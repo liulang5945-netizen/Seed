@@ -97,11 +97,12 @@ from neuroplex.resonance.dialogue_format import (  # noqa: E402
 # 2026-08-03 数据清洗（clean_dialogue_data.py）：过滤代码/英文密集样本后 *_clean.jsonl
 # 原始 *_clean 对应文件约 97.6K 条 → 清洗后 88.7K 条（90.9%）
 # ⚠️ 2026-08-12 发现：sft_shared_core/unique 与 alpaca 内容 100% 重复；清理后只保留两个 canonical 文件。
+# ⚠️ 2026-08-23 数据整理：alpaca_zh_sft_clean.jsonl 已删除（其 44391 条内容已并入
+# dialogue_extended_clean.jsonl 的 123090 条扩充语料），canonical 仅余一文件。
 DIALOGUE_DATA_FILES = [
-    "alpaca_zh_sft_clean.jsonl",    # canonical：44391 条
-    "dialogue_extended_clean.jsonl",  # canonical：123090 条
+    "dialogue_extended_clean.jsonl",  # canonical：123090 条（含 alpaca-zh 原始内容）
 ]
-# 实际 canonical 唯一对话样本：44391（alpaca）+ 123090（扩充）= 167481 条
+# 实际 canonical 唯一对话样本：123090 条（扩充语料已含 alpaca）
 
 # HF 数据不再由训练器运行时静默下载；候选数据必须先经过
 # scripts/data_prep/download_hf_dialogue_candidates.py 的许可证/去重/质量审计。

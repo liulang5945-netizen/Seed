@@ -1,7 +1,7 @@
 """Train Seed on the raw-byte stream of the simple_zh corpus.
 
-阶段 1 原生数据管线：复用 ``data/simple_zh/`` 既有语料（class_a/b/c、
-dialogue_extended、alpaca_zh_sft），但以 raw-byte 流喂入 ``Seed.observe``；
+阶段 1 原生数据管线：复用 ``data/simple_zh/`` 既有语料（当前 canonical 为
+dialogue_extended_clean），以 raw-byte 流喂入 ``Seed.observe``；
 会话边界用 ``boundary_symbol``，对话结构沿用语料里的文本标记（问：/答：），
 全程不引入 tokenizer。训练循环为分片流式多 epoch + 周期 ``checkpoint()``
 落盘（seed-native-v1 信封），进度曲线逐条写入 ``reports/``。
@@ -36,9 +36,10 @@ from seed import Seed, SeedConfig  # noqa: E402
 from taiji import TaijiConfig  # noqa: E402
 
 DEFAULT_CORPUS = (
+    # 2026-08-23 数据整理：canonical 对话语料仅此一文件（123090 条，
+    # 已吸收 alpaca-zh/shared_core 内容）；旧声明中的 alpaca_zh_sft_clean /
+    # class_a_chinese 已删除。
     "data/simple_zh/dialogue_extended_clean.jsonl",
-    "data/simple_zh/alpaca_zh_sft_clean.jsonl",
-    "data/simple_zh/class_a_chinese.jsonl",
 )
 
 # Fixed unseen probe: window statistics over the moving stream measure content

@@ -10,7 +10,7 @@
 
     python scripts/training/eval_seed_corpus.py \
         --checkpoint checkpoints/seed_corpus.pt \
-        --holdout data/simple_zh/class_a_chinese.jsonl --holdout-rows 32
+        --holdout data/simple_zh/dialogue_extended_clean.jsonl --holdout-rows 32
 """
 
 from __future__ import annotations
@@ -168,7 +168,7 @@ def main() -> None:
     parser.add_argument("--checkpoint", required=True)
     parser.add_argument(
         "--holdout",
-        default=str(PROJECT_ROOT / "data" / "simple_zh" / "class_a_chinese.jsonl"),
+        default=str(PROJECT_ROOT / "data" / "simple_zh" / "dialogue_extended_clean.jsonl"),
     )
     parser.add_argument("--holdout-rows", type=int, default=32)
     parser.add_argument("--generation-length", type=int, default=64)

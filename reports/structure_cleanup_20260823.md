@@ -70,3 +70,25 @@ scripts/
 ├── data_prep/    1 个：download_hf_dialogue_candidates.py（现役语料候选下载器）
 └── archive/    337 个：根（遗留训练验证）+ diagnostics/90 + data_prep/51 + ops/3 + native_v6/7
 ```
+
+## 七、大文件整理（追加，2026-08-23）
+
+逐项审计 >1MB 文件的用途与引用后，按用户决定处置：
+
+| 文件 | 大小 | 处置 | 理由 |
+|---|---|---|---|
+| `data/simple_zh/simple_zh_texts.jsonl` | 1330 MB | **保留** | 用户指定：为后续按态极架构训练模型预留；当前仅归档脚本引用，可随时从 HF 重下 |
+| `data/simple_zh/shared_core.jsonl` | 399 MB | **保留** | 同上（源语料的 30% 共享切片，可由 split_simple_zh.py 重新生成） |
+| `data/simple_zh/dialogue_extended_clean.jsonl` | 103 MB | 保留 | 现役 canonical 对话语料（123090 条，含 alpaca-zh 内容） |
+| `checkpoints/seed_corpus_800k_backup.pt` | 4 MB | **删除** | 与现役检查点完全一致的副本，仅归档诊断脚本引用 |
+| `taiji_data/` 全目录 | 10.6 MB | **删除** | 冻结 Legacy 生命引擎运行时状态（feed 队列/锚点投影/写门控/增长指标）；sleep_engine 缺失时自动回退硬阈值 |
+| `neuroplex/domains/general/sp_general.*` | 10.5 MB | 保留 | 冻结产品基线通用域分词器，产品 API 仍用 |
+| `_libs/sentencepiece/*.pyd` | 1.4 MB | 保留 | 内置二进制库 |
+
+同步清除幽灵声明（对应已被用户早前删除的 `alpaca_zh_sft_clean.jsonl` / `class_a_chinese.jsonl`）：
+
+- `train_seed_corpus.py` DEFAULT_CORPUS 与文档字符串：仅留 `dialogue_extended_clean.jsonl`。
+- `_seed_verify_common.py::corpus_paths`、`verify_seed_a1_judge.py::_default_corpus_paths`：同上。
+- `experiment_config.py::DIALOGUE_DATA_FILES`：仅留一文件，注释说明 alpaca 内容已并入扩充语料。
+- `eval_seed_corpus.py` --holdout 默认：`dialogue_extended_clean.jsonl`。
+

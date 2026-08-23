@@ -33,10 +33,9 @@ def load_eval_module():
 
 def corpus_paths() -> List[Path]:
     base = REPO / "data" / "simple_zh"
+    # 2026-08-23 数据整理：canonical 对话语料仅此一文件。
     return [
         base / "dialogue_extended_clean.jsonl",
-        base / "alpaca_zh_sft_clean.jsonl",
-        base / "class_a_chinese.jsonl",
     ]
 
 
