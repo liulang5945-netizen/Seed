@@ -164,7 +164,7 @@ adapted = previous.threshold + replay_fatigue_gain * (previous.trace - previous.
 
 ### 6.4 验收结果
 
-`python scripts/training/_diag_m6_coverage.py 384 11 17 29 43 61`：
+`python scripts/archive/native_v6/_diag_m6_coverage.py 384 11 17 29 43 61`：
 
 | seed | 排练份额 0/1/2/3 | 最低份额 | accuracy | accepted |
 |---|---|---:|---:|---:|
@@ -316,7 +316,11 @@ inh_i ← λ·inh_i + (1−λ)·g·(1/k)·Σ_{j∈N(i)} W_ij·relu(membrane_j �
 
 `verify_taiji_m7_cue_chain.py` 用 8 个 cue、复用的 2 个 action/2 个 outcome 和完全均匀的预训练 marginals 隔离 `cue→action→outcome`。每条 active episode 只写一次，评测关闭 memory readback。Native v7 现状：action→outcome `100%`；cue→action slow cortical `50%`，八行 margin 全为 `0`；实际 action `62.5%`，但 no-replay/content-lesion 同为 `62.5%`。基准明确证明 M6 burst 没有写 cue→action，不是剂量或读出噪声。
 
-**当前唯一下一步**：accepted replay 先以内生 `cortical_projection` 在无外部 sensation 下重建 cue basis，用 action mode 写慢通路，再执行现有 action→outcome 段；补齐 control/content/order lesions。具体边界见 [SEED_ARCHITECTURE.md](SEED_ARCHITECTURE.md) §6。
+**§6.10 的"当前唯一下一步"已于 2026-08-23 闭合**，见 §6.11。
+
+### 6.11 M7 cue-chain 闭合（PASS，2026-08-23）
+
+按 §6.10 路线实现：accepted replay 先以内生 `cortical_projection` 在无外部 sensation 下重建 cue basis，用 action mode 写慢通路，再执行现有 action→outcome 段；补齐 no-replay/content/order lesions。决定性机制是 `cue_learn_scale` 慢写门控。`verify_taiji_m7_cue_chain.py` 七项判据全过（800K 检查点）。至此 M5–M7、A1–B1 全部闭合，本文件不再有活跃下一步；现状总览见 [plans/README.md](../README.md)。
 
 ## 7. 附录：已废止的 D1 长程稳定性档案（NeuroPlex/PlayEngine）
 

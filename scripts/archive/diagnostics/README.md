@@ -1,7 +1,13 @@
-# diagnostics：阶段 3 睡眠损伤诊断脚本存档（不可从当前 HEAD 复现全部结论）
+# diagnostics：一次性诊断脚本存档（不可从当前 HEAD 复现全部结论）
 
-本目录保存阶段 3（sleep/play）期间 A2 睡眠损伤定位过程的全部临时诊断脚本
-（原位于 `scripts/training/_diag_*.py`，2026-08-23 归档至此）。
+本目录保存两类历史诊断脚本（共 90 个）：
+
+1. 阶段 3（sleep/play）A2 睡眠损伤定位过程的 `_diag_*.py` 簇
+   （原位于 `scripts/training/_diag_*.py`，2026-08-23 归档至此）。
+2. Legacy 对话/微观路由调查的 `diag_dialogue_*` / `diag_micro_*` / `diag_c25e_*` /
+   `diag_runtime_mechanism_trace` 等簇（同样于 2026-08-23 自 `scripts/training/`
+   归档）；它们服务于已冻结的 transformer 种群管线，当前无活跃用途，
+   仅 `tests/test_micro_data_ab.py` 仍导入其中的常量定义。
 
 性质与 `scripts/archive/` 主目录一致：**历史调查记录，不是可运行资产**。
 它们绑定当时的检查点状态与配置数值（如 `replay_outcome_slow_scale`、

@@ -35,7 +35,7 @@ ROUTER_TEMP = 0.15
 
 
 def encode_all(text, embeddings, general_sp):
-    from scripts.training.train_multi_domain_foundation import batch_align_and_embed
+    from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
     neuron_embeddings, targets, mask = {}, None, None
     for nid, emb in embeddings.items():
         out = batch_align_and_embed([text], general_sp, general_sp, emb, max_seq_len=SEQ_LEN)
@@ -58,7 +58,7 @@ def ppl_from_logits(logits, targets, mask):
 
 def solo_loss(neuron, emb, general_sp, text):
     """单 neuron + home embedding，旧 5 logits 转译到 general 256K 口径。"""
-    from scripts.training.train_multi_domain_foundation import batch_align_and_embed
+    from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
     out = batch_align_and_embed([text], general_sp, general_sp, emb, max_seq_len=SEQ_LEN)
     with torch.no_grad():
         r = neuron.forward(out[0], return_logits=True)
@@ -92,7 +92,7 @@ def main():
     from scripts.training.utils import (
         load_general_tokenizer, load_dialogue_texts_multi, create_shared_embedding,
     )
-    from scripts.training.train_multi_domain_foundation import load_domain_texts
+    from scripts.archive.train_multi_domain_foundation import load_domain_texts
     from taiji.resonance.ensemble import ResonanceEnsemble
     from taiji.resonance.field import ResonanceField
     from taiji.resonance.geometry import NeuronGeometry

@@ -24,7 +24,7 @@ DOMAINS = ["code", "math", "zh", "en"]
 
 
 def main():
-    from scripts.training.train_multi_domain_foundation import (
+    from scripts.archive.train_multi_domain_foundation import (
         load_domain_texts, load_general_tokenizer, load_tokenizer_for_vocab,
         verify_checkpoint, GENERAL_VOCAB,
     )
@@ -79,7 +79,7 @@ def main():
     # [4] 输出空间验证：logits 在 general 256K
     print("\n[3] 输出空间验证（general 256K）...")
     import torch.nn.functional as F
-    from scripts.training.train_multi_domain_foundation import batch_align_and_embed
+    from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
     from taiji.resonance.neuron import ResonanceNeuron
     emb = torch.nn.Embedding(GENERAL_VOCAB, 512)
     emb.weight.data.copy_(torch.load(os.path.join(SAVE_DIR, "shared_embedding.pt"),

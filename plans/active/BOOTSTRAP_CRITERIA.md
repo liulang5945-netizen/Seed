@@ -160,7 +160,7 @@
 > - 65h 全量长跑已彻底证否（4 分钟快速版能提供同等或更高信息量）
 >
 > 报告：`reports/a3_with_decay_0.95_20260820.json` / `reports/a3_with_decay_0.90_20260820.json`
-> 脚本：`scripts/training/verify_a3_with_decay.py`
+> 脚本：`scripts/archive/verify_a3_with_decay.py`
 > 机制改动：`neuroplex/life/sleep_engine.py`（SleepConfig.lora_decay_per_sleep）
 >
 > ---

@@ -2,11 +2,19 @@
 
 本目录是 Legacy NeuroPlex 和已退役 Native substrate 版本的验证/诊断脚本存档，**全部视为不可运行的历史记录**，只用于追溯当时做过哪些检查。
 
+子目录划分（2026-08-23 结构整理后）：
+
+- 根：遗留训练/验证/评估脚本（transformer 种群管线、hub/collab/c25-c28 验证、play engine 验证等，共约 186 个）。
+- `diagnostics/`：一次性诊断脚本（阶段 3 睡眠损伤 `_diag_*` 簇 + 对话/微观路由调查 `diag_*` 簇，共 90 个）。
+- `data_prep/`：遗留语料下载/清洗/合并脚本（全部指向已废弃的 `taiji_data/` 旧管线，共 51 个）；现役语料构建器见 `scripts/data_prep/`。
+- `ops/`：遗留运维小工具（endpoint 检查/重启，共 2 个）。
+- `native_v6/`：见下段。
+
 `native_v6/` 保存 M6 fixed-fan-in 上限、写入 basis、replay 覆盖与 signed-opponent 离线反证。其结论已由 Native v7 的双时间尺度 consolidation path 吸收；这些脚本绑定旧 payload/decoder 语义，必须在对应历史提交上复现，不能从当前 HEAD 运行。
 
 ## 为什么这里的 `from taiji.<...>` 不是 Bug
 
-98 个文件里共 301 处 `from taiji.resonance / taiji.brain / taiji.life / taiji.loader ...`。这里的 `taiji` 是 **`neuroplex` 包的历史 import 别名**，不是当前顶层 `taiji/` 新基底。命名口径见 `plans/active/ARCHITECTURE_DIRECTION_2026_08.md` §0。
+98 个文件里共 301 处 `from taiji.resonance / taiji.brain / taiji.life / taiji.loader ...`（2026-08-23 扩充归档后全目录 336 个 py 中共 317 处）。这里的 `taiji` 是 **`neuroplex` 包的历史 import 别名**，不是当前顶层 `taiji/` 新基底。命名口径见 `plans/active/ARCHITECTURE_DIRECTION_2026_08.md` §0。
 
 已决定 **不重写、不批量改名**，理由：
 
@@ -18,7 +26,8 @@
 
 - 本目录 **没有 `test_*.py`**，pytest 不会收集。
 - CI 只执行 `scripts/training/verify_taiji_*.py`、`pytest tests/taiji_native`、`pytest tests/`，都不触及本目录。
-- 无任何在用代码引用本目录；仅 `neuroplex/resonance/neuron.py:896` 把一段死代码标注为“仅 scripts/archive/”。
+- 在用代码引用仅两处：`tests/test_micro_data_ab.py` 从 `diagnostics/` 导入诊断簇的常量（纯数据，不执行训练）；目录内脚本互引已在归档时同步改写为 `scripts.archive.*`。
+- 仅 `neuroplex/resonance/neuron.py:896` 把一段死代码标注为“仅 scripts/archive/”。
 
 因此这些 import 不会让构建变红，唯一风险是**人（或 agent）误以为它们引用的是新基底 `taiji/`**。本文件即为消除该误解而存在。
 

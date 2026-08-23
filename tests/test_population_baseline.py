@@ -1,7 +1,7 @@
 import torch
 
 from neuroplex.resonance import ResonanceEnsemble, ResonanceField
-from scripts.verify_population_baseline import (
+from scripts.archive.verify_population_baseline import (
     DEFAULT_SEED,
     _make_inputs,
     _make_population,

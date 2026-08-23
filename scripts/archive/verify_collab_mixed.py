@@ -37,7 +37,7 @@ DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
 def compute_avg_loss_ensemble(ens, embeddings, general_sp, text, fusion_mode="soft",
                               seq_len=64):
     """协作 PPL：全部 neuron 各自 home embedding 编码 → forward_train(target=general) 融合。"""
-    from scripts.training.train_multi_domain_foundation import batch_align_and_embed
+    from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
     neuron_embeddings, targets, mask = {}, None, None
     for nid, emb in embeddings.items():
         out = batch_align_and_embed([text], general_sp, general_sp, emb, max_seq_len=seq_len)
@@ -67,7 +67,7 @@ def compute_avg_loss_solo(neuron, emb, general_sp, text, seq_len=64):
     """个体 PPL：单 neuron + 自己 home embedding。
     旧 5（zh 50K head）的 logits 转译到 general 256K 再算 CE（与训练 target=general 口径一致）；
     新 4 原生 256K 无需转译。"""
-    from scripts.training.train_multi_domain_foundation import batch_align_and_embed
+    from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
     out = batch_align_and_embed([text], general_sp, general_sp, emb, max_seq_len=seq_len)
     with torch.no_grad():
         r = neuron.forward(out[0], return_logits=True)
@@ -111,7 +111,7 @@ def main():
     from scripts.training.utils import (
         load_general_tokenizer, load_dialogue_texts_multi, create_shared_embedding,
     )
-    from scripts.training.train_multi_domain_foundation import load_domain_texts
+    from scripts.archive.train_multi_domain_foundation import load_domain_texts
     from taiji.resonance.ensemble import ResonanceEnsemble
     from taiji.resonance.field import ResonanceField
     from taiji.resonance.geometry import NeuronGeometry
@@ -124,7 +124,7 @@ def main():
     print("=" * 64)
 
     general_sp = load_general_tokenizer()
-    from scripts.training.train_multi_domain_foundation import batch_align_and_embed
+    from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
     ck = torch.load(CKPT_PATH, map_location="cpu", weights_only=False)
     print(f"  epoch={ck['epoch']}, total_steps={ck['total_steps']}")
 
@@ -321,7 +321,7 @@ def main():
 
     # ── 6. 生成冒烟（跨 vocab 转译融合）──
     print("\n[5] 生成冒烟（zh 提问 → 转译融合）...")
-    from scripts.training.train_multi_domain_foundation import batch_align_and_embed
+    from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
     prompt = "写一个 Python 函数计算斐波那契数列"
     cur = general_sp.encode(prompt)
     for _ in range(8):

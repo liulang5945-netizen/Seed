@@ -166,7 +166,7 @@ _generate_p7()                             cortex.py:2283+
 
 - `ResonanceNeuron` 的 side channel 实际消费点在 `neuron.py:667-714` 的 `side_signals` 分支。
 - `ResonanceEnsemble` 构造 geometry 和跨规格投影，但不会在生产装配时自动调用 `build_topology()` / `establish_topology_channels()`。
-- 训练/分析脚本通常先在 `scripts/training/analyze_side_channels.py:64-89` 等位置重建 topology，再加载 checkpoint。
+- 训练/分析脚本通常先在 `scripts/archive/analyze_side_channels.py:64-89` 等位置重建 topology，再加载 checkpoint。
 - 生产 loader 主要在 `loader.py:1111-1173` 从协作产物恢复已有 channel/projector；没有产物就没有训练好的 peer 关系。
 - `Cortex.add_neuron()` 会把新 neuron 加入 ensemble；`Cortex.revive_neuron()` 明确提示 side channel topology 需由调用方重新建立，见 `cortex.py:959-964`。
 
@@ -411,7 +411,7 @@ _generate_p7()                             cortex.py:2283+
 诊断命令：
 
 ```powershell
-python scripts/training/diag_runtime_mechanism_trace.py
+python scripts/archive/diagnostics/diag_runtime_mechanism_trace.py
 ```
 
 原始结果：`reports/runtime_mechanism_trace_20260820.json`。该脚本使用真实
@@ -481,8 +481,8 @@ TypeError: 'dict_values' object is not an iterator
 
 | 脚本 | 依赖 | 结果 |
 |---|---|---|
-| `scripts/training/verify_play_engine_contract_mock.py` | 无需 checkpoint（mock cortex） | **13/13 PASS** — 4 场景全过：① final_scores 全正 → record 调用 + field_state 非空张量；② final_scores 空 → 低质量活动不抛；③ field_state=None → record 跳过不抛；④ coaction 接线 → update 收 ≥2 active_ids |
-| `scripts/training/verify_play_engine_runtime_contract.py` | 9 成员 production checkpoint（`data/neurons` + `data/foundation_v1_dual` + `collab_v3_c24v2.ckpt.pt`） | **待用户在含 checkpoint 的环境运行** — 5 维判据：C1 行级 trace 无 TypeError；C2 cortex.think 被调用；C3 final_scores 非空；C4 返回非 None PlayActivity；C5 record_high_resonance_state 调用且 field_state 非空 |
+| `scripts/archive/verify_play_engine_contract_mock.py` | 无需 checkpoint（mock cortex） | **13/13 PASS** — 4 场景全过：① final_scores 全正 → record 调用 + field_state 非空张量；② final_scores 空 → 低质量活动不抛；③ field_state=None → record 跳过不抛；④ coaction 接线 → update 收 ≥2 active_ids |
+| `scripts/archive/verify_play_engine_runtime_contract.py` | 9 成员 production checkpoint（`data/neurons` + `data/foundation_v1_dual` + `collab_v3_c24v2.ckpt.pt`） | **待用户在含 checkpoint 的环境运行** — 5 维判据：C1 行级 trace 无 TypeError；C2 cortex.think 被调用；C3 final_scores 非空；C4 返回非 None PlayActivity；C5 record_high_resonance_state 调用且 field_state 非空 |
 | 源码级 inspect 检查 | 无依赖 | **PASS** — `next(iter(` / `cortex.think(` / `get_last_field_state()` 三处修复点均在代码中；`neuron._last_field_state` / `output.get('resonance_score'` / `next(self._cortex.neurons.values())` 三处旧断裂契约已从代码中移除（仅余注释中的解释性引用） |
 
 ### 14.2 行级 trace 回归守卫
@@ -533,7 +533,7 @@ TypeError: 'dict_values' object is not an iterator
 
 ### 15.3 回归验证
 
-`scripts/training/verify_c28_gap1_gap2_contract.py`（无需 checkpoint，mock + 源码级 inspect）**21/21 PASS**：
+`scripts/archive/verify_c28_gap1_gap2_contract.py`（无需 checkpoint，mock + 源码级 inspect）**21/21 PASS**：
 
 - **Gap 1（11 维）**：G1.1 `_capture_field_memory` 直接调用 → record_field_memory 收到正确 (field_state, label, text, phase)；G1.2/G1.3/G1.4 auto_capture 透传门控；G1.5/G1.6/G1.7 源码级 inspect（参数存在 / 门控存在 / 方法定义存在）
 - **Gap 2（7 维）**：G2.1 continuous_forward 含 coaction.update；G2.2 带 round_num=t+1 + 非致命包装；G2.3 len>=2 门控；G2.4/G2.5 离散 forward 对照基准
@@ -550,8 +550,8 @@ TypeError: 'dict_values' object is not an iterator
 
 三项机制缺口（PlayEngine 契约 / 场记忆自动捕获 / coaction 连续路径）已全部闭合。下一步收敛为**用户在含 9 成员 checkpoint 的环境运行两条生产路径验证**：
 
-1. `python -u scripts/training/verify_play_engine_runtime_contract.py` — PlayEngine 自由共振→高共振 replay 链 5/5 PASS
-2. `python -u scripts/training/diag_runtime_mechanism_trace.py` — 重跑机制 trace，确认：
+1. `python -u scripts/archive/verify_play_engine_runtime_contract.py` — PlayEngine 自由共振→高共振 replay 链 5/5 PASS
+2. `python -u scripts/archive/diagnostics/diag_runtime_mechanism_trace.py` — 重跑机制 trace，确认：
    - `pending_field_memories: {before: 0, after: >0}`（Gap 1 闭合证据，普通 generate 现在自动沉淀）
    - `coaction_pairs: >0`（Gap 2 闭合证据，continuous 路径现累积共激活）
    - `play_result: 非 None`（PlayEngine 修复证据）

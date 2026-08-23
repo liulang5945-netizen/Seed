@@ -18,7 +18,7 @@ from scripts.training.train_cross_domain_collab import (
     load_neuron, load_shared_lm_head, load_shared_embedding,
 )
 from scripts.training.utils import load_general_tokenizer, create_shared_embedding
-from scripts.training.gen_test_collab import DOMAINS, DIALOGUE_IDS, DIALOGUE_DIR, GENERAL_DIR
+from scripts.archive.gen_test_collab import DOMAINS, DIALOGUE_IDS, DIALOGUE_DIR, GENERAL_DIR
 
 PROMPTS = [
     ("code", "Write a Python function to compute the Fibonacci sequence"),

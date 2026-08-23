@@ -20,7 +20,7 @@ from scripts.training.train_cross_domain_collab import (
 from scripts.training.utils import (
     load_general_tokenizer, create_shared_embedding,
 )
-from scripts.training.gen_test_collab import DOMAINS, DIALOGUE_IDS, DIALOGUE_DIR, GENERAL_DIR
+from scripts.archive.gen_test_collab import DOMAINS, DIALOGUE_IDS, DIALOGUE_DIR, GENERAL_DIR
 from taiji.resonance import ResonanceNeuron, ResonanceField, ResonanceEnsemble
 from taiji.resonance.geometry import NeuronGeometry
 from taiji.resonance.topology import build_topology, establish_topology_channels

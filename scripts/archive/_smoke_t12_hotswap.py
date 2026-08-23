@@ -31,7 +31,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 import sentencepiece as spm
-from scripts.training.hot_swap_vocab import (
+from scripts.archive.hot_swap_vocab import (
     build_token_id_map,
     compute_new_embeddings,
     migrate_lm_head_state,

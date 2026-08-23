@@ -134,9 +134,12 @@ _libs/
 taiji-yuanli-redesign/
 
 # Temporary scripts (one-off data fixes, not production code)
-# Note: scripts/data_prep/download_*.py ARE production code, keep them.
-# scripts/download_* below only excludes legacy root-level downloads.
+# scripts/data_prep/ 现仅保留 download_hf_dialogue_candidates.py；
+# 遗留语料脚本已归入 scripts/archive/data_prep/。
 scripts/download_*
+
+# One-off scratch space (audit/migration helpers, deleted after use)
+_scratch/
 
 # Environment files (API keys, secrets)
 .env

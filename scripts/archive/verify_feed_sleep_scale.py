@@ -98,7 +98,7 @@ TRAIN_POOL = []
 for t, d, pts in NEW_TOPICS:
     TRAIN_POOL.append(knowledge(t, d, pts))
 # 并入 progressive 的 5 轮 40 条（机器学习/NLP/编程/数学主题）
-from scripts.training.verify_feed_sleep_progressive import ROUND_BATCHES  # noqa: E402
+from scripts.archive.verify_feed_sleep_progressive import ROUND_BATCHES  # noqa: E402
 for batch in ROUND_BATCHES:
     TRAIN_POOL.extend(batch)
 TRAIN_POOL = list(dict.fromkeys(TRAIN_POOL))  # 去重（同 FeedEngine dedup 语义）

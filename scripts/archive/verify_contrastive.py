@@ -28,7 +28,7 @@ def main():
     from scripts.training.utils import (
         load_general_tokenizer, create_shared_embedding,
     )
-    from scripts.training.train_multi_domain_foundation import load_domain_texts, batch_align_and_embed
+    from scripts.archive.train_multi_domain_foundation import load_domain_texts, batch_align_and_embed
     from taiji.resonance.ensemble import ResonanceEnsemble
     from taiji.resonance.field import ResonanceField
     from taiji.resonance.geometry import NeuronGeometry

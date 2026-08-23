@@ -29,7 +29,7 @@ import torch.nn.functional as F  # noqa: E402
 from taiji.resonance import ResonanceNeuron  # noqa: E402
 from scripts.training.utils import load_general_tokenizer  # noqa: E402
 from scripts.training.train_cross_domain_collab import load_tokenizer_for_vocab  # noqa: E402
-from scripts.training.train_domain_target_sft import (  # noqa: E402
+from scripts.archive.train_domain_target_sft import (  # noqa: E402
     build_sample, build_batch, load_sft, DOMAIN_VOCAB, SEQ_LEN,
 )
 

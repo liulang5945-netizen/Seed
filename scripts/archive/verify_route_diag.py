@@ -29,7 +29,7 @@ def main():
     from scripts.training.utils import (
         load_general_tokenizer, create_shared_embedding, load_domain_tokenizer,
     )
-    from scripts.training.train_multi_domain_foundation import (
+    from scripts.archive.train_multi_domain_foundation import (
         load_domain_texts, batch_align_and_embed,
     )
     from taiji.resonance.ensemble import ResonanceEnsemble

@@ -42,7 +42,7 @@ from scripts.training.utils import (
 from scripts.training.train_cross_domain_collab import (
     load_neuron, load_shared_lm_head, load_shared_embedding,
 )
-from scripts.training.train_multi_domain_foundation import batch_align_and_embed
+from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
 
 
 def main():

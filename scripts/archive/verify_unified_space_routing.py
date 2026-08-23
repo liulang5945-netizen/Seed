@@ -36,7 +36,7 @@ HIDDEN = 512  # compact spec hidden_size（general 基座 embedding/lm_head 维�
 
 def compute_avg_loss(ens, emb, general_sp, text, fusion_mode, max_len=128):
     """与 verify_checkpoint 口径一致：返回平均 loss（非 PPL），8 条文本后统一 exp。"""
-    from scripts.training.train_multi_domain_foundation import batch_align_and_embed
+    from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
     out = batch_align_and_embed([text], general_sp, general_sp, emb, max_seq_len=max_len)
     shared_emb, targets, mask = out[0], out[1], out[2]
     with torch.no_grad():
@@ -56,7 +56,7 @@ def compute_avg_loss(ens, emb, general_sp, text, fusion_mode, max_len=128):
 
 def route_profile(ens, emb, general_sp, text, max_len=128):
     """返回 division 模式下每 neuron 的位置占比 dict。"""
-    from scripts.training.train_multi_domain_foundation import batch_align_and_embed
+    from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
     out = batch_align_and_embed([text], general_sp, general_sp, emb, max_seq_len=max_len)
     with torch.no_grad():
         r = ens.forward(shared_embeddings=out[0], return_logits=True, fusion_mode="division")
@@ -92,7 +92,7 @@ def main():
     from scripts.training.train_cross_domain_collab import (
         load_neuron, load_shared_lm_head, load_shared_embedding,
     )
-    from scripts.training.train_multi_domain_foundation import (
+    from scripts.archive.train_multi_domain_foundation import (
         load_domain_texts, load_general_tokenizer,
     )
     from taiji.resonance.ensemble import ResonanceEnsemble
@@ -120,7 +120,7 @@ def main():
     # ── [1] division 路由可跑 + 输出空间 ──
     print("\n[1] division 路由 forward 冒烟（输出 256K、无 NaN）...")
     sample = texts["code"][0]
-    from scripts.training.train_multi_domain_foundation import batch_align_and_embed
+    from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
     out = batch_align_and_embed([sample], general_sp, general_sp, emb, max_seq_len=64)
     with torch.no_grad():
         r = ens.forward(shared_embeddings=out[0], return_logits=True, fusion_mode="division")
