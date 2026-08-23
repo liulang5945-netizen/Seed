@@ -7,7 +7,7 @@
 - 根：遗留训练/验证/评估脚本（transformer 种群管线、hub/collab/c25-c28 验证、play engine 验证等，共约 186 个）。
 - `diagnostics/`：一次性诊断脚本（阶段 3 睡眠损伤 `_diag_*` 簇 + 对话/微观路由调查 `diag_*` 簇，共 90 个）。
 - `data_prep/`：遗留语料下载/清洗/合并脚本（全部指向已废弃的 `taiji_data/` 旧管线，共 51 个）；现役语料构建器见 `scripts/data_prep/`。
-- `ops/`：遗留运维小工具（endpoint 检查/重启，共 2 个）。
+- `ops/`：遗留运维小工具（endpoint 检查/重启/一次性存储清理，共 3 个）。
 - `native_v6/`：见下段。
 
 `native_v6/` 保存 M6 fixed-fan-in 上限、写入 basis、replay 覆盖与 signed-opponent 离线反证。其结论已由 Native v7 的双时间尺度 consolidation path 吸收；这些脚本绑定旧 payload/decoder 语义，必须在对应历史提交上复现，不能从当前 HEAD 运行。

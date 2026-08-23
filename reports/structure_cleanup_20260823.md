@@ -5,7 +5,7 @@
 
 ---
 
-## 一、移动（181 个文件，全部 `git mv` 保留历史）
+## 一、移动（182 个文件，全部 `git mv` 保留历史）
 
 ### 1. `scripts/training/` → `scripts/archive/diagnostics/`（46 个）
 `diag_dialogue_*`（30）、`diag_micro_*`（14）、`diag_c25e_leader_quality_gap`、`diag_runtime_mechanism_trace`。
@@ -30,8 +30,8 @@
 ### 5. `scripts/` 根 → `scripts/archive/`（4 个）
 `bootstrap_population_demo`、`count_data`、`migrate_ckpt_v3`、`verify_population_baseline`（后者仍被 `tests/test_population_baseline.py` 使用，引用已同步改为 `scripts.archive.*`）。
 
-### 6. `scripts/utils/` → `scripts/archive/ops/`（2 个）
-`check_endpoints`、`restart_server`——无任何在用引用；目录清空后删除。
+### 6. `scripts/utils/` 与 `scripts/maintenance/` → `scripts/archive/ops/`（3 个）
+`check_endpoints`、`restart_server`（无任何在用引用）；`cleanup_redundant_artifacts`（2026-08-19 一次性存储清理，硬编码白名单已执行完毕）。两个目录清空后删除。
 
 ### 7. `PROJECT_ANALYSIS.md` → `docs/history/PROJECT_ANALYSIS_20260822.md`
 一次性分析快照（含整理前脚本规模数字），加日期后缀归档，避免根目录残留。
@@ -46,7 +46,7 @@
 ## 三、顶层清洁
 
 - 删除 `_v9_run.log`（无跟踪的运行日志）。
-- 删除空目录 `scripts/utils/`。
+- 删除空目录 `scripts/utils/`、`scripts/maintenance/`。
 - `.gitignore`：更新过时的 `scripts/data_prep` 注释；新增 `_scratch/` 规则；一次性辅助脚本（`audit_helper.py`、`reorg_execute.py`、`fix_depths.py`）用后即删。
 
 ## 四、plans 同步
@@ -68,5 +68,5 @@
 scripts/
 ├── training/    29 个：seed/taiji 原生验证 + 产品训练入口 + 共享库（全部被 CI/测试/api 钉住）
 ├── data_prep/    1 个：download_hf_dialogue_candidates.py（现役语料候选下载器）
-└── archive/    336 个：根（遗留训练验证）+ diagnostics/90 + data_prep/51 + ops/2 + native_v6/7
+└── archive/    337 个：根（遗留训练验证）+ diagnostics/90 + data_prep/51 + ops/3 + native_v6/7
 ```

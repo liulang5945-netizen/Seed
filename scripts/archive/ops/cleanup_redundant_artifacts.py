@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 DATA_ROOT = PROJECT_ROOT / "data"
 REPORT_PATH = PROJECT_ROOT / "reports" / "storage_cleanup_20260819.json"
 
