@@ -35,7 +35,7 @@
 
 ## 当前状态与唯一下一步
 
-2026-08-24 审计确认：GitHub `main` 远程读写已经恢复；Taiji 核心没有 Transformer/tokenizer/autograd 依赖。容量硬编码第三阶段已完成：`CapacityPolicy` + 参数预算现在同时规划区域/突触结构与 episodic memory 的时间、episode 编码维度，训练画像也会同步放大，旧 policy JSON 保持兼容。Transformer 清理边界第九阶段已完成：平台 API、旧 Cortex CLI、可选 Agent 路由和聊天请求时的生命/记忆/ReAct/DataCollector fallback 均通过 `api/legacy_bridge.py` 的可用性门控；CI 已覆盖不安装 `legacy` extra 的导入阻断 smoke 与显式 Legacy 启动 smoke。当前唯一下一步是收口 `api/run_app.py` 的兼容 CLI Legacy 导入；禁止直接删除目录造成产品壳断裂。
+2026-08-24 审计确认：GitHub `main` 远程读写已经恢复；Taiji 核心没有 Transformer/tokenizer/autograd 依赖。容量硬编码第三阶段已完成：`CapacityPolicy` + 参数预算现在同时规划区域/突触结构与 episodic memory 的时间、episode 编码维度，训练画像也会同步放大，旧 policy JSON 保持兼容。Transformer 清理边界第十阶段已完成：桌面启动依赖清单迁到 `seed_platform.dependencies`，核心清单不再自动安装 Transformer/RAG/Agent 依赖，只有显式 `SEED_ENABLE_LEGACY=1` 才启用 Legacy 清单；平台 API、旧 Cortex CLI、可选 Agent 路由和聊天请求 fallback 均已门控。当前唯一下一步是收口 `api/training/recommend.py` 的请求时 Legacy 数据集检查；禁止直接删除目录造成产品壳断裂。
 
 M7 已闭合（七项判据全过）：accepted replay 用内生 `cortical_projection` 重建 cue 基底、把 action mode 写入慢通路，`act()` 显著高于 no-replay/content-lesion。阶段 1/2 完成：800K raw-byte 重训（byte_ppl 23.1，面板三组排序正确）、`seed/judge.py` 原生自我评估、A1 同判据验证通过。阶段 3 完成：原生 sleep 调度 + 主题探索环境，A2–A5/B1 五项判据在 800K 成熟检查点上全部 PASS（报告落盘 `reports/seed_a2/a3/a4_a5/b1_*.json`）；机制：`_development_ticks` 生命周期成熟门控、观察性夜晚（零漂移自我维持睡眠）、经验清醒预算封顶。阶段 4/5 完成：产品接入（api/前端/桌面端/移动端远程接入）全仓 108 项绿；超越证据报告见 `reports/seed_phase5_transcendence_20260823.md`。当前诚实边界：byte-level 生成尚未到人工可读。判据见 [SEED_ARCHITECTURE.md](active/SEED_ARCHITECTURE.md) §6 与 [BOOTSTRAP_CRITERIA.md](archive/authored/BOOTSTRAP_CRITERIA.md)。
 

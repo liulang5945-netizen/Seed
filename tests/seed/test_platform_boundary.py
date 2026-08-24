@@ -35,6 +35,18 @@ def test_chat_entrypoints_use_the_legacy_gate() -> None:
         assert "legacy_available" in source, relative
 
 
+def test_desktop_entrypoint_keeps_transformer_dependencies_opt_in() -> None:
+    run_app = REPO / "api" / "run_app.py"
+    imports = _imports(run_app)
+    assert "seed_platform.config" in imports
+    assert "seed_platform.dependencies" in imports
+    assert "neuroplex.core.config" not in imports
+
+    source = run_app.read_text(encoding="utf-8")
+    assert "CORE_DEPENDENCIES" not in source
+    assert "transformers" not in source
+
+
 def test_platform_paths_are_owned_outside_neuroplex() -> None:
     modules = (
         "api/app.py",

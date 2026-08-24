@@ -44,49 +44,13 @@ if base_dir not in sys.path:
 # ==========================================
 PIP_MIRROR = os.environ.get("TAIJI_PIP_INDEX", "https://mirrors.aliyun.com/pypi/simple/")
 
-# ==========================================
-# 全部依赖定义（名称 -> pip 包名）
-# ==========================================
-CORE_DEPENDENCIES = {
-    # GUI 层
-    "PyQt6": "PyQt6",
-    "PyQt6.QtWebEngineWidgets": "PyQt6-WebEngine",
-    # 后端 API 核心
-    "fastapi": "fastapi",
-    "uvicorn": "uvicorn",
-    "starlette": "starlette",
-    "pydantic": "pydantic",
-    "multipart": "python-multipart",
-    # 深度学习框架
-    "torch": "torch>=2.0.0",
-    "transformers": "transformers",
-    "peft": "peft",
-    "accelerate": "accelerate",
-    "bitsandbytes": "bitsandbytes",
-    "datasets": "datasets",
-    # Agent / LLM
-    "langchain": "langchain",
-    "langchain_community": "langchain-community",
-    "langchain_core": "langchain-core",
-    "langchain_openai": "langchain-openai",
-    "langchain_experimental": "langchain-experimental",
-    # RAG
-    "sentence_transformers": "sentence-transformers",
-    # 数据处理
-    "numpy": "numpy",
-    "scipy": "scipy",
-    "pandas": "pandas",
-    "matplotlib": "matplotlib",
-    # 工具
-    "requests": "requests",
-    "tqdm": "tqdm",
-    "PyPDF2": "PyPDF2",
-    "docx": "python-docx",
-    "pdfminer": "pdfminer.six",
-    "jieba": "jieba",
-    "bs4": "beautifulsoup4",
-    "duckduckgo_search": "duckduckgo-search",
-}
+from seed_platform.config import (
+    apply_env_overrides,
+    get_external_path,
+    get_internal_path,
+    get_writable_base_dir,
+)
+from seed_platform.dependencies import dependency_manifest, legacy_requested
 
 
 def _check_module(import_name: str) -> bool:
@@ -98,14 +62,14 @@ def _check_module(import_name: str) -> bool:
         return False
 
 
-def _check_all_dependencies() -> tuple[list[str], list[str]]:
+def _check_all_dependencies(*, include_legacy: bool = False) -> tuple[list[str], list[str]]:
     """
     全面检测所有核心依赖。
     返回 (已安装列表, 缺失列表)。
     """
     missing_modules = []
     missing_packages = []
-    for module_name, pip_name in CORE_DEPENDENCIES.items():
+    for module_name, pip_name in dependency_manifest(include_legacy=include_legacy).items():
         if not _check_module(module_name):
             missing_modules.append(module_name)
             missing_packages.append(pip_name)
@@ -180,10 +144,10 @@ def _show_error_dialog(title: str, message: str):
         root.withdraw()
         messagebox.showerror(title, message)
     except Exception:
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"{title}")
         print(f"{message}")
-        print(f"{'='*60}\n")
+        print(f"{'=' * 60}\n")
         input("按 Enter 键退出...")
 
 
@@ -191,7 +155,8 @@ def _show_error_dialog(title: str, message: str):
 # 启动前全面依赖自检
 # ==========================================
 print("[DependencyCheck] 正在检查核心依赖...")
-missing_modules, missing_packages = _check_all_dependencies()
+legacy_enabled = legacy_requested()
+missing_modules, missing_packages = _check_all_dependencies(include_legacy=legacy_enabled)
 
 if missing_modules:
     print(f"[DependencyCheck] WARN 缺失 {len(missing_modules)} 个依赖")
@@ -208,7 +173,7 @@ if missing_modules:
             )
             sys.exit(1)
         # 安装后重新检查
-        still_missing, _ = _check_all_dependencies()
+        still_missing, _ = _check_all_dependencies(include_legacy=legacy_enabled)
         if still_missing:
             _show_error_dialog(
                 "Taiji 依赖缺失",
@@ -243,13 +208,6 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 
 # 应用配置（通过 config.py 集中管理镜像源等设置）
-from neuroplex.core.config import (
-    apply_env_overrides,
-    get_external_path,
-    get_internal_path,
-    get_writable_base_dir,
-)
-
 apply_env_overrides()
 
 # 日志重定向（打包后）
@@ -462,7 +420,7 @@ class Worker(QObject):
             import time
             import urllib.request
             import json
-            from neuroplex.core.config import MODEL_LOAD_TIMEOUT
+            from seed_platform.config import MODEL_LOAD_TIMEOUT
 
             def start_server():
                 uvicorn.run(app, host="127.0.0.1", port=8000, log_level="warning")
@@ -508,7 +466,7 @@ class Worker(QObject):
                     # 捕获到明确的后端报错，直接中断轮询向外抛出
                     raise e
                 except Exception as e:
-                    print(f"[HealthCheck] 正在等待后端就绪 ({attempt+1}/{max_attempts})... {e}")
+                    print(f"[HealthCheck] 正在等待后端就绪 ({attempt + 1}/{max_attempts})... {e}")
                     sleep_time = 0.3 if attempt < 10 else 1
                     time.sleep(sleep_time)
 
@@ -1012,7 +970,7 @@ if __name__ == "__main__":
         )
         _crash_path = os.path.join(_writable_base, "crash.log")
         with open(_crash_path, "w", encoding="utf-8") as _f:
-            _f.write(f"Taiji 启动崩溃\n{'='*60}\n{_tb.format_exc()}")
+            _f.write(f"Taiji 启动崩溃\n{'=' * 60}\n{_tb.format_exc()}")
         # 尝试弹框提示
         try:
             from PyQt6.QtWidgets import QApplication as _QA, QMessageBox as _QMB
