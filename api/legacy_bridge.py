@@ -7,8 +7,8 @@ all direct Cortex lifecycle and explicit Cortex route imports stay here.
 
 from __future__ import annotations
 
-import logging
 import importlib.util
+import logging
 import os
 from pathlib import Path
 from typing import Any
@@ -18,6 +18,19 @@ from fastapi import FastAPI
 logger = logging.getLogger("ApiServer.LegacyBridge")
 _life_scheduler: Any | None = None
 _LEGACY_ENABLE_ENV = "SEED_ENABLE_LEGACY"
+_LEGACY_RUNTIME_REQUIREMENTS = ("sentencepiece",)
+
+
+def _missing_legacy_dependency() -> str | None:
+    """Return the first dependency required by the Legacy runtime that is absent."""
+
+    for module_name in _LEGACY_RUNTIME_REQUIREMENTS:
+        try:
+            if importlib.util.find_spec(module_name) is None:
+                return module_name
+        except (ImportError, ModuleNotFoundError, ValueError):
+            return module_name
+    return None
 
 
 def legacy_available() -> bool:
@@ -27,9 +40,16 @@ def legacy_available() -> bool:
     if mode in {"0", "false", "no", "off", "disabled"}:
         return False
     try:
-        return importlib.util.find_spec("neuroplex") is not None
+        if importlib.util.find_spec("neuroplex") is None:
+            return False
     except (ImportError, ModuleNotFoundError, ValueError):
         return False
+
+    missing = _missing_legacy_dependency()
+    if missing is not None:
+        logger.info("Legacy plugin unavailable; missing optional dependency: %s", missing)
+        return False
+    return True
 
 
 def get_legacy_auth_manager() -> Any:
