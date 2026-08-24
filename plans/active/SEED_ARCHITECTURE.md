@@ -87,6 +87,6 @@ Native v7 已把反证结果落实为双时间尺度 cortical path：清醒快�
 
 机器可读结果：`reports/taiji_m6_locus_20260822.json`、`reports/taiji_signed_opponent_20260822.json`、`reports/taiji_m6_seed_panel_v7_20260822.json`。
 
-## 6. 当前唯一下一步
+## 6. 当前构建上限与运行边界
 
-M7 可执行基准已经建立并按预期 FAIL：默认 seed 的 action→outcome 仍为 `100%`，但 8 个 cue 上的慢通路 action evidence 全为零，cue→action cortical accuracy `50%`；实际 `act()` 为 `62.5%`，与 no-replay、content-lesion 完全相同。下一步只实现一个机制：accepted replay 先用场自身的 `cortical_projection` 在无外部 sensation 下重建 cue 状态，把 action mode 作为下一感觉写入慢通路；随后再执行现有 action→outcome burst。禁止把 cue/action/outcome 列表交给 `consolidate`，禁止 teacher action、event slot 或 memory-weight 复制；control、内容 lesion 和顺序 lesion必须回落。
+M7 cue-chain 已闭合，原生训练入口现在由 `seed.datasets`、`api/training/native.py` 和 Seed 前端共同提供 raw-byte 路径。真实 API 的 `SEED_ENABLE_LEGACY=0/1` 装配矩阵已验证；当前仍诚实保留 `neuroplex/` 作为冻结对照，旧 Transformer 消费点只允许存在于测试列出的三处，Legacy 产品路由和桌面依赖必须通过显式开关进入。下一步是在真实 CUDA 机器上测量大容量 Taiji 的吞吐、显存和稀疏算子收益，而不是删除 Legacy 目录；删除会破坏产品壳的兼容契约。

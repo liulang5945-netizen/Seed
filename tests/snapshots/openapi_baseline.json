@@ -722,6 +722,52 @@
         "title": "MemoryPayload",
         "type": "object"
       },
+      "NativeTrainRequest": {
+        "properties": {
+          "datasets": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datasets"
+          },
+          "device": {
+            "default": "auto",
+            "title": "Device",
+            "type": "string"
+          },
+          "max_symbols": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Symbols"
+          },
+          "parameter_budget": {
+            "default": 300000,
+            "title": "Parameter Budget",
+            "type": "integer"
+          },
+          "seed": {
+            "default": 20260822,
+            "title": "Seed",
+            "type": "integer"
+          }
+        },
+        "title": "NativeTrainRequest",
+        "type": "object"
+      },
       "RAGSearchRequest": {
         "properties": {
           "query": {
@@ -747,10 +793,26 @@
             "title": "Dataset Size",
             "type": "integer"
           },
+          "parameter_budget": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parameter Budget"
+          },
           "preset": {
             "default": "mid",
             "title": "Preset",
             "type": "string"
+          },
+          "seed": {
+            "default": 20260822,
+            "title": "Seed",
+            "type": "integer"
           }
         },
         "title": "RecommendRequest",
@@ -2991,7 +3053,7 @@
     },
     "/api/model/publish": {
       "post": {
-        "description": "保存当前模型（Cortex 模式下不适用传统 save_model）",
+        "description": "保存当前模型（Taiji 使用原生 checkpoint 落盘）",
         "operationId": "publish_model_api_model_publish_post",
         "responses": {
           "200": {
@@ -5860,6 +5922,43 @@
         "summary": "List Train Files"
       }
     },
+    "/api/train/native": {
+      "post": {
+        "description": "Start asynchronous training on the native Taiji byte stream.",
+        "operationId": "train_native_api_train_native_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NativeTrainRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Train Native"
+      }
+    },
     "/api/train/pause": {
       "post": {
         "description": "暂停正在进行的训练（设置标志）",
@@ -6042,7 +6141,7 @@
     },
     "/api/training/check_dataset": {
       "post": {
-        "description": "检查数据集质量",
+        "description": "检查原生 raw-byte 训练数据集质量。",
         "operationId": "check_dataset_quality_api_training_check_dataset_post",
         "requestBody": {
           "content": {

@@ -6,8 +6,8 @@
 
 - 训练对象：Taiji 的长期学习主体是物理稀疏突触的 `edge_weight`，并包含运动偏置、情景 association/readout；membrane/activity/trace/threshold 是持续动力学状态，`pre_index` 只在受门控的巩固期发生结构重连。
 - CUDA 边界：底层张量与 checkpoint 恢复支持 `device="cuda"`，原生语料入口现支持 `--device auto|cpu|cuda|cuda:N`；当前开发机安装的是 CPU-only PyTorch，因此 CUDA 契约由条件 smoke test 守护，吞吐优化仍需在真实 CUDA 机器测量后进行。
-- 容量规划：`TaijiConfig.capacity_profile(target_active_parameters, template=...)` 以显式参数预算自动求最大可容纳区域、记忆宽度和 fan-in；`planned_active_parameter_count` 在分配张量前给出与 `Taiji.parameter_count()` 一致的精确学习标量数。默认 300,000 预算得到 `(200,152,96)` 区域、304 memory units、286,170 个 active learned scalars。
-- Legacy 边界：`seed/` 与 `taiji/` 已完全不导入 Transformer/Neuroplex，但 `api/`、桌面端、认证/工具/设置和旧训练脚本仍有大量 `neuroplex` 导入。现在删除 `neuroplex/` 会直接破坏产品壳；彻底摆脱是可行的迁移任务，不是安全的目录删除。
+- 容量规划：`TaijiConfig.capacity_profile(target_active_parameters, template=...)` 以显式参数预算自动求最大可容纳区域、记忆宽度和 fan-in；`planned_active_parameter_count` 在分配张量前给出与 `Taiji.parameter_count()` 一致的精确学习标量数。默认 300,000 预算得到 `(200,152,96)` 区域、304 memory units、287,322 个 active learned scalars。
+- Legacy 边界：`seed/`、`taiji/` 和原生训练 API/前端不导入 Transformer/Neuroplex；桌面、认证/工具/设置和旧训练脚本仍保留显式 Legacy 插件。现在删除 `neuroplex/` 会直接破坏产品壳；彻底删除不是安全的目录操作。
 
 第二阶段已完成（2026-08-24）：
 
@@ -22,8 +22,10 @@
 - 第八阶段已完成：`CapacityPolicy` 新增 memory 时间/episode 维度比例，`training_profile` 与参数预算搜索不再把这两个学习 readout 维度固定为 8/16；旧 policy JSON 自动补齐默认比例。`api/main.py --no-ui` 的旧 Cortex 加载已收口到 `legacy_bridge`，不再让 API 入口直接导入 NeuroPlex。
 - 第九阶段已完成：`api/chat_strategies.py` 与 `api/routes_chat.py` 的请求时生命状态、上下文记忆、ReAct、进化记录、递归策略和 DataCollector fallback 均先通过 `legacy_available()`；无 Legacy 部署不会因聊天请求再次触发旧组件导入，Seed 仍保留原生直接生成路径。
 - 第十阶段已完成：`api/run_app.py` 不再直接依赖 `neuroplex.core.config`；桌面 bootstrap 的核心依赖与 Legacy 依赖拆到 `seed_platform.dependencies`，`transformers`、PEFT、LangChain、RAG 等只在显式 Legacy 开关下参与自检/安装，平台认证所需 `cryptography` 保留在核心清单。
+- 第十一阶段已完成：`seed.datasets` 统一 JSONL/JSON/UTF-8 text 到 raw-byte 文档合同；训练推荐不再返回 `hidden_size/num_layers`，而是返回参数预算和 Taiji 容量画像；`/api/train/native` 提供原生 SSE 训练，检查点续训复用同一解析器，前端 Seed 模式不再调用 `/api/taiji/sleep`；runtime status 的 life/tools 旧 fallback 只在显式 Legacy 开关下执行。
+- 第十二阶段已完成：真实 API 启动矩阵验证 `SEED_ENABLE_LEGACY=0/1` 均通过，原生训练 SSE 返回完成事件；后端回归 `142 passed, 2 skipped, 3 deselected`，前端测试 `74 passed`，生产构建通过。当前机器无 CUDA 运行时，吞吐与显存只保留条件契约，不能伪造实测结论。
 
-**唯一下一步**：收口 `api/training/recommend.py` 的请求时 Legacy 数据集检查，确保 Seed 训练 API 缺少旧检查器时仍返回明确的可用性结果，而不是隐式导入旧模块。
+**唯一下一步**：在真实 CUDA 机器上测量大容量 Taiji 的吞吐、显存占用和稀疏算子收益；没有 CUDA 环境前不调整原生算法边界。
 
 ## 1. 当前架构
 

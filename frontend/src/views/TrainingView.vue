@@ -5,8 +5,9 @@
       <div class="header-left">
         <h2>微调训练</h2>
         <span class="header-sub">
-          <span v-if="taijiModelInfo.size">{{ taijiModelInfo.size }} · {{ taijiModelInfo.config?.num_hidden_layers }}层 · {{ taijiModelInfo.config?.hidden_size }}维</span>
-          <span v-else>Seed微调 · LoRA 低秩适配</span>
+          <span v-if="isTaijiModel">Seed 原生 · 参数预算驱动</span>
+          <span v-else-if="taijiModelInfo.size">{{ taijiModelInfo.size }} · Legacy 模型训练</span>
+          <span v-else>模型训练</span>
         </span>
       </div>
       <div class="header-actions">
@@ -37,7 +38,7 @@
         <div v-if="trainState === 'running' || trainState === 'paused'" class="tk-card">
           <div class="progress-hero">
             <div>
-              <div class="card-sub" style="margin-bottom:6px">{{ taijiModelInfo.size || 'Seed模型' }} · LoRA 微调</div>
+              <div class="card-sub" style="margin-bottom:6px">{{ isTaijiModel ? 'Seed 原生 byte-stream 训练' : 'Legacy LoRA 微调' }}</div>
               <div class="pct">{{ trainProgress }}<span class="unit">%</span></div>
             </div>
             <div class="right-meta">
@@ -60,7 +61,7 @@
         <div v-else class="tk-card">
           <div class="progress-hero">
             <div>
-              <div class="card-sub" style="margin-bottom:6px">{{ taijiModelInfo.size || 'Seed模型' }} · LoRA 微调</div>
+              <div class="card-sub" style="margin-bottom:6px">{{ isTaijiModel ? 'Seed 原生 byte-stream 训练' : 'Legacy LoRA 微调' }}</div>
               <div class="pct">0<span class="unit">%</span></div>
             </div>
             <div class="right-meta">
@@ -207,9 +208,26 @@
         <div class="tk-card">
           <div class="card-head">
             <h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;color:var(--primary)"><circle cx="6" cy="7" r="2.2"/><circle cx="6" cy="17" r="2.2"/><circle cx="18" cy="12" r="2.2"/><path d="M8 7.5 12 5M8 16.5 12 19M8 16l7-4M8 8l7 3"/></svg>训练超参数</h3>
-            <span class="card-sub">LoRA 微调 · {{ taijiModelInfo.size || 'Seed模型' }}</span>
+            <span class="card-sub">{{ isTaijiModel ? 'Taiji 原生训练' : 'Legacy LoRA 训练' }}</span>
           </div>
-          <div class="hp-grid">
+          <div v-if="isTaijiModel" class="hp-grid">
+            <div class="hp-field">
+              <label class="hp-label">参数预算</label>
+              <n-input-number v-model:value="taijiTrainParams.parameter_budget" :min="93367" :step="10000" />
+              <span class="hp-desc">由预算自动规划区域、突触和情景记忆容量</span>
+            </div>
+            <div class="hp-field">
+              <label class="hp-label">最大训练字节数</label>
+              <n-input-number v-model:value="taijiTrainParams.max_symbols" :min="1" :step="10000" />
+              <span class="hp-desc">限制本次 raw-byte 在线学习的输入规模</span>
+            </div>
+            <div class="hp-field">
+              <label class="hp-label">训练设备</label>
+              <n-input v-model:value="taijiTrainParams.device" placeholder="auto / cpu / cuda" />
+              <span class="hp-desc">auto 会在可用时选择 CUDA，否则使用 CPU</span>
+            </div>
+          </div>
+          <div v-else class="hp-grid">
             <div class="hp-field">
               <label class="hp-label"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 14h6l-1 7 8-11h-6l1-7Z"/></svg>学习率 (Learning Rate)</label>
               <n-input-number v-model:value="taijiTrainParams.learning_rate" :min="0.00001" :step="0.00001" />
@@ -427,7 +445,7 @@ import {
   loadCheckpoints, resumeFromCheckpoint,
   publishModel, forcePublish, exportModelToGGUF,
   cancelPublish, drawLossChart,
-  taijiModelInfo, taijiTrainParams,
+  isTaijiModel, taijiModelInfo, taijiTrainParams,
   startTaijiTraining,
 } from '../composables/useTraining.js';
 
@@ -456,6 +474,7 @@ const applyAndRestart = () => {
 // 恢复默认值
 const resetDefaults = () => {
   Object.assign(taijiTrainParams, {
+    parameter_budget: 300000, max_symbols: 200000, device: 'auto',
     num_epochs: 5, batch_size: 4, learning_rate: 1e-4,
     max_length: 512, save_steps: 50, log_steps: 5,
     keep_checkpoints: 3,

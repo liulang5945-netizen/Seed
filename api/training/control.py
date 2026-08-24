@@ -1,8 +1,8 @@
 """
 训练控制 API 路由
 ================
-Cortex 模式下训练走 sleep_engine，这些端点控制 app_state 训练标志。
-stop/pause/resume 设置标志（sleep_engine 可选检查），reset 紧急释放 train_lock。
+这些端点控制 Seed 原生训练的 app_state 标志。
+stop/pause/resume 设置标志，reset 紧急释放 train_lock。
 """
 
 import logging
