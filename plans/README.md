@@ -28,6 +28,8 @@
 - 现有 9 个 Transformer 成员（含 5 个对话成员）未被改写，只作为离线对照。
 - `scripts/archive/` 内 `from taiji.<legacy>` 是历史别名（含义＝`neuroplex`），已确认不重写；判定见 `scripts/archive/README.md`。
 - CI 与本地一致性：`cryptography` 已在 `pyproject.toml` legacy extra 与 ci.yml 两处安装行声明（缺失会让 `SecureStorage` 构造失败）；`AuthManager.__new__` 只在初始化成功后写入 `cls._instance`，避免半构造单例被永久缓存成 `AttributeError`；SPA 兜底路由 `include_in_schema=False`，使 OpenAPI 快照不再依赖被 gitignore 的 `frontend/dist` 构建产物。三者共同消除“本地绿、CI 红”的环境漂移。
+- CI 门禁约束（踩坑记录）：`black --check .` 是 `test (3.10)/(3.12)` 的早期步骤，一旦失败其后 mypy、pip-audit、8 个 verify 脚本、契约与全量回归**全部跳过**——任何新增文件未过 black 会让整条验证通路失效。覆盖率阈值 `fail_under = 17` 按「全量 tests/ + 全量 source」标定，只跑子集的 job 必须用 `--cov=<pkg>` 显式收窄度量面；`test-windows` 曾因沿用裸 `--cov` 把 `neuroplex/`、`api/` 计入分母而得出 9.19% 假低值，收窄为 `seed/taiji/seed_platform` 后实测 71.27%。
+- 已知技术债（未阻塞）：`api/__init__.py` 带 UTF-8 BOM，`ast.parse` 直接读会抛 `invalid non-printable character U+FEFF`；现有 `ast` 类检查均用 `encoding="utf-8-sig"` 规避，新增此类工具需沿用或先清 BOM。
 
 ## 当前状态与唯一下一步
 
