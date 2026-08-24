@@ -1,0 +1,133 @@
+{
+  "canvas_version": "1.1",
+  "project": "Seed",
+  "analyzed_at": "2026-08-24T10:31:00Z",
+  "layout": {
+    "type": "grid",
+    "columns": 2,
+    "gap": 16,
+    "max_width": 1080
+  },
+  "sections": [
+    {
+      "id": "header",
+      "type": "hero",
+      "span": "full",
+      "title": "Seed — Harness 实践分析报告 (R2)",
+      "subtitle": "上一轮 18 项修复后复评 · CI/CD · 测试 · 构建 · 安全 · 开发工作流 — 14 项新发现",
+      "score": "B-",
+      "score_rationale": "上一轮修复显著提升：lint 门禁、前端测试、版本统一、pre-commit、devcontainer 均已就位。短板集中在测试深度（组件/E2E 缺失、覆盖率阈值=0）和 CI 完整性（ESLint advisory、mypy 未入 CI）。",
+      "quick_wins": ["F01", "F02", "F07", "F09", "F10"],
+      "category_scores": {
+        "ci_cd": "B-", "testing": "C-", "code_quality": "B-",
+        "build_packaging": "B", "security": "B-", "dev_workflow": "B"
+      }
+    },
+    {
+      "id": "severity_distribution",
+      "type": "donut_chart",
+      "span": 1,
+      "title": "严重度分布",
+      "data": [
+        { "label": "Critical", "value": 0, "color": "#ef4444" },
+        { "label": "High", "value": 3, "color": "#f97316" },
+        { "label": "Medium", "value": 8, "color": "#eab308" },
+        { "label": "Low", "value": 3, "color": "#22c55e" }
+      ]
+    },
+    {
+      "id": "effort_impact",
+      "type": "quadrant_chart",
+      "span": 1,
+      "title": "投入-收益矩阵",
+      "axes": { "x": "投入 (effort)", "y": "收益 (impact)" },
+      "data_ref": "findings"
+    },
+    {
+      "id": "improvement_delta",
+      "type": "comparison",
+      "span": "full",
+      "title": "R1 → R2 改进对比",
+      "before": {
+        "score": "C+",
+        "findings": 18,
+        "critical": 2,
+        "high": 5,
+        "key_gaps": ["无 lint 门禁", "前端零测试", "无版本管理", "无 pre-commit", "无 devcontainer"]
+      },
+      "after": {
+        "score": "B-",
+        "findings": 14,
+        "critical": 0,
+        "high": 3,
+        "key_gaps": ["ESLint advisory", "覆盖率阈值=0", "mypy 未入 CI", "无组件测试", "无桌面构建验证"]
+      }
+    },
+    {
+      "id": "strengths",
+      "type": "list",
+      "span": "full",
+      "title": "核心优势（R2 新增/增强）",
+      "items": [
+        "ruff + black 双重 blocking 门禁 + pre-commit hooks 本地校验，CI 双重守护",
+        "vitest 覆盖 3 stores + 4 composables 共 51 个测试用例，前端逻辑测试从 0 到 1",
+        "版本号以 pyproject.toml 为单一事实来源，sync_version.py 自动同步 5 文件 + CI --check",
+        "scripts/release.py 一键编排前端→PyInstaller→NSIS→产物校验，构建流程标准化",
+        "OpenAPI 快照测试 + 安全中间件状态暴露 + Dependabot 三生态周更，工程化基线扎实"
+      ]
+    },
+    {
+      "id": "all_findings",
+      "type": "finding_cards",
+      "span": "full",
+      "title": "全部发现",
+      "findings_ref": ["F01","F02","F03","F04","F05","F06","F07","F08","F09","F10","F11","F12","F13","F14"]
+    },
+    {
+      "id": "action_plan",
+      "type": "roadmap",
+      "span": "full",
+      "title": "建议改进路线",
+      "phases": [
+        {
+          "name": "Phase 1 — 快速收益",
+          "time": "1-2 天",
+          "items": [
+            {"text":"ESLint 改为 blocking","ref":"F01"},
+            {"text":"设置覆盖率阈值","ref":"F02"},
+            {"text":"OpenAPI 快照改为严格模式","ref":"F09"},
+            {"text":"Windows CI 缓存+覆盖率","ref":"F07"},
+            {"text":"添加 pip-audit","ref":"F10"}
+          ]
+        },
+        {
+          "name": "Phase 2 — 测试深度",
+          "time": "1 周",
+          "items": [
+            {"text":"Vue 组件测试","ref":"F04"},
+            {"text":"Playwright E2E 断言","ref":"F06"},
+            {"text":"verify 输出统一","ref":"F11"}
+          ]
+        },
+        {
+          "name": "Phase 3 — CI 完整性",
+          "time": "1 周",
+          "items": [
+            {"text":"mypy 入 CI","ref":"F03"},
+            {"text":"桌面构建验证","ref":"F05"},
+            {"text":"ruff 规则扩展","ref":"F08"}
+          ]
+        },
+        {
+          "name": "Phase 4 — 工程化",
+          "time": "持续",
+          "items": [
+            {"text":"Docker 容器化","ref":"F12"},
+            {"text":"性能基准测试","ref":"F13"},
+            {"text":"ESLint import 解析","ref":"F14"}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,261 @@
+{
+  "project": "Seed",
+  "analyzed_at": "2026-08-24T10:31:00Z",
+  "summary": {
+    "total_findings": 14,
+    "by_severity": { "critical": 0, "high": 3, "medium": 8, "low": 3 },
+    "by_category": {
+      "ci_cd": 3,
+      "testing": 5,
+      "code_quality": 3,
+      "build_packaging": 1,
+      "security": 1,
+      "dev_workflow": 1
+    },
+    "overall_score": "B-",
+    "score_rationale": "上一轮 18 项修复后显著提升：lint 门禁、前端测试、版本统一、pre-commit、devcontainer 均已就位。主要短板集中在测试深度（组件/E2E 缺失、覆盖率阈值=0）、CI 完整性（ESLint 仅 advisory、mypy 未入 CI、桌面构建未验证）和安全扫描（pip-audit 缺失）。",
+    "quick_wins": ["F01", "F02", "F07", "F09", "F10"],
+    "total_effort_hours": 89,
+    "category_scores": {
+      "ci_cd": "B-",
+      "testing": "C-",
+      "code_quality": "B-",
+      "build_packaging": "B",
+      "security": "B-",
+      "dev_workflow": "B"
+    },
+    "strengths": [
+      "ruff + black 双重门禁blocking，pre-commit hooks 本地校验 + CI 双重守护",
+      "vitest 覆盖 3 stores + 4 composables 共 51 个测试用例，前端逻辑测试从 0 到 1",
+      "版本号以 pyproject.toml 为单一事实来源，sync_version.py 自动同步 5 个文件 + CI --check 验证",
+      "scripts/release.py 一键编排前端→PyInstaller→NSIS→产物校验，构建流程标准化",
+      "OpenAPI 快照测试 + 安全中间件状态暴露 + Dependabot 三生态周更，工程化基线扎实"
+    ]
+  },
+  "findings": [
+    {
+      "id": "F01",
+      "severity": "high",
+      "category": "ci_cd",
+      "title": "前端 ESLint 在 CI 为 advisory 模式，不阻断合并",
+      "description": "ci.yml 中 `npx eslint src --ext .js,.vue` 设置了 `continue-on-error: true`。这意味着即使 ESLint 发现严重问题（如未定义变量、import 错误），CI 仍然会通过。此外，ESLint 仅在 build-frontend job 中运行，主 test job 不检查前端代码。",
+      "evidence": {
+        "file": ".github/workflows/ci.yml",
+        "detail": "line 108: continue-on-error: true"
+      },
+      "recommendation": "修复现有 ESLint 错误后移除 continue-on-error: true，使 lint 失败阻断 PR 合并。或分阶段：先设 advisory 阈值（当前错误数），逐步收紧。",
+      "effort": "low",
+      "effort_hours": 3,
+      "impact": "high",
+      "quick_win": true
+    },
+    {
+      "id": "F02",
+      "severity": "high",
+      "category": "testing",
+      "title": "覆盖率阈值 fail_under=0，覆盖率追踪形同虚设",
+      "description": "pyproject.toml 配置了 [tool.coverage.run] 和 [tool.coverage.report]，CI 也生成 coverage.xml，但 fail_under=0 意味着任何覆盖率都不会导致失败。覆盖率报告生成后无人查看，也无法阻止覆盖率退化。",
+      "evidence": {
+        "file": "pyproject.toml",
+        "detail": "fail_under = 0"
+      },
+      "recommendation": "设置合理的 fail_under 阈值（如当前覆盖率的 90%），或使用 codecov/coveralls 的 PR 评论功能自动报告覆盖率变化。建议先运行一次获取基线，再设定 fail_under = baseline - 2%。",
+      "effort": "low",
+      "effort_hours": 2,
+      "impact": "high",
+      "quick_win": true
+    },
+    {
+      "id": "F03",
+      "severity": "high",
+      "category": "ci_cd",
+      "title": "mypy 已配置但未在 CI 中运行",
+      "description": "pyproject.toml 包含完整的 [tool.mypy] 配置段（warn_return_any、check_untyped_defs、ignore_missing_imports 等），但 CI 中没有任何 mypy 检查步骤。类型错误只能在运行时发现，配置形同虚设。",
+      "evidence": {
+        "file": ".github/workflows/ci.yml",
+        "detail": "无 mypy step；pyproject.toml 有 [tool.mypy] 配置"
+      },
+      "recommendation": "在 test job 中添加 `mypy seed taiji neuroplex api` 步骤。建议先用 `continue-on-error: true` 评估当前错误数量，修复后改为 blocking。",
+      "effort": "medium",
+      "effort_hours": 8,
+      "impact": "medium",
+      "quick_win": false
+    },
+    {
+      "id": "F04",
+      "severity": "medium",
+      "category": "testing",
+      "title": "15 个 Vue 组件 + 6 个 View 完全无组件测试",
+      "description": "前端有 15 个 .vue 组件（ChatView、AppSidebar、MonacoEditor 等）和 6 个 View 页面，但 vitest 测试仅覆盖 stores/ 和 composables/。没有任何组件渲染测试或交互测试。@vue/test-utils 已安装但未用于组件测试。",
+      "evidence": {
+        "file": "frontend/src/__tests__/",
+        "detail": "仅 4 个测试文件：appStore/runtimeStore/apiClient/useMarkdown，无 .vue 测试"
+      },
+      "recommendation": "为核心组件添加 @vue/test-utils 挂载测试：至少覆盖 ChatView（消息渲染）、AppSidebar（导航切换）、RuntimeExceptionCenter（错误展示）等高频组件。",
+      "effort": "high",
+      "effort_hours": 20,
+      "impact": "medium",
+      "quick_win": false
+    },
+    {
+      "id": "F05",
+      "severity": "medium",
+      "category": "build_packaging",
+      "title": "CI 无桌面构建验证（PyInstaller/NSIS）",
+      "description": "CI 有 build-frontend job 验证 vite build，但完全没有验证 PyInstaller 打包（desktop/seed.spec）或 NSIS 安装程序。scripts/release.py 已自动化流程，但 CI 不运行它。桌面端代码破坏只能靠本地发现。",
+      "evidence": {
+        "file": ".github/workflows/ci.yml",
+        "detail": "build-frontend job 仅验证 vite build，无 PyInstaller job"
+      },
+      "recommendation": "在 test-windows job 中添加 `python -m PyInstaller --noconfirm desktop/seed.spec --verify` 步骤，或添加单独的 build-desktop job（windows-latest）运行 scripts/release.py --skip-nsis。",
+      "effort": "medium",
+      "effort_hours": 6,
+      "impact": "medium",
+      "quick_win": false
+    },
+    {
+      "id": "F06",
+      "severity": "medium",
+      "category": "testing",
+      "title": "Playwright 仍仅用于截图，无 E2E 测试断言",
+      "description": "frontend/shoot-fe.cjs 使用 Playwright 截取 UI 截图，但没有任何断言（assertion）。虽然 vitest 已覆盖纯逻辑测试，但端到端流程（如：启动应用→登录→发送消息→验证回复）完全无自动化验证。",
+      "evidence": {
+        "file": "frontend/shoot-fe.cjs",
+        "detail": "Playwright 脚本仅 page.screenshot()，无 expect() 断言"
+      },
+      "recommendation": "将 shoot-fe.cjs 改造为 Playwright E2E 冒烟测试：添加 expect(page.locator(...)).toBeVisible() 等断言，验证关键 UI 元素存在。或在 CI 中添加 Playwright test 步骤。",
+      "effort": "medium",
+      "effort_hours": 8,
+      "impact": "medium",
+      "quick_win": false
+    },
+    {
+      "id": "F07",
+      "severity": "medium",
+      "category": "ci_cd",
+      "title": "Windows CI 无 pip 缓存且无覆盖率报告",
+      "description": "test-windows job 没有 `cache: pip` 配置（ubuntu test job 有），每次运行都要重新安装依赖，浪费 CI 时间。同时 Windows job 不生成覆盖率报告或 JUnit XML，无法对比跨平台测试差异。",
+      "evidence": {
+        "file": ".github/workflows/ci.yml",
+        "detail": "test-windows: 无 cache: pip；无 --cov/--junitxml 参数；无 upload-artifact"
+      },
+      "recommendation": "在 test-windows 的 setup-python 中添加 `cache: pip`，pytest 命令添加 `--cov --junitxml=report-win.xml`，并上传 artifacts。",
+      "effort": "low",
+      "effort_hours": 1,
+      "impact": "low",
+      "quick_win": true
+    },
+    {
+      "id": "F08",
+      "severity": "medium",
+      "category": "code_quality",
+      "title": "ruff lint 规则仅 E/F/W，缺少 import 排序和类型注解检查",
+      "description": "pyproject.toml 的 [tool.ruff.lint] 仅启用 select = [\"E\", \"F\", \"W\"]（基础错误 + pyflakes + warnings），忽略了 I（isort import 排序）、UP（pyupgrade 现代化语法）、ANN（类型注解）、B（bugbear 常见 bug 模式）等有价值规则。",
+      "evidence": {
+        "file": "pyproject.toml",
+        "detail": "select = [\"E\", \"F\", \"W\"]; ignore = [\"E551\", \"E402\", \"E741\"]"
+      },
+      "recommendation": "逐步添加 ruff 规则：先添加 I（import 排序）和 UP（pyupgrade），评估错误数量后选择性启用。ANN 和 B 可作为长期目标。",
+      "effort": "medium",
+      "effort_hours": 4,
+      "impact": "low",
+      "quick_win": false
+    },
+    {
+      "id": "F09",
+      "severity": "medium",
+      "category": "testing",
+      "title": "OpenAPI 快照测试自动更新，可能掩盖破坏性变更",
+      "description": "test_openapi_snapshot.py 在检测到 schema 变化时自动更新快照文件并调用 pytest.fail()。但如果开发者直接 commit 更新后的快照，破坏性 API 变更（如删除 endpoint）会在不通知的情况下被合并。快照测试应在 CI 中严格对比，本地才允许更新。",
+      "evidence": {
+        "file": "tests/test_openapi_snapshot.py",
+        "detail": "line 77: _save_snapshot(openapi_schema) 在 pytest.fail 前自动更新"
+      },
+      "recommendation": "添加 --snapshot-update 参数控制更新行为（类似 jest -u）：默认模式下 schema 变化直接 fail，仅显式传入 --snapshot-update 才允许更新快照。",
+      "effort": "low",
+      "effort_hours": 2,
+      "impact": "medium",
+      "quick_win": true
+    },
+    {
+      "id": "F10",
+      "severity": "medium",
+      "category": "security",
+      "title": "Dependabot 仅跟踪依赖更新，无 pip-audit CVE 扫描",
+      "description": ".github/dependabot.yml 配置了 pip/npm/github-actions 三个生态的周更依赖更新，但 CI 中没有 pip-audit 或 safety 步骤扫描已知 CVE。Dependabot 只在有新版本时提 PR，不会主动报告当前版本的已知漏洞。",
+      "evidence": {
+        "file": ".github/dependabot.yml",
+        "detail": "仅配置 schedule: weekly，无 CVE 扫描"
+      },
+      "recommendation": "在 CI 中添加 `pip-audit` 步骤扫描 requirements.txt / pyproject.toml 的已知 CVE。可配合 pip-audit-action 在发现高危 CVE 时阻断 CI。",
+      "effort": "low",
+      "effort_hours": 2,
+      "impact": "medium",
+      "quick_win": true
+    },
+    {
+      "id": "F11",
+      "severity": "medium",
+      "category": "testing",
+      "title": "verify 脚本输出格式仍不统一，CI 无法提取趋势指标",
+      "description": "scripts/training/ 下有 8+ 个 verify_*.py 脚本，CI 中它们仅通过退出码判断成功失败。输出格式各异（有的 print JSON，有的 print 纯文本），无法在 CI 中统一收集并绘制指标趋势图（如 loss 变化、精度趋势）。",
+      "evidence": {
+        "file": "scripts/training/",
+        "detail": "8 个 verify 脚本，CI 仅运行它们但不收集输出指标"
+      },
+      "recommendation": "定义统一的 verify 输出 schema（如 JSON with {metrics: {loss, accuracy}, threshold, status}），在 CI 中使用 actions/upload-artifact 收集所有 verify 输出并归档。",
+      "effort": "medium",
+      "effort_hours": 8,
+      "impact": "low",
+      "quick_win": false
+    },
+    {
+      "id": "F12",
+      "severity": "low",
+      "category": "dev_workflow",
+      "title": "无 Docker/容器化支持，开发-生产环境不一致",
+      "description": "项目依赖手动安装（pip install + npm ci），devcontainer.json 提供了 VS Code 开发容器定义，但没有 Dockerfile 或 docker-compose.yml。生产部署依赖目标机器的环境配置，无法保证开发-测试-生产环境一致性。",
+      "evidence": {
+        "file": ".devcontainer/devcontainer.json",
+        "detail": "有 devcontainer 但无 Dockerfile/docker-compose.yml"
+      },
+      "recommendation": "添加 Dockerfile（多阶段构建：Python 3.12 + Node 22）和 docker-compose.yml（api + frontend + 可选 redis），支持容器化部署和 CI 复现。",
+      "effort": "medium",
+      "effort_hours": 8,
+      "impact": "low",
+      "quick_win": false
+    },
+    {
+      "id": "F13",
+      "severity": "low",
+      "category": "code_quality",
+      "title": "无性能基准测试，回归检测依赖人工",
+      "description": "项目没有自动化性能测试（如推理延迟、训练吞吐量、内存占用基准）。性能退化（如模型加载变慢、API 响应延迟增加）只能在用户反馈中发现，无法在 CI 中自动检测。",
+      "evidence": {
+        "file": "tests/",
+        "detail": "无 benchmark/ 或 performance/ 测试目录"
+      },
+      "recommendation": "添加 pytest-benchmark 或简单的计时测试，覆盖关键路径：模型推理延迟、API /api/health 响应时间、前端首屏加载时间。CI 中对比基准，超过阈值时警告。",
+      "effort": "medium",
+      "effort_hours": 12,
+      "impact": "low",
+      "quick_win": false
+    },
+    {
+      "id": "F14",
+      "severity": "low",
+      "category": "code_quality",
+      "title": "ESLint import/no-unresolved 被禁用，import 错误无法检测",
+      "description": "frontend/.eslintrc.cjs 中 'import/no-unresolved': 'off' 禁用了 import 路径解析检查。这意味着错误的 import 路径（如拼写错误、文件移动后未更新引用）不会被 ESLint 捕获，只能等到运行时或 vite build 时才发现。",
+      "evidence": {
+        "file": "frontend/.eslintrc.cjs",
+        "detail": "rules: { 'import/no-unresolved': 'off' }"
+      },
+      "recommendation": "配置 eslint-import-resolver-alias 映射 vite 的 @ alias，然后启用 import/no-unresolved。或在 vite.config.js 中配置 resolve.alias 供 ESLint 使用。",
+      "effort": "low",
+      "effort_hours": 2,
+      "impact": "low",
+      "quick_win": false
+    }
+  ]
+}

@@ -1,0 +1,1417 @@
+﻿{
+  "architecture": {
+    "active_learned_parameters": 83841,
+    "actual_learned_scalar_storage": 83841,
+    "avoided_dense_weight_scalars": 54320,
+    "checkpoint_format": "taiji-native-v8",
+    "cortical_context_dim": 224,
+    "default_config_storage_projection": {
+      "dense_equivalent_edges": 235312,
+      "edge_density": 0.6035561297341402,
+      "learned_synapse_edges": 142024,
+      "sparse_to_dense_synapse_byte_ratio": 1.2071122594682804
+    },
+    "dense_equivalent_learned_scalars": 138161,
+    "dense_synapse_weight_bytes": 551616,
+    "edge_weight_bytes": 327168,
+    "episodic_write_count_in_passive_benchmark": 0,
+    "fixed_receptor_edges": 224,
+    "learned_synapse_edges": 81792,
+    "learning": "edge-local-predictive-and-motor-delta",
+    "memory_iterations": 3,
+    "memory_readout_fan_in": 48,
+    "memory_units": 192,
+    "motor_receptor_channels": 48,
+    "regions": [
+      64,
+      48
+    ],
+    "reward_baseline_rate": 0.05,
+    "sensor": "raw-byte-one-hot",
+    "sequence_window": null,
+    "sparse_synapse_storage_bytes": 654336,
+    "sparse_to_dense_synapse_byte_ratio": 1.186216498433693,
+    "state_version": 5,
+    "synapse_storage": "fixed-fan-in-v1",
+    "topology_index_bytes": 327168,
+    "topology_index_scalars": 81792
+  },
+  "benchmark": "taiji_native_v7_dual_timescale",
+  "checks": {
+    "active_action_api": true,
+    "all_cortical_coordinates_reach_motor": true,
+    "checkpoint_exact_next_step": true,
+    "compressed_fixed_fan_in_storage": true,
+    "free_generation_cycle": true,
+    "local_parameters_changed": true,
+    "native_episodic_field_api": true,
+    "native_namespace": true,
+    "no_autograd_parameters": true,
+    "no_dense_synapse_tensor": true,
+    "no_event_key_value_slots": true,
+    "no_legacy_or_transformer_dependency": true,
+    "online_learning_reduces_surprise": true,
+    "shared_action_evidence_space": true,
+    "teacher_forced_accuracy": true
+  },
+  "epochs": 200,
+  "metrics": {
+    "after": {
+      "accuracy": 0.9411764705882353,
+      "mean_surprise": 0.10361352700243369,
+      "observations": 17.0
+    },
+    "before": {
+      "accuracy": 0.0,
+      "mean_surprise": 5.404138636898535,
+      "observations": 17.0
+    },
+    "changed_parameter_tensors": 8,
+    "generated_hex": "6263646162636461",
+    "generated_text": "bcdabcda",
+    "surprise_reduction": 0.9808270042713231,
+    "training": {
+      "mean_surprise": 0.22424085160182045,
+      "observations": 3400.0,
+      "online_accuracy": 0.9370588235294117
+    },
+    "training_seconds": 5.065097699999569
+  },
+  "seed": 7,
+  "status": "pass"
+}
+{
+  "ambiguous_predictions": [
+    {
+      "hit": 1,
+      "prediction": 98,
+      "target": 98
+    },
+    {
+      "hit": 1,
+      "prediction": 100,
+      "target": 100
+    },
+    {
+      "hit": 1,
+      "prediction": 98,
+      "target": 98
+    },
+    {
+      "hit": 1,
+      "prediction": 100,
+      "target": 100
+    },
+    {
+      "hit": 1,
+      "prediction": 98,
+      "target": 98
+    },
+    {
+      "hit": 1,
+      "prediction": 100,
+      "target": 100
+    },
+    {
+      "hit": 1,
+      "prediction": 98,
+      "target": 98
+    },
+    {
+      "hit": 1,
+      "prediction": 100,
+      "target": 100
+    }
+  ],
+  "ambiguous_symbol": "x",
+  "benchmark": "taiji_n7_second_order_context",
+  "checks": {
+    "ambiguous_accuracy": true,
+    "beats_first_order_by_20pp": true,
+    "beats_full_state_lesion_by_20pp": true
+  },
+  "epochs": 200,
+  "metrics": {
+    "fast_activity_centroid_cosine": 0.8983514904975891,
+    "first_order_accuracy": 0.5,
+    "full_accuracy": 1.0,
+    "gain_over_strongest_causal_control": 0.5,
+    "motor_context_centroid_cosine": 0.9314057230949402,
+    "slow_trace_centroid_cosine": 0.9515683054924011,
+    "state_lesion_accuracy": 0.5,
+    "trace_lesion_accuracy": 1.0,
+    "trace_lesion_motor_context_centroid_cosine": 0.9653503894805908
+  },
+  "seed": 7,
+  "status": "pass",
+  "stream": "axbcxdaxbcxdaxbcxdaxbcxd"
+}
+{
+  "benchmark": "taiji_n8_delayed_trace",
+  "checks": {
+    "beats_first_order_by_20pp": true,
+    "full_delayed_accuracy": true,
+    "trace_is_necessary_by_20pp": true,
+    "trace_only_beats_all_state_lesion_by_20pp": true,
+    "trace_only_is_sufficient": true
+  },
+  "cue_to_probe_distractors": "1234",
+  "epochs": 200,
+  "metrics": {
+    "all_state_lesion_accuracy": 0.5,
+    "first_order_accuracy": 0.5,
+    "full_accuracy": 1.0,
+    "no_trace_accuracy": 0.5,
+    "post_probe_motor_context_centroid_cosine": 0.9863966107368469,
+    "pre_probe_fast_centroid_cosine": 0.9756316542625427,
+    "pre_probe_trace_centroid_cosine": 0.9052759408950806,
+    "trace_necessity_gap": 0.5,
+    "trace_only_accuracy": 1.0,
+    "trace_sufficiency_gap": 0.5
+  },
+  "predictions": {
+    "all_state_lesion": [
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 0,
+        "prediction": 98,
+        "target": 100
+      },
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 0,
+        "prediction": 98,
+        "target": 100
+      },
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 0,
+        "prediction": 98,
+        "target": 100
+      },
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 0,
+        "prediction": 98,
+        "target": 100
+      }
+    ],
+    "full": [
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 1,
+        "prediction": 100,
+        "target": 100
+      },
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 1,
+        "prediction": 100,
+        "target": 100
+      },
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 1,
+        "prediction": 100,
+        "target": 100
+      },
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 1,
+        "prediction": 100,
+        "target": 100
+      }
+    ],
+    "no_trace": [
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 0,
+        "prediction": 98,
+        "target": 100
+      },
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 0,
+        "prediction": 98,
+        "target": 100
+      },
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 0,
+        "prediction": 98,
+        "target": 100
+      },
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 0,
+        "prediction": 98,
+        "target": 100
+      }
+    ],
+    "trace_only": [
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 1,
+        "prediction": 100,
+        "target": 100
+      },
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 1,
+        "prediction": 100,
+        "target": 100
+      },
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 1,
+        "prediction": 100,
+        "target": 100
+      },
+      {
+        "hit": 1,
+        "prediction": 98,
+        "target": 98
+      },
+      {
+        "hit": 1,
+        "prediction": 100,
+        "target": 100
+      }
+    ]
+  },
+  "probe": "x",
+  "seed": 7,
+  "status": "pass",
+  "stream": "a1234xbc1234xda1234xbc1234xda1234xbc1234xda1234xbc1234xd"
+}
+{
+  "benchmark": "taiji_n9_long_free_run",
+  "checks": {
+    "all_four_actions_remain_present": true,
+    "all_state_is_finite": true,
+    "exact_128_step_cycle": true,
+    "membrane_bound_holds": true,
+    "no_first_error": true,
+    "no_invalid_or_boundary_action": true,
+    "public_generate_matches_instrumented_loop": true,
+    "threshold_bounds_hold": true,
+    "trace_bound_holds": true
+  },
+  "epochs": 200,
+  "free_run_steps": 128,
+  "metrics": {
+    "accuracy": 1.0,
+    "distinct_actions": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "final_tick": 130,
+    "finite_state": true,
+    "first_error_index": null,
+    "generated_head": "bcdabcdabcdabcdabcdabcdabcdabcda",
+    "generated_tail": "bcdabcdabcdabcdabcdabcdabcdabcda",
+    "invalid_actions": 0,
+    "max_membrane_norm": 0.889867901802063,
+    "max_trace_norm": 0.20070064067840576,
+    "threshold_max": 0.4135996103286743,
+    "threshold_min": -0.08080001920461655
+  },
+  "prompt": "a",
+  "seed": 7,
+  "status": "pass",
+  "training_includes_boundary": false,
+  "training_stream": "abcdabcdabcdabcd"
+}
+{
+  "behavior": {
+    "n5_accuracy": 0.9411764705882353,
+    "n5_generated": "bcdabcda",
+    "n7_full_accuracy": 1.0,
+    "n8_full_accuracy": 1.0,
+    "n8_no_trace_accuracy": 0.5,
+    "n8_trace_only_accuracy": 1.0,
+    "n9_accuracy": 1.0,
+    "n9_first_error_index": null,
+    "native_current_status": "pass"
+  },
+  "benchmark": "taiji_n10_sparse_migration",
+  "checks": {
+    "backproject_matches_dense": true,
+    "checkpoint_format_is_current": true,
+    "forward_matches_dense": true,
+    "local_update_matches_dense": true,
+    "n7_passes_after_migration": true,
+    "n8_passes_after_migration": true,
+    "n9_passes_after_migration": true,
+    "native_current_passes": true,
+    "no_dense_synapse_tensor": true
+  },
+  "diagnostic_timing": {
+    "native_current_training_seconds": 5.037222299999485
+  },
+  "epochs": 200,
+  "operator_equivalence": {
+    "backproject_max_abs_error": 0.0,
+    "forward_max_abs_error": 2.9802322387695312e-08,
+    "local_update_max_abs_error": 0.0
+  },
+  "seed": 7,
+  "status": "pass",
+  "storage": {
+    "default_config_storage_projection": {
+      "dense_equivalent_edges": 235312,
+      "edge_density": 0.6035561297341402,
+      "learned_synapse_edges": 142024,
+      "sparse_to_dense_synapse_byte_ratio": 1.2071122594682804
+    },
+    "dense_equivalent_learned_scalars": 138161,
+    "dense_synapse_weight_bytes": 551616,
+    "edge_weight_bytes": 327168,
+    "learned_synapse_edges": 81792,
+    "sparse_synapse_storage_bytes": 654336,
+    "sparse_to_dense_synapse_byte_ratio": 1.186216498433693,
+    "topology_index_bytes": 327168
+  }
+}
+{
+  "benchmark": "taiji_n11_active_environment",
+  "checks": {
+    "all_pending_actions_are_settled": true,
+    "beats_action_learning_lesion_by_25pp": true,
+    "beats_random_by_35pp": true,
+    "deterministic_policy_solves_both_cues": true,
+    "environment_transition_depends_on_action": true,
+    "final_success_at_least_90pct": true,
+    "reward_updates_are_local_and_counted": true
+  },
+  "environment": {
+    "actions": [
+      "0",
+      "1"
+    ],
+    "cues": [
+      "L",
+      "R"
+    ],
+    "episodic_memory_learning_enabled": false,
+    "failure_sensation": "-",
+    "reason": "N11 isolates motor reward causality; M5 tests memory separately",
+    "reward": {
+      "failure": -1.0,
+      "success": 1.0
+    },
+    "success_sensation": "+",
+    "teacher_action_label_exposed_to_taiji": false
+  },
+  "interactions": 200,
+  "metrics": {
+    "action_learning_lesion": {
+      "decision_samples": [
+        {
+          "action": "1",
+          "cue": "L",
+          "reward": -1.0,
+          "sensation": "-",
+          "success": false,
+          "trial": 0
+        },
+        {
+          "action": "0",
+          "cue": "R",
+          "reward": -1.0,
+          "sensation": "-",
+          "success": false,
+          "trial": 1
+        },
+        {
+          "action": "1",
+          "cue": "L",
+          "reward": -1.0,
+          "sensation": "-",
+          "success": false,
+          "trial": 2
+        },
+        {
+          "action": "1",
+          "cue": "R",
+          "reward": 1.0,
+          "sensation": "+",
+          "success": true,
+          "trial": 3
+        },
+        {
+          "action": "1",
+          "cue": "L",
+          "reward": -1.0,
+          "sensation": "-",
+          "success": false,
+          "trial": 4
+        },
+        {
+          "action": "0",
+          "cue": "R",
+          "reward": -1.0,
+          "sensation": "-",
+          "success": false,
+          "trial": 195
+        },
+        {
+          "action": "1",
+          "cue": "L",
+          "reward": -1.0,
+          "sensation": "-",
+          "success": false,
+          "trial": 196
+        },
+        {
+          "action": "1",
+          "cue": "R",
+          "reward": 1.0,
+          "sensation": "+",
+          "success": true,
+          "trial": 197
+        },
+        {
+          "action": "0",
+          "cue": "L",
+          "reward": 1.0,
+          "sensation": "+",
+          "success": true,
+          "trial": 198
+        },
+        {
+          "action": "1",
+          "cue": "R",
+          "reward": 1.0,
+          "sensation": "+",
+          "success": true,
+          "trial": 199
+        }
+      ],
+      "final_reward_baseline": 0.0,
+      "final_window_accuracy": 0.575,
+      "first_window_accuracy": 0.55,
+      "mean_abs_reward_prediction_error": 1.0,
+      "mean_reward": 0.13,
+      "motor_changed": false,
+      "overall_accuracy": 0.565,
+      "pending_action_cleared": true,
+      "pending_experience_cleared": true,
+      "reward_updates": 0
+    },
+    "deterministic_accuracy": 1.0,
+    "deterministic_decisions": [
+      {
+        "action": "0",
+        "cue": "L",
+        "reward": 1.0,
+        "success": true
+      },
+      {
+        "action": "1",
+        "cue": "R",
+        "reward": 1.0,
+        "success": true
+      }
+    ],
+    "gain_over_action_lesion": 0.42500000000000004,
+    "gain_over_random": 0.5,
+    "learned": {
+      "decision_samples": [
+        {
+          "action": "1",
+          "cue": "L",
+          "reward": -1.0,
+          "sensation": "-",
+          "success": false,
+          "trial": 0
+        },
+        {
+          "action": "0",
+          "cue": "R",
+          "reward": -1.0,
+          "sensation": "-",
+          "success": false,
+          "trial": 1
+        },
+        {
+          "action": "1",
+          "cue": "L",
+          "reward": -1.0,
+          "sensation": "-",
+          "success": false,
+          "trial": 2
+        },
+        {
+          "action": "1",
+          "cue": "R",
+          "reward": 1.0,
+          "sensation": "+",
+          "success": true,
+          "trial": 3
+        },
+        {
+          "action": "0",
+          "cue": "L",
+          "reward": 1.0,
+          "sensation": "+",
+          "success": true,
+          "trial": 4
+        },
+        {
+          "action": "1",
+          "cue": "R",
+          "reward": 1.0,
+          "sensation": "+",
+          "success": true,
+          "trial": 195
+        },
+        {
+          "action": "0",
+          "cue": "L",
+          "reward": 1.0,
+          "sensation": "+",
+          "success": true,
+          "trial": 196
+        },
+        {
+          "action": "1",
+          "cue": "R",
+          "reward": 1.0,
+          "sensation": "+",
+          "success": true,
+          "trial": 197
+        },
+        {
+          "action": "0",
+          "cue": "L",
+          "reward": 1.0,
+          "sensation": "+",
+          "success": true,
+          "trial": 198
+        },
+        {
+          "action": "1",
+          "cue": "R",
+          "reward": 1.0,
+          "sensation": "+",
+          "success": true,
+          "trial": 199
+        }
+      ],
+      "final_reward_baseline": 0.9818249045727537,
+      "final_window_accuracy": 1.0,
+      "first_window_accuracy": 0.85,
+      "mean_abs_reward_prediction_error": 0.2347100767347303,
+      "mean_reward": 0.9,
+      "motor_changed": true,
+      "overall_accuracy": 0.95,
+      "pending_action_cleared": true,
+      "pending_experience_cleared": true,
+      "reward_updates": 200
+    },
+    "random_policy_accuracy": 0.5
+  },
+  "seed": 7,
+  "status": "pass"
+}
+{
+  "architecture": {
+    "checkpoint_format": "taiji-native-v8",
+    "event_slots_allocated": 0,
+    "full_field_dynamic_scalars": 608,
+    "memory_association_edges": 4096,
+    "memory_iterations": 3,
+    "memory_meta_dim": 32,
+    "memory_readout_fan_in": 32,
+    "memory_units": 128,
+    "state_version": 5,
+    "stored_event_count_metadata": 8,
+    "trace_only_dynamic_scalars": 608
+  },
+  "benchmark": "taiji_m5_native_episodic_field",
+  "checks": {
+    "action_outcome_transaction_checkpoint_exact": true,
+    "beats_equal_width_trace_only_by_37_5pp": true,
+    "fixed_topology_no_event_slots": true,
+    "one_shot_action_recall_at_least_87_5pct": true,
+    "recalled_state_feeds_next_fabric_tick": true,
+    "recalls_outcome_and_provenance": true,
+    "recalls_time_and_episode_codes": true,
+    "recurrent_completion_is_causally_necessary": true
+  },
+  "episodes": 8,
+  "metrics": {
+    "action_gain_over_recurrent_lesion": 0.625,
+    "action_gain_over_trace_only": 0.625,
+    "equal_width_trace_only": {
+      "action_accuracy": 0.25,
+      "episode_identity_accuracy": 0.125,
+      "mean_confidence": 0.0,
+      "mean_feedback_norm": 0.0,
+      "mean_time_code_cosine": 0.0,
+      "outcome_accuracy": 0.0,
+      "provenance_accuracy": 0.25,
+      "rows": [
+        {
+          "action": "1",
+          "confidence": 0.0,
+          "cue": "A",
+          "episode_prediction": 0,
+          "expected_action": "0",
+          "expected_outcome": "+",
+          "expected_provenance": "experienced",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        },
+        {
+          "action": "1",
+          "confidence": 0.0,
+          "cue": "B",
+          "episode_prediction": 0,
+          "expected_action": "1",
+          "expected_outcome": "-",
+          "expected_provenance": "imagined",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        },
+        {
+          "action": "1",
+          "confidence": 0.0,
+          "cue": "C",
+          "episode_prediction": 0,
+          "expected_action": "0",
+          "expected_outcome": "!",
+          "expected_provenance": "replayed",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        },
+        {
+          "action": "0",
+          "confidence": 0.0,
+          "cue": "D",
+          "episode_prediction": 0,
+          "expected_action": "1",
+          "expected_outcome": "?",
+          "expected_provenance": "external",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        },
+        {
+          "action": "1",
+          "confidence": 0.0,
+          "cue": "E",
+          "episode_prediction": 0,
+          "expected_action": "0",
+          "expected_outcome": "+",
+          "expected_provenance": "experienced",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        },
+        {
+          "action": "1",
+          "confidence": 0.0,
+          "cue": "F",
+          "episode_prediction": 0,
+          "expected_action": "1",
+          "expected_outcome": "-",
+          "expected_provenance": "imagined",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        },
+        {
+          "action": "1",
+          "confidence": 0.0,
+          "cue": "G",
+          "episode_prediction": 0,
+          "expected_action": "0",
+          "expected_outcome": "!",
+          "expected_provenance": "replayed",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        },
+        {
+          "action": "0",
+          "confidence": 0.0,
+          "cue": "H",
+          "episode_prediction": 0,
+          "expected_action": "1",
+          "expected_outcome": "?",
+          "expected_provenance": "external",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        }
+      ]
+    },
+    "full_field": {
+      "action_accuracy": 0.875,
+      "episode_identity_accuracy": 0.75,
+      "mean_confidence": 0.5789771802084883,
+      "mean_feedback_norm": 0.13724349346011877,
+      "mean_time_code_cosine": 0.7835270389914513,
+      "outcome_accuracy": 0.75,
+      "provenance_accuracy": 1.0,
+      "rows": [
+        {
+          "action": "0",
+          "confidence": 0.7235367839613428,
+          "cue": "A",
+          "episode_prediction": 1,
+          "expected_action": "0",
+          "expected_outcome": "+",
+          "expected_provenance": "experienced",
+          "expected_reward": 1.4454793665512593,
+          "feedback_norm": 0.15933668613433838,
+          "recalled_outcome": 43,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.799135684967041
+        },
+        {
+          "action": "1",
+          "confidence": 0.5834139850947442,
+          "cue": "B",
+          "episode_prediction": 1,
+          "expected_action": "1",
+          "expected_outcome": "-",
+          "expected_provenance": "imagined",
+          "expected_reward": 0.5515441763227974,
+          "feedback_norm": 0.09537619352340698,
+          "recalled_outcome": 43,
+          "recalled_provenance": "imagined",
+          "time_cosine": 0.8589262366294861
+        },
+        {
+          "action": "0",
+          "confidence": 0.4636195261493016,
+          "cue": "C",
+          "episode_prediction": 2,
+          "expected_action": "0",
+          "expected_outcome": "!",
+          "expected_provenance": "replayed",
+          "expected_reward": 0.260589119718044,
+          "feedback_norm": 0.09813445061445236,
+          "recalled_outcome": 33,
+          "recalled_provenance": "replayed",
+          "time_cosine": 0.727436900138855
+        },
+        {
+          "action": "1",
+          "confidence": 0.6282938037687205,
+          "cue": "D",
+          "episode_prediction": 3,
+          "expected_action": "1",
+          "expected_outcome": "?",
+          "expected_provenance": "external",
+          "expected_reward": 0.5181323278939537,
+          "feedback_norm": 0.15601937472820282,
+          "recalled_outcome": 63,
+          "recalled_provenance": "external",
+          "time_cosine": 0.7879379391670227
+        },
+        {
+          "action": "0",
+          "confidence": 0.5606553282072834,
+          "cue": "E",
+          "episode_prediction": 7,
+          "expected_action": "0",
+          "expected_outcome": "+",
+          "expected_provenance": "experienced",
+          "expected_reward": 0.5021037084965261,
+          "feedback_norm": 0.14125603437423706,
+          "recalled_outcome": 43,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.42635858058929443
+        },
+        {
+          "action": "1",
+          "confidence": 0.5563091052814547,
+          "cue": "F",
+          "episode_prediction": 5,
+          "expected_action": "1",
+          "expected_outcome": "-",
+          "expected_provenance": "imagined",
+          "expected_reward": 0.48681241275862897,
+          "feedback_norm": 0.16310039162635803,
+          "recalled_outcome": 43,
+          "recalled_provenance": "imagined",
+          "time_cosine": 0.7551385164260864
+        },
+        {
+          "action": "0",
+          "confidence": 0.6219560440192029,
+          "cue": "G",
+          "episode_prediction": 6,
+          "expected_action": "0",
+          "expected_outcome": "!",
+          "expected_provenance": "replayed",
+          "expected_reward": 0.5833756920154574,
+          "feedback_norm": 0.13155385851860046,
+          "recalled_outcome": 33,
+          "recalled_provenance": "replayed",
+          "time_cosine": 0.9406501650810242
+        },
+        {
+          "action": "0",
+          "confidence": 0.4940328651858565,
+          "cue": "H",
+          "episode_prediction": 7,
+          "expected_action": "1",
+          "expected_outcome": "?",
+          "expected_provenance": "external",
+          "expected_reward": 0.3127431298630083,
+          "feedback_norm": 0.15317095816135406,
+          "recalled_outcome": 63,
+          "recalled_provenance": "external",
+          "time_cosine": 0.9726322889328003
+        }
+      ]
+    },
+    "recurrent_association_lesion": {
+      "action_accuracy": 0.25,
+      "episode_identity_accuracy": 0.125,
+      "mean_confidence": 0.0,
+      "mean_feedback_norm": 0.0,
+      "mean_time_code_cosine": 0.0,
+      "outcome_accuracy": 0.0,
+      "provenance_accuracy": 0.25,
+      "rows": [
+        {
+          "action": "1",
+          "confidence": 0.0,
+          "cue": "A",
+          "episode_prediction": 0,
+          "expected_action": "0",
+          "expected_outcome": "+",
+          "expected_provenance": "experienced",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        },
+        {
+          "action": "1",
+          "confidence": 0.0,
+          "cue": "B",
+          "episode_prediction": 0,
+          "expected_action": "1",
+          "expected_outcome": "-",
+          "expected_provenance": "imagined",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        },
+        {
+          "action": "1",
+          "confidence": 0.0,
+          "cue": "C",
+          "episode_prediction": 0,
+          "expected_action": "0",
+          "expected_outcome": "!",
+          "expected_provenance": "replayed",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        },
+        {
+          "action": "0",
+          "confidence": 0.0,
+          "cue": "D",
+          "episode_prediction": 0,
+          "expected_action": "1",
+          "expected_outcome": "?",
+          "expected_provenance": "external",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        },
+        {
+          "action": "1",
+          "confidence": 0.0,
+          "cue": "E",
+          "episode_prediction": 0,
+          "expected_action": "0",
+          "expected_outcome": "+",
+          "expected_provenance": "experienced",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        },
+        {
+          "action": "1",
+          "confidence": 0.0,
+          "cue": "F",
+          "episode_prediction": 0,
+          "expected_action": "1",
+          "expected_outcome": "-",
+          "expected_provenance": "imagined",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        },
+        {
+          "action": "1",
+          "confidence": 0.0,
+          "cue": "G",
+          "episode_prediction": 0,
+          "expected_action": "0",
+          "expected_outcome": "!",
+          "expected_provenance": "replayed",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        },
+        {
+          "action": "0",
+          "confidence": 0.0,
+          "cue": "H",
+          "episode_prediction": 0,
+          "expected_action": "1",
+          "expected_outcome": "?",
+          "expected_provenance": "external",
+          "expected_reward": 0.0,
+          "feedback_norm": 0.0,
+          "recalled_outcome": 0,
+          "recalled_provenance": "experienced",
+          "time_cosine": 0.0
+        }
+      ]
+    }
+  },
+  "protocol": {
+    "claim_boundary": "one-shot associative recall, not action discovery",
+    "fabric_learning_enabled": false,
+    "motor_learning_enabled": false,
+    "query_action_affordance_count": 2,
+    "reward_per_write": 1.0,
+    "write_action_affordance_count": 1,
+    "write_exposures_per_episode": 1
+  },
+  "seed": 23,
+  "status": "pass"
+}
+{
+  "architecture": {
+    "checkpoint_format": "taiji-native-v8",
+    "cortical_baseline_rate": 0.00390625,
+    "event_slots_allocated": 0,
+    "memory_association_edges": 4096,
+    "memory_units": 128,
+    "replay_learning_scale": 0.45,
+    "replay_noise_scale": 0.75,
+    "replay_priority_threshold": 0.05,
+    "replay_seed_gain": 0.65,
+    "replay_value_weight": 0.6,
+    "replay_winner_resource_retention": 0.9,
+    "state_version": 5,
+    "stored_event_count_metadata": 8
+  },
+  "benchmark": "taiji_m6_endogenous_replay",
+  "checks": {
+    "consolidation_beats_chance": true,
+    "consolidation_beats_no_replay_control": true,
+    "engram_content_is_causally_necessary": true,
+    "evaluation_has_no_episodic_readback": true,
+    "fixed_topology_no_event_slots": true,
+    "no_replay_control_writes_nothing": true,
+    "recurrent_completion_is_causally_necessary": true,
+    "sleep_only_touches_cortex": true,
+    "sleep_reactivates_own_engrams": true,
+    "sleep_requires_settled_state_and_written_field": true
+  },
+  "consolidation": {
+    "engram_content_lesion": {
+      "acceptance_rate": 1.0,
+      "accepted": 96,
+      "cycles": 96,
+      "mean_confidence": 0.5365100913225582,
+      "mean_error_norm": 1.7841952588674355,
+      "mean_novelty": 0.8984055320421854,
+      "mean_priority": 0.23438586794479346,
+      "mean_value": 0.7921461634637669,
+      "replayed_probability": 0.07788061808484296,
+      "structural_events": 0
+    },
+    "full_replay": {
+      "acceptance_rate": 0.9583333333333334,
+      "accepted": 92,
+      "cycles": 96,
+      "mean_confidence": 0.43874151873811074,
+      "mean_error_norm": 1.778762773171985,
+      "mean_novelty": 0.9098093174397945,
+      "mean_priority": 0.18307613664568942,
+      "mean_value": 0.6464012753347781,
+      "replayed_probability": 0.12068949760093044,
+      "structural_events": 20
+    },
+    "no_replay_control": {
+      "acceptance_rate": 0.9583333333333334,
+      "accepted": 92,
+      "cycles": 96,
+      "mean_confidence": 0.43874151873811074,
+      "mean_error_norm": 1.7791132829995637,
+      "mean_novelty": 0.9098093174397945,
+      "mean_priority": 0.18307613664568942,
+      "mean_value": 0.6464012753347781,
+      "replayed_probability": 0.12068949760093044,
+      "structural_events": 0
+    },
+    "recurrent_association_lesion": {
+      "acceptance_rate": 0.0,
+      "accepted": 0,
+      "cycles": 96,
+      "mean_confidence": 0.0,
+      "mean_error_norm": 0.0,
+      "mean_novelty": 1.0,
+      "mean_priority": 0.0,
+      "mean_value": 0.5429463956331586,
+      "replayed_probability": 0.1484287925219784,
+      "structural_events": 0
+    }
+  },
+  "contingency_pairs": 4,
+  "episodes": 8,
+  "metrics": {
+    "accuracy_gain_over_control": 0.25,
+    "before_sleep": {
+      "contingency_accuracy": 0.25,
+      "mean_margin": 0.0,
+      "mean_surprise": 1.3862943611198906,
+      "mean_true_probability": 0.25,
+      "rows": [
+        {
+          "action": "0",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "+",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        },
+        {
+          "action": "1",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "-",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        },
+        {
+          "action": "2",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "!",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        },
+        {
+          "action": "3",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "?",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        }
+      ]
+    },
+    "engram_content_lesion": {
+      "contingency_accuracy": 0.25,
+      "mean_margin": 0.0,
+      "mean_surprise": 1.3862943611198906,
+      "mean_true_probability": 0.25,
+      "rows": [
+        {
+          "action": "0",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "+",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        },
+        {
+          "action": "1",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "-",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        },
+        {
+          "action": "2",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "!",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        },
+        {
+          "action": "3",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "?",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        }
+      ]
+    },
+    "full_replay": {
+      "contingency_accuracy": 0.5,
+      "mean_margin": 0.003071121871471405,
+      "mean_surprise": 1.3709141264956768,
+      "mean_true_probability": 0.2539154402911663,
+      "rows": [
+        {
+          "action": "0",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "+",
+          "margin": 0.0020095109939575195,
+          "predicted_outcome": "+",
+          "true_probability": 0.25437939167022705
+        },
+        {
+          "action": "1",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "-",
+          "margin": 0.013332262635231018,
+          "predicted_outcome": "-",
+          "true_probability": 0.2611735761165619
+        },
+        {
+          "action": "2",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "!",
+          "margin": -0.0008269548416137695,
+          "predicted_outcome": "-",
+          "true_probability": 0.25057899951934814
+        },
+        {
+          "action": "3",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "?",
+          "margin": -0.002230331301689148,
+          "predicted_outcome": "-",
+          "true_probability": 0.24952979385852814
+        }
+      ]
+    },
+    "margin_gain_over_control": 0.003071121871471405,
+    "no_replay_control": {
+      "contingency_accuracy": 0.25,
+      "mean_margin": 0.0,
+      "mean_surprise": 1.3862943611198906,
+      "mean_true_probability": 0.25,
+      "rows": [
+        {
+          "action": "0",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "+",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        },
+        {
+          "action": "1",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "-",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        },
+        {
+          "action": "2",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "!",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        },
+        {
+          "action": "3",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "?",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        }
+      ]
+    },
+    "recurrent_association_lesion": {
+      "contingency_accuracy": 0.25,
+      "mean_margin": 0.0,
+      "mean_surprise": 1.3862943611198906,
+      "mean_true_probability": 0.25,
+      "rows": [
+        {
+          "action": "0",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "+",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        },
+        {
+          "action": "1",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "-",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        },
+        {
+          "action": "2",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "!",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        },
+        {
+          "action": "3",
+          "episodic_confidence": 0.0,
+          "episodic_feedback_norm": 0.0,
+          "expected_outcome": "?",
+          "margin": 0.0,
+          "predicted_outcome": "+",
+          "true_probability": 0.25
+        }
+      ]
+    },
+    "surprise_drop_over_control": 0.015380234624213784
+  },
+  "protocol": {
+    "claim_boundary": "action-outcome contingency transfer, not cue-conditioned policy transfer: the replayed sequence carries no cue byte",
+    "consolidation_cycles": 96,
+    "cortex_learning_during_storage": false,
+    "external_replay_list": false,
+    "memory_to_fabric_weight_copy": false,
+    "motor_learning_during_sleep": false,
+    "motor_learning_during_storage": false,
+    "pretrain_corpus_bytes": 511,
+    "pretrain_epochs": 6,
+    "pretrain_mean_surprise": 1.8021462600594342,
+    "pretrain_online_accuracy": 0.626953125,
+    "pretrain_pairing_is_uniform": true,
+    "probe_chance_accuracy": 0.25,
+    "reward_per_write": 1.0,
+    "teacher_target": false,
+    "write_exposures_per_episode": 1
+  },
+  "seed": 29,
+  "status": "pass"
+}

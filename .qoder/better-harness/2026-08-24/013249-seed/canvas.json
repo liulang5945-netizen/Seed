@@ -1,0 +1,95 @@
+{
+  "canvas_version": "1.1",
+  "project": "Seed",
+  "analyzed_at": "2026-08-24T01:35:00Z",
+  "layout": {
+    "type": "grid",
+    "columns": 2,
+    "gap": 16,
+    "max_width": 1080
+  },
+  "sections": [
+    {
+      "id": "header",
+      "type": "hero",
+      "span": "full",
+      "title": "Seed — Harness 实践分析报告",
+      "subtitle": "CI/CD · 测试 · 构建 · 安全 · 开发工作流 — 18 项发现",
+      "score": "C+",
+      "score_rationale": "后端验证管线和安全基线扎实（B+），但 CI 缺 lint/build 门禁、前端零测试、无覆盖率追踪、无类型检查，综合拉至 C+。",
+      "quick_wins": ["F01", "F07", "F09", "F10", "F14"],
+      "category_scores": {
+        "ci_cd": "D+", "testing": "D", "code_quality": "C",
+        "build_packaging": "C", "security": "B", "dev_workflow": "C-"
+      }
+    },
+    {
+      "id": "severity_distribution",
+      "type": "donut_chart",
+      "span": 1,
+      "title": "严重度分布",
+      "data": [
+        { "label": "Critical", "value": 2, "color": "#ef4444" },
+        { "label": "High", "value": 5, "color": "#f97316" },
+        { "label": "Medium", "value": 7, "color": "#eab308" },
+        { "label": "Low", "value": 4, "color": "#22c55e" }
+      ]
+    },
+    {
+      "id": "effort_impact",
+      "type": "quadrant_chart",
+      "span": 1,
+      "title": "投入-收益矩阵",
+      "axes": { "x": "投入 (effort)", "y": "收益 (impact)" },
+      "data_ref": "findings"
+    },
+    {
+      "id": "strengths",
+      "type": "list",
+      "span": "full",
+      "title": "核心优势",
+      "items": [
+        "分层验证管线：8 个 verify 脚本 + 3 级 pytest 套件，从因果验证到回归测试层层递进",
+        "指标口径白皮书严格区分 train_fit vs heldout，防止评估泄漏",
+        "双入口 PyInstaller + MERGE 共享 _internal，打包设计精巧",
+        "JWT fail-closed + 路径穿越防护 + 速率限制，安全基线扎实",
+        "CONTRIBUTING.md 明确模块边界约束，架构防腐"
+      ]
+    },
+    {
+      "id": "all_findings",
+      "type": "finding_cards",
+      "span": "full",
+      "title": "全部发现",
+      "findings_ref": ["F01","F02","F03","F04","F05","F06","F07","F08","F09","F10","F11","F12","F13","F14","F15","F16","F17","F18"]
+    },
+    {
+      "id": "action_plan",
+      "type": "roadmap",
+      "span": "full",
+      "title": "建议改进路线",
+      "phases": [
+        {
+          "name": "Phase 1 — 快速收益",
+          "time": "1-2 天",
+          "items": [{"text":"ruff + black CI 门禁","ref":"F01"},{"text":"health 暴露安全中间件状态","ref":"F07"},{"text":"pre-commit hooks","ref":"F14"},{"text":"ESLint + Prettier","ref":"F10"},{"text":"CI 产物上传","ref":"F09"}]
+        },
+        {
+          "name": "Phase 2 — 测试基础设施",
+          "time": "1 周",
+          "items": [{"text":"pytest-cov 覆盖率追踪","ref":"F05"},{"text":"vitest + vue-test-utils","ref":"F02"},{"text":"统一 verify 输出 schema","ref":"F11"},{"text":"OpenAPI 契约测试","ref":"F15"}]
+        },
+        {
+          "name": "Phase 3 — CI 增强",
+          "time": "1 周",
+          "items": [{"text":"Windows runner","ref":"F08"},{"text":"构建/打包验证","ref":"F03"},{"text":"依赖安全扫描","ref":"F16"},{"text":"版本号统一管理","ref":"F04"}]
+        },
+        {
+          "name": "Phase 4 — 工程化",
+          "time": "持续",
+          "items": [{"text":"静态类型检查","ref":"F06"},{"text":"自动化构建脚本","ref":"F12"},{"text":"标准化开发环境","ref":"F17"},{"text":"多 worker 速率限制","ref":"F13"}]
+        }
+      ]
+    }
+  ]
+}
