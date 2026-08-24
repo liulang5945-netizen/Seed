@@ -8,7 +8,7 @@
 import pytest
 import torch
 
-from taiji import Taiji, TaijiConfig
+from taiji import CapacityPolicy, Taiji, TaijiConfig
 
 
 def test_training_profile_scales_regions_dimensions_and_edge_density() -> None:
@@ -64,6 +64,40 @@ def test_capacity_profile_rejects_a_budget_below_the_smallest_valid_fabric() -> 
         pass
     else:
         raise AssertionError("an impossible parameter budget must be rejected")
+
+
+def test_capacity_policy_can_change_depth_and_structural_proportions() -> None:
+    policy = CapacityPolicy(
+        region_ratios=(1.0, 0.60, 0.35, 0.20),
+        synapse_fan_in_ratio=0.15,
+        motor_fan_in_ratio=0.30,
+        memory_units_ratio=1.25,
+        memory_fan_in_ratio=0.20,
+        memory_meta_ratio=0.30,
+        memory_readout_fan_in_ratio=0.25,
+        lateral_fan_in_ratio=0.10,
+        alignment=8,
+    )
+    profile = TaijiConfig.capacity_profile(300_000, policy=policy, seed=311)
+
+    assert len(profile.region_sizes) == 4
+    assert profile.region_sizes[1] < profile.region_sizes[0]
+    assert profile.region_sizes[-1] < profile.region_sizes[1]
+    assert profile.planned_active_parameter_count <= 300_000
+    assert Taiji(profile).parameter_count() == profile.planned_active_parameter_count
+
+
+def test_capacity_policy_rejects_invalid_ratios() -> None:
+    with pytest.raises(ValueError, match="region_ratios"):
+        CapacityPolicy(region_ratios=())
+    with pytest.raises(ValueError, match="positive"):
+        CapacityPolicy(memory_units_ratio=0.0)
+
+
+def test_capacity_policy_roundtrips_as_external_search_input() -> None:
+    policy = CapacityPolicy(region_ratios=(1.0, 0.65, 0.40), alignment=16)
+
+    assert CapacityPolicy.from_dict(policy.to_dict()) == policy
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA device is not available")

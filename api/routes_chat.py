@@ -16,7 +16,7 @@ from fastapi import APIRouter, HTTPException, UploadFile, File, Request
 from fastapi.responses import StreamingResponse
 
 from neuroplex.core.app_state import app_state
-from neuroplex.core.utils import get_external_path
+from seed_platform.paths import get_external_path
 from api.models import ChatRequest
 from api.chat_strategies import create_event_generator
 from api.seed_runtime import get_seed_runtime, is_seed_active

@@ -10,7 +10,7 @@ import threading
 
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Request
 
-from neuroplex.core.utils import get_external_path
+from seed_platform.paths import get_external_path
 
 logger = logging.getLogger("ApiServer.Update")
 router = APIRouter()

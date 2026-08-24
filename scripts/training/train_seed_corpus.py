@@ -39,7 +39,7 @@ from seed.persistence import (  # noqa: E402
     attach_metadata,
     corpus_fingerprint,
 )
-from taiji import TaijiConfig  # noqa: E402
+from taiji import CapacityPolicy, TaijiConfig  # noqa: E402
 
 DEFAULT_CORPUS = (
     # 2026-08-23 数据整理：canonical 对话语料仅此一文件（123090 条，
@@ -70,6 +70,16 @@ def resolve_device(requested: str | torch.device) -> torch.device:
             "CUDA was requested but this PyTorch build or machine has no available CUDA device"
         )
     return device
+
+
+def load_capacity_policy(path: Path | str) -> CapacityPolicy:
+    """Load an explicit structural search policy from JSON."""
+
+    with open(path, encoding="utf-8") as handle:
+        payload = json.load(handle)
+    if not isinstance(payload, dict):
+        raise ValueError("capacity policy must be a JSON object")
+    return CapacityPolicy.from_dict(payload)
 
 
 def iter_corpus_symbols(
@@ -209,6 +219,11 @@ def main() -> None:
         help="自动规划不超过该数量的可学习参数；设置后替代 --scale",
     )
     parser.add_argument(
+        "--capacity-policy",
+        default=None,
+        help="容量策略 JSON；可改变区域深度、比例与 fan-in 密度，需配合 --parameter-budget",
+    )
+    parser.add_argument(
         "--device",
         default="auto",
         help="训练设备：auto、cpu、cuda 或 cuda:N",
@@ -239,10 +254,18 @@ def main() -> None:
         max_symbols = 5_000
     else:
         if args.parameter_budget is None:
+            if args.capacity_policy is not None:
+                parser.error("--capacity-policy requires --parameter-budget")
             taiji_config = TaijiConfig.training_profile(scale=args.scale, seed=args.seed)
         else:
+            policy = (
+                load_capacity_policy(args.capacity_policy)
+                if args.capacity_policy is not None
+                else None
+            )
             taiji_config = TaijiConfig.capacity_profile(
                 args.parameter_budget,
+                policy=policy,
                 seed=args.seed,
             )
         config = SeedConfig(taiji=taiji_config)

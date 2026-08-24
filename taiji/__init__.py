@@ -4,7 +4,7 @@ This top-level package is independent of the legacy NeuroPlex Transformer
 runtime.  PyTorch is used only as a tensor execution engine.
 """
 
-from .config import TaijiConfig
+from .config import CapacityPolicy, TaijiConfig
 from .environment import EnvironmentOutcome, TaijiEnvironment
 from .fabric import TaijiFabric
 from .memory import EpisodicField, EpisodicReplay, EpisodicWrite
@@ -27,6 +27,7 @@ from .state import (
 __all__ = [
     "ByteMotor",
     "ByteSensor",
+    "CapacityPolicy",
     "EnvironmentOutcome",
     "EpisodicField",
     "EpisodicReplay",

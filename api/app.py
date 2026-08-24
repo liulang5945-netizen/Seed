@@ -13,7 +13,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from neuroplex.core.utils import get_external_path, get_internal_path
+from api.legacy_bridge import (
+    get_legacy_auth_manager,
+    legacy_startup_download_progress,
+    load_legacy_runtime,
+    register_legacy_routers,
+    start_legacy_services,
+    stop_legacy_services,
+)
+from seed_platform.paths import get_external_path, get_internal_path
 
 base_dir = (
     os.path.dirname(sys.executable)
@@ -76,9 +84,7 @@ class JWTAuthMiddleware:
             return await self.app(scope, receive, send)
 
         try:
-            from neuroplex.core.security import AuthManager
-
-            auth = AuthManager()
+            auth = get_legacy_auth_manager()
             if not auth.enabled:
                 return await self.app(scope, receive, send)
 
@@ -138,60 +144,15 @@ class JWTAuthMiddleware:
 
 
 def _load_model_background():
-    """Load the model in a background thread."""
-    try:
-        from neuroplex.tools.builtin_tools import register_all_tools
+    """Compatibility wrapper around the single Legacy runtime boundary."""
 
-        register_all_tools()
-        # Deep Coupling: 注册引擎间事件订阅
-        try:
-            from neuroplex.infra.event_subscriptions import register_all_subscriptions
-
-            register_all_subscriptions()
-            logger.info("EventBus engine subscriptions registered")
-        except Exception as exc:
-            logger.warning(f"EventBus subscriptions failed: {exc}")
-    except Exception as exc:
-        logger.warning(f"Built-in tool registration failed: {exc}")
-
-    # 运行环境选择持久化：上次选了 Seed 原生则直接恢复，不先装 Cortex。
-    try:
-        from api.routes_model_switch import load_runtime_pref
-        from neuroplex.core.app_state import app_state as _state
-
-        pref = load_runtime_pref()
-        if pref.get("runtime") == "seed":
-            try:
-                from api.seed_runtime import activate_seed
-
-                checkpoint = pref.get("checkpoint") or None
-                if checkpoint:
-                    from pathlib import Path as _Path
-
-                    checkpoint = (
-                        _Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-                        / "checkpoints"
-                        / checkpoint
-                    )
-                runtime = activate_seed(checkpoint)
-                _state.mark_started()
-                logger.info(f"Seed runtime auto-restored from preference: {runtime.name}")
-                return
-            except Exception as exc:
-                logger.warning(f"Seed preference restore failed, falling back to Cortex: {exc}")
-    except Exception as exc:
-        logger.warning(f"Runtime preference check failed: {exc}")
-
-    from neuroplex.core.model_loader import load_model_on_startup
-
-    load_model_on_startup()
+    load_legacy_runtime()
 
 
 def get_startup_download_progress():
     """Compatibility helper for startup download progress."""
-    from neuroplex.core.model_loader import startup_download_progress
 
-    return startup_download_progress()
+    return legacy_startup_download_progress()
 
 
 def _build_lifespan(startup_tasks: bool):
@@ -205,33 +166,10 @@ def _build_lifespan(startup_tasks: bool):
         thread.start()
         logger.info("Background model loading started")
 
-        try:
-            from neuroplex.core.model_loader import start_auto_reload
-
-            start_auto_reload(check_interval=60)
-            logger.info("Model auto reload started")
-        except Exception as exc:
-            logger.warning(f"Model auto reload startup failed: {exc}")
-
-        try:
-            from neuroplex.life.life_scheduler import get_life_scheduler
-
-            scheduler = get_life_scheduler()
-            scheduler.start()
-            logger.info("Life scheduler started")
-        except Exception as exc:
-            logger.warning(f"Life scheduler startup failed: {exc}")
+        start_legacy_services()
 
         yield
-
-        try:
-            from neuroplex.life.life_scheduler import get_life_scheduler
-
-            scheduler = get_life_scheduler()
-            scheduler.stop()
-            logger.info("Life scheduler stopped")
-        except Exception as exc:
-            logger.warning(f"Life scheduler shutdown failed: {exc}")
+        stop_legacy_services()
 
     return lifespan
 
@@ -266,17 +204,13 @@ def _register_routers(app: FastAPI):
     from .routes_agent_workspace import router as agent_workspace_router
     from .routes_auth import router as auth_router
     from .routes_chat import router as chat_router
-    from .routes_life import router as life_router
     from .routes_model_switch import router as model_switch_router
     from .routes_models import router as models_router
-    from .routes_multimodal import router as multimodal_router
     from .routes_plugins import router as plugins_router
     from .routes_rag import router as rag_router
     from .routes_runtime import router as runtime_router
     from .routes_settings import router as settings_router
     from .routes_system import router as system_router
-    from .routes_neuroplex import router as neuroplex_router
-    from .routes_neuroplex_model import router as population_compat_router
     from .routes_terminal import router as terminal_router
     from .routes_update import router as update_router
     from .routes_workflows import router as workflows_router
@@ -299,10 +233,7 @@ def _register_routers(app: FastAPI):
     app.include_router(agent_mcp_router)
     app.include_router(agent_memory_router)
     app.include_router(terminal_router)
-    app.include_router(life_router)
-    app.include_router(multimodal_router)
-    app.include_router(neuroplex_router)
-    app.include_router(population_compat_router)
+    register_legacy_routers(app)
 
 
 def _mount_static_assets(app: FastAPI):

@@ -9,7 +9,7 @@ import shutil
 from fastapi import APIRouter, HTTPException, UploadFile, File, BackgroundTasks
 
 from neuroplex.core.app_state import app_state
-from neuroplex.core.utils import get_external_path
+from seed_platform.paths import get_external_path
 from neuroplex.tools.rag import RAGKnowledgeBase, RAGConfig
 
 from .models import RAGSearchRequest

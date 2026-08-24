@@ -15,7 +15,7 @@ import threading
 
 from fastapi import APIRouter, HTTPException, Request
 
-from neuroplex.core.utils import get_external_path
+from seed_platform.paths import get_external_path
 
 logger = logging.getLogger("ApiServer.System")
 router = APIRouter()

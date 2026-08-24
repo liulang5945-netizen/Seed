@@ -14,65 +14,20 @@
 from __future__ import annotations
 
 import os
-import sys
 from dataclasses import dataclass, field
 from typing import List, Optional
 import logging
+
+from seed_platform.paths import (
+    get_external_path as get_external_path,
+    get_internal_path as get_internal_path,
+    get_writable_base_dir as get_writable_base_dir,
+)
 
 logger = logging.getLogger(__name__)
 
 # 模型加载超时（秒）
 MODEL_LOAD_TIMEOUT = 600
-
-# 项目根目录（非打包时）
-_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-# 应用标识（用于 LocalAppData 子目录）
-_APP_DIR_NAME = "Taiji"
-
-
-def _is_frozen() -> bool:
-    """是否打包为 exe。"""
-    return getattr(sys, "frozen", False)
-
-
-def get_writable_base_dir() -> str:
-    """获取可写基目录（防只读安装目录）。
-
-    打包时用 %LOCALAPPDATA%/Taiji，否则用项目根目录。
-    """
-    if _is_frozen():
-        local = os.environ.get("LOCALAPPDATA", "")
-        base = os.path.join(local, _APP_DIR_NAME) if local else os.getcwd()
-    else:
-        base = _PROJECT_ROOT
-    os.makedirs(base, exist_ok=True)
-    return base
-
-
-def get_external_path(relative_path: str) -> str:
-    """获取外部可写路径（如模型缓存、用户数据目录）。
-
-    打包时基于可写基目录（LocalAppData fallback），否则基于项目根。
-    """
-    base = get_writable_base_dir()
-    path = os.path.join(base, relative_path) if relative_path else base
-    if relative_path:
-        os.makedirs(path, exist_ok=True)
-    return path
-
-
-def get_internal_path(relative_path: str) -> str:
-    """获取内部打包路径（如打包进 exe 的前端页面）。
-
-    打包时基于 sys._MEIPASS，否则基于项目根目录。
-    """
-    if _is_frozen():
-        meipass = getattr(sys, "_MEIPASS", None) or os.path.dirname(sys.executable)
-        base = meipass
-    else:
-        base = _PROJECT_ROOT
-    return os.path.join(base, relative_path) if relative_path else base
 
 
 @dataclass
@@ -116,7 +71,6 @@ class TrainingConfig:
             return round(psutil.virtual_memory().total / (1024**3), 1)
         except Exception:
             try:
-
                 return max(16.0, 0.0)
             except Exception:
                 return 16.0
