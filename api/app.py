@@ -1,5 +1,6 @@
 """Taiji FastAPI application factory."""
 
+import importlib
 import json
 import logging
 import os
@@ -15,6 +16,7 @@ from fastapi.staticfiles import StaticFiles
 
 from api.legacy_bridge import (
     get_legacy_auth_manager,
+    legacy_available,
     legacy_startup_download_progress,
     load_legacy_runtime,
     register_legacy_routers,
@@ -197,8 +199,22 @@ def _configure_middlewares(app: FastAPI):
     app.add_middleware(JWTAuthMiddleware)
 
 
+def _load_optional_router(module_name: str):
+    """Load a Legacy-dependent router only when the plugin is available."""
+
+    if not legacy_available():
+        logger.info("Legacy plugin disabled; skipped router %s", module_name)
+        return None
+    try:
+        module = importlib.import_module(f"api.{module_name}")
+    except ModuleNotFoundError as exc:
+        logger.warning("Optional router %s unavailable: %s", module_name, exc)
+        return None
+    return getattr(module, "router", None)
+
+
 def _register_routers(app: FastAPI):
-    from .routes_agent import router as agent_router
+    agent_router = _load_optional_router("routes_agent")
     from .routes_agent_mcp import router as agent_mcp_router
     from .routes_agent_memory import router as agent_memory_router
     from .routes_agent_workspace import router as agent_workspace_router
@@ -206,29 +222,34 @@ def _register_routers(app: FastAPI):
     from .routes_chat import router as chat_router
     from .routes_model_switch import router as model_switch_router
     from .routes_models import router as models_router
-    from .routes_plugins import router as plugins_router
-    from .routes_rag import router as rag_router
+
+    plugins_router = _load_optional_router("routes_plugins")
+    rag_router = _load_optional_router("routes_rag")
     from .routes_runtime import router as runtime_router
     from .routes_settings import router as settings_router
     from .routes_system import router as system_router
     from .routes_terminal import router as terminal_router
     from .routes_update import router as update_router
-    from .routes_workflows import router as workflows_router
+
+    workflows_router = _load_optional_router("routes_workflows")
     from .training import router as training_router
 
     app.include_router(auth_router)
     app.include_router(runtime_router)
-    app.include_router(workflows_router)
-    app.include_router(plugins_router)
+    for optional_router in (workflows_router, plugins_router):
+        if optional_router is not None:
+            app.include_router(optional_router)
     app.include_router(chat_router)
     app.include_router(training_router)
-    app.include_router(rag_router)
+    if rag_router is not None:
+        app.include_router(rag_router)
     app.include_router(models_router)
     app.include_router(system_router)
     app.include_router(settings_router)
     app.include_router(update_router)
     app.include_router(model_switch_router)
-    app.include_router(agent_router)
+    if agent_router is not None:
+        app.include_router(agent_router)
     app.include_router(agent_workspace_router)
     app.include_router(agent_mcp_router)
     app.include_router(agent_memory_router)

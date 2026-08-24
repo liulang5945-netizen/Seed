@@ -33,7 +33,7 @@ base_dir = (
 if base_dir not in sys.path:
     sys.path.insert(0, base_dir)
 
-from neuroplex.core.config import get_config
+from seed_platform.config import get_config
 import uvicorn
 import logging
 
