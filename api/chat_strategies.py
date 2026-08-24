@@ -19,6 +19,8 @@ import logging
 import threading
 from datetime import datetime, timezone, timedelta
 
+from api.legacy_bridge import legacy_available
+
 logger = logging.getLogger("ApiServer.Chat.Strategies")
 
 # 中国时区
@@ -51,14 +53,15 @@ def _apply_rag(prompt, app_state):
         if context:
             context_str = "\n---\n".join(context)
             return (
-                f"基于以下参考资料回答问题。\n\n"
-                f"【参考资料】\n{context_str}\n\n【问题】\n{prompt}"
+                f"基于以下参考资料回答问题。\n\n【参考资料】\n{context_str}\n\n【问题】\n{prompt}"
             )
     return prompt
 
 
 def _get_life_state():
     """读取Seed生命状态（仅读取，不记录交互）"""
+    if not legacy_available():
+        return {}
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
 
@@ -76,6 +79,8 @@ def _record_life_interaction(
     had_search_results: bool = False,
 ):
     """记录交互到生命系统（带真实指标）"""
+    if not legacy_available():
+        return
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
 
@@ -93,6 +98,8 @@ def _record_life_interaction(
 
 def _get_memory_context():
     """读取近期记忆，注入推理上下文（使用统一上下文管理器）"""
+    if not legacy_available():
+        return ""
     try:
         from neuroplex.agent.context_manager import get_context_manager
 
@@ -132,6 +139,8 @@ def _build_history(request):
 
 def _record_evolution(prompt, result_text, success):
     """记录到进化引擎"""
+    if not legacy_available():
+        return
     try:
         from neuroplex.life.evolution_engine import get_evolution_engine
 
@@ -158,6 +167,8 @@ def _record_recursive_strategies(prompt, system_prompt, success, reasoning_steps
     记录到 RecursiveImprover，睡眠时 analyze_and_improve() 才有数据可分析。
     质量分：success → 1.0，失败 → 0.2（供 high(>=0.8)/low(<0.4) 分组）。
     """
+    if not legacy_available():
+        return
     try:
         from neuroplex.life.recursive_improver import get_recursive_improver
 
@@ -179,6 +190,8 @@ def _record_recursive_strategies(prompt, system_prompt, success, reasoning_steps
 
 def _has_react_engine() -> bool:
     """检查 ReAct 引擎是否可用"""
+    if not legacy_available():
+        return False
     try:
         from neuroplex.agent_ext.react_engine import ReActEngine  # noqa: F401
     except ImportError:
@@ -249,6 +262,7 @@ async def _stream_unified(request, prompt, app_state, stop_event, collector):
       {"type":"observation","data":{"step":1,"tool":"search","result":"..."}}
       {"type":"final","data":{"answer":"...","step":2}}
     """
+    legacy_enabled = legacy_available()
     life_needs = _get_life_state()
     fatigue = life_needs.get("fatigue", 0)
     curiosity = life_needs.get("curiosity", 50)
@@ -265,37 +279,38 @@ async def _stream_unified(request, prompt, app_state, stop_event, collector):
     enriched_prompt = prompt
     history = _build_history(request)
 
-    try:
-        from neuroplex.agent.context_manager import get_context_manager
+    if legacy_enabled:
+        try:
+            from neuroplex.agent.context_manager import get_context_manager
 
-        ctx = get_context_manager()
+            ctx = get_context_manager()
 
-        # 注入对话历史到上下文管理器
-        if request.history:
-            for u, a in request.history:
-                if u:
-                    ctx.add_message("user", u)
-                if a:
-                    ctx.add_message("assistant", a)
+            # 注入对话历史到上下文管理器
+            if request.history:
+                for u, a in request.history:
+                    if u:
+                        ctx.add_message("user", u)
+                    if a:
+                        ctx.add_message("assistant", a)
 
-        # 构建带记忆的 prompt
-        enriched_prompt = ctx.build_context(
-            task=prompt,
-            system_prompt=system_prompt,
-            include_history=True,
-            include_memory=True,
-        )
+            # 构建带记忆的 prompt
+            enriched_prompt = ctx.build_context(
+                task=prompt,
+                system_prompt=system_prompt,
+                include_history=True,
+                include_memory=True,
+            )
 
-        # 构建消息列表（用于 ReAct 引擎）
-        history = ctx._get_recent_history_messages()
-    except Exception:
-        # 回退到旧方式
-        memory_context = _get_memory_context()
-        enriched_prompt = (memory_context + prompt) if memory_context else prompt
+            # 构建消息列表（用于 ReAct 引擎）
+            history = ctx._get_recent_history_messages()
+        except Exception:
+            # 回退到旧方式
+            memory_context = _get_memory_context()
+            enriched_prompt = (memory_context + prompt) if memory_context else prompt
 
     # 发送生命状态
     if life_needs:
-        yield f'data: {json.dumps({"type": "life", "data": {"needs": life_needs}}, ensure_ascii=False)}\n\n'
+        yield f"data: {json.dumps({'type': 'life', 'data': {'needs': life_needs}}, ensure_ascii=False)}\n\n"
 
     full_text = ""
     # 跟踪推理真实指标（用于生命系统）
@@ -305,7 +320,7 @@ async def _stream_unified(request, prompt, app_state, stop_event, collector):
     tool_names: set = set()  # 实际用过的工具（递归改进输入环）
 
     # 尝试 ReAct 引擎（统一推理）
-    if _has_react_engine():
+    if legacy_enabled and _has_react_engine():
         try:
             from neuroplex.agent_ext.react_engine import ReActEngine
 

@@ -15,6 +15,7 @@ import time
 from fastapi import APIRouter, HTTPException, UploadFile, File, Request
 from fastapi.responses import StreamingResponse
 
+from api.legacy_bridge import legacy_available
 from seed_platform.app_state import app_state
 from seed_platform.paths import get_external_path
 from api.models import ChatRequest
@@ -69,16 +70,21 @@ async def chat_stream(request: ChatRequest):
             },
         )
 
-    # 触发用户指令，中断当前生命活动
-    try:
-        from neuroplex.life.life_scheduler import get_life_scheduler
+    legacy_enabled = legacy_available()
 
-        get_life_scheduler().handle_user_directive()
-    except Exception as e:
-        logger.warning(f"Failed to trigger user directive: {e}")
+    # 触发用户指令，中断当前生命活动
+    if legacy_enabled:
+        try:
+            from neuroplex.life.life_scheduler import get_life_scheduler
+
+            get_life_scheduler().handle_user_directive()
+        except Exception as e:
+            logger.warning(f"Failed to trigger user directive: {e}")
 
     # 根据引擎类型选择数据收集器
     def collector_factory():
+        if not legacy_enabled:
+            return None
         try:
             from neuroplex.agent_ext.data_collector import DataCollector
 
