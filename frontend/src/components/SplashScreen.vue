@@ -4,7 +4,7 @@
       <div class="splash-bg"></div>
       <div class="splash-content">
         <div class="splash-logo">
-          <img src="/logo.svg?v=ink-20260624-8" alt="Seed" />
+          <img src="/seed-taiji-network.png" alt="Seed Taiji" />
         </div>
         <h1 class="splash-title">态 极</h1>
         <p class="splash-status">{{ statusText }}</p>
@@ -96,6 +96,14 @@ onUnmounted(() => {
 .splash-logo img {
   width: 64px;
   height: 64px;
+  object-fit: contain;
+  border-radius: 50%;
+  animation: splash-logo-flow 28s linear infinite;
+}
+
+@keyframes splash-logo-flow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* 标题 */
@@ -128,5 +136,11 @@ onUnmounted(() => {
 }
 .splash-fade-leave-to {
   opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splash-logo img {
+    animation: none;
+  }
 }
 </style>

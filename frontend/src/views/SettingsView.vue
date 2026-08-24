@@ -31,7 +31,7 @@
               @click="activeSection = 'neuron'"
             >
               <svg class="sn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="7" r="2.2"/><circle cx="6" cy="17" r="2.2"/><circle cx="18" cy="12" r="2.2"/><circle cx="12" cy="4" r="1.5"/><circle cx="12" cy="20" r="1.5"/><path d="M8 7.5 12 5M8 16.5 12 19M8 16l7-4M8 8l7 3"/></svg>
-              神经元设置
+              Taiji 设置
             </button>
             <button
               class="sn-item"
@@ -146,19 +146,19 @@
               </div>
             </section>
 
-            <!-- ── 2. 神经元设置 ── -->
+            <!-- ── 2. Taiji 运行设置 ── -->
             <section v-else-if="activeSection === 'neuron'" class="settings-section">
-              <h2>神经元设置</h2>
+              <h2>Taiji 运行设置</h2>
 
-              <!-- 共振阈值 -->
+              <!-- 局部激活阈值 -->
               <div class="setting-row setting-row--first">
                 <div class="setting-left">
-                  <span class="setting-label">共振阈值</span>
-                  <p class="setting-desc">神经元激活的同步判定阈值（越高越严谨）</p>
+                  <span class="setting-label">局部激活阈值</span>
+                  <p class="setting-desc">控制单步局部状态更新的激活门槛，不代表全局同步或相位共振</p>
                 </div>
                 <div class="setting-right">
                   <div class="range-wrap">
-                    <input type="range" min="0" max="1" step="0.01" value="0.72" aria-label="共振阈值" />
+                    <input type="range" min="0" max="1" step="0.01" value="0.72" aria-label="局部激活阈值" />
                     <span class="range-value">0.72</span>
                   </div>
                 </div>
@@ -168,7 +168,7 @@
               <div class="setting-row">
                 <div class="setting-left">
                   <span class="setting-label">响应超时</span>
-                  <p class="setting-desc">神经元链路最大等待时间（毫秒）</p>
+                  <p class="setting-desc">一次状态推进等待后端返回的最长时间（毫秒）</p>
                 </div>
                 <div class="setting-right">
                   <input type="number" min="10" max="10000" value="100" aria-label="响应超时" />
@@ -193,7 +193,7 @@
               <div class="setting-row setting-row--last">
                 <div class="setting-left">
                   <span class="setting-label">睡眠模式</span>
-                  <p class="setting-desc">非活跃时段暂停后台共振计算以节省算力，每日首次唤醒需约 2 秒预热</p>
+                  <p class="setting-desc">非活跃时段暂停后台状态推进以节省算力，唤醒后恢复 Taiji 持续状态</p>
                 </div>
                 <div class="setting-right">
                   <label class="toggle" aria-label="睡眠模式开关">
@@ -276,7 +276,7 @@
               <div class="setting-row">
                 <div class="setting-left">
                   <span class="setting-label">导出数据</span>
-                  <p class="setting-desc">导出所有对话记录、配置快照与神经元状态</p>
+                  <p class="setting-desc">导出所有对话记录、配置快照与 Taiji 状态</p>
                 </div>
                 <div class="setting-right">
                   <button class="btn-sm btn-outline" @click="toast('占位功能：导出数据尚未接入', 'info')">
@@ -293,7 +293,7 @@
                     <svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
                     危险操作
                   </h3>
-                  <p>重置将清除所有本地配置、神经元状态与缓存文件，此操作不可撤销。建议先导出数据再进行重置。</p>
+                  <p>重置将清除所有本地配置、Taiji 状态与缓存文件，此操作不可撤销。建议先导出数据再进行重置。</p>
                   <button class="btn-destructive" @click="toast('占位功能：重置尚未接入', 'warning')">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5h5v6h-5z"/><path d="M14.5 9.5 13 7h-2l-1.5 2.5"/></svg>
                     重置Seed
@@ -314,12 +314,12 @@
                     <span class="meta-tag">v{{ appVersion }}</span>
                   </div>
                   <div class="meta-line meta-line--muted">
-                    共振场引擎
-                    <span class="meta-tag">ResonanceField v3.0</span>
+                    原生基底
+                    <span class="meta-tag">seed-native-v1</span>
                   </div>
                   <div class="meta-line meta-line--muted">
-                    渲染后端
-                    <span class="meta-tag">WASM+GPU</span>
+                    状态通路
+                    <span class="meta-tag">ByteSensor → ByteMotor</span>
                   </div>
                 </div>
               </div>

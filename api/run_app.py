@@ -56,11 +56,14 @@ from seed_platform.dependencies import dependency_manifest, legacy_requested
 def _find_brand_icon() -> str | None:
     """解析开发与 PyInstaller 内置资源中的 Seed logo。"""
     candidates = [
+        get_internal_path("frontend/dist/seed-taiji-network.png"),
+        get_internal_path("frontend/dist/favicon.ico"),
+        get_external_path("frontend/public/seed-taiji-network.png"),
+        get_external_path("frontend/public/favicon.ico"),
         get_internal_path("frontend/dist/logo.svg"),
         get_internal_path("frontend/dist/favicon.svg"),
         get_external_path("icon.ico"),
         get_internal_path("icon.ico"),
-        get_internal_path("frontend/dist/favicon.ico"),
     ]
     for candidate in candidates:
         if os.path.isfile(candidate):
@@ -627,6 +630,7 @@ class MainWindow(QMainWindow):
 
         # 无边框窗口：去掉系统原生标题栏，改用自绘极简标题栏
         self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.FramelessWindowHint)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, True)
 
         self._web_view = CustomWebView()
 
@@ -639,13 +643,21 @@ class MainWindow(QMainWindow):
 
         # 中央区域 = 自绘标题栏 + Web 视图（无边框窗口）
         central = QWidget()
+        central.setObjectName("seedWindowFrame")
+        central.setStyleSheet(self._window_frame_qss(dark=False))
         central_layout = QVBoxLayout(central)
-        central_layout.setContentsMargins(0, 0, 0, 0)
+        central_layout.setContentsMargins(1, 1, 1, 1)
         central_layout.setSpacing(0)
         self._titlebar = self._build_titlebar()
+        self._web_view.setStyleSheet(
+            "QWebEngineView { border: none; background: transparent; "
+            "border-bottom-left-radius: 17px; border-bottom-right-radius: 17px; }"
+        )
         central_layout.addWidget(self._titlebar)
         central_layout.addWidget(self._web_view, 1)
+        self._window_frame = central
         self.setCentralWidget(central)
+        self._apply_window_shape()
 
         # 前端就绪后同步标题栏主题
         self._web_view.loadFinished.connect(self._on_page_loaded)
@@ -682,25 +694,53 @@ class MainWindow(QMainWindow):
         """标题栏样式（跟随前端主题）。默认亮色，暗色主题切为深色。"""
         if dark:
             return """
-                #seedTitlebar { background: #0f141b; border-bottom: 1px solid #1c2530; }
+                #seedTitlebar { background: #0f141b; border-bottom: 1px solid #1c2530; border-top-left-radius: 17px; border-top-right-radius: 17px; }
                 #seedTitlebar QLabel { color: #cbd5e1; font-size: 12px; font-weight: 600; }
                 QPushButton.titlebarBtn { background: transparent; border: none; color: #94a3b8; font-size: 14px; border-radius: 6px; }
                 QPushButton.titlebarBtn:hover { background: #1f2937; color: #e2e8f0; }
                 QPushButton.titlebarClose:hover { background: #dc2626; color: #ffffff; }
             """
         return """
-            #seedTitlebar { background: #f6f7f9; border-bottom: 1px solid #e2e5ea; }
+            #seedTitlebar { background: #f6f7f9; border-bottom: 1px solid #e2e5ea; border-top-left-radius: 17px; border-top-right-radius: 17px; }
             #seedTitlebar QLabel { color: #334155; font-size: 12px; font-weight: 600; }
             QPushButton.titlebarBtn { background: transparent; border: none; color: #64748b; font-size: 14px; border-radius: 6px; }
             QPushButton.titlebarBtn:hover { background: #e6e9ee; color: #0f172a; }
             QPushButton.titlebarClose:hover { background: #dc2626; color: #ffffff; }
         """
 
+    @staticmethod
+    def _window_frame_qss(dark: bool) -> str:
+        border = "#283442" if dark else "#d8dde5"
+        return f"""
+            #seedWindowFrame {{
+                background: transparent;
+                border: 1px solid {border};
+                border-radius: 18px;
+            }}
+        """
+
+    def _apply_window_shape(self):
+        """用圆角 mask 裁掉 QWebEngineView 的直角，避免白角露出。"""
+        if self.isMaximized():
+            self.clearMask()
+            return
+        from PyQt6.QtGui import QPainterPath, QRegion
+
+        path = QPainterPath()
+        path.addRoundedRect(self.rect(), 18, 18)
+        self.setMask(QRegion(path.toFillPolygon().toPolygon()))
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self._apply_window_shape()
+
     def _apply_titlebar_theme(self, theme):
         """根据前端 data-theme 同步标题栏配色（'dark' → 深色，其余 → 亮色）。"""
         dark = str(theme).strip().lower() == "dark"
         if getattr(self, "_titlebar", None) is not None:
             self._titlebar.setStyleSheet(self._titlebar_qss(dark))
+        if getattr(self, "_window_frame", None) is not None:
+            self._window_frame.setStyleSheet(self._window_frame_qss(dark))
 
     def _sync_titlebar_theme(self):
         """前端就绪后读取其主题，同步标题栏配色。"""

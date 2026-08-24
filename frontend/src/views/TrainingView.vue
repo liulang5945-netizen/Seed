@@ -261,7 +261,7 @@
             <div class="hp-field">
               <label class="hp-label"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M4 9h16M9 9v10"/></svg>最大序列长度 (Max Seq Len)</label>
               <n-input-number v-model:value="taijiTrainParams.max_length" :min="64" :max="4096" />
-              <span class="hp-desc">单样本最大 token 数，影响显存与上下文</span>
+              <span class="hp-desc">单样本最大字节数，影响单次状态推进与内存</span>
             </div>
             <div class="hp-field">
               <label class="hp-label"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>LoRA rank</label>
