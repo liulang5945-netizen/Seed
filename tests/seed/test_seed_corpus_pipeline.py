@@ -13,6 +13,8 @@ import importlib.util
 import json
 from pathlib import Path
 
+import pytest
+
 from seed import Seed, SeedConfig
 from taiji import TaijiConfig
 
@@ -108,3 +110,13 @@ def test_training_run_streams_checkpoints_and_progress(tmp_path) -> None:
     assert "online_accuracy" in entries[-1]
     assert "mean_surprise" in entries[-1]
     assert summary["ticks"] == entries[-1]["ticks"]
+
+
+def test_training_device_resolution_is_explicit(monkeypatch) -> None:
+    trainer = _module()
+
+    assert trainer.resolve_device("cpu").type == "cpu"
+    monkeypatch.setattr(trainer.torch.cuda, "is_available", lambda: False)
+    assert trainer.resolve_device("auto").type == "cpu"
+    with pytest.raises(RuntimeError, match="CUDA"):
+        trainer.resolve_device("cuda")

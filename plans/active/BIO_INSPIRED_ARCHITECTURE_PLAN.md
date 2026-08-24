@@ -2,6 +2,15 @@
 
 > 本文件只记录当前源码状态、已复现实证与唯一下一步。历史 NeuroPlex/D1/PlayEngine 结论不混入当前执行线。
 
+## 2026-08-24：容量、CUDA 与 Legacy 解耦决策
+
+- 训练对象：Taiji 的长期学习主体是物理稀疏突触的 `edge_weight`，并包含运动偏置、情景 association/readout；membrane/activity/trace/threshold 是持续动力学状态，`pre_index` 只在受门控的巩固期发生结构重连。
+- CUDA 边界：底层张量与 checkpoint 恢复支持 `device="cuda"`，原生语料入口现支持 `--device auto|cpu|cuda|cuda:N`；当前开发机安装的是 CPU-only PyTorch，因此 CUDA 契约由条件 smoke test 守护，吞吐优化仍需在真实 CUDA 机器测量后进行。
+- 容量规划：`TaijiConfig.capacity_profile(target_active_parameters, template=...)` 以显式参数预算自动求最大可容纳区域、记忆宽度和 fan-in；`planned_active_parameter_count` 在分配张量前给出与 `Taiji.parameter_count()` 一致的精确学习标量数。默认 300,000 预算得到 `(200,152,96)` 区域、304 memory units、286,170 个 active learned scalars。
+- Legacy 边界：`seed/` 与 `taiji/` 已完全不导入 Transformer/Neuroplex，但 `api/`、桌面端、认证/工具/设置和旧训练脚本仍有大量 `neuroplex` 导入。现在删除 `neuroplex/` 会直接破坏产品壳；彻底摆脱是可行的迁移任务，不是安全的目录删除。
+
+**唯一下一步**：先把认证、路径、配置、应用状态、工具注册等平台能力从 `neuroplex` 移入中性 `seed_platform`，使 `api/app.py` 与 Seed 默认启动链不再导入 legacy model；只有当产品入口的 legacy import 门禁归零后，再归档并删除 Transformer/Cortex 训练代码与 `legacy` 依赖组。
+
 ## 1. 当前架构
 
 ```text
