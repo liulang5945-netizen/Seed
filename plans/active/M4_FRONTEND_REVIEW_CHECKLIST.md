@@ -51,3 +51,14 @@
 
 §1.5 三项全过：安装与启动、核心交互（对话/历史/切换/设置全链路无控制台错误）、
 界面品质对照本清单达标。差距项逐条修复后复评，复评记录落 `reports/m4_frontend_review_<日期>.md`。
+
+## 6. 2026-08-24 客户端美化未生效复核
+
+- [x] 根因确认：源码 `frontend/dist` 与冻结客户端 `dist/Seed/_internal/frontend/dist` 的
+  `index.html`、JS/CSS hash 不一致；客户端日志确认运行的是冻结内置前端，不会读取仓库源码目录。
+- [x] 重新打包后复核：`Seed.exe` 内置前端与本次前端构建完全一致；打包后通过 `http://127.0.0.1:8000/`
+  返回当前 `index-CBgTIe_H.js` / `style-DBXByxTa.css`，桌面日志确认后端、WebSocket 与前端加载链路启动。
+- [x] `desktop/build.py` 已增加打包后前端一致性断言，避免以后只改源码/只构建前端却继续启动旧客户端。
+
+本项已闭合。后续若再次修改前端，唯一正确动作是重新执行 `python desktop/build.py` 后再打开
+`dist/Seed/Seed.exe`；只运行开发目录或只运行 `npm run build` 不会更新已经存在的 exe。
