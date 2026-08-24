@@ -15,7 +15,6 @@ from typing import Any
 
 from fastapi import FastAPI
 
-
 logger = logging.getLogger("ApiServer.LegacyBridge")
 _life_scheduler: Any | None = None
 _LEGACY_ENABLE_ENV = "SEED_ENABLE_LEGACY"
