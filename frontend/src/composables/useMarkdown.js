@@ -7,6 +7,13 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/atom-one-dark.css';
 import DOMPurify from 'dompurify';
 
+// 仅允许安全字符，防止模型输出 lang 注入到 class 属性（XSS）
+function sanitizeLang(lang) {
+  if (!lang) return 'text'
+  const cleaned = String(lang).replace(/[^a-zA-Z0-9_-]/g, '')
+  return cleaned || 'text'
+}
+
 const marked = new Marked(
   markedHighlight({
     langPrefix: 'hljs language-',
@@ -20,7 +27,7 @@ const marked = new Marked(
 marked.use({
   renderer: {
     code(code, lang) {
-      const language = lang || 'text';
+      const language = sanitizeLang(lang);
       return `<div class="code-block-wrapper">
   <div class="code-header">
     <span class="code-lang">${language}</span>
@@ -162,7 +169,7 @@ export function useMarkdown() {
   // DOMPurify 配置：允许 img 标签及常见图片属性
   const purifyConfig = {
     ADD_TAGS: ['img'],
-    ADD_ATTR: ['src', 'alt', 'width', 'height', 'loading', 'decoding', 'style', 'title'],
+    ADD_ATTR: ['src', 'alt', 'width', 'height', 'loading', 'decoding', 'title'],
     ALLOW_DATA_ATTR: false,
   };
 

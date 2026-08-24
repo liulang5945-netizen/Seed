@@ -3,9 +3,11 @@
 ========================================
 使用 HuggingFace datasets 库下载数据集
 """
+
 import os
 import json
 from pathlib import Path
+
 
 def download_belle_data():
     """下载 BELLE 数据集"""
@@ -29,11 +31,11 @@ def download_belle_data():
         print(f"\n转换格式并保存到: {output_file}")
 
         converted = 0
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             for item in dataset:
-                instruction = item.get('instruction', '')
-                input_text = item.get('input', '')
-                output_text = item.get('output', '')
+                instruction = item.get("instruction", "")
+                input_text = item.get("input", "")
+                output_text = item.get("output", "")
 
                 if not instruction or not output_text:
                     continue
@@ -45,12 +47,15 @@ def download_belle_data():
 
                 # 构建messages格式
                 messages = [
-                    {"role": "system", "content": "你是态极，一个本地AI生命体。你运行在用户的电脑上，数据不出本机。你会用自然、友好的方式回答用户的问题。"},
+                    {
+                        "role": "system",
+                        "content": "你是态极，一个本地AI生命体。你运行在用户的电脑上，数据不出本机。你会用自然、友好的方式回答用户的问题。",
+                    },
                     {"role": "user", "content": user_msg},
-                    {"role": "assistant", "content": output_text}
+                    {"role": "assistant", "content": output_text},
                 ]
 
-                f.write(json.dumps({"messages": messages}, ensure_ascii=False) + '\n')
+                f.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
                 converted += 1
 
         print(f"转换完成: {converted} 条")
@@ -59,6 +64,7 @@ def download_belle_data():
     except Exception as e:
         print(f"下载失败: {e}")
         return None
+
 
 def download_firefly_data():
     """下载 Firefly 数据集"""
@@ -82,12 +88,12 @@ def download_firefly_data():
         print(f"\n转换格式并保存到: {output_file}")
 
         converted = 0
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             for item in dataset:
                 # Firefly 格式: kind, input, target
-                kind = item.get('kind', '')
-                input_text = item.get('input', '')
-                target_text = item.get('target', '')
+                kind = item.get("kind", "")
+                input_text = item.get("input", "")
+                target_text = item.get("target", "")
 
                 if not target_text:
                     continue
@@ -97,12 +103,15 @@ def download_firefly_data():
 
                 # 构建messages格式
                 messages = [
-                    {"role": "system", "content": "你是态极，一个本地AI生命体。你运行在用户的电脑上，数据不出本机。你会用自然、友好的方式回答用户的问题。"},
+                    {
+                        "role": "system",
+                        "content": "你是态极，一个本地AI生命体。你运行在用户的电脑上，数据不出本机。你会用自然、友好的方式回答用户的问题。",
+                    },
                     {"role": "user", "content": user_msg},
-                    {"role": "assistant", "content": target_text}
+                    {"role": "assistant", "content": target_text},
                 ]
 
-                f.write(json.dumps({"messages": messages}, ensure_ascii=False) + '\n')
+                f.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
                 converted += 1
 
         print(f"转换完成: {converted} 条")
@@ -112,20 +121,22 @@ def download_firefly_data():
         print(f"下载失败: {e}")
         return None
 
+
 def sample_and_check(file_path, num_samples=5):
     """抽样检查数据质量"""
     print(f"\n抽样检查: {file_path}")
     print("-" * 40)
 
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         for i, line in enumerate(f):
             if i >= num_samples:
                 break
             item = json.loads(line)
-            msgs = item['messages']
+            msgs = item["messages"]
             print(f"\n样本 {i+1}:")
             print(f"  Q: {msgs[1]['content'][:80]}...")
             print(f"  A: {msgs[2]['content'][:80]}...")
+
 
 def main():
     print("=" * 60)
@@ -154,7 +165,7 @@ def main():
     if downloaded_files:
         print("\n下载的文件:")
         for f in downloaded_files:
-            with open(f, 'r', encoding='utf-8') as fh:
+            with open(f, "r", encoding="utf-8") as fh:
                 line_count = sum(1 for _ in fh)
             print(f"  {os.path.basename(f)}: {line_count} 条")
 
@@ -162,5 +173,6 @@ def main():
         print("1. 检查数据质量")
         print("2. 合并所有数据进行训练")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

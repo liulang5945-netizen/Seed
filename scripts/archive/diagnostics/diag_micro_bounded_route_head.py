@@ -22,7 +22,9 @@ import random
 import sys
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn as nn
@@ -45,7 +47,6 @@ from scripts.archive.diagnostics.diag_micro_route_fusion_pilot import (
 )
 from scripts.training.utils import load_dialogue_texts_multi
 
-
 ROUTE_HEAD_BOUND = 2.0
 ROUTE_HEAD_HIDDEN = 128
 ROUTE_HEAD_LR = 2e-3
@@ -58,8 +59,9 @@ DEFAULT_ROUTE_STEPS = 80
 class TokenBoundedRouteHead(nn.Module):
     """输入 token hidden、输出逐位置有界 trust logits 的临时路由头。"""
 
-    def __init__(self, input_dim: int, hidden_dim: int = ROUTE_HEAD_HIDDEN,
-                 bound: float = ROUTE_HEAD_BOUND):
+    def __init__(
+        self, input_dim: int, hidden_dim: int = ROUTE_HEAD_HIDDEN, bound: float = ROUTE_HEAD_BOUND
+    ):
         super().__init__()
         self.bound = float(bound)
         self.norm = nn.LayerNorm(input_dim)
@@ -80,9 +82,12 @@ class TokenBoundedRouteHead(nn.Module):
 class SharedRouteScorer(nn.Module):
     """所有成员共享的共同 route 空间 scorer。"""
 
-    def __init__(self, input_dim: int = ROUTE_COMMON_DIM,
-                 hidden_dim: int = ROUTE_HEAD_HIDDEN,
-                 bound: float = ROUTE_HEAD_BOUND):
+    def __init__(
+        self,
+        input_dim: int = ROUTE_COMMON_DIM,
+        hidden_dim: int = ROUTE_HEAD_HIDDEN,
+        bound: float = ROUTE_HEAD_BOUND,
+    ):
         super().__init__()
         self.bound = float(bound)
         self.norm = nn.LayerNorm(input_dim)
@@ -103,8 +108,9 @@ class SharedRouteScorer(nn.Module):
 class SharedAlignedTokenRouteHead(nn.Module):
     """成员专属 hidden→共同空间 adapter + 共享 token scorer。"""
 
-    def __init__(self, input_dim: int, shared_scorer: SharedRouteScorer,
-                 common_dim: int = ROUTE_COMMON_DIM):
+    def __init__(
+        self, input_dim: int, shared_scorer: SharedRouteScorer, common_dim: int = ROUTE_COMMON_DIM
+    ):
         super().__init__()
         self.adapter = nn.Linear(input_dim, common_dim)
         if input_dim == common_dim:
@@ -155,10 +161,7 @@ def _install_token_bounded_heads(
 def _forward_batch(cortex, rounds, general_sp, token_route: bool = False):
     """实验侧前向；token_route=True 才启用 token-level quality head。"""
 
-    embeddings = {
-        nid: cortex._neuron_shared_embeddings[nid]
-        for nid in cortex.ensemble.neurons
-    }
+    embeddings = {nid: cortex._neuron_shared_embeddings[nid] for nid in cortex.ensemble.neurons}
     neuron_embeddings, targets, answer_mask = batch_rounds(
         rounds,
         general_sp,
@@ -182,10 +185,12 @@ def _forward_batch(cortex, rounds, general_sp, token_route: bool = False):
 
 def _projected_member_nll(result, cortex, targets, answer_mask):
     projected = _projected_logits(cortex, result)
-    nlls = torch.stack([
-        _masked_teacher_forcing_nll(member_logits, targets, answer_mask)
-        for member_logits in projected
-    ])
+    nlls = torch.stack(
+        [
+            _masked_teacher_forcing_nll(member_logits, targets, answer_mask)
+            for member_logits in projected
+        ]
+    )
     shift_targets = targets[:, 1:].contiguous()
     valid = answer_mask[:, 1:].bool() & shift_targets.ge(0)
     if not bool(valid.any()):
@@ -211,16 +216,14 @@ def _per_position_target_snapshot(cortex, rounds, general_sp) -> dict:
     with torch.no_grad():
         for start in range(0, len(rounds), 1):
             result, targets, answer_mask = _forward_batch(
-                cortex, rounds[start:start + 1], general_sp, token_route=True
+                cortex, rounds[start : start + 1], general_sp, token_route=True
             )
             _projected, _member_nll, token_nll = _projected_member_nll(
                 result, cortex, targets, answer_mask
             )
             ideal = F.softmax(-token_nll / ROUTE_TARGET_TEMPERATURE, dim=0)
             target_sum += ideal.sum(dim=1).cpu()
-            oracle_wins += torch.bincount(
-                ideal.argmax(dim=0).cpu(), minlength=len(member_ids)
-            )
+            oracle_wins += torch.bincount(ideal.argmax(dim=0).cpu(), minlength=len(member_ids))
             total_tokens += token_nll.shape[1]
             del result
     total_tokens = max(total_tokens, 1)
@@ -228,12 +231,10 @@ def _per_position_target_snapshot(cortex, rounds, general_sp) -> dict:
         "samples": len(rounds),
         "answer_tokens": total_tokens,
         "mean_target_weights": {
-            nid: round(float(target_sum[i] / total_tokens), 6)
-            for i, nid in enumerate(member_ids)
+            nid: round(float(target_sum[i] / total_tokens), 6) for i, nid in enumerate(member_ids)
         },
         "oracle_position_winner_fraction": {
-            nid: round(float(oracle_wins[i] / total_tokens), 6)
-            for i, nid in enumerate(member_ids)
+            nid: round(float(oracle_wins[i] / total_tokens), 6) for i, nid in enumerate(member_ids)
         },
     }
 
@@ -269,25 +270,27 @@ def _token_route_snapshot(cortex, rounds, general_sp) -> dict:
     with torch.no_grad():
         for start in range(0, len(rounds), 1):
             result, targets, answer_mask = _forward_batch(
-                cortex, rounds[start:start + 1], general_sp, token_route=True
+                cortex, rounds[start : start + 1], general_sp, token_route=True
             )
             projected = _projected_logits(cortex, result)
             token_quality = result.get("quality_token_logits")
             if token_quality is None:
                 raise RuntimeError("token route head did not return token quality logits")
             route_logits = token_quality[:, :, :-1]
-            trust = F.softmax(
-                route_logits / ROUTE_PREDICT_TEMPERATURE, dim=0
+            trust = F.softmax(route_logits / ROUTE_PREDICT_TEMPERATURE, dim=0)
+            shadow_logits = torch.einsum("nbl,nblv->blv", trust, projected[:, :, :-1, :])
+            hard_nlls.append(
+                float(
+                    _masked_teacher_forcing_nll(
+                        result["fused_logits"], targets, answer_mask
+                    ).detach()
+                )
             )
-            shadow_logits = torch.einsum(
-                "nbl,nblv->blv", trust, projected[:, :, :-1, :]
+            shadow_nlls.append(
+                float(
+                    _masked_shift_teacher_forcing_nll(shadow_logits, targets, answer_mask).detach()
+                )
             )
-            hard_nlls.append(float(_masked_teacher_forcing_nll(
-                result["fused_logits"], targets, answer_mask
-            ).detach()))
-            shadow_nlls.append(float(_masked_shift_teacher_forcing_nll(
-                shadow_logits, targets, answer_mask
-            ).detach()))
             weights = result.get("weights")
             if weights is not None:
                 for nid, value in zip(member_ids, weights):
@@ -320,25 +323,21 @@ def _route_loss(cortex, result, targets, answer_mask):
     _projected, member_nll, member_token_nll = _projected_member_nll(
         result, cortex, targets, answer_mask
     )
-    per_position_ideal = F.softmax(
-        -member_token_nll.detach() / ROUTE_TARGET_TEMPERATURE, dim=0
-    )
+    per_position_ideal = F.softmax(-member_token_nll.detach() / ROUTE_TARGET_TEMPERATURE, dim=0)
     ideal = per_position_ideal.mean(dim=1)
     shift_targets = targets[:, 1:].contiguous()
     valid = answer_mask[:, 1:].bool() & shift_targets.ge(0)
     if not bool(valid.any()):
         valid = shift_targets.ge(0)
-    predicted_logits = quality_token_logits[:, :, :-1].reshape(
-        quality_token_logits.shape[0], -1
-    )[:, valid.reshape(-1)]
+    predicted_logits = quality_token_logits[:, :, :-1].reshape(quality_token_logits.shape[0], -1)[
+        :, valid.reshape(-1)
+    ]
     if predicted_logits.shape != member_token_nll.shape:
         raise RuntimeError(
             "token route/projected NLL shape mismatch: "
             f"route={tuple(predicted_logits.shape)} nll={tuple(member_token_nll.shape)}"
         )
-    predicted_log_probs = F.log_softmax(
-        predicted_logits / ROUTE_PREDICT_TEMPERATURE, dim=0
-    )
+    predicted_log_probs = F.log_softmax(predicted_logits / ROUTE_PREDICT_TEMPERATURE, dim=0)
     loss = -(per_position_ideal * predicted_log_probs).sum(dim=0).mean()
     return loss, member_nll.detach(), ideal.detach(), per_position_ideal.detach()
 
@@ -367,11 +366,13 @@ def run(
         neuron.eval()
 
     train_rounds, eval_rounds = _load_route_rounds(train_cap, eval_cap)
-    hf_eval_rounds = _rounds_from_texts(load_dialogue_texts_multi(
-        "data/hf_candidates/moss_003_dialogue",
-        filenames=["eval.jsonl"],
-        max_texts=eval_cap,
-    ))
+    hf_eval_rounds = _rounds_from_texts(
+        load_dialogue_texts_multi(
+            "data/hf_candidates/moss_003_dialogue",
+            filenames=["eval.jsonl"],
+            max_texts=eval_cap,
+        )
+    )
     if not train_rounds or not eval_rounds:
         raise RuntimeError("bounded route head train/eval rounds are empty")
     if not hf_eval_rounds:
@@ -382,9 +383,7 @@ def run(
     trainable = _install_token_bounded_heads(cortex, route_head_kind)
     bounded_before = _token_route_snapshot(cortex, eval_rounds, general_sp)
     bounded_before_hf = _token_route_snapshot(cortex, hf_eval_rounds, general_sp)
-    optimizer = torch.optim.AdamW(
-        trainable, lr=ROUTE_HEAD_LR, weight_decay=0.01
-    )
+    optimizer = torch.optim.AdamW(trainable, lr=ROUTE_HEAD_LR, weight_decay=0.01)
     generator = torch.Generator().manual_seed(SEED + 19)
     history = []
     for step in range(1, route_steps + 1):
@@ -400,22 +399,20 @@ def run(
         torch.nn.utils.clip_grad_norm_(trainable, max_norm=1.0)
         optimizer.step()
         if step % 10 == 0 or step == route_steps:
-            history.append({
-                "step": step,
-                "loss": round(float(loss.detach()), 6),
-                "best_member_nll": round(float(member_nll.min()), 6),
-                "ideal_top1": int(ideal.argmax()),
-                "ideal_position_top1_fraction": round(
-                    float((per_position_ideal.argmax(dim=0) == ideal.argmax()).float().mean()),
-                    6,
-                ),
-                "quality_min": round(float(
-                    result["quality_token_logits"].detach().min()
-                ), 6),
-                "quality_max": round(float(
-                    result["quality_token_logits"].detach().max()
-                ), 6),
-            })
+            history.append(
+                {
+                    "step": step,
+                    "loss": round(float(loss.detach()), 6),
+                    "best_member_nll": round(float(member_nll.min()), 6),
+                    "ideal_top1": int(ideal.argmax()),
+                    "ideal_position_top1_fraction": round(
+                        float((per_position_ideal.argmax(dim=0) == ideal.argmax()).float().mean()),
+                        6,
+                    ),
+                    "quality_min": round(float(result["quality_token_logits"].detach().min()), 6),
+                    "quality_max": round(float(result["quality_token_logits"].detach().max()), 6),
+                }
+            )
             print(
                 f"[bounded-route] step {step}/{route_steps}: "
                 f"loss={history[-1]['loss']:.4f} "
@@ -481,11 +478,13 @@ def run(
                 6,
             ),
             "hf_bounded_after_over_production_ppl_ratio": round(
-                math.exp(min(
-                    bounded_after_hf["hard_route_teacher_forcing_nll"]
-                    - production_before_hf["hard_route_teacher_forcing_nll"],
-                    20,
-                )),
+                math.exp(
+                    min(
+                        bounded_after_hf["hard_route_teacher_forcing_nll"]
+                        - production_before_hf["hard_route_teacher_forcing_nll"],
+                        20,
+                    )
+                ),
                 6,
             ),
         },

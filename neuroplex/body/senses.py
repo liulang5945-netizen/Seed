@@ -8,10 +8,10 @@
 
 注意：不再使用全局单例，由 BodyCore 统一管理。
 """
-import asyncio
+
 import logging
 import time
-from typing import Optional, Generator, AsyncGenerator
+from typing import AsyncGenerator
 
 logger = logging.getLogger("Taiji.Senses")
 
@@ -113,14 +113,18 @@ class InputSensor:
 
     async def _generate(self, text: str, max_tokens: int, temperature: float) -> str:
         """同步生成"""
-        if hasattr(self._engine, 'generate'):
+        if hasattr(self._engine, "generate"):
             return self._engine.generate(text, max_new_tokens=max_tokens, temperature=temperature)
         return "引擎不支持生成"
 
-    async def _stream_generate(self, text: str, max_tokens: int, temperature: float) -> AsyncGenerator[str, None]:
+    async def _stream_generate(
+        self, text: str, max_tokens: int, temperature: float
+    ) -> AsyncGenerator[str, None]:
         """流式生成"""
-        if hasattr(self._engine, 'generate_stream'):
-            async for chunk in self._engine.generate_stream(text, max_new_tokens=max_tokens, temperature=temperature):
+        if hasattr(self._engine, "generate_stream"):
+            async for chunk in self._engine.generate_stream(
+                text, max_new_tokens=max_tokens, temperature=temperature
+            ):
                 yield chunk
         else:
             yield "引擎不支持流式生成"

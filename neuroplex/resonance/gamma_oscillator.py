@@ -29,6 +29,7 @@ Usage:
     osc.tick()  # 每轮共振推进
     gate = osc.gate_factor("zh_1")  # 调制写入强度
 """
+
 from __future__ import annotations
 
 import math
@@ -130,7 +131,7 @@ class GammaOscillator:
         for i, nid_i in enumerate(ids):
             if nid_i not in self.phases:
                 continue
-            for nid_j in ids[i + 1:]:
+            for nid_j in ids[i + 1 :]:
                 if nid_j not in self.phases:
                     continue
                 # 耦合强度由共激活强度调制
@@ -247,7 +248,7 @@ def apply_gamma_gate(
     field._gamma_oscillator = gamma_oscillator
     if gamma_oscillator is not None:
         # monkey-patch write/update（保留原方法）
-        if not hasattr(field, '_original_write'):
+        if not hasattr(field, "_original_write"):
             field._original_write = field.write
             field._original_update = field.update
 

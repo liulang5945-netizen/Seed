@@ -4,6 +4,7 @@ This is a minimal stub that allows imports to succeed. The real
 implementation will run Python code inside a hardened sandbox
 (files provided via a virtual filesystem).
 """
+
 import logging
 
 logger = logging.getLogger(__name__)

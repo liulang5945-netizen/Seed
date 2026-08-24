@@ -9,6 +9,7 @@
 运行：
     python -X utf8 -u scripts/training/diag_dialogue_generation_contract.py
 """
+
 from __future__ import annotations
 
 import json
@@ -17,7 +18,9 @@ import os
 import sys
 import hashlib
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 
@@ -26,10 +29,12 @@ from neuroplex.resonance.dialogue_format import SFT_ANSWER_MARKER
 from neuroplex.resonance.translator import build_position_alignment
 from scripts.training.utils import load_dialogue_texts_multi, split_train_eval
 
-
 DIALOGUE_IDS = [
-    "zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-    "zh_aug3_dialogue", "zh_std0_dialogue",
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
 ]
 
 
@@ -72,41 +77,47 @@ def main() -> None:
 
     for sample_index, text in enumerate(texts):
         marker = text.find(SFT_ANSWER_MARKER)
-        prompt = text[:marker + len(SFT_ANSWER_MARKER)]
+        prompt = text[: marker + len(SFT_ANSWER_MARKER)]
         full_general, targets = build_position_alignment(text, zh, general)
         prompt_general = general.encode(prompt)
-        prefix_matches = list(full_general[:len(prompt_general)]) == list(prompt_general)
+        prefix_matches = list(full_general[: len(prompt_general)]) == list(prompt_general)
         answer_start = len(prompt_general)
         target_id = int(targets[answer_start]) if answer_start < len(targets) else -100
         backfill = general.encode(zh.decode([target_id])) if target_id >= 0 else []
-        report["samples"].append({
-            "sample_index": sample_index,
-            "prompt_preview": prompt[:120],
-            "full_general_len": len(full_general),
-            "prompt_general_len": len(prompt_general),
-            "answer_start": answer_start,
-            "prefix_matches": prefix_matches,
-            "first_target_id": target_id,
-            "first_target_piece": zh.id_to_piece(target_id) if target_id >= 0 else None,
-            "first_target_backfill_general_ids": backfill,
-            "backfill_nonempty": bool(backfill),
-        })
+        report["samples"].append(
+            {
+                "sample_index": sample_index,
+                "prompt_preview": prompt[:120],
+                "full_general_len": len(full_general),
+                "prompt_general_len": len(prompt_general),
+                "answer_start": answer_start,
+                "prefix_matches": prefix_matches,
+                "first_target_id": target_id,
+                "first_target_piece": zh.id_to_piece(target_id) if target_id >= 0 else None,
+                "first_target_backfill_general_ids": backfill,
+                "backfill_nonempty": bool(backfill),
+            }
+        )
 
         for nid in DIALOGUE_IDS:
             emb = cortex._neuron_shared_embeddings[nid]
             prompt_ids = torch.tensor([list(prompt_general)], dtype=torch.long)
-            prompt_logits = cortex.neurons[nid](emb(prompt_ids), return_logits=True)["logits"].detach()
+            prompt_logits = cortex.neurons[nid](emb(prompt_ids), return_logits=True)[
+                "logits"
+            ].detach()
             prompt_next = prompt_logits[:, -1, :]
             target_rank = (
-                int((prompt_next[0] > prompt_next[0, target_id]).sum())
-                if target_id >= 0 else None
+                int((prompt_next[0] > prompt_next[0, target_id]).sum()) if target_id >= 0 else None
             )
-            neuron_report = report["neurons"].setdefault(nid, {
-                "target_ranks_zero_based": [],
-                "top1_hits": 0,
-                "backfill_nonempty": 0,
-                "prefix_parity": [],
-            })
+            neuron_report = report["neurons"].setdefault(
+                nid,
+                {
+                    "target_ranks_zero_based": [],
+                    "top1_hits": 0,
+                    "backfill_nonempty": 0,
+                    "prefix_parity": [],
+                },
+            )
             if target_rank is not None:
                 neuron_report["target_ranks_zero_based"].append(target_rank)
             if int(prompt_next.argmax()) == target_id:
@@ -118,21 +129,27 @@ def main() -> None:
             # prefix subset while ranking the complete held-out sample set.
             if sample_index < 8:
                 full_ids = torch.tensor([list(full_general)], dtype=torch.long)
-                full_logits = cortex.neurons[nid](emb(full_ids), return_logits=True)["logits"].detach()
+                full_logits = cortex.neurons[nid](emb(full_ids), return_logits=True)[
+                    "logits"
+                ].detach()
                 full_next = full_logits[:, answer_start - 1, :]
                 diff = (full_next - prompt_next).abs()
                 cosine = float(torch.nn.functional.cosine_similarity(full_next, prompt_next).item())
-                neuron_report["prefix_parity"].append({
-                    "sample_index": sample_index,
-                    "max_abs_diff": round(float(diff.max()), 6),
-                    "cosine": round(max(-1.0, min(1.0, cosine)), 8),
-                })
+                neuron_report["prefix_parity"].append(
+                    {
+                        "sample_index": sample_index,
+                        "max_abs_diff": round(float(diff.max()), 6),
+                        "cosine": round(max(-1.0, min(1.0, cosine)), 8),
+                    }
+                )
 
     for neuron_report in report["neurons"].values():
         ranks = neuron_report.pop("target_ranks_zero_based")
         ranks_sorted = sorted(ranks)
         neuron_report["mean_target_rank_zero_based"] = round(sum(ranks) / max(len(ranks), 1), 2)
-        neuron_report["median_target_rank_zero_based"] = ranks_sorted[len(ranks_sorted) // 2] if ranks_sorted else None
+        neuron_report["median_target_rank_zero_based"] = (
+            ranks_sorted[len(ranks_sorted) // 2] if ranks_sorted else None
+        )
         neuron_report["top1_rate"] = round(neuron_report["top1_hits"] / max(len(ranks), 1), 4)
 
     print(json.dumps(report, ensure_ascii=False, indent=2))

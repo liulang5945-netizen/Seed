@@ -28,18 +28,20 @@ logger = logging.getLogger("Taiji.Search.Index")
 @dataclass
 class IndexedPage:
     """索引中的一页"""
+
     url: str = ""
     title: str = ""
     text: str = ""
     links: List[str] = field(default_factory=list)
     crawled_at: float = 0.0
     word_count: int = 0
-    source: str = ""          # discovery / crawl / browse
+    source: str = ""  # discovery / crawl / browse
 
 
 @dataclass
 class SearchHit:
     """搜索命中"""
+
     url: str = ""
     title: str = ""
     snippet: str = ""
@@ -49,6 +51,7 @@ class SearchHit:
 # ═══════════════════════════════════════════════
 # 词级分词器
 # ═══════════════════════════════════════════════
+
 
 class Tokenizer:
     """
@@ -107,6 +110,7 @@ class Tokenizer:
 # ═══════════════════════════════════════════════
 # 倒排索引 + BM25
 # ═══════════════════════════════════════════════
+
 
 class InvertedIndex:
     """
@@ -216,10 +220,14 @@ class InvertedIndex:
             for score, idx in scored[:top_k]:
                 page = self._pages[idx]
                 snippet = self._make_snippet(page.text, terms)
-                hits.append(SearchHit(
-                    url=page.url, title=page.title,
-                    snippet=snippet, score=round(score, 2),
-                ))
+                hits.append(
+                    SearchHit(
+                        url=page.url,
+                        title=page.title,
+                        snippet=snippet,
+                        score=round(score, 2),
+                    )
+                )
             return hits
 
     def _make_snippet(self, text: str, terms: List[str], window: int = 100) -> str:
@@ -233,7 +241,7 @@ class InvertedIndex:
                 prefix = "..." if start > 0 else ""
                 suffix = "..." if end < len(text) else ""
                 return prefix + text[start:end] + suffix
-        return text[:window * 2]
+        return text[: window * 2]
 
     # ─── 持久化 ───
 
@@ -271,9 +279,12 @@ class InvertedIndex:
                 data = {
                     "pages": [
                         {
-                            "url": p.url, "title": p.title[:200],
-                            "text": p.text[:8000], "links": p.links[:30],
-                            "crawled_at": p.crawled_at, "word_count": p.word_count,
+                            "url": p.url,
+                            "title": p.title[:200],
+                            "text": p.text[:8000],
+                            "links": p.links[:30],
+                            "crawled_at": p.crawled_at,
+                            "word_count": p.word_count,
                             "source": p.source,
                         }
                         for p in self._pages

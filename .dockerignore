@@ -1,0 +1,48 @@
+# 版本控制与 IDE
+.git
+.gitignore
+.github
+.vscode
+.idea
+.qoder
+.trae
+.workbuddy
+.devcontainer
+
+# Python 缓存与虚拟环境
+__pycache__
+*.py[cod]
+*.egg-info
+.venv
+venv
+.pytest_cache
+.ruff_cache
+.seed_test_tmp
+.coverage
+coverage.xml
+report.xml
+
+# 前端（构建在镜像内单独 stage 完成，排除依赖与产物以减小上下文）
+frontend/node_modules
+frontend/dist
+frontend/.dev*.log
+
+# 构建与分发产物
+build
+dist
+*.spec.bak
+
+# 大体积 / 本地专属资源（通过 volume 挂载提供，不进镜像上下文）
+checkpoints
+logs
+reports
+artifacts
+_scratch
+_libs
+update_frontend
+
+# 测试与临时数据
+tests
+*.pt
+*.log
+.local

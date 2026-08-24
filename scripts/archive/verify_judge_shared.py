@@ -11,6 +11,7 @@
 
 运行：python -u scripts/training/verify_judge_shared.py
 """
+
 from __future__ import annotations
 
 import os
@@ -19,7 +20,9 @@ import sys
 import tempfile
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import random  # noqa: E402
 import numpy as np  # noqa: E402
@@ -45,8 +48,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 HUB_CKPT = "data/hub_neuron/neuron_hub.pt"
 
@@ -84,9 +92,12 @@ def main():
         judge_heads = {nid: cortex.neurons[nid].judge_lm_head for nid in domain_nids}
         first_id = id(judge_heads[domain_nids[0]])
         all_shared = all(id(judge_heads[nid]) == first_id for nid in domain_nids)
-        check("A1. 4 个域 neuron judge_lm_head 是同一对象", all_shared,
-              f"ids={'同' if all_shared else '异'} "
-              f"first={first_id} all={[id(judge_heads[n]) for n in domain_nids]}")
+        check(
+            "A1. 4 个域 neuron judge_lm_head 是同一对象",
+            all_shared,
+            f"ids={'同' if all_shared else '异'} "
+            f"first={first_id} all={[id(judge_heads[n]) for n in domain_nids]}",
+        )
 
         # ── A2. 参数省 393M ──
         print("\n[A2] 参数总账（去重后）...", flush=True)
@@ -106,21 +117,27 @@ def main():
         # 对比：共享前应多 3×131M = 393M
         judge_shared_saving = 3 * 131072000  # 3 份额外的 256K×512
         saved = (total_params + judge_shared_saving) - total_params
-        check("A2. 总参数去重后省 393M（4 份判定头 -> 1 份共享）",
-              abs(saved - judge_shared_saving) < 1000,  # 省量 = 3×131M
-              f"total={total_params/1e6:.0f}M (共享前≈{(total_params+judge_shared_saving)/1e6:.0f}M, 省={judge_shared_saving/1e6:.0f}M)")
+        check(
+            "A2. 总参数去重后省 393M（4 份判定头 -> 1 份共享）",
+            abs(saved - judge_shared_saving) < 1000,  # 省量 = 3×131M
+            f"total={total_params/1e6:.0f}M (共享前≈{(total_params+judge_shared_saving)/1e6:.0f}M, 省={judge_shared_saving/1e6:.0f}M)",
+        )
 
         # ── A3. 判定空间统一化（std0/hub 补判定能力）──
         print("\n[A3] 判定空间统一化（std0 768 / hub 1024 补判定）...", flush=True)
         std0 = cortex.neurons["zh_std0_dialogue"]
         hub = cortex.neurons["hub"]
-        check("A3. std0/hub 获得判定头（共享 + 投影适配）",
-              std0.judge_lm_head is not None and hub.judge_lm_head is not None
-              and std0.judge_proj is not None and hub.judge_proj is not None
-              and std0.judge_proj.in_features == 768
-              and hub.judge_proj.in_features == 1024,
-              f"std0_proj={std0.judge_proj.in_features if std0.judge_proj else 'None'}→512, "
-              f"hub_proj={hub.judge_proj.in_features if hub.judge_proj else 'None'}→512")
+        check(
+            "A3. std0/hub 获得判定头（共享 + 投影适配）",
+            std0.judge_lm_head is not None
+            and hub.judge_lm_head is not None
+            and std0.judge_proj is not None
+            and hub.judge_proj is not None
+            and std0.judge_proj.in_features == 768
+            and hub.judge_proj.in_features == 1024,
+            f"std0_proj={std0.judge_proj.in_features if std0.judge_proj else 'None'}→512, "
+            f"hub_proj={hub.judge_proj.in_features if hub.judge_proj else 'None'}→512",
+        )
 
         # ── A4. 判定空间统一可比（std0/hub 与 compact 同 256K 空间）──
         print("\n[A4] 判定空间统一可比...", flush=True)
@@ -135,25 +152,29 @@ def main():
                 n = cortex.neurons[nid]
                 r = n.forward(emb, round_num=1, return_judge_logits=True)
                 judge_out[nid] = r.get("judge_logits")
-        all_256k = all(v is not None and v.shape[-1] == 256000
-                       for v in judge_out.values())
+        all_256k = all(v is not None and v.shape[-1] == 256000 for v in judge_out.values())
         finite = all(torch.isfinite(v).all().item() for v in judge_out.values())
-        check("A4. std0/hub 判定 logits 与 compact 同 256K 空间（可比）",
-              all_256k and finite,
-              f"code={judge_out['code'].shape if judge_out['code'] is not None else 'None'} "
-              f"std0={judge_out['zh_std0_dialogue'].shape if judge_out['zh_std0_dialogue'] is not None else 'None'} "
-              f"hub={judge_out['hub'].shape if judge_out['hub'] is not None else 'None'}")
+        check(
+            "A4. std0/hub 判定 logits 与 compact 同 256K 空间（可比）",
+            all_256k and finite,
+            f"code={judge_out['code'].shape if judge_out['code'] is not None else 'None'} "
+            f"std0={judge_out['zh_std0_dialogue'].shape if judge_out['zh_std0_dialogue'] is not None else 'None'} "
+            f"hub={judge_out['hub'].shape if judge_out['hub'] is not None else 'None'}",
+        )
 
         # ── B1. 回归：生成非空 ──
         print("\n[B1] 回归：生成非空不退化...", flush=True)
         out = cortex.generate(
             build_dialogue_prompt("介绍一下什么是机器学习。"),
-            max_tokens=32, domain="zh", temperature=0.55,
+            max_tokens=32,
+            domain="zh",
+            temperature=0.55,
         )
-        check("B1. 生成非空不退化",
-              isinstance(out, str) and len(out.strip()) > 0
-              and not cortex._is_degenerate_text(out),
-              f"out={out[:36]!r}")
+        check(
+            "B1. 生成非空不退化",
+            isinstance(out, str) and len(out.strip()) > 0 and not cortex._is_degenerate_text(out),
+            f"out={out[:36]!r}",
+        )
     except Exception as e:
         check("A1. 共享检测", False, f"err={e}")
         check("A2. 参数省", False, f"err={e}")

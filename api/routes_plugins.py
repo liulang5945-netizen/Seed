@@ -1,6 +1,7 @@
 """
 插件 API 路由
 """
+
 import logging
 from fastapi import APIRouter, HTTPException
 

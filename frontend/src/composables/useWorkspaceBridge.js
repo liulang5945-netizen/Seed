@@ -111,7 +111,8 @@ export function useWorkspaceBridge() {
                   } else if (parsed.type === 'thought') {
                     explanation += parsed.data?.content || ''
                   }
-                } catch (e) { console.debug('[WSBridge] parse error:', e.message) }
+                } catch (e) {
+                  console.debug('[WSBridge] parse error:', e.message)
                   explanation += p
                 }
               }
@@ -123,7 +124,8 @@ export function useWorkspaceBridge() {
           sendTerminalOutputToChat(`💡 ${explanation}`, 'explanation')
         }
       }
-    } catch (e) { console.debug('[WSBridge] execution error:', e.message) }
+    } catch (e) {
+      console.debug('[WSBridge] execution error:', e.message)
       // 自动解释失败，静默处理
     }
   }

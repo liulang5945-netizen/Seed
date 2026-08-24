@@ -21,8 +21,8 @@ from __future__ import annotations
 
 import logging
 from collections import deque
-from dataclasses import dataclass, field
-from typing import Any, Optional
+from dataclasses import dataclass
+from typing import Optional
 
 import torch
 import torch.nn as nn
@@ -33,6 +33,7 @@ logger = logging.getLogger("Taiji.STDP")
 @dataclass
 class FiringRecord:
     """单次发放记录。"""
+
     neuron_id: str
     round_num: int
     field_vector: torch.Tensor  # [B, D] 或 [D]
@@ -52,10 +53,10 @@ class STDPRule:
 
     def __init__(
         self,
-        eta_plus: float = 0.01,   # LTP 学习率
+        eta_plus: float = 0.01,  # LTP 学习率
         eta_minus: float = 0.005,  # LTD 学习率（通常小于 LTP）
-        tau_plus: float = 2.0,     # LTP 时间常数（轮次）
-        tau_minus: float = 2.0,    # LTD 时间常数
+        tau_plus: float = 2.0,  # LTP 时间常数（轮次）
+        tau_minus: float = 2.0,  # LTD 时间常数
         # 相似度门控。2026-08-14 验收实测（R11）：原默认 0.3 使 STDP 从未生效——
         # 各 neuron 的场写入方向（含跨规格投影后的统一空间）cosine 实测 ±0.03，
         # 0.3 阈值下所有 pair 被门控，睡眠期 apply 恒空转（离散/连续路径皆然）。
@@ -93,8 +94,11 @@ class STDPRule:
             v_pre = v_pre.unsqueeze(0)
         if v_post.dim() == 1:
             v_post = v_post.unsqueeze(0)
-        sim = ((v_pre * v_post).sum(dim=-1) /
-               (v_pre.norm(dim=-1) * v_post.norm(dim=-1) + 1e-8)).mean().item()
+        sim = (
+            ((v_pre * v_post).sum(dim=-1) / (v_pre.norm(dim=-1) * v_post.norm(dim=-1) + 1e-8))
+            .mean()
+            .item()
+        )
 
         # 相似度不足，不更新
         if sim < self.similarity_threshold:
@@ -102,10 +106,18 @@ class STDPRule:
 
         if delta_t > 0:
             # pre 先于 post → LTP
-            return self.eta_plus * float(torch.exp(torch.tensor(-delta_t / self.tau_plus)).item()) * sim
+            return (
+                self.eta_plus
+                * float(torch.exp(torch.tensor(-delta_t / self.tau_plus)).item())
+                * sim
+            )
         elif delta_t < 0:
             # post 先于 pre → LTD
-            return -self.eta_minus * float(torch.exp(torch.tensor(delta_t / self.tau_minus)).item()) * sim
+            return (
+                -self.eta_minus
+                * float(torch.exp(torch.tensor(delta_t / self.tau_minus)).item())
+                * sim
+            )
         else:
             # 同轮次，小幅 LTP（视为同时发放）
             return self.eta_plus * 0.5 * sim
@@ -139,9 +151,9 @@ class STDPTracker:
         # 语义与 apply_updates 一致：pre 先于 post 发放 → (pre, post) 有向对
         self._coactivation_stats: dict = {}
         # 结构演化阈值（修剪/生长）
-        self.grow_count_threshold = 5      # 共激活次数 ≥ 此值 → 视为高共激活
-        self.grow_sim_threshold = 0.3      # 平均 sim ≥ 此值 → 视为方向一致
-        self.prune_count_threshold = 2     # 共激活次数 < 此值 → 视为低共激活
+        self.grow_count_threshold = 5  # 共激活次数 ≥ 此值 → 视为高共激活
+        self.grow_sim_threshold = 0.3  # 平均 sim ≥ 此值 → 视为方向一致
+        self.prune_count_threshold = 2  # 共激活次数 < 此值 → 视为低共激活
         self.structure_last_updated: int = 0
 
     def record_firing(
@@ -197,11 +209,18 @@ class STDPTracker:
                             v_pre = v_pre.unsqueeze(0)
                         if v_post.dim() == 1:
                             v_post = v_post.unsqueeze(0)
-                        sim = float(((v_pre * v_post).sum(dim=-1) /
-                                     (v_pre.norm(dim=-1) * v_post.norm(dim=-1) + 1e-8)).mean().item())
+                        sim = float(
+                            (
+                                (v_pre * v_post).sum(dim=-1)
+                                / (v_pre.norm(dim=-1) * v_post.norm(dim=-1) + 1e-8)
+                            )
+                            .mean()
+                            .item()
+                        )
                         key = (str(pre_id), str(post_id))
                         entry = self._coactivation_stats.setdefault(
-                            key, {"count": 0, "total_sim": 0.0, "last_update": post_fire.round_num})
+                            key, {"count": 0, "total_sim": 0.0, "last_update": post_fire.round_num}
+                        )
                         entry["count"] += 1
                         entry["total_sim"] += sim
                         entry["last_update"] = max(entry["last_update"], post_fire.round_num)
@@ -244,8 +263,10 @@ class STDPTracker:
 
         # ── 1. 修剪：低共激活 + 弱权重通道条目删除 ──
         for post_id, post_neuron in neurons.items():
-            for ch_dict, ctype in ((getattr(post_neuron, "excite_channels", {}), "excite"),
-                                   (getattr(post_neuron, "inhibit_channels", {}), "inhibit")):
+            for ch_dict, ctype in (
+                (getattr(post_neuron, "excite_channels", {}), "excite"),
+                (getattr(post_neuron, "inhibit_channels", {}), "inhibit"),
+            ):
                 for pre_id in list(ch_dict.keys()):
                     cstat = self.get_coactivation_stats(pre_id, post_id)
                     if cstat["count"] >= self.prune_count_threshold:
@@ -272,11 +293,14 @@ class STDPTracker:
             # 该 post 已有的所有通道 peer（excite + inhibit）
             existing_peers = sorted(
                 set(getattr(post_neuron, "excite_channels", {}).keys())
-                | set(getattr(post_neuron, "inhibit_channels", {}).keys()))
+                | set(getattr(post_neuron, "inhibit_channels", {}).keys())
+            )
             # 已覆盖的 (pre, post) 对（两个方向都算，避免重复建通道）
             covered = set()
-            for ch_dict in (getattr(post_neuron, "excite_channels", {}),
-                            getattr(post_neuron, "inhibit_channels", {})):
+            for ch_dict in (
+                getattr(post_neuron, "excite_channels", {}),
+                getattr(post_neuron, "inhibit_channels", {}),
+            ):
                 covered.update(ch_dict.keys())
 
             for pre_id, cstat in list(self._coactivation_stats.items()):
@@ -414,8 +438,10 @@ class STDPTracker:
         for post_id, post_neuron in neurons.items():
             post_updates = {}
             # 检查该神经元的所有 side_channels
-            for channel_dict in [getattr(post_neuron, "excite_channels", {}),
-                                  getattr(post_neuron, "inhibit_channels", {})]:
+            for channel_dict in [
+                getattr(post_neuron, "excite_channels", {}),
+                getattr(post_neuron, "inhibit_channels", {}),
+            ]:
                 for key in channel_dict.keys():
                     pre_id = key
                     if pre_id in neurons or pre_id in self._firing_history:
@@ -448,8 +474,7 @@ class STDPTracker:
         """
         return {
             "coactivation_stats": {
-                f"{pre}|{post}": dict(v)
-                for (pre, post), v in self._coactivation_stats.items()
+                f"{pre}|{post}": dict(v) for (pre, post), v in self._coactivation_stats.items()
             },
             "grow_count_threshold": self.grow_count_threshold,
             "grow_sim_threshold": self.grow_sim_threshold,

@@ -83,19 +83,33 @@ def test_1_output_structure():
     emb = torch.randn(1, 8, TINY_TEST.base_embed_dim)
     tgt = torch.randint(0, 512, (1, 8))
     r = ens.forward_train(
-        shared_embeddings=emb, targets=tgt, n_rounds=3,
-        continuous=True, ct=ContinuousResonance(steps=4, dt=0.25, min_steps=2),
+        shared_embeddings=emb,
+        targets=tgt,
+        n_rounds=3,
+        continuous=True,
+        ct=ContinuousResonance(steps=4, dt=0.25, min_steps=2),
     )
-    need = ["fused_logits", "weights", "scores", "phase_loss", "per_neuron_nll",
-            "field_state", "continuous_weights"]
+    need = [
+        "fused_logits",
+        "weights",
+        "scores",
+        "phase_loss",
+        "per_neuron_nll",
+        "field_state",
+        "continuous_weights",
+    ]
     for k in need:
         check(f"输出含 {k}", k in r and r[k] is not None)
-    check("fused_logits 形状 [B,L,V]",
-          r["fused_logits"].shape == (1, 8, 512),
-          f"→ {tuple(r['fused_logits'].shape)}")
-    check("continuous_weights 形状 [N]",
-          r["continuous_weights"].shape == (4,),
-          f"→ {tuple(r['continuous_weights'].shape)}")
+    check(
+        "fused_logits 形状 [B,L,V]",
+        r["fused_logits"].shape == (1, 8, 512),
+        f"→ {tuple(r['fused_logits'].shape)}",
+    )
+    check(
+        "continuous_weights 形状 [N]",
+        r["continuous_weights"].shape == (4,),
+        f"→ {tuple(r['continuous_weights'].shape)}",
+    )
 
 
 def test_2_weights_time_average():
@@ -104,8 +118,10 @@ def test_2_weights_time_average():
     emb = torch.randn(1, 8, TINY_TEST.base_embed_dim)
     ct = ContinuousResonance(steps=3, dt=1 / 3, min_steps=2)
     r = ens.forward_train(
-        shared_embeddings=emb, n_rounds=3,
-        continuous=True, ct=ct,
+        shared_embeddings=emb,
+        n_rounds=3,
+        continuous=True,
+        ct=ct,
     )
     # 独立复算：t=0 激活 + t=1..steps 激活（在 forward_train 已推进相位后无法
     # 精确复算，这里验证基础性质：非负 + 有区分度 + 未归一化求和合理）
@@ -113,9 +129,11 @@ def test_2_weights_time_average():
     check("连续权重非负", bool((cw >= 0).all()), f"→ {cw.tolist()}")
     check("连续权重有区分度", cw.std().item() > 1e-6, f"std={cw.std().item():.4f}")
     # Σdt·a ≤ steps·dt（激活 ≤1）
-    check("权重上界 = steps·dt",
-          cw.max().item() <= ct.steps * ct.dt + 1e-5,
-          f"max={cw.max().item():.4f} ≤ {ct.steps * ct.dt}")
+    check(
+        "权重上界 = steps·dt",
+        cw.max().item() <= ct.steps * ct.dt + 1e-5,
+        f"max={cw.max().item():.4f} ≤ {ct.steps * ct.dt}",
+    )
 
 
 def test_3_fusion_weights_normalized():
@@ -124,15 +142,19 @@ def test_3_fusion_weights_normalized():
     emb = torch.randn(1, 8, TINY_TEST.base_embed_dim)
     ct = ContinuousResonance(steps=4, dt=0.25, min_steps=2)
     r = ens.forward_train(
-        shared_embeddings=emb, n_rounds=3,
-        continuous=True, ct=ct,
+        shared_embeddings=emb,
+        n_rounds=3,
+        continuous=True,
+        ct=ct,
     )
     w = r["weights"]
     cw = r["continuous_weights"]
     expect = cw / cw.sum().clamp_min(1e-8)
-    check("融合权重 = 连续权重归一化",
-          torch.allclose(w, expect, atol=1e-5),
-          f"w={w.tolist()} expect={expect.tolist()}")
+    check(
+        "融合权重 = 连续权重归一化",
+        torch.allclose(w, expect, atol=1e-5),
+        f"w={w.tolist()} expect={expect.tolist()}",
+    )
     check("融合权重和≈1", abs(w.sum().item() - 1.0) < 1e-4, f"sum={w.sum().item():.6f}")
 
 
@@ -147,26 +169,41 @@ def test_4_supervision_pure():
     ct = ContinuousResonance(steps=4, dt=0.25, min_steps=2)
     # continuous=True：round 1 后连续积分（n_rounds=3）
     r_c = ens.forward_train(
-        shared_embeddings=emb, targets=tgt, answer_mask=am, n_rounds=3,
-        continuous=True, ct=ct,
+        shared_embeddings=emb,
+        targets=tgt,
+        answer_mask=am,
+        n_rounds=3,
+        continuous=True,
+        ct=ct,
     )
     # 离散 n_rounds=1：只有 round 1（t=0 独立前向）→ per_neuron_nll 应一致
     r_1 = ens.forward_train(
-        shared_embeddings=emb, targets=tgt, answer_mask=am, n_rounds=1,
+        shared_embeddings=emb,
+        targets=tgt,
+        answer_mask=am,
+        n_rounds=1,
         continuous=False,
     )
     # 注意：两次调用间 gamma 相位已推进 → round 1 输入不同 → NLL 不能直接比。
     # 改为验证结构性纯净：continuous 模式的 final_judge_logits 来自 round 1
-    #（n_rounds=3 但 per_neuron_nll 未因连续积分更新）。
-    check("per_neuron_nll 形状 [N]",
-          r_c["per_neuron_nll"].shape == (4,),
-          f"→ {tuple(r_c['per_neuron_nll'].shape)}")
+    # （n_rounds=3 但 per_neuron_nll 未因连续积分更新）。
+    check(
+        "per_neuron_nll 形状 [N]",
+        r_c["per_neuron_nll"].shape == (4,),
+        f"→ {tuple(r_c['per_neuron_nll'].shape)}",
+    )
     # 连续路径 per_neuron_nll 非 NaN 且有限
-    check("per_neuron_nll 有限", bool(torch.isfinite(r_c["per_neuron_nll"]).all()),
-          f"→ {r_c['per_neuron_nll'].tolist()}")
+    check(
+        "per_neuron_nll 有限",
+        bool(torch.isfinite(r_c["per_neuron_nll"]).all()),
+        f"→ {r_c['per_neuron_nll'].tolist()}",
+    )
     # round 1 与 round 3（连续）的 contrastive/phase 监督均存在
-    check("phase_loss 存在", r_c["phase_loss"].item() != 0.0 or r_c["phase_loss"].numel() == 1,
-          f"phase_loss={r_c['phase_loss'].item():.4f}")
+    check(
+        "phase_loss 存在",
+        r_c["phase_loss"].item() != 0.0 or r_c["phase_loss"].numel() == 1,
+        f"phase_loss={r_c['phase_loss'].item():.4f}",
+    )
 
 
 def test_5_differentiable_phase():
@@ -189,8 +226,10 @@ def test_5_differentiable_phase():
     emb = torch.randn(1, 8, TINY_TEST.base_embed_dim)
     ct = ContinuousResonance(steps=5, dt=0.2, min_steps=2)
     r = ens.forward_train(
-        shared_embeddings=emb, n_rounds=3,
-        continuous=True, ct=ct,
+        shared_embeddings=emb,
+        n_rounds=3,
+        continuous=True,
+        ct=ct,
     )
     loss = r["continuous_weights"].sum() + r["phase_loss"]
     loss.backward()
@@ -209,10 +248,12 @@ def test_6_discrete_no_regression():
     emb = torch.randn(1, 8, TINY_TEST.base_embed_dim)
     tgt = torch.randint(0, 512, (1, 8))
     r = ens.forward_train(shared_embeddings=emb, targets=tgt, n_rounds=3)
-    check("离散 fused_logits 形状", r["fused_logits"].shape == (1, 8, 512),
-          f"→ {tuple(r['fused_logits'].shape)}")
-    check("离散 weights 形状 [N]", r["weights"].shape == (4,),
-          f"→ {tuple(r['weights'].shape)}")
+    check(
+        "离散 fused_logits 形状",
+        r["fused_logits"].shape == (1, 8, 512),
+        f"→ {tuple(r['fused_logits'].shape)}",
+    )
+    check("离散 weights 形状 [N]", r["weights"].shape == (4,), f"→ {tuple(r['weights'].shape)}")
     # 离散路径不返回 continuous_weights（None）
     check("离散 continuous_weights=None", r["continuous_weights"] is None)
     # 离散路径 fused_logits 非 NaN
@@ -233,8 +274,10 @@ def test_7_phase_evolves():
     b_before = ph.binding_tensor(["n1", "n2", "n3", "n4"], coactivation=None)
     ct = ContinuousResonance(steps=8, dt=1 / 8, min_steps=2)
     r = ens.forward_train(
-        shared_embeddings=emb, n_rounds=3,
-        continuous=True, ct=ct,
+        shared_embeddings=emb,
+        n_rounds=3,
+        continuous=True,
+        ct=ct,
     )
     b_after = ph.binding_tensor(["n1", "n2", "n3", "n4"], coactivation=None)
     delta = (b_before - b_after).abs().max().item()

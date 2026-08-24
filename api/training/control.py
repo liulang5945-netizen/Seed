@@ -4,6 +4,7 @@
 Cortex 模式下训练走 sleep_engine，这些端点控制 app_state 训练标志。
 stop/pause/resume 设置标志（sleep_engine 可选检查），reset 紧急释放 train_lock。
 """
+
 import logging
 
 from fastapi import APIRouter
@@ -55,8 +56,8 @@ def force_reset_training():
     if locked:
         try:
             app_state.train_lock.release()
-        except RuntimeError:
-            pass
+        except RuntimeError as e:
+            logger.debug("【force_reset_training】处理失败（非致命）: %s", e)
     logger.warning(f"训练状态已强制重置 (was_training={was_training}, lock_was_held={locked})")
     return {
         "status": "ok",

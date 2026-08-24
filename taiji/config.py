@@ -117,23 +117,16 @@ class TaijiConfig:
             )
         if self.consolidation_seed_offset <= 0:
             raise ValueError(
-                "consolidation_seed_offset must select a positive independent "
-                "random stream"
+                "consolidation_seed_offset must select a positive independent " "random stream"
             )
         if self.consolidation_seed_offset == self.lateral_seed_offset:
-            raise ValueError(
-                "consolidation and lateral banks require distinct random streams"
-            )
+            raise ValueError("consolidation and lateral banks require distinct random streams")
         if self.motor_fan_in > 2 * sum(self.region_sizes):
-            raise ValueError(
-                "motor_fan_in cannot exceed the available cortical state"
-            )
+            raise ValueError("motor_fan_in cannot exceed the available cortical state")
         if self.memory_units <= 1:
             raise ValueError("memory_units must be greater than 1")
         if not 0 < self.memory_readout_fan_in <= self.memory_meta_dim:
-            raise ValueError(
-                "memory_readout_fan_in must be in [1, memory_meta_dim]"
-            )
+            raise ValueError("memory_readout_fan_in must be in [1, memory_meta_dim]")
         if not 0 < self.memory_meta_dim <= self.memory_units:
             raise ValueError("memory_meta_dim must be in [1, memory_units]")
         if self.memory_iterations <= 0:
@@ -223,9 +216,7 @@ class TaijiConfig:
         if self.replay_write_repeats <= 0:
             raise ValueError("replay_write_repeats must be positive")
         if not 0.0 < self.replay_winner_resource_retention <= 1.0:
-            raise ValueError(
-                "replay_winner_resource_retention must be in (0, 1]"
-            )
+            raise ValueError("replay_winner_resource_retention must be in (0, 1]")
         if not 0.0 <= self.structural_turnover_ratio <= 1.0:
             raise ValueError("structural_turnover_ratio must be in [0, 1]")
         if not 0.0 < self.structural_capture_target <= 1.0:

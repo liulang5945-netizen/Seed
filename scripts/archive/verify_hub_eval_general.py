@@ -17,6 +17,7 @@
 默认使用 code_sft[16:24]，避开训练/历史评估常用的前 16 条；如需改变片段，
 使用 --eval-start / --eval-count 显式指定。
 """
+
 from __future__ import annotations
 
 import os
@@ -24,7 +25,9 @@ import random
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
@@ -37,7 +40,8 @@ torch.manual_seed(0)
 from scripts.training.utils import load_general_tokenizer  # noqa: E402
 import scripts.training.train_cross_domain_collab as tcdc  # noqa: E402
 from scripts.archive.verify_hub_collab_train import (  # noqa: E402
-    build_ensemble_with_hub, make_batch,
+    build_ensemble_with_hub,
+    make_batch,
 )
 
 SFT_DIR = "data/sft"
@@ -77,16 +81,15 @@ def main():
     print("=" * 60, flush=True)
 
     neurons, shared_embeddings, ensemble, general_sp, _ = build_ensemble_with_hub(
-        nids=DOMAINS, field_dim=FIELD_DIM)
+        nids=DOMAINS, field_dim=FIELD_DIM
+    )
 
-    data = torch.load(os.path.join(SFT_DIR, "code_sft.pt"),
-                      map_location="cpu", weights_only=False)
+    data = torch.load(os.path.join(SFT_DIR, "code_sft.pt"), map_location="cpu", weights_only=False)
     end = args.eval_start + args.eval_count
-    texts = [d["full"] for d in data][args.eval_start:end]
+    texts = [d["full"] for d in data][args.eval_start : end]
     if len(texts) != args.eval_count:
         raise ValueError(
-            f"holdout 样本不足：需要 code_sft[{args.eval_start}:{end}]，"
-            f"实际只有 {len(data)} 条"
+            f"holdout 样本不足：需要 code_sft[{args.eval_start}:{end}]，" f"实际只有 {len(data)} 条"
         )
     print(f"评估片段: code_sft[{args.eval_start}:{end}]（固定 holdout）", flush=True)
     neuron_embeddings, _, _ = make_batch(texts, general_sp, shared_embeddings, seq_len=32)
@@ -122,8 +125,7 @@ def main():
             if label == smoke_label:
                 continue
             mean_delta = sum(cos_map[nid] - smoke[nid] for nid in DOMAINS) / len(DOMAINS)
-            detail = "  ".join(
-                f"{nid} Δ{cos_map[nid] - smoke[nid]:+.3f}" for nid in DOMAINS)
+            detail = "  ".join(f"{nid} Δ{cos_map[nid] - smoke[nid]:+.3f}" for nid in DOMAINS)
             print(f"  {label}: 均值 Δ{mean_delta:+.3f}  {detail}", flush=True)
 
     print(f"\n  总耗时: {time.time() - t0:.1f}s", flush=True)

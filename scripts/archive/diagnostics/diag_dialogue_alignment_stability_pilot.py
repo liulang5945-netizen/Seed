@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """corrected alignment 的低学习率/梯度裁剪稳定性 pilot（仅内存）。"""
+
 from __future__ import annotations
 
 import gc
@@ -8,7 +9,9 @@ import logging
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 
@@ -33,7 +36,6 @@ from scripts.training.utils import (
     make_wsd_scheduler,
     split_train_eval,
 )
-
 
 STEPS = int(os.environ.get("TAIJI_ALIGNMENT_STEPS", "320"))
 LR = float(os.environ.get("TAIJI_ALIGNMENT_LR", "3e-5"))

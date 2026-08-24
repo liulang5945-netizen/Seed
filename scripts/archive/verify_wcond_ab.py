@@ -17,6 +17,7 @@
   python scripts/training/verify_wcond_ab.py --collab-ckpt data/neurons/<正式训练产物>.ckpt.pt
   # 日志落盘（N3）: python -u scripts/training/verify_wcond_ab.py 2>&1 | Tee-Object logs\verify_wcond_ab_$(Get-Date -Format yyyyMMdd_HHmmss).log
 """
+
 from __future__ import annotations
 
 import argparse
@@ -25,14 +26,18 @@ import os
 import random
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import numpy as np
 import torch
 
 from neuroplex.resonance.field import ResonanceField
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 DEFAULT_CKPT = os.path.join(PROJECT_ROOT, "data", "neurons", "hub_collab_v2.ckpt.pt")
 
 # N2: seed 固定（与训练脚本 seed 0 一致）
@@ -115,17 +120,21 @@ def main():
     s_trained = field.score(probe)
     field.W_cond.data.zero_()  # sigmoid(0)=0.5 → cond=0.5*state_n，方向不变
     s_identity = field.score(probe)
-    check("A1 W_cond 门控参与评分（产物 vs 恒等门控不同）",
-          abs(s_trained - s_identity) > 1e-6,
-          f"score_trained={s_trained:.6f} score_identity={s_identity:.6f}")
+    check(
+        "A1 W_cond 门控参与评分（产物 vs 恒等门控不同）",
+        abs(s_trained - s_identity) > 1e-6,
+        f"score_trained={s_trained:.6f} score_identity={s_identity:.6f}",
+    )
 
     # ── A2 训练-推理口径契约 ──
     field.W_cond.data.copy_(w_trained)
     s_api = field.score(probe)
     s_manual = manual_score(field, probe)
-    check("A2 口径契约（field.score == 公式参考实现）",
-          abs(s_api - s_manual) < 1e-6,
-          f"api={s_api:.6f} manual={s_manual:.6f}")
+    check(
+        "A2 口径契约（field.score == 公式参考实现）",
+        abs(s_api - s_manual) < 1e-6,
+        f"api={s_api:.6f} manual={s_manual:.6f}",
+    )
 
     # ── A3 训练-随机 A/B（证据记录） ──
     torch.manual_seed(SEED)
@@ -135,19 +144,27 @@ def main():
     field.W_cond.data.copy_(w_random)
     s_b = field.score(probe)
     delta = abs(s_a - s_b)
-    print(f"  [REC] A3 训练 vs 随机门控：score_trained={s_a:.6f} score_random={s_b:.6f} Δ={delta:.6f}", flush=True)
+    print(
+        f"  [REC] A3 训练 vs 随机门控：score_trained={s_a:.6f} score_random={s_b:.6f} Δ={delta:.6f}",
+        flush=True,
+    )
     # 14 步 smoke 产物下 Δ 预期极小——证据如实记录，正式训练后重跑本脚本复核
-    check("A3 训练-随机 A/B 可测（差异已记录，收益判定见正式训练后复测）",
-          True, f"Δ={delta:.6f}（当前产物训练步数不足，Δ≈0 属预期）")
+    check(
+        "A3 训练-随机 A/B 可测（差异已记录，收益判定见正式训练后复测）",
+        True,
+        f"Δ={delta:.6f}（当前产物训练步数不足，Δ≈0 属预期）",
+    )
 
     # ── A4 装配契约（loader step7 同路径） ──
     field2 = ResonanceField(dim=dim)
     ok_shape = field2.W_cond.shape == w_trained.shape
     field2.W_cond.data.copy_(w_trained)
     ok_inject = torch.equal(field2.W_cond, w_trained)
-    check("A4 装配契约（形状匹配 + 注入 loader step7 同路径）",
-          ok_shape and ok_inject,
-          f"shape={tuple(field2.W_cond.shape)} injected={ok_inject}")
+    check(
+        "A4 装配契约（形状匹配 + 注入 loader step7 同路径）",
+        ok_shape and ok_inject,
+        f"shape={tuple(field2.W_cond.shape)} injected={ok_inject}",
+    )
 
     print("=" * 60, flush=True)
     print(f"结果: {PASS} PASS / {FAIL} FAIL", flush=True)

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-23 03:53:29",
+  "timestamp": "2026-08-23 14:57:40",
   "task": "A4/A5 原生版：经验驱动增长与自然饱和",
   "checkpoint": "E:\\Seed\\checkpoints\\seed_corpus.pt",
   "batches": 10,
@@ -22,16 +22,16 @@
   },
   "final": {
     "dialogue": {
-      "mean": -2.9761326668524104,
-      "std": 0.23823105445544315
+      "mean": -2.9761416702319927,
+      "std": 0.23822912261807017
     },
     "knowledge": {
-      "mean": -3.2693234370733326,
-      "std": 0.3630529006740254
+      "mean": -3.269345382750295,
+      "std": 0.36304578458448594
     },
     "unfamiliar": {
-      "mean": -3.4122060441444506,
-      "std": 0.3161338629617613
+      "mean": -3.412222752147296,
+      "std": 0.3161440828438408
     }
   },
   "trajectory": [
@@ -47,100 +47,100 @@
     {
       "batch": 1,
       "group_means": {
-        "dialogue": -3.0184370507641325,
-        "knowledge": -3.2586858770000213,
-        "unfamiliar": -3.4437457662645925
+        "dialogue": -3.0185001967301357,
+        "knowledge": -3.2586745982786045,
+        "unfamiliar": -3.443688712180292
       },
-      "overall_mean": -3.240289564676249
+      "overall_mean": -3.2402878357296774
     },
     {
       "batch": 2,
       "group_means": {
-        "dialogue": -3.0132583887851196,
-        "knowledge": -3.2680429759014014,
-        "unfamiliar": -3.44525201764153
+        "dialogue": -3.0134057244542127,
+        "knowledge": -3.268111154090701,
+        "unfamiliar": -3.4452974015585807
       },
-      "overall_mean": -3.242184460776017
+      "overall_mean": -3.2422714267011643
     },
     {
       "batch": 3,
       "group_means": {
-        "dialogue": -3.024163034286384,
-        "knowledge": -3.2392369338500218,
-        "unfamiliar": -3.4285310253883154
+        "dialogue": -3.0241807006678165,
+        "knowledge": -3.2393267330072923,
+        "unfamiliar": -3.4285545324796884
       },
-      "overall_mean": -3.2306436645082406
+      "overall_mean": -3.2306873220515993
     },
     {
       "batch": 4,
       "group_means": {
-        "dialogue": -2.9354903681408855,
-        "knowledge": -3.236765686110516,
-        "unfamiliar": -3.4458545694597187
+        "dialogue": -2.935481035970422,
+        "knowledge": -3.2368191589381277,
+        "unfamiliar": -3.445867808580018
       },
-      "overall_mean": -3.206036874570373
+      "overall_mean": -3.2060560011628554
     },
     {
       "batch": 5,
       "group_means": {
-        "dialogue": -2.9290791196908725,
-        "knowledge": -3.221836213176827,
-        "unfamiliar": -3.4690627839563852
+        "dialogue": -2.9290573122860835,
+        "knowledge": -3.2218668639426977,
+        "unfamiliar": -3.469064889642148
       },
-      "overall_mean": -3.2066593722746948
+      "overall_mean": -3.206663021956976
     },
     {
       "batch": 6,
       "group_means": {
-        "dialogue": -2.9411953808197064,
-        "knowledge": -3.2479507012293163,
-        "unfamiliar": -3.4363781269139357
+        "dialogue": -2.9411846445454994,
+        "knowledge": -3.247981177368883,
+        "unfamiliar": -3.4363878251769515
       },
-      "overall_mean": -3.2085080696543193
+      "overall_mean": -3.2085178823637777
     },
     {
       "batch": 7,
       "group_means": {
-        "dialogue": -2.9561551090719114,
-        "knowledge": -3.2716073457592323,
-        "unfamiliar": -3.41358129254326
+        "dialogue": -2.9561616230767,
+        "knowledge": -3.271639719863128,
+        "unfamiliar": -3.413598356014827
       },
-      "overall_mean": -3.2137812491248012
+      "overall_mean": -3.2137998996515513
     },
     {
       "batch": 8,
       "group_means": {
-        "dialogue": -3.0003098767593777,
-        "knowledge": -3.2886368428885002,
-        "unfamiliar": -3.4050441034295584
+        "dialogue": -3.000313197242721,
+        "knowledge": -3.2887747338175473,
+        "unfamiliar": -3.405057128508454
       },
-      "overall_mean": -3.2313302743591454
+      "overall_mean": -3.2313816865229072
     },
     {
       "batch": 9,
       "group_means": {
-        "dialogue": -3.0011471162267758,
-        "knowledge": -3.2745675435279975,
-        "unfamiliar": -3.403760115728944
+        "dialogue": -3.0011490454228382,
+        "knowledge": -3.2745879842923884,
+        "unfamiliar": -3.403772943485645
       },
-      "overall_mean": -3.2264915918279056
+      "overall_mean": -3.2265033244002908
     },
     {
       "batch": 10,
       "group_means": {
-        "dialogue": -2.9761326668524104,
-        "knowledge": -3.2693234370733326,
-        "unfamiliar": -3.4122060441444506
+        "dialogue": -2.9761416702319927,
+        "knowledge": -3.269345382750295,
+        "unfamiliar": -3.412222752147296
       },
-      "overall_mean": -3.2192207160233983
+      "overall_mean": -3.219236601709861
     }
   ],
   "group_rises": {
-    "dialogue": 0.0956454350972109,
-    "knowledge": 0.015433602372166177,
-    "unfamiliar": 0.06686059538887434
+    "dialogue": 0.09563643171762859,
+    "knowledge": 0.015411656695203835,
+    "unfamiliar": 0.06684388738602909
   },
-  "post_peak_drop": 0.013183841453025202,
+  "post_peak_drop": 0.01318060054700565,
   "criteria": {
     "finite": true,
     "all_rise": true,
@@ -150,5 +150,5 @@
   },
   "a4_pass": true,
   "a5_pass": true,
-  "elapsed_seconds": 315.2296574115753
+  "elapsed_seconds": 457.0073947906494
 }

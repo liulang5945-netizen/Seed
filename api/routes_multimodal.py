@@ -3,14 +3,13 @@
 ==================
 让前端能调用Seed的多模态输出能力。
 """
+
 import os
 import logging
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import Optional
-
-from neuroplex.core.app_state import app_state
 
 logger = logging.getLogger("ApiServer.Multimodal")
 router = APIRouter()
@@ -20,6 +19,7 @@ def _get_output_engine():
     """获取多模态输出引擎"""
     try:
         from neuroplex.multimodal.output_engine import MultimodalOutputEngine
+
         return MultimodalOutputEngine()
     except Exception as e:
         logger.error(f"Failed to get output engine: {e}")
@@ -27,6 +27,7 @@ def _get_output_engine():
 
 
 # ======================== 语音输出 ========================
+
 
 class TTSRequest(BaseModel):
     text: str
@@ -49,9 +50,11 @@ async def text_to_speech(request: TTSRequest):
                 filename=os.path.basename(audio_path),
             )
         raise HTTPException(status_code=500, detail="语音生成失败")
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Request failed: {e}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
 
 
 @router.get("/api/multimodal/voices")
@@ -64,6 +67,7 @@ async def list_voices():
 
 
 # ======================== 图像生成 ========================
+
 
 class ImageGenRequest(BaseModel):
     prompt: str
@@ -97,12 +101,15 @@ async def generate_image(request: ImageGenRequest):
                 filename=os.path.basename(image_path),
             )
         raise HTTPException(status_code=500, detail="图像生成失败")
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Request failed: {e}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
 
 
 # ======================== 图像描述 ========================
+
 
 class ImageDescribeRequest(BaseModel):
     image_path: str
@@ -120,10 +127,11 @@ async def describe_image(request: ImageDescribeRequest):
         return {"description": description}
     except Exception as e:
         logger.error(f"Request failed: {e}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
 
 
 # ======================== 状态查询 ========================
+
 
 @router.get("/api/multimodal/status")
 async def multimodal_status():

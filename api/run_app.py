@@ -17,6 +17,7 @@
 4. 托盘右键菜单中文翻译优化
 5. 首次启动自动检测并安装缺失的 PyQt6 + 后端核心依赖
 """
+
 import os
 import sys
 import traceback
@@ -24,23 +25,24 @@ import threading
 import subprocess
 
 # 修复 PyQt6 QWebEngine GPU 渲染导致的 segfault（必须在导入 PyQt6 之前设置）
-os.environ.setdefault('QTWEBENGINE_CHROMIUM_FLAGS', '--disable-gpu')
-os.environ.setdefault('QT_OPENGL', 'software')
+os.environ.setdefault("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu")
+os.environ.setdefault("QT_OPENGL", "software")
 
 # ==========================================
 # 将项目根目录加入 sys.path
 # ==========================================
-base_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+base_dir = (
+    os.path.dirname(sys.executable)
+    if getattr(sys, "frozen", False)
+    else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
 if base_dir not in sys.path:
     sys.path.insert(0, base_dir)
 
 # ==========================================
 # 镜像源配置
 # ==========================================
-PIP_MIRROR = os.environ.get(
-    "TAIJI_PIP_INDEX",
-    "https://mirrors.aliyun.com/pypi/simple/"
-)
+PIP_MIRROR = os.environ.get("TAIJI_PIP_INDEX", "https://mirrors.aliyun.com/pypi/simple/")
 
 # ==========================================
 # 全部依赖定义（名称 -> pip 包名）
@@ -130,20 +132,27 @@ def _install_missing_packages(packages: list[str]) -> tuple[bool, str]:
             # 构建 trusted-host
             mirror_host = PIP_MIRROR.split("//")[-1].split("/")[0].rstrip("/")
             cmd = [
-                sys.executable, "-m", "pip", "install",
-                "-i", PIP_MIRROR,
-                "--trusted-host", mirror_host,
+                sys.executable,
+                "-m",
+                "pip",
+                "install",
+                "-i",
+                PIP_MIRROR,
+                "--trusted-host",
+                mirror_host,
             ] + batch
             result = subprocess.run(
                 cmd,
-                capture_output=True, text=True, timeout=600,
+                capture_output=True,
+                text=True,
+                timeout=600,
                 creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
             )
             if result.returncode != 0:
                 print(f"[DependencyCheck] FAIL 批次安装失败:\n{result.stderr[-500:]}")
                 failed_packages.extend(batch)
             else:
-                print(f"[DependencyCheck] OK 批次安装成功")
+                print("[DependencyCheck] OK 批次安装成功")
         except subprocess.TimeoutExpired:
             print("[DependencyCheck] FAIL 下载超时")
             failed_packages.extend(batch)
@@ -166,6 +175,7 @@ def _show_error_dialog(title: str, message: str):
     try:
         import tkinter as tk
         from tkinter import messagebox
+
         root = tk.Tk()
         root.withdraw()
         messagebox.showerror(title, message)
@@ -187,14 +197,14 @@ if missing_modules:
     print(f"[DependencyCheck] WARN 缺失 {len(missing_modules)} 个依赖")
     # 仅在未打包的开发环境中尝试自动安装
     # 打包后的 exe 依赖已内置，此时缺失说明 PyInstaller 漏打了 hiddenimports
-    if not getattr(sys, 'frozen', False):
+    if not getattr(sys, "frozen", False):
         ok, err = _install_missing_packages(missing_packages)
         if not ok:
             _show_error_dialog(
                 "Taiji 依赖缺失",
                 f"核心依赖安装失败。\n\n{err}\n\n"
                 f"请手动运行:\n"
-                f"  {sys.executable} -m pip install -r requirements.txt"
+                f"  {sys.executable} -m pip install -r requirements.txt",
             )
             sys.exit(1)
         # 安装后重新检查
@@ -204,34 +214,48 @@ if missing_modules:
                 "Taiji 依赖缺失",
                 f"以下依赖仍无法安装: {', '.join(still_missing)}\n\n"
                 f"请手动运行:\n"
-                f"  {sys.executable} -m pip install -r requirements.txt"
+                f"  {sys.executable} -m pip install -r requirements.txt",
             )
             sys.exit(1)
     else:
         # 打包模式下缺失依赖，可能是 PyInstaller 漏打了
         # 尝试从 external_libs 目录加载补丁
         print(f"[DependencyCheck] WARN 打包模式下缺失: {', '.join(missing_modules)}")
-        print(f"[DependencyCheck] 将尝试从 external_libs 目录加载...")
+        print("[DependencyCheck] 将尝试从 external_libs 目录加载...")
         # 不直接退出，让热更新系统尝试补救
 else:
     print("[DependencyCheck] OK 所有核心依赖已就绪")
 
-from PyQt6.QtCore import QThread, QObject, pyqtSignal, QUrl
+from PyQt6.QtCore import QThread, QObject, pyqtSignal, QUrl, Qt, QEvent, QTimer
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtWidgets import (
-    QApplication, QSystemTrayIcon, QMenu, QMessageBox, QMainWindow,
+    QApplication,
+    QSystemTrayIcon,
+    QMenu,
+    QMessageBox,
+    QMainWindow,
+    QVBoxLayout,
+    QHBoxLayout,
+    QWidget,
+    QPushButton,
+    QLabel,
 )
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 
 # 应用配置（通过 config.py 集中管理镜像源等设置）
-from neuroplex.core.config import apply_env_overrides, get_external_path, get_internal_path, get_writable_base_dir
+from neuroplex.core.config import (
+    apply_env_overrides,
+    get_external_path,
+    get_internal_path,
+    get_writable_base_dir,
+)
 
 apply_env_overrides()
 
 # 日志重定向（打包后）
 _log_file_lock = threading.Lock()
 
-if getattr(sys, 'frozen', False):
+if getattr(sys, "frozen", False):
     # 使用可写基目录存储日志，防止安装到只读目录时写失败
     writable_base = get_writable_base_dir()
     log_path = os.path.join(writable_base, "app.log")
@@ -239,12 +263,22 @@ if getattr(sys, 'frozen', False):
         sys.stdout = open(log_path, "a", encoding="utf-8", buffering=1)
         sys.stderr = sys.stdout
     except Exception:
+
         class DummyWriter:
-            encoding = 'utf-8'
-            def write(self, *args, **kwargs): pass
-            def flush(self, *args, **kwargs): pass
-            def isatty(self): return False
-            def fileno(self): return 1
+            encoding = "utf-8"
+
+            def write(self, *args, **kwargs):
+                pass
+
+            def flush(self, *args, **kwargs):
+                pass
+
+            def isatty(self):
+                return False
+
+            def fileno(self):
+                return 1
+
         sys.stdout = DummyWriter()
         sys.stderr = DummyWriter()
 
@@ -269,6 +303,10 @@ sys.path.insert(0, ext_libs_dir)
 # ==========================================
 import importlib.util
 import importlib
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class HotUpdateImporter:
     """
@@ -409,6 +447,7 @@ else:
 
 class Worker(QObject):
     """后台工作线程：加载模型 + 启动 FastAPI"""
+
     finished = pyqtSignal(str)
     error = pyqtSignal(str)
     progress = pyqtSignal(str)
@@ -437,15 +476,17 @@ class Worker(QObject):
             # 使用更激进的快速轮询策略：前5次间隔0.3s，后续1s间隔
             is_ready = False
             max_attempts = max(60, MODEL_LOAD_TIMEOUT)
-            
+
             # 禁用系统代理以加速本地连接，防止经过翻墙软件导致响应极慢
             proxy_handler = urllib.request.ProxyHandler({})
             opener = urllib.request.build_opener(proxy_handler)
 
             for attempt in range(max_attempts):
                 if not server_thread.is_alive():
-                    raise Exception("后端服务线程已意外终止！常见原因：8000 端口被占用，或内部依赖严重缺失。")
-                    
+                    raise Exception(
+                        "后端服务线程已意外终止！常见原因：8000 端口被占用，或内部依赖严重缺失。"
+                    )
+
                 try:
                     # 刚开始时更频繁地重试
                     timeout = 0.5 if attempt < 10 else 2
@@ -458,7 +499,9 @@ class Worker(QObject):
                                 break
                             elif data.get("status") == "error":
                                 # 服务已启动，只是模型加载报错（如没下载或显存不足），允许显示前端UI让用户处理
-                                print(f"[HealthCheck] 基础服务就绪，但模型异常: {data.get('message')}")
+                                print(
+                                    f"[HealthCheck] 基础服务就绪，但模型异常: {data.get('message')}"
+                                )
                                 is_ready = True
                                 break
                 except RuntimeError as e:
@@ -473,7 +516,7 @@ class Worker(QObject):
                 raise Exception("FastAPI 后端服务启动超时或模型加载失败。请检查网络连接和显存。")
 
             # 后端已就绪（可能还在加载模型），立即通知前端显示 UI
-            server_start_msg = (
+            _server_start_msg = (
                 "服务已就绪，模型仍在加载中...\n"
                 "前端界面可正常操作，聊天功能将在模型加载完成后可用。"
             )
@@ -487,40 +530,114 @@ class Worker(QObject):
 
 class CustomWebView(QWebEngineView):
     """自定义 Web 视图，用于拦截并汉化右键菜单"""
+
     def contextMenuEvent(self, event):
         try:
             menu = self.createStandardContextMenu()
             if menu:
                 translations = {
-                    "Back": "返回", "Forward": "前进", "Reload": "重新加载",
-                    "Cut": "剪切", "Copy": "复制", "Paste": "粘贴",
-                    "Undo": "撤销", "Redo": "重做", "Select all": "全选",
-                    "Paste and match style": "粘贴并匹配样式", "Inspect": "检查元素",
-                    "Save image": "另存图片", "Copy image": "复制图片",
-                    "Copy image address": "复制图片地址", "Save link": "另存链接",
-                    "Copy link address": "复制链接地址", "Print...": "打印",
+                    "Back": "返回",
+                    "Forward": "前进",
+                    "Reload": "重新加载",
+                    "Cut": "剪切",
+                    "Copy": "复制",
+                    "Paste": "粘贴",
+                    "Undo": "撤销",
+                    "Redo": "重做",
+                    "Select all": "全选",
+                    "Paste and match style": "粘贴并匹配样式",
+                    "Inspect": "检查元素",
+                    "Save image": "另存图片",
+                    "Copy image": "复制图片",
+                    "Copy image address": "复制图片地址",
+                    "Save link": "另存链接",
+                    "Copy link address": "复制链接地址",
+                    "Print...": "打印",
                     "View page source": "查看网页源代码",
-                    "Save Media": "另存媒体", "Copy Media Address": "复制媒体地址",
+                    "Save Media": "另存媒体",
+                    "Copy Media Address": "复制媒体地址",
                     "Open link in new tab": "在新标签页中打开",
                     "Open link in new window": "在新窗口中打开",
                 }
                 for action in menu.actions():
-                    text = action.text().replace('&', '')
+                    text = action.text().replace("&", "")
                     if text in translations:
                         action.setText(translations[text])
                     else:
                         lower_text = text.lower()
-                        if any(kw in lower_text for kw in ["translate", "screen studio", "progressive web app", "pwa"]):
+                        if any(
+                            kw in lower_text
+                            for kw in ["translate", "screen studio", "progressive web app", "pwa"]
+                        ):
                             action.setVisible(False)
                         elif "inspect" in lower_text:
                             action.setText("检查元素")
                         elif "search web for" in lower_text:
                             action.setText("在网页中搜索")
-                pos = event.globalPos() if hasattr(event, 'globalPos') else event.globalPosition().toPoint()
+                pos = (
+                    event.globalPos()
+                    if hasattr(event, "globalPos")
+                    else event.globalPosition().toPoint()
+                )
                 menu.exec(pos)
         except Exception as e:
             print(f"[UI] 右键菜单兼容性问题: {e}")
             super().contextMenuEvent(event)
+
+
+class _EdgeResizeFilter(QObject):
+    """无边框窗口的边缘缩放：应用级事件过滤器。
+
+    Web 视图铺满窗口会吞掉鼠标事件，因此用应用级过滤器捕获：
+    光标进入窗口边缘热区并按下左键时，交给系统处理缩放（startSystemResize）。
+    """
+
+    BORDER = 6
+
+    def __init__(self, window):
+        super().__init__()
+        self._window = window
+
+    def eventFilter(self, obj, event):
+        w = self._window
+        try:
+            if w.isMaximized() or not w.isVisible():
+                return False
+            if (
+                event.type() == QEvent.Type.MouseButtonPress
+                and event.button() == Qt.MouseButton.LeftButton
+            ):
+                edges = self._edges_at(self._global_pos(event))
+                if edges is not None:
+                    w.windowHandle().startSystemResize(edges)
+                    return True
+        except Exception:
+            return False
+        return False
+
+    @staticmethod
+    def _global_pos(event):
+        gp = getattr(event, "globalPosition", None)
+        return gp().toPoint() if callable(gp) else event.globalPos()
+
+    def _edges_at(self, gpos):
+        rect = self._window.frameGeometry()
+        B = self.BORDER
+        edges = None
+
+        def add(edge):
+            nonlocal edges
+            edges = edge if edges is None else edges | edge
+
+        if abs(gpos.x() - rect.left()) <= B:
+            add(Qt.Edge.LeftEdge)
+        if abs(gpos.x() - rect.right()) <= B:
+            add(Qt.Edge.RightEdge)
+        if abs(gpos.y() - rect.top()) <= B:
+            add(Qt.Edge.TopEdge)
+        if abs(gpos.y() - rect.bottom()) <= B:
+            add(Qt.Edge.BottomEdge)
+        return edges
 
 
 class MainWindow(QMainWindow):
@@ -532,35 +649,53 @@ class MainWindow(QMainWindow):
         try:
             self.menuBar().hide()
             self.setMenuWidget(None)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【MainWindow.__init__】处理失败（非致命）: %s", e)
+
+        # 无边框窗口：去掉系统原生标题栏，改用自绘极简标题栏
+        self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.FramelessWindowHint)
+
         self._web_view = CustomWebView()
-        
+
         # 🔧 启用跨域访问，允许前端 JS 通过 fetch 调用同源 API
         from PyQt6.QtWebEngineCore import QWebEngineSettings
+
         self._web_view.settings().setAttribute(
             QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
         )
-        
-        self.setCentralWidget(self._web_view)
-        
+
+        # 中央区域 = 自绘标题栏 + Web 视图（无边框窗口）
+        central = QWidget()
+        central_layout = QVBoxLayout(central)
+        central_layout.setContentsMargins(0, 0, 0, 0)
+        central_layout.setSpacing(0)
+        self._titlebar = self._build_titlebar()
+        central_layout.addWidget(self._titlebar)
+        central_layout.addWidget(self._web_view, 1)
+        self.setCentralWidget(central)
+
+        # 前端就绪后同步标题栏主题
+        self._web_view.loadFinished.connect(self._on_page_loaded)
+
         # 快捷键：F5 刷新前端页面
         from PyQt6.QtGui import QKeySequence, QShortcut
+
         self.shortcut_f5 = QShortcut(QKeySequence("F5"), self)
         self.shortcut_f5.activated.connect(self._web_view.reload)
-        
+
         # 快捷键：F12 打开原生开发者工具 (DevTools)
         self.shortcut_f12 = QShortcut(QKeySequence("F12"), self)
         self.shortcut_f12.activated.connect(self.toggle_devtools)
 
     def toggle_devtools(self):
-        if not hasattr(self, 'dev_window'):
+        if not hasattr(self, "dev_window"):
             from PyQt6.QtWebEngineWidgets import QWebEngineView
+
             self.dev_window = QWebEngineView()
             self.dev_window.setWindowTitle("Seed 开发者工具 (F12)")
             self.dev_window.resize(900, 600)
             self._web_view.page().setDevToolsPage(self.dev_window.page())
-        
+
         if self.dev_window.isVisible():
             self.dev_window.hide()
         else:
@@ -568,6 +703,104 @@ class MainWindow(QMainWindow):
 
     def get_web_view(self):
         return self._web_view
+
+    @staticmethod
+    def _titlebar_qss(dark: bool) -> str:
+        """标题栏样式（跟随前端主题）。默认亮色，暗色主题切为深色。"""
+        if dark:
+            return """
+                #seedTitlebar { background: #0f141b; border-bottom: 1px solid #1c2530; }
+                #seedTitlebar QLabel { color: #cbd5e1; font-size: 12px; font-weight: 600; }
+                QPushButton.titlebarBtn { background: transparent; border: none; color: #94a3b8; font-size: 14px; border-radius: 6px; }
+                QPushButton.titlebarBtn:hover { background: #1f2937; color: #e2e8f0; }
+                QPushButton.titlebarClose:hover { background: #dc2626; color: #ffffff; }
+            """
+        return """
+            #seedTitlebar { background: #f6f7f9; border-bottom: 1px solid #e2e5ea; }
+            #seedTitlebar QLabel { color: #334155; font-size: 12px; font-weight: 600; }
+            QPushButton.titlebarBtn { background: transparent; border: none; color: #64748b; font-size: 14px; border-radius: 6px; }
+            QPushButton.titlebarBtn:hover { background: #e6e9ee; color: #0f172a; }
+            QPushButton.titlebarClose:hover { background: #dc2626; color: #ffffff; }
+        """
+
+    def _apply_titlebar_theme(self, theme):
+        """根据前端 data-theme 同步标题栏配色（'dark' → 深色，其余 → 亮色）。"""
+        dark = str(theme).strip().lower() == "dark"
+        if getattr(self, "_titlebar", None) is not None:
+            self._titlebar.setStyleSheet(self._titlebar_qss(dark))
+
+    def _sync_titlebar_theme(self):
+        """前端就绪后读取其主题，同步标题栏配色。"""
+        try:
+            self._web_view.page().runJavaScript(
+                "document.documentElement.getAttribute('data-theme') || ''",
+                self._apply_titlebar_theme,
+            )
+        except Exception as e:
+            logger.debug("【_sync_titlebar_theme】处理失败（非致命）: %s", e)
+
+    def _on_page_loaded(self, ok):
+        if ok:
+            # 延迟读取，确保前端已应用主题（data-theme 在挂载/设置加载后设置）
+            QTimer.singleShot(800, self._sync_titlebar_theme)
+
+    def _build_titlebar(self):
+        """自绘极简标题栏：标题 + 最小化/最大化/关闭，可拖拽、双击切换最大化。"""
+        bar = QWidget()
+        bar.setFixedHeight(36)
+        bar.setObjectName("seedTitlebar")
+        bar.setStyleSheet(self._titlebar_qss(dark=False))
+
+        layout = QHBoxLayout(bar)
+        layout.setContentsMargins(12, 0, 8, 0)
+        layout.setSpacing(2)
+
+        title = QLabel("Seed")
+        layout.addWidget(title)
+        layout.addStretch(1)
+
+        min_btn = QPushButton("–")
+        min_btn.setProperty("class", "titlebarBtn")
+        min_btn.setFixedSize(40, 26)
+        min_btn.setToolTip("最小化")
+        min_btn.clicked.connect(self.showMinimized)
+        layout.addWidget(min_btn)
+
+        max_btn = QPushButton("□")
+        max_btn.setProperty("class", "titlebarBtn")
+        max_btn.setFixedSize(40, 26)
+        max_btn.setToolTip("最大化 / 还原")
+        max_btn.clicked.connect(self._toggle_max_restore)
+        layout.addWidget(max_btn)
+
+        close_btn = QPushButton("×")
+        close_btn.setProperty("class", "titlebarBtn titlebarClose")
+        close_btn.setFixedSize(40, 26)
+        close_btn.setToolTip("关闭")
+        close_btn.clicked.connect(self.close)
+        layout.addWidget(close_btn)
+
+        bar.mousePressEvent = self._titlebar_mouse_press
+        bar.mouseDoubleClickEvent = self._titlebar_double_click
+        return bar
+
+    def _titlebar_mouse_press(self, event):
+        """拖拽标题栏移动窗口（交给系统处理，等同原生标题栏）。"""
+        if event.button() == Qt.MouseButton.LeftButton:
+            handle = self.windowHandle()
+            if handle is not None:
+                handle.startSystemMove()
+            event.accept()
+
+    def _titlebar_double_click(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self._toggle_max_restore()
+
+    def _toggle_max_restore(self):
+        if self.isMaximized():
+            self.showNormal()
+        else:
+            self.showMaximized()
 
     def load(self, url):
         self._web_view.load(url)
@@ -596,9 +829,12 @@ def _real_main():
     # 确保浏览器数据（如 localStorage、历史记录）持久化保存，防止打包后临时目录导致数据丢失
     try:
         from PyQt6.QtWebEngineCore import QWebEngineProfile
+
         profile = QWebEngineProfile.defaultProfile()
         profile.setPersistentStoragePath(get_external_path("user_data"))
-        profile.setPersistentCookiesPolicy(QWebEngineProfile.PersistentCookiesPolicy.ForcePersistentCookies)
+        profile.setPersistentCookiesPolicy(
+            QWebEngineProfile.PersistentCookiesPolicy.ForcePersistentCookies
+        )
     except Exception as e:
         print(f"配置浏览器持久化失败: {e}")
 
@@ -606,6 +842,7 @@ def _real_main():
     splash = None
     try:
         from build_scripts.splash import LoadingWindow
+
         splash = LoadingWindow("首次启动需下载模型，请耐心等待")
         splash.show()
         app.processEvents()
@@ -632,14 +869,14 @@ def _real_main():
         base_path = get_external_path("")
         icon_path = os.path.join(base_path, "icon.ico")
         internal_icon = get_internal_path("icon.ico")
-        
+
         if os.path.exists(icon_path):
             app_icon = QIcon(icon_path)
         elif os.path.exists(internal_icon):
             app_icon = QIcon(internal_icon)
         else:
             app_icon = QIcon(sys.executable)
-            
+
         window.setWindowIcon(app_icon)
 
         tray_icon = QSystemTrayIcon(app_icon, app)
@@ -656,51 +893,65 @@ def _real_main():
         return_home_action.triggered.connect(lambda: window.load(QUrl(client_url)))
 
         clear_cache_action = QAction("清除界面缓存", window)
+
         def clear_web_cache():
             from PyQt6.QtWebEngineCore import QWebEngineProfile
+
             QWebEngineProfile.defaultProfile().clearHttpCache()
             window.get_web_view().reload()
+
         clear_cache_action.triggered.connect(clear_web_cache)
 
         restart_action = QAction("重启工作站", window)
+
         def restart_app():
             # 隐藏托盘图标并关闭闪屏
             tray_icon.hide()
             if splash:
                 try:
                     splash.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug(
+                        "【_real_main.on_loading_complete.restart_app】处理失败（非致命）: %s", e
+                    )
             import subprocess
-            import time
+
             env = os.environ.copy()
-            if getattr(sys, 'frozen', False):
+            if getattr(sys, "frozen", False):
                 env.pop("_MEIPASS2", None)
                 path_list = env.get("PATH", "").split(os.pathsep)
-                env["PATH"] = os.pathsep.join([p for p in path_list if p != getattr(sys, '_MEIPASS', '')])
-                
+                env["PATH"] = os.pathsep.join(
+                    [p for p in path_list if p != getattr(sys, "_MEIPASS", "")]
+                )
+
             creationflags = 0
             if sys.platform == "win32":
                 creationflags = subprocess.CREATE_NO_WINDOW
             subprocess.Popen([sys.executable] + sys.argv[1:], env=env, creationflags=creationflags)
-            
+
             # 必须立刻强制退出以释放 8000 端口，否则新进程会因端口占用而启动失败
             os._exit(0)
+
         restart_action.triggered.connect(restart_app)
 
         quit_action = QAction("彻底退出", window)
+
         def force_quit():
             tray_icon.hide()
             if splash:
                 try:
                     splash.close()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug(
+                        "【_real_main.on_loading_complete.force_quit】处理失败（非致命）: %s", e
+                    )
             app.quit()
             # 给 Qt 一点时间释放资源
             import time
+
             time.sleep(0.3)
             os._exit(0)
+
         quit_action.triggered.connect(force_quit)
         tray_menu.addAction(show_action)
         tray_menu.addAction(return_home_action)
@@ -711,8 +962,9 @@ def _real_main():
         tray_menu.addAction(quit_action)
         tray_icon.setContextMenu(tray_menu)
         tray_icon.activated.connect(
-            lambda r: window.showNormal()
-            if r == QSystemTrayIcon.ActivationReason.DoubleClick else None
+            lambda r: (
+                window.showNormal() if r == QSystemTrayIcon.ActivationReason.DoubleClick else None
+            )
         )
         tray_icon.show()
 
@@ -720,6 +972,9 @@ def _real_main():
         if splash:
             splash.finish(window)
         window.show()
+        # 无边框窗口的边缘缩放（拖动窗口边缘调整大小）
+        window._edge_resize_filter = _EdgeResizeFilter(window)
+        app.installEventFilter(window._edge_resize_filter)
         thread.quit()
 
     def on_loading_error(error_message):
@@ -749,19 +1004,25 @@ if __name__ == "__main__":
         _real_main()
     except Exception as _e:
         import traceback as _tb
-        _writable_base = get_writable_base_dir() if getattr(sys, 'frozen', False) else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+        _writable_base = (
+            get_writable_base_dir()
+            if getattr(sys, "frozen", False)
+            else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        )
         _crash_path = os.path.join(_writable_base, "crash.log")
         with open(_crash_path, "w", encoding="utf-8") as _f:
             _f.write(f"Taiji 启动崩溃\n{'='*60}\n{_tb.format_exc()}")
         # 尝试弹框提示
         try:
             from PyQt6.QtWidgets import QApplication as _QA, QMessageBox as _QMB
+
             _tmp_app = _QA(sys.argv)
             _msg = _QMB()
             _msg.setIcon(_QMB.Icon.Critical)
             _msg.setWindowTitle("Seed 启动失败")
             _msg.setText(f"程序启动时发生致命错误，详情已写入:\n{_crash_path}\n\n{str(_e)}")
             _msg.exec()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【run_app】处理失败（非致命）: %s", e)
         sys.exit(1)

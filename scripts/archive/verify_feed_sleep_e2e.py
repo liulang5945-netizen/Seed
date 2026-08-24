@@ -31,6 +31,9 @@ import torch  # noqa: E402
 from taiji.loader import assemble_cortex  # noqa: E402
 from taiji.life.feed_engine import FeedEngine  # noqa: E402
 from taiji.life.sleep_engine import SleepConfig, SleepEngine, SleepReport  # noqa: E402
+import logging
+
+logger = logging.getLogger(__name__)
 
 passed = 0
 failed = 0
@@ -46,8 +49,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -70,17 +78,18 @@ def snapshot_learnable(cortex):
     for nid, neuron in cortex.neurons.items():
         entry = {}
         if hasattr(neuron, "lm_head") and neuron.lm_head is not None:
-            entry["lm_head"] = {k: v.detach().clone()
-                                for k, v in neuron.lm_head.state_dict().items()}
+            entry["lm_head"] = {
+                k: v.detach().clone() for k, v in neuron.lm_head.state_dict().items()
+            }
         if hasattr(neuron, "embed_adapter") and neuron.embed_adapter is not None:
-            entry["embed_adapter"] = {k: v.detach().clone()
-                                      for k, v in neuron.embed_adapter.state_dict().items()}
+            entry["embed_adapter"] = {
+                k: v.detach().clone() for k, v in neuron.embed_adapter.state_dict().items()
+            }
         if entry:
             snaps[nid] = entry
     emb_snap = None
     if cortex._shared_embedding is not None:
-        emb_snap = {k: v.detach().clone()
-                    for k, v in cortex._shared_embedding.state_dict().items()}
+        emb_snap = {k: v.detach().clone() for k, v in cortex._shared_embedding.state_dict().items()}
     return snaps, emb_snap
 
 
@@ -144,42 +153,44 @@ def main():
     )
 
     before_snaps, before_emb = snapshot_learnable(cortex)
-    report = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
-                         duration_seconds=0)
+    report = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
     print("\n[Phase 2] 睡眠训练（影子权重 COW）...", flush=True)
     try:
         sleep_engine._sleep_phase_model_training(report)
     except Exception as e:
         import traceback
+
         traceback.print_exc()
         check("Phase 2 训练无异常", False, f"{e}")
         print(f"  训练后推理检查跳过（训练异常），临时目录: {tmp_dir}", flush=True)
         return
 
     print(f"\n  样本消费: training_samples_used={report.training_samples_used}", flush=True)
-    check("样本被消费", report.training_samples_used > 0,
-          f"used={report.training_samples_used}")
-    check("训练 loss 有限", report.training_loss is not None
-          and abs(report.training_loss) < 1e6,
-          f"loss={report.training_loss}")
+    check("样本被消费", report.training_samples_used > 0, f"used={report.training_samples_used}")
+    check(
+        "训练 loss 有限",
+        report.training_loss is not None and abs(report.training_loss) < 1e6,
+        f"loss={report.training_loss}",
+    )
     # 训练-训练互斥锁释放验证（finally 中 finish_training），保证后续睡眠周期可再训练
     from taiji.core.app_state import app_state
+
     check("训练锁已释放（可进入下一睡眠周期）", not app_state.is_training)
 
     # ── 4. 影子权重写回 live 验证 ──
     after_snaps, after_emb = snapshot_learnable(cortex)
     zh_changed = part_changed(before_snaps, after_snaps, "zh", "lm_head")
     check("zh 神经元 lm_head 权重已更新（写回 live）", zh_changed)
-    emb_changed = before_emb is not None and after_emb is not None and any(
-        k in after_emb and not torch.equal(before_emb[k], after_emb[k])
-        for k in before_emb
+    emb_changed = (
+        before_emb is not None
+        and after_emb is not None
+        and any(k in after_emb and not torch.equal(before_emb[k], after_emb[k]) for k in before_emb)
     )
     check("shared_embedding 经验积累生效", emb_changed)
 
     # ── 5. ckpt 保存闭环 ──
     ckpt_path = os.path.join(tmp_dir, "cortex_state.pt")
-    check("训练后自动保存 cortex_state.pt", os.path.exists(ckpt_path),
-          f"path={ckpt_path}")
+    check("训练后自动保存 cortex_state.pt", os.path.exists(ckpt_path), f"path={ckpt_path}")
     if os.path.exists(ckpt_path):
         ckpt_size_mb = os.path.getsize(ckpt_path) / 1024 / 1024
         print(f"  ckpt 大小: {ckpt_size_mb:.1f} MB", flush=True)
@@ -191,8 +202,8 @@ def main():
     print("\n[推理] 训练后 generate ...", flush=True)
     try:
         out_code = cortex.generate(
-            "Write a Python function to compute the Fibonacci sequence",
-            max_tokens=40)
+            "Write a Python function to compute the Fibonacci sequence", max_tokens=40
+        )
         print(f"  code 输出: {out_code[:80]!r}", flush=True)
         check("训练后 code 推理非空", bool(out_code and out_code.strip()))
     except Exception as e:
@@ -209,12 +220,11 @@ def main():
     # ── 清理临时目录 ──
     try:
         shutil.rmtree(tmp_dir, ignore_errors=True)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【main】处理失败（非致命）: %s", e)
 
     print("\n" + "=" * 60, flush=True)
-    print(f"结果: {passed} PASS / {failed} FAIL  "
-          f"({time.time() - t0:.1f}s)", flush=True)
+    print(f"结果: {passed} PASS / {failed} FAIL  " f"({time.time() - t0:.1f}s)", flush=True)
     print("=" * 60, flush=True)
     sys.exit(0 if failed == 0 else 1)
 

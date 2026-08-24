@@ -5,6 +5,7 @@
 
 用 mock neuron 避免加载真实模型，聚焦 checkpoint 逻辑正确性。
 """
+
 from __future__ import annotations
 
 import os
@@ -17,7 +18,9 @@ import torch
 import torch.nn as nn
 
 from scripts.training.finetune_cross_spec import (
-    save_checkpoint, load_checkpoint, build_final_artifact,
+    save_checkpoint,
+    load_checkpoint,
+    build_final_artifact,
 )
 
 
@@ -32,9 +35,7 @@ class MockNeuron(nn.Module):
 
     def __init__(self, n_layers=4, hidden=32, field_dim=16, vocab=100):
         super().__init__()
-        self.layers = nn.ModuleList([
-            nn.Linear(hidden, hidden) for _ in range(n_layers)
-        ])
+        self.layers = nn.ModuleList([nn.Linear(hidden, hidden) for _ in range(n_layers)])
         self.norm = nn.LayerNorm(hidden)
         self.lm_head = nn.Linear(hidden, vocab, bias=False)
         self.field_write = nn.Linear(hidden, field_dim, bias=False)
@@ -59,15 +60,20 @@ class MockNeuron(nn.Module):
 
 class MockEnsemble:
     """模拟 ensemble 的 _cross_spec_projectors / _cross_spec_back_projectors。"""
+
     def __init__(self):
-        self._cross_spec_projectors = nn.ModuleDict({
-            "n0": nn.Linear(16, 32, bias=False),
-            "n1": nn.Linear(16, 32, bias=False),
-        })
-        self._cross_spec_back_projectors = nn.ModuleDict({
-            "n0": nn.Linear(32, 16, bias=False),
-            "n1": nn.Linear(32, 16, bias=False),
-        })
+        self._cross_spec_projectors = nn.ModuleDict(
+            {
+                "n0": nn.Linear(16, 32, bias=False),
+                "n1": nn.Linear(16, 32, bias=False),
+            }
+        )
+        self._cross_spec_back_projectors = nn.ModuleDict(
+            {
+                "n0": nn.Linear(32, 16, bias=False),
+                "n1": nn.Linear(32, 16, bias=False),
+            }
+        )
 
 
 def main():
@@ -76,8 +82,10 @@ def main():
     print("=" * 60)
 
     # 1. 构造 mock neurons + ensemble + shared_embeddings
-    neurons = {"n0": MockNeuron(n_layers=4, hidden=32, field_dim=16, vocab=100),
-               "n1": MockNeuron(n_layers=4, hidden=32, field_dim=16, vocab=100)}
+    neurons = {
+        "n0": MockNeuron(n_layers=4, hidden=32, field_dim=16, vocab=100),
+        "n1": MockNeuron(n_layers=4, hidden=32, field_dim=16, vocab=100),
+    }
     ensemble = MockEnsemble()
     shared_embeddings = {
         "n0": nn.Embedding(1000, 32),
@@ -114,10 +122,18 @@ def main():
             p.requires_grad = True
 
     # 统计
-    body_count = sum(1 for n in neurons.values() for name, p in n.named_parameters()
-                     if p.requires_grad and not any(name.startswith(pfx) for pfx in ["excite_", "inhibit_"])
-                     and "scale_" not in name and "bias_" not in name)
-    emb_count = sum(p.numel() for emb in shared_embeddings.values() for p in emb.parameters() if p.requires_grad)
+    body_count = sum(
+        1
+        for n in neurons.values()
+        for name, p in n.named_parameters()
+        if p.requires_grad
+        and not any(name.startswith(pfx) for pfx in ["excite_", "inhibit_"])
+        and "scale_" not in name
+        and "bias_" not in name
+    )
+    emb_count = sum(
+        p.numel() for emb in shared_embeddings.values() for p in emb.parameters() if p.requires_grad
+    )
     print(f"  body 可训练参数张量数: {body_count}, emb 可训练参数数: {emb_count}")
     assert body_count > 0, "body 参数应可训练"
     assert emb_count > 0, "emb 参数应可训练"
@@ -134,7 +150,9 @@ def main():
             if "scale_" in name or "bias_" in name:
                 continue
             body_params.append(p)
-    emb_params = [p for emb in shared_embeddings.values() for p in emb.parameters() if p.requires_grad]
+    emb_params = [
+        p for emb in shared_embeddings.values() for p in emb.parameters() if p.requires_grad
+    ]
 
     # side_channels + 投影层 走 Muon (用 AdamW 代替 mock)
     side_params = []
@@ -189,11 +207,20 @@ def main():
     ckpt_path = os.path.join(tmpdir, "test.ckpt.pt")
     final_path = os.path.join(tmpdir, "test.final.pt")
 
-    save_checkpoint(ckpt_path, epoch=0, total_steps=1, optimizer=optimizer,
-                    neurons=neurons, ensemble=ensemble, loss_history=[{"step": 1, "loss": 1.0}],
-                    adamw_optimizer=None, scheduler=scheduler,
-                    body_optimizer=body_optimizer, body_scheduler=body_scheduler,
-                    shared_embeddings=shared_embeddings)
+    save_checkpoint(
+        ckpt_path,
+        epoch=0,
+        total_steps=1,
+        optimizer=optimizer,
+        neurons=neurons,
+        ensemble=ensemble,
+        loss_history=[{"step": 1, "loss": 1.0}],
+        adamw_optimizer=None,
+        scheduler=scheduler,
+        body_optimizer=body_optimizer,
+        body_scheduler=body_scheduler,
+        shared_embeddings=shared_embeddings,
+    )
     print(f"  saved: {ckpt_path}")
 
     # 也保存 final artifact
@@ -203,9 +230,15 @@ def main():
 
     # 验证 ckpt 包含期望的 keys
     ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
-    expected_keys = ["side_channels_state", "scale_bias_state", "cross_spec_state",
-                     "body_state", "body_optimizer_state", "body_scheduler_state",
-                     "shared_embedding_state"]
+    expected_keys = [
+        "side_channels_state",
+        "scale_bias_state",
+        "cross_spec_state",
+        "body_state",
+        "body_optimizer_state",
+        "body_scheduler_state",
+        "shared_embedding_state",
+    ]
     missing = [k for k in expected_keys if k not in ckpt]
     print(f"  checkpoint keys: {sorted(ckpt.keys())}")
     if missing:
@@ -227,8 +260,10 @@ def main():
 
     # 6. 创建新 neurons + ensemble，加载 checkpoint，验证 body 参数恢复
     print("\n[5] 加载 checkpoint 验证 round-trip...")
-    neurons2 = {"n0": MockNeuron(n_layers=4, hidden=32, field_dim=16, vocab=100),
-                "n1": MockNeuron(n_layers=4, hidden=32, field_dim=16, vocab=100)}
+    neurons2 = {
+        "n0": MockNeuron(n_layers=4, hidden=32, field_dim=16, vocab=100),
+        "n1": MockNeuron(n_layers=4, hidden=32, field_dim=16, vocab=100),
+    }
     ensemble2 = MockEnsemble()
     shared_embeddings2 = {
         "n0": nn.Embedding(1000, 32),
@@ -282,15 +317,22 @@ def main():
             if "scale_" in name or "bias_" in name:
                 continue
             body_params2.append(p)
-    emb_params2 = [p for emb in shared_embeddings2.values() for p in emb.parameters() if p.requires_grad]
+    emb_params2 = [
+        p for emb in shared_embeddings2.values() for p in emb.parameters() if p.requires_grad
+    ]
     body_optimizer2 = torch.optim.AdamW(body_params2 + emb_params2, lr=1e-4)
     scheduler2 = torch.optim.lr_scheduler.LambdaLR(optimizer2, lambda s: 1.0)
     body_scheduler2 = torch.optim.lr_scheduler.LambdaLR(body_optimizer2, lambda s: 1.0)
 
     epoch, steps, hist = load_checkpoint(
-        ckpt_path, optimizer2, neurons2, ensemble2,
-        adamw_optimizer=None, scheduler=scheduler2,
-        body_optimizer=body_optimizer2, body_scheduler=body_scheduler2,
+        ckpt_path,
+        optimizer2,
+        neurons2,
+        ensemble2,
+        adamw_optimizer=None,
+        scheduler=scheduler2,
+        body_optimizer=body_optimizer2,
+        body_scheduler=body_scheduler2,
         shared_embeddings=shared_embeddings2,
     )
     print(f"  restored: epoch={epoch}, steps={steps}, hist={len(hist)}")
@@ -313,7 +355,9 @@ def main():
                 if original_trained is not None and not torch.equal(original_trained, p.data):
                     mismatches += 1
                     if mismatches <= 3:
-                        print(f"  MISMATCH {nid}.{name}: orig={original_trained.flatten()[:3]} loaded={p.data.flatten()[:3]}")
+                        print(
+                            f"  MISMATCH {nid}.{name}: orig={original_trained.flatten()[:3]} loaded={p.data.flatten()[:3]}"
+                        )
     print(f"  body 参数不匹配数: {mismatches}")
     assert mismatches == 0, f"body 参数 round-trip 失败 ({mismatches} 不匹配)"
 
@@ -335,6 +379,7 @@ def main():
 
     # 清理
     import shutil
+
     shutil.rmtree(tmpdir)
 
     print("\n" + "=" * 60)

@@ -4,6 +4,7 @@ This is a minimal stub that allows imports to succeed. The real
 implementation will collect ReAct / conversation traces for
 fine-tuning pipelines.
 """
+
 import logging
 
 logger = logging.getLogger(__name__)

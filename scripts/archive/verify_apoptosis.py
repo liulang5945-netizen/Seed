@@ -11,10 +11,11 @@
 Usage:
     python scripts/training/verify_apoptosis.py
 """
+
 import sys
 import os
 
-os.environ.setdefault('TAIJI_TEST_MODE', '1')
+os.environ.setdefault("TAIJI_TEST_MODE", "1")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 
@@ -26,6 +27,7 @@ def main():
     # Step 1: 装配 Cortex
     print("\n[Step 1] 装配 Cortex...")
     from taiji.loader import assemble_cortex
+
     cortex, tokenizer, modules = assemble_cortex(
         neurons_dir="data/neurons",
         device="cpu",
@@ -82,6 +84,7 @@ def main():
     from taiji.resonance.field import ResonanceField
     from taiji.resonance.ensemble import ResonanceEnsemble
     import torch
+
     single_cfg = get_domain_neuron_config("zh")
     single_neuron = ResonanceNeuron(single_cfg).to("cpu")
     single_neuron.eval()
@@ -93,7 +96,7 @@ def main():
         {"zh": single_neuron}, single_field, max_rounds=1, coaction=single_coaction
     )
     # 模拟 remove_neuron 的安全检查
-    success = (len(single_ensemble.neurons) <= 1)
+    success = len(single_ensemble.neurons) <= 1
     if success:
         print(f"  ✅ 安全检查逻辑正确: 单神经元时拒绝移除")
     else:
@@ -106,6 +109,7 @@ def main():
     # Step 4: 测试 ApoptosisTracker.record_ppl + grace_evals
     print("\n[Step 4] 测试 ApoptosisTracker.record_ppl + grace_evals...")
     from taiji.resonance.lifecycle import ApoptosisTracker
+
     apop = ApoptosisTracker()
     # 宽限期内（前 10 次）不触发凋亡
     for i in range(10):
@@ -148,9 +152,11 @@ def main():
     print("\n[Step 6] 测试 _sleep_phase_evaluation 完整流程...")
     # 使用临时目录避免破坏生产数据
     import tempfile
+
     temp_dir = tempfile.mkdtemp()
     # 复制 neurons 到临时目录
     import shutil
+
     for f in os.listdir("data/neurons"):
         if f.endswith(".pt"):
             shutil.copy(os.path.join("data/neurons", f), temp_dir)
@@ -162,6 +168,7 @@ def main():
         wire_bio_modules=True,
     )
     from taiji.life.sleep_engine import SleepEngine, SleepReport
+
     sleep_engine = SleepEngine()
     sleep_engine.cortex = cortex2
     sleep_engine._lifecycle = modules2.get("lifecycle")
@@ -201,11 +208,11 @@ def main():
     # Step 8: 综合判断
     print("\n" + "=" * 60)
     all_pass = (
-        count_after_remove == initial_count and
-        success and  # 安全检查逻辑正确（单神经元时拒绝移除）
-        triggered_isolated and  # 孤立神经元触发
-        not triggered_active and  # 活跃神经元不触发
-        health.get("status") is not None
+        count_after_remove == initial_count
+        and success  # 安全检查逻辑正确（单神经元时拒绝移除）
+        and triggered_isolated  # 孤立神经元触发
+        and not triggered_active  # 活跃神经元不触发
+        and health.get("status") is not None
     )
     if all_pass:
         print("🎉 验证通过：ApoptosisTracker 完整闭环成功")

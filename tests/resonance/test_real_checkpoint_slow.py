@@ -10,6 +10,7 @@
 ckpt 不存在时 skip（CI 无 data/ 也能跑，本地跑需 data/ 目录）。
 运行: python -m pytest tests/resonance/test_real_checkpoint_slow.py -v
 """
+
 from pathlib import Path
 
 import pytest
@@ -74,6 +75,6 @@ def test_memory_component_products():
     assert (
         "state_dict" in anchor and "in_dim" in anchor and "proj_dim" in anchor
     ), "anchor_projector 产物结构异常"
-    assert gate["in_dim"] == anchor["in_dim"], (
-        f"gate/projector 输入维度不一致: {gate['in_dim']} vs {anchor['in_dim']}"
-    )
+    assert (
+        gate["in_dim"] == anchor["in_dim"]
+    ), f"gate/projector 输入维度不一致: {gate['in_dim']} vs {anchor['in_dim']}"

@@ -2,11 +2,10 @@
 系统更新、补丁管理 API 路由
 从 routes_system.py 拆分：版本检查、更新安装、热更新补丁
 """
-import json
+
 import logging
 import os
 import shutil
-import sys
 import threading
 
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Request
@@ -26,12 +25,12 @@ def _require_admin_auth(request: Request):
     - 认证未启用时：拒绝访问（更新操作必须在认证保护下进行）
     """
     from neuroplex.core.security import AuthManager
+
     auth = AuthManager()
 
     if not auth.enabled:
         raise HTTPException(
-            status_code=403,
-            detail="更新操作需要启用认证。请先启用认证后再执行此操作。"
+            status_code=403, detail="更新操作需要启用认证。请先启用认证后再执行此操作。"
         )
 
     auth_header = request.headers.get("Authorization", "")
@@ -46,11 +45,60 @@ def _require_admin_auth(request: Request):
     return payload
 
 
+def _validate_update_url(url: str):
+    """
+    SSRF 防护：仅允许 http/https，拒绝指向私网/保留地址的更新源。
+
+    校验主机名本身及其 DNS 解析结果（防 DNS rebinding 到内网）。
+    """
+    import ipaddress
+    import socket
+    from urllib.parse import urlparse
+
+    parsed = urlparse(url)
+    if parsed.scheme not in ("http", "https"):
+        raise HTTPException(status_code=400, detail="仅支持 http/https 更新地址")
+    hostname = parsed.hostname
+    if not hostname:
+        raise HTTPException(status_code=400, detail="更新地址缺少主机名")
+    host_l = hostname.lower()
+    if host_l == "localhost" or host_l.endswith(".localhost"):
+        raise HTTPException(status_code=400, detail="更新地址不允许指向本机")
+
+    def _is_forbidden(ip_str: str) -> bool:
+        try:
+            ip = ipaddress.ip_address(ip_str)
+        except ValueError:
+            return True
+        # is_private 覆盖 10/8、172.16/12、192.168/16、127/8、169.254/16、::1 等
+        return (
+            ip.is_private
+            or ip.is_loopback
+            or ip.is_link_local
+            or ip.is_reserved
+            or ip.is_multicast
+            or ip.is_unspecified
+        )
+
+    try:
+        ipaddress.ip_address(hostname)
+        candidates = [hostname]
+    except ValueError:
+        try:
+            candidates = list({info[4][0] for info in socket.getaddrinfo(hostname, None)})
+        except Exception:
+            raise HTTPException(status_code=400, detail="更新地址主机名无法解析")
+
+    if any(_is_forbidden(addr) for addr in candidates):
+        raise HTTPException(status_code=400, detail="更新地址不允许指向私网或保留地址")
+
+
 @router.get("/api/system/version")
 def get_system_version():
     """获取当前版本信息"""
     try:
         from build_scripts.updater import VersionManager
+
         vm = VersionManager()
         v = vm.current
         return {
@@ -74,11 +122,15 @@ def get_system_version():
 
 
 @router.post("/api/system/check_update")
-def check_update(req: dict = {}):
-    """检查远程更新"""
+def check_update(request: Request, req: dict = {}):
+    """检查远程更新 - 需要管理员认证（自定义 URL 经 SSRF 校验）"""
+    _require_admin_auth(request)
+    repo = req.get("repo", "")
+    if repo and repo.startswith("http"):
+        _validate_update_url(repo)
     try:
         from build_scripts.updater import VersionManager, UpdateChecker
-        repo = req.get("repo", "")
+
         vm = VersionManager()
         checker = UpdateChecker(vm)
         if repo:
@@ -119,6 +171,7 @@ def apply_update(request: Request, req: dict = {}):
     _require_admin_auth(request)
     try:
         from build_scripts.updater import UpdatePackageInstaller
+
         url = req.get("url", "")
         if not url:
             return {"status": "error", "message": "未提供更新包 URL"}
@@ -141,9 +194,11 @@ async def upload_update(request: Request, file: UploadFile = File(...)):
     """上传并安装更新包（手动模式）- 需要管理员认证"""
     _require_admin_auth(request)
     import zipfile
+
     try:
         from build_scripts.updater import UpdatePackageInstaller
         import tempfile
+
         fd, tmp_path = tempfile.mkstemp(suffix=".zip")
         os.close(fd)
         with open(tmp_path, "wb") as buffer:
@@ -184,6 +239,7 @@ def reload_modules(req: dict, request: Request):
     _require_admin_auth(request)
     try:
         from build_scripts.updater import ModuleHotReloader
+
         reloader = ModuleHotReloader()
         modules = req.get("modules", [])
         if modules:
@@ -211,6 +267,7 @@ def set_update_url(req: dict, request: Request):
     _require_admin_auth(request)
     try:
         from build_scripts.updater import VersionManager
+
         url = req.get("url", "")
         if not url:
             return {"status": "error", "message": "URL 不能为空"}
@@ -228,6 +285,7 @@ def list_patches():
     """列出当前可用的 Python 补丁模块（支持子目录结构）"""
     try:
         from build_scripts.updater import ModuleHotReloader
+
         reloader = ModuleHotReloader()
         patches = reloader.get_available_patches()
         patch_details = []
@@ -236,7 +294,9 @@ def list_patches():
             detail = {
                 "module": mod_name,
                 "path": os.path.relpath(patch_path, reloader.update_dir) if patch_path else "",
-                "size": os.path.getsize(patch_path) if patch_path and os.path.exists(patch_path) else 0,
+                "size": (
+                    os.path.getsize(patch_path) if patch_path and os.path.exists(patch_path) else 0
+                ),
             }
             patch_details.append(detail)
         return {"status": "ok", "patches": patches, "patch_details": patch_details}
@@ -287,6 +347,7 @@ async def upload_patch(request: Request, file: UploadFile = File(...), target_pa
         reload_result = ""
         try:
             from build_scripts.updater import ModuleHotReloader
+
             reloader = ModuleHotReloader()
             if reloader.reload_module(module_name):
                 reload_result = f"，模块 {module_name} 已热重载"
@@ -304,7 +365,7 @@ async def upload_patch(request: Request, file: UploadFile = File(...), target_pa
     except Exception as e:
         logger.error(f"上传补丁失败: {e}")
         logger.error(f"Request failed: {e}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
 
 
 @router.post("/api/system/upload_ui")
@@ -312,6 +373,7 @@ async def upload_ui_zip(request: Request, file: UploadFile = File(...)):
     """接收拖拽的 frontend.zip 并自动覆盖 update_frontend - 需要管理员认证"""
     _require_admin_auth(request)
     import zipfile
+
     try:
         ui_dir = get_external_path("update_frontend")
         temp_zip = get_external_path("temp_ui.zip")
@@ -320,18 +382,20 @@ async def upload_ui_zip(request: Request, file: UploadFile = File(...)):
         if os.path.exists(ui_dir):
             shutil.rmtree(ui_dir, ignore_errors=True)
         os.makedirs(ui_dir, exist_ok=True)
-        with zipfile.ZipFile(temp_zip, 'r') as zip_ref:
+        with zipfile.ZipFile(temp_zip, "r") as zip_ref:
             # ZipSlip 防护：验证所有解压路径在目标目录内
             for info in zip_ref.infolist():
                 extract_path = os.path.join(ui_dir, info.filename)
                 abs_extract = os.path.abspath(extract_path)
                 abs_ui = os.path.abspath(ui_dir)
                 if not (abs_extract.startswith(abs_ui + os.sep) or abs_extract == abs_ui):
-                    raise HTTPException(status_code=400, detail=f"ZIP 包含非法路径: {info.filename}")
+                    raise HTTPException(
+                        status_code=400, detail=f"ZIP 包含非法路径: {info.filename}"
+                    )
             zip_ref.extractall(ui_dir)
         os.remove(temp_zip)
         return {"status": "success", "message": "界面补丁包部署完毕！2秒后将自动刷新界面立刻生效！"}
     except Exception as e:
         logger.error(f"UI更新失败: {e}")
         logger.error(f"Request failed: {e}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")

@@ -11,6 +11,9 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def _load_native_v2_contract() -> dict[str, Any]:
@@ -21,8 +24,7 @@ def _load_native_v2_contract() -> dict[str, Any]:
 
 NATIVE_V2_TOKENIZER_CONTRACT = _load_native_v2_contract()
 _SPECIAL = {
-    key: int(value)
-    for key, value in NATIVE_V2_TOKENIZER_CONTRACT["special_tokens"].items()
+    key: int(value) for key, value in NATIVE_V2_TOKENIZER_CONTRACT["special_tokens"].items()
 }
 _GENERATED = NATIVE_V2_TOKENIZER_CONTRACT.get("generated_special_ranges", {})
 _MULTIMODAL = NATIVE_V2_TOKENIZER_CONTRACT["multimodal"]
@@ -161,15 +163,15 @@ class SpecialTokenResolver:
             unk_id = getattr(tokenizer, "unk_token_id", None)
             if token_id is not None and token_id != unk_id:
                 return int(token_id)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【SpecialTokenResolver._find_token_id】处理失败（非致命）: %s", e)
 
         try:
             token_ids = tokenizer.encode(content, add_special_tokens=False)
             if len(token_ids) == 1:
                 return int(token_ids[0])
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【SpecialTokenResolver._find_token_id】处理失败（非致命）: %s", e)
 
         try:
             added = getattr(tokenizer, "added_tokens_decoder", {})
@@ -178,8 +180,8 @@ class SpecialTokenResolver:
                     return int(token_id)
                 if isinstance(info, dict) and info.get("content") == content:
                     return int(token_id)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【SpecialTokenResolver._find_token_id】处理失败（非致命）: %s", e)
 
         return None
 
@@ -200,12 +202,16 @@ def get_taiji_data_path(subdir: str) -> str:
 
         model_path = getattr(app_state, "_loaded_model_name", "") or ""
         if model_path and os.path.isdir(model_path):
-            model_dir = model_path if os.path.exists(os.path.join(model_path, "config.json")) else os.path.dirname(model_path)
+            model_dir = (
+                model_path
+                if os.path.exists(os.path.join(model_path, "config.json"))
+                else os.path.dirname(model_path)
+            )
             data_path = os.path.join(model_dir, subdir)
             os.makedirs(data_path, exist_ok=True)
             return data_path
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【get_taiji_data_path】处理失败（非致命）: %s", e)
 
     try:
         from neuroplex.core.config import get_external_path
@@ -249,6 +255,7 @@ class ModelConfig:
     def to_dict(self) -> dict:
         """Serialise to dict — auto-generated from dataclass fields, never drifts."""
         from dataclasses import asdict
+
         return asdict(self)
 
     @classmethod
@@ -266,14 +273,26 @@ class ModelConfig:
             "rope_theta": 500000.0,
             "attention_bias": False,
             "base_vocab_size": int(NATIVE_V2_TOKENIZER_CONTRACT["text_vocab_size"]),
-            "num_special_tokens": int(NATIVE_V2_TOKENIZER_CONTRACT["total_vocab_size"] - NATIVE_V2_TOKENIZER_CONTRACT["text_vocab_size"]),
+            "num_special_tokens": int(
+                NATIVE_V2_TOKENIZER_CONTRACT["total_vocab_size"]
+                - NATIVE_V2_TOKENIZER_CONTRACT["text_vocab_size"]
+            ),
             "num_short_term_slots": 20,
             "num_long_term_slots": 10,
             "memory_dim": 64,
             "active_heads": None,
         }
-        return cls(**{k: type(defaults.get(k, v))(v) if isinstance(defaults.get(k), (int, float, bool)) else v
-                      for k, v in {**defaults, **data}.items() if k in defaults})
+        return cls(
+            **{
+                k: (
+                    type(defaults.get(k, v))(v)
+                    if isinstance(defaults.get(k), (int, float, bool))
+                    else v
+                )
+                for k, v in {**defaults, **data}.items()
+                if k in defaults
+            }
+        )
 
     def validate(self) -> bool:
         """Validate model configuration on construction.
@@ -295,11 +314,15 @@ class ModelConfig:
         if self.max_position_embeddings < 1:
             errors.append("max_position_embeddings must be >= 1")
         if self.num_attention_heads % self.num_key_value_heads != 0:
-            errors.append(f"num_attention_heads ({self.num_attention_heads}) "
-                         f"must be divisible by num_key_value_heads ({self.num_key_value_heads})")
+            errors.append(
+                f"num_attention_heads ({self.num_attention_heads}) "
+                f"must be divisible by num_key_value_heads ({self.num_key_value_heads})"
+            )
         if self.hidden_size % self.num_attention_heads != 0:
-            errors.append(f"hidden_size ({self.hidden_size}) "
-                         f"must be divisible by num_attention_heads ({self.num_attention_heads})")
+            errors.append(
+                f"hidden_size ({self.hidden_size}) "
+                f"must be divisible by num_attention_heads ({self.num_attention_heads})"
+            )
         if errors:
             raise ValueError(f"ModelConfig validation failed: {'; '.join(errors)}")
         return True

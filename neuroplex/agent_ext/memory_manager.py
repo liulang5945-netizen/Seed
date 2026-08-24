@@ -4,6 +4,7 @@ This is a minimal stub that allows imports to succeed. The real
 implementation will back the agent's short-term / long-term memory
 stores with persistent storage.
 """
+
 import logging
 
 logger = logging.getLogger(__name__)

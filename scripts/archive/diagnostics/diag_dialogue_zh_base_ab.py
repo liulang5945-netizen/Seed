@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """验证 ``zh`` 基础成员是否污染 dialogue continuous 路径。"""
+
 from __future__ import annotations
 
 import json
@@ -14,7 +15,6 @@ from diag_dialogue_capacity_ab import (
     _generate,
     _text_metrics,
 )
-
 
 FULL_9 = DIALOGUE_IDS + ["code", "en", "math", "zh"]
 FULL_8_NO_ZH = DIALOGUE_IDS + ["code", "en", "math"]

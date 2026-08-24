@@ -13,7 +13,6 @@ import torch  # noqa: E402
 from taiji import Taiji, TaijiConfig  # noqa: E402
 from taiji.memory import EpisodicField  # noqa: E402
 
-
 # 拦截 write，记录写入前的 cue_familiarity 与 novelty
 _original_write = EpisodicField.write
 
@@ -86,9 +85,7 @@ def repeat_scenario() -> None:
         for symbol in stream:
             model.observe(int(symbol), learn=False)
             probabilities = model.snapshot().motor_probabilities
-            candidates = [
-                int(i) for i in torch.argsort(probabilities, descending=True)[:8]
-            ]
+            candidates = [int(i) for i in torch.argsort(probabilities, descending=True)[:8]]
             model.act(candidates, sample=False)
             model.settle_action(-3.0, learn=False, learn_memory=True)
         model.observe(model.config.boundary_symbol, learn=False)

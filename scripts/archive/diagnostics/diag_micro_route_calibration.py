@@ -26,7 +26,9 @@ import random
 import sys
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -42,7 +44,6 @@ from scripts.archive.diagnostics.diag_micro_route_fusion_pilot import (
     _prepare_population,
 )
 
-
 CALIBRATION_CAP = 8
 CALIBRATION_BOUND = 2.0
 CALIBRATION_TEMPERATURE = 1.0
@@ -53,7 +54,7 @@ def _collect_quality_logits(cortex, rounds, general_sp) -> torch.Tensor:
     with torch.no_grad():
         for index in range(len(rounds)):
             result, _targets, _answer_mask = _forward_batch(
-                cortex, rounds[index:index + 1], general_sp
+                cortex, rounds[index : index + 1], general_sp
             )
             quality = result.get("quality_logits")
             if quality is None:
@@ -87,11 +88,11 @@ def _route_metrics(cortex, rounds, general_sp, calibration_mean, calibration_std
     calibrated_route_wins = torch.zeros(len(member_ids), dtype=torch.long)
     with torch.no_grad():
         for index in range(len(rounds)):
-            batch = rounds[index:index + 1]
+            batch = rounds[index : index + 1]
             raw, targets, answer_mask = _forward_batch(cortex, batch, general_sp)
-            raw_nlls.append(float(_masked_teacher_forcing_nll(
-                raw["fused_logits"], targets, answer_mask
-            )))
+            raw_nlls.append(
+                float(_masked_teacher_forcing_nll(raw["fused_logits"], targets, answer_mask))
+            )
             raw_weights += raw["weights"].detach().float().cpu()
             raw_quality.append(raw["quality_logits"].detach().float().cpu())
 
@@ -103,9 +104,13 @@ def _route_metrics(cortex, rounds, general_sp, calibration_mean, calibration_std
             calibrated, targets_cal, answer_mask_cal = _forward_batch(
                 cortex, batch, general_sp, trust_override=trust
             )
-            calibrated_nlls.append(float(_masked_teacher_forcing_nll(
-                calibrated["fused_logits"], targets_cal, answer_mask_cal
-            )))
+            calibrated_nlls.append(
+                float(
+                    _masked_teacher_forcing_nll(
+                        calibrated["fused_logits"], targets_cal, answer_mask_cal
+                    )
+                )
+            )
             weights = calibrated["weights"].detach().float().cpu()
             calibrated_weights += weights
             calibrated_route_wins += (weights > 0).long()
@@ -122,20 +127,15 @@ def _route_metrics(cortex, rounds, general_sp, calibration_mean, calibration_std
         "raw_hard_route_ppl": round(math.exp(min(raw_mean, 20)), 4),
         "calibrated_hard_route_ppl": round(math.exp(min(calibrated_mean, 20)), 4),
         "nll_delta_calibrated_minus_raw": round(calibrated_mean - raw_mean, 6),
-        "ppl_ratio_calibrated_over_raw": round(
-            math.exp(min(calibrated_mean - raw_mean, 20)), 6
-        ),
+        "ppl_ratio_calibrated_over_raw": round(math.exp(min(calibrated_mean - raw_mean, 20)), 6),
         "raw_mean_weights": {
-            nid: round(float(raw_weights[i] / count), 6)
-            for i, nid in enumerate(member_ids)
+            nid: round(float(raw_weights[i] / count), 6) for i, nid in enumerate(member_ids)
         },
         "calibrated_mean_weights": {
-            nid: round(float(calibrated_weights[i] / count), 6)
-            for i, nid in enumerate(member_ids)
+            nid: round(float(calibrated_weights[i] / count), 6) for i, nid in enumerate(member_ids)
         },
         "calibrated_route_win_counts": {
-            nid: int(calibrated_route_wins[i])
-            for i, nid in enumerate(member_ids)
+            nid: int(calibrated_route_wins[i]) for i, nid in enumerate(member_ids)
         },
         "raw_quality_logits_mean": {
             nid: round(float(raw_quality_tensor[:, i].mean()), 6)
@@ -171,9 +171,7 @@ def run(
     if not calibration_rounds or not eval_rounds:
         raise RuntimeError("calibration or eval rounds are empty")
 
-    calibration_logits = _collect_quality_logits(
-        cortex, calibration_rounds, general_sp
-    )
+    calibration_logits = _collect_quality_logits(cortex, calibration_rounds, general_sp)
     calibration_mean = calibration_logits.mean(dim=0)
     calibration_std = calibration_logits.std(dim=0, unbiased=False).clamp_min(1.0)
     eval_metrics = _route_metrics(
@@ -209,14 +207,8 @@ def run(
         "specialist_reports": specialist_reports,
         "quality_logit_calibration": {
             "member_ids": member_ids,
-            "mean": {
-                nid: round(float(calibration_mean[i]), 6)
-                for i, nid in enumerate(member_ids)
-            },
-            "std": {
-                nid: round(float(calibration_std[i]), 6)
-                for i, nid in enumerate(member_ids)
-            },
+            "mean": {nid: round(float(calibration_mean[i]), 6) for i, nid in enumerate(member_ids)},
+            "std": {nid: round(float(calibration_std[i]), 6) for i, nid in enumerate(member_ids)},
             "global_min": round(float(calibration_logits.min()), 6),
             "global_max": round(float(calibration_logits.max()), 6),
         },

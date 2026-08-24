@@ -10,6 +10,7 @@
 运行：
     python -X utf8 -u scripts/training/diag_dialogue_holdout_ppl.py
 """
+
 from __future__ import annotations
 
 import gc
@@ -19,7 +20,9 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -36,10 +39,12 @@ from scripts.training.utils import (
     split_train_eval,
 )
 
-
 DIALOGUE_IDS = [
-    "zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-    "zh_aug3_dialogue", "zh_std0_dialogue",
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
 ]
 CHECKPOINT_DIR = os.path.join("data", "neurons")
 MAX_TEXTS = 100000
@@ -73,7 +78,7 @@ def _evaluate(neuron, shared_embedding, texts, domain_sp, general_sp) -> dict:
     legacy_tokens = 0
     with torch.no_grad():
         for start in range(0, len(texts), BATCH_SIZE):
-            batch = texts[start:start + BATCH_SIZE]
+            batch = texts[start : start + BATCH_SIZE]
             embeddings, targets, mask, sft_mask = batch_align_and_embed(
                 batch,
                 domain_sp,

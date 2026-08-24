@@ -4,6 +4,7 @@ This is a minimal stub that allows imports to succeed. The real
 implementation will expose an engine that can propose and apply
 safe self-modifications to the agent's own code / weights.
 """
+
 import logging
 
 logger = logging.getLogger(__name__)

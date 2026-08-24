@@ -47,13 +47,26 @@ SYNONYM_MAP = {
 
 # ── question 前缀包装（礼貌语/澄清语）──
 QUESTION_PREFIXES = [
-    "请问", "我想知道", "你能帮我吗，", "麻烦你", "帮我看看",
-    "不好意思，想请问", "想了解一下", "能告诉我吗？",
+    "请问",
+    "我想知道",
+    "你能帮我吗，",
+    "麻烦你",
+    "帮我看看",
+    "不好意思，想请问",
+    "想了解一下",
+    "能告诉我吗？",
 ]
 
 # ── question 后缀包装 ──
 QUESTION_SUFFIXES = [
-    "", "", "", "", "谢谢", "谢谢啦", "麻烦了", "可以吗",
+    "",
+    "",
+    "",
+    "",
+    "谢谢",
+    "谢谢啦",
+    "麻烦了",
+    "可以吗",
 ]
 
 # ── 系统/角色前缀（多轮上下文增强）──
@@ -70,15 +83,20 @@ def parse_dialogue(text: str) -> Optional[Tuple[str, str]]:
     a_idx = text.find(A_MARKER)
     if q_idx == -1 or a_idx == -1 or a_idx <= q_idx:
         return None
-    question = text[q_idx + len(Q_MARKER):a_idx].strip()
-    answer = text[a_idx + len(A_MARKER):].strip()
+    question = text[q_idx + len(Q_MARKER) : a_idx].strip()
+    answer = text[a_idx + len(A_MARKER) :].strip()
     if len(question) < 2 or len(answer) < 2:
         return None
     return question, answer
 
 
-def rewrite_question(question: str, rng: random.Random, prefix_prob: float = 0.3,
-                     suffix_prob: float = 0.2, synonym_prob: float = 0.5) -> str:
+def rewrite_question(
+    question: str,
+    rng: random.Random,
+    prefix_prob: float = 0.3,
+    suffix_prob: float = 0.2,
+    synonym_prob: float = 0.5,
+) -> str:
     """改写 question（同义替换 + 前缀/后缀包装），保留语义。
 
     Args:
@@ -109,9 +127,14 @@ def rewrite_question(question: str, rng: random.Random, prefix_prob: float = 0.3
     return q
 
 
-def augment_dialogue_text(text: str, rng: random.Random, rewrite_prob: float = 0.5,
-                          prefix_prob: float = 0.3, suffix_prob: float = 0.2,
-                          synonym_prob: float = 0.5) -> str:
+def augment_dialogue_text(
+    text: str,
+    rng: random.Random,
+    rewrite_prob: float = 0.5,
+    prefix_prob: float = 0.3,
+    suffix_prob: float = 0.2,
+    synonym_prob: float = 0.5,
+) -> str:
     """增强单条对话：改写 question，保留 answer 不变。
 
     Args:
@@ -132,7 +155,11 @@ def augment_dialogue_text(text: str, rng: random.Random, rewrite_prob: float = 0
     # 角色前缀增强（少量样本加）
     role = rng.choice(ROLE_PREFIXES) if rng.random() < 0.15 else ""
     new_q = rewrite_question(
-        question, rng, prefix_prob, suffix_prob, synonym_prob,
+        question,
+        rng,
+        prefix_prob,
+        suffix_prob,
+        synonym_prob,
     )
     return f"{Q_MARKER}{role}{new_q}\n{A_MARKER}{answer}"
 
@@ -277,7 +304,7 @@ def generate_neuron_augmented_data(
             continue
         # 提取 "答：" 之后的内容
         a_idx = generated_text.find(A_MARKER)
-        paraphrase = generated_text[a_idx + len(A_MARKER):].strip() if a_idx != -1 else ""
+        paraphrase = generated_text[a_idx + len(A_MARKER) :].strip() if a_idx != -1 else ""
         if len(paraphrase) < 4:
             continue
         augmented.append(f"{Q_MARKER}{question}\n{A_MARKER}{paraphrase}")
@@ -301,9 +328,14 @@ class DialogueAugmenter:
     - 多轮拼接需要 context_pool（整个对话池），由训练脚本传入
     """
 
-    def __init__(self, rewrite_prob: float = 0.5, multi_turn_prob: float = 0.4,
-                 prefix_prob: float = 0.3, suffix_prob: float = 0.2,
-                 synonym_prob: float = 0.5):
+    def __init__(
+        self,
+        rewrite_prob: float = 0.5,
+        multi_turn_prob: float = 0.4,
+        prefix_prob: float = 0.3,
+        suffix_prob: float = 0.2,
+        synonym_prob: float = 0.5,
+    ):
         self.rewrite_prob = rewrite_prob
         self.multi_turn_prob = multi_turn_prob
         self.prefix_prob = prefix_prob
@@ -326,14 +358,20 @@ class DialogueAugmenter:
         """增强单条对话（多轮拼接 + 模板改写）。"""
         # 多轮拼接优先（产生上下文，改写在后）
         out = multi_turn_concatenate(
-            text, self._context_pool, self._rng,
+            text,
+            self._context_pool,
+            self._rng,
             prob=self.multi_turn_prob,
         )
         # 只对最终轮 question 做模板改写
         # 简化：若拼接成功则不改写最终轮（保持前序轮次纯净），否则改写
         if out == text:
             out = augment_dialogue_text(
-                text, self._rng, self.rewrite_prob,
-                self.prefix_prob, self.suffix_prob, self.synonym_prob,
+                text,
+                self._rng,
+                self.rewrite_prob,
+                self.prefix_prob,
+                self.suffix_prob,
+                self.synonym_prob,
             )
         return out

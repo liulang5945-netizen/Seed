@@ -33,6 +33,7 @@ def probe_texts() -> list[bytes]:
     base = REPO / "data" / "simple_zh"
     path = base / "dialogue_extended_clean.jsonl"
     import json
+
     with path.open("r", encoding="utf-8") as handle:
         for index, line in enumerate(handle):
             if index >= 8:
@@ -67,9 +68,7 @@ def variant(
     targets = probes[:texts_count]
     for text in targets:
         scheduler.experience(text, learn=True)
-        model.substrate.consolidate(
-            cycles=cycles, learn=learn, replay_cue_chain=cue_chain
-        )
+        model.substrate.consolidate(cycles=cycles, learn=learn, replay_cue_chain=cue_chain)
     after = measure(model, probes)
     print(
         f"{name}: surprise {before:.3f} -> {after:.3f} "

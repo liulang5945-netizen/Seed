@@ -7,6 +7,7 @@ Agent 核心功能 API 路由（精简版）
 - routes_agent_mcp.py      → MCP 服务器市场、安装/卸载、启动/停止
 - routes_agent_memory.py   → 记忆系统（短期/工作/长期记忆）
 """
+
 import json
 import logging
 from fastapi import APIRouter, HTTPException
@@ -22,6 +23,7 @@ router = APIRouter()
 
 # ======================== Agent 工具列表 ========================
 
+
 @router.get("/api/agent/tools")
 def list_agent_tools():
     """列出已加载的 Agent 工具。"""
@@ -29,6 +31,7 @@ def list_agent_tools():
 
 
 # ======================== ReAct 推理引擎 ========================
+
 
 @router.post("/api/agent/react")
 async def react_task(req: dict):
@@ -56,14 +59,29 @@ async def react_task_stream(req: dict):
     max_steps = req.get("max_steps", 15)
 
     async def event_generator():
+        import threading
+
+        from .chat_strategies import _iterate_sync_gen_in_thread
+
+        stop_event = threading.Event()
         try:
-            for event in agent_service.run_react_stream(task, max_steps):
+            # 同步生成器放到工作线程驱动，事件经队列桥接，不阻塞事件循环
+            async for event in _iterate_sync_gen_in_thread(
+                lambda: agent_service.run_react_stream(task, max_steps),
+                stop_event,
+            ):
                 event_type = event.get("type", "unknown")
                 data = json.dumps(event.get("data", {}), ensure_ascii=False)
                 yield f"event: {event_type}\ndata: {data}\n\n"
                 await asyncio.sleep(0.01)
+        except (GeneratorExit, RuntimeError, asyncio.CancelledError):
+            logger.info("ReAct 流式客户端已断开，停止生成")
+            stop_event.set()
+            raise
         except Exception as e:
             yield f"event: error\ndata: {json.dumps({'error': str(e)})}\n\n"
+        finally:
+            stop_event.set()
 
         yield "event: done\ndata: {}\n\n"
 
@@ -86,6 +104,7 @@ async def cancel_agent():
 
 
 # ======================== 工具注册表 ========================
+
 
 @router.get("/api/agent/tools/registry")
 def list_tool_registry():
@@ -117,11 +136,16 @@ async def run_tool(req: dict):
 
 # ======================== 多 Agent 协作 ========================
 
+
 @router.get("/api/agent/roles")
 def list_roles():
     """列出所有可用的 Agent 角色"""
     try:
-        return {"status": "ok", "roles": agent_service.list_roles(), "count": len(agent_service.list_roles())}
+        return {
+            "status": "ok",
+            "roles": agent_service.list_roles(),
+            "count": len(agent_service.list_roles()),
+        }
     except Exception as e:
         logger.error(f"Request failed: {e}")
         return {"status": "error", "message": "内部错误，请查看日志"}

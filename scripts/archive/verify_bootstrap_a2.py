@@ -15,6 +15,7 @@ A4. 开关回归：judge_driven_replay=False 时行为不变（judge_driven_repl
 
 运行：python -u scripts/training/verify_bootstrap_a2.py
 """
+
 from __future__ import annotations
 
 import os
@@ -23,7 +24,9 @@ import sys
 import tempfile
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import random  # noqa: E402
 import numpy as np  # noqa: E402
@@ -51,8 +54,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -75,8 +83,7 @@ def field_state_of(cortex, text: str):
     gids = cortex._general_sp.encode(text) or [0]
     ids = torch.tensor([gids], dtype=torch.long, device=cortex.device)
     emb = cortex._shared_embedding(ids)
-    res = cortex.think(emb, active_nids=None, fusion_mode="soft",
-                       collab_mode="continuous")
+    res = cortex.think(emb, active_nids=None, fusion_mode="soft", collab_mode="continuous")
     fs = res.get("field_state")
     if fs is None:
         raise RuntimeError("think() 未返回 field_state")
@@ -120,17 +127,15 @@ def nll_round(cortex, nid: str, text: str, field_vec=None, round_num=1) -> float
         else:
             fs = v
     with torch.no_grad():
-        res = neuron.forward(emb, field_state=fs, round_num=round_num,
-                             return_logits=True)
+        res = neuron.forward(emb, field_state=fs, round_num=round_num, return_logits=True)
         logits = res["logits"]
         target = torch.tensor([domain_ids], dtype=torch.long, device=cortex.device)
         min_len = logits.size(1) - 1
         if min_len < 1:
             return float("nan")
         sl = logits[:, :min_len, :].contiguous()
-        st = target[:, 1:1 + min_len].contiguous().clamp(0, logits.size(-1) - 1)
-        loss = F.cross_entropy(sl.view(-1, sl.size(-1)), st.view(-1),
-                               ignore_index=-100)
+        st = target[:, 1 : 1 + min_len].contiguous().clamp(0, logits.size(-1) - 1)
+        loss = F.cross_entropy(sl.view(-1, sl.size(-1)), st.view(-1), ignore_index=-100)
     return loss.item()
 
 
@@ -151,14 +156,12 @@ def main():
             wire_bio_modules=True,
             neuron_ids=DIALOGUE_IDS,
         )
-        target_ids = [nid for nid in cortex.neurons
-                      if nid.startswith("zh_") and "dialogue" in nid]
+        target_ids = [nid for nid in cortex.neurons if nid.startswith("zh_") and "dialogue" in nid]
         nid0 = target_ids[0]
         print(f"  装配 {len(cortex.neurons)} 神经元, 目标 {target_ids}", flush=True)
         check("装配成功（9 neuron）", len(cortex.neurons) == 9)
 
-        cfg = SleepConfig(max_training_steps=10, training_enabled=True,
-                          judge_driven_replay=True)
+        cfg = SleepConfig(max_training_steps=10, training_enabled=True, judge_driven_replay=True)
         sleep_engine = SleepEngine(config=cfg, data_dir=tmp_dir)
         sleep_engine.forward_replay_max_samples = 3  # 6 条中选 3 条短板
         sc = SleepConsolidator(replay_buffer_size=50)
@@ -171,8 +174,7 @@ def main():
         for text in HARD_SAMPLES + EASY_SAMPLES:
             vec = field_state_of(cortex, text)
             sleep_engine.record_field_memory(vec, labels[text], text=text)
-        r_f = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
-                          duration_seconds=0)
+        r_f = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
         sleep_engine._sleep_phase_field_consolidation(r_f)
         bank = sleep_engine.get_field_memory()
         check("记忆库固化 6 条", len(bank) == 6, f"n={len(bank)}")
@@ -181,9 +183,13 @@ def main():
         for text in HARD_SAMPLES + EASY_SAMPLES:
             fs = field_state_of(cortex, text)
             sc.record_high_resonance_state(
-                field_state=fs, resonance_score=0.9,
-                step=sleep_engine._current_step, active_nids=target_ids,
-                threshold=0.5, text=text)
+                field_state=fs,
+                resonance_score=0.9,
+                step=sleep_engine._current_step,
+                active_nids=target_ids,
+                threshold=0.5,
+                text=text,
+            )
         check("场状态记录：6 条带 text 进重放缓冲区", len(sc._replay_buffer) == 6)
 
         # ── A1. 自我评估信度：judge NLL 有区分度（能排序样本）──
@@ -193,32 +199,36 @@ def main():
         judge_nlls = {}
         for text in HARD_SAMPLES + EASY_SAMPLES:
             judge_nlls[labels[text]] = sleep_engine._sample_judge_nll(
-                text, target_ids, device, cortex._shared_embedding)
+                text, target_ids, device, cortex._shared_embedding
+            )
         vals = [v for v in judge_nlls.values() if v is not None]
         std = (sum((v - sum(vals) / len(vals)) ** 2 for v in vals) / len(vals)) ** 0.5
         print(f"    judge NLL: {judge_nlls}", flush=True)
         print(f"    区分度 std={std:.3f}", flush=True)
-        check("A1. judge NLL 有区分度（std>0.05，能排序样本）", std > 0.05,
-              f"std={std:.3f}")
+        check("A1. judge NLL 有区分度（std>0.05，能排序样本）", std > 0.05, f"std={std:.3f}")
 
         # ── 基线：重放前条件化 NLL（round2 + 场向量）──
-        field_vecs = {labels[t]: field_state_of(cortex, t)
-                      for t in HARD_SAMPLES + EASY_SAMPLES}
-        base_cond = {labels[t]: nll_round(cortex, nid0, t, field_vecs[labels[t]], round_num=2)
-                     for t in HARD_SAMPLES + EASY_SAMPLES}
+        field_vecs = {labels[t]: field_state_of(cortex, t) for t in HARD_SAMPLES + EASY_SAMPLES}
+        base_cond = {
+            labels[t]: nll_round(cortex, nid0, t, field_vecs[labels[t]], round_num=2)
+            for t in HARD_SAMPLES + EASY_SAMPLES
+        }
         ctrl_plain0 = nll_round(cortex, nid0, CONTROL_TEXT, round_num=1)
         print(f"\n[基线] 条件化 NLL: {base_cond}", flush=True)
 
         # ── A2. judge 驱动 sleep → 短板改善 ──
         print("\n[A2] judge 驱动重放（手，短板优先）...", flush=True)
-        r7 = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
-                         duration_seconds=0)
+        r7 = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
         sleep_engine._sleep_phase_forward_replay(r7)
-        check("A2a. judge 驱动重放执行（judge_driven_replay>0）",
-              r7.judge_driven_replay > 0,
-              f"judge_driven={r7.judge_driven_replay}, replayed={r7.forward_replayed}")
-        after_cond = {labels[t]: nll_round(cortex, nid0, t, field_vecs[labels[t]], round_num=2)
-                      for t in HARD_SAMPLES + EASY_SAMPLES}
+        check(
+            "A2a. judge 驱动重放执行（judge_driven_replay>0）",
+            r7.judge_driven_replay > 0,
+            f"judge_driven={r7.judge_driven_replay}, replayed={r7.forward_replayed}",
+        )
+        after_cond = {
+            labels[t]: nll_round(cortex, nid0, t, field_vecs[labels[t]], round_num=2)
+            for t in HARD_SAMPLES + EASY_SAMPLES
+        }
         deltas = {k: after_cond[k] - base_cond[k] for k in base_cond}
         # judge 判定短板 = judge NLL 最高的 top3（forward_replay_max_samples=3）
         ranked = sorted(judge_nlls, key=lambda k: judge_nlls[k], reverse=True)
@@ -227,30 +237,39 @@ def main():
         unpicked = set(deltas) - picked
         unpicked_d = sum(deltas[k] for k in unpicked) / len(unpicked)
         print(f"    ΔNLL: {deltas}", flush=True)
-        print(f"    judge 选中(短板) Δ均值={picked_d:.3f}, 未选中 Δ均值={unpicked_d:.3f}",
-              flush=True)
-        check("A2b. judge 判定的短板条件化 NLL 下降（它补了自己判定的差）",
-              picked_d < -0.02, f"Δ={picked_d:.3f}")
-        check("A2c. 短板改善 > 未选中（归因于 judge 选择）",
-              picked_d < unpicked_d,
-              f"picked={picked_d:.3f} unpicked={unpicked_d:.3f}")
+        print(
+            f"    judge 选中(短板) Δ均值={picked_d:.3f}, 未选中 Δ均值={unpicked_d:.3f}", flush=True
+        )
+        check(
+            "A2b. judge 判定的短板条件化 NLL 下降（它补了自己判定的差）",
+            picked_d < -0.02,
+            f"Δ={picked_d:.3f}",
+        )
+        check(
+            "A2c. 短板改善 > 未选中（归因于 judge 选择）",
+            picked_d < unpicked_d,
+            f"picked={picked_d:.3f} unpicked={unpicked_d:.3f}",
+        )
 
         # ── A3. 自我维持 / 零破坏 ──
         print("\n[A3] 零破坏（body 未动）...", flush=True)
         ctrl_plain1 = nll_round(cortex, nid0, CONTROL_TEXT, round_num=1)
-        check("A3. round1 无条件化 NLL 不暴涨（body 零破坏）",
-              abs(ctrl_plain1 - ctrl_plain0) < 0.5,
-              f"Δ={ctrl_plain1 - ctrl_plain0:.3f}")
+        check(
+            "A3. round1 无条件化 NLL 不暴涨（body 零破坏）",
+            abs(ctrl_plain1 - ctrl_plain0) < 0.5,
+            f"Δ={ctrl_plain1 - ctrl_plain0:.3f}",
+        )
 
         # ── A4. 开关回归 ──
         print("\n[A4] 开关回归（judge_driven_replay=False）...", flush=True)
         sleep_engine.config.judge_driven_replay = False
-        r_off = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
-                            duration_seconds=0)
+        r_off = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
         sleep_engine._sleep_phase_forward_replay(r_off)
-        check("A4. 关闭后 judge_driven_replay==0（旧行为不变）",
-              r_off.judge_driven_replay == 0,
-              f"judge_driven={r_off.judge_driven_replay}")
+        check(
+            "A4. 关闭后 judge_driven_replay==0（旧行为不变）",
+            r_off.judge_driven_replay == 0,
+            f"judge_driven={r_off.judge_driven_replay}",
+        )
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
 

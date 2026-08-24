@@ -8,6 +8,7 @@
 3. 沙盒执行：隔离环境中运行
 4. 资源限制：CPU/内存/时间限制
 """
+
 import ast
 import os
 import re
@@ -23,6 +24,7 @@ logger = logging.getLogger("Taiji.SecurityGuard")
 @dataclass
 class SecurityCheckResult:
     """安全检查结果"""
+
     passed: bool
     risk_level: str  # "safe", "low", "medium", "high", "critical"
     violations: List[str]
@@ -39,49 +41,45 @@ class CodeSecurityGuard:
     # 危险函数/模块（直接拒绝）
     BLOCKED_PATTERNS = [
         # 系统命令执行
-        (r'\bos\.system\b', "os.system 命令执行"),
-        (r'\bos\.popen\b', "os.popen 命令执行"),
-        (r'\bsubprocess\.(?:call|run|Popen|check_output|check_call)\b', "subprocess 命令执行"),
-        (r'\b__import__\b', "动态导入"),
-        (r'\beval\s*\(', "eval 执行"),
-        (r'\bexec\s*\(', "exec 执行"),
-        (r'\bcompile\s*\(.*exec', "compile+exec 执行"),
-
+        (r"\bos\.system\b", "os.system 命令执行"),
+        (r"\bos\.popen\b", "os.popen 命令执行"),
+        (r"\bsubprocess\.(?:call|run|Popen|check_output|check_call)\b", "subprocess 命令执行"),
+        (r"\b__import__\b", "动态导入"),
+        (r"\beval\s*\(", "eval 执行"),
+        (r"\bexec\s*\(", "exec 执行"),
+        (r"\bcompile\s*\(.*exec", "compile+exec 执行"),
         # 文件系统破坏
-        (r'\bshutil\.rmtree\b', "递归删除目录"),
-        (r'\bos\.remove\b', "删除文件"),
-        (r'\bos\.unlink\b', "删除文件"),
-        (r'\bos\.rename\b.*(?:/|\\\\)', "跨目录重命名"),
-        (r'\bformat\s+[a-zA-Z]:', "格式化磁盘"),
-
+        (r"\bshutil\.rmtree\b", "递归删除目录"),
+        (r"\bos\.remove\b", "删除文件"),
+        (r"\bos\.unlink\b", "删除文件"),
+        (r"\bos\.rename\b.*(?:/|\\\\)", "跨目录重命名"),
+        (r"\bformat\s+[a-zA-Z]:", "格式化磁盘"),
         # 网络攻击
-        (r'\bsocket\.socket\b', "原始套接字"),
-        (r'\bparamiko\b', "SSH 连接"),
-        (r'\bftplib\b', "FTP 连接"),
-
+        (r"\bsocket\.socket\b", "原始套接字"),
+        (r"\bparamiko\b", "SSH 连接"),
+        (r"\bftplib\b", "FTP 连接"),
         # 进程注入
-        (r'\bctypes\.(?:windll|cdll)\b', "系统库调用"),
-        (r'\bsys\._getframe\b', "栈帧访问"),
-        (r'\binspect\.(?:getmembers|getsource)\b', "内省访问"),
-
+        (r"\bctypes\.(?:windll|cdll)\b", "系统库调用"),
+        (r"\bsys\._getframe\b", "栈帧访问"),
+        (r"\binspect\.(?:getmembers|getsource)\b", "内省访问"),
         # 危险操作
-        (r'\bos\.chmod\b', "修改权限"),
-        (r'\bos\.chown\b', "修改所有者"),
-        (r'\bos\.kill\b', "杀进程"),
-        (r'\bos\.fork\b', "fork 进程"),
-        (r':\(\)\s*\{.*\|.*\&.*\}', "fork 炸弹"),
+        (r"\bos\.chmod\b", "修改权限"),
+        (r"\bos\.chown\b", "修改所有者"),
+        (r"\bos\.kill\b", "杀进程"),
+        (r"\bos\.fork\b", "fork 进程"),
+        (r":\(\)\s*\{.*\|.*\&.*\}", "fork 炸弹"),
     ]
 
     # 敏感模块（警告但不拒绝）
     WARNED_PATTERNS = [
-        (r'\bimport\s+requests\b', "网络请求模块"),
-        (r'\bimport\s+urllib\b', "网络请求模块"),
-        (r'\bimport\s+http\b', "HTTP 模块"),
-        (r'\bimport\s+json\b', "JSON 模块（通常安全）"),
-        (r'\bimport\s+os\b', "操作系统模块"),
-        (r'\bimport\s+sys\b', "系统模块"),
-        (r'\bopen\s*\(', "文件操作"),
-        (r'\bwith\s+open\b', "文件操作"),
+        (r"\bimport\s+requests\b", "网络请求模块"),
+        (r"\bimport\s+urllib\b", "网络请求模块"),
+        (r"\bimport\s+http\b", "HTTP 模块"),
+        (r"\bimport\s+json\b", "JSON 模块（通常安全）"),
+        (r"\bimport\s+os\b", "操作系统模块"),
+        (r"\bimport\s+sys\b", "系统模块"),
+        (r"\bopen\s*\(", "文件操作"),
+        (r"\bwith\s+open\b", "文件操作"),
     ]
 
     # 最大代码长度
@@ -92,11 +90,11 @@ class CodeSecurityGuard:
 
     # 禁止的 AST 节点类型
     BLOCKED_AST_TYPES = (
-        ast.Delete,      # del 语句
-        ast.Global,      # global 声明
-        ast.Nonlocal,    # nonlocal 声明
-        ast.Yield,       # yield（生成器，可能无限）
-        ast.YieldFrom,   # yield from
+        ast.Delete,  # del 语句
+        ast.Global,  # global 声明
+        ast.Nonlocal,  # nonlocal 声明
+        ast.Yield,  # yield（生成器，可能无限）
+        ast.YieldFrom,  # yield from
     )
 
     def check_code(self, code: str, context: str = "") -> SecurityCheckResult:
@@ -151,10 +149,10 @@ class CodeSecurityGuard:
 
         # 5. 路径遍历检查
         path_patterns = [
-            (r'\.\./\.\./', "多层路径遍历"),
-            (r'/etc/(?:passwd|shadow|hosts)', "系统文件访问"),
-            (r'~/(?:\.ssh|\.aws|\.env)', "敏感目录访问"),
-            (r'(?:password|secret|token|key).*\.json', "敏感文件访问"),
+            (r"\.\./\.\./", "多层路径遍历"),
+            (r"/etc/(?:passwd|shadow|hosts)", "系统文件访问"),
+            (r"~/(?:\.ssh|\.aws|\.env)", "敏感目录访问"),
+            (r"(?:password|secret|token|key).*\.json", "敏感文件访问"),
         ]
         for pattern, desc in path_patterns:
             if re.search(pattern, code, re.IGNORECASE):
@@ -164,8 +162,8 @@ class CodeSecurityGuard:
 
         # 6. 网络安全检查
         network_patterns = [
-            (r'https?://(?!api\.github\.com|pypi\.org|registry\.npmjs\.org)', "外部网络请求"),
-            (r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b', "硬编码 IP 地址"),
+            (r"https?://(?!api\.github\.com|pypi\.org|registry\.npmjs\.org)", "外部网络请求"),
+            (r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b", "硬编码 IP 地址"),
         ]
         for pattern, desc in network_patterns:
             if re.search(pattern, code):
@@ -204,7 +202,9 @@ class CodeSecurityGuard:
                         violations.append(f"危险模块导入: {alias.name}")
 
             if isinstance(node, ast.ImportFrom):
-                if node.module and any(m in node.module for m in ("os", "sys", "subprocess", "shutil", "ctypes")):
+                if node.module and any(
+                    m in node.module for m in ("os", "sys", "subprocess", "shutil", "ctypes")
+                ):
                     violations.append(f"危险模块导入: from {node.module}")
 
             # 检查函数调用

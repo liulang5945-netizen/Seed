@@ -25,8 +25,13 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 import torch  # noqa: E402
 from taiji.loader import assemble_cortex  # noqa: E402
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -66,8 +71,7 @@ def field_state_of(cortex, text: str) -> torch.Tensor:
     gids = cortex._general_sp.encode(text) or [0]
     ids = torch.tensor([gids], dtype=torch.long, device=cortex.device)
     emb = cortex._shared_embedding(ids)
-    res = cortex.think(emb, active_nids=None, fusion_mode="soft",
-                       collab_mode="continuous")
+    res = cortex.think(emb, active_nids=None, fusion_mode="soft", collab_mode="continuous")
     fs = res.get("field_state")
     if fs is None:
         raise RuntimeError("think() 未返回 field_state")
@@ -104,7 +108,11 @@ def main():
     dims = {}
     for nid in nids:
         n = cortex.neurons[nid]
-        fd = n.config.unified_field_dim if n.config.unified_field_dim is not None else n.config.field_dim
+        fd = (
+            n.config.unified_field_dim
+            if n.config.unified_field_dim is not None
+            else n.config.field_dim
+        )
         dims[nid] = fd
     print(f"  neuron field 配置: {dims}", flush=True)
     print(f"  → max = {dim}（cortex 取 effective 最大值）", flush=True)
@@ -128,10 +136,14 @@ def main():
     gap = syn_mean - mis_mean
 
     print("\n[结果] 跨域场余弦（sim ∈ [-1, 1]）", flush=True)
-    print(f"  同义对  均值 {syn_mean:.3f}（范围 {min(syn_sims):.3f}~{max(syn_sims):.3f}）", flush=True)
+    print(
+        f"  同义对  均值 {syn_mean:.3f}（范围 {min(syn_sims):.3f}~{max(syn_sims):.3f}）", flush=True
+    )
     for (a, b), s in zip(SYNONYM_PAIRS, syn_sims):
         print(f"    {a:10s} ↔ {b:16s}  {s:+.3f}", flush=True)
-    print(f"  错配对  均值 {mis_mean:.3f}（范围 {min(mis_sims):.3f}~{max(mis_sims):.3f}）", flush=True)
+    print(
+        f"  错配对  均值 {mis_mean:.3f}（范围 {min(mis_sims):.3f}~{max(mis_sims):.3f}）", flush=True
+    )
     for (a, b), s in zip(MISMATCH_PAIRS, mis_sims):
         print(f"    {a:10s} ↔ {b:16s}  {s:+.3f}", flush=True)
     print(f"\n  对齐幅度 = 同义 − 错配 = {gap:+.3f}", flush=True)
@@ -153,7 +165,10 @@ def main():
     # 自相似基准（同一文本两次前向，应 ≈ 1.0）
     fs1 = field_state_of(cortex, "函数")
     fs2 = field_state_of(cortex, "函数")
-    print(f"\n  自相似基准（同文本两次前向）: {cosine(fs1, fs2):.3f}（应≈1.0，验证采集稳定性）", flush=True)
+    print(
+        f"\n  自相似基准（同文本两次前向）: {cosine(fs1, fs2):.3f}（应≈1.0，验证采集稳定性）",
+        flush=True,
+    )
 
     print("\n" + "=" * 64, flush=True)
     print(f"诊断完成 ({time.time() - t0:.1f}s)", flush=True)

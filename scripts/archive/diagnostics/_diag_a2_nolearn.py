@@ -28,9 +28,7 @@ def _night_delta(learn: bool, cycles: int = 8):
     night = sched.night(targets, cycles_per_text=cycles, learn=learn)
     after = common.measure_panel(model, judge)
     tafter = sum(float(judge.score(t)["quality"]) for t in targets) / len(targets)
-    return round(after["overall_mean"] - base["overall_mean"], 4), round(
-        tafter - tbase, 4
-    ), night
+    return round(after["overall_mean"] - base["overall_mean"], 4), round(tafter - tbase, 4), night
 
 
 def _det_delta(cycles: int = 8):
@@ -54,9 +52,14 @@ def _det_delta(cycles: int = 8):
 
 def main() -> None:
     d, t, night = _night_delta(learn=False)
-    print(f"learn=False cycles=8: overall={d} targets={t} accepted={night['accepted']:.0f}", flush=True)
+    print(
+        f"learn=False cycles=8: overall={d} targets={t} accepted={night['accepted']:.0f}",
+        flush=True,
+    )
     d, t, night = _night_delta(learn=True, cycles=1)
-    print(f"learn=True cycles=1: overall={d} targets={t} accepted={night['accepted']:.0f}", flush=True)
+    print(
+        f"learn=True cycles=1: overall={d} targets={t} accepted={night['accepted']:.0f}", flush=True
+    )
     print("determinism learn=True cycles=8:", flush=True)
     _det_delta()
 

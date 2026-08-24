@@ -33,9 +33,11 @@ def verify_training_checkpoint(domain: str, ckpt_path: str):
     cfg = ckpt["neuron_config"]
     result = ckpt.get("result", {})
 
-    ppl = math.exp(min(result.get('final_loss', 10), 20))
-    print(f"  Config: hidden={cfg.hidden_size}, layers={cfg.num_hidden_layers}, "
-          f"vocab={cfg.vocab_size}, lm_head_rank={cfg.lm_head_rank}")
+    ppl = math.exp(min(result.get("final_loss", 10), 20))
+    print(
+        f"  Config: hidden={cfg.hidden_size}, layers={cfg.num_hidden_layers}, "
+        f"vocab={cfg.vocab_size}, lm_head_rank={cfg.lm_head_rank}"
+    )
     print(f"  Training: loss={result.get('final_loss', 'N/A'):.4f}, PPL={ppl:.1f}")
 
     expected = DOMAIN_VOCAB_SIZES.get(domain)
@@ -85,7 +87,7 @@ def verify_generate(domain: str, neuron: ResonanceNeuron, cfg):
             ids_t = torch.cat([ids_t, torch.tensor([[next_tok]])], dim=1)
 
         output = domain_sp.decode(generated) if generated else "(empty)"
-        has_ch = any('\u4e00' <= c <= '\u9fff' for c in output)
+        has_ch = any("\u4e00" <= c <= "\u9fff" for c in output)
         print(f"  '{prompt}' -> '{output[:60]}' [{['no-chinese','chinese'][has_ch]}]")
 
 
@@ -107,7 +109,9 @@ def main():
     print(f"\n{'='*60}")
     print(f"P7 End-to-end validation PASSED")
     print(f"  Domain: {args.domain} | {cfg.spec} | {n_params:.1f}M params")
-    print(f"  lm_head: {cfg.hidden_size}x{cfg.vocab_size}={cfg.hidden_size*cfg.vocab_size/1e6:.1f}M")
+    print(
+        f"  lm_head: {cfg.hidden_size}x{cfg.vocab_size}={cfg.hidden_size*cfg.vocab_size/1e6:.1f}M"
+    )
     print(f"  field: dim={cfg.field_dim}")
 
 

@@ -13,6 +13,7 @@
 Usage:
     python scripts/training/verify_task_parallel.py
 """
+
 import os
 import sys
 import threading
@@ -48,7 +49,8 @@ def build_ensemble() -> ResonanceEnsemble:
         "tiny_c": make_neuron("tiny_c", seed=3),
     }
     ens = ResonanceEnsemble(
-        neurons, ResonanceField(dim=512),
+        neurons,
+        ResonanceField(dim=512),
         max_rounds=2,
         coaction=CoactivationTracker(),
     )
@@ -64,15 +66,18 @@ def run_task(ens, task_id, emb, active_nids, barrier, results):
         results[task_id] = {
             "final_scores": out["final_scores"],
             "n_rounds": out["n_rounds"],
-            "top1": max(out["final_scores"], key=out["final_scores"].get)
-                   if out["final_scores"] else None,
+            "top1": (
+                max(out["final_scores"], key=out["final_scores"].get)
+                if out["final_scores"]
+                else None
+            ),
             "finite": all(
-                torch.isfinite(torch.tensor(v)).all()
-                for v in out["final_scores"].values()
+                torch.isfinite(torch.tensor(v)).all() for v in out["final_scores"].values()
             ),
         }
     except Exception as e:  # noqa: BLE001
         import traceback
+
         errors.append(f"{type(e).__name__}: {e}\n{traceback.format_exc()}")
     results[task_id]["errors"] = errors
 
@@ -80,8 +85,9 @@ def run_task(ens, task_id, emb, active_nids, barrier, results):
 def serial_baseline(ens, emb, active_nids):
     out = ens.forward(shared_embeddings=emb, active_nids=active_nids)
     return {
-        "top1": max(out["final_scores"], key=out["final_scores"].get)
-                if out["final_scores"] else None,
+        "top1": (
+            max(out["final_scores"], key=out["final_scores"].get) if out["final_scores"] else None
+        ),
         "n_rounds": out["n_rounds"],
     }
 
@@ -146,22 +152,23 @@ def main():
         assert results[i].get("finite", False), f"[2] task{i} 分数非有限"
         # [2] 路由隔离：final_scores keys 只含本任务 active_nids
         keys = set(results[i]["final_scores"].keys())
-        assert keys == set(tasks[i]["active_nids"]), \
-            f"[2] task{i} 路由污染: {keys} != {tasks[i]['active_nids']}"
+        assert keys == set(
+            tasks[i]["active_nids"]
+        ), f"[2] task{i} 路由污染: {keys} != {tasks[i]['active_nids']}"
         # [4] top-1 与串行一致（不应期共享允许调度微差，但主导 neuron 不变）
-        assert results[i]["top1"] == baseline[i]["top1"], \
-            f"[2] task{i} top-1 漂移: {results[i]['top1']} != {baseline[i]['top1']}"
+        assert (
+            results[i]["top1"] == baseline[i]["top1"]
+        ), f"[2] task{i} top-1 漂移: {results[i]['top1']} != {baseline[i]['top1']}"
         # [5] round_scores 独立
-        assert len(ens._fstate("round_scores")) >= 1, \
-            f"[2] task{i} round_scores 丢失"
-        print(f"  ok [2] task{i}: top1={results[i]['top1']}, "
-              f"keys={sorted(keys)}, rounds={results[i]['n_rounds']}")
+        assert len(ens._fstate("round_scores")) >= 1, f"[2] task{i} round_scores 丢失"
+        print(
+            f"  ok [2] task{i}: top1={results[i]['top1']}, "
+            f"keys={sorted(keys)}, rounds={results[i]['n_rounds']}"
+        )
 
     # [4] 汇总：并发 top-1 全部与串行一致 → 任务间无实质污染
     print("\n[3] 并发 vs 串行一致性（top-1 全对齐）...")
-    all_match = all(
-        results[i]["top1"] == baseline[i]["top1"] for i in range(3)
-    )
+    all_match = all(results[i]["top1"] == baseline[i]["top1"] for i in range(3))
     assert all_match, "[3] 并发 top-1 与串行不一致"
     print("  ok [3] 三任务并发 top-1 与串行基线完全一致（field 隔离生效）")
 

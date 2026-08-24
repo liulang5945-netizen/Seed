@@ -3,10 +3,14 @@
 ==================
 使用 requests 直接下载，避免 datasets 库兼容性问题
 """
+
 import os
 import json
 import requests
 from pathlib import Path
+import logging
+
+logger = logging.getLogger(__name__)
 
 # 数据集配置
 DATASETS = [
@@ -30,6 +34,7 @@ DATASETS = [
     },
 ]
 
+
 def download_file(url, output_path):
     """下载文件"""
     print(f"  下载中: {url}")
@@ -37,20 +42,21 @@ def download_file(url, output_path):
     response = requests.get(url, stream=True)
     response.raise_for_status()
 
-    total_size = int(response.headers.get('content-length', 0))
+    total_size = int(response.headers.get("content-length", 0))
     downloaded = 0
 
-    with open(output_path, 'wb') as f:
+    with open(output_path, "wb") as f:
         for chunk in response.iter_content(chunk_size=8192):
             f.write(chunk)
             downloaded += len(chunk)
             if total_size > 0:
                 percent = (downloaded / total_size) * 100
-                if downloaded % (1024*1024) == 0:  # 每MB显示一次
+                if downloaded % (1024 * 1024) == 0:  # 每MB显示一次
                     print(f"    进度: {percent:.1f}% ({downloaded/(1024*1024):.1f}MB)")
 
     print(f"  下载完成: {output_path}")
     return output_path
+
 
 def convert_alpaca(input_file, output_file):
     """转换 Alpaca 格式"""
@@ -76,7 +82,7 @@ def convert_alpaca(input_file, output_file):
             messages = [
                 {"role": "system", "content": "你是态极，一个有帮助的AI助手。"},
                 {"role": "user", "content": user_content},
-                {"role": "assistant", "content": output_text}
+                {"role": "assistant", "content": output_text},
             ]
 
             f.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
@@ -84,6 +90,7 @@ def convert_alpaca(input_file, output_file):
 
     print(f"  转换完成: {count:,} 条")
     return count
+
 
 def convert_belle(input_file, output_file):
     """转换 BELLE 格式"""
@@ -104,7 +111,7 @@ def convert_belle(input_file, output_file):
             messages = [
                 {"role": "system", "content": "你是态极，一个有帮助的AI助手。"},
                 {"role": "user", "content": instruction},
-                {"role": "assistant", "content": output_text}
+                {"role": "assistant", "content": output_text},
             ]
 
             f.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
@@ -112,6 +119,7 @@ def convert_belle(input_file, output_file):
 
     print(f"  转换完成: {count:,} 条")
     return count
+
 
 def main():
     print("=" * 60)
@@ -165,13 +173,14 @@ def main():
     # 删除临时目录
     try:
         temp_dir.rmdir()
-    except:
-        pass
+    except BaseException as e:
+        logger.debug("【main】处理失败（非致命）: %s", e)
 
     print()
     print("=" * 60)
     print(f"下载完成！总计: {total_count:,} 条")
     print("=" * 60)
+
 
 if __name__ == "__main__":
     main()

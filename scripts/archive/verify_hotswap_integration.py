@@ -13,6 +13,7 @@
 Usage:
     python scripts/training/verify_hotswap_integration.py
 """
+
 import os
 import sys
 import threading
@@ -44,6 +45,7 @@ def run_inference_loop(ens, results: dict, stop: threading.Event, n_iters: int =
                 time.sleep(0.01)
     except Exception as e:  # noqa: BLE001
         import traceback
+
         errors.append(f"{type(e).__name__}: {e}\n{traceback.format_exc()}")
     results["errors"] = errors
     results["n_calls"] = n_calls
@@ -69,10 +71,14 @@ def main():
     nid = next(iter(cortex.neurons))
     neuron = cortex.neurons[nid]
     cfg = neuron.config
-    print(f"  ok [1] 加载 {nid}: spec={cfg.spec}, hidden={cfg.hidden_size}, "
-          f"field_dim={cfg.field_dim}, layers={cfg.num_hidden_layers}")
-    print(f"      ensemble field.dim={cortex.ensemble.field.dim}, "
-          f"neurons={list(cortex.neurons.keys())}")
+    print(
+        f"  ok [1] 加载 {nid}: spec={cfg.spec}, hidden={cfg.hidden_size}, "
+        f"field_dim={cfg.field_dim}, layers={cfg.num_hidden_layers}"
+    )
+    print(
+        f"      ensemble field.dim={cortex.ensemble.field.dim}, "
+        f"neurons={list(cortex.neurons.keys())}"
+    )
 
     # [2] 任务级并行：3 线程并发 forward（真实权重）
     print("\n[2] 三线程并发推理（真实权重）...")
@@ -87,20 +93,17 @@ def main():
             out = cortex.ensemble.forward(shared_embeddings=emb)
             results[i] = {
                 "finite": all(
-                    torch.isfinite(torch.tensor(v)).all()
-                    for v in out["final_scores"].values()
+                    torch.isfinite(torch.tensor(v)).all() for v in out["final_scores"].values()
                 ),
                 "scores": out["final_scores"],
                 "n_rounds": out["n_rounds"],
             }
         except Exception as e:  # noqa: BLE001
             import traceback
+
             results[i] = {"errors": f"{type(e).__name__}: {e}\n{traceback.format_exc()}"}
 
-    threads = [
-        threading.Thread(target=run_task, args=(i, 100 + i), daemon=True)
-        for i in range(3)
-    ]
+    threads = [threading.Thread(target=run_task, args=(i, 100 + i), daemon=True) for i in range(3)]
     for th in threads:
         th.start()
     for th in threads:
@@ -110,8 +113,10 @@ def main():
             print(f"  fail task{i}: {results[i]['errors']}")
             return 1
         assert results[i]["finite"], f"[2] task{i} 分数非有限"
-        print(f"  ok [2] task{i}: rounds={results[i]['n_rounds']}, "
-              f"scores={ {k: round(v, 3) for k, v in results[i]['scores'].items()} }")
+        print(
+            f"  ok [2] task{i}: rounds={results[i]['n_rounds']}, "
+            f"scores={ {k: round(v, 3) for k, v in results[i]['scores'].items()} }"
+        )
 
     # [3] 快照隔离 + 混合规格热插拔（推理线程 + 同规格 + 跨规格）
     print("\n[3] 推理线程中热插拔（同规格 compact + 跨规格 standard）...")
@@ -125,23 +130,26 @@ def main():
 
     # 3a. 同规格热插拔（cortex.add_neuron → compact 2048 == 场 2048）
     new_nid = cortex.add_neuron("zh")
-    print(f"  add_neuron({new_nid}): field_dim={cortex.neurons[new_nid].config.field_dim}, "
-          f"cross_spec_projector={'yes' if new_nid in cortex.ensemble._cross_spec_projectors else 'no'}")
+    print(
+        f"  add_neuron({new_nid}): field_dim={cortex.neurons[new_nid].config.field_dim}, "
+        f"cross_spec_projector={'yes' if new_nid in cortex.ensemble._cross_spec_projectors else 'no'}"
+    )
 
     # 3b. 跨规格热插拔（field_dim=1024 ≠ 场 2048，hidden=512 同规格 →
     # 触发跨规格投影层补建，模拟旧 3072-vs-2048 崩溃场景的变体）
     from dataclasses import replace
     from taiji.resonance.config import get_domain_neuron_config
     from taiji.resonance.neuron import ResonanceNeuron
-    mixed_cfg = replace(get_domain_neuron_config("zh"), neuron_id="zh_alt_hotswap",
-                        field_dim=1024)
+
+    mixed_cfg = replace(get_domain_neuron_config("zh"), neuron_id="zh_alt_hotswap", field_dim=1024)
     alt_neuron = ResonanceNeuron(mixed_cfg).to("cpu")
     alt_neuron.eval()
     cortex.ensemble.add_neuron("zh_alt_hotswap", alt_neuron)  # 内部写入共享 dict
-    assert "zh_alt_hotswap" in cortex.ensemble._cross_spec_projectors, \
-        "[3] 跨规格投影层未补建"
+    assert "zh_alt_hotswap" in cortex.ensemble._cross_spec_projectors, "[3] 跨规格投影层未补建"
     proj = cortex.ensemble._cross_spec_projectors["zh_alt_hotswap"]
-    print(f"  add alt 1024: 投影层自动补建 ({proj.linear1.in_features}->{proj.linear1.out_features})")
+    print(
+        f"  add alt 1024: 投影层自动补建 ({proj.linear1.in_features}->{proj.linear1.out_features})"
+    )
 
     # 含跨规格 neuron 的 forward 正常
     out = cortex.ensemble.forward(shared_embeddings=torch.randn(1, 4, BASE_EMBED_DIM))
@@ -172,15 +180,20 @@ def main():
         for e in errs[:3]:
             print(e)
         return 1
-    print(f"  ok [3] 推理线程 {inf_results.get('n_calls', 0)} 次 forward 全部正常"
-          f"（增删/隔离/复活期间不崩溃）")
+    print(
+        f"  ok [3] 推理线程 {inf_results.get('n_calls', 0)} 次 forward 全部正常"
+        f"（增删/隔离/复活期间不崩溃）"
+    )
 
     # [4] 训练/推理分离 COW（真实权重）
     print("\n[4] 真实 COW 周期（影子权重）...")
     live_modules = dict(cortex.neurons)
     live_snap = {
-        n: {k: v.data.detach().clone() for k, v in m.state_dict().items()
-            if v.dtype.is_floating_point}
+        n: {
+            k: v.data.detach().clone()
+            for k, v in m.state_dict().items()
+            if v.dtype.is_floating_point
+        }
         for n, m in live_modules.items()
     }
     shadow_modules = {n: _clone_module(m) for n, m in live_modules.items()}
@@ -204,6 +217,7 @@ def main():
     assert stable, "[4] 影子训练期间 live 权重被改动"
     # 写回 + 恢复
     from taiji.life.sleep_engine import SleepEngine
+
     SleepEngine._copy_shadow_back(live_modules, None, shadow_modules, None)
     for n in list(cortex.neurons.keys()):
         ln = live_modules.get(n)
@@ -212,7 +226,8 @@ def main():
     # 写回生效
     trained = not all(
         torch.equal(live_snap[n][k], m.state_dict()[k].data)
-        for n, m in live_modules.items() for k in live_snap[n]
+        for n, m in live_modules.items()
+        for k in live_snap[n]
     )
     assert trained, "[4] 写回未生效（live == 训练前）"
     out = cortex.ensemble.forward(shared_embeddings=torch.randn(1, 4, BASE_EMBED_DIM))

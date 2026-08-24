@@ -38,10 +38,9 @@ def _small_config() -> SeedConfig:
 
 def _trained_seed() -> Seed:
     model = Seed(_small_config())
-    data = (
-        "问：你好。\n答：你好，很高兴见到你。"
-        "水的沸点在标准大气压下是一百摄氏度。"
-    ).encode("utf-8")
+    data = ("问：你好。\n答：你好，很高兴见到你。" "水的沸点在标准大气压下是一百摄氏度。").encode(
+        "utf-8"
+    )
     model.learn_bytes(data, epochs=3)
     return model
 
@@ -60,8 +59,7 @@ def test_judge_report_contains_self_referential_signals() -> None:
     ):
         assert key in report, f"judge report 缺少自指信号 {key}"
     assert report["observations"] > 0
-    for key in ("quality", "mean_surprise", "mean_error_norm",
-                "mean_confidence", "accuracy"):
+    for key in ("quality", "mean_surprise", "mean_error_norm", "mean_confidence", "accuracy"):
         assert math.isfinite(report[key]), f"{key} 必须是有限实数"
     assert 0.0 <= report["accuracy"] <= 1.0
 
@@ -87,9 +85,7 @@ def test_judge_ranks_learned_text_above_noise() -> None:
     model = _trained_seed()
     judge = SeedJudge(model)
 
-    learned = judge.score(
-        "问：你好。\n答：你好，很高兴见到你。".encode("utf-8")
-    )
+    learned = judge.score("问：你好。\n答：你好，很高兴见到你。".encode("utf-8"))
     # 同一批字节打乱顺序后不再具备学到的结构，质量必须更低。
     raw = "问：你好。\n答：你好，很高兴见到你。".encode("utf-8")
     permuted = torch.randperm(len(raw), generator=torch.Generator().manual_seed(7))

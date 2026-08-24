@@ -41,17 +41,13 @@ def _window_bytes(symbols: list[int], boundary: int) -> bytes:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--checkpoint", default=str(REPO / "checkpoints" / "seed_corpus.pt")
-    )
+    parser.add_argument("--checkpoint", default=str(REPO / "checkpoints" / "seed_corpus.pt"))
     parser.add_argument("--ticks", type=int, default=800000)
     parser.add_argument("--window", type=int, default=4000)
     args = parser.parse_args()
 
     trainer = _trainer_module()
-    model = Seed.from_checkpoint(
-        torch.load(args.checkpoint, weights_only=False)
-    )
+    model = Seed.from_checkpoint(torch.load(args.checkpoint, weights_only=False))
     boundary = model.substrate.config.boundary_symbol
 
     symbols = []

@@ -15,6 +15,7 @@ Usage:
     python -u scripts/training/finetune_neuron_dialogue.py --base_id zh_std0 --target_id zh_std0_dialogue
     python -u scripts/training/finetune_neuron_dialogue.py --base_id zh_std0 --target_id zh_std0_dialogue --resume
 """
+
 from __future__ import annotations
 
 import argparse
@@ -28,17 +29,26 @@ from datetime import datetime
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 
 from neuroplex.resonance import ResonanceNeuron, get_domain_neuron_config
 from neuroplex.resonance.translator import batch_align_and_embed
 from scripts.training.utils import (
-    load_domain_tokenizer, load_general_tokenizer,
-    OUTPUT_DIR, SequentialSampler, create_shared_embedding,
-    make_wsd_scheduler, load_dialogue_texts_multi, split_train_eval,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+    OUTPUT_DIR,
+    SequentialSampler,
+    create_shared_embedding,
+    make_wsd_scheduler,
+    load_dialogue_texts_multi,
+    split_train_eval,
 )
-from scripts.training.experiment_config import DEFAULT_DOMAIN as DOMAIN, SAMPLING_TOP_K, DIALOGUE_PROMPTS, SFT_ANSWER_MARKER
+from scripts.training.experiment_config import (
+    DEFAULT_DOMAIN as DOMAIN,
+    SAMPLING_TOP_K,
+    DIALOGUE_PROMPTS,
+    SFT_ANSWER_MARKER,
+)
 
 DEVICE = "cpu"
 
@@ -113,7 +123,9 @@ def load_base_neuron(base_id: str):
     shared_emb.to(DEVICE)
 
     result = ckpt.get("result", {})
-    print(f"  [{base_id}] spec={cfg.spec}, best_val_ppl={result.get('best_val_ppl', '?')}", flush=True)
+    print(
+        f"  [{base_id}] spec={cfg.spec}, best_val_ppl={result.get('best_val_ppl', '?')}", flush=True
+    )
     return neuron, shared_emb, cfg
 
 
@@ -131,7 +143,7 @@ def generate_sample(neuron, domain_sp, general_sp, shared_emb, prompt=DIALOGUE_P
     generated_domain_ids = []
 
     domain_eos_id = None
-    if hasattr(domain_sp, 'eos_id'):
+    if hasattr(domain_sp, "eos_id"):
         eid = domain_sp.eos_id()
         if eid is not None and eid >= 0:
             domain_eos_id = int(eid)
@@ -144,7 +156,7 @@ def generate_sample(neuron, domain_sp, general_sp, shared_emb, prompt=DIALOGUE_P
             # 简单 top-k sampling（SAMPLING_TOP_K 从 experiment_config 导入）
             top_k = min(SAMPLING_TOP_K, logits.size(-1))
             topk_vals, _ = torch.topk(logits[0], top_k)
-            logits[0][logits[0] < topk_vals[-1]] = float('-inf')
+            logits[0][logits[0] < topk_vals[-1]] = float("-inf")
             probs = F.softmax(logits, dim=-1)
             next_domain_token = torch.multinomial(probs, num_samples=1).item()
             generated_domain_ids.append(next_domain_token)
@@ -157,7 +169,9 @@ def generate_sample(neuron, domain_sp, general_sp, shared_emb, prompt=DIALOGUE_P
             new_general_ids = general_sp.encode(piece_text)
             if not new_general_ids:
                 new_general_ids = [general_sp.pad_id()]
-            ids = torch.cat([ids, torch.tensor([new_general_ids], dtype=torch.long, device=DEVICE)], dim=1)
+            ids = torch.cat(
+                [ids, torch.tensor([new_general_ids], dtype=torch.long, device=DEVICE)], dim=1
+            )
     text = domain_sp.DecodeIds(generated_domain_ids)
     neuron.train()
     return text
@@ -172,13 +186,24 @@ def main():
     parser.add_argument("--batch_size", type=int, default=8)
     parser.add_argument("--grad_accum", type=int, default=4)
     parser.add_argument("--lr", type=float, default=1e-4)
-    parser.add_argument("--train_embedding", action="store_true", default=True,
-                        help="S8: 训练 shared_embedding（默认 True，适配对话格式 token）")
-    parser.add_argument("--freeze_embedding", action="store_true",
-                        help="S8: 冻结 shared_embedding（恢复旧行为，不推荐）")
-    parser.add_argument("--eval_every", type=int, default=500,
-                        help="eval + 保存 ckpt 间隔（500 步 ≈ 1h，中断最多丢 500 步。"
-                             "2026-08-12 软件更新中断教训：默认 1000 时中断零保存）")
+    parser.add_argument(
+        "--train_embedding",
+        action="store_true",
+        default=True,
+        help="S8: 训练 shared_embedding（默认 True，适配对话格式 token）",
+    )
+    parser.add_argument(
+        "--freeze_embedding",
+        action="store_true",
+        help="S8: 冻结 shared_embedding（恢复旧行为，不推荐）",
+    )
+    parser.add_argument(
+        "--eval_every",
+        type=int,
+        default=500,
+        help="eval + 保存 ckpt 间隔（500 步 ≈ 1h，中断最多丢 500 步。"
+        "2026-08-12 软件更新中断教训：默认 1000 时中断零保存）",
+    )
     parser.add_argument("--log_every", type=int, default=200)
     parser.add_argument("--warmup_steps", type=int, default=100)
     parser.add_argument("--max_texts", type=int, default=100000)
@@ -193,14 +218,19 @@ def main():
 
     # 日志
     os.makedirs(LOG_DIR, exist_ok=True)
-    log_path = os.path.join(LOG_DIR, f"finetune_dialogue_{args.target_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
+    log_path = os.path.join(
+        LOG_DIR,
+        f"finetune_dialogue_{args.target_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log",
+    )
     logger = TeeLogger(log_path)
     sys.stdout = logger
 
     print("=" * 60, flush=True)
-    print(f"Fine-tune 神经元用对话数据", flush=True)
+    print("Fine-tune 神经元用对话数据", flush=True)
     print(f"  base: {args.base_id} -> target: {args.target_id}", flush=True)
-    print(f"  steps={args.steps}, lr={args.lr}, batch={args.batch_size}×{args.grad_accum}", flush=True)
+    print(
+        f"  steps={args.steps}, lr={args.lr}, batch={args.batch_size}×{args.grad_accum}", flush=True
+    )
     print(f"  日志: {log_path}", flush=True)
     print("=" * 60, flush=True)
 
@@ -214,7 +244,8 @@ def main():
     print("\n[2] 加载对话训练数据...", flush=True)
     dialogue_dir = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "data", "simple_zh",
+        "data",
+        "simple_zh",
     )
     texts = load_dialogue_texts_multi(dialogue_dir, max_texts=args.max_texts)
     print(f"  训练集: {len(texts)} 条对话", flush=True)
@@ -242,22 +273,24 @@ def main():
         for p in shared_emb.parameters():
             p.requires_grad = False
         optimizer = torch.optim.AdamW(neuron.parameters(), lr=args.lr, weight_decay=0.1)
-        print(f"  shared_embedding: FROZEN（保留原有 token 映射）", flush=True)
+        print("  shared_embedding: FROZEN（保留原有 token 映射）", flush=True)
     else:
         all_params = list(neuron.parameters()) + list(shared_emb.parameters())
         optimizer = torch.optim.AdamW(all_params, lr=args.lr, weight_decay=0.1)
-        print(f"  shared_embedding: TRAINABLE（S8 默认，适配对话 token 分布）", flush=True)
+        print("  shared_embedding: TRAINABLE（S8 默认，适配对话 token 分布）", flush=True)
 
     # WSD 调度（公式抽取到 utils.make_wsd_scheduler）
     scheduler = make_wsd_scheduler(
-        optimizer, num_steps=args.steps,
-        warmup_steps=args.warmup_steps, decay_ratio=0.85,
+        optimizer,
+        num_steps=args.steps,
+        warmup_steps=args.warmup_steps,
+        decay_ratio=0.85,
     )
 
     # 7. 断点续训
     save_path = os.path.join(OUTPUT_DIR, f"neuron_{args.target_id}.pt")
     start_step = 0
-    best_val_loss = float('inf')
+    best_val_loss = float("inf")
     best_step = 0
 
     if args.resume and os.path.exists(save_path):
@@ -289,32 +322,41 @@ def main():
         if hasattr(scheduler, "base_lrs"):
             scheduler.base_lrs = [args.lr] * len(scheduler.base_lrs)
         result = ckpt.get("result", {})
-        best_val_loss = result.get("best_val_ppl", float('inf'))
+        best_val_loss = result.get("best_val_ppl", float("inf"))
         best_step = result.get("best_step", 0)
         start_step = result.get("steps", 0)
-        print(f"  已恢复: step={start_step}, best_val_ppl={best_val_loss:.2f}@step{best_step}", flush=True)
+        print(
+            f"  已恢复: step={start_step}, best_val_ppl={best_val_loss:.2f}@step{best_step}",
+            flush=True,
+        )
 
     # 8. 训练循环
-    print(f"\n[4] 开始 fine-tune...", flush=True)
+    print("\n[4] 开始 fine-tune...", flush=True)
     neuron.train()
     step = start_step
+    skipped_steps = 0
     epoch_start_time = time.time()
 
     while step < args.steps:
-        batch_texts = sampler.sample_batch()
-
         # grad accumulation
         optimizer.zero_grad()
         accum_loss = 0.0
+        micro_failed = False
         for _ in range(args.grad_accum):
+            # 梯度累积修复（2026-08-23）：batch 采样移入 micro-step 循环内，
+            # 原实现在循环外采样一次导致 N 个 micro-step 重复同一 batch。
+            batch_texts = sampler.sample_batch()
             try:
                 # S3: 传入 answer_marker，获取 sft_mask（只对 answer 部分计算 loss）
                 shared_emb_out, targets, mask, sft_mask = batch_align_and_embed(
-                    batch_texts, domain_sp, general_sp, shared_emb,
+                    batch_texts,
+                    domain_sp,
+                    general_sp,
+                    shared_emb,
                     answer_marker=SFT_ANSWER_MARKER,
                 )
             except Exception:
-                accum_loss = 0
+                micro_failed = True
                 break
 
             result = neuron.forward(shared_emb_out, return_logits=True)
@@ -328,13 +370,26 @@ def main():
             # attention_mask、sft_mask 与对齐 target 的交集：有效 answer 部分
             valid_sft_mask = effective_sft_mask(shift_targets, shift_mask, shift_sft_mask)
             shift_targets_flat[~valid_sft_mask] = -100
-            loss = F.cross_entropy(
-                shift_logits.view(-1, shift_logits.size(-1)),
-                shift_targets_flat.view(-1),
-                ignore_index=-100,
-            ) / args.grad_accum
+            loss = (
+                F.cross_entropy(
+                    shift_logits.view(-1, shift_logits.size(-1)),
+                    shift_targets_flat.view(-1),
+                    ignore_index=-100,
+                )
+                / args.grad_accum
+            )
             loss.backward()
             accum_loss += loss.item()
+
+        if micro_failed:
+            # 任一 micro-step 失败：跳过本 step，不得用残余梯度执行 optimizer.step()
+            skipped_steps += 1
+            optimizer.zero_grad()
+            print(
+                f"  [warn] step {step + 1} 数据对齐失败，已跳过" f"（累计跳过 {skipped_steps} 次）",
+                flush=True,
+            )
+            continue
 
         optimizer.step()
         scheduler.step()
@@ -345,9 +400,12 @@ def main():
             ppl = math.exp(min(avg_loss, 20))
             elapsed = time.time() - epoch_start_time
             current_lr = scheduler.get_last_lr()[0]
-            print(f"  [{args.target_id}] step {step}/{args.steps} "
-                  f"loss={avg_loss:.4f} PPL={ppl:.1f} lr={current_lr:.2e} "
-                  f"elapsed={elapsed/60:.0f}min", flush=True)
+            print(
+                f"  [{args.target_id}] step {step}/{args.steps} "
+                f"loss={avg_loss:.4f} PPL={ppl:.1f} lr={current_lr:.2e} "
+                f"elapsed={elapsed/60:.0f}min",
+                flush=True,
+            )
 
         if step % args.eval_every == 0 or step == args.steps:
             neuron.eval()
@@ -358,7 +416,10 @@ def main():
                 for text in eval_texts:
                     # S3: eval 也用 SFT masking，只评估 answer 部分的 PPL
                     shared_emb_out, targets, mask, sft_mask = batch_align_and_embed(
-                        [text], domain_sp, general_sp, shared_emb,
+                        [text],
+                        domain_sp,
+                        general_sp,
+                        shared_emb,
                         answer_marker=SFT_ANSWER_MARKER,
                     )
                     result = neuron.forward(shared_emb_out, return_logits=True)
@@ -393,38 +454,45 @@ def main():
 
             # 每次 eval 都保存 latest checkpoint（避免 resume 回退到旧 best）
             os.makedirs(os.path.dirname(save_path), exist_ok=True)
-            torch.save({
-                "neuron_config": neuron.config,
-                "state_dict": {k: v.detach().clone() for k, v in neuron.state_dict().items()},
-                "shared_embedding_state": {k: v.detach().clone() for k, v in shared_emb.state_dict().items()},
-                "domain": DOMAIN,
-                "data_source": "dialogue_sft_finetune",
-                "data_config": {
-                    "max_texts": args.max_texts,
-                    "eval_ratio": 0.05,
-                    "eval_cap": 100,
-                    "max_seq_len": 128,
-                    "answer_marker": SFT_ANSWER_MARKER,
-                    "answer_marker_mode": "first",
+            torch.save(
+                {
+                    "neuron_config": neuron.config,
+                    "state_dict": {k: v.detach().clone() for k, v in neuron.state_dict().items()},
+                    "shared_embedding_state": {
+                        k: v.detach().clone() for k, v in shared_emb.state_dict().items()
+                    },
+                    "domain": DOMAIN,
+                    "data_source": "dialogue_sft_finetune",
+                    "data_config": {
+                        "max_texts": args.max_texts,
+                        "eval_ratio": 0.05,
+                        "eval_cap": 100,
+                        "max_seq_len": 128,
+                        "answer_marker": SFT_ANSWER_MARKER,
+                        "answer_marker_mode": "first",
+                    },
+                    "result": {
+                        "best_val_ppl": best_val_loss,
+                        "best_step": best_step,
+                        "steps": step,
+                        "base_id": args.base_id,
+                        "finetune": True,
+                    },
+                    "optimizer_state": optimizer.state_dict(),
+                    "scheduler_state": scheduler.state_dict(),
                 },
-                "result": {
-                    "best_val_ppl": best_val_loss,
-                    "best_step": best_step,
-                    "steps": step,
-                    "base_id": args.base_id,
-                    "finetune": True,
-                },
-                "optimizer_state": optimizer.state_dict(),
-                "scheduler_state": scheduler.state_dict(),
-            }, save_path)
+                save_path,
+            )
 
             # 生成样本
-            sample = generate_sample(neuron, domain_sp, general_sp, shared_emb, prompt=DIALOGUE_PROMPTS[0])
+            sample = generate_sample(
+                neuron, domain_sp, general_sp, shared_emb, prompt=DIALOGUE_PROMPTS[0]
+            )
             print(f"    生成: {sample[:200]}", flush=True)
             neuron.train()
 
     # 9. 最终保存
-    print(f"\n[5] 训练完成", flush=True)
+    print("\n[5] 训练完成", flush=True)
     print(f"  best_val_PPL={best_val_loss:.2f}@step{best_step}", flush=True)
     print(f"  Checkpoint: {save_path}", flush=True)
 

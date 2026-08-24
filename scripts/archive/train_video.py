@@ -12,6 +12,7 @@
     # 评估 PSNR（不训练）
     python scripts/training/train_video.py --eval-only --resume data/video/video_latest.pt
 """
+
 from __future__ import annotations
 
 import argparse
@@ -24,7 +25,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 from neuroplex.multimodal.video import VideoVQVAE
 from neuroplex.multimodal.io import save_video
@@ -39,7 +42,7 @@ MAX_GRAD_NORM = 1.0
 DEFAULT_STEPS = 2000
 LOG_INTERVAL = 50
 SAVE_INTERVAL = 500
-NUM_EMBEDDINGS = 256   # 软分配熵正则防崩塌，用更大 codebook 提升重建质量
+NUM_EMBEDDINGS = 256  # 软分配熵正则防崩塌，用更大 codebook 提升重建质量
 LATENT_DIM = 256
 HIDDEN_DIM = 64
 COMMITMENT_COST = 0.25
@@ -47,8 +50,9 @@ COMMITMENT_COST = 0.25
 OUTPUT_DIR = "data/video"
 
 
-def synthesize_batch(batch_size: int, num_frames: int, frame_size: int,
-                     device: torch.device) -> torch.Tensor:
+def synthesize_batch(
+    batch_size: int, num_frames: int, frame_size: int, device: torch.device
+) -> torch.Tensor:
     """合成视频 batch（简化版，2 种类型便于学习）。
 
     - 移动色块（不同速度/方向/颜色）
@@ -75,7 +79,7 @@ def synthesize_batch(batch_size: int, num_frames: int, frame_size: int,
                 alpha = t / max(num_frames - 1, 1)
                 cx = int(x0 + (x1 - x0) * alpha)
                 cy = int(y0 + (y1 - y0) * alpha)
-                video[:, t, cy:cy+size, cx:cx+size] = color
+                video[:, t, cy : cy + size, cx : cx + size] = color
 
         else:
             # 渐变扫光
@@ -99,8 +103,13 @@ def synthesize_batch(batch_size: int, num_frames: int, frame_size: int,
     return torch.stack(batch)  # [B, 3, T, H, W]
 
 
-def compute_psnr(model: VideoVQVAE, device: torch.device, n_samples: int = 20,
-                 num_frames: int = NUM_FRAMES, frame_size: int = FRAME_SIZE) -> float:
+def compute_psnr(
+    model: VideoVQVAE,
+    device: torch.device,
+    n_samples: int = 20,
+    num_frames: int = NUM_FRAMES,
+    frame_size: int = FRAME_SIZE,
+) -> float:
     """评估模型重建质量（PSNR dB）。"""
     model.eval()
     total_mse = 0.0
@@ -208,15 +217,18 @@ def train(
 
             psnr_str = ""
             if eval_psnr and (step + 1) % (log_interval * 4) == 0:
-                psnr = compute_psnr(model, device, n_samples=10,
-                                    num_frames=num_frames, frame_size=frame_size)
+                psnr = compute_psnr(
+                    model, device, n_samples=10, num_frames=num_frames, frame_size=frame_size
+                )
                 psnr_str = f" | PSNR={psnr:.1f}dB"
                 model.train()
 
-            print(f"  step {step + 1}/{steps} | "
-                  f"recon={avg_recon:.4f} vq={avg_vq:.4f} | "
-                  f"codebook: {unique_codes}/{NUM_EMBEDDINGS} ({utilization:.1f}%){psnr_str} | "
-                  f"{steps_per_sec:.1f} steps/s")
+            print(
+                f"  step {step + 1}/{steps} | "
+                f"recon={avg_recon:.4f} vq={avg_vq:.4f} | "
+                f"codebook: {unique_codes}/{NUM_EMBEDDINGS} ({utilization:.1f}%){psnr_str} | "
+                f"{steps_per_sec:.1f} steps/s"
+            )
 
             total_recon_loss = 0.0
             total_vq_loss = 0.0
@@ -227,22 +239,26 @@ def train(
             ckpt_path = os.path.join(output_dir, "video_latest.pt")
             final_psnr = 0.0
             if eval_psnr:
-                final_psnr = compute_psnr(model, device, n_samples=20,
-                                          num_frames=num_frames, frame_size=frame_size)
+                final_psnr = compute_psnr(
+                    model, device, n_samples=20, num_frames=num_frames, frame_size=frame_size
+                )
                 model.train()
-            torch.save({
-                "step": step + 1,
-                "model_state_dict": model.state_dict(),
-                "config": {
-                    "num_frames": num_frames,
-                    "frame_size": frame_size,
-                    "num_embeddings": NUM_EMBEDDINGS,
-                    "latent_dim": LATENT_DIM,
-                    "hidden_dim": HIDDEN_DIM,
-                    "commitment_cost": COMMITMENT_COST,
+            torch.save(
+                {
+                    "step": step + 1,
+                    "model_state_dict": model.state_dict(),
+                    "config": {
+                        "num_frames": num_frames,
+                        "frame_size": frame_size,
+                        "num_embeddings": NUM_EMBEDDINGS,
+                        "latent_dim": LATENT_DIM,
+                        "hidden_dim": HIDDEN_DIM,
+                        "commitment_cost": COMMITMENT_COST,
+                    },
+                    "psnr": final_psnr,
                 },
-                "psnr": final_psnr,
-            }, ckpt_path)
+                ckpt_path,
+            )
             print(f"  💾 checkpoint saved: {ckpt_path} (PSNR={final_psnr:.1f}dB)")
 
     print(f"\n训练完成！checkpoint: {os.path.join(output_dir, 'video_latest.pt')}")
@@ -262,8 +278,12 @@ def main():
     parser.add_argument("--save-interval", type=int, default=SAVE_INTERVAL)
     parser.add_argument("--eval-only", action="store_true")
     parser.add_argument("--no-psnr", action="store_true")
-    parser.add_argument("--diversity-cost", type=float, default=0.1,
-                        help="软分配熵正则权重（0=关闭，0.1=默认，第一阶段防崩塌；第二阶段降到0.01专注重建）")
+    parser.add_argument(
+        "--diversity-cost",
+        type=float,
+        default=0.1,
+        help="软分配熵正则权重（0=关闭，0.1=默认，第一阶段防崩塌；第二阶段降到0.01专注重建）",
+    )
 
     args = parser.parse_args()
 
@@ -286,10 +306,13 @@ def main():
         )
         model.load_state_dict(ckpt["model_state_dict"])
         model.to(device)
-        psnr = compute_psnr(model, device, n_samples=50,
-                            num_frames=args.num_frames, frame_size=args.frame_size)
+        psnr = compute_psnr(
+            model, device, n_samples=50, num_frames=args.num_frames, frame_size=args.frame_size
+        )
         print(f"PSNR: {psnr:.2f} dB (checkpoint: {args.resume}, step={ckpt.get('step', '?')})")
-        print(f"  {'✅ 可识别 (>20dB)' if psnr > 20 else '⚠ 失真严重 (<15dB)' if psnr < 15 else '🔧 待提升 (15-20dB)'}")
+        print(
+            f"  {'✅ 可识别 (>20dB)' if psnr > 20 else '⚠ 失真严重 (<15dB)' if psnr < 15 else '🔧 待提升 (15-20dB)'}"
+        )
         return
 
     train(

@@ -2,6 +2,7 @@
 数据集管理 API 路由
 上传、列表、删除、预览微调数据集
 """
+
 import json
 import logging
 import os
@@ -27,7 +28,7 @@ async def upload_dataset(file: UploadFile = File(...)):
         return {
             "status": "success",
             "path": f"data/{file.filename}",
-            "message": f"数据集 `{file.filename}` 已成功上传并选中！"
+            "message": f"数据集 `{file.filename}` 已成功上传并选中！",
         }
     except Exception as e:
         logger.error(f"数据集上传失败: {e}")
@@ -41,7 +42,8 @@ def _get_all_data_dirs() -> list:
     dirs.append(primary)
     # 回退：项目根目录下的 data/
     import sys
-    if getattr(sys, 'frozen', False):
+
+    if getattr(sys, "frozen", False):
         project_root = os.path.dirname(sys.executable)
     else:
         project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -98,12 +100,15 @@ def train_preview(filename: str):
             return {"samples": [], "count": 0}
 
         import jsonlines
+
         samples = []
         count = 0
         with jsonlines.open(data_path) as reader:
             for item in reader:
                 if count < 5:
-                    instruction = item.get("instruction", item.get("question", item.get("input", "")))
+                    instruction = item.get(
+                        "instruction", item.get("question", item.get("input", ""))
+                    )
                     output = item.get("output", item.get("answer", item.get("response", "")))
                     samples.append({"instruction": instruction[:200], "output": output[:300]})
                 count += 1
@@ -117,7 +122,9 @@ def train_preview(filename: str):
                 for i, item in enumerate(data[:5]):
                     instruction = item.get("instruction", item.get("question", ""))
                     output = item.get("output", item.get("answer", ""))
-                    samples.append({"instruction": str(instruction)[:200], "output": str(output)[:300]})
+                    samples.append(
+                        {"instruction": str(instruction)[:200], "output": str(output)[:300]}
+                    )
                 return {"samples": samples, "count": len(data)}
         except Exception as fallback_e:
             logger.debug(f"JSON 回退读取也失败: {fallback_e}")

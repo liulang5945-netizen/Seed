@@ -90,8 +90,7 @@ def main() -> None:
 
     night = scheduler.night(targets, cycles_per_text=8, learn=True)
     print(
-        f"night accepted={night['accepted']:.0f} "
-        f"mean_priority={night['mean_priority']:.3f}",
+        f"night accepted={night['accepted']:.0f} " f"mean_priority={night['mean_priority']:.3f}",
         flush=True,
     )
 

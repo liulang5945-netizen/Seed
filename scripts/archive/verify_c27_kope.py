@@ -25,7 +25,9 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch  # noqa: E402
 import random  # noqa: E402
@@ -39,6 +41,7 @@ torch.cuda.manual_seed_all(0)
 from neuroplex.loader import assemble_cortex  # noqa: E402
 from neuroplex.brain.cortex import TaskSet  # noqa: E402
 from neuroplex.resonance.continuous import ContinuousResonance  # noqa: E402
+
 # 口径契约：zh/dialogue 域 prompt 必须走训练格式
 from neuroplex.resonance.dialogue_format import build_dialogue_prompt  # noqa: E402
 
@@ -56,8 +59,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -87,40 +95,61 @@ def main():
             cortex._executive_route(wp)
     print("  judge EMA 预热完成", flush=True)
 
-    zh_domain_all = ["zh_aug0_dialogue", "zh_aug1_dialogue",
-                     "zh_aug2_dialogue", "zh_aug3_dialogue",
-                     "zh_std0_dialogue", "zh"]
+    zh_domain_all = [
+        "zh_aug0_dialogue",
+        "zh_aug1_dialogue",
+        "zh_aug2_dialogue",
+        "zh_aug3_dialogue",
+        "zh_std0_dialogue",
+        "zh",
+    ]
     emb_in = torch.tensor(
         [cortex._general_sp.encode(build_dialogue_prompt("相位编码测试"))],
-        dtype=torch.long, device=cortex.device)
+        dtype=torch.long,
+        device=cortex.device,
+    )
     emb = cortex._shared_embedding(emb_in)
 
     # ── A. 相位编码（forward/continuous_forward 输出）──
     print("\n[A] 相位编码（phase_code / phase_mean / phase_lock）...", flush=True)
     try:
-        res_c = cortex.think(emb, active_nids=zh_domain_all,
-                             collab_mode="continuous", fusion_mode="soft")
+        res_c = cortex.think(
+            emb, active_nids=zh_domain_all, collab_mode="continuous", fusion_mode="soft"
+        )
         pc = res_c.get("phase_code")
         pm = res_c.get("phase_mean")
         pl = res_c.get("phase_lock")
         # C27 增量三（BioOSS）：phase_code 含振荡段 → 维度 = 2N + 2M
         _M = len(getattr(cortex.ensemble, "oscillators", []))
-        ok = (pc is not None and pc.numel() == 2 * len(zh_domain_all) + 2 * _M
-              and isinstance(pm, float) and -math.pi <= pm <= math.pi
-              and isinstance(pl, float) and 0.0 <= pl <= 1.0 + 1e-6)
-        check("A1. continuous 路径相位编码合法",
-              ok, f"code_dim={None if pc is None else tuple(pc.shape)} mean={pm:.3f} lock={pl:.3f}")
+        ok = (
+            pc is not None
+            and pc.numel() == 2 * len(zh_domain_all) + 2 * _M
+            and isinstance(pm, float)
+            and -math.pi <= pm <= math.pi
+            and isinstance(pl, float)
+            and 0.0 <= pl <= 1.0 + 1e-6
+        )
+        check(
+            "A1. continuous 路径相位编码合法",
+            ok,
+            f"code_dim={None if pc is None else tuple(pc.shape)} mean={pm:.3f} lock={pl:.3f}",
+        )
     except Exception as e:
         check("A1. continuous 路径相位编码合法", False, f"err={e}")
     try:
-        res_d = cortex.think(emb, active_nids=zh_domain_all,
-                             collab_mode="fusion", fusion_mode="soft")
+        res_d = cortex.think(
+            emb, active_nids=zh_domain_all, collab_mode="fusion", fusion_mode="soft"
+        )
         pc2 = res_d.get("phase_code")
         pl2 = res_d.get("phase_lock")
-        check("A2. 离散 forward 路径相位编码合法",
-              pc2 is not None and pc2.numel() > 0
-              and isinstance(pl2, float) and 0.0 <= pl2 <= 1.0 + 1e-6,
-              f"code_dim={None if pc2 is None else tuple(pc2.shape)} lock={pl2}")
+        check(
+            "A2. 离散 forward 路径相位编码合法",
+            pc2 is not None
+            and pc2.numel() > 0
+            and isinstance(pl2, float)
+            and 0.0 <= pl2 <= 1.0 + 1e-6,
+            f"code_dim={None if pc2 is None else tuple(pc2.shape)} lock={pl2}",
+        )
     except Exception as e:
         check("A2. 离散 forward 路径相位编码合法", False, f"err={e}")
 
@@ -128,27 +157,37 @@ def main():
     print("\n[B] 记忆带相位（record/consolidate/retrieve）...", flush=True)
     try:
         from neuroplex.life.sleep_engine import get_sleep_engine
+
         engine = get_sleep_engine()
         bank = engine.get_field_memory()
         vec = torch.randn(3072)  # field.dim（5 dialogue 装配 = 3072）
         engine.record_field_memory(vec, "相位记忆A", text="记忆内容A", phase=0.7)
         pend = list(engine.pending_field_memories)
-        check("B1. record_field_memory 带相位（pending 4 元组）",
-              len(pend) == 1 and len(pend[0]) == 4 and pend[0][3] == 0.7,
-              f"pending_len={len(pend[0]) if pend else 0}")
+        check(
+            "B1. record_field_memory 带相位（pending 4 元组）",
+            len(pend) == 1 and len(pend[0]) == 4 and pend[0][3] == 0.7,
+            f"pending_len={len(pend[0]) if pend else 0}",
+        )
         engine.pending_field_memories = []
-        added = bank.consolidate([vec], ["相位记忆A"], texts=["记忆内容A"],
-                                 phases=[0.7])
+        added = bank.consolidate([vec], ["相位记忆A"], texts=["记忆内容A"], phases=[0.7])
         entry = bank.entries[-1]
-        check("B2. consolidate 保存记忆相位", added == 1 and entry["phase"] == 0.7,
-              f"entry_phase={entry.get('phase')}")
+        check(
+            "B2. consolidate 保存记忆相位",
+            added == 1 and entry["phase"] == 0.7,
+            f"entry_phase={entry.get('phase')}",
+        )
         q = vec / vec.norm()
         rw = bank.retrieve_with_phase(q, top_k=1)
         rv = bank.retrieve_vectors(q, top_k=1)
-        check("B3. retrieve_with_phase 返回相位 + retrieve_vectors 兼容",
-              len(rw) == 1 and len(rw[0]) == 4 and rw[0][3] == 0.7
-              and len(rv) == 1 and len(rv[0]) == 3,
-              f"with_phase={rw[0][3] if rw else None}, vec_n={len(rv[0]) if rv else 0}")
+        check(
+            "B3. retrieve_with_phase 返回相位 + retrieve_vectors 兼容",
+            len(rw) == 1
+            and len(rw[0]) == 4
+            and rw[0][3] == 0.7
+            and len(rv) == 1
+            and len(rv[0]) == 3,
+            f"with_phase={rw[0][3] if rw else None}, vec_n={len(rv[0]) if rv else 0}",
+        )
     except Exception as e:
         check("B1. record_field_memory 带相位", False, f"err={e}")
         check("B2. consolidate 保存记忆相位", False, f"err={e}")
@@ -160,14 +199,20 @@ def main():
         ct = ContinuousResonance()
         ct.entrain_memory(target_phase=0.7)
         ph = ct.theta_phase_at(5.0)
-        check("C1. entrain 目标相位生效（theta_phase_at 返回目标）",
-              abs(ph - 0.7) < 1e-6, f"ph={ph:.4f}")
+        check(
+            "C1. entrain 目标相位生效（theta_phase_at 返回目标）",
+            abs(ph - 0.7) < 1e-6,
+            f"ph={ph:.4f}",
+        )
         ct.reset_entrain()
         ph2 = ct.theta_phase_at(5.0)
-        check("C2. reset_entrain 恢复自由演化",
-              not ct._memory_entrained and ct._entrain_phase == 0.0
-              and abs(ph2 - (ct.theta_init + ct.theta_omega * 5.0)) < 1e-6,
-              f"ph={ph2:.4f}")
+        check(
+            "C2. reset_entrain 恢复自由演化",
+            not ct._memory_entrained
+            and ct._entrain_phase == 0.0
+            and abs(ph2 - (ct.theta_init + ct.theta_omega * 5.0)) < 1e-6,
+            f"ph={ph2:.4f}",
+        )
     except Exception as e:
         check("C1. entrain 目标相位生效", False, f"err={e}")
         check("C2. reset_entrain 恢复自由演化", False, f"err={e}")
@@ -185,12 +230,16 @@ def main():
         my_ct.entrain_memory = spy_entrain  # 实例属性替换（forward 内部调用点）
         mem_vec = torch.randn(3072)
         cortex.ensemble.continuous_forward(
-            shared_embeddings=emb, active_nids=zh_domain_all,
-            seed_memories=[(mem_vec, 0.8, 0.7)], ct=my_ct,
+            shared_embeddings=emb,
+            active_nids=zh_domain_all,
+            seed_memories=[(mem_vec, 0.8, 0.7)],
+            ct=my_ct,
         )
-        check("C3. seed_memories 3 元组 → 按记忆相位对齐",
-              calls3.get("phase") == 0.7,
-              f"entrain_target={calls3.get('phase')}")
+        check(
+            "C3. seed_memories 3 元组 → 按记忆相位对齐",
+            calls3.get("phase") == 0.7,
+            f"entrain_target={calls3.get('phase')}",
+        )
     except Exception as e:
         check("C3. seed_memories 3 元组 → 按记忆相位对齐", False, f"err={e}")
     try:
@@ -204,12 +253,16 @@ def main():
 
         my_ct2.entrain_memory = spy_entrain2
         cortex.ensemble.continuous_forward(
-            shared_embeddings=emb, active_nids=zh_domain_all,
-            seed_memories=[(mem_vec, 0.8)], ct=my_ct2,
+            shared_embeddings=emb,
+            active_nids=zh_domain_all,
+            seed_memories=[(mem_vec, 0.8)],
+            ct=my_ct2,
         )
-        check("C4. 2 元组 seed_memories 回退峰值（增量五零回归）",
-              calls4.get("phase") == 0.0,
-              f"entrain_target={calls4.get('phase')}")
+        check(
+            "C4. 2 元组 seed_memories 回退峰值（增量五零回归）",
+            calls4.get("phase") == 0.0,
+            f"entrain_target={calls4.get('phase')}",
+        )
     except Exception as e:
         check("C4. 2 元组 seed_memories 回退峰值", False, f"err={e}")
 
@@ -218,29 +271,42 @@ def main():
     try:
         out = cortex.generate(
             build_dialogue_prompt("介绍一下什么是神经网络。"),
-            max_tokens=32, domain="zh", temperature=0.55,
+            max_tokens=32,
+            domain="zh",
+            temperature=0.55,
             memory_vectors=[(torch.randn(3072), 0.5, 0.3)],
         )
         lp = cortex.get_last_phase()
-        check("D1. generate memory_vectors 3 元组可用（非空）",
-              isinstance(out, str) and len(out.strip()) > 0,
-              f"out={out[:30]!r}")
-        check("D2. get_last_phase 截获连续共振相位",
-              isinstance(lp, float), f"phase={lp}")
+        check(
+            "D1. generate memory_vectors 3 元组可用（非空）",
+            isinstance(out, str) and len(out.strip()) > 0,
+            f"out={out[:30]!r}",
+        )
+        check("D2. get_last_phase 截获连续共振相位", isinstance(lp, float), f"phase={lp}")
     except Exception as e:
         check("D1. generate memory_vectors 3 元组可用", False, f"err={e}")
         check("D2. get_last_phase 截获连续共振相位", False, f"err={e}")
     try:
-        cortex.generate_task_chain([
-            TaskSet(prompt=build_dialogue_prompt("记录一条带相位的记忆"),
-                    mode="continuous", domain="zh", max_tokens=24,
-                    record_memory=True, memory_label="KoPE任务链记忆"),
-        ])
+        cortex.generate_task_chain(
+            [
+                TaskSet(
+                    prompt=build_dialogue_prompt("记录一条带相位的记忆"),
+                    mode="continuous",
+                    domain="zh",
+                    max_tokens=24,
+                    record_memory=True,
+                    memory_label="KoPE任务链记忆",
+                ),
+            ]
+        )
         engine2 = get_sleep_engine()
         pend2 = list(engine2.pending_field_memories)
         ok_phase = any(len(p) >= 4 and p[3] is not None for p in pend2)
-        check("D3. task_chain 记忆写入带相位",
-              ok_phase, f"pending={[(None, p[1], p[3] if len(p) >= 4 else None) for p in pend2]}")
+        check(
+            "D3. task_chain 记忆写入带相位",
+            ok_phase,
+            f"pending={[(None, p[1], p[3] if len(p) >= 4 else None) for p in pend2]}",
+        )
         engine2.pending_field_memories = []
     except Exception as e:
         check("D3. task_chain 记忆写入带相位", False, f"err={e}")

@@ -14,6 +14,7 @@
 Usage:
     python scripts/training/verify_hotswap_snapshot.py
 """
+
 import os
 import sys
 import threading
@@ -50,7 +51,8 @@ def build_ensemble() -> ResonanceEnsemble:
     n_b = make_neuron("tiny_b", field_dim=512, seed=2)
     field = ResonanceField(dim=512)
     ens = ResonanceEnsemble(
-        {"tiny_a": n_a, "tiny_b": n_b}, field,
+        {"tiny_a": n_a, "tiny_b": n_b},
+        field,
         max_rounds=2,
         coaction=CoactivationTracker(),
     )
@@ -78,6 +80,7 @@ def run_inference_loop(ens: ResonanceEnsemble, results: dict, stop: threading.Ev
                 time.sleep(0.02)
     except Exception as e:  # noqa: BLE001
         import traceback
+
         errors.append(f"{type(e).__name__}: {e}\n{traceback.format_exc()}")
     results["errors"] = errors
     results["n_calls"] = n_calls
@@ -109,11 +112,11 @@ def main():
     # 场景 A: 混合规格热插拔（field_dim=256 ≠ field.dim=512）
     ens.add_neuron("tiny_mixed", mixed_neuron)
     assert "tiny_mixed" in ens.neurons, "[1-A] 混合规格 add_neuron 失败"
-    assert "tiny_mixed" in ens._cross_spec_projectors, \
-        "[1-A] 混合规格投影层未补建"
+    assert "tiny_mixed" in ens._cross_spec_projectors, "[1-A] 混合规格投影层未补建"
     proj = ens._cross_spec_projectors["tiny_mixed"]
-    assert proj.linear1.in_features == 256 and proj.linear1.out_features == 512, \
-        "[1-A] 投影层维度错误"
+    assert (
+        proj.linear1.in_features == 256 and proj.linear1.out_features == 512
+    ), "[1-A] 投影层维度错误"
     print(f"  ok [1-A] 混合规格热插拔: 投影层自动补建 (256->512)")
 
     # 场景 B: 同规格热插拔
@@ -160,8 +163,10 @@ def main():
         return 1
     assert results.get("n_calls", 0) > 0, "推理线程未执行任何 forward"
     assert results.get("finite_ok", False), "推理输出出现非有限值"
-    print(f"  ok [2] 推理线程 {results['n_calls']} 次 forward 全部正常"
-          f"（并发增删/隔离/复活期间不崩溃）")
+    print(
+        f"  ok [2] 推理线程 {results['n_calls']} 次 forward 全部正常"
+        f"（并发增删/隔离/复活期间不崩溃）"
+    )
 
     # 混合规格投影层回归测试（独立于并发）
     print("\n[3] 混合规格投影层回归（静态）...")

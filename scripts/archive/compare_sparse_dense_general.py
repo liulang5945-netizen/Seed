@@ -12,6 +12,7 @@ holdout 的 general 256K 输出空间，比较同一 neuron/collab 权重下：
     python -X utf8 -u scripts/training/compare_sparse_dense_general.py \
         --ckpt data/neurons/cross_domain_collab_sparse12.ckpt.pt
 """
+
 from __future__ import annotations
 
 import argparse
@@ -21,7 +22,9 @@ import sys
 import time
 from typing import Dict, Iterable, List
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -62,7 +65,7 @@ def _load_holdout_texts(start: int, count: int) -> Dict[str, List[str]]:
     for domain in DOMAINS:
         path = os.path.join(SFT_DIR, f"{domain}_sft.pt")
         data = torch.load(path, map_location="cpu", weights_only=False)
-        selected = [row["full"] for row in data[start:start + count]]
+        selected = [row["full"] for row in data[start : start + count]]
         if len(selected) != count:
             raise ValueError(
                 f"{domain} holdout 不足：需要 [{start}:{start + count}]，实际 {len(data)} 条"
@@ -83,9 +86,7 @@ def _build_ensemble(
     neurons = {}
     shared_embeddings = {}
     for domain in DOMAINS:
-        neurons[domain] = load_neuron(
-            domain, GENERAL_DIR, DEVICE, shared_lm_head=shared_lm_head
-        )
+        neurons[domain] = load_neuron(domain, GENERAL_DIR, DEVICE, shared_lm_head=shared_lm_head)
         shared_embeddings[domain] = load_shared_embedding(GENERAL_DIR, DEVICE)
     hub, hub_embedding = load_hub_neuron(HUB_PATH, DEVICE)
     neurons["hub"] = hub
@@ -221,8 +222,7 @@ def _route_distance(left: Dict[str, int], right: Dict[str, int]) -> float:
     right_total = max(sum(right.values()), 1)
     keys = set(left) | set(right)
     return 0.5 * sum(
-        abs(left.get(key, 0) / left_total - right.get(key, 0) / right_total)
-        for key in keys
+        abs(left.get(key, 0) / left_total - right.get(key, 0) / right_total) for key in keys
     )
 
 
@@ -242,9 +242,7 @@ def main() -> int:
     metadata = torch.load(args.ckpt, map_location="cpu", weights_only=False, mmap=True)
     router_state = metadata.get("sparse_router_state")
     if router_state is None:
-        raise RuntimeError(
-            "checkpoint 不含 sparse_router_state；拒绝用随机 Router 做真实性 A/B"
-        )
+        raise RuntimeError("checkpoint 不含 sparse_router_state；拒绝用随机 Router 做真实性 A/B")
     router_cfg = metadata.get("sparse_router_config") or {}
     top_k = args.top_k if args.top_k is not None else int(router_cfg.get("top_k", 2))
     warmup = (
@@ -261,18 +259,14 @@ def main() -> int:
     dense_neurons, dense_embeddings, dense_ensemble = _build_ensemble(
         args.ckpt, False, top_k, warmup
     )
-    dense = _run_mode(
-        dense_ensemble, dense_embeddings, holdout, general_sp, args.seq_len, False
-    )
+    dense = _run_mode(dense_ensemble, dense_embeddings, holdout, general_sp, args.seq_len, False)
     print(dense, flush=True)
 
     print("\n[稀疏]", flush=True)
     sparse_neurons, sparse_embeddings, sparse_ensemble = _build_ensemble(
         args.ckpt, True, top_k, warmup
     )
-    sparse = _run_mode(
-        sparse_ensemble, sparse_embeddings, holdout, general_sp, args.seq_len, True
-    )
+    sparse = _run_mode(sparse_ensemble, sparse_embeddings, holdout, general_sp, args.seq_len, True)
     print(sparse, flush=True)
 
     print("\n[随机 Router 对照]", flush=True)
@@ -285,16 +279,17 @@ def main() -> int:
     print(random_sparse, flush=True)
 
     ppl_delta_pct = (sparse["ppl"] - dense["ppl"]) / max(dense["ppl"], 1e-9) * 100.0
-    active_reduction_pct = (
-        1.0 - sparse["avg_active"] / max(dense["avg_active"], 1e-9)
-    ) * 100.0
+    active_reduction_pct = (1.0 - sparse["avg_active"] / max(dense["avg_active"], 1e-9)) * 100.0
     quality_ok = sparse["ppl"] <= dense["ppl"] * 1.05
     sparsity_ok = sparse["avg_active"] < dense["avg_active"] - 0.01
     route_distance = _route_distance(sparse["selected_counts"], random_sparse["selected_counts"])
     behavior_ok = route_distance >= 0.05
     passed = quality_ok and sparsity_ok and behavior_ok
     print("\n[汇总]", flush=True)
-    print(f"  PPL: dense={dense['ppl']:.4f} sparse={sparse['ppl']:.4f} Δ={ppl_delta_pct:+.2f}%", flush=True)
+    print(
+        f"  PPL: dense={dense['ppl']:.4f} sparse={sparse['ppl']:.4f} Δ={ppl_delta_pct:+.2f}%",
+        flush=True,
+    )
     print(
         f"  激活: dense={dense['avg_active']:.2f} sparse={sparse['avg_active']:.2f} "
         f"减少={active_reduction_pct:+.2f}%",

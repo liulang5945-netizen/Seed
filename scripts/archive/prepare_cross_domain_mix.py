@@ -27,7 +27,9 @@ from typing import Dict, List
 
 import torch
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 from neuroplex.resonance.translator import TokenizerHub
 
@@ -38,7 +40,7 @@ IGNORE_LABEL = -100
 SFT_DIR = "data/sft"
 
 # 每域混合：域数据（主）+ 英文对话（辅，提供对话能力）
-MIX_RATIO_DOMAIN = 1.0   # 域 SFT 全部保留
+MIX_RATIO_DOMAIN = 1.0  # 域 SFT 全部保留
 MIX_RATIO_DIALOGUE = 1.0  # 英文对话等量混入（让 neuron 具备对话响应能力）
 
 
@@ -110,17 +112,25 @@ def tokenize_domain_mix(
     assert input_ids.shape == (len(all_input_ids), seq_len)
     assert labels.shape == (len(all_labels), seq_len)
 
-    print(f"  [{domain}] mixed: domain={len(domain_samples)} + dialogue={len(dialogue_samples)} "
-          f"→ {len(all_input_ids)} samples, input_ids={tuple(input_ids.shape)}", flush=True)
+    print(
+        f"  [{domain}] mixed: domain={len(domain_samples)} + dialogue={len(dialogue_samples)} "
+        f"→ {len(all_input_ids)} samples, input_ids={tuple(input_ids.shape)}",
+        flush=True,
+    )
     return {"input_ids": input_ids, "labels": labels}
 
 
 def main():
     parser = argparse.ArgumentParser(description="P8-2x: 跨域混合 SFT 数据准备")
-    parser.add_argument("--domains", nargs="+", default=["code", "math"],
-                        help="要混合的域（默认 code math）")
-    parser.add_argument("--dialogue", type=str, default="en",
-                        help="对话数据域（默认 en_sft 英文对话，域 tokenizer 编码高效）")
+    parser.add_argument(
+        "--domains", nargs="+", default=["code", "math"], help="要混合的域（默认 code math）"
+    )
+    parser.add_argument(
+        "--dialogue",
+        type=str,
+        default="en",
+        help="对话数据域（默认 en_sft 英文对话，域 tokenizer 编码高效）",
+    )
     parser.add_argument("--seq-len", type=int, default=SEQ_LEN)
     parser.add_argument("--output-dir", type=str, default=SFT_DIR)
     args = parser.parse_args()
@@ -142,7 +152,11 @@ def main():
             continue
 
         result = tokenize_domain_mix(
-            hub, domain, domain_samples, dialogue_samples, seq_len=args.seq_len,
+            hub,
+            domain,
+            domain_samples,
+            dialogue_samples,
+            seq_len=args.seq_len,
         )
         out_path = os.path.join(args.output_dir, f"p7_{domain}_mixed_tokenized.pt")
         torch.save(result, out_path)
@@ -150,7 +164,9 @@ def main():
 
     print("\n=== Done ===")
     print("下一步: 用混合数据训练 code/math neuron 本体")
-    print("  python scripts/training/train_neurons_from_scratch.py --domain code --data-dir data/sft")
+    print(
+        "  python scripts/training/train_neurons_from_scratch.py --domain code --data-dir data/sft"
+    )
 
 
 if __name__ == "__main__":

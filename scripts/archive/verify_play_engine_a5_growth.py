@@ -31,6 +31,7 @@
 
 运行：python -u scripts/training/verify_play_engine_a5_growth.py
 """
+
 from __future__ import annotations
 
 import json
@@ -38,7 +39,9 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
@@ -50,11 +53,16 @@ from neuroplex.life.sleep_engine import SleepEngine, SleepConfig, SleepReport  #
 from neuroplex.resonance.neuro_modulation import SleepConsolidator  # noqa: E402
 
 from scripts.archive.verify_a1_judge_signal_real import (  # noqa: E402
-    DIALOGUE_IDS, COLLAB_NAME, EXTRA_NEURONS_DIR,
-    DIALOGUE_PROMPTS, KNOWLEDGE_PROMPTS, UNFAMILIAR_PROMPTS,
+    DIALOGUE_IDS,
+    COLLAB_NAME,
+    EXTRA_NEURONS_DIR,
+    DIALOGUE_PROMPTS,
+    KNOWLEDGE_PROMPTS,
+    UNFAMILIAR_PROMPTS,
 )
 from scripts.archive.verify_a3_with_decay import (  # noqa: E402
-    field_state_of, lora_l2_norm,
+    field_state_of,
+    lora_l2_norm,
 )
 from scripts.archive.verify_a4_post_sleep_judge_signal import (  # noqa: E402
     measure_group_stds,
@@ -128,8 +136,7 @@ def main():
         wire_bio_modules=True,
         neuron_ids=DIALOGUE_IDS,
     )
-    target_ids = [nid for nid in cortex.neurons
-                  if nid.startswith("zh_") and "dialogue" in nid]
+    target_ids = [nid for nid in cortex.neurons if nid.startswith("zh_") and "dialogue" in nid]
     print(f"  装配 {len(cortex.neurons)} 神经元，judge 目标 = {target_ids}", flush=True)
 
     tmp_data = os.path.join("data", "_tmp_a5_prep")
@@ -149,19 +156,25 @@ def main():
         "unfamiliar": UNFAMILIAR_PROMPTS,
     }
     all_prompts = DIALOGUE_PROMPTS + KNOWLEDGE_PROMPTS + UNFAMILIAR_PROMPTS
-    prompt_labels = (["dialogue"] * len(DIALOGUE_PROMPTS) +
-                     ["knowledge"] * len(KNOWLEDGE_PROMPTS) +
-                     ["unfamiliar"] * len(UNFAMILIAR_PROMPTS))
+    prompt_labels = (
+        ["dialogue"] * len(DIALOGUE_PROMPTS)
+        + ["knowledge"] * len(KNOWLEDGE_PROMPTS)
+        + ["unfamiliar"] * len(UNFAMILIAR_PROMPTS)
+    )
 
     new_batches = []
     for _ in range(N_MICRO // CHECKPOINT_EVERY):
         new_batches.append(
-            list(zip(
-                NEW_DIALOGUE_BATCH + NEW_KNOWLEDGE_BATCH + NEW_UNFAMILIAR_BATCH,
-                (["dialogue"] * len(NEW_DIALOGUE_BATCH) +
-                 ["knowledge"] * len(NEW_KNOWLEDGE_BATCH) +
-                 ["unfamiliar"] * len(NEW_UNFAMILIAR_BATCH))
-            ))
+            list(
+                zip(
+                    NEW_DIALOGUE_BATCH + NEW_KNOWLEDGE_BATCH + NEW_UNFAMILIAR_BATCH,
+                    (
+                        ["dialogue"] * len(NEW_DIALOGUE_BATCH)
+                        + ["knowledge"] * len(NEW_KNOWLEDGE_BATCH)
+                        + ["unfamiliar"] * len(NEW_UNFAMILIAR_BATCH)
+                    ),
+                )
+            )
         )
 
     print("\n[2/4] 预测量 pre-sleep A1 真实版 + 注入 24 条记忆...", flush=True)
@@ -175,15 +188,23 @@ def main():
         vec = field_state_of(cortex, text)
         sleep_engine.record_field_memory(vec, f"init_{prompt_labels[i]}_{i}", text=text)
         sc.record_high_resonance_state(
-            field_state=vec, resonance_score=0.9, step=0,
-            active_nids=target_ids, threshold=0.5, text=text)
+            field_state=vec,
+            resonance_score=0.9,
+            step=0,
+            active_nids=target_ids,
+            threshold=0.5,
+            text=text,
+        )
     r_init = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
     sleep_engine._sleep_phase_field_consolidation(r_init)
-    print(f"  注入 {len(all_prompts)} 条 + 场固化 {r_init.field_memories_consolidated} 条",
-          flush=True)
+    print(
+        f"  注入 {len(all_prompts)} 条 + 场固化 {r_init.field_memories_consolidated} 条", flush=True
+    )
 
-    print(f"\n[3/4] 跑 {N_MICRO} 次 micro-sleep（每 {CHECKPOINT_EVERY} 步前注入 {NEW_PROMPTS_PER_BATCH} 条新 prompt）...",
-          flush=True)
+    print(
+        f"\n[3/4] 跑 {N_MICRO} 次 micro-sleep（每 {CHECKPOINT_EVERY} 步前注入 {NEW_PROMPTS_PER_BATCH} 条新 prompt）...",
+        flush=True,
+    )
     checkpoint_curve = []
     n_complete_cycles = 0
     crash_count = 0
@@ -195,11 +216,15 @@ def main():
                 batch = new_batches[batch_idx]
                 for j, (text, label) in enumerate(batch):
                     vec = field_state_of(cortex, text)
-                    sleep_engine.record_field_memory(
-                        vec, f"step{step}_{label}_{j}", text=text)
+                    sleep_engine.record_field_memory(vec, f"step{step}_{label}_{j}", text=text)
                     sc.record_high_resonance_state(
-                        field_state=vec, resonance_score=0.9, step=step,
-                        active_nids=target_ids, threshold=0.5, text=text)
+                        field_state=vec,
+                        resonance_score=0.9,
+                        step=step,
+                        active_nids=target_ids,
+                        threshold=0.5,
+                        text=text,
+                    )
                     new_injected_total += 1
 
         report = SleepReport(
@@ -215,8 +240,7 @@ def main():
                 n_complete_cycles += 1
         except Exception as e:
             crash_count += 1
-            print(f"  [WARN] micro-sleep {step} 异常: {type(e).__name__}: {e}",
-                  flush=True)
+            print(f"  [WARN] micro-sleep {step} 异常: {type(e).__name__}: {e}", flush=True)
             if crash_count > 5:
                 print(f"  [ABORT] 连续异常 > 5 次，停止", flush=True)
                 check(f"micro-sleep {step} 不崩溃", False, f"crashes={crash_count}")
@@ -228,35 +252,43 @@ def main():
             lora_l2 = {nid: lora_l2_norm(cortex.neurons[nid]) for nid in target_ids}
             ckpt = measure_group_stds(sleep_engine, cortex, target_ids, groups)
             t_now = time.time() - t0
-            checkpoint_curve.append({
-                "step": step,
-                "elapsed_total_s": round(t_now, 1),
-                "dt_step_s": round(dt_step, 1),
-                "new_injected_so_far": new_injected_total,
-                "mean_dialogue": ckpt["dialogue"]["mean"],
-                "mean_knowledge": ckpt["knowledge"]["mean"],
-                "mean_unfamiliar": ckpt["unfamiliar"]["mean"],
-                "std_dialogue": ckpt["dialogue"]["std"],
-                "std_knowledge": ckpt["knowledge"]["std"],
-                "std_unfamiliar": ckpt["unfamiliar"]["std"],
-                "lora_l2_zh_aug3": lora_l2.get("zh_aug3_dialogue"),
-            })
-            d_m, k_m, u_m = (ckpt["dialogue"]["mean"],
-                             ckpt["knowledge"]["mean"],
-                             ckpt["unfamiliar"]["mean"])
-            print(f"  step {step:3d}/{N_MICRO}  dt={dt_step:5.1f}s  "
-                  f"mean(d/k/u)={d_m:.4f}/{k_m:.4f}/{u_m:.4f}  "
-                  f"new={new_injected_total}  "
-                  f"lora_l2_aug3={lora_l2.get('zh_aug3_dialogue', 0):.3f}",
-                  flush=True)
+            checkpoint_curve.append(
+                {
+                    "step": step,
+                    "elapsed_total_s": round(t_now, 1),
+                    "dt_step_s": round(dt_step, 1),
+                    "new_injected_so_far": new_injected_total,
+                    "mean_dialogue": ckpt["dialogue"]["mean"],
+                    "mean_knowledge": ckpt["knowledge"]["mean"],
+                    "mean_unfamiliar": ckpt["unfamiliar"]["mean"],
+                    "std_dialogue": ckpt["dialogue"]["std"],
+                    "std_knowledge": ckpt["knowledge"]["std"],
+                    "std_unfamiliar": ckpt["unfamiliar"]["std"],
+                    "lora_l2_zh_aug3": lora_l2.get("zh_aug3_dialogue"),
+                }
+            )
+            d_m, k_m, u_m = (
+                ckpt["dialogue"]["mean"],
+                ckpt["knowledge"]["mean"],
+                ckpt["unfamiliar"]["mean"],
+            )
+            print(
+                f"  step {step:3d}/{N_MICRO}  dt={dt_step:5.1f}s  "
+                f"mean(d/k/u)={d_m:.4f}/{k_m:.4f}/{u_m:.4f}  "
+                f"new={new_injected_total}  "
+                f"lora_l2_aug3={lora_l2.get('zh_aug3_dialogue', 0):.3f}",
+                flush=True,
+            )
 
     print(f"\n[4/4] 后测量 post-sleep 100 次 A1 真实版 24 prompt...", flush=True)
     post = measure_group_stds(sleep_engine, cortex, target_ids, groups)
     post_means = {g: post[g]["mean"] for g in groups}
     for g in ("dialogue", "knowledge", "unfamiliar"):
         d = post[g]
-        print(f"  post {g}: std={d['std']}  mean={d['mean']}  Δmean={d['mean'] - pre_means[g]:+.4f}",
-              flush=True)
+        print(
+            f"  post {g}: std={d['std']}  mean={d['mean']}  Δmean={d['mean'] - pre_means[g]:+.4f}",
+            flush=True,
+        )
 
     print("\n" + "=" * 64, flush=True)
     print("A5 准备 5 维判据：", flush=True)
@@ -268,32 +300,45 @@ def main():
         m_post = post_means[g]
         delta = m_post - m_pre
         ok = abs(delta) <= 0.05
-        check(f"A5.{g[0]}: |Δ mean| ≤ 0.05（不显著退化）", ok,
-              f"pre={m_pre:.4f}  post={m_post:.4f}  Δ={delta:+.4f}")
+        check(
+            f"A5.{g[0]}: |Δ mean| ≤ 0.05（不显著退化）",
+            ok,
+            f"pre={m_pre:.4f}  post={m_post:.4f}  Δ={delta:+.4f}",
+        )
         pass_lines.append(f"{g}: mean pre={m_pre:.4f} → post={m_post:.4f} (Δ={delta:+.4f})")
 
     any_growth = any((post_means[g] - pre_means[g]) >= 0.01 for g in groups)
     best_growth = max((post_means[g] - pre_means[g]) for g in groups)
     best_growth_g = max(groups, key=lambda g: post_means[g] - pre_means[g])
-    check("A5d: 至少 1 组 mean 上升 ≥ 0.01（经验驱动增长方向性）",
-          any_growth,
-          f"best={best_growth_g} Δ={best_growth:+.4f}")
+    check(
+        "A5d: 至少 1 组 mean 上升 ≥ 0.01（经验驱动增长方向性）",
+        any_growth,
+        f"best={best_growth_g} Δ={best_growth:+.4f}",
+    )
 
-    check("A5e: 100 次 micro-sleep 无崩溃",
-          crash_count == 0,
-          f"crashes={crash_count}/{N_MICRO}, new_injected={new_injected_total}")
+    check(
+        "A5e: 100 次 micro-sleep 无崩溃",
+        crash_count == 0,
+        f"crashes={crash_count}/{N_MICRO}, new_injected={new_injected_total}",
+    )
 
-    a5_pass = (failed == 0)
+    a5_pass = failed == 0
     if a5_pass:
         verdict = "A5 准备 PASS：100 步喂新经验后 judge mean 不退化"
         if any_growth:
-            verdict += f"，且 {best_growth_g} 组 mean 上升 {best_growth:+.4f}（经验驱动增长方向性证据）"
-        next_step = ("A5 准备通过。下一步 A5 完整：把 A5 准备流程常态嵌入对话循环，"
-                     "观测 multi-day 自举演化（每天 1000 步 micro-sleep × 喂新经验）。")
+            verdict += (
+                f"，且 {best_growth_g} 组 mean 上升 {best_growth:+.4f}（经验驱动增长方向性证据）"
+            )
+        next_step = (
+            "A5 准备通过。下一步 A5 完整：把 A5 准备流程常态嵌入对话循环，"
+            "观测 multi-day 自举演化（每天 1000 步 micro-sleep × 喂新经验）。"
+        )
     else:
         verdict = f"A5 准备 部分失败（{passed} PASS / {failed} FAIL）"
-        next_step = ("退化 > 0.05 需要：(1) 收窄 decay 到 0.85-0.95；(2) 新 prompt "
-                     "每 20 步而非 10 步注入；(3) replay buffer 缩到 100 让 old 经验溢出。")
+        next_step = (
+            "退化 > 0.05 需要：(1) 收窄 decay 到 0.85-0.95；(2) 新 prompt "
+            "每 20 步而非 10 步注入；(3) replay buffer 缩到 100 让 old 经验溢出。"
+        )
     print(f"\n判定: {verdict}", flush=True)
     print(f"下一步: {next_step}", flush=True)
 
@@ -301,8 +346,9 @@ def main():
     out_path = os.path.join("reports", f"play_engine_a5_growth_{today}.json")
     payload = {
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "task": (f"A5 准备：{N_MICRO} 次 micro-sleep + 每 10 步注入 "
-                 f"{NEW_PROMPTS_PER_BATCH} 条新经验"),
+        "task": (
+            f"A5 准备：{N_MICRO} 次 micro-sleep + 每 10 步注入 " f"{NEW_PROMPTS_PER_BATCH} 条新经验"
+        ),
         "cortex": {
             "n_neurons": len(cortex.neurons),
             "judge_target_ids": target_ids,

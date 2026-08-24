@@ -3,6 +3,7 @@
 ================
 提供硬件自适应训练配置推荐和数据集质量检查端点
 """
+
 import logging
 import os
 from fastapi import APIRouter, HTTPException
@@ -25,19 +26,21 @@ def _detect_hardware() -> dict:
     """检测本地硬件，为训练提供配置参考"""
     try:
         import psutil
+
         cpu_count = psutil.cpu_count(logical=False) or os.cpu_count() or 4
-        ram_gb = psutil.virtual_memory().total / (1024 ** 3)
+        ram_gb = psutil.virtual_memory().total / (1024**3)
     except ImportError:
         cpu_count = os.cpu_count() or 4
         ram_gb = 0
     try:
         import torch
+
         cuda_available = torch.cuda.is_available()
         gpu_name = ""
         vram_gb = 0
         if cuda_available:
             gpu_name = torch.cuda.get_device_name(0)
-            vram_gb = torch.cuda.get_device_properties(0).total_mem / (1024 ** 3)
+            vram_gb = torch.cuda.get_device_properties(0).total_mem / (1024**3)
     except ImportError:
         cuda_available = False
         gpu_name = ""
@@ -103,6 +106,7 @@ async def check_dataset_quality(req: DatasetCheckRequest):
     """检查数据集质量"""
     try:
         from neuroplex.train.dataset_checker import DatasetQualityChecker
+
         checker = DatasetQualityChecker()
         result = checker.check(req.file_path)
         return {"status": "success", **result}

@@ -92,7 +92,7 @@ def compute_new_embeddings(
 
     # 2. 未匹配的新 token：子 piece 分解平均 或 随机初始化
     unk_id = old_sp.unk_id()
-    std = hidden ** -0.5
+    std = hidden**-0.5
     matched_new = set(id_map.values())
     n_avg = 0
     n_random = 0
@@ -109,8 +109,10 @@ def compute_new_embeddings(
             new_w[new_id] = torch.randn(hidden, dtype=old_w.dtype) * std
             n_random += 1
 
-    print(f"  [migrate] 精确匹配 {len(id_map)} / 子 piece 平均 {n_avg} / 随机初始化 {n_random} "
-          f"（共 {new_vocab}）")
+    print(
+        f"  [migrate] 精确匹配 {len(id_map)} / 子 piece 平均 {n_avg} / 随机初始化 {n_random} "
+        f"（共 {new_vocab}）"
+    )
     return new_w
 
 
@@ -159,8 +161,13 @@ def migrate_neuron_ckpt(
         迁移报告 dict
     """
     ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
-    report = {"path": str(ckpt_path), "migrated": False, "old_vocab": None,
-              "new_vocab": None, "lm_head_shape": None}
+    report = {
+        "path": str(ckpt_path),
+        "migrated": False,
+        "old_vocab": None,
+        "new_vocab": None,
+        "lm_head_shape": None,
+    }
 
     sd = ckpt.get("state_dict") or ckpt.get("model_state_dict") or {}
     if "lm_head.weight" not in sd:
@@ -193,8 +200,7 @@ def migrate_neuron_ckpt(
         old_vocab = getattr(cfg, "vocab_size", None)
         cfg.vocab_size = new_vocab
         report["old_cfg_vocab"] = old_vocab
-        print(f"  [cfg] {ckpt_path.name}: neuron_config.vocab_size "
-              f"{old_vocab} → {new_vocab}")
+        print(f"  [cfg] {ckpt_path.name}: neuron_config.vocab_size " f"{old_vocab} → {new_vocab}")
 
     # 保存（写临时文件再原子替换，避免中断损坏）
     tmp_path = ckpt_path.with_suffix(".pt.tmp")
@@ -204,7 +210,9 @@ def migrate_neuron_ckpt(
     report["migrated"] = True
     report["new_vocab"] = new_vocab
     report["lm_head_shape"] = tuple(sd["lm_head.weight"].shape)
-    print(f"  [migrate] {ckpt_path.name}: lm_head {old_shape} → {tuple(sd['lm_head.weight'].shape)}")
+    print(
+        f"  [migrate] {ckpt_path.name}: lm_head {old_shape} → {tuple(sd['lm_head.weight'].shape)}"
+    )
     return report
 
 
@@ -213,8 +221,9 @@ def main():
     parser.add_argument("--neurons-dir", type=str, default=str(PROJECT_ROOT / "data" / "neurons"))
     parser.add_argument("--domain", type=str, default="zh")
     parser.add_argument("--new-vocab", type=int, default=50000)
-    parser.add_argument("--backup-dir", type=str,
-                        default=str(PROJECT_ROOT / "data" / "neurons" / "pre_t12_backup"))
+    parser.add_argument(
+        "--backup-dir", type=str, default=str(PROJECT_ROOT / "data" / "neurons" / "pre_t12_backup")
+    )
     parser.add_argument("--no-backup", action="store_true", help="不备份原 ckpt")
     args = parser.parse_args()
 
@@ -224,16 +233,22 @@ def main():
     if not new_model.exists():
         raise FileNotFoundError(f"新 tokenizer 不存在: {new_model}（先运行 upgrade_tokenizer.py）")
     if not OLD_BACKUP.exists():
-        raise FileNotFoundError(f"旧 tokenizer 备份不存在: {OLD_BACKUP}（先运行 upgrade_tokenizer.py）")
+        raise FileNotFoundError(
+            f"旧 tokenizer 备份不存在: {OLD_BACKUP}（先运行 upgrade_tokenizer.py）"
+        )
 
     new_sp = spm.SentencePieceProcessor(str(new_model))
     old_sp = spm.SentencePieceProcessor(str(OLD_BACKUP))
-    print(f"旧 tokenizer: {old_sp.GetPieceSize()} vocab | 新 tokenizer: {new_sp.GetPieceSize()} vocab")
+    print(
+        f"旧 tokenizer: {old_sp.GetPieceSize()} vocab | 新 tokenizer: {new_sp.GetPieceSize()} vocab"
+    )
 
     # 预检：新 vocab 是否与目标一致
     if new_sp.GetPieceSize() != args.new_vocab:
-        print(f"[warn] 新 tokenizer 实际 vocab={new_sp.GetPieceSize()}，"
-              f"目标 {args.new_vocab}（以实际为准）")
+        print(
+            f"[warn] 新 tokenizer 实际 vocab={new_sp.GetPieceSize()}，"
+            f"目标 {args.new_vocab}（以实际为准）"
+        )
         args.new_vocab = new_sp.GetPieceSize()
 
     # 扫描目标域 ckpt（含 _aug/_dialogue/_fieldcond 变体）
@@ -247,8 +262,7 @@ def main():
     backup_dir = None if args.no_backup else Path(args.backup_dir)
     migrated = 0
     for path in ckpt_paths:
-        report = migrate_neuron_ckpt(Path(path), old_sp, new_sp,
-                                     args.new_vocab, backup_dir)
+        report = migrate_neuron_ckpt(Path(path), old_sp, new_sp, args.new_vocab, backup_dir)
         if report["migrated"]:
             migrated += 1
 

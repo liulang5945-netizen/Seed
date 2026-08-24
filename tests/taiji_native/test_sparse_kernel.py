@@ -5,9 +5,7 @@ from taiji import SparseSynapses
 
 def _dense_view(synapses: SparseSynapses) -> torch.Tensor:
     dense = torch.zeros(synapses.out_features, synapses.in_features)
-    posts = torch.arange(synapses.out_features).unsqueeze(1).expand_as(
-        synapses.pre_index
-    )
+    posts = torch.arange(synapses.out_features).unsqueeze(1).expand_as(synapses.pre_index)
     dense[posts, synapses.pre_index] = synapses.edge_weight
     return dense
 
@@ -26,12 +24,8 @@ def test_edge_indexed_kernel_matches_dense_reference_for_all_operators() -> None
     presynaptic = torch.linspace(-0.8, 0.9, 11)
     error = torch.linspace(-0.4, 0.5, 7)
 
-    assert torch.allclose(
-        synapses.forward(presynaptic), dense_before @ presynaptic, atol=1e-6
-    )
-    assert torch.allclose(
-        synapses.backproject(error), dense_before.T @ error, atol=1e-6
-    )
+    assert torch.allclose(synapses.forward(presynaptic), dense_before @ presynaptic, atol=1e-6)
+    assert torch.allclose(synapses.backproject(error), dense_before.T @ error, atol=1e-6)
 
     learning_rate = 0.07
     weight_decay = 1e-3
@@ -43,9 +37,7 @@ def test_edge_indexed_kernel_matches_dense_reference_for_all_operators() -> None
     presynaptic_by_edge = presynaptic[synapses.pre_index]
     silent_by_edge = (presynaptic_by_edge == 0).to(dense_before.dtype)
     silent_dense = torch.zeros_like(dense_before)
-    posts = torch.arange(synapses.out_features).unsqueeze(1).expand_as(
-        synapses.pre_index
-    )
+    posts = torch.arange(synapses.out_features).unsqueeze(1).expand_as(synapses.pre_index)
     silent_dense[posts, synapses.pre_index] = silent_by_edge
     expected = dense_before * (1.0 - weight_decay * silent_dense)
     expected.add_(learning_rate * torch.outer(error, presynaptic) / scale * mask)
@@ -86,9 +78,7 @@ def test_local_update_decay_touches_only_presynaptically_silent_edges() -> None:
 
     lit = presynaptic[synapses.pre_index] != 0
     silent = ~lit
-    assert torch.equal(synapses.edge_weight[lit], before[lit]), (
-        "被本次事件点亮的接触不得被衰减抽走"
-    )
+    assert torch.equal(synapses.edge_weight[lit], before[lit]), "被本次事件点亮的接触不得被衰减抽走"
     assert torch.allclose(
         synapses.edge_weight[silent], 0.5 * before[silent], atol=1e-6
     ), "沉默接触必须按衰减率放松"

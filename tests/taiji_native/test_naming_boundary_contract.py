@@ -10,6 +10,7 @@
   4. Transformer 底层的 live 消费点是封闭且已知的：新增消费点必须显式改这里
   5. taiji/ 内禁止出现"态极"：新基底不复用 Legacy NeuroPlex 的旧中文称呼
 """
+
 from __future__ import annotations
 
 import ast
@@ -29,9 +30,7 @@ LEGACY_TRANSFORMER_CONSUMERS = {
 
 def _iter_python_files(package: str) -> list[Path]:
     return sorted(
-        path
-        for path in (REPO / package).rglob("*.py")
-        if "__pycache__" not in path.parts
+        path for path in (REPO / package).rglob("*.py") if "__pycache__" not in path.parts
     )
 
 
@@ -62,9 +61,7 @@ def _imports_symbol(path: Path, symbol: str) -> bool:
     （例如本测试自身）都不会被误判成消费者。
     """
     for node in ast.walk(_parse(path)):
-        if isinstance(node, ast.ImportFrom) and any(
-            alias.name == symbol for alias in node.names
-        ):
+        if isinstance(node, ast.ImportFrom) and any(alias.name == symbol for alias in node.names):
             return True
     return False
 
@@ -98,9 +95,7 @@ def test_seed_only_composes_the_public_taiji_substrate() -> None:
         modules = _imported_modules(path)
         taiji_imports += sum(_top_level(module) == "taiji" for module in modules)
         forbidden = {
-            module
-            for module in modules
-            if _top_level(module) in {"neuroplex", "transformers"}
+            module for module in modules if _top_level(module) in {"neuroplex", "transformers"}
         }
         if forbidden:
             offenders[path.relative_to(REPO).as_posix()] = forbidden
@@ -118,9 +113,7 @@ def test_legacy_baseline_never_depends_on_seed_or_the_new_substrate() -> None:
     offenders: dict[str, set[str]] = {}
     for path in _iter_python_files("neuroplex"):
         forbidden = {
-            module
-            for module in _imported_modules(path)
-            if _top_level(module) in {"seed", "taiji"}
+            module for module in _imported_modules(path) if _top_level(module) in {"seed", "taiji"}
         }
         if forbidden:
             offenders[path.relative_to(REPO).as_posix()] = forbidden
@@ -151,7 +144,7 @@ def test_legacy_transformer_block_consumers_stay_closed() -> None:
 
 
 def test_new_substrate_does_not_reuse_the_legacy_chinese_name() -> None:
-    """"态极"是 Legacy NeuroPlex 的旧称，冻结代码内保留但新基底禁止使用。"""
+    """ "态极"是 Legacy NeuroPlex 的旧称，冻结代码内保留但新基底禁止使用。"""
     offenders = [
         path.relative_to(REPO).as_posix()
         for path in _iter_python_files("taiji")
@@ -159,6 +152,6 @@ def test_new_substrate_does_not_reuse_the_legacy_chinese_name() -> None:
     ]
 
     assert not offenders, (
-        "\"态极\"指 Legacy NeuroPlex，与替代 Transformer 的新基底无关；"
-        f"taiji/ 内请写 \"Taiji\" 或 \"NeuroPlex\"：{offenders}"
+        '"态极"指 Legacy NeuroPlex，与替代 Transformer 的新基底无关；'
+        f'taiji/ 内请写 "Taiji" 或 "NeuroPlex"：{offenders}'
     )

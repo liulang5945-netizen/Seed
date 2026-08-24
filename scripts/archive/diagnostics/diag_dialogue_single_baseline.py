@@ -8,6 +8,7 @@
 输出每个 checkpoint 的来源字段、对齐后的 prompt NLL 和短生成，区分
 “单体能力不足”和“群体路由/融合造成的退化”。不执行训练，不写 checkpoint。
 """
+
 from __future__ import annotations
 
 import json
@@ -19,7 +20,6 @@ import torch
 
 from neuroplex.loader import assemble_cortex
 from neuroplex.resonance.dialogue_format import build_dialogue_prompt
-
 
 DIALOGUE_IDS = [
     "zh_aug0_dialogue",

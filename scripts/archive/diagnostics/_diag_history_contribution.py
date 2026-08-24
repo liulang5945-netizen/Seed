@@ -6,6 +6,7 @@ model's distribution with full dynamics against the same distribution after
 motor head only learned byte marginals and the fabric contributes nothing;
 the gap is the fabric's causal share of prediction quality.
 """
+
 from __future__ import annotations
 
 import math
@@ -25,13 +26,11 @@ PROBE_LEN = 4000
 
 
 def main() -> None:
-    checkpoint = torch.load(
-        PROJECT_ROOT / "checkpoints" / "seed_corpus.pt", weights_only=False
-    )
+    checkpoint = torch.load(PROJECT_ROOT / "checkpoints" / "seed_corpus.pt", weights_only=False)
     model = Seed.from_checkpoint(checkpoint)
-    symbols = list(iter_corpus_symbols(
-        [PROJECT_ROOT / DEFAULT_CORPUS[0]]
-    ))[200_000:200_000 + PROBE_LEN]
+    symbols = list(iter_corpus_symbols([PROJECT_ROOT / DEFAULT_CORPUS[0]]))[
+        200_000 : 200_000 + PROBE_LEN
+    ]
 
     # Full-history pass: keep the checkpoint's accumulated cortical state
     # (activity, traces, thresholds) and stream the probe on top of it.
@@ -59,8 +58,10 @@ def main() -> None:
     print(f"n={n}")
     print(f"full-history:  surprise={full_mean:.4f} acc={full_top1 / n:.4f}")
     print(f"reset-history: surprise={reset_mean:.4f} acc={reset_top1 / n:.4f}")
-    print(f"fabric share:  {reset_mean - full_mean:+.4f} nats/byte, "
-          f"{(full_top1 - reset_top1) / n:+.4f} accuracy")
+    print(
+        f"fabric share:  {reset_mean - full_mean:+.4f} nats/byte, "
+        f"{(full_top1 - reset_top1) / n:+.4f} accuracy"
+    )
 
 
 if __name__ == "__main__":

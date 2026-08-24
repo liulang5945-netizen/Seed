@@ -366,10 +366,7 @@ def print_summary(
         )
         stats = normalized_stats.get(source.name)
         if stats:
-            print(
-                f"  normalized_records={stats['records']} "
-                f"normalized_chars={stats['chars']}"
-            )
+            print(f"  normalized_records={stats['records']} " f"normalized_chars={stats['chars']}")
     print(f"Estimated raw download size: {total_bytes / (1024 ** 3):.2f} GB")
 
 
@@ -411,7 +408,9 @@ def main() -> None:
             print(f"Normalizing {source.name}...")
             local_files = downloaded_map.get(source.name)
             if local_files is None:
-                local_files = [raw_dir / source.name / file_name for file_name in file_map[source.name]]
+                local_files = [
+                    raw_dir / source.name / file_name for file_name in file_map[source.name]
+                ]
             normalized_stats[source.name] = normalize_downloads(
                 source=source,
                 files=local_files,

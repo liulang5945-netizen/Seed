@@ -181,8 +181,9 @@ export function useApi() {
         if (connected) {
           clearInterval(healthCheckTimer);
           healthCheckTimer = setInterval(() => {
+            // checkHealth 已经拉取并应用了 /api/runtime/status 完整负载，
+            // 再调 refreshAll 是同一请求的重复发射（轮询风暴主因）。
             checkHealth().catch(() => {});
-            runtimeStore.refreshAll().catch(() => {});
           }, 15000);
         }
       } catch (e) {

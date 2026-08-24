@@ -61,6 +61,7 @@ v5（C15 预测质量路由，collab_v3_c15，2026-08-08，D 方案）：
 - max_texts_per_domain/dialogue-max-texts 不设时按全部数据（4×3000+2000 → ~14000 步 ≈ 40h，勿踩）
 - 评估：verify_collab_mixed.py（内部 CKPT_PATH 或改路径）
 """
+
 from __future__ import annotations
 
 import json
@@ -79,20 +80,30 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from neuroplex.resonance import (
-    ResonanceNeuron, ResonanceField, ResonanceEnsemble, get_domain_neuron_config,
+    ResonanceNeuron,
+    ResonanceField,
+    ResonanceEnsemble,
+    get_domain_neuron_config,
 )
 from neuroplex.resonance.geometry import NeuronGeometry
 from neuroplex.resonance.topology import (
-    build_topology, establish_topology_channels, topology_detail,
+    build_topology,
+    establish_topology_channels,
+    topology_detail,
 )
 from neuroplex.resonance.translator import (
-    TokenizerHub, AlignmentRules, batch_align_and_embed,
+    TokenizerHub,
+    AlignmentRules,
+    batch_align_and_embed,
 )
 from scripts.training.utils import (
-    load_domain_tokenizer, load_general_tokenizer,
-    create_shared_embedding, build_muon_adamw_optimizers, make_wsd_scheduler,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+    create_shared_embedding,
+    build_muon_adamw_optimizers,
     load_dialogue_texts_multi,
-    OUTPUT_DIR, DOMAIN_TOKENIZER_DIR,
+    OUTPUT_DIR,
+    DOMAIN_TOKENIZER_DIR,
 )
 from scripts.training.experiment_config import SFT_ANSWER_MARKER
 
@@ -122,8 +133,9 @@ class TeeLogger:
         self.fp.close()
 
 
-def load_neuron(nid: str, neuron_dir: str, device: str,
-                shared_lm_head: Optional[nn.Linear] = None) -> ResonanceNeuron:
+def load_neuron(
+    nid: str, neuron_dir: str, device: str, shared_lm_head: Optional[nn.Linear] = None
+) -> ResonanceNeuron:
     """加载单个域 neuron（兼容 verify_v3 与训练产物格式）。
 
     shared_lm_head：统一输出空间（general 基座）时传入共享 general 256K head——
@@ -140,8 +152,11 @@ def load_neuron(nid: str, neuron_dir: str, device: str,
     neuron = ResonanceNeuron(cfg, shared_lm_head=shared_lm_head).to(device)
     neuron.load_state_dict(ckpt["state_dict"], strict=False)
     result = ckpt.get("result", {})
-    print(f"  [{nid}] vocab={cfg.vocab_size}, spec={cfg.spec}, "
-          f"best_val_ppl={result.get('best_val_ppl', '?')}", flush=True)
+    print(
+        f"  [{nid}] vocab={cfg.vocab_size}, spec={cfg.spec}, "
+        f"best_val_ppl={result.get('best_val_ppl', '?')}",
+        flush=True,
+    )
     return neuron
 
 
@@ -155,8 +170,7 @@ def load_shared_lm_head(neuron_dir: str, hidden_size: int, device: str) -> Optio
     if not os.path.exists(path):
         return None
     head = nn.Linear(hidden_size, 256000, bias=False)
-    head.weight.data.copy_(
-        torch.load(path, map_location=device, weights_only=False)["weight"])
+    head.weight.data.copy_(torch.load(path, map_location=device, weights_only=False)["weight"])
     print(f"  [shared_lm_head] 从 {path} 加载 general 256K head", flush=True)
     return head
 
@@ -200,13 +214,17 @@ def load_hub_neuron(hub_path: str, device: str) -> Tuple[ResonanceNeuron, nn.Emb
             emb.weight.data.copy_(w)
         elif isinstance(w, dict) and "weight" in w:
             emb.weight.data.copy_(w["weight"])
-    print(f"  [hub] vocab={cfg.vocab_size}, spec={cfg.spec}, "
-          f"field_dim={cfg.field_dim}, 同 general 空间协作（保留自身 256K head）", flush=True)
+    print(
+        f"  [hub] vocab={cfg.vocab_size}, spec={cfg.spec}, "
+        f"field_dim={cfg.field_dim}, 同 general 空间协作（保留自身 256K head）",
+        flush=True,
+    )
     return neuron, emb
 
 
 def compute_hub_anchor_loss(
-    ensemble, neurons: Dict[str, ResonanceNeuron],
+    ensemble,
+    neurons: Dict[str, ResonanceNeuron],
     neuron_embeddings: Dict[str, torch.Tensor],
     nid: str,
 ) -> torch.Tensor:
@@ -238,7 +256,8 @@ def compute_hub_anchor_loss(
 
 PAIRS_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    "data", "cross_domain_pairs.jsonl",
+    "data",
+    "cross_domain_pairs.jsonl",
 )
 
 
@@ -261,12 +280,16 @@ def load_pairs_texts(max_pairs: int = 0) -> List[Tuple[str, str]]:
 
 
 def compute_hub_contrastive_loss(
-    ensemble, neurons: Dict[str, ResonanceNeuron],
+    ensemble,
+    neurons: Dict[str, ResonanceNeuron],
     shared_embeddings: Dict[str, torch.nn.Embedding],
     general_sp,
-    zh_id: str, code_id: str,
-    zh_texts: List[str], code_texts: List[str],
-    tau: float = 0.1, max_seq_len: int = 64,
+    zh_id: str,
+    code_id: str,
+    zh_texts: List[str],
+    code_texts: List[str],
+    tau: float = 0.1,
+    max_seq_len: int = 64,
 ) -> torch.Tensor:
     """跨域对比 loss（缺口 L 阶段 3 第三部分·渐进第二步，决策 4C 最终形态）。
 
@@ -281,11 +304,11 @@ def compute_hub_contrastive_loss(
     loss 的 backward 二次图教训）。
     """
     zh_emb = batch_align_and_embed(
-        zh_texts, general_sp, general_sp, shared_embeddings[zh_id],
-        max_seq_len=max_seq_len)[0]
+        zh_texts, general_sp, general_sp, shared_embeddings[zh_id], max_seq_len=max_seq_len
+    )[0]
     code_emb = batch_align_and_embed(
-        code_texts, general_sp, general_sp, shared_embeddings[code_id],
-        max_seq_len=max_seq_len)[0]
+        code_texts, general_sp, general_sp, shared_embeddings[code_id], max_seq_len=max_seq_len
+    )[0]
     v_zh = neurons[zh_id].forward(zh_emb.detach(), round_num=1)["field_vector"]
     v_code = neurons[code_id].forward(code_emb.detach(), round_num=1)["field_vector"]
     if zh_id in ensemble._cross_spec_projectors:
@@ -312,13 +335,20 @@ def load_tokenizer_for_vocab(domain: str, vocab_size: int):
     variant = os.path.join(DOMAIN_TOKENIZER_DIR, domain, f"sp_{domain}_v{k}k.model")
     if os.path.exists(variant):
         import sentencepiece as spm
+
         sp2 = spm.SentencePieceProcessor(model_file=variant)
-        print(f"  [tokenizer] {domain}: 标准 vocab={sp.GetPieceSize()} ≠ neuron "
-              f"vocab={vocab_size}，使用 {variant} (vocab={sp2.GetPieceSize()})", flush=True)
+        print(
+            f"  [tokenizer] {domain}: 标准 vocab={sp.GetPieceSize()} ≠ neuron "
+            f"vocab={vocab_size}，使用 {variant} (vocab={sp2.GetPieceSize()})",
+            flush=True,
+        )
         return sp2
-    print(f"  [tokenizer] ⚠️ {domain}: 标准 vocab={sp.GetPieceSize()} ≠ neuron "
-          f"vocab={vocab_size}，未找到变体 {os.path.basename(variant)}，"
-          f"继续用标准 tokenizer（logits 尾部可能无映射）", flush=True)
+    print(
+        f"  [tokenizer] ⚠️ {domain}: 标准 vocab={sp.GetPieceSize()} ≠ neuron "
+        f"vocab={vocab_size}，未找到变体 {os.path.basename(variant)}，"
+        f"继续用标准 tokenizer（logits 尾部可能无映射）",
+        flush=True,
+    )
     return sp
 
 
@@ -335,9 +365,18 @@ def load_sft_texts(data_dir: str, domain: str, max_texts: int) -> List[str]:
     return texts
 
 
-def save_checkpoint(path, epoch, total_steps, neurons, ensemble,
-                    muon_optimizer, adamw_optimizer, body_optimizer,
-                    loss_history, resume_pos=None):
+def save_checkpoint(
+    path,
+    epoch,
+    total_steps,
+    neurons,
+    ensemble,
+    muon_optimizer,
+    adamw_optimizer,
+    body_optimizer,
+    loss_history,
+    resume_pos=None,
+):
     """保存协作层 checkpoint（side_channels + scale/bias + body + 投影层 + Router）。
 
     C16（2026-08-08）：body_state 不再包含 quality_head（判别器拆为独立 head_state，
@@ -394,7 +433,9 @@ def save_checkpoint(path, epoch, total_steps, neurons, ensemble,
         "lora_state": lora_state,
         "cross_spec_state": {
             "forward": {nid: p.state_dict() for nid, p in ensemble._cross_spec_projectors.items()},
-            "backward": {nid: p.state_dict() for nid, p in ensemble._cross_spec_back_projectors.items()},
+            "backward": {
+                nid: p.state_dict() for nid, p in ensemble._cross_spec_back_projectors.items()
+            },
         },
         "loss_history": loss_history,
         "saved_at": datetime.now().isoformat(),
@@ -422,8 +463,9 @@ def save_checkpoint(path, epoch, total_steps, neurons, ensemble,
     torch.save(ckpt, path)
 
 
-def load_training_state(ckpt_path, neurons, ensemble,
-                        muon_optimizer, adamw_optimizer, body_optimizer, device):
+def load_training_state(
+    ckpt_path, neurons, ensemble, muon_optimizer, adamw_optimizer, body_optimizer, device
+):
     """从训练 ckpt 恢复协作层权重 + 优化器状态 + 断点位置（2026-08-16）。
 
     与 save_checkpoint 对称。用于长任务（53h CPU 全量）中断后断点续训：
@@ -446,8 +488,11 @@ def load_training_state(ckpt_path, neurons, ensemble,
             continue
         for ch_name, ch_map in sd.items():
             for pid, ch_sd in ch_map.items():
-                ch = neurons[nid].excite_channels if ch_name == "excite" \
+                ch = (
+                    neurons[nid].excite_channels
+                    if ch_name == "excite"
                     else neurons[nid].inhibit_channels
+                )
                 if pid in ch:
                     ch[pid].load_state_dict(ch_sd)
                     n_ch += 1
@@ -457,8 +502,11 @@ def load_training_state(ckpt_path, neurons, ensemble,
     cs = ck.get("cross_spec_state") or ck.get("cross_spec") or {}
     n_proj = 0
     for direction, proj_map in cs.items():
-        target = ensemble._cross_spec_projectors if direction == "forward" \
+        target = (
+            ensemble._cross_spec_projectors
+            if direction == "forward"
             else ensemble._cross_spec_back_projectors
+        )
         for nid, sd in proj_map.items():
             if nid in target:
                 target[nid].load_state_dict(sd)
@@ -504,8 +552,11 @@ def load_training_state(ckpt_path, neurons, ensemble,
         ensemble.sparse_router.load_state_dict(ck["sparse_router_state"])
 
     # 8. W_cond（场门控）
-    if ck.get("field_w_cond") is not None and ensemble._field is not None \
-            and hasattr(ensemble._field, "W_cond"):
+    if (
+        ck.get("field_w_cond") is not None
+        and ensemble._field is not None
+        and hasattr(ensemble._field, "W_cond")
+    ):
         ensemble._field.W_cond.data.copy_(ck["field_w_cond"])
 
     # 9. 优化器状态
@@ -523,8 +574,11 @@ def load_training_state(ckpt_path, neurons, ensemble,
     else:
         start_epoch = ck.get("epoch", 0)  # 旧 ckpt：epoch 语义为 epoch+1（训练循环下标）
     loss_history = ck.get("loss_history", []) or []
-    print(f"  [resume] 恢复 total_steps={total_steps} epoch={start_epoch} "
-          f"resume_pos={resume_pos}", flush=True)
+    print(
+        f"  [resume] 恢复 total_steps={total_steps} epoch={start_epoch} "
+        f"resume_pos={resume_pos}",
+        flush=True,
+    )
     return start_epoch, total_steps, loss_history, resume_pos
 
 
@@ -549,116 +603,205 @@ def load_cross_spec_reference(ensemble, ckpt_path: str) -> int:
             target[nid].load_state_dict(state)
             loaded += 1
     if loaded == 0:
-        raise RuntimeError(
-            f"anchor reference 不含可匹配的 cross-spec 投影: {ckpt_path}"
-        )
+        raise RuntimeError(f"anchor reference 不含可匹配的 cross-spec 投影: {ckpt_path}")
     print(f"  [anchor-reference] 仅加载 {loaded} 个 cross-spec 投影: {ckpt_path}", flush=True)
     return loaded
 
 
 def main():
     parser = __import__("argparse").ArgumentParser(description="跨域协作层联合训练")
-    parser.add_argument("--neuron-dir", default=os.path.join(OUTPUT_DIR),
-                        help="neuron 目录（含 neuron_{domain}.pt + shared_embedding.pt）")
-    parser.add_argument("--domains", default="code,math,zh",
-                        help="参与协作的域（逗号分隔）")
-    parser.add_argument("--data-dir", default=os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "data", "sft"), help="域 SFT 数据目录")
+    parser.add_argument(
+        "--neuron-dir",
+        default=os.path.join(OUTPUT_DIR),
+        help="neuron 目录（含 neuron_{domain}.pt + shared_embedding.pt）",
+    )
+    parser.add_argument("--domains", default="code,math,zh", help="参与协作的域（逗号分隔）")
+    parser.add_argument(
+        "--data-dir",
+        default=os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+            "data",
+            "sft",
+        ),
+        help="域 SFT 数据目录",
+    )
     parser.add_argument("--epochs", type=int, default=2)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--batch-size", type=int, default=4)
-    parser.add_argument("--max-texts-per-domain", type=int, default=0,
-                        help="每域最大样本数（0=全部）")
-    parser.add_argument("--unfreeze_layers", type=int, default=2,
-                        help="S8: 解冻最后 N 层 transformer + norm + lm_head + field_write")
-    parser.add_argument("--body_lr_ratio", type=float, default=0.1,
-                        help="S8: body 参数学习率比例（相对 args.lr）")
-    parser.add_argument("--topology", default="hybrid",
-                        choices=["full", "knn", "hub_spoke", "hybrid"])
+    parser.add_argument(
+        "--max-texts-per-domain", type=int, default=0, help="每域最大样本数（0=全部）"
+    )
+    parser.add_argument(
+        "--unfreeze_layers",
+        type=int,
+        default=2,
+        help="S8: 解冻最后 N 层 transformer + norm + lm_head + field_write",
+    )
+    parser.add_argument(
+        "--body_lr_ratio", type=float, default=0.1, help="S8: body 参数学习率比例（相对 args.lr）"
+    )
+    parser.add_argument(
+        "--topology", default="hybrid", choices=["full", "knn", "hub_spoke", "hybrid"]
+    )
     parser.add_argument("--topology_k", type=int, default=3)
-    parser.add_argument("--use_sparse_router", action="store_true",
-                        help="§4.0c: 启用 Probe-based Sparse Router（自适应激活）")
+    parser.add_argument(
+        "--use_sparse_router",
+        action="store_true",
+        help="§4.0c: 启用 Probe-based Sparse Router（自适应激活）",
+    )
     parser.add_argument("--sparse_router_top_k", type=int, default=3)
     parser.add_argument("--sparse_router_warmup_steps", type=int, default=2000)
-    parser.add_argument("--rules-path", default=None,
-                        help="AlignmentRules 词库规则 JSON（可编辑层，可选）")
-    parser.add_argument("--dialogue-ids", default="",
-                        help="混合阵容：旧对话 neuron id 列表（逗号分隔，如 "
-                             "zh_aug0_dialogue,zh_aug1_dialogue,...）。这些 neuron "
-                             "保留各自域输出头（zh 50K），经词库转译参与统一空间协作")
-    parser.add_argument("--dialogue-dir", default=OUTPUT_DIR,
-                        help="旧对话 neuron 目录（默认 data/neurons）")
-    parser.add_argument("--dialogue-max-texts", type=int, default=10000,
-                        help="对话数据最大条数（混合阵容时加入训练）")
-    parser.add_argument("--dialogue-data-dir",
-                        default=os.path.join(
-                            os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-                            "data", "simple_zh"),
-                        help="对话数据目录（DIALOGUE_DATA_FILES 所在，默认 data/simple_zh）")
-    parser.add_argument("--save-name", default="cross_domain_collab",
-                        help="checkpoint 文件名前缀")
-    parser.add_argument("--resume-from", default=None,
-                        help="断点续训：训练 ckpt 路径（如 data/neurons/cross_domain_"
-                             "collab_full.ckpt.pt）。加载协作层权重 + 优化器状态 + "
-                             "断点位置，从中断处继续（53h 长任务保护）")
+    parser.add_argument(
+        "--rules-path", default=None, help="AlignmentRules 词库规则 JSON（可编辑层，可选）"
+    )
+    parser.add_argument(
+        "--dialogue-ids",
+        default="",
+        help="混合阵容：旧对话 neuron id 列表（逗号分隔，如 "
+        "zh_aug0_dialogue,zh_aug1_dialogue,...）。这些 neuron "
+        "保留各自域输出头（zh 50K），经词库转译参与统一空间协作",
+    )
+    parser.add_argument(
+        "--dialogue-dir", default=OUTPUT_DIR, help="旧对话 neuron 目录（默认 data/neurons）"
+    )
+    parser.add_argument(
+        "--dialogue-max-texts",
+        type=int,
+        default=10000,
+        help="对话数据最大条数（混合阵容时加入训练）",
+    )
+    parser.add_argument(
+        "--dialogue-data-dir",
+        default=os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+            "data",
+            "simple_zh",
+        ),
+        help="对话数据目录（DIALOGUE_DATA_FILES 所在，默认 data/simple_zh）",
+    )
+    parser.add_argument("--save-name", default="cross_domain_collab", help="checkpoint 文件名前缀")
+    parser.add_argument(
+        "--resume-from",
+        default=None,
+        help="断点续训：训练 ckpt 路径（如 data/neurons/cross_domain_"
+        "collab_full.ckpt.pt）。加载协作层权重 + 优化器状态 + "
+        "断点位置，从中断处继续（53h 长任务保护）",
+    )
     parser.add_argument("--device", default="cpu")
-    parser.add_argument("--target-space", default="domain",
-                        choices=["domain", "general"],
-                        help="训练目标空间：domain=各域 tokenizer（原口径）；"
-                             "general=通用 256K 空间（各 neuron 投影到 general 融合，"
-                             "支持跨域组合：en/zh 理解指令 + code 生成代码）")
-    parser.add_argument("--seq-len", type=int, default=128,
-                        help="batch_align_and_embed 最大序列长度")
-    parser.add_argument("--contrastive-weight", type=float, default=0.5,
-                        help="预测质量对比约束权重（C15/D 方案，2026-08-08：quality_head 输出"
-                             "对齐 per-neuron NLL 排序——谁能预测好当前文本谁上。替代 C13/C14 "
-                             "域标签判别 routing_loss（判别任务不对称 + 输入不可比 + 尺度游戏，"
-                             "三次失败）。所有域 batch 生效）")
-    parser.add_argument("--lora-rank", type=int, default=16,
-                        help="C16（2026-08-08）：尾层 LoRA 秩。>0 时 body 尾层（最后 2 层）"
-                             "冻结并改用低秩增量 BA（B 初始 0 → 个体生成能力零破坏起点），"
-                             "解决 C14b 分解验证发现的 'collab 训练 body 微调破坏生成' 根因；"
-                             "=0 关闭（退回直接微调 body 尾层旧行为）")
-    parser.add_argument("--cross-spec-only", action="store_true",
-                        help="只训练 cross-spec 前向/反向投影层，用于短跑归因；"
-                             "冻结 neuron side/scale/body、Router 和场门控")
-    parser.add_argument("--freeze-hub-projector", action="store_true",
-                        help="冻结 hub 的 cross-spec 投影，避免短跑改变共享锚点；"
-                             "通常与 --cross-spec-only 一起使用")
-    parser.add_argument("--anchor-reference", default=None,
-                        help="仅加载指定 checkpoint 的 cross-spec 投影作为固定锚点参考；"
-                             "不加载 neuron、side、field 或 optimizer 状态")
-    parser.add_argument("--hub-path", default=None,
-                        help="缺口 L：hub neuron（联合皮层）ckpt 路径，如 "
-                             "data/hub_neuron/neuron_hub.pt。加入协作阵容训练 hub-and-spoke "
-                             "side_channels：hybrid 拓扑按容量自动选 hub 为 global-hub "
-                             "（1024×14=14336 最大），hub 保留自带 general 256K lm_head "
-                             "（同 general 目标空间，无需词库转译）；body 冻结走 LoRA 模式，"
-                             "个体能力由 train_hub_neuron.py 独立训练")
-    parser.add_argument("--hub-anchor-weight", type=float, default=0.0,
-                        help="缺口 L 阶段 3 第三部分：hub 锚定 loss 权重。>0 时每个 batch "
-                             "约束当前域 neuron field_vector（经 cross_spec 投影到统一空间）"
-                             "对齐 hub field_vector（cosine 最大化，hub 为跨域语义锚点）。"
-                             "梯度只流 cross_spec_projectors（域 neuron 与 hub body 冻结，"
-                             "零破坏），需 --hub-path 开启。先锚定后叠加对比 loss（渐进）")
-    parser.add_argument("--hub-contrastive-weight", type=float, default=0.0,
-                        help="缺口 L 阶段 3 第三部分·渐进第二步：跨域对比 loss 权重。>0 时"
-                             "每 batch 用跨域平行语料（data/cross_domain_pairs.jsonl，zh↔code "
-                             "同义对 1629 对）做双向 InfoNCE——同义对在统一空间（hub 空间）"
-                             "靠近、不同义对远离，hub 空间成为跨域共享语义空间。梯度只流"
-                             "zh/code 两侧 cross_spec_projectors，需 --hub-path 且阵容含两侧")
-    parser.add_argument("--hub-contrastive-zh", default="zh",
-                        help="对比 loss 的 zh 侧域 neuron id")
-    parser.add_argument("--hub-contrastive-code", default="code",
-                        help="对比 loss 的 code 侧域 neuron id")
-    parser.add_argument("--hub-contrastive-tau", type=float, default=0.1,
-                        help="对比 loss InfoNCE 温度（越小越尖锐，0.1 为 CLIP 常用量级）")
-    parser.add_argument("--unified-field-dim", type=int, default=0,
-                        help="统一场维度（协作层训练口径）。0=auto 取阵容 max(field_dim)（含 hub "
-                             "为 4096）；装配综合体口径为 3072（对话 neuron 主导，hub 经 "
-                             "add_neuron 补投影 4096→3072）——传 3072 让训练与装配维度一致，"
-                             "hub 的 cross_spec 投影（4096→3072）参与训练，产物可装配复用")
+    parser.add_argument(
+        "--target-space",
+        default="domain",
+        choices=["domain", "general"],
+        help="训练目标空间：domain=各域 tokenizer（原口径）；"
+        "general=通用 256K 空间（各 neuron 投影到 general 融合，"
+        "支持跨域组合：en/zh 理解指令 + code 生成代码）",
+    )
+    parser.add_argument(
+        "--seq-len", type=int, default=128, help="batch_align_and_embed 最大序列长度"
+    )
+    parser.add_argument(
+        "--grad-clip",
+        type=float,
+        default=1.0,
+        help="梯度裁剪 max_norm（2026-08-23 新增，默认 1.0；<=0 关闭）",
+    )
+    parser.add_argument(
+        "--balance-loss-weight",
+        type=float,
+        default=0.01,
+        help="Router balance_loss 权重（原写死 0.01，2026-08-23 提为 CLI）",
+    )
+    parser.add_argument(
+        "--diversity-loss-weight",
+        type=float,
+        default=0.05,
+        help="Router diversity_loss 权重（原写死 0.05，2026-08-23 提为 CLI）",
+    )
+    parser.add_argument(
+        "--contrastive-weight",
+        type=float,
+        default=0.5,
+        help="预测质量对比约束权重（C15/D 方案，2026-08-08：quality_head 输出"
+        "对齐 per-neuron NLL 排序——谁能预测好当前文本谁上。替代 C13/C14 "
+        "域标签判别 routing_loss（判别任务不对称 + 输入不可比 + 尺度游戏，"
+        "三次失败）。所有域 batch 生效）",
+    )
+    parser.add_argument(
+        "--lora-rank",
+        type=int,
+        default=16,
+        help="C16（2026-08-08）：尾层 LoRA 秩。>0 时 body 尾层（最后 2 层）"
+        "冻结并改用低秩增量 BA（B 初始 0 → 个体生成能力零破坏起点），"
+        "解决 C14b 分解验证发现的 'collab 训练 body 微调破坏生成' 根因；"
+        "=0 关闭（退回直接微调 body 尾层旧行为）",
+    )
+    parser.add_argument(
+        "--cross-spec-only",
+        action="store_true",
+        help="只训练 cross-spec 前向/反向投影层，用于短跑归因；"
+        "冻结 neuron side/scale/body、Router 和场门控",
+    )
+    parser.add_argument(
+        "--freeze-hub-projector",
+        action="store_true",
+        help="冻结 hub 的 cross-spec 投影，避免短跑改变共享锚点；"
+        "通常与 --cross-spec-only 一起使用",
+    )
+    parser.add_argument(
+        "--anchor-reference",
+        default=None,
+        help="仅加载指定 checkpoint 的 cross-spec 投影作为固定锚点参考；"
+        "不加载 neuron、side、field 或 optimizer 状态",
+    )
+    parser.add_argument(
+        "--hub-path",
+        default=None,
+        help="缺口 L：hub neuron（联合皮层）ckpt 路径，如 "
+        "data/hub_neuron/neuron_hub.pt。加入协作阵容训练 hub-and-spoke "
+        "side_channels：hybrid 拓扑按容量自动选 hub 为 global-hub "
+        "（1024×14=14336 最大），hub 保留自带 general 256K lm_head "
+        "（同 general 目标空间，无需词库转译）；body 冻结走 LoRA 模式，"
+        "个体能力由 train_hub_neuron.py 独立训练",
+    )
+    parser.add_argument(
+        "--hub-anchor-weight",
+        type=float,
+        default=0.0,
+        help="缺口 L 阶段 3 第三部分：hub 锚定 loss 权重。>0 时每个 batch "
+        "约束当前域 neuron field_vector（经 cross_spec 投影到统一空间）"
+        "对齐 hub field_vector（cosine 最大化，hub 为跨域语义锚点）。"
+        "梯度只流 cross_spec_projectors（域 neuron 与 hub body 冻结，"
+        "零破坏），需 --hub-path 开启。先锚定后叠加对比 loss（渐进）",
+    )
+    parser.add_argument(
+        "--hub-contrastive-weight",
+        type=float,
+        default=0.0,
+        help="缺口 L 阶段 3 第三部分·渐进第二步：跨域对比 loss 权重。>0 时"
+        "每 batch 用跨域平行语料（data/cross_domain_pairs.jsonl，zh↔code "
+        "同义对 1629 对）做双向 InfoNCE——同义对在统一空间（hub 空间）"
+        "靠近、不同义对远离，hub 空间成为跨域共享语义空间。梯度只流"
+        "zh/code 两侧 cross_spec_projectors，需 --hub-path 且阵容含两侧",
+    )
+    parser.add_argument("--hub-contrastive-zh", default="zh", help="对比 loss 的 zh 侧域 neuron id")
+    parser.add_argument(
+        "--hub-contrastive-code", default="code", help="对比 loss 的 code 侧域 neuron id"
+    )
+    parser.add_argument(
+        "--hub-contrastive-tau",
+        type=float,
+        default=0.1,
+        help="对比 loss InfoNCE 温度（越小越尖锐，0.1 为 CLIP 常用量级）",
+    )
+    parser.add_argument(
+        "--unified-field-dim",
+        type=int,
+        default=0,
+        help="统一场维度（协作层训练口径）。0=auto 取阵容 max(field_dim)（含 hub "
+        "为 4096）；装配综合体口径为 3072（对话 neuron 主导，hub 经 "
+        "add_neuron 补投影 4096→3072）——传 3072 让训练与装配维度一致，"
+        "hub 的 cross_spec 投影（4096→3072）参与训练，产物可装配复用",
+    )
     args = parser.parse_args()
 
     if args.freeze_hub_projector and not args.cross_spec_only:
@@ -677,7 +820,8 @@ def main():
 
     os.makedirs(LOG_DIR, exist_ok=True)
     log_path = os.path.join(
-        LOG_DIR, f"train_cross_domain_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
+        LOG_DIR, f"train_cross_domain_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+    )
     logger = TeeLogger(log_path)
     sys.stdout = logger
 
@@ -724,8 +868,11 @@ def main():
         elif isinstance(ses, torch.Tensor):
             emb.weight.data.copy_(ses)
         shared_embeddings[nid] = emb
-        print(f"  [{nid}] vocab={cfg.vocab_size}, spec={cfg.spec}, "
-              f"home embedding 从 ckpt 加载（保留域输出头 → 词库转译协作）", flush=True)
+        print(
+            f"  [{nid}] vocab={cfg.vocab_size}, spec={cfg.spec}, "
+            f"home embedding 从 ckpt 加载（保留域输出头 → 词库转译协作）",
+            flush=True,
+        )
 
     # hub neuron（缺口 L：联合皮层）：同 general 256K 空间协作，自带 lm_head，
     # 不走词库转译（与 domains 同空间）；body 由 train_hub_neuron.py 独立训练。
@@ -735,8 +882,11 @@ def main():
         neurons["hub"] = n
         shared_embeddings["hub"] = emb
 
-    print(f"  阵容: {len(neurons)} neuron "
-          f"(域 {domains} + 对话 {dialogue_ids} + hub {'✓' if args.hub_path else '—'})", flush=True)
+    print(
+        f"  阵容: {len(neurons)} neuron "
+        f"(域 {domains} + 对话 {dialogue_ids} + hub {'✓' if args.hub_path else '—'})",
+        flush=True,
+    )
 
     # 2. TokenizerHub + 词库规则层
     print("\n[2] TokenizerHub + 词库可编辑层...", flush=True)
@@ -745,15 +895,20 @@ def main():
         hub.register_domain(dom, load_tokenizer_for_vocab(dom, neurons[dom].config.vocab_size))
     # 旧对话 neuron（zh 域空间）：注册 zh tokenizer 供 _get_neuron_tokenizer 前缀解析
     if dialogue_ids:
-        hub.register_domain("zh", load_tokenizer_for_vocab("zh", neurons[dialogue_ids[0]].config.vocab_size))
+        hub.register_domain(
+            "zh", load_tokenizer_for_vocab("zh", neurons[dialogue_ids[0]].config.vocab_size)
+        )
     general_sp = load_general_tokenizer()
     hub.register_domain("general", general_sp)
 
     rules = None
     if args.rules_path:
         rules = AlignmentRules(args.rules_path)
-        print(f"  [AlignmentRules] 加载 {args.rules_path} "
-              f"({len(rules.overrides)} 域规则, version={rules.version})", flush=True)
+        print(
+            f"  [AlignmentRules] 加载 {args.rules_path} "
+            f"({len(rules.overrides)} 域规则, version={rules.version})",
+            flush=True,
+        )
 
     # 3. 建立 side_channels（拓扑）
     print(f"\n[3] 建立 side_channels (topology={args.topology})...", flush=True)
@@ -763,8 +918,11 @@ def main():
     establish_topology_channels(neurons, topology, geometry)
 
     # 4. 冻结核心参数，仅协作层可训练
-    print(f"\n[4] 冻结核心参数 (unfreeze_layers={args.unfreeze_layers}, "
-          f"lora_rank={args.lora_rank}, cross_spec_only={args.cross_spec_only})...", flush=True)
+    print(
+        f"\n[4] 冻结核心参数 (unfreeze_layers={args.unfreeze_layers}, "
+        f"lora_rank={args.lora_rank}, cross_spec_only={args.cross_spec_only})...",
+        flush=True,
+    )
     lora_mode = args.lora_rank > 0
     for neuron in neurons.values():
         for p in neuron.parameters():
@@ -788,7 +946,7 @@ def main():
             for p in neuron.lora_adapters.parameters():
                 p.requires_grad = True
             # quality_head（判别器）独立解冻走主 lr（C15 + C16：拆为独立分量）
-            if hasattr(neuron, 'quality_head') and neuron.quality_head is not None:
+            if hasattr(neuron, "quality_head") and neuron.quality_head is not None:
                 for p in neuron.quality_head.parameters():
                     p.requires_grad = True
             # R2（REMEDIATION_PLAN 2026-08-14）：field_read 解冻训练——
@@ -804,7 +962,7 @@ def main():
                     p.requires_grad = True
             for p in neuron.norm.parameters():
                 p.requires_grad = True
-            if hasattr(neuron, 'lm_head') and neuron.lm_head is not None:
+            if hasattr(neuron, "lm_head") and neuron.lm_head is not None:
                 for p in neuron.lm_head.parameters():
                     p.requires_grad = True
             for p in neuron.get_field_write_parameters():
@@ -814,7 +972,7 @@ def main():
             for p in neuron.get_field_read_parameters():
                 p.requires_grad = True
             # C15: 预测质量 head 解冻（contrastive_loss 监督它对齐 per-neuron NLL 排序）
-            if hasattr(neuron, 'quality_head') and neuron.quality_head is not None:
+            if hasattr(neuron, "quality_head") and neuron.quality_head is not None:
                 for p in neuron.quality_head.parameters():
                     p.requires_grad = True
         neuron.train()
@@ -826,10 +984,16 @@ def main():
     print("\n[5] 创建 ensemble...", flush=True)
     max_field_dim = max(n.config.field_dim for n in neurons.values())
     field = ResonanceField(dim=args.unified_field_dim or max_field_dim)
-    print(f"  统一场维度: {field.dim} "
-          f"({'装配口径' if args.unified_field_dim else '阵容 max'}={max_field_dim})", flush=True)
+    print(
+        f"  统一场维度: {field.dim} "
+        f"({'装配口径' if args.unified_field_dim else '阵容 max'}={max_field_dim})",
+        flush=True,
+    )
     ensemble = ResonanceEnsemble(
-        neurons, field, max_rounds=2, geometry=geometry,
+        neurons,
+        field,
+        max_rounds=2,
+        geometry=geometry,
         use_sparse_router=args.use_sparse_router,
         sparse_router_top_k=args.sparse_router_top_k,
         sparse_router_warmup_steps=args.sparse_router_warmup_steps,
@@ -849,8 +1013,11 @@ def main():
             p.requires_grad = not (args.freeze_hub_projector and pid == "hub")
     # R1（REMEDIATION_PLAN 2026-08-14）：场门控 W_cond 参与训练
     # （训练-推理评分口径统一后，W_cond 需要梯度才能成为可学习门控）
-    if (not args.cross_spec_only and ensemble._field is not None
-            and hasattr(ensemble._field, "W_cond")):
+    if (
+        not args.cross_spec_only
+        and ensemble._field is not None
+        and hasattr(ensemble._field, "W_cond")
+    ):
         ensemble._field.W_cond.requires_grad = True
 
     # 6. 优化器：Muon(2D 协作层) + AdamW(1D) + body 低 lr
@@ -872,9 +1039,12 @@ def main():
         for name, p in neuron.named_parameters():
             if p.requires_grad and ("scale_" in name and p.ndim == 0):
                 adamw_params.append(p)
-            if p.requires_grad and not any(
-                name.startswith(prefix) for prefix in ["excite_", "inhibit_"]
-            ) and "scale_" not in name and "bias_" not in name:
+            if (
+                p.requires_grad
+                and not any(name.startswith(prefix) for prefix in ["excite_", "inhibit_"])
+                and "scale_" not in name
+                and "bias_" not in name
+            ):
                 # C15 fix（2026-08-08）：quality_head（预测质量头）不走 body 低 lr。
                 # C14 教训：判别器 lr=1e-4（body_lr_ratio=0.1）下 MLP 欠拟合；lr=1e-3 下
                 # softmax CE 无尺度约束 → logit 膨胀作弊（全判给 en）。D 方案用
@@ -899,8 +1069,11 @@ def main():
             elif p.requires_grad:
                 adamw_params.append(p)
     # R1: 场门控 W_cond（2D → Muon，与 cross_spec 投影同级）
-    if (ensemble._field is not None and hasattr(ensemble._field, "W_cond")
-            and ensemble._field.W_cond.requires_grad):
+    if (
+        ensemble._field is not None
+        and hasattr(ensemble._field, "W_cond")
+        and ensemble._field.W_cond.requires_grad
+    ):
         muon_params.append(ensemble._field.W_cond)
 
     # 2026-08-07 fix：去重——共享 general lm_head 被多个 general neuron 共享，
@@ -918,13 +1091,18 @@ def main():
     body_params = _dedup(body_params)
 
     muon_optimizer, adamw_optimizer = build_muon_adamw_optimizers(
-        muon_params, adamw_params, args.lr)
+        muon_params, adamw_params, args.lr
+    )
     body_optimizer = None
     if body_params:
-        body_optimizer = torch.optim.AdamW(body_params, lr=args.lr * args.body_lr_ratio,
-                                           weight_decay=0.01)
-    print(f"  可训练: muon(2D)={len(muon_params)}, adamw(1D)={len(adamw_params)}, "
-          f"body={len(body_params)}", flush=True)
+        body_optimizer = torch.optim.AdamW(
+            body_params, lr=args.lr * args.body_lr_ratio, weight_decay=0.01
+        )
+    print(
+        f"  可训练: muon(2D)={len(muon_params)}, adamw(1D)={len(adamw_params)}, "
+        f"body={len(body_params)}",
+        flush=True,
+    )
 
     # 7. 加载各域数据
     print("\n[7] 加载训练数据...", flush=True)
@@ -936,16 +1114,19 @@ def main():
     # 仅 general 目标空间支持（对话文本统一 general 编码，domain tokenizer 未注册）
     if dialogue_ids and args.target_space == "general":
         domain_texts["dialogue"] = load_dialogue_texts_multi(
-            args.dialogue_data_dir, max_texts=args.dialogue_max_texts, max_answer_chars=150)
+            args.dialogue_data_dir, max_texts=args.dialogue_max_texts, max_answer_chars=150
+        )
         data_sources.append("dialogue")
         print(f"  dialogue: {len(domain_texts['dialogue'])} 条对话（短答案 ≤150 字）", flush=True)
     # 阶段 3 第三部分·渐进第二步：跨域平行语料桶（zh↔code 同义对，对比 loss 数据源）
     pairs_texts: List[Tuple[str, str]] = []
     if args.hub_path and args.hub_contrastive_weight > 0:
-        assert args.hub_contrastive_zh in neurons, \
-            f"对比 loss zh 侧 {args.hub_contrastive_zh} 不在阵容: {list(neurons)}"
-        assert args.hub_contrastive_code in neurons, \
-            f"对比 loss code 侧 {args.hub_contrastive_code} 不在阵容: {list(neurons)}"
+        assert (
+            args.hub_contrastive_zh in neurons
+        ), f"对比 loss zh 侧 {args.hub_contrastive_zh} 不在阵容: {list(neurons)}"
+        assert (
+            args.hub_contrastive_code in neurons
+        ), f"对比 loss code 侧 {args.hub_contrastive_code} 不在阵容: {list(neurons)}"
         pairs_texts = load_pairs_texts()
     total_steps_per_epoch = sum(
         max(1, (len(t) - args.batch_size) // args.batch_size) for t in domain_texts.values()
@@ -953,7 +1134,9 @@ def main():
 
     # 8. 训练循环（域轮转，batch 级 target_domain）
     print("\n[8] 开始训练...", flush=True)
+    # 可复现性修复（2026-08-23）：补 torch 种子（本文件未使用 numpy，无需 np seed）
     random.seed(42)
+    torch.manual_seed(42)
     total_steps = 0
     loss_history: List[dict] = []
     ckpt_path = os.path.join(OUTPUT_DIR, f"{args.save_name}.ckpt.pt")
@@ -964,18 +1147,33 @@ def main():
     resume_pos: Optional[dict] = None
     if args.resume_from and os.path.exists(args.resume_from):
         start_epoch, total_steps, loss_history, resume_pos = load_training_state(
-            args.resume_from, neurons, ensemble, muon_optimizer, adamw_optimizer,
-            body_optimizer, DEVICE)
+            args.resume_from,
+            neurons,
+            ensemble,
+            muon_optimizer,
+            adamw_optimizer,
+            body_optimizer,
+            DEVICE,
+        )
         print(f"  [resume] 从中断点继续（epoch={start_epoch} 起）", flush=True)
 
     for epoch in range(start_epoch, args.epochs):
         epoch_start = time.time()
         for domain in data_sources:
             # 断点续训：跳过已完成的 domain（2026-08-16）
-            if (resume_pos is not None and epoch == resume_pos["epoch"]
-                    and domain != resume_pos["domain"]):
+            if (
+                resume_pos is not None
+                and epoch == resume_pos["epoch"]
+                and domain != resume_pos["domain"]
+            ):
                 # 仅在 resume domain 之后（data_sources 有序）才需跳过其之前的 domain
                 if data_sources.index(domain) < data_sources.index(resume_pos["domain"]):
+                    # RNG 流一致性修复（2026-08-23）：被跳过的 domain 也要消耗
+                    # 等量的 random.shuffle，否则 resume 后后续 domain 的 shuffle
+                    # 结果与从头训练不一致（侵入最小方案：等效消耗而非改确定性顺序）。
+                    # 注意：resume domain 内被跳过的 batch 若开启 hub 对比 loss
+                    # （random.sample 按 batch 消耗 RNG）仍可能轻微漂移，暂不在此修复。
+                    random.shuffle(domain_texts[domain])
                     continue
             texts = domain_texts[domain]
             random.shuffle(texts)
@@ -990,11 +1188,14 @@ def main():
 
             for i in range(0, len(texts) - args.batch_size, args.batch_size):
                 # 断点续训：本 domain 已有部分 batch 完成时跳过（2026-08-16）
-                if (resume_pos is not None and epoch == resume_pos["epoch"]
-                        and domain == resume_pos["domain"]
-                        and i < resume_pos["batch_i"]):
+                if (
+                    resume_pos is not None
+                    and epoch == resume_pos["epoch"]
+                    and domain == resume_pos["domain"]
+                    and i < resume_pos["batch_i"]
+                ):
                     continue
-                batch_texts = texts[i:i + args.batch_size]
+                batch_texts = texts[i : i + args.batch_size]
                 neuron_embeddings = {}
                 targets = None
                 mask = None
@@ -1003,12 +1204,18 @@ def main():
                     if general_mode:
                         # 输入与目标都在 general 256K 空间（domain_sp == general_sp）
                         out = batch_align_and_embed(
-                            batch_texts, general_sp, general_sp, emb,
+                            batch_texts,
+                            general_sp,
+                            general_sp,
+                            emb,
                             max_seq_len=args.seq_len,
                         )
                     else:
                         out = batch_align_and_embed(
-                            batch_texts, domain_sp, general_sp, emb,
+                            batch_texts,
+                            domain_sp,
+                            general_sp,
+                            emb,
                             answer_marker=answer_marker,
                             answer_marker_mode="last" if answer_marker else "first",
                         )
@@ -1051,12 +1258,20 @@ def main():
                 ce_loss = F.cross_entropy(
                     shift_logits.view(-1, shift_logits.size(-1)),
                     shift_targets.view(-1),
-                    ignore_index=-100, reduction="sum",
+                    ignore_index=-100,
+                    reduction="sum",
                 )
-                n_tokens = max((shift_mask & (shift_sft if sft_mask is not None else shift_mask)).sum().item(), 1)
+                n_tokens = max(
+                    (shift_mask & (shift_sft if sft_mask is not None else shift_mask)).sum().item(),
+                    1,
+                )
                 ce_loss = ce_loss / n_tokens
 
-                total_loss = ce_loss + 0.01 * result["balance_loss"] + 0.05 * result["diversity_loss"]
+                total_loss = (
+                    ce_loss
+                    + args.balance_loss_weight * result["balance_loss"]
+                    + args.diversity_loss_weight * result["diversity_loss"]
+                )
                 # C15（D 方案，2026-08-08）：预测质量对比约束——quality_head 输出对齐
                 # per-neuron NLL 排序（"谁能预测好当前文本谁上"）。替代 C13/C14 域标签
                 # 判别 routing_loss（判别任务不对称：math/code 是英文 → en 覆盖；判别器
@@ -1073,13 +1288,16 @@ def main():
                 # 梯度只流 cross_spec_projectors（域 neuron/hub body 冻结，零破坏）。
                 anchor_loss = None
                 if args.hub_path and args.hub_anchor_weight > 0:
-                    anchor_total = torch.tensor(0.0, device=next(iter(neuron_embeddings.values())).device)
+                    anchor_total = torch.tensor(
+                        0.0, device=next(iter(neuron_embeddings.values())).device
+                    )
                     n_anchor = 0
                     for anid in neurons:
                         if anid == "hub":
                             continue
                         anchor_total = anchor_total + compute_hub_anchor_loss(
-                            ensemble, neurons, neuron_embeddings, anid)
+                            ensemble, neurons, neuron_embeddings, anid
+                        )
                         n_anchor += 1
                     if n_anchor:
                         anchor_loss = anchor_total / n_anchor
@@ -1088,18 +1306,33 @@ def main():
                 # 阶段 3 第三部分·渐进第二步：跨域对比 loss——每 batch 采样平行语料对，
                 # 同义对（zh↔code）在统一空间（hub 空间）双向 InfoNCE 靠近、不同义远离。
                 # 梯度只流 zh/code 两侧 cross_spec_projectors（域 neuron body 冻结）。
-                if (args.hub_path and args.hub_contrastive_weight > 0 and pairs_texts):
+                if args.hub_path and args.hub_contrastive_weight > 0 and pairs_texts:
                     sample = random.sample(pairs_texts, min(8, len(pairs_texts)))
                     zh_texts = [p[0] for p in sample]
                     code_texts = [p[1] for p in sample]
                     contrastive_loss = compute_hub_contrastive_loss(
-                        ensemble, neurons, shared_embeddings, general_sp,
-                        args.hub_contrastive_zh, args.hub_contrastive_code,
-                        zh_texts, code_texts, tau=args.hub_contrastive_tau,
-                        max_seq_len=args.seq_len)
+                        ensemble,
+                        neurons,
+                        shared_embeddings,
+                        general_sp,
+                        args.hub_contrastive_zh,
+                        args.hub_contrastive_code,
+                        zh_texts,
+                        code_texts,
+                        tau=args.hub_contrastive_tau,
+                        max_seq_len=args.seq_len,
+                    )
                     total_loss = total_loss + args.hub_contrastive_weight * contrastive_loss
 
                 total_loss.backward()
+                # 梯度裁剪（2026-08-23）：step 前统一裁剪，阈值由 --grad-clip 配置
+                if args.grad_clip > 0:
+                    for opt in (muon_optimizer, adamw_optimizer, body_optimizer):
+                        if opt is not None:
+                            torch.nn.utils.clip_grad_norm_(
+                                [p for group in opt.param_groups for p in group["params"]],
+                                args.grad_clip,
+                            )
                 if muon_optimizer is not None:
                     muon_optimizer.step()
                 if adamw_optimizer is not None:
@@ -1111,33 +1344,60 @@ def main():
                 if total_steps % 10 == 0:
                     ppl = math.exp(min(ce_loss.item(), 20))
                     elapsed = time.time() - epoch_start
-                    print(f"  E{epoch+1}/{args.epochs} [{domain}] step {total_steps}: "
-                          f"loss={ce_loss.item():.4f} PPL={ppl:.1f} "
-                          f"({i//args.batch_size}/{max(1,(len(texts)-args.batch_size)//args.batch_size)} "
-                          f"ETA {(elapsed/max(i//args.batch_size,1))*( (len(texts)-args.batch_size)//args.batch_size - i//args.batch_size)/60:.1f}min)",
-                          flush=True)
-                    loss_history.append({
-                        "step": total_steps, "epoch": epoch + 1, "domain": domain,
-                        "loss": ce_loss.item(), "ppl": ppl,
-                        "contrastive_loss": float(result.get("contrastive_loss", 0.0)),  # C15/C16d 质量监督
-                    })
+                    print(
+                        f"  E{epoch+1}/{args.epochs} [{domain}] step {total_steps}: "
+                        f"loss={ce_loss.item():.4f} PPL={ppl:.1f} "
+                        f"({i//args.batch_size}/{max(1,(len(texts)-args.batch_size)//args.batch_size)} "
+                        f"ETA {(elapsed/max(i//args.batch_size,1))*( (len(texts)-args.batch_size)//args.batch_size - i//args.batch_size)/60:.1f}min)",
+                        flush=True,
+                    )
+                    loss_history.append(
+                        {
+                            "step": total_steps,
+                            "epoch": epoch + 1,
+                            "domain": domain,
+                            "loss": ce_loss.item(),
+                            "ppl": ppl,
+                            "contrastive_loss": float(
+                                result.get("contrastive_loss", 0.0)
+                            ),  # C15/C16d 质量监督
+                        }
+                    )
 
                 if total_steps % 500 == 0:
-                    save_checkpoint(ckpt_path, epoch + 1, total_steps, neurons,
-                                    ensemble, muon_optimizer, adamw_optimizer,
-                                    body_optimizer, loss_history,
-                                    resume_pos={"epoch": epoch, "domain": domain,
-                                                "batch_i": i})
+                    save_checkpoint(
+                        ckpt_path,
+                        epoch + 1,
+                        total_steps,
+                        neurons,
+                        ensemble,
+                        muon_optimizer,
+                        adamw_optimizer,
+                        body_optimizer,
+                        loss_history,
+                        resume_pos={"epoch": epoch, "domain": domain, "batch_i": i},
+                    )
                     print(f"  [checkpoint] step {total_steps} 已保存", flush=True)
 
         # epoch 结束保存（resume_pos 置 None → 下一 epoch 从第一个 domain 起）
-        save_checkpoint(ckpt_path, epoch + 1, total_steps, neurons, ensemble,
-                        muon_optimizer, adamw_optimizer, body_optimizer, loss_history,
-                        resume_pos={"epoch": epoch + 1, "domain": data_sources[0],
-                                    "batch_i": 0})
+        save_checkpoint(
+            ckpt_path,
+            epoch + 1,
+            total_steps,
+            neurons,
+            ensemble,
+            muon_optimizer,
+            adamw_optimizer,
+            body_optimizer,
+            loss_history,
+            resume_pos={"epoch": epoch + 1, "domain": data_sources[0], "batch_i": 0},
+        )
         epoch_ppl = math.exp(min(loss_history[-1]["loss"] if loss_history else 0, 20))
-        print(f"  [Epoch {epoch+1} 完成] PPL≈{epoch_ppl:.1f}, "
-              f"耗时 {(time.time()-epoch_start)/60:.1f} min", flush=True)
+        print(
+            f"  [Epoch {epoch+1} 完成] PPL≈{epoch_ppl:.1f}, "
+            f"耗时 {(time.time()-epoch_start)/60:.1f} min",
+            flush=True,
+        )
 
     print("\n[9] 训练完成。", flush=True)
     print(f"  checkpoint: {ckpt_path}", flush=True)

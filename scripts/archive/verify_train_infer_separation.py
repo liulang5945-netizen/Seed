@@ -13,6 +13,7 @@
 Usage:
     python scripts/training/verify_train_infer_separation.py
 """
+
 import os
 import sys
 import threading
@@ -52,7 +53,8 @@ class MiniCortex:
         torch.manual_seed(7)
         self._shared_embedding = torch.nn.Embedding(GENERAL_VOCAB, BASE_EMBED_DIM)
         self.ensemble = ResonanceEnsemble(
-            self.neurons, ResonanceField(dim=512),
+            self.neurons,
+            ResonanceField(dim=512),
             max_rounds=2,
             coaction=CoactivationTracker(),
         )
@@ -63,7 +65,8 @@ def snapshot_weights(modules: dict) -> dict:
     out = {}
     for nid, m in modules.items():
         out[nid] = {
-            k: v.data.detach().clone() for k, v in m.state_dict().items()
+            k: v.data.detach().clone()
+            for k, v in m.state_dict().items()
             if v.dtype.is_floating_point
         }
     return out
@@ -99,6 +102,7 @@ def run_inference_loop(ens: ResonanceEnsemble, results: dict, stop: threading.Ev
                 time.sleep(0.01)
     except Exception as e:  # noqa: BLE001
         import traceback
+
         errors.append(f"{type(e).__name__}: {e}\n{traceback.format_exc()}")
     results["errors"] = errors
     results["n_calls"] = n_calls
@@ -147,8 +151,7 @@ def main():
     time.sleep(0.05)  # 让推理线程在训练期间跑几轮
 
     # [2] 训练期间 live 权重必须稳定
-    assert weights_equal(live_snap, live_modules), \
-        "[2] 训练期间 live 权重被改动（影子隔离失效）"
+    assert weights_equal(live_snap, live_modules), "[2] 训练期间 live 权重被改动（影子隔离失效）"
     print("  ok [2] 训练期间 live 权重完全稳定（推理读到稳定权重）")
 
     # [3] 训练期间推理线程不崩溃（后续汇总断言）
@@ -169,9 +172,14 @@ def main():
 
     # [4] 写回后 live == 影子（训练生效）；被移除的 nid 未复活
     assert weights_equal(
-        {nid: {k: v.data.detach().clone() for k, v in shadow_modules[nid].state_dict().items()
-               if v.dtype.is_floating_point}
-         for nid in shadow_modules},
+        {
+            nid: {
+                k: v.data.detach().clone()
+                for k, v in shadow_modules[nid].state_dict().items()
+                if v.dtype.is_floating_point
+            }
+            for nid in shadow_modules
+        },
         live_modules,
     ), "[4] 写回后 live != 影子"
     print("  ok [4] 写回后 live == 影子（训练生效）")
@@ -199,8 +207,10 @@ def main():
         return 1
     assert results.get("n_calls", 0) > 0, "推理线程未执行任何 forward"
     assert results.get("finite_ok", False), "推理输出出现非有限值"
-    print(f"  ok [6] 推理线程 {results['n_calls']} 次 forward 全部正常"
-          f"（训练周期全程不崩溃、分数有限）")
+    print(
+        f"  ok [6] 推理线程 {results['n_calls']} 次 forward 全部正常"
+        f"（训练周期全程不崩溃、分数有限）"
+    )
 
     print(f"\n{'='*60}")
     print("训练/推理分离验证: 全部通过")

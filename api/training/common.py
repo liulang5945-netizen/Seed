@@ -5,6 +5,7 @@
   - safe_put(): 带超时的队列写入
   - collect_hardware_diag(): 硬件诊断信息采集
 """
+
 import logging
 import queue
 
@@ -15,8 +16,8 @@ def safe_put(log_queue: queue.Queue, msg, timeout: float = 5.0):
     """带超时的队列写入，防止训练线程被慢速 SSE 消费者永久阻塞"""
     try:
         log_queue.put(msg, timeout=timeout)
-    except queue.Full:
-        pass  # 丢弃过时消息，避免阻塞训练循环
+    except queue.Full as e:
+        logger.debug("【safe_put】处理失败（非致命）: %s", e)
 
 
 def collect_hardware_diag(device_str: str) -> dict:
@@ -41,30 +42,37 @@ def collect_hardware_diag(device_str: str) -> dict:
     # 检测系统 RAM
     try:
         import psutil
+
         ram_gb = round(psutil.virtual_memory().total / (1024**3), 1)
     except ImportError:
         try:
             from neuroplex.core.config import TrainingConfig
+
             ram_gb = round(TrainingConfig.get_total_ram_gb(), 1)
         except Exception:
             ram_gb = None
 
     # 生成诊断消息
     if device_type == "cuda":
-        msg = (f"训练设备: {device_name} ({gpu_memory_gb}GB 显存)"
-               f"{' | 系统内存: ' + str(ram_gb) + 'GB' if ram_gb else ''}"
-               f" — GPU 训练性能最优 ✓")
+        msg = (
+            f"训练设备: {device_name} ({gpu_memory_gb}GB 显存)"
+            f"{' | 系统内存: ' + str(ram_gb) + 'GB' if ram_gb else ''}"
+            f" — GPU 训练性能最优 ✓"
+        )
     elif device_type == "cpu":
-        msg = (f"训练设备: CPU"
-               f"{' | 系统内存: ' + str(ram_gb) + 'GB' if ram_gb else ''}"
-               f" — ⚠ CPU 训练较慢（约 GPU 的 1/10~1/50），建议使用 GPU 或 GGUF 推理模式")
+        msg = (
+            f"训练设备: CPU"
+            f"{' | 系统内存: ' + str(ram_gb) + 'GB' if ram_gb else ''}"
+            f" — ⚠ CPU 训练较慢（约 GPU 的 1/10~1/50），建议使用 GPU 或 GGUF 推理模式"
+        )
     elif device_type == "mps":
-        msg = (f"训练设备: Apple MPS (Metal)"
-               f"{' | 系统内存: ' + str(ram_gb) + 'GB' if ram_gb else ''}"
-               f" — MPS 训练性能介于 CPU 和 CUDA 之间")
+        msg = (
+            f"训练设备: Apple MPS (Metal)"
+            f"{' | 系统内存: ' + str(ram_gb) + 'GB' if ram_gb else ''}"
+            f" — MPS 训练性能介于 CPU 和 CUDA 之间"
+        )
     else:
-        msg = (f"训练设备: {device_type}"
-               f"{' | 系统内存: ' + str(ram_gb) + 'GB' if ram_gb else ''}")
+        msg = f"训练设备: {device_type}" f"{' | 系统内存: ' + str(ram_gb) + 'GB' if ram_gb else ''}"
 
     return {
         "device_type": device_type,
@@ -74,5 +82,3 @@ def collect_hardware_diag(device_str: str) -> dict:
         "gpu_memory_gb": gpu_memory_gb,
         "message": msg,
     }
-
-

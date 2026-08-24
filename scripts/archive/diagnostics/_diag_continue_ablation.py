@@ -1,4 +1,5 @@
 """Ablate what makes continued exposure regress: memory feedback vs motor."""
+
 from __future__ import annotations
 
 import sys
@@ -23,17 +24,14 @@ STEPS = 20_000
 
 
 def run(name: str, **observe_kwargs) -> None:
-    checkpoint = torch.load(
-        PROJECT_ROOT / "checkpoints" / "seed_corpus.pt", weights_only=False
-    )
+    checkpoint = torch.load(PROJECT_ROOT / "checkpoints" / "seed_corpus.pt", weights_only=False)
     model = Seed.from_checkpoint(checkpoint)
     before = model.score_bytes(HOLDOUT)["mean_surprise"]
     stream = iter_corpus_symbols([PROJECT_ROOT / DEFAULT_CORPUS[0]])
     for _ in range(STEPS):
         model.observe(next(stream), **observe_kwargs)
     after = model.score_bytes(HOLDOUT)["mean_surprise"]
-    print(f"{name:24s} before={before:.4f} after={after:.4f} "
-          f"delta={after - before:+.4f}")
+    print(f"{name:24s} before={before:.4f} after={after:.4f} " f"delta={after - before:+.4f}")
 
 
 def main() -> None:

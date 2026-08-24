@@ -25,7 +25,6 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
-import os
 import sys
 import time
 from pathlib import Path
@@ -35,6 +34,7 @@ sys.path.insert(0, str(REPO))
 
 import torch  # noqa: E402
 
+import _verify_emit  # noqa: E402
 from seed import Seed, SeedJudge  # noqa: E402
 
 
@@ -112,9 +112,7 @@ def main() -> None:
     )
 
     # 器官局部校准：以 -loss 为已知质量目标，权重由闭式岭回归学得。
-    calibration = [
-        (judge.features(data), -loss) for loss, data in scored
-    ]
+    calibration = [(judge.features(data), -loss) for loss, data in scored]
     calibration_accuracy = judge.calibrate(calibration)
     print(f"  校准（局部闭式岭回归）拟合排序准确率 = {calibration_accuracy:.3f}", flush=True)
     print(f"  学得权重 = {[round(float(w), 4) for w in judge.weights]}", flush=True)
@@ -147,14 +145,15 @@ def main() -> None:
             report = judge.score(text.encode("utf-8"))
             qualities.append(report["quality"])
             details.append(
-                {"text": text, "quality": report["quality"],
-                 "mean_surprise": report["mean_surprise"],
-                 "accuracy": report["accuracy"]}
+                {
+                    "text": text,
+                    "quality": report["quality"],
+                    "mean_surprise": report["mean_surprise"],
+                    "accuracy": report["accuracy"],
+                }
             )
         mean = sum(qualities) / len(qualities)
-        std = (
-            sum((value - mean) ** 2 for value in qualities) / len(qualities)
-        ) ** 0.5
+        std = (sum((value - mean) ** 2 for value in qualities) / len(qualities)) ** 0.5
         groups[group_name] = {
             "details": details,
             "mean": mean,
@@ -208,7 +207,7 @@ def main() -> None:
     with out_path.open("w", encoding="utf-8") as handle:
         json.dump(payload, handle, ensure_ascii=False, indent=2)
     print(f"报告已写入: {out_path}", flush=True)
-    sys.exit(0 if a1_pass else 1)
+    sys.exit(_verify_emit.emit_and_exit("seed_a1_judge", payload))
 
 
 if __name__ == "__main__":

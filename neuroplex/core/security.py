@@ -9,6 +9,7 @@ Taiji 安全模块
 - SecureStorage: 敏感数据加密存储
 - AuditLogger: 安全操作审计日志
 """
+
 import hashlib
 import hmac
 import json
@@ -18,8 +19,8 @@ import secrets
 import struct
 import time
 import base64
-from datetime import datetime, timedelta
-from typing import Optional, Dict, List
+from datetime import datetime
+from typing import Optional, List
 
 from neuroplex.services.settings_service import load_settings, update_settings
 
@@ -27,15 +28,18 @@ logger = logging.getLogger("Security")
 
 # ======================== 路径工具 ========================
 
+
 def _security_dir() -> str:
     """安全数据存储目录"""
     from neuroplex.core.config import get_external_path
+
     path = get_external_path("security")
     os.makedirs(path, exist_ok=True)
     return path
 
 
 # ======================== JWT 认证 ========================
+
 
 class JWTManager:
     """轻量级 JWT 管理器（纯 Python hmac 实现，无外部依赖）
@@ -62,8 +66,8 @@ class JWTManager:
                     key = f.read().strip()
                 if len(key) >= 32:
                     return key
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【JWTManager._load_or_generate_secret】处理失败（非致命）: %s", e)
         # 生成新密钥
         secret = secrets.token_hex(32)
         try:
@@ -72,8 +76,8 @@ class JWTManager:
             # 限制文件权限
             try:
                 os.chmod(key_path, 0o600)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【JWTManager._load_or_generate_secret】处理失败（非致命）: %s", e)
         except Exception as e:
             logger.warning(f"保存 JWT 密钥失败: {e}")
         return secret
@@ -90,9 +94,7 @@ class JWTManager:
     def _sign(self, message: str) -> str:
         """HS256 签名"""
         sig = hmac.new(
-            self.secret_key.encode("utf-8"),
-            message.encode("utf-8"),
-            hashlib.sha256
+            self.secret_key.encode("utf-8"), message.encode("utf-8"), hashlib.sha256
         ).digest()
         return self._b64_encode(sig)
 
@@ -158,26 +160,37 @@ class JWTManager:
         if time.time() > exp - 2 * 3600:
             return self.create_token(
                 payload.get("sub", "unknown"),
-                {k: v for k, v in payload.items() if k not in ("sub", "iat", "exp")}
+                {k: v for k, v in payload.items() if k not in ("sub", "iat", "exp")},
             )
         return None  # Token 还很新鲜，不需要刷新
 
 
 # ======================== 敏感数据加密 ========================
 
+
 class SecureStorage:
     """敏感数据加密存储
 
-    使用 XOR + HMAC 的轻量级加密方案（无需 cryptography 库）。
-    适用于保护 API Key 等短文本。
+    使用 cryptography.fernet.Fernet（AES-128-CBC + HMAC-SHA256 AEAD）。
+    密钥由机器指纹经 PBKDF2HMAC(SHA256, 600k 迭代) 派生，
+    盐为随机生成并持久化在安全目录的 .storage_salt 文件中（不再硬编码）。
+
+    向后兼容：旧版本 XOR + HMAC 密文仍可解密（decrypt 自动回退并告警），
+    重新保存时自动以 Fernet 格式重写。
     """
 
+    _SALT_FILE = ".storage_salt"
+    _PBKDF2_ITERATIONS = 600_000
+
     def __init__(self):
-        self._master_key = self._derive_master_key()
+        from cryptography.fernet import Fernet
+
+        self._fernet = Fernet(self._derive_fernet_key())
 
     def _machine_fingerprint(self) -> str:
         """生成机器指纹（CPU + 用户名 + 主机名）"""
         import platform
+
         parts = [
             platform.node(),
             platform.machine(),
@@ -186,41 +199,89 @@ class SecureStorage:
         ]
         return "|".join(parts)
 
-    def _derive_master_key(self) -> bytes:
-        """从机器指纹派生主密钥"""
+    def _salt_path(self) -> str:
+        return os.path.join(_security_dir(), self._SALT_FILE)
+
+    def _load_or_generate_salt(self) -> bytes:
+        """加载或随机生成 PBKDF2 盐（持久化在密钥文件旁）"""
+        salt_path = self._salt_path()
+        if os.path.exists(salt_path):
+            try:
+                with open(salt_path, "rb") as f:
+                    salt = f.read()
+                if len(salt) >= 16:
+                    return salt
+            except Exception as e:
+                logger.debug("【SecureStorage._load_or_generate_salt】处理失败（非致命）: %s", e)
+        salt = secrets.token_bytes(32)
+        try:
+            with open(salt_path, "wb") as f:
+                f.write(salt)
+            try:
+                os.chmod(salt_path, 0o600)
+            except Exception as e:
+                logger.debug("【SecureStorage._load_or_generate_salt】处理失败（非致命）: %s", e)
+        except Exception as e:
+            logger.warning(f"保存加密盐失败: {e}")
+        return salt
+
+    def _derive_fernet_key(self) -> bytes:
+        """从机器指纹经 PBKDF2HMAC 派生 Fernet 密钥（urlsafe_b64 编码）"""
+        from cryptography.hazmat.primitives import hashes
+        from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=self._load_or_generate_salt(),
+            iterations=self._PBKDF2_ITERATIONS,
+        )
+        return base64.urlsafe_b64encode(kdf.derive(self._machine_fingerprint().encode("utf-8")))
+
+    def encrypt(self, plaintext: str) -> str:
+        """加密字符串，返回 Base64 编码的密文（Fernet token）"""
+        if not plaintext:
+            return ""
+        return self._fernet.encrypt(plaintext.encode("utf-8")).decode("ascii")
+
+    def decrypt(self, ciphertext: str) -> str:
+        """解密 Base64 编码的密文
+
+        先尝试 Fernet 解密；失败则回退旧 XOR 路径（兼容历史数据），
+        并告警提示——下次 encrypt/保存会自动以 Fernet 重写。
+        """
+        if not ciphertext:
+            return ""
+
+        from cryptography.fernet import InvalidToken
+
+        try:
+            return self._fernet.decrypt(ciphertext.encode("ascii")).decode("utf-8")
+        except InvalidToken as e:
+            logger.debug("【SecureStorage.decrypt】处理失败（非致命）: %s", e)
+        except Exception as e:
+            logger.warning(f"解密失败: {e}")
+            return ""
+
+        legacy = self._decrypt_legacy_xor(ciphertext)
+        if legacy:
+            logger.warning("legacy XOR secret, re-encrypt on next save")
+        return legacy
+
+    # ---------------- 旧 XOR 方案（仅保留解密用于向后兼容） ----------------
+
+    def _derive_legacy_master_key(self) -> bytes:
+        """旧版主密钥派生（硬编码盐，仅用于解密历史数据）"""
         fingerprint = self._machine_fingerprint()
-        # 多轮哈希增强安全性
         key = fingerprint.encode("utf-8")
         for _ in range(10000):
             key = hashlib.sha256(key + b"taiji-salt-2024").digest()
         return key  # 32 bytes
 
-    def encrypt(self, plaintext: str) -> str:
-        """加密字符串，返回 Base64 编码的密文"""
-        if not plaintext:
-            return ""
-
-        data = plaintext.encode("utf-8")
-        # 生成随机 IV
-        iv = secrets.token_bytes(16)
-
-        # XOR 加密（使用 master_key 派生密钥流）
-        key_stream = self._generate_keystream(iv, len(data))
-        encrypted = bytes(a ^ b for a, b in zip(data, key_stream))
-
-        # 计算 HMAC 用于完整性验证
-        mac = hmac.new(self._master_key, iv + encrypted, hashlib.sha256).digest()[:16]
-
-        # 组合: IV(16) + MAC(16) + Encrypted
-        result = iv + mac + encrypted
-        return base64.b64encode(result).decode("ascii")
-
-    def decrypt(self, ciphertext: str) -> str:
-        """解密 Base64 编码的密文"""
-        if not ciphertext:
-            return ""
-
+    def _decrypt_legacy_xor(self, ciphertext: str) -> str:
+        """旧版 XOR + HMAC 解密（仅用于读取历史密文）"""
         try:
+            master_key = self._derive_legacy_master_key()
             raw = base64.b64decode(ciphertext)
             if len(raw) < 32:
                 return ""
@@ -229,36 +290,33 @@ class SecureStorage:
             mac = raw[16:32]
             encrypted = raw[32:]
 
-            # 验证 HMAC
-            expected_mac = hmac.new(self._master_key, iv + encrypted, hashlib.sha256).digest()[:16]
+            # 验证 HMAC（旧格式截断到 16 字节，仅 legacy 路径保留）
+            expected_mac = hmac.new(master_key, iv + encrypted, hashlib.sha256).digest()[:16]
             if not hmac.compare_digest(mac, expected_mac):
                 logger.warning("解密失败: HMAC 验证不通过")
                 return ""
 
             # XOR 解密
-            key_stream = self._generate_keystream(iv, len(encrypted))
+            key_stream = self._legacy_keystream(master_key, iv, len(encrypted))
             decrypted = bytes(a ^ b for a, b in zip(encrypted, key_stream))
             return decrypted.decode("utf-8")
         except Exception as e:
             logger.warning(f"解密失败: {e}")
             return ""
 
-    def _generate_keystream(self, iv: bytes, length: int) -> bytes:
-        """使用 HMAC 生成密钥流"""
+    def _legacy_keystream(self, master_key: bytes, iv: bytes, length: int) -> bytes:
+        """旧版 HMAC 密钥流（仅 legacy 解密路径使用）"""
         stream = b""
         counter = 0
         while len(stream) < length:
-            block = hmac.new(
-                self._master_key,
-                iv + struct.pack(">I", counter),
-                hashlib.sha256
-            ).digest()
+            block = hmac.new(master_key, iv + struct.pack(">I", counter), hashlib.sha256).digest()
             stream += block
             counter += 1
         return stream[:length]
 
 
 # ======================== 操作审计 ========================
+
 
 class AuditLogger:
     """安全操作审计日志"""
@@ -272,8 +330,9 @@ class AuditLogger:
         today = datetime.now().strftime("%Y-%m-%d")
         return os.path.join(self.log_dir, f"audit_{today}.jsonl")
 
-    def log_event(self, event_type: str, detail: dict = None,
-                  user: str = "local", ip: str = "127.0.0.1"):
+    def log_event(
+        self, event_type: str, detail: dict = None, user: str = "local", ip: str = "127.0.0.1"
+    ):
         """记录安全事件"""
         event = {
             "timestamp": datetime.now().isoformat(),
@@ -293,6 +352,7 @@ class AuditLogger:
         events = []
         try:
             from datetime import timedelta
+
             today = datetime.now()
             for d in range(days):
                 day = today - timedelta(days=d)
@@ -314,6 +374,7 @@ class AuditLogger:
 
 
 # ======================== 认证管理器 ========================
+
 
 class AuthManager:
     """认证管理器（单例）"""
@@ -339,17 +400,19 @@ class AuthManager:
             self.enabled = data.get("auth_enabled", False)
             self.username = data.get("auth_username", "admin")
             self.password_hash = data.get("auth_password_hash", "")
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【AuthManager._load_settings】处理失败（非致命）: %s", e)
 
     def _save_settings(self):
         """保存认证配置"""
         try:
-            update_settings({
-                "auth_enabled": self.enabled,
-                "auth_username": self.username,
-                "auth_password_hash": self.password_hash,
-            })
+            update_settings(
+                {
+                    "auth_enabled": self.enabled,
+                    "auth_username": self.username,
+                    "auth_password_hash": self.password_hash,
+                }
+            )
         except Exception as e:
             logger.warning(f"保存认证配置失败: {e}")
 
@@ -398,7 +461,9 @@ class AuthManager:
         if not self.enabled:
             # 如果已设置密码，未启用认证可能是部署失误，拒绝登录并提示
             if self.password_hash:
-                self._audit.log_event("login_failed", {"user": username, "reason": "auth_disabled_but_password_set"})
+                self._audit.log_event(
+                    "login_failed", {"user": username, "reason": "auth_disabled_but_password_set"}
+                )
                 return None
             # 密码也未设置 = 全新部署首次使用，允许无密码访问
             self._audit.log_event("login_noauth_first_run", {"user": username})

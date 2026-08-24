@@ -2,6 +2,7 @@
 Seed — 模型路由（精简版）
 Cortex 神经元架构是唯一认知主体，不依赖外部模型市场/下载/GGUF。
 """
+
 import logging
 
 from fastapi import APIRouter
@@ -13,6 +14,7 @@ router = APIRouter()
 
 
 # ======================== Cortex 模型信息 ========================
+
 
 @router.get("/api/models/installed")
 def list_installed_models():
@@ -44,7 +46,11 @@ def get_gguf_quants():
 @router.get("/api/models/recommend")
 def recommend_models():
     """推荐模型（Seed使用 Cortex）。"""
-    return {"models": [], "recommended": "Cortex（神经元架构）", "message": "Seed使用 Cortex 神经元架构"}
+    return {
+        "models": [],
+        "recommended": "Cortex（神经元架构）",
+        "message": "Seed使用 Cortex 神经元架构",
+    }
 
 
 @router.get("/api/models/tags")

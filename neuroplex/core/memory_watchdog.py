@@ -10,6 +10,7 @@ decorator for graceful degradation under memory pressure (triggering
 GC, shedding load, or refusing new allocations). Until then, all
 checks report "healthy" so callers proceed normally.
 """
+
 import functools
 import logging
 

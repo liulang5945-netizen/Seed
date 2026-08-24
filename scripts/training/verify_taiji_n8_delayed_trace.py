@@ -10,6 +10,7 @@ import sys
 from typing import Dict, Literal, Tuple
 
 import torch
+import _verify_emit
 import torch.nn.functional as F
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -17,7 +18,6 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from taiji import Taiji, TaijiConfig
-
 
 DATA = b"a1234xbc1234xd" * 4
 PROBE = ord("x")
@@ -31,8 +31,7 @@ def _first_order_accuracy(data: bytes) -> float:
             followers[int(following)] += 1
             targets.append(int(following))
     best_count = max(followers.values())
-    prediction = min(symbol for symbol, count in followers.items()
-                     if count == best_count)
+    prediction = min(symbol for symbol, count in followers.items() if count == best_count)
     return sum(target == prediction for target in targets) / len(targets)
 
 
@@ -84,23 +83,27 @@ def _evaluate(
 
         target = int(sequence[index + 1])
         state = model.snapshot()
-        pre_fast[target].append(torch.cat([
-            *(region.membrane for region in state.regions),
-            *(region.activity for region in state.regions),
-        ]))
-        pre_trace[target].append(torch.cat([
-            region.trace for region in state.regions
-        ]))
+        pre_fast[target].append(
+            torch.cat(
+                [
+                    *(region.membrane for region in state.regions),
+                    *(region.activity for region in state.regions),
+                ]
+            )
+        )
+        pre_trace[target].append(torch.cat([region.trace for region in state.regions]))
         if mode != "full":
             _intervene(model, mode, index)
         step = model.observe(symbol, learn=False)
         hit = int(step.predicted_symbol == target)
         hits.append(hit)
-        rows.append({
-            "target": target,
-            "prediction": step.predicted_symbol,
-            "hit": hit,
-        })
+        rows.append(
+            {
+                "target": target,
+                "prediction": step.predicted_symbol,
+                "hit": hit,
+            }
+        )
         post_context[target].append(model.snapshot().motor_context)
 
     diagnostics = {
@@ -122,27 +125,17 @@ def run_benchmark(*, epochs: int = 200, seed: int = 7) -> Dict[str, object]:
     model.learn_bytes(DATA, epochs=epochs)
     learned = model.checkpoint()
 
-    full, rows, diagnostics = _evaluate(
-        Taiji.from_checkpoint(learned), mode="full"
-    )
-    without_trace, no_trace_rows, _ = _evaluate(
-        Taiji.from_checkpoint(learned), mode="no_trace"
-    )
-    trace_only, trace_only_rows, _ = _evaluate(
-        Taiji.from_checkpoint(learned), mode="trace_only"
-    )
-    without_state, all_rows, _ = _evaluate(
-        Taiji.from_checkpoint(learned), mode="all"
-    )
+    full, rows, diagnostics = _evaluate(Taiji.from_checkpoint(learned), mode="full")
+    without_trace, no_trace_rows, _ = _evaluate(Taiji.from_checkpoint(learned), mode="no_trace")
+    trace_only, trace_only_rows, _ = _evaluate(Taiji.from_checkpoint(learned), mode="trace_only")
+    without_state, all_rows, _ = _evaluate(Taiji.from_checkpoint(learned), mode="all")
     first_order = _first_order_accuracy(DATA)
     checks = {
         "full_delayed_accuracy": full >= 0.75,
         "beats_first_order_by_20pp": full >= first_order + 0.20,
         "trace_is_necessary_by_20pp": full >= without_trace + 0.20,
         "trace_only_is_sufficient": trace_only >= 0.75,
-        "trace_only_beats_all_state_lesion_by_20pp": (
-            trace_only >= without_state + 0.20
-        ),
+        "trace_only_beats_all_state_lesion_by_20pp": (trace_only >= without_state + 0.20),
     }
     return {
         "benchmark": "taiji_n8_delayed_trace",
@@ -184,7 +177,7 @@ def main() -> int:
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(rendered + "\n", encoding="utf-8")
-    return 0 if report["status"] == "pass" else 1
+    return _verify_emit.emit_and_exit("taiji_n8_delayed_trace", report)
 
 
 if __name__ == "__main__":

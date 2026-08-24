@@ -86,25 +86,34 @@ def run(seed: int, cycles: int) -> None:
 
     print(f"\n=== seed {seed}  cycles {cycles} ===")
     print(f"accepted={accepted}  recorded={total}  mis-rehearsed={wrong}")
-    print(f"accuracy={metrics['contingency_accuracy']:.2f}  "
-          f"mean_margin={metrics['mean_margin']:+.5f}")
+    print(
+        f"accuracy={metrics['contingency_accuracy']:.2f}  "
+        f"mean_margin={metrics['mean_margin']:+.5f}"
+    )
     print(f"{'pair':>6} {'rehearsals':>11} {'share':>7} {'margin':>10}  read-back")
     for row in metrics["rows"]:
         action = ord(str(row["action"]))
         n = rehearsed.get(action, 0)
         share = n / total if total else 0.0
         ok = "ok" if row["predicted_outcome"] == row["expected_outcome"] else "WRONG"
-        print(f"{row['action']}->{row['expected_outcome']:>3} {n:11d} {share:6.1%} "
-              f"{row['margin']:+10.5f}  {ok}")
+        print(
+            f"{row['action']}->{row['expected_outcome']:>3} {n:11d} {share:6.1%} "
+            f"{row['margin']:+10.5f}  {ok}"
+        )
 
     covered = sorted(action for action in pairs if rehearsed.get(action, 0) > 0)
     starved = min(pairs, key=lambda a: rehearsed.get(a, 0))
-    losers = [ord(str(r["action"])) for r in metrics["rows"]
-              if r["predicted_outcome"] != r["expected_outcome"]]
-    print(f"covered {len(covered)}/{len(pairs)}  "
-          f"starved={chr(starved)}({rehearsed.get(starved, 0)})  "
-          f"losers={[chr(a) for a in losers] or 'none'}  "
-          f"starved_is_loser={starved in losers}")
+    losers = [
+        ord(str(r["action"]))
+        for r in metrics["rows"]
+        if r["predicted_outcome"] != r["expected_outcome"]
+    ]
+    print(
+        f"covered {len(covered)}/{len(pairs)}  "
+        f"starved={chr(starved)}({rehearsed.get(starved, 0)})  "
+        f"losers={[chr(a) for a in losers] or 'none'}  "
+        f"starved_is_loser={starved in losers}"
+    )
 
 
 def main() -> None:

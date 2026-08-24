@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import logging
 import math
-import time
 import threading
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -55,7 +54,7 @@ class CrossSpecProjector(nn.Module):
     def __init__(self, in_dim: int, out_dim: int):
         super().__init__()
         self.linear1 = nn.Linear(in_dim, out_dim, bias=False)
-        nn.init.normal_(self.linear1.weight, std=out_dim ** -0.5)
+        nn.init.normal_(self.linear1.weight, std=out_dim**-0.5)
         self.gelu = nn.GELU()
         self.linear2 = nn.Linear(out_dim, out_dim, bias=False)
         nn.init.zeros_(self.linear2.weight)  # 零初始化：初始时 linear2 输出=0
@@ -70,9 +69,9 @@ class CrossSpecProjector(nn.Module):
         旧 nn.Linear 的 weight 形状为 [out_dim, in_dim]，直接赋值给 linear1.weight。
         linear2 保持零初始化（初始行为与旧 Linear 一致）。
         """
-        assert self.linear1.weight.shape == legacy_weight.shape, (
-            f"legacy weight shape {legacy_weight.shape} != linear1.weight shape {self.linear1.weight.shape}"
-        )
+        assert (
+            self.linear1.weight.shape == legacy_weight.shape
+        ), f"legacy weight shape {legacy_weight.shape} != linear1.weight shape {self.linear1.weight.shape}"
         with torch.no_grad():
             self.linear1.weight.copy_(legacy_weight)
             # linear2 保持零初始化（构造时已设置）
@@ -106,7 +105,7 @@ class SparseRouter(nn.Module):
         shared_expert_id: Optional[str] = None,  # shared_expert 始终激活，不参与 top-K
         # ── §4.0d: 熵驱动动态 K ──
         dynamic_k: bool = True,  # True=熵驱动动态K（简单样本少选，复杂样本多选）
-        k_min: int = 1,          # 动态 K 下限
+        k_min: int = 1,  # 动态 K 下限
         k_max: Optional[int] = None,  # 动态 K 上限（None = N-1）
     ):
         super().__init__()
@@ -128,16 +127,16 @@ class SparseRouter(nn.Module):
             nn.Linear(hidden_dim, 1),
         )
         # 初始化：最后一层小权重，初始路由分接近均匀
-        nn.init.normal_(self.router_mlp[0].weight, std=in_dim ** -0.5)
+        nn.init.normal_(self.router_mlp[0].weight, std=in_dim**-0.5)
         nn.init.zeros_(self.router_mlp[0].bias)
-        nn.init.normal_(self.router_mlp[2].weight, std=hidden_dim ** -0.5)
+        nn.init.normal_(self.router_mlp[2].weight, std=hidden_dim**-0.5)
         nn.init.zeros_(self.router_mlp[2].bias)
 
     def forward(
         self,
         active_ids: List[str],
         round_vecs_unified: Dict[str, torch.Tensor],  # {nid: [B, D_field]}
-        round_confidences: Dict[str, torch.Tensor],   # {nid: [B]}
+        round_confidences: Dict[str, torch.Tensor],  # {nid: [B]}
         round_score_vecs: Optional[Dict[str, torch.Tensor]],  # {nid: [B, D_score]} or None
         step: int = 0,
     ) -> Dict[str, torch.Tensor]:
@@ -221,7 +220,7 @@ class SparseRouter(nn.Module):
                 k_b = max(int(k_per_sample[b]) - 1, 1)  # 扣掉 shared 占位
                 k_b = min(k_b, N - 1)
                 domain_scores = routing_scores[b].clone()
-                domain_scores[shared_idx] = float('-inf')  # 排除 shared
+                domain_scores[shared_idx] = float("-inf")  # 排除 shared
                 topk = domain_scores.topk(k_b).indices  # [k_b]
                 hard_mask[b, topk] = 1.0
                 # 更新 k_per_sample 反映实际（shared + domain）
@@ -237,7 +236,7 @@ class SparseRouter(nn.Module):
                 top_k_ids.append(topk.tolist())
 
         # selected weights: 只在 hard_mask 选中神经元上归一化
-        masked_scores = routing_scores.masked_fill(hard_mask == 0, float('-inf'))
+        masked_scores = routing_scores.masked_fill(hard_mask == 0, float("-inf"))
         selected_weights = F.softmax(masked_scores, dim=-1)  # [B, N]
         # 处理全 -inf 行（不应发生，但防御）
         selected_weights = torch.nan_to_num(selected_weights, nan=0.0)
@@ -254,13 +253,13 @@ class SparseRouter(nn.Module):
         load_balance_loss = N * (f * P).sum()
 
         return {
-            "routing_scores": routing_scores,    # [B, N]
-            "hard_mask": hard_mask,              # [B, N] per-sample
-            "soft_weights": soft_weights,        # [B, N]
-            "final_weights": final_weights,      # [B, N] STE
+            "routing_scores": routing_scores,  # [B, N]
+            "hard_mask": hard_mask,  # [B, N] per-sample
+            "soft_weights": soft_weights,  # [B, N]
+            "final_weights": final_weights,  # [B, N] STE
             "load_balance_loss": load_balance_loss,  # scalar
-            "k_per_sample": k_per_sample,        # [B] 每样本实际 K
-            "top_k_ids": top_k_ids,              # List[List[int]] 每样本 top-K 全局索引
+            "k_per_sample": k_per_sample,  # [B] 每样本实际 K
+            "top_k_ids": top_k_ids,  # List[List[int]] 每样本 top-K 全局索引
         }
 
 
@@ -357,6 +356,7 @@ class ResonanceEnsemble:
             self._init_geometry()
         else:
             from .geometry import NeuronGeometry
+
             self.geometry = NeuronGeometry(embedding_dim=8, sigma=0.5)
             self._init_geometry()
 
@@ -392,11 +392,13 @@ class ResonanceEnsemble:
         # dynamic=False（默认）时退化为固定 shared_expert_weight（完全向后兼容）
         self.shared_weight_dynamic = shared_weight_dynamic
         # R3: consensus 融合参数（默认值，可被 __init__ 参数覆盖）
-        self.consensus_k = 5       # 每神经元投票的 top-k token 数
+        self.consensus_k = 5  # 每神经元投票的 top-k token 数
         self.consensus_alpha = 0.5  # 共识加成强度（0=关闭，1=全员同意时权重翻倍）
-        if (shared_weight_dynamic
-                and shared_expert_id is not None
-                and shared_expert_id in self.neurons):
+        if (
+            shared_weight_dynamic
+            and shared_expert_id is not None
+            and shared_expert_id in self.neurons
+        ):
             field_dim = self.field.dim
             # MLP: Linear(1 + field_dim, hidden) + GELU + Linear(hidden, 1)
             hidden = max(64, field_dim // 4)
@@ -408,9 +410,12 @@ class ResonanceEnsemble:
             # 初始化使初始输出 ≈ logit(shared_expert_weight)
             # sigmoid(logit(0.3)) = 0.3，故最后一层 bias = logit(0.3)
             import math as _math
+
             with torch.no_grad():
                 nn.init.zeros_(self.shared_weight_mlp[2].weight)
-                self.shared_weight_mlp[2].bias.fill_(_math.log(shared_expert_weight / (1.0 - shared_expert_weight)))
+                self.shared_weight_mlp[2].bias.fill_(
+                    _math.log(shared_expert_weight / (1.0 - shared_expert_weight))
+                )
         else:
             self.shared_weight_mlp = None
 
@@ -431,8 +436,12 @@ class ResonanceEnsemble:
         # - 第一层保留旧 Linear 语义（旧 checkpoint 可直接加载到 linear1.weight）
         # - 第二层零初始化，初始时 y = linear1(x)（与旧单层 Linear 完全一致，零破坏）
         # - 训练后第二层学到非线性变换，上限提升（单层线性 → 2 层 MLP 有非线性能力）
-        self._cross_spec_projectors: Dict[str, "CrossSpecProjector"] = {}  # forward: field_dim -> unified
-        self._cross_spec_back_projectors: Dict[str, "CrossSpecProjector"] = {}  # backward: unified -> field_dim
+        self._cross_spec_projectors: Dict[str, "CrossSpecProjector"] = (
+            {}
+        )  # forward: field_dim -> unified
+        self._cross_spec_back_projectors: Dict[str, "CrossSpecProjector"] = (
+            {}
+        )  # backward: unified -> field_dim
         field_dim = self.field.dim
         for nid, neuron in self.neurons.items():
             nfd = neuron.config.field_dim
@@ -440,8 +449,11 @@ class ResonanceEnsemble:
                 self._cross_spec_projectors[nid] = CrossSpecProjector(nfd, field_dim)
                 self._cross_spec_back_projectors[nid] = CrossSpecProjector(field_dim, nfd)
         if self._cross_spec_projectors:
-            print(f"  [ensemble] 检测到混合 field_dim，创建 {len(self._cross_spec_projectors)} 个跨规格投影层"
-                  f"（T6: 2 层 MLP, 含反向投影）", flush=True)
+            print(
+                f"  [ensemble] 检测到混合 field_dim，创建 {len(self._cross_spec_projectors)} 个跨规格投影层"
+                f"（T6: 2 层 MLP, 含反向投影）",
+                flush=True,
+            )
 
         # ── C12: 评分投影（field_score_proj）──
         # 场状态投影到共享评分空间，与 neuron.score_proj 配对。
@@ -452,7 +464,7 @@ class ResonanceEnsemble:
         if all(sd is not None for sd in all_score_dims) and len(set(all_score_dims)) == 1:
             sd = all_score_dims[0]
             self.field_score_proj = nn.Linear(field_dim, sd, bias=False)
-            nn.init.normal_(self.field_score_proj.weight, std=field_dim ** -0.5)
+            nn.init.normal_(self.field_score_proj.weight, std=field_dim**-0.5)
             self.score_dim = sd
         else:
             self.field_score_proj = None
@@ -471,8 +483,11 @@ class ResonanceEnsemble:
                 warmup_steps=sparse_router_warmup_steps,
                 shared_expert_id=shared_expert_id,
             )
-            print(f"  [ensemble] Sparse Router 已启用（top_k={sparse_router_top_k}, "
-                  f"warmup={sparse_router_warmup_steps}步, shared={shared_expert_id}）", flush=True)
+            print(
+                f"  [ensemble] Sparse Router 已启用（top_k={sparse_router_top_k}, "
+                f"warmup={sparse_router_warmup_steps}步, shared={shared_expert_id}）",
+                flush=True,
+            )
         else:
             self.sparse_router = None
 
@@ -556,8 +571,13 @@ class ResonanceEnsemble:
             d = getattr(self, attr, None)
             if d:
                 out[attr.lstrip("_")] = {k: v.state_dict() for k, v in d.items()}
-        for attr in ("field_score_proj", "shared_weight_mlp", "sparse_router",
-                     "spatial_diffuser", "gamma_oscillator"):
+        for attr in (
+            "field_score_proj",
+            "shared_weight_mlp",
+            "sparse_router",
+            "spatial_diffuser",
+            "gamma_oscillator",
+        ):
             m = getattr(self, attr, None)
             if m is not None:
                 out[attr] = m.state_dict()
@@ -569,8 +589,10 @@ class ResonanceEnsemble:
         """聚合加载（P2-3）。缺失/形状不符的键跳过并返回跳过清单（非致命语义
         与 loader 一致）；strict=True 时缺失键抛 KeyError。"""
         skipped: List[str] = []
-        for attr, per_nid in (("_cross_spec_projectors", "cross_spec_projectors"),
-                              ("_cross_spec_back_projectors", "cross_spec_back_projectors")):
+        for attr, per_nid in (
+            ("_cross_spec_projectors", "cross_spec_projectors"),
+            ("_cross_spec_back_projectors", "cross_spec_back_projectors"),
+        ):
             src = state.get(per_nid)
             if not src:
                 continue
@@ -584,8 +606,13 @@ class ResonanceEnsemble:
                 except Exception as e:
                     logger.warning("聚合加载跳过 %s[%s]: %s", per_nid, nid, e)
                     skipped.append(f"{per_nid}[{nid}] ({e})")
-        for attr in ("field_score_proj", "shared_weight_mlp", "sparse_router",
-                     "spatial_diffuser", "gamma_oscillator"):
+        for attr in (
+            "field_score_proj",
+            "shared_weight_mlp",
+            "sparse_router",
+            "spatial_diffuser",
+            "gamma_oscillator",
+        ):
             if attr not in state:
                 continue
             m = getattr(self, attr, None)
@@ -606,6 +633,7 @@ class ResonanceEnsemble:
         elif "field" in state and strict:
             raise KeyError("field 状态缺失但 strict=True")
         return skipped
+
     # 1) field 属性：推理 forward 期间返回本线程独立共振场（thread-local），
     #    其余路径（训练/诊断）返回默认场 _field。跨任务共振场互不污染。
     # 2) forward scratch（round_scores/_router_* 等）全部 thread-local，
@@ -632,6 +660,7 @@ class ResonanceEnsemble:
                 f.W_cond.copy_(self._field.W_cond)
             if self.gamma_oscillator is not None:
                 from neuroplex.resonance.gamma_oscillator import apply_gamma_gate
+
                 apply_gamma_gate(f, self.gamma_oscillator)
             self._local.task_field = f
         return f
@@ -734,7 +763,9 @@ class ResonanceEnsemble:
         return self._tokenizer_hub.get_tokenizer(domain)
 
     def _project_logits_to_target(
-        self, final_logits: Dict[str, torch.Tensor], active_ids: List[str],
+        self,
+        final_logits: Dict[str, torch.Tensor],
+        active_ids: List[str],
         target_domain: str,
     ) -> torch.Tensor:
         """缺口 M: 把各 neuron logits 用词库转译矩阵投影到 target 域空间。
@@ -753,9 +784,7 @@ class ResonanceEnsemble:
             )
         tgt_vocab = target_sp.GetPieceSize() if hasattr(target_sp, "GetPieceSize") else 0
         if tgt_vocab <= 0:
-            raise RuntimeError(
-                f"[forward_train] target tokenizer '{target_domain}' 无有效 vocab。"
-            )
+            raise RuntimeError(f"[forward_train] target tokenizer '{target_domain}' 无有效 vocab。")
 
         projected = []
         for nid in active_ids:
@@ -770,8 +799,10 @@ class ResonanceEnsemble:
                     f"无法投影到 target domain '{target_domain}'。"
                 )
             matrix = build_logits_alignment_matrix(
-                src_sp, target_sp,
-                source_domain=nid, target_domain=target_domain,
+                src_sp,
+                target_sp,
+                source_domain=nid,
+                target_domain=target_domain,
                 cache=self._logits_alignment_cache,
                 overrides=self._alignment_rules,
                 source_vocab_size=logits.shape[-1],
@@ -805,7 +836,8 @@ class ResonanceEnsemble:
             return None
         try:
             return self.gamma_oscillator.pairwise_binding(
-                list(active_ids), coactivation=self.coaction,
+                list(active_ids),
+                coactivation=self.coaction,
             )
         except Exception:
             return None
@@ -867,6 +899,7 @@ class ResonanceEnsemble:
     def _init_geometry(self) -> None:
         """初始化 NeuronGeometry：按域分组分配坐标，注册到 coaction。"""
         from collections import defaultdict
+
         domain_to_nids = defaultdict(list)
         for nid in self.neurons:
             # 从 nid 提取 domain（格式: "domain" 或 "domain_N"）
@@ -904,8 +937,7 @@ class ResonanceEnsemble:
             for pre_id in active_ids:
                 if post_id == pre_id:
                     continue
-                if (pre_id in post_neuron.excite_channels or
-                        pre_id in post_neuron.inhibit_channels):
+                if pre_id in post_neuron.excite_channels or pre_id in post_neuron.inhibit_channels:
                     pre_vec = round_vecs[pre_id]  # [B, D]
                     if router_mask is not None:
                         pre_mask = router_mask[:, router_active_ids.index(pre_id)]  # [B]
@@ -942,7 +974,9 @@ class ResonanceEnsemble:
                     # EMA 更新
                     if key in self._channel_usage:
                         alpha = self._channel_usage_ema_alpha
-                        self._channel_usage[key] = alpha * self._channel_usage[key] + (1 - alpha) * usage
+                        self._channel_usage[key] = (
+                            alpha * self._channel_usage[key] + (1 - alpha) * usage
+                        )
                     else:
                         self._channel_usage[key] = usage
 
@@ -988,7 +1022,9 @@ class ResonanceEnsemble:
                     # 限制 bias 范围 [-1.0, 2.0]
                     bias_buf.clamp_(-1.0, 2.0)
 
-    def add_neuron(self, nid: str, neuron: ResonanceNeuron, from_split: Optional[str] = None) -> None:
+    def add_neuron(
+        self, nid: str, neuron: ResonanceNeuron, from_split: Optional[str] = None
+    ) -> None:
         """运行时添加新神经元到 ensemble（neurogenesis 入口）。
 
         混合规格热插拔：field_dim 允许不同（跨规格投影层在下方自动补建），
@@ -1028,13 +1064,15 @@ class ResonanceEnsemble:
         # 必须补建跨规格投影层，否则推理 _project_vec 用 identity 导致维度错配崩溃
         if neuron.config.field_dim != self.field.dim:
             self._cross_spec_projectors[nid] = CrossSpecProjector(
-                neuron.config.field_dim, self.field.dim)
+                neuron.config.field_dim, self.field.dim
+            )
             self._cross_spec_back_projectors[nid] = CrossSpecProjector(
-                self.field.dim, neuron.config.field_dim)
+                self.field.dim, neuron.config.field_dim
+            )
 
         # RSGN 融合: 新 neuron 加入几何空间
         # splitting 模式下靠近父 neuron，新建模式下靠近同域中心
-        if hasattr(self, 'geometry') and self.geometry is not None:
+        if hasattr(self, "geometry") and self.geometry is not None:
             if from_split is not None and from_split in self.geometry.positions:
                 # 分裂模式：子 neuron 在父 neuron 附近（小偏移）
                 parent_pos = self.geometry.positions[from_split]
@@ -1044,14 +1082,15 @@ class ResonanceEnsemble:
                 # 新建模式：在同域中心附近随机放置
                 domain = nid.split("_")[0] if "_" in nid else nid
                 domain_nids = [
-                    dn for dn in self.geometry.positions
+                    dn
+                    for dn in self.geometry.positions
                     if (dn.split("_")[0] if "_" in dn else dn) == domain
                 ]
                 if domain_nids:
                     # 取同域 neuron 中心
-                    center = torch.stack([
-                        self.geometry.positions[dn] for dn in domain_nids
-                    ]).mean(dim=0)
+                    center = torch.stack([self.geometry.positions[dn] for dn in domain_nids]).mean(
+                        dim=0
+                    )
                     offset = torch.randn_like(center) * 0.05
                     self.geometry.assign_position(nid, center + offset)
                 else:
@@ -1116,8 +1155,11 @@ class ResonanceEnsemble:
         nmap = nmap if nmap is not None else self.neurons
 
         # 确定参考 tensor（device 信息来源）
-        ref_tensor = (neuron_embeddings[next(iter(neuron_embeddings))]
-                      if neuron_embeddings else shared_embeddings)
+        ref_tensor = (
+            neuron_embeddings[next(iter(neuron_embeddings))]
+            if neuron_embeddings
+            else shared_embeddings
+        )
 
         def _get_emb(nid: str) -> torch.Tensor:
             """获取 neuron 的输入 embedding，优先级：neuron_embeddings > shared_embeddings."""
@@ -1203,7 +1245,14 @@ class ResonanceEnsemble:
                 if need_logits:
                     round_logits[nid] = result["logits"]
 
-        return round_vecs, round_logits, round_confidences, round_score_vecs, round_quality_logits, round_judge_logits
+        return (
+            round_vecs,
+            round_logits,
+            round_confidences,
+            round_score_vecs,
+            round_quality_logits,
+            round_judge_logits,
+        )
 
     def forward(
         self,
@@ -1302,8 +1351,9 @@ class ResonanceEnsemble:
         # 验证中发现：active_ids 为 set 时 all_logits.keys() 每次运行顺序不同）。
         if active_nids is not None:
             seen: set = set()
-            active_ids = [nid for nid in active_nids
-                          if nid in nmap and not (nid in seen or seen.add(nid))]
+            active_ids = [
+                nid for nid in active_nids if nid in nmap and not (nid in seen or seen.add(nid))
+            ]
             if not active_ids:
                 # fallback: 全部 neuron
                 active_ids = list(neuron_ids)
@@ -1311,8 +1361,11 @@ class ResonanceEnsemble:
             active_ids = list(neuron_ids)
 
         # Shared Expert: general 神经元始终激活（不受路由/精简模式影响）
-        if self.shared_expert_id and self.shared_expert_id in nmap \
-                and self.shared_expert_id not in active_ids:
+        if (
+            self.shared_expert_id
+            and self.shared_expert_id in nmap
+            and self.shared_expert_id not in active_ids
+        ):
             active_ids.append(self.shared_expert_id)
 
         vectors: Dict[str, torch.Tensor] = {}
@@ -1350,7 +1403,14 @@ class ResonanceEnsemble:
         def round1_logits_filter(nid):
             return round1_return_logits
 
-        round_vecs, round_logits, round_confidences, round_score_vecs_r1, round_quality_logits_r1, round_judge_logits_r1 = self._parallel_forward(
+        (
+            round_vecs,
+            round_logits,
+            round_confidences,
+            round_score_vecs_r1,
+            round_quality_logits_r1,
+            round_judge_logits_r1,
+        ) = self._parallel_forward(
             active_ids,
             shared_embeddings,
             field_state=None,
@@ -1365,8 +1425,9 @@ class ResonanceEnsemble:
 
         # Write round 1 to field
         # P1-2: 从 NeuromodulatorState 读取 field_write_scale（去甲肾上腺素驱动）
-        write_scale = (self.neuromodulator.get_field_write_scale()
-                       if self.neuromodulator is not None else 1.0)
+        write_scale = (
+            self.neuromodulator.get_field_write_scale() if self.neuromodulator is not None else 1.0
+        )
         # C23-B（2026-08-08）：相位绑定写入——同相群体写入增强（场状态由相位同步塑造）
         binding_map = self._phase_binding_map(active_ids)
         binding_bs = self._phase_binding_scale()
@@ -1374,8 +1435,9 @@ class ResonanceEnsemble:
             # P0#3: 抑制性神经元走 write_inhibit（乘法衰减），兴奋性走 write（累加）
             neuron = nmap[nid]
             # MaturityTracker: 幼稚态低共振权重（0.1），成熟态 1.0
-            maturity_w = (self.maturity.get_resonance_weight(nid)
-                          if self.maturity is not None else 1.0)
+            maturity_w = (
+                self.maturity.get_resonance_weight(nid) if self.maturity is not None else 1.0
+            )
             # Cross-spec projection: 将不同 field_dim 的向量投影到 field.dim
             vec = self._project_vec(nid, round_vecs[nid])
             # C1: 亚型写入增益（PV+ 强写入, SOM+ 弱写入等）
@@ -1398,9 +1460,7 @@ class ResonanceEnsemble:
             # ≈ 0，STDP 相似度阈值 0.3 永不满足 → 睡眠期强化从未生效（空转）。
             # 投影后各 neuron 在同一场空间中比较"写入主张"方向，STDP 才可触发。
             if self.stdp_tracker is not None:
-                self.stdp_tracker.record_firing(
-                    nid, 1, self._project_vec(nid, round_vecs[nid])
-                )
+                self.stdp_tracker.record_firing(nid, 1, self._project_vec(nid, round_vecs[nid]))
             # P1-Coactivation: 记录共激活（同轮 forward 的 neuron 互为共激活）
             if self.coaction is not None:
                 self.coaction.update(active_ids, round_num=1)
@@ -1410,8 +1470,8 @@ class ResonanceEnsemble:
         # 与 WTA 互补：lateral norm 约束 excitatory 幅度，WTA 选 inhibitory 方向。
         try:
             self.field.lateral_inhibition_norm()
-        except Exception:
-            pass  # 非关键，失败不影响推理
+        except Exception as e:
+            logger.debug("【ResonanceEnsemble.forward】处理失败（非致命）: %s", e)
 
         # Deviance detection 融合：inhibitory neuron 竞争性抑制（WTA）
         # 多个 inhibitory neuron 写入后，只保留 top-1 最强抑制方向，
@@ -1420,8 +1480,8 @@ class ResonanceEnsemble:
         if n_inhibitory >= 2:
             try:
                 self.field.apply_inhibitory_wta(top_k=1)
-            except Exception:
-                pass  # WTA 失败非关键，保持原有累积抑制
+            except Exception as e:
+                logger.debug("【ResonanceEnsemble.forward】处理失败（非致命）: %s", e)
 
         # P0-2 fix: 不应期错峰 — 不再全部 enter_refractory（否则 round 2+ 全部 refractory 无人写入）
         # 改为：只让 round 1 分数排名前 top_K 的 neuron 进入不应期
@@ -1434,8 +1494,11 @@ class ResonanceEnsemble:
         # 按 score 降序排序，只让 top-K 进入不应期（K = min(half, logits_top_k)）
         # P1-2: refractory_multiplier 由 NeuromodulatorState 提供（血清素驱动）
         # C1: 再乘以亚型不应期乘数（PV+ 短不应期, SOM+ 长不应期等）
-        neuromod_mult = (self.neuromodulator.get_refractory_multiplier()
-                         if self.neuromodulator is not None else 1.0)
+        neuromod_mult = (
+            self.neuromodulator.get_refractory_multiplier()
+            if self.neuromodulator is not None
+            else 1.0
+        )
         ranked_round1 = sorted(scores.items(), key=lambda x: x[1], reverse=True)
         refractory_k = max(1, min(len(ranked_round1) // 2, self.logits_top_k))
         for nid, _ in ranked_round1[:refractory_k]:
@@ -1446,7 +1509,7 @@ class ResonanceEnsemble:
         # ── B2/B3 fix: round 1 后确定 top-K ──
         if return_logits:
             ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-            self._logits_keep_ids = {nid for nid, _ in ranked[:self.logits_top_k]}
+            self._logits_keep_ids = {nid for nid, _ in ranked[: self.logits_top_k]}
 
             if large_scale:
                 # 大规模：只为 best_nid 重新 forward 获取 logits（gating 需要）
@@ -1459,9 +1522,11 @@ class ResonanceEnsemble:
                     temp_gain=temp_gain,
                     ffn_gain=ffn_gain,
                 )
-                best_emb = (neuron_embeddings[best_nid]
-                            if neuron_embeddings is not None and best_nid in neuron_embeddings
-                            else shared_embeddings)
+                best_emb = (
+                    neuron_embeddings[best_nid]
+                    if neuron_embeddings is not None and best_nid in neuron_embeddings
+                    else shared_embeddings
+                )
                 best_result = nmap[best_nid].forward(best_emb, **best_kwargs)
                 round_logits[best_nid] = best_result["logits"]
             else:
@@ -1486,11 +1551,7 @@ class ResonanceEnsemble:
         # （每样本只被其 top-K 神经元影响 = per-sample 稀疏信号流）
         # use_sparse_router=False 时跳过（向后兼容）
         # 推理时不用 STE，直接 hard top-K（与训练 forward 的 hard 一致）
-        if (
-            self.use_sparse_router
-            and self.sparse_router is not None
-            and self.max_rounds >= 2
-        ):
+        if self.use_sparse_router and self.sparse_router is not None and self.max_rounds >= 2:
             # 构建 round_vecs_unified（投影到 unified 维度）
             round_vecs_unified_r1 = {
                 nid: self._project_vec(nid, round_vecs[nid]) for nid in active_ids
@@ -1518,7 +1579,8 @@ class ResonanceEnsemble:
         side_signals_per_neuron: Optional[Dict[str, Dict[str, torch.Tensor]]] = None
         if self.max_rounds >= 2:
             side_signals_per_neuron = self._build_side_signals(
-                active_ids, nmap, round_vecs, self._router_active_ids)
+                active_ids, nmap, round_vecs, self._router_active_ids
+            )
 
             # Auxiliary-loss-free balancing: 更新 channel 利用率统计
             self._update_channel_usage(side_signals_per_neuron, round_vecs)
@@ -1537,14 +1599,15 @@ class ResonanceEnsemble:
                     mv = mv.detach().float().flatten()
                     if mv.numel() != self.field.dim:
                         continue
-                    self.field.write(f"__memory_{i}__", mv.to(ref.device),
-                                     scale=float(mw))
+                    self.field.write(f"__memory_{i}__", mv.to(ref.device), scale=float(mw))
                 except Exception as e:
                     logger.debug("记忆写入场跳过 (%s): %s", i, e)
                     continue
 
         # ── Rounds 2+: conditioned resonance ──
-        prev_round_scores: Optional[Dict[str, float]] = self.round_scores[-1] if self.round_scores else None
+        prev_round_scores: Optional[Dict[str, float]] = (
+            self.round_scores[-1] if self.round_scores else None
+        )
         adaptive_stop_reason: Optional[str] = None
         for round_num in range(2, self.max_rounds + 1):
             # P0-2 fix: round 2+ 也基于当前 _logits_keep_ids 过滤，但每轮会重新计算
@@ -1553,7 +1616,14 @@ class ResonanceEnsemble:
                     self._logits_keep_ids is None or nid in self._logits_keep_ids
                 )
 
-            round_vecs, round_logits, round_confidences, _round_score_vecs, _round_quality_logits, _round_judge = self._parallel_forward(
+            (
+                round_vecs,
+                round_logits,
+                round_confidences,
+                _round_score_vecs,
+                _round_quality_logits,
+                _round_judge,
+            ) = self._parallel_forward(
                 active_ids,
                 shared_embeddings,
                 field_state=self.field.get_normalised_state() if field_conditioning else None,
@@ -1584,8 +1654,9 @@ class ResonanceEnsemble:
                 # P0#3: 抑制性神经元走 write_inhibit，兴奋性走 update
                 neuron = nmap[nid]
                 # MaturityTracker: 幼稚态低共振权重（0.1），成熟态 1.0
-                maturity_w = (self.maturity.get_resonance_weight(nid)
-                              if self.maturity is not None else 1.0)
+                maturity_w = (
+                    self.maturity.get_resonance_weight(nid) if self.maturity is not None else 1.0
+                )
                 vec = self._project_vec(nid, round_vecs[nid])
                 # C1: 亚型写入增益（PV+ 强写入, SOM+ 弱写入等）
                 vec = vec * neuron.write_gain
@@ -1630,9 +1701,11 @@ class ResonanceEnsemble:
                 old_contrib = self.field._contributions.get(nid)
                 if old_contrib is not None:
                     st = self.field.state
-                    oc = (old_contrib.squeeze(0)
-                          if st.dim() == 1 and old_contrib.dim() == 2
-                          else old_contrib)
+                    oc = (
+                        old_contrib.squeeze(0)
+                        if st.dim() == 1 and old_contrib.dim() == 2
+                        else old_contrib
+                    )
                     if st.shape == oc.shape:
                         # R15（REMEDIATION_PLAN 2026-08-14）：原地减法——
                         # 保持 buffer 对象身份（state_dict/设备迁移一致性）；
@@ -1645,7 +1718,9 @@ class ResonanceEnsemble:
 
             scores = {}
             for nid in active_ids:
-                scores[nid] = self.field.score(self._project_vec(nid, round_vecs[nid]), neuron_id=nid)
+                scores[nid] = self.field.score(
+                    self._project_vec(nid, round_vecs[nid]), neuron_id=nid
+                )
 
             # C23（2026-08-08）：相位同步本体化——pairwise binding 调制共振分
             # 推理路径此前只做 Kuramoto 相位演化（无消费端，纯装饰）；现在
@@ -1654,20 +1729,21 @@ class ResonanceEnsemble:
             if self.gamma_oscillator is not None:
                 try:
                     binding = self.gamma_oscillator.pairwise_binding(
-                        list(active_ids), coactivation=self.coaction,
+                        list(active_ids),
+                        coactivation=self.coaction,
                     )
                     bs = getattr(self.gamma_oscillator, "binding_scale", 0.0)
                     if binding and bs != 0.0:
                         for nid in scores:
                             scores[nid] = scores[nid] * (1.0 + bs * binding.get(nid, 0.0))
-                except Exception:
-                    pass  # 相位绑定失败不影响共振主流程
+                except Exception as e:
+                    logger.debug("【ResonanceEnsemble.forward】处理失败（非致命）: %s", e)
             self.round_scores.append(scores)
 
             # P0-2 fix: 每轮基于当前 scores 重新计算 _logits_keep_ids（原 bug：round 1 后冻结）
             if return_logits:
                 ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-                self._logits_keep_ids = {nid for nid, _ in ranked[:self.logits_top_k]}
+                self._logits_keep_ids = {nid for nid, _ in ranked[: self.logits_top_k]}
 
             # C9: 自适应停止检查（在 active_filter 之前，用完整 scores 判断）
             should_stop, reason = self._check_adaptive_stop(
@@ -1687,7 +1763,9 @@ class ResonanceEnsemble:
                 filtered = set()
                 active_list = list(active_ids)
                 for nid in active_list:
-                    other_vecs = [self._project_vec(o, round_vecs[o]) for o in active_list if o != nid]
+                    other_vecs = [
+                        self._project_vec(o, round_vecs[o]) for o in active_list if o != nid
+                    ]
                     if not other_vecs:
                         filtered.add(nid)
                         continue
@@ -1720,12 +1798,18 @@ class ResonanceEnsemble:
                     for pre_id in active_ids:
                         if post_id == pre_id:
                             continue
-                        if (pre_id in post_neuron.excite_channels or
-                                pre_id in post_neuron.inhibit_channels):
+                        if (
+                            pre_id in post_neuron.excite_channels
+                            or pre_id in post_neuron.inhibit_channels
+                        ):
                             pre_vec = round_vecs[pre_id]
                             if router_mask is not None:
-                                pre_mask = router_mask[:, self._router_active_ids.index(pre_id)]  # [B]
-                                side_signals_per_neuron[post_id][pre_id] = pre_vec * pre_mask.unsqueeze(-1)
+                                pre_mask = router_mask[
+                                    :, self._router_active_ids.index(pre_id)
+                                ]  # [B]
+                                side_signals_per_neuron[post_id][pre_id] = (
+                                    pre_vec * pre_mask.unsqueeze(-1)
+                                )
                             else:
                                 side_signals_per_neuron[post_id][pre_id] = pre_vec
 
@@ -1734,15 +1818,17 @@ class ResonanceEnsemble:
                 nmap[nid].tick_refractory()
 
             # KoPE/Kuramoto: 相位耦合 — 共激活强的 neuron 相位相互牵引
-            if self.gamma_oscillator is not None and hasattr(self.gamma_oscillator, "kuramoto_step"):
+            if self.gamma_oscillator is not None and hasattr(
+                self.gamma_oscillator, "kuramoto_step"
+            ):
                 try:
                     self.gamma_oscillator.kuramoto_step(
                         coupling_strength=0.05,
                         active_ids=active_ids,
                         coactivation=self.coaction,
                     )
-                except Exception:
-                    pass  # 相位耦合失败不影响共振主流程
+                except Exception as e:
+                    logger.debug("【ResonanceEnsemble.forward】处理失败（非致命）: %s", e)
 
             self.n_active_history.append(len(active_ids))
             vectors = round_vecs
@@ -1782,10 +1868,15 @@ class ResonanceEnsemble:
         # 聚合用 round1 快照（round1_active_ids），不用共振过滤后的 active_ids——
         # 否则共振收敛只保留最强 neuron，回合级判定退化为单 neuron 信号。
         if round_quality_logits_r1:
-            ql = torch.stack([
-                round_quality_logits_r1[nid] for nid in round1_active_ids
-                if nid in round_quality_logits_r1
-            ]).mean(dim=1)  # [N, 1]
+            ql = torch.stack(
+                [
+                    round_quality_logits_r1[nid]
+                    for nid in round1_active_ids
+                    if nid in round_quality_logits_r1
+                ]
+            ).mean(
+                dim=1
+            )  # [N, 1]
             result["quality_logits"] = ql.squeeze(-1)  # [N]（与 round1 顺序一致）
         else:
             result["quality_logits"] = None
@@ -1839,7 +1930,11 @@ class ResonanceEnsemble:
                 self._division_logit_fusion(all_logits, result, ref, normalize=True)
             elif same_vocab:
                 self._compute_per_position_weights(
-                    all_logits, vectors, scores, result, ref,
+                    all_logits,
+                    vectors,
+                    scores,
+                    result,
+                    ref,
                 )
             else:
                 # 跨 vocab（混合阵容）收敛（2026-08-07）：与训练口径一致——
@@ -1856,16 +1951,24 @@ class ResonanceEnsemble:
                         native_list = [all_logits[nid] for nid in nids]
                         scores_t = torch.tensor(
                             [scores.get(nid, 0.0) for nid in nids],
-                            dtype=ref.dtype, device=ref.device,
+                            dtype=ref.dtype,
+                            device=ref.device,
                         )
                         # C15: 推理也优先用预测质量 logit（round 1 独立前向，无场耦合）
                         quality_t = None
                         if round_quality_logits_r1:
-                            dl = [round_quality_logits_r1[nid] for nid in nids if nid in round_quality_logits_r1]
+                            dl = [
+                                round_quality_logits_r1[nid]
+                                for nid in nids
+                                if nid in round_quality_logits_r1
+                            ]
                             if len(dl) == len(nids):
                                 quality_t = torch.stack(dl).mean(dim=1).squeeze(-1)  # [N]
                         fused, rw = self._confidence_routing_fusion(
-                            proj, native_list, nids, "general",
+                            proj,
+                            native_list,
+                            nids,
+                            "general",
                             scores=scores_t,
                             quality_logits=quality_t,
                         )
@@ -1907,8 +2010,10 @@ class ResonanceEnsemble:
                     domain_scores = [s for nid, s in scores.items() if nid != self.shared_expert_id]
                     max_domain_score = max(domain_scores) if domain_scores else 0.0
                     max_score_tensor = torch.full(
-                        (B, 1), float(max_domain_score),
-                        device=field_state.device, dtype=field_state.dtype,
+                        (B, 1),
+                        float(max_domain_score),
+                        device=field_state.device,
+                        dtype=field_state.dtype,
                     )
                     # 联合输入 [B, 1+D] → MLP → sigmoid → [B,1]
                     mlp_input = torch.cat([max_score_tensor, field_state], dim=-1)
@@ -1922,7 +2027,9 @@ class ResonanceEnsemble:
                     sw_broadcast = sw
                     sw_scalar = sw
 
-                result["weighted_logits"] = sw_broadcast * shared_logits + (1.0 - sw_broadcast) * original_fused
+                result["weighted_logits"] = (
+                    sw_broadcast * shared_logits + (1.0 - sw_broadcast) * original_fused
+                )
                 # 更新 final_weights 反映 Shared Expert 的权重
                 if "final_weights" in result:
                     weights = result["final_weights"]
@@ -1943,7 +2050,9 @@ class ResonanceEnsemble:
     # 下游路由（C27 增量一后验）消费——记忆/路由读到的状态携带相位语义。
 
     def _encode_phase_code(
-        self, ids: List[str], weights: Dict[str, float],
+        self,
+        ids: List[str],
+        weights: Dict[str, float],
     ) -> tuple:
         """场向量相位编码：每 neuron 相位向量 × 激活权重 → 显式相位表征。
 
@@ -1966,31 +2075,32 @@ class ResonanceEnsemble:
             ph = go.phasors[idxs].detach()  # [N,2] cos/sin
             w = torch.tensor(
                 [weights.get(nid, 0.0) for nid in ids if nid in go._id_to_idx],
-                dtype=ph.dtype, device=ph.device,
+                dtype=ph.dtype,
+                device=ph.device,
             )
-            ws = w / w.sum().clamp_min(1e-8)   # 归一化激活权重
-            weighted = ph * ws.unsqueeze(-1)    # [N,2]
-            code = weighted.flatten()           # [2N]
-            z = weighted.sum(dim=0)             # (Σw·cosθ, Σw·sinθ)
+            ws = w / w.sum().clamp_min(1e-8)  # 归一化激活权重
+            weighted = ph * ws.unsqueeze(-1)  # [N,2]
+            code = weighted.flatten()  # [2N]
+            z = weighted.sum(dim=0)  # (Σw·cosθ, Σw·sinθ)
             lock = float(z.norm().item())
-            mean = (math.atan2(float(z[1].item()), float(z[0].item()))
-                    if lock > 1e-8 else 0.0)
+            mean = math.atan2(float(z[1].item()), float(z[0].item())) if lock > 1e-8 else 0.0
             # C27 增量三（BioOSS）：o 型振荡节点作为节奏中心加入编码——
             # 全量 phase_code 追加振荡段 [2M]，相位均值/锁相度按 1:1 融合
             # 振荡器节奏中心（o 型主导"何时激活"，p 型主导"激活什么"）。
             if self.oscillators:
-                osc_ph = torch.stack([
-                    torch.as_tensor(
-                        [math.cos(o.phase), math.sin(o.phase)],
-                        dtype=ph.dtype, device=ph.device)
-                    for o in self.oscillators
-                ])  # [M,2]
+                osc_ph = torch.stack(
+                    [
+                        torch.as_tensor(
+                            [math.cos(o.phase), math.sin(o.phase)], dtype=ph.dtype, device=ph.device
+                        )
+                        for o in self.oscillators
+                    ]
+                )  # [M,2]
                 code = torch.cat([code, osc_ph.flatten()])  # [2N+2M]
                 z_osc = osc_ph.mean(dim=0)  # 节奏中心（M 个振荡器均值）
                 z = 0.5 * z + 0.5 * z_osc
                 lock = float(z.norm().item())
-                mean = (math.atan2(float(z[1].item()), float(z[0].item()))
-                        if lock > 1e-8 else 0.0)
+                mean = math.atan2(float(z[1].item()), float(z[0].item())) if lock > 1e-8 else 0.0
             return code, mean, lock
         except Exception:
             return None, 0.0, 0.0
@@ -2047,8 +2157,7 @@ class ResonanceEnsemble:
         ids = [nid for nid in active_nids if nid in nmap]
         if not ids:
             return {"field_state": None, "n_steps": 0, "continuous_weights": {}}
-        ref = (next(iter(neuron_embeddings.values()))
-               if neuron_embeddings else shared_embeddings)
+        ref = next(iter(neuron_embeddings.values())) if neuron_embeddings else shared_embeddings
 
         self._get_task_field().reset(batch_size=ref.shape[0])
         field = self.field
@@ -2070,17 +2179,23 @@ class ResonanceEnsemble:
 
         # ── t=0：独立前向（无场），采集判定信号 + 写场（同 round1 语义）──
         vecs0, logits0, conf0, _sv, ql0, judge0 = self._parallel_forward(
-            ids, shared_embeddings, field_state=None, round_num=1,
+            ids,
+            shared_embeddings,
+            field_state=None,
+            round_num=1,
             return_logits_filter=lambda nid: return_logits,
             neuron_embeddings=neuron_embeddings,
-            nmap=nmap, want_judge=return_judge_logits,
+            nmap=nmap,
+            want_judge=return_judge_logits,
         )
-        write_scale = (self.neuromodulator.get_field_write_scale()
-                       if self.neuromodulator is not None else 1.0)
+        write_scale = (
+            self.neuromodulator.get_field_write_scale() if self.neuromodulator is not None else 1.0
+        )
         for nid in ids:
             neuron = nmap[nid]
-            maturity_w = (self.maturity.get_resonance_weight(nid)
-                          if self.maturity is not None else 1.0)
+            maturity_w = (
+                self.maturity.get_resonance_weight(nid) if self.maturity is not None else 1.0
+            )
             vec = self._project_vec(nid, vecs0[nid]) * neuron.write_gain
             if neuron.is_inhibitory:
                 field.write_inhibit(nid, vec, weight=maturity_w)
@@ -2091,9 +2206,7 @@ class ResonanceEnsemble:
             # 永不触发 STDP，2026-08-14 验收实测后统一）
             if self.stdp_tracker is not None:
                 try:
-                    self.stdp_tracker.record_firing(
-                        nid, 1, self._project_vec(nid, vecs0[nid])
-                    )
+                    self.stdp_tracker.record_firing(nid, 1, self._project_vec(nid, vecs0[nid]))
                 except Exception as e:
                     logger.debug("STDP record_firing 失败 (%s): %s", nid, e)
         try:
@@ -2135,8 +2248,7 @@ class ResonanceEnsemble:
                     mv = mv.detach().float().flatten()
                     if mv.numel() != field.dim:
                         continue
-                    field.write(f"__memory_{i}__", mv.to(ref.device),
-                                scale=float(mw))
+                    field.write(f"__memory_{i}__", mv.to(ref.device), scale=float(mw))
                 except Exception as e:
                     logger.debug("记忆写入场跳过 (%s): %s", i, e)
                     continue
@@ -2144,8 +2256,9 @@ class ResonanceEnsemble:
             # theta 注意窗（theta 相位对齐峰值，gamma 绑定增强）。
             # C27 增量二（KoPE）：按记忆相位对齐（默认 0 = 峰值，零回归）。
             try:
-                ct.entrain_memory(target_phase=(
-                    _entrain_target if _entrain_target is not None else 0.0))
+                ct.entrain_memory(
+                    target_phase=(_entrain_target if _entrain_target is not None else 0.0)
+                )
             except Exception as e:
                 logger.warning("entrain_memory 失败（非致命）: %s", e)
         # 连续路径的判定信号（t=0 快照，与离散 round1 等价）
@@ -2157,8 +2270,7 @@ class ResonanceEnsemble:
         # （记忆注入时 theta 已 entrain 到峰值 → gamma 绑定增强；无记忆时
         # theta_omega=0 → 包络恒 1，零回归）。
         if self.gamma_oscillator is not None:
-            b0 = self.gamma_oscillator.binding_tensor(
-                ids, coactivation=self.coaction)
+            b0 = self.gamma_oscillator.binding_tensor(ids, coactivation=self.coaction)
             activ0 = ct.theta_modulate(ct.activation(b0), 0)
         else:
             activ0 = torch.ones(len(ids), device=ref.device)
@@ -2172,7 +2284,9 @@ class ResonanceEnsemble:
         for t in range(1, ct.steps + 1):
             n_steps = t
             # 1) 相位连续演化（状态推进）+ C27 增量三（BioOSS）o 型牵引
-            if self.gamma_oscillator is not None and hasattr(self.gamma_oscillator, "kuramoto_step"):
+            if self.gamma_oscillator is not None and hasattr(
+                self.gamma_oscillator, "kuramoto_step"
+            ):
                 try:
                     # 推进振荡节点（theta/gamma 双层节奏源）→ p 型牵引输入
                     osc_phs, osc_ws = [], []
@@ -2181,8 +2295,10 @@ class ResonanceEnsemble:
                         osc_phs.append(osc.unit(device=ref.device, dtype=ref.dtype))
                         osc_ws.append(osc.coupling)
                     self.gamma_oscillator.kuramoto_step(
-                        coupling_strength=0.05, active_ids=ids,
-                        coactivation=self.coaction, dt=ct.dt,
+                        coupling_strength=0.05,
+                        active_ids=ids,
+                        coactivation=self.coaction,
+                        dt=ct.dt,
                         external_phases=osc_phs or None,
                         external_weights=osc_ws or None,
                     )
@@ -2198,31 +2314,55 @@ class ResonanceEnsemble:
                 activ = torch.ones(len(ids), device=ref.device)
             binding_history.append(b_t.detach())
             # 3) 软过滤（低激活退场；保留至少 1 个）
-            active_this = [ids[i] for i, a in enumerate(activ) if a > ct.min_activ]
+            # 性能修复（2026-08-23 审计）：逐元素比较/索引会逐次 GPU 同步，
+            # 每积分步每 neuron 一次 .item() 完全串行化 CUDA pipeline。
+            # 一次性 tolist 后在 Python 侧过滤/索引，数值完全一致。
+            activ_vals = activ.tolist()
+            id_to_idx = {nid: idx for idx, nid in enumerate(ids)}
+            active_this = [nid for nid, a in zip(ids, activ_vals) if a > ct.min_activ]
             if not active_this:
-                active_this = [ids[int(activ.argmax())]]
+                active_this = [ids[activ_vals.index(max(activ_vals))]]
             # 4) 场条件化 forward
             round_vecs, round_logits, round_confs, _sv2, _ql2, _j2 = self._parallel_forward(
-                active_this, shared_embeddings,
+                active_this,
+                shared_embeddings,
                 field_state=field.get_normalised_state(),
                 round_num=t + 1,
                 return_logits_filter=lambda nid: logits_filter(nid, keep_ids),
-                neuron_embeddings=neuron_embeddings, nmap=nmap,
+                neuron_embeddings=neuron_embeddings,
+                nmap=nmap,
             )
             if round_logits:
                 all_logits.update(round_logits)
             # 5) 场积分（时间步进；scale = dt·a_i·conf_i）
+            # 性能修复（2026-08-23 审计）：兴奋性 neuron 的 conf 均值一次性
+            # stack+tolist（单次同步），替代逐 neuron .mean().item()；
+            # ids.index(nid) O(n) 查找换 id_to_idx O(1) 字典。
+            _exc_nids = [nid for nid in active_this if not nmap[nid].is_inhibitory]
+            _conf_mean_map = (
+                dict(
+                    zip(
+                        _exc_nids,
+                        torch.stack([round_confs[nid].mean() for nid in _exc_nids]).tolist(),
+                    )
+                )
+                if _exc_nids
+                else {}
+            )
             for nid in active_this:
-                i = ids.index(nid)
+                i = id_to_idx[nid]
                 neuron = nmap[nid]
-                maturity_w = (self.maturity.get_resonance_weight(nid)
-                              if self.maturity is not None else 1.0)
+                maturity_w = (
+                    self.maturity.get_resonance_weight(nid) if self.maturity is not None else 1.0
+                )
                 vec = self._project_vec(nid, round_vecs[nid]) * neuron.write_gain
-                a_i = float(activ[i].item())
+                a_i = activ_vals[i]
                 if neuron.is_inhibitory:
                     field.write_inhibit(nid, vec, weight=maturity_w * a_i)
                 else:
-                    field.write(nid, vec, scale=ct.dt * write_scale * maturity_w * a_i * float(round_confs[nid].mean().item()))
+                    field.write(
+                        nid, vec, scale=ct.dt * write_scale * maturity_w * a_i * _conf_mean_map[nid]
+                    )
                 # R11: STDP 记录积分步发放（round_num=t+1，与离散 round2+ 同语义；
                 # 口径同前：投影到场空间的向量，2026-08-14 验收实测后统一）
                 if self.stdp_tracker is not None:
@@ -2256,8 +2396,8 @@ class ResonanceEnsemble:
                     _gw = float(osc.gaba_amp.item()) * osc.gaba_gate()
                     if _gw > 1e-6:
                         field.write_inhibit(
-                            f"__osc_{osc.nid}__", osc.gaba_vec.to(ref.device),
-                            weight=min(_gw, 1.0))
+                            f"__osc_{osc.nid}__", osc.gaba_vec.to(ref.device), weight=min(_gw, 1.0)
+                        )
                 except Exception as e:
                     logger.debug("GABA 节奏门控跳过 (%s): %s", osc.nid, e)
                     continue
@@ -2276,10 +2416,10 @@ class ResonanceEnsemble:
         pc, pm, pl = self._encode_phase_code(ids, final_scores)
         result: Dict = {
             "field_state": field.get_state(),
-            "final_scores": final_scores,          # 连续路径：时间平均激活即"共振分"
-            "round1_scores": round1_scores,        # C25-E 增量四：t=0 场共振分（质量信号）
+            "final_scores": final_scores,  # 连续路径：时间平均激活即"共振分"
+            "round1_scores": round1_scores,  # C25-E 增量四：t=0 场共振分（质量信号）
             "n_steps": n_steps,
-            "n_rounds": n_steps + 1,               # 兼容字段（t=0 + 积分步）
+            "n_rounds": n_steps + 1,  # 兼容字段（t=0 + 积分步）
             "continuous_weights": {nid: float(w.detach().item()) for nid, w in zip(ids, weights)},
             "phase_locked": stopped,
             "stop_reason": stop_reason,
@@ -2303,9 +2443,9 @@ class ResonanceEnsemble:
             same_vocab = len(set(vocab_sizes)) == 1
             w_t = weights.detach() / weights.detach().sum().clamp_min(1e-8)  # 归一化时间平均权重
             if same_vocab and len(all_logits) >= 2:
-                stacked = torch.stack([all_logits[nid] * w_t[i]
-                                       for i, nid in enumerate(ids)
-                                       if nid in all_logits])
+                stacked = torch.stack(
+                    [all_logits[nid] * w_t[i] for i, nid in enumerate(ids) if nid in all_logits]
+                )
                 result["weighted_logits"] = stacked.sum(dim=0)
             elif same_vocab:
                 nid0 = next(iter(all_logits))
@@ -2316,7 +2456,7 @@ class ResonanceEnsemble:
                 try:
                     if self._tokenizer_hub is not None and len(nids) >= 2:
                         proj = self._project_logits_to_target(all_logits, nids, "general")
-                        native_list = [all_logits[nid] for nid in nids]
+                        [all_logits[nid] for nid in nids]
                         scores_t = torch.tensor(
                             [final_scores.get(nid, 0.0) for nid in nids],
                             device=ref.device,
@@ -2431,9 +2571,7 @@ class ResonanceEnsemble:
             - individual_logits: {nid: [B, L, V]}（仅 return_individual_logits=True）
         """
         if shared_embeddings is None and neuron_embeddings is None:
-            raise ValueError(
-                "[forward_train] 必须提供 shared_embeddings 或 neuron_embeddings"
-            )
+            raise ValueError("[forward_train] 必须提供 shared_embeddings 或 neuron_embeddings")
 
         # 快照隔离（训练与推理并发时，增删不影响正在进行的训练步）
         nmap = dict(self.neurons)
@@ -2460,12 +2598,11 @@ class ResonanceEnsemble:
             except Exception:
                 write_scale = 1.0
         # C1: 调质不应期乘数（用于 round 2+ enter_refractory）
-        neuromod_mult = 1.0
         if neuromodulator is not None:
             try:
-                neuromod_mult = float(neuromodulator.get_refractory_multiplier())
+                float(neuromodulator.get_refractory_multiplier())
             except Exception:
-                neuromod_mult = 1.0
+                pass
 
         # S9: 神经调质门控 Transformer 内部计算（注入 attention/FFN，进入梯度流）
         # - temp_gain: norepinephrine → 注意力温度（高 NE → 聚焦，低 NE → 泛化）
@@ -2506,11 +2643,15 @@ class ResonanceEnsemble:
         #     excite/inhibit_channels 在建立时按 pre neuron.field_dim 注册）
         #   - round_vecs_unified: 投影到 unified 维度（用于维护 field_state）
         field_state: Optional[torch.Tensor] = None  # round 1 时为 None
-        round_vecs_raw: Dict[str, torch.Tensor] = {}      # 原始 field_dim 维度
+        round_vecs_raw: Dict[str, torch.Tensor] = {}  # 原始 field_dim 维度
         round_vecs_unified: Dict[str, torch.Tensor] = {}  # unified 维度
-        final_logits: Dict[str, torch.Tensor] = {}        # 最后一轮每个 neuron 的 logits
-        final_judge_logits: Dict[str, torch.Tensor] = {}  # C24 双头：最后一轮 general 256K 判定 logits
-        round_quality_logits_all: Dict[str, torch.Tensor] = {}  # C15: round 1 预测质量 logit（全程保留）
+        final_logits: Dict[str, torch.Tensor] = {}  # 最后一轮每个 neuron 的 logits
+        final_judge_logits: Dict[str, torch.Tensor] = (
+            {}
+        )  # C24 双头：最后一轮 general 256K 判定 logits
+        round_quality_logits_all: Dict[str, torch.Tensor] = (
+            {}
+        )  # C15: round 1 预测质量 logit（全程保留）
         round_quality_token_logits_all: Dict[str, torch.Tensor] = {}  # 临时逐位置路由 logit
         # C25-E 连续化：时间平均激活融合权重（连续模式下替代 softmax(scores/temp)）
         continuous_weights: Optional[torch.Tensor] = None
@@ -2530,7 +2671,8 @@ class ResonanceEnsemble:
                 # t=0 激活（round 1 结束时相位已演化过一次）
                 if gamma_oscillator is not None:
                     b0 = gamma_oscillator.binding_tensor(
-                        list(active_ids), coactivation=self.coaction)
+                        list(active_ids), coactivation=self.coaction
+                    )
                     a0 = ct.activation(b0)
                 else:
                     b0 = torch.zeros(len(active_ids), device=ref_dev)
@@ -2547,37 +2689,43 @@ class ResonanceEnsemble:
                             # ω/coupling 梯度经 牵引→new_p→bvec→phase_loss 打通。
                             osc_phs, osc_ws = [], []
                             for _osc in self.oscillators:
-                                osc_phs.append(
-                                    _osc.phase_unit_tensor(t * ct.dt, device=ref_dev))
+                                osc_phs.append(_osc.phase_unit_tensor(t * ct.dt, device=ref_dev))
                                 osc_ws.append(_osc.coupling)
                             if getattr(gamma_oscillator, "differentiable", False):
                                 self._last_evolved_phasors = gamma_oscillator.evolve(
-                                    list(active_ids), coactivation=self.coaction,
+                                    list(active_ids),
+                                    coactivation=self.coaction,
                                     external_phases=osc_phs or None,
-                                    external_weights=osc_ws or None)
+                                    external_weights=osc_ws or None,
+                                )
                                 gamma_oscillator.kuramoto_step(
                                     active_ids=list(active_ids),
-                                    coactivation=self.coaction, dt=ct.dt)
+                                    coactivation=self.coaction,
+                                    dt=ct.dt,
+                                )
                             elif hasattr(gamma_oscillator, "kuramoto_step"):
                                 gamma_oscillator.kuramoto_step(
-                                    coupling_strength=0.05, active_ids=list(active_ids),
-                                    coactivation=self.coaction, dt=ct.dt,
+                                    coupling_strength=0.05,
+                                    active_ids=list(active_ids),
+                                    coactivation=self.coaction,
+                                    dt=ct.dt,
                                     external_phases=osc_phs or None,
-                                    external_weights=osc_ws or None)
+                                    external_weights=osc_ws or None,
+                                )
                         except Exception as e:
                             logger.warning("Kuramoto 演化失败（非致命）: %s", e)
                     # 2) 激活强度（相位绑定驱动，连续替代不应期硬门）
                     if gamma_oscillator is not None:
                         b_t = gamma_oscillator.binding_tensor(
-                            list(active_ids), coactivation=self.coaction)
+                            list(active_ids), coactivation=self.coaction
+                        )
                         activ = ct.activation(b_t)
                     else:
                         b_t = torch.zeros(len(active_ids), device=ref_dev)
                         activ = torch.ones(len(active_ids), device=ref_dev)
                     bhist.append(b_t.detach())
                     # 3) 软过滤（低激活退场；保留至少 1 个）
-                    active_this = [active_ids[i] for i, a in enumerate(activ)
-                                   if a > ct.min_activ]
+                    active_this = [active_ids[i] for i, a in enumerate(activ) if a > ct.min_activ]
                     if not active_this:
                         active_this = [active_ids[int(activ.argmax())]]
                     # 4) 场条件化 forward（只 forward 激活的 neuron）
@@ -2589,8 +2737,10 @@ class ResonanceEnsemble:
                             for pre_id in active_this:
                                 if post_id == pre_id:
                                     continue
-                                if (pre_id in post_neuron.excite_channels or
-                                        pre_id in post_neuron.inhibit_channels):
+                                if (
+                                    pre_id in post_neuron.excite_channels
+                                    or pre_id in post_neuron.inhibit_channels
+                                ):
                                     side_signals_ct[post_id][pre_id] = round_vecs_raw[pre_id]
                     t_vecs_raw: Dict[str, torch.Tensor] = {}
                     t_vecs_uni: Dict[str, torch.Tensor] = {}
@@ -2615,20 +2765,22 @@ class ResonanceEnsemble:
                         vu = self._project_vec(nid, vr)
                         t_vecs_uni[nid] = vu
                         t_conf[nid] = r.get(
-                            "field_confidence",
-                            torch.ones(vr.shape[0], device=vr.device))
+                            "field_confidence", torch.ones(vr.shape[0], device=vr.device)
+                        )
                     # 5) 场积分 F(t+dt) = F(t) + dt·Σ a_i·project(v_i)·conf_i
                     #    （可微；激活直接驱动场演化——C25-E 核心）
                     if t_vecs_uni:
                         normed = F.normalize(
-                            torch.stack([t_vecs_uni[nid] for nid in active_this]),
-                            dim=-1)
+                            torch.stack([t_vecs_uni[nid] for nid in active_this]), dim=-1
+                        )
                         confs = torch.stack([t_conf[nid] for nid in active_this])
-                        act_sel = torch.stack([
-                            activ[active_ids.index(nid)] for nid in active_this])
-                        contrib = (normed * confs.unsqueeze(-1)
-                                   * act_sel.unsqueeze(-1).unsqueeze(-1)).sum(dim=0)
-                        fs_cur = field_state if field_state is not None else torch.zeros_like(contrib)
+                        act_sel = torch.stack([activ[active_ids.index(nid)] for nid in active_this])
+                        contrib = (
+                            normed * confs.unsqueeze(-1) * act_sel.unsqueeze(-1).unsqueeze(-1)
+                        ).sum(dim=0)
+                        fs_cur = (
+                            field_state if field_state is not None else torch.zeros_like(contrib)
+                        )
                         field_state = fs_cur + ct.dt * contrib
                         # C27 增量四（2026-08-14）：GABA 节奏门控进训练——与推理
                         # continuous_forward 的 write_inhibit 同公式（mask *= 1-w·|v_abs|）
@@ -2639,14 +2791,17 @@ class ResonanceEnsemble:
                                 _w = _osc.gaba_amp * _gate
                                 _gv = _osc.gaba_vec.detach().to(ref_dev)
                                 _gv_abs = _gv.abs()
-                                _decay = (1.0 - _w * _gv_abs / (_gv_abs.norm() + 1e-8)).clamp(0.0, 1.0)
+                                _decay = (1.0 - _w * _gv_abs / (_gv_abs.norm() + 1e-8)).clamp(
+                                    0.0, 1.0
+                                )
                                 field_state = field_state * _decay
                             except Exception as e:
                                 logger.debug("GABA 门控跳过 (%s): %s", _osc.nid, e)
                                 continue
                     # 6) 权重累积 w += dt·a（时间平均激活=参与度）
                     w = ct.weights_accum(
-                        w, activ, torch.ones(len(active_ids), device=ref_dev), ct.dt)
+                        w, activ, torch.ones(len(active_ids), device=ref_dev), ct.dt
+                    )
                     # 7) 收敛：绑定分布稳定（相位锁定；最少步数防单步假收敛）
                     if t >= ct.min_steps and ct.converged(bhist):
                         break
@@ -2665,7 +2820,8 @@ class ResonanceEnsemble:
             side_signals_per_neuron: Optional[Dict[str, Dict[str, torch.Tensor]]] = None
             if round_num > 1 and round_vecs_raw:
                 side_signals_per_neuron = self._build_side_signals(
-                    active_ids, nmap, round_vecs_raw, list(active_ids))
+                    active_ids, nmap, round_vecs_raw, list(active_ids)
+                )
 
             # 全可微前向（串行：batch 内已并行，neuron.forward 全可微）
             for nid in active_ids:
@@ -2726,9 +2882,9 @@ class ResonanceEnsemble:
                 dim=-1,
             )  # [N, B, D]
             # C8: per-sample confidence 加权（高置信度 neuron 贡献更大）
-            all_confidences = torch.stack([
-                round_confidences_new[nid] for nid in active_ids
-            ])  # [N, B]
+            all_confidences = torch.stack(
+                [round_confidences_new[nid] for nid in active_ids]
+            )  # [N, B]
             all_vecs_weighted = all_vecs_norm * all_confidences.unsqueeze(-1)  # [N, B, D]
             # §4.0d: per-sample 稀疏——只累加每样本 top-K 神经元的写入
             # 非 top-K 神经元在该样本的 round 2+ 写入被 mask 为零
@@ -2769,10 +2925,12 @@ class ResonanceEnsemble:
                         # （梯度经 new_p → dtheta → ω/K，打通 ω/K 梯度路径）；
                         # 状态推进由 kuramoto_step 内部 detach 完成
                         self._last_evolved_phasors = gamma_oscillator.evolve(
-                            list(active_ids), coactivation=self.coaction,
+                            list(active_ids),
+                            coactivation=self.coaction,
                         )
                         gamma_oscillator.kuramoto_step(
-                            active_ids=active_ids, coactivation=self.coaction,
+                            active_ids=active_ids,
+                            coactivation=self.coaction,
                         )
                     elif hasattr(gamma_oscillator, "kuramoto_step"):
                         gamma_oscillator.kuramoto_step(
@@ -2780,8 +2938,8 @@ class ResonanceEnsemble:
                             active_ids=active_ids,
                             coactivation=self.coaction,
                         )
-                except Exception:
-                    pass  # 振荡失败不影响训练主流程
+                except Exception as e:
+                    logger.debug("【ResonanceEnsemble.forward_train】处理失败（非致命）: %s", e)
 
             # ── §4.0c+d: Sparse Router 接入 ──
             # round 1 结束后，Router 选 per-sample top-K
@@ -2815,9 +2973,7 @@ class ResonanceEnsemble:
             dim=-1,
         )  # [N, B, D] 单位向量（方向）
         # C8: per-sample confidence 加权（高置信度 neuron 对场状态贡献更大）
-        all_confidences = torch.stack([
-            round_confidences_new[nid] for nid in active_ids
-        ])  # [N, B]
+        all_confidences = torch.stack([round_confidences_new[nid] for nid in active_ids])  # [N, B]
         all_vecs_weighted = all_vecs_norm * all_confidences.unsqueeze(-1)  # [N, B, D]
         # C23-B（2026-08-08）训练场调制→C23-C4 修复（2026-08-08）：
         # 训练 forward_train **不再**用 binding 调制场构造。原因（完整配方训练实测）：
@@ -2847,9 +3003,9 @@ class ResonanceEnsemble:
         # 小神经元能获得公平的共振分。
         if self.field_score_proj is not None and round_score_vecs_new:
             # neuron 评分向量 [N, B, score_dim]（已归一化）
-            all_score_vecs = torch.stack([
-                round_score_vecs_new[nid] for nid in active_ids
-            ])  # [N, B, score_dim]
+            all_score_vecs = torch.stack(
+                [round_score_vecs_new[nid] for nid in active_ids]
+            )  # [N, B, score_dim]
             # 场状态投影到评分空间 [N, B, score_dim]
             loo_score = self.field_score_proj(loo_state)  # [N, B, score_dim]
             loo_score_norm = F.normalize(loo_score, dim=-1)
@@ -2867,15 +3023,15 @@ class ResonanceEnsemble:
             # - W_cond 随训练获得梯度 → 成为可学习的场门控（对齐推理）。
             loo_norm = F.normalize(loo_state, dim=-1)
             w_cond = self._field.W_cond.to(loo_norm.device)
-            cond_gate = torch.sigmoid(loo_norm @ w_cond)      # [N, B, D]
-            cond_state = loo_norm * cond_gate                 # 同 field._condition
+            cond_gate = torch.sigmoid(loo_norm @ w_cond)  # [N, B, D]
+            cond_state = loo_norm * cond_gate  # 同 field._condition
             # R1 修复（2026-08-14 冒烟实测）：norm 必须不带 keepdim（→ [N, B]）；
             # keepdim=True 时除法广播出 [N, B, 1]，下游 mean(dim=1) 只消 B →
             # [N, 1]，softmax/einsum 全部错形（einsum 'n,nblv' 维度不匹配）。
             scores = (all_vecs_norm * cond_state).sum(dim=-1) / (
                 cond_state.norm(dim=-1) + 1e-8
             )  # [N, B]
-        scores = scores.mean(dim=1)                      # [N] batch 平均
+        scores = scores.mean(dim=1)  # [N] batch 平均
 
         # 调质影响：norepinephrine 高 → scores 增强 → 融合权重增大（警觉 → 强贡献）
         # write_scale 是 Python float（不可微，但调质本身是外部状态，非可学习参数）
@@ -2898,32 +3054,34 @@ class ResonanceEnsemble:
                         ev_p = getattr(self, "_last_evolved_phasors", None)
                         if ev_p is not None and ev_p.shape[0] == len(active_ids):
                             bvec = gamma_oscillator.binding_tensor(
-                                list(active_ids), coactivation=self.coaction,
+                                list(active_ids),
+                                coactivation=self.coaction,
                                 phasors=ev_p,
                             ).to(scores.device)
                         else:
                             bvec = gamma_oscillator.binding_tensor(
-                                list(active_ids), coactivation=self.coaction,
+                                list(active_ids),
+                                coactivation=self.coaction,
                             ).to(scores.device)
                         # C23-C2（2026-08-08）：phase-binding loss——绑定与调制前
                         # 共振分对齐（"谁共振贡献大谁同相"）。contrastive_loss 只
                         # 依赖 quality_logits/NLL（不经 binding），若无此 loss 项，
                         # ω/K/phasors 在训练中梯度恒为 0（C20 训练实测）。
-                        self._phase_loss = F.mse_loss(
-                            bvec, F.normalize(scores.detach(), dim=0)
-                        )
+                        self._phase_loss = F.mse_loss(bvec, F.normalize(scores.detach(), dim=0))
                         scores = scores * (1.0 + bs * bvec)
                     else:
                         # C23（2026-08-08）：标量相位绑定（GammaOscillator）——
                         # 同相群体增强/异相解绑（相位从"对全局相位的标量门控"
                         # 升级为 neuron 之间的关系度量，共振本体化）
                         binding = gamma_oscillator.pairwise_binding(
-                            list(active_ids), coactivation=self.coaction,
+                            list(active_ids),
+                            coactivation=self.coaction,
                         )
                         if binding:
                             bvec = torch.tensor(
                                 [binding[nid] for nid in active_ids],
-                                dtype=torch.float32, device=scores.device,
+                                dtype=torch.float32,
+                                device=scores.device,
                             )
                             scores = scores * (1.0 + bs * bvec)
             except Exception as e:
@@ -2942,9 +3100,7 @@ class ResonanceEnsemble:
                     f"{dict(zip(active_ids, vocab_sizes))}），需要传入 target_domain "
                     f"（对应 batch_align_and_embed 的 domain_sp 域）才能融合。"
                 )
-            all_logits = self._project_logits_to_target(
-                final_logits, active_ids, target_domain
-            )
+            all_logits = self._project_logits_to_target(final_logits, active_ids, target_domain)
         else:
             all_logits = torch.stack([final_logits[nid] for nid in active_ids])  # [N, B, L, V]
 
@@ -2958,16 +3114,20 @@ class ResonanceEnsemble:
         quality_logits_t: Optional[torch.Tensor] = None
         quality_token_logits_t: Optional[torch.Tensor] = None
         if round_quality_logits_all:
-            quality_logits_t = torch.stack([
-                round_quality_logits_all[nid] for nid in active_ids
-            ]).mean(dim=1).squeeze(-1)  # [N]
+            quality_logits_t = (
+                torch.stack([round_quality_logits_all[nid] for nid in active_ids])
+                .mean(dim=1)
+                .squeeze(-1)
+            )  # [N]
         if round_quality_token_logits_all:
-            quality_token_logits_t = torch.stack([
-                round_quality_token_logits_all[nid] for nid in active_ids
-            ]).squeeze(-1)  # [N, B, L]
+            quality_token_logits_t = torch.stack(
+                [round_quality_token_logits_all[nid] for nid in active_ids]
+            ).squeeze(
+                -1
+            )  # [N, B, L]
         if continuous and continuous_weights is not None:
             weights = continuous_weights / continuous_weights.sum().clamp_min(1e-8)
-            fused_logits = torch.einsum('n,nblv->blv', weights, all_logits)
+            fused_logits = torch.einsum("n,nblv->blv", weights, all_logits)
             balance_loss = -(weights * torch.log(weights + 1e-8)).sum()
         elif self._last_router_result is not None and fusion_mode != "residual":
             # 从 Router final_weights [B, N_round1] 中取当前 active_ids 对应列
@@ -2980,9 +3140,11 @@ class ResonanceEnsemble:
             )
             weights_per_sample = router_final_weights.index_select(-1, col_indices)  # [B, N_active]
             # 重新归一化（取子集后和可能 < 1）
-            weights_per_sample = weights_per_sample / (weights_per_sample.sum(dim=-1, keepdim=True) + 1e-8)
+            weights_per_sample = weights_per_sample / (
+                weights_per_sample.sum(dim=-1, keepdim=True) + 1e-8
+            )
             # per-sample 融合：fused = Σ_bn weights[b,n] * logits[n]
-            fused_logits = torch.einsum('bn,nblv->blv', weights_per_sample, all_logits)
+            fused_logits = torch.einsum("bn,nblv->blv", weights_per_sample, all_logits)
             # batch 平均权重（用于返回和监控）
             weights = weights_per_sample.mean(dim=0)  # [N_active]
             # 负载均衡 loss 用 Router 的 Switch 风格 loss（替换原负熵）
@@ -2996,7 +3158,7 @@ class ResonanceEnsemble:
             other_scores = scores[other_indices]
             other_logits = all_logits[other_indices]
             other_weights = F.softmax(other_scores / temperature, dim=0)  # [N-1]
-            residual = torch.einsum('n,nblv->blv', other_weights, other_logits)
+            residual = torch.einsum("n,nblv->blv", other_weights, other_logits)
             fused_logits = leader_logits + residual
             balance_loss = -(other_weights * torch.log(other_weights + 1e-8)).sum()
             weights = other_weights
@@ -3010,18 +3172,22 @@ class ResonanceEnsemble:
                 native_list = [final_logits[nid] for nid in active_ids]
                 # C15: quality_logits 优先于 scores（预测质量 head，无 LOO 泄漏、无判别器尺度游戏）
                 fused_logits, route_weights = self._confidence_routing_fusion(
-                    all_logits, native_list, active_ids, target_domain,
+                    all_logits,
+                    native_list,
+                    active_ids,
+                    target_domain,
                     scores=scores,
                     quality_logits=quality_logits_t,
                     quality_token_logits=quality_token_logits_t,
-                    trust_override=trust_override)  # trust_override: 上界诊断
+                    trust_override=trust_override,
+                )  # trust_override: 上界诊断
                 weights = route_weights  # [N] batch 平均路由权重（监控）
                 # 路由权重由 logits 决定（非参数），balance_loss 梯度会反向干扰路由 → 置 0
                 balance_loss = torch.zeros((), device=fused_logits.device)
             else:
                 # soft 软加权融合（默认，全可微）
                 weights = F.softmax(scores / temperature, dim=0)  # [N]
-                fused_logits = torch.einsum('n,nblv->blv', weights, all_logits)
+                fused_logits = torch.einsum("n,nblv->blv", weights, all_logits)
                 balance_loss = -(weights * torch.log(weights + 1e-8)).sum()
                 # C15: soft 模式 quality_logits 已在融合段前统一初始化
 
@@ -3030,7 +3196,7 @@ class ResonanceEnsemble:
             # all_vecs_norm: [N, B, D] → batch 平均后 [N, D]
             vecs_batch = all_vecs_norm.mean(dim=1)  # [N, D]
             vecs_norm = F.normalize(vecs_batch, dim=-1)
-            sim_matrix = torch.einsum('nd,md->nm', vecs_norm, vecs_norm)  # [N, N]
+            sim_matrix = torch.einsum("nd,md->nm", vecs_norm, vecs_norm)  # [N, N]
             mask = torch.triu(
                 torch.ones(N, N, device=sim_matrix.device, dtype=torch.bool),
                 diagonal=1,
@@ -3058,15 +3224,13 @@ class ResonanceEnsemble:
         # ideal = softmax(-nll/tau)（NLL 低的神经元获高路由权重）
         # actual = Router soft_weights，KL(actual || ideal) 对齐
         router_contrastive_loss = torch.tensor(0.0, device=weights.device)
-        if (
-            nll_z is not None
-            and self._last_router_result is not None
-        ):
+        if nll_z is not None and self._last_router_result is not None:
             router_soft = self._last_router_result["soft_weights"]  # [B, N]
             actual_router = router_soft.mean(dim=0)  # [N] batch 平均
             router_ideal = F.softmax(-nll_z / 0.5, dim=0)  # [N]
             router_contrastive_loss = (
-                actual_router * (actual_router.clamp(min=1e-8).log() - router_ideal.clamp(min=1e-8).log())
+                actual_router
+                * (actual_router.clamp(min=1e-8).log() - router_ideal.clamp(min=1e-8).log())
             ).sum()
 
         # ── C27 增量四（2026-08-14）：节奏对齐自监督（osc rhythm loss）──
@@ -3081,8 +3245,8 @@ class ResonanceEnsemble:
                 _b_mean = bvec.detach().mean()
                 _target = 1.0 - torch.sigmoid(_b_mean * 4.0)
                 _w_gates = [
-                    _osc.gaba_amp.to(weights.device) * _osc.gaba_gate_tensor(
-                        ct.steps * ct.dt, device=weights.device)
+                    _osc.gaba_amp.to(weights.device)
+                    * _osc.gaba_gate_tensor(ct.steps * ct.dt, device=weights.device)
                     for _osc in self.oscillators
                 ]
                 _w_mean = torch.stack(_w_gates).mean()
@@ -3110,17 +3274,19 @@ class ResonanceEnsemble:
         # C15: 预测质量 logits [N]（round 1 独立前向，batch 平均）
         # 缺失时（旧 ckpt 无 quality_head）为 None，向后兼容 scores 路径
         if round_quality_logits_all:
-            ql = torch.stack([
-                round_quality_logits_all[nid] for nid in active_ids
-            ]).mean(dim=1)  # [N, 1] -> mean over batch -> [N, 1]
+            ql = torch.stack([round_quality_logits_all[nid] for nid in active_ids]).mean(
+                dim=1
+            )  # [N, 1] -> mean over batch -> [N, 1]
             result["quality_logits"] = ql.squeeze(-1)  # [N]
         else:
             result["quality_logits"] = None
 
         if round_quality_token_logits_all:
-            result["quality_token_logits"] = torch.stack([
-                round_quality_token_logits_all[nid] for nid in active_ids
-            ]).squeeze(-1)  # [N, B, L]
+            result["quality_token_logits"] = torch.stack(
+                [round_quality_token_logits_all[nid] for nid in active_ids]
+            ).squeeze(
+                -1
+            )  # [N, B, L]
         else:
             result["quality_token_logits"] = None
 
@@ -3140,7 +3306,9 @@ class ResonanceEnsemble:
         per_neuron_targets: Optional[Dict[str, torch.Tensor]],
         quality_logits_t: Optional[torch.Tensor],
         N: int,
-    ) -> Tuple[Optional[torch.Tensor], Optional[torch.Tensor], Optional[torch.Tensor], torch.Tensor]:
+    ) -> Tuple[
+        Optional[torch.Tensor], Optional[torch.Tensor], Optional[torch.Tensor], torch.Tensor
+    ]:
         """质量监督流水线（P2-1b 从 forward_train 提取）。
 
         流程：per-neuron NLL → z-score → 绝对质量 gate → contrastive loss（C15-C25-G 五代增量，
@@ -3151,8 +3319,7 @@ class ResonanceEnsemble:
         # reference the caller's fusion-local ``weights`` variable here: this
         # helper is also used independently of the fusion branch.
         quality_device = (
-            next(iter(final_logits.values())).device
-            if final_logits else torch.device("cpu")
+            next(iter(final_logits.values())).device if final_logits else torch.device("cpu")
         )
         # ── per-neuron NLL（供 C12 共振分对比 + §4.0d Router 对比约束共用）──
         # targets=None 时不计算（向后兼容）
@@ -3169,16 +3336,18 @@ class ResonanceEnsemble:
                 # targets（general 编码）算回合级 NLL → 天然可比（C20 判定 5/5
                 # 的信号）。native NLL（per_neuron_targets）不可比（en 16K 英文词表
                 # 对英文回合 NLL 恒低 → quality_logit 膨胀常数头）→ 双头后废弃。
-                judge_logits_stack = torch.stack([
-                    final_judge_logits[nid] for nid in active_ids
-                ])  # [N, B, L, 256000]
+                judge_logits_stack = torch.stack(
+                    [final_judge_logits[nid] for nid in active_ids]
+                )  # [N, B, L, 256000]
                 shift_logits = judge_logits_stack[:, :, :-1, :].contiguous()
                 shift_targets = targets[:, 1:].contiguous()  # [B, L-1]
                 nll_all = F.cross_entropy(
                     shift_logits.reshape(-1, shift_logits.size(-1)),
                     shift_targets.unsqueeze(0).expand(N, -1, -1).reshape(-1),
                     reduction="none",
-                ).view(N, -1)  # [N, B*(L-1)]
+                ).view(
+                    N, -1
+                )  # [N, B*(L-1)]
                 if answer_mask is not None:
                     am_shift = answer_mask[:, 1:].contiguous().reshape(-1).bool()
                     n_tok = int(am_shift.sum().item())
@@ -3204,11 +3373,13 @@ class ResonanceEnsemble:
                     st = targets[:, 1:].contiguous()
                     am = answer_mask[:, 1:].contiguous() if answer_mask is not None else None
                     if am is not None and am.sum() > 0:
-                        st = st.clone(); st[~am] = -100
+                        st = st.clone()
+                        st[~am] = -100
                     else:
                         am = torch.ones_like(st, dtype=torch.bool)
-                    l = F.cross_entropy(lg.view(-1, lg.size(-1)), st.view(-1),
-                                        ignore_index=-100, reduction="sum")
+                    l = F.cross_entropy(
+                        lg.view(-1, lg.size(-1)), st.view(-1), ignore_index=-100, reduction="sum"
+                    )
                     n_tok = max(int((am.sum()).item()), 1)
                     nll_list.append(l / n_tok)
                 per_neuron_nll = torch.stack(nll_list)
@@ -3223,21 +3394,27 @@ class ResonanceEnsemble:
                         st = targets[:, 1:].contiguous()
                         am = answer_mask[:, 1:].contiguous() if answer_mask is not None else None
                         if am is not None and am.sum() > 0:
-                            st = st.clone(); st[~am] = -100
+                            st = st.clone()
+                            st[~am] = -100
                         else:
                             am = torch.ones_like(st, dtype=torch.bool)
-                        l = F.cross_entropy(lg.view(-1, lg.size(-1)), st.view(-1),
-                                            ignore_index=-100, reduction="sum")
+                        l = F.cross_entropy(
+                            lg.view(-1, lg.size(-1)),
+                            st.view(-1),
+                            ignore_index=-100,
+                            reduction="sum",
+                        )
                         n_tok = max(int((am.sum()).item()), 1)
                         nll_list.append(l / n_tok)
                         continue
                     lg = final_logits[nid][:, :-1, :].contiguous()  # [B, L-1, V_nid]
-                    st = nt[:, 1:].clone().contiguous()             # [B, L-1]
+                    st = nt[:, 1:].clone().contiguous()  # [B, L-1]
                     am = answer_mask[:, 1:].contiguous() if answer_mask is not None else None
                     if am is not None and am.sum() > 0:
                         st[~am] = -100
-                    l = F.cross_entropy(lg.view(-1, lg.size(-1)), st.view(-1),
-                                        ignore_index=-100, reduction="sum")
+                    l = F.cross_entropy(
+                        lg.view(-1, lg.size(-1)), st.view(-1), ignore_index=-100, reduction="sum"
+                    )
                     n_tok = max(int((am.sum()).item()), 1)
                     nll_list.append(l / n_tok)
                 per_neuron_nll = torch.stack(nll_list)
@@ -3245,12 +3422,14 @@ class ResonanceEnsemble:
                 # ── general 空间投影 NLL（C20 原版，向后兼容）──
                 # all_logits: [N, B, L, V], targets: [B, L]
                 shift_logits = all_logits[:, :, :-1, :].contiguous()  # [N, B, L-1, V]
-                shift_targets = targets[:, 1:].contiguous()            # [B, L-1]
+                shift_targets = targets[:, 1:].contiguous()  # [B, L-1]
                 nll_all = F.cross_entropy(
                     shift_logits.reshape(-1, shift_logits.size(-1)),
                     shift_targets.unsqueeze(0).expand(N, -1, -1).reshape(-1),
                     reduction="none",
-                ).view(N, -1)  # [N, B*(L-1)]
+                ).view(
+                    N, -1
+                )  # [N, B*(L-1)]
                 if answer_mask is not None:
                     # 只对 answer 位置求均值（回合级 NLL）；无 answer 位置时回退全序列
                     am_shift = answer_mask[:, 1:].contiguous().reshape(-1).bool()  # [B*(L-1)]
@@ -3296,7 +3475,7 @@ class ResonanceEnsemble:
                         s["ms"] = (1 - a) * s["ms"] + a * v * v
                     if s["count"] >= NLL_EMA_WARMUP:
                         var = max(s["ms"] - s["mean"] ** 2, 1e-4)
-                        zs.append((per_neuron_nll[i] - s["mean"]) / (var ** 0.5))
+                        zs.append((per_neuron_nll[i] - s["mean"]) / (var**0.5))
                     else:
                         zs.append(per_neuron_nll[i])
                 nll_z = torch.stack(zs)  # [N]
@@ -3345,16 +3524,15 @@ class ResonanceEnsemble:
             ideal_weights = F.softmax(-nll_gated_z / 0.5, dim=0)  # tau=0.5 温度
             # KL(actual || ideal) = Σ actual * log(actual/ideal)
             contrastive_loss = (
-                actual_weights * (actual_weights.clamp(min=1e-8).log() - ideal_weights.clamp(min=1e-8).log())
+                actual_weights
+                * (actual_weights.clamp(min=1e-8).log() - ideal_weights.clamp(min=1e-8).log())
             ).sum()
         else:
             contrastive_loss = torch.tensor(0.0, device=quality_device)
 
         return per_neuron_nll, nll_z, nll_gated_z, contrastive_loss
 
-    def _average_logits(
-        self, logits_dict: Dict[str, torch.Tensor]
-    ) -> torch.Tensor:
+    def _average_logits(self, logits_dict: Dict[str, torch.Tensor]) -> torch.Tensor:
         """Compute simple average of logits across neurons for early stop.
 
         P7: 不同 neuron 的 logits 可能在不同 vocab 空间（10k-20k）。
@@ -3377,8 +3555,10 @@ class ResonanceEnsemble:
         for logits in logits_list:
             if logits.shape[-1] < max_vocab:
                 pad = torch.zeros(
-                    *logits.shape[:-1], max_vocab - logits.shape[-1],
-                    device=device, dtype=logits.dtype,
+                    *logits.shape[:-1],
+                    max_vocab - logits.shape[-1],
+                    device=device,
+                    dtype=logits.dtype,
                 )
                 logits = torch.cat([logits, pad], dim=-1)
             padded.append(logits)
@@ -3408,11 +3588,12 @@ class ResonanceEnsemble:
         neuron_ids = list(all_logits.keys())
         score_vals = torch.tensor(
             [scores.get(nid, 0.0) for nid in neuron_ids],
-            dtype=torch.float32, device=ref.device,
+            dtype=torch.float32,
+            device=ref.device,
         )
         weights = F.softmax(score_vals / max(temperature, 1e-6), dim=0)  # [N]
         logits_stack = torch.stack([all_logits[nid] for nid in neuron_ids])  # [N, B, L, V]
-        fused = torch.einsum('n,nblv->blv', weights, logits_stack)
+        fused = torch.einsum("n,nblv->blv", weights, logits_stack)
         result["weighted_logits"] = fused
         result["weights"] = weights.detach().cpu().tolist()
         result["fusion_mode"] = "score"
@@ -3457,10 +3638,9 @@ class ResonanceEnsemble:
         neuron_ids = list(all_logits.keys())
         N = len(neuron_ids)
         # 逐 neuron max-prob（softmax 后取最大值）→ [N, B, L]
-        probs = torch.stack([
-            F.softmax(all_logits[nid], dim=-1).max(dim=-1).values
-            for nid in neuron_ids
-        ])
+        probs = torch.stack(
+            [F.softmax(all_logits[nid], dim=-1).max(dim=-1).values for nid in neuron_ids]
+        )
         if normalize:
             # 相对校准：除以每 neuron 的 batch 平均 max-prob（消除系统性更尖锐者主导）
             scale = probs.mean(dim=(1, 2), keepdim=True).clamp(min=1e-6)
@@ -3524,12 +3704,12 @@ class ResonanceEnsemble:
         Returns:
             (fused_logits [B, L, V_tgt], route_weights [N] batch 平均路由权重)
         """
-        probs_tgt = F.softmax(all_logits, dim=-1).max(dim=-1).values     # [N, B, L]
+        probs_tgt = F.softmax(all_logits, dim=-1).max(dim=-1).values  # [N, B, L]
         # 原生空间 vocab 不同，逐 neuron 计算后 stack
-        probs_nat = torch.stack([
-            F.softmax(ln, dim=-1).max(dim=-1).values for ln in native_logits
-        ])                                                               # [N, B, L]
-        conf = torch.minimum(probs_nat, probs_tgt)                       # [N, B, L]
+        probs_nat = torch.stack(
+            [F.softmax(ln, dim=-1).max(dim=-1).values for ln in native_logits]
+        )  # [N, B, L]
+        conf = torch.minimum(probs_nat, probs_tgt)  # [N, B, L]
         if trust_override is not None:
             # 上界诊断：trust 直接给定（如"已知域"硬门控），跳过 scores 软校准
             trust = trust_override.to(conf.dtype).to(conf.device).clamp(min=1e-9)
@@ -3564,13 +3744,14 @@ class ResonanceEnsemble:
             # （人脑"沉默突触"：新生神经元初期不参与输出）。成熟 neuron 返回 1.0 不受影响。
             mw = torch.tensor(
                 [self.maturity.get_resonance_weight(nid) for nid in active_ids],
-                dtype=conf.dtype, device=conf.device,
+                dtype=conf.dtype,
+                device=conf.device,
             )
             conf = conf * mw.view(-1, 1, 1)
-        sel = conf.argmax(dim=0)                                         # [B, L]
+        sel = conf.argmax(dim=0)  # [B, L]
         w = F.one_hot(sel, num_classes=all_logits.shape[0]).permute(2, 0, 1).float()  # [N, B, L]
-        fused = (w.unsqueeze(-1) * all_logits).sum(dim=0)                # [B, L, V_tgt]
-        route_weights = w.mean(dim=(1, 2))                               # [N] 监控
+        fused = (w.unsqueeze(-1) * all_logits).sum(dim=0)  # [B, L, V_tgt]
+        route_weights = w.mean(dim=(1, 2))  # [N] 监控
         return fused, route_weights
 
     def _compute_per_position_weights(
@@ -3617,7 +3798,7 @@ class ResonanceEnsemble:
         # replaces the legacy geometric orthogonality term (kept on the
         # field as complementarity_score for diagnostics only); routing
         # now uses prediction_complementarity, as field.py documents.
-        if hasattr(self.field, 'prediction_complementarity') and len(neuron_ids) > 1:
+        if hasattr(self.field, "prediction_complementarity") and len(neuron_ids) > 1:
             comp_vals = []
             for i, nid in enumerate(neuron_ids):
                 other_logits = [all_logits[o] for j, o in enumerate(neuron_ids) if j != i]
@@ -3644,8 +3825,7 @@ class ResonanceEnsemble:
                 weighted_logits = weighted_logits + w.unsqueeze(-1) * logits
         result["weighted_logits"] = weighted_logits
         result["final_weights"] = {
-            nid: float(position_weights[i].mean().item())
-            for i, nid in enumerate(neuron_ids)
+            nid: float(position_weights[i].mean().item()) for i, nid in enumerate(neuron_ids)
         }
 
     def _residual_logit_fusion(
@@ -3767,7 +3947,8 @@ class ResonanceEnsemble:
         # 1. 共振分 softmax 权重（基础权重）
         score_tensor = torch.tensor(
             [float(scores.get(nid, 0.0)) for nid in neuron_ids],
-            device=ref.device, dtype=logits_stack.dtype,
+            device=ref.device,
+            dtype=logits_stack.dtype,
         )  # [N]
         base_weights = F.softmax(score_tensor / temperature, dim=0)  # [N]
 
@@ -3793,7 +3974,7 @@ class ResonanceEnsemble:
         consensus_factor = 1.0 + consensus_alpha * (consensus_votes / N)  # [B, L, V]
 
         # 5. 基础加权 logits: [B, L, V] = Σ_n w_n × logits_n
-        base_fused = torch.einsum('n,nblv->blv', base_weights, logits_stack)
+        base_fused = torch.einsum("n,nblv->blv", base_weights, logits_stack)
 
         # 6. 应用共识加成：fused = base_fused × consensus_factor
         # 注意：这是乘性加成（高共识 token 的 logit 被放大）

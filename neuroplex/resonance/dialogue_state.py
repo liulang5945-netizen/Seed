@@ -12,6 +12,7 @@
 人脑启发：海马体在对话间保持工作记忆，每轮对话更新海马状态，
 而非把所有历史对话文本重新读一遍（前缀拼接的低效做法）。
 """
+
 from __future__ import annotations
 
 from collections import deque
@@ -126,7 +127,7 @@ class DialogueState:
         self._dialogue_history.append({"role": role, "content": content})
         # 限制历史长度，避免无限增长
         if len(self._dialogue_history) > self.max_rounds * 2 + 2:
-            self._dialogue_history = self._dialogue_history[-(self.max_rounds * 2 + 2):]
+            self._dialogue_history = self._dialogue_history[-(self.max_rounds * 2 + 2) :]
 
     def get_dialogue_history(self) -> List[Dict[str, str]]:
         """获取对话历史（用于 debug/日志）。"""

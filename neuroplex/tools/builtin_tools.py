@@ -3,6 +3,7 @@
 ================
 在系统启动时注册所有内置工具。
 """
+
 import logging
 from neuroplex.agent_ext.tool_registry import registry, ToolDef
 
@@ -25,6 +26,7 @@ def _register_web_tools():
         """搜索网页，返回搜索结果"""
         try:
             from neuroplex.tools.web import search
+
             results = search(query, max_results=num_results)
             if not results:
                 return "未找到相关结果"
@@ -35,26 +37,29 @@ def _register_web_tools():
         except Exception as e:
             return f"搜索失败: {e}"
 
-    registry.register(ToolDef(
-        name="web_search",
-        description="搜索网页获取信息。用于查找最新资讯、技术文档、事实查询等。",
-        parameters={
-            "type": "object",
-            "properties": {
-                "query": {"type": "string", "description": "搜索关键词"},
-                "num_results": {"type": "integer", "description": "返回结果数量", "default": 5},
+    registry.register(
+        ToolDef(
+            name="web_search",
+            description="搜索网页获取信息。用于查找最新资讯、技术文档、事实查询等。",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "搜索关键词"},
+                    "num_results": {"type": "integer", "description": "返回结果数量", "default": 5},
+                },
+                "required": ["query"],
             },
-            "required": ["query"],
-        },
-        func=web_search,
-        category="网络",
-    ))
+            func=web_search,
+            category="网络",
+        )
+    )
 
     # 读取网页
     def web_fetch(url: str) -> str:
         """读取网页内容，返回正文"""
         try:
             from neuroplex.tools.web import fetch
+
             page = fetch(url)
             if not page:
                 return "无法读取网页"
@@ -62,19 +67,21 @@ def _register_web_tools():
         except Exception as e:
             return f"读取网页失败: {e}"
 
-    registry.register(ToolDef(
-        name="web_fetch",
-        description="读取指定URL的网页内容。用于获取网页正文、文章内容等。",
-        parameters={
-            "type": "object",
-            "properties": {
-                "url": {"type": "string", "description": "网页URL"},
+    registry.register(
+        ToolDef(
+            name="web_fetch",
+            description="读取指定URL的网页内容。用于获取网页正文、文章内容等。",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "url": {"type": "string", "description": "网页URL"},
+                },
+                "required": ["url"],
             },
-            "required": ["url"],
-        },
-        func=web_fetch,
-        category="网络",
-    ))
+            func=web_fetch,
+            category="网络",
+        )
+    )
 
 
 def _register_file_tools():
@@ -85,54 +92,61 @@ def _register_file_tools():
         """读取文件内容"""
         try:
             from neuroplex.body.limbs import read_file as _read_file
+
             return _read_file(file_path, page)
         except Exception as e:
             return f"读取文件失败: {e}"
 
-    registry.register(ToolDef(
-        name="read_file",
-        description="读取本地文件内容。支持文本文件、代码文件等。",
-        parameters={
-            "type": "object",
-            "properties": {
-                "file_path": {"type": "string", "description": "文件路径"},
-                "page": {"type": "integer", "description": "页码（从1开始）", "default": 1},
+    registry.register(
+        ToolDef(
+            name="read_file",
+            description="读取本地文件内容。支持文本文件、代码文件等。",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "file_path": {"type": "string", "description": "文件路径"},
+                    "page": {"type": "integer", "description": "页码（从1开始）", "default": 1},
+                },
+                "required": ["file_path"],
             },
-            "required": ["file_path"],
-        },
-        func=read_file,
-        category="文件",
-    ))
+            func=read_file,
+            category="文件",
+        )
+    )
 
     # 写入文件
     def write_file(file_path: str, content: str) -> str:
         """将内容写入文件"""
         try:
             from neuroplex.body.limbs import write_file as _write_file
+
             return _write_file(file_path, content)
         except Exception as e:
             return f"写入文件失败: {e}"
 
-    registry.register(ToolDef(
-        name="write_file",
-        description="将内容写入文件。用于创建或修改文件。",
-        parameters={
-            "type": "object",
-            "properties": {
-                "file_path": {"type": "string", "description": "文件路径"},
-                "content": {"type": "string", "description": "文件内容"},
+    registry.register(
+        ToolDef(
+            name="write_file",
+            description="将内容写入文件。用于创建或修改文件。",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "file_path": {"type": "string", "description": "文件路径"},
+                    "content": {"type": "string", "description": "文件内容"},
+                },
+                "required": ["file_path", "content"],
             },
-            "required": ["file_path", "content"],
-        },
-        func=write_file,
-        category="文件",
-    ))
+            func=write_file,
+            category="文件",
+        )
+    )
 
     # 列出目录
     def list_directory(dir_path: str = ".") -> str:
         """列出目录内容"""
         try:
             import os
+
             if not os.path.exists(dir_path):
                 return f"目录不存在: {dir_path}"
             items = []
@@ -153,18 +167,20 @@ def _register_file_tools():
         except Exception as e:
             return f"列出目录失败: {e}"
 
-    registry.register(ToolDef(
-        name="list_directory",
-        description="列出目录中的文件和子目录。",
-        parameters={
-            "type": "object",
-            "properties": {
-                "dir_path": {"type": "string", "description": "目录路径", "default": "."},
+    registry.register(
+        ToolDef(
+            name="list_directory",
+            description="列出目录中的文件和子目录。",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "dir_path": {"type": "string", "description": "目录路径", "default": "."},
+                },
             },
-        },
-        func=list_directory,
-        category="文件",
-    ))
+            func=list_directory,
+            category="文件",
+        )
+    )
 
 
 def _register_code_tools():
@@ -175,21 +191,24 @@ def _register_code_tools():
         """执行代码并返回结果"""
         try:
             from neuroplex.body.limbs import execute_code as _execute_code
+
             return _execute_code(code, language)
         except Exception as e:
             return f"执行代码失败: {e}"
 
-    registry.register(ToolDef(
-        name="execute_code",
-        description="执行代码并返回结果。支持Python代码。",
-        parameters={
-            "type": "object",
-            "properties": {
-                "code": {"type": "string", "description": "要执行的代码"},
-                "language": {"type": "string", "description": "编程语言", "default": "python"},
+    registry.register(
+        ToolDef(
+            name="execute_code",
+            description="执行代码并返回结果。支持Python代码。",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "code": {"type": "string", "description": "要执行的代码"},
+                    "language": {"type": "string", "description": "编程语言", "default": "python"},
+                },
+                "required": ["code"],
             },
-            "required": ["code"],
-        },
-        func=execute_code,
-        category="代码",
-    ))
+            func=execute_code,
+            category="代码",
+        )
+    )

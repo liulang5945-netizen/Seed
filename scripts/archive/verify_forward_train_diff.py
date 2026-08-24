@@ -12,6 +12,7 @@
 Usage:
     python -u scripts/training/verify_forward_train_diff.py
 """
+
 from __future__ import annotations
 
 import os
@@ -122,7 +123,7 @@ def test_forward_train_cross_spec():
     torch.manual_seed(42)
 
     neurons = {
-        "compact": make_tiny_neuron("compact", field_dim=64),    # compact 规格
+        "compact": make_tiny_neuron("compact", field_dim=64),  # compact 规格
         "standard": make_tiny_neuron("standard", field_dim=128),  # standard 规格
     }
     for post_id in neurons:
@@ -167,8 +168,10 @@ def test_forward_train_cross_spec():
 
     print(f"  fused_logits shape: {result['fused_logits'].shape}")
     print(f"  field_state shape: {result['field_state'].shape}")  # 应该是 [2, 128]
-    assert result["field_state"].shape == (2, 128), \
-        f"field_state 应该是 unified 维度 128，实际 {result['field_state'].shape}"
+    assert result["field_state"].shape == (
+        2,
+        128,
+    ), f"field_state 应该是 unified 维度 128，实际 {result['field_state'].shape}"
 
     target = torch.zeros(2, 8, dtype=torch.long)
     loss = F.cross_entropy(
@@ -400,6 +403,7 @@ def main():
             failed += 1
             print(f"  ❌ {test.__name__} 失败: {e}")
             import traceback
+
             traceback.print_exc()
 
     print("\n" + "=" * 60)

@@ -1,14 +1,13 @@
 """Settings management API routes."""
 
 import logging
-import os
 
 from fastapi import APIRouter, HTTPException
 
 from neuroplex.core.app_state import app_state
 from neuroplex.core.config import get_config
 from neuroplex.core.memory_watchdog import force_memory_refresh, get_memory_status_dict
-from neuroplex.services.settings_service import load_settings, save_settings, update_settings
+from neuroplex.services.settings_service import load_settings, update_settings
 
 logger = logging.getLogger("ApiServer.Settings")
 router = APIRouter()
@@ -58,10 +57,12 @@ async def set_quant(req: dict):
     """Update quantization settings."""
     load_in_4bit = req.get("load_in_4bit", False)
     load_in_8bit = req.get("load_in_8bit", False)
-    update_settings({
-        "load_in_4bit": load_in_4bit,
-        "load_in_8bit": load_in_8bit,
-    })
+    update_settings(
+        {
+            "load_in_4bit": load_in_4bit,
+            "load_in_8bit": load_in_8bit,
+        }
+    )
     quant_mode = "4-bit" if load_in_4bit else "8-bit" if load_in_8bit else "disabled"
     return {"status": "ok", "message": f"Quantization mode set to {quant_mode}; restart required"}
 
@@ -69,7 +70,9 @@ async def set_quant(req: dict):
 @router.post("/api/settings/gguf")
 async def set_gguf_settings(req: dict):
     """Update GGUF-related settings."""
-    updates = {key: req[key] for key in ("model_type", "gguf_path", "n_gpu_layers", "n_ctx") if key in req}
+    updates = {
+        key: req[key] for key in ("model_type", "gguf_path", "n_gpu_layers", "n_ctx") if key in req
+    }
     if req.get("gguf_path"):
         updates["model_type"] = "gguf"
     update_settings(updates)
@@ -122,7 +125,12 @@ def get_current_model():
                     is_pending = True
         if pending_path and pending_path != effective_path:
             is_pending = True
-        if is_pending and app_state.startup_complete and effective_path and pending_path == effective_path:
+        if (
+            is_pending
+            and app_state.startup_complete
+            and effective_path
+            and pending_path == effective_path
+        ):
             is_pending = False
 
         pending_settings = {

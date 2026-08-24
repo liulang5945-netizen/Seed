@@ -11,11 +11,12 @@
 Usage:
     python scripts/training/verify_neurogenesis.py
 """
+
 import sys
 import os
 import tempfile
 
-os.environ.setdefault('TAIJI_TEST_MODE', '1')
+os.environ.setdefault("TAIJI_TEST_MODE", "1")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 
@@ -27,6 +28,7 @@ def main():
     # Step 1: 装配 Cortex
     print("\n[Step 1] 装配 Cortex...")
     from taiji.loader import assemble_cortex
+
     cortex, tokenizer, modules = assemble_cortex(
         neurons_dir="data/neurons",
         device="cpu",
@@ -63,6 +65,7 @@ def main():
     ckpt_path = os.path.join(cortex.neurons_dir, f"neuron_{new_nid}.pt")
     if os.path.exists(ckpt_path):
         import torch
+
         ckpt = torch.load(ckpt_path, map_location="cpu", weights_only=False)
         cfg = ckpt["neuron_config"]
         sd = ckpt["state_dict"]
@@ -93,6 +96,7 @@ def main():
     # Step 6: 验证新神经元参与 ensemble forward
     print("\n[Step 6] 验证新神经元参与 ensemble forward...")
     import torch
+
     # 构造测试输入
     if cortex._shared_embedding is not None:
         # 用 shared_embedding 编码测试输入
@@ -115,6 +119,7 @@ def main():
     # Step 7: 验证 life_scheduler 接线闭环
     print("\n[Step 7] 验证 life_scheduler 接线闭环...")
     from taiji.life.life_scheduler import get_life_scheduler
+
     life = get_life_scheduler()
     if life._cortex is not None:
         print(f"  ✅ life_scheduler._cortex 已注入: {type(life._cortex).__name__}")
@@ -145,6 +150,7 @@ def main():
     print("\n[Step 9] 验证 ensemble.add_neuron field_dim 校验...")
     from taiji.resonance.neuron import ResonanceNeuron
     from taiji.resonance.config import get_domain_neuron_config
+
     # 创建一个 STANDARD 规格（hidden_size=768，与 COMPACT=512 不一致）
     cfg_std = get_domain_neuron_config("en", spec="standard")
     neuron_std = ResonanceNeuron(cfg_std)
@@ -162,11 +168,7 @@ def main():
 
     # Step 10: 综合判断
     print("\n" + "=" * 60)
-    all_pass = (
-        new_nid == "zh_1" and
-        new_count == initial_neuron_count + 1 and
-        new_nid_2 == "zh_2"
-    )
+    all_pass = new_nid == "zh_1" and new_count == initial_neuron_count + 1 and new_nid_2 == "zh_2"
     # 清理 zh_1 的 ckpt（zh_2 已在 Step 8 清理）
     ckpt_path_1 = os.path.join(cortex.neurons_dir, f"neuron_{new_nid}.pt")
     if os.path.exists(ckpt_path_1):

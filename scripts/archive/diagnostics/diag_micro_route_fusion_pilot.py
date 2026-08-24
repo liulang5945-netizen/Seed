@@ -31,7 +31,9 @@ import sys
 from pathlib import Path
 from typing import Dict, Iterable, List, Tuple
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -53,7 +55,11 @@ from scripts.archive.diagnostics.diag_micro_specialist_group import (
     SPECIALIST_ROLES,
     _make_config,
 )
-from scripts.archive.diagnostics.diag_micro_population_canary import PROMPTS, _generate, _surface_metrics
+from scripts.archive.diagnostics.diag_micro_population_canary import (
+    PROMPTS,
+    _generate,
+    _surface_metrics,
+)
 from scripts.archive.train_round_level_quality import batch_rounds
 from scripts.training.utils import (
     load_dialogue_texts_multi,
@@ -61,7 +67,6 @@ from scripts.training.utils import (
     load_general_tokenizer,
     split_train_eval,
 )
-
 
 BASE_POPULATION_SIZE = 9
 ROUTE_TRAIN_SAMPLE_CAP = 96
@@ -89,9 +94,7 @@ def _rounds_from_texts(texts: Iterable[str]) -> List[Tuple[str, str, str]]:
 
 
 def _load_route_rounds(train_cap: int, eval_cap: int) -> tuple[list, list]:
-    texts = load_dialogue_texts_multi(
-        "data/simple_zh", max_texts=100_000, max_answer_chars=96
-    )
+    texts = load_dialogue_texts_multi("data/simple_zh", max_texts=100_000, max_answer_chars=96)
     train_texts, eval_texts = split_train_eval(texts, eval_ratio=0.05, seed=42)
     return (
         _rounds_from_texts(train_texts[:train_cap]),
@@ -254,10 +257,7 @@ def _freeze_to_quality_heads(cortex) -> list[torch.nn.Parameter]:
 
 
 def _forward_batch(cortex, rounds, general_sp, trust_override=None):
-    embeddings = {
-        nid: cortex._neuron_shared_embeddings[nid]
-        for nid in cortex.ensemble.neurons
-    }
+    embeddings = {nid: cortex._neuron_shared_embeddings[nid] for nid in cortex.ensemble.neurons}
     neuron_embeddings, targets, answer_mask = batch_rounds(
         rounds,
         general_sp,
@@ -290,9 +290,7 @@ def _projected_logits(cortex, result) -> torch.Tensor:
     individual = result.get("individual_logits")
     if not individual:
         raise RuntimeError("forward_train did not return individual logits")
-    return cortex.ensemble._project_logits_to_target(
-        individual, ids, "general"
-    )
+    return cortex.ensemble._project_logits_to_target(individual, ids, "general")
 
 
 def _quality_replay_terms(cortex, result, targets, answer_mask):
@@ -312,9 +310,7 @@ def _quality_replay_terms(cortex, result, targets, answer_mask):
 
     nlls = []
     for member_logits in projected:
-        nlls.append(_masked_teacher_forcing_nll(
-            member_logits, targets, answer_mask
-        ))
+        nlls.append(_masked_teacher_forcing_nll(member_logits, targets, answer_mask))
     per_member_nll = torch.stack(nlls)
     ql_std = quality_logits.detach().std() + 1e-6
     actual = F.softmax(
@@ -322,9 +318,7 @@ def _quality_replay_terms(cortex, result, targets, answer_mask):
         dim=0,
     )
     ideal = F.softmax(-per_member_nll / 0.5, dim=0)
-    replay_loss = (
-        actual * (actual.clamp_min(1e-8).log() - ideal.clamp_min(1e-8).log())
-    ).sum()
+    replay_loss = (actual * (actual.clamp_min(1e-8).log() - ideal.clamp_min(1e-8).log())).sum()
     return projected, shadow_nll, replay_loss, per_member_nll
 
 
@@ -347,15 +341,17 @@ def _route_snapshot(cortex, rounds, general_sp) -> dict:
     with torch.no_grad():
         for start in range(0, len(rounds), ROUTE_BATCH_SIZE):
             result, targets, answer_mask = _forward_batch(
-                cortex, rounds[start:start + ROUTE_BATCH_SIZE], general_sp
+                cortex, rounds[start : start + ROUTE_BATCH_SIZE], general_sp
             )
             _projected, shadow_nll, _replay, _nlls = _quality_replay_terms(
                 cortex, result, targets, answer_mask
             )
             hard_nlls.append(
-                float(_masked_teacher_forcing_nll(
-                    result["fused_logits"], targets, answer_mask
-                ).detach())
+                float(
+                    _masked_teacher_forcing_nll(
+                        result["fused_logits"], targets, answer_mask
+                    ).detach()
+                )
             )
             shadow_nlls.append(float(shadow_nll.detach()))
             weights = result.get("weights")
@@ -464,8 +460,7 @@ def run(
     generation_after = _generation_snapshot(cortex, expanded_ids)
     changed = {
         "hard_nll_delta": round(
-            after["hard_route_teacher_forcing_nll"]
-            - before["hard_route_teacher_forcing_nll"],
+            after["hard_route_teacher_forcing_nll"] - before["hard_route_teacher_forcing_nll"],
             6,
         ),
         "shadow_nll_delta": round(

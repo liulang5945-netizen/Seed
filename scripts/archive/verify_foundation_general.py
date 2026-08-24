@@ -10,6 +10,7 @@
 Usage:
     python scripts/training/verify_foundation_general.py
 """
+
 import os
 import sys
 import math
@@ -25,8 +26,11 @@ DOMAINS = ["code", "math", "zh", "en"]
 
 def main():
     from scripts.archive.train_multi_domain_foundation import (
-        load_domain_texts, load_general_tokenizer, load_tokenizer_for_vocab,
-        verify_checkpoint, GENERAL_VOCAB,
+        load_domain_texts,
+        load_general_tokenizer,
+        load_tokenizer_for_vocab,
+        verify_checkpoint,
+        GENERAL_VOCAB,
     )
     from taiji.resonance.config import get_domain_neuron_config
 
@@ -52,9 +56,13 @@ def main():
         ckpt_path = os.path.join(SAVE_DIR, f"neuron_{d}.pt")
         assert os.path.exists(ckpt_path), f"[1] {d} checkpoint 缺失"
         avg = verify_checkpoint(
-            SAVE_DIR, d, general_sp, general_sp,
+            SAVE_DIR,
+            d,
+            general_sp,
+            general_sp,
             torch.nn.Embedding(GENERAL_VOCAB, 512),
-            texts[d], n_check=8,
+            texts[d],
+            n_check=8,
             lm_head_path=shared_head_path,
         )
         results[d] = math.exp(min(avg, 20))
@@ -66,9 +74,13 @@ def main():
         best_emb = os.path.join(SAVE_DIR, f"shared_embedding_best_{d}.pt")
         assert os.path.exists(best_emb), f"[2] {d} best embedding 缺失"
         avg = verify_checkpoint(
-            SAVE_DIR, d, general_sp, general_sp,
+            SAVE_DIR,
+            d,
+            general_sp,
+            general_sp,
             torch.nn.Embedding(GENERAL_VOCAB, 512),
-            texts[d], n_check=8,
+            texts[d],
+            n_check=8,
             embed_path=best_emb,
             lm_head_path=shared_head_path,
         )
@@ -81,17 +93,23 @@ def main():
     import torch.nn.functional as F
     from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
     from taiji.resonance.neuron import ResonanceNeuron
+
     emb = torch.nn.Embedding(GENERAL_VOCAB, 512)
-    emb.weight.data.copy_(torch.load(os.path.join(SAVE_DIR, "shared_embedding.pt"),
-                                     map_location="cpu", weights_only=False))
+    emb.weight.data.copy_(
+        torch.load(
+            os.path.join(SAVE_DIR, "shared_embedding.pt"), map_location="cpu", weights_only=False
+        )
+    )
     for d in DOMAINS:
-        ckpt = torch.load(os.path.join(SAVE_DIR, f"neuron_{d}.pt"),
-                          map_location="cpu", weights_only=False)
+        ckpt = torch.load(
+            os.path.join(SAVE_DIR, f"neuron_{d}.pt"), map_location="cpu", weights_only=False
+        )
         cfg = ckpt["neuron_config"]
         cfg.unified_field_dim = None
         head = torch.nn.Linear(cfg.hidden_size, GENERAL_VOCAB, bias=False)
-        head.weight.data.copy_(torch.load(shared_head_path, map_location="cpu",
-                                          weights_only=False)["weight"])
+        head.weight.data.copy_(
+            torch.load(shared_head_path, map_location="cpu", weights_only=False)["weight"]
+        )
         n = ResonanceNeuron(cfg, shared_lm_head=head)
         n.load_state_dict(ckpt["state_dict"], strict=False)
         n.eval()
@@ -100,8 +118,9 @@ def main():
         with torch.no_grad():
             r = n.forward(out[0], return_logits=True)
         logits = r["logits"]
-        assert logits.shape[-1] == GENERAL_VOCAB, \
-            f"[3] {d} logits vocab={logits.shape[-1]} != {GENERAL_VOCAB}"
+        assert (
+            logits.shape[-1] == GENERAL_VOCAB
+        ), f"[3] {d} logits vocab={logits.shape[-1]} != {GENERAL_VOCAB}"
         top_id = int(logits[0, -1].argmax().item())
         top_piece = general_sp.IdToPiece(top_id)
         print(f"  {d}: logits {tuple(logits.shape)}, top token='{top_piece}'")

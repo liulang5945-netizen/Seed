@@ -12,12 +12,15 @@
 
 输出：同目录 *_clean.jsonl（保持 {"text": ...} 格式）
 """
+
 import json
 import os
 import re
 import sys
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 sys.path.insert(0, PROJECT_ROOT)
 
 from scripts.training.experiment_config import DIALOGUE_DATA_FILES  # noqa: E402
@@ -25,9 +28,7 @@ from scripts.training.experiment_config import DIALOGUE_DATA_FILES  # noqa: E402
 DATA_DIR = os.path.join(PROJECT_ROOT, "data", "simple_zh")
 
 # 代码特征正则（中文对话中出现的编程关键字）
-CODE_PATTERN = re.compile(
-    r"```|\b(def|import|print|for|while|return|class|if __name__|lambda)\b"
-)
+CODE_PATTERN = re.compile(r"```|\b(def|import|print|for|while|return|class|if __name__|lambda)\b")
 # 英文单词
 EN_WORD = re.compile(r"[A-Za-z]{2,}")
 MAX_EN_WORDS = 8  # 答案英文词数上限（保留合理术语）
@@ -86,12 +87,18 @@ def main():
         total_kept += stat["kept"]
         total_dropped["code"] += stat["dropped"]["code"]
         total_dropped["en"] += stat["dropped"]["en"]
-        print(f"  {fname}: 保留 {stat['kept']} 条, "
-              f"过滤 代码={stat['dropped']['code']} 英文密集={stat['dropped']['en']}", flush=True)
+        print(
+            f"  {fname}: 保留 {stat['kept']} 条, "
+            f"过滤 代码={stat['dropped']['code']} 英文密集={stat['dropped']['en']}",
+            flush=True,
+        )
     total_in = total_kept + total_dropped["code"] + total_dropped["en"]
-    print(f"\n  合计: 输入 {total_in} → 保留 {total_kept} "
-          f"({total_kept / total_in * 100:.1f}%), "
-          f"过滤 代码={total_dropped['code']} 英文密集={total_dropped['en']}", flush=True)
+    print(
+        f"\n  合计: 输入 {total_in} → 保留 {total_kept} "
+        f"({total_kept / total_in * 100:.1f}%), "
+        f"过滤 代码={total_dropped['code']} 英文密集={total_dropped['en']}",
+        flush=True,
+    )
     print(f"\n  输出文件: {DATA_DIR}/**_clean.jsonl", flush=True)
 
 

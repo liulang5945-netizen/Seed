@@ -5,6 +5,7 @@
 quality_head 不参与生成；phasor 经 C23-B 场写入 binding 本体化影响生成路径。
 用同一套 9 神经元 + 不同 collab 装配，跑 Q1-Q4 对比生成质量。
 """
+
 import os
 import sys
 import time
@@ -13,8 +14,13 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 
 from taiji.loader import assemble_cortex  # noqa: E402
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
 QUESTIONS = [
@@ -60,5 +66,5 @@ def run_collab(collab_name: str):
 
 
 if __name__ == "__main__":
-    run_collab("collab_v3_c24v2.ckpt.pt")   # v2（今天 12:37 重训）
+    run_collab("collab_v3_c24v2.ckpt.pt")  # v2（今天 12:37 重训）
     run_collab("collab_v3_c24v2_v1.ckpt.pt")  # v1（8/10 备份）

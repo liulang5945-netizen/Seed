@@ -8,6 +8,7 @@
 
 输出：data/simple_zh/simple_zh_texts.jsonl（统一格式，每行一个 text）
 """
+
 from __future__ import annotations
 
 import os
@@ -16,7 +17,9 @@ import json
 import time
 from huggingface_hub import HfApi, hf_hub_download
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 REPO_ID = "fzmnm/TinyStoriesAdv-zh"
 OUTPUT_DIR = "data/simple_zh"
@@ -32,9 +35,9 @@ def main():
     print("=" * 60)
 
     # 列出所有文件
-    files = api.list_repo_files(REPO_ID, repo_type='dataset')
-    jsonl_files = [f for f in files if f.startswith('train_data/') and f.endswith('.jsonl')]
-    val_files = [f for f in files if f.startswith('val_data/') and f.endswith('.jsonl')]
+    files = api.list_repo_files(REPO_ID, repo_type="dataset")
+    jsonl_files = [f for f in files if f.startswith("train_data/") and f.endswith(".jsonl")]
+    val_files = [f for f in files if f.startswith("val_data/") and f.endswith(".jsonl")]
     print(f"训练文件: {len(jsonl_files)} 个 jsonl")
     print(f"验证文件: {len(val_files)} 个 jsonl")
 
@@ -43,16 +46,17 @@ def main():
     total_chars = 0
     t0 = time.time()
 
-    with open(OUTPUT_FILE, 'w', encoding='utf-8') as out_f:
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as out_f:
         # 训练数据
         for i, fname in enumerate(jsonl_files):
-            print(f"  [{i+1}/{len(jsonl_files)}] 下载 {fname}...", end=' ', flush=True)
+            print(f"  [{i+1}/{len(jsonl_files)}] 下载 {fname}...", end=" ", flush=True)
             try:
-                local = hf_hub_download(REPO_ID, fname, repo_type='dataset',
-                                        local_dir=os.path.join(OUTPUT_DIR, '_raw'))
+                local = hf_hub_download(
+                    REPO_ID, fname, repo_type="dataset", local_dir=os.path.join(OUTPUT_DIR, "_raw")
+                )
                 count = 0
                 chars = 0
-                with open(local, 'r', encoding='utf-8') as f:
+                with open(local, "r", encoding="utf-8") as f:
                     for line in f:
                         line = line.strip()
                         if not line:
@@ -62,18 +66,18 @@ def main():
                         except json.JSONDecodeError:
                             continue
                         # 提取 text 字段（不同文件字段名可能不同）
-                        text = d.get('text') or d.get('content') or d.get('story') or ''
+                        text = d.get("text") or d.get("content") or d.get("story") or ""
                         if not text or len(text) < 20:
                             continue
                         # 清理：去掉 meta_tag 前缀行（如果有）
-                        if text.startswith('meta_tag:'):
-                            lines = text.split('\n', 2)
+                        if text.startswith("meta_tag:"):
+                            lines = text.split("\n", 2)
                             if len(lines) >= 2:
                                 text = lines[1] if len(lines) == 2 else lines[2]
                         text = text.strip()
                         if len(text) < 20:
                             continue
-                        out_f.write(json.dumps({'text': text}, ensure_ascii=False) + '\n')
+                        out_f.write(json.dumps({"text": text}, ensure_ascii=False) + "\n")
                         count += 1
                         chars += len(text)
                 total_texts += count
@@ -100,7 +104,8 @@ def main():
 
     # 清理临时目录
     import shutil
-    raw_dir = os.path.join(OUTPUT_DIR, '_raw')
+
+    raw_dir = os.path.join(OUTPUT_DIR, "_raw")
     if os.path.exists(raw_dir):
         shutil.rmtree(raw_dir)
         print(f"已清理临时目录: {raw_dir}")

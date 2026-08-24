@@ -17,16 +17,16 @@
 import time
 import logging
 import concurrent.futures
-from typing import List, Optional, Dict
-from dataclasses import dataclass
+from typing import List, Optional
 
 from .discovery import (
-    WebSearchProvider, SitemapProvider, SearchResult,
+    WebSearchProvider,
+    SitemapProvider,
     search as discovery_search,
 )
-from .fetcher import DualFetcher, FetchedPage, get_fetcher
-from .extractor import ReadabilityExtractor, PageContent, get_extractor
-from .index import InvertedIndex, IndexedPage, SearchHit, get_index
+from .fetcher import DualFetcher
+from .extractor import ReadabilityExtractor, PageContent
+from .index import InvertedIndex, IndexedPage
 
 logger = logging.getLogger("Taiji.Search.Pipeline")
 
@@ -34,6 +34,7 @@ logger = logging.getLogger("Taiji.Search.Pipeline")
 # ═══════════════════════════════════════════════
 # SearchPipeline — 统一编排
 # ═══════════════════════════════════════════════
+
 
 class SearchPipeline:
     """
@@ -52,8 +53,7 @@ class SearchPipeline:
 
     # ─── 核心：搜索 + 抓取 + 入索引 ───
 
-    def search_and_index(self, query: str, max_results: int = 8,
-                         fetch_pages: int = 3) -> str:
+    def search_and_index(self, query: str, max_results: int = 8, fetch_pages: int = 3) -> str:
         """
         完整管道：搜索 → 抓取顶部页面 → 提取正文 → 入索引 → 返回结构化摘要。
 
@@ -66,18 +66,19 @@ class SearchPipeline:
             return f"搜索 '{query}' 未找到结果。"
 
         # 并行抓取顶部页面
-        fetched_contents = self._fetch_and_extract_batch(
-            [r.url for r in results[:fetch_pages]]
-        )
+        fetched_contents = self._fetch_and_extract_batch([r.url for r in results[:fetch_pages]])
 
         # 入索引
         indexed = 0
         for content in fetched_contents:
             if content and content.word_count > 20:
                 page = IndexedPage(
-                    url=content.url, title=content.title,
-                    text=content.text, links=content.links,
-                    crawled_at=time.time(), word_count=content.word_count,
+                    url=content.url,
+                    title=content.title,
+                    text=content.text,
+                    links=content.links,
+                    crawled_at=time.time(),
+                    word_count=content.word_count,
                     source="discovery",
                 )
                 self.index.add_page(page)
@@ -86,7 +87,9 @@ class SearchPipeline:
         # 生成摘要
         elapsed = time.time() - t0
         lines = [f"## 搜索: {query}\n"]
-        lines.append(f"找到 {len(results)} 条结果，抓取 {len(fetched_contents)} 页，入索引 {indexed} 页 ({elapsed:.1f}s)\n")
+        lines.append(
+            f"找到 {len(results)} 条结果，抓取 {len(fetched_contents)} 页，入索引 {indexed} 页 ({elapsed:.1f}s)\n"
+        )
 
         for i, r in enumerate(results):
             lines.append(f"### {i+1}. {r.title}")
@@ -103,8 +106,7 @@ class SearchPipeline:
 
     # ─── 深度搜索：先查本地 ───
 
-    def search_deep(self, query: str, max_results: int = 8,
-                    fetch_pages: int = 3) -> str:
+    def search_deep(self, query: str, max_results: int = 8, fetch_pages: int = 3) -> str:
         """
         深度搜索：先查本地索引 → 命中则直接返回 → 未命中则联网搜索 + 入索引。
 
@@ -151,9 +153,13 @@ class SearchPipeline:
 
         # 入索引
         indexed_page = IndexedPage(
-            url=url, title=content.title, text=content.text,
-            links=content.links, crawled_at=time.time(),
-            word_count=content.word_count, source="browse",
+            url=url,
+            title=content.title,
+            text=content.text,
+            links=content.links,
+            crawled_at=time.time(),
+            word_count=content.word_count,
+            source="browse",
         )
         self.index.add_page(indexed_page)
 
@@ -165,18 +171,25 @@ class SearchPipeline:
                     continue
                 sub_content = self._fetch_and_extract_single(link_url)
                 if sub_content and sub_content.word_count > 20:
-                    self.index.add_page(IndexedPage(
-                        url=link_url, title=sub_content.title,
-                        text=sub_content.text, links=sub_content.links,
-                        crawled_at=time.time(), word_count=sub_content.word_count,
-                        source="browse_follow",
-                    ))
+                    self.index.add_page(
+                        IndexedPage(
+                            url=link_url,
+                            title=sub_content.title,
+                            text=sub_content.text,
+                            links=sub_content.links,
+                            crawled_at=time.time(),
+                            word_count=sub_content.word_count,
+                            source="browse_follow",
+                        )
+                    )
                     followed += 1
 
         elapsed = time.time() - t0
         lines = [f"## 浏览: {url}\n"]
         lines.append(f"标题: {content.title}")
-        lines.append(f"字数: {content.word_count}，链接: {len(content.links)}，跟随: {followed} ({elapsed:.1f}s)\n")
+        lines.append(
+            f"字数: {content.word_count}，链接: {len(content.links)}，跟随: {followed} ({elapsed:.1f}s)\n"
+        )
         lines.append(f"**正文摘要**:\n{content.text[:800]}...")
         return "\n".join(lines)
 
@@ -203,19 +216,26 @@ class SearchPipeline:
         indexed = 0
         for content in contents:
             if content and content.word_count > 20:
-                self.index.add_page(IndexedPage(
-                    url=content.url, title=content.title,
-                    text=content.text, links=content.links,
-                    crawled_at=time.time(), word_count=content.word_count,
-                    source="crawl",
-                ))
+                self.index.add_page(
+                    IndexedPage(
+                        url=content.url,
+                        title=content.title,
+                        text=content.text,
+                        links=content.links,
+                        crawled_at=time.time(),
+                        word_count=content.word_count,
+                        source="crawl",
+                    )
+                )
                 indexed += 1
 
         elapsed = time.time() - t0
-        return (f"## 爬取: {seed_url}\n"
-                f"发现 URL: {len(urls)}，成功抓取: {len([c for c in contents if c])}，"
-                f"入索引: {indexed} ({elapsed:.1f}s)\n"
-                f"索引统计: {self.index.stats()}")
+        return (
+            f"## 爬取: {seed_url}\n"
+            f"发现 URL: {len(urls)}，成功抓取: {len([c for c in contents if c])}，"
+            f"入索引: {indexed} ({elapsed:.1f}s)\n"
+            f"索引统计: {self.index.stats()}"
+        )
 
     # ─── 纯本地搜索 ───
 
@@ -243,13 +263,14 @@ class SearchPipeline:
         content.url = url
         return content
 
-    def _fetch_and_extract_batch(self, urls: List[str], max_workers: int = 4) -> List[Optional[PageContent]]:
+    def _fetch_and_extract_batch(
+        self, urls: List[str], max_workers: int = 4
+    ) -> List[Optional[PageContent]]:
         """并行抓取 + 提取"""
         results: List[Optional[PageContent]] = [None] * len(urls)
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as pool:
             future_to_idx = {
-                pool.submit(self._fetch_and_extract_single, url): i
-                for i, url in enumerate(urls)
+                pool.submit(self._fetch_and_extract_single, url): i for i, url in enumerate(urls)
             }
             for future in concurrent.futures.as_completed(future_to_idx, timeout=30):
                 idx = future_to_idx[future]
@@ -280,6 +301,7 @@ def get_pipeline() -> SearchPipeline:
 
 
 # ─── 工具接口（供 tool_registry 注册）───
+
 
 def tool_search(query: str) -> str:
     """快速搜索（不入索引）"""

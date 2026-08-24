@@ -8,12 +8,16 @@ keeps its identity during normal execution.
 from __future__ import annotations
 
 from contextlib import contextmanager
+import logging
+import pickle
 from pathlib import Path
 import sys
 from threading import RLock
 from typing import Any, Iterator
 
 import torch
+
+logger = logging.getLogger(__name__)
 
 
 _ALIAS_LOCK = RLock()
@@ -46,7 +50,20 @@ def load_legacy_checkpoint(
     *,
     map_location: Any = "cpu",
 ) -> Any:
-    """Load an unsafe historical pickle inside the compatibility namespace."""
+    """Load a checkpoint, preferring the safe ``weights_only=True`` mode.
 
-    with historical_taiji_namespace():
-        return torch.load(path, map_location=map_location, weights_only=False)
+    Falls back to the unsafe historical pickle inside the compatibility
+    namespace (with an explicit warning) for legacy ``taiji.*`` checkpoints
+    that contain non-tensor objects.
+    """
+
+    try:
+        return torch.load(path, map_location=map_location, weights_only=True)
+    except pickle.UnpicklingError:
+        logger.warning(
+            "checkpoint %s requires weights_only=False (legacy pickle); "
+            "only load files from trusted sources",
+            path,
+        )
+        with historical_taiji_namespace():
+            return torch.load(path, map_location=map_location, weights_only=False)

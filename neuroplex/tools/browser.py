@@ -26,13 +26,12 @@
     pip install playwright
     playwright install chromium
 """
+
 import os
-import json
 import time
 import logging
 import asyncio
-from typing import Optional, List, Dict, Any
-from pathlib import Path
+from typing import List, Dict, Any
 
 logger = logging.getLogger("Taiji.Browser")
 
@@ -66,10 +65,10 @@ class Browser:
         """启动浏览器"""
         try:
             from playwright.async_api import async_playwright
+
             self._playwright = await async_playwright().start()
             self._browser = await self._playwright.chromium.launch(
-                headless=self.headless,
-                args=['--no-sandbox', '--disable-dev-shm-usage']
+                headless=self.headless, args=["--no-sandbox", "--disable-dev-shm-usage"]
             )
             self._context = await self._browser.new_context(
                 viewport={"width": 1280, "height": 720},
@@ -79,7 +78,9 @@ class Browser:
             self._page.set_default_timeout(self.timeout)
             logger.info("浏览器启动成功")
         except ImportError:
-            logger.error("需要安装 playwright: pip install playwright && playwright install chromium")
+            logger.error(
+                "需要安装 playwright: pip install playwright && playwright install chromium"
+            )
             raise
         except Exception as e:
             logger.error(f"浏览器启动失败: {e}")
@@ -95,8 +96,8 @@ class Browser:
             if self._playwright:
                 await self._playwright.stop()
             logger.info("浏览器已关闭")
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【Browser.close】处理失败（非致命）: %s", e)
 
     # ─── 导航 ───────────────────────────────────────
 
@@ -350,7 +351,7 @@ class Browser:
         lines = [f"搜索 '{query}' 找到 {len(results)} 条结果:\n"]
         for i, r in enumerate(results, 1):
             lines.append(f"{i}. {r['title']}")
-            if r['snippet']:
+            if r["snippet"]:
                 lines.append(f"   {r['snippet'][:200]}")
             lines.append(f"   URL: {r['link']}")
             lines.append("")
@@ -397,6 +398,7 @@ class Browser:
 # 同步封装（供工具调用）
 # ═══════════════════════════════════════════════
 
+
 def _run_async(coro):
     """在同步上下文中运行异步代码"""
     try:
@@ -404,6 +406,7 @@ def _run_async(coro):
         if loop.is_running():
             # 已在异步上下文中，使用线程池
             import concurrent.futures
+
             with concurrent.futures.ThreadPoolExecutor() as pool:
                 return pool.submit(asyncio.run, coro).result(timeout=60)
         else:
@@ -414,26 +417,31 @@ def _run_async(coro):
 
 def browse_open(url: str) -> str:
     """打开网页（供工具调用）"""
+
     async def _open():
         async with Browser() as b:
             title = await b.goto(url)
             info = await b.get_page_info()
             return f"已打开: {title}\nURL: {info['url']}\n文本长度: {info['text_length']}\n链接数: {info['links_count']}\n图片数: {info['images_count']}"
+
     return _run_async(_open())
 
 
 def browse_read(url: str) -> str:
     """读取网页内容（供工具调用）"""
+
     async def _read():
         async with Browser() as b:
             await b.goto(url, wait_until="networkidle")
             text = await b.get_text()
             return f"网页内容 ({url}):\n\n{text[:8000]}"
+
     return _run_async(_read())
 
 
 def browse_click(url: str, selector: str) -> str:
     """打开网页并点击元素（供工具调用）"""
+
     async def _click():
         async with Browser() as b:
             await b.goto(url)
@@ -441,23 +449,28 @@ def browse_click(url: str, selector: str) -> str:
             await asyncio.sleep(1)
             text = await b.get_text()
             return f"{result}\n\n点击后页面内容:\n{text[:3000]}"
+
     return _run_async(_click())
 
 
 def browse_search(query: str) -> str:
     """浏览器搜索（供工具调用）"""
+
     async def _search():
         async with Browser() as b:
             result = await b.search_and_extract(query)
             return result
+
     return _run_async(_search())
 
 
 def browse_screenshot(url: str) -> str:
     """截取网页截图（供工具调用）"""
+
     async def _screenshot():
         async with Browser() as b:
             await b.goto(url)
             path = await b.screenshot()
             return f"截图已保存: {path}"
+
     return _run_async(_screenshot())

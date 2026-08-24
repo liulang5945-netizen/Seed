@@ -1,9 +1,11 @@
 """
 使用 datasets 库流式下载数据集
 """
+
 import os
 import json
 from pathlib import Path
+
 
 def download_belle_streaming():
     """流式下载 BELLE 数据集"""
@@ -25,11 +27,11 @@ def download_belle_streaming():
         print(f"保存到: {output_file}")
 
         converted = 0
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             for item in dataset:
-                instruction = item.get('instruction', '')
-                input_text = item.get('input', '')
-                output_text = item.get('output', '')
+                instruction = item.get("instruction", "")
+                input_text = item.get("input", "")
+                output_text = item.get("output", "")
 
                 if not instruction or not output_text:
                     continue
@@ -41,12 +43,15 @@ def download_belle_streaming():
 
                 # 构建messages格式
                 messages = [
-                    {"role": "system", "content": "你是态极，一个本地AI生命体。你运行在用户的电脑上，数据不出本机。你会用自然、友好的方式回答用户的问题。"},
+                    {
+                        "role": "system",
+                        "content": "你是态极，一个本地AI生命体。你运行在用户的电脑上，数据不出本机。你会用自然、友好的方式回答用户的问题。",
+                    },
                     {"role": "user", "content": user_msg},
-                    {"role": "assistant", "content": output_text}
+                    {"role": "assistant", "content": output_text},
                 ]
 
-                f.write(json.dumps({"messages": messages}, ensure_ascii=False) + '\n')
+                f.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
                 converted += 1
 
                 if converted % 10000 == 0:
@@ -62,8 +67,10 @@ def download_belle_streaming():
     except Exception as e:
         print(f"下载失败: {e}")
         import traceback
+
         traceback.print_exc()
         return None
+
 
 def download_firefly_streaming():
     """流式下载 Firefly 数据集"""
@@ -85,12 +92,12 @@ def download_firefly_streaming():
         print(f"保存到: {output_file}")
 
         converted = 0
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             for item in dataset:
                 # Firefly 格式: kind, input, target
-                kind = item.get('kind', '')
-                input_text = item.get('input', '')
-                target_text = item.get('target', '')
+                kind = item.get("kind", "")
+                input_text = item.get("input", "")
+                target_text = item.get("target", "")
 
                 if not target_text:
                     continue
@@ -100,12 +107,15 @@ def download_firefly_streaming():
 
                 # 构建messages格式
                 messages = [
-                    {"role": "system", "content": "你是态极，一个本地AI生命体。你运行在用户的电脑上，数据不出本机。你会用自然、友好的方式回答用户的问题。"},
+                    {
+                        "role": "system",
+                        "content": "你是态极，一个本地AI生命体。你运行在用户的电脑上，数据不出本机。你会用自然、友好的方式回答用户的问题。",
+                    },
                     {"role": "user", "content": user_msg},
-                    {"role": "assistant", "content": target_text}
+                    {"role": "assistant", "content": target_text},
                 ]
 
-                f.write(json.dumps({"messages": messages}, ensure_ascii=False) + '\n')
+                f.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
                 converted += 1
 
                 if converted % 10000 == 0:
@@ -121,23 +131,26 @@ def download_firefly_streaming():
     except Exception as e:
         print(f"下载失败: {e}")
         import traceback
+
         traceback.print_exc()
         return None
+
 
 def sample_and_check(file_path, num_samples=5):
     """抽样检查数据质量"""
     print(f"\n抽样检查: {os.path.basename(file_path)}")
     print("-" * 60)
 
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         for i, line in enumerate(f):
             if i >= num_samples:
                 break
             item = json.loads(line)
-            msgs = item['messages']
+            msgs = item["messages"]
             print(f"\n样本 {i+1}:")
             print(f"  Q: {msgs[1]['content'][:100]}")
             print(f"  A: {msgs[2]['content'][:100]}")
+
 
 def main():
     print("=" * 60)
@@ -165,7 +178,7 @@ def main():
         print("\n下载的文件:")
         total_lines = 0
         for f in downloaded_files:
-            with open(f, 'r', encoding='utf-8') as fh:
+            with open(f, "r", encoding="utf-8") as fh:
                 line_count = sum(1 for _ in fh)
             print(f"  {os.path.basename(f)}: {line_count} 条")
             total_lines += line_count
@@ -182,5 +195,6 @@ def main():
     else:
         print("\n没有成功下载的数据")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

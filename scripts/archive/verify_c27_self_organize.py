@@ -29,9 +29,12 @@ import shutil
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch  # noqa: E402
+
 # N2（REMEDIATION_PLAN R7）：固定 seed 保证可复现
 import random  # noqa: E402
 import numpy as np  # noqa: E402
@@ -45,6 +48,9 @@ from neuroplex.loader import assemble_cortex  # noqa: E402
 from neuroplex.life.sleep_engine import SleepEngine, SleepReport  # noqa: E402
 from neuroplex.life.integrate_engine import IntegrateEngine  # noqa: E402
 from neuroplex.resonance.dialogue_format import build_dialogue_prompt  # noqa: E402
+import logging
+
+logger = logging.getLogger(__name__)
 
 passed = 0
 failed = 0
@@ -60,11 +66,18 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 
 MEMORY_ITEMS = [
     {
@@ -86,8 +99,7 @@ def field_state_of(cortex, text: str) -> torch.Tensor:
     gids = cortex._general_sp.encode(text) or [0]
     ids = torch.tensor([gids], dtype=torch.long, device=cortex.device)
     emb = cortex._shared_embedding(ids)
-    res = cortex.think(emb, active_nids=None, fusion_mode="soft",
-                       collab_mode="continuous")
+    res = cortex.think(emb, active_nids=None, fusion_mode="soft", collab_mode="continuous")
     fs = res.get("field_state")
     if fs is None:
         raise RuntimeError("think() 未返回 field_state")
@@ -126,17 +138,15 @@ def cond_nll(cortex, nid: str, text: str, vec=None, round_num=1) -> float:
         else:
             fs = v
     with torch.no_grad():
-        res = neuron.forward(emb, field_state=fs, round_num=round_num,
-                             return_logits=True)
+        res = neuron.forward(emb, field_state=fs, round_num=round_num, return_logits=True)
         logits = res["logits"]
         target = torch.tensor([domain_ids], dtype=torch.long, device=cortex.device)
         min_len = logits.size(1) - 1
         if min_len < 1:
             return float("nan")
         sl = logits[:, :min_len, :].contiguous()
-        st = target[:, 1:1 + min_len].contiguous().clamp(0, logits.size(-1) - 1)
-        loss = F.cross_entropy(sl.view(-1, sl.size(-1)), st.view(-1),
-                               ignore_index=-100)
+        st = target[:, 1 : 1 + min_len].contiguous().clamp(0, logits.size(-1) - 1)
+        loss = F.cross_entropy(sl.view(-1, sl.size(-1)), st.view(-1), ignore_index=-100)
     return loss.item()
 
 
@@ -144,10 +154,11 @@ def generate_probe(cortex) -> tuple[str, bool]:
     """用固定短输入确认热插拔前后群体仍可生成。"""
     out = cortex.generate(
         build_dialogue_prompt("介绍一下什么是机器学习。"),
-        max_tokens=8, domain="zh", temperature=0.55,
+        max_tokens=8,
+        domain="zh",
+        temperature=0.55,
     )
-    ok = isinstance(out, str) and bool(out.strip()) \
-        and not cortex._is_degenerate_text(out)
+    ok = isinstance(out, str) and bool(out.strip()) and not cortex._is_degenerate_text(out)
     return out, ok
 
 
@@ -183,8 +194,7 @@ def main():
         for item in MEMORY_ITEMS:
             vec = field_state_of(cortex, item["text"])
             sleep_engine.record_field_memory(vec, item["label"], text=item["text"])
-        report = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
-                             duration_seconds=0)
+        report = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
         sleep_engine._sleep_phase_field_consolidation(report)
         bank = sleep_engine.get_field_memory()
         check("记忆库固化 3 条", len(bank) == 3)
@@ -193,73 +203,87 @@ def main():
             bank.retrieve_vectors(qv, top_k=1)
         acc = {e["label"]: e["access_count"] for e in bank.entries}
         print(f"    access_count: {acc}", flush=True)
-        check("记忆经验就绪：3 条 access_count ≥ 1",
-              all(v >= 1 for v in acc.values()))
+        check("记忆经验就绪：3 条 access_count ≥ 1", all(v >= 1 for v in acc.values()))
 
         # ── 2. 创建新生 neuron（from_split 继承 + 噪声分化，真实路径）──
         split_parent = "zh_aug0_dialogue"  # 选 compact（512 hidden）与 ensemble 一致
-        new_nid = cortex.add_neuron("zh", lifecycle=lifecycle,
-                                    from_split=split_parent)
+        new_nid = cortex.add_neuron("zh", lifecycle=lifecycle, from_split=split_parent)
         new_ckpt = os.path.join(cortex.neurons_dir, f"neuron_{new_nid}.pt")
         print(f"  新生 neuron: {new_nid}（split from {split_parent}）", flush=True)
         check("A0. 新生 neuron 创建并注入", new_nid in cortex.neurons)
 
         maturity = lifecycle.maturity
-        check("A1. 新生 neuron 从幼稚态开始",
-              maturity.get_maturity_ratio(new_nid) == 0.0
-              and maturity.get_resonance_weight(new_nid) == 0.1
-              and maturity.get_lr_multiplier(new_nid) == 3.0,
-              f"ratio={maturity.get_maturity_ratio(new_nid):.2f}, "
-              f"weight={maturity.get_resonance_weight(new_nid):.2f}, "
-              f"lr_mult={maturity.get_lr_multiplier(new_nid):.2f}")
+        check(
+            "A1. 新生 neuron 从幼稚态开始",
+            maturity.get_maturity_ratio(new_nid) == 0.0
+            and maturity.get_resonance_weight(new_nid) == 0.1
+            and maturity.get_lr_multiplier(new_nid) == 3.0,
+            f"ratio={maturity.get_maturity_ratio(new_nid):.2f}, "
+            f"weight={maturity.get_resonance_weight(new_nid):.2f}, "
+            f"lr_mult={maturity.get_lr_multiplier(new_nid):.2f}",
+        )
 
         # 父/子 读路径基线（from_split 已继承父权重）
-        parent_read = {k: v.clone() for k, v in
-                       cortex.neurons[split_parent].field_read_layers.state_dict().items()}
-        new_read_before = {k: v.clone() for k, v in
-                           cortex.neurons[new_nid].field_read_layers.state_dict().items()}
+        parent_read = {
+            k: v.clone()
+            for k, v in cortex.neurons[split_parent].field_read_layers.state_dict().items()
+        }
+        new_read_before = {
+            k: v.clone() for k, v in cortex.neurons[new_nid].field_read_layers.state_dict().items()
+        }
         # 成熟 neuron 基线（零破坏验证）
-        mature_before = {k: v.clone() for k, v in
-                         cortex.neurons[split_parent].state_dict().items()}
+        mature_before = {k: v.clone() for k, v in cortex.neurons[split_parent].state_dict().items()}
 
         # ── 3. 集成：feed 为空 + 记忆库有经验 → 从经验生长 ──
         print("\n[整合] IntegrateEngine（feed 为空，仅记忆经验）...", flush=True)
-        ie = IntegrateEngine(cortex, lifecycle=lifecycle,
-                             feed_engine=None,   # feed 为空 → 纯记忆生长
-                             memory_bank=bank)
+        ie = IntegrateEngine(
+            cortex,
+            lifecycle=lifecycle,
+            feed_engine=None,  # feed 为空 → 纯记忆生长
+            memory_bank=bank,
+        )
         result = ie.integrate(new_nid)
         status = result.get("status")
         print(f"    结果: {result}", flush=True)
-        check("A. feed 空 + 记忆经验 → 新生不 skipped（从经验生长）",
-              status in ("training", "committed"),
-              f"status={status}")
+        check(
+            "A. feed 空 + 记忆经验 → 新生不 skipped（从经验生长）",
+            status in ("training", "committed"),
+            f"status={status}",
+        )
 
         # ── 4. 读路径已学习（记忆注意窗预训练生效）──
-        new_read_after = {k: v.clone() for k, v in
-                          cortex.neurons[new_nid].field_read_layers.state_dict().items()}
+        new_read_after = {
+            k: v.clone() for k, v in cortex.neurons[new_nid].field_read_layers.state_dict().items()
+        }
         read_delta = sum(
             float((new_read_after[k] - new_read_before[k]).abs().max().item())
             for k in new_read_before
         )
         print(f"    读路径 delta（vs 继承基线）={read_delta:.4f}", flush=True)
-        check("B. 读路径已学习：field_read_layers 权重变化（记忆注意窗预训练生效）",
-              read_delta > 1e-4, f"delta={read_delta:.4f}")
+        check(
+            "B. 读路径已学习：field_read_layers 权重变化（记忆注意窗预训练生效）",
+            read_delta > 1e-4,
+            f"delta={read_delta:.4f}",
+        )
 
         # ── 5. 记忆条件化可用（软）：条件化 NLL ≤ 无条件化 NLL + 容差 ──
         item0 = MEMORY_ITEMS[0]
         vec0 = field_state_of(cortex, item0["text"])
         nll_cond = cond_nll(cortex, new_nid, item0["text"], vec0, round_num=2)
         nll_plain = cond_nll(cortex, new_nid, item0["text"], None, round_num=1)
-        print(f"    条件化 NLL={nll_cond:.3f}, 无条件化 NLL={nll_plain:.3f}",
-              flush=True)
-        check("C. 记忆条件化可用：条件化 NLL ≤ 无条件化 + 1.0（读路径对齐经验）",
-              nll_cond <= nll_plain + 1.0,
-              f"cond={nll_cond:.3f} plain={nll_plain:.3f}")
+        print(f"    条件化 NLL={nll_cond:.3f}, 无条件化 NLL={nll_plain:.3f}", flush=True)
+        check(
+            "C. 记忆条件化可用：条件化 NLL ≤ 无条件化 + 1.0（读路径对齐经验）",
+            nll_cond <= nll_plain + 1.0,
+            f"cond={nll_cond:.3f} plain={nll_plain:.3f}",
+        )
 
         # ── 6. 邻居协调保留降权（代码契约）──
-        check("D. 邻居协调保留降权：PEER_ALIGNMENT_WEIGHT == 0.3",
-              IntegrateEngine.PEER_ALIGNMENT_WEIGHT == 0.3,
-              f"PEER_ALIGNMENT_WEIGHT={IntegrateEngine.PEER_ALIGNMENT_WEIGHT}")
+        check(
+            "D. 邻居协调保留降权：PEER_ALIGNMENT_WEIGHT == 0.3",
+            IntegrateEngine.PEER_ALIGNMENT_WEIGHT == 0.3,
+            f"PEER_ALIGNMENT_WEIGHT={IntegrateEngine.PEER_ALIGNMENT_WEIGHT}",
+        )
 
         # ── 7. 零破坏：成熟 neuron 参数不变 ──
         mature_after = cortex.neurons[split_parent].state_dict()
@@ -269,26 +293,30 @@ def main():
             if k in mature_after and mature_before[k].shape == mature_after[k].shape
         )
         print(f"    成熟 neuron delta={mature_delta:.6f}", flush=True)
-        check("E. 零破坏：成熟 neuron（父本）参数不变",
-              mature_delta < 1e-8, f"delta={mature_delta:.2e}")
+        check(
+            "E. 零破坏：成熟 neuron（父本）参数不变",
+            mature_delta < 1e-8,
+            f"delta={mature_delta:.2e}",
+        )
 
         # ── 7.5 成熟：幼稚态逐步转为正式成员 ──
         for _ in range(int(maturity.maturity_rounds) + 1):
             maturity.tick(new_nid)
-        check("G1. 新生 neuron 完成成熟",
-              maturity.is_mature(new_nid)
-              and maturity.get_maturity_ratio(new_nid) == 1.0
-              and maturity.get_resonance_weight(new_nid) == 1.0
-              and maturity.get_lr_multiplier(new_nid) == 1.0,
-              f"ratio={maturity.get_maturity_ratio(new_nid):.2f}, "
-              f"weight={maturity.get_resonance_weight(new_nid):.2f}, "
-              f"lr_mult={maturity.get_lr_multiplier(new_nid):.2f}")
+        check(
+            "G1. 新生 neuron 完成成熟",
+            maturity.is_mature(new_nid)
+            and maturity.get_maturity_ratio(new_nid) == 1.0
+            and maturity.get_resonance_weight(new_nid) == 1.0
+            and maturity.get_lr_multiplier(new_nid) == 1.0,
+            f"ratio={maturity.get_maturity_ratio(new_nid):.2f}, "
+            f"weight={maturity.get_resonance_weight(new_nid):.2f}, "
+            f"lr_mult={maturity.get_lr_multiplier(new_nid):.2f}",
+        )
 
         # ── 7.6 隔离/恢复：状态机与 Cortex 路由摘除/复活联动 ──
         before_count = len(cortex.neurons)
         out_before, ok_before = generate_probe(cortex)
-        check("G2. 新生加入后群体仍可生成", ok_before,
-              f"out={out_before[:24]!r}")
+        check("G2. 新生加入后群体仍可生成", ok_before, f"out={out_before[:24]!r}")
 
         apoptosis = lifecycle.apoptosis
         old_failure_threshold = apoptosis.failure_threshold
@@ -304,52 +332,59 @@ def main():
         }
         apoptosis.step_population({new_nid: weak_metrics}, step_round=1)
         states = apoptosis.step_population({new_nid: weak_metrics}, step_round=2)
-        check("G3. 低生存分按状态机进入隔离",
-              states.get(new_nid) == "isolated"
-              and new_nid in apoptosis.get_isolated(),
-              f"state={states.get(new_nid)}")
+        check(
+            "G3. 低生存分按状态机进入隔离",
+            states.get(new_nid) == "isolated" and new_nid in apoptosis.get_isolated(),
+            f"state={states.get(new_nid)}",
+        )
 
         isolated = cortex.isolate_neuron(new_nid)
-        check("G4. 隔离摘除路由但保留群体", isolated
-              and new_nid not in cortex.neurons
-              and len(cortex.neurons) == before_count - 1
-              and new_nid in cortex.get_isolated_neurons())
+        check(
+            "G4. 隔离摘除路由但保留群体",
+            isolated
+            and new_nid not in cortex.neurons
+            and len(cortex.neurons) == before_count - 1
+            and new_nid in cortex.get_isolated_neurons(),
+        )
         out_isolated, ok_isolated = generate_probe(cortex)
-        check("G5. 隔离后既有群体仍可生成", ok_isolated,
-              f"out={out_isolated[:24]!r}")
+        check("G5. 隔离后既有群体仍可生成", ok_isolated, f"out={out_isolated[:24]!r}")
 
         revived = cortex.revive_neuron(new_nid)
         apoptosis.revive(new_nid)
-        check("G6. 复活重新加入路由", revived
-              and new_nid in cortex.neurons
-              and new_nid not in cortex.get_isolated_neurons()
-              and apoptosis.get_state(new_nid) == "active"
-              and len(cortex.neurons) == before_count)
+        check(
+            "G6. 复活重新加入路由",
+            revived
+            and new_nid in cortex.neurons
+            and new_nid not in cortex.get_isolated_neurons()
+            and apoptosis.get_state(new_nid) == "active"
+            and len(cortex.neurons) == before_count,
+        )
         revived_read = cortex.neurons[new_nid].field_read_layers.state_dict()
         restore_delta = sum(
             float((revived_read[k] - new_read_after[k]).abs().max().item())
-            for k in new_read_after if k in revived_read
+            for k in new_read_after
+            if k in revived_read
         )
-        check("G7. 复活保留新生后的读路径权重",
-              restore_delta < 1e-6, f"delta={restore_delta:.2e}")
+        check("G7. 复活保留新生后的读路径权重", restore_delta < 1e-6, f"delta={restore_delta:.2e}")
         out_revived, ok_revived = generate_probe(cortex)
-        check("G8. 复活后群体继续生成", ok_revived,
-              f"out={out_revived[:24]!r}")
-        check("G9. 隔离/复活不破坏场记忆",
-              len(bank) == len(MEMORY_ITEMS)
-              and {e["label"] for e in bank.entries}
-              == {item["label"] for item in MEMORY_ITEMS},
-              f"field_memory={len(bank)}")
+        check("G8. 复活后群体继续生成", ok_revived, f"out={out_revived[:24]!r}")
+        check(
+            "G9. 隔离/复活不破坏场记忆",
+            len(bank) == len(MEMORY_ITEMS)
+            and {e["label"] for e in bank.entries} == {item["label"] for item in MEMORY_ITEMS},
+            f"field_memory={len(bank)}",
+        )
         apoptosis.failure_threshold = old_failure_threshold
 
         # ── 8. 持久化：新 neuron 读路径随 state_dict 保存 ──
         saved_sd = cortex.neurons[new_nid].state_dict()
         read_keys = [k for k in saved_sd if k.startswith("field_read_layers.")]
         lora_keys = [k for k in saved_sd if k.startswith("lora_adapters.")]
-        check("F. 持久化：新 neuron 读路径 + LoRA 随 state_dict 保存",
-              len(read_keys) >= len(cortex.neurons[new_nid].layers)
-              and len(lora_keys) >= 3,
-              f"read_keys={len(read_keys)}, lora_keys={len(lora_keys)}")
+        check(
+            "F. 持久化：新 neuron 读路径 + LoRA 随 state_dict 保存",
+            len(read_keys) >= len(cortex.neurons[new_nid].layers) and len(lora_keys) >= 3,
+            f"read_keys={len(read_keys)}, lora_keys={len(lora_keys)}",
+        )
 
         print(f"\n[验证摘要] {tmp_dir}", flush=True)
         print(f"  记忆库: {bank.status()}", flush=True)
@@ -359,8 +394,8 @@ def main():
         if new_ckpt and os.path.exists(new_ckpt):
             try:
                 os.remove(new_ckpt)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【main】处理失败（非致命）: %s", e)
 
     print("\n" + "=" * 60, flush=True)
     print(f"结果: {passed} PASS / {failed} FAIL  ({time.time() - t0:.1f}s)", flush=True)

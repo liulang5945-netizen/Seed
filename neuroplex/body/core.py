@@ -12,10 +12,10 @@
 - metabolism（代谢系统）：硬件感知、资源管理
 - senses（感知系统）：API 输入、终端、前端
 """
-import os
+
 import logging
 import threading
-from typing import Optional, Any, Callable
+from typing import Callable
 
 logger = logging.getLogger("Taiji.Body")
 
@@ -69,18 +69,17 @@ class BodyCore:
     def set_cortex(self, cortex):
         """设置大脑（取代旧的 set_model/self._model）"""
         with self._lock:
-            old = self._cortex
             self._cortex = cortex
             logger.info(f"Cortex set: {type(cortex).__name__}")
             # 通知感知系统
-            if self._senses is not None and hasattr(self._senses, 'set_cortex'):
+            if self._senses is not None and hasattr(self._senses, "set_cortex"):
                 self._senses.set_cortex(cortex)
 
     def set_model(self, model):
         """设置模型（已废弃，请使用 set_cortex）"""
         logger.warning("set_model() is deprecated, use set_cortex() instead")
         # 如果传入的是 Cortex 实例，自动路由到 set_cortex
-        if type(model).__name__ == 'Cortex':
+        if type(model).__name__ == "Cortex":
             self.set_cortex(model)
         else:
             with self._lock:
@@ -126,6 +125,7 @@ class BodyCore:
         """自动检测最佳设备"""
         try:
             import torch
+
             if torch.cuda.is_available():
                 self._device = "cuda"
             else:
@@ -165,6 +165,7 @@ class BodyCore:
         """获取行动系统（手脚）"""
         if self._limbs is None:
             from neuroplex.body import limbs
+
             self._limbs = limbs
         return self._limbs
 
@@ -173,6 +174,7 @@ class BodyCore:
         """获取代谢系统"""
         if self._metabolism is None:
             from neuroplex.body import metabolism
+
             self._metabolism = metabolism
         return self._metabolism
 
@@ -181,6 +183,7 @@ class BodyCore:
         """获取感知系统（感官）"""
         if self._senses is None:
             from neuroplex.body import senses
+
             self._senses = senses
         return self._senses
 
@@ -189,6 +192,7 @@ class BodyCore:
     def check_resources(self) -> dict:
         """检查系统资源状态"""
         import psutil
+
         try:
             cpu_percent = psutil.cpu_percent(interval=0.1)
             memory = psutil.virtual_memory()
@@ -213,14 +217,13 @@ class BodyCore:
         # GPU 信息
         try:
             import torch
+
             if torch.cuda.is_available():
                 result["gpu_name"] = torch.cuda.get_device_name(0)
                 result["gpu_memory_total_gb"] = round(
                     torch.cuda.get_device_properties(0).total_mem / (1024**3), 1
                 )
-                result["gpu_memory_used_gb"] = round(
-                    torch.cuda.memory_allocated(0) / (1024**3), 1
-                )
+                result["gpu_memory_used_gb"] = round(torch.cuda.memory_allocated(0) / (1024**3), 1)
         except Exception as e:
             logger.debug("core: non-critical %s", e, exc_info=True)
 
@@ -230,15 +233,16 @@ class BodyCore:
         """检查态极是否健康"""
         try:
             import psutil
+
             memory = psutil.virtual_memory()
             if memory.percent > 95:
                 return False
             if psutil.cpu_percent(interval=0.1) > 95:
                 return False
-        except ImportError:
-            pass
+        except ImportError as e:
+            logger.debug("【BodyCore.is_healthy】处理失败（非致命）: %s", e)
         # 大脑必须加载
-        if self._cortex is not None and hasattr(self._cortex, 'is_loaded'):
+        if self._cortex is not None and hasattr(self._cortex, "is_loaded"):
             if not self._cortex.is_loaded:
                 return False
         return True
@@ -250,8 +254,9 @@ class BodyCore:
                 try:
                     import gc
                     import torch
-                    if hasattr(self._model, 'to'):
-                        self._model.to('cpu')
+
+                    if hasattr(self._model, "to"):
+                        self._model.to("cpu")
                     del self._model
                     self._model = None
                     gc.collect()
@@ -266,6 +271,7 @@ class BodyCore:
                 try:
                     import gc
                     import torch
+
                     del self._cortex
                     self._cortex = None
                     gc.collect()

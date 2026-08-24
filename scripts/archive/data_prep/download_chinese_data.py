@@ -3,10 +3,12 @@
 ==============
 补充中文对话数据
 """
+
 import os
 import json
 import requests
 import time
+
 
 def download_file(url, output_path, max_retries=3):
     """下载文件"""
@@ -16,7 +18,7 @@ def download_file(url, output_path, max_retries=3):
             response = requests.get(url, timeout=300)
             response.raise_for_status()
 
-            with open(output_path, 'wb') as f:
+            with open(output_path, "wb") as f:
                 f.write(response.content)
 
             print(f"  下载完成: {len(response.content) / (1024*1024):.1f} MB")
@@ -28,6 +30,7 @@ def download_file(url, output_path, max_retries=3):
                 time.sleep(5)
 
     return False
+
 
 def convert_chinese_alpaca(input_file, output_file, max_samples=None):
     """转换中文 Alpaca 格式"""
@@ -54,13 +57,14 @@ def convert_chinese_alpaca(input_file, output_file, max_samples=None):
             messages = [
                 {"role": "system", "content": "你是态极，一个有帮助的AI助手。"},
                 {"role": "user", "content": user_content},
-                {"role": "assistant", "content": output_text}
+                {"role": "assistant", "content": output_text},
             ]
 
             f.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
             count += 1
 
     return count
+
 
 def convert_belle_format(input_file, output_file, max_samples=None):
     """转换 BELLE 格式"""
@@ -82,13 +86,14 @@ def convert_belle_format(input_file, output_file, max_samples=None):
             messages = [
                 {"role": "system", "content": "你是态极，一个有帮助的AI助手。"},
                 {"role": "user", "content": instruction},
-                {"role": "assistant", "content": output_text}
+                {"role": "assistant", "content": output_text},
             ]
 
             f.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
             count += 1
 
     return count
+
 
 def main():
     print("=" * 60)
@@ -165,8 +170,10 @@ def main():
             elif ds["format"] == "firefly":
                 # Firefly 是 JSONL 格式，需要特殊处理
                 count = 0
-                with open(temp_file, encoding="utf-8") as f_in, \
-                     open(output_file, "w", encoding="utf-8") as f_out:
+                with (
+                    open(temp_file, encoding="utf-8") as f_in,
+                    open(output_file, "w", encoding="utf-8") as f_out,
+                ):
                     for line in f_in:
                         if ds.get("max_samples") and count >= ds["max_samples"]:
                             break
@@ -183,10 +190,12 @@ def main():
                             messages = [
                                 {"role": "system", "content": "你是态极，一个有帮助的AI助手。"},
                                 {"role": "user", "content": input_text},
-                                {"role": "assistant", "content": target_text}
+                                {"role": "assistant", "content": target_text},
                             ]
 
-                            f_out.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
+                            f_out.write(
+                                json.dumps({"messages": messages}, ensure_ascii=False) + "\n"
+                            )
                             count += 1
                         except json.JSONDecodeError:
                             continue
@@ -208,6 +217,7 @@ def main():
     print("=" * 60)
     print(f"下载完成！总计: {total_count:,} 条")
     print("=" * 60)
+
 
 if __name__ == "__main__":
     main()

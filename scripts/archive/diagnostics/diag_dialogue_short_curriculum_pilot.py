@@ -11,6 +11,7 @@
 运行：
     python -X utf8 -u scripts/training/diag_dialogue_short_curriculum_pilot.py
 """
+
 from __future__ import annotations
 
 import gc
@@ -20,7 +21,9 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -38,10 +41,12 @@ from scripts.training.utils import (
     split_train_eval,
 )
 
-
 DIALOGUE_IDS = [
-    "zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-    "zh_aug3_dialogue", "zh_std0_dialogue",
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
 ]
 MAX_TEXTS = 100000
 MAX_ANSWER_CHARS = 120
@@ -98,7 +103,7 @@ def _metrics(neuron, shared, texts, domain_sp, general_sp) -> dict:
     top1 = 0
     with torch.no_grad():
         for start in range(0, len(texts), BATCH_SIZE):
-            batch = texts[start:start + BATCH_SIZE]
+            batch = texts[start : start + BATCH_SIZE]
             embeddings, targets, mask, sft_mask = batch_align_and_embed(
                 batch,
                 domain_sp,
@@ -125,7 +130,7 @@ def _metrics(neuron, shared, texts, domain_sp, general_sp) -> dict:
 
             for row_index, text in enumerate(batch):
                 marker = text.find(SFT_ANSWER_MARKER)
-                prompt = text[:marker + len(SFT_ANSWER_MARKER)]
+                prompt = text[: marker + len(SFT_ANSWER_MARKER)]
                 _, aligned_targets = build_position_alignment(text, domain_sp, general_sp)
                 answer_start = len(general_sp.encode(prompt))
                 target_id = int(aligned_targets[answer_start])
@@ -162,7 +167,9 @@ def _train_one(neuron_id, train_texts, eval_texts, domain_sp, general_sp) -> dic
     losses = []
     for step in range(STEPS):
         batch_start = (step * BATCH_SIZE) % len(train_texts)
-        batch = [train_texts[(batch_start + offset) % len(train_texts)] for offset in range(BATCH_SIZE)]
+        batch = [
+            train_texts[(batch_start + offset) % len(train_texts)] for offset in range(BATCH_SIZE)
+        ]
         optimizer.zero_grad()
         loss = _batch_loss(neuron, shared, batch, domain_sp, general_sp)
         loss.backward()

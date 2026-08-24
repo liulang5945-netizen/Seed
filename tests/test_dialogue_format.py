@@ -10,6 +10,7 @@
 运行（标准库 unittest，零第三方依赖，pytest 亦可收集）：
     python -m unittest tests.test_dialogue_format -v
 """
+
 import unittest
 
 from neuroplex.resonance.dialogue_format import (

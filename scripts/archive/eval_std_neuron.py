@@ -14,6 +14,7 @@ Usage:
     # 两种都跑
     python -u scripts/training/eval_std_neuron.py --mode both
 """
+
 from __future__ import annotations
 
 import argparse
@@ -21,26 +22,36 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 from neuroplex.resonance import (
-    ResonanceNeuron, ResonanceField, ResonanceEnsemble,
+    ResonanceNeuron,
+    ResonanceField,
+    ResonanceEnsemble,
     get_domain_neuron_config,
 )
 from neuroplex.resonance.translator import batch_align_and_embed
 from scripts.training.utils import (
-    load_domain_tokenizer, load_general_tokenizer,
-    OUTPUT_DIR, load_simple_zh_texts, create_shared_embedding,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+    OUTPUT_DIR,
+    load_simple_zh_texts,
+    create_shared_embedding,
 )
 from scripts.training.experiment_config import (
     ZH_COMPACT_NEURON_IDS as COMPACT_NEURON_IDS,
     ZH_STD_NEURON_ID as STD_NEURON_ID,
     DEFAULT_DOMAIN as DOMAIN,
-    SAMPLING_TEMPERATURE, SAMPLING_TOP_K, SAMPLING_REPETITION_PENALTY, SAMPLING_MAX_TOKENS,
+    SAMPLING_TEMPERATURE,
+    SAMPLING_TOP_K,
+    SAMPLING_REPETITION_PENALTY,
+    SAMPLING_MAX_TOKENS,
     BASE_PROMPTS,
 )
 
@@ -79,8 +90,11 @@ def load_neuron(nid, spec):
     shared_emb.to(DEVICE).eval()
 
     result = ckpt.get("result", {})
-    print(f"  [{nid}] spec={cfg.spec}, params={sum(p.numel() for p in neuron.parameters())/1e6:.1f}M, "
-          f"best_val_ppl={result.get('best_val_ppl', '?')}", flush=True)
+    print(
+        f"  [{nid}] spec={cfg.spec}, params={sum(p.numel() for p in neuron.parameters())/1e6:.1f}M, "
+        f"best_val_ppl={result.get('best_val_ppl', '?')}",
+        flush=True,
+    )
 
     return neuron, shared_emb, cfg
 
@@ -100,7 +114,10 @@ def eval_single_ppl(neuron, shared_emb, domain_sp, general_sp, n_eval=100):
     with torch.no_grad():
         for text in texts:
             shared_emb_out, targets, mask = batch_align_and_embed(
-                [text], domain_sp, general_sp, shared_emb,
+                [text],
+                domain_sp,
+                general_sp,
+                shared_emb,
             )
             shared_emb_out = shared_emb_out.to(DEVICE)
             targets = targets.to(DEVICE)
@@ -157,12 +174,12 @@ def eval_single_generation(neuron, shared_emb, domain_sp, general_sp):
                 logits = logits / SAMPLING_TEMPERATURE
                 if SAMPLING_TOP_K < logits.size(-1):
                     topk_vals, _ = torch.topk(logits, SAMPLING_TOP_K, dim=-1)
-                    logits[logits < topk_vals[:, -1:]] = float('-inf')
+                    logits[logits < topk_vals[:, -1:]] = float("-inf")
 
                 probs = torch.softmax(logits, dim=-1)
                 next_token = torch.multinomial(probs, num_samples=1).item()
 
-                if hasattr(domain_sp, 'eos_id'):
+                if hasattr(domain_sp, "eos_id"):
                     eos = domain_sp.eos_id() if callable(domain_sp.eos_id) else domain_sp.eos_id
                     if next_token == eos:
                         break
@@ -170,7 +187,9 @@ def eval_single_generation(neuron, shared_emb, domain_sp, general_sp):
                 piece = domain_sp.DecodeIds([next_token])
                 gen_ids = general_sp.EncodeAsIds(piece)
                 if gen_ids:
-                    ids = torch.cat([ids, torch.tensor([gen_ids], dtype=torch.long, device=DEVICE)], dim=1)
+                    ids = torch.cat(
+                        [ids, torch.tensor([gen_ids], dtype=torch.long, device=DEVICE)], dim=1
+                    )
                 else:
                     break
                 if ids.shape[1] > 200:
@@ -179,12 +198,23 @@ def eval_single_generation(neuron, shared_emb, domain_sp, general_sp):
         print(f"  prompt: {prompt}\n  {STD_NEURON_ID}: {text}\n", flush=True)
 
 
-def eval_mixed_collab(std_neuron, std_emb, std_cfg,
-                       compact_neurons, compact_embs, compact_cfg,
-                       domain_sp, general_sp, n_eval=100):
+def eval_mixed_collab(
+    std_neuron,
+    std_emb,
+    std_cfg,
+    compact_neurons,
+    compact_embs,
+    compact_cfg,
+    domain_sp,
+    general_sp,
+    n_eval=100,
+):
     """混合协作评估：standard + compact 神经元。"""
     print("\n" + "=" * 70, flush=True)
-    print(f"[混合协作 PPL] {STD_NEURON_ID} (standard) + {list(compact_neurons.keys())} (compact)", flush=True)
+    print(
+        f"[混合协作 PPL] {STD_NEURON_ID} (standard) + {list(compact_neurons.keys())} (compact)",
+        flush=True,
+    )
     print("=" * 70, flush=True)
 
     # 由于 standard 和 compact 的 field_dim 不同（3072 vs 2048），
@@ -207,7 +237,10 @@ def eval_mixed_collab(std_neuron, std_emb, std_cfg,
         with torch.no_grad():
             for text in texts:
                 shared_emb_out, targets, mask = batch_align_and_embed(
-                    [text], domain_sp, general_sp, shared_emb,
+                    [text],
+                    domain_sp,
+                    general_sp,
+                    shared_emb,
                 )
                 shared_emb_out = shared_emb_out.to(DEVICE)
                 targets = targets.to(DEVICE)
@@ -244,7 +277,10 @@ def eval_mixed_collab(std_neuron, std_emb, std_cfg,
             mask = None
             for nid, shared_emb in all_embs.items():
                 shared_emb_out, tgt, msk = batch_align_and_embed(
-                    [text], domain_sp, general_sp, shared_emb,
+                    [text],
+                    domain_sp,
+                    general_sp,
+                    shared_emb,
                 )
                 shared_emb_out = shared_emb_out.to(DEVICE)
                 if targets is None:
@@ -290,8 +326,12 @@ def eval_mixed_collab(std_neuron, std_emb, std_cfg,
 
 def main():
     parser = argparse.ArgumentParser(description="评估 standard 神经元 zh_std0")
-    parser.add_argument("--mode", choices=["single", "mixed", "both"], default="both",
-                        help="评估模式：single(单神经元) / mixed(混合协作) / both")
+    parser.add_argument(
+        "--mode",
+        choices=["single", "mixed", "both"],
+        default="both",
+        help="评估模式：single(单神经元) / mixed(混合协作) / both",
+    )
     parser.add_argument("--n_eval", type=int, default=100, help="PPL 评估文本数")
     parser.add_argument("--device", default="cpu", help="计算设备 (cpu/cuda)")
     args = parser.parse_args()
@@ -335,9 +375,17 @@ def main():
                 compact_cfg = cfg
 
         if compact_neurons:
-            eval_mixed_collab(std_neuron, std_emb, std_cfg,
-                            compact_neurons, compact_embs, compact_cfg,
-                            domain_sp, general_sp, n_eval=args.n_eval)
+            eval_mixed_collab(
+                std_neuron,
+                std_emb,
+                std_cfg,
+                compact_neurons,
+                compact_embs,
+                compact_cfg,
+                domain_sp,
+                general_sp,
+                n_eval=args.n_eval,
+            )
         else:
             print("  WARN: 未加载任何 compact 神经元，跳过混合协作评估", flush=True)
 

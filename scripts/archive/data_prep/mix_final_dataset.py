@@ -3,6 +3,7 @@
 ============
 将所有数据按推荐比例混合，构建面向未来的完美地基
 """
+
 import os
 import json
 import random
@@ -11,28 +12,78 @@ from collections import Counter
 # 数据源配置
 DATA_SOURCES = [
     # === 基础预训练数据 (70%) ===
-    {"file": "taiji_data/training_data/pretrain_final.jsonl", "weight": 1.0, "category": "基础预训练"},
-
+    {
+        "file": "taiji_data/training_data/pretrain_final.jsonl",
+        "weight": 1.0,
+        "category": "基础预训练",
+    },
     # === 工具调用数据 (10%) ===
-    {"file": "taiji_data/training_data/react_converted.jsonl", "weight": 1.0, "category": "工具调用"},
-
+    {
+        "file": "taiji_data/training_data/react_converted.jsonl",
+        "weight": 1.0,
+        "category": "工具调用",
+    },
     # === 生命体数据 (5%，高权重) ===
-    {"file": "taiji_data/training_data/lifeform/state_awareness.jsonl", "weight": 10.0, "category": "生命体"},
-    {"file": "taiji_data/training_data/lifeform/temporal_memory.jsonl", "weight": 10.0, "category": "生命体"},
-    {"file": "taiji_data/training_data/lifeform/proactive_interaction.jsonl", "weight": 10.0, "category": "生命体"},
-    {"file": "taiji_data/training_data/lifeform/boundary_refusal.jsonl", "weight": 10.0, "category": "生命体"},
-    {"file": "taiji_data/training_data/lifeform/ambiguity_clarification.jsonl", "weight": 10.0, "category": "生命体"},
-    {"file": "taiji_data/training_data/lifeform/emotional_empathy.jsonl", "weight": 10.0, "category": "生命体"},
-    {"file": "taiji_data/training_data/lifeform/memory_forgetting.jsonl", "weight": 10.0, "category": "生命体"},
-    {"file": "taiji_data/training_data/lifeform/tool_failure_recovery.jsonl", "weight": 10.0, "category": "生命体"},
-
+    {
+        "file": "taiji_data/training_data/lifeform/state_awareness.jsonl",
+        "weight": 10.0,
+        "category": "生命体",
+    },
+    {
+        "file": "taiji_data/training_data/lifeform/temporal_memory.jsonl",
+        "weight": 10.0,
+        "category": "生命体",
+    },
+    {
+        "file": "taiji_data/training_data/lifeform/proactive_interaction.jsonl",
+        "weight": 10.0,
+        "category": "生命体",
+    },
+    {
+        "file": "taiji_data/training_data/lifeform/boundary_refusal.jsonl",
+        "weight": 10.0,
+        "category": "生命体",
+    },
+    {
+        "file": "taiji_data/training_data/lifeform/ambiguity_clarification.jsonl",
+        "weight": 10.0,
+        "category": "生命体",
+    },
+    {
+        "file": "taiji_data/training_data/lifeform/emotional_empathy.jsonl",
+        "weight": 10.0,
+        "category": "生命体",
+    },
+    {
+        "file": "taiji_data/training_data/lifeform/memory_forgetting.jsonl",
+        "weight": 10.0,
+        "category": "生命体",
+    },
+    {
+        "file": "taiji_data/training_data/lifeform/tool_failure_recovery.jsonl",
+        "weight": 10.0,
+        "category": "生命体",
+    },
     # === 毕业级数据 (额外补充) ===
-    {"file": "taiji_data/training_data/taiji_graduation_conversation.jsonl", "weight": 0.3, "category": "毕业对话"},
-    {"file": "taiji_data/training_data/taiji_graduation_v2_conversation.jsonl", "weight": 0.2, "category": "毕业对话"},
-    {"file": "taiji_data/training_data/taiji_graduation_v3_conversation.jsonl", "weight": 0.2, "category": "毕业对话"},
+    {
+        "file": "taiji_data/training_data/taiji_graduation_conversation.jsonl",
+        "weight": 0.3,
+        "category": "毕业对话",
+    },
+    {
+        "file": "taiji_data/training_data/taiji_graduation_v2_conversation.jsonl",
+        "weight": 0.2,
+        "category": "毕业对话",
+    },
+    {
+        "file": "taiji_data/training_data/taiji_graduation_v3_conversation.jsonl",
+        "weight": 0.2,
+        "category": "毕业对话",
+    },
 ]
 
 OUTPUT_FILE = "taiji_data/training_data/pretrain_final.jsonl"
+
 
 def load_jsonl(file_path):
     """加载 JSONL 文件"""
@@ -49,6 +100,7 @@ def load_jsonl(file_path):
                     continue
     return data
 
+
 def validate_item(item):
     """验证数据质量"""
     messages = item.get("messages", [])
@@ -59,6 +111,7 @@ def validate_item(item):
         if not msg.get("content", "").strip():
             return False
     return True
+
 
 def main():
     print("=" * 60)
@@ -129,7 +182,7 @@ def main():
     english_count = 0
     for item in all_data[:10000]:
         user_content = next((m["content"] for m in item["messages"] if m.get("role") == "user"), "")
-        if any('一' <= c <= '鿿' for c in user_content):
+        if any("一" <= c <= "鿿" for c in user_content):
             chinese_count += 1
         else:
             english_count += 1
@@ -146,6 +199,7 @@ def main():
     print("=" * 60)
     print(f"  输出文件: {OUTPUT_FILE}")
     print(f"  总数据量: {total:,} 条")
+
 
 if __name__ == "__main__":
     main()

@@ -59,6 +59,7 @@ def main() -> None:
     print(f"baseline raw panel surprise = {base:.4f}", flush=True)
 
     from seed.judge import SeedJudge
+
     for decay in (5e-4, 2e-3, 5e-3, 1e-2):
         model = common.load_model(ckpt)
         set_decay(model, decay)

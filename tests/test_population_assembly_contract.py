@@ -9,7 +9,6 @@ import unittest
 
 from neuroplex.core.model_loader import DEFAULT_NEURON_IDS
 
-
 EXPECTED_DIALOGUE_IDS = [
     "zh_aug0_dialogue",
     "zh_aug1_dialogue",

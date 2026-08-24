@@ -1,6 +1,7 @@
 """临时诊断：dialogue neuron 在 zh 词表空间（home embedding + zh 50K 输出头）生成中文
 是否正常（对比 C19 的 general decode 错位）。验证后清理。
 """
+
 import os
 import sys
 
@@ -18,6 +19,7 @@ PROMPTS = ["你好，请介绍一下你自己", "什么是人工智能？", "今
 
 def main():
     import argparse
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--nid", default="zh_aug0_dialogue")
     ap.add_argument("--inject-lora", default="", help="C16 collab ckpt，注入其 lora_state 对比")
@@ -53,6 +55,7 @@ def main():
 
     general_sp = load_general_tokenizer()
     import sentencepiece as spm
+
     zh_sp = spm.SentencePieceProcessor()
     zh_sp.Load("taiji/domains/zh/sp_zh.model")
     print(f"zh tokenizer vocab: {zh_sp.GetPieceSize()}")

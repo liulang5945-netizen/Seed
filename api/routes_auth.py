@@ -3,6 +3,7 @@
 =============
 提供登录、登出、密码管理、Token 刷新等认证相关端点
 """
+
 import logging
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
@@ -61,6 +62,7 @@ async def enable_auth(req: EnableAuthRequest, request: Request):
     - 认证已启用后需要提供有效的管理员 Token
     """
     from neuroplex.core.security import AuthManager
+
     auth = AuthManager()
 
     # 如果认证已启用，需要验证现有 Token
@@ -81,6 +83,7 @@ async def enable_auth(req: EnableAuthRequest, request: Request):
 async def disable_auth(request: Request):
     """禁用认证 — 需要有效的管理员 Token"""
     from neuroplex.core.security import AuthManager
+
     auth = AuthManager()
 
     # 认证未启用时，禁止通过此端点操作（防止竞态条件）

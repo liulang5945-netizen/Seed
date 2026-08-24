@@ -9,11 +9,12 @@
 Usage:
     python scripts/training/verify_coactivation_persistence.py
 """
+
 import sys
 import os
 import tempfile
 
-os.environ.setdefault('TAIJI_TEST_MODE', '1')
+os.environ.setdefault("TAIJI_TEST_MODE", "1")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 
@@ -25,6 +26,7 @@ def main():
     # Step 1: 装配 Cortex 并积累共激活数据
     print("\n[Step 1] 装配 Cortex 并积累共激活数据...")
     from taiji.loader import assemble_cortex
+
     cortex, tokenizer, modules = assemble_cortex(
         neurons_dir="data/neurons",
         device="cpu",
@@ -34,6 +36,7 @@ def main():
 
     # 执行多次 forward 积累共激活
     import torch
+
     if cortex._shared_embedding is not None:
         for _ in range(5):
             test_ids = torch.randint(0, cortex._shared_embedding.num_embeddings, (1, 8))
@@ -120,6 +123,7 @@ def main():
     # Step 7: 验证孤立模式检测仍有效
     print("\n[Step 7] 验证恢复后孤立模式检测仍有效...")
     from taiji.resonance.lifecycle import NeurogenesisTrigger
+
     trigger = NeurogenesisTrigger()
     isolated = trigger.detect_isolated_patterns(cortex2.coaction, min_isolation_ratio=0.5)
     print(f"  孤立神经元: {isolated}")
@@ -145,9 +149,9 @@ def main():
     # Step 9: 综合判断
     print("\n" + "=" * 60)
     all_pass = (
-        "coaction" in state and
-        len(slow_matrix_before) == len(slow_matrix_after) and
-        activation_counts_before == activation_counts_after
+        "coaction" in state
+        and len(slow_matrix_before) == len(slow_matrix_after)
+        and activation_counts_before == activation_counts_after
     )
     if all_pass:
         print("🎉 验证通过：CoactivationTracker 跨会话持久化成功")

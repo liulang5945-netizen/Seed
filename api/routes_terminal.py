@@ -9,13 +9,12 @@ Web 终端 WebSocket 路由
 - 并发终端数量限制（默认 3）
 - 空闲超时自动断开（默认 300 秒）
 """
+
 import asyncio
 import json
 import logging
 import os
-import signal
 import sys
-import time
 import threading
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
@@ -61,6 +60,7 @@ def _verify_ws_token(ws) -> bool:
     """
     try:
         from neuroplex.core.security import AuthManager
+
         auth = AuthManager()
 
         if auth.enabled:
@@ -110,8 +110,8 @@ async def _read_stream(stream, ws: WebSocket, prefix: str):
             text = data.decode("utf-8", errors="replace")
             payload = json.dumps({"type": prefix, "data": text}, ensure_ascii=False)
             await ws.send_text(payload)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【_read_stream】处理失败（非致命）: %s", e)
 
 
 @router.websocket("/ws/terminal")
@@ -124,7 +124,6 @@ async def terminal_websocket(ws: WebSocket):
     - 空闲超时（默认 300s）
     - 可通过 terminal_enabled 配置完全禁用
     """
-    import sys as _sys
     import subprocess as _sp
 
     # 全局开关：允许管理员完全禁用终端功能
@@ -150,6 +149,7 @@ async def terminal_websocket(ws: WebSocket):
 
     process = None
     import time as _time
+
     _session_started = _time.time()
     _pid = 0
 
@@ -163,8 +163,8 @@ async def terminal_websocket(ws: WebSocket):
             custom_path = get_setting("workspace_path", "")
             if custom_path and os.path.isdir(custom_path):
                 work_dir = custom_path
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【terminal_websocket】处理失败（非致命）: %s", e)
 
         # 获取 shell
         if sys.platform == "win32":
@@ -177,22 +177,50 @@ async def terminal_websocket(ws: WebSocket):
         creationflags = _sp.CREATE_NO_WINDOW if sys.platform == "win32" else 0
         process = _sp.Popen(
             [shell_cmd] + shell_args,
-            stdin=_sp.PIPE, stdout=_sp.PIPE, stderr=_sp.PIPE,
-            cwd=work_dir, env={**os.environ, "TERM": "xterm-256color"},
+            stdin=_sp.PIPE,
+            stdout=_sp.PIPE,
+            stderr=_sp.PIPE,
+            cwd=work_dir,
+            env={**os.environ, "TERM": "xterm-256color"},
             creationflags=creationflags,
         )
         logger.info(f"终端进程启动: PID={process.pid}, work_dir={work_dir}, shell={shell_cmd}")
         _pid = process.pid
 
         # 欢迎消息
-        await ws.send_text(json.dumps({
-            "type": "output",
-            "data": f"\r\nTaiji Terminal | {shell_cmd} | PID: {process.pid}\r\n"
-        }))
+        await ws.send_text(
+            json.dumps(
+                {
+                    "type": "output",
+                    "data": f"\r\nTaiji Terminal | {shell_cmd} | PID: {process.pid}\r\n",
+                }
+            )
+        )
 
-        # 后台线程读取子进程 stdout → asyncio queue
+        # 后台线程读取子进程 stdout → asyncio queue（有界，防背压撑爆内存）
         import queue
-        output_queue = queue.Queue()
+
+        output_queue = queue.Queue(maxsize=1000)
+        _dropped = [0]
+
+        def _put_bounded(q, item):
+            """有界入队：满时丢弃最旧数据并告警（节流），保证读者始终看到最新输出"""
+            try:
+                q.put_nowait(item)
+                return
+            except queue.Full as e:
+                logger.debug("【terminal_websocket._put_bounded】处理失败（非致命）: %s", e)
+            try:
+                q.get_nowait()
+                _dropped[0] += 1
+                if _dropped[0] == 1 or _dropped[0] % 100 == 0:
+                    logger.warning(f"终端输出队列已满，丢弃最旧输出（累计 {_dropped[0]} 次）")
+            except queue.Empty as e:
+                logger.debug("【terminal_websocket._put_bounded】处理失败（非致命）: %s", e)
+            try:
+                q.put_nowait(item)
+            except queue.Full as e:
+                logger.debug("【terminal_websocket._put_bounded】处理失败（非致命）: %s", e)
 
         def _read_output(stream, q):
             try:
@@ -200,13 +228,17 @@ async def terminal_websocket(ws: WebSocket):
                     data = stream.read(4096)
                     if not data:
                         break
-                    q.put(data)
-            except Exception:
-                pass
-            q.put(None)
+                    _put_bounded(q, data)
+            except Exception as e:
+                logger.debug("【terminal_websocket._read_output】处理失败（非致命）: %s", e)
+            _put_bounded(q, None)
 
-        _stdout_thread = threading.Thread(target=_read_output, args=(process.stdout, output_queue), daemon=True)
-        _stderr_thread = threading.Thread(target=_read_output, args=(process.stderr, output_queue), daemon=True)
+        _stdout_thread = threading.Thread(
+            target=_read_output, args=(process.stdout, output_queue), daemon=True
+        )
+        _stderr_thread = threading.Thread(
+            target=_read_output, args=(process.stderr, output_queue), daemon=True
+        )
         _stdout_thread.start()
         _stderr_thread.start()
 
@@ -217,10 +249,12 @@ async def terminal_websocket(ws: WebSocket):
                     data = await loop.run_in_executor(None, output_queue.get, True, 0.5)
                     if data is None:
                         break
-                    await ws.send_text(json.dumps({
-                        "type": "output",
-                        "data": data.decode("utf-8", errors="replace")
-                    }, ensure_ascii=False))
+                    await ws.send_text(
+                        json.dumps(
+                            {"type": "output", "data": data.decode("utf-8", errors="replace")},
+                            ensure_ascii=False,
+                        )
+                    )
                 except queue.Empty:
                     continue
                 except Exception:
@@ -228,31 +262,45 @@ async def terminal_websocket(ws: WebSocket):
 
         drain_task = asyncio.create_task(_drain_output())
 
-        # 主循环：WebSocket 输入 → 子进程 stdin
+        # 主循环：WebSocket 输入 → 子进程 stdin（空闲超时自动断开）
         try:
             while True:
-                raw = await ws.receive_text()
+                try:
+                    raw = await asyncio.wait_for(ws.receive_text(), timeout=IDLE_TIMEOUT_SECONDS)
+                except asyncio.TimeoutError:
+                    logger.info(f"终端[PID={_pid}] 空闲 {IDLE_TIMEOUT_SECONDS}s，自动断开")
+                    try:
+                        await ws.send_text(
+                            json.dumps(
+                                {
+                                    "type": "error",
+                                    "data": f"空闲超过 {IDLE_TIMEOUT_SECONDS} 秒，连接已关闭",
+                                }
+                            )
+                        )
+                        await ws.close(code=4000, reason="Idle timeout")
+                    except Exception as e:
+                        logger.debug("【terminal_websocket】处理失败（非致命）: %s", e)
+                    break
                 msg = json.loads(raw)
                 t = msg.get("type", "")
                 if t == "input" and process.stdin and not process.stdin.closed:
                     data = msg.get("data", "")
                     process.stdin.write(data.encode("utf-8"))
                     process.stdin.flush()
-                    # 审计日志（截断过长的输入，防止刷屏）
-                    _trimmed = data.strip()[:200] + ("..." if len(data.strip()) > 200 else "")
-                    if _trimmed:
-                        logger.info(f"终端[PID={_pid}] 输入: {_trimmed}")
+                    # 审计日志：脱敏，仅记录输入长度（DEBUG 级）
+                    if data.strip():
+                        logger.debug(f"终端[PID={_pid}] 输入: {len(data)} chars")
                 elif t == "ping":
                     await ws.send_text(json.dumps({"type": "pong"}))
         except json.JSONDecodeError:
             if process.stdin and not process.stdin.closed:
                 process.stdin.write(raw.encode("utf-8"))
                 process.stdin.flush()
-                _trimmed = raw.strip()[:200] + ("..." if len(raw.strip()) > 200 else "")
-                if _trimmed:
-                    logger.info(f"终端[PID={_pid}] 输入: {_trimmed}")
-        except WebSocketDisconnect:
-            pass
+                if raw.strip():
+                    logger.debug(f"终端[PID={_pid}] 输入: {len(raw)} chars")
+        except WebSocketDisconnect as e:
+            logger.debug("【terminal_websocket】处理失败（非致命）: %s", e)
         finally:
             drain_task.cancel()
             elapsed = _time.time() - _session_started
@@ -264,13 +312,13 @@ async def terminal_websocket(ws: WebSocket):
         logger.error(f"终端异常: {e}")
         try:
             await ws.send_text(json.dumps({"type": "error", "data": str(e)[:200]}))
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【terminal_websocket】处理失败（非致命）: %s", e)
     finally:
         _release_terminal_slot()
         if process and process.poll() is None:
             try:
                 process.terminate()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【terminal_websocket】处理失败（非致命）: %s", e)
         logger.info("终端会话结束")

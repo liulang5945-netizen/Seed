@@ -52,7 +52,10 @@ def main() -> None:
     scheduler.experience(texts[0], learn=False)  # 只读经历，零学习
     after_exp = measure(model, texts)
     fp1 = param_fingerprint(model)
-    print(f"仅 experience(learn=False): surprise={after_exp:.3f} param_fp={fp1:.2f} tick={model.tick}", flush=True)
+    print(
+        f"仅 experience(learn=False): surprise={after_exp:.3f} param_fp={fp1:.2f} tick={model.tick}",
+        flush=True,
+    )
 
     model.reset_dynamics(episode_id="probe")
     after_reset = measure(model, texts)
@@ -66,7 +69,10 @@ def main() -> None:
     restored = measure(model, texts)
     fp2 = param_fingerprint(model)
     print(f"night(learn=True) 后: surprise={damaged:.3f}", flush=True)
-    print(f"restore(checkpoint) 后: surprise={restored:.3f} param_fp={fp2:.2f} (原始 {fp0:.2f})", flush=True)
+    print(
+        f"restore(checkpoint) 后: surprise={restored:.3f} param_fp={fp2:.2f} (原始 {fp0:.2f})",
+        flush=True,
+    )
 
 
 if __name__ == "__main__":

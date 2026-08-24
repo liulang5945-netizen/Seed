@@ -8,6 +8,7 @@
 Usage:
     python -u scripts/training/analyze_side_channels.py
 """
+
 from __future__ import annotations
 
 import argparse
@@ -15,26 +16,38 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn as nn
 
 from neuroplex.resonance import (
-    ResonanceNeuron, ResonanceField, ResonanceEnsemble,
-    get_domain_neuron_config, NeuronGeometry,
+    ResonanceNeuron,
+    ResonanceField,
+    ResonanceEnsemble,
+    get_domain_neuron_config,
+    NeuronGeometry,
 )
 from neuroplex.resonance.topology import (
-    build_topology, establish_topology_channels,
-    infer_topology_from_state, topology_detail,
+    build_topology,
+    establish_topology_channels,
+    infer_topology_from_state,
+    topology_detail,
 )
 from neuroplex.resonance.translator import batch_align_and_embed
 from scripts.training.utils import (
-    load_domain_tokenizer, load_general_tokenizer,
-    OUTPUT_DIR, load_simple_zh_texts,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+    OUTPUT_DIR,
+    load_simple_zh_texts,
 )
 from scripts.archive.finetune_side_channels import load_neuron_with_embedding
-from scripts.training.experiment_config import ZH_COMPACT_NEURON_IDS as NEURON_IDS, DEFAULT_DOMAIN as DOMAIN
+from scripts.training.experiment_config import (
+    ZH_COMPACT_NEURON_IDS as NEURON_IDS,
+    DEFAULT_DOMAIN as DOMAIN,
+)
 
 DEVICE = "cpu"
 
@@ -119,7 +132,9 @@ def main():
                 continue
             ch = neurons[post_id].excite_channels[pre_id]
             w = ch.weight.data
-            print(f"{pre_id}->{post_id:<12} {w.norm().item():12.4f} {w.abs().max().item():12.4f} {w.std().item():12.4f}")
+            print(
+                f"{pre_id}->{post_id:<12} {w.norm().item():12.4f} {w.abs().max().item():12.4f} {w.std().item():12.4f}"
+            )
 
     print("\n--- 2. 前向投影输出分析 ---")
     print("每条 channel 的 proj 输出范数（4 条样本平均）：")
@@ -140,7 +155,9 @@ def main():
                 ch = neurons[post_id].excite_channels[pre_id]
                 sig = field_vectors[pre_id]
                 proj = ch(sig)
-                print(f"{pre_id}->{post_id:<12} {proj.norm().item():12.4f} {proj.abs().max().item():12.4f} {proj.abs().mean().item():12.6f}")
+                print(
+                    f"{pre_id}->{post_id:<12} {proj.norm().item():12.4f} {proj.abs().max().item():12.4f} {proj.abs().mean().item():12.6f}"
+                )
 
     print("\n--- 3. 调制效果分析（gate 值） ---")
     print("gate = 1 + tanh(proj)，如果 gate ≈ 1.0 说明通道无效")
@@ -162,7 +179,9 @@ def main():
                 # gate 偏离 1.0 的程度
                 deviation = (gate - 1.0).abs().mean().item()
                 effective = "✓" if deviation > 0.01 else "✗"
-                print(f"{pre_id}->{post_id:<12} {g_mean:12.4f} {g_max:12.4f} {g_min:12.4f} {effective:>6}")
+                print(
+                    f"{pre_id}->{post_id:<12} {g_mean:12.4f} {g_max:12.4f} {g_min:12.4f} {effective:>6}"
+                )
 
     print("\n--- 4. 聚合调制效果（所有通道累加） ---")
     print("每神经元接收的总 excite_sum：")
@@ -178,8 +197,10 @@ def main():
                 excite_sum = proj if excite_sum is None else excite_sum + proj
             gate = 1.0 + torch.tanh(excite_sum.unsqueeze(1))
             dev = (gate - 1.0).abs().mean().item()
-            print(f"  {post_id}: excite_sum_norm={excite_sum.norm().item():.4f}, "
-                  f"gate_deviation={dev:.4f}, gate_range=[{gate.min().item():.3f}, {gate.max().item():.3f}]")
+            print(
+                f"  {post_id}: excite_sum_norm={excite_sum.norm().item():.4f}, "
+                f"gate_deviation={dev:.4f}, gate_range=[{gate.min().item():.3f}, {gate.max().item():.3f}]"
+            )
 
     print("\n" + "=" * 60)
     print("分析完成")

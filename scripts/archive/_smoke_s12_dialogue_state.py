@@ -8,6 +8,7 @@
 5. reset 清空状态
 6. 序列化/反序列化
 """
+
 from __future__ import annotations
 
 import os
@@ -118,11 +119,18 @@ def test_round_token_prepend():
     assert ids == [1, 2, 3], "第 1 轮 ids 应不变"
 
     # 第 2 轮：应插入 token
-    dialogue.end_round.__wrapped__ if hasattr(dialogue.end_round, '__wrapped__') else None
+    dialogue.end_round.__wrapped__ if hasattr(dialogue.end_round, "__wrapped__") else None
     # 模拟 end_round（需要 field，这里用 None 跳过）
     # 直接手动调用内部逻辑
-    dialogue._round_states.append({"state": torch.zeros(1), "inhibitory_mask": torch.ones(1),
-                                    "contributions": {}, "inhibit_contributions": {}, "batch_size": 1})
+    dialogue._round_states.append(
+        {
+            "state": torch.zeros(1),
+            "inhibitory_mask": torch.ones(1),
+            "contributions": {},
+            "inhibit_contributions": {},
+            "batch_size": 1,
+        }
+    )
     dialogue.start_round()
     assert dialogue.should_prepend_round_token(), "第 2 轮应插入 round_token"
     ids = dialogue.prepend_round_token([1, 2, 3])

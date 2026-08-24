@@ -13,14 +13,18 @@ aug2 共振分碾压（0.7-0.93）当选 leader 5/7 次但 NLL 常最差（弱 n
 
 运行：python -u scripts/training/verify_c25_e_leader_fusion.py
 """
+
 from __future__ import annotations
 
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch  # noqa: E402
+
 # N2（REMEDIATION_PLAN R7）：固定 seed 保证可复现
 import random  # noqa: E402
 import re  # noqa: E402
@@ -33,14 +37,25 @@ torch.cuda.manual_seed_all(0)
 from neuroplex.loader import assemble_cortex  # noqa: E402
 from neuroplex.resonance.dialogue_format import build_dialogue_prompt  # noqa: E402
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
 QUESTIONS = [
-    "你好", "你是谁？", "今天天气怎么样？", "1+1等于几？",
-    "帮我写一首关于春天的诗", "推荐一本好书", "什么是幸福？", "怎么学好英语？",
+    "你好",
+    "你是谁？",
+    "今天天气怎么样？",
+    "1+1等于几？",
+    "帮我写一首关于春天的诗",
+    "推荐一本好书",
+    "什么是幸福？",
+    "怎么学好英语？",
 ]
 
 passed = 0
@@ -80,7 +95,8 @@ def anomaly_flags(text: str) -> list:
     if re.search(r"\d+\.\s*\n", text) or "1.<0x0A>" in text:
         flags.append("numbered-list-collapse")
     if re.search(r"([。！？，,.！、]{2})\1{1,}", text) or re.search(
-            r"(.)\1{3,}", text.replace("……", "。。")):
+        r"(.)\1{3,}", text.replace("……", "。。")
+    ):
         flags.append("repeated-punct")
     stripped = re.sub(r"[0-9\s,，。.!！?？;；:：、+\-*/=×÷\"\'“”（）()<>]", "", text)
     if stripped and len(stripped) >= 2 and not re.search(r"[\u4e00-\u9fff\w]", stripped):
@@ -113,8 +129,7 @@ def main():
         general_ids = cortex._general_sp.encode(prompt)
         ids_t = torch.tensor([general_ids], dtype=torch.long, device=cortex.device)
         nemb = {n: cortex._neuron_shared_embeddings[n](ids_t) for n in zh_nids}
-        r = cortex.think(active_nids=zh_nids, neuron_embeddings=nemb,
-                         collab_mode="continuous")
+        r = cortex.think(active_nids=zh_nids, neuron_embeddings=nemb, collab_mode="continuous")
         r1 = r.get("round1_scores") or {}
         nll_q = cortex._nll_quality_from_round1_logits(r, prompt, "zh")
         fused = cortex._fuse_leader_quality(r1, nll_q) if nll_q else {}
@@ -122,22 +137,26 @@ def main():
             continue
         ranks_pure.append(leader_rank_of(r1, nll_q))
         ranks_fused.append(leader_rank_of(fused, nll_q))
-        print(f"  [{q[:10]}...] pure_rank={ranks_pure[-1]} "
-              f"fused_rank={ranks_fused[-1]} "
-              f"pure_leader={max(r1, key=r1.get)[:12]} "
-              f"fused_leader={max(fused, key=fused.get)[:12]}", flush=True)
+        print(
+            f"  [{q[:10]}...] pure_rank={ranks_pure[-1]} "
+            f"fused_rank={ranks_fused[-1]} "
+            f"pure_leader={max(r1, key=r1.get)[:12]} "
+            f"fused_leader={max(fused, key=fused.get)[:12]}",
+            flush=True,
+        )
     n = len(ranks_pure)
     if n == 0:
         print("  [FAIL] 无有效样本", flush=True)
         sys.exit(1)
     avg_pure = sum(ranks_pure) / n
     avg_fused = sum(ranks_fused) / n
-    print(f"\nleader NLL 质量位次均值: 融合前 {avg_pure:.2f} → 融合后 {avg_fused:.2f}",
-          flush=True)
-    check("融合后 leader 质量位次不劣化（≤ 融合前）",
-          avg_fused <= avg_pure + 0.2, f"{avg_pure:.2f}→{avg_fused:.2f}")
-    check("融合后 leader 质量位次显著提升（均值 < 1.5）",
-          avg_fused < 1.5, f"avg={avg_fused:.2f}")
+    print(f"\nleader NLL 质量位次均值: 融合前 {avg_pure:.2f} → 融合后 {avg_fused:.2f}", flush=True)
+    check(
+        "融合后 leader 质量位次不劣化（≤ 融合前）",
+        avg_fused <= avg_pure + 0.2,
+        f"{avg_pure:.2f}→{avg_fused:.2f}",
+    )
+    check("融合后 leader 质量位次显著提升（均值 < 1.5）", avg_fused < 1.5, f"avg={avg_fused:.2f}")
 
     # ── 2. 端到端生成不破坏（8 问 continuous 非空率 + 无异常串）──
     non_empty = 0
@@ -145,21 +164,28 @@ def main():
     print("\n[2] 融合后 continuous 生成实测（8 问）", flush=True)
     for q in QUESTIONS:
         text = cortex.generate(
-            prompt=build_dialogue_prompt(q), max_tokens=60, temperature=0.55,
-            top_k=15, domain="zh", repetition_penalty=1.4,
-            fusion_mode="soft", collab_mode="continuous",
+            prompt=build_dialogue_prompt(q),
+            max_tokens=60,
+            temperature=0.55,
+            top_k=15,
+            domain="zh",
+            repetition_penalty=1.4,
+            fusion_mode="soft",
+            collab_mode="continuous",
         )
         if text.strip():
             non_empty += 1
         for flag in anomaly_flags(text):
             anomalies.setdefault(flag, []).append(q)
-        print(f"  [{q}] {text[:50]!r} len={len(text)}"
-              f"{' <ANOMALY>' if anomaly_flags(text) else ''}", flush=True)
+        print(
+            f"  [{q}] {text[:50]!r} len={len(text)}"
+            f"{' <ANOMALY>' if anomaly_flags(text) else ''}",
+            flush=True,
+        )
     check("continuous 生成非空率 ≥ 7/8", non_empty >= 7, f"{non_empty}/8")
     # R9（REMEDIATION_PLAN 2026-08-14）：无异常串才判 PASS——"无意义输出判 PASS"
     # 不再被接受（历史：`1.\n` 死循环曾以非空身份混过回归）。
-    check("生成无异常串（编号塌缩/重复标点/纯数字）",
-          not anomalies, f"anomalies={anomalies}")
+    check("生成无异常串（编号塌缩/重复标点/纯数字）", not anomalies, f"anomalies={anomalies}")
 
     print("\n" + "=" * 64, flush=True)
     print(f"结果: {passed} PASS / {failed} FAIL", flush=True)

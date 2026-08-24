@@ -15,6 +15,7 @@
 
 注意：未训练的 codec 输出无意义，需训练后才有实际重建能力。
 """
+
 from __future__ import annotations
 
 from typing import List, Optional
@@ -43,22 +44,24 @@ class _ResidualBlock1D(nn.Module):
 class EnCodecEncoder(nn.Module):
     """音频编码器：1D CNN 下采样。"""
 
-    def __init__(self, in_channels: int = 1, hidden_dim: int = 64, latent_dim: int = 128, stride: int = 128):
+    def __init__(
+        self, in_channels: int = 1, hidden_dim: int = 64, latent_dim: int = 128, stride: int = 128
+    ):
         super().__init__()
         # 下采样 stride=128：通过多层 stride 卷积实现
         # 128 = 2^7，用 7 层 stride=2 或组合
         # 简化：4 层 stride 卷积 (4*4*4*2=128)
         self.downsample = nn.Sequential(
-            nn.Conv1d(in_channels, hidden_dim, 4, stride=4, padding=1),     # /4
+            nn.Conv1d(in_channels, hidden_dim, 4, stride=4, padding=1),  # /4
             nn.ReLU(),
             _ResidualBlock1D(hidden_dim),
-            nn.Conv1d(hidden_dim, hidden_dim, 4, stride=4, padding=1),      # /16
+            nn.Conv1d(hidden_dim, hidden_dim, 4, stride=4, padding=1),  # /16
             nn.ReLU(),
             _ResidualBlock1D(hidden_dim),
-            nn.Conv1d(hidden_dim, hidden_dim, 4, stride=2, padding=1),      # /32
+            nn.Conv1d(hidden_dim, hidden_dim, 4, stride=2, padding=1),  # /32
             nn.ReLU(),
             _ResidualBlock1D(hidden_dim),
-            nn.Conv1d(hidden_dim, latent_dim, 4, stride=4, padding=1),      # /128
+            nn.Conv1d(hidden_dim, latent_dim, 4, stride=4, padding=1),  # /128
             nn.ReLU(),
         )
 
@@ -74,13 +77,13 @@ class EnCodecDecoder(nn.Module):
         super().__init__()
         self.upsample = nn.Sequential(
             _ResidualBlock1D(latent_dim),
-            nn.ConvTranspose1d(latent_dim, hidden_dim, 4, stride=4, padding=1),    # x4
+            nn.ConvTranspose1d(latent_dim, hidden_dim, 4, stride=4, padding=1),  # x4
             nn.ReLU(),
             _ResidualBlock1D(hidden_dim),
-            nn.ConvTranspose1d(hidden_dim, hidden_dim, 4, stride=4, padding=1),    # x16
+            nn.ConvTranspose1d(hidden_dim, hidden_dim, 4, stride=4, padding=1),  # x16
             nn.ReLU(),
             _ResidualBlock1D(hidden_dim),
-            nn.ConvTranspose1d(hidden_dim, hidden_dim, 4, stride=2, padding=1),    # x32
+            nn.ConvTranspose1d(hidden_dim, hidden_dim, 4, stride=2, padding=1),  # x32
             nn.ReLU(),
             nn.ConvTranspose1d(hidden_dim, out_channels, 4, stride=4, padding=1),  # x128
         )
@@ -93,9 +96,14 @@ class EnCodecDecoder(nn.Module):
 class AudioQuantizer(nn.Module):
     """音频向量量化层（EMA codebook + dead code revival，防崩塌）。"""
 
-    def __init__(self, num_embeddings: int = 4096, embedding_dim: int = 128,
-                 commitment_cost: float = 0.25, ema_decay: float = 0.99,
-                 dead_code_threshold: int = 100):
+    def __init__(
+        self,
+        num_embeddings: int = 4096,
+        embedding_dim: int = 128,
+        commitment_cost: float = 0.25,
+        ema_decay: float = 0.99,
+        dead_code_threshold: int = 100,
+    ):
         super().__init__()
         self.num_embeddings = num_embeddings
         self.embedding_dim = embedding_dim
@@ -129,9 +137,11 @@ class AudioQuantizer(nn.Module):
         if not self._ema_initialized and self.training:
             self._init_ema_from_data(z_flat)
 
-        dist = (z_flat.pow(2).sum(dim=1, keepdim=True)
-                - 2 * z_flat @ self.codebook.weight.t()
-                + self.codebook.weight.pow(2).sum(dim=1))
+        dist = (
+            z_flat.pow(2).sum(dim=1, keepdim=True)
+            - 2 * z_flat @ self.codebook.weight.t()
+            + self.codebook.weight.pow(2).sum(dim=1)
+        )
         indices = dist.argmin(dim=1)  # [B*L]
         quantized_flat = self.codebook(indices)
 
@@ -151,11 +161,14 @@ class AudioQuantizer(nn.Module):
                 one_hot = F.one_hot(indices, self.num_embeddings).float()
                 cluster_size = one_hot.sum(dim=0)
                 self.ema_cluster_size.data.mul_(self.ema_decay).add_(
-                    cluster_size, alpha=1 - self.ema_decay)
+                    cluster_size, alpha=1 - self.ema_decay
+                )
                 dw = one_hot.t() @ z_flat
                 self.ema_w.data.mul_(self.ema_decay).add_(dw, alpha=1 - self.ema_decay)
                 n = self.ema_cluster_size.sum()
-                smoothed_size = (self.ema_cluster_size + 1e-5) / (n + self.num_embeddings * 1e-5) * n
+                smoothed_size = (
+                    (self.ema_cluster_size + 1e-5) / (n + self.num_embeddings * 1e-5) * n
+                )
                 self.codebook.weight.data.copy_(self.ema_w / smoothed_size.unsqueeze(1))
                 self.usage_count.data += cluster_size.long()
 
@@ -165,7 +178,9 @@ class AudioQuantizer(nn.Module):
                     if n_dead > 0:
                         n_replace = min(n_dead, z_flat.shape[0])
                         dead_indices = dead_mask.nonzero(as_tuple=True)[0][:n_replace]
-                        rand_indices = torch.randperm(z_flat.shape[0], device=z_flat.device)[:n_replace]
+                        rand_indices = torch.randperm(z_flat.shape[0], device=z_flat.device)[
+                            :n_replace
+                        ]
                         self.codebook.weight.data[dead_indices] = z_flat[rand_indices].detach()
                         self.ema_w.data[dead_indices] = z_flat[rand_indices].detach()
                         self.usage_count.data[dead_indices] = 1
@@ -209,7 +224,9 @@ class EnCodec(nn.Module):
         _, indices, _ = self.quantizer(z)
         return indices
 
-    def decode_from_indices(self, indices: torch.Tensor, target_len: Optional[int] = None) -> torch.Tensor:
+    def decode_from_indices(
+        self, indices: torch.Tensor, target_len: Optional[int] = None
+    ) -> torch.Tensor:
         quantized = self.quantizer.codebook(indices)  # [B, L, D]
         quantized = quantized.permute(0, 2, 1).contiguous()  # [B, D, L]
         recon = self.decoder(quantized)

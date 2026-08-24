@@ -102,7 +102,8 @@ const validateAndEmit = async () => {
     } else {
       error.value = data.message || '路径不可用';
     }
-  } catch (e) { console.warn('[PathSelector] check failed:', e.message) }
+  } catch (e) {
+    console.warn('[PathSelector] check failed:', e.message);
     error.value = '路径验证失败';
   }
 };

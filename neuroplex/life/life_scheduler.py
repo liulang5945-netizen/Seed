@@ -20,14 +20,14 @@
   boredom > 60   → 自动触发玩耍
   多个需求同时高时，优先级竞争
 """
+
 import os
 import json
 import time
-import random
 import logging
 import threading
-from typing import Dict, List, Optional, Any
-from dataclasses import dataclass, field
+from typing import List, Optional
+from dataclasses import dataclass
 from datetime import datetime
 
 logger = logging.getLogger("LifeScheduler")
@@ -36,11 +36,12 @@ logger = logging.getLogger("LifeScheduler")
 @dataclass
 class NeedsState:
     """态极的内在需求状态"""
-    hunger: float = 30.0      # 饥饿度（初始略饿，需要进食）
-    fatigue: float = 10.0     # 疲劳度
-    boredom: float = 20.0     # 无聊度
-    stress: float = 10.0      # 压力度
-    curiosity: float = 50.0   # 好奇心
+
+    hunger: float = 30.0  # 饥饿度（初始略饿，需要进食）
+    fatigue: float = 10.0  # 疲劳度
+    boredom: float = 20.0  # 无聊度
+    stress: float = 10.0  # 压力度
+    curiosity: float = 50.0  # 好奇心
 
     def clamp_all(self):
         """确保所有需求在 0~100 范围内"""
@@ -74,9 +75,10 @@ class NeedsState:
 @dataclass
 class LifeEvent:
     """一次生命事件"""
+
     timestamp: str
-    event_type: str   # "feed" / "sleep" / "play" / "work" / "idle"
-    trigger: str      # 触发原因（哪个需求导致的）
+    event_type: str  # "feed" / "sleep" / "play" / "work" / "idle"
+    trigger: str  # 触发原因（哪个需求导致的）
     needs_before: dict
     needs_after: dict
     duration_seconds: float = 0
@@ -99,16 +101,17 @@ class LifeScheduler:
     RESEARCH_THRESHOLD = 85  # B1 修复：curiosity 极高时触发科学研究
 
     # 需求自然增长速率（每分钟）
-    HUNGER_GROWTH = 0.5       # 饥饿感缓慢上升
-    FATIGUE_GROWTH = 0.3      # 疲劳感缓慢上升
-    BOREDOM_GROWTH = 0.4      # 无聊感缓慢上升
-    STRESS_DECAY = 0.2        # 压力自然缓慢下降
-    CURIOSITY_GROWTH = 0.1    # 好奇心缓慢积累
+    HUNGER_GROWTH = 0.5  # 饥饿感缓慢上升
+    FATIGUE_GROWTH = 0.3  # 疲劳感缓慢上升
+    BOREDOM_GROWTH = 0.4  # 无聊感缓慢上升
+    STRESS_DECAY = 0.2  # 压力自然缓慢下降
+    CURIOSITY_GROWTH = 0.1  # 好奇心缓慢积累
 
     def __init__(self, data_dir: str = None, event_bus=None):
         if data_dir is None:
             try:
                 from neuroplex.config import get_taiji_data_path
+
                 data_dir = get_taiji_data_path("life_data")
             except ImportError:
                 data_dir = "taiji/life_data"
@@ -234,7 +237,11 @@ class LifeScheduler:
                     norepinephrine_target = max(0.15, 0.4 - (needs.fatigue - 80) / 20.0 * 0.25)
 
                 # 只要有任一需要覆盖，就调用 set_targets
-                if dopamine_target is not None or serotonin_target is not None or norepinephrine_target is not None:
+                if (
+                    dopamine_target is not None
+                    or serotonin_target is not None
+                    or norepinephrine_target is not None
+                ):
                     self._neuromodulator.set_targets(
                         dopamine=dopamine_target,
                         serotonin=serotonin_target,
@@ -260,11 +267,10 @@ class LifeScheduler:
                 high_error_domains = [d for d, r in error_rates.items() if r > 0.5]
                 if high_error_domains:
                     logger.debug(
-                        f"高饥饿+高错误率域: {high_error_domains}，"
-                        f"睡眠时将触发 neurogenesis"
+                        f"高饥饿+高错误率域: {high_error_domains}，" f"睡眠时将触发 neurogenesis"
                     )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【LifeScheduler._update_neuron_signals】处理失败（非致命）: %s", e)
 
         # 3. fatigue 高 → 标记需要 SleepConsolidator
         if needs.fatigue > self.FATIGUE_THRESHOLD:
@@ -304,7 +310,9 @@ class LifeScheduler:
             self.needs.clamp_all()
 
             if self._life_state in ["sleeping", "feeding", "playing"]:
-                logger.info(f"🚨 User directive received! Interrupting current state: {self._life_state}")
+                logger.info(
+                    f"🚨 User directive received! Interrupting current state: {self._life_state}"
+                )
                 # 尝试中断正在运行的引擎
                 if self._life_state == "sleeping" and self._sleep_engine:
                     if hasattr(self._sleep_engine, "abort"):
@@ -316,9 +324,14 @@ class LifeScheduler:
                     if hasattr(self._play_engine, "abort"):
                         self._play_engine.abort()
 
-    def record_interaction(self, success: bool = True, topic: str = "",
-                           reasoning_steps: int = 0, used_tools: bool = False,
-                           had_search_results: bool = False):
+    def record_interaction(
+        self,
+        success: bool = True,
+        topic: str = "",
+        reasoning_steps: int = 0,
+        used_tools: bool = False,
+        had_search_results: bool = False,
+    ):
         """
         记录一次用户交互（外部调用）。
 
@@ -357,9 +370,9 @@ class LifeScheduler:
                 if used_tools and had_search_results:
                     self.needs.curiosity -= 12  # 搜索到了答案
                 elif used_tools:
-                    self.needs.curiosity -= 5   # 尝试了但结果一般
+                    self.needs.curiosity -= 5  # 尝试了但结果一般
                 else:
-                    self.needs.curiosity += 1   # 普通对话，好奇心微增
+                    self.needs.curiosity += 1  # 普通对话，好奇心微增
 
                 # 无聊：新话题/新工具使用 → 无聊下降
                 if used_tools:
@@ -468,26 +481,31 @@ class LifeScheduler:
             try:
                 ts = datetime.fromisoformat(event.timestamp).timestamp()
                 if ts >= cutoff:
-                    timeline.append({
-                        "time": event.timestamp,
-                        "action": event.event_type,
-                        "trigger": event.trigger,
-                        "needs_before": event.needs_before,
-                        "needs_after": event.needs_after,
-                        "duration": event.duration_seconds,
-                    })
+                    timeline.append(
+                        {
+                            "time": event.timestamp,
+                            "action": event.event_type,
+                            "trigger": event.trigger,
+                            "needs_before": event.needs_before,
+                            "needs_after": event.needs_after,
+                            "duration": event.duration_seconds,
+                        }
+                    )
             except Exception:
                 continue
         return timeline[-50:]  # 最多返回 50 条
 
     def get_summary(self) -> str:
         """获取人类可读的状态摘要"""
-        status = self.get_status()
+        status = self.get_status()  # noqa: F841 — available for subclass use
         needs = self.needs
 
         state_emoji = {
-            "idle": "😊", "feeding": "🍚", "sleeping": "💤",
-            "playing": "🎮", "working": "🏃",
+            "idle": "😊",
+            "feeding": "🍚",
+            "sleeping": "💤",
+            "playing": "🎮",
+            "working": "🏃",
         }
 
         lines = [
@@ -496,7 +514,7 @@ class LifeScheduler:
             f"当前状态: {state_emoji.get(self._life_state, '❓')} {self._life_state}",
             f"生命运行: {'✅ 启动' if self._is_running else '⏸️ 暂停'}",
             f"总心跳数: {self._total_heartbeats}",
-            f"\n内在需求:",
+            "\n内在需求:",
             f"  🍚 饥饿度: {self._bar(needs.hunger)} {needs.hunger:.0f}",
             f"  😴 疲劳度: {self._bar(needs.fatigue)} {needs.fatigue:.0f}",
             f"  😐 无聊度: {self._bar(needs.boredom)} {needs.boredom:.0f}",
@@ -510,7 +528,7 @@ class LifeScheduler:
         if next_action:
             lines.append(f"下一步行动: {next_action}")
         else:
-            lines.append(f"下一步行动: 继续等待（需求未达阈值）")
+            lines.append("下一步行动: 继续等待（需求未达阈值）")
 
         return "\n".join(lines)
 
@@ -555,6 +573,7 @@ class LifeScheduler:
         if self._total_heartbeats % 5 == 0:
             try:
                 from neuroplex.agent.context_manager import get_context_manager
+
                 ctx = get_context_manager()
                 ctx.decay_memories()
             except Exception as e:
@@ -570,7 +589,8 @@ class LifeScheduler:
         import random as _rand
 
         # 随机扰动：每个需求 ±0~1.5 的波动，模拟生命的不确定性
-        jitter = lambda: _rand.uniform(-1.5, 1.5)
+        def jitter():
+            return _rand.uniform(-1.5, 1.5)
 
         # 需求自然增长（带随机扰动）
         self.needs.hunger += self.HUNGER_GROWTH + jitter()
@@ -591,17 +611,17 @@ class LifeScheduler:
 
         # 偶尔的"情绪波动"（5% 概率触发较大幅度变化）
         if _rand.random() < 0.05:
-            mood = _rand.choice(['happy', 'restless', 'curious', 'tired'])
-            if mood == 'happy':
+            mood = _rand.choice(["happy", "restless", "curious", "tired"])
+            if mood == "happy":
                 self.needs.stress -= 3
                 self.needs.boredom -= 2
-            elif mood == 'restless':
+            elif mood == "restless":
                 self.needs.boredom += 4
                 self.needs.curiosity += 3
-            elif mood == 'curious':
+            elif mood == "curious":
                 self.needs.curiosity += 5
                 self.needs.boredom -= 2
-            elif mood == 'tired':
+            elif mood == "tired":
                 self.needs.fatigue += 4
                 self.needs.curiosity -= 2
 
@@ -692,6 +712,7 @@ class LifeScheduler:
         try:
             if self._feed_engine is None:
                 from neuroplex.life.feed_engine import get_feed_engine
+
                 self._feed_engine = get_feed_engine()
 
             report = self._feed_engine.feed(reason="auto")
@@ -720,6 +741,7 @@ class LifeScheduler:
         try:
             if self._sleep_engine is None:
                 from neuroplex.life.sleep_engine import get_sleep_engine
+
                 self._sleep_engine = get_sleep_engine()
 
             report = self._sleep_engine.sleep(reason="auto")
@@ -733,10 +755,13 @@ class LifeScheduler:
                 self.needs.clamp_all()
 
             # 广播事件到前端
-            self._publish_event("sleep_complete", {
-                "loss": report.training_loss,
-                "phases": report.phases_completed,
-            })
+            self._publish_event(
+                "sleep_complete",
+                {
+                    "loss": report.training_loss,
+                    "phases": report.phases_completed,
+                },
+            )
 
             return {
                 "success": True,
@@ -755,6 +780,7 @@ class LifeScheduler:
         try:
             if self._play_engine is None:
                 from neuroplex.life.play_engine import get_play_engine
+
                 self._play_engine = get_play_engine()
 
             report = self._play_engine.play(reason="auto")
@@ -787,6 +813,7 @@ class LifeScheduler:
         try:
             if self._explore_engine is None:
                 from neuroplex.life.explore_engine import get_explore_engine
+
                 self._explore_engine = get_explore_engine()
 
             result = self._explore_engine.explore(reason="auto")
@@ -800,11 +827,14 @@ class LifeScheduler:
                 self.needs.clamp_all()
 
             # 广播事件到前端
-            self._publish_event("explore_complete", {
-                "topic": result.topic,
-                "pages_read": result.pages_read,
-                "knowledge_stored": result.knowledge_stored,
-            })
+            self._publish_event(
+                "explore_complete",
+                {
+                    "topic": result.topic,
+                    "pages_read": result.pages_read,
+                    "knowledge_stored": result.knowledge_stored,
+                },
+            )
 
             return {
                 "success": True,
@@ -824,11 +854,13 @@ class LifeScheduler:
         """执行科学研究（好奇心极高时触发）"""
         try:
             from neuroplex.life.science_engine import get_science_engine
+
             engine = get_science_engine()
 
             # 选一个随机领域提出假设
             domains = ["语言理解", "知识推理", "记忆机制", "学习效率", "工具使用"]
             import random
+
             domain = random.choice(domains)
             question = f"如何提升态极在{domain}方面的能力？"
 
@@ -846,10 +878,13 @@ class LifeScheduler:
                 self.needs.boredom -= 15
                 self.needs.clamp_all()
 
-            self._publish_event("research_complete", {
-                "domain": domain,
-                "hypothesis": hypothesis.title if hypothesis else "",
-            })
+            self._publish_event(
+                "research_complete",
+                {
+                    "domain": domain,
+                    "hypothesis": hypothesis.title if hypothesis else "",
+                },
+            )
 
             return {"success": True, "domain": domain}
         except Exception as e:
@@ -888,7 +923,9 @@ class LifeScheduler:
                 "needs": self.needs.to_dict(),
                 "life_state": self._life_state,
                 "total_heartbeats": self._total_heartbeats,
-                "last_heartbeat": self._last_heartbeat.isoformat() if self._last_heartbeat else None,
+                "last_heartbeat": (
+                    self._last_heartbeat.isoformat() if self._last_heartbeat else None
+                ),
                 "last_activity": self._last_activity.isoformat() if self._last_activity else None,
             }
             path = os.path.join(self.data_dir, "life_state.json")
@@ -900,15 +937,17 @@ class LifeScheduler:
             recent = self._event_log[-100:]
             events_data = []
             for e in recent:
-                events_data.append({
-                    "timestamp": e.timestamp,
-                    "event_type": e.event_type,
-                    "trigger": e.trigger,
-                    "needs_before": e.needs_before,
-                    "needs_after": e.needs_after,
-                    "duration_seconds": e.duration_seconds,
-                    "success": e.success,
-                })
+                events_data.append(
+                    {
+                        "timestamp": e.timestamp,
+                        "event_type": e.event_type,
+                        "trigger": e.trigger,
+                        "needs_before": e.needs_before,
+                        "needs_after": e.needs_after,
+                        "duration_seconds": e.duration_seconds,
+                        "success": e.success,
+                    }
+                )
             with open(events_path, "w", encoding="utf-8") as f:
                 json.dump(events_data, f, indent=2, ensure_ascii=False)
         except Exception as e:

@@ -43,8 +43,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -60,8 +65,7 @@ def field_state_of(cortex, text: str) -> torch.Tensor:
     gids = cortex._general_sp.encode(text) or [0]
     ids = torch.tensor([gids], dtype=torch.long, device=cortex.device)
     emb = cortex._shared_embedding(ids)
-    res = cortex.think(emb, active_nids=None, fusion_mode="soft",
-                       collab_mode="continuous")
+    res = cortex.think(emb, active_nids=None, fusion_mode="soft", collab_mode="continuous")
     fs = res.get("field_state")
     if fs is None:
         raise RuntimeError("think() 未返回 field_state")
@@ -74,6 +78,7 @@ def train_gate(vectors: list, steps: int = 400) -> WriteGate:
     """训练写门控：正样本 = 新信息（sim 0.4-0.75，实测不同主题场基线 0.57-0.72），
     负样本 = 冗余（sim 0.88-0.98，覆盖重复/模糊重复区）。"""
     import random
+
     dim = vectors[0].shape[-1]
     torch.manual_seed(42)
     random.seed(42)
@@ -83,12 +88,10 @@ def train_gate(vectors: list, steps: int = 400) -> WriteGate:
     xs, ys = [], []
     for v in vectors:
         for _ in range(3):
-            xs.append((v, torch.tensor(random.uniform(0.4, 0.75),
-                                       dtype=torch.float)))
+            xs.append((v, torch.tensor(random.uniform(0.4, 0.75), dtype=torch.float)))
             ys.append(1.0)
         for _ in range(3):
-            xs.append((v, torch.tensor(random.uniform(0.88, 0.98),
-                                       dtype=torch.float)))
+            xs.append((v, torch.tensor(random.uniform(0.88, 0.98), dtype=torch.float)))
             ys.append(0.0)
     for _ in range(steps):
         opt.zero_grad()
@@ -96,7 +99,8 @@ def train_gate(vectors: list, steps: int = 400) -> WriteGate:
         for (v, s), y in zip(xs, ys):
             p = gate(v, s)
             loss = torch.nn.functional.binary_cross_entropy(
-                p.squeeze(-1), torch.tensor(y, dtype=torch.float))
+                p.squeeze(-1), torch.tensor(y, dtype=torch.float)
+            )
             loss.backward()
             tot += loss.item()
         opt.step()
@@ -143,18 +147,15 @@ def main():
             acc_ok += 1 if got == want else 0
             total += 1
     print(f"  门控判别: {acc_ok}/{total} 与标签一致", flush=True)
-    check("写门控可学习（判别准确率 ≥ 95%）", acc_ok / total >= 0.95,
-          f"{acc_ok}/{total}")
+    check("写门控可学习（判别准确率 ≥ 95%）", acc_ok / total >= 0.95, f"{acc_ok}/{total}")
 
     # ── 3. 门控优于硬阈值：sim=0.9 的模糊重复 ──
     v0 = v_list[0]
     hard_threshold = 0.92
     hard_accepts = 0.9 <= hard_threshold  # 硬阈值漏判（0.9 < 0.92 → 接受）
     gate_rejects = not gate_decision(gate, v0, 0.9)  # 门控训练覆盖 0.85-0.95 → 拒绝
-    print(f"  sim=0.9 模糊重复: 硬阈值接受={hard_accepts}, 门控接受={not gate_rejects}",
-          flush=True)
-    check("门控优于硬阈值（拒绝 0.9 模糊重复，硬阈值漏判）",
-          hard_accepts and gate_rejects)
+    print(f"  sim=0.9 模糊重复: 硬阈值接受={hard_accepts}, 门控接受={not gate_rejects}", flush=True)
+    check("门控优于硬阈值（拒绝 0.9 模糊重复，硬阈值漏判）", hard_accepts and gate_rejects)
 
     # ── 4. consolidate(gate) 集成：首次固化 4 主题 + 重复被拒 ──
     bank = FieldMemoryBank(dim=dim, gate=gate)
@@ -183,10 +184,8 @@ def main():
         gate.save(path)
         gate2 = WriteGate(dim)
         ok = gate2.load(path)
-        check("写门控持久化 + 恢复", ok,
-              f"path={os.path.basename(path)}")
-        check("恢复后门控决策一致",
-              gate_decision(gate2, v0, 0.9) == gate_decision(gate, v0, 0.9))
+        check("写门控持久化 + 恢复", ok, f"path={os.path.basename(path)}")
+        check("恢复后门控决策一致", gate_decision(gate2, v0, 0.9) == gate_decision(gate, v0, 0.9))
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
 

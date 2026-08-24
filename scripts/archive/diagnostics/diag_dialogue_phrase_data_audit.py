@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """审计 dialogue canonical answer 中的高频续写片段。"""
+
 from __future__ import annotations
 
 import json
@@ -7,7 +8,6 @@ import os
 from collections import Counter
 
 from experiment_config import DIALOGUE_DATA_FILES
-
 
 DATA_DIR = os.path.join("data", "simple_zh")
 ANSWER_MARKER = "答："
@@ -78,18 +78,20 @@ def main() -> None:
                     bucket["sample_count"] += 1
                     for index in positions:
                         continuation = answer[
-                            index + len(phrase): index + len(phrase) + CONTINUATION_WIDTH
+                            index + len(phrase) : index + len(phrase) + CONTINUATION_WIDTH
                         ]
                         bucket["continuations"][continuation] += 1
                     if len(bucket["examples"]) < EXAMPLE_LIMIT:
                         index = positions[0]
                         left = max(0, index - 24)
                         right = min(len(answer), index + len(phrase) + 48)
-                        bucket["examples"].append({
-                            "source_file": filename,
-                            "line": line_number,
-                            "context": answer[left:right],
-                        })
+                        bucket["examples"].append(
+                            {
+                                "source_file": filename,
+                                "line": line_number,
+                                "context": answer[left:right],
+                            }
+                        )
         file_stats[filename] = stats
 
     report = {

@@ -1,101 +1,123 @@
 # -*- mode: python ; coding: utf-8 -*-
-"""
-Seed 桌面客户端 PyInstaller 配置
+"""Seed 桌面端双入口打包规格（由 desktop/build.py 生成并调用）。
 
-使用方式：
-    pyinstaller desktop/seed.spec
+- Seed.exe        : GUI 主入口（windowed，desktop/main.py）
+- SeedBackend.exe : 后端工作进程（console，desktop/backend_worker.py）
+
+两个入口经 MERGE 共享同一份 _internal 依赖，避免体积翻倍。
+frozen 模式下主程序以子进程拉起 SeedBackend.exe，等价于开发模式
+的 `python -m uvicorn api.app:app`，规避：
+1. `sys.executable -m uvicorn` 递归启动 GUI 的问题；
+2. 进程内线程/多进程方案与 logging 配置、PyInstaller spawn 的冲突。
 """
 import os
-import sys
 from pathlib import Path
 
-ROOT_DIR = Path(SPECPATH)
+ROOT = Path(os.environ.get("SEED_BUILD_ROOT", Path(SPECPATH).parent))
 
 block_cipher = None
 
-a = Analysis(
-    [str(ROOT_DIR / 'desktop' / 'main.py')],
-    pathex=[str(ROOT_DIR)],
+_common_hiddenimports = [
+    "neuroplex", "api", "uvicorn", "fastapi", "pydantic",
+    "torch",
+]
+
+a_backend = Analysis(
+    [str(ROOT / "desktop" / "backend_worker.py")],
+    pathex=[str(ROOT)],
     binaries=[],
-    datas=[
-        (str(ROOT_DIR / 'frontend' / 'dist'), 'frontend/dist'),
-        (str(ROOT_DIR / 'taiji_data' / 'final'), 'taiji_data/final'),
-        (str(ROOT_DIR / 'app_settings.json'), '.'),
-        (str(ROOT_DIR / 'version.json'), '.'),
-        (str(ROOT_DIR / 'icon.ico'), '.'),
-    ],
-    hiddenimports=[
-        'neuroplex', 'neuroplex.core', 'neuroplex.core.api', 'neuroplex.core.inference',
-        'neuroplex.core.app_state', 'neuroplex.body', 'neuroplex.body.core',
-        'neuroplex.brain', 'neuroplex.brain.cortex',
-        'neuroplex.life', 'neuroplex.life.life_scheduler',
-        'neuroplex.life.feed_engine', 'neuroplex.life.sleep_engine',
-        'neuroplex.life.play_engine', 'neuroplex.life.evolution_engine',
-        'neuroplex.life.explore_engine', 'neuroplex.life.science_engine',
-        'neuroplex.agent', 'neuroplex.agent.working_memory',
-        'neuroplex.agent.context_manager', 'neuroplex.agent.semantic_memory',
-        'neuroplex.agent_ext', 'neuroplex.agent_ext.react_engine',
-        'neuroplex.agent_ext.tool_registry', 'neuroplex.agent_ext.agent',
-        'neuroplex.tools', 'neuroplex.tools.web', 'neuroplex.tools.rag',
-        'neuroplex.tools.desktop', 'neuroplex.tools.searxng', 'neuroplex.tools.browser',
-        'neuroplex.safety', 'neuroplex.safety.safety',
-        'neuroplex.infra', 'neuroplex.infra.events',
-        'api', 'api.app', 'api.routes_chat', 'api.routes_neuroplex',
-        'api.routes_life', 'api.routes_agent', 'api.routes_models',
-        'api.routes_training', 'api.routes_settings', 'api.routes_rag',
-        'api.chat_strategies', 'api.models',
-        'uvicorn', 'uvicorn.logging', 'uvicorn.loops',
-        'uvicorn.loops.auto', 'uvicorn.protocols',
-        'uvicorn.protocols.http', 'uvicorn.protocols.http.auto',
-        'uvicorn.protocols.websockets', 'uvicorn.protocols.websockets.auto',
-        'uvicorn.lifespan', 'uvicorn.lifespan.on',
-        'fastapi', 'pydantic', 'pydantic.deprecated',
-        'torch', 'transformers', 'sentence_transformers',
-        'sentencepiece', 'numpy', 'jieba',
-        'PyQt6', 'PyQt6.QtWidgets', 'PyQt6.QtCore', 'PyQt6.QtGui',
-        'PyQt6.QtWebEngineWidgets', 'PyQt6.QtWebEngineCore',
-    ],
+    datas=[],
+    hiddenimports=_common_hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
-    excludes=[
-        'matplotlib', 'pandas', 'tensorboard', 'datasets',
-        'langchain', 'langchain_core', 'langchain_community',
-    ],
+    excludes=[],
     win_no_prefer_redirects=False,
     win_private_assemblies=False,
     cipher=block_cipher,
     noarchive=False,
 )
 
-pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+# 运行时数据资产（PyInstaller 只收集 .py，纯数据文件必须显式声明）：
+# - tokenizer_contract.json / domains/*.model：cortex 装配与 life 状态必需，
+#   缺失会让 /api/health 直接 500；
+# - checkpoints/seed_corpus.pt：Seed 原生运行时激活用。
+_datas = []
+for src, dst in [
+    (ROOT / "frontend" / "dist", "frontend/dist"),
+    (ROOT / "neuroplex" / "tokenizer_contract.json", "neuroplex"),
+    (ROOT / "neuroplex" / "domains", "neuroplex/domains"),
+    (ROOT / "checkpoints" / "seed_corpus.pt", "checkpoints"),
+    (ROOT / "taiji_data" / "final", "taiji_data/final"),
+    (ROOT / "app_settings.json", "."),
+    (ROOT / "version.json", "."),
+    (ROOT / "icon.ico", "."),
+]:
+    if src.exists():
+        _datas.append((str(src), dst))
 
-exe = EXE(
-    pyz,
-    a.scripts,
+a_main = Analysis(
+    [str(ROOT / "desktop" / "main.py")],
+    pathex=[str(ROOT)],
+    binaries=[],
+    datas=_datas,
+    hiddenimports=_common_hiddenimports + [
+        "PyQt6", "PyQt6.QtWebEngineWidgets",
+    ],
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=block_cipher,
+    noarchive=False,
+)
+
+# 合并重复模块，两个 exe 共享 _internal（新版 PyInstaller 需三元组：
+# (analysis, identifier, path_to_exe)）
+MERGE((a_main, "seed-main", "Seed"), (a_backend, "seed-backend", "SeedBackend"))
+
+pyz_main = PYZ(a_main.pure, a_main.zipped_data, cipher=block_cipher)
+pyz_backend = PYZ(a_backend.pure, a_backend.zipped_data, cipher=block_cipher)
+
+_icon = str(ROOT / "icon.ico") if (ROOT / "icon.ico").exists() else str(ROOT / "frontend" / "public" / "favicon.ico")
+
+exe_main = EXE(
+    pyz_main,
+    a_main.scripts,
     [],
     exclude_binaries=True,
-    name='Seed',
+    name="Seed",
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=True,
-    console=False,  # 无控制台窗口
-    disable_windowed_traceback=False,
-    argv_emulation=False,
-    target_arch=None,
-    codesign_identity=None,
-    entitlements_file=None,
-    icon=str(ROOT_DIR / 'icon.ico'),
+    upx=False,
+    console=False,
+    icon=_icon,
+)
+
+exe_backend = EXE(
+    pyz_backend,
+    a_backend.scripts,
+    [],
+    exclude_binaries=True,
+    name="SeedBackend",
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=False,
+    console=True,
 )
 
 coll = COLLECT(
-    exe,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
+    exe_main,
+    exe_backend,
+    a_main.binaries,
+    a_main.zipfiles,
+    a_main.datas,
     strip=False,
-    upx=True,
+    upx=False,
     upx_exclude=[],
-    name='Seed',
+    name="Seed",
 )

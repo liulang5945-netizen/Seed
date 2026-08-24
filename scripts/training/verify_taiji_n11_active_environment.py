@@ -9,13 +9,13 @@ import sys
 from typing import Dict, Sequence, Tuple
 
 import torch
+import _verify_emit
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from taiji import EnvironmentOutcome, Taiji, TaijiConfig
-
 
 CUES = (ord("L"), ord("R"))
 ACTIONS = (ord("0"), ord("1"))
@@ -73,9 +73,7 @@ def _interact(
     for trial in range(interactions):
         cue, available = environment.reset()
         model.reset_dynamics(episode_id=f"n11-{trial}")
-        model.observe(
-            model.config.boundary_symbol, learn=True, learn_motor=False
-        )
+        model.observe(model.config.boundary_symbol, learn=True, learn_motor=False)
         model.observe(cue, learn=True, learn_motor=False)
         decision = model.act(available, sample=True)
         outcome = environment.step(decision.action_symbol)
@@ -90,19 +88,20 @@ def _interact(
         rewards.append(outcome.reward)
         modulations.append(settled.reward_prediction_error)
         if trial < 5 or trial >= interactions - 5:
-            decisions.append({
-                "trial": trial,
-                "cue": chr(cue),
-                "action": chr(decision.action_symbol),
-                "sensation": chr(outcome.sensation),
-                "reward": outcome.reward,
-                "success": outcome.reward > 0.0,
-            })
+            decisions.append(
+                {
+                    "trial": trial,
+                    "cue": chr(cue),
+                    "action": chr(decision.action_symbol),
+                    "sensation": chr(outcome.sensation),
+                    "reward": outcome.reward,
+                    "success": outcome.reward > 0.0,
+                }
+            )
 
-    motor_changed = (
-        not torch.equal(initial_motor[0], model.motor.synapses.edge_weight)
-        or not torch.equal(initial_motor[1], model.motor.bias)
-    )
+    motor_changed = not torch.equal(
+        initial_motor[0], model.motor.synapses.edge_weight
+    ) or not torch.equal(initial_motor[1], model.motor.bias)
     window = min(40, interactions)
     return {
         "first_window_accuracy": sum(successes[:window]) / window,
@@ -116,9 +115,7 @@ def _interact(
         ),
         "motor_changed": motor_changed,
         "pending_action_cleared": model.snapshot().pending_action is None,
-        "pending_experience_cleared": (
-            model.snapshot().pending_experience is None
-        ),
+        "pending_experience_cleared": (model.snapshot().pending_experience is None),
         "decision_samples": decisions,
     }
 
@@ -144,12 +141,14 @@ def _deterministic_accuracy(model: Taiji) -> tuple[float, list[Dict[str, object]
             learn_motor=False,
             use_memory=False,
         )
-        rows.append({
-            "cue": chr(cue),
-            "action": chr(decision.action_symbol),
-            "reward": outcome.reward,
-            "success": outcome.reward > 0.0,
-        })
+        rows.append(
+            {
+                "cue": chr(cue),
+                "action": chr(decision.action_symbol),
+                "reward": outcome.reward,
+                "success": outcome.reward > 0.0,
+            }
+        )
     return sum(bool(row["success"]) for row in rows) / len(rows), rows
 
 
@@ -170,23 +169,16 @@ def _actions_change_sensation() -> bool:
 def run_benchmark(*, interactions: int = 200, seed: int = 7) -> Dict[str, object]:
     learned_model = Taiji(_config(seed), episode_id="n11-learned")
     lesion_model = Taiji(_config(seed), episode_id="n11-lesion")
-    learned = _interact(
-        learned_model, interactions=interactions, learn_action=True
-    )
-    lesion = _interact(
-        lesion_model, interactions=interactions, learn_action=False
-    )
+    learned = _interact(learned_model, interactions=interactions, learn_action=True)
+    lesion = _interact(lesion_model, interactions=interactions, learn_action=False)
     deterministic, deterministic_rows = _deterministic_accuracy(learned_model)
     random_baseline = 1.0 / len(ACTIONS)
     checks = {
         "environment_transition_depends_on_action": _actions_change_sensation(),
         "final_success_at_least_90pct": learned["final_window_accuracy"] >= 0.90,
-        "beats_random_by_35pp": (
-            learned["final_window_accuracy"] >= random_baseline + 0.35
-        ),
+        "beats_random_by_35pp": (learned["final_window_accuracy"] >= random_baseline + 0.35),
         "beats_action_learning_lesion_by_25pp": (
-            learned["final_window_accuracy"]
-            >= lesion["final_window_accuracy"] + 0.25
+            learned["final_window_accuracy"] >= lesion["final_window_accuracy"] + 0.25
         ),
         "deterministic_policy_solves_both_cues": deterministic == 1.0,
         "reward_updates_are_local_and_counted": (
@@ -222,8 +214,7 @@ def run_benchmark(*, interactions: int = 200, seed: int = 7) -> Dict[str, object
             "random_policy_accuracy": random_baseline,
             "gain_over_random": learned["final_window_accuracy"] - random_baseline,
             "gain_over_action_lesion": (
-                learned["final_window_accuracy"]
-                - lesion["final_window_accuracy"]
+                learned["final_window_accuracy"] - lesion["final_window_accuracy"]
             ),
             "deterministic_accuracy": deterministic,
             "deterministic_decisions": deterministic_rows,
@@ -245,7 +236,7 @@ def main() -> int:
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(rendered + "\n", encoding="utf-8")
-    return 0 if report["status"] == "pass" else 1
+    return _verify_emit.emit_and_exit("taiji_n11_active_environment", report)
 
 
 if __name__ == "__main__":

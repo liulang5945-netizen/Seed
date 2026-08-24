@@ -2,6 +2,7 @@
 
 将新数据合并到现有的 data/distill/domain_datasets.pt。
 """
+
 from __future__ import annotations
 
 import os
@@ -18,13 +19,16 @@ if os.path.isdir(_LIBS):
     sys.path.insert(0, _LIBS)
 
 try:
-    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
-    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
-except Exception:
-    pass
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception as e:
+    logger.debug("【legacy_fill_domain_corpus】处理失败（非致命）: %s", e)
 
 import torch
 import sentencepiece as spm
+import logging
+
+logger = logging.getLogger(__name__)
 
 TEXT_OFFSET = 13388
 SEQ_LEN = 256
@@ -76,8 +80,10 @@ def extract_text(sample: dict, cfg: dict) -> str:
 
 
 def fetch_page(dataset, config, split, offset, length=PAGE_SIZE, retries=5):
-    url = (f"{API_BASE}?dataset={dataset}&config={config}"
-           f"&split={split}&offset={offset}&length={length}")
+    url = (
+        f"{API_BASE}?dataset={dataset}&config={config}"
+        f"&split={split}&offset={offset}&length={length}"
+    )
     for attempt in range(retries):
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "taiji-neuron/1.0"})
@@ -200,9 +206,11 @@ def main():
         t = torch.tensor(tokens_list, dtype=torch.long)
         all_data[domain] = t
         torch.save(t, f"data/distill/{domain}.pt")
-        print(f"  ✓ {domain}: {t.shape}, "
-              f"range=[{t.min().item()}, {t.max().item()}], "
-              f"耗时 {elapsed:.0f}s")
+        print(
+            f"  ✓ {domain}: {t.shape}, "
+            f"range=[{t.min().item()}, {t.max().item()}], "
+            f"耗时 {elapsed:.0f}s"
+        )
 
     # 保存合并数据
     torch.save(all_data, DOMAIN_DATA_PATH)

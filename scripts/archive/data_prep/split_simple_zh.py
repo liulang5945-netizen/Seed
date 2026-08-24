@@ -14,6 +14,7 @@
   data/simple_zh/class_b_encyclopedia.jsonl（百科数学 70%）
   data/simple_zh/class_c_story.jsonl    （故事对话 70%）
 """
+
 from __future__ import annotations
 
 import os
@@ -27,13 +28,13 @@ OUTPUT_DIR = "data/simple_zh"
 
 # 类别映射：文件路径前缀 → 类别
 CATEGORY_MAP = {
-    "train_data/chinese_class/": "A_chinese",      # 语文（古诗文、字词、阅读）
-    "train_data/tinybooks/": "A_chinese",           # 文学（经典简化版）
+    "train_data/chinese_class/": "A_chinese",  # 语文（古诗文、字词、阅读）
+    "train_data/tinybooks/": "A_chinese",  # 文学（经典简化版）
     "train_data/encyclopedias/": "B_encyclopedia",  # 百科
-    "train_data/math/": "B_encyclopedia",            # 数学
-    "train_data/tinystories_adv/": "C_story",       # 故事生成
-    "train_data/tinygames/": "C_story",              # 游戏/对话
-    "train_data/quizs/": "B_encyclopedia",           # 测验归到百科
+    "train_data/math/": "B_encyclopedia",  # 数学
+    "train_data/tinystories_adv/": "C_story",  # 故事生成
+    "train_data/tinygames/": "C_story",  # 游戏/对话
+    "train_data/quizs/": "B_encyclopedia",  # 测验归到百科
 }
 
 
@@ -47,15 +48,15 @@ def categorize_file(fname: str) -> str | None:
 
 def extract_text(d: dict) -> str:
     """提取 text 字段，清理 meta_tag。"""
-    text = d.get('text') or d.get('content') or d.get('story') or ''
+    text = d.get("text") or d.get("content") or d.get("story") or ""
     if not text or len(text) < 20:
-        return ''
-    if text.startswith('meta_tag:'):
-        lines = text.split('\n', 2)
+        return ""
+    if text.startswith("meta_tag:"):
+        lines = text.split("\n", 2)
         if len(lines) >= 2:
             text = lines[1] if len(lines) == 2 else lines[2]
     text = text.strip()
-    return text if len(text) >= 20 else ''
+    return text if len(text) >= 20 else ""
 
 
 def main():
@@ -66,8 +67,8 @@ def main():
     print("按类别分割 TinyStoriesAdv-zh（为多神经元差异化训练）")
     print("=" * 60)
 
-    files = api.list_repo_files(REPO_ID, repo_type='dataset')
-    jsonl_files = [f for f in files if f.startswith('train_data/') and f.endswith('.jsonl')]
+    files = api.list_repo_files(REPO_ID, repo_type="dataset")
+    jsonl_files = [f for f in files if f.startswith("train_data/") and f.endswith(".jsonl")]
 
     # 按类别收集
     categories = {"A_chinese": [], "B_encyclopedia": [], "C_story": []}
@@ -87,7 +88,7 @@ def main():
         print(f"  未分类: {len(uncategorized)} 个文件")
 
     # 下载并按类别保存
-    raw_dir = os.path.join(OUTPUT_DIR, '_raw_split')
+    raw_dir = os.path.join(OUTPUT_DIR, "_raw_split")
     os.makedirs(raw_dir, exist_ok=True)
 
     cat_texts = {"A_chinese": [], "B_encyclopedia": [], "C_story": []}
@@ -96,11 +97,11 @@ def main():
     for cat, flist in categories.items():
         print(f"\n[{cat}] 下载 {len(flist)} 个文件...")
         for i, fname in enumerate(flist):
-            print(f"  ({i+1}/{len(flist)}) {fname}...", end=' ', flush=True)
+            print(f"  ({i+1}/{len(flist)}) {fname}...", end=" ", flush=True)
             try:
-                local = hf_hub_download(REPO_ID, fname, repo_type='dataset', local_dir=raw_dir)
+                local = hf_hub_download(REPO_ID, fname, repo_type="dataset", local_dir=raw_dir)
                 count = 0
-                with open(local, 'r', encoding='utf-8') as f:
+                with open(local, "r", encoding="utf-8") as f:
                     for line in f:
                         line = line.strip()
                         if not line:
@@ -144,16 +145,22 @@ def main():
     # 保存
     output_files = {
         "shared_core": (os.path.join(OUTPUT_DIR, "shared_core.jsonl"), shared_core),
-        "class_a_chinese": (os.path.join(OUTPUT_DIR, "class_a_chinese.jsonl"), unique_data["A_chinese"]),
-        "class_b_encyclopedia": (os.path.join(OUTPUT_DIR, "class_b_encyclopedia.jsonl"), unique_data["B_encyclopedia"]),
+        "class_a_chinese": (
+            os.path.join(OUTPUT_DIR, "class_a_chinese.jsonl"),
+            unique_data["A_chinese"],
+        ),
+        "class_b_encyclopedia": (
+            os.path.join(OUTPUT_DIR, "class_b_encyclopedia.jsonl"),
+            unique_data["B_encyclopedia"],
+        ),
         "class_c_story": (os.path.join(OUTPUT_DIR, "class_c_story.jsonl"), unique_data["C_story"]),
     }
 
     print(f"\n保存分割结果:")
     for name, (path, texts) in output_files.items():
-        with open(path, 'w', encoding='utf-8') as f:
+        with open(path, "w", encoding="utf-8") as f:
             for text in texts:
-                f.write(json.dumps({'text': text}, ensure_ascii=False) + '\n')
+                f.write(json.dumps({"text": text}, ensure_ascii=False) + "\n")
         chars = sum(len(t) for t in texts)
         print(f"  {name}: {len(texts)} 条, {chars/10000:.0f} 万字, ~{int(chars*0.6/1e6)}M tokens")
 
@@ -161,15 +168,22 @@ def main():
     print(f"\n{'='*60}")
     print("每个神经元训练数据（共享核心 + 一类独有）:")
     shared_count = len(shared_core)
-    for cat, label in [("A_chinese", "语文文学"), ("B_encyclopedia", "百科数学"), ("C_story", "故事对话")]:
+    for cat, label in [
+        ("A_chinese", "语文文学"),
+        ("B_encyclopedia", "百科数学"),
+        ("C_story", "故事对话"),
+    ]:
         unique_count = len(unique_data[cat])
         total = shared_count + unique_count
         chars = sum(len(t) for t in shared_core) + sum(len(t) for t in unique_data[cat])
-        print(f"  {label}: {shared_count}(共享) + {unique_count}(独有) = {total} 条, ~{int(chars*0.6/1e6)}M tokens")
+        print(
+            f"  {label}: {shared_count}(共享) + {unique_count}(独有) = {total} 条, ~{int(chars*0.6/1e6)}M tokens"
+        )
         print(f"    数据/参数比(36M): {chars*0.6/1e6/36:.1f}:1")
 
     # 清理
     import shutil
+
     if os.path.exists(raw_dir):
         shutil.rmtree(raw_dir)
         print(f"\n已清理临时目录")

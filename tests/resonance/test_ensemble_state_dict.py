@@ -3,6 +3,7 @@
 ResonanceEnsemble 非 nn.Module（历史设计），本文件验证聚合接口
 state_dict()/load_state_dict() 的 round-trip、跳过语义与混合规格覆盖。
 """
+
 import torch
 
 from neuroplex.resonance import (
@@ -22,8 +23,7 @@ def _make_ensemble(mixed_spec: bool = True):
     n_code = ResonanceNeuron(cfg_code)
     n_code.config.neuron_id = "code0"
     field = ResonanceField(dim=3072)  # unified = max(field_dim)
-    ens = ResonanceEnsemble(
-        neurons={"zh0": n_zh, "code0": n_code}, field=field, max_rounds=2)
+    ens = ResonanceEnsemble(neurons={"zh0": n_zh, "code0": n_code}, field=field, max_rounds=2)
     return ens, n_zh, n_code
 
 

@@ -3,11 +3,16 @@
 =======================
 补充高质量的中文逻辑推理 (COIG-CQIA) 和英文多轮对话/推理 (OpenHermes) 数据
 """
+
 import os
 import json
 import requests
 import time
 from pathlib import Path
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def download_file(url, output_path, max_retries=3):
     """下载文件，带重试功能和进度显示"""
@@ -16,15 +21,15 @@ def download_file(url, output_path, max_retries=3):
             print(f"  下载中 (尝试 {attempt + 1})...")
             response = requests.get(url, stream=True, timeout=60)
             response.raise_for_status()
-            
-            total_size = int(response.headers.get('content-length', 0))
+
+            total_size = int(response.headers.get("content-length", 0))
             downloaded = 0
 
-            with open(output_path, 'wb') as f:
+            with open(output_path, "wb") as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
                     downloaded += len(chunk)
-                    if total_size > 0 and downloaded % (10*1024*1024) == 0:  # 每10MB打印一次
+                    if total_size > 0 and downloaded % (10 * 1024 * 1024) == 0:  # 每10MB打印一次
                         percent = (downloaded / total_size) * 100
                         print(f"    进度: {percent:.1f}% ({downloaded/(1024*1024):.1f}MB)")
 
@@ -38,22 +43,25 @@ def download_file(url, output_path, max_retries=3):
 
     return False
 
+
 def convert_coig_cqia(input_file, output_file, max_samples=None):
     """转换 COIG-CQIA 格式"""
     count = 0
-    with open(input_file, encoding="utf-8") as f_in, \
-         open(output_file, "w", encoding="utf-8") as f_out:
+    with (
+        open(input_file, encoding="utf-8") as f_in,
+        open(output_file, "w", encoding="utf-8") as f_out,
+    ):
         for line in f_in:
             if max_samples and count >= max_samples:
                 break
             try:
                 item = json.loads(line)
-                
+
                 # COIG-CQIA 通常包含 instruction, input, output
                 instruction = item.get("instruction", "")
                 input_text = item.get("input", "")
                 output_text = item.get("output", "")
-                
+
                 if not instruction and "query" in item:
                     instruction = item["query"]
                     output_text = item.get("response", "")
@@ -68,7 +76,7 @@ def convert_coig_cqia(input_file, output_file, max_samples=None):
                 messages = [
                     {"role": "system", "content": "你是态极，一个严谨且富有逻辑的AI助手。"},
                     {"role": "user", "content": user_content},
-                    {"role": "assistant", "content": output_text}
+                    {"role": "assistant", "content": output_text},
                 ]
 
                 f_out.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
@@ -76,6 +84,7 @@ def convert_coig_cqia(input_file, output_file, max_samples=None):
             except json.JSONDecodeError:
                 continue
     return count
+
 
 def convert_sharegpt(input_file, output_file, max_samples=None):
     """转换 ShareGPT/OpenHermes 格式"""
@@ -93,13 +102,13 @@ def convert_sharegpt(input_file, output_file, max_samples=None):
         for item in data:
             if max_samples and count >= max_samples:
                 break
-            
+
             conversations = item.get("conversations", [])
             if not conversations or len(conversations) < 2:
                 continue
-                
+
             messages = [{"role": "system", "content": "你是态极，一个有帮助的AI助手。"}]
-            
+
             valid = True
             for turn in conversations:
                 role = "user" if turn.get("from") in ["human", "user"] else "assistant"
@@ -108,12 +117,13 @@ def convert_sharegpt(input_file, output_file, max_samples=None):
                     valid = False
                     break
                 messages.append({"role": role, "content": content})
-                
+
             if valid and len(messages) > 1:
                 f_out.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
                 count += 1
-                
+
     return count
+
 
 def main():
     print("=" * 60)
@@ -149,7 +159,7 @@ def main():
             "url": "https://huggingface.co/datasets/teknium/OpenHermes-2.5/resolve/main/openhermes2_5.json",
             "output": str(output_dir / "openhermes_2_5.jsonl"),
             "format": "sharegpt",
-            "max_samples": 50000, # 限制数量，OpenHermes很大(1M+)，这里取5万条作为补充
+            "max_samples": 50000,  # 限制数量，OpenHermes很大(1M+)，这里取5万条作为补充
         },
     ]
 
@@ -178,7 +188,7 @@ def main():
                 count = convert_coig_cqia(str(temp_file), ds["output"], ds.get("max_samples"))
             elif ds["format"] == "sharegpt":
                 count = convert_sharegpt(str(temp_file), ds["output"], ds.get("max_samples"))
-            
+
             print(f"  完成: {count:,} 条")
             total_count += count
         except Exception as e:
@@ -189,13 +199,14 @@ def main():
 
     try:
         temp_dir.rmdir()
-    except:
-        pass
+    except BaseException as e:
+        logger.debug("【main】处理失败（非致命）: %s", e)
 
     print()
     print("=" * 60)
     print(f"全部处理完成！本次累计准备: {total_count:,} 条高质量数据。")
     print("=" * 60)
+
 
 if __name__ == "__main__":
     main()

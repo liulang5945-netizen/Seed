@@ -6,6 +6,7 @@ the population shared embedding, trains only the micro member, and never
 writes a neuron checkpoint.  This isolates the question "can a smaller member
 learn the dialogue target at lower local cost?" before testing population gain.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -18,7 +19,9 @@ import random
 import sys
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -34,7 +37,6 @@ from scripts.training.utils import (
     load_general_tokenizer,
     split_train_eval,
 )
-
 
 BASE_CHECKPOINT = os.path.join("data", "neurons", "neuron_zh_aug0_dialogue.pt")
 MAX_TEXTS = 100_000
@@ -62,7 +64,7 @@ def _encode(texts, domain_sp, general_sp, shared):
     chunks = []
     with torch.no_grad():
         for start in range(0, len(texts), 16):
-            batch = texts[start:start + 16]
+            batch = texts[start : start + 16]
             embeddings, targets, mask, sft_mask = batch_align_and_embed(
                 batch,
                 domain_sp,
@@ -101,7 +103,7 @@ def _first_token_metrics(first_logits, texts, domain_sp, general_sp) -> dict:
     top1 = 0
     for row_index, text in enumerate(texts):
         marker = text.find(SFT_ANSWER_MARKER)
-        prompt = text[:marker + len(SFT_ANSWER_MARKER)]
+        prompt = text[: marker + len(SFT_ANSWER_MARKER)]
         _, targets = build_position_alignment(text, domain_sp, general_sp)
         answer_start = len(general_sp.encode(prompt))
         if answer_start <= 0 or answer_start > first_logits.shape[1]:
@@ -130,13 +132,13 @@ def _evaluate(neuron, encoded, texts, domain_sp, general_sp) -> dict:
     first_texts = []
     with torch.no_grad():
         for start in range(0, len(texts), BATCH_SIZE):
-            batch = tuple(item[start:start + BATCH_SIZE] for item in encoded)
+            batch = tuple(item[start : start + BATCH_SIZE] for item in encoded)
             loss, logits, valid = _loss(neuron, batch)
             total_ce += float(loss) * int(valid.sum())
             total_tokens += int(valid.sum())
-            for row_index, text in enumerate(texts[start:start + BATCH_SIZE]):
+            for row_index, text in enumerate(texts[start : start + BATCH_SIZE]):
                 marker = text.find(SFT_ANSWER_MARKER)
-                prompt = text[:marker + len(SFT_ANSWER_MARKER)]
+                prompt = text[: marker + len(SFT_ANSWER_MARKER)]
                 answer_start = len(general_sp.encode(prompt))
                 if 0 < answer_start <= logits.shape[1]:
                     first_logits.append(logits[row_index, answer_start - 1].cpu())
@@ -151,11 +153,13 @@ def _evaluate(neuron, encoded, texts, domain_sp, general_sp) -> dict:
             "median_rank_zero_based": None,
             "top1_rate": None,
         }
-    metrics.update({
-        "answer_loss": round(total_ce / max(total_tokens, 1), 6),
-        "corrected_ppl": round(math.exp(min(total_ce / max(total_tokens, 1), 20)), 4),
-        "effective_answer_tokens": total_tokens,
-    })
+    metrics.update(
+        {
+            "answer_loss": round(total_ce / max(total_tokens, 1), 6),
+            "corrected_ppl": round(math.exp(min(total_ce / max(total_tokens, 1), 20)), 4),
+            "effective_answer_tokens": total_tokens,
+        }
+    )
     return metrics
 
 

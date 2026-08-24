@@ -9,11 +9,16 @@
 - 工具调用：THUDM/AgentInstruct (包含复杂的Thought-Action-Observation轨迹)
 - 长上下文：THUDM/LongAlign-10k (真正的长文档、长依赖多轮对话)
 """
+
 import os
 import json
 import requests
 import time
 from pathlib import Path
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def download_file(url, output_path, max_retries=3):
     """下载文件，带重试功能和进度显示"""
@@ -22,15 +27,15 @@ def download_file(url, output_path, max_retries=3):
             print(f"  下载中 (尝试 {attempt + 1})...")
             response = requests.get(url, stream=True, timeout=60)
             response.raise_for_status()
-            
-            total_size = int(response.headers.get('content-length', 0))
+
+            total_size = int(response.headers.get("content-length", 0))
             downloaded = 0
 
-            with open(output_path, 'wb') as f:
+            with open(output_path, "wb") as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
                     downloaded += len(chunk)
-                    if total_size > 0 and downloaded % (5*1024*1024) == 0:  # 每5MB打印一次
+                    if total_size > 0 and downloaded % (5 * 1024 * 1024) == 0:  # 每5MB打印一次
                         percent = (downloaded / total_size) * 100
                         print(f"    进度: {percent:.1f}% ({downloaded/(1024*1024):.1f}MB)")
 
@@ -44,18 +49,26 @@ def download_file(url, output_path, max_retries=3):
 
     return False
 
+
 def convert_agent_instruct(input_file, output_file):
     """转换 AgentInstruct 格式为标准 messages 格式"""
     count = 0
-    with open(input_file, encoding="utf-8") as f_in, \
-         open(output_file, "w", encoding="utf-8") as f_out:
+    with (
+        open(input_file, encoding="utf-8") as f_in,
+        open(output_file, "w", encoding="utf-8") as f_out,
+    ):
         for line in f_in:
             try:
                 item = json.loads(line)
                 conversations = item.get("conversations", [])
-                
-                messages = [{"role": "system", "content": "你是态极，一个具备高级工具调用(ReAct)和规划能力的AI Agent。"}]
-                
+
+                messages = [
+                    {
+                        "role": "system",
+                        "content": "你是态极，一个具备高级工具调用(ReAct)和规划能力的AI Agent。",
+                    }
+                ]
+
                 valid = True
                 for turn in conversations:
                     role = "user" if turn.get("from") == "user" else "assistant"
@@ -64,7 +77,7 @@ def convert_agent_instruct(input_file, output_file):
                         valid = False
                         break
                     messages.append({"role": role, "content": content})
-                    
+
                 if valid and len(messages) > 1:
                     f_out.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
                     count += 1
@@ -72,32 +85,44 @@ def convert_agent_instruct(input_file, output_file):
                 continue
     return count
 
+
 def convert_long_align(input_file, output_file, max_samples=2000):
     """转换 LongAlign 格式，限制数量以控制训练时间"""
     count = 0
-    with open(input_file, encoding="utf-8") as f_in, \
-         open(output_file, "w", encoding="utf-8") as f_out:
+    with (
+        open(input_file, encoding="utf-8") as f_in,
+        open(output_file, "w", encoding="utf-8") as f_out,
+    ):
         for line in f_in:
             if count >= max_samples:
                 break
             try:
                 item = json.loads(line)
                 messages = item.get("messages", [])
-                
+
                 if not messages:
                     continue
-                    
+
                 # 确保有 system prompt
                 if messages[0].get("role") != "system":
-                    messages.insert(0, {"role": "system", "content": "你是态极，一个擅长处理超长上下文和复杂多轮逻辑的AI助手。"})
+                    messages.insert(
+                        0,
+                        {
+                            "role": "system",
+                            "content": "你是态极，一个擅长处理超长上下文和复杂多轮逻辑的AI助手。",
+                        },
+                    )
                 else:
-                    messages[0]["content"] = "你是态极，一个擅长处理超长上下文和复杂多轮逻辑的AI助手。"
-                
+                    messages[0][
+                        "content"
+                    ] = "你是态极，一个擅长处理超长上下文和复杂多轮逻辑的AI助手。"
+
                 f_out.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
                 count += 1
             except json.JSONDecodeError:
                 continue
     return count
+
 
 def main():
     print("=" * 60)
@@ -121,7 +146,7 @@ def main():
             "url": "https://huggingface.co/datasets/THUDM/LongAlign-10k/resolve/main/data/train.jsonl",
             "output": str(output_dir / "long_align_train.jsonl"),
             "format": "long_align",
-            "max_samples": 2000, # 长文本非常占显存，先取2000条高质量数据
+            "max_samples": 2000,  # 长文本非常占显存，先取2000条高质量数据
         },
     ]
 
@@ -150,7 +175,7 @@ def main():
                 count = convert_agent_instruct(str(temp_file), ds["output"])
             elif ds["format"] == "long_align":
                 count = convert_long_align(str(temp_file), ds["output"], ds.get("max_samples"))
-            
+
             print(f"  完成: {count:,} 条")
             total_count += count
         except Exception as e:
@@ -161,13 +186,14 @@ def main():
 
     try:
         temp_dir.rmdir()
-    except:
-        pass
+    except BaseException as e:
+        logger.debug("【main】处理失败（非致命）: %s", e)
 
     print()
     print("=" * 60)
     print(f"全部处理完成！本次累计准备: {total_count:,} 条复杂行为数据。")
     print("=" * 60)
+
 
 if __name__ == "__main__":
     main()

@@ -25,8 +25,13 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 from taiji.loader import assemble_cortex  # noqa: E402
 from scripts.training.experiment_config import build_dialogue_prompt  # noqa: E402
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -77,7 +82,9 @@ def run_mode(cortex, prompts, force_nid=None):
         for _ in range(N_SAMPLES):
             try:
                 out = cortex.generate(
-                    prompt, max_tokens=MAX_TOKENS, domain="zh",
+                    prompt,
+                    max_tokens=MAX_TOKENS,
+                    domain="zh",
                     collab_mode="continuous",
                     active_nids=[force_nid] if force_nid else None,
                 )
@@ -129,14 +136,26 @@ def main():
 
     print("\n" + "=" * 50, flush=True)
     print(f"{'指标':<12}{'当前机制(A)':>14}{'强制134M(B)':>14}{'Δ(B-A)':>12}", flush=True)
-    print(f"{'平均长度':<12}{agg_cur['avg_len']:>14.1f}{agg_std0['avg_len']:>14.1f}"
-          f"{agg_std0['avg_len'] - agg_cur['avg_len']:>+12.1f}", flush=True)
-    print(f"{'非空':<12}{agg_cur['non_empty']:>14d}/{agg_cur['n_runs']}"
-          f"{agg_std0['non_empty']:>10d}/{agg_std0['n_runs']}{'':>12}", flush=True)
-    print(f"{'字符重复率':<12}{agg_cur['dup']:>14.3f}{agg_std0['dup']:>14.3f}"
-          f"{agg_std0['dup'] - agg_cur['dup']:>+12.3f}", flush=True)
-    print(f"{'主题词命中':<12}{agg_cur['hit']:>14.3f}{agg_std0['hit']:>14.3f}"
-          f"{agg_std0['hit'] - agg_cur['hit']:>+12.3f}", flush=True)
+    print(
+        f"{'平均长度':<12}{agg_cur['avg_len']:>14.1f}{agg_std0['avg_len']:>14.1f}"
+        f"{agg_std0['avg_len'] - agg_cur['avg_len']:>+12.1f}",
+        flush=True,
+    )
+    print(
+        f"{'非空':<12}{agg_cur['non_empty']:>14d}/{agg_cur['n_runs']}"
+        f"{agg_std0['non_empty']:>10d}/{agg_std0['n_runs']}{'':>12}",
+        flush=True,
+    )
+    print(
+        f"{'字符重复率':<12}{agg_cur['dup']:>14.3f}{agg_std0['dup']:>14.3f}"
+        f"{agg_std0['dup'] - agg_cur['dup']:>+12.3f}",
+        flush=True,
+    )
+    print(
+        f"{'主题词命中':<12}{agg_cur['hit']:>14.3f}{agg_std0['hit']:>14.3f}"
+        f"{agg_std0['hit'] - agg_cur['hit']:>+12.3f}",
+        flush=True,
+    )
 
     # 逐 prompt 长度对比（采样均值）
     print("\n逐 prompt 平均长度（3 采样均值）:", flush=True)
@@ -159,14 +178,23 @@ def main():
     len_gain = agg_std0["avg_len"] - agg_cur["avg_len"]
     dup_gain = agg_cur["dup"] - agg_std0["dup"]  # 正值 = B 重复更少（更好）
     if len_gain >= 8 and dup_gain >= 0.01:
-        print(f"→ 强制 134M 显著占优（长度 +{len_gain:.0f}，重复 -{dup_gain:.3f}）"
-              "——实施 leader 信号改进", flush=True)
+        print(
+            f"→ 强制 134M 显著占优（长度 +{len_gain:.0f}，重复 -{dup_gain:.3f}）"
+            "——实施 leader 信号改进",
+            flush=True,
+        )
     elif len_gain >= 3 or dup_gain >= 0.005:
-        print(f"→ 强制 134M 轻微占优（长度 +{len_gain:.0f}，重复改善 {dup_gain:+.3f}）"
-              "——收益边际，需权衡机制改动成本", flush=True)
+        print(
+            f"→ 强制 134M 轻微占优（长度 +{len_gain:.0f}，重复改善 {dup_gain:+.3f}）"
+            "——收益边际，需权衡机制改动成本",
+            flush=True,
+        )
     else:
-        print(f"→ 收益不显著（长度 {len_gain:+.0f}，重复 {dup_gain:+.3f}）"
-              "——转向 dialogue 数据扩充重训", flush=True)
+        print(
+            f"→ 收益不显著（长度 {len_gain:+.0f}，重复 {dup_gain:+.3f}）"
+            "——转向 dialogue 数据扩充重训",
+            flush=True,
+        )
 
     print(f"\n耗时 {time.time() - t0:.0f}s", flush=True)
 

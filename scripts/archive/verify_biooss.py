@@ -14,6 +14,7 @@ Usage:
     $env:TAIJI_TEST_MODE="1"
     python scripts/training/verify_biooss.py
 """
+
 from __future__ import annotations
 
 import os
@@ -152,7 +153,10 @@ base_embed_dim = exc_neuron.config.base_embed_dim
 shared_emb = torch.randn(B, L, base_embed_dim)
 
 # forward 前 mask 应全 1
-check("forward 前 mask 全 1", torch.allclose(field2.inhibitory_mask, torch.ones_like(field2.inhibitory_mask)))
+check(
+    "forward 前 mask 全 1",
+    torch.allclose(field2.inhibitory_mask, torch.ones_like(field2.inhibitory_mask)),
+)
 
 result = ensemble.forward(shared_embeddings=shared_emb, return_logits=False)
 
@@ -174,7 +178,9 @@ check("forward 后 state 有 excitatory 贡献", state_nonzero)
 print("\n=== Test 6: ensemble forward with logits (inhibitory + excitatory) ===")
 result = ensemble.forward(shared_embeddings=shared_emb, return_logits=True)
 check("forward 返回结果", result is not None)
-check("final_scores 包含两 neuron", set(result.get("final_scores", {}).keys()) == {"exc_1", "inh_1"})
+check(
+    "final_scores 包含两 neuron", set(result.get("final_scores", {}).keys()) == {"exc_1", "inh_1"}
+)
 check("weighted_logits 存在", "weighted_logits" in result)
 
 # ── Test 7: Cortex.add_neuron 按 ~20% 生成 inhibitory ──
@@ -198,6 +204,7 @@ check("初始 inhibitory 数=0", initial_inhibitory == 0)
 
 # 临时切换 neurons_dir 避免污染 data/neurons
 import tempfile
+
 tmp_dir = tempfile.mkdtemp()
 cortex.neurons_dir = tmp_dir
 
@@ -243,6 +250,7 @@ check("7 个新 neuron 中 2 个 inhibitory (29%)", new_inh == 2, f"got {new_inh
 
 # 清理临时 ckpt
 import shutil
+
 shutil.rmtree(tmp_dir, ignore_errors=True)
 
 # ── Summary ──

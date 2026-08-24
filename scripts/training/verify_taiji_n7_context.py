@@ -7,9 +7,10 @@ from collections import Counter, defaultdict
 import json
 from pathlib import Path
 import sys
-from typing import Dict, Iterable, Literal, Tuple
+from typing import Dict, Literal, Tuple
 
 import torch
+import _verify_emit
 import torch.nn.functional as F
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -17,7 +18,6 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from taiji import Taiji, TaijiConfig
-
 
 DATA = b"axbcxd" * 4
 AMBIGUOUS = ord("x")
@@ -30,8 +30,7 @@ def _first_order_accuracy(data: bytes) -> float:
     counts = followers[AMBIGUOUS]
     best_count = max(counts.values())
     prediction = min(symbol for symbol, count in counts.items() if count == best_count)
-    targets = [int(data[index + 1]) for index, value in enumerate(data[:-1])
-               if value == AMBIGUOUS]
+    targets = [int(data[index + 1]) for index, value in enumerate(data[:-1]) if value == AMBIGUOUS]
     return sum(target == prediction for target in targets) / len(targets)
 
 
@@ -69,11 +68,13 @@ def _evaluate(
         target = int(sequence[index + 1])
         hit = int(step.predicted_symbol == target)
         hits.append(hit)
-        rows.append({
-            "target": target,
-            "prediction": step.predicted_symbol,
-            "hit": hit,
-        })
+        rows.append(
+            {
+                "target": target,
+                "prediction": step.predicted_symbol,
+                "hit": hit,
+            }
+        )
         state = model.snapshot()
         contexts[target].append(state.motor_context)
         fast[target].append(torch.cat([region.activity for region in state.regions]))
@@ -97,15 +98,9 @@ def run_benchmark(*, epochs: int = 200, seed: int = 7) -> Dict[str, object]:
     model.learn_bytes(DATA, epochs=epochs)
     learned = model.checkpoint()
 
-    full, diagnostics, rows = _evaluate(
-        Taiji.from_checkpoint(learned), lesion="none"
-    )
-    trace_lesion, trace_diagnostics, _ = _evaluate(
-        Taiji.from_checkpoint(learned), lesion="trace"
-    )
-    state_lesion, _, _ = _evaluate(
-        Taiji.from_checkpoint(learned), lesion="all"
-    )
+    full, diagnostics, rows = _evaluate(Taiji.from_checkpoint(learned), lesion="none")
+    trace_lesion, trace_diagnostics, _ = _evaluate(Taiji.from_checkpoint(learned), lesion="trace")
+    state_lesion, _, _ = _evaluate(Taiji.from_checkpoint(learned), lesion="all")
     first_order = _first_order_accuracy(DATA)
     strongest_causal_control = max(first_order, state_lesion)
     checks = {
@@ -148,7 +143,7 @@ def main() -> int:
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(rendered + "\n", encoding="utf-8")
-    return 0 if report["status"] == "pass" else 1
+    return _verify_emit.emit_and_exit("taiji_n7_context", report)
 
 
 if __name__ == "__main__":

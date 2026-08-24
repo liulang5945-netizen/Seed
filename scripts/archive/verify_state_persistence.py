@@ -10,6 +10,7 @@
 这验证了"经验积累持久化"的完整闭环：
     启动 → feed → sleep → 保存 → 重启 → 状态恢复 → 继续累积
 """
+
 import sys
 import os
 from datetime import datetime
@@ -37,8 +38,9 @@ def _snapshot(cortex) -> dict:
     return snap
 
 
-def _compare_snapshots(label: str, snap_a: dict, snap_b: dict, tol: float = 1e-6,
-                       max_tol: float = 1e-3) -> tuple:
+def _compare_snapshots(
+    label: str, snap_a: dict, snap_b: dict, tol: float = 1e-6, max_tol: float = 1e-3
+) -> tuple:
     """对比两个快照，返回 (全部一致, 详细信息列表)。
 
     Args:
@@ -98,6 +100,7 @@ def main():
         # Step 1: 装配 Cortex（幼稚态）
         print("\n[Step 1] 装配 Cortex（幼稚态）...")
         from taiji.loader import assemble_cortex
+
         cortex, tokenizer, modules = assemble_cortex(
             neurons_dir=neurons_dir,
             device="cpu",
@@ -143,7 +146,10 @@ def main():
         # 验证训练确实改变了权重
         print("\n[Step 3] 验证训练改变了权重...")
         trained_changed, _ = _compare_snapshots(
-            "init vs trained", snap_init, snap_trained, tol=1e-6,
+            "init vs trained",
+            snap_init,
+            snap_trained,
+            tol=1e-6,
         )
         if trained_changed:
             print("  ⚠️ 训练未改变任何权重（可能是 lr 太小或样本太少）")
@@ -181,7 +187,10 @@ def main():
         # fp16 保存 shared_embedding 有微小精度损失，容差放宽到 1e-2
         print("\n[Step 6] 对比 [trained] vs [reloaded] 权重...")
         all_match, details = _compare_snapshots(
-            "trained vs reloaded", snap_trained, snap_reloaded, tol=1e-2,
+            "trained vs reloaded",
+            snap_trained,
+            snap_reloaded,
+            tol=1e-2,
         )
 
         # Step 7: 综合判断

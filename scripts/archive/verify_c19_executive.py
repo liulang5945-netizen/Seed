@@ -4,6 +4,7 @@
 1. _executive_route 回合级判定（混合信号：启发式 + quality_head 回合级聚合）
 2. executive 模式生成（dominant 域稳定生成，无 token 级竞争）vs fusion 模式
 """
+
 import os
 import sys
 
@@ -23,8 +24,13 @@ PROMPTS = [
 
 
 def main():
-    DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                    "zh_aug3_dialogue", "zh_std0_dialogue"]
+    DIALOGUE_IDS = [
+        "zh_aug0_dialogue",
+        "zh_aug1_dialogue",
+        "zh_aug2_dialogue",
+        "zh_aug3_dialogue",
+        "zh_std0_dialogue",
+    ]
     cortex, tokenizer, modules = assemble_cortex(
         neurons_dir="data/neurons",
         collab_name="collab_v3_c16.ckpt.pt",
@@ -36,12 +42,21 @@ def main():
     # 1. 回合级判定
     print("\n=== C19 回合级判定（_executive_route）===")
     # 诊断：quality_head 注入 + probe
-    print("[diag] quality_head 存在:", {
-        nid: getattr(n, "quality_head", None) is not None for nid, n in cortex.neurons.items()
-    })
-    print("[diag] _neuron_shared_embeddings:", list(cortex._neuron_shared_embeddings.keys()) if cortex._neuron_shared_embeddings else "EMPTY")
+    print(
+        "[diag] quality_head 存在:",
+        {nid: getattr(n, "quality_head", None) is not None for nid, n in cortex.neurons.items()},
+    )
+    print(
+        "[diag] _neuron_shared_embeddings:",
+        (
+            list(cortex._neuron_shared_embeddings.keys())
+            if cortex._neuron_shared_embeddings
+            else "EMPTY"
+        ),
+    )
     try:
         import torch
+
         gids = cortex._general_sp.encode(PROMPTS[0][1])
         ids_t = torch.tensor([gids], dtype=torch.long, device=cortex.device)
         nem = {nid: emb(ids_t) for nid, emb in cortex._neuron_shared_embeddings.items()}
@@ -54,12 +69,19 @@ def main():
         for nid, n in cortex.neurons.items():
             try:
                 r1 = n.forward(nem[nid], round_num=1, return_logits=False)
-                print(f"  [per-neuron] {nid}: quality_logit={'present' if 'quality_logit' in r1 else 'MISSING'}, qh={'yes' if getattr(n,'quality_head',None) is not None else 'NO'}")
+                print(
+                    f"  [per-neuron] {nid}: quality_logit={'present' if 'quality_logit' in r1 else 'MISSING'}, qh={'yes' if getattr(n,'quality_head',None) is not None else 'NO'}"
+                )
             except Exception as e:
                 print(f"  [per-neuron] {nid}: ERROR {type(e).__name__}: {e}")
-        print("[diag] probe final_scores:", {k: round(float(v), 3) for k, v in probe.get("final_scores", {}).items()})
+        print(
+            "[diag] probe final_scores:",
+            {k: round(float(v), 3) for k, v in probe.get("final_scores", {}).items()},
+        )
     except Exception as e:
-        import traceback; traceback.print_exc()
+        import traceback
+
+        traceback.print_exc()
 
     for tag, prompt in PROMPTS:
         dom, conf, per_dom = cortex._executive_route(prompt)
@@ -74,11 +96,17 @@ def main():
             # 否则 dialogue neuron 触发换行死循环（cortex 口径守卫硬失败）。
             gen_prompt = build_dialogue_prompt(prompt) if tag in ("zh", "dialogue") else prompt
             out_exec = cortex.generate(
-                gen_prompt, max_tokens=40, temperature=0.9, top_k=50,
+                gen_prompt,
+                max_tokens=40,
+                temperature=0.9,
+                top_k=50,
                 collab_mode="executive",
             )
             out_fusion = cortex.generate(
-                gen_prompt, max_tokens=40, temperature=0.9, top_k=50,
+                gen_prompt,
+                max_tokens=40,
+                temperature=0.9,
+                top_k=50,
                 collab_mode="fusion",
             )
             print(f"\n── [{tag}] {gen_prompt}")

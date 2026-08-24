@@ -12,6 +12,7 @@
 9. 共识加成强度可调（consensus_alpha）
 10. 共识票数正确（全员同意 → votes=N）
 """
+
 from __future__ import annotations
 
 import os
@@ -72,7 +73,11 @@ def test_output_shape():
     scores = {f"n{i}": 0.5 + i * 0.1 for i in range(3)}
     result = {}
     ens._consensus_logit_fusion(all_logits, scores, result, ref=torch.tensor(0.0))
-    assert result["weighted_logits"].shape == (B, L, V), f"应为 [B,L,V], got {result['weighted_logits'].shape}"
+    assert result["weighted_logits"].shape == (
+        B,
+        L,
+        V,
+    ), f"应为 [B,L,V], got {result['weighted_logits'].shape}"
     print(f"  PASS: 输出形状 {result['weighted_logits'].shape}")
 
 
@@ -87,6 +92,7 @@ def test_final_weights_from_scores():
     fw = result["final_weights"]
     # softmax([0.8, 0.3, 0.6])
     import torch.nn.functional as F
+
     expected = F.softmax(torch.tensor([0.8, 0.3, 0.6]), dim=0)
     assert abs(fw["n0"] - expected[0].item()) < 1e-5
     assert abs(fw["n1"] - expected[1].item()) < 1e-5
@@ -155,7 +161,9 @@ def test_forward_integration():
     ens = _make_ensemble(n_neurons=2)
     shared_emb = torch.randn(2, 8, 512)
     with torch.no_grad():
-        result = ens.forward(shared_embeddings=shared_emb, fusion_mode="consensus", return_logits=True)
+        result = ens.forward(
+            shared_embeddings=shared_emb, fusion_mode="consensus", return_logits=True
+        )
     # 应有 weighted_logits
     assert "weighted_logits" in result, "应返回 weighted_logits"
     print(f"  PASS: forward(fusion_mode='consensus') 返回 weighted_logits")
@@ -178,9 +186,12 @@ def test_consensus_alpha_adjustable():
     base_fused = 0.5 * 10.0 * 3  # 简化：3 个相同 logit，softmax 权重各 1/3
     # 但 softmax([0.5,0.5,0.5]) = [1/3, 1/3, 1/3]
     import torch.nn.functional as F
+
     w = F.softmax(torch.tensor([0.5, 0.5, 0.5]), dim=0)
     base_fused_val = (w[0] * 10.0 + w[1] * 10.0 + w[2] * 10.0).item()
-    assert abs(fused - base_fused_val) < 1e-4, f"alpha=0 时 fused={fused} 应等于 base={base_fused_val}"
+    assert (
+        abs(fused - base_fused_val) < 1e-4
+    ), f"alpha=0 时 fused={fused} 应等于 base={base_fused_val}"
     print(f"  PASS: alpha=0 时 fused={fused:.4f} ≈ base_fused={base_fused_val:.4f}（无加成）")
 
 

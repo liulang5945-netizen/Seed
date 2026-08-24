@@ -2,11 +2,13 @@
 下载高质量对话数据集 (使用 requests 直接下载)
 =============================================
 """
+
 import os
 import json
 import requests
 from pathlib import Path
 from tqdm import tqdm
+
 
 def download_file(url, output_path):
     """下载文件并显示进度"""
@@ -14,10 +16,10 @@ def download_file(url, output_path):
     print(f"  保存到: {output_path}")
 
     response = requests.get(url, stream=True)
-    total_size = int(response.headers.get('content-length', 0))
+    total_size = int(response.headers.get("content-length", 0))
 
-    with open(output_path, 'wb') as f:
-        with tqdm(total=total_size, unit='B', unit_scale=True, desc="下载进度") as pbar:
+    with open(output_path, "wb") as f:
+        with tqdm(total=total_size, unit="B", unit_scale=True, desc="下载进度") as pbar:
             for chunk in response.iter_content(chunk_size=8192):
                 if chunk:
                     f.write(chunk)
@@ -26,19 +28,22 @@ def download_file(url, output_path):
     print(f"  下载完成! 文件大小: {os.path.getsize(output_path) / 1024 / 1024:.1f} MB")
     return True
 
+
 def convert_alpaca_to_messages(input_path, output_path, max_samples=None):
     """将 Alpaca 格式转换为 messages 格式"""
     print(f"  转换格式...")
 
     converted = 0
-    with open(input_path, 'r', encoding='utf-8') as fin, \
-         open(output_path, 'w', encoding='utf-8') as fout:
+    with (
+        open(input_path, "r", encoding="utf-8") as fin,
+        open(output_path, "w", encoding="utf-8") as fout,
+    ):
 
         # 检查是否是JSON数组
         first_char = fin.read(1)
         fin.seek(0)
 
-        if first_char == '[':
+        if first_char == "[":
             data = json.load(fin)
             items = data
         else:
@@ -48,9 +53,9 @@ def convert_alpaca_to_messages(input_path, output_path, max_samples=None):
                     items.append(json.loads(line))
 
         for item in items[:max_samples] if max_samples else items:
-            instruction = item.get('instruction', '')
-            input_text = item.get('input', '')
-            output_text = item.get('output', '')
+            instruction = item.get("instruction", "")
+            input_text = item.get("input", "")
+            output_text = item.get("output", "")
 
             if not instruction or not output_text:
                 continue
@@ -62,31 +67,36 @@ def convert_alpaca_to_messages(input_path, output_path, max_samples=None):
 
             # 构建messages格式
             messages = [
-                {"role": "system", "content": "你是态极，一个本地AI生命体。你运行在用户的电脑上，数据不出本机。你会用自然、友好的方式回答用户的问题。"},
+                {
+                    "role": "system",
+                    "content": "你是态极，一个本地AI生命体。你运行在用户的电脑上，数据不出本机。你会用自然、友好的方式回答用户的问题。",
+                },
                 {"role": "user", "content": user_msg},
-                {"role": "assistant", "content": output_text}
+                {"role": "assistant", "content": output_text},
             ]
 
-            fout.write(json.dumps({"messages": messages}, ensure_ascii=False) + '\n')
+            fout.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
             converted += 1
 
     print(f"  转换完成: {converted} 条")
     return converted
+
 
 def sample_and_check(file_path, num_samples=5):
     """抽样检查数据质量"""
     print(f"\n抽样检查: {os.path.basename(file_path)}")
     print("-" * 60)
 
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         for i, line in enumerate(f):
             if i >= num_samples:
                 break
             item = json.loads(line)
-            msgs = item['messages']
+            msgs = item["messages"]
             print(f"\n样本 {i+1}:")
             print(f"  Q: {msgs[1]['content'][:100]}")
             print(f"  A: {msgs[2]['content'][:100]}")
+
 
 def main():
     print("=" * 60)
@@ -129,16 +139,19 @@ def main():
                 # 备用: 使用 HuggingFace API
                 try:
                     from datasets import load_dataset
+
                     print("  使用 datasets 库下载...")
-                    dataset = load_dataset("BelleGroup/train_0.5M_CN", split="train", streaming=True)
+                    dataset = load_dataset(
+                        "BelleGroup/train_0.5M_CN", split="train", streaming=True
+                    )
 
                     # 流式写入
                     count = 0
-                    with open(input_file, 'w', encoding='utf-8') as f:
+                    with open(input_file, "w", encoding="utf-8") as f:
                         for item in dataset:
-                            f.write(json.dumps(item, ensure_ascii=False) + '\n')
+                            f.write(json.dumps(item, ensure_ascii=False) + "\n")
                             count += 1
-                            if count >= ds.get('max_samples', 50000):
+                            if count >= ds.get("max_samples", 50000):
                                 break
                             if count % 10000 == 0:
                                 print(f"    已下载 {count} 条...")
@@ -151,9 +164,7 @@ def main():
         # 转换格式
         if input_file.exists() and not output_file.exists():
             convert_alpaca_to_messages(
-                str(input_file),
-                str(output_file),
-                max_samples=ds.get('max_samples')
+                str(input_file), str(output_file), max_samples=ds.get("max_samples")
             )
 
         if output_file.exists():
@@ -169,7 +180,7 @@ def main():
         print("\n下载的文件:")
         total_lines = 0
         for f in downloaded_files:
-            with open(f, 'r', encoding='utf-8') as fh:
+            with open(f, "r", encoding="utf-8") as fh:
                 line_count = sum(1 for _ in fh)
             print(f"  {os.path.basename(f)}: {line_count} 条")
             total_lines += line_count
@@ -185,5 +196,6 @@ def main():
         print("2. 下载 train_0.5M_CN.json")
         print("3. 放到 taiji_data/training_data/downloads/ 目录")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

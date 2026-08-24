@@ -5,6 +5,7 @@
       INI, YAML, Python/JS/TS/Java/C/C++/Go/Rust/SQL 等源码文件
       PNG, JPG, JPEG, BMP, GIF, WEBP, TIFF（OCR 图片文字识别）
 """
+
 import logging
 import os
 from typing import Callable, Optional
@@ -12,19 +13,58 @@ from typing import Callable, Optional
 logger = logging.getLogger("FileParser")
 
 SUPPORTED_EXTENSIONS = {
-    ".txt", ".json", ".jsonl", ".md", ".csv", ".pdf", ".docx", ".doc",
-    ".html", ".htm", ".epub", ".xlsx", ".xls", ".pptx", ".rtf",
-    ".xml", ".log", ".ini", ".cfg", ".yaml", ".yml", ".py", ".js",
-    ".ts", ".css", ".java", ".c", ".cpp", ".h", ".hpp", ".sh",
-    ".bat", ".ps1", ".sql", ".r", ".go", ".rs", ".swift",
-    ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp", ".tiff", ".tif",
+    ".txt",
+    ".json",
+    ".jsonl",
+    ".md",
+    ".csv",
+    ".pdf",
+    ".docx",
+    ".doc",
+    ".html",
+    ".htm",
+    ".epub",
+    ".xlsx",
+    ".xls",
+    ".pptx",
+    ".rtf",
+    ".xml",
+    ".log",
+    ".ini",
+    ".cfg",
+    ".yaml",
+    ".yml",
+    ".py",
+    ".js",
+    ".ts",
+    ".css",
+    ".java",
+    ".c",
+    ".cpp",
+    ".h",
+    ".hpp",
+    ".sh",
+    ".bat",
+    ".ps1",
+    ".sql",
+    ".r",
+    ".go",
+    ".rs",
+    ".swift",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".bmp",
+    ".gif",
+    ".webp",
+    ".tiff",
+    ".tif",
 }
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp", ".tiff", ".tif"}
 
 
-def parse_file_to_text(file_path: str,
-                       progress_callback: Optional[Callable] = None) -> str:
+def parse_file_to_text(file_path: str, progress_callback: Optional[Callable] = None) -> str:
     """
     解析文件为纯文本
 
@@ -35,10 +75,34 @@ def parse_file_to_text(file_path: str,
     """
     ext = os.path.splitext(file_path)[1].lower()
 
-    if ext in {".txt", ".md", ".json", ".jsonl", ".log", ".ini",
-               ".cfg", ".yaml", ".yml", ".py", ".js", ".ts", ".css",
-               ".java", ".c", ".cpp", ".h", ".hpp", ".sh", ".bat",
-               ".ps1", ".sql", ".r", ".go", ".rs", ".swift"}:
+    if ext in {
+        ".txt",
+        ".md",
+        ".json",
+        ".jsonl",
+        ".log",
+        ".ini",
+        ".cfg",
+        ".yaml",
+        ".yml",
+        ".py",
+        ".js",
+        ".ts",
+        ".css",
+        ".java",
+        ".c",
+        ".cpp",
+        ".h",
+        ".hpp",
+        ".sh",
+        ".bat",
+        ".ps1",
+        ".sql",
+        ".r",
+        ".go",
+        ".rs",
+        ".swift",
+    }:
         return _parse_text(file_path)
     elif ext == ".csv":
         return _parse_csv(file_path)
@@ -69,6 +133,7 @@ def parse_file_to_text(file_path: str,
 
 # ======================== 纯文本 ========================
 
+
 def _parse_text(file_path: str) -> str:
     try:
         with open(file_path, "r", encoding="utf-8") as f:
@@ -84,9 +149,11 @@ def _parse_text(file_path: str) -> str:
 
 # ======================== CSV ========================
 
+
 def _parse_csv(file_path: str) -> str:
     try:
         import pandas as pd
+
         df = pd.read_csv(file_path)
         lines = []
         for _, row in df.iterrows():
@@ -102,8 +169,10 @@ def _parse_csv(file_path: str) -> str:
 
 # ======================== PDF（含 OCR 回退） ========================
 
-def _parse_pdf_with_ocr_fallback(file_path: str,
-                                 progress_callback: Optional[Callable] = None) -> str:
+
+def _parse_pdf_with_ocr_fallback(
+    file_path: str, progress_callback: Optional[Callable] = None
+) -> str:
     basename = os.path.basename(file_path)
 
     # 第一步：PyMuPDF 文本层
@@ -130,6 +199,7 @@ def _parse_pdf_with_ocr_fallback(file_path: str,
 def _parse_pdf_pymupdf(file_path: str) -> str:
     try:
         import fitz
+
         doc = fitz.open(file_path)
         total_pages = len(doc)
         pages = []
@@ -154,6 +224,7 @@ def _parse_pdf_pymupdf(file_path: str) -> str:
 def _parse_pdf_text(file_path: str) -> str:
     try:
         from PyPDF2 import PdfReader
+
         reader = PdfReader(file_path)
         pages = [page.extract_text() for page in reader.pages if page.extract_text()]
         return "\n\n".join(pages)
@@ -164,13 +235,13 @@ def _parse_pdf_text(file_path: str) -> str:
 def _parse_pdf_fallback(file_path: str) -> str:
     try:
         from pdfminer.high_level import extract_text
+
         return extract_text(file_path)
     except ImportError:
         return ""
 
 
-def _parse_pdf_ocr(file_path: str,
-                   progress_callback: Optional[Callable] = None) -> str:
+def _parse_pdf_ocr(file_path: str, progress_callback: Optional[Callable] = None) -> str:
     """
     逐页 OCR 识别 PDF（全部页面，支持进度回调）
     使用 ThreadPoolExecutor 并行处理多页以加速。
@@ -262,8 +333,7 @@ def _parse_pdf_ocr(file_path: str,
 
             # 回调进度
             if progress_callback:
-                progress_callback(i + 1, total_pages,
-                                  page_text if page_text.strip() else None)
+                progress_callback(i + 1, total_pages, page_text if page_text.strip() else None)
 
         doc.close()
 
@@ -290,9 +360,11 @@ def _parse_pdf_ocr(file_path: str,
 
 # ======================== DOCX / DOC ========================
 
+
 def _parse_docx(file_path: str) -> str:
     try:
         from docx import Document
+
         doc = Document(file_path)
         paras = [p.text for p in doc.paragraphs if p.text.strip()]
         for table in doc.tables:
@@ -312,13 +384,15 @@ def _parse_docx(file_path: str) -> str:
 def _parse_doc(file_path: str) -> str:
     try:
         import textract
+
         text = textract.process(file_path).decode("utf-8", errors="replace")
         if text.strip():
             return text
-    except (ImportError, Exception):
-        pass
+    except (ImportError, Exception) as e:
+        logger.debug("【_parse_doc】处理失败（非致命）: %s", e)
     try:
         import olefile
+
         ole = olefile.OleFileIO(file_path)
         if ole.exists("WordDocument"):
             for stream_name in ["1Table", "0Table"]:
@@ -327,45 +401,56 @@ def _parse_doc(file_path: str) -> str:
                     try:
                         text = raw.decode("utf-16-le", errors="ignore")
                         import re
-                        text = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', text)
-                        text = re.sub(r'\s+', ' ', text).strip()
+
+                        text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", text)
+                        text = re.sub(r"\s+", " ", text).strip()
                         if len(text) > 20:
                             ole.close()
                             return text
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.debug("【_parse_doc】处理失败（非致命）: %s", e)
             ole.close()
-    except (ImportError, Exception):
-        pass
+    except (ImportError, Exception) as e:
+        logger.debug("【_parse_doc】处理失败（非致命）: %s", e)
     logger.warning(f"无法解析 .doc: {os.path.basename(file_path)}")
     return ""
 
 
 # ======================== HTML ========================
 
+
 def _html_to_text_regex(html: str) -> str:
     """HTML 转纯文本（纯 regex，无外部依赖）"""
     import re
-    text = re.sub(r'<script[^>]*>.*?</script>', '', html, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<style[^>]*>.*?</style>', '', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<nav[^>]*>.*?</nav>', '', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<footer[^>]*>.*?</footer>', '', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<header[^>]*>.*?</header>', '', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<aside[^>]*>.*?</aside>', '', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<(?:br|p|div|h[1-6]|li|tr|blockquote)[^>]*/?>', '\n', text, flags=re.IGNORECASE)
-    text = re.sub(r'</(?:p|div|h[1-6]|li|tr|blockquote)>', '\n', text, flags=re.IGNORECASE)
-    text = re.sub(r'<[^>]+>', '', text)
-    text = text.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>').replace('&quot;', '"').replace('&#39;', "'").replace('&nbsp;', ' ')
-    text = re.sub(r'\n{3,}', '\n\n', text)
+
+    text = re.sub(r"<script[^>]*>.*?</script>", "", html, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<style[^>]*>.*?</style>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<nav[^>]*>.*?</nav>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<footer[^>]*>.*?</footer>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<header[^>]*>.*?</header>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<aside[^>]*>.*?</aside>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<(?:br|p|div|h[1-6]|li|tr|blockquote)[^>]*/?>", "\n", text, flags=re.IGNORECASE)
+    text = re.sub(r"</(?:p|div|h[1-6]|li|tr|blockquote)>", "\n", text, flags=re.IGNORECASE)
+    text = re.sub(r"<[^>]+>", "", text)
+    text = (
+        text.replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", '"')
+        .replace("&#39;", "'")
+        .replace("&nbsp;", " ")
+    )
+    text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip()
 
 
 def _parse_html(file_path: str) -> str:
     try:
         import re
+
         with open(file_path, "r", encoding="utf-8") as f:
             html = f.read()
-        return re.sub(r'\n{3,}', '\n\n', _html_to_text_regex(html))
+        return re.sub(r"\n{3,}", "\n\n", _html_to_text_regex(html))
     except Exception as e:
         logger.error(f"读取 HTML 失败: {e}")
         return _parse_text(file_path)
@@ -373,13 +458,15 @@ def _parse_html(file_path: str) -> str:
 
 # ======================== EPUB ========================
 
+
 def _parse_epub(file_path: str) -> str:
     try:
         from ebooklib import epub
+
         book = epub.read_epub(file_path)
         chapters = []
         for item in book.get_items_of_type(9):
-            html = item.get_content().decode('utf-8', errors='ignore')
+            html = item.get_content().decode("utf-8", errors="ignore")
             text = _html_to_text_regex(html)
             if text:
                 chapters.append(text)
@@ -392,19 +479,23 @@ def _parse_epub(file_path: str) -> str:
 
 
 def _parse_epub_fallback(file_path: str) -> str:
-    import zipfile, re
+    import zipfile
+    import re
+
     try:
         with zipfile.ZipFile(file_path, "r") as zf:
-            html_files = [n for n in zf.namelist()
-                          if n.endswith(('.html', '.xhtml', '.htm'))
-                          and not n.startswith('__MACOSX')]
+            html_files = [
+                n
+                for n in zf.namelist()
+                if n.endswith((".html", ".xhtml", ".htm")) and not n.startswith("__MACOSX")
+            ]
             chapters = []
             for name in sorted(html_files):
                 try:
                     content = zf.read(name).decode("utf-8")
                     text = _html_to_text_regex(content)
                     if text:
-                        chapters.append(re.sub(r'\n{3,}', '\n\n', text))
+                        chapters.append(re.sub(r"\n{3,}", "\n\n", text))
                 except Exception:
                     continue
             return "\n\n".join(chapters)
@@ -415,9 +506,11 @@ def _parse_epub_fallback(file_path: str) -> str:
 
 # ======================== Excel ========================
 
+
 def _parse_excel(file_path: str) -> str:
     try:
         import pandas as pd
+
         xl = pd.ExcelFile(file_path)
         all_sheets = []
         for sheet_name in xl.sheet_names:
@@ -441,6 +534,7 @@ def _parse_excel(file_path: str) -> str:
 def _parse_excel_openpyxl(file_path: str) -> str:
     try:
         import openpyxl
+
         wb = openpyxl.load_workbook(file_path, read_only=True, data_only=True)
         all_sheets = []
         for sheet_name in wb.sheetnames:
@@ -459,9 +553,11 @@ def _parse_excel_openpyxl(file_path: str) -> str:
 
 # ======================== PPTX ========================
 
+
 def _parse_pptx(file_path: str) -> str:
     try:
         from pptx import Presentation
+
         prs = Presentation(file_path)
         slides = []
         for i, slide in enumerate(prs.slides, 1):
@@ -486,9 +582,11 @@ def _parse_pptx(file_path: str) -> str:
 
 # ======================== RTF ========================
 
+
 def _parse_rtf(file_path: str) -> str:
     try:
         from striprtf.striprtf import rtf_to_text
+
         with open(file_path, "r", encoding="utf-8") as f:
             return rtf_to_text(f.read())
     except ImportError:
@@ -500,13 +598,14 @@ def _parse_rtf(file_path: str) -> str:
 
 def _parse_rtf_fallback(file_path: str) -> str:
     import re
+
     try:
         with open(file_path, "r", encoding="utf-8", errors="replace") as f:
             content = f.read()
-        content = re.sub(r'\\[a-zA-Z]+\d* ?', '', content)
-        content = re.sub(r'\\\'[0-9a-fA-F]{2}', '', content)
-        content = re.sub(r'[{}]', '', content)
-        return re.sub(r'\n{3,}', '\n\n', content).strip()
+        content = re.sub(r"\\[a-zA-Z]+\d* ?", "", content)
+        content = re.sub(r"\\\'[0-9a-fA-F]{2}", "", content)
+        content = re.sub(r"[{}]", "", content)
+        return re.sub(r"\n{3,}", "\n\n", content).strip()
     except Exception as e:
         logger.error(f"RTF 备用解析失败: {e}")
         return ""
@@ -514,16 +613,18 @@ def _parse_rtf_fallback(file_path: str) -> str:
 
 # ======================== XML ========================
 
+
 def _parse_xml(file_path: str) -> str:
     try:
         import xml.etree.ElementTree as ET
+
         tree = ET.parse(file_path)
         root = tree.getroot()
 
         def _extract_text(elem, depth=0):
             texts = []
             if elem.text and elem.text.strip():
-                tag = elem.tag.split('}')[-1] if '}' in elem.tag else elem.tag
+                tag = elem.tag.split("}")[-1] if "}" in elem.tag else elem.tag
                 texts.append(f"{'  ' * depth}[{tag}] {elem.text.strip()}")
             for child in elem:
                 texts.extend(_extract_text(child, depth + 1))
@@ -532,10 +633,11 @@ def _parse_xml(file_path: str) -> str:
         lines = _extract_text(root)
         if not lines:
             import re
+
             with open(file_path, "r", encoding="utf-8") as f:
                 xml_content = f.read()
-            text = re.sub(r'<[^>]+>', ' ', xml_content)
-            text = re.sub(r'\s+', ' ', text).strip()
+            text = re.sub(r"<[^>]+>", " ", xml_content)
+            text = re.sub(r"\s+", " ", text).strip()
             return text
         return "\n".join(lines)
     except (ImportError, Exception):
@@ -544,9 +646,11 @@ def _parse_xml(file_path: str) -> str:
 
 # ======================== 图片 OCR ========================
 
+
 def _parse_image_ocr(file_path: str) -> str:
     try:
         from PIL import Image
+
         img = Image.open(file_path)
         return _ocr_from_pil_image(img, file_path=file_path)
     except (ImportError, Exception) as e:
@@ -570,17 +674,20 @@ def _ocr_from_pil_image(img, file_path: str = None) -> str:
     tesseract_path = None
     try:
         import pytesseract
+
         current = pytesseract.pytesseract.tesseract_cmd
         if current and os.path.isfile(current):
             tesseract_available = True
             tesseract_path = current
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【_ocr_from_pil_image】处理失败（非致命）: %s", e)
 
     # ── 第一优先：Tesseract OCR（subprocess 直接调用，防死锁）──
     if tesseract_available:
         try:
-            import subprocess, tempfile
+            import subprocess
+            import tempfile
+
             # 保存图片到临时文件（避免管道死锁）
             _fd, _tmp_img = tempfile.mkstemp(suffix=".png")
             os.close(_fd)
@@ -591,9 +698,11 @@ def _ocr_from_pil_image(img, file_path: str = None) -> str:
 
             tesseract_exe = os.path.abspath(tesseract_path)
             # 直接调用 tesseract.exe，30 秒超时，隐藏黑窗口
-            proc = subprocess.run(
+            _proc = subprocess.run(
                 [tesseract_exe, _tmp_img, _tmp_out.replace(".txt", ""), "-l", "chi_sim+eng"],
-                capture_output=True, timeout=30, text=True,
+                capture_output=True,
+                timeout=30,
+                text=True,
                 creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0,
             )
             result_path = _tmp_out if _tmp_out.endswith(".txt") else _tmp_out + ".txt"
@@ -603,16 +712,20 @@ def _ocr_from_pil_image(img, file_path: str = None) -> str:
                     text = f.read().strip()
 
             # 清理临时文件
-            try: os.remove(_tmp_img)
-            except: pass
-            try: os.remove(result_path)
-            except: pass
+            try:
+                os.remove(_tmp_img)
+            except BaseException as e:
+                logger.debug("【_ocr_from_pil_image】处理失败（非致命）: %s", e)
+            try:
+                os.remove(result_path)
+            except BaseException as e:
+                logger.debug("【_ocr_from_pil_image】处理失败（非致命）: %s", e)
 
             if text:
                 return text
 
         except subprocess.TimeoutExpired:
-            logger.debug(f"Tesseract 超时（30s）")
+            logger.debug("Tesseract 超时（30s）")
         except Exception as e:
             logger.debug(f"Tesseract subprocess 调用失败: {e}")
     else:
@@ -625,7 +738,8 @@ def _ocr_from_pil_image(img, file_path: str = None) -> str:
     # ── 第二优先：Windows 原生 OCR（Win10+ 零依赖兜底）──
     windows_ocr_available = False
     try:
-        import winrt
+        import winrt  # noqa: F401  # capability check
+
         windows_ocr_available = True
     except ImportError:
         logger.warning("winrt 库未安装，Windows 原生 OCR 不可用。pip install winrt")
@@ -636,6 +750,7 @@ def _ocr_from_pil_image(img, file_path: str = None) -> str:
             if not file_path:
                 # PDF 渲染的图片没有实体文件路径，临时写入
                 import tempfile
+
                 _temp_fd, _temp_path = tempfile.mkstemp(suffix=".png")
                 os.close(_temp_fd)
                 img.save(_temp_path, "PNG")
@@ -645,14 +760,14 @@ def _ocr_from_pil_image(img, file_path: str = None) -> str:
             if win_text.strip():
                 logger.info("Windows 原生 OCR 兜底成功")
                 return win_text
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【_ocr_from_pil_image】处理失败（非致命）: %s", e)
         finally:
             if _temp_path:
                 try:
                     os.remove(_temp_path)
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("【_ocr_from_pil_image】处理失败（非致命）: %s", e)
 
     # ── 所有引擎尝试完毕，仍无文字 ──
     if not tesseract_available and not windows_ocr_available:
@@ -660,9 +775,7 @@ def _ocr_from_pil_image(img, file_path: str = None) -> str:
         _log_ocr_diagnostic(tesseract_available, tesseract_path, windows_ocr_available)
     else:
         # 引擎可用但识别为空：该页可能为空白/纯图/低质量扫描
-        logger.warning(
-            "OCR 引擎已就绪但未识别到文字，该页面可能为空白、纯图片或质量过低的扫描件。"
-        )
+        logger.warning("OCR 引擎已就绪但未识别到文字，该页面可能为空白、纯图片或质量过低的扫描件。")
     return ""
 
 
@@ -684,17 +797,18 @@ def _probe_ocr_engines() -> dict:
                 tesseract_langs = pytesseract.get_languages()
             except Exception:
                 tesseract_langs = ["eng"]  # 无法探测时假设至少支持英文
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【_probe_ocr_engines】处理失败（非致命）: %s", e)
 
     has_chi_sim = "chi_sim" in tesseract_langs
 
     windows_ocr_available = False
     try:
-        import winrt
+        import winrt  # noqa: F401  # capability check
+
         windows_ocr_available = True
-    except ImportError:
-        pass
+    except ImportError as e:
+        logger.debug("【_probe_ocr_engines】处理失败（非致命）: %s", e)
 
     return {
         "tesseract_available": tesseract_available,
@@ -719,20 +833,20 @@ def get_ocr_diagnostic_text() -> str:
     if status["tesseract_available"]:
         lines.append(f"  ✅ Tesseract-OCR: {status['tesseract_path']}")
         if status["has_chi_sim"]:
-            lines.append(f"     ✅ 中文语言包 chi_sim 已安装")
+            lines.append("     ✅ 中文语言包 chi_sim 已安装")
         else:
             lines.append(f"     ❌ 缺少中文语言包 chi_sim！可用语言: {status['tesseract_langs']}")
-            lines.append(f"     请下载 chi_sim.traineddata 放入 Tesseract tessdata 目录")
+            lines.append("     请下载 chi_sim.traineddata 放入 Tesseract tessdata 目录")
     else:
-        lines.append(f"  ❌ Tesseract-OCR 未安装")
-        lines.append(f"     → 下载: https://github.com/UB-Mannheim/tesseract/wiki")
-        lines.append(f"     安装时必须勾选 Chinese (Simplified) 语言包")
+        lines.append("  ❌ Tesseract-OCR 未安装")
+        lines.append("     → 下载: https://github.com/UB-Mannheim/tesseract/wiki")
+        lines.append("     安装时必须勾选 Chinese (Simplified) 语言包")
 
     if status["windows_ocr_available"]:
-        lines.append(f"  ✅ Windows 原生 OCR (winrt) 已安装")
+        lines.append("  ✅ Windows 原生 OCR (winrt) 已安装")
     else:
-        lines.append(f"  ❌ Windows 原生 OCR (winrt) 未安装")
-        lines.append(f"     → 命令: pip install winrt")
+        lines.append("  ❌ Windows 原生 OCR (winrt) 未安装")
+        lines.append("     → 命令: pip install winrt")
 
     if not status["tesseract_available"] and not status["windows_ocr_available"]:
         lines.append("")
@@ -749,8 +863,9 @@ def get_ocr_diagnostic_text() -> str:
     return "\n".join(lines)
 
 
-def _log_ocr_diagnostic(tesseract_available: bool, tesseract_path: str | None,
-                        windows_ocr_available: bool) -> None:
+def _log_ocr_diagnostic(
+    tesseract_available: bool, tesseract_path: str | None, windows_ocr_available: bool
+) -> None:
     """输出 OCR 引擎不可用的详细诊断信息和安装指引"""
     lines = [
         "=" * 60,
@@ -783,13 +898,17 @@ def _windows_native_ocr(image_path: str) -> str:
     返回空字符串表示不可用或失败。
     """
     import sys as _sys
+
     if _sys.platform != "win32":
         return ""
     try:
         import asyncio
         from winrt.windows.media.ocr import OcrEngine
         from winrt.windows.graphics.imaging import (
-            BitmapDecoder, SoftwareBitmap, BitmapPixelFormat, BitmapAlphaMode
+            BitmapDecoder,
+            SoftwareBitmap,  # noqa: F401
+            BitmapPixelFormat,
+            BitmapAlphaMode,
         )
         from winrt.windows.storage import StorageFile
 
@@ -809,22 +928,22 @@ def _windows_native_ocr(image_path: str) -> str:
             except Exception:
                 # fallback：有些格式可能需要转换像素格式
                 bitmap = await decoder.get_software_bitmap_async(
-                    BitmapPixelFormat.bgra8,
-                    BitmapAlphaMode.premultiplied
+                    BitmapPixelFormat.bgra8, BitmapAlphaMode.premultiplied
                 )
 
             engine = OcrEngine.try_create_from_user_profile_languages()
             if engine is None:
                 from winrt.windows.globalization import Language
+
                 try:
                     engine = OcrEngine.try_create_from_language(Language("zh-Hans"))
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("【_windows_native_ocr._ocr】处理失败（非致命）: %s", e)
             if engine is None:
                 try:
                     engine = OcrEngine.try_create_from_language(Language("en-US"))
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("【_windows_native_ocr._ocr】处理失败（非致命）: %s", e)
             if engine is None:
                 logger.debug("Windows OCR 引擎不可用（无可识别语言）")
                 return ""
@@ -844,7 +963,9 @@ def _windows_native_ocr(image_path: str) -> str:
 
 
 def _auto_detect_tesseract():
-    import os as _os, sys
+    import os as _os
+    import sys
+
     if sys.platform != "win32":
         return
     try:
@@ -855,12 +976,20 @@ def _auto_detect_tesseract():
         current = pytesseract.pytesseract.tesseract_cmd
         if current and _os.path.exists(current):
             return
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【_auto_detect_tesseract】处理失败（非致命）: %s", e)
     candidates = [
-        _os.path.join(_os.environ.get("ProgramFiles", "C:\\Program Files"), "Tesseract-OCR", "tesseract.exe"),
-        _os.path.join(_os.environ.get("ProgramFiles(x86)", "C:\\Program Files (x86)"), "Tesseract-OCR", "tesseract.exe"),
-        _os.path.join(_os.environ.get("LOCALAPPDATA", ""), "Programs", "Tesseract-OCR", "tesseract.exe"),
+        _os.path.join(
+            _os.environ.get("ProgramFiles", "C:\\Program Files"), "Tesseract-OCR", "tesseract.exe"
+        ),
+        _os.path.join(
+            _os.environ.get("ProgramFiles(x86)", "C:\\Program Files (x86)"),
+            "Tesseract-OCR",
+            "tesseract.exe",
+        ),
+        _os.path.join(
+            _os.environ.get("LOCALAPPDATA", ""), "Programs", "Tesseract-OCR", "tesseract.exe"
+        ),
         "C:\\Program Files\\Tesseract-OCR\\tesseract.exe",
         "C:\\Program Files (x86)\\Tesseract-OCR\\tesseract.exe",
     ]

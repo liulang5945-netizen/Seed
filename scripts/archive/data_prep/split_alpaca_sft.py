@@ -5,6 +5,7 @@
   - data/simple_zh/sft_shared_core.jsonl  (30% 共享，~14600 条)
   - data/simple_zh/sft_unique_0.jsonl ~ sft_unique_4.jsonl  (70% 独有，每份 ~6800 条)
 """
+
 import json
 import os
 import random
@@ -65,7 +66,10 @@ def main():
     print("\n每个神经元训练数据量:", flush=True)
     for i in range(NUM_SPLITS):
         total = len(shared_core) + len(splits[i])
-        print(f"  神经元 {i}: {len(shared_core)} (shared) + {len(splits[i])} (unique) = {total} 条", flush=True)
+        print(
+            f"  神经元 {i}: {len(shared_core)} (shared) + {len(splits[i])} (unique) = {total} 条",
+            flush=True,
+        )
 
 
 if __name__ == "__main__":

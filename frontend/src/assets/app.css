@@ -37,7 +37,8 @@ a { color: inherit; text-decoration: none; }
   flex-shrink: 0;
   position: relative;
   z-index: 10;
-  transition: width 0.3s var(--ease, ease), background 0.3s ease;
+  /* 去掉 width 过渡：拖拽改宽即时跟随，避免“滑动拖尾”的迟滞感 */
+  transition: background 0.3s ease;
 }
 
 .sidebar-header {

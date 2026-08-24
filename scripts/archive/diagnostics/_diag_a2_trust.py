@@ -45,8 +45,7 @@ def run(struct_threshold: float | None, slow_scale: float = 1.0):
     after = common.measure_panel(model, judge)
     tafter = sum(float(judge.score(t)["quality"]) for t in targets) / len(targets)
     groups = {
-        g: round(after["groups"][g]["mean"] - base["groups"][g]["mean"], 4)
-        for g in base["groups"]
+        g: round(after["groups"][g]["mean"] - base["groups"][g]["mean"], 4) for g in base["groups"]
     }
     print(
         f"  overall={round(after['overall_mean']-base['overall_mean'],4)} "
@@ -58,8 +57,8 @@ def run(struct_threshold: float | None, slow_scale: float = 1.0):
 
 
 def main() -> None:
-    run(None, 1.0)      # 慢写开（当前）
-    run(None, 0.0)      # 慢写关（诊断二十配置）
+    run(None, 1.0)  # 慢写开（当前）
+    run(None, 0.0)  # 慢写关（诊断二十配置）
 
 
 if __name__ == "__main__":

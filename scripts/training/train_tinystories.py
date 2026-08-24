@@ -9,6 +9,7 @@
 配置：~10M 参数, GPT-2 BPE (50257), batch=32, lr=1e-3
 符合 AI_TRAINING_PLAYBOOK.md 准则。
 """
+
 from __future__ import annotations
 
 import os
@@ -25,20 +26,21 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 
 from neuroplex.layers import TransformerBlock, RMSNorm
 
+
 # ── 配置 ──
 class Config:
-    vocab_size = 50257       # GPT-2 BPE
-    hidden_size = 192        # CPU 友好 (~10M 参数)
+    vocab_size = 50257  # GPT-2 BPE
+    hidden_size = 192  # CPU 友好 (~10M 参数)
     num_layers = 4
     num_heads = 4
-    num_kv_heads = 4         # MHA (不用 GQA，简化)
+    num_kv_heads = 4  # MHA (不用 GQA，简化)
     intermediate_size = 768  # SwiGLU
-    block_size = 128         # 序列长度 (CPU 友好)
+    block_size = 128  # 序列长度 (CPU 友好)
     rms_norm_eps = 1e-5
     dropout = 0.1
     # 训练
-    batch_size = 12          # nanoGPT CPU 配置
-    lr = 1e-3                # 小模型用高 lr (Playbook)
+    batch_size = 12  # nanoGPT CPU 配置
+    lr = 1e-3  # 小模型用高 lr (Playbook)
     max_iters = 3000
     warmup_iters = 100
     eval_interval = 500
@@ -59,18 +61,20 @@ class PureTransformerLM(nn.Module):
         self.tok_emb = nn.Embedding(cfg.vocab_size, cfg.hidden_size)
         self.pos_emb = nn.Embedding(cfg.block_size, cfg.hidden_size)
         self.drop = nn.Dropout(cfg.dropout)
-        self.blocks = nn.ModuleList([
-            TransformerBlock(
-                hidden_size=cfg.hidden_size,
-                num_heads=cfg.num_heads,
-                num_kv_heads=cfg.num_kv_heads,
-                intermediate_size=cfg.intermediate_size,
-                rms_norm_eps=cfg.rms_norm_eps,
-                bias=False,
-                dropout=cfg.dropout,
-            )
-            for _ in range(cfg.num_layers)
-        ])
+        self.blocks = nn.ModuleList(
+            [
+                TransformerBlock(
+                    hidden_size=cfg.hidden_size,
+                    num_heads=cfg.num_heads,
+                    num_kv_heads=cfg.num_kv_heads,
+                    intermediate_size=cfg.intermediate_size,
+                    rms_norm_eps=cfg.rms_norm_eps,
+                    bias=False,
+                    dropout=cfg.dropout,
+                )
+                for _ in range(cfg.num_layers)
+            ]
+        )
         self.norm_f = RMSNorm(cfg.hidden_size, cfg.rms_norm_eps)
         # Tied embedding: lm_head 权重 = tok_emb 权重
         self.lm_head = nn.Linear(cfg.hidden_size, cfg.vocab_size, bias=False)
@@ -81,7 +85,9 @@ class PureTransformerLM(nn.Module):
         # 对残差层缩放 (GPT-2 风格)
         for pn, p in self.named_parameters():
             if pn.endswith("attention.out_proj.weight") or pn.endswith("feed_forward.w2.weight"):
-                nn.init.normal_(p, mean=0.0, std=cfg.hidden_size ** -0.5 / math.sqrt(2 * cfg.num_layers))
+                nn.init.normal_(
+                    p, mean=0.0, std=cfg.hidden_size**-0.5 / math.sqrt(2 * cfg.num_layers)
+                )
 
     def _init_weights(self, module):
         if isinstance(module, nn.Linear):
@@ -101,7 +107,7 @@ class PureTransformerLM(nn.Module):
 
         # 因果掩码
         mask = torch.tril(torch.ones(T, T, device=idx.device)).unsqueeze(0).unsqueeze(0)
-        mask = (1.0 - mask) * float('-inf')
+        mask = (1.0 - mask) * float("-inf")
 
         for block in self.blocks:
             x, _, _ = block(x, mask=mask)
@@ -123,12 +129,12 @@ class PureTransformerLM(nn.Module):
     def generate(self, idx: torch.Tensor, max_new_tokens: int, temperature=0.8, top_k=40):
         self.eval()
         for _ in range(max_new_tokens):
-            idx_cond = idx if idx.size(1) <= self.cfg.block_size else idx[:, -self.cfg.block_size:]
+            idx_cond = idx if idx.size(1) <= self.cfg.block_size else idx[:, -self.cfg.block_size :]
             logits, _ = self(idx_cond)
             logits = logits[:, -1, :] / temperature
             if top_k is not None:
                 v, _ = torch.topk(logits, min(top_k, logits.size(-1)))
-                logits[logits < v[:, [-1]]] = float('-inf')
+                logits[logits < v[:, [-1]]] = float("-inf")
             probs = F.softmax(logits, dim=-1)
             idx_next = torch.multinomial(probs, num_samples=1)
             idx = torch.cat([idx, idx_next], dim=1)
@@ -145,11 +151,13 @@ def load_data():
     return train_data, val_data
 
 
-def get_batch(data, cfg: Config, device='cpu'):
+def get_batch(data, cfg: Config, device="cpu"):
     """随机采样一个 batch。"""
     ix = torch.randint(len(data) - cfg.block_size - 1, (cfg.batch_size,))
-    x = torch.stack([torch.from_numpy(data[i:i+cfg.block_size].astype(np.int64)) for i in ix])
-    y = torch.stack([torch.from_numpy(data[i+1:i+1+cfg.block_size].astype(np.int64)) for i in ix])
+    x = torch.stack([torch.from_numpy(data[i : i + cfg.block_size].astype(np.int64)) for i in ix])
+    y = torch.stack(
+        [torch.from_numpy(data[i + 1 : i + 1 + cfg.block_size].astype(np.int64)) for i in ix]
+    )
     return x.to(device), y.to(device)
 
 
@@ -179,7 +187,7 @@ def generate_sample(model, cfg: Config, enc, prompt="Once upon a time"):
 
 def main():
     cfg = Config()
-    device = 'cpu'
+    device = "cpu"
     enc = tiktoken.get_encoding("gpt2")
 
     print("=" * 60)
@@ -195,7 +203,7 @@ def main():
     print(f"参数量: {n_params/1e6:.1f}M")
 
     # 数据
-    print(f"\n[1] 加载数据...")
+    print("\n[1] 加载数据...")
     train_data, val_data = load_data()
     data_param_ratio = len(train_data) / n_params
     print(f"数据/参数比: {data_param_ratio:.1f} (Chinchilla 最优 20:1)")
@@ -219,14 +227,14 @@ def main():
         return cfg.lr * 0.1 + 0.9 * cfg.lr * coeff
 
     # 训练
-    print(f"\n[2] 开始训练...")
-    best_val_loss = float('inf')
+    print("\n[2] 开始训练...")
+    best_val_loss = float("inf")
     t0 = time.time()
 
     for it in range(cfg.max_iters):
         lr = get_lr(it)
         for pg in optimizer.param_groups:
-            pg['lr'] = lr
+            pg["lr"] = lr
 
         x, y = get_batch(train_data, cfg, device)
         logits, loss = model(x, y)
@@ -237,8 +245,10 @@ def main():
 
         if it % 100 == 0:
             elapsed = time.time() - t0
-            print(f"  step {it:5d}/{cfg.max_iters} loss={loss.item():.4f} lr={lr:.2e} "
-                  f"PPL={math.exp(loss.item()):.1f} elapsed={elapsed:.0f}s")
+            print(
+                f"  step {it:5d}/{cfg.max_iters} loss={loss.item():.4f} lr={lr:.2e} "
+                f"PPL={math.exp(loss.item()):.1f} elapsed={elapsed:.0f}s"
+            )
 
         if (it + 1) % cfg.eval_interval == 0 or it == cfg.max_iters - 1:
             losses = estimate_loss(model, train_data, val_data, cfg)
@@ -251,17 +261,20 @@ def main():
             print(f"  生成样本: {sample[:300]}...")
             print()
 
-            if losses['val'] < best_val_loss:
-                best_val_loss = losses['val']
-                torch.save({
-                    'model_state': model.state_dict(),
-                    'config': cfg.__dict__,
-                    'val_loss': best_val_loss,
-                }, cfg.save_path)
+            if losses["val"] < best_val_loss:
+                best_val_loss = losses["val"]
+                torch.save(
+                    {
+                        "model_state": model.state_dict(),
+                        "config": cfg.__dict__,
+                        "val_loss": best_val_loss,
+                    },
+                    cfg.save_path,
+                )
                 print(f"  ✅ 保存 best model (val_loss={best_val_loss:.4f})")
 
     # 最终生成
-    print(f"\n[3] 最终生成样本:")
+    print("\n[3] 最终生成样本:")
     print("=" * 60)
     for prompt in ["Once upon a time", "The little bear", "In a forest"]:
         sample = generate_sample(model, cfg, enc, prompt)

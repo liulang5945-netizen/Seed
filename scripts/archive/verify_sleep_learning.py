@@ -6,14 +6,16 @@
 3. 检查 shared_embedding 权重持续变化
 4. 对比首次生成 vs 末次生成的文本质量
 """
+
 import sys
 import os
 from datetime import datetime
 
-os.environ.setdefault('TAJIJI_TEST_MODE', '1')
+os.environ.setdefault("TAJIJI_TEST_MODE", "1")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 import torch
+
 
 def main():
     print("=" * 60)
@@ -23,6 +25,7 @@ def main():
     # Step 1: 装配 Cortex
     print("\n[Step 1] 装配 Cortex...")
     from taiji.loader import assemble_cortex
+
     cortex, tokenizer, modules = assemble_cortex(
         neurons_dir="data/neurons",
         device="cpu",
@@ -124,9 +127,7 @@ def main():
     # Step 7: 综合判断
     print("\n" + "=" * 60)
     success = (
-        len(valid_losses) >= 2 and
-        (valid_losses[0] - valid_losses[-1]) > 0 and
-        shared_diff > 1.0
+        len(valid_losses) >= 2 and (valid_losses[0] - valid_losses[-1]) > 0 and shared_diff > 1.0
     )
     if success:
         print("🎉 验证通过：经验驱动学习持续生效")

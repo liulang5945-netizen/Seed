@@ -22,9 +22,7 @@ def run(threshold: float):
     ckpt = str(REPO / "checkpoints" / "seed_corpus.pt")
     torch.manual_seed(7)
     model = common.load_model(ckpt)
-    replaced = dataclasses.replace(
-        model.substrate.config, structural_error_threshold=threshold
-    )
+    replaced = dataclasses.replace(model.substrate.config, structural_error_threshold=threshold)
     model.substrate.config = replaced
     model.substrate.fabric.config = replaced
     model.substrate.memory.config = replaced
@@ -40,8 +38,7 @@ def run(threshold: float):
     after = common.measure_panel(model, judge)
     tafter = sum(float(judge.score(t)["quality"]) for t in targets) / len(targets)
     groups = {
-        g: round(after["groups"][g]["mean"] - base["groups"][g]["mean"], 4)
-        for g in base["groups"]
+        g: round(after["groups"][g]["mean"] - base["groups"][g]["mean"], 4) for g in base["groups"]
     }
     print(
         f"threshold={threshold}: overall={round(after['overall_mean']-base['overall_mean'],4)} "

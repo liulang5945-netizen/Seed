@@ -8,15 +8,19 @@ import json
 import math
 from pathlib import Path
 import sys
-from typing import Dict, Mapping, Optional, Sequence, Tuple
+from typing import Dict, Mapping, Sequence
 
 import torch
+import _verify_emit
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from taiji import Taiji, TaijiConfig
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 CUES = tuple(ord(value) for value in "ABCDEFGH")
@@ -69,10 +73,7 @@ def _pretrain_corpus() -> bytes:
     """Every cue/action/outcome triple exactly once: marginals only, no pairing."""
 
     return bytes((FILLER,)).join(
-        bytes((cue, action, outcome))
-        for cue in CUES
-        for action in ACTIONS
-        for outcome in OUTCOMES
+        bytes((cue, action, outcome)) for cue in CUES for action in ACTIONS for outcome in OUTCOMES
     )
 
 
@@ -134,8 +135,7 @@ def _sleep(
         for left, right in zip(before[:fabric_count], after[:fabric_count])
     )
     non_cortex_intact = all(
-        torch.equal(left, right)
-        for left, right in zip(before[fabric_count:], after[fabric_count:])
+        torch.equal(left, right) for left, right in zip(before[fabric_count:], after[fabric_count:])
     )
     return {
         "checkpoint": model.checkpoint(),
@@ -216,17 +216,17 @@ def _evaluate_contingency(
         probability_sum += true_probability
         margin_sum += margin
         surprise_sum += -math.log(max(true_probability, 1e-12))
-        rows.append({
-            "action": chr(action),
-            "expected_outcome": chr(outcome),
-            "predicted_outcome": chr(prediction),
-            "true_probability": true_probability,
-            "margin": margin,
-            "episodic_feedback_norm": float(
-                step.memory_recall.cortical_feedback.norm().item()
-            ),
-            "episodic_confidence": step.memory_recall.confidence,
-        })
+        rows.append(
+            {
+                "action": chr(action),
+                "expected_outcome": chr(outcome),
+                "predicted_outcome": chr(prediction),
+                "true_probability": true_probability,
+                "margin": margin,
+                "episodic_feedback_norm": float(step.memory_recall.cortical_feedback.norm().item()),
+                "episodic_confidence": step.memory_recall.confidence,
+            }
+        )
     count = len(pairs)
     return {
         "contingency_accuracy": correct / count,
@@ -239,8 +239,7 @@ def _evaluate_contingency(
 
 def _episodic_readback_is_closed(rows: Sequence[Mapping[str, object]]) -> bool:
     return all(
-        float(row["episodic_feedback_norm"]) == 0.0
-        and float(row["episodic_confidence"]) == 0.0
+        float(row["episodic_feedback_norm"]) == 0.0 and float(row["episodic_confidence"]) == 0.0
         for row in rows
     )
 
@@ -251,8 +250,8 @@ def _rejects_unsettled_state(checkpoint: Mapping[str, object]) -> bool:
     model.act(ACTIONS, sample=False)
     try:
         model.consolidate(cycles=1)
-    except RuntimeError:
-        pass
+    except RuntimeError as e:
+        logger.debug("【_rejects_unsettled_state】处理失败（非致命）: %s", e)
     else:
         return False
     model.settle_action(0.0, learn=False, learn_memory=False)
@@ -302,9 +301,7 @@ def run_benchmark(*, seed: int = 29, cycles: int = 96) -> Dict[str, object]:
     full_metrics = _evaluate_contingency(full["checkpoint"], pairs)
     control_metrics = _evaluate_contingency(control["checkpoint"], pairs)
     content_metrics = _evaluate_contingency(content_lesion["checkpoint"], pairs)
-    association_metrics = _evaluate_contingency(
-        association_lesion["checkpoint"], pairs
-    )
+    association_metrics = _evaluate_contingency(association_lesion["checkpoint"], pairs)
 
     chance = 1.0 / len(OUTCOMES)
     no_slots = not {"events", "keys", "values", "slots"} & (
@@ -312,29 +309,22 @@ def run_benchmark(*, seed: int = 29, cycles: int = 96) -> Dict[str, object]:
     )
     checks = {
         "sleep_reactivates_own_engrams": (
-            full["summary"]["accepted"] > 0
-            and full["summary"]["replayed_probability"] > 0.0
+            full["summary"]["accepted"] > 0 and full["summary"]["replayed_probability"] > 0.0
         ),
         "consolidation_beats_no_replay_control": (
-            full_metrics["contingency_accuracy"]
-            > control_metrics["contingency_accuracy"]
+            full_metrics["contingency_accuracy"] > control_metrics["contingency_accuracy"]
             and full_metrics["mean_margin"] > control_metrics["mean_margin"]
         ),
-        "consolidation_beats_chance": (
-            full_metrics["contingency_accuracy"] > chance
-        ),
+        "consolidation_beats_chance": (full_metrics["contingency_accuracy"] > chance),
         "engram_content_is_causally_necessary": (
-            full_metrics["contingency_accuracy"]
-            > content_metrics["contingency_accuracy"]
+            full_metrics["contingency_accuracy"] > content_metrics["contingency_accuracy"]
         ),
         "recurrent_completion_is_causally_necessary": (
-            full_metrics["contingency_accuracy"]
-            > association_metrics["contingency_accuracy"]
+            full_metrics["contingency_accuracy"] > association_metrics["contingency_accuracy"]
         ),
         "no_replay_control_writes_nothing": (
             not control["cortex_changed"]
-            and control_metrics["contingency_accuracy"]
-            == baseline_metrics["contingency_accuracy"]
+            and control_metrics["contingency_accuracy"] == baseline_metrics["contingency_accuracy"]
         ),
         "sleep_only_touches_cortex": (
             full["cortex_changed"]
@@ -347,8 +337,7 @@ def run_benchmark(*, seed: int = 29, cycles: int = 96) -> Dict[str, object]:
             and _episodic_readback_is_closed(control_metrics["rows"])
         ),
         "sleep_requires_settled_state_and_written_field": (
-            _rejects_unsettled_state(stored)
-            and _sleep_needs_a_written_field(seed)
+            _rejects_unsettled_state(stored) and _sleep_needs_a_written_field(seed)
         ),
         "fixed_topology_no_event_slots": no_slots,
     }
@@ -391,9 +380,7 @@ def run_benchmark(*, seed: int = 29, cycles: int = 96) -> Dict[str, object]:
             "replay_priority_threshold": model.config.replay_priority_threshold,
             "replay_learning_scale": model.config.replay_learning_scale,
             "cortical_baseline_rate": model.config.cortical_baseline_rate,
-            "replay_winner_resource_retention": (
-                model.config.replay_winner_resource_retention
-            ),
+            "replay_winner_resource_retention": (model.config.replay_winner_resource_retention),
         },
         "metrics": {
             "before_sleep": baseline_metrics,
@@ -402,8 +389,7 @@ def run_benchmark(*, seed: int = 29, cycles: int = 96) -> Dict[str, object]:
             "engram_content_lesion": content_metrics,
             "recurrent_association_lesion": association_metrics,
             "accuracy_gain_over_control": (
-                full_metrics["contingency_accuracy"]
-                - control_metrics["contingency_accuracy"]
+                full_metrics["contingency_accuracy"] - control_metrics["contingency_accuracy"]
             ),
             "margin_gain_over_control": (
                 full_metrics["mean_margin"] - control_metrics["mean_margin"]
@@ -423,9 +409,7 @@ def run_benchmark(*, seed: int = 29, cycles: int = 96) -> Dict[str, object]:
     }
 
 
-def run_panel(
-    *, seeds: Sequence[int] = SEED_PANEL, cycles: int = 96
-) -> Dict[str, object]:
+def run_panel(*, seeds: Sequence[int] = SEED_PANEL, cycles: int = 96) -> Dict[str, object]:
     """Aggregate the benchmark over a seed panel.
 
     A single seed cannot separate a mechanism change from seed-specific
@@ -440,26 +424,18 @@ def run_panel(
             {
                 "seed": seed,
                 "status": report["status"],
-                "failed_checks": sorted(
-                    name for name, ok in report["checks"].items() if not ok
-                ),
-                "accuracy_gain_over_control": metrics[
-                    "accuracy_gain_over_control"
-                ],
+                "failed_checks": sorted(name for name, ok in report["checks"].items() if not ok),
+                "accuracy_gain_over_control": metrics["accuracy_gain_over_control"],
                 "margin_gain_over_control": metrics["margin_gain_over_control"],
-                "full_replay_accuracy": metrics["full_replay"][
-                    "contingency_accuracy"
-                ],
-                "no_replay_control_accuracy": metrics["no_replay_control"][
-                    "contingency_accuracy"
-                ],
+                "full_replay_accuracy": metrics["full_replay"]["contingency_accuracy"],
+                "no_replay_control_accuracy": metrics["no_replay_control"]["contingency_accuracy"],
             }
         )
 
     passing = sum(1 for row in per_seed if row["status"] == "pass")
-    mean_gain = sum(
-        float(row["accuracy_gain_over_control"]) for row in per_seed
-    ) / max(1, len(per_seed))
+    mean_gain = sum(float(row["accuracy_gain_over_control"]) for row in per_seed) / max(
+        1, len(per_seed)
+    )
     checks = {
         "all_seeds_pass": passing == len(per_seed),
         "all_seeds_reach_full_contingency": all(
@@ -506,7 +482,7 @@ def main() -> int:
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(rendered + "\n", encoding="utf-8")
-    return 0 if report["status"] == "pass" else 1
+    return _verify_emit.emit_and_exit("taiji_m6_endogenous_replay", report)
 
 
 if __name__ == "__main__":

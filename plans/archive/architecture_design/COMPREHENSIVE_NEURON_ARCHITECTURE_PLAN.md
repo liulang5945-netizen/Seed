@@ -1074,7 +1074,7 @@ Cortex.save_state() → cortex_state.pt（fp16 shared_embedding + fp32 lm_head +
 
 - scripts/training/verify_1plus1.py -- 使用真实 teacher hidden states 的验证脚本
 - scripts/training/verify_h1h8.py -- H1-H8 冒烟测试（24 项）
-- plans/archive/implementation/H1-H8-mechanism-fixes.md -- H1-H10 机制解析
+- plans/archive/implementation/H1_H8_MECHANISM_FIXES.md -- H1-H10 机制解析
 
 ---
 

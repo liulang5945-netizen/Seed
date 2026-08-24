@@ -23,8 +23,13 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 
 from taiji.loader import assemble_cortex  # noqa: E402
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -63,15 +68,19 @@ def main():
         lens = []
         for prompt in PROMPTS:
             try:
-                out = cortex.generate(prompt, max_tokens=40, domain="zh",
-                                      active_nids=[nid], collab_mode="continuous")
+                out = cortex.generate(
+                    prompt, max_tokens=40, domain="zh", active_nids=[nid], collab_mode="continuous"
+                )
                 lens.append(len(out))
                 print(f"  {prompt[:12]}... → {out[:55]!r}", flush=True)
             except Exception as e:
                 lens.append(0)
                 print(f"  {prompt[:12]}... → ERR {e}", flush=True)
         non_empty = sum(1 for l in lens if l > 0)
-        print(f"  非空 {non_empty}/{len(PROMPTS)}，平均长度 {sum(lens)/max(len(lens),1):.0f}", flush=True)
+        print(
+            f"  非空 {non_empty}/{len(PROMPTS)}，平均长度 {sum(lens)/max(len(lens),1):.0f}",
+            flush=True,
+        )
 
 
 if __name__ == "__main__":

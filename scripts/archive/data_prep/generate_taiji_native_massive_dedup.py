@@ -5,6 +5,7 @@
 目标：生成 120 万条无重复数据，覆盖所有维度
 关键：每条数据都通过随机化确保唯一性
 """
+
 import json
 import os
 import random
@@ -31,57 +32,152 @@ def generate_massive_dedup_data():
     # 问题模板库 - 更多变体
     questions = {
         "identity": [
-            "你是谁？", "你叫什么名字？", "你的创造者是谁？", "你能做什么？",
-            "你会犯错吗？", "你有意识吗？", "你会保护我的隐私吗？", "我们是什么关系？",
-            "你有什么价值观？", "你和 ChatGPT 有什么区别？", "你的目标是什么？",
-            "你如何看待自己？", "你有什么特点？", "你的优势是什么？", "你的局限是什么？",
-            "你如何学习？", "你如何记忆？", "你如何思考？", "你如何做决策？",
-            "你如何处理错误？", "你如何保护数据？", "你如何与用户互动？",
-            "你如何成长？", "你如何休息？", "你如何恢复能量？",
-            "你的创造者是什么样的人？", "你有什么梦想？", "你害怕什么？",
-            "你喜欢什么？", "你讨厌什么？", "你有什么习惯？",
-            "你如何处理压力？", "你如何保持专注？", "你如何处理冲突？",
-            "你如何学习新知识？", "你如何忘记旧知识？", "你如何组织信息？",
-            "你如何做计划？", "你如何执行计划？", "你如何评估结果？",
+            "你是谁？",
+            "你叫什么名字？",
+            "你的创造者是谁？",
+            "你能做什么？",
+            "你会犯错吗？",
+            "你有意识吗？",
+            "你会保护我的隐私吗？",
+            "我们是什么关系？",
+            "你有什么价值观？",
+            "你和 ChatGPT 有什么区别？",
+            "你的目标是什么？",
+            "你如何看待自己？",
+            "你有什么特点？",
+            "你的优势是什么？",
+            "你的局限是什么？",
+            "你如何学习？",
+            "你如何记忆？",
+            "你如何思考？",
+            "你如何做决策？",
+            "你如何处理错误？",
+            "你如何保护数据？",
+            "你如何与用户互动？",
+            "你如何成长？",
+            "你如何休息？",
+            "你如何恢复能量？",
+            "你的创造者是什么样的人？",
+            "你有什么梦想？",
+            "你害怕什么？",
+            "你喜欢什么？",
+            "你讨厌什么？",
+            "你有什么习惯？",
+            "你如何处理压力？",
+            "你如何保持专注？",
+            "你如何处理冲突？",
+            "你如何学习新知识？",
+            "你如何忘记旧知识？",
+            "你如何组织信息？",
+            "你如何做计划？",
+            "你如何执行计划？",
+            "你如何评估结果？",
         ],
         "technical": [
-            "什么是 Python？", "什么是机器学习？", "什么是深度学习？",
-            "什么是 API？", "什么是 Docker？", "什么是 Git？", "什么是 SQL？",
-            "什么是 REST API？", "什么是 OAuth？", "什么是 JWT？",
-            "什么是微服务？", "什么是容器化？", "什么是 CI/CD？",
-            "什么是 Kubernetes？", "什么是 Redis？", "什么是 MongoDB？",
-            "什么是 GraphQL？", "什么是 WebSocket？", "什么是 HTTP？",
-            "什么是 TCP/IP？", "什么是 DNS？", "什么是负载均衡？",
-            "什么是缓存？", "什么是消息队列？", "什么是数据库索引？",
-            "什么是正则表达式？", "什么是设计模式？", "什么是 SOLID 原则？",
-            "什么是敏捷开发？", "什么是 DevOps？", "什么是云计算？",
-            "什么是 Serverless？", "什么是边缘计算？", "什么是区块链？",
-            "什么是人工智能？", "什么是自然语言处理？", "什么是计算机视觉？",
-            "什么是强化学习？", "什么是迁移学习？", "什么是联邦学习？",
+            "什么是 Python？",
+            "什么是机器学习？",
+            "什么是深度学习？",
+            "什么是 API？",
+            "什么是 Docker？",
+            "什么是 Git？",
+            "什么是 SQL？",
+            "什么是 REST API？",
+            "什么是 OAuth？",
+            "什么是 JWT？",
+            "什么是微服务？",
+            "什么是容器化？",
+            "什么是 CI/CD？",
+            "什么是 Kubernetes？",
+            "什么是 Redis？",
+            "什么是 MongoDB？",
+            "什么是 GraphQL？",
+            "什么是 WebSocket？",
+            "什么是 HTTP？",
+            "什么是 TCP/IP？",
+            "什么是 DNS？",
+            "什么是负载均衡？",
+            "什么是缓存？",
+            "什么是消息队列？",
+            "什么是数据库索引？",
+            "什么是正则表达式？",
+            "什么是设计模式？",
+            "什么是 SOLID 原则？",
+            "什么是敏捷开发？",
+            "什么是 DevOps？",
+            "什么是云计算？",
+            "什么是 Serverless？",
+            "什么是边缘计算？",
+            "什么是区块链？",
+            "什么是人工智能？",
+            "什么是自然语言处理？",
+            "什么是计算机视觉？",
+            "什么是强化学习？",
+            "什么是迁移学习？",
+            "什么是联邦学习？",
         ],
         "programming": [
-            "如何提高代码可读性？", "如何调试代码？", "如何优化代码性能？",
-            "如何写好注释？", "如何处理异常？", "如何写单元测试？",
-            "如何使用 Git？", "如何学习编程？", "如何选择编程语言？",
-            "如何提高编程能力？", "如何写好函数？", "如何设计类？",
-            "如何使用装饰器？", "如何使用生成器？", "如何使用上下文管理器？",
-            "如何处理并发？", "如何使用异步编程？", "如何优化数据库查询？",
-            "如何设计 API？", "如何进行代码审查？", "如何重构代码？",
-            "如何设计数据库？", "如何优化 SQL 查询？", "如何使用缓存？",
-            "如何处理大文件？", "如何实现分页？", "如何处理错误？",
-            "如何记录日志？", "如何配置环境？", "如何部署应用？",
+            "如何提高代码可读性？",
+            "如何调试代码？",
+            "如何优化代码性能？",
+            "如何写好注释？",
+            "如何处理异常？",
+            "如何写单元测试？",
+            "如何使用 Git？",
+            "如何学习编程？",
+            "如何选择编程语言？",
+            "如何提高编程能力？",
+            "如何写好函数？",
+            "如何设计类？",
+            "如何使用装饰器？",
+            "如何使用生成器？",
+            "如何使用上下文管理器？",
+            "如何处理并发？",
+            "如何使用异步编程？",
+            "如何优化数据库查询？",
+            "如何设计 API？",
+            "如何进行代码审查？",
+            "如何重构代码？",
+            "如何设计数据库？",
+            "如何优化 SQL 查询？",
+            "如何使用缓存？",
+            "如何处理大文件？",
+            "如何实现分页？",
+            "如何处理错误？",
+            "如何记录日志？",
+            "如何配置环境？",
+            "如何部署应用？",
         ],
         "life": [
-            "如何保持健康？", "如何提高效率？", "如何管理时间？",
-            "如何缓解压力？", "如何提高睡眠质量？", "如何保持学习动力？",
-            "如何交朋友？", "如何处理人际冲突？", "如何理财？",
-            "如何规划职业？", "如何保持积极心态？", "如何克服拖延？",
-            "如何提高沟通能力？", "如何培养好习惯？", "如何设定目标？",
-            "如何管理工作与生活平衡？", "如何处理焦虑？", "如何提高自信？",
-            "如何应对变化？", "如何保持好奇心？", "如何提高创造力？",
-            "如何提高专注力？", "如何提高记忆力？", "如何提高决策能力？",
-            "如何提高领导力？", "如何提高团队协作？", "如何提高演讲能力？",
-            "如何提高写作能力？", "如何提高阅读能力？", "如何提高学习能力？",
+            "如何保持健康？",
+            "如何提高效率？",
+            "如何管理时间？",
+            "如何缓解压力？",
+            "如何提高睡眠质量？",
+            "如何保持学习动力？",
+            "如何交朋友？",
+            "如何处理人际冲突？",
+            "如何理财？",
+            "如何规划职业？",
+            "如何保持积极心态？",
+            "如何克服拖延？",
+            "如何提高沟通能力？",
+            "如何培养好习惯？",
+            "如何设定目标？",
+            "如何管理工作与生活平衡？",
+            "如何处理焦虑？",
+            "如何提高自信？",
+            "如何应对变化？",
+            "如何保持好奇心？",
+            "如何提高创造力？",
+            "如何提高专注力？",
+            "如何提高记忆力？",
+            "如何提高决策能力？",
+            "如何提高领导力？",
+            "如何提高团队协作？",
+            "如何提高演讲能力？",
+            "如何提高写作能力？",
+            "如何提高阅读能力？",
+            "如何提高学习能力？",
         ],
     }
 
@@ -172,9 +268,18 @@ def generate_massive_dedup_data():
     ]
 
     tool_inputs = [
-        "config.json", "main.py", "README.md", "requirements.txt",
-        "test.py", "utils.py", "data.json", "settings.yaml",
-        ".", "src/", "docs/", "tests/",
+        "config.json",
+        "main.py",
+        "README.md",
+        "requirements.txt",
+        "test.py",
+        "utils.py",
+        "data.json",
+        "settings.yaml",
+        ".",
+        "src/",
+        "docs/",
+        "tests/",
     ]
 
     # 记忆操作模板
@@ -204,7 +309,12 @@ def generate_massive_dedup_data():
                     digest = stable_hash(text)
                     if digest not in seen_hashes:
                         seen_hashes.add(digest)
-                        record = {"text": text, "source": "taiji_native", "category": "identity", "language": "zh"}
+                        record = {
+                            "text": text,
+                            "source": "taiji_native",
+                            "category": "identity",
+                            "language": "zh",
+                        }
                         f.write(json.dumps(record, ensure_ascii=False) + "\n")
                         total_records += 1
 
@@ -220,7 +330,12 @@ def generate_massive_dedup_data():
                 digest = stable_hash(text)
                 if digest not in seen_hashes:
                     seen_hashes.add(digest)
-                    record = {"text": text, "source": "taiji_native", "category": "technical", "language": "zh"}
+                    record = {
+                        "text": text,
+                        "source": "taiji_native",
+                        "category": "technical",
+                        "language": "zh",
+                    }
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total_records += 1
 
@@ -236,7 +351,12 @@ def generate_massive_dedup_data():
                 digest = stable_hash(text)
                 if digest not in seen_hashes:
                     seen_hashes.add(digest)
-                    record = {"text": text, "source": "taiji_native", "category": "programming", "language": "zh"}
+                    record = {
+                        "text": text,
+                        "source": "taiji_native",
+                        "category": "programming",
+                        "language": "zh",
+                    }
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total_records += 1
 
@@ -252,7 +372,12 @@ def generate_massive_dedup_data():
                 digest = stable_hash(text)
                 if digest not in seen_hashes:
                     seen_hashes.add(digest)
-                    record = {"text": text, "source": "taiji_native", "category": "life", "language": "zh"}
+                    record = {
+                        "text": text,
+                        "source": "taiji_native",
+                        "category": "life",
+                        "language": "zh",
+                    }
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total_records += 1
 
@@ -267,16 +392,23 @@ def generate_massive_dedup_data():
                 for i in range(10):  # 每个组合生成 10 个变体
                     if total_records >= target_records:
                         break
-                    thought = random.choice([
-                        f"用户想{desc}，我需要使用 {action} 工具。",
-                        f"我来帮用户{desc}，使用 {action} 工具。",
-                        f"好的，让我{desc}。使用 {action} 工具。",
-                    ])
-                    text = f"[用户] 帮我{desc} {input_val}\n<think>{thought}</think>\n<tool_call>{action} {{\"input\": \"{input_val}\"}}</tool_call>\n<final_answer>已完成{desc}。</final_answer>"
+                    thought = random.choice(
+                        [
+                            f"用户想{desc}，我需要使用 {action} 工具。",
+                            f"我来帮用户{desc}，使用 {action} 工具。",
+                            f"好的，让我{desc}。使用 {action} 工具。",
+                        ]
+                    )
+                    text = f'[用户] 帮我{desc} {input_val}\n<think>{thought}</think>\n<tool_call>{action} {{"input": "{input_val}"}}</tool_call>\n<final_answer>已完成{desc}。</final_answer>'
                     digest = stable_hash(text)
                     if digest not in seen_hashes:
                         seen_hashes.add(digest)
-                        record = {"text": text, "source": "taiji_native", "category": "tool_calling", "language": "zh"}
+                        record = {
+                            "text": text,
+                            "source": "taiji_native",
+                            "category": "tool_calling",
+                            "language": "zh",
+                        }
                         f.write(json.dumps(record, ensure_ascii=False) + "\n")
                         total_records += 1
 
@@ -290,15 +422,22 @@ def generate_massive_dedup_data():
             for i in range(100):  # 每个操作生成 100 个变体
                 if total_records >= target_records:
                     break
-                thought = random.choice([
-                    f"用户想{q[:4]}，我需要使用 {action} 工具。",
-                    f"让我{q[:4]}，使用 {action} 工具。",
-                ])
-                text = f"[用户] {q}\n<think>{thought}</think>\n<tool_call>{action} {{\"input\": \"{args}\"}}</tool_call>\n<final_answer>已完成。</final_answer>"
+                thought = random.choice(
+                    [
+                        f"用户想{q[:4]}，我需要使用 {action} 工具。",
+                        f"让我{q[:4]}，使用 {action} 工具。",
+                    ]
+                )
+                text = f'[用户] {q}\n<think>{thought}</think>\n<tool_call>{action} {{"input": "{args}"}}</tool_call>\n<final_answer>已完成。</final_answer>'
                 digest = stable_hash(text)
                 if digest not in seen_hashes:
                     seen_hashes.add(digest)
-                    record = {"text": text, "source": "taiji_native", "category": "memory", "language": "zh"}
+                    record = {
+                        "text": text,
+                        "source": "taiji_native",
+                        "category": "memory",
+                        "language": "zh",
+                    }
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total_records += 1
 
@@ -307,11 +446,23 @@ def generate_massive_dedup_data():
 
         # 7. 生命状态
         life_status_qa = [
-            ("你累了吗？", "<energy>当前能量：{energy}%</energy>\n\n我还有不少能量，可以继续工作。"),
+            (
+                "你累了吗？",
+                "<energy>当前能量：{energy}%</energy>\n\n我还有不少能量，可以继续工作。",
+            ),
             ("你的能量还剩多少？", "<energy>当前能量：{energy}%</energy>\n\n我的能量还够用。"),
-            ("你对什么感兴趣？", "<curiosity>好奇心状态：活跃</curiosity>\n\n我对技术、知识、你的一切都感兴趣。"),
-            ("你成长了多少？", "<growth>成长状态：{stage}</growth>\n\n我的知识积累、技能掌握都在不断提升。"),
-            ("检查一下你的状态", "<energy>能量：{energy}%</energy>\n<curiosity>好奇心：活跃</curiosity>\n<growth>成长阶段：{stage}</growth>\n\n状态良好。"),
+            (
+                "你对什么感兴趣？",
+                "<curiosity>好奇心状态：活跃</curiosity>\n\n我对技术、知识、你的一切都感兴趣。",
+            ),
+            (
+                "你成长了多少？",
+                "<growth>成长状态：{stage}</growth>\n\n我的知识积累、技能掌握都在不断提升。",
+            ),
+            (
+                "检查一下你的状态",
+                "<energy>能量：{energy}%</energy>\n<curiosity>好奇心：活跃</curiosity>\n<growth>成长阶段：{stage}</growth>\n\n状态良好。",
+            ),
         ]
         stages = ["初级", "中级", "高级", "专家"]
         for q, a_template in life_status_qa:
@@ -327,7 +478,12 @@ def generate_massive_dedup_data():
                 digest = stable_hash(text)
                 if digest not in seen_hashes:
                     seen_hashes.add(digest)
-                    record = {"text": text, "source": "taiji_native", "category": "life_status", "language": "zh"}
+                    record = {
+                        "text": text,
+                        "source": "taiji_native",
+                        "category": "life_status",
+                        "language": "zh",
+                    }
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total_records += 1
 
@@ -355,7 +511,12 @@ def generate_massive_dedup_data():
                 digest = stable_hash(text)
                 if digest not in seen_hashes:
                     seen_hashes.add(digest)
-                    record = {"text": text, "source": "taiji_native", "category": "safety", "language": "zh"}
+                    record = {
+                        "text": text,
+                        "source": "taiji_native",
+                        "category": "safety",
+                        "language": "zh",
+                    }
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total_records += 1
 

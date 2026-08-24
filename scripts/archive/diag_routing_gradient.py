@@ -12,6 +12,7 @@ forward_train，对比：
 Usage:
     python scripts/training/diag_routing_gradient.py
 """
+
 import os
 import sys
 import math
@@ -26,21 +27,32 @@ CKPT_PATH = "data/neurons/collab_v2_routing.ckpt.pt"
 GENERAL_DIR = "data/foundation_v1_general"
 DIALOGUE_DIR = "data/neurons"
 DOMAINS = ["code", "math", "zh", "en"]
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 
 from taiji.resonance.neuron import ResonanceNeuron
 from taiji.resonance.field import ResonanceField
 from taiji.resonance.ensemble import ResonanceEnsemble
 from taiji.resonance.topology import (
-    NeuronGeometry, build_topology, establish_topology_channels,
+    NeuronGeometry,
+    build_topology,
+    establish_topology_channels,
 )
 from taiji.resonance.translator import TokenizerHub
 from scripts.training.utils import (
-    load_domain_tokenizer, load_general_tokenizer, create_shared_embedding,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+    create_shared_embedding,
 )
 from scripts.training.train_cross_domain_collab import (
-    load_neuron, load_shared_lm_head, load_shared_embedding,
+    load_neuron,
+    load_shared_lm_head,
+    load_shared_embedding,
 )
 from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
 
@@ -61,9 +73,11 @@ def main():
         neurons[nid] = n
         embeddings[nid] = load_shared_embedding(GENERAL_DIR, device)
     for nid in DIALOGUE_IDS:
-        ckp = torch.load(os.path.join(DIALOGUE_DIR, f"neuron_{nid}.pt"),
-                         map_location=device, weights_only=False)
-        cfg = ckp["neuron_config"]; cfg.unified_field_dim = None
+        ckp = torch.load(
+            os.path.join(DIALOGUE_DIR, f"neuron_{nid}.pt"), map_location=device, weights_only=False
+        )
+        cfg = ckp["neuron_config"]
+        cfg.unified_field_dim = None
         n = ResonanceNeuron(cfg)
         n.load_state_dict(ckp["state_dict"], strict=False)
         neurons[nid] = n
@@ -136,7 +150,7 @@ def main():
                 p.requires_grad = True
         for p in neuron.norm.parameters():
             p.requires_grad = True
-        if hasattr(neuron, 'lm_head') and neuron.lm_head is not None:
+        if hasattr(neuron, "lm_head") and neuron.lm_head is not None:
             for p in neuron.lm_head.parameters():
                 p.requires_grad = True
         for p in neuron.get_field_write_parameters():
@@ -172,17 +186,24 @@ def main():
     )
     scores = result["scores"]
     print(f"[scores] requires_grad={scores.requires_grad}, shape={scores.shape}")
-    print(f"[scores] 排序: " + ", ".join(
-        f"{nid}={float(s):.4f}" for nid, s in zip(list(neurons.keys()), scores.detach())
-    ))
+    print(
+        f"[scores] 排序: "
+        + ", ".join(
+            f"{nid}={float(s):.4f}" for nid, s in zip(list(neurons.keys()), scores.detach())
+        )
+    )
 
     # C15: 预测质量 logits（D 方案，监督 = NLL 排序对比，替代 C13 域判别）
     domain_logits = result.get("quality_logits")
-    print(f"[quality_logits] requires_grad={domain_logits.requires_grad if domain_logits is not None else 'N/A'}, "
-          f"shape={domain_logits.shape if domain_logits is not None else 'N/A'}")
+    print(
+        f"[quality_logits] requires_grad={domain_logits.requires_grad if domain_logits is not None else 'N/A'}, "
+        f"shape={domain_logits.shape if domain_logits is not None else 'N/A'}"
+    )
     if domain_logits is not None:
         dl_sorted = sorted(zip(list(neurons.keys()), domain_logits.detach()), key=lambda x: -x[1])
-        print(f"[quality_logits] 排序: " + ", ".join(f"{nid}={float(d):.4f}" for nid, d in dl_sorted))
+        print(
+            f"[quality_logits] 排序: " + ", ".join(f"{nid}={float(d):.4f}" for nid, d in dl_sorted)
+        )
 
     # ── 7. CE loss（与训练一致）──
     fused_logits = result["fused_logits"]
@@ -194,7 +215,8 @@ def main():
     ce_loss = F.cross_entropy(
         shift_logits.view(-1, shift_logits.size(-1)),
         shift_targets.view(-1),
-        ignore_index=-100, reduction="sum",
+        ignore_index=-100,
+        reduction="sum",
     )
     n_tokens = max(shift_mask.sum().item(), 1)
     ce_loss = ce_loss / n_tokens
@@ -210,25 +232,26 @@ def main():
     else:
         routing_loss = -F.log_softmax(scores / 0.15, dim=0)[domain_idx]
         rl_source = "scores (fallback)"
-    print(f"[loss] routing_loss({rl_source})={routing_loss.item():.4f}, weight=0.5 -> {0.5*routing_loss.item():.4f}")
+    print(
+        f"[loss] routing_loss({rl_source})={routing_loss.item():.4f}, weight=0.5 -> {0.5*routing_loss.item():.4f}"
+    )
 
     # ── 9. 分别反传对比梯度 ──
     def zero_all_grads():
         for n in neurons.values():
             for p in n.parameters():
                 p.grad = None
-        for mod in [ens.field_score_proj] if getattr(ens, 'field_score_proj', None) else []:
+        for mod in [ens.field_score_proj] if getattr(ens, "field_score_proj", None) else []:
             mod.zero_grad()
-        for proj in getattr(ens, '_cross_spec_projectors', {}).values():
+        for proj in getattr(ens, "_cross_spec_projectors", {}).values():
             for p in proj.parameters():
                 p.grad = None
-        for proj in getattr(ens, '_cross_spec_back_projectors', {}).values():
+        for proj in getattr(ens, "_cross_spec_back_projectors", {}).values():
             for p in proj.parameters():
                 p.grad = None
 
     def param_norms(param_filter):
-        return [(n, p.grad.detach().norm().item()) for n, p in param_filter
-                if p.grad is not None]
+        return [(n, p.grad.detach().norm().item()) for n, p in param_filter if p.grad is not None]
 
     def neuron_body_grads(prefix):
         out = []

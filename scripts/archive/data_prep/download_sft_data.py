@@ -24,6 +24,7 @@
     dict[domain] -> {"input_ids": LongTensor[N, L], "labels": LongTensor[N, L], "response_mask": LongTensor[N, L]}
     （已 tokenize，供训练脚本直接使用）
 """
+
 from __future__ import annotations
 
 import os
@@ -35,20 +36,25 @@ import urllib.request
 import urllib.error
 
 # sentencepiece 装在 _libs/ 下
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 sys.path.insert(0, PROJECT_ROOT)
 _LIBS = os.path.join(PROJECT_ROOT, "_libs")
 if os.path.isdir(_LIBS):
     sys.path.insert(0, _LIBS)
 
 try:
-    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
-    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
-except Exception:
-    pass
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+except Exception as e:
+    logger.debug("【download_sft_data】处理失败（非致命）: %s", e)
 
 import torch
 import sentencepiece as spm
+import logging
+
+logger = logging.getLogger(__name__)
 
 # v2 contract: text token range [13388, 256000)
 TEXT_OFFSET = 13388
@@ -149,8 +155,9 @@ def extract_sft_fields(sample: dict, cfg: dict) -> dict:
     }
 
 
-def fetch_page(dataset: str, config: str, split: str, offset: int,
-               length: int = PAGE_SIZE, retries: int = 5) -> list[dict]:
+def fetch_page(
+    dataset: str, config: str, split: str, offset: int, length: int = PAGE_SIZE, retries: int = 5
+) -> list[dict]:
     """从 HF datasets-server 获取一页数据（带 429 限流处理）.
 
     429 限流策略：
@@ -158,15 +165,20 @@ def fetch_page(dataset: str, config: str, split: str, offset: int,
       - 最多 5 次重试
       - 每次成功后短暂 sleep 0.5s 避免 trigger 限流
     """
-    url = (f"{API_BASE}?dataset={dataset}&config={config}"
-           f"&split={split}&offset={offset}&length={length}")
+    url = (
+        f"{API_BASE}?dataset={dataset}&config={config}"
+        f"&split={split}&offset={offset}&length={length}"
+    )
     backoff_delays = [5, 15, 45, 135, 405]  # 指数退避
     for attempt in range(retries):
         try:
-            req = urllib.request.Request(url, headers={
-                "User-Agent": "neuroplex-population/1.0",
-                "Accept": "application/json",
-            })
+            req = urllib.request.Request(
+                url,
+                headers={
+                    "User-Agent": "neuroplex-population/1.0",
+                    "Accept": "application/json",
+                },
+            )
             with urllib.request.urlopen(req, timeout=60) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
                 time.sleep(0.5)  # 避免 trigger 限流
@@ -212,8 +224,10 @@ def download_domain_sft(domain: str, target_n: int) -> list[dict]:
         split = cfg["split"]
         max_samples = cfg.get("max_samples", target_n)
 
-        print(f"  [{domain}] 源 {src_idx+1}/{len(sources)}: "
-              f"{dataset} (config={config}, split={split})")
+        print(
+            f"  [{domain}] 源 {src_idx+1}/{len(sources)}: "
+            f"{dataset} (config={config}, split={split})"
+        )
 
         fetched = 0
         offset = 0
@@ -252,8 +266,9 @@ def download_domain_sft(domain: str, target_n: int) -> list[dict]:
     return samples[:target_n]
 
 
-def tokenize_sft(sp: spm.SentencePieceProcessor, samples: list[dict],
-                 seq_len: int = SEQ_LEN) -> dict:
+def tokenize_sft(
+    sp: spm.SentencePieceProcessor, samples: list[dict], seq_len: int = SEQ_LEN
+) -> dict:
     """把 SFT 样本 tokenize 成训练用的 input_ids + labels + response_mask.
 
     关键设计：
@@ -293,14 +308,12 @@ def tokenize_sft(sp: spm.SentencePieceProcessor, samples: list[dict],
         full_ids = full_ids + [PAD_ID] * pad_len
 
         # labels: prompt 部分用 IGNORE_LABEL，response + EOS 用真实 token
-        labels = ([IGNORE_LABEL] * len(prompt_ids)
-                  + response_ids + [EOS_ID]
-                  + [IGNORE_LABEL] * pad_len)
+        labels = (
+            [IGNORE_LABEL] * len(prompt_ids) + response_ids + [EOS_ID] + [IGNORE_LABEL] * pad_len
+        )
 
         # response_mask: prompt=0, response+EOS=1, pad=0
-        response_mask = ([0] * len(prompt_ids)
-                         + [1] * (len(response_ids) + 1)
-                         + [0] * pad_len)
+        response_mask = [0] * len(prompt_ids) + [1] * (len(response_ids) + 1) + [0] * pad_len
 
         input_ids_list.append(full_ids)
         labels_list.append(labels)
@@ -322,10 +335,13 @@ def tokenize_sft(sp: spm.SentencePieceProcessor, samples: list[dict],
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--samples", type=int, default=DEFAULT_SAMPLES,
-                        help=f"每域目标样本数（默认 {DEFAULT_SAMPLES}）")
-    parser.add_argument("--output", type=str, default="data/sft",
-                        help="输出目录")
+    parser.add_argument(
+        "--samples",
+        type=int,
+        default=DEFAULT_SAMPLES,
+        help=f"每域目标样本数（默认 {DEFAULT_SAMPLES}）",
+    )
+    parser.add_argument("--output", type=str, default="data/sft", help="输出目录")
     args = parser.parse_args()
 
     os.makedirs(args.output, exist_ok=True)

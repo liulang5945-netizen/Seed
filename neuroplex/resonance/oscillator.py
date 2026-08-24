@@ -26,7 +26,7 @@ C27 增量四（2026-08-14）：o 型从固定节奏源 → **可学习节奏控
 from __future__ import annotations
 
 import math
-from typing import List, Optional
+from typing import List
 
 import torch
 import torch.nn as nn
@@ -45,8 +45,9 @@ class OscillatorNode(nn.Module):
         phase: 初始相位（rad，float 状态）
     """
 
-    def __init__(self, nid: str, omega: float, coupling: float,
-                 gaba_amp: float, dim: int, phase: float = 0.0):
+    def __init__(
+        self, nid: str, omega: float, coupling: float, gaba_amp: float, dim: int, phase: float = 0.0
+    ):
         super().__init__()
         self.nid = nid
         self.dim = int(dim)
@@ -99,7 +100,8 @@ class OscillatorNode(nn.Module):
     def theta_tensor(self, t: float, device=None, dtype=None) -> torch.Tensor:
         """可微相位 θ(t) = θ0 + ω·t（ω 可微，θ0 状态 detach）。"""
         theta0 = torch.tensor(
-            self._phase, dtype=dtype if dtype is not None else torch.float32,
+            self._phase,
+            dtype=dtype if dtype is not None else torch.float32,
             device=device,
         )
         return theta0 + self.omega * float(t)
@@ -124,8 +126,6 @@ def make_default_oscillators(dim: int) -> List[OscillatorNode]:
         [OscillatorNode(theta), OscillatorNode(gamma)]
     """
     return [
-        OscillatorNode(nid="osc_theta_0", omega=0.5, coupling=0.4,
-                       gaba_amp=0.08, dim=dim),
-        OscillatorNode(nid="osc_gamma_0", omega=math.pi / 4, coupling=0.3,
-                       gaba_amp=0.04, dim=dim),
+        OscillatorNode(nid="osc_theta_0", omega=0.5, coupling=0.4, gaba_amp=0.08, dim=dim),
+        OscillatorNode(nid="osc_gamma_0", omega=math.pi / 4, coupling=0.3, gaba_amp=0.04, dim=dim),
     ]

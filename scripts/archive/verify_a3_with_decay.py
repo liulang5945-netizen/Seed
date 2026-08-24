@@ -36,6 +36,7 @@
 
 运行：python -u scripts/training/verify_a3_with_decay.py
 """
+
 from __future__ import annotations
 
 import json
@@ -43,7 +44,9 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch  # noqa: E402
 import numpy as np  # noqa: E402
@@ -55,8 +58,12 @@ from neuroplex.life.sleep_engine import SleepEngine, SleepConfig, SleepReport  #
 from neuroplex.resonance.neuro_modulation import SleepConsolidator  # noqa: E402
 
 from scripts.archive.verify_a1_judge_signal_real import (  # noqa: E402
-    DIALOGUE_IDS, COLLAB_NAME, EXTRA_NEURONS_DIR,
-    DIALOGUE_PROMPTS, KNOWLEDGE_PROMPTS, UNFAMILIAR_PROMPTS,
+    DIALOGUE_IDS,
+    COLLAB_NAME,
+    EXTRA_NEURONS_DIR,
+    DIALOGUE_PROMPTS,
+    KNOWLEDGE_PROMPTS,
+    UNFAMILIAR_PROMPTS,
 )
 
 passed = 0
@@ -79,8 +86,7 @@ def field_state_of(cortex, text: str):
     gids = cortex._general_sp.encode(text) or [0]
     ids = torch.tensor([gids], dtype=torch.long, device=cortex.device)
     emb = cortex._shared_embedding(ids)
-    res = cortex.think(emb, active_nids=None, fusion_mode="soft",
-                       collab_mode="continuous")
+    res = cortex.think(emb, active_nids=None, fusion_mode="soft", collab_mode="continuous")
     fs = res.get("field_state")
     if fs is None:
         raise RuntimeError("think() 未返回 field_state")
@@ -100,6 +106,7 @@ def _to_general(cortex, domain_sp, domain_ids):
 
 def nll_round1(cortex, nid: str, text: str) -> float:
     import torch.nn.functional as F
+
     neuron = cortex.neurons[nid]
     neuron.eval()
     hub = cortex._tokenizer_hub
@@ -118,7 +125,7 @@ def nll_round1(cortex, nid: str, text: str) -> float:
         if min_len < 1:
             return float("nan")
         sl = logits[:, :min_len, :].contiguous()
-        st = target[:, 1:1 + min_len].contiguous().clamp(0, logits.size(-1) - 1)
+        st = target[:, 1 : 1 + min_len].contiguous().clamp(0, logits.size(-1) - 1)
         loss = F.cross_entropy(sl.view(-1, sl.size(-1)), st.view(-1), ignore_index=-100)
     return loss.item()
 
@@ -127,8 +134,7 @@ def measure_judge_nlls(sleep_engine, cortex, target_ids, prompts) -> dict:
     device = next(cortex._shared_embedding.parameters()).device
     out = {}
     for text in prompts:
-        nll = sleep_engine._sample_judge_nll(
-            text, target_ids, device, cortex._shared_embedding)
+        nll = sleep_engine._sample_judge_nll(text, target_ids, device, cortex._shared_embedding)
         out[text] = nll
     return out
 
@@ -139,7 +145,7 @@ def lora_l2_norm(neuron) -> float:
     with torch.no_grad():
         for p in neuron.lora_adapters.parameters():
             s += float(p.data.pow(2).sum().item())
-    return s ** 0.5
+    return s**0.5
 
 
 def main():
@@ -159,8 +165,7 @@ def main():
         wire_bio_modules=True,
         neuron_ids=DIALOGUE_IDS,
     )
-    target_ids = [nid for nid in cortex.neurons
-                  if nid.startswith("zh_") and "dialogue" in nid]
+    target_ids = [nid for nid in cortex.neurons if nid.startswith("zh_") and "dialogue" in nid]
     print(f"  装配 {len(cortex.neurons)} 神经元，judge 目标 = {target_ids}", flush=True)
 
     tmp_data = os.path.join("data", "_tmp_a3_decay")
@@ -175,21 +180,29 @@ def main():
     sleep_engine.set_brain_interfaces(cortex=cortex, sleep_consolidator=sc)
 
     all_prompts = DIALOGUE_PROMPTS + KNOWLEDGE_PROMPTS + UNFAMILIAR_PROMPTS
-    prompt_labels = (["dialogue"] * len(DIALOGUE_PROMPTS) +
-                     ["knowledge"] * len(KNOWLEDGE_PROMPTS) +
-                     ["unfamiliar"] * len(UNFAMILIAR_PROMPTS))
+    prompt_labels = (
+        ["dialogue"] * len(DIALOGUE_PROMPTS)
+        + ["knowledge"] * len(KNOWLEDGE_PROMPTS)
+        + ["unfamiliar"] * len(UNFAMILIAR_PROMPTS)
+    )
 
     print("\n[2/(N+1)] 注入 24 条 prompt 记忆（喂经验）...", flush=True)
     for i, text in enumerate(all_prompts):
         vec = field_state_of(cortex, text)
         sleep_engine.record_field_memory(vec, f"init_{prompt_labels[i]}_{i}", text=text)
         sc.record_high_resonance_state(
-            field_state=vec, resonance_score=0.9, step=0,
-            active_nids=target_ids, threshold=0.5, text=text)
+            field_state=vec,
+            resonance_score=0.9,
+            step=0,
+            active_nids=target_ids,
+            threshold=0.5,
+            text=text,
+        )
     r_init = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
     sleep_engine._sleep_phase_field_consolidation(r_init)
-    print(f"  注入 {len(all_prompts)} 条 + 场固化 {r_init.field_memories_consolidated} 条",
-          flush=True)
+    print(
+        f"  注入 {len(all_prompts)} 条 + 场固化 {r_init.field_memories_consolidated} 条", flush=True
+    )
 
     print(f"\n[3/(N+1)] 初始观测 + LoRA 初始 L2...", flush=True)
     nlls_round0 = measure_judge_nlls(sleep_engine, cortex, target_ids, all_prompts)
@@ -197,8 +210,10 @@ def main():
     mean0 = float(np.mean(valid_nlls0))
     nll_round1_0 = {nid: nll_round1(cortex, nid, DIALOGUE_PROMPTS[0]) for nid in target_ids}
     lora_l2_round0 = {nid: lora_l2_norm(cortex.neurons[nid]) for nid in target_ids}
-    print(f"  judge NLL 总均值 = {mean0:.3f}（{len(valid_nlls0)}/{len(all_prompts)} 有效）",
-          flush=True)
+    print(
+        f"  judge NLL 总均值 = {mean0:.3f}（{len(valid_nlls0)}/{len(all_prompts)} 有效）",
+        flush=True,
+    )
     print(f"  LoRA L2 = {lora_l2_round0}", flush=True)
 
     history = {
@@ -231,9 +246,11 @@ def main():
         dt = time.time() - t_round
         lora_l2_r = {nid: lora_l2_norm(cortex.neurons[nid]) for nid in target_ids}
         a3e_lora_l2.append(lora_l2_r)
-        print(f"  sleep phase 用时 {dt:.1f}s "
-              f"(fwd_replay={r_report.forward_replayed} judge_driven={r_report.judge_driven_replay})",
-              flush=True)
+        print(
+            f"  sleep phase 用时 {dt:.1f}s "
+            f"(fwd_replay={r_report.forward_replayed} judge_driven={r_report.judge_driven_replay})",
+            flush=True,
+        )
         print(f"  LoRA L2 = {lora_l2_r}", flush=True)
 
         nlls_r = measure_judge_nlls(sleep_engine, cortex, target_ids, all_prompts)
@@ -247,27 +264,40 @@ def main():
         nll_round1_r = {nid: nll_round1(cortex, nid, DIALOGUE_PROMPTS[0]) for nid in target_ids}
         body_deltas = {nid: nll_round1_r[nid] - nll_round1_0[nid] for nid in target_ids}
         max_body_delta = max(abs(v) for v in body_deltas.values())
-        print(f"  judge NLL 总均值 = {mean_r:.3f}（Δ={mean_r - mean0:+.3f} 相对 round0）", flush=True)
+        print(
+            f"  judge NLL 总均值 = {mean_r:.3f}（Δ={mean_r - mean0:+.3f} 相对 round0）", flush=True
+        )
         print(f"  body NLL Δ = {body_deltas}（max |Δ|={max_body_delta:.3f}）", flush=True)
 
-        sorted_prompts = sorted([(t, v) for t, v in nlls_r.items() if v is not None],
-                                key=lambda x: x[1], reverse=True)
+        sorted_prompts = sorted(
+            [(t, v) for t, v in nlls_r.items() if v is not None], key=lambda x: x[1], reverse=True
+        )
         n = len(sorted_prompts)
         top_third = sorted_prompts[: n // 3]
-        bot_third = sorted_prompts[-n // 3:]
+        bot_third = sorted_prompts[-n // 3 :]
         top_delta = float(np.mean([nlls_r[t] - nlls_round0[t] for t, _ in top_third]))
         bot_delta = float(np.mean([nlls_r[t] - nlls_round0[t] for t, _ in bot_third]))
         improved = top_delta < bot_delta
         a3b_evidence.append((r, top_delta, bot_delta, improved))
-        print(f"  归因: 短板(top1/3) Δ={top_delta:+.3f}  非短板(bot1/3) Δ={bot_delta:+.3f}  "
-              f"改善归因 = {improved}", flush=True)
+        print(
+            f"  归因: 短板(top1/3) Δ={top_delta:+.3f}  非短板(bot1/3) Δ={bot_delta:+.3f}  "
+            f"改善归因 = {improved}",
+            flush=True,
+        )
 
-        check(f"Round {r} A3a: judge NLL 总均值不暴涨（|Δ|<0.1）",
-              abs(mean_r - mean0) < 0.1, f"|Δ|={abs(mean_r - mean0):.3f}")
-        check(f"Round {r} A3b: 归因正确（短板 Δ < 非短板 Δ）",
-              improved, f"top={top_delta:+.3f} bot={bot_delta:+.3f}")
-        check(f"Round {r} A3c: body max|Δ|<1.5",
-              max_body_delta < 1.5, f"max|Δ|={max_body_delta:.3f}")
+        check(
+            f"Round {r} A3a: judge NLL 总均值不暴涨（|Δ|<0.1）",
+            abs(mean_r - mean0) < 0.1,
+            f"|Δ|={abs(mean_r - mean0):.3f}",
+        )
+        check(
+            f"Round {r} A3b: 归因正确（短板 Δ < 非短板 Δ）",
+            improved,
+            f"top={top_delta:+.3f} bot={bot_delta:+.3f}",
+        )
+        check(
+            f"Round {r} A3c: body max|Δ|<1.5", max_body_delta < 1.5, f"max|Δ|={max_body_delta:.3f}"
+        )
 
         history[f"round_{r}"] = {
             "judge_nlls": nlls_r,
@@ -281,8 +311,10 @@ def main():
         }
 
     print("\n" + "=" * 64, flush=True)
-    print(f"A3 多轮稳定版 终判: {passed} PASS / {failed} FAIL（{N_ROUNDS} 轮, decay={DECAY}）",
-          flush=True)
+    print(
+        f"A3 多轮稳定版 终判: {passed} PASS / {failed} FAIL（{N_ROUNDS} 轮, decay={DECAY}）",
+        flush=True,
+    )
     print("=" * 64, flush=True)
 
     attribution_pass_count = sum(1 for _, _, _, ok in a3b_evidence if ok)
@@ -292,21 +324,30 @@ def main():
     print(f"最终漂移 |Δ|={final_drift:.3f}", flush=True)
 
     if completed_rounds == N_ROUNDS:
-        check("A3d: 自我维持（全部 8 轮无崩溃、无 NaN）", True,
-              f"completed_rounds={completed_rounds}/{N_ROUNDS}")
+        check(
+            "A3d: 自我维持（全部 8 轮无崩溃、无 NaN）",
+            True,
+            f"completed_rounds={completed_rounds}/{N_ROUNDS}",
+        )
     else:
-        check("A3d: 自我维持（全部 8 轮无崩溃、无 NaN）", False,
-              f"completed_rounds={completed_rounds}/{N_ROUNDS}")
+        check(
+            "A3d: 自我维持（全部 8 轮无崩溃、无 NaN）",
+            False,
+            f"completed_rounds={completed_rounds}/{N_ROUNDS}",
+        )
 
     if DECAY < 1.0 and completed_rounds > 0:
         lora_l2_means = []
         for layer_dict in a3e_lora_l2:
             lora_l2_means.append(float(np.mean(list(layer_dict.values()))))
-        is_monotonic_down = all(lora_l2_means[i] <= lora_l2_means[i - 1] + 1e-6
-                                for i in range(1, len(lora_l2_means)))
-        check("A3e: LoRA L2 衰减生效（per-round 平均单调下降）",
-              is_monotonic_down,
-              f"per_round_avg={['%.3f' % x for x in lora_l2_means]}")
+        is_monotonic_down = all(
+            lora_l2_means[i] <= lora_l2_means[i - 1] + 1e-6 for i in range(1, len(lora_l2_means))
+        )
+        check(
+            "A3e: LoRA L2 衰减生效（per-round 平均单调下降）",
+            is_monotonic_down,
+            f"per_round_avg={['%.3f' % x for x in lora_l2_means]}",
+        )
 
     attribution_pass = attribution_pass_count >= 6
     drift_ok = final_drift is not None and final_drift < 0.1

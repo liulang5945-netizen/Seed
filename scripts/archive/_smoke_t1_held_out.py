@@ -7,6 +7,7 @@
 4. 不同 seed → 不同分桶
 5. 空列表安全处理
 """
+
 from __future__ import annotations
 
 import os

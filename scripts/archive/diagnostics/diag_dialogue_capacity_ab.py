@@ -10,6 +10,7 @@
 该诊断只做推理，不训练、不写 checkpoint，用于区分单体容量瓶颈与群体
 融合/解码瓶颈。
 """
+
 from __future__ import annotations
 
 import json
@@ -21,7 +22,6 @@ import torch
 
 from neuroplex.loader import assemble_cortex
 from neuroplex.resonance.dialogue_format import build_dialogue_prompt
-
 
 DIALOGUE_IDS = [
     "zh_aug0_dialogue",

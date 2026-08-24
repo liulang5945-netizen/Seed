@@ -95,9 +95,7 @@ class MemoryState:
         return cls(
             activity=payload["activity"].detach().to(device).clone(),
             trace=payload["trace"].detach().to(device).clone(),
-            cortical_feedback=(
-                payload["cortical_feedback"].detach().to(device).clone()
-            ),
+            cortical_feedback=(payload["cortical_feedback"].detach().to(device).clone()),
             threshold=payload["threshold"].detach().to(device).clone(),
             inhibition=float(payload["inhibition"]),
             last_confidence=float(payload["last_confidence"]),
@@ -142,9 +140,7 @@ class PendingAction:
             action_symbol=int(payload["action_symbol"]),
             available_actions=tuple(int(value) for value in payload["available_actions"]),
             context=payload["context"].detach().to(device).clone(),
-            policy_probabilities=(
-                payload["policy_probabilities"].detach().to(device).clone()
-            ),
+            policy_probabilities=(payload["policy_probabilities"].detach().to(device).clone()),
         )
 
 
@@ -191,9 +187,7 @@ class PendingExperience:
             tick=int(payload["tick"]),
             action_symbol=int(payload["action_symbol"]),
             reward=float(payload["reward"]),
-            cortical_context=(
-                payload["cortical_context"].detach().to(device).clone()
-            ),
+            cortical_context=(payload["cortical_context"].detach().to(device).clone()),
             episode_id=str(payload["episode_id"]),
             provenance=str(payload["provenance"]),
             learn_memory=bool(payload["learn_memory"]),
@@ -223,13 +217,9 @@ class TaijiState:
             motor_context=self.motor_context.detach().clone(),
             motor_probabilities=self.motor_probabilities.detach().clone(),
             last_symbol=None if self.last_symbol is None else int(self.last_symbol),
-            pending_action=(
-                None if self.pending_action is None else self.pending_action.clone()
-            ),
+            pending_action=(None if self.pending_action is None else self.pending_action.clone()),
             pending_experience=(
-                None
-                if self.pending_experience is None
-                else self.pending_experience.clone()
+                None if self.pending_experience is None else self.pending_experience.clone()
             ),
         )
 
@@ -244,14 +234,10 @@ class TaijiState:
             "motor_probabilities": self.motor_probabilities.detach().cpu().clone(),
             "last_symbol": self.last_symbol,
             "pending_action": (
-                None
-                if self.pending_action is None
-                else self.pending_action.to_payload()
+                None if self.pending_action is None else self.pending_action.to_payload()
             ),
             "pending_experience": (
-                None
-                if self.pending_experience is None
-                else self.pending_experience.to_payload()
+                None if self.pending_experience is None else self.pending_experience.to_payload()
             ),
         }
 
@@ -264,31 +250,23 @@ class TaijiState:
             tick=int(payload["tick"]),
             episode_id=str(payload["episode_id"]),
             regions=tuple(
-                RegionState.from_payload(region, device=device)
-                for region in payload["regions"]
+                RegionState.from_payload(region, device=device) for region in payload["regions"]
             ),
             memory=MemoryState.from_payload(payload["memory"], device=device),
             motor_context=payload["motor_context"].detach().to(device).clone(),
-            motor_probabilities=(
-                payload["motor_probabilities"].detach().to(device).clone()
-            ),
+            motor_probabilities=(payload["motor_probabilities"].detach().to(device).clone()),
             last_symbol=(
-                None if payload.get("last_symbol") is None
-                else int(payload["last_symbol"])
+                None if payload.get("last_symbol") is None else int(payload["last_symbol"])
             ),
             pending_action=(
                 None
                 if payload.get("pending_action") is None
-                else PendingAction.from_payload(
-                    payload["pending_action"], device=device
-                )
+                else PendingAction.from_payload(payload["pending_action"], device=device)
             ),
             pending_experience=(
                 None
                 if payload.get("pending_experience") is None
-                else PendingExperience.from_payload(
-                    payload["pending_experience"], device=device
-                )
+                else PendingExperience.from_payload(payload["pending_experience"], device=device)
             ),
         )
 

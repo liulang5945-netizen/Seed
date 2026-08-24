@@ -13,6 +13,7 @@
 Usage:
     python scripts/training/verify_mm_ensemble_train.py
 """
+
 from __future__ import annotations
 
 import os
@@ -29,8 +30,11 @@ import torch
 def main():
     print("=== Step 1: assemble_cortex ===")
     from taiji.loader import assemble_cortex
+
     cortex, tokenizer, modules = assemble_cortex(
-        neurons_dir="data/neurons", device="cpu", max_rounds=2,
+        neurons_dir="data/neurons",
+        device="cpu",
+        max_rounds=2,
     )
     print(f"Neurons: {list(cortex.neurons.keys())}")
     print(f"Modules: {list(modules.keys())}")
@@ -57,6 +61,7 @@ def main():
     print()
     print("=== Step 3: Build SleepEngine + synthetic image sample ===")
     from taiji.life.sleep_engine import SleepEngine
+
     sleep = SleepEngine()
     sleep.set_brain_interfaces(cortex=cortex)
 

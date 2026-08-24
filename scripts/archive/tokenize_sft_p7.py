@@ -21,7 +21,9 @@ from typing import Dict, List
 import torch
 
 # 添加项目根目录到 path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 from neuroplex.resonance.translator import TokenizerHub
 
@@ -111,16 +113,18 @@ def tokenize_domain(
     labels = torch.tensor(all_labels, dtype=torch.long)
 
     # 验证
-    assert input_ids.shape == (len(all_input_ids), seq_len), \
-        f"input_ids shape mismatch: {input_ids.shape}"
-    assert labels.shape == (len(all_labels), seq_len), \
-        f"labels shape mismatch: {labels.shape}"
+    assert input_ids.shape == (
+        len(all_input_ids),
+        seq_len,
+    ), f"input_ids shape mismatch: {input_ids.shape}"
+    assert labels.shape == (len(all_labels), seq_len), f"labels shape mismatch: {labels.shape}"
     # prompt 位置 label 应为 -100
-    assert (labels[:, 0] == IGNORE_LABEL).all(), \
-        "first position should be prompt (label=-100)"
+    assert (labels[:, 0] == IGNORE_LABEL).all(), "first position should be prompt (label=-100)"
 
-    print(f"  [{domain}] {len(all_input_ids)} samples, "
-          f"input_ids={input_ids.shape}, labels={labels.shape}")
+    print(
+        f"  [{domain}] {len(all_input_ids)} samples, "
+        f"input_ids={input_ids.shape}, labels={labels.shape}"
+    )
 
     return {"input_ids": input_ids, "labels": labels}
 
@@ -128,10 +132,12 @@ def tokenize_domain(
 def main():
     parser = argparse.ArgumentParser(description="P8-2: tokenize SFT data with domain tokenizers")
     parser.add_argument("--seq-len", type=int, default=SEQ_LEN, help="max sequence length")
-    parser.add_argument("--samples", type=int, default=None,
-                        help="max samples per domain (None=all)")
-    parser.add_argument("--input", type=str, default="data/sft/sft_datasets.pt",
-                        help="input raw SFT data path")
+    parser.add_argument(
+        "--samples", type=int, default=None, help="max samples per domain (None=all)"
+    )
+    parser.add_argument(
+        "--input", type=str, default="data/sft/sft_datasets.pt", help="input raw SFT data path"
+    )
     parser.add_argument("--output-dir", type=str, default=OUTPUT_DIR, help="output directory")
     args = parser.parse_args()
 
@@ -179,7 +185,7 @@ def main():
 
         samples = domain_data[domain]
         if args.samples and len(samples) > args.samples:
-            samples = samples[:args.samples]
+            samples = samples[: args.samples]
 
         result = tokenize_domain(hub, domain, samples, seq_len=args.seq_len)
 

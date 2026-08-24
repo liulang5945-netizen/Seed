@@ -4,6 +4,7 @@
 只测试 ``zh_aug2_dialogue``，使用原始混合 dialogue 数据和 corrected holdout evaluator；
 与当前 fine-tune 入口唯一差异是 shared embedding 不参与优化。不会写入 checkpoint。
 """
+
 from __future__ import annotations
 
 import gc
@@ -12,7 +13,9 @@ import logging
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -31,7 +34,6 @@ from scripts.training.utils import (
     make_wsd_scheduler,
     split_train_eval,
 )
-
 
 NEURON_ID = "zh_aug2_dialogue"
 MAX_TEXTS = 100000
@@ -94,7 +96,9 @@ def main() -> None:
     losses = []
     for step in range(STEPS):
         batch_start = (step * BATCH_SIZE) % len(train_texts)
-        batch = [train_texts[(batch_start + offset) % len(train_texts)] for offset in range(BATCH_SIZE)]
+        batch = [
+            train_texts[(batch_start + offset) % len(train_texts)] for offset in range(BATCH_SIZE)
+        ]
         optimizer.zero_grad()
         loss = _loss(neuron, shared, batch, domain_sp, general_sp)
         loss.backward()

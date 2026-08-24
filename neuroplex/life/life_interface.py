@@ -14,7 +14,6 @@ import logging
 from typing import Dict, List, Optional, Any, Callable
 from datetime import datetime
 from dataclasses import dataclass, asdict
-import json
 
 logger = logging.getLogger("ThreadSafeLifeInterface")
 
@@ -22,6 +21,7 @@ logger = logging.getLogger("ThreadSafeLifeInterface")
 @dataclass
 class LifeStateSnapshot:
     """生命状态快照（用于线程安全的状态读取）"""
+
     timestamp: str
     hunger: float
     fatigue: float
@@ -38,16 +38,16 @@ class LifeStateSnapshot:
 class ThreadSafeLifeInterface:
     """
     TaijiCore 生命系统的线程安全API接口
-    
+
     提供对生命系统各引擎的原子性访问，确保并发操作的一致性。
-    
+
     使用示例：
         interface = ThreadSafeLifeInterface()
-        
+
         # 同步接口
         state = interface.get_life_state()
         interface.feed()
-        
+
         # 异步接口
         await interface.async_sleep(duration=3600)
         await interface.async_play()
@@ -56,7 +56,7 @@ class ThreadSafeLifeInterface:
     def __init__(self, scheduler=None):
         """
         初始化线程安全生命接口
-        
+
         Args:
             scheduler: 可选的life_scheduler实例，若为None则延迟初始化
         """
@@ -64,11 +64,11 @@ class ThreadSafeLifeInterface:
         self._lock = threading.RLock()  # 统一互斥锁，同步和异步方法共用
         self._activity_log: List[str] = []
         self._event_handlers: Dict[str, List[Callable]] = {
-            'on_feed': [],
-            'on_sleep': [],
-            'on_play': [],
-            'on_evolve': [],
-            'on_stress': [],
+            "on_feed": [],
+            "on_sleep": [],
+            "on_play": [],
+            "on_evolve": [],
+            "on_stress": [],
         }
 
         logger.info("ThreadSafeLifeInterface initialized")
@@ -78,7 +78,7 @@ class ThreadSafeLifeInterface:
     def get_life_state(self) -> LifeStateSnapshot:
         """
         原子性地读取当前生命状态
-        
+
         Returns:
             LifeStateSnapshot: 包含所有需求状态的快照
         """
@@ -126,7 +126,7 @@ class ThreadSafeLifeInterface:
                 action = f"feed(amount={amount})"
                 self._log_action(action)
                 if success:
-                    self._trigger_event('on_feed', amount)
+                    self._trigger_event("on_feed", amount)
                 logger.info(f"Feed operation {'successful' if success else 'failed'}: {action}")
                 return success
             except Exception as e:
@@ -155,7 +155,7 @@ class ThreadSafeLifeInterface:
                 action = f"sleep(duration={duration}s)"
                 self._log_action(action)
                 if success:
-                    self._trigger_event('on_sleep', duration)
+                    self._trigger_event("on_sleep", duration)
                 logger.info(f"Sleep operation {'successful' if success else 'failed'}: {action}")
                 return success
             except Exception as e:
@@ -184,7 +184,7 @@ class ThreadSafeLifeInterface:
                 action = f"play(enjoyment={enjoyment})"
                 self._log_action(action)
                 if success:
-                    self._trigger_event('on_play', enjoyment)
+                    self._trigger_event("on_play", enjoyment)
                 logger.info(f"Play operation {'successful' if success else 'failed'}: {action}")
                 return success
             except Exception as e:
@@ -194,10 +194,10 @@ class ThreadSafeLifeInterface:
     def evolve(self, improvement: Dict[str, float]) -> bool:
         """
         原子性地执行进化操作（改进多个需求指标）
-        
+
         Args:
             improvement: 改进字典，如 {'hunger': -10, 'stress': -5}
-            
+
         Returns:
             bool: 操作是否成功
         """
@@ -216,7 +216,7 @@ class ThreadSafeLifeInterface:
 
                 action = f"evolve({improvement})"
                 self._log_action(action)
-                self._trigger_event('on_evolve', improvement)
+                self._trigger_event("on_evolve", improvement)
                 logger.info(f"Evolution successful: {action}")
                 return True
             except Exception as e:
@@ -226,10 +226,10 @@ class ThreadSafeLifeInterface:
     def apply_stress(self, stress_level: float = 10.0) -> bool:
         """
         原子性地应用压力
-        
+
         Args:
             stress_level: 施加的压力等级 (0-100)
-            
+
         Returns:
             bool: 操作是否成功
         """
@@ -242,7 +242,7 @@ class ThreadSafeLifeInterface:
                 self._scheduler.needs.stress = min(100, self._scheduler.needs.stress + stress_level)
                 action = f"apply_stress(level={stress_level})"
                 self._log_action(action)
-                self._trigger_event('on_stress', stress_level)
+                self._trigger_event("on_stress", stress_level)
                 logger.info(f"Stress applied: {action}")
                 return True
             except Exception as e:
@@ -286,7 +286,7 @@ class ThreadSafeLifeInterface:
     def on_event(self, event_name: str, handler: Callable) -> None:
         """
         注册事件处理器
-        
+
         支持的事件：on_feed, on_sleep, on_play, on_evolve, on_stress
         """
         if event_name in self._event_handlers:
@@ -337,7 +337,7 @@ class ThreadSafeLifeInterface:
     def set_scheduler(self, scheduler) -> None:
         """
         设置life_scheduler实例（用于延迟初始化）
-        
+
         Args:
             scheduler: life_scheduler实例
         """
@@ -376,8 +376,8 @@ def set_global_scheduler(scheduler) -> None:
 
 
 __all__ = [
-    'ThreadSafeLifeInterface',
-    'LifeStateSnapshot',
-    'get_global_interface',
-    'set_global_scheduler',
+    "ThreadSafeLifeInterface",
+    "LifeStateSnapshot",
+    "get_global_interface",
+    "set_global_scheduler",
 ]

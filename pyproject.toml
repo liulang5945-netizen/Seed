@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "seed"
-version = "0.1.0"
+version = "1.6.0"
 description = "Seed model built on the native Taiji predictive substrate"
 readme = "README.md"
 license = {text = "Apache-2.0"}
@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "httpx", "black", "ruff", "tomli>=2.0.0; python_version < '3.11'"]
+dev = ["pytest", "pytest-cov", "httpx", "black", "ruff", "tomli>=2.0.0; python_version < '3.11'"]
 legacy = [
     "transformers>=4.40.0,<5.0.0",
     "huggingface_hub>=0.20.0,<1.0.0",
@@ -62,12 +62,15 @@ seed-legacy-desktop = "desktop.main:main"
 include = ["seed*", "taiji*", "neuroplex*", "api*"]
 
 [tool.pytest.ini_options]
+testpaths = ["tests"]
 addopts = [
     "-p",
     "no:cacheprovider",
 ]
 markers = [
     "slow: long-running integration tests",
+    "reset_state: reset app_state singleton before/after each test function",
+    "benchmark: performance baseline tests (latency/throughput regression guards)",
 ]
 cache_dir = ".seed_test_tmp/pytest_cache"
 norecursedirs = [
@@ -78,4 +81,51 @@ norecursedirs = [
     "tmp*",
     ".tmp*",
     "__pycache__",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+exclude = [
+    "_libs",
+    "build",
+    "dist",
+    "node_modules",
+    ".git",
+    "__pycache__",
+    "scripts/archive",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W"]
+ignore = ["E501", "E402", "E741"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+extend-exclude = "/(_libs|build|dist|node_modules|scripts/archive)/"
+
+[tool.coverage.run]
+source = ["seed", "taiji", "neuroplex", "api"]
+omit = ["tests/*", "scripts/*"]
+
+[tool.coverage.report]
+show_missing = true
+# F02: 覆盖率门禁——当前基线约 19%，设为 17% 防止退化；随覆盖率提升逐步上调。
+# seed/taiji 核心模块已达 75-100%，neuroplex/tools 与 api 路由待补齐。
+fail_under = 17
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+check_untyped_defs = true
+ignore_missing_imports = true
+exclude = [
+    "_libs/",
+    "build/",
+    "dist/",
+    "tests/",
+    "scripts/",
 ]

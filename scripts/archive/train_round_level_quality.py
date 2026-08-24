@@ -27,6 +27,7 @@
         --init-collab data/neurons/collab_v3_c16.ckpt.pt \
         --save-name collab_v3_c20
 """
+
 from __future__ import annotations
 
 import argparse
@@ -38,21 +39,28 @@ import time
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 
 from neuroplex.resonance import ResonanceEnsemble, ResonanceField, ResonanceNeuron
 from neuroplex.resonance.translator import TokenizerHub
 from scripts.training.utils import (
-    load_general_tokenizer, create_shared_embedding,
+    load_general_tokenizer,
+    create_shared_embedding,
     load_dialogue_texts_multi,
     OUTPUT_DIR,
 )
 from scripts.training.experiment_config import SFT_ANSWER_MARKER
 from scripts.training.train_cross_domain_collab import (
-    load_neuron, load_shared_lm_head, load_shared_embedding,
-    load_tokenizer_for_vocab, TeeLogger, LOG_DIR,
+    load_neuron,
+    load_shared_lm_head,
+    load_shared_embedding,
+    load_tokenizer_for_vocab,
+    TeeLogger,
+    LOG_DIR,
 )
 
 DEVICE = "cpu"
@@ -83,7 +91,8 @@ def build_rounds(
         print(f"  [{dom}] SFT 回合 {len([1 for r in rounds if r[2] == dom])} 条", flush=True)
     if dialogue_ids:
         texts = load_dialogue_texts_multi(
-            dialogue_data_dir, max_texts=dialogue_max_texts, max_answer_chars=150)
+            dialogue_data_dir, max_texts=dialogue_max_texts, max_answer_chars=150
+        )
         n_dia = 0
         for text in texts:
             idx = text.find(SFT_ANSWER_MARKER)
@@ -121,7 +130,7 @@ def batch_rounds(
             p_ids = p_ids[-keep_p:] if keep_p > 0 else []
         ids = p_ids + a_ids + [eos]
         am = torch.zeros(len(ids), dtype=torch.bool)
-        am[len(p_ids):len(p_ids) + len(a_ids) + 1] = True  # answer + EOS
+        am[len(p_ids) : len(p_ids) + len(a_ids) + 1] = True  # answer + EOS
         all_ids.append(torch.tensor(ids, dtype=torch.long))
         all_am.append(am)
 
@@ -130,8 +139,8 @@ def batch_rounds(
     padded_ids = torch.full((B, L), -100, dtype=torch.long)
     padded_am = torch.zeros(B, L, dtype=torch.bool)
     for b in range(B):
-        padded_ids[b, :len(all_ids[b])] = all_ids[b]
-        padded_am[b, :len(all_am[b])] = all_am[b]
+        padded_ids[b, : len(all_ids[b])] = all_ids[b]
+        padded_am[b, : len(all_am[b])] = all_am[b]
 
     neuron_embeddings = {}
     for nid, emb in shared_embeddings.items():
@@ -172,9 +181,16 @@ def main():
     parser = argparse.ArgumentParser(description="C20 回合级质量监督训练")
     parser.add_argument("--neuron-dir", default=os.path.join(OUTPUT_DIR))
     parser.add_argument("--domains", default="code,math,zh,en")
-    parser.add_argument("--data-dir", default=os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
-        "data", "sft"))
+    parser.add_argument(
+        "--data-dir",
+        default=os.path.join(
+            os.path.dirname(
+                os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            ),
+            "data",
+            "sft",
+        ),
+    )
     parser.add_argument("--epochs", type=int, default=2)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--batch-size", type=int, default=2)
@@ -183,24 +199,50 @@ def main():
     parser.add_argument("--dialogue-ids", default="")
     parser.add_argument("--dialogue-dir", default=OUTPUT_DIR)
     parser.add_argument("--dialogue-max-texts", type=int, default=300)
-    parser.add_argument("--dialogue-data-dir", default=os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
-        "data", "simple_zh"))
-    parser.add_argument("--contrastive-weight", type=float, default=0.5,
-                        help="回合级质量监督权重（KL 对齐 answer-only NLL z-score）")
-    parser.add_argument("--init-collab", default=None,
-                        help="C16 训练产物 collab_v3_c16.ckpt.pt：warm start quality_head")
+    parser.add_argument(
+        "--dialogue-data-dir",
+        default=os.path.join(
+            os.path.dirname(
+                os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            ),
+            "data",
+            "simple_zh",
+        ),
+    )
+    parser.add_argument(
+        "--contrastive-weight",
+        type=float,
+        default=0.5,
+        help="回合级质量监督权重（KL 对齐 answer-only NLL z-score）",
+    )
+    parser.add_argument(
+        "--init-collab",
+        default=None,
+        help="C16 训练产物 collab_v3_c16.ckpt.pt：warm start quality_head",
+    )
     parser.add_argument("--save-name", default="collab_v3_c20")
     parser.add_argument("--device", default="cpu")
     # C23-C：可微相位动力学（PhasorDynamics）——显式启用
-    parser.add_argument("--enable-phasor", action="store_true",
-                        help="启用可微相位动力学（PhasorDynamics）：相位绑结端到端可学")
-    parser.add_argument("--phasor-binding-scale", type=float, default=0.3,
-                        help="相位绑定强度 β（scores/场写入 × (1+β·binding)）")
-    parser.add_argument("--phasor-lr", type=float, default=1e-3,
-                        help="相位切向演化学习率（task_gradient_step）")
-    parser.add_argument("--phasor-weight", type=float, default=1.0,
-                        help="phase-binding loss 权重（绑定 vs 共振贡献对齐，驱动 ω/K 学习）")
+    parser.add_argument(
+        "--enable-phasor",
+        action="store_true",
+        help="启用可微相位动力学（PhasorDynamics）：相位绑结端到端可学",
+    )
+    parser.add_argument(
+        "--phasor-binding-scale",
+        type=float,
+        default=0.3,
+        help="相位绑定强度 β（scores/场写入 × (1+β·binding)）",
+    )
+    parser.add_argument(
+        "--phasor-lr", type=float, default=1e-3, help="相位切向演化学习率（task_gradient_step）"
+    )
+    parser.add_argument(
+        "--phasor-weight",
+        type=float,
+        default=1.0,
+        help="phase-binding loss 权重（绑定 vs 共振贡献对齐，驱动 ω/K 学习）",
+    )
     args = parser.parse_args()
 
     global DEVICE
@@ -209,7 +251,9 @@ def main():
     dialogue_ids = [d.strip() for d in (args.dialogue_ids or "").split(",") if d.strip()]
 
     os.makedirs(LOG_DIR, exist_ok=True)
-    log_path = os.path.join(LOG_DIR, f"train_round_level_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
+    log_path = os.path.join(
+        LOG_DIR, f"train_round_level_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+    )
     sys.stdout = TeeLogger(log_path)
 
     print("=" * 60, flush=True)
@@ -229,14 +273,19 @@ def main():
     # 无判定头 → 共享 foundation_v1_general 的 general 256K 头（C20 信号链）。
     judge_fallback = None
     if not os.path.exists(os.path.join(args.neuron_dir, "shared_lm_head.pt")):
-        gen_head_path = os.path.join(os.path.dirname(OUTPUT_DIR), "foundation_v1_general", "shared_lm_head.pt")
+        gen_head_path = os.path.join(
+            os.path.dirname(OUTPUT_DIR), "foundation_v1_general", "shared_lm_head.pt"
+        )
         if os.path.exists(gen_head_path):
             judge_fallback = torch.load(gen_head_path, map_location=DEVICE, weights_only=False)
     for nid in domains:
         n = load_neuron(nid, args.neuron_dir, DEVICE, shared_lm_head=shared_lm_head)
         # C24 双头：从 ckpt 恢复 judge_lm_head（general 256K 判定头）
-        ck = torch.load(os.path.join(args.neuron_dir, f"neuron_{nid}.pt"),
-                        map_location=DEVICE, weights_only=False)
+        ck = torch.load(
+            os.path.join(args.neuron_dir, f"neuron_{nid}.pt"),
+            map_location=DEVICE,
+            weights_only=False,
+        )
         jh = ck.get("judge_lm_head_state")
         if jh is not None:
             # 维度从 ckpt 权重 shape 推断（general 词表实例值，非硬编码 256000）
@@ -244,7 +293,9 @@ def main():
             jh_head.weight.data.copy_(jh)
             n.judge_lm_head = jh_head
         elif judge_fallback is not None:
-            jh_head = torch.nn.Linear(n.config.hidden_size, judge_fallback["weight"].shape[0], bias=False).to(DEVICE)
+            jh_head = torch.nn.Linear(
+                n.config.hidden_size, judge_fallback["weight"].shape[0], bias=False
+            ).to(DEVICE)
             jh_head.weight.data.copy_(judge_fallback["weight"])
             n.judge_lm_head = jh_head
         neurons[nid] = n
@@ -271,8 +322,11 @@ def main():
                 # neuron，无法注入 512 维 general 判定头 → 跳过注入，该 neuron 的
                 # per_neuron_nll 走 C20 已验证的 general 空间投影路径（ensemble 内
                 # len(final_judge_logits)!=N 时自动回退，见 forward_train）。
-                print(f"  ⚠️ {nid} hidden={cfg.hidden_size} ≠ judge head {jh_w.shape[1]}"
-                      f"，跳过判定头注入（C20 general 投影路径兜底）", flush=True)
+                print(
+                    f"  ⚠️ {nid} hidden={cfg.hidden_size} ≠ judge head {jh_w.shape[1]}"
+                    f"，跳过判定头注入（C20 general 投影路径兜底）",
+                    flush=True,
+                )
         neurons[nid] = n
         emb = create_shared_embedding(DEVICE)
         ses = ck.get("shared_embedding_state", {})
@@ -284,7 +338,9 @@ def main():
     print(f"  阵容: {list(neurons.keys())}", flush=True)
     # C24 双头：确认判定头注入
     n_judge = sum(1 for n in neurons.values() if getattr(n, "judge_lm_head", None) is not None)
-    print(f"  [C24 双头] judge_lm_head（general 256K 判定头）: {n_judge}/{len(neurons)}", flush=True)
+    print(
+        f"  [C24 双头] judge_lm_head（general 256K 判定头）: {n_judge}/{len(neurons)}", flush=True
+    )
 
     # warm start：C16 collab 产物的 quality_head
     if args.init_collab and os.path.exists(args.init_collab):
@@ -295,7 +351,10 @@ def main():
             if nid in hs and getattr(neuron, "quality_head", None) is not None:
                 neuron.quality_head.load_state_dict(hs[nid])
                 loaded += 1
-        print(f"  [warm start] quality_head 从 {args.init_collab} 加载 {loaded}/{len(neurons)}", flush=True)
+        print(
+            f"  [warm start] quality_head 从 {args.init_collab} 加载 {loaded}/{len(neurons)}",
+            flush=True,
+        )
     else:
         print("  [warm start] 未提供 init-collab → quality_head 随机初始化", flush=True)
 
@@ -305,7 +364,9 @@ def main():
     for dom in domains:
         hub.register_domain(dom, load_tokenizer_for_vocab(dom, neurons[dom].config.vocab_size))
     if dialogue_ids:
-        hub.register_domain("zh", load_tokenizer_for_vocab("zh", neurons[dialogue_ids[0]].config.vocab_size))
+        hub.register_domain(
+            "zh", load_tokenizer_for_vocab("zh", neurons[dialogue_ids[0]].config.vocab_size)
+        )
     general_sp = load_general_tokenizer()
     hub.register_domain("general", general_sp)
 
@@ -326,6 +387,7 @@ def main():
     phasor = None
     if args.enable_phasor:
         from neuroplex.resonance.phasor import PhasorDynamics
+
         phasor = PhasorDynamics(binding_scale=args.phasor_binding_scale)
         domain_to_nids = {}
         for nid in neurons.keys():
@@ -335,8 +397,13 @@ def main():
         phasor.to(args.device)
         print(f"  [phasor] PhasorDynamics wired（{len(phasor.list_phases())} phases）", flush=True)
 
-    qh_params = [p for n in neurons.values() if getattr(n, "quality_head", None) is not None
-                 for p in n.quality_head.parameters() if p.requires_grad]
+    qh_params = [
+        p
+        for n in neurons.values()
+        if getattr(n, "quality_head", None) is not None
+        for p in n.quality_head.parameters()
+        if p.requires_grad
+    ]
     ph_params = []
     if phasor is not None:
         # ω/K 进 optimizer（可学）；phasors 用 task_gradient_step 切向更新（不进 optimizer，
@@ -351,7 +418,10 @@ def main():
     max_field_dim = max(n.config.field_dim for n in neurons.values())
     field = ResonanceField(dim=max_field_dim)
     ensemble = ResonanceEnsemble(
-        neurons, field, max_rounds=2, geometry=None,
+        neurons,
+        field,
+        max_rounds=2,
+        geometry=None,
         gamma_oscillator=phasor,  # C23-C：可微相位动力学（None = 标量行为不变）
     )
     ensemble.set_tokenizer_hub(hub)
@@ -361,8 +431,13 @@ def main():
     #    （转译，NLL 基线巨大）被 gate 全排除，监督失效）
     print("\n[5] 加载回合数据...", flush=True)
     rounds = build_rounds(
-        domains, args.data_dir, args.max_texts_per_domain,
-        dialogue_ids, args.dialogue_data_dir, args.dialogue_max_texts)
+        domains,
+        args.data_dir,
+        args.max_texts_per_domain,
+        dialogue_ids,
+        args.dialogue_data_dir,
+        args.dialogue_max_texts,
+    )
     by_source: Dict[str, List[Tuple[str, str, str]]] = {}
     for r in rounds:
         by_source.setdefault(r[2], []).append(r)
@@ -388,9 +463,10 @@ def main():
         for source in sources:
             lst = by_source[source]
             for i in range(0, len(lst) - args.batch_size, args.batch_size):
-                batch = lst[i:i + args.batch_size]
+                batch = lst[i : i + args.batch_size]
                 neuron_embeddings, targets, answer_mask = batch_rounds(
-                    batch, general_sp, shared_embeddings, args.seq_len)
+                    batch, general_sp, shared_embeddings, args.seq_len
+                )
                 # C24 双头（2026-08-09）：判定监督回退 C20 general 空间投影 NLL——
                 # 各 neuron 的 judge_lm_head（general 256K）在共享空间算回合 NLL，
                 # 天然可比（native NLL 不可比：en 16K 英文词表对英文回合 NLL 恒低
@@ -426,16 +502,21 @@ def main():
                     nll = result.get("per_neuron_nll")
                     nll_str = "N/A"
                     if nll is not None:
-                        nll_str = ", ".join(f"{nid}={float(v.detach()):.2f}"
-                                            for nid, v in zip(neurons.keys(), nll))
+                        nll_str = ", ".join(
+                            f"{nid}={float(v.detach()):.2f}" for nid, v in zip(neurons.keys(), nll)
+                        )
                     elapsed = time.time() - epoch_start
-                    print(f"  E{epoch+1}/{args.epochs} [{source}] step {total_steps}: "
-                          f"contrastive={float(result['contrastive_loss'].detach()):.4f} "
-                          f"per-neuron NLL: {nll_str} "
-                          f"(ETA {(elapsed/max(total_steps,1))*(total_steps_per_epoch*args.epochs-total_steps)/60:.1f}min)",
-                          flush=True)
+                    print(
+                        f"  E{epoch+1}/{args.epochs} [{source}] step {total_steps}: "
+                        f"contrastive={float(result['contrastive_loss'].detach()):.4f} "
+                        f"per-neuron NLL: {nll_str} "
+                        f"(ETA {(elapsed/max(total_steps,1))*(total_steps_per_epoch*args.epochs-total_steps)/60:.1f}min)",
+                        flush=True,
+                    )
                     rec = {
-                        "step": total_steps, "epoch": epoch + 1, "source": source,
+                        "step": total_steps,
+                        "epoch": epoch + 1,
+                        "source": source,
                         "contrastive_loss": float(result["contrastive_loss"].detach()),
                     }
                     # C23-C3（2026-08-08）：phase-binding loss 记入训练历史
@@ -446,10 +527,14 @@ def main():
                     loss_history.append(rec)
 
                 if total_steps % 500 == 0:
-                    save_head_checkpoint(ckpt_path, epoch + 1, total_steps, neurons, loss_history, phasor=phasor)
+                    save_head_checkpoint(
+                        ckpt_path, epoch + 1, total_steps, neurons, loss_history, phasor=phasor
+                    )
                     print(f"  [checkpoint] step {total_steps} 已保存", flush=True)
 
-        save_head_checkpoint(ckpt_path, epoch + 1, total_steps, neurons, loss_history, phasor=phasor)
+        save_head_checkpoint(
+            ckpt_path, epoch + 1, total_steps, neurons, loss_history, phasor=phasor
+        )
         print(f"  [Epoch {epoch+1} 完成] 耗时 {(time.time()-epoch_start)/60:.1f} min", flush=True)
 
     print("\n[7] 训练完成。", flush=True)

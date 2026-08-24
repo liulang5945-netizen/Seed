@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """量化 general→domain 对齐中的 domain target 重复绑定。"""
+
 from __future__ import annotations
 
 import json
@@ -7,18 +8,25 @@ import os
 import sys
 from collections import Counter
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 from neuroplex.resonance.translator import _get_token_spans, build_position_alignment
-from scripts.training.utils import load_dialogue_texts_multi, load_domain_tokenizer, load_general_tokenizer
-
+from scripts.training.utils import (
+    load_dialogue_texts_multi,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+)
 
 DATA_DIR = "data/simple_zh"
 SAMPLE_CAP = 10_000
 PHRASE = "是一种基于"
 
 
-def _best_domain_indices(text: str, domain_sp, general_sp) -> tuple[list[int], list[int], list[tuple[int, int]], list[tuple[int, int]], list[int]]:
+def _best_domain_indices(
+    text: str, domain_sp, general_sp
+) -> tuple[list[int], list[int], list[tuple[int, int]], list[tuple[int, int]], list[int]]:
     domain_ids, domain_spans = _get_token_spans(domain_sp, text)
     general_ids, general_spans = _get_token_spans(general_sp, text)
     mapped = []
@@ -61,13 +69,11 @@ def _row(text: str, domain_sp, general_sp) -> dict:
         "general_spans": general_spans,
         "legacy_domain_indices": mapped,
         "legacy_target_pieces": [
-            domain_sp.id_to_piece(domain_ids[index]) if index >= 0 else None
-            for index in mapped
+            domain_sp.id_to_piece(domain_ids[index]) if index >= 0 else None for index in mapped
         ],
         "production_first_occurrence_indices": causal,
         "production_target_pieces": [
-            domain_sp.id_to_piece(domain_ids[index]) if index >= 0 else None
-            for index in causal
+            domain_sp.id_to_piece(domain_ids[index]) if index >= 0 else None for index in causal
         ],
         "legacy_repeated_target_positions": repeated_positions,
     }

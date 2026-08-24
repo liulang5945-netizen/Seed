@@ -73,9 +73,7 @@ class BasisTally:
 
     def record(self, symbol: int, previous) -> None:
         self.bases.setdefault(symbol, []).append(previous[0].trace.detach().clone())
-        self.thresholds.setdefault(symbol, []).append(
-            previous[0].threshold.detach().clone()
-        )
+        self.thresholds.setdefault(symbol, []).append(previous[0].threshold.detach().clone())
 
 
 def _run(checkpoint, cycles: int, *, arm: str) -> tuple[BasisTally, object]:
@@ -145,9 +143,7 @@ def arm_patch(arm: str, tally: BasisTally | None = None):
                 trace=region.trace,
                 prediction=region.prediction,
                 error=region.error,
-                threshold=torch.full_like(
-                    region.threshold, float(self.config.threshold_base)
-                ),
+                threshold=torch.full_like(region.threshold, float(self.config.threshold_base)),
                 inhibition=region.inhibition,
             )
             for region in cleared

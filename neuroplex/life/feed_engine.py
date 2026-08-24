@@ -19,6 +19,7 @@
 4. 进食计划：根据能力短板有针对性地"点菜"
 5. 进食记录：追踪吃了什么、消化了多少
 """
+
 import os
 import json
 import time
@@ -36,12 +37,13 @@ logger = logging.getLogger("FeedEngine")
 @dataclass
 class FeedItem:
     """一次进食记录"""
-    source: str           # 来源类型: "file", "web", "api", "conversation", "knowledge"
-    source_path: str      # 来源路径/URL
-    content_hash: str     # 内容哈希（去重用）
+
+    source: str  # 来源类型: "file", "web", "api", "conversation", "knowledge"
+    source_path: str  # 来源路径/URL
+    content_hash: str  # 内容哈希（去重用）
     quality_score: float  # 营养评分 0~1
-    category: str         # 分类: "code", "knowledge", "conversation", "creative"
-    sample_count: int     # 生成的训练样本数
+    category: str  # 分类: "code", "knowledge", "conversation", "creative"
+    sample_count: int  # 生成的训练样本数
     timestamp: str = ""
     status: str = "pending"  # pending / digested / rejected
 
@@ -53,6 +55,7 @@ class FeedItem:
 @dataclass
 class FeedReport:
     """一次进食的报告"""
+
     timestamp: str
     duration_seconds: float
     items_fed: int = 0
@@ -66,18 +69,21 @@ class FeedReport:
 @dataclass
 class FeedConfig:
     """喂养配置"""
+
     auto_feed_enabled: bool = True
-    feed_interval_hours: float = 2.0     # 每 2 小时喂一次
-    min_quality_score: float = 0.3       # 最低营养评分
-    max_items_per_feed: int = 100        # 每次最多吃多少
-    max_content_length: int = 10000      # 单条内容最大长度
-    dedup_enabled: bool = True           # 去重
-    category_weights: Dict[str, float] = field(default_factory=lambda: {
-        "code": 1.0,
-        "knowledge": 0.8,
-        "conversation": 0.6,
-        "creative": 0.5,
-    })
+    feed_interval_hours: float = 2.0  # 每 2 小时喂一次
+    min_quality_score: float = 0.3  # 最低营养评分
+    max_items_per_feed: int = 100  # 每次最多吃多少
+    max_content_length: int = 10000  # 单条内容最大长度
+    dedup_enabled: bool = True  # 去重
+    category_weights: Dict[str, float] = field(
+        default_factory=lambda: {
+            "code": 1.0,
+            "knowledge": 0.8,
+            "conversation": 0.6,
+            "creative": 0.5,
+        }
+    )
 
 
 class FeedEngine:
@@ -88,12 +94,12 @@ class FeedEngine:
     喂养引擎负责"吃"（收集数据），睡眠引擎负责"消化"（训练模型）。
     """
 
-    def __init__(self, config: Optional[FeedConfig] = None,
-                 data_dir: str = None):
+    def __init__(self, config: Optional[FeedConfig] = None, data_dir: str = None):
         self.config = config or FeedConfig()
         if data_dir is None:
             try:
                 from neuroplex.config import get_taiji_data_path
+
                 data_dir = get_taiji_data_path("feed_data")
             except ImportError:
                 data_dir = "taiji/feed_data"
@@ -167,8 +173,9 @@ class FeedEngine:
 
         return report
 
-    def feed_file(self, file_path: str, category: str = "knowledge",
-                  domain: Optional[str] = None) -> Optional[FeedItem]:
+    def feed_file(
+        self, file_path: str, category: str = "knowledge", domain: Optional[str] = None
+    ) -> Optional[FeedItem]:
         """
         喂态极吃一个文件。
 
@@ -186,11 +193,11 @@ class FeedEngine:
 
         # 多模态文件路由：图片/音频/视频走 feed_multimodal
         ext = os.path.splitext(file_path)[1].lower()
-        if ext in ('.jpg', '.jpeg', '.png', '.gif', '.bmp'):
+        if ext in (".jpg", ".jpeg", ".png", ".gif", ".bmp"):
             return self.feed_multimodal("image", file_path=file_path)
-        elif ext in ('.wav', '.mp3', '.flac', '.ogg'):
+        elif ext in (".wav", ".mp3", ".flac", ".ogg"):
             return self.feed_multimodal("audio", file_path=file_path)
-        elif ext in ('.mp4', '.mov', '.avi', '.webm'):
+        elif ext in (".mp4", ".mov", ".avi", ".webm"):
             return self.feed_multimodal("video", file_path=file_path)
 
         try:
@@ -208,9 +215,13 @@ class FeedEngine:
             logger.warning(f"Failed to feed file {file_path}: {e}")
             return None
 
-    def feed_text(self, text: str, source: str = "manual",
-                  category: str = "knowledge",
-                  domain: Optional[str] = None) -> Optional[FeedItem]:
+    def feed_text(
+        self,
+        text: str,
+        source: str = "manual",
+        category: str = "knowledge",
+        domain: Optional[str] = None,
+    ) -> Optional[FeedItem]:
         """
         直接喂态极一段文字。
 
@@ -224,17 +235,20 @@ class FeedEngine:
             FeedItem 或 None
         """
         return self._process_content(
-            content=text[:self.config.max_content_length],
+            content=text[: self.config.max_content_length],
             source="text",
             source_path=source,
             category=category,
             domain=domain,
         )
 
-    def feed_multimodal(self, modality: str,
-                        data: Optional[torch.Tensor] = None,
-                        file_path: Optional[str] = None,
-                        tokenizer_hub=None) -> Optional[FeedItem]:
+    def feed_multimodal(
+        self,
+        modality: str,
+        data: Optional[torch.Tensor] = None,
+        file_path: Optional[str] = None,
+        tokenizer_hub=None,
+    ) -> Optional[FeedItem]:
         """
         喂态极多模态资料（图片/音频/视频）。
 
@@ -254,6 +268,7 @@ class FeedEngine:
         if tokenizer_hub is None:
             try:
                 from neuroplex.resonance.translator import get_tokenizer_hub
+
                 tokenizer_hub = get_tokenizer_hub()
             except ImportError:
                 logger.warning("TokenizerHub not available")
@@ -327,14 +342,20 @@ class FeedEngine:
         self._content_hashes.add(content_hash)
         self._feed_items.append(item)
 
-        logger.info(f"Fed {modality} sample: {len(token_ids)} tokens, "
-                    f"input={len(sample['input_ids'])}, target={len(sample['target_ids'])}")
+        logger.info(
+            f"Fed {modality} sample: {len(token_ids)} tokens, "
+            f"input={len(sample['input_ids'])}, target={len(sample['target_ids'])}"
+        )
 
         return item
 
-    def feed_directory(self, dir_path: str, extensions: List[str] = None,
-                       category: str = "code",
-                       domain: Optional[str] = None) -> int:
+    def feed_directory(
+        self,
+        dir_path: str,
+        extensions: List[str] = None,
+        category: str = "code",
+        domain: Optional[str] = None,
+    ) -> int:
         """
         喂态极吃一个目录下的所有文件。
 
@@ -356,8 +377,12 @@ class FeedEngine:
 
         for root, dirs, files in os.walk(dir_path):
             # 跳过隐藏目录和常见无用目录
-            dirs[:] = [d for d in dirs if not d.startswith('.') and d not in
-                       {'__pycache__', 'node_modules', '.git', 'venv', 'dist', 'build'}]
+            dirs[:] = [
+                d
+                for d in dirs
+                if not d.startswith(".")
+                and d not in {"__pycache__", "node_modules", ".git", "venv", "dist", "build"}
+            ]
 
             for fname in files:
                 if any(fname.endswith(ext) for ext in extensions):
@@ -426,9 +451,9 @@ class FeedEngine:
             by_domain.setdefault(d, []).append(sample)
         return by_domain
 
-    def feed_from_practice(self, code: str, output: str = "",
-                           success: bool = True,
-                           domain: str = "code") -> Optional[FeedItem]:
+    def feed_from_practice(
+        self, code: str, output: str = "", success: bool = True, domain: str = "code"
+    ) -> Optional[FeedItem]:
         """
         从实践（代码执行/任务完成）中喂养样本（供 limbs 调用）。
 
@@ -488,9 +513,14 @@ class FeedEngine:
 
     # ─── 内部实现 ───────────────────────────────────
 
-    def _process_content(self, content: str, source: str,
-                         source_path: str, category: str,
-                         domain: Optional[str] = None) -> Optional[FeedItem]:
+    def _process_content(
+        self,
+        content: str,
+        source: str,
+        source_path: str,
+        category: str,
+        domain: Optional[str] = None,
+    ) -> Optional[FeedItem]:
         """处理一段内容：评估质量、去重、生成样本（带域标签）"""
         # 去重
         content_hash = hashlib.md5(content.encode()).hexdigest()
@@ -547,7 +577,7 @@ class FeedEngine:
             return 0.0
 
         score = 0.0
-        lines = content.split('\n')
+        lines = content.split("\n")
         non_empty = [l for l in lines if l.strip()]
 
         # 1. 长度合理性 (0~0.3)
@@ -567,12 +597,12 @@ class FeedEngine:
         # 3. 结构化程度 (0~0.2)
         if category == "code":
             # 代码应有缩进
-            indented = sum(1 for l in non_empty if l.startswith(('    ', '\t')))
+            indented = sum(1 for l in non_empty if l.startswith(("    ", "\t")))
             if non_empty:
                 score += (indented / len(non_empty)) * 0.2
         else:
             # 文档应有标题/列表
-            structured = sum(1 for l in non_empty if l.startswith(('#', '-', '*', '1.', '2.')))
+            structured = sum(1 for l in non_empty if l.startswith(("#", "-", "*", "1.", "2.")))
             if non_empty:
                 score += min(structured / len(non_empty), 1.0) * 0.2
 
@@ -587,9 +617,9 @@ class FeedEngine:
 
         return min(1.0, score)
 
-    def _generate_samples(self, content: str, category: str,
-                          source_path: str,
-                          domain: str = "general") -> List[dict]:
+    def _generate_samples(
+        self, content: str, category: str, source_path: str, domain: str = "general"
+    ) -> List[dict]:
         """将内容转换为训练样本（带 domain 标签）"""
         samples = []
 
@@ -605,8 +635,7 @@ class FeedEngine:
 
         return samples
 
-    def _code_to_samples(self, code: str, source_path: str,
-                         domain: str = "general") -> List[dict]:
+    def _code_to_samples(self, code: str, source_path: str, domain: str = "general") -> List[dict]:
         """代码 -> ReAct 训练样本（带 domain 标签）"""
         samples = []
         fname = os.path.basename(source_path)
@@ -623,27 +652,30 @@ class FeedEngine:
             thought = f"这是一个名为 {seg_name} 的代码段，我需要理解它的功能。"
             answer = f"这段代码实现了 {seg_name} 的功能。"
 
-            samples.append({
-                "type": "react",
-                "domain": domain,
-                "text": seg_code,  # 保留原始代码，供 sleep_engine 直接训练使用
-                "task": task,
-                "steps": [{
-                    "thought": thought,
-                    "action": "read_local_file",
-                    "action_args": {"input": source_path},
-                    "observation": seg_code[:500],
-                    "final_answer": answer,
-                }],
-            })
+            samples.append(
+                {
+                    "type": "react",
+                    "domain": domain,
+                    "text": seg_code,  # 保留原始代码，供 sleep_engine 直接训练使用
+                    "task": task,
+                    "steps": [
+                        {
+                            "thought": thought,
+                            "action": "read_local_file",
+                            "action_args": {"input": source_path},
+                            "observation": seg_code[:500],
+                            "final_answer": answer,
+                        }
+                    ],
+                }
+            )
 
         return samples
 
-    def _conversation_to_samples(self, content: str,
-                                 domain: str = "general") -> List[dict]:
+    def _conversation_to_samples(self, content: str, domain: str = "general") -> List[dict]:
         """对话文本 -> 对话训练样本（带 domain 标签）"""
         samples = []
-        lines = content.strip().split('\n')
+        lines = content.strip().split("\n")
 
         messages = []
         for line in lines:
@@ -651,13 +683,13 @@ class FeedEngine:
             if not line:
                 continue
             # 简单解析 "角色: 内容" 格式
-            if ':' in line:
-                parts = line.split(':', 1)
+            if ":" in line:
+                parts = line.split(":", 1)
                 role = parts[0].strip().lower()
                 text = parts[1].strip()
-                if role in ('user', 'human', '用户'):
+                if role in ("user", "human", "用户"):
                     messages.append({"role": "user", "content": text})
-                elif role in ('assistant', 'ai', '助手'):
+                elif role in ("assistant", "ai", "助手"):
                     messages.append({"role": "assistant", "content": text})
 
         if len(messages) >= 2:
@@ -665,58 +697,63 @@ class FeedEngine:
 
         return samples
 
-    def _knowledge_to_samples(self, content: str, source_path: str,
-                              domain: str = "general") -> List[dict]:
+    def _knowledge_to_samples(
+        self, content: str, source_path: str, domain: str = "general"
+    ) -> List[dict]:
         """知识文本 -> 问答训练样本（带 domain 标签）"""
         samples = []
         # 阈值从 30 降至 10：中文句子字符数较短（每个汉字算 1），
         # 30 会过滤掉大多数中文短句，导致经验积累无效。
-        paragraphs = [p.strip() for p in content.split('\n\n') if len(p.strip()) > 10]
+        paragraphs = [p.strip() for p in content.split("\n\n") if len(p.strip()) > 10]
 
         for i, para in enumerate(paragraphs[:5]):  # 最多 5 段
             # 将每段转换为问答对
-            title = para.split('\n')[0].strip('# -')
+            title = para.split("\n")[0].strip("# -")
             task = f"解释以下概念: {title}"
             answer = para[:300]
 
-            samples.append({
-                "type": "react",
-                "domain": domain,
-                "text": para,  # 保留原始文本，供 sleep_engine 直接训练使用
-                "task": task,
-                "steps": [{
-                    "thought": f"让我查阅关于 {title} 的知识。",
-                    "action": "query_knowledge",
-                    "action_args": {"input": title},
-                    "observation": answer,
-                    "final_answer": answer,
-                }],
-            })
+            samples.append(
+                {
+                    "type": "react",
+                    "domain": domain,
+                    "text": para,  # 保留原始文本，供 sleep_engine 直接训练使用
+                    "task": task,
+                    "steps": [
+                        {
+                            "thought": f"让我查阅关于 {title} 的知识。",
+                            "action": "query_knowledge",
+                            "action_args": {"input": title},
+                            "observation": answer,
+                            "final_answer": answer,
+                        }
+                    ],
+                }
+            )
 
         return samples
 
     def _split_code_segments(self, code: str) -> List[tuple]:
         """将代码按函数/类分段，返回 [(name, code), ...]"""
         segments = []
-        lines = code.split('\n')
+        lines = code.split("\n")
         current_name = "module_level"
         current_lines = []
 
         for line in lines:
             stripped = line.lstrip()
-            if stripped.startswith(('def ', 'class ', 'async def ')):
+            if stripped.startswith(("def ", "class ", "async def ")):
                 # 保存上一段
                 if current_lines:
-                    segments.append((current_name, '\n'.join(current_lines)))
+                    segments.append((current_name, "\n".join(current_lines)))
                 # 提取名称
-                parts = stripped.split('(')[0].split()
+                parts = stripped.split("(")[0].split()
                 current_name = parts[-1] if len(parts) > 1 else "unknown"
                 current_lines = [line]
             else:
                 current_lines.append(line)
 
         if current_lines:
-            segments.append((current_name, '\n'.join(current_lines)))
+            segments.append((current_name, "\n".join(current_lines)))
 
         return segments
 
@@ -724,10 +761,11 @@ class FeedEngine:
         """从用户对话历史中进食"""
         try:
             from neuroplex.agent_ext.data_collector import get_collector
+
             collector = get_collector()
             react_data, conv_data = collector.load_as_training_data()
 
-            for item in conv_data[:self.config.max_items_per_feed]:
+            for item in conv_data[: self.config.max_items_per_feed]:
                 content = json.dumps(item, ensure_ascii=False)
                 feed_item = self._process_content(
                     content=content,
@@ -749,8 +787,8 @@ class FeedEngine:
         if not os.path.isdir(knowledge_dir):
             return
 
-        for fname in os.listdir(knowledge_dir)[:self.config.max_items_per_feed]:
-            if fname.endswith('.json'):
+        for fname in os.listdir(knowledge_dir)[: self.config.max_items_per_feed]:
+            if fname.endswith(".json"):
                 fpath = os.path.join(knowledge_dir, fname)
                 item = self.feed_file(fpath, category="knowledge")
                 if item:
@@ -762,10 +800,11 @@ class FeedEngine:
         """从数据收集器中进食 ReAct 数据"""
         try:
             from neuroplex.agent_ext.data_collector import get_collector
+
             collector = get_collector()
             react_data, _ = collector.load_as_training_data()
 
-            for item in react_data[:self.config.max_items_per_feed]:
+            for item in react_data[: self.config.max_items_per_feed]:
                 content = json.dumps(item, ensure_ascii=False)
                 feed_item = self._process_content(
                     content=content,
@@ -802,6 +841,7 @@ class FeedEngine:
         # 检查能力评估器，找出薄弱环节
         try:
             from neuroplex.infra.auto_upgrade import CapabilityEvaluator
+
             eval_path = os.path.join(self.data_dir, "..", "sleep_data", "capability_scores.json")
             if os.path.exists(eval_path):
                 evaluator = CapabilityEvaluator(save_path=eval_path)
@@ -843,16 +883,18 @@ class FeedEngine:
         try:
             data = []
             for item in recent_items:
-                data.append({
-                    "source": item.source,
-                    "source_path": item.source_path,
-                    "content_hash": item.content_hash,
-                    "quality_score": item.quality_score,
-                    "category": item.category,
-                    "sample_count": item.sample_count,
-                    "timestamp": item.timestamp,
-                    "status": item.status,
-                })
+                data.append(
+                    {
+                        "source": item.source,
+                        "source_path": item.source_path,
+                        "content_hash": item.content_hash,
+                        "quality_score": item.quality_score,
+                        "category": item.category,
+                        "sample_count": item.sample_count,
+                        "timestamp": item.timestamp,
+                        "status": item.status,
+                    }
+                )
             with open(items_path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
         except Exception as e:
@@ -864,16 +906,18 @@ class FeedEngine:
         try:
             data = []
             for report in self._feed_history[-50:]:
-                data.append({
-                    "timestamp": report.timestamp,
-                    "duration_seconds": report.duration_seconds,
-                    "items_fed": report.items_fed,
-                    "items_rejected": report.items_rejected,
-                    "samples_generated": report.samples_generated,
-                    "categories": report.categories,
-                    "avg_quality": report.avg_quality,
-                    "recommendations": report.recommendations,
-                })
+                data.append(
+                    {
+                        "timestamp": report.timestamp,
+                        "duration_seconds": report.duration_seconds,
+                        "items_fed": report.items_fed,
+                        "items_rejected": report.items_rejected,
+                        "samples_generated": report.samples_generated,
+                        "categories": report.categories,
+                        "avg_quality": report.avg_quality,
+                        "recommendations": report.recommendations,
+                    }
+                )
             with open(path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
         except Exception as e:
@@ -934,7 +978,7 @@ class FeedEngine:
 
         if self._feed_history:
             last = self._feed_history[-1]
-            lines.append(f"\n最近一次进食报告:")
+            lines.append("\n最近一次进食报告:")
             lines.append(f"  时长: {last.duration_seconds}s")
             lines.append(f"  进食: {last.items_fed} 条, 拒绝: {last.items_rejected} 条")
             lines.append(f"  生成样本: {last.samples_generated} 条")
@@ -963,6 +1007,7 @@ class FeedEngine:
 
         try:
             from neuroplex.infra.auto_upgrade import CapabilityEvaluator
+
             eval_path = os.path.join(self.data_dir, "..", "sleep_data", "capability_scores.json")
             if os.path.exists(eval_path):
                 evaluator = CapabilityEvaluator(save_path=eval_path)

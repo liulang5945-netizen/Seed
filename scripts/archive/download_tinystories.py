@@ -7,6 +7,7 @@ TinyStories (Microsoft 2023): 简单英文故事，3-4岁儿童词汇。
   data/tinystories/train.bin  — uint16 token ids (GPT-2 BPE)
   data/tinystories/val.bin    — uint16 token ids
 """
+
 import os
 import sys
 import numpy as np
@@ -37,8 +38,8 @@ except Exception as e:
 
 # 收集文本并编码
 # CPU 训练验证：100K 条故事足够（约 50M tokens）
-N_TRAIN = 80000   # 80K 条训练
-N_VAL = 2000      # 2K 条验证
+N_TRAIN = 80000  # 80K 条训练
+N_VAL = 2000  # 2K 条验证
 TOTAL = N_TRAIN + N_VAL
 
 print(f"\n[2] 编码 {TOTAL} 条故事 (train={N_TRAIN}, val={N_VAL})...")
@@ -60,7 +61,9 @@ for item in ds:
         val_tokens.extend(tokens)
     count += 1
     if count % 10000 == 0:
-        print(f"  已处理 {count}/{TOTAL} 条, train_tokens={len(train_tokens)}, val_tokens={len(val_tokens)}")
+        print(
+            f"  已处理 {count}/{TOTAL} 条, train_tokens={len(train_tokens)}, val_tokens={len(val_tokens)}"
+        )
 
 print(f"\n[3] 编码完成:")
 print(f"  Train: {len(train_tokens)} tokens ({len(train_tokens)/1e6:.1f}M)")

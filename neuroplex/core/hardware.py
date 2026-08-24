@@ -7,10 +7,17 @@
   - auto_configure_for_hardware(): 纯公式驱动的硬件自适应配置
   - get_torch_dtype(): 根据设备自动匹配计算精度
 """
+
+from __future__ import annotations
+
 import json
 import logging
 import os
 import re
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from neuroplex.core.config import TrainingConfig
 
 logger = logging.getLogger("Hardware")
 
@@ -20,16 +27,18 @@ def resolve_device(config: "TrainingConfig") -> str:
     if config.device != "auto":
         return config.device
     import torch
+
     if torch.cuda.is_available():
         return "cuda"
     if torch.backends.mps.is_available():
         return "mps"
     try:
         import torch_directml
+
         if torch_directml.is_available():
             return torch_directml.device()
-    except ImportError:
-        pass
+    except ImportError as e:
+        logger.debug("【resolve_device】处理失败（非致命）: %s", e)
     return "cpu"
 
 
@@ -49,17 +58,19 @@ def estimate_params_b(config, loaded_model=None) -> tuple:
     # ── 方式1: 从 model.config 直接读取（HuggingFace 标准属性，最准确） ──
     if loaded_model is not None:
         try:
-            _cfg = getattr(loaded_model, 'config', None)
+            _cfg = getattr(loaded_model, "config", None)
             if _cfg is not None:
                 # 方式1a: 直接从 config 读 num_parameters
-                _np = getattr(_cfg, 'num_parameters', None) or _cfg.get('num_parameters', 0)
+                _np = getattr(_cfg, "num_parameters", None) or _cfg.get("num_parameters", 0)
                 if _np:
                     params_b = round(_np / 1e9, 2)
                     logger.info(f"从 model.config.num_parameters 读取参数量: {params_b:.2f}B")
                     return params_b, "model.config.num_parameters"
                 # 方式1b: 从 config 的 hidden_size + num_hidden_layers 公式计算
-                hidden = getattr(_cfg, 'hidden_size', None) or _cfg.get('hidden_size', 0)
-                layers = getattr(_cfg, 'num_hidden_layers', None) or _cfg.get('num_hidden_layers', 0)
+                hidden = getattr(_cfg, "hidden_size", None) or _cfg.get("hidden_size", 0)
+                layers = getattr(_cfg, "num_hidden_layers", None) or _cfg.get(
+                    "num_hidden_layers", 0
+                )
                 if hidden and layers:
                     params_b = round((12 * layers * hidden * hidden) / 1e9, 2)
                     if params_b > 0.01:
@@ -93,14 +104,16 @@ def estimate_params_b(config, loaded_model=None) -> tuple:
                 layers = cdata.get("num_hidden_layers", 0)
                 if hidden and layers:
                     return round((12 * layers * hidden * hidden) / 1e9, 2), "config.json(公式)"
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【estimate_params_b】处理失败（非致命）: %s", e)
 
     # ── 方式2.5: 文件体积反推参数量 ──
     if config.model_name and os.path.isdir(config.model_name):
         import glob as _glob
-        _model_files = (_glob.glob(os.path.join(config.model_name, "*.safetensors")) +
-                        _glob.glob(os.path.join(config.model_name, "*.bin")))
+
+        _model_files = _glob.glob(os.path.join(config.model_name, "*.safetensors")) + _glob.glob(
+            os.path.join(config.model_name, "*.bin")
+        )
         if _model_files:
             _total_bytes = sum(os.path.getsize(f) for f in _model_files)
             _bytes_per_param = 2.0
@@ -112,24 +125,33 @@ def estimate_params_b(config, loaded_model=None) -> tuple:
                     _dtype = str(_cdata.get("torch_dtype", "")).lower()
                     if "float32" in _dtype or "fp32" in _dtype:
                         _bytes_per_param = 4.0
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("【estimate_params_b】处理失败（非致命）: %s", e)
             _params_b = round(_total_bytes / (_bytes_per_param * 1e9), 2)
             if 0.01 < _params_b < 200:
-                logger.info(f"从文件体积估算参数量: {_params_b:.2f}B"
-                            f" ({_total_bytes/1e9:.1f}GB @ {_bytes_per_param:.0f} bytes/param)")
+                logger.info(
+                    f"从文件体积估算参数量: {_params_b:.2f}B"
+                    f" ({_total_bytes/1e9:.1f}GB @ {_bytes_per_param:.0f} bytes/param)"
+                )
                 return _params_b, "文件体积估算"
 
     # ── 方式3: 从模型名称解析 ──
     if config.model_name:
-        match = re.search(r'(\d+\.?\d*)\s*[bB]', config.model_name)
+        match = re.search(r"(\d+\.?\d*)\s*[bB]", config.model_name)
         if match:
             return float(match.group(1)), "模型名称解析"
         name_lower = config.model_name.lower()
         scale_map = [
-            (('72b', '70b'), 72.0), (('32b',), 32.0), (('14b', '13b'), 14.0),
-            (('12b',), 12.0), (('9b',), 9.0), (('8b',), 8.0), (('7b',), 7.0),
-            (('6b',), 6.0), (('3b', '3.8b'), 3.8), (('2b',), 2.0),
+            (("72b", "70b"), 72.0),
+            (("32b",), 32.0),
+            (("14b", "13b"), 14.0),
+            (("12b",), 12.0),
+            (("9b",), 9.0),
+            (("8b",), 8.0),
+            (("7b",), 7.0),
+            (("6b",), 6.0),
+            (("3b", "3.8b"), 3.8),
+            (("2b",), 2.0),
         ]
         for keywords, scale in scale_map:
             if any(kw in name_lower for kw in keywords):
@@ -157,10 +179,12 @@ def auto_configure_for_hardware(config, loaded_model=None) -> dict:
 
     # 总内存
     from neuroplex.core.config import TrainingConfig
+
     ram_gb_total = TrainingConfig.get_total_ram_gb()
     # 当前实际可用内存
     try:
         import psutil as _ps
+
         ram_gb_available = round(_ps.virtual_memory().available / (1024**3), 1)
     except Exception:
         ram_gb_available = max(1.0, ram_gb_total * 0.75)
@@ -180,6 +204,7 @@ def auto_configure_for_hardware(config, loaded_model=None) -> dict:
     cpu_total = os.cpu_count() or 8
     try:
         import psutil as _ps
+
         cpu_physical = _ps.cpu_count(logical=False) or max(1, cpu_total // 2)
     except Exception:
         cpu_physical = max(1, cpu_total // 2)
@@ -220,13 +245,17 @@ def auto_configure_for_hardware(config, loaded_model=None) -> dict:
         if mem_ratio > 0.50:
             config.load_in_4bit = True
             _quant_auto = True
-            decisions.append(f"🔄 模型 ~{model_gb_native:.0f}GB → 4-bit 量化（可用内存 ~{effective_mem:.0f}GB）")
+            decisions.append(
+                f"🔄 模型 ~{model_gb_native:.0f}GB → 4-bit 量化（可用内存 ~{effective_mem:.0f}GB）"
+            )
             quant_ratio = 0.55
             model_gb = params_b * dtype_per_B * quant_ratio
         elif mem_ratio > 0.30:
             config.load_in_8bit = True
             _quant_auto = True
-            decisions.append(f"🔄 模型 ~{model_gb_native:.0f}GB → 8-bit 量化（可用内存 ~{effective_mem:.0f}GB）")
+            decisions.append(
+                f"🔄 模型 ~{model_gb_native:.0f}GB → 8-bit 量化（可用内存 ~{effective_mem:.0f}GB）"
+            )
             quant_ratio = 1.1
             model_gb = params_b * dtype_per_B * quant_ratio
 
@@ -261,7 +290,9 @@ def auto_configure_for_hardware(config, loaded_model=None) -> dict:
         auto_grad = max(1, target_effective // config.batch_size)
         if auto_grad > config.gradient_accumulation_steps:
             config.gradient_accumulation_steps = auto_grad
-            decisions.append(f"🔗 梯度累积 ×{auto_grad}（等效 Batch≈{config.batch_size * auto_grad}）")
+            decisions.append(
+                f"🔗 梯度累积 ×{auto_grad}（等效 Batch≈{config.batch_size * auto_grad}）"
+            )
 
     # ── 8. max_length 自动调节 ──
     if raw_usable < 0 and config.max_length > 128:
@@ -281,7 +312,9 @@ def auto_configure_for_hardware(config, loaded_model=None) -> dict:
         _t.set_num_threads(gpu_cpu_threads)
         os.environ["OMP_NUM_THREADS"] = str(gpu_cpu_threads)
         os.environ["MKL_NUM_THREADS"] = str(gpu_cpu_threads)
-        decisions.append(f"🧵 CPU 线程: {gpu_cpu_threads}/{cpu_physical} 物理核（GPU 训练，避免争用）")
+        decisions.append(
+            f"🧵 CPU 线程: {gpu_cpu_threads}/{cpu_physical} 物理核（GPU 训练，避免争用）"
+        )
 
     # ── 10. LoRA rank 自适应 ──
     if config.use_lora:
@@ -348,6 +381,7 @@ def auto_configure_for_hardware(config, loaded_model=None) -> dict:
 
 class HardwareInfo:
     """硬件信息容器"""
+
     def __init__(self):
         self.total_ram_gb = 0.0
         self.available_memory_gb = 0.0
@@ -368,12 +402,14 @@ def analyze_hardware() -> HardwareInfo:
     # 内存
     try:
         from neuroplex.core.config import TrainingConfig
+
         info.total_ram_gb = round(TrainingConfig.get_total_ram_gb(), 1)
     except Exception:
         info.total_ram_gb = 8.0
 
     try:
         import psutil as _ps
+
         info.available_memory_gb = round(_ps.virtual_memory().available / (1024**3), 1)
     except Exception:
         info.available_memory_gb = round(info.total_ram_gb * 0.75, 1)
@@ -381,6 +417,7 @@ def analyze_hardware() -> HardwareInfo:
     # GPU
     try:
         import torch
+
         if torch.cuda.is_available():
             info.device = "cuda"
             info.vram_gb = round(torch.cuda.get_device_properties(0).total_mem / (1024**3), 1)
@@ -394,6 +431,7 @@ def analyze_hardware() -> HardwareInfo:
     info.cpu_logical = os.cpu_count() or 8
     try:
         import psutil as _ps
+
         info.cpu_physical = _ps.cpu_count(logical=False) or max(1, info.cpu_logical // 2)
     except Exception:
         info.cpu_physical = max(1, info.cpu_logical // 2)

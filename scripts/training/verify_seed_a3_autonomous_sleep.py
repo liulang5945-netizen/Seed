@@ -24,6 +24,7 @@ SCRIPTS = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPTS))
 
 import _seed_verify_common as common  # noqa: E402
+import _verify_emit  # noqa: E402
 
 from seed import SeedSleepScheduler  # noqa: E402
 
@@ -99,8 +100,7 @@ def main() -> None:
     print("\n[3/3] 判定", flush=True)
     print(f"  数值有限 = {'PASS' if finite else 'FAIL'}", flush=True)
     print(
-        f"  8 轮累计 |Δ| = {cumulative:.4f} "
-        f"→ {'PASS' if stable else 'FAIL'}（线 < 0.15）",
+        f"  8 轮累计 |Δ| = {cumulative:.4f} " f"→ {'PASS' if stable else 'FAIL'}（线 < 0.15）",
         flush=True,
     )
     print(f"  累计被接受的内生回放 = {accepted_total:.0f}", flush=True)
@@ -128,7 +128,19 @@ def main() -> None:
         },
     )
     print(f"报告已写入: {out_path}", flush=True)
-    sys.exit(0 if a3_pass else 1)
+    sys.exit(
+        _verify_emit.emit_and_exit(
+            "seed_a3_autonomous_sleep",
+            {
+                "a3_pass": a3_pass,
+                "checks": {"finite": finite, "stable": stable},
+                "metrics": {
+                    "cumulative_abs_delta": cumulative,
+                    "accepted_total": accepted_total,
+                },
+            },
+        )
+    )
 
 
 if __name__ == "__main__":

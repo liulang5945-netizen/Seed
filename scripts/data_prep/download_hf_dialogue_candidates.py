@@ -28,7 +28,6 @@ from typing import Any, Iterable
 
 from huggingface_hub import HfApi, hf_hub_download
 
-
 DATASET_ID = "fnlp/moss-003-sft-data"
 DATASET_URL = f"https://huggingface.co/datasets/{DATASET_ID}"
 RAW_FILENAME = "moss-003-sft-no-tools.jsonl.zip"
@@ -231,11 +230,7 @@ def build_candidate(
                                 selected_hashes.remove(worst_digest)
                                 selected_hashes.add(digest)
 
-    rows = [
-        row
-        for category in sorted(reservoirs)
-        for _, _, row in reservoirs[category]
-    ]
+    rows = [row for category in sorted(reservoirs) for _, _, row in reservoirs[category]]
     random.Random(seed).shuffle(rows)
     eval_count = max(1, round(len(rows) * 0.05)) if rows else 0
     eval_rows = rows[:eval_count]

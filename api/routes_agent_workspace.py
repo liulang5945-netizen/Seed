@@ -18,6 +18,7 @@ router = APIRouter()
 def _require_admin_auth(request: Request):
     """Validate admin auth for sensitive operations (e.g. pip install)."""
     from neuroplex.core.security import AuthManager
+
     auth = AuthManager()
 
     if not auth.enabled:
@@ -92,18 +93,12 @@ def set_workspace_path(req: dict, request: Request):
     ]
 
     if normalized_path in forbidden_paths:
-        raise HTTPException(
-            status_code=403,
-            detail="不允许将工作区设置为系统敏感目录"
-        )
+        raise HTTPException(status_code=403, detail="不允许将工作区设置为系统敏感目录")
 
     # 安全检查：路径不能是根目录的直接子目录
     parent_dir = os.path.dirname(normalized_path)
     if parent_dir in [os.path.abspath("/"), os.path.abspath("C:\\")]:
-        raise HTTPException(
-            status_code=403,
-            detail="不允许将工作区设置为根目录的直接子目录"
-        )
+        raise HTTPException(status_code=403, detail="不允许将工作区设置为根目录的直接子目录")
 
     # 需要认证才能更改工作区路径
     from neuroplex.core.security import AuthManager
@@ -167,8 +162,8 @@ def list_workspace_tree():
                             "size": size,
                         }
                     )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【list_workspace_tree.build_tree】处理失败（非致命）: %s", e)
         return entries
 
     return {"tree": build_tree(ws_dir)}
@@ -220,8 +215,9 @@ def save_workspace_file(req: FileSaveRequest):
 
 
 @router.post("/api/workspace/run")
-def run_workspace_code(req: CodeRunRequest):
+def run_workspace_code(req: CodeRunRequest, request: Request):
     """Run Python code in the workspace sandbox."""
+    _require_admin_auth(request)
     try:
         from neuroplex.agent_ext.sandbox_executor import execute_python_with_files
 
@@ -248,7 +244,7 @@ async def create_project(req: CreateProjectRequest):
         return {"status": "ok", "message": result}
     except Exception as exc:
         logger.error(f"Request failed: {exc}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
 
 
 @router.delete("/api/workspace/delete/{name:path}")
@@ -270,7 +266,7 @@ def delete_workspace_item(name: str):
         raise
     except Exception as exc:
         logger.error(f"Request failed: {exc}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
 
 
 @router.post("/api/agent/analyze_code")
@@ -335,8 +331,9 @@ async def save_context_api(req: CodeRunRequest):
 
 
 @router.post("/api/plugins/upload")
-async def upload_plugin(file: UploadFile = File(...)):
+async def upload_plugin(request: Request, file: UploadFile = File(...)):
     """Upload a plugin archive into the plugins directory."""
+    _require_admin_auth(request)
     try:
         plugins_dir = get_external_path("plugins")
         os.makedirs(plugins_dir, exist_ok=True)
@@ -350,7 +347,7 @@ async def upload_plugin(file: UploadFile = File(...)):
     except Exception as exc:
         logger.error(f"插件安装失败: {exc}")
         logger.error(f"Request failed: {exc}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
 
 
 @router.get("/api/workspace/quick_paths")

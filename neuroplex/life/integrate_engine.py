@@ -18,6 +18,7 @@
 
 喂养闭环：数据全部来自 FeedEngine 累积样本 —— 态极自主演化的"喂→睡→醒"最后一环。
 """
+
 from __future__ import annotations
 
 import logging
@@ -34,23 +35,29 @@ class IntegrateEngine:
     """新生神经元无缝衔接引擎（静默 → 同伴协调 → 验证 → 固化/凋亡）。"""
 
     # ── 阶段阈值（maturity_ratio）──
-    SILENT_END = 0.3      # 静默期结束（此后逐步参与融合）
-    VERIFY_START = 0.8    # 验证期开始（ablation 决策）
+    SILENT_END = 0.3  # 静默期结束（此后逐步参与融合）
+    VERIFY_START = 0.8  # 验证期开始（ablation 决策）
 
     # ── 训练超参（v1，保守值）──
-    MAX_STEPS_PER_SESSION = 32   # 单次 sleep 会话最大训练步数
-    MAX_TEXT_LEN = 256           # 单条样本最大 token 长度
+    MAX_STEPS_PER_SESSION = 32  # 单次 sleep 会话最大训练步数
+    MAX_TEXT_LEN = 256  # 单条样本最大 token 长度
     PEER_ALIGNMENT_WEIGHT = 0.3  # 邻居对齐权重（记忆生长为主，协作辅助）
-    PEER_ALIGNMENT_TEMP = 2.0   # 邻居分布对齐温度
-    LORA_RANK = 16               # 新 neuron body 保护（C16）
-    ABLATION_SAMPLES = 16        # ablation 评估样本数
+    PEER_ALIGNMENT_TEMP = 2.0  # 邻居分布对齐温度
+    LORA_RANK = 16  # 新 neuron body 保护（C16）
+    ABLATION_SAMPLES = 16  # ablation 评估样本数
     # C26 增量七：自组织新生——记忆条件化预训练超参
-    MEMORY_PRETRAIN_LR = 3e-4     # 读路径+LoRA 温和学习率（防破坏）
-    MEMORY_PRETRAIN_STEPS = 24    # 记忆条件化预训练步数（每 neuron 预算）
-    MEMORY_MIN_ACCESS = 1         # 记忆条目最小访问次数（≥1 有实际被检索过）
+    MEMORY_PRETRAIN_LR = 3e-4  # 读路径+LoRA 温和学习率（防破坏）
+    MEMORY_PRETRAIN_STEPS = 24  # 记忆条件化预训练步数（每 neuron 预算）
+    MEMORY_MIN_ACCESS = 1  # 记忆条目最小访问次数（≥1 有实际被检索过）
 
-    def __init__(self, cortex, lifecycle=None, feed_engine=None,
-                 memory_bank=None, device: Optional[str] = None):
+    def __init__(
+        self,
+        cortex,
+        lifecycle=None,
+        feed_engine=None,
+        memory_bank=None,
+        device: Optional[str] = None,
+    ):
         self.cortex = cortex
         self.lifecycle = lifecycle
         self.feed_engine = feed_engine
@@ -79,8 +86,12 @@ class IntegrateEngine:
         domain = new_nid.split("_")[0] if "_" in new_nid else new_nid
         samples = self._collect_samples(domain)
         if not samples:
-            return {"nid": new_nid, "status": "skipped", "reason": "no_feed_samples",
-                    "maturity": self._maturity_ratio(new_nid)}
+            return {
+                "nid": new_nid,
+                "status": "skipped",
+                "reason": "no_feed_samples",
+                "maturity": self._maturity_ratio(new_nid),
+            }
 
         # ── 影子权重 COW（训练在克隆副本上，live 稳定；与 _train_cortex_neurons 同模式）──
         live_modules = dict(cortex.neurons)
@@ -102,9 +113,9 @@ class IntegrateEngine:
         finally:
             # 写回 live（只写回整合后的新 neuron 协作层，成熟 neuron 冻结未动）
             from neuroplex.life.sleep_engine import SleepEngine
+
             try:
-                SleepEngine._copy_shadow_back(live_modules, live_emb,
-                                              shadow_modules, shadow_emb)
+                SleepEngine._copy_shadow_back(live_modules, live_emb, shadow_modules, shadow_emb)
             except Exception as e:
                 logger.warning(f"[IntegrateEngine] 写回 live 失败: {e}")
 
@@ -113,8 +124,14 @@ class IntegrateEngine:
     # ──────────────────────────────────────────────
     # 单次 sleep 会话的训练循环
     # ──────────────────────────────────────────────
-    def _integrate_session(self, shadow_modules: Dict[str, object], shadow_emb,
-                           new_nid: str, domain: str, samples: list) -> Dict[str, object]:
+    def _integrate_session(
+        self,
+        shadow_modules: Dict[str, object],
+        shadow_emb,
+        new_nid: str,
+        domain: str,
+        samples: list,
+    ) -> Dict[str, object]:
         ensemble = self.cortex.ensemble
         hub = self.cortex._tokenizer_hub
         general_sp = self.cortex._general_sp
@@ -126,8 +143,10 @@ class IntegrateEngine:
 
         # 拓扑邻居 = 新 neuron 的 side_channel 输入源（导师）
         neighbor_ids = self._neighbor_ids(new_neuron)
-        logger.info(f"[IntegrateEngine] {new_nid} 整合开始: domain={domain}, "
-                    f"导师邻居={neighbor_ids}, 样本={len(texts)}")
+        logger.info(
+            f"[IntegrateEngine] {new_nid} 整合开始: domain={domain}, "
+            f"导师邻居={neighbor_ids}, 样本={len(texts)}"
+        )
 
         # 可训练参数（只新 neuron 的协作层）
         trainable = [p for p in new_neuron.parameters() if p.requires_grad]
@@ -170,8 +189,9 @@ class IntegrateEngine:
                 # CE（目标域空间）
                 fused = result["fused_logits"]
                 sl, st = fused[:, :-1, :].contiguous(), target_ids[:, 1:].contiguous()
-                ce = F.cross_entropy(sl.reshape(-1, sl.size(-1)), st.reshape(-1),
-                                     ignore_index=-100, reduction="mean")
+                ce = F.cross_entropy(
+                    sl.reshape(-1, sl.size(-1)), st.reshape(-1), ignore_index=-100, reduction="mean"
+                )
 
                 # 邻居协调（新 neuron 对齐同伴输出分布）
                 ind = result.get("individual_logits", {})
@@ -184,11 +204,13 @@ class IntegrateEngine:
                             nb_lg = ind.get(nb)
                             if nb_lg is None or nb_lg.shape != new_lg.shape:
                                 continue
-                            kls.append(F.kl_div(
-                                F.log_softmax(new_lg / self.PEER_ALIGNMENT_TEMP, dim=-1),
-                                F.softmax(nb_lg.detach() / self.PEER_ALIGNMENT_TEMP, dim=-1),
-                                reduction="batchmean",
-                            ))
+                            kls.append(
+                                F.kl_div(
+                                    F.log_softmax(new_lg / self.PEER_ALIGNMENT_TEMP, dim=-1),
+                                    F.softmax(nb_lg.detach() / self.PEER_ALIGNMENT_TEMP, dim=-1),
+                                    reduction="batchmean",
+                                )
+                            )
                     if kls:
                         peer_alignment = sum(kls) / len(kls)
 
@@ -208,34 +230,47 @@ class IntegrateEngine:
 
                 # 每 8 步打印一次进度
                 if steps % 8 == 0:
-                    logger.info(f"[IntegrateEngine] {new_nid} step {steps}: "
-                                f"loss={loss.item():.3f} ce={ce.item():.3f} "
-                                f"peer_alignment={peer_alignment:.3f} maturity={self._maturity_ratio(new_nid):.2f}")
+                    logger.info(
+                        f"[IntegrateEngine] {new_nid} step {steps}: "
+                        f"loss={loss.item():.3f} ce={ce.item():.3f} "
+                        f"peer_alignment={peer_alignment:.3f} maturity={self._maturity_ratio(new_nid):.2f}"
+                    )
             except Exception as e:
                 logger.warning(f"[IntegrateEngine] {new_nid} 单条样本训练失败: {e}")
                 continue
 
         if steps == 0:
-            return {"nid": new_nid, "status": "skipped", "reason": "no_valid_steps",
-                    "maturity": self._maturity_ratio(new_nid)}
+            return {
+                "nid": new_nid,
+                "status": "skipped",
+                "reason": "no_valid_steps",
+                "maturity": self._maturity_ratio(new_nid),
+            }
 
         self._progress[new_nid] = self._progress.get(new_nid, 0) + steps
         maturity = self._maturity_ratio(new_nid)
-        logger.info(f"[IntegrateEngine] {new_nid} 会话完成: steps={steps}, "
-                    f"avg_loss={total_loss/steps:.3f}, maturity={maturity:.2f}")
+        logger.info(
+            f"[IntegrateEngine] {new_nid} 会话完成: steps={steps}, "
+            f"avg_loss={total_loss/steps:.3f}, maturity={maturity:.2f}"
+        )
 
         # ③ 验证期：成熟度达标后做 ablation 决策
         if maturity >= self.VERIFY_START:
-            return self._verify_commit(new_nid, shadow_modules, shadow_emb,
-                                       domain, samples)
-        return {"nid": new_nid, "status": "training", "steps": steps,
-                "maturity": maturity, "avg_loss": total_loss / steps}
+            return self._verify_commit(new_nid, shadow_modules, shadow_emb, domain, samples)
+        return {
+            "nid": new_nid,
+            "status": "training",
+            "steps": steps,
+            "maturity": maturity,
+            "avg_loss": total_loss / steps,
+        }
 
     # ──────────────────────────────────────────────
     # C26 增量七：自组织新生——记忆条件化预训练
     # ──────────────────────────────────────────────
-    def _memory_pretrain(self, shadow_modules: Dict[str, object], shadow_emb,
-                         new_nid: str, domain: str) -> int:
+    def _memory_pretrain(
+        self, shadow_modules: Dict[str, object], shadow_emb, new_nid: str, domain: str
+    ) -> int:
         """记忆注意窗预训练（从经验生长，非中心模型迁移）。
 
         用记忆库中积累的高频经验（记忆向量 + 文本）在 round2+ 场条件化
@@ -258,10 +293,13 @@ class IntegrateEngine:
             if not entries:
                 return 0
             # 候选：访问计数 ≥1（实际被检索过）且含向量+文本的记忆
-            cands = [e for e in entries
-                     if e.get("vector") is not None
-                     and (e.get("text") or e.get("label"))
-                     and e.get("access_count", 0) >= self.MEMORY_MIN_ACCESS]
+            cands = [
+                e
+                for e in entries
+                if e.get("vector") is not None
+                and (e.get("text") or e.get("label"))
+                and e.get("access_count", 0) >= self.MEMORY_MIN_ACCESS
+            ]
             if not cands:
                 return 0
         except Exception as e:
@@ -280,6 +318,7 @@ class IntegrateEngine:
         if not samples:
             return 0
         import random
+
         random.shuffle(samples)
         samples = samples[: self.MEMORY_PRETRAIN_STEPS]
 
@@ -294,8 +333,9 @@ class IntegrateEngine:
             return 0
         device = self.device
         ensemble = cortex.ensemble
-        back_projectors = (getattr(ensemble, "_cross_spec_back_projectors", {})
-                           if ensemble is not None else {})
+        back_projectors = (
+            getattr(ensemble, "_cross_spec_back_projectors", {}) if ensemble is not None else {}
+        )
 
         neuron = shadow_modules[new_nid]
         # 读路径 + LoRA（field_read 是记忆注意窗的条件化调制层）
@@ -364,17 +404,17 @@ class IntegrateEngine:
                     continue
                 optimizer.zero_grad()
                 # 记忆注意窗：round2+ 场条件化 forward（field_state=记忆向量）
-                result = neuron.forward(emb, field_state=fs, round_num=2,
-                                        return_logits=True)
+                result = neuron.forward(emb, field_state=fs, round_num=2, return_logits=True)
                 logits = result["logits"]
                 min_len = logits.size(1) - 1
                 if min_len < 1:
                     continue
                 sl = logits[:, :min_len, :].contiguous()
-                st = target_ids[:, 1:1 + min_len].contiguous()
+                st = target_ids[:, 1 : 1 + min_len].contiguous()
                 st = st.clamp(0, logits.size(-1) - 1)
-                loss = F.cross_entropy(sl.reshape(-1, sl.size(-1)), st.reshape(-1),
-                                       ignore_index=-100)
+                loss = F.cross_entropy(
+                    sl.reshape(-1, sl.size(-1)), st.reshape(-1), ignore_index=-100
+                )
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(train_params, max_norm=5.0)
                 optimizer.step()
@@ -394,10 +434,15 @@ class IntegrateEngine:
     # ──────────────────────────────────────────────
     # ablation 验证 + 固化/凋亡
     # ──────────────────────────────────────────────
-    def _verify_commit(self, new_nid: str, shadow_modules: Dict[str, object],
-                       shadow_emb, domain: str, samples: list) -> Dict[str, object]:
+    def _verify_commit(
+        self,
+        new_nid: str,
+        shadow_modules: Dict[str, object],
+        shadow_emb,
+        domain: str,
+        samples: list,
+    ) -> Dict[str, object]:
         """有 vs 无新 neuron 的 ensemble CE 对比：贡献为正 → commit；负 → 凋零信号。"""
-        from neuroplex.life.sleep_engine import _clone_module
 
         ensemble = self.cortex.ensemble
         hub = self.cortex._tokenizer_hub
@@ -423,15 +468,22 @@ class IntegrateEngine:
                                 emb[nid] = shadow_emb(ids_t)
                         with torch.no_grad():
                             r = ensemble.forward_train(
-                                neuron_embeddings=emb, n_rounds=2, fusion_mode="soft",
-                                targets=t_ids, field_conditioning=True,
+                                neuron_embeddings=emb,
+                                n_rounds=2,
+                                fusion_mode="soft",
+                                targets=t_ids,
+                                field_conditioning=True,
                                 target_domain=domain,
                             )
                         f = r["fused_logits"]
-                        cels.append(F.cross_entropy(
-                            f[:, :-1, :].reshape(-1, f.size(-1)),
-                            t_ids[:, 1:].reshape(-1), ignore_index=-100,
-                            reduction="mean").item())
+                        cels.append(
+                            F.cross_entropy(
+                                f[:, :-1, :].reshape(-1, f.size(-1)),
+                                t_ids[:, 1:].reshape(-1),
+                                ignore_index=-100,
+                                reduction="mean",
+                            ).item()
+                        )
                     except Exception as e:
                         logger.debug(f"[IntegrateEngine] ablation 单条失败: {e}")
             finally:
@@ -444,23 +496,36 @@ class IntegrateEngine:
         loss_without = eval_ce(False)
         gain = loss_without - loss_with  # >0 = 有该 neuron 时 CE 更低（有贡献）
 
-        logger.info(f"[IntegrateEngine] {new_nid} ablation: with={loss_with:.3f} "
-                    f"without={loss_without:.3f} gain={gain:+.3f}")
+        logger.info(
+            f"[IntegrateEngine] {new_nid} ablation: with={loss_with:.3f} "
+            f"without={loss_without:.3f} gain={gain:+.3f}"
+        )
 
         if gain > 0:
             # ④ 固化：tick 到满，成为正式成员（未来可当导师）
             self._commit(new_nid)
-            return {"nid": new_nid, "status": "committed", "maturity": 1.0,
-                    "ablation_gain": gain, "loss_with": loss_with,
-                    "loss_without": loss_without}
+            return {
+                "nid": new_nid,
+                "status": "committed",
+                "maturity": 1.0,
+                "ablation_gain": gain,
+                "loss_with": loss_with,
+                "loss_without": loss_without,
+            }
         # 凋零信号（无贡献：移除后 ensemble 更好）
         if self.lifecycle is not None:
             try:
                 self.lifecycle.apoptosis.record_ppl(domain, loss_without)
-            except Exception:
-                pass
-        return {"nid": new_nid, "status": "apoptosis", "maturity": self._maturity_ratio(new_nid),
-                "ablation_gain": gain, "loss_with": loss_with, "loss_without": loss_without}
+            except Exception as e:
+                logger.debug("【IntegrateEngine._verify_commit】处理失败（非致命）: %s", e)
+        return {
+            "nid": new_nid,
+            "status": "apoptosis",
+            "maturity": self._maturity_ratio(new_nid),
+            "ablation_gain": gain,
+            "loss_with": loss_with,
+            "loss_without": loss_without,
+        }
 
     # ──────────────────────────────────────────────
     # 辅助
@@ -541,7 +606,7 @@ class IntegrateEngine:
             domain_ids = hub.encode(text, domain=domain)
             if not domain_ids or len(domain_ids) < 3:
                 return None
-            domain_ids = domain_ids[:self.MAX_TEXT_LEN]
+            domain_ids = domain_ids[: self.MAX_TEXT_LEN]
             domain_sp = hub.get_tokenizer(domain)
             general_ids = []
             for did in domain_ids:
@@ -567,9 +632,13 @@ class IntegrateEngine:
         texts = []
         for sample in samples:
             if isinstance(sample, dict):
-                text = (sample.get("text", "") or sample.get("content", "") or
-                        sample.get("task", "") or sample.get("answer", "") or
-                        " ".join(str(v) for v in sample.values() if isinstance(v, str)))
+                text = (
+                    sample.get("text", "")
+                    or sample.get("content", "")
+                    or sample.get("task", "")
+                    or sample.get("answer", "")
+                    or " ".join(str(v) for v in sample.values() if isinstance(v, str))
+                )
             else:
                 text = str(sample)
             if len(text.strip()) > 10:
@@ -600,8 +669,8 @@ class IntegrateEngine:
             return
         try:
             self.lifecycle.maturity.tick(nid)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【IntegrateEngine._tick】处理失败（非致命）: %s", e)
 
     def _commit(self, nid: str) -> None:
         """固化：maturity 直接 tick 到满（关键期关闭，成为正式成员）。"""

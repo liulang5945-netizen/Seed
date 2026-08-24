@@ -26,6 +26,7 @@
 
 运行：python -u scripts/training/verify_a1_judge_signal_real.py
 """
+
 from __future__ import annotations
 
 import json
@@ -33,7 +34,9 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
@@ -43,8 +46,13 @@ np.random.seed(0)
 from neuroplex.loader import assemble_cortex  # noqa: E402
 from neuroplex.life.sleep_engine import SleepEngine, SleepConfig  # noqa: E402
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -99,8 +107,7 @@ def main():
         wire_bio_modules=True,
         neuron_ids=DIALOGUE_IDS,
     )
-    target_ids = [nid for nid in cortex.neurons
-                  if nid.startswith("zh_") and "dialogue" in nid]
+    target_ids = [nid for nid in cortex.neurons if nid.startswith("zh_") and "dialogue" in nid]
     print(f"  装配神经元数 = {len(cortex.neurons)}，judge 目标 = {target_ids}", flush=True)
     for nid in cortex.neurons:
         cortex.neurons[nid].eval()
@@ -124,13 +131,16 @@ def main():
         valid_nlls = []
         for i, text in enumerate(prompts):
             jnll = sleep_engine._sample_judge_nll(
-                text, target_ids, device, cortex._shared_embedding)
+                text, target_ids, device, cortex._shared_embedding
+            )
             nlls.append({"text": text, "judge_nll": jnll})
             if jnll is not None:
                 valid_nlls.append(jnll)
-            print(f"  [{group_name} {i+1}/8] NLL={jnll:.3f}  {text[:30]}...",
-                  flush=True) if jnll is not None else \
-                print(f"  [{group_name} {i+1}/8] NLL=None  {text[:30]}...", flush=True)
+            (
+                print(f"  [{group_name} {i+1}/8] NLL={jnll:.3f}  {text[:30]}...", flush=True)
+                if jnll is not None
+                else print(f"  [{group_name} {i+1}/8] NLL=None  {text[:30]}...", flush=True)
+            )
         if valid_nlls:
             mean = float(np.mean(valid_nlls))
             std = float(np.std(valid_nlls))
@@ -146,8 +156,10 @@ def main():
             "max": mx,
             "n_valid": len(valid_nlls),
         }
-        print(f"  → {group_name}: mean={mean} std={std} "
-              f"min={mn} max={mx} n={len(valid_nlls)}/8", flush=True)
+        print(
+            f"  → {group_name}: mean={mean} std={std} " f"min={mn} max={mx} n={len(valid_nlls)}/8",
+            flush=True,
+        )
 
     print("\n[3/3] 汇总判据...", flush=True)
     thresholds = []
@@ -162,8 +174,10 @@ def main():
     a1_pass = pass_count >= 2
 
     print("\n" + "=" * 64, flush=True)
-    print(f"A1 真实版 判定: {'PASS' if a1_pass else 'FAIL'} "
-          f"({pass_count}/3 组 std>0.05)", flush=True)
+    print(
+        f"A1 真实版 判定: {'PASS' if a1_pass else 'FAIL'} " f"({pass_count}/3 组 std>0.05)",
+        flush=True,
+    )
     print("=" * 64, flush=True)
     print("\n结果映射决策：", flush=True)
     if pass_count == 3:
@@ -174,7 +188,9 @@ def main():
         failed = [g for g, _, ok in thresholds if not ok]
         print(f"  通过 {passed}，失败 {failed}", flush=True)
         if "unfamiliar" in failed:
-            print("  → 失败的是陌生领域（与「够格的自我」关系最小，先排除训练语料问题）", flush=True)
+            print(
+                "  → 失败的是陌生领域（与「够格的自我」关系最小，先排除训练语料问题）", flush=True
+            )
             print("  下一步：用通过的两组（对话+知识）直接进入 A3", flush=True)
         elif "dialogue" in failed:
             print("  → 失败的是对话组（与「够格的自我」关系最直接）", flush=True)
@@ -185,11 +201,20 @@ def main():
         passed = [g for g, _, ok in thresholds if ok]
         print(f"  仅 {passed[0] if passed else '无'} 通过", flush=True)
         if passed and passed[0] == "unfamiliar":
-            print("  → 只有陌生领域可被 judge 区分（说明「够格的自我」对真实任务缺乏信度）", flush=True)
-            print("  下一步：陌生领域不能驱动 A3（无法形成自指信号），需重构「够格的自我」或扩展训练", flush=True)
+            print(
+                "  → 只有陌生领域可被 judge 区分（说明「够格的自我」对真实任务缺乏信度）",
+                flush=True,
+            )
+            print(
+                "  下一步：陌生领域不能驱动 A3（无法形成自指信号），需重构「够格的自我」或扩展训练",
+                flush=True,
+            )
         else:
             print("  → 真实任务信度不足（1/3 不可自举）", flush=True)
-            print("  下一步：先用唯一通过组做诊断，看其它组为何平（mean 对比 + judge 头激活）", flush=True)
+            print(
+                "  下一步：先用唯一通过组做诊断，看其它组为何平（mean 对比 + judge 头激活）",
+                flush=True,
+            )
     else:
         print("  全部 3 组 std<0.05 → judge 在真实任务上无信度", flush=True)
         print("  含义：A1 真实版失败（合成 toy 文本能区分，但真实任务不能）", flush=True)
@@ -212,9 +237,7 @@ def main():
             "device": str(device),
         },
         "groups": {g: results[g] for g in ("dialogue", "knowledge", "unfamiliar")},
-        "thresholds": [
-            {"group": g, "std": s, "ok": ok} for g, s, ok in thresholds
-        ],
+        "thresholds": [{"group": g, "std": s, "ok": ok} for g, s, ok in thresholds],
         "pass_count": pass_count,
         "a1_pass": a1_pass,
         "elapsed_seconds": time.time() - t0,

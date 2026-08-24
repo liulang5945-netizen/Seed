@@ -16,6 +16,7 @@
 注意：未训练的 VQ-VAE 输出无意义，需训练后才有实际重建能力。
 本实现聚焦架构骨架，训练流程后续补充。
 """
+
 from __future__ import annotations
 
 from typing import List, Optional
@@ -48,8 +49,13 @@ class VQVAEEncoder(nn.Module):
         downsample: 下采样倍数（4, 8, 16）。默认 8（平衡 token 数和重建质量）。
     """
 
-    def __init__(self, in_channels: int = 3, hidden_dim: int = 128, latent_dim: int = 256,
-                 downsample: int = 8):
+    def __init__(
+        self,
+        in_channels: int = 3,
+        hidden_dim: int = 128,
+        latent_dim: int = 256,
+        downsample: int = 8,
+    ):
         super().__init__()
         self.downsample_factor = downsample
 
@@ -58,7 +64,7 @@ class VQVAEEncoder(nn.Module):
                 nn.Conv2d(in_channels, hidden_dim, 4, stride=2, padding=1),  # /2
                 nn.ReLU(),
                 _ResidualBlock(hidden_dim),
-                nn.Conv2d(hidden_dim, latent_dim, 4, stride=2, padding=1),   # /4
+                nn.Conv2d(hidden_dim, latent_dim, 4, stride=2, padding=1),  # /4
                 nn.ReLU(),
             )
         elif downsample == 8:
@@ -66,10 +72,10 @@ class VQVAEEncoder(nn.Module):
                 nn.Conv2d(in_channels, hidden_dim, 4, stride=2, padding=1),  # /2
                 nn.ReLU(),
                 _ResidualBlock(hidden_dim),
-                nn.Conv2d(hidden_dim, hidden_dim, 4, stride=2, padding=1),   # /4
+                nn.Conv2d(hidden_dim, hidden_dim, 4, stride=2, padding=1),  # /4
                 nn.ReLU(),
                 _ResidualBlock(hidden_dim),
-                nn.Conv2d(hidden_dim, latent_dim, 4, stride=2, padding=1),   # /8
+                nn.Conv2d(hidden_dim, latent_dim, 4, stride=2, padding=1),  # /8
                 nn.ReLU(),
             )
         else:
@@ -77,13 +83,13 @@ class VQVAEEncoder(nn.Module):
                 nn.Conv2d(in_channels, hidden_dim, 4, stride=2, padding=1),  # /2
                 nn.ReLU(),
                 _ResidualBlock(hidden_dim),
-                nn.Conv2d(hidden_dim, hidden_dim, 4, stride=2, padding=1),   # /4
+                nn.Conv2d(hidden_dim, hidden_dim, 4, stride=2, padding=1),  # /4
                 nn.ReLU(),
                 _ResidualBlock(hidden_dim),
-                nn.Conv2d(hidden_dim, hidden_dim, 4, stride=2, padding=1),   # /8
+                nn.Conv2d(hidden_dim, hidden_dim, 4, stride=2, padding=1),  # /8
                 nn.ReLU(),
                 _ResidualBlock(hidden_dim),
-                nn.Conv2d(hidden_dim, latent_dim, 4, stride=2, padding=1),   # /16
+                nn.Conv2d(hidden_dim, latent_dim, 4, stride=2, padding=1),  # /16
                 nn.ReLU(),
             )
 
@@ -98,8 +104,13 @@ class VQVAEDecoder(nn.Module):
         downsample: 上采样倍数（与 encoder 对应）。
     """
 
-    def __init__(self, out_channels: int = 3, hidden_dim: int = 128, latent_dim: int = 256,
-                 downsample: int = 8):
+    def __init__(
+        self,
+        out_channels: int = 3,
+        hidden_dim: int = 128,
+        latent_dim: int = 256,
+        downsample: int = 8,
+    ):
         super().__init__()
         self.downsample_factor = downsample
 
@@ -148,11 +159,16 @@ class VectorQuantizer(nn.Module):
     EMA codebook 更新 + dead code revival 防止 codebook 崩塌。
     """
 
-    def __init__(self, num_embeddings: int = 8192, embedding_dim: int = 256,
-                 commitment_cost: float = 0.25, ema_decay: float = 0.99,
-                 dead_code_threshold: int = 100,
-                 revival_threshold: float = 1e-3,
-                 revival_interval: int = 100):
+    def __init__(
+        self,
+        num_embeddings: int = 8192,
+        embedding_dim: int = 256,
+        commitment_cost: float = 0.25,
+        ema_decay: float = 0.99,
+        dead_code_threshold: int = 100,
+        revival_threshold: float = 1e-3,
+        revival_interval: int = 100,
+    ):
         super().__init__()
         self.num_embeddings = num_embeddings
         self.embedding_dim = embedding_dim
@@ -207,9 +223,11 @@ class VectorQuantizer(nn.Module):
             self._init_ema_from_data(z_flat)
 
         # 计算与 codebook 的距离（||z - e||^2 = ||z||^2 - 2 z·e + ||e||^2）
-        dist = (z_flat.pow(2).sum(dim=1, keepdim=True)
-                - 2 * z_flat @ self.codebook.weight.t()
-                + self.codebook.weight.pow(2).sum(dim=1))
+        dist = (
+            z_flat.pow(2).sum(dim=1, keepdim=True)
+            - 2 * z_flat @ self.codebook.weight.t()
+            + self.codebook.weight.pow(2).sum(dim=1)
+        )
 
         # 最近邻索引
         indices = dist.argmin(dim=1)  # [B*H*W]
@@ -234,7 +252,8 @@ class VectorQuantizer(nn.Module):
                 cluster_size = one_hot.sum(dim=0)  # [num_emb]
                 # EMA 更新 cluster size
                 self.ema_cluster_size.data.mul_(self.ema_decay).add_(
-                    cluster_size, alpha=1 - self.ema_decay)
+                    cluster_size, alpha=1 - self.ema_decay
+                )
 
                 # 计算每个码字的向量之和
                 dw = one_hot.t() @ z_flat  # [num_emb, D]
@@ -243,7 +262,9 @@ class VectorQuantizer(nn.Module):
 
                 # Laplace 平滑
                 n = self.ema_cluster_size.sum()
-                smoothed_size = (self.ema_cluster_size + 1e-5) / (n + self.num_embeddings * 1e-5) * n
+                smoothed_size = (
+                    (self.ema_cluster_size + 1e-5) / (n + self.num_embeddings * 1e-5) * n
+                )
                 self.codebook.weight.data.copy_(self.ema_w / smoothed_size.unsqueeze(1))
 
                 # 更新使用计数
@@ -264,7 +285,9 @@ class VectorQuantizer(nn.Module):
                         # 从当前 batch 随机采样数据点替换低频码字
                         n_replace = min(n_dead, z_flat.shape[0])
                         dead_indices = dead_mask.nonzero(as_tuple=True)[0][:n_replace]
-                        rand_indices = torch.randperm(z_flat.shape[0], device=z_flat.device)[:n_replace]
+                        rand_indices = torch.randperm(z_flat.shape[0], device=z_flat.device)[
+                            :n_replace
+                        ]
                         self.codebook.weight.data[dead_indices] = z_flat[rand_indices].detach()
                         self.ema_w.data[dead_indices] = z_flat[rand_indices].detach()
                         # 重置 EMA 统计（给重置的码字一个"初始配额"，避免立即又被判为低频）
@@ -343,10 +366,10 @@ class VQVAEImageCodec:
         downsample: int = 8,
     ):
         """Args:
-            model: 预训练 VQ-VAE 模型（None 时按 downsample 创建未训练实例）
-            image_size: 输入图像尺寸（默认 224×224）
-            device: torch 设备
-            downsample: 下采样倍数（4/8/16），仅在 model=None 时生效
+        model: 预训练 VQ-VAE 模型（None 时按 downsample 创建未训练实例）
+        image_size: 输入图像尺寸（默认 224×224）
+        device: torch 设备
+        downsample: 下采样倍数（4/8/16），仅在 model=None 时生效
         """
         self.model = model or VQVAE(downsample=downsample)
         self.model.eval()
@@ -400,10 +423,10 @@ class VQVAEImageCodec:
         with torch.no_grad():
             # 计算空间尺寸（正方形）
             n = len(ids)
-            h = w = int(n ** 0.5)
+            h = w = int(n**0.5)
             if h * w != n:
                 # 非正方形，用最长边
-                h = int(n ** 0.5) + 1
+                h = int(n**0.5) + 1
                 w = (n + h - 1) // h
             indices = torch.tensor(ids, dtype=torch.long, device=self.device).view(1, h, w)
             recon = self.model.decode_from_indices(indices)  # [1, 3, H, W]

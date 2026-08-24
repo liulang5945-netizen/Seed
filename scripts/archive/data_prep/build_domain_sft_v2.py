@@ -16,6 +16,7 @@
 Usage:
     python -u scripts/data_prep/build_domain_sft_v2.py
 """
+
 from __future__ import annotations
 
 import json
@@ -25,14 +26,21 @@ import sys
 
 import pyarrow.ipc as ipc
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 SFT_DIR = os.path.join(PROJECT_ROOT, "data", "sft")
 os.makedirs(SFT_DIR, exist_ok=True)
 
 CACHE_ROOT = os.path.join(PROJECT_ROOT, "data", "cache")
 CODE_ALPACA_ARROW = os.path.join(
-    CACHE_ROOT, "sahil2801___code_alpaca-20k", "default", "0.0.0",
-    "152bb5e9a29651266b018106053980070a0521a1", "code_alpaca-20k-train.arrow")
+    CACHE_ROOT,
+    "sahil2801___code_alpaca-20k",
+    "default",
+    "0.0.0",
+    "152bb5e9a29651266b018106053980070a0521a1",
+    "code_alpaca-20k-train.arrow",
+)
 MATH_TEXTS = os.path.join(PROJECT_ROOT, "data", "corpus", "math_texts.jsonl")
 
 MAX_FULL_CHARS = 512  # 超长样本跳过（SEQ_LEN=192 token 装不下，截断会丢 answer 尾部）
@@ -50,8 +58,13 @@ def to_sample(instruction: str, input_: str, response: str):
     full = prompt + "\n" + response
     if len(full) > MAX_FULL_CHARS:
         return None
-    return {"instruction": instruction, "input": input_, "response": response,
-            "prompt": prompt, "full": full}
+    return {
+        "instruction": instruction,
+        "input": input_,
+        "response": response,
+        "prompt": prompt,
+        "full": full,
+    }
 
 
 def load_code_alpaca() -> list:
@@ -70,8 +83,10 @@ def load_code_alpaca() -> list:
 def load_math() -> list:
     """gsm8k main train+test 完整 QA + math_texts 行级续写样本 → 30000。"""
     import os as _os
+
     _os.environ["HF_HUB_OFFLINE"] = "1"
     import datasets
+
     qa = []
     for split in ["train", "test"]:
         ds = datasets.load_dataset("openai/gsm8k", "main", split=split)
@@ -107,8 +122,10 @@ def load_math() -> list:
 
 def load_zh() -> list:
     import os as _os
+
     _os.environ["HF_HUB_OFFLINE"] = "1"
     import datasets
+
     ds = datasets.load_dataset("shibing624/alpaca-zh", split="train")
     out = []
     for row in ds:
@@ -121,8 +138,10 @@ def load_zh() -> list:
 
 def load_en() -> list:
     import os as _os
+
     _os.environ["HF_HUB_OFFLINE"] = "1"
     import datasets
+
     ds = datasets.load_dataset("tatsu-lab/alpaca", split="train")
     out = []
     for row in ds:
@@ -161,6 +180,7 @@ def main():
         print(f"  [{domain}] avg_len={sum(lens)//len(lens)} max_len={max(lens)}", flush=True)
         path = os.path.join(SFT_DIR, f"{domain}_sft.pt")
         import torch
+
         torch.save(samples, path)
         print(f"  [{domain}] 已保存 {path}（{len(samples)} 条）", flush=True)
 
@@ -168,9 +188,11 @@ def main():
     print("\n" + "=" * 60)
     print("回读验证：")
     import torch
+
     for domain in builders:
-        data = torch.load(os.path.join(SFT_DIR, f"{domain}_sft.pt"),
-                          map_location="cpu", weights_only=False)
+        data = torch.load(
+            os.path.join(SFT_DIR, f"{domain}_sft.pt"), map_location="cpu", weights_only=False
+        )
         keys = set(data[0].keys())
         assert keys == {"instruction", "input", "response", "prompt", "full"}, keys
         ok = all(s["full"].startswith(s["prompt"] + "\n") for s in data[:50])

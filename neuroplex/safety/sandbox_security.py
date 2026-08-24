@@ -3,12 +3,12 @@
 ============
 路径白名单、命令黑名单、审计日志。
 """
+
 import logging
 import os
 import json
 import time
-from typing import List, Optional
-from pathlib import Path
+from typing import Optional
 
 logger = logging.getLogger("SandboxSecurity")
 
@@ -180,6 +180,7 @@ def is_command_safe(command: str) -> bool:
 
 # ======================== 审计日志 ========================
 
+
 class AuditLogger:
     """沙箱操作审计日志"""
 
@@ -212,8 +213,8 @@ class AuditLogger:
                 lines = f.readlines()
                 for line in lines[-count:]:
                     events.append(json.loads(line))
-        except FileNotFoundError:
-            pass
+        except FileNotFoundError as e:
+            logger.debug("【AuditLogger.get_recent】处理失败（非致命）: %s", e)
         return events
 
 

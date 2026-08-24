@@ -5,6 +5,7 @@
 1. 域头 answer PPL 能否收敛（生成能力）
 2. 训练后 general 256K 空间 NLL 对角是否保留（判定能力）
 """
+
 import os
 import sys
 import random
@@ -28,20 +29,24 @@ GENERAL_LOSS_WEIGHT = 0.5  # general 保留 loss 权重
 
 def load_general_base(domain, device="cpu"):
     """加载 foundation_v1_general（body + general 256K 共享头）。"""
-    ck = torch.load(f"data/foundation_v1_general/neuron_{domain}.pt", map_location=device, weights_only=False)
+    ck = torch.load(
+        f"data/foundation_v1_general/neuron_{domain}.pt", map_location=device, weights_only=False
+    )
     cfg = ck["neuron_config"]
     cfg.unified_field_dim = None
     neuron = ResonanceNeuron(cfg).to(device)
     sd = {k: v for k, v in ck["state_dict"].items() if not k.startswith("lm_head")}
     neuron.load_state_dict(sd, strict=False)
     # general 256K 共享头
-    gs = torch.load("data/foundation_v1_general/shared_lm_head.pt", map_location=device, weights_only=False)
+    gs = torch.load(
+        "data/foundation_v1_general/shared_lm_head.pt", map_location=device, weights_only=False
+    )
     general_head = torch.nn.Linear(512, 256000, bias=False).to(device)
     general_head.weight.data.copy_(gs["weight"])
     neuron.lm_head = general_head  # 判定头（general 256K）
     # 域头（新训练，生成）
     dom_head = torch.nn.Linear(512, GENERAL_VOCAB[domain], bias=False).to(device)
-    torch.nn.init.normal_(dom_head.weight, std=512 ** -0.5)
+    torch.nn.init.normal_(dom_head.weight, std=512**-0.5)
     neuron.domain_lm_head = dom_head
     return neuron, cfg
 
@@ -53,8 +58,8 @@ def build_batch(samples, domain_sp, general_sp, shared_emb, device):
         g_ids = torch.cat([g_ids, torch.tensor([general_sp.eos_id()])])
         d_targets = torch.cat([d_targets, torch.tensor([domain_sp.eos_id()])])
         if len(g_ids) > SEQ_LEN:
-            g_ids = torch.cat([g_ids[:SEQ_LEN - 1], torch.tensor([general_sp.eos_id()])])
-            d_targets = torch.cat([d_targets[:SEQ_LEN - 1], torch.tensor([domain_sp.eos_id()])])
+            g_ids = torch.cat([g_ids[: SEQ_LEN - 1], torch.tensor([general_sp.eos_id()])])
+            d_targets = torch.cat([d_targets[: SEQ_LEN - 1], torch.tensor([domain_sp.eos_id()])])
         rows.append((g_ids, d_targets, ans_start))
     max_len = max(len(r[0]) for r in rows)
     B = len(rows)
@@ -90,8 +95,11 @@ def main():
     general = load_general_tokenizer()
     dsp = load_tokenizer_for_vocab(domain, GENERAL_VOCAB[domain])
     shared_emb = torch.nn.Embedding(256000, 512)
-    shared_emb.weight.data.copy_(torch.load("data/foundation_v1_general/shared_embedding.pt",
-                                            map_location="cpu", weights_only=False))
+    shared_emb.weight.data.copy_(
+        torch.load(
+            "data/foundation_v1_general/shared_embedding.pt", map_location="cpu", weights_only=False
+        )
+    )
     for p in shared_emb.parameters():
         p.requires_grad = False
 
@@ -108,7 +116,9 @@ def main():
     # 冻结 shared_embedding（C24 配方），全部 body + 双头可训
     opt = torch.optim.AdamW(
         [p for p in neuron.parameters()] + [p for p in neuron.domain_lm_head.parameters()],
-        lr=LR, weight_decay=0.1)
+        lr=LR,
+        weight_decay=0.1,
+    )
 
     print("\n=== 训练前：general 256K 判定对角（4 回合 NLL）===")
     PROMPTS = [
@@ -141,20 +151,28 @@ def main():
         am = sft_mask[:, 1:].contiguous()
         dt[~am] = -100
         nt = max(int(am.sum().item()), 1)
-        loss_dom = F.cross_entropy(dl.view(-1, dl.size(-1)), dt.view(-1), ignore_index=-100, reduction="sum") / nt
+        loss_dom = (
+            F.cross_entropy(
+                dl.view(-1, dl.size(-1)), dt.view(-1), ignore_index=-100, reduction="sum"
+            )
+            / nt
+        )
         # general 保留 loss（next-token，全序列）
         gl = neuron.lm_head(emb)  # 复用输入 embedding → general logits
         gt = g_tgt[:, 1:].clone().contiguous()
-        loss_gen = F.cross_entropy(gl[:, :-1, :].contiguous().view(-1, gl.size(-1)),
-                                   gt.view(-1), ignore_index=-100)
+        loss_gen = F.cross_entropy(
+            gl[:, :-1, :].contiguous().view(-1, gl.size(-1)), gt.view(-1), ignore_index=-100
+        )
         loss = loss_dom + GENERAL_LOSS_WEIGHT * loss_gen
         opt.zero_grad()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(neuron.parameters(), 1.0)
         opt.step()
         if step % 10 == 0:
-            print(f"  [step {step}] dom_loss={loss_dom.item():.3f} gen_loss={loss_gen.item():.3f} "
-                  f"dom_PPL={math.exp(min(loss_dom.item(), 20)):.1f}")
+            print(
+                f"  [step {step}] dom_loss={loss_dom.item():.3f} gen_loss={loss_gen.item():.3f} "
+                f"dom_PPL={math.exp(min(loss_dom.item(), 20)):.1f}"
+            )
 
     # 训练后验证
     print("\n=== 训练后：域头 answer PPL（eval 集）===")
@@ -167,7 +185,9 @@ def main():
         am = sm[:, 1:].contiguous()
         t[~am] = -100
         nt = int(am.sum().item())
-        l = F.cross_entropy(lg.view(-1, lg.size(-1)), t.view(-1), ignore_index=-100, reduction="sum")
+        l = F.cross_entropy(
+            lg.view(-1, lg.size(-1)), t.view(-1), ignore_index=-100, reduction="sum"
+        )
         print(f"  code 域 answer PPL = {math.exp(min(l.item()/max(nt,1), 20)):.1f}")
 
     print("\n=== 训练后：general 256K 判定对角 ===")

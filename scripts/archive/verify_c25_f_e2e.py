@@ -39,8 +39,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -88,25 +93,36 @@ def main():
 
     print("\n[2] 三阶段 zh→code→zh（阶段间 {prev} 传递）", flush=True)
     stages = [
-        {"prompt": "用户需求：写一个 Python 函数，输入 n，输出斐波那契数列第 n 项。",
-         "mode": "executive", "domain": "zh"},
-        {"prompt": "根据需求：{prev}\n写出满足需求的完整 Python 函数代码。",
-         "mode": "continuous", "domain": "code", "max_tokens": 48},
-        {"prompt": "用中文向用户解释以下代码的功能：{prev}",
-         "mode": "executive", "domain": "zh", "max_tokens": 32},
+        {
+            "prompt": "用户需求：写一个 Python 函数，输入 n，输出斐波那契数列第 n 项。",
+            "mode": "executive",
+            "domain": "zh",
+        },
+        {
+            "prompt": "根据需求：{prev}\n写出满足需求的完整 Python 函数代码。",
+            "mode": "continuous",
+            "domain": "code",
+            "max_tokens": 48,
+        },
+        {
+            "prompt": "用中文向用户解释以下代码的功能：{prev}",
+            "mode": "executive",
+            "domain": "zh",
+            "max_tokens": 32,
+        },
     ]
     outs = cortex.generate_staged(stages, max_tokens_per_stage=32)
     for i, o in enumerate(outs):
         print(f"  阶段{i + 1} → {o[:80]!r}", flush=True)
-        check(f"阶段{i + 1} 输出非空", isinstance(o, str) and len(o.strip()) > 0,
-              f"len={len(o)}")
+        check(f"阶段{i + 1} 输出非空", isinstance(o, str) and len(o.strip()) > 0, f"len={len(o)}")
     # 内容质量为信息性报告（机制验证对象是编排链路；内容质量受模型
     # 能力上限约束——C24 zh PPL 70.2 高，阶段 1 zh 碎片会污染 prev。
     # diag_c25_f_stage2 已确认：无 prev 时中文指令出代码、英文 prompt 出
     # 代码，domain/mode/判定均正常，碎片纯由 prev 携带）
-    s2_has_code = ("def" in outs[1] or "return" in outs[1] or "import" in outs[1]
-                   or "lambda" in outs[1])
-    s3_zh = any('\u4e00' <= c <= '\u9fff' for c in outs[2])
+    s2_has_code = (
+        "def" in outs[1] or "return" in outs[1] or "import" in outs[1] or "lambda" in outs[1]
+    )
+    s3_zh = any("\u4e00" <= c <= "\u9fff" for c in outs[2])
     print(f"  [INFO] 阶段2 code 特征: {s2_has_code} → {outs[1][:60]!r}", flush=True)
     print(f"  [INFO] 阶段3 中文特征: {s3_zh} → {outs[2][:60]!r}", flush=True)
 
@@ -118,8 +134,11 @@ def main():
     ]
     bad_outs = cortex.generate_staged(bad_stages, max_tokens_per_stage=8)
     check("空 prompt 阶段输出空串", bad_outs[1] == "", f"→ {bad_outs[1]!r}")
-    check("异常阶段前后正常", len(bad_outs[0].strip()) > 0 and len(bad_outs[2].strip()) > 0,
-          f"→ {bad_outs[0][:30]!r} / {bad_outs[2][:30]!r}")
+    check(
+        "异常阶段前后正常",
+        len(bad_outs[0].strip()) > 0 and len(bad_outs[2].strip()) > 0,
+        f"→ {bad_outs[0][:30]!r} / {bad_outs[2][:30]!r}",
+    )
 
     print(f"\n  总耗时: {time.time() - t0:.1f}s", flush=True)
     print("=" * 60, flush=True)

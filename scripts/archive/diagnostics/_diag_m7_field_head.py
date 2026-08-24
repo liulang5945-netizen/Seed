@@ -59,8 +59,18 @@ def main(seed: int = 29) -> None:
     captured: Dict[str, torch.Tensor] = {}
     original_write = EpisodicField.write
 
-    def capturing_write(self, cortical_context, *, action_symbol, reward,
-                        outcome_symbol, tick, episode_id, provenance, threshold):
+    def capturing_write(
+        self,
+        cortical_context,
+        *,
+        action_symbol,
+        reward,
+        outcome_symbol,
+        tick,
+        episode_id,
+        provenance,
+        threshold,
+    ):
         cue_pattern = self._cue_pattern(cortical_context, threshold)
         action_drive = self._normalize_drive(
             self.action_encoder.forward(self._one_hot(action_symbol))
@@ -72,16 +82,16 @@ def main(seed: int = 29) -> None:
         episode_code = self._episode_code(episode_id)
         provenance_code = self._provenance_code(provenance)
         time_drive = self._normalize_drive(self.time_encoder.forward(time_code))
-        episode_drive = self._normalize_drive(
-            self.episode_encoder.forward(episode_code)
-        )
-        provenance_drive = self._normalize_drive(
-            self.provenance_encoder.forward(provenance_code)
-        )
+        episode_drive = self._normalize_drive(self.episode_encoder.forward(episode_code))
+        provenance_drive = self._normalize_drive(self.provenance_encoder.forward(provenance_code))
         cue_drive = self._encode_cue(cortical_context)
         components = (
-            action_drive, outcome_drive, reward * self.reward_code,
-            time_drive, episode_drive, provenance_drive,
+            action_drive,
+            outcome_drive,
+            reward * self.reward_code,
+            time_drive,
+            episode_drive,
+            provenance_drive,
         )
         scale = self.config.memory_event_gain / math.sqrt(len(components))
         event_drive = cue_drive + scale * torch.stack(components, dim=0).sum(dim=0)
@@ -89,9 +99,15 @@ def main(seed: int = 29) -> None:
         captured["pattern"] = pattern.clone()
         captured["cue_pattern"] = cue_pattern.clone()
         return original_write(
-            self, cortical_context, action_symbol=action_symbol, reward=reward,
-            outcome_symbol=outcome_symbol, tick=tick, episode_id=episode_id,
-            provenance=provenance, threshold=threshold,
+            self,
+            cortical_context,
+            action_symbol=action_symbol,
+            reward=reward,
+            outcome_symbol=outcome_symbol,
+            tick=tick,
+            episode_id=episode_id,
+            provenance=provenance,
+            threshold=threshold,
         )
 
     cue_patterns: Dict[int, torch.Tensor] = {}
@@ -99,14 +115,10 @@ def main(seed: int = 29) -> None:
     try:
         for cue, ev in episodes.items():
             model.reset_dynamics(episode_id=ev["episode_id"])
-            model.observe(
-                model.config.boundary_symbol, learn=False, learn_motor=False
-            )
+            model.observe(model.config.boundary_symbol, learn=False, learn_motor=False)
             model.observe(cue, learn=False, learn_motor=False)
             model.act((ev["action"],), sample=False)
-            model.settle_action(
-                1.0, learn=False, learn_memory=True, provenance="experienced"
-            )
+            model.settle_action(1.0, learn=False, learn_memory=True, provenance="experienced")
             model.observe(ev["outcome"], learn=False, learn_motor=False)
             event_patterns[cue] = captured["pattern"]
             cue_patterns[cue] = captured["cue_pattern"]
@@ -134,10 +146,7 @@ def main(seed: int = 29) -> None:
                     ).item()
                 )
             )
-    print(
-        f"  pairwise event cosine: mean {sum(pair)/len(pair):.3f} "
-        f"max {max(pair):.3f}"
-    )
+    print(f"  pairwise event cosine: mean {sum(pair)/len(pair):.3f} " f"max {max(pair):.3f}")
     ok_a = ok_o = 0
     for cue, ev in episodes.items():
         ctx = mem.readout_receptors.forward(event_patterns[cue])
@@ -153,17 +162,13 @@ def main(seed: int = 29) -> None:
         for _ in range(model.config.memory_iterations):
             recurrent = mem.association.forward(activity)
             activity, _ = mem._activate(
-                mem._encode_cue(
-                    torch.zeros(model.config.cortical_context_dim)
-                ) * 0.0
+                mem._encode_cue(torch.zeros(model.config.cortical_context_dim)) * 0.0
                 + mem.config.memory_recurrent_gain * recurrent,
                 model._state.memory.threshold,
             )
         sims = {
             c: float(
-                torch.nn.functional.cosine_similarity(
-                    activity, event_patterns[c], dim=0
-                ).item()
+                torch.nn.functional.cosine_similarity(activity, event_patterns[c], dim=0).item()
             )
             for c in CUES
         }
@@ -192,9 +197,7 @@ def main(seed: int = 29) -> None:
         ok_a += int(act == ev["action"])
         ok_o += int(out == ev["outcome"])
         conf = max(1e-8, step.memory_recall.confidence)
-        cortical_probes[cue] = (
-            step.memory_recall.cortical_feedback / conf
-        ).detach().clone()
+        cortical_probes[cue] = (step.memory_recall.cortical_feedback / conf).detach().clone()
     print(f"  wake recall action: {ok_a}/8, outcome: {ok_o}/8")
 
     print("== cortical identity of recall projection ==")
@@ -202,9 +205,7 @@ def main(seed: int = 29) -> None:
         best = max(
             cortical_probes,
             key=lambda c: float(
-                torch.nn.functional.cosine_similarity(
-                    probe, cortical_probes[c], dim=0
-                ).item()
+                torch.nn.functional.cosine_similarity(probe, cortical_probes[c], dim=0).item()
             ),
         )
         identity_ok += int(best == cue)
@@ -244,13 +245,9 @@ def main(seed: int = 29) -> None:
     contexts = {}
     for cue in CUES:
         model.reset_dynamics(episode_id=f"diag-geo-{cue}")
-        model.observe(
-            model.config.boundary_symbol, learn=False, learn_motor=False
-        )
+        model.observe(model.config.boundary_symbol, learn=False, learn_motor=False)
         model.observe(cue, learn=False, learn_motor=False)
-        contexts[cue] = model.fabric.cortical_context(
-            model._state.regions
-        ).detach().clone()
+        contexts[cue] = model.fabric.cortical_context(model._state.regions).detach().clone()
     sims = []
     same_action = []
     for i in range(len(CUES)):
@@ -263,22 +260,14 @@ def main(seed: int = 29) -> None:
             sims.append(s)
             if episodes[CUES[i]]["action"] == episodes[CUES[j]]["action"]:
                 same_action.append(s)
-    print(
-        f"  pairwise cortical cosine: mean {sum(sims)/len(sims):.3f} "
-        f"max {max(sims):.3f}"
-    )
-    print(
-        f"  same-action pair cosine mean: "
-        f"{sum(same_action)/len(same_action):.3f}"
-    )
+    print(f"  pairwise cortical cosine: mean {sum(sims)/len(sims):.3f} " f"max {max(sims):.3f}")
+    print(f"  same-action pair cosine mean: " f"{sum(same_action)/len(same_action):.3f}")
 
     print("== stage 6: which cues fail recall ==")
     fails = []
     for cue, ev in episodes.items():
         model.reset_dynamics(episode_id=f"diag-fail-{cue}")
-        model.observe(
-            model.config.boundary_symbol, learn=False, learn_motor=False
-        )
+        model.observe(model.config.boundary_symbol, learn=False, learn_motor=False)
         step = model.observe(cue, learn=False, learn_motor=False)
         act = int(step.memory_recall.action_probabilities.argmax().item())
         if act != ev["action"]:

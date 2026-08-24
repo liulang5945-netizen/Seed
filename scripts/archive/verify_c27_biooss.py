@@ -27,7 +27,9 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch  # noqa: E402
 import random  # noqa: E402
@@ -40,6 +42,7 @@ torch.cuda.manual_seed_all(0)
 from neuroplex.loader import assemble_cortex  # noqa: E402
 from neuroplex.resonance.oscillator import OscillatorNode, make_default_oscillators  # noqa: E402
 from neuroplex.resonance.phasor import PhasorDynamics  # noqa: E402
+
 # 口径契约：zh/dialogue 域 prompt 必须走训练格式
 from neuroplex.resonance.dialogue_format import build_dialogue_prompt  # noqa: E402
 
@@ -57,8 +60,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -83,36 +91,42 @@ def main():
 
     # ── A. OscillatorNode 单元 ──
     print("\n[A] OscillatorNode 单元 ...", flush=True)
-    osc = OscillatorNode(nid="osc_test", omega=0.5, coupling=0.4,
-                         gaba_amp=0.08, dim=16, phase=0.0)
+    osc = OscillatorNode(nid="osc_test", omega=0.5, coupling=0.4, gaba_amp=0.08, dim=16, phase=0.0)
     osc.step(dt=1.0)
-    check("A1. 相位推进（θ += ω·dt）", abs(osc.phase - 0.5) < 1e-6,
-          f"phase={osc.phase:.4f}")
+    check("A1. 相位推进（θ += ω·dt）", abs(osc.phase - 0.5) < 1e-6, f"phase={osc.phase:.4f}")
     u = osc.unit()
-    check("A2. unit 单位向量（cos/sin）",
-          abs(float(u[0]) - math.cos(0.5)) < 1e-6
-          and abs(float(u[1]) - math.sin(0.5)) < 1e-6,
-          f"unit={u.tolist()}")
-    g0 = OscillatorNode(nid="g", omega=0.5, coupling=0.1, gaba_amp=0.1,
-                        dim=16, phase=0.0).gaba_gate()
-    gp = OscillatorNode(nid="g", omega=0.5, coupling=0.1, gaba_amp=0.1,
-                        dim=16, phase=math.pi).gaba_gate()
-    check("A3. GABA 半周期窗口（cos>0 激活，π 相位关闭）",
-          abs(g0 - 1.0) < 1e-6 and gp < 1e-6,
-          f"g0={g0:.3f} gp={gp:.3f}")
+    check(
+        "A2. unit 单位向量（cos/sin）",
+        abs(float(u[0]) - math.cos(0.5)) < 1e-6 and abs(float(u[1]) - math.sin(0.5)) < 1e-6,
+        f"unit={u.tolist()}",
+    )
+    g0 = OscillatorNode(
+        nid="g", omega=0.5, coupling=0.1, gaba_amp=0.1, dim=16, phase=0.0
+    ).gaba_gate()
+    gp = OscillatorNode(
+        nid="g", omega=0.5, coupling=0.1, gaba_amp=0.1, dim=16, phase=math.pi
+    ).gaba_gate()
+    check(
+        "A3. GABA 半周期窗口（cos>0 激活，π 相位关闭）",
+        abs(g0 - 1.0) < 1e-6 and gp < 1e-6,
+        f"g0={g0:.3f} gp={gp:.3f}",
+    )
 
     # ── B. 装配注入 ──
     print("\n[B] 装配注入（o 型振荡节点）...", flush=True)
     oscs = getattr(cortex.ensemble, "oscillators", [])
-    check("B1. ensemble 装配注入振荡节点（theta+gamma 双层）",
-          len(oscs) == 2
-          and any(o.nid.startswith("osc_theta") for o in oscs)
-          and any(o.nid.startswith("osc_gamma") for o in oscs),
-          f"oscs={[o.nid for o in oscs]}")
-    check("B2. 振荡节点含 GABA 门控方向（gaba_vec 维度 = 场维度）",
-          all(o.gaba_vec.numel() == int(getattr(cortex.field, "dim", 0))
-              for o in oscs),
-          f"dims={[int(o.gaba_vec.numel()) for o in oscs]}")
+    check(
+        "B1. ensemble 装配注入振荡节点（theta+gamma 双层）",
+        len(oscs) == 2
+        and any(o.nid.startswith("osc_theta") for o in oscs)
+        and any(o.nid.startswith("osc_gamma") for o in oscs),
+        f"oscs={[o.nid for o in oscs]}",
+    )
+    check(
+        "B2. 振荡节点含 GABA 门控方向（gaba_vec 维度 = 场维度）",
+        all(o.gaba_vec.numel() == int(getattr(cortex.field, "dim", 0)) for o in oscs),
+        f"dims={[int(o.gaba_vec.numel()) for o in oscs]}",
+    )
 
     # ── C. 相位牵引（PhasorDynamics evolve 外部振荡器）──
     print("\n[C] 相位牵引（o 型驱动 p 型锁相）...", flush=True)
@@ -122,20 +136,25 @@ def main():
         # dt=0 且 K=0 → 无内部演化，仅外部牵引项可见
         base = pd.evolve(active_ids=["n0", "n1"], dt=0.0, coupling_strength=0.0)
         pulled = pd.evolve(
-            active_ids=["n0", "n1"], dt=0.0, coupling_strength=0.0,
+            active_ids=["n0", "n1"],
+            dt=0.0,
+            coupling_strength=0.0,
             external_phases=[[1.0, 0.0]],  # osc 相位 0（θ=0）
             external_weights=[0.5],
         )
         diff = float((pulled - base).abs().sum().item())
-        check("C1. 外部振荡器牵引改变相位演化", diff > 1e-4,
-              f"diff={diff:.5f}")
+        check("C1. 外部振荡器牵引改变相位演化", diff > 1e-4, f"diff={diff:.5f}")
         # 方向验证：n0 相位 0.1 > osc 0 → sin(0-0.1)<0 → 相位应逆时针减小
         import math as _m
+
         p0_base = _m.atan2(float(base[0, 1].detach()), float(base[0, 0].detach()))
         p0_pull = _m.atan2(float(pulled[0, 1].detach()), float(pulled[0, 0].detach()))
         delta = (p0_pull - p0_base + _m.pi) % (2 * _m.pi) - _m.pi
-        check("C2. 牵引方向正确（朝振荡器相位拉动）", delta < 0,
-              f"delta={delta:.4f} (base={p0_base:.3f}→pull={p0_pull:.3f})")
+        check(
+            "C2. 牵引方向正确（朝振荡器相位拉动）",
+            delta < 0,
+            f"delta={delta:.4f} (base={p0_base:.3f}→pull={p0_pull:.3f})",
+        )
     except Exception as e:
         check("C1. 外部振荡器牵引改变相位演化", False, f"err={e}")
         check("C2. 牵引方向正确", False, f"err={e}")
@@ -145,27 +164,40 @@ def main():
     try:
         emb_in = torch.tensor(
             [cortex._general_sp.encode(build_dialogue_prompt("节奏门控测试"))],
-            dtype=torch.long, device=cortex.device)
+            dtype=torch.long,
+            device=cortex.device,
+        )
         emb = cortex._shared_embedding(emb_in)
-        zh_domain_all = ["zh_aug0_dialogue", "zh_aug1_dialogue",
-                         "zh_aug2_dialogue", "zh_aug3_dialogue",
-                         "zh_std0_dialogue", "zh"]
+        zh_domain_all = [
+            "zh_aug0_dialogue",
+            "zh_aug1_dialogue",
+            "zh_aug2_dialogue",
+            "zh_aug3_dialogue",
+            "zh_std0_dialogue",
+            "zh",
+        ]
         # 注意：continuous_forward 写 thread-local task_field（多线程推理隔离），
         # 须经 _get_task_field 读取同一对象（与 continuous_forward 内部一致）。
         tf = cortex.ensemble._get_task_field()
         tf.reset(batch_size=1)
         mask0 = tf.inhibitory_mask.detach().clone()
         cortex.ensemble.continuous_forward(
-            shared_embeddings=emb, active_nids=zh_domain_all,
+            shared_embeddings=emb,
+            active_nids=zh_domain_all,
         )
         mask1 = tf.inhibitory_mask.detach()
         gated = bool((mask1 < mask0 - 1e-6).any())
-        check("D1. 振荡门控调制 inhibitory_mask（GABA 窗口）",
-              gated, f"min_mask={float(mask1.min()):.4f}")
+        check(
+            "D1. 振荡门控调制 inhibitory_mask（GABA 窗口）",
+            gated,
+            f"min_mask={float(mask1.min()):.4f}",
+        )
         # 门控幅度受 gaba_amp 限制（不污染内容场：轻微调制）
-        check("D2. 门控幅度温和（≥0.9，防内容场过衰减）",
-              float(mask1.min()) >= 0.9 - 1e-6,
-              f"min_mask={float(mask1.min()):.4f}")
+        check(
+            "D2. 门控幅度温和（≥0.9，防内容场过衰减）",
+            float(mask1.min()) >= 0.9 - 1e-6,
+            f"min_mask={float(mask1.min()):.4f}",
+        )
     except Exception as e:
         check("D1. 振荡门控调制 inhibitory_mask", False, f"err={e}")
         check("D2. 门控幅度温和", False, f"err={e}")
@@ -173,21 +205,25 @@ def main():
     # ── E. phase_code 含振荡段（节奏中心）──
     print("\n[E] KoPE phase_code 纳入振荡段 ...", flush=True)
     try:
-        res = cortex.think(emb, active_nids=zh_domain_all,
-                           collab_mode="continuous", fusion_mode="soft")
+        res = cortex.think(
+            emb, active_nids=zh_domain_all, collab_mode="continuous", fusion_mode="soft"
+        )
         pc = res.get("phase_code")
         M = len(cortex.ensemble.oscillators)
         expect = 2 * len(zh_domain_all) + 2 * M
-        check("E1. phase_code 维度含振荡段（2N+2M）",
-              pc is not None and pc.numel() == expect,
-              f"dim={None if pc is None else tuple(pc.shape)} expect={expect}")
+        check(
+            "E1. phase_code 维度含振荡段（2N+2M）",
+            pc is not None and pc.numel() == expect,
+            f"dim={None if pc is None else tuple(pc.shape)} expect={expect}",
+        )
         # 振荡段数值 = 振荡节点相位
-        osc_seg = pc[-2 * M:] if pc is not None else None
-        osc_mean_ph = (float(osc_seg[1]) if M == 1 else
-                       float(osc_seg[-1]) if M >= 1 else 0.0)
-        check("E2. 振荡段为节奏中心（有限值）",
-              osc_seg is not None and all(v == v for v in osc_seg.tolist()),
-              f"osc_seg={None if osc_seg is None else osc_seg.tolist()[:4]}")
+        osc_seg = pc[-2 * M :] if pc is not None else None
+        osc_mean_ph = float(osc_seg[1]) if M == 1 else float(osc_seg[-1]) if M >= 1 else 0.0
+        check(
+            "E2. 振荡段为节奏中心（有限值）",
+            osc_seg is not None and all(v == v for v in osc_seg.tolist()),
+            f"osc_seg={None if osc_seg is None else osc_seg.tolist()[:4]}",
+        )
     except Exception as e:
         check("E1. phase_code 维度含振荡段", False, f"err={e}")
         check("E2. 振荡段为节奏中心", False, f"err={e}")
@@ -197,14 +233,17 @@ def main():
     try:
         out = cortex.generate(
             build_dialogue_prompt("介绍一下什么是注意力机制。"),
-            max_tokens=32, domain="zh", temperature=0.55,
+            max_tokens=32,
+            domain="zh",
+            temperature=0.55,
         )
         lp = cortex.get_last_phase()
-        check("F1. 生成非空不退化", isinstance(out, str)
-              and len(out.strip()) > 0 and not cortex._is_degenerate_text(out),
-              f"out={out[:30]!r}")
-        check("F2. get_last_phase 正常（含节奏中心相位均值）",
-              isinstance(lp, float), f"phase={lp}")
+        check(
+            "F1. 生成非空不退化",
+            isinstance(out, str) and len(out.strip()) > 0 and not cortex._is_degenerate_text(out),
+            f"out={out[:30]!r}",
+        )
+        check("F2. get_last_phase 正常（含节奏中心相位均值）", isinstance(lp, float), f"phase={lp}")
     except Exception as e:
         check("F1. 生成非空不退化", False, f"err={e}")
         check("F2. get_last_phase 正常", False, f"err={e}")

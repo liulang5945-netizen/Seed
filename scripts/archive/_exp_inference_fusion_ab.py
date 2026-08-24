@@ -8,13 +8,16 @@ entropy 路由（forward）生成质量更好——因为训练时模型学的�
 Usage:
     python -u scripts/training/_exp_inference_fusion_ab.py
 """
+
 from __future__ import annotations
 
 import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -40,15 +43,14 @@ TOP_K = 15
 REPETITION_PENALTY = 1.4
 
 
-def generate_with(ensemble, neurons, shared_embeddings, domain_sp, general_sp,
-                  prompt, mode):
+def generate_with(ensemble, neurons, shared_embeddings, domain_sp, general_sp, prompt, mode):
     """采样生成。mode: "per_position"（entropy 路由）或 "score"（共振分融合）。"""
     general_ids = general_sp.EncodeAsIds(prompt)
     if not general_ids:
         return "(empty)"
     ids = torch.tensor([general_ids], dtype=torch.long, device=DEVICE)
     generated_domain = []
-    domain_eos_id = domain_sp.eos_id() if hasattr(domain_sp, 'eos_id') else None
+    domain_eos_id = domain_sp.eos_id() if hasattr(domain_sp, "eos_id") else None
     if domain_eos_id is not None and domain_eos_id < 0:
         domain_eos_id = None
 
@@ -60,7 +62,8 @@ def generate_with(ensemble, neurons, shared_embeddings, domain_sp, general_sp,
 
             result = ensemble.forward(
                 neuron_embeddings=neuron_embeddings,
-                return_logits=True, fusion_mode=mode,
+                return_logits=True,
+                fusion_mode=mode,
             )
             if "weighted_logits" in result:
                 logits = result["weighted_logits"][:, -1, :].float()
@@ -78,7 +81,7 @@ def generate_with(ensemble, neurons, shared_embeddings, domain_sp, general_sp,
             if TOP_K > 0:
                 cur_top_k = min(TOP_K, logits.size(-1))
                 topk_vals, _ = torch.topk(logits[0], cur_top_k)
-                logits[0][logits[0] < topk_vals[-1]] = float('-inf')
+                logits[0][logits[0] < topk_vals[-1]] = float("-inf")
 
             probs = F.softmax(logits, dim=-1)
             nxt = torch.multinomial(probs, num_samples=1).item()
@@ -88,7 +91,9 @@ def generate_with(ensemble, neurons, shared_embeddings, domain_sp, general_sp,
 
             piece_text = domain_sp.decode([nxt])
             new_general_ids = general_sp.encode(piece_text)
-            ids = torch.cat([ids, torch.tensor([new_general_ids], dtype=torch.long, device=DEVICE)], dim=1)
+            ids = torch.cat(
+                [ids, torch.tensor([new_general_ids], dtype=torch.long, device=DEVICE)], dim=1
+            )
 
     return domain_sp.decode(generated_domain)
 
@@ -96,7 +101,9 @@ def generate_with(ensemble, neurons, shared_embeddings, domain_sp, general_sp,
 def main():
     domain_sp = load_domain_tokenizer(DEFAULT_DOMAIN)
     general_sp = load_general_tokenizer()
-    neurons, shared_embeddings = load_neurons_and_weights("dialogue", "data/neurons/cross_spec_dialogue.ckpt.pt")
+    neurons, shared_embeddings = load_neurons_and_weights(
+        "dialogue", "data/neurons/cross_spec_dialogue.ckpt.pt"
+    )
     geometry = NeuronGeometry(embedding_dim=8, sigma=0.5)
     topology = build_topology(neurons, geometry, mode="hybrid", k=3)
     establish_topology_channels(neurons, topology, geometry)
@@ -105,13 +112,20 @@ def main():
     ensemble = ResonanceEnsemble(neurons, field, max_rounds=2, geometry=geometry)
     load_cross_spec_weights(ensemble, "dialogue", "data/neurons/cross_spec_dialogue.ckpt.pt")
 
-    print(f"\n{'='*60}\n推理融合 A/B 实验（{len(PROMPTS)} prompts，同一 forward 推理路径）\n{'='*60}", flush=True)
+    print(
+        f"\n{'='*60}\n推理融合 A/B 实验（{len(PROMPTS)} prompts，同一 forward 推理路径）\n{'='*60}",
+        flush=True,
+    )
     for prompt in PROMPTS:
         print(f"\n问：{prompt.replace('问：','').replace('答：','').strip()}", flush=True)
-        for mode, label in [("per_position", "A: per_position(entropy 路由)"), ("score", "B: score(共振分融合)")]:
+        for mode, label in [
+            ("per_position", "A: per_position(entropy 路由)"),
+            ("score", "B: score(共振分融合)"),
+        ]:
             try:
-                out = generate_with(ensemble, neurons, shared_embeddings,
-                                    domain_sp, general_sp, prompt, mode)
+                out = generate_with(
+                    ensemble, neurons, shared_embeddings, domain_sp, general_sp, prompt, mode
+                )
                 print(f"  [{label}] {out}", flush=True)
             except Exception as e:
                 print(f"  [{label}] 失败: {e}", flush=True)

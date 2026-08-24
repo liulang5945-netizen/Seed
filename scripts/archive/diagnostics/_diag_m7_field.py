@@ -64,8 +64,18 @@ def main(seed: int = 29, **overrides) -> None:
     pending_cue: Dict[str, int] = {}
     original_write = EpisodicField.write
 
-    def capturing_write(self, cortical_context, *, action_symbol, reward,
-                        outcome_symbol, tick, episode_id, provenance, threshold):
+    def capturing_write(
+        self,
+        cortical_context,
+        *,
+        action_symbol,
+        reward,
+        outcome_symbol,
+        tick,
+        episode_id,
+        provenance,
+        threshold,
+    ):
         cue_pattern = self._cue_pattern(cortical_context, threshold)
         action_drive = self._normalize_drive(
             self.action_encoder.forward(self._one_hot(action_symbol))
@@ -77,25 +87,31 @@ def main(seed: int = 29, **overrides) -> None:
         episode_code = self._episode_code(episode_id)
         provenance_code = self._provenance_code(provenance)
         time_drive = self._normalize_drive(self.time_encoder.forward(time_code))
-        episode_drive = self._normalize_drive(
-            self.episode_encoder.forward(episode_code)
-        )
-        provenance_drive = self._normalize_drive(
-            self.provenance_encoder.forward(provenance_code)
-        )
+        episode_drive = self._normalize_drive(self.episode_encoder.forward(episode_code))
+        provenance_drive = self._normalize_drive(self.provenance_encoder.forward(provenance_code))
         cue_drive = self._encode_cue(cortical_context)
         components = (
-            action_drive, outcome_drive, reward * self.reward_code,
-            time_drive, episode_drive, provenance_drive,
+            action_drive,
+            outcome_drive,
+            reward * self.reward_code,
+            time_drive,
+            episode_drive,
+            provenance_drive,
         )
         scale = self.config.memory_event_gain / math.sqrt(len(components))
         event_drive = cue_drive + scale * torch.stack(components, dim=0).sum(dim=0)
         event_pattern, _ = self._activate(event_drive, threshold)
         captured["pattern"] = event_pattern.clone()
         return original_write(
-            self, cortical_context, action_symbol=action_symbol, reward=reward,
-            outcome_symbol=outcome_symbol, tick=tick, episode_id=episode_id,
-            provenance=provenance, threshold=threshold,
+            self,
+            cortical_context,
+            action_symbol=action_symbol,
+            reward=reward,
+            outcome_symbol=outcome_symbol,
+            tick=tick,
+            episode_id=episode_id,
+            provenance=provenance,
+            threshold=threshold,
         )
 
     EpisodicField.write = capturing_write
@@ -103,14 +119,10 @@ def main(seed: int = 29, **overrides) -> None:
     try:
         for cue, ev in episodes.items():
             model.reset_dynamics(episode_id=ev["episode_id"])
-            model.observe(
-                model.config.boundary_symbol, learn=False, learn_motor=False
-            )
+            model.observe(model.config.boundary_symbol, learn=False, learn_motor=False)
             model.observe(cue, learn=False, learn_motor=False)
             model.act((ev["action"],), sample=False)
-            model.settle_action(
-                1.0, learn=False, learn_memory=True, provenance="experienced"
-            )
+            model.settle_action(1.0, learn=False, learn_memory=True, provenance="experienced")
             model.observe(ev["outcome"], learn=False, learn_motor=False)
             event_patterns[cue] = captured["pattern"]
     finally:
@@ -158,11 +170,7 @@ def main(seed: int = 29, **overrides) -> None:
         got = classify(replay.pattern)
         best_cue, best_sim = None, -2.0
         for cue, pat in event_patterns.items():
-            s = float(
-                torch.nn.functional.cosine_similarity(
-                    replay.pattern, pat, dim=0
-                ).item()
-            )
+            s = float(torch.nn.functional.cosine_similarity(replay.pattern, pat, dim=0).item())
             if s > best_sim:
                 best_cue, best_sim = cue, s
         sims.append(best_sim)
@@ -205,10 +213,10 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed", type=int, default=29)
-    parser.add_argument("--binding", type=float, default=None,
-                        help="override memory_action_binding_gain")
-    parser.add_argument("--repeats", type=int, default=None,
-                        help="override episodic_write_repeats")
+    parser.add_argument(
+        "--binding", type=float, default=None, help="override memory_action_binding_gain"
+    )
+    parser.add_argument("--repeats", type=int, default=None, help="override episodic_write_repeats")
     args = parser.parse_args()
     ov = {}
     if args.binding is not None:

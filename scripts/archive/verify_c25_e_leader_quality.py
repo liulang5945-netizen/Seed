@@ -4,6 +4,7 @@
 复现路径：9 neuron 装配 + 训练格式 prompt + domain="zh"（此前 continuous
 空输出 5/8 的场景）。验证：continuous 空输出消除、leader 有区分度。
 """
+
 import os
 import sys
 
@@ -25,14 +26,25 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
 QUESTIONS = [
-    "你好", "你是谁？", "今天天气怎么样？", "1+1等于几？",
-    "帮我写一首关于春天的诗", "推荐一本好书", "什么是幸福？", "怎么学好英语？",
+    "你好",
+    "你是谁？",
+    "今天天气怎么样？",
+    "1+1等于几？",
+    "帮我写一首关于春天的诗",
+    "推荐一本好书",
+    "什么是幸福？",
+    "怎么学好英语？",
 ]
 
 
@@ -60,8 +72,13 @@ def main():
         for q in QUESTIONS:
             prompt = f"问：{q}\n答："
             text = cortex.generate(
-                prompt=prompt, max_tokens=60, temperature=0.55, top_k=15,
-                domain="zh", repetition_penalty=1.4, fusion_mode="soft",
+                prompt=prompt,
+                max_tokens=60,
+                temperature=0.55,
+                top_k=15,
+                domain="zh",
+                repetition_penalty=1.4,
+                fusion_mode="soft",
                 collab_mode=mode,
             )
             if text.strip():
@@ -86,9 +103,11 @@ def main():
     fs = r.get("final_scores", {})
     print(f"  round1_scores: {r1s}", flush=True)
     print(f"  final_scores (时间平均激活): {fs}", flush=True)
-    check("round1_scores 有区分度",
-          len(r1s) >= 2 and max(r1s.values()) - min(r1s.values()) > 1e-4,
-          f"max-min={max(r1s.values()) - min(r1s.values()):.4f}")
+    check(
+        "round1_scores 有区分度",
+        len(r1s) >= 2 and max(r1s.values()) - min(r1s.values()) > 1e-4,
+        f"max-min={max(r1s.values()) - min(r1s.values()):.4f}",
+    )
 
     print("=" * 60, flush=True)
     print(f"结果: {passed}/{passed + failed} PASS", flush=True)

@@ -5,6 +5,7 @@ test_api_dialogue 用训练格式 prompt（"问：{q}\n答："）+ domain="zh"�
 continuous 默认下 Q2-Q6 空输出。对比 executive/continuous 同 prompt 生成，
 并检查 leader 选择与 weighted_logits 是否异常。
 """
+
 import os
 import sys
 
@@ -12,8 +13,13 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 
 from taiji.loader import assemble_cortex  # noqa: E402
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -40,8 +46,13 @@ def main():
         print(f"\n=== {q} ===", flush=True)
         for mode in ("executive", "continuous"):
             text = cortex.generate(
-                prompt=prompt, max_tokens=30, temperature=0.55, top_k=15,
-                domain="zh", repetition_penalty=1.4, fusion_mode="soft",
+                prompt=prompt,
+                max_tokens=30,
+                temperature=0.55,
+                top_k=15,
+                domain="zh",
+                repetition_penalty=1.4,
+                fusion_mode="soft",
                 collab_mode=mode,
             )
             print(f"  [{mode}] {text[:80]!r} len={len(text)}", flush=True)

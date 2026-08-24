@@ -25,10 +25,11 @@ Usage:
     # 第二次调用，memory 自动作为前缀
     cortex.generate("你叫什么")  # 模型能看到上一轮内容
 """
+
 from __future__ import annotations
 
 from collections import deque
-from typing import Optional, List
+from typing import List
 import torch
 
 
@@ -122,17 +123,31 @@ class WorkingMemory:
     def save(self, path: str) -> None:
         """保存工作记忆到磁盘（会话暂停时调用）。"""
         import os
+
         os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
-        torch.save({
-            "max_tokens": self.max_tokens,
-            "buffer": list(self.buffer),
-            "round_marks": self.round_marks,
-        }, path)
+        torch.save(
+            {
+                "max_tokens": self.max_tokens,
+                "buffer": list(self.buffer),
+                "round_marks": self.round_marks,
+            },
+            path,
+        )
 
     @classmethod
     def load(cls, path: str) -> "WorkingMemory":
         """从磁盘加载工作记忆（会话恢复时调用）。"""
-        data = torch.load(path, weights_only=False)
+        import logging
+        import pickle
+
+        try:
+            data = torch.load(path, weights_only=True)
+        except pickle.UnpicklingError:
+            logging.getLogger("Taiji.WorkingMemory").warning(
+                "工作记忆 %s 需要 weights_only=False（legacy pickle），" "请确认文件来源可信",
+                path,
+            )
+            data = torch.load(path, weights_only=False)
         mem = cls(max_tokens=data["max_tokens"])
         mem.buffer.extend(data["buffer"])
         mem.round_marks = data["round_marks"]

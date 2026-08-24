@@ -20,11 +20,15 @@
 
 from __future__ import annotations
 
+import logging
 import os
-from typing import Dict, List, Optional, Tuple
+import pickle
+from typing import Dict, List, Tuple
 
 import torch
 import torch.nn as nn
+
+logger = logging.getLogger(__name__)
 
 
 class AnchorProjector(nn.Module):
@@ -59,17 +63,27 @@ class AnchorProjector(nn.Module):
 
     def save(self, path: str) -> None:
         os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
-        torch.save({
-            "in_dim": self.in_dim,
-            "proj_dim": self.proj_dim,
-            "state_dict": self.state_dict(),
-        }, path)
+        torch.save(
+            {
+                "in_dim": self.in_dim,
+                "proj_dim": self.proj_dim,
+                "state_dict": self.state_dict(),
+            },
+            path,
+        )
 
     def load(self, path: str) -> bool:
         if not os.path.exists(path):
             return False
         try:
-            payload = torch.load(path, map_location="cpu", weights_only=False)
+            try:
+                payload = torch.load(path, map_location="cpu", weights_only=True)
+            except pickle.UnpicklingError:
+                logger.warning(
+                    "%s 需要 weights_only=False（legacy pickle），请确认文件来源可信",
+                    path,
+                )
+                payload = torch.load(path, map_location="cpu", weights_only=False)
         except Exception:
             return False
         self.in_dim = int(payload.get("in_dim", self.in_dim))

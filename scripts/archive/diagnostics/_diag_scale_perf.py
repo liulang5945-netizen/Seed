@@ -1,4 +1,5 @@
 """Profile Taiji construction and per-observe cost at candidate scales."""
+
 from __future__ import annotations
 
 import sys

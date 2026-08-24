@@ -4,6 +4,7 @@ This is a minimal stub that allows imports to succeed. The real
 implementation will back project creation, code analysis, dependency
 management, and plan/context persistence for the agent workspace.
 """
+
 import logging
 
 logger = logging.getLogger(__name__)

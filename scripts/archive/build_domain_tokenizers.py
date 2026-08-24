@@ -22,12 +22,12 @@ OUTPUT_DIR = PROJECT_ROOT / "neuroplex" / "domains"
 # general 域使用混合语料（zh+en+code+math），vocab=256K
 # 其他域用专用语料，vocab=10K-20K
 DOMAINS = {
-    "zh":      ("skypile_zh.jsonl",      20000, 30000, "中文", None),
-    "en":      ("falcon_refinedweb_en.jsonl", 16000, 20000, "英文", None),
-    "code":    ("codeparrot_code.jsonl",  12000, 15000, "代码", None),
-    "math":    ("openwebmath.jsonl",      10000, 10000, "数学", None),
+    "zh": ("skypile_zh.jsonl", 20000, 30000, "中文", None),
+    "en": ("falcon_refinedweb_en.jsonl", 16000, 20000, "英文", None),
+    "code": ("codeparrot_code.jsonl", 12000, 15000, "代码", None),
+    "math": ("openwebmath.jsonl", 10000, 10000, "数学", None),
     # general: 混合语料，256K vocab，max_lines 表示每个域取多少行合并
-    "general": (None,                    256000, 200000, "通用(混合语料)", "mixed"),
+    "general": (None, 256000, 200000, "通用(混合语料)", "mixed"),
 }
 
 
@@ -42,7 +42,13 @@ def extract_text(path: Path, max_lines: int) -> list[str]:
             except json.JSONDecodeError:
                 continue
             text = obj.get("text", "") or obj.get("content", "") or obj.get("output", "") or ""
-            text = text.replace("\r", " ").replace("\n", " ").replace("\t", " ").replace("\x00", "").strip()
+            text = (
+                text.replace("\r", " ")
+                .replace("\n", " ")
+                .replace("\t", " ")
+                .replace("\x00", "")
+                .strip()
+            )
             if len(text) > 60:
                 lines.append(text)
     return lines
@@ -67,7 +73,10 @@ def train_tokenizer(domain: str, texts: list[str], vocab_size: int) -> spm.Sente
         normalization_rule_name="identity",
         add_dummy_prefix=True,
         remove_extra_whitespaces=False,
-        pad_id=0, unk_id=1, bos_id=2, eos_id=3,
+        pad_id=0,
+        unk_id=1,
+        bos_id=2,
+        eos_id=3,
         split_digits=True,
         split_by_whitespace=True,
         split_by_unicode_script=True,
@@ -87,20 +96,23 @@ def train_tokenizer(domain: str, texts: list[str], vocab_size: int) -> spm.Sente
 def diagnose(sp, domain: str):
     """验证 tokenizer 质量。"""
     test_cases = {
-        "zh":   ["深度学习是人工智能的一个分支", "中华人民共和国宪法"],
-        "en":   ["Inspector General Report on Tax-Exempt Scrutiny",
-                 "Understanding the fundamentals of machine learning"],
-        "code": ["def factorial(n): return 1 if n <= 1 else n * factorial(n-1)",
-                 "class NeuralNetwork(nn.Module):"],
-        "math": ["f(x) = \\int_{0}^{\\infty} e^{-x^2} dx",
-                 "Let G be a finite group of order n"],
+        "zh": ["深度学习是人工智能的一个分支", "中华人民共和国宪法"],
+        "en": [
+            "Inspector General Report on Tax-Exempt Scrutiny",
+            "Understanding the fundamentals of machine learning",
+        ],
+        "code": [
+            "def factorial(n): return 1 if n <= 1 else n * factorial(n-1)",
+            "class NeuralNetwork(nn.Module):",
+        ],
+        "math": ["f(x) = \\int_{0}^{\\infty} e^{-x^2} dx", "Let G be a finite group of order n"],
     }
 
     print(f"\n  {domain} tokenizer (vocab={sp.GetPieceSize()}):")
     for text in test_cases.get(domain, [])[:2]:
         pieces = sp.encode(text, out_type=str)
         ids = sp.encode(text)
-        print(f"    \"{text[:60]}...\"")
+        print(f'    "{text[:60]}..."')
         print(f"    → {len(ids)} tokens: {' | '.join(pieces[:20])}")
 
 
@@ -111,10 +123,10 @@ def load_mixed_corpus(max_lines_per_domain: int) -> list[str]:
     """
     mixed_texts = []
     sub_domains = [
-        ("skypile_zh.jsonl",         max_lines_per_domain, "中文"),
+        ("skypile_zh.jsonl", max_lines_per_domain, "中文"),
         ("falcon_refinedweb_en.jsonl", max_lines_per_domain, "英文"),
-        ("codeparrot_code.jsonl",    max_lines_per_domain // 2, "代码"),  # 代码量减半
-        ("openwebmath.jsonl",        max_lines_per_domain // 4, "数学"),  # 数学量减半
+        ("codeparrot_code.jsonl", max_lines_per_domain // 2, "代码"),  # 代码量减半
+        ("openwebmath.jsonl", max_lines_per_domain // 4, "数学"),  # 数学量减半
     ]
     for fname, n, desc in sub_domains:
         path = DATA_DIR / fname

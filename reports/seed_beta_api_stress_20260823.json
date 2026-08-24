@@ -1,0 +1,59 @@
+{
+  "benchmark": "seed_beta_api_stress",
+  "timestamp": "2026-08-23 15:36:02",
+  "thresholds": {
+    "success_rate": 0.99
+  },
+  "metrics": {
+    "requests": 1000,
+    "successes": 1000,
+    "success_rate": 1.0,
+    "avg_latency_seconds": 0.702,
+    "wall_seconds": 702.2,
+    "first_errors": []
+  },
+  "hostile_audit": [
+    {
+      "name": "empty_prompt",
+      "status_code": 200,
+      "controlled": true,
+      "seconds": 0.702
+    },
+    {
+      "name": "long_prompt_100k",
+      "status_code": 200,
+      "controlled": true,
+      "seconds": 13.316
+    },
+    {
+      "name": "deep_history",
+      "status_code": 200,
+      "controlled": true,
+      "seconds": 4.367
+    },
+    {
+      "name": "unicode_edge",
+      "status_code": 200,
+      "controlled": true,
+      "seconds": 0.684
+    },
+    {
+      "name": "newline_injection",
+      "status_code": 200,
+      "controlled": true,
+      "seconds": 0.705
+    },
+    {
+      "name": "null_bytes",
+      "status_code": 200,
+      "controlled": true,
+      "seconds": 0.762
+    }
+  ],
+  "checks": {
+    "success_rate_at_least_99pct": true,
+    "no_uncaught_server_errors": true,
+    "hostile_inputs_all_controlled": true
+  },
+  "status": "pass"
+}

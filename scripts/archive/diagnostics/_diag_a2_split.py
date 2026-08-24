@@ -43,14 +43,18 @@ def main() -> None:
     for text in targets:
         scheduler.experience(text, learn=True)
     after_exp = panel_mean(model, judge)
-    print(f"after experience-only overall_mean = {after_exp:.4f} "
-          f"(Δ={after_exp - base:+.4f})", flush=True)
+    print(
+        f"after experience-only overall_mean = {after_exp:.4f} " f"(Δ={after_exp - base:+.4f})",
+        flush=True,
+    )
 
     # 单文本 8 cycles 的聚合分量，看 value/novelty 谁主导选择
     field = model.substrate.memory
-    print(f"\nwrite_count={field.write_count} "
-          f"replay_priority_threshold={field.config.replay_priority_threshold}",
-          flush=True)
+    print(
+        f"\nwrite_count={field.write_count} "
+        f"replay_priority_threshold={field.config.replay_priority_threshold}",
+        flush=True,
+    )
     for text in targets[:1]:
         scheduler.experience(text, learn=True)
         result = model.consolidate(cycles=8, learn=True)
@@ -64,8 +68,11 @@ def main() -> None:
         )
 
     after_replay = panel_mean(model, judge)
-    print(f"\nafter experience+replay overall_mean = {after_replay:.4f} "
-          f"(Δ={after_replay - base:+.4f})", flush=True)
+    print(
+        f"\nafter experience+replay overall_mean = {after_replay:.4f} "
+        f"(Δ={after_replay - base:+.4f})",
+        flush=True,
+    )
 
 
 if __name__ == "__main__":

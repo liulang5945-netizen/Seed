@@ -25,6 +25,7 @@
 
 约束：冻结 9 成员 production weights，CPU 短跑（<2 分钟）。
 """
+
 from __future__ import annotations
 
 import json
@@ -32,7 +33,9 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
@@ -41,9 +44,17 @@ torch.manual_seed(0)
 np.random.seed(0)
 from neuroplex.loader import assemble_cortex  # noqa: E402
 from neuroplex.life.sleep_engine import SleepEngine, SleepConfig, SleepReport  # noqa: E402
+import logging
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+logger = logging.getLogger(__name__)
+
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -94,7 +105,7 @@ def lora_l2_norm(neuron):
     with torch.no_grad():
         for p in neuron.lora_adapters.parameters():
             s += float(p.data.pow(2).sum().item())
-    return s ** 0.5
+    return s**0.5
 
 
 def main():
@@ -115,21 +126,20 @@ def main():
         wire_bio_modules=True,
         neuron_ids=DIALOGUE_IDS,
     )
-    target_ids = [nid for nid in cortex.neurons
-                  if nid.startswith("zh_") and "dialogue" in nid]
+    target_ids = [nid for nid in cortex.neurons if nid.startswith("zh_") and "dialogue" in nid]
     print(f"  judge 目标 = {target_ids}", flush=True)
     for nid in cortex.neurons:
         cortex.neurons[nid].eval()
     device = next(cortex._shared_embedding.parameters()).device
 
-    cfg = SleepConfig(training_enabled=False, judge_driven_replay=True,
-                      lora_decay_per_sleep=0.9)
+    cfg = SleepConfig(training_enabled=False, judge_driven_replay=True, lora_decay_per_sleep=0.9)
     sleep_engine = SleepEngine(config=cfg, data_dir=os.path.join("data", "_tmp_phase_sniff"))
     os.makedirs(os.path.join("data", "_tmp_phase_sniff"), exist_ok=True)
     sc_holder = {"sc": None}
     sc_module = None
     try:
         from neuroplex.resonance.neuro_modulation import SleepConsolidator  # noqa
+
         sc_holder["sc"] = SleepConsolidator(replay_buffer_size=50)
         sleep_engine.set_brain_interfaces(cortex=cortex, sleep_consolidator=sc_holder["sc"])
         print("  [sc] SleepConsolidator 接线成功（replay buffer size=50）", flush=True)
@@ -150,8 +160,7 @@ def main():
         gids = cortex._general_sp.encode(text) or [0]
         ids = torch.tensor([gids], dtype=torch.long, device=cortex.device)
         emb = cortex._shared_embedding(ids)
-        res = cortex.think(emb, active_nids=None, fusion_mode="soft",
-                           collab_mode="continuous")
+        res = cortex.think(emb, active_nids=None, fusion_mode="soft", collab_mode="continuous")
         fs = res.get("field_state")
         if fs is None:
             continue
@@ -159,18 +168,22 @@ def main():
             fs = fs.mean(dim=0)
         try:
             sleep_engine.record_field_memory(fs, f"init_{i}", text=text)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【main】处理失败（非致命）: %s", e)
         if sc_holder["sc"] is not None:
             try:
                 sc_holder["sc"].record_high_resonance_state(
-                    field_state=fs, resonance_score=0.9, step=0,
-                    active_nids=target_ids, threshold=0.5, text=text)
+                    field_state=fs,
+                    resonance_score=0.9,
+                    step=0,
+                    active_nids=target_ids,
+                    threshold=0.5,
+                    text=text,
+                )
             except Exception as e:
-                pass
+                logger.debug("【main】处理失败（非致命）: %s", e)
         injected += 1
-    r_init = SleepReport(timestamp=time.strftime("%Y%m%d-%H%M%S"),
-                         duration_seconds=0.0)
+    r_init = SleepReport(timestamp=time.strftime("%Y%m%d-%H%M%S"), duration_seconds=0.0)
     sleep_engine._sleep_phase_field_consolidation(r_init)
     print(f"  注入 {injected} 条 + 场固化 {r_init.field_memories_consolidated} 条", flush=True)
 
@@ -183,7 +196,8 @@ def main():
         t1 = time.time()
         for text in all_prompts:
             jnll = sleep_engine._sample_judge_nll(
-                text, target_ids, device, cortex._shared_embedding)
+                text, target_ids, device, cortex._shared_embedding
+            )
             nlls.append({"text": text, "judge_nll": jnll})
             if jnll is not None:
                 valid_nlls.append(jnll)
@@ -196,7 +210,9 @@ def main():
             mean = std = None
         entry = {
             "label": label,
-            "mean": mean, "std": std, "n_valid": len(valid_nlls),
+            "mean": mean,
+            "std": std,
+            "n_valid": len(valid_nlls),
             "duration_sec": round(dt, 2),
             "lora_l2": l2s,
             "nlls": nlls,
@@ -207,8 +223,7 @@ def main():
 
     def run_phase15():
         """跑一次 Phase 1.5 field_consolidation（处理 record_field_memory 写入）。"""
-        report = SleepReport(timestamp=time.strftime("%Y%m%d-%H%M%S"),
-                             duration_seconds=0.0)
+        report = SleepReport(timestamp=time.strftime("%Y%m%d-%H%M%S"), duration_seconds=0.0)
         try:
             sleep_engine._sleep_phase_field_consolidation(report)
         except Exception as e:
@@ -219,8 +234,7 @@ def main():
     def run_phase3():
         """跑一次 Phase 3 knowledge_integration（含 downscaling ×0.98 + 通道强化 ×1.1）。"""
         target_neuron_ids = target_ids
-        report = SleepReport(timestamp=time.strftime("%Y%m%d-%H%M%S"),
-                             duration_seconds=0.0)
+        report = SleepReport(timestamp=time.strftime("%Y%m%d-%H%M%S"), duration_seconds=0.0)
         try:
             sleep_engine._sleep_phase_knowledge_integration(report)
         except Exception as e:
@@ -243,8 +257,7 @@ def main():
                 continue
             if len(n.lora_adapters) == 0:
                 n.enable_lora(rank=16, layers=None)
-        report = SleepReport(timestamp=time.strftime("%Y%m%d-%H%M%S"),
-                             duration_seconds=0.0)
+        report = SleepReport(timestamp=time.strftime("%Y%m%d-%H%M%S"), duration_seconds=0.0)
         try:
             sleep_engine._sleep_phase_synaptic_consolidation(report)
         except Exception as e:
@@ -255,8 +268,7 @@ def main():
     def run_phase17():
         """跑一次 Phase 1.7 forward_replay。"""
         target_neuron_ids = target_ids
-        report = SleepReport(timestamp=time.strftime("%Y%m%d-%H%M%S"),
-                             duration_seconds=0.0)
+        report = SleepReport(timestamp=time.strftime("%Y%m%d-%H%M%S"), duration_seconds=0.0)
         try:
             sleep_engine._sleep_phase_forward_replay(report)
         except Exception as e:
@@ -290,14 +302,14 @@ def main():
     phase17_labels = [h["label"] for h in history if "after_phase17" in h["label"]]
     phase3_labels = [h["label"] for h in history if "after_phase3" in h["label"]]
     max_drift_phase16 = max(
-        (h["mean"] - base for h in history if "after_phase16" in h["label"]),
-        default=0.0)
+        (h["mean"] - base for h in history if "after_phase16" in h["label"]), default=0.0
+    )
     max_drift_phase17 = max(
-        (h["mean"] - base for h in history if "after_phase17" in h["label"]),
-        default=0.0)
+        (h["mean"] - base for h in history if "after_phase17" in h["label"]), default=0.0
+    )
     max_drift_phase3 = max(
-        (h["mean"] - base for h in history if "after_phase3" in h["label"]),
-        default=0.0)
+        (h["mean"] - base for h in history if "after_phase3" in h["label"]), default=0.0
+    )
 
     print(f"\n  Phase 1.6 累计 |Δ mean| max = {max_drift_phase16:.6f}", flush=True)
     print(f"  Phase 1.7 累计 |Δ mean| max = {max_drift_phase17:.6f}", flush=True)

@@ -3,15 +3,17 @@
 ================
 将所有清洗和扩充后的数据合并为最终训练集
 """
+
 import json
 import os
 from pathlib import Path
 from collections import Counter
 
+
 def load_jsonl(file_path):
     """加载 JSONL 文件"""
     data = []
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line:
@@ -21,23 +23,25 @@ def load_jsonl(file_path):
                     continue
     return data
 
+
 def validate_messages(item):
     """验证 messages 格式数据"""
-    messages = item.get('messages', [])
+    messages = item.get("messages", [])
     if len(messages) < 2:
         return False
 
     # 检查是否有 user 和 assistant
-    roles = [m.get('role') for m in messages]
-    if 'user' not in roles or 'assistant' not in roles:
+    roles = [m.get("role") for m in messages]
+    if "user" not in roles or "assistant" not in roles:
         return False
 
     # 检查内容非空
     for msg in messages:
-        if not msg.get('content', '').strip():
+        if not msg.get("content", "").strip():
             return False
 
     return True
+
 
 def main():
     print("=" * 60)
@@ -150,11 +154,11 @@ def main():
 
     for item in all_data:
         # 使用问题的前100字符作为去重键
-        messages = item.get('messages', [])
-        key = ''
+        messages = item.get("messages", [])
+        key = ""
         for msg in messages:
-            if msg.get('role') == 'user':
-                key = msg['content'][:100]
+            if msg.get("role") == "user":
+                key = msg["content"][:100]
                 break
 
         if key not in seen:
@@ -169,6 +173,7 @@ def main():
 
     # 打乱顺序
     import random
+
     random.seed(42)
     random.shuffle(unique_data)
 
@@ -176,9 +181,9 @@ def main():
     output_file = Path("taiji_data/training_data/pretrain_final.jsonl")
     print(f"\n[5] 保存到: {output_file}")
 
-    with open(output_file, 'w', encoding='utf-8') as f:
+    with open(output_file, "w", encoding="utf-8") as f:
         for item in unique_data:
-            f.write(json.dumps(item, ensure_ascii=False) + '\n')
+            f.write(json.dumps(item, ensure_ascii=False) + "\n")
 
     print(f"  保存完成: {len(unique_data)} 条")
 
@@ -201,7 +206,7 @@ def main():
 
     samples = random.sample(unique_data, min(5, len(unique_data)))
     for i, sample in enumerate(samples):
-        msgs = sample.get('messages', [])
+        msgs = sample.get("messages", [])
         print(f"\n样本 {i+1}:")
         print(f"  Q: {msgs[1]['content'][:100]}")
         print(f"  A: {msgs[2]['content'][:100]}")
@@ -216,5 +221,6 @@ def main():
     print("2. 运行预训练:")
     print("   python taiji/train/finetune_taiji.py")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

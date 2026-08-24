@@ -11,6 +11,7 @@
 运行：
     python -X utf8 -u scripts/training/diag_dialogue_training_contract.py
 """
+
 from __future__ import annotations
 
 import gc
@@ -19,7 +20,9 @@ import logging
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 
@@ -27,10 +30,12 @@ from neuroplex.resonance.dialogue_format import SFT_ANSWER_MARKER
 from neuroplex.resonance.translator import build_position_alignment
 from scripts.training.utils import load_dialogue_texts_multi, split_train_eval
 
-
 CHECKPOINT_IDS = [
-    "zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-    "zh_aug3_dialogue", "zh_std0_dialogue",
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
 ]
 DATA_DIR = "data/simple_zh"
 MAX_TEXTS = 100000
@@ -69,8 +74,9 @@ def _training_shape(text: str, domain_sp, general_sp) -> dict:
     shifted_positions = max(sequence_len - 1, 0)
     answer_positions = max(sequence_len - max(answer_start, 1), 0)
     aligned_answer_positions = int(
-        ((domain_targets[1:sequence_len] >= 0)
-         & (torch.arange(1, sequence_len) >= answer_start)).sum()
+        (
+            (domain_targets[1:sequence_len] >= 0) & (torch.arange(1, sequence_len) >= answer_start)
+        ).sum()
     )
     return {
         "sequence_len": sequence_len,
@@ -159,10 +165,7 @@ def main() -> None:
             "eval_pool": _aggregate(eval_pool, domain_sp, general_sp),
             "eval_used_by_training": _aggregate(eval_texts, domain_sp, general_sp),
         },
-        "checkpoints": {
-            neuron_id: _checkpoint_metadata(neuron_id)
-            for neuron_id in CHECKPOINT_IDS
-        },
+        "checkpoints": {neuron_id: _checkpoint_metadata(neuron_id) for neuron_id in CHECKPOINT_IDS},
     }
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

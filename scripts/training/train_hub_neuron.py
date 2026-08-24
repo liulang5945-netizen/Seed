@@ -27,6 +27,7 @@ Usage:
     # 日志落盘（N3 规范）:
     #   python -u scripts/training/train_hub_neuron.py --epochs 1 2>&1 | Tee-Object -FilePath logs\train_hub_$(Get-Date -Format yyyyMMdd_HHmmss).log
 """
+
 from __future__ import annotations
 
 import argparse
@@ -47,6 +48,9 @@ import torch.nn.functional as F
 from neuroplex.resonance import ResonanceNeuron
 from neuroplex.resonance.config import get_default_neuron_config
 from scripts.training.utils import load_general_tokenizer
+import logging
+
+logger = logging.getLogger(__name__)
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT_DIR = os.path.join(PROJECT_ROOT, "data", "hub_neuron")
@@ -103,7 +107,10 @@ def build_mixed_samples(args) -> List[dict]:
     if pairs:
         random.shuffle(pairs)
         samples.extend(pairs[:PAIRS_QUOTA])
-        print(f"  [pairs] {len(pairs)} 条平行语料 → {min(PAIRS_QUOTA, len(pairs))} 条跨域样本", flush=True)
+        print(
+            f"  [pairs] {len(pairs)} 条平行语料 → {min(PAIRS_QUOTA, len(pairs))} 条跨域样本",
+            flush=True,
+        )
     print(f"  混合样本总数: {len(samples)}", flush=True)
     return samples
 
@@ -176,7 +183,9 @@ def build_hub_neuron(device: str) -> Tuple[ResonanceNeuron, torch.nn.Embedding]:
     emb.to(device)
     emb.weight.requires_grad = False
     n_params = sum(p.numel() for p in neuron.parameters())
-    print(f"  hub neuron: {n_params / 1e6:.0f}M 参数（EXPRT hidden=1024, lm_head 256K）", flush=True)
+    print(
+        f"  hub neuron: {n_params / 1e6:.0f}M 参数（EXPRT hidden=1024, lm_head 256K）", flush=True
+    )
     return neuron, emb
 
 
@@ -185,7 +194,9 @@ def build_hub_neuron(device: str) -> Tuple[ResonanceNeuron, torch.nn.Embedding]:
 
 def verify_checkpoint(eval_samples: List[dict], general_sp, emb, n_check: int = 4) -> float:
     """保存后立即回读：重算 answer-masked val PPL，防坏 checkpoint。"""
-    ckpt = torch.load(os.path.join(OUT_DIR, "neuron_hub.pt"), map_location="cpu", weights_only=False)
+    ckpt = torch.load(
+        os.path.join(OUT_DIR, "neuron_hub.pt"), map_location="cpu", weights_only=False
+    )
     cfg = ckpt["neuron_config"]
     cfg.unified_field_dim = None
     neuron = ResonanceNeuron(cfg)
@@ -204,8 +215,9 @@ def verify_checkpoint(eval_samples: List[dict], general_sp, emb, n_check: int = 
             am = m[:, 1:].contiguous()
             tgt[~am] = -100
             nt = am.sum().item()
-            l = F.cross_entropy(lg.view(-1, lg.size(-1)), tgt.view(-1),
-                                ignore_index=-100, reduction="sum")
+            l = F.cross_entropy(
+                lg.view(-1, lg.size(-1)), tgt.view(-1), ignore_index=-100, reduction="sum"
+            )
             total_loss += l.item()
             total_tok += max(nt, 1)
     avg = total_loss / max(total_tok, 1)
@@ -214,8 +226,14 @@ def verify_checkpoint(eval_samples: List[dict], general_sp, emb, n_check: int = 
     return avg
 
 
-def save_checkpoint(neuron, shared_emb, step: int, ppl: Optional[float], loss_history: list,
-                    out_name: str = "neuron_hub"):
+def save_checkpoint(
+    neuron,
+    shared_emb,
+    step: int,
+    ppl: Optional[float],
+    loss_history: list,
+    out_name: str = "neuron_hub",
+):
     os.makedirs(OUT_DIR, exist_ok=True)
     ckpt = {
         "neuron_config": neuron.config,
@@ -235,9 +253,11 @@ def save_checkpoint(neuron, shared_emb, step: int, ppl: Optional[float], loss_hi
         os.makedirs(os.path.join(PROJECT_ROOT, "logs"), exist_ok=True)
         hist_path = os.path.join(PROJECT_ROOT, "logs", f"{out_name}_history.json")
         with open(hist_path, "w", encoding="utf-8") as f:
-            json.dump({"steps": loss_history, "last_step": step, "best_ppl": ppl}, f, ensure_ascii=False)
-    except Exception:
-        pass
+            json.dump(
+                {"steps": loss_history, "last_step": step, "best_ppl": ppl}, f, ensure_ascii=False
+            )
+    except Exception as e:
+        logger.debug("【save_checkpoint】处理失败（非致命）: %s", e)
 
 
 # ======================== 训练 ========================
@@ -249,12 +269,22 @@ def main():
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--max-steps", type=int, default=100000)
     parser.add_argument("--device", default="cpu")
-    parser.add_argument("--save-every", type=int, default=500,
-                        help="ckpt 保存间隔（步）；正式训练默认 500，smoke 强制 5")
-    parser.add_argument("--out-name", default=None,
-                        help="产物文件名（不含 .pt）；默认：正式=neuron_hub / smoke=neuron_hub_smoke（防覆盖正式产物）")
-    parser.add_argument("--resume", action="store_true",
-                        help="从现有 ckpt 恢复 state_dict+loss_history 续训（步数预算重新计算）")
+    parser.add_argument(
+        "--save-every",
+        type=int,
+        default=500,
+        help="ckpt 保存间隔（步）；正式训练默认 500，smoke 强制 5",
+    )
+    parser.add_argument(
+        "--out-name",
+        default=None,
+        help="产物文件名（不含 .pt）；默认：正式=neuron_hub / smoke=neuron_hub_smoke（防覆盖正式产物）",
+    )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="从现有 ckpt 恢复 state_dict+loss_history 续训（步数预算重新计算）",
+    )
     args = parser.parse_args()
     if args.out_name is None:
         args.out_name = "neuron_hub_smoke" if args.smoke else "neuron_hub"
@@ -282,8 +312,8 @@ def main():
 
     neuron, shared_emb = build_hub_neuron(device)
     optimizer = torch.optim.AdamW(
-        [p for p in neuron.parameters() if p.requires_grad],
-        lr=LR, weight_decay=WEIGHT_DECAY)
+        [p for p in neuron.parameters() if p.requires_grad], lr=LR, weight_decay=WEIGHT_DECAY
+    )
     steps_per_epoch = max(1, len(train_samples) // BATCH_SIZE)
 
     loss_history = []
@@ -300,7 +330,10 @@ def main():
     max_steps = args.max_steps if not args.smoke else 2
     total_steps = min(max_steps, steps_per_epoch * args.epochs)
     save_every = 5 if args.smoke else args.save_every
-    print(f"  预算: {total_steps} 步（--smoke={args.smoke}），每 {save_every} 步保存到 {args.out_name}.pt", flush=True)
+    print(
+        f"  预算: {total_steps} 步（--smoke={args.smoke}），每 {save_every} 步保存到 {args.out_name}.pt",
+        flush=True,
+    )
 
     neuron.train()
     loss_history = []
@@ -311,7 +344,7 @@ def main():
         for i in range(0, len(train_samples), BATCH_SIZE):
             if step >= total_steps:
                 break
-            batch = train_samples[i:i + BATCH_SIZE]
+            batch = train_samples[i : i + BATCH_SIZE]
             e, y, m = build_batch(batch, general_sp, shared_emb)
             if e is None:
                 continue
@@ -321,18 +354,24 @@ def main():
             tgt = y[:, 1:].clone().contiguous()
             am = m[:, 1:].contiguous()
             tgt[~am] = -100
-            nt = am.sum().item()
-            loss = F.cross_entropy(lg.view(-1, lg.size(-1)), tgt.view(-1),
-                                   ignore_index=-100, reduction="mean")
+            am.sum().item()
+            loss = F.cross_entropy(
+                lg.view(-1, lg.size(-1)), tgt.view(-1), ignore_index=-100, reduction="mean"
+            )
             loss.backward()
             optimizer.step()
             loss_history.append(float(loss.item()))
             step += 1
             if step % save_every == 0 or step == total_steps:
-                print(f"  step {step}/{total_steps} loss={float(loss.item()):.3f}"
-                      f" ({time.time() - t0:.0f}s)", flush=True)
+                print(
+                    f"  step {step}/{total_steps} loss={float(loss.item()):.3f}"
+                    f" ({time.time() - t0:.0f}s)",
+                    flush=True,
+                )
                 # 用户规则：周期保存 + 回读验证（先保存再回读，防坏 checkpoint）
-                save_checkpoint(neuron, shared_emb, step, None, loss_history, out_name=args.out_name)
+                save_checkpoint(
+                    neuron, shared_emb, step, None, loss_history, out_name=args.out_name
+                )
                 ppl = verify_checkpoint(val_samples, general_sp, shared_emb)
                 best_ppl = ppl if best_ppl is None else min(best_ppl, ppl)
                 if args.smoke:

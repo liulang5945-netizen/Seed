@@ -4,6 +4,7 @@ This is a minimal stub that allows imports to succeed. The real
 implementation will integrate with Cortex.generate() to provide
 Reasoning + Acting loops.
 """
+
 import logging
 
 logger = logging.getLogger(__name__)

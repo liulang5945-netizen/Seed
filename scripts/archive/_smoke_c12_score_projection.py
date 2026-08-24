@@ -10,6 +10,7 @@
 7. 梯度流：score_proj 和 field_score_proj 有梯度
 8. checkpoint 兼容性：旧 ckpt（无 score_proj）加载到 score_dim=256 neuron（strict=False）
 """
+
 from __future__ import annotations
 
 import os
@@ -65,8 +66,10 @@ def test_score_dim_enabled():
     print("\n[2] score_dim=256 启用 score_proj")
     neuron = _make_neuron(score_dim=256)
     assert neuron.score_proj is not None, "score_dim=256 时 score_proj 应存在"
-    assert neuron.score_proj.weight.shape == (256, TINY_TEST.field_dim), \
-        f"score_proj shape 错误: {neuron.score_proj.weight.shape}"
+    assert neuron.score_proj.weight.shape == (
+        256,
+        TINY_TEST.field_dim,
+    ), f"score_proj shape 错误: {neuron.score_proj.weight.shape}"
 
     shared_emb = torch.randn(2, 8, 512)
     with torch.no_grad():
@@ -76,9 +79,12 @@ def test_score_dim_enabled():
     assert score_vec.shape == (2, 256), f"score_vec shape 错误: {score_vec.shape}"
     # 验证 L2 归一化
     norms = score_vec.norm(dim=-1)
-    assert torch.allclose(norms, torch.ones_like(norms), atol=1e-5), \
-        f"score_vec 应 L2 归一化, norms={norms}"
-    print(f"  PASS: score_proj shape={neuron.score_proj.weight.shape}, score_vec shape={score_vec.shape}")
+    assert torch.allclose(
+        norms, torch.ones_like(norms), atol=1e-5
+    ), f"score_vec 应 L2 归一化, norms={norms}"
+    print(
+        f"  PASS: score_proj shape={neuron.score_proj.weight.shape}, score_vec shape={score_vec.shape}"
+    )
 
 
 def test_ensemble_creates_field_score_proj():
@@ -87,8 +93,10 @@ def test_ensemble_creates_field_score_proj():
     ens = _make_ensemble(score_dim=256, n_neurons=2)
     assert ens.field_score_proj is not None, "ensemble 应创建 field_score_proj"
     assert ens.score_dim == 256, f"ensemble score_dim 应为 256, got {ens.score_dim}"
-    assert ens.field_score_proj.weight.shape == (256, TINY_TEST.field_dim), \
-        f"field_score_proj shape 错误: {ens.field_score_proj.weight.shape}"
+    assert ens.field_score_proj.weight.shape == (
+        256,
+        TINY_TEST.field_dim,
+    ), f"field_score_proj shape 错误: {ens.field_score_proj.weight.shape}"
 
     # 混合 score_dim（一个 None 一个 256）→ 不创建
     n0 = _make_neuron(score_dim=None, neuron_id="n0")
@@ -155,11 +163,7 @@ def test_gradient_flow():
     targets = torch.randint(0, V, (B, L))
 
     result = ens.forward_train(shared_embeddings=shared_emb, n_rounds=1, targets=targets)
-    loss = (
-        result["fused_logits"].sum()
-        + result["contrastive_loss"]
-        + result["balance_loss"]
-    )
+    loss = result["fused_logits"].sum() + result["contrastive_loss"] + result["balance_loss"]
     loss.backward()
 
     # 检查 neuron score_proj 梯度
@@ -191,7 +195,9 @@ def test_checkpoint_compat():
     # score_proj 应在 missing keys 中
     score_proj_missing = [k for k in missing if "score_proj" in k]
     assert len(score_proj_missing) > 0, f"score_proj 应在 missing keys 中, missing={missing}"
-    print(f"  PASS: 旧 ckpt 加载到 score_dim=256 neuron (missing={len(missing)}, unexpected={len(unexpected)})")
+    print(
+        f"  PASS: 旧 ckpt 加载到 score_dim=256 neuron (missing={len(missing)}, unexpected={len(unexpected)})"
+    )
     print(f"  score_proj missing keys: {score_proj_missing}")
 
 

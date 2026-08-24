@@ -22,7 +22,6 @@ from _diag_m6_write_basis import arm_patch  # noqa: E402
 sys.path.insert(0, str(ROOT / "tests" / "taiji_native"))
 import test_endogenous_replay as suite  # noqa: E402
 
-
 CASES = (
     "test_replay_reads_the_homeostatic_set_point_without_writing_it",
     "test_consolidation_rewiring_terminates",

@@ -8,6 +8,7 @@
 5. disable_channels 逻辑：置零通道后输出变化
 6. 评估集无泄漏：split_train_eval 训练/评估不重叠
 """
+
 from __future__ import annotations
 
 import copy
@@ -53,8 +54,10 @@ def test_solo_ppl_logic():
     shift_t = shift_t.clone()
     shift_t[~shift_m] = -100
     loss = F.cross_entropy(
-        shift_l.view(-1, shift_l.size(-1)), shift_t.view(-1),
-        ignore_index=-100, reduction="sum",
+        shift_l.view(-1, shift_l.size(-1)),
+        shift_t.view(-1),
+        ignore_index=-100,
+        reduction="sum",
     ) / max(shift_m.sum().item(), 1)
     ppl = math.exp(min(loss.item(), 20))
     assert ppl > 1.0, f"随机模型 PPL 应 > 1, got {ppl}"
@@ -82,7 +85,9 @@ def test_ensemble_ppl_logic():
             fusion_mode="soft",
             field_conditioning=True,
         )
-    assert "weighted_logits" in result, f"soft 模式应产出 weighted_logits, keys={list(result.keys())}"
+    assert (
+        "weighted_logits" in result
+    ), f"soft 模式应产出 weighted_logits, keys={list(result.keys())}"
     fused = result["weighted_logits"]
     assert fused.shape == (1, 16, 500), f"weighted_logits 形状 {fused.shape}"
     print(f"  PASS: ensemble soft 协作产出 weighted_logits {tuple(fused.shape)}")
@@ -106,7 +111,9 @@ def test_fusion_modes():
                 fusion_mode=mode,
             )
         assert "weighted_logits" in result, f"{mode} 模式应产出 weighted_logits"
-        print(f"  PASS: fusion_mode={mode} → weighted_logits {tuple(result['weighted_logits'].shape)}")
+        print(
+            f"  PASS: fusion_mode={mode} → weighted_logits {tuple(result['weighted_logits'].shape)}"
+        )
 
 
 def test_field_conditioning_switch():
@@ -154,7 +161,9 @@ def test_disable_channels():
     # 有通道
     with torch.no_grad():
         result_with = ens.forward(
-            neuron_embeddings=neuron_embeddings, return_logits=True, fusion_mode="soft",
+            neuron_embeddings=neuron_embeddings,
+            return_logits=True,
+            fusion_mode="soft",
         )
     # 置零通道
     for neuron in neurons.values():
@@ -164,7 +173,9 @@ def test_disable_channels():
                     p.zero_()
     with torch.no_grad():
         result_zero = ens.forward(
-            neuron_embeddings=neuron_embeddings, return_logits=True, fusion_mode="soft",
+            neuron_embeddings=neuron_embeddings,
+            return_logits=True,
+            fusion_mode="soft",
         )
     logits_with = result_with["weighted_logits"]
     logits_zero = result_zero["weighted_logits"]

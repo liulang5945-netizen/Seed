@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """记录 5 个 dialogue 单体的 token continuation fingerprint。"""
+
 from __future__ import annotations
 
 import json
@@ -10,7 +11,6 @@ import time
 from neuroplex.loader import assemble_cortex
 from diag_dialogue_capacity_ab import DIALOGUE_IDS
 from diag_dialogue_decode_trace import _trace_one
-
 
 QUESTIONS = ["什么是神经网络？", "什么是注意力机制？", "你是谁？"]
 
@@ -25,12 +25,14 @@ def _overlap_events(steps: list[dict]) -> list[dict]:
             if left[-size:] == right[:size]:
                 overlap = size
         if overlap >= 2:
-            events.append({
-                "step": current["step"],
-                "previous": left,
-                "current": right,
-                "overlap": overlap,
-            })
+            events.append(
+                {
+                    "step": current["step"],
+                    "previous": left,
+                    "current": right,
+                    "overlap": overlap,
+                }
+            )
     return events
 
 
@@ -67,18 +69,22 @@ def main() -> None:
         for question in QUESTIONS:
             try:
                 trace = _trace_one(cortex, [nid], question)
-                rows.append({
-                    "question": question,
-                    "generated": trace["generated"],
-                    "pieces": [step.get("decoded") for step in trace["steps"]],
-                    "overlap_events": _overlap_events(trace["steps"]),
-                    "trace": trace,
-                })
+                rows.append(
+                    {
+                        "question": question,
+                        "generated": trace["generated"],
+                        "pieces": [step.get("decoded") for step in trace["steps"]],
+                        "overlap_events": _overlap_events(trace["steps"]),
+                        "trace": trace,
+                    }
+                )
             except Exception as exc:
-                rows.append({
-                    "question": question,
-                    "error": f"{type(exc).__name__}: {exc}",
-                })
+                rows.append(
+                    {
+                        "question": question,
+                        "error": f"{type(exc).__name__}: {exc}",
+                    }
+                )
         report["neurons"][nid] = {"rows": rows}
 
     for question in QUESTIONS:
@@ -90,17 +96,22 @@ def main() -> None:
         common = []
         for step in range(max_steps):
             values = [pieces[step] for pieces in per_neuron if step < len(pieces)]
-            common.append({
-                "step": step,
-                "values": values,
-                "unique_values": sorted(set(values)),
-                "all_same": len(set(values)) <= 1,
-            })
+            common.append(
+                {
+                    "step": step,
+                    "values": values,
+                    "unique_values": sorted(set(values)),
+                    "all_same": len(set(values)) <= 1,
+                }
+            )
         report.setdefault("cross_neuron", {})[question] = {
             "common_step_pieces": common,
             "neurons_with_overlap": [
-                nid for nid in DIALOGUE_IDS
-                if next(row for row in report["neurons"][nid]["rows"] if row["question"] == question)["overlap_events"]
+                nid
+                for nid in DIALOGUE_IDS
+                if next(
+                    row for row in report["neurons"][nid]["rows"] if row["question"] == question
+                )["overlap_events"]
             ],
         }
     report["elapsed_seconds"] = round(time.time() - started, 1)

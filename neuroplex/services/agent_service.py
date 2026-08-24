@@ -4,6 +4,7 @@ This is a minimal stub that allows imports to succeed as
 ``from neuroplex.services import agent_service``. The real implementation
 will coordinate agent lifecycle, workspace, and task dispatch.
 """
+
 import logging
 
 logger = logging.getLogger(__name__)

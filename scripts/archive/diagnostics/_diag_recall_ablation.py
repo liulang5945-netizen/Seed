@@ -1,4 +1,5 @@
 """Ablation: unit-test recall protocol vs gate/repeats/binding."""
+
 from __future__ import annotations
 
 import sys

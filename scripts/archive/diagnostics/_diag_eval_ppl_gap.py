@@ -7,6 +7,7 @@
 Usage:
     python -u scripts/training/_diag_eval_ppl_gap.py
 """
+
 from __future__ import annotations
 
 import math
@@ -19,23 +20,33 @@ import torch
 import torch.nn.functional as F
 
 from neuroplex.resonance import (
-    ResonanceNeuron, ResonanceField, ResonanceEnsemble, get_domain_neuron_config,
+    ResonanceNeuron,
+    ResonanceField,
+    ResonanceEnsemble,
+    get_domain_neuron_config,
     NeuronConfig,
 )
 from neuroplex.resonance.geometry import NeuronGeometry
 from neuroplex.resonance.topology import build_topology, establish_topology_channels
 from neuroplex.resonance.translator import batch_align_and_embed
 from scripts.training.finetune_cross_spec import load_neuron_with_embedding, load_dialogue_texts
-from scripts.training.utils import load_dialogue_texts_multi, load_domain_tokenizer, load_general_tokenizer
+from scripts.training.utils import (
+    load_dialogue_texts_multi,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+)
 from scripts.training.experiment_config import (
-    ENSEMBLE_DIALOGUE_IDS as NEURON_IDS, DEFAULT_DOMAIN, SFT_ANSWER_MARKER,
+    ENSEMBLE_DIALOGUE_IDS as NEURON_IDS,
+    DEFAULT_DOMAIN,
+    SFT_ANSWER_MARKER,
 )
 
 DEVICE = "cpu"
 
 
-def compute_answer_ppl(neurons, shared_embeddings, ensemble, domain_sp, general_sp,
-                       texts, use_train_path=True):
+def compute_answer_ppl(
+    neurons, shared_embeddings, ensemble, domain_sp, general_sp, texts, use_train_path=True
+):
     """answer-only 协作 PPL（与训练同口径）。"""
     total_loss = 0.0
     total_tokens = 0
@@ -47,7 +58,10 @@ def compute_answer_ppl(neurons, shared_embeddings, ensemble, domain_sp, general_
             sft_mask = None
             for nid, shared_emb in shared_embeddings.items():
                 out = batch_align_and_embed(
-                    [text], domain_sp, general_sp, shared_emb,
+                    [text],
+                    domain_sp,
+                    general_sp,
+                    shared_emb,
                     answer_marker=SFT_ANSWER_MARKER,
                     answer_marker_mode="last",
                 )
@@ -60,7 +74,8 @@ def compute_answer_ppl(neurons, shared_embeddings, ensemble, domain_sp, general_
             if use_train_path:
                 result = ensemble.forward_train(
                     neuron_embeddings=neuron_embeddings,
-                    n_rounds=2, fusion_mode="soft",
+                    n_rounds=2,
+                    fusion_mode="soft",
                     targets=targets,
                     target_domain=DEFAULT_DOMAIN,
                 )
@@ -68,7 +83,8 @@ def compute_answer_ppl(neurons, shared_embeddings, ensemble, domain_sp, general_
             else:
                 result = ensemble.forward(
                     neuron_embeddings=neuron_embeddings,
-                    return_logits=True, fusion_mode="soft",
+                    return_logits=True,
+                    fusion_mode="soft",
                 )
                 fused = result.get("weighted_logits")
 
@@ -81,7 +97,8 @@ def compute_answer_ppl(neurons, shared_embeddings, ensemble, domain_sp, general_
             loss = F.cross_entropy(
                 shift_logits.view(-1, shift_logits.size(-1)),
                 shift_targets.view(-1),
-                ignore_index=-100, reduction="sum",
+                ignore_index=-100,
+                reduction="sum",
             )
             total_loss += loss.item()
             total_tokens += (shift_mask & shift_sft).sum().item()
@@ -110,6 +127,7 @@ def main():
 
     # 加载 cross_spec 权重（用完整 ckpt：含 side_channels/scale_bias/body）
     from scripts.training.eval_dialogue import load_cross_spec_weights
+
     ckpt = os.path.join("data", "neurons", "cross_spec_dialogue.ckpt.pt")
     load_cross_spec_weights(ensemble, "dialogue", ckpt)
     print(f"\n最终模型已加载（dialogue weights）", flush=True)
@@ -124,11 +142,19 @@ def main():
     print(f"eval 分布样本: {len(eval_texts)} 条", flush=True)
 
     for name, texts in [("训练分布", train_texts), ("eval 分布", eval_texts)]:
-        for path_name, use_train in [("forward_train(同训练路径)", True), ("forward(推理路径)", False)]:
+        for path_name, use_train in [
+            ("forward_train(同训练路径)", True),
+            ("forward(推理路径)", False),
+        ]:
             try:
                 avg, ppl = compute_answer_ppl(
-                    neurons, shared_embeddings, ensemble, domain_sp, general_sp,
-                    texts, use_train_path=use_train,
+                    neurons,
+                    shared_embeddings,
+                    ensemble,
+                    domain_sp,
+                    general_sp,
+                    texts,
+                    use_train_path=use_train,
                 )
                 print(f"  [{name}] {path_name}: loss={avg:.4f} PPL={ppl:.1f}", flush=True)
             except Exception as e:

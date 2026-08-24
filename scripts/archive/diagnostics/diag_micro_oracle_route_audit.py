@@ -21,7 +21,9 @@ import random
 import sys
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -68,15 +70,11 @@ def _audit(cortex, rounds, general_sp):
     with torch.no_grad():
         for index in range(len(rounds)):
             result, targets, answer_mask = _forward_batch(
-                cortex, rounds[index:index + 1], general_sp
+                cortex, rounds[index : index + 1], general_sp
             )
             projected = _projected_logits(cortex, result)
-            member_nll, valid_tokens = _member_token_nll(
-                projected, targets, answer_mask
-            )
-            raw_nll = _masked_teacher_forcing_nll(
-                result["fused_logits"], targets, answer_mask
-            )
+            member_nll, valid_tokens = _member_token_nll(projected, targets, answer_mask)
+            raw_nll = _masked_teacher_forcing_nll(result["fused_logits"], targets, answer_mask)
             oracle_per_token, winner = member_nll.min(dim=0)
             oracle_nll = oracle_per_token.mean()
             single_best_nll = member_nll.mean(dim=1).min()
@@ -86,9 +84,7 @@ def _audit(cortex, rounds, general_sp):
             single_best_nlls.append(float(single_best_nll))
             member_token_sum += member_nll.sum(dim=1).float().cpu()
             member_token_count += valid_tokens
-            oracle_wins += torch.bincount(
-                winner.cpu(), minlength=len(member_ids)
-            )
+            oracle_wins += torch.bincount(winner.cpu(), minlength=len(member_ids))
             total_tokens += valid_tokens
             del result, projected, member_nll
 
@@ -114,8 +110,7 @@ def _audit(cortex, rounds, general_sp):
             for i, nid in enumerate(member_ids)
         },
         "oracle_winner_fraction": {
-            nid: round(float(oracle_winner_fraction[i]), 6)
-            for i, nid in enumerate(member_ids)
+            nid: round(float(oracle_winner_fraction[i]), 6) for i, nid in enumerate(member_ids)
         },
     }
 

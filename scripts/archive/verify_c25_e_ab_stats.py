@@ -35,8 +35,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -56,7 +61,7 @@ PROMPTS = [
     ("zh", "用中文解释什么是机器学习"),
 ]
 
-SAMPLES = 3          # 每 prompt 采样次数
+SAMPLES = 3  # 每 prompt 采样次数
 MAX_TOKENS = 32
 TEMPERATURE = 0.55
 TOP_K = 15
@@ -67,7 +72,7 @@ def repeat_score(text: str) -> float:
     """4-gram 重复率（0=无重复，1=全重复）。"""
     if len(text) < 4:
         return 0.0
-    grams = [text[i:i + 4] for i in range(len(text) - 3)]
+    grams = [text[i : i + 4] for i in range(len(text) - 3)]
     uniq = set(grams)
     return 1.0 - len(uniq) / max(len(grams), 1)
 
@@ -100,16 +105,21 @@ def main():
     for i, (tag, prompt) in enumerate(PROMPTS):
         d, _, _ = cortex._executive_route(prompt)
         dom_map[i] = d
-    expect_ok = sum(1 for i, (tag, _) in enumerate(PROMPTS)
-                    if (tag == "zh" and dom_map[i] == "zh")
-                    or (tag in ("code", "math", "en") and dom_map[i] == tag))
+    expect_ok = sum(
+        1
+        for i, (tag, _) in enumerate(PROMPTS)
+        if (tag == "zh" and dom_map[i] == "zh")
+        or (tag in ("code", "math", "en") and dom_map[i] == tag)
+    )
     print(f"  判定正确 {expect_ok}/{len(PROMPTS)}", flush=True)
     check("判定正确率 ≥ 90%", expect_ok / len(PROMPTS) >= 0.9, f"→ {expect_ok}/{len(PROMPTS)}")
 
     print(f"\n[1] 多次采样生成（{SAMPLES} 次/ prompt）", flush=True)
     # stats[mode][metric] = list per-prompt 均值
-    stats = {"executive": {"non_empty": [], "avg_len": [], "avg_rep": []},
-             "continuous": {"non_empty": [], "avg_len": [], "avg_rep": []}}
+    stats = {
+        "executive": {"non_empty": [], "avg_len": [], "avg_rep": []},
+        "continuous": {"non_empty": [], "avg_len": [], "avg_rep": []},
+    }
     for mode in ("executive", "continuous"):
         for i, (tag, prompt) in enumerate(PROMPTS):
             texts = []
@@ -117,8 +127,10 @@ def main():
             gen_prompt = build_dialogue_prompt(prompt) if tag == "zh" else prompt
             for _ in range(SAMPLES):
                 text = cortex.generate(
-                    prompt=gen_prompt, max_tokens=MAX_TOKENS,
-                    temperature=TEMPERATURE, top_k=TOP_K,
+                    prompt=gen_prompt,
+                    max_tokens=MAX_TOKENS,
+                    temperature=TEMPERATURE,
+                    top_k=TOP_K,
                     repetition_penalty=REPETITION_PENALTY,
                     domain=dom_map[i],
                     collab_mode=mode,
@@ -144,9 +156,17 @@ def main():
     # 逐 prompt 对比（均值口径）
     better = {"continuous": 0, "executive": 0, "tie": 0}
     for i, (tag, _) in enumerate(PROMPTS):
-        se = stats["executive"]["avg_len"][i] * (1 - stats["executive"]["avg_rep"][i]) * stats["executive"]["non_empty"][i]
-        sc = stats["continuous"]["avg_len"][i] * (1 - stats["continuous"]["avg_rep"][i]) * stats["continuous"]["non_empty"][i]
-        if sc > se * 1.02:      # >2% 视为胜
+        se = (
+            stats["executive"]["avg_len"][i]
+            * (1 - stats["executive"]["avg_rep"][i])
+            * stats["executive"]["non_empty"][i]
+        )
+        sc = (
+            stats["continuous"]["avg_len"][i]
+            * (1 - stats["continuous"]["avg_rep"][i])
+            * stats["continuous"]["non_empty"][i]
+        )
+        if sc > se * 1.02:  # >2% 视为胜
             better["continuous"] += 1
         elif se > sc * 1.02:
             better["executive"] += 1
@@ -155,18 +175,24 @@ def main():
     print(f"\n  逐 prompt 质量对比（长度×低重复×非空，均值口径，±2% 容差）: {better}", flush=True)
 
     # 判定 1：continuous 非空率不劣
-    check("continuous 非空率 ≥ executive - 0.05",
-          agg["continuous"]["non_empty"] >= agg["executive"]["non_empty"] - 0.05,
-          f"{agg['continuous']['non_empty']:.2f} vs {agg['executive']['non_empty']:.2f}")
+    check(
+        "continuous 非空率 ≥ executive - 0.05",
+        agg["continuous"]["non_empty"] >= agg["executive"]["non_empty"] - 0.05,
+        f"{agg['continuous']['non_empty']:.2f} vs {agg['executive']['non_empty']:.2f}",
+    )
     # 判定 2：continuous 重复率不劣（均值口径）
-    check("continuous 重复率 ≤ executive + 0.02",
-          agg["continuous"]["avg_rep"] <= agg["executive"]["avg_rep"] + 0.02,
-          f"{agg['continuous']['avg_rep']:.3f} vs {agg['executive']['avg_rep']:.3f}")
+    check(
+        "continuous 重复率 ≤ executive + 0.02",
+        agg["continuous"]["avg_rep"] <= agg["executive"]["avg_rep"] + 0.02,
+        f"{agg['continuous']['avg_rep']:.3f} vs {agg['executive']['avg_rep']:.3f}",
+    )
     # 判定 3：continuous ≥ executive 的 prompt ≥ 60%
     cont_ok = better["continuous"] + better["tie"]
-    check("continuous 质量 ≥ executive 的 prompt ≥ 60%",
-          cont_ok / len(PROMPTS) >= 0.6,
-          f"{cont_ok}/{len(PROMPTS)}")
+    check(
+        "continuous 质量 ≥ executive 的 prompt ≥ 60%",
+        cont_ok / len(PROMPTS) >= 0.6,
+        f"{cont_ok}/{len(PROMPTS)}",
+    )
 
     print(f"\n  总耗时: {time.time() - t0:.1f}s", flush=True)
     print("=" * 64, flush=True)

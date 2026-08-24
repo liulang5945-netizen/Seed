@@ -19,6 +19,7 @@ SearXNG 优势：
     from neuroplex.tools.searxng import searxng_search
     results = searxng_search("Python programming")
 """
+
 import json
 import logging
 import urllib.request
@@ -61,10 +62,13 @@ class SearXNGClient:
         for url in candidates:
             try:
                 test_url = f"{url}/search?q=test&format=json"
-                req = urllib.request.Request(test_url, headers={
-                    "User-Agent": "TaijiBot/1.0",
-                    "Accept": "application/json",
-                })
+                req = urllib.request.Request(
+                    test_url,
+                    headers={
+                        "User-Agent": "TaijiBot/1.0",
+                        "Accept": "application/json",
+                    },
+                )
                 with urllib.request.urlopen(req, timeout=5) as resp:
                     if resp.status == 200:
                         self._working_instance = url
@@ -76,8 +80,9 @@ class SearXNGClient:
         logger.warning("没有可用的 SearXNG 实例")
         return None
 
-    def search(self, query: str, categories: str = "general",
-               language: str = "auto", max_results: int = 10) -> List[Dict]:
+    def search(
+        self, query: str, categories: str = "general", language: str = "auto", max_results: int = 10
+    ) -> List[Dict]:
         """
         搜索。
 
@@ -95,31 +100,38 @@ class SearXNGClient:
             return []
 
         try:
-            params = urllib.parse.urlencode({
-                "q": query,
-                "format": "json",
-                "categories": categories,
-                "language": language,
-                "pageno": 1,
-            })
+            params = urllib.parse.urlencode(
+                {
+                    "q": query,
+                    "format": "json",
+                    "categories": categories,
+                    "language": language,
+                    "pageno": 1,
+                }
+            )
             url = f"{instance}/search?{params}"
 
-            req = urllib.request.Request(url, headers={
-                "User-Agent": "TaijiBot/1.0",
-                "Accept": "application/json",
-            })
+            req = urllib.request.Request(
+                url,
+                headers={
+                    "User-Agent": "TaijiBot/1.0",
+                    "Accept": "application/json",
+                },
+            )
             with urllib.request.urlopen(req, timeout=15) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
 
             results = []
             for item in data.get("results", [])[:max_results]:
-                results.append({
-                    "title": item.get("title", ""),
-                    "url": item.get("url", ""),
-                    "content": item.get("content", ""),
-                    "engine": item.get("engine", ""),
-                    "score": item.get("score", 0),
-                })
+                results.append(
+                    {
+                        "title": item.get("title", ""),
+                        "url": item.get("url", ""),
+                        "content": item.get("content", ""),
+                        "engine": item.get("engine", ""),
+                        "score": item.get("score", 0),
+                    }
+                )
 
             return results
         except Exception as e:
@@ -156,15 +168,33 @@ def _auto_category(query: str) -> str:
     q = query.lower()
 
     # 新闻类
-    if any(kw in q for kw in ["新闻", "最新", "今日", "近日", "发生", "事件", "报道", "news", "latest"]):
+    if any(
+        kw in q for kw in ["新闻", "最新", "今日", "近日", "发生", "事件", "报道", "news", "latest"]
+    ):
         return "news"
 
     # 学术类
-    if any(kw in q for kw in ["论文", "研究", "学术", "期刊", "paper", "research", "study", "journal"]):
+    if any(
+        kw in q for kw in ["论文", "研究", "学术", "期刊", "paper", "research", "study", "journal"]
+    ):
         return "science"
 
     # IT/技术类
-    if any(kw in q for kw in ["代码", "编程", "api", "sdk", "github", "框架", "库", "code", "programming", "framework"]):
+    if any(
+        kw in q
+        for kw in [
+            "代码",
+            "编程",
+            "api",
+            "sdk",
+            "github",
+            "框架",
+            "库",
+            "code",
+            "programming",
+            "framework",
+        ]
+    ):
         return "it"
 
     # 图片类
@@ -210,10 +240,10 @@ def searxng_search(query: str, categories: str = "auto", max_results: int = 5) -
     lines = [f"SearXNG 搜索 '{query}' 找到 {len(results)} 条结果:\n"]
     for i, r in enumerate(results, 1):
         lines.append(f"{i}. {r['title']}")
-        if r['content']:
+        if r["content"]:
             lines.append(f"   {r['content'][:200]}")
         lines.append(f"   URL: {r['url']}")
-        if r['engine']:
+        if r["engine"]:
             lines.append(f"   来源: {r['engine']}")
         lines.append("")
 

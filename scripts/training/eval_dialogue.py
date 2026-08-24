@@ -11,35 +11,44 @@ Usage:
     python -u scripts/training/eval_dialogue.py --weights cross_spec  # 用 simple_zh 训练权重
     python -u scripts/training/eval_dialogue.py --ckpt_path data/neurons/ckpt/step_6000.pt  # §4.0d+: 指定任意 checkpoint（早停对比）
 """
+
 from __future__ import annotations
 
 import math
 import os
 import sys
+from typing import Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 
 from neuroplex.resonance import (
-    ResonanceNeuron, ResonanceField, ResonanceEnsemble,
-    get_domain_neuron_config, NeuronGeometry,
+    ResonanceField,
+    ResonanceEnsemble,
+    NeuronGeometry,
 )
 from neuroplex.resonance.topology import (
-    build_topology, establish_topology_channels,
-    infer_topology_from_state, topology_detail,
+    build_topology,
+    establish_topology_channels,
+    infer_topology_from_state,
+    topology_detail,
 )
 from neuroplex.resonance.translator import batch_align_and_embed
 from scripts.training.utils import (
-    load_domain_tokenizer, load_general_tokenizer,
-    OUTPUT_DIR, load_simple_zh_texts,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+    OUTPUT_DIR,
 )
 from scripts.training.finetune_cross_spec import load_dialogue_texts, load_neuron_with_embedding
 from scripts.training.experiment_config import (
-    ENSEMBLE_DIALOGUE_IDS as NEURON_IDS, DEFAULT_DOMAIN as DOMAIN,
-    SAMPLING_TEMPERATURE, SAMPLING_TOP_K, SAMPLING_REPETITION_PENALTY, SAMPLING_MAX_TOKENS,
+    ENSEMBLE_DIALOGUE_IDS as NEURON_IDS,
+    DEFAULT_DOMAIN as DOMAIN,
+    SAMPLING_TEMPERATURE,
+    SAMPLING_TOP_K,
+    SAMPLING_REPETITION_PENALTY,
+    SAMPLING_MAX_TOKENS,
     DIALOGUE_PROMPTS,
 )
 
@@ -61,8 +70,9 @@ def _resolve_weights_path(weights_type: str, ckpt_path: Optional[str] = None) ->
     return None
 
 
-def load_neurons_and_weights(weights_type: str = "dialogue", topology_mode: str = "hybrid",
-                             ckpt_path: Optional[str] = None):
+def load_neurons_and_weights(
+    weights_type: str = "dialogue", topology_mode: str = "hybrid", ckpt_path: Optional[str] = None
+):
     """加载神经元和指定类型的权重。
 
     S7: 优先从 checkpoint 自动推断拓扑（匹配训练时拓扑），
@@ -94,11 +104,15 @@ def load_neurons_and_weights(weights_type: str = "dialogue", topology_mode: str 
         side_state_peek = ckpt_data.get("side_channels") or ckpt_data.get("side_channels_state")
         if side_state_peek and isinstance(side_state_peek, dict):
             topology = infer_topology_from_state(side_state_peek)
-            print(f"  [topology] 从 checkpoint 推断: {topology_detail(topology, neurons)}", flush=True)
+            print(
+                f"  [topology] 从 checkpoint 推断: {topology_detail(topology, neurons)}", flush=True
+            )
 
     if topology is None:
         topology = build_topology(neurons, geometry, mode=topology_mode)
-        print(f"  [topology] 回退到 {topology_mode}: {topology_detail(topology, neurons)}", flush=True)
+        print(
+            f"  [topology] 回退到 {topology_mode}: {topology_detail(topology, neurons)}", flush=True
+        )
 
     stats = establish_topology_channels(neurons, topology, geometry)
     for nid, n_ch in stats.items():
@@ -137,8 +151,9 @@ def load_neurons_and_weights(weights_type: str = "dialogue", topology_mode: str 
     return neurons, shared_embeddings
 
 
-def load_cross_spec_weights(ensemble, weights_type: str = "dialogue",
-                            ckpt_path: Optional[str] = None):
+def load_cross_spec_weights(
+    ensemble, weights_type: str = "dialogue", ckpt_path: Optional[str] = None
+):
     """加载跨规格投影层权重 + 协作层训练产物（side_channels/scale_bias/body）。
 
     §4.0d+: ckpt_path 显式指定任意 checkpoint 文件（早停对比用），
@@ -241,11 +256,13 @@ def load_cross_spec_weights(ensemble, weights_type: str = "dialogue",
             except (RuntimeError, ValueError) as e:
                 print(f"  [sparse_router-warn] 加载失败: {e}", flush=True)
         else:
-            print(f"  [sparse_router] checkpoint 含 Router 状态但 ensemble 未启用 Router，跳过", flush=True)
+            print(
+                "  [sparse_router] checkpoint 含 Router 状态但 ensemble 未启用 Router，跳过",
+                flush=True,
+            )
 
 
-def _checkpoint_has_router(weights_type: str = "dialogue",
-                           ckpt_path: Optional[str] = None) -> bool:
+def _checkpoint_has_router(weights_type: str = "dialogue", ckpt_path: Optional[str] = None) -> bool:
     """§4.0c: 检测 checkpoint 是否含 Sparse Router 状态。
 
     §4.0d+: ckpt_path 显式指定任意 checkpoint 文件（早停对比用），
@@ -261,9 +278,15 @@ def _checkpoint_has_router(weights_type: str = "dialogue",
         return False
 
 
-def eval_dialogue_ppl(neurons, shared_embeddings, domain_sp, general_sp,
-                      weights_type: str = "dialogue", n_eval: int = 100,
-                      ckpt_path: Optional[str] = None):
+def eval_dialogue_ppl(
+    neurons,
+    shared_embeddings,
+    domain_sp,
+    general_sp,
+    weights_type: str = "dialogue",
+    n_eval: int = 100,
+    ckpt_path: Optional[str] = None,
+):
     """对话 PPL 评估（alpaca-zh 评估集）。"""
     print("\n" + "=" * 70, flush=True)
     print(f"[对话 PPL 评估] 个体 vs 协作 (weights={weights_type})", flush=True)
@@ -272,7 +295,9 @@ def eval_dialogue_ppl(neurons, shared_embeddings, domain_sp, general_sp,
     # 加载对话评估数据
     dialogue_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "data", "simple_zh", "alpaca_zh_sft.jsonl",
+        "data",
+        "simple_zh",
+        "alpaca_zh_sft.jsonl",
     )
     all_texts = load_dialogue_texts(dialogue_path, max_texts=n_eval * 3)
     texts = all_texts[-n_eval:] if len(all_texts) > n_eval else all_texts
@@ -294,7 +319,10 @@ def eval_dialogue_ppl(neurons, shared_embeddings, domain_sp, general_sp,
         with torch.no_grad():
             for text in texts:
                 shared_emb_out, targets, mask = batch_align_and_embed(
-                    [text], domain_sp, general_sp, shared_emb,
+                    [text],
+                    domain_sp,
+                    general_sp,
+                    shared_emb,
                 )
                 shared_emb_out = shared_emb_out.to(DEVICE)
                 targets = targets.to(DEVICE)
@@ -329,7 +357,10 @@ def eval_dialogue_ppl(neurons, shared_embeddings, domain_sp, general_sp,
             mask = None
             for nid, shared_emb in shared_embeddings.items():
                 shared_emb_out, tgt, msk = batch_align_and_embed(
-                    [text], domain_sp, general_sp, shared_emb,
+                    [text],
+                    domain_sp,
+                    general_sp,
+                    shared_emb,
                 )
                 neuron_embeddings[nid] = shared_emb_out.to(DEVICE)
                 if targets is None:
@@ -345,7 +376,11 @@ def eval_dialogue_ppl(neurons, shared_embeddings, domain_sp, general_sp,
             if "weighted_logits" in result:
                 fused_logits = result["weighted_logits"]
             else:
-                best_nid = max(result.get("final_scores", {}), key=result["final_scores"].get, default=NEURON_IDS[0])
+                best_nid = max(
+                    result.get("final_scores", {}),
+                    key=result["final_scores"].get,
+                    default=NEURON_IDS[0],
+                )
                 fused_logits = neurons[best_nid].forward(
                     neuron_embeddings[best_nid], return_logits=True
                 )["logits"]
@@ -369,7 +404,9 @@ def eval_dialogue_ppl(neurons, shared_embeddings, domain_sp, general_sp,
     print(f"  协作 [side]:   PPL={collab_ppl:.1f} (loss={avg_loss:.4f})", flush=True)
 
     if "final_weights" in result:
-        weights_str = ", ".join(f"{k}:{v:.3f}" for k, v in sorted(result["final_weights"].items(), key=lambda x: -x[1]))
+        weights_str = ", ".join(
+            f"{k}:{v:.3f}" for k, v in sorted(result["final_weights"].items(), key=lambda x: -x[1])
+        )
         print(f"  融合权重: {weights_str}", flush=True)
 
     min_ind = min(individual_ppls.values())
@@ -385,10 +422,18 @@ def eval_dialogue_ppl(neurons, shared_embeddings, domain_sp, general_sp,
     return individual_ppls, collab_ppl
 
 
-def _generate_collab(neurons, shared_embeddings, ensemble, domain_sp, general_sp,
-                     prompt, max_tokens=SAMPLING_MAX_TOKENS,
-                     temperature=SAMPLING_TEMPERATURE, top_k=SAMPLING_TOP_K,
-                     repetition_penalty=SAMPLING_REPETITION_PENALTY):
+def _generate_collab(
+    neurons,
+    shared_embeddings,
+    ensemble,
+    domain_sp,
+    general_sp,
+    prompt,
+    max_tokens=SAMPLING_MAX_TOKENS,
+    temperature=SAMPLING_TEMPERATURE,
+    top_k=SAMPLING_TOP_K,
+    repetition_penalty=SAMPLING_REPETITION_PENALTY,
+):
     """协作生成（模块级函数，供单轮和多轮评测共用）。
 
     关键修复：ensemble 输出的 weighted_logits 维度 = zh domain vocab_size，
@@ -404,7 +449,7 @@ def _generate_collab(neurons, shared_embeddings, ensemble, domain_sp, general_sp
 
     # domain tokenizer 的 EOS
     domain_eos_id = None
-    if hasattr(domain_sp, 'eos_id'):
+    if hasattr(domain_sp, "eos_id"):
         eid = domain_sp.eos_id()
         if eid is not None and eid >= 0:
             domain_eos_id = int(eid)
@@ -425,10 +470,16 @@ def _generate_collab(neurons, shared_embeddings, ensemble, domain_sp, general_sp
             if "weighted_logits" in result:
                 logits = result["weighted_logits"][:, -1, :].float()
             else:
-                best_nid = max(result.get("final_scores", {}), key=result["final_scores"].get, default=NEURON_IDS[0])
-                logits = neurons[best_nid].forward(
-                    neuron_embeddings[best_nid], return_logits=True
-                )["logits"][:, -1, :].float()
+                best_nid = max(
+                    result.get("final_scores", {}),
+                    key=result["final_scores"].get,
+                    default=NEURON_IDS[0],
+                )
+                logits = (
+                    neurons[best_nid]
+                    .forward(neuron_embeddings[best_nid], return_logits=True)["logits"][:, -1, :]
+                    .float()
+                )
 
             # Repetition penalty
             if generated_domain:
@@ -442,7 +493,7 @@ def _generate_collab(neurons, shared_embeddings, ensemble, domain_sp, general_sp
                 cur_top_k = min(top_k, logits.size(-1))
                 topk_vals, _ = torch.topk(logits[0], cur_top_k)
                 threshold = topk_vals[-1]
-                logits[0][logits[0] < threshold] = float('-inf')
+                logits[0][logits[0] < threshold] = float("-inf")
 
             probs = F.softmax(logits, dim=-1)
             next_domain_token = torch.multinomial(probs, num_samples=1).item()
@@ -457,7 +508,9 @@ def _generate_collab(neurons, shared_embeddings, ensemble, domain_sp, general_sp
             new_general_ids = general_sp.encode(piece_text)
             if not new_general_ids:
                 new_general_ids = [general_sp.pad_id()]
-            ids = torch.cat([ids, torch.tensor([new_general_ids], dtype=torch.long, device=DEVICE)], dim=1)
+            ids = torch.cat(
+                [ids, torch.tensor([new_general_ids], dtype=torch.long, device=DEVICE)], dim=1
+            )
 
     # 用 domain tokenizer 解码
     text = domain_sp.DecodeIds(generated_domain)
@@ -466,20 +519,20 @@ def _generate_collab(neurons, shared_embeddings, ensemble, domain_sp, general_sp
 
 # 多轮对话场景：每个场景是一系列追问，测试综合体维持上下文的能力
 MULTI_TURN_SCENARIOS = [
-    ["你好，请介绍一下自己",
-     "你和小神经元是什么关系？",
-     "那你能做什么？"],
-    ["什么是人工智能？",
-     "它和机器学习有什么区别？",
-     "能举个例子吗？"],
-    ["如何学习编程？",
-     "应该先学哪门语言？",
-     "有什么好的学习资源推荐吗？"],
+    ["你好，请介绍一下自己", "你和小神经元是什么关系？", "那你能做什么？"],
+    ["什么是人工智能？", "它和机器学习有什么区别？", "能举个例子吗？"],
+    ["如何学习编程？", "应该先学哪门语言？", "有什么好的学习资源推荐吗？"],
 ]
 
 
-def eval_conversation(neurons, shared_embeddings, domain_sp, general_sp,
-                      weights_type: str = "dialogue", ckpt_path: Optional[str] = None):
+def eval_conversation(
+    neurons,
+    shared_embeddings,
+    domain_sp,
+    general_sp,
+    weights_type: str = "dialogue",
+    ckpt_path: Optional[str] = None,
+):
     """实际对话生成质量评估（单轮）。"""
     print("\n" + "=" * 70, flush=True)
     print(f"[对话生成质量评估] (weights={weights_type})", flush=True)
@@ -493,15 +546,21 @@ def eval_conversation(neurons, shared_embeddings, domain_sp, general_sp,
 
     for prompt in DIALOGUE_PROMPTS:
         print(f"\n  {prompt}", flush=True)
-        response = _generate_collab(neurons, shared_embeddings, ensemble,
-                                    domain_sp, general_sp, prompt)
+        response = _generate_collab(
+            neurons, shared_embeddings, ensemble, domain_sp, general_sp, prompt
+        )
         print(f"  协作回复: {response}", flush=True)
         print(f"  {'-' * 60}", flush=True)
 
 
-def eval_multi_turn_conversation(neurons, shared_embeddings, domain_sp, general_sp,
-                                 weights_type: str = "dialogue",
-                                 ckpt_path: Optional[str] = None):
+def eval_multi_turn_conversation(
+    neurons,
+    shared_embeddings,
+    domain_sp,
+    general_sp,
+    weights_type: str = "dialogue",
+    ckpt_path: Optional[str] = None,
+):
     """多轮对话评测（缺口 H 修复）：测试综合体维持上下文的能力。
 
     每个场景包含多轮追问，综合体需要根据上下文生成连贯回复。
@@ -524,9 +583,9 @@ def eval_multi_turn_conversation(neurons, shared_embeddings, domain_sp, general_
             # 拼接对话历史 + 当前问题（与训练数据格式对齐）
             prompt = f"{history}问：{question}\n答："
             print(f"\n  [轮 {turn_idx}] 问：{question}", flush=True)
-            response = _generate_collab(neurons, shared_embeddings, ensemble,
-                                        domain_sp, general_sp, prompt,
-                                        max_tokens=128)
+            response = _generate_collab(
+                neurons, shared_embeddings, ensemble, domain_sp, general_sp, prompt, max_tokens=128
+            )
             print(f"  [轮 {turn_idx}] 答：{response}", flush=True)
             # 将本轮对话加入历史
             history = f"{history}问：{question}\n答：{response}\n"
@@ -535,20 +594,32 @@ def eval_multi_turn_conversation(neurons, shared_embeddings, domain_sp, general_
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("--weights", type=str, default="dialogue",
-                        choices=["dialogue", "cross_spec", "none"],
-                        help="dialogue=对话训练权重, cross_spec=simple_zh训练权重, none=无权重")
-    parser.add_argument("--ckpt_path", type=str, default=None,
-                        help="§4.0d+: 显式指定任意 checkpoint 文件（早停对比用），优先于 --weights 默认路径")
+    parser.add_argument(
+        "--weights",
+        type=str,
+        default="dialogue",
+        choices=["dialogue", "cross_spec", "none"],
+        help="dialogue=对话训练权重, cross_spec=simple_zh训练权重, none=无权重",
+    )
+    parser.add_argument(
+        "--ckpt_path",
+        type=str,
+        default=None,
+        help="§4.0d+: 显式指定任意 checkpoint 文件（早停对比用），优先于 --weights 默认路径",
+    )
     parser.add_argument("--n_eval", type=int, default=50)
     parser.add_argument("--skip_ppl", action="store_true", help="跳过 PPL 评估")
     parser.add_argument("--skip_gen", action="store_true", help="跳过生成评估")
     parser.add_argument("--multi_turn", action="store_true", help="启用多轮对话评测")
     parser.add_argument("--device", default="cpu", help="计算设备 (cpu/cuda)")
-    parser.add_argument("--topology", default="hybrid",
-                        choices=["full", "knn", "hub_spoke", "hybrid"],
-                        help="S7: 回退拓扑模式 (checkpoint 无拓扑信息时使用)")
+    parser.add_argument(
+        "--topology",
+        default="hybrid",
+        choices=["full", "knn", "hub_spoke", "hybrid"],
+        help="S7: 回退拓扑模式 (checkpoint 无拓扑信息时使用)",
+    )
     args = parser.parse_args()
 
     global DEVICE
@@ -559,22 +630,41 @@ def main():
     print("=" * 70, flush=True)
 
     neurons, shared_embeddings = load_neurons_and_weights(
-        args.weights, args.topology, ckpt_path=args.ckpt_path)
+        args.weights, args.topology, ckpt_path=args.ckpt_path
+    )
     domain_sp = load_domain_tokenizer(DOMAIN)
     general_sp = load_general_tokenizer()
 
     if not args.skip_ppl:
-        eval_dialogue_ppl(neurons, shared_embeddings, domain_sp, general_sp,
-                          weights_type=args.weights, n_eval=args.n_eval,
-                          ckpt_path=args.ckpt_path)
+        eval_dialogue_ppl(
+            neurons,
+            shared_embeddings,
+            domain_sp,
+            general_sp,
+            weights_type=args.weights,
+            n_eval=args.n_eval,
+            ckpt_path=args.ckpt_path,
+        )
 
     if not args.skip_gen:
-        eval_conversation(neurons, shared_embeddings, domain_sp, general_sp,
-                          weights_type=args.weights, ckpt_path=args.ckpt_path)
+        eval_conversation(
+            neurons,
+            shared_embeddings,
+            domain_sp,
+            general_sp,
+            weights_type=args.weights,
+            ckpt_path=args.ckpt_path,
+        )
 
     if args.multi_turn:
-        eval_multi_turn_conversation(neurons, shared_embeddings, domain_sp, general_sp,
-                                     weights_type=args.weights, ckpt_path=args.ckpt_path)
+        eval_multi_turn_conversation(
+            neurons,
+            shared_embeddings,
+            domain_sp,
+            general_sp,
+            weights_type=args.weights,
+            ckpt_path=args.ckpt_path,
+        )
 
     print("\n" + "=" * 70, flush=True)
     print("评估完成", flush=True)

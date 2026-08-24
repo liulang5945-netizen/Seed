@@ -92,8 +92,16 @@ def evaluate_seed(
     holdout_bytes: bytes,
     report_path: Optional[Path | str] = None,
     generation_length: int = 64,
+    holdout_source: Optional[str] = None,
+    holdout_selection: Optional[str] = None,
+    train_corpus: Optional[str] = None,
+    leakage_risk: bool = False,
 ) -> Dict[str, Any]:
-    """Measure holdout PPL, panel self-surprise and sampled continuations."""
+    """Measure holdout PPL, panel self-surprise and sampled continuations.
+
+    holdout_source/holdout_selection/train_corpus/leakage_risk 为防泄漏元数据：
+    holdout 与训练语料同源且未按 hash 分桶取评估桶时 leakage_risk=True。
+    """
 
     if not holdout_bytes:
         raise ValueError("holdout_bytes cannot be empty")
@@ -120,12 +128,14 @@ def evaluate_seed(
                 sample=True,
                 stop_at_boundary=True,
             )
-            samples.append({
-                "group": group,
-                "prompt": prompt,
-                "continuation": continuation.decode("utf-8", errors="replace"),
-                "prompt_surprise": prompt_score["mean_surprise"],
-            })
+            samples.append(
+                {
+                    "group": group,
+                    "prompt": prompt,
+                    "continuation": continuation.decode("utf-8", errors="replace"),
+                    "prompt_surprise": prompt_score["mean_surprise"],
+                }
+            )
         panel[group] = {
             "surprises": surprises,
             "mean": statistics.fmean(surprises),
@@ -137,6 +147,10 @@ def evaluate_seed(
         "format": "seed-corpus-eval-v1",
         "parameters": model.parameter_count(),
         "holdout": holdout,
+        "holdout_source": holdout_source,
+        "holdout_selection": holdout_selection,
+        "train_corpus": train_corpus,
+        "leakage_risk": leakage_risk,
         "panel": panel,
         "samples": samples,
         "neuroplex_baseline_reference": _baseline_reference(),
@@ -151,15 +165,35 @@ def evaluate_seed(
     return report
 
 
-def _holdout_bytes(path: Path, rows: int) -> bytes:
-    chunks = []
+def _load_texts(path: Path) -> list:
+    texts = []
     with path.open(encoding="utf-8") as handle:
-        for index, line in enumerate(handle):
-            if index >= rows:
-                break
+        for line in handle:
+            line = line.strip()
+            if not line:
+                continue
             text = json.loads(line).get("text", "")
             if text:
-                chunks.append(text)
+                texts.append(text)
+    return texts
+
+
+def _holdout_bytes(path: Path, rows: int, selection: str = "head_lines") -> bytes:
+    """取 holdout 字节流。
+
+    selection="hash_split"：复用 scripts.training.utils.split_train_eval 的
+    确定性 hash 分桶口径，取**评估桶**（与训练桶互补），避免与训练语料同源
+    时顺序取头部造成的泄漏。selection="head_lines"：顺序取前 N 行（仅用于
+    用户显式提供的独立 holdout 文件）。
+    """
+    if selection == "hash_split":
+        # 局部导入：避免模块加载时拉起 neuroplex/sentencepiece 重依赖
+        from scripts.training.utils import split_train_eval
+
+        _, eval_texts = split_train_eval(_load_texts(path), eval_ratio=0.05, seed=42)
+        chunks = eval_texts[:rows]
+    else:
+        chunks = _load_texts(path)[:rows]
     return "\n".join(chunks).encode("utf-8")
 
 
@@ -171,28 +205,54 @@ def main() -> None:
         default=str(PROJECT_ROOT / "data" / "simple_zh" / "dialogue_extended_clean.jsonl"),
     )
     parser.add_argument("--holdout-rows", type=int, default=32)
+    parser.add_argument(
+        "--train-corpus",
+        default=str(PROJECT_ROOT / "data" / "simple_zh" / "dialogue_extended_clean.jsonl"),
+        help="训练语料路径（用于判定 holdout 是否与训练同源，决定是否 hash 分桶）",
+    )
+    parser.add_argument(
+        "--holdout-selection",
+        choices=["auto", "hash_split", "head_lines"],
+        default="auto",
+        help="holdout 选取方式：auto=与训练语料同源时 hash_split、独立文件时 "
+        "head_lines；hash_split=确定性 hash 分桶取评估桶；"
+        "head_lines=顺序取前 N 行（仅推荐独立 holdout 文件）",
+    )
     parser.add_argument("--generation-length", type=int, default=64)
     parser.add_argument(
         "--report",
         default=str(
-            PROJECT_ROOT
-            / "reports"
-            / f"seed_corpus_eval_{time.strftime('%Y%m%d_%H%M%S')}.json"
+            PROJECT_ROOT / "reports" / f"seed_corpus_eval_{time.strftime('%Y%m%d_%H%M%S')}.json"
         ),
     )
     args = parser.parse_args()
 
     checkpoint = torch.load(args.checkpoint, weights_only=False)
     model = Seed.from_checkpoint(checkpoint)
+
+    holdout_path = Path(args.holdout).resolve()
+    train_path = Path(args.train_corpus).resolve()
+    same_file = holdout_path == train_path
+    if args.holdout_selection == "auto":
+        selection = "hash_split" if same_file else "head_lines"
+    else:
+        selection = args.holdout_selection
+    leakage_risk = same_file and selection != "hash_split"
+
     report = evaluate_seed(
         model,
-        holdout_bytes=_holdout_bytes(Path(args.holdout), args.holdout_rows),
+        holdout_bytes=_holdout_bytes(holdout_path, args.holdout_rows, selection),
         report_path=args.report,
         generation_length=args.generation_length,
+        holdout_source=str(holdout_path),
+        holdout_selection=selection,
+        train_corpus=str(train_path),
+        leakage_risk=leakage_risk,
     )
     print(
         f"byte_ppl={report['holdout']['byte_ppl']:.3f} "
         f"accuracy={report['holdout']['accuracy']:.3f} "
+        f"selection={selection} leakage_risk={leakage_risk} "
         f"report={args.report}"
     )
 

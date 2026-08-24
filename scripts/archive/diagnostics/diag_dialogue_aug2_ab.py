@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """验证 zh_aug2_dialogue 是否直接引入技术回答碎片。"""
+
 from __future__ import annotations
 
 import json
@@ -9,7 +10,6 @@ import time
 
 from neuroplex.loader import assemble_cortex
 from diag_dialogue_capacity_ab import DIALOGUE_IDS, QUESTIONS, _generate, _text_metrics
-
 
 DIALOGUE_5 = DIALOGUE_IDS
 DIALOGUE_4_NO_AUG2 = [nid for nid in DIALOGUE_IDS if nid != "zh_aug2_dialogue"]
@@ -54,18 +54,22 @@ def main() -> None:
         for question in QUESTIONS:
             try:
                 generated = _generate(cortex, active_nids, question)
-                rows.append({
-                    "question": question,
-                    "text": generated,
-                    **_text_metrics(generated),
-                })
+                rows.append(
+                    {
+                        "question": question,
+                        "text": generated,
+                        **_text_metrics(generated),
+                    }
+                )
             except Exception as exc:
-                rows.append({
-                    "question": question,
-                    "text": "",
-                    **_text_metrics(""),
-                    "error": f"{type(exc).__name__}: {exc}",
-                })
+                rows.append(
+                    {
+                        "question": question,
+                        "text": "",
+                        **_text_metrics(""),
+                        "error": f"{type(exc).__name__}: {exc}",
+                    }
+                )
         report["modes"][mode] = {
             "active_nids": active_nids,
             "rows": rows,

@@ -7,10 +7,12 @@
     from neuroplex.core.model_loader import load_model_on_startup
     load_model_on_startup()  # 在 API lifespan 中调用
 """
+
 from __future__ import annotations
 
 import logging
 import os
+import threading
 
 logger = logging.getLogger("ModelLoader")
 
@@ -54,13 +56,15 @@ def load_model_on_startup() -> None:
         device = "cpu"
         try:
             import torch
+
             if torch.cuda.is_available():
                 device = "cuda"
-        except ImportError:
-            pass
+        except ImportError as e:
+            logger.debug("【load_model_on_startup】处理失败（非致命）: %s", e)
 
         # 装配 Cortex
         from neuroplex.loader import assemble_cortex
+
         neurons_dir = os.environ.get("TAIJI_NEURONS_DIR", "data/neurons")
         neuron_ids = _resolve_neuron_ids()
         # 9 神经元挂载阵容（2026-08-11 收敛）：collab 用 C20v2 判定重训产物
@@ -90,7 +94,8 @@ def load_model_on_startup() -> None:
 
         # 构造 SleepEngine 并接线 bio 模块
         try:
-            from neuroplex.life.sleep_engine import SleepEngine, get_sleep_engine
+            from neuroplex.life.sleep_engine import get_sleep_engine
+
             sleep = get_sleep_engine()
             sleep.set_brain_interfaces(
                 cortex=cortex,
@@ -107,6 +112,7 @@ def load_model_on_startup() -> None:
         # 构造 FeedEngine（API 端点会显式传 tokenizer_hub，无需注入 cortex）
         try:
             from neuroplex.life.feed_engine import get_feed_engine
+
             get_feed_engine()  # 预初始化全局实例
             logger.info("[ModelLoader] FeedEngine 已预初始化")
         except Exception as e:
@@ -114,9 +120,7 @@ def load_model_on_startup() -> None:
 
         app_state.mark_started()
         n_neurons = len(cortex.neurons)
-        logger.info(
-            f"[ModelLoader] Cortex 加载完成: {n_neurons} neurons, device={device}"
-        )
+        logger.info(f"[ModelLoader] Cortex 加载完成: {n_neurons} neurons, device={device}")
 
     except Exception as e:
         logger.error(f"[ModelLoader] Cortex 加载失败: {e}", exc_info=True)
@@ -134,3 +138,43 @@ def startup_download_progress() -> dict:
         "total_mb": 0,
         "downloaded_mb": 0,
     }
+
+
+_auto_reload_thread: threading.Thread | None = None
+
+
+def start_auto_reload(check_interval: int = 60) -> None:
+    """后台周期巡检：模型未装载（且非 Seed 接管）时自动重试装配。
+
+    前端承诺的“内存合适后自动尝试装载，每 60 秒检查一次”由此实现；
+    幂等，重复调用不会叠加线程。Seed 原生运行时激活时不干预。
+    """
+    global _auto_reload_thread
+    if _auto_reload_thread is not None and _auto_reload_thread.is_alive():
+        return
+
+    def _loop() -> None:
+        import time
+
+        while True:
+            time.sleep(check_interval)
+            try:
+                from neuroplex.core.app_state import app_state
+
+                seed_active = False
+                try:
+                    from api.seed_runtime import is_seed_active
+
+                    seed_active = is_seed_active()
+                except Exception as e:
+                    logger.debug("【start_auto_reload._loop】处理失败（非致命）: %s", e)
+                if seed_active or app_state.model is not None:
+                    continue
+                logger.info("[ModelLoader] 模型未装载，自动重试装配...")
+                load_model_on_startup()
+            except Exception as exc:
+                logger.warning(f"[ModelLoader] auto reload check failed: {exc}")
+
+    _auto_reload_thread = threading.Thread(target=_loop, name="model-auto-reload", daemon=True)
+    _auto_reload_thread.start()
+    logger.info(f"[ModelLoader] auto reload started (interval={check_interval}s)")

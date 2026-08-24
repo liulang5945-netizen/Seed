@@ -221,6 +221,7 @@ export const useChatStore = defineStore('chat', () => {
 
       const res = await authFetch(`${API_BASE}/api/chat/stream`, {
         method: 'POST',
+        retries: 0, // 非幂等流式推理：禁用重试，避免 5xx 时重复推理
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: promptInput,

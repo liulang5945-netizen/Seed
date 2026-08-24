@@ -1,0 +1,115 @@
+{
+  "benchmark": "seed_beta_recovery",
+  "timestamp": "2026-08-23 15:44:31",
+  "rounds": {
+    "round_1": {
+      "crash_mid_save_raises": true,
+      "target_survives_mid_save_crash": true,
+      "no_tmp_residue_after_crash": true,
+      "restore_after_crash_matches": true,
+      "clean_replace_after_stray_tmp": true,
+      "corrupted_target_rejected": true,
+      "service_restored_after_repair": true,
+      "round_pass": true
+    },
+    "round_2": {
+      "crash_mid_save_raises": true,
+      "target_survives_mid_save_crash": true,
+      "no_tmp_residue_after_crash": true,
+      "restore_after_crash_matches": true,
+      "clean_replace_after_stray_tmp": true,
+      "corrupted_target_rejected": true,
+      "service_restored_after_repair": true,
+      "round_pass": true
+    },
+    "round_3": {
+      "crash_mid_save_raises": true,
+      "target_survives_mid_save_crash": true,
+      "no_tmp_residue_after_crash": true,
+      "restore_after_crash_matches": true,
+      "clean_replace_after_stray_tmp": true,
+      "corrupted_target_rejected": true,
+      "service_restored_after_repair": true,
+      "round_pass": true
+    },
+    "round_4": {
+      "crash_mid_save_raises": true,
+      "target_survives_mid_save_crash": true,
+      "no_tmp_residue_after_crash": true,
+      "restore_after_crash_matches": true,
+      "clean_replace_after_stray_tmp": true,
+      "corrupted_target_rejected": true,
+      "service_restored_after_repair": true,
+      "round_pass": true
+    },
+    "round_5": {
+      "crash_mid_save_raises": true,
+      "target_survives_mid_save_crash": true,
+      "no_tmp_residue_after_crash": true,
+      "restore_after_crash_matches": true,
+      "clean_replace_after_stray_tmp": true,
+      "corrupted_target_rejected": true,
+      "service_restored_after_repair": true,
+      "round_pass": true
+    },
+    "round_6": {
+      "crash_mid_save_raises": true,
+      "target_survives_mid_save_crash": true,
+      "no_tmp_residue_after_crash": true,
+      "restore_after_crash_matches": true,
+      "clean_replace_after_stray_tmp": true,
+      "corrupted_target_rejected": true,
+      "service_restored_after_repair": true,
+      "round_pass": true
+    },
+    "round_7": {
+      "crash_mid_save_raises": true,
+      "target_survives_mid_save_crash": true,
+      "no_tmp_residue_after_crash": true,
+      "restore_after_crash_matches": true,
+      "clean_replace_after_stray_tmp": true,
+      "corrupted_target_rejected": true,
+      "service_restored_after_repair": true,
+      "round_pass": true
+    },
+    "round_8": {
+      "crash_mid_save_raises": true,
+      "target_survives_mid_save_crash": true,
+      "no_tmp_residue_after_crash": true,
+      "restore_after_crash_matches": true,
+      "clean_replace_after_stray_tmp": true,
+      "corrupted_target_rejected": true,
+      "service_restored_after_repair": true,
+      "round_pass": true
+    },
+    "round_9": {
+      "crash_mid_save_raises": true,
+      "target_survives_mid_save_crash": true,
+      "no_tmp_residue_after_crash": true,
+      "restore_after_crash_matches": true,
+      "clean_replace_after_stray_tmp": true,
+      "corrupted_target_rejected": true,
+      "service_restored_after_repair": true,
+      "round_pass": true
+    },
+    "round_10": {
+      "crash_mid_save_raises": true,
+      "target_survives_mid_save_crash": true,
+      "no_tmp_residue_after_crash": true,
+      "restore_after_crash_matches": true,
+      "clean_replace_after_stray_tmp": true,
+      "corrupted_target_rejected": true,
+      "service_restored_after_repair": true,
+      "round_pass": true
+    }
+  },
+  "metrics": {
+    "passed_rounds": 10,
+    "total_rounds": 10
+  },
+  "checks": {
+    "crash_recovery_10_of_10": true,
+    "no_tmp_residue_any_round": true
+  },
+  "status": "pass"
+}

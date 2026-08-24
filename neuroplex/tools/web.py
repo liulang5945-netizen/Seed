@@ -16,6 +16,7 @@
     results = search("Python 3.12 新特性")
     content = fetch("https://example.com")
 """
+
 import os
 import re
 import concurrent.futures
@@ -27,9 +28,8 @@ import random
 import urllib.request
 import urllib.parse
 import urllib.error
-from typing import List, Dict, Optional, Any
-from dataclasses import dataclass, field
-from pathlib import Path
+from typing import List, Optional
+from dataclasses import dataclass
 
 logger = logging.getLogger("Taiji.Web")
 
@@ -38,9 +38,11 @@ logger = logging.getLogger("Taiji.Web")
 # 数据结构
 # ═══════════════════════════════════════════════
 
+
 @dataclass
 class SearchResult:
     """搜索结果"""
+
     title: str
     url: str
     snippet: str
@@ -53,6 +55,7 @@ class SearchResult:
 @dataclass
 class WebPage:
     """网页内容"""
+
     url: str
     title: str
     content: str
@@ -67,6 +70,7 @@ class WebPage:
 # ═══════════════════════════════════════════════
 # 缓存
 # ═══════════════════════════════════════════════
+
 
 class WebCache:
     """联网结果缓存"""
@@ -86,7 +90,7 @@ class WebCache:
         if not os.path.exists(path):
             return None
         try:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             if time.time() - data.get("timestamp", 0) > self.ttl:
                 os.remove(path)
@@ -100,18 +104,23 @@ class WebCache:
         key = self._key(url)
         path = os.path.join(self.cache_dir, f"{key}.json")
         try:
-            with open(path, 'w', encoding='utf-8') as f:
-                json.dump({
-                    "url": url,
-                    "content": content[:50000],  # 限制缓存大小
-                    "timestamp": time.time(),
-                }, f, ensure_ascii=False)
-        except Exception:
-            pass
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(
+                    {
+                        "url": url,
+                        "content": content[:50000],  # 限制缓存大小
+                        "timestamp": time.time(),
+                    },
+                    f,
+                    ensure_ascii=False,
+                )
+        except Exception as e:
+            logger.debug("【WebCache.set】处理失败（非致命）: %s", e)
 
     def clear(self):
         """清空缓存"""
         import shutil
+
         if os.path.exists(self.cache_dir):
             shutil.rmtree(self.cache_dir)
             os.makedirs(self.cache_dir, exist_ok=True)
@@ -124,6 +133,7 @@ _cache = WebCache()
 # ═══════════════════════════════════════════════
 # 重试包装器
 # ═══════════════════════════════════════════════
+
 
 def _with_retry(func, max_retries: int = 2, base_delay: float = 1.0):
     """
@@ -159,12 +169,15 @@ def _search_single_engine(engine_func, query: str, max_results: int, timeout: fl
 # 搜索引擎
 # ═══════════════════════════════════════════════
 
+
 def _http_get(url: str, timeout: int = 10) -> str:
     """统一的 HTTP GET 请求（纯 stdlib）"""
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
+    }
     req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return resp.read().decode('utf-8', errors='ignore')
+        return resp.read().decode("utf-8", errors="ignore")
 
 
 def _search_duckduckgo(query: str, max_results: int = 5) -> List[SearchResult]:
@@ -178,21 +191,24 @@ def _search_duckduckgo(query: str, max_results: int = 5) -> List[SearchResult]:
         blocks = re.findall(
             r'<a[^>]*class="result__a"[^>]*href="([^"]*)"[^>]*>(.*?)</a>.*?'
             r'<a[^>]*class="result__snippet"[^>]*>(.*?)</a>',
-            html, re.DOTALL
+            html,
+            re.DOTALL,
         )
         for href, title, snippet in blocks[:max_results]:
             # DDG 的 href 可能是重定向链接，提取真实 URL
             real_url = href
             if "uddg=" in href:
-                m = re.search(r'uddg=([^&]+)', href)
+                m = re.search(r"uddg=([^&]+)", href)
                 if m:
                     real_url = urllib.parse.unquote(m.group(1))
-            results.append(SearchResult(
-                title=re.sub(r'<[^>]+>', '', title).strip(),
-                url=real_url,
-                snippet=re.sub(r'<[^>]+>', '', snippet).strip(),
-                source="DuckDuckGo",
-            ))
+            results.append(
+                SearchResult(
+                    title=re.sub(r"<[^>]+>", "", title).strip(),
+                    url=real_url,
+                    snippet=re.sub(r"<[^>]+>", "", snippet).strip(),
+                    source="DuckDuckGo",
+                )
+            )
         return results
     except Exception as e:
         logger.debug(f"DuckDuckGo 搜索失败: {e}")
@@ -206,17 +222,16 @@ def _search_bing(query: str, max_results: int = 5) -> List[SearchResult]:
         html = _http_get(url)
         results = []
         # 解析 Bing 搜索结果：<li class="b_algo"><h2><a href="..." >标题</a></h2><p>摘要</p>
-        blocks = re.findall(
-            r'<li\s+class="b_algo">(.*?)</li>',
-            html, re.DOTALL
-        )
+        blocks = re.findall(r'<li\s+class="b_algo">(.*?)</li>', html, re.DOTALL)
         for block in blocks[:max_results]:
-            title_m = re.search(r'<h2[^>]*>\s*<a[^>]*href="([^"]*)"[^>]*>(.*?)</a>', block, re.DOTALL)
-            desc_m = re.search(r'<p[^>]*>(.*?)</p>', block, re.DOTALL)
+            title_m = re.search(
+                r'<h2[^>]*>\s*<a[^>]*href="([^"]*)"[^>]*>(.*?)</a>', block, re.DOTALL
+            )
+            desc_m = re.search(r"<p[^>]*>(.*?)</p>", block, re.DOTALL)
             if title_m:
                 href = title_m.group(1)
-                title = re.sub(r'<[^>]+>', '', title_m.group(2)).strip()
-                snippet = re.sub(r'<[^>]+>', '', desc_m.group(1)).strip() if desc_m else ""
+                title = re.sub(r"<[^>]+>", "", title_m.group(2)).strip()
+                snippet = re.sub(r"<[^>]+>", "", desc_m.group(1)).strip() if desc_m else ""
                 results.append(SearchResult(title=title, url=href, snippet=snippet, source="Bing"))
         return results
     except Exception as e:
@@ -233,27 +248,40 @@ def _search_baidu(query: str, max_results: int = 5) -> List[SearchResult]:
         # 解析百度搜索结果
         blocks = re.findall(
             r'<div[^>]*class="[^"]*result[^"]*c-container[^"]*"[^>]*>(.*?)</div>\s*(?=<div[^>]*class="[^"]*result)',
-            html, re.DOTALL
+            html,
+            re.DOTALL,
         )
         if not blocks:
             blocks = re.findall(r'<div[^>]*id="content_left"[^>]*>(.*)', html, re.DOTALL)
             if blocks:
-                blocks = re.findall(r'<div[^>]*class="[^"]*result[^"]*c-container[^"]*"[^>]*>(.*?)(?=<div[^>]*class="[^"]*result[^"]*c-container)', blocks[0], re.DOTALL)
+                blocks = re.findall(
+                    r'<div[^>]*class="[^"]*result[^"]*c-container[^"]*"[^>]*>(.*?)(?=<div[^>]*class="[^"]*result[^"]*c-container)',
+                    blocks[0],
+                    re.DOTALL,
+                )
         for block in blocks[:max_results]:
-            title_m = re.search(r'<h3[^>]*>\s*<a[^>]*>(.*?)</a>', block, re.DOTALL)
+            title_m = re.search(r"<h3[^>]*>\s*<a[^>]*>(.*?)</a>", block, re.DOTALL)
             link_m = re.search(r'<h3[^>]*>\s*<a[^>]*href="([^"]*)"', block, re.DOTALL)
-            desc_m = re.search(r'<span[^>]*class="[^"]*content-right_8Zs40[^"]*"[^>]*>(.*?)</span>|<div[^>]*class="[^"]*c-abstract[^"]*"[^>]*>(.*?)</div>', block, re.DOTALL)
+            desc_m = re.search(
+                r'<span[^>]*class="[^"]*content-right_8Zs40[^"]*"[^>]*>(.*?)</span>|<div[^>]*class="[^"]*c-abstract[^"]*"[^>]*>(.*?)</div>',
+                block,
+                re.DOTALL,
+            )
             if title_m:
-                title = re.sub(r'<[^>]+>', '', title_m.group(1)).strip()
+                title = re.sub(r"<[^>]+>", "", title_m.group(1)).strip()
                 snippet = ""
                 if desc_m:
-                    snippet = re.sub(r'<[^>]+>', '', desc_m.group(1) or desc_m.group(2) or "").strip()
-                results.append(SearchResult(
-                    title=title,
-                    url=link_m.group(1) if link_m else "",
-                    snippet=snippet,
-                    source="Baidu",
-                ))
+                    snippet = re.sub(
+                        r"<[^>]+>", "", desc_m.group(1) or desc_m.group(2) or ""
+                    ).strip()
+                results.append(
+                    SearchResult(
+                        title=title,
+                        url=link_m.group(1) if link_m else "",
+                        snippet=snippet,
+                        source="Baidu",
+                    )
+                )
         return results
     except Exception as e:
         logger.debug(f"百度搜索失败: {e}")
@@ -279,8 +307,8 @@ def search(query: str, max_results: int = 5, engine: str = "auto") -> List[Searc
         try:
             data = json.loads(cached)
             return [SearchResult(**r) for r in data]
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【search】处理失败（非致命）: %s", e)
 
     results = []
 
@@ -312,21 +340,38 @@ def search(query: str, max_results: int = 5, engine: str = "auto") -> List[Searc
             for f in futures:
                 f.cancel()
     elif engine == "duckduckgo":
-        results = _with_retry(lambda: _search_duckduckgo(query, max_results), max_retries=2, base_delay=1.0)
+        results = _with_retry(
+            lambda: _search_duckduckgo(query, max_results), max_retries=2, base_delay=1.0
+        )
     elif engine == "bing":
-        results = _with_retry(lambda: _search_bing(query, max_results), max_retries=2, base_delay=1.0)
+        results = _with_retry(
+            lambda: _search_bing(query, max_results), max_retries=2, base_delay=1.0
+        )
     elif engine == "baidu":
-        results = _with_retry(lambda: _search_baidu(query, max_results), max_retries=2, base_delay=1.0)
+        results = _with_retry(
+            lambda: _search_baidu(query, max_results), max_retries=2, base_delay=1.0
+        )
 
     # 缓存结果
     if results:
         try:
-            _cache.set(cache_key, json.dumps([{
-                "title": r.title, "url": r.url,
-                "snippet": r.snippet, "source": r.source,
-            } for r in results], ensure_ascii=False))
-        except Exception:
-            pass
+            _cache.set(
+                cache_key,
+                json.dumps(
+                    [
+                        {
+                            "title": r.title,
+                            "url": r.url,
+                            "snippet": r.snippet,
+                            "source": r.source,
+                        }
+                        for r in results
+                    ],
+                    ensure_ascii=False,
+                ),
+            )
+        except Exception as e:
+            logger.debug("【search】处理失败（非致命）: %s", e)
 
     return results
 
@@ -349,60 +394,87 @@ def search_to_text(query: str, max_results: int = 5) -> str:
 # 网页抓取
 # ═══════════════════════════════════════════════
 
+
 def _html_to_text(html: str) -> str:
     """HTML 转纯文本（纯 regex，无外部依赖）"""
     # 移除无用标签
-    text = re.sub(r'<script[^>]*>.*?</script>', '', html, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<style[^>]*>.*?</style>', '', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<nav[^>]*>.*?</nav>', '', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<footer[^>]*>.*?</footer>', '', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<header[^>]*>.*?</header>', '', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<aside[^>]*>.*?</aside>', '', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<iframe[^>]*>.*?</iframe>', '', text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<script[^>]*>.*?</script>", "", html, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<style[^>]*>.*?</style>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<nav[^>]*>.*?</nav>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<footer[^>]*>.*?</footer>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<header[^>]*>.*?</header>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<aside[^>]*>.*?</aside>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<iframe[^>]*>.*?</iframe>", "", text, flags=re.DOTALL | re.IGNORECASE)
     # 在块级标签前后插入换行
-    text = re.sub(r'<(?:br|p|div|h[1-6]|li|tr|blockquote)[^>]*/?>', '\n', text, flags=re.IGNORECASE)
-    text = re.sub(r'</(?:p|div|h[1-6]|li|tr|blockquote)>', '\n', text, flags=re.IGNORECASE)
+    text = re.sub(r"<(?:br|p|div|h[1-6]|li|tr|blockquote)[^>]*/?>", "\n", text, flags=re.IGNORECASE)
+    text = re.sub(r"</(?:p|div|h[1-6]|li|tr|blockquote)>", "\n", text, flags=re.IGNORECASE)
     # 移除所有剩余标签
-    text = re.sub(r'<[^>]+>', '', text)
+    text = re.sub(r"<[^>]+>", "", text)
     # 解码 HTML 实体
-    text = text.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>').replace('&quot;', '"').replace('&#39;', "'").replace('&nbsp;', ' ')
+    text = (
+        text.replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", '"')
+        .replace("&#39;", "'")
+        .replace("&nbsp;", " ")
+    )
     # 清理多余空白
-    text = re.sub(r'[ \t]+', ' ', text)
-    text = re.sub(r'\n{3,}', '\n\n', text)
+    text = re.sub(r"[ \t]+", " ", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip()
 
 
 def _html_to_markdown(html: str) -> str:
     """HTML 转 Markdown（纯 regex，无外部依赖）"""
     # 移除无用标签
-    text = re.sub(r'<script[^>]*>.*?</script>', '', html, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<style[^>]*>.*?</style>', '', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<nav[^>]*>.*?</nav>', '', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<footer[^>]*>.*?</footer>', '', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<aside[^>]*>.*?</aside>', '', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<iframe[^>]*>.*?</iframe>', '', text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<script[^>]*>.*?</script>", "", html, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<style[^>]*>.*?</style>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<nav[^>]*>.*?</nav>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<footer[^>]*>.*?</footer>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<aside[^>]*>.*?</aside>", "", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<iframe[^>]*>.*?</iframe>", "", text, flags=re.DOTALL | re.IGNORECASE)
     # 转换标题
-    text = re.sub(r'<h1[^>]*>(.*?)</h1>', r'\n# \1\n', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<h2[^>]*>(.*?)</h2>', r'\n## \1\n', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<h3[^>]*>(.*?)</h3>', r'\n### \1\n', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<h4[^>]*>(.*?)</h4>', r'\n#### \1\n', text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<h1[^>]*>(.*?)</h1>", r"\n# \1\n", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<h2[^>]*>(.*?)</h2>", r"\n## \1\n", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<h3[^>]*>(.*?)</h3>", r"\n### \1\n", text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<h4[^>]*>(.*?)</h4>", r"\n#### \1\n", text, flags=re.DOTALL | re.IGNORECASE)
     # 转换列表
-    text = re.sub(r'<li[^>]*>(.*?)</li>', r'\n- \1', text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(r"<li[^>]*>(.*?)</li>", r"\n- \1", text, flags=re.DOTALL | re.IGNORECASE)
     # 转换代码块
-    text = re.sub(r'<pre[^>]*><code[^>]*>(.*?)</code></pre>', r'\n```\n\1\n```\n', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<pre[^>]*>(.*?)</pre>', r'\n```\n\1\n```\n', text, flags=re.DOTALL | re.IGNORECASE)
-    text = re.sub(r'<code[^>]*>(.*?)</code>', r'`\1`', text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(
+        r"<pre[^>]*><code[^>]*>(.*?)</code></pre>",
+        r"\n```\n\1\n```\n",
+        text,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    text = re.sub(
+        r"<pre[^>]*>(.*?)</pre>", r"\n```\n\1\n```\n", text, flags=re.DOTALL | re.IGNORECASE
+    )
+    text = re.sub(r"<code[^>]*>(.*?)</code>", r"`\1`", text, flags=re.DOTALL | re.IGNORECASE)
     # 转换引用
-    text = re.sub(r'<blockquote[^>]*>(.*?)</blockquote>', lambda m: '\n> ' + m.group(1).strip().replace('\n', '\n> ') + '\n', text, flags=re.DOTALL | re.IGNORECASE)
+    text = re.sub(
+        r"<blockquote[^>]*>(.*?)</blockquote>",
+        lambda m: "\n> " + m.group(1).strip().replace("\n", "\n> ") + "\n",
+        text,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
     # 段落换行
-    text = re.sub(r'<(?:br|p|div)[^>]*/?>', '\n', text, flags=re.IGNORECASE)
-    text = re.sub(r'</(?:p|div)>', '\n', text, flags=re.IGNORECASE)
+    text = re.sub(r"<(?:br|p|div)[^>]*/?>", "\n", text, flags=re.IGNORECASE)
+    text = re.sub(r"</(?:p|div)>", "\n", text, flags=re.IGNORECASE)
     # 移除所有剩余标签
-    text = re.sub(r'<[^>]+>', '', text)
+    text = re.sub(r"<[^>]+>", "", text)
     # 解码 HTML 实体
-    text = text.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>').replace('&quot;', '"').replace('&#39;', "'").replace('&nbsp;', ' ')
+    text = (
+        text.replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", '"')
+        .replace("&#39;", "'")
+        .replace("&nbsp;", " ")
+    )
     # 清理
-    text = re.sub(r'\n{3,}', '\n\n', text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
     return text.strip()
 
 
@@ -435,7 +507,7 @@ def fetch(url: str, as_markdown: bool = True, max_length: int = 10000) -> str:
         req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=15) as resp:
             content_type = resp.headers.get("Content-Type", "")
-            html = resp.read().decode('utf-8', errors='ignore')
+            html = resp.read().decode("utf-8", errors="ignore")
 
         # 根据内容类型处理
         if "json" in content_type:
@@ -469,6 +541,7 @@ def fetch_to_markdown(url: str, max_length: int = 10000) -> str:
 # 统一接口（供工具注册）
 # ═══════════════════════════════════════════════
 
+
 def web_search(query: str) -> str:
     """搜索工具的统一接口"""
     return search_to_text(query, max_results=5)
@@ -484,6 +557,7 @@ def web_browse(url: str) -> str:
     # 先尝试 Playwright
     try:
         from playwright.sync_api import sync_playwright
+
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
             page = browser.new_page()
@@ -491,8 +565,8 @@ def web_browse(url: str) -> str:
             html = page.content()
             browser.close()
             return _html_to_markdown(html)[:8000]
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【web_browse】处理失败（非致命）: %s", e)
 
     # 回退到普通抓取
     return fetch_to_markdown(url)
@@ -501,6 +575,7 @@ def web_browse(url: str) -> str:
 # ═══════════════════════════════════════════════
 # 深度搜索：搜索 → 批量抓取 → 结构化摘要
 # ═══════════════════════════════════════════════
+
 
 def search_deep(query: str, max_fetch: int = 3) -> str:
     """
@@ -525,8 +600,12 @@ def search_deep(query: str, max_fetch: int = 3) -> str:
     if max_fetch > 0:
         with concurrent.futures.ThreadPoolExecutor(max_workers=min(max_fetch, 3)) as pool:
             future_map = {
-                pool.submit(_with_retry, lambda u=r.url: fetch(u, as_markdown=True, max_length=3000),
-                           max_retries=1, base_delay=0.5): i
+                pool.submit(
+                    _with_retry,
+                    lambda u=r.url: fetch(u, as_markdown=True, max_length=3000),
+                    max_retries=1,
+                    base_delay=0.5,
+                ): i
                 for i, r in enumerate(results[:max_fetch])
             }
             for future in concurrent.futures.as_completed(future_map, timeout=12.0):
@@ -535,8 +614,8 @@ def search_deep(query: str, max_fetch: int = 3) -> str:
                     content = future.result(timeout=1.0)
                     if content and not content.startswith(("抓取失败", "HTTP 错误")):
                         fetched[idx] = content[:2000]
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("【search_deep】处理失败（非致命）: %s", e)
             for f in future_map:
                 f.cancel()
 

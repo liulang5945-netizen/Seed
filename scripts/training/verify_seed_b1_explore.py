@@ -29,11 +29,11 @@ SCRIPTS = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPTS))
 
 import _seed_verify_common as common  # noqa: E402
+import _verify_emit  # noqa: E402
 
 import torch  # noqa: E402
 
 from seed import TopicWorld, play  # noqa: E402
-
 
 # 6 主题池：中文短句；首字节互不相同保证选择时刻候选可区分。
 TOPICS = [
@@ -64,8 +64,7 @@ def main() -> None:
     torch.manual_seed(args.seed)
     model = common.load_model(args.checkpoint)
     print(
-        f"[1/3] 检查点 = {args.checkpoint}（tick={model.tick}），"
-        f"决策次数 = {args.decisions}",
+        f"[1/3] 检查点 = {args.checkpoint}（tick={model.tick}），" f"决策次数 = {args.decisions}",
         flush=True,
     )
 
@@ -80,13 +79,10 @@ def main() -> None:
     sequence = [int(index) for index in stats["topic_sequence"]]
     counts = Counter(sequence)
     distinct = len(counts)
-    switch_count = sum(
-        1 for a, b in zip(sequence, sequence[1:]) if a != b
-    )
+    switch_count = sum(1 for a, b in zip(sequence, sequence[1:]) if a != b)
     top_share = max(counts.values()) / max(1, len(sequence))
     finite = all(
-        bool(torch.isfinite(tensor).all().item())
-        for tensor in model.substrate.parameter_tensors()
+        bool(torch.isfinite(tensor).all().item()) for tensor in model.substrate.parameter_tensors()
     )
 
     print("\n[2/3] 探索轨迹", flush=True)
@@ -129,11 +125,7 @@ def main() -> None:
             "checkpoint": str(args.checkpoint),
             "decisions": args.decisions,
             "topics": [topic.decode("utf-8") for topic in TOPICS],
-            "play_stats": {
-                key: value
-                for key, value in stats.items()
-                if key != "topic_sequence"
-            },
+            "play_stats": {key: value for key, value in stats.items() if key != "topic_sequence"},
             "topic_sequence": sequence,
             "topic_counts": {str(k): v for k, v in sorted(counts.items())},
             "distinct_topics": distinct,
@@ -151,7 +143,26 @@ def main() -> None:
         },
     )
     print(f"报告已写入: {out_path}", flush=True)
-    sys.exit(0 if b1_pass else 1)
+    sys.exit(
+        _verify_emit.emit_and_exit(
+            "seed_b1_explore",
+            {
+                "b1_pass": b1_pass,
+                "checks": {
+                    "coverage": coverage,
+                    "switches_ok": switches_ok,
+                    "share_ok": share_ok,
+                    "no_crash": no_crash,
+                    "finite": finite,
+                },
+                "metrics": {
+                    "distinct_topics": distinct,
+                    "switch_count": switch_count,
+                    "top_share": top_share,
+                },
+            },
+        )
+    )
 
 
 if __name__ == "__main__":

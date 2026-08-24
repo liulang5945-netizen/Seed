@@ -10,6 +10,7 @@
 7. _check_adaptive_stop 单元测试（边界情况）
 8. 默认参数语义正确
 """
+
 from __future__ import annotations
 
 import os
@@ -38,7 +39,8 @@ def _make_ensemble(max_rounds=3, adaptive_stop=False, **kwargs):
     neurons = {f"n{i}": _make_neuron(f"n{i}", seed=42 + i) for i in range(2)}
     field = ResonanceField(dim=TINY_TEST.field_dim)
     return ResonanceEnsemble(
-        neurons, field,
+        neurons,
+        field,
         max_rounds=max_rounds,
         adaptive_stop=adaptive_stop,
         **kwargs,
@@ -72,7 +74,9 @@ def test_adaptive_stop_field():
         result = ens.forward(shared_embeddings=shared_emb)
     assert "adaptive_stopped" in result
     assert "adaptive_stop_reason" in result
-    print(f"  PASS: result 含 adaptive_stopped={result['adaptive_stopped']}, reason={result['adaptive_stop_reason']}")
+    print(
+        f"  PASS: result 含 adaptive_stopped={result['adaptive_stopped']}, reason={result['adaptive_stop_reason']}"
+    )
 
 
 def test_convergence_stop():
@@ -93,8 +97,9 @@ def test_convergence_stop():
     assert result["n_rounds"] <= 3, f"收敛应在 3 轮内停止, got {result['n_rounds']}"
     # 是否因收敛停止（也可能是主导，但 dominance_ratio=100 应关闭）
     if result["adaptive_stopped"]:
-        assert "converged" in result["adaptive_stop_reason"], \
-            f"应因收敛停止, got {result['adaptive_stop_reason']}"
+        assert (
+            "converged" in result["adaptive_stop_reason"]
+        ), f"应因收敛停止, got {result['adaptive_stop_reason']}"
     print(f"  PASS: n_rounds={result['n_rounds']}, reason={result['adaptive_stop_reason']}")
 
 
@@ -114,8 +119,9 @@ def test_dominance_stop():
     with torch.no_grad():
         result = ens.forward(shared_embeddings=shared_emb)
     if result["adaptive_stopped"]:
-        assert "dominant" in result["adaptive_stop_reason"], \
-            f"应因主导停止, got {result['adaptive_stop_reason']}"
+        assert (
+            "dominant" in result["adaptive_stop_reason"]
+        ), f"应因主导停止, got {result['adaptive_stop_reason']}"
     print(f"  PASS: n_rounds={result['n_rounds']}, reason={result['adaptive_stop_reason']}")
 
 

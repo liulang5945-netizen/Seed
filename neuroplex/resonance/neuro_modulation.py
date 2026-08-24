@@ -16,11 +16,10 @@ from __future__ import annotations
 
 import logging
 from collections import deque
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Optional
 
 import torch
-import torch.nn as nn
 
 logger = logging.getLogger("Taiji.NeuroModulation")
 
@@ -35,10 +34,10 @@ class NeuromodulatorState:
     - norepinephrine: 注意力/警觉，高→field_write 强度↑
     """
 
-    dopamine: float = 0.5      # 奖励/错误反馈驱动
-    serotonin: float = 0.5     # 满足感/稳定度
+    dopamine: float = 0.5  # 奖励/错误反馈驱动
+    serotonin: float = 0.5  # 满足感/稳定度
     norepinephrine: float = 0.5  # 警觉/注意力
-    acetylcholine: float = 0.5   # C25-C：新颖性/注意聚焦（对比文档 171 行已列未实现）
+    acetylcholine: float = 0.5  # C25-C：新颖性/注意聚焦（对比文档 171 行已列未实现）
 
     # 目标值（由外部信号设定，实际值缓慢趋近）
     _target_dopamine: float = 0.5
@@ -235,13 +234,15 @@ class SleepConsolidator:
             text: 触发文本（可选；None = 旧记录无语言目标，仅共激活重放）
         """
         if resonance_score > threshold:
-            self._replay_buffer.append({
-                "state": field_state.detach().clone(),
-                "score": resonance_score,
-                "step": step,
-                "active_nids": list(active_nids) if active_nids else None,
-                "text": text,
-            })
+            self._replay_buffer.append(
+                {
+                    "state": field_state.detach().clone(),
+                    "score": resonance_score,
+                    "step": step,
+                    "active_nids": list(active_nids) if active_nids else None,
+                    "text": text,
+                }
+            )
 
     def should_consolidate(self, current_step: int) -> bool:
         """是否应该执行巩固。"""
@@ -267,8 +268,7 @@ class SleepConsolidator:
         Returns:
             巩固统计
         """
-        logger.info("开始睡眠巩固（step=%d，重放缓冲=%d）",
-                    current_step, len(self._replay_buffer))
+        logger.info("开始睡眠巩固（step=%d，重放缓冲=%d）", current_step, len(self._replay_buffer))
 
         stats = {
             "replayed_states": 0,
@@ -304,8 +304,11 @@ class SleepConsolidator:
             for i, j in strong_pairs:
                 for src, dst in ((i, j), (j, i)):
                     src_neuron = neurons.get(src)
-                    if (src_neuron is not None and hasattr(src_neuron, "excite_channels")
-                            and dst in src_neuron.excite_channels):
+                    if (
+                        src_neuron is not None
+                        and hasattr(src_neuron, "excite_channels")
+                        and dst in src_neuron.excite_channels
+                    ):
                         src_neuron.excite_channels[dst].weight.data *= 1.1
                         stats["channels_reinforced"] += 1
 
@@ -327,8 +330,11 @@ class SleepConsolidator:
                 stats["channels_struct_pruned"] = struct_stats.get("pruned", 0)
                 stats["channels_grown"] = struct_stats.get("grown", 0)
                 if struct_stats.get("pruned") or struct_stats.get("grown"):
-                    logger.info("  STDP 结构演化: 修剪 %d 通道, 生长 %d 通道",
-                                struct_stats.get("pruned", 0), struct_stats.get("grown", 0))
+                    logger.info(
+                        "  STDP 结构演化: 修剪 %d 通道, 生长 %d 通道",
+                        struct_stats.get("pruned", 0),
+                        struct_stats.get("grown", 0),
+                    )
             except Exception as e:
                 logger.warning("STDP 结构演化失败（非关键）: %s", e)
 
@@ -375,8 +381,10 @@ class SleepConsolidator:
         """
         n = 0
         for neuron in neurons.values():
-            for ch_dict in (getattr(neuron, "excite_channels", {}),
-                            getattr(neuron, "inhibit_channels", {})):
+            for ch_dict in (
+                getattr(neuron, "excite_channels", {}),
+                getattr(neuron, "inhibit_channels", {}),
+            ):
                 for linear in ch_dict.values():
                     if hasattr(linear, "weight"):
                         linear.weight.data *= factor
@@ -391,9 +399,9 @@ class SleepConsolidator:
             "replay_buffer_size": len(self._replay_buffer),
             "last_consolidation_step": self._last_consolidation_step,
             "next_consolidation_in": max(
-                0, self.consolidation_interval - (
-                    self._last_consolidation_step % self.consolidation_interval
-                )
+                0,
+                self.consolidation_interval
+                - (self._last_consolidation_step % self.consolidation_interval),
             ),
         }
 
@@ -414,7 +422,9 @@ class SleepConsolidator:
     def load_state_dict(self, state: dict) -> None:
         """从 dict 恢复状态。"""
         self.replay_buffer_size = state.get("replay_buffer_size", self.replay_buffer_size)
-        self.consolidation_interval = state.get("consolidation_interval", self.consolidation_interval)
+        self.consolidation_interval = state.get(
+            "consolidation_interval", self.consolidation_interval
+        )
         self.downscale_factor = state.get("downscale_factor", self.downscale_factor)
         self._replay_buffer = deque(
             state.get("replay_buffer", []),

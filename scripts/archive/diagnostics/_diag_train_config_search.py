@@ -9,6 +9,7 @@ Arms (each fresh model, same corpus prefix, same budget):
 Measured every 20K ticks: holdout surprise (fixed, unseen) and stream-prefix
 surprise (content the model has already seen -> re-exposure must not regress).
 """
+
 from __future__ import annotations
 
 import sys
@@ -42,10 +43,7 @@ ARMS = {
 def main() -> None:
     config = SeedConfig(taiji=TaijiConfig.training_profile(scale=2, seed=20260822))
     corpus = [PROJECT_ROOT / DEFAULT_CORPUS[0]]
-    prefix = [
-        value
-        for value in list(iter_corpus_symbols(corpus))[:TOTAL + 1]
-    ]
+    prefix = [value for value in list(iter_corpus_symbols(corpus))[: TOTAL + 1]]
     prefix_bytes = bytes(v for v in prefix[:8000] if v != 256)
 
     results = {}
@@ -65,8 +63,10 @@ def main() -> None:
     for name, rows in results.items():
         holdout_trend = rows[-1][1] - rows[0][1]
         reexpose_trend = rows[-1][2] - rows[0][2]
-        print(f"{name}: holdout 40K->60K {holdout_trend:+.4f}, "
-              f"re-expose 40K->60K {reexpose_trend:+.4f}")
+        print(
+            f"{name}: holdout 40K->60K {holdout_trend:+.4f}, "
+            f"re-expose 40K->60K {reexpose_trend:+.4f}"
+        )
 
 
 if __name__ == "__main__":

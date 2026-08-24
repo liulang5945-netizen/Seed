@@ -1,7 +1,7 @@
 """
 RAG 知识库 API 路由
 """
-import json
+
 import logging
 import os
 import shutil
@@ -29,7 +29,9 @@ def _process_rag_file_background(file_path: str):
 
 
 @router.post("/api/rag/upload")
-def upload_rag_document(file: UploadFile = File(...), bg_tasks: BackgroundTasks = BackgroundTasks()):
+def upload_rag_document(
+    file: UploadFile = File(...), bg_tasks: BackgroundTasks = BackgroundTasks()
+):
     """接收前端上传的文档，加入 RAG 知识库"""
     try:
         doc_dir = get_external_path("docs")
@@ -38,11 +40,14 @@ def upload_rag_document(file: UploadFile = File(...), bg_tasks: BackgroundTasks 
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         bg_tasks.add_task(_process_rag_file_background, file_path)
-        return {"status": "success", "message": f"文件 {file.filename} 已上传，正在后台向量化建库，请稍后查看！"}
+        return {
+            "status": "success",
+            "message": f"文件 {file.filename} 已上传，正在后台向量化建库，请稍后查看！",
+        }
     except Exception as e:
         logger.error(f"RAG 添加文件失败: {e}")
         logger.error(f"Request failed: {e}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
 
 
 @router.delete("/api/rag/clear")
@@ -57,7 +62,7 @@ async def clear_rag_documents():
     except Exception as e:
         logger.error(f"RAG 清空失败: {e}")
         logger.error(f"Request failed: {e}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
 
 
 @router.get("/api/rag/files")
@@ -79,12 +84,15 @@ def delete_rag_file(filename: str):
         app_state.rag_kb.remove_file(filename)
         app_state.rag_kb.rebuild_index()
         return {"status": "success"}
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Request failed: {e}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
 
 
 # ======================== RAG 检索策略配置 API ========================
+
 
 @router.get("/api/rag/config")
 async def get_rag_config():
@@ -95,7 +103,7 @@ async def get_rag_config():
     except Exception as e:
         logger.error(f"获取 RAG 配置失败: {e}")
         logger.error(f"Request failed: {e}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
 
 
 @router.put("/api/rag/config")
@@ -122,7 +130,7 @@ async def update_rag_config(updates: dict):
     except Exception as e:
         logger.error(f"更新 RAG 配置失败: {e}")
         logger.error(f"Request failed: {e}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
 
 
 @router.get("/api/rag/status")
@@ -144,7 +152,42 @@ async def get_rag_status():
     except Exception as e:
         logger.error(f"获取 RAG 状态失败: {e}")
         logger.error(f"Request failed: {e}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+
+
+@router.get("/api/rag/stats")
+async def get_rag_stats():
+    """知识库统计（前端 KB 页工具栏用，形状与 /api/rag/status 对齐）。"""
+    try:
+        kb = app_state.rag_kb
+        if not kb:
+            return {"status": "ok", "doc_count": 0, "chunk_count": 0}
+        return {
+            "status": "ok",
+            "doc_count": len(kb.documents),
+            "chunk_count": len(kb.chunks),
+            "has_embeddings": kb.embeddings is not None,
+        }
+    except Exception as e:
+        logger.error(f"获取 RAG 统计失败: {e}")
+        return {"status": "error", "doc_count": 0, "chunk_count": 0}
+
+
+@router.delete("/api/rag/clear")
+async def clear_rag():
+    """清空知识库索引（保留磁盘文件需另走逐文件删除）。"""
+    try:
+        kb = app_state.rag_kb
+        if not kb:
+            return {"status": "success", "removed": 0}
+        removed = len(kb.get_doc_names())
+        for name in list(kb.get_doc_names()):
+            kb.remove_file(name)
+        kb.rebuild_index()
+        return {"status": "success", "removed": removed}
+    except Exception as e:
+        logger.error(f"清空 RAG 知识库失败: {e}")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
 
 
 @router.post("/api/rag/search")
@@ -173,6 +216,8 @@ def rag_preview(filename: str):
                 content = f.read(10000)
             return {"content": content}
         return {"content": "(文件不存在)"}
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Request failed: {e}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")

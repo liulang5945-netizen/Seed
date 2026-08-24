@@ -163,9 +163,7 @@ class TopicWorld:
         if terminal:
             self._choosing = True
             self._index = None
-        return EnvironmentOutcome(
-            sensation=expected, reward=reward, terminal=terminal
-        )
+        return EnvironmentOutcome(sensation=expected, reward=reward, terminal=terminal)
 
 
 def play(
@@ -197,12 +195,8 @@ def play(
         try:
             decision = seed.act(affordances, sample=bool(sample))
             outcome = world.step(decision.action_symbol)
-            seed.settle_action(
-                outcome.reward, learn=bool(learn), provenance="experienced"
-            )
-            seed.observe(
-                outcome.sensation, learn=bool(learn), learn_motor=False
-            )
+            seed.settle_action(outcome.reward, learn=bool(learn), provenance="experienced")
+            seed.observe(outcome.sensation, learn=bool(learn), learn_motor=False)
             actions += 1
             reward_sum += float(outcome.reward)
             while not outcome.terminal:
@@ -211,12 +205,8 @@ def play(
                     sample=bool(sample),
                 )
                 outcome = world.step(decision.action_symbol)
-                seed.settle_action(
-                    outcome.reward, learn=bool(learn), provenance="experienced"
-                )
-                seed.observe(
-                    outcome.sensation, learn=bool(learn), learn_motor=False
-                )
+                seed.settle_action(outcome.reward, learn=bool(learn), provenance="experienced")
+                seed.observe(outcome.sensation, learn=bool(learn), learn_motor=False)
                 actions += 1
                 reward_sum += float(outcome.reward)
             seed.observe(boundary, learn=bool(learn), learn_motor=False)
@@ -234,4 +224,3 @@ def play(
         "topic_sequence": topic_sequence,
         "forced_switches": world.forced_switches,
     }
-

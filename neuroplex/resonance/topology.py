@@ -33,6 +33,7 @@ Usage:
     topology = infer_topology_from_state(ckpt["side_channels_state"])
     establish_topology_channels(neurons, topology, geometry)
 """
+
 from __future__ import annotations
 
 from collections import defaultdict
@@ -42,8 +43,8 @@ import torch
 
 from .geometry import NeuronGeometry
 
-
 # ── Hub selection helpers ────────────────────────────────────────────────
+
 
 def _spec_capacity(neuron) -> int:
     """Approximate capacity metric for hub selection (higher = more hub-worthy).
@@ -61,6 +62,7 @@ def _domain_of(nid: str) -> str:
 
 
 # ── Topology builders ────────────────────────────────────────────────────
+
 
 def build_topology(
     neurons: Dict[str, object],
@@ -100,7 +102,11 @@ def build_topology(
         return _build_hub_spoke(nids, neurons, geometry, n_hubs=n_hubs)
     if mode == "hybrid":
         return _build_hybrid(
-            nids, neurons, geometry, n_hubs=n_hubs, intra_group_full=intra_group_full,
+            nids,
+            neurons,
+            geometry,
+            n_hubs=n_hubs,
+            intra_group_full=intra_group_full,
         )
     raise ValueError(f"Unknown topology mode: {mode} (expected: full|knn|hub_spoke|hybrid)")
 
@@ -116,7 +122,9 @@ def _ensure_positions(geometry: NeuronGeometry, nids: List[str]) -> None:
 
 
 def _build_knn(
-    nids: List[str], geometry: NeuronGeometry, k: int = 3,
+    nids: List[str],
+    geometry: NeuronGeometry,
+    k: int = 3,
 ) -> Dict[str, List[str]]:
     """Symmetric k-nearest-neighbor topology.
 
@@ -264,6 +272,7 @@ def _build_hybrid(
 
 # ── Channel establishment ────────────────────────────────────────────────
 
+
 def establish_topology_channels(
     neurons: Dict[str, object],
     topology: Dict[str, List[str]],
@@ -308,7 +317,8 @@ def establish_topology_channels(
                 init_scale = 50.0
 
             post_neuron.establish_side_channel(
-                pre_id, pre_neuron,
+                pre_id,
+                pre_neuron,
                 channel_type=channel_type,
                 init_scale=init_scale,
             )
@@ -318,6 +328,7 @@ def establish_topology_channels(
 
 
 # ── Checkpoint inference ─────────────────────────────────────────────────
+
 
 def infer_topology_from_state(side_channels_state: Dict) -> Dict[str, List[str]]:
     """Reconstruct topology adjacency from checkpoint's side_channels_state.
@@ -341,6 +352,7 @@ def infer_topology_from_state(side_channels_state: Dict) -> Dict[str, List[str]]
 
 # ── Diagnostics ──────────────────────────────────────────────────────────
 
+
 def topology_summary(topology: Dict[str, List[str]]) -> str:
     """Human-readable topology summary for logging."""
     n = len(topology)
@@ -348,12 +360,15 @@ def topology_summary(topology: Dict[str, List[str]]) -> str:
     max_edges = n * (n - 1) if n > 1 else 0
     density = edges / max_edges if max_edges > 0 else 0.0
     avg_k = edges / n if n > 0 else 0.0
-    return (f"neurons={n}, directed_edges={edges}, "
-            f"density={density:.1%} of full-mesh, avg_indegree={avg_k:.1f}")
+    return (
+        f"neurons={n}, directed_edges={edges}, "
+        f"density={density:.1%} of full-mesh, avg_indegree={avg_k:.1f}"
+    )
 
 
 def topology_detail(
-    topology: Dict[str, List[str]], neurons: Optional[Dict[str, object]] = None,
+    topology: Dict[str, List[str]],
+    neurons: Optional[Dict[str, object]] = None,
 ) -> str:
     """Detailed topology report with hub identification (for training logs)."""
     lines = [topology_summary(topology)]

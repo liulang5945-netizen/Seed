@@ -12,6 +12,7 @@
 9. _project_vec 调用正常（MLP 可调用）
 10. finetune load 兼容旧格式（"weight" key → linear1.weight）
 """
+
 from __future__ import annotations
 
 import os

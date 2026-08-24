@@ -12,7 +12,7 @@
 | [TAIJI_SUBSTRATE_ARCHITECTURE.md](active/TAIJI_SUBSTRATE_ARCHITECTURE.md) | 完整算法：张量、状态方程、tick、局部学习、训练、生成、复杂度、代码映射和反证门槛 |
 | [BIO_INSPIRED_ARCHITECTURE_PLAN.md](active/BIO_INSPIRED_ARCHITECTURE_PLAN.md) | 当前实现状态、实测结果和唯一下一步 |
 | [ARCHITECTURE_DIRECTION_2026_08.md](active/ARCHITECTURE_DIRECTION_2026_08.md) | 规范词表、“全面替代而非补丁”的不可回退决策与命名边界 |
-| [NEUROPLEX_MECHANISM_RUNTIME_MAP_20260820.md](active/NEUROPLEX_MECHANISM_RUNTIME_MAP_20260820.md) | 冻结 Legacy NeuroPlex 的源码事实基线 |
+| [NEUROPLEX_MECHANISM_RUNTIME_MAP_20260820.md](archive/authored/NEUROPLEX_MECHANISM_RUNTIME_MAP_20260820.md) | 冻结 Legacy NeuroPlex 的源码事实基线 |
 
 其余 active 文档是记忆、自举、生物类比等专项参考；若冲突，以 Seed 总架构、Taiji 算法规格和当前实现计划为准。
 
@@ -30,8 +30,8 @@
 
 ## 当前状态与唯一下一步
 
-M7 已闭合（七项判据全过）：accepted replay 用内生 `cortical_projection` 重建 cue 基底、把 action mode 写入慢通路，`act()` 显著高于 no-replay/content-lesion。阶段 1/2 完成：800K raw-byte 重训（byte_ppl 23.1，面板三组排序正确）、`seed/judge.py` 原生自我评估、A1 同判据验证通过。阶段 3 完成：原生 sleep 调度 + 主题探索环境，A2–A5/B1 五项判据在 800K 成熟检查点上全部 PASS（报告落盘 `reports/seed_a2/a3/a4_a5/b1_*.json`）；机制：`_development_ticks` 生命周期成熟门控、观察性夜晚（零漂移自我维持睡眠）、经验清醒预算封顶。阶段 4/5 完成：产品接入（api/前端/桌面端/移动端远程接入）全仓 108 项绿；超越证据报告见 `reports/seed_phase5_transcendence_20260823.md`。当前诚实边界：byte-level 生成尚未到人工可读。判据见 [SEED_ARCHITECTURE.md](active/SEED_ARCHITECTURE.md) §6 与 [BOOTSTRAP_CRITERIA.md](active/BOOTSTRAP_CRITERIA.md)。
+M7 已闭合（七项判据全过）：accepted replay 用内生 `cortical_projection` 重建 cue 基底、把 action mode 写入慢通路，`act()` 显著高于 no-replay/content-lesion。阶段 1/2 完成：800K raw-byte 重训（byte_ppl 23.1，面板三组排序正确）、`seed/judge.py` 原生自我评估、A1 同判据验证通过。阶段 3 完成：原生 sleep 调度 + 主题探索环境，A2–A5/B1 五项判据在 800K 成熟检查点上全部 PASS（报告落盘 `reports/seed_a2/a3/a4_a5/b1_*.json`）；机制：`_development_ticks` 生命周期成熟门控、观察性夜晚（零漂移自我维持睡眠）、经验清醒预算封顶。阶段 4/5 完成：产品接入（api/前端/桌面端/移动端远程接入）全仓 108 项绿；超越证据报告见 `reports/seed_phase5_transcendence_20260823.md`。当前诚实边界：byte-level 生成尚未到人工可读。判据见 [SEED_ARCHITECTURE.md](active/SEED_ARCHITECTURE.md) §6 与 [BOOTSTRAP_CRITERIA.md](archive/authored/BOOTSTRAP_CRITERIA.md)。
 
 ## 归档
 
-`archive/` 保存旧架构、审计、实施历史和参考资料。旧 Taiji-0 补丁原型见 [TAIJI0_PATCH_PROTOTYPE_RETIRED_20260821.md](archive/architecture/TAIJI0_PATCH_PROTOTYPE_RETIRED_20260821.md)，本次云端 Transformer 壳审计见 [TAIJI_TRANSFORMER_SHELL_AUDIT_20260822.md](archive/architecture/TAIJI_TRANSFORMER_SHELL_AUDIT_20260822.md)。归档中的下一步不再有效。
+`archive/` 保存旧架构、审计、实施历史和参考资料。旧 Taiji-0 补丁原型见 [TAIJI0_PATCH_PROTOTYPE_RETIRED_20260821.md](archive/architecture_design/TAIJI0_PATCH_PROTOTYPE_RETIRED_20260821.md)，本次云端 Transformer 壳审计见 [TAIJI_TRANSFORMER_SHELL_AUDIT_20260822.md](archive/audits/TAIJI_TRANSFORMER_SHELL_AUDIT_20260822.md)。归档中的下一步不再有效。

@@ -5,6 +5,7 @@
 2. sft_mask 末尾位置为 True（EOS 计入 loss）
 3. 统计 max_answer_chars=150 筛选后数据量
 """
+
 import os
 import sys
 
@@ -38,7 +39,10 @@ shared_emb = torch.nn.Embedding(general_sp.GetPieceSize(), 512)
 torch.nn.init.normal_(shared_emb.weight, mean=0.0, std=0.02)
 
 emb, targets, mask, sft_mask = batch_align_and_embed(
-    texts, domain_sp, general_sp, shared_emb,
+    texts,
+    domain_sp,
+    general_sp,
+    shared_emb,
     answer_marker="答：",
     answer_marker_mode="last",
 )
@@ -49,8 +53,8 @@ print(f"\n[1] shape: emb={emb.shape}, targets={targets.shape}, sft_mask={sft_mas
 ok = 0
 for b in range(len(texts)):
     L = int(mask[b].sum().item())
-    last_tgt = int(targets[b, L-1].item())
-    last_sft = bool(sft_mask[b, L-1].item())
+    last_tgt = int(targets[b, L - 1].item())
+    last_sft = bool(sft_mask[b, L - 1].item())
     print(f"  样本{b}: L={L}, 末尾target={last_tgt}(EOS={domain_eos}), sft={last_sft}")
     if last_tgt == domain_eos and last_sft:
         ok += 1

@@ -9,10 +9,10 @@
 
 视频（MP4）需要 imageio-ffmpeg，未安装时降级为逐帧 PNG 序列。
 """
+
 from __future__ import annotations
 
 import os
-from typing import Optional
 
 import torch
 
@@ -121,6 +121,7 @@ def save_video(
 
     try:
         import imageio.v2 as imageio
+
         writer = imageio.get_writer(path, fps=fps, codec="libx264")
         for frame in frames_np:
             writer.append_data(frame)
@@ -134,6 +135,7 @@ def save_video(
         out_dir = base + "_frames"
         os.makedirs(out_dir, exist_ok=True)
         from PIL import Image
+
         for i, frame in enumerate(frames_np):
             Image.fromarray(frame).save(os.path.join(out_dir, f"frame_{i:04d}.png"))
         return out_dir
@@ -148,6 +150,7 @@ __all__ = ["save_image", "save_audio", "save_video", "load_image", "load_audio",
 def load_image(path: str) -> torch.Tensor:
     """从文件加载图像 → [3,H,W] tensor (0~1)。"""
     from PIL import Image
+
     img = Image.open(path).convert("RGB")
     return torch.from_numpy(_pil_to_np(img)).permute(2, 0, 1).float() / 255.0
 
@@ -159,16 +162,19 @@ def load_audio(path: str, sample_rate: int = 16000) -> torch.Tensor:
     """
     try:
         import soundfile as sf
+
         data, sr = sf.read(path, dtype="float32")
         if data.ndim > 1:
             data = data[:, 0]  # 取左声道
         import librosa
+
         if sr != sample_rate:
             data = librosa.resample(data, orig_sr=sr, target_sr=sample_rate)
         return torch.from_numpy(data).unsqueeze(0)
     except ImportError:
         import wave
         import numpy as np
+
         with wave.open(path, "rb") as wf:
             frames = wf.readframes(wf.getnframes())
             sr = wf.getframerate()
@@ -182,6 +188,7 @@ def load_audio(path: str, sample_rate: int = 16000) -> torch.Tensor:
         audio = audio / max(abs(audio).max(), 1.0)
         if sr != sample_rate:
             import librosa
+
             audio = librosa.resample(audio, orig_sr=sr, target_sr=sample_rate)
         return torch.from_numpy(audio).unsqueeze(0)
 
@@ -192,8 +199,10 @@ def load_video(path: str) -> torch.Tensor:
     用 imageio 逐帧读取，失败时尝试 torchvision。
     """
     import numpy as np
+
     try:
         import imageio.v2 as imageio
+
         reader = imageio.get_reader(path)
         frames = []
         for frame in reader:
@@ -209,4 +218,5 @@ def load_video(path: str) -> torch.Tensor:
 def _pil_to_np(img):
     """PIL Image → numpy [H,W,3]。"""
     import numpy as np
+
     return np.array(img)

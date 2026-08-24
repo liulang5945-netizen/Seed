@@ -34,7 +34,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 from neuroplex.multimodal.vqvae import VQVAE
 
@@ -47,7 +49,7 @@ MAX_GRAD_NORM = 1.0
 DEFAULT_STEPS = 2000
 LOG_INTERVAL = 50
 SAVE_INTERVAL = 500
-NUM_EMBEDDINGS = 8192          # 与 tokenizer_contract.json 对齐
+NUM_EMBEDDINGS = 8192  # 与 tokenizer_contract.json 对齐
 LATENT_DIM = 256
 HIDDEN_DIM = 128
 COMMITMENT_COST = 0.25
@@ -87,8 +89,9 @@ def synthesize_batch(batch_size: int, image_size: int, device: torch.device) -> 
         if bg_type == 0:
             # 线性渐变
             direction = torch.rand(1).item() * 3.14159
-            grad = (xx_n * torch.cos(torch.tensor(direction)) +
-                    yy_n * torch.sin(torch.tensor(direction)))
+            grad = xx_n * torch.cos(torch.tensor(direction)) + yy_n * torch.sin(
+                torch.tensor(direction)
+            )
             grad = grad / grad.max().clamp(min=0.01)
             img = base_color * grad
         elif bg_type == 1:
@@ -121,11 +124,12 @@ def synthesize_batch(batch_size: int, image_size: int, device: torch.device) -> 
 
             if shape_type == 0:
                 # 圆形
-                mask = ((xx - cx) ** 2 + (yy - cy) ** 2 < size ** 2).float()
+                mask = ((xx - cx) ** 2 + (yy - cy) ** 2 < size**2).float()
             elif shape_type == 1:
                 # 矩形
-                mask = ((xx > cx - size) & (xx < cx + size) &
-                        (yy > cy - size) & (yy < cy + size)).float()
+                mask = (
+                    (xx > cx - size) & (xx < cx + size) & (yy > cy - size) & (yy < cy + size)
+                ).float()
             else:
                 # 线条
                 angle = torch.rand(1).item() * 3.14159
@@ -210,6 +214,7 @@ def load_cifar10_batch(batch_size: int, device: torch.device) -> torch.Tensor:
 
     # 随机选一个 batch 文件
     import random
+
     batch_files = [f"data_batch_{i}" for i in range(1, 6)] + ["test_batch"]
     batch_file = random.choice(batch_files)
     with open(os.path.join(CIFAR10_DIR, batch_file), "rb") as f:
@@ -225,8 +230,13 @@ def load_cifar10_batch(batch_size: int, device: torch.device) -> torch.Tensor:
     return batch_tensor
 
 
-def compute_psnr(model: VQVAE, device: torch.device, n_samples: int = 100,
-                 data_source: str = "cifar10", image_size: int = 32) -> float:
+def compute_psnr(
+    model: VQVAE,
+    device: torch.device,
+    n_samples: int = 100,
+    data_source: str = "cifar10",
+    image_size: int = 32,
+) -> float:
     """评估模型重建质量（PSNR dB）。
 
     PSNR > 25dB = 可用重建
@@ -309,7 +319,7 @@ def train(
     # 3. 优化器（排除 codebook 参数，codebook 由 EMA 更新）
     codebook_params = set()
     for mod in model.modules():
-        if hasattr(mod, 'codebook') and isinstance(mod.codebook, nn.Embedding):
+        if hasattr(mod, "codebook") and isinstance(mod.codebook, nn.Embedding):
             codebook_params.add(id(mod.codebook.weight))
     trainable = [p for p in model.parameters() if id(p) not in codebook_params]
     optimizer = torch.optim.AdamW(trainable, lr=lr, weight_decay=WEIGHT_DECAY)
@@ -370,15 +380,18 @@ def train(
 
             psnr_str = ""
             if eval_psnr and (step + 1) % (log_interval * 4) == 0:
-                psnr = compute_psnr(model, device, n_samples=50,
-                                    data_source=data_source, image_size=image_size)
+                psnr = compute_psnr(
+                    model, device, n_samples=50, data_source=data_source, image_size=image_size
+                )
                 psnr_str = f" | PSNR={psnr:.1f}dB"
                 model.train()
 
-            print(f"  step {step + 1}/{steps} | "
-                  f"recon={avg_recon:.4f} vq={avg_vq:.4f} | "
-                  f"codebook: {unique_codes}/{NUM_EMBEDDINGS} ({utilization:.1f}%){psnr_str} | "
-                  f"{steps_per_sec:.1f} steps/s")
+            print(
+                f"  step {step + 1}/{steps} | "
+                f"recon={avg_recon:.4f} vq={avg_vq:.4f} | "
+                f"codebook: {unique_codes}/{NUM_EMBEDDINGS} ({utilization:.1f}%){psnr_str} | "
+                f"{steps_per_sec:.1f} steps/s"
+            )
 
             total_recon_loss = 0.0
             total_vq_loss = 0.0
@@ -391,22 +404,26 @@ def train(
             # 保存前评估 PSNR
             final_psnr = 0.0
             if eval_psnr:
-                final_psnr = compute_psnr(model, device, n_samples=100,
-                                          data_source=data_source, image_size=image_size)
+                final_psnr = compute_psnr(
+                    model, device, n_samples=100, data_source=data_source, image_size=image_size
+                )
                 model.train()
-            torch.save({
-                "step": step + 1,
-                "model_state_dict": model.state_dict(),
-                "config": {
-                    "image_size": image_size,
-                    "num_embeddings": NUM_EMBEDDINGS,
-                    "latent_dim": LATENT_DIM,
-                    "hidden_dim": HIDDEN_DIM,
-                    "commitment_cost": COMMITMENT_COST,
-                    "downsample": downsample,
+            torch.save(
+                {
+                    "step": step + 1,
+                    "model_state_dict": model.state_dict(),
+                    "config": {
+                        "image_size": image_size,
+                        "num_embeddings": NUM_EMBEDDINGS,
+                        "latent_dim": LATENT_DIM,
+                        "hidden_dim": HIDDEN_DIM,
+                        "commitment_cost": COMMITMENT_COST,
+                        "downsample": downsample,
+                    },
+                    "psnr": final_psnr,
                 },
-                "psnr": final_psnr,
-            }, ckpt_path)
+                ckpt_path,
+            )
             print(f"  💾 checkpoint saved: {ckpt_path} (PSNR={final_psnr:.1f}dB)")
 
     print(f"\n训练完成！checkpoint: {os.path.join(output_dir, 'vqvae_latest.pt')}")
@@ -414,35 +431,46 @@ def train(
 
 def main():
     parser = argparse.ArgumentParser(description="训练 VQ-VAE 图像编解码器")
-    parser.add_argument("--steps", type=int, default=DEFAULT_STEPS,
-                        help=f"训练步数（默认 {DEFAULT_STEPS}）")
-    parser.add_argument("--batch-size", type=int, default=BATCH_SIZE,
-                        help=f"batch size（默认 {BATCH_SIZE}）")
-    parser.add_argument("--image-size", type=int, default=IMAGE_SIZE,
-                        help=f"图像尺寸（默认 {IMAGE_SIZE}）")
-    parser.add_argument("--lr", type=float, default=LR,
-                        help=f"学习率（默认 {LR}）")
-    parser.add_argument("--data-source", type=str, default="synthetic",
-                        choices=["synthetic", "cifar10", "dir"],
-                        help="数据源：synthetic(合成) / cifar10(自动下载) / dir(目录)")
-    parser.add_argument("--data-dir", type=str, default=None,
-                        help="真实图像目录（仅 data-source=dir 时生效）")
-    parser.add_argument("--output-dir", type=str, default=OUTPUT_DIR,
-                        help=f"输出目录（默认 {OUTPUT_DIR}）")
-    parser.add_argument("--resume", type=str, default=None,
-                        help="从 checkpoint 恢复训练")
-    parser.add_argument("--device", type=str, default="auto",
-                        help="计算设备（auto/cpu/cuda）")
-    parser.add_argument("--log-interval", type=int, default=LOG_INTERVAL,
-                        help=f"日志间隔（默认 {LOG_INTERVAL}）")
-    parser.add_argument("--save-interval", type=int, default=SAVE_INTERVAL,
-                        help=f"保存间隔（默认 {SAVE_INTERVAL}）")
-    parser.add_argument("--eval-only", action="store_true",
-                        help="仅评估 PSNR（不训练）")
-    parser.add_argument("--no-psnr", action="store_true",
-                        help="禁用训练中 PSNR 评估（加速）")
-    parser.add_argument("--downsample", type=int, default=4, choices=[4, 8, 16],
-                        help="下采样倍数（4=高重建质量/多 token，8=平衡，16=少 token）默认 4")
+    parser.add_argument(
+        "--steps", type=int, default=DEFAULT_STEPS, help=f"训练步数（默认 {DEFAULT_STEPS}）"
+    )
+    parser.add_argument(
+        "--batch-size", type=int, default=BATCH_SIZE, help=f"batch size（默认 {BATCH_SIZE}）"
+    )
+    parser.add_argument(
+        "--image-size", type=int, default=IMAGE_SIZE, help=f"图像尺寸（默认 {IMAGE_SIZE}）"
+    )
+    parser.add_argument("--lr", type=float, default=LR, help=f"学习率（默认 {LR}）")
+    parser.add_argument(
+        "--data-source",
+        type=str,
+        default="synthetic",
+        choices=["synthetic", "cifar10", "dir"],
+        help="数据源：synthetic(合成) / cifar10(自动下载) / dir(目录)",
+    )
+    parser.add_argument(
+        "--data-dir", type=str, default=None, help="真实图像目录（仅 data-source=dir 时生效）"
+    )
+    parser.add_argument(
+        "--output-dir", type=str, default=OUTPUT_DIR, help=f"输出目录（默认 {OUTPUT_DIR}）"
+    )
+    parser.add_argument("--resume", type=str, default=None, help="从 checkpoint 恢复训练")
+    parser.add_argument("--device", type=str, default="auto", help="计算设备（auto/cpu/cuda）")
+    parser.add_argument(
+        "--log-interval", type=int, default=LOG_INTERVAL, help=f"日志间隔（默认 {LOG_INTERVAL}）"
+    )
+    parser.add_argument(
+        "--save-interval", type=int, default=SAVE_INTERVAL, help=f"保存间隔（默认 {SAVE_INTERVAL}）"
+    )
+    parser.add_argument("--eval-only", action="store_true", help="仅评估 PSNR（不训练）")
+    parser.add_argument("--no-psnr", action="store_true", help="禁用训练中 PSNR 评估（加速）")
+    parser.add_argument(
+        "--downsample",
+        type=int,
+        default=4,
+        choices=[4, 8, 16],
+        help="下采样倍数（4=高重建质量/多 token，8=平衡，16=少 token）默认 4",
+    )
 
     args = parser.parse_args()
 
@@ -469,10 +497,13 @@ def main():
         model.load_state_dict(ckpt["model_state_dict"])
         model.to(device)
         ds = "cifar10" if args.data_source == "cifar10" else "synthetic"
-        psnr = compute_psnr(model, device, n_samples=200,
-                            data_source=ds, image_size=args.image_size)
+        psnr = compute_psnr(
+            model, device, n_samples=200, data_source=ds, image_size=args.image_size
+        )
         print(f"PSNR: {psnr:.2f} dB (checkpoint: {args.resume}, step={ckpt.get('step', '?')})")
-        print(f"  {'✅ 可用重建 (>25dB)' if psnr > 25 else '⚠ 噪声级别 (<20dB)' if psnr < 20 else '🔧 待提升 (20-25dB)'}")
+        print(
+            f"  {'✅ 可用重建 (>25dB)' if psnr > 25 else '⚠ 噪声级别 (<20dB)' if psnr < 20 else '🔧 待提升 (20-25dB)'}"
+        )
         return
 
     train(

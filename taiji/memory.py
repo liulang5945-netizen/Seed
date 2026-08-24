@@ -127,12 +127,8 @@ class EpisodicField:
             max_weight_norm=config.max_weight_norm,
             device=self.device,
         )
-        reward_code = (
-            torch.randint(0, 2, (units,), generator=generator) * 2 - 1
-        ).to(torch.float32)
-        self.reward_code = (
-            reward_code * float(config.weight_init_scale)
-        ).to(self.device)
+        reward_code = (torch.randint(0, 2, (units,), generator=generator) * 2 - 1).to(torch.float32)
+        self.reward_code = (reward_code * float(config.weight_init_scale)).to(self.device)
 
         # All plastic pathways begin blank.  Fixed fan-in topology determines
         # which physically existing synapses may participate in an engram.
@@ -166,18 +162,10 @@ class EpisodicField:
         self.outcome_readout = self._blank_readout(alphabet, generator)
         self.reward_readout = self._blank_readout(1, generator)
         self.familiarity_readout = self._blank_readout(1, generator)
-        self.cortical_readout = self._blank_readout(
-            config.cortical_context_dim, generator
-        )
-        self.time_readout = self._blank_readout(
-            config.memory_time_dim, generator
-        )
-        self.episode_readout = self._blank_readout(
-            config.memory_episode_dim, generator
-        )
-        self.provenance_readout = self._blank_readout(
-            len(self.PROVENANCE_KINDS), generator
-        )
+        self.cortical_readout = self._blank_readout(config.cortical_context_dim, generator)
+        self.time_readout = self._blank_readout(config.memory_time_dim, generator)
+        self.episode_readout = self._blank_readout(config.memory_episode_dim, generator)
+        self.provenance_readout = self._blank_readout(len(self.PROVENANCE_KINDS), generator)
         self.write_count = 0
         self._last_event: torch.Tensor | None = None
         self._last_event_episode: str | None = None
@@ -185,9 +173,7 @@ class EpisodicField:
         self._episode_write_tick = -1
         self._episode_write_index = 0
 
-    def _blank_readout(
-        self, out_features: int, generator: torch.Generator
-    ) -> SparseSynapses:
+    def _blank_readout(self, out_features: int, generator: torch.Generator) -> SparseSynapses:
         readout = SparseSynapses(
             out_features,
             self.config.memory_meta_dim,
@@ -208,9 +194,7 @@ class EpisodicField:
         return MemoryState(
             activity=zero.clone(),
             trace=zero.clone(),
-            cortical_feedback=torch.zeros(
-                self.config.cortical_context_dim, device=self.device
-            ),
+            cortical_feedback=torch.zeros(self.config.cortical_context_dim, device=self.device),
             threshold=torch.full(
                 (self.config.memory_units,),
                 self.config.threshold_base,
@@ -234,19 +218,19 @@ class EpisodicField:
         tick_value = float(tick)
         values = []
         for index in range(pairs):
-            period = float(2 ** index)
-            values.extend((
-                math.sin(tick_value / period),
-                math.cos(tick_value / period),
-            ))
+            period = float(2**index)
+            values.extend(
+                (
+                    math.sin(tick_value / period),
+                    math.cos(tick_value / period),
+                )
+            )
         return torch.tensor(values, device=self.device, dtype=torch.float32)
 
     def _episode_code(self, episode_id: str) -> torch.Tensor:
         if not episode_id:
             raise ValueError("episodic episode_id cannot be empty")
-        raw = hashlib.shake_256(episode_id.encode("utf-8")).digest(
-            self.config.memory_episode_dim
-        )
+        raw = hashlib.shake_256(episode_id.encode("utf-8")).digest(self.config.memory_episode_dim)
         values = [1.0 if value >= 128 else -1.0 for value in raw]
         return torch.tensor(values, device=self.device, dtype=torch.float32)
 
@@ -254,9 +238,7 @@ class EpisodicField:
         try:
             index = self.PROVENANCE_KINDS.index(str(provenance))
         except ValueError as exc:
-            raise ValueError(
-                f"unsupported episodic provenance: {provenance}"
-            ) from exc
+            raise ValueError(f"unsupported episodic provenance: {provenance}") from exc
         code = torch.zeros(len(self.PROVENANCE_KINDS), device=self.device)
         code[index] = 1.0
         return code
@@ -267,10 +249,7 @@ class EpisodicField:
         threshold: torch.Tensor,
     ) -> Tuple[torch.Tensor, float]:
         positive = torch.relu(drive - threshold)
-        inhibition = (
-            self.config.memory_inhibition_gain
-            * float(positive.mean().item())
-        )
+        inhibition = self.config.memory_inhibition_gain * float(positive.mean().item())
         activity = torch.tanh(torch.relu(drive - threshold - inhibition))
         activity = bound_norm(activity, self.config.max_trace_norm)
         return activity, inhibition
@@ -284,13 +263,9 @@ class EpisodicField:
         return drive * (float(self.config.weight_init_scale) / rms)
 
     def _encode_cue(self, cortical_context: torch.Tensor) -> torch.Tensor:
-        return self._normalize_drive(
-            self.cue_encoder.forward(cortical_context.to(self.device))
-        )
+        return self._normalize_drive(self.cue_encoder.forward(cortical_context.to(self.device)))
 
-    def _cue_pattern(
-        self, cortical_context: torch.Tensor, threshold: torch.Tensor
-    ) -> torch.Tensor:
+    def _cue_pattern(self, cortical_context: torch.Tensor, threshold: torch.Tensor) -> torch.Tensor:
         expected = (self.config.cortical_context_dim,)
         if cortical_context.shape != expected:
             raise ValueError(
@@ -328,8 +303,7 @@ class EpisodicField:
         active = (activity > 1e-6).to(activity.dtype)
         threshold = torch.clamp(
             previous.threshold
-            + self.config.homeostasis_rate
-            * (active - self.config.target_activity),
+            + self.config.homeostasis_rate * (active - self.config.target_activity),
             min=self.config.threshold_min,
             max=self.config.threshold_max,
         )
@@ -348,16 +322,10 @@ class EpisodicField:
             time_code = self.time_readout.forward(context)
             episode_code = self.episode_readout.forward(context)
             provenance_evidence = self.provenance_readout.forward(context)
-            raw_expected_reward = float(
-                self.reward_readout.forward(context)[0].item()
-            )
-            familiarity = float(
-                self.familiarity_readout.forward(context)[0].item()
-            )
+            raw_expected_reward = float(self.reward_readout.forward(context)[0].item())
+            familiarity = float(self.familiarity_readout.forward(context)[0].item())
             familiarity_confidence = 1.0 - math.exp(-max(0.0, familiarity))
-            resonance_confidence = 1.0 - math.exp(
-                -float(recurrent_support.norm().item())
-            )
+            resonance_confidence = 1.0 - math.exp(-float(recurrent_support.norm().item()))
             # Injection trust fades with the field's lifetime write count:
             # the readout rows are shared, so every further episode written
             # interferes with every engram already stored, and the read path
@@ -369,41 +337,26 @@ class EpisodicField:
             confidence = (
                 familiarity_confidence
                 * resonance_confidence
-                * math.exp(
-                    -self.config.memory_confidence_decay * self.write_count
-                )
+                * math.exp(-self.config.memory_confidence_decay * self.write_count)
             )
             cortical_feedback = (
-                confidence * self.cortical_readout.forward(context)
+                confidence
+                * self.cortical_readout.forward(context)
                 * float(self.config.max_membrane_norm)
             )
             time_code = confidence * time_code
             episode_code = confidence * episode_code
             expected_reward = confidence * raw_expected_reward
-            action_probabilities = torch.softmax(
-                confidence * action_evidence, dim=0
-            )
-            outcome_probabilities = torch.softmax(
-                confidence * outcome_evidence, dim=0
-            )
-            provenance_probabilities = torch.softmax(
-                confidence * provenance_evidence, dim=0
-            )
+            action_probabilities = torch.softmax(confidence * action_evidence, dim=0)
+            outcome_probabilities = torch.softmax(confidence * outcome_evidence, dim=0)
+            provenance_probabilities = torch.softmax(confidence * provenance_evidence, dim=0)
         else:
             action_evidence = zeros.clone()
-            action_probabilities = torch.full_like(
-                zeros, 1.0 / self.config.alphabet_size
-            )
+            action_probabilities = torch.full_like(zeros, 1.0 / self.config.alphabet_size)
             outcome_probabilities = action_probabilities.clone()
-            cortical_feedback = torch.zeros(
-                self.config.cortical_context_dim, device=self.device
-            )
-            time_code = torch.zeros(
-                self.config.memory_time_dim, device=self.device
-            )
-            episode_code = torch.zeros(
-                self.config.memory_episode_dim, device=self.device
-            )
+            cortical_feedback = torch.zeros(self.config.cortical_context_dim, device=self.device)
+            time_code = torch.zeros(self.config.memory_time_dim, device=self.device)
+            episode_code = torch.zeros(self.config.memory_episode_dim, device=self.device)
             provenance_probabilities = torch.full(
                 (len(self.PROVENANCE_KINDS),),
                 1.0 / len(self.PROVENANCE_KINDS),
@@ -463,12 +416,8 @@ class EpisodicField:
         episode_code = self._episode_code(episode_id)
         provenance_code = self._provenance_code(provenance)
         time_drive = self._normalize_drive(self.time_encoder.forward(time_code))
-        episode_drive = self._normalize_drive(
-            self.episode_encoder.forward(episode_code)
-        )
-        provenance_drive = self._normalize_drive(
-            self.provenance_encoder.forward(provenance_code)
-        )
+        episode_drive = self._normalize_drive(self.episode_encoder.forward(episode_code))
+        provenance_drive = self._normalize_drive(self.provenance_encoder.forward(provenance_code))
         cue_drive = self._encode_cue(cortical_context)
         event_components = (
             action_drive,
@@ -478,12 +427,8 @@ class EpisodicField:
             episode_drive,
             provenance_drive,
         )
-        event_scale = self.config.memory_event_gain / math.sqrt(
-            len(event_components)
-        )
-        event_drive = cue_drive + event_scale * torch.stack(
-            event_components, dim=0
-        ).sum(dim=0)
+        event_scale = self.config.memory_event_gain / math.sqrt(len(event_components))
+        event_drive = cue_drive + event_scale * torch.stack(event_components, dim=0).sum(dim=0)
         event_pattern, _ = self._activate(event_drive, threshold)
 
         completion_before = self.association.forward(cue_pattern)
@@ -498,8 +443,7 @@ class EpisodicField:
         salience = math.tanh(abs(reward))
         strength = min(
             1.0,
-            self.config.memory_novelty_gain * novelty
-            + self.config.memory_reward_gain * salience,
+            self.config.memory_novelty_gain * novelty + self.config.memory_reward_gain * salience,
         )
 
         # The auto-associative attractor landscape saturates within a lived
@@ -516,13 +460,9 @@ class EpisodicField:
             self._episode_write_index = 0
         self._episode_write_tick = tick
         identity_gate = 1.0 / math.sqrt(
-            1.0
-            + self._episode_write_index
-            / self.config.readout_episode_saturation
+            1.0 + self._episode_write_index / self.config.readout_episode_saturation
         )
-        association_rate = (
-            self.config.episodic_learning_rate * strength * identity_gate
-        )
+        association_rate = self.config.episodic_learning_rate * strength * identity_gate
         for _ in range(int(self.config.episodic_write_repeats)):
             self.association.local_update(
                 event_pattern - self.association.forward(cue_pattern),
@@ -557,10 +497,7 @@ class EpisodicField:
         # root budget; flooding of the injected evidence is policed on the read
         # side instead, where the crowded-field confidence decay bounds how
         # much any recall may move waking prediction.
-        value_gate = math.exp(
-            -self._episode_write_index
-            / self.config.readout_value_saturation
-        )
+        value_gate = math.exp(-self._episode_write_index / self.config.readout_value_saturation)
         # Readout plasticity is redundancy gated across episodes: within one
         # lived episode repeated transitions must still build recall
         # confidence, but re-living an episode the field has already written
@@ -584,10 +521,7 @@ class EpisodicField:
         ):
             redundancy = max(
                 0.0,
-                float(
-                    torch.dot(event_pattern, self._last_event).item()
-                    / event_norm
-                ),
+                float(torch.dot(event_pattern, self._last_event).item() / event_norm),
             )
         if event_norm > 1e-8:
             self._last_event = event_pattern.detach().clone() / event_norm
@@ -596,10 +530,7 @@ class EpisodicField:
         self._last_event_episode = episode_id
         readout_gate = (1.0 - redundancy) ** 2
         readout_rate = (
-            self.config.episodic_readout_learning_rate
-            * strength
-            * readout_gate
-            * value_gate
+            self.config.episodic_readout_learning_rate * strength * readout_gate * value_gate
         )
         # The cortical readout regresses a high-dimensional value, unlike the
         # softmax readouts whose error is a probability residual bounded by one.
@@ -610,16 +541,10 @@ class EpisodicField:
         # a sub-stable rate for the receptor norm, and extra repeats let the
         # regression converge instead of oscillating.
         cortical_rate = (
-            self.config.cortical_readout_learning_rate
-            * strength
-            * readout_gate
-            * value_gate
+            self.config.cortical_readout_learning_rate * strength * readout_gate * value_gate
         )
         identity_rate = (
-            self.config.episodic_readout_learning_rate
-            * strength
-            * readout_gate
-            * identity_gate
+            self.config.episodic_readout_learning_rate * strength * readout_gate * identity_gate
         )
         cortical_scale = float(self.config.max_membrane_norm)
         # The episodic action projection is value-bearing: the field records
@@ -629,18 +554,18 @@ class EpisodicField:
         outcome_target = self._one_hot(outcome_symbol)
         # The injected reward must stay unit bounded: quality style rewards
         # can sit at -3 and would otherwise scale the action readout error
-        # far beyond a probability residual.  Sign carries the valence.
-        bounded_reward = math.tanh(reward)
+        # far beyond a probability residual.  Sign carries the valence.  The
+        # bound is a clip, not a tanh: tanh's sagging slope near zero shrank a
+        # unit reward to 0.76 and starved one-shot recall (M5 regressed 7/8
+        # to 6/8), while the clip keeps the unit slope across [-1, 1] and
+        # still caps extreme rewards at unit magnitude.
+        bounded_reward = math.copysign(min(abs(float(reward)), 1.0), float(reward))
         cortical_target = (
-            bound_norm(
-                cortical_context.to(self.device), self.config.max_membrane_norm
-            )
+            bound_norm(cortical_context.to(self.device), self.config.max_membrane_norm)
             / cortical_scale
         )
         for _ in range(int(self.config.episodic_write_repeats)):
-            action_policy = torch.softmax(
-                self.action_readout.forward(context), dim=0
-            )
+            action_policy = torch.softmax(self.action_readout.forward(context), dim=0)
             action_error = bounded_reward * (action_target - action_policy)
             self.action_readout.local_update(
                 action_error,
@@ -665,10 +590,7 @@ class EpisodicField:
                 weight_decay=self.config.synapse_decay,
             )
         reward_error = torch.tensor(
-            [
-                bounded_reward
-                - float(self.reward_readout.forward(context)[0].item())
-            ],
+            [bounded_reward - float(self.reward_readout.forward(context)[0].item())],
             device=self.device,
         )
         self.reward_readout.local_update(
@@ -677,9 +599,7 @@ class EpisodicField:
             learning_rate=identity_rate,
             weight_decay=self.config.synapse_decay,
         )
-        familiarity = float(
-            self.familiarity_readout.forward(context)[0].item()
-        )
+        familiarity = float(self.familiarity_readout.forward(context)[0].item())
         familiarity_error = torch.tensor(
             [1.0 - (1.0 - math.exp(-max(0.0, familiarity)))],
             device=self.device,
@@ -775,15 +695,11 @@ class EpisodicField:
         units = self.config.memory_units
         self_clock = self._time_code(tick)
         time_drive = self._normalize_drive(self.time_encoder.forward(self_clock))
-        noise = torch.randn(
-            units, generator=generator, dtype=torch.float32
-        ).to(self.device)
+        noise = torch.randn(units, generator=generator, dtype=torch.float32).to(self.device)
         value_weight = float(self.config.replay_value_weight)
-        seed_drive = (
-            float(self.config.replay_seed_gain)
-            * (value_weight * self.reward_code + (1.0 - value_weight) * time_drive)
-            + float(self.config.replay_noise_scale) * self._normalize_drive(noise)
-        )
+        seed_drive = float(self.config.replay_seed_gain) * (
+            value_weight * self.reward_code + (1.0 - value_weight) * time_drive
+        ) + float(self.config.replay_noise_scale) * self._normalize_drive(noise)
         adapted = previous.threshold + float(self.config.replay_fatigue_gain) * (
             previous.trace - previous.trace.mean()
         )
@@ -804,17 +720,12 @@ class EpisodicField:
         # another.  This is endogenous attractor refinement, not a teacher: no
         # external symbol or replay list enters the loop.
         proposed_action = int(
-            self.action_readout.forward(
-                self.readout_receptors.forward(activity)
-            ).argmax().item()
+            self.action_readout.forward(self.readout_receptors.forward(activity)).argmax().item()
         )
         binding_drive = self._normalize_drive(
             self.action_encoder.forward(self._one_hot(proposed_action))
         )
-        bound_seed = (
-            seed_drive
-            + float(self.config.memory_action_binding_gain) * binding_drive
-        )
+        bound_seed = seed_drive + float(self.config.memory_action_binding_gain) * binding_drive
         for _ in range(self.config.memory_iterations):
             recurrent = self.association.forward(activity)
             activity, inhibition = self._activate(
@@ -833,15 +744,11 @@ class EpisodicField:
         )
 
         context = self.readout_receptors.forward(activity)
-        familiarity = float(
-            self.familiarity_readout.forward(context)[0].item()
-        )
+        familiarity = float(self.familiarity_readout.forward(context)[0].item())
         familiarity_confidence = 1.0 - math.exp(-max(0.0, familiarity))
         resonance = 1.0 - math.exp(-float(recurrent_support.norm().item()))
         confidence = familiarity_confidence * resonance
-        raw_expected_reward = float(
-            self.reward_readout.forward(context)[0].item()
-        )
+        raw_expected_reward = float(self.reward_readout.forward(context)[0].item())
         expected_reward = confidence * raw_expected_reward
         value = math.tanh(abs(raw_expected_reward))
 
@@ -852,31 +759,17 @@ class EpisodicField:
             * self.cortical_readout.forward(context)
             * float(self.config.max_membrane_norm)
         )
-        action_probabilities = torch.softmax(
-            self.action_readout.forward(context), dim=0
-        )
-        outcome_probabilities = torch.softmax(
-            self.outcome_readout.forward(context), dim=0
-        )
-        provenance_probabilities = torch.softmax(
-            self.provenance_readout.forward(context), dim=0
-        )
+        action_probabilities = torch.softmax(self.action_readout.forward(context), dim=0)
+        outcome_probabilities = torch.softmax(self.outcome_readout.forward(context), dim=0)
+        provenance_probabilities = torch.softmax(self.provenance_readout.forward(context), dim=0)
 
         clock_norm = self_clock.norm().clamp_min(1e-8)
         recalled_norm = time_code.norm().clamp_min(1e-8)
         recency = 0.5 * (
-            1.0
-            + float(
-                (torch.dot(time_code, self_clock) / (recalled_norm * clock_norm)).item()
-            )
+            1.0 + float((torch.dot(time_code, self_clock) / (recalled_norm * clock_norm)).item())
         )
         selection = value_weight * value + (1.0 - value_weight) * novelty
-        priority = (
-            familiarity_confidence
-            * resonance
-            * selection
-            * recency
-        )
+        priority = familiarity_confidence * resonance * selection * recency
         accepted = priority >= float(self.config.replay_priority_threshold)
 
         trace = bound_norm(
@@ -976,9 +869,7 @@ class EpisodicField:
             "provenance_readout": self.provenance_readout.to_payload(),
             "write_count": self.write_count,
             "last_event": (
-                self._last_event.detach().cpu().clone()
-                if self._last_event is not None
-                else None
+                self._last_event.detach().cpu().clone() if self._last_event is not None else None
             ),
         }
 
@@ -989,9 +880,7 @@ class EpisodicField:
         self.time_encoder.load_payload(payload["time_encoder"])
         self.episode_encoder.load_payload(payload["episode_encoder"])
         self.provenance_encoder.load_payload(payload["provenance_encoder"])
-        reward_code = payload["reward_code"].detach().to(
-            self.device, dtype=torch.float32
-        )
+        reward_code = payload["reward_code"].detach().to(self.device, dtype=torch.float32)
         if reward_code.shape != self.reward_code.shape:
             raise ValueError("episodic reward code does not match architecture")
         self.reward_code = reward_code.clone()

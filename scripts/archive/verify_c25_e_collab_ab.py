@@ -36,8 +36,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -96,8 +101,10 @@ def main():
                 # 2026-08-12 口径修复：dialogue/zh 域生成用训练格式（问/答）
                 gen_prompt = build_dialogue_prompt(prompt) if tag in ("zh", "dialogue") else prompt
                 text = cortex.generate(
-                    prompt=gen_prompt, max_tokens=20,
-                    temperature=0.55, top_k=15,
+                    prompt=gen_prompt,
+                    max_tokens=20,
+                    temperature=0.55,
+                    top_k=15,
                     repetition_penalty=1.4,
                     domain=dom_exe[tag],
                     collab_mode=mode,
@@ -120,13 +127,21 @@ def main():
             # 口径守卫（2026-08-12）：zh/dialogue 域用训练格式 prompt
             gen_prompt = build_dialogue_prompt(prompt) if tag in ("zh", "dialogue") else prompt
             text = cortex.generate(
-                prompt=gen_prompt, max_tokens=10, temperature=0.55, top_k=15,
-                repetition_penalty=1.4, domain=dom, collab_mode="continuous",
+                prompt=gen_prompt,
+                max_tokens=10,
+                temperature=0.55,
+                top_k=15,
+                repetition_penalty=1.4,
+                domain=dom,
+                collab_mode="continuous",
                 fusion_mode="soft",
             )
             leader = getattr(cortex, "_executive_domains", {})
-            check(f"continuous {tag} 生成正常", isinstance(text, str) and len(text) > 0,
-                  f"→ {text[:40]!r}")
+            check(
+                f"continuous {tag} 生成正常",
+                isinstance(text, str) and len(text) > 0,
+                f"→ {text[:40]!r}",
+            )
         except Exception as e:
             check(f"continuous {tag} 无异常", False, f"err={e}")
 

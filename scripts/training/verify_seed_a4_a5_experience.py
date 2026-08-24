@@ -27,6 +27,7 @@ SCRIPTS = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPTS))
 
 import _seed_verify_common as common  # noqa: E402
+import _verify_emit  # noqa: E402
 
 from seed import SeedSleepScheduler  # noqa: E402
 
@@ -58,9 +59,7 @@ def main() -> None:
     # 新经验：跳过校准用过的文档，保证对有机体是新的
     new_texts = [
         text.encode("utf-8")
-        for text in common.corpus_documents(
-            args.batches * args.texts_per_batch, skip=48
-        )
+        for text in common.corpus_documents(args.batches * args.texts_per_batch, skip=48)
     ]
     print(f"  新经验池 = {len(new_texts)} 篇（跳过校准段）", flush=True)
 
@@ -73,8 +72,7 @@ def main() -> None:
         {
             "batch": 0,
             "group_means": {
-                name: float(group["mean"])
-                for name, group in baseline["groups"].items()
+                name: float(group["mean"]) for name, group in baseline["groups"].items()
             },
             "overall_mean": float(baseline["overall_mean"]),
         }
@@ -82,9 +80,7 @@ def main() -> None:
     finite = True
     print("\n[2/4] 分批喂入新经验（经历 + 内生巩固）", flush=True)
     for batch in range(1, args.batches + 1):
-        chunk = new_texts[
-            (batch - 1) * args.texts_per_batch : batch * args.texts_per_batch
-        ]
+        chunk = new_texts[(batch - 1) * args.texts_per_batch : batch * args.texts_per_batch]
         scheduler.night(
             chunk,
             cycles_per_text=args.cycles_per_text,
@@ -95,8 +91,7 @@ def main() -> None:
         entry = {
             "batch": batch,
             "group_means": {
-                name: float(group["mean"])
-                for name, group in measurement["groups"].items()
+                name: float(group["mean"]) for name, group in measurement["groups"].items()
             },
             "overall_mean": float(measurement["overall_mean"]),
         }
@@ -117,9 +112,7 @@ def main() -> None:
         delta = final["groups"][name]["mean"] - baseline["groups"][name]["mean"]
         rises[name] = delta
         bounded = bounded and delta <= 0.30
-        std_ratio = final["groups"][name]["std"] / max(
-            baseline["groups"][name]["std"], 1e-9
-        )
+        std_ratio = final["groups"][name]["std"] / max(baseline["groups"][name]["std"], 1e-9)
         std_holds = std_holds and std_ratio >= 0.95
         print(
             f"  {name}: Δmean={delta:+.4f}，std 比={std_ratio:.3f}",
@@ -138,8 +131,7 @@ def main() -> None:
     print(f"  A5 三组全部上升 = {'PASS' if all_rise else 'FAIL'}（{rises}）", flush=True)
     print(f"  A5 上升不爆炸（≤0.30） = {'PASS' if bounded else 'FAIL'}", flush=True)
     print(
-        f"  A5 过顶回落（{post_peak_drop:.4f} ≤ 0.15） = "
-        f"{'PASS' if saturates else 'FAIL'}",
+        f"  A5 过顶回落（{post_peak_drop:.4f} ≤ 0.15） = " f"{'PASS' if saturates else 'FAIL'}",
         flush=True,
     )
     print(f"  A4 三组 std 维持（≥ 基线×0.95） = {'PASS' if std_holds else 'FAIL'}", flush=True)
@@ -162,12 +154,10 @@ def main() -> None:
             "cycles_per_text": args.cycles_per_text,
             "max_symbols": args.max_symbols,
             "baseline": {
-                name: {"mean": g["mean"], "std": g["std"]}
-                for name, g in baseline["groups"].items()
+                name: {"mean": g["mean"], "std": g["std"]} for name, g in baseline["groups"].items()
             },
             "final": {
-                name: {"mean": g["mean"], "std": g["std"]}
-                for name, g in final["groups"].items()
+                name: {"mean": g["mean"], "std": g["std"]} for name, g in final["groups"].items()
             },
             "trajectory": trajectory,
             "group_rises": rises,
@@ -185,7 +175,23 @@ def main() -> None:
         },
     )
     print(f"报告已写入: {out_path}", flush=True)
-    sys.exit(0 if (a4_pass and a5_pass) else 1)
+    sys.exit(
+        _verify_emit.emit_and_exit(
+            "seed_a4_a5_experience",
+            {
+                "a4_pass": a4_pass,
+                "a5_pass": a5_pass,
+                "checks": {
+                    "finite": finite,
+                    "all_rise": all_rise,
+                    "bounded": bounded,
+                    "saturates": saturates,
+                    "std_holds": std_holds,
+                },
+                "metrics": {"post_peak_drop": post_peak_drop},
+            },
+        )
+    )
 
 
 if __name__ == "__main__":

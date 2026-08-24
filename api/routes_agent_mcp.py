@@ -2,7 +2,7 @@
 MCP 服务器管理 API 路由
 从 routes_agent.py 拆分：MCP 市场、安装/卸载、启动/停止、工具列表
 """
-import json
+
 import logging
 
 from fastapi import APIRouter, HTTPException
@@ -16,6 +16,7 @@ def mcp_marketplace(category: str = "", keyword: str = ""):
     """浏览 MCP 服务器市场"""
     try:
         from neuroplex.agent_ext.mcp_manager import mcp_manager
+
         return {"status": "ok", **mcp_manager.get_marketplace(category=category, keyword=keyword)}
     except Exception as e:
         logger.error(f"获取 MCP 市场数据失败: {e}")
@@ -28,6 +29,7 @@ def mcp_marketplace_refresh():
     """从远程源刷新 MCP 市场数据"""
     try:
         from neuroplex.agent_ext.mcp_manager import mcp_manager
+
         result = mcp_manager.refresh_marketplace()
         return {"status": "ok", **result}
     except Exception as e:
@@ -41,6 +43,7 @@ def mcp_server_detail(server_id: str):
     """获取 MCP 服务器详情"""
     try:
         from neuroplex.agent_ext.mcp_manager import mcp_manager
+
         detail = mcp_manager.get_server_detail(server_id)
         if detail:
             return {"status": "ok", **detail}
@@ -58,6 +61,7 @@ async def mcp_install(req: dict):
         raise HTTPException(status_code=400, detail="server_id 不能为空")
     try:
         from neuroplex.agent_ext.mcp_manager import mcp_manager
+
         result = mcp_manager.install_server(server_id)
         return result
     except Exception as e:
@@ -73,6 +77,7 @@ async def mcp_uninstall(req: dict):
         raise HTTPException(status_code=400, detail="server_id 不能为空")
     try:
         from neuroplex.agent_ext.mcp_manager import mcp_manager
+
         result = mcp_manager.uninstall_server(server_id)
         return result
     except Exception as e:
@@ -89,6 +94,7 @@ async def mcp_start(req: dict):
         raise HTTPException(status_code=400, detail="server_id 不能为空")
     try:
         from neuroplex.agent_ext.mcp_manager import mcp_manager
+
         result = mcp_manager.start_server(server_id, workspace_path=workspace)
         return result
     except Exception as e:
@@ -104,6 +110,7 @@ async def mcp_stop(req: dict):
         raise HTTPException(status_code=400, detail="server_id 不能为空")
     try:
         from neuroplex.agent_ext.mcp_manager import mcp_manager
+
         result = mcp_manager.stop_server(server_id)
         return result
     except Exception as e:
@@ -120,6 +127,7 @@ async def mcp_restart(req: dict):
         raise HTTPException(status_code=400, detail="server_id 不能为空")
     try:
         from neuroplex.agent_ext.mcp_manager import mcp_manager
+
         result = mcp_manager.restart_server(server_id, workspace_path=workspace)
         return result
     except Exception as e:
@@ -132,6 +140,7 @@ def mcp_installed():
     """获取已安装的 MCP 服务器列表"""
     try:
         from neuroplex.agent_ext.mcp_manager import mcp_manager
+
         return {"status": "ok", "servers": mcp_manager.get_installed_servers()}
     except Exception as e:
         logger.error(f"Request failed: {e}")
@@ -143,6 +152,7 @@ def mcp_status():
     """获取 MCP 管理器状态"""
     try:
         from neuroplex.agent_ext.mcp_manager import mcp_manager
+
         return {"status": "ok", **mcp_manager.get_status()}
     except Exception as e:
         logger.error(f"Request failed: {e}")
@@ -154,6 +164,7 @@ def mcp_tools():
     """获取所有 MCP 工具"""
     try:
         from neuroplex.agent_ext.mcp_manager import mcp_manager
+
         return {"status": "ok", "tools": mcp_manager.get_all_mcp_tools()}
     except Exception as e:
         logger.error(f"Request failed: {e}")
@@ -165,7 +176,11 @@ def plugin_marketplace(category: str = "", keyword: str = ""):
     """浏览 Agent 插件市场"""
     try:
         from neuroplex.agent_ext.mcp_manager import mcp_manager
-        return {"status": "ok", **mcp_manager.get_plugin_marketplace(category=category, keyword=keyword)}
+
+        return {
+            "status": "ok",
+            **mcp_manager.get_plugin_marketplace(category=category, keyword=keyword),
+        }
     except Exception as e:
         logger.error(f"获取插件市场数据失败: {e}")
         logger.error(f"Request failed: {e}")
@@ -177,6 +192,7 @@ def plugin_marketplace_refresh():
     """从远程源刷新 Agent 插件市场"""
     try:
         from neuroplex.agent_ext.mcp_manager import mcp_manager
+
         result = mcp_manager.refresh_plugin_marketplace()
         return {"status": "ok", **result}
     except Exception as e:
@@ -199,9 +215,15 @@ async def mcp_add_custom(req: dict):
         raise HTTPException(status_code=400, detail="server_id 不能为空")
     try:
         from neuroplex.agent_ext.mcp_manager import mcp_manager
+
         result = mcp_manager.add_custom_server(
-            server_id, name, command, args,
-            npm_package=npm_package, description=description, env=env,
+            server_id,
+            name,
+            command,
+            args,
+            npm_package=npm_package,
+            description=description,
+            env=env,
         )
         return result
     except Exception as e:

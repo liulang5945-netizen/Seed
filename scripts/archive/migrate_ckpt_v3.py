@@ -191,9 +191,7 @@ def main():
     for domain in args.domains:
         # 同时处理 base 和 fieldcond
         for suffix in ["", "_fieldcond"]:
-            ckpt_path = os.path.join(
-                args.neurons_dir, f"neuron_{domain}{suffix}.pt"
-            )
+            ckpt_path = os.path.join(args.neurons_dir, f"neuron_{domain}{suffix}.pt")
             if os.path.exists(ckpt_path):
                 try:
                     if migrate_ckpt(

@@ -21,7 +21,9 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 
@@ -43,7 +45,6 @@ from scripts.archive.diagnostics.diag_micro_spec_sweep import CANDIDATES
 from scripts.archive.diagnostics.diag_micro_population_canary import PROMPTS, _generate
 from scripts.training.utils import load_domain_tokenizer, load_general_tokenizer
 
-
 SPECIALIST_ROLES = ("current_only", "hf_only", "current_plus_hf_10")
 DEFAULT_MICRO_SPEC = "micro_2x128"
 # Backward-compatible module contract used by the historical route audits.
@@ -64,9 +65,7 @@ def _make_config(neuron_id: str, micro_spec: str = DEFAULT_MICRO_SPEC) -> Neuron
     )
 
 
-def _save_specialist_checkpoints(
-    neurons: dict[str, torch.nn.Module], checkpoint_dir: Path
-) -> dict:
+def _save_specialist_checkpoints(neurons: dict[str, torch.nn.Module], checkpoint_dir: Path) -> dict:
     """Persist only local specialist weights; the shared embedding stays global."""
 
     checkpoint_dir.mkdir(parents=True, exist_ok=True)
@@ -75,9 +74,7 @@ def _save_specialist_checkpoints(
         path = checkpoint_dir / f"neuron_{neuron_id}.pt"
         payload = {
             "neuron_config": neuron.config,
-            "state_dict": {
-                key: value.detach().cpu() for key, value in neuron.state_dict().items()
-            },
+            "state_dict": {key: value.detach().cpu() for key, value in neuron.state_dict().items()},
             "checkpoint_contract": {
                 "local_weights_only": True,
                 "shared_embedding_loaded_once": True,
@@ -100,8 +97,7 @@ def _standalone_specialists_forward(
 
     specialist_ids = list(neurons)
     field_dim = max(
-        getattr(neuron.config, "unified_field_dim", None)
-        or neuron.config.field_dim
+        getattr(neuron.config, "unified_field_dim", None) or neuron.config.field_dim
         for neuron in neurons.values()
     )
     ensemble = ResonanceEnsemble(
@@ -130,15 +126,12 @@ def _standalone_specialists_forward(
         "rounds": result["n_rounds"],
         "n_active_history": result.get("n_active_history", []),
         "final_scores": {
-            nid: round(float(score), 6)
-            for nid, score in result.get("final_scores", {}).items()
+            nid: round(float(score), 6) for nid, score in result.get("final_scores", {}).items()
         },
     }
 
 
-def _population_canary_multi(
-    neurons: dict[str, torch.nn.Module], shared, general_sp
-) -> dict:
+def _population_canary_multi(neurons: dict[str, torch.nn.Module], shared, general_sp) -> dict:
     standalone_forward = _standalone_specialists_forward(neurons, shared, general_sp)
     with contextlib.redirect_stdout(io.StringIO()):
         cortex, _, _ = assemble_cortex(
@@ -222,9 +215,7 @@ def run(
         "current_eval": pools["current_eval"],
         "hf_eval": pools["hf_eval"],
     }
-    selected_hf_train = _select_hf_for_ratio(
-        pools["current_train"], pools["hf_train"], hf_ratio
-    )
+    selected_hf_train = _select_hf_for_ratio(pools["current_train"], pools["hf_train"], hf_ratio)
     train_sets = {
         "current_only": pools["current_train"],
         "hf_only": pools["hf_train"],

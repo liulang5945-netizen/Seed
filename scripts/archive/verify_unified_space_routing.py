@@ -17,6 +17,7 @@
 Usage:
     python scripts/training/verify_unified_space_routing.py
 """
+
 import os
 import sys
 import math
@@ -37,17 +38,18 @@ HIDDEN = 512  # compact spec hidden_size（general 基座 embedding/lm_head 维�
 def compute_avg_loss(ens, emb, general_sp, text, fusion_mode, max_len=128):
     """与 verify_checkpoint 口径一致：返回平均 loss（非 PPL），8 条文本后统一 exp。"""
     from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
+
     out = batch_align_and_embed([text], general_sp, general_sp, emb, max_seq_len=max_len)
     shared_emb, targets, mask = out[0], out[1], out[2]
     with torch.no_grad():
-        r = ens.forward(shared_embeddings=shared_emb, return_logits=True,
-                        fusion_mode=fusion_mode)
+        r = ens.forward(shared_embeddings=shared_emb, return_logits=True, fusion_mode=fusion_mode)
     logits = r["weighted_logits"]  # [B, L, V]
     sl, st, sm = logits[:, :-1].contiguous(), targets[:, 1:].contiguous(), mask[:, 1:].contiguous()
     st = st.clone()
     st[~sm] = -100
-    loss = F.cross_entropy(sl.reshape(-1, sl.size(-1)), st.reshape(-1),
-                          ignore_index=-100, reduction="sum")
+    loss = F.cross_entropy(
+        sl.reshape(-1, sl.size(-1)), st.reshape(-1), ignore_index=-100, reduction="sum"
+    )
     n = int(sm.sum().item())
     if n == 0:
         return None
@@ -57,6 +59,7 @@ def compute_avg_loss(ens, emb, general_sp, text, fusion_mode, max_len=128):
 def route_profile(ens, emb, general_sp, text, max_len=128):
     """返回 division 模式下每 neuron 的位置占比 dict。"""
     from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
+
     out = batch_align_and_embed([text], general_sp, general_sp, emb, max_seq_len=max_len)
     with torch.no_grad():
         r = ens.forward(shared_embeddings=out[0], return_logits=True, fusion_mode="division")
@@ -75,8 +78,9 @@ def greedy_generate(ens, emb, general_sp, prompt, max_new=16):
         inp = torch.tensor([cur], dtype=torch.long)
         shared_emb = emb(inp)
         with torch.no_grad():
-            r = ens.forward(shared_embeddings=shared_emb, return_logits=True,
-                            fusion_mode="division")
+            r = ens.forward(
+                shared_embeddings=shared_emb, return_logits=True, fusion_mode="division"
+            )
         logits = r["weighted_logits"][0, -1]
         next_id = int(logits.argmax().item())
         cur.append(next_id)
@@ -90,10 +94,13 @@ def greedy_generate(ens, emb, general_sp, prompt, max_new=16):
 
 def main():
     from scripts.training.train_cross_domain_collab import (
-        load_neuron, load_shared_lm_head, load_shared_embedding,
+        load_neuron,
+        load_shared_lm_head,
+        load_shared_embedding,
     )
     from scripts.archive.train_multi_domain_foundation import (
-        load_domain_texts, load_general_tokenizer,
+        load_domain_texts,
+        load_general_tokenizer,
     )
     from taiji.resonance.ensemble import ResonanceEnsemble
     from taiji.resonance.field import ResonanceField
@@ -121,6 +128,7 @@ def main():
     print("\n[1] division 路由 forward 冒烟（输出 256K、无 NaN）...")
     sample = texts["code"][0]
     from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
+
     out = batch_align_and_embed([sample], general_sp, general_sp, emb, max_seq_len=64)
     with torch.no_grad():
         r = ens.forward(shared_embeddings=out[0], return_logits=True, fusion_mode="division")
@@ -137,9 +145,12 @@ def main():
     # 更尖锐（平均 max-prob 高），它会在所有位置胜出——分工退化为"最尖锐者主导"。
     print("\n[1.5] 平均 max-prob 尺度诊断（code 文本样本，per-neuron）...")
     for nid in DOMAINS:
-        n_out = ens.forward(shared_embeddings=out[0], return_logits=True,
-                            fusion_mode="per_position",
-                            active_nids=[nid])["neuron_logits"]
+        n_out = ens.forward(
+            shared_embeddings=out[0],
+            return_logits=True,
+            fusion_mode="per_position",
+            active_nids=[nid],
+        )["neuron_logits"]
         mp = F.softmax(n_out[nid], dim=-1).max(dim=-1).values.mean().item()
         print(f"  {nid:5s}: 平均 max-prob = {mp:.4f}")
 
@@ -147,8 +158,10 @@ def main():
     # solo ensemble PPL(45) 远差于 verify_checkpoint 回读(6.1) —— 定位差异来源。
     print("\n[1.6] ensemble vs direct neuron logits 一致性（code 样本）...")
     from taiji.resonance.neuron import ResonanceNeuron
-    cfg = torch.load(os.path.join(SAVE_DIR, "neuron_code.pt"),
-                     map_location="cpu", weights_only=False)["neuron_config"]
+
+    cfg = torch.load(
+        os.path.join(SAVE_DIR, "neuron_code.pt"), map_location="cpu", weights_only=False
+    )["neuron_config"]
     cfg.unified_field_dim = None
     direct_n = ResonanceNeuron(cfg, shared_lm_head=head)
     direct_n.load_state_dict(neurons["code"].state_dict(), strict=False)
@@ -157,8 +170,7 @@ def main():
         d_logits = direct_n.forward(out[0], return_logits=True)["logits"]
         solo = ResonanceEnsemble({"code": neurons["code"]}, field, max_rounds=1)
         neurons["code"].eval()
-        s_res = solo.forward(shared_embeddings=out[0], return_logits=True,
-                             fusion_mode="division")
+        s_res = solo.forward(shared_embeddings=out[0], return_logits=True, fusion_mode="division")
     s_logits = s_res["weighted_logits"]
     max_diff = (d_logits - s_logits).abs().max().item()
     print(f"  direct logits {tuple(d_logits.shape)} vs ensemble {tuple(s_logits.shape)}")
@@ -190,8 +202,10 @@ def main():
         if own > max_other:
             print(f"  ✓ {nid} neuron 对角占优（自身域 {own:.3f} > 其他域最高 {max_other:.3f}）")
         else:
-            print(f"  ⚠ {nid} neuron 未对角占优（自身域 {own:.3f} < 其他域最高 {max_other:.3f}）"
-                  f" —— 见 [1.5] 尺度诊断")
+            print(
+                f"  ⚠ {nid} neuron 未对角占优（自身域 {own:.3f} < 其他域最高 {max_other:.3f}）"
+                f" —— 见 [1.5] 尺度诊断"
+            )
 
     # ── [3] PPL 对比：division(裸) vs division_norm(归一化) vs soft vs 最强个体 ──
     # 预期基线：协作层未训练时 max-prob/共振分未校准 → 个体通常 ≥ division（分工把位置
@@ -220,10 +234,17 @@ def main():
             if l_ind:
                 indiv_loss.append(l_ind)
         avg = lambda xs: sum(xs) / len(xs) if xs else float("nan")
-        div_a, divn_a, soft_a, ind_a = avg(div_loss), avg(divn_loss), avg(soft_loss), avg(indiv_loss)
+        div_a, divn_a, soft_a, ind_a = (
+            avg(div_loss),
+            avg(divn_loss),
+            avg(soft_loss),
+            avg(indiv_loss),
+        )
         summary[d] = (math.exp(div_a), math.exp(divn_a), math.exp(soft_a), math.exp(ind_a))
-        print(f"  {d:6s} {math.exp(div_a):10.2f} {math.exp(divn_a):10.2f} "
-              f"{math.exp(soft_a):10.2f} {math.exp(ind_a):10.2f}")
+        print(
+            f"  {d:6s} {math.exp(div_a):10.2f} {math.exp(divn_a):10.2f} "
+            f"{math.exp(soft_a):10.2f} {math.exp(ind_a):10.2f}"
+        )
     # 关键断言：所有模式均远优于随机（ln 256000 ≈ 12.45 → PPL ≈ 255K），基座能力真实
     for d in DOMAINS:
         for name, ppl in zip(("div裸", "div归一化", "soft", "个体"), summary[d]):
@@ -232,8 +253,11 @@ def main():
 
     # ── [4] 生成冒烟 ──
     print("\n[4] 生成冒烟（division 分工路由，贪心 16 token）...")
-    for prompt in ["写一个 Python 函数计算斐波那契数列", "什么是机器学习？",
-                   "def add(a, b): return a + b  # 请解释这段代码"]:
+    for prompt in [
+        "写一个 Python 函数计算斐波那契数列",
+        "什么是机器学习？",
+        "def add(a, b): return a + b  # 请解释这段代码",
+    ]:
         out_text = greedy_generate(ens, emb, general_sp, prompt, max_new=16)
         print(f"  prompt: {prompt[:24]}")
         print(f"  → {out_text[:80]}")

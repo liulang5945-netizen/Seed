@@ -47,9 +47,7 @@ class SparseSynapses:
         self.max_weight_norm = float(max_weight_norm)
         self.device = torch.device(device)
         self.excludes_self = bool(
-            not allow_self
-            and self.out_features == self.in_features
-            and self.in_features > 1
+            not allow_self and self.out_features == self.in_features and self.in_features > 1
         )
 
         # Fixed-fan-in topology keeps the native v2 per-row random stream so a
@@ -65,9 +63,7 @@ class SparseSynapses:
             candidates = torch.arange(self.in_features)
             if self.excludes_self:
                 candidates = candidates[candidates != post]
-            order = torch.randperm(
-                int(candidates.numel()), generator=generator
-            )[:count]
+            order = torch.randperm(int(candidates.numel()), generator=generator)[:count]
             selected_by_post.append(candidates[order].to(torch.long))
         self.row_fan_in = count
         pre_index = torch.stack(selected_by_post)
@@ -76,12 +72,12 @@ class SparseSynapses:
         # Drawing one transient row at a time preserves the configured RNG
         # stream bit-for-bit without retaining an out_features × in_features
         # matrix: only each gathered row survives construction.
-        edge_weight = torch.stack([
-            torch.randn(self.in_features, generator=generator)[selected]
-            for selected in selected_by_post
-        ]) * (
-            float(init_scale) / max(1, self.fan_in) ** 0.5
-        )
+        edge_weight = torch.stack(
+            [
+                torch.randn(self.in_features, generator=generator)[selected]
+                for selected in selected_by_post
+            ]
+        ) * (float(init_scale) / max(1, self.fan_in) ** 0.5)
 
         self.pre_index = pre_index.to(self.device, dtype=torch.int32)
         self.edge_weight = edge_weight.to(self.device, dtype=torch.float32)
@@ -153,12 +149,8 @@ class SparseSynapses:
         presynaptic_trace = presynaptic_trace.to(self.device)
         scale = max(1.0, float((presynaptic_trace != 0).sum().item()) ** 0.5)
         if weight_decay:
-            silent = (presynaptic_trace[self.pre_index] == 0).to(
-                self.edge_weight.dtype
-            )
-            self.edge_weight.mul_(
-                1.0 - float(weight_decay) * silent
-            )
+            silent = (presynaptic_trace[self.pre_index] == 0).to(self.edge_weight.dtype)
+            self.edge_weight.mul_(1.0 - float(weight_decay) * silent)
         self.edge_weight.add_(
             float(learning_rate)
             * postsynaptic_error.unsqueeze(1)
@@ -193,10 +185,7 @@ class SparseSynapses:
         activity = postsynaptic_activity.to(self.device)
         self.edge_weight.add_(
             float(learning_rate)
-            * (
-                activity.unsqueeze(1) * activity[self.pre_index]
-                - float(baseline)
-            )
+            * (activity.unsqueeze(1) * activity[self.pre_index] - float(baseline))
         )
         self.edge_weight.clamp_(min=0.0)
         self._bound_rows()
@@ -355,8 +344,8 @@ class SparseSynapses:
         width = self.row_fan_in
         chosen = torch.arange(width, device=self.device).unsqueeze(0) < moves.unsqueeze(1)
         rows = torch.arange(self.out_features, device=self.device).unsqueeze(1).expand(-1, width)
-        self.pre_index[rows[chosen], retire_order[chosen]] = (
-            donor_order[:, :width][chosen].to(torch.int32)
+        self.pre_index[rows[chosen], retire_order[chosen]] = donor_order[:, :width][chosen].to(
+            torch.int32
         )
         self.edge_weight[rows[chosen], retire_order[chosen]] = 0.0
         return int(chosen.sum().item())
@@ -408,12 +397,8 @@ class SparseSynapses:
         )
         if actual != expected:
             raise ValueError("synapse payload shape does not match architecture")
-        pre_index = payload["pre_index"].detach().to(
-            device=self.device, dtype=torch.int32
-        )
-        edge_weight = payload["edge_weight"].detach().to(
-            device=self.device, dtype=torch.float32
-        )
+        pre_index = payload["pre_index"].detach().to(device=self.device, dtype=torch.int32)
+        edge_weight = payload["edge_weight"].detach().to(device=self.device, dtype=torch.float32)
         if pre_index.shape != self.pre_index.shape:
             raise ValueError("synapse presynaptic topology does not match architecture")
         if edge_weight.shape != self.edge_weight.shape:

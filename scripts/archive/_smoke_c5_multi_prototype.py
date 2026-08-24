@@ -10,6 +10,7 @@
 7. proto_counts 统计正确
 8. _fingerprint_route 适配多原型
 """
+
 from __future__ import annotations
 
 import os
@@ -78,7 +79,9 @@ def test_update_winner_only():
 
     assert diff_0 > 1e-6, f"胜者原型 0 应被更新, diff={diff_0}"
     # 初始化阶段（count<1）直接赋值，所以 diff_0 可能较大
-    print(f"  PASS: 胜者原型 0 更新 (diff={diff_0:.4f}), 非胜者不变 (diff_1={diff_1:.4f}, diff_2={diff_2:.4f})")
+    print(
+        f"  PASS: 胜者原型 0 更新 (diff={diff_0:.4f}), 非胜者不变 (diff_1={diff_1:.4f}, diff_2={diff_2:.4f})"
+    )
 
 
 def test_initialization_phase():
@@ -163,7 +166,9 @@ def test_fingerprint_route_compat():
     # 通过检查 cortex.py 源码包含多原型分支
     cortex_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "taiji", "brain", "cortex.py",
+        "taiji",
+        "brain",
+        "cortex.py",
     )
     with open(cortex_path, "r", encoding="utf-8") as f:
         source = f.read()
@@ -186,7 +191,9 @@ def test_checkpoint_compat():
     # strict=False 加载（旧 ckpt 兼容）
     missing, unexpected = n.load_state_dict(old_state, strict=False)
     # domain_prototypes 和 proto_counts 应在 missing 中
-    assert any("domain_prototypes" in k for k in missing), f"domain_prototypes 应 missing, got {missing[:3]}"
+    assert any(
+        "domain_prototypes" in k for k in missing
+    ), f"domain_prototypes 应 missing, got {missing[:3]}"
     assert any("proto_counts" in k for k in missing), f"proto_counts 应 missing"
     # 加载后 domain_prototypes 仍保持初始化值（未被覆盖）
     assert n.domain_prototypes is not None

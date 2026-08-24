@@ -24,8 +24,13 @@ import torch  # noqa: E402
 from taiji.loader import assemble_cortex  # noqa: E402
 from scripts.training.experiment_config import build_dialogue_prompt  # noqa: E402
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -54,7 +59,10 @@ def main():
     )
     nids = list(cortex.neurons.keys())
     print(f"  装配: {nids}", flush=True)
-    print(f"  规格: { {n: (getattr(n, 'config', None) and getattr(n.config, 'hidden_size', '?')) for n, nid in [(cortex.neurons[n], n) for n in nids]} }", flush=True)
+    print(
+        f"  规格: { {n: (getattr(n, 'config', None) and getattr(n.config, 'hidden_size', '?')) for n, nid in [(cortex.neurons[n], n) for n in nids]} }",
+        flush=True,
+    )
 
     domain = "zh"
     domain_nids = [k for k in cortex.neurons if k == domain or k.startswith(domain + "_")]
@@ -78,8 +86,9 @@ def main():
             collab_mode="continuous",
         )
         qual_scores = result.get("round1_scores") or result.get("final_scores", {})
-        domain_scores = {k: v for k, v in qual_scores.items()
-                         if k == domain or k.startswith(domain + "_")}
+        domain_scores = {
+            k: v for k, v in qual_scores.items() if k == domain or k.startswith(domain + "_")
+        }
         leader_nid = max(domain_scores, key=domain_scores.get) if domain_scores else "?"
         leader_stats[leader_nid] = leader_stats.get(leader_nid, 0) + 1
         scores_sorted = sorted(domain_scores.items(), key=lambda x: -x[1])
@@ -94,7 +103,10 @@ def main():
     gen_leaders = [n for n in leader_stats if n.startswith("zh_")]
     general_zh_leader = leader_stats.get("zh", 0)
     print(f"  general zh(51M) 当选: {general_zh_leader}/{len(PROMPTS)}", flush=True)
-    print(f"  dialogue 当选: {sum(leader_stats.get(n, 0) for n in gen_leaders)}/{len(PROMPTS)}", flush=True)
+    print(
+        f"  dialogue 当选: {sum(leader_stats.get(n, 0) for n in gen_leaders)}/{len(PROMPTS)}",
+        flush=True,
+    )
 
 
 if __name__ == "__main__":

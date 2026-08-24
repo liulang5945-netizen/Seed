@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-23 03:53:54",
+  "timestamp": "2026-08-23 14:57:56",
   "task": "B1-bis 原生版：探索自主性（突破锁定）",
   "checkpoint": "E:\\Seed\\checkpoints\\seed_corpus.pt",
   "decisions": 20,
@@ -15,7 +15,7 @@
     "episodes": 20,
     "actions": 880,
     "crashes": 0,
-    "mean_reward": 0.12613636363636363,
+    "mean_reward": 0.125,
     "distinct_topics": 6,
     "forced_switches": 0
   },
@@ -60,5 +60,5 @@
     "finite": true
   },
   "b1_pass": true,
-  "elapsed_seconds": 9.015545845031738
+  "elapsed_seconds": 13.774030208587646
 }

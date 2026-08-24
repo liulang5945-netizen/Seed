@@ -13,7 +13,7 @@
 
 import logging
 from collections import defaultdict
-from typing import Iterable, Tuple
+from typing import Iterable
 
 logger = logging.getLogger("CoactivationTracker")
 
@@ -61,8 +61,10 @@ class CoactivationTracker:
         """
         self._geometry = geometry
         if geometry is not None:
-            logger.info(f"CoactivationTracker: RSGN geometry registered "
-                        f"({len(geometry.positions)} neurons)")
+            logger.info(
+                f"CoactivationTracker: RSGN geometry registered "
+                f"({len(geometry.positions)} neurons)"
+            )
         else:
             logger.info("CoactivationTracker: RSGN geometry removed")
 
@@ -97,10 +99,9 @@ class CoactivationTracker:
                     weight = geo.distance_gate(active_list[i], active_list[j])
                 self._fast_matrix[pair] += weight
                 # EMA 更新 slow 矩阵
-                self._slow_matrix[pair] = (
-                    (1 - self.ema_alpha) * self._slow_matrix[pair]
-                    + self.ema_alpha * weight
-                )
+                self._slow_matrix[pair] = (1 - self.ema_alpha) * self._slow_matrix[
+                    pair
+                ] + self.ema_alpha * weight
 
         for nid in active_list:
             self._activation_counts[nid] += 1
@@ -135,7 +136,7 @@ class CoactivationTracker:
         slow = slow * (1 - ema_alpha)
         """
         for pair in list(self._slow_matrix.keys()):
-            self._slow_matrix[pair] *= (1 - self.ema_alpha)
+            self._slow_matrix[pair] *= 1 - self.ema_alpha
 
     def get_strong_pairs(self, threshold: float = 0.2) -> list:
         """获取共激活强度超过阈值的 pair 列表（供 SleepConsolidator 强化 side_channels）。
@@ -161,8 +162,7 @@ class CoactivationTracker:
             被遗忘的 pair 数量
         """
         weak_pairs = [
-            pair for pair, strength in self._slow_matrix.items()
-            if strength < self.forget_threshold
+            pair for pair, strength in self._slow_matrix.items() if strength < self.forget_threshold
         ]
         for pair in weak_pairs:
             del self._slow_matrix[pair]

@@ -16,6 +16,7 @@
 
 注意：未训练的 codec 输出无意义，需训练后才有实际重建能力。
 """
+
 from __future__ import annotations
 
 from typing import List, Optional
@@ -95,9 +96,15 @@ class VideoQuantizer(nn.Module):
     用 EMA 跟踪近期使用率（而非累计计数），持续重启死码。
     """
 
-    def __init__(self, num_embeddings: int = 8192, embedding_dim: int = 256,
-                 commitment_cost: float = 0.25, ema_decay: float = 0.99,
-                 dead_threshold: float = 1e-3, diversity_cost: float = 0.1):
+    def __init__(
+        self,
+        num_embeddings: int = 8192,
+        embedding_dim: int = 256,
+        commitment_cost: float = 0.25,
+        ema_decay: float = 0.99,
+        dead_threshold: float = 1e-3,
+        diversity_cost: float = 0.1,
+    ):
         super().__init__()
         self.num_embeddings = num_embeddings
         self.embedding_dim = embedding_dim
@@ -133,9 +140,11 @@ class VideoQuantizer(nn.Module):
         if not self._ema_initialized and self.training:
             self._init_ema_from_data(z_flat)
 
-        dist = (z_flat.pow(2).sum(dim=1, keepdim=True)
-                - 2 * z_flat @ self.codebook.weight.t()
-                + self.codebook.weight.pow(2).sum(dim=1))
+        dist = (
+            z_flat.pow(2).sum(dim=1, keepdim=True)
+            - 2 * z_flat @ self.codebook.weight.t()
+            + self.codebook.weight.pow(2).sum(dim=1)
+        )
         indices = dist.argmin(dim=1)
         quantized_flat = self.codebook(indices)
 
@@ -162,11 +171,14 @@ class VideoQuantizer(nn.Module):
 
                 # EMA codebook 更新
                 self.ema_cluster_size.data.mul_(self.ema_decay).add_(
-                    cluster_size, alpha=1 - self.ema_decay)
+                    cluster_size, alpha=1 - self.ema_decay
+                )
                 dw = one_hot.t() @ z_flat
                 self.ema_w.data.mul_(self.ema_decay).add_(dw, alpha=1 - self.ema_decay)
                 n = self.ema_cluster_size.sum()
-                smoothed_size = (self.ema_cluster_size + 1e-5) / (n + self.num_embeddings * 1e-5) * n
+                smoothed_size = (
+                    (self.ema_cluster_size + 1e-5) / (n + self.num_embeddings * 1e-5) * n
+                )
                 self.codebook.weight.data.copy_(self.ema_w / smoothed_size.unsqueeze(1))
 
                 # EMA 近期使用率（归一化概率）
@@ -215,12 +227,17 @@ class VideoVQVAE(nn.Module):
         if recon.shape != x.shape:
             target = x.shape
             # 裁剪到目标形状（时间、空间都可能略大）
-            recon = recon[:, :, :target[2], :target[3], :target[4]]
+            recon = recon[:, :, : target[2], : target[3], : target[4]]
             # 若裁剪后仍不足（罕见），补零
             if recon.shape != target:
-                pad = [0, target[4] - recon.shape[4],
-                       0, target[3] - recon.shape[3],
-                       0, target[2] - recon.shape[2]]
+                pad = [
+                    0,
+                    target[4] - recon.shape[4],
+                    0,
+                    target[3] - recon.shape[3],
+                    0,
+                    target[2] - recon.shape[2],
+                ]
                 recon = F.pad(recon, pad)
         return recon, indices, vq_loss
 
@@ -229,7 +246,9 @@ class VideoVQVAE(nn.Module):
         _, indices, _ = self.quantizer(z)
         return indices
 
-    def decode_from_indices(self, indices: torch.Tensor, target_shape: Optional[tuple] = None) -> torch.Tensor:
+    def decode_from_indices(
+        self, indices: torch.Tensor, target_shape: Optional[tuple] = None
+    ) -> torch.Tensor:
         B, T, H, W = indices.shape
         quantized = self.quantizer.codebook(indices)  # [B, T, H, W, D]
         quantized = quantized.permute(0, 4, 1, 2, 3).contiguous()  # [B, D, T, H, W]
@@ -239,9 +258,7 @@ class VideoVQVAE(nn.Module):
             t, h, w = target_shape
             recon = recon[:, :, :t, :h, :w]
             if recon.shape[2] < t or recon.shape[3] < h or recon.shape[4] < w:
-                pad = [0, w - recon.shape[4],
-                       0, h - recon.shape[3],
-                       0, t - recon.shape[2]]
+                pad = [0, w - recon.shape[4], 0, h - recon.shape[3], 0, t - recon.shape[2]]
                 recon = F.pad(recon, pad)
         return recon
 
@@ -305,10 +322,11 @@ class VideoCodec:
 
         # 裁剪/补齐时间维度到 num_frames
         if T > self.num_frames:
-            video = video[:, :, :self.num_frames]
+            video = video[:, :, : self.num_frames]
         elif T < self.num_frames:
-            pad = torch.zeros(B, C, self.num_frames - T, self.frame_size, self.frame_size,
-                              device=self.device)
+            pad = torch.zeros(
+                B, C, self.num_frames - T, self.frame_size, self.frame_size, device=self.device
+            )
             video = torch.cat([video, pad], dim=2)
 
         return video
@@ -323,7 +341,7 @@ class VideoCodec:
     def decode(self, ids: List[int]) -> torch.Tensor:
         """codebook 索引序列 → 重建视频。"""
         with torch.no_grad():
-            n = len(ids)
+            len(ids)
             # 推断 3D 尺寸：T' = num_frames/4, H' = W' = frame_size/4（空间 4x 下采样）
             t = self.num_frames // 4
             s = self.frame_size // 4

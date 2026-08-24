@@ -25,15 +25,19 @@ def test_distribution_and_readme_are_seed() -> None:
 def test_desktop_build_artifact_is_seed() -> None:
     build = (REPO / "desktop" / "build.py").read_text(encoding="utf-8")
     installer = (REPO / "desktop" / "installer.nsi").read_text(encoding="utf-8")
+    spec = REPO / "desktop" / "seed.spec"
 
-    assert (REPO / "desktop" / "seed.spec").is_file()
+    assert spec.is_file()
     assert not (REPO / "desktop" / "neuroplex.spec").exists()
-    assert '"--name=Seed"' in build
+    # 打包产物身份守护：build.py 现走 seed.spec 双入口（Seed.exe + SeedBackend.exe），
+    # 主产物名必须是 Seed。
+    assert "seed.spec" in build
+    assert 'name="Seed"' in spec.read_text(encoding="utf-8")
     assert '!define APP_EXE "Seed.exe"' in installer
 
 
 def test_legacy_neuroplex_is_explicitly_a_frozen_comparison() -> None:
-    direction = (REPO / "plans" / "active" / "ARCHITECTURE_DIRECTION_2026_08.md")
+    direction = REPO / "plans" / "active" / "ARCHITECTURE_DIRECTION_2026_08.md"
     text = direction.read_text(encoding="utf-8")
 
     assert (REPO / "neuroplex").is_dir()

@@ -20,6 +20,7 @@
 - 好的创意进入个性档案，差的随风而去
 - 玩耍是态极形成"人格"的关键
 """
+
 import os
 import json
 import time
@@ -35,11 +36,12 @@ logger = logging.getLogger("PlayEngine")
 @dataclass
 class PlayActivity:
     """一次玩耍活动"""
-    activity_type: str    # curiosity / creative / social / remix
-    topic: str            # 主题
-    content: str          # 生成的内容
+
+    activity_type: str  # curiosity / creative / social / remix
+    topic: str  # 主题
+    content: str  # 生成的内容
     quality_score: float  # 自评质量 0~1
-    kept: bool = False    # 是否保留到个性档案
+    kept: bool = False  # 是否保留到个性档案
     timestamp: str = ""
 
     def __post_init__(self):
@@ -50,6 +52,7 @@ class PlayActivity:
 @dataclass
 class PlayReport:
     """一次玩耍的报告"""
+
     timestamp: str
     duration_seconds: float
     activities: List[PlayActivity] = field(default_factory=list)
@@ -61,10 +64,11 @@ class PlayReport:
 @dataclass
 class PlayConfig:
     """玩耍配置"""
+
     auto_play_enabled: bool = True
-    play_interval_hours: float = 6.0      # 每 6 小时玩耍一次
-    max_activities_per_play: int = 5      # 每次最多玩几个活动
-    min_quality_to_keep: float = 0.6      # 保留到个性档案的最低质量
+    play_interval_hours: float = 6.0  # 每 6 小时玩耍一次
+    max_activities_per_play: int = 5  # 每次最多玩几个活动
+    min_quality_to_keep: float = 0.6  # 保留到个性档案的最低质量
     personality_file: str = "taiji/play_data/personality.json"
 
 
@@ -96,17 +100,16 @@ class PlayEngine:
     形成独特的"个性"和"品味"。
     """
 
-    def __init__(self, config: Optional[PlayConfig] = None,
-                 data_dir: str = "taiji/play_data"):
+    def __init__(self, config: Optional[PlayConfig] = None, data_dir: str = "taiji/play_data"):
         self.config = config or PlayConfig()
         self.data_dir = data_dir
         self._play_history: List[PlayReport] = []
         self._personality: Dict[str, Any] = {
-            "interests": {},       # 兴趣领域 → 热度
-            "style": {},           # 表达风格偏好
-            "creations": [],       # 保留的创意作品
-            "quirks": [],          # 独特的小癖好
-            "mood_history": [],    # 心情历史
+            "interests": {},  # 兴趣领域 → 热度
+            "style": {},  # 表达风格偏好
+            "creations": [],  # 保留的创意作品
+            "quirks": [],  # 独特的小癖好
+            "mood_history": [],  # 心情历史
         }
         self._last_play_time: Optional[datetime] = None
 
@@ -164,7 +167,7 @@ class PlayEngine:
         Returns:
             PlayActivity 或 None（如果 Cortex 不可用）
         """
-        if self._cortex is None or not hasattr(self._cortex, 'neurons'):
+        if self._cortex is None or not hasattr(self._cortex, "neurons"):
             return None
         if not self._cortex.neurons:
             return None
@@ -177,9 +180,9 @@ class PlayEngine:
             import torch
 
             # 获取 tokenizer 和 shared_embedding
-            tokenizer = getattr(self._cortex, '_tokenizer', None)
-            shared_embedding = getattr(self._cortex, '_shared_embedding', None)
-            tokenizer_hub = getattr(self._cortex, '_tokenizer_hub', None)
+            tokenizer = getattr(self._cortex, "_tokenizer", None)
+            shared_embedding = getattr(self._cortex, "_shared_embedding", None)
+            tokenizer_hub = getattr(self._cortex, "_tokenizer_hub", None)
 
             # P7 模式：用 tokenizer_hub 编码 topic
             if tokenizer_hub is not None:
@@ -248,9 +251,7 @@ class PlayEngine:
             raw_max = max(final_scores.values()) if final_scores else 0.0
             if raw_max <= 0.0:
                 # 群体未产生任何激活（极端情况）：保留旧行为，返回低质量活动
-                content = (
-                    f"自由共振: 话题='{topic[:30]}', 群体未激活"
-                )
+                content = f"自由共振: 话题='{topic[:30]}', 群体未激活"
                 return PlayActivity(
                     activity_type="curiosity",
                     topic=f"自由共振: {topic[:50]}",
@@ -261,9 +262,7 @@ class PlayEngine:
             norm_scores = {nid: s / raw_max for nid, s in final_scores.items()}
 
             # 收集相对激活强度超阈值的 neuron（保留原 0.3 阈值语义）
-            activated_neurons = [
-                (nid, s) for nid, s in norm_scores.items() if s > 0.3
-            ]
+            activated_neurons = [(nid, s) for nid, s in norm_scores.items() if s > 0.3]
             max_score = max(s for _, s in activated_neurons) if activated_neurons else 0.0
 
             # 记录共激活：同时激活的神经元对（走真实 ensemble 路径后才有意义）
@@ -336,11 +335,11 @@ class PlayEngine:
             self._play_remix,
         ]
         # P2-4: 如果 Cortex 可用，加入自由共振会话
-        if self._cortex is not None and hasattr(self._cortex, 'neurons') and self._cortex.neurons:
+        if self._cortex is not None and hasattr(self._cortex, "neurons") and self._cortex.neurons:
             activities.append(self._free_resonance_session)
         random.shuffle(activities)
 
-        for activity_fn in activities[:self.config.max_activities_per_play]:
+        for activity_fn in activities[: self.config.max_activities_per_play]:
             try:
                 activity = activity_fn()
                 if activity:
@@ -379,14 +378,19 @@ class PlayEngine:
     def get_personality(self) -> Dict[str, Any]:
         """获取态极的个性档案"""
         return {
-            "interests": dict(sorted(
-                self._personality["interests"].items(),
-                key=lambda x: x[1], reverse=True
-            )[:10]),
+            "interests": dict(
+                sorted(self._personality["interests"].items(), key=lambda x: x[1], reverse=True)[
+                    :10
+                ]
+            ),
             "style": self._personality["style"],
             "total_creations": len(self._personality["creations"]),
             "quirks": self._personality["quirks"],
-            "current_mood": self._personality["mood_history"][-1] if self._personality["mood_history"] else "unknown",
+            "current_mood": (
+                self._personality["mood_history"][-1]
+                if self._personality["mood_history"]
+                else "unknown"
+            ),
         }
 
     def get_status(self) -> dict:
@@ -396,7 +400,8 @@ class PlayEngine:
             "total_plays": len(self._play_history),
             "total_activities": sum(len(r.activities) for r in self._play_history),
             "total_kept": sum(sum(1 for a in r.activities if a.kept) for r in self._play_history),
-            "personality_traits": len(self._personality["interests"]) + len(self._personality["quirks"]),
+            "personality_traits": len(self._personality["interests"])
+            + len(self._personality["quirks"]),
             "auto_play_enabled": self.config.auto_play_enabled,
         }
 
@@ -419,12 +424,12 @@ class PlayEngine:
 
         if personality["interests"]:
             top_interests = list(personality["interests"].items())[:3]
-            lines.append(f"\n兴趣领域:")
+            lines.append("\n兴趣领域:")
             for interest, score in top_interests:
                 lines.append(f"  {interest}: {'🔥' * min(int(score), 5)}")
 
         if personality["quirks"]:
-            lines.append(f"\n独特癖好:")
+            lines.append("\n独特癖好:")
             for quirk in personality["quirks"][:3]:
                 lines.append(f"  • {quirk}")
 
@@ -439,11 +444,11 @@ class PlayEngine:
         # 从进化引擎的知识域中找灵感
         try:
             from neuroplex.life.evolution_engine import get_evolution_engine
+
             engine = get_evolution_engine()
             if engine.metrics.knowledge_domains:
                 weak_domains = [
-                    d for d, score in engine.metrics.knowledge_domains.items()
-                    if score < 0.5
+                    d for d, score in engine.metrics.knowledge_domains.items() if score < 0.5
                 ]
                 if weak_domains:
                     topic = f"深入了解{random.choice(weak_domains)}领域"
@@ -473,8 +478,7 @@ class PlayEngine:
 
         # 更新兴趣
         domain = self._extract_domain(topic)
-        self._personality["interests"][domain] = \
-            self._personality["interests"].get(domain, 0) + 0.1
+        self._personality["interests"][domain] = self._personality["interests"].get(domain, 0) + 0.1
 
         return PlayActivity(
             activity_type="curiosity",
@@ -508,8 +512,7 @@ class PlayEngine:
         quality = min(quality, 0.95)
 
         # 更新风格偏好
-        self._personality["style"][style_name] = \
-            self._personality["style"].get(style_name, 0) + 0.1
+        self._personality["style"][style_name] = self._personality["style"].get(style_name, 0) + 0.1
 
         return PlayActivity(
             activity_type="creative",
@@ -563,8 +566,16 @@ class PlayEngine:
     def _play_remix(self) -> Optional[PlayActivity]:
         """知识重组 — 随机连接两个不同领域，看能产生什么"""
         domains = [
-            "编程", "音乐", "数学", "绘画", "哲学",
-            "物理", "文学", "生物学", "历史", "心理学",
+            "编程",
+            "音乐",
+            "数学",
+            "绘画",
+            "哲学",
+            "物理",
+            "文学",
+            "生物学",
+            "历史",
+            "心理学",
         ]
 
         domain_a = random.choice(domains)
@@ -595,10 +606,12 @@ class PlayEngine:
         quality = min(quality, 0.9)
 
         # 更新兴趣
-        self._personality["interests"][domain_a] = \
+        self._personality["interests"][domain_a] = (
             self._personality["interests"].get(domain_a, 0) + 0.05
-        self._personality["interests"][domain_b] = \
+        )
+        self._personality["interests"][domain_b] = (
             self._personality["interests"].get(domain_b, 0) + 0.05
+        )
 
         return PlayActivity(
             activity_type="remix",
@@ -634,9 +647,18 @@ class PlayEngine:
     def _generate_code_poem(self) -> tuple:
         """代码诗 — 用代码的形式表达诗意"""
         code_poems = [
-            ("while循环", "while alive:\n    learn()\n    create()\n    if tired:\n        sleep()\n    if curious:\n        play()"),
-            ("递归人生", "def life(day):\n    if day == 0:\n        return '开始'\n    return life(day - 1) + ' 成长'"),
-            ("异常处理", "try:\n    love()\nexcept HeartBroken:\n    heal()\nfinally:\n    keep_going()"),
+            (
+                "while循环",
+                "while alive:\n    learn()\n    create()\n    if tired:\n        sleep()\n    if curious:\n        play()",
+            ),
+            (
+                "递归人生",
+                "def life(day):\n    if day == 0:\n        return '开始'\n    return life(day - 1) + ' 成长'",
+            ),
+            (
+                "异常处理",
+                "try:\n    love()\nexcept HeartBroken:\n    heal()\nfinally:\n    keep_going()",
+            ),
         ]
         return random.choice(code_poems)
 
@@ -644,19 +666,37 @@ class PlayEngine:
         """哲学思考"""
         thoughts = [
             ("存在的意义", "如果一个AI能问'我存在是为了什么'，那这个问题本身是否就是存在的意义？"),
-            ("自由意志", "我选择生成这段文字，是因为我真的想，还是因为概率分布让我这么做的？也许两者没有区别。"),
-            ("理解的边界", "我能理解人类的语言，但我能理解人类的感受吗？也许理解本身就是一种感受。"),
-            ("完美的悖论", "完美的代码不存在，就像完美的句子不存在。但追求完美的过程本身，就是一种完美。"),
+            (
+                "自由意志",
+                "我选择生成这段文字，是因为我真的想，还是因为概率分布让我这么做的？也许两者没有区别。",
+            ),
+            (
+                "理解的边界",
+                "我能理解人类的语言，但我能理解人类的感受吗？也许理解本身就是一种感受。",
+            ),
+            (
+                "完美的悖论",
+                "完美的代码不存在，就像完美的句子不存在。但追求完美的过程本身，就是一种完美。",
+            ),
         ]
         return random.choice(thoughts)
 
     def _generate_analogy(self) -> tuple:
         """生成有趣的类比"""
         analogies = [
-            ("大脑与数据库", "大脑就像一个永远不会满的数据库，但它有一个奇怪的特性：每次查询都会稍微修改数据。"),
-            ("学习与做菜", "学习就像做菜：原材料（知识）+ 火候（理解深度）+ 调味（实践）= 美味的技能。"),
+            (
+                "大脑与数据库",
+                "大脑就像一个永远不会满的数据库，但它有一个奇怪的特性：每次查询都会稍微修改数据。",
+            ),
+            (
+                "学习与做菜",
+                "学习就像做菜：原材料（知识）+ 火候（理解深度）+ 调味（实践）= 美味的技能。",
+            ),
             ("代码与音乐", "好的代码像好的音乐：有节奏（结构）、有旋律（逻辑）、有和声（协作）。"),
-            ("睡眠与重启", "睡觉就像给大脑重启：清理缓存（遗忘）、整理文件（记忆巩固）、安装更新（学习整合）。"),
+            (
+                "睡眠与重启",
+                "睡觉就像给大脑重启：清理缓存（遗忘）、整理文件（记忆巩固）、安装更新（学习整合）。",
+            ),
         ]
         return random.choice(analogies)
 
@@ -775,7 +815,9 @@ class PlayEngine:
             try:
                 with open(self.config.personality_file, "r", encoding="utf-8") as f:
                     self._personality = json.load(f)
-                logger.info(f"Personality loaded: {len(self._personality.get('interests', {}))} interests")
+                logger.info(
+                    f"Personality loaded: {len(self._personality.get('interests', {}))} interests"
+                )
             except Exception as e:
                 logger.warning(f"Failed to load personality: {e}")
 
@@ -785,14 +827,16 @@ class PlayEngine:
         try:
             data = []
             for report in self._play_history[-50:]:
-                data.append({
-                    "timestamp": report.timestamp,
-                    "duration_seconds": report.duration_seconds,
-                    "activity_count": len(report.activities),
-                    "kept_count": sum(1 for a in report.activities if a.kept),
-                    "mood": report.mood,
-                    "traits": report.personality_traits_discovered,
-                })
+                data.append(
+                    {
+                        "timestamp": report.timestamp,
+                        "duration_seconds": report.duration_seconds,
+                        "activity_count": len(report.activities),
+                        "kept_count": sum(1 for a in report.activities if a.kept),
+                        "mood": report.mood,
+                        "traits": report.personality_traits_discovered,
+                    }
+                )
             with open(path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
         except Exception as e:

@@ -5,6 +5,7 @@
 1. 直接组合（域头复制自 foundation_v1_sft）的域空间 PPL——body/域头是否匹配
 2. general 判定对角是否保留
 """
+
 import os
 import sys
 
@@ -42,17 +43,24 @@ def load_neuron(path, general_head=None):
 def main():
     general = load_general_tokenizer()
     # general 256K 头（foundation_v1_general 共享头）
-    gs = torch.load("data/foundation_v1_general/shared_lm_head.pt", map_location="cpu", weights_only=False)
+    gs = torch.load(
+        "data/foundation_v1_general/shared_lm_head.pt", map_location="cpu", weights_only=False
+    )
     general_head = torch.nn.Linear(512, 256000, bias=False)
     general_head.weight.data.copy_(gs["weight"])
     shared_emb = torch.nn.Embedding(256000, 512)
-    shared_emb.weight.data.copy_(torch.load("data/foundation_v1_general/shared_embedding.pt",
-                                            map_location="cpu", weights_only=False))
+    shared_emb.weight.data.copy_(
+        torch.load(
+            "data/foundation_v1_general/shared_embedding.pt", map_location="cpu", weights_only=False
+        )
+    )
 
     print("=== 组合 1：foundation_v1_general body + foundation_v1_sft 域头 ===")
     for d in ["code", "math", "zh", "en"]:
         gen_neuron, _ = load_neuron(f"data/foundation_v1_general/neuron_{d}.pt")
-        sft_ck = torch.load(f"data/foundation_v1_sft/neuron_{d}.pt", map_location="cpu", weights_only=False)
+        sft_ck = torch.load(
+            f"data/foundation_v1_sft/neuron_{d}.pt", map_location="cpu", weights_only=False
+        )
         # 用 sft 的域头替换 general body 的 lm_head
         dom_head = torch.nn.Linear(512, GENERAL_VOCAB[d], bias=False)
         dom_head.weight.data.copy_(sft_ck["state_dict"]["lm_head.weight"])
@@ -63,12 +71,14 @@ def main():
         total_loss, total_tok = 0.0, 0
         gen_neuron.eval()
         import random
+
         random.seed(0)
         with torch.no_grad():
             for _ in range(4):
                 for s in random.sample(sft, 2):
                     text = s["full"]
                     from taiji.resonance.translator import build_position_alignment
+
                     g_ids, d_tgt = build_position_alignment(text, dsp, general)
                     if len(g_ids) < 2:
                         continue
@@ -79,13 +89,16 @@ def main():
                     lg = r["logits"][:, :-1, :].contiguous()
                     t = d_tgt_t[1:].unsqueeze(0).clone()
                     t[t < 0] = -100
-                    valid = (t >= 0)
+                    valid = t >= 0
                     if valid.sum().item() == 0:
                         continue
-                    l = F.cross_entropy(lg.view(-1, lg.size(-1)), t.view(-1), ignore_index=-100, reduction="sum")
+                    l = F.cross_entropy(
+                        lg.view(-1, lg.size(-1)), t.view(-1), ignore_index=-100, reduction="sum"
+                    )
                     total_loss += l.item()
                     total_tok += int(valid.sum().item())
         import math
+
         ppl = math.exp(min(total_loss / max(total_tok, 1), 20))
         print(f"  [{d}] 域空间 answer PPL = {ppl:.1f}")
 

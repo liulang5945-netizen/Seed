@@ -16,7 +16,7 @@ from __future__ import annotations
 import logging
 import os
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 logger = logging.getLogger("Taiji.Lifecycle")
 
@@ -42,15 +42,15 @@ class ApoptosisTracker:
     """
 
     # 相对阈值（种群竞争）
-    low_score_threshold: float = 0.4    # 生存分 < 此值视为"低分"
-    failure_threshold: int = 3          # 连续 3 轮低分 → candidate（防单轮抖动）
-    observe_rounds: int = 10            # 隔离观察期（级联过程，可复活）
+    low_score_threshold: float = 0.4  # 生存分 < 此值视为"低分"
+    failure_threshold: int = 3  # 连续 3 轮低分 → candidate（防单轮抖动）
+    observe_rounds: int = 10  # 隔离观察期（级联过程，可复活）
 
     # 状态机（nid -> state）
-    _states: dict = field(default_factory=dict)          # active|candidate|isolated|dead
+    _states: dict = field(default_factory=dict)  # active|candidate|isolated|dead
     _failure_counts: dict = field(default_factory=dict)  # nid -> 连续低分计数
-    _isolate_since: dict = field(default_factory=dict)   # nid -> 进入隔离的轮次
-    _scores: dict = field(default_factory=dict)          # nid -> 最近生存分
+    _isolate_since: dict = field(default_factory=dict)  # nid -> 进入隔离的轮次
+    _scores: dict = field(default_factory=dict)  # nid -> 最近生存分
 
     # 兼容旧字段（旧调用方仍可调用 record_ppl / check_activation）
     _apoptosed: dict = field(default_factory=dict)
@@ -120,10 +120,7 @@ class ApoptosisTracker:
         metrics_map: {nid: metrics}，先计算种群 ppl 百分位（若注入 ppl），再逐 nid 流转。
         """
         # 1. 种群 ppl 百分位（空间自适应：分位在同一空间内计算）
-        ppl_vals = {
-            nid: m["ppl"] for nid, m in metrics_map.items()
-            if m.get("ppl") is not None
-        }
+        ppl_vals = {nid: m["ppl"] for nid, m in metrics_map.items() if m.get("ppl") is not None}
         if ppl_vals:
             sorted_ids = sorted(ppl_vals, key=lambda k: ppl_vals[k])
             rank = {nid: i for i, nid in enumerate(sorted_ids)}
@@ -147,8 +144,12 @@ class ApoptosisTracker:
                     self._failure_counts[nid] = self._failure_counts.get(nid, 0) + 1
                     if self._failure_counts[nid] >= self.failure_threshold:
                         self._states[nid] = "candidate"  # 凋亡级联启动
-                        logger.warning("神经元 %s 生存分 %.2f 连续 %d 轮偏低，进入 candidate",
-                                       nid, score, self._failure_counts[nid])
+                        logger.warning(
+                            "神经元 %s 生存分 %.2f 连续 %d 轮偏低，进入 candidate",
+                            nid,
+                            score,
+                            self._failure_counts[nid],
+                        )
                 else:
                     self._failure_counts[nid] = 0
             elif state == "candidate":
@@ -173,7 +174,9 @@ class ApoptosisTracker:
                     # 观察期满 → 试复活（重新加入路由，下一轮决定生死）
                     # 人脑：凋亡级联的最后确认，给神经元最后一次证明自己的机会
                     self._states[nid] = "trial"
-                    logger.warning("神经元 %s 隔离观察 %d 轮，进入 trial（试复活）", nid, self.observe_rounds)
+                    logger.warning(
+                        "神经元 %s 隔离观察 %d 轮，进入 trial（试复活）", nid, self.observe_rounds
+                    )
             elif state == "trial":
                 if not low:
                     # 试复活成功：分数恢复 → 真正复活
@@ -273,15 +276,19 @@ class ApoptosisTracker:
             for other_nid, other_neuron in ensemble.neurons.items():
                 if hasattr(other_neuron, "excite_channels") and key in other_neuron.excite_channels:
                     del other_neuron.excite_channels[key]
-                if hasattr(other_neuron, "inhibit_channels") and key in other_neuron.inhibit_channels:
+                if (
+                    hasattr(other_neuron, "inhibit_channels")
+                    and key in other_neuron.inhibit_channels
+                ):
                     del other_neuron.inhibit_channels[key]
 
         return True
 
     # ── 突触修剪（层级 0：先修剪连接，不动神经元本体）────
 
-    def prune_synapses(self, neurons: Dict[str, Any],
-                       min_usage: float = 0.01, stale_rounds: int = 10) -> int:
+    def prune_synapses(
+        self, neurons: Dict[str, Any], min_usage: float = 0.01, stale_rounds: int = 10
+    ) -> int:
         """修剪弱突触（side_channels）——人脑突触修剪（Synaptic Pruning）。
 
         长期未被利用的侧通道（|proj*scale+bias| 均值低）被删除，
@@ -339,7 +346,11 @@ class ApoptosisTracker:
                     self._apoptosed[neuron_id] = True
                     logger.warning(
                         "神经元 %s 连续 %d 次 PPL > %.1f（当前 %.1f），标记凋亡（兼容路径）",
-                        neuron_id, self._failure_counts[neuron_id], self.ppl_threshold, ppl)
+                        neuron_id,
+                        self._failure_counts[neuron_id],
+                        self.ppl_threshold,
+                        ppl,
+                    )
                     return True
             else:
                 self._failure_counts[neuron_id] = 0
@@ -355,9 +366,14 @@ class ApoptosisTracker:
         if ratio < self.activation_ratio and self._states.get(neuron_id, "active") == "active":
             self._apoptosed[neuron_id] = True
             self._states[neuron_id] = "candidate"
-            logger.warning("神经元 %s 激活率 %.3f < %.3f（%d/%d 轮），标记凋亡（兼容路径）",
-                           neuron_id, ratio, self.activation_ratio,
-                           activation_count, total_rounds)
+            logger.warning(
+                "神经元 %s 激活率 %.3f < %.3f（%d/%d 轮），标记凋亡（兼容路径）",
+                neuron_id,
+                ratio,
+                self.activation_ratio,
+                activation_count,
+                total_rounds,
+            )
             return True
         return False
 
@@ -415,7 +431,9 @@ class MaturityTracker:
         """获取共振权重（幼稚态低，成熟态高）。"""
         ratio = self.get_maturity_ratio(neuron_id)
         # 线性增长：幼稚态 maturity_min_resonance_weight，成熟态 1.0
-        return self.maturity_min_resonance_weight + (1.0 - self.maturity_min_resonance_weight) * ratio
+        return (
+            self.maturity_min_resonance_weight + (1.0 - self.maturity_min_resonance_weight) * ratio
+        )
 
     def is_mature(self, neuron_id: str) -> bool:
         """是否已完全成熟。"""
@@ -495,7 +513,7 @@ class NeurogenesisTrigger:
             return "healthy"
         if len(history) < self.slope_window:
             return "unknown"
-        slope = self._compute_slope(history[-self.slope_window:])
+        slope = self._compute_slope(history[-self.slope_window :])
         if slope < self.plateau_slope_threshold:
             return "data_insufficient"
         return "capacity_limited"
@@ -531,13 +549,15 @@ class NeurogenesisTrigger:
 
         # 4. 斜率判别：历史足够长才启用
         if len(history) >= self.slope_window:
-            slope = self._compute_slope(history[-self.slope_window:])
+            slope = self._compute_slope(history[-self.slope_window :])
             if slope < self.plateau_slope_threshold:
                 # 还在学习，数据不足——不触发新生，也不重置计数
                 logger.info(
                     "domain %s 错误率高但持续下降（斜率 %.4f < %.2f），"
                     "判定为数据不足，继续喂数据而非加神经元",
-                    domain, slope, self.plateau_slope_threshold,
+                    domain,
+                    slope,
+                    self.plateau_slope_threshold,
                 )
                 return False
 
@@ -573,7 +593,7 @@ class NeurogenesisTrigger:
     #   错误率 < 0.3  → 简单任务 → compact（36M，成本低）
     #   0.3 ≤ 错误率 < 0.6 → 中等任务 → standard（116M，中等容量）
     #   错误率 ≥ 0.6 → 复杂任务 → expert（285M，最大容量）
-    simple_task_threshold: float = 0.3   # < 此值 → compact
+    simple_task_threshold: float = 0.3  # < 此值 → compact
     complex_task_threshold: float = 0.6  # ≥ 此值 → expert
     # 中间区间 → standard
 
@@ -602,8 +622,10 @@ class NeurogenesisTrigger:
             reason = f"错误率 {latest_error:.3f} < {self.simple_task_threshold}（简单任务）"
         elif latest_error < self.complex_task_threshold:
             spec = "standard"
-            reason = (f"错误率 {latest_error:.3f} ∈ "
-                      f"[{self.simple_task_threshold}, {self.complex_task_threshold})（中等任务）")
+            reason = (
+                f"错误率 {latest_error:.3f} ∈ "
+                f"[{self.simple_task_threshold}, {self.complex_task_threshold})（中等任务）"
+            )
         else:
             spec = "expert"
             reason = f"错误率 {latest_error:.3f} ≥ {self.complex_task_threshold}（复杂任务）"
@@ -723,22 +745,16 @@ class LifecycleManager:
         # 状态机流转
         states = self.apoptosis.step_population(metrics_map, step_round)
         newly_isolated = [
-            nid for nid, s in states.items()
+            nid
+            for nid, s in states.items()
             if s == "isolated" and self.apoptosis._isolate_since.get(nid, 0) == step_round
         ]
         # 隔离观察期满 → 试复活（sleep 侧需 revive_neuron 重新加入路由）
-        newly_trial = [
-            nid for nid, s in states.items() if s == "trial"
-        ]
-        dead = [
-            nid for nid, s in states.items() if s == "dead"
-        ]
+        newly_trial = [nid for nid, s in states.items() if s == "trial"]
+        dead = [nid for nid, s in states.items() if s == "dead"]
         # dead 神经元清理（ckpt 移入回收站 + 从 ensemble 摘除）
         for nid in dead:
-            ckpt_path = (
-                os.path.join(ckpt_dir, f"neuron_{nid}.pt")
-                if ckpt_dir else None
-            )
+            ckpt_path = os.path.join(ckpt_dir, f"neuron_{nid}.pt") if ckpt_dir else None
             self.apoptosis.cleanup_neuron(nid, ckpt_path, ensemble)
 
         # 递增所有注册神经元的成熟度

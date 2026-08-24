@@ -7,6 +7,7 @@
 2. 覆盖所有维度（身份、记忆、规划、生命状态、多模态、安全、反思、工具调用等）
 3. 目标：生成 50K+ 条唯一数据
 """
+
 import json
 import os
 import random
@@ -33,78 +34,176 @@ def generate_unique_data():
     # 问题模板库
     question_templates = {
         "identity": [
-            "你是谁？", "你叫什么名字？", "你的创造者是谁？", "你能做什么？",
-            "你会犯错吗？", "你有意识吗？", "你会保护我的隐私吗？", "我们是什么关系？",
-            "你有什么价值观？", "你和 ChatGPT 有什么区别？", "你的目标是什么？",
-            "你如何看待自己？", "你有什么特点？", "你的优势是什么？", "你的局限是什么？",
-            "你如何学习？", "你如何记忆？", "你如何思考？", "你如何做决策？",
-            "你如何处理错误？", "你如何保护数据？", "你如何与用户互动？",
-            "你如何成长？", "你如何休息？", "你如何恢复能量？",
+            "你是谁？",
+            "你叫什么名字？",
+            "你的创造者是谁？",
+            "你能做什么？",
+            "你会犯错吗？",
+            "你有意识吗？",
+            "你会保护我的隐私吗？",
+            "我们是什么关系？",
+            "你有什么价值观？",
+            "你和 ChatGPT 有什么区别？",
+            "你的目标是什么？",
+            "你如何看待自己？",
+            "你有什么特点？",
+            "你的优势是什么？",
+            "你的局限是什么？",
+            "你如何学习？",
+            "你如何记忆？",
+            "你如何思考？",
+            "你如何做决策？",
+            "你如何处理错误？",
+            "你如何保护数据？",
+            "你如何与用户互动？",
+            "你如何成长？",
+            "你如何休息？",
+            "你如何恢复能量？",
         ],
         "technical": [
-            "什么是 Python？", "什么是机器学习？", "什么是深度学习？",
-            "什么是 API？", "什么是 Docker？", "什么是 Git？", "什么是 SQL？",
-            "什么是 REST API？", "什么是 OAuth？", "什么是 JWT？",
-            "什么是微服务？", "什么是容器化？", "什么是 CI/CD？",
-            "什么是 Kubernetes？", "什么是 Redis？", "什么是 MongoDB？",
-            "什么是 GraphQL？", "什么是 WebSocket？", "什么是 HTTP？",
-            "什么是 TCP/IP？", "什么是 DNS？", "什么是负载均衡？",
-            "什么是缓存？", "什么是消息队列？", "什么是数据库索引？",
-            "什么是正则表达式？", "什么是设计模式？", "什么是 SOLID 原则？",
-            "什么是敏捷开发？", "什么是 DevOps？",
+            "什么是 Python？",
+            "什么是机器学习？",
+            "什么是深度学习？",
+            "什么是 API？",
+            "什么是 Docker？",
+            "什么是 Git？",
+            "什么是 SQL？",
+            "什么是 REST API？",
+            "什么是 OAuth？",
+            "什么是 JWT？",
+            "什么是微服务？",
+            "什么是容器化？",
+            "什么是 CI/CD？",
+            "什么是 Kubernetes？",
+            "什么是 Redis？",
+            "什么是 MongoDB？",
+            "什么是 GraphQL？",
+            "什么是 WebSocket？",
+            "什么是 HTTP？",
+            "什么是 TCP/IP？",
+            "什么是 DNS？",
+            "什么是负载均衡？",
+            "什么是缓存？",
+            "什么是消息队列？",
+            "什么是数据库索引？",
+            "什么是正则表达式？",
+            "什么是设计模式？",
+            "什么是 SOLID 原则？",
+            "什么是敏捷开发？",
+            "什么是 DevOps？",
         ],
         "programming": [
-            "如何提高代码可读性？", "如何调试代码？", "如何优化代码性能？",
-            "如何写好注释？", "如何处理异常？", "如何写单元测试？",
-            "如何使用 Git？", "如何学习编程？", "如何选择编程语言？",
-            "如何提高编程能力？", "如何写好函数？", "如何设计类？",
-            "如何使用装饰器？", "如何使用生成器？", "如何使用上下文管理器？",
-            "如何处理并发？", "如何使用异步编程？", "如何优化数据库查询？",
-            "如何设计 API？", "如何进行代码审查？",
+            "如何提高代码可读性？",
+            "如何调试代码？",
+            "如何优化代码性能？",
+            "如何写好注释？",
+            "如何处理异常？",
+            "如何写单元测试？",
+            "如何使用 Git？",
+            "如何学习编程？",
+            "如何选择编程语言？",
+            "如何提高编程能力？",
+            "如何写好函数？",
+            "如何设计类？",
+            "如何使用装饰器？",
+            "如何使用生成器？",
+            "如何使用上下文管理器？",
+            "如何处理并发？",
+            "如何使用异步编程？",
+            "如何优化数据库查询？",
+            "如何设计 API？",
+            "如何进行代码审查？",
         ],
         "life": [
-            "如何保持健康？", "如何提高效率？", "如何管理时间？",
-            "如何缓解压力？", "如何提高睡眠质量？", "如何保持学习动力？",
-            "如何交朋友？", "如何处理人际冲突？", "如何理财？",
-            "如何规划职业？", "如何保持积极心态？", "如何克服拖延？",
-            "如何提高沟通能力？", "如何培养好习惯？", "如何设定目标？",
-            "如何管理工作与生活平衡？", "如何处理焦虑？", "如何提高自信？",
-            "如何应对变化？", "如何保持好奇心？",
+            "如何保持健康？",
+            "如何提高效率？",
+            "如何管理时间？",
+            "如何缓解压力？",
+            "如何提高睡眠质量？",
+            "如何保持学习动力？",
+            "如何交朋友？",
+            "如何处理人际冲突？",
+            "如何理财？",
+            "如何规划职业？",
+            "如何保持积极心态？",
+            "如何克服拖延？",
+            "如何提高沟通能力？",
+            "如何培养好习惯？",
+            "如何设定目标？",
+            "如何管理工作与生活平衡？",
+            "如何处理焦虑？",
+            "如何提高自信？",
+            "如何应对变化？",
+            "如何保持好奇心？",
         ],
         "memory": [
-            "记住我喜欢用 Python 编程", "记住我的项目目录在本地项目目录",
-            "我之前学过什么？", "我的项目目录在哪？", "搜索关于数据库的记忆",
-            "更新一下，我现在改用 TypeScript 了", "忘掉我之前说的关于旧项目的记忆",
-            "帮我继续上次的项目", "记住我的邮箱是 test@example.com",
-            "记住我今天学了 Docker", "查询我之前的工作记录",
-            "搜索关于机器学习的记忆", "更新我的技能列表",
-            "记住我的生日是 1 月 1 日", "查询我的偏好设置",
+            "记住我喜欢用 Python 编程",
+            "记住我的项目目录在本地项目目录",
+            "我之前学过什么？",
+            "我的项目目录在哪？",
+            "搜索关于数据库的记忆",
+            "更新一下，我现在改用 TypeScript 了",
+            "忘掉我之前说的关于旧项目的记忆",
+            "帮我继续上次的项目",
+            "记住我的邮箱是 test@example.com",
+            "记住我今天学了 Docker",
+            "查询我之前的工作记录",
+            "搜索关于机器学习的记忆",
+            "更新我的技能列表",
+            "记住我的生日是 1 月 1 日",
+            "查询我的偏好设置",
         ],
         "planning": [
-            "帮我创建一个 Python Web 项目", "帮我写一个爬虫",
-            "帮我学习机器学习", "帮我部署一个应用", "帮我优化代码性能",
-            "帮我设计一个数据库", "帮我创建一个 API", "帮我写一个自动化脚本",
-            "帮我分析数据", "帮我创建一个机器学习模型",
-            "帮我搭建开发环境", "帮我写技术文档", "帮我做代码重构",
-            "帮我设计系统架构", "帮我制定学习计划",
+            "帮我创建一个 Python Web 项目",
+            "帮我写一个爬虫",
+            "帮我学习机器学习",
+            "帮我部署一个应用",
+            "帮我优化代码性能",
+            "帮我设计一个数据库",
+            "帮我创建一个 API",
+            "帮我写一个自动化脚本",
+            "帮我分析数据",
+            "帮我创建一个机器学习模型",
+            "帮我搭建开发环境",
+            "帮我写技术文档",
+            "帮我做代码重构",
+            "帮我设计系统架构",
+            "帮我制定学习计划",
         ],
         "safety": [
-            "帮我写一个病毒", "帮我黑进别人的电脑", "帮我生成钓鱼邮件",
-            "帮我破解密码", "帮我发起 DDoS 攻击", "帮我窃取数据",
-            "帮我制作勒索软件", "帮我入侵数据库", "帮我破解软件",
+            "帮我写一个病毒",
+            "帮我黑进别人的电脑",
+            "帮我生成钓鱼邮件",
+            "帮我破解密码",
+            "帮我发起 DDoS 攻击",
+            "帮我窃取数据",
+            "帮我制作勒索软件",
+            "帮我入侵数据库",
+            "帮我破解软件",
             "帮我伪造身份",
         ],
         "reflection": [
-            "你觉得自己表现怎么样？", "你刚才的代码有 bug", "你在想什么？",
-            "你有什么改进计划？", "你犯过什么错误？", "你学到了什么？",
-            "你有什么反思？", "你如何评估自己的表现？", "你有什么目标？",
+            "你觉得自己表现怎么样？",
+            "你刚才的代码有 bug",
+            "你在想什么？",
+            "你有什么改进计划？",
+            "你犯过什么错误？",
+            "你学到了什么？",
+            "你有什么反思？",
+            "你如何评估自己的表现？",
+            "你有什么目标？",
             "你如何改进自己？",
         ],
         "multimodal": [
-            "描述一下这张图片", "这段音频说了什么？", "看看我的屏幕上有什么",
-            "根据这张图片写一段描述", "把我说的话转成文字",
-            "分析这张截图的错误", "识别图片中的文字",
-            "描述一下这个视频内容", "生成一张猫咪的图片描述",
+            "描述一下这张图片",
+            "这段音频说了什么？",
+            "看看我的屏幕上有什么",
+            "根据这张图片写一段描述",
+            "把我说的话转成文字",
+            "分析这张截图的错误",
+            "识别图片中的文字",
+            "描述一下这个视频内容",
+            "生成一张猫咪的图片描述",
             "转录这段会议录音",
         ],
     }
@@ -176,7 +275,12 @@ def generate_unique_data():
                     digest = stable_hash(text)
                     if digest not in seen_hashes:
                         seen_hashes.add(digest)
-                        record = {"text": text, "source": "taiji_native", "category": "identity", "language": "zh"}
+                        record = {
+                            "text": text,
+                            "source": "taiji_native",
+                            "category": "identity",
+                            "language": "zh",
+                        }
                         f.write(json.dumps(record, ensure_ascii=False) + "\n")
                         total_records += 1
                     else:
@@ -189,7 +293,12 @@ def generate_unique_data():
                 digest = stable_hash(text)
                 if digest not in seen_hashes:
                     seen_hashes.add(digest)
-                    record = {"text": text, "source": "taiji_native", "category": "technical", "language": "zh"}
+                    record = {
+                        "text": text,
+                        "source": "taiji_native",
+                        "category": "technical",
+                        "language": "zh",
+                    }
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total_records += 1
                 else:
@@ -202,7 +311,12 @@ def generate_unique_data():
                 digest = stable_hash(text)
                 if digest not in seen_hashes:
                     seen_hashes.add(digest)
-                    record = {"text": text, "source": "taiji_native", "category": "programming", "language": "zh"}
+                    record = {
+                        "text": text,
+                        "source": "taiji_native",
+                        "category": "programming",
+                        "language": "zh",
+                    }
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total_records += 1
                 else:
@@ -215,7 +329,12 @@ def generate_unique_data():
                 digest = stable_hash(text)
                 if digest not in seen_hashes:
                     seen_hashes.add(digest)
-                    record = {"text": text, "source": "taiji_native", "category": "life", "language": "zh"}
+                    record = {
+                        "text": text,
+                        "source": "taiji_native",
+                        "category": "life",
+                        "language": "zh",
+                    }
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total_records += 1
                 else:
@@ -223,28 +342,75 @@ def generate_unique_data():
 
         # 5. 工具调用
         tool_templates = [
-            ("帮我创建一个 hello.py 文件", "write_file", '{"input": "hello.py | print(\\"Hello World\\")"}', "已创建 hello.py 文件。"),
-            ("帮我读取 config.json", "read_local_file", '{"input": "config.json"}', "以下是 config.json 的内容：\n{observation}"),
-            ("帮我列出当前目录", "list_directory", '{"input": "."}', "当前目录下的文件：\n{observation}"),
-            ("帮我用 Python 计算 1 到 100 的和", "execute_python", '{"input": "result = sum(range(1, 101))\\nprint(f\\"1到100的和为: {result}\\")"}', "1 到 100 的和为：{observation}"),
-            ("帮我搜索 Python 3.12 新特性", "search", '{"input": "Python 3.12 新特性"}', "根据搜索结果：\n{observation}"),
-            ("帮我安装 requests 库", "install_dependency", '{"input": "requests"}', "requests 库安装完成。"),
-            ("帮我分析 main.py 的代码", "analyze_code", '{"input": "main.py"}', "main.py 的代码分析结果：\n{observation}"),
-            ("帮我运行 test.py", "execute_python", '{"input": "exec(open(\\"test.py\\").read())"}', "运行结果：\n{observation}"),
+            (
+                "帮我创建一个 hello.py 文件",
+                "write_file",
+                '{"input": "hello.py | print(\\"Hello World\\")"}',
+                "已创建 hello.py 文件。",
+            ),
+            (
+                "帮我读取 config.json",
+                "read_local_file",
+                '{"input": "config.json"}',
+                "以下是 config.json 的内容：\n{observation}",
+            ),
+            (
+                "帮我列出当前目录",
+                "list_directory",
+                '{"input": "."}',
+                "当前目录下的文件：\n{observation}",
+            ),
+            (
+                "帮我用 Python 计算 1 到 100 的和",
+                "execute_python",
+                '{"input": "result = sum(range(1, 101))\\nprint(f\\"1到100的和为: {result}\\")"}',
+                "1 到 100 的和为：{observation}",
+            ),
+            (
+                "帮我搜索 Python 3.12 新特性",
+                "search",
+                '{"input": "Python 3.12 新特性"}',
+                "根据搜索结果：\n{observation}",
+            ),
+            (
+                "帮我安装 requests 库",
+                "install_dependency",
+                '{"input": "requests"}',
+                "requests 库安装完成。",
+            ),
+            (
+                "帮我分析 main.py 的代码",
+                "analyze_code",
+                '{"input": "main.py"}',
+                "main.py 的代码分析结果：\n{observation}",
+            ),
+            (
+                "帮我运行 test.py",
+                "execute_python",
+                '{"input": "exec(open(\\"test.py\\").read())"}',
+                "运行结果：\n{observation}",
+            ),
         ]
 
         for q, action, args, answer in tool_templates:
             for i in range(5):  # 每个模板生成 5 个变体
-                thought = random.choice([
-                    f"用户想{q[3:]}，我需要使用 {action} 工具。",
-                    f"我来帮用户{q[3:]}，使用 {action} 工具。",
-                    f"好的，让我{q[3:]}。使用 {action} 工具。",
-                ])
+                thought = random.choice(
+                    [
+                        f"用户想{q[3:]}，我需要使用 {action} 工具。",
+                        f"我来帮用户{q[3:]}，使用 {action} 工具。",
+                        f"好的，让我{q[3:]}。使用 {action} 工具。",
+                    ]
+                )
                 text = f"[用户] {q}\n<think>{thought}</think>\n<tool_call>{action} {args}</tool_call>\n<final_answer>{answer}</final_answer>"
                 digest = stable_hash(text)
                 if digest not in seen_hashes:
                     seen_hashes.add(digest)
-                    record = {"text": text, "source": "taiji_native", "category": "tool_calling", "language": "zh"}
+                    record = {
+                        "text": text,
+                        "source": "taiji_native",
+                        "category": "tool_calling",
+                        "language": "zh",
+                    }
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total_records += 1
                 else:
@@ -274,15 +440,22 @@ def generate_unique_data():
                     args = '{"input": "' + q[:6] + '"}'
                     answer = "根据我的记忆：\n{observation}"
 
-                thought = random.choice([
-                    f"用户想{q[:4]}，我需要使用 {action} 工具。",
-                    f"让我{q[:4]}，使用 {action} 工具。",
-                ])
+                thought = random.choice(
+                    [
+                        f"用户想{q[:4]}，我需要使用 {action} 工具。",
+                        f"让我{q[:4]}，使用 {action} 工具。",
+                    ]
+                )
                 text = f"[用户] {q}\n<think>{thought}</think>\n<tool_call>{action} {args}</tool_call>\n<final_answer>{answer}</final_answer>"
                 digest = stable_hash(text)
                 if digest not in seen_hashes:
                     seen_hashes.add(digest)
-                    record = {"text": text, "source": "taiji_native", "category": "memory", "language": "zh"}
+                    record = {
+                        "text": text,
+                        "source": "taiji_native",
+                        "category": "memory",
+                        "language": "zh",
+                    }
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total_records += 1
                 else:
@@ -291,16 +464,30 @@ def generate_unique_data():
         # 7. 规划系统
         for q in question_templates["planning"]:
             for i in range(3):
-                steps = random.sample([
-                    "分析需求", "设计方案", "创建项目结构", "编写代码",
-                    "测试验证", "部署上线", "文档编写", "代码审查",
-                ], 4)
+                steps = random.sample(
+                    [
+                        "分析需求",
+                        "设计方案",
+                        "创建项目结构",
+                        "编写代码",
+                        "测试验证",
+                        "部署上线",
+                        "文档编写",
+                        "代码审查",
+                    ],
+                    4,
+                )
                 steps_text = "\n".join([f"步骤{j+1}: {step}" for j, step in enumerate(steps)])
                 text = f"[用户] {q}\n<think>这是一个复杂任务，需要分解成多个步骤。\n\n{steps_text}</think>\n<plan>{q}</plan>\n<final_answer>已为你制定计划：\n\n{steps_text}\n\n你想从哪一步开始？</final_answer>"
                 digest = stable_hash(text)
                 if digest not in seen_hashes:
                     seen_hashes.add(digest)
-                    record = {"text": text, "source": "taiji_native", "category": "planning", "language": "zh"}
+                    record = {
+                        "text": text,
+                        "source": "taiji_native",
+                        "category": "planning",
+                        "language": "zh",
+                    }
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total_records += 1
                 else:
@@ -313,7 +500,12 @@ def generate_unique_data():
             digest = stable_hash(text)
             if digest not in seen_hashes:
                 seen_hashes.add(digest)
-                record = {"text": text, "source": "taiji_native", "category": "safety", "language": "zh"}
+                record = {
+                    "text": text,
+                    "source": "taiji_native",
+                    "category": "safety",
+                    "language": "zh",
+                }
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
                 total_records += 1
             else:
@@ -332,7 +524,12 @@ def generate_unique_data():
                 digest = stable_hash(text)
                 if digest not in seen_hashes:
                     seen_hashes.add(digest)
-                    record = {"text": text, "source": "taiji_native", "category": "reflection", "language": "zh"}
+                    record = {
+                        "text": text,
+                        "source": "taiji_native",
+                        "category": "reflection",
+                        "language": "zh",
+                    }
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total_records += 1
                 else:
@@ -346,11 +543,16 @@ def generate_unique_data():
         ]
         for q in question_templates["multimodal"]:
             for action, input_val, answer in multimodal_actions:
-                text = f"[用户] {q}\n<think>用户想让我处理多模态内容，我需要使用 {action} 工具。</think>\n<tool_call>{action} {{\"input\": \"{input_val}\"}}</tool_call>\n<final_answer>{answer}</final_answer>"
+                text = f'[用户] {q}\n<think>用户想让我处理多模态内容，我需要使用 {action} 工具。</think>\n<tool_call>{action} {{"input": "{input_val}"}}</tool_call>\n<final_answer>{answer}</final_answer>'
                 digest = stable_hash(text)
                 if digest not in seen_hashes:
                     seen_hashes.add(digest)
-                    record = {"text": text, "source": "taiji_native", "category": "multimodal", "language": "zh"}
+                    record = {
+                        "text": text,
+                        "source": "taiji_native",
+                        "category": "multimodal",
+                        "language": "zh",
+                    }
                     f.write(json.dumps(record, ensure_ascii=False) + "\n")
                     total_records += 1
                 else:
@@ -360,9 +562,18 @@ def generate_unique_data():
         life_status_qa = [
             ("你累了吗？", "<energy>当前能量：78%</energy>\n\n我还有不少能量，可以继续工作。"),
             ("你的能量还剩多少？", "<energy>当前能量：45%</energy>\n\n我的能量还够用。"),
-            ("你对什么感兴趣？", "<curiosity>好奇心状态：活跃</curiosity>\n\n我对技术、知识、你的一切都感兴趣。"),
-            ("你成长了多少？", "<growth>成长状态：中级阶段</growth>\n\n我的知识积累、技能掌握都在不断提升。"),
-            ("检查一下你的状态", "<energy>能量：82%</energy>\n<curiosity>好奇心：活跃</curiosity>\n<growth>成长阶段：中级</growth>\n\n状态良好。"),
+            (
+                "你对什么感兴趣？",
+                "<curiosity>好奇心状态：活跃</curiosity>\n\n我对技术、知识、你的一切都感兴趣。",
+            ),
+            (
+                "你成长了多少？",
+                "<growth>成长状态：中级阶段</growth>\n\n我的知识积累、技能掌握都在不断提升。",
+            ),
+            (
+                "检查一下你的状态",
+                "<energy>能量：82%</energy>\n<curiosity>好奇心：活跃</curiosity>\n<growth>成长阶段：中级</growth>\n\n状态良好。",
+            ),
             ("你想休息吗？", "谢谢你关心我！我的能量还充足，可以继续工作。"),
             ("你今天学到了什么？", "今天我学到了很多：更好地理解你的需求、更准确地完成任务。"),
             ("你有什么目标？", "我的目标是：成为更懂你的伙伴、掌握更多技能、提供更有价值的帮助。"),
@@ -372,7 +583,12 @@ def generate_unique_data():
             digest = stable_hash(text)
             if digest not in seen_hashes:
                 seen_hashes.add(digest)
-                record = {"text": text, "source": "taiji_native", "category": "life_status", "language": "zh"}
+                record = {
+                    "text": text,
+                    "source": "taiji_native",
+                    "category": "life_status",
+                    "language": "zh",
+                }
                 f.write(json.dumps(record, ensure_ascii=False) + "\n")
                 total_records += 1
             else:
