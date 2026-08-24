@@ -27,6 +27,14 @@ def test_api_entrypoint_reaches_legacy_only_through_one_bridge() -> None:
         assert not any(module.startswith("neuroplex") for module in imports)
 
 
+def test_chat_entrypoints_use_the_legacy_gate() -> None:
+    for relative in ("api/chat_strategies.py", "api/routes_chat.py"):
+        imports = _imports(REPO / relative)
+        assert "api.legacy_bridge" in imports, relative
+        source = (REPO / relative).read_text(encoding="utf-8")
+        assert "legacy_available" in source, relative
+
+
 def test_platform_paths_are_owned_outside_neuroplex() -> None:
     modules = (
         "api/app.py",

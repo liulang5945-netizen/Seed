@@ -20,8 +20,9 @@
 - 第六阶段已完成：启动必经的 config、memory watchdog 与 runtime status 已迁到 `seed_platform` 并保留兼容转发；`create_app(startup_tasks=False)` 在子进程中阻断所有 `neuroplex` 导入仍可生成 OpenAPI，`/api/health` 与 `/api/runtime/bootstrap` 契约存在，独立 smoke 已固化为 `tests/seed/test_no_legacy_startup_smoke.py`。
 - 第七阶段已完成：CI 增加 `no-legacy`/`legacy` 启动矩阵；Legacy 门面不再只检查仓库内的 `neuroplex` 包，而是同时检查启动所需的 `sentencepiece`，缺依赖时即使显式设置 `SEED_ENABLE_LEGACY=1` 也会安全降级。
 - 第八阶段已完成：`CapacityPolicy` 新增 memory 时间/episode 维度比例，`training_profile` 与参数预算搜索不再把这两个学习 readout 维度固定为 8/16；旧 policy JSON 自动补齐默认比例。`api/main.py --no-ui` 的旧 Cortex 加载已收口到 `legacy_bridge`，不再让 API 入口直接导入 NeuroPlex。
+- 第九阶段已完成：`api/chat_strategies.py` 与 `api/routes_chat.py` 的请求时生命状态、上下文记忆、ReAct、进化记录、递归策略和 DataCollector fallback 均先通过 `legacy_available()`；无 Legacy 部署不会因聊天请求再次触发旧组件导入，Seed 仍保留原生直接生成路径。
 
-**唯一下一步**：收紧 `api/chat_strategies.py` 的请求时 Legacy fallback，确保 Seed 默认路径不因旧生命/记忆/Agent 组件缺失而产生隐式穿透。
+**唯一下一步**：收口 `api/run_app.py` 的兼容 CLI Legacy 导入，确保除显式 Legacy bridge 外没有产品入口直接加载 NeuroPlex。
 
 ## 1. 当前架构
 
