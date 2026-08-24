@@ -147,6 +147,50 @@ jobs:
           test -f frontend/dist/index.html || (echo "dist/index.html missing" && exit 1)
           echo "Frontend build OK"
 
+  startup-smoke:
+    name: Startup smoke (${{ matrix.profile }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - profile: no-legacy
+            install-legacy: false
+            test-name: test_api_starts_without_legacy_imports
+            enable-legacy: "0"
+          - profile: legacy
+            install-legacy: true
+            test-name: test_api_starts_with_legacy_enabled
+            enable-legacy: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install torch (CPU)
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install test runner
+        run: pip install pytest
+
+      - name: Install platform dependencies without Legacy extra
+        if: matrix.install-legacy == false
+        run: |
+          pip install fastapi python-multipart pydantic anyio cryptography
+          pip install -e . --no-deps
+
+      - name: Install package with Legacy extra
+        if: matrix.install-legacy == true
+        run: pip install -e ".[legacy]"
+
+      - name: Run selected startup smoke
+        env:
+          SEED_ENABLE_LEGACY: ${{ matrix.enable-legacy }}
+        run: python -m pytest tests/seed/test_no_legacy_startup_smoke.py -q -k "${{ matrix.test-name }}"
+
   test-windows:
     runs-on: windows-latest
     steps:

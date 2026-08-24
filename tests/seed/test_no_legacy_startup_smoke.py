@@ -39,6 +39,26 @@ print(f"no-legacy startup smoke passed: {len(paths)} API paths")
 """
 
 
+_LEGACY_SCRIPT = r"""
+import os
+
+
+os.environ["SEED_ENABLE_LEGACY"] = "1"
+
+from api.app import create_app
+from api.legacy_bridge import legacy_available
+
+
+assert legacy_available() is True
+app = create_app(startup_tasks=False)
+paths = app.openapi()["paths"]
+assert "/api/health" in paths
+assert "/api/runtime/bootstrap" in paths
+assert "/api/life/status" in paths
+print(f"legacy startup smoke passed: {len(paths)} API paths")
+"""
+
+
 def test_api_starts_without_legacy_imports():
     env = os.environ.copy()
     env["SEED_ENABLE_LEGACY"] = "0"
@@ -53,3 +73,19 @@ def test_api_starts_without_legacy_imports():
 
     assert result.returncode == 0, result.stdout + result.stderr
     assert "no-legacy startup smoke passed" in result.stdout
+
+
+def test_api_starts_with_legacy_enabled():
+    env = os.environ.copy()
+    env["SEED_ENABLE_LEGACY"] = "1"
+    result = subprocess.run(
+        [sys.executable, "-c", _LEGACY_SCRIPT],
+        cwd=REPO,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "legacy startup smoke passed" in result.stdout
