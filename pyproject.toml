@@ -112,8 +112,11 @@ omit = ["tests/*", "scripts/*"]
 
 [tool.coverage.report]
 show_missing = true
-# F02: 覆盖率门禁——当前基线约 19%，设为 17% 防止退化；随覆盖率提升逐步上调。
-# seed/taiji 核心模块已达 75-100%，neuroplex/tools 与 api 路由待补齐。
+# F02: 覆盖率门禁——设为 17% 防止退化；随覆盖率提升逐步上调。
+# 注意：本阈值按「全量 tests/ + 全量 source」标定。任何只跑测试子集的 job
+# （如 CI 的 test-windows 只跑 tests/taiji_native tests/seed）必须用 --cov=<pkg>
+# 显式收窄度量面，否则分母掺入未触及代码会产生假低覆盖率并误触本门禁。
+# seed/taiji 核心模块已达 84-100%，neuroplex/tools 与 api 路由待补齐。
 fail_under = 17
 
 [tool.mypy]

@@ -211,8 +211,12 @@ jobs:
         run: pip install -e . --no-deps
 
       # F07: Windows 核心测试 + 覆盖率 + JUnit 报告，便于跨平台对比
+      # 覆盖率度量面必须与测试范围对齐：本 job 只跑 tests/taiji_native 与 tests/seed，
+      # 若沿用 [tool.coverage.run] 的全量 source（含 neuroplex/api），分母会掺入大量
+      # 该子集根本不触及的代码，得出 9% 的假低值并误触 fail_under=17。
+      # 显式限定为 seed/taiji/seed_platform 后真实覆盖率为 71%。
       - name: Run core tests on Windows
-        run: python -m pytest tests/taiji_native tests/seed -q --cov --junitxml=report-win.xml --cov-report=xml:coverage-win.xml
+        run: python -m pytest tests/taiji_native tests/seed -q --cov=seed --cov=taiji --cov=seed_platform --junitxml=report-win.xml --cov-report=xml:coverage-win.xml
 
       - name: Upload Windows test results
         if: always()
