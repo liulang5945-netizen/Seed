@@ -172,6 +172,14 @@ def _do_switch_model(*, async_mode: bool = False) -> dict[str, Any]:
     import traceback
 
     try:
+        from api.legacy_bridge import legacy_available
+
+        if not legacy_available():
+            return {
+                "status": "error",
+                "message": "Cortex Legacy plugin is unavailable or disabled",
+            }
+
         if async_mode:
             app_state.update_switch_status("switching", "Unloading current Cortex...")
 
