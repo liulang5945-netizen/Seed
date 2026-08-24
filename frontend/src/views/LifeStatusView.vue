@@ -4,7 +4,7 @@
     <header class="topbar">
       <div class="topbar-left">
         <span class="topbar-title">生命状态</span>
-        <span class="topbar-sub">实时监控Seed神经元网络</span>
+        <span class="topbar-sub">{{ runtimeStore.health.isTaiji ? '实时查看 Taiji 原生状态通路' : '实时监控 Cortex 对照运行态' }}</span>
       </div>
       <span class="topbar-spacer"></span>
       <n-tag
@@ -26,6 +26,60 @@
 
     <!-- ═══ 滚动内容区 ═══ -->
     <div class="scroll-area">
+
+      <template v-if="runtimeStore.health.isTaiji">
+        <section class="native-taiji-status">
+          <div class="native-status-head">
+            <div>
+              <span class="eyebrow">TAIJI NATIVE SUBSTRATE</span>
+              <h1>原生状态通路</h1>
+              <p>当前客户端展示的是持续状态与局部可塑性运行态，不是 Transformer 的 token 统计面板。</p>
+            </div>
+            <span class="native-status-pill">{{ runtimeStore.connectionStatus }}</span>
+          </div>
+
+          <div class="native-contract-grid">
+            <article class="native-contract-card">
+              <span class="native-contract-label">感觉器</span>
+              <strong>ByteSensor</strong>
+              <span>257 个固定输入单元</span>
+            </article>
+            <article class="native-contract-card">
+              <span class="native-contract-label">输入格式</span>
+              <strong>raw bytes</strong>
+              <span>不经过 tokenizer / embedding</span>
+            </article>
+            <article class="native-contract-card">
+              <span class="native-contract-label">学习方式</span>
+              <strong>local plasticity</strong>
+              <span>按预测与结果误差更新已有突触</span>
+            </article>
+            <article class="native-contract-card">
+              <span class="native-contract-label">动作器</span>
+              <strong>ByteMotor</strong>
+              <span>输出字节，接收 action → outcome 反馈</span>
+            </article>
+          </div>
+
+          <div class="native-pipeline" aria-label="Taiji 原生状态推进链路">
+            <div class="native-pipeline-step"><span>01</span><strong>observe()</strong><small>因果 tick</small></div>
+            <span class="native-pipeline-arrow">→</span>
+            <div class="native-pipeline-step"><span>02</span><strong>predictive fabric</strong><small>递归预测</small></div>
+            <span class="native-pipeline-arrow">→</span>
+            <div class="native-pipeline-step"><span>03</span><strong>EpisodicField</strong><small>情景关联</small></div>
+            <span class="native-pipeline-arrow">→</span>
+            <div class="native-pipeline-step"><span>04</span><strong>ByteMotor</strong><small>动作与反馈</small></div>
+          </div>
+
+          <div class="native-status-note">
+            <strong>当前运行说明</strong>
+            <p>{{ runtimeStore.health.message || 'Taiji 状态已连接；每次 observe() 都会推进同一份持续状态。' }}</p>
+            <p>训练发生在真实相邻边的局部突触更新上，checkpoint 保存状态与突触，而不是 token logits。</p>
+          </div>
+        </section>
+      </template>
+
+      <template v-else>
 
       <!-- ═══ KPI 卡片行 ═══ -->
       <div class="kpi-grid">
@@ -358,6 +412,7 @@
           </div>
         </div>
       </div>
+      </template>
     </div>
   </div>
 </template>
@@ -511,6 +566,133 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* ═══ Taiji Native 运行态 ═══ */
+.native-taiji-status {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 28px 30px 40px;
+}
+.native-status-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.native-status-head .eyebrow {
+  color: var(--primary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+.native-status-head h1 {
+  margin: 8px 0 6px;
+  color: var(--foreground);
+  font-size: 1.7rem;
+}
+.native-status-head p {
+  margin: 0;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+.native-status-pill {
+  flex: none;
+  padding: 7px 12px;
+  border: 1px solid color-mix(in srgb, var(--chart-2) 32%, var(--border));
+  border-radius: 999px;
+  color: var(--chart-2);
+  background: color-mix(in srgb, var(--chart-2) 9%, var(--card));
+  font-size: 0.78rem;
+}
+.native-contract-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.native-contract-card,
+.native-status-note {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+}
+.native-contract-card {
+  display: flex;
+  min-height: 118px;
+  flex-direction: column;
+  gap: 7px;
+}
+.native-contract-label {
+  color: var(--muted-foreground);
+  font-size: 0.74rem;
+}
+.native-contract-card strong {
+  color: var(--foreground);
+  font-size: 1rem;
+}
+.native-contract-card > span:last-child {
+  color: var(--muted-foreground);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.native-pipeline {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  margin: 18px 0;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent) 35%, var(--card));
+}
+.native-pipeline-step {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+.native-pipeline-step > span {
+  color: var(--primary);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+.native-pipeline-step strong {
+  overflow-wrap: anywhere;
+  color: var(--foreground);
+  font-size: 0.84rem;
+}
+.native-pipeline-step small {
+  color: var(--muted-foreground);
+  font-size: 0.72rem;
+}
+.native-pipeline-arrow {
+  align-self: center;
+  color: var(--muted-foreground);
+  font-size: 1.1rem;
+}
+.native-status-note strong {
+  color: var(--foreground);
+  font-size: 0.88rem;
+}
+.native-status-note p {
+  margin: 8px 0 0;
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .native-contract-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 620px) {
+  .native-taiji-status { padding: 20px 16px 30px; }
+  .native-status-head { flex-direction: column; }
+  .native-contract-grid { grid-template-columns: 1fr; }
+  .native-pipeline { flex-direction: column; }
+  .native-pipeline-arrow { transform: rotate(90deg); align-self: flex-start; }
+}
+
 /* ═══ 视图容器（豆包设计 token） ═══ */
 .life-status-view {
   --chart-1: var(--primary);

@@ -23,12 +23,12 @@
         <template v-if="chatStore.messages.length === 0">
           <section class="chat-welcome">
             <div class="welcome-logo" aria-hidden="true">
-              <img src="/logo-taiji-ink.jpg" alt="Seed" />
+              <TaijiLogo :size="72" :thinking="runtimeStore.health.state === 'connected'" />
             </div>
             <h1>有什么我能帮你的吗？</h1>
             <div class="welcome-sub">
               <span class="ok-dot"></span>
-              Seed已就绪 · 神经元同步中，可随时提问
+              {{ runtimeStore.connectionStatus }} · {{ runtimeStore.health.isTaiji ? 'Taiji Native 原始字节通路' : 'Seed 运行时' }}
             </div>
           </section>
 
@@ -52,24 +52,24 @@
               <div class="msg-body">
                 <span class="msg-name">你</span>
                 <div class="bubble">
-                  <p>解释一下Seed的神经元共振机制是怎么工作的？</p>
+                  <p>Taiji 如何把原始字节推进成一次输出？</p>
                 </div>
               </div>
             </div>
 
             <!-- 示例 AI 回复 1 -->
             <div class="msg msg-ai">
-              <img class="av av-ai" src="/logo-taiji-ink.jpg" alt="Seed" aria-label="Seed">
+              <TaijiLogo class="av av-ai" :size="32" :thinking="false" aria-label="Seed" />
               <div class="msg-body">
                 <span class="msg-name">Seed</span>
                 <div class="bubble">
-                  <p><span class="lead">神经元共振机制</span>是Seed的核心，由 <code>ResonanceField</code> 层实现。当多个神经元的相位差小于阈值 <code>θ</code> 时，它们会进入同步放电状态，形成共振簇，输出更稳定的联合表征。</p>
+                  <p><span class="lead">Taiji 的一次状态推进</span>从原始字节开始，不经过 tokenizer 或学习式 embedding。输入先进入 <code>ByteSensor</code>，再经过预测织体与 <code>EpisodicField</code>，最后由 <code>ByteMotor</code> 产生字节或动作。</p>
                   <ol class="msg-steps">
-                    <li><strong>相位计算</strong>：每个神经元维护相位 <code>φᵢ</code>，每步更新 <code>φᵢ ← φᵢ + ωᵢ·Δt</code>。</li>
-                    <li><strong>耦合检测</strong>：计算两两相位差 <code>Δφ = |φᵢ − φⱼ|</code>，若 <code>Δφ &lt; θ</code> 则建立耦合边。</li>
-                    <li><strong>共振聚合</strong>：耦合强度超过 <code>α</code> 的簇被标记为共振簇，参与输出与梯度回传。</li>
+                    <li><strong>感觉</strong>：固定的 257 个感受器接收当前 byte 和 episode 边界。</li>
+                    <li><strong>预测与记忆</strong>：递归预测织体推进状态，情景场保存 episode 关联。</li>
+                    <li><strong>动作</strong>：稀疏 motor group 选择下一字节或动作，结果回到下一次感觉。</li>
                   </ol>
-                  <p>你当前的配置 <code>θ=0.12</code>、<code>α=0.65</code>，处于较敏感的共振区间，活跃度 87% 与之吻合。</p>
+                  <p>这里的智能来自持续状态、预测误差和环境反馈的闭环，而不是一次性计算 token logits。</p>
                 </div>
                 <div class="msg-actions">
                   <button type="button" class="msg-action-btn" title="复制"><Copy :size="14" /></button>
@@ -87,35 +87,34 @@
               <div class="msg-body">
                 <span class="msg-name">你</span>
                 <div class="bubble">
-                  <p>我的 ResonanceField 模块 loss 一直降不下来，怎么排查？</p>
+                  <p>Taiji 的局部可塑性没有产生有效学习，应该怎么排查？</p>
                 </div>
               </div>
             </div>
 
             <!-- 示例 AI 回复 2 -->
             <div class="msg msg-ai">
-              <img class="av av-ai" src="/logo-taiji-ink.jpg" alt="Seed" aria-label="Seed">
+              <TaijiLogo class="av av-ai" :size="32" :thinking="false" aria-label="Seed" />
               <div class="msg-body">
                 <span class="msg-name">Seed</span>
                 <div class="bubble">
-                  <p>loss 卡住通常出在共振簇的梯度回传上。建议按这个顺序排查：</p>
+                  <p>Taiji 不依赖 Transformer 的 BPTT 或全局梯度。先按一次真实状态推进检查局部误差与突触更新：</p>
                   <ol class="msg-steps">
-                    <li>查看共振簇规模分布，若 90% 以上集中在单个簇，说明 <code>θ</code> 过小、过度同步。</li>
-                    <li>检查梯度范数，共振边梯度若爆炸，需启用 <code>grad_clip</code>。</li>
-                    <li>适当放宽 <code>θ</code> 并下调 <code>α</code>，让模型自行筛选有效耦合。</li>
+                    <li>确认输入仍是原始 byte 流，并在 episode 边界处正确 reset。</li>
+                    <li>检查预测误差、递归误差和 action→outcome 误差是否有非零信号。</li>
+                    <li>确认局部 plasticity 只更新已有突触，且 checkpoint 保存了持续状态。</li>
                   </ol>
-                  <p>可以先试用下面这组配置跑一个 epoch 观察曲线：</p>
+                  <p>可以先记录一个短 episode 的 observe→learn→generate 链路：</p>
                   <div class="msg-code">
                     <div class="code-head">
                       <Code :size="14" />
-                      <span class="lang">resonance.yaml</span>
+                      <span class="lang">taiji-native.json</span>
                       <button class="copy" type="button"><Copy :size="13" />复制</button>
                     </div>
-                    <pre><span class="k">resonance_field</span>:
-  <span class="k">theta</span>: <span class="n">0.18</span>        <span class="c"># 相位阈值，适当放宽</span>
-  <span class="k">alpha</span>: <span class="n">0.55</span>        <span class="c"># 耦合强度下限</span>
-  <span class="k">grad_clip</span>: <span class="n">1.0</span>     <span class="c"># 梯度裁剪，防止爆炸</span>
-  <span class="k">sync_window</span>: <span class="n">4</span>     <span class="c"># 同步窗口步数</span></pre>
+                    <pre><span class="k">input</span>: <span class="s">raw_bytes</span>
+  <span class="k">sensor</span>: <span class="s">ByteSensor(257)</span>
+  <span class="k">learning</span>: <span class="s">local_plasticity</span>
+  <span class="k">output</span>: <span class="s">ByteMotor</span></pre>
                   </div>
                 </div>
                 <div class="msg-actions">
@@ -148,7 +147,7 @@
             <article v-for="msg in displayedMessages" :key="msg.id"
               :class="['msg', msg.role === 'user' ? 'msg-user' : 'msg-ai']"
               v-memo="[msg.id, msg.content, msg.role]">
-              <img v-if="msg.role === 'assistant'" class="av av-ai" src="/logo-taiji-ink.jpg" alt="Seed" />
+              <TaijiLogo v-if="msg.role === 'assistant'" class="av av-ai" :size="32" :thinking="false" aria-label="Seed" />
               <span v-else class="av av-user" aria-label="用户">
                 <User :size="16" />
               </span>
@@ -167,7 +166,7 @@
             </article>
 
             <article v-if="chatStore.isLoading" class="msg msg-ai thinking-row">
-              <img class="av av-ai breathing" src="/logo-taiji-ink.jpg" alt="Seed" />
+              <TaijiLogo class="av av-ai breathing" :size="32" :thinking="true" aria-label="Seed" />
               <div class="msg-body">
                 <span class="msg-name">{{ chatStore.isReceiving ? 'Seed · 正在回应' : 'Seed · 正在启动' }}</span>
                 <div v-if="!chatStore.isReceiving" class="bubble loading-bubble">
@@ -227,7 +226,7 @@
           <span aria-hidden="true">·</span>
           <span class="kbd">Shift</span>+<span class="kbd">Enter</span> 换行
           <span aria-hidden="true">·</span>
-          Seed基于大模型生成，请核对关键信息
+          Seed基于 Taiji 原生状态与局部可塑性生成，请核对关键信息
         </div>
       </div>
     </div>
@@ -256,37 +255,23 @@ const messagesArea = ref(null)
 const inputRef = ref(null)
 const engineModel = ref('agent')  // 统一使用 ReAct 引擎
 
-const energyPercent = computed(() => Math.max(0, 100 - (runtimeStore.life.needs?.fatigue || 0)).toFixed(0))
-const satietyPercent = computed(() => Math.max(0, 100 - (runtimeStore.life.needs?.hunger || 0)).toFixed(0))
-const curiosityPercent = computed(() => Math.max(0, runtimeStore.life.needs?.curiosity || 0).toFixed(0))
-const lifeStateText = computed(() => ({ idle: '清醒', sleeping: '睡眠', feeding: '吸收', playing: '探索', working: '执行' }[runtimeStore.life.life_state || 'idle'] || ''))
-const needIcons = { hunger: '饿', fatigue: '累', boredom: '闷', stress: '压', curiosity: '奇' }
-const dominantNeedKey = computed(() => runtimeStore.life.dominant_need || '')
-const dominantNeedLabel = computed(() => needIcons[dominantNeedKey.value] || '')
-const dominantNeedValue = computed(() => {
-  const needs = runtimeStore.life.needs || {}
-  return dominantNeedKey.value ? Math.round(needs[dominantNeedKey.value] || 0) : 0
-})
 const vitalChips = computed(() => {
-  const chips = [
-    { dot: 'c1', label: '神经元活跃度', value: `${energyPercent.value}%` },
-    { dot: 'c2', label: '共振强度', value: (Math.max(0, Number(curiosityPercent.value) || 0) / 100).toFixed(2) },
-    { dot: 'c3', label: '能量水平', value: lifeStateText.value || '稳定' },
+  const isTaiji = runtimeStore.health.isTaiji
+  return [
+    { dot: 'c1', label: '运行时', value: isTaiji ? 'Taiji Native' : 'Cortex' },
+    { dot: 'c2', label: '输入', value: isTaiji ? 'raw bytes' : '对照流' },
+    { dot: 'c3', label: '学习', value: isTaiji ? '局部可塑性' : '冻结对照' },
   ]
-  if (dominantNeedLabel.value) {
-    chips.push({ dot: 'c-danger', label: dominantNeedLabel.value, value: `${dominantNeedValue.value}%` })
-  }
-  return chips
 })
 const runtimeNotice = computed(() => runtimeStore.runtimeNotice)
 
 const quickHints = [
-  { icon: Brain, text: '解释神经元共振机制' },
-  { icon: Bug, text: '帮我调试 ResonanceField' },
-  { icon: SlidersHorizontal, text: '生成训练配置' },
-  { icon: LineChart, text: '分析 loss 曲线' },
-  { icon: GitBranch, text: '优化神经元同步策略' },
-  { icon: ScrollText, text: '解读最新共振日志' },
+  { icon: Brain, text: '解释 Taiji 的原始字节输入' },
+  { icon: Bug, text: '查看一次状态推进与输出' },
+  { icon: SlidersHorizontal, text: '生成 Taiji 原生训练配置' },
+  { icon: LineChart, text: '分析局部预测误差' },
+  { icon: GitBranch, text: '解释情景场如何巩固记忆' },
+  { icon: ScrollText, text: '查看 action → outcome 闭环' },
 ]
 
 const canSend = computed(() =>
@@ -523,7 +508,6 @@ onMounted(scrollToBottom)
   object-fit: contain;
   display: block;
   border-radius: 50%;
-  animation: taiji-spin 28s linear infinite;
 }
 .welcome-logo::before {
   content: "";
@@ -638,7 +622,7 @@ onMounted(scrollToBottom)
   padding: 0;
   border: 1px solid var(--border);
 }
-.av-ai.breathing { animation: taijiBreathe 2.4s ease-in-out infinite; }
+.av-ai.breathing { opacity: 0.82; }
 .av-user {
   background: var(--accent);
   color: var(--accent-foreground);
@@ -994,8 +978,6 @@ onMounted(scrollToBottom)
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .welcome-logo img,
-  .av-ai.breathing,
   .think-dot { animation: none !important; }
 }
 

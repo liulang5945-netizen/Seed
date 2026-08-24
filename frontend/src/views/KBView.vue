@@ -4,7 +4,7 @@
       <!-- 页面标题 -->
       <div class="page-header">
         <h1>知识库管理</h1>
-        <p class="subtitle">管理Seed的领域知识源，为检索增强与共振推理提供语料支撑。</p>
+        <p class="subtitle">管理 Seed 的领域知识源，为 Taiji 原生输入与情景记忆提供语料支撑。</p>
       </div>
 
       <!-- 标签页 -->
