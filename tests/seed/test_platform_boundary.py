@@ -83,3 +83,4 @@ def test_legacy_bridge_owns_explicit_cortex_routes_and_lifecycle() -> None:
     assert "load_legacy_runtime" in text
     assert "start_legacy_services" in text
     assert "stop_legacy_services" in text
+    assert "legacy_available" in text

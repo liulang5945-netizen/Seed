@@ -16,8 +16,9 @@
 - `api/app.py` 不再直接导入任何 `neuroplex` 模块；Cortex 生命周期、自动重载、life scheduler 和显式 Cortex 路由集中到 `api/legacy_bridge.py`，AST 门禁阻止依赖重新散回入口。
 - 第三阶段已完成：`seed_platform.settings` 以原子 JSON 写入拥有持久化 settings，旧 `neuroplex.services.settings_service` 仅保留兼容转发；`AppState` 已迁到 `seed_platform.app_state`，API 与训练控制不再借用 `neuroplex.core.app_state`。RAG 知识库改为 API Legacy 适配器按需注入，平台状态不再反向导入 Neuroplex。
 - 第四阶段已完成：认证实现已迁到 `seed_platform.auth`，登录/改密/状态/审计/刷新由 `seed_platform.auth_service` 提供；旧 `neuroplex.core.security` 与 `neuroplex.services.auth_service` 仅保留兼容转发。API、健康检查和 Legacy bridge 均改用平台认证，平台认证实现不再导入 Neuroplex。
+- 第五阶段已完成：`api/legacy_bridge.py` 成为显式可选插件门面；默认 runtime preference 选择 Seed，`SEED_ENABLE_LEGACY=0` 时跳过 Cortex 工具、自动重载、life scheduler 和显式 Legacy 路由，Cortex 手动切换会返回不可用，已有 Cortex 安装仍可开启兼容路径。
 
-**唯一下一步**：把 `legacy_bridge` 改为显式可选插件并让 Seed 成为无 Legacy 安装下的默认启动路径，同时保留当前兼容转发以支持已有 Cortex 安装。
+**唯一下一步**：建立无 Legacy 依赖安装的独立启动 smoke，验证精简部署下 API、健康检查和 Seed runtime 的默认启动契约。
 
 ## 1. 当前架构
 

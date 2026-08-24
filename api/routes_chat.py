@@ -427,9 +427,9 @@ async def health_check():
     """健康检查端点"""
     # 启动未完成时返回 loading / downloading 状态
     if not app_state.startup_complete:
-        from neuroplex.core.model_loader import startup_download_progress
+        from api.legacy_bridge import legacy_startup_download_progress
 
-        dl = startup_download_progress()
+        dl = legacy_startup_download_progress()
         if dl["active"]:
             return {
                 "status": "downloading",
