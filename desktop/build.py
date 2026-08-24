@@ -23,6 +23,32 @@ DIST_DIR = ROOT_DIR / "dist"
 BUILD_DIR = ROOT_DIR / "build"
 
 
+def _verify_packaged_frontend() -> None:
+    """保证冻结客户端携带的前端就是本次构建出来的前端。
+
+    开发目录的 ``frontend/dist`` 与 PyInstaller 的
+    ``dist/Seed/_internal/frontend/dist`` 是两份独立副本。只启动旧 exe
+    时，源码中的视觉改动不会生效；用 index.html 做字节级断言可以把这种
+    静默的版本漂移变成明确的构建失败。
+    """
+    source_index = ROOT_DIR / "frontend" / "dist" / "index.html"
+    packaged_index = DIST_DIR / "Seed" / "_internal" / "frontend" / "dist" / "index.html"
+    if not source_index.is_file():
+        raise RuntimeError(f"前端构建产物不存在: {source_index}")
+    if not packaged_index.is_file():
+        raise RuntimeError(f"打包产物未包含前端: {packaged_index}")
+
+    source_bytes = source_index.read_bytes()
+    packaged_bytes = packaged_index.read_bytes()
+    if source_bytes != packaged_bytes:
+        raise RuntimeError(
+            "打包客户端内置前端与本次构建产物不一致；"
+            "请检查 PyInstaller datas 是否仍指向 frontend/dist"
+        )
+
+    print("  前端一致性校验通过（源码 dist = 客户端内置 dist）")
+
+
 def build():
     """打包Seed桌面客户端"""
     print("=" * 50)
@@ -86,6 +112,7 @@ def build():
         return False
 
     print("  PyInstaller 打包完成")
+    _verify_packaged_frontend()
 
     # 后处理
     print("\n[3/3] 后处理...")
