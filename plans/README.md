@@ -29,7 +29,9 @@
 - `scripts/archive/` 内 `from taiji.<legacy>` 是历史别名（含义＝`neuroplex`），已确认不重写；判定见 `scripts/archive/README.md`。
 - CI 与本地一致性：`cryptography` 已在 `pyproject.toml` legacy extra 与 ci.yml 两处安装行声明（缺失会让 `SecureStorage` 构造失败）；`AuthManager.__new__` 只在初始化成功后写入 `cls._instance`，避免半构造单例被永久缓存成 `AttributeError`；SPA 兜底路由 `include_in_schema=False`，使 OpenAPI 快照不再依赖被 gitignore 的 `frontend/dist` 构建产物。三者共同消除“本地绿、CI 红”的环境漂移。
 - CI 门禁约束（踩坑记录）：`black --check .` 是 `test (3.10)/(3.12)` 的早期步骤，一旦失败其后 mypy、pip-audit、8 个 verify 脚本、契约与全量回归**全部跳过**——任何新增文件未过 black 会让整条验证通路失效。覆盖率阈值 `fail_under = 17` 按「全量 tests/ + 全量 source」标定，只跑子集的 job 必须用 `--cov=<pkg>` 显式收窄度量面；`test-windows` 曾因沿用裸 `--cov` 把 `neuroplex/`、`api/` 计入分母而得出 9.19% 假低值，收窄为 `seed/taiji/seed_platform` 后实测 71.27%。
-- 已知技术债（未阻塞）：`api/__init__.py` 带 UTF-8 BOM，`ast.parse` 直接读会抛 `invalid non-printable character U+FEFF`；现有 `ast` 类检查均用 `encoding="utf-8-sig"` 规避，新增此类工具需沿用或先清 BOM。
+- 编码卫生（已闭环）：`api/__init__.py` 与 `frontend/shoot-fe.cjs` 的 UTF-8 BOM 已清除。BOM 是隐形炸弹——black 走 `tokenize.open` 会静默剥离，CI 因此长绿，但任何 `ast.parse(read_text(encoding="utf-8"))` 都会抛 `invalid non-printable character U+FEFF`。已加 `tests/seed/test_python_sources_have_no_utf8_bom` 守卫（经反向验证：塞回 BOM 立即失败），并要求扫描面 >100 文件以防守卫被悄悄收窄。`tests/seed/test_platform_boundary.py::_imports` 保持 `utf-8-sig` 容错不变——它的职责是查 import，编码问题由专职守卫报错。
+- 遗留技术债（不阻塞，明确不修）：`scripts/archive/legacy_convert_dense_model_format.py` 同时存在 BOM 与不可逆 mojibake（第 83 行 `[绯荤粺]` ＝ GBK 的 `[系统]` 被当 UTF-8 写回），在 `utf-8`/`utf-8-sig`/`gbk` 下均无法解析，本已是死文件；它被 black `extend-exclude` 与 coverage `omit` 排除，也排除在 BOM 守卫扫描外。
+- 分支策略：仓库**只保留 `main`**。历史上 Dependabot 版本更新累积过 31 条长期分支，已全部删除（对应 12 个 open PR 随之关闭，均为依赖升级，无业务提交丢失）。`.github/dependabot.yml` 三个生态系统的 `open-pull-requests-limit` 统一设为 `0`：该选项只关版本更新，安全更新走独立通道（内部上限 10）不受影响；`groups`/`ignore`/`labels` 全部保留，恢复只需把 `0` 改回 `3`。
 
 ## 当前状态与唯一下一步
 

@@ -1,10 +1,15 @@
 version: 2
+# 单分支策略：仓库只保留 main。Dependabot 版本更新会为每个依赖开一条长期分支
+# （曾累积 31 条），与单分支策略冲突，故将 open-pull-requests-limit 统一设为 0。
+# 该选项**只**关闭版本更新；安全更新（Dependabot security updates）走独立通道，
+# 有自己的内部上限 10，不受此值影响——真出 CVE 时仍会收到 PR。
+# 下方 groups/ignore/labels 全部保留，将来想恢复版本更新只需把 0 改回 3。
 updates:
   - package-ecosystem: pip
     directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 0
     labels:
       - dependencies
     groups:
@@ -23,7 +28,7 @@ updates:
     directory: /frontend
     schedule:
       interval: weekly
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 0
     labels:
       - dependencies
     groups:
@@ -42,7 +47,7 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 0
     labels:
       - dependencies
       - ci
