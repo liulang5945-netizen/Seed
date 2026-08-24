@@ -83,3 +83,24 @@ def test_legacy_bridge_owns_explicit_cortex_routes_and_lifecycle() -> None:
     assert "start_legacy_services" in text
     assert "stop_legacy_services" in text
     assert "legacy_available" in text
+
+
+def test_python_sources_have_no_utf8_bom() -> None:
+    # BOM 是隐形炸弹：black 走 tokenize.open 会静默剥离，CI 因此长绿，
+    # 但任何 ast.parse(read_text(encoding="utf-8")) 都会炸 U+FEFF。
+    # scripts/archive/ 内的脚本已因历史 mojibake 无法解析，不在守卫范围。
+    skip_parts = {".git", "node_modules", "build", "dist", "_libs", ".venv"}
+    scanned = 0
+    offenders: list[str] = []
+    for path in REPO.rglob("*.py"):
+        if any(part in skip_parts for part in path.parts):
+            continue
+        relative = path.relative_to(REPO).as_posix()
+        if relative.startswith("scripts/archive/"):
+            continue
+        scanned += 1
+        if path.read_bytes().startswith(b"\xef\xbb\xbf"):
+            offenders.append(relative)
+
+    assert scanned > 100, f"BOM 扫描面异常收窄，仅扫到 {scanned} 个文件"
+    assert offenders == [], f"以下 Python 源码带 UTF-8 BOM：{offenders}"
