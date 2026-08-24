@@ -20,6 +20,8 @@ def test_training_profile_scales_regions_dimensions_and_edge_density() -> None:
     assert profile.motor_fan_in > default.motor_fan_in
     assert profile.memory_units > default.memory_units
     assert profile.memory_fan_in > default.memory_fan_in
+    assert profile.memory_time_dim > default.memory_time_dim
+    assert profile.memory_episode_dim > default.memory_episode_dim
     assert profile.cortical_context_dim > default.cortical_context_dim
 
 
@@ -75,6 +77,8 @@ def test_capacity_policy_can_change_depth_and_structural_proportions() -> None:
         memory_fan_in_ratio=0.20,
         memory_meta_ratio=0.30,
         memory_readout_fan_in_ratio=0.25,
+        memory_time_ratio=0.20,
+        memory_episode_ratio=0.25,
         lateral_fan_in_ratio=0.10,
         alignment=8,
     )
@@ -83,6 +87,9 @@ def test_capacity_policy_can_change_depth_and_structural_proportions() -> None:
     assert len(profile.region_sizes) == 4
     assert profile.region_sizes[1] < profile.region_sizes[0]
     assert profile.region_sizes[-1] < profile.region_sizes[1]
+    default_profile = TaijiConfig.capacity_profile(300_000, seed=311)
+    assert profile.memory_time_dim > default_profile.memory_time_dim
+    assert profile.memory_episode_dim > default_profile.memory_episode_dim
     assert profile.planned_active_parameter_count <= 300_000
     assert Taiji(profile).parameter_count() == profile.planned_active_parameter_count
 
@@ -98,6 +105,17 @@ def test_capacity_policy_roundtrips_as_external_search_input() -> None:
     policy = CapacityPolicy(region_ratios=(1.0, 0.65, 0.40), alignment=16)
 
     assert CapacityPolicy.from_dict(policy.to_dict()) == policy
+
+
+def test_capacity_policy_loads_older_json_without_memory_dimension_ratios() -> None:
+    policy = CapacityPolicy(region_ratios=(1.0, 0.65, 0.40), alignment=16)
+    payload = policy.to_dict()
+    payload.pop("memory_time_ratio")
+    payload.pop("memory_episode_ratio")
+
+    assert CapacityPolicy.from_dict(payload) == CapacityPolicy(
+        region_ratios=(1.0, 0.65, 0.40), alignment=16
+    )
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA device is not available")

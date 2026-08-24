@@ -123,6 +123,18 @@ def load_legacy_runtime() -> None:
     load_model_on_startup()
 
 
+def load_legacy_cortex(neurons_dir: str, device: str):
+    """Load the frozen Cortex CLI model through the explicit Legacy boundary."""
+
+    if not legacy_available():
+        raise RuntimeError(
+            "Legacy Cortex is unavailable; install the legacy extra and enable SEED_ENABLE_LEGACY=1"
+        )
+    from neuroplex.loader import load_cortex
+
+    return load_cortex(neurons_dir=neurons_dir, device=device)
+
+
 def legacy_startup_download_progress() -> dict[str, Any]:
     if not legacy_available():
         return {
