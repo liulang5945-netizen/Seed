@@ -14,8 +14,9 @@
 - `CapacityPolicy` 将区域深度/比例、各类 fan-in 密度、memory/meta 比例和对齐粒度从完整动力学配置中拆出；策略可 JSON round-trip，`train_seed_corpus.py --capacity-policy ... --parameter-budget ...` 可直接用于架构搜索，最终 checkpoint 仍只保存展开后的 `TaijiConfig`，格式兼容。
 - `seed_platform.paths` 成为源运行/桌面打包路径的唯一平台实现，API 的工作区、聊天历史、RAG、更新、数据集与发布路径不再经由 `neuroplex.core.utils`。
 - `api/app.py` 不再直接导入任何 `neuroplex` 模块；Cortex 生命周期、自动重载、life scheduler 和显式 Cortex 路由集中到 `api/legacy_bridge.py`，AST 门禁阻止依赖重新散回入口。
+- 第三阶段已完成：`seed_platform.settings` 以原子 JSON 写入拥有持久化 settings，旧 `neuroplex.services.settings_service` 仅保留兼容转发；`AppState` 已迁到 `seed_platform.app_state`，API 与训练控制不再借用 `neuroplex.core.app_state`。RAG 知识库改为 API Legacy 适配器按需注入，平台状态不再反向导入 Neuroplex。
 
-**唯一下一步**：把 `app_state`、认证和 settings service 依次迁到 `seed_platform`，让聊天、健康检查、训练控制与平台路由不再借用 Cortex 命名空间；完成后将 `legacy_bridge` 改为显式可选插件并让 Seed 成为无 Legacy 安装下的默认启动路径。
+**唯一下一步**：把认证服务迁到 `seed_platform`，让认证、健康检查与平台路由不再借用 Cortex 命名空间；完成后将 `legacy_bridge` 改为显式可选插件并让 Seed 成为无 Legacy 安装下的默认启动路径。
 
 ## 1. 当前架构
 

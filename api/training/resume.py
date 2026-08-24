@@ -26,7 +26,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from neuroplex.core.app_state import app_state
+from seed_platform.app_state import app_state
 from seed import Seed
 from seed.persistence import atomic_save, attach_metadata, corpus_fingerprint
 

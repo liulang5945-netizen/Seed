@@ -6,7 +6,7 @@ URLs readable while directing clients to population growth.
 
 from fastapi import APIRouter, HTTPException
 
-from neuroplex.core.app_state import app_state
+from seed_platform.app_state import app_state
 
 router = APIRouter()
 

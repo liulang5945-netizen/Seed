@@ -46,7 +46,7 @@ def load_legacy_runtime() -> None:
 
     try:
         from api.routes_model_switch import load_runtime_pref
-        from neuroplex.core.app_state import app_state
+        from seed_platform.app_state import app_state
 
         pref = load_runtime_pref()
         if pref.get("runtime") == "seed":
