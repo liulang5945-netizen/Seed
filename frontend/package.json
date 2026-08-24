@@ -23,7 +23,7 @@
     "lucide-vue-next": "^1.0.0",
     "marked": "^18.0.3",
     "marked-highlight": "^2.2.4",
-    "monaco-editor": "^0.55.1",
+    "monaco-editor": "^0.56.0",
     "naive-ui": "^2.40.0",
     "pinia": "^3.0.4",
     "vue": "^3.5.32",
