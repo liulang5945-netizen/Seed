@@ -81,3 +81,11 @@
 
 本项已闭合。最终客户端位于 `dist/Seed/Seed.exe`；以后修改前端或品牌资源后，继续执行
 `python desktop/build.py`，再从该 exe 启动，避免打开旧包看不到改动。
+
+## 9. 2026-08-24 圆角窗口 PyQt6 参数兼容修复
+
+- [x] 修复 `QPainterPath.addRoundedRect()` 将 `QRect` 误传给 PyQt6 的启动崩溃。
+- [x] 重新打包并验证桌面客户端能完成窗口初始化。
+
+本项已闭合。圆角 mask 已使用 PyQt6 支持的浮点坐标重载；新包真实启动后完成
+后端就绪、WebSocket 就绪和前端加载冒烟验证。
