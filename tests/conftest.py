@@ -49,7 +49,7 @@ def _observe_logging() -> None:
 
 @pytest.fixture(autouse=True, scope="session")
 def _reset_global_app_state() -> None:
-    """Reinitialize the neuroplex app-state singleton for a clean slate.
+    """Reinitialize the platform app-state singleton for a clean slate.
 
     The singleton is created at import time and persists across tests. We
     replace it with a fresh instance at session teardown only if the module
@@ -57,7 +57,7 @@ def _reset_global_app_state() -> None:
     """
     yield
     try:
-        import neuroplex.core.app_state as _app_state_mod
+        import seed_platform.app_state as _app_state_mod
     except Exception:  # pragma: no cover - neuroplex optional in some envs
         return
     try:
@@ -75,14 +75,14 @@ def reset_state():
     This is finer-grained than the session-level reset above.
     """
     try:
-        import neuroplex.core.app_state as _mod
+        import seed_platform.app_state as _mod
 
         _mod.app_state = _mod.AppState()
     except Exception:
         pass
     yield
     try:
-        import neuroplex.core.app_state as _mod
+        import seed_platform.app_state as _mod
 
         _mod.app_state = _mod.AppState()
     except Exception:

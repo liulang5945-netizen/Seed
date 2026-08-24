@@ -8,7 +8,7 @@ import shutil
 
 from fastapi import APIRouter, HTTPException, UploadFile, File, BackgroundTasks
 
-from neuroplex.core.app_state import app_state
+from seed_platform.app_state import app_state
 from seed_platform.paths import get_external_path
 from neuroplex.tools.rag import RAGKnowledgeBase, RAGConfig
 
@@ -18,11 +18,28 @@ logger = logging.getLogger("ApiServer.RAG")
 router = APIRouter()
 
 
+def _ensure_rag_kb() -> object | None:
+    """Create the optional Legacy RAG adapter without coupling platform state to it."""
+
+    if app_state.rag_kb is None:
+        try:
+            app_state.update_rag_kb(RAGKnowledgeBase(persist_dir=get_external_path("rag_data")))
+        except Exception as exc:
+            logger.warning("RAG knowledge base unavailable: %s", exc)
+    return app_state.rag_kb
+
+
+_ensure_rag_kb()
+
+
 def _process_rag_file_background(file_path: str):
     """后台处理：嵌入模型向量化"""
     try:
-        app_state.rag_kb.add_file(file_path)
-        app_state.rag_kb.rebuild_index()
+        kb = _ensure_rag_kb()
+        if kb is None:
+            raise RuntimeError("RAG knowledge base is unavailable")
+        kb.add_file(file_path)
+        kb.rebuild_index()
         logger.info(f"✅ 后台 RAG 向量化建库完成: {file_path}")
     except Exception as e:
         logger.error(f"❌ 后台 RAG 向量化失败: {e}")
@@ -68,7 +85,8 @@ async def clear_rag_documents():
 @router.get("/api/rag/files")
 def list_rag_files():
     """获取已挂载的 RAG 文件列表"""
-    return {"files": app_state.rag_kb.get_doc_names()}
+    kb = _ensure_rag_kb()
+    return {"files": kb.get_doc_names() if kb is not None else []}
 
 
 @router.delete("/api/rag/file/{filename:path}")
@@ -81,8 +99,10 @@ def delete_rag_file(filename: str):
             raise HTTPException(status_code=403, detail="路径不安全")
         if os.path.exists(doc_path):
             os.remove(doc_path)
-        app_state.rag_kb.remove_file(filename)
-        app_state.rag_kb.rebuild_index()
+        kb = _ensure_rag_kb()
+        if kb is not None:
+            kb.remove_file(filename)
+            kb.rebuild_index()
         return {"status": "success"}
     except HTTPException:
         raise

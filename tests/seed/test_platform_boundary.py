@@ -10,7 +10,7 @@ REPO = Path(__file__).resolve().parents[2]
 
 
 def _imports(path: Path) -> set[str]:
-    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    tree = ast.parse(path.read_text(encoding="utf-8-sig"), filename=str(path))
     modules: set[str] = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
@@ -46,6 +46,19 @@ def test_platform_paths_are_owned_outside_neuroplex() -> None:
 
     pyproject = (REPO / "pyproject.toml").read_text(encoding="utf-8")
     assert '"seed_platform*"' in pyproject
+
+
+def test_platform_state_has_no_legacy_imports() -> None:
+    app_state = REPO / "seed_platform" / "app_state.py"
+    imports = _imports(app_state)
+
+    assert not any(module.startswith("neuroplex") for module in imports)
+    assert "seed_platform.app_state" in _imports(REPO / "neuroplex" / "core" / "app_state.py")
+
+    api_modules = list((REPO / "api").rglob("*.py"))
+    for module_path in api_modules:
+        imports = _imports(module_path)
+        assert "neuroplex.core.app_state" not in imports, module_path
 
 
 def test_legacy_bridge_owns_explicit_cortex_routes_and_lifecycle() -> None:

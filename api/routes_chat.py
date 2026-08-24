@@ -15,7 +15,7 @@ import time
 from fastapi import APIRouter, HTTPException, UploadFile, File, Request
 from fastapi.responses import StreamingResponse
 
-from neuroplex.core.app_state import app_state
+from seed_platform.app_state import app_state
 from seed_platform.paths import get_external_path
 from api.models import ChatRequest
 from api.chat_strategies import create_event_generator

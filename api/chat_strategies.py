@@ -184,7 +184,7 @@ def _has_react_engine() -> bool:
     except ImportError:
         return False
 
-    from neuroplex.core.app_state import app_state
+    from seed_platform.app_state import app_state
 
     # 有 trainer（模型已加载）就支持 ReAct
     # _call_local_model 会自动根据 tokenizer 类型选择 prompt 格式

@@ -19,7 +19,7 @@ def seed_client(monkeypatch):
     monkeypatch.setattr(seed_runtime, "_runtime", runtime)
 
     # 健康检查只在启动完成后返回完整负载，测试里直接标记就绪。
-    from neuroplex.core.app_state import app_state
+    from seed_platform.app_state import app_state
 
     monkeypatch.setattr(app_state, "startup_complete", True)
     monkeypatch.setattr(app_state, "startup_error", None)

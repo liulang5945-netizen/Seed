@@ -16,7 +16,7 @@ from typing import Any
 
 from fastapi import APIRouter
 
-from neuroplex.core.app_state import app_state
+from seed_platform.app_state import app_state
 
 logger = logging.getLogger("ApiServer.ModelSwitch")
 router = APIRouter()

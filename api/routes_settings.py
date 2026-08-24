@@ -4,7 +4,7 @@ import logging
 
 from fastapi import APIRouter, HTTPException
 
-from neuroplex.core.app_state import app_state
+from seed_platform.app_state import app_state
 from neuroplex.core.config import get_config
 from neuroplex.core.memory_watchdog import force_memory_refresh, get_memory_status_dict
 from seed_platform.settings import load_settings, update_settings
