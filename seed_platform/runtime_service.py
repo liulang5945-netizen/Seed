@@ -136,6 +136,16 @@ def _auth_section(auth_header: str) -> dict:
 
 
 def _life_section() -> dict:
+    from seed_platform.dependencies import legacy_requested
+
+    if not legacy_requested():
+        return {
+            "status": "seed",
+            "is_running": False,
+            "needs": {},
+            "total_interactions": 0,
+            "uptime_seconds": 0,
+        }
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
 
@@ -161,6 +171,10 @@ def _life_section() -> dict:
 
 
 def _tools_section() -> dict:
+    from seed_platform.dependencies import legacy_requested
+
+    if not legacy_requested():
+        return {"status": "seed", "tools": [], "count": 0, "error": ""}
     try:
         from neuroplex.services.tool_service import list_tools
 

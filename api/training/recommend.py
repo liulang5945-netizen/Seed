@@ -9,6 +9,9 @@ import os
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from seed.datasets import inspect_native_dataset
+from taiji import TaijiConfig
+
 logger = logging.getLogger("ApiServer.Training.Recommend")
 router = APIRouter()
 
@@ -16,6 +19,8 @@ router = APIRouter()
 class RecommendRequest(BaseModel):
     dataset_size: int = 100
     preset: str = "mid"
+    parameter_budget: int | None = None
+    seed: int = 20260822
 
 
 class DatasetCheckRequest(BaseModel):
@@ -56,46 +61,80 @@ def _detect_hardware() -> dict:
 
 _NATIVE_PRESETS = {
     "tiny": {
-        "hidden_size": 384,
-        "num_layers": 8,
-        "batch_size": 16,
-        "grad_accum": 1,
+        "parameter_budget": 100_000,
+        "epochs": 1,
         "description": "极轻量（适合 CPU 快速实验）",
     },
     "small": {
-        "hidden_size": 512,
-        "num_layers": 12,
-        "batch_size": 8,
-        "grad_accum": 2,
-        "description": "小模型（适合消费级 GPU）",
+        "parameter_budget": 300_000,
+        "epochs": 1,
+        "description": "小容量（适合消费级 GPU）",
     },
     "mid": {
-        "hidden_size": 768,
-        "num_layers": 16,
-        "batch_size": 4,
-        "grad_accum": 4,
-        "description": "中等模型（适合单卡训练）",
+        "parameter_budget": 1_000_000,
+        "epochs": 2,
+        "description": "中等容量（适合单卡训练）",
     },
     "large": {
-        "hidden_size": 1024,
-        "num_layers": 24,
-        "batch_size": 2,
-        "grad_accum": 8,
-        "description": "大模型（需多卡或大显存）",
+        "parameter_budget": 4_000_000,
+        "epochs": 3,
+        "description": "大容量（需更充足的内存）",
     },
 }
+
+
+def _native_capacity(budget: int, seed: int) -> dict:
+    config = TaijiConfig.capacity_profile(budget, seed=seed)
+    return {
+        "parameter_budget": budget,
+        "planned_active_parameters": config.planned_active_parameter_count,
+        "region_sizes": list(config.region_sizes),
+        "synapse_fan_in": config.synapse_fan_in,
+        "motor_fan_in": config.motor_fan_in,
+        "memory_units": config.memory_units,
+        "memory_meta_dim": config.memory_meta_dim,
+        "memory_time_dim": config.memory_time_dim,
+        "memory_episode_dim": config.memory_episode_dim,
+        "memory_fan_in": config.memory_fan_in,
+        "memory_readout_fan_in": config.memory_readout_fan_in,
+        "lateral_fan_in": config.lateral_fan_in,
+    }
 
 
 @router.post("/api/training/recommend")
 async def get_training_recommendation(req: RecommendRequest):
     """获取基于本地硬件的原生训练推荐配置"""
     try:
+        if req.preset not in _NATIVE_PRESETS:
+            raise HTTPException(status_code=400, detail=f"未知原生训练预设: {req.preset}")
+        if req.dataset_size < 0:
+            raise HTTPException(status_code=400, detail="dataset_size 不能为负数")
+        if req.parameter_budget is not None and req.parameter_budget <= 0:
+            raise HTTPException(status_code=400, detail="parameter_budget 必须为正数")
         hw = _detect_hardware()
+        selected = _NATIVE_PRESETS[req.preset]
+        budget = int(req.parameter_budget or selected["parameter_budget"])
         return {
             "status": "success",
             "hardware": hw,
-            "presets": {k: {**v, "hardware": hw} for k, v in _NATIVE_PRESETS.items()},
+            "runtime": "seed-taiji-native",
+            "selected_preset": req.preset,
+            "selected": {
+                **selected,
+                "dataset_size": req.dataset_size,
+                "device": "cuda" if hw["cuda_available"] else "cpu",
+                "capacity": _native_capacity(budget, req.seed),
+            },
+            "presets": {
+                key: {
+                    **value,
+                    "capacity": _native_capacity(int(value["parameter_budget"]), req.seed),
+                }
+                for key, value in _NATIVE_PRESETS.items()
+            },
         }
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"获取训练推荐失败: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -103,13 +142,16 @@ async def get_training_recommendation(req: RecommendRequest):
 
 @router.post("/api/training/check_dataset")
 async def check_dataset_quality(req: DatasetCheckRequest):
-    """检查数据集质量"""
+    """检查原生 raw-byte 训练数据集质量。"""
+    if not req.file_path.strip():
+        raise HTTPException(status_code=400, detail="file_path 不能为空")
     try:
-        from neuroplex.train.dataset_checker import DatasetQualityChecker
-
-        checker = DatasetQualityChecker()
-        result = checker.check(req.file_path)
-        return {"status": "success", **result}
+        result = inspect_native_dataset(req.file_path)
+        return {"status": "success", **result.to_dict()}
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail=f"数据集不存在: {req.file_path}")
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"数据集检查失败: {e}")
         raise HTTPException(status_code=500, detail=str(e))

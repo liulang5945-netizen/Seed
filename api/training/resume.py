@@ -27,7 +27,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from seed_platform.app_state import app_state
-from seed import Seed
+from seed import Seed, iter_native_documents
 from seed.persistence import atomic_save, attach_metadata, corpus_fingerprint
 
 from .common import collect_hardware_diag, safe_put
@@ -67,41 +67,13 @@ def _resolve_datasets(names: List[str]):
     return resolved, missing
 
 
-def _row_text(obj) -> str:
-    """兼容 text / instruction-output / question-answer 三类 jsonl 行。"""
-    if isinstance(obj, str):
-        return obj
-    if not isinstance(obj, dict):
-        return ""
-    text = obj.get("text")
-    if text:
-        return str(text)
-    parts = [
-        obj.get(key)
-        for key in ("instruction", "input", "prompt", "question", "output", "response", "answer")
-        if obj.get(key)
-    ]
-    return "\n".join(str(part) for part in parts) if parts else ""
-
-
 def _iter_symbols(paths: List[Path], boundary: int):
-    """逐行流式产出 (符号, 该行字节数)；字节数用于进度分母统计。"""
-    for path in paths:
-        with open(path, encoding="utf-8") as handle:
-            for line in handle:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    text = _row_text(json.loads(line))
-                except json.JSONDecodeError:
-                    text = line
-                if not text:
-                    continue
-                raw = text.encode("utf-8")
-                yield boundary, 0
-                for symbol in raw:
-                    yield symbol, 1
+    """逐文档流式产出 (符号, 该字节是否计入进度)。"""
+    for text in iter_native_documents(paths):
+        raw = text.encode("utf-8")
+        yield boundary, 0
+        for symbol in raw:
+            yield symbol, 1
 
 
 def _train_worker(
@@ -111,6 +83,7 @@ def _train_worker(
     save_path: Path,
     event_q: "queue.Queue",
     max_ticks: Optional[int],
+    start_description: str = "已从检查点恢复，开始流式续训…",
 ) -> None:
     """后台训练线程：逐字节观察语料，周期发进度与落盘，响应停止/暂停。"""
     boundary = model.config.taiji.boundary_symbol
@@ -129,7 +102,7 @@ def _train_worker(
         {
             "type": "progress",
             "fraction": 0.0,
-            "desc": f"已从检查点恢复（tick {start_tick:,}），开始流式续训…",
+            "desc": f"{start_description}（tick {start_tick:,}）",
             "step": start_tick,
             "epoch": 1,
             "total_epochs": 1,
@@ -225,6 +198,31 @@ def _train_worker(
         safe_put(event_q, None)
 
 
+def stream_training_events(
+    event_q: "queue.Queue",
+    thread: threading.Thread,
+    initial_events: Optional[list[dict]] = None,
+):
+    """Yield one shared SSE contract for native training endpoints."""
+
+    try:
+        for event in initial_events or []:
+            yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+        while True:
+            try:
+                event = event_q.get(timeout=20)
+            except queue.Empty:
+                yield ": keepalive\n\n"
+                continue
+            if event is None:
+                break
+            yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+    finally:
+        if thread.is_alive():
+            app_state.stop_training_requested = True
+    yield "data: [DONE]\n\n"
+
+
 @router.post("/api/train/resume_checkpoint")
 def resume_checkpoint(req: ResumeRequest):
     """从检查点恢复训练，SSE 流式返回进度（契约见模块文档）。"""
@@ -286,23 +284,10 @@ def resume_checkpoint(req: ResumeRequest):
     app_state._trainer_ref = thread
     thread.start()
 
-    def stream():
-        try:
-            if corpus_drift_warning:
-                yield f"data: {json.dumps({'type': 'warning', 'message': corpus_drift_warning}, ensure_ascii=False)}\n\n"
-            while True:
-                try:
-                    evt = event_q.get(timeout=20)
-                except queue.Empty:
-                    yield ": keepalive\n\n"
-                    continue
-                if evt is None:
-                    break
-                yield f"data: {json.dumps(evt, ensure_ascii=False)}\n\n"
-        finally:
-            # 客户端断开（含前端"停止"按钮中断请求）→ 请求停止后台训练。
-            if thread.is_alive():
-                app_state.stop_training_requested = True
-        yield "data: [DONE]\n\n"
-
-    return StreamingResponse(stream(), media_type="text/event-stream")
+    initial_events = (
+        [{"type": "warning", "message": corpus_drift_warning}] if corpus_drift_warning else []
+    )
+    return StreamingResponse(
+        stream_training_events(event_q, thread, initial_events),
+        media_type="text/event-stream",
+    )

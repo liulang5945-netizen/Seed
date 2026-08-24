@@ -80,6 +80,13 @@ def test_platform_state_has_no_legacy_imports() -> None:
         assert "neuroplex.core.app_state" not in imports, module_path
 
 
+def test_runtime_status_keeps_legacy_sections_opt_in() -> None:
+    source = (REPO / "seed_platform" / "runtime_service.py").read_text(encoding="utf-8")
+    assert "legacy_requested" in source
+    assert "neuroplex.life.life_scheduler" in source
+    assert "neuroplex.services.tool_service" in source
+
+
 def test_platform_auth_has_no_legacy_imports() -> None:
     auth = REPO / "seed_platform" / "auth.py"
     imports = _imports(auth)

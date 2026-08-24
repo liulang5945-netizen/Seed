@@ -4,8 +4,8 @@
  * 从 App.vue 拆出，减轻主文件臃肿
  *
  * 支持两种训练模式：
- * 1. 普通模式（HuggingFace/GGUF）— LoRA 微调，走 /api/train/stream
- * 2. Cortex 模式 — 睡眠训练，走 /api/taiji/sleep
+ * 1. 普通模式（Legacy 模型）— 保留旧的 LoRA 流程
+ * 2. Seed 原生模式 — raw-byte Taiji 训练，走 /api/train/native
  *
  * 当加载 Cortex 神经元架构时，自动进入 Cortex 模式，显示生命活动面板。
  * 普通模型下不触发任何 Cortex 相关内容。
@@ -57,6 +57,7 @@ export const taijiLifeStatus = reactive({          // 生命状态
 export const taijiTimeline = ref([]);              // 生命活动时间线
 export const taijiLifeLoading = ref(false);        // 生命活动操作中
 export const taijiTrainParams = reactive({         // Seed专属训练参数
+  parameter_budget: 300000, max_symbols: 200000, device: 'auto',
   num_epochs: 5, batch_size: 4, learning_rate: 1e-4,
   max_length: 512, save_steps: 50, log_steps: 5,
   keep_checkpoints: 3,
@@ -648,26 +649,24 @@ export async function exportModelToGGUF(toast, $confirm) {
 // ===== Seed模式：检测 + 生命活动 + Seed微调 =====
 
 /**
- * 检测当前加载的模型是否为 Cortex 神经元架构。
- * 如果是，自动设置 isTaijiModel=true 并加载Seed信息。
+ * 检测当前加载的运行时是否为 Seed 原生 Taiji。
+ * Legacy Cortex 不再被当作 Seed 训练主体。
  * 应在训练页面 onMounted 时调用。
  */
 export async function detectTaijiModel() {
   try {
-    const res = await authFetch(`${API_BASE}/api/taiji/model/info`);
+    const res = await authFetch(`${API_BASE}/api/runtime/status`);
     if (res.ok) {
       const data = await res.json();
-      if (data.status === 'active') {
+      if (data.health?.is_seed) {
         isTaijiModel.value = true;
         Object.assign(taijiModelInfo, {
-          size: data.size || '',
-          parameters: data.parameters || {},
-          config: data.config || {},
-          available_sizes: data.available_sizes || [],
-          checkpoints: data.checkpoints || {},
+          size: 'Seed Native',
+          parameters: { active: data.health?.model_name || '' },
+          config: {},
+          available_sizes: [],
+          checkpoints: {},
         });
-        // 自动加载生命状态
-        await loadTaijiLifeStatus();
         return true;
       }
     }
@@ -680,6 +679,7 @@ export async function detectTaijiModel() {
  * 加载Seed生命状态（心跳、空闲时间等）
  */
 export async function loadTaijiLifeStatus() {
+  if (isTaijiModel.value) return;
   try {
     const res = await authFetch(`${API_BASE}/api/taiji/life/status`);
     if (res.ok) {
@@ -695,6 +695,7 @@ export async function loadTaijiLifeStatus() {
  * 加载Seed生命时间线
  */
 export async function loadTaijiTimeline(hours = 24) {
+  if (isTaijiModel.value) return;
   try {
     const res = await authFetch(`${API_BASE}/api/taiji/life/timeline?hours=${hours}`);
     if (res.ok) {
@@ -712,6 +713,10 @@ export async function loadTaijiTimeline(hours = 24) {
 export async function feedTaiji(toast) {
   taijiLifeLoading.value = true;
   try {
+    if (isTaijiModel.value) {
+      toast('Seed 原生运行时不启用 Legacy 生命活动接口', 'info');
+      return;
+    }
     const res = await authFetch(`${API_BASE}/api/taiji/feed`, { method: 'POST' });
     if (res.ok) {
       const data = await res.json();
@@ -730,6 +735,10 @@ export async function feedTaiji(toast) {
 export async function sleepTaiji(toast) {
   taijiLifeLoading.value = true;
   try {
+    if (isTaijiModel.value) {
+      toast('Seed 原生运行时通过 /api/train/native 持续学习，不启用 Legacy 睡眠引擎', 'info');
+      return;
+    }
     const res = await authFetch(`${API_BASE}/api/taiji/sleep`, { method: 'POST' });
     if (res.ok) {
       const data = await res.json();
@@ -750,6 +759,10 @@ export async function sleepTaiji(toast) {
 export async function playTaiji(toast) {
   taijiLifeLoading.value = true;
   try {
+    if (isTaijiModel.value) {
+      toast('Seed 原生运行时不启用 Legacy 生命活动接口', 'info');
+      return;
+    }
     const res = await authFetch(`${API_BASE}/api/taiji/play`, { method: 'POST' });
     if (res.ok) {
       const data = await res.json();
@@ -765,15 +778,14 @@ export async function playTaiji(toast) {
 }
 
 /**
- * 启动Seed睡眠训练（Cortex 模式）。
- * Cortex 神经元架构通过 sleep_engine 训练。
+ * 启动 Seed 原生 Taiji byte-stream 训练。
  */
 export async function startTaijiTraining(toast) {
   trainState.value = 'running';
   trainLog.value = '';
   trainLoss.value = [];
   trainProgress.value = 0;
-  trainProgressDesc.value = '⏳ 正在启动睡眠训练...';
+  trainProgressDesc.value = '⏳ 正在启动 Taiji 原生训练...';
   trainAbortController = new AbortController();
   Object.assign(trainMetrics, {
     elapsed: 0, eta: null, lr: null, epoch: 1,
@@ -786,13 +798,19 @@ export async function startTaijiTraining(toast) {
   });
 
   try {
-    trainProgressDesc.value = '💤 睡眠训练进行中（共振整合 + STDP）...';
-    trainProgress.value = 30;
-    trainLog.value += '💤 启动睡眠训练（sleep_engine）...\n';
+    trainProgressDesc.value = '🧠 Taiji 原生 byte-stream 训练进行中...';
+    trainLog.value += '🧠 启动 Taiji 原生训练（raw bytes + local plasticity）...\n';
     autoScrollTrainLog();
 
-    const res = await authFetch(`${API_BASE}/api/taiji/sleep`, {
+    const res = await authFetch(`${API_BASE}/api/train/native`, {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        datasets: selectedDatasets.value.length ? [...selectedDatasets.value] : null,
+        parameter_budget: taijiTrainParams.parameter_budget,
+        max_symbols: taijiTrainParams.max_symbols || null,
+        device: taijiTrainParams.device || 'auto',
+      }),
       signal: trainAbortController.signal,
     });
 
@@ -801,18 +819,61 @@ export async function startTaijiTraining(toast) {
       throw new Error(err.detail || `HTTP ${res.status}`);
     }
 
-    const data = await res.json();
-    trainProgress.value = 100;
-    trainProgressDesc.value = `✅ 睡眠训练完成`;
-    trainLog.value += `✅ 睡眠训练完成：${data.phases_completed || 0} 阶段，${data.training_samples_used || 0} 样本\n`;
-    if (data.loss != null) {
-      trainLoss.value.push({ step: 1, loss: data.loss });
-      trainMetrics.current_loss = data.loss;
+    trainReader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    while (true) {
+      const { done, value } = await trainReader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const payload = line.slice(6);
+        if (payload === '[DONE]') continue;
+        let evt;
+        try {
+          evt = JSON.parse(payload);
+        } catch (parseError) {
+          console.debug('[useTraining] native SSE parse error:', parseError.message);
+          continue;
+        }
+        if (evt.type === 'hardware_diag') {
+          Object.assign(trainDevice, {
+            device_type: evt.device_type || '', device_name: evt.device_name || '',
+            gpu_name: evt.gpu_name || null, gpu_memory_gb: evt.gpu_memory_gb || null,
+            ram_gb: evt.ram_gb || null, message: evt.message || '',
+          });
+        } else if (evt.type === 'progress') {
+          trainProgress.value = Math.round((evt.fraction || 0) * 100);
+          trainProgressDesc.value = evt.desc || '';
+          trainLog.value += `${evt.desc || ''}\n`;
+          if (evt.loss != null) {
+            trainLoss.value.push({ step: evt.step || 0, loss: evt.loss });
+            trainMetrics.current_loss = evt.loss;
+          }
+          Object.assign(trainMetrics, {
+            elapsed: evt.elapsed ?? trainMetrics.elapsed,
+            eta: evt.eta ?? trainMetrics.eta,
+            epoch: evt.epoch ?? trainMetrics.epoch,
+            total_epochs: evt.total_epochs ?? trainMetrics.total_epochs,
+            samples_per_sec: evt.samples_per_sec ?? trainMetrics.samples_per_sec,
+            total_steps: evt.total_steps ?? trainMetrics.total_steps,
+          });
+        } else if (evt.type === 'completed') {
+          trainState.value = 'completed';
+          trainProgress.value = 100;
+          trainProgressDesc.value = `✅ ${evt.message || '原生训练完成'}`;
+          trainLog.value += `✅ ${evt.message || '原生训练完成'}\n`;
+        } else if (evt.type === 'error') {
+          throw new Error(evt.message || '原生训练失败');
+        }
+        autoScrollTrainLog();
+      }
     }
-    trainState.value = 'completed';
-    autoScrollTrainLog();
-    toast(`✅ 睡眠训练完成（${data.phases_completed || 0} 阶段）`, 'success');
-    // 刷新Seed信息
+    if (trainState.value === 'running') trainState.value = 'completed';
+    toast('✅ Taiji 原生训练完成', 'success');
     await detectTaijiModel();
   } catch (err) {
     if (err.name !== 'AbortError') {

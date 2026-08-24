@@ -33,7 +33,7 @@ import torch
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from seed import Seed, SeedConfig  # noqa: E402
+from seed import Seed, SeedConfig, iter_native_documents  # noqa: E402
 from seed.persistence import (  # noqa: E402
     atomic_save,
     attach_metadata,
@@ -95,17 +95,9 @@ def iter_corpus_symbols(
     needed -- the model sees exactly the bytes a reader would see.
     """
 
-    for path in paths:
-        with open(path, encoding="utf-8") as handle:
-            for line in handle:
-                line = line.strip()
-                if not line:
-                    continue
-                text = json.loads(line).get("text", "")
-                if not text:
-                    continue
-                yield boundary
-                yield from text.encode("utf-8")
+    for text in iter_native_documents(paths):
+        yield boundary
+        yield from text.encode("utf-8")
 
 
 def run_training(

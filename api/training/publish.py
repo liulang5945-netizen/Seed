@@ -1,6 +1,6 @@
 """
 Seed — 模型发布 API（精简版）
-Cortex 神经元架构不适用传统 save_model，仅保留 published 列表查询和 GGUF 不支持消息。
+Taiji 原生检查点不使用传统 save_model，保留 published 列表查询和 GGUF 不支持消息。
 """
 
 import json as _json
@@ -18,10 +18,10 @@ router = APIRouter()
 
 @router.post("/api/model/publish")
 async def publish_model():
-    """保存当前模型（Cortex 模式下不适用传统 save_model）"""
+    """保存当前模型（Taiji 使用原生 checkpoint 落盘）"""
     raise HTTPException(
         status_code=503,
-        detail="Cortex 神经元架构通过独立训练、协作训练或 sleep_engine 管理神经元 checkpoint。",
+        detail="Taiji 使用 seed-native checkpoint；传统模型发布接口不适用。",
     )
 
 
