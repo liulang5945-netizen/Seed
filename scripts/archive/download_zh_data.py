@@ -11,8 +11,12 @@
 用法：
     python -u scripts/training/download_zh_data.py --target_articles 500000
 """
+
 import sys, os, argparse, time
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 CACHE_PATH = "data/corpus/zh_texts.jsonl"
 TARGET_CHARS_PER_ARTICLE = 200  # 平均每条文本约 200 字
@@ -28,8 +32,10 @@ def download_wikipedia(max_articles, cache_path, existing_count):
     count = 0
     try:
         ds = load_dataset(
-            "wikimedia/wikipedia", "20231101.zh",
-            split="train", streaming=True,
+            "wikimedia/wikipedia",
+            "20231101.zh",
+            split="train",
+            streaming=True,
         )
         with open(cache_path, "a", encoding="utf-8") as f:
             for example in ds:
@@ -86,17 +92,25 @@ def download_alpaca(cache_path, existing_count):
 
 def main():
     parser = argparse.ArgumentParser(description="下载大量中文训练数据")
-    parser.add_argument("--target_articles", type=int, default=500000,
-                        help="目标文章数（默认 50 万条，约 100M 字 ≈ 60M tokens）")
-    parser.add_argument("--keep_existing", action="store_true",
-                        help="保留现有缓存数据，追加下载（默认重新下载）")
+    parser.add_argument(
+        "--target_articles",
+        type=int,
+        default=500000,
+        help="目标文章数（默认 50 万条，约 100M 字 ≈ 60M tokens）",
+    )
+    parser.add_argument(
+        "--keep_existing", action="store_true", help="保留现有缓存数据，追加下载（默认重新下载）"
+    )
     args = parser.parse_args()
 
     print("=" * 70, flush=True)
     print("下载大量中文训练数据", flush=True)
     print(f"  目标: {args.target_articles} 条文本", flush=True)
-    print(f"  估计: ~{args.target_articles * TARGET_CHARS_PER_ARTICLE / 1e6:.0f}M 字 ≈ "
-          f"~{args.target_articles * TARGET_CHARS_PER_ARTICLE / 1.7 / 1e6:.0f}M tokens", flush=True)
+    print(
+        f"  估计: ~{args.target_articles * TARGET_CHARS_PER_ARTICLE / 1e6:.0f}M 字 ≈ "
+        f"~{args.target_articles * TARGET_CHARS_PER_ARTICLE / 1.7 / 1e6:.0f}M tokens",
+        flush=True,
+    )
     print("=" * 70, flush=True)
 
     existing_count = 0
@@ -145,7 +159,10 @@ def main():
     print(f"  总字符: {total_chars/1e6:.1f}M", flush=True)
     print(f"  估计 tokens: {estimated_tokens/1e6:.1f}M", flush=True)
     print(f"  数据/参数比 (491M): {estimated_tokens/491e6:.3f}", flush=True)
-    print(f"  Chinchilla 最优 (20:1): {'✅ 达标' if estimated_tokens/491e6 >= 20 else '❌ 仍不足，但已改善'}", flush=True)
+    print(
+        f"  Chinchilla 最优 (20:1): {'✅ 达标' if estimated_tokens/491e6 >= 20 else '❌ 仍不足，但已改善'}",
+        flush=True,
+    )
     print("=" * 70, flush=True)
 
 

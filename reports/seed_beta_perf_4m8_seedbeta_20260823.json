@@ -1,0 +1,79 @@
+{
+  "benchmark": "seed_beta_perf",
+  "checkpoint": "checkpoints\\seed_beta.pt",
+  "timestamp": "2026-08-23 19:53:23",
+  "thresholds": {
+    "load_seconds": 30.0,
+    "first_byte_seconds": 2.0,
+    "bytes_per_second": 200.0
+  },
+  "metrics": {
+    "load_seconds": 0.138,
+    "first_byte_seconds_max": 0.071,
+    "first_byte_seconds_all": [
+      0.071,
+      0.053,
+      0.057,
+      0.052,
+      0.067
+    ],
+    "bytes_per_second": 572.2,
+    "total_generated_bytes": 2048,
+    "throughput_rows": [
+      {
+        "prompt": "中国的首都是哪里？",
+        "bytes": 256,
+        "seconds": 0.426,
+        "bytes_per_second": 601.1
+      },
+      {
+        "prompt": "水的化学式是什么？",
+        "bytes": 256,
+        "seconds": 0.403,
+        "bytes_per_second": 634.5
+      },
+      {
+        "prompt": "为什么天空是蓝色的？",
+        "bytes": 256,
+        "seconds": 0.442,
+        "bytes_per_second": 578.9
+      },
+      {
+        "prompt": "怎样煮一碗面条？",
+        "bytes": 256,
+        "seconds": 0.427,
+        "bytes_per_second": 599.7
+      },
+      {
+        "prompt": "请你推荐一本书。",
+        "bytes": 256,
+        "seconds": 0.456,
+        "bytes_per_second": 561.4
+      },
+      {
+        "prompt": "什么是光合作用？",
+        "bytes": 256,
+        "seconds": 0.469,
+        "bytes_per_second": 546.3
+      },
+      {
+        "prompt": "飞机为什么能飞起来？",
+        "bytes": 256,
+        "seconds": 0.469,
+        "bytes_per_second": 545.4
+      },
+      {
+        "prompt": "请解释一下什么是互联网。",
+        "bytes": 256,
+        "seconds": 0.486,
+        "bytes_per_second": 526.2
+      }
+    ]
+  },
+  "checks": {
+    "load_within_30s": true,
+    "first_byte_within_2s": true,
+    "throughput_at_least_200_bps": true
+  },
+  "status": "pass"
+}

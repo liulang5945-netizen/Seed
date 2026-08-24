@@ -62,8 +62,8 @@ def main() -> None:
     # ideal 权重（ideal winner = nll 最小的 neuron，index 1, ql=68）
     nlls = torch.tensor([0.6, 0.3, 2.0, 1.0, 3.0])
     ideal = F.softmax(-nlls / 0.5, dim=0)
-    winner_idx = int(ideal.argmax())   # index 1（ql=68，初始最低）
-    loser_idx = int(ideal.argmin())    # index 4（ql=95，初始最高）
+    winner_idx = int(ideal.argmax())  # index 1（ql=68，初始最低）
+    loser_idx = int(ideal.argmin())  # index 4（ql=95，初始最高）
 
     # ---- 1. 原逻辑（裸 logit /1.0）：梯度相对修复后显著消失 ----
     ql_old = ql_vals.clone().requires_grad_(True)
@@ -76,10 +76,12 @@ def main() -> None:
     loss_new = kl_loss(ql_new, ideal, temp=1.0, center=True)
     loss_new.backward()
     grad_new = ql_new.grad.abs().max().item()
-    check("修复后（std 标准化）KL 梯度非零", grad_new > 1e-3,
-          f"max|grad|={grad_new:.4f}")
-    check("原逻辑梯度显著小于修复后（饱和）", grad_old < grad_new * 0.5,
-          f"old={grad_old:.2e} new={grad_new:.4f}")
+    check("修复后（std 标准化）KL 梯度非零", grad_new > 1e-3, f"max|grad|={grad_new:.4f}")
+    check(
+        "原逻辑梯度显著小于修复后（饱和）",
+        grad_old < grad_new * 0.5,
+        f"old={grad_old:.2e} new={grad_new:.4f}",
+    )
 
     # ---- 3. 一步梯度下降减小 KL（梯度方向正确的本质判据）----
     ql_gd = ql_vals.clone().requires_grad_(True)
@@ -99,31 +101,41 @@ def main() -> None:
     ent_new = -(a_new * (a_new + 1e-8).log()).sum().item()
     check("原逻辑 actual 饱和（熵≈0）", ent_old < 0.05, f"ent={ent_old:.4f}")
     check("修复后 actual 有熵", ent_new > 0.5, f"ent={ent_new:.4f}")
-    check("修复后分布不独热（max_w 合理）", float(a_new.max()) < 0.99,
-          f"max_w={float(a_new.max()):.3f}")
+    check(
+        "修复后分布不独热（max_w 合理）",
+        float(a_new.max()) < 0.99,
+        f"max_w={float(a_new.max()):.3f}",
+    )
 
     # ---- 5. 尺度不变性：std 标准化后 KL 值与训练行为与绝对尺度无关 ----
     # 注：∂KL/∂ql = (1/std)·∂KL/∂z（÷std 因子）——Adam 自适应归一化使实际
     # 训练不受影响；此处用"z 空间等效步长"（ql 步长 = lr_z×std）验证各尺度下
     # 一步梯度下降的 KL 减小量一致（修复后膨胀不再导致训练失效）。
     l_ref = None
-    for scale_label, ql_scaled in [("×10+500", ql_vals.clone() * 10 + 500.0),
-                                   ("÷10-3", ql_vals.clone() / 10 - 3.0),
-                                   ("+1000", ql_vals.clone() + 1000.0)]:
+    for scale_label, ql_scaled in [
+        ("×10+500", ql_vals.clone() * 10 + 500.0),
+        ("÷10-3", ql_vals.clone() / 10 - 3.0),
+        ("+1000", ql_vals.clone() + 1000.0),
+    ]:
         ql_b = ql_scaled.clone().requires_grad_(True)
         l_b = kl_loss(ql_b, ideal, temp=1.0, center=True)
         l_b.backward()
         if l_ref is None:
             l_ref = l_b.item()
         else:
-            check(f"尺度不变（{scale_label}）KL 值一致",
-                  abs(l_b.item() - l_ref) < 1e-3,
-                  f"KL={l_b.item():.4f} vs ref={l_ref:.4f}")
+            check(
+                f"尺度不变（{scale_label}）KL 值一致",
+                abs(l_b.item() - l_ref) < 1e-3,
+                f"KL={l_b.item():.4f} vs ref={l_ref:.4f}",
+            )
         with torch.no_grad():
             ql_b.data -= 0.5 * ql_b.grad * (ql_b.detach().std() + 1e-6)  # z 空间等效步长
         l_b2 = kl_loss(ql_b.detach(), ideal, temp=1.0, center=True)
-        check(f"尺度不变（{scale_label}）梯度下降 KL 减小", l_b2 < l_b,
-              f"KL {l_b.item():.4f} → {l_b2.item():.4f}")
+        check(
+            f"尺度不变（{scale_label}）梯度下降 KL 减小",
+            l_b2 < l_b,
+            f"KL {l_b.item():.4f} → {l_b2.item():.4f}",
+        )
 
     print(f"\n结果: {passed} PASS / {failed} FAIL")
     sys.exit(1 if failed else 0)

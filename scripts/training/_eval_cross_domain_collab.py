@@ -10,6 +10,7 @@ Usage:
     python -u scripts/training/_eval_cross_domain_collab.py \
         --ckpt data/neurons/cross_domain_v1.ckpt.pt
 """
+
 from __future__ import annotations
 
 import argparse
@@ -27,7 +28,10 @@ from neuroplex.resonance.geometry import NeuronGeometry
 from neuroplex.resonance.topology import build_topology, establish_topology_channels
 from neuroplex.resonance.translator import TokenizerHub, batch_align_and_embed
 from scripts.training.train_cross_domain_collab import (
-    load_neuron, load_shared_embedding, load_shared_lm_head, load_tokenizer_for_vocab,
+    load_neuron,
+    load_shared_embedding,
+    load_shared_lm_head,
+    load_tokenizer_for_vocab,
 )
 from scripts.training.eval_dialogue import load_cross_spec_weights
 from scripts.training.utils import load_general_tokenizer
@@ -57,8 +61,7 @@ def load_ensemble(neuron_dir, domains, ckpt_path, no_weights=False):
     return neurons, shared_embeddings, ensemble
 
 
-def domain_ppl(neurons, shared_embeddings, ensemble, hub, general_sp, domain, texts,
-               rounds=1):
+def domain_ppl(neurons, shared_embeddings, ensemble, hub, general_sp, domain, texts, rounds=1):
     """协作 vs 原生 neuron：answer-only PPL（训练同口径，forward_train）。
 
     基线 = 本域原生 neuron（跨 vocab 的个体对比无意义：code neuron 的 12K
@@ -75,9 +78,14 @@ def domain_ppl(neurons, shared_embeddings, ensemble, hub, general_sp, domain, te
     total_tokens = 0
     with torch.no_grad():
         for text in texts:
-            out = batch_align_and_embed([text], domain_sp, general_sp, emb,
-                                        answer_marker=answer_marker,
-                                        answer_marker_mode=marker_mode)
+            out = batch_align_and_embed(
+                [text],
+                domain_sp,
+                general_sp,
+                emb,
+                answer_marker=answer_marker,
+                answer_marker_mode=marker_mode,
+            )
             shared_emb_out, targets, mask = out[0].to(DEVICE), out[1].to(DEVICE), out[2].to(DEVICE)
             sft_mask = out[3].to(DEVICE) if len(out) > 3 else None
             res = native.forward(shared_emb_out, return_logits=True)
@@ -92,8 +100,9 @@ def domain_ppl(neurons, shared_embeddings, ensemble, hub, general_sp, domain, te
             else:
                 st[~sm] = -100
                 n_tok = sm.sum().item()
-            loss = F.cross_entropy(sl.view(-1, sl.size(-1)), st.view(-1),
-                                   ignore_index=-100, reduction="sum")
+            loss = F.cross_entropy(
+                sl.view(-1, sl.size(-1)), st.view(-1), ignore_index=-100, reduction="sum"
+            )
             total_loss += loss.item()
             total_tokens += max(n_tok, 1)
     best_avg = total_loss / max(total_tokens, 1)
@@ -108,17 +117,25 @@ def domain_ppl(neurons, shared_embeddings, ensemble, hub, general_sp, domain, te
             mask = None
             sft_mask = None
             for nid, e in shared_embeddings.items():
-                out = batch_align_and_embed([text], domain_sp, general_sp, e,
-                                            answer_marker=answer_marker,
-                                            answer_marker_mode=marker_mode)
+                out = batch_align_and_embed(
+                    [text],
+                    domain_sp,
+                    general_sp,
+                    e,
+                    answer_marker=answer_marker,
+                    answer_marker_mode=marker_mode,
+                )
                 neuron_embeddings[nid] = out[0].to(DEVICE)
                 if targets is None:
                     targets, mask = out[1].to(DEVICE), out[2].to(DEVICE)
                     if len(out) > 3:
                         sft_mask = out[3].to(DEVICE)
             result = ensemble.forward_train(
-                neuron_embeddings=neuron_embeddings, n_rounds=rounds, fusion_mode="soft",
-                targets=targets, target_domain=domain,
+                neuron_embeddings=neuron_embeddings,
+                n_rounds=rounds,
+                fusion_mode="soft",
+                targets=targets,
+                target_domain=domain,
             )
             fused = result["fused_logits"]
             sl, st = fused[:, :-1, :].contiguous(), targets[:, 1:].contiguous()
@@ -131,8 +148,9 @@ def domain_ppl(neurons, shared_embeddings, ensemble, hub, general_sp, domain, te
             else:
                 st[~sm] = -100
                 n_tok = sm.sum().item()
-            loss = F.cross_entropy(sl.view(-1, sl.size(-1)), st.view(-1),
-                                   ignore_index=-100, reduction="sum")
+            loss = F.cross_entropy(
+                sl.view(-1, sl.size(-1)), st.view(-1), ignore_index=-100, reduction="sum"
+            )
             total_loss += loss.item()
             total_tokens += max(n_tok, 1)
     collab_avg = total_loss / max(total_tokens, 1)
@@ -175,8 +193,17 @@ def _resolve_generation_tokenizer(logits, target_sp, general_sp):
     )
 
 
-def cross_domain_generate(neurons, shared_embeddings, ensemble, hub, general_sp,
-                          zh_prompt, target_domain="code", max_tokens=30, rounds=1):
+def cross_domain_generate(
+    neurons,
+    shared_embeddings,
+    ensemble,
+    hub,
+    general_sp,
+    zh_prompt,
+    target_domain="code",
+    max_tokens=30,
+    rounds=1,
+):
     """跨域生成：中文 prompt → target 域路由，按实际输出空间解码。
 
     对当前共享 general LM head，输出是通用词表；只有旧的域专用 head
@@ -193,13 +220,15 @@ def cross_domain_generate(neurons, shared_embeddings, ensemble, hub, general_sp,
             for nid, emb in shared_embeddings.items():
                 neuron_embeddings[nid] = emb(ids)
             result = ensemble.forward_train(
-                neuron_embeddings=neuron_embeddings, n_rounds=rounds, fusion_mode="soft",
+                neuron_embeddings=neuron_embeddings,
+                n_rounds=rounds,
+                fusion_mode="soft",
                 target_domain=target_domain,
             )
             logits = result["fused_logits"][:, -1, :].float()
             if output_sp is None:
                 output_sp = _resolve_generation_tokenizer(logits, target_sp, general_sp)
-                if output_sp is target_sp and hasattr(target_sp, 'eos_id'):
+                if output_sp is target_sp and hasattr(target_sp, "eos_id"):
                     eos_id = target_sp.eos_id()
                     if eos_id is not None and eos_id < 0:
                         eos_id = None
@@ -214,8 +243,9 @@ def cross_domain_generate(neurons, shared_embeddings, ensemble, hub, general_sp,
     return output_sp.decode(generated) if output_sp is not None else ""
 
 
-def cross_domain_generate_general(neurons, shared_embeddings, ensemble, hub, general_sp,
-                                  zh_prompt, max_tokens=40, rounds=2):
+def cross_domain_generate_general(
+    neurons, shared_embeddings, ensemble, hub, general_sp, zh_prompt, max_tokens=40, rounds=2
+):
     """通用空间生成：zh 提问 → general 256K 空间分工路由（zh 理解 + code 表达共存）。
 
     各 neuron logits 投影到 general 空间，按位置路由（min(原生,投影) 置信度）：
@@ -226,14 +256,15 @@ def cross_domain_generate_general(neurons, shared_embeddings, ensemble, hub, gen
     target_sp = general_sp
     ids = torch.tensor([general_sp.encode(zh_prompt)], dtype=torch.long, device=DEVICE)
     generated = []
-    eos_id = None
     with torch.no_grad():
         for _ in range(max_tokens):
             neuron_embeddings = {}
             for nid, emb in shared_embeddings.items():
                 neuron_embeddings[nid] = emb(ids)
             result = ensemble.forward_train(
-                neuron_embeddings=neuron_embeddings, n_rounds=rounds, fusion_mode="soft",
+                neuron_embeddings=neuron_embeddings,
+                n_rounds=rounds,
+                fusion_mode="soft",
                 target_domain="general",
             )
             logits = result["fused_logits"][:, -1, :].float()
@@ -252,15 +283,21 @@ def main():
     parser.add_argument("--ckpt", default=CKPT)
     parser.add_argument("--data-dir", default="data/sft")
     parser.add_argument("--n-ppl", type=int, default=10)
-    parser.add_argument("--no-weights", action="store_true",
-                        help="不加载协作层权重（只测基座 + 路由融合）")
-    parser.add_argument("--rounds", type=int, default=1,
-                        help="forward_train 共振轮数（无训练权重时用 1 避免 side 扭曲）")
+    parser.add_argument(
+        "--no-weights", action="store_true", help="不加载协作层权重（只测基座 + 路由融合）"
+    )
+    parser.add_argument(
+        "--rounds",
+        type=int,
+        default=1,
+        help="forward_train 共振轮数（无训练权重时用 1 避免 side 扭曲）",
+    )
     args = parser.parse_args()
 
     print("加载多域 neuron + 协作层...", flush=True)
     neurons, shared_embeddings, ensemble = load_ensemble(
-        args.neuron_dir, DOMAINS, args.ckpt, no_weights=args.no_weights)
+        args.neuron_dir, DOMAINS, args.ckpt, no_weights=args.no_weights
+    )
     print("已加载", list(neurons.keys()), flush=True)
 
     # 与训练同口径注册 tokenizer：zh 用 neuron vocab 匹配的 v20k 变体
@@ -276,11 +313,15 @@ def main():
     total_emerge = 0.0
     for dom in DOMAINS:
         texts = load_sft_texts(args.data_dir, dom, args.n_ppl)
-        r = domain_ppl(neurons, shared_embeddings, ensemble, hub, general_sp, dom, texts,
-                       rounds=args.rounds)
+        r = domain_ppl(
+            neurons, shared_embeddings, ensemble, hub, general_sp, dom, texts, rounds=args.rounds
+        )
         total_emerge += r["emerge_pct"]
-        print(f"  [{dom}] 最强个体={r['best_individual']} PPL={r['best_ppl']:.1f} | "
-              f"协作 PPL={r['collab_ppl']:.1f} | EMERGE={r['emerge_pct']:+.1f}%", flush=True)
+        print(
+            f"  [{dom}] 最强个体={r['best_individual']} PPL={r['best_ppl']:.1f} | "
+            f"协作 PPL={r['collab_ppl']:.1f} | EMERGE={r['emerge_pct']:+.1f}%",
+            flush=True,
+        )
     print(f"  平均 EMERGE: {total_emerge/len(DOMAINS):+.1f}%", flush=True)
 
     print(f"\n{'='*60}\n[2] 跨域任务生成（中文提问 → code 输出）\n{'='*60}", flush=True)
@@ -292,15 +333,23 @@ def main():
     for p in zh_prompts:
         print(f"\n  中文提问：{p}", flush=True)
         try:
-            out = cross_domain_generate(neurons, shared_embeddings, ensemble, hub,
-                                        general_sp, p, target_domain="code",
-                                        rounds=args.rounds)
+            out = cross_domain_generate(
+                neurons,
+                shared_embeddings,
+                ensemble,
+                hub,
+                general_sp,
+                p,
+                target_domain="code",
+                rounds=args.rounds,
+            )
             print(f"  [目标域路由/实际输出词表] → {out}", flush=True)
         except Exception as e:
             print(f"  生成失败: {e}", flush=True)
         try:
-            out_g = cross_domain_generate_general(neurons, shared_embeddings, ensemble,
-                                                  hub, general_sp, p, rounds=args.rounds)
+            out_g = cross_domain_generate_general(
+                neurons, shared_embeddings, ensemble, hub, general_sp, p, rounds=args.rounds
+            )
             print(f"  [general 域] → {out_g}", flush=True)
         except Exception as e:
             print(f"  通用空间生成失败: {e}", flush=True)

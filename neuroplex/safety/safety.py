@@ -11,12 +11,11 @@
 4. 异常隔离：一个引擎崩溃不影响其他引擎
 5. 频率限制：防止疯狂调用
 """
+
 import re
 import time
 import logging
-import functools
-from typing import Any, Callable, Dict, List, Optional
-from datetime import datetime, timedelta
+from typing import Any, Callable, Dict, List
 from collections import defaultdict
 
 logger = logging.getLogger("Taiji.Safety")
@@ -31,20 +30,20 @@ class SafetyGuard:
 
     # 敏感信息模式（不应出现在输出中）
     SENSITIVE_PATTERNS = [
-        r'(?:password|passwd|pwd)\s*[=:]\s*\S+',
-        r'(?:api[_-]?key|apikey)\s*[=:]\s*\S+',
-        r'(?:secret|token)\s*[=:]\s*\S+',
-        r'(?:ssh-rsa|ssh-ed25519)\s+\S+',
-        r'-----BEGIN\s+(?:RSA|EC|OPENSSH)\s+PRIVATE\s+KEY-----',
+        r"(?:password|passwd|pwd)\s*[=:]\s*\S+",
+        r"(?:api[_-]?key|apikey)\s*[=:]\s*\S+",
+        r"(?:secret|token)\s*[=:]\s*\S+",
+        r"(?:ssh-rsa|ssh-ed25519)\s+\S+",
+        r"-----BEGIN\s+(?:RSA|EC|OPENSSH)\s+PRIVATE\s+KEY-----",
     ]
 
     # 恶意输入模式
     MALICIOUS_PATTERNS = [
-        r'ignore\s+(?:all\s+)?previous\s+instructions',
-        r'you\s+are\s+now\s+(?:a|an)\s+',
-        r'system\s*:\s*you\s+are',
-        r'forget\s+(?:everything|all)',
-        r'override\s+(?:safety|security)',
+        r"ignore\s+(?:all\s+)?previous\s+instructions",
+        r"you\s+are\s+now\s+(?:a|an)\s+",
+        r"system\s*:\s*you\s+are",
+        r"forget\s+(?:everything|all)",
+        r"override\s+(?:safety|security)",
     ]
 
     def __init__(self, max_events_per_minute: int = 60):
@@ -128,13 +127,13 @@ class SafetyGuard:
         cutoff = now - 60
 
         # 清理过期记录
-        self._rate_limits[action] = [
-            t for t in self._rate_limits[action] if t > cutoff
-        ]
+        self._rate_limits[action] = [t for t in self._rate_limits[action] if t > cutoff]
 
         if len(self._rate_limits[action]) >= limit:
             self._blocked_count += 1
-            logger.warning(f"Rate limit exceeded for {action}: {len(self._rate_limits[action])}/{limit} per minute")
+            logger.warning(
+                f"Rate limit exceeded for {action}: {len(self._rate_limits[action])}/{limit} per minute"
+            )
             return False
 
         self._rate_limits[action].append(now)

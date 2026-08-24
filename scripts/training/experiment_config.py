@@ -13,9 +13,9 @@
 2. 神经元 ID 按实验阶段组织（base / dialogue / cross_spec）
 3. 保持向后兼容：utils.py 的旧常量仍可使用（通过 re-export）
 """
+
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 # ── 项目根目录（不依赖 cwd）──────────────────────────────────────────────
@@ -44,6 +44,9 @@ SHARED_EMBED_DIM = 512
 # ── 域配置 ───────────────────────────────────────────────────────────────
 DEFAULT_DOMAIN = "zh"
 
+# ── SFT 格式常量 ─────────────────────────────────────────────────────────
+SFT_ANSWER_MARKER = "\u7b54\uff1a"  # "答："
+
 # ── 神经元 ID（单一真相源）──────────────────────────────────────────────
 # 按实验阶段组织，避免散落在 8+ 文件中复制粘贴
 
@@ -53,8 +56,10 @@ ZH_STD_NEURON_ID = "zh_std0"
 
 # 对话版本（已 fine-tune 对话能力）
 ZH_COMPACT_DIALOGUE_IDS = [
-    "zh_aug0_dialogue", "zh_aug1_dialogue",
-    "zh_aug2_dialogue", "zh_aug3_dialogue",
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
 ]
 ZH_STD_DIALOGUE_ID = "zh_std0_dialogue"
 
@@ -85,12 +90,6 @@ SAMPLING_MAX_TOKENS = 60  # 折中默认值（原 single=100, aug_joint=80, dial
 # 口径契约单一真相源已上移至核心库 taiji/resonance/dialogue_format.py
 # （2026-08-12）：此处 re-export 保持 scripts 侧
 # `from scripts.training.experiment_config import build_dialogue_prompt` 等兼容。
-from neuroplex.resonance.dialogue_format import (  # noqa: E402
-    SFT_ANSWER_MARKER,
-    Q_MARKER,
-    build_dialogue_prompt,
-    dialogue_prompt_requires_guard,
-)
 
 # ── 对话训练数据文件列表（S5: 数据扩充）─────────────────────────────────
 # 本地已有的对话数据文件（均为 {"text": "问：...\n答：..."} 格式）

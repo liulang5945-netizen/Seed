@@ -20,7 +20,9 @@ import random
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch  # noqa: E402
 from neuroplex.loader import assemble_cortex  # noqa: E402
@@ -31,26 +33,47 @@ from neuroplex.resonance.field_alignment import (  # noqa: E402
 )
 from neuroplex.resonance.field_memory import WriteGate  # noqa: E402
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
 TERM_PAIRS = [
-    ("函数", "function"), ("数组", "array"), ("神经网络", "neural network"),
-    ("循环", "loop"), ("变量", "variable"), ("数据结构", "data structure"),
-    ("机器学习", "machine learning"), ("递归", "recursion"),
-    ("排序算法", "sorting algorithm"), ("类的继承", "class inheritance"),
-    ("梯度下降", "gradient descent"), ("线性回归", "linear regression"),
-    ("卷积", "convolution"), ("注意力机制", "attention mechanism"),
-    ("词嵌入", "word embedding"), ("损失函数", "loss function"),
-    ("学习率", "learning rate"), ("过拟合", "overfitting"),
-    ("正则化", "regularization"), ("激活函数", "activation function"),
-    ("反向传播", "backpropagation"), ("批归一化", "batch normalization"),
-    ("强化学习", "reinforcement learning"), ("决策树", "decision tree"),
-    ("聚类", "clustering"), ("特征提取", "feature extraction"),
-    ("时间序列", "time series"), ("概率分布", "probability distribution"),
-    ("矩阵乘法", "matrix multiplication"), ("量子比特", "qubit"),
+    ("函数", "function"),
+    ("数组", "array"),
+    ("神经网络", "neural network"),
+    ("循环", "loop"),
+    ("变量", "variable"),
+    ("数据结构", "data structure"),
+    ("机器学习", "machine learning"),
+    ("递归", "recursion"),
+    ("排序算法", "sorting algorithm"),
+    ("类的继承", "class inheritance"),
+    ("梯度下降", "gradient descent"),
+    ("线性回归", "linear regression"),
+    ("卷积", "convolution"),
+    ("注意力机制", "attention mechanism"),
+    ("词嵌入", "word embedding"),
+    ("损失函数", "loss function"),
+    ("学习率", "learning rate"),
+    ("过拟合", "overfitting"),
+    ("正则化", "regularization"),
+    ("激活函数", "activation function"),
+    ("反向传播", "backpropagation"),
+    ("批归一化", "batch normalization"),
+    ("强化学习", "reinforcement learning"),
+    ("决策树", "decision tree"),
+    ("聚类", "clustering"),
+    ("特征提取", "feature extraction"),
+    ("时间序列", "time series"),
+    ("概率分布", "probability distribution"),
+    ("矩阵乘法", "matrix multiplication"),
+    ("量子比特", "qubit"),
 ]
 
 TOPICS = [
@@ -65,8 +88,7 @@ def field_state_of(cortex, text: str) -> torch.Tensor:
     gids = cortex._general_sp.encode(text) or [0]
     ids = torch.tensor([gids], dtype=torch.long, device=cortex.device)
     emb = cortex._shared_embedding(ids)
-    res = cortex.think(emb, active_nids=None, fusion_mode="soft",
-                       collab_mode="continuous")
+    res = cortex.think(emb, active_nids=None, fusion_mode="soft", collab_mode="continuous")
     fs = res.get("field_state")
     if fs is None:
         raise RuntimeError("think() 未返回 field_state")
@@ -85,19 +107,18 @@ def train_write_gate(vectors: list, steps: int = 400) -> WriteGate:
     xs, ys = [], []
     for v in vectors:
         for _ in range(3):
-            xs.append((v, torch.tensor(random.uniform(0.4, 0.75),
-                                       dtype=torch.float)))
+            xs.append((v, torch.tensor(random.uniform(0.4, 0.75), dtype=torch.float)))
             ys.append(1.0)
         for _ in range(3):
-            xs.append((v, torch.tensor(random.uniform(0.88, 0.98),
-                                       dtype=torch.float)))
+            xs.append((v, torch.tensor(random.uniform(0.88, 0.98), dtype=torch.float)))
             ys.append(0.0)
     for _ in range(steps):
         opt.zero_grad()
         for (v, s), y in zip(xs, ys):
             p = gate(v, s)
             loss = torch.nn.functional.binary_cross_entropy(
-                p.squeeze(-1), torch.tensor(y, dtype=torch.float))
+                p.squeeze(-1), torch.tensor(y, dtype=torch.float)
+            )
             loss.backward()
         opt.step()
     return gate
@@ -147,14 +168,19 @@ def main():
     gate = train_write_gate(topic_vecs)
     # 抽查门控决策
     v0 = topic_vecs[0]
+
     def dec(sim):
         return float(gate(v0, torch.tensor(sim, dtype=torch.float)).item()) > 0.5
-    print(f"  门控决策抽查: sim=0.5→{dec(0.5)}（新信息应写）, sim=0.9→{dec(0.9)}（冗余应拒）",
-          flush=True)
+
+    print(
+        f"  门控决策抽查: sim=0.5→{dec(0.5)}（新信息应写）, sim=0.9→{dec(0.9)}（冗余应拒）",
+        flush=True,
+    )
 
     # ── 4. 保存到 sleep 数据目录（sleep_engine 自动装配）──
     try:
         from neuroplex.config import get_taiji_data_path
+
         data_dir = get_taiji_data_path("sleep_data")
     except ImportError:
         data_dir = "taiji/sleep_data"

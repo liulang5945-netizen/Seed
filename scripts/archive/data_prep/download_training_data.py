@@ -12,6 +12,7 @@
 使用方式：
     python scripts/download_training_data.py
 """
+
 import os
 import sys
 import json
@@ -19,7 +20,7 @@ import logging
 import hashlib
 from pathlib import Path
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
 logger = logging.getLogger("DataDownloader")
 
 # 数据目录
@@ -31,6 +32,7 @@ def download_hf_dataset(repo_id: str, filename: str, output_path: str) -> bool:
     """从 HuggingFace 下载数据集文件"""
     try:
         from huggingface_hub import hf_hub_download
+
         logger.info(f"下载 {repo_id}/{filename}...")
         path = hf_hub_download(
             repo_id=repo_id,
@@ -51,6 +53,7 @@ def download_hf_dataset(repo_id: str, filename: str, output_path: str) -> bool:
 def download_via_url(url: str, output_path: str) -> bool:
     """通过 URL 直接下载"""
     import urllib.request
+
     try:
         logger.info(f"下载 {url}...")
         urllib.request.urlretrieve(url, output_path)
@@ -85,7 +88,7 @@ def convert_agent_instruct(input_path: str, output_path: str) -> int:
     }
     """
     count = 0
-    with open(input_path, 'r', encoding='utf-8') as f:
+    with open(input_path, "r", encoding="utf-8") as f:
         try:
             data = json.load(f)
         except json.JSONDecodeError:
@@ -120,10 +123,18 @@ def convert_agent_instruct(input_path: str, output_path: str) -> int:
                 elif role == "gpt":
                     # 尝试解析 ReAct 格式
                     if "Thought:" in content:
-                        thought = content.split("Thought:")[1].split("Action:")[0].strip() if "Action:" in content else content.split("Thought:")[1].strip()
+                        thought = (
+                            content.split("Thought:")[1].split("Action:")[0].strip()
+                            if "Action:" in content
+                            else content.split("Thought:")[1].strip()
+                        )
                         current_step["thought"] = thought
                     if "Action:" in content:
-                        action_part = content.split("Action:")[1].split("Action Input:")[0].strip() if "Action Input:" in content else content.split("Action:")[1].strip()
+                        action_part = (
+                            content.split("Action:")[1].split("Action Input:")[0].strip()
+                            if "Action Input:" in content
+                            else content.split("Action:")[1].strip()
+                        )
                         current_step["action"] = action_part
                     if "Action Input:" in content:
                         input_part = content.split("Action Input:")[1].strip()
@@ -144,17 +155,19 @@ def convert_agent_instruct(input_path: str, output_path: str) -> int:
                         current_step = {}
 
             if task and steps:
-                converted.append({
-                    "type": "react",
-                    "task": task[:500],
-                    "steps": steps[:10],
-                })
+                converted.append(
+                    {
+                        "type": "react",
+                        "task": task[:500],
+                        "steps": steps[:10],
+                    }
+                )
                 count += 1
         except Exception:
             continue
 
     # 保存
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         for item in converted:
             f.write(json.dumps(item, ensure_ascii=False) + "\n")
 
@@ -186,7 +199,7 @@ def convert_function_calling(input_path: str, output_path: str) -> int:
     }
     """
     count = 0
-    with open(input_path, 'r', encoding='utf-8') as f:
+    with open(input_path, "r", encoding="utf-8") as f:
         try:
             data = json.load(f)
         except json.JSONDecodeError:
@@ -218,24 +231,32 @@ def convert_function_calling(input_path: str, output_path: str) -> int:
                     task = content
                 elif role == "gpt":
                     if func_call:
-                        steps.append({
-                            "thought": content[:200] if content else "",
-                            "action": func_call.get("name", ""),
-                            "action_args": json.loads(func_call.get("arguments", "{}")) if isinstance(func_call.get("arguments"), str) else func_call.get("arguments", {}),
-                        })
+                        steps.append(
+                            {
+                                "thought": content[:200] if content else "",
+                                "action": func_call.get("name", ""),
+                                "action_args": (
+                                    json.loads(func_call.get("arguments", "{}"))
+                                    if isinstance(func_call.get("arguments"), str)
+                                    else func_call.get("arguments", {})
+                                ),
+                            }
+                        )
 
             if task and steps:
-                converted.append({
-                    "type": "tool_call",
-                    "task": task[:500],
-                    "tools": [t.get("function", {}).get("name", "") for t in tools[:20]],
-                    "steps": steps[:10],
-                })
+                converted.append(
+                    {
+                        "type": "tool_call",
+                        "task": task[:500],
+                        "tools": [t.get("function", {}).get("name", "") for t in tools[:20]],
+                        "steps": steps[:10],
+                    }
+                )
                 count += 1
         except Exception:
             continue
 
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         for item in converted:
             f.write(json.dumps(item, ensure_ascii=False) + "\n")
 
@@ -268,36 +289,84 @@ def generate_synthetic_react_data(count: int = 500) -> int:
         {
             "task": "搜索关于{topic}的最新信息，并总结要点",
             "steps": [
-                {"thought": "我需要搜索{topic}的相关信息", "action": "search", "action_args": {"input": "{topic}"}},
-                {"thought": "搜索完成，让我阅读详细内容", "action": "read_webpage", "action_args": {"input": "https://example.com/{topic}"}},
-                {"thought": "现在总结要点", "action": "text_summarize", "action_args": {"input": "{content}"}},
+                {
+                    "thought": "我需要搜索{topic}的相关信息",
+                    "action": "search",
+                    "action_args": {"input": "{topic}"},
+                },
+                {
+                    "thought": "搜索完成，让我阅读详细内容",
+                    "action": "read_webpage",
+                    "action_args": {"input": "https://example.com/{topic}"},
+                },
+                {
+                    "thought": "现在总结要点",
+                    "action": "text_summarize",
+                    "action_args": {"input": "{content}"},
+                },
             ],
         },
         {
             "task": "读取{file}文件，分析其中的数据",
             "steps": [
-                {"thought": "先读取文件内容", "action": "read_local_file", "action_args": {"input": "{file}"}},
-                {"thought": "分析数据结构", "action": "data_query", "action_args": {"input": "{file} | describe"}},
+                {
+                    "thought": "先读取文件内容",
+                    "action": "read_local_file",
+                    "action_args": {"input": "{file}"},
+                },
+                {
+                    "thought": "分析数据结构",
+                    "action": "data_query",
+                    "action_args": {"input": "{file} | describe"},
+                },
             ],
         },
         {
             "task": "编写一个{lang}程序，实现{feature}",
             "steps": [
-                {"thought": "先规划代码结构", "action": "create_plan", "action_args": {"input": "实现{feature}"}},
-                {"thought": "编写代码", "action": "write_file", "action_args": {"input": "{filepath} | {code}"}},
-                {"thought": "测试代码", "action": "execute_python", "action_args": {"input": "{test_code}"}},
+                {
+                    "thought": "先规划代码结构",
+                    "action": "create_plan",
+                    "action_args": {"input": "实现{feature}"},
+                },
+                {
+                    "thought": "编写代码",
+                    "action": "write_file",
+                    "action_args": {"input": "{filepath} | {code}"},
+                },
+                {
+                    "thought": "测试代码",
+                    "action": "execute_python",
+                    "action_args": {"input": "{test_code}"},
+                },
             ],
         },
         {
             "task": "计算{expr}的值",
             "steps": [
-                {"thought": "使用计算器工具", "action": "calculator", "action_args": {"input": "{expr}"}},
+                {
+                    "thought": "使用计算器工具",
+                    "action": "calculator",
+                    "action_args": {"input": "{expr}"},
+                },
             ],
         },
     ]
 
-    topics = ["人工智能", "量子计算", "机器学习", "深度学习", "自然语言处理", "计算机视觉",
-              "区块链", "云计算", "物联网", "大数据", "网络安全", "自动驾驶"]
+    topics = [
+        "人工智能",
+        "量子计算",
+        "机器学习",
+        "深度学习",
+        "自然语言处理",
+        "计算机视觉",
+        "区块链",
+        "云计算",
+        "物联网",
+        "大数据",
+        "网络安全",
+        "自动驾驶",
+    ]
     files = ["data.csv", "config.json", "report.txt", "analysis.py", "README.md"]
     langs = ["Python", "JavaScript", "Go", "Rust"]
     features = ["排序算法", "数据可视化", "API接口", "文件处理", "网络爬虫"]
@@ -306,7 +375,7 @@ def generate_synthetic_react_data(count: int = 500) -> int:
     output_path = DATA_DIR / "synthetic_react_data.jsonl"
     total_count = 0
 
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         for i in range(count):
             template = random.choice(templates)
             topic = random.choice(topics)
@@ -316,8 +385,7 @@ def generate_synthetic_react_data(count: int = 500) -> int:
             expr = random.choice(exprs)
 
             task = template["task"].format(
-                topic=topic, file=file, lang=lang,
-                feature=feature, expr=expr
+                topic=topic, file=file, lang=lang, feature=feature, expr=expr
             )
 
             steps = []
@@ -326,8 +394,11 @@ def generate_synthetic_react_data(count: int = 500) -> int:
                 for k, v in step_template.items():
                     if isinstance(v, str):
                         step[k] = v.format(
-                            topic=topic, file=file, lang=lang,
-                            feature=feature, expr=expr,
+                            topic=topic,
+                            file=file,
+                            lang=lang,
+                            feature=feature,
+                            expr=expr,
                             filepath=f"agent_workspace/{file}",
                             code=f"# {feature} implementation",
                             test_code=f"print('Testing {feature}')",
@@ -352,6 +423,7 @@ def generate_synthetic_react_data(count: int = 500) -> int:
 def download_agent_instruct_parquet() -> int:
     """下载 AgentInstruct parquet 数据并转换为 ReAct 格式"""
     import urllib.request
+
     base_url = "https://huggingface.co/datasets/THUDM/AgentInstruct/resolve/main/data/"
     files = [
         "alfworld-00000-of-00001-302ad687bb3817a4.parquet",
@@ -368,7 +440,7 @@ def download_agent_instruct_parquet() -> int:
     total = 0
     output_path = DATA_DIR / "agent_instruct_react.jsonl"
 
-    with open(output_path, 'w', encoding='utf-8') as out_f:
+    with open(output_path, "w", encoding="utf-8") as out_f:
         for fname in files:
             local_path = output_dir / fname
             if not local_path.exists():
@@ -383,6 +455,7 @@ def download_agent_instruct_parquet() -> int:
             # 读取 parquet
             try:
                 import pandas as pd
+
                 df = pd.read_parquet(str(local_path))
                 logger.info(f"  {fname}: {len(df)} 条")
 
@@ -398,7 +471,9 @@ def download_agent_instruct_parquet() -> int:
                         if "steps" in row:
                             item["steps"] = row["steps"] if isinstance(row["steps"], list) else []
                         elif "trajectory" in row:
-                            item["steps"] = row["trajectory"] if isinstance(row["trajectory"], list) else []
+                            item["steps"] = (
+                                row["trajectory"] if isinstance(row["trajectory"], list) else []
+                            )
 
                         if item["task"]:
                             out_f.write(json.dumps(item, ensure_ascii=False) + "\n")
@@ -425,21 +500,33 @@ def generate_tool_call_data(count: int = 300) -> int:
             "task": "帮我搜索{topic}的最新进展",
             "tools": ["search"],
             "steps": [
-                {"thought": "用户想了解{topic}，我需要搜索", "action": "search", "action_args": {"input": "{topic} 最新进展"}},
+                {
+                    "thought": "用户想了解{topic}，我需要搜索",
+                    "action": "search",
+                    "action_args": {"input": "{topic} 最新进展"},
+                },
             ],
         },
         {
             "task": "读取{file}并告诉我内容",
             "tools": ["read_local_file"],
             "steps": [
-                {"thought": "先读取文件", "action": "read_local_file", "action_args": {"input": "{file}"}},
+                {
+                    "thought": "先读取文件",
+                    "action": "read_local_file",
+                    "action_args": {"input": "{file}"},
+                },
             ],
         },
         {
             "task": "计算{expr}",
             "tools": ["calculator"],
             "steps": [
-                {"thought": "使用计算器", "action": "calculator", "action_args": {"input": "{expr}"}},
+                {
+                    "thought": "使用计算器",
+                    "action": "calculator",
+                    "action_args": {"input": "{expr}"},
+                },
             ],
         },
         {
@@ -453,7 +540,11 @@ def generate_tool_call_data(count: int = 300) -> int:
             "task": "创建一个新文件{file}，内容为{content}",
             "tools": ["write_file"],
             "steps": [
-                {"thought": "写入文件", "action": "write_file", "action_args": {"input": "{file} | {content}"}},
+                {
+                    "thought": "写入文件",
+                    "action": "write_file",
+                    "action_args": {"input": "{file} | {content}"},
+                },
             ],
         },
         {
@@ -467,21 +558,33 @@ def generate_tool_call_data(count: int = 300) -> int:
             "task": "访问{url}看看内容",
             "tools": ["url_check"],
             "steps": [
-                {"thought": "抓取网页", "action": "url_check", "action_args": {"input": "{url} | fetch"}},
+                {
+                    "thought": "抓取网页",
+                    "action": "url_check",
+                    "action_args": {"input": "{url} | fetch"},
+                },
             ],
         },
         {
             "task": "分析{file}中的数据",
             "tools": ["data_query"],
             "steps": [
-                {"thought": "查询数据", "action": "data_query", "action_args": {"input": "{file} | describe"}},
+                {
+                    "thought": "查询数据",
+                    "action": "data_query",
+                    "action_args": {"input": "{file} | describe"},
+                },
             ],
         },
         {
             "task": "帮我规划一个{project}项目",
             "tools": ["create_plan"],
             "steps": [
-                {"thought": "创建计划", "action": "create_plan", "action_args": {"input": "开发{project}"}},
+                {
+                    "thought": "创建计划",
+                    "action": "create_plan",
+                    "action_args": {"input": "开发{project}"},
+                },
             ],
         },
         {
@@ -489,12 +592,25 @@ def generate_tool_call_data(count: int = 300) -> int:
             "tools": ["search", "text_summarize"],
             "steps": [
                 {"thought": "先搜索", "action": "search", "action_args": {"input": "{topic}"}},
-                {"thought": "搜索完成，总结要点", "action": "text_summarize", "action_args": {"input": "{topic}相关结果"}},
+                {
+                    "thought": "搜索完成，总结要点",
+                    "action": "text_summarize",
+                    "action_args": {"input": "{topic}相关结果"},
+                },
             ],
         },
     ]
 
-    topics = ["Python编程", "机器学习", "深度学习", "Web开发", "数据库", "云计算", "网络安全", "数据分析"]
+    topics = [
+        "Python编程",
+        "机器学习",
+        "深度学习",
+        "Web开发",
+        "数据库",
+        "云计算",
+        "网络安全",
+        "数据分析",
+    ]
     files = ["data.csv", "config.json", "README.md", "main.py", "report.txt"]
     urls = ["https://example.com", "https://github.com", "https://news.ycombinator.com"]
     exprs = ["2+3*4", "sqrt(144)", "factorial(10)", "log2(1024)", "sin(pi/2)"]
@@ -504,7 +620,7 @@ def generate_tool_call_data(count: int = 300) -> int:
     output_path = DATA_DIR / "tool_call_training.jsonl"
     total = 0
 
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         for i in range(count):
             template = random.choice(tool_templates)
             topic = random.choice(topics)
@@ -515,8 +631,7 @@ def generate_tool_call_data(count: int = 300) -> int:
             content = random.choice(contents)
 
             task = template["task"].format(
-                topic=topic, file=file, url=url,
-                expr=expr, project=project, content=content
+                topic=topic, file=file, url=url, expr=expr, project=project, content=content
             )
             steps = []
             for step in template["steps"]:
@@ -524,8 +639,12 @@ def generate_tool_call_data(count: int = 300) -> int:
                 for k, v in step.items():
                     if isinstance(v, str):
                         s[k] = v.format(
-                            topic=topic, file=file, url=url,
-                            expr=expr, project=project, content=content
+                            topic=topic,
+                            file=file,
+                            url=url,
+                            expr=expr,
+                            project=project,
+                            content=content,
                         )
                     else:
                         s[k] = v
@@ -580,7 +699,7 @@ def main():
     # 列出所有数据文件
     for f in sorted(DATA_DIR.glob("*.jsonl")):
         size = f.stat().st_size
-        with open(f, 'r', encoding='utf-8') as fh:
+        with open(f, "r", encoding="utf-8") as fh:
             lines = sum(1 for _ in fh)
         logger.info(f"  {f.name}: {lines} 条 ({size/1024:.1f} KB)")
 

@@ -6,6 +6,7 @@
 
 态极原生实现，专门为态极服务。
 """
+
 import json
 import logging
 import os
@@ -48,9 +49,7 @@ def _feedback_to_feed(code: str, output: str, success: bool, domain: str = "code
     if _feed_engine is None:
         return
     try:
-        _feed_engine.feed_from_practice(
-            code=code, output=output, success=success, domain=domain
-        )
+        _feed_engine.feed_from_practice(code=code, output=output, success=success, domain=domain)
     except Exception as e:
         logger.debug(f"实践反馈失败（非关键）: {e}")
 
@@ -59,7 +58,9 @@ def _get_workspace() -> str:
     """获取态极的工作台目录"""
     global _WORKSPACE_DIR
     if _WORKSPACE_DIR is None:
-        _WORKSPACE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "agent_workspace")
+        _WORKSPACE_DIR = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "agent_workspace"
+        )
         os.makedirs(_WORKSPACE_DIR, exist_ok=True)
     return _WORKSPACE_DIR
 
@@ -77,12 +78,14 @@ def _check_path_security(file_path: str) -> bool:
     """额外的路径安全检查（系统路径白名单）"""
     try:
         from neuroplex.safety.sandbox_security import is_path_allowed
+
         return is_path_allowed(file_path)
     except ImportError:
         return True  # 安全模块不可用时放行
 
 
 # ======================== 文件系统操作 ========================
+
 
 def read_file(file_path: str, page: int = 1) -> str:
     """
@@ -252,7 +255,7 @@ def list_directory(dir_path: str = "") -> dict:
                     files.append({"name": entry, "size": 0})
         rel = os.path.relpath(resolved, _get_workspace())
         return {
-            "path": rel if rel != '.' else '.',
+            "path": rel if rel != "." else ".",
             "dirs": dirs,
             "files": files,
             "total_dirs": len(dirs),
@@ -318,27 +321,33 @@ def analyze_code(file_path: str) -> dict:
                 imports = [l for l in lines if l.strip().startswith(("import ", "from "))]
                 funcs = [l for l in lines if l.strip().startswith(("def ", "async def "))]
                 classes = [l for l in lines if l.strip().startswith("class ")]
-                result.update({
-                    "valid": True,
-                    "code_lines": len(code_lines),
-                    "imports": len(imports),
-                    "functions": len(funcs),
-                    "classes": len(classes),
-                })
+                result.update(
+                    {
+                        "valid": True,
+                        "code_lines": len(code_lines),
+                        "imports": len(imports),
+                        "functions": len(funcs),
+                        "classes": len(classes),
+                    }
+                )
             except SyntaxError as e:
-                result.update({
-                    "valid": False,
-                    "error": f"行 {e.lineno}: {e.msg}",
-                })
+                result.update(
+                    {
+                        "valid": False,
+                        "error": f"行 {e.lineno}: {e.msg}",
+                    }
+                )
         elif ext == ".json":
             try:
                 json.loads("".join(lines))
                 result["valid"] = True
             except json.JSONDecodeError as e:
-                result.update({
-                    "valid": False,
-                    "error": str(e),
-                })
+                result.update(
+                    {
+                        "valid": False,
+                        "error": str(e),
+                    }
+                )
 
         return result
     except Exception as e:
@@ -349,6 +358,12 @@ def run_python(code: str) -> dict:
     """
     在工作台中执行 Python 代码
 
+    安全策略（默认行为变化，自安全修复起生效）：
+    - 优先使用 sandbox_executor 沙箱执行；
+    - 沙箱不可用时**默认拒绝**裸子进程执行（任意代码执行风险）；
+    - 仅在显式设置环境变量 NEUROPLEX_ALLOW_UNSAFE_EXEC=1 时才回退到
+      直接 subprocess 执行（旧行为），用于受信任的本地调试场景。
+
     Args:
         code: Python 代码
 
@@ -356,6 +371,26 @@ def run_python(code: str) -> dict:
         执行结果字典
     """
     try:
+        # 优先走沙箱执行器
+        try:
+            from neuroplex.agent_ext.sandbox_executor import execute_python_code_safe
+
+            output = execute_python_code_safe(code)
+            _feedback_to_feed(code=code, output=output, success=True, domain="code")
+            return {"success": True, "stdout": output, "stderr": "", "returncode": 0}
+        except (ImportError, NotImplementedError) as e:
+            logger.debug("【run_python】处理失败（非致命）: %s", e)
+
+        # 沙箱不可用：默认拒绝裸执行，需显式环境变量确认
+        if os.environ.get("NEUROPLEX_ALLOW_UNSAFE_EXEC") != "1":
+            msg = (
+                "安全拒绝: 沙箱不可用，未执行代码"
+                "（设置 NEUROPLEX_ALLOW_UNSAFE_EXEC=1 可显式允许裸执行）"
+            )
+            logger.warning(msg)
+            _feedback_to_feed(code=code, output=msg, success=False, domain="code")
+            return {"success": False, "error": msg}
+
         result = subprocess.run(
             [sys.executable, "-c", code],
             capture_output=True,

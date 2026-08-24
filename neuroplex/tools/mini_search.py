@@ -15,21 +15,22 @@
     engine.crawl("https://docs.python.org/3/", depth=2)
     results = engine.search("async programming")
 """
+
 import os
 import re
 import json
 import time
-import hashlib
 import logging
 import threading
 import concurrent.futures
 import random
 import urllib.parse
-from pathlib import Path
-from collections import defaultdict
+import urllib.robotparser
 import threading as _thr
+
 _tokenizer_lock = _thr.Lock()
 _cached_tokenizer = None
+
 
 def _get_tokenizer():
     global _cached_tokenizer
@@ -40,13 +41,15 @@ def _get_tokenizer():
             return _cached_tokenizer if _cached_tokenizer else None
         try:
             from neuroplex.loader import TaijiNativeTokenizerV2
+
             _cached_tokenizer = TaijiNativeTokenizerV2()
             return _cached_tokenizer
         except Exception:
             _cached_tokenizer = False
             return None
 
-from typing import List, Dict, Optional, Tuple
+
+from typing import List, Optional
 from dataclasses import dataclass, field
 
 logger = logging.getLogger("MiniSearch")
@@ -55,6 +58,7 @@ logger = logging.getLogger("MiniSearch")
 @dataclass
 class CrawledPage:
     """爬取的网页"""
+
     url: str
     title: str = ""
     text: str = ""
@@ -65,6 +69,7 @@ class CrawledPage:
 @dataclass
 class SearchHit:
     """搜索结果"""
+
     url: str
     title: str
     snippet: str
@@ -96,6 +101,7 @@ class MiniSearchEngine:
         """内存索引 + JSON 持久化（sandbox 不支持 SQLite 磁盘写入）"""
         self._memory_pages = []
         import atexit
+
         self._load_from_disk()
         atexit.register(self._save_to_disk)
 
@@ -106,8 +112,8 @@ class MiniSearchEngine:
         try:
             with open(self._json_path(), "w", encoding="utf-8") as fh:
                 json.dump(self._memory_pages, fh, ensure_ascii=False, indent=2)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【MiniSearchEngine._save_to_disk】处理失败（非致命）: %s", e)
 
     def _load_from_disk(self):
         try:
@@ -122,8 +128,14 @@ class MiniSearchEngine:
     # 1. 爬虫 —— 下载网页 + 提取正文 + 提取链接
     # ═══════════════════════════════════════════
 
-    def crawl(self, seed_url: str, depth: int = 2, max_pages: int = 50,
-              respect_robots: bool = True, sitemap_first: bool = True) -> int:
+    def crawl(
+        self,
+        seed_url: str,
+        depth: int = 2,
+        max_pages: int = 50,
+        respect_robots: bool = True,
+        sitemap_first: bool = True,
+    ) -> int:
         """Concurrent crawler with rate limiting, robots.txt, sitemap, smart extraction"""
         from neuroplex.tools.web import fetch as web_fetch
         import queue
@@ -137,7 +149,7 @@ class MiniSearchEngine:
             sitemap_urls = self._discover_sitemap_urls(seed_url)
             if sitemap_urls:
                 logger.info(f"Sitemap: {len(sitemap_urls)} URLs")
-                to_visit = [(u, 0) for u in sitemap_urls[:max_pages * 2]]
+                to_visit = [(u, 0) for u in sitemap_urls[: max_pages * 2]]
                 with visited_lock:
                     visited.add(self._normalize_url(seed_url))
 
@@ -161,13 +173,19 @@ class MiniSearchEngine:
                         continue
                     visited.add(normal)
 
-                result = self._crawl_single_page(url, web_fetch, seed_url, cur_depth, depth, respect_robots)
+                result = self._crawl_single_page(
+                    url, web_fetch, seed_url, cur_depth, depth, respect_robots
+                )
                 if result:
                     with visited_lock:
                         if total_crawled[0] < max_pages:
-                            self._save_page(result["url"], result["title"], result["text"], result["links"])
+                            self._save_page(
+                                result["url"], result["title"], result["text"], result["links"]
+                            )
                             total_crawled[0] += 1
-                            logger.info(f"  [{total_crawled[0]}/{max_pages}] {result['title'][:60]} ({result['url'][:80]})")
+                            logger.info(
+                                f"  [{total_crawled[0]}/{max_pages}] {result['title'][:60]} ({result['url'][:80]})"
+                            )
                     if cur_depth < depth:
                         for link in result.get("links", []):
                             n = self._normalize_url(link)
@@ -182,8 +200,8 @@ class MiniSearchEngine:
             for f in futures:
                 try:
                     f.result(timeout=300)
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("【MiniSearchEngine.crawl】处理失败（非致命）: %s", e)
 
         self._rebuild_fts()
         logger.info(f"Crawl done: {total_crawled[0]} pages, seed={seed_url}")
@@ -196,7 +214,7 @@ class MiniSearchEngine:
             return None
         try:
             html = web_fetch(url, as_markdown=False, max_length=200000)
-            if not html or html.startswith(("F","H")):
+            if not html or html.startswith(("F", "H")):
                 return None
             if len(html) < 100:
                 return None
@@ -225,7 +243,6 @@ class MiniSearchEngine:
         domain = urllib.parse.urlparse(url).netloc
         if domain not in self._robots_cache:
             try:
-                import urllib.robotparser
                 rp = urllib.robotparser.RobotFileParser()
                 rp.set_url("https://" + domain + "/robots.txt")
                 rp.read()
@@ -237,46 +254,69 @@ class MiniSearchEngine:
 
     def _discover_sitemap_urls(self, seed_url):
         from neuroplex.tools.web import fetch as web_fetch
+
         parsed = urllib.parse.urlparse(seed_url)
         base = parsed.scheme + "://" + parsed.netloc
         for path in ["/sitemap.xml", "/sitemap_index.xml"]:
             try:
                 xml = web_fetch(base + path, as_markdown=False, max_length=500000)
-                if xml and not xml.startswith(("F","H")) and len(xml) > 50:
+                if xml and not xml.startswith(("F", "H")) and len(xml) > 50:
                     urls = re.findall(r"<loc>(https?://[^<]+)</loc>", xml, re.IGNORECASE)
                     if urls:
                         return [self._normalize_url(u) for u in urls if self._normalize_url(u)]
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【MiniSearchEngine._discover_sitemap_urls】处理失败（非致命）: %s", e)
         return []
 
     def _normalize_url(self, url):
         try:
             p = urllib.parse.urlparse(url)
-            return urllib.parse.urlunparse((
-                p.scheme.lower(), p.netloc.lower(),
-                p.path.rstrip("/") or "/", p.params, p.query, ""
-            ))
+            return urllib.parse.urlunparse(
+                (
+                    p.scheme.lower(),
+                    p.netloc.lower(),
+                    p.path.rstrip("/") or "/",
+                    p.params,
+                    p.query,
+                    "",
+                )
+            )
         except Exception:
             return url
 
-
     def _extract_title(self, html: str) -> str:
-        m = re.search(r'<title[^>]*>(.*?)</title>', html, re.DOTALL | re.IGNORECASE)
-        return re.sub(r'<[^>]+>', '', m.group(1)).strip()[:200] if m else ""
+        m = re.search(r"<title[^>]*>(.*?)</title>", html, re.DOTALL | re.IGNORECASE)
+        return re.sub(r"<[^>]+>", "", m.group(1)).strip()[:200] if m else ""
 
     def _extract_main_content(self, html: str) -> str:
         """Smart content extraction: remove boilerplate, score by text density"""
-        for tag in ["script", "style", "nav", "footer", "header", "aside",
-                     "noscript", "iframe", "svg", "form"]:
-            html = re.sub(r"<" + tag + r"[^>]*>.*?</" + tag + r">", " ", html, flags=re.DOTALL | re.IGNORECASE)
+        for tag in [
+            "script",
+            "style",
+            "nav",
+            "footer",
+            "header",
+            "aside",
+            "noscript",
+            "iframe",
+            "svg",
+            "form",
+        ]:
+            html = re.sub(
+                r"<" + tag + r"[^>]*>.*?</" + tag + r">", " ", html, flags=re.DOTALL | re.IGNORECASE
+            )
         bp = (
             r'(?:class|id)\s*=\s*"[^"]*(?:nav|menu|sidebar|footer|header'
-            r'|comment|widget|advertisement|banner|breadcrumb|pagination'
+            r"|comment|widget|advertisement|banner|breadcrumb|pagination"
             r'|social|share|related|recommend|popular|trending)[^"]*"'
         )
-        html = re.sub(r"<[^>]*" + bp + r"[^>]*>.*?</[^>]+>", " ", html, flags=re.DOTALL | re.IGNORECASE)
-        blocks = re.split(r"(?:<article[^>]*>|<section[^>]*>|<main[^>]*>|<div[^>]*>)|(?:</article>|</section>|</main>|</div>)", html)
+        html = re.sub(
+            r"<[^>]*" + bp + r"[^>]*>.*?</[^>]+>", " ", html, flags=re.DOTALL | re.IGNORECASE
+        )
+        blocks = re.split(
+            r"(?:<article[^>]*>|<section[^>]*>|<main[^>]*>|<div[^>]*>)|(?:</article>|</section>|</main>|</div>)",
+            html,
+        )
         scored = []
         for blk in blocks:
             text = self._strip_tags(blk)
@@ -298,7 +338,12 @@ class MiniSearchEngine:
         """Strip HTML tags, keep line breaks"""
         text = re.sub(r"<(?:br|p|div|h[1-6]|li|tr)[^>]*/?>", "\n", html, flags=re.IGNORECASE)
         text = re.sub(r"<[^>]+>", "", text)
-        text = text.replace("&amp;", "&").replace("&lt;", "<").replace("&gt;", ">").replace("&nbsp;", " ")
+        text = (
+            text.replace("&amp;", "&")
+            .replace("&lt;", "<")
+            .replace("&gt;", ">")
+            .replace("&nbsp;", " ")
+        )
         text = re.sub(r"\n{3,}", "\n\n", text)
         return text.strip()
 
@@ -315,19 +360,22 @@ class MiniSearchEngine:
             try:
                 domain = urllib.parse.urlparse(link).netloc
                 if domain == base_domain and not any(
-                    x in link for x in ['.jpg', '.png', '.pdf', '.zip', '.css', '.js']
+                    x in link for x in [".jpg", ".png", ".pdf", ".zip", ".css", ".js"]
                 ):
                     result.append(link)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【MiniSearchEngine._extract_links】处理失败（非致命）: %s", e)
         return list(set(result))  # 去重
 
     def _save_page(self, url: str, title: str, text: str, links: List[str]):
         """存储页面到内存列表"""
         with self._lock:
             entry = {
-                "url": url, "title": title[:200], "text": text[:10000],
-                "links": links, "crawled_at": time.time(),
+                "url": url,
+                "title": title[:200],
+                "text": text[:10000],
+                "links": links,
+                "crawled_at": time.time(),
             }
             self._memory_pages = [p for p in self._memory_pages if p["url"] != url]
             self._memory_pages.append(entry)
@@ -369,8 +417,10 @@ class MiniSearchEngine:
                     scored.append((score, p["url"], p["title"], snip))
 
             scored.sort(key=lambda x: x[0], reverse=True)
-            return [SearchHit(url=u, title=t, snippet=s[:200], score=round(sc, 2))
-                    for sc, u, t, s in scored[:top_k]]
+            return [
+                SearchHit(url=u, title=t, snippet=s[:200], score=round(sc, 2))
+                for sc, u, t, s in scored[:top_k]
+            ]
 
     def _tokenize(self, text):
         """分词：优先态极原生 tokenizer（与模型同词汇表），回退到 regex"""
@@ -379,8 +429,8 @@ class MiniSearchEngine:
             try:
                 ids = tok.encode(text)
                 return [str(tid) for tid in ids]
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【MiniSearchEngine._tokenize】处理失败（非致命）: %s", e)
         text = re.sub(r"[^\w\u4e00-\u9fff]+", " ", text.lower())
         return [t for t in text.split() if len(t) >= 2]
 
@@ -391,8 +441,12 @@ class MiniSearchEngine:
             if idx >= 0:
                 start = max(0, idx - window // 2)
                 end = min(len(text), idx + window // 2)
-                return ("..." if start > 0 else "") + text[start:end] + ("..." if end < len(text) else "")
-        return text[:window * 2]
+                return (
+                    ("..." if start > 0 else "")
+                    + text[start:end]
+                    + ("..." if end < len(text) else "")
+                )
+        return text[: window * 2]
 
     def search_to_text(self, query: str, top_k: int = 10) -> str:
         """搜索并返回格式化文本（供 Agent 工具调用）"""

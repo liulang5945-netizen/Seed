@@ -22,6 +22,7 @@ Usage:
         --neuron_id zh_par2 --data_files shared_core.jsonl class_c_story.jsonl \\
         --shared_emb_mode frozen --threads 6
 """
+
 from __future__ import annotations
 
 import argparse
@@ -32,7 +33,9 @@ import random
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import sentencepiece as spm
 import torch
@@ -42,9 +45,13 @@ import torch.nn.functional as F
 from neuroplex.resonance import ResonanceNeuron, get_domain_neuron_config
 from neuroplex.resonance.translator import batch_align_and_embed
 from scripts.training.utils import (
-    load_domain_tokenizer, load_general_tokenizer,
+    load_domain_tokenizer,
+    load_general_tokenizer,
     load_or_create_shared_embedding,
-    OUTPUT_DIR, SequentialSampler, make_wsd_scheduler, split_train_eval,
+    OUTPUT_DIR,
+    SequentialSampler,
+    make_wsd_scheduler,
+    split_train_eval,
 )
 from scripts.training.experiment_config import (
     ZH_COMPACT_NEURON_IDS,
@@ -63,7 +70,7 @@ def load_multi_texts(data_files: list[str], max_texts: int = 10000000) -> list[s
             print(f"  [WARN] 文件不存在: {path}", flush=True)
             continue
         count = 0
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, "r", encoding="utf-8") as f:
             for line in f:
                 if len(texts) >= max_texts:
                     break
@@ -72,7 +79,7 @@ def load_multi_texts(data_files: list[str], max_texts: int = 10000000) -> list[s
                     continue
                 try:
                     d = json.loads(line)
-                    text = d.get('text', '')
+                    text = d.get("text", "")
                     if len(text) >= 20:
                         texts.append(text)
                         count += 1
@@ -92,9 +99,16 @@ class AugmentingSampler:
     防止模型逐字记忆训练集特定 token 序列。
     """
 
-    def __init__(self, texts: list[str], batch_size: int, seed: int = 42,
-                 truncate_min_ratio: float = 0.5, concat_prob: float = 0.3):
+    def __init__(
+        self,
+        texts: list[str],
+        batch_size: int,
+        seed: int = 42,
+        truncate_min_ratio: float = 0.5,
+        concat_prob: float = 0.3,
+    ):
         from scripts.training.utils import SequentialSampler
+
         self.base = SequentialSampler(texts, batch_size, seed=seed)
         self.texts = texts
         self.n_texts = len(texts)
@@ -103,8 +117,11 @@ class AugmentingSampler:
         self.concat_prob = concat_prob
         # 预筛选短文本（< 200 字）用于拼接，避免长+长超长
         self._short_texts = [t for t in texts if 20 <= len(t) <= 200]
-        print(f"  [AugmentingSampler] truncate_min={truncate_min_ratio}, "
-              f"concat_prob={concat_prob}, short_pool={len(self._short_texts)}", flush=True)
+        print(
+            f"  [AugmentingSampler] truncate_min={truncate_min_ratio}, "
+            f"concat_prob={concat_prob}, short_pool={len(self._short_texts)}",
+            flush=True,
+        )
 
     def _augment_one(self, text: str) -> str:
         """对单条文本做随机截断 + 拼接。"""
@@ -115,18 +132,20 @@ class AugmentingSampler:
             sub = text[:keep_chars]
             # 找最后一个句末标点（。。！？）
             last_punct = max(
-                sub.rfind('。'), sub.rfind('！'), sub.rfind('？'),
-                sub.rfind('.'), sub.rfind('!'), sub.rfind('?'),
+                sub.rfind("。"),
+                sub.rfind("！"),
+                sub.rfind("？"),
+                sub.rfind("."),
+                sub.rfind("!"),
+                sub.rfind("?"),
             )
             if last_punct > 30:
-                text = sub[:last_punct + 1]
+                text = sub[: last_punct + 1]
 
         # 增强 2：30% 概率拼接另一条短文本
-        if (self._short_texts and
-                self.rng.random() < self.concat_prob and
-                len(text) < 300):
+        if self._short_texts and self.rng.random() < self.concat_prob and len(text) < 300:
             other = self.rng.choice(self._short_texts)
-            text = text + '\n' + other
+            text = text + "\n" + other
         return text
 
     def sample_batch(self) -> list[str]:
@@ -167,7 +186,9 @@ def train_parallel(
     """并行训练配置。"""
     if augment:
         sampler = AugmentingSampler(
-            texts, batch_size, seed=42,
+            texts,
+            batch_size,
+            seed=42,
             truncate_min_ratio=truncate_min_ratio,
             concat_prob=concat_prob,
         )
@@ -182,24 +203,34 @@ def train_parallel(
         # 冻结 shared_embedding
         for p in embed_params:
             p.requires_grad = False
-        optimizer = torch.optim.AdamW([
-            {"params": neuron_params, "weight_decay": 0.1},
-        ], lr=lr, betas=(0.9, 0.99))
+        optimizer = torch.optim.AdamW(
+            [
+                {"params": neuron_params, "weight_decay": 0.1},
+            ],
+            lr=lr,
+            betas=(0.9, 0.99),
+        )
         trainable_params = neuron_params
         print(f"  shared_embedding: FROZEN（复用已有权重）", flush=True)
     else:
         # 训练 shared_embedding
-        optimizer = torch.optim.AdamW([
-            {"params": neuron_params, "weight_decay": 0.1},
-            {"params": embed_params, "weight_decay": 0.0},
-        ], lr=lr, betas=(0.9, 0.99))
+        optimizer = torch.optim.AdamW(
+            [
+                {"params": neuron_params, "weight_decay": 0.1},
+                {"params": embed_params, "weight_decay": 0.0},
+            ],
+            lr=lr,
+            betas=(0.9, 0.99),
+        )
         trainable_params = neuron_params + embed_params
         print(f"  shared_embedding: TRAINABLE（第一个神经元训练）", flush=True)
 
     # WSD 调度（公式抽取到 utils.make_wsd_scheduler）
     scheduler = make_wsd_scheduler(
-        optimizer, num_steps=num_steps,
-        warmup_steps=warmup_steps, decay_ratio=0.85,
+        optimizer,
+        num_steps=num_steps,
+        warmup_steps=warmup_steps,
+        decay_ratio=0.85,
     )
 
     neuron.train()
@@ -220,7 +251,10 @@ def train_parallel(
     effective_batch = batch_size * grad_accum
 
     print(f"\n  [{neuron_id}] 并行训练开始:", flush=True)
-    print(f"    batch={batch_size} × grad_accum={grad_accum} = effective {effective_batch}", flush=True)
+    print(
+        f"    batch={batch_size} × grad_accum={grad_accum} = effective {effective_batch}",
+        flush=True,
+    )
     print(f"    lr={lr}, WSD调度, 数据={len(texts)} 条", flush=True)
     print(f"    steps={num_steps}, eval_every={eval_every}", flush=True)
 
@@ -233,7 +267,10 @@ def train_parallel(
                 break
             batch_texts = sampler.sample_batch()
             shared_emb, targets, mask = batch_align_and_embed(
-                batch_texts, domain_sp, general_sp, shared_embedding,
+                batch_texts,
+                domain_sp,
+                general_sp,
+                shared_embedding,
             )
             shared_emb = shared_emb.to(device)
             targets = targets.to(device)
@@ -247,11 +284,14 @@ def train_parallel(
             shift_targets = shift_targets.clone()
             shift_targets[~shift_mask] = -100
 
-            loss = F.cross_entropy(
-                shift_logits.view(-1, shift_logits.size(-1)),
-                shift_targets.view(-1),
-                ignore_index=-100,
-            ) / grad_accum
+            loss = (
+                F.cross_entropy(
+                    shift_logits.view(-1, shift_logits.size(-1)),
+                    shift_targets.view(-1),
+                    ignore_index=-100,
+                )
+                / grad_accum
+            )
             loss.backward()
             accum_loss += loss.item()
             step += 1
@@ -288,10 +328,13 @@ def train_parallel(
             with torch.no_grad():
                 for text in eval_texts[:30]:
                     shared, targets, mask = batch_align_and_embed(
-                        [text], domain_sp, general_sp, shared_embedding,
+                        [text],
+                        domain_sp,
+                        general_sp,
+                        shared_embedding,
                     )
                     result = neuron.forward(shared, return_logits=True)
-                    logits = result['logits']
+                    logits = result["logits"]
                     shift_logits = logits[:, :-1, :].contiguous()
                     shift_targets = targets[:, 1:].contiguous()
                     shift_mask = mask[:, 1:].contiguous()
@@ -312,62 +355,84 @@ def train_parallel(
                 best_step = step
                 best_state = {k: v.detach().clone() for k, v in neuron.state_dict().items()}
                 if shared_emb_mode == "train":
-                    best_embed_state = {k: v.detach().clone() for k, v in shared_embedding.state_dict().items()}
+                    best_embed_state = {
+                        k: v.detach().clone() for k, v in shared_embedding.state_dict().items()
+                    }
                 print(f"    [SAVE] best (val PPL={best_val_loss:.2f})", flush=True)
 
                 # 中途 checkpoint：每次刷新 best 时立即保存，防止崩溃丢失进度
                 os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                torch.save({
-                    "neuron_config": neuron.config,
-                    "state_dict": best_state,
-                    "shared_embedding_state": best_embed_state if best_embed_state else None,
-                    "domain": "zh",
-                    "data_source": "simple_zh_split",
-                    "result": {
-                        "best_val_ppl": best_val_loss,
-                        "best_step": best_step,
-                        "steps": step,
-                        "saved": "best",
-                        "spec": spec,
-                        "shared_emb_mode": shared_emb_mode,
+                torch.save(
+                    {
+                        "neuron_config": neuron.config,
+                        "state_dict": best_state,
+                        "shared_embedding_state": best_embed_state if best_embed_state else None,
+                        "domain": "zh",
+                        "data_source": "simple_zh_split",
+                        "result": {
+                            "best_val_ppl": best_val_loss,
+                            "best_step": best_step,
+                            "steps": step,
+                            "saved": "best",
+                            "spec": spec,
+                            "shared_emb_mode": shared_emb_mode,
+                        },
                     },
-                }, save_path)
+                    save_path,
+                )
 
-            sample = generate_sample(neuron, domain_sp, general_sp, shared_embedding, device, prompt="小猫")
+            sample = generate_sample(
+                neuron, domain_sp, general_sp, shared_embedding, device, prompt="小猫"
+            )
             print(f"    生成: {sample[:200]}", flush=True)
             print()
             neuron.train()
 
     save_state = best_state if best_state is not None else neuron.state_dict()
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
-    torch.save({
-        "neuron_config": neuron.config,
-        "state_dict": save_state,
-        "shared_embedding_state": best_embed_state if best_embed_state else None,
-        "domain": "zh",
-        "data_source": "simple_zh_split",
-        "result": {
-            "best_val_ppl": best_val_loss,
-            "best_step": best_step,
-            "steps": step,
-            "saved": "best" if best_state is not None else "final",
-            "spec": spec,
-            "shared_emb_mode": shared_emb_mode,
+    torch.save(
+        {
+            "neuron_config": neuron.config,
+            "state_dict": save_state,
+            "shared_embedding_state": best_embed_state if best_embed_state else None,
+            "domain": "zh",
+            "data_source": "simple_zh_split",
+            "result": {
+                "best_val_ppl": best_val_loss,
+                "best_step": best_step,
+                "steps": step,
+                "saved": "best" if best_state is not None else "final",
+                "spec": spec,
+                "shared_emb_mode": shared_emb_mode,
+            },
         },
-    }, save_path)
+        save_path,
+    )
 
     # train 模式：自动保存 shared_embedding 到 data/shared_embedding.pt
     # 这样后续 frozen 模式的神经元可以复用（因果掩码修复后的干净 embedding）
     if shared_emb_mode == "train" and best_embed_state is not None:
         from scripts.training.utils import save_shared_embedding, SHARED_EMBEDDING_PATH
+
         save_shared_embedding(shared_embedding, SHARED_EMBEDDING_PATH)
-        print(f"  [AUTO-SAVE] shared_embedding → {SHARED_EMBEDDING_PATH} "
-              f"(供后续 frozen 模式神经元复用)", flush=True)
+        print(
+            f"  [AUTO-SAVE] shared_embedding → {SHARED_EMBEDDING_PATH} "
+            f"(供后续 frozen 模式神经元复用)",
+            flush=True,
+        )
 
     elapsed = time.time() - t_start
-    print(f"\n  [{neuron_id}] Done. best_val_PPL={best_val_loss:.2f}@step{best_step}, time={elapsed/60:.1f}min", flush=True)
+    print(
+        f"\n  [{neuron_id}] Done. best_val_PPL={best_val_loss:.2f}@step{best_step}, time={elapsed/60:.1f}min",
+        flush=True,
+    )
     print(f"  Saved: {save_path}", flush=True)
-    return {"neuron_id": neuron_id, "best_val_ppl": best_val_loss, "best_step": best_step, "elapsed_s": elapsed}
+    return {
+        "neuron_id": neuron_id,
+        "best_val_ppl": best_val_loss,
+        "best_step": best_step,
+        "elapsed_s": elapsed,
+    }
 
 
 def generate_sample(neuron, domain_sp, general_sp, shared_embedding, device, prompt="从前"):
@@ -411,9 +476,15 @@ def generate_sample(neuron, domain_sp, general_sp, shared_embedding, device, pro
 def main():
     parser = argparse.ArgumentParser(description="并行训练 compact/standard 神经元（差异化数据）")
     parser.add_argument("--neuron_id", required=True)
-    parser.add_argument("--data_files", nargs='+', required=True, help="数据文件名（在 data/simple_zh/ 下）")
-    parser.add_argument("--spec", choices=["compact", "standard"], default="compact",
-                        help="神经元规格：compact(36M) 或 standard(~100M)")
+    parser.add_argument(
+        "--data_files", nargs="+", required=True, help="数据文件名（在 data/simple_zh/ 下）"
+    )
+    parser.add_argument(
+        "--spec",
+        choices=["compact", "standard"],
+        default="compact",
+        help="神经元规格：compact(36M) 或 standard(~100M)",
+    )
     parser.add_argument("--steps", type=int, default=16000)
     parser.add_argument("--batch_size", type=int, default=8)
     parser.add_argument("--grad_accum", type=int, default=4)
@@ -426,12 +497,19 @@ def main():
     parser.add_argument("--dropout", type=float, default=0.2)
     parser.add_argument("--threads", type=int, default=6, help="PyTorch 线程数（并行时限制）")
     parser.add_argument("--no_augment", action="store_true", help="禁用数据增强")
-    parser.add_argument("--truncate_min_ratio", type=float, default=0.5,
-                        help="随机截断最小保留比例（0.5=保留 50%-100%）")
-    parser.add_argument("--concat_prob", type=float, default=0.3,
-                        help="片段拼接概率")
-    parser.add_argument("--shared_emb_mode", choices=["train", "frozen"], default="frozen",
-                        help="train=训练shared_embedding, frozen=冻结复用")
+    parser.add_argument(
+        "--truncate_min_ratio",
+        type=float,
+        default=0.5,
+        help="随机截断最小保留比例（0.5=保留 50%-100%）",
+    )
+    parser.add_argument("--concat_prob", type=float, default=0.3, help="片段拼接概率")
+    parser.add_argument(
+        "--shared_emb_mode",
+        choices=["train", "frozen"],
+        default="frozen",
+        help="train=训练shared_embedding, frozen=冻结复用",
+    )
     args = parser.parse_args()
 
     # 限制线程数（并行训练不抢资源）
@@ -444,7 +522,10 @@ def main():
     print(f"  spec: {args.spec}", flush=True)
     print(f"  data_files: {args.data_files}", flush=True)
     print(f"  shared_emb_mode: {args.shared_emb_mode}", flush=True)
-    print(f"  effective batch: {args.batch_size} × {args.grad_accum} = {args.batch_size * args.grad_accum}", flush=True)
+    print(
+        f"  effective batch: {args.batch_size} × {args.grad_accum} = {args.batch_size * args.grad_accum}",
+        flush=True,
+    )
     print(f"  lr: {args.lr}, threads: {args.threads}", flush=True)
     print("=" * 70, flush=True)
 
@@ -480,17 +561,30 @@ def main():
         del peer_neuron
     n_side = len(neuron.excite_channels)
     n_params = sum(p.numel() for p in neuron.parameters())
-    print(f"  {args.neuron_id}: {n_params/1e6:.1f}M params ({n_side} excite side_channels)", flush=True)
+    print(
+        f"  {args.neuron_id}: {n_params/1e6:.1f}M params ({n_side} excite side_channels)",
+        flush=True,
+    )
 
     # 5. 训练
     print(f"\n[5] 开始训练...", flush=True)
     save_path = os.path.join(OUTPUT_DIR, f"neuron_{args.neuron_id}.pt")
     result = train_parallel(
-        neuron=neuron, texts=all_texts, neuron_id=args.neuron_id,
-        shared_embedding=shared_embedding, domain_sp=domain_sp, general_sp=general_sp,
-        num_steps=args.steps, batch_size=args.batch_size, grad_accum=args.grad_accum,
-        lr=args.lr, device=args.device, log_every=args.log_every, save_path=save_path,
-        warmup_steps=args.warmup_steps, eval_every=args.eval_every,
+        neuron=neuron,
+        texts=all_texts,
+        neuron_id=args.neuron_id,
+        shared_embedding=shared_embedding,
+        domain_sp=domain_sp,
+        general_sp=general_sp,
+        num_steps=args.steps,
+        batch_size=args.batch_size,
+        grad_accum=args.grad_accum,
+        lr=args.lr,
+        device=args.device,
+        log_every=args.log_every,
+        save_path=save_path,
+        warmup_steps=args.warmup_steps,
+        eval_every=args.eval_every,
         shared_emb_mode=args.shared_emb_mode,
         augment=not args.no_augment,
         truncate_min_ratio=args.truncate_min_ratio,

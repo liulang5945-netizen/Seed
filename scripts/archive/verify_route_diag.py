@@ -6,6 +6,7 @@
 
 对每域 2 条文本，打印各 neuron 的路由权重（position 占比）+ 各 neuron 的原生/投影 max-prob。
 """
+
 import os
 import sys
 
@@ -18,19 +19,29 @@ CKPT_PATH = "data/neurons/collab_v1_mixed.ckpt.pt"
 GENERAL_DIR = "data/foundation_v1_general"
 DIALOGUE_DIR = "data/neurons"
 DOMAINS = ["code", "math", "zh", "en"]
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 
 
 def main():
     from scripts.training.train_cross_domain_collab import (
-        load_neuron, load_shared_lm_head, load_shared_embedding,
+        load_neuron,
+        load_shared_lm_head,
+        load_shared_embedding,
     )
     from scripts.training.utils import (
-        load_general_tokenizer, create_shared_embedding, load_domain_tokenizer,
+        load_general_tokenizer,
+        create_shared_embedding,
+        load_domain_tokenizer,
     )
     from scripts.archive.train_multi_domain_foundation import (
-        load_domain_texts, batch_align_and_embed,
+        load_domain_texts,
+        batch_align_and_embed,
     )
     from taiji.resonance.ensemble import ResonanceEnsemble
     from taiji.resonance.field import ResonanceField
@@ -51,10 +62,13 @@ def main():
         neurons[nid] = load_neuron(nid, GENERAL_DIR, "cpu", shared_lm_head=shared_lm_head)
         embeddings[nid] = load_shared_embedding(GENERAL_DIR, "cpu")
     for nid in DIALOGUE_IDS:
-        ckp = torch.load(os.path.join(DIALOGUE_DIR, f"neuron_{nid}.pt"),
-                         map_location="cpu", weights_only=False)
-        cfg = ckp["neuron_config"]; cfg.unified_field_dim = None
+        ckp = torch.load(
+            os.path.join(DIALOGUE_DIR, f"neuron_{nid}.pt"), map_location="cpu", weights_only=False
+        )
+        cfg = ckp["neuron_config"]
+        cfg.unified_field_dim = None
         from taiji.resonance.neuron import ResonanceNeuron
+
         n = ResonanceNeuron(cfg)
         n.load_state_dict(ckp["state_dict"], strict=False)
         neurons[nid] = n
@@ -110,6 +124,7 @@ def main():
 
     # 逐域诊断
     import torch.nn.functional as F
+
     for d in DOMAINS:
         sample = texts[d][0]
         neuron_embeddings, targets = {}, None
@@ -119,9 +134,14 @@ def main():
             if targets is None:
                 targets = out[1]
         with torch.no_grad():
-            r = ens.forward_train(neuron_embeddings=neuron_embeddings, n_rounds=2,
-                                  fusion_mode="soft", targets=targets,
-                                  field_conditioning=True, target_domain="general")
+            r = ens.forward_train(
+                neuron_embeddings=neuron_embeddings,
+                n_rounds=2,
+                fusion_mode="soft",
+                targets=targets,
+                field_conditioning=True,
+                target_domain="general",
+            )
         w = dict(zip(ens.neurons.keys(), r["weights"]))
         print(f"=== {d} 文本: {sample[:50]}")
         for nid in sorted(w, key=lambda k: -w[k]):

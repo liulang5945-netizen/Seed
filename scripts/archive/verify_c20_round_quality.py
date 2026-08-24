@@ -9,6 +9,7 @@
 用法：
     python scripts/training/verify_c20_round_quality.py [--ckpt20 data/neurons/collab_v3_c20.ckpt.pt]
 """
+
 import os
 import sys
 
@@ -53,12 +54,18 @@ def quality_probe(cortex, text):
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--ckpt20", default="data/neurons/collab_v3_c20.ckpt.pt")
     args = parser.parse_args()
 
-    DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                    "zh_aug3_dialogue", "zh_std0_dialogue"]
+    DIALOGUE_IDS = [
+        "zh_aug0_dialogue",
+        "zh_aug1_dialogue",
+        "zh_aug2_dialogue",
+        "zh_aug3_dialogue",
+        "zh_std0_dialogue",
+    ]
     cortex, tokenizer, modules = assemble_cortex(
         neurons_dir="data/neurons",
         collab_name="collab_v3_c16.ckpt.pt",
@@ -109,11 +116,17 @@ def main():
             # 口径（2026-08-12）：zh/dialogue 项用训练格式 "问：...\n答："。
             gen_prompt = build_dialogue_prompt(prompt) if tag in ("zh", "dialogue") else prompt
             out_exec = cortex.generate(
-                gen_prompt, max_tokens=40, temperature=0.9, top_k=50,
+                gen_prompt,
+                max_tokens=40,
+                temperature=0.9,
+                top_k=50,
                 collab_mode="executive",
             )
             out_fusion = cortex.generate(
-                gen_prompt, max_tokens=40, temperature=0.9, top_k=50,
+                gen_prompt,
+                max_tokens=40,
+                temperature=0.9,
+                top_k=50,
                 collab_mode="fusion",
             )
             print(f"\n── [{tag}] {gen_prompt}")

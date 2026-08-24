@@ -46,8 +46,7 @@ def check_upgrade():
         "can_upgrade": False,
         "recommended_action": "population_growth",
         "message": (
-            "NeuroPlex 通过神经元专业化、新增成员、同伴协作训练或"
-            "生命周期管理扩展群体能力。"
+            "NeuroPlex 通过神经元专业化、新增成员、同伴协作训练或" "生命周期管理扩展群体能力。"
         ),
     }
 
@@ -76,10 +75,7 @@ def start_upgrade():
     """Reject the deprecated upgrade operation explicitly."""
     raise HTTPException(
         status_code=410,
-        detail=(
-            "旧升级接口已退役。请使用 Cortex 的神经元群体增长、"
-            "协作训练和生命周期接口。"
-        ),
+        detail=("旧升级接口已退役。请使用 Cortex 的神经元群体增长、" "协作训练和生命周期接口。"),
     )
 
 

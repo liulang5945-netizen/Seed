@@ -15,6 +15,7 @@
 
 用 TINY_TEST 规格避免加载真实模型。
 """
+
 from __future__ import annotations
 
 import copy
@@ -31,8 +32,13 @@ from neuroplex.resonance.neuron import ResonanceNeuron
 from neuroplex.resonance.distillation import DistillationLoss, build_layer_map
 
 
-def make_neuron(seed: int, vocab_size: int = 100, num_layers: int = 2,
-                num_heads: int = 4, hidden_size: int = 256) -> ResonanceNeuron:
+def make_neuron(
+    seed: int,
+    vocab_size: int = 100,
+    num_layers: int = 2,
+    num_heads: int = 4,
+    hidden_size: int = 256,
+) -> ResonanceNeuron:
     cfg = copy.deepcopy(TINY_TEST)
     cfg.vocab_size = vocab_size
     cfg.neuron_id = f"n_{seed}"
@@ -56,7 +62,9 @@ def test_layer_map():
     m = build_layer_map(6, 14)
     assert len(m) == 6, f"6→14 应产生 6 对映射, got {len(m)}"
     assert m[-1] == (5, 13), f"最后一对应映射到 teacher 最后一层, got {m[-1]}"
-    print(f"  PASS: 层映射正确 (2→4: {build_layer_map(2,4)}, 6→14 末对: {build_layer_map(6,14)[-1]})")
+    print(
+        f"  PASS: 层映射正确 (2→4: {build_layer_map(2,4)}, 6→14 末对: {build_layer_map(6,14)[-1]})"
+    )
 
 
 def test_kl_loss():
@@ -82,15 +90,19 @@ def test_kl_loss():
     kl_t1 = d1.kl_loss(logits, logits2, mask=None)
     kl_t8 = d8.kl_loss(logits, logits2, mask=None)
     # 平滑 KL（= KL/T²）应随 T 增大而减小
-    assert kl_t8 / (8.0 * 8.0) < kl_t1, f"平滑 KL 应随 T 减小, T=1: {kl_t1:.4f}, T=8 平滑: {kl_t8/64:.4f}"
+    assert (
+        kl_t8 / (8.0 * 8.0) < kl_t1
+    ), f"平滑 KL 应随 T 减小, T=1: {kl_t1:.4f}, T=8 平滑: {kl_t8/64:.4f}"
 
     # mask 生效：全 False → 0
     mask_false = torch.zeros(B, L, dtype=torch.bool)
     kl_masked = d.kl_loss(logits, logits2, mask=mask_false)
     assert abs(kl_masked.item()) < 1e-6, f"全 False mask KL 应≈0, got {kl_masked.item()}"
 
-    print(f"  PASS: KL 蒸馏正确 (same={kl_same.item():.2e}, diff={kl_diff.item():.4f}, "
-          f"T1={kl_t1.item():.4f}, T8={kl_t8.item():.4f})")
+    print(
+        f"  PASS: KL 蒸馏正确 (same={kl_same.item():.2e}, diff={kl_diff.item():.4f}, "
+        f"T1={kl_t1.item():.4f}, T8={kl_t8.item():.4f})"
+    )
 
 
 def test_vocab_alignment():
@@ -173,8 +185,10 @@ def test_attn_loss():
     assert al_proj.item() > 0
     assert al_proj.shape == torch.Size([]), "loss 应为标量"
 
-    print(f"  PASS: attention 转移正确 (mean={al.item():.4f}, same={al_same.item():.2e}, "
-          f"proj(4→8 heads)={al_proj.item():.4f})")
+    print(
+        f"  PASS: attention 转移正确 (mean={al.item():.4f}, same={al_same.item():.2e}, "
+        f"proj(4→8 heads)={al_proj.item():.4f})"
+    )
 
 
 def test_neuron_intermediate():
@@ -202,8 +216,10 @@ def test_neuron_intermediate():
     diff = (result["logits"] - result_no["logits"]).abs().max().item()
     assert diff < 1e-6, f"return_intermediate 不应改变 logits, diff={diff}"
 
-    print(f"  PASS: intermediate_hidden={tuple(ih.shape)}, attn_weights={tuple(aw.shape)}, "
-          f"logits diff={diff:.2e}")
+    print(
+        f"  PASS: intermediate_hidden={tuple(ih.shape)}, attn_weights={tuple(aw.shape)}, "
+        f"logits diff={diff:.2e}"
+    )
 
 
 def test_backward_compat():
@@ -274,15 +290,18 @@ def test_checkpoint_roundtrip():
     t_logits = torch.randn(B, L, 100)
     opt = torch.optim.Adam(list(student.parameters()) + list(d.parameters()), lr=1e-3)
     s_result = student.forward(x, return_logits=True, return_intermediate=True)
-    loss = d.kl_loss(s_result["logits"], t_logits, mask=None) + \
-           d.hidden_loss(s_result["intermediate_hidden"], teacher_h, mask=None) + \
-           d.attn_loss(s_result["attn_weights"], teacher_h.new_zeros(B, 3, 6, L, L))
+    loss = (
+        d.kl_loss(s_result["logits"], t_logits, mask=None)
+        + d.hidden_loss(s_result["intermediate_hidden"], teacher_h, mask=None)
+        + d.attn_loss(s_result["attn_weights"], teacher_h.new_zeros(B, 3, 6, L, L))
+    )
     opt.zero_grad()
     loss.backward()
     opt.step()
 
     # 保存
     import tempfile
+
     with tempfile.NamedTemporaryFile(suffix=".pt", delete=False) as f:
         tmp_path = f.name
     ckpt = {"student_state": student.state_dict(), "distill_state": d.state_dict()}
@@ -303,8 +322,10 @@ def test_checkpoint_roundtrip():
     d1, d2 = d.state_dict(), d2.state_dict()
     mismatches_d = [k for k in d1 if not torch.equal(d1[k], d2[k])]
     assert not mismatches_d, f"distill 参数不匹配: {mismatches_d[:3]}"
-    print(f"  PASS: checkpoint round-trip 0 mismatch "
-          f"(student={len(s1)} params, distill={len(d1)} params)")
+    print(
+        f"  PASS: checkpoint round-trip 0 mismatch "
+        f"(student={len(s1)} params, distill={len(d1)} params)"
+    )
 
 
 def main():

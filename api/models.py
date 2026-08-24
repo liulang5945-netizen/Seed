@@ -1,6 +1,7 @@
 """
 API 请求/响应数据模型（Pydantic）
 """
+
 from typing import List, Optional
 from pydantic import BaseModel
 
@@ -44,12 +45,14 @@ class CreateProjectRequest(BaseModel):
 
 class GGUFExportRequest(BaseModel):
     """GGUF 导出请求"""
+
     model_dir: str
     quant: str = "Q4_K_M"
 
 
 class TaijiTrainRequest(BaseModel):
     """Seed原生模型微调请求"""
+
     num_epochs: int = 5
     batch_size: int = 4
     learning_rate: float = 1e-4

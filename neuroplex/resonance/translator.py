@@ -54,8 +54,8 @@ class TokenizerHub:
 
     def __init__(self, general_tokenizer=None):
         """Args:
-            general_tokenizer: the general 256K tokenizer (I/O protocol). Optional.
-                P7 推荐不传，让 hub 完全基于域 tokenizer 工作。
+        general_tokenizer: the general 256K tokenizer (I/O protocol). Optional.
+            P7 推荐不传，让 hub 完全基于域 tokenizer 工作。
         """
         # 文本域 tokenizer：{domain: tokenizer}
         self.tokenizers: Dict[str, object] = {}
@@ -217,9 +217,7 @@ class TokenizerHub:
         # fallback: 尝试直接属性
         if hasattr(tok, "vocab_size"):
             return int(getattr(tok, "vocab_size"))
-        raise AttributeError(
-            f"Tokenizer for '{domain}' has neither vocab_size nor GetPieceSize"
-        )
+        raise AttributeError(f"Tokenizer for '{domain}' has neither vocab_size nor GetPieceSize")
 
     def eos_token_id(self, domain: str = "general", modality: str = None) -> int:
         """返回域 tokenizer 或模态编码器的 EOS token id.
@@ -296,21 +294,15 @@ class TokenizerHub:
         try:
             from sentencepiece import SentencePieceProcessor
         except ImportError as e:
-            raise ImportError(
-                "sentencepiece 未安装。请运行: pip install sentencepiece"
-            ) from e
+            raise ImportError("sentencepiece 未安装。请运行: pip install sentencepiece") from e
 
         if domains_dir is None:
             # neuroplex/resonance/translator.py → neuroplex/domains/
             here = os.path.dirname(os.path.abspath(__file__))
-            domains_dir = os.path.normpath(
-                os.path.join(here, "..", "domains")
-            )
+            domains_dir = os.path.normpath(os.path.join(here, "..", "domains"))
 
         if not os.path.isdir(domains_dir):
-            raise FileNotFoundError(
-                f"域 tokenizer 目录不存在: {domains_dir}"
-            )
+            raise FileNotFoundError(f"域 tokenizer 目录不存在: {domains_dir}")
 
         hub = cls(general_tokenizer=general_tokenizer)
 
@@ -372,10 +364,15 @@ class TokenizerHub:
             return tok
         ev = EditableVocabulary(tok, ext_path=ext_path)
         self.tokenizers[domain] = ev
-        print(f"[TokenizerHub] {domain} tokenizer 已升级为可实时编辑（base={ev.base_vocab}）", flush=True)
+        print(
+            f"[TokenizerHub] {domain} tokenizer 已升级为可实时编辑（base={ev.base_vocab}）",
+            flush=True,
+        )
         return ev
 
-    def add_tokens(self, domain: str, pieces: List[str], ext_path: Optional[str] = None) -> List[int]:
+    def add_tokens(
+        self, domain: str, pieces: List[str], ext_path: Optional[str] = None
+    ) -> List[int]:
         """实时给域词表追加 token（不存在的才追加，返回各 piece 的 token id）。
 
         新 token 的 id ≥ base vocab → 下游对齐/转译表（fingerprint 的
@@ -435,8 +432,7 @@ class EditableVocabulary:
     → 加 token 后指纹变化 → build_logits_alignment_matrix 缓存自动重建。
     """
 
-    def __init__(self, sp, ext_pieces: Optional[List[str]] = None,
-                 ext_path: Optional[str] = None):
+    def __init__(self, sp, ext_pieces: Optional[List[str]] = None, ext_path: Optional[str] = None):
         self._sp = sp
         self._ext_pieces: List[str] = []
         self._ext_id: Dict[str, int] = {}
@@ -519,7 +515,7 @@ class EditableVocabulary:
         if self._trie is None:
             self._build_trie()
         ids = []
-        buf: List[str] = []      # 未命中的普通字符缓冲
+        buf: List[str] = []  # 未命中的普通字符缓冲
         n = len(text)
         i = 0
         while i < n:
@@ -602,11 +598,17 @@ class EditableVocabulary:
             raise ValueError("EditableVocabulary.save_ext 需要 path")
         os.makedirs(os.path.dirname(os.path.abspath(save_path)), exist_ok=True)
         with open(save_path, "w", encoding="utf-8") as f:
-            json.dump({"ext_pieces": self._ext_pieces, "base_vocab": self.base_vocab},
-                      f, ensure_ascii=False, indent=2)
+            json.dump(
+                {"ext_pieces": self._ext_pieces, "base_vocab": self.base_vocab},
+                f,
+                ensure_ascii=False,
+                indent=2,
+            )
         self.ext_path = save_path
-        print(f"[EditableVocabulary] 已保存 {len(self._ext_pieces)} 个扩展 token 到 {save_path}",
-              flush=True)
+        print(
+            f"[EditableVocabulary] 已保存 {len(self._ext_pieces)} 个扩展 token 到 {save_path}",
+            flush=True,
+        )
         return save_path
 
     def load_ext(self, path: Optional[str] = None) -> int:
@@ -650,8 +652,7 @@ def resize_linear_for_vocab(linear, new_vocab: int, init_std: float = 0.02):
     old_vocab = linear.out_features
     if old_vocab >= new_vocab:
         return linear
-    new_linear = torch.nn.Linear(linear.in_features, new_vocab,
-                                 bias=linear.bias is not None)
+    new_linear = torch.nn.Linear(linear.in_features, new_vocab, bias=linear.bias is not None)
     with torch.no_grad():
         new_linear.weight.data[:old_vocab] = linear.weight.data
         if old_vocab > 0:
@@ -685,14 +686,18 @@ def resize_lm_head_for_vocab(neuron, new_vocab: int) -> bool:
     if head.out_features >= new_vocab:
         return False
     neuron.lm_head = resize_linear_for_vocab(head, new_vocab)
-    print(f"[resize_lm_head_for_vocab] {neuron.config.neuron_id} lm_head "
-          f"{head.out_features} → {new_vocab}", flush=True)
+    print(
+        f"[resize_lm_head_for_vocab] {neuron.config.neuron_id} lm_head "
+        f"{head.out_features} → {new_vocab}",
+        flush=True,
+    )
     return True
 
 
 # ============================================================================
 # Token alignment utility: domain token ↔ general token position mapping
 # ============================================================================
+
 
 def _get_token_spans(sp, text: str) -> Tuple[List[int], List[Tuple[int, int]]]:
     """Encode text and track character spans for each token.
@@ -860,8 +865,8 @@ def batch_align_and_embed(
         d_targets = torch.cat([d_targets, torch.tensor([domain_eos])])
         # 截断到最大序列长度（保留末尾 EOS：截到 max_seq_len-1 + EOS）
         if max_seq_len > 0 and len(g_ids) > max_seq_len:
-            g_ids = torch.cat([g_ids[:max_seq_len-1], torch.tensor([general_eos])])
-            d_targets = torch.cat([d_targets[:max_seq_len-1], torch.tensor([domain_eos])])
+            g_ids = torch.cat([g_ids[: max_seq_len - 1], torch.tensor([general_eos])])
+            d_targets = torch.cat([d_targets[: max_seq_len - 1], torch.tensor([domain_eos])])
         all_general_ids.append(g_ids)
         all_targets.append(d_targets)
 
@@ -877,7 +882,7 @@ def batch_align_and_embed(
                 answer_starts.append(0)
             else:
                 # prefix 含分隔符本身（分隔符属于 question，不计入 loss）
-                prefix_with_marker = text[:marker_idx + len(answer_marker)]
+                prefix_with_marker = text[: marker_idx + len(answer_marker)]
                 prefix_ids = general_sp.encode(prefix_with_marker)
                 # 截断到 max_seq_len
                 start = min(len(prefix_ids), max_seq_len) if max_seq_len > 0 else len(prefix_ids)
@@ -922,6 +927,7 @@ def batch_align_and_embed(
 # 词库转译（跨 vocab 对齐）：domain token → target domain token
 # ============================================================================
 
+
 class AlignmentRules:
     """可编辑/可拓展的词库转译规则层（人工覆盖自动构建的映射）。
 
@@ -952,7 +958,9 @@ class AlignmentRules:
             self.load(rules_path)
 
     def add_override(
-        self, source_domain: str, source_piece: str,
+        self,
+        source_domain: str,
+        source_piece: str,
         target_pieces: List[str],
     ) -> None:
         """人工指定 source token → target token(s) 映射。
@@ -977,7 +985,9 @@ class AlignmentRules:
         return True
 
     def get(
-        self, source_domain: Optional[str], source_piece: str,
+        self,
+        source_domain: Optional[str],
+        source_piece: str,
     ) -> Optional[List[str]]:
         """查规则：先域特定，后全局（"*"）。返回 target_pieces 或 None。"""
         if source_domain is not None:
@@ -991,7 +1001,7 @@ class AlignmentRules:
             "overrides": self.overrides,
             "version": self.version,
             "note": "词库转译人工规则：{source_domain: {source_piece: [target_piece...]}}；"
-                    "source_domain='*' 为全局规则；piece 文本见 id_to_piece。",
+            "source_domain='*' 为全局规则；piece 文本见 id_to_piece。",
         }
 
     def save(self, path: Optional[str] = None) -> str:
@@ -1146,8 +1156,10 @@ def build_logits_alignment_matrix(
 
     # 遍历 min(logits vocab, tokenizer vocab) 个 token（超出 tokenizer 的 id 无 piece → 零行）
     alignment, _ = build_domain_to_domain_alignment(
-        source_sp, target_sp,
-        source_domain=source_domain, overrides=overrides,
+        source_sp,
+        target_sp,
+        source_domain=source_domain,
+        overrides=overrides,
     )
     tgt_vocab = target_sp.GetPieceSize() if hasattr(target_sp, "GetPieceSize") else 0
 

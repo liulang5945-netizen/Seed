@@ -7,6 +7,7 @@ B. stage2 prompt + domain=code + executive   （对照：域约束 vs 共振模�
 C. stage2 prompt + domain=None + continuous  （自动判定）
 D. 纯英文 code prompt + domain=code + continuous（C25-E A/B 基线对照）
 """
+
 import os
 import sys
 
@@ -14,8 +15,13 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 
 from taiji.loader import assemble_cortex  # noqa: E402
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -38,7 +44,10 @@ def run(cortex, tag, prompt, domain, mode):
         fusion_mode="soft",
     )
     has_code = any(k in text for k in ("def", "return", "import", "lambda"))
-    print(f"[{tag}] domain={domain} mode={mode}\n  → {text[:100]!r}\n  has_code={has_code}", flush=True)
+    print(
+        f"[{tag}] domain={domain} mode={mode}\n  → {text[:100]!r}\n  has_code={has_code}",
+        flush=True,
+    )
 
 
 def main():

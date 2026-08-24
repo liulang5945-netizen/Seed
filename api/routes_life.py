@@ -3,6 +3,7 @@ Seed生命状态 API
 ================
 提供生命系统的 REST 接口：状态查询、手动触发生命活动。
 """
+
 import logging
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
@@ -23,9 +24,10 @@ async def get_life_status():
     """获取Seed完整生命状态"""
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
+
         scheduler = get_life_scheduler()
         status = scheduler.get_status()
-        needs = scheduler.needs.to_dict() if hasattr(scheduler, 'needs') else {}
+        needs = scheduler.needs.to_dict() if hasattr(scheduler, "needs") else {}
         return {
             "is_running": status.get("is_running", False),
             "needs": needs,
@@ -35,7 +37,7 @@ async def get_life_status():
     except Exception as e:
         logger.error(f"获取生命状态失败: {e}")
         logger.error(f"Request failed: {e}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
 
 
 @router.post("/feed")
@@ -43,10 +45,12 @@ async def feed_taiji(reason: str = "manual"):
     """手动触发喂养（数据摄取）"""
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
+
         scheduler = get_life_scheduler()
         scheduler.record_interaction(success=True, topic="feed")
 
         from neuroplex.life.feed_engine import get_feed_engine
+
         engine = get_feed_engine()
         report = engine.feed(reason=reason)
         return LifeActionResponse(
@@ -56,7 +60,7 @@ async def feed_taiji(reason: str = "manual"):
                 "items_fed": report.items_fed,
                 "samples_generated": report.samples_generated,
                 "avg_quality": report.avg_quality,
-            }
+            },
         )
     except Exception as e:
         logger.error(f"喂养失败: {e}")
@@ -68,10 +72,12 @@ async def sleep_taiji(reason: str = "manual"):
     """手动触发睡眠（训练/整合）"""
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
+
         scheduler = get_life_scheduler()
         scheduler.record_interaction(success=True, topic="sleep")
 
         from neuroplex.life.sleep_engine import get_sleep_engine
+
         engine = get_sleep_engine()
         report = engine.sleep(reason=reason)
         loss_str = f"{report.training_loss:.4f}" if report.training_loss is not None else "N/A"
@@ -82,7 +88,7 @@ async def sleep_taiji(reason: str = "manual"):
                 "phases": report.phases_completed,
                 "training_loss": report.training_loss,
                 "health": report.health_status,
-            }
+            },
         )
     except Exception as e:
         logger.error(f"睡眠失败: {e}")
@@ -94,10 +100,12 @@ async def play_taiji(reason: str = "manual"):
     """手动触发玩耍（探索/创造）"""
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
+
         scheduler = get_life_scheduler()
         scheduler.record_interaction(success=True, topic="play")
 
         from neuroplex.life.play_engine import get_play_engine
+
         engine = get_play_engine()
         report = engine.play(reason=reason)
         return LifeActionResponse(
@@ -107,7 +115,7 @@ async def play_taiji(reason: str = "manual"):
                 "activities": len(report.activities),
                 "mood": report.mood,
                 "traits": report.personality_traits_discovered,
-            }
+            },
         )
     except Exception as e:
         logger.error(f"玩耍失败: {e}")
@@ -119,6 +127,7 @@ async def evolve_taiji():
     """手动触发进化"""
     try:
         from neuroplex.life.evolution_engine import get_evolution_engine
+
         engine = get_evolution_engine()
         return LifeActionResponse(
             success=True,
@@ -126,7 +135,7 @@ async def evolve_taiji():
             data={
                 "phase": engine.metrics.current_phase,
                 "tasks_completed": engine.metrics.tasks_completed,
-            }
+            },
         )
     except Exception as e:
         logger.error(f"进化查询失败: {e}")
@@ -138,6 +147,7 @@ async def record_interaction(success: bool = True, topic: str = ""):
     """记录一次用户交互（影响需求状态）"""
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
+
         scheduler = get_life_scheduler()
         scheduler.record_interaction(success=success, topic=topic)
         return LifeActionResponse(success=True, message="交互已记录")

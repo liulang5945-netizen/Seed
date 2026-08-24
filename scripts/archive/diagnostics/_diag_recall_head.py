@@ -1,4 +1,5 @@
 """Run the unit-test recall protocol against the isolated HEAD package."""
+
 from __future__ import annotations
 
 import sys
@@ -26,10 +27,7 @@ def main() -> None:
         seed=23,
     )
     model = Taiji(config)
-    mapping = {
-        cue: ACTIONS[index % len(ACTIONS)]
-        for index, cue in enumerate(CUES)
-    }
+    mapping = {cue: ACTIONS[index % len(ACTIONS)] for index, cue in enumerate(CUES)}
     for index, (cue, action) in enumerate(mapping.items()):
         model.reset_dynamics(episode_id=f"store-{index}")
         model.observe(256, learn=False, learn_motor=False)

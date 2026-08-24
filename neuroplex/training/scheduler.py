@@ -27,8 +27,8 @@ class TrainingScheduler:
         # task = FineTuneTask / GrowNeuronTask / NewNeuronTask
     """
 
-    REUSE_THRESHOLD = 0.7   # cosine similarity: above this → fine-tune
-    SPAWN_THRESHOLD = 0.3   # cosine similarity: between REUSE and SPAWN → spawn
+    REUSE_THRESHOLD = 0.7  # cosine similarity: above this → fine-tune
+    SPAWN_THRESHOLD = 0.3  # cosine similarity: between REUSE and SPAWN → spawn
 
     def __init__(
         self,
@@ -98,6 +98,7 @@ class TrainingScheduler:
 
 class FineTuneTask:
     """Fine-tune an existing neuron on new data."""
+
     def __init__(self, neuron_id: str, data):
         self.neuron_id = neuron_id
         self.data = data
@@ -106,6 +107,7 @@ class FineTuneTask:
 
 class GrowNeuronTask:
     """Grow a sibling neuron from a related population member."""
+
     def __init__(self, parent_id: str, data):
         self.parent_id = parent_id
         self.data = data
@@ -119,6 +121,7 @@ SpawnNeuronTask = GrowNeuronTask
 
 class NewNeuronTask:
     """Train a new neuron from scratch."""
+
     def __init__(self, data, seed_neurons: Optional[List[str]] = None):
         self.data = data
         self.seed_neurons = seed_neurons or []

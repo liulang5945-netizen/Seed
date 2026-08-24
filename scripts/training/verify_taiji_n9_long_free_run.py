@@ -9,13 +9,13 @@ import sys
 from typing import Dict
 
 import torch
+import _verify_emit
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from taiji import Taiji, TaijiConfig
-
 
 DATA = b"abcd" * 4
 PROMPT = b"a"
@@ -44,9 +44,7 @@ def _instrumented_free_run(model: Taiji) -> Dict[str, object]:
         step = model.observe(symbol, learn=False)
         state = model.snapshot()
         for region in state.regions:
-            max_membrane_norm = max(
-                max_membrane_norm, float(region.membrane.norm().item())
-            )
+            max_membrane_norm = max(max_membrane_norm, float(region.membrane.norm().item()))
             max_trace_norm = max(max_trace_norm, float(region.trace.norm().item()))
             threshold_min = min(threshold_min, float(region.threshold.min().item()))
             threshold_max = max(threshold_max, float(region.threshold.max().item()))
@@ -56,7 +54,8 @@ def _instrumented_free_run(model: Taiji) -> Dict[str, object]:
 
     output = bytes(generated)
     errors = [
-        index for index, (actual, expected) in enumerate(zip(output, EXPECTED))
+        index
+        for index, (actual, expected) in enumerate(zip(output, EXPECTED))
         if actual != expected
     ]
     return {
@@ -95,9 +94,7 @@ def run_benchmark(*, epochs: int = 200, seed: int = 7) -> Dict[str, object]:
         "membrane_bound_holds": (
             instrumented["max_membrane_norm"] <= config.max_membrane_norm + 1e-6
         ),
-        "trace_bound_holds": (
-            instrumented["max_trace_norm"] <= config.max_trace_norm + 1e-6
-        ),
+        "trace_bound_holds": (instrumented["max_trace_norm"] <= config.max_trace_norm + 1e-6),
         "threshold_bounds_hold": (
             instrumented["threshold_min"] >= config.threshold_min - 1e-6
             and instrumented["threshold_max"] <= config.threshold_max + 1e-6
@@ -136,7 +133,7 @@ def main() -> int:
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(rendered + "\n", encoding="utf-8")
-    return 0 if report["status"] == "pass" else 1
+    return _verify_emit.emit_and_exit("taiji_n9_long_free_run", report)
 
 
 if __name__ == "__main__":

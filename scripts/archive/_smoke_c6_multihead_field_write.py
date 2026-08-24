@@ -9,6 +9,7 @@
 6. checkpoint 兼容：旧单头 ckpt 加载到多头 neuron（strict=False，缺失参数用初始化值）
 7. get_field_write_parameters：返回正确参数列表
 """
+
 from __future__ import annotations
 
 import os
@@ -52,8 +53,9 @@ def test_backward_compat_single_head():
     assert result["field_vector"].shape == (2, 512)
     # L2 归一化检查
     norms = result["field_vector"].norm(dim=-1)
-    assert torch.allclose(norms, torch.ones_like(norms), atol=1e-5), \
-        f"field_vector 应 L2 归一化, norms={norms}"
+    assert torch.allclose(
+        norms, torch.ones_like(norms), atol=1e-5
+    ), f"field_vector 应 L2 归一化, norms={norms}"
     print(f"  PASS: 单头行为正确, field_vector shape={result['field_vector'].shape}")
 
 
@@ -86,8 +88,9 @@ def test_multihead_changes_output():
     assert diff > 1e-4, f"多头应改变输出, diff={diff}"
     # 多头也应 L2 归一化
     norms = result_multi["field_vector"].norm(dim=-1)
-    assert torch.allclose(norms, torch.ones_like(norms), atol=1e-5), \
-        f"多头 field_vector 应 L2 归一化, norms={norms}"
+    assert torch.allclose(
+        norms, torch.ones_like(norms), atol=1e-5
+    ), f"多头 field_vector 应 L2 归一化, norms={norms}"
     # 多头应返回 gate
     assert "field_gate" in result_multi, "多头应返回 field_gate 诊断信息"
     assert result_multi["field_gate"].shape == (2, 4)
@@ -144,8 +147,9 @@ def test_gate_softmax():
 
     # softmax 性质：每行和为 1
     row_sums1 = gate1.sum(dim=-1)
-    assert torch.allclose(row_sums1, torch.ones_like(row_sums1), atol=1e-5), \
-        f"gate1 行和应=1, got {row_sums1}"
+    assert torch.allclose(
+        row_sums1, torch.ones_like(row_sums1), atol=1e-5
+    ), f"gate1 行和应=1, got {row_sums1}"
     print(f"  PASS: gate softmax 行和=1 (sums={row_sums1.tolist()})")
 
     # 不同输入产生不同 gate
@@ -166,8 +170,10 @@ def test_attention_weights_shape():
         result = neuron.forward(shared_emb)
 
     attn_weights = result["field_attn_weights"]
-    assert attn_weights.shape == (B, L), \
-        f"field_attn_weights 应为 [B, L]={(B, L)}, got {attn_weights.shape}"
+    assert attn_weights.shape == (
+        B,
+        L,
+    ), f"field_attn_weights 应为 [B, L]={(B, L)}, got {attn_weights.shape}"
     # 平均后应仍 softmax（每行和≈1/K 的平均，不一定=1，但应非负）
     assert (attn_weights >= 0).all(), "attention weights 应非负"
     print(f"  PASS: field_attn_weights shape={attn_weights.shape}")
@@ -192,8 +198,7 @@ def test_checkpoint_compat():
     assert len(missing) > 0, f"应有缺失的 key（多头新参数）, missing={missing}"
     # field_pool_query 应能加载（如果名字匹配的话，但多头用 field_pool_queries，所以会缺失）
     has_new_params = any(
-        "field_write_heads" in k or "field_gate" in k or "field_pool_queries" in k
-        for k in missing
+        "field_write_heads" in k or "field_gate" in k or "field_pool_queries" in k for k in missing
     )
     assert has_new_params, f"缺失的 key 应含多头新参数, missing={missing}"
 
@@ -223,8 +228,7 @@ def test_get_field_write_parameters():
     # 多头：4 个 head (weight) + field_gate (weight + bias) + field_pool_queries
     # = 4 + 2 + 1 = 7
     expected = 4 + 2 + 1
-    assert len(params_multi) == expected, \
-        f"多头应有 {expected} 个参数, got {len(params_multi)}"
+    assert len(params_multi) == expected, f"多头应有 {expected} 个参数, got {len(params_multi)}"
     print(f"  PASS: 多头参数数={len(params_multi)} (4 heads + gate + queries)")
 
 
@@ -239,8 +243,9 @@ def test_quick_probe_multihead():
         v = neuron.quick_probe(shared_emb)
     assert v.shape == (2, 512), f"quick_probe 输出 shape 错误: {v.shape}"
     norms = v.norm(dim=-1)
-    assert torch.allclose(norms, torch.ones_like(norms), atol=1e-5), \
-        f"quick_probe 输出应 L2 归一化, norms={norms}"
+    assert torch.allclose(
+        norms, torch.ones_like(norms), atol=1e-5
+    ), f"quick_probe 输出应 L2 归一化, norms={norms}"
     print(f"  PASS: quick_probe 多头正常, shape={v.shape}")
 
 

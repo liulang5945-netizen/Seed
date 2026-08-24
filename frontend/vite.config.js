@@ -8,7 +8,12 @@ import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    include: ['src/**/*.{test,spec}.{js,ts}'],
+  },
   base: '/',
   build: {
     modulePreload: false,
@@ -23,7 +28,8 @@ export default defineConfig({
       },
     },
     vue(),
-    vueDevTools(),
+    // vitest 模式下不加载 devtools，避免 vite-plugin-inspect 兼容性崩溃
+    ...(mode !== 'test' ? [vueDevTools()] : []),
     AutoImport({
       imports: [
         'vue',
@@ -62,4 +68,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

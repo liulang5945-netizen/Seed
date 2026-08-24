@@ -13,11 +13,12 @@
 Usage:
     python scripts/training/verify_maturity.py
 """
+
 import sys
 import os
 import tempfile
 
-os.environ.setdefault('TAIJI_TEST_MODE', '1')
+os.environ.setdefault("TAIJI_TEST_MODE", "1")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 
@@ -29,6 +30,7 @@ def main():
     # Step 1: MaturityTracker API — 幼稚态值
     print("\n[Step 1] MaturityTracker API — 幼稚态值...")
     from taiji.resonance.lifecycle import MaturityTracker
+
     mt = MaturityTracker()
     mt.register_new("naive_nid")
     naive_lr = mt.get_lr_multiplier("naive_nid")
@@ -59,6 +61,7 @@ def main():
     # Step 4: 装配 Cortex + lifecycle
     print("\n[Step 4] 装配 Cortex + lifecycle...")
     from taiji.loader import assemble_cortex
+
     cortex, tokenizer, modules = assemble_cortex(
         neurons_dir="data/neurons",
         device="cpu",
@@ -84,6 +87,7 @@ def main():
     # Step 6: ensemble.forward 应用 maturity 权重（幼稚态贡献小）
     print("\n[Step 6] ensemble.forward 应用 maturity 权重...")
     import torch
+
     # 对比：naive neuron 写入 scale = write_scale × 0.1 vs mature neuron × 1.0
     # 验证方式：检查 field._contributions[new_nid] 存在且非零（maturity 生效不致完全静默）
     shared_emb = torch.randn(1, 8, 512)
@@ -97,23 +101,25 @@ def main():
     naive_weight = cortex.ensemble.maturity.get_resonance_weight(new_nid)
     mature_nid = "zh"  # 原始神经元未注册 maturity → 视为成熟
     mature_weight = cortex.ensemble.maturity.get_resonance_weight(mature_nid)
-    assert naive_weight < mature_weight, \
-        f"幼稚态权重({naive_weight}) 应小于成熟态({mature_weight})"
+    assert naive_weight < mature_weight, f"幼稚态权重({naive_weight}) 应小于成熟态({mature_weight})"
     print(f"  ✅ 权重对比: {new_nid}(naive)={naive_weight} < {mature_nid}(mature)={mature_weight}")
 
     # Step 7: _train_single_neuron 的 lr 包含 maturity 倍数
     print("\n[Step 7] _train_single_neuron lr 包含 maturity 倍数...")
     from taiji.life.sleep_engine import SleepEngine
+
     se = SleepEngine()
     se.set_brain_interfaces(cortex=cortex, lifecycle=lifecycle)
 
     # 捕获 optimizer lr（monkey-patch AdamW）
     original_adamw = torch.optim.AdamW
     captured = {}
+
     class CapturingAdamW(original_adamw):
         def __init__(self, params, lr=1e-3, **kwargs):
-            captured['lr'] = lr
+            captured["lr"] = lr
             super().__init__(params, lr=lr, **kwargs)
+
     torch.optim.AdamW = CapturingAdamW
     try:
         # 用幼稚态神经元训练
@@ -123,12 +129,13 @@ def main():
     finally:
         torch.optim.AdamW = original_adamw
 
-    assert 'lr' in captured, "未捕获到 optimizer lr"
+    assert "lr" in captured, "未捕获到 optimizer lr"
     # base_lr=1e-3, DA_mult≈1.0-2.0, maturity_mult=3.0
     # 所以 lr 应 >= 1e-3 × 1.0 × 3.0 = 3e-3
     expected_min = 1e-3 * 3.0 * 0.5  # 保守下限（DA 最低 0.5）
-    assert captured['lr'] >= expected_min, \
-        f"幼稚态 lr={captured['lr']} 应 >= {expected_min} (base×maturity×DA_min)"
+    assert (
+        captured["lr"] >= expected_min
+    ), f"幼稚态 lr={captured['lr']} 应 >= {expected_min} (base×maturity×DA_min)"
     print(f"  ✅ 捕获 lr={captured['lr']:.6f} (含 maturity×3.0 倍数, base=1e-3)")
 
     # 对比：成熟神经元 lr 应更低（maturity=1.0）
@@ -143,8 +150,8 @@ def main():
             )
     finally:
         torch.optim.AdamW = original_adamw
-    if 'lr' in captured:
-        mature_lr_val = captured['lr']
+    if "lr" in captured:
+        mature_lr_val = captured["lr"]
         naive_lr_val = 3e-3  # 理论值 base×3.0
         print(f"  ✅ 成熟神经元 lr={mature_lr_val:.6f} (maturity=1.0, 对比幼稚态更高 lr)")
 

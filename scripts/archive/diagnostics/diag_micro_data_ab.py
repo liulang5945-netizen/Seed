@@ -28,7 +28,9 @@ import random
 import sys
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -61,7 +63,6 @@ from scripts.training.utils import (
     split_train_eval,
 )
 
-
 SEED = 20260819
 CURRENT_MAX_TEXTS = 100_000
 HF_DIR = Path("data/hf_candidates/moss_003_dialogue")
@@ -91,12 +92,8 @@ def _encode_batch(texts, domain_sp, general_sp, shared):
 def _load_pools(eval_cap: int = 0) -> dict[str, list[str]]:
     current = load_dialogue_texts_multi("data/simple_zh", max_texts=CURRENT_MAX_TEXTS)
     current_train, current_eval = split_train_eval(current, eval_ratio=0.05, seed=42)
-    hf_train = load_dialogue_texts_multi(
-        str(HF_DIR), filenames=["train.jsonl"], max_texts=100_000
-    )
-    hf_eval = load_dialogue_texts_multi(
-        str(HF_DIR), filenames=["eval.jsonl"], max_texts=100_000
-    )
+    hf_train = load_dialogue_texts_multi(str(HF_DIR), filenames=["train.jsonl"], max_texts=100_000)
+    hf_eval = load_dialogue_texts_multi(str(HF_DIR), filenames=["eval.jsonl"], max_texts=100_000)
     if eval_cap > 0:
         current_eval = current_eval[:eval_cap]
         hf_eval = hf_eval[:eval_cap]
@@ -134,7 +131,7 @@ def _evaluate(neuron, texts, domain_sp, general_sp, shared) -> dict:
     top1 = 0
     with torch.no_grad():
         for start in range(0, len(texts), BATCH_SIZE):
-            batch_texts = texts[start:start + BATCH_SIZE]
+            batch_texts = texts[start : start + BATCH_SIZE]
             encoded = _encode_batch(batch_texts, domain_sp, general_sp, shared)
             loss, logits, valid = _loss(neuron, encoded)
             valid_tokens = int(valid.sum())
@@ -142,7 +139,7 @@ def _evaluate(neuron, texts, domain_sp, general_sp, shared) -> dict:
             total_tokens += valid_tokens
             for row_index, text in enumerate(batch_texts):
                 marker = text.find(SFT_ANSWER_MARKER)
-                prompt = text[:marker + len(SFT_ANSWER_MARKER)]
+                prompt = text[: marker + len(SFT_ANSWER_MARKER)]
                 _, targets = build_position_alignment(text, domain_sp, general_sp)
                 answer_start = len(general_sp.encode(prompt))
                 logit_position = _valid_first_token_position(answer_start, logits.shape[1])
@@ -306,9 +303,7 @@ def run(
         "current_eval": pools["current_eval"],
         "hf_eval": pools["hf_eval"],
     }
-    selected_hf_train = _select_hf_for_ratio(
-        pools["current_train"], pools["hf_train"], hf_ratio
-    )
+    selected_hf_train = _select_hf_for_ratio(pools["current_train"], pools["hf_train"], hf_ratio)
     mix_name = "current_plus_hf" if hf_ratio == 1.0 else f"current_plus_hf_{int(hf_ratio * 100)}"
     current_report, _ = _train_condition(
         "current_only",

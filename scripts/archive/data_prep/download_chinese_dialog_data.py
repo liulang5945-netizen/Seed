@@ -9,6 +9,7 @@
 3. ShareGPT-Chinese - 中文ShareGPT数据
 4. MOSS-SFT - 中文对话数据
 """
+
 import os
 import json
 import subprocess
@@ -59,16 +60,20 @@ DATASETS = [
     },
 ]
 
+
 def download_file_from_hf(repo_id, filename, output_dir):
     """从 HuggingFace 下载文件"""
     try:
         # 使用 huggingface-cli 下载
         cmd = [
-            "huggingface-cli", "download",
+            "huggingface-cli",
+            "download",
             repo_id,
             filename,
-            "--repo-type", "dataset",
-            "--local-dir", output_dir
+            "--repo-type",
+            "dataset",
+            "--local-dir",
+            output_dir,
         ]
         print(f"  执行: {' '.join(cmd)}")
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=3600)
@@ -86,19 +91,22 @@ def download_file_from_hf(repo_id, filename, output_dir):
         print(f"  下载错误: {e}")
         return False
 
+
 def convert_alpaca_to_messages(input_path, output_path):
     """将 Alpaca 格式转换为 messages 格式"""
     print(f"  转换 Alpaca 格式到 messages 格式...")
 
     converted = 0
-    with open(input_path, 'r', encoding='utf-8') as fin, \
-         open(output_path, 'w', encoding='utf-8') as fout:
+    with (
+        open(input_path, "r", encoding="utf-8") as fin,
+        open(output_path, "w", encoding="utf-8") as fout,
+    ):
 
         # 检查是否是JSON数组
         first_char = fin.read(1)
         fin.seek(0)
 
-        if first_char == '[':
+        if first_char == "[":
             # JSON数组格式
             data = json.load(fin)
             items = data
@@ -107,9 +115,9 @@ def convert_alpaca_to_messages(input_path, output_path):
             items = [json.loads(line) for line in fin if line.strip()]
 
         for item in items:
-            instruction = item.get('instruction', '')
-            input_text = item.get('input', '')
-            output_text = item.get('output', '')
+            instruction = item.get("instruction", "")
+            input_text = item.get("input", "")
+            output_text = item.get("output", "")
 
             if not instruction or not output_text:
                 continue
@@ -121,34 +129,39 @@ def convert_alpaca_to_messages(input_path, output_path):
 
             # 构建messages格式
             messages = [
-                {"role": "system", "content": "你是态极，一个本地AI生命体。你运行在用户的电脑上，数据不出本机。你会用自然、友好的方式回答用户的问题。"},
+                {
+                    "role": "system",
+                    "content": "你是态极，一个本地AI生命体。你运行在用户的电脑上，数据不出本机。你会用自然、友好的方式回答用户的问题。",
+                },
                 {"role": "user", "content": user_msg},
-                {"role": "assistant", "content": output_text}
+                {"role": "assistant", "content": output_text},
             ]
 
-            fout.write(json.dumps({"messages": messages}, ensure_ascii=False) + '\n')
+            fout.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
             converted += 1
 
     return converted
+
 
 def merge_to_training_dir(source_files, target_dir):
     """合并文件到训练目录"""
     target_file = os.path.join(target_dir, "chinese_dialog_merged.jsonl")
 
-    with open(target_file, 'w', encoding='utf-8') as fout:
+    with open(target_file, "w", encoding="utf-8") as fout:
         total = 0
         for source_file in source_files:
             if not os.path.exists(source_file):
                 continue
 
             print(f"  合并: {os.path.basename(source_file)}")
-            with open(source_file, 'r', encoding='utf-8') as fin:
+            with open(source_file, "r", encoding="utf-8") as fin:
                 for line in fin:
                     fout.write(line)
                     total += 1
 
     print(f"  合并完成: {total} 条 -> {target_file}")
     return target_file
+
 
 def main():
     print("=" * 60)
@@ -180,14 +193,12 @@ def main():
     belle_file = download_dir / belle_ds["filename"]
 
     if not belle_file.exists():
-        success = download_file_from_hf(
-            belle_ds["repo"],
-            belle_ds["filename"],
-            str(download_dir)
-        )
+        success = download_file_from_hf(belle_ds["repo"], belle_ds["filename"], str(download_dir))
         if not success:
             print("下载失败，请手动下载或检查网络连接")
-            print(f"huggingface-cli download {belle_ds['repo']} {belle_ds['filename']} --repo-type dataset --local-dir {download_dir}")
+            print(
+                f"huggingface-cli download {belle_ds['repo']} {belle_ds['filename']} --repo-type dataset --local-dir {download_dir}"
+            )
     else:
         print(f"文件已存在: {belle_file}")
 
@@ -209,7 +220,7 @@ def main():
         merged_file = merge_to_training_dir(downloaded_files, str(target_dir))
 
         # 统计最终数据量
-        with open(merged_file, 'r', encoding='utf-8') as f:
+        with open(merged_file, "r", encoding="utf-8") as f:
             line_count = sum(1 for _ in f)
         print(f"\n最终文件: {merged_file}")
         print(f"数据量: {line_count} 条")
@@ -222,5 +233,6 @@ def main():
     print("2. 继续下载其他数据集 (如需要)")
     print("3. 合并所有数据进行训练")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

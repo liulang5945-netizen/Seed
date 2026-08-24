@@ -37,7 +37,7 @@ function sanitizeMessage(msg) {
   const lines = msg.split('\n')
   const clean = []
   for (const line of lines) {
-    if (line.match(/^\s*(File |Traceback|  File "|    |\w+Error:)/)) break
+    if (line.match(/^\s*(File |Traceback| {2}File "| {4}|\w+Error:)/)) break
     clean.push(line)
   }
   const result = clean.join('\n').trim() || msg.slice(0, 200)

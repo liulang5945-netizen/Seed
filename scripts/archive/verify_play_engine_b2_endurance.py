@@ -32,6 +32,7 @@
 
 运行：python -u scripts/training/verify_play_engine_b2_endurance.py
 """
+
 from __future__ import annotations
 
 import json
@@ -40,7 +41,9 @@ import random
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
@@ -53,11 +56,16 @@ from neuroplex.life.sleep_engine import SleepEngine, SleepConfig, SleepReport  #
 from neuroplex.resonance.neuro_modulation import SleepConsolidator  # noqa: E402
 
 from scripts.archive.verify_a1_judge_signal_real import (  # noqa: E402
-    DIALOGUE_IDS, COLLAB_NAME, EXTRA_NEURONS_DIR,
-    DIALOGUE_PROMPTS, KNOWLEDGE_PROMPTS, UNFAMILIAR_PROMPTS,
+    DIALOGUE_IDS,
+    COLLAB_NAME,
+    EXTRA_NEURONS_DIR,
+    DIALOGUE_PROMPTS,
+    KNOWLEDGE_PROMPTS,
+    UNFAMILIAR_PROMPTS,
 )
 from scripts.archive.verify_a3_with_decay import (  # noqa: E402
-    field_state_of, lora_l2_norm,
+    field_state_of,
+    lora_l2_norm,
 )
 from scripts.archive.verify_a4_post_sleep_judge_signal import (  # noqa: E402
     measure_group_stds,
@@ -85,14 +93,11 @@ def main():
     t0 = time.time()
     today = time.strftime("%Y%m%d")
     print("=" * 64, flush=True)
-    print(f"自举门槛 B2 autonomous 续航：{N_MICRO} 次 micro-sleep + 关闭喂新经验",
-          flush=True)
-    print(f"  自反思 query: 每 {SELF_RECALL_EVERY} 步从记忆库抽 {SELF_RECALL_K} 条",
-          flush=True)
+    print(f"自举门槛 B2 autonomous 续航：{N_MICRO} 次 micro-sleep + 关闭喂新经验", flush=True)
+    print(f"  自反思 query: 每 {SELF_RECALL_EVERY} 步从记忆库抽 {SELF_RECALL_K} 条", flush=True)
     print("=" * 64, flush=True)
 
-    print("\n[1/6] 装配 9 成员 production cortex（冻结，不写 checkpoint）...",
-          flush=True)
+    print("\n[1/6] 装配 9 成员 production cortex（冻结，不写 checkpoint）...", flush=True)
     cortex, _tok, _mods = assemble_cortex(
         neurons_dir="data/neurons",
         collab_name=COLLAB_NAME,
@@ -102,10 +107,8 @@ def main():
         wire_bio_modules=True,
         neuron_ids=DIALOGUE_IDS,
     )
-    target_ids = [nid for nid in cortex.neurons
-                  if nid.startswith("zh_") and "dialogue" in nid]
-    print(f"  装配 {len(cortex.neurons)} 神经元，judge 目标 = {target_ids}",
-          flush=True)
+    target_ids = [nid for nid in cortex.neurons if nid.startswith("zh_") and "dialogue" in nid]
+    print(f"  装配 {len(cortex.neurons)} 神经元，judge 目标 = {target_ids}", flush=True)
 
     tmp_data = os.path.join("data", "_tmp_b2")
     os.makedirs(tmp_data, exist_ok=True)
@@ -123,21 +126,25 @@ def main():
         "knowledge": KNOWLEDGE_PROMPTS,
         "unfamiliar": UNFAMILIAR_PROMPTS,
     }
-    all_seed_prompts = (DIALOGUE_PROMPTS + KNOWLEDGE_PROMPTS
-                        + UNFAMILIAR_PROMPTS)
-    print(f"\n[2/6] 注入种子记忆：{len(all_seed_prompts)} 条 A1 真实版 prompt...",
-          flush=True)
+    all_seed_prompts = DIALOGUE_PROMPTS + KNOWLEDGE_PROMPTS + UNFAMILIAR_PROMPTS
+    print(f"\n[2/6] 注入种子记忆：{len(all_seed_prompts)} 条 A1 真实版 prompt...", flush=True)
     for i, text in enumerate(all_seed_prompts):
         vec = field_state_of(cortex, text)
         sleep_engine.record_field_memory(vec, f"seed_{i}", text=text)
         sc.record_high_resonance_state(
-            field_state=vec, resonance_score=0.9, step=0,
-            active_nids=target_ids, threshold=0.5, text=text)
-    r_init = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
-                          duration_seconds=0)
+            field_state=vec,
+            resonance_score=0.9,
+            step=0,
+            active_nids=target_ids,
+            threshold=0.5,
+            text=text,
+        )
+    r_init = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
     sleep_engine._sleep_phase_field_consolidation(r_init)
-    print(f"  注入 {len(all_seed_prompts)} 条 + 场固化 "
-          f"{r_init.field_memories_consolidated} 条", flush=True)
+    print(
+        f"  注入 {len(all_seed_prompts)} 条 + 场固化 " f"{r_init.field_memories_consolidated} 条",
+        flush=True,
+    )
 
     print(f"\n[3/6] 预测量（pre-sleep 3 组 std/mean 基线）...", flush=True)
     pre = measure_group_stds(sleep_engine, cortex, target_ids, a1_groups)
@@ -145,14 +152,15 @@ def main():
     for g in ("dialogue", "knowledge", "unfamiliar"):
         d = pre[g]
         pre_summary[g] = {"std": d["std"], "mean": d["mean"]}
-        print(f"  pre {g}: std={d['std']:.6f}  mean={d['mean']:.4f}",
-              flush=True)
-    pre_lora = sum(lora_l2_norm(cortex.neurons[nid])
-                   for nid in target_ids if nid in cortex.neurons)
+        print(f"  pre {g}: std={d['std']:.6f}  mean={d['mean']:.4f}", flush=True)
+    pre_lora = sum(lora_l2_norm(cortex.neurons[nid]) for nid in target_ids if nid in cortex.neurons)
     print(f"  pre LoRA L2 (compact dialogue): {pre_lora:.4f}", flush=True)
 
-    print(f"\n[4/6] 跑 {N_MICRO} 次 micro-sleep（关闭喂新经验；"
-          f"每 {SELF_RECALL_EVERY} 步自反思 query）...", flush=True)
+    print(
+        f"\n[4/6] 跑 {N_MICRO} 次 micro-sleep（关闭喂新经验；"
+        f"每 {SELF_RECALL_EVERY} 步自反思 query）...",
+        flush=True,
+    )
     n_crashes = 0
     n_nan = 0
     self_recall_count = 0
@@ -162,19 +170,25 @@ def main():
         t_step = time.time()
 
         if step % SELF_RECALL_EVERY == 0:
-            recalled = random.sample(memory_bank_texts,
-                                     min(SELF_RECALL_K, len(memory_bank_texts)))
+            recalled = random.sample(memory_bank_texts, min(SELF_RECALL_K, len(memory_bank_texts)))
             for j, text in enumerate(recalled):
                 vec = field_state_of(cortex, text)
-                sleep_engine.record_field_memory(
-                    vec, f"selfrec_step{step}_{j}", text=text)
+                sleep_engine.record_field_memory(vec, f"selfrec_step{step}_{j}", text=text)
                 sc.record_high_resonance_state(
-                    field_state=vec, resonance_score=0.88, step=step,
-                    active_nids=target_ids, threshold=0.5, text=text)
+                    field_state=vec,
+                    resonance_score=0.88,
+                    step=step,
+                    active_nids=target_ids,
+                    threshold=0.5,
+                    text=text,
+                )
             self_recall_count += 1
             if step % (SELF_RECALL_EVERY * 5) == 0:
-                print(f"  step {step:4d}  self-recall #{self_recall_count}  "
-                      f"({len(recalled)} 条抽回记忆库)", flush=True)
+                print(
+                    f"  step {step:4d}  self-recall #{self_recall_count}  "
+                    f"({len(recalled)} 条抽回记忆库)",
+                    flush=True,
+                )
 
         report = SleepReport(
             timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -187,17 +201,19 @@ def main():
                 sleep_engine._sleep_phase_forward_replay(report)
         except Exception as e:
             n_crashes += 1
-            print(f"  [WARN] micro-sleep {step} 异常: "
-                  f"{type(e).__name__}: {e}", flush=True)
+            print(f"  [WARN] micro-sleep {step} 异常: " f"{type(e).__name__}: {e}", flush=True)
             if n_crashes > 5:
                 print(f"  [ABORT] 崩溃 > 5，停止", flush=True)
                 break
             continue
 
     elapsed_step = time.time() - t0
-    print(f"\n  完成 {N_MICRO} 步, "
-          f"自反思 query 触发 {self_recall_count} 次, "
-          f"崩溃 {n_crashes} 次", flush=True)
+    print(
+        f"\n  完成 {N_MICRO} 步, "
+        f"自反思 query 触发 {self_recall_count} 次, "
+        f"崩溃 {n_crashes} 次",
+        flush=True,
+    )
 
     print(f"\n[5/6] 后测量（post-sleep 3 组 std/mean）...", flush=True)
     post = measure_group_stds(sleep_engine, cortex, target_ids, a1_groups)
@@ -205,10 +221,10 @@ def main():
     for g in ("dialogue", "knowledge", "unfamiliar"):
         d = post[g]
         post_summary[g] = {"std": d["std"], "mean": d["mean"]}
-        print(f"  post {g}: std={d['std']:.6f}  mean={d['mean']:.4f}",
-              flush=True)
-    post_lora = sum(lora_l2_norm(cortex.neurons[nid])
-                    for nid in target_ids if nid in cortex.neurons)
+        print(f"  post {g}: std={d['std']:.6f}  mean={d['mean']:.4f}", flush=True)
+    post_lora = sum(
+        lora_l2_norm(cortex.neurons[nid]) for nid in target_ids if nid in cortex.neurons
+    )
     print(f"  post LoRA L2 (compact dialogue): {post_lora:.4f}", flush=True)
 
     print("\n" + "=" * 64, flush=True)
@@ -218,38 +234,45 @@ def main():
     ratio_summary = {}
     all_pass = True
     for g in ("dialogue", "knowledge", "unfamiliar"):
-        ratio = (post_summary[g]["std"]
-                 / max(pre_summary[g]["std"], 1e-9))
+        ratio = post_summary[g]["std"] / max(pre_summary[g]["std"], 1e-9)
         ratio_summary[g] = ratio
         passed_this = ratio >= 0.95
         if not passed_this:
             all_pass = False
-        check(f"B2.{g[0]} {g} 组 std >= pre × 0.95（不遗忘）",
-              passed_this,
-              f"ratio={ratio:.4f}  pre={pre_summary[g]['std']:.4f}  "
-              f"post={post_summary[g]['std']:.4f}")
+        check(
+            f"B2.{g[0]} {g} 组 std >= pre × 0.95（不遗忘）",
+            passed_this,
+            f"ratio={ratio:.4f}  pre={pre_summary[g]['std']:.4f}  "
+            f"post={post_summary[g]['std']:.4f}",
+        )
 
-    check("B2.d 0 崩溃 / 0 NaN / 0 爆炸",
-          n_crashes == 0 and n_nan == 0,
-          f"crashes={n_crashes}/{N_MICRO}  nan={n_nan}")
+    check(
+        "B2.d 0 崩溃 / 0 NaN / 0 爆炸",
+        n_crashes == 0 and n_nan == 0,
+        f"crashes={n_crashes}/{N_MICRO}  nan={n_nan}",
+    )
 
     elapsed_min = (time.time() - t0) / 60
-    check(f"B2.e {N_MICRO} 步 <= 30 min",
-          elapsed_min <= 30,
-          f"elapsed={elapsed_min:.1f} min")
+    check(f"B2.e {N_MICRO} 步 <= 30 min", elapsed_min <= 30, f"elapsed={elapsed_min:.1f} min")
 
-    b2_pass = (failed == 0)
+    b2_pass = failed == 0
 
     print("\n" + "=" * 64, flush=True)
     if b2_pass:
-        print("判定: B2 PASS：autonomous 续航成立（100 步无遗忘，"
-              "无新经验时它能自反思维生）", flush=True)
-        print("下一步: B2 通过。下一步：C1 协作形态自主 — 验证协作权重/结构"
-              "随经验演化、撤掉外部协作设计后 EMERGE 不归零", flush=True)
+        print(
+            "判定: B2 PASS：autonomous 续航成立（100 步无遗忘，" "无新经验时它能自反思维生）",
+            flush=True,
+        )
+        print(
+            "下一步: B2 通过。下一步：C1 协作形态自主 — 验证协作权重/结构"
+            "随经验演化、撤掉外部协作设计后 EMERGE 不归零",
+            flush=True,
+        )
     else:
         print(f"判定: B2 FAIL ({failed} 维不过)", flush=True)
-        print("下一步: 调 SELF_RECALL_EVERY 更密 / K 更大；或延长 N_MICRO"
-              "观察漂移累积", flush=True)
+        print(
+            "下一步: 调 SELF_RECALL_EVERY 更密 / K 更大；或延长 N_MICRO" "观察漂移累积", flush=True
+        )
     print("=" * 64, flush=True)
 
     report_obj = {
@@ -279,11 +302,12 @@ def main():
         "passed": passed,
         "failed": failed,
         "verdict": ("B2 PASS" if b2_pass else f"B2 FAIL ({failed} 维不过)"),
-        "next_step": ("B2 通过。下一步：C1 协作形态自主 — 验证协作权重/结构"
-                      "随经验演化、撤掉外部协作设计后 EMERGE 不归零"
-                      if b2_pass else
-                      "调 SELF_RECALL_EVERY 更密 / K 更大；或延长 N_MICRO"
-                      "观察漂移累积"),
+        "next_step": (
+            "B2 通过。下一步：C1 协作形态自主 — 验证协作权重/结构"
+            "随经验演化、撤掉外部协作设计后 EMERGE 不归零"
+            if b2_pass
+            else "调 SELF_RECALL_EVERY 更密 / K 更大；或延长 N_MICRO" "观察漂移累积"
+        ),
         "elapsed_seconds": time.time() - t0,
     }
     out_path = f"reports/play_engine_b2_endurance_{today}.json"

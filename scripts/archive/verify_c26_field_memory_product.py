@@ -67,8 +67,7 @@ def main():
         # ── 1. 训练两组件 + 保存到 sleep data_dir ──
         n = len(tfm.TERM_PAIRS)
         pos_pairs = tfm.TERM_PAIRS
-        neg_pairs = [(tfm.TERM_PAIRS[i][0], tfm.TERM_PAIRS[(i + 7) % n][1])
-                     for i in range(n)]
+        neg_pairs = [(tfm.TERM_PAIRS[i][0], tfm.TERM_PAIRS[(i + 7) % n][1]) for i in range(n)]
         texts = set()
         for a, b in pos_pairs + neg_pairs:
             texts.add(a)
@@ -80,6 +79,7 @@ def main():
             vectors[txt] = tfm.field_state_of(cortex, txt)
 
         from taiji.resonance.field_alignment import train_anchor_projector
+
         proj = train_anchor_projector(vectors, pos_pairs, neg_pairs)
         gate = tfm.train_write_gate([vectors[t] for t in tfm.TOPICS])
         proj_path = os.path.join(tmp_dir, "anchor_projector.pt")
@@ -102,18 +102,22 @@ def main():
         topic_labels = [f"T{i}" for i in range(len(tfm.TOPICS))]
         for v, lbl in zip(topic_vecs, topic_labels):
             sleep_engine.record_field_memory(v, lbl)
-        report = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
-                             duration_seconds=0)
+        report = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
         sleep_engine._sleep_phase_field_consolidation(report)
-        check("门控固化：4 新主题全部写入", report.field_memories_consolidated == 4
-              and len(bank) == 4, f"bank={len(bank)}")
+        check(
+            "门控固化：4 新主题全部写入",
+            report.field_memories_consolidated == 4 and len(bank) == 4,
+            f"bank={len(bank)}",
+        )
         for v, lbl in zip(topic_vecs, topic_labels):
             sleep_engine.record_field_memory(v, lbl)
-        report2 = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
-                              duration_seconds=0)
+        report2 = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
         sleep_engine._sleep_phase_field_consolidation(report2)
-        check("门控固化：重复主题被拒", report2.field_memories_consolidated == 0,
-              f"added={report2.field_memories_consolidated}")
+        check(
+            "门控固化：重复主题被拒",
+            report2.field_memories_consolidated == 0,
+            f"added={report2.field_memories_consolidated}",
+        )
 
         # ── 4. 锚点空间检索 ──
         print("\n[4] 锚点空间检索 ...", flush=True)
@@ -128,8 +132,7 @@ def main():
         se2 = SleepEngine(data_dir=tmp_dir)
         se2.set_brain_interfaces(cortex=cortex)
         bank2 = se2.get_field_memory()
-        check("重启后组件自动加载", bank2.gate is not None
-              and bank2.projector is not None)
+        check("重启后组件自动加载", bank2.gate is not None and bank2.projector is not None)
         check("重启后记忆库恢复（4 条）", len(bank2) == 4, f"bank2={len(bank2)}")
         top2 = bank2.retrieve(topic_vecs[0], top_k=1)
         check("重启后锚点检索仍命中", bool(top2) and top2[0][0] == topic_labels[0])
@@ -141,10 +144,10 @@ def main():
             se3 = SleepEngine(data_dir=tmp_empty)
             se3.set_brain_interfaces(cortex=cortex)
             bank3 = se3.get_field_memory()
-            check("无产物时无 gate/projector（回退）",
-                  bank3.gate is None and bank3.projector is None)
-            check("无产物时硬阈值场固化可用",
-                  bank3.consolidate(topic_vecs, topic_labels) == 4)
+            check(
+                "无产物时无 gate/projector（回退）", bank3.gate is None and bank3.projector is None
+            )
+            check("无产物时硬阈值场固化可用", bank3.consolidate(topic_vecs, topic_labels) == 4)
         finally:
             shutil.rmtree(tmp_empty, ignore_errors=True)
     finally:

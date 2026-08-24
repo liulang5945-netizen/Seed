@@ -145,7 +145,7 @@
               </button>
             </div>
 
-            <article v-for="(msg, index) in displayedMessages" :key="msg.id"
+            <article v-for="msg in displayedMessages" :key="msg.id"
               :class="['msg', msg.role === 'user' ? 'msg-user' : 'msg-ai']"
               v-memo="[msg.id, msg.content, msg.role]">
               <img v-if="msg.role === 'assistant'" class="av av-ai" src="/logo-taiji-ink.jpg" alt="Seed" />

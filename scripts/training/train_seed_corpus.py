@@ -25,7 +25,7 @@ import json
 import sys
 import time
 from pathlib import Path
-from typing import Dict, Iterable, Iterator, List, Optional, Sequence
+from typing import Dict, Iterator, Optional, Sequence
 
 import torch
 
@@ -33,6 +33,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from seed import Seed, SeedConfig  # noqa: E402
+from seed.persistence import (  # noqa: E402
+    atomic_save,
+    attach_metadata,
+    corpus_fingerprint,
+)
 from taiji import TaijiConfig  # noqa: E402
 
 DEFAULT_CORPUS = (
@@ -106,9 +111,23 @@ def run_training(
     if resume_checkpoint is not None:
         model.restore(torch.load(resume_checkpoint, weights_only=False))
     boundary = config.taiji.boundary_symbol
+    fingerprint = corpus_fingerprint(corpus_paths)
+
+    def _persist() -> None:
+        # 2026-08-23 M0：原子落盘 + 信封元数据，崩溃不产生半写文件。
+        envelope = attach_metadata(
+            model.checkpoint(),
+            tick=model.tick,
+            corpus_fingerprint=fingerprint,
+            extra={"trainer": "train_seed_corpus"},
+        )
+        atomic_save(envelope, checkpoint_path)
 
     started = time.perf_counter()
-    ticks = 0
+    # 续训时以模型自身 tick 为基线：进度统计与检查点节奏（% checkpoint_every）
+    # 与崩溃前对齐，避免计数器清零导致重复训练段与节奏错位。
+    ticks = int(model.tick)
+    base_ticks = ticks
     window_ticks = 0
     window_correct = 0
     window_surprise = 0.0
@@ -122,9 +141,7 @@ def run_training(
             "window_ticks": window_ticks,
             "online_accuracy": window_correct / max(1, window_ticks),
             "mean_surprise": window_surprise / max(1, window_ticks),
-            "holdout_surprise": model.score_bytes(HOLDOUT_PROBE)[
-                "mean_surprise"
-            ],
+            "holdout_surprise": model.score_bytes(HOLDOUT_PROBE)["mean_surprise"],
             "elapsed_seconds": time.perf_counter() - started,
         }
         with progress_path.open("a", encoding="utf-8") as handle:
@@ -144,13 +161,13 @@ def run_training(
                 window_correct = 0
                 window_surprise = 0.0
             if ticks % checkpoint_every == 0:
-                torch.save(model.checkpoint(), checkpoint_path)
-            if max_symbols is not None and ticks >= max_symbols:
+                _persist()
+            if max_symbols is not None and ticks >= base_ticks + max_symbols:
                 _flush(final=True)
-                torch.save(model.checkpoint(), checkpoint_path)
+                _persist()
                 return _summary(model, ticks)
     _flush(final=True)
-    torch.save(model.checkpoint(), checkpoint_path)
+    _persist()
     return _summary(model, ticks)
 
 
@@ -180,9 +197,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--progress",
-        default=str(
-            PROJECT_ROOT / "reports" / "seed_corpus_progress.jsonl"
-        ),
+        default=str(PROJECT_ROOT / "reports" / "seed_corpus_progress.jsonl"),
     )
     parser.add_argument("--resume", default=None)
     parser.add_argument(
@@ -196,11 +211,7 @@ def main() -> None:
         config = SeedConfig()
         max_symbols = 5_000
     else:
-        config = SeedConfig(
-            taiji=TaijiConfig.training_profile(
-                scale=args.scale, seed=args.seed
-            )
-        )
+        config = SeedConfig(taiji=TaijiConfig.training_profile(scale=args.scale, seed=args.seed))
         max_symbols = args.max_symbols
 
     summary = run_training(

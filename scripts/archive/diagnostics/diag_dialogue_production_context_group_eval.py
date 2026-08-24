@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """修复版 full9 与 full9_no_aug2 的 32 条 held-out 生成统计。"""
+
 from __future__ import annotations
 
 import json
@@ -8,13 +9,18 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 from neuroplex.loader import assemble_cortex
 from neuroplex.resonance.dialogue_format import SFT_ANSWER_MARKER
-from scripts.archive.diagnostics.diag_dialogue_capacity_ab import _generate, _summarize, _text_metrics
+from scripts.archive.diagnostics.diag_dialogue_capacity_ab import (
+    _generate,
+    _summarize,
+    _text_metrics,
+)
 from scripts.archive.diagnostics.diag_dialogue_generation_contract import _heldout_samples
-
 
 DIALOGUE_IDS = [
     "zh_aug0_dialogue",
@@ -87,9 +93,7 @@ def main() -> None:
             "rows": rows,
         }
     report["elapsed_seconds"] = round(time.time() - started, 1)
-    out_path = os.path.join(
-        "reports", "production_dialogue_context_group_eval_20260820.json"
-    )
+    out_path = os.path.join("reports", "production_dialogue_context_group_eval_20260820.json")
     with open(out_path, "w", encoding="utf-8") as handle:
         json.dump(report, handle, ensure_ascii=False, indent=2)
     print(json.dumps(report, ensure_ascii=False, indent=2))

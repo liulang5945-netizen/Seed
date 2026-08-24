@@ -495,10 +495,11 @@ async function trainTaiji() {
 let refreshInterval = null
 onMounted(() => {
   runtimeStore.refreshAll()
-  // 每 15 秒自动刷新
+  // App 级健康检查每 15 秒已刷新同一负载（/api/runtime/status），
+  // 本页只做低频兼容刷新，避免重复轮询。
   refreshInterval = setInterval(() => {
     runtimeStore.refreshAll().catch(() => {})
-  }, 15000)
+  }, 60000)
 })
 
 onUnmounted(() => {

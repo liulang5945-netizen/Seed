@@ -10,6 +10,7 @@
 - 历史同类口径错误（07-29 评估集分布失真、07-31 token ID 错位、08-12 裸 prompt）
   均靠人工发现——本模块把契约固化，配合 tests/test_dialogue_format.py 回归防复发。
 """
+
 from __future__ import annotations
 
 from typing import Iterable, Optional

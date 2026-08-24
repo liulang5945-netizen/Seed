@@ -47,9 +47,7 @@ class FakeNeuron:
 
     def __init__(self, nid: str, channel_keys: list, weight: float = 0.5):
         self.config = type("Cfg", (), {"neuron_id": nid})()
-        self.excite_channels = {
-            k: torch.nn.Linear(8, 8, bias=False) for k in channel_keys
-        }
+        self.excite_channels = {k: torch.nn.Linear(8, 8, bias=False) for k in channel_keys}
         for lin in self.excite_channels.values():
             lin.weight.data.fill_(weight)
 
@@ -82,11 +80,15 @@ def main() -> None:
     print("\n[1] 高共振状态记录", flush=True)
     for i in range(6):
         sc.record_high_resonance_state(
-            field_state=torch.randn(8), resonance_score=0.9, step=100 + i,
+            field_state=torch.randn(8),
+            resonance_score=0.9,
+            step=100 + i,
             active_nids=["code", "math"],  # C25-D：重放将驱动 (code,math) 共激活
         )
     sc.record_high_resonance_state(
-        field_state=torch.randn(8), resonance_score=0.8, step=200,
+        field_state=torch.randn(8),
+        resonance_score=0.8,
+        step=200,
         active_nids=None,  # 旧格式记录：仅计数，不驱动
     )
     check("replay buffer 含 7 条记录", len(sc._replay_buffer) == 7)
@@ -96,7 +98,9 @@ def main() -> None:
     # ---- 2. consolidate：真重放 + 强化 + downscaling + 修剪 ----
     print("\n[2] consolidate 真重放", flush=True)
     result = sc.consolidate(
-        neurons=neurons, coactivation_tracker=coaction, current_step=1000,
+        neurons=neurons,
+        coactivation_tracker=coaction,
+        current_step=1000,
     )
     print(f"  stats: {result}", flush=True)
 
@@ -111,13 +115,19 @@ def main() -> None:
     check("重放 pair 进入 strong_pairs", ("code", "math") in strong, f"strong={strong}")
     # code→math 通道：初始 0.5 → 强化 ×1.1 → downscaling ×0.98 ≈ 0.539
     w_after = neurons["code"].excite_channels["math"].weight.abs().mean().item()
-    check("强通道净保留（≈0.5×1.1×0.98=0.539）",
-          abs(w_after - 0.5 * 1.1 * 0.98) < 1e-3, f"w={w_after:.4f}")
+    check(
+        "强通道净保留（≈0.5×1.1×0.98=0.539）",
+        abs(w_after - 0.5 * 1.1 * 0.98) < 1e-3,
+        f"w={w_after:.4f}",
+    )
 
     # ---- 3. downscaling 全局缩放 ----
     print("\n[3] 突触稳态下调", flush=True)
-    check("channels_downscaled > 0", result["channels_downscaled"] > 0,
-          f"n={result['channels_downscaled']}")
+    check(
+        "channels_downscaled > 0",
+        result["channels_downscaled"] > 0,
+        f"n={result['channels_downscaled']}",
+    )
     # 未强化通道（zh→code，weight=0.05）：×0.98 → ≈0.049（弱信号被压低）
     w_zh = neurons["zh"].excite_channels["code"].weight.abs().mean().item()
     check("弱通道整体下压（×0.98）", abs(w_zh - 0.05 * 0.98) < 1e-3, f"w={w_zh:.4f}")
@@ -133,16 +143,16 @@ def main() -> None:
     # ---- 5. 持久化兼容（replay 含 active_nids 可序列化）----
     print("\n[5] 持久化兼容", flush=True)
     sc.record_high_resonance_state(
-        field_state=torch.randn(8), resonance_score=0.85, step=300,
+        field_state=torch.randn(8),
+        resonance_score=0.85,
+        step=300,
         active_nids=["zh", "math"],
     )
     state = sc.get_state_dict()
-    check("replay 序列化含 active_nids",
-          any("active_nids" in r for r in state["replay_buffer"]))
+    check("replay 序列化含 active_nids", any("active_nids" in r for r in state["replay_buffer"]))
     sc2 = SleepConsolidator()
     sc2.load_state_dict(state)
-    check("load 还原 active_nids",
-          sc2._replay_buffer[0].get("active_nids") == ["zh", "math"])
+    check("load 还原 active_nids", sc2._replay_buffer[0].get("active_nids") == ["zh", "math"])
     check("downscale_factor 持久化", sc2.downscale_factor == 0.98)
 
     print("\n" + "=" * 60)

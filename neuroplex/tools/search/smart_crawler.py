@@ -20,17 +20,13 @@
 
 import re
 import time
-import math
 import hashlib
 import logging
-import threading
 import urllib.parse
-from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Set, Tuple
-from collections import defaultdict
+from dataclasses import dataclass
+from typing import List, Optional, Set, Tuple
 
-from .discovery import http_get, _random_ua, SearchResult
-from .fetcher import DualFetcher, FetchedPage
+from .fetcher import DualFetcher
 from .extractor import ReadabilityExtractor, PageContent
 from .index import InvertedIndex, IndexedPage, Tokenizer
 
@@ -40,6 +36,7 @@ logger = logging.getLogger("Taiji.Search.SmartCrawler")
 # ═══════════════════════════════════════════════
 # 链接评分器
 # ═══════════════════════════════════════════════
+
 
 class LinkScorer:
     """
@@ -55,24 +52,45 @@ class LinkScorer:
 
     # URL 路径里的高价值关键词
     CONTENT_PATH_PATTERNS = [
-        r"/docs?/", r"/tutorial", r"/guide", r"/manual",
-        r"/api/", r"/reference", r"/article", r"/post",
-        r"/blog/", r"/wiki/", r"/learn",
+        r"/docs?/",
+        r"/tutorial",
+        r"/guide",
+        r"/manual",
+        r"/api/",
+        r"/reference",
+        r"/article",
+        r"/post",
+        r"/blog/",
+        r"/wiki/",
+        r"/learn",
     ]
 
     # URL 路径里的低价值关键词
     NOISE_PATH_PATTERNS = [
-        r"/login", r"/register", r"/signup", r"/cart",
-        r"/search", r"/tag/", r"/category/", r"/author/",
-        r"/page/\d+", r"/feed", r"/rss", r"/sitemap",
-        r"/about", r"/contact", r"/privacy", r"/terms",
+        r"/login",
+        r"/register",
+        r"/signup",
+        r"/cart",
+        r"/search",
+        r"/tag/",
+        r"/category/",
+        r"/author/",
+        r"/page/\d+",
+        r"/feed",
+        r"/rss",
+        r"/sitemap",
+        r"/about",
+        r"/contact",
+        r"/privacy",
+        r"/terms",
     ]
 
     def __init__(self):
         self.tokenizer = Tokenizer()
 
-    def score(self, link_url: str, anchor_text: str, topic_terms: Set[str],
-              position: str = "content") -> float:
+    def score(
+        self, link_url: str, anchor_text: str, topic_terms: Set[str], position: str = "content"
+    ) -> float:
         """
         给链接打分。
 
@@ -127,8 +145,9 @@ class LinkScorer:
 
         return max(0, score)
 
-    def rank_links(self, links: List[Tuple[str, str, str]],
-                   topic_terms: Set[str], top_n: int = 10) -> List[Tuple[str, float]]:
+    def rank_links(
+        self, links: List[Tuple[str, str, str]], topic_terms: Set[str], top_n: int = 10
+    ) -> List[Tuple[str, float]]:
         """
         对页面上的所有链接排序，返回 top_n 个最值得爬的。
 
@@ -151,6 +170,7 @@ class LinkScorer:
 # ═══════════════════════════════════════════════
 # 内容质量评估
 # ═══════════════════════════════════════════════
+
 
 class ContentQuality:
     """评估页面内容质量，决定是否继续深入爬取"""
@@ -213,6 +233,7 @@ class ContentQuality:
 # URL 规范化 + 去重
 # ═══════════════════════════════════════════════
 
+
 class UrlNormalizer:
     """URL 规范化，避免重复爬取同一页面"""
 
@@ -225,9 +246,18 @@ class UrlNormalizer:
         # 移除常见跟踪参数
         if clean.query:
             params = urllib.parse.parse_qs(clean.query)
-            noise_keys = {"utm_source", "utm_medium", "utm_campaign",
-                          "utm_content", "utm_term", "fbclid", "gclid",
-                          "ref", "source", "from"}
+            noise_keys = {
+                "utm_source",
+                "utm_medium",
+                "utm_campaign",
+                "utm_content",
+                "utm_term",
+                "fbclid",
+                "gclid",
+                "ref",
+                "source",
+                "from",
+            }
             filtered = {k: v for k, v in params.items() if k.lower() not in noise_keys}
             clean = clean._replace(query=urllib.parse.urlencode(filtered, doseq=True))
         # 小写化 scheme 和 host
@@ -254,9 +284,11 @@ class UrlNormalizer:
 # SmartCrawler — 智能爬虫主体
 # ═══════════════════════════════════════════════
 
+
 @dataclass
 class CrawlStats:
     """爬取统计"""
+
     visited: int = 0
     indexed: int = 0
     skipped_dup: int = 0
@@ -288,9 +320,14 @@ class SmartCrawler:
         self.normalizer = UrlNormalizer()
         self.tokenizer = Tokenizer()
 
-    def crawl_topic(self, seed_url: str, topic: str,
-                    max_pages: int = 30, max_depth: int = 3,
-                    same_domain_only: bool = True) -> CrawlStats:
+    def crawl_topic(
+        self,
+        seed_url: str,
+        topic: str,
+        max_pages: int = 30,
+        max_depth: int = 3,
+        same_domain_only: bool = True,
+    ) -> CrawlStats:
         """
         主题聚焦爬取：只爬与主题相关的页面。
 
@@ -307,6 +344,7 @@ class SmartCrawler:
 
         # 优先队列：(score, url, depth)
         import heapq
+
         queue: List[Tuple[float, str, int]] = []
         heapq.heappush(queue, (-100, seed_url, 0))  # 种子页给高分
 
@@ -347,15 +385,23 @@ class SmartCrawler:
 
             # 质量评估
             q_score, reason = self.quality.assess(content, topic_terms)
-            logger.info(f"  [{stats.visited}/{max_pages}] {reason}({q_score:.2f}) {content.title[:50]}")
+            logger.info(
+                f"  [{stats.visited}/{max_pages}] {reason}({q_score:.2f}) {content.title[:50]}"
+            )
 
             # 入索引（即使低质量也入，只是不再深入）
             if content.word_count > 20:
-                self.index.add_page(IndexedPage(
-                    url=normal_url, title=content.title, text=content.text,
-                    links=content.links, crawled_at=time.time(),
-                    word_count=content.word_count, source="smart_crawl",
-                ))
+                self.index.add_page(
+                    IndexedPage(
+                        url=normal_url,
+                        title=content.title,
+                        text=content.text,
+                        links=content.links,
+                        crawled_at=time.time(),
+                        word_count=content.word_count,
+                        source="smart_crawl",
+                    )
+                )
                 stats.indexed += 1
             else:
                 stats.skipped_low_quality += 1
@@ -382,16 +428,19 @@ class SmartCrawler:
             time.sleep(0.5 + 0.5 * (1.0 - q_score))  # 高质量页面等短一点
 
         stats.elapsed = time.time() - t0
-        logger.info(f"智能爬取完成: {stats.indexed}/{stats.visited} 页入索引, "
-                     f"跳过 {stats.skipped_dup} 重复, {stats.skipped_low_quality} 低质量, "
-                     f"耗时 {stats.elapsed:.1f}s")
+        logger.info(
+            f"智能爬取完成: {stats.indexed}/{stats.visited} 页入索引, "
+            f"跳过 {stats.skipped_dup} 重复, {stats.skipped_low_quality} 低质量, "
+            f"耗时 {stats.elapsed:.1f}s"
+        )
         # Deep Coupling: 发布爬取完成事件
         try:
             from neuroplex.infra.events import get_event_bus
+
             bus = get_event_bus()
             bus.publish("crawl_complete", {"indexed": stats.indexed}, source="smart_crawler")
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【SmartCrawler.crawl_topic】处理失败（非致命）: %s", e)
         return stats
 
     def crawl_from_search(self, query: str, max_pages: int = 20) -> CrawlStats:
@@ -401,6 +450,7 @@ class SmartCrawler:
         这是"搜索 + 智能爬取"的组合拳。
         """
         from .discovery import WebSearchProvider
+
         provider = WebSearchProvider()
         results = provider.search(query, max_results=10)
         if not results:
@@ -427,7 +477,9 @@ class SmartCrawler:
             if total_stats.indexed >= max_pages:
                 break
 
-        logger.info(f"搜索+爬取完成: {total_stats.indexed} 页入索引, 耗时 {total_stats.elapsed:.1f}s")
+        logger.info(
+            f"搜索+爬取完成: {total_stats.indexed} 页入索引, 耗时 {total_stats.elapsed:.1f}s"
+        )
         return total_stats
 
     def _extract_links_with_context(self, html: str, base_url: str) -> List[Tuple[str, str, str]]:
@@ -476,14 +528,18 @@ class SmartCrawler:
 
             # 跳过非 HTML 资源
             href_lower = href.lower()
-            if any(href_lower.endswith(ext) for ext in
-                   [".jpg", ".png", ".gif", ".css", ".js", ".pdf", ".zip"]):
+            if any(
+                href_lower.endswith(ext)
+                for ext in [".jpg", ".png", ".gif", ".css", ".js", ".pdf", ".zip"]
+            ):
                 continue
 
             # 判断位置：通过周围的 HTML class/id
             position = "content"
-            before = html[:match.start()]
-            last_tag = re.findall(r'<(?:div|nav|aside|footer|header|section)\s[^>]*class="([^"]*)"', before)
+            before = html[: match.start()]
+            last_tag = re.findall(
+                r'<(?:div|nav|aside|footer|header|section)\s[^>]*class="([^"]*)"', before
+            )
             if last_tag:
                 last_class = last_tag[-1].lower()
                 if any(x in last_class for x in ["nav", "menu", "header"]):
@@ -523,9 +579,11 @@ def tool_smart_crawl(query: str) -> str:
     """
     crawler = get_smart_crawler()
     stats = crawler.crawl_from_search(query, max_pages=15)
-    return (f"## 智能爬取: {query}\n\n"
-            f"访问 {stats.visited} 页，入索引 {stats.indexed} 页\n"
-            f"跳过重复 {stats.skipped_dup}，低质量 {stats.skipped_low_quality}，失败 {stats.failed}\n"
-            f"发现链接 {stats.total_links_found}，跟踪 {stats.total_links_followed}\n"
-            f"耗时 {stats.elapsed:.1f}s\n"
-            f"索引统计: {crawler.index.stats()}")
+    return (
+        f"## 智能爬取: {query}\n\n"
+        f"访问 {stats.visited} 页，入索引 {stats.indexed} 页\n"
+        f"跳过重复 {stats.skipped_dup}，低质量 {stats.skipped_low_quality}，失败 {stats.failed}\n"
+        f"发现链接 {stats.total_links_found}，跟踪 {stats.total_links_followed}\n"
+        f"耗时 {stats.elapsed:.1f}s\n"
+        f"索引统计: {crawler.index.stats()}"
+    )

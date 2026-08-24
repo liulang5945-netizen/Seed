@@ -20,37 +20,94 @@
     result = run_command("dir")
     info = system_info()
 """
+
 import os
-import sys
-import json
-import time
 import shutil
 import logging
 import subprocess
 import platform
-from typing import List, Dict, Optional, Any
-from pathlib import Path
+from typing import List
 
 logger = logging.getLogger("Taiji.Desktop")
 
 # 安全命令白名单（允许执行的命令）
 SAFE_COMMANDS = {
-    "dir", "ls", "cat", "type", "echo", "pwd", "cd", "mkdir", "rmdir",
-    "copy", "cp", "move", "mv", "del", "rm", "find", "grep", "head", "tail",
-    "wc", "sort", "uniq", "diff", "tar", "zip", "unzip", "gzip", "gunzip",
-    "python", "python3", "pip", "node", "npm", "git", "curl", "wget",
-    "ping", "ipconfig", "ifconfig", "nslookup", "tracert", "traceroute",
-    "tasklist", "taskkill", "systeminfo", "whoami", "hostname",
-    "date", "time", "cal", "bc", "expr",
-    "code", "notepad", "explorer", "calc", "mspaint", "snippingtool",
+    "dir",
+    "ls",
+    "cat",
+    "type",
+    "echo",
+    "pwd",
+    "cd",
+    "mkdir",
+    "rmdir",
+    "copy",
+    "cp",
+    "move",
+    "mv",
+    "del",
+    "rm",
+    "find",
+    "grep",
+    "head",
+    "tail",
+    "wc",
+    "sort",
+    "uniq",
+    "diff",
+    "tar",
+    "zip",
+    "unzip",
+    "gzip",
+    "gunzip",
+    "python",
+    "python3",
+    "pip",
+    "node",
+    "npm",
+    "git",
+    "curl",
+    "wget",
+    "ping",
+    "ipconfig",
+    "ifconfig",
+    "nslookup",
+    "tracert",
+    "traceroute",
+    "tasklist",
+    "taskkill",
+    "systeminfo",
+    "whoami",
+    "hostname",
+    "date",
+    "time",
+    "cal",
+    "bc",
+    "expr",
+    "code",
+    "notepad",
+    "explorer",
+    "calc",
+    "mspaint",
+    "snippingtool",
 }
 
 # 危险命令黑名单
 DANGEROUS_COMMANDS = {
-    "format", "fdisk", "diskpart", "regedit", "reg",
-    "net user", "net localgroup", "net share",
-    "shutdown", "restart", "logoff",
-    "rd /s", "rmdir /s", "rm -rf",
+    "format",
+    "fdisk",
+    "diskpart",
+    "regedit",
+    "reg",
+    "net user",
+    "net localgroup",
+    "net share",
+    "shutdown",
+    "restart",
+    "logoff",
+    "rd /s",
+    "rmdir /s",
+    "rm -rf",
 }
 
 
@@ -75,18 +132,19 @@ def run_program(program: str, args: List[str] = None, wait: bool = False) -> str
                 capture_output=True,
                 text=True,
                 timeout=60,
-                encoding='utf-8',
-                errors='ignore',
+                encoding="utf-8",
+                errors="ignore",
             )
             output = result.stdout + result.stderr
             return f"程序已执行 (退出码: {result.returncode})\n{output[:3000]}"
         else:
             if platform.system() == "Windows":
-                # Windows: 使用 start 命令启动（不阻塞）
+                # Windows: 新控制台启动（不阻塞）。
+                # shell=False + list 参数：避免 cmd.exe 解析元字符导致命令注入。
                 subprocess.Popen(
                     cmd,
                     creationflags=subprocess.CREATE_NEW_CONSOLE,
-                    shell=True,
+                    shell=False,
                 )
             else:
                 # Linux/Mac: 使用 & 后台运行
@@ -124,8 +182,8 @@ def run_command(command: str, timeout: int = 30) -> str:
                 text=True,
                 timeout=timeout,
                 shell=True,
-                encoding='utf-8',
-                errors='ignore',
+                encoding="utf-8",
+                errors="ignore",
             )
         else:
             result = subprocess.run(
@@ -134,8 +192,8 @@ def run_command(command: str, timeout: int = 30) -> str:
                 text=True,
                 timeout=timeout,
                 shell=True,
-                encoding='utf-8',
-                errors='ignore',
+                encoding="utf-8",
+                errors="ignore",
             )
 
         output = result.stdout + result.stderr
@@ -177,29 +235,33 @@ def list_processes(name_filter: str = "") -> str:
     import psutil
 
     processes = []
-    for proc in psutil.process_iter(['pid', 'name', 'cpu_percent', 'memory_percent']):
+    for proc in psutil.process_iter(["pid", "name", "cpu_percent", "memory_percent"]):
         try:
             pinfo = proc.info
-            if name_filter and name_filter.lower() not in pinfo['name'].lower():
+            if name_filter and name_filter.lower() not in pinfo["name"].lower():
                 continue
-            processes.append({
-                "pid": pinfo['pid'],
-                "name": pinfo['name'],
-                "cpu": f"{pinfo['cpu_percent']:.1f}%",
-                "memory": f"{pinfo['memory_percent']:.1f}%",
-            })
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            pass
+            processes.append(
+                {
+                    "pid": pinfo["pid"],
+                    "name": pinfo["name"],
+                    "cpu": f"{pinfo['cpu_percent']:.1f}%",
+                    "memory": f"{pinfo['memory_percent']:.1f}%",
+                }
+            )
+        except (psutil.NoSuchProcess, psutil.AccessDenied) as e:
+            logger.debug("【list_processes】处理失败（非致命）: %s", e)
 
     if not processes:
         return f"未找到进程: {name_filter}" if name_filter else "无进程"
 
     # 按 CPU 使用率排序
-    processes.sort(key=lambda x: float(x['cpu'].rstrip('%')), reverse=True)
+    processes.sort(key=lambda x: float(x["cpu"].rstrip("%")), reverse=True)
 
     lines = [f"进程列表 ({len(processes)} 个):\n"]
     for p in processes[:20]:
-        lines.append(f"  PID {p['pid']:>6} | {p['name']:<30} | CPU: {p['cpu']:>6} | MEM: {p['memory']:>6}")
+        lines.append(
+            f"  PID {p['pid']:>6} | {p['name']:<30} | CPU: {p['cpu']:>6} | MEM: {p['memory']:>6}"
+        )
 
     return "\n".join(lines)
 
@@ -207,6 +269,7 @@ def list_processes(name_filter: str = "") -> str:
 def kill_process(pid: int) -> str:
     """终止进程"""
     import psutil
+
     try:
         proc = psutil.Process(pid)
         name = proc.name()
@@ -252,7 +315,7 @@ def file_operations(action: str, src: str, dst: str = "") -> str:
                 os.remove(src)
             return f"已删除: {src}"
         elif action == "zip":
-            shutil.make_archive(dst, 'zip', src)
+            shutil.make_archive(dst, "zip", src)
             return f"已压缩: {src} → {dst}.zip"
         elif action == "unzip":
             shutil.unpack_archive(src, dst)
@@ -267,14 +330,19 @@ def clipboard_read() -> str:
     """读取剪贴板"""
     try:
         import pyperclip
+
         return pyperclip.paste()
     except ImportError:
         # Windows 回退
         if platform.system() == "Windows":
             import subprocess
+
             result = subprocess.run(
                 ["powershell", "-command", "Get-Clipboard"],
-                capture_output=True, text=True, encoding='utf-8', errors='ignore',
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="ignore",
             )
             return result.stdout.strip()
         return "需要安装 pyperclip: pip install pyperclip"
@@ -284,11 +352,13 @@ def clipboard_write(text: str) -> str:
     """写入剪贴板"""
     try:
         import pyperclip
+
         pyperclip.copy(text)
         return f"已写入剪贴板: {text[:50]}..."
     except ImportError:
         if platform.system() == "Windows":
             import subprocess
+
             subprocess.run(
                 ["powershell", "-command", f"Set-Clipboard -Value '{text}'"],
                 capture_output=True,
@@ -314,11 +384,14 @@ def open_terminal(path: str = ".", command: str = "") -> str:
     path = os.path.abspath(path)
     if platform.system() == "Windows":
         if command:
-            subprocess.Popen(["cmd", "/k", f"cd /d {path} && {command}"],
-                           creationflags=subprocess.CREATE_NEW_CONSOLE)
+            subprocess.Popen(
+                ["cmd", "/k", f"cd /d {path} && {command}"],
+                creationflags=subprocess.CREATE_NEW_CONSOLE,
+            )
         else:
-            subprocess.Popen(["cmd", "/k", f"cd /d {path}"],
-                           creationflags=subprocess.CREATE_NEW_CONSOLE)
+            subprocess.Popen(
+                ["cmd", "/k", f"cd /d {path}"], creationflags=subprocess.CREATE_NEW_CONSOLE
+            )
     elif platform.system() == "Darwin":
         subprocess.Popen(["open", "-a", "Terminal", path])
     else:
@@ -345,6 +418,7 @@ def open_editor(file_path: str) -> str:
 # ═══════════════════════════════════════════════
 # 工具接口（供注册）
 # ═══════════════════════════════════════════════
+
 
 def desktop_run_command(command: str) -> str:
     """执行系统命令（工具接口）"""

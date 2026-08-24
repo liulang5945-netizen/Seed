@@ -46,8 +46,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -66,43 +71,49 @@ def main():
     # ── 1. theta 相位单调推进 + 包络周期性 ──
     phases = [cr.theta_phase_at(t) for t in range(0, 16)]
     monotonic = all(phases[i] < phases[i + 1] for i in range(len(phases) - 1))
-    check("theta 相位随时间单调推进", monotonic,
-          f"θ(15)={phases[15]:.2f}")
+    check("theta 相位随时间单调推进", monotonic, f"θ(15)={phases[15]:.2f}")
     period = 2 * math.pi / theta_omega
     env0 = cr.theta_envelope(0.0)
     env_period = cr.theta_envelope(period)
-    check("theta 包络周期复原（t+2π/ω）", abs(env0 - env_period) < 1e-6,
-          f"{env0:.4f} vs {env_period:.4f}")
+    check(
+        "theta 包络周期复原（t+2π/ω）",
+        abs(env0 - env_period) < 1e-6,
+        f"{env0:.4f} vs {env_period:.4f}",
+    )
 
     # ── 2. theta_omega=0 回归：包络恒 1、调制恒等 ──
     activ = torch.tensor([0.3, 0.7, 0.9])
     off_env = [cr_off.theta_envelope(t) for t in range(8)]
     check("未启用嵌套时包络恒 1（回归）", all(abs(e - 1.0) < 1e-9 for e in off_env))
-    check("未启用嵌套时调制恒等（逐元素一致）",
-          torch.equal(cr_off.theta_modulate(activ, 3.0), activ))
+    check(
+        "未启用嵌套时调制恒等（逐元素一致）", torch.equal(cr_off.theta_modulate(activ, 3.0), activ)
+    )
 
     # ── 3. 嵌套调制生效：真实激活序列 × 包络后出现周期起伏 ──
     # 构造一段"gamma 激活"（模拟主循环中恒定绑定下的激活，未嵌套时平坦）
     base_activ = torch.tensor([0.6] * 16)  # 假设 gamma 激活稳定在 0.6
     mod_seq = [cr.theta_modulate(base_activ, t)[0].item() for t in range(16)]
     peak_gap = max(mod_seq) - min(mod_seq)
-    check("嵌套后激活出现周期包络起伏（峰谷差 > 0）", peak_gap > 0.05,
-          f"峰谷差={peak_gap:.3f}")
+    check("嵌套后激活出现周期包络起伏（峰谷差 > 0）", peak_gap > 0.05, f"峰谷差={peak_gap:.3f}")
     base_val = 0.6  # base_activ 常数
-    within = all(base_val * (1 - theta_amp - 1e-6) <= v
-                 <= base_val * (1 + theta_amp + 1e-6) for v in mod_seq)
-    check("调制幅度在包络范围 [base×(1-A), base×(1+A)]", within,
-          f"范围 [{min(mod_seq):.3f}, {max(mod_seq):.3f}]")
+    within = all(
+        base_val * (1 - theta_amp - 1e-6) <= v <= base_val * (1 + theta_amp + 1e-6) for v in mod_seq
+    )
+    check(
+        "调制幅度在包络范围 [base×(1-A), base×(1+A)]",
+        within,
+        f"范围 [{min(mod_seq):.3f}, {max(mod_seq):.3f}]",
+    )
 
     # 未嵌套对照：16 步全平
     off_seq = [cr_off.theta_modulate(base_activ, t)[0].item() for t in range(16)]
-    check("未嵌套对照序列平坦（无起伏）",
-          max(off_seq) - min(off_seq) < 1e-9)
+    check("未嵌套对照序列平坦（无起伏）", max(off_seq) - min(off_seq) < 1e-9)
 
     # 慢快关系：theta 一个周期内 gamma 多步（theta 慢于 gamma）
     steps_per_theta = int(2 * math.pi / theta_omega)  # 12.57 步/周期
-    check("theta 慢于 gamma（一周期覆盖多步）", steps_per_theta >= 8,
-          f"{steps_per_theta:.0f} 步/周期")
+    check(
+        "theta 慢于 gamma（一周期覆盖多步）", steps_per_theta >= 8, f"{steps_per_theta:.0f} 步/周期"
+    )
 
     # ── 4. 真实装配回归：默认（theta_omega=0）不改变现有 continuous ──
     cortex, tokenizer, modules = assemble_cortex(
@@ -117,11 +128,12 @@ def main():
     text = "请解释一下量子纠缠的基本原理"
     gids = cortex._general_sp.encode(text) or [0]
     emb = cortex._shared_embedding(torch.tensor([gids], dtype=torch.long))
-    res = cortex.think(emb, active_nids=None, fusion_mode="soft",
-                       collab_mode="continuous")
-    check("默认装配 think 正常（无嵌套零回归）",
-          res.get("field_state") is not None and res.get("final_scores"),
-          f"n_scores={len(res.get('final_scores', {}))}")
+    res = cortex.think(emb, active_nids=None, fusion_mode="soft", collab_mode="continuous")
+    check(
+        "默认装配 think 正常（无嵌套零回归）",
+        res.get("field_state") is not None and res.get("final_scores"),
+        f"n_scores={len(res.get('final_scores', {}))}",
+    )
 
     print("\n" + "=" * 64, flush=True)
     print(f"结果: {passed} PASS / {failed} FAIL  ({time.time() - t0:.1f}s)", flush=True)

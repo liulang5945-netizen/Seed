@@ -10,6 +10,7 @@
 7. 向后兼容：answer_marker_mode 默认 "first" 行为不变
 8. 神经元改写（TINY_TEST neuron 少量样本）
 """
+
 from __future__ import annotations
 
 import copy
@@ -22,12 +23,15 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 import torch
 
 from scripts.training.data_augmentation import (
-    parse_dialogue, rewrite_question, augment_dialogue_text,
-    multi_turn_concatenate, DialogueAugmenter, generate_neuron_augmented_data,
+    parse_dialogue,
+    rewrite_question,
+    augment_dialogue_text,
+    multi_turn_concatenate,
+    DialogueAugmenter,
+    generate_neuron_augmented_data,
 )
 from taiji.resonance.config import TINY_TEST
 from taiji.resonance.neuron import ResonanceNeuron
-
 
 SAMPLE = "问：你好，请告诉我什么是人工智能？\n答：人工智能是让机器模拟人类智能的技术。"
 SAMPLE2 = "问：如何学习编程？\n答：先学基础语法，再动手写项目。"
@@ -123,6 +127,7 @@ def test_last_marker_mode():
     print("\n[6] answer_marker_mode=last")
     from taiji.resonance.translator import batch_align_and_embed
     from taiji.resonance.translator import TokenizerHub
+
     # 用真实 tokenizer（zh 域）验证 mask 位置
     hub = TokenizerHub()
     try:
@@ -130,18 +135,27 @@ def test_last_marker_mode():
         general_sp = hub.get_general_sp()
     except Exception:
         from scripts.training.utils import load_domain_tokenizer, load_general_tokenizer
+
         domain_sp = load_domain_tokenizer("zh")
         general_sp = load_general_tokenizer()
 
     shared_emb = torch.nn.Embedding(general_sp.vocab_size(), 512)
     mt_text = "问：你好\n答：你好呀！\n问：什么是AI？\n答：人工智能。"
     _, _, mask, sft_first = batch_align_and_embed(
-        [mt_text], domain_sp, general_sp, shared_emb,
-        answer_marker="答：", answer_marker_mode="first",
+        [mt_text],
+        domain_sp,
+        general_sp,
+        shared_emb,
+        answer_marker="答：",
+        answer_marker_mode="first",
     )
     _, _, mask, sft_last = batch_align_and_embed(
-        [mt_text], domain_sp, general_sp, shared_emb,
-        answer_marker="答：", answer_marker_mode="last",
+        [mt_text],
+        domain_sp,
+        general_sp,
+        shared_emb,
+        answer_marker="答：",
+        answer_marker_mode="last",
     )
 
     # first 模式：第一个 "答：" 之后全 True（含中间轮 question）
@@ -153,8 +167,10 @@ def test_last_marker_mode():
     first_true_first = int(sft_first[0].nonzero()[0].item())
     first_true_last = int(sft_last[0].nonzero()[0].item())
     assert first_true_last > first_true_first, "last 模式 answer 起点应更靠后"
-    print(f"  PASS: first 模式 answer 起点={first_true_first} (n={n_first}), "
-          f"last 模式起点={first_true_last} (n={n_last})")
+    print(
+        f"  PASS: first 模式 answer 起点={first_true_first} (n={n_first}), "
+        f"last 模式起点={first_true_last} (n={n_last})"
+    )
 
 
 def test_backward_compat():
@@ -162,23 +178,33 @@ def test_backward_compat():
     print("\n[7] 向后兼容")
     from taiji.resonance.translator import batch_align_and_embed
     from taiji.resonance.translator import TokenizerHub
+
     hub = TokenizerHub()
     try:
         domain_sp = hub.get_domain_sp("zh")
         general_sp = hub.get_general_sp()
     except Exception:
         from scripts.training.utils import load_domain_tokenizer, load_general_tokenizer
+
         domain_sp = load_domain_tokenizer("zh")
         general_sp = load_general_tokenizer()
 
     shared_emb = torch.nn.Embedding(general_sp.vocab_size(), 512)
     # 不传 answer_marker_mode：与显式 "first" 一致
     _, _, mask, sft_default = batch_align_and_embed(
-        [SAMPLE], domain_sp, general_sp, shared_emb, answer_marker="答：",
+        [SAMPLE],
+        domain_sp,
+        general_sp,
+        shared_emb,
+        answer_marker="答：",
     )
     _, _, mask, sft_first = batch_align_and_embed(
-        [SAMPLE], domain_sp, general_sp, shared_emb,
-        answer_marker="答：", answer_marker_mode="first",
+        [SAMPLE],
+        domain_sp,
+        general_sp,
+        shared_emb,
+        answer_marker="答：",
+        answer_marker_mode="first",
     )
     assert torch.equal(sft_default, sft_first), "默认模式应与 first 一致"
     # 不传 answer_marker：返回 3 元组（兼容旧调用）
@@ -198,12 +224,14 @@ def test_neuron_aug():
     neuron.eval()
 
     from taiji.resonance.translator import TokenizerHub
+
     hub = TokenizerHub()
     try:
         domain_sp = hub.get_domain_sp("zh")
         general_sp = hub.get_general_sp()
     except Exception:
         from scripts.training.utils import load_domain_tokenizer, load_general_tokenizer
+
         domain_sp = load_domain_tokenizer("zh")
         general_sp = load_general_tokenizer()
 
@@ -211,8 +239,14 @@ def test_neuron_aug():
     rng = random.Random(42)
     texts = [SAMPLE, SAMPLE2]
     augmented = generate_neuron_augmented_data(
-        texts, neuron, shared_emb, domain_sp, general_sp,
-        rng, max_new_tokens=16, max_samples=2,
+        texts,
+        neuron,
+        shared_emb,
+        domain_sp,
+        general_sp,
+        rng,
+        max_new_tokens=16,
+        max_samples=2,
     )
     # 随机初始化的 neuron 生成可能失败，但函数不应抛异常
     assert isinstance(augmented, list), "应返回列表"

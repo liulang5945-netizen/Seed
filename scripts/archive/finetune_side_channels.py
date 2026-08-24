@@ -23,6 +23,7 @@ Usage:
     # 断点续训
     python -u scripts/training/finetune_side_channels.py --resume
 """
+
 from __future__ import annotations
 
 import argparse
@@ -33,27 +34,42 @@ import sys
 import time
 from datetime import datetime
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 from neuroplex.resonance import (
-    ResonanceNeuron, ResonanceField, ResonanceEnsemble,
-    get_domain_neuron_config, NeuronGeometry,
+    ResonanceNeuron,
+    ResonanceField,
+    ResonanceEnsemble,
+    get_domain_neuron_config,
+    NeuronGeometry,
 )
 from neuroplex.resonance.topology import (
-    build_topology, establish_topology_channels, topology_detail,
+    build_topology,
+    establish_topology_channels,
+    topology_detail,
 )
 from neuroplex.resonance.translator import batch_align_and_embed
 from scripts.training.utils import (
-    load_domain_tokenizer, load_general_tokenizer,
-    OUTPUT_DIR, load_simple_zh_texts, create_shared_embedding,
-    make_wsd_scheduler, build_muon_adamw_optimizers,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+    OUTPUT_DIR,
+    load_simple_zh_texts,
+    create_shared_embedding,
+    make_wsd_scheduler,
+    build_muon_adamw_optimizers,
     load_dialogue_texts_multi,
 )
-from scripts.training.experiment_config import ZH_COMPACT_NEURON_IDS as NEURON_IDS, DEFAULT_DOMAIN as DOMAIN, SFT_ANSWER_MARKER
+from scripts.training.experiment_config import (
+    ZH_COMPACT_NEURON_IDS as NEURON_IDS,
+    DEFAULT_DOMAIN as DOMAIN,
+    SFT_ANSWER_MARKER,
+)
 from scripts.training.data_augmentation import DialogueAugmenter
 
 DEVICE = "cpu"
@@ -64,7 +80,7 @@ LOG_DIR = os.path.join(
     "logs",
 )
 CKPT_PATH = os.path.join(OUTPUT_DIR, "side_channels_finetuned.ckpt.pt")  # 训练用 checkpoint
-FINAL_PATH = os.path.join(OUTPUT_DIR, "side_channels_finetuned.pt")     # 最终交付产物
+FINAL_PATH = os.path.join(OUTPUT_DIR, "side_channels_finetuned.pt")  # 最终交付产物
 
 
 class TeeLogger:
@@ -87,10 +103,20 @@ class TeeLogger:
         self.fp.close()
 
 
-def save_checkpoint(path, epoch, total_steps, optimizer, neurons, loss_history,
-                    adamw_optimizer=None, scheduler=None,
-                    body_optimizer=None, body_scheduler=None,
-                    shared_embeddings=None, ensemble=None):
+def save_checkpoint(
+    path,
+    epoch,
+    total_steps,
+    optimizer,
+    neurons,
+    loss_history,
+    adamw_optimizer=None,
+    scheduler=None,
+    body_optimizer=None,
+    body_scheduler=None,
+    shared_embeddings=None,
+    ensemble=None,
+):
     """保存训练 checkpoint，支持断点续训。"""
     side_state = {}
     scale_bias_state = {}
@@ -154,9 +180,16 @@ def save_checkpoint(path, epoch, total_steps, optimizer, neurons, loss_history,
     torch.save(ckpt, path)
 
 
-def load_checkpoint(path, optimizer, neurons, adamw_optimizer=None, scheduler=None,
-                    body_optimizer=None, body_scheduler=None,
-                    shared_embeddings=None):
+def load_checkpoint(
+    path,
+    optimizer,
+    neurons,
+    adamw_optimizer=None,
+    scheduler=None,
+    body_optimizer=None,
+    body_scheduler=None,
+    shared_embeddings=None,
+):
     """加载 checkpoint，恢复 side_channels、scale/bias、body、optimizer、训练进度。"""
     ckpt = torch.load(path, map_location=DEVICE, weights_only=False)
     side_state = ckpt["side_channels_state"]
@@ -212,7 +245,10 @@ def load_neuron_with_embedding(nid, cfg, debug=False):
     missing, unexpected = neuron.load_state_dict(ckpt["state_dict"], strict=False)
     if debug and (missing or unexpected):
         print(f"  [{nid}] missing keys: {missing[:5]}{'...' if len(missing)>5 else ''}", flush=True)
-        print(f"  [{nid}] unexpected keys: {unexpected[:5]}{'...' if len(unexpected)>5 else ''}", flush=True)
+        print(
+            f"  [{nid}] unexpected keys: {unexpected[:5]}{'...' if len(unexpected)>5 else ''}",
+            flush=True,
+        )
 
     shared_emb = create_shared_embedding(DEVICE)
     if "shared_embedding_state" in ckpt and ckpt["shared_embedding_state"] is not None:
@@ -262,33 +298,43 @@ def build_final_artifact(neurons, shared_embeddings) -> dict:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--resume", action="store_true",
-                        help="从最新 checkpoint 断点续训")
+    parser.add_argument("--resume", action="store_true", help="从最新 checkpoint 断点续训")
     parser.add_argument("--epochs", type=int, default=8)
     parser.add_argument("--batch_size", type=int, default=4)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--max_texts", type=int, default=100000)
-    parser.add_argument("--data", type=str, default="dialogue",
-                        choices=["dialogue", "simple_zh"],
-                        help="S5: dialogue=多文件合并对话数据, simple_zh=作文数据")
+    parser.add_argument(
+        "--data",
+        type=str,
+        default="dialogue",
+        choices=["dialogue", "simple_zh"],
+        help="S5: dialogue=多文件合并对话数据, simple_zh=作文数据",
+    )
     parser.add_argument("--device", default="cpu", help="计算设备 (cpu/cuda)")
-    parser.add_argument("--topology", default="hybrid",
-                        choices=["full", "knn", "hub_spoke", "hybrid"],
-                        help="S7: side_channels 拓扑模式 (default: hybrid)")
-    parser.add_argument("--topology_k", type=int, default=3,
-                        help="k-NN 拓扑的 k 值 (仅 knn 模式)")
-    parser.add_argument("--unfreeze_layers", type=int, default=2,
-                        help="S8: 解冻最后 N 层 transformer + norm + lm_head + field_write (0=全冻结)")
-    parser.add_argument("--train_embedding", action="store_true",
-                        help="S8: 训练 shared_embedding（默认冻结）")
-    parser.add_argument("--body_lr_ratio", type=float, default=0.1,
-                        help="S8: body 参数学习率比例 (相对 args.lr)")
-    parser.add_argument("--augment", action="store_true",
-                        help="T4: 启用数据增强（模板改写 + 多轮拼接）")
-    parser.add_argument("--aug_rewrite_prob", type=float, default=0.5,
-                        help="T4: 模板改写概率")
-    parser.add_argument("--aug_multi_turn_prob", type=float, default=0.4,
-                        help="T4: 多轮拼接概率")
+    parser.add_argument(
+        "--topology",
+        default="hybrid",
+        choices=["full", "knn", "hub_spoke", "hybrid"],
+        help="S7: side_channels 拓扑模式 (default: hybrid)",
+    )
+    parser.add_argument("--topology_k", type=int, default=3, help="k-NN 拓扑的 k 值 (仅 knn 模式)")
+    parser.add_argument(
+        "--unfreeze_layers",
+        type=int,
+        default=2,
+        help="S8: 解冻最后 N 层 transformer + norm + lm_head + field_write (0=全冻结)",
+    )
+    parser.add_argument(
+        "--train_embedding", action="store_true", help="S8: 训练 shared_embedding（默认冻结）"
+    )
+    parser.add_argument(
+        "--body_lr_ratio", type=float, default=0.1, help="S8: body 参数学习率比例 (相对 args.lr)"
+    )
+    parser.add_argument(
+        "--augment", action="store_true", help="T4: 启用数据增强（模板改写 + 多轮拼接）"
+    )
+    parser.add_argument("--aug_rewrite_prob", type=float, default=0.5, help="T4: 模板改写概率")
+    parser.add_argument("--aug_multi_turn_prob", type=float, default=0.4, help="T4: 多轮拼接概率")
     args = parser.parse_args()
 
     global DEVICE
@@ -325,7 +371,10 @@ def main():
     print(f"\n[2] 建立 side_channels (topology={args.topology})...", flush=True)
     geometry = NeuronGeometry(embedding_dim=8, sigma=0.5)
     topology = build_topology(
-        neurons, geometry, mode=args.topology, k=args.topology_k,
+        neurons,
+        geometry,
+        mode=args.topology,
+        k=args.topology_k,
     )
     print(f"  {topology_detail(topology, neurons)}", flush=True)
     stats = establish_topology_channels(neurons, topology, geometry)
@@ -359,7 +408,7 @@ def main():
             for p in neuron.norm.parameters():
                 p.requires_grad = True
             # lm_head（如果存在）
-            if hasattr(neuron, 'lm_head') and neuron.lm_head is not None:
+            if hasattr(neuron, "lm_head") and neuron.lm_head is not None:
                 for p in neuron.lm_head.parameters():
                     p.requires_grad = True
             # field_write（让场写入适配协作动态，C6 多头兼容）
@@ -391,13 +440,19 @@ def main():
         for name, p in neuron.named_parameters():
             if not p.requires_grad:
                 continue
-            if any(name.startswith(prefix) for prefix in ["excite_", "inhibit_"]) or "scale_" in name:
+            if (
+                any(name.startswith(prefix) for prefix in ["excite_", "inhibit_"])
+                or "scale_" in name
+            ):
                 trainable_side += p.numel()
             else:
                 trainable_body += p.numel()
     for emb in shared_embeddings.values():
         trainable_emb += sum(p.numel() for p in emb.parameters() if p.requires_grad)
-    print(f"  可训练: side_channels={trainable_side:,}, body={trainable_body:,}, emb={trainable_emb:,}", flush=True)
+    print(
+        f"  可训练: side_channels={trainable_side:,}, body={trainable_body:,}, emb={trainable_emb:,}",
+        flush=True,
+    )
 
     # 5. 创建 ensemble
     field = ResonanceField(dim=cfg.field_dim)
@@ -412,8 +467,11 @@ def main():
     general_sp = load_general_tokenizer()
     if args.data == "dialogue":
         dialogue_dir = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
-            "data", "simple_zh",
+            os.path.dirname(
+                os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            ),
+            "data",
+            "simple_zh",
         )
         texts = load_dialogue_texts_multi(dialogue_dir, max_texts=args.max_texts)
         print(f"  训练集(多文件合并对话): {len(texts)} 条对话", flush=True)
@@ -429,8 +487,11 @@ def main():
             multi_turn_prob=args.aug_multi_turn_prob,
         )
         augmenter.set_context_pool(texts)  # 多轮拼接的上下文池
-        print(f"  [T4] 数据增强启用: 改写={args.aug_rewrite_prob}, "
-              f"多轮拼接={args.aug_multi_turn_prob}", flush=True)
+        print(
+            f"  [T4] 数据增强启用: 改写={args.aug_rewrite_prob}, "
+            f"多轮拼接={args.aug_multi_turn_prob}",
+            flush=True,
+        )
 
     # 7. 训练循环
     print("\n[5] 开始训练 side_channels...", flush=True)
@@ -439,9 +500,9 @@ def main():
     # - 1D 参数（bias/LayerNorm）用 AdamW：Muon 仅适用于 2D
     # - scale 参数（0D scalar）用 AdamW
     # S8: body 参数（最后N层）用单独 AdamW，lr = args.lr * body_lr_ratio
-    muon_params = []   # 2D weight (side_channels only)
+    muon_params = []  # 2D weight (side_channels only)
     adamw_params = []  # 1D bias/norm + 0D scale (side_channels only)
-    body_params = []   # S8: unfrozen neuron body params
+    body_params = []  # S8: unfrozen neuron body params
     for nid, neuron in neurons.items():
         for ch in neuron.excite_channels.values():
             for p in ch.parameters():
@@ -488,11 +549,19 @@ def main():
     # Muon + AdamW 混合优化器（配置抽取到 utils.build_muon_adamw_optimizers）
     muon_lr = args.lr
     optimizer, adamw_optimizer = build_muon_adamw_optimizers(
-        muon_params, adamw_params, lr=muon_lr,
+        muon_params,
+        adamw_params,
+        lr=muon_lr,
     )
-    print(f"  Muon 参数: {sum(p.numel() for p in muon_params):,} (2D weight, lr={muon_lr})", flush=True)
+    print(
+        f"  Muon 参数: {sum(p.numel() for p in muon_params):,} (2D weight, lr={muon_lr})",
+        flush=True,
+    )
     if adamw_optimizer is not None:
-        print(f"  AdamW 参数: {sum(p.numel() for p in adamw_params):,} (1D bias/scale, lr={muon_lr})", flush=True)
+        print(
+            f"  AdamW 参数: {sum(p.numel() for p in adamw_params):,} (1D bias/scale, lr={muon_lr})",
+            flush=True,
+        )
     else:
         print(f"  AdamW 参数: 0 (无 1D 参数)", flush=True)
 
@@ -503,7 +572,10 @@ def main():
     if all_body_params:
         body_lr = args.lr * args.body_lr_ratio
         body_optimizer = torch.optim.AdamW(all_body_params, lr=body_lr, weight_decay=0.1)
-        print(f"  Body+Emb 参数: {sum(p.numel() for p in all_body_params):,} (lr={body_lr}, ratio={args.body_lr_ratio})", flush=True)
+        print(
+            f"  Body+Emb 参数: {sum(p.numel() for p in all_body_params):,} (lr={body_lr}, ratio={args.body_lr_ratio})",
+            flush=True,
+        )
 
     # 学习率调度：WSD（warmup + stable + cosine decay）
     # 修复 Playbook #4(warmup) 和 #5(decay) 合规项，公式抽取到 utils.make_wsd_scheduler
@@ -513,17 +585,24 @@ def main():
     warmup_steps = 100
     decay_ratio = 0.8
     scheduler = make_wsd_scheduler(
-        optimizer, num_steps=total_est_steps,
-        warmup_steps=warmup_steps, decay_ratio=decay_ratio,
+        optimizer,
+        num_steps=total_est_steps,
+        warmup_steps=warmup_steps,
+        decay_ratio=decay_ratio,
     )
     # S8: body scheduler（与主调度同步）
     if body_optimizer is not None:
         body_scheduler = make_wsd_scheduler(
-            body_optimizer, num_steps=total_est_steps,
-            warmup_steps=warmup_steps, decay_ratio=decay_ratio,
+            body_optimizer,
+            num_steps=total_est_steps,
+            warmup_steps=warmup_steps,
+            decay_ratio=decay_ratio,
         )
     decay_start = max(warmup_steps + 1, int(total_est_steps * decay_ratio))
-    print(f"  LR 调度: warmup={warmup_steps}步, decay 从 {decay_start}/{total_est_steps} 步开始", flush=True)
+    print(
+        f"  LR 调度: warmup={warmup_steps}步, decay 从 {decay_start}/{total_est_steps} 步开始",
+        flush=True,
+    )
 
     LOG_EVERY = 50
     BIAS_UPDATE_EVERY = 50  # Auxiliary-loss-free balancing bias 更新频率
@@ -537,17 +616,27 @@ def main():
     if args.resume and os.path.exists(CKPT_PATH):
         print(f"\n[resume] 加载 checkpoint: {CKPT_PATH}", flush=True)
         start_epoch, total_steps, loss_history = load_checkpoint(
-            CKPT_PATH, optimizer, neurons, adamw_optimizer, scheduler,
-            body_optimizer, body_scheduler, shared_embeddings,
+            CKPT_PATH,
+            optimizer,
+            neurons,
+            adamw_optimizer,
+            scheduler,
+            body_optimizer,
+            body_scheduler,
+            shared_embeddings,
         )
         # start_epoch 是上次完成的 epoch 编号，从下一个开始
-        print(f"  已恢复: epoch={start_epoch} (从 epoch {start_epoch+1} 继续), "
-              f"total_steps={total_steps}, loss_history={len(loss_history)} 条", flush=True)
+        print(
+            f"  已恢复: epoch={start_epoch} (从 epoch {start_epoch+1} 继续), "
+            f"total_steps={total_steps}, loss_history={len(loss_history)} 条",
+            flush=True,
+        )
         start_epoch = start_epoch + 1
     elif args.resume:
         print(f"\n[resume] 未找到 checkpoint ({CKPT_PATH})，从头开始", flush=True)
 
     import random
+
     random.seed(42)
 
     for epoch in range(start_epoch, NUM_EPOCHS):
@@ -560,7 +649,7 @@ def main():
             augmenter.set_epoch(epoch)
 
         for i in range(0, len(texts) - BATCH_SIZE, BATCH_SIZE):
-            batch_texts = texts[i:i + BATCH_SIZE]
+            batch_texts = texts[i : i + BATCH_SIZE]
 
             # T4: 在线数据增强（模板改写 + 多轮拼接）
             if augmenter is not None:
@@ -574,7 +663,10 @@ def main():
             for nid, shared_emb in shared_embeddings.items():
                 # S3: 传入 answer_marker，获取 sft_mask（只对 answer 部分计算 loss）
                 emb_out, tgt, msk, sft = batch_align_and_embed(
-                    batch_texts, domain_sp, general_sp, shared_emb,
+                    batch_texts,
+                    domain_sp,
+                    general_sp,
+                    shared_emb,
                     answer_marker=SFT_ANSWER_MARKER,
                     answer_marker_mode="last",  # T4: 多轮精确 masking
                 )
@@ -622,13 +714,19 @@ def main():
                     shift_t[~shift_m] = -100
                     n_tok = shift_m.sum().item()
                     if n_tok > 0:
-                        loss_nid = F.cross_entropy(
-                            shift_l.view(-1, shift_l.size(-1)),
-                            shift_t.view(-1),
-                            ignore_index=-100,
-                            reduction="sum",
-                        ) / n_tok
-                        print(f"    {nid}: solo_ppl={math.exp(min(loss_nid.item(), 20)):.1f}", flush=True)
+                        loss_nid = (
+                            F.cross_entropy(
+                                shift_l.view(-1, shift_l.size(-1)),
+                                shift_t.view(-1),
+                                ignore_index=-100,
+                                reduction="sum",
+                            )
+                            / n_tok
+                        )
+                        print(
+                            f"    {nid}: solo_ppl={math.exp(min(loss_nid.item(), 20)):.1f}",
+                            flush=True,
+                        )
                 # 协作 PPL
                 fused = result["fused_logits"]
                 shift_l = fused[:, :-1, :].contiguous()
@@ -707,9 +805,11 @@ def main():
                         total_delta += sum(abs(d) for d in deltas.values())
                     if total_delta > 0:
                         n_channels = sum(len(n.get_channel_usage_stats()) for n in neurons.values())
-                        print(f"  [bias update] step {total_steps}: "
-                              f"{n_channels} channels, total_delta={total_delta:.4f}",
-                              flush=True)
+                        print(
+                            f"  [bias update] step {total_steps}: "
+                            f"{n_channels} channels, total_delta={total_delta:.4f}",
+                            flush=True,
+                        )
 
                 if total_steps % LOG_EVERY == 0:
                     avg_loss = epoch_loss / max(epoch_tokens, 1)
@@ -718,17 +818,21 @@ def main():
                     steps_done = (i + BATCH_SIZE) / BATCH_SIZE
                     steps_total = (len(texts) - BATCH_SIZE) / BATCH_SIZE
                     eta = elapsed / max(steps_done, 1) * (steps_total - steps_done)
-                    print(f"  Epoch {epoch+1}/{NUM_EPOCHS} step {total_steps}: "
-                          f"loss={avg_loss:.4f} PPL={ppl:.1f} "
-                          f"[{steps_done:.0f}/{steps_total:.0f} ETA {eta/60:.1f}min]",
-                          flush=True)
-                    loss_history.append({
-                        "step": total_steps,
-                        "epoch": epoch + 1,
-                        "loss": avg_loss,
-                        "ppl": ppl,
-                        "tokens": epoch_tokens,
-                    })
+                    print(
+                        f"  Epoch {epoch+1}/{NUM_EPOCHS} step {total_steps}: "
+                        f"loss={avg_loss:.4f} PPL={ppl:.1f} "
+                        f"[{steps_done:.0f}/{steps_total:.0f} ETA {eta/60:.1f}min]",
+                        flush=True,
+                    )
+                    loss_history.append(
+                        {
+                            "step": total_steps,
+                            "epoch": epoch + 1,
+                            "loss": avg_loss,
+                            "ppl": ppl,
+                            "tokens": epoch_tokens,
+                        }
+                    )
 
                     # Channel usage 诊断（每 LOG_EVERY 步输出，监控死通道）
                     all_usages = []
@@ -742,30 +846,55 @@ def main():
                         max_usage = max(all_usages)
                         # 死通道判定：usage < avg * 0.1
                         dead_count = sum(1 for u in all_usages if u < avg_usage * 0.1)
-                        print(f"    [channels] usage avg={avg_usage:.4f} "
-                              f"min={min_usage:.4f} max={max_usage:.4f} "
-                              f"dead={dead_count}/{len(all_usages)}",
-                              flush=True)
+                        print(
+                            f"    [channels] usage avg={avg_usage:.4f} "
+                            f"min={min_usage:.4f} max={max_usage:.4f} "
+                            f"dead={dead_count}/{len(all_usages)}",
+                            flush=True,
+                        )
 
                 # 中途 checkpoint（每 500 步保存，防止崩溃丢失进度）
                 if total_steps % 500 == 0:
-                    save_checkpoint(CKPT_PATH, epoch, total_steps, optimizer, neurons, loss_history,
-                                    adamw_optimizer, scheduler,
-                                    body_optimizer, body_scheduler, shared_embeddings,
-                                    ensemble=ensemble)
+                    save_checkpoint(
+                        CKPT_PATH,
+                        epoch,
+                        total_steps,
+                        optimizer,
+                        neurons,
+                        loss_history,
+                        adamw_optimizer,
+                        scheduler,
+                        body_optimizer,
+                        body_scheduler,
+                        shared_embeddings,
+                        ensemble=ensemble,
+                    )
                     print(f"  [中途 checkpoint] step {total_steps} 已保存", flush=True)
 
         avg_epoch_loss = epoch_loss / max(epoch_tokens, 1)
         ppl = math.exp(min(avg_epoch_loss, 20))
         epoch_elapsed = time.time() - epoch_start_time
-        print(f"  [Epoch {epoch+1} 完成] avg_loss={avg_epoch_loss:.4f} PPL={ppl:.1f} "
-              f"耗时 {epoch_elapsed/60:.1f} min", flush=True)
+        print(
+            f"  [Epoch {epoch+1} 完成] avg_loss={avg_epoch_loss:.4f} PPL={ppl:.1f} "
+            f"耗时 {epoch_elapsed/60:.1f} min",
+            flush=True,
+        )
 
         # 每 epoch 保存 checkpoint（断点续训用，含 optimizer state）
-        save_checkpoint(CKPT_PATH, epoch, total_steps, optimizer, neurons, loss_history,
-                        adamw_optimizer, scheduler,
-                        body_optimizer, body_scheduler, shared_embeddings,
-                        ensemble=ensemble)
+        save_checkpoint(
+            CKPT_PATH,
+            epoch,
+            total_steps,
+            optimizer,
+            neurons,
+            loss_history,
+            adamw_optimizer,
+            scheduler,
+            body_optimizer,
+            body_scheduler,
+            shared_embeddings,
+            ensemble=ensemble,
+        )
         print(f"  [checkpoint 已保存] {CKPT_PATH}", flush=True)
 
         # 同步保存最终产物（含 S8 body + emb，下游 eval 直接加载）
@@ -779,8 +908,11 @@ def main():
             first_ppl = recent[0]["ppl"]
             last_ppl = recent[-1]["ppl"]
             delta = last_ppl - first_ppl
-            print(f"  [趋势] 最近 5 点 PPL: {first_ppl:.1f} -> {last_ppl:.1f} "
-                  f"(Δ={delta:+.1f}, {'下降' if delta < 0 else '上升/停滞'})", flush=True)
+            print(
+                f"  [趋势] 最近 5 点 PPL: {first_ppl:.1f} -> {last_ppl:.1f} "
+                f"(Δ={delta:+.1f}, {'下降' if delta < 0 else '上升/停滞'})",
+                flush=True,
+            )
 
     # 8. 最终保存
     print("\n[6] 训练完成，最终保存...", flush=True)

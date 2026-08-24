@@ -18,7 +18,9 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 from neuroplex.loader import assemble_cortex
 from scripts.archive.diagnostics.diag_micro_data_ab import (
@@ -28,9 +30,12 @@ from scripts.archive.diagnostics.diag_micro_data_ab import (
     _load_shared_embedding,
     _real_population_forward,
 )
-from scripts.archive.diagnostics.diag_micro_population_canary import PROMPTS, _generate, _surface_metrics
+from scripts.archive.diagnostics.diag_micro_population_canary import (
+    PROMPTS,
+    _generate,
+    _surface_metrics,
+)
 from scripts.training.utils import load_domain_tokenizer, load_general_tokenizer
-
 
 SPECIALIST_ROLES = ("current_only", "hf_only", "current_plus_hf_10")
 SPECIALIST_IDS = [f"zh_micro_specialist_{role}" for role in SPECIALIST_ROLES]
@@ -43,11 +48,13 @@ def _file_manifest(checkpoint_dir: Path) -> list[dict]:
         if not path.exists():
             raise FileNotFoundError(f"missing specialist checkpoint: {path}")
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
-        manifest.append({
-            "filename": path.name,
-            "bytes": path.stat().st_size,
-            "sha256": digest,
-        })
+        manifest.append(
+            {
+                "filename": path.name,
+                "bytes": path.stat().st_size,
+                "sha256": digest,
+            }
+        )
     return manifest
 
 

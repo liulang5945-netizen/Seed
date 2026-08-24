@@ -1,4 +1,7 @@
+# MIGRATED: scripts/archive/diagnostics/_diag_param_health.py → scripts/legacy/_diag_param_health.py
+# 仅历史诊断脚本（崩溃检查点分析），不再被训练/产品流程引用；请勿在新代码中 import 本文件。
 """检查崩塌检查点的参数健康度（NaN/Inf/范数溢出）。"""
+
 import sys
 
 sys.path.insert(0, r"e:\Seed")
@@ -6,10 +9,9 @@ sys.path.insert(0, r"e:\Seed")
 import torch
 
 from seed import Seed
+from scripts.legacy import CHECKPOINT_DIR  # 公共检查点目录常量（scripts/legacy/__init__.py）
 
-model = Seed.from_checkpoint(
-    torch.load(r"e:\Seed\checkpoints\seed_corpus.pt", weights_only=False)
-)
+model = Seed.from_checkpoint(torch.load(CHECKPOINT_DIR / "seed_corpus.pt", weights_only=False))
 tensors = model.substrate.parameter_tensors()
 print("n_tensors", len(tensors))
 overall_max = 0.0

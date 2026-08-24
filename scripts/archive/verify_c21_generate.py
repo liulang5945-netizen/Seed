@@ -6,6 +6,7 @@
    空间过滤解决——≠256K 头的 lora_state 不注入；原 --no-dialogue-lora
    清零逻辑会误伤 v3 微调自带的 LoRA，已废弃移除）
 """
+
 import os
 import sys
 
@@ -25,17 +26,29 @@ PROMPTS = [
     ("en", "What is the capital of France?"),
 ]
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 
 
 def main():
     import argparse
+
     ap = argparse.ArgumentParser()
-    ap.add_argument("--ckpt20", default="data/neurons/collab_v3_c24v2.ckpt.pt",
-                    help="collab ckpt（C24v2 双头重训产物，loader 自动加载 head_state/phasor_state）")
-    ap.add_argument("--extra-dir", default="data/foundation_v1_dual",
-                    help="C24v2: 双头 SFT neuron 目录（域头生成 + judge_lm_head general 256K 判定）")
+    ap.add_argument(
+        "--ckpt20",
+        default="data/neurons/collab_v3_c24v2.ckpt.pt",
+        help="collab ckpt（C24v2 双头重训产物，loader 自动加载 head_state/phasor_state）",
+    )
+    ap.add_argument(
+        "--extra-dir",
+        default="data/foundation_v1_dual",
+        help="C24v2: 双头 SFT neuron 目录（域头生成 + judge_lm_head general 256K 判定）",
+    )
     args = ap.parse_args()
 
     # C24: collab ckpt 直接作为协作层加载（loader 自动注入 head_state/phasor_state，
@@ -65,12 +78,16 @@ def main():
             # 口径（2026-08-12）：zh/dialogue 项用训练格式 "问：...\n答："。
             gen_prompt = build_dialogue_prompt(prompt) if tag in ("zh", "dialogue") else prompt
             out = cortex.generate(
-                gen_prompt, max_tokens=40, temperature=0.9, top_k=50,
+                gen_prompt,
+                max_tokens=40,
+                temperature=0.9,
+                top_k=50,
                 collab_mode="executive",
             )
             print(f"\n── [{tag}] {gen_prompt}\n  → {out}")
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             print(f"\n── [{tag}] ERROR: {type(e).__name__}: {e}")
 

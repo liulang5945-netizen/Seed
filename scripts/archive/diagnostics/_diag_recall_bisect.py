@@ -1,4 +1,5 @@
 """Bisect: which working-tree mechanism costs recall vs HEAD."""
+
 from __future__ import annotations
 
 import sys
@@ -21,8 +22,18 @@ _original_write = EpisodicField.write
 _original_replay = EpisodicField.replay
 
 
-def _no_gate_write(self, cortical_context, *, action_symbol, reward,
-                    outcome_symbol, tick, episode_id, provenance, threshold):
+def _no_gate_write(
+    self,
+    cortical_context,
+    *,
+    action_symbol,
+    reward,
+    outcome_symbol,
+    tick,
+    episode_id,
+    provenance,
+    threshold,
+):
     """Working-tree write with the identity gate neutralised.
 
     Setting the gate sigma would still threshold at the mean; this patch keeps
@@ -31,9 +42,15 @@ def _no_gate_write(self, cortical_context, *, action_symbol, reward,
 
     with object.__setattr__ if False else _patched_sigma(self, -1e9):
         return _original_write(
-            self, cortical_context, action_symbol=action_symbol, reward=reward,
-            outcome_symbol=outcome_symbol, tick=tick, episode_id=episode_id,
-            provenance=provenance, threshold=threshold,
+            self,
+            cortical_context,
+            action_symbol=action_symbol,
+            reward=reward,
+            outcome_symbol=outcome_symbol,
+            tick=tick,
+            episode_id=episode_id,
+            provenance=provenance,
+            threshold=threshold,
         )
 
 
@@ -61,15 +78,11 @@ def _no_binding_replay(self, previous, *, tick, generator):
     units = self.config.memory_units
     self_clock = self._time_code(tick)
     time_drive = self._normalize_drive(self.time_encoder.forward(self_clock))
-    noise = torch.randn(units, generator=generator, dtype=torch.float32).to(
-        self.device
-    )
+    noise = torch.randn(units, generator=generator, dtype=torch.float32).to(self.device)
     value_weight = float(self.config.replay_value_weight)
-    seed_drive = (
-        float(self.config.replay_seed_gain)
-        * (value_weight * self.reward_code + (1.0 - value_weight) * time_drive)
-        + float(self.config.replay_noise_scale) * self._normalize_drive(noise)
-    )
+    seed_drive = float(self.config.replay_seed_gain) * (
+        value_weight * self.reward_code + (1.0 - value_weight) * time_drive
+    ) + float(self.config.replay_noise_scale) * self._normalize_drive(noise)
     adapted = previous.threshold + float(self.config.replay_fatigue_gain) * (
         previous.trace - previous.trace.mean()
     )
@@ -88,7 +101,8 @@ def _no_binding_replay(self, previous, *, tick, generator):
     novelty = float(
         torch.clamp(
             completion_error.norm() / activity.norm().clamp_min(1e-8),
-            min=0.0, max=1.0,
+            min=0.0,
+            max=1.0,
         ).item()
     )
     context = self.readout_receptors.forward(activity)
@@ -102,22 +116,13 @@ def _no_binding_replay(self, previous, *, tick, generator):
     time_code = confidence * self.time_readout.forward(context)
     episode_code = confidence * self.episode_readout.forward(context)
     cortical_projection = confidence * self.cortical_readout.forward(context)
-    action_probabilities = torch.softmax(
-        self.action_readout.forward(context), dim=0
-    )
-    outcome_probabilities = torch.softmax(
-        self.outcome_readout.forward(context), dim=0
-    )
-    provenance_probabilities = torch.softmax(
-        self.provenance_readout.forward(context), dim=0
-    )
+    action_probabilities = torch.softmax(self.action_readout.forward(context), dim=0)
+    outcome_probabilities = torch.softmax(self.outcome_readout.forward(context), dim=0)
+    provenance_probabilities = torch.softmax(self.provenance_readout.forward(context), dim=0)
     clock_norm = self_clock.norm().clamp_min(1e-8)
     recalled_norm = time_code.norm().clamp_min(1e-8)
     recency = 0.5 * (
-        1.0
-        + float(
-            (torch.dot(time_code, self_clock) / (recalled_norm * clock_norm)).item()
-        )
+        1.0 + float((torch.dot(time_code, self_clock) / (recalled_norm * clock_norm)).item())
     )
     selection = value_weight * value + (1.0 - value_weight) * novelty
     priority = familiarity_confidence * resonance * selection * recency
@@ -179,10 +184,7 @@ def run(label, *, gate=False, repeats=None, meta_dim=None, fan_in=None) -> None:
     else:
         EpisodicField.write = _no_gate_write
     model = Taiji(config)
-    mapping = {
-        cue: ACTIONS[index % len(ACTIONS)]
-        for index, cue in enumerate(CUES)
-    }
+    mapping = {cue: ACTIONS[index % len(ACTIONS)] for index, cue in enumerate(CUES)}
     for index, (cue, action) in enumerate(mapping.items()):
         model.reset_dynamics(episode_id=f"store-{index}")
         model.observe(256, learn=False, learn_motor=False)

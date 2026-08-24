@@ -24,6 +24,7 @@ Usage:
         --domains code,math,zh,en --steps-per-domain 600 --save-dir data/foundation_v1_general \
         --target-space general
 """
+
 from __future__ import annotations
 
 import argparse
@@ -35,7 +36,9 @@ import time
 from datetime import datetime
 from typing import Dict, List, Optional
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -47,7 +50,10 @@ from scripts.training.utils import load_general_tokenizer
 from scripts.training.train_cross_domain_collab import load_tokenizer_for_vocab
 from scripts.training.experiment_config import SFT_ANSWER_MARKER
 
-LOG_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))), "logs")
+LOG_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
+    "logs",
+)
 DIALOGUE_EMB_SRC = "data/neurons/neuron_zh_std0_dialogue.pt"
 SEQ_LEN = 96
 SEED = 0
@@ -57,9 +63,12 @@ GENERAL_VOCAB = 256000
 def create_shared_lm_head(hidden_size: int = 512) -> torch.nn.Linear:
     """统一输出空间：所有 neuron 共享的 general 256K lm_head（无投影稀释）。"""
     head = torch.nn.Linear(hidden_size, GENERAL_VOCAB, bias=False)
-    torch.nn.init.normal_(head.weight, std=hidden_size ** -0.5)
-    print(f"  [shared_lm_head] {hidden_size} → {GENERAL_VOCAB} "
-          f"({hidden_size * GENERAL_VOCAB / 1e6:.0f}M params)", flush=True)
+    torch.nn.init.normal_(head.weight, std=hidden_size**-0.5)
+    print(
+        f"  [shared_lm_head] {hidden_size} → {GENERAL_VOCAB} "
+        f"({hidden_size * GENERAL_VOCAB / 1e6:.0f}M params)",
+        flush=True,
+    )
     return head
 
 
@@ -85,8 +94,14 @@ def load_domain_texts(domain: str, max_texts: int) -> List[str]:
     return texts
 
 
-def save_foundation(save_dir: str, domain: str, step: int, neuron: ResonanceNeuron,
-                    shared_emb: torch.nn.Embedding, loss_history: list):
+def save_foundation(
+    save_dir: str,
+    domain: str,
+    step: int,
+    neuron: ResonanceNeuron,
+    shared_emb: torch.nn.Embedding,
+    loss_history: list,
+):
     os.makedirs(save_dir, exist_ok=True)
     ckpt = {
         "neuron_config": neuron.config,
@@ -108,9 +123,15 @@ def _strip_shared_head(state: dict) -> dict:
     return {k: v for k, v in state.items() if not k.startswith("lm_head.")}
 
 
-def save_best_foundation(save_dir: str, domain: str, step: int, neuron: ResonanceNeuron,
-                         shared_emb: torch.nn.Embedding, ppl: float,
-                         shared_lm_head: Optional[torch.nn.Linear] = None):
+def save_best_foundation(
+    save_dir: str,
+    domain: str,
+    step: int,
+    neuron: ResonanceNeuron,
+    shared_emb: torch.nn.Embedding,
+    ppl: float,
+    shared_lm_head: Optional[torch.nn.Linear] = None,
+):
     """保存每域最优权重（早停选择）+ 该步 embedding 快照。
 
     评估/协作层用 shared_embedding.pt（最终），此处额外保存每域最优 embedding
@@ -130,33 +151,45 @@ def save_best_foundation(save_dir: str, domain: str, step: int, neuron: Resonanc
         "saved_at": datetime.now().isoformat(),
     }
     torch.save(ckpt, os.path.join(save_dir, f"neuron_{domain}.pt"))
-    torch.save(shared_emb.weight.data.clone(),
-               os.path.join(save_dir, f"shared_embedding_best_{domain}.pt"))
+    torch.save(
+        shared_emb.weight.data.clone(), os.path.join(save_dir, f"shared_embedding_best_{domain}.pt")
+    )
     if shared_lm_head is not None:
-        torch.save({"weight": shared_lm_head.weight.data.clone()},
-                   os.path.join(save_dir, "shared_lm_head.pt"))
+        torch.save(
+            {"weight": shared_lm_head.weight.data.clone()},
+            os.path.join(save_dir, "shared_lm_head.pt"),
+        )
     return os.path.join(save_dir, f"neuron_{domain}.pt")
 
 
-def verify_checkpoint(save_dir: str, domain: str, sp, general_sp,
-                      shared_emb: torch.nn.Embedding, texts: List[str],
-                      n_check: int = 8, embed_path: Optional[str] = None,
-                      lm_head_path: Optional[str] = None) -> float:
+def verify_checkpoint(
+    save_dir: str,
+    domain: str,
+    sp,
+    general_sp,
+    shared_emb: torch.nn.Embedding,
+    texts: List[str],
+    n_check: int = 8,
+    embed_path: Optional[str] = None,
+    lm_head_path: Optional[str] = None,
+) -> float:
     """保存后立即回读，验证 neuron + embedding 能复现低 PPL（防坏 checkpoint）。
 
     embed_path 为 None 时用共享 embedding（collab/eval 口径）；否则用该步 embedding
     快照（配对校验：best 权重 ↔ best 步 embedding）。
     lm_head_path：统一输出空间模式（共享 general lm_head）时传入，重建 neuron 时注入。
     """
-    ckpt = torch.load(os.path.join(save_dir, f"neuron_{domain}.pt"),
-                      map_location="cpu", weights_only=False)
+    ckpt = torch.load(
+        os.path.join(save_dir, f"neuron_{domain}.pt"), map_location="cpu", weights_only=False
+    )
     cfg = ckpt["neuron_config"]
     cfg.unified_field_dim = None
     shared_head = None
     if lm_head_path and os.path.exists(lm_head_path):
         shared_head = torch.nn.Linear(cfg.hidden_size, GENERAL_VOCAB, bias=False)
         shared_head.weight.data.copy_(
-            torch.load(lm_head_path, map_location="cpu", weights_only=False)["weight"])
+            torch.load(lm_head_path, map_location="cpu", weights_only=False)["weight"]
+        )
     n = ResonanceNeuron(cfg, shared_lm_head=shared_head)
     n.load_state_dict(ckpt["state_dict"], strict=False)
     emb = torch.nn.Embedding(256000, 512)
@@ -169,9 +202,15 @@ def verify_checkpoint(save_dir: str, domain: str, sp, general_sp,
     total_loss, total_tok = 0.0, 0
     with torch.no_grad():
         for t in random.sample(texts, min(n_check, len(texts))):
-            out = batch_align_and_embed([t], sp, general_sp, emb,
-                                        max_seq_len=SEQ_LEN, answer_marker=answer_marker,
-                                        answer_marker_mode=marker_mode)
+            out = batch_align_and_embed(
+                [t],
+                sp,
+                general_sp,
+                emb,
+                max_seq_len=SEQ_LEN,
+                answer_marker=answer_marker,
+                answer_marker_mode=marker_mode,
+            )
             x, y, m = out[0], out[1], out[2]
             sft_mask = out[3] if len(out) > 3 else None
             r = n.forward(x, return_logits=True)
@@ -185,8 +224,9 @@ def verify_checkpoint(save_dir: str, domain: str, sp, general_sp,
             else:
                 st[~sm] = -100
                 nt = sm.sum().item()
-            l = F.cross_entropy(sl.view(-1, sl.size(-1)), st.view(-1),
-                                ignore_index=-100, reduction="sum")
+            l = F.cross_entropy(
+                sl.view(-1, sl.size(-1)), st.view(-1), ignore_index=-100, reduction="sum"
+            )
             total_loss += l.item()
             total_tok += max(nt, 1)
     avg = total_loss / max(total_tok, 1)
@@ -202,13 +242,21 @@ def main():
     parser.add_argument("--seq-len", type=int, default=SEQ_LEN)
     parser.add_argument("--lr", type=float, default=3e-4, help="neuron 学习率")
     parser.add_argument("--embed-lr", type=float, default=1e-4, help="shared embedding 学习率")
-    parser.add_argument("--lm-head-lr", type=float, default=1e-4,
-                        help="共享 general lm_head 学习率（--target-space=general）")
+    parser.add_argument(
+        "--lm-head-lr",
+        type=float,
+        default=1e-4,
+        help="共享 general lm_head 学习率（--target-space=general）",
+    )
     parser.add_argument("--max-texts", type=int, default=3000)
     parser.add_argument("--save-dir", default="data/foundation_v1")
-    parser.add_argument("--target-space", choices=["domain", "general"], default="domain",
-                        help="domain=域 tokenizer 目标（现状）；general=共享 general 256K "
-                             "lm_head 统一输出空间（免投影，路由置信度保留）")
+    parser.add_argument(
+        "--target-space",
+        choices=["domain", "general"],
+        default="domain",
+        help="domain=域 tokenizer 目标（现状）；general=共享 general 256K "
+        "lm_head 统一输出空间（免投影，路由置信度保留）",
+    )
     parser.add_argument("--seed", type=int, default=SEED)
     args = parser.parse_args()
 
@@ -220,16 +268,24 @@ def main():
     log_path = os.path.join(LOG_DIR, f"foundation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
 
     print("=" * 60, flush=True)
-    print(f"多域基座训练（对话配方：general 编码输入 + "
-          f"{'general 256K 统一输出空间' if args.target_space == 'general' else '域标签'}）", flush=True)
-    print(f"domains={domains} steps/domain={args.steps_per_domain} "
-          f"batch={args.batch_size} lr={args.lr} embed_lr={args.embed_lr} "
-          f"target_space={args.target_space}", flush=True)
+    print(
+        f"多域基座训练（对话配方：general 编码输入 + "
+        f"{'general 256K 统一输出空间' if args.target_space == 'general' else '域标签'}）",
+        flush=True,
+    )
+    print(
+        f"domains={domains} steps/domain={args.steps_per_domain} "
+        f"batch={args.batch_size} lr={args.lr} embed_lr={args.embed_lr} "
+        f"target_space={args.target_space}",
+        flush=True,
+    )
     print(f"log: {log_path}", flush=True)
 
     general_sp = load_general_tokenizer()
-    domain_sps = {d: load_tokenizer_for_vocab(d, get_domain_neuron_config(d, spec="compact").vocab_size)
-                  for d in domains}
+    domain_sps = {
+        d: load_tokenizer_for_vocab(d, get_domain_neuron_config(d, spec="compact").vocab_size)
+        for d in domains
+    }
     texts = {d: load_domain_texts(d, args.max_texts) for d in domains}
 
     # 统一输出空间（general 模式）：所有 neuron 共享 general 256K lm_head，
@@ -245,11 +301,16 @@ def main():
         neurons[d] = ResonanceNeuron(cfg, shared_lm_head=shared_lm_head)
 
     # 优化器：neuron 主体 lr，embedding 独立低 lr（联合训练共享感知层）
-    opt_neurons = {d: torch.optim.AdamW(neurons[d].parameters(), lr=args.lr, weight_decay=0.01)
-                   for d in domains}
+    opt_neurons = {
+        d: torch.optim.AdamW(neurons[d].parameters(), lr=args.lr, weight_decay=0.01)
+        for d in domains
+    }
     opt_emb = torch.optim.AdamW(shared_emb.parameters(), lr=args.embed_lr, weight_decay=0.0)
-    opt_head = (torch.optim.AdamW(shared_lm_head.parameters(), lr=args.lm_head_lr,
-                                  weight_decay=0.01) if general_mode else None)
+    opt_head = (
+        torch.optim.AdamW(shared_lm_head.parameters(), lr=args.lm_head_lr, weight_decay=0.01)
+        if general_mode
+        else None
+    )
 
     total_steps = args.steps_per_domain * len(domains)
     step = 0
@@ -264,15 +325,22 @@ def main():
             batch = random.sample(texts[d], args.batch_size)
             if general_mode:
                 # 统一输出空间：输入/目标都 general 编码，全文本 loss（无 answer marker）
-                out = batch_align_and_embed(batch, general_sp, general_sp, shared_emb,
-                                            max_seq_len=args.seq_len)
+                out = batch_align_and_embed(
+                    batch, general_sp, general_sp, shared_emb, max_seq_len=args.seq_len
+                )
                 answer_marker = None
             else:
                 answer_marker = SFT_ANSWER_MARKER if d == "zh" else None
                 marker_mode = "last" if answer_marker else "first"
-                out = batch_align_and_embed(batch, domain_sps[d], general_sp, shared_emb,
-                                            max_seq_len=args.seq_len, answer_marker=answer_marker,
-                                            answer_marker_mode=marker_mode)
+                out = batch_align_and_embed(
+                    batch,
+                    domain_sps[d],
+                    general_sp,
+                    shared_emb,
+                    max_seq_len=args.seq_len,
+                    answer_marker=answer_marker,
+                    answer_marker_mode=marker_mode,
+                )
             x, y, m = out[0], out[1], out[2]
             sft_mask = out[3] if len(out) > 3 else None
 
@@ -287,8 +355,12 @@ def main():
             else:
                 st[~sm] = -100
                 nt = max(sm.sum().item(), 1)
-            loss = F.cross_entropy(sl.view(-1, sl.size(-1)), st.view(-1),
-                                   ignore_index=-100, reduction="sum") / nt
+            loss = (
+                F.cross_entropy(
+                    sl.view(-1, sl.size(-1)), st.view(-1), ignore_index=-100, reduction="sum"
+                )
+                / nt
+            )
 
             opt_neurons[d].zero_grad()
             opt_emb.zero_grad()
@@ -314,16 +386,23 @@ def main():
 
             if step % 50 == 0:
                 elapsed = time.time() - t0
-                print(f"  step {step}/{total_steps} [{d}] loss={loss.item():.3f} "
-                      f"PPL={ppl:.1f} best[{d}]={best_ppl[d]:.1f}@{best_step[d]} ({elapsed:.0f}s)", flush=True)
+                print(
+                    f"  step {step}/{total_steps} [{d}] loss={loss.item():.3f} "
+                    f"PPL={ppl:.1f} best[{d}]={best_ppl[d]:.1f}@{best_step[d]} ({elapsed:.0f}s)",
+                    flush=True,
+                )
 
             # 周期保存最终 embedding（训练全程共享，供 eval 使用）
             if step % 400 == 0:
-                torch.save(shared_emb.weight.data.clone(),
-                           os.path.join(args.save_dir, "shared_embedding.pt"))
+                torch.save(
+                    shared_emb.weight.data.clone(),
+                    os.path.join(args.save_dir, "shared_embedding.pt"),
+                )
                 if general_mode:
-                    torch.save({"weight": shared_lm_head.weight.data.clone()},
-                               os.path.join(args.save_dir, "shared_lm_head.pt"))
+                    torch.save(
+                        {"weight": shared_lm_head.weight.data.clone()},
+                        os.path.join(args.save_dir, "shared_lm_head.pt"),
+                    )
 
     # 最终：保存最终 embedding 为规范版本（collab/eval 用），并全域回读验证
     torch.save(shared_emb.weight.data.clone(), os.path.join(args.save_dir, "shared_embedding.pt"))
@@ -333,18 +412,34 @@ def main():
     print("\n[最终] 回读验证（best 权重 + 最终 embedding，collab/eval 口径）：", flush=True)
     for d in domains:
         # 统一空间模式：输入/目标都 general 编码（与训练循环 L267 一致），不能传域 sp
-        verify_checkpoint(args.save_dir, d, general_sp, general_sp, shared_emb, texts[d],
-                          lm_head_path=lm_head_path)
+        verify_checkpoint(
+            args.save_dir,
+            d,
+            general_sp,
+            general_sp,
+            shared_emb,
+            texts[d],
+            lm_head_path=lm_head_path,
+        )
     print("[配对校验] best 权重 + 各自 best 步 embedding 快照：", flush=True)
     for d in domains:
         p = os.path.join(args.save_dir, f"shared_embedding_best_{d}.pt")
         if os.path.exists(p):
-            verify_checkpoint(args.save_dir, d, general_sp, general_sp, shared_emb,
-                              texts[d], embed_path=p, lm_head_path=lm_head_path)
+            verify_checkpoint(
+                args.save_dir,
+                d,
+                general_sp,
+                general_sp,
+                shared_emb,
+                texts[d],
+                embed_path=p,
+                lm_head_path=lm_head_path,
+            )
 
     hist_path = os.path.join(LOG_DIR, "foundation_history.json")
     with open(hist_path, "w", encoding="utf-8") as f:
         import json
+
         json.dump(loss_history, f, ensure_ascii=False)
     print(f"\n[完成] best PPL: {best_ppl}", flush=True)
     print(f"  checkpoint: {args.save_dir}/", flush=True)

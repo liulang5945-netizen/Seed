@@ -2,11 +2,32 @@
 核心层实现
 LLaMA 3 风格: RMSNorm + RoPE + GQA + SwiGLU + Pre-Norm
 """
-import math
+
+import inspect
+import logging
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
+
+logger = logging.getLogger(__name__)
+
+# PyTorch 2.5+ SDPA 原生 GQA 支持探测（避免 repeat_interleave 显存放大）
+try:
+    _SDPA_SUPPORTS_GQA = (
+        "enable_gqa" in inspect.signature(F.scaled_dot_product_attention).parameters
+    )
+except (TypeError, ValueError):
+    _SDPA_SUPPORTS_GQA = False
+
+# KV cache 格式：
+# - 2 元组 (xk, xv)：旧格式，start_pos 按 cache 长度推断（仅无驱逐时正确）
+# - 3 元组 (xk, xv, abs_len)：S11 驱逐模式下由本模块返回，abs_len 为
+#   已消耗的绝对 token 数，保证驱逐后 RoPE 仍按绝对位置旋转
+KVCache = Union[
+    Tuple[torch.Tensor, torch.Tensor],
+    Tuple[torch.Tensor, torch.Tensor, int],
+]
 
 
 class RMSNorm(nn.Module):
@@ -18,8 +39,11 @@ class RMSNorm(nn.Module):
         self.weight = nn.Parameter(torch.ones(dim))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        rms = torch.sqrt(torch.mean(x ** 2, dim=-1, keepdim=True) + self.eps)
-        return self.weight * (x / rms)
+        # fp16/bf16 下 x**2 可能溢出（inf），统计量统一升 fp32 计算。
+        # 无溢出时与原实现逐位一致（fp32 输入 .float() 为 no-op）。
+        x32 = x.float()
+        rms = torch.sqrt(torch.mean(x32**2, dim=-1, keepdim=True) + self.eps)
+        return self.weight * (x32 / rms).type_as(x)
 
 
 class RotaryEmbedding(nn.Module):
@@ -35,18 +59,24 @@ class RotaryEmbedding(nn.Module):
         # 使用 OrderedDict 作为 LRU 缓存，最多保留 4 个条目
         from collections import OrderedDict
         import threading as _threading
+
         self._cache = OrderedDict()
         self._max_cache_size = 4
         self._cache_lock = _threading.Lock()
 
     def _get_sin_cos(self, seq_len: int, device, dtype):
-        key = (seq_len, device, dtype)
+        # 按 2 的幂桶化缓存 key（最小 128）：自回归生成时 seq_len 每步 +1，
+        # 若直接用 seq_len 做 key 缓存必失效（每 token 重算 O(L) sin/cos）。
+        # 桶化后同一桶内返回前缀切片，语义不变。
+        bucket = max(1 << (seq_len - 1).bit_length(), 128)
+        key = (bucket, device, dtype)
         with self._cache_lock:
             if key in self._cache:
                 self._cache.move_to_end(key)
-                return self._cache[key]
+                sin, cos = self._cache[key]
+                return sin[:seq_len], cos[:seq_len]
 
-        pos = torch.arange(seq_len, device=device, dtype=torch.float32)
+        pos = torch.arange(bucket, device=device, dtype=torch.float32)
         angles = torch.outer(pos, self.freqs.to(device))
         result = (
             torch.sin(angles).to(dtype),
@@ -58,15 +88,17 @@ class RotaryEmbedding(nn.Module):
             while len(self._cache) > self._max_cache_size:
                 self._cache.popitem(last=False)
 
-        return result
+        return result[0][:seq_len], result[1][:seq_len]
 
     def forward(self, x: torch.Tensor, seq_len: int):
         return self._get_sin_cos(seq_len, x.device, x.dtype)
 
 
 def apply_rotary_emb(
-    xq: torch.Tensor, xk: torch.Tensor,
-    sin: torch.Tensor, cos: torch.Tensor,
+    xq: torch.Tensor,
+    xk: torch.Tensor,
+    sin: torch.Tensor,
+    cos: torch.Tensor,
 ) -> Tuple[torch.Tensor, torch.Tensor]:
     """对 Q/K 应用旋转编码"""
     # xq, xk: [batch, seq, heads, head_dim]
@@ -77,10 +109,8 @@ def apply_rotary_emb(
     sin = sin.unsqueeze(0).unsqueeze(2)  # [1, seq, 1, dim/2]
     cos = cos.unsqueeze(0).unsqueeze(2)
 
-    q_out = torch.stack([xq_r * cos - xq_i * sin,
-                         xq_r * sin + xq_i * cos], dim=-1).flatten(-2)
-    k_out = torch.stack([xk_r * cos - xk_i * sin,
-                         xk_r * sin + xk_i * cos], dim=-1).flatten(-2)
+    q_out = torch.stack([xq_r * cos - xq_i * sin, xq_r * sin + xq_i * cos], dim=-1).flatten(-2)
+    k_out = torch.stack([xk_r * cos - xk_i * sin, xk_r * sin + xk_i * cos], dim=-1).flatten(-2)
     return q_out.type_as(xq), k_out.type_as(xk)
 
 
@@ -90,15 +120,22 @@ class GroupedQueryAttention(nn.Module):
     S11: 支持 attention sink + 滑动窗口（StreamingLLM 启发）。
     """
 
-    def __init__(self, hidden_size: int, num_heads: int, num_kv_heads: int,
-                 dropout: float = 0.0, bias: bool = False,
-                 attention_sink_size: int = 0, sliding_window_size: int = 0):
+    def __init__(
+        self,
+        hidden_size: int,
+        num_heads: int,
+        num_kv_heads: int,
+        dropout: float = 0.0,
+        bias: bool = False,
+        attention_sink_size: int = 0,
+        sliding_window_size: int = 0,
+    ):
         super().__init__()
         self.num_heads = num_heads
         self.num_kv_heads = num_kv_heads
         self.head_dim = hidden_size // num_heads
         self.num_queries_per_kv = num_heads // num_kv_heads
-        self.scale = self.head_dim ** -0.5
+        self.scale = self.head_dim**-0.5
 
         self.wq = nn.Linear(hidden_size, num_heads * self.head_dim, bias=bias)
         self.wk = nn.Linear(hidden_size, num_kv_heads * self.head_dim, bias=bias)
@@ -118,7 +155,9 @@ class GroupedQueryAttention(nn.Module):
         self.kv_cache_max_len = attention_sink_size + sliding_window_size
 
     def _evict_kv_cache(
-        self, xk: torch.Tensor, xv: torch.Tensor,
+        self,
+        xk: torch.Tensor,
+        xv: torch.Tensor,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """S11: 滑动窗口 KV cache 驱逐。
 
@@ -148,13 +187,14 @@ class GroupedQueryAttention(nn.Module):
         return torch.cat([sink_k, window_k], dim=1), torch.cat([sink_v, window_v], dim=1)
 
     def forward(
-        self, x: torch.Tensor,
+        self,
+        x: torch.Tensor,
         mask: Optional[torch.Tensor] = None,
-        kv_cache: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
+        kv_cache: Optional[KVCache] = None,
         use_cache: bool = False,
         temp_gain: float = 1.0,
         return_attn_weights: bool = False,
-    ) -> Tuple[torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]], Optional[torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, Optional[KVCache], Optional[torch.Tensor]]:
         """S9: temp_gain 门控注意力温度（norepinephrine 驱动）。
 
         temp_gain > 1 → xq 放大 → logits 放大 → softmax 更尖锐（高警觉，聚焦）
@@ -177,29 +217,48 @@ class GroupedQueryAttention(nn.Module):
         if temp_gain != 1.0:
             xq = xq * temp_gain
 
-        # RoPE
-        start_pos = kv_cache[0].shape[1] if kv_cache is not None else 0
+        # RoPE（按绝对位置旋转；驱逐模式下由 3 元组 cache 携带 abs_len，
+        # 避免驱逐后 start_pos 按 cache 长度推断导致位置相位错乱）
+        if kv_cache is not None:
+            if len(kv_cache) == 3:
+                cache_k, _cache_v, start_pos = kv_cache
+            else:
+                cache_k, _cache_v = kv_cache
+                # 旧 2 元组：无驱逐语义，start_pos = cache 长度
+                start_pos = cache_k.shape[1]
+        else:
+            start_pos = 0
         sin, cos = self.rope(x, seqlen + start_pos)
         xq, xk = apply_rotary_emb(xq, xk, sin[start_pos:], cos[start_pos:])
 
         # KV Cache
+        abs_total = start_pos + seqlen
         if kv_cache is not None:
-            xk = torch.cat([kv_cache[0], xk], dim=1)
-            xv = torch.cat([kv_cache[1], xv], dim=1)
+            xk = torch.cat([cache_k, xk], dim=1)
+            xv = torch.cat([_cache_v, xv], dim=1)
             # S11: 滑动窗口驱逐（KV cache 超限时保留 sink + window）
             if self.kv_cache_max_len > 0:
                 xk, xv = self._evict_kv_cache(xk, xv)
-        new_kv_cache = (xk, xv) if use_cache else None
-
-        # GQA: 扩展 KV heads（PyTorch 2.5+ 原生支持 GQA，旧版本需要手动扩展）
-        if self.num_queries_per_kv > 1:
-            xk = xk.repeat_interleave(self.num_queries_per_kv, dim=2)
-            xv = xv.repeat_interleave(self.num_queries_per_kv, dim=2)
+        if use_cache:
+            # 驱逐模式返回 3 元组携带绝对长度；否则保持旧 2 元组格式
+            new_kv_cache = (xk, xv, abs_total) if self.kv_cache_max_len > 0 else (xk, xv)
+        else:
+            new_kv_cache = None
 
         # 转换为 [batch, heads, seq, dim] 格式
         xq = xq.transpose(1, 2)
         xk = xk.transpose(1, 2)
         xv = xv.transpose(1, 2)
+
+        # GQA KV head 扩展：SDPA 原生路径用 enable_gqa（省 repeat_interleave
+        # 的 num_queries_per_kv 倍显存拷贝）；手动路径（取 attn weights 或
+        # SDPA 不可用时）仍 repeat_interleave 扩展
+        use_native_gqa = (
+            self.num_queries_per_kv > 1 and not return_attn_weights and _SDPA_SUPPORTS_GQA
+        )
+        if self.num_queries_per_kv > 1 and not use_native_gqa:
+            xk = xk.repeat_interleave(self.num_queries_per_kv, dim=1)
+            xv = xv.repeat_interleave(self.num_queries_per_kv, dim=1)
 
         # S11: 滑动窗口启用时，mask 需要适配驱逐后的 KV cache 长度
         # 当驱逐发生时，KV cache 长度可能小于 start_pos + seqlen，
@@ -227,13 +286,22 @@ class GroupedQueryAttention(nn.Module):
             attn_weights = scores  # [B, num_heads, L, L]
         else:
             try:
-                output = F.scaled_dot_product_attention(
-                    xq, xk, xv,
+                sdpa_kwargs = dict(
                     is_causal=is_causal,
                     dropout_p=self.attn_dropout.p if self.training else 0.0,
                 )
-            except Exception:
-                # 回退到手动 attention（兼容旧版 PyTorch）
+                if use_native_gqa:
+                    sdpa_kwargs["enable_gqa"] = True
+                output = F.scaled_dot_product_attention(xq, xk, xv, **sdpa_kwargs)
+            except (AttributeError, NotImplementedError, RuntimeError) as exc:
+                # 仅兼容性/资源类异常回退手动 attention；记录一次避免静默语义改变
+                if not getattr(self, "_sdpa_fallback_logged", False):
+                    self._sdpa_fallback_logged = True
+                    logger.warning("SDPA 不可用，回退手动 attention（仅提示一次）: %s", exc)
+                if use_native_gqa:
+                    # 手动路径不支持未扩展的 GQA，先扩展
+                    xk = xk.repeat_interleave(self.num_queries_per_kv, dim=1)
+                    xv = xv.repeat_interleave(self.num_queries_per_kv, dim=1)
                 scores = torch.matmul(xq, xk.transpose(-2, -1)) * self.scale
                 if mask is not None:
                     scores = scores + mask
@@ -280,19 +348,31 @@ class TransformerBlock(nn.Module):
         - 胞体整合: 预测编码（error = basal - apical_prediction，误差驱动校正）
     """
 
-    def __init__(self, hidden_size: int, num_heads: int, num_kv_heads: int,
-                 intermediate_size: int, rms_norm_eps: float = 1e-5, bias: bool = False,
-                 dropout: float = 0.0,
-                 dendritic: bool = False, apical_kv_dim: Optional[int] = None,
-                 attention_sink_size: int = 0, sliding_window_size: int = 0):
+    def __init__(
+        self,
+        hidden_size: int,
+        num_heads: int,
+        num_kv_heads: int,
+        intermediate_size: int,
+        rms_norm_eps: float = 1e-5,
+        bias: bool = False,
+        dropout: float = 0.0,
+        dendritic: bool = False,
+        apical_kv_dim: Optional[int] = None,
+        attention_sink_size: int = 0,
+        sliding_window_size: int = 0,
+    ):
         super().__init__()
         self.dendritic = dendritic
 
         # ── Basal 路径（始终存在，标准 Transformer）──
         # S11: 传入 attention_sink_size + sliding_window_size 启用长上下文
         self.attention = GroupedQueryAttention(
-            hidden_size, num_heads, num_kv_heads,
-            dropout=dropout, bias=bias,
+            hidden_size,
+            num_heads,
+            num_kv_heads,
+            dropout=dropout,
+            bias=bias,
             attention_sink_size=attention_sink_size,
             sliding_window_size=sliding_window_size,
         )
@@ -311,13 +391,17 @@ class TransformerBlock(nn.Module):
             self.apical_head_dim = hidden_size // num_heads
             self.apical_num_kv_heads = num_kv_heads
             self.apical_num_queries_per_kv = num_heads // num_kv_heads
-            self.apical_scale = self.apical_head_dim ** -0.5
+            self.apical_scale = self.apical_head_dim**-0.5
 
             # Q 投影（来自 x，与 basal 共享输入但独立参数）
             self.apical_wq = nn.Linear(hidden_size, num_heads * self.apical_head_dim, bias=bias)
             # KV 投影（来自 field_state，跨空间投影）
-            self.apical_wk = nn.Linear(apical_kv_dim, num_kv_heads * self.apical_head_dim, bias=bias)
-            self.apical_wv = nn.Linear(apical_kv_dim, num_kv_heads * self.apical_head_dim, bias=bias)
+            self.apical_wk = nn.Linear(
+                apical_kv_dim, num_kv_heads * self.apical_head_dim, bias=bias
+            )
+            self.apical_wv = nn.Linear(
+                apical_kv_dim, num_kv_heads * self.apical_head_dim, bias=bias
+            )
             # 输出投影
             self.apical_wo = nn.Linear(num_heads * self.apical_head_dim, hidden_size, bias=False)
 
@@ -334,7 +418,10 @@ class TransformerBlock(nn.Module):
             self.error_scale = nn.Parameter(torch.tensor(0.1))
 
     def _apical_cross_attention(
-        self, x: torch.Tensor, field_state: torch.Tensor, temp_gain: float = 1.0,
+        self,
+        x: torch.Tensor,
+        field_state: torch.Tensor,
+        temp_gain: float = 1.0,
     ) -> torch.Tensor:
         """Apical cross-attention: Q from x, KV from field_state.
 
@@ -377,11 +464,16 @@ class TransformerBlock(nn.Module):
         # Cross-attention（无 causal mask，KV 是全局反馈）
         try:
             output = F.scaled_dot_product_attention(
-                xq, xk, xv,
+                xq,
+                xk,
+                xv,
                 is_causal=False,  # cross-attention 不需要 causal
                 dropout_p=self.apical_attn_dropout.p if self.training else 0.0,
             )
-        except Exception:
+        except (AttributeError, NotImplementedError, RuntimeError) as exc:
+            if not getattr(self, "_apical_sdpa_fallback_logged", False):
+                self._apical_sdpa_fallback_logged = True
+                logger.warning("apical SDPA 不可用，回退手动 attention（仅提示一次）: %s", exc)
             scores = torch.matmul(xq, xk.transpose(-2, -1)) * self.apical_scale
             scores = F.softmax(scores, dim=-1, dtype=torch.float32).type_as(xq)
             if self.training:
@@ -392,15 +484,16 @@ class TransformerBlock(nn.Module):
         return self.apical_wo(output)
 
     def forward(
-        self, x: torch.Tensor,
+        self,
+        x: torch.Tensor,
         mask: Optional[torch.Tensor] = None,
-        kv_cache: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
+        kv_cache: Optional[KVCache] = None,
         use_cache: bool = False,
         temp_gain: float = 1.0,
         ffn_gain: float = 1.0,
         field_state: Optional[torch.Tensor] = None,
         return_attn_weights: bool = False,
-    ) -> Tuple[torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]], Optional[torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, Optional[KVCache], Optional[torch.Tensor]]:
         """S9+S10: 神经调质门控 + 树突化扩展。
 
         - temp_gain/ffn_gain: S9 神经调质信号（norepinephrine/dopamine）
@@ -411,8 +504,12 @@ class TransformerBlock(nn.Module):
         """
         # ── Basal 路径: 标准 attention + FFN ──
         h, new_kv_cache, attn_weights = self.attention(
-            self.attention_norm(x), mask, kv_cache, use_cache,
-            temp_gain=temp_gain, return_attn_weights=return_attn_weights,
+            self.attention_norm(x),
+            mask,
+            kv_cache,
+            use_cache,
+            temp_gain=temp_gain,
+            return_attn_weights=return_attn_weights,
         )
         x = x + self.resid_dropout(h)
         x = x + self.resid_dropout(self.feed_forward(self.ffn_norm(x), gain=ffn_gain))
@@ -421,7 +518,9 @@ class TransformerBlock(nn.Module):
         if self.dendritic and field_state is not None:
             # Apical cross-attention（Q=x, KV=field_state）
             h_apical = self._apical_cross_attention(
-                self.apical_norm(x), field_state, temp_gain=temp_gain,
+                self.apical_norm(x),
+                field_state,
+                temp_gain=temp_gain,
             )
 
             # 预测编码整合（胞体整合）

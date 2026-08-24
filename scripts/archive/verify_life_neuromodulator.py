@@ -12,11 +12,12 @@
 Usage:
     python scripts/training/verify_life_neuromodulator.py
 """
+
 import sys
 import os
 from datetime import datetime
 
-os.environ.setdefault('TAIJI_TEST_MODE', '1')
+os.environ.setdefault("TAIJI_TEST_MODE", "1")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 
@@ -28,6 +29,7 @@ def main():
     # Step 1: 装配 Cortex
     print("\n[Step 1] 装配 Cortex...")
     from taiji.loader import assemble_cortex
+
     cortex, tokenizer, modules = assemble_cortex(
         neurons_dir="data/neurons",
         device="cpu",
@@ -41,6 +43,7 @@ def main():
     # Step 2: 创建 LifeScheduler 并注入调质
     print("\n[Step 2] 创建 LifeScheduler...")
     from taiji.life.life_scheduler import LifeScheduler, NeedsState
+
     life = LifeScheduler()
     life._neuromodulator = nm
     print(f"  ✅ LifeScheduler 创建，调质已注入")
@@ -157,17 +160,16 @@ def main():
         print(f"  ✅ 失败交互增加压力和疲劳")
 
     life.needs = NeedsState(stress=50, boredom=50, fatigue=20, curiosity=50, hunger=40)
-    life.record_interaction(success=True, topic="新话题", reasoning_steps=2, used_tools=True, had_search_results=True)
+    life.record_interaction(
+        success=True, topic="新话题", reasoning_steps=2, used_tools=True, had_search_results=True
+    )
     print(f"  成功交互后: {life.needs.to_dict()}")
     if life.needs.stress < 50 and life.needs.hunger < 40:
         print(f"  ✅ 成功交互降低压力和饥饿")
 
     # Step 9: 综合判断
     print("\n" + "=" * 60)
-    all_pass = (
-        da_after == 0.7 and  # Step 7
-        True  # 其他步骤已在线打印
-    )
+    all_pass = da_after == 0.7 and True  # Step 7  # 其他步骤已在线打印
     if all_pass:
         print("🎉 验证通过：life_scheduler 与调质系统联动成功")
         print(f"   - 正常需求：不覆盖 sleep_engine/metabolism 的调质目标值")

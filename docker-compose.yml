@@ -1,0 +1,38 @@
+# Seed — docker-compose 编排
+#
+# 用法：
+#   docker compose up --build          # 构建并启动
+#   docker compose up -d               # 后台运行
+#   docker compose logs -f seed        # 查看日志
+#
+# 模型检查点通过具名卷或绑定挂载提供（见 seed 服务 volumes）。
+
+services:
+  seed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: seed:latest
+    container_name: seed-api
+    ports:
+      - "8000:8000"
+    volumes:
+      # 模型检查点（必需，否则后端以无模型降级模式启动）
+      - ./checkpoints:/app/checkpoints
+      # 用户数据与运行时产物持久化
+      - seed_user_data:/app/user_data
+      - seed_rag_data:/app/rag_data
+    environment:
+      # 如需放开跨域来源，可覆盖默认 CORS 白名单
+      - SEED_LOG_LEVEL=INFO
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+
+volumes:
+  seed_user_data:
+  seed_rag_data:

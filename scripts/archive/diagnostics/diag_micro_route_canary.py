@@ -20,7 +20,9 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 
@@ -45,7 +47,6 @@ from scripts.archive.diagnostics.diag_micro_population_canary import (
     _surface_metrics,
 )
 from scripts.training.utils import load_domain_tokenizer, load_general_tokenizer
-
 
 DEFAULT_HF_RATIO = 0.10
 CALIBRATION_SAMPLES = 256
@@ -92,7 +93,7 @@ def _warm_route_prototype(micro, texts, domain_sp, general_sp, shared) -> dict:
     used = 0
     with torch.no_grad():
         for start in range(0, min(len(texts), CALIBRATION_SAMPLES), BATCH_SIZE):
-            batch = texts[start:start + BATCH_SIZE]
+            batch = texts[start : start + BATCH_SIZE]
             encoded = _encode_batch(batch, domain_sp, general_sp, shared)
             result = micro(encoded[0], return_logits=False)
             hidden = result.get("hidden_before_write")
@@ -114,7 +115,7 @@ def _align_route_adapter(micro, texts, domain_sp, general_sp, shared) -> dict:
     selected = texts[:CALIBRATION_SAMPLES]
     for _ in range(ALIGNMENT_EPOCHS):
         for start in range(0, len(selected), BATCH_SIZE):
-            batch = selected[start:start + BATCH_SIZE]
+            batch = selected[start : start + BATCH_SIZE]
             encoded = _encode_batch(batch, domain_sp, general_sp, shared)
             embeddings = encoded[0]
             with torch.no_grad():
@@ -142,7 +143,7 @@ def _generation_snapshot(cortex, active_sets, prompts):
         seed = SEED + index
         for mode, active_ids in active_sets.items():
             if isinstance(active_ids, str) and active_ids.startswith("auto_top"):
-                top_k = int(active_ids[len("auto_top"):])
+                top_k = int(active_ids[len("auto_top") :])
                 resolved_ids = cortex._auto_topk_route(
                     cortex._general_sp.encode(prompt), top_k=top_k
                 )
@@ -232,7 +233,7 @@ def run(
             micro, pools["current_train"], domain_sp, general_sp, shared
         ),
         "prototype_warmup": _warm_route_prototype(
-        micro, pools["current_train"], domain_sp, general_sp, shared
+            micro, pools["current_train"], domain_sp, general_sp, shared
         ),
     }
     report["generation"]["after_prototype_warmup"] = _generation_snapshot(

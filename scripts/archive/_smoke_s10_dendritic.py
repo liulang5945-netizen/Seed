@@ -9,6 +9,7 @@
 
 用 TINY_TEST neuron 避免加载真实模型，聚焦树突化逻辑正确性。
 """
+
 from __future__ import annotations
 
 import os
@@ -30,12 +31,18 @@ def test_block_backward_compat():
     print("\n[1] dendritic=False 向后兼容性")
     torch.manual_seed(42)
     block_std = TransformerBlock(
-        hidden_size=256, num_heads=4, num_kv_heads=2,
-        intermediate_size=512, dendritic=False,
+        hidden_size=256,
+        num_heads=4,
+        num_kv_heads=2,
+        intermediate_size=512,
+        dendritic=False,
     )
     block_dend = TransformerBlock(
-        hidden_size=256, num_heads=4, num_kv_heads=2,
-        intermediate_size=512, dendritic=False,  # False, 不创建 apical
+        hidden_size=256,
+        num_heads=4,
+        num_kv_heads=2,
+        intermediate_size=512,
+        dendritic=False,  # False, 不创建 apical
     )
     # 复制权重确保相同
     block_dend.load_state_dict(block_std.state_dict())
@@ -56,8 +63,12 @@ def test_dendritic_changes_output():
     print("\n[2] dendritic=True apical 路径生效")
     torch.manual_seed(42)
     block = TransformerBlock(
-        hidden_size=256, num_heads=4, num_kv_heads=2,
-        intermediate_size=512, dendritic=True, apical_kv_dim=512,
+        hidden_size=256,
+        num_heads=4,
+        num_kv_heads=2,
+        intermediate_size=512,
+        dendritic=True,
+        apical_kv_dim=512,
     )
     block.eval()
     x = torch.randn(2, 16, 256)
@@ -80,12 +91,19 @@ def test_dendritic_field_none_safe():
     torch.manual_seed(42)
     # 创建标准块和树突化块，复制 basal 权重
     block_std = TransformerBlock(
-        hidden_size=256, num_heads=4, num_kv_heads=2,
-        intermediate_size=512, dendritic=False,
+        hidden_size=256,
+        num_heads=4,
+        num_kv_heads=2,
+        intermediate_size=512,
+        dendritic=False,
     )
     block_dend = TransformerBlock(
-        hidden_size=256, num_heads=4, num_kv_heads=2,
-        intermediate_size=512, dendritic=True, apical_kv_dim=512,
+        hidden_size=256,
+        num_heads=4,
+        num_kv_heads=2,
+        intermediate_size=512,
+        dendritic=True,
+        apical_kv_dim=512,
     )
     # 只复制 basal 路径权重（apical 保持初始化）
     std_sd = block_std.state_dict()
@@ -148,17 +166,24 @@ def test_neuron_dendritic():
         result_dend_no_field = neuron_dend.forward(shared_emb, return_logits=True)
         # 树突化神经元，有 field_state（round 2+，apical 激活）
         result_dend_with_field = neuron_dend.forward(
-            shared_emb, field_state=field_state, round_num=2, return_logits=True,
+            shared_emb,
+            field_state=field_state,
+            round_num=2,
+            return_logits=True,
         )
 
     # field_state=None 时两者应接近（basal 权重相同）
     diff_no_field = (result_std["logits"] - result_dend_no_field["logits"]).abs().max().item()
     # 有 field_state 时输出应改变
-    diff_with_field = (result_dend_no_field["logits"] - result_dend_with_field["logits"]).abs().max().item()
+    diff_with_field = (
+        (result_dend_no_field["logits"] - result_dend_with_field["logits"]).abs().max().item()
+    )
 
     print(f"  field_state=None: std vs dend diff={diff_no_field:.2e}")
     print(f"  field_state=非None: dend 改变 diff={diff_with_field:.4e}")
-    assert diff_with_field > 1e-4, f"树突化 neuron 接收 field_state 时输出应改变, diff={diff_with_field}"
+    assert (
+        diff_with_field > 1e-4
+    ), f"树突化 neuron 接收 field_state 时输出应改变, diff={diff_with_field}"
     print(f"  PASS: neuron 级别树突化生效")
 
 
@@ -197,7 +222,9 @@ def test_checkpoint_compat():
     apical_diff = (apical_wq_before - apical_wq_after).abs().max().item()
     assert apical_diff < 1e-8, f"apical 参数应保持初始化值, diff={apical_diff}"
 
-    print(f"  PASS: 标准 ckpt 加载到 dendritic neuron (missing={len(missing)}, unexpected={len(unexpected)})")
+    print(
+        f"  PASS: 标准 ckpt 加载到 dendritic neuron (missing={len(missing)}, unexpected={len(unexpected)})"
+    )
     print(f"  apical 参数保持初始化值 (diff={apical_diff:.2e})")
 
 

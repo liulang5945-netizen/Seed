@@ -1,4 +1,5 @@
 """探针：小模型学习后的 surprise 基线。"""
+
 import sys
 
 sys.path.insert(0, r"e:\Seed")
@@ -22,10 +23,9 @@ config = SeedConfig(
         seed=43,
     )
 )
-data = (
-    "问：你好。\n答：你好，很高兴见到你。"
-    "水的沸点在标准大气压下是一百摄氏度。"
-).encode("utf-8")
+data = ("问：你好。\n答：你好，很高兴见到你。" "水的沸点在标准大气压下是一百摄氏度。").encode(
+    "utf-8"
+)
 
 for epochs in (6, 12, 30, 60):
     model = Seed(config)

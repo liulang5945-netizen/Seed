@@ -150,10 +150,7 @@ class OpponentBank:
         if weight_decay:
             self.weights.mul_(1.0 - float(weight_decay))
         self.weights.add_(
-            float(learning_rate)
-            * error.unsqueeze(1)
-            * plastic_context.unsqueeze(0)
-            / scale
+            float(learning_rate) * error.unsqueeze(1) * plastic_context.unsqueeze(0) / scale
         )
         norms = self.weights.norm(dim=1, keepdim=True).clamp_min(1e-12)
         self.weights.mul_(torch.clamp(self.max_weight_norm / norms, max=1.0))
@@ -181,12 +178,14 @@ def _metrics(
         margin = float((values[target] - rivals.max()).item())
         correct += int(prediction == target)
         margins.append(margin)
-        rows.append({
-            "action": chr(action),
-            "expected_outcome": chr(int(pairs[action])),
-            "predicted_outcome": chr(OUTCOMES[prediction]),
-            "margin": margin,
-        })
+        rows.append(
+            {
+                "action": chr(action),
+                "expected_outcome": chr(int(pairs[action])),
+                "predicted_outcome": chr(OUTCOMES[prediction]),
+                "margin": margin,
+            }
+        )
     return {
         "accuracy": correct / len(actions),
         "positive_margins": sum(value > 0.0 for value in margins),
@@ -223,30 +222,26 @@ def _alignment_geometry(
         grouped[int(action)].append(bank.encode(trace, baseline))
 
     actions = sorted(probes_by_action)
-    probe_contexts = {
-        action: bank.encode(probes_by_action[action], baseline) for action in actions
-    }
+    probe_contexts = {action: bank.encode(probes_by_action[action], baseline) for action in actions}
     centroids = {
-        action: torch.stack(grouped[action]).mean(dim=0)
-        for action in actions
-        if grouped[action]
+        action: torch.stack(grouped[action]).mean(dim=0) for action in actions if grouped[action]
     }
     cosine_rows = []
     for probe_action in actions:
-        cosine_rows.append({
-            "probe_action": chr(probe_action),
-            "against_write_centroids": {
-                chr(write_action): _cosine(
-                    probe_contexts[probe_action], centroids[write_action]
-                )
-                for write_action in actions
-                if write_action in centroids
-            },
-        })
+        cosine_rows.append(
+            {
+                "probe_action": chr(probe_action),
+                "against_write_centroids": {
+                    chr(write_action): _cosine(
+                        probe_contexts[probe_action], centroids[write_action]
+                    )
+                    for write_action in actions
+                    if write_action in centroids
+                },
+            }
+        )
     return {
-        "write_counts_by_action": {
-            chr(action): len(grouped[action]) for action in actions
-        },
+        "write_counts_by_action": {chr(action): len(grouped[action]) for action in actions},
         "probe_to_write_centroid_cosines": cosine_rows,
     }
 
@@ -275,9 +270,7 @@ def _mirror_real_replay_writes(
         "accepted_pairs": Counter(),
         "records": [],
         "sleep_threshold_offset": torch.zeros(model.config.memory_units),
-        "mode_resources": {
-            key: torch.ones(model.config.alphabet_size) for key in mode_banks
-        },
+        "mode_resources": {key: torch.ones(model.config.alphabet_size) for key in mode_banks},
         "mode_gains": {},
     }
 
@@ -378,13 +371,15 @@ def _mirror_real_replay_writes(
                     learning_rate=mode_rate,
                     weight_decay=weight_decay,
                 )
-            state["records"].append((
-                action,
-                outcome,
-                presynaptic_trace.detach().cpu().clone(),
-                float(learning_rate),
-                float(weight_decay),
-            ))
+            state["records"].append(
+                (
+                    action,
+                    outcome,
+                    presynaptic_trace.detach().cpu().clone(),
+                    float(learning_rate),
+                    float(weight_decay),
+                )
+            )
             state["writes"] += 1
         return original_update(
             self,
@@ -443,9 +438,7 @@ def run_seed(
         for width in widths
         for power in resource_powers
     }
-    resource_lesions = {
-        key: deepcopy(bank) for key, bank in resource_banks.items()
-    }
+    resource_lesions = {key: deepcopy(bank) for key, bank in resource_banks.items()}
     mode_banks = {
         (width, retention): OpponentBank.create(
             model.config.region_sizes[0],
@@ -460,13 +453,9 @@ def run_seed(
 
     sleep_checkpoint = deepcopy(stored)
     if sleep_trace_decay is not None:
-        sleep_checkpoint["config"]["memory_trace_decay"] = float(
-            sleep_trace_decay
-        )
+        sleep_checkpoint["config"]["memory_trace_decay"] = float(sleep_trace_decay)
     if sleep_fatigue_gain is not None:
-        sleep_checkpoint["config"]["replay_fatigue_gain"] = float(
-            sleep_fatigue_gain
-        )
+        sleep_checkpoint["config"]["replay_fatigue_gain"] = float(sleep_fatigue_gain)
     sleeper = Taiji.from_checkpoint(sleep_checkpoint)
     sleeper.reset_dynamics(episode_id="opponent-sleep")
     with _mirror_real_replay_writes(
@@ -493,9 +482,7 @@ def run_seed(
     # action.  ``balanced_probe_aligned`` additionally gives every action the
     # same number of writes, using the minimum naturally available count.
     probe_aligned = {width: _blank_copy(bank) for width, bank in banks.items()}
-    balanced_probe_aligned = {
-        width: _blank_copy(bank) for width, bank in banks.items()
-    }
+    balanced_probe_aligned = {width: _blank_copy(bank) for width, bank in banks.items()}
     for action, outcome, _trace, rate, decay in records:
         for bank in probe_aligned.values():
             bank.learn(
@@ -506,19 +493,15 @@ def run_seed(
                 weight_decay=decay,
             )
 
-    records_by_action: DefaultDict[
-        int, List[Tuple[int, int, torch.Tensor, float, float]]
-    ] = defaultdict(list)
+    records_by_action: DefaultDict[int, List[Tuple[int, int, torch.Tensor, float, float]]] = (
+        defaultdict(list)
+    )
     for record in records:
         records_by_action[int(record[0])].append(record)
-    balanced_writes = min(
-        (len(records_by_action[action]) for action in actions), default=0
-    )
+    balanced_writes = min((len(records_by_action[action]) for action in actions), default=0)
     for index in range(balanced_writes):
         for action in actions:
-            _record_action, outcome, _trace, rate, decay = records_by_action[action][
-                index
-            ]
+            _record_action, outcome, _trace, rate, decay = records_by_action[action][index]
             for bank in balanced_probe_aligned.values():
                 bank.learn(
                     probes_by_action[action],
@@ -533,36 +516,22 @@ def run_seed(
     for width in widths:
         metrics = _metrics(banks[width], probes, baseline, pairs)
         lesion_metrics = _metrics(lesions[width], probes, baseline, pairs)
-        probe_aligned_metrics = _metrics(
-            probe_aligned[width], probes, baseline, pairs
-        )
-        balanced_metrics = _metrics(
-            balanced_probe_aligned[width], probes, baseline, pairs
-        )
+        probe_aligned_metrics = _metrics(probe_aligned[width], probes, baseline, pairs)
+        balanced_metrics = _metrics(balanced_probe_aligned[width], probes, baseline, pairs)
         variants[str(width)] = {
             **metrics,
-            "probe_aligned_positive_margins": probe_aligned_metrics[
-                "positive_margins"
-            ],
+            "probe_aligned_positive_margins": probe_aligned_metrics["positive_margins"],
             "probe_aligned_rows": probe_aligned_metrics["rows"],
-            "balanced_probe_aligned_positive_margins": balanced_metrics[
-                "positive_margins"
-            ],
+            "balanced_probe_aligned_positive_margins": balanced_metrics["positive_margins"],
             "balanced_probe_aligned_rows": balanced_metrics["rows"],
             "rotated_content_lesion_accuracy": lesion_metrics["accuracy"],
-            "rotated_content_lesion_positive_margins": lesion_metrics[
-                "positive_margins"
-            ],
+            "rotated_content_lesion_positive_margins": lesion_metrics["positive_margins"],
             "receptor_edges": banks[width].receptor_edges,
             "decoder_edges_for_four_outcomes": banks[width].decoder_edges,
-            "alignment": _alignment_geometry(
-                banks[width], records, probes_by_action, baseline
-            ),
+            "alignment": _alignment_geometry(banks[width], records, probes_by_action, baseline),
             "local_resource": {
                 str(power): {
-                    **_metrics(
-                        resource_banks[(width, power)], probes, baseline, pairs
-                    ),
+                    **_metrics(resource_banks[(width, power)], probes, baseline, pairs),
                     "rotated_content_lesion_positive_margins": _metrics(
                         resource_lesions[(width, power)],
                         probes,
@@ -574,9 +543,7 @@ def run_seed(
             },
             "winner_resource": {
                 str(retention): {
-                    **_metrics(
-                        mode_banks[(width, retention)], probes, baseline, pairs
-                    ),
+                    **_metrics(mode_banks[(width, retention)], probes, baseline, pairs),
                     "rotated_content_lesion_positive_margins": _metrics(
                         mode_lesions[(width, retention)],
                         probes,
@@ -600,14 +567,10 @@ def run_seed(
         "sleep_trace_decay": sleeper.config.memory_trace_decay,
         "sleep_fatigue_gain": sleeper.config.replay_fatigue_gain,
         "sleep_homeostasis_rate": float(sleep_homeostasis_rate),
-        "sleep_threshold_offset_norm": float(
-            captured["sleep_threshold_offset"].norm().item()
-        ),
+        "sleep_threshold_offset_norm": float(captured["sleep_threshold_offset"].norm().item()),
         "baseline_norm": float(baseline.norm().item()),
         "actual_taiji_accuracy": actual["contingency_accuracy"],
-        "actual_taiji_positive_margins": sum(
-            float(row["margin"]) > 0.0 for row in actual["rows"]
-        ),
+        "actual_taiji_positive_margins": sum(float(row["margin"]) > 0.0 for row in actual["rows"]),
         "variants": variants,
     }
 
@@ -651,9 +614,7 @@ def run_panel(
     summary = {}
     for width in widths:
         key = str(width)
-        passing = sum(
-            int(row["variants"][key]["positive_margins"] == 4) for row in rows
-        )
+        passing = sum(int(row["variants"][key]["positive_margins"] == 4) for row in rows)
         lesion_passing = sum(
             int(row["variants"][key]["rotated_content_lesion_positive_margins"] == 4)
             for row in rows
@@ -664,25 +625,17 @@ def run_panel(
             "all_seeds_pass": passing == len(rows),
             "rotated_content_lesion_passing_seeds": lesion_passing,
             "probe_aligned_passing_seeds": sum(
-                int(row["variants"][key]["probe_aligned_positive_margins"] == 4)
-                for row in rows
+                int(row["variants"][key]["probe_aligned_positive_margins"] == 4) for row in rows
             ),
             "balanced_probe_aligned_passing_seeds": sum(
-                int(
-                    row["variants"][key][
-                        "balanced_probe_aligned_positive_margins"
-                    ]
-                    == 4
-                )
+                int(row["variants"][key]["balanced_probe_aligned_positive_margins"] == 4)
                 for row in rows
             ),
             "local_resource": {
                 str(power): {
                     "passing_seeds": sum(
                         int(
-                            row["variants"][key]["local_resource"][str(power)][
-                                "positive_margins"
-                            ]
+                            row["variants"][key]["local_resource"][str(power)]["positive_margins"]
                             == 4
                         )
                         for row in rows
@@ -703,47 +656,39 @@ def run_panel(
                 str(retention): {
                     "passing_seeds": (
                         winner_passing := sum(
-                        int(
-                            row["variants"][key]["winner_resource"][
-                                str(retention)
-                            ]["positive_margins"]
-                            == 4
+                            int(
+                                row["variants"][key]["winner_resource"][str(retention)][
+                                    "positive_margins"
+                                ]
+                                == 4
+                            )
+                            for row in rows
                         )
-                        for row in rows
-                    )),
+                    ),
                     "rotated_content_lesion_passing_seeds": (
                         winner_lesion_passing := sum(
-                        int(
-                            row["variants"][key]["winner_resource"][
-                                str(retention)
-                            ]["rotated_content_lesion_positive_margins"]
-                            == 4
+                            int(
+                                row["variants"][key]["winner_resource"][str(retention)][
+                                    "rotated_content_lesion_positive_margins"
+                                ]
+                                == 4
+                            )
+                            for row in rows
                         )
-                        for row in rows
-                    )),
-                    "all_seeds_pass": (
-                        winner_passing == len(rows) and winner_lesion_passing == 0
                     ),
+                    "all_seeds_pass": (winner_passing == len(rows) and winner_lesion_passing == 0),
                     "minimum_margin": min(
                         float(pair["margin"])
                         for row in rows
-                        for pair in row["variants"][key]["winner_resource"][
-                            str(retention)
-                        ]["rows"]
+                        for pair in row["variants"][key]["winner_resource"][str(retention)]["rows"]
                     ),
                     "mean_margin": sum(
                         float(pair["margin"])
                         for row in rows
-                        for pair in row["variants"][key]["winner_resource"][
-                            str(retention)
-                        ]["rows"]
+                        for pair in row["variants"][key]["winner_resource"][str(retention)]["rows"]
                     )
                     / sum(
-                        len(
-                            row["variants"][key]["winner_resource"][
-                                str(retention)
-                            ]["rows"]
-                        )
+                        len(row["variants"][key]["winner_resource"][str(retention)]["rows"])
                         for row in rows
                     ),
                 }
@@ -758,9 +703,7 @@ def run_panel(
         }
         for width in widths
         for retention in mode_resource_retentions
-        if summary[str(width)]["winner_resource"][str(retention)][
-            "all_seeds_pass"
-        ]
+        if summary[str(width)]["winner_resource"][str(retention)]["all_seeds_pass"]
     ]
     selected = max(candidates, key=lambda row: row["minimum_margin"]) if candidates else None
     return {
@@ -798,9 +741,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--cycles", type=int, default=96)
     parser.add_argument("--widths", type=int, nargs="+", default=[64])
-    parser.add_argument(
-        "--resource-powers", type=float, nargs="+", default=[0.0]
-    )
+    parser.add_argument("--resource-powers", type=float, nargs="+", default=[0.0])
     parser.add_argument("--sleep-trace-decay", type=float)
     parser.add_argument("--sleep-fatigue-gain", type=float)
     parser.add_argument("--sleep-homeostasis-rate", type=float, default=0.0)
@@ -821,9 +762,7 @@ def main() -> int:
         tuple(args.seeds),
         cycles=int(args.cycles),
         widths=tuple(dict.fromkeys(int(width) for width in args.widths)),
-        resource_powers=tuple(
-            dict.fromkeys(float(power) for power in args.resource_powers)
-        ),
+        resource_powers=tuple(dict.fromkeys(float(power) for power in args.resource_powers)),
         sleep_trace_decay=args.sleep_trace_decay,
         sleep_fatigue_gain=args.sleep_fatigue_gain,
         sleep_homeostasis_rate=float(args.sleep_homeostasis_rate),

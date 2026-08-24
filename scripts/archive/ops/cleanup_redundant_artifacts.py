@@ -22,7 +22,6 @@ import shutil
 from datetime import datetime, timezone
 from pathlib import Path
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 DATA_ROOT = PROJECT_ROOT / "data"
 REPORT_PATH = PROJECT_ROOT / "reports" / "storage_cleanup_20260819.json"
@@ -79,9 +78,7 @@ def collect_targets() -> list[Path]:
     targets.extend(path for path in REMOVE_DIRECTORIES if path.exists())
     simple_zh = DATA_ROOT / "simple_zh"
     targets.extend(
-        simple_zh / name
-        for name in sorted(REMOVE_SIMPLE_ZH_FILES)
-        if (simple_zh / name).exists()
+        simple_zh / name for name in sorted(REMOVE_SIMPLE_ZH_FILES) if (simple_zh / name).exists()
     )
     for path in targets:
         _assert_in_data_root(path)
@@ -91,13 +88,19 @@ def collect_targets() -> list[Path]:
 def describe(targets: list[Path]) -> list[dict[str, object]]:
     rows = []
     for path in targets:
-        size = sum(item.stat().st_size for item in path.rglob("*") if item.is_file()) if path.is_dir() else path.stat().st_size
-        rows.append({
-            "path": str(path.relative_to(PROJECT_ROOT)),
-            "kind": "directory" if path.is_dir() else "file",
-            "size_bytes": size,
-            "size_gb": round(size / (1024 ** 3), 3),
-        })
+        size = (
+            sum(item.stat().st_size for item in path.rglob("*") if item.is_file())
+            if path.is_dir()
+            else path.stat().st_size
+        )
+        rows.append(
+            {
+                "path": str(path.relative_to(PROJECT_ROOT)),
+                "kind": "directory" if path.is_dir() else "file",
+                "size_bytes": size,
+                "size_gb": round(size / (1024**3), 3),
+            }
+        )
     return rows
 
 
@@ -115,10 +118,12 @@ def main() -> None:
         "targets": rows,
         "target_count": len(rows),
         "target_size_bytes": sum(int(row["size_bytes"]) for row in rows),
-        "target_size_gb": round(sum(int(row["size_bytes"]) for row in rows) / (1024 ** 3), 3),
+        "target_size_gb": round(sum(int(row["size_bytes"]) for row in rows) / (1024**3), 3),
     }
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    REPORT_PATH.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    REPORT_PATH.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(payload, ensure_ascii=False, indent=2))
 
     if args.apply:

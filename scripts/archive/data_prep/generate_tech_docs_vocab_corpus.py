@@ -9,6 +9,9 @@ import json
 import re
 from pathlib import Path
 from typing import Any, Iterable, Iterator
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 TEXT_KEYS = (
@@ -81,9 +84,13 @@ CURATED_TECH_SEEDS = [
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Generate technical-docs supplement corpus for tokenizer balancing")
+    parser = argparse.ArgumentParser(
+        description="Generate technical-docs supplement corpus for tokenizer balancing"
+    )
     parser.add_argument("--project-dir", default=".")
-    parser.add_argument("--input-dir", action="append", default=None, help="Directory to scan; can be repeated.")
+    parser.add_argument(
+        "--input-dir", action="append", default=None, help="Directory to scan; can be repeated."
+    )
     parser.add_argument(
         "--output",
         default="taiji_data/tokenizer/local_vocab_sources/tech/tech_docs_vocab.jsonl",
@@ -195,8 +202,8 @@ def iter_source_texts(path: Path, max_chars: int) -> Iterator[str]:
         if stripped.startswith("{") or stripped.startswith("["):
             try:
                 obj = json.loads(stripped)
-            except json.JSONDecodeError:
-                pass
+            except json.JSONDecodeError as e:
+                logger.debug("【iter_source_texts】处理失败（非致命）: %s", e)
             else:
                 for item in iter_text_from_json(obj):
                     yield from chunk_text(item, max_chars)
@@ -214,7 +221,11 @@ def collect_input_files(paths: list[Path]) -> list[Path]:
                 files.append(root)
             continue
         for path in root.rglob("*"):
-            if path.is_file() and path.suffix.lower() in TEXT_SUFFIXES and not should_skip_path(path):
+            if (
+                path.is_file()
+                and path.suffix.lower() in TEXT_SUFFIXES
+                and not should_skip_path(path)
+            ):
                 files.append(path)
     return sorted(files)
 
@@ -254,7 +265,13 @@ def write_records(
             if digest in seen:
                 continue
             seen.add(digest)
-            handle.write(json.dumps({"text": seed, "source": "tech_docs_vocab", "path": "curated_seed"}, ensure_ascii=False) + "\n")
+            handle.write(
+                json.dumps(
+                    {"text": seed, "source": "tech_docs_vocab", "path": "curated_seed"},
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
             records += 1
             chars += len(seed)
 

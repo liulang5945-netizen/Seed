@@ -5,6 +5,7 @@
 2. 动态更新后输出与静态复用不同
 3. forward_train 已正确每轮更新（回归测试）
 """
+
 from __future__ import annotations
 
 import os

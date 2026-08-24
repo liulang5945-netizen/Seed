@@ -12,6 +12,7 @@
     # 评估 PSNR（不训练）
     python scripts/training/train_encodec.py --eval-only --resume data/encodec/encodec_latest.pt
 """
+
 from __future__ import annotations
 
 import argparse
@@ -24,21 +25,23 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 from neuroplex.multimodal.encodec import EnCodec
 from neuroplex.multimodal.io import save_audio
 
 # ── 默认超参数 ──
 BATCH_SIZE = 8
-AUDIO_LEN = 16000          # 1 秒 @ 16kHz
+AUDIO_LEN = 16000  # 1 秒 @ 16kHz
 LR = 3e-4
 WEIGHT_DECAY = 0.01
 MAX_GRAD_NORM = 1.0
 DEFAULT_STEPS = 2000
 LOG_INTERVAL = 50
 SAVE_INTERVAL = 500
-NUM_EMBEDDINGS = 4096      # 与 tokenizer_contract.json 对齐
+NUM_EMBEDDINGS = 4096  # 与 tokenizer_contract.json 对齐
 LATENT_DIM = 128
 HIDDEN_DIM = 64
 COMMITMENT_COST = 0.25
@@ -71,9 +74,11 @@ def synthesize_batch(batch_size: int, audio_len: int, device: torch.device) -> t
         elif sig_type == 1:
             # 多频叠加（3 个谐波）
             f0 = torch.rand(1).item() * 300 + 100
-            sig = (torch.sin(2 * math.pi * f0 * t) +
-                   0.5 * torch.sin(2 * math.pi * 2 * f0 * t) +
-                   0.3 * torch.sin(2 * math.pi * 3 * f0 * t))
+            sig = (
+                torch.sin(2 * math.pi * f0 * t)
+                + 0.5 * torch.sin(2 * math.pi * 2 * f0 * t)
+                + 0.3 * torch.sin(2 * math.pi * 3 * f0 * t)
+            )
             sig = sig / 1.8
         elif sig_type == 2:
             # 扫频信号（线性 chirp）
@@ -87,8 +92,11 @@ def synthesize_batch(batch_size: int, audio_len: int, device: torch.device) -> t
             # 调幅信号
             carrier = torch.rand(1).item() * 500 + 300
             modulator = torch.rand(1).item() * 10 + 2
-            sig = (1 + 0.5 * torch.sin(2 * math.pi * modulator * t)) * \
-                  torch.sin(2 * math.pi * carrier * t) * 0.5
+            sig = (
+                (1 + 0.5 * torch.sin(2 * math.pi * modulator * t))
+                * torch.sin(2 * math.pi * carrier * t)
+                * 0.5
+            )
         else:
             # ADSR 包络音符（多音符序列）
             sig = torch.zeros(audio_len, device=device)
@@ -105,7 +113,7 @@ def synthesize_batch(batch_size: int, audio_len: int, device: torch.device) -> t
                 d = note_len // 5
                 r = note_len // 2
                 env[:a] = torch.linspace(0, 1, a)
-                env[a:a+d] = torch.linspace(1, 0.7, d)
+                env[a : a + d] = torch.linspace(1, 0.7, d)
                 env[-r:] = torch.linspace(0.7, 0, r)
                 sig[start:end] = env * torch.sin(2 * math.pi * freq * note_t)
 
@@ -117,8 +125,9 @@ def synthesize_batch(batch_size: int, audio_len: int, device: torch.device) -> t
     return torch.stack(batch)  # [B, L]
 
 
-def compute_psnr(model: EnCodec, device: torch.device, n_samples: int = 100,
-                 audio_len: int = AUDIO_LEN) -> float:
+def compute_psnr(
+    model: EnCodec, device: torch.device, n_samples: int = 100, audio_len: int = AUDIO_LEN
+) -> float:
     """评估模型重建质量（PSNR dB）。
 
     PSNR > 20dB = 可听清
@@ -244,10 +253,12 @@ def train(
                 psnr_str = f" | PSNR={psnr:.1f}dB"
                 model.train()
 
-            print(f"  step {step + 1}/{steps} | "
-                  f"recon={avg_recon:.4f} vq={avg_vq:.4f} | "
-                  f"codebook: {unique_codes}/{NUM_EMBEDDINGS} ({utilization:.1f}%){psnr_str} | "
-                  f"{steps_per_sec:.1f} steps/s")
+            print(
+                f"  step {step + 1}/{steps} | "
+                f"recon={avg_recon:.4f} vq={avg_vq:.4f} | "
+                f"codebook: {unique_codes}/{NUM_EMBEDDINGS} ({utilization:.1f}%){psnr_str} | "
+                f"{steps_per_sec:.1f} steps/s"
+            )
 
             total_recon_loss = 0.0
             total_vq_loss = 0.0
@@ -261,19 +272,22 @@ def train(
             if eval_psnr:
                 final_psnr = compute_psnr(model, device, n_samples=100, audio_len=audio_len)
                 model.train()
-            torch.save({
-                "step": step + 1,
-                "model_state_dict": model.state_dict(),
-                "config": {
-                    "audio_len": audio_len,
-                    "num_embeddings": NUM_EMBEDDINGS,
-                    "latent_dim": LATENT_DIM,
-                    "hidden_dim": HIDDEN_DIM,
-                    "commitment_cost": COMMITMENT_COST,
-                    "sample_rate": SAMPLE_RATE,
+            torch.save(
+                {
+                    "step": step + 1,
+                    "model_state_dict": model.state_dict(),
+                    "config": {
+                        "audio_len": audio_len,
+                        "num_embeddings": NUM_EMBEDDINGS,
+                        "latent_dim": LATENT_DIM,
+                        "hidden_dim": HIDDEN_DIM,
+                        "commitment_cost": COMMITMENT_COST,
+                        "sample_rate": SAMPLE_RATE,
+                    },
+                    "psnr": final_psnr,
                 },
-                "psnr": final_psnr,
-            }, ckpt_path)
+                ckpt_path,
+            )
             print(f"  💾 checkpoint saved: {ckpt_path} (PSNR={final_psnr:.1f}dB)")
 
     print(f"\n训练完成！checkpoint: {os.path.join(output_dir, 'encodec_latest.pt')}")
@@ -281,28 +295,29 @@ def train(
 
 def main():
     parser = argparse.ArgumentParser(description="训练 EnCodec 音频编解码器")
-    parser.add_argument("--steps", type=int, default=DEFAULT_STEPS,
-                        help=f"训练步数（默认 {DEFAULT_STEPS}）")
-    parser.add_argument("--batch-size", type=int, default=BATCH_SIZE,
-                        help=f"batch size（默认 {BATCH_SIZE}）")
-    parser.add_argument("--audio-len", type=int, default=AUDIO_LEN,
-                        help=f"音频长度（采样点数，默认 {AUDIO_LEN}）")
-    parser.add_argument("--lr", type=float, default=LR,
-                        help=f"学习率（默认 {LR}）")
-    parser.add_argument("--output-dir", type=str, default=OUTPUT_DIR,
-                        help=f"输出目录（默认 {OUTPUT_DIR}）")
-    parser.add_argument("--resume", type=str, default=None,
-                        help="从 checkpoint 恢复训练")
-    parser.add_argument("--device", type=str, default="auto",
-                        help="计算设备（auto/cpu/cuda）")
-    parser.add_argument("--log-interval", type=int, default=LOG_INTERVAL,
-                        help=f"日志间隔（默认 {LOG_INTERVAL}）")
-    parser.add_argument("--save-interval", type=int, default=SAVE_INTERVAL,
-                        help=f"保存间隔（默认 {SAVE_INTERVAL}）")
-    parser.add_argument("--eval-only", action="store_true",
-                        help="仅评估 PSNR（不训练）")
-    parser.add_argument("--no-psnr", action="store_true",
-                        help="禁用训练中 PSNR 评估（加速）")
+    parser.add_argument(
+        "--steps", type=int, default=DEFAULT_STEPS, help=f"训练步数（默认 {DEFAULT_STEPS}）"
+    )
+    parser.add_argument(
+        "--batch-size", type=int, default=BATCH_SIZE, help=f"batch size（默认 {BATCH_SIZE}）"
+    )
+    parser.add_argument(
+        "--audio-len", type=int, default=AUDIO_LEN, help=f"音频长度（采样点数，默认 {AUDIO_LEN}）"
+    )
+    parser.add_argument("--lr", type=float, default=LR, help=f"学习率（默认 {LR}）")
+    parser.add_argument(
+        "--output-dir", type=str, default=OUTPUT_DIR, help=f"输出目录（默认 {OUTPUT_DIR}）"
+    )
+    parser.add_argument("--resume", type=str, default=None, help="从 checkpoint 恢复训练")
+    parser.add_argument("--device", type=str, default="auto", help="计算设备（auto/cpu/cuda）")
+    parser.add_argument(
+        "--log-interval", type=int, default=LOG_INTERVAL, help=f"日志间隔（默认 {LOG_INTERVAL}）"
+    )
+    parser.add_argument(
+        "--save-interval", type=int, default=SAVE_INTERVAL, help=f"保存间隔（默认 {SAVE_INTERVAL}）"
+    )
+    parser.add_argument("--eval-only", action="store_true", help="仅评估 PSNR（不训练）")
+    parser.add_argument("--no-psnr", action="store_true", help="禁用训练中 PSNR 评估（加速）")
 
     args = parser.parse_args()
 
@@ -329,7 +344,9 @@ def main():
         model.to(device)
         psnr = compute_psnr(model, device, n_samples=200, audio_len=args.audio_len)
         print(f"PSNR: {psnr:.2f} dB (checkpoint: {args.resume}, step={ckpt.get('step', '?')})")
-        print(f"  {'✅ 可听清 (>20dB)' if psnr > 20 else '⚠ 失真严重 (<15dB)' if psnr < 15 else '🔧 待提升 (15-20dB)'}")
+        print(
+            f"  {'✅ 可听清 (>20dB)' if psnr > 20 else '⚠ 失真严重 (<15dB)' if psnr < 15 else '🔧 待提升 (15-20dB)'}"
+        )
         return
 
     train(

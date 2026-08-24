@@ -18,13 +18,13 @@
   发现新领域 → 深入搜索
   知识积累 → 睡眠整合
 """
+
 import os
 import json
 import time
 import logging
 import hashlib
-import threading
-from typing import Dict, List, Optional, Any
+from typing import List, Optional
 from dataclasses import dataclass, field
 from datetime import datetime
 
@@ -34,6 +34,7 @@ logger = logging.getLogger("ExploreEngine")
 @dataclass
 class ExploreResult:
     """一次探索的结果"""
+
     topic: str
     sources_found: int = 0
     pages_read: int = 0
@@ -50,12 +51,13 @@ class ExploreResult:
 @dataclass
 class ExploreConfig:
     """探索配置"""
+
     auto_explore_enabled: bool = True
-    curiosity_threshold: float = 70.0      # 好奇心超过此值时触发探索
-    max_pages_per_explore: int = 5         # 每次探索最多读几个网页
-    max_search_results: int = 3            # 每次搜索最多几个结果
-    explore_cooldown_minutes: int = 30     # 探索冷却时间
-    knowledge_dir: str = ""                # 知识存储目录
+    curiosity_threshold: float = 70.0  # 好奇心超过此值时触发探索
+    max_pages_per_explore: int = 5  # 每次探索最多读几个网页
+    max_search_results: int = 3  # 每次搜索最多几个结果
+    explore_cooldown_minutes: int = 30  # 探索冷却时间
+    knowledge_dir: str = ""  # 知识存储目录
 
 
 class ExploreEngine:
@@ -70,6 +72,7 @@ class ExploreEngine:
         if data_dir is None:
             try:
                 from neuroplex.config import get_taiji_data_path
+
                 data_dir = get_taiji_data_path("explore_data")
             except ImportError:
                 data_dir = "taiji/explore_data"
@@ -119,7 +122,7 @@ class ExploreEngine:
             result.sources_found = len(search_results)
 
             # 2. 阅读网页
-            for url in search_results[:self.config.max_pages_per_explore]:
+            for url in search_results[: self.config.max_pages_per_explore]:
                 content = self._read_page(url)
                 if content:
                     result.pages_read += 1
@@ -159,6 +162,7 @@ class ExploreEngine:
         """判断是否应该探索（好奇心驱动）"""
         try:
             from neuroplex.life.life_scheduler import get_life_scheduler
+
             life = get_life_scheduler()
             curiosity = life.needs.curiosity
 
@@ -181,7 +185,9 @@ class ExploreEngine:
             "is_exploring": self._is_exploring,
             "total_explores": len(self._explore_history),
             "known_topics": len(self._known_topics),
-            "last_explore": self._last_explore_time.isoformat() if self._last_explore_time else None,
+            "last_explore": (
+                self._last_explore_time.isoformat() if self._last_explore_time else None
+            ),
             "auto_explore_enabled": self.config.auto_explore_enabled,
         }
 
@@ -192,13 +198,12 @@ class ExploreEngine:
         # 从进化引擎获取知识域
         try:
             from neuroplex.life.evolution_engine import get_evolution_engine
+
             evo = get_evolution_engine()
-            weak_domains = [
-                d for d, score in evo.metrics.knowledge_domains.items()
-                if score < 3.0
-            ]
+            weak_domains = [d for d, score in evo.metrics.knowledge_domains.items() if score < 3.0]
             if weak_domains:
                 import random
+
                 return random.choice(weak_domains)
         except Exception as e:
             logger.debug("explore_engine: non-critical %s", e, exc_info=True)
@@ -217,6 +222,7 @@ class ExploreEngine:
             "生物信息学",
         ]
         import random
+
         topic = random.choice(curiosity_topics)
 
         # 避免重复探索
@@ -231,6 +237,7 @@ class ExploreEngine:
         """搜索互联网，返回 URL 列表"""
         try:
             from neuroplex.agent_ext.tool_registry import registry
+
             search_tool = registry.get("search")
             if search_tool and search_tool.func:
                 result = search_tool.func(query)
@@ -243,9 +250,10 @@ class ExploreEngine:
                             urls.append(line.split(" ")[0])
                         elif "http" in line:
                             import re
-                            found = re.findall(r'https?://[^\s\)]+', line)
+
+                            found = re.findall(r"https?://[^\s\)]+", line)
                             urls.extend(found)
-                    return urls[:self.config.max_search_results]
+                    return urls[: self.config.max_search_results]
         except Exception as e:
             logger.debug(f"Search failed: {e}")
         return []
@@ -254,6 +262,7 @@ class ExploreEngine:
         """阅读网页内容"""
         try:
             from neuroplex.agent_ext.tool_registry import registry
+
             read_tool = registry.get("read_webpage")
             if read_tool and read_tool.func:
                 content = read_tool.func(url)
@@ -303,6 +312,7 @@ class ExploreEngine:
             # 同时存入 RAG 知识库
             try:
                 from neuroplex.tools.rag_kb import get_rag_kb
+
                 kb = get_rag_kb()
                 if kb:
                     kb.add_document(content[:2000], metadata={"topic": topic, "source": url})
@@ -313,6 +323,7 @@ class ExploreEngine:
             # 修复：探索结果只进 RAG 不进权重训练，"探索→学习→记忆"未闭环
             try:
                 from neuroplex.life.feed_engine import get_feed_engine
+
                 feed = get_feed_engine()
                 feed.feed_text(
                     text=content[:3000],
@@ -338,10 +349,10 @@ class ExploreEngine:
         """记录到进化引擎"""
         try:
             from neuroplex.life.evolution_engine import get_evolution_engine
+
             evo = get_evolution_engine()
             # 探索成功 → 增加知识域分数
-            evo.metrics.knowledge_domains[topic] = \
-                evo.metrics.knowledge_domains.get(topic, 0) + 1.0
+            evo.metrics.knowledge_domains[topic] = evo.metrics.knowledge_domains.get(topic, 0) + 1.0
             evo._save_metrics()
         except Exception as e:
             logger.debug("explore_engine: non-critical %s", e, exc_info=True)
@@ -354,15 +365,17 @@ class ExploreEngine:
         try:
             data = []
             for r in self._explore_history[-50:]:
-                data.append({
-                    "topic": r.topic,
-                    "sources_found": r.sources_found,
-                    "pages_read": r.pages_read,
-                    "knowledge_stored": r.knowledge_stored,
-                    "duration_seconds": r.duration_seconds,
-                    "discoveries": r.discoveries,
-                    "timestamp": r.timestamp,
-                })
+                data.append(
+                    {
+                        "topic": r.topic,
+                        "sources_found": r.sources_found,
+                        "pages_read": r.pages_read,
+                        "knowledge_stored": r.knowledge_stored,
+                        "duration_seconds": r.duration_seconds,
+                        "discoveries": r.discoveries,
+                        "timestamp": r.timestamp,
+                    }
+                )
             with open(path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
         except Exception as e:

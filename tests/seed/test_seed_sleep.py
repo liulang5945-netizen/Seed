@@ -69,12 +69,19 @@ def test_scheduler_night_consolidates_and_reports_endogenous_replay() -> None:
     judge = SeedJudge(model)
     scheduler = SeedSleepScheduler(model, judge)
 
-    night = scheduler.night(
-        [PATTERN.encode("ascii")], cycles_per_text=4, learn=True
-    )
+    # 巩固对象选自我评估最差的模式（调度器的本职语义："眼睛选差"）。
+    # 熟悉模式的玩具场 replay 优先级（~0.008）远低于场门限 0.05，且落在写路径
+    # 奖励界函数在 |r|<1 的敏感区；差模式 quality ≈ -5.1 在界函数饱和区，
+    # 场景对界函数形状不敏感，内生接受稳健复现。
+    generator = torch.Generator().manual_seed(11)
+    raw = bytearray(PATTERN.encode("ascii"))
+    permuted = torch.randperm(len(raw), generator=generator).tolist()
+    bad_pattern = bytes(raw[index] for index in permuted)
+
+    night = scheduler.night([bad_pattern], cycles_per_text=8, learn=True)
 
     assert night["texts"] == 1
-    assert night["cycles"] == 4
+    assert night["cycles"] == 8
     # 内生回放必须有被场自身优先级门接受的条目（无外部回放列表）
     assert night["accepted"] >= 1
     # 调度器记录的是基质的结算报告字段，不是自造统计
@@ -103,14 +110,9 @@ def test_sleep_read_only_when_learn_disabled() -> None:
     judge = SeedJudge(model)
     scheduler = SeedSleepScheduler(model, judge)
 
-    before = [
-        tensor.detach().clone()
-        for tensor in model.substrate.parameter_tensors()
-    ]
+    before = [tensor.detach().clone() for tensor in model.substrate.parameter_tensors()]
     scheduler.night([PATTERN.encode("ascii")], cycles_per_text=2, learn=False)
     after = model.substrate.parameter_tensors()
 
     for previous, current in zip(before, after):
-        assert torch.equal(previous, current.detach()), (
-            "learn=False 的睡眠不得改变已学参数"
-        )
+        assert torch.equal(previous, current.detach()), "learn=False 的睡眠不得改变已学参数"

@@ -42,9 +42,7 @@ class SeedJudge:
 
     def __init__(self, seed: Seed) -> None:
         self.seed = seed
-        self.weights = torch.tensor(
-            DEFAULT_WEIGHTS, dtype=torch.float64, device=seed.device
-        )
+        self.weights = torch.tensor(DEFAULT_WEIGHTS, dtype=torch.float64, device=seed.device)
 
     @torch.no_grad()
     def score(self, text: bytes) -> Dict[str, float]:
@@ -66,18 +64,14 @@ class SeedJudge:
         observations = 0
         try:
             substrate.reset_dynamics(episode_id="judge")
-            step = substrate.observe(
-                substrate.config.boundary_symbol, learn=False
-            )
+            step = substrate.observe(substrate.config.boundary_symbol, learn=False)
             for symbol in text:
                 step = substrate.observe(int(symbol), learn=False)
                 if step.prior_prediction is None:
                     continue
                 observations += 1
                 surprise_sum += float(step.surprise)
-                error_sum += sum(step.local_error_norms) / max(
-                    1, len(step.local_error_norms)
-                )
+                error_sum += sum(step.local_error_norms) / max(1, len(step.local_error_norms))
                 confidence_sum += float(step.memory_recall.confidence)
                 correct += int(step.prior_prediction == int(symbol))
         finally:
@@ -150,16 +144,12 @@ class SeedJudge:
         return self.ranking_accuracy(features, targets)
 
     @staticmethod
-    def ranking_accuracy(
-        features: torch.Tensor, targets: torch.Tensor
-    ) -> float:
+    def ranking_accuracy(features: torch.Tensor, targets: torch.Tensor) -> float:
         """Fraction of comparable pairs whose score order matches the target."""
 
         scores = features @ torch.linalg.solve(
             features.T @ features
-            + 1e-3 * torch.eye(
-                features.shape[1], dtype=torch.float64, device=features.device
-            ),
+            + 1e-3 * torch.eye(features.shape[1], dtype=torch.float64, device=features.device),
             features.T @ targets,
         )
         comparable = 0

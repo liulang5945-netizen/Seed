@@ -65,8 +65,7 @@ def build_layer_map(student_layers: int, teacher_layers: int) -> List[Tuple[int,
         ]
         return [(i, teacher_indices[i]) for i in range(student_layers)]
     student_indices = [
-        int(round(i * (student_layers - 1) / (teacher_layers - 1)))
-        for i in range(teacher_layers)
+        int(round(i * (student_layers - 1) / (teacher_layers - 1))) for i in range(teacher_layers)
     ]
     return [(student_indices[i], i) for i in range(teacher_layers)]
 
@@ -125,20 +124,22 @@ class DistillationLoss(nn.Module):
         student_heads: int,
         teacher_heads: int,
         temperature: float = 4.0,  # 蒸馏温度（软化分布，保留类间关系）
-        vocab_alignment: Optional[Dict[int, int]] = None,  # {student_id: teacher_id}, None=相同 vocab
+        vocab_alignment: Optional[
+            Dict[int, int]
+        ] = None,  # {student_id: teacher_id}, None=相同 vocab
         attn_align_mode: str = "mean",  # "mean"=聚合 heads, "proj"=可学习 head 投影
     ):
         """Args:
-            student_hidden: student hidden_size
-            teacher_hidden: teacher hidden_size
-            student_layers: student Transformer 层数
-            teacher_layers: teacher Transformer 层数
-            student_heads: student attention heads 数
-            teacher_heads: teacher attention heads 数
-            temperature: KL 蒸馏温度 T（软化 logits）
-            vocab_alignment: student token id -> teacher token id 映射（vocab 不同时）
-            attn_align_mode: "mean"=所有 heads 平均后对齐（零参数）,
-                             "proj"=可学习 head 投影（student_heads -> teacher_heads）
+        student_hidden: student hidden_size
+        teacher_hidden: teacher hidden_size
+        student_layers: student Transformer 层数
+        teacher_layers: teacher Transformer 层数
+        student_heads: student attention heads 数
+        teacher_heads: teacher attention heads 数
+        temperature: KL 蒸馏温度 T（软化 logits）
+        vocab_alignment: student token id -> teacher token id 映射（vocab 不同时）
+        attn_align_mode: "mean"=所有 heads 平均后对齐（零参数）,
+                         "proj"=可学习 head 投影（student_heads -> teacher_heads）
         """
         super().__init__()
         self.temperature = temperature
@@ -147,10 +148,9 @@ class DistillationLoss(nn.Module):
 
         # B. 层映射 + hidden 投影头
         self.layer_map: List[Tuple[int, int]] = build_layer_map(student_layers, teacher_layers)
-        self.hidden_projectors = nn.ModuleList([
-            HiddenProjector(student_hidden, teacher_hidden)
-            for _ in self.layer_map
-        ])
+        self.hidden_projectors = nn.ModuleList(
+            [HiddenProjector(student_hidden, teacher_hidden) for _ in self.layer_map]
+        )
 
         # C. head 投影
         if attn_align_mode == "proj":
@@ -229,7 +229,9 @@ class DistillationLoss(nn.Module):
             if mask is not None:
                 # 有效 token 上的平均表示（去 mask）
                 mask_f = mask.float().unsqueeze(-1)  # [B, L, 1]
-                s_mean = (s_proj * mask_f).sum(dim=1) / mask_f.sum(dim=1).clamp(min=1.0)  # [B, t_hidden]
+                s_mean = (s_proj * mask_f).sum(dim=1) / mask_f.sum(dim=1).clamp(
+                    min=1.0
+                )  # [B, t_hidden]
                 t_mean = (t * mask_f).sum(dim=1) / mask_f.sum(dim=1).clamp(min=1.0)
             else:
                 s_mean = s_proj.mean(dim=1)

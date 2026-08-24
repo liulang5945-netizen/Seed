@@ -3,6 +3,7 @@
 ================================
 将 task/steps 格式转换为 messages 格式，用于预训练
 """
+
 import os
 import json
 import random
@@ -18,6 +19,7 @@ REACT_FILES = [
 ]
 
 OUTPUT_FILE = "taiji_data/training_data/react_converted.jsonl"
+
 
 def convert_react_to_messages(item):
     """将 ReAct 格式转换为 Messages 格式"""
@@ -56,10 +58,11 @@ def convert_react_to_messages(item):
     messages = [
         {"role": "system", "content": "你是态极，一个会使用工具的AI助手。"},
         {"role": "user", "content": task},
-        {"role": "assistant", "content": assistant_content}
+        {"role": "assistant", "content": assistant_content},
     ]
 
     return {"messages": messages}
+
 
 def main():
     print("=" * 60)
@@ -105,6 +108,7 @@ def main():
     print(f"转换完成！总计: {len(all_converted):,} 条")
     print(f"输出文件: {OUTPUT_FILE}")
     print("=" * 60)
+
 
 if __name__ == "__main__":
     main()

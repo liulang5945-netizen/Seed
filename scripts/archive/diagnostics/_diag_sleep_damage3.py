@@ -35,8 +35,10 @@ def fingerprints(model: Seed) -> dict:
     fabric = model.substrate.fabric
     motor = model.substrate.motor
     memory = model.substrate.memory
+
     def fp(tensors):
         return round(float(sum(t.detach().abs().sum().item() for t in tensors)), 4)
+
     return {
         "fabric": fp(fabric.parameter_tensors()),
         "motor": fp([motor.synapses.edge_weight, motor.bias]),

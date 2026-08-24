@@ -20,6 +20,7 @@ def seed_client(monkeypatch):
 
     # 健康检查只在启动完成后返回完整负载，测试里直接标记就绪。
     from neuroplex.core.app_state import app_state
+
     monkeypatch.setattr(app_state, "startup_complete", True)
     monkeypatch.setattr(app_state, "startup_error", None)
 
@@ -62,9 +63,7 @@ def test_switch_model_rejects_unknown_type():
     from api.app import create_app
 
     client = TestClient(create_app(startup_tasks=False))
-    response = client.post(
-        "/api/system/switch_model", json={"model_type": "unknown"}
-    )
+    response = client.post("/api/system/switch_model", json={"model_type": "unknown"})
     assert response.status_code == 200
     payload = response.json()
     assert payload["status"] == "error"

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-23 03:32:17",
+  "timestamp": "2026-08-23 14:50:02",
   "task": "A3 原生版：连续 8 轮自主睡眠",
   "checkpoint": "E:\\Seed\\checkpoints\\seed_corpus.pt",
   "rounds": 8,
@@ -15,59 +15,59 @@
     },
     {
       "round": 1,
-      "overall_mean": -3.350865584522212,
-      "delta": -0.07233165754606352,
+      "overall_mean": -3.3509943851363206,
+      "delta": -0.07246045816017199,
       "accepted": 14.0
     },
     {
       "round": 2,
-      "overall_mean": -3.276405341582308,
-      "delta": 0.002128585393840865,
-      "accepted": 13.0
+      "overall_mean": -3.2764200635915834,
+      "delta": 0.0021138633845652066,
+      "accepted": 14.0
     },
     {
       "round": 3,
-      "overall_mean": -3.2731874980937015,
-      "delta": 0.005346428882447185,
+      "overall_mean": -3.2731805904911346,
+      "delta": 0.005353336485014015,
       "accepted": 16.0
     },
     {
       "round": 4,
-      "overall_mean": -3.276983511898438,
-      "delta": 0.0015504150777108094,
+      "overall_mean": -3.276982576879547,
+      "delta": 0.001551350096601567,
       "accepted": 16.0
     },
     {
       "round": 5,
-      "overall_mean": -3.278713530821807,
-      "delta": -0.00017960384565851584,
+      "overall_mean": -3.2787134925559642,
+      "delta": -0.00017956557981557708,
       "accepted": 16.0
     },
     {
       "round": 6,
-      "overall_mean": -3.2783788970021654,
-      "delta": 0.00015502997398320062,
-      "accepted": 15.0
+      "overall_mean": -3.2783789690572767,
+      "delta": 0.00015495791887198962,
+      "accepted": 16.0
     },
     {
       "round": 7,
-      "overall_mean": -3.2785193022351096,
-      "delta": 1.4624741039082068e-05,
+      "overall_mean": -3.2785193138311257,
+      "delta": 1.461314502293476e-05,
       "accepted": 16.0
     },
     {
       "round": 8,
-      "overall_mean": -3.278528729981233,
-      "delta": 5.196994915745989e-06,
+      "overall_mean": -3.2785287203852307,
+      "delta": 5.2065909179610514e-06,
       "accepted": 16.0
     }
   ],
-  "cumulative_abs_delta": 5.196994915745989e-06,
-  "accepted_total": 122.0,
+  "cumulative_abs_delta": 5.2065909179610514e-06,
+  "accepted_total": 124.0,
   "criteria": {
     "finite": true,
     "stable": true
   },
   "a3_pass": true,
-  "elapsed_seconds": 253.56940054893494
+  "elapsed_seconds": 362.71997261047363
 }

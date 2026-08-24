@@ -5,7 +5,6 @@ import torch
 
 from taiji import Taiji, TaijiConfig
 
-
 CUES = tuple(ord(value) for value in "ABCDEFGH")
 ACTIONS = (ord("0"), ord("1"))
 OUTCOMES = (ord("+"), ord("-"))
@@ -26,10 +25,7 @@ def _config() -> TaijiConfig:
 
 
 def _record_balanced_one_shot_episodes(model: Taiji) -> dict[int, int]:
-    mapping = {
-        cue: ACTIONS[index % len(ACTIONS)]
-        for index, cue in enumerate(CUES)
-    }
+    mapping = {cue: ACTIONS[index % len(ACTIONS)] for index, cue in enumerate(CUES)}
     for index, (cue, action) in enumerate(mapping.items()):
         model.reset_dynamics(episode_id=f"store-{index}")
         model.observe(256, learn=False, learn_motor=False)
@@ -78,16 +74,10 @@ def test_episodic_field_beats_equal_width_trace_only_and_read_lesion() -> None:
     mapping = _record_balanced_one_shot_episodes(model)
     checkpoint = model.checkpoint()
 
-    recalled, confidences = _recall_accuracy(
-        checkpoint, mapping, use_memory=True
-    )
-    trace_only, lesion_confidences = _recall_accuracy(
-        checkpoint, mapping, use_memory=False
-    )
+    recalled, confidences = _recall_accuracy(checkpoint, mapping, use_memory=True)
+    trace_only, lesion_confidences = _recall_accuracy(checkpoint, mapping, use_memory=False)
     recurrent_lesion_checkpoint = deepcopy(checkpoint)
-    recurrent_lesion_checkpoint["memory"]["association"][
-        "edge_weight"
-    ].zero_()
+    recurrent_lesion_checkpoint["memory"]["association"]["edge_weight"].zero_()
     recurrent_lesion, _ = _recall_accuracy(
         recurrent_lesion_checkpoint,
         mapping,
@@ -145,16 +135,12 @@ def test_one_event_recalls_action_outcome_value_without_allocating_a_slot() -> N
 
     model.reset_dynamics(episode_id="one-event-recall")
     model.observe(256, learn=False, learn_motor=False)
-    recall = model.observe(
-        ord("Q"), learn=False, learn_motor=False
-    ).memory_recall
+    recall = model.observe(ord("Q"), learn=False, learn_motor=False).memory_recall
 
     assert recall.used_long_term is True
     assert recall.confidence > 0.0
     assert recall.action_evidence[ord("1")] > recall.action_evidence[ord("0")]
-    assert recall.outcome_probabilities[ord("+")] > recall.outcome_probabilities[
-        ord("-")
-    ]
+    assert recall.outcome_probabilities[ord("+")] > recall.outcome_probabilities[ord("-")]
     assert recall.expected_reward > 0.0
     assert int(recall.provenance_probabilities.argmax().item()) == 0
     stored_time = model.memory._time_code(2)
@@ -163,9 +149,7 @@ def test_one_event_recalls_action_outcome_value_without_allocating_a_slot() -> N
     assert torch.cosine_similarity(recall.time_code, stored_time, dim=0) > 0.5
     assert torch.cosine_similarity(
         recall.episode_code, stored_episode, dim=0
-    ) > torch.cosine_similarity(
-        recall.episode_code, other_episode, dim=0
-    )
+    ) > torch.cosine_similarity(recall.episode_code, other_episode, dim=0)
 
 
 def test_recalled_cortical_state_is_fed_back_on_the_next_causal_tick() -> None:
@@ -177,9 +161,7 @@ def test_recalled_cortical_state_is_fed_back_on_the_next_causal_tick() -> None:
     for model, enabled in ((full, True), (lesioned, False)):
         model.reset_dynamics(episode_id=f"feedback-{enabled}")
         model.observe(256, learn=False, learn_motor=False, use_memory=enabled)
-        cue_step = model.observe(
-            CUES[0], learn=False, learn_motor=False, use_memory=enabled
-        )
+        cue_step = model.observe(CUES[0], learn=False, learn_motor=False, use_memory=enabled)
         if enabled:
             assert cue_step.memory_recall.cortical_feedback.norm() > 0.0
         else:

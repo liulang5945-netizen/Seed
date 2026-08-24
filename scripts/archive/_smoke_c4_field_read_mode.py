@@ -8,6 +8,7 @@
 5. checkpoint 兼容（参数结构不变，旧 ckpt 可加载）
 6. field_state=None 时三种模式行为一致（不触发 conditioning）
 """
+
 from __future__ import annotations
 
 import os
@@ -46,7 +47,9 @@ def test_additive_backward_compat():
         # round 1: 无 field conditioning
         result_r1 = neuron.forward(shared_emb, return_logits=True)
         # round 2: 有 field conditioning（additive）
-        result_r2 = neuron.forward(shared_emb, field_state=field_state, round_num=2, return_logits=True)
+        result_r2 = neuron.forward(
+            shared_emb, field_state=field_state, round_num=2, return_logits=True
+        )
 
     diff = (result_r1["logits"] - result_r2["logits"]).abs().max().item()
     assert diff > 1e-4, f"additive 模式 round 2 应改变输出, diff={diff}"
@@ -65,7 +68,9 @@ def test_multiplicative():
 
     with torch.no_grad():
         result_r1 = neuron.forward(shared_emb, return_logits=True)
-        result_r2 = neuron.forward(shared_emb, field_state=field_state, round_num=2, return_logits=True)
+        result_r2 = neuron.forward(
+            shared_emb, field_state=field_state, round_num=2, return_logits=True
+        )
 
     diff = (result_r1["logits"] - result_r2["logits"]).abs().max().item()
     assert diff > 1e-4, f"multiplicative 模式 round 2 应改变输出, diff={diff}"
@@ -84,7 +89,9 @@ def test_predictive():
 
     with torch.no_grad():
         result_r1 = neuron.forward(shared_emb, return_logits=True)
-        result_r2 = neuron.forward(shared_emb, field_state=field_state, round_num=2, return_logits=True)
+        result_r2 = neuron.forward(
+            shared_emb, field_state=field_state, round_num=2, return_logits=True
+        )
 
     diff = (result_r1["logits"] - result_r2["logits"]).abs().max().item()
     assert diff > 1e-4, f"predictive 模式 round 2 应改变输出, diff={diff}"
@@ -154,8 +161,12 @@ def test_no_field_state_consistent():
     diff_add_mult = (logits["additive"] - logits["multiplicative"]).abs().max().item()
     diff_add_pred = (logits["additive"] - logits["predictive"]).abs().max().item()
 
-    assert diff_add_mult < 1e-6, f"field_state=None 时 additive vs multiplicative 应一致, diff={diff_add_mult}"
-    assert diff_add_pred < 1e-6, f"field_state=None 时 additive vs predictive 应一致, diff={diff_add_pred}"
+    assert (
+        diff_add_mult < 1e-6
+    ), f"field_state=None 时 additive vs multiplicative 应一致, diff={diff_add_mult}"
+    assert (
+        diff_add_pred < 1e-6
+    ), f"field_state=None 时 additive vs predictive 应一致, diff={diff_add_pred}"
     print(f"  PASS: field_state=None 时三种模式一致 (diff={diff_add_mult:.2e})")
 
 

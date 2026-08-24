@@ -9,7 +9,7 @@
 ;输出：SeedSetup.exe
 
 !define APP_NAME "Seed"
-!define APP_VERSION "1.6.0"
+!define APP_VERSION "1.6.0\"
 !define APP_PUBLISHER "Seed Project"
 !define APP_EXE "Seed.exe"
 !define APP_DIR "Seed"

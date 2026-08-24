@@ -74,11 +74,13 @@ def main() -> None:
     new_pieces = ["量子计算", "超导", "张量网络"]
     ids = ev.add_tokens(new_pieces)
     check("base 已含词复用 base id", ids[0] < base, f"量子计算→{ids[0]}")
-    check("新词分配 ext id (≥base)", ids[1] >= base and ids[2] >= base,
-          f"超导→{ids[1]} 张量网络→{ids[2]}")
+    check(
+        "新词分配 ext id (≥base)",
+        ids[1] >= base and ids[2] >= base,
+        f"超导→{ids[1]} 张量网络→{ids[2]}",
+    )
     check("vocab_size 扩展 +2", ev.vocab_size() == base + 2)
-    check("重复 add 幂等", ev.add_token("量子计算") == ids[0]
-          and ev.add_token("超导") == ids[1])
+    check("重复 add 幂等", ev.add_token("量子计算") == ids[0] and ev.add_token("超导") == ids[1])
 
     text = "量子计算与超导和张量网络"
     enc = ev.encode(text)
@@ -111,8 +113,11 @@ def main() -> None:
     cache: dict = {}
     m0 = build_logits_alignment_matrix(code_sp, zh_sp, "code", "zh", cache=cache)
     m1 = build_logits_alignment_matrix(code_sp, ev, "code", "zh", cache=cache)
-    check("target vocab 扩展 → 矩阵重建列数+2", m1.shape[1] == m0.shape[1] + 2,
-          f"{tuple(m0.shape)} → {tuple(m1.shape)}")
+    check(
+        "target vocab 扩展 → 矩阵重建列数+2",
+        m1.shape[1] == m0.shape[1] + 2,
+        f"{tuple(m0.shape)} → {tuple(m1.shape)}",
+    )
 
     # ---- 4. TokenizerHub API ----
     print("\n[4] TokenizerHub 实时编辑 API", flush=True)
@@ -139,6 +144,7 @@ def main() -> None:
     class FakeNeuron:
         lm_head_rank = 0
         config = type("Cfg", (), {"neuron_id": "zh"})()
+
     fn = FakeNeuron()
     fn.lm_head = torch.nn.Linear(512, base, bias=False)
     ok = resize_lm_head_for_vocab(fn, base + 3)

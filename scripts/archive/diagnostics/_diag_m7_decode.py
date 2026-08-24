@@ -1,4 +1,5 @@
 """Diagnose why the consolidated cue->action decode is ~1e-3 at evaluation."""
+
 from __future__ import annotations
 
 import sys
@@ -81,8 +82,7 @@ def main() -> None:
         trace_offset = sum(m.config.region_sizes)
         trace = bound_norm(
             reinstated[
-                trace_offset + fast_offset:trace_offset + fast_offset
-                + m.config.region_sizes[0]
+                trace_offset + fast_offset : trace_offset + fast_offset + m.config.region_sizes[0]
             ],
             m.config.max_trace_norm,
         )

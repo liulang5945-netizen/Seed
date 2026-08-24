@@ -7,6 +7,7 @@ max_tokens=8、seed 和 soft fusion。每次生成前清空场与对话状态，
 运行：
     python -X utf8 -u scripts/training/diag_dialogue_decode_topk.py
 """
+
 from __future__ import annotations
 
 import json
@@ -17,10 +18,12 @@ import torch
 
 from neuroplex.loader import assemble_cortex
 
-
 DIALOGUE_IDS = [
-    "zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-    "zh_aug3_dialogue", "zh_std0_dialogue",
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
 ]
 QUESTIONS = ["你好", "你是谁？", "今天天气怎么样？", "帮我写一首关于春天的诗"]
 TOP_K_VARIANTS = [15, 40, 100, 1]

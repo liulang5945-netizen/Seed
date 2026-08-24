@@ -29,16 +29,29 @@ import os
 import logging
 import re
 import threading
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
 
 import torch
+
+# P2（2026-08-23）：纯算法辅助函数抽离，避免 Cortex 神对象继续膨胀。
+# 仅承载无 self 状态的纯函数；保持推理数学逐位等价。
+from neuroplex.brain import _cortex_helpers
 import torch.nn.functional as F
 
 logger = logging.getLogger("Cortex")
 
+# P7 跑偏截断用的 CJK/标点判定正则：提升为模块级编译常量，
+# 避免生成循环内每个 token 重复 re.compile（每次编译毫秒级开销）
+_CJK_OR_PUNCT_RE = re.compile(
+    r"[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef\u2014\u2018\u2019\u201c\u201d\u2026]"
+)
+
 from neuroplex.resonance import (
-    ResonanceNeuron, ResonanceField, ResonanceEnsemble, NeuronConfig,
+    ResonanceNeuron,
+    ResonanceField,
+    ResonanceEnsemble,
+    NeuronConfig,
 )
 from neuroplex.resonance.translator import (
     build_position_alignment,
@@ -69,6 +82,7 @@ class TaskSet:
             三重传递的第三重（文本 prev + 场状态 seed_memories + 记忆写入）。
         memory_label: 记忆写入的标签（None = 用 prompt 截断）。
     """
+
     prompt: str
     mode: str = "continuous"
     domain: Optional[str] = None
@@ -93,7 +107,7 @@ class Cortex:
         device: str = "cpu",
         max_rounds: int = 3,
         shared_embedding: Optional[torch.nn.Embedding] = None,
-        general_tokenizer = None,
+        general_tokenizer=None,
         neuron_ids: Optional[List[str]] = None,
     ):
         self.device = device
@@ -118,7 +132,11 @@ class Cortex:
             # （embed_adapter 已处理 hidden_size 差异，无需校验 hidden_size）
             # field_dim 取最大值，ensemble 自动为其他规格创建正/反向投影层
             effective_dims = {
-                n.config.unified_field_dim if n.config.unified_field_dim is not None else n.config.field_dim
+                (
+                    n.config.unified_field_dim
+                    if n.config.unified_field_dim is not None
+                    else n.config.field_dim
+                )
                 for n in self.neurons.values()
             }
             field_dim = max(effective_dims)
@@ -131,14 +149,16 @@ class Cortex:
         field_device = None
         try:
             field_device = getattr(first_neuron.lm_head, "device", None)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【Cortex.__init__】处理失败（非致命）: %s", e)
         self.field = ResonanceField(dim=field_dim, device=field_device or self.device)
         # P1-1: CoactivationTracker（共激活追踪，供孤立检测+部落分组）
         from neuroplex.resonance.tribal import CoactivationTracker
+
         self.coaction = CoactivationTracker()
         self.ensemble = ResonanceEnsemble(
-            self.neurons, self.field,
+            self.neurons,
+            self.field,
             max_rounds=max_rounds,
             coaction=self.coaction,
         )
@@ -210,7 +230,9 @@ class Cortex:
         self.is_loaded = len(self.neurons) > 0
         print(f"[Cortex] Loaded {len(self.neurons)} neurons, field_dim={field_dim}")
         if self._shared_embedding is not None:
-            print(f"[Cortex] Shared embedding: {self._shared_embedding.num_embeddings} × {self._shared_embedding.embedding_dim}")
+            print(
+                f"[Cortex] Shared embedding: {self._shared_embedding.num_embeddings} × {self._shared_embedding.embedding_dim}"
+            )
 
     def _load_neurons(self, neuron_ids: Optional[List[str]] = None):
         """Load all trained neurons from disk.
@@ -226,6 +248,7 @@ class Cortex:
                 通过 embed_adapter + ensemble 跨规格投影层兼容，无需同规格。
         """
         import glob
+
         # 扫描所有 neuron_*.pt（排除 _fieldcond.pt 等非 neuron 文件）
         ckpt_paths = sorted(glob.glob(os.path.join(self.neurons_dir, "neuron_*.pt")))
         # DEAD CODE 标注 (R17, REMEDIATION_PLAN 2026-08-14)：以下 _fieldcond
@@ -238,7 +261,7 @@ class Cortex:
             if "_fieldcond" in name or name.startswith("_"):
                 continue
             # 从文件名提取 domain：neuron_{domain}.pt → {domain}
-            domain = name[len("neuron_"):-len(".pt")]
+            domain = name[len("neuron_") : -len(".pt")]
 
             # 只装配指定集合（对话综合体场景：排除 base 版避免污染）
             if neuron_ids is not None and domain not in neuron_ids:
@@ -257,9 +280,8 @@ class Cortex:
             # (legacy_checkpoint.load_legacy_checkpoint 提供临时 alias，避免
             #  process-wide shadow 顶层 taiji 命名空间) — R17, 2026-08-21
             from neuroplex.legacy_checkpoint import load_legacy_checkpoint
-            ckpt = load_legacy_checkpoint(
-                ckpt_path, map_location=self.device
-            )
+
+            ckpt = load_legacy_checkpoint(ckpt_path, map_location=self.device)
             cfg: NeuronConfig = ckpt["neuron_config"]
             sd = ckpt["state_dict"]
 
@@ -330,6 +352,7 @@ class Cortex:
             tokenizer_hub: TokenizerHub 实例（含域 tokenizer + general tokenizer）
         """
         from neuroplex.resonance.translator import TokenizerHub
+
         if not isinstance(tokenizer_hub, TokenizerHub):
             raise TypeError(
                 f"[Cortex] set_tokenizer_hub expects TokenizerHub, "
@@ -342,10 +365,10 @@ class Cortex:
         try:
             if getattr(self, "ensemble", None) is not None:
                 self.ensemble.set_tokenizer_hub(tokenizer_hub)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【Cortex.set_tokenizer_hub】处理失败（非致命）: %s", e)
         domains = tokenizer_hub.list_domains()
-        print(f"[Cortex] TokenizerHub registered (P7 模式)")
+        print("[Cortex] TokenizerHub registered (P7 模式)")
         print(f"  domains: {domains}")
         for d in domains:
             print(f"  {d}: vocab={tokenizer_hub.vocab_size(d)}")
@@ -392,6 +415,7 @@ class Cortex:
             path: 保存路径（目录或文件路径）
         """
         import os
+
         if os.path.isdir(path) or path.endswith(os.sep):
             os.makedirs(path, exist_ok=True)
             path = os.path.join(path, "cortex_state.pt")
@@ -403,8 +427,7 @@ class Cortex:
         # shared_embedding（fp16 压缩：524MB → 262MB）
         if self._shared_embedding is not None:
             sd = self._shared_embedding.state_dict()
-            sd_fp16 = {k: v.half() if v.is_floating_point() else v
-                       for k, v in sd.items()}
+            sd_fp16 = {k: v.half() if v.is_floating_point() else v for k, v in sd.items()}
             state["shared_embedding"] = sd_fp16
             state["shared_embedding_dtype"] = "fp16"
 
@@ -447,12 +470,14 @@ class Cortex:
             logger.debug("[Cortex]   %d oscillators 已保存（节奏控制器）", len(osc_states))
 
         torch.save(state, path)
-        logger.info(f"[Cortex] 状态已保存: {path} "
-                    f"(shared_emb={'yes' if 'shared_embedding' in state else 'no'}, "
-                    f"neurons={len(neuron_states)}, "
-                    f"neuromodulator={'yes' if 'neuromodulator' in state else 'no'}, "
-                    f"coaction={'yes' if 'coaction' in state else 'no'}, "
-                    f"sleep_consolidator={'yes' if 'sleep_consolidator' in state else 'no'})")
+        logger.info(
+            f"[Cortex] 状态已保存: {path} "
+            f"(shared_emb={'yes' if 'shared_embedding' in state else 'no'}, "
+            f"neurons={len(neuron_states)}, "
+            f"neuromodulator={'yes' if 'neuromodulator' in state else 'no'}, "
+            f"coaction={'yes' if 'coaction' in state else 'no'}, "
+            f"sleep_consolidator={'yes' if 'sleep_consolidator' in state else 'no'})"
+        )
 
     def load_state(self, path: str, strict: bool = False) -> bool:
         """从磁盘加载可学习状态（恢复经验积累）。
@@ -465,6 +490,7 @@ class Cortex:
             True 如果成功加载，False 如果文件不存在
         """
         import os
+
         if os.path.isdir(path):
             path = os.path.join(path, "cortex_state.pt")
         if not os.path.exists(path):
@@ -472,6 +498,7 @@ class Cortex:
             return False
 
         from neuroplex.legacy_checkpoint import load_legacy_checkpoint
+
         state = load_legacy_checkpoint(path, map_location=self.device)
         logger.info(f"[Cortex] 加载状态: {path} (version={state.get('version', 1)})")
 
@@ -479,11 +506,14 @@ class Cortex:
         if "shared_embedding" in state and self._shared_embedding is not None:
             sd = state["shared_embedding"]
             target_dtype = self._shared_embedding.weight.dtype
-            sd_restored = {k: v.to(target_dtype) if v.is_floating_point() else v
-                           for k, v in sd.items()}
+            sd_restored = {
+                k: v.to(target_dtype) if v.is_floating_point() else v for k, v in sd.items()
+            }
             self._shared_embedding.load_state_dict(sd_restored, strict=strict)
-            logger.info("[Cortex]   shared_embedding 已恢复 (dtype=%s)",
-                        state.get("shared_embedding_dtype", "fp32"))
+            logger.info(
+                "[Cortex]   shared_embedding 已恢复 (dtype=%s)",
+                state.get("shared_embedding_dtype", "fp32"),
+            )
 
         # per-neuron
         neuron_states = state.get("neurons", {})
@@ -509,40 +539,49 @@ class Cortex:
                         _osc.load_state_dict(_osd["state_dict"], strict=False)
                         osc_loaded += 1
                     except Exception as _e:
-                        logger.warning("[Cortex]   oscillator %s 恢复失败: %s",
-                                       _osd.get("nid"), _e)
+                        logger.warning("[Cortex]   oscillator %s 恢复失败: %s", _osd.get("nid"), _e)
                     break
         if osc_states:
-            logger.info("[Cortex]   %d/%d oscillators 恢复（节奏控制器）",
-                        osc_loaded, len(osc_states))
+            logger.info(
+                "[Cortex]   %d/%d oscillators 恢复（节奏控制器）", osc_loaded, len(osc_states)
+            )
 
         # neuromodulator state 恢复（跨会话调质连续性）
         if "neuromodulator" in state and self._neuromodulator is not None:
             self._neuromodulator.load_state_dict(state["neuromodulator"])
-            logger.info("[Cortex]   neuromodulator 已恢复 "
-                        "(DA=%.2f, 5HT=%.2f, NE=%.2f)" % (
-                            self._neuromodulator.dopamine,
-                            self._neuromodulator.serotonin,
-                            self._neuromodulator.norepinephrine,
-                        ))
+            logger.info(
+                "[Cortex]   neuromodulator 已恢复 "
+                "(DA=%.2f, 5HT=%.2f, NE=%.2f)"
+                % (
+                    self._neuromodulator.dopamine,
+                    self._neuromodulator.serotonin,
+                    self._neuromodulator.norepinephrine,
+                )
+            )
 
         # coaction state 恢复（跨会话共激活追踪连续性）
         if "coaction" in state and self.coaction is not None:
             self.coaction.load_state_dict(state["coaction"])
-            logger.info("[Cortex]   coaction 已恢复 "
-                        "(pairs=%d, neurons=%d)" % (
-                            len(self.coaction._slow_matrix),
-                            len(self.coaction._activation_counts),
-                        ))
+            logger.info(
+                "[Cortex]   coaction 已恢复 "
+                "(pairs=%d, neurons=%d)"
+                % (
+                    len(self.coaction._slow_matrix),
+                    len(self.coaction._activation_counts),
+                )
+            )
 
         # sleep_consolidator state 恢复（跨会话 replay buffer 连续性）
         if "sleep_consolidator" in state and self._sleep_consolidator is not None:
             self._sleep_consolidator.load_state_dict(state["sleep_consolidator"])
-            logger.info("[Cortex]   sleep_consolidator 已恢复 "
-                        "(replay=%d, last_step=%d)" % (
-                            len(self._sleep_consolidator._replay_buffer),
-                            self._sleep_consolidator._last_consolidation_step,
-                        ))
+            logger.info(
+                "[Cortex]   sleep_consolidator 已恢复 "
+                "(replay=%d, last_step=%d)"
+                % (
+                    len(self._sleep_consolidator._replay_buffer),
+                    self._sleep_consolidator._last_consolidation_step,
+                )
+            )
         return True
 
     def set_gamma_oscillator(self, oscillator) -> None:
@@ -576,14 +615,17 @@ class Cortex:
         apply_gamma_gate(self.field, oscillator)
         self.gamma_oscillator = oscillator
         # KoPE/Kuramoto: 注入 ensemble，每轮共振后执行相位耦合
-        if hasattr(self, 'ensemble') and self.ensemble is not None:
+        if hasattr(self, "ensemble") and self.ensemble is not None:
             self.ensemble.gamma_oscillator = oscillator
-        print(f"[Cortex] GammaOscillator enabled "
-              f"({len(oscillator.phases)} neurons phased, "
-              f"{len(domain_to_nids)} domains)")
+        print(
+            f"[Cortex] GammaOscillator enabled "
+            f"({len(oscillator.phases)} neurons phased, "
+            f"{len(domain_to_nids)} domains)"
+        )
+
     def tick_gamma(self) -> None:
         """P6-3: 推进 Gamma 振荡相位（每轮共振后调用）。"""
-        if hasattr(self, 'gamma_oscillator') and self.gamma_oscillator is not None:
+        if hasattr(self, "gamma_oscillator") and self.gamma_oscillator is not None:
             self.gamma_oscillator.tick()
 
     def set_working_memory(self, memory) -> None:
@@ -599,14 +641,16 @@ class Cortex:
             memory: WorkingMemory 实例
         """
         self.working_memory = memory
-        print(f"[Cortex] WorkingMemory enabled "
-              f"(max_tokens={memory.max_tokens}, current={len(memory)})")
+        print(
+            f"[Cortex] WorkingMemory enabled "
+            f"(max_tokens={memory.max_tokens}, current={len(memory)})"
+        )
 
     def clear_working_memory(self) -> None:
         """P6-4: 清空工作记忆（新会话开始时调用）。"""
-        if hasattr(self, 'working_memory') and self.working_memory is not None:
+        if hasattr(self, "working_memory") and self.working_memory is not None:
             self.working_memory.reset()
-            print(f"[Cortex] WorkingMemory cleared")
+            print("[Cortex] WorkingMemory cleared")
 
     def set_dialogue_state(self, dialogue_state) -> None:
         """S12: 注册多轮对话状态管理器。
@@ -632,7 +676,7 @@ class Cortex:
         """S12: 清空对话状态（新会话开始时调用）。"""
         if self._dialogue_state is not None:
             self._dialogue_state.reset()
-            print(f"[Cortex] DialogueState cleared")
+            print("[Cortex] DialogueState cleared")
 
     def set_neuromodulator(self, neuromodulator) -> None:
         """P1-2: 注册神经调质状态，注入到 ensemble。
@@ -645,10 +689,12 @@ class Cortex:
         """
         self._neuromodulator = neuromodulator
         self.ensemble.neuromodulator = neuromodulator
-        print(f"[Cortex] NeuromodulatorState enabled "
-              f"(dopamine={neuromodulator.dopamine:.2f}, "
-              f"serotonin={neuromodulator.serotonin:.2f}, "
-              f"norepinephrine={neuromodulator.norepinephrine:.2f})")
+        print(
+            f"[Cortex] NeuromodulatorState enabled "
+            f"(dopamine={neuromodulator.dopamine:.2f}, "
+            f"serotonin={neuromodulator.serotonin:.2f}, "
+            f"norepinephrine={neuromodulator.norepinephrine:.2f})"
+        )
 
     def set_maturity(self, maturity) -> None:
         """注册成熟度追踪器，注入到 ensemble。
@@ -660,7 +706,7 @@ class Cortex:
         未注册时 ensemble 退化为默认值 1.0（向后兼容）。
         """
         self.ensemble.maturity = maturity
-        print(f"[Cortex] MaturityTracker enabled (幼稚态 weight=0.1, lr×3.0)")
+        print("[Cortex] MaturityTracker enabled (幼稚态 weight=0.1, lr×3.0)")
 
     def set_sleep_consolidator(self, sleep_consolidator) -> None:
         """注册睡眠巩固器，用于跨会话 replay buffer 持久化。
@@ -669,7 +715,7 @@ class Cortex:
         replay_buffer 和 last_consolidation_step，使高共振经验不因重启丢失。
         """
         self._sleep_consolidator = sleep_consolidator
-        print(f"[Cortex] SleepConsolidator registered (replay buffer 持久化)")
+        print("[Cortex] SleepConsolidator registered (replay buffer 持久化)")
 
     def add_neuron(self, domain: str, lifecycle=None, from_split: Optional[str] = None) -> str:
         """运行时创建新神经元并加入 ensemble（neurogenesis 入口）。
@@ -699,9 +745,7 @@ class Cortex:
         from neuroplex.resonance.config import get_domain_neuron_config, DOMAIN_VOCAB_SIZES
 
         if domain not in DOMAIN_VOCAB_SIZES:
-            raise ValueError(
-                f"未知 domain: {domain}. 可选: {list(DOMAIN_VOCAB_SIZES.keys())}"
-            )
+            raise ValueError(f"未知 domain: {domain}. 可选: {list(DOMAIN_VOCAB_SIZES.keys())}")
 
         # 校验 from_split 父 neuron 存在
         if from_split is not None and from_split not in self.neurons:
@@ -745,9 +789,7 @@ class Cortex:
         else:
             domain_nids = [n for n in self.neurons if n.startswith(f"{domain}_")]
             if domain_nids:
-                n_inhibitory = sum(
-                    1 for n in domain_nids if self.neurons[n].is_inhibitory
-                )
+                n_inhibitory = sum(1 for n in domain_nids if self.neurons[n].is_inhibitory)
                 inhibitory_ratio = n_inhibitory / len(domain_nids)
                 if inhibitory_ratio < 0.2:
                     cfg.neuron_type = "inhibitory"
@@ -879,12 +921,18 @@ class Cortex:
             # 2. 清理其他神经元的 side channel 引用（ModuleDict 按 key 删除）
             for other_neuron in self.neurons.values():
                 try:
-                    if hasattr(other_neuron, "excite_channels") and nid in other_neuron.excite_channels:
+                    if (
+                        hasattr(other_neuron, "excite_channels")
+                        and nid in other_neuron.excite_channels
+                    ):
                         del other_neuron.excite_channels[nid]
-                    if hasattr(other_neuron, "inhibit_channels") and nid in other_neuron.inhibit_channels:
+                    if (
+                        hasattr(other_neuron, "inhibit_channels")
+                        and nid in other_neuron.inhibit_channels
+                    ):
                         del other_neuron.inhibit_channels[nid]
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("【Cortex.remove_neuron】处理失败（非致命）: %s", e)
 
         # 3. 删除 ckpt 文件（锁外，I/O 不阻塞增删并发）
         if delete_ckpt:
@@ -930,8 +978,7 @@ class Cortex:
             try:
                 neuron = self.neurons[nid]
                 torch.save(
-                    {"neuron_config": neuron.config,
-                     "state_dict": neuron.state_dict()},
+                    {"neuron_config": neuron.config, "state_dict": neuron.state_dict()},
                     ckpt_path,
                 )
             except Exception as e:
@@ -941,12 +988,18 @@ class Cortex:
             # 清理其他神经元的 side channel 引用（ModuleDict 按 key 删除）
             for other_neuron in self.neurons.values():
                 try:
-                    if hasattr(other_neuron, "excite_channels") and nid in other_neuron.excite_channels:
+                    if (
+                        hasattr(other_neuron, "excite_channels")
+                        and nid in other_neuron.excite_channels
+                    ):
                         del other_neuron.excite_channels[nid]
-                    if hasattr(other_neuron, "inhibit_channels") and nid in other_neuron.inhibit_channels:
+                    if (
+                        hasattr(other_neuron, "inhibit_channels")
+                        and nid in other_neuron.inhibit_channels
+                    ):
                         del other_neuron.inhibit_channels[nid]
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("【Cortex.isolate_neuron】处理失败（非致命）: %s", e)
 
             # 记录恢复信息（ckpt 保留，未删除）
             if not hasattr(self, "_isolated"):
@@ -956,7 +1009,8 @@ class Cortex:
                 "ckpt": ckpt_path,
                 "shared_embedding": (
                     self._neuron_shared_embeddings.pop(nid, None)
-                    if self._neuron_shared_embeddings is not None else None
+                    if self._neuron_shared_embeddings is not None
+                    else None
                 ),
             }
         logger.info(f"[Cortex] Isolate: 神经元 {nid} 已隔离（保留 ckpt，可复活）")
@@ -988,6 +1042,7 @@ class Cortex:
 
         try:
             from neuroplex.legacy_checkpoint import load_legacy_checkpoint
+
             ckpt = load_legacy_checkpoint(ckpt_path, map_location=self.device)
             cfg: NeuronConfig = ckpt["neuron_config"]
             sd = ckpt["state_dict"]
@@ -1083,8 +1138,7 @@ class Cortex:
                     vec, w = item, 1.0
                 if vec is None:
                     continue
-                seed_memories.append(
-                    (vec, w, phase) if phase is not None else (vec, w))
+                seed_memories.append((vec, w, phase) if phase is not None else (vec, w))
         kwargs = dict(return_logits=True, active_nids=active_nids, fusion_mode=fusion_mode)
         if return_judge_logits:
             kwargs["return_judge_logits"] = True
@@ -1112,26 +1166,12 @@ class Cortex:
         """
         self._memory_bank = bank
 
+    # P2（2026-08-23）：本方法体已抽离至 neuroplex/brain/_cortex_helpers.py
+    # （纯函数、逐位等价），此处仅保留对外的 staticmethod 绑定以兼容
+    # self._is_degenerate_text(...) 全部调用点。真正逻辑见 _cortex_helpers。
     @staticmethod
     def _is_degenerate_text(text: str) -> bool:
-        """R9（REMEDIATION_PLAN 2026-08-14）：退化输出检测（与 verify 脚本同规则）。
-
-        三类已知退化（欠训练 dialogue neuron 实测）：
-        - 编号列表塌缩：`1.\n` 或字面量 `1.<0x0A>`（裸 prompt 死循环残留）
-        - 重复标点/字符：同字符连续 >=4
-        - 纯数字长串：剔除数字/空白/运算符/标点后仍 >=2 个非汉字非字母字符
-          （>=2 排除 "1 + " 这类短算术 stub——那是截断不是退化循环）
-        """
-        if not text:
-            return False
-        if re.search(r"\d+\.\s*\n", text) or "1.<0x0A>" in text:
-            return True
-        if re.search(r"([。！？，,.！、]{2})\1{1,}", text) or re.search(
-                r"(.)\1{3,}", text.replace("……", "。。")):
-            return True
-        stripped = re.sub(r"[0-9\s,，。.!！?？;；:：、+\-*/=×÷\"\'“”（）()<>]", "", text)
-        return bool(stripped) and len(stripped) >= 2 and not re.search(
-            r"[\u4e00-\u9fff\w]", stripped)
+        return _cortex_helpers.is_degenerate_text(text)
 
     @torch.no_grad()
     def generate(
@@ -1210,9 +1250,15 @@ class Cortex:
         # 推理快照（nmap = dict(self.neurons)）读到稳定权重 → 无需与训练互斥。
         if n_candidates <= 1:
             text = self._generate_p7(
-                prompt, max_tokens, temperature, top_k, domain,
-                repetition_penalty, routing_level=routing_level,
-                active_nids=active_nids, collab_mode=collab_mode,
+                prompt,
+                max_tokens,
+                temperature,
+                top_k,
+                domain,
+                repetition_penalty,
+                routing_level=routing_level,
+                active_nids=active_nids,
+                collab_mode=collab_mode,
                 fusion_mode=fusion_mode,
                 _allow_plain_prompt=_allow_plain_prompt,
                 memory_vectors=memory_vectors,
@@ -1232,12 +1278,20 @@ class Cortex:
                 retry_temp = min(temperature + 0.15, 1.2)
                 logger.warning(
                     "[Cortex] 检测到退化输出 %r，重试（temp %.2f→%.2f）",
-                    text[:30], temperature, retry_temp,
+                    text[:30],
+                    temperature,
+                    retry_temp,
                 )
                 text = self._generate_p7(
-                    prompt, max_tokens, retry_temp, top_k, domain,
-                    repetition_penalty, routing_level=routing_level,
-                    active_nids=active_nids, collab_mode=collab_mode,
+                    prompt,
+                    max_tokens,
+                    retry_temp,
+                    top_k,
+                    domain,
+                    repetition_penalty,
+                    routing_level=routing_level,
+                    active_nids=active_nids,
+                    collab_mode=collab_mode,
                     fusion_mode=fusion_mode,
                     _allow_plain_prompt=_allow_plain_prompt,
                     memory_vectors=memory_vectors,
@@ -1256,9 +1310,15 @@ class Cortex:
         for _ in range(n_candidates):
             try:
                 text = self._generate_p7(
-                    prompt, max_tokens, temperature, top_k, domain,
-                    repetition_penalty, routing_level=routing_level,
-                    active_nids=active_nids, collab_mode=collab_mode,
+                    prompt,
+                    max_tokens,
+                    temperature,
+                    top_k,
+                    domain,
+                    repetition_penalty,
+                    routing_level=routing_level,
+                    active_nids=active_nids,
+                    collab_mode=collab_mode,
                     fusion_mode=fusion_mode,
                     _allow_plain_prompt=_allow_plain_prompt,
                     memory_vectors=memory_vectors,
@@ -1363,7 +1423,9 @@ class Cortex:
                 retry_temp = min((st.temperature or temperature) + 0.15, 1.2)
                 logger.warning(
                     "[Cortex] task_chain 阶段 %d 退化 %r，重试（temp %.2f）",
-                    i, text[:30], retry_temp,
+                    i,
+                    text[:30],
+                    retry_temp,
                 )
                 try:
                     text = self.generate(
@@ -1398,10 +1460,10 @@ class Cortex:
             if st.record_memory and fs is not None and text.strip():
                 try:
                     from neuroplex.life.sleep_engine import get_sleep_engine
+
                     engine = get_sleep_engine()
                     label = st.memory_label or tpl.strip()[:40]
-                    engine.record_field_memory(
-                        fs, label, text=text, phase=self.get_last_phase())
+                    engine.record_field_memory(fs, label, text=text, phase=self.get_last_phase())
                     gate_i["memory"] = "recorded"
                 except Exception as e:
                     gate_i["memory"] = f"skip:{str(e)[:40]}"
@@ -1425,15 +1487,18 @@ class Cortex:
         生产路径推荐 generate_task_chain（TaskSet 序列，三重传递 + 质量门）。
         本方法仅保持 C25-F 时代调用点兼容（verify_c25_f 等），返回各阶段文本。
         """
-        task_sets = [TaskSet(
-            prompt=st.get("prompt", ""),
-            mode=st.get("mode", "continuous"),
-            domain=st.get("domain"),
-            active_nids=st.get("active_nids"),
-            max_tokens=st.get("max_tokens"),
-            temperature=st.get("temperature"),
-            quality_gate=st.get("quality_gate", True),
-        ) for st in stages]
+        task_sets = [
+            TaskSet(
+                prompt=st.get("prompt", ""),
+                mode=st.get("mode", "continuous"),
+                domain=st.get("domain"),
+                active_nids=st.get("active_nids"),
+                max_tokens=st.get("max_tokens"),
+                temperature=st.get("temperature"),
+                quality_gate=st.get("quality_gate", True),
+            )
+            for st in stages
+        ]
         return self.generate_task_chain(
             task_sets,
             max_tokens_per_stage=max_tokens_per_stage,
@@ -1466,7 +1531,7 @@ class Cortex:
             tokens = text.split()
             if len(tokens) < n:
                 return set(tokens)
-            return {tuple(tokens[i:i + n]) for i in range(len(tokens) - n + 1)}
+            return {tuple(tokens[i : i + n]) for i in range(len(tokens) - n + 1)}
 
         ngram_sets = [to_ngrams(c) for c in candidates]
 
@@ -1556,89 +1621,159 @@ class Cortex:
 
         # 1. 代码检测：强信号关键字（1 个即判定）+ 结构特征
         strong_code = [
-            'def ', 'class ', 'function ', 'async ',
-            'const ', 'let ', 'var ', 'SELECT ', 'CREATE TABLE',
-            'docker ', 'git ', 'npm ', 'kubectl ', 'pip ',
-            'package ', '#include', 'require(',
+            "def ",
+            "class ",
+            "function ",
+            "async ",
+            "const ",
+            "let ",
+            "var ",
+            "SELECT ",
+            "CREATE TABLE",
+            "docker ",
+            "git ",
+            "npm ",
+            "kubectl ",
+            "pip ",
+            "package ",
+            "#include",
+            "require(",
         ]
         # import/from 需要排除自然语言用法（"from 0 to 1", "from the"）
         code_keywords = [
-            'return ', 'if __name__', 'print(',
-            'lambda ', 'try:', 'except ', 'raise ',
+            "return ",
+            "if __name__",
+            "print(",
+            "lambda ",
+            "try:",
+            "except ",
+            "raise ",
         ]
-        code_patterns = ['{', '};', '=>', 'self.', 'std::',
-                         'def __init__', 'class ']
-        if _has_domain('code'):
+        code_patterns = ["{", "};", "=>", "self.", "std::", "def __init__", "class "]
+        if _has_domain("code"):
             strong_score = sum(1 for kw in strong_code if kw in text)
             weak_score = sum(1 for kw in code_keywords if kw in text)
             pattern_score = sum(1 for p in code_patterns if p in text)
             # import/from: 排除 "from 0", "from the", "from a" 等自然语言用法
             import_score = 0
-            for m in ['import ', 'from ']:
+            for m in ["import ", "from "]:
                 idx = text.find(m)
                 if idx >= 0:
-                    after = text[idx + len(m):].lstrip()
+                    after = text[idx + len(m) :].lstrip()
                     # 如果后面是自然语言词（数字、冠词等），不是代码
-                    if not (after[:1].isdigit() or after.startswith(('the ', 'a ', 'an '))):
+                    if not (after[:1].isdigit() or after.startswith(("the ", "a ", "an "))):
                         import_score += 1
-            if '```' in text:
+            if "```" in text:
                 pattern_score += 5
             # 强信号 1 个即判定，弱信号需 2 个
             if strong_score >= 1 or import_score >= 1 or weak_score + pattern_score >= 2:
-                return 'code'
+                return "code"
 
         # 2. 数学检测：多路信号融合（符号 + 关键词 + 公式特征 + 上下标）
-        if _has_domain('math'):
+        if _has_domain("math"):
             # 2a. 数学符号（Unicode 数学字符 + 基础运算符）
-            math_symbols = set('=+-*/^∑∫∏√∞∂∇∈⊂∪∩∀∃≤≥≠≈±→←↑↓⇒⇐')
+            math_symbols = set("=+-*/^∑∫∏√∞∂∇∈⊂∪∩∀∃≤≥≠≈±→←↑↓⇒⇐")
             math_sym_count = sum(1 for c in text if c in math_symbols)
 
             # 2b. 数学关键词（英文数学术语，大小写不敏感）
             math_keywords = [
-                'derivative', 'integral', 'theorem', 'proof', 'equation',
-                'sin', 'cos', 'tan', 'log', 'ln', 'limit',
-                'matrix', 'vector', 'tensor', 'eigen', 'calculus',
-                'algebra', 'geometry', 'probability', 'distribution',
-                'gradient', 'fourier', 'laplace', 'taylor', 'riemann',
-                'convergence', 'divergence', 'differential', 'polynomial',
-                'hypothesis', 'variable', 'coefficient', 'parameter',
-                'pythagorean', 'fibonacci', 'factorial', 'logarithm',
-                'bayes', 'gaussian', 'stochastic', 'determinant',
-                'chain rule', 'product rule', 'quotient rule',
+                "derivative",
+                "integral",
+                "theorem",
+                "proof",
+                "equation",
+                "sin",
+                "cos",
+                "tan",
+                "log",
+                "ln",
+                "limit",
+                "matrix",
+                "vector",
+                "tensor",
+                "eigen",
+                "calculus",
+                "algebra",
+                "geometry",
+                "probability",
+                "distribution",
+                "gradient",
+                "fourier",
+                "laplace",
+                "taylor",
+                "riemann",
+                "convergence",
+                "divergence",
+                "differential",
+                "polynomial",
+                "hypothesis",
+                "variable",
+                "coefficient",
+                "parameter",
+                "pythagorean",
+                "fibonacci",
+                "factorial",
+                "logarithm",
+                "bayes",
+                "gaussian",
+                "stochastic",
+                "determinant",
+                "chain rule",
+                "product rule",
+                "quotient rule",
             ]
             math_kw_count = sum(1 for kw in math_keywords if kw.lower() in text.lower())
 
             # 2c. 公式特征：上下标数字、希腊字母、函数调用模式
-            superscript = sum(1 for c in text if '\u00b2' <= c <= '\u00b9')  # ²³⁴...
-            subscript = sum(1 for c in text if '\u2080' <= c <= '\u2089')    # ₀₁₂...
-            greek = sum(1 for c in text if '\u0391' <= c <= '\u03c9')       # Α-ω
+            superscript = sum(1 for c in text if "\u00b2" <= c <= "\u00b9")  # ²³⁴...
+            subscript = sum(1 for c in text if "\u2080" <= c <= "\u2089")  # ₀₁₂...
+            greek = sum(1 for c in text if "\u0391" <= c <= "\u03c9")  # Α-ω
             # 函数调用模式 f(x), g(x), h(x)
-            fn_call = 1 if text.count('(') >= 1 and text.count(')') >= 1 and any(
-                p in text for p in ['f(', 'g(', 'h(', 'f(x)', 'g(x)', 'h(x)',
-                                    'sin(', 'cos(', 'tan(', 'log(', 'ln(']
-            ) else 0
+            fn_call = (
+                1
+                if text.count("(") >= 1
+                and text.count(")") >= 1
+                and any(
+                    p in text
+                    for p in [
+                        "f(",
+                        "g(",
+                        "h(",
+                        "f(x)",
+                        "g(x)",
+                        "h(x)",
+                        "sin(",
+                        "cos(",
+                        "tan(",
+                        "log(",
+                        "ln(",
+                    ]
+                )
+                else 0
+            )
 
             # 2d. 数字表达式密度（纯数字 + 运算符占比高）
-            stripped = text.replace(' ', '').replace('\n', '')
-            digit_ops = sum(1 for c in stripped if c.isdigit() or c in '+-*/=()^.,')
+            stripped = text.replace(" ", "").replace("\n", "")
+            digit_ops = sum(1 for c in stripped if c.isdigit() or c in "+-*/=()^.,")
             digit_ratio = digit_ops / max(len(stripped), 1)
 
             # 综合判定（满足任一条件）
-            math_total = (math_sym_count + math_kw_count * 2
-                          + superscript + subscript + greek + fn_call)
+            math_total = (
+                math_sym_count + math_kw_count * 2 + superscript + subscript + greek + fn_call
+            )
             if math_total >= 1 or digit_ratio > 0.4:
-                return 'math'
+                return "math"
 
         # 3. 中文检测（CJK 统一汉字区块）
-        cjk_count = sum(1 for c in text if '\u4e00' <= c <= '\u9fff')
-        if cjk_count > len(text.replace(' ', '')) * 0.3:
-            return 'zh' if _has_domain('zh') else _first_domain()
+        cjk_count = sum(1 for c in text if "\u4e00" <= c <= "\u9fff")
+        if cjk_count > len(text.replace(" ", "")) * 0.3:
+            return "zh" if _has_domain("zh") else _first_domain()
 
         # 4. 默认：en 或 general
-        if _has_domain('en'):
-            return 'en'
-        if _has_domain('general'):
-            return 'general'
+        if _has_domain("en"):
+            return "en"
+        if _has_domain("general"):
+            return "general"
         return _first_domain()
 
     @torch.no_grad()
@@ -1727,7 +1862,7 @@ class Cortex:
                                 s["ms"] = (1 - a) * s["ms"] + a * v * v
                             if s["count"] >= self._quality_ema_warmup:
                                 var = max(s["ms"] - s["mean"] ** 2, 1e-4)
-                                zs.append((float(ql[i]) - s["mean"]) / (var ** 0.5))
+                                zs.append((float(ql[i]) - s["mean"]) / (var**0.5))
                             else:
                                 zs.append(None)  # 未成熟，该 neuron 不参与
                         # 只聚合成熟 neuron 的 z；全未成熟 → quality_ready=False
@@ -1739,8 +1874,8 @@ class Cortex:
                             for i, nid in enumerate(nids):
                                 d = nid.split("_")[0]
                                 per_domain.setdefault(d, []).append(zs[i])
-        except Exception:
-            pass  # probe 失败 → 纯启发式（回退安全）
+        except Exception as e:
+            logger.debug("【Cortex._executive_route】处理失败（非致命）: %s", e)
 
         # ── C24 双头：judge NLL 域判定（主信号）──
         # 判定 = judge NLL 最低域；与启发式不同且显著占优（NLL 差 ≥ 1.0，
@@ -1763,9 +1898,11 @@ class Cortex:
             per_domain_scores = {d: sum(v) / len(v) for d, v in per_domain.items()}
             best_q_domain = max(per_domain_scores, key=per_domain_scores.get)
             base = per_domain_scores.get(domain, 0.0)
-            if (best_q_domain != domain
-                    and per_domain_scores[best_q_domain] > base * 1.5 + 1e-6
-                    and per_domain_scores[best_q_domain] - base >= 0.7):
+            if (
+                best_q_domain != domain
+                and per_domain_scores[best_q_domain] > base * 1.5 + 1e-6
+                and per_domain_scores[best_q_domain] - base >= 0.7
+            ):
                 domain = best_q_domain
         elif per_domain_nll is not None:
             # 诊断信息：judge NLL 域分数（供验证输出/监控）
@@ -1806,13 +1943,16 @@ class Cortex:
         sims = {}
         for nid, neuron in self.neurons.items():
             try:
-                if hasattr(neuron, 'embed_adapter') and neuron.embed_adapter is not None:
+                if hasattr(neuron, "embed_adapter") and neuron.embed_adapter is not None:
                     # 用 neuron 自己的 embed_adapter 投影到 768 维
                     projected = neuron.embed_adapter(prompt_pooled)  # [1, 768]
                     proj_vec = projected.squeeze(0)  # [768]
                     proj_norm = proj_vec / (proj_vec.norm() + 1e-8)
                     # C5: 多原型取 max cosine
-                    if getattr(neuron, "num_prototypes", 1) > 1 and neuron.domain_prototypes is not None:
+                    if (
+                        getattr(neuron, "num_prototypes", 1) > 1
+                        and neuron.domain_prototypes is not None
+                    ):
                         # 多原型: [K, 768] → max cosine
                         protos = neuron.domain_prototypes  # [K, 768]
                         proto_norms = protos / (protos.norm(dim=-1, keepdim=True) + 1e-8)
@@ -1882,7 +2022,7 @@ class Cortex:
         sims = {}
         for nid, neuron in self.neurons.items():
             try:
-                if hasattr(neuron, 'embed_adapter') and neuron.embed_adapter is not None:
+                if hasattr(neuron, "embed_adapter") and neuron.embed_adapter is not None:
                     projected = neuron.embed_adapter(prompt_pooled)
                     proj_vec = projected.squeeze(0)
                     proj_norm = proj_vec / (proj_vec.norm() + 1e-8)
@@ -1921,9 +2061,7 @@ class Cortex:
         general_ids = self._general_sp.encode(prefix_text + generated_text)
         return general_ids if general_ids else [0]
 
-    def _get_domain_to_general_alignment(
-        self, domain: str, domain_sp
-    ) -> Dict[int, list]:
+    def _get_domain_to_general_alignment(self, domain: str, domain_sp) -> Dict[int, list]:
         """S6: 构建 domain token ID → general token IDs 对齐表（带缓存 + 热插拔失效）。
 
         消除自回归生成时的 domain→text→general re-encode 往返。
@@ -1958,7 +2096,7 @@ class Cortex:
             return {}
 
         alignment: Dict[int, list] = {}
-        vocab_size = domain_sp.GetPieceSize() if hasattr(domain_sp, 'GetPieceSize') else 0
+        vocab_size = domain_sp.GetPieceSize() if hasattr(domain_sp, "GetPieceSize") else 0
         for domain_id in range(vocab_size):
             piece = domain_sp.id_to_piece(domain_id)
             manual = None
@@ -1969,9 +2107,11 @@ class Cortex:
                 general_ids = []
                 for gp in manual:
                     general_ids.extend(self._general_sp.encode(gp))
-                alignment[domain_id] = general_ids if general_ids else [
-                    self._general_sp.pad_id() if hasattr(self._general_sp, 'pad_id') else 0
-                ]
+                alignment[domain_id] = (
+                    general_ids
+                    if general_ids
+                    else [self._general_sp.pad_id() if hasattr(self._general_sp, "pad_id") else 0]
+                )
                 continue
             if piece.startswith("<0x") and piece.endswith(">"):
                 # byte fallback piece（如 <0x0A>）：必须 decode 成真实字节再 encode，
@@ -1984,7 +2124,7 @@ class Cortex:
                 alignment[domain_id] = general_ids
             else:
                 # 空映射用 pad_id 兜底
-                pad_id = self._general_sp.pad_id() if hasattr(self._general_sp, 'pad_id') else 0
+                pad_id = self._general_sp.pad_id() if hasattr(self._general_sp, "pad_id") else 0
                 alignment[domain_id] = [pad_id]
 
         self._domain_to_general_cache[domain] = {"fp": fp, "alignment": alignment}
@@ -2020,35 +2160,17 @@ class Cortex:
     # （0.7-0.93 vs 0.01-0.17）当选 leader 5/7 次，但其生成质量（zh lm_head
     # NLL）常是 5 个 dialogue 中最差——"共振分高但生成差"弱 neuron 独占。
     # 融合：域内归一化共振分 × 质量信号（prompt NLL 的负数）等权求和。
+    # P2（2026-08-23）：方法体已抽离至 _cortex_helpers.fuse_leader_quality，
+    # 此处保留 staticmethod 绑定兼容 self._fuse_leader_quality(...)。
     @staticmethod
-    def _fuse_leader_quality(resonance_scores: dict, nll_quality: dict,
-                             alpha: float = 0.5) -> dict:
-        """连续 leader 融合分数（共振分与 -NLL 域内 min-max 归一化后加权）。
-
-        Args:
-            resonance_scores: {nid: round1_scores}（t=0 场共振分，越大越强）
-            nll_quality: {nid: -NLL}（生成质量，越大越好）
-            alpha: 共振分权重（0.5 = 等权；质量权重 = 1-alpha）
-
-        Returns:
-            {nid: fused_score}（仅含两信号都有的 neuron；空 → 调用方回退）
-        """
-        common = [k for k in nll_quality if k in resonance_scores]
-        if not common:
-            return {}
-
-        def _minmax(values: dict) -> dict:
-            lo, hi = min(values.values()), max(values.values())
-            if hi - lo < 1e-9:
-                return {k: 0.5 for k in values}
-            return {k: (v - lo) / (hi - lo) for k, v in values.items()}
-
-        r_norm = _minmax({k: resonance_scores[k] for k in common})
-        q_norm = _minmax({k: nll_quality[k] for k in common})
-        return {k: alpha * r_norm[k] + (1 - alpha) * q_norm[k] for k in common}
+    def _fuse_leader_quality(resonance_scores: dict, nll_quality: dict, alpha: float = 0.5) -> dict:
+        return _cortex_helpers.fuse_leader_quality(resonance_scores, nll_quality, alpha)
 
     def _nll_quality_from_round1_logits(
-        self, result: dict, prompt: str, domain: str,
+        self,
+        result: dict,
+        prompt: str,
+        domain: str,
     ) -> dict:
         """从 round1 logits 计算各 neuron 对 prompt 的 next-token NLL 质量。
 
@@ -2076,7 +2198,9 @@ class Cortex:
             # tokenizer。两者词元数通常不同，必须按字符 span 对齐后再计算
             # next-token NLL，不能直接把两套 tokenizer 的 id 按位置硬配。
             _, aligned_targets = build_position_alignment(
-                prompt, tok, self._general_sp,
+                prompt,
+                tok,
+                self._general_sp,
             )
             aligned_targets = aligned_targets.to(self.device)
         except Exception:
@@ -2096,7 +2220,7 @@ class Cortex:
                 if n < 1:
                     continue
                 logp = torch.log_softmax(lg[:, :n, :], dim=-1)  # [1, n, V]
-                tgt = aligned_targets[1:n + 1]
+                tgt = aligned_targets[1 : n + 1]
                 mask = (tgt >= 0) & (tgt != 1) & (tgt != 0)
                 safe_tgt = tgt.clamp_min(0).unsqueeze(0).unsqueeze(-1)
                 nll_tok = -logp.gather(-1, safe_tgt).squeeze(-1)  # [1, n]
@@ -2114,7 +2238,11 @@ class Cortex:
     # 剔除持续劣化（迟滞防抖）、加入后验显著更高的未激活同域 neuron。
 
     def _rolling_nll_quality(
-        self, result: dict, gen_text: str, domain: str, window: int,
+        self,
+        result: dict,
+        gen_text: str,
+        domain: str,
+        window: int,
     ) -> dict:
         """滚动后验（C27 增量一）：对已生成文本窗口的 next-token NLL 质量。
 
@@ -2133,8 +2261,7 @@ class Cortex:
             tok = hub.get_tokenizer(domain) or hub.get_tokenizer("general")
             if tok is None:
                 return {}
-            zids = torch.tensor([tok.encode(gen_text)], dtype=torch.long,
-                                device=self.device)
+            zids = torch.tensor([tok.encode(gen_text)], dtype=torch.long, device=self.device)
         except Exception:
             return {}
         if zids.numel() < 1:
@@ -2157,7 +2284,7 @@ class Cortex:
             if lg.shape[-1] != vocab:
                 continue
             try:
-                lg_win = lg.detach()[:, -(n + 1):-1, :]  # [1, n, V]
+                lg_win = lg.detach()[:, -(n + 1) : -1, :]  # [1, n, V]
                 logp = torch.log_softmax(lg_win, dim=-1)
                 nll_tok = -logp.gather(-1, tgt).squeeze(-1)  # [1, n]
                 mask = (tgt.squeeze(-1) != 1) & (tgt.squeeze(-1) != 0)
@@ -2169,8 +2296,13 @@ class Cortex:
         return out
 
     def _probe_inactive_fused(
-        self, inactive_nids: List[str], general_ids: List[int],
-        gen_text: str, domain: str, window: int, fusion_mode: str,
+        self,
+        inactive_nids: List[str],
+        general_ids: List[int],
+        gen_text: str,
+        domain: str,
+        window: int,
+        fusion_mode: str,
     ) -> dict:
         """chunk 边界轻量 probe：未激活同域 neuron 的后验分（加入评估依据）。
 
@@ -2181,13 +2313,14 @@ class Cortex:
         if not inactive_nids:
             return {}
         try:
-            probe_ids = torch.tensor([general_ids], dtype=torch.long,
-                                     device=self.device)
+            probe_ids = torch.tensor([general_ids], dtype=torch.long, device=self.device)
             probe_emb = self._shared_embedding(probe_ids)
             with torch.no_grad():
                 probe = self.ensemble.forward(
-                    shared_embeddings=probe_emb, return_logits=True,
-                    active_nids=inactive_nids, fusion_mode=fusion_mode,
+                    shared_embeddings=probe_emb,
+                    return_logits=True,
+                    active_nids=inactive_nids,
+                    fusion_mode=fusion_mode,
                 )
             base = probe.get("round1_scores") or probe.get("final_scores") or {}
             q = self._rolling_nll_quality(probe, gen_text, domain, window)
@@ -2197,7 +2330,8 @@ class Cortex:
             if not common:
                 return {}
             return self._fuse_leader_quality(
-                {k: base[k] for k in common}, {k: q[k] for k in common})
+                {k: base[k] for k in common}, {k: q[k] for k in common}
+            )
         except Exception:
             return {}
 
@@ -2245,17 +2379,15 @@ class Cortex:
         if not fused:
             return active_nids, streaks
         # 2. 域约束全集（演化边界——C22 回合判定保持外层约束）
-        domain_all = [
-            k for k in self.neurons
-            if k == domain or k.startswith(domain + "_")
-        ]
+        domain_all = [k for k in self.neurons if k == domain or k.startswith(domain + "_")]
         if not domain_all:
             return active_nids, streaks
         # 3. 未激活同域 neuron 后验（chunk 边界轻量 probe）
         inactive = [k for k in domain_all if k not in active_nids]
         if inactive:
             fused_inactive = self._probe_inactive_fused(
-                inactive, general_ids, gen_text, domain, window, fusion_mode)
+                inactive, general_ids, gen_text, domain, window, fusion_mode
+            )
             if fused_inactive:
                 fused = {**fused, **fused_inactive}
         if not fused:
@@ -2302,8 +2434,9 @@ class Cortex:
         # 7. 保持原顺序 + 新加入 append + general 保留
         new_nids = [k for k in active_nids if k in keep]
         new_nids += [k for k in domain_all if k in keep and k not in active_nids]
-        new_nids += [k for k in active_nids
-                     if k in keep and k not in domain_all and k not in new_nids]
+        new_nids += [
+            k for k in active_nids if k in keep and k not in domain_all and k not in new_nids
+        ]
         return new_nids, new_streaks
 
     def _generate_p7(
@@ -2372,9 +2505,13 @@ class Cortex:
         if self._tokenizer_hub is None:
             raise RuntimeError("TokenizerHub not set. Call cortex.set_tokenizer_hub() first.")
         if self._shared_embedding is None:
-            raise RuntimeError("Shared embedding not set. Call cortex.set_shared_embedding() first.")
+            raise RuntimeError(
+                "Shared embedding not set. Call cortex.set_shared_embedding() first."
+            )
         if self._general_sp is None:
-            raise RuntimeError("General tokenizer not set. Call cortex.set_general_tokenizer() first.")
+            raise RuntimeError(
+                "General tokenizer not set. Call cortex.set_general_tokenizer() first."
+            )
 
         hub = self._tokenizer_hub
 
@@ -2386,8 +2523,9 @@ class Cortex:
         self._executive_confidence = 0.0
         self._executive_domains: dict = {}
         if domain is None and collab_mode in ("executive", "continuous"):
-            domain, self._executive_confidence, self._executive_domains = \
-                self._executive_route(prompt)
+            domain, self._executive_confidence, self._executive_domains = self._executive_route(
+                prompt
+            )
         elif domain is None:
             domain = self._infer_domain(prompt)
         if domain not in hub.list_domains():
@@ -2407,11 +2545,12 @@ class Cortex:
         if memory_vectors is None and auto_memory and self._memory_bank is not None:
             try:
                 if len(self._memory_bank) > 0:
-                    _qids = torch.tensor([general_ids], dtype=torch.long,
-                                         device=self.device)
+                    _qids = torch.tensor([general_ids], dtype=torch.long, device=self.device)
                     _qemb = self._shared_embedding(_qids)
                     _qres = self.think(
-                        _qemb, active_nids=None, fusion_mode=fusion_mode,
+                        _qemb,
+                        active_nids=None,
+                        fusion_mode=fusion_mode,
                         collab_mode=collab_mode,
                     )
                     _qfs = _qres.get("field_state")
@@ -2422,10 +2561,9 @@ class Cortex:
                         _lab, _sim, _vec, _ph = _top[0]
                         # C27 增量二（KoPE）：记忆带相位 → 注入按记忆相位对齐
                         # theta（相位归属记忆）；无相位回退 2 元组（峰值对齐）。
-                        memory_vectors = [(_vec, _sim, _ph)] if _ph is not None \
-                            else [(_vec, _sim)]
-            except Exception:
-                pass  # 自动检索失败静默跳过（显式向量通道不受影响）
+                        memory_vectors = [(_vec, _sim, _ph)] if _ph is not None else [(_vec, _sim)]
+            except Exception as e:
+                logger.debug("【Cortex._generate_p7】处理失败（非致命）: %s", e)
 
         # S12: 多轮对话状态管理
         # - start_round: 加载上一轮的 field_state（隐式记忆上下文）
@@ -2452,14 +2590,18 @@ class Cortex:
         # 回合级判定（_executive_route），再跑 token 级共振校验会造成双路径打架
         # （共振校验可能覆盖 executive 的 dominant 判定）。C25-E "continuous" 同。
         resonance_active_nids: Optional[List[str]] = None  # resonance 模式填充
-        if (len(self.neurons) > 1 and routing_mode != "keyword"
-                and collab_mode not in ("executive", "continuous")):
+        if (
+            len(self.neurons) > 1
+            and routing_mode != "keyword"
+            and collab_mode not in ("executive", "continuous")
+        ):
             try:
                 probe_ids = torch.tensor([general_ids], dtype=torch.long, device=self.device)
                 probe_emb = self._shared_embedding(probe_ids)
                 with torch.no_grad():
                     probe_result = self.ensemble.forward(
-                        shared_embeddings=probe_emb, return_logits=False,
+                        shared_embeddings=probe_emb,
+                        return_logits=False,
                     )
                 probe_scores = probe_result.get("final_scores", {})
                 if probe_scores:
@@ -2467,9 +2609,7 @@ class Cortex:
                         # R1: 共振分数软路由 —— 按分数排序选 top-k 神经元
                         # 跨域协作：不限定 domain，让共振分数自发决定激活集合
                         # shared_expert（若存在）始终包含，保证基础语言能力
-                        sorted_nids = sorted(
-                            probe_scores.items(), key=lambda x: x[1], reverse=True
-                        )
+                        sorted_nids = sorted(probe_scores.items(), key=lambda x: x[1], reverse=True)
                         top_nids = [nid for nid, _ in sorted_nids[:resonance_top_k]]
                         # 确保 shared_expert 在激活集中
                         if self.ensemble.shared_expert_id:
@@ -2487,19 +2627,19 @@ class Cortex:
                         best_nid = max(probe_scores, key=probe_scores.get)
                         best_domain = best_nid
                         chosen_score = max(
-                            (probe_scores.get(nid, 0.0)
-                             for nid in self.neurons
-                             if nid == domain),
+                            (probe_scores.get(nid, 0.0) for nid in self.neurons if nid == domain),
                             default=0.0,
                         )
                         # 切换条件：最强域分数比选定域高 50% 以上，且最强域已加载
-                        if (best_domain != domain
-                                and best_domain in hub.list_domains()
-                                and chosen_score > 0
-                                and probe_scores[best_nid] > chosen_score * 1.5):
+                        if (
+                            best_domain != domain
+                            and best_domain in hub.list_domains()
+                            and chosen_score > 0
+                            and probe_scores[best_nid] > chosen_score * 1.5
+                        ):
                             domain = best_domain
-            except Exception:
-                pass  # 共振探测失败，保留关键词路由结果
+            except Exception as e:
+                logger.debug("【Cortex._generate_p7】处理失败（非致命）: %s", e)
 
         # 3. Domain EOS
         # C21（2026-08-08）：词库多词表架构——decode 按生成 logits 的词表空间。
@@ -2510,9 +2650,7 @@ class Cortex:
         # （code 12K/math 10K/zh 50K/en 16K），替代 C21 硬编码 50000→zh。
         eos_id = hub.eos_token_id("general")
         decode_sp = self._general_sp  # 当前生成词表空间（leader 分支可能覆盖为域）
-        decode_domain = "general"     # 当前 decode 空间域（P7 CJK 截断仅对中文生效）
-        domain_sp = None
-        alignment_table = None
+        decode_domain = "general"  # 当前 decode 空间域（P7 CJK 截断仅对中文生效）
 
         generated_pieces = []
         generated_token_ids = set()
@@ -2525,7 +2663,7 @@ class Cortex:
         # 稀疏激活：支持字符串模式自动选择（auto_topK / auto_all / auto_top1）
         if isinstance(active_nids, str):
             if active_nids.startswith("auto_top"):
-                k_str = active_nids[len("auto_top"):]
+                k_str = active_nids[len("auto_top") :]
                 k = int(k_str) if k_str else 3
                 active_nids = self._auto_topk_route(general_ids, top_k=k)
             elif active_nids in ("auto_all", "all"):
@@ -2543,13 +2681,11 @@ class Cortex:
                 # （回合内稳定生成，不做 token 级竞争；人脑"模式确定→整通路激活"）
                 # C25-E：continuous 同 executive 激活（判定信号链一致）
                 domain_neurons = [
-                    k for k in self.neurons
-                    if k == domain or k.startswith(domain + "_")
+                    k for k in self.neurons if k == domain or k.startswith(domain + "_")
                 ]
                 active_nids = domain_neurons
                 general_neurons = [
-                    k for k in self.neurons
-                    if (k == "general" or k.startswith("general_"))
+                    k for k in self.neurons if (k == "general" or k.startswith("general_"))
                 ]
                 if general_neurons and domain not in general_neurons:
                     active_nids.extend(general_neurons)
@@ -2560,14 +2696,12 @@ class Cortex:
                 # Level 1 域路由：激活 domain 前缀的全部神经元（同域多神经元协作）
                 # 如 domain="zh" → 激活 zh_aug0_dialogue / zh_std0_dialogue 等
                 domain_neurons = [
-                    k for k in self.neurons
-                    if k == domain or k.startswith(domain + "_")
+                    k for k in self.neurons if k == domain or k.startswith(domain + "_")
                 ]
                 active_nids = domain_neurons
                 # general 神经元 always-active（基础语言能力）
                 general_neurons = [
-                    k for k in self.neurons
-                    if (k == "general" or k.startswith("general_"))
+                    k for k in self.neurons if (k == "general" or k.startswith("general_"))
                 ]
                 if general_neurons and domain not in general_neurons:
                     active_nids.extend(general_neurons)
@@ -2613,29 +2747,38 @@ class Cortex:
                         continue
                     neuron_embeddings[nid] = emb(ids_tensor)
                 result = self.think(
-                    active_nids=active_nids, fusion_mode=fusion_mode,
+                    active_nids=active_nids,
+                    fusion_mode=fusion_mode,
                     neuron_embeddings=neuron_embeddings,
                     collab_mode=collab_mode,
                     memory_vectors=memory_vectors,
                 )
             else:
                 shared_emb = self._shared_embedding(ids_tensor)
-                result = self.think(shared_emb, active_nids=active_nids, fusion_mode=fusion_mode,
-                                    collab_mode=collab_mode,
-                                    memory_vectors=memory_vectors)
+                result = self.think(
+                    shared_emb,
+                    active_nids=active_nids,
+                    fusion_mode=fusion_mode,
+                    collab_mode=collab_mode,
+                    memory_vectors=memory_vectors,
+                )
 
             # Get logits: 协作模式选择
             neuron_logits = result.get("neuron_logits", {})
             final_scores = result.get("final_scores", {})
 
-            if collab_mode in ("leader", "executive", "continuous") and final_scores and neuron_logits:
+            if (
+                collab_mode in ("leader", "executive", "continuous")
+                and final_scores
+                and neuron_logits
+            ):
                 # 族长主导（C19 executive 复用）：选共振分最高的 neuron 的 logits
                 # （不融合）——回合内稳定生成，避免异构 logit 融合干扰。
                 # 族长在 round 2+ 已读共振场（受其他 neuron 影响），
                 # 用自己 logits 干净输出，避免异构 logit 融合干扰（confidence陷阱）
                 # C19（2026-08-08）：executive 模式下 leader 限定在 dominant 域内
                 # ——任务模式激活后由域内最强 neuron 稳定生成，不用跨域最强
-                #（否则回合级判定白做，leader 被其他域 neuron 抢占）。
+                # （否则回合级判定白做，leader 被其他域 neuron 抢占）。
                 # C25-E：continuous 用时间平均激活权重（continuous_weights）选 leader。
                 # C25-E 增量四（2026-08-11）：continuous leader 用 round1_scores
                 # （t=0 场共振分，质量信号）优先——时间平均激活=参与度不区分强弱，
@@ -2646,7 +2789,8 @@ class Cortex:
                         # 质量信号优先，fallback 时间平均激活
                         qual_scores = result.get("round1_scores") or final_scores
                         domain_scores = {
-                            k: v for k, v in qual_scores.items()
+                            k: v
+                            for k, v in qual_scores.items()
                             if k == domain or k.startswith(domain + "_")
                         }
                         base_scores = domain_scores if domain_scores else qual_scores
@@ -2658,19 +2802,21 @@ class Cortex:
                         fused = None
                         if len(base_scores) >= 2:
                             if _leader_nll_quality_cache is None:
-                                _leader_nll_quality_cache = (
-                                    self._nll_quality_from_round1_logits(
-                                        result, prompt, domain))
+                                _leader_nll_quality_cache = self._nll_quality_from_round1_logits(
+                                    result, prompt, domain
+                                )
                             if _leader_nll_quality_cache:
                                 fused = self._fuse_leader_quality(
-                                    base_scores, _leader_nll_quality_cache)
+                                    base_scores, _leader_nll_quality_cache
+                                )
                         if fused:
                             leader_nid = max(fused, key=fused.get)
                         else:
                             leader_nid = max(base_scores, key=base_scores.get)
                     else:
                         domain_scores = {
-                            k: v for k, v in final_scores.items()
+                            k: v
+                            for k, v in final_scores.items()
                             if k == domain or k.startswith(domain + "_")
                         }
                         if domain_scores:
@@ -2683,7 +2829,7 @@ class Cortex:
                 # 补输入分隔符 "\n" 重新 forward——训练时 answer 起点在 prompt+"\n"
                 # 之后（train_domain_target_sft.py build_sample），生成输入无 "\n"
                 # 会导致 first-token 概率 EOS > 换行 → 生成空/碎片。
-                if (not _c24_prefixed and leader_nid in _c24_domain_nids):
+                if not _c24_prefixed and leader_nid in _c24_domain_nids:
                     _c24_prefixed = True
                     _nl_ids = self._general_sp.encode("\n")
                     if _nl_ids:
@@ -2768,15 +2914,18 @@ class Cortex:
 
             # No-repeat-ngram: ban tokens that would complete an existing n-gram
             if no_repeat_ngram_size > 0 and len(generated_token_list) >= no_repeat_ngram_size - 1:
-                ngram_prefix = tuple(generated_token_list[-(no_repeat_ngram_size - 1):])
+                ngram_prefix = tuple(generated_token_list[-(no_repeat_ngram_size - 1) :])
                 # 查找已生成文本中所有匹配前缀的 n-gram 的下一个 token
                 banned_ids = set()
                 for i in range(len(generated_token_list) - no_repeat_ngram_size + 1):
-                    if tuple(generated_token_list[i:i + no_repeat_ngram_size - 1]) == ngram_prefix:
+                    if (
+                        tuple(generated_token_list[i : i + no_repeat_ngram_size - 1])
+                        == ngram_prefix
+                    ):
                         banned_ids.add(generated_token_list[i + no_repeat_ngram_size - 1])
                 # 将 banned tokens 的 logit 设为 -inf
                 for tid in banned_ids:
-                    logits[0, tid] = float('-inf')
+                    logits[0, tid] = float("-inf")
 
             # P7-修复（2026-08-04）：EOS logit 增强 + 熵停止 + 跑偏截断
             # 训练数据（alpaca clean）无 EOS 标记，模型从未学会输出 </s>，
@@ -2787,7 +2936,11 @@ class Cortex:
                 logits[0, eos_id] += 0.5  # 温和 EOS bias（top-k 后可能仍在候选）
             else:
                 # 无 EOS：softmax 熵 > 阈值时视为跑偏，提前停止
-                probs_ent = F.softmax(logits / temperature, dim=-1)
+                # 修复（2026-08-23 审计 M5）：logits 在上方各分支已除以
+                # temperature（2704-2757 行），此处不再二次除温——旧行为
+                # logits/temperature² 会系统性压低熵，使 8.0 阈值几乎不触发。
+                # 注意：阈值语义恢复为单次除温口径，若停止时机变化需重新标定。
+                probs_ent = F.softmax(logits, dim=-1)
                 ent = -(probs_ent * probs_ent.clamp_min(1e-9).log()).sum(-1)
                 if ent[0].item() > 8.0 and len(generated_ids_ordered) >= 8:
                     break
@@ -2820,11 +2973,10 @@ class Cortex:
             # C24（2026-08-09）：仅对 zh 域 decode 生效——code/math/en 域空间
             # 输出天然非中文（代码/数字/公式），CJK 截断会误杀域生成。
             if decode_domain == "zh" and len(generated_ids_ordered) >= 4:
-                _cjk_or_punct = re.compile(r'[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef\u2014\u2018\u2019\u201c\u201d\u2026]')
                 last_pieces = [decode_sp.id_to_piece(t) for t in generated_ids_ordered[-4:]]
-                non_cjk = sum(1 for p in last_pieces if not _cjk_or_punct.search(p))
+                non_cjk = sum(1 for p in last_pieces if not _CJK_OR_PUNCT_RE.search(p))
                 if non_cjk >= 3:
-                    while generated_ids_ordered and not _cjk_or_punct.search(
+                    while generated_ids_ordered and not _CJK_OR_PUNCT_RE.search(
                         decode_sp.id_to_piece(generated_ids_ordered[-1])
                     ):
                         generated_ids_ordered.pop()
@@ -2853,14 +3005,24 @@ class Cortex:
             # 已生成文本，round1_logits 零额外前向）+ 共振分重估同域 neuron
             # 后验：剔除持续劣化（迟滞防抖）、加入后验显著更高的未激活同域
             # neuron。仅在 continuous 模式（C22 收敛路径）；异常静默回退。
-            if (collab_mode == "continuous" and instance_routing
-                    and domain and ir_step > 0
-                    and (ir_step + 1) % instance_chunk == 0):
+            if (
+                collab_mode == "continuous"
+                and instance_routing
+                and domain
+                and ir_step > 0
+                and (ir_step + 1) % instance_chunk == 0
+            ):
                 try:
-                    _ctx = decode_sp.DecodeIds(generated_ids_ordered) if generated_ids_ordered else ""
+                    _ctx = (
+                        decode_sp.DecodeIds(generated_ids_ordered) if generated_ids_ordered else ""
+                    )
                     if _ctx.strip():
                         _evolved, _ir_streaks = self._instance_route_evolve(
-                            active_nids, result, _ctx, domain, _ir_streaks,
+                            active_nids,
+                            result,
+                            _ctx,
+                            domain,
+                            _ir_streaks,
                             window=instance_chunk,
                             evict_ratio=instance_evict_ratio,
                             evict_streak=instance_evict_streak,
@@ -2873,12 +3035,16 @@ class Cortex:
                             logger.info(
                                 "[Cortex] 实例级路由 chunk %d：激活 %d→%d",
                                 (ir_step + 1) // instance_chunk,
-                                len(active_nids), len(_evolved),
+                                len(active_nids),
+                                len(_evolved),
                             )
                             active_nids = _evolved
                 except Exception as _e:
-                    logger.debug("[Cortex] 实例级路由 chunk %d 失败回退: %s",
-                                 (ir_step + 1) // instance_chunk, _e)
+                    logger.debug(
+                        "[Cortex] 实例级路由 chunk %d 失败回退: %s",
+                        (ir_step + 1) // instance_chunk,
+                        _e,
+                    )
 
         # Decode with 当前词表空间 tokenizer（多词表架构）
         # P7-修复（2026-08-04）：用 DecodeIds 替代 "".join(pieces)
@@ -2898,8 +3064,7 @@ class Cortex:
         # C27 增量二（KoPE）：截获最近一次共振的相位均值（记忆沉淀/任务链
         # 记录带相位——相位归属记忆；无 phase → None 回退）。
         try:
-            self._last_phase_mean = (
-                result.get("phase_mean") if isinstance(result, dict) else None)
+            self._last_phase_mean = result.get("phase_mean") if isinstance(result, dict) else None
         except Exception:
             self._last_phase_mean = None
 
@@ -2928,10 +3093,10 @@ class Cortex:
         if fs is None:
             return
         from neuroplex.life.sleep_engine import get_sleep_engine
+
         engine = get_sleep_engine()
         label = prompt.strip()[:40] if prompt else "auto"
-        engine.record_field_memory(
-            fs, label, text=generated_text, phase=self.get_last_phase())
+        engine.record_field_memory(fs, label, text=generated_text, phase=self.get_last_phase())
 
     @torch.no_grad()
     def generate_multimodal(
@@ -2983,8 +3148,12 @@ class Cortex:
 
         # 训练/推理分离：无锁读（同 generate，训练侧影子权重保证 live 稳定）
         return self._generate_multimodal_p8(
-            features, actual_modality, domain,
-            max_tokens, temperature, top_k,
+            features,
+            actual_modality,
+            domain,
+            max_tokens,
+            temperature,
+            top_k,
         )
 
     def _generate_multimodal_p8(
@@ -3014,6 +3183,7 @@ class Cortex:
         # 2026-08-07 收敛：确定模态在 general 词表的 codec 段
         # image/audio 段在 tokenizer_contract.json 预留；video 暂无预留段，v1 不支持生成
         from neuroplex.config import MULTIMODAL_TOKENS
+
         if modality == "image":
             mm_token_base = MULTIMODAL_TOKENS["image_token_base"]
             mm_codebook_size = MULTIMODAL_TOKENS["image_codebook_size"]
@@ -3034,20 +3204,13 @@ class Cortex:
 
         # 1. 找出所有支持该模态输入投影的 neuron
         # （输出统一走共享 general lm_head，不再需要 per-neuron mm_lm_heads）
-        mm_nids = [
-            nid for nid, neuron in self.neurons.items()
-            if modality in neuron.mm_projections
-        ]
+        mm_nids = [nid for nid, neuron in self.neurons.items() if modality in neuron.mm_projections]
         if not mm_nids:
-            logger.warning(
-                f"无 neuron 注册了模态 '{modality}' 投影层，fallback 到 text 路径"
-            )
+            logger.warning(f"无 neuron 注册了模态 '{modality}' 投影层，fallback 到 text 路径")
             if features.dim() == 2 and features.dtype == torch.long:
                 ids = features.tolist()[0] if features.dim() == 2 else features.tolist()
                 return ids[:max_tokens]
-            raise RuntimeError(
-                f"无 neuron 支持模态 '{modality}'，且输入不是离散 token id"
-            )
+            raise RuntimeError(f"无 neuron 支持模态 '{modality}'，且输入不是离散 token id")
 
         # 2. 输入维度归一化
         features = features.to(self.device)
@@ -3065,9 +3228,7 @@ class Cortex:
         # 4. codec（用于自回归时查 codebook）
         codec = hub.modal_encoders.get(modality)
         has_codebook = (
-            codec is not None
-            and hasattr(codec, "model")
-            and hasattr(codec.model, "quantizer")
+            codec is not None and hasattr(codec, "model") and hasattr(codec.model, "quantizer")
         )
 
         # 5. 自回归生成（多 neuron 共振）
@@ -3095,8 +3256,8 @@ class Cortex:
             logits = logits[:, -1, :] / temperature  # [B, general_vocab]
 
             # mask 到 codec 段：非 codec 段 logits 设为 -inf，确保采样落在 codec 段
-            mask = torch.full_like(logits, float('-inf'))
-            mask[:, mm_token_base:mm_token_base + mm_codebook_size] = 0
+            mask = torch.full_like(logits, float("-inf"))
+            mask[:, mm_token_base : mm_token_base + mm_codebook_size] = 0
             logits = logits + mask
 
             if top_k > 0:
@@ -3118,24 +3279,22 @@ class Cortex:
             generated.append(next_codec_index)
 
             # 自回归：用 codec 索引查 codebook 得到 embedding，拼接到每个 neuron
-            next_token_tensor = torch.tensor([[next_codec_index]], dtype=torch.long, device=self.device)
+            next_token_tensor = torch.tensor(
+                [[next_codec_index]], dtype=torch.long, device=self.device
+            )
             if has_codebook:
                 codebook = codec.model.quantizer.codebook  # Embedding
                 next_feat = codebook(next_token_tensor)  # [1, 1, latent_dim]
                 for nid in mm_nids:
                     neuron = self.neurons[nid]
                     next_emb = neuron.encode_multimodal_input(next_feat, modality)
-                    neuron_embeddings[nid] = torch.cat(
-                        [neuron_embeddings[nid], next_emb], dim=1
-                    )
+                    neuron_embeddings[nid] = torch.cat([neuron_embeddings[nid], next_emb], dim=1)
             else:
                 # codec 不可用时用 zeros 填充（退化）
                 first_emb = next(iter(neuron_embeddings.values()))
                 next_emb = torch.zeros(1, 1, first_emb.shape[-1], device=self.device)
                 for nid in mm_nids:
-                    neuron_embeddings[nid] = torch.cat(
-                        [neuron_embeddings[nid], next_emb], dim=1
-                    )
+                    neuron_embeddings[nid] = torch.cat([neuron_embeddings[nid], next_emb], dim=1)
 
         return generated
 

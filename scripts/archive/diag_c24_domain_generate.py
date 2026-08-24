@@ -4,6 +4,7 @@
 1. 每个域头 neuron 在域空间能否连贯生成（C24 训练成果本身）
 2. 生成 decode 是否走对词表空间（code 12K / math 10K / zh 50K / en 16K）
 """
+
 import os
 import sys
 
@@ -31,14 +32,18 @@ PROMPTS = {
 
 
 def load_neuron(domain: str, out_dir: str = OUT_DIR):
-    ckpt = torch.load(os.path.join(out_dir, f"neuron_{domain}.pt"), map_location=DEVICE, weights_only=False)
+    ckpt = torch.load(
+        os.path.join(out_dir, f"neuron_{domain}.pt"), map_location=DEVICE, weights_only=False
+    )
     cfg = ckpt["neuron_config"]
     cfg.unified_field_dim = None
     neuron = ResonanceNeuron(cfg).to(DEVICE)
     neuron.load_state_dict(ckpt["state_dict"], strict=False)
     neuron.eval()
     emb = torch.nn.Embedding(256000, 512)
-    emb.weight.data.copy_(torch.load(os.path.join(out_dir, "shared_embedding.pt"), map_location=DEVICE))
+    emb.weight.data.copy_(
+        torch.load(os.path.join(out_dir, "shared_embedding.pt"), map_location=DEVICE)
+    )
     return neuron, emb
 
 
@@ -72,8 +77,13 @@ def generate(neuron, emb, domain_sp, general_sp, prompt, max_tokens=40):
 
 def main():
     import argparse
+
     ap = argparse.ArgumentParser()
-    ap.add_argument("--dir", default=OUT_DIR, help="neuron 目录：foundation_v1（SFT 前）或 foundation_v1_sft（SFT 后）")
+    ap.add_argument(
+        "--dir",
+        default=OUT_DIR,
+        help="neuron 目录：foundation_v1（SFT 前）或 foundation_v1_sft（SFT 后）",
+    )
     args = ap.parse_args()
     general_sp = load_general_tokenizer()
     for dom, prompt in PROMPTS.items():

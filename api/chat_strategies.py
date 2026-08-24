@@ -12,6 +12,7 @@ Seed是独立生命体，用自己的大脑推理。
 
 Seed不需要区分"思维"和"行动"，它是一个统一的生命体。
 """
+
 import asyncio
 import json
 import logging
@@ -49,8 +50,10 @@ def _apply_rag(prompt, app_state):
         context = app_state.rag_kb.search_with_fallback(prompt)
         if context:
             context_str = "\n---\n".join(context)
-            return (f"基于以下参考资料回答问题。\n\n"
-                    f"【参考资料】\n{context_str}\n\n【问题】\n{prompt}")
+            return (
+                f"基于以下参考资料回答问题。\n\n"
+                f"【参考资料】\n{context_str}\n\n【问题】\n{prompt}"
+            )
     return prompt
 
 
@@ -58,18 +61,24 @@ def _get_life_state():
     """读取Seed生命状态（仅读取，不记录交互）"""
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
+
         life = get_life_scheduler()
         return life.needs.to_dict()
     except Exception:
         return {}
 
 
-def _record_life_interaction(success: bool = True, topic: str = "",
-                             reasoning_steps: int = 0, used_tools: bool = False,
-                             had_search_results: bool = False):
+def _record_life_interaction(
+    success: bool = True,
+    topic: str = "",
+    reasoning_steps: int = 0,
+    used_tools: bool = False,
+    had_search_results: bool = False,
+):
     """记录交互到生命系统（带真实指标）"""
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
+
         life = get_life_scheduler()
         life.record_interaction(
             success=success,
@@ -78,32 +87,34 @@ def _record_life_interaction(success: bool = True, topic: str = "",
             used_tools=used_tools,
             had_search_results=had_search_results,
         )
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【_record_life_interaction】处理失败（非致命）: %s", e)
 
 
 def _get_memory_context():
     """读取近期记忆，注入推理上下文（使用统一上下文管理器）"""
     try:
         from neuroplex.agent.context_manager import get_context_manager
+
         ctx = get_context_manager()
         wm_context = ctx._get_working_memory_context(500)
         if wm_context:
             return f"【近期记忆】\n{wm_context}\n\n"
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【_get_memory_context】处理失败（非致命）: %s", e)
 
     # 回退到旧方式
     try:
         from neuroplex.agent.working_memory import get_working_memory
+
         wm = get_working_memory()
         all_memories = wm.export_all()
         if all_memories:
             lines = [f"- {str(v)[:100]}" for k, v in list(all_memories.items())[:5]]
             if lines:
                 return "【近期记忆】\n" + "\n".join(lines) + "\n\n"
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【_get_memory_context】处理失败（非致命）: %s", e)
     return ""
 
 
@@ -123,6 +134,7 @@ def _record_evolution(prompt, result_text, success):
     """记录到进化引擎"""
     try:
         from neuroplex.life.evolution_engine import get_evolution_engine
+
         evo = get_evolution_engine()
         if success:
             evo.record_task_success(
@@ -135,8 +147,8 @@ def _record_evolution(prompt, result_text, success):
                 task=prompt[:200],
                 error=result_text[:200] if result_text else "empty",
             )
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【_record_evolution】处理失败（非致命）: %s", e)
 
 
 def _record_recursive_strategies(prompt, system_prompt, success, reasoning_steps, tool_names):
@@ -148,27 +160,27 @@ def _record_recursive_strategies(prompt, system_prompt, success, reasoning_steps
     """
     try:
         from neuroplex.life.recursive_improver import get_recursive_improver
+
         improver = get_recursive_improver()
         q = 1.0 if success else 0.2
         # prompt 策略（system_prompt 是实际生效的提示策略）
-        improver.record_strategy(
-            "prompt", (system_prompt or "")[:200], prompt[:200], success, q)
+        improver.record_strategy("prompt", (system_prompt or "")[:200], prompt[:200], success, q)
         # 工具选择策略（每个用过的工具一条，供按工具统计成功率）
         for tool in tool_names:
-            improver.record_strategy(
-                "tool_choice", tool, prompt[:200], success, q)
+            improver.record_strategy("tool_choice", tool, prompt[:200], success, q)
         # 反思策略（多步推理 = 展开了反思/规划）
         if reasoning_steps >= 2:
             improver.record_strategy(
-                "reflection", f"react_{reasoning_steps}steps", prompt[:200], success, q)
-    except Exception:
-        pass
+                "reflection", f"react_{reasoning_steps}steps", prompt[:200], success, q
+            )
+    except Exception as e:
+        logger.debug("【_record_recursive_strategies】处理失败（非致命）: %s", e)
 
 
 def _has_react_engine() -> bool:
     """检查 ReAct 引擎是否可用"""
     try:
-        from neuroplex.agent_ext.react_engine import ReActEngine
+        from neuroplex.agent_ext.react_engine import ReActEngine  # noqa: F401
     except ImportError:
         return False
 
@@ -180,6 +192,46 @@ def _has_react_engine() -> bool:
         return True
 
     return False
+
+
+async def _iterate_sync_gen_in_thread(gen_factory, stop_event):
+    """在工作线程中驱动同步生成器，通过 asyncio.Queue 桥接回 async 迭代。
+
+    防止秒级推理的 next() 阻塞事件循环：
+    - 线程内逐条 next()，事件经 loop.call_soon_threadsafe 投递到队列
+    - 正常结束 / 异常 / stop_event 置位都保证投递哨兵，消费者永不悬挂
+    - 消费者收到 error 哨兵时重抛异常（交由调用方既有 except 走回退逻辑）
+    """
+    loop = asyncio.get_running_loop()
+    q: asyncio.Queue = asyncio.Queue()
+
+    def _run():
+        gen = gen_factory()
+        try:
+            for item in gen:
+                if stop_event.is_set():
+                    break
+                loop.call_soon_threadsafe(q.put_nowait, ("item", item))
+            loop.call_soon_threadsafe(q.put_nowait, ("done", None))
+        except Exception as exc:
+            logger.error(f"流式生成线程异常: {exc}")
+            loop.call_soon_threadsafe(q.put_nowait, ("error", exc))
+        finally:
+            try:
+                gen.close()
+            except Exception as e:
+                logger.debug("【_iterate_sync_gen_in_thread._run】处理失败（非致命）: %s", e)
+
+    threading.Thread(target=_run, daemon=True).start()
+
+    while True:
+        kind, payload = await q.get()
+        if kind == "item":
+            yield payload
+        elif kind == "error":
+            raise payload
+        else:  # done
+            return
 
 
 async def _stream_unified(request, prompt, app_state, stop_event, collector):
@@ -215,6 +267,7 @@ async def _stream_unified(request, prompt, app_state, stop_event, collector):
 
     try:
         from neuroplex.agent.context_manager import get_context_manager
+
         ctx = get_context_manager()
 
         # 注入对话历史到上下文管理器
@@ -255,13 +308,18 @@ async def _stream_unified(request, prompt, app_state, stop_event, collector):
     if _has_react_engine():
         try:
             from neuroplex.agent_ext.react_engine import ReActEngine
+
             engine = ReActEngine(max_steps=max_steps)
 
-            for event in engine.run_stream(
-                task=enriched_prompt,
-                system_prompt=system_prompt,
-                history=history,
-            ):
+            def _gen_factory():
+                return engine.run_stream(
+                    task=enriched_prompt,
+                    system_prompt=system_prompt,
+                    history=history,
+                )
+
+            # 同步生成器放到工作线程驱动，事件经队列桥接，不阻塞事件循环
+            async for event in _iterate_sync_gen_in_thread(_gen_factory, stop_event):
                 if stop_event.is_set():
                     logger.info("推理被用户停止")
                     break
@@ -286,7 +344,11 @@ async def _stream_unified(request, prompt, app_state, stop_event, collector):
                     if tool_name:
                         tool_names.add(str(tool_name))
                     result_text = event_data.get("result", "")
-                    if tool_name and ("search" in tool_name.lower() or "fetch" in tool_name.lower() or "browse" in tool_name.lower()):
+                    if tool_name and (
+                        "search" in tool_name.lower()
+                        or "fetch" in tool_name.lower()
+                        or "browse" in tool_name.lower()
+                    ):
                         if result_text and len(str(result_text).strip()) > 50:
                             had_search_results = True
 
@@ -297,7 +359,9 @@ async def _stream_unified(request, prompt, app_state, stop_event, collector):
             logger.error(f"ReAct engine error: {e}, falling back to direct generation")
             full_text = ""
             # 如果 ReAct 引擎出错，回退到直接生成
-            async for chunk in _stream_fallback(enriched_prompt, system_prompt, app_state, stop_event):
+            async for chunk in _stream_fallback(
+                enriched_prompt, system_prompt, app_state, stop_event
+            ):
                 yield chunk
                 full_text += chunk
     else:
@@ -310,7 +374,8 @@ async def _stream_unified(request, prompt, app_state, stop_event, collector):
     success = bool(full_text and not full_text.startswith("["))
     _record_evolution(request.prompt, full_text, success)
     _record_recursive_strategies(
-        request.prompt, system_prompt, success, reasoning_steps, tool_names)
+        request.prompt, system_prompt, success, reasoning_steps, tool_names
+    )
 
     # 记录交互到生命系统（带真实指标）
     _record_life_interaction(
@@ -325,8 +390,8 @@ async def _stream_unified(request, prompt, app_state, stop_event, collector):
         if collector and full_text:
             collector.collect_conversation(request.prompt, full_text)
             collector.flush()
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【_stream_unified】处理失败（非致命）: %s", e)
     yield "data: [DONE]\n\n"
 
 
@@ -348,9 +413,7 @@ async def _stream_fallback(prompt, system_prompt, app_state, stop_event):
         # 任务级并行：同步 generate 移入工作线程（asyncio.to_thread），
         # 不同聊天请求各自在独立线程运行 → 并发推理不阻塞事件循环，
         # 且 ensemble 每任务独立共振场（thread-local）互不污染
-        result = await asyncio.to_thread(
-            model.generate, formatted, max_tokens=512
-        )
+        result = await asyncio.to_thread(model.generate, formatted, max_tokens=512)
         full_text = result if isinstance(result, str) else str(result)
         yield f"data: {json.dumps(full_text, ensure_ascii=False)}\n\n"
         await asyncio.sleep(0.01)
@@ -368,14 +431,15 @@ def create_event_generator(request, app_state, collector_factory):
     - 能直接回答 → 1步完成（快速）
     - 需要工具 → 自动调用搜索/工具
     """
+
     async def event_generator():
         stop_event = threading.Event()
         try:
             collector = None
             try:
                 collector = collector_factory()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【create_event_generator.event_generator】处理失败（非致命）: %s", e)
 
             prompt = _apply_rag(request.prompt, app_state)
 

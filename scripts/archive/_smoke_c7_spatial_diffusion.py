@@ -9,6 +9,7 @@
 6. 图拉普拉斯性质：对称 + 行和≈0 + 对角线≈1
 7. ensemble 级别：spatial_diffusion_enabled=False 时 forward_train 行为不变
 """
+
 from __future__ import annotations
 
 import os
@@ -26,10 +27,12 @@ from taiji.resonance.spatial_diffusion import SpatialDiffuser
 def _make_geometry() -> NeuronGeometry:
     """构造 4 neuron 的 geometry：n0/n1 同域近邻，n2/n3 同域近邻，跨域远。"""
     geo = NeuronGeometry(embedding_dim=8, sigma=0.5)
-    geo.assign_domain_positions({
-        "zh": ["n0", "n1"],
-        "en": ["n2", "n3"],
-    })
+    geo.assign_domain_positions(
+        {
+            "zh": ["n0", "n1"],
+            "en": ["n2", "n3"],
+        }
+    )
     return geo
 
 
@@ -92,12 +95,12 @@ def test_nearby_neurons_become_similar():
     # 远邻 similarity 变化应小于近邻变化
     delta_near = sim_n0_n1_after - sim_n0_n1_before
     delta_far = abs(sim_n0_n2_after - sim_n0_n2_before)
-    assert delta_near > delta_far, (
-        f"近邻变化({delta_near:.4f}) 应大于远邻变化({delta_far:.4f})"
+    assert delta_near > delta_far, f"近邻变化({delta_near:.4f}) 应大于远邻变化({delta_far:.4f})"
+    print(
+        f"  [PASS] 近邻扩散效果强于远邻 "
+        f"(n0-n1: {sim_n0_n1_before:.3f}→{sim_n0_n1_after:.3f}, "
+        f"n0-n2: {sim_n0_n2_before:.3f}→{sim_n0_n2_after:.3f})"
     )
-    print(f"  [PASS] 近邻扩散效果强于远邻 "
-          f"(n0-n1: {sim_n0_n1_before:.3f}→{sim_n0_n1_after:.3f}, "
-          f"n0-n2: {sim_n0_n2_before:.3f}→{sim_n0_n2_after:.3f})")
 
 
 def test_gradient_flow():
@@ -152,8 +155,10 @@ def test_laplacian_properties():
     diag_diff = (diag - 1.0).abs().max().item()
     assert diag_diff < 1e-6, f"对角线应≈1, diag_diff={diag_diff}"
 
-    print(f"  [PASS] 拉普拉斯性质 (sym_diff={sym_diff:.2e}, "
-          f"max_row_sum={max_row_sum:.2e}, diag_diff={diag_diff:.2e})")
+    print(
+        f"  [PASS] 拉普拉斯性质 (sym_diff={sym_diff:.2e}, "
+        f"max_row_sum={max_row_sum:.2e}, diag_diff={diag_diff:.2e})"
+    )
 
 
 def test_ensemble_backward_compatible():
@@ -211,9 +216,11 @@ def test_ensemble_backward_compatible():
     # 输出不同（扩散改变了 field_state，进而改变 logits）
     # 注：两个 ensemble 用不同的 neuron 权重（随机初始化），所以输出本来就不同
     # 这里只验证 forward_train 能正常运行
-    print(f"  [PASS] ensemble 向后兼容 "
-          f"(no_diff logits shape={logits_no.shape}, "
-          f"with_diff logits shape={logits_with.shape})")
+    print(
+        f"  [PASS] ensemble 向后兼容 "
+        f"(no_diff logits shape={logits_no.shape}, "
+        f"with_diff logits shape={logits_with.shape})"
+    )
 
 
 def main():

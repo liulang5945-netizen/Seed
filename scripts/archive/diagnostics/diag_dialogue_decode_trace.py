@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """逐 token 追踪 dialogue 生成：leader、候选一致性、采样与重复。"""
+
 from __future__ import annotations
 
 import json
@@ -12,7 +13,6 @@ import torch
 from neuroplex.loader import assemble_cortex
 from neuroplex.resonance.dialogue_format import build_dialogue_prompt
 from diag_dialogue_capacity_ab import DIALOGUE_IDS, QUESTIONS
-
 
 FULL_9 = DIALOGUE_IDS + ["code", "en", "math", "zh"]
 FULL_8_NO_ZH = DIALOGUE_IDS + ["code", "en", "math"]
@@ -89,9 +89,7 @@ def _leader_trace(
             ]
         }
     top1 = {
-        nid: values["top5"][0]["token_id"]
-        for nid, values in top_tokens.items()
-        if values["top5"]
+        nid: values["top5"][0]["token_id"] for nid, values in top_tokens.items() if values["top5"]
     }
     return {
         "leader": leader,
@@ -125,10 +123,12 @@ def _trace_one(cortex, active_nids: list[str], question: str) -> dict:
         source = args[0] if args else kwargs.get("input")
         k = args[1] if len(args) > 1 else kwargs.get("k")
         if source is not None and k is not None and source.ndim == 2 and int(k) <= TOP_K:
-            topk_events.append({
-                "token_ids": result.indices[0].detach().cpu().tolist(),
-                "values": result.values[0].detach().cpu().tolist(),
-            })
+            topk_events.append(
+                {
+                    "token_ids": result.indices[0].detach().cpu().tolist(),
+                    "values": result.values[0].detach().cpu().tolist(),
+                }
+            )
         return result
 
     def traced_multinomial(*args, **kwargs):
@@ -136,10 +136,12 @@ def _trace_one(cortex, active_nids: list[str], question: str) -> dict:
         source = args[0] if args else kwargs.get("input")
         num_samples = args[1] if len(args) > 1 else kwargs.get("num_samples")
         if source is not None and num_samples == 1 and source.ndim == 2:
-            sample_events.append({
-                "position": int(result.reshape(-1)[0].item()),
-                "probabilities": source[0].detach().cpu().tolist(),
-            })
+            sample_events.append(
+                {
+                    "position": int(result.reshape(-1)[0].item()),
+                    "probabilities": source[0].detach().cpu().tolist(),
+                }
+            )
         return result
 
     cortex.think = traced_think
@@ -189,20 +191,20 @@ def _trace_one(cortex, active_nids: list[str], question: str) -> dict:
         generated_ids.append(token_id)
         probs = torch.tensor(sample["probabilities"], dtype=torch.float32)
         entropy = float((-(probs * probs.clamp_min(1e-9).log()).sum()).item())
-        steps.append({
-            "step": index,
-            "leader": leader_record["leader"],
-            "leader_changed": (
-                index > 0 and leader_record["leader"] != steps[-1]["leader"]
-            ),
-            "candidate_top1_unique": leader_record["top1_unique"],
-            "candidate_top1_agreement": leader_record["top1_agreement"],
-            "sampled_rank_in_topk": position + 1,
-            "sample_entropy": round(entropy, 6),
-            "repeated_token": repeated_token,
-            "repeated_bigram": repeated_bigram,
-            **token,
-        })
+        steps.append(
+            {
+                "step": index,
+                "leader": leader_record["leader"],
+                "leader_changed": (index > 0 and leader_record["leader"] != steps[-1]["leader"]),
+                "candidate_top1_unique": leader_record["top1_unique"],
+                "candidate_top1_agreement": leader_record["top1_agreement"],
+                "sampled_rank_in_topk": position + 1,
+                "sample_entropy": round(entropy, 6),
+                "repeated_token": repeated_token,
+                "repeated_bigram": repeated_bigram,
+                **token,
+            }
+        )
 
     leaders = [step["leader"] for step in steps]
     return {
@@ -216,17 +218,18 @@ def _trace_one(cortex, active_nids: list[str], question: str) -> dict:
         "summary": {
             "leader_sequence": leaders,
             "leader_changes": sum(
-                steps[i]["leader"] != steps[i - 1]["leader"]
-                for i in range(1, len(steps))
+                steps[i]["leader"] != steps[i - 1]["leader"] for i in range(1, len(steps))
             ),
             "candidate_disagreement_steps": sum(
                 not step["candidate_top1_agreement"] for step in steps
             ),
             "repeated_token_steps": sum(step["repeated_token"] for step in steps),
             "repeated_bigram_steps": sum(step["repeated_bigram"] for step in steps),
-            "mean_sampled_rank": round(
-                sum(step["sampled_rank_in_topk"] for step in steps) / len(steps), 4
-            ) if steps else None,
+            "mean_sampled_rank": (
+                round(sum(step["sampled_rank_in_topk"] for step in steps) / len(steps), 4)
+                if steps
+                else None
+            ),
         },
     }
 
@@ -265,10 +268,12 @@ def main() -> None:
             try:
                 rows.append(_trace_one(cortex, active_nids, question))
             except Exception as exc:
-                rows.append({
-                    "question": question,
-                    "error": f"{type(exc).__name__}: {exc}",
-                })
+                rows.append(
+                    {
+                        "question": question,
+                        "error": f"{type(exc).__name__}: {exc}",
+                    }
+                )
         report["modes"][mode] = {"active_nids": active_nids, "rows": rows}
     report["elapsed_seconds"] = round(time.time() - started, 1)
     out_path = os.path.join("reports", "production_dialogue_decode_trace_20260820.json")

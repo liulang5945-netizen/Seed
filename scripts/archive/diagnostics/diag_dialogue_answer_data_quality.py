@@ -9,6 +9,7 @@
 
 只做前向诊断，不修改权重、不执行训练。
 """
+
 from __future__ import annotations
 
 import gc
@@ -18,7 +19,9 @@ import os
 import re
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 
@@ -35,10 +38,12 @@ from scripts.training.utils import (
     split_train_eval,
 )
 
-
 DIALOGUE_IDS = [
-    "zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-    "zh_aug3_dialogue", "zh_std0_dialogue",
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
 ]
 MAX_TEXTS = 100000
 EVAL_CAP = 100
@@ -90,26 +95,28 @@ def _data_rows(texts: list[str], domain_sp, general_sp, source_map: dict[str, st
     rows = []
     for index, text in enumerate(texts):
         marker = text.find(SFT_ANSWER_MARKER)
-        prompt = text[:marker + len(SFT_ANSWER_MARKER)]
-        answer = text[marker + len(SFT_ANSWER_MARKER):]
+        prompt = text[: marker + len(SFT_ANSWER_MARKER)]
+        answer = text[marker + len(SFT_ANSWER_MARKER) :]
         full_general, targets = build_position_alignment(text, domain_sp, general_sp)
         prompt_general = general_sp.encode(prompt)
         answer_start = len(prompt_general)
         target_id = int(targets[answer_start]) if answer_start < len(targets) else -100
         piece = domain_sp.id_to_piece(target_id) if target_id >= 0 else ""
         shape = _training_shape(text, domain_sp, general_sp)
-        rows.append({
-            "sample_index": index,
-            "source_file": source_map.get(text, "unknown"),
-            "category": _first_token_category(piece, answer),
-            "first_target_piece": piece,
-            "first_answer_preview": answer[:80],
-            "answer_chars": len(answer),
-            "answer_marker_count": text.count(SFT_ANSWER_MARKER),
-            "truncated": shape["truncated"],
-            "first_target_id": target_id,
-            "prompt_general_ids": prompt_general,
-        })
+        rows.append(
+            {
+                "sample_index": index,
+                "source_file": source_map.get(text, "unknown"),
+                "category": _first_token_category(piece, answer),
+                "first_target_piece": piece,
+                "first_answer_preview": answer[:80],
+                "answer_chars": len(answer),
+                "answer_marker_count": text.count(SFT_ANSWER_MARKER),
+                "truncated": shape["truncated"],
+                "first_target_id": target_id,
+                "prompt_general_ids": prompt_general,
+            }
+        )
     return rows
 
 
@@ -129,13 +136,13 @@ def _load_neuron(neuron_id: str):
 def _rank_rows(rows: list[dict], neuron_id: str, neuron, shared, general_sp) -> None:
     with torch.no_grad():
         for start in range(0, len(rows), BATCH_SIZE):
-            batch = rows[start:start + BATCH_SIZE]
+            batch = rows[start : start + BATCH_SIZE]
             max_len = max(len(row["prompt_general_ids"]) for row in batch)
             ids = torch.zeros((len(batch), max_len), dtype=torch.long)
             positions = []
             for row_index, row in enumerate(batch):
                 token_ids = row["prompt_general_ids"]
-                ids[row_index, :len(token_ids)] = torch.tensor(token_ids, dtype=torch.long)
+                ids[row_index, : len(token_ids)] = torch.tensor(token_ids, dtype=torch.long)
                 positions.append(len(token_ids) - 1)
             logits = neuron(shared(ids), return_logits=True)["logits"]
             for row_index, row in enumerate(batch):
@@ -156,8 +163,11 @@ def _summarize(rows: list[dict], neuron_id: str) -> dict:
     by_category = {}
     for category in sorted({row["category"] for row in rows}):
         subset = [row for row in rows if row["category"] == category]
-        ranks = [row["ranks_by_neuron"][neuron_id] for row in subset
-                 if row["ranks_by_neuron"][neuron_id] is not None]
+        ranks = [
+            row["ranks_by_neuron"][neuron_id]
+            for row in subset
+            if row["ranks_by_neuron"][neuron_id] is not None
+        ]
         top1 = [row["top1_by_neuron"][neuron_id] for row in subset]
         ranks.sort()
         by_category[category] = {
@@ -196,12 +206,21 @@ def main() -> None:
             "first_token_category_counts": category_counts,
             "truncated_samples": sum(row["truncated"] for row in rows),
             "multi_marker_samples": sum(row["answer_marker_count"] > 1 for row in rows),
-            "answer_char_mean": round(sum(row["answer_chars"] for row in rows) / max(len(rows), 1), 2),
+            "answer_char_mean": round(
+                sum(row["answer_chars"] for row in rows) / max(len(rows), 1), 2
+            ),
             "preview": [
-                {key: row[key] for key in (
-                    "sample_index", "source_file", "category", "first_target_piece",
-                    "first_answer_preview", "truncated",
-                )}
+                {
+                    key: row[key]
+                    for key in (
+                        "sample_index",
+                        "source_file",
+                        "category",
+                        "first_target_piece",
+                        "first_answer_preview",
+                        "truncated",
+                    )
+                }
                 for row in rows[:12]
             ],
         },

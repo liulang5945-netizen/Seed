@@ -11,6 +11,7 @@ Seed桌面客户端打包脚本
     dist/Seed.exe (Windows)
     dist/Seed (Linux/Mac)
 """
+
 import os
 import sys
 import shutil
@@ -34,61 +35,51 @@ def build():
     if BUILD_DIR.exists():
         shutil.rmtree(BUILD_DIR)
 
-    # 前端构建
+    # 前端构建（Windows 上 npm 实为 npm.cmd，直接调 "npm" 会 WinError 2）
     print("\n[1/3] 构建前端...")
     frontend_dir = ROOT_DIR / "frontend"
+    npm_cmd = shutil.which("npm") or shutil.which("npm.cmd") or "npm"
     result = subprocess.run(
-        ["npm", "run", "build"],
+        [npm_cmd, "run", "build"],
         cwd=str(frontend_dir),
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",  # npm 中文输出编码不稳定，避免解码崩溃；内容仅用于报错展示
+        shell=(os.name == "nt"),  # Windows 下 .cmd 需要 shell 解析
     )
     if result.returncode != 0:
         print(f"前端构建失败: {result.stderr}")
         return False
     print("  前端构建完成")
 
-    # PyInstaller 打包
+    # PyInstaller 打包（双入口：Seed.exe GUI + SeedBackend.exe 后端，
+    # 见 desktop/seed.spec；MERGE 共享 _internal 避免体积翻倍）
     print("\n[2/3] PyInstaller 打包...")
+    print("  规格: desktop/seed.spec")
 
-    # 收集数据文件
-    datas = [
-        (str(ROOT_DIR / "frontend" / "dist"), "frontend/dist"),
-        (str(ROOT_DIR / "taiji_data" / "final"), "taiji_data/final"),
-        (str(ROOT_DIR / "app_settings.json"), "."),
-        (str(ROOT_DIR / "version.json"), "."),
-        (str(ROOT_DIR / "icon.ico"), "."),
-    ]
+    # 应用图标：优先根目录 icon.ico，回退前端 favicon.ico（spec 内同样逻辑）
+    icon_file = ROOT_DIR / "icon.ico"
+    if not icon_file.exists():
+        icon_file = ROOT_DIR / "frontend" / "public" / "favicon.ico"
 
-    # 构建 PyInstaller 命令
     cmd = [
-        sys.executable, "-m", "PyInstaller",
-        "--name=Seed",
-        "--windowed",  # 无控制台窗口
-        "--onedir",    # 单目录打包
-        f"--icon={ROOT_DIR / 'icon.ico'}",
+        sys.executable,
+        "-m",
+        "PyInstaller",
         "--noconfirm",
+        str(ROOT_DIR / "desktop" / "seed.spec"),
     ]
-
-    # 添加数据文件
-    for src, dst in datas:
-        if Path(src).exists():
-            cmd.append(f"--add-data={src};{dst}")
-
-    # 添加隐式导入
-    hidden_imports = [
-        "neuroplex", "api", "uvicorn", "fastapi", "pydantic",
-        "torch", "transformers", "sentence_transformers",
-        "PyQt6", "PyQt6.QtWebEngineWidgets",
-    ]
-    for imp in hidden_imports:
-        cmd.append(f"--hidden-import={imp}")
-
-    # 入口点
-    cmd.append(str(ROOT_DIR / "desktop" / "main.py"))
 
     print(f"  命令: {' '.join(cmd[:5])}...")
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(
+        cmd,
+        cwd=str(ROOT_DIR),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",  # PyInstaller 输出含中文路径/警告时同样容错
+    )
 
     if result.returncode != 0:
         print(f"打包失败:\n{result.stderr[-500:]}")
@@ -109,8 +100,13 @@ def build():
                 shutil.copytree(src, dist_seed / extra_dir, dirs_exist_ok=True)
 
         # 创建空目录
-        for empty_dir in ["agent_workspace", "taiji_data/feed_data", "taiji_data/sleep_data",
-                          "taiji_data/life_data", "taiji_data/evolution_data"]:
+        for empty_dir in [
+            "agent_workspace",
+            "taiji_data/feed_data",
+            "taiji_data/sleep_data",
+            "taiji_data/life_data",
+            "taiji_data/evolution_data",
+        ]:
             (dist_seed / empty_dir).mkdir(parents=True, exist_ok=True)
 
     print("  后处理完成")

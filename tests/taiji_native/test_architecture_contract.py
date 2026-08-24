@@ -40,15 +40,17 @@ def test_native_core_has_no_legacy_or_sequence_model_dependency() -> None:
                 forbidden_calls.add(node.attr)
 
     assert not any(
-        module.startswith(("neuroplex", "transformers"))
-        for module in imported
+        module.startswith(("neuroplex", "transformers")) for module in imported
     ), imported
-    assert not {
-        "backward",
-        "topk",
-        "MultiheadAttention",
-        "TransformerEncoder",
-    } & forbidden_calls
+    assert (
+        not {
+            "backward",
+            "topk",
+            "MultiheadAttention",
+            "TransformerEncoder",
+        }
+        & forbidden_calls
+    )
 
 
 def test_raw_bytes_are_receptors_not_tokenizer_ids() -> None:
@@ -111,13 +113,10 @@ def test_learning_is_local_masked_and_has_no_autograd_parameters() -> None:
         model.memory.provenance_readout,
     )
     for projection in synapses:
-        posts = torch.arange(projection.out_features).unsqueeze(1).expand_as(
-            projection.pre_index.cpu()
+        posts = (
+            torch.arange(projection.out_features).unsqueeze(1).expand_as(projection.pre_index.cpu())
         )
-        edge_keys = (
-            posts * projection.in_features
-            + projection.pre_index.cpu()
-        )
+        edge_keys = posts * projection.in_features + projection.pre_index.cpu()
         assert projection.pre_index.shape == (
             projection.out_features,
             projection.row_fan_in,
@@ -137,9 +136,7 @@ def test_learning_is_local_masked_and_has_no_autograd_parameters() -> None:
 def test_motor_receptors_cover_every_cortical_coordinate_once() -> None:
     model = Taiji(_config())
     receptors = model.motor.receptors
-    counts = torch.bincount(
-        receptors.channel.cpu(), minlength=receptors.out_features
-    )
+    counts = torch.bincount(receptors.channel.cpu(), minlength=receptors.out_features)
 
     assert receptors.channel.numel() == model.config.cortical_context_dim
     assert int(counts.sum()) == model.config.cortical_context_dim
@@ -195,15 +192,9 @@ def test_waking_baseline_is_checkpointed_and_reset_invariant() -> None:
     assert any(not torch.equal(a, b) for a, b in zip(initial, learned))
 
     model.reset_dynamics(episode_id="baseline-reset")
-    assert all(
-        torch.equal(a, b)
-        for a, b in zip(learned, model.fabric.trace_baselines)
-    )
+    assert all(torch.equal(a, b) for a, b in zip(learned, model.fabric.trace_baselines))
     restored = Taiji.from_checkpoint(model.checkpoint())
-    assert all(
-        torch.equal(a, b)
-        for a, b in zip(learned, restored.fabric.trace_baselines)
-    )
+    assert all(torch.equal(a, b) for a, b in zip(learned, restored.fabric.trace_baselines))
 
 
 def test_checkpoint_preserves_learning_state_and_exact_next_step() -> None:

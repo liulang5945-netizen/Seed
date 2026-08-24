@@ -3,7 +3,6 @@ import torch
 
 from taiji import EnvironmentOutcome, Taiji, TaijiConfig
 
-
 CUES = (ord("L"), ord("R"))
 ACTIONS = (ord("0"), ord("1"))
 
@@ -20,12 +19,14 @@ class BinaryCueEnvironment:
 
 
 def _model() -> Taiji:
-    return Taiji(TaijiConfig(
-        region_sizes=(64, 48),
-        synapse_fan_in=16,
-        motor_fan_in=48,
-        seed=7,
-    ))
+    return Taiji(
+        TaijiConfig(
+            region_sizes=(64, 48),
+            synapse_fan_in=16,
+            motor_fan_in=48,
+            seed=7,
+        )
+    )
 
 
 def _run_interactions(model: Taiji, *, learn_action: bool) -> list[bool]:
@@ -34,9 +35,7 @@ def _run_interactions(model: Taiji, *, learn_action: bool) -> list[bool]:
     for trial in range(200):
         cue = CUES[trial % len(CUES)]
         model.reset_dynamics(episode_id=f"n11-{trial}")
-        model.observe(
-            model.config.boundary_symbol, learn=True, learn_motor=False
-        )
+        model.observe(model.config.boundary_symbol, learn=True, learn_motor=False)
         model.observe(cue, learn=True, learn_motor=False)
         action = model.act(ACTIONS, sample=True).action_symbol
         outcome = environment.outcome(cue, action)

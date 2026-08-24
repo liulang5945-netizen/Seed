@@ -10,6 +10,7 @@
 Usage:
     python scripts/training/verify_multimodal.py
 """
+
 from __future__ import annotations
 
 import os
@@ -46,7 +47,9 @@ def verify_image_pathway():
     print(f"  encode: {len(ids)} tokens")
 
     recon = codec.decode(ids)
-    print(f"  decode: shape={recon.shape}, range=[{recon.min().item():.2f}, {recon.max().item():.2f}]")
+    print(
+        f"  decode: shape={recon.shape}, range=[{recon.min().item():.2f}, {recon.max().item():.2f}]"
+    )
 
     cfg = get_default_neuron_config()
     cfg.spec = "image-fallback"
@@ -84,7 +87,9 @@ def verify_audio_pathway():
     print(f"  encode: {len(ids)} tokens")
 
     recon = codec.decode(ids)
-    print(f"  decode: shape={recon.shape}, range=[{recon.min().item():.2f}, {recon.max().item():.2f}]")
+    print(
+        f"  decode: shape={recon.shape}, range=[{recon.min().item():.2f}, {recon.max().item():.2f}]"
+    )
 
     cfg = get_default_neuron_config()
     cfg.spec = "audio-fallback"
@@ -122,7 +127,9 @@ def verify_video_pathway():
     print(f"  encode: {len(ids)} tokens")
 
     recon = codec.decode(ids)
-    print(f"  decode: shape={recon.shape}, range=[{recon.min().item():.2f}, {recon.max().item():.2f}]")
+    print(
+        f"  decode: shape={recon.shape}, range=[{recon.min().item():.2f}, {recon.max().item():.2f}]"
+    )
 
     cfg = get_default_neuron_config()
     cfg.spec = "video-fallback"

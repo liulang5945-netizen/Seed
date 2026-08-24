@@ -5,6 +5,7 @@ Cortex 反思系统 v2
 检测执行错误，分析原因，生成纠正方案。
 v2 新增：执行前自验证、多路径探索、工具成功率统计。
 """
+
 import os
 import re
 import logging
@@ -17,18 +18,20 @@ logger = logging.getLogger("Cortex.Reflector")
 
 class ReflectionType(Enum):
     """反思类型"""
-    CONFIRM = "confirm"     # 确认成功
-    DETECT = "detect"       # 检测到问题
-    CAUSE = "cause"         # 分析原因
-    CORRECT = "correct"     # 纠正方案
+
+    CONFIRM = "confirm"  # 确认成功
+    DETECT = "detect"  # 检测到问题
+    CAUSE = "cause"  # 分析原因
+    CORRECT = "correct"  # 纠正方案
 
 
 @dataclass
 class ReflectionResult:
     """反思结果"""
+
     type: ReflectionType
     message: str
-    confidence: float = 0.0   # 0-1 置信度
+    confidence: float = 0.0  # 0-1 置信度
     should_retry: bool = False
     correction_hint: Optional[str] = None
 
@@ -72,7 +75,11 @@ class ReflectorSystem:
         (r"TypeError", "类型错误", "检查函数参数类型是否正确"),
         (r"FileNotFoundError.*'([^']+)'", "文件不存在", "文件 '{0}' 不存在，检查路径是否正确"),
         (r"PermissionError", "权限不足", "没有文件访问权限，检查文件是否被占用"),
-        (r"ModuleNotFoundError.*'(\w+)'", "模块未安装", "模块 '{0}' 未安装，使用 install_dependency 安装"),
+        (
+            r"ModuleNotFoundError.*'(\w+)'",
+            "模块未安装",
+            "模块 '{0}' 未安装，使用 install_dependency 安装",
+        ),
         (r"IndentationError", "缩进错误", "检查代码缩进，确保使用一致的空格或 Tab"),
         (r"ZeroDivisionError", "除零错误", "代码中存在除以零的操作，添加零值检查"),
         (r"IndexError", "索引越界", "列表索引超出范围，检查列表长度"),
@@ -88,8 +95,13 @@ class ReflectorSystem:
 
     # 高风险工具（执行前需要额外验证）
     HIGH_RISK_TOOLS = {
-        "run_command", "execute_code", "delete_file", "write_file",
-        "install_dependency", "git_push", "send_email",
+        "run_command",
+        "execute_code",
+        "delete_file",
+        "write_file",
+        "install_dependency",
+        "git_push",
+        "send_email",
     }
 
     # 常见工具的典型失败模式（用于自验证）
@@ -105,7 +117,10 @@ class ReflectorSystem:
         ],
         "write_file": [
             (lambda a: not a.get("input"), "缺少文件路径"),
-            (lambda a: not a.get("content") and len(str(a.get("input", "")).split()) < 2, "缺少写入内容"),
+            (
+                lambda a: not a.get("content") and len(str(a.get("input", "")).split()) < 2,
+                "缺少写入内容",
+            ),
         ],
         "search": [
             (lambda a: not a.get("input"), "缺少搜索关键词"),
@@ -128,10 +143,11 @@ class ReflectorSystem:
             return
         try:
             import json
+
             with open(self._save_path, "r", encoding="utf-8") as f:
                 self._tool_stats = json.load(f)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【ReflectorSystem._load_stats】处理失败（非致命）: %s", e)
 
     def _save_stats(self):
         """保存工具成功率统计到磁盘"""
@@ -139,11 +155,12 @@ class ReflectorSystem:
             return
         try:
             import json
+
             os.makedirs(os.path.dirname(self._save_path), exist_ok=True)
             with open(self._save_path, "w", encoding="utf-8") as f:
                 json.dump(self._tool_stats, f, indent=2)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【ReflectorSystem._save_stats】处理失败（非致命）: %s", e)
 
     def evaluate_result(self, tool_name: str, result: str) -> ReflectionResult:
         """
@@ -221,8 +238,8 @@ class ReflectorSystem:
                 if check_fn(action_args):
                     warnings.append(msg)
                     confidence -= 0.2
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【ReflectorSystem.verify_before_act】处理失败（非致命）: %s", e)
 
         # ── 信号3: 高风险工具标记 ──
         if tool_name in self.HIGH_RISK_TOOLS:
@@ -237,12 +254,14 @@ class ReflectorSystem:
         confidence = max(0.0, min(1.0, confidence))
 
         # 记录验证结果
-        self.reflection_history.append(ReflectionResult(
-            type=ReflectionType.CORRECT if confidence >= 0.5 else ReflectionType.DETECT,
-            message=f"验证 {tool_name}: 置信度 {confidence:.2f}, {len(warnings)} 个警告",
-            confidence=confidence,
-            should_retry=confidence < 0.5,
-        ))
+        self.reflection_history.append(
+            ReflectionResult(
+                type=ReflectionType.CORRECT if confidence >= 0.5 else ReflectionType.DETECT,
+                message=f"验证 {tool_name}: 置信度 {confidence:.2f}, {len(warnings)} 个警告",
+                confidence=confidence,
+                should_retry=confidence < 0.5,
+            )
+        )
 
         return confidence, warnings
 
@@ -299,22 +318,26 @@ class ReflectorSystem:
         alts = replacements.get(tool_name, [])
         for alt_tool in alts:
             if alt_tool in available_tools:
-                alternatives.append({
-                    "tool": alt_tool,
-                    "args": action_args.copy(),
-                    "reason": f"{tool_name} 置信度低，尝试 {alt_tool} 作为替代",
-                })
+                alternatives.append(
+                    {
+                        "tool": alt_tool,
+                        "args": action_args.copy(),
+                        "reason": f"{tool_name} 置信度低，尝试 {alt_tool} 作为替代",
+                    }
+                )
 
         # 参数修正建议
         if tool_name == "read_file" and action_args.get("input"):
             path = action_args["input"]
             # 尝试绝对路径
             if not os.path.isabs(path):
-                alternatives.append({
-                    "tool": tool_name,
-                    "args": {**action_args, "input": os.path.abspath(path)},
-                    "reason": "使用绝对路径代替相对路径",
-                })
+                alternatives.append(
+                    {
+                        "tool": tool_name,
+                        "args": {**action_args, "input": os.path.abspath(path)},
+                        "reason": "使用绝对路径代替相对路径",
+                    }
+                )
 
         return alternatives[:3]  # 最多 3 个备选
 
@@ -342,8 +365,9 @@ class ReflectorSystem:
         self.reflection_history.append(reflection)
         return reflection
 
-    def generate_correction(self, error_reflection: ReflectionResult,
-                            original_tool: str, original_args: dict) -> ReflectionResult:
+    def generate_correction(
+        self, error_reflection: ReflectionResult, original_tool: str, original_args: dict
+    ) -> ReflectionResult:
         """
         基于错误分析生成纠正方案
 
@@ -409,10 +433,8 @@ class ReflectorSystem:
     def get_stats(self) -> dict:
         """获取反思统计（含 v2 工具成功率）"""
         total = len(self.reflection_history)
-        errors = sum(1 for r in self.reflection_history
-                     if r.type == ReflectionType.DETECT)
-        confirms = sum(1 for r in self.reflection_history
-                       if r.type == ReflectionType.CONFIRM)
+        errors = sum(1 for r in self.reflection_history if r.type == ReflectionType.DETECT)
+        confirms = sum(1 for r in self.reflection_history if r.type == ReflectionType.CONFIRM)
         # v2: 工具成功率汇总
         tool_success_rates = {}
         for tool, stats in self._tool_stats.items():

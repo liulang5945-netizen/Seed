@@ -1,4 +1,5 @@
 """Check whether continued training from the 200K checkpoint regresses quality."""
+
 from __future__ import annotations
 
 import sys
@@ -21,9 +22,7 @@ HOLDOUT = (
 
 
 def main() -> None:
-    checkpoint = torch.load(
-        PROJECT_ROOT / "checkpoints" / "seed_corpus.pt", weights_only=False
-    )
+    checkpoint = torch.load(PROJECT_ROOT / "checkpoints" / "seed_corpus.pt", weights_only=False)
     static = Seed.from_checkpoint(checkpoint)
     continued = Seed.from_checkpoint(checkpoint)
 
@@ -34,21 +33,21 @@ def main() -> None:
 
     static_score = static.score_bytes(HOLDOUT)
     continued_score = continued.score_bytes(HOLDOUT)
-    print(f"static    surprise={static_score['mean_surprise']:.4f} "
-          f"acc={static_score['accuracy']:.4f}")
-    print(f"continued surprise={continued_score['mean_surprise']:.4f} "
-          f"acc={continued_score['accuracy']:.4f}")
+    print(
+        f"static    surprise={static_score['mean_surprise']:.4f} "
+        f"acc={static_score['accuracy']:.4f}"
+    )
+    print(
+        f"continued surprise={continued_score['mean_surprise']:.4f} "
+        f"acc={continued_score['accuracy']:.4f}"
+    )
 
     # score the very stream prefix both models just diverged on
-    prefix = bytes(
-        value for value in list(iter_corpus_symbols(corpus))[:2000]
-        if value != 256
-    )
+    prefix = bytes(value for value in list(iter_corpus_symbols(corpus))[:2000] if value != 256)
     print("on first 2KB of the training stream:")
     for name, model in (("static", static), ("continued", continued)):
         score = model.score_bytes(prefix)
-        print(f"  {name}: surprise={score['mean_surprise']:.4f} "
-              f"acc={score['accuracy']:.4f}")
+        print(f"  {name}: surprise={score['mean_surprise']:.4f} " f"acc={score['accuracy']:.4f}")
 
 
 if __name__ == "__main__":

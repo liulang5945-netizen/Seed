@@ -1,4 +1,3 @@
-from pathlib import Path
 from uuid import uuid4
 
 import pytest
@@ -33,7 +32,7 @@ def test_generation_decoder_rejects_an_unknown_output_vocab() -> None:
         _resolve_generation_tokenizer(logits, target, general)
 
 
-def test_anchor_reference_loads_only_matching_cross_spec_projections() -> None:
+def test_anchor_reference_loads_only_matching_cross_spec_projections(tmp_path) -> None:
     source_forward = torch.nn.Linear(2, 2, bias=False)
     source_backward = torch.nn.Linear(2, 2, bias=False)
     target_forward = torch.nn.Linear(2, 2, bias=False)
@@ -46,20 +45,19 @@ def test_anchor_reference_loads_only_matching_cross_spec_projections() -> None:
         _cross_spec_projectors = {"hub": target_forward}
         _cross_spec_back_projectors = {"code": target_backward}
 
-    ckpt = Path(__file__).with_name(f".anchor_reference_{uuid4().hex}.pt")
-    try:
-        torch.save(
-            {
-                "cross_spec_state": {
-                    "forward": {"hub": source_forward.state_dict(), "math": {}},
-                    "backward": {"code": source_backward.state_dict()},
-                }
-            },
-            ckpt,
-        )
+    # 用 pytest tmp_path（系统临时目录）而非测试目录落盘：
+    # 避免在源码树遗留临时 ckpt，且 teardown 由 pytest 统一管理
+    ckpt = tmp_path / f".anchor_reference_{uuid4().hex}.pt"
+    torch.save(
+        {
+            "cross_spec_state": {
+                "forward": {"hub": source_forward.state_dict(), "math": {}},
+                "backward": {"code": source_backward.state_dict()},
+            }
+        },
+        ckpt,
+    )
 
-        assert load_cross_spec_reference(_Ensemble(), str(ckpt)) == 2
-        assert torch.equal(target_forward.weight, source_forward.weight)
-        assert torch.equal(target_backward.weight, source_backward.weight)
-    finally:
-        ckpt.unlink(missing_ok=True)
+    assert load_cross_spec_reference(_Ensemble(), str(ckpt)) == 2
+    assert torch.equal(target_forward.weight, source_forward.weight)
+    assert torch.equal(target_backward.weight, source_backward.weight)

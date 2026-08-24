@@ -32,7 +32,6 @@ import torch.nn.functional as F
 from neuroplex.brain.cortex import Cortex
 from neuroplex.resonance import NeuronConfig, ResonanceEnsemble, ResonanceField, ResonanceNeuron
 
-
 DEFAULT_SEED = 20260819
 NEURON_IDS = ("probe_alpha", "probe_beta", "probe_gamma")
 BASE_EMBED_DIM = 16
@@ -72,12 +71,8 @@ def _make_population(seed: int) -> Dict[str, ResonanceNeuron]:
 
 def _make_inputs(seed: int) -> tuple[torch.Tensor, torch.Tensor]:
     generator = torch.Generator(device="cpu").manual_seed(seed + 1)
-    embeddings = torch.randn(
-        BATCH_SIZE, SEQ_LEN, BASE_EMBED_DIM, generator=generator
-    )
-    targets = torch.randint(
-        0, VOCAB_SIZE, (BATCH_SIZE, SEQ_LEN), generator=generator
-    )
+    embeddings = torch.randn(BATCH_SIZE, SEQ_LEN, BASE_EMBED_DIM, generator=generator)
+    targets = torch.randint(0, VOCAB_SIZE, (BATCH_SIZE, SEQ_LEN), generator=generator)
     return embeddings, targets
 
 
@@ -329,12 +324,18 @@ def _core_probe(seed: int, include_cortex: bool = True) -> Dict[str, Any]:
     dense_field = ResonanceField(dim=FIELD_DIM)
     sparse_field = _clone_field(dense_field)
     dense = _run_ensemble(
-        dense_population, embeddings, targets,
-        sparse=False, field=dense_field,
+        dense_population,
+        embeddings,
+        targets,
+        sparse=False,
+        field=dense_field,
     )
     sparse = _run_ensemble(
-        sparse_population, embeddings, targets,
-        sparse=True, field=sparse_field,
+        sparse_population,
+        embeddings,
+        targets,
+        sparse=True,
+        field=sparse_field,
     )
 
     result: Dict[str, Any] = {
@@ -360,8 +361,7 @@ def run_baseline(
     dense = probe["dense"]
     sparse = probe["sparse"]
     deterministic = all(
-        abs(probe[branch]["loss"] - repeat[branch]["loss"]) < 1e-7
-        for branch in ("dense", "sparse")
+        abs(probe[branch]["loss"] - repeat[branch]["loss"]) < 1e-7 for branch in ("dense", "sparse")
     )
     sparse_route = sparse["route"]
     dense_active = len(NEURON_IDS)
@@ -395,9 +395,7 @@ def run_baseline(
         report["api_health"] = _api_health_smoke()
         report["checks"]["api_health_ok"] = bool(report["api_health"]["ok"])
 
-    report["status"] = (
-        "pass" if all(report["checks"].values()) else "fail"
-    )
+    report["status"] = "pass" if all(report["checks"].values()) else "fail"
     if output:
         output_path = Path(output)
         output_path.parent.mkdir(parents=True, exist_ok=True)

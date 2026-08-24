@@ -24,6 +24,7 @@ Usage:
     python -u scripts/archive/legacy_train_teacher_alignment.py \
         --teacher zh_std0 --student zh_aug0 --resume
 """
+
 from __future__ import annotations
 
 import argparse
@@ -45,13 +46,17 @@ from neuroplex.resonance import ResonanceNeuron, get_domain_neuron_config
 from neuroplex.resonance.distillation import DistillationLoss
 from neuroplex.resonance.translator import batch_align_and_embed
 from scripts.training.utils import (
-    load_domain_tokenizer, load_general_tokenizer,
-    OUTPUT_DIR, create_shared_embedding,
-    make_wsd_scheduler, build_muon_adamw_optimizers,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+    OUTPUT_DIR,
+    create_shared_embedding,
+    make_wsd_scheduler,
+    build_muon_adamw_optimizers,
     load_dialogue_texts_multi,
 )
 from scripts.training.experiment_config import (
-    DEFAULT_DOMAIN as DOMAIN, SFT_ANSWER_MARKER,
+    DEFAULT_DOMAIN as DOMAIN,
+    SFT_ANSWER_MARKER,
 )
 from scripts.training.data_augmentation import DialogueAugmenter
 
@@ -98,9 +103,12 @@ def load_neuron(nid: str) -> ResonanceNeuron:
     neuron = ResonanceNeuron(cfg).to(DEVICE)
     neuron.load_state_dict(ckpt["state_dict"], strict=False)
     result = ckpt.get("result", {})
-    print(f"  [{nid}] spec={cfg.spec}, hidden={cfg.hidden_size}, "
-          f"layers={cfg.num_hidden_layers}, heads={cfg.num_attention_heads}, "
-          f"best_val_ppl={result.get('best_val_ppl', '?')}", flush=True)
+    print(
+        f"  [{nid}] spec={cfg.spec}, hidden={cfg.hidden_size}, "
+        f"layers={cfg.num_hidden_layers}, heads={cfg.num_attention_heads}, "
+        f"best_val_ppl={result.get('best_val_ppl', '?')}",
+        flush=True,
+    )
     return neuron
 
 
@@ -126,8 +134,17 @@ def copy_matching_weights(teacher: ResonanceNeuron, student: ResonanceNeuron) ->
     return copied
 
 
-def save_checkpoint(path, epoch, total_steps, optimizer, student, distill,
-                    adamw_optimizer=None, scheduler=None, loss_history=None):
+def save_checkpoint(
+    path,
+    epoch,
+    total_steps,
+    optimizer,
+    student,
+    distill,
+    adamw_optimizer=None,
+    scheduler=None,
+    loss_history=None,
+):
     """保存蒸馏训练 checkpoint，支持断点续训。"""
     ckpt = {
         "epoch": epoch,
@@ -145,8 +162,7 @@ def save_checkpoint(path, epoch, total_steps, optimizer, student, distill,
     torch.save(ckpt, path)
 
 
-def load_checkpoint(path, optimizer, student, distill,
-                    adamw_optimizer=None, scheduler=None):
+def load_checkpoint(path, optimizer, student, distill, adamw_optimizer=None, scheduler=None):
     """加载 checkpoint，恢复 student/distill/optimizer/进度。"""
     ckpt = torch.load(path, map_location=DEVICE, weights_only=False)
     student.load_state_dict(ckpt["student_state"], strict=False)
@@ -163,29 +179,33 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--teacher", required=True, help="teacher neuron id（已训练）")
     parser.add_argument("--student", required=True, help="student neuron id（已训练或新建）")
-    parser.add_argument("--init_from_teacher", action="store_true",
-                        help="student 不存在时从 teacher 复制匹配权重初始化")
+    parser.add_argument(
+        "--init_from_teacher",
+        action="store_true",
+        help="student 不存在时从 teacher 复制匹配权重初始化",
+    )
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--epochs", type=int, default=4)
     parser.add_argument("--batch_size", type=int, default=2)
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--max_texts", type=int, default=5000)
-    parser.add_argument("--temperature", type=float, default=4.0,
-                        help="KL 蒸馏温度（软化分布）")
+    parser.add_argument("--temperature", type=float, default=4.0, help="KL 蒸馏温度（软化分布）")
     parser.add_argument("--w_ce", type=float, default=1.0, help="CE loss 权重")
     parser.add_argument("--w_kl", type=float, default=1.0, help="KL 蒸馏权重")
     parser.add_argument("--w_hidden", type=float, default=0.5, help="中间层对齐权重")
     parser.add_argument("--w_attn", type=float, default=0.3, help="注意力转移权重")
     parser.add_argument("--hidden_mode", default="cosine", choices=["cosine", "mse"])
     parser.add_argument("--attn_align_mode", default="mean", choices=["mean", "proj"])
-    parser.add_argument("--vocab_alignment", default=None,
-                        help="跨域蒸馏对齐表 JSON（{student_id: teacher_id}），同域可省略")
-    parser.add_argument("--augment", action="store_true",
-                        help="T4: 启用数据增强（模板改写 + 多轮拼接）")
-    parser.add_argument("--aug_rewrite_prob", type=float, default=0.5,
-                        help="T4: 模板改写概率")
-    parser.add_argument("--aug_multi_turn_prob", type=float, default=0.4,
-                        help="T4: 多轮拼接概率")
+    parser.add_argument(
+        "--vocab_alignment",
+        default=None,
+        help="跨域蒸馏对齐表 JSON（{student_id: teacher_id}），同域可省略",
+    )
+    parser.add_argument(
+        "--augment", action="store_true", help="T4: 启用数据增强（模板改写 + 多轮拼接）"
+    )
+    parser.add_argument("--aug_rewrite_prob", type=float, default=0.5, help="T4: 模板改写概率")
+    parser.add_argument("--aug_multi_turn_prob", type=float, default=0.4, help="T4: 多轮拼接概率")
     parser.add_argument("--device", default="cpu", help="计算设备 (cpu/cuda)")
     args = parser.parse_args()
 
@@ -194,7 +214,8 @@ def main():
 
     os.makedirs(LOG_DIR, exist_ok=True)
     log_path = os.path.join(
-        LOG_DIR, f"train_distillation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log",
+        LOG_DIR,
+        f"train_distillation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log",
     )
     logger = TeeLogger(log_path)
     sys.stdout = logger
@@ -261,12 +282,17 @@ def main():
         else:
             adamw_params.append(p)
     optimizer, adamw_optimizer = build_muon_adamw_optimizers(
-        muon_params, adamw_params, lr=args.lr,
+        muon_params,
+        adamw_params,
+        lr=args.lr,
     )
     # distill 投影头参数（AdamW）
     distill_params = list(distill.parameters())
-    print(f"  Student 可训练: muon={sum(p.numel() for p in muon_params):,}, "
-          f"adamw={sum(p.numel() for p in adamw_params):,}", flush=True)
+    print(
+        f"  Student 可训练: muon={sum(p.numel() for p in muon_params):,}, "
+        f"adamw={sum(p.numel() for p in adamw_params):,}",
+        flush=True,
+    )
     print(f"  Distill heads: {sum(p.numel() for p in distill_params):,}", flush=True)
 
     # 5. 加载数据
@@ -275,7 +301,8 @@ def main():
     general_sp = load_general_tokenizer()
     dialogue_dir = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "data", "simple_zh",
+        "data",
+        "simple_zh",
     )
     texts = load_dialogue_texts_multi(dialogue_dir, max_texts=args.max_texts)
     print(f"  训练集: {len(texts)} 条对话", flush=True)
@@ -288,16 +315,21 @@ def main():
             multi_turn_prob=args.aug_multi_turn_prob,
         )
         augmenter.set_context_pool(texts)  # 多轮拼接的上下文池
-        print(f"  [T4] 数据增强启用: 改写={args.aug_rewrite_prob}, "
-              f"多轮拼接={args.aug_multi_turn_prob}", flush=True)
+        print(
+            f"  [T4] 数据增强启用: 改写={args.aug_rewrite_prob}, "
+            f"多轮拼接={args.aug_multi_turn_prob}",
+            flush=True,
+        )
 
     # 6. 调度器
     total_est_steps = args.epochs * ((len(texts) - args.batch_size) // args.batch_size)
     warmup_steps = 50
     decay_ratio = 0.8
     scheduler = make_wsd_scheduler(
-        optimizer, num_steps=total_est_steps,
-        warmup_steps=warmup_steps, decay_ratio=decay_ratio,
+        optimizer,
+        num_steps=total_est_steps,
+        warmup_steps=warmup_steps,
+        decay_ratio=decay_ratio,
     )
     print(f"  LR 调度: warmup={warmup_steps}步, total≈{total_est_steps}步", flush=True)
 
@@ -309,15 +341,24 @@ def main():
     if args.resume and os.path.exists(CKPT_PATH):
         print(f"\n[resume] 加载 checkpoint: {CKPT_PATH}", flush=True)
         start_epoch, total_steps, loss_history = load_checkpoint(
-            CKPT_PATH, optimizer, student, distill, adamw_optimizer, scheduler,
+            CKPT_PATH,
+            optimizer,
+            student,
+            distill,
+            adamw_optimizer,
+            scheduler,
         )
-        print(f"  已恢复: epoch={start_epoch} (从 epoch {start_epoch+1} 继续), "
-              f"total_steps={total_steps}, loss_history={len(loss_history)} 条", flush=True)
+        print(
+            f"  已恢复: epoch={start_epoch} (从 epoch {start_epoch+1} 继续), "
+            f"total_steps={total_steps}, loss_history={len(loss_history)} 条",
+            flush=True,
+        )
         start_epoch = start_epoch + 1
     elif args.resume:
         print(f"\n[resume] 未找到 checkpoint ({CKPT_PATH})，从头开始", flush=True)
 
     import random
+
     random.seed(42)
 
     # 7. 训练循环
@@ -330,7 +371,7 @@ def main():
             augmenter.set_epoch(epoch)
 
         for i in range(0, len(texts) - args.batch_size, args.batch_size):
-            batch_texts = texts[i:i + args.batch_size]
+            batch_texts = texts[i : i + args.batch_size]
 
             # T4: 在线数据增强（模板改写 + 多轮拼接）
             if augmenter is not None:
@@ -339,7 +380,10 @@ def main():
             # shared embedding（teacher/student 共享同一外部嵌入）
             shared_emb = create_shared_embedding(DEVICE)
             emb_out, targets, mask, sft_mask = batch_align_and_embed(
-                batch_texts, domain_sp, general_sp, shared_emb,
+                batch_texts,
+                domain_sp,
+                general_sp,
+                shared_emb,
                 answer_marker=SFT_ANSWER_MARKER,
                 answer_marker_mode="last",  # T4: 多轮精确 masking（前序轮次为纯上下文）
             )
@@ -349,12 +393,16 @@ def main():
             # teacher forward（冻结，no_grad）
             with torch.no_grad():
                 t_result = teacher.forward(
-                    emb, return_logits=True, return_intermediate=True,
+                    emb,
+                    return_logits=True,
+                    return_intermediate=True,
                 )
 
             # student forward（可训练）
             s_result = student.forward(
-                emb, return_logits=True, return_intermediate=True,
+                emb,
+                return_logits=True,
+                return_intermediate=True,
             )
 
             # 三联蒸馏 loss
@@ -409,21 +457,46 @@ def main():
                     f"[{elapsed:.0f}s]",
                     flush=True,
                 )
-                loss_history.append({
-                    "step": total_steps, "epoch": epoch + 1,
-                    "loss": loss.item(), "ce": ce_loss.item(),
-                    "kl": d["kl"].item(), "hidden": d["hidden"].item(),
-                    "attn": d["attn"].item(),
-                })
+                loss_history.append(
+                    {
+                        "step": total_steps,
+                        "epoch": epoch + 1,
+                        "loss": loss.item(),
+                        "ce": ce_loss.item(),
+                        "kl": d["kl"].item(),
+                        "hidden": d["hidden"].item(),
+                        "attn": d["attn"].item(),
+                    }
+                )
 
             if total_steps % 500 == 0:
-                save_checkpoint(CKPT_PATH, epoch, total_steps, optimizer, student, distill,
-                                adamw_optimizer, scheduler, loss_history)
+                save_checkpoint(
+                    CKPT_PATH,
+                    epoch,
+                    total_steps,
+                    optimizer,
+                    student,
+                    distill,
+                    adamw_optimizer,
+                    scheduler,
+                    loss_history,
+                )
                 print(f"  [中途 checkpoint] step {total_steps} 已保存", flush=True)
 
-        print(f"  [Epoch {epoch+1} 完成] 耗时 {(time.time()-epoch_start_time)/60:.1f} min", flush=True)
-        save_checkpoint(CKPT_PATH, epoch, total_steps, optimizer, student, distill,
-                        adamw_optimizer, scheduler, loss_history)
+        print(
+            f"  [Epoch {epoch+1} 完成] 耗时 {(time.time()-epoch_start_time)/60:.1f} min", flush=True
+        )
+        save_checkpoint(
+            CKPT_PATH,
+            epoch,
+            total_steps,
+            optimizer,
+            student,
+            distill,
+            adamw_optimizer,
+            scheduler,
+            loss_history,
+        )
         print(f"  [checkpoint 已保存] {CKPT_PATH}", flush=True)
 
         # 同步保存最终产物（student state_dict + distill heads）

@@ -28,27 +28,37 @@ import os
 import re
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 CACHE_ROOT = os.path.join(PROJECT_ROOT, "data", "cache")
 # alpaca-zh（shibing624）：中文指令数据集，含大量代码问答样本
 ALPACA_ZH_ARROW = os.path.join(
-    CACHE_ROOT, "shibing624___alpaca-zh", "shibing624___alpaca-zh",
-    "default", "0.0.0", "f39db019a94f8dbea48ab30d2bdc090703284559",
-    "alpaca-zh-train.arrow")
+    CACHE_ROOT,
+    "shibing624___alpaca-zh",
+    "shibing624___alpaca-zh",
+    "default",
+    "0.0.0",
+    "f39db019a94f8dbea48ab30d2bdc090703284559",
+    "alpaca-zh-train.arrow",
+)
 OUT_PATH = os.path.join(PROJECT_ROOT, "data", "cross_domain_pairs.jsonl")
 
 CODE_FENCE = re.compile(r"```[a-zA-Z0-9_-]*\n(.*?)```", re.S)
 ZH_CHARS = re.compile(r"[\u4e00-\u9fff]")
 
-MIN_CODE_LEN = 15      # 代码块最小字符数（剔除占位块）
-MIN_ZH_INSTR = 4       # 指令最少中文数（保证 zh 侧是中文语义）
+MIN_CODE_LEN = 15  # 代码块最小字符数（剔除占位块）
+MIN_ZH_INSTR = 4  # 指令最少中文数（保证 zh 侧是中文语义）
 
 
 def load_alpaca_zh() -> list:
     """alpaca-zh 本地 arrow 直读（与 build_domain_sft_v2 同模式）。"""
     from pyarrow import ipc
+
     with open(ALPACA_ZH_ARROW, "rb") as f:
         table = ipc.open_stream(f).read_all()
     return table.to_pylist()
@@ -88,11 +98,13 @@ def main():
         if len(inst) < 4:
             skipped["inst_short"] += 1
             continue
-        pairs.append({
-            "zh": zh_text,
-            "code": code,
-            "source": i,
-        })
+        pairs.append(
+            {
+                "zh": zh_text,
+                "code": code,
+                "source": i,
+            }
+        )
 
     print(f"  提取同义对: {len(pairs)} 条", flush=True)
     print(f"  跳过统计: {skipped}", flush=True)

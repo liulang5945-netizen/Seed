@@ -1,4 +1,5 @@
 """Inspect the phase-1 evaluation report."""
+
 from __future__ import annotations
 
 import json

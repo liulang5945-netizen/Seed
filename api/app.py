@@ -5,8 +5,6 @@ import logging
 import os
 import sys
 import threading
-import time
-from collections import defaultdict
 from contextlib import asynccontextmanager
 from typing import Any, Optional
 
@@ -37,23 +35,16 @@ except ImportError:
 
 _global_rate_limiter: Optional[Any] = None
 
-_RATELIMIT_WHITELIST_PREFIXES = (
-    "/api/chat/history/",
-    "/api/models/download",
-    "/api/models/download_cancel",
-    "/api/models/download_progress",
-    "/api/models/downloaded",
-    "/api/settings/",
-    "/api/system/",
-    "/api/workspace/",
-)
-
 
 def get_rate_limiter() -> Optional[Any]:
     """Return the shared in-memory rate limiter instance."""
     global _global_rate_limiter
     if SECURITY_MIDDLEWARE_AVAILABLE and _global_rate_limiter is None:
-        _global_rate_limiter = RateLimiter(max_requests=100, window_seconds=60)
+        # 600/min matches the read bucket of the previous in-app rate limiter:
+        # the frontend polls /api/runtime/status every few seconds from several
+        # components, and a tighter global cap turned its own polling into
+        # cascading 429s that also blocked legitimate page requests.
+        _global_rate_limiter = RateLimiter(max_requests=600, window_seconds=60)
     return _global_rate_limiter
 
 
@@ -79,7 +70,9 @@ class JWTAuthMiddleware:
             return await self.app(scope, receive, send)
 
         path = scope.get("path", "")
-        if path in self.PUBLIC_PATHS or any(path.startswith(prefix) for prefix in self.PUBLIC_PREFIXES):
+        if path in self.PUBLIC_PATHS or any(
+            path.startswith(prefix) for prefix in self.PUBLIC_PREFIXES
+        ):
             return await self.app(scope, receive, send)
 
         try:
@@ -117,82 +110,30 @@ class JWTAuthMiddleware:
 
             scope["state"] = scope.get("state", {})
             scope["state"]["user"] = payload
-        except ImportError:
-            pass
+        except ImportError as e:
+            # 刻意允许的降级：无认证模块时不启用认证
+            logger.debug("【JWTAuthMiddleware.__call__】处理失败（非致命）: %s", e)
         except Exception as exc:
-            logger.warning(f"JWT auth exception: {exc}")
-
-        return await self.app(scope, receive, send)
-
-
-class RateLimitMiddleware:
-    """Simple in-memory rate limit middleware."""
-
-    WINDOW_SECONDS = 60
-
-    def __init__(self, app: FastAPI):
-        self.app = app
-        self._requests = defaultdict(list)
-
-    @staticmethod
-    def _is_whitelisted(path: str) -> bool:
-        return path.startswith(_RATELIMIT_WHITELIST_PREFIXES)
-
-    @staticmethod
-    def _get_category(path: str, method: str) -> str:
-        if "/api/chat/stream" in path:
-            return "stream"
-        if method in ("POST", "DELETE", "PUT", "PATCH"):
-            return "write"
-        return "read"
-
-    def _get_bucket_key(self, client_ip: str, path: str, method: str) -> str:
-        return f"{client_ip}:{self._get_category(path, method)}"
-
-    async def __call__(self, scope, receive, send):
-        if scope["type"] != "http":
-            return await self.app(scope, receive, send)
-
-        path = scope.get("path", "")
-        if self._is_whitelisted(path):
-            return await self.app(scope, receive, send)
-
-        client = scope.get("client")
-        client_ip = client[0] if client else "unknown"
-        method = scope.get("method", "GET")
-
-        bucket_key = self._get_bucket_key(client_ip, path, method)
-        category = self._get_category(path, method)
-        now = time.time()
-        limits = {"stream": 100, "write": 300, "read": 600}
-        max_requests = limits.get(category, 600)
-
-        timestamps = self._requests[bucket_key]
-        timestamps[:] = [ts for ts in timestamps if now - ts < self.WINDOW_SECONDS]
-
-        if len(timestamps) >= max_requests:
-            retry_after = int(self.WINDOW_SECONDS - (now - timestamps[0]))
+            # fail-closed：非预期异常（如密钥损坏/存储故障）一律拒绝，
+            # 不能 warning 后放行，否则认证系统故障 = 全网开放
+            logger.error(f"JWT auth exception: {exc}")
             await send(
                 {
                     "type": "http.response.start",
-                    "status": 429,
-                    "headers": [
-                        (b"content-type", b"application/json"),
-                        (b"retry-after", str(retry_after).encode("utf-8")),
-                    ],
+                    "status": 503,
+                    "headers": [(b"content-type", b"application/json")],
                 }
             )
             await send(
                 {
                     "type": "http.response.body",
-                    "body": json.dumps(
-                        {"detail": "Too many requests", "retry_after": retry_after}
-                    ).encode("utf-8"),
+                    "body": json.dumps({"detail": "Authentication service unavailable"}).encode(
+                        "utf-8"
+                    ),
                 }
             )
             return
 
-        timestamps.append(now)
         return await self.app(scope, receive, send)
 
 
@@ -205,12 +146,41 @@ def _load_model_background():
         # Deep Coupling: 注册引擎间事件订阅
         try:
             from neuroplex.infra.event_subscriptions import register_all_subscriptions
+
             register_all_subscriptions()
             logger.info("EventBus engine subscriptions registered")
         except Exception as exc:
             logger.warning(f"EventBus subscriptions failed: {exc}")
     except Exception as exc:
         logger.warning(f"Built-in tool registration failed: {exc}")
+
+    # 运行环境选择持久化：上次选了 Seed 原生则直接恢复，不先装 Cortex。
+    try:
+        from api.routes_model_switch import load_runtime_pref
+        from neuroplex.core.app_state import app_state as _state
+
+        pref = load_runtime_pref()
+        if pref.get("runtime") == "seed":
+            try:
+                from api.seed_runtime import activate_seed
+
+                checkpoint = pref.get("checkpoint") or None
+                if checkpoint:
+                    from pathlib import Path as _Path
+
+                    checkpoint = (
+                        _Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                        / "checkpoints"
+                        / checkpoint
+                    )
+                runtime = activate_seed(checkpoint)
+                _state.mark_started()
+                logger.info(f"Seed runtime auto-restored from preference: {runtime.name}")
+                return
+            except Exception as exc:
+                logger.warning(f"Seed preference restore failed, falling back to Cortex: {exc}")
+    except Exception as exc:
+        logger.warning(f"Runtime preference check failed: {exc}")
 
     from neuroplex.core.model_loader import load_model_on_startup
 
@@ -286,7 +256,6 @@ def _configure_middlewares(app: FastAPI):
             app.middleware("http")(create_rate_limit_middleware(limiter))
             logger.info("Security middleware integrated")
 
-    app.add_middleware(RateLimitMiddleware)
     app.add_middleware(JWTAuthMiddleware)
 
 
@@ -368,10 +337,12 @@ def _mount_static_assets(app: FastAPI):
                 status_code=404,
             )
 
-        file_path = os.path.join(dist_path, catchall)
-        if os.path.isfile(file_path):
+        # 路径穿越防护：realpath 解析后必须仍位于 dist 目录内
+        dist_root = os.path.realpath(dist_path)
+        file_path = os.path.realpath(os.path.join(dist_root, catchall))
+        if file_path.startswith(dist_root + os.sep) and os.path.isfile(file_path):
             return FileResponse(file_path)
-        return FileResponse(os.path.join(dist_path, "index.html"))
+        return FileResponse(os.path.join(dist_root, "index.html"))
 
 
 def create_app(*, startup_tasks: bool = True) -> FastAPI:

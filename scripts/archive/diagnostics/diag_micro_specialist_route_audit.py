@@ -20,7 +20,9 @@ import random
 import sys
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -50,7 +52,6 @@ from scripts.archive.diagnostics.diag_micro_specialist_group import (
 )
 from scripts.archive.diagnostics.diag_micro_dialogue_pilot import BATCH_SIZE
 from scripts.training.utils import load_domain_tokenizer, load_general_tokenizer
-
 
 DEFAULT_EVAL_CAP = 512
 TOP_K = 3
@@ -83,7 +84,9 @@ def _assemble_population(neurons: dict[str, torch.nn.Module], shared):
     return cortex, base_ids, base_ids + list(neurons)
 
 
-def _route_scores(cortex, route_params: dict[str, tuple[torch.nn.Module, torch.Tensor]], prompt: str):
+def _route_scores(
+    cortex, route_params: dict[str, tuple[torch.nn.Module, torch.Tensor]], prompt: str
+):
     ids = cortex._general_sp.encode(prompt)
     prompt_ids = torch.tensor([ids], dtype=torch.long, device=cortex.device)
     pooled = cortex._shared_embedding(prompt_ids).mean(dim=1)
@@ -99,9 +102,7 @@ def _route_scores(cortex, route_params: dict[str, tuple[torch.nn.Module, torch.T
             scores[neuron_id] = 0.0
         else:
             scores[neuron_id] = float(
-                F.cosine_similarity(
-                    projected.unsqueeze(0), prototype.unsqueeze(0), dim=-1
-                ).item()
+                F.cosine_similarity(projected.unsqueeze(0), prototype.unsqueeze(0), dim=-1).item()
             )
     return scores
 
@@ -154,8 +155,7 @@ def _generation_and_routes(cortex, base_ids, expanded_ids, route_params):
             "scores": scores,
             "ordered_ids": ordered,
             "specialist_ranks_zero_based": {
-                neuron_id: ordered.index(neuron_id)
-                for neuron_id in route_params
+                neuron_id: ordered.index(neuron_id) for neuron_id in route_params
             },
             "top1": ordered[:1],
             "top3": ordered[:TOP_K],

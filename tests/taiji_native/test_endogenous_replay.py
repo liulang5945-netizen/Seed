@@ -2,7 +2,6 @@ import torch
 
 from taiji import Taiji, TaijiConfig
 
-
 CUES = tuple(ord(value) for value in "ABCD")
 ACTIONS = (ord("0"), ord("1"))
 OUTCOMES = (ord("+"), ord("-"))
@@ -68,8 +67,7 @@ def test_replay_reads_the_homeostatic_set_point_without_writing_it() -> None:
     before = _thresholds(model)
     baselines_before = _baselines(model)
     consolidation_before = tuple(
-        decoder.edge_weight.clone()
-        for decoder in model.fabric.consolidation_decoders
+        decoder.edge_weight.clone() for decoder in model.fabric.consolidation_decoders
     )
 
     summary = model.consolidate(cycles=24, learn=True)
@@ -78,15 +76,11 @@ def test_replay_reads_the_homeostatic_set_point_without_writing_it() -> None:
     after = _thresholds(model)
     for index, (start, end) in enumerate(zip(before, after)):
         assert torch.equal(start, end), f"region {index} set point drifted during sleep"
-    for index, (start, end) in enumerate(
-        zip(baselines_before, _baselines(model))
-    ):
+    for index, (start, end) in enumerate(zip(baselines_before, _baselines(model))):
         assert torch.equal(start, end), f"region {index} baseline drifted during sleep"
     assert any(
         not torch.equal(start, decoder.edge_weight)
-        for start, decoder in zip(
-            consolidation_before, model.fabric.consolidation_decoders
-        )
+        for start, decoder in zip(consolidation_before, model.fabric.consolidation_decoders)
     ), "sleep did not write the slow consolidation pathway"
 
 
@@ -151,9 +145,7 @@ def test_consolidation_leaves_the_field_untouched() -> None:
 
     model = Taiji(_config())
     _store_episodes(model)
-    before = tuple(
-        tensor.detach().clone() for tensor in model.memory.parameter_tensors()
-    )
+    before = tuple(tensor.detach().clone() for tensor in model.memory.parameter_tensors())
 
     model.consolidate(cycles=16, learn=True)
 

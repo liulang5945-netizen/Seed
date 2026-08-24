@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """corrected alignment + full-context generation 的 800 步协同 pilot。"""
+
 from __future__ import annotations
 
 import gc
@@ -8,7 +9,9 @@ import logging
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -33,7 +36,6 @@ from scripts.training.utils import (
     make_wsd_scheduler,
     split_train_eval,
 )
-
 
 STEPS = 800
 LR = 3e-5

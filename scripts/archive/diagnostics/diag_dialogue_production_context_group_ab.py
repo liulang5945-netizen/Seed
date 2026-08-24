@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """修复后的 Cortex 入口：5-dialogue 与完整 9 成员生成 A/B。"""
+
 from __future__ import annotations
 
 import json
@@ -11,7 +12,6 @@ import torch
 
 from neuroplex.loader import assemble_cortex
 from neuroplex.resonance.dialogue_format import build_dialogue_prompt
-
 
 DIALOGUE_IDS = [
     "zh_aug0_dialogue",
@@ -88,9 +88,7 @@ def main() -> None:
             "generations": generations,
         }
     report["elapsed_seconds"] = round(time.time() - started, 1)
-    out_path = os.path.join(
-        "reports", "production_dialogue_context_group_ab_20260820.json"
-    )
+    out_path = os.path.join("reports", "production_dialogue_context_group_ab_20260820.json")
     with open(out_path, "w", encoding="utf-8") as handle:
         json.dump(report, handle, ensure_ascii=False, indent=2)
     print(json.dumps(report, ensure_ascii=False, indent=2))

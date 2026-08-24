@@ -21,9 +21,7 @@ SCRIPT = REPO / "scripts" / "training" / "train_seed_corpus.py"
 
 
 def _module():
-    spec = importlib.util.spec_from_file_location(
-        "train_seed_corpus", SCRIPT
-    )
+    spec = importlib.util.spec_from_file_location("train_seed_corpus", SCRIPT)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -97,9 +95,7 @@ def test_training_run_streams_checkpoints_and_progress(tmp_path) -> None:
     )
 
     assert checkpoint_path.is_file()
-    restored = Seed.from_checkpoint(
-        __import__("torch").load(checkpoint_path, weights_only=False)
-    )
+    restored = Seed.from_checkpoint(__import__("torch").load(checkpoint_path, weights_only=False))
     assert restored.checkpoint()["format"] == "seed-native-v1"
 
     entries = [

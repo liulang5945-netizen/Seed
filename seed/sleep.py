@@ -14,7 +14,7 @@ judge quality (the eye picks what to sleep on), and the reward bound into
 each engram is that same judge quality for the whole text: the valence axis
 must carry the self assessment so low valued patterns get replayed first.
 The write path bounds the injected reward to a unit interval itself
-(``tanh``) and gates readout plasticity by identity, value and redundancy,
+(unit-slope clip) and gates readout plasticity by identity, value and redundancy,
 so one episode can no longer flood the shared readout rows (800K collapse,
 phase 3).
 """
@@ -96,7 +96,7 @@ class SeedSleepScheduler:
             self.seed.observe(int(symbol), learn=bool(learn))
             probabilities = self.seed.snapshot().motor_probabilities
             candidates = top_candidates(probabilities, ACTION_FANOUT)
-            decision = self.seed.act(candidates, sample=False)
+            self.seed.act(candidates, sample=False)
             self.seed.settle_action(
                 quality,
                 learn=False,
@@ -154,9 +154,7 @@ class SeedSleepScheduler:
                 self.experience(text, learn=bool(learn), max_symbols=max_symbols)
             if self.seed.substrate.memory.write_count <= 0:
                 continue
-            result = self.seed.consolidate(
-                cycles=int(cycles_per_text), learn=bool(learn)
-            )
+            result = self.seed.consolidate(cycles=int(cycles_per_text), learn=bool(learn))
             total_cycles += result.cycles
             accepted += result.accepted
             priority_sum += result.mean_priority * result.cycles
@@ -172,9 +170,7 @@ class SeedSleepScheduler:
             "mean_error_norm": error_sum / attempts,
         }
 
-    def _write_episodic_observations(
-        self, text: bytes, *, max_symbols: int | None = None
-    ) -> None:
+    def _write_episodic_observations(self, text: bytes, *, max_symbols: int | None = None) -> None:
         """Observe the text with the fabric frozen, still writing engrams.
 
         The self sustaining night reactivates what the field already holds,

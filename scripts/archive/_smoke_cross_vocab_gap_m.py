@@ -12,6 +12,7 @@
 Usage:
     python -u scripts/training/_smoke_cross_vocab_gap_m.py
 """
+
 from __future__ import annotations
 
 import os
@@ -25,8 +26,11 @@ import torch.nn.functional as F
 from taiji.resonance import ResonanceNeuron, ResonanceField, ResonanceEnsemble
 from taiji.resonance.config import NeuronConfig
 from taiji.resonance.translator import (
-    TokenizerHub, AlignmentRules, build_domain_to_domain_alignment,
-    build_logits_alignment_matrix, tokenizer_fingerprint,
+    TokenizerHub,
+    AlignmentRules,
+    build_domain_to_domain_alignment,
+    build_logits_alignment_matrix,
+    tokenizer_fingerprint,
 )
 
 
@@ -131,8 +135,9 @@ def test_matrix_and_hotswap():
     dense = m1.to_dense()
     row_sums = dense.sum(dim=1)
     nonempty_rows = row_sums[row_sums > 0]
-    assert torch.allclose(nonempty_rows, torch.ones_like(nonempty_rows), atol=1e-5), \
-        f"行归一化失败: {nonempty_rows[:5]}"
+    assert torch.allclose(
+        nonempty_rows, torch.ones_like(nonempty_rows), atol=1e-5
+    ), f"行归一化失败: {nonempty_rows[:5]}"
 
     # 缓存复用：同一 tokenizer 实例 → 返回同一对象
     m2 = build_logits_alignment_matrix(src, tgt, "code", "zh", cache)
@@ -203,8 +208,10 @@ def test_forward_train_cross_vocab():
                 if p.grad is not None and p.grad.abs().sum().item() > 0:
                     grad_ok += 1
     assert grad_ok == grad_total, f"梯度只到 {grad_ok}/{grad_total}"
-    print(f"  ✅ 跨 vocab 融合通过: fused={tuple(fused.shape)}, "
-          f"side_channels 梯度 {grad_ok}/{grad_total}, loss={loss.item():.4f}")
+    print(
+        f"  ✅ 跨 vocab 融合通过: fused={tuple(fused.shape)}, "
+        f"side_channels 梯度 {grad_ok}/{grad_total}, loss={loss.item():.4f}"
+    )
     return True
 
 
@@ -224,7 +231,9 @@ def test_forward_train_same_vocab_backward_compat():
     ensemble = ResonanceEnsemble(neurons, field, max_rounds=2)
     shared_emb = torch.randn(2, 8, 32)
     result = ensemble.forward_train(
-        shared_embeddings=shared_emb, n_rounds=2, fusion_mode="soft",
+        shared_embeddings=shared_emb,
+        n_rounds=2,
+        fusion_mode="soft",
     )
     assert result["fused_logits"].shape == (2, 8, 128)
     print(f"  ✅ 向后兼容通过: fused={tuple(result['fused_logits'].shape)}")
@@ -253,7 +262,10 @@ def test_alignment_rules_override():
     # 人工覆盖：tok_10 → 强制映射到 tok_20, tok_21（多段）
     rules.add_override("code", "tok_10", ["tok_20", "tok_21"])
     align_edit, _ = build_domain_to_domain_alignment(
-        src, tgt, source_domain="code", overrides=rules,
+        src,
+        tgt,
+        source_domain="code",
+        overrides=rules,
     )
     assert 20 in align_edit[10] and 21 in align_edit[10], f"override 未生效: {align_edit[10]}"
 
@@ -261,7 +273,10 @@ def test_alignment_rules_override():
     rules2 = AlignmentRules()
     rules2.add_override("*", "tok_5", ["tok_30"])
     align_global, _ = build_domain_to_domain_alignment(
-        src, tgt, source_domain="code", overrides=rules2,
+        src,
+        tgt,
+        source_domain="code",
+        overrides=rules2,
     )
     assert align_global[5] == [30], f"全局规则未生效: {align_global[5]}"
     print("  ✅ override 覆盖 + 全局规则通过")
@@ -271,6 +286,7 @@ def test_alignment_rules_override():
 def test_alignment_rules_persistence():
     print("\n=== Test 7: AlignmentRules 持久化 + 热加载 ===")
     import tempfile
+
     tmp = os.path.join(tempfile.gettempdir(), "alignment_rules_test.json")
     if os.path.exists(tmp):
         os.remove(tmp)
@@ -332,6 +348,7 @@ if __name__ == "__main__":
                 passed += 1
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             print(f"  ❌ {t.__name__} 失败: {e}")
     print(f"\n{'=' * 60}\n结果: {passed}/{len(tests)} 通过")

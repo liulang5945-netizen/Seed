@@ -86,8 +86,7 @@ def test_evaluation_reports_ppl_panel_scores_and_generation(tmp_path) -> None:
         assert "std" in entry
 
     assert len(report["samples"]) == 24
-    assert all("prompt" in sample and "continuation" in sample
-               for sample in report["samples"])
+    assert all("prompt" in sample and "continuation" in sample for sample in report["samples"])
 
     baseline = report["neuroplex_baseline_reference"]
     assert baseline["report"] == "a1_judge_nll_std_real_20260820.json"
@@ -95,3 +94,47 @@ def test_evaluation_reports_ppl_panel_scores_and_generation(tmp_path) -> None:
 
     persisted = json.loads(report_path.read_text(encoding="utf-8"))
     assert persisted["holdout"] == report["holdout"]
+
+
+def test_holdout_hash_split_uses_eval_bucket_not_head(tmp_path) -> None:
+    """防泄漏回归：holdout 与训练语料同源时必须取 hash 评估桶而非文件头部。"""
+    from scripts.training.utils import split_train_eval
+
+    evaluator = _module()
+    corpus = tmp_path / "corpus.jsonl"
+    texts = [f"这是第{i}条用于分桶测试的文本内容" for i in range(3000)]
+    with corpus.open("w", encoding="utf-8") as handle:
+        for text in texts:
+            handle.write(json.dumps({"text": text}) + "\n")
+
+    train_texts, eval_texts = split_train_eval(texts, eval_ratio=0.05, seed=42)
+    selected = evaluator._holdout_bytes(corpus, 32, "hash_split").decode("utf-8").split("\n")
+    assert len(selected) == 32
+    # 全部来自评估桶且与训练桶无交集
+    assert all(text in eval_texts for text in selected)
+    assert not any(text in train_texts for text in selected)
+    # 不再是顺序取头部
+    assert selected != texts[:32]
+
+    head = evaluator._holdout_bytes(corpus, 32, "head_lines").decode("utf-8").split("\n")
+    assert head == texts[:32]
+
+
+def test_evaluation_records_leakage_metadata(tmp_path) -> None:
+    """报告必须记录 holdout 来源/选取方式/训练语料与泄漏风险标记。"""
+    evaluator = _module()
+    model = Seed(_small_config(), episode_id="eval-meta-test")
+    report = evaluator.evaluate_seed(
+        model,
+        holdout_bytes="水的沸点在标准大气压下是一百摄氏度。".encode("utf-8"),
+        report_path=tmp_path / "eval.json",
+        generation_length=12,
+        holdout_source="data/simple_zh/dialogue_extended_clean.jsonl",
+        holdout_selection="hash_split",
+        train_corpus="data/simple_zh/dialogue_extended_clean.jsonl",
+        leakage_risk=False,
+    )
+    assert report["holdout_source"] == "data/simple_zh/dialogue_extended_clean.jsonl"
+    assert report["holdout_selection"] == "hash_split"
+    assert report["train_corpus"] == "data/simple_zh/dialogue_extended_clean.jsonl"
+    assert report["leakage_risk"] is False

@@ -1,4 +1,5 @@
 """Reconcile the fast-probe margin with the act() decision on cue B."""
+
 from __future__ import annotations
 
 import sys
@@ -42,10 +43,11 @@ def main() -> None:
         fast = m.motor.synapses.forward(context) + m.motor.bias
         slow = m.fabric.consolidated_decode(0, snap.regions[0].trace)
         pair = torch.tensor(list(ACTIONS))
-        print(f"cue {chr(cue)} expected {chr(expected)} "
-              f"decided {chr(decision.action_symbol)}")
-        print(f"  state.motor_probabilities[01] = "
-              f"{[float(m._state.motor_probabilities[a]) for a in ACTIONS]}")
+        print(f"cue {chr(cue)} expected {chr(expected)} " f"decided {chr(decision.action_symbol)}")
+        print(
+            f"  state.motor_probabilities[01] = "
+            f"{[float(m._state.motor_probabilities[a]) for a in ACTIONS]}"
+        )
         print(f"  fast logits[01] = {[float(fast[a]) for a in ACTIONS]}")
         print(f"  slow logits[01] = {[float(slow[a]) for a in ACTIONS]}")
         print(f"  bias[01] = {[float(m.motor.bias[a]) for a in ACTIONS]}")

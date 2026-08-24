@@ -10,6 +10,7 @@ also runs a real mixed-spec ResonanceEnsemble forward with a compact neuron,
 which is the first compatibility gate for adding a small member beside the
 existing population.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -29,7 +30,6 @@ from neuroplex.resonance import (
     get_domain_neuron_config,
 )
 
-
 GENERAL_VOCAB = 256_000
 BASE_EMBED_DIM = 512
 
@@ -38,22 +38,70 @@ BASE_EMBED_DIM = 512
 # the capacity. Field dimensions are intentionally smaller than the existing
 # 2048/3072/4096 members; the ensemble must prove the cross-spec projection.
 CANDIDATES = {
-    "micro_2x128": dict(hidden_size=128, num_hidden_layers=2, num_attention_heads=4,
-                        num_key_value_heads=1, intermediate_size=384, field_dim=256),
-    "micro_3x128": dict(hidden_size=128, num_hidden_layers=3, num_attention_heads=4,
-                        num_key_value_heads=1, intermediate_size=384, field_dim=256),
-    "micro_4x128": dict(hidden_size=128, num_hidden_layers=4, num_attention_heads=4,
-                        num_key_value_heads=1, intermediate_size=384, field_dim=256),
-    "micro_4x128_field512": dict(hidden_size=128, num_hidden_layers=4, num_attention_heads=4,
-                                  num_key_value_heads=1, intermediate_size=384, field_dim=512),
-    "micro_3x160": dict(hidden_size=160, num_hidden_layers=3, num_attention_heads=4,
-                        num_key_value_heads=1, intermediate_size=480, field_dim=320),
-    "micro_4x160": dict(hidden_size=160, num_hidden_layers=4, num_attention_heads=4,
-                        num_key_value_heads=1, intermediate_size=480, field_dim=320),
-    "micro_4x160_field640": dict(hidden_size=160, num_hidden_layers=4, num_attention_heads=4,
-                                  num_key_value_heads=1, intermediate_size=480, field_dim=640),
-    "micro_4x192": dict(hidden_size=192, num_hidden_layers=4, num_attention_heads=4,
-                        num_key_value_heads=1, intermediate_size=576, field_dim=384),
+    "micro_2x128": dict(
+        hidden_size=128,
+        num_hidden_layers=2,
+        num_attention_heads=4,
+        num_key_value_heads=1,
+        intermediate_size=384,
+        field_dim=256,
+    ),
+    "micro_3x128": dict(
+        hidden_size=128,
+        num_hidden_layers=3,
+        num_attention_heads=4,
+        num_key_value_heads=1,
+        intermediate_size=384,
+        field_dim=256,
+    ),
+    "micro_4x128": dict(
+        hidden_size=128,
+        num_hidden_layers=4,
+        num_attention_heads=4,
+        num_key_value_heads=1,
+        intermediate_size=384,
+        field_dim=256,
+    ),
+    "micro_4x128_field512": dict(
+        hidden_size=128,
+        num_hidden_layers=4,
+        num_attention_heads=4,
+        num_key_value_heads=1,
+        intermediate_size=384,
+        field_dim=512,
+    ),
+    "micro_3x160": dict(
+        hidden_size=160,
+        num_hidden_layers=3,
+        num_attention_heads=4,
+        num_key_value_heads=1,
+        intermediate_size=480,
+        field_dim=320,
+    ),
+    "micro_4x160": dict(
+        hidden_size=160,
+        num_hidden_layers=4,
+        num_attention_heads=4,
+        num_key_value_heads=1,
+        intermediate_size=480,
+        field_dim=320,
+    ),
+    "micro_4x160_field640": dict(
+        hidden_size=160,
+        num_hidden_layers=4,
+        num_attention_heads=4,
+        num_key_value_heads=1,
+        intermediate_size=480,
+        field_dim=640,
+    ),
+    "micro_4x192": dict(
+        hidden_size=192,
+        num_hidden_layers=4,
+        num_attention_heads=4,
+        num_key_value_heads=1,
+        intermediate_size=576,
+        field_dim=384,
+    ),
 }
 
 
@@ -125,23 +173,30 @@ def run() -> dict:
         cfg = _make_config(name)
         neuron = ResonanceNeuron(cfg)
         local_params = sum(param.numel() for param in neuron.parameters())
-        rows.append({
-            "name": name,
-            "config": {
-                key: getattr(cfg, key)
-                for key in (
-                    "hidden_size", "num_hidden_layers", "num_attention_heads",
-                    "num_key_value_heads", "intermediate_size", "field_dim",
-                    "vocab_size", "base_embed_dim",
-                )
-            },
-            "approx_local_params_m": cfg.approx_params_m,
-            "actual_local_params_m": local_params / 1_000_000,
-            "population_shared_embedding_m": GENERAL_VOCAB * BASE_EMBED_DIM / 1_000_000,
-            "breakdown_m": _param_breakdown(neuron),
-            "single_forward": _run_forward(neuron),
-            "mixed_compact_forward": _run_mixed_population(neuron),
-        })
+        rows.append(
+            {
+                "name": name,
+                "config": {
+                    key: getattr(cfg, key)
+                    for key in (
+                        "hidden_size",
+                        "num_hidden_layers",
+                        "num_attention_heads",
+                        "num_key_value_heads",
+                        "intermediate_size",
+                        "field_dim",
+                        "vocab_size",
+                        "base_embed_dim",
+                    )
+                },
+                "approx_local_params_m": cfg.approx_params_m,
+                "actual_local_params_m": local_params / 1_000_000,
+                "population_shared_embedding_m": GENERAL_VOCAB * BASE_EMBED_DIM / 1_000_000,
+                "breakdown_m": _param_breakdown(neuron),
+                "single_forward": _run_forward(neuron),
+                "mixed_compact_forward": _run_mixed_population(neuron),
+            }
+        )
         del neuron
     return {
         "contract": "production_resonance_neuron_micro_sweep",

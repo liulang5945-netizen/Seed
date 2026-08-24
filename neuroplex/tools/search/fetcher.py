@@ -9,13 +9,11 @@
 策略：先 HTTP，失败或内容太少则回退 Browser。
 """
 
-import os
-import re
 import time
 import logging
 import concurrent.futures
-from dataclasses import dataclass, field
-from typing import List, Optional, Dict
+from dataclasses import dataclass
+from typing import List, Optional
 from urllib.parse import urlparse
 
 from .discovery import http_get, _random_ua
@@ -26,10 +24,11 @@ logger = logging.getLogger("Taiji.Search.Fetcher")
 @dataclass
 class FetchedPage:
     """抓取的原始页面"""
+
     url: str = ""
     html: str = ""
-    status: str = "ok"           # ok / http_error / empty / browser_fallback
-    fetcher: str = "http"        # http / browser
+    status: str = "ok"  # ok / http_error / empty / browser_fallback
+    fetcher: str = "http"  # http / browser
     fetch_time: float = 0.0
     error: str = ""
 
@@ -38,14 +37,33 @@ class FetchedPage:
 # HttpFetcher
 # ═══════════════════════════════════════════════
 
+
 class HttpFetcher:
     """快速 HTTP 抓取，纯 stdlib"""
 
     SKIP_EXTENSIONS = {
-        ".jpg", ".jpeg", ".png", ".gif", ".svg", ".webp", ".ico",
-        ".pdf", ".zip", ".tar", ".gz", ".rar",
-        ".mp3", ".mp4", ".avi", ".mov", ".wav",
-        ".css", ".js", ".woff", ".woff2", ".ttf",
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".gif",
+        ".svg",
+        ".webp",
+        ".ico",
+        ".pdf",
+        ".zip",
+        ".tar",
+        ".gz",
+        ".rar",
+        ".mp3",
+        ".mp4",
+        ".avi",
+        ".mov",
+        ".wav",
+        ".css",
+        ".js",
+        ".woff",
+        ".woff2",
+        ".ttf",
     }
 
     def fetch(self, url: str, timeout: int = 12) -> FetchedPage:
@@ -59,16 +77,24 @@ class HttpFetcher:
             if not html or len(html.strip()) < 200:
                 return FetchedPage(url=url, status="empty", fetch_time=time.time() - t0)
             return FetchedPage(
-                url=url, html=html, status="ok",
-                fetcher="http", fetch_time=time.time() - t0,
+                url=url,
+                html=html,
+                status="ok",
+                fetcher="http",
+                fetch_time=time.time() - t0,
             )
         except Exception as e:
             return FetchedPage(
-                url=url, status="http_error",
-                fetcher="http", fetch_time=time.time() - t0, error=str(e),
+                url=url,
+                status="http_error",
+                fetcher="http",
+                fetch_time=time.time() - t0,
+                error=str(e),
             )
 
-    def fetch_batch(self, urls: List[str], max_workers: int = 4, timeout: int = 12) -> List[FetchedPage]:
+    def fetch_batch(
+        self, urls: List[str], max_workers: int = 4, timeout: int = 12
+    ) -> List[FetchedPage]:
         """并行抓取多个 URL"""
         results: List[FetchedPage] = [None] * len(urls)
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as pool:
@@ -93,6 +119,7 @@ class HttpFetcher:
 # BrowserFetcher
 # ═══════════════════════════════════════════════
 
+
 class BrowserFetcher:
     """Playwright 浏览器抓取，处理 JS 渲染页面"""
 
@@ -106,6 +133,7 @@ class BrowserFetcher:
         if self._browser is not None:
             return
         from playwright.sync_api import sync_playwright
+
         self._playwright = sync_playwright().start()
         self._browser = self._playwright.chromium.launch(
             headless=self.headless, args=["--no-sandbox", "--disable-gpu"]
@@ -128,15 +156,23 @@ class BrowserFetcher:
             page.close()
             context.close()
             if not html or len(html.strip()) < 200:
-                return FetchedPage(url=url, status="empty", fetcher="browser", fetch_time=time.time() - t0)
+                return FetchedPage(
+                    url=url, status="empty", fetcher="browser", fetch_time=time.time() - t0
+                )
             return FetchedPage(
-                url=url, html=html, status="ok",
-                fetcher="browser", fetch_time=time.time() - t0,
+                url=url,
+                html=html,
+                status="ok",
+                fetcher="browser",
+                fetch_time=time.time() - t0,
             )
         except Exception as e:
             return FetchedPage(
-                url=url, status="http_error",
-                fetcher="browser", fetch_time=time.time() - t0, error=str(e),
+                url=url,
+                status="http_error",
+                fetcher="browser",
+                fetch_time=time.time() - t0,
+                error=str(e),
             )
 
     def fetch_with_pagination(self, seed_url: str, max_pages: int = 10) -> List[FetchedPage]:
@@ -145,7 +181,8 @@ class BrowserFetcher:
         try:
             self._ensure_browser()
             context = self._browser.new_context(
-                viewport={"width": 1280, "height": 800}, user_agent=_random_ua(),
+                viewport={"width": 1280, "height": 800},
+                user_agent=_random_ua(),
             )
             page = context.new_page()
             current_url = seed_url
@@ -153,10 +190,15 @@ class BrowserFetcher:
                 t0 = time.time()
                 page.goto(current_url, wait_until="networkidle", timeout=self.timeout)
                 time.sleep(0.8)
-                pages.append(FetchedPage(
-                    url=current_url, html=page.content(), status="ok",
-                    fetcher="browser", fetch_time=time.time() - t0,
-                ))
+                pages.append(
+                    FetchedPage(
+                        url=current_url,
+                        html=page.content(),
+                        status="ok",
+                        fetcher="browser",
+                        fetch_time=time.time() - t0,
+                    )
+                )
                 # 找"下一页"
                 next_url = self._find_next_page(page)
                 if not next_url or next_url == current_url:
@@ -192,6 +234,7 @@ class BrowserFetcher:
 # ═══════════════════════════════════════════════
 # DualFetcher — 自动选择 HTTP / Browser
 # ═══════════════════════════════════════════════
+
 
 class DualFetcher:
     """

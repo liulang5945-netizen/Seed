@@ -6,6 +6,7 @@
 用法:
   python scripts/data_prep/merge_cleaned_sft.py
 """
+
 import json
 import os
 from pathlib import Path
@@ -15,7 +16,7 @@ from collections import Counter
 def load_jsonl(file_path: str) -> list:
     """加载 JSONL 文件"""
     data = []
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line:
@@ -28,10 +29,10 @@ def load_jsonl(file_path: str) -> list:
 
 def merge_cleaned_sft():
     """合并所有清洗后的SFT数据"""
-    sft_dir = Path('taiji_data/training_data/sft')
+    sft_dir = Path("taiji_data/training_data/sft")
 
     # 查找所有清洗后的文件
-    clean_files = list(sft_dir.glob('*_clean.jsonl'))
+    clean_files = list(sft_dir.glob("*_clean.jsonl"))
 
     if not clean_files:
         print("未找到清洗后的文件！请先运行 clean_sft_for_pretrain.py")
@@ -57,12 +58,12 @@ def merge_cleaned_sft():
     duplicates = 0
 
     for item in all_data:
-        messages = item.get('messages', [])
+        messages = item.get("messages", [])
         # 提取问题作为去重键
-        question = ''
+        question = ""
         for msg in messages:
-            if msg.get('role') == 'user':
-                question = msg['content'][:100]  # 取前100字符作为键
+            if msg.get("role") == "user":
+                question = msg["content"][:100]  # 取前100字符作为键
                 break
 
         if question not in seen_questions:
@@ -75,14 +76,15 @@ def merge_cleaned_sft():
 
     # 打乱顺序
     import random
+
     random.seed(42)
     random.shuffle(unique_data)
 
     # 写入合并文件
-    output_file = sft_dir.parent / 'sft_merged_clean.jsonl'
-    with open(output_file, 'w', encoding='utf-8') as f:
+    output_file = sft_dir.parent / "sft_merged_clean.jsonl"
+    with open(output_file, "w", encoding="utf-8") as f:
         for item in unique_data:
-            f.write(json.dumps(item, ensure_ascii=False) + '\n')
+            f.write(json.dumps(item, ensure_ascii=False) + "\n")
 
     print(f"\n合并完成!")
     print(f"输出文件: {output_file}")
@@ -101,5 +103,5 @@ python taiji/train/finetune_taiji.py
 """)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     merge_cleaned_sft()

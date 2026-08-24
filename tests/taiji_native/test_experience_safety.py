@@ -65,10 +65,7 @@ def test_lived_experience_does_not_damage_waking_competence() -> None:
         for symbol in STREAM:
             model.observe(int(symbol), learn=False)
             probabilities = model.snapshot().motor_probabilities
-            candidates = [
-                int(index)
-                for index in torch.argsort(probabilities, descending=True)[:8]
-            ]
+            candidates = [int(index) for index in torch.argsort(probabilities, descending=True)[:8]]
             model.act(candidates, sample=False)
             model.settle_action(-3.0, learn=False, learn_memory=True)
         model.observe(model.config.boundary_symbol, learn=False)

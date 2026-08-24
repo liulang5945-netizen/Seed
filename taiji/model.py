@@ -11,7 +11,6 @@ from .config import TaijiConfig
 from .fabric import TaijiFabric
 from .memory import EpisodicField
 from .organs import ByteMotor, ByteSensor
-from .sparse import bound_norm
 from .state import (
     PendingAction,
     PendingExperience,
@@ -46,17 +45,11 @@ class Taiji:
         self._rng = torch.Generator(device="cpu")
         self._rng.manual_seed(self.config.seed)
         self.sensor = ByteSensor(self.config, device=self.device)
-        self.fabric = TaijiFabric(
-            self.config, generator=self._rng, device=self.device
-        )
-        self.motor = ByteMotor(
-            self.config, generator=self._rng, device=self.device
-        )
+        self.fabric = TaijiFabric(self.config, generator=self._rng, device=self.device)
+        self.motor = ByteMotor(self.config, generator=self._rng, device=self.device)
         self._memory_rng = torch.Generator(device="cpu")
         self._memory_rng.set_state(self._rng.get_state().clone())
-        self.memory = EpisodicField(
-            self.config, generator=self._memory_rng, device=self.device
-        )
+        self.memory = EpisodicField(self.config, generator=self._memory_rng, device=self.device)
         # Lifetime development ticks survive episode boundaries: state.tick
         # restarts at every reset_dynamics, so it cannot carry the replay
         # maturity gate -- an experienced text resets it to tens of ticks and
@@ -78,9 +71,7 @@ class Taiji:
             episode_id=episode_id,
             regions=self.fabric.initial_state(),
             memory=self.memory.initial_state(),
-            motor_context=torch.zeros(
-                self.config.motor_context_dim, device=self.device
-            ),
+            motor_context=torch.zeros(self.config.motor_context_dim, device=self.device),
             motor_probabilities=uniform,
             last_symbol=None,
             pending_action=None,
@@ -101,9 +92,7 @@ class Taiji:
             raise RuntimeError("pending action must be settled before reset")
         if self._state.pending_experience is not None:
             raise RuntimeError("pending experience must observe its outcome before reset")
-        self._development_ticks = max(
-            self._development_ticks, int(self._state.tick)
-        )
+        self._development_ticks = max(self._development_ticks, int(self._state.tick))
         self._state = self._initial_state(episode_id or self._state.episode_id)
 
     @torch.no_grad()
@@ -170,14 +159,11 @@ class Taiji:
             use_long_term=use_memory,
         )
         context = self.motor.encode_context(cortical_state)
-        cortical_prediction_evidence = (
-            float(self.config.consolidation_read_gain)
-            * self.fabric.consolidated_decode(0, regions[0].trace)
-        )
+        cortical_prediction_evidence = float(
+            self.config.consolidation_read_gain
+        ) * self.fabric.consolidated_decode(0, regions[0].trace)
         episodic_evidence = cortical_prediction_evidence + (
-            self.config.memory_read_gain
-            * memory_recall.confidence
-            * memory_recall.action_evidence
+            self.config.memory_read_gain * memory_recall.confidence * memory_recall.action_evidence
         )
         probabilities = self.motor.probabilities(
             context,
@@ -234,14 +220,12 @@ class Taiji:
         indices = torch.tensor(actions, device=self.device, dtype=torch.long)
         restricted = self._state.motor_probabilities[indices]
         restricted = restricted / restricted.sum().clamp_min(1e-12)
-        policy = torch.zeros(
-            self.config.alphabet_size, device=self.device
-        )
+        policy = torch.zeros(self.config.alphabet_size, device=self.device)
         policy[indices] = restricted
         if sample:
-            local_index = int(torch.multinomial(
-                restricted.detach().cpu(), 1, generator=self._rng
-            ).item())
+            local_index = int(
+                torch.multinomial(restricted.detach().cpu(), 1, generator=self._rng).item()
+            )
         else:
             local_index = int(restricted.argmax().item())
         action_symbol = actions[local_index]
@@ -294,9 +278,7 @@ class Taiji:
             tick=pending.tick,
             action_symbol=pending.action_symbol,
             reward=reward,
-            cortical_context=self.fabric.cortical_context(
-                self._state.regions
-            ).detach().clone(),
+            cortical_context=self.fabric.cortical_context(self._state.regions).detach().clone(),
             episode_id=self._state.episode_id,
             provenance=provenance,
             learn_memory=(bool(learn) if learn_memory is None else bool(learn_memory)),
@@ -353,9 +335,7 @@ class Taiji:
         # checkpoint loaded straight into sleep still counts as lived.
         self._development_ticks = max(self._development_ticks, tick)
         structural_before = int(self.fabric.structural_events)
-        winner_resource = torch.ones(
-            self.config.alphabet_size, device=self.device
-        )
+        winner_resource = torch.ones(self.config.alphabet_size, device=self.device)
 
         accepted = 0
         priority_sum = 0.0
@@ -382,14 +362,8 @@ class Taiji:
                 continue
             accepted += 1
             threshold = float(self.config.replay_priority_threshold)
-            endorsement = (
-                min(1.0, replay.priority / threshold) if threshold > 0.0 else 1.0
-            )
-            learn_scale = (
-                float(self.config.replay_learning_scale) * endorsement
-                if learn
-                else 0.0
-            )
+            endorsement = min(1.0, replay.priority / threshold) if threshold > 0.0 else 1.0
+            learn_scale = float(self.config.replay_learning_scale) * endorsement if learn else 0.0
             # Topology and slow-store writes both move against the dream-basis
             # error, which reads the waking decoder off its distribution.  In a
             # crowded field the shared readout rows no longer locate any one
@@ -404,9 +378,7 @@ class Taiji:
             # consolidation would read as fully trusted and rewire against
             # garbage error anyway (A2, diagnosis 21/24); only the lifetime
             # development counter survives the reset.
-            field_trusted = self._development_ticks < int(
-                self.config.replay_maturity_ticks
-            )
+            field_trusted = self._development_ticks < int(self.config.replay_maturity_ticks)
             # The engram is read at its mode, not sampled.  The readouts are
             # softmaxes over the whole 257 byte alphabet, so a correct but
             # low-margin reactivation still looks nearly uniform: measured peak
@@ -448,9 +420,7 @@ class Taiji:
             # support intersects.
             action_symbol, outcome_symbol = burst
             winner_gain = float(winner_resource[action_symbol].item())
-            winner_resource[action_symbol].mul_(
-                float(self.config.replay_winner_resource_retention)
-            )
+            winner_resource[action_symbol].mul_(float(self.config.replay_winner_resource_retention))
 
             if replay_cue_chain:
                 # Hippocampal-style cortical reinstatement is an activity path,
@@ -460,24 +430,15 @@ class Taiji:
                 # recalled action applies the same local next-sensation rule as
                 # the action->outcome phase below.
                 cleared = self.fabric.clear_dynamics(regions)
-                confidence = max(
-                    1e-8, float(replay.familiarity * replay.resonance)
-                )
+                confidence = max(1e-8, float(replay.familiarity * replay.resonance))
                 reinstated = replay.cortical_projection / confidence
                 fast_offset = 0
                 trace_offset = sum(self.config.region_sizes)
                 cue_states = []
-                for region_size, previous_region in zip(
-                    self.config.region_sizes, cleared
-                ):
-                    activity = torch.relu(reinstated[
-                        fast_offset:fast_offset + region_size
-                    ])
+                for region_size, previous_region in zip(self.config.region_sizes, cleared):
+                    activity = torch.relu(reinstated[fast_offset : fast_offset + region_size])
                     trace = reinstated[
-                        trace_offset
-                        + fast_offset:trace_offset
-                        + fast_offset
-                        + region_size
+                        trace_offset + fast_offset : trace_offset + fast_offset + region_size
                     ]
                     # The cortical readout regresses a unit-normalised context,
                     # so the reinstated slices carry identity but not
@@ -489,25 +450,21 @@ class Taiji:
                     # lands where evaluation will read it.
                     activity_norm = float(activity.norm().item())
                     if activity_norm > 1e-8:
-                        activity = (
-                            activity
-                            * (float(self.config.max_membrane_norm)
-                               / activity_norm)
-                        )
+                        activity = activity * (float(self.config.max_membrane_norm) / activity_norm)
                     trace_norm = float(trace.norm().item())
                     if trace_norm > 1e-8:
-                        trace = trace * (
-                            float(self.config.max_trace_norm) / trace_norm
+                        trace = trace * (float(self.config.max_trace_norm) / trace_norm)
+                    cue_states.append(
+                        RegionState(
+                            membrane=activity.detach().clone(),
+                            activity=activity.detach().clone(),
+                            trace=trace.detach().clone(),
+                            prediction=torch.zeros_like(previous_region.prediction),
+                            error=torch.zeros_like(previous_region.error),
+                            threshold=previous_region.threshold.detach().clone(),
+                            inhibition=torch.zeros_like(previous_region.inhibition),
                         )
-                    cue_states.append(RegionState(
-                        membrane=activity.detach().clone(),
-                        activity=activity.detach().clone(),
-                        trace=trace.detach().clone(),
-                        prediction=torch.zeros_like(previous_region.prediction),
-                        error=torch.zeros_like(previous_region.error),
-                        threshold=previous_region.threshold.detach().clone(),
-                        inhibition=torch.zeros_like(previous_region.inhibition),
-                    ))
+                    )
                     fast_offset += region_size
                 cue_settled = tuple(cue_states)
                 tick += 1
@@ -521,9 +478,7 @@ class Taiji:
                 # dream garbage.  The maturity gate therefore covers this leg
                 # too -- a fresh toy field keeps the mechanism M7 probes for,
                 # a lived field rehearses without rewriting.
-                cue_learn_scale = (
-                    learn_scale * winner_gain if field_trusted else 0.0
-                )
+                cue_learn_scale = learn_scale * winner_gain if field_trusted else 0.0
                 for _ in range(int(self.config.replay_write_repeats)):
                     regions, _rates, error_norms = self.fabric.step(
                         action_activity,
@@ -589,9 +544,7 @@ class Taiji:
             # decoder/transition/lateral weights on self generated engrams is
             # what dragged the whole frozen panel down after a night (A2), while
             # the slow pathway is the store evaluation reads through.
-            fast_learn_scale = learn_scale * float(
-                self.config.replay_outcome_fast_scale
-            )
+            fast_learn_scale = learn_scale * float(self.config.replay_outcome_fast_scale)
             # The slow store is read through a basis rescaled to the trace
             # bound, and only the cue-chain phase writes on such a basis (the
             # reinstated projection is rescaled before it enters the fabric).
@@ -735,9 +688,11 @@ class Taiji:
         generated = bytearray()
         for _ in range(length):
             if sample:
-                next_symbol = int(torch.multinomial(
-                    step.probabilities.detach().cpu(), 1, generator=self._rng
-                ).item())
+                next_symbol = int(
+                    torch.multinomial(
+                        step.probabilities.detach().cpu(), 1, generator=self._rng
+                    ).item()
+                )
             else:
                 next_symbol = step.predicted_symbol
             if next_symbol == self.config.boundary_symbol and stop_at_boundary:
@@ -809,9 +764,7 @@ class Taiji:
             or state.memory.threshold.shape != memory_shape
         ):
             raise ValueError("checkpoint memory state does not match architecture")
-        if state.memory.cortical_feedback.shape != (
-            self.config.cortical_context_dim,
-        ):
+        if state.memory.cortical_feedback.shape != (self.config.cortical_context_dim,):
             raise ValueError("checkpoint memory feedback does not match architecture")
         if state.motor_context.shape != (self.config.motor_context_dim,):
             raise ValueError("checkpoint motor context does not match architecture")
@@ -827,12 +780,8 @@ class Taiji:
                 raise ValueError("checkpoint pending action is not afforded")
         if state.pending_experience is not None:
             experience = state.pending_experience
-            if experience.cortical_context.shape != (
-                self.config.cortical_context_dim,
-            ):
-                raise ValueError(
-                    "checkpoint pending experience does not match architecture"
-                )
+            if experience.cortical_context.shape != (self.config.cortical_context_dim,):
+                raise ValueError("checkpoint pending experience does not match architecture")
             if not 0 <= experience.action_symbol < self.config.alphabet_size:
                 raise ValueError("checkpoint pending experience action is invalid")
             if not math.isfinite(experience.reward):

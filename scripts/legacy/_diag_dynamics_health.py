@@ -1,4 +1,7 @@
+# MIGRATED: scripts/archive/diagnostics/_diag_dynamics_health.py → scripts/legacy/_diag_dynamics_health.py
+# 仅历史诊断脚本（崩溃检查点分析），不再被训练/产品流程引用；请勿在新代码中 import 本文件。
 """在崩塌检查点上跑一段流，观察皮层活动率/误差/记忆置信度的动力学。"""
+
 import sys
 
 sys.path.insert(0, r"e:\Seed")
@@ -6,14 +9,12 @@ sys.path.insert(0, r"e:\Seed")
 import torch
 
 from seed import Seed
+from scripts.legacy import CHECKPOINT_DIR  # 公共检查点目录常量（scripts/legacy/__init__.py）
 
-model = Seed.from_checkpoint(
-    torch.load(r"e:\Seed\checkpoints\seed_corpus.pt", weights_only=False)
+model = Seed.from_checkpoint(torch.load(CHECKPOINT_DIR / "seed_corpus.pt", weights_only=False))
+text = ("问：你好。\n答：你好，很高兴见到你。" "水的沸点在标准大气压下是一百摄氏度。").encode(
+    "utf-8"
 )
-text = (
-    "问：你好。\n答：你好，很高兴见到你。"
-    "水的沸点在标准大气压下是一百摄氏度。"
-).encode("utf-8")
 
 model.reset_dynamics(episode_id="diag")
 step = model.observe(256, learn=False)
@@ -29,9 +30,7 @@ for symbol in text:
     sums[2] += step.memory_recall.confidence
     sums[3] += float(step.surprise)
 
-mean_activity, mean_error, mean_conf, mean_surprise = (
-    value / count for value in sums
-)
+mean_activity, mean_error, mean_conf, mean_surprise = (value / count for value in sums)
 print(f"ticks={count}")
 print(f"mean activity_rate = {mean_activity:.5f} (target=0.12)")
 print(f"mean error_norm    = {mean_error:.5f}")

@@ -40,14 +40,27 @@ class FakeCortex:
         self.calls: list = []
         self.replies = {"s1": "[s1输出]", "s2": "[s2输出]", "s3": "[s3输出]"}
 
-    def generate(self, prompt: str, max_tokens: int = 60, temperature: float = 0.55,
-                 top_k: int = 15, domain=None, repetition_penalty: float = 1.4,
-                 collab_mode: str = "executive", fusion_mode: str = "soft",
-                 **kwargs) -> str:
-        self.calls.append({
-            "prompt": prompt, "max_tokens": max_tokens, "domain": domain,
-            "collab_mode": collab_mode, "fusion_mode": fusion_mode,
-        })
+    def generate(
+        self,
+        prompt: str,
+        max_tokens: int = 60,
+        temperature: float = 0.55,
+        top_k: int = 15,
+        domain=None,
+        repetition_penalty: float = 1.4,
+        collab_mode: str = "executive",
+        fusion_mode: str = "soft",
+        **kwargs,
+    ) -> str:
+        self.calls.append(
+            {
+                "prompt": prompt,
+                "max_tokens": max_tokens,
+                "domain": domain,
+                "collab_mode": collab_mode,
+                "fusion_mode": fusion_mode,
+            }
+        )
         return self.replies.get(f"s{len(self.calls)}", "[out]")
 
 
@@ -60,9 +73,11 @@ def test_1_template_prev():
     ]
     out = Cortex.generate_staged(fc, stages)
     check("两阶段输出", len(out) == 2, f"n={len(out)}")
-    check("阶段2 prompt 含 prev", "{prev}" not in fc.calls[1]["prompt"]
-          and "[s1输出]" in fc.calls[1]["prompt"],
-          f"prompt={fc.calls[1]['prompt']!r}")
+    check(
+        "阶段2 prompt 含 prev",
+        "{prev}" not in fc.calls[1]["prompt"] and "[s1输出]" in fc.calls[1]["prompt"],
+        f"prompt={fc.calls[1]['prompt']!r}",
+    )
     check("阶段2 生成输入含上一阶段输出", "[s1输出]" in fc.calls[1]["prompt"])
 
 
@@ -71,8 +86,9 @@ def test_2_auto_concat():
     fc = FakeCortex()
     stages = [{"prompt": "阶段1"}, {"prompt": "阶段2"}]
     out = Cortex.generate_staged(fc, stages)
-    check("自动拼接", fc.calls[1]["prompt"].endswith("[s1输出]"),
-          f"prompt={fc.calls[1]['prompt']!r}")
+    check(
+        "自动拼接", fc.calls[1]["prompt"].endswith("[s1输出]"), f"prompt={fc.calls[1]['prompt']!r}"
+    )
 
 
 def test_3_first_stage_no_concat():
@@ -80,8 +96,11 @@ def test_3_first_stage_no_concat():
     fc = FakeCortex()
     stages = [{"prompt": "首阶段指令"}]
     out = Cortex.generate_staged(fc, stages)
-    check("首阶段 prompt 原样", fc.calls[0]["prompt"] == "首阶段指令",
-          f"prompt={fc.calls[0]['prompt']!r}")
+    check(
+        "首阶段 prompt 原样",
+        fc.calls[0]["prompt"] == "首阶段指令",
+        f"prompt={fc.calls[0]['prompt']!r}",
+    )
 
 
 def test_4_task_set_params():
@@ -94,12 +113,14 @@ def test_4_task_set_params():
     out = Cortex.generate_staged(fc, stages)
     c1, c2 = fc.calls[0], fc.calls[1]
     check("阶段1 domain=zh", c1["domain"] == "zh", f"domain={c1['domain']}")
-    check("阶段1 mode=executive", c1["collab_mode"] == "executive",
-          f"mode={c1['collab_mode']}")
+    check("阶段1 mode=executive", c1["collab_mode"] == "executive", f"mode={c1['collab_mode']}")
     check("阶段1 max_tokens=40", c1["max_tokens"] == 40, f"max={c1['max_tokens']}")
     check("阶段2 domain=code", c2["domain"] == "code", f"domain={c2['domain']}")
-    check("阶段2 mode=continuous（task-set 切换）", c2["collab_mode"] == "continuous",
-          f"mode={c2['collab_mode']}")
+    check(
+        "阶段2 mode=continuous（task-set 切换）",
+        c2["collab_mode"] == "continuous",
+        f"mode={c2['collab_mode']}",
+    )
 
 
 def test_5_empty_prompt_skipped():
@@ -132,25 +153,37 @@ def test_7_zh_code_zh_example():
     fc = FakeCortex()
     stages = [
         {"prompt": "请理解以下需求：写一个斐波那契函数", "mode": "executive", "domain": "zh"},
-        {"prompt": "根据上面的理解生成 Python 代码：\n{prev}", "mode": "executive", "domain": "code"},
+        {
+            "prompt": "根据上面的理解生成 Python 代码：\n{prev}",
+            "mode": "executive",
+            "domain": "code",
+        },
         {"prompt": "请用中文解释这段代码的作用：\n{prev}", "mode": "continuous", "domain": "zh"},
     ]
     out = Cortex.generate_staged(fc, stages, max_tokens_per_stage=20)
     check("三阶段输出", len(out) == 3, f"n={len(out)}")
     check("阶段间输出传递（阶段2 含阶段1 输出）", "[s1输出]" in fc.calls[1]["prompt"])
     check("阶段3 含阶段2 输出", "[s2输出]" in fc.calls[2]["prompt"])
-    check("task-set 切换（zh→code→zh）",
-          [c["domain"] for c in fc.calls] == ["zh", "code", "zh"],
-          f"domains={[c['domain'] for c in fc.calls]}")
+    check(
+        "task-set 切换（zh→code→zh）",
+        [c["domain"] for c in fc.calls] == ["zh", "code", "zh"],
+        f"domains={[c['domain'] for c in fc.calls]}",
+    )
 
 
 if __name__ == "__main__":
     print("=" * 60, flush=True)
     print("C25-F 多阶段任务模式链冒烟验证（task-set 序列）", flush=True)
     print("=" * 60, flush=True)
-    for fn in [test_1_template_prev, test_2_auto_concat, test_3_first_stage_no_concat,
-               test_4_task_set_params, test_5_empty_prompt_skipped,
-               test_6_exception_handled, test_7_zh_code_zh_example]:
+    for fn in [
+        test_1_template_prev,
+        test_2_auto_concat,
+        test_3_first_stage_no_concat,
+        test_4_task_set_params,
+        test_5_empty_prompt_skipped,
+        test_6_exception_handled,
+        test_7_zh_code_zh_example,
+    ]:
         fn()
     print("=" * 60, flush=True)
     print(f"结果: {passed}/{passed + failed} PASS", flush=True)

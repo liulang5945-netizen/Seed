@@ -4,6 +4,7 @@
 验证：① 影子 COW 跑通 ② 训练循环（CE + 邻居蒸馏 + contrastive）跑通
 ③ ablation 决策（commit/apoptosis）跑通 ④ 静默期 maturity 压低融合。
 """
+
 import os
 import sys
 
@@ -17,7 +18,11 @@ from taiji.resonance.field import ResonanceField
 from taiji.resonance.geometry import NeuronGeometry
 from taiji.resonance.topology import build_topology, establish_topology_channels
 from taiji.resonance.translator import TokenizerHub
-from scripts.training.utils import load_general_tokenizer, load_domain_tokenizer, create_shared_embedding
+from scripts.training.utils import (
+    load_general_tokenizer,
+    load_domain_tokenizer,
+    create_shared_embedding,
+)
 from scripts.training.train_cross_domain_collab import load_shared_lm_head
 
 
@@ -100,10 +105,13 @@ def main():
     shared_lm_head = load_shared_lm_head("data/foundation_v1_general", 512, "cpu")
     neurons, embeddings = {}, {}
     for nid in DIALOGUE_IDS:
-        ckp = torch.load(os.path.join(DIALOGUE_DIR, f"neuron_{nid}.pt"),
-                         map_location="cpu", weights_only=False)
-        cfg = ckp["neuron_config"]; cfg.unified_field_dim = None
+        ckp = torch.load(
+            os.path.join(DIALOGUE_DIR, f"neuron_{nid}.pt"), map_location="cpu", weights_only=False
+        )
+        cfg = ckp["neuron_config"]
+        cfg.unified_field_dim = None
         from taiji.resonance.neuron import ResonanceNeuron
+
         n = ResonanceNeuron(cfg)
         n.load_state_dict(ckp["state_dict"], strict=False)
         neurons[nid] = n
@@ -127,10 +135,12 @@ def main():
 
     # 新生 neuron：clone zh_std0 + 噪声（模拟 split 新生 zh_1）
     import copy
+
     parent = neurons["zh_std0_dialogue"]
     cfg = copy.deepcopy(parent.config)
     cfg.neuron_id = "zh_1"
     from taiji.resonance.neuron import ResonanceNeuron
+
     new_neuron = ResonanceNeuron(cfg)
     sd = parent.state_dict()
     for k, v in new_neuron.state_dict().items():
@@ -149,9 +159,12 @@ def main():
 
     # 静默期验证：maturity=0 时 ensemble 融合压低新 neuron（conf 乘 0.1）
     r = ens.forward_train(
-        neuron_embeddings={nid: shared_emb(torch.tensor(
-            [general_sp.EncodeAsIds("你好")], dtype=torch.long)) for nid in neurons},
-        n_rounds=2, fusion_mode="soft",
+        neuron_embeddings={
+            nid: shared_emb(torch.tensor([general_sp.EncodeAsIds("你好")], dtype=torch.long))
+            for nid in neurons
+        },
+        n_rounds=2,
+        fusion_mode="soft",
         targets=torch.tensor([general_sp.EncodeAsIds("你好")], dtype=torch.long),
         target_domain="zh",
     )

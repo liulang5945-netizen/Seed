@@ -14,6 +14,7 @@ quality 监督 = per-neuron NLL 排序（谁能预测好当前文本谁上）。
 Usage:
     python scripts/training/diag_route_errors.py --ckpt data/neurons/collab_v3_c13.ckpt.pt
 """
+
 import os
 import sys
 import math
@@ -28,14 +29,20 @@ import torch.nn.functional as F
 GENERAL_DIR = "data/foundation_v1_general"
 DIALOGUE_DIR = "data/neurons"
 DOMAINS = ["code", "math", "zh", "en"]
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 SEQ_LEN = 64
 ROUTER_TEMP = 0.15
 
 
 def encode_all(text, embeddings, general_sp):
     from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
+
     neuron_embeddings, targets, mask = {}, None, None
     for nid, emb in embeddings.items():
         out = batch_align_and_embed([text], general_sp, general_sp, emb, max_seq_len=SEQ_LEN)
@@ -46,10 +53,15 @@ def encode_all(text, embeddings, general_sp):
 
 
 def ppl_from_logits(logits, targets, mask):
-    sl, st, sm = logits[:, :-1].contiguous(), targets[:, 1:].clone().contiguous(), mask[:, 1:].contiguous()
+    sl, st, sm = (
+        logits[:, :-1].contiguous(),
+        targets[:, 1:].clone().contiguous(),
+        mask[:, 1:].contiguous(),
+    )
     st[~sm] = -100
-    loss = F.cross_entropy(sl.reshape(-1, sl.size(-1)), st.reshape(-1),
-                          ignore_index=-100, reduction="sum")
+    loss = F.cross_entropy(
+        sl.reshape(-1, sl.size(-1)), st.reshape(-1), ignore_index=-100, reduction="sum"
+    )
     n = int(sm.sum().item())
     if n == 0:
         return None
@@ -59,6 +71,7 @@ def ppl_from_logits(logits, targets, mask):
 def solo_loss(neuron, emb, general_sp, text):
     """单 neuron + home embedding，旧 5 logits 转译到 general 256K 口径。"""
     from scripts.archive.train_multi_domain_foundation import batch_align_and_embed
+
     out = batch_align_and_embed([text], general_sp, general_sp, emb, max_seq_len=SEQ_LEN)
     with torch.no_grad():
         r = neuron.forward(out[0], return_logits=True)
@@ -66,9 +79,11 @@ def solo_loss(neuron, emb, general_sp, text):
     if logits.shape[-1] != 256000:
         from taiji.resonance.translator import build_logits_alignment_matrix
         from scripts.training.utils import load_domain_tokenizer
+
         src_sp = load_domain_tokenizer("zh")
-        m = build_logits_alignment_matrix(src_sp, general_sp, "zh", "general",
-                                          cache={}, source_vocab_size=logits.shape[-1])
+        m = build_logits_alignment_matrix(
+            src_sp, general_sp, "zh", "general", cache={}, source_vocab_size=logits.shape[-1]
+        )
         b, l, vi = logits.shape
         logits = torch.sparse.mm(logits.reshape(-1, vi), m.to(logits.dtype)).reshape(b, l, 256000)
     return ppl_from_logits(logits, out[1], out[2])
@@ -76,21 +91,34 @@ def solo_loss(neuron, emb, general_sp, text):
 
 def main():
     import argparse
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--ckpt", default="data/neurons/collab_v3_c13.ckpt.pt")
     ap.add_argument("--n-eval", type=int, default=8)
-    ap.add_argument("--gate-thresh", type=float, default=1.10,
-                    help="门控 PPL / solo 最优 超过该比例 → 判定融合有损")
-    ap.add_argument("--soft-thresh", type=float, default=1.10,
-                    help="soft PPL / 门控 PPL 超过该比例 → 判定路由错误")
+    ap.add_argument(
+        "--gate-thresh",
+        type=float,
+        default=1.10,
+        help="门控 PPL / solo 最优 超过该比例 → 判定融合有损",
+    )
+    ap.add_argument(
+        "--soft-thresh",
+        type=float,
+        default=1.10,
+        help="soft PPL / 门控 PPL 超过该比例 → 判定路由错误",
+    )
     args = ap.parse_args()
 
     random.seed(42)
     from scripts.training.train_cross_domain_collab import (
-        load_neuron, load_shared_lm_head, load_shared_embedding,
+        load_neuron,
+        load_shared_lm_head,
+        load_shared_embedding,
     )
     from scripts.training.utils import (
-        load_general_tokenizer, load_dialogue_texts_multi, create_shared_embedding,
+        load_general_tokenizer,
+        load_dialogue_texts_multi,
+        create_shared_embedding,
     )
     from scripts.archive.train_multi_domain_foundation import load_domain_texts
     from taiji.resonance.ensemble import ResonanceEnsemble
@@ -112,9 +140,11 @@ def main():
         neurons[nid] = n
         embeddings[nid] = load_shared_embedding(GENERAL_DIR, "cpu")
     for nid in DIALOGUE_IDS:
-        ckp = torch.load(os.path.join(DIALOGUE_DIR, f"neuron_{nid}.pt"),
-                         map_location="cpu", weights_only=False)
-        cfg = ckp["neuron_config"]; cfg.unified_field_dim = None
+        ckp = torch.load(
+            os.path.join(DIALOGUE_DIR, f"neuron_{nid}.pt"), map_location="cpu", weights_only=False
+        )
+        cfg = ckp["neuron_config"]
+        cfg.unified_field_dim = None
         n = __import__("taiji.resonance.neuron", fromlist=["ResonanceNeuron"]).ResonanceNeuron(cfg)
         n.load_state_dict(ckp["state_dict"], strict=False)
         neurons[nid] = n
@@ -174,15 +204,22 @@ def main():
     # ── 数据 ──
     texts = {d: load_domain_texts(d, 3000) for d in DOMAINS}
     texts["dialogue"] = load_dialogue_texts_multi(
-        os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-                     "data", "simple_zh"),
-        max_texts=2000, max_answer_chars=150)
+        os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+            "data",
+            "simple_zh",
+        ),
+        max_texts=2000,
+        max_answer_chars=150,
+    )
     print(f"[数据加载完成] dialogue={len(texts['dialogue'])} 条\n")
 
     # ── 逐文本诊断 ──
     print("=" * 110)
-    print("逐文本路由诊断（gate/solo > %.2f → 融合有损；soft/gate > %.2f → 路由错误）"
-          % (args.gate_thresh, args.soft_thresh))
+    print(
+        "逐文本路由诊断（gate/solo > %.2f → 融合有损；soft/gate > %.2f → 路由错误）"
+        % (args.gate_thresh, args.soft_thresh)
+    )
     print("=" * 110)
 
     stats = {s: {"route_err": 0, "fuse_loss": 0, "ok": 0} for s in DOMAINS + ["dialogue"]}
@@ -195,9 +232,12 @@ def main():
             # 1) soft 融合 + quality_logits
             with torch.no_grad():
                 r_soft = ens.forward_train(
-                    neuron_embeddings=neuron_embeddings, n_rounds=2,
-                    fusion_mode="soft", targets=targets,
-                    field_conditioning=True, target_domain="general",
+                    neuron_embeddings=neuron_embeddings,
+                    n_rounds=2,
+                    fusion_mode="soft",
+                    targets=targets,
+                    field_conditioning=True,
+                    target_domain="general",
                 )
             dl = r_soft.get("quality_logits")  # [N] active_ids 顺序
             dl_rank = sorted(nids, key=lambda k: -dl[nids.index(k)].item())
@@ -213,9 +253,12 @@ def main():
                     trust[nids.index(nid)] = 100.0
             with torch.no_grad():
                 r_gate = ens.forward_train(
-                    neuron_embeddings=neuron_embeddings, n_rounds=2,
-                    fusion_mode="soft", targets=targets,
-                    field_conditioning=True, target_domain="general",
+                    neuron_embeddings=neuron_embeddings,
+                    n_rounds=2,
+                    fusion_mode="soft",
+                    targets=targets,
+                    field_conditioning=True,
+                    target_domain="general",
                     trust_override=trust,
                 )
             gate_ppl = ppl_from_logits(r_gate["fused_logits"], targets, mask)
@@ -242,8 +285,10 @@ def main():
 
             dl_str = ", ".join(f"{k}={dl[nids.index(k)]:.2f}" for k in dl_rank[:4])
             fmt = lambda x: f"{math.exp(x):7.1f}" if x is not None else "    N/A"
-            print(f"  argmax={dl_argmax:16s} soft={fmt(soft_ppl)} gate={fmt(gate_ppl)} "
-                  f"solo={fmt(best_solo)}({best_nid}) [{tag}] | {dl_str}")
+            print(
+                f"  argmax={dl_argmax:16s} soft={fmt(soft_ppl)} gate={fmt(gate_ppl)} "
+                f"solo={fmt(best_solo)}({best_nid}) [{tag}] | {dl_str}"
+            )
             print(f"    样例: {t[:70].replace(chr(10), ' ')}")
 
     # ── 汇总 ──
@@ -254,8 +299,7 @@ def main():
     for src in DOMAINS + ["dialogue"]:
         s = stats[src]
         total = s["ok"] + s["route_err"] + s["fuse_loss"]
-        print(f"  {src:10s} {s['ok']:5d} {s['route_err']:8d} {s['fuse_loss']:8d}"
-              f"  (共 {total})")
+        print(f"  {src:10s} {s['ok']:5d} {s['route_err']:8d} {s['fuse_loss']:8d}" f"  (共 {total})")
     print("\n  路由错误 → 判别器没选对人（可训练修复：增强 domain head / 加数据）")
     print("  融合有损 → 门控也救不了（训练修不了：查融合/转译路径）")
     return 0

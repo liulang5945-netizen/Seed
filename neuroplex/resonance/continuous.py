@@ -13,15 +13,15 @@
 本模块输出——连续共振只作用于协作融合路径；t=0 独立前向采集判定信号，
 与离散 round1 语义一致。
 """
+
 from __future__ import annotations
 
 import math
 import os
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 
 class ContinuousResonance(nn.Module):
@@ -41,9 +41,9 @@ class ContinuousResonance(nn.Module):
         conv_tol: float = 0.02,
         min_steps: int = 2,
         # 缺口 R：多频段振荡——theta-gamma 嵌套（人脑：慢 theta 相位调制 gamma 振幅包络）
-        theta_omega: float = 0.0,   # theta 频率（rad/单位时间；0 = 不启用，向后兼容）
-        theta_amp: float = 0.2,     # 包络调制幅度（theta_omega=0 时无效果）
-        theta_init: float = 0.0,    # 初始 theta 相位
+        theta_omega: float = 0.0,  # theta 频率（rad/单位时间；0 = 不启用，向后兼容）
+        theta_amp: float = 0.2,  # 包络调制幅度（theta_omega=0 时无效果）
+        theta_init: float = 0.0,  # 初始 theta 相位
     ):
         """
         Args:
@@ -70,7 +70,12 @@ class ContinuousResonance(nn.Module):
         # 嵌套，生产默认关闭；环境变量 TAIJI_THETA_NESTING=1 免改码 A/B
         # （theta 频率 0.5 rad/单位时间，幅度 0.2，verify_c26_theta_gamma 标定值）。
         # 无 env 时行为与旧版完全一致（theta_omega=0 → 包络恒 1、调制恒等）。
-        if theta_omega == 0.0 and os.environ.get("TAIJI_THETA_NESTING", "0") not in ("", "0", "false", "False"):
+        if theta_omega == 0.0 and os.environ.get("TAIJI_THETA_NESTING", "0") not in (
+            "",
+            "0",
+            "false",
+            "False",
+        ):
             theta_omega = 0.5
             theta_amp = theta_amp if theta_amp != 0.0 else 0.2
         self.theta_omega = theta_omega
@@ -146,7 +151,7 @@ class ContinuousResonance(nn.Module):
         if binding.numel() == 0:
             return 0.0
         m = float(binding.mean().item())
-        s = float(binding.std(unbiased=False).item())
+        float(binding.std(unbiased=False).item())
         # 全同相 = 1，全异相 = -1；锁定 = |绑定均值| 高
         return m
 

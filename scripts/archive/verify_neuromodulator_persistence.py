@@ -9,11 +9,12 @@
 Usage:
     python scripts/training/verify_neuromodulator_persistence.py
 """
+
 import sys
 import os
 from datetime import datetime
 
-os.environ.setdefault('TAJIJI_TEST_MODE', '1')
+os.environ.setdefault("TAJIJI_TEST_MODE", "1")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 import torch
@@ -27,6 +28,7 @@ def main():
     # Step 1: 装配 Cortex
     print("\n[Step 1] 装配 Cortex...")
     from taiji.loader import assemble_cortex
+
     cortex, tokenizer, modules = assemble_cortex(
         neurons_dir="data/neurons",
         device="cpu",
@@ -71,7 +73,9 @@ def main():
     ht_after_train = nm.serotonin
     ne_after_train = nm.norepinephrine
     print(f"  训练 loss: {report.training_loss:.4f}")
-    print(f"  训练后调质: DA={da_after_train:.4f}, 5HT={ht_after_train:.4f}, NE={ne_after_train:.4f}")
+    print(
+        f"  训练后调质: DA={da_after_train:.4f}, 5HT={ht_after_train:.4f}, NE={ne_after_train:.4f}"
+    )
 
     da_changed = abs(da_after_train - da_before) > 0.01
     if not da_changed:

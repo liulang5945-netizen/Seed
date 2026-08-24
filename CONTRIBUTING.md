@@ -12,10 +12,31 @@ python scripts/training/verify_taiji_native_v1.py
 python -m pytest tests/taiji_native -q
 ```
 
+Or use the **Dev Container** (recommended): open the project in VS Code with the Dev Containers extension — it auto-configures Python 3.12 + Node 22 + all extensions.
+
+### Code quality
+
+```bash
+# Lint & format (pre-commit hooks run these automatically)
+ruff check .
+black --check .
+
+# Frontend lint & test
+cd frontend && npm run lint && npm test
+```
+
 Run the complete regression suite before submitting:
 
 ```bash
 python -m pytest tests -q
+```
+
+### Building a release
+
+```bash
+python scripts/release.py            # Full build (frontend + PyInstaller + NSIS)
+python scripts/release.py --skip-nsis # Without NSIS installer
+python scripts/sync_version.py        # Sync version to all files
 ```
 
 ## Native-core rules

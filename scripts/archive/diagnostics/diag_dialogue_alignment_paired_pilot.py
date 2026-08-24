@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """同初始化、同批次的 legacy/corrected alignment 对照 pilot。"""
+
 from __future__ import annotations
 
 import gc
@@ -9,7 +10,9 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -27,7 +30,6 @@ from scripts.training.utils import (
     make_wsd_scheduler,
     split_train_eval,
 )
-
 
 NEURON_ID = "zh_aug0_dialogue"
 MAX_TEXTS = 100_000
@@ -107,7 +109,7 @@ def _metrics(neuron, shared, texts, domain_sp, general_sp) -> dict:
     top1 = 0
     skipped = 0
     for start in range(0, len(texts), BATCH_SIZE):
-        batch = texts[start:start + BATCH_SIZE]
+        batch = texts[start : start + BATCH_SIZE]
         embeddings, targets, mask, sft_mask = translator_module.batch_align_and_embed(
             batch,
             domain_sp,
@@ -136,7 +138,7 @@ def _metrics(neuron, shared, texts, domain_sp, general_sp) -> dict:
 
         for row_index, text in enumerate(batch):
             marker = text.find(SFT_ANSWER_MARKER)
-            prompt = text[:marker + len(SFT_ANSWER_MARKER)]
+            prompt = text[: marker + len(SFT_ANSWER_MARKER)]
             _, aligned_targets = translator_module.build_position_alignment(
                 text, domain_sp, general_sp
             )

@@ -130,6 +130,27 @@ restored = Seed.from_checkpoint(checkpoint)
 
 Researchers may still import `Taiji` directly for substrate-only falsification experiments. Production-facing composition belongs in `seed/`.
 
+## Public Beta
+
+Seed ships as a self-contained Windows desktop build (dual-entry `Seed.exe` + `SeedBackend.exe`,
+about 1.1GB): double-click launches the backend, activates the Seed native runtime, and serves the
+web UI on `http://127.0.0.1:8000` within a few seconds. Development mode equivalent:
+
+```bash
+python -m uvicorn api.app:app --host 127.0.0.1 --port 8000   # backend + web UI (serves frontend/dist)
+python desktop/main.py                                         # desktop shell (window + backend + WebSocket 8765)
+cd frontend && npm run dev                                     # frontend dev server
+```
+
+Environment knobs: `SEED_PORT` (default 8000), `SEED_HOST` (default 127.0.0.1),
+`SEED_RUNTIME=1` (activate the Seed native runtime on startup).
+
+Beta verification evidence lives in `reports/` (API stress 1000/1000, checkpoint crash-recovery
+10/10, latency/throughput baselines, frontend review) and the release report
+`reports/seed_public_beta_release_20260823.md`. End-user instructions (install, chat, training,
+known limits) are in [docs/seed_public_beta_user_guide.md](docs/seed_public_beta_user_guide.md).
+Current checkpoints are early-stage: garbled replies are expected model behavior, not defects.
+
 ## Reproducible Taiji substrate results
 
 The committed verification uses two regions `[64, 48]`, seed `7`, and raw bytes:

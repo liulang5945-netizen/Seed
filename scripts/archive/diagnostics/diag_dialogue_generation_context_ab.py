@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """单体 dialogue 生成上下文：逐 piece 回填 vs 完整文本重编码 A/B。"""
+
 from __future__ import annotations
 
 import json
@@ -7,15 +8,20 @@ import logging
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
 
 from neuroplex.resonance import ResonanceNeuron
 from neuroplex.resonance.dialogue_format import build_dialogue_prompt
-from scripts.training.utils import create_shared_embedding, load_domain_tokenizer, load_general_tokenizer
-
+from scripts.training.utils import (
+    create_shared_embedding,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+)
 
 NEURON_ID = "zh_aug0_dialogue"
 SEED = 20260820
@@ -74,9 +80,7 @@ def _generate(neuron, shared, domain_sp, general_sp, question: str, mode: str) -
         "text": domain_sp.DecodeIds(generated_ids),
         "generated_ids": generated_ids,
         "context_equal_steps": context_equal_steps,
-        "context_equal_rate": round(
-            sum(context_equal_steps) / max(len(context_equal_steps), 1), 4
-        ),
+        "context_equal_rate": round(sum(context_equal_steps) / max(len(context_equal_steps), 1), 4),
     }
 
 
@@ -100,8 +104,12 @@ def main() -> None:
     }
     for question in QUESTIONS:
         report["prompts"][question] = {
-            "incremental": _generate(neuron, shared, domain_sp, general_sp, question, "incremental"),
-            "full_reencode": _generate(neuron, shared, domain_sp, general_sp, question, "full_reencode"),
+            "incremental": _generate(
+                neuron, shared, domain_sp, general_sp, question, "incremental"
+            ),
+            "full_reencode": _generate(
+                neuron, shared, domain_sp, general_sp, question, "full_reencode"
+            ),
         }
     out_path = os.path.join("reports", "production_dialogue_generation_context_ab_20260820.json")
     with open(out_path, "w", encoding="utf-8") as handle:

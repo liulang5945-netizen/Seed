@@ -17,7 +17,9 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 
@@ -34,7 +36,6 @@ from scripts.archive.diagnostics.diag_micro_data_ab import (
 )
 from scripts.archive.diagnostics.diag_micro_spec_sweep import CANDIDATES
 from scripts.training.utils import load_domain_tokenizer, load_general_tokenizer
-
 
 BASE_EMBED_DIM = 512
 ZH_VOCAB_SIZE = 50_000
@@ -74,9 +75,7 @@ def run(
         "current_eval": pools["current_eval"],
         "hf_eval": pools["hf_eval"],
     }
-    selected_hf_train = _select_hf_for_ratio(
-        pools["current_train"], pools["hf_train"], hf_ratio
-    )
+    selected_hf_train = _select_hf_for_ratio(pools["current_train"], pools["hf_train"], hf_ratio)
     train_texts = pools["current_train"] + selected_hf_train
     results = {}
     for spec_name in specs:
@@ -121,12 +120,8 @@ def run(
             "hf_eval": len(pools["hf_eval"]),
             "eval_cap": eval_cap,
             "train_samples": len(train_texts),
-            "current_fraction": round(
-                len(pools["current_train"]) / max(len(train_texts), 1), 6
-            ),
-            "hf_fraction": round(
-                len(selected_hf_train) / max(len(train_texts), 1), 6
-            ),
+            "current_fraction": round(len(pools["current_train"]) / max(len(train_texts), 1), 6),
+            "hf_fraction": round(len(selected_hf_train) / max(len(train_texts), 1), 6),
         },
         "candidates": results,
     }

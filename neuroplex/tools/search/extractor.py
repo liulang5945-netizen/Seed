@@ -22,10 +22,11 @@ logger = logging.getLogger("Taiji.Search.Extractor")
 @dataclass
 class PageContent:
     """提取后的页面内容"""
+
     url: str = ""
     title: str = ""
-    text: str = ""           # 纯文本正文
-    markdown: str = ""       # Markdown 格式
+    text: str = ""  # 纯文本正文
+    markdown: str = ""  # Markdown 格式
     links: List[str] = field(default_factory=list)
     word_count: int = 0
     extract_method: str = "readability"  # readability / fallback
@@ -34,6 +35,7 @@ class PageContent:
 # ═══════════════════════════════════════════════
 # ReadabilityExtractor — 启发式正文提取
 # ═══════════════════════════════════════════════
+
 
 class ReadabilityExtractor:
     """
@@ -47,20 +49,48 @@ class ReadabilityExtractor:
     """
 
     NOISE_TAGS = {
-        "script", "style", "nav", "footer", "aside", "header",
-        "form", "iframe", "noscript", "svg", "button",
+        "script",
+        "style",
+        "nav",
+        "footer",
+        "aside",
+        "header",
+        "form",
+        "iframe",
+        "noscript",
+        "svg",
+        "button",
     }
 
     NOISE_CLASS_PATTERNS = [
-        r"nav", r"menu", r"sidebar", r"footer", r"header",
-        r"comment", r"share", r"related", r"advert", r"banner",
-        r"popup", r"modal", r"cookie", r"subscribe", r"social",
+        r"nav",
+        r"menu",
+        r"sidebar",
+        r"footer",
+        r"header",
+        r"comment",
+        r"share",
+        r"related",
+        r"advert",
+        r"banner",
+        r"popup",
+        r"modal",
+        r"cookie",
+        r"subscribe",
+        r"social",
     ]
 
     CONTENT_SELECTORS = [
-        "main", "article", '[role="main"]',
-        ".content", "#content", ".post-content", ".article-content",
-        ".entry-content", ".post-body", ".article-body",
+        "main",
+        "article",
+        '[role="main"]',
+        ".content",
+        "#content",
+        ".post-content",
+        ".article-content",
+        ".entry-content",
+        ".post-body",
+        ".article-body",
     ]
 
     def extract(self, html: str, url: str = "") -> PageContent:
@@ -80,8 +110,13 @@ class ReadabilityExtractor:
         method = "readability" if wc > 50 else "fallback"
 
         return PageContent(
-            url=url, title=title, text=text, markdown=md,
-            links=links, word_count=wc, extract_method=method,
+            url=url,
+            title=title,
+            text=text,
+            markdown=md,
+            links=links,
+            word_count=wc,
+            extract_method=method,
         )
 
     def _extract_title(self, html: str) -> str:
@@ -89,7 +124,7 @@ class ReadabilityExtractor:
         m = re.search(r"<title[^>]*>(.*?)</title>", html, re.DOTALL | re.IGNORECASE)
         if m:
             return re.sub(r"\s+", " ", m.group(1)).strip()
-        m = re.search(r'<h1[^>]*>(.*?)</h1>', html, re.DOTALL | re.IGNORECASE)
+        m = re.search(r"<h1[^>]*>(.*?)</h1>", html, re.DOTALL | re.IGNORECASE)
         if m:
             return re.sub(r"<[^>]+>", "", m.group(1)).strip()
         return ""
@@ -98,14 +133,18 @@ class ReadabilityExtractor:
         """移除噪音标签"""
         for tag in self.NOISE_TAGS:
             html = re.sub(
-                rf"<{tag}[^>]*>.*?</{tag}>", "", html,
+                rf"<{tag}[^>]*>.*?</{tag}>",
+                "",
+                html,
                 flags=re.DOTALL | re.IGNORECASE,
             )
         # 移除噪音 class
         for pattern in self.NOISE_CLASS_PATTERNS:
             html = re.sub(
                 rf'<div[^>]*class="[^"]*{pattern}[^"]*"[^>]*>.*?</div>',
-                "", html, flags=re.DOTALL | re.IGNORECASE,
+                "",
+                html,
+                flags=re.DOTALL | re.IGNORECASE,
             )
         # 移除注释
         html = re.sub(r"<!--.*?-->", "", html, flags=re.DOTALL)
@@ -115,13 +154,14 @@ class ReadabilityExtractor:
         """找到文本密度最高的内容容器"""
         for selector in self.CONTENT_SELECTORS:
             # 提取选择器中的标签名（main, article 等）
-            tag_match = re.match(r'([a-z]+)', selector)
+            tag_match = re.match(r"([a-z]+)", selector)
             if not tag_match:
                 continue
             tag_name = tag_match.group(1)
             m = re.search(
                 rf"<{tag_name}[^>]*>(.*?)</{tag_name}>",
-                html, re.DOTALL | re.IGNORECASE,
+                html,
+                re.DOTALL | re.IGNORECASE,
             )
             if m and len(m.group(1)) > 500:
                 return m.group(1)
@@ -154,10 +194,17 @@ class ReadabilityExtractor:
     def _decode_entities(self, text: str) -> str:
         """解码 HTML 实体"""
         entities = {
-            "&amp;": "&", "&lt;": "<", "&gt;": ">",
-            "&quot;": '"', "&#39;": "'", "&nbsp;": " ",
-            "&hellip;": "...", "&mdash;": "-", "&ndash;": "-",
-            "&copy;": "(c)", "&reg;": "(R)",
+            "&amp;": "&",
+            "&lt;": "<",
+            "&gt;": ">",
+            "&quot;": '"',
+            "&#39;": "'",
+            "&nbsp;": " ",
+            "&hellip;": "...",
+            "&mdash;": "-",
+            "&ndash;": "-",
+            "&copy;": "(c)",
+            "&reg;": "(R)",
         }
         for ent, char in entities.items():
             text = text.replace(ent, char)
@@ -187,12 +234,14 @@ class ReadabilityExtractor:
             try:
                 domain = urllib.parse.urlparse(link).netloc
                 if domain == base_domain and link not in seen:
-                    if not any(link.lower().endswith(ext) for ext in
-                               [".jpg", ".png", ".pdf", ".zip", ".css", ".js"]):
+                    if not any(
+                        link.lower().endswith(ext)
+                        for ext in [".jpg", ".png", ".pdf", ".zip", ".css", ".js"]
+                    ):
                         seen.add(link)
                         result.append(link)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【ReadabilityExtractor._extract_links】处理失败（非致命）: %s", e)
         return result
 
     def _to_markdown(self, html: str, title: str, url: str) -> str:
@@ -204,23 +253,48 @@ class ReadabilityExtractor:
         for level in range(1, 7):
             md = re.sub(
                 rf"<h{level}[^>]*>(.*?)</h{level}>",
-                lambda m, lv=level: "\n" + "#" * lv + " " + re.sub(r"<[^>]+>", "", m.group(1)).strip() + "\n",
-                html, flags=re.DOTALL | re.IGNORECASE,
+                lambda m, lv=level: "\n"
+                + "#" * lv
+                + " "
+                + re.sub(r"<[^>]+>", "", m.group(1)).strip()
+                + "\n",
+                html,
+                flags=re.DOTALL | re.IGNORECASE,
             )
         # 段落
-        md = re.sub(r"<p[^>]*>(.*?)</p>", lambda m: re.sub(r"<[^>]+>", "", m.group(1)).strip() + "\n\n",
-                    md, flags=re.DOTALL | re.IGNORECASE)
+        md = re.sub(
+            r"<p[^>]*>(.*?)</p>",
+            lambda m: re.sub(r"<[^>]+>", "", m.group(1)).strip() + "\n\n",
+            md,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
         # 加粗
-        md = re.sub(r"<(?:strong|b)[^>]*>(.*?)</(?:strong|b)>", r"**\1**", md, flags=re.DOTALL | re.IGNORECASE)
+        md = re.sub(
+            r"<(?:strong|b)[^>]*>(.*?)</(?:strong|b)>",
+            r"**\1**",
+            md,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
         # 斜体
-        md = re.sub(r"<(?:em|i)[^>]*>(.*?)</(?:em|i)>", r"*\1*", md, flags=re.DOTALL | re.IGNORECASE)
+        md = re.sub(
+            r"<(?:em|i)[^>]*>(.*?)</(?:em|i)>", r"*\1*", md, flags=re.DOTALL | re.IGNORECASE
+        )
         # 链接
-        md = re.sub(r'<a[^>]*href="([^"]*)"[^>]*>(.*?)</a>', r"[\2](\1)", md, flags=re.DOTALL | re.IGNORECASE)
+        md = re.sub(
+            r'<a[^>]*href="([^"]*)"[^>]*>(.*?)</a>',
+            r"[\2](\1)",
+            md,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
         # 列表
         md = re.sub(r"<li[^>]*>(.*?)</li>", r"- \1\n", md, flags=re.DOTALL | re.IGNORECASE)
         # 代码块
-        md = re.sub(r"<pre[^>]*>(.*?)</pre>", lambda m: "\n```\n" + re.sub(r"<[^>]+>", "", m.group(1)).strip() + "\n```\n",
-                    md, flags=re.DOTALL | re.IGNORECASE)
+        md = re.sub(
+            r"<pre[^>]*>(.*?)</pre>",
+            lambda m: "\n```\n" + re.sub(r"<[^>]+>", "", m.group(1)).strip() + "\n```\n",
+            md,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
         md = re.sub(r"<code[^>]*>(.*?)</code>", r"`\1`", md, flags=re.DOTALL | re.IGNORECASE)
         # 换行
         md = re.sub(r"<br\s*/?>", "\n", md, flags=re.IGNORECASE)

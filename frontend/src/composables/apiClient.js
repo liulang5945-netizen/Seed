@@ -19,8 +19,18 @@ function resolveApiBase() {
 
 export const API_BASE = resolveApiBase()
 
+// 可安全重试的状态码：超时/限流/网关类错误。不含 500/501 等可能由请求本身触发的服务端错误。
+const RETRYABLE_STATUS = new Set([408, 429, 502, 503, 504])
+// 幂等方法默认允许重试；非幂等写请求（POST/PUT/DELETE/PATCH）即使带 body 也不应静默重发。
+const IDEMPOTENT_METHODS = new Set(['GET', 'HEAD', 'OPTIONS', 'PUT', 'DELETE'])
+
 export async function authFetch(url, options = {}) {
-  const maxRetries = options.retries ?? 2
+  const method = (options.method || 'GET').toUpperCase()
+  const hasBody = options.body != null
+  const idempotent = IDEMPOTENT_METHODS.has(method)
+  // 默认重试：仅幂等方法默认 2 次；非幂等写请求默认 0（避免重复副作用，如重复推理）。
+  // 调用方显式传入 retries 时以调用方为准。
+  const maxRetries = options.retries != null ? options.retries : (idempotent ? 2 : 0)
   const token = localStorage.getItem('jwt_token') || ''
   const headers = new Headers(options.headers || {})
   if (token && !headers.has('Authorization')) {
@@ -39,8 +49,9 @@ export async function authFetch(url, options = {}) {
           }))
         }
       }
-      // 服务端错误 → 重试；客户端错误（4xx 除 401 外）→ 不重试
-      if (response.status >= 500 && attempt < maxRetries) {
+      // 仅对可重试状态码、且未发送 body 的请求重试；避免非幂等写请求（如流式 POST）重复副作用。
+      const bodySent = !idempotent && hasBody
+      if (maxRetries > 0 && attempt < maxRetries && !bodySent && RETRYABLE_STATUS.has(response.status)) {
         lastError = new Error(`Server error HTTP ${response.status}`)
         await new Promise(r => setTimeout(r, (attempt + 1) * 500))
         continue
@@ -48,7 +59,9 @@ export async function authFetch(url, options = {}) {
       return response
     } catch (e) {
       lastError = e
-      if (attempt < maxRetries) {
+      // 网络层错误：已发送 body 的非幂等写请求同样不重试，避免重复副作用。
+      const bodySent = !idempotent && hasBody
+      if (maxRetries > 0 && attempt < maxRetries && !bodySent) {
         await new Promise(r => setTimeout(r, (attempt + 1) * 500))
       }
     }

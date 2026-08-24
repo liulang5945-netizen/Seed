@@ -1,0 +1,104 @@
+公测路线图 M3-M5 交付（建议拆 5 个提交，按依赖顺序）
+
+================================================================
+提交 1/5  fix(substrate): 回归门禁根因修复（n10 参考式 + m5 bounded_reward）
+================================================================
+[why]
+verify_taiji_n10 / m5 失败阻断公测推进。根因：f30729c 把稀疏核衰减改为
+资格门控但 n10 参考式未同步；e3dc6af 引入 tanh(bounded_reward) 把
+m5 协议 reward=1.0 压到 0.762，7/8 跌破 0.875 阈值。
+[how]
+- verify_taiji_n10_sparse_migration.py：参考式对齐内核现行资格门控语义
+- taiji/memory.py：bounded_reward = clip(reward, -1, 1)（保留有界意图，
+  恢复 [-1,1] 单位斜率）
+- seed/sleep.py + tests/seed/test_seed_sleep.py：巩固场景改自评最差模式
+[verify]
+CI 8 项 + A1-B1 5 项 ALL PASS（reports/_gate_clip_repair.log）；
+内生回放 accepted 48/48；pytest 113 绿。
+files: taiji/memory.py, seed/sleep.py, tests/seed/test_seed_sleep.py,
+scripts/training/verify_taiji_n10_sparse_migration.py,
+reports/_gate_clip_repair.log, reports/seed_a1..b1*.json
+
+================================================================
+提交 2/5  feat(persistence): 检查点原子落盘 + 崩溃恢复自愈（M3）
+================================================================
+[why]
+公测工程稳定性门槛：进程崩溃/断电不得损坏检查点。
+[how]
+- seed/persistence.py（新增）：原子落盘 + 元数据；落盘前清扫陈旧
+  <目标名>.*.tmp（崩溃残留目录自愈）
+- scripts/training/verify_seed_beta_recovery.py（新增）：10 轮×3 故障注入
+- scripts/training/verify_seed_beta_api_stress.py（新增）：1000 连发+恶意输入
+- scripts/training/verify_seed_beta_perf.py（新增）：延迟/吞吐三项阈值
+[verify]
+恢复演练 10/10（reports/seed_beta_recovery_20260823.json）；
+压测 1000/1000 + 6/6 受控（reports/seed_beta_api_stress_20260823.json）；
+性能 3/3（800K 与 4.8M 双基线，*_perf_*.json）。
+files: seed/persistence.py, tests/seed/test_seed_persistence.py,
+scripts/training/verify_seed_beta_{recovery,api_stress,perf}.py,
+reports/seed_beta_{recovery,api_stress}_20260823.json,
+reports/seed_beta_perf_{baseline_800k,4m8_seedbeta_20260823}.json
+
+================================================================
+提交 3/5  feat(api): 服务实现层补齐 + 对话评测面板（M2/M3）
+================================================================
+[why]
+成熟封装分析 12 项缺失中的实现层欠账：runtime_service 零参 stub、
+工具注册表空壳、限流过紧、缺检查点/续训/rag 端点；对话能力需可量化面板。
+[how]
+- neuroplex/services/{runtime_service,tool_service}.py、
+  neuroplex/agent_ext/tool_registry.py：真实实现
+- neuroplex/infra/（新增）：EventBus + 事件审计
+- api/：app.py 静态资源双路径、routes_model_switch/rag、
+  seed_runtime 序列化口径、training/{checkpoints,resume}.py（SSE 续训）
+- scripts/training/verify_seed_beta_dialogue.py：50 题固定面板四项阈值
+- neuroplex/core/websocket_server.py：Seed 原生重写（8765）
+[verify]
+面板双基线（800K/4.8M，reports/seed_beta_dialogue_*.json）；
+resume_checkpoint SSE 冒烟通过；回归全绿。
+files: api/**（含 training/）, neuroplex/services/**,
+neuroplex/infra/**, neuroplex/agent_ext/tool_registry.py,
+neuroplex/core/{websocket_server,model_loader}.py,
+scripts/training/verify_seed_beta_dialogue.py,
+reports/seed_beta_dialogue_*.json
+
+================================================================
+提交 4/5  feat(desktop): 双入口打包 + 前端联调（M4）
+================================================================
+[why]
+frozen 模式三大陷阱：sys.executable 递归启动风暴（疑似致系统重启）、
+进程内线程与 uvicorn dictConfig 冲突、spawn 卡死。
+[how]
+- desktop/seed.spec：双 Analysis + MERGE 三元组 + 双 EXE 共享 _internal；
+  datas 补齐 tokenizer_contract.json / domains/*.model / seed_corpus.pt
+- desktop/backend_worker.py（新增）：SeedBackend.exe → uvicorn
+- desktop/main.py：frozen 走 Popen 后端 + 文件日志 + ROOT_DIR=exe 目录
+- desktop/build.py：seed.spec 入口 + utf-8 子进程解码
+- frontend：App.vue ws 接线、轮询收敛、生命状态条
+- scripts/training/train_seed_corpus.py：续训计数器以 model.tick 为基线
+[verify]
+打包冒烟：启动 2.9s、/api/health ok、seed_active=true、浏览器对话实测
+（_scratch/verify_8000_chat_nihao_reply.png）；三轮页面评审
+（reports/m4_frontend_review_20260823.md）；暗色对比度最低 4.91:1；
+身份守护 3 passed；pytest 113 绿 + CI 8 项 8/8（_gate_full_20260823.log）。
+files: desktop/**, frontend/src/**, api/app.py,
+scripts/training/train_seed_corpus.py, tests/seed/test_project_identity.py,
+plans/active/M4_FRONTEND_REVIEW_CHECKLIST.md,
+reports/m4_frontend_review_20260823.md, reports/_gate_full_20260823.log
+
+================================================================
+提交 5/5  docs(beta): 公测路线图 + 发布报告 + 用户文档（M5）
+================================================================
+[why]
+公测交付物：五维验收证据、已知限制、用户文档要点。
+[how]
+- plans/active/SEED_PUBLIC_BETA_ROADMAP.md：标准/差距/阶段/机制/进度日志
+- reports/seed_public_beta_release_20260823.md：五维证据+限制+文档要点
+- docs/seed_public_beta_user_guide.md + README Public Beta 段落
+- .gitignore：taiji/play_data/ + 门禁证据日志例外
+[verify]
+报告证据全部指向 reports/ 原始产物；身份守护回归通过。
+⚠️ 注意：模型能力/训练规模两维为草稿状态，长训完成后复测定稿再推送。
+files: plans/active/SEED_PUBLIC_BETA_ROADMAP.md,
+reports/seed_public_beta_release_20260823.md,
+docs/seed_public_beta_user_guide.md, README.md, .gitignore

@@ -5,6 +5,7 @@
 - 全部 loss 有限（无 NaN/Inf）
 - per_neuron_nll 形状正确（C20 原版 general 投影路径）
 """
+
 import torch
 
 from neuroplex.resonance import (
@@ -29,20 +30,29 @@ def test_forward_train_smoke():
     emb = torch.randn(B, L, D)
     tgt = torch.randint(0, 100, (B, L))
     am = torch.zeros(B, L, dtype=torch.bool)
-    am[:, L // 2:] = True
+    am[:, L // 2 :] = True
 
     r = ens.forward_train(shared_embeddings=emb, targets=tgt, answer_mask=am, n_rounds=2)
 
     # 质量流水线产物必须全部在场（提取段返回 4 元组 + result 键）
-    for key in ("fused_logits", "weights", "scores", "balance_loss",
-                "diversity_loss", "contrastive_loss", "per_neuron_nll"):
+    for key in (
+        "fused_logits",
+        "weights",
+        "scores",
+        "balance_loss",
+        "diversity_loss",
+        "contrastive_loss",
+        "per_neuron_nll",
+    ):
         assert key in r, f"缺返回键: {key}"
 
     assert torch.isfinite(r["fused_logits"]).all(), "fused_logits 含 NaN/Inf"
     assert torch.isfinite(r["contrastive_loss"]), "contrastive_loss 非有限"
     assert torch.isfinite(r["balance_loss"]), "balance_loss 非有限"
     assert torch.isfinite(r["diversity_loss"]), "diversity_loss 非有限"
-    assert r["per_neuron_nll"].shape == (2,), f"per_neuron_nll 形状异常: {r['per_neuron_nll'].shape}"
+    assert r["per_neuron_nll"].shape == (
+        2,
+    ), f"per_neuron_nll 形状异常: {r['per_neuron_nll'].shape}"
     assert torch.isfinite(r["per_neuron_nll"]).all(), "per_neuron_nll 含 NaN/Inf"
     # C15 质量 logits：无 quality_head 的构造 neuron 应为 None（向后兼容）
     assert r["quality_logits"] is None or torch.isfinite(r["quality_logits"]).all()

@@ -32,6 +32,9 @@ import torch.nn.functional as F  # noqa: E402
 from taiji.loader import assemble_cortex  # noqa: E402
 from taiji.life.feed_engine import FeedEngine  # noqa: E402
 from taiji.life.sleep_engine import SleepConfig, SleepEngine, SleepReport  # noqa: E402
+import logging
+
+logger = logging.getLogger(__name__)
 
 passed = 0
 failed = 0
@@ -47,8 +50,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -162,14 +170,13 @@ def eval_zh_ppl(cortex, texts, max_tokens=256) -> float | None:
                 continue
             input_ids = torch.tensor([general_ids], dtype=torch.long, device=device)
             embeddings = shared_embedding(input_ids)
-            result = neuron.forward(embeddings, field_state=None, round_num=1,
-                                    return_logits=True)
+            result = neuron.forward(embeddings, field_state=None, round_num=1, return_logits=True)
             logits = result["logits"]
             min_len = logits.size(1) - 1
             if min_len < 1:
                 continue
             shift_logits = logits[:, :min_len, :].contiguous()
-            shift_targets = target_ids[:, 1:1 + min_len].contiguous()
+            shift_targets = target_ids[:, 1 : 1 + min_len].contiguous()
             vocab_size = logits.size(-1)
             shift_targets = shift_targets.clamp(0, vocab_size - 1)
             loss = F.cross_entropy(
@@ -191,7 +198,9 @@ def eval_generation(cortex, prompts, max_tokens=30) -> dict:
     for p in prompts:
         try:
             # 口径（2026-08-12）：zh 评估用对话训练格式。
-            outs.append(cortex.generate(build_dialogue_prompt(p), max_tokens=max_tokens, domain="zh"))
+            outs.append(
+                cortex.generate(build_dialogue_prompt(p), max_tokens=max_tokens, domain="zh")
+            )
         except Exception:
             outs.append("")
     non_empty = sum(1 for o in outs if o.strip())
@@ -241,38 +250,47 @@ def main():
 
     records = []
     for r in range(len(ROUND_BATCHES)):
-        print(f"\n{'=' * 50}\n[轮 {r + 1}] feed {len(ROUND_BATCHES[r])} 条新 zh 样本 → sleep 训练",
-              flush=True)
+        print(
+            f"\n{'=' * 50}\n[轮 {r + 1}] feed {len(ROUND_BATCHES[r])} 条新 zh 样本 → sleep 训练",
+            flush=True,
+        )
         fed = 0
         for text in ROUND_BATCHES[r]:
-            item = feed_engine.feed_text(text, source=f"prog_r{r}",
-                                         category="knowledge", domain="zh")
+            item = feed_engine.feed_text(
+                text, source=f"prog_r{r}", category="knowledge", domain="zh"
+            )
             if item is not None and item.status == "digested":
                 fed += 1
         check(f"轮{r + 1} 样本消化", fed == len(ROUND_BATCHES[r]), f"{fed}/{len(ROUND_BATCHES[r])}")
 
-        report = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
-                             duration_seconds=0)
+        report = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
         try:
             sleep_engine._sleep_phase_model_training(report)
         except Exception as e:
             import traceback
+
             traceback.print_exc()
             check(f"轮{r + 1} 训练无异常", False, f"{e}")
             return
-        check(f"轮{r + 1} 样本被消费", report.training_samples_used > 0,
-              f"used={report.training_samples_used}")
+        check(
+            f"轮{r + 1} 样本被消费",
+            report.training_samples_used > 0,
+            f"used={report.training_samples_used}",
+        )
         from taiji.core.app_state import app_state
+
         check(f"轮{r + 1} 训练锁释放", not app_state.is_training)
 
         ppl = eval_zh_ppl(cortex, EVAL_TEXTS)
         gen = eval_generation(cortex, GEN_PROMPTS)
-        records.append({"round": r + 1, "ppl": ppl, "loss": report.training_loss,
-                        **gen})
+        records.append({"round": r + 1, "ppl": ppl, "loss": report.training_loss, **gen})
         ckpt_ok = os.path.exists(os.path.join(tmp_dir, "cortex_state.pt"))
         check(f"轮{r + 1} ckpt 自动保存", ckpt_ok)
-        print(f"  轮{r + 1}: held-out PPL={ppl:.1f}  loss={report.training_loss:.4f}"
-              f"  生成非空={gen['non_empty']}/4 重复={gen['dup']}", flush=True)
+        print(
+            f"  轮{r + 1}: held-out PPL={ppl:.1f}  loss={report.training_loss:.4f}"
+            f"  生成非空={gen['non_empty']}/4 重复={gen['dup']}",
+            flush=True,
+        )
 
     # ── 主断言：渐进改善 ──
     final = records[-1]
@@ -280,15 +298,21 @@ def main():
     print(f"  baseline PPL={ppl0:.1f}", flush=True)
     for rec in records:
         print(f"  轮{rec['round']}: PPL={rec['ppl']:.1f}", flush=True)
-    check("末轮 held-out PPL < baseline（渐进改善）",
-          final["ppl"] is not None and final["ppl"] < ppl0,
-          f"final={final['ppl']:.1f} < baseline={ppl0:.1f}")
-    check("生成非空率不劣于 baseline 期",
-          final["non_empty"] >= records[0]["non_empty"],
-          f"final={final['non_empty']}/4 vs 首轮={records[0]['non_empty']}/4")
-    check("重复率未上升",
-          final["dup"] <= records[0]["dup"] + 1,
-          f"final dup={final['dup']} vs 首轮 dup={records[0]['dup']}")
+    check(
+        "末轮 held-out PPL < baseline（渐进改善）",
+        final["ppl"] is not None and final["ppl"] < ppl0,
+        f"final={final['ppl']:.1f} < baseline={ppl0:.1f}",
+    )
+    check(
+        "生成非空率不劣于 baseline 期",
+        final["non_empty"] >= records[0]["non_empty"],
+        f"final={final['non_empty']}/4 vs 首轮={records[0]['non_empty']}/4",
+    )
+    check(
+        "重复率未上升",
+        final["dup"] <= records[0]["dup"] + 1,
+        f"final dup={final['dup']} vs 首轮 dup={records[0]['dup']}",
+    )
 
     # ── 训练后生成展示 ──
     print("\n[末轮生成抽样]", flush=True)
@@ -297,8 +321,8 @@ def main():
 
     try:
         shutil.rmtree(tmp_dir, ignore_errors=True)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【main】处理失败（非致命）: %s", e)
 
     print("\n" + "=" * 60, flush=True)
     print(f"结果: {passed} PASS / {failed} FAIL  ({time.time() - t0:.1f}s)", flush=True)

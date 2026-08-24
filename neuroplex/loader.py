@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 import os
+import pickle
 import time
 from typing import Optional, Any
 
@@ -29,6 +30,7 @@ def _safe_torch_load(path, *, map_location, weights_only: bool):
         return torch.load(path, map_location=map_location, weights_only=True)
     return load_legacy_checkpoint(path, map_location=map_location)
 
+
 from .tokenizer_native_v2 import TaijiNativeTokenizerV2
 
 # 向后兼容别名
@@ -49,19 +51,23 @@ def general_vocab_size() -> int:
         return _GENERAL_VOCAB_CACHE
     try:
         import sentencepiece as spm
+
         sp_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "domains", "general", "sp_general.model",
+            "domains",
+            "general",
+            "sp_general.model",
         )
         if os.path.exists(sp_path):
             sp = spm.SentencePieceProcessor()
             sp.Load(sp_path)
             _GENERAL_VOCAB_CACHE = int(sp.GetPieceSize())
             return _GENERAL_VOCAB_CACHE
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【general_vocab_size】处理失败（非致命）: %s", e)
     _GENERAL_VOCAB_CACHE = 256000
     return _GENERAL_VOCAB_CACHE
+
 
 logger = logging.getLogger("Taiji")
 
@@ -165,7 +171,9 @@ def create_cortex(
 
     logger.info(
         "Cortex created: %d neurons, device=%s, fallback=%s",
-        len(cortex.neurons), device, not cortex.is_loaded,
+        len(cortex.neurons),
+        device,
+        not cortex.is_loaded,
     )
     return cortex, tokenizer
 
@@ -206,17 +214,17 @@ def _ensure_single_neuron_fallback(cortex, device: str):
     Returns:
         注入了 fallback 神经元的 cortex
     """
-    from neuroplex.resonance import ResonanceNeuron, NeuronConfig
+    from neuroplex.resonance import ResonanceNeuron
 
     logger.warning(
-        "未找到已训练神经元，进入单神经元 fallback 模式 "
-        "（random init general neuron，能力有限）"
+        "未找到已训练神经元，进入单神经元 fallback 模式 " "（random init general neuron，能力有限）"
     )
 
     # 创建随机初始化的 general 神经元
     # H1 修复：原来用 NeuronConfig 默认（hidden=768 STANDARD），
     # 与生产 5 域（COMPACT 512）不一致。改用全局 DEFAULT_NEURON_SPEC。
     from neuroplex.resonance import get_default_neuron_config
+
     cfg = get_default_neuron_config()
     cfg.spec = "general-fallback"
     cfg.field_dim = 4096
@@ -227,9 +235,11 @@ def _ensure_single_neuron_fallback(cortex, device: str):
 
     # 重建 ensemble 以包含 fallback 神经元
     from neuroplex.resonance import ResonanceField, ResonanceEnsemble
+
     cortex.field = ResonanceField(dim=cfg.field_dim)
     cortex.ensemble = ResonanceEnsemble(
-        cortex.neurons, cortex.field,
+        cortex.neurons,
+        cortex.field,
         max_rounds=cortex.max_rounds,
     )
     cortex.is_loaded = True
@@ -237,7 +247,8 @@ def _ensure_single_neuron_fallback(cortex, device: str):
     n_params = sum(p.numel() for p in neuron.parameters())
     logger.info(
         "Fallback 神经元已创建: [general] %s, %.0fM params (random init)",
-        cfg.spec, n_params / 1e6,
+        cfg.spec,
+        n_params / 1e6,
     )
     return cortex
 
@@ -295,6 +306,7 @@ def assemble_cortex(
     # P7 架构：每 neuron 有独立 embedding + 独立 lm_head + 域专用 vocab
     try:
         from neuroplex.resonance.translator import TokenizerHub
+
         hub = TokenizerHub.load_default_domains()
         cortex.set_tokenizer_hub(hub)
         modules["tokenizer_hub"] = hub
@@ -304,7 +316,8 @@ def assemble_cortex(
         )
     except Exception as e:
         logger.warning(
-            "[assemble_cortex] TokenizerHub 注册失败（非致命，P7 模式不可用）: %s", e,
+            "[assemble_cortex] TokenizerHub 注册失败（非致命，P7 模式不可用）: %s",
+            e,
         )
 
     # Step 1.7: 额外 neuron 源加载（C19，2026-08-08）
@@ -330,9 +343,12 @@ def assemble_cortex(
     # general vocab 从 sp_general.model 获取（256K）。
     try:
         import sentencepiece as spm
+
         general_sp_path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
-            "domains", "general", "sp_general.model",
+            "domains",
+            "general",
+            "sp_general.model",
         )
         if os.path.exists(general_sp_path):
             general_sp = spm.SentencePieceProcessor()
@@ -366,23 +382,28 @@ def assemble_cortex(
                         loaded_shared = True
                         logger.info(
                             "[assemble_cortex] Shared embedding 加载训练权重: %s (%d×%d)",
-                            shared_emb_path, general_vocab, base_embed_dim,
+                            shared_emb_path,
+                            general_vocab,
+                            base_embed_dim,
                         )
                     else:
                         logger.warning(
                             "[assemble_cortex] shared_embedding 维度不匹配 "
                             "(%s vs %s)，使用随机初始化",
-                            tuple(weight.shape), (general_vocab, base_embed_dim),
+                            tuple(weight.shape),
+                            (general_vocab, base_embed_dim),
                         )
                 except Exception as e:
                     logger.warning(
-                        "[assemble_cortex] shared_embedding 加载失败（回退随机初始化）: %s", e,
+                        "[assemble_cortex] shared_embedding 加载失败（回退随机初始化）: %s",
+                        e,
                     )
             if not loaded_shared:
                 torch.nn.init.normal_(shared_emb.weight, mean=0.0, std=0.02)
                 logger.info(
                     "[assemble_cortex] Shared embedding 随机初始化 (vocab=%d, dim=%d)",
-                    general_vocab, base_embed_dim,
+                    general_vocab,
+                    base_embed_dim,
                 )
             shared_emb.to(device)
             cortex.set_shared_embedding(shared_emb)
@@ -405,9 +426,24 @@ def assemble_cortex(
                 if n_ckpt_path is None:
                     continue
                 try:
-                    n_ckpt = torch.load(
-                        n_ckpt_path, map_location="cpu", weights_only=False,
-                    )
+                    try:
+                        n_ckpt = torch.load(
+                            n_ckpt_path,
+                            map_location="cpu",
+                            weights_only=True,
+                        )
+                    except pickle.UnpicklingError:
+                        logger.warning(
+                            "[assemble_cortex] neuron %s ckpt 需要 weights_only=False"
+                            "（legacy pickle），请确认文件来源可信: %s",
+                            nid,
+                            n_ckpt_path,
+                        )
+                        n_ckpt = torch.load(
+                            n_ckpt_path,
+                            map_location="cpu",
+                            weights_only=False,
+                        )
                     n_emb_state = n_ckpt.get("shared_embedding_state")
                     if n_emb_state is None:
                         # general 基座 neuron（C16 阵容）：ckpt 无 per-neuron
@@ -416,7 +452,16 @@ def assemble_cortex(
                         for d in (neurons_dir, extra_dir):
                             se_path = os.path.join(d, "shared_embedding.pt") if d else ""
                             if se_path and os.path.exists(se_path):
-                                se = torch.load(se_path, map_location="cpu", weights_only=False)
+                                try:
+                                    se = torch.load(se_path, map_location="cpu", weights_only=True)
+                                except pickle.UnpicklingError:
+                                    logger.warning(
+                                        "[assemble_cortex] shared_embedding 需要"
+                                        " weights_only=False（legacy pickle），"
+                                        "请确认文件来源可信: %s",
+                                        se_path,
+                                    )
+                                    se = torch.load(se_path, map_location="cpu", weights_only=False)
                                 w = se["weight"] if isinstance(se, dict) and "weight" in se else se
                                 n_emb = torch.nn.Embedding(w.shape[0], w.shape[1])
                                 n_emb.weight.data.copy_(w)
@@ -430,7 +475,9 @@ def assemble_cortex(
                     neuron_shared_embeddings[nid] = n_emb
                 except Exception as e:
                     logger.warning(
-                        "[assemble_cortex] neuron %s shared_embedding 加载失败: %s", nid, e,
+                        "[assemble_cortex] neuron %s shared_embedding 加载失败: %s",
+                        nid,
+                        e,
                     )
             if neuron_shared_embeddings:
                 cortex.set_neuron_shared_embeddings(neuron_shared_embeddings)
@@ -444,7 +491,8 @@ def assemble_cortex(
             logger.info(
                 "[assemble_cortex] Shared embedding + general tokenizer wired "
                 "(vocab=%d, dim=%d)",
-                general_vocab, base_embed_dim,
+                general_vocab,
+                base_embed_dim,
             )
         else:
             logger.warning(
@@ -454,7 +502,8 @@ def assemble_cortex(
             )
     except Exception as e:
         logger.warning(
-            "[assemble_cortex] shared_embedding/general tokenizer 加载失败（非致命）: %s", e,
+            "[assemble_cortex] shared_embedding/general tokenizer 加载失败（非致命）: %s",
+            e,
         )
 
     # Step 1.7: 协作层权重加载（side_channels + 跨规格投影层 + head/lora）— 推理核心，非可选 bio 模块
@@ -472,6 +521,7 @@ def assemble_cortex(
     # Step 2: STDPTracker（P1-1，注入 ensemble）
     try:
         from neuroplex.resonance import STDPTracker
+
         stdp_tracker = STDPTracker()
         cortex.ensemble.stdp_tracker = stdp_tracker
         modules["stdp_tracker"] = stdp_tracker
@@ -482,11 +532,13 @@ def assemble_cortex(
     # Step 5: NeuromodulatorState（P1-2，注入 cortex + ensemble）
     try:
         from neuroplex.resonance import NeuromodulatorState
+
         neuromodulator = NeuromodulatorState()
         cortex.set_neuromodulator(neuromodulator)
         modules["neuromodulator"] = neuromodulator
-        logger.info("[assemble_cortex] NeuromodulatorState wired (dopamine=%.2f)",
-                    neuromodulator.dopamine)
+        logger.info(
+            "[assemble_cortex] NeuromodulatorState wired (dopamine=%.2f)", neuromodulator.dopamine
+        )
     except Exception as e:
         logger.warning("[assemble_cortex] NeuromodulatorState 创建失败（非致命）: %s", e)
 
@@ -498,6 +550,7 @@ def assemble_cortex(
     # ③ 装配失败 → 回退标量 GammaOscillator（非致命，向后兼容）。
     try:
         from neuroplex.resonance.phasor import PhasorDynamics
+
         gamma = PhasorDynamics()
         # 按已加载 neuron 的 domain 分配相位（同域同相先验；phased state 注入前）
         domain_to_nids: dict[str, list[str]] = {}
@@ -531,8 +584,9 @@ def assemble_cortex(
                                 if key == "phasors":
                                     rows.append(torch.tensor([1.0, 0.0], dtype=t.dtype))
                                 else:
-                                    rows.append(torch.full(
-                                        (), float(gamma.omega_init), dtype=t.dtype))
+                                    rows.append(
+                                        torch.full((), float(gamma.omega_init), dtype=t.dtype)
+                                    )
                         ps_reordered[key] = torch.stack(rows)
                 gamma.load_state_dict(
                     {k: v for k, v in ps_reordered.items() if k != "id_order"},
@@ -541,13 +595,15 @@ def assemble_cortex(
                 logger.info(
                     "[assemble_cortex] PhasorDynamics 注入训练 phasor_state "
                     "(%d neurons, 顺序重排 %d→当前)",
-                    len(train_order), len(train_order),
+                    len(train_order),
+                    len(train_order),
                 )
             else:
                 logger.warning(
                     "[assemble_cortex] phasor_state 训练顺序与当前 neuron 集合不匹配"
                     "（训练 %d vs 当前 %d），走同域同相先验",
-                    len(train_order), len(cortex.neurons),
+                    len(train_order),
+                    len(cortex.neurons),
                 )
                 if domain_to_nids:
                     gamma.assign_phase_by_domain(domain_to_nids)
@@ -560,6 +616,7 @@ def assemble_cortex(
         # 双层节奏源 + GABA 式节奏门控）——轻量合成节点，无需训练 ckpt。
         try:
             from neuroplex.resonance.oscillator import make_default_oscillators
+
             _fd = getattr(getattr(cortex, "field", None), "dim", None)
             if _fd is None:
                 _fd = getattr(getattr(cortex.ensemble, "field", None), "dim", None) or 4096
@@ -567,8 +624,9 @@ def assemble_cortex(
             cortex.ensemble.set_oscillators(oscillators)
             modules["oscillators"] = oscillators
             logger.info(
-                "[assemble_cortex] BioOSS oscillators wired "
-                "(theta+gamma, %d nodes, dim=%d)", len(oscillators), _fd,
+                "[assemble_cortex] BioOSS oscillators wired " "(theta+gamma, %d nodes, dim=%d)",
+                len(oscillators),
+                _fd,
             )
         except Exception as e:
             logger.warning("[assemble_cortex] BioOSS oscillators 装配失败（非致命）: %s", e)
@@ -577,12 +635,12 @@ def assemble_cortex(
         gamma.eval()
         for _p in gamma.parameters():
             _p.requires_grad_(False)
-        logger.info("[assemble_cortex] PhasorDynamics wired (%d phases)",
-                    len(gamma.phases))
+        logger.info("[assemble_cortex] PhasorDynamics wired (%d phases)", len(gamma.phases))
     except Exception as e:
         logger.warning("[assemble_cortex] PhasorDynamics 装配失败，回退标量 GammaOscillator: %s", e)
         try:
             from neuroplex.resonance import GammaOscillator
+
             gamma = GammaOscillator()
             domain_to_nids = {}
             for nid in cortex.neurons.keys():
@@ -592,8 +650,7 @@ def assemble_cortex(
                 gamma.assign_phase_by_domain(domain_to_nids)
             cortex.set_gamma_oscillator(gamma)
             modules["gamma_oscillator"] = gamma
-            logger.info("[assemble_cortex] GammaOscillator wired (%d phases)",
-                        len(gamma.phases))
+            logger.info("[assemble_cortex] GammaOscillator wired (%d phases)", len(gamma.phases))
         except Exception as e2:
             logger.warning("[assemble_cortex] GammaOscillator 创建失败（非致命）: %s", e2)
 
@@ -603,6 +660,7 @@ def assemble_cortex(
     # neuroplex/agent/working_memory（ContextManager.set_working_memory）。
     try:
         from neuroplex.brain.working_memory import WorkingMemory
+
         wm = WorkingMemory(max_tokens=512)
         cortex.set_working_memory(wm)
         modules["working_memory"] = wm
@@ -613,6 +671,7 @@ def assemble_cortex(
     # Step 8: LifecycleManager + SleepConsolidator（返回给 sleep_engine 使用）
     try:
         from neuroplex.resonance import LifecycleManager
+
         lifecycle = LifecycleManager()
         modules["lifecycle"] = lifecycle
         logger.info("[assemble_cortex] LifecycleManager created")
@@ -621,6 +680,7 @@ def assemble_cortex(
 
     try:
         from neuroplex.resonance import SleepConsolidator
+
         sleep_consolidator = SleepConsolidator()
         modules["sleep_consolidator"] = sleep_consolidator
         logger.info("[assemble_cortex] SleepConsolidator created")
@@ -632,6 +692,7 @@ def assemble_cortex(
     # 这里闭环：assemble_cortex 装配完 → 立即注入到全局 SleepEngine。
     try:
         from neuroplex.life.sleep_engine import get_sleep_engine
+
         sleep_engine = get_sleep_engine()
         sleep_engine.set_brain_interfaces(
             cortex=cortex,
@@ -650,6 +711,7 @@ def assemble_cortex(
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
         from neuroplex.life.feed_engine import get_feed_engine
+
         life_scheduler = get_life_scheduler()
         life_scheduler.set_brain_interfaces(
             cortex=cortex,
@@ -667,6 +729,7 @@ def assemble_cortex(
     #   2. play_engine 调用 coaction.update(ids)（而非不存在的 record_coactivation）
     try:
         from neuroplex.life.play_engine import get_play_engine
+
         coactivation = cortex.coaction  # 使用 cortex 已有的实例
         play_engine = get_play_engine()
         play_engine.set_brain_interfaces(
@@ -686,6 +749,7 @@ def assemble_cortex(
     try:
         from neuroplex.life.evolution_engine import get_evolution_engine
         from neuroplex.life.feed_engine import get_feed_engine
+
         evolution_engine = get_evolution_engine()
         evolution_engine.set_brain_interfaces(
             cortex=cortex,
@@ -703,6 +767,7 @@ def assemble_cortex(
     try:
         from neuroplex.body.limbs import set_feed_engine as limbs_set_feed_engine
         from neuroplex.life.feed_engine import get_feed_engine
+
         limbs_set_feed_engine(get_feed_engine())
         logger.info("[assemble_cortex] limbs.set_feed_engine wired (闭环)")
     except Exception as e:
@@ -745,6 +810,7 @@ def assemble_cortex(
     try:
         from neuroplex.agent.context_manager import get_context_manager
         from neuroplex.agent.working_memory import get_working_memory
+
         cm = get_context_manager()
         wm = get_working_memory()
         cm.set_working_memory(wm)
@@ -788,7 +854,9 @@ def assemble_cortex(
                 logger.info("[assemble_cortex] VQ-VAE image codec registered to TokenizerHub")
             modules["vqvae_codec"] = image_codec
         else:
-            logger.info("[assemble_cortex] VQ-VAE checkpoint not found (%s), skip image", vqvae_ckpt)
+            logger.info(
+                "[assemble_cortex] VQ-VAE checkpoint not found (%s), skip image", vqvae_ckpt
+            )
 
         # 10.2 音频 EnCodec
         encodec_ckpt = "data/encodec/encodec_latest.pt"
@@ -812,7 +880,9 @@ def assemble_cortex(
                 logger.info("[assemble_cortex] EnCodec audio codec registered to TokenizerHub")
             modules["encodec_codec"] = audio_codec
         else:
-            logger.info("[assemble_cortex] EnCodec checkpoint not found (%s), skip audio", encodec_ckpt)
+            logger.info(
+                "[assemble_cortex] EnCodec checkpoint not found (%s), skip audio", encodec_ckpt
+            )
 
         # 10.3 视频 VideoVQVAE
         video_ckpt = "data/video/video_latest.pt"
@@ -846,7 +916,9 @@ def assemble_cortex(
         n_modalities = len(hub.list_modalities())
         logger.info(
             "[assemble_cortex] multimodal projections + heads auto-registered for %d neurons, %d modalities: %s",
-            n_neurons, n_modalities, ", ".join(hub.list_modalities()),
+            n_neurons,
+            n_modalities,
+            ", ".join(hub.list_modalities()),
         )
 
     except Exception as e:
@@ -926,7 +998,7 @@ def ensure_judge_capability(cortex, device: str) -> int:
     if shared_head is None:
         # 无任何判定头：从 shared_lm_head.pt 新建（若存在）
         emb = getattr(cortex, "_shared_embedding", None)
-        judge_vocab = emb.weight.shape[0] if emb is not None else general_vocab_size()
+        emb.weight.shape[0] if emb is not None else general_vocab_size()
         sh_path = None
         for d in ["data/foundation_v1_dual", "data/foundation_v1_general", "data"]:
             cand = os.path.join(d, "shared_lm_head.pt")
@@ -955,15 +1027,25 @@ def ensure_judge_capability(cortex, device: str) -> int:
             proj = torch.nn.Linear(hidden, JUDGE_DIM, bias=False).to(device)
             torch.nn.init.xavier_normal_(proj.weight)
             for p in proj.parameters():
-                p.requires_grad = True  # 可训练：每 neuron 独立学习翻译进固定判定空间（标尺 judge_lm_head 冻结）
+                p.requires_grad = (
+                    True  # 可训练：每 neuron 独立学习翻译进固定判定空间（标尺 judge_lm_head 冻结）
+                )
             n.judge_proj = proj
             n.judge_lm_head = shared_head
-            logger.info("[ensure_judge_capability] %s (hidden=%d) 挂判定投影 %d→%d + 共享判定头",
-                        nid, hidden, hidden, JUDGE_DIM)
+            logger.info(
+                "[ensure_judge_capability] %s (hidden=%d) 挂判定投影 %d→%d + 共享判定头",
+                nid,
+                hidden,
+                hidden,
+                JUDGE_DIM,
+            )
         n_injected += 1
     if n_injected:
-        logger.info("[ensure_judge_capability] %d 个 neuron 补注入判定能力（共享判定头 in=%d）",
-                    n_injected, JUDGE_DIM)
+        logger.info(
+            "[ensure_judge_capability] %d 个 neuron 补注入判定能力（共享判定头 in=%d）",
+            n_injected,
+            JUDGE_DIM,
+        )
     return n_injected
 
 
@@ -989,7 +1071,9 @@ def _load_extra_neurons(cortex, extra_dir: str, device: str) -> list:
         shared_lm_head = torch.nn.Linear(w.shape[1], w.shape[0], bias=False)
         shared_lm_head.weight.data.copy_(w)
         logger.info(
-            "[assemble_cortex] shared_lm_head 注入 extra neurons (%d×%d)", w.shape[0], w.shape[1],
+            "[assemble_cortex] shared_lm_head 注入 extra neurons (%d×%d)",
+            w.shape[0],
+            w.shape[1],
         )
 
     added = []
@@ -1004,7 +1088,7 @@ def _load_extra_neurons(cortex, extra_dir: str, device: str) -> list:
         name = os.path.basename(path)
         if name.startswith("_"):
             continue
-        nid = name[len("neuron_"):-len(".pt")]
+        nid = name[len("neuron_") : -len(".pt")]
         if nid in cortex.neurons:
             continue
         try:
@@ -1042,17 +1126,26 @@ def _load_extra_neurons(cortex, extra_dir: str, device: str) -> list:
             jh = ckpt.get("judge_lm_head_state")
             if jh is not None:
                 if shared_judge_head is None:
-                    judge_head = torch.nn.Linear(cfg.hidden_size, jh.shape[0], bias=False).to(device)
+                    judge_head = torch.nn.Linear(cfg.hidden_size, jh.shape[0], bias=False).to(
+                        device
+                    )
                     judge_head.weight.data.copy_(jh)
                     neuron.judge_lm_head = judge_head
                     shared_judge_head = judge_head
                     shared_judge_weight = jh
-                    logger.info("[assemble_cortex] %s judge_lm_head 注入（general 判定头，首个->共享基准）", nid)
+                    logger.info(
+                        "[assemble_cortex] %s judge_lm_head 注入（general 判定头，首个->共享基准）",
+                        nid,
+                    )
                 elif torch.equal(jh, shared_judge_weight):
                     neuron.judge_lm_head = shared_judge_head
-                    logger.info("[assemble_cortex] %s judge_lm_head 共享（权重与首个完全相同）", nid)
+                    logger.info(
+                        "[assemble_cortex] %s judge_lm_head 共享（权重与首个完全相同）", nid
+                    )
                 else:
-                    judge_head = torch.nn.Linear(cfg.hidden_size, jh.shape[0], bias=False).to(device)
+                    judge_head = torch.nn.Linear(cfg.hidden_size, jh.shape[0], bias=False).to(
+                        device
+                    )
                     judge_head.weight.data.copy_(jh)
                     neuron.judge_lm_head = judge_head
                     logger.info("[assemble_cortex] %s judge_lm_head 独立（权重与首个不同）", nid)
@@ -1135,8 +1228,11 @@ def _load_collab_weights_into_cortex(
         id_order = ps.get("id_order") or list((ckpt.get("head_state") or {}).keys())
         if id_order:
             cortex._phasor_id_order = id_order
-        logger.info("[assemble_cortex] 协作层含 phasor_state（%d 分量，%d neurons），待注入",
-                    len(ps), len(id_order))
+        logger.info(
+            "[assemble_cortex] 协作层含 phasor_state（%d 分量，%d neurons），待注入",
+            len(ps),
+            len(id_order),
+        )
 
     def _pick(*keys):
         """key 兼容：训练 ckpt（_state 后缀）与 final artifact（无后缀）。"""
@@ -1155,13 +1251,17 @@ def _load_collab_weights_into_cortex(
             for ch_type, peers in side_state[nid].items():
                 if ch_type not in ("excite", "inhibit"):
                     continue
-                channels = neuron.excite_channels if ch_type == "excite" else neuron.inhibit_channels
+                channels = (
+                    neuron.excite_channels if ch_type == "excite" else neuron.inhibit_channels
+                )
                 for pid, ch_state in peers.items():
                     if pid not in cortex.neurons:
                         continue
                     if pid not in channels:
                         neuron.establish_side_channel(
-                            pid, cortex.neurons[pid], channel_type=ch_type,
+                            pid,
+                            cortex.neurons[pid],
+                            channel_type=ch_type,
                         )
                     channels[pid].load_state_dict(ch_state)
                     n_side += 1
@@ -1172,7 +1272,8 @@ def _load_collab_weights_into_cortex(
             logger.warning(
                 "[assemble_cortex] 协作层权重 ID 与当前装配集合不匹配: "
                 "ckpt=%s, current=%s（可能是旧版权重，等待新训练产物覆盖）",
-                sorted(ckpt_ids)[:5], sorted(current_ids)[:5],
+                sorted(ckpt_ids)[:5],
+                sorted(current_ids)[:5],
             )
 
     # 2. 跨规格投影层（forward/backward）
@@ -1202,7 +1303,9 @@ def _load_collab_weights_into_cortex(
                 if name in sd and sd[name].shape == p.shape:
                     p.data.copy_(sd[name])
                     n_body += 1
-        logger.info("[assemble_cortex] body_state 已应用: %d 个参数（微调后的 lm_head/body）", n_body)
+        logger.info(
+            "[assemble_cortex] body_state 已应用: %d 个参数（微调后的 lm_head/body）", n_body
+        )
 
     # 4. scale_bias_state（S8: 可学习 scale 标量 + 通道 bias 缓冲）
     n_sb = 0
@@ -1236,8 +1339,7 @@ def _load_collab_weights_into_cortex(
                     qh.load_state_dict(sd)
                     n_head += 1
                 except Exception as e:
-                    logger.warning(
-                        "[assemble_cortex] %s quality_head 加载失败: %s", nid, e)
+                    logger.warning("[assemble_cortex] %s quality_head 加载失败: %s", nid, e)
         logger.info("[assemble_cortex] head_state 已应用: %d 个 quality_head", n_head)
 
     # 6. lora_state（C16：LoRA 尾层增量——body 冻结时的低秩适配）
@@ -1253,12 +1355,19 @@ def _load_collab_weights_into_cortex(
             if nid not in cortex.neurons:
                 continue
             neuron = cortex.neurons[nid]
-            _out_vocab = getattr(neuron.lm_head, "out_features", None) if neuron.lm_head is not None else None
+            _out_vocab = (
+                getattr(neuron.lm_head, "out_features", None)
+                if neuron.lm_head is not None
+                else None
+            )
             if _out_vocab != general_vocab_size():
                 n_lora_skip += 1
                 logger.info(
                     "[assemble_cortex] 跳过 %s 的 lora_state（lm_head=%s ≠ general %d，"
-                    "域词表 neuron 保域能力）", nid, _out_vocab, general_vocab_size(),
+                    "域词表 neuron 保域能力）",
+                    nid,
+                    _out_vocab,
+                    general_vocab_size(),
                 )
                 continue
             if len(neuron.lora_adapters) == 0:
@@ -1273,7 +1382,11 @@ def _load_collab_weights_into_cortex(
                 n_lora += 1
             except Exception as e:
                 logger.warning("[assemble_cortex] %s lora_state 加载失败: %s", nid, e)
-        logger.info("[assemble_cortex] lora_state 已应用: %d 个 neuron（跳过域词表 %d）", n_lora, n_lora_skip)
+        logger.info(
+            "[assemble_cortex] lora_state 已应用: %d 个 neuron（跳过域词表 %d）",
+            n_lora,
+            n_lora_skip,
+        )
 
     # 6.5 sparse_router（R3: 训练产物加载闭环——审计发现训练侧保存
     # sparse_router_state，但生产 loader 从不创建/加载 → 训练好的 router
@@ -1281,11 +1394,11 @@ def _load_collab_weights_into_cortex(
     # 仅当 ckpt 含 router 状态时才启用（向后兼容：无状态产物零行为变化）。
     n_router = 0
     router_state = _pick("sparse_router_state")
-    if router_state is not None and not getattr(
-            cortex.ensemble, "use_sparse_router", False):
+    if router_state is not None and not getattr(cortex.ensemble, "use_sparse_router", False):
         router_cfg = ckpt.get("sparse_router_config") or {}
         try:
             from neuroplex.resonance.ensemble import SparseRouter
+
             router = SparseRouter(
                 field_dim=cortex.field.dim,
                 score_dim=getattr(cortex.ensemble, "score_dim", None),
@@ -1300,7 +1413,8 @@ def _load_collab_weights_into_cortex(
             n_router = 1
             logger.info(
                 "[assemble_cortex] sparse_router 已恢复（top_k=%d, warmup=%d）",
-                router_cfg.get("top_k", 3), router_cfg.get("warmup_steps", 0),
+                router_cfg.get("top_k", 3),
+                router_cfg.get("warmup_steps", 0),
             )
         except Exception as e:
             logger.warning("[assemble_cortex] sparse_router 恢复失败: %s", e)
@@ -1318,12 +1432,21 @@ def _load_collab_weights_into_cortex(
         else:
             logger.warning(
                 "[assemble_cortex] field_w_cond 形状不匹配: ckpt=%s vs field=%s，跳过",
-                tuple(w_cond.shape), tuple(w.shape),
+                tuple(w_cond.shape),
+                tuple(w.shape),
             )
 
     logger.info(
         "[assemble_cortex] 协作层权重已加载: %s (side_channels=%d, 跨规格投影=%d, "
         "body=%d, scale_bias=%d, head=%d, lora=%d, sparse_router=%d, field_w_cond=%d)",
-        collab_path, n_side, n_proj, n_body, n_sb, n_head, n_lora, n_router, n_wcond,
+        collab_path,
+        n_side,
+        n_proj,
+        n_body,
+        n_sb,
+        n_head,
+        n_lora,
+        n_router,
+        n_wcond,
     )
     return True

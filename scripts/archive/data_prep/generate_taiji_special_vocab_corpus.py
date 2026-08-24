@@ -87,8 +87,12 @@ def build_records(limit: int) -> list[str]:
         records.append(f"<reflect><cause>{cause}</cause><correct>{correction}</correct></reflect>")
 
     for memory_type, goal in product(MEMORY_TYPES, GOALS):
-        records.append(f"<mem_read><{memory_type}>read memory about {goal}</{memory_type}></mem_read>")
-        records.append(f"<mem_write><{memory_type}>record verified outcome for {goal}</{memory_type}></mem_write>")
+        records.append(
+            f"<mem_read><{memory_type}>read memory about {goal}</{memory_type}></mem_read>"
+        )
+        records.append(
+            f"<mem_write><{memory_type}>record verified outcome for {goal}</{memory_type}></mem_write>"
+        )
 
     for modality, observation in product(MODALITIES, OBSERVATIONS):
         records.append(f"<{modality}>{observation}</{modality}>")
@@ -119,7 +123,10 @@ def write_records(output: Path, records: int) -> dict[str, str | int]:
     built_records = build_records(records)
     with output.open("w", encoding="utf-8", newline="\n") as handle:
         for text in built_records:
-            handle.write(json.dumps({"text": text, "source": "taiji_special_vocab"}, ensure_ascii=False) + "\n")
+            handle.write(
+                json.dumps({"text": text, "source": "taiji_special_vocab"}, ensure_ascii=False)
+                + "\n"
+            )
     return {"output": str(output), "records": len(built_records)}
 
 

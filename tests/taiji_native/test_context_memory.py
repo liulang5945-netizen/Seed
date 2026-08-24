@@ -22,12 +22,14 @@ def _ambiguous_accuracy(model: Taiji, data: bytes, *, lesion: str) -> float:
 
 def test_temporal_state_solves_ambiguous_second_order_successors() -> None:
     data = b"axbcxd" * 4
-    model = Taiji(TaijiConfig(
-        region_sizes=(64, 48),
-        synapse_fan_in=16,
-        motor_fan_in=48,
-        seed=7,
-    ))
+    model = Taiji(
+        TaijiConfig(
+            region_sizes=(64, 48),
+            synapse_fan_in=16,
+            motor_fan_in=48,
+            seed=7,
+        )
+    )
     model.learn_bytes(data, epochs=200)
 
     full = _ambiguous_accuracy(model, data, lesion="none")

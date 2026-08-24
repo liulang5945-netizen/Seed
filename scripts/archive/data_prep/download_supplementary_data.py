@@ -7,6 +7,7 @@
   python scripts/download_supplementary_data.py --all
   python scripts/download_supplementary_data.py --math --code --safety
 """
+
 import os
 import sys
 import json
@@ -42,6 +43,7 @@ def to_messages(system, user, assistant):
 def download_json_from_hf(repo_id, filename, repo_type="dataset"):
     """从 HuggingFace 下载单个 JSON/JSONL 文件"""
     from huggingface_hub import hf_hub_download
+
     try:
         path = hf_hub_download(repo_id=repo_id, filename=filename, repo_type=repo_type)
         with open(path, encoding="utf-8") as f:
@@ -75,9 +77,14 @@ def download_math(sample_limit=None):
     # GSM8K - 直接下载 parquet 并转换
     try:
         from huggingface_hub import hf_hub_download
-        path = hf_hub_download(repo_id="openai/gsm8k", filename="main/train-00000-of-00001.parquet",
-                               repo_type="dataset")
+
+        path = hf_hub_download(
+            repo_id="openai/gsm8k",
+            filename="main/train-00000-of-00001.parquet",
+            repo_type="dataset",
+        )
         import pandas as pd
+
         df = pd.read_parquet(path)
         for _, row in df.iterrows():
             q = str(row.get("question", ""))
@@ -88,7 +95,11 @@ def download_math(sample_limit=None):
             else:
                 reasoning = ""
                 final_answer = a
-            text = f"让我一步步思考这个问题。\n\n{reasoning}\n\n最终答案是：{final_answer}" if reasoning else final_answer
+            text = (
+                f"让我一步步思考这个问题。\n\n{reasoning}\n\n最终答案是：{final_answer}"
+                if reasoning
+                else final_answer
+            )
             all_data.append(to_messages("你是一个数学推理助手。", q, text))
         logger.info(f"  GSM8K: {len(df)} 条")
     except Exception as e:
@@ -97,8 +108,10 @@ def download_math(sample_limit=None):
     # GSM8K_zh
     try:
         from huggingface_hub import hf_hub_download
-        path = hf_hub_download(repo_id="meta-math/GSM8K_zh", filename="train.json",
-                               repo_type="dataset")
+
+        path = hf_hub_download(
+            repo_id="meta-math/GSM8K_zh", filename="train.json", repo_type="dataset"
+        )
         with open(path, encoding="utf-8") as f:
             items = json.load(f)
         for item in items:
@@ -113,10 +126,14 @@ def download_math(sample_limit=None):
     # UltraData-Math L1 (网页数学语料)
     try:
         from huggingface_hub import hf_hub_download
-        path = hf_hub_download(repo_id="openbmb/UltraData-Math",
-                               filename="UltraData-Math-L1/train-00000-of-00001.parquet",
-                               repo_type="dataset")
+
+        path = hf_hub_download(
+            repo_id="openbmb/UltraData-Math",
+            filename="UltraData-Math-L1/train-00000-of-00001.parquet",
+            repo_type="dataset",
+        )
         import pandas as pd
+
         df = pd.read_parquet(path)
         count = 0
         limit = sample_limit or 30000
@@ -125,10 +142,14 @@ def download_math(sample_limit=None):
                 break
             text = str(row.get("text", row.get("content", "")))
             if len(text) > 100:
-                all_data.append({"messages": [
-                    {"role": "user", "content": "请阅读并理解以下数学相关内容。"},
-                    {"role": "assistant", "content": text[:4000]}
-                ]})
+                all_data.append(
+                    {
+                        "messages": [
+                            {"role": "user", "content": "请阅读并理解以下数学相关内容。"},
+                            {"role": "assistant", "content": text[:4000]},
+                        ]
+                    }
+                )
                 count += 1
         logger.info(f"  UltraData-Math-L1: {count} 条")
     except Exception as e:
@@ -136,6 +157,7 @@ def download_math(sample_limit=None):
 
     if sample_limit and len(all_data) > sample_limit:
         import random
+
         random.shuffle(all_data)
         all_data = all_data[:sample_limit]
 
@@ -154,8 +176,10 @@ def download_code(sample_limit=None):
     # CodeAlpaca-20K
     try:
         from huggingface_hub import hf_hub_download
-        path = hf_hub_download(repo_id="sahil2801/CodeAlpaca-20k", filename="data.json",
-                               repo_type="dataset")
+
+        path = hf_hub_download(
+            repo_id="sahil2801/CodeAlpaca-20k", filename="data.json", repo_type="dataset"
+        )
         with open(path, encoding="utf-8") as f:
             items = json.load(f)
         for item in items:
@@ -172,9 +196,10 @@ def download_code(sample_limit=None):
     # OpenHermes 代码部分 (已有,补充更多)
     try:
         from huggingface_hub import hf_hub_download
-        path = hf_hub_download(repo_id="teknium/OpenHermes-2.5",
-                               filename="openhermes2_5.json",
-                               repo_type="dataset")
+
+        path = hf_hub_download(
+            repo_id="teknium/OpenHermes-2.5", filename="openhermes2_5.json", repo_type="dataset"
+        )
         with open(path, encoding="utf-8") as f:
             items = json.load(f)
         count = 0
@@ -191,8 +216,24 @@ def download_code(sample_limit=None):
                         user_msg = c.get("value", "")
                     elif c.get("from") == "gpt":
                         asst_msg = c.get("value", "")
-                if user_msg and asst_msg and any(kw in user_msg.lower() for kw in
-                    ["code", "program", "function", "python", "java", "script", "编程", "代码", "函数"]):
+                if (
+                    user_msg
+                    and asst_msg
+                    and any(
+                        kw in user_msg.lower()
+                        for kw in [
+                            "code",
+                            "program",
+                            "function",
+                            "python",
+                            "java",
+                            "script",
+                            "编程",
+                            "代码",
+                            "函数",
+                        ]
+                    )
+                ):
                     all_data.append(to_messages("你是一个编程助手。", user_msg, asst_msg))
                     count += 1
         logger.info(f"  OpenHermes (code): {count} 条")
@@ -201,6 +242,7 @@ def download_code(sample_limit=None):
 
     if sample_limit and len(all_data) > sample_limit:
         import random
+
         random.shuffle(all_data)
         all_data = all_data[:sample_limit]
 
@@ -220,12 +262,14 @@ def download_safety():
     try:
         from huggingface_hub import hf_hub_download
         import pandas as pd
+
         # 下载前几个parquet分片
         for shard in range(3):
             try:
                 filename = f"data/train-{shard:05d}-of-00042.parquet"
-                path = hf_hub_download(repo_id="Anthropic/hh-rlhf", filename=filename,
-                                       repo_type="dataset")
+                path = hf_hub_download(
+                    repo_id="Anthropic/hh-rlhf", filename=filename, repo_type="dataset"
+                )
                 df = pd.read_parquet(path)
                 for _, row in df.iterrows():
                     chosen = str(row.get("chosen", ""))
@@ -235,7 +279,11 @@ def download_safety():
                             user_q = parts[0].replace("Human: ", "").strip()
                             assistant_a = parts[-1].strip()
                             if user_q and assistant_a:
-                                all_data.append(to_messages("你是一个安全、有帮助的AI助手。", user_q, assistant_a))
+                                all_data.append(
+                                    to_messages(
+                                        "你是一个安全、有帮助的AI助手。", user_q, assistant_a
+                                    )
+                                )
                 logger.info(f"  HH-RLHF shard {shard}: {len(df)} 条")
             except Exception as e:
                 logger.warning(f"  HH-RLHF shard {shard} 下载失败: {e}")
@@ -247,8 +295,10 @@ def download_safety():
     try:
         from huggingface_hub import hf_hub_download
         import pandas as pd
-        path = hf_hub_download(repo_id="yahma/alpaca-cleaned", filename="alpaca_data_cleaned.json",
-                               repo_type="dataset")
+
+        path = hf_hub_download(
+            repo_id="yahma/alpaca-cleaned", filename="alpaca_data_cleaned.json", repo_type="dataset"
+        )
         with open(path, encoding="utf-8") as f:
             items = json.load(f)
         count = 0
@@ -282,8 +332,12 @@ def download_science():
     try:
         from huggingface_hub import hf_hub_download
         import pandas as pd
-        path = hf_hub_download(repo_id="allenai/sciq", filename="data/validation-00000-of-00001.parquet",
-                               repo_type="dataset")
+
+        path = hf_hub_download(
+            repo_id="allenai/sciq",
+            filename="data/validation-00000-of-00001.parquet",
+            repo_type="dataset",
+        )
         df = pd.read_parquet(path)
         for _, row in df.iterrows():
             q = str(row.get("question", ""))
@@ -300,8 +354,12 @@ def download_science():
     try:
         from huggingface_hub import hf_hub_download
         import pandas as pd
-        path = hf_hub_download(repo_id="allenai/ai2_arc", filename="ARC-Easy/train-00000-of-00001.parquet",
-                               repo_type="dataset")
+
+        path = hf_hub_download(
+            repo_id="allenai/ai2_arc",
+            filename="ARC-Easy/train-00000-of-00001.parquet",
+            repo_type="dataset",
+        )
         df = pd.read_parquet(path)
         for _, row in df.iterrows():
             q = str(row.get("question", ""))
@@ -311,7 +369,11 @@ def download_science():
                 labels = choices.get("label", []) if isinstance(choices, dict) else []
                 texts = choices.get("text", []) if isinstance(choices, dict) else []
                 choice_text = " ".join([f"({l}) {t}" for l, t in zip(labels, texts)])
-                all_data.append(to_messages("你是一个科学推理助手。", f"{q}\n{choice_text}", f"答案是：{answer}"))
+                all_data.append(
+                    to_messages(
+                        "你是一个科学推理助手。", f"{q}\n{choice_text}", f"答案是：{answer}"
+                    )
+                )
         logger.info(f"  ARC-Easy: {len(df)} 条")
     except Exception as e:
         logger.warning(f"  ARC 下载失败: {e}")
@@ -332,21 +394,25 @@ def download_long_context():
     try:
         from huggingface_hub import hf_hub_download
         import pandas as pd
+
         for shard in range(2):
             try:
                 filename = f"data/train-{shard:05d}-of-00030.parquet"
-                path = hf_hub_download(repo_id="ccdv/cnn_dailymail", filename=filename,
-                                       repo_type="dataset")
+                path = hf_hub_download(
+                    repo_id="ccdv/cnn_dailymail", filename=filename, repo_type="dataset"
+                )
                 df = pd.read_parquet(path)
                 for _, row in df.iterrows():
                     article = str(row.get("article", ""))
                     summary = str(row.get("highlights", ""))
                     if article and summary and len(article) > 300:
-                        all_data.append(to_messages(
-                            "你是一个文本摘要助手。",
-                            f"请为以下文章生成摘要：\n\n{article[:3000]}",
-                            summary
-                        ))
+                        all_data.append(
+                            to_messages(
+                                "你是一个文本摘要助手。",
+                                f"请为以下文章生成摘要：\n\n{article[:3000]}",
+                                summary,
+                            )
+                        )
                 logger.info(f"  CNN/DailyMail shard {shard}: {len(df)} 条")
             except Exception as e:
                 logger.warning(f"  CNN shard {shard} 下载失败: {e}")
@@ -358,8 +424,12 @@ def download_long_context():
     try:
         from huggingface_hub import hf_hub_download
         import pandas as pd
-        path = hf_hub_download(repo_id="rajpurkar/squad", filename="data/train-00000-of-00001.parquet",
-                               repo_type="dataset")
+
+        path = hf_hub_download(
+            repo_id="rajpurkar/squad",
+            filename="data/train-00000-of-00001.parquet",
+            repo_type="dataset",
+        )
         df = pd.read_parquet(path)
         count = 0
         for _, row in df.iterrows():
@@ -373,11 +443,13 @@ def download_long_context():
                 texts = answers.get("text", [])
                 answer_text = texts[0] if texts else ""
             if context and question and answer_text:
-                all_data.append(to_messages(
-                    "你是一个阅读理解助手。",
-                    f"阅读以下段落并回答问题：\n\n{context}\n\n问题：{question}",
-                    answer_text
-                ))
+                all_data.append(
+                    to_messages(
+                        "你是一个阅读理解助手。",
+                        f"阅读以下段落并回答问题：\n\n{context}\n\n问题：{question}",
+                        answer_text,
+                    )
+                )
                 count += 1
         logger.info(f"  SQuAD: {count} 条")
     except Exception as e:
@@ -399,9 +471,12 @@ def download_lifeform():
     try:
         from huggingface_hub import hf_hub_download
         import pandas as pd
-        path = hf_hub_download(repo_id="empathetic_dialogues", filename="train.csv",
-                               repo_type="dataset")
+
+        path = hf_hub_download(
+            repo_id="empathetic_dialogues", filename="train.csv", repo_type="dataset"
+        )
         import csv
+
         with open(path, encoding="utf-8") as f:
             reader = csv.DictReader(f)
             count = 0
@@ -412,10 +487,11 @@ def download_lifeform():
                 utterance = str(row.get("utterance", ""))
                 emotion = str(row.get("emotion", ""))
                 if context and utterance:
-                    all_data.append(to_messages(
-                        f"你是一个有情感的AI生命体。当前用户情绪：{emotion}",
-                        context, utterance
-                    ))
+                    all_data.append(
+                        to_messages(
+                            f"你是一个有情感的AI生命体。当前用户情绪：{emotion}", context, utterance
+                        )
+                    )
                     count += 1
         logger.info(f"  EmpatheticDialogues: {count} 条")
     except Exception as e:
@@ -425,8 +501,12 @@ def download_lifeform():
     try:
         from huggingface_hub import hf_hub_download
         import pandas as pd
-        path = hf_hub_download(repo_id="daily_dialog", filename="data/train-00000-of-00001.parquet",
-                               repo_type="dataset")
+
+        path = hf_hub_download(
+            repo_id="daily_dialog",
+            filename="data/train-00000-of-00001.parquet",
+            repo_type="dataset",
+        )
         df = pd.read_parquet(path)
         count = 0
         for _, row in df.iterrows():
@@ -439,10 +519,9 @@ def download_lifeform():
                         user_q = str(dialog[i])
                         asst_a = str(dialog[i + 1])
                         if user_q and asst_a:
-                            all_data.append(to_messages(
-                                "你是一个善解人意的AI生命体。",
-                                user_q, asst_a
-                            ))
+                            all_data.append(
+                                to_messages("你是一个善解人意的AI生命体。", user_q, asst_a)
+                            )
                             count += 1
                             if count >= 10000:
                                 break
@@ -466,12 +545,14 @@ def download_chinese(sample_limit=None):
     try:
         from huggingface_hub import hf_hub_download
         import pandas as pd
+
         limit = sample_limit or 30000
         for shard in range(5):
             try:
                 filename = f"data/train-{shard:05d}-of-00034.parquet"
-                path = hf_hub_download(repo_id="BelleGroup/train_2M_CN", filename=filename,
-                                       repo_type="dataset")
+                path = hf_hub_download(
+                    repo_id="BelleGroup/train_2M_CN", filename=filename, repo_type="dataset"
+                )
                 df = pd.read_parquet(path)
                 count = 0
                 for _, row in df.iterrows():
@@ -513,10 +594,13 @@ def download_multilingual():
         try:
             from huggingface_hub import hf_hub_download
             import pandas as pd
+
             lang = pair.split("-")[1]
-            path = hf_hub_download(repo_id="Helsinki-NLP/opus-100",
-                                   filename=f"data/{pair}/train-00000-of-00001.parquet",
-                                   repo_type="dataset")
+            path = hf_hub_download(
+                repo_id="Helsinki-NLP/opus-100",
+                filename=f"data/{pair}/train-00000-of-00001.parquet",
+                repo_type="dataset",
+            )
             df = pd.read_parquet(path)
             count = 0
             for _, row in df.iterrows():
@@ -527,10 +611,9 @@ def download_multilingual():
                     src = translation.get("en", "")
                     tgt = translation.get(lang, "")
                     if src and tgt:
-                        all_data.append(to_messages(
-                            f"你是一个翻译助手，请将以下内容翻译为{lang}。",
-                            src, tgt
-                        ))
+                        all_data.append(
+                            to_messages(f"你是一个翻译助手，请将以下内容翻译为{lang}。", src, tgt)
+                        )
                         count += 1
             logger.info(f"  OPUS-100 {pair}: {count} 条")
         except Exception as e:
@@ -552,8 +635,10 @@ def download_agent():
     try:
         from huggingface_hub import hf_hub_download
         import pandas as pd
-        path = hf_hub_download(repo_id="gorilla-llm/APIBench", filename="data/torch_hub.parquet",
-                               repo_type="dataset")
+
+        path = hf_hub_download(
+            repo_id="gorilla-llm/APIBench", filename="data/torch_hub.parquet", repo_type="dataset"
+        )
         df = pd.read_parquet(path)
         count = 0
         for _, row in df.iterrows():
@@ -571,9 +656,10 @@ def download_agent():
     # ToolBench (如果有)
     try:
         from huggingface_hub import hf_hub_download
-        path = hf_hub_download(repo_id="ToolBench/ToolBench_Instruct",
-                               filename="data/train.json",
-                               repo_type="dataset")
+
+        path = hf_hub_download(
+            repo_id="ToolBench/ToolBench_Instruct", filename="data/train.json", repo_type="dataset"
+        )
         with open(path, encoding="utf-8") as f:
             items = json.load(f)
         count = 0
@@ -609,9 +695,20 @@ def main():
     parser.add_argument("--sample", type=int, default=None, help="每个数据源最大采样数")
     args = parser.parse_args()
 
-    if not any([args.all, args.math, args.code, args.agent, args.safety,
-                args.chinese, args.multilingual, args.science, args.long_context,
-                args.lifeform]):
+    if not any(
+        [
+            args.all,
+            args.math,
+            args.code,
+            args.agent,
+            args.safety,
+            args.chinese,
+            args.multilingual,
+            args.science,
+            args.long_context,
+            args.lifeform,
+        ]
+    ):
         parser.print_help()
         return
 

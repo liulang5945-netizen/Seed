@@ -10,6 +10,7 @@
 重点比较 5-dialogue 子群体和完整 9 成员群体，确认 full route 是否把
 ``zh`` 基础成员带入 dialogue 输出通路。
 """
+
 from __future__ import annotations
 
 import json
@@ -21,7 +22,6 @@ import torch
 
 from neuroplex.loader import assemble_cortex
 from neuroplex.resonance.dialogue_format import build_dialogue_prompt
-
 
 DIALOGUE_IDS = [
     "zh_aug0_dialogue",
@@ -90,9 +90,7 @@ def _trace(cortex, active_nids: list[str], question: str) -> dict:
     candidates = _candidate_ids(active_nids)
     round1_scores = result.get("round1_scores") or {}
     final_scores = result.get("final_scores") or {}
-    domain_scores = {
-        nid: value for nid, value in round1_scores.items() if nid in candidates
-    }
+    domain_scores = {nid: value for nid, value in round1_scores.items() if nid in candidates}
     if not domain_scores:
         domain_scores = {nid: final_scores[nid] for nid in candidates if nid in final_scores}
     raw_leader = max(domain_scores, key=domain_scores.get) if domain_scores else None
@@ -124,7 +122,8 @@ def _trace(cortex, active_nids: list[str], question: str) -> dict:
         "top_tokens": top_tokens,
         "weighted_logits_vocab": (
             int(result["weighted_logits"].shape[-1])
-            if result.get("weighted_logits") is not None else None
+            if result.get("weighted_logits") is not None
+            else None
         ),
     }
 
@@ -159,11 +158,13 @@ def main() -> None:
             try:
                 rows.append(_trace(cortex, active_nids, question))
             except Exception as exc:
-                rows.append({
-                    "question": question,
-                    "active_nids": active_nids,
-                    "error": f"{type(exc).__name__}: {exc}",
-                })
+                rows.append(
+                    {
+                        "question": question,
+                        "active_nids": active_nids,
+                        "error": f"{type(exc).__name__}: {exc}",
+                    }
+                )
         report["modes"][mode] = {
             "rows": rows,
             "predicted_continuous_leaders": [
@@ -171,11 +172,13 @@ def main() -> None:
             ],
             "leader_counts": {
                 nid: sum(row.get("predicted_continuous_leader") == nid for row in rows)
-                for nid in sorted({
-                    row.get("predicted_continuous_leader")
-                    for row in rows
-                    if row.get("predicted_continuous_leader") is not None
-                })
+                for nid in sorted(
+                    {
+                        row.get("predicted_continuous_leader")
+                        for row in rows
+                        if row.get("predicted_continuous_leader") is not None
+                    }
+                )
             },
         }
     report["elapsed_seconds"] = round(time.time() - started, 1)

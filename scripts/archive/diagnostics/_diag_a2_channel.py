@@ -39,9 +39,7 @@ def main() -> None:
     for name in base["groups"]:
         d_after = after["groups"][name]["mean"] - base["groups"][name]["mean"]
         d_muted = muted["groups"][name]["mean"] - base["groups"][name]["mean"]
-        print(
-            f"{name}: after={d_after:+.4f} muted={d_muted:+.4f}", flush=True
-        )
+        print(f"{name}: after={d_after:+.4f} muted={d_muted:+.4f}", flush=True)
     print(
         f"overall: after={after['overall_mean']-base['overall_mean']:+.4f} "
         f"muted={muted['overall_mean']-base['overall_mean']:+.4f}",

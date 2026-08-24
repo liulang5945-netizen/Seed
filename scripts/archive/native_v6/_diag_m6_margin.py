@@ -59,9 +59,7 @@ def _evidence(model: Taiji, bases) -> torch.Tensor:
     """Rows are probe bases, columns are the four outcome rows of decoder 0."""
 
     decoder = model.fabric.decoders[0]
-    return torch.stack([
-        decoder.forward(basis).detach()[SELECTOR] for basis in bases
-    ])
+    return torch.stack([decoder.forward(basis).detach()[SELECTOR] for basis in bases])
 
 
 def _margins(evidence: torch.Tensor, pairs, actions) -> torch.Tensor:
@@ -71,7 +69,7 @@ def _margins(evidence: torch.Tensor, pairs, actions) -> torch.Tensor:
     for row, action in enumerate(actions):
         target = OUTCOMES.index(pairs[action])
         values = evidence[row]
-        rivals = torch.cat([values[:target], values[target + 1:]])
+        rivals = torch.cat([values[:target], values[target + 1 :]])
         out[row] = values[target] - rivals.max()
     return out
 
@@ -117,10 +115,11 @@ def _support_overlap(model: Taiji) -> str:
     supports = [set(decoder.pre_index[row].tolist()) for row in OUTCOMES]
     cells = []
     for left in range(len(OUTCOMES)):
-        cells.append(" ".join(
-            f"{len(supports[left] & supports[right]):3d}"
-            for right in range(len(OUTCOMES))
-        ))
+        cells.append(
+            " ".join(
+                f"{len(supports[left] & supports[right]):3d}" for right in range(len(OUTCOMES))
+            )
+        )
     return "\n".join(f"    {chr(OUTCOMES[i])} {row}" for i, row in enumerate(cells))
 
 
@@ -172,8 +171,9 @@ def run(seed: int, cycles: int) -> None:
     print("  read-back")
     for row in metrics["rows"]:
         ok = "ok" if row["predicted_outcome"] == row["expected_outcome"] else "WRONG"
-        print(f"    {row['action']}->{row['expected_outcome']} "
-              f"margin={row['margin']:+.5f}  {ok}")
+        print(
+            f"    {row['action']}->{row['expected_outcome']} " f"margin={row['margin']:+.5f}  {ok}"
+        )
 
 
 def sweep(seed: int) -> None:
@@ -211,15 +211,15 @@ def sweep(seed: int) -> None:
             traces.append(probe.snapshot().regions[0].trace.detach().clone())
         active = [int((trace.abs() > 1e-6).sum().item()) for trace in traces]
         cosines = [
-            torch.nn.functional.cosine_similarity(
-                traces[left], traces[right], dim=0
-            ).item()
+            torch.nn.functional.cosine_similarity(traces[left], traces[right], dim=0).item()
             for left in range(len(actions))
             for right in range(left + 1, len(actions))
         ]
         counts = "/".join(str(value) for value in active)
-        print(f"    {repeats:5d} {counts:>16} {max(cosines):8.3f} "
-              f"{sum(cosines) / len(cosines):9.3f}")
+        print(
+            f"    {repeats:5d} {counts:>16} {max(cosines):8.3f} "
+            f"{sum(cosines) / len(cosines):9.3f}"
+        )
 
 
 def origin(seed: int) -> None:
@@ -254,42 +254,43 @@ def origin(seed: int) -> None:
 
     def _cosines(stack: torch.Tensor) -> list[float]:
         return [
-            torch.nn.functional.cosine_similarity(
-                stack[left], stack[right], dim=0
-            ).item()
+            torch.nn.functional.cosine_similarity(stack[left], stack[right], dim=0).item()
             for left in range(len(actions))
             for right in range(left + 1, len(actions))
         ]
 
     raw = _cosines(bases)
     stripped = _cosines(residual)
-    print(f"    pairwise cosine  raw: max {max(raw):.3f} mean "
-          f"{sum(raw) / len(raw):.3f}")
-    print(f"    pairwise cosine  residual: max {max(stripped):.3f} mean "
-          f"{sum(stripped) / len(stripped):.3f}")
+    print(f"    pairwise cosine  raw: max {max(raw):.3f} mean " f"{sum(raw) / len(raw):.3f}")
+    print(
+        f"    pairwise cosine  residual: max {max(stripped):.3f} mean "
+        f"{sum(stripped) / len(stripped):.3f}"
+    )
 
     counts = (bases.abs() > 1e-6).sum(dim=0)
     promiscuous = int((counts == len(actions)).sum().item())
     touched = int((counts > 0).sum().item())
-    print(f"    units driven by all {len(actions)} actions: {promiscuous} "
-          f"of {touched} touched ({bases.shape[1]} total)")
+    print(
+        f"    units driven by all {len(actions)} actions: {promiscuous} "
+        f"of {touched} touched ({bases.shape[1]} total)"
+    )
 
     checkpoint = Taiji.from_checkpoint(deepcopy(stored))
     thresholds = checkpoint.snapshot().regions[0].threshold
     base = float(checkpoint.config.threshold_base)
     if promiscuous:
         selected = thresholds[counts == len(actions)]
-        print(f"    threshold on those units: mean {selected.mean() / base:5.2f}x "
-              f"base, min {selected.min() / base:5.2f}x")
+        print(
+            f"    threshold on those units: mean {selected.mean() / base:5.2f}x "
+            f"base, min {selected.min() / base:5.2f}x"
+        )
     quiet = thresholds[counts == 0]
     if quiet.numel():
-        print(f"    threshold on never-driven units: mean "
-              f"{quiet.mean() / base:5.2f}x base")
+        print(f"    threshold on never-driven units: mean " f"{quiet.mean() / base:5.2f}x base")
     energy = bases.abs().sum(dim=0)
     order = torch.argsort(energy, descending=True)[:6]
     top = ", ".join(
-        f"u{int(i)}:{int(counts[i])}a/{float(thresholds[i] / base):.1f}x"
-        for i in order
+        f"u{int(i)}:{int(counts[i])}a/{float(thresholds[i] / base):.1f}x" for i in order
     )
     print(f"    strongest units (actions/threshold): {top}")
 
@@ -365,9 +366,7 @@ def locus(seed: int, cycles: int) -> dict:
 
     def _margins_at(baseline: torch.Tensor, gain: float) -> torch.Tensor:
         adjusted = bases - gain * baseline
-        evidence = torch.stack([
-            decoder.forward(row).detach()[SELECTOR] for row in adjusted
-        ])
+        evidence = torch.stack([decoder.forward(row).detach()[SELECTOR] for row in adjusted])
         return _margins(evidence, pairs, actions)
 
     raw = _margins_at(common, 0.0)
@@ -379,8 +378,10 @@ def locus(seed: int, cycles: int) -> dict:
 
     print(f"\n=== seed {seed}: offline locus check (cycles {cycles}) ===")
     print(f"    raw basis       {_cells(raw)}   {_positive_count(raw)}/{len(actions)}")
-    print(f"    pure residual   {_cells(residual)}   "
-          f"{_positive_count(residual)}/{len(actions)}   <- ceiling of any common-mode removal")
+    print(
+        f"    pure residual   {_cells(residual)}   "
+        f"{_positive_count(residual)}/{len(actions)}   <- ceiling of any common-mode removal"
+    )
 
     reachable = _positive_count(raw)
     for kind, baseline in (("oracle", common), ("stream", stream)):
@@ -388,41 +389,42 @@ def locus(seed: int, cycles: int) -> dict:
             hits = _positive_count(_margins_at(baseline, gain))
             reachable = max(reachable, hits)
         window = torch.linspace(0.0, 1.0, 41)
-        curve = " ".join(
-            str(_positive_count(_margins_at(baseline, float(g)))) for g in window[::4]
-        )
+        curve = " ".join(str(_positive_count(_margins_at(baseline, float(g)))) for g in window[::4])
         print(f"    {kind:<7} positives over gain 0.0..1.0: {curve}")
 
     delta_all = bases - common
     normed = delta_all / delta_all.norm(dim=1, keepdim=True).clamp_min(1e-12)
     cosines = normed @ normed.t()
     offdiag = [
-        float(cosines[i, j].item())
-        for i in range(len(actions)) for j in range(i + 1, len(actions))
+        float(cosines[i, j].item()) for i in range(len(actions)) for j in range(i + 1, len(actions))
     ]
-    print(f"    residual pairwise cosine  min {min(offdiag):+.3f}"
-          f"  mean {sum(offdiag) / len(offdiag):+.3f}  max {max(offdiag):+.3f}")
+    print(
+        f"    residual pairwise cosine  min {min(offdiag):+.3f}"
+        f"  mean {sum(offdiag) / len(offdiag):+.3f}  max {max(offdiag):+.3f}"
+    )
 
     projections = _replay_projections(deepcopy(stored), cycles=cycles)
     if projections:
         mean_projection = torch.stack(projections).mean(dim=0)
-        write = torch.stack([
-            _write_basis(rested, action, mean_projection) for action in actions
-        ])
+        write = torch.stack([_write_basis(rested, action, mean_projection) for action in actions])
         alignment = []
         for row in range(len(actions)):
             probe = bases[row]
             other = write[row]
             denominator = (probe.norm() * other.norm()).clamp_min(1e-12)
             alignment.append(float((torch.dot(probe, other) / denominator).item()))
-        print(f"    write-vs-probe basis cosine  "
-              + "  ".join(f"{value:+.3f}" for value in alignment))
+        print(
+            f"    write-vs-probe basis cosine  " + "  ".join(f"{value:+.3f}" for value in alignment)
+        )
         write_margins = _margins(
             torch.stack([decoder.forward(row).detach()[SELECTOR] for row in write]),
-            pairs, actions,
+            pairs,
+            actions,
         )
-        print(f"    margins on write basis  {_cells(write_margins)}"
-              f"   {_positive_count(write_margins)}/{len(actions)}")
+        print(
+            f"    margins on write basis  {_cells(write_margins)}"
+            f"   {_positive_count(write_margins)}/{len(actions)}"
+        )
 
     print("    per-pair attribution (true row vs best rival at gain 0)")
     for row, action in enumerate(actions):
@@ -438,9 +440,11 @@ def locus(seed: int, cycles: int) -> dict:
         common_term = float(torch.dot(weight_diff, common).item())
         residual_term = float(torch.dot(weight_diff, delta).item())
         verdict = "residual WRONG" if residual_term <= 0.0 else "residual ok"
-        print(f"      {chr(action)}->{chr(pairs[action])} vs {chr(OUTCOMES[rival])}"
-              f"  common {common_term * 1e4:+9.2f}  residual {residual_term * 1e4:+9.2f}"
-              f"   {verdict}")
+        print(
+            f"      {chr(action)}->{chr(pairs[action])} vs {chr(OUTCOMES[rival])}"
+            f"  common {common_term * 1e4:+9.2f}  residual {residual_term * 1e4:+9.2f}"
+            f"   {verdict}"
+        )
         if residual_term <= 0.0:
             true_term = float(torch.dot(true_row, delta).item())
             rival_term = float(torch.dot(rival_row, delta).item())
@@ -449,10 +453,12 @@ def locus(seed: int, cycles: int) -> dict:
             shared = len(support_true & support_rival)
             peak = int(delta.abs().argmax().item())
             seen = "yes" if peak in support_true else "NO"
-            print(f"        root cause: true row reads {true_term * 1e4:+9.2f},"
-                  f" rival reads {rival_term * 1e4:+9.2f},"
-                  f" shared contacts {shared}/{len(support_true)},"
-                  f" peak residual unit in true fan-in: {seen}")
+            print(
+                f"        root cause: true row reads {true_term * 1e4:+9.2f},"
+                f" rival reads {rival_term * 1e4:+9.2f},"
+                f" shared contacts {shared}/{len(support_true)},"
+                f" peak residual unit in true fan-in: {seen}"
+            )
 
     return {
         "seed": seed,
@@ -525,10 +531,12 @@ def main() -> None:
         for row in results:
             ok = row["reachable_positive"] == row["pairs"]
             passing += int(ok)
-            print(f"    seed {row['seed']:3d}  raw {row['raw_positive']}/{row['pairs']}"
-                  f"  residual {row['residual_positive']}/{row['pairs']}"
-                  f"  best {row['reachable_positive']}/{row['pairs']}"
-                  f"  {'PASS' if ok else 'fail'}")
+            print(
+                f"    seed {row['seed']:3d}  raw {row['raw_positive']}/{row['pairs']}"
+                f"  residual {row['residual_positive']}/{row['pairs']}"
+                f"  best {row['reachable_positive']}/{row['pairs']}"
+                f"  {'PASS' if ok else 'fail'}"
+            )
         print(f"    seeds reaching 4/4: {passing}/{len(results)}")
         return
     if len(sys.argv) > 1 and sys.argv[1] == "sweep":

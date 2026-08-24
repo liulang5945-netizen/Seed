@@ -42,6 +42,21 @@ _CJK_BLOCK_RE = re.compile(r"[\u4e00-\u9fff]+")
 _SENTENCE_SPLIT_RE = re.compile(r"(?<=[\u3002\uff01\uff1f.!?;\uff1b])\s+")
 
 
+def _trusted_pickle_path(persist_dir: str, path: str) -> str:
+    """校验 legacy pickle 缓存路径必须位于预期 persist 目录内。
+
+    信任边界：这些 .pkl 文件只应由本进程（旧版本）写入 persist_dir，
+    用于一次性迁移到 JSON 后即删除。加载前校验路径归属，防止经由
+    符号链接/路径篡改加载目录外的恶意 pickle（pickle.load 可执行
+    任意代码）。
+    """
+    dir_real = os.path.realpath(persist_dir)
+    file_real = os.path.realpath(path)
+    if os.path.dirname(file_real) != dir_real:
+        raise ValueError(f"拒绝加载 persist 目录外的 pickle 文件: {path}")
+    return file_real
+
+
 def _fallback_tokens(text: str) -> List[str]:
     """Return deterministic local tokens without external tokenizers."""
 
@@ -312,7 +327,9 @@ class CrossEncoderReranker:
         except Exception:
             return False
 
-    def rerank(self, query: str, passages: List[str], top_k: int = DEFAULT_TOP_K) -> List[Tuple[int, float]]:
+    def rerank(
+        self, query: str, passages: List[str], top_k: int = DEFAULT_TOP_K
+    ) -> List[Tuple[int, float]]:
         if not passages:
             return []
 
@@ -492,7 +509,9 @@ class RAGKnowledgeBase:
                 chunks.append(paragraph)
                 continue
 
-            sentences = [item.strip() for item in _SENTENCE_SPLIT_RE.split(paragraph) if item.strip()]
+            sentences = [
+                item.strip() for item in _SENTENCE_SPLIT_RE.split(paragraph) if item.strip()
+            ]
             if not sentences:
                 sentences = [paragraph]
 
@@ -758,7 +777,9 @@ class RAGKnowledgeBase:
             rrf_scores[index] = rrf_scores.get(index, 0.0) + 1.0 / (RRF_K + rank + 1)
 
         results: List[Tuple[str, str, float]] = []
-        for index, score in sorted(rrf_scores.items(), key=lambda item: item[1], reverse=True)[:top_k]:
+        for index, score in sorted(rrf_scores.items(), key=lambda item: item[1], reverse=True)[
+            :top_k
+        ]:
             if 0 <= index < len(self.chunks):
                 filename, chunk_text, _ = self.chunks[index]
                 results.append((filename, chunk_text, score))
@@ -909,7 +930,8 @@ class RAGKnowledgeBase:
                 self._embed_dim = int(index_data.get("embed_dim", 0) or 0)
             elif os.path.exists(index_pkl_path):
                 logger.warning("Loading legacy pickle index, migrating to JSON...")
-                with open(index_pkl_path, "rb") as handle:
+                # 信任边界见 _trusted_pickle_path：仅加载本进程历史 dump 的缓存
+                with open(_trusted_pickle_path(self.persist_dir, index_pkl_path), "rb") as handle:
                     index_data = pickle.load(handle)
                 self.chunks = index_data.get("chunks", [])
                 self._embed_dim = int(index_data.get("embed_dim", 0) or 0)
@@ -917,8 +939,8 @@ class RAGKnowledgeBase:
                 safe_json_save(index_json_path, index_data)
                 try:
                     os.remove(index_pkl_path)
-                except OSError:
-                    pass
+                except OSError as e:
+                    logger.debug("【RAGKnowledgeBase._load】处理失败（非致命）: %s", e)
 
             if os.path.exists(embeddings_path):
                 import numpy as np
@@ -936,15 +958,16 @@ class RAGKnowledgeBase:
                 bm25_data = safe_json_load(bm25_json_path, default={})
             elif os.path.exists(bm25_pkl_path):
                 logger.warning("Loading legacy pickle BM25 index, migrating to JSON...")
-                with open(bm25_pkl_path, "rb") as handle:
+                # 信任边界见 _trusted_pickle_path：仅加载本进程历史 dump 的缓存
+                with open(_trusted_pickle_path(self.persist_dir, bm25_pkl_path), "rb") as handle:
                     bm25_data = pickle.load(handle)
                 # 迁移：保存为 JSON 格式，删除 pickle 文件
                 if bm25_data:
                     safe_json_save(bm25_json_path, bm25_data)
                 try:
                     os.remove(bm25_pkl_path)
-                except OSError:
-                    pass
+                except OSError as e:
+                    logger.debug("【RAGKnowledgeBase._load】处理失败（非致命）: %s", e)
             if bm25_data:
                 self._bm25_index = BM25Index.from_dict(bm25_data)
             else:

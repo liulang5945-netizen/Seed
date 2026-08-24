@@ -5,18 +5,19 @@ Cortex 记忆系统
 提供短期记忆（工作记忆）和长期记忆（持久化存储），
 通过特殊 token 实现模型原生的读写操作。
 """
+
 import os
 import json
 import logging
 import time
-from typing import Optional, Dict, List, Any
-from pathlib import Path
+from typing import Optional, Dict, List
 
 logger = logging.getLogger("Cortex.Memory")
 
 
 class MemorySlot:
     """单个记忆槽"""
+
     def __init__(self, slot_id: int, is_long_term: bool = False):
         self.slot_id = slot_id
         self.is_long_term = is_long_term
@@ -79,7 +80,9 @@ class MemorySystem:
         # 下一个可用的短期记忆槽（轮转）
         self._next_short_slot = 0
 
-    def write(self, slot_id: int, content: str, is_long_term: bool = False, importance: float = 0.5):
+    def write(
+        self, slot_id: int, content: str, is_long_term: bool = False, importance: float = 0.5
+    ):
         """写入记忆槽"""
         slots = self.long_term if is_long_term else self.short_term
         if 0 <= slot_id < len(slots):
@@ -102,9 +105,11 @@ class MemorySystem:
                 return i
 
         # 没有空槽，覆盖最不重要且最久未访问的
-        target = min(range(len(self.short_term)),
-                     key=lambda i: self.short_term[i].importance * 0.5 +
-                                   (1.0 / (self.short_term[i].access_count + 1)) * 0.5)
+        target = min(
+            range(len(self.short_term)),
+            key=lambda i: self.short_term[i].importance * 0.5
+            + (1.0 / (self.short_term[i].access_count + 1)) * 0.5,
+        )
         self.short_term[target].write(content, importance)
         return target
 

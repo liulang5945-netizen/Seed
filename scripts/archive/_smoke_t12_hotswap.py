@@ -68,14 +68,13 @@ NEW_TEXTS = OLD_TEXTS + [
 
 def train_mini_tokenizer(texts: list[str], vocab_size: int) -> spm.SentencePieceProcessor:
     """训练 mini tokenizer（参数与生产一致）。"""
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False,
-                                     encoding="utf-8") as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False, encoding="utf-8") as f:
         for _ in range(200):  # 重复扩展训练数据
             for t in texts:
                 f.write(t + "\n")
         corpus_path = f.name
 
-    prefix = corpus_path[:-len(".txt")]
+    prefix = corpus_path[: -len(".txt")]
     spm.SentencePieceTrainer.train(
         input=corpus_path,
         model_prefix=prefix,
@@ -86,7 +85,10 @@ def train_mini_tokenizer(texts: list[str], vocab_size: int) -> spm.SentencePiece
         normalization_rule_name="identity",
         add_dummy_prefix=True,
         remove_extra_whitespaces=False,
-        pad_id=0, unk_id=1, bos_id=2, eos_id=3,
+        pad_id=0,
+        unk_id=1,
+        bos_id=2,
+        eos_id=3,
         split_digits=True,
         max_sentence_length=16384,
         num_threads=4,
@@ -111,8 +113,9 @@ def run():
     id_map = build_token_id_map(old_sp, new_sp)
     for old_id, name in [(0, "pad"), (1, "unk"), (2, "bos"), (3, "eos")]:
         piece = old_sp.IdToPiece(old_id)
-        assert id_map.get(old_id) == new_sp.PieceToId(piece), \
-            f"[1] 特殊 token {name}(id={old_id}) 映射错误: {id_map.get(old_id)}"
+        assert id_map.get(old_id) == new_sp.PieceToId(
+            piece
+        ), f"[1] 特殊 token {name}(id={old_id}) 映射错误: {id_map.get(old_id)}"
     passed.append("[1] 特殊 token（0-3）映射正确")
 
     # ---- [2] 精确匹配覆盖率 ----
@@ -130,14 +133,17 @@ def run():
     # ---- [3] 迁移后形状 ----
     new_vocab = new_sp.GetPieceSize()
     new_w = compute_new_embeddings(old_w, id_map, new_vocab, old_sp, new_sp)
-    assert new_w.shape == (new_vocab, hidden), \
-        f"[3] 迁移形状错误: {tuple(new_w.shape)} vs {(new_vocab, hidden)}"
+    assert new_w.shape == (
+        new_vocab,
+        hidden,
+    ), f"[3] 迁移形状错误: {tuple(new_w.shape)} vs {(new_vocab, hidden)}"
     passed.append(f"[3] lm_head 迁移形状正确 {tuple(new_w.shape)}")
 
     # ---- [4] 匹配行权重一致 ----
     for old_id, new_id in list(id_map.items())[:5]:
-        assert torch.equal(new_w[new_id], old_w[old_id]), \
-            f"[4] 匹配行权重不一致: old {old_id} → new {new_id}"
+        assert torch.equal(
+            new_w[new_id], old_w[old_id]
+        ), f"[4] 匹配行权重不一致: old {old_id} → new {new_id}"
     passed.append("[4] 精确匹配行权重完全一致")
 
     # ---- [5] 子 piece 分解初始化 ----
@@ -150,15 +156,16 @@ def run():
         sub_ids = old_sp.encode(piece)
         if sub_ids and all(s != old_sp.unk_id() for s in sub_ids):
             expect = old_w[sub_ids].mean(dim=0)
-            assert torch.allclose(new_w[new_id], expect, atol=1e-6), \
-                f"[5] 子 piece 平均错误: piece={piece}, sub={sub_ids}"
+            assert torch.allclose(
+                new_w[new_id], expect, atol=1e-6
+            ), f"[5] 子 piece 平均错误: piece={piece}, sub={sub_ids}"
             n_avg += 1
             break  # 验证一个即可
     assert n_avg >= 1, "[5] 未找到可子 piece 分解的新 token（语料问题？）"
     passed.append("[5] 子 piece 分解初始化正确（均值）")
 
     # ---- [6] 随机初始化兜底 ----
-    std = hidden ** -0.5
+    std = hidden**-0.5
     random_ids = []
     for i in range(new_vocab):
         if i in matched_new:
@@ -170,12 +177,14 @@ def run():
     if random_ids:
         random_rows = new_w[random_ids]
         assert random_rows.abs().sum() > 0, "[6] 随机行全零"
-        assert abs(random_rows.std().item() - std) < 0.1, \
-            f"[6] 随机行 std 偏差: {random_rows.std().item():.3f} vs {std:.3f}"
+        assert (
+            abs(random_rows.std().item() - std) < 0.1
+        ), f"[6] 随机行 std 偏差: {random_rows.std().item():.3f} vs {std:.3f}"
     passed.append("[6] 随机初始化 std 合理（非全零）")
 
     # ---- [7] ckpt 迁移：cfg.vocab_size 更新 + 保存后加载 ----
     from taiji.resonance.config import get_domain_neuron_config
+
     cfg = get_domain_neuron_config("zh")
     cfg.vocab_size = old_vocab  # 模拟旧 ckpt 的 cfg
     fake_ckpt = {
@@ -191,20 +200,23 @@ def run():
         report = migrate_neuron_ckpt(ckpt_path, old_sp, new_sp, new_vocab, backup_dir)
         assert report["migrated"], f"[7] ckpt 未迁移: {report}"
         assert report["new_vocab"] == new_vocab, f"[7] 迁移 vocab 错误: {report}"
-        assert report["lm_head_shape"] == (new_vocab, hidden), \
-            f"[7] 迁移后形状错误: {report}"
+        assert report["lm_head_shape"] == (new_vocab, hidden), f"[7] 迁移后形状错误: {report}"
         # 保存后可加载验证
         reloaded = torch.load(ckpt_path, map_location="cpu", weights_only=False)
-        assert reloaded["neuron_config"].vocab_size == new_vocab, \
-            f"[7] 重载 cfg.vocab_size 未更新: {reloaded['neuron_config'].vocab_size}"
-        assert reloaded["state_dict"]["lm_head.weight"].shape == (new_vocab, hidden), \
-            "[7] 重载 lm_head 形状错误"
+        assert (
+            reloaded["neuron_config"].vocab_size == new_vocab
+        ), f"[7] 重载 cfg.vocab_size 未更新: {reloaded['neuron_config'].vocab_size}"
+        assert reloaded["state_dict"]["lm_head.weight"].shape == (
+            new_vocab,
+            hidden,
+        ), "[7] 重载 lm_head 形状错误"
         # 备份存在
         assert (backup_dir / "neuron_zh_smoke.pt").exists(), "[7] 备份文件缺失"
         # 匹配行仍一致
         for old_id, new_id in list(id_map.items())[:3]:
-            assert torch.equal(reloaded["state_dict"]["lm_head.weight"][new_id],
-                               old_w[old_id]), "[7] 迁移后匹配行不一致"
+            assert torch.equal(
+                reloaded["state_dict"]["lm_head.weight"][new_id], old_w[old_id]
+            ), "[7] 迁移后匹配行不一致"
     passed.append("[7] ckpt 迁移后 cfg.vocab_size 更新 + 可加载 + 备份完整")
 
     # ---- [8] migrate_lm_head_state 顶层入口 ----

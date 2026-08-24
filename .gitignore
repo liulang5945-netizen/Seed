@@ -66,6 +66,7 @@ neuroplex/evolution_data/
 neuroplex/feed_data/
 neuroplex/life_data/
 neuroplex/play_data/
+taiji/play_data/
 neuroplex/sleep_data/
 neuroplex/test_evolution/
 taiji_data/
@@ -77,6 +78,8 @@ security/audit_logs/
 # Logs
 *.log
 logs/
+# 例外：回归门禁证据日志随 reports/ 入库（发布报告引用）
+!reports/_gate_*.log
 
 # Test artifacts
 .pytest_cache/

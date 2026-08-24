@@ -10,6 +10,7 @@
 Usage:
     python scripts/training/verify_cortex_generate_api.py
 """
+
 from __future__ import annotations
 
 import os
@@ -30,9 +31,16 @@ def clear_output_dir(out_dir: str):
     os.makedirs(out_dir, exist_ok=True)
 
 
-def simulate_cortex_generate(cortex, hub, modality: str, input_path: str = None,
-                             max_tokens: int = 0, temperature: float = 1.0,
-                             top_k: int = 0, seed: int = 42):
+def simulate_cortex_generate(
+    cortex,
+    hub,
+    modality: str,
+    input_path: str = None,
+    max_tokens: int = 0,
+    temperature: float = 1.0,
+    top_k: int = 0,
+    seed: int = 42,
+):
     """模拟 routes_neuroplex.py 中的 cortex_generate 端点逻辑。"""
     if seed is not None:
         torch.manual_seed(seed)
@@ -43,6 +51,7 @@ def simulate_cortex_generate(cortex, hub, modality: str, input_path: str = None,
     if input_path:
         # 模仿模式
         from taiji.multimodal.io import load_image, load_audio, load_video
+
         if modality == "image":
             data = load_image(input_path).to(device)
         elif modality == "audio":
@@ -92,9 +101,12 @@ def test_random_image(cortex, hub):
     clear_output_dir(out_dir)
     ids, recon = simulate_cortex_generate(cortex, hub, "image", seed=42)
     print(f"  tokens: {len(ids)}, range=[{min(ids)}, {max(ids)}]")
-    print(f"  recon shape: {recon.shape}, range=[{recon.min().item():.3f}, {recon.max().item():.3f}]")
+    print(
+        f"  recon shape: {recon.shape}, range=[{recon.min().item():.3f}, {recon.max().item():.3f}]"
+    )
 
     from taiji.multimodal.io import save_image
+
     img = recon if recon.dim() == 3 else recon[0]
     path = os.path.join(out_dir, "random.png")
     save_image(img, path)
@@ -112,6 +124,7 @@ def test_random_audio(cortex, hub):
     print(f"  recon shape: {recon.shape}")
 
     from taiji.multimodal.io import save_audio
+
     aud = recon if recon.dim() <= 1 else recon[0]
     path = os.path.join(out_dir, "random.wav")
     save_audio(aud, path, sample_rate=16000)
@@ -128,6 +141,7 @@ def test_random_video(cortex, hub):
     print(f"  recon shape: {recon.shape}")
 
     from taiji.multimodal.io import save_video
+
     vid = recon if recon.dim() == 4 else recon[0]
     # video decode 返回 [C, T, H, W]，save_video 需要 [T, C, H, W]
     if vid.dim() == 4 and vid.shape[0] == 3:
@@ -151,6 +165,7 @@ def test_imitation_image(cortex, hub):
     print(f"  recon shape: {recon.shape}")
 
     from taiji.multimodal.io import save_image
+
     img = recon if recon.dim() == 3 else recon[0]
     path = os.path.join(out_dir, "imitation.png")
     save_image(img, path)
@@ -176,12 +191,14 @@ def test_modalities_info(cortex):
             continue
         vocab = codec.vocab_size() if hasattr(codec, "vocab_size") else 0
         ckpt_path = ckpt_map.get(mod, "")
-        modalities.append({
-            "modality": mod,
-            "vocab_size": vocab,
-            "trained": os.path.isfile(ckpt_path),
-            "checkpoint": ckpt_path if os.path.isfile(ckpt_path) else None,
-        })
+        modalities.append(
+            {
+                "modality": mod,
+                "vocab_size": vocab,
+                "trained": os.path.isfile(ckpt_path),
+                "checkpoint": ckpt_path if os.path.isfile(ckpt_path) else None,
+            }
+        )
 
     print(f"  Modalities: {modalities}")
     assert len(modalities) == 3, f"expected 3 modalities, got {len(modalities)}"
@@ -203,8 +220,11 @@ def main():
 
     print("\n=== Step 1: assemble_cortex ===")
     from taiji.loader import assemble_cortex
+
     cortex, tokenizer, modules = assemble_cortex(
-        neurons_dir="data/neurons", device="cpu", max_rounds=2,
+        neurons_dir="data/neurons",
+        device="cpu",
+        max_rounds=2,
     )
     hub = modules.get("tokenizer_hub")
     assert hub is not None

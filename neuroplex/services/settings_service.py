@@ -4,6 +4,7 @@ This is a minimal stub that allows imports to succeed. Settings are
 kept in an in-process dict; the real implementation will persist them
 to disk and broadcast changes to subscribers.
 """
+
 import logging
 
 logger = logging.getLogger(__name__)

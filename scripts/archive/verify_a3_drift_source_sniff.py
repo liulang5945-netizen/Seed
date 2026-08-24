@@ -18,6 +18,7 @@
 
 约束：冻结 9 成员 production weights，不写 checkpoint，CPU 短跑（<60s）。
 """
+
 from __future__ import annotations
 
 import json
@@ -25,7 +26,9 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
@@ -35,8 +38,13 @@ np.random.seed(0)
 from neuroplex.loader import assemble_cortex  # noqa: E402
 from neuroplex.life.sleep_engine import SleepEngine, SleepConfig  # noqa: E402
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -82,15 +90,23 @@ def snapshot_stateful(cortex):
         for attr in ("dopamine", "serotonin", "norepinephrine"):
             v = getattr(nm, attr, None)
             if v is not None:
-                snap[f"neuromodulator.{attr}"] = float(v) if isinstance(v, float) else (
-                    float(v.item()) if hasattr(v, "item") else None)
+                snap[f"neuromodulator.{attr}"] = (
+                    float(v)
+                    if isinstance(v, float)
+                    else (float(v.item()) if hasattr(v, "item") else None)
+                )
     go = getattr(cortex, "gamma_oscillator", None) or getattr(cortex, "_gamma_oscillator", None)
     if go is not None:
         if hasattr(go, "phase"):
-            snap["gamma.phase"] = float(go.phase) if isinstance(go.phase, float) else (
-                float(go.phase.item()) if hasattr(go.phase, "item") else None)
+            snap["gamma.phase"] = (
+                float(go.phase)
+                if isinstance(go.phase, float)
+                else (float(go.phase.item()) if hasattr(go.phase, "item") else None)
+            )
         if hasattr(go, "step"):
-            snap["gamma.step"] = int(go.step) if not hasattr(go.step, "item") else int(go.step.item())
+            snap["gamma.step"] = (
+                int(go.step) if not hasattr(go.step, "item") else int(go.step.item())
+            )
     wm = getattr(cortex, "working_memory", None) or getattr(cortex, "_working_memory", None)
     if wm is not None:
         if hasattr(wm, "current"):
@@ -104,8 +120,11 @@ def snapshot_stateful(cortex):
         for attr in ("weight", "lr_mult"):
             v = getattr(mt, attr, None)
             if v is not None:
-                snap[f"maturity.{attr}"] = float(v) if isinstance(v, float) else (
-                    float(v.item()) if hasattr(v, "item") else None)
+                snap[f"maturity.{attr}"] = (
+                    float(v)
+                    if isinstance(v, float)
+                    else (float(v.item()) if hasattr(v, "item") else None)
+                )
     return snap
 
 
@@ -159,8 +178,7 @@ def main():
         wire_bio_modules=True,
         neuron_ids=DIALOGUE_IDS,
     )
-    target_ids = [nid for nid in cortex.neurons
-                  if nid.startswith("zh_") and "dialogue" in nid]
+    target_ids = [nid for nid in cortex.neurons if nid.startswith("zh_") and "dialogue" in nid]
     print(f"  装配神经元数 = {len(cortex.neurons)}，judge 目标 = {target_ids}", flush=True)
     for nid in cortex.neurons:
         cortex.neurons[nid].eval()
@@ -186,8 +204,11 @@ def main():
     all_prompts = [p for g in groups.values() for p in g]
 
     history = []
-    print(f"\n[2/4] 跑 {n_rounds} 轮 _sample_judge_nll（不调用 sleep phase，"
-          f"只在每轮采样前 restore 有状态组件）...", flush=True)
+    print(
+        f"\n[2/4] 跑 {n_rounds} 轮 _sample_judge_nll（不调用 sleep phase，"
+        f"只在每轮采样前 restore 有状态组件）...",
+        flush=True,
+    )
     for r in range(n_rounds):
         restore_stateful(cortex, initial_snap)
         snap_before = snapshot_stateful(cortex)
@@ -197,13 +218,15 @@ def main():
         per_neuron_round1 = {}
         for text in all_prompts:
             jnll = sleep_engine._sample_judge_nll(
-                text, target_ids, device, cortex._shared_embedding)
+                text, target_ids, device, cortex._shared_embedding
+            )
             nlls.append({"text": text, "judge_nll": jnll})
             if jnll is not None:
                 valid_nlls.append(jnll)
         snap_after = snapshot_stateful(cortex)
         round1 = sleep_engine._sample_judge_nll(
-            all_prompts[0], target_ids, device, cortex._shared_embedding)
+            all_prompts[0], target_ids, device, cortex._shared_embedding
+        )
         dt = time.time() - t1
         if valid_nlls:
             mean = float(np.mean(valid_nlls))
@@ -212,21 +235,31 @@ def main():
             mx = float(np.max(valid_nlls))
         else:
             mean = std = mn = mx = None
-        history.append({
-            "round": r,
-            "judge_nlls": nlls,
-            "mean": mean, "std": std, "min": mn, "max": mx,
-            "n_valid": len(valid_nlls),
-            "duration_sec": round(dt, 2),
-            "stateful_before": snap_before,
-            "stateful_after": snap_after,
-            "stateful_changed": {k: (snap_before.get(k), snap_after.get(k))
-                                 for k in snap_before
-                                 if snap_before.get(k) != snap_after.get(k)},
-        })
-        print(f"  [Round {r}] mean={mean} std={std} min={mn} max={mx} "
-              f"valid={len(valid_nlls)}/24 dt={dt:.1f}s "
-              f"changed={list(history[-1]['stateful_changed'].keys())}", flush=True)
+        history.append(
+            {
+                "round": r,
+                "judge_nlls": nlls,
+                "mean": mean,
+                "std": std,
+                "min": mn,
+                "max": mx,
+                "n_valid": len(valid_nlls),
+                "duration_sec": round(dt, 2),
+                "stateful_before": snap_before,
+                "stateful_after": snap_after,
+                "stateful_changed": {
+                    k: (snap_before.get(k), snap_after.get(k))
+                    for k in snap_before
+                    if snap_before.get(k) != snap_after.get(k)
+                },
+            }
+        )
+        print(
+            f"  [Round {r}] mean={mean} std={std} min={mn} max={mx} "
+            f"valid={len(valid_nlls)}/24 dt={dt:.1f}s "
+            f"changed={list(history[-1]['stateful_changed'].keys())}",
+            flush=True,
+        )
 
     print("\n[3/4] 分析漂移幅度（max|Δ mean|、单条 prompt 漂移）...", flush=True)
     means = [h["mean"] for h in history if h["mean"] is not None]
@@ -239,15 +272,20 @@ def main():
         baseline_mean = max_drift = max_drift_any = final_drift = None
     per_prompt_drifts = []
     for i, p in enumerate(all_prompts):
-        seq = [h["judge_nlls"][i]["judge_nll"] for h in history
-               if h["judge_nlls"][i]["judge_nll"] is not None]
+        seq = [
+            h["judge_nlls"][i]["judge_nll"]
+            for h in history
+            if h["judge_nlls"][i]["judge_nll"] is not None
+        ]
         if len(seq) >= 2:
-            per_prompt_drifts.append({
-                "text": p,
-                "n": len(seq),
-                "max_minus_min": float(max(seq) - min(seq)),
-                "std": float(np.std(seq)),
-            })
+            per_prompt_drifts.append(
+                {
+                    "text": p,
+                    "n": len(seq),
+                    "max_minus_min": float(max(seq) - min(seq)),
+                    "std": float(np.std(seq)),
+                }
+            )
     per_prompt_drifts.sort(key=lambda x: x["max_minus_min"], reverse=True)
     print(f"  baseline mean (round 0) = {baseline_mean}", flush=True)
     print(f"  final mean (round {n_rounds - 1}) = {means[-1] if means else None}", flush=True)

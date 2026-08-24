@@ -47,8 +47,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -100,8 +105,7 @@ def field_state_of(cortex, text: str) -> torch.Tensor:
     gids = cortex._general_sp.encode(text) or [0]
     ids = torch.tensor([gids], dtype=torch.long, device=cortex.device)
     emb = cortex._shared_embedding(ids)
-    res = cortex.think(emb, active_nids=None, fusion_mode="soft",
-                       collab_mode="continuous")
+    res = cortex.think(emb, active_nids=None, fusion_mode="soft", collab_mode="continuous")
     fs = res.get("field_state")
     if fs is None:
         raise RuntimeError("think() 未返回 field_state")
@@ -140,32 +144,35 @@ def main():
         for item in MEMORY_ITEMS:
             vec = field_state_of(cortex, item["text"])
             sleep_engine.record_field_memory(vec, item["label"])
-        check("已记录 4 条待固化场记忆",
-              len(sleep_engine.pending_field_memories) == len(MEMORY_ITEMS),
-              f"pending={len(sleep_engine.pending_field_memories)}")
+        check(
+            "已记录 4 条待固化场记忆",
+            len(sleep_engine.pending_field_memories) == len(MEMORY_ITEMS),
+            f"pending={len(sleep_engine.pending_field_memories)}",
+        )
 
         # ── 2. 睡眠固化（Phase 1.5，不触发训练）──
-        report = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
-                             duration_seconds=0)
+        report = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
         sleep_engine._sleep_phase_field_consolidation(report)
         bank = sleep_engine.get_field_memory()
         mem_path = os.path.join(tmp_dir, "field_memory.pt")
-        check("睡眠固化：4 条场记忆沉淀", report.field_memories_consolidated == 4
-              and len(bank) == 4,
-              f"consolidated={report.field_memories_consolidated}, bank={len(bank)}")
-        check("场记忆持久化到磁盘", os.path.exists(mem_path),
-              f"path={mem_path}")
+        check(
+            "睡眠固化：4 条场记忆沉淀",
+            report.field_memories_consolidated == 4 and len(bank) == 4,
+            f"consolidated={report.field_memories_consolidated}, bank={len(bank)}",
+        )
+        check("场记忆持久化到磁盘", os.path.exists(mem_path), f"path={mem_path}")
 
         # ── 3. 重复固化去重（突触稳态下调）──
         dup = sleep_engine.record_field_memory
         for item in MEMORY_ITEMS:
             dup(field_state_of(cortex, item["text"]), item["label"])
-        report2 = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
-                              duration_seconds=0)
+        report2 = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
         sleep_engine._sleep_phase_field_consolidation(report2)
-        check("重复固化被去重（只保留新模式）", report2.field_memories_consolidated == 0
-              and len(bank) == 4,
-              f"added={report2.field_memories_consolidated}, bank={len(bank)}")
+        check(
+            "重复固化被去重（只保留新模式）",
+            report2.field_memories_consolidated == 0 and len(bank) == 4,
+            f"added={report2.field_memories_consolidated}, bank={len(bank)}",
+        )
 
         # ── 4. 跨会话检索：query 场状态 → top-1 命中 ──
         print("\n[会话 2] 查询前向 → 场状态 → 记忆库检索 ...", flush=True)
@@ -178,8 +185,11 @@ def main():
             ok = got == item["label"]
             hit += 1 if ok else 0
             print(f"    query={item['query'][:14]}... → {got} (sim={sim:.3f})", flush=True)
-        check("跨会话检索 top-1 全部命中对应记忆", hit == len(MEMORY_ITEMS),
-              f"{hit}/{len(MEMORY_ITEMS)}")
+        check(
+            "跨会话检索 top-1 全部命中对应记忆",
+            hit == len(MEMORY_ITEMS),
+            f"{hit}/{len(MEMORY_ITEMS)}",
+        )
 
         # ── 5. 注入闭环：记忆标签进 prompt → 生成 ──
         # 两级断言：
@@ -196,29 +206,52 @@ def main():
             mem_out = fresh_generate(cortex, mem_prompt, max_tokens=48)
             inject_pipe += 1 if item["key"] in mem_prompt else 0
             changed += 1 if mem_out != base else 0
-            print(f"    {item['key']}: 注入改变={mem_out != base}, "
-                  f"对照={base[:32]!r}, 注入={mem_out[:32]!r}", flush=True)
-        check("注入管线：记忆正确流入生成输入", inject_pipe == len(MEMORY_ITEMS),
-              f"{inject_pipe}/{len(MEMORY_ITEMS)}")
-        check("注入生效：生成输出被记忆输入改变", changed >= 1,
-              f"{changed}/{len(MEMORY_ITEMS)} 与对照不同")
+            print(
+                f"    {item['key']}: 注入改变={mem_out != base}, "
+                f"对照={base[:32]!r}, 注入={mem_out[:32]!r}",
+                flush=True,
+            )
+        check(
+            "注入管线：记忆正确流入生成输入",
+            inject_pipe == len(MEMORY_ITEMS),
+            f"{inject_pipe}/{len(MEMORY_ITEMS)}",
+        )
+        check(
+            "注入生效：生成输出被记忆输入改变",
+            changed >= 1,
+            f"{changed}/{len(MEMORY_ITEMS)} 与对照不同",
+        )
 
         # ── 6. 重启恢复：新实例 load 后检索仍命中 ──
         from taiji.resonance.field_memory import FieldMemoryBank
+
         bank2 = FieldMemoryBank()
-        check("新实例从磁盘恢复场记忆库", bank2.load(mem_path) and len(bank2) == 4,
-              f"bank2={len(bank2)}")
-        top2 = bank2.retrieve(field_state_of(cortex, MEMORY_ITEMS[0]["query"]),
-                              top_k=1)
-        check("恢复后跨重启检索命中", bool(top2) and top2[0][0] == MEMORY_ITEMS[0]["label"],
-              f"top={top2[0][0] if top2 else None}")
+        check(
+            "新实例从磁盘恢复场记忆库",
+            bank2.load(mem_path) and len(bank2) == 4,
+            f"bank2={len(bank2)}",
+        )
+        top2 = bank2.retrieve(field_state_of(cortex, MEMORY_ITEMS[0]["query"]), top_k=1)
+        check(
+            "恢复后跨重启检索命中",
+            bool(top2) and top2[0][0] == MEMORY_ITEMS[0]["label"],
+            f"top={top2[0][0] if top2 else None}",
+        )
 
         # ── 7. sleep() 主流程已挂载 Phase 1.5（源码断言，避免触发训练）──
-        src = open(os.path.join(os.path.dirname(os.path.dirname(
-            os.path.dirname(os.path.abspath(__file__)))), "taiji", "life",
-            "sleep_engine.py"), encoding="utf-8").read()
-        check("sleep() 主流程含 Phase 1.5 场固化",
-              "field_consolidation" in src and "_sleep_phase_field_consolidation" in src)
+        src = open(
+            os.path.join(
+                os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+                "taiji",
+                "life",
+                "sleep_engine.py",
+            ),
+            encoding="utf-8",
+        ).read()
+        check(
+            "sleep() 主流程含 Phase 1.5 场固化",
+            "field_consolidation" in src and "_sleep_phase_field_consolidation" in src,
+        )
 
         print(f"\n[验证摘要] {tmp_dir}", flush=True)
         print(f"  场记忆库: {bank.status()}", flush=True)

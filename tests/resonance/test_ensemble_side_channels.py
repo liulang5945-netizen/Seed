@@ -24,9 +24,7 @@ def test_ensemble_passes_side_signals():
         "n0": torch.randn(B, T, 512),
         "n1": torch.randn(B, T, 512),
     }
-    result = ensemble.forward(
-        neuron_embeddings=emb, return_logits=True, fusion_mode="soft"
-    )
+    result = ensemble.forward(neuron_embeddings=emb, return_logits=True, fusion_mode="soft")
     assert "neuron_logits" in result or "weighted_logits" in result
 
 
@@ -53,6 +51,14 @@ def test_side_signals_affect_round2():
     result2 = ensemble2.forward(neuron_embeddings=emb, return_logits=True, fusion_mode="soft")
 
     # max_rounds=2 应该产生与 max_rounds=1 不同的 logits
-    logits1 = result1["weighted_logits"] if "weighted_logits" in result1 else result1["neuron_logits"]["n0"]
-    logits2 = result2["weighted_logits"] if "weighted_logits" in result2 else result2["neuron_logits"]["n0"]
+    logits1 = (
+        result1["weighted_logits"]
+        if "weighted_logits" in result1
+        else result1["neuron_logits"]["n0"]
+    )
+    logits2 = (
+        result2["weighted_logits"]
+        if "weighted_logits" in result2
+        else result2["neuron_logits"]["n0"]
+    )
     assert not torch.allclose(logits1, logits2, atol=1e-5)

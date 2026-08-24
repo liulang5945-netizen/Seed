@@ -10,13 +10,13 @@ import sys
 from typing import Dict, Mapping
 
 import torch
+import _verify_emit
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from taiji import Taiji, TaijiConfig
-
 
 CUES = tuple(ord(value) for value in "ABCDEFGH")
 ACTIONS = (ord("0"), ord("1"))
@@ -135,40 +135,47 @@ def _evaluate(
             int(recall.outcome_probabilities.argmax().item()) == expected_outcome
         )
         provenance_correct += int(
-            int(recall.provenance_probabilities.argmax().item())
-            == expected_provenance
+            int(recall.provenance_probabilities.argmax().item()) == expected_provenance
         )
 
-        episode_candidates = torch.stack([
-            model.memory._episode_code(str(candidate["episode_id"]))
-            for candidate in episodes.values()
-        ])
+        episode_candidates = torch.stack(
+            [
+                model.memory._episode_code(str(candidate["episode_id"]))
+                for candidate in episodes.values()
+            ]
+        )
         episode_scores = torch.nn.functional.cosine_similarity(
             recall.episode_code.unsqueeze(0), episode_candidates, dim=1
         )
         episode_prediction = int(episode_scores.argmax().item())
         episode_correct += int(episode_prediction == index)
         expected_time = model.memory._time_code(int(event["tick"]))
-        time_cosine = float(torch.nn.functional.cosine_similarity(
-            recall.time_code, expected_time, dim=0
-        ).item()) if recall.time_code.norm() > 0 else 0.0
+        time_cosine = (
+            float(
+                torch.nn.functional.cosine_similarity(recall.time_code, expected_time, dim=0).item()
+            )
+            if recall.time_code.norm() > 0
+            else 0.0
+        )
         time_cosines.append(time_cosine)
-        rows.append({
-            "cue": chr(cue),
-            "expected_action": chr(expected_action),
-            "action": chr(decision.action_symbol),
-            "expected_outcome": chr(expected_outcome),
-            "recalled_outcome": int(recall.outcome_probabilities.argmax().item()),
-            "expected_provenance": str(event["provenance"]),
-            "recalled_provenance": PROVENANCE[
-                int(recall.provenance_probabilities.argmax().item())
-            ],
-            "episode_prediction": episode_prediction,
-            "confidence": recall.confidence,
-            "expected_reward": recall.expected_reward,
-            "feedback_norm": float(recall.cortical_feedback.norm().item()),
-            "time_cosine": time_cosine,
-        })
+        rows.append(
+            {
+                "cue": chr(cue),
+                "expected_action": chr(expected_action),
+                "action": chr(decision.action_symbol),
+                "expected_outcome": chr(expected_outcome),
+                "recalled_outcome": int(recall.outcome_probabilities.argmax().item()),
+                "expected_provenance": str(event["provenance"]),
+                "recalled_provenance": PROVENANCE[
+                    int(recall.provenance_probabilities.argmax().item())
+                ],
+                "episode_prediction": episode_prediction,
+                "confidence": recall.confidence,
+                "expected_reward": recall.expected_reward,
+                "feedback_norm": float(recall.cortical_feedback.norm().item()),
+                "time_cosine": time_cosine,
+            }
+        )
     count = len(episodes)
     return {
         "action_accuracy": action_correct / count,
@@ -226,9 +233,7 @@ def _checkpoint_transaction_is_exact(
         and left.memory_write_strength > 0.0
         and all(
             torch.equal(a, b)
-            for a, b in zip(
-                original.parameter_tensors(), restored.parameter_tensors()
-            )
+            for a, b in zip(original.parameter_tensors(), restored.parameter_tensors())
         )
     )
 
@@ -243,9 +248,7 @@ def run_benchmark(*, seed: int = 23) -> Dict[str, object]:
     full = _evaluate(checkpoint, episodes, use_memory=True)
     trace_only = _evaluate(checkpoint, episodes, use_memory=False)
     recurrent_lesion_checkpoint = deepcopy(checkpoint)
-    recurrent_lesion_checkpoint["memory"]["association"][
-        "edge_weight"
-    ].zero_()
+    recurrent_lesion_checkpoint["memory"]["association"]["edge_weight"].zero_()
     recurrent_lesion = _evaluate(
         recurrent_lesion_checkpoint,
         episodes,
@@ -263,36 +266,27 @@ def run_benchmark(*, seed: int = 23) -> Dict[str, object]:
         set(vars(model.memory)) | set(model.memory.to_payload())
     )
     checks = {
-        "one_shot_action_recall_at_least_87_5pct": (
-            full["action_accuracy"] >= 0.875
-        ),
+        "one_shot_action_recall_at_least_87_5pct": (full["action_accuracy"] >= 0.875),
         "beats_equal_width_trace_only_by_37_5pp": (
             full["action_accuracy"] >= trace_only["action_accuracy"] + 0.375
         ),
         "recurrent_completion_is_causally_necessary": (
-            full["action_accuracy"]
-            >= recurrent_lesion["action_accuracy"] + 0.25
+            full["action_accuracy"] >= recurrent_lesion["action_accuracy"] + 0.25
         ),
         "recalls_outcome_and_provenance": (
-            full["outcome_accuracy"] >= 0.75
-            and full["provenance_accuracy"] >= 0.75
+            full["outcome_accuracy"] >= 0.75 and full["provenance_accuracy"] >= 0.75
         ),
         "recalls_time_and_episode_codes": (
-            full["mean_time_code_cosine"] >= 0.50
-            and full["episode_identity_accuracy"] >= 0.75
+            full["mean_time_code_cosine"] >= 0.50 and full["episode_identity_accuracy"] >= 0.75
         ),
-        "recalled_state_feeds_next_fabric_tick": _feedback_is_causal(
-            checkpoint, episodes
-        ),
+        "recalled_state_feeds_next_fabric_tick": _feedback_is_causal(checkpoint, episodes),
         "action_outcome_transaction_checkpoint_exact": (
             _checkpoint_transaction_is_exact(checkpoint)
         ),
         "fixed_topology_no_event_slots": (
             no_slots
             and model.memory.association.edge_count == edge_count_before
-            and torch.equal(
-                model.memory.association.pre_index, topology_before
-            )
+            and torch.equal(model.memory.association.pre_index, topology_before)
         ),
     }
     return {
@@ -329,8 +323,7 @@ def run_benchmark(*, seed: int = 23) -> Dict[str, object]:
                 full["action_accuracy"] - trace_only["action_accuracy"]
             ),
             "action_gain_over_recurrent_lesion": (
-                full["action_accuracy"]
-                - recurrent_lesion["action_accuracy"]
+                full["action_accuracy"] - recurrent_lesion["action_accuracy"]
             ),
         },
         "checks": checks,
@@ -349,7 +342,7 @@ def main() -> int:
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(rendered + "\n", encoding="utf-8")
-    return 0 if report["status"] == "pass" else 1
+    return _verify_emit.emit_and_exit("taiji_m5_episodic_field", report)
 
 
 if __name__ == "__main__":

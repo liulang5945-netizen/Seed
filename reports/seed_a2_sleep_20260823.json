@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-23 03:34:46",
+  "timestamp": "2026-08-23 14:43:57",
   "task": "A2 原生版：仅自我评估驱动的巩固",
   "checkpoint": "E:\\Seed\\checkpoints\\seed_corpus.pt",
   "targets": 6,
@@ -8,11 +8,11 @@
     "texts": 6.0,
     "cycles": 48.0,
     "accepted": 48.0,
-    "mean_priority": 0.21693582853989954,
-    "mean_confidence": 0.6565595276843189,
-    "mean_error_norm": 1.762622914174884
+    "mean_priority": 0.21833997309130324,
+    "mean_confidence": 0.6644647956046216,
+    "mean_error_norm": 1.759429941733995
   },
-  "parameter_delta": 1522.631027251482,
+  "parameter_delta": 1523.1194450110197,
   "baseline": {
     "dialogue": {
       "mean": -3.0717781019496213,
@@ -29,24 +29,24 @@
   },
   "after": {
     "dialogue": {
-      "mean": -2.991129930282527,
-      "std": 0.18867241751589506
+      "mean": -2.9912362458233193,
+      "std": 0.1887015695880728
     },
     "knowledge": {
-      "mean": -3.184111850767586,
-      "std": 0.2736309935371036
+      "mean": -3.18404345136743,
+      "std": 0.2736849419123852
     },
     "unfamiliar": {
-      "mean": -3.273452555512633,
-      "std": 0.17480500056699183
+      "mean": -3.2732646048100515,
+      "std": 0.17499654980829604
     }
   },
   "group_deltas": {
-    "dialogue": 0.08064817166709437,
-    "knowledge": 0.10064518867791294,
-    "unfamiliar": 0.20561408402069192
+    "dialogue": 0.08054185612630205,
+    "knowledge": 0.10071358807806874,
+    "unfamiliar": 0.2058020347232734
   },
-  "overall_delta": 0.1289691481219002,
+  "overall_delta": 0.12901915964254806,
   "criteria": {
     "finite": true,
     "no_regression": true,
@@ -54,5 +54,5 @@
     "consolidation_real": true
   },
   "a2_pass": true,
-  "elapsed_seconds": 147.2559974193573
+  "elapsed_seconds": 216.97797513008118
 }

@@ -19,13 +19,23 @@ from .field import ResonanceField
 from .neuron import ResonanceNeuron
 from .ensemble import ResonanceEnsemble
 from .config import (
-    NeuronConfig, MICRO, COMPACT, STANDARD, FOUNDATION, EXPERT, TINY_TEST,
-    DEFAULT_NEURON_SPEC, get_default_neuron_config,
-    DOMAIN_VOCAB_SIZES, GENERAL_TOKENIZER_DOMAIN, get_domain_neuron_config,
+    NeuronConfig,
+    MICRO,
+    COMPACT,
+    STANDARD,
+    FOUNDATION,
+    EXPERT,
+    TINY_TEST,
+    DEFAULT_NEURON_SPEC,
+    get_default_neuron_config,
+    DOMAIN_VOCAB_SIZES,
+    GENERAL_TOKENIZER_DOMAIN,
+    get_domain_neuron_config,
 )
 from .translator import (
     TokenizerHub,
-    build_position_alignment, batch_align_and_embed,
+    build_position_alignment,
+    batch_align_and_embed,
 )
 from .lifecycle import LifecycleManager, ApoptosisTracker, MaturityTracker, NeurogenesisTrigger
 from .stdp import STDPTracker, STDPRule, FiringRecord
@@ -34,8 +44,11 @@ from .gamma_oscillator import GammaOscillator, apply_gamma_gate
 from .phasor import PhasorDynamics
 from .geometry import NeuronGeometry
 from .topology import (
-    build_topology, establish_topology_channels,
-    infer_topology_from_state, topology_summary, topology_detail,
+    build_topology,
+    establish_topology_channels,
+    infer_topology_from_state,
+    topology_summary,
+    topology_detail,
 )
 
 __all__ = [
@@ -44,7 +57,10 @@ __all__ = [
     "ResonanceNeuron",
     "ResonanceEnsemble",
     "NeuronConfig",
-    "MICRO", "COMPACT", "STANDARD", "FOUNDATION",
+    "MICRO",
+    "COMPACT",
+    "STANDARD",
+    "FOUNDATION",
     "EXPERT",
     "TINY_TEST",
     "DEFAULT_NEURON_SPEC",
@@ -62,14 +78,22 @@ __all__ = [
     "MaturityTracker",
     "NeurogenesisTrigger",
     # STDP
-    "STDPTracker", "STDPRule", "FiringRecord",
+    "STDPTracker",
+    "STDPRule",
+    "FiringRecord",
     # 神经调质
-    "NeuromodulatorState", "SleepConsolidator",
+    "NeuromodulatorState",
+    "SleepConsolidator",
     # Gamma 同步
-    "GammaOscillator", "apply_gamma_gate", "PhasorDynamics",
+    "GammaOscillator",
+    "apply_gamma_gate",
+    "PhasorDynamics",
     # RSGN 几何
     "NeuronGeometry",
     # S7 拓扑
-    "build_topology", "establish_topology_channels",
-    "infer_topology_from_state", "topology_summary", "topology_detail",
+    "build_topology",
+    "establish_topology_channels",
+    "infer_topology_from_state",
+    "topology_summary",
+    "topology_detail",
 ]

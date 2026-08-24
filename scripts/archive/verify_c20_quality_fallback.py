@@ -5,6 +5,7 @@
 _executive_route 回退到 quality z-score（C25-G 修复后可用），不崩溃、判定合理。
 对比：正常模式（judge NLL 判定）vs 回退模式（mock judge 失效）。
 """
+
 import os
 import sys
 
@@ -26,8 +27,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -69,8 +75,11 @@ def main():
         d, _, _ = cortex._executive_route(prompt)
         dom_normal[tag] = d
         print(f"  {tag} → {d}", flush=True)
-    check("正常模式判定 5/5", dom_normal == {"code": "code", "math": "math", "zh": "zh",
-                                             "dialogue": "zh", "en": "en"}, f"→ {dom_normal}")
+    check(
+        "正常模式判定 5/5",
+        dom_normal == {"code": "code", "math": "math", "zh": "zh", "dialogue": "zh", "en": "en"},
+        f"→ {dom_normal}",
+    )
 
     print("\n[2] 回退模式（mock judge 失效 → quality proxy）", flush=True)
     real_think = cortex.think
@@ -93,8 +102,11 @@ def main():
         check("回退模式不崩溃（5 域全判定）", len(dom_fb) == 5, f"→ {dom_fb}")
         agree = sum(1 for k in dom_normal if dom_fb.get(k) == dom_normal[k])
         print(f"  [INFO] 回退与正常判定一致 {agree}/5", flush=True)
-        check("回退判定均为合法域", all(d in ("zh", "en", "code", "math")
-                                          for d in dom_fb.values()), f"→ {set(dom_fb.values())}")
+        check(
+            "回退判定均为合法域",
+            all(d in ("zh", "en", "code", "math") for d in dom_fb.values()),
+            f"→ {set(dom_fb.values())}",
+        )
     except Exception as e:
         check("回退模式不崩溃", False, f"err={type(e).__name__}: {e}")
     finally:

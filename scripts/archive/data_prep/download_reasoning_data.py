@@ -3,10 +3,12 @@
 ====================
 补充推理数学和知识问答数据
 """
+
 import os
 import json
 import requests
 import time
+
 
 def download_file(url, output_path, max_retries=3):
     """下载文件"""
@@ -16,7 +18,7 @@ def download_file(url, output_path, max_retries=3):
             response = requests.get(url, timeout=300)
             response.raise_for_status()
 
-            with open(output_path, 'wb') as f:
+            with open(output_path, "wb") as f:
                 f.write(response.content)
 
             print(f"  下载完成: {len(response.content) / (1024*1024):.1f} MB")
@@ -28,6 +30,7 @@ def download_file(url, output_path, max_retries=3):
                 time.sleep(5)
 
     return False
+
 
 def main():
     print("=" * 60)
@@ -83,8 +86,10 @@ def main():
 
         try:
             if ds["format"] == "gsm8k":
-                with open(temp_file, encoding="utf-8") as f_in, \
-                     open(output_file, "w", encoding="utf-8") as f_out:
+                with (
+                    open(temp_file, encoding="utf-8") as f_in,
+                    open(output_file, "w", encoding="utf-8") as f_out,
+                ):
                     for line in f_in:
                         try:
                             item = json.loads(line)
@@ -103,19 +108,26 @@ def main():
                                 full_answer = answer
 
                             messages = [
-                                {"role": "system", "content": "你是态极，一个擅长数学推理的AI助手。"},
+                                {
+                                    "role": "system",
+                                    "content": "你是态极，一个擅长数学推理的AI助手。",
+                                },
                                 {"role": "user", "content": question},
-                                {"role": "assistant", "content": full_answer}
+                                {"role": "assistant", "content": full_answer},
                             ]
 
-                            f_out.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
+                            f_out.write(
+                                json.dumps({"messages": messages}, ensure_ascii=False) + "\n"
+                            )
                             count += 1
                         except json.JSONDecodeError:
                             continue
 
             elif ds["format"] == "dolly":
-                with open(temp_file, encoding="utf-8") as f_in, \
-                     open(output_file, "w", encoding="utf-8") as f_out:
+                with (
+                    open(temp_file, encoding="utf-8") as f_in,
+                    open(output_file, "w", encoding="utf-8") as f_out,
+                ):
                     for line in f_in:
                         try:
                             item = json.loads(line)
@@ -133,10 +145,12 @@ def main():
                             messages = [
                                 {"role": "system", "content": "你是态极，一个知识渊博的AI助手。"},
                                 {"role": "user", "content": user_content},
-                                {"role": "assistant", "content": response}
+                                {"role": "assistant", "content": response},
                             ]
 
-                            f_out.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
+                            f_out.write(
+                                json.dumps({"messages": messages}, ensure_ascii=False) + "\n"
+                            )
                             count += 1
                         except json.JSONDecodeError:
                             continue
@@ -159,12 +173,20 @@ def main():
                                 answer_text = answers[0].get("text", "")
 
                                 messages = [
-                                    {"role": "system", "content": "你是态极，一个擅长阅读理解的AI助手。"},
-                                    {"role": "user", "content": f"阅读以下文本并回答问题：\n\n{context}\n\n问题：{question}"},
-                                    {"role": "assistant", "content": answer_text}
+                                    {
+                                        "role": "system",
+                                        "content": "你是态极，一个擅长阅读理解的AI助手。",
+                                    },
+                                    {
+                                        "role": "user",
+                                        "content": f"阅读以下文本并回答问题：\n\n{context}\n\n问题：{question}",
+                                    },
+                                    {"role": "assistant", "content": answer_text},
                                 ]
 
-                                f.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
+                                f.write(
+                                    json.dumps({"messages": messages}, ensure_ascii=False) + "\n"
+                                )
                                 count += 1
 
                                 if count >= ds.get("max_samples", 999999):
@@ -188,6 +210,7 @@ def main():
     print("=" * 60)
     print(f"下载完成！总计: {total_count:,} 条")
     print("=" * 60)
+
 
 if __name__ == "__main__":
     main()

@@ -16,13 +16,12 @@
 核心哲学：
 态极不能改自己的权重，但可以设计更好的自己。
 """
+
 import os
 import json
-import time
 import logging
-import hashlib
 from datetime import datetime
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional
 from dataclasses import dataclass, field, asdict
 
 logger = logging.getLogger("RecursiveImprover")
@@ -31,26 +30,28 @@ logger = logging.getLogger("RecursiveImprover")
 @dataclass
 class StrategyRecord:
     """一次策略使用记录"""
-    strategy_type: str      # "prompt" | "tool_choice" | "reflection" | "planning"
-    strategy_content: str   # 策略内容
-    task: str               # 任务描述
-    success: bool           # 是否成功
-    quality_score: float    # 质量评分 0-1
+
+    strategy_type: str  # "prompt" | "tool_choice" | "reflection" | "planning"
+    strategy_content: str  # 策略内容
+    task: str  # 任务描述
+    success: bool  # 是否成功
+    quality_score: float  # 质量评分 0-1
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
 
 
 @dataclass
 class ImprovementProposal:
     """一次改进提案"""
-    proposal_type: str      # "prompt" | "tool" | "reflection" | "architecture"
-    description: str        # 改进描述
-    old_value: str          # 旧值
-    new_value: str          # 新值
-    confidence: float       # 置信度 0-1
-    evidence_count: int     # 支持证据数量
+
+    proposal_type: str  # "prompt" | "tool" | "reflection" | "architecture"
+    description: str  # 改进描述
+    old_value: str  # 旧值
+    new_value: str  # 新值
+    confidence: float  # 置信度 0-1
+    evidence_count: int  # 支持证据数量
     # 神经元架构扩展：标记是否需要新建神经元 + 目标域
-    needs_new_neuron: bool = False   # 是否需要 neurogenesis 创建新神经元
-    target_domain: str = ""          # 目标域（zh/en/code/math/general）
+    needs_new_neuron: bool = False  # 是否需要 neurogenesis 创建新神经元
+    target_domain: str = ""  # 目标域（zh/en/code/math/general）
 
 
 class RecursiveImprover:
@@ -65,6 +66,7 @@ class RecursiveImprover:
         if data_dir is None:
             try:
                 from neuroplex.config import get_taiji_data_path
+
                 data_dir = get_taiji_data_path("improvement_data")
             except ImportError:
                 data_dir = "taiji_data/improvement_data"
@@ -91,8 +93,14 @@ class RecursiveImprover:
 
     # ─── 策略记录 ─────────────────────────────────────
 
-    def record_strategy(self, strategy_type: str, strategy_content: str,
-                       task: str, success: bool, quality_score: float):
+    def record_strategy(
+        self,
+        strategy_type: str,
+        strategy_content: str,
+        task: str,
+        success: bool,
+        quality_score: float,
+    ):
         """记录一次策略使用（推理时由 chat_strategies 等调用方喂数据）"""
         record = StrategyRecord(
             strategy_type=strategy_type,
@@ -131,8 +139,10 @@ class RecursiveImprover:
                 self._apply_improvement(p)
                 self._improvements.append(p)
 
-        logger.info(f"Generated {len(proposals)} improvement proposals, "
-                    f"{len([p for p in proposals if p.confidence >= 0.7])} applied")
+        logger.info(
+            f"Generated {len(proposals)} improvement proposals, "
+            f"{len([p for p in proposals if p.confidence >= 0.7])} applied"
+        )
         return proposals
 
     def _analyze_prompt_strategies(self) -> List[ImprovementProposal]:
@@ -153,18 +163,18 @@ class RecursiveImprover:
             low_patterns = self._extract_patterns([r.strategy_content for r in low_quality])
 
             # 高分独有模式（过滤超长整句/噪声：中文无空格分词时整句会成为单个"词"）
-            unique_patterns = {
-                p for p in (high_patterns - low_patterns) if len(p) <= 80
-            }
+            unique_patterns = {p for p in (high_patterns - low_patterns) if len(p) <= 80}
             if unique_patterns:
-                proposals.append(ImprovementProposal(
-                    proposal_type="prompt",
-                    description=f"发现 {len(unique_patterns)} 个高效 prompt 模式",
-                    old_value=self._best_strategies.get("system_prompt", ""),
-                    new_value=f"建议加入: {', '.join(list(unique_patterns)[:3])}",
-                    confidence=min(len(high_quality) / 10, 1.0),
-                    evidence_count=len(high_quality),
-                ))
+                proposals.append(
+                    ImprovementProposal(
+                        proposal_type="prompt",
+                        description=f"发现 {len(unique_patterns)} 个高效 prompt 模式",
+                        old_value=self._best_strategies.get("system_prompt", ""),
+                        new_value=f"建议加入: {', '.join(list(unique_patterns)[:3])}",
+                        confidence=min(len(high_quality) / 10, 1.0),
+                        evidence_count=len(high_quality),
+                    )
+                )
 
         return proposals
 
@@ -191,17 +201,19 @@ class RecursiveImprover:
         for tool, stats in tool_stats.items():
             if stats["total"] >= 3:
                 success_rate = stats["success"] / stats["total"]
-                avg_quality = stats["quality_sum"] / stats["total"]
+                stats["quality_sum"] / stats["total"]
 
                 if success_rate < 0.3:
-                    proposals.append(ImprovementProposal(
-                        proposal_type="tool",
-                        description=f"工具 {tool} 成功率仅 {success_rate:.0%}",
-                        old_value=f"当前使用频率: {stats['total']}次",
-                        new_value="建议降低优先级或寻找替代工具",
-                        confidence=0.8,
-                        evidence_count=stats["total"],
-                    ))
+                    proposals.append(
+                        ImprovementProposal(
+                            proposal_type="tool",
+                            description=f"工具 {tool} 成功率仅 {success_rate:.0%}",
+                            old_value=f"当前使用频率: {stats['total']}次",
+                            new_value="建议降低优先级或寻找替代工具",
+                            confidence=0.8,
+                            evidence_count=stats["total"],
+                        )
+                    )
 
         return proposals
 
@@ -217,14 +229,16 @@ class RecursiveImprover:
         # 简化实现：检查反思后的任务成功率是否更高
         success_after_reflection = [r for r in reflection_records if r.success]
         if len(success_after_reflection) < len(reflection_records) * 0.5:
-            proposals.append(ImprovementProposal(
-                proposal_type="reflection",
-                description="反思后的行为改善率不足 50%",
-                old_value="当前反思模板",
-                new_value="建议：增加具体行动步骤，减少泛泛而谈",
-                confidence=0.7,
-                evidence_count=len(reflection_records),
-            ))
+            proposals.append(
+                ImprovementProposal(
+                    proposal_type="reflection",
+                    description="反思后的行为改善率不足 50%",
+                    old_value="当前反思模板",
+                    new_value="建议：增加具体行动步骤，减少泛泛而谈",
+                    confidence=0.7,
+                    evidence_count=len(reflection_records),
+                )
+            )
 
         return proposals
 
@@ -260,8 +274,8 @@ class RecursiveImprover:
                     try:
                         data = json.loads(line.strip())
                         self._strategy_records.append(StrategyRecord(**data))
-                    except (json.JSONDecodeError, TypeError, ValueError):
-                        pass
+                    except (json.JSONDecodeError, TypeError, ValueError) as e:
+                        logger.debug("【RecursiveImprover._load_records】处理失败（非致命）: %s", e)
 
     def _ensure_data_dir(self):
         """延迟创建数据目录（只在首次写入时创建）"""

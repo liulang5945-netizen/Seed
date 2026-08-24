@@ -6,6 +6,7 @@ The script first runs the short micro dialogue pilot, then assembles the real
 the same active-neuron set. No checkpoint or default loader configuration is
 modified.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -19,14 +20,15 @@ import random
 import sys
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 
 from neuroplex.core.model_loader import DEFAULT_NEURON_IDS
 from neuroplex.loader import assemble_cortex
 from scripts.archive.diagnostics.diag_micro_dialogue_pilot import run as run_micro_pilot
-
 
 PROMPTS = [
     "问：你好，请介绍一下自己\n答：",
@@ -41,7 +43,7 @@ DEFAULT_PILOT_STEPS = 160
 
 def _surface_metrics(text: str) -> dict:
     chars = list(text)
-    bigrams = ["".join(chars[i:i + 2]) for i in range(max(0, len(chars) - 1))]
+    bigrams = ["".join(chars[i : i + 2]) for i in range(max(0, len(chars) - 1))]
     repeated = len(bigrams) - len(set(bigrams))
     return {
         "chars": len(chars),

@@ -8,6 +8,7 @@ checkpoint；比较训练前后的 answer loss、首 token NLL、rank 和 Top-1�
 运行：
     python -X utf8 -u scripts/training/diag_dialogue_micro_overfit.py
 """
+
 from __future__ import annotations
 
 import gc
@@ -17,7 +18,9 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -34,7 +37,6 @@ from scripts.training.utils import (
     load_general_tokenizer,
     split_train_eval,
 )
-
 
 NEURON_ID = "zh_aug0_dialogue"
 MAX_TEXTS = 100000
@@ -85,7 +87,7 @@ def _first_token_metrics(logits, texts, domain_sp, general_sp) -> dict:
     top1 = 0
     for row_index, text in enumerate(texts):
         marker = text.find(SFT_ANSWER_MARKER)
-        prompt = text[:marker + len(SFT_ANSWER_MARKER)]
+        prompt = text[: marker + len(SFT_ANSWER_MARKER)]
         general_ids, targets = build_position_alignment(text, domain_sp, general_sp)
         answer_start = len(general_sp.encode(prompt))
         target_id = int(targets[answer_start])
@@ -145,8 +147,10 @@ def main() -> None:
         "samples": [
             {
                 "eval_index": index,
-                "question": text[:text.find(SFT_ANSWER_MARKER)],
-                "answer_preview": text[text.find(SFT_ANSWER_MARKER) + len(SFT_ANSWER_MARKER):][:60],
+                "question": text[: text.find(SFT_ANSWER_MARKER)],
+                "answer_preview": text[text.find(SFT_ANSWER_MARKER) + len(SFT_ANSWER_MARKER) :][
+                    :60
+                ],
             }
             for index, text in selected
         ],

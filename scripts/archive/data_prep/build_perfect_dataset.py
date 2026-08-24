@@ -7,6 +7,7 @@
 4. 验证质量
 5. 输出最终报告
 """
+
 import os
 import json
 import requests
@@ -132,14 +133,16 @@ def analyze_existing_data(file_path):
 
                 # 检测语言
                 user_msg = next((m["content"] for m in messages if m.get("role") == "user"), "")
-                if any('一' <= c <= '鿿' for c in user_msg):
+                if any("一" <= c <= "鿿" for c in user_msg):
                     stats["languages"]["中文"] += 1
                 else:
                     stats["languages"]["英文"] += 1
 
                 # 检测类别
                 content = " ".join(m.get("content", "") for m in messages)
-                if any(kw in content.lower() for kw in ["代码", "code", "python", "javascript", "编程"]):
+                if any(
+                    kw in content.lower() for kw in ["代码", "code", "python", "javascript", "编程"]
+                ):
                     stats["categories"]["代码编程"] += 1
                 elif any(kw in content.lower() for kw in ["计算", "数学", "math", "推理"]):
                     stats["categories"]["推理数学"] += 1
@@ -249,13 +252,17 @@ def convert_dataset(temp_file, output_file, format_type, max_samples=None):
                         user_content += "\n" + input_text
 
                     # 判断是否中文
-                    is_chinese = any('一' <= c <= '鿿' for c in instruction)
-                    system_prompt = "你是态极，一个有帮助的AI助手。" if is_chinese else "You are Taiji, a helpful AI assistant."
+                    is_chinese = any("一" <= c <= "鿿" for c in instruction)
+                    system_prompt = (
+                        "你是态极，一个有帮助的AI助手。"
+                        if is_chinese
+                        else "You are Taiji, a helpful AI assistant."
+                    )
 
                     messages = [
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_content},
-                        {"role": "assistant", "content": output_text}
+                        {"role": "assistant", "content": output_text},
                     ]
 
                     f.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
@@ -283,7 +290,7 @@ def convert_dataset(temp_file, output_file, format_type, max_samples=None):
                         messages = [
                             {"role": "system", "content": "你是态极，一个有帮助的AI助手。"},
                             {"role": "user", "content": user_content},
-                            {"role": "assistant", "content": response}
+                            {"role": "assistant", "content": response},
                         ]
 
                         f.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
@@ -312,7 +319,7 @@ def convert_dataset(temp_file, output_file, format_type, max_samples=None):
                         messages = [
                             {"role": "system", "content": "You are Taiji, a helpful AI assistant."},
                             {"role": "user", "content": "Tell me something interesting."},
-                            {"role": "assistant", "content": text}
+                            {"role": "assistant", "content": text},
                         ]
 
                         f.write(json.dumps({"messages": messages}, ensure_ascii=False) + "\n")
@@ -377,7 +384,9 @@ def validate_quality(file_path):
 
                 # 检查回声模式
                 user_msg = next((m["content"] for m in messages if m.get("role") == "user"), "")
-                assistant_msg = next((m["content"] for m in messages if m.get("role") == "assistant"), "")
+                assistant_msg = next(
+                    (m["content"] for m in messages if m.get("role") == "assistant"), ""
+                )
                 if user_msg and assistant_msg and user_msg == assistant_msg:
                     issues["echo_pattern"] += 1
 

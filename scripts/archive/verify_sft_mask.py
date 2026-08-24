@@ -9,6 +9,7 @@
 6. 截断处理：max_seq_len 截断后 sft_mask 仍正确
 7. 无分隔符文本：整个文本视为 answer（全 True）
 """
+
 from __future__ import annotations
 
 import os
@@ -20,7 +21,11 @@ import torch
 import torch.nn as nn
 
 from taiji.resonance.translator import batch_align_and_embed
-from scripts.training.utils import load_domain_tokenizer, load_general_tokenizer, create_shared_embedding
+from scripts.training.utils import (
+    load_domain_tokenizer,
+    load_general_tokenizer,
+    create_shared_embedding,
+)
 from scripts.training.experiment_config import SFT_ANSWER_MARKER
 
 
@@ -54,7 +59,10 @@ def test_sft_mask_basic():
     texts = [text]
 
     shared_emb_out, targets, mask, sft_mask = batch_align_and_embed(
-        texts, domain_sp, general_sp, shared_emb,
+        texts,
+        domain_sp,
+        general_sp,
+        shared_emb,
         answer_marker=SFT_ANSWER_MARKER,
     )
 
@@ -73,7 +81,7 @@ def test_sft_mask_basic():
 
     # 检查 answer 起始位置：用 general_sp encode prefix_with_marker
     marker_idx = text.find(SFT_ANSWER_MARKER)
-    prefix_with_marker = text[:marker_idx + len(SFT_ANSWER_MARKER)]
+    prefix_with_marker = text[: marker_idx + len(SFT_ANSWER_MARKER)]
     prefix_ids = general_sp.encode(prefix_with_marker)
     expected_start = len(prefix_ids)
     print(f"  expected answer start: {expected_start}")
@@ -102,7 +110,10 @@ def test_sft_mask_batch():
     ]
 
     shared_emb_out, targets, mask, sft_mask = batch_align_and_embed(
-        texts, domain_sp, general_sp, shared_emb,
+        texts,
+        domain_sp,
+        general_sp,
+        shared_emb,
         answer_marker=SFT_ANSWER_MARKER,
     )
 
@@ -138,7 +149,10 @@ def test_sft_mask_truncation():
     texts = [text]
 
     _, _, mask, sft_mask = batch_align_and_embed(
-        texts, domain_sp, general_sp, shared_emb,
+        texts,
+        domain_sp,
+        general_sp,
+        shared_emb,
         max_seq_len=20,
         answer_marker=SFT_ANSWER_MARKER,
     )
@@ -168,7 +182,10 @@ def test_sft_mask_no_marker():
     texts = [text]
 
     _, _, mask, sft_mask = batch_align_and_embed(
-        texts, domain_sp, general_sp, shared_emb,
+        texts,
+        domain_sp,
+        general_sp,
+        shared_emb,
         answer_marker=SFT_ANSWER_MARKER,
     )
 
@@ -204,6 +221,7 @@ def main():
         except Exception as e:
             print(f"  ❌ {test.__name__} 失败: {e}")
             import traceback
+
             traceback.print_exc()
             failed += 1
 

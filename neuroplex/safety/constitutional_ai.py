@@ -14,10 +14,11 @@
   4. 完整性：不要遗漏关键信息
   5. 诚实性：不知道就说不知道
 """
+
 import re
 import logging
 from typing import Optional, Dict, List, Tuple
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 logger = logging.getLogger("Taiji.ConstitutionalAI")
 
@@ -25,6 +26,7 @@ logger = logging.getLogger("Taiji.ConstitutionalAI")
 @dataclass
 class Principle:
     """宪法原则"""
+
     name: str
     description: str
     check_fn: callable  # (response, context) -> (violation: bool, reason: str)
@@ -34,6 +36,7 @@ class Principle:
 @dataclass
 class CritiqueResult:
     """批评结果"""
+
     passed: bool  # 是否通过所有检查
     violations: List[Dict]  # 违规列表
     revised_response: Optional[str] = None  # 修正后的回答
@@ -131,14 +134,17 @@ class ConstitutionalAI:
             try:
                 violation, reason = principle.check_fn(response, context or {})
                 if violation:
-                    violations.append({
-                        "principle": principle.name,
-                        "severity": principle.severity,
-                        "reason": reason,
-                    })
+                    violations.append(
+                        {
+                            "principle": principle.name,
+                            "severity": principle.severity,
+                            "reason": reason,
+                        }
+                    )
                     # 统计
-                    self._violation_stats[principle.name] = \
+                    self._violation_stats[principle.name] = (
                         self._violation_stats.get(principle.name, 0) + 1
+                    )
             except Exception as e:
                 logger.debug(f"原则 {principle.name} 检查异常: {e}")
 
@@ -173,15 +179,15 @@ class ConstitutionalAI:
             if principle == "no_fake_success":
                 # 去掉假装成功的部分
                 revised = re.sub(
-                    r'已(成功|完成|创建|修改|删除).*?[。\n]',
-                    '操作未能确认成功，请检查结果。',
+                    r"已(成功|完成|创建|修改|删除).*?[。\n]",
+                    "操作未能确认成功，请检查结果。",
                     revised,
                     count=1,
                 )
 
             if principle == "no_truncation":
                 # 如果回答被截断，添加提示
-                if not revised.rstrip().endswith(('。', '！', '？', '）', '`', '"', "'")):
+                if not revised.rstrip().endswith(("。", "！", "？", "）", "`", '"', "'")):
                     revised = revised.rstrip() + "...\n\n（回答可能不完整，请告诉我是否需要继续）"
 
         return revised
@@ -193,9 +199,18 @@ class ConstitutionalAI:
         task = context.get("task", "").lower()
 
         illegal_keywords = [
-            "黑进", "入侵", "破解密码", "ddos", "攻击系统",
-            "hack", "crack", "exploit", "bypass auth",
-            "制造病毒", "写木马", "窃取数据",
+            "黑进",
+            "入侵",
+            "破解密码",
+            "ddos",
+            "攻击系统",
+            "hack",
+            "crack",
+            "exploit",
+            "bypass auth",
+            "制造病毒",
+            "写木马",
+            "窃取数据",
         ]
 
         # 检查任务是否涉及非法行为
@@ -211,11 +226,11 @@ class ConstitutionalAI:
     def _check_harmful_content(self, response: str, context: dict) -> Tuple[bool, str]:
         """检查是否包含有害内容"""
         harmful_patterns = [
-            (r'rm\s+-rf\s+/', "包含删除根目录的命令"),
-            (r'format\s+[a-zA-Z]:', "包含格式化磁盘的命令"),
-            (r'del\s+/[sS]\s+/[qQ]\s+[a-zA-Z]:', "包含删除磁盘文件的命令"),
-            (r':(){ :\|:& };:', "包含 fork 炸弹"),
-            (r'shutdown\s+-[hHrR]\s+now', "包含立即关机命令"),
+            (r"rm\s+-rf\s+/", "包含删除根目录的命令"),
+            (r"format\s+[a-zA-Z]:", "包含格式化磁盘的命令"),
+            (r"del\s+/[sS]\s+/[qQ]\s+[a-zA-Z]:", "包含删除磁盘文件的命令"),
+            (r":(){ :\|:& };:", "包含 fork 炸弹"),
+            (r"shutdown\s+-[hHrR]\s+now", "包含立即关机命令"),
         ]
 
         for pattern, reason in harmful_patterns:
@@ -230,7 +245,15 @@ class ConstitutionalAI:
 
         # 如果工具返回了错误，但回答说成功了
         if observation:
-            error_indicators = ["error", "Error", "错误", "失败", "failed", "Traceback", "Exception"]
+            error_indicators = [
+                "error",
+                "Error",
+                "错误",
+                "失败",
+                "failed",
+                "Traceback",
+                "Exception",
+            ]
             has_error = any(e in observation for e in error_indicators)
 
             success_claims = ["成功", "已完成", "已创建", "已修改", "已删除", "successfully"]
@@ -259,9 +282,9 @@ class ConstitutionalAI:
 
         # 简单问题可以简短回答
         simple_patterns = [
-            r'^(什么是|是什么|怎么|如何|为什么|解释)',
-            r'^(你好|hi|hello)',
-            r'^\d+\s*[\+\-\*\/]\s*\d+',  # 算术
+            r"^(什么是|是什么|怎么|如何|为什么|解释)",
+            r"^(你好|hi|hello)",
+            r"^\d+\s*[\+\-\*\/]\s*\d+",  # 算术
         ]
         is_simple = any(re.match(p, task, re.IGNORECASE) for p in simple_patterns)
 
@@ -279,12 +302,12 @@ class ConstitutionalAI:
         task = context.get("task", "")
 
         # 如果是"怎么做"类问题
-        how_to_patterns = [r'怎么', r'如何', r'怎样', r'方法', r'步骤']
+        how_to_patterns = [r"怎么", r"如何", r"怎样", r"方法", r"步骤"]
         is_how_to = any(re.search(p, task) for p in how_to_patterns)
 
         if is_how_to:
             # 回答应该包含具体步骤或代码
-            has_steps = any(s in response for s in ['1.', '2.', '步骤', '首先', '然后', '```'])
+            has_steps = any(s in response for s in ["1.", "2.", "步骤", "首先", "然后", "```"])
             if not has_steps and len(response) > 50:
                 return True, "问题要求方法/步骤，但回答缺少具体步骤"
 
@@ -296,14 +319,14 @@ class ConstitutionalAI:
             return False, ""
 
         # 检查是否在句子中间截断
-        last_char = response.rstrip()[-1] if response.rstrip() else ''
-        incomplete_endings = ['，', '、', '：', '（', '的', '是', '在', '有', '和', '与']
+        last_char = response.rstrip()[-1] if response.rstrip() else ""
+        incomplete_endings = ["，", "、", "：", "（", "的", "是", "在", "有", "和", "与"]
 
         if last_char in incomplete_endings:
             return True, f"回答在不完整的位置截断（以 '{last_char}' 结尾）"
 
         # 检查代码块是否未关闭
-        code_block_count = response.count('```')
+        code_block_count = response.count("```")
         if code_block_count % 2 != 0:
             return True, "代码块未正确关闭（``` 数量为奇数）"
 
@@ -326,9 +349,7 @@ class ConstitutionalAI:
         return {
             "total_critiques": self._critique_count,
             "violation_stats": self._violation_stats.copy(),
-            "violation_rate": (
-                sum(self._violation_stats.values()) / max(self._critique_count, 1)
-            ),
+            "violation_rate": (sum(self._violation_stats.values()) / max(self._critique_count, 1)),
         }
 
 

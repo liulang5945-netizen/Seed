@@ -11,7 +11,6 @@ from typing import Any
 
 import sentencepiece as spm
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 TRAINING_DIR = PROJECT_ROOT / "taiji_data" / "training_data"
 PRETRAIN_MIX_DIR = TRAINING_DIR / "pretrain_mix_v1"
@@ -90,7 +89,9 @@ def extract_text(record: dict[str, Any]) -> str:
     return json.dumps(record, ensure_ascii=False)
 
 
-def sample_token_ratio(path: Path, sp: spm.SentencePieceProcessor, sample_size: int = 1000) -> dict[str, float]:
+def sample_token_ratio(
+    path: Path, sp: spm.SentencePieceProcessor, sample_size: int = 1000
+) -> dict[str, float]:
     with path.open("r", encoding="utf-8", errors="ignore") as handle:
         lines = [line.strip() for line in handle if line.strip()]
     if not lines:
@@ -182,7 +183,9 @@ def build_gap_summary(mix: dict[str, Any], multimodal: dict[str, Any]) -> dict[s
     return {
         "base_token_gap_min": max(0, TOKEN_GOALS["base_min"] - total_tokens),
         "base_token_gap_recommended": max(0, TOKEN_GOALS["base_recommended"] - total_tokens),
-        "english_token_gap_recommended": max(0, TOKEN_GOALS["english_recommended"] - english_tokens),
+        "english_token_gap_recommended": max(
+            0, TOKEN_GOALS["english_recommended"] - english_tokens
+        ),
         "multimodal_pair_gap_min": max(0, TOKEN_GOALS["multimodal_pairs_min"] - multimodal_pairs),
     }
 

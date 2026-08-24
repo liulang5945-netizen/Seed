@@ -8,6 +8,7 @@
 5. finetune_cross_spec.py 有 --field_warmup_ratio 参数
 6. warm-up 逻辑正确（前 N 步关闭，后启用）
 """
+
 from __future__ import annotations
 
 import os
@@ -58,7 +59,9 @@ def test_backward_compat():
     result_default = ens.forward_train(shared_embeddings=shared_emb, n_rounds=2)
     # 显式传 True
     ens2 = _make_ensemble()
-    result_true = ens2.forward_train(shared_embeddings=shared_emb, n_rounds=2, field_conditioning=True)
+    result_true = ens2.forward_train(
+        shared_embeddings=shared_emb, n_rounds=2, field_conditioning=True
+    )
     # 两者应相同（field_state 注入一致）
     if "fused_logits" in result_default and "fused_logits" in result_true:
         diff = (result_default["fused_logits"] - result_true["fused_logits"]).abs().max().item()
@@ -72,8 +75,12 @@ def test_field_conditioning_false():
     ens_true = _make_ensemble()
     ens_false = _make_ensemble()
     shared_emb = torch.randn(2, 8, 512)
-    result_true = ens_true.forward_train(shared_embeddings=shared_emb, n_rounds=2, field_conditioning=True)
-    result_false = ens_false.forward_train(shared_embeddings=shared_emb, n_rounds=2, field_conditioning=False)
+    result_true = ens_true.forward_train(
+        shared_embeddings=shared_emb, n_rounds=2, field_conditioning=True
+    )
+    result_false = ens_false.forward_train(
+        shared_embeddings=shared_emb, n_rounds=2, field_conditioning=False
+    )
     # 两者应不同（field_state 注入 vs 不注入）
     if "fused_logits" in result_true and "fused_logits" in result_false:
         diff = (result_true["fused_logits"] - result_false["fused_logits"]).abs().max().item()
@@ -89,7 +96,9 @@ def test_field_state_maintained():
     ens = _make_ensemble()
     shared_emb = torch.randn(2, 8, 512)
     # warm-up 阶段：field_conditioning=False
-    result_warmup = ens.forward_train(shared_embeddings=shared_emb, n_rounds=2, field_conditioning=False)
+    result_warmup = ens.forward_train(
+        shared_embeddings=shared_emb, n_rounds=2, field_conditioning=False
+    )
     # field_state 应仍存在（累积了 round 1+2 的写入）
     assert "field_state" in result_warmup, "应返回 field_state"
     field_state_warmup = result_warmup["field_state"]
@@ -106,7 +115,9 @@ def test_finetune_has_warmup_arg():
     # 通过检查源码包含参数定义
     spec_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "scripts", "training", "finetune_cross_spec.py",
+        "scripts",
+        "training",
+        "finetune_cross_spec.py",
     )
     with open(spec_path, "r", encoding="utf-8") as f:
         source = f.read()

@@ -3,6 +3,7 @@
 ====================
 将所有高质量数据合并为面向未来的地基
 """
+
 import os
 import json
 import random
@@ -12,63 +13,107 @@ from collections import Counter
 DATA_SOURCES = [
     # === 原始清洗数据 ===
     {"file": "taiji_data/training_data/pretrain_cleaned.jsonl", "weight": 1.0, "category": "基础"},
-
     # === 中文数据 ===
     {"file": "taiji_data/training_data/alpaca_zh_51k.jsonl", "weight": 2.0, "category": "中文"},
     {"file": "taiji_data/training_data/alpaca_zh.jsonl", "weight": 2.0, "category": "中文"},
     {"file": "taiji_data/training_data/alpaca中文版.jsonl", "weight": 2.0, "category": "中文"},
-
     # === 英文指令数据 ===
     {"file": "taiji_data/training_data/alpaca_en.jsonl", "weight": 1.5, "category": "英文"},
     {"file": "taiji_data/training_data/dolly_15k.jsonl", "weight": 1.5, "category": "知识"},
-
     # === 代码数据 ===
     {"file": "taiji_data/training_data/code_alpaca.jsonl", "weight": 2.0, "category": "代码"},
     {"file": "taiji_data/training_data/code_alpaca_20k.jsonl", "weight": 2.0, "category": "代码"},
-
     # === 工具调用数据 ===
     {"file": "taiji_data/training_data/react_data.jsonl", "weight": 2.0, "category": "工具"},
     {"file": "taiji_data/training_data/taiji_react_data.jsonl", "weight": 2.0, "category": "工具"},
-
     # === 对话数据 ===
-    {"file": "taiji_data/training_data/taiji_conversation_data.jsonl", "weight": 1.5, "category": "对话"},
+    {
+        "file": "taiji_data/training_data/taiji_conversation_data.jsonl",
+        "weight": 1.5,
+        "category": "对话",
+    },
     {"file": "taiji_data/training_data/conversation_data.jsonl", "weight": 1.0, "category": "对话"},
-
     # === 生命体数据 ===
-    {"file": "taiji_data/training_data/lifeform/state_awareness.jsonl", "weight": 3.0, "category": "生命体"},
-    {"file": "taiji_data/training_data/lifeform/temporal_memory.jsonl", "weight": 3.0, "category": "生命体"},
-    {"file": "taiji_data/training_data/lifeform/proactive_interaction.jsonl", "weight": 3.0, "category": "生命体"},
-    {"file": "taiji_data/training_data/lifeform/boundary_refusal.jsonl", "weight": 3.0, "category": "生命体"},
-    {"file": "taiji_data/training_data/lifeform/ambiguity_clarification.jsonl", "weight": 3.0, "category": "生命体"},
-    {"file": "taiji_data/training_data/lifeform/emotional_empathy.jsonl", "weight": 3.0, "category": "生命体"},
-    {"file": "taiji_data/training_data/lifeform/memory_forgetting.jsonl", "weight": 3.0, "category": "生命体"},
-    {"file": "taiji_data/training_data/lifeform/tool_failure_recovery.jsonl", "weight": 3.0, "category": "生命体"},
-
+    {
+        "file": "taiji_data/training_data/lifeform/state_awareness.jsonl",
+        "weight": 3.0,
+        "category": "生命体",
+    },
+    {
+        "file": "taiji_data/training_data/lifeform/temporal_memory.jsonl",
+        "weight": 3.0,
+        "category": "生命体",
+    },
+    {
+        "file": "taiji_data/training_data/lifeform/proactive_interaction.jsonl",
+        "weight": 3.0,
+        "category": "生命体",
+    },
+    {
+        "file": "taiji_data/training_data/lifeform/boundary_refusal.jsonl",
+        "weight": 3.0,
+        "category": "生命体",
+    },
+    {
+        "file": "taiji_data/training_data/lifeform/ambiguity_clarification.jsonl",
+        "weight": 3.0,
+        "category": "生命体",
+    },
+    {
+        "file": "taiji_data/training_data/lifeform/emotional_empathy.jsonl",
+        "weight": 3.0,
+        "category": "生命体",
+    },
+    {
+        "file": "taiji_data/training_data/lifeform/memory_forgetting.jsonl",
+        "weight": 3.0,
+        "category": "生命体",
+    },
+    {
+        "file": "taiji_data/training_data/lifeform/tool_failure_recovery.jsonl",
+        "weight": 3.0,
+        "category": "生命体",
+    },
     # === 专项能力数据 ===
-    {"file": "taiji_data/training_data/final_error_recovery.jsonl", "weight": 2.0, "category": "专项"},
+    {
+        "file": "taiji_data/training_data/final_error_recovery.jsonl",
+        "weight": 2.0,
+        "category": "专项",
+    },
     {"file": "taiji_data/training_data/final_language.jsonl", "weight": 1.5, "category": "专项"},
     {"file": "taiji_data/training_data/final_memory.jsonl", "weight": 2.0, "category": "专项"},
     {"file": "taiji_data/training_data/final_perception.jsonl", "weight": 1.5, "category": "专项"},
     {"file": "taiji_data/training_data/final_planning.jsonl", "weight": 2.0, "category": "专项"},
     {"file": "taiji_data/training_data/final_safety.jsonl", "weight": 2.0, "category": "专项"},
     {"file": "taiji_data/training_data/final_tools.jsonl", "weight": 2.0, "category": "专项"},
-
     # === 高质量数据 ===
     {"file": "taiji_data/training_data/hq_conversation.jsonl", "weight": 3.0, "category": "高质量"},
-    {"file": "taiji_data/training_data/hq_error_recovery.jsonl", "weight": 3.0, "category": "高质量"},
+    {
+        "file": "taiji_data/training_data/hq_error_recovery.jsonl",
+        "weight": 3.0,
+        "category": "高质量",
+    },
     {"file": "taiji_data/training_data/hq_memory.jsonl", "weight": 3.0, "category": "高质量"},
     {"file": "taiji_data/training_data/hq_react.jsonl", "weight": 3.0, "category": "高质量"},
     {"file": "taiji_data/training_data/hq_safety.jsonl", "weight": 3.0, "category": "高质量"},
-
     # === 补强数据 ===
     {"file": "taiji_data/training_data/gap_complex_tasks.jsonl", "weight": 2.0, "category": "补强"},
-    {"file": "taiji_data/training_data/gap_error_recovery.jsonl", "weight": 2.0, "category": "补强"},
+    {
+        "file": "taiji_data/training_data/gap_error_recovery.jsonl",
+        "weight": 2.0,
+        "category": "补强",
+    },
     {"file": "taiji_data/training_data/gap_memory_usage.jsonl", "weight": 2.0, "category": "补强"},
     {"file": "taiji_data/training_data/gap_multimodal.jsonl", "weight": 1.5, "category": "补强"},
-    {"file": "taiji_data/training_data/gap_safety_refusal.jsonl", "weight": 2.0, "category": "补强"},
+    {
+        "file": "taiji_data/training_data/gap_safety_refusal.jsonl",
+        "weight": 2.0,
+        "category": "补强",
+    },
 ]
 
 OUTPUT_FILE = "taiji_data/training_data/pretrain_final.jsonl"
+
 
 def load_jsonl(file_path):
     """加载 JSONL 文件"""
@@ -85,6 +130,7 @@ def load_jsonl(file_path):
                 except json.JSONDecodeError:
                     continue
     return data
+
 
 def validate_item(item):
     """验证单条数据质量"""
@@ -107,6 +153,7 @@ def validate_item(item):
         return False
 
     return True
+
 
 def main():
     print("=" * 60)
@@ -142,13 +189,15 @@ def main():
 
         print(f"{len(valid_data):,} 条 (权重: {weight})")
 
-        file_stats.append({
-            "file": os.path.basename(file_path),
-            "original": len(data),
-            "valid": len(valid_data),
-            "weight": weight,
-            "category": category,
-        })
+        file_stats.append(
+            {
+                "file": os.path.basename(file_path),
+                "original": len(data),
+                "valid": len(valid_data),
+                "weight": weight,
+                "category": category,
+            }
+        )
 
     # 打乱顺序
     print(f"\n  打乱数据顺序...")
@@ -176,7 +225,7 @@ def main():
     english_count = 0
     for item in all_data[:10000]:  # 抽样检测
         user_content = next((m["content"] for m in item["messages"] if m.get("role") == "user"), "")
-        if any('一' <= c <= '鿿' for c in user_content):
+        if any("一" <= c <= "鿿" for c in user_content):
             chinese_count += 1
         else:
             english_count += 1
@@ -208,6 +257,7 @@ def main():
     print("=" * 60)
     print("[DONE] 面向未来的地基构建完成！")
     print("=" * 60)
+
 
 if __name__ == "__main__":
     main()

@@ -73,12 +73,17 @@ def _report(tag: str, logits: torch.Tensor, norms: torch.Tensor, pairs) -> None:
             f"{'*' if col == target else ' '}{float(logits[row, col]):+.5f}"
             for col in range(logits.shape[1])
         )
-        print(f"   '{chr(action)}'->'{chr(pairs[action])}' {cells}   |trace|={float(norms[row]):.4f}")
+        print(
+            f"   '{chr(action)}'->'{chr(pairs[action])}' {cells}   |trace|={float(norms[row]):.4f}"
+        )
     spread = float(logits.max() - logits.min())
     print(f"  logit spread across the whole matrix = {spread:.5f}")
-    print(f"  column means (per-outcome row bias)  = "
-          + "  ".join(f"{chr(OUTCOMES[c])}:{float(logits[:, c].mean()):+.5f}"
-                      for c in range(logits.shape[1])))
+    print(
+        f"  column means (per-outcome row bias)  = "
+        + "  ".join(
+            f"{chr(OUTCOMES[c])}:{float(logits[:, c].mean()):+.5f}" for c in range(logits.shape[1])
+        )
+    )
 
     # Every one of the four outcome bytes is read out of the SAME decoder row
     # across all four probe actions, so that row's column mean is its response
@@ -94,8 +99,10 @@ def _report(tag: str, logits: torch.Tensor, norms: torch.Tensor, pairs) -> None:
         target = OUTCOMES.index(pairs[action])
         raw_hits += int(int(logits[row].argmax()) == target)
         centred_hits += int(int(centred[row].argmax()) == target)
-    print(f"  argmax accuracy: raw={raw_hits}/{len(actions)}"
-          f"   column-centred={centred_hits}/{len(actions)}")
+    print(
+        f"  argmax accuracy: raw={raw_hits}/{len(actions)}"
+        f"   column-centred={centred_hits}/{len(actions)}"
+    )
 
 
 def _arbitrate(checkpoint, before, pairs, *, cycles: int, arm: str) -> int:
@@ -126,9 +133,7 @@ def _arbitrate(checkpoint, before, pairs, *, cycles: int, arm: str) -> int:
     for row, action in enumerate(actions):
         target = OUTCOMES.index(pairs[action])
         true_move = float(delta[row, target])
-        rival_move = float(
-            torch.cat([delta[row, :target], delta[row, target + 1 :]]).max()
-        )
+        rival_move = float(torch.cat([delta[row, :target], delta[row, target + 1 :]]).max())
         won = true_move > rival_move
         wins += int(won)
         print(
@@ -191,8 +196,7 @@ def main() -> None:
     before, norms_before = _logit_matrix(checkpoint, pairs)
     _report(f"seed={seed} BEFORE sleep", before, norms_before, pairs)
 
-    tally = {arm: _arbitrate(checkpoint, before, pairs, cycles=cycles, arm=arm)
-             for arm in ARMS}
+    tally = {arm: _arbitrate(checkpoint, before, pairs, cycles=cycles, arm=arm) for arm in ARMS}
     print(f"\nseed={seed} {cycles} cycles -- TRUE-cell wins by arm")
     for arm in ARMS:
         print(f"   {arm:<20} {tally[arm]}/{len(pairs)}")

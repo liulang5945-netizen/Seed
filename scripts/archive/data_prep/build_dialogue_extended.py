@@ -14,12 +14,15 @@
 用法：
   python scripts/training/build_dialogue_extended.py [--max-samples 150000]
 """
+
 import argparse
 import json
 import os
 import sys
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 sys.path.insert(0, PROJECT_ROOT)
 
 from scripts.archive.data_prep.clean_dialogue_data import is_dirty  # noqa: E402
@@ -95,8 +98,11 @@ def build(max_samples: int) -> None:
             dropped[reason if reason == "code" else "en"] += 1
             continue
         kept.append(t)
-    print(f"  清洗: {len(new_texts)} → {len(kept)} 条 "
-          f"(过滤 代码={dropped['code']} 英文密集={dropped['en']})", flush=True)
+    print(
+        f"  清洗: {len(new_texts)} → {len(kept)} 条 "
+        f"(过滤 代码={dropped['code']} 英文密集={dropped['en']})",
+        flush=True,
+    )
 
     # 4. 输出
     with open(OUT_PATH, "w", encoding="utf-8") as f:
@@ -109,7 +115,10 @@ def build(max_samples: int) -> None:
     for t in kept[:5]:
         print(f"  --- {t[:100]!r}", flush=True)
 
-    print(f"\n  合计（现有 + 新增）: {len(existing)} + {len(kept)} = {len(existing) + len(kept)} 条", flush=True)
+    print(
+        f"\n  合计（现有 + 新增）: {len(existing)} + {len(kept)} = {len(existing) + len(kept)} 条",
+        flush=True,
+    )
 
 
 if __name__ == "__main__":

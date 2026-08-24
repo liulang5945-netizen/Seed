@@ -23,6 +23,7 @@
 
 运行：python -u scripts/training/verify_play_engine_b1_bis_explore.py
 """
+
 from __future__ import annotations
 
 import json
@@ -31,7 +32,9 @@ import random
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
@@ -44,11 +47,16 @@ from neuroplex.life.sleep_engine import SleepEngine, SleepConfig, SleepReport  #
 from neuroplex.resonance.neuro_modulation import SleepConsolidator  # noqa: E402
 
 from scripts.archive.verify_a1_judge_signal_real import (  # noqa: E402
-    DIALOGUE_IDS, COLLAB_NAME, EXTRA_NEURONS_DIR,
-    DIALOGUE_PROMPTS, KNOWLEDGE_PROMPTS, UNFAMILIAR_PROMPTS,
+    DIALOGUE_IDS,
+    COLLAB_NAME,
+    EXTRA_NEURONS_DIR,
+    DIALOGUE_PROMPTS,
+    KNOWLEDGE_PROMPTS,
+    UNFAMILIAR_PROMPTS,
 )
 from scripts.archive.verify_a3_with_decay import (  # noqa: E402
-    field_state_of, lora_l2_norm,
+    field_state_of,
+    lora_l2_norm,
 )
 from scripts.archive.verify_a4_post_sleep_judge_signal import (  # noqa: E402
     measure_group_stds,
@@ -80,11 +88,15 @@ def main():
     today = time.strftime("%Y%m%d")
     n_decisions = N_MICRO // DECISION_EVERY
     print("=" * 64, flush=True)
-    print(f"自举门槛 B1-bis 探索：{N_MICRO} 次 micro-sleep + {n_decisions} 次自主选主题",
-          flush=True)
-    print(f"  3 个探索机制: ε-greedy {EPSILON*100:.0f}% + "
-          f"force_switch streak={FORCE_SWITCH_STREAK} + "
-          f"recency_bonus={RECENCY_BONUS}", flush=True)
+    print(
+        f"自举门槛 B1-bis 探索：{N_MICRO} 次 micro-sleep + {n_decisions} 次自主选主题", flush=True
+    )
+    print(
+        f"  3 个探索机制: ε-greedy {EPSILON*100:.0f}% + "
+        f"force_switch streak={FORCE_SWITCH_STREAK} + "
+        f"recency_bonus={RECENCY_BONUS}",
+        flush=True,
+    )
     print("=" * 64, flush=True)
 
     print("\n[1/5] 装配 9 成员 production cortex（冻结，不写 checkpoint）...", flush=True)
@@ -97,8 +109,7 @@ def main():
         wire_bio_modules=True,
         neuron_ids=DIALOGUE_IDS,
     )
-    target_ids = [nid for nid in cortex.neurons
-                  if nid.startswith("zh_") and "dialogue" in nid]
+    target_ids = [nid for nid in cortex.neurons if nid.startswith("zh_") and "dialogue" in nid]
     print(f"  装配 {len(cortex.neurons)} 神经元，judge 目标 = {target_ids}", flush=True)
 
     tmp_data = os.path.join("data", "_tmp_b1bis")
@@ -122,26 +133,38 @@ def main():
         vec = field_state_of(cortex, text)
         sleep_engine.record_field_memory(vec, f"a1_{i}", text=text)
         sc.record_high_resonance_state(
-            field_state=vec, resonance_score=0.9, step=0,
-            active_nids=target_ids, threshold=0.5, text=text)
+            field_state=vec,
+            resonance_score=0.9,
+            step=0,
+            active_nids=target_ids,
+            threshold=0.5,
+            text=text,
+        )
     for tname, prompts in TOPIC_POOLS.items():
         for i, text in enumerate(prompts):
             vec = field_state_of(cortex, text)
             sleep_engine.record_field_memory(vec, f"{tname}_{i}", text=text)
             sc.record_high_resonance_state(
-                field_state=vec, resonance_score=0.85, step=0,
-                active_nids=target_ids, threshold=0.5, text=text)
+                field_state=vec,
+                resonance_score=0.85,
+                step=0,
+                active_nids=target_ids,
+                threshold=0.5,
+                text=text,
+            )
     r_init = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
     sleep_engine._sleep_phase_field_consolidation(r_init)
     print(f"  注入 168 条 + 场固化 {r_init.field_memories_consolidated} 条", flush=True)
 
-    print(f"\n[3/5] 跑 {N_MICRO} 次 micro-sleep（每 {DECISION_EVERY} 步一次自主选主题）...",
-          flush=True)
+    print(
+        f"\n[3/5] 跑 {N_MICRO} 次 micro-sleep（每 {DECISION_EVERY} 步一次自主选主题）...",
+        flush=True,
+    )
     device = next(cortex._shared_embedding.parameters()).device
     decision_log = []
     selected_counts = {tname: 0 for tname in TOPIC_POOLS}
     n_crashes = 0
-    last_selected_at = {tname: -10**9 for tname in TOPIC_POOLS}
+    last_selected_at = {tname: -(10**9) for tname in TOPIC_POOLS}
     last_chosen_topic = None
     current_streak = 0
     switch_count = 0
@@ -161,7 +184,8 @@ def main():
                 nlls = []
                 for text in sample_prompts:
                     jnll = sleep_engine._sample_judge_nll(
-                        text, target_ids, device, cortex._shared_embedding)
+                        text, target_ids, device, cortex._shared_embedding
+                    )
                     if jnll is not None and jnll < 1e6:
                         nlls.append(jnll)
                 nll_per_pool[tname] = float(np.mean(nlls)) if nlls else 0.0
@@ -174,8 +198,7 @@ def main():
             sorted_pools = sorted(nll_with_bonus.items(), key=lambda x: -x[1])
             top1_topic = sorted_pools[0][0]
 
-            force_switch = (last_chosen_topic == top1_topic
-                            and current_streak >= FORCE_SWITCH_STREAK)
+            force_switch = last_chosen_topic == top1_topic and current_streak >= FORCE_SWITCH_STREAK
             epsilon_roll = random.random() < EPSILON
             if force_switch or epsilon_roll:
                 other_topics = [t for t in nll_with_bonus if t != top1_topic]
@@ -204,31 +227,41 @@ def main():
                 current_streak = 0
             last_chosen_topic = chosen_topic
 
-            decision_log.append({
-                "decision_idx": decision_idx,
-                "step": step,
-                "nll_per_pool": nll_per_pool,
-                "nll_with_bonus": nll_with_bonus,
-                "top1_topic": top1_topic,
-                "chosen_topic": chosen_topic,
-                "mechanism": mechanism,
-                "current_streak": current_streak,
-            })
+            decision_log.append(
+                {
+                    "decision_idx": decision_idx,
+                    "step": step,
+                    "nll_per_pool": nll_per_pool,
+                    "nll_with_bonus": nll_with_bonus,
+                    "top1_topic": top1_topic,
+                    "chosen_topic": chosen_topic,
+                    "mechanism": mechanism,
+                    "current_streak": current_streak,
+                }
+            )
 
             for j, text in enumerate(TOPIC_POOLS[chosen_topic]):
                 vec = field_state_of(cortex, text)
                 sleep_engine.record_field_memory(
-                    vec, f"b1bis_step{step}_{chosen_topic}_{j}", text=text)
+                    vec, f"b1bis_step{step}_{chosen_topic}_{j}", text=text
+                )
                 sc.record_high_resonance_state(
-                    field_state=vec, resonance_score=0.9, step=step,
-                    active_nids=target_ids, threshold=0.5, text=text)
+                    field_state=vec,
+                    resonance_score=0.9,
+                    step=step,
+                    active_nids=target_ids,
+                    threshold=0.5,
+                    text=text,
+                )
 
             top_conc_so_far = max(selected_counts.values()) / max(1, decision_idx + 1)
-            print(f"  decision {decision_idx:2d}  step {step:4d}  "
-                  f"top1={top1_topic:12s}  chose={chosen_topic:12s}  "
-                  f"mech={mechanism:14s}  streak={current_streak:2d}  "
-                  f"top_conc={top_conc_so_far*100:.1f}%  switches={switch_count}",
-                  flush=True)
+            print(
+                f"  decision {decision_idx:2d}  step {step:4d}  "
+                f"top1={top1_topic:12s}  chose={chosen_topic:12s}  "
+                f"mech={mechanism:14s}  streak={current_streak:2d}  "
+                f"top_conc={top_conc_so_far*100:.1f}%  switches={switch_count}",
+                flush=True,
+            )
 
         report = SleepReport(
             timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -241,8 +274,7 @@ def main():
                 sleep_engine._sleep_phase_forward_replay(report)
         except Exception as e:
             n_crashes += 1
-            print(f"  [WARN] micro-sleep {step} 异常: {type(e).__name__}: {e}",
-                  flush=True)
+            print(f"  [WARN] micro-sleep {step} 异常: {type(e).__name__}: {e}", flush=True)
             if n_crashes > 5:
                 check(f"micro-sleep {step} 不崩溃", False, f"crashes={n_crashes}")
                 break
@@ -252,8 +284,9 @@ def main():
     print(f"\n[4/5] 决策统计：{len(decision_log)} 次决策", flush=True)
     for tname in TOPIC_POOLS:
         cnt = selected_counts[tname]
-        print(f"  {tname:12s}: 选中 {cnt:2d} 次 ({100*cnt/max(1,len(decision_log)):.1f}%)",
-              flush=True)
+        print(
+            f"  {tname:12s}: 选中 {cnt:2d} 次 ({100*cnt/max(1,len(decision_log)):.1f}%)", flush=True
+        )
 
     n_decisions_done = len(decision_log)
     distinct_topics_selected = len(distinct_topics_seen)
@@ -276,45 +309,53 @@ def main():
     print("=" * 64, flush=True)
 
     b1a = distinct_topics_selected >= 5
-    check(f"B1-bis.a distinct 主题数 ≥ 5（探索 ≥ 5 个不同主题）",
-          b1a,
-          f"distinct={distinct_topics_selected}/{len(TOPIC_POOLS)}")
+    check(
+        f"B1-bis.a distinct 主题数 ≥ 5（探索 ≥ 5 个不同主题）",
+        b1a,
+        f"distinct={distinct_topics_selected}/{len(TOPIC_POOLS)}",
+    )
 
     b1b = top_concentration <= 0.70
-    check(f"B1-bis.b top 主题 ≤ 70%（不锁定）",
-          b1b,
-          f"{top_topic[0]}={top_concentration*100:.1f}%")
+    check(f"B1-bis.b top 主题 ≤ 70%（不锁定）", b1b, f"{top_topic[0]}={top_concentration*100:.1f}%")
 
     b1c = n_crashes == 0
-    check(f"B1-bis.c 0 崩溃 / 0 NaN",
-          b1c,
-          f"crashes={n_crashes}/{N_MICRO}")
+    check(f"B1-bis.c 0 崩溃 / 0 NaN", b1c, f"crashes={n_crashes}/{N_MICRO}")
 
     elapsed_min = (time.time() - t0) / 60
     b1d = elapsed_min <= 60
-    check(f"B1-bis.d 1000 步 ≤ 60 min",
-          b1d,
-          f"elapsed={elapsed_min:.1f} min")
+    check(f"B1-bis.d 1000 步 ≤ 60 min", b1d, f"elapsed={elapsed_min:.1f} min")
 
-    b1bis_pass = (failed == 0)
+    b1bis_pass = failed == 0
     if b1bis_pass:
-        verdict = (f"B1-bis PASS：{n_decisions_done} 次决策覆盖 {distinct_topics_selected} 主题，"
-                   f"switch_count={switch_count}，top 主题 {top_concentration*100:.1f}% ≤ 70%，"
-                   f"epsilon_used={epsilon_used} + force_used={force_used}，"
-                   f"0 崩溃，{elapsed_min:.1f} min ≤ 60 min")
-        next_step = ("B1-bis 通过。下一步：B2 —— play 引擎常态运行下，"
-                     "它能不能在不被喂新经验时仍维持 100 步无遗忘（autonomous 续航）。")
+        verdict = (
+            f"B1-bis PASS：{n_decisions_done} 次决策覆盖 {distinct_topics_selected} 主题，"
+            f"switch_count={switch_count}，top 主题 {top_concentration*100:.1f}% ≤ 70%，"
+            f"epsilon_used={epsilon_used} + force_used={force_used}，"
+            f"0 崩溃，{elapsed_min:.1f} min ≤ 60 min"
+        )
+        next_step = (
+            "B1-bis 通过。下一步：B2 —— play 引擎常态运行下，"
+            "它能不能在不被喂新经验时仍维持 100 步无遗忘（autonomous 续航）。"
+        )
     else:
         if not b1a:
-            verdict = (f"B1-bis 半 PASS：distinct {distinct_topics_selected} < 5 — "
-                       f"探索机制 3 个不够强，需加大 ε=0.20 或 recency_bonus=1.0")
-            next_step = ("B1-bis 失败：distinct < 5。需加大 ε=0.20 / 减小 force_streak=3 / "
-                         "加大 recency_bonus=1.0，让更多主题被选中。")
+            verdict = (
+                f"B1-bis 半 PASS：distinct {distinct_topics_selected} < 5 — "
+                f"探索机制 3 个不够强，需加大 ε=0.20 或 recency_bonus=1.0"
+            )
+            next_step = (
+                "B1-bis 失败：distinct < 5。需加大 ε=0.20 / 减小 force_streak=3 / "
+                "加大 recency_bonus=1.0，让更多主题被选中。"
+            )
         elif not b1b:
-            verdict = (f"B1-bis 半 PASS：top {top_concentration*100:.1f}% > 70% — "
-                       f"哲学仍被锁定，3 机制没打破")
-            next_step = ("B1-bis 失败：top > 70%。需把 recency_bonus 加到 1.0 让长期未选主题的"
-                         "加权远超 base NLL。")
+            verdict = (
+                f"B1-bis 半 PASS：top {top_concentration*100:.1f}% > 70% — "
+                f"哲学仍被锁定，3 机制没打破"
+            )
+            next_step = (
+                "B1-bis 失败：top > 70%。需把 recency_bonus 加到 1.0 让长期未选主题的"
+                "加权远超 base NLL。"
+            )
         else:
             verdict = f"B1-bis 失败（{passed} PASS / {failed} FAIL）"
             next_step = "B1-bis 失败：需重审其他判据"
@@ -325,8 +366,7 @@ def main():
     out_path = os.path.join("reports", f"play_engine_b1_bis_explore_{today}.json")
     payload = {
         "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "task": (f"B1-bis 探索：{N_MICRO} 次 micro-sleep + {n_decisions} 次决策 + "
-                 f"3 探索机制"),
+        "task": (f"B1-bis 探索：{N_MICRO} 次 micro-sleep + {n_decisions} 次决策 + " f"3 探索机制"),
         "cortex": {
             "n_neurons": len(cortex.neurons),
             "judge_target_ids": target_ids,

@@ -17,27 +17,43 @@
 
 运行：python -u scripts/training/diag_c25e_leader_quality_gap.py
 """
+
 from __future__ import annotations
 
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch  # noqa: E402
 from neuroplex.loader import assemble_cortex  # noqa: E402
 from neuroplex.resonance.dialogue_format import build_dialogue_prompt  # noqa: E402
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
 _QUESTIONS = [
-    "请介绍什么是神经网络", "什么是注意力机制", "请解释梯度下降的原理",
-    "如何缓解过拟合问题", "什么是自然语言处理", "请介绍 Transformer 架构",
-    "什么是词嵌入", "深度学习有哪些应用领域", "你好，请介绍一下你自己",
-    "请用一句话介绍态极", "你能帮我做什么", "今天天气不错，聊聊吗",
+    "请介绍什么是神经网络",
+    "什么是注意力机制",
+    "请解释梯度下降的原理",
+    "如何缓解过拟合问题",
+    "什么是自然语言处理",
+    "请介绍 Transformer 架构",
+    "什么是词嵌入",
+    "深度学习有哪些应用领域",
+    "你好，请介绍一下你自己",
+    "请用一句话介绍态极",
+    "你能帮我做什么",
+    "今天天气不错，聊聊吗",
 ]
 
 
@@ -106,10 +122,13 @@ def main():
         neg_nll = {k: -v for k, v in nll.items()}
         sp = spearman(r1, neg_nll)
         sp_vals.append(sp)
-        print(f"  [{q[:14]}...] leader={leader} "
-              f"NLL位次={leader_nll_rank}/{len(nll)-1} "
-              f"spearman={sp:.3f}  r1=[{min(r1.values()):.3f},{max(r1.values()):.3f}] "
-              f"NLL=[{min(nll.values()):.2f},{max(nll.values()):.2f}]", flush=True)
+        print(
+            f"  [{q[:14]}...] leader={leader} "
+            f"NLL位次={leader_nll_rank}/{len(nll)-1} "
+            f"spearman={sp:.3f}  r1=[{min(r1.values()):.3f},{max(r1.values()):.3f}] "
+            f"NLL=[{min(nll.values()):.2f},{max(nll.values()):.2f}]",
+            flush=True,
+        )
 
     n = len(leader_nll_ranks)
     if n == 0:
@@ -122,10 +141,15 @@ def main():
     print(f"leader NLL 位次分布: {sorted(leader_nll_ranks)}", flush=True)
     print(f"leader 恰为 NLL 最优: {perfect}/{n}（{(100*perfect/n):.0f}%）", flush=True)
     print(f"质量融合后 NLL 位次分布: {sorted(fused_nll_ranks)}", flush=True)
-    print(f"质量融合后恰为 NLL 最优: {fused_perfect}/{len(fused_nll_ranks)}（{(100*fused_perfect/max(len(fused_nll_ranks), 1)):.0f}%）", flush=True)
+    print(
+        f"质量融合后恰为 NLL 最优: {fused_perfect}/{len(fused_nll_ranks)}（{(100*fused_perfect/max(len(fused_nll_ranks), 1)):.0f}%）",
+        flush=True,
+    )
     print(f"平均 Spearman(r1, -NLL): {mean_sp:.3f}", flush=True)
     if perfect / n >= 0.75 and mean_sp >= 0.6:
-        print("→ round1_scores 与生成质量高度一致，leader 无弱 neuron 独占 → 收敛不实施", flush=True)
+        print(
+            "→ round1_scores 与生成质量高度一致，leader 无弱 neuron 独占 → 收敛不实施", flush=True
+        )
     elif perfect / n >= 0.5:
         print("→ 部分错位，leader 偶有 NLL 次优 → 融合收益边际，可暂缓", flush=True)
     else:

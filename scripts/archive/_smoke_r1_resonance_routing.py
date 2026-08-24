@@ -10,6 +10,7 @@
 7. keyword 模式跳过 probe forward
 8. hybrid 模式保留现有 50% 阈值硬切换逻辑
 """
+
 from __future__ import annotations
 
 import os
@@ -44,7 +45,9 @@ def test_generate_p7_signature():
     # 默认值检查
     assert params["routing_mode"].default == "hybrid", f"routing_mode 默认应为 hybrid"
     assert params["resonance_top_k"].default == 3, f"resonance_top_k 默认应为 3"
-    print(f"  PASS: routing_mode 默认={params['routing_mode'].default}, resonance_top_k 默认={params['resonance_top_k'].default}")
+    print(
+        f"  PASS: routing_mode 默认={params['routing_mode'].default}, resonance_top_k 默认={params['resonance_top_k'].default}"
+    )
 
 
 def test_resonance_sort_logic():
@@ -79,10 +82,10 @@ def test_cross_domain_activation():
     print("\n[6] 跨域激活")
     # 模拟跨域场景：zh 和 code 神经元都有高共振分
     probe_scores = {
-        "zh_aug0": 0.7,    # 中文域
-        "code_0": 0.9,     # 代码域
-        "zh_std0": 0.5,    # 中文域
-        "general": 0.3,    # 通用域
+        "zh_aug0": 0.7,  # 中文域
+        "code_0": 0.9,  # 代码域
+        "zh_std0": 0.5,  # 中文域
+        "general": 0.3,  # 通用域
     }
     sorted_nids = sorted(probe_scores.items(), key=lambda x: x[1], reverse=True)
     top_nids = [nid for nid, _ in sorted_nids[:3]]  # top-3

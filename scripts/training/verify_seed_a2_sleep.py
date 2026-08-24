@@ -27,6 +27,7 @@ SCRIPTS = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPTS))
 
 import _seed_verify_common as common  # noqa: E402
+import _verify_emit  # noqa: E402
 
 from seed import SeedSleepScheduler  # noqa: E402
 
@@ -63,9 +64,7 @@ def main() -> None:
     print(f"\n[3/5] judge 选出最差的 {len(targets)} 条作为巩固对象", flush=True)
 
     before = [tensor.detach().clone() for tensor in model.substrate.parameter_tensors()]
-    night = scheduler.night(
-        targets, cycles_per_text=args.cycles_per_text, learn=True
-    )
+    night = scheduler.night(targets, cycles_per_text=args.cycles_per_text, learn=True)
     delta_params = common.parameter_delta(model, before)
     print(
         f"  night 报告: cycles={night['cycles']:.0f} accepted={night['accepted']:.0f} "
@@ -84,9 +83,7 @@ def main() -> None:
     overall_delta = after["overall_mean"] - baseline["overall_mean"]
     print(f"  全体均值 Δ = {overall_delta:+.4f}", flush=True)
 
-    finite = all(
-        math.isfinite(after["groups"][name]["mean"]) for name in baseline["groups"]
-    )
+    finite = all(math.isfinite(after["groups"][name]["mean"]) for name in baseline["groups"])
     no_regression = overall_delta >= 0.0
     some_improvement = any(delta > 0.0 for delta in deltas.values())
     consolidation_real = delta_params > 0.0
@@ -94,7 +91,10 @@ def main() -> None:
 
     print("\n[5/5] 判定", flush=True)
     print(f"  数值有限 = {'PASS' if finite else 'FAIL'}", flush=True)
-    print(f"  质量不降（Δ>=0） = {'PASS' if no_regression else 'FAIL'}（{overall_delta:+.4f}）", flush=True)
+    print(
+        f"  质量不降（Δ>=0） = {'PASS' if no_regression else 'FAIL'}（{overall_delta:+.4f}）",
+        flush=True,
+    )
     print(f"  至少一项改善 = {'PASS' if some_improvement else 'FAIL'}（{deltas}）", flush=True)
     print(f"  巩固真实发生（参数变化>0） = {'PASS' if consolidation_real else 'FAIL'}", flush=True)
     print("=" * 64, flush=True)
@@ -112,12 +112,10 @@ def main() -> None:
             "night_report": night,
             "parameter_delta": delta_params,
             "baseline": {
-                name: {"mean": g["mean"], "std": g["std"]}
-                for name, g in baseline["groups"].items()
+                name: {"mean": g["mean"], "std": g["std"]} for name, g in baseline["groups"].items()
             },
             "after": {
-                name: {"mean": g["mean"], "std": g["std"]}
-                for name, g in after["groups"].items()
+                name: {"mean": g["mean"], "std": g["std"]} for name, g in after["groups"].items()
             },
             "group_deltas": deltas,
             "overall_delta": overall_delta,
@@ -132,7 +130,21 @@ def main() -> None:
         },
     )
     print(f"报告已写入: {out_path}", flush=True)
-    sys.exit(0 if a2_pass else 1)
+    sys.exit(
+        _verify_emit.emit_and_exit(
+            "seed_a2_sleep",
+            {
+                "a2_pass": a2_pass,
+                "checks": {
+                    "finite": finite,
+                    "no_regression": no_regression,
+                    "some_improvement": some_improvement,
+                    "consolidation_real": consolidation_real,
+                },
+                "metrics": {"overall_delta": overall_delta, "parameter_delta": delta_params},
+            },
+        )
+    )
 
 
 if __name__ == "__main__":

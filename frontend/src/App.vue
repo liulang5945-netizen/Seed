@@ -59,14 +59,21 @@ import RouteErrorView from './components/RouteErrorView.vue'
 import { UploadCloud } from 'lucide-vue-next'
 import { useAppStore } from './stores/appStore.js'
 import { useChatStore } from './stores/chatStore.js'
+import { useRuntimeStore } from './stores/runtimeStore.js'
 import { useApi } from './composables/useApi.js'
+import { useWebSocket } from './composables/useWebSocket.js'
 import { API_BASE, authFetch } from './composables/apiClient.js'
 import { loadCheckpoints, trainAbortController } from './composables/useTraining.js'
 import router from './router'
 
 const appStore = useAppStore()
 const chatStore = useChatStore()
+const runtimeStore = useRuntimeStore()
 const routeError = ref('')
+
+// WebSocket 实时通道（8765）：连接由 useWebSocket 在 mount 时自动发起，
+// 失败时其内部有 6 次重连上限并优雅降级，不影响主路径（HTTP 轮询照常工作）。
+const { on: onWsMessage } = useWebSocket()
 
 // Naive UI 主题
 const naiveTheme = computed(() => {
@@ -251,6 +258,11 @@ onMounted(async () => {
 
   startHealthCheck()
   loadCheckpoints()
+
+  // 生命事件实时推送 → 更新 runtimeStore 的需求面板
+  onWsMessage(({ event_type, data }) => {
+    if (event_type) runtimeStore.handleLifeEvent({ event_type, data })
+  })
 })
 
 onUnmounted(() => {

@@ -10,12 +10,13 @@
 Usage:
     python scripts/training/verify_metabolism_neuromodulator.py
 """
+
 import sys
 import os
 from datetime import datetime
 from unittest.mock import patch, MagicMock
 
-os.environ.setdefault('TAIJI_TEST_MODE', '1')
+os.environ.setdefault("TAIJI_TEST_MODE", "1")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 import torch
@@ -29,6 +30,7 @@ def main():
     # Step 1: 装配 Cortex（含 NeuromodulatorState）
     print("\n[Step 1] 装配 Cortex...")
     from taiji.loader import assemble_cortex
+
     cortex, tokenizer, modules = assemble_cortex(
         neurons_dir="data/neurons",
         device="cpu",
@@ -43,6 +45,7 @@ def main():
     # Step 2: 测试 metabolism.update_neuromodulator() 直接调用
     print("\n[Step 2] 测试 metabolism.update_neuromodulator()...")
     from taiji.body import metabolism
+
     metabolism.set_neuromodulator(nm)
 
     # 记录调用前的 NE
@@ -74,17 +77,19 @@ def main():
     cpu_ne_results = []
     for cpu_pct, label in test_cases:
         # Mock psutil.cpu_percent 返回指定值
-        with patch('psutil.cpu_percent', return_value=cpu_pct):
+        with patch("psutil.cpu_percent", return_value=cpu_pct):
             metabolism.update_neuromodulator()
             ne_target = nm._target_norepinephrine
             field_write_scale = nm.get_field_write_scale()
             cpu_ne_results.append((cpu_pct, ne_target, field_write_scale))
-            print(f"  CPU={cpu_pct:5.1f}% → NE_target={ne_target:.3f}, "
-                  f"field_write_scale={field_write_scale:.3f} ({label})")
+            print(
+                f"  CPU={cpu_pct:5.1f}% → NE_target={ne_target:.3f}, "
+                f"field_write_scale={field_write_scale:.3f} ({label})"
+            )
 
     # 验证单调性：CPU 越高，NE 越低
     ne_values = [r[1] for r in cpu_ne_results]
-    monotonic = all(ne_values[i] >= ne_values[i+1] for i in range(len(ne_values)-1))
+    monotonic = all(ne_values[i] >= ne_values[i + 1] for i in range(len(ne_values) - 1))
     if monotonic:
         print(f"  ✅ 单调性验证通过：CPU↑ → NE↓（节能控制正确）")
     else:
@@ -92,7 +97,7 @@ def main():
 
     # 验证 field_write_scale 随 NE 变化
     fws_values = [r[2] for r in cpu_ne_results]
-    fws_monotonic = all(fws_values[i] >= fws_values[i+1] for i in range(len(fws_values)-1))
+    fws_monotonic = all(fws_values[i] >= fws_values[i + 1] for i in range(len(fws_values) - 1))
     if fws_monotonic:
         print(f"  ✅ field_write_scale 单调性：CPU↑ → NE↓ → field_write↓（节能链路完整）")
 
@@ -114,7 +119,7 @@ def main():
     print(f"  sleep_engine 设置 DA_target={da_before_metab:.3f}")
 
     # Mock 内存使用率 95%（紧张）
-    with patch('psutil.virtual_memory') as mock_vm:
+    with patch("psutil.virtual_memory") as mock_vm:
         mock_vm.return_value.percent = 95.0
         mock_vm.return_value.available = 500 * 1024 * 1024  # 500MB
         mock_vm.return_value.total = 8 * 1024**3
@@ -130,7 +135,7 @@ def main():
 
     # Mock 内存使用率 50%（充裕）
     nm.set_targets(dopamine=0.8)  # 重新设置高 DA
-    with patch('psutil.virtual_memory') as mock_vm:
+    with patch("psutil.virtual_memory") as mock_vm:
         mock_vm.return_value.percent = 50.0
         mock_vm.return_value.available = 4 * 1024**3
         mock_vm.return_value.total = 8 * 1024**3
@@ -195,8 +200,12 @@ def main():
     all_pass = monotonic and fws_monotonic and ne_spread > 0.3
     if all_pass:
         print("🎉 验证通过：metabolism → 去甲肾上腺素接线成功")
-        print(f"   - CPU 10% → NE={cpu_ne_results[0][1]:.3f}, field_write={cpu_ne_results[0][2]:.3f}")
-        print(f"   - CPU 100% → NE={cpu_ne_results[-1][1]:.3f}, field_write={cpu_ne_results[-1][2]:.3f}")
+        print(
+            f"   - CPU 10% → NE={cpu_ne_results[0][1]:.3f}, field_write={cpu_ne_results[0][2]:.3f}"
+        )
+        print(
+            f"   - CPU 100% → NE={cpu_ne_results[-1][1]:.3f}, field_write={cpu_ne_results[-1][2]:.3f}"
+        )
         print(f"   - 三调质全接线完成：DA(loss) + 5HT(acc) + NE(cpu)")
         return 0
     else:

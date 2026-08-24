@@ -9,6 +9,7 @@
 Usage:
     python scripts/training/verify_http_api.py
 """
+
 from __future__ import annotations
 
 import os
@@ -30,9 +31,11 @@ def main():
     # Step 1: 先手动加载 Cortex 到 app_state（模拟 lifespan 启动）
     print("\n=== Step 1: Load Cortex into app_state ===")
     from taiji.core.model_loader import load_model_on_startup
+
     load_model_on_startup()
 
     from taiji.core.app_state import app_state
+
     if app_state.model is None:
         print("FAIL: app_state.model is None after load_model_on_startup")
         return 1
@@ -41,7 +44,7 @@ def main():
     print(f"  startup_complete: {app_state.startup_complete}")
     print(f"  startup_error: {app_state.startup_error}")
 
-    if type(app_state.model).__name__ != 'Cortex':
+    if type(app_state.model).__name__ != "Cortex":
         print(f"FAIL: expected Cortex, got {type(app_state.model).__name__}")
         return 1
 
@@ -58,13 +61,16 @@ def main():
 
     # Step 3: 测试 /api/taiji/cortex/generate (随机 image)
     print("\n=== Step 3: POST /api/taiji/cortex/generate (random image) ===")
-    resp = client.post("/api/taiji/cortex/generate", json={
-        "modality": "image",
-        "max_tokens": 0,
-        "temperature": 1.0,
-        "top_k": 0,
-        "seed": 42,
-    })
+    resp = client.post(
+        "/api/taiji/cortex/generate",
+        json={
+            "modality": "image",
+            "max_tokens": 0,
+            "temperature": 1.0,
+            "top_k": 0,
+            "seed": 42,
+        },
+    )
     print(f"  status: {resp.status_code}")
     if resp.status_code != 200:
         print(f"  body: {resp.text[:500]}")
@@ -75,18 +81,24 @@ def main():
 
     # Step 4: 测试无效 modality
     print("\n=== Step 4: POST /api/taiji/cortex/generate (invalid modality) ===")
-    resp = client.post("/api/taiji/cortex/generate", json={
-        "modality": "smell",
-        "max_tokens": 0,
-    })
+    resp = client.post(
+        "/api/taiji/cortex/generate",
+        json={
+            "modality": "smell",
+            "max_tokens": 0,
+        },
+    )
     print(f"  status: {resp.status_code}")
     print(f"  body: {resp.text[:200]}")
 
     # Step 5: 测试 Pydantic 校验（缺少 modality）
     print("\n=== Step 5: POST /api/taiji/cortex/generate (missing modality) ===")
-    resp = client.post("/api/taiji/cortex/generate", json={
-        "max_tokens": 0,
-    })
+    resp = client.post(
+        "/api/taiji/cortex/generate",
+        json={
+            "max_tokens": 0,
+        },
+    )
     print(f"  status: {resp.status_code}")
     print(f"  body: {resp.text[:200]}")
 

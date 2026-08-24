@@ -3,12 +3,12 @@
 ============================
 支持插件发现、加载、卸载、工具注册、路由注册。
 """
+
 import importlib
 import json
 import logging
 import os
 import shutil
-import uuid
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
@@ -18,6 +18,7 @@ logger = logging.getLogger("PluginManager")
 @dataclass
 class PluginManifest:
     """插件清单"""
+
     id: str
     name: str
     version: str = "1.0.0"
@@ -50,7 +51,13 @@ class PluginManager:
                 try:
                     with open(manifest_path, "r", encoding="utf-8") as f:
                         data = json.load(f)
-                    manifest = PluginManifest(**{k: v for k, v in data.items() if k in PluginManifest.__dataclass_fields__})
+                    manifest = PluginManifest(
+                        **{
+                            k: v
+                            for k, v in data.items()
+                            if k in PluginManifest.__dataclass_fields__
+                        }
+                    )
                     manifest.id = manifest.id or item
                     self._plugins[manifest.id] = manifest
                     logger.info(f"发现插件: {manifest.name} v{manifest.version}")
@@ -69,9 +76,13 @@ class PluginManager:
         """列出所有插件"""
         return [
             {
-                "id": p.id, "name": p.name, "version": p.version,
-                "description": p.description, "author": p.author,
-                "enabled": p.enabled, "tools_count": len(p.tools),
+                "id": p.id,
+                "name": p.name,
+                "version": p.version,
+                "description": p.description,
+                "author": p.author,
+                "enabled": p.enabled,
+                "tools_count": len(p.tools),
             }
             for p in self._plugins.values()
         ]
@@ -111,6 +122,7 @@ class PluginManager:
                 router = module.get_router()
                 try:
                     from api.app import app
+
                     app.include_router(router, prefix=f"/api/plugins/{plugin_id}")
                 except ImportError:
                     logger.debug("FastAPI app 不可用，跳过插件 %s 路由注册", plugin_id)
@@ -129,8 +141,8 @@ class PluginManager:
             if hasattr(module, "unregister_tools"):
                 try:
                     module.unregister_tools()
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("【PluginManager.unload_plugin】处理失败（非致命）: %s", e)
             del self._loaded_modules[plugin_id]
 
         manifest = self._plugins.get(plugin_id)
@@ -158,7 +170,9 @@ class PluginManager:
             shutil.rmtree(dest)
         shutil.copytree(source_path, dest)
 
-        manifest = PluginManifest(**{k: v for k, v in data.items() if k in PluginManifest.__dataclass_fields__})
+        manifest = PluginManifest(
+            **{k: v for k, v in data.items() if k in PluginManifest.__dataclass_fields__}
+        )
         manifest.id = plugin_id
         self._plugins[plugin_id] = manifest
         logger.info(f"插件 {plugin_id} 已安装")
@@ -175,6 +189,7 @@ class PluginManager:
 
     def _save_manifest(self, manifest: PluginManifest):
         from dataclasses import asdict
+
         path = os.path.join(self._dir, manifest.id, "manifest.json")
         if os.path.exists(os.path.dirname(path)):
             with open(path, "w", encoding="utf-8") as f:

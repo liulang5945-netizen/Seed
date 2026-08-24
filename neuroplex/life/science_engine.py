@@ -17,16 +17,15 @@
 - 算法实验：比较不同算法的性能
 - 数学实验：验证数学猜想
 """
+
 import os
 import json
 import time
 import logging
-import hashlib
 import random
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional
 from dataclasses import dataclass, field
 from datetime import datetime
-from pathlib import Path
 
 logger = logging.getLogger("ScienceEngine")
 
@@ -34,6 +33,7 @@ logger = logging.getLogger("ScienceEngine")
 @dataclass
 class Hypothesis:
     """研究假设"""
+
     id: str
     question: str
     hypothesis: str
@@ -50,6 +50,7 @@ class Hypothesis:
 @dataclass
 class Experiment:
     """实验"""
+
     id: str
     hypothesis_id: str
     description: str
@@ -70,6 +71,7 @@ class Experiment:
 @dataclass
 class Discovery:
     """发现"""
+
     id: str
     hypothesis_id: str
     conclusion: str
@@ -94,6 +96,7 @@ class ScienceEngine:
         if data_dir is None:
             try:
                 from neuroplex.config import get_taiji_data_path
+
                 data_dir = get_taiji_data_path("science_data")
             except ImportError:
                 data_dir = "taiji/science_data"
@@ -105,7 +108,9 @@ class ScienceEngine:
         self._data_dir_ready = False
         self._load_data()
 
-        logger.info(f"ScienceEngine initialized: {len(self.hypotheses)} hypotheses, {len(self.discoveries)} discoveries")
+        logger.info(
+            f"ScienceEngine initialized: {len(self.hypotheses)} hypotheses, {len(self.discoveries)} discoveries"
+        )
 
     # ─── 公开接口 ───────────────────────────────────
 
@@ -204,8 +209,7 @@ class ScienceEngine:
 
         # 收集相关实验
         related_experiments = [
-            e for e in self.experiments.values()
-            if e.hypothesis_id == hypothesis_id
+            e for e in self.experiments.values() if e.hypothesis_id == hypothesis_id
         ]
 
         if not related_experiments:
@@ -213,13 +217,15 @@ class ScienceEngine:
 
         # 分析实验结果
         successes = [e for e in related_experiments if e.success]
-        failures = [e for e in related_experiments if not e.success]
+        [e for e in related_experiments if not e.success]
 
         if successes:
             conclusion = f"假设 '{h.hypothesis}' 被证实。{len(successes)}/{len(related_experiments)} 次实验成功。"
             confidence = len(successes) / len(related_experiments)
         else:
-            conclusion = f"假设 '{h.hypothesis}' 被证伪。所有 {len(related_experiments)} 次实验均失败。"
+            conclusion = (
+                f"假设 '{h.hypothesis}' 被证伪。所有 {len(related_experiments)} 次实验均失败。"
+            )
             confidence = 0.0
 
         d = Discovery(
@@ -358,7 +364,7 @@ class ScienceEngine:
             return self._gen_general_experiment(h)
 
     def _gen_math_prime_experiment(self, h: Hypothesis) -> str:
-        return f'''
+        return f"""
 # 实验: {h.question}
 print(f"假设: {h.hypothesis}")
 import math
@@ -382,10 +388,10 @@ for n in [100, 500, 1000]:
     predicted = n / math.log(n)
     print(f"n={{n}}: 实际={{actual}}, 预测={{predicted:.1f}}, 比值={{actual/predicted:.2f}}")
 print("结论: 素数分布近似素数定理 n/ln(n)")
-'''
+"""
 
     def _gen_math_fibonacci_experiment(self, h: Hypothesis) -> str:
-        return f'''
+        return f"""
 # 实验: {h.question}
 print(f"假设: {h.hypothesis}")
 import math
@@ -407,10 +413,10 @@ print(f"黄金比例 phi = {{phi:.6f}}")
 print(f"连续项比值最后5个: {{[f'{{r:.6f}}' for r in ratios[-5:]]}}")
 print(f"最大误差: {{max(abs(r - phi) for r in ratios[-5:]):.8f}}")
 print("结论: 斐波那契数列连续项比值收敛到黄金比例")
-'''
+"""
 
     def _gen_math_pi_experiment(self, h: Hypothesis) -> str:
-        return f'''
+        return f"""
 # 实验: {h.question}
 print(f"假设: {h.hypothesis}")
 import random
@@ -436,10 +442,10 @@ for k in range(100000):
 pi_leibniz = 4 * partial
 print(f"莱布尼茨级数(10万项): pi~={{pi_leibniz:.6f}}, 误差={{abs(pi_leibniz - 3.141592653589793):.6f}}")
 print("结论: 蒙特卡洛和级数方法均可收敛到圆周率，级数方法更精确")
-'''
+"""
 
     def _gen_math_general_experiment(self, h: Hypothesis) -> str:
-        return f'''
+        return f"""
 # 实验: {h.question}
 print(f"假设: {h.hypothesis}")
 
@@ -452,10 +458,10 @@ for n in range(1, 20):
 print(f"前 19 项结果: {{results}}")
 print(f"规律: 三角数序列")
 print("结论: 数学公式验证成功")
-'''
+"""
 
     def _gen_algo_sort_experiment(self, h: Hypothesis) -> str:
-        return f'''
+        return f"""
 # 实验: {h.question}
 print(f"假设: {h.hypothesis}")
 import time, random
@@ -486,10 +492,10 @@ for size in [100, 500, 1000]:
     qt = time.time() - start
     print(f"n={{size}}: Bubble={{bt:.4f}}s, Quick={{qt:.4f}}s, Speedup={{bt/max(qt,0.0001):.1f}}x")
 print("结论: 快速排序在所有规模上都优于冒泡排序")
-'''
+"""
 
     def _gen_algo_search_experiment(self, h: Hypothesis) -> str:
-        return f'''
+        return f"""
 # 实验: {h.question}
 print(f"假设: {h.hypothesis}")
 import time, random
@@ -519,10 +525,10 @@ for size in [1000, 10000, 100000]:
     bt = time.time() - start
     print(f"n={{size}}: Linear={{lt:.4f}}s, Binary={{bt:.4f}}s, Speedup={{lt/max(bt,0.0001):.0f}}x")
 print("结论: 二分搜索在有序数组上远快于线性搜索")
-'''
+"""
 
     def _gen_algo_recursion_experiment(self, h: Hypothesis) -> str:
-        return f'''
+        return f"""
 # 实验: {h.question}
 print(f"假设: {h.hypothesis}")
 import sys, time
@@ -547,10 +553,10 @@ for n in [10, 20, 30]:
     it = time.time() - start
     print(f"n={{n}}: 递归={{rt:.6f}}s, 迭代={{it:.8f}}s, 比值={{rt/max(it,1e-10):.0f}}x")
 print("结论: 迭代实现远快于朴素递归，时间复杂度从O(2^n)降至O(n)")
-'''
+"""
 
     def _gen_algo_general_experiment(self, h: Hypothesis) -> str:
-        return f'''
+        return f"""
 # 实验: {h.question}
 print(f"假设: {h.hypothesis}")
 import time, random
@@ -564,10 +570,10 @@ print(f"排序1000个随机数: {{elapsed:.6f}}s")
 print(f"前10个: {{sorted_data[:10]}}")
 print(f"验证排序正确: {{sorted_data == sorted(data)}}")
 print("结论: Python内置排序高效可靠")
-'''
+"""
 
     def _gen_data_experiment(self, h: Hypothesis) -> str:
-        return f'''
+        return f"""
 # 实验: {h.question}
 print(f"假设: {h.hypothesis}")
 import random
@@ -595,10 +601,10 @@ print(f"1σ内: {{within_1sigma/n:.1%}} (期望68.3%)")
 print(f"2σ内: {{within_2sigma/n:.1%}} (期望95.4%)")
 print(f"3σ内: {{within_3sigma/n:.1%}} (期望99.7%)")
 print("结论: 数据近似正态分布，68-95-99.7规则成立")
-'''
+"""
 
     def _gen_general_experiment(self, h: Hypothesis) -> str:
-        return f'''
+        return f"""
 # 实验: {h.question}
 print(f"假设: {h.hypothesis}")
 
@@ -612,7 +618,7 @@ print(f"均值: {{mean}}")
 print(f"方差: {{variance}}")
 print(f"标准差: {{std_dev:.2f}}")
 print("结论: 数据呈均匀分布")
-'''
+"""
 
     def _predict_outcome(self, h: Hypothesis) -> str:
         """预测实验结果"""
@@ -622,25 +628,16 @@ print("结论: 数据呈均匀分布")
         """通过沙箱执行器安全运行实验代码"""
         try:
             from neuroplex.agent_ext.sandbox_executor import execute_python_code_safe
+
             return execute_python_code_safe(code)
-        except ImportError:
-            logger.warning("沙箱执行器不可用，使用受限执行")
-            import io
-            from contextlib import redirect_stdout
-            f = io.StringIO()
-            # 受限命名空间：禁止危险操作
-            safe_builtins = {
-                k: v for k, v in __builtins__.items()
-                if k not in ('eval', 'exec', 'compile', '__import__', 'open')
-            } if isinstance(__builtins__, dict) else {
-                k: getattr(__builtins__, k)
-                for k in dir(__builtins__)
-                if not k.startswith('_') and k not in ('eval', 'exec', 'compile', '__import__', 'open')
-            }
-            namespace = {"__builtins__": safe_builtins}
-            with redirect_stdout(f):
-                exec(code, namespace)
-            return f.getvalue()
+        except (ImportError, NotImplementedError):
+            # 安全修复：黑名单过滤 __builtins__ 的 exec 可被逃逸，
+            # 沙箱不可用（含 sandbox_executor 仍为 stub）时拒绝执行，返回结构化错误。
+            logger.error(
+                "沙箱执行器不可用，拒绝执行实验代码"
+                "（黑名单 exec 回退已废弃：可经 __builtins__ 子类链逃逸）"
+            )
+            return "Error: 沙箱不可用，实验代码未执行（需要 neuroplex.agent_ext.sandbox_executor）"
 
     def _evaluate_result(self, h: Hypothesis, output: str, expected: str) -> bool:
         """
@@ -698,28 +695,50 @@ print("结论: 数据呈均匀分布")
         """保存数据"""
         self._ensure_data_dir()
         data = {
-            "hypotheses": {k: {
-                "id": v.id, "question": v.question, "hypothesis": v.hypothesis,
-                "domain": v.domain, "confidence": v.confidence, "status": v.status,
-                "created_at": v.created_at,
-            } for k, v in self.hypotheses.items()},
-            "experiments": {k: {
-                "id": v.id, "hypothesis_id": v.hypothesis_id,
-                "description": v.description, "code": v.code[:1000],
-                "expected_outcome": v.expected_outcome, "actual_outcome": v.actual_outcome,
-                "success": v.success, "duration": v.duration, "output": v.output[:500],
-                "error": v.error, "created_at": v.created_at,
-            } for k, v in self.experiments.items()},
-            "discoveries": {k: {
-                "id": v.id, "hypothesis_id": v.hypothesis_id,
-                "conclusion": v.conclusion, "evidence": v.evidence,
-                "confidence": v.confidence, "domain": v.domain,
-                "created_at": v.created_at,
-            } for k, v in self.discoveries.items()},
+            "hypotheses": {
+                k: {
+                    "id": v.id,
+                    "question": v.question,
+                    "hypothesis": v.hypothesis,
+                    "domain": v.domain,
+                    "confidence": v.confidence,
+                    "status": v.status,
+                    "created_at": v.created_at,
+                }
+                for k, v in self.hypotheses.items()
+            },
+            "experiments": {
+                k: {
+                    "id": v.id,
+                    "hypothesis_id": v.hypothesis_id,
+                    "description": v.description,
+                    "code": v.code[:1000],
+                    "expected_outcome": v.expected_outcome,
+                    "actual_outcome": v.actual_outcome,
+                    "success": v.success,
+                    "duration": v.duration,
+                    "output": v.output[:500],
+                    "error": v.error,
+                    "created_at": v.created_at,
+                }
+                for k, v in self.experiments.items()
+            },
+            "discoveries": {
+                k: {
+                    "id": v.id,
+                    "hypothesis_id": v.hypothesis_id,
+                    "conclusion": v.conclusion,
+                    "evidence": v.evidence,
+                    "confidence": v.confidence,
+                    "domain": v.domain,
+                    "created_at": v.created_at,
+                }
+                for k, v in self.discoveries.items()
+            },
         }
         path = os.path.join(self.data_dir, "science_data.json")
         try:
-            with open(path, 'w', encoding='utf-8') as f:
+            with open(path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
         except Exception as e:
             logger.warning(f"Failed to save science data: {e}")
@@ -730,7 +749,7 @@ print("结论: 数据呈均匀分布")
         if not os.path.exists(path):
             return
         try:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             for k, v in data.get("hypotheses", {}).items():
                 self.hypotheses[k] = Hypothesis(**v)

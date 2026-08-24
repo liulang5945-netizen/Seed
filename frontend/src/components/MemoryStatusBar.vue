@@ -15,7 +15,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRuntimeStore } from '../stores/runtimeStore.js'
 
 const props = defineProps({
-  pollInterval: { type: Number, default: 5000 },
+  // 5s 轮询叠加其他组件会把 /api/runtime/status 打出风暴；内存水位变化缓慢，30s 足够。
+  pollInterval: { type: Number, default: 30000 },
 })
 
 const emit = defineEmits(['memory-warning'])

@@ -11,7 +11,6 @@
 
 from __future__ import annotations
 
-import torch
 
 from seed import Seed, SeedConfig
 from taiji import TaijiConfig
@@ -38,17 +37,16 @@ def _tiny_config() -> SeedConfig:
 
 def _decoder_mass(model: Seed) -> float:
     fabric = model.substrate.fabric
-    return sum(
-        float(bank.edge_weight.abs().mean()) for bank in fabric.decoders
-    ) / len(fabric.decoders)
+    return sum(float(bank.edge_weight.abs().mean()) for bank in fabric.decoders) / len(
+        fabric.decoders
+    )
 
 
 def test_streaming_training_does_not_evaporate_cortical_synapses() -> None:
     model = Seed(_tiny_config())
-    data = (
-        "问：你好。\n答：你好，很高兴见到你。"
-        "水的沸点在标准大气压下是一百摄氏度。"
-    ).encode("utf-8")
+    data = ("问：你好。\n答：你好，很高兴见到你。" "水的沸点在标准大气压下是一百摄氏度。").encode(
+        "utf-8"
+    )
 
     # 先建立记忆，再长时间持续暴露于同一内容（学会之后误差变小，
     # 正是旧全局衰减蒸发占主导的区间）。
@@ -62,13 +60,12 @@ def test_streaming_training_does_not_evaporate_cortical_synapses() -> None:
             model.observe(symbol, learn=True)
 
     final_mass = _decoder_mass(model)
-    assert final_mass >= 0.9 * learned_mass, (
-        f"皮层解码权重在持续学习中蒸发：{learned_mass:.5f} → {final_mass:.5f}"
-    )
+    assert (
+        final_mass >= 0.9 * learned_mass
+    ), f"皮层解码权重在持续学习中蒸发：{learned_mass:.5f} → {final_mass:.5f}"
 
     # 记忆必须仍然可读：蒸发的权重不会自我报告，行为才是证据。
     final_surprise = model.score_bytes(data)["mean_surprise"]
     assert final_surprise <= learned_surprise + 0.15, (
-        f"长期暴露后模型丢掉了已学内容："
-        f"surprise {learned_surprise:.3f} → {final_surprise:.3f}"
+        f"长期暴露后模型丢掉了已学内容：" f"surprise {learned_surprise:.3f} → {final_surprise:.3f}"
     )

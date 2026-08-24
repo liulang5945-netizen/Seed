@@ -18,7 +18,9 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn as nn
@@ -46,7 +48,6 @@ from scripts.archive.diagnostics.diag_micro_route_canary import _assemble_with_m
 from scripts.training.utils import load_domain_tokenizer, load_general_tokenizer
 from neuroplex.loader import assemble_cortex
 
-
 DEFAULT_HF_RATIO = 0.10
 CALIBRATION_SAMPLES = 256
 ALIGNMENT_EPOCHS = 2
@@ -69,7 +70,7 @@ def _fit_external_route_adapter(micro, texts, domain_sp, general_sp, shared):
     losses = []
     for _ in range(ALIGNMENT_EPOCHS):
         for start in range(0, len(selected), BATCH_SIZE):
-            batch = selected[start:start + BATCH_SIZE]
+            batch = selected[start : start + BATCH_SIZE]
             embeddings = _encode_batch(batch, domain_sp, general_sp, shared)[0]
             with torch.no_grad():
                 target = micro(embeddings, return_logits=False)["hidden_before_write"]
@@ -85,19 +86,23 @@ def _fit_external_route_adapter(micro, texts, domain_sp, general_sp, shared):
     targets = []
     with torch.no_grad():
         for start in range(0, len(selected), BATCH_SIZE):
-            batch = selected[start:start + BATCH_SIZE]
+            batch = selected[start : start + BATCH_SIZE]
             embeddings = _encode_batch(batch, domain_sp, general_sp, shared)[0]
             hidden = micro(embeddings, return_logits=False)["hidden_before_write"]
             targets.append(hidden)
     prototype = F.normalize(torch.cat(targets, dim=0).mean(dim=0), dim=0)
-    return adapter, prototype, {
-        "samples": len(selected),
-        "epochs": ALIGNMENT_EPOCHS,
-        "first_loss": round(losses[0], 6) if losses else None,
-        "last_loss": round(losses[-1], 6) if losses else None,
-        "projection_params": sum(p.numel() for p in adapter.parameters()),
-        "prototype_norm": round(float(prototype.norm().item()), 6),
-    }
+    return (
+        adapter,
+        prototype,
+        {
+            "samples": len(selected),
+            "epochs": ALIGNMENT_EPOCHS,
+            "first_loss": round(losses[0], 6) if losses else None,
+            "last_loss": round(losses[-1], 6) if losses else None,
+            "projection_params": sum(p.numel() for p in adapter.parameters()),
+            "prototype_norm": round(float(prototype.norm().item()), 6),
+        },
+    )
 
 
 def _external_route_ids(cortex, route_adapter, micro_prototype, prompt, top_k):
@@ -117,9 +122,9 @@ def _external_route_ids(cortex, route_adapter, micro_prototype, prompt, top_k):
             # the production auto-top-k behavior instead of silently dropping them.
             scores[nid] = 0.0
         else:
-            scores[nid] = float(F.cosine_similarity(
-                projected.unsqueeze(0), prototype.unsqueeze(0), dim=-1
-            ).item())
+            scores[nid] = float(
+                F.cosine_similarity(projected.unsqueeze(0), prototype.unsqueeze(0), dim=-1).item()
+            )
     ordered = sorted(scores, key=scores.get, reverse=True)
     return ordered[:top_k], scores
 

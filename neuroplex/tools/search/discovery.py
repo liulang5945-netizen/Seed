@@ -13,13 +13,12 @@
 """
 
 import re
-import time
 import logging
 import urllib.parse
 import urllib.request
 import concurrent.futures
-from dataclasses import dataclass, field
-from typing import List, Optional, Callable
+from dataclasses import dataclass
+from typing import List, Optional
 
 logger = logging.getLogger("Taiji.Search.Discovery")
 
@@ -27,16 +26,19 @@ logger = logging.getLogger("Taiji.Search.Discovery")
 @dataclass
 class SearchResult:
     """统一的搜索结果"""
+
     title: str = ""
     url: str = ""
     snippet: str = ""
-    source: str = ""          # 来源搜索引擎
-    score: float = 0.0        # 原始排序分数
+    source: str = ""  # 来源搜索引擎
+    score: float = 0.0  # 原始排序分数
 
     def to_dict(self) -> dict:
         return {
-            "title": self.title, "url": self.url,
-            "snippet": self.snippet, "source": self.source,
+            "title": self.title,
+            "url": self.url,
+            "snippet": self.snippet,
+            "source": self.source,
         }
 
 
@@ -54,12 +56,14 @@ _USER_AGENTS = [
 
 def _random_ua() -> str:
     import random
+
     return random.choice(_USER_AGENTS)
 
 
 def http_get(url: str, timeout: int = 10, verify_ssl: bool = True) -> str:
     """纯 stdlib HTTP GET，随机 UA，可选 SSL 容错"""
     import ssl
+
     headers = {
         "User-Agent": _random_ua(),
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -85,6 +89,7 @@ def _strip_tags(html: str) -> str:
 # 1. 网页搜索引擎（正则爬取结果页）
 # ═══════════════════════════════════════════════
 
+
 def _search_duckduckgo(query: str, max_results: int = 8) -> List[SearchResult]:
     """DuckDuckGo HTML 版搜索结果页爬取"""
     try:
@@ -95,7 +100,8 @@ def _search_duckduckgo(query: str, max_results: int = 8) -> List[SearchResult]:
         blocks = re.findall(
             r'<a[^>]*class="result__a"[^>]*href="([^"]*)"[^>]*>(.*?)</a>.*?'
             r'<a[^>]*class="result__snippet"[^>]*>(.*?)</a>',
-            html, re.DOTALL,
+            html,
+            re.DOTALL,
         )
         for href, title, snippet in blocks[:max_results]:
             real_url = href
@@ -103,12 +109,14 @@ def _search_duckduckgo(query: str, max_results: int = 8) -> List[SearchResult]:
                 m = re.search(r"uddg=([^&]+)", href)
                 if m:
                     real_url = urllib.parse.unquote(m.group(1))
-            results.append(SearchResult(
-                title=_strip_tags(title),
-                url=real_url,
-                snippet=_strip_tags(snippet),
-                source="DuckDuckGo",
-            ))
+            results.append(
+                SearchResult(
+                    title=_strip_tags(title),
+                    url=real_url,
+                    snippet=_strip_tags(snippet),
+                    source="DuckDuckGo",
+                )
+            )
         return results
     except Exception as e:
         logger.debug(f"DDG 搜索失败: {e}")
@@ -127,22 +135,29 @@ def _search_bing(query: str, max_results: int = 8) -> List[SearchResult]:
             # 新版 Bing 可能用不同结构，直接找 h2 > a
             pattern = r'<h2[^>]*>\s*<a[^>]*href="([^"]*)"[^>]*>(.*?)</a>.*?(?:<p[^>]*>(.*?)</p>)?'
             for href, title, snippet in re.findall(pattern, html, re.DOTALL)[:max_results]:
-                results.append(SearchResult(
-                    title=_strip_tags(title), url=href,
-                    snippet=_strip_tags(snippet) if snippet else "",
-                    source="Bing",
-                ))
+                results.append(
+                    SearchResult(
+                        title=_strip_tags(title),
+                        url=href,
+                        snippet=_strip_tags(snippet) if snippet else "",
+                        source="Bing",
+                    )
+                )
             return results
         for block in blocks[:max_results]:
-            title_m = re.search(r'<h2[^>]*>\s*<a[^>]*href="([^"]*)"[^>]*>(.*?)</a>', block, re.DOTALL)
+            title_m = re.search(
+                r'<h2[^>]*>\s*<a[^>]*href="([^"]*)"[^>]*>(.*?)</a>', block, re.DOTALL
+            )
             desc_m = re.search(r"<p[^>]*>(.*?)</p>", block, re.DOTALL)
             if title_m:
-                results.append(SearchResult(
-                    title=_strip_tags(title_m.group(2)),
-                    url=title_m.group(1),
-                    snippet=_strip_tags(desc_m.group(1)) if desc_m else "",
-                    source="Bing",
-                ))
+                results.append(
+                    SearchResult(
+                        title=_strip_tags(title_m.group(2)),
+                        url=title_m.group(1),
+                        snippet=_strip_tags(desc_m.group(1)) if desc_m else "",
+                        source="Bing",
+                    )
+                )
         return results
     except Exception as e:
         logger.debug(f"Bing 搜索失败: {e}")
@@ -157,26 +172,30 @@ def _search_baidu(query: str, max_results: int = 8) -> List[SearchResult]:
         results = []
         blocks = re.findall(
             r'<div[^>]*class="[^"]*result[^"]*c-container[^"]*"[^>]*>(.*?)(?=<div[^>]*class="[^"]*result[^"]*c-container|</div>\s*$)',
-            html, re.DOTALL,
+            html,
+            re.DOTALL,
         )
         for block in blocks[:max_results]:
-            title_m = re.search(r'<h3[^>]*>\s*<a[^>]*>(.*?)</a>', block, re.DOTALL)
+            title_m = re.search(r"<h3[^>]*>\s*<a[^>]*>(.*?)</a>", block, re.DOTALL)
             link_m = re.search(r'<h3[^>]*>\s*<a[^>]*href="([^"]*)"', block, re.DOTALL)
             desc_m = re.search(
                 r'<span[^>]*class="[^"]*content-right[^"]*"[^>]*>(.*?)</span>'
                 r'|<div[^>]*class="[^"]*c-abstract[^"]*"[^>]*>(.*?)</div>',
-                block, re.DOTALL,
+                block,
+                re.DOTALL,
             )
             if title_m:
                 snippet = ""
                 if desc_m:
                     snippet = _strip_tags(desc_m.group(1) or desc_m.group(2) or "")
-                results.append(SearchResult(
-                    title=_strip_tags(title_m.group(1)),
-                    url=link_m.group(1) if link_m else "",
-                    snippet=snippet,
-                    source="Baidu",
-                ))
+                results.append(
+                    SearchResult(
+                        title=_strip_tags(title_m.group(1)),
+                        url=link_m.group(1) if link_m else "",
+                        snippet=snippet,
+                        source="Baidu",
+                    )
+                )
         return results
     except Exception as e:
         logger.debug(f"Baidu 搜索失败: {e}")
@@ -186,20 +205,28 @@ def _search_baidu(query: str, max_results: int = 8) -> List[SearchResult]:
 def _search_wikipedia(query: str, max_results: int = 5) -> List[SearchResult]:
     """维基百科 API（免费、无密钥、结构化 JSON）"""
     try:
-        url = (f"https://zh.wikipedia.org/w/api.php?"
-               f"action=query&list=search&srsearch={urllib.parse.quote(query)}"
-               f"&format=json&srlimit={max_results}")
+        url = (
+            f"https://zh.wikipedia.org/w/api.php?"
+            f"action=query&list=search&srsearch={urllib.parse.quote(query)}"
+            f"&format=json&srlimit={max_results}"
+        )
         html = http_get(url, timeout=8)
         import json
+
         data = json.loads(html)
         results = []
         for item in data.get("query", {}).get("search", []):
             title = item.get("title", "")
             snippet = _strip_tags(item.get("snippet", ""))
             page_url = f"https://zh.wikipedia.org/wiki/{urllib.parse.quote(title)}"
-            results.append(SearchResult(
-                title=title, url=page_url, snippet=snippet, source="Wikipedia",
-            ))
+            results.append(
+                SearchResult(
+                    title=title,
+                    url=page_url,
+                    snippet=snippet,
+                    source="Wikipedia",
+                )
+            )
         return results
     except Exception as e:
         logger.debug(f"Wikipedia 搜索失败: {e}")
@@ -216,24 +243,31 @@ def _search_google(query: str, max_results: int = 8) -> List[SearchResult]:
         blocks = re.findall(
             r'<a[^>]*href="/url\?q=([^&"]+)[^>]*>(.*?)</a>.*?'
             r'<div[^>]*class="[^"]*BNeawe[^"]*"[^>]*>(.*?)</div>',
-            html, re.DOTALL,
+            html,
+            re.DOTALL,
         )
         for href, title, snippet in blocks[:max_results]:
             real_url = urllib.parse.unquote(href)
-            results.append(SearchResult(
-                title=_strip_tags(title),
-                url=real_url,
-                snippet=_strip_tags(snippet),
-                source="Google",
-            ))
+            results.append(
+                SearchResult(
+                    title=_strip_tags(title),
+                    url=real_url,
+                    snippet=_strip_tags(snippet),
+                    source="Google",
+                )
+            )
         # 回退：找所有 /url?q= 链接
         if not results:
             links = re.findall(r'href="/url\?q=([^&"]+)', html)
             for href in links[:max_results]:
-                results.append(SearchResult(
-                    title="", url=urllib.parse.unquote(href),
-                    snippet="", source="Google",
-                ))
+                results.append(
+                    SearchResult(
+                        title="",
+                        url=urllib.parse.unquote(href),
+                        snippet="",
+                        source="Google",
+                    )
+                )
         return results
     except Exception as e:
         logger.debug(f"Google 搜索失败: {e}")
@@ -250,13 +284,18 @@ def _search_yandex(query: str, max_results: int = 8) -> List[SearchResult]:
         blocks = re.findall(
             r'<a[^>]*class="[^"]*OrganicTitle[^"]*"[^>]*href="([^"]*)"[^>]*>(.*?)</a>.*?'
             r'<span[^>]*class="[^"]*OrganicText[^"]*"[^>]*>(.*?)</span>',
-            html, re.DOTALL,
+            html,
+            re.DOTALL,
         )
         for href, title, snippet in blocks[:max_results]:
-            results.append(SearchResult(
-                title=_strip_tags(title), url=href,
-                snippet=_strip_tags(snippet), source="Yandex",
-            ))
+            results.append(
+                SearchResult(
+                    title=_strip_tags(title),
+                    url=href,
+                    snippet=_strip_tags(snippet),
+                    source="Yandex",
+                )
+            )
         return results
     except Exception as e:
         logger.debug(f"Yandex 搜索失败: {e}")
@@ -273,13 +312,18 @@ def _search_mojeek(query: str, max_results: int = 8) -> List[SearchResult]:
         blocks = re.findall(
             r'<a[^>]*class="[^"]*ob[^"]*"[^>]*href="([^"]*)"[^>]*>(.*?)</a>.*?'
             r'<p[^>]*class="[^"]*s[^"]*"[^>]*>(.*?)</p>',
-            html, re.DOTALL,
+            html,
+            re.DOTALL,
         )
         for href, title, snippet in blocks[:max_results]:
-            results.append(SearchResult(
-                title=_strip_tags(title), url=href,
-                snippet=_strip_tags(snippet), source="Mojeek",
-            ))
+            results.append(
+                SearchResult(
+                    title=_strip_tags(title),
+                    url=href,
+                    snippet=_strip_tags(snippet),
+                    source="Mojeek",
+                )
+            )
         return results
     except Exception as e:
         logger.debug(f"Mojeek 搜索失败: {e}")
@@ -298,15 +342,18 @@ def _search_searx(query: str, max_results: int = 8) -> List[SearchResult]:
             url = f"{base}?q={urllib.parse.quote(query)}&format=json"
             html = http_get(url, timeout=10)
             import json
+
             data = json.loads(html)
             results = []
             for item in data.get("results", [])[:max_results]:
-                results.append(SearchResult(
-                    title=item.get("title", ""),
-                    url=item.get("url", ""),
-                    snippet=item.get("content", ""),
-                    source=f"Searx({item.get('engine', '?')})",
-                ))
+                results.append(
+                    SearchResult(
+                        title=item.get("title", ""),
+                        url=item.get("url", ""),
+                        snippet=item.get("content", ""),
+                        source=f"Searx({item.get('engine', '?')})",
+                    )
+                )
             if results:
                 return results
         except Exception:
@@ -317,22 +364,26 @@ def _search_searx(query: str, max_results: int = 8) -> List[SearchResult]:
 def _search_arxiv(query: str, max_results: int = 5) -> List[SearchResult]:
     """arXiv API（学术论文，免费无密钥，SSL 容错）"""
     try:
-        url = (f"http://export.arxiv.org/api/query?search_query=all:{urllib.parse.quote(query)}"
-               f"&start=0&max_results={max_results}")
+        url = (
+            f"http://export.arxiv.org/api/query?search_query=all:{urllib.parse.quote(query)}"
+            f"&start=0&max_results={max_results}"
+        )
         xml = http_get(url, timeout=10, verify_ssl=False)
         results = []
-        entries = re.findall(r'<entry>(.*?)</entry>', xml, re.DOTALL)
+        entries = re.findall(r"<entry>(.*?)</entry>", xml, re.DOTALL)
         for entry in entries[:max_results]:
-            title_m = re.search(r'<title>(.*?)</title>', entry, re.DOTALL)
-            link_m = re.search(r'<id>(.*?)</id>', entry, re.DOTALL)
-            summary_m = re.search(r'<summary>(.*?)</summary>', entry, re.DOTALL)
+            title_m = re.search(r"<title>(.*?)</title>", entry, re.DOTALL)
+            link_m = re.search(r"<id>(.*?)</id>", entry, re.DOTALL)
+            summary_m = re.search(r"<summary>(.*?)</summary>", entry, re.DOTALL)
             if title_m:
-                results.append(SearchResult(
-                    title=_strip_tags(title_m.group(1)).strip(),
-                    url=link_m.group(1).strip() if link_m else "",
-                    snippet=_strip_tags(summary_m.group(1))[:300] if summary_m else "",
-                    source="arXiv",
-                ))
+                results.append(
+                    SearchResult(
+                        title=_strip_tags(title_m.group(1)).strip(),
+                        url=link_m.group(1).strip() if link_m else "",
+                        snippet=_strip_tags(summary_m.group(1))[:300] if summary_m else "",
+                        source="arXiv",
+                    )
+                )
         return results
     except Exception as e:
         logger.debug(f"arXiv 搜索失败: {e}")
@@ -342,19 +393,26 @@ def _search_arxiv(query: str, max_results: int = 5) -> List[SearchResult]:
 def _search_hackernews(query: str, max_results: int = 5) -> List[SearchResult]:
     """Hacker News Algolia API（免费、无密钥、结构化 JSON）"""
     try:
-        url = (f"https://hn.algolia.com/api/v1/search?query={urllib.parse.quote(query)}"
-               f"&tags=story&hitsPerPage={max_results}")
+        url = (
+            f"https://hn.algolia.com/api/v1/search?query={urllib.parse.quote(query)}"
+            f"&tags=story&hitsPerPage={max_results}"
+        )
         html = http_get(url, timeout=8)
         import json
+
         data = json.loads(html)
         results = []
         for hit in data.get("hits", [])[:max_results]:
-            results.append(SearchResult(
-                title=hit.get("title", ""),
-                url=hit.get("url", "") or f"https://news.ycombinator.com/item?id={hit.get('objectID', '')}",
-                snippet=hit.get("story_text", "")[:200] or f"Points: {hit.get('points', 0)}, Comments: {hit.get('num_comments', 0)}",
-                source="HackerNews",
-            ))
+            results.append(
+                SearchResult(
+                    title=hit.get("title", ""),
+                    url=hit.get("url", "")
+                    or f"https://news.ycombinator.com/item?id={hit.get('objectID', '')}",
+                    snippet=hit.get("story_text", "")[:200]
+                    or f"Points: {hit.get('points', 0)}, Comments: {hit.get('num_comments', 0)}",
+                    source="HackerNews",
+                )
+            )
         return results
     except Exception as e:
         logger.debug(f"HackerNews 搜索失败: {e}")
@@ -364,23 +422,29 @@ def _search_hackernews(query: str, max_results: int = 5) -> List[SearchResult]:
 def _search_reddit(query: str, max_results: int = 5) -> List[SearchResult]:
     """Reddit 搜索（JSON API，无密钥）"""
     try:
-        url = (f"https://www.reddit.com/search.json?q={urllib.parse.quote(query)}"
-               f"&limit={max_results}&sort=relevance")
+        url = (
+            f"https://www.reddit.com/search.json?q={urllib.parse.quote(query)}"
+            f"&limit={max_results}&sort=relevance"
+        )
         headers = {"User-Agent": _random_ua()}
         req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=10) as resp:
             import json
+
             data = json.loads(resp.read().decode("utf-8", errors="ignore"))
         results = []
         children = data.get("data", {}).get("children", [])
         for child in children[:max_results]:
             d = child.get("data", {})
-            results.append(SearchResult(
-                title=d.get("title", ""),
-                url=f"https://www.reddit.com{d.get('permalink', '')}",
-                snippet=d.get("selftext", "")[:200] or f"r/{d.get('subreddit', '?')} | Score: {d.get('score', 0)}",
-                source="Reddit",
-            ))
+            results.append(
+                SearchResult(
+                    title=d.get("title", ""),
+                    url=f"https://www.reddit.com{d.get('permalink', '')}",
+                    snippet=d.get("selftext", "")[:200]
+                    or f"r/{d.get('subreddit', '?')} | Score: {d.get('score', 0)}",
+                    source="Reddit",
+                )
+            )
         return results
     except Exception as e:
         logger.debug(f"Reddit 搜索失败: {e}")
@@ -390,20 +454,25 @@ def _search_reddit(query: str, max_results: int = 5) -> List[SearchResult]:
 def _search_stackoverflow(query: str, max_results: int = 5) -> List[SearchResult]:
     """Stack Overflow API（免费、无密钥、结构化 JSON）"""
     try:
-        url = (f"https://api.stackexchange.com/2.3/search/advanced?"
-               f"order=desc&sort=relevance&q={urllib.parse.quote(query)}"
-               f"&site=stackoverflow&pagesize={max_results}")
+        url = (
+            f"https://api.stackexchange.com/2.3/search/advanced?"
+            f"order=desc&sort=relevance&q={urllib.parse.quote(query)}"
+            f"&site=stackoverflow&pagesize={max_results}"
+        )
         html = http_get(url, timeout=10)
         import json
+
         data = json.loads(html)
         results = []
         for item in data.get("items", [])[:max_results]:
-            results.append(SearchResult(
-                title=item.get("title", ""),
-                url=item.get("link", ""),
-                snippet=_strip_tags(item.get("body", ""))[:200],
-                source="StackOverflow",
-            ))
+            results.append(
+                SearchResult(
+                    title=item.get("title", ""),
+                    url=item.get("link", ""),
+                    snippet=_strip_tags(item.get("body", ""))[:200],
+                    source="StackOverflow",
+                )
+            )
         return results
     except Exception as e:
         logger.debug(f"StackOverflow 搜索失败: {e}")
@@ -413,19 +482,24 @@ def _search_stackoverflow(query: str, max_results: int = 5) -> List[SearchResult
 def _search_github(query: str, max_results: int = 5) -> List[SearchResult]:
     """GitHub 搜索（无密钥时有限速但有结果）"""
     try:
-        url = (f"https://api.github.com/search/repositories?q={urllib.parse.quote(query)}"
-               f"&per_page={max_results}&sort=stars")
+        url = (
+            f"https://api.github.com/search/repositories?q={urllib.parse.quote(query)}"
+            f"&per_page={max_results}&sort=stars"
+        )
         html = http_get(url, timeout=10)
         import json
+
         data = json.loads(html)
         results = []
         for item in data.get("items", [])[:max_results]:
-            results.append(SearchResult(
-                title=item.get("full_name", ""),
-                url=item.get("html_url", ""),
-                snippet=item.get("description", "")[:200],
-                source="GitHub",
-            ))
+            results.append(
+                SearchResult(
+                    title=item.get("full_name", ""),
+                    url=item.get("html_url", ""),
+                    snippet=item.get("description", "")[:200],
+                    source="GitHub",
+                )
+            )
         return results
     except Exception as e:
         logger.debug(f"GitHub 搜索失败: {e}")
@@ -435,6 +509,7 @@ def _search_github(query: str, max_results: int = 5) -> List[SearchResult]:
 # ═══════════════════════════════════════════════
 # WebSearchProvider — 多引擎并行搜索
 # ═══════════════════════════════════════════════
+
 
 class WebSearchProvider:
     """多引擎并行搜索，取最快返回的非空结果"""
@@ -464,9 +539,14 @@ class WebSearchProvider:
         # 因为它们的 HTML 结构频繁变化或被反爬虫挡
         self.engine_names = engines or [
             # JSON API 层（最可靠，<1s）
-            "wikipedia", "hackernews", "stackoverflow", "github", "arxiv",
+            "wikipedia",
+            "hackernews",
+            "stackoverflow",
+            "github",
+            "arxiv",
             # HTML 爬取层（可用但不稳定）
-            "baidu", "bing",
+            "baidu",
+            "bing",
         ]
 
     def search(self, query: str, max_results: int = 8) -> List[SearchResult]:
@@ -483,8 +563,7 @@ class WebSearchProvider:
             return []
 
         engines_to_use = {
-            name: func for name, func in self.ENGINES.items()
-            if name in self.engine_names
+            name: func for name, func in self.ENGINES.items() if name in self.engine_names
         }
         if not engines_to_use:
             return []
@@ -494,8 +573,7 @@ class WebSearchProvider:
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=len(engines_to_use)) as pool:
             future_map = {
-                pool.submit(func, query, max_results): name
-                for name, func in engines_to_use.items()
+                pool.submit(func, query, max_results): name for name, func in engines_to_use.items()
             }
             try:
                 for future in concurrent.futures.as_completed(future_map, timeout=8.0):
@@ -505,8 +583,8 @@ class WebSearchProvider:
                         if results:
                             engine_results[name] = results
                             logger.debug(f"  {name}: {len(results)} 条")
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.debug("【WebSearchProvider.search】处理失败（非致命）: %s", e)
             except concurrent.futures.TimeoutError:
                 logger.debug("  部分引擎超时，用已返回结果")
             for f in future_map:
@@ -541,6 +619,7 @@ class WebSearchProvider:
 # SitemapProvider — 通过 robots.txt / sitemap 发现 URL
 # ═══════════════════════════════════════════════
 
+
 class SitemapProvider:
     """通过 robots.txt 和 sitemap.xml 发现站点 URL"""
 
@@ -564,8 +643,8 @@ class SitemapProvider:
                     sm = line.split(":", 1)[1].strip()
                     if sm:
                         sitemap_urls.append(sm)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【SitemapProvider.discover】处理失败（非致命）: %s", e)
 
         # 2. 默认 sitemap.xml
         if not sitemap_urls:

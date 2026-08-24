@@ -7,6 +7,7 @@
 - routes_update.py    → 版本检查、更新安装、热更新补丁
 - routes_model_switch.py → 模型热切换、发布状态重置
 """
+
 import logging
 import os
 import sys
@@ -22,6 +23,7 @@ router = APIRouter()
 
 # ======================== 硬件检测 ========================
 
+
 @router.get("/api/system/hardware")
 def get_system_hardware():
     """检测系统硬件配置（原生Seed）"""
@@ -31,8 +33,8 @@ def get_system_hardware():
 
         cpu_count = psutil.cpu_count(logical=False) or os.cpu_count() or 4
         ram = psutil.virtual_memory()
-        ram_gb = ram.total / (1024 ** 3)
-        avail_ram_gb = ram.available / (1024 ** 3)
+        ram_gb = ram.total / (1024**3)
+        avail_ram_gb = ram.available / (1024**3)
 
         cpu_info = f"{cpu_count} 核"
         gpu_info = "无"
@@ -44,7 +46,7 @@ def get_system_hardware():
             vram_bytes = torch.cuda.get_device_properties(0).total_mem
             vram_info = f"{vram_bytes / (1024**3):.1f} GB"
             gpu_backends = ["cuda"]
-        elif hasattr(torch, 'directml') and torch.directml.is_available():
+        elif hasattr(torch, "directml") and torch.directml.is_available():
             gpu_info = "AMD GPU (DirectML)"
             vram_info = f"{ram_gb * 0.5:.0f} GB (共享)"
             gpu_backends = ["directml"]
@@ -64,17 +66,22 @@ def get_system_hardware():
         return {
             "status": "error",
             "message": f"硬件检测失败: {str(e)}",
-            "cpu": "", "ram": "", "gpu": "", "vram": "",
+            "cpu": "",
+            "ram": "",
+            "gpu": "",
+            "vram": "",
             "recommend": "Cortex 神经元架构",
         }
 
 
 # ======================== 系统操作 ========================
 
+
 @router.post("/api/system/restart")
 def restart_system(request: Request):
     """接收前端发来的重启指令 — 需要认证（认证启用时）"""
     from neuroplex.core.security import AuthManager
+
     auth = AuthManager()
 
     if auth.enabled:
@@ -94,13 +101,17 @@ def restart_system(request: Request):
             time.sleep(2)
             env = os.environ.copy()
             env.pop("_MEIPASS2", None)
-            if getattr(sys, 'frozen', False):
+            if getattr(sys, "frozen", False):
                 path_list = env.get("PATH", "").split(os.pathsep)
-                env["PATH"] = os.pathsep.join([p for p in path_list if p != getattr(sys, '_MEIPASS', '')])
+                env["PATH"] = os.pathsep.join(
+                    [p for p in path_list if p != getattr(sys, "_MEIPASS", "")]
+                )
             creationflags = 0
             if sys.platform == "win32":
                 creationflags = subprocess.CREATE_NO_WINDOW
-            new_process = subprocess.Popen([sys.executable] + sys.argv, env=env, creationflags=creationflags)
+            new_process = subprocess.Popen(
+                [sys.executable] + sys.argv, env=env, creationflags=creationflags
+            )
             logger.info(f"新进程已创建: PID={new_process.pid}")
         except Exception as e:
             logger.error(f"无法创建新进程: {e}")
@@ -113,6 +124,7 @@ def restart_system(request: Request):
 
 
 # ======================== 路径与文件选择 ========================
+
 
 @router.post("/api/system/validate_path")
 def validate_path(req: dict):
@@ -149,7 +161,7 @@ def select_folder():
                 ("ulFlags", wintypes.UINT),
                 ("lpfn", ctypes.c_void_p),
                 ("lParam", wintypes.LPARAM),
-                ("iImage", ctypes.c_int)
+                ("iImage", ctypes.c_int),
             ]
 
         shell32 = ctypes.windll.shell32
@@ -162,7 +174,7 @@ def select_folder():
         ole32.CoTaskMemFree.argtypes = [ctypes.c_void_p]
 
         hr = ole32.CoInitialize(None)
-        need_cleanup = (hr == 0)
+        need_cleanup = hr == 0
         if hr == 0x80010106:
             logger.warning(f"COM 线程模式冲突 (thread {thread_id})")
 
@@ -206,18 +218,29 @@ def select_file():
     from ctypes import wintypes
 
     try:
+
         class OPENFILENAME(ctypes.Structure):
             _fields_ = [
-                ("lStructSize", wintypes.DWORD), ("hwndOwner", wintypes.HWND),
-                ("hInstance", wintypes.HINSTANCE), ("lpstrFilter", wintypes.LPCWSTR),
-                ("lpstrCustomFilter", wintypes.LPWSTR), ("nMaxCustFilter", wintypes.DWORD),
-                ("nFilterIndex", wintypes.DWORD), ("lpstrFile", wintypes.LPWSTR),
-                ("nMaxFile", wintypes.DWORD), ("lpstrFileTitle", wintypes.LPWSTR),
-                ("nMaxFileTitle", wintypes.DWORD), ("lpstrInitialDir", wintypes.LPCWSTR),
-                ("lpstrTitle", wintypes.LPCWSTR), ("Flags", wintypes.DWORD),
-                ("nFileOffset", wintypes.WORD), ("nFileExtension", wintypes.WORD),
-                ("lpstrDefExt", wintypes.LPCWSTR), ("lCustData", wintypes.LPARAM),
-                ("lpfnHook", ctypes.c_void_p), ("lpTemplateName", wintypes.LPCWSTR)
+                ("lStructSize", wintypes.DWORD),
+                ("hwndOwner", wintypes.HWND),
+                ("hInstance", wintypes.HINSTANCE),
+                ("lpstrFilter", wintypes.LPCWSTR),
+                ("lpstrCustomFilter", wintypes.LPWSTR),
+                ("nMaxCustFilter", wintypes.DWORD),
+                ("nFilterIndex", wintypes.DWORD),
+                ("lpstrFile", wintypes.LPWSTR),
+                ("nMaxFile", wintypes.DWORD),
+                ("lpstrFileTitle", wintypes.LPWSTR),
+                ("nMaxFileTitle", wintypes.DWORD),
+                ("lpstrInitialDir", wintypes.LPCWSTR),
+                ("lpstrTitle", wintypes.LPCWSTR),
+                ("Flags", wintypes.DWORD),
+                ("nFileOffset", wintypes.WORD),
+                ("nFileExtension", wintypes.WORD),
+                ("lpstrDefExt", wintypes.LPCWSTR),
+                ("lCustData", wintypes.LPARAM),
+                ("lpfnHook", ctypes.c_void_p),
+                ("lpTemplateName", wintypes.LPCWSTR),
             ]
 
         comdlg32 = ctypes.windll.comdlg32

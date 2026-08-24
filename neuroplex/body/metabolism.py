@@ -6,6 +6,7 @@
 
 态极原生实现，专门为态极服务。
 """
+
 import logging
 import os
 from typing import Optional
@@ -56,6 +57,7 @@ def update_neuromodulator():
         #    避免正反馈循环（高负载→NE↑→field_write↑→更多计算→更高负载）
         try:
             import psutil
+
             cpu_percent = psutil.cpu_percent(interval=0.1)
             # CPU 负载 0% → NE=0.9（专注），100% → NE=0.2（节能）
             norepinephrine_target = max(0.2, 0.9 - cpu_percent / 100.0 * 0.7)
@@ -145,18 +147,20 @@ class HardwareInfo:
         """获取最优计算设备"""
         try:
             import torch
+
             if torch.cuda.is_available():
                 return "cuda"
             if torch.backends.mps.is_available():
                 return "mps"
             try:
                 import torch_directml
+
                 if torch_directml.is_available():
                     return "directml"
-            except ImportError:
-                pass
-        except ImportError:
-            pass
+            except ImportError as e:
+                logger.debug("【HardwareInfo.get_optimal_device】处理失败（非致命）: %s", e)
+        except ImportError as e:
+            logger.debug("【HardwareInfo.get_optimal_device】处理失败（非致命）: %s", e)
         return "cpu"
 
 
@@ -172,6 +176,7 @@ def analyze_hardware() -> HardwareInfo:
     # 获取内存信息
     try:
         import psutil
+
         info.total_ram_gb = round(psutil.virtual_memory().total / (1024**3), 1)
         info.available_memory_gb = round(psutil.virtual_memory().available / (1024**3), 1)
     except ImportError:
@@ -181,6 +186,7 @@ def analyze_hardware() -> HardwareInfo:
     # 获取 GPU 信息
     try:
         import torch
+
         if torch.cuda.is_available():
             info.device = "cuda"
             info.vram_gb = round(torch.cuda.get_device_properties(0).total_mem / (1024**3), 1)
@@ -197,6 +203,7 @@ def analyze_hardware() -> HardwareInfo:
     info.cpu_logical = os.cpu_count() or 8
     try:
         import psutil
+
         info.cpu_physical = psutil.cpu_count(logical=False) or max(1, info.cpu_logical // 2)
     except ImportError:
         info.cpu_physical = max(1, info.cpu_logical // 2)
@@ -216,6 +223,7 @@ def get_optimal_dtype(device: str):
     """
     try:
         import torch
+
         if device == "cuda":
             return torch.float16
         elif device == "mps":
@@ -241,9 +249,11 @@ def estimate_model_params(model) -> Optional[float]:
 
     try:
         # 方式1: 从 model.config 读取
-        config = getattr(model, 'config', None)
+        config = getattr(model, "config", None)
         if config is not None:
-            num_params = getattr(config, 'num_parameters', None) or getattr(config, 'n_params', None)
+            num_params = getattr(config, "num_parameters", None) or getattr(
+                config, "n_params", None
+            )
             if num_params:
                 return round(num_params / 1e9, 2)
 
@@ -274,6 +284,7 @@ def check_resources() -> dict:
     # 内存使用百分比（供 neuromodulator 使用）
     try:
         import psutil
+
         result["memory_percent"] = psutil.virtual_memory().percent
     except ImportError:
         if info.total_ram_gb > 0:

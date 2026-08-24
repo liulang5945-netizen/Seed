@@ -16,31 +16,44 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 from neuroplex.resonance import (
-    ResonanceNeuron, ResonanceField, ResonanceEnsemble,
-    get_domain_neuron_config, NeuronGeometry,
+    ResonanceNeuron,
+    ResonanceField,
+    ResonanceEnsemble,
+    get_domain_neuron_config,
+    NeuronGeometry,
 )
 from neuroplex.resonance.topology import (
-    build_topology, establish_topology_channels,
-    infer_topology_from_state, topology_detail,
+    build_topology,
+    establish_topology_channels,
+    infer_topology_from_state,
+    topology_detail,
 )
 from neuroplex.resonance.translator import batch_align_and_embed
 from scripts.training.utils import (
-    load_domain_tokenizer, load_general_tokenizer,
-    OUTPUT_DIR, load_simple_zh_texts, create_shared_embedding,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+    OUTPUT_DIR,
+    load_simple_zh_texts,
+    create_shared_embedding,
 )
 from scripts.training.experiment_config import (
     ZH_COMPACT_NEURON_IDS as NEURON_IDS,
     SHARED_EXPERT_ID,
     ZH_STD_NEURON_ID as STD_NEURON_ID,
     DEFAULT_DOMAIN as DOMAIN,
-    SAMPLING_TEMPERATURE, SAMPLING_TOP_K, SAMPLING_REPETITION_PENALTY, SAMPLING_MAX_TOKENS,
+    SAMPLING_TEMPERATURE,
+    SAMPLING_TOP_K,
+    SAMPLING_REPETITION_PENALTY,
+    SAMPLING_MAX_TOKENS,
     BASE_PROMPTS,
 )
 
@@ -98,7 +111,9 @@ def load_aug_neurons(include_shared_expert=False, include_std=False, topology_mo
         shared_embeddings[nid] = shared_emb
 
         result = ckpt.get("result", {})
-        print(f"  [{nid}] spec={cfg.spec}, best_val_ppl={result.get('best_val_ppl', '?')}", flush=True)
+        print(
+            f"  [{nid}] spec={cfg.spec}, best_val_ppl={result.get('best_val_ppl', '?')}", flush=True
+        )
 
     # S7: 建立 side_channels（拓扑驱动，优先从 checkpoint 推断）
     # side_channels 天然支持跨规格：src_dim=peer.field_dim, dst_dim=self.hidden_size
@@ -139,7 +154,9 @@ def load_aug_neurons(include_shared_expert=False, include_std=False, topology_mo
         print(f"  [topology] 从 checkpoint 推断: {topology_detail(topology, neurons)}", flush=True)
     if topology is None or not any(topology.values()):
         topology = build_topology(neurons, geometry, mode=topology_mode)
-        print(f"  [topology] 回退到 {topology_mode}: {topology_detail(topology, neurons)}", flush=True)
+        print(
+            f"  [topology] 回退到 {topology_mode}: {topology_detail(topology, neurons)}", flush=True
+        )
 
     stats = establish_topology_channels(neurons, topology, geometry)
     for nid, n_ch in stats.items():
@@ -200,15 +217,26 @@ def _load_cross_spec_weights(ensemble):
     print(f"  [cross_spec] 已加载跨规格投影层权重: {cross_spec_path}", flush=True)
 
 
-def eval_ppl(neurons, shared_embeddings, domain_sp, general_sp, n_eval=100,
-             shared_expert_id=None, shared_expert_weight=0.3):
+def eval_ppl(
+    neurons,
+    shared_embeddings,
+    domain_sp,
+    general_sp,
+    n_eval=100,
+    shared_expert_id=None,
+    shared_expert_weight=0.3,
+):
     """个体 vs 协作 PPL（side_channels + max_rounds=2）。
 
     Args:
         shared_expert_id: 如果提供，启用 Shared Expert 机制
         shared_expert_weight: Shared Expert 的固定融合权重
     """
-    mode_label = f" + Shared Expert ({shared_expert_id}, w={shared_expert_weight})" if shared_expert_id else ""
+    mode_label = (
+        f" + Shared Expert ({shared_expert_id}, w={shared_expert_weight})"
+        if shared_expert_id
+        else ""
+    )
     print("\n" + "=" * 70, flush=True)
     print(f"[PPL 评估] 个体 vs 协作 (side_channels, max_rounds=2){mode_label}", flush=True)
     print("=" * 70, flush=True)
@@ -221,7 +249,9 @@ def eval_ppl(neurons, shared_embeddings, domain_sp, general_sp, n_eval=100,
     max_field_dim = max(n.config.field_dim for n in neurons.values())
     field = ResonanceField(dim=max_field_dim)
     ensemble = ResonanceEnsemble(
-        neurons, field, max_rounds=2,
+        neurons,
+        field,
+        max_rounds=2,
         shared_expert_id=shared_expert_id,
         shared_expert_weight=shared_expert_weight,
     )
@@ -238,7 +268,10 @@ def eval_ppl(neurons, shared_embeddings, domain_sp, general_sp, n_eval=100,
         with torch.no_grad():
             for text in texts:
                 shared_emb_out, targets, mask = batch_align_and_embed(
-                    [text], domain_sp, general_sp, shared_emb,
+                    [text],
+                    domain_sp,
+                    general_sp,
+                    shared_emb,
                 )
                 shared_emb_out = shared_emb_out.to(DEVICE)
                 targets = targets.to(DEVICE)
@@ -274,7 +307,10 @@ def eval_ppl(neurons, shared_embeddings, domain_sp, general_sp, n_eval=100,
             mask = None
             for nid, shared_emb in shared_embeddings.items():
                 shared_emb_out, tgt, msk = batch_align_and_embed(
-                    [text], domain_sp, general_sp, shared_emb,
+                    [text],
+                    domain_sp,
+                    general_sp,
+                    shared_emb,
                 )
                 neuron_embeddings[nid] = shared_emb_out.to(DEVICE)
                 if targets is None:
@@ -295,10 +331,18 @@ def eval_ppl(neurons, shared_embeddings, domain_sp, general_sp, n_eval=100,
                 if len(set(l.shape[-1] for l in n_logits)) == 1:
                     fused_logits = torch.stack(n_logits).mean(dim=0)
                 else:
-                    best_nid = max(result.get("final_scores", {}), key=result["final_scores"].get, default=NEURON_IDS[0])
+                    best_nid = max(
+                        result.get("final_scores", {}),
+                        key=result["final_scores"].get,
+                        default=NEURON_IDS[0],
+                    )
                     fused_logits = result["neuron_logits"][best_nid]
             else:
-                best_nid = max(result.get("final_scores", {}), key=result["final_scores"].get, default=NEURON_IDS[0])
+                best_nid = max(
+                    result.get("final_scores", {}),
+                    key=result["final_scores"].get,
+                    default=NEURON_IDS[0],
+                )
                 fused_logits = neurons[best_nid].forward(
                     neuron_embeddings[best_nid], return_logits=True
                 )["logits"]
@@ -322,10 +366,14 @@ def eval_ppl(neurons, shared_embeddings, domain_sp, general_sp, n_eval=100,
     print(f"  协作 [side]:   PPL={collab_ppl:.1f} (loss={avg_loss:.4f})", flush=True)
 
     if "final_scores" in result:
-        scores_str = ", ".join(f"{k}:{v:.3f}" for k, v in sorted(result["final_scores"].items(), key=lambda x: -x[1]))
+        scores_str = ", ".join(
+            f"{k}:{v:.3f}" for k, v in sorted(result["final_scores"].items(), key=lambda x: -x[1])
+        )
         print(f"  共振分: {scores_str}", flush=True)
     if "final_weights" in result:
-        weights_str = ", ".join(f"{k}:{v:.3f}" for k, v in sorted(result["final_weights"].items(), key=lambda x: -x[1]))
+        weights_str = ", ".join(
+            f"{k}:{v:.3f}" for k, v in sorted(result["final_weights"].items(), key=lambda x: -x[1])
+        )
         print(f"  融合权重: {weights_str}", flush=True)
 
     min_ind = min(individual_ppls.values())
@@ -341,8 +389,15 @@ def eval_ppl(neurons, shared_embeddings, domain_sp, general_sp, n_eval=100,
     return individual_ppls, collab_ppl
 
 
-def eval_generation(neurons, shared_embeddings, domain_sp, general_sp, cfg,
-                    shared_expert_id=None, shared_expert_weight=0.3):
+def eval_generation(
+    neurons,
+    shared_embeddings,
+    domain_sp,
+    general_sp,
+    cfg,
+    shared_expert_id=None,
+    shared_expert_weight=0.3,
+):
     """生成质量对比：个体 vs 协作（side_channels）。"""
     mode_label = f" + Shared Expert" if shared_expert_id else ""
     print("\n" + "=" * 70, flush=True)
@@ -353,7 +408,9 @@ def eval_generation(neurons, shared_embeddings, domain_sp, general_sp, cfg,
     max_field_dim = max(n.config.field_dim for n in neurons.values())
     field = ResonanceField(dim=max_field_dim)
     ensemble = ResonanceEnsemble(
-        neurons, field, max_rounds=2,
+        neurons,
+        field,
+        max_rounds=2,
         shared_expert_id=shared_expert_id,
         shared_expert_weight=shared_expert_weight,
     )
@@ -363,7 +420,14 @@ def eval_generation(neurons, shared_embeddings, domain_sp, general_sp, cfg,
 
     PROMPTS = BASE_PROMPTS
 
-    def generate_individual(prompt, nid, max_tokens=SAMPLING_MAX_TOKENS, temperature=SAMPLING_TEMPERATURE, top_k=SAMPLING_TOP_K, repetition_penalty=SAMPLING_REPETITION_PENALTY):
+    def generate_individual(
+        prompt,
+        nid,
+        max_tokens=SAMPLING_MAX_TOKENS,
+        temperature=SAMPLING_TEMPERATURE,
+        top_k=SAMPLING_TOP_K,
+        repetition_penalty=SAMPLING_REPETITION_PENALTY,
+    ):
         neuron = neurons[nid]
         shared_emb = shared_embeddings[nid]
         general_ids = general_sp.EncodeAsIds(prompt)
@@ -388,13 +452,13 @@ def eval_generation(neurons, shared_embeddings, domain_sp, general_sp, cfg,
                 # Top-k filtering
                 if top_k > 0 and top_k < logits.size(-1):
                     topk_vals, _ = torch.topk(logits, top_k, dim=-1)
-                    logits[logits < topk_vals[:, -1:]] = float('-inf')
+                    logits[logits < topk_vals[:, -1:]] = float("-inf")
 
                 # Softmax + sampling
                 probs = torch.softmax(logits, dim=-1)
                 next_token = torch.multinomial(probs, num_samples=1).item()
 
-                if hasattr(domain_sp, 'eos_id'):
+                if hasattr(domain_sp, "eos_id"):
                     eos = domain_sp.eos_id() if callable(domain_sp.eos_id) else domain_sp.eos_id
                     if next_token == eos:
                         break
@@ -402,7 +466,9 @@ def eval_generation(neurons, shared_embeddings, domain_sp, general_sp, cfg,
                 piece = domain_sp.DecodeIds([next_token])
                 gen_ids = general_sp.EncodeAsIds(piece)
                 if gen_ids:
-                    ids = torch.cat([ids, torch.tensor([gen_ids], dtype=torch.long, device=DEVICE)], dim=1)
+                    ids = torch.cat(
+                        [ids, torch.tensor([gen_ids], dtype=torch.long, device=DEVICE)], dim=1
+                    )
                 else:
                     break
                 if ids.shape[1] > 200:
@@ -410,7 +476,13 @@ def eval_generation(neurons, shared_embeddings, domain_sp, general_sp, cfg,
             text = domain_sp.DecodeIds(generated_domain)
         return text
 
-    def generate_collab(prompt, max_tokens=SAMPLING_MAX_TOKENS, temperature=SAMPLING_TEMPERATURE, top_k=SAMPLING_TOP_K, repetition_penalty=SAMPLING_REPETITION_PENALTY):
+    def generate_collab(
+        prompt,
+        max_tokens=SAMPLING_MAX_TOKENS,
+        temperature=SAMPLING_TEMPERATURE,
+        top_k=SAMPLING_TOP_K,
+        repetition_penalty=SAMPLING_REPETITION_PENALTY,
+    ):
         general_ids = general_sp.EncodeAsIds(prompt)
         if not general_ids:
             return "(empty)"
@@ -441,13 +513,25 @@ def eval_generation(neurons, shared_embeddings, domain_sp, general_sp, cfg,
                     if len(set(l.shape[-1] for l in n_logits)) == 1:
                         logits = torch.stack(n_logits).mean(dim=0)[:, -1, :].float()
                     else:
-                        best_nid = max(result.get("final_scores", {}), key=result["final_scores"].get, default=NEURON_IDS[0])
+                        best_nid = max(
+                            result.get("final_scores", {}),
+                            key=result["final_scores"].get,
+                            default=NEURON_IDS[0],
+                        )
                         logits = result["neuron_logits"][best_nid][:, -1, :].float()
                 else:
-                    best_nid = max(result.get("final_scores", {}), key=result["final_scores"].get, default=NEURON_IDS[0])
-                    logits = neurons[best_nid].forward(
-                        neuron_embeddings[best_nid], return_logits=True
-                    )["logits"][:, -1, :].float()
+                    best_nid = max(
+                        result.get("final_scores", {}),
+                        key=result["final_scores"].get,
+                        default=NEURON_IDS[0],
+                    )
+                    logits = (
+                        neurons[best_nid]
+                        .forward(neuron_embeddings[best_nid], return_logits=True)["logits"][
+                            :, -1, :
+                        ]
+                        .float()
+                    )
 
                 # Repetition penalty: 降低已生成 token 的概率
                 if generated_domain:
@@ -460,13 +544,13 @@ def eval_generation(neurons, shared_embeddings, domain_sp, general_sp, cfg,
                 # Top-k filtering
                 if top_k > 0 and top_k < logits.size(-1):
                     topk_vals, _ = torch.topk(logits, top_k, dim=-1)
-                    logits[logits < topk_vals[:, -1:]] = float('-inf')
+                    logits[logits < topk_vals[:, -1:]] = float("-inf")
 
                 # Softmax + sampling
                 probs = torch.softmax(logits, dim=-1)
                 next_token = torch.multinomial(probs, num_samples=1).item()
 
-                if hasattr(domain_sp, 'eos_id'):
+                if hasattr(domain_sp, "eos_id"):
                     eos = domain_sp.eos_id() if callable(domain_sp.eos_id) else domain_sp.eos_id
                     if next_token == eos:
                         break
@@ -477,7 +561,10 @@ def eval_generation(neurons, shared_embeddings, domain_sp, general_sp, cfg,
                 piece = domain_sp.DecodeIds([next_token])
                 gen_ids = general_sp.EncodeAsIds(piece)
                 if gen_ids:
-                    current_ids = torch.cat([current_ids, torch.tensor([gen_ids], dtype=torch.long, device=DEVICE)], dim=1)
+                    current_ids = torch.cat(
+                        [current_ids, torch.tensor([gen_ids], dtype=torch.long, device=DEVICE)],
+                        dim=1,
+                    )
                 else:
                     break
 
@@ -498,19 +585,30 @@ def eval_generation(neurons, shared_embeddings, domain_sp, general_sp, cfg,
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser(description="评估 zh_aug 神经元联合效果")
-    parser.add_argument("--shared_expert", action="store_true",
-                        help="启用 Shared Expert 机制（加载 general 神经元）")
-    parser.add_argument("--shared_expert_weight", type=float, default=0.3,
-                        help="Shared Expert 的固定融合权重（默认 0.3）")
-    parser.add_argument("--include_std", action="store_true",
-                        help="加载 standard 神经元 zh_std0（混合规格协作）")
-    parser.add_argument("--n_eval", type=int, default=100,
-                        help="PPL 评估文本数（默认 100）")
+    parser.add_argument(
+        "--shared_expert",
+        action="store_true",
+        help="启用 Shared Expert 机制（加载 general 神经元）",
+    )
+    parser.add_argument(
+        "--shared_expert_weight",
+        type=float,
+        default=0.3,
+        help="Shared Expert 的固定融合权重（默认 0.3）",
+    )
+    parser.add_argument(
+        "--include_std", action="store_true", help="加载 standard 神经元 zh_std0（混合规格协作）"
+    )
+    parser.add_argument("--n_eval", type=int, default=100, help="PPL 评估文本数（默认 100）")
     parser.add_argument("--device", default="cpu", help="计算设备 (cpu/cuda)")
-    parser.add_argument("--topology", default="hybrid",
-                        choices=["full", "knn", "hub_spoke", "hybrid"],
-                        help="S7: 回退拓扑模式 (checkpoint 无拓扑信息时使用)")
+    parser.add_argument(
+        "--topology",
+        default="hybrid",
+        choices=["full", "knn", "hub_spoke", "hybrid"],
+        help="S7: 回退拓扑模式 (checkpoint 无拓扑信息时使用)",
+    )
     args = parser.parse_args()
 
     global DEVICE
@@ -534,15 +632,26 @@ def main():
     se_id = SHARED_EXPERT_ID if args.shared_expert else None
 
     print("\n[2] PPL 评估...", flush=True)
-    eval_ppl(neurons, shared_embeddings, domain_sp, general_sp,
-             n_eval=args.n_eval,
-             shared_expert_id=se_id,
-             shared_expert_weight=args.shared_expert_weight)
+    eval_ppl(
+        neurons,
+        shared_embeddings,
+        domain_sp,
+        general_sp,
+        n_eval=args.n_eval,
+        shared_expert_id=se_id,
+        shared_expert_weight=args.shared_expert_weight,
+    )
 
     print("\n[3] 生成质量...", flush=True)
-    eval_generation(neurons, shared_embeddings, domain_sp, general_sp, cfg,
-                    shared_expert_id=se_id,
-                    shared_expert_weight=args.shared_expert_weight)
+    eval_generation(
+        neurons,
+        shared_embeddings,
+        domain_sp,
+        general_sp,
+        cfg,
+        shared_expert_id=se_id,
+        shared_expert_weight=args.shared_expert_weight,
+    )
 
     print("\n" + "=" * 60, flush=True)
     print("评估完成", flush=True)

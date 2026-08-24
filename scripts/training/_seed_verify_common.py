@@ -84,14 +84,9 @@ def measure_panel(model: Seed, judge: SeedJudge) -> Dict[str, object]:
     groups: Dict[str, Dict[str, object]] = {}
     all_means: List[float] = []
     for group_name, prompts in panel.items():
-        qualities = [
-            float(judge.score(text.encode("utf-8"))["quality"])
-            for text in prompts
-        ]
+        qualities = [float(judge.score(text.encode("utf-8"))["quality"]) for text in prompts]
         mean = sum(qualities) / len(qualities)
-        std = (
-            sum((value - mean) ** 2 for value in qualities) / len(qualities)
-        ) ** 0.5
+        std = (sum((value - mean) ** 2 for value in qualities) / len(qualities)) ** 0.5
         groups[group_name] = {"mean": mean, "std": std, "qualities": qualities}
         all_means.append(mean)
     return {"groups": groups, "overall_mean": sum(all_means) / len(all_means)}
@@ -100,10 +95,7 @@ def measure_panel(model: Seed, judge: SeedJudge) -> Dict[str, object]:
 def parameter_delta(model: Seed, before: List[torch.Tensor]) -> float:
     after = model.substrate.parameter_tensors()
     return float(
-        sum(
-            float((a.detach() - b.detach()).abs().sum().item())
-            for a, b in zip(after, before)
-        )
+        sum(float((a.detach() - b.detach()).abs().sum().item()) for a, b in zip(after, before))
     )
 
 

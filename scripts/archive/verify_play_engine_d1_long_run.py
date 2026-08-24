@@ -57,6 +57,7 @@
 或 D1-fix v3：D1_JUDGE_DRIVEN_DECAY=1 python -u scripts/training/verify_play_engine_d1_long_run.py
 或 D1-fix v4：D1_JUDGE_DRIVEN_DECAY=1 D1_HYSTERESIS_N=2 D1_CEILING_RATIO=1.3 python -u scripts/training/verify_play_engine_d1_long_run.py
 """
+
 from __future__ import annotations
 
 import json
@@ -65,7 +66,9 @@ import random
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
@@ -78,11 +81,16 @@ from neuroplex.life.sleep_engine import SleepEngine, SleepConfig, SleepReport  #
 from neuroplex.resonance.neuro_modulation import SleepConsolidator  # noqa: E402
 
 from scripts.archive.verify_a1_judge_signal_real import (  # noqa: E402
-    DIALOGUE_IDS, COLLAB_NAME, EXTRA_NEURONS_DIR,
-    DIALOGUE_PROMPTS, KNOWLEDGE_PROMPTS, UNFAMILIAR_PROMPTS,
+    DIALOGUE_IDS,
+    COLLAB_NAME,
+    EXTRA_NEURONS_DIR,
+    DIALOGUE_PROMPTS,
+    KNOWLEDGE_PROMPTS,
+    UNFAMILIAR_PROMPTS,
 )
 from scripts.archive.verify_a3_with_decay import (  # noqa: E402
-    field_state_of, lora_l2_norm,
+    field_state_of,
+    lora_l2_norm,
 )
 from scripts.archive.verify_a4_post_sleep_judge_signal import (  # noqa: E402
     measure_group_stds,
@@ -121,8 +129,7 @@ def check(name: str, cond: bool, extra: str = "") -> None:
 def coaction_stats(cortex) -> dict:
     coaction = getattr(cortex, "coaction", None)
     if coaction is None:
-        return {"fast_pair_count": 0, "strong_pair_count": 0,
-                "activation_count_sum": 0}
+        return {"fast_pair_count": 0, "strong_pair_count": 0, "activation_count_sum": 0}
     return {
         "fast_pair_count": len(coaction._fast_matrix),
         "strong_pair_count": len(coaction.get_strong_pairs(threshold=0.2)),
@@ -138,12 +145,12 @@ def sample_trajectory(sleep_engine, cortex, target_ids, a1_groups):
         vals = []
         for text in prompts[:2]:
             jnll = sleep_engine._sample_judge_nll(
-                text, target_ids, device, cortex._shared_embedding)
+                text, target_ids, device, cortex._shared_embedding
+            )
             if jnll is not None and jnll < 1e6:
                 vals.append(jnll)
         nlls[gname] = float(np.mean(vals)) if vals else 0.0
-    lora_l2 = sum(lora_l2_norm(cortex.neurons[nid])
-                  for nid in target_ids if nid in cortex.neurons)
+    lora_l2 = sum(lora_l2_norm(cortex.neurons[nid]) for nid in target_ids if nid in cortex.neurons)
     coact = coaction_stats(cortex)
     return {"nlls": nlls, "lora_l2": float(lora_l2), "coaction": coact}
 
@@ -153,23 +160,27 @@ def main():
     today = time.strftime("%Y%m%d")
     n_decisions = N_MICRO // DECISION_EVERY
     print("=" * 64, flush=True)
-    print(f"自举门槛 D1 长程稳定性：{N_MICRO} 次 micro-sleep + {n_decisions} 次决策",
-          flush=True)
-    print(f"  3 机制: ε-greedy {EPSILON*100:.0f}% + "
-          f"force_switch streak={FORCE_SWITCH_STREAK} + "
-          f"recency_bonus={RECENCY_BONUS}", flush=True)
-    print(f"  衰减: lora_decay={DECAY}  "
-          f"judge_driven_decay={JUDGE_DRIVEN_DECAY}  "
-          f"decay_min_std={DECAY_MIN_STD}  "
-          f"decay_min_rel_ratio={DECAY_MIN_REL_RATIO}  "
-          f"decay_sample_n={DECAY_SAMPLE_N}  "
-          f"hysteresis_n={HYSTERESIS_N}  "
-          f"ceiling_ratio={CEILING_RATIO}", flush=True)
+    print(f"自举门槛 D1 长程稳定性：{N_MICRO} 次 micro-sleep + {n_decisions} 次决策", flush=True)
+    print(
+        f"  3 机制: ε-greedy {EPSILON*100:.0f}% + "
+        f"force_switch streak={FORCE_SWITCH_STREAK} + "
+        f"recency_bonus={RECENCY_BONUS}",
+        flush=True,
+    )
+    print(
+        f"  衰减: lora_decay={DECAY}  "
+        f"judge_driven_decay={JUDGE_DRIVEN_DECAY}  "
+        f"decay_min_std={DECAY_MIN_STD}  "
+        f"decay_min_rel_ratio={DECAY_MIN_REL_RATIO}  "
+        f"decay_sample_n={DECAY_SAMPLE_N}  "
+        f"hysteresis_n={HYSTERESIS_N}  "
+        f"ceiling_ratio={CEILING_RATIO}",
+        flush=True,
+    )
     print(f"  每 {SAMPLE_EVERY} 步采样轨迹（NLL / LoRA L2 / coaction）", flush=True)
     print("=" * 64, flush=True)
 
-    print("\n[1/5] 装配 9 成员 production cortex（冻结，不写 checkpoint）...",
-          flush=True)
+    print("\n[1/5] 装配 9 成员 production cortex（冻结，不写 checkpoint）...", flush=True)
     cortex, _tok, _mods = assemble_cortex(
         neurons_dir="data/neurons",
         collab_name=COLLAB_NAME,
@@ -179,10 +190,8 @@ def main():
         wire_bio_modules=True,
         neuron_ids=DIALOGUE_IDS,
     )
-    target_ids = [nid for nid in cortex.neurons
-                  if nid.startswith("zh_") and "dialogue" in nid]
-    print(f"  装配 {len(cortex.neurons)} 神经元，judge 目标 = {target_ids}",
-          flush=True)
+    target_ids = [nid for nid in cortex.neurons if nid.startswith("zh_") and "dialogue" in nid]
+    print(f"  装配 {len(cortex.neurons)} 神经元，judge 目标 = {target_ids}", flush=True)
 
     tmp_data = os.path.join("data", "_tmp_d1")
     os.makedirs(tmp_data, exist_ok=True)
@@ -194,8 +203,7 @@ def main():
         decay_min_judge_std=DECAY_MIN_STD,
         decay_min_relative_ratio=DECAY_MIN_REL_RATIO,
         decay_judge_sample_n=DECAY_SAMPLE_N,
-        decay_baseline_prompts=tuple(
-            DIALOGUE_PROMPTS + KNOWLEDGE_PROMPTS + UNFAMILIAR_PROMPTS),
+        decay_baseline_prompts=tuple(DIALOGUE_PROMPTS + KNOWLEDGE_PROMPTS + UNFAMILIAR_PROMPTS),
         decay_baseline_sample_n=DECAY_SAMPLE_N,
         decay_hysteresis_n=HYSTERESIS_N,
         decay_lora_ceiling_ratio=CEILING_RATIO,
@@ -210,23 +218,31 @@ def main():
         "knowledge": KNOWLEDGE_PROMPTS,
         "unfamiliar": UNFAMILIAR_PROMPTS,
     }
-    print(f"\n[2/5] 注入 A1 真实版 24 条 + 6 主题池 144 条记忆（初始 168 条）...",
-          flush=True)
+    print(f"\n[2/5] 注入 A1 真实版 24 条 + 6 主题池 144 条记忆（初始 168 条）...", flush=True)
     for i, text in enumerate(DIALOGUE_PROMPTS + KNOWLEDGE_PROMPTS + UNFAMILIAR_PROMPTS):
         vec = field_state_of(cortex, text)
         sleep_engine.record_field_memory(vec, f"a1_{i}", text=text)
         sc.record_high_resonance_state(
-            field_state=vec, resonance_score=0.9, step=0,
-            active_nids=target_ids, threshold=0.5, text=text)
+            field_state=vec,
+            resonance_score=0.9,
+            step=0,
+            active_nids=target_ids,
+            threshold=0.5,
+            text=text,
+        )
     for tname, prompts in TOPIC_POOLS.items():
         for i, text in enumerate(prompts):
             vec = field_state_of(cortex, text)
             sleep_engine.record_field_memory(vec, f"{tname}_{i}", text=text)
             sc.record_high_resonance_state(
-                field_state=vec, resonance_score=0.85, step=0,
-                active_nids=target_ids, threshold=0.5, text=text)
-    r_init = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
-                          duration_seconds=0)
+                field_state=vec,
+                resonance_score=0.85,
+                step=0,
+                active_nids=target_ids,
+                threshold=0.5,
+                text=text,
+            )
+    r_init = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
     sleep_engine._sleep_phase_field_consolidation(r_init)
     print(f"  注入 168 条 + 场固化", flush=True)
 
@@ -237,15 +253,17 @@ def main():
         d = pre[g]
         pre_summary[g] = {"std": d["std"], "mean": d["mean"]}
         print(f"  pre {g}: std={d['std']:.6f}  mean={d['mean']:.4f}", flush=True)
-    pre_lora = sum(lora_l2_norm(cortex.neurons[nid])
-                   for nid in target_ids if nid in cortex.neurons)
+    pre_lora = sum(lora_l2_norm(cortex.neurons[nid]) for nid in target_ids if nid in cortex.neurons)
     print(f"  pre LoRA L2: {pre_lora:.4f}", flush=True)
 
-    print(f"\n[4/5] 跑 {N_MICRO} 次 micro-sleep（每 {DECISION_EVERY} 步决策 + "
-          f"每 {SAMPLE_EVERY} 步采样）...", flush=True)
+    print(
+        f"\n[4/5] 跑 {N_MICRO} 次 micro-sleep（每 {DECISION_EVERY} 步决策 + "
+        f"每 {SAMPLE_EVERY} 步采样）...",
+        flush=True,
+    )
     device = next(cortex._shared_embedding.parameters()).device
     n_crashes = 0
-    last_selected_at = {tname: -10**9 for tname in TOPIC_POOLS}
+    last_selected_at = {tname: -(10**9) for tname in TOPIC_POOLS}
     last_chosen_topic = None
     current_streak = 0
     switch_count = 0
@@ -258,11 +276,14 @@ def main():
     traj = sample_trajectory(sleep_engine, cortex, target_ids, a1_groups)
     traj["step"] = 0
     trajectory.append(traj)
-    print(f"  step    0  NLL d={traj['nlls']['dialogue']:.2f}  "
-          f"k={traj['nlls']['knowledge']:.2f}  "
-          f"u={traj['nlls']['unfamiliar']:.2f}  "
-          f"LoRA={traj['lora_l2']:.4f}  "
-          f"coact={traj['coaction']['fast_pair_count']}", flush=True)
+    print(
+        f"  step    0  NLL d={traj['nlls']['dialogue']:.2f}  "
+        f"k={traj['nlls']['knowledge']:.2f}  "
+        f"u={traj['nlls']['unfamiliar']:.2f}  "
+        f"LoRA={traj['lora_l2']:.4f}  "
+        f"coact={traj['coaction']['fast_pair_count']}",
+        flush=True,
+    )
 
     for step in range(1, N_MICRO + 1):
         if step % DECISION_EVERY == 1:
@@ -273,7 +294,8 @@ def main():
                 nlls = []
                 for text in sample_prompts:
                     jnll = sleep_engine._sample_judge_nll(
-                        text, target_ids, device, cortex._shared_embedding)
+                        text, target_ids, device, cortex._shared_embedding
+                    )
                     if jnll is not None and jnll < 1e6:
                         nlls.append(jnll)
                 nll_per_pool[tname] = float(np.mean(nlls)) if nlls else 0.0
@@ -286,8 +308,7 @@ def main():
             sorted_pools = sorted(nll_with_bonus.items(), key=lambda x: -x[1])
             top1_topic = sorted_pools[0][0]
 
-            force_switch = (last_chosen_topic == top1_topic
-                            and current_streak >= FORCE_SWITCH_STREAK)
+            force_switch = last_chosen_topic == top1_topic and current_streak >= FORCE_SWITCH_STREAK
             epsilon_roll = random.random() < EPSILON
             if force_switch or epsilon_roll:
                 other_topics = [t for t in nll_with_bonus if t != top1_topic]
@@ -319,16 +340,24 @@ def main():
             for j, text in enumerate(TOPIC_POOLS[chosen_topic]):
                 vec = field_state_of(cortex, text)
                 sleep_engine.record_field_memory(
-                    vec, f"d1_step{step}_{chosen_topic}_{j}", text=text)
+                    vec, f"d1_step{step}_{chosen_topic}_{j}", text=text
+                )
                 sc.record_high_resonance_state(
-                    field_state=vec, resonance_score=0.9, step=step,
-                    active_nids=target_ids, threshold=0.5, text=text)
+                    field_state=vec,
+                    resonance_score=0.9,
+                    step=step,
+                    active_nids=target_ids,
+                    threshold=0.5,
+                    text=text,
+                )
 
             if step % (DECISION_EVERY * 5) == 1:
-                print(f"  decision {decision_idx:2d}  step {step:4d}  "
-                      f"chose={chosen_topic:12s}  mech={mechanism:14s}  "
-                      f"streak={current_streak:2d}  switches={switch_count}",
-                      flush=True)
+                print(
+                    f"  decision {decision_idx:2d}  step {step:4d}  "
+                    f"chose={chosen_topic:12s}  mech={mechanism:14s}  "
+                    f"streak={current_streak:2d}  switches={switch_count}",
+                    flush=True,
+                )
 
         report = SleepReport(
             timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -349,17 +378,22 @@ def main():
             traj = sample_trajectory(sleep_engine, cortex, target_ids, a1_groups)
             traj["step"] = step
             trajectory.append(traj)
-            print(f"  step {step:4d}  NLL d={traj['nlls']['dialogue']:.2f}  "
-                  f"k={traj['nlls']['knowledge']:.2f}  "
-                  f"u={traj['nlls']['unfamiliar']:.2f}  "
-                  f"LoRA={traj['lora_l2']:.4f}  "
-                  f"coact={traj['coaction']['fast_pair_count']}",
-                  flush=True)
+            print(
+                f"  step {step:4d}  NLL d={traj['nlls']['dialogue']:.2f}  "
+                f"k={traj['nlls']['knowledge']:.2f}  "
+                f"u={traj['nlls']['unfamiliar']:.2f}  "
+                f"LoRA={traj['lora_l2']:.4f}  "
+                f"coact={traj['coaction']['fast_pair_count']}",
+                flush=True,
+            )
 
     elapsed_step = time.time() - t0
-    print(f"\n  完成 {N_MICRO} 步, switches={switch_count}, "
-          f"epsilon_used={epsilon_used}, force_used={force_used}, "
-          f"崩溃 {n_crashes} 次", flush=True)
+    print(
+        f"\n  完成 {N_MICRO} 步, switches={switch_count}, "
+        f"epsilon_used={epsilon_used}, force_used={force_used}, "
+        f"崩溃 {n_crashes} 次",
+        flush=True,
+    )
 
     print(f"\n[5/5] 后测量（post 3 组 std/mean）...", flush=True)
     post = measure_group_stds(sleep_engine, cortex, target_ids, a1_groups)
@@ -368,8 +402,9 @@ def main():
         d = post[g]
         post_summary[g] = {"std": d["std"], "mean": d["mean"]}
         print(f"  post {g}: std={d['std']:.6f}  mean={d['mean']:.4f}", flush=True)
-    post_lora = sum(lora_l2_norm(cortex.neurons[nid])
-                    for nid in target_ids if nid in cortex.neurons)
+    post_lora = sum(
+        lora_l2_norm(cortex.neurons[nid]) for nid in target_ids if nid in cortex.neurons
+    )
     print(f"  post LoRA L2: {post_lora:.4f}", flush=True)
 
     print("\n" + "=" * 64, flush=True)
@@ -378,32 +413,30 @@ def main():
 
     ratio_summary = {}
     for g in ("dialogue", "knowledge", "unfamiliar"):
-        ratio = (post_summary[g]["std"]
-                 / max(pre_summary[g]["std"], 1e-9))
+        ratio = post_summary[g]["std"] / max(pre_summary[g]["std"], 1e-9)
         ratio_summary[g] = ratio
-        check(f"D1.{g[0]} {g} 组 std >= pre × 0.90（长程不遗忘）",
-              ratio >= 0.90,
-              f"ratio={ratio:.4f}  pre={pre_summary[g]['std']:.4f}  "
-              f"post={post_summary[g]['std']:.4f}")
+        check(
+            f"D1.{g[0]} {g} 组 std >= pre × 0.90（长程不遗忘）",
+            ratio >= 0.90,
+            f"ratio={ratio:.4f}  pre={pre_summary[g]['std']:.4f}  "
+            f"post={post_summary[g]['std']:.4f}",
+        )
 
-    check("D1.d 0 崩溃 / 0 NaN / 0 爆炸",
-          n_crashes == 0,
-          f"crashes={n_crashes}/{N_MICRO}")
+    check("D1.d 0 崩溃 / 0 NaN / 0 爆炸", n_crashes == 0, f"crashes={n_crashes}/{N_MICRO}")
 
     elapsed_min = (time.time() - t0) / 60
-    check(f"D1.e {N_MICRO} 步 <= 60 min",
-          elapsed_min <= 60,
-          f"elapsed={elapsed_min:.1f} min")
+    check(f"D1.e {N_MICRO} 步 <= 60 min", elapsed_min <= 60, f"elapsed={elapsed_min:.1f} min")
 
-    d1_pass = (failed == 0)
+    d1_pass = failed == 0
 
     print("\n" + "=" * 64, flush=True)
     if d1_pass:
-        print("判定: D1 PASS：长程稳定性成立 — 1000 步无累积爆炸 / 无渐进遗忘",
-              flush=True)
-        next_msg = ("D1 通过。门槛 D 起步。"
-                    "下一步：D2 极限压力 — 5000 步 + 减少 LoRA 衰减 0.9→0.8 "
-                    "看何时崩")
+        print("判定: D1 PASS：长程稳定性成立 — 1000 步无累积爆炸 / 无渐进遗忘", flush=True)
+        next_msg = (
+            "D1 通过。门槛 D 起步。"
+            "下一步：D2 极限压力 — 5000 步 + 减少 LoRA 衰减 0.9→0.8 "
+            "看何时崩"
+        )
         print(f"下一步: {next_msg}", flush=True)
     else:
         print(f"判定: D1 FAIL ({failed} 维不过)", flush=True)
@@ -448,15 +481,19 @@ def main():
                 f"c) 调整 hysteresis N 2→3 进一步抗噪"
             )
         elif JUDGE_DRIVEN_DECAY:
-            next_msg = ("D1-fix judge 驱动衰减自调节仍 FAIL——"
-                        "考虑：a) 调高 decay_min_std（0.05→0.10）让 skip 更激进；"
-                        "b) 调低 DECAY（0.9→0.7）让保留的 LoRA 也衰减；"
-                        "c) 缩短 N_MICRO 到 500 看半程")
+            next_msg = (
+                "D1-fix judge 驱动衰减自调节仍 FAIL——"
+                "考虑：a) 调高 decay_min_std（0.05→0.10）让 skip 更激进；"
+                "b) 调低 DECAY（0.9→0.7）让保留的 LoRA 也衰减；"
+                "c) 缩短 N_MICRO 到 500 看半程"
+            )
         else:
-            next_msg = ("D1 FAIL 根因=过度收敛。"
-                        "运行 D1_JUDGE_DRIVEN_DECAY=1 让 judge 驱动衰减自调节"
-                        "（SleepConfig.judge_driven_decay=True）"
-                        "—— std<0.05 时 skip 本次衰减，保留训练累积的 LoRA。")
+            next_msg = (
+                "D1 FAIL 根因=过度收敛。"
+                "运行 D1_JUDGE_DRIVEN_DECAY=1 让 judge 驱动衰减自调节"
+                "（SleepConfig.judge_driven_decay=True）"
+                "—— std<0.05 时 skip 本次衰减，保留训练累积的 LoRA。"
+            )
         print(f"下一步: {next_msg}", flush=True)
     print("=" * 64, flush=True)
 
@@ -498,41 +535,39 @@ def main():
         "elapsed_seconds": time.time() - t0,
     }
     if HYSTERESIS_N >= 2 and CEILING_RATIO < 1.5 and DECAY >= 0.88:
-        out_path = (f"reports/play_engine_d1_fix_v4_hysteresis_ceiling_"
-                    f"{today}.json")
+        out_path = f"reports/play_engine_d1_fix_v4_hysteresis_ceiling_" f"{today}.json"
     # v9 path - 1.5<=CEILING<1.7, DECAY<0.88, baseline=first_n_steps_mean
     # (N plan: 修 baseline 初始化让 ceiling 真正可触发) — 必须在 v5 之前判断，
     # 避免 v5 path 优先吃掉 v9 命名
-    elif (HYSTERESIS_N >= 2 and 1.5 <= CEILING_RATIO < 1.7
-          and DECAY < 0.88
-          and BASELINE_INIT == "first_n_steps_mean"):
-        out_path = (f"reports/play_engine_d1_fix_v9_baseline_fix_"
-                    f"{today}.json")
+    elif (
+        HYSTERESIS_N >= 2
+        and 1.5 <= CEILING_RATIO < 1.7
+        and DECAY < 0.88
+        and BASELINE_INIT == "first_n_steps_mean"
+    ):
+        out_path = f"reports/play_engine_d1_fix_v9_baseline_fix_" f"{today}.json"
     # v9-old path - same as v5 but baseline=first_measurement (A/B 对照)
-    elif (HYSTERESIS_N >= 2 and 1.5 <= CEILING_RATIO < 1.7
-          and DECAY < 0.88
-          and BASELINE_INIT == "first_measurement"):
-        out_path = (f"reports/play_engine_d1_fix_v9_baseline_old_"
-                    f"{today}.json")
+    elif (
+        HYSTERESIS_N >= 2
+        and 1.5 <= CEILING_RATIO < 1.7
+        and DECAY < 0.88
+        and BASELINE_INIT == "first_measurement"
+    ):
+        out_path = f"reports/play_engine_d1_fix_v9_baseline_old_" f"{today}.json"
     # v5 path - 1.5<=CEILING<1.7, DECAY<0.88 (tightened: exclude v7 ceiling 1.7)
     elif HYSTERESIS_N >= 2 and 1.5 <= CEILING_RATIO < 1.7 and DECAY < 0.88:
-        out_path = (f"reports/play_engine_d1_fix_v5_ceiling16_decay85_"
-                    f"{today}.json")
+        out_path = f"reports/play_engine_d1_fix_v5_ceiling16_decay85_" f"{today}.json"
     # v6 path - 1.5<=CEILING<1.7, 0.875<=DECAY<0.92 (tightened: exclude v7 ceiling 1.7)
     elif HYSTERESIS_N >= 2 and 1.5 <= CEILING_RATIO < 1.7 and 0.875 <= DECAY < 0.92:
-        out_path = (f"reports/play_engine_d1_fix_v6_ceiling16_decay88_"
-                    f"{today}.json")
+        out_path = f"reports/play_engine_d1_fix_v6_ceiling16_decay88_" f"{today}.json"
     # v7 path - CEILING==1.7, DECAY<0.88 (H plan: ceiling 1.7 + DECAY 0.85)
     elif HYSTERESIS_N >= 2 and 1.69 <= CEILING_RATIO <= 1.71 and DECAY < 0.88:
-        out_path = (f"reports/play_engine_d1_fix_v7_ceiling17_decay85_"
-                    f"{today}.json")
+        out_path = f"reports/play_engine_d1_fix_v7_ceiling17_decay85_" f"{today}.json"
     # v8 path - CEILING>=1.95, DECAY<0.88 (K plan: ceiling 2.0 + DECAY 0.85)
     elif HYSTERESIS_N >= 2 and CEILING_RATIO >= 1.95 and DECAY < 0.88:
-        out_path = (f"reports/play_engine_d1_fix_v8_ceiling20_decay85_"
-                    f"{today}.json")
+        out_path = f"reports/play_engine_d1_fix_v8_ceiling20_decay85_" f"{today}.json"
     elif JUDGE_DRIVEN_DECAY:
-        out_path = (f"reports/play_engine_d1_fix_judge_driven_decay_"
-                    f"{today}.json")
+        out_path = f"reports/play_engine_d1_fix_judge_driven_decay_" f"{today}.json"
     else:
         out_path = f"reports/play_engine_d1_long_run_{today}.json"
     os.makedirs("reports", exist_ok=True)

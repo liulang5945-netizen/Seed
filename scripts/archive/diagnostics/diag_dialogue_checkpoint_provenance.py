@@ -11,6 +11,7 @@
 运行：
     python -X utf8 -u scripts/training/diag_dialogue_checkpoint_provenance.py
 """
+
 from __future__ import annotations
 
 import glob
@@ -20,14 +21,18 @@ import os
 import re
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 
-
 DIALOGUE_IDS = [
-    "zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-    "zh_aug3_dialogue", "zh_std0_dialogue",
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
 ]
 CHECKPOINT_DIR = "data/neurons"
 LOG_DIR = "logs"
@@ -43,10 +48,7 @@ def _log_metrics(path: str | None) -> dict:
     if path is None:
         return {"path": None, "evals": []}
     text = open(path, "r", encoding="utf-8").read()
-    evals = [
-        {"step": int(step), "ppl": float(ppl)}
-        for step, ppl in EVAL_RE.findall(text)
-    ]
+    evals = [{"step": int(step), "ppl": float(ppl)} for step, ppl in EVAL_RE.findall(text)]
     best = min(evals, key=lambda item: item["ppl"]) if evals else None
     return {
         "path": path,

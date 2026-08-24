@@ -16,7 +16,7 @@ general/domain token 映射，再查共享嵌入表。
 from __future__ import annotations
 
 import math
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import torch
 import torch.nn as nn
@@ -41,7 +41,7 @@ class LoraPair(nn.Module):
         self.scale = (alpha if alpha is not None else rank) / rank
         self.a = nn.Linear(in_dim, rank, bias=False)
         self.b = nn.Linear(rank, in_dim, bias=False)
-        nn.init.kaiming_uniform_(self.a.weight, a=5 ** 0.5)
+        nn.init.kaiming_uniform_(self.a.weight, a=5**0.5)
         nn.init.zeros_(self.b.weight)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -107,23 +107,25 @@ class ResonanceNeuron(nn.Module):
         # mm_lm_heads（独立 codebook 输出头）2026-08-07 已废弃——多模态输出统一走共享 general lm_head
 
         # ── Transformer body (reuses layers.py, zero changes) ──
-        self.layers = nn.ModuleList([
-            TransformerBlock(
-                hidden_size=c.hidden_size,
-                num_heads=c.num_attention_heads,
-                num_kv_heads=c.num_key_value_heads,
-                intermediate_size=c.intermediate_size,
-                rms_norm_eps=c.rms_norm_eps,
-                bias=c.attention_bias,
-                dropout=c.dropout,
-                dendritic=c.dendritic_enabled,
-                apical_kv_dim=(c.apical_kv_dim or c.field_dim) if c.dendritic_enabled else None,
-                # S11: 长上下文 attention sink + 滑动窗口
-                attention_sink_size=c.attention_sink_size,
-                sliding_window_size=c.sliding_window_size,
-            )
-            for _ in range(c.num_hidden_layers)
-        ])
+        self.layers = nn.ModuleList(
+            [
+                TransformerBlock(
+                    hidden_size=c.hidden_size,
+                    num_heads=c.num_attention_heads,
+                    num_kv_heads=c.num_key_value_heads,
+                    intermediate_size=c.intermediate_size,
+                    rms_norm_eps=c.rms_norm_eps,
+                    bias=c.attention_bias,
+                    dropout=c.dropout,
+                    dendritic=c.dendritic_enabled,
+                    apical_kv_dim=(c.apical_kv_dim or c.field_dim) if c.dendritic_enabled else None,
+                    # S11: 长上下文 attention sink + 滑动窗口
+                    attention_sink_size=c.attention_sink_size,
+                    sliding_window_size=c.sliding_window_size,
+                )
+                for _ in range(c.num_hidden_layers)
+            ]
+        )
         self.norm = RMSNorm(c.hidden_size, c.rms_norm_eps)
         self.dendritic_enabled = c.dendritic_enabled
         # C4: 场读入模式
@@ -140,7 +142,7 @@ class ResonanceNeuron(nn.Module):
         # C6: 多头 field write（num_field_heads > 1 时启用）
         # 单 query 只能写一个语义切面；多头让 neuron 同时表达"主题"+"情感"+"结构"等多个维度
         self.num_field_heads = c.num_field_heads
-        self.field_pool_scale = c.hidden_size ** -0.5
+        self.field_pool_scale = c.hidden_size**-0.5
 
         if c.num_field_heads > 1:
             # C6: 多头路径
@@ -149,10 +151,12 @@ class ResonanceNeuron(nn.Module):
                 torch.randn(c.num_field_heads, c.hidden_size) * 0.02
             )
             # K 个独立 field_write 投影（每个 head 学不同写入方向，强制多样性）
-            self.field_write_heads = nn.ModuleList([
-                nn.Linear(c.hidden_size, c.field_dim, bias=False)
-                for _ in range(c.num_field_heads)
-            ])
+            self.field_write_heads = nn.ModuleList(
+                [
+                    nn.Linear(c.hidden_size, c.field_dim, bias=False)
+                    for _ in range(c.num_field_heads)
+                ]
+            )
             # 门控聚合：从 pooled 特征动态选择每个 head 的权重
             self.field_gate = nn.Linear(c.hidden_size, c.num_field_heads, bias=True)
             # 保留 field_write=None 标记（兼容旧代码访问）
@@ -165,7 +169,9 @@ class ResonanceNeuron(nn.Module):
         # 突触投影（Field Projector）：不同规格 field_dim → 统一场空间
         # 模拟人脑突触可塑性（LTP/LTD）：不同类型神经元通过突触连接到统一网络
         # None 或 == field_dim 时为 Identity（向后兼容，不影响现有训练）
-        effective_field_dim = c.unified_field_dim if c.unified_field_dim is not None else c.field_dim
+        effective_field_dim = (
+            c.unified_field_dim if c.unified_field_dim is not None else c.field_dim
+        )
         if c.unified_field_dim is not None and c.unified_field_dim != c.field_dim:
             self.field_projector = nn.Linear(c.field_dim, c.unified_field_dim, bias=False)
         else:
@@ -179,7 +185,7 @@ class ResonanceNeuron(nn.Module):
         self.score_dim = c.score_dim
         if c.score_dim is not None:
             self.score_proj = nn.Linear(effective_field_dim, c.score_dim, bias=False)
-            nn.init.normal_(self.score_proj.weight, std=effective_field_dim ** -0.5)
+            nn.init.normal_(self.score_proj.weight, std=effective_field_dim**-0.5)
         else:
             self.score_proj = None
 
@@ -206,10 +212,12 @@ class ResonanceNeuron(nn.Module):
                 nn.init.normal_(m.weight, std=0.02)
 
         # ── Field read projections (one per layer, for conditioning) ──
-        self.field_read_layers = nn.ModuleList([
-            nn.Linear(effective_field_dim, c.hidden_size, bias=False)
-            for _ in range(c.num_hidden_layers)
-        ])
+        self.field_read_layers = nn.ModuleList(
+            [
+                nn.Linear(effective_field_dim, c.hidden_size, bias=False)
+                for _ in range(c.num_hidden_layers)
+            ]
+        )
 
         # Position gate for field read (v2)
         # Each position decides how much field conditioning to absorb,
@@ -234,7 +242,7 @@ class ResonanceNeuron(nn.Module):
         else:
             # P7 默认：per-neuron 独立 lm_head
             self.lm_head = nn.Linear(c.hidden_size, c.vocab_size, bias=False)
-            nn.init.normal_(self.lm_head.weight, std=c.hidden_size ** -0.5)
+            nn.init.normal_(self.lm_head.weight, std=c.hidden_size**-0.5)
 
         # ── Domain prototype (EMA updated, for L2 prototype routing) ──
         # 数据驱动典型响应向量，768 维 hidden_size 空间
@@ -460,7 +468,7 @@ class ResonanceNeuron(nn.Module):
         if modality in self.mm_projections:
             return  # 已注册，幂等
         self.mm_projections[modality] = nn.Linear(raw_dim, self.config.base_embed_dim, bias=False)
-        nn.init.normal_(self.mm_projections[modality].weight, std=self.config.base_embed_dim ** -0.5)
+        nn.init.normal_(self.mm_projections[modality].weight, std=self.config.base_embed_dim**-0.5)
 
     def auto_register_modalities(self, tokenizer_hub) -> None:
         """2026-08-07 收敛后：自动注册所有已注册到 TokenizerHub 的非文本模态的**输入投影**。
@@ -514,9 +522,7 @@ class ResonanceNeuron(nn.Module):
 
         # 连续特征路径：投影到 base_embed_dim
         if features.dim() != 3:
-            raise ValueError(
-                f"多模态输入应为 [B, L, raw_dim] float，got {features.shape}"
-            )
+            raise ValueError(f"多模态输入应为 [B, L, raw_dim] float，got {features.shape}")
 
         if modality not in self.mm_projections:
             raise ValueError(
@@ -585,8 +591,10 @@ class ResonanceNeuron(nn.Module):
         # 修复：传标准下三角 causal mask，确保位置 K 只看到 0..K
         if seqlen > 1:
             causal_mask = torch.full(
-                (1, 1, seqlen, seqlen), float('-inf'),
-                device=h.device, dtype=h.dtype,
+                (1, 1, seqlen, seqlen),
+                float("-inf"),
+                device=h.device,
+                dtype=h.dtype,
             )
             causal_mask = torch.triu(causal_mask, diagonal=1)
         else:
@@ -602,8 +610,12 @@ class ResonanceNeuron(nn.Module):
                 # 树突化：直接调用 block.forward，内部处理 basal + apical
                 h_in = h
                 h, _, attn_w = block(
-                    h, mask=causal_mask, temp_gain=temp_gain, ffn_gain=ffn_gain,
-                    field_state=field_state, return_attn_weights=return_intermediate,
+                    h,
+                    mask=causal_mask,
+                    temp_gain=temp_gain,
+                    ffn_gain=ffn_gain,
+                    field_state=field_state,
+                    return_attn_weights=return_intermediate,
                 )
                 # C16: 整块 LoRA（dendritic 路径无法拆开注入，退化到块级低秩残差）
                 if lora_on:
@@ -612,7 +624,9 @@ class ResonanceNeuron(nn.Module):
                 # 标准路径（向后兼容）
                 h_normed = block.attention_norm(h)
                 attn_out, _, attn_w = block.attention(
-                    h_normed, mask=causal_mask, temp_gain=temp_gain,
+                    h_normed,
+                    mask=causal_mask,
+                    temp_gain=temp_gain,
                     return_attn_weights=return_intermediate,
                 )
                 h = h + attn_out
@@ -685,9 +699,7 @@ class ResonanceNeuron(nn.Module):
                     if scale is not None:
                         proj = proj * scale + (bias if bias is not None else 0.0)
                         # 记录 usage = |scaled_proj|.mean()（detached，不参与梯度）
-                        self._channel_usage[f"excite:{peer_id}"] = (
-                            proj.detach().abs().mean().item()
-                        )
+                        self._channel_usage[f"excite:{peer_id}"] = proj.detach().abs().mean().item()
                     excite_sum = proj if excite_sum is None else excite_sum + proj
                 if peer_id in self.inhibit_channels:
                     proj = self.inhibit_channels[peer_id](sig)
@@ -741,22 +753,20 @@ class ResonanceNeuron(nn.Module):
         elif self.num_field_heads > 1:
             # C6: 多头 attention pooling + 门控聚合
             # K 个独立 query 各自 attention pooling，捕捉不同语义切面
-            attn_scores = torch.matmul(
-                h, self.field_pool_queries.T
-            ) * self.field_pool_scale  # [B, L, K]
+            attn_scores = (
+                torch.matmul(h, self.field_pool_queries.T) * self.field_pool_scale
+            )  # [B, L, K]
             attn_weights = torch.softmax(attn_scores, dim=1)  # [B, L, K] softmax over L
-            pooled = torch.einsum('blk,blh->bkh', attn_weights, h)  # [B, K, hidden]
+            pooled = torch.einsum("blk,blh->bkh", attn_weights, h)  # [B, K, hidden]
 
             # K 个独立 field_write 投影（每个 head 学不同写入方向）
-            v_raw_k = torch.stack([
-                head(pooled[:, k]) for k, head in enumerate(self.field_write_heads)
-            ])  # [K, B, field_dim]
+            v_raw_k = torch.stack(
+                [head(pooled[:, k]) for k, head in enumerate(self.field_write_heads)]
+            )  # [K, B, field_dim]
 
             # 门控聚合：从 pooled 均值动态选择每个 head 的权重
-            gate = torch.softmax(
-                self.field_gate(pooled.mean(dim=1)), dim=-1
-            )  # [B, K]
-            v_raw = torch.einsum('bk,kbd->bd', gate, v_raw_k)  # [B, field_dim]
+            gate = torch.softmax(self.field_gate(pooled.mean(dim=1)), dim=-1)  # [B, K]
+            v_raw = torch.einsum("bk,kbd->bd", gate, v_raw_k)  # [B, field_dim]
 
             v_raw = self.field_projector(v_raw)  # [B, effective_field_dim] 突触投影
             v = v_raw / (v_raw.norm(dim=-1, keepdim=True) + 1e-8)
@@ -765,15 +775,15 @@ class ResonanceNeuron(nn.Module):
             L = h.shape[1]
             max_entropy = math.log(L) if L > 1 else 1.0
             # 每 head 的 attention entropy: -Σ(p·log p) over L
-            entropy_per_head = -(
-                attn_weights * (attn_weights + 1e-8).log()
-            ).sum(dim=1)  # [B, K]
+            entropy_per_head = -(attn_weights * (attn_weights + 1e-8).log()).sum(dim=1)  # [B, K]
             confidence_per_head = 1.0 - entropy_per_head / max_entropy  # [B, K]
             field_confidence = (gate * confidence_per_head).sum(dim=-1)  # [B]
 
             result: Dict[str, torch.Tensor] = {
                 "field_vector": v,
-                "hidden_before_write": pooled.mean(dim=1),  # 平均 pooling 用于 domain_prototype 更新
+                "hidden_before_write": pooled.mean(
+                    dim=1
+                ),  # 平均 pooling 用于 domain_prototype 更新
                 "field_attn_weights": attn_weights.mean(dim=-1),  # [B, L] 平均 attention（诊断用）
                 "field_gate": gate,  # [B, K] 门控权重（诊断用）
                 "field_confidence": field_confidence,  # [B] 置信度（C8）
@@ -839,11 +849,15 @@ class ResonanceNeuron(nn.Module):
 
         # ── 兼容性表示对齐：中间表示 ──
         if return_intermediate:
-            result["intermediate_hidden"] = torch.stack(layer_hiddens, dim=1)  # [B, n_layers, L, hidden]
+            result["intermediate_hidden"] = torch.stack(
+                layer_hiddens, dim=1
+            )  # [B, n_layers, L, hidden]
             # attn_w: [B, num_heads, L, L] per layer；None（如 seqlen<=1）时跳过
             valid_attns = [a for a in layer_attns if a is not None]
             if valid_attns:
-                result["attn_weights"] = torch.stack(valid_attns, dim=1)  # [B, n_layers, num_heads, L, L]
+                result["attn_weights"] = torch.stack(
+                    valid_attns, dim=1
+                )  # [B, n_layers, num_heads, L, L]
             else:
                 result["attn_weights"] = None
 
@@ -987,11 +1001,11 @@ class ResonanceNeuron(nn.Module):
                 rank = max(rank, v.shape[0])
         if len(self.lora_adapters) == 0:
             self.enable_lora(rank if rank > 0 else 16, layers=layers)
-        lora_sd = {k[len("lora_adapters."):]: v for k, v in sd.items()
-                   if k.startswith("lora_adapters.")}
+        lora_sd = {
+            k[len("lora_adapters.") :]: v for k, v in sd.items() if k.startswith("lora_adapters.")
+        }
         try:
             self.lora_adapters.load_state_dict(lora_sd, strict=False)
             return True
         except Exception:
             return False
-

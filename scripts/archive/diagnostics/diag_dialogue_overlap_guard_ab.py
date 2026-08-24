@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """诊断-only：domain piece 字符重叠 guard 的最小 A/B。"""
+
 from __future__ import annotations
 
 import json
@@ -12,7 +13,6 @@ import torch
 from neuroplex.loader import assemble_cortex
 from neuroplex.resonance.dialogue_format import build_dialogue_prompt
 from diag_dialogue_capacity_ab import DIALOGUE_IDS, QUESTIONS, _text_metrics
-
 
 FULL_9 = DIALOGUE_IDS + ["code", "en", "math", "zh"]
 FULL_8_NO_ZH = DIALOGUE_IDS + ["code", "en", "math"]
@@ -75,12 +75,14 @@ def _generate(cortex, active_nids: list[str], question: str, guard: bool) -> dic
             for position, token_id in enumerate(topk_ids):
                 current = tokenizer.decode([int(token_id)])
                 if _overlap_chars(previous, current) >= 2:
-                    banned.append({
-                        "position": position,
-                        "token_id": int(token_id),
-                        "previous": previous,
-                        "current": current,
-                    })
+                    banned.append(
+                        {
+                            "position": position,
+                            "token_id": int(token_id),
+                            "previous": previous,
+                            "current": current,
+                        }
+                    )
             if banned and len(banned) < source.shape[-1]:
                 adjusted = source.clone()
                 adjusted[:, [event["position"] for event in banned]] = 0.0
@@ -97,12 +99,14 @@ def _generate(cortex, active_nids: list[str], question: str, guard: bool) -> dic
             current = tokenizer.decode([token_id])
             previous_pieces.append(current)
             if banned:
-                guard_events.append({
-                    "banned": banned,
-                    "selected_position": position,
-                    "selected_token_id": token_id,
-                    "selected_piece": current,
-                })
+                guard_events.append(
+                    {
+                        "banned": banned,
+                        "selected_position": position,
+                        "selected_token_id": token_id,
+                        "selected_piece": current,
+                    }
+                )
         return result
 
     torch.topk = traced_topk
@@ -166,16 +170,20 @@ def main() -> None:
             try:
                 current = _generate(cortex, active_nids, question, guard=False)
                 guarded = _generate(cortex, active_nids, question, guard=True)
-                rows.append({
-                    "question": question,
-                    "current": current,
-                    "guarded": guarded,
-                })
+                rows.append(
+                    {
+                        "question": question,
+                        "current": current,
+                        "guarded": guarded,
+                    }
+                )
             except Exception as exc:
-                rows.append({
-                    "question": question,
-                    "error": f"{type(exc).__name__}: {exc}",
-                })
+                rows.append(
+                    {
+                        "question": question,
+                        "error": f"{type(exc).__name__}: {exc}",
+                    }
+                )
         report["modes"][mode] = {"active_nids": active_nids, "rows": rows}
     report["elapsed_seconds"] = round(time.time() - started, 1)
     out_path = os.path.join("reports", "production_dialogue_overlap_guard_ab_20260820.json")

@@ -33,9 +33,7 @@ def observe_only_experience(scheduler, text):
         probabilities = seed.snapshot().motor_probabilities
         candidates = top_candidates(probabilities, 8)
         seed.act(candidates, sample=False)
-        seed.settle_action(
-            quality, learn=False, learn_memory=True, provenance="experienced"
-        )
+        seed.settle_action(quality, learn=False, learn_memory=True, provenance="experienced")
     seed.observe(boundary, learn=False)
 
 
@@ -54,14 +52,11 @@ def main() -> None:
                 model.substrate.consolidate(cycles=4, learn=True)
     after = common.measure_panel(model, judge)
     param_delta = sum(
-        float((v - b).abs().sum())
-        for v, b in zip(model.substrate.parameter_tensors(), before)
+        float((v - b).abs().sum()) for v, b in zip(model.substrate.parameter_tensors(), before)
     )
     print(f"参数变化总量 = {param_delta:.6f}", flush=True)
     for name in base["groups"]:
-        delta = (
-            after["groups"][name]["mean"] - base["groups"][name]["mean"]
-        )
+        delta = after["groups"][name]["mean"] - base["groups"][name]["mean"]
         print(f"  {name}: Δ={delta:+.4f}", flush=True)
     print(f"  overall Δ = {after['overall_mean'] - base['overall_mean']:+.4f}", flush=True)
 

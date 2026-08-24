@@ -4,6 +4,7 @@ Endpoints:
 - GET /api/runtime/bootstrap  — public, minimal info for unauthenticated clients
 - GET /api/runtime/status     — full status, requires auth if auth is enabled
 """
+
 from fastapi import APIRouter, Request
 
 from neuroplex.services.runtime_service import get_runtime_status, get_bootstrap_status

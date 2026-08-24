@@ -10,6 +10,7 @@
 7. field.update 支持 per-sample scale
 8. 向后兼容：confidence 默认 1.0（field.write 接受 float）
 """
+
 from __future__ import annotations
 
 import os
@@ -64,8 +65,9 @@ def test_confidence_range():
         result = neuron.forward(shared_emb)
 
     confidence = result["field_confidence"]
-    assert (confidence >= 0).all() and (confidence <= 1).all(), \
-        f"confidence 应在 [0, 1] 范围内, min={confidence.min()}, max={confidence.max()}"
+    assert (confidence >= 0).all() and (
+        confidence <= 1
+    ).all(), f"confidence 应在 [0, 1] 范围内, min={confidence.min()}, max={confidence.max()}"
     print(f"  PASS: confidence 范围 [{confidence.min():.4f}, {confidence.max():.4f}]")
 
 
@@ -153,13 +155,15 @@ def test_multihead_confidence():
     gate = result["field_gate"]  # [B, K]
 
     assert confidence.shape == (2,), f"多头 confidence shape 应为 (2,), got {confidence.shape}"
-    assert (confidence >= 0).all() and (confidence <= 1).all(), \
-        f"多头 confidence 应在 [0, 1], min={confidence.min()}, max={confidence.max()}"
+    assert (confidence >= 0).all() and (
+        confidence <= 1
+    ).all(), f"多头 confidence 应在 [0, 1], min={confidence.min()}, max={confidence.max()}"
 
     # gate 行和应为 1（softmax）
     gate_sums = gate.sum(dim=-1)
-    assert torch.allclose(gate_sums, torch.ones_like(gate_sums), atol=1e-5), \
-        f"gate 行和应=1, got {gate_sums}"
+    assert torch.allclose(
+        gate_sums, torch.ones_like(gate_sums), atol=1e-5
+    ), f"gate 行和应=1, got {gate_sums}"
 
     print(f"  PASS: 多头 confidence 正确 (val={confidence.tolist()}), gate 行和=1")
 
@@ -227,7 +231,9 @@ def test_confidence_extremes():
 
     assert focused_conf.item() > 0.99, f"完全聚焦 confidence 应接近 1, got {focused_conf.item()}"
     assert uniform_conf.item() < 0.01, f"均匀分布 confidence 应接近 0, got {uniform_conf.item()}"
-    print(f"  PASS: 完全聚焦 confidence={focused_conf.item():.4f}, 均匀分布 confidence={uniform_conf.item():.4f}")
+    print(
+        f"  PASS: 完全聚焦 confidence={focused_conf.item():.4f}, 均匀分布 confidence={uniform_conf.item():.4f}"
+    )
 
 
 def main():

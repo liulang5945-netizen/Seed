@@ -3,13 +3,16 @@
 Usage:
     python -u scripts/training/eval_single_dialogue.py --neuron_id zh_sft_std0
 """
+
 from __future__ import annotations
 
 import argparse
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn as nn
@@ -19,7 +22,10 @@ from neuroplex.resonance import ResonanceNeuron, get_domain_neuron_config
 from scripts.training.utils import load_general_tokenizer, OUTPUT_DIR, create_shared_embedding
 from scripts.training.experiment_config import (
     DEFAULT_DOMAIN,
-    SAMPLING_TEMPERATURE, SAMPLING_TOP_K, SAMPLING_REPETITION_PENALTY, SAMPLING_MAX_TOKENS,
+    SAMPLING_TEMPERATURE,
+    SAMPLING_TOP_K,
+    SAMPLING_REPETITION_PENALTY,
+    SAMPLING_MAX_TOKENS,
     DIALOGUE_PROMPTS,
 )
 
@@ -46,11 +52,24 @@ def load_neuron(neuron_id: str):
     shared_emb.to(DEVICE).eval()
 
     result = ckpt.get("result", {})
-    print(f"  [{neuron_id}] spec={cfg.spec}, best_val_ppl={result.get('best_val_ppl', '?')}", flush=True)
+    print(
+        f"  [{neuron_id}] spec={cfg.spec}, best_val_ppl={result.get('best_val_ppl', '?')}",
+        flush=True,
+    )
     return neuron, shared_emb, cfg
 
 
-def generate(neuron, shared_emb, domain_sp, general_sp, prompt, max_tokens=SAMPLING_MAX_TOKENS, temperature=SAMPLING_TEMPERATURE, top_k=SAMPLING_TOP_K, repetition_penalty=SAMPLING_REPETITION_PENALTY):
+def generate(
+    neuron,
+    shared_emb,
+    domain_sp,
+    general_sp,
+    prompt,
+    max_tokens=SAMPLING_MAX_TOKENS,
+    temperature=SAMPLING_TEMPERATURE,
+    top_k=SAMPLING_TOP_K,
+    repetition_penalty=SAMPLING_REPETITION_PENALTY,
+):
     """生成对话回复。
 
     关键修复：neuron 的 lm_head 输出是 domain token ID（不是 general token ID）。
@@ -67,7 +86,7 @@ def generate(neuron, shared_emb, domain_sp, general_sp, prompt, max_tokens=SAMPL
 
     # domain tokenizer 的 EOS
     domain_eos_id = None
-    if hasattr(domain_sp, 'eos_id'):
+    if hasattr(domain_sp, "eos_id"):
         eid = domain_sp.eos_id()
         if eid is not None and eid >= 0:
             domain_eos_id = int(eid)
@@ -90,7 +109,7 @@ def generate(neuron, shared_emb, domain_sp, general_sp, prompt, max_tokens=SAMPL
                 top_k = min(top_k, logits.size(-1))
                 topk_vals, _ = torch.topk(logits[0], top_k)
                 threshold = topk_vals[-1]
-                logits[0][logits[0] < threshold] = float('-inf')
+                logits[0][logits[0] < threshold] = float("-inf")
 
             probs = F.softmax(logits, dim=-1)
             next_domain_token = torch.multinomial(probs, num_samples=1).item()
@@ -105,7 +124,9 @@ def generate(neuron, shared_emb, domain_sp, general_sp, prompt, max_tokens=SAMPL
             new_general_ids = general_sp.encode(piece_text)
             if not new_general_ids:
                 new_general_ids = [general_sp.pad_id()]  # fallback
-            ids = torch.cat([ids, torch.tensor([new_general_ids], dtype=torch.long, device=DEVICE)], dim=1)
+            ids = torch.cat(
+                [ids, torch.tensor([new_general_ids], dtype=torch.long, device=DEVICE)], dim=1
+            )
 
     # 用 domain tokenizer 解码
     text = domain_sp.DecodeIds(generated_domain_ids)
@@ -128,6 +149,7 @@ def main():
     neuron, shared_emb, cfg = load_neuron(args.neuron_id)
     general_sp = load_general_tokenizer()
     from scripts.training.utils import load_domain_tokenizer
+
     domain_sp = load_domain_tokenizer("zh")
 
     PROMPTS = DIALOGUE_PROMPTS

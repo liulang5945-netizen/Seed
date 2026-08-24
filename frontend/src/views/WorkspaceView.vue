@@ -90,14 +90,13 @@
 
       <!-- 底部状态栏 -->
       <div class="status-bar">
-        <span v-if="monacoEditor?.activeTab">Ln {{ monacoEditor.cursorLine }}, Col {{ monacoEditor.cursorCol }}</span>
-        <span v-else>—</span>
-        <span>UTF-8</span>
-        <span>{{ monacoEditor?.language?.toUpperCase() || '—' }}</span>
-        <span v-if="monacoEditor?.isDirty" class="status-dirty">● 未保存</span>
+        <span class="status-item" v-if="monacoEditor?.activeTab"><Crosshair :size="12" />Ln {{ monacoEditor.cursorLine }}, Col {{ monacoEditor.cursorCol }}</span>
+        <span class="status-item" v-else><Crosshair :size="12" />—</span>
+        <span class="status-item"><FileText :size="12" />UTF-8</span>
+        <span class="status-item"><FileCode :size="12" />{{ monacoEditor?.language?.toUpperCase() || '—' }}</span>
+        <span v-if="monacoEditor?.isDirty" class="status-item status-dirty"><span class="dirty-dot"></span>未保存</span>
         <span class="status-spacer"></span>
-        <span class="status-dot"></span>
-        <span>神经元同步中</span>
+        <span class="status-item"><Activity :size="12" class="status-sync-icon" />神经元同步中</span>
       </div>
     </div>
 
@@ -145,7 +144,7 @@
 import { ref, reactive, computed, onMounted, onUnmounted, inject } from 'vue';
 import { useApi } from '../composables/useApi.js';
 import { API_BASE, authFetch } from '../composables/apiClient.js';
-import { RefreshCw, FilePlus, FolderPlus, Terminal, FolderOpen, Folder, FileCode, FileText, Image as ImageIcon, Database, Edit3, Edit2, Trash2 } from 'lucide-vue-next';
+import { RefreshCw, FilePlus, FolderPlus, Terminal, FolderOpen, Folder, FileCode, FileText, Image as ImageIcon, Database, Edit3, Edit2, Trash2, Crosshair, Activity } from 'lucide-vue-next';
 import MonacoEditor from '../components/MonacoEditor.vue';
 import WebTerminal from '../components/WebTerminal.vue';
 
@@ -524,19 +523,24 @@ onUnmounted(() => { document.removeEventListener('click', closeCtx); });
   color: var(--muted-foreground);
   background: var(--card);
 }
-.status-dot {
+/* 状态项：图标 + 文本对齐（统一 12px 图标，与主流 IDE 状态栏一致） */
+.status-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.status-item svg { flex-shrink: 0; color: var(--muted-foreground); }
+.status-sync-icon { color: var(--chart-2) !important; }
+.dirty-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--chart-2);
-  animation: pulse 2s infinite;
+  background: currentColor;
+  flex-shrink: 0;
 }
 .status-spacer { flex: 1; }
 .status-dirty { color: var(--chart-4); }
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
 
 /* ── 右栏属性面板 ── */
 .prop-group { margin-bottom: 14px; }

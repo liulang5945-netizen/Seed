@@ -38,8 +38,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -84,7 +89,7 @@ def repeat_score(text: str) -> float:
     """4-gram 重复率（0=无重复，1=全重复）。"""
     if len(text) < 4:
         return 0.0
-    grams = [text[i:i + 4] for i in range(len(text) - 3)]
+    grams = [text[i : i + 4] for i in range(len(text) - 3)]
     uniq = set(grams)
     return 1.0 - len(uniq) / max(len(grams), 1)
 
@@ -137,8 +142,10 @@ def main():
             # 裸问题会触发换行死循环假退化（守卫会硬失败）。
             gen_prompt = build_dialogue_prompt(prompt) if tag == "zh" else prompt
             text = cortex.generate(
-                prompt=gen_prompt, max_tokens=MAX_TOKENS,
-                temperature=TEMPERATURE, top_k=TOP_K,
+                prompt=gen_prompt,
+                max_tokens=MAX_TOKENS,
+                temperature=TEMPERATURE,
+                top_k=TOP_K,
                 repetition_penalty=REPETITION_PENALTY,
                 domain=dom_map[i],
                 collab_mode=mode,
@@ -186,18 +193,24 @@ def main():
         print(f"      cont: {results['continuous'][i][:60]!r}", flush=True)
 
     # 判定 1：continuous 非空率不劣于 executive
-    check("continuous 非空率 ≥ executive",
-          stats["continuous"]["non_empty"] >= stats["executive"]["non_empty"],
-          f"{stats['continuous']['non_empty']} vs {stats['executive']['non_empty']}")
+    check(
+        "continuous 非空率 ≥ executive",
+        stats["continuous"]["non_empty"] >= stats["executive"]["non_empty"],
+        f"{stats['continuous']['non_empty']} vs {stats['executive']['non_empty']}",
+    )
     # 判定 2：continuous 平均重复率不高于 executive（≥0 表示不更差）
-    check("continuous 重复率 ≤ executive + 0.02",
-          stats["continuous"]["avg_rep"] <= stats["executive"]["avg_rep"] + 0.02,
-          f"{stats['continuous']['avg_rep']:.3f} vs {stats['executive']['avg_rep']:.3f}")
+    check(
+        "continuous 重复率 ≤ executive + 0.02",
+        stats["continuous"]["avg_rep"] <= stats["executive"]["avg_rep"] + 0.02,
+        f"{stats['continuous']['avg_rep']:.3f} vs {stats['executive']['avg_rep']:.3f}",
+    )
     # 判定 3：continuous 至少 50% prompt 不劣于 executive（含 tie）
     cont_ok = better["continuous"] + better["tie"]
-    check("continuous 质量 ≥ executive 的 prompt ≥ 60%",
-          cont_ok / len(PROMPTS) >= 0.6,
-          f"{cont_ok}/{len(PROMPTS)}")
+    check(
+        "continuous 质量 ≥ executive 的 prompt ≥ 60%",
+        cont_ok / len(PROMPTS) >= 0.6,
+        f"{cont_ok}/{len(PROMPTS)}",
+    )
 
     print(f"\n  总耗时: {time.time() - t0:.1f}s", flush=True)
     print("=" * 64, flush=True)

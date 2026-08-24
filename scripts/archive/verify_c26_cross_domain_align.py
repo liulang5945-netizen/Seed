@@ -49,8 +49,13 @@ def check(name: str, cond: bool, extra: str = "") -> None:
         print(f"  [FAIL] {name} {extra}", flush=True)
 
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -106,8 +111,7 @@ def field_state_of(cortex, text: str) -> torch.Tensor:
     gids = cortex._general_sp.encode(text) or [0]
     ids = torch.tensor([gids], dtype=torch.long, device=cortex.device)
     emb = cortex._shared_embedding(ids)
-    res = cortex.think(emb, active_nids=None, fusion_mode="soft",
-                       collab_mode="continuous")
+    res = cortex.think(emb, active_nids=None, fusion_mode="soft", collab_mode="continuous")
     fs = res.get("field_state")
     if fs is None:
         raise RuntimeError("think() 未返回 field_state")
@@ -149,8 +153,11 @@ def main():
     raw_syn = torch.stack([cache[a] @ cache[b] for a, b in SYNONYM_PAIRS])
     raw_mis = torch.stack([cache[a] @ cache[b] for a, b in MISMATCH_PAIRS])
     raw_gap = float(raw_syn.mean() - raw_mis.mean())
-    print(f"  原始场空间: 同义 {raw_syn.mean():.3f} vs 错配 {raw_mis.mean():.3f}, "
-          f"幅度 {raw_gap:+.3f}", flush=True)
+    print(
+        f"  原始场空间: 同义 {raw_syn.mean():.3f} vs 错配 {raw_mis.mean():.3f}, "
+        f"幅度 {raw_gap:+.3f}",
+        flush=True,
+    )
     check("原始场空间无对齐（诊断复现）", raw_gap < 0.03, f"gap={raw_gap:+.3f}")
 
     # ── 2. 训练对齐投影 P（对比 margin loss）──
@@ -186,8 +193,11 @@ def main():
     loss_last = losses[-1]
     print(f"  loss 首尾: {loss_first:.4f} → {loss_last:.4f}", flush=True)
     # margin loss 多数对达标后停在残差是正常现象：阈值按相对下降 ≥20% 判定收敛
-    check("训练收敛（loss 下降 ≥20%）", loss_first - loss_last >= 0.2 * loss_first,
-          f"{loss_first:.3f}→{loss_last:.3f}")
+    check(
+        "训练收敛（loss 下降 ≥20%）",
+        loss_first - loss_last >= 0.2 * loss_first,
+        f"{loss_first:.3f}→{loss_last:.3f}",
+    )
 
     # ── 3. P 空间对齐评估 ──
     with torch.no_grad():
@@ -199,12 +209,17 @@ def main():
         pm_a, pm_p = proj(mis_anchors), proj(mis_pos)
         p_mis = torch.stack([pm_a[i] @ pm_p[i] for i in range(len(pm_a))])
     p_gap = float(p_syn.mean() - p_mis.mean())
-    print(f"\n[评估] P 空间: 同义 {p_syn.mean():.3f} vs 错配 {p_mis.mean():.3f}, "
-          f"幅度 {p_gap:+.3f}", flush=True)
-    check("P 空间对齐幅度 ≥ 0.15（场向量蕴含可提取语义）", p_gap >= 0.15,
-          f"gap={p_gap:+.3f}（原始 {raw_gap:+.3f}）")
-    check("同义对 P 空间余弦显著为正", float(p_syn.mean()) >= 0.3,
-          f"sim={p_syn.mean():.3f}")
+    print(
+        f"\n[评估] P 空间: 同义 {p_syn.mean():.3f} vs 错配 {p_mis.mean():.3f}, "
+        f"幅度 {p_gap:+.3f}",
+        flush=True,
+    )
+    check(
+        "P 空间对齐幅度 ≥ 0.15（场向量蕴含可提取语义）",
+        p_gap >= 0.15,
+        f"gap={p_gap:+.3f}（原始 {raw_gap:+.3f}）",
+    )
+    check("同义对 P 空间余弦显著为正", float(p_syn.mean()) >= 0.3, f"sim={p_syn.mean():.3f}")
 
     # ── 4. live 权重零影响 ──
     # 对齐冒烟只训练独立 P，cortex.neurons 权重全程未动（场向量冻结）
@@ -214,7 +229,10 @@ def main():
     print(f"结果: {passed} PASS / {failed} FAIL  ({time.time() - t0:.1f}s)", flush=True)
     # 科学结论以 P 空间对齐幅度为准（loss 残差是 margin 达标后的正常现象）
     if p_gap >= 0.15:
-        print("→ 场向量蕴含可提取的跨域语义结构：缺口 L 走「轻量锚点投影 + 场级对比约束」，", flush=True)
+        print(
+            "→ 场向量蕴含可提取的跨域语义结构：缺口 L 走「轻量锚点投影 + 场级对比约束」，",
+            flush=True,
+        )
         print("  无需 hub 全套架构", flush=True)
     else:
         print("→ 对齐投影学不进去：场向量未蕴含跨域语义，缺口 L 需 hub neuron 全套", flush=True)

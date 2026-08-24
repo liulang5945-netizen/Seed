@@ -15,13 +15,14 @@ Phase 3 (REM): 知识整合 — 进化引擎 + 用户画像更新
 Phase 4 (清醒): 自我评估 — 检查模型健康状态
 Phase 5 (梦境): 经验素材生成 — 态极生成下一轮群体训练数据
 """
+
 import os
 import json
 import time
 import logging
 import threading
 import math
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, field
 from collections import deque
@@ -51,9 +52,7 @@ def _clone_module(module):
     from dataclasses import replace
 
     if isinstance(module, torch.nn.Embedding):
-        return torch.nn.Embedding.from_pretrained(
-            module.weight.detach().clone(), freeze=False
-        )
+        return torch.nn.Embedding.from_pretrained(module.weight.detach().clone(), freeze=False)
     cfg = replace(module.config)
     new = type(module)(cfg)
     new.load_state_dict(module.state_dict(), strict=False)
@@ -62,6 +61,7 @@ def _clone_module(module):
         new = new.to(ref.device)
     new.train(module.training)
     return new
+
 
 try:
     from neuroplex.resonance.lifecycle import LifecycleManager
@@ -83,6 +83,7 @@ except ImportError:
 @dataclass
 class SleepReport:
     """一次睡眠的报告"""
+
     timestamp: str
     duration_seconds: float
     phases_completed: List[str] = field(default_factory=list)
@@ -129,14 +130,15 @@ class SleepReport:
 @dataclass
 class SleepConfig:
     """睡眠配置"""
+
     auto_sleep_enabled: bool = True
-    sleep_interval_hours: float = 4.0       # 每 4 小时自动睡眠一次
-    min_idle_minutes: int = 30               # 空闲 30 分钟后才触发
-    max_cpu_percent: float = 80.0            # CPU < 80% 才睡眠
-    max_memory_percent: float = 90.0         # 内存 < 90% 才睡眠
-    training_enabled: bool = True            # 睡眠时是否训练
-    max_training_steps: int = 50             # 睡眠时最大训练步数
-    save_checkpoints: bool = True            # 睡眠时保存 checkpoint
+    sleep_interval_hours: float = 4.0  # 每 4 小时自动睡眠一次
+    min_idle_minutes: int = 30  # 空闲 30 分钟后才触发
+    max_cpu_percent: float = 80.0  # CPU < 80% 才睡眠
+    max_memory_percent: float = 90.0  # 内存 < 90% 才睡眠
+    training_enabled: bool = True  # 睡眠时是否训练
+    max_training_steps: int = 50  # 睡眠时最大训练步数
+    save_checkpoints: bool = True  # 睡眠时保存 checkpoint
     auto_generation_transition: bool = False  # 代际迁移（需手动开启，默认关闭）
     judge_driven_replay: bool = False  # 自举门槛 A2（2026-08-15）：②→③ 接线——
     # 重放样本由 judge NLL 选择（它自己判定短板优先），而非随机；False=旧行为
@@ -203,20 +205,25 @@ class SleepConfig:
 class SleepEngine:
     """
     态极的睡眠引擎
-    
+
     核心理念：
     - 睡眠不是浪费时间，而是成长的关键
     - 就像人脑在睡眠中巩固记忆、整合经验
     - 态极在用户休息时自动整理、学习、进化
-    
+
     睡眠触发条件：
     1. 定时触发（每 N 小时）
     2. 空闲触发（用户超过 M 分钟没有交互）
     3. 手动触发（用户/系统主动调用）
     """
-    
-    def __init__(self, config: Optional[SleepConfig] = None, data_dir: str = None,
-                 model_provider=None, tokenizer_provider=None):
+
+    def __init__(
+        self,
+        config: Optional[SleepConfig] = None,
+        data_dir: str = None,
+        model_provider=None,
+        tokenizer_provider=None,
+    ):
         """
         Args:
             config: 睡眠配置
@@ -228,6 +235,7 @@ class SleepEngine:
         if data_dir is None:
             try:
                 from neuroplex.config import get_taiji_data_path
+
                 data_dir = get_taiji_data_path("sleep_data")
             except ImportError:
                 data_dir = "taiji/sleep_data"
@@ -293,7 +301,9 @@ class SleepEngine:
         # std（与 D1 pre/post 同口径），不依赖历史 std——更稳定且无
         # 启动期冷启动问题（v2 的 last 字段首次为 None 时不能做相对判定）。
 
-        logger.info(f"SleepEngine initialized: auto={self.config.auto_sleep_enabled}, interval={self.config.sleep_interval_hours}h")
+        logger.info(
+            f"SleepEngine initialized: auto={self.config.auto_sleep_enabled}, interval={self.config.sleep_interval_hours}h"
+        )
 
     # ─── 神经元架构接口 ───────────────────────────────
 
@@ -335,7 +345,7 @@ class SleepEngine:
         # P1-2: 神经调质状态（若未提供则自动创建默认实例）
         if neuromodulator is not None:
             self._neuromodulator = neuromodulator
-        elif not hasattr(self, '_neuromodulator') or self._neuromodulator is None:
+        elif not hasattr(self, "_neuromodulator") or self._neuromodulator is None:
             if NeuromodulatorState is not None:
                 try:
                     self._neuromodulator = NeuromodulatorState()
@@ -389,27 +399,27 @@ class SleepEngine:
     def sleep(self, reason: str = "manual") -> SleepReport:
         """
         让态极进入睡眠。
-        
+
         Args:
             reason: 睡眠原因（"manual", "auto", "scheduled"）
-            
+
         Returns:
             SleepReport 睡眠报告
         """
         if self._is_sleeping:
             logger.warning("Already sleeping, skipping")
             return SleepReport(timestamp=datetime.now().isoformat(), duration_seconds=0)
-        
+
         self._is_sleeping = True
         start_time = time.time()
-        
+
         logger.info(f"💤 Taiji is going to sleep... (reason: {reason})")
-        
+
         report = SleepReport(
             timestamp=datetime.now().isoformat(),
             duration_seconds=0,
         )
-        
+
         # Phase 1: 浅睡眠 — 记忆整理
         try:
             self._sleep_phase_memory_consolidation(report)
@@ -454,7 +464,7 @@ class SleepEngine:
             logger.info("  Phase 1.8: Oscillator train ✅")
         except Exception as e:
             logger.warning(f"  Phase 1.8 failed: {e}")
-        
+
         # Phase 2: 深睡眠 — 模型训练
         if self.config.training_enabled:
             try:
@@ -479,7 +489,7 @@ class SleepEngine:
             logger.info("  Phase 3.5: Experience consolidation ✅")
         except Exception as e:
             logger.warning(f"  Phase 3.5 failed: {e}")
-        
+
         # Phase 4: 清醒准备 — 自我评估
         try:
             health = self._sleep_phase_evaluation(report)
@@ -496,7 +506,7 @@ class SleepEngine:
             logger.info("  Phase 5: Recursive improvement ✅")
         except Exception as e:
             logger.warning(f"  Phase 5 failed: {e}")
-        
+
         # P0-4 fix (C1): 所有 Phase 完成后统一清空 feed_engine 样本
         # （Phase 2 和 Phase 2.5 共享同一批样本，之前 Phase 2 清空导致 Phase 2.5 无数据）
         if self._feed_engine is not None:
@@ -514,15 +524,17 @@ class SleepEngine:
         self._sleep_history.append(report)
         self._save_history()
 
-        logger.info(f"⏰ Taiji woke up! Duration: {report.duration_seconds}s, Phases: {len(report.phases_completed)}")
+        logger.info(
+            f"⏰ Taiji woke up! Duration: {report.duration_seconds}s, Phases: {len(report.phases_completed)}"
+        )
 
         return report
-    
+
     def wake(self):
         """唤醒态极"""
         self._is_sleeping = False
         logger.info("☀️ Taiji is awake!")
-    
+
     def record_activity(self):
         """记录用户活动（用于判断是否空闲）"""
         self._last_activity_time = datetime.now()
@@ -534,6 +546,7 @@ class SleepEngine:
         只跑 Phase 2（微调），不跑完整的 6 阶段。
         """
         from datetime import datetime
+
         if self._is_sleeping:
             return
         self._is_sleeping = True
@@ -550,60 +563,61 @@ class SleepEngine:
         finally:
             self._is_sleeping = False
             self._last_sleep_time = time.time()
-    
+
     def start_auto_sleep(self):
         """启动自动睡眠线程"""
         if not self.config.auto_sleep_enabled:
             return
-        
+
         if self._auto_sleep_thread and self._auto_sleep_thread.is_alive():
             return
-        
+
         self._stop_event.clear()
         self._auto_sleep_thread = threading.Thread(target=self._auto_sleep_loop, daemon=True)
         self._auto_sleep_thread.start()
         logger.info("Auto-sleep thread started")
-    
+
     def stop_auto_sleep(self):
         """停止自动睡眠"""
         self._stop_event.set()
         if self._auto_sleep_thread:
             self._auto_sleep_thread.join(timeout=5)
         logger.info("Auto-sleep thread stopped")
-    
+
     def _auto_sleep_loop(self):
         """自动睡眠循环"""
         while not self._stop_event.is_set():
             time.sleep(60)  # 每分钟检查一次
-            
+
             if self._should_auto_sleep():
                 self.sleep(reason="auto")
-    
+
     def _should_auto_sleep(self) -> bool:
         """检查是否应该自动睡眠"""
         if self._is_sleeping:
             return False
-        
+
         # 检查距上次睡眠的时间
         if self._last_sleep_time:
             hours_since_last = (datetime.now() - self._last_sleep_time).total_seconds() / 3600
             if hours_since_last < self.config.sleep_interval_hours:
                 return False
-        
+
         # 检查空闲时间
         if self._last_activity_time:
             idle_minutes = (datetime.now() - self._last_activity_time).total_seconds() / 60
             if idle_minutes < self.config.min_idle_minutes:
                 return False
-        
+
         return True
-    
+
     # ─── 睡眠阶段实现 ──────────────────────────────
-    
+
     # ─── C26: 场记忆（可写记忆第 0 格）─────────────────────────
 
-    def record_field_memory(self, vector, label: str, text: Optional[str] = None,
-                            phase: Optional[float] = None) -> None:
+    def record_field_memory(
+        self, vector, label: str, text: Optional[str] = None, phase: Optional[float] = None
+    ) -> None:
         """C26: 记录一条待固化的场记忆（场状态快照 + 文本标签 + 内容）。
 
         会话中产生的高频场状态（如知识样本前向后的 field state）先入队，
@@ -614,8 +628,7 @@ class SleepEngine:
         """
         if vector is None:
             return
-        self.pending_field_memories.append(
-            (vector.detach().clone(), label, text, phase))
+        self.pending_field_memories.append((vector.detach().clone(), label, text, phase))
 
     def get_field_memory(self) -> Any:
         """C26: 获取持久场记忆库（懒加载：首次从 data_dir/field_memory.pt 恢复）。
@@ -628,6 +641,7 @@ class SleepEngine:
         if self._field_memory is None:
             from neuroplex.resonance.field_memory import FieldMemoryBank, WriteGate
             from neuroplex.resonance.field_alignment import AnchorProjector
+
             # 记忆空间 = 真实场空间（维度随装配规格动态匹配，避免硬编码错配）
             dim = 4096
             if self.cortex is not None and hasattr(self.cortex, "field"):
@@ -674,8 +688,7 @@ class SleepEngine:
         vectors = [v for v, *_ in self.pending_field_memories]
         labels = [lbl for _, lbl, *_ in self.pending_field_memories]
         texts = [txt for _, _, txt, *_ in self.pending_field_memories]
-        phases = [it[3] if len(it) >= 4 else None
-                  for it in self.pending_field_memories]
+        phases = [it[3] if len(it) >= 4 else None for it in self.pending_field_memories]
         added = bank.consolidate(vectors, labels, texts=texts, phases=phases)
         self.pending_field_memories.clear()
         path = os.path.join(self.data_dir, "field_memory.pt")
@@ -684,10 +697,10 @@ class SleepEngine:
         logger.info(f"  场固化: +{added} 条场记忆（bank 共 {len(bank)} 条）→ {path}")
 
     # ── C26 增量三：突触沉淀（Phase 1.6，海马→皮层两层记忆）──────────────────
-    synaptic_min_access = 2        # 检索命中 ≥ 该次数才算高频（沉淀候选）
-    synaptic_lora_rank = 16        # LoRA 低秩维度（C16 同款）
-    synaptic_lora_lr = 3e-4        # LoRA 温和学习率（只动低秩增量，防破坏）
-    synaptic_epochs = 2            # 样本极少（记忆条目），2 epoch 够记住
+    synaptic_min_access = 2  # 检索命中 ≥ 该次数才算高频（沉淀候选）
+    synaptic_lora_rank = 16  # LoRA 低秩维度（C16 同款）
+    synaptic_lora_lr = 3e-4  # LoRA 温和学习率（只动低秩增量，防破坏）
+    synaptic_epochs = 2  # 样本极少（记忆条目），2 epoch 够记住
 
     def _sleep_phase_synaptic_consolidation(self, report: SleepReport) -> None:
         """Phase 1.6: 突触沉淀 — 高频场记忆重放进神经元权重（C26 增量三）。
@@ -714,8 +727,7 @@ class SleepEngine:
 
         # 目标神经元：zh 域 dialogue neuron（记忆文本为中文）；无则回退 zh 域全部
         neurons = self.cortex.neurons
-        target_ids = [nid for nid in neurons
-                      if nid.startswith("zh_") and "dialogue" in nid]
+        target_ids = [nid for nid in neurons if nid.startswith("zh_") and "dialogue" in nid]
         if not target_ids:
             target_ids = [nid for nid in neurons if nid.startswith("zh_")]
         if not target_ids:
@@ -725,6 +737,7 @@ class SleepEngine:
         # 组 SFT 重放样本（问答对 + 原文各一份 = 用户决策"两者混合"）
         import random
         import torch.nn.functional as F
+
         samples = []
         for e in cands:
             label = e.get("label", "")
@@ -785,8 +798,7 @@ class SleepEngine:
             # lora_adapters → 需在 shadow 上重建并复制 live 初始状态
             shadow.enable_lora(self.synaptic_lora_rank, layers=None)
             try:
-                shadow.lora_adapters.load_state_dict(
-                    live.lora_adapters.state_dict())
+                shadow.lora_adapters.load_state_dict(live.lora_adapters.state_dict())
             except Exception as e:
                 logger.debug(f"  [突触沉淀] {nid} lora 初始复制失败: {e}")
                 continue
@@ -804,29 +816,29 @@ class SleepEngine:
                         if not domain_ids or len(domain_ids) < 3:
                             continue
                         domain_ids = domain_ids[:256]
-                        target_ids_t = torch.tensor(
-                            [domain_ids], dtype=torch.long, device=device)
+                        target_ids_t = torch.tensor([domain_ids], dtype=torch.long, device=device)
                         gids = _to_general(domain_ids)
                         if len(gids) < 3:
                             continue
-                        input_ids = torch.tensor(
-                            [gids], dtype=torch.long, device=device)
+                        input_ids = torch.tensor([gids], dtype=torch.long, device=device)
                         embeddings = shared_embedding(input_ids)
                         optimizer.zero_grad()
                         result = shadow.forward(
-                            embeddings, field_state=None, round_num=1,
-                            return_logits=True)
+                            embeddings, field_state=None, round_num=1, return_logits=True
+                        )
                         logits = result["logits"]  # [1, L, domain_vocab]
                         min_len = logits.size(1) - 1
                         if min_len < 1:
                             continue
                         shift_logits = logits[:, :min_len, :].contiguous()
-                        shift_targets = target_ids_t[:, 1:1 + min_len].contiguous()
+                        shift_targets = target_ids_t[:, 1 : 1 + min_len].contiguous()
                         vocab_size = logits.size(-1)
                         shift_targets = shift_targets.clamp(0, vocab_size - 1)
                         loss = F.cross_entropy(
                             shift_logits.view(-1, shift_logits.size(-1)),
-                            shift_targets.view(-1), ignore_index=-100)
+                            shift_targets.view(-1),
+                            ignore_index=-100,
+                        )
                         loss.backward()
                         optimizer.step()
                         total_loss += loss.item()
@@ -847,20 +859,25 @@ class SleepEngine:
         marked = bank.mark_consolidated([e["idx"] for e in cands])
         try:
             bank.save(os.path.join(self.data_dir, "field_memory.pt"))
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug(
+                "【SleepEngine._sleep_phase_synaptic_consolidation】处理失败（非致命）: %s", e
+            )
         report.synaptic_consolidated = marked
         report.synaptic_lora_loss = (total_loss / steps) if steps else None
-        logger.info(f"  突触沉淀完成: {marked} 条记忆沉淀进 {trained_nids} 个神经元"
-                    f"（{steps} 步, avg loss={report.synaptic_lora_loss:.3f}）")
+        logger.info(
+            f"  突触沉淀完成: {marked} 条记忆沉淀进 {trained_nids} 个神经元"
+            f"（{steps} 步, avg loss={report.synaptic_lora_loss:.3f}）"
+        )
 
     # ── C26 增量六：真正睡眠重放（Phase 1.7，记忆注意窗固化）──────────────────
-    forward_replay_lr = 3e-4        # 读路径 + LoRA 温和学习率（防破坏）
-    forward_replay_epochs = 2       # 样本极少，2 epoch 够
+    forward_replay_lr = 3e-4  # 读路径 + LoRA 温和学习率（防破坏）
+    forward_replay_epochs = 2  # 样本极少，2 epoch 够
     forward_replay_max_samples = 8  # 每 neuron 最多重放样本数（CPU 预算）
 
-    def _sample_judge_nll(self, text: str, target_ids: list, device,
-                          shared_embedding) -> Optional[float]:
+    def _sample_judge_nll(
+        self, text: str, target_ids: list, device, shared_embedding
+    ) -> Optional[float]:
         """②→③ 接线（自举门槛 A2，2026-08-15）：样本的 judge NLL。
 
         用 judge_lm_head（general 256K 统一判定空间）度量"它自己判定这段文本
@@ -903,10 +920,10 @@ class SleepEngine:
             if min_len < 1:
                 continue
             lg = jl[:, :min_len, :].contiguous()
-            tgt = input_ids[:, 1:1 + min_len].contiguous()
+            tgt = input_ids[:, 1 : 1 + min_len].contiguous()
             loss = torch.nn.functional.cross_entropy(
-                lg.view(-1, lg.size(-1)), tgt.view(-1),
-                ignore_index=-100, reduction="mean")
+                lg.view(-1, lg.size(-1)), tgt.view(-1), ignore_index=-100, reduction="mean"
+            )
             nlls.append(float(loss.item()))
         return max(nlls) if nlls else None
 
@@ -940,13 +957,13 @@ class SleepEngine:
                 return None
             nlls = []
             for text in texts:
-                jnll = self._sample_judge_nll(
-                    text, target_ids, device, shared_embedding)
+                jnll = self._sample_judge_nll(text, target_ids, device, shared_embedding)
                 if jnll is not None and jnll < 1e6:
                     nlls.append(jnll)
             if len(nlls) < 2:
                 return None
             import statistics
+
             return float(statistics.pstdev(nlls))
 
         cur_texts: list = []
@@ -1012,8 +1029,8 @@ class SleepEngine:
                     text = e.get("text") or e.get("label", "")
                     if len(text.strip()) >= 8:
                         samples.append((e["vector"], text))
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【SleepEngine._sleep_phase_forward_replay】处理失败（非致命）: %s", e)
         # 2. 场状态重放（带 text 的记录；无 text 的旧记录仅共激活重放）
         if sc is not None:
             try:
@@ -1021,16 +1038,15 @@ class SleepEngine:
                     txt = rec.get("text")
                     if txt and len(str(txt).strip()) >= 8:
                         samples.append((rec["state"], str(txt)))
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【SleepEngine._sleep_phase_forward_replay】处理失败（非致命）: %s", e)
         if not samples:
             report.forward_replayed = 0
             return
 
         # 目标神经元：zh 域 dialogue（与增量三一致）；无则回退 zh 域全部
         neurons = self.cortex.neurons
-        target_ids = [nid for nid in neurons
-                      if nid.startswith("zh_") and "dialogue" in nid]
+        target_ids = [nid for nid in neurons if nid.startswith("zh_") and "dialogue" in nid]
         if not target_ids:
             target_ids = [nid for nid in neurons if nid.startswith("zh_")]
         if not target_ids:
@@ -1049,8 +1065,9 @@ class SleepEngine:
             report.forward_replayed = 0
             return
         ensemble = getattr(self.cortex, "ensemble", None)
-        back_projectors = (getattr(ensemble, "_cross_spec_back_projectors", {})
-                           if ensemble is not None else {})
+        back_projectors = (
+            getattr(ensemble, "_cross_spec_back_projectors", {}) if ensemble is not None else {}
+        )
 
         def _to_general(domain_ids):
             gids = []
@@ -1068,8 +1085,11 @@ class SleepEngine:
             if proj is not None:
                 try:
                     return proj(vec.unsqueeze(0)).squeeze(0)
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug(
+                        "【SleepEngine._sleep_phase_forward_replay._fs_for】处理失败（非致命）: %s",
+                        e,
+                    )
             return vec
 
         def _copy_learned(dst, src) -> int:
@@ -1087,6 +1107,7 @@ class SleepEngine:
             return n
 
         import random
+
         if self.config.judge_driven_replay:
             # ②→③ 接线（自举门槛 A2）：它自己判定短板 → 优先重放。
             # 样本按 judge NLL 降序（短板优先），取代随机；无 judge 头的
@@ -1095,9 +1116,10 @@ class SleepEngine:
             for vec, text in samples:
                 nll = self._sample_judge_nll(text, target_ids, device, shared_embedding)
                 scored.append((nll, vec, text))
-            scored.sort(key=lambda x: (x[0] is not None, x[0] if x[0] is not None else 0.0),
-                        reverse=True)
-            samples = [(vec, text) for _, vec, text in scored[:self.forward_replay_max_samples]]
+            scored.sort(
+                key=lambda x: (x[0] is not None, x[0] if x[0] is not None else 0.0), reverse=True
+            )
+            samples = [(vec, text) for _, vec, text in scored[: self.forward_replay_max_samples]]
             report.judge_driven_replay = len(samples)
             logger.info(f"  [重放] judge 驱动样本选择（短板优先）: {len(samples)} 条")
         else:
@@ -1123,13 +1145,12 @@ class SleepEngine:
         if self.config.judge_driven_decay and effective_decay < 1.0:
             try:
                 cur_std, base_std = self._judge_decay_measurement(
-                    target_ids, device, shared_embedding)
+                    target_ids, device, shared_embedding
+                )
                 report.decay_judge_std = cur_std
                 report.decay_baseline_std = base_std
                 # 先估算本轮会 replay 多少 nid（用于 decay_skipped_count 计数）
-                est_replayed = sum(
-                    1 for nid in target_ids
-                    if neurons.get(nid) is not None)
+                est_replayed = sum(1 for nid in target_ids if neurons.get(nid) is not None)
                 # D1-fix v3 复合判定：相对（与 baseline 比）+ 绝对（与底线比）
                 # - 相对：cur < base × decay_min_relative_ratio → skip
                 # - 绝对：cur < decay_min_judge_std → skip
@@ -1137,8 +1158,7 @@ class SleepEngine:
                 # std 收窄 = baseline 持续走低，relative 阈值稳定触发。
                 skip_reason = None
                 if cur_std is not None and base_std is not None and base_std > 0:
-                    rel_thresh = float(
-                        base_std * self.config.decay_min_relative_ratio)
+                    rel_thresh = float(base_std * self.config.decay_min_relative_ratio)
                     if cur_std < rel_thresh:
                         skip_reason = (
                             f"相对下降 "
@@ -1147,9 +1167,11 @@ class SleepEngine:
                             f"{self.config.decay_min_relative_ratio:.2f}"
                             f"={rel_thresh:.4f}"
                         )
-                if (skip_reason is None
-                        and cur_std is not None
-                        and cur_std < float(self.config.decay_min_judge_std)):
+                if (
+                    skip_reason is None
+                    and cur_std is not None
+                    and cur_std < float(self.config.decay_min_judge_std)
+                ):
                     skip_reason = (
                         f"绝对过小 "
                         f"cur={cur_std:.4f} < "
@@ -1172,7 +1194,7 @@ class SleepEngine:
                                 sq += float(p.data.detach().pow(2).sum().item())
                             except Exception:
                                 continue
-                    cur_l2 = (sq ** 0.5) if sq > 0 else None
+                    cur_l2 = (sq**0.5) if sq > 0 else None
                 except Exception:
                     cur_l2 = None
                 report.decay_current_lora_l2 = cur_l2
@@ -1195,12 +1217,10 @@ class SleepEngine:
                     elif init_strategy == "first_n_steps_mean":
                         if cur_l2 is not None:
                             self._lora_l2_warmup_samples.append(cur_l2)
-                        warmup_n = max(1, int(
-                            self.config.lora_l2_baseline_warmup_n))
+                        warmup_n = max(1, int(self.config.lora_l2_baseline_warmup_n))
                         if len(self._lora_l2_warmup_samples) >= warmup_n:
-                            self._lora_l2_baseline = (
-                                sum(self._lora_l2_warmup_samples)
-                                / len(self._lora_l2_warmup_samples)
+                            self._lora_l2_baseline = sum(self._lora_l2_warmup_samples) / len(
+                                self._lora_l2_warmup_samples
                             )
                             self._lora_l2_baseline_locked = True
                             logger.info(
@@ -1215,19 +1235,16 @@ class SleepEngine:
                             f"仅支持 first_measurement | first_n_steps_mean"
                         )
                 report.decay_lora_l2_baseline = self._lora_l2_baseline
-                report.decay_lora_l2_warmup_collected = (
-                    len(self._lora_l2_warmup_samples)
-                )
+                report.decay_lora_l2_warmup_collected = len(self._lora_l2_warmup_samples)
                 # ceiling 强制：cur_l2 > baseline × ratio → 强制衰减
                 ceiling_forced = False
-                if (cur_l2 is not None
-                        and self._lora_l2_baseline is not None
-                        and self._lora_l2_baseline > 0
-                        and self.config.decay_lora_ceiling_ratio < 10.0):
-                    ceiling_thresh = (
-                        self._lora_l2_baseline
-                        * self.config.decay_lora_ceiling_ratio
-                    )
+                if (
+                    cur_l2 is not None
+                    and self._lora_l2_baseline is not None
+                    and self._lora_l2_baseline > 0
+                    and self.config.decay_lora_ceiling_ratio < 10.0
+                ):
+                    ceiling_thresh = self._lora_l2_baseline * self.config.decay_lora_ceiling_ratio
                     if cur_l2 > ceiling_thresh:
                         ceiling_forced = True
                 # D1-fix v4 第二层：hysteresis 复合——
@@ -1246,7 +1263,8 @@ class SleepEngine:
                         logger.info(
                             f"  [D1-fix v4] hysteresis reset: "
                             f"pending {self._consecutive_skip_count}→0 "
-                            f"（v3 SKIP 信号不成立）")
+                            f"（v3 SKIP 信号不成立）"
+                        )
                     self._consecutive_skip_count = 0
                 elif ceiling_forced:
                     # v3 SKIP 信号成立但 ceiling 强制覆盖 → 走衰减，重置 pending
@@ -1254,7 +1272,8 @@ class SleepEngine:
                         logger.info(
                             f"  [D1-fix v4] hysteresis reset: "
                             f"pending {self._consecutive_skip_count}→0 "
-                            f"（ceiling 强制）")
+                            f"（ceiling 强制）"
+                        )
                     self._consecutive_skip_count = 0
                     skip_path = "ceiling 强制覆盖"
                 else:
@@ -1268,24 +1287,21 @@ class SleepEngine:
                         will_skip = False
                     elif self._consecutive_skip_count >= h_n:
                         will_skip = True
-                        skip_path = (
-                            f"hysteresis 达到 {h_n} 周期 → 真 SKIP，"
-                            f"reset pending"
-                        )
+                        skip_path = f"hysteresis 达到 {h_n} 周期 → 真 SKIP，" f"reset pending"
                     else:
                         skip_path = (
                             f"hysteresis 累计 {self._consecutive_skip_count}/{h_n}"
                             f" → 暂 skip pending，仍走衰减"
                         )
                 # 报告 pending 计数（仅 h_n>0 且未真 skip 时）
-                if (not will_skip
-                        and self._consecutive_skip_count > 0
-                        and skip_reason is not None
-                        and not ceiling_forced
-                        and h_n > 0):
-                    report.decay_hysteresis_pending = (
-                        self._consecutive_skip_count
-                    )
+                if (
+                    not will_skip
+                    and self._consecutive_skip_count > 0
+                    and skip_reason is not None
+                    and not ceiling_forced
+                    and h_n > 0
+                ):
+                    report.decay_hysteresis_pending = self._consecutive_skip_count
                 if ceiling_forced:
                     report.decay_ceiling_forced_count = est_replayed
                 if will_skip:
@@ -1294,34 +1310,36 @@ class SleepEngine:
                     report.decay_skipped_count = est_replayed
                     self._consecutive_skip_count = 0  # 真 skip 后重置
                     _l2_info = (
-                        f", LoRA L2={cur_l2:.3f}, "
-                        f"baseline={self._lora_l2_baseline:.3f}"
-                        if cur_l2 is not None
-                        and self._lora_l2_baseline is not None
+                        f", LoRA L2={cur_l2:.3f}, " f"baseline={self._lora_l2_baseline:.3f}"
+                        if cur_l2 is not None and self._lora_l2_baseline is not None
                         else ""
                     )
                     logger.info(
                         f"  [D1-fix v4] judge-driven decay SKIP: "
                         f"{skip_reason} + {skip_path} → "
-                        f"保留 LoRA (~{est_replayed} 个 nid{_l2_info})")
+                        f"保留 LoRA (~{est_replayed} 个 nid{_l2_info})"
+                    )
                 else:
                     logger.info(
                         f"  [D1-fix v4] judge-driven decay KEEP: "
                         f"cur={cur_std} base={base_std} "
                         f"LoRA L2={cur_l2} baseline={self._lora_l2_baseline} "
-                        f"→ {skip_path}，正常衰减 {effective_decay}")
+                        f"→ {skip_path}，正常衰减 {effective_decay}"
+                    )
             except Exception as e:
                 logger.debug(
-                    f"  [D1-fix v4] judge-driven decay 判定失败: "
-                    f"{type(e).__name__}: {e}")
+                    f"  [D1-fix v4] judge-driven decay 判定失败: " f"{type(e).__name__}: {e}"
+                )
 
         for nid in target_ids:
             live = neurons[nid]
             if len(live.lora_adapters) == 0:
                 try:
                     live.enable_lora(16, layers=None)
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug(
+                        "【SleepEngine._sleep_phase_forward_replay】处理失败（非致命）: %s", e
+                    )
             try:
                 shadow = _clone_module(live)
             except Exception as e:
@@ -1355,31 +1373,31 @@ class SleepEngine:
                         if not domain_ids or len(domain_ids) < 3:
                             continue
                         domain_ids = domain_ids[:256]
-                        target_ids_t = torch.tensor(
-                            [domain_ids], dtype=torch.long, device=device)
+                        target_ids_t = torch.tensor([domain_ids], dtype=torch.long, device=device)
                         gids = _to_general(domain_ids)
                         if len(gids) < 3:
                             continue
-                        input_ids = torch.tensor(
-                            [gids], dtype=torch.long, device=device)
+                        input_ids = torch.tensor([gids], dtype=torch.long, device=device)
                         embeddings = shared_embedding(input_ids)
                         fs = _fs_for(nid, vec)
                         optimizer.zero_grad()
                         # round2+ 场条件化 forward（记忆注意窗：field_state=记忆向量）
                         result = shadow.forward(
-                            embeddings, field_state=fs, round_num=2,
-                            return_logits=True)
+                            embeddings, field_state=fs, round_num=2, return_logits=True
+                        )
                         logits = result["logits"]
                         min_len = logits.size(1) - 1
                         if min_len < 1:
                             continue
                         shift_logits = logits[:, :min_len, :].contiguous()
-                        shift_targets = target_ids_t[:, 1:1 + min_len].contiguous()
+                        shift_targets = target_ids_t[:, 1 : 1 + min_len].contiguous()
                         vocab_size = logits.size(-1)
                         shift_targets = shift_targets.clamp(0, vocab_size - 1)
                         loss = torch.nn.functional.cross_entropy(
                             shift_logits.view(-1, shift_logits.size(-1)),
-                            shift_targets.view(-1), ignore_index=-100)
+                            shift_targets.view(-1),
+                            ignore_index=-100,
+                        )
                         loss.backward()
                         optimizer.step()
                         total_loss += loss.item()
@@ -1403,8 +1421,7 @@ class SleepEngine:
                 except Exception as e:
                     logger.debug(f"  [重放] {nid} LoRA 衰减失败: {e}")
             replayed_nids += 1
-            logger.info(f"  [重放] {nid}: 读路径+LoRA 写回（{n_copied} 张量，"
-                        f"decay={decay}）")
+            logger.info(f"  [重放] {nid}: 读路径+LoRA 写回（{n_copied} 张量，" f"decay={decay}）")
             if steps >= max_steps:
                 break
 
@@ -1413,14 +1430,16 @@ class SleepEngine:
             return
         report.forward_replayed = replayed_nids
         report.forward_replay_loss = (total_loss / steps) if steps else None
-        logger.info(f"  真正睡眠重放完成: {replayed_nids} 个神经元"
-                    f"（{len(samples)} 条样本, {steps} 步, "
-                    f"avg loss={report.forward_replay_loss:.3f}）")
+        logger.info(
+            f"  真正睡眠重放完成: {replayed_nids} 个神经元"
+            f"（{len(samples)} 条样本, {steps} 步, "
+            f"avg loss={report.forward_replay_loss:.3f}）"
+        )
 
     # ── C27 增量五：振荡器节奏训练（Phase 1.8，o 型可学习节奏控制器）──────────
-    osc_train_lr = 1e-3        # 振荡器仅 3 标量参数，学习率可稍大
-    osc_train_max_steps = 24   # 节奏训练步数预算（比 1.7 少，参数量级极小）
-    osc_train_ct_steps = 4     # 连续积分步数缩短（节奏学习不需完整 8 步）
+    osc_train_lr = 1e-3  # 振荡器仅 3 标量参数，学习率可稍大
+    osc_train_max_steps = 24  # 节奏训练步数预算（比 1.7 少，参数量级极小）
+    osc_train_ct_steps = 4  # 连续积分步数缩短（节奏学习不需完整 8 步）
 
     def _sleep_phase_osc_train(self, report: SleepReport) -> None:
         """Phase 1.8: 振荡器节奏训练 — o 型节奏参数随睡眠经验学习（C27 增量五）。
@@ -1453,8 +1472,8 @@ class SleepEngine:
                     text = e.get("text") or e.get("label", "")
                     if len(text.strip()) >= 8:
                         samples.append((e["vector"], text))
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【SleepEngine._sleep_phase_osc_train】处理失败（非致命）: %s", e)
         sc = self._sleep_consolidator
         if sc is not None:
             try:
@@ -1462,8 +1481,8 @@ class SleepEngine:
                     txt = rec.get("text")
                     if txt and len(str(txt).strip()) >= 8:
                         samples.append((rec["state"], str(txt)))
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【SleepEngine._sleep_phase_osc_train】处理失败（非致命）: %s", e)
         if not samples:
             report.osc_trained = 0
             return
@@ -1480,6 +1499,7 @@ class SleepEngine:
             return
 
         import random
+
         random.shuffle(samples)
         samples = samples[: self.forward_replay_max_samples]
 
@@ -1492,8 +1512,8 @@ class SleepEngine:
         # 关收敛提前 break（min_steps 拉大）——保证牵引项（coupling 梯度）稳定
         try:
             from neuroplex.resonance.continuous import ContinuousResonance
-            ct = ContinuousResonance(
-                steps=self.osc_train_ct_steps, min_steps=10 ** 6)
+
+            ct = ContinuousResonance(steps=self.osc_train_ct_steps, min_steps=10**6)
         except Exception:
             ct = None
 
@@ -1517,8 +1537,12 @@ class SleepEngine:
                 embeddings = shared_embedding(input_ids)
                 optimizer.zero_grad()
                 out = ensemble.forward_train(
-                    shared_embeddings=embeddings, n_rounds=2,
-                    continuous=True, target_domain="zh", ct=ct)
+                    shared_embeddings=embeddings,
+                    n_rounds=2,
+                    continuous=True,
+                    target_domain="zh",
+                    ct=ct,
+                )
                 loss = out["osc_rhythm_loss"] + out["phase_loss"]
                 if not torch.isfinite(loss.detach()):
                     continue
@@ -1533,14 +1557,17 @@ class SleepEngine:
             return
         report.osc_trained = len(oscs)
         report.osc_train_loss = total_loss / steps
-        logger.info(f"  振荡器节奏训练完成: {len(oscs)} 节点"
-                    f"（{steps} 步, avg loss={report.osc_train_loss:.4f}）")
+        logger.info(
+            f"  振荡器节奏训练完成: {len(oscs)} 节点"
+            f"（{steps} 步, avg loss={report.osc_train_loss:.4f}）"
+        )
 
     def _sleep_phase_memory_consolidation(self, report: SleepReport):
         """Phase 1: 记忆整理 — 整合上下文管理器 + WorkingMemory"""
         try:
             # 整合上下文管理器
             from neuroplex.agent.context_manager import get_context_manager
+
             ctx = get_context_manager()
             ctx.consolidate_for_sleep()
             logger.info("  ContextManager consolidated")
@@ -1549,6 +1576,7 @@ class SleepEngine:
 
         try:
             from neuroplex.agent.working_memory import get_working_memory
+
             wm = get_working_memory()
 
             modified = wm.get_modified_keys()
@@ -1572,10 +1600,10 @@ class SleepEngine:
 
         except ImportError:
             logger.info("  WorkingMemory not available, skipping")
-    
+
     def _sleep_phase_model_training(self, report: SleepReport):
         """Phase 2: 神经元训练 - 用收集的数据训练 Cortex 神经元（P7 独立 lm_head）。"""
-        if self.cortex is not None and hasattr(self.cortex, 'neurons') and self.cortex.neurons:
+        if self.cortex is not None and hasattr(self.cortex, "neurons") and self.cortex.neurons:
             self._train_cortex_neurons(report)
             return
 
@@ -1589,8 +1617,10 @@ class SleepEngine:
         if self._integrate_engine is None:
             try:
                 from neuroplex.life.integrate_engine import IntegrateEngine
+
                 self._integrate_engine = IntegrateEngine(
-                    cortex=self.cortex, lifecycle=self._lifecycle,
+                    cortex=self.cortex,
+                    lifecycle=self._lifecycle,
                     feed_engine=self._feed_engine,
                     memory_bank=self.get_field_memory(),
                 )
@@ -1622,8 +1652,7 @@ class SleepEngine:
 
         # 收集同域 neuron
         domain_nids = [
-            nid for nid in self.cortex.neurons
-            if nid == domain or nid.startswith(f"{domain}_")
+            nid for nid in self.cortex.neurons if nid == domain or nid.startswith(f"{domain}_")
         ]
         if not domain_nids:
             return None  # 域内无 neuron，从零新建
@@ -1635,7 +1664,7 @@ class SleepEngine:
         # round_scores 已 thread-local（任务级并行）；这里读共享镜像
         # _last_forward_round_scores（最后一次推理的写穿结果）
         try:
-            scores = getattr(self.cortex.ensemble, '_last_forward_round_scores', [])
+            scores = getattr(self.cortex.ensemble, "_last_forward_round_scores", [])
             if scores:
                 last_scores = scores[-1] if scores else {}
                 best_nid = max(
@@ -1643,8 +1672,8 @@ class SleepEngine:
                     key=lambda n: last_scores.get(n, 0.0),
                 )
                 return best_nid
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【SleepEngine._select_split_parent】处理失败（非致命）: %s", e)
 
         # fallback: 第一个同域 neuron
         return domain_nids[0]
@@ -1665,6 +1694,7 @@ class SleepEngine:
         # 自主进化：训练前感知硬件负载，高负载时降低 NE → 减少 field_write → 节能
         try:
             from neuroplex.body import metabolism
+
             metabolism.set_neuromodulator(self._neuromodulator)
             metabolism.update_neuromodulator()
         except Exception as e:
@@ -1677,6 +1707,7 @@ class SleepEngine:
         else:
             try:
                 from neuroplex.life.feed_engine import get_feed_engine
+
                 self._feed_engine = get_feed_engine()
                 domain_samples = self._feed_engine.get_pending_samples_by_domain()
             except Exception as e:
@@ -1690,7 +1721,7 @@ class SleepEngine:
             logger.info("  无训练样本，跳过 Cortex 训练")
             return
 
-        tokenizer_hub = getattr(self.cortex, '_tokenizer_hub', None)
+        tokenizer_hub = getattr(self.cortex, "_tokenizer_hub", None)
         if tokenizer_hub is None:
             logger.warning("  Cortex 未设置 tokenizer_hub，跳过训练")
             return
@@ -1702,6 +1733,7 @@ class SleepEngine:
         # 注意：推理（generate）不再拿此锁——训练在影子权重上进行，
         # live 权重训练期间稳定，推理快照读到稳定权重（人脑：学习时正常对话）
         from neuroplex.core.app_state import app_state
+
         if not app_state.try_start_training():
             logger.warning("  训练锁被占用，跳过本次 Cortex 训练")
             return
@@ -1753,7 +1785,9 @@ class SleepEngine:
                             total_loss = total_loss + avg_loss
                             trained_count = trained_count + 1
                             ppl_results[domain] = ppl
-                            logger.info(f"  域 '{domain}' 文本训练完成: loss={avg_loss:.4f}, PPL={ppl:.1f}")
+                            logger.info(
+                                f"  域 '{domain}' 文本训练完成: loss={avg_loss:.4f}, PPL={ppl:.1f}"
+                            )
 
                     # 多模态样本训练（新逻辑）— 所有 neuron 参与共振
                     for mm_sample in mm_samples:
@@ -1765,7 +1799,9 @@ class SleepEngine:
                             if mm_loss is not None:
                                 total_loss = total_loss + mm_loss
                                 trained_count = trained_count + 1
-                                logger.info(f"  模态 '{modality}' ensemble 训练完成: loss={mm_loss:.4f}, PPL={mm_ppl:.1f}")
+                                logger.info(
+                                    f"  模态 '{modality}' ensemble 训练完成: loss={mm_loss:.4f}, PPL={mm_ppl:.1f}"
+                                )
 
                     # 记录 PPL 到凋亡追踪器
                     if self._lifecycle is not None:
@@ -1812,9 +1848,7 @@ class SleepEngine:
                         if live_n is not None:
                             self.cortex.neurons[nid] = live_n
                     self.cortex._shared_embedding = live_emb
-                    logger.info(
-                        f"  影子权重写回完成: {len(shadow_modules)} 个神经元"
-                    )
+                    logger.info(f"  影子权重写回完成: {len(shadow_modules)} 个神经元")
                 except Exception as e:
                     logger.warning(f"  影子权重写回失败: {e}")
         finally:
@@ -1826,9 +1860,7 @@ class SleepEngine:
             try:
                 if self._neuromodulator.should_trigger_neurogenesis():
                     logger.info("  多巴胺持续过低，触发 neurogenesis 信号")
-                    report.recommendations.append(
-                        "[神经新生] 多巴胺持续偏低，建议扩展神经元种群"
-                    )
+                    report.recommendations.append("[神经新生] 多巴胺持续偏低，建议扩展神经元种群")
             except Exception as e:
                 logger.debug(f"  neuromodulator neurogenesis 检查失败: {e}")
 
@@ -1854,10 +1886,15 @@ class SleepEngine:
                                 # 新 neuron 起点高于随机初始化；域首 neuron 从零新建
                                 split_parent = self._select_split_parent(domain)
                                 new_nid = self.cortex.add_neuron(
-                                    domain, lifecycle=self._lifecycle,
+                                    domain,
+                                    lifecycle=self._lifecycle,
                                     from_split=split_parent,
                                 )
-                                split_info = f" (split from {split_parent})" if split_parent else " (from scratch)"
+                                split_info = (
+                                    f" (split from {split_parent})"
+                                    if split_parent
+                                    else " (from scratch)"
+                                )
                                 logger.info(f"  🌱 neurogenesis 完成: {new_nid}{split_info}")
                                 report.recommendations.append(
                                     f"[神经新生] 新神经元 {new_nid} 已创建{split_info}"
@@ -1878,8 +1915,10 @@ class SleepEngine:
                 if coaction is not None:
                     maturity = getattr(self._lifecycle, "maturity", None)
                     isolated_nids = self._lifecycle.neurogenesis.detect_isolated_patterns(
-                        coaction, min_isolation_ratio=0.8,
-                        maturity_tracker=maturity, min_maturity_ratio=0.1,
+                        coaction,
+                        min_isolation_ratio=0.8,
+                        maturity_tracker=maturity,
+                        min_maturity_ratio=0.1,
                     )
                     if isolated_nids and self.cortex is not None:
                         logger.info(f"  孤立神经元检测: {isolated_nids}")
@@ -1889,13 +1928,20 @@ class SleepEngine:
                             try:
                                 # LuminaNet splitting: 孤立 neuron 分裂出协同 neuron
                                 # 孤立 neuron 自身作为分裂父本，子 neuron 继承权重后分化
-                                split_parent = nid if nid in self.cortex.neurons else self._select_split_parent(domain)
+                                split_parent = (
+                                    nid
+                                    if nid in self.cortex.neurons
+                                    else self._select_split_parent(domain)
+                                )
                                 new_nid = self.cortex.add_neuron(
-                                    domain, lifecycle=self._lifecycle,
+                                    domain,
+                                    lifecycle=self._lifecycle,
                                     from_split=split_parent,
                                 )
                                 split_info = f" (split from {split_parent})" if split_parent else ""
-                                logger.info(f"  🌱 孤立协同神经元创建: {new_nid}{split_info} (为 {nid})")
+                                logger.info(
+                                    f"  🌱 孤立协同神经元创建: {new_nid}{split_info} (为 {nid})"
+                                )
                                 report.recommendations.append(
                                     f"[神经新生] 孤立神经元 {nid} → 创建协同神经元 {new_nid}{split_info}"
                                 )
@@ -1928,6 +1974,7 @@ class SleepEngine:
             # #23: 记录睡眠训练结果到进化引擎
             try:
                 from neuroplex.life.evolution_engine import get_evolution_engine
+
                 evo = get_evolution_engine()
                 evo.record_sleep_training(
                     loss=report.training_loss,
@@ -1943,11 +1990,11 @@ class SleepEngine:
         # 训练后自动保存经验积累状态（shared_embedding + lm_head 权重）
         # 使下次启动 Cortex 时从当前状态继续，而非从随机初始化重新开始
         # 测试模式下（TAJIJI_TEST_MODE=1）跳过保存，确保测试可复现
-        if trained_count > 0 and not os.environ.get('TAJIJI_TEST_MODE'):
+        if trained_count > 0 and not os.environ.get("TAJIJI_TEST_MODE"):
             # domain_prototype 已在 _train_contrastive_phase 中 EMA 更新，
             # 此处无需再次更新（prototype 跟随 hidden_before_write 平滑跟踪）
             try:
-                neurons_dir = getattr(self.cortex, 'neurons_dir', 'data/neurons')
+                neurons_dir = getattr(self.cortex, "neurons_dir", "data/neurons")
                 self.cortex.save_state(neurons_dir)
                 logger.info(f"  经验积累状态已保存到 {neurons_dir}/cortex_state.pt")
             except Exception as e:
@@ -2002,7 +2049,7 @@ class SleepEngine:
                 if delta > 0.05:
                     ach_target = 0.85  # loss 上升：遇到新颖/困难输入 → 聚焦
                 elif delta > -0.05:
-                    ach_target = 0.5   # 停滞：中性
+                    ach_target = 0.5  # 停滞：中性
                 else:
                     ach_target = 0.35  # 学习有效：习惯化 → 聚焦降低
                 self._neuromodulator.set_targets(acetylcholine=ach_target)
@@ -2055,9 +2102,9 @@ class SleepEngine:
         if self.cortex is None or self._feed_engine is None:
             return None
 
-        tokenizer_hub = getattr(self.cortex, '_tokenizer_hub', None)
-        shared_embedding = getattr(self.cortex, '_shared_embedding', None)
-        general_sp = getattr(self.cortex, '_general_sp', None)
+        tokenizer_hub = getattr(self.cortex, "_tokenizer_hub", None)
+        shared_embedding = getattr(self.cortex, "_shared_embedding", None)
+        general_sp = getattr(self.cortex, "_general_sp", None)
 
         if tokenizer_hub is None or shared_embedding is None or general_sp is None:
             return None
@@ -2071,6 +2118,7 @@ class SleepEngine:
         total = 0
 
         import torch
+
         with torch.no_grad():
             for domain, samples in domain_samples.items():
                 neuron = self.cortex.neurons.get(domain)
@@ -2102,15 +2150,17 @@ class SleepEngine:
 
                     # 对每个位置预测下一个 token
                     for i in range(1, min(len(general_ids) - 1, 8)):
-                        prefix = general_ids[:i + 1]
+                        prefix = general_ids[: i + 1]
                         if len(prefix) < 2:
                             continue
 
-                        ids_tensor = torch.tensor([prefix], dtype=torch.long,
-                                                   device=shared_embedding.weight.device)
+                        ids_tensor = torch.tensor(
+                            [prefix], dtype=torch.long, device=shared_embedding.weight.device
+                        )
                         emb = shared_embedding(ids_tensor)
-                        result = neuron.forward(emb, field_state=None, round_num=1,
-                                                return_logits=True)
+                        result = neuron.forward(
+                            emb, field_state=None, round_num=1, return_logits=True
+                        )
                         logits = result.get("logits")
                         if logits is None:
                             continue
@@ -2155,9 +2205,7 @@ class SleepEngine:
         # 注意：dict 内容恢复（live 引用）由调用方在写回后执行，
         # 本方法只负责权重写回，避免静态方法与 cortex 实例耦合。
 
-    def _train_single_neuron(
-        self, neuron, domain: str, samples: list, cortex
-    ) -> tuple:
+    def _train_single_neuron(self, neuron, domain: str, samples: list, cortex) -> tuple:
         """P7: 训练单个神经元的独立 lm_head + shared_embedding 协同学习。
 
         经验驱动学习（非中心模型迁移）：
@@ -2179,9 +2227,9 @@ class SleepEngine:
         import torch.nn.functional as F
 
         # 从 cortex 获取 P7 组件
-        shared_embedding = getattr(cortex, '_shared_embedding', None)
-        general_sp = getattr(cortex, '_general_sp', None)
-        tokenizer_hub = getattr(cortex, '_tokenizer_hub', None)
+        shared_embedding = getattr(cortex, "_shared_embedding", None)
+        general_sp = getattr(cortex, "_general_sp", None)
+        tokenizer_hub = getattr(cortex, "_tokenizer_hub", None)
 
         if shared_embedding is None:
             logger.warning(f"  [{domain}] cortex._shared_embedding 未设置，跳过")
@@ -2198,7 +2246,7 @@ class SleepEngine:
         # 收集可训练参数：lm_head + embed_adapter + shared_embedding
         # shared_embedding 是感官层，与神经元协同学习（经验驱动，非中心模型迁移）
         lm_head_params = list(neuron.lm_head.parameters())
-        if hasattr(neuron, 'embed_adapter'):
+        if hasattr(neuron, "embed_adapter"):
             adapter_params = list(neuron.embed_adapter.parameters())
         else:
             adapter_params = []
@@ -2220,8 +2268,8 @@ class SleepEngine:
             try:
                 maturity_lr_mult = self._lifecycle.maturity.get_lr_multiplier(domain)
                 lr_mult *= maturity_lr_mult
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【SleepEngine._train_single_neuron】处理失败（非致命）: %s", e)
         adaptive_lr = base_lr * lr_mult
         # 分层学习率（2026-08-11，培养期破坏性更新修复）：
         # verify_feed_sleep_progressive 实证——8 样本×3 epoch 直接训练
@@ -2242,9 +2290,13 @@ class SleepEngine:
         texts = []
         for sample in samples:
             if isinstance(sample, dict):
-                text = sample.get("text", "") or sample.get("content", "") or \
-                       sample.get("task", "") or sample.get("answer", "") or \
-                       " ".join(str(v) for v in sample.values() if isinstance(v, str))
+                text = (
+                    sample.get("text", "")
+                    or sample.get("content", "")
+                    or sample.get("task", "")
+                    or sample.get("answer", "")
+                    or " ".join(str(v) for v in sample.values() if isinstance(v, str))
+                )
             else:
                 text = str(sample)
             if len(text.strip()) > 10:
@@ -2259,6 +2311,7 @@ class SleepEngine:
         # 随机采样：每轮训练不同的 64 条样本，释放大训练集的全部价值
         # 避免固定前 64 条导致数据利用率只有 64/N
         import random
+
         if len(texts) > max_samples:
             random.shuffle(texts)
         texts = texts[:max_samples]
@@ -2303,7 +2356,9 @@ class SleepEngine:
                     # Forward + backward
                     optimizer.zero_grad()
                     result = neuron.forward(
-                        embeddings, field_state=None, round_num=1,
+                        embeddings,
+                        field_state=None,
+                        round_num=1,
                         return_logits=True,
                     )
                     logits = result["logits"]  # [1, L, domain_vocab]
@@ -2314,7 +2369,7 @@ class SleepEngine:
                     if min_len < 1:
                         continue
                     shift_logits = logits[:, :min_len, :].contiguous()
-                    shift_targets = target_ids[:, 1:1 + min_len].contiguous()
+                    shift_targets = target_ids[:, 1 : 1 + min_len].contiguous()
 
                     # clamp targets to neuron's vocab
                     vocab_size = logits.size(-1)
@@ -2374,9 +2429,9 @@ class SleepEngine:
         if len(cortex.neurons) < 2:
             return None  # 单 neuron 无对比意义
 
-        shared_embedding = getattr(cortex, '_shared_embedding', None)
-        general_sp = getattr(cortex, '_general_sp', None)
-        tokenizer_hub = getattr(cortex, '_tokenizer_hub', None)
+        shared_embedding = getattr(cortex, "_shared_embedding", None)
+        general_sp = getattr(cortex, "_general_sp", None)
+        tokenizer_hub = getattr(cortex, "_tokenizer_hub", None)
         if shared_embedding is None or general_sp is None or tokenizer_hub is None:
             return None
 
@@ -2386,9 +2441,9 @@ class SleepEngine:
         # 不含 lm_head（保护刚学到的 LM 能力）
         trainable_params = list(shared_embedding.parameters())
         for neuron in cortex.neurons.values():
-            if hasattr(neuron, 'embed_adapter'):
+            if hasattr(neuron, "embed_adapter"):
                 trainable_params.extend(neuron.embed_adapter.parameters())
-            if hasattr(neuron, 'get_field_write_parameters'):
+            if hasattr(neuron, "get_field_write_parameters"):
                 trainable_params.extend(neuron.get_field_write_parameters())
 
         if not trainable_params:
@@ -2458,8 +2513,8 @@ class SleepEngine:
                 general_ids = general_ids[:32]
 
                 input_ids = torch.tensor([general_ids], dtype=torch.long, device=device)
-                embeddings = shared_embedding(input_ids)            # [1, L, 512]
-                prompt_pooled = embeddings.mean(dim=1).squeeze(0)   # [512]
+                embeddings = shared_embedding(input_ids)  # [1, L, 512]
+                prompt_pooled = embeddings.mean(dim=1).squeeze(0)  # [512]
                 sample_prompts.append((sample_domain, prompt_pooled))
 
                 # 首条样本收集 hidden/field（供 proto_loss/align_loss 用）
@@ -2471,13 +2526,17 @@ class SleepEngine:
                         try:
                             neuron.train()
                             result = neuron.forward(
-                                embeddings, field_state=None, round_num=1,
+                                embeddings,
+                                field_state=None,
+                                round_num=1,
                                 return_logits=False,
                             )
                             resp_hidden[sample_domain][nid] = result["hidden_before_write"]
                             resp_field[sample_domain][nid] = result["field_vector"]
                         except Exception as e:
-                            logger.debug(f"  contrastive: neuron {nid} on {sample_domain} 失败: {e}")
+                            logger.debug(
+                                f"  contrastive: neuron {nid} on {sample_domain} 失败: {e}"
+                            )
                             continue
 
         if len(sample_prompts) < 2:
@@ -2504,16 +2563,16 @@ class SleepEngine:
 
         # field 优先用 ensemble 跨规格投影层（与推理 _project_vec 一致），
         # 投影结果统一到 field.dim；无投影层时 pad 到公共 max dim
-        ensemble = getattr(cortex, 'ensemble', None)
+        ensemble = getattr(cortex, "ensemble", None)
         target_field_dim = max_field_dim
         use_field_proj = False
-        if ensemble is not None and getattr(ensemble, '_cross_spec_projectors', None):
+        if ensemble is not None and getattr(ensemble, "_cross_spec_projectors", None):
             try:
                 first_proj = next(iter(ensemble._cross_spec_projectors.values()))
                 target_field_dim = first_proj.linear1.out_features
                 use_field_proj = True
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【SleepEngine._train_contrastive_phase】处理失败（非致命）: %s", e)
 
         def _pad_last(vec, target_dim):
             if vec.size(-1) >= target_dim:
@@ -2521,8 +2580,8 @@ class SleepEngine:
             return F.pad(vec, (0, target_dim - vec.size(-1)))
 
         # 每个 neuron 对自己域样本的响应（prototype 可训练代理）
-        self_hidden: Dict[str, torch.Tensor] = {}   # nid -> normed hidden [1, H_common]
-        self_field: Dict[str, torch.Tensor] = {}    # nid -> normed field [1, D_common]
+        self_hidden: Dict[str, torch.Tensor] = {}  # nid -> normed hidden [1, H_common]
+        self_field: Dict[str, torch.Tensor] = {}  # nid -> normed field [1, D_common]
         self_hidden_raw: Dict[str, torch.Tensor] = {}  # nid -> 原始维度 hidden（prototype 更新用）
         for nid in all_nids:
             d = _domain_of(nid)
@@ -2558,18 +2617,19 @@ class SleepEngine:
             sims = {}
             for nid in all_nids:
                 neuron = cortex.neurons[nid]
-                if not hasattr(neuron, 'embed_adapter') or neuron.embed_adapter is None:
+                if not hasattr(neuron, "embed_adapter") or neuron.embed_adapter is None:
                     continue
                 try:
                     projected = neuron.embed_adapter(prompt_vec.unsqueeze(0))  # [1, 768]
-                    proj_vec = projected.squeeze(0)                            # [768]
+                    proj_vec = projected.squeeze(0)  # [768]
                     proj_norm = proj_vec / (proj_vec.norm() + 1e-8)
-                    proto = neuron.domain_prototype.detach()                   # [768]
+                    proto = neuron.domain_prototype.detach()  # [768]
                     if proto.norm() < 1e-6:
                         # 冷启动：prototype 全零，用 self_hidden 代理（有梯度方向）
                         # 注意用原始维度 hidden（prototype 是 neuron 自身维度）
-                        proto = self_hidden_raw.get(
-                            nid, torch.zeros_like(proto)).squeeze(0).detach()
+                        proto = (
+                            self_hidden_raw.get(nid, torch.zeros_like(proto)).squeeze(0).detach()
+                        )
                     proto_norm = proto / (proto.norm() + 1e-8)
                     sims[nid] = (proj_norm * proto_norm).sum()
                 except Exception:
@@ -2597,10 +2657,12 @@ class SleepEngine:
         for i in range(N):
             for j in range(i + 1, N):
                 nid_i, nid_j = all_nids[i], all_nids[j]
-                if (_domain_of(nid_i) != _domain_of(nid_j)
-                        and nid_i in self_hidden and nid_j in self_hidden):
-                    sim = (self_hidden[nid_i].squeeze(0) *
-                           self_hidden[nid_j].squeeze(0)).sum()
+                if (
+                    _domain_of(nid_i) != _domain_of(nid_j)
+                    and nid_i in self_hidden
+                    and nid_j in self_hidden
+                ):
+                    sim = (self_hidden[nid_i].squeeze(0) * self_hidden[nid_j].squeeze(0)).sum()
                     # 修复：推向负相关，sim=0 时 loss=margin²>0 有梯度
                     proto_loss = proto_loss + (sim + PROTO_MARGIN).pow(2)
                     proto_count += 1
@@ -2609,18 +2671,16 @@ class SleepEngine:
         # ── 信号 3: align_loss — prototype 排序与共振分数排序对齐 ──
         # 把动态共振信号对齐到易训练的 prototype 方向。
         # 前两信号有效后，排序分布不再均匀，KL 才有意义。
-        hidden_vecs = [self_hidden[nid].squeeze(0) for nid in all_nids
-                       if nid in self_hidden]
+        hidden_vecs = [self_hidden[nid].squeeze(0) for nid in all_nids if nid in self_hidden]
         if len(hidden_vecs) >= 2:
-            all_hidden_vecs = torch.stack(hidden_vecs)             # [N, 768]
-            mean_hidden = all_hidden_vecs.mean(dim=0)              # [768]
+            all_hidden_vecs = torch.stack(hidden_vecs)  # [N, 768]
+            mean_hidden = all_hidden_vecs.mean(dim=0)  # [768]
             mean_hidden_norm = mean_hidden / (mean_hidden.norm() + 1e-8)
 
-            field_vecs = [self_field[nid].squeeze(0) for nid in all_nids
-                          if nid in self_field]
+            field_vecs = [self_field[nid].squeeze(0) for nid in all_nids if nid in self_field]
             if len(field_vecs) >= 2:
-                all_field_vecs = torch.stack(field_vecs)           # [N, D]
-                mean_field = all_field_vecs.mean(dim=0)            # [D]
+                all_field_vecs = torch.stack(field_vecs)  # [N, D]
+                mean_field = all_field_vecs.mean(dim=0)  # [D]
                 mean_field_norm = mean_field / (mean_field.norm() + 1e-8)
             else:
                 mean_field_norm = None
@@ -2633,18 +2693,17 @@ class SleepEngine:
                 proto_sim = (self_hidden[nid].squeeze(0) * mean_hidden_norm).sum()
                 proto_sims_list.append(proto_sim)
                 if mean_field_norm is not None and nid in self_field:
-                    field_sim = (self_field[nid].squeeze(0) *
-                                 mean_field_norm).sum().detach()
+                    field_sim = (self_field[nid].squeeze(0) * mean_field_norm).sum().detach()
                 else:
                     field_sim = torch.tensor(0.0, device=device)
                 field_sims_list.append(field_sim)
 
             if len(proto_sims_list) >= 2:
-                proto_sims_tensor = torch.stack(proto_sims_list)   # [N]
-                field_sims_tensor = torch.stack(field_sims_list)   # [N]
+                proto_sims_tensor = torch.stack(proto_sims_list)  # [N]
+                field_sims_tensor = torch.stack(field_sims_list)  # [N]
                 proto_dist = F.log_softmax(proto_sims_tensor * 10.0, dim=0)
                 field_dist = F.softmax(field_sims_tensor * 10.0, dim=0)
-                align_loss = F.kl_div(proto_dist, field_dist, reduction='batchmean')
+                align_loss = F.kl_div(proto_dist, field_dist, reduction="batchmean")
             else:
                 align_loss = torch.tensor(0.0, device=device)
         else:
@@ -2661,9 +2720,7 @@ class SleepEngine:
         # 用原始维度 hidden：prototype 在 neuron 自身 hidden 空间（512/768 各自）
         for nid in all_nids:
             if nid in self_hidden_raw:
-                cortex.neurons[nid].update_domain_prototype(
-                    self_hidden_raw[nid].detach()
-                )
+                cortex.neurons[nid].update_domain_prototype(self_hidden_raw[nid].detach())
 
         # 恢复 neuron eval 模式
         for neuron in cortex.neurons.values():
@@ -2673,13 +2730,13 @@ class SleepEngine:
             f"  contrastive phase: route={route_loss.item():.4f}, "
             f"proto={proto_loss.item():.4f}, align={align_loss.item():.4f}, neurons={N}"
         )
-        print(f"  [contrastive] route={route_loss.item():.4f}, "
-              f"proto={proto_loss.item():.4f}, align={align_loss.item():.4f}, neurons={N}")
+        print(
+            f"  [contrastive] route={route_loss.item():.4f}, "
+            f"proto={proto_loss.item():.4f}, align={align_loss.item():.4f}, neurons={N}"
+        )
         return total_contrastive.item()
 
-    def _train_multimodal_ensemble(
-        self, modality: str, sample: dict, tokenizer_hub
-    ) -> tuple:
+    def _train_multimodal_ensemble(self, modality: str, sample: dict, tokenizer_hub) -> tuple:
         """P8: 多模态 ensemble 共振训练。
 
         与推理路径一致：所有注册了该模态的 neuron 参与共振，
@@ -2705,6 +2762,7 @@ class SleepEngine:
         # target 必须映射到 general 词表的 codec 段（base + codec_index）。
         # image/audio 段在 tokenizer_contract.json 预留；video 暂无预留段，v1 不支持训练。
         from neuroplex.config import MULTIMODAL_TOKENS
+
         if modality == "image":
             mm_token_base = MULTIMODAL_TOKENS["image_token_base"]
             mm_codebook_size = MULTIMODAL_TOKENS["image_codebook_size"]
@@ -2719,8 +2777,7 @@ class SleepEngine:
         # 找出所有支持该模态输入投影的 neuron
         # （输出统一走共享 general lm_head，不再需要 per-neuron mm_lm_heads）
         mm_nids = [
-            nid for nid, neuron in cortex.neurons.items()
-            if modality in neuron.mm_projections
+            nid for nid, neuron in cortex.neurons.items() if modality in neuron.mm_projections
         ]
         if not mm_nids:
             logger.debug(f"  [{modality}] 无 neuron 支持该模态")
@@ -2746,11 +2803,17 @@ class SleepEngine:
             return None, None
 
         encoder = tokenizer_hub.modal_encoders.get(modality)
-        if encoder is None or not hasattr(encoder, "model") or not hasattr(encoder.model, "quantizer"):
+        if (
+            encoder is None
+            or not hasattr(encoder, "model")
+            or not hasattr(encoder.model, "quantizer")
+        ):
             logger.debug(f"  [{modality}] codec 不可用")
             return None, None
 
-        codebook = encoder.model.quantizer.codebook.to(next(cortex.neurons[mm_nids[0]].parameters()).device)
+        codebook = encoder.model.quantizer.codebook.to(
+            next(cortex.neurons[mm_nids[0]].parameters()).device
+        )
         device = next(cortex.neurons[mm_nids[0]].parameters()).device
 
         # 构建输入 embedding（每个 neuron 独立投影）
@@ -2788,7 +2851,7 @@ class SleepEngine:
             return None, None
 
         logits = result["weighted_logits"]  # [B, L, general_vocab=256K]
-        shift_logits = logits[:, -len(target_ids):, :].contiguous()
+        shift_logits = logits[:, -len(target_ids) :, :].contiguous()
 
         # 2026-08-07 收敛：target 是 codec 索引（0~codebook_size），
         # 需映射到 general 词表的 codec 段（base + codec_index）才能与 logits 对齐。
@@ -2859,6 +2922,7 @@ class SleepEngine:
         # 1. 巩固 ContextManager 记忆（短期→长期）
         try:
             from neuroplex.agent.context_manager import get_context_manager
+
             cm = get_context_manager()
             cm.consolidate_for_sleep()
 
@@ -2880,14 +2944,14 @@ class SleepEngine:
         if hasattr(self._feed_engine, "get_pending_count"):
             try:
                 pending = self._feed_engine.get_pending_count()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug(
+                    "【SleepEngine._sleep_phase_experience_consolidation】处理失败（非致命）: %s", e
+                )
 
         logger.info(f"  Phase 3.5: 巩固 {consolidated} 条记忆, {pending} 个待处理样本")
         if consolidated > 0:
-            report.recommendations.append(
-                f"[经验巩固] {consolidated} 条长期记忆转化为群体训练数据"
-            )
+            report.recommendations.append(f"[经验巩固] {consolidated} 条长期记忆转化为群体训练数据")
         return {"status": "ok", "consolidated": consolidated, "pending_samples": pending}
 
     def _sleep_phase_evaluation(self, report: SleepReport) -> dict:
@@ -2943,7 +3007,7 @@ class SleepEngine:
             if coaction is not None:
                 activation_counts = getattr(coaction, "_activation_counts", {})
 
-            total_rounds = max(1, self._current_step)
+            max(1, self._current_step)
             max_activation = max(activation_counts.values()) if activation_counts else 0
             ppl_results = getattr(self, "_last_ppl_results", {}) or {}
 
@@ -2952,10 +3016,12 @@ class SleepEngine:
             max_degree = 0
             for nid in neurons:
                 neuron = neurons[nid]
-                out_deg = len(getattr(neuron, "excite_channels", {})) + \
-                          len(getattr(neuron, "inhibit_channels", {}))
+                out_deg = len(getattr(neuron, "excite_channels", {})) + len(
+                    getattr(neuron, "inhibit_channels", {})
+                )
                 in_deg = sum(
-                    1 for other in neurons.values()
+                    1
+                    for other in neurons.values()
                     if (hasattr(other, "excite_channels") and nid in other.excite_channels)
                     or (hasattr(other, "inhibit_channels") and nid in other.inhibit_channels)
                 )
@@ -2974,13 +3040,15 @@ class SleepEngine:
                         maturity = self._lifecycle.maturity.get_maturity_ratio(nid)
                     except Exception:
                         maturity = 1.0
-                is_inhibitory = getattr(getattr(neuron, "config", None), "neuron_type", "") == "inhibitory"
+                is_inhibitory = (
+                    getattr(getattr(neuron, "config", None), "neuron_type", "") == "inhibitory"
+                )
                 metrics_map[nid] = {
                     "activity": activity_norm,
                     "ppl": ppl_results.get(nid),
                     "connectivity": (degrees[nid] / max_degree) if max_degree > 0 else 0.0,
                     "contribution": None,  # A/B 剔除实验（可选，评估基础设施就绪后注入）
-                    "redundancy": None,     # field_vector 相似度（可选）
+                    "redundancy": None,  # field_vector 相似度（可选）
                     "maturity_ratio": maturity,
                     "is_inhibitory": is_inhibitory,
                 }
@@ -3052,10 +3120,13 @@ class SleepEngine:
                         domain = nid.split("_")[0] if "_" in nid else nid
                         split_parent = self._select_split_parent(domain)
                         new_nid = self.cortex.add_neuron(
-                            domain, lifecycle=self._lifecycle,
+                            domain,
+                            lifecycle=self._lifecycle,
                             from_split=split_parent,
                         )
-                        split_info = f" (split from {split_parent})" if split_parent else " (from scratch)"
+                        split_info = (
+                            f" (split from {split_parent})" if split_parent else " (from scratch)"
+                        )
                         logger.info(f"  🌱 凋亡补偿新生: {new_nid}{split_info} (替代 {nid})")
                         report.recommendations.append(
                             f"[神经新生] 凋亡补偿: {nid} → {new_nid}{split_info}"
@@ -3079,10 +3150,11 @@ class SleepEngine:
         try:
             # B4 修复：使用全局单例，保留历史策略记录
             from neuroplex.life.recursive_improver import get_recursive_improver
+
             improver = get_recursive_improver()
 
             # B3 修复：将 Phase 4 的评估结果注入到改进分析中
-            health = report.health_status if hasattr(report, 'health_status') else None
+            health = report.health_status if hasattr(report, "health_status") else None
             if health and health != "unknown":
                 logger.debug(f"  基于评估结果执行改进分析 (health: {health})")
 
@@ -3096,21 +3168,30 @@ class SleepEngine:
                         # Deep Coupling: 发布改进事件到 EventBus
                         try:
                             from neuroplex.infra.events import get_event_bus
+
                             bus = get_event_bus()
-                            bus.publish("improvement_proposal", {
-                                "proposal": {
-                                    "type": p.proposal_type,
-                                    "description": p.description,
-                                    "new_value": p.new_value,
-                                    "confidence": p.confidence,
-                                }
-                            }, source="sleep_engine")
-                        except Exception:
-                            pass
+                            bus.publish(
+                                "improvement_proposal",
+                                {
+                                    "proposal": {
+                                        "type": p.proposal_type,
+                                        "description": p.description,
+                                        "new_value": p.new_value,
+                                        "confidence": p.confidence,
+                                    }
+                                },
+                                source="sleep_engine",
+                            )
+                        except Exception as e:
+                            logger.debug(
+                                "【SleepEngine._sleep_phase_recursive_improvement】处理失败（非致命）: %s",
+                                e,
+                            )
 
             # 2. 检查是否准备好能力扩展（神经元架构下的进化 = 数据改进闭环）
             try:
                 from neuroplex.life.evolution_engine import get_evolution_engine
+
                 engine = get_evolution_engine()
                 evolution_status = engine.check_evolution_ready()
 
@@ -3158,7 +3239,10 @@ class SleepEngine:
         if not weaknesses:
             return
         try:
-            import os, json, datetime as dt
+            import os
+            import json
+            import datetime as dt
+
             output_dir = os.path.join(self.data_dir, "weakness_training_data")
             os.makedirs(output_dir, exist_ok=True)
             # 生成弱项针对性练习样本
@@ -3174,11 +3258,13 @@ class SleepEngine:
                 elif "工具" in w or "tool" in w.lower() or "ReAct" in w:
                     samples.extend(self._tool_weakness_samples())
                 else:
-                    samples.append({
-                        "instruction": f"请针对以下弱项提供详细解答：{w}",
-                        "output": f"（此为自动生成的弱项针对性训练样本，指向：{w}）",
-                        "weakness": w,
-                    })
+                    samples.append(
+                        {
+                            "instruction": f"请针对以下弱项提供详细解答：{w}",
+                            "output": f"（此为自动生成的弱项针对性训练样本，指向：{w}）",
+                            "weakness": w,
+                        }
+                    )
             if samples:
                 ts = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
                 path = os.path.join(output_dir, f"weakness_fix_{ts}.json")
@@ -3193,23 +3279,38 @@ class SleepEngine:
 
     def _math_weakness_samples(self) -> list:
         return [
-            {"instruction": "计算 128 × 37 的结果", "output": "128 × 37 = 128 × (40 - 3) = 5120 - 384 = 4736"},
-            {"instruction": "什么是勾股定理？请用例子说明", "output": "勾股定理：直角三角形中 a² + b² = c²。例：a=3, b=4 → c=5"},
+            {
+                "instruction": "计算 128 × 37 的结果",
+                "output": "128 × 37 = 128 × (40 - 3) = 5120 - 384 = 4736",
+            },
+            {
+                "instruction": "什么是勾股定理？请用例子说明",
+                "output": "勾股定理：直角三角形中 a² + b² = c²。例：a=3, b=4 → c=5",
+            },
         ]
 
     def _code_weakness_samples(self) -> list:
         return [
-            {"instruction": "用 Python 写一个二分查找函数", "output": "def binary_search(arr, target):\n    left, right = 0, len(arr)-1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target: return mid\n        elif arr[mid] < target: left = mid + 1\n        else: right = mid - 1\n    return -1"},
+            {
+                "instruction": "用 Python 写一个二分查找函数",
+                "output": "def binary_search(arr, target):\n    left, right = 0, len(arr)-1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target: return mid\n        elif arr[mid] < target: left = mid + 1\n        else: right = mid - 1\n    return -1",
+            },
         ]
 
     def _accuracy_weakness_samples(self) -> list:
         return [
-            {"instruction": "请详细解释相对论的基本原理", "output": "相对论由爱因斯坦提出，包含狭义和广义两部分。狭义相对论基于光速不变原理和相对性原理……"},
+            {
+                "instruction": "请详细解释相对论的基本原理",
+                "output": "相对论由爱因斯坦提出，包含狭义和广义两部分。狭义相对论基于光速不变原理和相对性原理……",
+            },
         ]
 
     def _tool_weakness_samples(self) -> list:
         return [
-            {"instruction": "搜索 Python 3.12 的新特性并总结", "output": '[TOOL:search] Python 3.12 新特性\nPython 3.12 引入了更详细的错误信息、类型参数语法改进、per-interpreter GIL 等特性……'},
+            {
+                "instruction": "搜索 Python 3.12 的新特性并总结",
+                "output": "[TOOL:search] Python 3.12 新特性\nPython 3.12 引入了更详细的错误信息、类型参数语法改进、per-interpreter GIL 等特性……",
+            },
         ]
 
     def _identify_weaknesses(self) -> List[str]:
@@ -3217,24 +3318,26 @@ class SleepEngine:
         weaknesses = []
         try:
             from neuroplex.infra.self_evaluator import get_self_evaluator
+
             evaluator = get_self_evaluator()
             stats = evaluator.get_stats()
             if stats.get("avg_score", 1.0) < 0.6:
                 weaknesses.append("整体回答质量偏低")
-        except ImportError:
-            pass
+        except ImportError as e:
+            logger.debug("【SleepEngine._identify_weaknesses】处理失败（非致命）: %s", e)
 
         # 从进化引擎获取失败模式
         try:
             from neuroplex.life.evolution_engine import get_evolution_engine
+
             engine = get_evolution_engine()
             total = engine.metrics.tasks_completed + engine.metrics.tasks_failed
             if total > 10:
                 fail_rate = engine.metrics.tasks_failed / total
                 if fail_rate > 0.3:
                     weaknesses.append(f"任务失败率高 ({fail_rate:.0%})")
-        except ImportError:
-            pass
+        except ImportError as e:
+            logger.debug("【SleepEngine._identify_weaknesses】处理失败（非致命）: %s", e)
 
         return weaknesses or ["信息不足，需要更多交互数据"]
 
@@ -3247,6 +3350,7 @@ class SleepEngine:
         constraints = {"max_memory_gb": 16, "max_active_neurons": 8}
         try:
             import torch
+
             if torch.cuda.is_available():
                 mem = torch.cuda.get_device_properties(0).total_mem / (1024**3)
                 constraints["max_memory_gb"] = round(mem * 0.8)  # 留 20% 余量
@@ -3265,6 +3369,7 @@ class SleepEngine:
 
             # 从工作记忆中提取行为轨迹
             from neuroplex.agent.working_memory import get_working_memory
+
             wm = get_working_memory()
             entries = wm.get_all()
 
@@ -3276,12 +3381,14 @@ class SleepEngine:
             samples = []
             for key, content in entries.items():
                 if isinstance(content, str) and len(content) > 20:
-                    samples.append({
-                        "type": "memory_consolidation",
-                        "key": key,
-                        "content": content,
-                        "timestamp": datetime.now().isoformat(),
-                    })
+                    samples.append(
+                        {
+                            "type": "memory_consolidation",
+                            "key": key,
+                            "content": content,
+                            "timestamp": datetime.now().isoformat(),
+                        }
+                    )
 
             # 保存语料
             if samples:
@@ -3304,13 +3411,14 @@ class SleepEngine:
         # 1. 从工作记忆收集
         try:
             from neuroplex.agent.working_memory import get_working_memory
+
             wm = get_working_memory()
             entries = wm.get_all()
             for key, content in entries.items():
                 if isinstance(content, str) and len(content) > 20:
                     texts.append(content)
-        except ImportError:
-            pass
+        except ImportError as e:
+            logger.debug("【SleepEngine._collect_training_texts】处理失败（非致命）: %s", e)
 
         # 2. 从进化语料目录读取
         corpus_dir = os.path.join(self.data_dir, "evolution_corpus")
@@ -3328,8 +3436,10 @@ class SleepEngine:
                                         texts.append(content)
                                 except json.JSONDecodeError:
                                     continue
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.debug(
+                            "【SleepEngine._collect_training_texts】处理失败（非致命）: %s", e
+                        )
 
         # 3. 确保至少有基本数据
         if not texts:
@@ -3342,10 +3452,11 @@ class SleepEngine:
         """获取当前可用的训练设备。"""
         try:
             import torch
+
             if torch.cuda.is_available():
                 return "cuda"
-        except ImportError:
-            pass
+        except ImportError as e:
+            logger.debug("【SleepEngine._get_device】处理失败（非致命）: %s", e)
         return "cpu"
 
     def _get_model(self):
@@ -3354,6 +3465,7 @@ class SleepEngine:
             return self._model_provider()
         try:
             from neuroplex.core.app_state import app_state
+
             return app_state.model
         except ImportError:
             return None
@@ -3364,12 +3476,13 @@ class SleepEngine:
             return self._tokenizer_provider()
         try:
             from neuroplex.core.app_state import app_state
+
             return app_state.tokenizer
         except ImportError:
             return None
 
     # ─── 持久化 ─────────────────────────────────────
-    
+
     def _ensure_data_dir(self):
         """延迟创建数据目录（只在首次写入时创建）"""
         if not self._data_dir_ready:
@@ -3383,20 +3496,22 @@ class SleepEngine:
         try:
             data = []
             for report in self._sleep_history[-50:]:  # 只保留最近 50 次
-                data.append({
-                    "timestamp": report.timestamp,
-                    "duration_seconds": report.duration_seconds,
-                    "phases_completed": report.phases_completed,
-                    "memory_entries_cleared": report.memory_entries_cleared,
-                    "training_samples_used": report.training_samples_used,
-                    "evolution_events": report.evolution_events,
-                    "health_status": report.health_status,
-                })
+                data.append(
+                    {
+                        "timestamp": report.timestamp,
+                        "duration_seconds": report.duration_seconds,
+                        "phases_completed": report.phases_completed,
+                        "memory_entries_cleared": report.memory_entries_cleared,
+                        "training_samples_used": report.training_samples_used,
+                        "evolution_events": report.evolution_events,
+                        "health_status": report.health_status,
+                    }
+                )
             with open(path, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
         except Exception as e:
             logger.warning(f"Failed to save sleep history: {e}")
-    
+
     def _load_history(self):
         """加载睡眠历史"""
         path = os.path.join(self.data_dir, "sleep_history.json")
@@ -3409,26 +3524,28 @@ class SleepEngine:
                 self._sleep_history.append(SleepReport(**item))
         except Exception as e:
             logger.warning(f"Failed to load sleep history: {e}")
-    
+
     # ─── 状态查询 ───────────────────────────────────
-    
+
     def get_status(self) -> dict:
         """获取睡眠引擎状态"""
         return {
             "is_sleeping": self._is_sleeping,
             "last_sleep": self._last_sleep_time.isoformat() if self._last_sleep_time else None,
-            "last_activity": self._last_activity_time.isoformat() if self._last_activity_time else None,
+            "last_activity": (
+                self._last_activity_time.isoformat() if self._last_activity_time else None
+            ),
             "total_sleeps": len(self._sleep_history),
             "auto_sleep_enabled": self.config.auto_sleep_enabled,
         }
-    
+
     def get_summary(self) -> str:
         """获取人类可读的状态摘要"""
         status = self.get_status()
-        
+
         sleeping = "💤 睡眠中" if status["is_sleeping"] else "☀️ 清醒"
         last_sleep = status["last_sleep"] or "从未睡眠"
-        
+
         lines = [
             "💤 睡眠引擎状态",
             "━━━━━━━━━━━━━━━━",
@@ -3437,36 +3554,36 @@ class SleepEngine:
             f"总睡眠次数: {status['total_sleeps']}",
             f"自动睡眠: {'✅ 开启' if status['auto_sleep_enabled'] else '❌ 关闭'}",
         ]
-        
+
         if self._sleep_history:
             last = self._sleep_history[-1]
-            lines.append(f"\n最近一次睡眠报告:")
+            lines.append("\n最近一次睡眠报告:")
             lines.append(f"  时长: {last.duration_seconds}s")
             lines.append(f"  阶段: {', '.join(last.phases_completed)}")
             lines.append(f"  健康状态: {last.health_status}")
-        
+
         return "\n".join(lines)
-    
+
     def get_sleep_trends(self) -> List[str]:
         """分析睡眠趋势"""
         if len(self._sleep_history) < 3:
             return ["数据不足，至少需要 3 次睡眠记录"]
-        
+
         recent = self._sleep_history[-5:]
         avg_duration = sum(r.duration_seconds for r in recent) / len(recent)
         avg_phases = sum(len(r.phases_completed) for r in recent) / len(recent)
-        
+
         trends = [
             f"最近 {len(recent)} 次睡眠平均时长: {avg_duration:.1f}s",
             f"平均完成阶段数: {avg_phases:.1f}/4",
         ]
-        
+
         # 检查训练效果
         recent_training = [r.training_samples_used for r in recent if r.training_samples_used > 0]
         if recent_training:
             avg_samples = sum(recent_training) / len(recent_training)
             trends.append(f"平均训练样本数: {avg_samples:.0f}")
-        
+
         return trends
 
 

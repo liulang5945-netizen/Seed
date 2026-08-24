@@ -11,6 +11,7 @@
 8. ensemble enter_refractory 应用 refractory_multiplier
 9. 向后兼容（excitatory/inhibitory 行为不变）
 """
+
 from __future__ import annotations
 
 import os
@@ -102,7 +103,9 @@ def test_refractory_multiplier():
     }
     for nt, expected_mult in mults.items():
         n = _make_neuron(nt)
-        assert n.refractory_multiplier == expected_mult, f"{nt} mult 应={expected_mult}, got {n.refractory_multiplier}"
+        assert (
+            n.refractory_multiplier == expected_mult
+        ), f"{nt} mult 应={expected_mult}, got {n.refractory_multiplier}"
     print(f"  PASS: mults={mults}")
 
 
@@ -112,7 +115,9 @@ def test_ensemble_applies_write_gain():
     # 通过检查 ensemble.py 源码包含 write_gain 应用
     ens_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "taiji", "resonance", "ensemble.py",
+        "taiji",
+        "resonance",
+        "ensemble.py",
     )
     with open(ens_path, "r", encoding="utf-8") as f:
         source = f.read()
@@ -128,12 +133,17 @@ def test_ensemble_applies_refractory_multiplier():
     print("\n[8] ensemble 应用 refractory_multiplier")
     ens_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "taiji", "resonance", "ensemble.py",
+        "taiji",
+        "resonance",
+        "ensemble.py",
     )
     with open(ens_path, "r", encoding="utf-8") as f:
         source = f.read()
     assert "refractory_multiplier" in source, "ensemble.py 应应用 refractory_multiplier"
-    assert "neuromod_mult * subtype_mult" in source or "neuromod_mult * self.neurons[nid].refractory_multiplier" in source
+    assert (
+        "neuromod_mult * subtype_mult" in source
+        or "neuromod_mult * self.neurons[nid].refractory_multiplier" in source
+    )
     print("  PASS: ensemble.py 应用 refractory_multiplier")
 
 

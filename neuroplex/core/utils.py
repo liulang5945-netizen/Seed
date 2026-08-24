@@ -2,11 +2,11 @@
 通用工具模块
 提供 JSON 读写、HTML Toast、历史记录管理、路径解析等辅助功能
 """
+
 import json
 import logging
 import os
 import sys
-import traceback
 
 # 日志级别映射
 _LOG_LEVEL_MAP = {
@@ -39,7 +39,7 @@ def setup_logging(level: str = "INFO"):
     _DEFAULT_LEVEL = _LOG_LEVEL_MAP.get(level.upper(), logging.INFO)
     root_logger = logging.getLogger()
     root_logger.setLevel(_DEFAULT_LEVEL)
-    
+
     # 避免重复添加 Handler
     if not any(isinstance(h, logging.StreamHandler) for h in root_logger.handlers):
         console_handler = logging.StreamHandler(sys.stdout)
@@ -58,19 +58,19 @@ def get_logger(name: str, level: str = None) -> logging.Logger:
     """
     if name in _loggers:
         return _loggers[name]
-    
+
     logger = logging.getLogger(name)
     if level:
         logger.setLevel(_LOG_LEVEL_MAP.get(level.upper(), _DEFAULT_LEVEL))
     else:
         logger.setLevel(_DEFAULT_LEVEL)
-    
+
     # 确保有 Handler（如果没有父级 Handler）
     if not logger.handlers and not logger.parent.handlers:
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(_LOG_FORMAT)
         logger.addHandler(console_handler)
-    
+
     _loggers[name] = logger
     return logger
 
@@ -80,12 +80,14 @@ logger = get_logger("Utils")
 
 # ======================== 路径工具（统一管理，减少重复代码） ========================
 
+
 def get_external_path(relative_path: str) -> str:
     """
     获取外部路径（如外部的 model_cache 模型文件夹）
     委托给 core.config.get_external_path（含可写目录检测 + LocalAppData fallback）
     """
     from neuroplex.core.config import get_external_path as _get
+
     return _get(relative_path)
 
 
@@ -95,6 +97,7 @@ def get_internal_path(relative_path: str) -> str:
     委托给 core.config.get_internal_path
     """
     from neuroplex.core.config import get_internal_path as _get
+
     return _get(relative_path)
 
 
@@ -105,6 +108,7 @@ def ensure_dir(path: str) -> str:
 
 
 # ======================== JSON 工具 ========================
+
 
 def safe_json_load(file_path: str, default=None) -> dict:
     """安全加载 JSON 文件"""
@@ -141,6 +145,7 @@ def safe_remove(file_path: str):
 
 # ======================== UI 工具 ========================
 
+
 def build_toast_html(msg: str, type_: str = "info") -> str:
     """
     生成优雅的 Toast 通知 HTML
@@ -161,13 +166,14 @@ def build_toast_html(msg: str, type_: str = "info") -> str:
         <span style="margin-right: 6px;">{c['icon']}</span>{msg}
     </div>
     <style>
-    @keyframes toastIn {{ 0% {{ opacity: 0; transform: translateY(-10px); }} 
+    @keyframes toastIn {{ 0% {{ opacity: 0; transform: translateY(-10px); }}
     100% {{ opacity: 1; transform: translateY(0); }} }}
     </style>
     """
 
 
 # ======================== 历史管理 ========================
+
 
 def normalize_history(history: list) -> list:
     """规范化聊天历史为 list[list] 格式"""
@@ -194,6 +200,7 @@ def normalize_history(history: list) -> list:
 
 
 # ======================== 杂项 ========================
+
 
 def filter_by_query(items: list, query: str) -> list:
     """根据查询文本过滤列表"""

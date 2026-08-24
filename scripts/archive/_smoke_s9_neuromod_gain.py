@@ -8,6 +8,7 @@
 
 用 TINY_TEST neuron 避免加载真实模型，聚焦 gain 注入逻辑正确性。
 """
+
 from __future__ import annotations
 
 import os
@@ -75,14 +76,19 @@ def test_neuron_backward_compat():
         result_default = neuron.forward(shared_emb, return_logits=True)
         # 显式传 gain=1.0
         result_explicit = neuron.forward(
-            shared_emb, return_logits=True, temp_gain=1.0, ffn_gain=1.0,
+            shared_emb,
+            return_logits=True,
+            temp_gain=1.0,
+            ffn_gain=1.0,
         )
 
     logits_diff = (result_default["logits"] - result_explicit["logits"]).abs().max().item()
     vec_diff = (result_default["field_vector"] - result_explicit["field_vector"]).abs().max().item()
     assert logits_diff < 1e-6, f"gain=1.0 时 logits 应一致，diff={logits_diff}"
     assert vec_diff < 1e-6, f"gain=1.0 时 field_vector 应一致，diff={vec_diff}"
-    print(f"  PASS: gain=1.0 与默认输出一致 (logits_diff={logits_diff:.2e}, vec_diff={vec_diff:.2e})")
+    print(
+        f"  PASS: gain=1.0 与默认输出一致 (logits_diff={logits_diff:.2e}, vec_diff={vec_diff:.2e})"
+    )
 
 
 def test_gain_changes_output():
@@ -95,11 +101,15 @@ def test_gain_changes_output():
     shared_emb = torch.randn(2, 16, 512)
 
     with torch.no_grad():
-        result_baseline = neuron.forward(shared_emb, return_logits=True, temp_gain=1.0, ffn_gain=1.0)
+        result_baseline = neuron.forward(
+            shared_emb, return_logits=True, temp_gain=1.0, ffn_gain=1.0
+        )
         # temp_gain 改变（注意力温度）
         result_temp = neuron.forward(shared_emb, return_logits=True, temp_gain=1.5, ffn_gain=1.0)
         # ffn_gain 改变（FFN 输出强度）
-        result_ffn = neuron.forward(shared_embeddings=shared_emb, return_logits=True, temp_gain=1.0, ffn_gain=1.5)
+        result_ffn = neuron.forward(
+            shared_embeddings=shared_emb, return_logits=True, temp_gain=1.0, ffn_gain=1.5
+        )
 
     temp_diff = (result_baseline["logits"] - result_temp["logits"]).abs().max().item()
     ffn_diff = (result_baseline["logits"] - result_ffn["logits"]).abs().max().item()

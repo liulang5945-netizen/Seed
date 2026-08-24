@@ -4,6 +4,7 @@
 max-prob 天然差异。逐文本打印 9 neuron 的 quality_logit、softmax trust、
 真实 NLL 与 max-prob。
 """
+
 import os
 import sys
 
@@ -15,7 +16,9 @@ import torch
 import torch.nn.functional as F
 
 from scripts.training.train_cross_domain_collab import (
-    load_neuron, load_shared_lm_head, load_shared_embedding,
+    load_neuron,
+    load_shared_lm_head,
+    load_shared_embedding,
 )
 from scripts.training.utils import load_general_tokenizer, create_shared_embedding
 from scripts.archive.gen_test_collab import DOMAINS, DIALOGUE_IDS, DIALOGUE_DIR, GENERAL_DIR
@@ -42,10 +45,15 @@ def main():
             n = load_neuron(nid, GENERAL_DIR, "cpu", shared_lm_head=shared_lm_head)
             emb = load_shared_embedding(GENERAL_DIR, "cpu")
         else:
-            ckp = torch.load(os.path.join(DIALOGUE_DIR, f"neuron_{nid}.pt"),
-                             map_location="cpu", weights_only=False)
-            cfg = ckp["neuron_config"]; cfg.unified_field_dim = None
+            ckp = torch.load(
+                os.path.join(DIALOGUE_DIR, f"neuron_{nid}.pt"),
+                map_location="cpu",
+                weights_only=False,
+            )
+            cfg = ckp["neuron_config"]
+            cfg.unified_field_dim = None
             from taiji.resonance.neuron import ResonanceNeuron
+
             n = ResonanceNeuron(cfg)
             n.load_state_dict(ckp["state_dict"], strict=False)
             emb = create_shared_embedding("cpu")
@@ -87,11 +95,20 @@ def main():
                 if logits.shape[-1] != 256000:
                     from taiji.resonance.translator import build_logits_alignment_matrix
                     from scripts.training.utils import load_domain_tokenizer
+
                     src_sp = load_domain_tokenizer("zh")
-                    m = build_logits_alignment_matrix(src_sp, general_sp, "zh", "general",
-                                                      cache={}, source_vocab_size=logits.shape[-1])
+                    m = build_logits_alignment_matrix(
+                        src_sp,
+                        general_sp,
+                        "zh",
+                        "general",
+                        cache={},
+                        source_vocab_size=logits.shape[-1],
+                    )
                     b, l, vi = logits.shape
-                    logits = torch.sparse.mm(logits.reshape(-1, vi), m.to(logits.dtype)).reshape(b, l, 256000)
+                    logits = torch.sparse.mm(logits.reshape(-1, vi), m.to(logits.dtype)).reshape(
+                        b, l, 256000
+                    )
                 # 目标 token 是输入 shifted（纯预测质量近似：预测输入下一个 token）
                 tgt = ids_t[:, 1:].contiguous()
                 lg = logits[:, :-1, :].contiguous()
@@ -102,9 +119,13 @@ def main():
         qv = torch.tensor([qvals[nid] for nid in nids])
         trust = F.softmax(qv / 0.15, dim=0)
         print(f"\n── [{tag}] {prompt}")
-        print(f"  {'neuron':<18} {'quality':>9} {'trust@0.15':>11} {'NLL(shift)':>11} {'maxprob':>9}")
+        print(
+            f"  {'neuron':<18} {'quality':>9} {'trust@0.15':>11} {'NLL(shift)':>11} {'maxprob':>9}"
+        )
         for i, nid in enumerate(nids):
-            print(f"  {nid:<18} {qvals[nid]:>9.3f} {trust[i].item():>11.3f} {nlls[nid]:>11.3f} {mps[nid]:>9.3f}")
+            print(
+                f"  {nid:<18} {qvals[nid]:>9.3f} {trust[i].item():>11.3f} {nlls[nid]:>11.3f} {mps[nid]:>9.3f}"
+            )
 
 
 if __name__ == "__main__":

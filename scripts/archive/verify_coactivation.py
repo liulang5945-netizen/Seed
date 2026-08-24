@@ -10,10 +10,11 @@
 Usage:
     python scripts/training/verify_coactivation.py
 """
+
 import sys
 import os
 
-os.environ.setdefault('TAIJI_TEST_MODE', '1')
+os.environ.setdefault("TAIJI_TEST_MODE", "1")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 
@@ -25,6 +26,7 @@ def main():
     # Step 1: 测试 CoactivationTracker 基础功能
     print("\n[Step 1] 测试 CoactivationTracker 基础更新...")
     from taiji.resonance.tribal import CoactivationTracker
+
     ct = CoactivationTracker(ema_alpha=0.1, forget_threshold=0.01)
 
     # 模拟 3 个神经元共同激活 10 次
@@ -42,7 +44,7 @@ def main():
     # Step 2: 测试共激活强度
     print("\n[Step 2] 测试共激活强度...")
     strength_zh_en = ct.get_coactivation("zh", "en")
-    strength_math_general = ct.get_coaction if hasattr(ct, 'get_coaction') else ct.get_coactivation
+    strength_math_general = ct.get_coaction if hasattr(ct, "get_coaction") else ct.get_coactivation
     strength_math_gen = ct.get_coactivation("math", "general")
     print(f"  zh↔en 强度: {strength_zh_en:.3f}（高频，应 > 0.5）")
     print(f"  math↔general 强度: {strength_math_gen:.3f}（低频，应 < 0.2）")
@@ -67,6 +69,7 @@ def main():
     # Step 4: 测试孤立模式检测
     print("\n[Step 4] 测试孤立模式检测...")
     from taiji.resonance.lifecycle import NeurogenesisTrigger
+
     trigger = NeurogenesisTrigger()
     isolated = trigger.detect_isolated_patterns(ct, min_isolation_ratio=0.5)
     print(f"  孤立神经元: {isolated}")
@@ -80,6 +83,7 @@ def main():
     # Step 5: 测试 ensemble.forward 后 coaction 自动更新
     print("\n[Step 5] 测试 ensemble.forward 后 coaction 自动更新...")
     from taiji.loader import assemble_cortex
+
     cortex, tokenizer, modules = assemble_cortex(
         neurons_dir="data/neurons",
         device="cpu",
@@ -95,6 +99,7 @@ def main():
 
     # 执行 forward
     import torch
+
     if cortex._shared_embedding is not None:
         test_ids = torch.randint(0, cortex._shared_embedding.num_embeddings, (1, 8))
         shared_emb = cortex._shared_embedding(test_ids)
@@ -128,11 +133,11 @@ def main():
     # Step 7: 综合判断
     print("\n" + "=" * 60)
     all_pass = (
-        stats["neurons_tracked"] == 5 and
-        strength_zh_en > 0.5 and
-        "en" in tribe_zh and
-        "code" in tribe_zh and
-        hasattr(cortex, "coaction")
+        stats["neurons_tracked"] == 5
+        and strength_zh_en > 0.5
+        and "en" in tribe_zh
+        and "code" in tribe_zh
+        and hasattr(cortex, "coaction")
     )
     if all_pass:
         print("🎉 验证通过：CoactivationTracker + 孤立模式检测闭环成功")

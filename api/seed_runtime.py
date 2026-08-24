@@ -12,17 +12,22 @@
 from __future__ import annotations
 
 import logging
+import pickle
 import threading
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 logger = logging.getLogger("ApiServer.SeedRuntime")
 
-DEFAULT_CHECKPOINT = (
-    Path(__file__).resolve().parent.parent / "checkpoints" / "seed_corpus.pt"
-)
+DEFAULT_CHECKPOINT = Path(__file__).resolve().parent.parent / "checkpoints" / "seed_corpus.pt"
 
 _TURN_MARKERS = ("\n问：", "问：")
+
+# 输入长度上限（字符）：基底逐字节处理前缀（实测 ≈430 字节/秒），十万级
+# 提示会让单请求阻塞数分钟（压测实测 100K 字符 ≈ 309 秒），构成可用性风险；
+# 2048 字符（约 6KB ≈ 14s 前缀成本）是病态输入的封顶，典型对话消息远低于此，
+# 不影响首字节延迟门槛。超长输入截断处理而非拒绝，保持对话可用。
+MAX_PROMPT_CHARS = 2048
 
 
 class SeedRuntime:
@@ -49,18 +54,37 @@ class SeedRuntime:
         from seed import Seed
 
         path = Path(checkpoint_path) if checkpoint_path else DEFAULT_CHECKPOINT
-        checkpoint = torch.load(path, map_location="cpu", weights_only=False)
+        try:
+            checkpoint = torch.load(path, map_location="cpu", weights_only=True)
+        except pickle.UnpicklingError:
+            logger.warning(
+                "checkpoint %s 含自定义对象，以不安全模式（weights_only=False）"
+                "加载受信 checkpoint",
+                path,
+            )
+            checkpoint = torch.load(path, map_location="cpu", weights_only=False)
         model = Seed.from_checkpoint(checkpoint)
         logger.info("Seed runtime loaded from %s", path)
         return cls(model, path)
 
     @staticmethod
     def _serialize(prompt: str, history: Sequence[Tuple[str, str]] | None) -> str:
-        """沿用训练语料的 问：/答： 标记把多轮对话铺成一段文本。"""
+        """沿用训练语料的 问：/答： 标记把多轮对话铺成一段文本。
+
+        前缀总长受 ``MAX_PROMPT_CHARS`` 保护：超限时从最早的轮次开始丢弃，
+        保留最近上下文（多轮引用的新鲜度优先级高于久远历史）。
+        """
         parts: List[str] = []
-        for user, assistant in history or []:
+        budget = MAX_PROMPT_CHARS - len(prompt) - len("问：\n答：")
+        kept: List[str] = []
+        for user, assistant in reversed(list(history or [])):
             if user and assistant:
-                parts.append(f"问：{user}\n答：{assistant}")
+                part = f"问：{user}\n答：{assistant}"
+                budget -= len(part) + 1
+                if budget < 0:
+                    break
+                kept.append(part)
+        parts = list(reversed(kept))
         parts.append(f"问：{prompt}\n答：")
         return "\n".join(parts)
 
@@ -73,6 +97,7 @@ class SeedRuntime:
         learn: bool = True,
     ) -> str:
         """生成回复；可选把整段对话作为清醒持续学习写回基底。"""
+        prompt = (prompt or "")[:MAX_PROMPT_CHARS]
         text = self._serialize(prompt, history)
         with self._lock:
             raw = self.model.generate(
@@ -96,12 +121,17 @@ class SeedRuntime:
         return answer.strip()
 
     def save(self, path: Optional[Path | str] = None) -> Path:
-        """落盘当前状态（默认写回来源检查点）。"""
-        import torch
+        """落盘当前状态（默认写回来源检查点；原子写，崩溃不产生半写文件）。"""
+        from seed.persistence import atomic_save, attach_metadata
 
         target = Path(path or self.checkpoint_path or DEFAULT_CHECKPOINT)
         with self._lock:
-            torch.save(self.model.checkpoint(), target)
+            envelope = attach_metadata(
+                self.model.checkpoint(),
+                tick=self.model.tick,
+                extra={"trainer": "api_seed_runtime"},
+            )
+            atomic_save(envelope, target)
         logger.info("Seed runtime saved to %s", target)
         return target
 

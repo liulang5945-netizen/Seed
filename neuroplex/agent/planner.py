@@ -4,37 +4,40 @@ Cortex 规划系统
 
 将复杂任务分解为可执行步骤，跟踪进度，处理失败和重新规划。
 """
+
 import logging
-from typing import Optional, Dict, List, Any
-from dataclasses import dataclass, field
+from typing import Optional, Dict, List
+from dataclasses import dataclass
 from enum import IntEnum
 
 logger = logging.getLogger("Cortex.Planner")
 
 
 class StepStatus(IntEnum):
-    PENDING = 0     # 待执行
-    ACTIVE = 1      # 正在执行
-    DONE = 2        # 已完成
-    FAILED = 3      # 失败
-    SKIPPED = 4     # 跳过
+    PENDING = 0  # 待执行
+    ACTIVE = 1  # 正在执行
+    DONE = 2  # 已完成
+    FAILED = 3  # 失败
+    SKIPPED = 4  # 跳过
 
 
 class PlanAction(IntEnum):
     """规划头输出的动作类型"""
-    NEW_PLAN = 0    # 创建新计划
-    NEXT_STEP = 1   # 执行下一步
-    REPLAN = 2      # 重新规划
-    SKIP_STEP = 3   # 跳过当前步骤
-    DONE = 4        # 任务完成
-    WAIT = 5        # 等待外部输入
-    ABORT = 6       # 放弃任务
-    CONTINUE = 7    # 继续当前步骤
+
+    NEW_PLAN = 0  # 创建新计划
+    NEXT_STEP = 1  # 执行下一步
+    REPLAN = 2  # 重新规划
+    SKIP_STEP = 3  # 跳过当前步骤
+    DONE = 4  # 任务完成
+    WAIT = 5  # 等待外部输入
+    ABORT = 6  # 放弃任务
+    CONTINUE = 7  # 继续当前步骤
 
 
 @dataclass
 class PlanStep:
     """单个计划步骤"""
+
     step_id: int
     description: str
     status: StepStatus = StepStatus.PENDING
@@ -76,6 +79,7 @@ class PlanStep:
 
 class Plan:
     """完整计划"""
+
     def __init__(self, task: str, steps: List[PlanStep] = None):
         self.task = task
         self.steps: List[PlanStep] = steps or []
@@ -226,8 +230,8 @@ class PlannerSystem:
             try:
                 self._neuromodulator.set_targets(dopamine=0.8)
                 logger.debug("计划成功 → dopamine 目标=0.8")
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【PlannerSystem._feedback_plan_success】处理失败（非致命）: %s", e)
 
     def _feedback_plan_failure(self, task: str, error: str):
         """计划失败反馈：neurogenesis 信号 + dopamine↓。
@@ -241,26 +245,25 @@ class PlannerSystem:
             try:
                 self._neuromodulator.set_targets(dopamine=0.2)
                 logger.debug("计划失败 → dopamine 目标=0.2")
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【PlannerSystem._feedback_plan_failure】处理失败（非致命）: %s", e)
 
         # 2. neurogenesis 信号
         if self._lifecycle is not None:
             try:
-                neurogenesis = getattr(self._lifecycle, 'neurogenesis', None)
+                neurogenesis = getattr(self._lifecycle, "neurogenesis", None)
                 if neurogenesis is not None:
                     # 记录高错误率，连续记录后在睡眠时触发新生
                     neurogenesis.record_domain_error("general", 0.8)
                     neurogenesis.record_domain_error("general", 0.8)
                     logger.debug("计划失败 → neurogenesis 信号已记录")
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【PlannerSystem._feedback_plan_failure】处理失败（非致命）: %s", e)
 
     def create_plan(self, task: str, step_descriptions: List[str]) -> Plan:
         """创建新计划"""
         steps = [
-            PlanStep(step_id=i + 1, description=desc)
-            for i, desc in enumerate(step_descriptions)
+            PlanStep(step_id=i + 1, description=desc) for i, desc in enumerate(step_descriptions)
         ]
         if steps:
             steps[0].status = StepStatus.ACTIVE
@@ -295,8 +298,7 @@ class PlannerSystem:
 
         self.current_plan.replan_count += 1
         # 保留已完成的步骤
-        done_steps = [s for s in self.current_plan.steps
-                      if s.status == StepStatus.DONE]
+        done_steps = [s for s in self.current_plan.steps if s.status == StepStatus.DONE]
         new_plan_steps = [
             PlanStep(step_id=len(done_steps) + i + 1, description=desc)
             for i, desc in enumerate(new_steps)
@@ -310,8 +312,9 @@ class PlannerSystem:
         logger.info(f"Replan #{self.current_plan.replan_count}: {len(new_steps)} new steps")
         return self.current_plan
 
-    def handle_action(self, action: PlanAction, step_descs: List[str] = None,
-                      error: str = "") -> Optional[str]:
+    def handle_action(
+        self, action: PlanAction, step_descs: List[str] = None, error: str = ""
+    ) -> Optional[str]:
         """
         处理规划头输出的动作
 
@@ -347,9 +350,7 @@ class PlannerSystem:
                 if self.current_plan.current_step:
                     self.current_plan.current_step.status = StepStatus.DONE
                 # P2-5: 计划成功反馈（B 方案：喂养实践样本 + dopamine↑）
-                self._feedback_plan_success(
-                    self.current_plan.task, self.current_plan.steps
-                )
+                self._feedback_plan_success(self.current_plan.task, self.current_plan.steps)
                 self.plan_history.append(self.current_plan.to_dict())
                 self.current_plan = None
             return "任务完成。"
@@ -377,7 +378,11 @@ class PlannerSystem:
             "has_plan": True,
             "task": self.current_plan.task,
             "progress": f"{self.current_plan.progress:.0%}",
-            "current_step": self.current_plan.current_step.description if self.current_plan.current_step else None,
+            "current_step": (
+                self.current_plan.current_step.description
+                if self.current_plan.current_step
+                else None
+            ),
             "total_steps": len(self.current_plan.steps),
             "replan_count": self.current_plan.replan_count,
         }
@@ -385,6 +390,7 @@ class PlannerSystem:
     def parse_plan_tokens(self, token_ids: list, tokenizer) -> Optional[List[str]]:
         """从 token 序列解析计划步骤"""
         from neuroplex.config import SPECIAL_TOKENS
+
         ids = token_ids if isinstance(token_ids, list) else token_ids.tolist()
 
         steps = []

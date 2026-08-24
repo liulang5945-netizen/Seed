@@ -22,6 +22,7 @@
 kuramoto_step / gate_factor / batch_gate_factors / pairwise_binding），
 额外提供可微版 binding_tensor（forward_train 用）。
 """
+
 from __future__ import annotations
 
 import math
@@ -67,9 +68,7 @@ class PhasorDynamics(nn.Module):
         self.dt = dt
         self.omega_init = omega_init
         self._id_to_idx: Dict[str, int] = {}
-        self.register_parameter(
-            "coupling_k", nn.Parameter(torch.tensor(float(coupling_init)))
-        )
+        self.register_parameter("coupling_k", nn.Parameter(torch.tensor(float(coupling_init))))
         # phasors/omega 在 register_neurons 时注册为 Parameter（None 不会被 nn.Module
         # 注册，避免空 buffer 与后续 Parameter 同名冲突）
         self.phasors: Optional[nn.Parameter] = None
@@ -95,17 +94,13 @@ class PhasorDynamics(nn.Module):
         self._id_to_idx = {nid: i for i, nid in enumerate(ids)}
         if phases is None:
             phases = [0.0] * n
-        pv = torch.tensor(
-            [[math.cos(ph), math.sin(ph)] for ph in phases], dtype=torch.float32
-        )
+        pv = torch.tensor([[math.cos(ph), math.sin(ph)] for ph in phases], dtype=torch.float32)
         # 若已存在普通属性（None 占位或旧参数），先删除再注册 Parameter
         for _name in ("phasors", "omega"):
             if hasattr(self, _name):
                 delattr(self, _name)
         self.register_parameter("phasors", nn.Parameter(pv))
-        self.register_parameter(
-            "omega", nn.Parameter(torch.full((n,), float(self.omega_init)))
-        )
+        self.register_parameter("omega", nn.Parameter(torch.full((n,), float(self.omega_init))))
 
     def assign_phase(self, neuron_id: str, phase: float) -> None:
         """为单个 neuron 分配相位（兼容标量接口；首次调用需已 register 或自动追加）。
@@ -165,13 +160,10 @@ class PhasorDynamics(nn.Module):
         n = len(self._id_to_idx)
         # 追加一行相位向量 + 一个自然频率（保持既有相位行序不变）
         with torch.no_grad():
-            pv_new = torch.tensor(
-                [[math.cos(phase), math.sin(phase)]], dtype=torch.float32
-            )
+            pv_new = torch.tensor([[math.cos(phase), math.sin(phase)]], dtype=torch.float32)
             phasors_new = torch.cat([self.phasors.data.clone(), pv_new], dim=0)
             omega_new = torch.cat(
-                [self.omega.data.clone(),
-                 torch.full((1,), float(self.omega_init))], dim=0
+                [self.omega.data.clone(), torch.full((1,), float(self.omega_init))], dim=0
             )
             self._id_to_idx[neuron_id] = n
             self.phasors = nn.Parameter(phasors_new)
@@ -207,15 +199,13 @@ class PhasorDynamics(nn.Module):
         if p.shape[0] != N:
             # 外部相位顺序/数量不匹配 → 回退自身相位
             p = self.phasors[idxs]
-        sim = p @ p.t()                 # [N, N] cos(θ_i-θ_j)，可微
+        sim = p @ p.t()  # [N, N] cos(θ_i-θ_j)，可微
         if N >= 2 and coactivation is not None:
             c = torch.ones(N, N, device=sim.device)
             for i in range(N):
                 for j in range(N):
                     if i != j:
-                        c[i, j] = max(
-                            coactivation.get_coactivation(ids[i], ids[j]), 0.01
-                        )
+                        c[i, j] = max(coactivation.get_coactivation(ids[i], ids[j]), 0.01)
             sim = sim * c
         b = (sim.sum(dim=1) - torch.diag(sim)) / max(N - 1, 1)  # [N] 平均绑定
         return b
@@ -258,7 +248,7 @@ class PhasorDynamics(nn.Module):
         N = len(idxs)
         if N == 0 or self.phasors is None or self.phasors.numel() == 0:
             return torch.zeros(len(ids), 2)
-        p = self.phasors[idxs]          # Parameter [N,2]，可微
+        p = self.phasors[idxs]  # Parameter [N,2]，可微
         dets = torch.zeros(N, N, device=p.device)
         for i in range(N):
             pi = p[i]
@@ -269,8 +259,10 @@ class PhasorDynamics(nn.Module):
                 if coactivation is not None:
                     d = d * max(coactivation.get_coactivation(ids[i], ids[j]), 0.01)
                 dets[i, j] = d
-        K = self.coupling_k if coupling_strength is None else torch.tensor(
-            float(coupling_strength), device=p.device
+        K = (
+            self.coupling_k
+            if coupling_strength is None
+            else torch.tensor(float(coupling_strength), device=p.device)
         )
         step = dt if dt is not None else self.dt
         dtheta = self.omega[idxs] * step + (K / N) * dets.sum(dim=1)  # [N] 可微
@@ -279,8 +271,7 @@ class PhasorDynamics(nn.Module):
         # 不再 float() 截断梯度，牵引强度可微（经牵引→new_p→bvec→loss 反传）。
         if external_phases:
             for _m, _ep in enumerate(external_phases):
-                _ept = torch.as_tensor(
-                    _ep, dtype=p.dtype, device=p.device).reshape(-1)
+                _ept = torch.as_tensor(_ep, dtype=p.dtype, device=p.device).reshape(-1)
                 if _ept.numel() != 2:
                     continue
                 if not (external_weights and _m < len(external_weights)):
@@ -296,8 +287,7 @@ class PhasorDynamics(nn.Module):
                         continue
                     _ew_t = torch.tensor(_ew_f, dtype=p.dtype, device=p.device)
                 # sin(θ_m−θ_i) = cosθ_i·sinθ_m − sinθ_i·cosθ_m（_ew_t/θ_m 均可微）
-                dtheta = dtheta + _ew_t * (
-                    p[:, 0] * _ept[1] - p[:, 1] * _ept[0])
+                dtheta = dtheta + _ew_t * (p[:, 0] * _ept[1] - p[:, 1] * _ept[0])
         cos_d, sin_d = torch.cos(dtheta), torch.sin(dtheta)
         new_x = p[:, 0] * cos_d - p[:, 1] * sin_d
         new_y = p[:, 0] * sin_d + p[:, 1] * cos_d
@@ -329,15 +319,18 @@ class PhasorDynamics(nn.Module):
         if N < 2 or self.phasors is None or self.phasors.numel() == 0:
             return
         new_p = self.evolve(
-            active_ids=ids, coactivation=coactivation,
-            dt=dt, coupling_strength=coupling_strength,
+            active_ids=ids,
+            coactivation=coactivation,
+            dt=dt,
+            coupling_strength=coupling_strength,
             external_phases=external_phases,
             external_weights=external_weights,
         )
         with torch.no_grad():
             self.phasors[idxs] = new_p
         self.global_phase = (
-            self.global_phase + float(self.omega[idxs].mean().item()) * (dt if dt is not None else self.dt)
+            self.global_phase
+            + float(self.omega[idxs].mean().item()) * (dt if dt is not None else self.dt)
         ) % (2 * math.pi)
 
     def tick(self, dt: float = 1.0) -> float:
@@ -367,10 +360,9 @@ class PhasorDynamics(nn.Module):
         tangent = g - radial
         with torch.no_grad():
             self.phasors.sub_(lr * tangent)
-            self.phasors.data = (
-                self.phasors.data
-                / self.phasors.data.norm(dim=1, keepdim=True).clamp_min(1e-8)
-            )
+            self.phasors.data = self.phasors.data / self.phasors.data.norm(
+                dim=1, keepdim=True
+            ).clamp_min(1e-8)
 
     # ── 兼容标量接口（门控 / dict binding）──
 
@@ -378,9 +370,7 @@ class PhasorDynamics(nn.Module):
         idx = self._id_to_idx.get(neuron_id)
         if idx is None or self.phasors is None or self.phasors.numel() == 0:
             return 0.0
-        return math.atan2(
-            float(self.phasors[idx, 1].item()), float(self.phasors[idx, 0].item())
-        )
+        return math.atan2(float(self.phasors[idx, 1].item()), float(self.phasors[idx, 0].item()))
 
     def coherence(self, neuron_id: str) -> float:
         return math.cos(self.phase_of(neuron_id) - self.global_phase)
@@ -390,9 +380,7 @@ class PhasorDynamics(nn.Module):
         return self.min_gate + (self.max_gate - self.min_gate) * (c + 1.0) / 2.0
 
     def batch_gate_factors(self, neuron_ids: List[str]) -> torch.Tensor:
-        return torch.tensor(
-            [self.gate_factor(nid) for nid in neuron_ids], dtype=torch.float32
-        )
+        return torch.tensor([self.gate_factor(nid) for nid in neuron_ids], dtype=torch.float32)
 
     def pairwise_binding(
         self,

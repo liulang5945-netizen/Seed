@@ -2,6 +2,7 @@
 Seed — 模型发布 API（精简版）
 Cortex 神经元架构不适用传统 save_model，仅保留 published 列表查询和 GGUF 不支持消息。
 """
+
 import json as _json
 import logging
 import os
@@ -9,7 +10,6 @@ import os
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 
-from neuroplex.core.app_state import app_state
 from neuroplex.core.utils import get_external_path
 
 logger = logging.getLogger("ApiServer.Training")
@@ -35,11 +35,13 @@ def list_published_models():
             full = os.path.join(checkpoint_dir, name)
             if os.path.isdir(full) and name.startswith("published_"):
                 config_path = os.path.join(full, "config.json")
-                published.append({
-                    "name": name,
-                    "path": full,
-                    "has_config": os.path.exists(config_path),
-                })
+                published.append(
+                    {
+                        "name": name,
+                        "path": full,
+                        "has_config": os.path.exists(config_path),
+                    }
+                )
     return {"status": "ok", "published": published}
 
 

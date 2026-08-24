@@ -33,6 +33,7 @@
 
 约束：冻结 9 成员 production 阵容，不写 checkpoint，CPU 短跑（<60s）。
 """
+
 from __future__ import annotations
 
 import json
@@ -40,7 +41,9 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
@@ -50,8 +53,13 @@ np.random.seed(0)
 from neuroplex.loader import assemble_cortex  # noqa: E402
 from neuroplex.life.sleep_engine import SleepEngine, SleepConfig  # noqa: E402
 
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"
 
@@ -147,8 +155,7 @@ def main():
         wire_bio_modules=True,
         neuron_ids=DIALOGUE_IDS,
     )
-    target_ids = [nid for nid in cortex.neurons
-                  if nid.startswith("zh_") and "dialogue" in nid]
+    target_ids = [nid for nid in cortex.neurons if nid.startswith("zh_") and "dialogue" in nid]
     print(f"  装配神经元数 = {len(cortex.neurons)}，judge 目标 = {target_ids}", flush=True)
     for nid in cortex.neurons:
         cortex.neurons[nid].eval()
@@ -156,9 +163,12 @@ def main():
     print("  [DEBUG] 加载后 LoRA 状态：", flush=True)
     for nid in target_ids:
         n = cortex.neurons[nid]
-        print(f"    {nid}: lora_enabled={n.lora_enabled} "
-              f"lora_layers={n.lora_layers} "
-              f"lora_params={sum(p.numel() for p in n.lora_adapters.parameters())}", flush=True)
+        print(
+            f"    {nid}: lora_enabled={n.lora_enabled} "
+            f"lora_layers={n.lora_layers} "
+            f"lora_params={sum(p.numel() for p in n.lora_adapters.parameters())}",
+            flush=True,
+        )
 
     print("  [DEBUG] 手动 enable_lora（模拟 A3 训练后状态）...", flush=True)
     for nid in target_ids:
@@ -168,11 +178,13 @@ def main():
     print("  [DEBUG] enable_lora 后：", flush=True)
     for nid in target_ids:
         n = cortex.neurons[nid]
-        print(f"    {nid}: lora_enabled={n.lora_enabled} "
-              f"lora_layers={n.lora_layers} "
-              f"lora_params={sum(p.numel() for p in n.lora_adapters.parameters())} "
-              f"lora_l2={sum(p.data.pow(2).sum().item() for p in n.lora_adapters.parameters()) ** 0.5:.4f}",
-              flush=True)
+        print(
+            f"    {nid}: lora_enabled={n.lora_enabled} "
+            f"lora_layers={n.lora_layers} "
+            f"lora_params={sum(p.numel() for p in n.lora_adapters.parameters())} "
+            f"lora_l2={sum(p.data.pow(2).sum().item() for p in n.lora_adapters.parameters()) ** 0.5:.4f}",
+            flush=True,
+        )
 
     cfg = SleepConfig(training_enabled=False)
     sleep_engine = SleepEngine(config=cfg, data_dir=os.path.join("data", "_tmp_p0_sniff"))
@@ -204,11 +216,13 @@ def main():
                     saved = _detach_lora(cortex.neurons, target_ids)
                 try:
                     jnll = sleep_engine._sample_judge_nll(
-                        text, target_ids, device, cortex._shared_embedding)
+                        text, target_ids, device, cortex._shared_embedding
+                    )
                 except Exception as e:
                     jnll = None
-                    print(f"    EXC[{mode}/{group_name}/{i+1}]: {type(e).__name__}: {e}",
-                          flush=True)
+                    print(
+                        f"    EXC[{mode}/{group_name}/{i+1}]: {type(e).__name__}: {e}", flush=True
+                    )
                 finally:
                     if mode == "lora_zeroed" and saved is not None:
                         _restore_lora(cortex.neurons, target_ids, saved)
@@ -228,34 +242,60 @@ def main():
                 mean = std = mn = mx = None
             results[mode][group_name] = {
                 "nlls": nlls,
-                "mean": mean, "std": std, "min": mn, "max": mx,
+                "mean": mean,
+                "std": std,
+                "min": mn,
+                "max": mx,
                 "n_valid": len(valid_nlls),
             }
-            print(f"    → {group_name}: mean={mean} std={std} "
-                  f"min={mn} max={mx} n={len(valid_nlls)}/8", flush=True)
+            print(
+                f"    → {group_name}: mean={mean} std={std} "
+                f"min={mn} max={mx} n={len(valid_nlls)}/8",
+                flush=True,
+            )
 
     print("\n[3/4] 模式间 NLL 差值与稳定性...", flush=True)
     diffs = {}
     for group_name in groups:
-        b = np.array([x["judge_nll"] for x in results["baseline"][group_name]["nlls"]
-                      if x["judge_nll"] is not None])
-        z = np.array([x["judge_nll"] for x in results["lora_zeroed"][group_name]["nlls"]
-                      if x["judge_nll"] is not None])
-        d = np.array([x["judge_nll"] for x in results["lora_detached"][group_name]["nlls"]
-                      if x["judge_nll"] is not None])
+        b = np.array(
+            [
+                x["judge_nll"]
+                for x in results["baseline"][group_name]["nlls"]
+                if x["judge_nll"] is not None
+            ]
+        )
+        z = np.array(
+            [
+                x["judge_nll"]
+                for x in results["lora_zeroed"][group_name]["nlls"]
+                if x["judge_nll"] is not None
+            ]
+        )
+        d = np.array(
+            [
+                x["judge_nll"]
+                for x in results["lora_detached"][group_name]["nlls"]
+                if x["judge_nll"] is not None
+            ]
+        )
         diffs[group_name] = {
-            "baseline_minus_lora_zeroed_mean": (float((b - z).mean())
-                                               if len(b) == len(z) and len(b) > 0 else None),
-            "baseline_minus_lora_detached_mean": (float((b - d).mean())
-                                                  if len(b) == len(d) and len(b) > 0 else None),
-            "lora_zeroed_minus_lora_detached_mean": (float((z - d).mean())
-                                                    if len(z) == len(d) and len(z) > 0 else None),
+            "baseline_minus_lora_zeroed_mean": (
+                float((b - z).mean()) if len(b) == len(z) and len(b) > 0 else None
+            ),
+            "baseline_minus_lora_detached_mean": (
+                float((b - d).mean()) if len(b) == len(d) and len(b) > 0 else None
+            ),
+            "lora_zeroed_minus_lora_detached_mean": (
+                float((z - d).mean()) if len(z) == len(d) and len(z) > 0 else None
+            ),
             "n_match": int(min(len(b), len(z), len(d))),
         }
-        print(f"  [{group_name}] baseline-zerod={diffs[group_name]['baseline_minus_lora_zeroed_mean']}  "
-              f"baseline-detached={diffs[group_name]['baseline_minus_lora_detached_mean']}  "
-              f"zerod-detached={diffs[group_name]['lora_zeroed_minus_lora_detached_mean']}",
-              flush=True)
+        print(
+            f"  [{group_name}] baseline-zerod={diffs[group_name]['baseline_minus_lora_zeroed_mean']}  "
+            f"baseline-detached={diffs[group_name]['baseline_minus_lora_detached_mean']}  "
+            f"zerod-detached={diffs[group_name]['lora_zeroed_minus_lora_detached_mean']}",
+            flush=True,
+        )
 
     print("\n[4/4] 判据...", flush=True)
     n_exc_total = 0
@@ -286,11 +326,13 @@ def main():
             "all_finite": n_exc_total == 0,
             "lora_affects_judge": any(
                 abs(v["baseline_minus_lora_zeroed_mean"]) > 0.001
-                for v in diffs.values() if v["baseline_minus_lora_zeroed_mean"] is not None
+                for v in diffs.values()
+                if v["baseline_minus_lora_zeroed_mean"] is not None
             ),
             "zero_equals_detach": any(
                 abs(v["lora_zeroed_minus_lora_detached_mean"]) < 0.01
-                for v in diffs.values() if v["lora_zeroed_minus_lora_detached_mean"] is not None
+                for v in diffs.values()
+                if v["lora_zeroed_minus_lora_detached_mean"] is not None
             ),
         },
     }

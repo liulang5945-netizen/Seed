@@ -24,6 +24,7 @@ Usage:
     python -u scripts/training/train_domain_target_sft.py --smoke
     python -u scripts/training/train_domain_target_sft.py --domains code,math,zh,en --epochs 2
 """
+
 from __future__ import annotations
 
 import argparse
@@ -35,7 +36,9 @@ import time
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -45,14 +48,18 @@ from neuroplex.resonance.translator import build_position_alignment
 from scripts.training.utils import load_general_tokenizer
 from scripts.training.train_cross_domain_collab import load_tokenizer_for_vocab
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 LOG_DIR = os.path.join(PROJECT_ROOT, "logs")
 # C24 双头架构（2026-08-09）：基座 = foundation_v1_general（body 保留 general 256K 判定
 # 能力——C20 判定 5/5 依赖的空间可比性），训练时同时优化域头（生成）+ judge_lm_head
 # （general 空间保留，判定信号可比）。之前单域头版（foundation_v1 基座）判定退化根因：
 # foundation_v1 body 在 general 256K 空间无 NLL 对角 → C20 head 失配 → native NLL 不可比。
-BASE_DIR = os.path.join(PROJECT_ROOT, "data", "foundation_v1_general")  # 双头基座（general 判定能力保留）
-OUT_DIR = os.path.join(PROJECT_ROOT, "data", "foundation_v1_dual")      # C24v2 产物（双头 neuron）
+BASE_DIR = os.path.join(
+    PROJECT_ROOT, "data", "foundation_v1_general"
+)  # 双头基座（general 判定能力保留）
+OUT_DIR = os.path.join(PROJECT_ROOT, "data", "foundation_v1_dual")  # C24v2 产物（双头 neuron）
 SFT_DIR = os.path.join(PROJECT_ROOT, "data", "sft")
 SEQ_LEN = 192
 BATCH_SIZE = 8
@@ -76,7 +83,9 @@ def load_sft(domain: str) -> List[dict]:
     return data
 
 
-def build_sample(text: str, prompt: str, domain_sp, general_sp) -> Tuple[torch.Tensor, torch.Tensor, int]:
+def build_sample(
+    text: str, prompt: str, domain_sp, general_sp
+) -> Tuple[torch.Tensor, torch.Tensor, int]:
     """构造单条训练样本：general 输入 ids + 域目标 ids + answer 起始位置。
 
     answer 起点 = prompt+"\n" 在 general token 序列中的边界（结构化定位，
@@ -92,7 +101,9 @@ def build_sample(text: str, prompt: str, domain_sp, general_sp) -> Tuple[torch.T
     return g_ids, d_targets, k
 
 
-def build_batch(samples, domain_sp, general_sp, shared_emb) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+def build_batch(
+    samples, domain_sp, general_sp, shared_emb
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     """批量对齐：general 输入 embedding + 域目标 + 注意力 mask + answer(SFT) mask + general ids。
 
     返回 (emb, targets, attn_mask, sft_mask, general_ids)；targets 非 answer 位置为 -100。
@@ -116,7 +127,9 @@ def build_batch(samples, domain_sp, general_sp, shared_emb) -> Tuple[torch.Tenso
         # 截断（保留末尾 EOS）
         if len(g_ids) > SEQ_LEN:
             g_ids = torch.cat([g_ids[: SEQ_LEN - 1], torch.tensor([general_eos], dtype=torch.long)])
-            d_targets = torch.cat([d_targets[: SEQ_LEN - 1], torch.tensor([domain_eos], dtype=torch.long)])
+            d_targets = torch.cat(
+                [d_targets[: SEQ_LEN - 1], torch.tensor([domain_eos], dtype=torch.long)]
+            )
         rows.append((g_ids, d_targets, ans_start))
 
     max_len = max(len(r[0]) for r in rows)
@@ -168,7 +181,7 @@ def load_base_neuron(domain: str, device: str):
         neuron.judge_lm_head = judge_head
     # 新建域头（生成空间，训练目标）
     neuron.lm_head = torch.nn.Linear(cfg.hidden_size, DOMAIN_VOCAB[domain], bias=False).to(device)
-    torch.nn.init.normal_(neuron.lm_head.weight, std=cfg.hidden_size ** -0.5)
+    torch.nn.init.normal_(neuron.lm_head.weight, std=cfg.hidden_size**-0.5)
     return neuron, cfg
 
 
@@ -184,13 +197,17 @@ def load_shared_embedding(device: str) -> torch.nn.Embedding:
     emb.to(device)
     return emb
 
+
 # ======================== 保存 + 回读验证（用户规则） ========================
 
 
-def verify_checkpoint(domain: str, eval_pairs: List[Tuple[str, str]],
-                      domain_sp, general_sp, n_check: int = 8) -> float:
+def verify_checkpoint(
+    domain: str, eval_pairs: List[Tuple[str, str]], domain_sp, general_sp, n_check: int = 8
+) -> float:
     """保存后立即回读：重算 answer-masked val PPL，防坏 checkpoint。"""
-    ckpt = torch.load(os.path.join(OUT_DIR, f"neuron_{domain}.pt"), map_location="cpu", weights_only=False)
+    ckpt = torch.load(
+        os.path.join(OUT_DIR, f"neuron_{domain}.pt"), map_location="cpu", weights_only=False
+    )
     cfg = ckpt["neuron_config"]
     cfg.unified_field_dim = None
     neuron = ResonanceNeuron(cfg)
@@ -201,8 +218,14 @@ def verify_checkpoint(domain: str, eval_pairs: List[Tuple[str, str]],
         judge_head = torch.nn.Linear(cfg.hidden_size, jh.shape[0], bias=False)
         judge_head.weight.data.copy_(jh)
         neuron.judge_lm_head = judge_head
-    emb = torch.nn.Embedding(jh.shape[0], EMBED_DIM) if jh is not None else torch.nn.Embedding(256000, EMBED_DIM)
-    emb.weight.data.copy_(torch.load(os.path.join(OUT_DIR, "shared_embedding.pt"), map_location="cpu"))
+    emb = (
+        torch.nn.Embedding(jh.shape[0], EMBED_DIM)
+        if jh is not None
+        else torch.nn.Embedding(256000, EMBED_DIM)
+    )
+    emb.weight.data.copy_(
+        torch.load(os.path.join(OUT_DIR, "shared_embedding.pt"), map_location="cpu")
+    )
     neuron.eval()
     total_loss, total_tok = 0.0, 0
     n_s = min(BATCH_SIZE, len(eval_pairs))
@@ -217,7 +240,9 @@ def verify_checkpoint(domain: str, eval_pairs: List[Tuple[str, str]],
             sm_ = sm[:, 1:].contiguous()
             tgt[~(am & sm_)] = -100
             nt = (am & sm_).sum().item()
-            l = F.cross_entropy(lg.view(-1, lg.size(-1)), tgt.view(-1), ignore_index=-100, reduction="sum")
+            l = F.cross_entropy(
+                lg.view(-1, lg.size(-1)), tgt.view(-1), ignore_index=-100, reduction="sum"
+            )
             total_loss += l.item()
             total_tok += max(nt, 1)
     avg = total_loss / total_tok
@@ -226,7 +251,9 @@ def verify_checkpoint(domain: str, eval_pairs: List[Tuple[str, str]],
     return avg
 
 
-def save_checkpoint(domain: str, neuron, shared_emb, step: int, ppl: Optional[float], loss_history: list):
+def save_checkpoint(
+    domain: str, neuron, shared_emb, step: int, ppl: Optional[float], loss_history: list
+):
     os.makedirs(OUT_DIR, exist_ok=True)
     judge_head_state = None
     if getattr(neuron, "judge_lm_head", None) is not None:
@@ -241,7 +268,7 @@ def save_checkpoint(domain: str, neuron, shared_emb, step: int, ppl: Optional[fl
         "result": {"best_ppl": ppl, "best_step": step, "steps": step},
         "loss_history": loss_history,
         "c24_domain_sft": True,  # C24 标记：生成时输入需补 "\n"（训练 answer 起点在 prompt+"\n" 之后）
-        "c24_dual_head": True,   # C24v2 标记：双头（域生成 + general 判定）
+        "c24_dual_head": True,  # C24v2 标记：双头（域生成 + general 判定）
         "saved_at": datetime.now().isoformat(),
     }
     torch.save(ckpt, os.path.join(OUT_DIR, f"neuron_{domain}.pt"))
@@ -261,7 +288,10 @@ def train_domain(domain: str, samples: List[dict], args, device: str):
     for p in shared_emb.parameters():
         p.requires_grad = False  # 冻结 embedding（dialogue v3 成功配置）
     n_params = sum(p.numel() for p in neuron.parameters())
-    print(f"  参数 {n_params/1e6:.1f}M, vocab={cfg.vocab_size}, lm_head 维度={neuron.lm_head.out_features if neuron.lm_head is not None else '?'}", flush=True)
+    print(
+        f"  参数 {n_params/1e6:.1f}M, vocab={cfg.vocab_size}, lm_head 维度={neuron.lm_head.out_features if neuron.lm_head is not None else '?'}",
+        flush=True,
+    )
 
     # 训练/评估拆分（seed 在 shuffle 之前——对比公平性，C23-C4 教训）
     random.seed(args.seed)
@@ -304,7 +334,9 @@ def train_domain(domain: str, samples: List[dict], args, device: str):
                 sm_ = sm[:, 1:].contiguous()
                 tgt[~(am & sm_)] = -100
                 nt = (am & sm_).sum().item()
-                l = F.cross_entropy(lg.view(-1, lg.size(-1)), tgt.view(-1), ignore_index=-100, reduction="sum")
+                l = F.cross_entropy(
+                    lg.view(-1, lg.size(-1)), tgt.view(-1), ignore_index=-100, reduction="sum"
+                )
                 total_loss += l.item()
                 total_tok += max(nt, 1)
         neuron.train()
@@ -337,7 +369,9 @@ def train_domain(domain: str, samples: List[dict], args, device: str):
                     continue
                 jg = r["judge_logits"][:, :-1, :].contiguous()
                 tgt = ids[:, 1:].contiguous()
-                out[tag] = float(F.cross_entropy(jg.view(-1, jg.size(-1)), tgt.view(-1), reduction="mean"))
+                out[tag] = float(
+                    F.cross_entropy(jg.view(-1, jg.size(-1)), tgt.view(-1), reduction="mean")
+                )
         neuron.train()
         return out
 
@@ -350,7 +384,7 @@ def train_domain(domain: str, samples: List[dict], args, device: str):
         random.shuffle(train_pairs)
         for bi in range(steps_per_epoch):
             step += 1
-            batch = train_pairs[bi * args.batch_size:(bi + 1) * args.batch_size]
+            batch = train_pairs[bi * args.batch_size : (bi + 1) * args.batch_size]
             if len(batch) < 2:
                 continue
             e, y, m, sm, g_ids = build_batch(batch, domain_sp, general_sp, shared_emb)
@@ -374,7 +408,9 @@ def train_domain(domain: str, samples: List[dict], args, device: str):
                 gm = m[:, 1:].contiguous()
                 gt[~gm] = -100
                 gen_loss = F.cross_entropy(
-                    jg.view(-1, jg.size(-1)), gt.view(-1), ignore_index=-100,
+                    jg.view(-1, jg.size(-1)),
+                    gt.view(-1),
+                    ignore_index=-100,
                 )
             loss = loss + GENERAL_LOSS_WEIGHT * gen_loss
             optimizer.zero_grad()
@@ -386,18 +422,27 @@ def train_domain(domain: str, samples: List[dict], args, device: str):
             loss_history.append({"step": step, "loss": loss.item()})
 
             if step % args.log_every == 0 or step == total_steps:
-                avg_loss = sum(x["loss"] for x in loss_history[-args.log_every:]) / min(args.log_every, len(loss_history))
+                avg_loss = sum(x["loss"] for x in loss_history[-args.log_every :]) / min(
+                    args.log_every, len(loss_history)
+                )
                 ppl = math.exp(min(avg_loss, 20))
                 el = time.time() - t0
-                print(f"  [step {step}/{total_steps}] loss={avg_loss:.3f} PPL={ppl:.1f} "
-                      f"(gen_loss={gen_loss.item():.3f}) "
-                      f"({el:.0f}s, {el/step*1000:.0f}ms/step)", flush=True)
+                print(
+                    f"  [step {step}/{total_steps}] loss={avg_loss:.3f} PPL={ppl:.1f} "
+                    f"(gen_loss={gen_loss.item():.3f}) "
+                    f"({el:.0f}s, {el/step*1000:.0f}ms/step)",
+                    flush=True,
+                )
 
             if step % args.save_every == 0 or step == total_steps:
                 vavg = do_eval(step)
                 vppl = math.exp(min(vavg, 20))
-                print(f"  [eval step {step}] answer PPL={vppl:.1f} (best={best_ppl:.1f})", flush=True)
-                save_checkpoint(domain, neuron, shared_emb, step, vppl if vppl < 20 else None, loss_history)
+                print(
+                    f"  [eval step {step}] answer PPL={vppl:.1f} (best={best_ppl:.1f})", flush=True
+                )
+                save_checkpoint(
+                    domain, neuron, shared_emb, step, vppl if vppl < 20 else None, loss_history
+                )
                 verify_checkpoint(domain, eval_pairs, domain_sp, general_sp, n_check=2)
                 if vppl < best_ppl:
                     best_ppl, best_step = vppl, step

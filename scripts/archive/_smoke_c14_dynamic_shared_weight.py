@@ -11,6 +11,7 @@
 8. shared_weight_per_sample 字段存在且形状正确
 9. MLP 参数可收集（可训练性）
 """
+
 from __future__ import annotations
 
 import os
@@ -48,7 +49,8 @@ def _make_ensemble(
     }
     field = ResonanceField(dim=TINY_TEST.field_dim)
     return ResonanceEnsemble(
-        neurons, field,
+        neurons,
+        field,
         shared_expert_id=shared_expert_id,
         shared_expert_weight=shared_expert_weight,
         shared_weight_dynamic=shared_weight_dynamic,
@@ -116,7 +118,9 @@ def test_sw_range():
     with torch.no_grad():
         result = ens.forward(shared_embeddings=shared_emb, return_logits=True)
     sw_ps = result["shared_weight_per_sample"]
-    assert (sw_ps >= 0).all() and (sw_ps <= 1).all(), f"sw 应在 [0,1], got min={sw_ps.min()}, max={sw_ps.max()}"
+    assert (sw_ps >= 0).all() and (
+        sw_ps <= 1
+    ).all(), f"sw 应在 [0,1], got min={sw_ps.min()}, max={sw_ps.max()}"
     print(f"  PASS: sw 范围 [{sw_ps.min():.4f}, {sw_ps.max():.4f}]")
 
 
@@ -135,12 +139,16 @@ def test_dynamic_changes_output():
     ens_dynamic = _make_ensemble(shared_weight_dynamic=True, shared_expert_weight=0.3)
     # 手动扰动 MLP 权重使其偏离初始状态
     with torch.no_grad():
-        ens_dynamic.shared_weight_mlp[2].weight.add_(torch.randn_like(ens_dynamic.shared_weight_mlp[2].weight) * 0.5)
+        ens_dynamic.shared_weight_mlp[2].weight.add_(
+            torch.randn_like(ens_dynamic.shared_weight_mlp[2].weight) * 0.5
+        )
     with torch.no_grad():
         result_dynamic = ens_dynamic.forward(shared_embeddings=shared_emb, return_logits=True)
 
     if "weighted_logits" in result_fixed and "weighted_logits" in result_dynamic:
-        diff = (result_fixed["weighted_logits"] - result_dynamic["weighted_logits"]).abs().max().item()
+        diff = (
+            (result_fixed["weighted_logits"] - result_dynamic["weighted_logits"]).abs().max().item()
+        )
         assert diff > 1e-4, f"动态 sw 应改变输出, diff={diff}"
         print(f"  PASS: 输出差异={diff:.4f} (动态 vs 固定)")
     else:
@@ -153,7 +161,9 @@ def test_field_state_affects_sw():
     ens = _make_ensemble(shared_weight_dynamic=True)
     # 初始第二层 weight=0 导致第一层输出被忽略，需扰动第二层 weight
     with torch.no_grad():
-        ens.shared_weight_mlp[2].weight.add_(torch.randn_like(ens.shared_weight_mlp[2].weight) * 0.5)
+        ens.shared_weight_mlp[2].weight.add_(
+            torch.randn_like(ens.shared_weight_mlp[2].weight) * 0.5
+        )
 
     # 构造两个不同 field_state
     fs1 = torch.randn(1, TINY_TEST.field_dim)
@@ -164,7 +174,9 @@ def test_field_state_affects_sw():
     with torch.no_grad():
         sw1 = torch.sigmoid(ens.shared_weight_mlp(inp1))
         sw2 = torch.sigmoid(ens.shared_weight_mlp(inp2))
-    assert (sw1 - sw2).abs().max() > 1e-6, f"不同 field_state 应产生不同 sw, sw1={sw1.item()}, sw2={sw2.item()}"
+    assert (
+        sw1 - sw2
+    ).abs().max() > 1e-6, f"不同 field_state 应产生不同 sw, sw1={sw1.item()}, sw2={sw2.item()}"
     print(f"  PASS: sw1={sw1.item():.4f}, sw2={sw2.item():.4f} (field_state 影响)")
 
 
@@ -174,7 +186,9 @@ def test_max_score_affects_sw():
     ens = _make_ensemble(shared_weight_dynamic=True)
     # 扰动第二层 weight 使第一层输出（含 max_score 信号）能影响最终结果
     with torch.no_grad():
-        ens.shared_weight_mlp[2].weight.add_(torch.randn_like(ens.shared_weight_mlp[2].weight) * 0.5)
+        ens.shared_weight_mlp[2].weight.add_(
+            torch.randn_like(ens.shared_weight_mlp[2].weight) * 0.5
+        )
 
     field_state = torch.randn(1, TINY_TEST.field_dim)
     score_low = torch.full((1, 1), 0.1)
@@ -184,7 +198,11 @@ def test_max_score_affects_sw():
     with torch.no_grad():
         sw_low = torch.sigmoid(ens.shared_weight_mlp(inp_low))
         sw_high = torch.sigmoid(ens.shared_weight_mlp(inp_high))
-    assert (sw_low - sw_high).abs().max() > 1e-6, f"不同 score 应产生不同 sw, sw_low={sw_low.item()}, sw_high={sw_high.item()}"
+    assert (
+        sw_low - sw_high
+    ).abs().max() > 1e-6, (
+        f"不同 score 应产生不同 sw, sw_low={sw_low.item()}, sw_high={sw_high.item()}"
+    )
     print(f"  PASS: sw_low={sw_low.item():.4f}, sw_high={sw_high.item():.4f} (score 影响)")
 
 
@@ -208,7 +226,8 @@ def test_no_shared_expert():
     neurons = {"n0": _make_neuron("n0", seed=42)}
     field = ResonanceField(dim=TINY_TEST.field_dim)
     ens = ResonanceEnsemble(
-        neurons, field,
+        neurons,
+        field,
         shared_expert_id=None,
         shared_weight_dynamic=True,  # 即使启用也无 shared_expert
     )

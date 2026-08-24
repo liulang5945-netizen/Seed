@@ -6,14 +6,14 @@
 - POST /api/chat/upload     → 聊天文件上传
 - GET  /api/health          → 健康检查
 """
+
 import json
 import logging
 import os
 import time
-import uuid
 
 from fastapi import APIRouter, HTTPException, UploadFile, File, Request
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import StreamingResponse
 
 from neuroplex.core.app_state import app_state
 from neuroplex.core.utils import get_external_path
@@ -26,6 +26,7 @@ router = APIRouter()
 
 
 # ======================== 流式聊天 ========================
+
 
 def _seed_event_generator(request, seed_runtime):
     """Seed 原生分支：用户消息转为 byte 流喂入基底，generate 产出回复。
@@ -71,6 +72,7 @@ async def chat_stream(request: ChatRequest):
     # 触发用户指令，中断当前生命活动
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
+
         get_life_scheduler().handle_user_directive()
     except Exception as e:
         logger.warning(f"Failed to trigger user directive: {e}")
@@ -79,6 +81,7 @@ async def chat_stream(request: ChatRequest):
     def collector_factory():
         try:
             from neuroplex.agent_ext.data_collector import DataCollector
+
             return DataCollector(
                 save_path=get_external_path(
                     os.path.join("agent", "conversations", f"{int(time.time())}.jsonl")
@@ -98,6 +101,7 @@ async def chat_stream(request: ChatRequest):
         },
     )
 
+
 @router.get("/api/chat/stream")
 async def chat_stream_get():
     """明确处理对 stream 的 GET 请求，返回 405（方法不允许）以满足客户端预期"""
@@ -113,7 +117,8 @@ os.makedirs(_history_dir, exist_ok=True)
 def _safe_session_id(session_id: str) -> str:
     """验证 session_id，防止路径穿越"""
     import re
-    if not re.match(r'^[a-zA-Z0-9_\-]+$', session_id):
+
+    if not re.match(r"^[a-zA-Z0-9_\-]+$", session_id):
         raise HTTPException(status_code=400, detail="无效的会话 ID")
     return session_id
 
@@ -135,8 +140,8 @@ async def save_chat_history(session_id: str, request: Request):
         try:
             with open(session_file, "r", encoding="utf-8") as f:
                 existing = json.load(f)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("【save_chat_history】处理失败（非致命）: %s", e)
 
     # 合并更新
     if "name" in body:
@@ -197,6 +202,7 @@ async def create_chat_session(request: Request):
         raise HTTPException(status_code=500, detail="创建会话失败")
     return {"status": "ok", "session_id": sid}
 
+
 @router.get("/api/chat/sessions")
 async def list_chat_sessions():
     """列出所有已保存的会话"""
@@ -208,11 +214,13 @@ async def list_chat_sessions():
                 try:
                     with open(fpath, "r", encoding="utf-8") as f:
                         data = json.load(f)
-                    sessions.append({
-                        "session_id": data.get("session_id", fname.replace(".json", "")),
-                        "name": data.get("name", ""),
-                        "updated_at": data.get("updated_at", 0),
-                    })
+                    sessions.append(
+                        {
+                            "session_id": data.get("session_id", fname.replace(".json", "")),
+                            "name": data.get("name", ""),
+                            "updated_at": data.get("updated_at", 0),
+                        }
+                    )
                 except Exception:
                     continue
     return sessions
@@ -236,12 +244,63 @@ async def delete_chat_history(session_id: str):
 
 # 支持的文本文件扩展名
 _TEXT_EXTENSIONS = {
-    "txt", "md", "py", "js", "ts", "jsx", "tsx", "vue", "html", "htm", "css",
-    "json", "xml", "yaml", "yml", "toml", "ini", "cfg", "conf", "sh", "bash",
-    "bat", "cmd", "ps1", "sql", "java", "c", "cpp", "h", "hpp", "go", "rs",
-    "rb", "php", "swift", "kt", "scala", "r", "m", "lua", "pl", "ex", "exs",
-    "hs", "ml", "clj", "lisp", "el", "vim", "tex", "csv", "log", "gitignore",
-    "dockerfile", "makefile", "cmake", "gradle",
+    "txt",
+    "md",
+    "py",
+    "js",
+    "ts",
+    "jsx",
+    "tsx",
+    "vue",
+    "html",
+    "htm",
+    "css",
+    "json",
+    "xml",
+    "yaml",
+    "yml",
+    "toml",
+    "ini",
+    "cfg",
+    "conf",
+    "sh",
+    "bash",
+    "bat",
+    "cmd",
+    "ps1",
+    "sql",
+    "java",
+    "c",
+    "cpp",
+    "h",
+    "hpp",
+    "go",
+    "rs",
+    "rb",
+    "php",
+    "swift",
+    "kt",
+    "scala",
+    "r",
+    "m",
+    "lua",
+    "pl",
+    "ex",
+    "exs",
+    "hs",
+    "ml",
+    "clj",
+    "lisp",
+    "el",
+    "vim",
+    "tex",
+    "csv",
+    "log",
+    "gitignore",
+    "dockerfile",
+    "makefile",
+    "cmake",
+    "gradle",
 }
 
 _IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "bmp", "gif", "webp", "tiff", "tif", "svg"}
@@ -303,8 +362,10 @@ async def upload_chat_file(file: UploadFile = File(...)):
     if ext == "pdf":
         try:
             import io
+
             try:
                 from PyPDF2 import PdfReader
+
                 reader = PdfReader(io.BytesIO(content))
                 text_parts = []
                 for page in reader.pages:
@@ -329,8 +390,10 @@ async def upload_chat_file(file: UploadFile = File(...)):
     if ext == "docx":
         try:
             import io
+
             try:
                 from docx import Document
+
                 doc = Document(io.BytesIO(content))
                 text = "\n".join(p.text for p in doc.paragraphs if p.text.strip())
             except ImportError:
@@ -358,12 +421,14 @@ async def upload_chat_file(file: UploadFile = File(...)):
 
 # ======================== 健康检查 ========================
 
+
 @router.get("/api/health")
 async def health_check():
     """健康检查端点"""
     # 启动未完成时返回 loading / downloading 状态
     if not app_state.startup_complete:
         from neuroplex.core.model_loader import startup_download_progress
+
         dl = startup_download_progress()
         if dl["active"]:
             return {
@@ -378,7 +443,7 @@ async def health_check():
     if app_state.startup_error:
         return {"status": "error", "message": app_state.startup_error}
 
-    return {
+    payload = {
         "status": "ok",
         "service": "Taiji API",
         "timestamp": time.time(),
@@ -386,3 +451,13 @@ async def health_check():
         "taiji_available": app_state.is_taiji(),
         "seed_active": is_seed_active(),
     }
+
+    # Expose security middleware status so callers can detect silent degradation
+    try:
+        from api.app import SECURITY_MIDDLEWARE_AVAILABLE
+
+        payload["security_middleware"] = SECURITY_MIDDLEWARE_AVAILABLE
+    except ImportError:
+        payload["security_middleware"] = False
+
+    return payload

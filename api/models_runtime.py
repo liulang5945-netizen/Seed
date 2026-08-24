@@ -5,8 +5,8 @@ These models define the contract between the backend runtime service
 and the frontend runtimeStore. Keep them stable — the client shell
 depends on this shape.
 """
+
 from pydantic import BaseModel
-from typing import Optional
 
 
 class HealthPayload(BaseModel):
@@ -76,6 +76,7 @@ class TrainingPayload(BaseModel):
 
 class RuntimeStatusPayload(BaseModel):
     """The single trusted status payload for the client shell."""
+
     status: str = "ok"
     timestamp: int = 0
     health: HealthPayload = HealthPayload()
@@ -88,6 +89,7 @@ class RuntimeStatusPayload(BaseModel):
 
 class BootstrapPayload(BaseModel):
     """Public endpoint — no auth required. Tells the client what to do next."""
+
     alive: bool = True
     auth_enabled: bool = False
     need_login: bool = False

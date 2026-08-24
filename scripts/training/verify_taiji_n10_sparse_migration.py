@@ -9,6 +9,7 @@ import sys
 from typing import Dict
 
 import torch
+import _verify_emit
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
@@ -23,9 +24,7 @@ from verify_taiji_native_v7 import run_benchmark as run_native
 
 def _dense_view(synapses: SparseSynapses) -> torch.Tensor:
     dense = torch.zeros(synapses.out_features, synapses.in_features)
-    posts = torch.arange(synapses.out_features).unsqueeze(1).expand_as(
-        synapses.pre_index
-    )
+    posts = torch.arange(synapses.out_features).unsqueeze(1).expand_as(synapses.pre_index)
     dense[posts, synapses.pre_index.long()] = synapses.edge_weight
     return dense
 
@@ -51,7 +50,12 @@ def _operator_equivalence() -> Dict[str, object]:
     weight_decay = 1e-3
     mask = dense_before != 0
     scale = max(1.0, float((presynaptic != 0).sum().item()) ** 0.5)
-    expected = dense_before * (1.0 - weight_decay)
+    # The kernel decays per contact, gated by the same eligibility that gates
+    # potentiation (f30729c): a presynaptically silent column relaxes, a lit
+    # one is protected.  The ungated global form evaporated learned weights
+    # mid-training, so the dense reference must mirror the gated semantics.
+    silent = (presynaptic == 0).to(dense_before.dtype)
+    expected = dense_before * (1.0 - weight_decay * silent.unsqueeze(0))
     expected.add_(learning_rate * torch.outer(error, presynaptic) / scale * mask)
     expected.mul_(mask)
     norms = expected.norm(dim=1, keepdim=True).clamp_min(1e-8)
@@ -65,26 +69,18 @@ def _operator_equivalence() -> Dict[str, object]:
     sparse_after = _dense_view(synapses)
 
     metrics = {
-        "forward_max_abs_error": float(
-            (sparse_forward - dense_forward).abs().max().item()
-        ),
+        "forward_max_abs_error": float((sparse_forward - dense_forward).abs().max().item()),
         "backproject_max_abs_error": float(
             (sparse_backproject - dense_backproject).abs().max().item()
         ),
-        "local_update_max_abs_error": float(
-            (sparse_after - expected).abs().max().item()
-        ),
+        "local_update_max_abs_error": float((sparse_after - expected).abs().max().item()),
     }
     return {
         "metrics": metrics,
         "checks": {
             "forward_matches_dense": metrics["forward_max_abs_error"] <= 1e-6,
-            "backproject_matches_dense": (
-                metrics["backproject_max_abs_error"] <= 1e-6
-            ),
-            "local_update_matches_dense": (
-                metrics["local_update_max_abs_error"] <= 1e-6
-            ),
+            "backproject_matches_dense": (metrics["backproject_max_abs_error"] <= 1e-6),
+            "local_update_matches_dense": (metrics["local_update_max_abs_error"] <= 1e-6),
         },
     }
 
@@ -109,8 +105,7 @@ def run_benchmark(*, epochs: int = 200, seed: int = 7) -> Dict[str, object]:
         "n8_passes_after_migration": n8["status"] == "pass",
         "n9_passes_after_migration": n9["status"] == "pass",
         "checkpoint_format_is_current": (
-            native["architecture"]["checkpoint_format"]
-            == Taiji.CHECKPOINT_FORMAT
+            native["architecture"]["checkpoint_format"] == Taiji.CHECKPOINT_FORMAT
         ),
         "no_dense_synapse_tensor": native["checks"]["no_dense_synapse_tensor"],
     }
@@ -163,7 +158,7 @@ def main() -> int:
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(rendered + "\n", encoding="utf-8")
-    return 0 if report["status"] == "pass" else 1
+    return _verify_emit.emit_and_exit("taiji_n10_sparse_migration", report)
 
 
 if __name__ == "__main__":

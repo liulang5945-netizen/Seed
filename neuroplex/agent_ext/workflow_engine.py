@@ -7,9 +7,9 @@ must be importable and instantiable without side effects.
 The real implementation will execute multi-step workflows against the
 agent runtime and persist them via WorkflowStore.
 """
+
 import logging
 from dataclasses import dataclass, field
-from typing import List, Optional
 
 logger = logging.getLogger(__name__)
 

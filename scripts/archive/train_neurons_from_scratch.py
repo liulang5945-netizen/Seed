@@ -25,7 +25,9 @@ from typing import Dict, Optional
 import torch
 import torch.nn.functional as F
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 from neuroplex.resonance.config import get_domain_neuron_config, NeuronConfig, DOMAIN_VOCAB_SIZES
 from neuroplex.resonance.neuron import ResonanceNeuron
@@ -51,8 +53,9 @@ GENERAL_TOKENIZER_DOMAIN = "en"
 # OUTPUT_DIR 从 experiment_config 导入（见文件顶部 import）
 
 
-def load_domain_data(domain: str, data_dir: str = "data/sft",
-                     data_suffix: str = "") -> Optional[Dict[str, torch.Tensor]]:
+def load_domain_data(
+    domain: str, data_dir: str = "data/sft", data_suffix: str = ""
+) -> Optional[Dict[str, torch.Tensor]]:
     """加载 P8-2 产出的域 tokenized 数据。
 
     Args:
@@ -87,11 +90,13 @@ def create_neuron(domain: str, spec: str = "compact", device: str = "cpu") -> Re
     neuron = ResonanceNeuron(cfg).to(device)
     neuron.train()
     n_params = sum(p.numel() for p in neuron.parameters())
-    print(f"  [{domain}] {spec} neuron created: "
-          f"vocab={cfg.vocab_size}, hidden={cfg.hidden_size}, "
-          f"layers={cfg.num_hidden_layers}, {n_params/1e6:.1f}M params "
-          f"(lm_head={cfg.hidden_size * cfg.vocab_size / 1e6:.1f}M, "
-          f"embed={cfg.vocab_size * cfg.base_embed_dim / 1e6:.1f}M)")
+    print(
+        f"  [{domain}] {spec} neuron created: "
+        f"vocab={cfg.vocab_size}, hidden={cfg.hidden_size}, "
+        f"layers={cfg.num_hidden_layers}, {n_params/1e6:.1f}M params "
+        f"(lm_head={cfg.hidden_size * cfg.vocab_size / 1e6:.1f}M, "
+        f"embed={cfg.vocab_size * cfg.base_embed_dim / 1e6:.1f}M)"
+    )
     return neuron
 
 
@@ -110,8 +115,8 @@ def train_one_domain(
     Returns:
         {"domain": str, "final_loss": float, "steps_done": int, "saved": str}
     """
-    input_ids = data["input_ids"].to(device)    # [N, 256]
-    labels = data["labels"].to(device)           # [N, 256]
+    input_ids = data["input_ids"].to(device)  # [N, 256]
+    labels = data["labels"].to(device)  # [N, 256]
     n_samples = input_ids.shape[0]
 
     # 共享嵌入表（256K general vocab → 512-dim）
@@ -125,15 +130,16 @@ def train_one_domain(
     loss_rising_count = 0
     total_loss = 0.0
 
-    print(f"  [{domain}] Training {steps} steps, {n_samples} samples, "
-          f"batch={batch_size}, lr={lr}")
+    print(
+        f"  [{domain}] Training {steps} steps, {n_samples} samples, " f"batch={batch_size}, lr={lr}"
+    )
 
     t0 = time.time()
     for step in range(1, steps + 1):
         # 随机采样 batch
         indices = torch.randint(0, n_samples, (batch_size,))
-        batch_input_ids = input_ids[indices]   # [B, 256]
-        batch_labels = labels[indices]          # [B, 256]
+        batch_input_ids = input_ids[indices]  # [B, 256]
+        batch_labels = labels[indices]  # [B, 256]
 
         # P7: 用 neuron 自带 embedding 编码
         shared_emb = shared_embedding(batch_input_ids)  # [B, 256, base_embed_dim]
@@ -143,8 +149,8 @@ def train_one_domain(
         logits = result["logits"]  # [B, 256, domain_vocab]
 
         # CE loss（只在 response 位置计算，prompt=-100）
-        shift_logits = logits[:, :-1, :].contiguous()    # [B, 255, vocab]
-        shift_labels = batch_labels[:, 1:].contiguous()   # [B, 255]
+        shift_logits = logits[:, :-1, :].contiguous()  # [B, 255, vocab]
+        shift_labels = batch_labels[:, 1:].contiguous()  # [B, 255]
         loss = F.cross_entropy(
             shift_logits.view(-1, shift_logits.size(-1)),
             shift_labels.view(-1),
@@ -166,10 +172,14 @@ def train_one_domain(
             with torch.no_grad():
                 preds = shift_logits.argmax(dim=-1)
                 mask = shift_labels != -100
-                acc = (preds[mask] == shift_labels[mask]).float().mean().item() if mask.any() else 0.0
+                acc = (
+                    (preds[mask] == shift_labels[mask]).float().mean().item() if mask.any() else 0.0
+                )
 
-            print(f"    step {step:5d}/{steps} | loss={avg_loss:.4f} | "
-                  f"acc={acc:.3f} | elapsed={elapsed:.0f}s")
+            print(
+                f"    step {step:5d}/{steps} | loss={avg_loss:.4f} | "
+                f"acc={acc:.3f} | elapsed={elapsed:.0f}s"
+            )
             total_loss = 0.0
 
         # 早停检查
@@ -182,7 +192,9 @@ def train_one_domain(
             loss_rising_count += 1
 
         if step >= MIN_STEPS_BEFORE_STOP and loss_rising_count >= EARLY_STOP_PATIENCE:
-            print(f"    Early stop at step {step}: loss rising for {EARLY_STOP_PATIENCE} consecutive steps")
+            print(
+                f"    Early stop at step {step}: loss rising for {EARLY_STOP_PATIENCE} consecutive steps"
+            )
             break
 
         # 保存 checkpoint
@@ -193,8 +205,10 @@ def train_one_domain(
     save_path = _save_neuron(neuron, domain, step, save_dir)
     elapsed = time.time() - t0
 
-    print(f"  [{domain}] Done: {step} steps, best_loss={best_loss:.4f} "
-          f"(step {best_step}), {elapsed:.0f}s total")
+    print(
+        f"  [{domain}] Done: {step} steps, best_loss={best_loss:.4f} "
+        f"(step {best_step}), {elapsed:.0f}s total"
+    )
 
     return {
         "domain": domain,
@@ -222,22 +236,34 @@ def _save_neuron(neuron: ResonanceNeuron, domain: str, step: int, save_dir: str)
 
 def main():
     parser = argparse.ArgumentParser(description="P8-1: train neurons from scratch")
-    parser.add_argument("--domain", type=str, default=None,
-                        help="single domain to train (zh/en/code/math/general)")
+    parser.add_argument(
+        "--domain", type=str, default=None, help="single domain to train (zh/en/code/math/general)"
+    )
     parser.add_argument("--all", action="store_true", help="train all 5 domains")
-    parser.add_argument("--spec", type=str, default="compact",
-                        help="neuron spec: compact/standard/expert/foundation")
-    parser.add_argument("--steps", type=int, default=DEFAULT_STEPS,
-                        help="training steps per domain")
+    parser.add_argument(
+        "--spec",
+        type=str,
+        default="compact",
+        help="neuron spec: compact/standard/expert/foundation",
+    )
+    parser.add_argument(
+        "--steps", type=int, default=DEFAULT_STEPS, help="training steps per domain"
+    )
     parser.add_argument("--lr", type=float, default=LR, help="learning rate")
     parser.add_argument("--batch-size", type=int, default=BATCH_SIZE, help="batch size")
     parser.add_argument("--device", type=str, default="cpu", help="compute device")
-    parser.add_argument("--data-dir", type=str, default="data/sft",
-                        help="P8-2 tokenized data directory")
-    parser.add_argument("--data-suffix", type=str, default="",
-                        help="数据文件后缀（如 mixed → p7_code_mixed_tokenized.pt，工作3 跨域混合数据）")
-    parser.add_argument("--save-dir", type=str, default=OUTPUT_DIR,
-                        help="output directory for neuron checkpoints")
+    parser.add_argument(
+        "--data-dir", type=str, default="data/sft", help="P8-2 tokenized data directory"
+    )
+    parser.add_argument(
+        "--data-suffix",
+        type=str,
+        default="",
+        help="数据文件后缀（如 mixed → p7_code_mixed_tokenized.pt，工作3 跨域混合数据）",
+    )
+    parser.add_argument(
+        "--save-dir", type=str, default=OUTPUT_DIR, help="output directory for neuron checkpoints"
+    )
     args = parser.parse_args()
 
     # 确定训练域
@@ -252,8 +278,10 @@ def main():
 
     print(f"=== P8-1: Train neurons from scratch ===")
     print(f"Domains: {domains}")
-    print(f"Spec: {args.spec}, Steps: {args.steps}, LR: {args.lr}, "
-          f"Batch: {args.batch_size}, Device: {args.device}")
+    print(
+        f"Spec: {args.spec}, Steps: {args.steps}, LR: {args.lr}, "
+        f"Batch: {args.batch_size}, Device: {args.device}"
+    )
     print(f"Data: {args.data_dir}, Save: {args.save_dir}")
     print()
 
@@ -286,8 +314,10 @@ def main():
     # 汇总
     print(f"\n=== Training Summary ===")
     for r in results:
-        print(f"  {r['domain']}: loss={r['final_loss']:.4f}, "
-              f"steps={r['steps_done']}, saved={r['saved']}")
+        print(
+            f"  {r['domain']}: loss={r['final_loss']:.4f}, "
+            f"steps={r['steps_done']}, saved={r['saved']}"
+        )
     print(f"\nNext: python scripts/training/tokenize_sft_p7.py  (if not done)")
     print(f"      Then assemble and test: assemble_cortex() + cortex.generate()")
 

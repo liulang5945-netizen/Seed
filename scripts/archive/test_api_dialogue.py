@@ -5,19 +5,27 @@
 
 用 API 默认采样参数（temperature=0.8, top_k=50），验证真实 API 体验。
 """
+
 import os
 import sys
 import time
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+PROJECT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+)
 sys.path.insert(0, PROJECT_ROOT)
 
 from neuroplex.loader import assemble_cortex  # noqa: E402
 
 # 9 神经元阵容（用户确认 2026-08-10）：5 对话 + 4 域（C24v2 双头）
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
-COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"      # C20v2 判定重训产物（judge NLL 主信号）
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
+COLLAB_NAME = "collab_v3_c24v2.ckpt.pt"  # C20v2 判定重训产物（judge NLL 主信号）
 EXTRA_NEURONS_DIR = "data/foundation_v1_dual"  # C24v2 双头域 neuron（生成 + judge 判定）
 
 # 日常对话问题（贴近真实使用场景）
@@ -42,8 +50,11 @@ def main():
     t0 = time.time()
     print("=" * 60, flush=True)
     print("态极综合体 API 等价日常对话实测", flush=True)
-    print("参数: max_tokens=%d temperature=%s top_k=%s rep=%s"
-          % (MAX_TOKENS, TEMPERATURE, TOP_K, REPETITION_PENALTY), flush=True)
+    print(
+        "参数: max_tokens=%d temperature=%s top_k=%s rep=%s"
+        % (MAX_TOKENS, TEMPERATURE, TOP_K, REPETITION_PENALTY),
+        flush=True,
+    )
     print("=" * 60, flush=True)
 
     print("[1] 装配 Cortex（9 神经元：5 对话 + 4 域）...", flush=True)

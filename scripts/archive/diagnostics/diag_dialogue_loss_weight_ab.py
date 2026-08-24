@@ -9,6 +9,7 @@
 
 两组各训练 32 步，不保存 checkpoint，用于决定是否值得把首 token 权重纳入正式训练入口。
 """
+
 from __future__ import annotations
 
 import gc
@@ -17,7 +18,9 @@ import logging
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn.functional as F
@@ -25,7 +28,10 @@ import torch.nn.functional as F
 from neuroplex.resonance.dialogue_format import SFT_ANSWER_MARKER
 from neuroplex.resonance.translator import batch_align_and_embed, build_position_alignment
 from scripts.archive.diagnostics.diag_dialogue_answer_data_quality import _data_rows
-from scripts.archive.diagnostics.diag_dialogue_micro_overfit import _load_neuron, _first_token_metrics
+from scripts.archive.diagnostics.diag_dialogue_micro_overfit import (
+    _load_neuron,
+    _first_token_metrics,
+)
 from scripts.training.finetune_neuron_dialogue import effective_sft_mask
 from scripts.training.utils import (
     load_dialogue_texts_multi,
@@ -33,7 +39,6 @@ from scripts.training.utils import (
     load_general_tokenizer,
     split_train_eval,
 )
-
 
 STEPS = 32
 LR = 1e-4
@@ -70,7 +75,7 @@ def _batch_objective(neuron, shared, texts, domain_sp, general_sp, weighted: boo
     first_targets = []
     for row_index, text in enumerate(texts):
         marker = text.find(SFT_ANSWER_MARKER)
-        prompt = text[:marker + len(SFT_ANSWER_MARKER)]
+        prompt = text[: marker + len(SFT_ANSWER_MARKER)]
         _, aligned_targets = build_position_alignment(text, domain_sp, general_sp)
         answer_start = len(general_sp.encode(prompt))
         target_id = int(aligned_targets[answer_start])
@@ -82,7 +87,8 @@ def _batch_objective(neuron, shared, texts, domain_sp, general_sp, weighted: boo
     )
     objective = (
         (1.0 - FIRST_TOKEN_WEIGHT) * token_loss + FIRST_TOKEN_WEIGHT * first_token_loss
-        if weighted else token_loss
+        if weighted
+        else token_loss
     )
     return objective, token_loss, first_token_loss, logits, valid_mask
 
@@ -92,14 +98,21 @@ def _evaluate(neuron, shared, texts, domain_sp, general_sp) -> dict:
     shared.eval()
     with torch.no_grad():
         _, token_loss, first_loss, logits, valid_mask = _batch_objective(
-            neuron, shared, texts, domain_sp, general_sp, weighted=False,
+            neuron,
+            shared,
+            texts,
+            domain_sp,
+            general_sp,
+            weighted=False,
         )
         metrics = _first_token_metrics(logits, texts, domain_sp, general_sp)
-    metrics.update({
-        "answer_loss": round(float(token_loss), 6),
-        "first_token_nll": round(float(first_loss), 6),
-        "effective_answer_tokens": int(valid_mask.sum()),
-    })
+    metrics.update(
+        {
+            "answer_loss": round(float(token_loss), 6),
+            "first_token_nll": round(float(first_loss), 6),
+            "effective_answer_tokens": int(valid_mask.sum()),
+        }
+    )
     return metrics
 
 
@@ -117,7 +130,12 @@ def _run(config_name, train_texts, eval_texts, domain_sp, general_sp, weighted):
     for _ in range(STEPS):
         optimizer.zero_grad()
         objective, _, _, _, _ = _batch_objective(
-            neuron, shared, train_texts, domain_sp, general_sp, weighted=weighted,
+            neuron,
+            shared,
+            train_texts,
+            domain_sp,
+            general_sp,
+            weighted=weighted,
         )
         objective.backward()
         optimizer.step()
@@ -149,14 +167,14 @@ def main() -> None:
     general_sp = load_general_tokenizer()
     rows = _data_rows(eval_texts, domain_sp, general_sp, {})
     eligible = [
-        row["sample_index"]
-        for row in rows
-        if row["category"] == "han" and not row["truncated"]
+        row["sample_index"] for row in rows if row["category"] == "han" and not row["truncated"]
     ]
     if len(eligible) < TRAIN_COUNT + EVAL_COUNT:
         raise RuntimeError(f"only found {len(eligible)} eligible samples")
     train_texts = [eval_texts[index] for index in eligible[:TRAIN_COUNT]]
-    holdout_texts = [eval_texts[index] for index in eligible[TRAIN_COUNT:TRAIN_COUNT + EVAL_COUNT]]
+    holdout_texts = [
+        eval_texts[index] for index in eligible[TRAIN_COUNT : TRAIN_COUNT + EVAL_COUNT]
+    ]
 
     report = {
         "contract": {
@@ -169,7 +187,12 @@ def main() -> None:
             "writes_checkpoint": False,
         },
         "baseline": _run(
-            "token_mean", train_texts, holdout_texts, domain_sp, general_sp, weighted=False,
+            "token_mean",
+            train_texts,
+            holdout_texts,
+            domain_sp,
+            general_sp,
+            weighted=False,
         ),
         "first_token_weighted": _run(
             "0.8_token_mean_0.2_first_token",

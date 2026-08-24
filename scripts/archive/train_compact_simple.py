@@ -14,6 +14,7 @@ Usage:
     python -u scripts/training/train_compact_simple.py --steps 8000
     python -u scripts/training/train_compact_simple.py --steps 16000 --batch_size 12
 """
+
 from __future__ import annotations
 
 import argparse
@@ -24,7 +25,9 @@ import sys
 import time
 import random
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import sentencepiece as spm
 import torch
@@ -34,9 +37,13 @@ import torch.nn.functional as F
 from neuroplex.resonance import ResonanceNeuron, get_domain_neuron_config
 from neuroplex.resonance.translator import batch_align_and_embed
 from scripts.training.utils import (
-    load_domain_tokenizer, load_general_tokenizer,
+    load_domain_tokenizer,
+    load_general_tokenizer,
     load_or_create_shared_embedding,
-    OUTPUT_DIR, SequentialSampler, make_wsd_scheduler, split_train_eval,
+    OUTPUT_DIR,
+    SequentialSampler,
+    make_wsd_scheduler,
+    split_train_eval,
 )
 
 DATA_PATH = "data/simple_zh/simple_zh_texts.jsonl"
@@ -45,7 +52,7 @@ DATA_PATH = "data/simple_zh/simple_zh_texts.jsonl"
 def load_simple_texts(path: str, max_texts: int = 10000000) -> list[str]:
     """加载简单中文数据（jsonl 格式，提取 text 字段）。"""
     texts = []
-    with open(path, 'r', encoding='utf-8') as f:
+    with open(path, "r", encoding="utf-8") as f:
         for line in f:
             if len(texts) >= max_texts:
                 break
@@ -54,7 +61,7 @@ def load_simple_texts(path: str, max_texts: int = 10000000) -> list[str]:
                 continue
             try:
                 d = json.loads(line)
-                text = d.get('text', '')
+                text = d.get("text", "")
                 if len(text) >= 20:
                     texts.append(text)
             except json.JSONDecodeError:
@@ -86,15 +93,21 @@ def train_compact_simple(
     embed_params = list(shared_embedding.parameters())
     embed_param_ids = {id(p) for p in embed_params}
     neuron_params = [p for p in neuron.parameters()]
-    optimizer = torch.optim.AdamW([
-        {"params": neuron_params, "weight_decay": 0.1},        # 神经元参数衰减
-        {"params": embed_params, "weight_decay": 0.0},         # embedding 不衰减
-    ], lr=lr, betas=(0.9, 0.99))
+    optimizer = torch.optim.AdamW(
+        [
+            {"params": neuron_params, "weight_decay": 0.1},  # 神经元参数衰减
+            {"params": embed_params, "weight_decay": 0.0},  # embedding 不衰减
+        ],
+        lr=lr,
+        betas=(0.9, 0.99),
+    )
 
     # WSD 学习率调度（公式抽取到 utils.make_wsd_scheduler）
     scheduler = make_wsd_scheduler(
-        optimizer, num_steps=num_steps,
-        warmup_steps=warmup_steps, decay_ratio=0.85,
+        optimizer,
+        num_steps=num_steps,
+        warmup_steps=warmup_steps,
+        decay_ratio=0.85,
     )
 
     neuron.train()
@@ -113,7 +126,10 @@ def train_compact_simple(
 
     effective_batch = batch_size * grad_accum
     print(f"\n  [{neuron_id}] 正规配置训练:", flush=True)
-    print(f"    batch={batch_size} × grad_accum={grad_accum} = effective {effective_batch}", flush=True)
+    print(
+        f"    batch={batch_size} × grad_accum={grad_accum} = effective {effective_batch}",
+        flush=True,
+    )
     print(f"    lr={lr}, embedding 不衰减, WSD 调度", flush=True)
     print(f"    steps={num_steps}, 数据={len(texts)} 条", flush=True)
     print(f"    数据/参数比: {len(texts)*300/36e6:.1f}:1 (估算)", flush=True)
@@ -129,7 +145,10 @@ def train_compact_simple(
                 break
             batch_texts = sampler.sample_batch()
             shared_emb, targets, mask = batch_align_and_embed(
-                batch_texts, domain_sp, general_sp, shared_embedding,
+                batch_texts,
+                domain_sp,
+                general_sp,
+                shared_embedding,
             )
             shared_emb = shared_emb.to(device)
             targets = targets.to(device)
@@ -143,11 +162,14 @@ def train_compact_simple(
             shift_targets = shift_targets.clone()
             shift_targets[~shift_mask] = -100
 
-            loss = F.cross_entropy(
-                shift_logits.view(-1, shift_logits.size(-1)),
-                shift_targets.view(-1),
-                ignore_index=-100,
-            ) / grad_accum
+            loss = (
+                F.cross_entropy(
+                    shift_logits.view(-1, shift_logits.size(-1)),
+                    shift_targets.view(-1),
+                    ignore_index=-100,
+                )
+                / grad_accum
+            )
             loss.backward()
             accum_loss += loss.item()
             step += 1
@@ -188,10 +210,13 @@ def train_compact_simple(
             with torch.no_grad():
                 for text in eval_texts[:30]:
                     shared, targets, mask = batch_align_and_embed(
-                        [text], domain_sp, general_sp, shared_embedding,
+                        [text],
+                        domain_sp,
+                        general_sp,
+                        shared_embedding,
                     )
                     result = neuron.forward(shared, return_logits=True)
-                    logits = result['logits']
+                    logits = result["logits"]
                     shift_logits = logits[:, :-1, :].contiguous()
                     shift_targets = targets[:, 1:].contiguous()
                     shift_mask = mask[:, 1:].contiguous()
@@ -212,11 +237,15 @@ def train_compact_simple(
                 best_val_loss = val_ppl
                 best_step = step
                 best_state = {k: v.detach().clone() for k, v in neuron.state_dict().items()}
-                best_embed = {k: v.detach().clone() for k, v in shared_embedding.state_dict().items()}
+                best_embed = {
+                    k: v.detach().clone() for k, v in shared_embedding.state_dict().items()
+                }
                 print(f"    ✅ 保存 best (val PPL={best_val_loss:.2f})", flush=True)
 
             # 生成样本
-            sample_text = generate_sample(neuron, domain_sp, general_sp, shared_embedding, device, prompt="小猫")
+            sample_text = generate_sample(
+                neuron, domain_sp, general_sp, shared_embedding, device, prompt="小猫"
+            )
             print(f"    生成样本: {sample_text[:200]}", flush=True)
             print()
             neuron.train()
@@ -224,27 +253,38 @@ def train_compact_simple(
     # 保存
     save_state = best_state if best_state is not None else neuron.state_dict()
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
-    torch.save({
-        "neuron_config": neuron.config,
-        "state_dict": save_state,
-        "shared_embedding_state": best_embed if best_state is not None else None,
-        "domain": "zh",
-        "data_source": "simple_zh",
-        "result": {
-            "best_val_ppl": best_val_loss,
-            "best_step": best_step,
-            "steps": step,
-            "saved": "best" if best_state is not None else "final",
-            "spec": "compact",
-            "config": "regular_batch32_embed_no_decay",
+    torch.save(
+        {
+            "neuron_config": neuron.config,
+            "state_dict": save_state,
+            "shared_embedding_state": best_embed if best_state is not None else None,
+            "domain": "zh",
+            "data_source": "simple_zh",
+            "result": {
+                "best_val_ppl": best_val_loss,
+                "best_step": best_step,
+                "steps": step,
+                "saved": "best" if best_state is not None else "final",
+                "spec": "compact",
+                "config": "regular_batch32_embed_no_decay",
+            },
         },
-    }, save_path)
+        save_path,
+    )
 
     elapsed = time.time() - t_start
-    print(f"\n  [{neuron_id}] Done. best_val_PPL={best_val_loss:.2f}@step{best_step}, time={elapsed/60:.1f}min", flush=True)
+    print(
+        f"\n  [{neuron_id}] Done. best_val_PPL={best_val_loss:.2f}@step{best_step}, time={elapsed/60:.1f}min",
+        flush=True,
+    )
     print(f"  Saved: {save_path}", flush=True)
 
-    return {"neuron_id": neuron_id, "best_val_ppl": best_val_loss, "best_step": best_step, "elapsed_s": elapsed}
+    return {
+        "neuron_id": neuron_id,
+        "best_val_ppl": best_val_loss,
+        "best_step": best_step,
+        "elapsed_s": elapsed,
+    }
 
 
 def generate_sample(neuron, domain_sp, general_sp, shared_embedding, device, prompt="从前"):
@@ -300,7 +340,12 @@ def main():
     parser = argparse.ArgumentParser(description="用简单中文数据 + 正规配置训练 compact 神经元")
     parser.add_argument("--steps", type=int, default=8000)
     parser.add_argument("--batch_size", type=int, default=8)
-    parser.add_argument("--grad_accum", type=int, default=4, help="梯度累积步数 (effective batch = batch_size × grad_accum)")
+    parser.add_argument(
+        "--grad_accum",
+        type=int,
+        default=4,
+        help="梯度累积步数 (effective batch = batch_size × grad_accum)",
+    )
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--log_every", type=int, default=200)
@@ -316,7 +361,10 @@ def main():
     print(f"  数据: TinyStoriesAdv-zh (小学/幼儿园水平, 287M tokens)", flush=True)
     print(f"  规格: compact (hidden=512, layers=6, ~36M params)", flush=True)
     print(f"  正规配置:", flush=True)
-    print(f"    effective batch = {args.batch_size} × {args.grad_accum} = {args.batch_size * args.grad_accum} (≥32 ✅)", flush=True)
+    print(
+        f"    effective batch = {args.batch_size} × {args.grad_accum} = {args.batch_size * args.grad_accum} (≥32 ✅)",
+        flush=True,
+    )
     print(f"    lr = {args.lr} (小模型标准 ✅)", flush=True)
     print(f"    embedding 不加 weight_decay ✅", flush=True)
     print(f"    WSD 调度 + 顺序 epoch 采样 ✅", flush=True)
@@ -344,7 +392,9 @@ def main():
     neuron = ResonanceNeuron(cfg).to(args.device)
     n_params = sum(p.numel() for p in neuron.parameters())
     n_embed = sum(p.numel() for p in shared_embedding.parameters())
-    print(f"  {args.neuron_id}: neuron={n_params/1e6:.1f}M, shared_emb={n_embed/1e6:.1f}M", flush=True)
+    print(
+        f"  {args.neuron_id}: neuron={n_params/1e6:.1f}M, shared_emb={n_embed/1e6:.1f}M", flush=True
+    )
 
     # 5. 训练
     print(f"\n[5] 开始正规训练...", flush=True)

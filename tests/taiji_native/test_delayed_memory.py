@@ -1,6 +1,5 @@
 from taiji import Taiji, TaijiConfig
 
-
 DATA = b"a1234xbc1234xd" * 4
 PROBE = ord("x")
 
@@ -36,12 +35,14 @@ def _probe_accuracy(model: Taiji, mode: str) -> float:
 
 
 def test_slow_trace_is_necessary_and_sufficient_after_shared_distractors() -> None:
-    model = Taiji(TaijiConfig(
-        region_sizes=(64, 48),
-        synapse_fan_in=16,
-        motor_fan_in=48,
-        seed=7,
-    ))
+    model = Taiji(
+        TaijiConfig(
+            region_sizes=(64, 48),
+            synapse_fan_in=16,
+            motor_fan_in=48,
+            seed=7,
+        )
+    )
     model.learn_bytes(DATA, epochs=200)
     learned = model.checkpoint()
 

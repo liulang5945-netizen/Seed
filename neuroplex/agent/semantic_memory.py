@@ -14,13 +14,13 @@
 依赖：
     pip install sentence-transformers numpy
 """
+
 import os
 import json
 import time
 import logging
 import numpy as np
 from typing import Dict, List, Optional, Tuple
-from pathlib import Path
 
 logger = logging.getLogger("SemanticMemory")
 
@@ -33,8 +33,7 @@ class SemanticMemory:
     通过余弦相似度实现语义检索。
     """
 
-    def __init__(self, model_name: str = "all-MiniLM-L6-v2",
-                 persist_dir: str = None):
+    def __init__(self, model_name: str = "all-MiniLM-L6-v2", persist_dir: str = None):
         """
         Args:
             model_name: sentence-transformers 模型名
@@ -51,17 +50,22 @@ class SemanticMemory:
         os.makedirs(self.persist_dir, exist_ok=True)
         self._load_index()
 
-        logger.info(f"SemanticMemory initialized (model={model_name}, {len(self._memories)} memories)")
+        logger.info(
+            f"SemanticMemory initialized (model={model_name}, {len(self._memories)} memories)"
+        )
 
     def _get_embedder(self):
         """延迟加载 embedder"""
         if self._embedder is None:
             try:
                 from sentence_transformers import SentenceTransformer
+
                 self._embedder = SentenceTransformer(self.model_name)
                 logger.info(f"Loaded embedding model: {self.model_name}")
             except ImportError:
-                logger.warning("sentence-transformers not installed: pip install sentence-transformers")
+                logger.warning(
+                    "sentence-transformers not installed: pip install sentence-transformers"
+                )
                 return None
             except Exception as e:
                 logger.warning(f"Failed to load embedding model: {e}")
@@ -96,8 +100,7 @@ class SemanticMemory:
         except Exception as e:
             logger.warning(f"Failed to add semantic memory: {e}")
 
-    def search(self, query: str, top_k: int = 5,
-               min_score: float = 0.3) -> List[dict]:
+    def search(self, query: str, top_k: int = 5, min_score: float = 0.3) -> List[dict]:
         """
         语义检索。
 
@@ -127,12 +130,14 @@ class SemanticMemory:
                 score = self._cosine_similarity(query_embedding, mem_embedding)
 
                 if score >= min_score:
-                    results.append({
-                        "key": key,
-                        "content": mem["content"][:200],
-                        "score": float(score),
-                        "metadata": mem.get("metadata", {}),
-                    })
+                    results.append(
+                        {
+                            "key": key,
+                            "content": mem["content"][:200],
+                            "score": float(score),
+                            "metadata": mem.get("metadata", {}),
+                        }
+                    )
 
             # 按相似度排序
             results.sort(key=lambda x: x["score"], reverse=True)
@@ -183,7 +188,7 @@ class SemanticMemory:
                 },
                 "saved_at": time.time(),
             }
-            with open(path, 'w', encoding='utf-8') as f:
+            with open(path, "w", encoding="utf-8") as f:
                 json.dump(data, f, ensure_ascii=False)
             logger.info(f"Saved {len(self._memories)} semantic memories")
         except Exception as e:
@@ -196,7 +201,7 @@ class SemanticMemory:
             return
 
         try:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, "r", encoding="utf-8") as f:
                 data = json.load(f)
 
             for k, v in data.get("memories", {}).items():
@@ -226,7 +231,9 @@ class SemanticMemory:
 
         try:
             contents = [item[1] for item in items]
-            embeddings = embedder.encode(contents, convert_to_numpy=True, batch_size=32, show_progress_bar=False)
+            embeddings = embedder.encode(
+                contents, convert_to_numpy=True, batch_size=32, show_progress_bar=False
+            )
 
             for (key, content, metadata), embedding in zip(items, embeddings):
                 self._memories[key] = {

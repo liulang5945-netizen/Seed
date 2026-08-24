@@ -29,6 +29,7 @@
 - 近邻神经元强耦合，远距离弱耦合
 - 扩散使"局部共识"传播为"全局共识"
 """
+
 from __future__ import annotations
 
 from typing import List, Optional
@@ -147,9 +148,7 @@ class SpatialDiffuser:
             diffused = per_neuron_vectors - a * (L @ per_neuron_vectors)
         elif per_neuron_vectors.dim() == 3:  # [N, B, D]
             # L @ V: einsum('ij,jbd->ibd')
-            diffused = per_neuron_vectors - a * torch.einsum(
-                "ij,jbd->ibd", L, per_neuron_vectors
-            )
+            diffused = per_neuron_vectors - a * torch.einsum("ij,jbd->ibd", L, per_neuron_vectors)
         else:
             raise ValueError(
                 f"per_neuron_vectors dim must be 2 or 3, got {per_neuron_vectors.dim()}"

@@ -11,4 +11,3 @@
 请使用 `from api.training import router` 导入路由。
 此文件仅保留用于兼容旧版导入（如 api/app.py 中的 `from .routes_training import router`）。
 """
-from api.training import router

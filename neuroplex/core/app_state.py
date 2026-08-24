@@ -1,4 +1,3 @@
-
 """
 集中式应用状态管理
 使用细粒度锁替代全局单锁，推理请求不阻塞训练
@@ -8,13 +7,14 @@
 - train_lock: 训练状态锁
 - publish_lock: 发布状态锁
 """
+
 import logging
-import os
 import threading
 from dataclasses import dataclass, field
 from typing import Optional
 
 from neuroplex.core.utils import get_external_path
+
 try:
     from neuroplex.tools.rag import RAGKnowledgeBase
 except ImportError:
@@ -115,7 +115,7 @@ class AppState:
             old_trainer = self.trainer
             if old_trainer is not None:
                 try:
-                    if hasattr(old_trainer, 'unload'):
+                    if hasattr(old_trainer, "unload"):
                         old_trainer.unload()
                 except Exception as e:
                     logger.warning(f"卸载 trainer 时出错（可忽略）: {e}")
@@ -127,11 +127,12 @@ class AppState:
                 try:
                     self.tokenizer = None
                     import torch
-                    if hasattr(old_model, 'to'):
+
+                    if hasattr(old_model, "to"):
                         try:
-                            old_model.to('cpu')
-                        except Exception:
-                            pass
+                            old_model.to("cpu")
+                        except Exception as e:
+                            logger.debug("【AppState.unload_model】处理失败（非致命）: %s", e)
                     del old_model
                 except Exception as e:
                     logger.warning(f"释放 PyTorch 模型时出错: {e}")
@@ -146,11 +147,12 @@ class AppState:
             gc.collect()
             try:
                 import torch
+
                 if torch.cuda.is_available():
                     torch.cuda.empty_cache()
                     torch.cuda.synchronize()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【AppState.unload_model】处理失败（非致命）: %s", e)
 
             logger.info("旧模型已完全卸载，显存/内存已释放")
 
@@ -163,6 +165,7 @@ class AppState:
                 self.tokenizer = None
                 import gc
                 import torch
+
                 gc.collect()
                 if torch.cuda.is_available():
                     torch.cuda.empty_cache()
@@ -174,7 +177,7 @@ class AppState:
 
     def is_taiji(self) -> bool:
         """当前是否使用 Cortex 神经元架构（唯一认知主体）。"""
-        return self.model is not None and type(self.model).__name__ == 'Cortex'
+        return self.model is not None and type(self.model).__name__ == "Cortex"
 
     def get_trainer(self):
         return self.trainer
@@ -202,8 +205,8 @@ class AppState:
         self._trainer_ref = None
         try:
             self.train_lock.release()
-        except RuntimeError:
-            pass
+        except RuntimeError as e:
+            logger.debug("【AppState.finish_training】处理失败（非致命）: %s", e)
 
     def training_context(self, logger_name: str = "Training"):
         """
@@ -234,8 +237,8 @@ class AppState:
         self.stop_publishing_requested = False
         try:
             self.publish_lock.release()
-        except RuntimeError:
-            pass
+        except RuntimeError as e:
+            logger.debug("【AppState.finish_publishing】处理失败（非致命）: %s", e)
 
     def force_reset_publishing(self) -> dict:
         """紧急强制重置发布状态（修复死锁）"""
@@ -247,9 +250,11 @@ class AppState:
         if locked:
             try:
                 self.publish_lock.release()
-            except RuntimeError:
-                pass
-        logger.warning(f"发布状态已强制重置 (was_publishing={was_publishing}, lock_was_held={locked})")
+            except RuntimeError as e:
+                logger.debug("【AppState.force_reset_publishing】处理失败（非致命）: %s", e)
+        logger.warning(
+            f"发布状态已强制重置 (was_publishing={was_publishing}, lock_was_held={locked})"
+        )
         return {
             "was_publishing": was_publishing,
             "lock_was_held": locked,
@@ -275,7 +280,6 @@ class AppState:
 
     def register_background_task(self, thread: threading.Thread):
         self.background_tasks.append(thread)
-
 
 
 class _TrainingContext:

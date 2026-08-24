@@ -1,6 +1,7 @@
 """
 运行数据生成器扩充训练数据
 """
+
 import sys
 import json
 import os
@@ -8,6 +9,7 @@ from pathlib import Path
 
 # 添加项目路径
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
+
 
 def main():
     print("=" * 60)
@@ -64,9 +66,9 @@ def main():
         output_file = output_dir / "generated_unified_data.jsonl"
         print(f"\n保存到: {output_file}")
 
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             for item in all_data:
-                f.write(json.dumps(item, ensure_ascii=False) + '\n')
+                f.write(json.dumps(item, ensure_ascii=False) + "\n")
 
         print(f"总计生成: {len(all_data)} 条")
         print(f"保存完成: {output_file}")
@@ -75,9 +77,10 @@ def main():
         print("\n抽样检查:")
         print("-" * 60)
         import random
+
         samples = random.sample(all_data, min(5, len(all_data)))
         for i, sample in enumerate(samples):
-            msgs = sample.get('messages', [])
+            msgs = sample.get("messages", [])
             if len(msgs) >= 3:
                 print(f"\n样本 {i+1}:")
                 print(f"  Q: {msgs[1]['content'][:100]}")
@@ -89,7 +92,9 @@ def main():
     except Exception as e:
         print(f"运行失败: {e}")
         import traceback
+
         traceback.print_exc()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

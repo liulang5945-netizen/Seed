@@ -36,8 +36,7 @@ def run(noise: float):
     after = common.measure_panel(model, judge)
     tafter = sum(float(judge.score(t)["quality"]) for t in targets) / len(targets)
     groups = {
-        g: round(after["groups"][g]["mean"] - base["groups"][g]["mean"], 4)
-        for g in base["groups"]
+        g: round(after["groups"][g]["mean"] - base["groups"][g]["mean"], 4) for g in base["groups"]
     }
     print(
         f"noise={noise}: overall={round(after['overall_mean']-base['overall_mean'],4)} "

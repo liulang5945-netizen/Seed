@@ -10,6 +10,7 @@
 - shared_embedding 管理（create/load/save）
 - SequentialSampler（顺序 epoch 采样）
 """
+
 from __future__ import annotations
 
 import math
@@ -23,11 +24,12 @@ import sentencepiece as spm
 import torch
 import torch.nn as nn
 
-from neuroplex.resonance.config import DOMAIN_VOCAB_SIZES, GENERAL_TOKENIZER_DOMAIN
+from neuroplex.resonance.config import GENERAL_TOKENIZER_DOMAIN
+
 # P0 硬编码修复：路径/维度/ID 集中管理，从 experiment_config 导入
 from scripts.training.experiment_config import (
     DATA_DIR_STR as DATA_DIR,
-    OUTPUT_DIR_STR as OUTPUT_DIR,
+    OUTPUT_DIR_STR as OUTPUT_DIR,  # noqa: F401 – re-export for backward compat
     DOMAIN_TOKENIZER_DIR_STR as DOMAIN_TOKENIZER_DIR,
     SHARED_EMBEDDING_PATH_STR as SHARED_EMBEDDING_PATH,
     SIMPLE_ZH_DIR_STR as SIMPLE_ZH_DIR,
@@ -38,32 +40,66 @@ from scripts.training.experiment_config import (
     SFT_ANSWER_MARKER,
 )
 
-
 # ── HuggingFace 数据源映射（供 load_domain_texts 使用）──────────────────────
 DOMAIN_DATA_SOURCES = {
     "zh": [
-        {"dataset": "shibing624/alpaca-zh", "config": "default", "split": "train",
-         "text_fields": ["instruction", "input", "output"], "max_samples": 8000},
-        {"dataset": "qingyue2019/wikipedia-zh-cn-20240820", "config": "default", "split": "train",
-         "text_fields": ["text"], "max_samples": 5000},
+        {
+            "dataset": "shibing624/alpaca-zh",
+            "config": "default",
+            "split": "train",
+            "text_fields": ["instruction", "input", "output"],
+            "max_samples": 8000,
+        },
+        {
+            "dataset": "qingyue2019/wikipedia-zh-cn-20240820",
+            "config": "default",
+            "split": "train",
+            "text_fields": ["text"],
+            "max_samples": 5000,
+        },
     ],
     "en": [
-        {"dataset": "tatsu-lab/alpaca", "config": "default", "split": "train",
-         "text_fields": ["instruction", "input", "output"], "max_samples": 8000},
-        {"dataset": "wikipedia", "config": "20220301.en", "split": "train",
-         "text_fields": ["text"], "max_samples": 5000},
+        {
+            "dataset": "tatsu-lab/alpaca",
+            "config": "default",
+            "split": "train",
+            "text_fields": ["instruction", "input", "output"],
+            "max_samples": 8000,
+        },
+        {
+            "dataset": "wikipedia",
+            "config": "20220301.en",
+            "split": "train",
+            "text_fields": ["text"],
+            "max_samples": 5000,
+        },
     ],
     "code": [
-        {"dataset": "sahil2801/CodeAlpaca-20k", "config": "default", "split": "train",
-         "text_fields": ["instruction", "input", "output"], "max_samples": 8000},
+        {
+            "dataset": "sahil2801/CodeAlpaca-20k",
+            "config": "default",
+            "split": "train",
+            "text_fields": ["instruction", "input", "output"],
+            "max_samples": 8000,
+        },
     ],
     "math": [
-        {"dataset": "openai/gsm8k", "config": "main", "split": "train",
-         "text_fields": ["question", "answer"], "max_samples": 8000},
+        {
+            "dataset": "openai/gsm8k",
+            "config": "main",
+            "split": "train",
+            "text_fields": ["question", "answer"],
+            "max_samples": 8000,
+        },
     ],
     "general": [
-        {"dataset": "tatsu-lab/alpaca", "config": "default", "split": "train",
-         "text_fields": ["instruction", "input", "output"], "max_samples": 8000},
+        {
+            "dataset": "tatsu-lab/alpaca",
+            "config": "default",
+            "split": "train",
+            "text_fields": ["instruction", "input", "output"],
+            "max_samples": 8000,
+        },
     ],
 }
 
@@ -116,8 +152,10 @@ def load_general_tokenizer(general_model_path: str = None) -> spm.SentencePieceP
     if os.path.exists(en_path):
         sp = spm.SentencePieceProcessor()
         sp.Load(en_path)
-        print(f"  General tokenizer: FALLBACK to en tokenizer (vocab={sp.vocab_size()}). "
-              f"Upgrade to 256K tokenizer later for full vocab coverage.")
+        print(
+            f"  General tokenizer: FALLBACK to en tokenizer (vocab={sp.vocab_size()}). "
+            f"Upgrade to 256K tokenizer later for full vocab coverage."
+        )
         return sp
 
     raise FileNotFoundError(
@@ -128,8 +166,11 @@ def load_general_tokenizer(general_model_path: str = None) -> spm.SentencePieceP
 
 # ── 数据加载 ──────────────────────────────────────────────────────────────
 
+
 def split_train_eval(
-    texts: List[str], eval_ratio: float = 0.05, seed: int = 42,
+    texts: List[str],
+    eval_ratio: float = 0.05,
+    seed: int = 42,
 ) -> Tuple[List[str], List[str]]:
     """T1: 用 hash 分桶将数据分为训练集和 held-out 评估集。
 
@@ -261,7 +302,7 @@ def load_simple_zh_texts(data_files: List[str], max_texts: int = 10000000) -> Li
             print(f"  ⚠️ 文件不存在: {path}", flush=True)
             continue
         count = 0
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, "r", encoding="utf-8") as f:
             for line in f:
                 if len(texts) >= max_texts:
                     break
@@ -270,7 +311,7 @@ def load_simple_zh_texts(data_files: List[str], max_texts: int = 10000000) -> Li
                     continue
                 try:
                     d = json.loads(line)
-                    text = d.get('text', '')
+                    text = d.get("text", "")
                     if len(text) >= 20:
                         texts.append(text)
                         count += 1
@@ -315,7 +356,7 @@ def load_dialogue_texts_multi(
             print(f"  ⚠️ 文件不存在: {path}", flush=True)
             continue
         count = 0
-        with open(path, 'r', encoding='utf-8') as f:
+        with open(path, "r", encoding="utf-8") as f:
             for line in f:
                 if len(texts) >= max_texts:
                     break
@@ -324,7 +365,7 @@ def load_dialogue_texts_multi(
                     continue
                 try:
                     d = json.loads(line)
-                    text = d.get('text', '')
+                    text = d.get("text", "")
                     # S5: 过滤无 answer_marker 的脏数据（保证 SFT masking 有效）
                     if len(text) >= 20 and answer_marker in text:
                         # 2026-08-04：筛选短答案（训练/生成长度匹配）
@@ -382,7 +423,7 @@ def load_dialogue_texts_hf(
     # 优先从缓存加载
     if cache_path and os.path.exists(cache_path):
         texts = []
-        with open(cache_path, 'r', encoding='utf-8') as f:
+        with open(cache_path, "r", encoding="utf-8") as f:
             for i, line in enumerate(f):
                 if i >= max_texts:
                     break
@@ -390,7 +431,7 @@ def load_dialogue_texts_hf(
                 if line:
                     try:
                         d = json.loads(line)
-                        text = d.get('text', '')
+                        text = d.get("text", "")
                         if len(text) >= 20:
                             texts.append(text)
                     except json.JSONDecodeError:
@@ -404,7 +445,7 @@ def load_dialogue_texts_hf(
     try:
         from datasets import load_dataset
     except ImportError:
-        print(f"  ⚠️ datasets 库未安装，跳过 HF 数据下载", flush=True)
+        print("  ⚠️ datasets 库未安装，跳过 HF 数据下载", flush=True)
         return []
 
     for src in sources:
@@ -432,7 +473,7 @@ def load_dialogue_texts_hf(
     # 缓存到本地
     if all_texts and cache_path:
         os.makedirs(os.path.dirname(cache_path), exist_ok=True)
-        with open(cache_path, 'w', encoding='utf-8') as f:
+        with open(cache_path, "w", encoding="utf-8") as f:
             for text in all_texts:
                 f.write(json.dumps({"text": text}, ensure_ascii=False) + "\n")
         print(f"  缓存 {len(all_texts)} 条 HF 对话到: {cache_path}", flush=True)
@@ -450,8 +491,10 @@ def create_shared_embedding(device: str = "cpu") -> nn.Embedding:
     """
     emb = nn.Embedding(GENERAL_VOCAB_SIZE, SHARED_EMBED_DIM)
     emb.to(device)
-    print(f"  Shared embedding: {GENERAL_VOCAB_SIZE} × {SHARED_EMBED_DIM} "
-          f"({GENERAL_VOCAB_SIZE * SHARED_EMBED_DIM / 1e6:.0f}M params)")
+    print(
+        f"  Shared embedding: {GENERAL_VOCAB_SIZE} × {SHARED_EMBED_DIM} "
+        f"({GENERAL_VOCAB_SIZE * SHARED_EMBED_DIM / 1e6:.0f}M params)"
+    )
     return emb
 
 
@@ -466,8 +509,10 @@ def load_or_create_shared_embedding(device: str = "cpu") -> nn.Embedding:
         emb = nn.Embedding(weight.shape[0], weight.shape[1])
         emb.weight.data.copy_(weight)
         emb.to(device)
-        print(f"  Loaded shared embedding from {SHARED_EMBEDDING_PATH}: "
-              f"{emb.num_embeddings} × {emb.embedding_dim}")
+        print(
+            f"  Loaded shared embedding from {SHARED_EMBEDDING_PATH}: "
+            f"{emb.num_embeddings} × {emb.embedding_dim}"
+        )
         return emb
 
     return create_shared_embedding(device)
@@ -507,7 +552,7 @@ class SequentialSampler:
             self.cursor = 0
             self.epoch += 1
 
-        batch_indices = self.indices[self.cursor:self.cursor + self.batch_size]
+        batch_indices = self.indices[self.cursor : self.cursor + self.batch_size]
         self.cursor += self.batch_size
         return [self.texts[i] for i in batch_indices]
 
@@ -578,9 +623,13 @@ def build_muon_adamw_optimizers(
         (muon_optimizer, adamw_optimizer): adamw_optimizer 可能为 None（无 1D 参数时）
     """
     from torch.optim import Muon
+
     muon_optimizer = Muon(
-        params_2d, lr=lr, momentum=0.95,
-        nesterov=True, ns_steps=5,
+        params_2d,
+        lr=lr,
+        momentum=0.95,
+        nesterov=True,
+        ns_steps=5,
     )
     if len(params_1d) > 0:
         adamw_optimizer = torch.optim.AdamW(params_1d, lr=lr, weight_decay=adamw_weight_decay)

@@ -4,6 +4,7 @@ This is a minimal stub that allows imports to succeed. The real
 implementation will register / discover Model Context Protocol
 servers and expose their tools to the agent runtime.
 """
+
 import logging
 
 logger = logging.getLogger(__name__)

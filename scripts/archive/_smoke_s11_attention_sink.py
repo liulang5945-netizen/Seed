@@ -7,6 +7,7 @@
 4. 训练时（无 kv_cache）不受 sink/window 影响
 5. checkpoint 兼容：sink/window=0 的旧 ckpt 加载到新模型
 """
+
 from __future__ import annotations
 
 import os
@@ -29,8 +30,11 @@ def test_backward_compat_no_sink():
     torch.manual_seed(42)
     # sink/window=0（默认）
     attn_legacy = GroupedQueryAttention(
-        hidden_size=256, num_heads=4, num_kv_heads=2,
-        attention_sink_size=0, sliding_window_size=0,
+        hidden_size=256,
+        num_heads=4,
+        num_kv_heads=2,
+        attention_sink_size=0,
+        sliding_window_size=0,
     )
     attn_legacy.eval()
 
@@ -45,7 +49,9 @@ def test_backward_compat_no_sink():
         # KV cache 长度应等于 (step+1) * seqlen，无驱逐
         expected_len = (step + 1) * 4
         actual_len = kv_cache[0].shape[1]
-        assert actual_len == expected_len, f"step={step}: KV cache 应为 {expected_len}, 实际 {actual_len}"
+        assert (
+            actual_len == expected_len
+        ), f"step={step}: KV cache 应为 {expected_len}, 实际 {actual_len}"
 
     print(f"  PASS: sink/window=0 时 KV cache 无限增长（5步后长度={kv_cache[0].shape[1]}）")
 
@@ -58,8 +64,11 @@ def test_kv_cache_eviction():
     sink_size, window_size = 2, 4
     max_len = sink_size + window_size
     attn = GroupedQueryAttention(
-        hidden_size=256, num_heads=4, num_kv_heads=2,
-        attention_sink_size=sink_size, sliding_window_size=window_size,
+        hidden_size=256,
+        num_heads=4,
+        num_kv_heads=2,
+        attention_sink_size=sink_size,
+        sliding_window_size=window_size,
     )
     attn.eval()
 
@@ -86,12 +95,16 @@ def test_kv_cache_eviction():
     # step 3: +2 token → KV=8 > 6，驱逐到 max_len=6
     with torch.no_grad():
         out, kv_cache, _ = attn(x, kv_cache=kv_cache, use_cache=True)
-    assert kv_cache[0].shape[1] == max_len, f"step 3: 驱逐后 KV 应为 {max_len}, 实际 {kv_cache[0].shape[1]}"
+    assert (
+        kv_cache[0].shape[1] == max_len
+    ), f"step 3: 驱逐后 KV 应为 {max_len}, 实际 {kv_cache[0].shape[1]}"
 
     # step 4: +2 token → 持续驱逐
     with torch.no_grad():
         out, kv_cache, _ = attn(x, kv_cache=kv_cache, use_cache=True)
-    assert kv_cache[0].shape[1] == max_len, f"step 4: 持续驱逐后 KV 应为 {max_len}, 实际 {kv_cache[0].shape[1]}"
+    assert (
+        kv_cache[0].shape[1] == max_len
+    ), f"step 4: 持续驱逐后 KV 应为 {max_len}, 实际 {kv_cache[0].shape[1]}"
 
     print(f"  PASS: KV cache 驱逐生效（max_len={max_len}，多步后稳定）")
 
@@ -103,8 +116,11 @@ def test_sink_preserved():
     sink_size, window_size = 2, 3
     max_len = sink_size + window_size
     attn = GroupedQueryAttention(
-        hidden_size=256, num_heads=4, num_kv_heads=2,
-        attention_sink_size=sink_size, sliding_window_size=window_size,
+        hidden_size=256,
+        num_heads=4,
+        num_kv_heads=2,
+        attention_sink_size=sink_size,
+        sliding_window_size=window_size,
     )
     attn.eval()
 
@@ -135,7 +151,9 @@ def test_sink_preserved():
     # 验证 sink 部分（前 sink_size 个）确实来自原 cache 的前部
     assert torch.equal(evicted_k[:, :sink_size], fake_k[:, :sink_size]), "sink 部分应保持原前部"
     # 验证 window 部分（后 window_size 个）来自原 cache 的后部
-    assert torch.equal(evicted_k[:, -window_size:], fake_k[:, -window_size:]), "window 部分应保持原后部"
+    assert torch.equal(
+        evicted_k[:, -window_size:], fake_k[:, -window_size:]
+    ), "window 部分应保持原后部"
 
     print(f"  PASS: sink (前{sink_size}) + window (后{window_size}) 正确保留")
 
@@ -146,13 +164,19 @@ def test_training_unaffected():
     torch.manual_seed(42)
     # sink/window=0（标准）
     attn_std = GroupedQueryAttention(
-        hidden_size=256, num_heads=4, num_kv_heads=2,
-        attention_sink_size=0, sliding_window_size=0,
+        hidden_size=256,
+        num_heads=4,
+        num_kv_heads=2,
+        attention_sink_size=0,
+        sliding_window_size=0,
     )
     # sink/window 启用
     attn_sink = GroupedQueryAttention(
-        hidden_size=256, num_heads=4, num_kv_heads=2,
-        attention_sink_size=4, sliding_window_size=1024,
+        hidden_size=256,
+        num_heads=4,
+        num_kv_heads=2,
+        attention_sink_size=4,
+        sliding_window_size=1024,
     )
     # 复制权重
     attn_sink.load_state_dict(attn_std.state_dict(), strict=False)
@@ -177,15 +201,21 @@ def test_checkpoint_compat():
     # 旧模型（无 sink/window 参数，但新代码默认 sink/window=0）
     torch.manual_seed(42)
     attn_old = GroupedQueryAttention(
-        hidden_size=256, num_heads=4, num_kv_heads=2,
-        attention_sink_size=0, sliding_window_size=0,
+        hidden_size=256,
+        num_heads=4,
+        num_kv_heads=2,
+        attention_sink_size=0,
+        sliding_window_size=0,
     )
     old_sd = attn_old.state_dict()
 
     # 新模型（sink/window 启用，但参数名相同）
     attn_new = GroupedQueryAttention(
-        hidden_size=256, num_heads=4, num_kv_heads=2,
-        attention_sink_size=4, sliding_window_size=512,
+        hidden_size=256,
+        num_heads=4,
+        num_kv_heads=2,
+        attention_sink_size=4,
+        sliding_window_size=512,
     )
     # sink/window 不是 nn.Parameter，只是 Python 属性，不影响 state_dict
     # 所以 strict=True 加载应该成功

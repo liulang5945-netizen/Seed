@@ -7,43 +7,49 @@ Seed - 主入口
   python main.py --no-ui            # 仅加载模型（命令行模式）
   python main.py --train            # 训练模式
 """
+
 import argparse
+import logging
 import os
 import sys
+
+logger = logging.getLogger(__name__)
 
 # Windows 终端 UTF-8 支持
 if sys.platform == "win32":
     try:
         sys.stdout.reconfigure(encoding="utf-8")
         sys.stderr.reconfigure(encoding="utf-8")
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("【main】处理失败（非致命）: %s", e)
 
-base_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+base_dir = (
+    os.path.dirname(sys.executable)
+    if getattr(sys, "frozen", False)
+    else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
 
 # 确保项目根目录在 Python 路径中
 if base_dir not in sys.path:
     sys.path.insert(0, base_dir)
 
-from neuroplex.core.config import TrainingConfig, get_config, save_config
+from neuroplex.core.config import get_config
 import uvicorn
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def main():
     """主入口"""
     # 第一层：主入口参数
     parser = argparse.ArgumentParser(description="Seed")
-    parser.add_argument("--model_name", type=str, default=None,
-                        help="模型名称或路径")
-    parser.add_argument("--cache_dir", type=str, default=None,
-                        help="缓存目录")
-    parser.add_argument("--checkpoint", type=str, default=None,
-                        help="检查点路径")
-    parser.add_argument("--no-ui", action="store_true",
-                        help="仅加载模型，不启动 UI")
-    parser.add_argument("--train", action="store_true",
-                        help="启动训练模式")
-    
+    parser.add_argument("--model_name", type=str, default=None, help="模型名称或路径")
+    parser.add_argument("--cache_dir", type=str, default=None, help="缓存目录")
+    parser.add_argument("--checkpoint", type=str, default=None, help="检查点路径")
+    parser.add_argument("--no-ui", action="store_true", help="仅加载模型，不启动 UI")
+    parser.add_argument("--train", action="store_true", help="启动训练模式")
+
     # 解析主入口参数并移除已解析的，避免传递给 get_config
     args, remaining = parser.parse_known_args()
 
@@ -67,6 +73,7 @@ def main():
     if args.no_ui:
         print("ℹ️ no-ui 模式：仅 Cortex 加载")
         from neuroplex.loader import load_cortex
+
         cortex, tokenizer = load_cortex(
             neurons_dir=config.model_name or "data/neurons",
             device=config.resolve_device(),
@@ -78,7 +85,9 @@ def main():
         print("🚀 训练模式...")
         print("   Cortex 神经元架构训练方式：")
         print("   1. 对话神经元 SFT: scripts/training/finetune_neuron_dialogue.py")
-        print("   2. 协作层微调: scripts/training/finetune_cross_spec.py / finetune_side_channels.py")
+        print(
+            "   2. 协作层微调: scripts/training/finetune_cross_spec.py / finetune_side_channels.py"
+        )
         print("   3. 跨域协作联合训练（含 hub）: scripts/training/train_cross_domain_collab.py")
         print("   4. hub 神经元从零训练: scripts/training/train_hub_neuron.py")
         print("   5. 运行时学习: feed_engine + sleep_engine（在线闭环）")

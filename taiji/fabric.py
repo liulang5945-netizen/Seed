@@ -48,9 +48,7 @@ class TaijiFabric:
         # signed cortical support, so learnability no longer depends on whether
         # a randomly sampled row happened to touch a residual coordinate.
         consolidation_rng = torch.Generator(device="cpu")
-        consolidation_rng.manual_seed(
-            config.seed + config.consolidation_seed_offset
-        )
+        consolidation_rng.manual_seed(config.seed + config.consolidation_seed_offset)
         self.consolidation_decoders = tuple(
             SparseSynapses(
                 lower_size,
@@ -68,8 +66,7 @@ class TaijiFabric:
         # The running means supply the opponent origins.  They are homeostatic
         # statistics, not trainable parameters.
         self.trace_baselines = tuple(
-            torch.zeros(region_size, device=self.device)
-            for region_size in config.region_sizes
+            torch.zeros(region_size, device=self.device) for region_size in config.region_sizes
         )
         self.transitions = tuple(
             SparseSynapses(
@@ -125,17 +122,19 @@ class TaijiFabric:
         states = []
         for lower_size, region_size in zip(lower_sizes, self.config.region_sizes):
             zero = torch.zeros(region_size, device=self.device)
-            states.append(RegionState(
-                membrane=zero.clone(),
-                activity=zero.clone(),
-                trace=zero.clone(),
-                prediction=torch.zeros(lower_size, device=self.device),
-                error=torch.zeros(lower_size, device=self.device),
-                threshold=torch.full(
-                    (region_size,), self.config.threshold_base, device=self.device
-                ),
-                inhibition=zero.clone(),
-            ))
+            states.append(
+                RegionState(
+                    membrane=zero.clone(),
+                    activity=zero.clone(),
+                    trace=zero.clone(),
+                    prediction=torch.zeros(lower_size, device=self.device),
+                    error=torch.zeros(lower_size, device=self.device),
+                    threshold=torch.full(
+                        (region_size,), self.config.threshold_base, device=self.device
+                    ),
+                    inhibition=zero.clone(),
+                )
+            )
         return tuple(states)
 
     def opponent_trace(self, index: int, trace: torch.Tensor) -> torch.Tensor:
@@ -143,9 +142,7 @@ class TaijiFabric:
             raise IndexError("region index outside the predictive fabric")
         expected = (self.config.region_sizes[int(index)],)
         if trace.shape != expected:
-            raise ValueError(
-                f"region trace must be {expected}, got {tuple(trace.shape)}"
-            )
+            raise ValueError(f"region trace must be {expected}, got {tuple(trace.shape)}")
         return trace.to(self.device) - self.trace_baselines[int(index)]
 
     def _consolidation_basis(self, index: int, trace: torch.Tensor) -> torch.Tensor:
@@ -208,17 +205,10 @@ class TaijiFabric:
             raise ValueError("region state count does not match the architecture")
         if not math.isfinite(learn_scale) or learn_scale < 0.0:
             raise ValueError("learn_scale must be a finite non-negative number")
-        if (
-            not math.isfinite(consolidation_learn_scale)
-            or consolidation_learn_scale < 0.0
-        ):
-            raise ValueError(
-                "consolidation_learn_scale must be a finite non-negative number"
-            )
+        if not math.isfinite(consolidation_learn_scale) or consolidation_learn_scale < 0.0:
+            raise ValueError("consolidation_learn_scale must be a finite non-negative number")
         if episodic_feedback is None:
-            episodic_feedback = torch.zeros(
-                self.config.cortical_context_dim, device=self.device
-            )
+            episodic_feedback = torch.zeros(self.config.cortical_context_dim, device=self.device)
         elif episodic_feedback.shape != (self.config.cortical_context_dim,):
             raise ValueError("episodic feedback does not match cortical context")
         else:
@@ -231,14 +221,12 @@ class TaijiFabric:
         feedback_offset = 0
         feedback_trace_offset = sum(self.config.region_sizes)
 
-        for index, (region_size, decoder, transition) in enumerate(zip(
-            self.config.region_sizes, self.decoders, self.transitions
-        )):
+        for index, (region_size, decoder, transition) in enumerate(
+            zip(self.config.region_sizes, self.decoders, self.transitions)
+        ):
             old = previous[index]
             signed_trace = self.opponent_trace(index, old.trace)
-            consolidated_prediction = self.consolidation_decoders[index].forward(
-                signed_trace
-            )
+            consolidated_prediction = self.consolidation_decoders[index].forward(signed_trace)
             lower_prediction = decoder.forward(old.trace)
             if use_consolidated:
                 lower_prediction = lower_prediction + consolidated_prediction
@@ -246,9 +234,7 @@ class TaijiFabric:
             recurrent_prediction = transition.forward(old.trace)
             bottom_up = decoder.backproject(lower_error)
             if use_consolidated:
-                bottom_up = bottom_up + self.consolidation_decoders[
-                    index
-                ].backproject(lower_error)
+                bottom_up = bottom_up + self.consolidation_decoders[index].backproject(lower_error)
 
             if index + 1 < len(previous):
                 top_down = self.decode(
@@ -265,12 +251,10 @@ class TaijiFabric:
                 + self.config.top_down_gain * top_down
                 + self.config.memory_feedback_gain
                 * (
-                    episodic_feedback[
-                        feedback_offset:feedback_offset + region_size
-                    ]
+                    episodic_feedback[feedback_offset : feedback_offset + region_size]
                     + episodic_feedback[
                         feedback_trace_offset
-                        + feedback_offset:feedback_trace_offset
+                        + feedback_offset : feedback_trace_offset
                         + feedback_offset
                         + region_size
                     ]
@@ -301,18 +285,12 @@ class TaijiFabric:
             # can do it: while writing one action they cannot see the other
             # three, and a promiscuous unit ranks top-k under every one of them.
             lateral = self.laterals[index]
-            competition = lateral.forward(positive_drive) / float(
-                max(1, lateral.row_fan_in)
-            )
+            competition = lateral.forward(positive_drive) / float(max(1, lateral.row_fan_in))
             inhibition = (
                 self.config.inhibition_decay * old.inhibition
-                + (1.0 - self.config.inhibition_decay)
-                * self.config.inhibition_gain
-                * competition
+                + (1.0 - self.config.inhibition_decay) * self.config.inhibition_gain * competition
             )
-            activity = torch.tanh(torch.relu(
-                membrane - old.threshold - inhibition
-            ))
+            activity = torch.tanh(torch.relu(membrane - old.threshold - inhibition))
             active_indicator = (activity > 1e-6).to(activity.dtype)
             # Homeostasis is an integrator over the input a region actually
             # receives, and it can only find a useful set point if that input is
@@ -347,8 +325,7 @@ class TaijiFabric:
             else:
                 threshold = old.threshold
             trace = bound_norm(
-                self.config.trace_decay * old.trace
-                + (1.0 - self.config.trace_decay) * activity,
+                self.config.trace_decay * old.trace + (1.0 - self.config.trace_decay) * activity,
                 self.config.max_trace_norm,
             )
             state_error = activity - recurrent_prediction
@@ -393,14 +370,11 @@ class TaijiFabric:
                 decoder.local_update(
                     lower_error,
                     old.trace,
-                    learning_rate=self.config.predictive_learning_rate
-                    * learn_scale,
+                    learning_rate=self.config.predictive_learning_rate * learn_scale,
                     weight_decay=decay,
                 )
                 if consolidation_learn_scale > 0.0:
-                    consolidation_error = (
-                        lower_activity - consolidated_prediction
-                    )
+                    consolidation_error = lower_activity - consolidated_prediction
                     self.consolidation_decoders[index].local_update(
                         consolidation_error,
                         signed_trace,
@@ -411,8 +385,7 @@ class TaijiFabric:
                 transition.local_update(
                     state_error,
                     old.trace,
-                    learning_rate=self.config.transition_learning_rate
-                    * learn_scale,
+                    learning_rate=self.config.transition_learning_rate * learn_scale,
                     weight_decay=decay,
                 )
                 # The competition is calibrated on the activity it produced, so
@@ -435,19 +408,19 @@ class TaijiFabric:
             # a repeated sleep burst cannot drag its own zero point toward the
             # pattern it is trying to consolidate.
             if learn and adapt_homeostasis:
-                self.trace_baselines[index].lerp_(
-                    trace, float(self.config.cortical_baseline_rate)
-                )
+                self.trace_baselines[index].lerp_(trace, float(self.config.cortical_baseline_rate))
 
-            next_states.append(RegionState(
-                membrane=membrane,
-                activity=activity,
-                trace=trace,
-                prediction=lower_prediction,
-                error=lower_error,
-                threshold=threshold,
-                inhibition=inhibition,
-            ))
+            next_states.append(
+                RegionState(
+                    membrane=membrane,
+                    activity=activity,
+                    trace=trace,
+                    prediction=lower_prediction,
+                    error=lower_error,
+                    threshold=threshold,
+                    inhibition=inhibition,
+                )
+            )
             activity_rates.append(float(active_indicator.mean().item()))
             error_norms.append(float(lower_error.norm().item()))
             lower_activity = activity
@@ -455,9 +428,7 @@ class TaijiFabric:
 
         return tuple(next_states), tuple(activity_rates), tuple(error_norms)
 
-    def clear_dynamics(
-        self, regions: Sequence[RegionState]
-    ) -> Tuple[RegionState, ...]:
+    def clear_dynamics(self, regions: Sequence[RegionState]) -> Tuple[RegionState, ...]:
         """Silence activity while keeping every homeostatic set point.
 
         Unlike ``initial_state`` this preserves each region's adapted threshold and
@@ -483,10 +454,13 @@ class TaijiFabric:
     def cortical_context(self, regions: Sequence[RegionState]) -> torch.Tensor:
         """Expose time-separated fast activity and slow trace to an organ."""
 
-        return torch.cat([
-            *(region.activity for region in regions),
-            *(region.trace for region in regions),
-        ], dim=0)
+        return torch.cat(
+            [
+                *(region.activity for region in regions),
+                *(region.trace for region in regions),
+            ],
+            dim=0,
+        )
 
     def to_payload(self) -> Dict[str, Any]:
         return {
@@ -495,8 +469,7 @@ class TaijiFabric:
                 decoder.to_payload() for decoder in self.consolidation_decoders
             ],
             "trace_baselines": [
-                baseline.detach().cpu().clone()
-                for baseline in self.trace_baselines
+                baseline.detach().cpu().clone() for baseline in self.trace_baselines
             ],
             "transitions": [transition.to_payload() for transition in self.transitions],
             "laterals": [lateral.to_payload() for lateral in self.laterals],
@@ -505,12 +478,8 @@ class TaijiFabric:
     def load_payload(self, payload: Mapping[str, Any]) -> None:
         if len(payload["decoders"]) != len(self.decoders):
             raise ValueError("decoder count does not match architecture")
-        if len(payload["consolidation_decoders"]) != len(
-            self.consolidation_decoders
-        ):
-            raise ValueError(
-                "consolidation decoder count does not match architecture"
-            )
+        if len(payload["consolidation_decoders"]) != len(self.consolidation_decoders):
+            raise ValueError("consolidation decoder count does not match architecture")
         if len(payload["trace_baselines"]) != len(self.trace_baselines):
             raise ValueError("trace baseline count does not match architecture")
         if len(payload["transitions"]) != len(self.transitions):
@@ -519,18 +488,12 @@ class TaijiFabric:
             raise ValueError("lateral count does not match architecture")
         for synapses, state in zip(self.decoders, payload["decoders"]):
             synapses.load_payload(state)
-        for synapses, state in zip(
-            self.consolidation_decoders, payload["consolidation_decoders"]
-        ):
+        for synapses, state in zip(self.consolidation_decoders, payload["consolidation_decoders"]):
             synapses.load_payload(state)
-        for target, stored in zip(
-            self.trace_baselines, payload["trace_baselines"]
-        ):
+        for target, stored in zip(self.trace_baselines, payload["trace_baselines"]):
             baseline = stored.detach().to(self.device, dtype=torch.float32)
             if baseline.shape != target.shape:
-                raise ValueError(
-                    "trace baseline shape does not match architecture"
-                )
+                raise ValueError("trace baseline shape does not match architecture")
             if not bool(torch.isfinite(baseline).all()):
                 raise ValueError("trace baseline contains a non-finite value")
             target.copy_(baseline)

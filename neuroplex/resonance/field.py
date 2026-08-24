@@ -29,7 +29,6 @@ Fixes (this version):
 
 from __future__ import annotations
 
-import math
 from collections import deque
 from typing import Deque, Dict, List, Optional
 
@@ -97,8 +96,7 @@ class ResonanceField(nn.Module):
     def batch_size(self) -> int:
         return self._batch_size
 
-    def write(self, neuron_id: str, vector: torch.Tensor,
-              scale=1.0) -> torch.Tensor:
+    def write(self, neuron_id: str, vector: torch.Tensor, scale=1.0) -> torch.Tensor:
         """写入神经元的场向量（L2 归一化后累加到 state）。
 
         P1-2: scale 由 NeuromodulatorState.get_field_write_scale 提供，
@@ -141,8 +139,7 @@ class ResonanceField(nn.Module):
         self._write_history[neuron_id].append(v_norm.detach())
         return v_scaled
 
-    def update(self, neuron_id: str, vector: torch.Tensor,
-               scale=1.0) -> torch.Tensor:
+    def update(self, neuron_id: str, vector: torch.Tensor, scale=1.0) -> torch.Tensor:
         """增量更新：减去该 neuron 的旧贡献，加上新贡献。
 
         用于多轮共振场景（如 TribeSuperNeuron.forward_tribe）：
@@ -173,7 +170,11 @@ class ResonanceField(nn.Module):
                 self.state = self.state - old_contrib
             else:
                 # 维度不匹配时广播减法
-                self.state = self.state - old_contrib.squeeze(0) if old_contrib.dim() > self.state.dim() else self.state - old_contrib
+                self.state = (
+                    self.state - old_contrib.squeeze(0)
+                    if old_contrib.dim() > self.state.dim()
+                    else self.state - old_contrib
+                )
 
         # 加上新贡献（复用 write 的累加逻辑）
         B = v_scaled.shape[0]
@@ -192,8 +193,9 @@ class ResonanceField(nn.Module):
         self._write_history[neuron_id].append(v_norm.detach())
         return v_scaled
 
-    def write_inhibit(self, neuron_id: str, vector: torch.Tensor,
-                      weight: float = 1.0) -> torch.Tensor:
+    def write_inhibit(
+        self, neuron_id: str, vector: torch.Tensor, weight: float = 1.0
+    ) -> torch.Tensor:
         """P0#3: 抑制性神经元写入——乘法衰减掩码。
 
         GABA-like divisive inhibition: mask *= (1 - weight * |v|)
@@ -422,23 +424,37 @@ class ResonanceField(nn.Module):
         pb = torch.exp(logp_b)
 
         if targets is not None:
-            shift_t = targets[:, 1:].contiguous() if targets.shape == neuron_a_logits.shape[:2] else targets
+            shift_t = (
+                targets[:, 1:].contiguous()
+                if targets.shape == neuron_a_logits.shape[:2]
+                else targets
+            )
             shift_a = logp_a[:, :-1, :]
             shift_b = logp_b[:, :-1, :]
             if shift_t.dim() == 2:
                 tflat = shift_t.reshape(-1)
-                nll_a = -shift_a.reshape(-1, shift_a.size(-1)).gather(-1, tflat.unsqueeze(-1)).squeeze(-1)
-                nll_b = -shift_b.reshape(-1, shift_b.size(-1)).gather(-1, tflat.unsqueeze(-1)).squeeze(-1)
+                nll_a = (
+                    -shift_a.reshape(-1, shift_a.size(-1))
+                    .gather(-1, tflat.unsqueeze(-1))
+                    .squeeze(-1)
+                )
+                nll_b = (
+                    -shift_b.reshape(-1, shift_b.size(-1))
+                    .gather(-1, tflat.unsqueeze(-1))
+                    .squeeze(-1)
+                )
             else:
                 nll_a = -shift_a.gather(-1, shift_t)
                 nll_b = -shift_b.gather(-1, shift_t)
             reduction = (nll_a - nll_b).clamp(min=0.0).mean()
             return float(reduction.item())
-        raise_prob_b = (pb.max(dim=-1).values > pa.max(dim=-1).values)
+        raise_prob_b = pb.max(dim=-1).values > pa.max(dim=-1).values
         boost = raise_prob_b.float().mean()
         return float(boost.item())
 
-    def directional_congestion(self, vector: torch.Tensor, active_vectors: List[torch.Tensor]) -> float:
+    def directional_congestion(
+        self, vector: torch.Tensor, active_vectors: List[torch.Tensor]
+    ) -> float:
         """计算 vector 与 active_vectors 的平均正向 cosine similarity。
 
         大规模扩展性修复：
@@ -521,8 +537,7 @@ class ResonanceField(nn.Module):
             "state": self.state.detach().clone(),
             "inhibitory_mask": self.inhibitory_mask.detach().clone(),
             "contributions": {
-                nid: contrib.detach().clone()
-                for nid, contrib in self._contributions.items()
+                nid: contrib.detach().clone() for nid, contrib in self._contributions.items()
             },
             "inhibit_contributions": {
                 nid: contrib.detach().clone()
@@ -540,8 +555,7 @@ class ResonanceField(nn.Module):
         self.state = state_dict["state"].clone()
         self.inhibitory_mask = state_dict["inhibitory_mask"].clone()
         self._contributions = {
-            nid: contrib.clone()
-            for nid, contrib in state_dict.get("contributions", {}).items()
+            nid: contrib.clone() for nid, contrib in state_dict.get("contributions", {}).items()
         }
         self._inhibit_contributions = {
             nid: contrib.clone()

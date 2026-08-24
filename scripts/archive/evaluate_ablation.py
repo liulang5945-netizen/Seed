@@ -13,6 +13,7 @@ Usage:
     python -u scripts/training/evaluate_ablation.py
     python -u scripts/training/evaluate_ablation.py --weights dialogue --n_eval 50
 """
+
 from __future__ import annotations
 
 import json
@@ -20,30 +21,37 @@ import math
 import os
 import sys
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 from neuroplex.resonance import (
-    ResonanceField, ResonanceEnsemble,
+    ResonanceField,
+    ResonanceEnsemble,
 )
 from neuroplex.resonance.translator import batch_align_and_embed
 from scripts.training.utils import (
-    load_domain_tokenizer, load_general_tokenizer,
-    load_dialogue_texts_multi, split_train_eval,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+    load_dialogue_texts_multi,
+    split_train_eval,
 )
 from scripts.training.eval_dialogue import load_neurons_and_weights, load_cross_spec_weights
 from scripts.training.experiment_config import (
-    DEFAULT_DOMAIN as DOMAIN, SFT_ANSWER_MARKER,
+    DEFAULT_DOMAIN as DOMAIN,
+    SFT_ANSWER_MARKER,
 )
 
 DEVICE = "cpu"
 
 
-def compute_ppl_for_logits(logits: torch.Tensor, targets: torch.Tensor,
-                           mask: torch.Tensor) -> tuple:
+def compute_ppl_for_logits(
+    logits: torch.Tensor, targets: torch.Tensor, mask: torch.Tensor
+) -> tuple:
     """计算 shift-CE loss 和 PPL。"""
     shift_logits = logits[:, :-1, :].contiguous()
     shift_targets = targets[:, 1:].contiguous()
@@ -70,11 +78,16 @@ def eval_solo_ppl(neurons, shared_embeddings, eval_texts, domain_sp, general_sp)
         with torch.no_grad():
             for text in eval_texts:
                 emb, targets, mask = batch_align_and_embed(
-                    [text], domain_sp, general_sp, shared_emb,
+                    [text],
+                    domain_sp,
+                    general_sp,
+                    shared_emb,
                 )
                 result = neuron.forward(emb.to(DEVICE), return_logits=True)
                 loss, n_tok = compute_ppl_for_logits(
-                    result["logits"], targets.to(DEVICE), mask.to(DEVICE),
+                    result["logits"],
+                    targets.to(DEVICE),
+                    mask.to(DEVICE),
                 )
                 total_loss += loss
                 total_tokens += n_tok
@@ -84,9 +97,16 @@ def eval_solo_ppl(neurons, shared_embeddings, eval_texts, domain_sp, general_sp)
     return results
 
 
-def eval_ensemble_ppl(neurons, shared_embeddings, eval_texts, domain_sp, general_sp,
-                      fusion_mode: str = "soft", field_conditioning: bool = True,
-                      disable_channels: bool = False) -> float:
+def eval_ensemble_ppl(
+    neurons,
+    shared_embeddings,
+    eval_texts,
+    domain_sp,
+    general_sp,
+    fusion_mode: str = "soft",
+    field_conditioning: bool = True,
+    disable_channels: bool = False,
+) -> float:
     """ensemble 协作 PPL（可配置 fusion_mode / field_conditioning / channels）。"""
     max_field_dim = max(n.config.field_dim for n in neurons.values())
     field = ResonanceField(dim=max_field_dim)
@@ -112,7 +132,10 @@ def eval_ensemble_ppl(neurons, shared_embeddings, eval_texts, domain_sp, general
             targets, mask = None, None
             for nid, shared_emb in shared_embeddings.items():
                 emb, tgt, msk = batch_align_and_embed(
-                    [text], domain_sp, general_sp, shared_emb,
+                    [text],
+                    domain_sp,
+                    general_sp,
+                    shared_emb,
                 )
                 neuron_embeddings[nid] = emb.to(DEVICE)
                 if targets is None:
@@ -138,9 +161,9 @@ def eval_ensemble_ppl(neurons, shared_embeddings, eval_texts, domain_sp, general
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("--weights", default="dialogue",
-                        choices=["dialogue", "cross_spec", "none"])
+    parser.add_argument("--weights", default="dialogue", choices=["dialogue", "cross_spec", "none"])
     parser.add_argument("--n_eval", type=int, default=100, help="评估样本数")
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--output", default=None, help="结果 JSON 输出路径")
@@ -161,12 +184,15 @@ def main():
     domain_sp = load_domain_tokenizer(DOMAIN)
     general_sp = load_general_tokenizer()
     dialogue_dir = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
-        "data", "simple_zh",
+        os.path.dirname(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        ),
+        "data",
+        "simple_zh",
     )
     all_texts = load_dialogue_texts_multi(dialogue_dir, max_texts=args.n_eval * 30)
     _, eval_texts = split_train_eval(all_texts, eval_ratio=0.05)
-    eval_texts = eval_texts[:args.n_eval]
+    eval_texts = eval_texts[: args.n_eval]
     print(f"\n评估集(held-out 5% hash 分桶): {len(eval_texts)} 条对话", flush=True)
 
     results = {}
@@ -175,7 +201,11 @@ def main():
     solo = eval_solo_ppl(neurons, shared_embeddings, eval_texts, domain_sp, general_sp)
     best_solo = min(solo.values())
     ens_soft = eval_ensemble_ppl(
-        neurons, shared_embeddings, eval_texts, domain_sp, general_sp,
+        neurons,
+        shared_embeddings,
+        eval_texts,
+        domain_sp,
+        general_sp,
         fusion_mode="soft",
     )
     results["group1_resonance"] = {
@@ -185,12 +215,19 @@ def main():
         "collab_improves": ens_soft < best_solo,
         "delta_ppl": ens_soft - best_solo,
     }
-    print(f"\n[Group 1 结论] 协作({ens_soft:.1f}) vs 最强个体({best_solo:.1f}) → "
-          f"{'协作更优' if ens_soft < best_solo else '个体更优'} (Δ={ens_soft - best_solo:+.1f})", flush=True)
+    print(
+        f"\n[Group 1 结论] 协作({ens_soft:.1f}) vs 最强个体({best_solo:.1f}) → "
+        f"{'协作更优' if ens_soft < best_solo else '个体更优'} (Δ={ens_soft - best_solo:+.1f})",
+        flush=True,
+    )
 
     # ── Group 2: 融合方式（soft vs consensus）──
     ens_consensus = eval_ensemble_ppl(
-        neurons, shared_embeddings, eval_texts, domain_sp, general_sp,
+        neurons,
+        shared_embeddings,
+        eval_texts,
+        domain_sp,
+        general_sp,
         fusion_mode="consensus",
     )
     results["group2_fusion"] = {
@@ -199,13 +236,21 @@ def main():
         "consensus_better": ens_consensus < ens_soft,
         "delta_ppl": ens_consensus - ens_soft,
     }
-    print(f"[Group 2 结论] consensus({ens_consensus:.1f}) vs soft({ens_soft:.1f}) → "
-          f"{'consensus 更优' if ens_consensus < ens_soft else 'soft 更优'} (Δ={ens_consensus - ens_soft:+.1f})", flush=True)
+    print(
+        f"[Group 2 结论] consensus({ens_consensus:.1f}) vs soft({ens_soft:.1f}) → "
+        f"{'consensus 更优' if ens_consensus < ens_soft else 'soft 更优'} (Δ={ens_consensus - ens_soft:+.1f})",
+        flush=True,
+    )
 
     # ── Group 3: side_channels 贡献（有 vs 无）──
     ens_no_ch = eval_ensemble_ppl(
-        neurons, shared_embeddings, eval_texts, domain_sp, general_sp,
-        fusion_mode="soft", disable_channels=True,
+        neurons,
+        shared_embeddings,
+        eval_texts,
+        domain_sp,
+        general_sp,
+        fusion_mode="soft",
+        disable_channels=True,
     )
     results["group3_side_channels"] = {
         "with_channels": ens_soft,
@@ -213,13 +258,21 @@ def main():
         "channels_help": ens_soft < ens_no_ch,
         "delta_ppl": ens_soft - ens_no_ch,
     }
-    print(f"[Group 3 结论] 有通道({ens_soft:.1f}) vs 无通道({ens_no_ch:.1f}) → "
-          f"{'通道有效' if ens_soft < ens_no_ch else '通道无益'} (Δ={ens_soft - ens_no_ch:+.1f})", flush=True)
+    print(
+        f"[Group 3 结论] 有通道({ens_soft:.1f}) vs 无通道({ens_no_ch:.1f}) → "
+        f"{'通道有效' if ens_soft < ens_no_ch else '通道无益'} (Δ={ens_soft - ens_no_ch:+.1f})",
+        flush=True,
+    )
 
     # ── Group 4: field_conditioning 贡献（有 vs 无）──
     ens_no_field = eval_ensemble_ppl(
-        neurons, shared_embeddings, eval_texts, domain_sp, general_sp,
-        fusion_mode="soft", field_conditioning=False,
+        neurons,
+        shared_embeddings,
+        eval_texts,
+        domain_sp,
+        general_sp,
+        fusion_mode="soft",
+        field_conditioning=False,
     )
     results["group4_field_conditioning"] = {
         "with_field": ens_soft,
@@ -227,8 +280,11 @@ def main():
         "field_helps": ens_soft < ens_no_field,
         "delta_ppl": ens_soft - ens_no_field,
     }
-    print(f"[Group 4 结论] 有场读入({ens_soft:.1f}) vs 无场读入({ens_no_field:.1f}) → "
-          f"{'场调制有效' if ens_soft < ens_no_field else '场调制无益'} (Δ={ens_soft - ens_no_field:+.1f})", flush=True)
+    print(
+        f"[Group 4 结论] 有场读入({ens_soft:.1f}) vs 无场读入({ens_no_field:.1f}) → "
+        f"{'场调制有效' if ens_soft < ens_no_field else '场调制无益'} (Δ={ens_soft - ens_no_field:+.1f})",
+        flush=True,
+    )
 
     # ── 汇总表 ──
     print("\n" + "=" * 70, flush=True)

@@ -1,4 +1,5 @@
 """Check N11 active-environment collapse vs episodic_write_repeats."""
+
 from __future__ import annotations
 
 import sys
@@ -17,13 +18,15 @@ from test_active_environment import (  # noqa: E402
 
 
 def run(repeats: int) -> None:
-    model = Taiji(TaijiConfig(
-        region_sizes=(64, 48),
-        synapse_fan_in=16,
-        motor_fan_in=48,
-        episodic_write_repeats=repeats,
-        seed=7,
-    ))
+    model = Taiji(
+        TaijiConfig(
+            region_sizes=(64, 48),
+            synapse_fan_in=16,
+            motor_fan_in=48,
+            episodic_write_repeats=repeats,
+            seed=7,
+        )
+    )
     environment = BinaryCueEnvironment()
     successes = []
     for trial in range(200):

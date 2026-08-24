@@ -1,10 +1,9 @@
 """
 工作流 API 路由
 """
+
 import logging
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from typing import Optional
 
 from neuroplex.agent_ext.workflow_engine import WorkflowDefinition, WorkflowEngine, WorkflowStore
 
@@ -27,6 +26,7 @@ async def get_workflow(workflow_id: str):
     if not wf:
         raise HTTPException(status_code=404, detail="工作流不存在")
     from dataclasses import asdict
+
     return {"status": "success", "workflow": asdict(wf)}
 
 
@@ -34,7 +34,9 @@ async def get_workflow(workflow_id: str):
 async def create_workflow(data: dict):
     """创建工作流"""
     try:
-        wf = WorkflowDefinition(**{k: v for k, v in data.items() if k in WorkflowDefinition.__dataclass_fields__})
+        wf = WorkflowDefinition(
+            **{k: v for k, v in data.items() if k in WorkflowDefinition.__dataclass_fields__}
+        )
         store.save(wf)
         return {"status": "success", "id": wf.id}
     except Exception as e:
@@ -57,7 +59,8 @@ async def execute_workflow(workflow_id: str):
     try:
         result = engine.execute(wf)
         from dataclasses import asdict
+
         return {"status": "success", "result": asdict(result)}
     except Exception as e:
         logger.error(f"Request failed: {e}")
-        return HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志")

@@ -324,7 +324,7 @@ inh_i ← λ·inh_i + (1−λ)·g·(1/k)·Σ_{j∈N(i)} W_ij·relu(membrane_j �
 
 ## 7. 附录：已废止的 D1 长程稳定性档案（NeuroPlex/PlayEngine）
 
-> 完整判定标准与所有方案讨论见 [BOOTSTRAP_CRITERIA.md](BOOTSTRAP_CRITERIA.md) 第 4 节。本节只记录 v9 修复结论与对 Taiji 主线的隐含信号。
+> 完整判定标准与所有方案讨论见 [BOOTSTRAP_CRITERIA.md](../archive/authored/BOOTSTRAP_CRITERIA.md) 第 4 节。本节只记录 v9 修复结论与对 Taiji 主线的隐含信号。
 
 - **D1 系列目标**：1000 步压力测试下，3 组（dialogue/knowledge/unfamiliar）std ratio ≥ pre × 0.90
 - **v3/v4/v5/v6/v7/v8 演化**：见 BOOTSTRAP_CRITERIA.md

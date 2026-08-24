@@ -9,19 +9,27 @@
 Usage:
     python scripts/training/gen_test_collab.py --ckpt data/neurons/collab_v3_c14b.ckpt.pt
 """
+
 import os
 import sys
 
 os.environ.setdefault("TAIJI_TEST_MODE", "1")
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import torch
 
 GENERAL_DIR = "data/foundation_v1_general"
 DIALOGUE_DIR = "data/neurons"
 DOMAINS = ["code", "math", "zh", "en"]
-DIALOGUE_IDS = ["zh_aug0_dialogue", "zh_aug1_dialogue", "zh_aug2_dialogue",
-                "zh_aug3_dialogue", "zh_std0_dialogue"]
+DIALOGUE_IDS = [
+    "zh_aug0_dialogue",
+    "zh_aug1_dialogue",
+    "zh_aug2_dialogue",
+    "zh_aug3_dialogue",
+    "zh_std0_dialogue",
+]
 MAX_TOKENS = 40
 
 PROMPTS = [
@@ -47,31 +55,51 @@ def sample_token(logits, temperature, top_k):
 
 def main():
     import argparse
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--ckpt", default="data/neurons/collab_v3_c14b.ckpt.pt")
     ap.add_argument("--max-tokens", type=int, default=MAX_TOKENS)
-    ap.add_argument("--solo", default="",
-                    help="单 neuron 生成对比（如 code/math/zh/en/zh_std0_dialogue）——"
-                         "定位生成崩坏层：solo 也差 → 基座问题；solo 好 ensemble 差 → 融合破坏")
-    ap.add_argument("--temperature", type=float, default=0.0,
-                    help="采样温度（0=argmax 贪心；>0 用 top-k 采样，如 0.9）")
+    ap.add_argument(
+        "--solo",
+        default="",
+        help="单 neuron 生成对比（如 code/math/zh/en/zh_std0_dialogue）——"
+        "定位生成崩坏层：solo 也差 → 基座问题；solo 好 ensemble 差 → 融合破坏",
+    )
+    ap.add_argument(
+        "--temperature",
+        type=float,
+        default=0.0,
+        help="采样温度（0=argmax 贪心；>0 用 top-k 采样，如 0.9）",
+    )
     ap.add_argument("--top-k", type=int, default=50)
-    ap.add_argument("--subset", default="all",
-                    help="阵容子集：all=9 neuron / dialogue=旧 5 对话 / general=新 4 / "
-                         "或逗号列表（定位崩坏层对照）")
-    ap.add_argument("--inject", default="side,scale,body,cross",
-                    help="注入 ckpt 哪些分量（逗号列表：side/scale/body/cross/head/lora，"
-                         "用于分解验证破坏源——C16 后 head=quality_head 独立分量，"
-                         "lora=LoRA 尾层增量）")
-    ap.add_argument("--no-lmhead", action="store_true",
-                    help="注入 body 时跳过 lm_head.weight（分解验证：共享头微调是否破坏生成）")
+    ap.add_argument(
+        "--subset",
+        default="all",
+        help="阵容子集：all=9 neuron / dialogue=旧 5 对话 / general=新 4 / "
+        "或逗号列表（定位崩坏层对照）",
+    )
+    ap.add_argument(
+        "--inject",
+        default="side,scale,body,cross",
+        help="注入 ckpt 哪些分量（逗号列表：side/scale/body/cross/head/lora，"
+        "用于分解验证破坏源——C16 后 head=quality_head 独立分量，"
+        "lora=LoRA 尾层增量）",
+    )
+    ap.add_argument(
+        "--no-lmhead",
+        action="store_true",
+        help="注入 body 时跳过 lm_head.weight（分解验证：共享头微调是否破坏生成）",
+    )
     args = ap.parse_args()
 
     from scripts.training.train_cross_domain_collab import (
-        load_neuron, load_shared_lm_head, load_shared_embedding,
+        load_neuron,
+        load_shared_lm_head,
+        load_shared_embedding,
     )
     from scripts.training.utils import (
-        load_general_tokenizer, create_shared_embedding,
+        load_general_tokenizer,
+        create_shared_embedding,
     )
     from neuroplex.resonance.ensemble import ResonanceEnsemble
     from neuroplex.resonance.field import ResonanceField
@@ -106,10 +134,14 @@ def main():
     for nid in DIALOGUE_IDS:
         if nid not in load_ids:
             continue
-        ckp = torch.load(os.path.join(DIALOGUE_DIR, f"neuron_{nid}.pt"),
-                         map_location="cpu", weights_only=False)
-        cfg = ckp["neuron_config"]; cfg.unified_field_dim = None
-        n = __import__("neuroplex.resonance.neuron", fromlist=["ResonanceNeuron"]).ResonanceNeuron(cfg)
+        ckp = torch.load(
+            os.path.join(DIALOGUE_DIR, f"neuron_{nid}.pt"), map_location="cpu", weights_only=False
+        )
+        cfg = ckp["neuron_config"]
+        cfg.unified_field_dim = None
+        n = __import__("neuroplex.resonance.neuron", fromlist=["ResonanceNeuron"]).ResonanceNeuron(
+            cfg
+        )
         n.load_state_dict(ckp["state_dict"], strict=False)
         neurons[nid] = n
         emb = create_shared_embedding("cpu")
@@ -241,11 +273,20 @@ def main():
                 if logits.shape[-1] != 256000:  # 旧 5 转译到 general
                     from neuroplex.resonance.translator import build_logits_alignment_matrix
                     from scripts.training.utils import load_domain_tokenizer
+
                     src_sp = load_domain_tokenizer("zh")
-                    m = build_logits_alignment_matrix(src_sp, general_sp, "zh", "general",
-                                                      cache={}, source_vocab_size=logits.shape[-1])
+                    m = build_logits_alignment_matrix(
+                        src_sp,
+                        general_sp,
+                        "zh",
+                        "general",
+                        cache={},
+                        source_vocab_size=logits.shape[-1],
+                    )
                     b, l, vi = logits.shape
-                    logits = torch.sparse.mm(logits.reshape(-1, vi), m.to(logits.dtype)).reshape(b, l, 256000)
+                    logits = torch.sparse.mm(logits.reshape(-1, vi), m.to(logits.dtype)).reshape(
+                        b, l, 256000
+                    )
                 nxt = sample_token(logits[0, -1], args.temperature, args.top_k)
                 cur.append(nxt)
                 if general_sp.IdToPiece(nxt) in ("</s>", "<s>", "<unk>"):
@@ -260,11 +301,17 @@ def main():
         cur, r = generate(prompt)
         if cur is None:
             print(f"\n── [{tag}] {prompt}")
-            print(f"    融合失败: fusion_mode={r.get('fusion_mode')}, error={r.get('fusion_error')}")
+            print(
+                f"    融合失败: fusion_mode={r.get('fusion_mode')}, error={r.get('fusion_error')}"
+            )
             continue
         out = general_sp.DecodeIds(cur)
         weights = r.get("weights", [])
-        w_str = ", ".join(f"{k}={w:.2f}" for k, w in zip(list(neurons.keys()), weights)) if weights else "N/A"
+        w_str = (
+            ", ".join(f"{k}={w:.2f}" for k, w in zip(list(neurons.keys()), weights))
+            if weights
+            else "N/A"
+        )
         print(f"\n── [{tag}] prompt: {prompt}")
         print(f"    → {out}")
         print(f"    路由权重: {w_str}")

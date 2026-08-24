@@ -17,6 +17,7 @@ Usage:
     gate = geo.distance_gate("zh_1", "zh_2")  # → ~0.92 (同域近邻)
     gate = geo.distance_gate("zh_1", "en_1")  # → ~0.04 (跨域远邻)
 """
+
 from __future__ import annotations
 
 import math
@@ -78,7 +79,7 @@ class NeuronGeometry:
             else:
                 # 多个域：均匀分布在球面上（用 Fibonacci sphere 近似）
                 phi = math.acos(1 - 2 * (i + 0.5) / n_domains)
-                theta = math.pi * (1 + 5 ** 0.5) * i
+                theta = math.pi * (1 + 5**0.5) * i
                 center = torch.zeros(self.embedding_dim)
                 center[0] = inter_domain_radius * math.sin(phi) * math.cos(theta)
                 center[1] = inter_domain_radius * math.sin(phi) * math.sin(theta)
@@ -122,15 +123,13 @@ class NeuronGeometry:
         if nid_a not in self.positions or nid_b not in self.positions:
             return 0.01
         dist = self.distance(nid_a, nid_b)
-        return math.exp(-(dist ** 2) / (2 * self.sigma ** 2))
+        return math.exp(-(dist**2) / (2 * self.sigma**2))
 
-    def batch_distance_gates(
-        self, nids: List[str]
-    ) -> Dict[Tuple[str, str], float]:
+    def batch_distance_gates(self, nids: List[str]) -> Dict[Tuple[str, str], float]:
         """批量计算所有 pair 的距离门控。"""
         gates = {}
         for i, ni in enumerate(nids):
-            for j, nj in enumerate(nids[i + 1:], i + 1):
+            for j, nj in enumerate(nids[i + 1 :], i + 1):
                 gates[(ni, nj)] = self.distance_gate(ni, nj)
         return gates
 

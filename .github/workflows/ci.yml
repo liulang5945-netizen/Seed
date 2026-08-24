@@ -29,34 +29,69 @@ jobs:
         # FastAPI 可选依赖：python-multipart（form/File）—— test_api_health 触发 Form 中间件
         # 另带 pydantic+anyio（FastAPI 内部用）确保类型解析工作正常
         # tomli 仅 3.10 需要：tomllib 自 3.11 才进标准库，环境标记让 3.12 自动跳过
-        run: pip install sentencepiece pytest httpx fastapi python-multipart pydantic anyio "tomli>=2.0.0; python_version < '3.11'"
+        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio ruff black mypy pip-audit "tomli>=2.0.0; python_version < '3.11'"
 
       - name: Install package (editable)
         run: pip install -e . --no-deps
 
+      - name: Check version consistency
+        run: python scripts/sync_version.py --check
+
+      - name: Lint with ruff
+        run: ruff check .
+
+      # F08: import 排序（I）与 pyupgrade（UP）现代化规则追踪。
+      # 存量 ~1886 处，尚不适合阻断；以 advisory 模式跟踪，待逐步清理至可控后转 blocking。
+      # 本地可用 `ruff check . --select I,UP --fix` 批量修复可自动修复项。
+      - name: Track import-sorting / pyupgrade debt (advisory)
+        run: ruff check . --select I,UP --statistics
+        continue-on-error: true
+
+      - name: Format check with black
+        run: black --check .
+
+      # F03: mypy 静态类型检查（advisory 模式，待存量错误清理后改 blocking）
+      - name: Type check with mypy
+        run: mypy seed taiji neuroplex api
+        continue-on-error: true
+
+      # F10: 依赖 CVE 扫描（advisory 模式，报告已知漏洞）
+      - name: Audit dependencies for known CVEs
+        run: pip-audit --desc
+        continue-on-error: true
+
+      # F11: 每个 verify 脚本统一输出 VERIFY_RESULT 行（{name, status, metrics, checks}），
+      # 并将完整报告写入 reports/ci_verify/，最后作为 artifact 归档以便趋势分析。
       - name: Verify native Taiji end to end
-        run: python -X utf8 -u scripts/training/verify_taiji_native_v7.py
+        run: python -X utf8 -u scripts/training/verify_taiji_native_v7.py --output reports/ci_verify/taiji_native_v7.json
 
       - name: Verify second-order context causality
-        run: python -X utf8 -u scripts/training/verify_taiji_n7_context.py
+        run: python -X utf8 -u scripts/training/verify_taiji_n7_context.py --output reports/ci_verify/taiji_n7_context.json
 
       - name: Verify delayed trace causality
-        run: python -X utf8 -u scripts/training/verify_taiji_n8_delayed_trace.py
+        run: python -X utf8 -u scripts/training/verify_taiji_n8_delayed_trace.py --output reports/ci_verify/taiji_n8_delayed_trace.json
 
       - name: Verify long free-running stability
-        run: python -X utf8 -u scripts/training/verify_taiji_n9_long_free_run.py
+        run: python -X utf8 -u scripts/training/verify_taiji_n9_long_free_run.py --output reports/ci_verify/taiji_n9_long_free_run.json
 
       - name: Verify sparse-kernel migration
-        run: python -X utf8 -u scripts/training/verify_taiji_n10_sparse_migration.py
+        run: python -X utf8 -u scripts/training/verify_taiji_n10_sparse_migration.py --output reports/ci_verify/taiji_n10_sparse_migration.json
 
       - name: Verify active environment learning
-        run: python -X utf8 -u scripts/training/verify_taiji_n11_active_environment.py
+        run: python -X utf8 -u scripts/training/verify_taiji_n11_active_environment.py --output reports/ci_verify/taiji_n11_active_environment.json
 
       - name: Verify native episodic field
-        run: python -X utf8 -u scripts/training/verify_taiji_m5_episodic_field.py
+        run: python -X utf8 -u scripts/training/verify_taiji_m5_episodic_field.py --output reports/ci_verify/taiji_m5_episodic_field.json
 
       - name: Verify endogenous replay consolidation
-        run: python -X utf8 -u scripts/training/verify_taiji_m6_endogenous_replay.py
+        run: python -X utf8 -u scripts/training/verify_taiji_m6_endogenous_replay.py --output reports/ci_verify/taiji_m6_endogenous_replay.json
+
+      - name: Upload verify reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-reports-${{ matrix.python-version }}
+          path: reports/ci_verify/
 
       - name: Run native architecture contracts
         run: python -m pytest tests/taiji_native -q
@@ -66,4 +101,87 @@ jobs:
 
       - name: Run complete regression suite
         # Legacy real-checkpoint tests skip when local artifacts are absent.
-        run: python -m pytest tests/ -q
+        run: python -m pytest tests/ -q --cov --junitxml=report.xml --cov-report=xml:coverage.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.python-version }}
+          path: |
+            report.xml
+            coverage.xml
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      # F01: ESLint blocking 门禁——错误会阻断合并，警告暂不阻断（当前 0 errors / ~210 warnings）
+      - name: Lint frontend
+        working-directory: frontend
+        run: npx eslint src --ext .js,.vue
+
+      - name: Run frontend tests
+        working-directory: frontend
+        run: npx vitest run
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+      - name: Verify build output
+        run: |
+          test -f frontend/dist/index.html || (echo "dist/index.html missing" && exit 1)
+          echo "Frontend build OK"
+
+  test-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install torch (CPU)
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install test dependencies
+        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio "tomli>=2.0.0; python_version < '3.11'"
+
+      - name: Install package (editable)
+        run: pip install -e . --no-deps
+
+      # F07: Windows 核心测试 + 覆盖率 + JUnit 报告，便于跨平台对比
+      - name: Run core tests on Windows
+        run: python -m pytest tests/taiji_native tests/seed -q --cov --junitxml=report-win.xml --cov-report=xml:coverage-win.xml
+
+      - name: Upload Windows test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-windows
+          path: |
+            report-win.xml
+            coverage-win.xml
+
+      # F05: 桌面构建配置轻量验证——编译检查 seed.spec / build.py / release.py，
+      # 及时发现语法或导入破坏，避免本地打包时才暴露（完整 PyInstaller 构建较重，不入 PR 门禁）
+      - name: Validate desktop build configuration
+        run: |
+          python -c "import py_compile; py_compile.compile('desktop/build.py', doraise=True)"
+          python -c "import py_compile; py_compile.compile('scripts/release.py', doraise=True)"
+          python -c "import ast; ast.parse(open('desktop/seed.spec', encoding='utf-8').read()); print('seed.spec: syntax OK')"

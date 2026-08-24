@@ -7,6 +7,7 @@ and instantiable without side effects.
 The real implementation will generate images / audio / video and
 describe images via the multimodal ensemble.
 """
+
 import logging
 
 logger = logging.getLogger(__name__)

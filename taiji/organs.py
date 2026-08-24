@@ -64,9 +64,9 @@ class SparseReceptorBank:
         order = torch.randperm(self.in_features, generator=generator)
         channel = torch.empty(self.in_features, dtype=torch.long)
         channel[order] = torch.arange(self.in_features) % self.out_features
-        polarity = (
-            torch.randint(0, 2, (self.in_features,), generator=generator) * 2 - 1
-        ).to(torch.float32)
+        polarity = (torch.randint(0, 2, (self.in_features,), generator=generator) * 2 - 1).to(
+            torch.float32
+        )
         counts = torch.bincount(channel, minlength=self.out_features).to(torch.float32)
 
         self.channel = channel.to(self.device)
@@ -110,9 +110,7 @@ class SparseReceptorBank:
         if actual != expected:
             raise ValueError("receptor payload does not match architecture")
         channel = payload["channel"].detach().to(self.device, dtype=torch.long)
-        polarity = payload["polarity"].detach().to(
-            self.device, dtype=torch.float32
-        )
+        polarity = payload["polarity"].detach().to(self.device, dtype=torch.float32)
         if not torch.equal(channel, self.channel):
             raise ValueError("receptor channel map does not match architecture")
         if not torch.equal(polarity, self.polarity):
@@ -201,9 +199,7 @@ class ByteMotor:
         modulation = reward - self.reward_baseline
         target = torch.zeros(self.config.alphabet_size, device=self.device)
         target[int(action_symbol)] = 1.0
-        error = modulation * (
-            target - policy_probabilities.to(self.device)
-        )
+        error = modulation * (target - policy_probabilities.to(self.device))
         self._apply_error(context, error)
         self.reward_baseline += self.config.reward_baseline_rate * modulation
         self.reward_updates += 1

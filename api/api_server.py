@@ -15,5 +15,3 @@
 请使用 `from api.app import app` 导入应用实例。
 此文件仅保留用于兼容旧版导入（如 run_app.py 中的 `from api.api_server import app`）。
 """
-from api.app import app
-from api.app import get_startup_download_progress

@@ -10,6 +10,7 @@ that is actually reached by the assembled production path.
 Example:
     python -u scripts/training/diag_runtime_mechanism_trace.py --max-tokens 1
 """
+
 from __future__ import annotations
 
 import argparse
@@ -29,7 +30,6 @@ from neuroplex.resonance.field import ResonanceField
 from neuroplex.resonance.neuron import ResonanceNeuron
 from neuroplex.resonance.ensemble import ResonanceEnsemble
 from neuroplex.resonance.dialogue_format import build_dialogue_prompt
-
 
 DEFAULT_PROMPT = "请用一句话说明你现在的任务。"
 DEFAULT_REPORT = "reports/runtime_mechanism_trace_20260820.json"
@@ -83,9 +83,7 @@ def _install_trace(events: Dict[str, list]):
                 "field_state_present": field_state is not None,
                 "side_signal_count": len(side_signals or {}),
                 "output_keys": sorted(result.keys()) if isinstance(result, dict) else [],
-                "has_resonance_score": (
-                    isinstance(result, dict) and "resonance_score" in result
-                ),
+                "has_resonance_score": (isinstance(result, dict) and "resonance_score" in result),
                 "has_last_field_state": hasattr(self, "_last_field_state"),
             },
         )
@@ -256,14 +254,19 @@ def _trace_one(cortex, modules: dict, prompt: str, max_tokens: int) -> dict:
     play_preconditions = {
         "module_present": play_engine is not None,
         "cortex_set": bool(getattr(play_engine, "_cortex", None)) if play_engine else False,
-        "neuron_count": len(getattr(getattr(play_engine, "_cortex", None), "neurons", {}))
-        if play_engine else 0,
-        "tokenizer_hub_present": bool(
-            getattr(getattr(play_engine, "_cortex", None), "_tokenizer_hub", None)
-        ) if play_engine else False,
-        "shared_embedding_present": bool(
-            getattr(getattr(play_engine, "_cortex", None), "_shared_embedding", None)
-        ) if play_engine else False,
+        "neuron_count": (
+            len(getattr(getattr(play_engine, "_cortex", None), "neurons", {})) if play_engine else 0
+        ),
+        "tokenizer_hub_present": (
+            bool(getattr(getattr(play_engine, "_cortex", None), "_tokenizer_hub", None))
+            if play_engine
+            else False
+        ),
+        "shared_embedding_present": (
+            bool(getattr(getattr(play_engine, "_cortex", None), "_shared_embedding", None))
+            if play_engine
+            else False
+        ),
     }
     play_probe = {}
     if play_engine is not None and play_engine._cortex is not None:
@@ -283,7 +286,9 @@ def _trace_one(cortex, modules: dict, prompt: str, max_tokens: int) -> dict:
         if shared is not None and play_probe.get("en_encode", {}).get("length", 0):
             try:
                 ids = hub.encode(topic, domain="en")
-                emb = shared(torch.tensor([ids[:128]], dtype=torch.long, device=shared.weight.device))
+                emb = shared(
+                    torch.tensor([ids[:128]], dtype=torch.long, device=shared.weight.device)
+                )
                 play_probe["shared_embedding_probe"] = {"shape": list(emb.shape)}
             except Exception as exc:
                 play_probe["shared_embedding_probe_error"] = f"{type(exc).__name__}: {exc}"
@@ -305,11 +310,13 @@ def _trace_one(cortex, modules: dict, prompt: str, max_tokens: int) -> dict:
                         play_line_trace.append(frame.f_lineno)
                     if frame.f_code.co_name == "_free_resonance_session" and event == "exception":
                         exc_type, exc_value, _ = arg
-                        play_line_trace.append({
-                            "exception_type": exc_type.__name__,
-                            "exception": str(exc_value),
-                            "line": frame.f_lineno,
-                        })
+                        play_line_trace.append(
+                            {
+                                "exception_type": exc_type.__name__,
+                                "exception": str(exc_value),
+                                "line": frame.f_lineno,
+                            }
+                        )
                     return _trace_play
                 return _trace_play
 
@@ -354,7 +361,8 @@ def _trace_one(cortex, modules: dict, prompt: str, max_tokens: int) -> dict:
         },
         "neuron_round_histogram": {
             f"round={round_num}": sum(
-                count for (nid, round_value), count in neuron_rounds.items()
+                count
+                for (nid, round_value), count in neuron_rounds.items()
                 if round_value == round_num
             )
             for round_num in sorted({round_value for _, round_value in neuron_rounds})

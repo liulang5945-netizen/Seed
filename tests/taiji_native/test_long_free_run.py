@@ -4,12 +4,14 @@ from taiji import Taiji, TaijiConfig
 
 
 def test_learned_cycle_remains_exact_and_bounded_for_128_free_steps() -> None:
-    model = Taiji(TaijiConfig(
-        region_sizes=(64, 48),
-        synapse_fan_in=16,
-        motor_fan_in=48,
-        seed=7,
-    ))
+    model = Taiji(
+        TaijiConfig(
+            region_sizes=(64, 48),
+            synapse_fan_in=16,
+            motor_fan_in=48,
+            seed=7,
+        )
+    )
     # N9 is an explicitly cyclic stream. A terminal boundary would teach the
     # fourth ``d`` to stop, which contradicts the free-running target.
     model.learn_bytes(b"abcd" * 4, epochs=200, include_boundary=False)

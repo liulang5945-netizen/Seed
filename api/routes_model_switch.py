@@ -7,21 +7,46 @@ switch_model(model_type="cortex") 重载 Cortex；model_type="seed" 激活原生
 from __future__ import annotations
 
 import gc
+import json
 import logging
-import os
 import threading
+import time
+from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter
 
 from neuroplex.core.app_state import app_state
-from neuroplex.core.utils import get_external_path
 
 logger = logging.getLogger("ApiServer.ModelSwitch")
 router = APIRouter()
 
 _switch_lock = threading.Lock()
 _switch_thread: threading.Thread | None = None
+
+# 运行环境选择持久化：公测用户期望重启后仍保持所选认知主体。
+_RUNTIME_PREF_PATH = Path(__file__).resolve().parents[1] / "data" / "runtime_preference.json"
+
+
+def _save_runtime_pref(runtime: str, checkpoint: str = "") -> None:
+    try:
+        _RUNTIME_PREF_PATH.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "runtime": runtime,
+            "checkpoint": checkpoint,
+            "saved_at_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        }
+        _RUNTIME_PREF_PATH.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    except Exception as exc:
+        logger.warning(f"Failed to persist runtime preference: {exc}")
+
+
+def load_runtime_pref() -> dict:
+    """读取上次运行环境选择；无文件或损坏时返回空字典（默认 Cortex）。"""
+    try:
+        return json.loads(_RUNTIME_PREF_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
 
 
 @router.post("/api/system/reload_model")
@@ -71,9 +96,13 @@ def switch_model(req: dict[str, Any]) -> dict[str, Any]:
             try:
                 result = _do_switch_model(async_mode=True)
                 if result.get("status") == "ok":
-                    app_state.update_switch_status("success", result.get("message", "Cortex reload complete"))
+                    app_state.update_switch_status(
+                        "success", result.get("message", "Cortex reload complete")
+                    )
                 else:
-                    app_state.update_switch_status("error", "", result.get("message", "Cortex reload failed"))
+                    app_state.update_switch_status(
+                        "error", "", result.get("message", "Cortex reload failed")
+                    )
             except Exception as exc:
                 logger.exception("Async Cortex reload failed")
                 app_state.mark_startup_failed(str(exc))
@@ -111,6 +140,10 @@ def _switch_to_seed(req: dict[str, Any]) -> dict[str, Any]:
     try:
         runtime = activate_seed(req.get("checkpoint"))
         app_state.update_switch_status("success", f"Seed runtime active ({runtime.name})")
+        _save_runtime_pref(
+            "seed",
+            runtime.checkpoint_path.name if runtime.checkpoint_path else "",
+        )
         return {
             "status": "ok",
             "message": f"Seed runtime active: {runtime.name}",
@@ -144,6 +177,7 @@ def _do_switch_model(*, async_mode: bool = False) -> dict[str, Any]:
 
         # 切回 Cortex 主路径：Seed 运行时与 Cortex 互斥，先卸载。
         from api.seed_runtime import deactivate_seed
+
         deactivate_seed()
 
         app_state.unload_model()
@@ -153,12 +187,17 @@ def _do_switch_model(*, async_mode: bool = False) -> dict[str, Any]:
             app_state.update_switch_status("switching", "Loading Cortex neuron architecture...")
 
         from neuroplex.core.model_loader import load_model_on_startup
+
         load_model_on_startup()
 
         if app_state.startup_error:
-            return {"status": "error", "message": f"Cortex reload failed: {app_state.startup_error}"}
+            return {
+                "status": "error",
+                "message": f"Cortex reload failed: {app_state.startup_error}",
+            }
 
-        n_neurons = len(getattr(app_state.model, 'neurons', {}))
+        n_neurons = len(getattr(app_state.model, "neurons", {}))
+        _save_runtime_pref("cortex")
         return {
             "status": "ok",
             "message": f"Cortex reload complete: {n_neurons} neurons",

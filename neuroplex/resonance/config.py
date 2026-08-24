@@ -7,7 +7,7 @@ smaller local budget; it is never selected as the default production spec.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Literal, Optional
 
 
@@ -157,7 +157,6 @@ class NeuronConfig:
         """Rough parameter count in millions (transformer body + field projections)."""
         d = self.hidden_size
         n = self.num_hidden_layers
-        h = self.num_attention_heads
         # Per-layer: 4*(d^2) for Q/K/V/O (GQA saves on K/V) + 3*(d*intermediate) for SwiGLU
         kv_ratio = self.num_key_value_heads / self.num_attention_heads
         attn_params = d * d * (2 + 2 * kv_ratio)  # Q(1) + K(kv_ratio) + V(kv_ratio) + O(1)
@@ -209,7 +208,7 @@ FOUNDATION = NeuronConfig(
     num_attention_heads=6,
     num_key_value_heads=2,
     intermediate_size=1152,
-    spec='foundation',
+    spec="foundation",
     # H9: unified field_dim=4096 across all v3 neurons.
     field_dim=4096,
 )
@@ -302,12 +301,12 @@ def get_default_neuron_config(spec: str = None) -> "NeuronConfig":
     }
     if spec not in spec_map:
         raise ValueError(
-            f"未知 spec: {spec}. 可选: {list(spec_map.keys())}. "
-            f"默认: {DEFAULT_NEURON_SPEC}"
+            f"未知 spec: {spec}. 可选: {list(spec_map.keys())}. " f"默认: {DEFAULT_NEURON_SPEC}"
         )
     # 返回独立副本，避免修改全局常量
     base = spec_map[spec]
     from dataclasses import replace
+
     return replace(base)
 
 
@@ -322,9 +321,7 @@ def get_domain_neuron_config(domain: str, spec: str = None) -> "NeuronConfig":
         NeuronConfig 实例，vocab_size 已设置为域 tokenizer 大小
     """
     if domain not in DOMAIN_VOCAB_SIZES:
-        raise ValueError(
-            f"未知 domain: {domain}. 可选: {list(DOMAIN_VOCAB_SIZES.keys())}"
-        )
+        raise ValueError(f"未知 domain: {domain}. 可选: {list(DOMAIN_VOCAB_SIZES.keys())}")
     cfg = get_default_neuron_config(spec)
     cfg.vocab_size = DOMAIN_VOCAB_SIZES[domain]
     cfg.neuron_id = domain

@@ -48,9 +48,7 @@ def measure(model: Seed, items: list[bytes], *, use_memory: bool = True) -> floa
         count = 0
         previous = None
         for symbol in substrate.sensor.symbols(text, include_boundary=True):
-            step = substrate.observe(
-                int(symbol), learn=False, use_memory=use_memory
-            )
+            step = substrate.observe(int(symbol), learn=False, use_memory=use_memory)
             if step.surprise is not None:
                 surprise_sum += step.surprise
                 count += 1

@@ -3,6 +3,7 @@
 Usage:
     python scripts/training/verify_cortex_reload.py
 """
+
 from __future__ import annotations
 
 import os
@@ -22,11 +23,13 @@ def main():
     # Step 1: 首次加载 Cortex
     print("\n=== Step 1: Initial Cortex load ===")
     from taiji.core.model_loader import load_model_on_startup
+
     load_model_on_startup()
 
     from taiji.core.app_state import app_state
+
     assert app_state.model is not None
-    assert type(app_state.model).__name__ == 'Cortex'
+    assert type(app_state.model).__name__ == "Cortex"
     n1 = len(app_state.model.neurons)
     print(f"  Initial: {n1} neurons, is_taiji={app_state.is_taiji()}")
 
@@ -53,7 +56,7 @@ def main():
     # Step 3: 验证 app_state 状态
     print("\n=== Step 3: Verify app_state after reload ===")
     assert app_state.model is not None
-    assert type(app_state.model).__name__ == 'Cortex'
+    assert type(app_state.model).__name__ == "Cortex"
     n3 = len(app_state.model.neurons)
     print(f"  After reload: {n3} neurons, is_taiji={app_state.is_taiji()}")
     assert n3 == n1, f"neuron count changed: {n1} -> {n3}"

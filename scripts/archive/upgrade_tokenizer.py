@@ -49,7 +49,10 @@ TRAIN_KWARGS = dict(
     normalization_rule_name="identity",
     add_dummy_prefix=True,
     remove_extra_whitespaces=False,
-    pad_id=0, unk_id=1, bos_id=2, eos_id=3,
+    pad_id=0,
+    unk_id=1,
+    bos_id=2,
+    eos_id=3,
     split_digits=True,
     split_by_whitespace=True,
     split_by_unicode_script=True,
@@ -96,6 +99,7 @@ def sample_corpus(max_lines: int, min_len: int = 10) -> list[str]:
     # 对话语料：全量 + 重复 3 次（占比 ~15%）
     if DIALOGUE_PATH.exists():
         import json
+
         n_dialog = 0
         for _rep in range(3):
             with open(DIALOGUE_PATH, encoding="utf-8") as f:
@@ -129,13 +133,12 @@ def backup_old_model() -> None:
 
 def train_tokenizer(texts: list[str], vocab_size: int) -> spm.SentencePieceProcessor:
     """用采样语料训练新 tokenizer。"""
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False,
-                                     encoding="utf-8") as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False, encoding="utf-8") as f:
         for t in texts:
             f.write(t + "\n")
         corpus_path = f.name
 
-    model_prefix = str(MODEL_PATH)[:-len(".model")]
+    model_prefix = str(MODEL_PATH)[: -len(".model")]
     DOMAIN_DIR.mkdir(parents=True, exist_ok=True)
 
     spm.SentencePieceTrainer.train(
@@ -164,11 +167,13 @@ def diagnose(old_sp, new_sp) -> None:
         new_ids = new_sp.encode(text)
         total_old += len(old_ids)
         total_new += len(new_ids)
-        print(f"  \"{text[:30]}...\"")
+        print(f'  "{text[:30]}..."')
         print(f"    旧: {len(old_ids)} tokens | 新: {len(new_ids)} tokens")
         print(f"    新 pieces: {' | '.join(new_sp.encode(text, out_type=str)[:15])}")
-    print(f"\n  平均 token 数: 旧 {total_old/len(test_cases):.1f} → 新 {total_new/len(test_cases):.1f}"
-          f"（压缩率 {total_new/total_old:.2f}×）")
+    print(
+        f"\n  平均 token 数: 旧 {total_old/len(test_cases):.1f} → 新 {total_new/len(test_cases):.1f}"
+        f"（压缩率 {total_new/total_old:.2f}×）"
+    )
 
     # 覆盖率粗查：用新语料 10K 行统计 unk 频率（旧 tokenizer 无 byte_fallback 统计）
     unk_id = old_sp.unk_id()
@@ -184,7 +189,9 @@ def diagnose(old_sp, new_sp) -> None:
             ids = new_sp.encode(text)
             new_unk += sum(1 for x in ids if x == unk_id)
             n_new_tokens += len(ids)
-    print(f"  新 tokenizer unk 率（10K 行采样）: {new_unk}/{n_new_tokens} = {new_unk/max(n_new_tokens,1)*100:.3f}%")
+    print(
+        f"  新 tokenizer unk 率（10K 行采样）: {new_unk}/{n_new_tokens} = {new_unk/max(n_new_tokens,1)*100:.3f}%"
+    )
 
 
 def main():

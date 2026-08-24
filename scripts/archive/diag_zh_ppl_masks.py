@@ -30,7 +30,11 @@ from taiji.resonance import ResonanceNeuron  # noqa: E402
 from scripts.training.utils import load_general_tokenizer  # noqa: E402
 from scripts.training.train_cross_domain_collab import load_tokenizer_for_vocab  # noqa: E402
 from scripts.archive.train_domain_target_sft import (  # noqa: E402
-    build_sample, build_batch, load_sft, DOMAIN_VOCAB, SEQ_LEN,
+    build_sample,
+    build_batch,
+    load_sft,
+    DOMAIN_VOCAB,
+    SEQ_LEN,
 )
 
 NEURON_DIR = "data/foundation_v1_dual"
@@ -39,8 +43,9 @@ N_EVAL = 60
 
 
 def load_model():
-    ck = torch.load(os.path.join(NEURON_DIR, f"neuron_{DOMAIN}.pt"),
-                    map_location="cpu", weights_only=False)
+    ck = torch.load(
+        os.path.join(NEURON_DIR, f"neuron_{DOMAIN}.pt"), map_location="cpu", weights_only=False
+    )
     cfg = ck["neuron_config"]
     cfg.unified_field_dim = None
     neuron = ResonanceNeuron(cfg)
@@ -63,9 +68,12 @@ def ppl_by_mask(logits, targets, sft_mask):
     shift_targets = shift_targets.clamp(0, vocab_size - 1)
     shift_targets = shift_targets.clone()
     shift_targets[~shift_sft] = -100
-    loss = F.cross_entropy(shift_logits.view(-1, vocab_size),
-                           shift_targets.view(-1), ignore_index=-100,
-                           reduction="sum")
+    loss = F.cross_entropy(
+        shift_logits.view(-1, vocab_size),
+        shift_targets.view(-1),
+        ignore_index=-100,
+        reduction="sum",
+    )
     n = shift_sft.sum().item()
     return loss.item(), n
 
@@ -77,9 +85,11 @@ def main():
     print("=" * 60, flush=True)
 
     neuron, shared_emb, ck = load_model()
-    print(f"  neuron: {sum(p.numel() for p in neuron.parameters())/1e6:.1f}M, "
-          f"hidden={neuron.config.hidden_size}, vocab={neuron.config.vocab_size}",
-          flush=True)
+    print(
+        f"  neuron: {sum(p.numel() for p in neuron.parameters())/1e6:.1f}M, "
+        f"hidden={neuron.config.hidden_size}, vocab={neuron.config.vocab_size}",
+        flush=True,
+    )
     print(f"  ckpt best_ppl: {ck.get('result')}", flush=True)
 
     domain_sp = load_tokenizer_for_vocab(DOMAIN, DOMAIN_VOCAB[DOMAIN])
@@ -102,17 +112,19 @@ def main():
         random.shuffle(v)
 
     with torch.no_grad():
-        for label, bp in [("全序列(培养期口径)", pairs),
-                          ("短answer", buckets["short(<=60)"][:30]),
-                          ("中answer", buckets["mid(61-200)"][:30]),
-                          ("长answer", buckets["long(>200)"][:30])]:
+        for label, bp in [
+            ("全序列(培养期口径)", pairs),
+            ("短answer", buckets["short(<=60)"][:30]),
+            ("中answer", buckets["mid(61-200)"][:30]),
+            ("长answer", buckets["long(>200)"][:30]),
+        ]:
             if not bp:
                 continue
             tot_full, n_full = 0.0, 0
             tot_ans, n_ans = 0.0, 0
             tot_prompt, n_prompt = 0.0, 0
             for i in range(0, len(bp), 8):
-                batch = bp[i:i + 8]
+                batch = bp[i : i + 8]
                 emb, y, m, sm, g_ids = build_batch(batch, domain_sp, general_sp, shared_emb)
                 r = neuron.forward(emb, return_logits=True)
                 lg = r["logits"]
@@ -122,8 +134,9 @@ def main():
                 m_s = m[:, 1:].contiguous()
                 y_s = y_s.clamp(0, lg.size(-1) - 1)
                 y_s[~m_s] = -100
-                loss = F.cross_entropy(lg_s.view(-1, lg.size(-1)), y_s.view(-1),
-                                       ignore_index=-100, reduction="sum")
+                loss = F.cross_entropy(
+                    lg_s.view(-1, lg.size(-1)), y_s.view(-1), ignore_index=-100, reduction="sum"
+                )
                 tot_full += loss.item()
                 n_full += m_s.sum().item()
                 # answer-masked（C24 口径）
@@ -141,8 +154,14 @@ def main():
             prompt_ppl = math.exp(min(tot_prompt / max(n_prompt, 1), 20))
             print(f"\n[{label}] n={len(bp)}", flush=True)
             print(f"  全序列 PPL = {full_ppl:8.1f} (loss {tot_full/max(n_full,1):.4f})", flush=True)
-            print(f"  answer PPL = {ans_ppl:8.1f} (loss {tot_ans/max(n_ans,1):.4f})  ← C24 口径", flush=True)
-            print(f"  prompt PPL = {prompt_ppl:8.1f} (loss {tot_prompt/max(n_prompt,1):.4f})", flush=True)
+            print(
+                f"  answer PPL = {ans_ppl:8.1f} (loss {tot_ans/max(n_ans,1):.4f})  ← C24 口径",
+                flush=True,
+            )
+            print(
+                f"  prompt PPL = {prompt_ppl:8.1f} (loss {tot_prompt/max(n_prompt,1):.4f})",
+                flush=True,
+            )
 
 
 if __name__ == "__main__":

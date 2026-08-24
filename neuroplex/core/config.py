@@ -10,12 +10,16 @@
 
 此模块是对 API 层依赖的补齐实现；taiji-neuron 核心训练（resonance）不依赖本模块。
 """
+
 from __future__ import annotations
 
 import os
 import sys
 from dataclasses import dataclass, field
-from typing import Any, List, Optional
+from typing import List, Optional
+import logging
+
+logger = logging.getLogger(__name__)
 
 # 模型加载超时（秒）
 MODEL_LOAD_TIMEOUT = 600
@@ -79,10 +83,10 @@ class TrainingConfig:
     api/training/common.py 的实际引用。
     """
 
-    device: str = "auto"            # auto / cuda / mps / cpu
-    model_name: str = ""            # 模型名称或路径
-    model_type: str = "self"        # self（Legacy NeuroPlex 原生单一模型类型）
-    cache_dir: str = ""             # 缓存目录
+    device: str = "auto"  # auto / cuda / mps / cpu
+    model_name: str = ""  # 模型名称或路径
+    model_type: str = "self"  # self（Legacy NeuroPlex 原生单一模型类型）
+    cache_dir: str = ""  # 缓存目录
     resume_from_checkpoint: str = ""  # checkpoint 路径
     load_in_4bit: bool = False
     load_in_8bit: bool = False
@@ -100,6 +104,7 @@ class TrainingConfig:
     def resolve_device(self) -> str:
         """自动判断最优运算设备（cuda > mps > cpu）。"""
         from neuroplex.core.hardware import resolve_device
+
         return resolve_device(self)
 
     @staticmethod
@@ -107,10 +112,11 @@ class TrainingConfig:
         """获取系统总内存（GB），失败时保守回退 16GB。"""
         try:
             import psutil
-            return round(psutil.virtual_memory().total / (1024 ** 3), 1)
+
+            return round(psutil.virtual_memory().total / (1024**3), 1)
         except Exception:
             try:
-                import torch
+
                 return max(16.0, 0.0)
             except Exception:
                 return 16.0
@@ -162,8 +168,8 @@ def get_config(args: Optional[List[str]] = None) -> TrainingConfig:
                 setattr(config, key, float(value))
             else:
                 setattr(config, key, value)
-        except (ValueError, TypeError):
-            pass
+        except (ValueError, TypeError) as e:
+            logger.debug("【get_config】处理失败（非致命）: %s", e)
     return config
 
 
@@ -208,8 +214,8 @@ def apply_env_overrides() -> None:
                 # 写入进程级配置缓存（供 get_config 默认值使用）
                 _ENV_OVERRIDES[attr] = val
                 changed = True
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("【apply_env_overrides】处理失败（非致命）: %s", e)
     if changed:
         print("[config] 已应用环境变量覆盖", flush=True)
 

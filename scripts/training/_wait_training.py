@@ -1,4 +1,5 @@
 """阻塞等待 seed_corpus 训练达到目标 tick 或超时。"""
+
 import json
 import sys
 import time

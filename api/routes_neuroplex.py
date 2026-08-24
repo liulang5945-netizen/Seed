@@ -2,7 +2,7 @@
 Cortex 神经元架构 API 路由（内部代号：Seed）。
 所有端点基于 Cortex 神经元架构认知主体。
 """
-import json
+
 import logging
 import os
 import time
@@ -30,54 +30,58 @@ def _is_cortex(model) -> bool:
     """
     if model is None:
         return False
-    return type(model).__name__ == 'Cortex'
+    return type(model).__name__ == "Cortex"
 
 
 def _cortex_model_info(cortex) -> dict:
     """P2-6: 返回 Cortex 神经元架构信息。"""
-    neurons = getattr(cortex, 'neurons', {}) or {}
+    neurons = getattr(cortex, "neurons", {}) or {}
     neuron_specs = []
     total_params = 0
     for nid, neuron in neurons.items():
         try:
             n_params = sum(p.numel() for p in neuron.parameters())
             total_params += n_params
-            cfg = getattr(neuron, 'config', None)
-            spec = getattr(cfg, 'spec', 'unknown') if cfg else 'unknown'
-            n_type = getattr(cfg, 'neuron_type', 'unknown') if cfg else 'unknown'
-            neuron_specs.append({
-                "id": nid,
-                "spec": spec,
-                "neuron_type": n_type,
-                "params": n_params,
-            })
+            cfg = getattr(neuron, "config", None)
+            spec = getattr(cfg, "spec", "unknown") if cfg else "unknown"
+            n_type = getattr(cfg, "neuron_type", "unknown") if cfg else "unknown"
+            neuron_specs.append(
+                {
+                    "id": nid,
+                    "spec": spec,
+                    "neuron_type": n_type,
+                    "params": n_params,
+                }
+            )
         except Exception:
             continue
 
-    field_dim = getattr(getattr(cortex, 'field', None), 'dim', None)
-    is_fallback = any(
-        s.get('spec') == 'general-fallback' for s in neuron_specs
-    )
+    field_dim = getattr(getattr(cortex, "field", None), "dim", None)
+    is_fallback = any(s.get("spec") == "general-fallback" for s in neuron_specs)
 
     # 多模态 codec 状态
     modalities = []
-    hub = getattr(cortex, '_tokenizer_hub', None)
+    hub = getattr(cortex, "_tokenizer_hub", None)
     if hub is not None:
         for mod in hub.list_modalities():
             codec = hub.modal_encoders.get(mod)
             if codec is not None:
-                vocab = codec.vocab_size() if hasattr(codec, 'vocab_size') else 0
+                vocab = codec.vocab_size() if hasattr(codec, "vocab_size") else 0
                 # 检查 checkpoint 是否存在
-                ckpt_map = {"image": "data/vqvae/vqvae_latest.pt",
-                           "audio": "data/encodec/encodec_latest.pt",
-                           "video": "data/video/video_latest.pt"}
+                ckpt_map = {
+                    "image": "data/vqvae/vqvae_latest.pt",
+                    "audio": "data/encodec/encodec_latest.pt",
+                    "video": "data/video/video_latest.pt",
+                }
                 ckpt_path = ckpt_map.get(mod, "")
-                modalities.append({
-                    "modality": mod,
-                    "vocab_size": vocab,
-                    "trained": os.path.isfile(ckpt_path),
-                    "checkpoint": ckpt_path if os.path.isfile(ckpt_path) else None,
-                })
+                modalities.append(
+                    {
+                        "modality": mod,
+                        "vocab_size": vocab,
+                        "trained": os.path.isfile(ckpt_path),
+                        "checkpoint": ckpt_path if os.path.isfile(ckpt_path) else None,
+                    }
+                )
 
     return {
         "status": "active",
@@ -87,16 +91,18 @@ def _cortex_model_info(cortex) -> dict:
         "total_params": total_params,
         "is_fallback_mode": is_fallback,
         "neurons": neuron_specs,
-        "max_rounds": getattr(cortex, 'max_rounds', None),
+        "max_rounds": getattr(cortex, "max_rounds", None),
         "modalities": modalities,
         "message": (
-            "单神经元 fallback 模式（未训练）" if is_fallback
+            "单神经元 fallback 模式（未训练）"
+            if is_fallback
             else f"Cortex 已加载 {len(neurons)} 个神经元"
         ),
     }
 
 
 # ======================== 状态查询 ========================
+
 
 @router.get("/api/taiji/status")
 def taiji_status():
@@ -115,6 +121,7 @@ def taiji_tools():
 
 # ======================== 文件上传 ========================
 
+
 @router.post("/api/taiji/upload")
 async def taiji_upload(file: UploadFile = File(...)):
     """上传文件供多模态处理（图片/音频/视频）"""
@@ -128,6 +135,7 @@ async def taiji_upload(file: UploadFile = File(...)):
         file_path = os.path.join(upload_dir, safe_name)
         with open(file_path, "wb") as buffer:
             import shutil
+
             shutil.copyfileobj(file.file, buffer)
 
         ext = os.path.splitext(file.filename)[1].lower()
@@ -158,11 +166,13 @@ async def taiji_upload(file: UploadFile = File(...)):
 
 # ======================== 喂养引擎（吃饭）========================
 
+
 @router.get("/api/taiji/feed/status")
 def feed_status():
     """获取喂养引擎状态"""
     try:
         from neuroplex.life.feed_engine import get_feed_engine
+
         engine = get_feed_engine()
         return {"status": "ok", "data": engine.get_status(), "summary": engine.get_summary()}
     except Exception as e:
@@ -175,6 +185,7 @@ def feed_taiji():
     """让Seed吃饭 — 自动从各来源收集数据"""
     try:
         from neuroplex.life.feed_engine import get_feed_engine
+
         engine = get_feed_engine()
         report = engine.feed(reason="manual")
         return {
@@ -201,6 +212,7 @@ def feed_text(request: dict):
         source = request.get("source", "manual")
         category = request.get("category", "knowledge")
         from neuroplex.life.feed_engine import get_feed_engine
+
         engine = get_feed_engine()
         item = engine.feed_text(text=text, source=source, category=category)
         if item:
@@ -244,6 +256,7 @@ def feed_file(request: dict):
             raise HTTPException(status_code=404, detail="文件不存在")
         category = request.get("category", "knowledge")
         from neuroplex.life.feed_engine import get_feed_engine
+
         engine = get_feed_engine()
         item = engine.feed_file(file_path=safe_path, category=category)
         if item:
@@ -301,6 +314,7 @@ def feed_multimodal(request: dict):
 
         # 喂养
         from neuroplex.life.feed_engine import get_feed_engine
+
         engine = get_feed_engine()
         item = engine.feed_multimodal(modality, file_path=safe_path, tokenizer_hub=hub)
         if not item:
@@ -316,6 +330,7 @@ def feed_multimodal(request: dict):
         # 触发小睡消化
         if trigger_nap:
             from neuroplex.life.sleep_engine import get_sleep_engine
+
             sleep_engine = get_sleep_engine()
             sleep_engine.set_brain_interfaces(cortex=model)
             report = sleep_engine.nap(duration_minutes=1)
@@ -337,6 +352,7 @@ def feed_multimodal(request: dict):
 
 class CortexGenRequest(BaseModel):
     """Cortex 原生多模态生成请求。"""
+
     modality: str  # "image" / "audio" / "video"
     input_path: Optional[str] = None  # 参考文件路径（模仿生成）
     max_tokens: Optional[int] = 0  # 0=自动用 codec 网格大小
@@ -369,6 +385,7 @@ def cortex_generate(req: CortexGenRequest):
             raise HTTPException(status_code=503, detail=f"模态 '{modality}' 的 codec 未注册")
 
         import torch
+
         if req.seed is not None:
             torch.manual_seed(req.seed)
 
@@ -382,6 +399,7 @@ def cortex_generate(req: CortexGenRequest):
             if not os.path.isfile(safe_path):
                 raise HTTPException(status_code=404, detail="参考文件不存在")
             from neuroplex.multimodal.io import load_image, load_audio, load_video
+
             if modality == "image":
                 data = load_image(safe_path).to(device)
             elif modality == "audio":
@@ -413,7 +431,9 @@ def cortex_generate(req: CortexGenRequest):
 
         # max_tokens 默认用 codec 实际网格大小（避免 decode 时 reshape 失败）
         # image: Hz*Wz（正方形网格）；audio/video: 同样用 z_seq 长度
-        actual_max_tokens = req.max_tokens if req.max_tokens and req.max_tokens > 0 else z_seq.shape[1]
+        actual_max_tokens = (
+            req.max_tokens if req.max_tokens and req.max_tokens > 0 else z_seq.shape[1]
+        )
 
         # 生成
         generated_ids = model.generate_multimodal(
@@ -429,6 +449,7 @@ def cortex_generate(req: CortexGenRequest):
 
         # 保存
         from datetime import datetime
+
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
         out_dir = req.output_path or f"data/{modality}/generated"
         os.makedirs(out_dir, exist_ok=True)
@@ -442,12 +463,14 @@ def cortex_generate(req: CortexGenRequest):
 
         if modality == "image":
             from neuroplex.multimodal.io import save_image
+
             path = os.path.join(out_dir, f"cortex_{ts}.png")
             img = recon if recon.dim() == 3 else recon[0]
             save_image(img, path)
             result["file"] = path
         elif modality == "audio":
             from neuroplex.multimodal.io import save_audio
+
             path = os.path.join(out_dir, f"cortex_{ts}.wav")
             # audio decode 返回 1D [samples]，不要索引
             aud = recon if recon.dim() <= 1 else recon[0]
@@ -455,6 +478,7 @@ def cortex_generate(req: CortexGenRequest):
             result["file"] = path
         elif modality == "video":
             from neuroplex.multimodal.io import save_video
+
             path = os.path.join(out_dir, f"cortex_{ts}.mp4")
             vid = recon if recon.dim() == 4 else recon[0]
             # video decode 返回 [C, T, H, W]，save_video 需要 [T, C, H, W]
@@ -473,6 +497,7 @@ def cortex_generate(req: CortexGenRequest):
 
 class CortexChatRequest(BaseModel):
     """Cortex 文本对话请求。"""
+
     prompt: str
     # 2026-08-04：默认值改为保守参数（验证过短问答质量最佳）
     # 原 256/0.8/50 在 5 神经元异构 ensemble 上长序列生成易崩坏
@@ -512,6 +537,7 @@ def cortex_chat(req: CortexChatRequest):
         # set_brain_interfaces → cortex.set_field_memory 接通。
         try:
             from neuroplex.life.sleep_engine import get_sleep_engine
+
             engine = get_sleep_engine()
             fstate = model.get_last_field_state()
             if engine is not None and fstate is not None:
@@ -538,6 +564,7 @@ def cortex_chat(req: CortexChatRequest):
 
 class TaskChainStageRequest(BaseModel):
     """C26 增量八：任务链阶段（task-set）请求体。"""
+
     prompt: str
     mode: str = "continuous"
     domain: Optional[str] = None
@@ -551,6 +578,7 @@ class TaskChainStageRequest(BaseModel):
 
 class CortexTaskChainRequest(BaseModel):
     """C26 增量八：多阶段任务模式链 v2 请求体。"""
+
     stages: List[TaskChainStageRequest]
     max_tokens_per_stage: Optional[int] = 32
 
@@ -569,17 +597,21 @@ def cortex_task_chain(req: CortexTaskChainRequest):
         if not req.stages:
             raise HTTPException(status_code=400, detail="stages 不能为空")
         from neuroplex.brain.cortex import TaskSet
-        stages = [TaskSet(
-            prompt=s.prompt,
-            mode=s.mode,
-            domain=s.domain,
-            active_nids=s.active_nids,
-            max_tokens=s.max_tokens,
-            temperature=s.temperature,
-            quality_gate=s.quality_gate,
-            record_memory=s.record_memory,
-            memory_label=s.memory_label,
-        ) for s in req.stages]
+
+        stages = [
+            TaskSet(
+                prompt=s.prompt,
+                mode=s.mode,
+                domain=s.domain,
+                active_nids=s.active_nids,
+                max_tokens=s.max_tokens,
+                temperature=s.temperature,
+                quality_gate=s.quality_gate,
+                record_memory=s.record_memory,
+                memory_label=s.memory_label,
+            )
+            for s in req.stages
+        ]
         result = model.generate_task_chain(
             stages,
             max_tokens_per_stage=req.max_tokens_per_stage or 32,
@@ -609,6 +641,7 @@ def feed_directory(request: dict):
             raise HTTPException(status_code=404, detail="目录不存在")
         category = request.get("category", "code")
         from neuroplex.life.feed_engine import get_feed_engine
+
         engine = get_feed_engine()
         count = engine.feed_directory(dir_path=safe_path, category=category)
         return {"status": "ok", "files_fed": count}
@@ -624,6 +657,7 @@ def feed_plan():
     """获取进食计划 — 根据能力短板推荐吃什么"""
     try:
         from neuroplex.life.feed_engine import get_feed_engine
+
         engine = get_feed_engine()
         plan = engine.get_feed_plan()
         return {"status": "ok", "plan": plan}
@@ -634,11 +668,13 @@ def feed_plan():
 
 # ======================== 睡眠引擎 ========================
 
+
 @router.get("/api/taiji/sleep/status")
 def sleep_status():
     """获取睡眠引擎状态"""
     try:
         from neuroplex.life.sleep_engine import get_sleep_engine
+
         engine = get_sleep_engine()
         return {"status": "ok", "data": engine.get_status(), "summary": engine.get_summary()}
     except Exception as e:
@@ -651,6 +687,7 @@ def sleep_taiji():
     """让Seed睡觉"""
     try:
         from neuroplex.life.sleep_engine import get_sleep_engine
+
         engine = get_sleep_engine()
         report = engine.sleep(reason="manual")
         return {
@@ -668,11 +705,13 @@ def sleep_taiji():
 
 # ======================== 玩耍引擎（娱乐）========================
 
+
 @router.get("/api/taiji/play/status")
 def play_status():
     """获取玩耍引擎状态"""
     try:
         from neuroplex.life.play_engine import get_play_engine
+
         engine = get_play_engine()
         return {"status": "ok", "data": engine.get_status(), "summary": engine.get_summary()}
     except Exception as e:
@@ -685,17 +724,20 @@ def play_taiji():
     """让Seed玩耍 — 自由探索和创意实验"""
     try:
         from neuroplex.life.play_engine import get_play_engine
+
         engine = get_play_engine()
         report = engine.play(reason="manual")
         activities = []
         for a in report.activities:
-            activities.append({
-                "type": a.activity_type,
-                "topic": a.topic,
-                "content": a.content,
-                "quality": round(a.quality_score, 2),
-                "kept": a.kept,
-            })
+            activities.append(
+                {
+                    "type": a.activity_type,
+                    "topic": a.topic,
+                    "content": a.content,
+                    "quality": round(a.quality_score, 2),
+                    "kept": a.kept,
+                }
+            )
         return {
             "status": "ok",
             "activities": activities,
@@ -713,6 +755,7 @@ def play_personality():
     """获取Seed的个性档案"""
     try:
         from neuroplex.life.play_engine import get_play_engine
+
         engine = get_play_engine()
         return {"status": "ok", "personality": engine.get_personality()}
     except Exception as e:
@@ -722,11 +765,13 @@ def play_personality():
 
 # ======================== 生命调度器 ========================
 
+
 @router.get("/api/taiji/life/status")
 def life_status():
     """获取生命状态（需求、状态、心跳数）"""
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
+
         scheduler = get_life_scheduler()
         return {"status": "ok", "data": scheduler.get_status(), "summary": scheduler.get_summary()}
     except Exception as e:
@@ -739,6 +784,7 @@ def life_start():
     """启动生命（启动心跳循环）"""
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
+
         scheduler = get_life_scheduler()
         scheduler.start()
         return {"status": "ok", "message": "🌱 生命已启动"}
@@ -752,6 +798,7 @@ def life_stop():
     """暂停生命"""
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
+
         scheduler = get_life_scheduler()
         scheduler.stop()
         return {"status": "ok", "message": "⏸️ 生命已暂停"}
@@ -765,6 +812,7 @@ def life_interact(success: bool = True, topic: str = ""):
     """记录一次用户交互（影响需求状态）"""
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
+
         scheduler = get_life_scheduler()
         scheduler.record_interaction(success=success, topic=topic)
         return {"status": "ok", "needs": scheduler.needs.to_dict()}
@@ -780,6 +828,7 @@ def life_force_action(action: str):
         raise HTTPException(status_code=400, detail="无效的操作，支持: feed, sleep, play")
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
+
         scheduler = get_life_scheduler()
         result = scheduler.force_action(action)
         return {"status": "ok", "result": result, "needs": scheduler.needs.to_dict()}
@@ -793,6 +842,7 @@ def self_mod_status():
     """获取Seed自修改引擎状态（自主发现和安装工具的能力）"""
     try:
         from neuroplex.agent_ext.self_modification import get_self_modification_engine
+
         engine = get_self_modification_engine()
         return {"status": "ok", **engine.get_status()}
     except Exception as e:
@@ -808,6 +858,7 @@ async def self_mod_discover(req: dict):
         raise HTTPException(status_code=400, detail="关键词不能为空")
     try:
         from neuroplex.agent_ext.self_modification import get_self_modification_engine
+
         engine = get_self_modification_engine()
         matches = engine._discovery.find_matching_tools(keyword)
         return {"status": "ok", "matches": matches, "count": len(matches)}
@@ -822,6 +873,7 @@ async def self_mod_toggle(req: dict):
     enabled = req.get("enabled", True)
     try:
         from neuroplex.agent_ext.self_modification import get_self_modification_engine
+
         engine = get_self_modification_engine()
         if enabled:
             engine.enable()
@@ -838,6 +890,7 @@ def life_timeline(hours: int = 24):
     """获取生命时间线"""
     try:
         from neuroplex.life.life_scheduler import get_life_scheduler
+
         scheduler = get_life_scheduler()
         timeline = scheduler.get_timeline(hours=hours)
         return {"status": "ok", "timeline": timeline, "hours": hours}
@@ -847,6 +900,7 @@ def life_timeline(hours: int = 24):
 
 
 # ======================== 模型信息查询 ========================
+
 
 @router.get("/api/taiji/model/info")
 def taiji_model_info():
@@ -865,7 +919,11 @@ def cleanup_checkpoints_api(keep: int = 3):
     """清理旧 checkpoint，保留 best 和最新的 N 个"""
     model_path = getattr(app_state, "_loaded_model_name", "") or ""
     if model_path and os.path.isdir(model_path):
-        model_dir = model_path if os.path.exists(os.path.join(model_path, "config.json")) else os.path.dirname(model_path)
+        model_dir = (
+            model_path
+            if os.path.exists(os.path.join(model_path, "config.json"))
+            else os.path.dirname(model_path)
+        )
         save_dir = os.path.join(model_dir, "checkpoints")
     else:
         save_dir = get_external_path(os.path.join("taiji_checkpoints", "finetune"))
@@ -898,8 +956,8 @@ def _cleanup_checkpoints(save_dir: str, keep: int = 3) -> int:
             try:
                 step_num = int(d.split("_")[1])
                 step_dirs.append((step_num, os.path.join(save_dir, d)))
-            except ValueError:
-                pass
+            except ValueError as e:
+                logger.debug("【_cleanup_checkpoints】处理失败（非致命）: %s", e)
 
     step_dirs.sort(key=lambda x: x[0])
 

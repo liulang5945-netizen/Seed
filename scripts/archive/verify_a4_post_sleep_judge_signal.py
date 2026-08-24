@@ -28,6 +28,7 @@
 
 运行：python -u scripts/training/verify_a4_post_sleep_judge_signal.py
 """
+
 from __future__ import annotations
 
 import json
@@ -35,7 +36,9 @@ import os
 import sys
 import time
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+sys.path.insert(
+    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+)
 
 import numpy as np  # noqa: E402
 import torch  # noqa: E402
@@ -47,11 +50,17 @@ from neuroplex.life.sleep_engine import SleepEngine, SleepConfig, SleepReport  #
 from neuroplex.resonance.neuro_modulation import SleepConsolidator  # noqa: E402
 
 from scripts.archive.verify_a1_judge_signal_real import (  # noqa: E402
-    DIALOGUE_IDS, COLLAB_NAME, EXTRA_NEURONS_DIR,
-    DIALOGUE_PROMPTS, KNOWLEDGE_PROMPTS, UNFAMILIAR_PROMPTS,
+    DIALOGUE_IDS,
+    COLLAB_NAME,
+    EXTRA_NEURONS_DIR,
+    DIALOGUE_PROMPTS,
+    KNOWLEDGE_PROMPTS,
+    UNFAMILIAR_PROMPTS,
 )
 from scripts.archive.verify_a3_with_decay import (  # noqa: E402
-    field_state_of, measure_judge_nlls, lora_l2_norm,
+    field_state_of,
+    measure_judge_nlls,
+    lora_l2_norm,
 )
 
 passed = 0
@@ -79,7 +88,8 @@ def measure_group_stds(sleep_engine, cortex, target_ids, groups) -> dict:
         valid = []
         for text in prompts:
             jnll = sleep_engine._sample_judge_nll(
-                text, target_ids, device, cortex._shared_embedding)
+                text, target_ids, device, cortex._shared_embedding
+            )
             nlls.append({"text": text, "judge_nll": jnll})
             if jnll is not None and jnll < 1e6:
                 valid.append(jnll)
@@ -112,8 +122,7 @@ def main():
         wire_bio_modules=True,
         neuron_ids=DIALOGUE_IDS,
     )
-    target_ids = [nid for nid in cortex.neurons
-                  if nid.startswith("zh_") and "dialogue" in nid]
+    target_ids = [nid for nid in cortex.neurons if nid.startswith("zh_") and "dialogue" in nid]
     print(f"  装配 {len(cortex.neurons)} 神经元，judge 目标 = {target_ids}", flush=True)
 
     tmp_data = os.path.join("data", "_tmp_a4_prep")
@@ -137,24 +146,31 @@ def main():
     pre = measure_group_stds(sleep_engine, cortex, target_ids, groups)
     for g in ("dialogue", "knowledge", "unfamiliar"):
         d = pre[g]
-        print(f"  pre  {g}: std={d['std']}  mean={d['mean']}  n={d['n_valid']}/8",
-              flush=True)
+        print(f"  pre  {g}: std={d['std']}  mean={d['mean']}  n={d['n_valid']}/8", flush=True)
 
     print(f"\n[3/5] 注入 24 条 prompt 记忆（同 A3 衰减 0.9 流程）...", flush=True)
     all_prompts = DIALOGUE_PROMPTS + KNOWLEDGE_PROMPTS + UNFAMILIAR_PROMPTS
-    prompt_labels = (["dialogue"] * len(DIALOGUE_PROMPTS) +
-                     ["knowledge"] * len(KNOWLEDGE_PROMPTS) +
-                     ["unfamiliar"] * len(UNFAMILIAR_PROMPTS))
+    prompt_labels = (
+        ["dialogue"] * len(DIALOGUE_PROMPTS)
+        + ["knowledge"] * len(KNOWLEDGE_PROMPTS)
+        + ["unfamiliar"] * len(UNFAMILIAR_PROMPTS)
+    )
     for i, text in enumerate(all_prompts):
         vec = field_state_of(cortex, text)
         sleep_engine.record_field_memory(vec, f"init_{prompt_labels[i]}_{i}", text=text)
         sc.record_high_resonance_state(
-            field_state=vec, resonance_score=0.9, step=0,
-            active_nids=target_ids, threshold=0.5, text=text)
+            field_state=vec,
+            resonance_score=0.9,
+            step=0,
+            active_nids=target_ids,
+            threshold=0.5,
+            text=text,
+        )
     r_init = SleepReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), duration_seconds=0)
     sleep_engine._sleep_phase_field_consolidation(r_init)
-    print(f"  注入 {len(all_prompts)} 条 + 场固化 {r_init.field_memories_consolidated} 条",
-          flush=True)
+    print(
+        f"  注入 {len(all_prompts)} 条 + 场固化 {r_init.field_memories_consolidated} 条", flush=True
+    )
 
     print(f"\n[4/5] 跑 {N_ROUNDS} 轮 sleep（decay={DECAY}）...", flush=True)
     a3b_history = []
@@ -175,9 +191,15 @@ def main():
             break
         dt = time.time() - t_round
         lora_l2_r = {nid: lora_l2_norm(cortex.neurons[nid]) for nid in target_ids}
-        a3b_history.append({"round": r, "duration": dt, "lora_l2": lora_l2_r,
-                            "fwd_replayed": r_report.forward_replayed,
-                            "judge_driven": r_report.judge_driven_replay})
+        a3b_history.append(
+            {
+                "round": r,
+                "duration": dt,
+                "lora_l2": lora_l2_r,
+                "fwd_replayed": r_report.forward_replayed,
+                "judge_driven": r_report.judge_driven_replay,
+            }
+        )
         lora_l2_post = lora_l2_r
         print(f"  Round {r}/{N_ROUNDS}  dt={dt:.1f}s  lora_l2={lora_l2_r}", flush=True)
 
@@ -185,8 +207,7 @@ def main():
     post = measure_group_stds(sleep_engine, cortex, target_ids, groups)
     for g in ("dialogue", "knowledge", "unfamiliar"):
         d = post[g]
-        print(f"  post {g}: std={d['std']}  mean={d['mean']}  n={d['n_valid']}/8",
-              flush=True)
+        print(f"  post {g}: std={d['std']}  mean={d['mean']}  n={d['n_valid']}/8", flush=True)
 
     print("\n" + "=" * 64, flush=True)
     print("A4 准备 5 维判据：", flush=True)
@@ -196,31 +217,47 @@ def main():
         s_pre = pre[g]["std"]
         s_post = post[g]["std"]
         if s_pre is None or s_post is None:
-            check(f"A4.{g[0]}: post std >= pre std × 0.8", False,
-                  f"pre={s_pre} post={s_post}")
+            check(f"A4.{g[0]}: post std >= pre std × 0.8", False, f"pre={s_pre} post={s_post}")
             continue
         ratio = s_post / s_pre if s_pre > 0 else None
         ok = ratio is not None and s_post >= s_pre * 0.8
-        check(f"A4.{g[0]}: post std >= pre std × 0.8", ok,
-              f"pre={s_pre:.4f}  post={s_post:.4f}  ratio={ratio:.3f}" if ratio else f"pre={s_pre} post={s_post}")
-        pass_lines.append(f"{g}: pre={s_pre:.4f} → post={s_post:.4f} ({ratio:.2%})" if ratio else f"{g}: pre={s_pre} post={s_post}")
-        check(f"A4.{g[0]}: 守住 A1 真实版 std>0.05", s_post > 0.05,
-              f"post std={s_post:.4f}")
+        check(
+            f"A4.{g[0]}: post std >= pre std × 0.8",
+            ok,
+            (
+                f"pre={s_pre:.4f}  post={s_post:.4f}  ratio={ratio:.3f}"
+                if ratio
+                else f"pre={s_pre} post={s_post}"
+            ),
+        )
+        pass_lines.append(
+            f"{g}: pre={s_pre:.4f} → post={s_post:.4f} ({ratio:.2%})"
+            if ratio
+            else f"{g}: pre={s_pre} post={s_post}"
+        )
+        check(f"A4.{g[0]}: 守住 A1 真实版 std>0.05", s_post > 0.05, f"post std={s_post:.4f}")
 
     completed = len(a3b_history)
-    check(f"A4e: 完成 {N_ROUNDS} 轮 sleep 无崩溃", completed == N_ROUNDS,
-          f"completed={completed}/{N_ROUNDS}")
+    check(
+        f"A4e: 完成 {N_ROUNDS} 轮 sleep 无崩溃",
+        completed == N_ROUNDS,
+        f"completed={completed}/{N_ROUNDS}",
+    )
 
     a4_pass = (failed == 0) and (completed == N_ROUNDS)
     if a4_pass:
         verdict = "A4 准备 PASS：8 轮 sleep 后 judge 能力不遗忘"
-        next_step = ("A4 准备通过——judge 经验后不倒退。下一步 A4 完整：把 A3 sleep "
-                     "与 play 引擎常态化对接（不是 sniff 级能闭环的），进入 play "
-                     "engine 经验驱动增长观察期。")
+        next_step = (
+            "A4 准备通过——judge 经验后不倒退。下一步 A4 完整：把 A3 sleep "
+            "与 play 引擎常态化对接（不是 sniff 级能闭环的），进入 play "
+            "engine 经验驱动增长观察期。"
+        )
     else:
         verdict = f"A4 准备 部分失败（{passed} PASS / {failed} FAIL）"
-        next_step = ("某组 std 退化超 20%，需要：(1) 收窄 decay 到 0.85-0.95 之间；"
-                     "(2) sleep 间加 cooldown 1-2 步；(3) 重新审视 judge 头是否被训练改动。")
+        next_step = (
+            "某组 std 退化超 20%，需要：(1) 收窄 decay 到 0.85-0.95 之间；"
+            "(2) sleep 间加 cooldown 1-2 步；(3) 重新审视 judge 头是否被训练改动。"
+        )
     print(f"\n判定: {verdict}", flush=True)
     print(f"下一步: {next_step}", flush=True)
 
