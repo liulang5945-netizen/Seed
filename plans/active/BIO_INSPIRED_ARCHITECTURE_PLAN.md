@@ -17,8 +17,9 @@
 - 第三阶段已完成：`seed_platform.settings` 以原子 JSON 写入拥有持久化 settings，旧 `neuroplex.services.settings_service` 仅保留兼容转发；`AppState` 已迁到 `seed_platform.app_state`，API 与训练控制不再借用 `neuroplex.core.app_state`。RAG 知识库改为 API Legacy 适配器按需注入，平台状态不再反向导入 Neuroplex。
 - 第四阶段已完成：认证实现已迁到 `seed_platform.auth`，登录/改密/状态/审计/刷新由 `seed_platform.auth_service` 提供；旧 `neuroplex.core.security` 与 `neuroplex.services.auth_service` 仅保留兼容转发。API、健康检查和 Legacy bridge 均改用平台认证，平台认证实现不再导入 Neuroplex。
 - 第五阶段已完成：`api/legacy_bridge.py` 成为显式可选插件门面；默认 runtime preference 选择 Seed，`SEED_ENABLE_LEGACY=0` 时跳过 Cortex 工具、自动重载、life scheduler 和显式 Legacy 路由，Cortex 手动切换会返回不可用，已有 Cortex 安装仍可开启兼容路径。
+- 第六阶段已完成：启动必经的 config、memory watchdog 与 runtime status 已迁到 `seed_platform` 并保留兼容转发；`create_app(startup_tasks=False)` 在子进程中阻断所有 `neuroplex` 导入仍可生成 OpenAPI，`/api/health` 与 `/api/runtime/bootstrap` 契约存在，独立 smoke 已固化为 `tests/seed/test_no_legacy_startup_smoke.py`。
 
-**唯一下一步**：建立无 Legacy 依赖安装的独立启动 smoke，验证精简部署下 API、健康检查和 Seed runtime 的默认启动契约。
+**唯一下一步**：把无 Legacy 启动 smoke 接入 CI 矩阵，并分别验证不安装 legacy extra 与显式 `SEED_ENABLE_LEGACY=1` 的两条启动路径。
 
 ## 1. 当前架构
 

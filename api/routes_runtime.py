@@ -7,7 +7,7 @@ Endpoints:
 
 from fastapi import APIRouter, Request
 
-from neuroplex.services.runtime_service import get_runtime_status, get_bootstrap_status
+from seed_platform.runtime_service import get_runtime_status, get_bootstrap_status
 from api.models_runtime import RuntimeStatusPayload, BootstrapPayload
 
 router = APIRouter(prefix="/api/runtime", tags=["runtime"])

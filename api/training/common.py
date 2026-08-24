@@ -46,7 +46,7 @@ def collect_hardware_diag(device_str: str) -> dict:
         ram_gb = round(psutil.virtual_memory().total / (1024**3), 1)
     except ImportError:
         try:
-            from neuroplex.core.config import TrainingConfig
+            from seed_platform.config import TrainingConfig
 
             ram_gb = round(TrainingConfig.get_total_ram_gb(), 1)
         except Exception:
@@ -72,7 +72,7 @@ def collect_hardware_diag(device_str: str) -> dict:
             f" — MPS 训练性能介于 CPU 和 CUDA 之间"
         )
     else:
-        msg = f"训练设备: {device_type}" f"{' | 系统内存: ' + str(ram_gb) + 'GB' if ram_gb else ''}"
+        msg = f"训练设备: {device_type}{' | 系统内存: ' + str(ram_gb) + 'GB' if ram_gb else ''}"
 
     return {
         "device_type": device_type,
