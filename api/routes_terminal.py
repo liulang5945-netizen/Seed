@@ -18,7 +18,7 @@ import sys
 import threading
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from neuroplex.services.settings_service import get_setting
+from seed_platform.settings import get_setting
 
 logger = logging.getLogger("ApiServer.Terminal")
 router = APIRouter()

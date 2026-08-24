@@ -7,7 +7,7 @@ import shutil
 from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 
 from seed_platform.paths import get_external_path
-from neuroplex.services.settings_service import get_setting, update_settings
+from seed_platform.settings import get_setting, update_settings
 
 from .models import CodeRunRequest, CreateProjectRequest, FileSaveRequest
 

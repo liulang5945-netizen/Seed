@@ -22,7 +22,7 @@ import base64
 from datetime import datetime
 from typing import Optional, List
 
-from neuroplex.services.settings_service import load_settings, update_settings
+from seed_platform.settings import load_settings, update_settings
 
 logger = logging.getLogger("Security")
 
