@@ -16,7 +16,7 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from neuroplex.core.memory_watchdog import MemoryWatchdog, memory_guarded
 from neuroplex.core.utils import safe_json_load, safe_json_save
-from neuroplex.services.settings_service import load_settings, update_settings
+from seed_platform.settings import load_settings, update_settings
 from neuroplex.tools.file_parser import parse_file_to_text
 
 logger = logging.getLogger("RAG")
