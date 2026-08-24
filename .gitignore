@@ -73,6 +73,7 @@ taiji_data/
 
 # Security
 security/.jwt_secret
+security/.storage_salt
 security/audit_logs/
 
 # Logs
