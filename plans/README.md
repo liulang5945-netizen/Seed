@@ -27,6 +27,7 @@
 - 旧 `neuroplex.taiji` K/V 原型及 T4/T5 活动文件已删除；Git 历史仍可恢复。
 - 现有 9 个 Transformer 成员（含 5 个对话成员）未被改写，只作为离线对照。
 - `scripts/archive/` 内 `from taiji.<legacy>` 是历史别名（含义＝`neuroplex`），已确认不重写；判定见 `scripts/archive/README.md`。
+- CI 与本地一致性：`cryptography` 已在 `pyproject.toml` legacy extra 与 ci.yml 两处安装行声明（缺失会让 `SecureStorage` 构造失败）；`AuthManager.__new__` 只在初始化成功后写入 `cls._instance`，避免半构造单例被永久缓存成 `AttributeError`；SPA 兜底路由 `include_in_schema=False`，使 OpenAPI 快照不再依赖被 gitignore 的 `frontend/dist` 构建产物。三者共同消除“本地绿、CI 红”的环境漂移。
 
 ## 当前状态与唯一下一步
 
