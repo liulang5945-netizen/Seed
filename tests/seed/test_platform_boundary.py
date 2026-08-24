@@ -20,11 +20,11 @@ def _imports(path: Path) -> set[str]:
 
 
 def test_api_entrypoint_reaches_legacy_only_through_one_bridge() -> None:
-    app = REPO / "api" / "app.py"
-    imports = _imports(app)
+    for entrypoint in ("app.py", "main.py"):
+        imports = _imports(REPO / "api" / entrypoint)
 
-    assert "api.legacy_bridge" in imports
-    assert not any(module.startswith("neuroplex") for module in imports)
+        assert "api.legacy_bridge" in imports
+        assert not any(module.startswith("neuroplex") for module in imports)
 
 
 def test_platform_paths_are_owned_outside_neuroplex() -> None:

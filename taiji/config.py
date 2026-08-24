@@ -23,6 +23,8 @@ class CapacityPolicy:
     memory_fan_in_ratio: float = 0.25
     memory_meta_ratio: float = 0.375
     memory_readout_fan_in_ratio: float = 0.375
+    memory_time_ratio: float = 0.0625
+    memory_episode_ratio: float = 0.125
     lateral_fan_in_ratio: float = 0.125
     alignment: int = 8
 
@@ -36,6 +38,8 @@ class CapacityPolicy:
             "memory_fan_in_ratio",
             "memory_meta_ratio",
             "memory_readout_fan_in_ratio",
+            "memory_time_ratio",
+            "memory_episode_ratio",
             "lateral_fan_in_ratio",
         ):
             if float(getattr(self, name)) <= 0.0:
@@ -61,6 +65,8 @@ class CapacityPolicy:
             memory_fan_in_ratio=float(config.memory_fan_in) / width,
             memory_meta_ratio=float(config.memory_meta_dim) / width,
             memory_readout_fan_in_ratio=float(config.memory_readout_fan_in) / width,
+            memory_time_ratio=float(config.memory_time_dim) / width,
+            memory_episode_ratio=float(config.memory_episode_dim) / width,
             lateral_fan_in_ratio=float(config.lateral_fan_in) / width,
             alignment=int(alignment),
         )
@@ -74,6 +80,10 @@ class CapacityPolicy:
     def from_dict(cls, payload: Dict[str, Any]) -> "CapacityPolicy":
         values = dict(payload)
         values["region_ratios"] = tuple(float(value) for value in values["region_ratios"])
+        # Keep policy JSON written before the memory-dimension ratios existed
+        # loadable while allowing new searches to control those dimensions.
+        values.setdefault("memory_time_ratio", cls.memory_time_ratio)
+        values.setdefault("memory_episode_ratio", cls.memory_episode_ratio)
         return cls(**values)
 
 
@@ -315,6 +325,8 @@ class TaijiConfig:
             memory_fan_in=base.memory_fan_in * scale,
             memory_readout_fan_in=base.memory_readout_fan_in * scale,
             memory_meta_dim=base.memory_meta_dim * scale,
+            memory_time_dim=base.memory_time_dim * scale,
+            memory_episode_dim=base.memory_episode_dim * scale,
             seed=seed,
         )
 
@@ -396,6 +408,14 @@ class TaijiConfig:
                     "memory_readout_fan_in": max(
                         1,
                         int(round(primary_width * capacity.memory_readout_fan_in_ratio)),
+                    ),
+                    "memory_time_dim": aligned_dimension(
+                        primary_width * capacity.memory_time_ratio,
+                        minimum=2,
+                    ),
+                    "memory_episode_dim": aligned_dimension(
+                        primary_width * capacity.memory_episode_ratio,
+                        minimum=1,
                     ),
                     "lateral_fan_in": max(
                         1,

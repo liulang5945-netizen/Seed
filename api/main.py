@@ -72,9 +72,9 @@ def main():
 
     if args.no_ui:
         print("ℹ️ no-ui 模式：仅 Cortex 加载")
-        from neuroplex.loader import load_cortex
+        from api.legacy_bridge import load_legacy_cortex
 
-        cortex, tokenizer = load_cortex(
+        cortex, tokenizer = load_legacy_cortex(
             neurons_dir=config.model_name or "data/neurons",
             device=config.resolve_device(),
         )
