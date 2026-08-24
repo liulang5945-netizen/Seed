@@ -59,7 +59,7 @@ def _verify_ws_token(ws) -> bool:
     - 认证未启用时：检查终端是否允许未认证访问（默认不允许）
     """
     try:
-        from neuroplex.core.security import AuthManager
+        from seed_platform.auth import AuthManager
 
         auth = AuthManager()
 

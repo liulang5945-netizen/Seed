@@ -80,7 +80,7 @@ def get_system_hardware():
 @router.post("/api/system/restart")
 def restart_system(request: Request):
     """接收前端发来的重启指令 — 需要认证（认证启用时）"""
-    from neuroplex.core.security import AuthManager
+    from seed_platform.auth import AuthManager
 
     auth = AuthManager()
 

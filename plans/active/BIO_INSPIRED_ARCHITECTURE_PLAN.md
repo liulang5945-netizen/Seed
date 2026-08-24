@@ -15,8 +15,9 @@
 - `seed_platform.paths` 成为源运行/桌面打包路径的唯一平台实现，API 的工作区、聊天历史、RAG、更新、数据集与发布路径不再经由 `neuroplex.core.utils`。
 - `api/app.py` 不再直接导入任何 `neuroplex` 模块；Cortex 生命周期、自动重载、life scheduler 和显式 Cortex 路由集中到 `api/legacy_bridge.py`，AST 门禁阻止依赖重新散回入口。
 - 第三阶段已完成：`seed_platform.settings` 以原子 JSON 写入拥有持久化 settings，旧 `neuroplex.services.settings_service` 仅保留兼容转发；`AppState` 已迁到 `seed_platform.app_state`，API 与训练控制不再借用 `neuroplex.core.app_state`。RAG 知识库改为 API Legacy 适配器按需注入，平台状态不再反向导入 Neuroplex。
+- 第四阶段已完成：认证实现已迁到 `seed_platform.auth`，登录/改密/状态/审计/刷新由 `seed_platform.auth_service` 提供；旧 `neuroplex.core.security` 与 `neuroplex.services.auth_service` 仅保留兼容转发。API、健康检查和 Legacy bridge 均改用平台认证，平台认证实现不再导入 Neuroplex。
 
-**唯一下一步**：把认证服务迁到 `seed_platform`，让认证、健康检查与平台路由不再借用 Cortex 命名空间；完成后将 `legacy_bridge` 改为显式可选插件并让 Seed 成为无 Legacy 安装下的默认启动路径。
+**唯一下一步**：把 `legacy_bridge` 改为显式可选插件并让 Seed 成为无 Legacy 安装下的默认启动路径，同时保留当前兼容转发以支持已有 Cortex 安装。
 
 ## 1. 当前架构
 

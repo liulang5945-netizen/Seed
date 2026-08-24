@@ -24,7 +24,7 @@ def _require_admin_auth(request: Request):
     - 认证启用时：必须提供有效的管理员 Token
     - 认证未启用时：拒绝访问（更新操作必须在认证保护下进行）
     """
-    from neuroplex.core.security import AuthManager
+    from seed_platform.auth import AuthManager
 
     auth = AuthManager()
 

@@ -17,7 +17,7 @@ router = APIRouter()
 
 def _require_admin_auth(request: Request):
     """Validate admin auth for sensitive operations (e.g. pip install)."""
-    from neuroplex.core.security import AuthManager
+    from seed_platform.auth import AuthManager
 
     auth = AuthManager()
 
@@ -101,7 +101,7 @@ def set_workspace_path(req: dict, request: Request):
         raise HTTPException(status_code=403, detail="不允许将工作区设置为根目录的直接子目录")
 
     # 需要认证才能更改工作区路径
-    from neuroplex.core.security import AuthManager
+    from seed_platform.auth import AuthManager
 
     auth = AuthManager()
     if auth.enabled:
