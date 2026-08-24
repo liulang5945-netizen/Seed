@@ -128,7 +128,7 @@ def _auth_section(auth_header: str) -> dict:
         "has_password": False,
     }
     try:
-        from neuroplex.core.security import AuthManager
+        from seed_platform.auth import AuthManager
 
         auth = AuthManager()
         section["enabled"] = bool(auth.enabled)
@@ -227,7 +227,7 @@ def get_bootstrap_status() -> dict:
 
     auth_enabled = False
     try:
-        from neuroplex.core.security import AuthManager
+        from seed_platform.auth import AuthManager
 
         auth_enabled = bool(AuthManager().enabled)
     except Exception as e:  # pragma: no cover - defensive

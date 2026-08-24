@@ -8,7 +8,7 @@ import logging
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
-from neuroplex.services import auth_service
+from seed_platform import auth_service
 
 logger = logging.getLogger("ApiServer.Auth")
 router = APIRouter()
@@ -61,7 +61,7 @@ async def enable_auth(req: EnableAuthRequest, request: Request):
     - 首次运行（认证未启用）时可直接调用
     - 认证已启用后需要提供有效的管理员 Token
     """
-    from neuroplex.core.security import AuthManager
+    from seed_platform.auth import AuthManager
 
     auth = AuthManager()
 
@@ -82,7 +82,7 @@ async def enable_auth(req: EnableAuthRequest, request: Request):
 @router.post("/api/auth/disable")
 async def disable_auth(request: Request):
     """禁用认证 — 需要有效的管理员 Token"""
-    from neuroplex.core.security import AuthManager
+    from seed_platform.auth import AuthManager
 
     auth = AuthManager()
 

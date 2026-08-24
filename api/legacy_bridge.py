@@ -22,7 +22,7 @@ _life_scheduler: Any | None = None
 def get_legacy_auth_manager() -> Any:
     """Return the current auth manager until security moves to seed_platform."""
 
-    from neuroplex.core.security import AuthManager
+    from seed_platform.auth import AuthManager
 
     return AuthManager()
 

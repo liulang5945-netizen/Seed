@@ -61,6 +61,20 @@ def test_platform_state_has_no_legacy_imports() -> None:
         assert "neuroplex.core.app_state" not in imports, module_path
 
 
+def test_platform_auth_has_no_legacy_imports() -> None:
+    auth = REPO / "seed_platform" / "auth.py"
+    imports = _imports(auth)
+
+    assert not any(module.startswith("neuroplex") for module in imports)
+    assert "seed_platform.auth" in _imports(REPO / "neuroplex" / "core" / "security.py")
+
+    api_modules = list((REPO / "api").rglob("*.py"))
+    for module_path in api_modules:
+        imports = _imports(module_path)
+        assert "neuroplex.core.security" not in imports, module_path
+        assert "neuroplex.services.auth_service" not in imports, module_path
+
+
 def test_legacy_bridge_owns_explicit_cortex_routes_and_lifecycle() -> None:
     bridge = REPO / "api" / "legacy_bridge.py"
     text = bridge.read_text(encoding="utf-8")

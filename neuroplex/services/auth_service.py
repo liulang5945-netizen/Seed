@@ -1,10 +1,21 @@
-"""Auth service stub — not yet implemented.
+"""Compatibility exports for the platform-owned authentication service."""
 
-This is a minimal stub that allows imports to succeed as
-``from neuroplex.services import auth_service``. The real implementation
-will handle token issuance, refresh, and session validation.
-"""
+from seed_platform.auth_service import (
+    change_password,
+    disable_auth,
+    enable_auth,
+    get_audit_logs,
+    get_status,
+    login,
+    refresh_token,
+)
 
-import logging
-
-logger = logging.getLogger(__name__)
+__all__ = [
+    "change_password",
+    "disable_auth",
+    "enable_auth",
+    "get_audit_logs",
+    "get_status",
+    "login",
+    "refresh_token",
+]
