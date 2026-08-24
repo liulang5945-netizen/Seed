@@ -117,7 +117,7 @@ class TaijiConfig:
             )
         if self.consolidation_seed_offset <= 0:
             raise ValueError(
-                "consolidation_seed_offset must select a positive independent " "random stream"
+                "consolidation_seed_offset must select a positive independent random stream"
             )
         if self.consolidation_seed_offset == self.lateral_seed_offset:
             raise ValueError("consolidation and lateral banks require distinct random streams")
@@ -246,6 +246,129 @@ class TaijiConfig:
             memory_meta_dim=base.memory_meta_dim * scale,
             seed=seed,
         )
+
+    @classmethod
+    def capacity_profile(
+        cls,
+        target_active_parameters: int,
+        *,
+        template: "TaijiConfig | None" = None,
+        seed: "int | None" = None,
+        alignment: int = 8,
+    ) -> "TaijiConfig":
+        """Build the largest substrate that fits an active-parameter budget.
+
+        The template supplies architectural proportions and all dynamics.  The
+        planner scales only structural capacity (region widths, memory width
+        and physical fan-in), so callers can replace the default proportions
+        without adding another hard-coded profile.  The returned configuration
+        is deterministic and its exact learned-scalar count is available via
+        :attr:`planned_active_parameter_count` before any tensors are allocated.
+        """
+
+        target = int(target_active_parameters)
+        if target <= 0:
+            raise ValueError("target_active_parameters must be positive")
+        alignment = int(alignment)
+        if alignment <= 0:
+            raise ValueError("alignment must be positive")
+
+        if template is None:
+            base = cls(seed=cls.seed if seed is None else int(seed))
+        else:
+            base = template
+        chosen_seed = base.seed if seed is None else int(seed)
+        base_width = int(base.region_sizes[0])
+
+        def aligned_dimension(value: float, *, minimum: int) -> int:
+            units = max(1, int(round(float(value) / alignment)))
+            return max(int(minimum), units * alignment)
+
+        def candidate(width_units: int) -> "TaijiConfig":
+            primary_width = int(width_units) * alignment
+            scale = primary_width / base_width
+            values = base.to_dict()
+            values.update(
+                {
+                    "region_sizes": [
+                        aligned_dimension(size * scale, minimum=max(2, alignment))
+                        for size in base.region_sizes
+                    ],
+                    "synapse_fan_in": max(1, int(round(base.synapse_fan_in * scale))),
+                    "motor_fan_in": max(1, int(round(base.motor_fan_in * scale))),
+                    "memory_units": aligned_dimension(
+                        base.memory_units * scale,
+                        minimum=max(2, alignment),
+                    ),
+                    "memory_fan_in": max(1, int(round(base.memory_fan_in * scale))),
+                    "memory_meta_dim": aligned_dimension(
+                        base.memory_meta_dim * scale,
+                        minimum=max(2, alignment),
+                    ),
+                    "memory_readout_fan_in": max(
+                        1,
+                        int(round(base.memory_readout_fan_in * scale)),
+                    ),
+                    "lateral_fan_in": max(1, int(round(base.lateral_fan_in * scale))),
+                    "seed": chosen_seed,
+                }
+            )
+            values["memory_meta_dim"] = min(
+                int(values["memory_meta_dim"]),
+                int(values["memory_units"]),
+            )
+            values["memory_readout_fan_in"] = min(
+                int(values["memory_readout_fan_in"]),
+                int(values["memory_meta_dim"]),
+            )
+            return cls.from_dict(values)
+
+        smallest = candidate(1)
+        if smallest.planned_active_parameter_count > target:
+            raise ValueError(
+                "target_active_parameters is below the smallest valid aligned fabric "
+                f"({smallest.planned_active_parameter_count})"
+            )
+
+        lower = 1
+        upper = 2
+        while candidate(upper).planned_active_parameter_count <= target:
+            lower = upper
+            upper *= 2
+
+        while upper - lower > 1:
+            middle = (lower + upper) // 2
+            if candidate(middle).planned_active_parameter_count <= target:
+                lower = middle
+            else:
+                upper = middle
+        return candidate(lower)
+
+    @property
+    def planned_active_parameter_count(self) -> int:
+        """Exact number of learned scalars allocated by this configuration."""
+
+        lower_sizes = (self.alphabet_size, *self.region_sizes[:-1])
+        fabric = 0
+        for lower_size, region_size in zip(lower_sizes, self.region_sizes):
+            fabric += lower_size * min(self.synapse_fan_in, region_size)
+            fabric += lower_size * region_size
+            fabric += region_size * min(self.synapse_fan_in, region_size - 1)
+            fabric += region_size * min(self.lateral_fan_in, region_size - 1)
+
+        motor = self.alphabet_size * self.motor_context_dim + self.alphabet_size
+        readout_width = min(self.memory_readout_fan_in, self.memory_meta_dim)
+        readout_outputs = (
+            2 * self.alphabet_size
+            + 2
+            + self.cortical_context_dim
+            + self.memory_time_dim
+            + self.memory_episode_dim
+            + 4
+        )
+        memory = self.memory_units * min(self.memory_fan_in, self.memory_units - 1)
+        memory += readout_outputs * readout_width
+        return int(fabric + motor + memory)
 
     @property
     def cortical_context_dim(self) -> int:

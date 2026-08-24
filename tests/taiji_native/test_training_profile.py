@@ -5,6 +5,9 @@
 因此任何画像都必须原地通过 ``TaijiConfig`` 的全部 ``__post_init__`` 约束。
 """
 
+import pytest
+import torch
+
 from taiji import Taiji, TaijiConfig
 
 
@@ -36,3 +39,40 @@ def test_training_profile_rejects_non_positive_scale() -> None:
         pass
     else:
         raise AssertionError("scale must be positive")
+
+
+def test_planned_parameter_count_matches_constructed_substrate() -> None:
+    for config in (TaijiConfig(seed=311), TaijiConfig.training_profile(scale=2, seed=311)):
+        assert config.planned_active_parameter_count == Taiji(config).parameter_count()
+
+
+def test_capacity_profile_fits_a_parameter_budget_deterministically() -> None:
+    budget = 300_000
+    profile = TaijiConfig.capacity_profile(budget, seed=311)
+
+    assert profile.planned_active_parameter_count <= budget
+    assert profile.planned_active_parameter_count >= int(budget * 0.75)
+    assert profile.region_sizes > TaijiConfig(seed=311).region_sizes
+    assert profile == TaijiConfig.capacity_profile(budget, seed=311)
+    assert Taiji(profile).parameter_count() == profile.planned_active_parameter_count
+
+
+def test_capacity_profile_rejects_a_budget_below_the_smallest_valid_fabric() -> None:
+    try:
+        TaijiConfig.capacity_profile(1, seed=311)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("an impossible parameter budget must be rejected")
+
+
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA device is not available")
+def test_cuda_substrate_builds_steps_and_keeps_learned_tensors_on_device() -> None:
+    config = TaijiConfig.capacity_profile(100_000, seed=311)
+    model = Taiji(config, device="cuda")
+
+    model.observe(97, learn=True)
+    step = model.observe(98, learn=True)
+
+    assert step.probabilities.device.type == "cuda"
+    assert all(tensor.device.type == "cuda" for tensor in model.parameter_tensors())

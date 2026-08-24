@@ -13,7 +13,8 @@ dialogue_extended_clean），以 raw-byte 流喂入 ``Seed.observe``；
 正式训练（放大画像、限量符号数、周期落盘）::
 
     python scripts/training/train_seed_corpus.py \
-        --scale 2 --epochs 1 --max-symbols 400000 \
+        --parameter-budget 500000 --device auto \
+        --epochs 1 --max-symbols 400000 \
         --checkpoint checkpoints/seed_corpus.pt \
         --progress reports/seed_corpus_progress.jsonl
 """
@@ -57,6 +58,20 @@ HOLDOUT_PROBE = (
 ).encode("utf-8")
 
 
+def resolve_device(requested: str | torch.device) -> torch.device:
+    """Resolve a requested training device without silently ignoring CUDA."""
+
+    value = str(requested).strip().lower()
+    if value == "auto":
+        return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device(value)
+    if device.type == "cuda" and not torch.cuda.is_available():
+        raise RuntimeError(
+            "CUDA was requested but this PyTorch build or machine has no available CUDA device"
+        )
+    return device
+
+
 def iter_corpus_symbols(
     paths: Sequence[Path | str],
     *,
@@ -94,6 +109,7 @@ def run_training(
     progress_every: int,
     max_symbols: Optional[int] = None,
     resume_checkpoint: Optional[Path | str] = None,
+    device: str | torch.device = "cpu",
 ) -> Dict[str, float]:
     """Stream the corpus through ``Seed.observe`` with periodic persistence."""
 
@@ -107,7 +123,7 @@ def run_training(
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     progress_path.parent.mkdir(parents=True, exist_ok=True)
 
-    model = Seed(config, episode_id="seed-corpus")
+    model = Seed(config, device=resolve_device(device), episode_id="seed-corpus")
     if resume_checkpoint is not None:
         model.restore(torch.load(resume_checkpoint, weights_only=False))
     boundary = config.taiji.boundary_symbol
@@ -186,6 +202,17 @@ def main() -> None:
         default=[str(PROJECT_ROOT / name) for name in DEFAULT_CORPUS],
     )
     parser.add_argument("--scale", type=int, default=2)
+    parser.add_argument(
+        "--parameter-budget",
+        type=int,
+        default=None,
+        help="自动规划不超过该数量的可学习参数；设置后替代 --scale",
+    )
+    parser.add_argument(
+        "--device",
+        default="auto",
+        help="训练设备：auto、cpu、cuda 或 cuda:N",
+    )
     parser.add_argument("--seed", type=int, default=20260822)
     parser.add_argument("--epochs", type=int, default=1)
     parser.add_argument("--max-symbols", type=int, default=200_000)
@@ -211,7 +238,14 @@ def main() -> None:
         config = SeedConfig()
         max_symbols = 5_000
     else:
-        config = SeedConfig(taiji=TaijiConfig.training_profile(scale=args.scale, seed=args.seed))
+        if args.parameter_budget is None:
+            taiji_config = TaijiConfig.training_profile(scale=args.scale, seed=args.seed)
+        else:
+            taiji_config = TaijiConfig.capacity_profile(
+                args.parameter_budget,
+                seed=args.seed,
+            )
+        config = SeedConfig(taiji=taiji_config)
         max_symbols = args.max_symbols
 
     summary = run_training(
@@ -224,6 +258,7 @@ def main() -> None:
         progress_every=args.progress_every,
         max_symbols=max_symbols,
         resume_checkpoint=args.resume,
+        device=args.device,
     )
     print(json.dumps(summary, ensure_ascii=False))
 
