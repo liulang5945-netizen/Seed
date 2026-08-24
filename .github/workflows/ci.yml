@@ -29,7 +29,8 @@ jobs:
         # FastAPI 可选依赖：python-multipart（form/File）—— test_api_health 触发 Form 中间件
         # 另带 pydantic+anyio（FastAPI 内部用）确保类型解析工作正常
         # tomli 仅 3.10 需要：tomllib 自 3.11 才进标准库，环境标记让 3.12 自动跳过
-        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio ruff black mypy pip-audit "tomli>=2.0.0; python_version < '3.11'"
+        # cryptography：SecureStorage 的 Fernet 加密后端，缺失会让 AuthManager 构造失败 → 中间件 503
+        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography ruff black mypy pip-audit "tomli>=2.0.0; python_version < '3.11'"
 
       - name: Install package (editable)
         run: pip install -e . --no-deps
@@ -160,7 +161,7 @@ jobs:
         run: pip install torch --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install test dependencies
-        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio "tomli>=2.0.0; python_version < '3.11'"
+        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography "tomli>=2.0.0; python_version < '3.11'"
 
       - name: Install package (editable)
         run: pip install -e . --no-deps

@@ -383,11 +383,12 @@ class AuthManager:
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            cls._instance._jwt = JWTManager()
-            cls._instance._storage = SecureStorage()
-            cls._instance._audit = AuditLogger()
-            cls._instance._load_settings()
+            instance = super().__new__(cls)
+            instance._jwt = JWTManager()
+            instance._storage = SecureStorage()
+            instance._audit = AuditLogger()
+            instance._load_settings()
+            cls._instance = instance
         return cls._instance
 
     def _load_settings(self):
