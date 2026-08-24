@@ -10,7 +10,6 @@ from __future__ import annotations
 import os
 import sys
 
-
 _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _APP_DIR_NAME = "Taiji"
 

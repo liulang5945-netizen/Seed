@@ -16,7 +16,6 @@ from typing import Any
 
 from .paths import get_external_path
 
-
 logger = logging.getLogger("SeedPlatform.Settings")
 _SETTINGS_FILENAME = "app_settings.json"
 _SETTINGS_LOCK = threading.RLock()
