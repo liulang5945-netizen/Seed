@@ -56,9 +56,18 @@
 
 - [x] 根因确认：源码 `frontend/dist` 与冻结客户端 `dist/Seed/_internal/frontend/dist` 的
   `index.html`、JS/CSS hash 不一致；客户端日志确认运行的是冻结内置前端，不会读取仓库源码目录。
-- [x] 重新打包后复核：`Seed.exe` 内置前端与本次前端构建完全一致；打包后通过 `http://127.0.0.1:8000/`
-  返回当前 `index-CBgTIe_H.js` / `style-DBXByxTa.css`，桌面日志确认后端、WebSocket 与前端加载链路启动。
+- [x] 重新打包后复核：`Seed.exe` 内置前端与本次前端构建完全一致；最新包返回当前
+  `index-X2Jxjiko.js` / `style-CJJCRD6K.css`，并包含 `logo.svg`。
 - [x] `desktop/build.py` 已增加打包后前端一致性断言，避免以后只改源码/只构建前端却继续启动旧客户端。
 
 本项已闭合。后续若再次修改前端，唯一正确动作是重新执行 `python desktop/build.py` 后再打开
 `dist/Seed/Seed.exe`；只运行开发目录或只运行 `npm run build` 不会更新已经存在的 exe。
+
+## 7. 2026-08-24 侧边栏与品牌图标调整
+
+- [x] 主导航取消滚动容器，六个入口始终完整罗列；会话历史保留独立区域，不与主导航争夺布局语义。
+- [x] Windows 任务栏、窗口与托盘图标统一解析打包内置 `frontend/dist/logo.svg`，
+  避免 frozen 模式找不到 `frontend/public/favicon.ico` 时回退默认图标。
+
+本项已闭合。后续修改前端或品牌资源后，继续执行 `python desktop/build.py`，再从
+`dist/Seed/Seed.exe` 启动客户端。

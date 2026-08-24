@@ -157,10 +157,11 @@ a { color: inherit; text-decoration: none; }
 
 /* 导航 */
 .nav-scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 4px 10px 12px;
+  /* 主导航固定完整展开；会话历史由上方独立区域承载滚动 */
+  flex: none;
+  min-height: max-content;
+  overflow: visible;
+  padding: 4px 10px 2px;
   display: flex;
   flex-direction: column;
   gap: 2px;

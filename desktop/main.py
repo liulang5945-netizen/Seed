@@ -50,6 +50,30 @@ WS_PORT = 8765
 HEALTH_PATH = "/api/health"
 SWITCH_MODEL_PATH = "/api/system/switch_model"
 
+
+def _find_brand_icon() -> Path | None:
+    """解析开发与 frozen 两种布局中的 Seed logo。
+
+    打包后的前端资源位于 ``_internal/frontend/dist``，不是源码目录的
+    ``frontend/public``。找不到内置 logo 时才回退到显式的 ico 资产，
+    避免窗口和托盘显示 PyQt 默认小图标。
+    """
+    internal_root = Path(getattr(sys, "_MEIPASS", ROOT_DIR / "_internal"))
+    candidates = [
+        internal_root / "frontend" / "dist" / "logo.svg",
+        ROOT_DIR / "frontend" / "public" / "logo.svg",
+        ROOT_DIR / "frontend" / "dist" / "logo.svg",
+        ROOT_DIR / "icon.ico",
+        internal_root / "icon.ico",
+        internal_root / "frontend" / "dist" / "favicon.ico",
+        ROOT_DIR / "frontend" / "public" / "favicon.ico",
+    ]
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+    return None
+
+
 try:
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     _file_handler = logging.FileHandler(LOG_DIR / "desktop_main.log", encoding="utf-8")
@@ -461,11 +485,8 @@ def main():
     app.setAttribute(Qt.ApplicationAttribute.AA_DontUseNativeMenuBar, True)
 
     # 设置应用图标
-    icon_path = ROOT_DIR / "frontend" / "public" / "favicon.ico"
-    if not icon_path.exists():
-        icon_path = ROOT_DIR / "icon.ico"
-
-    if icon_path.exists():
+    icon_path = _find_brand_icon()
+    if icon_path is not None:
         app.setWindowIcon(QIcon(str(icon_path)))
 
     # 加载设置
@@ -557,6 +578,11 @@ def main():
         def __init__(self):
             super().__init__()
             self.setWindowTitle("Seed - AI 生命体")
+            brand_icon = _find_brand_icon()
+            if brand_icon is not None:
+                # 显式设置窗口图标，确保 Windows 任务栏使用 Seed logo，
+                # 不依赖 QApplication 默认图标或 exe 的回退图标。
+                self.setWindowIcon(QIcon(str(brand_icon)))
             self.setMinimumSize(QSize(1024, 700))
             self.menuBar().hide()
 
@@ -782,10 +808,8 @@ def main():
             self.tray = QSystemTrayIcon(self)
 
             # 使用应用 logo 作为托盘图标（与窗口图标一致）
-            tray_icon_path = ROOT_DIR / "frontend" / "public" / "favicon.ico"
-            if not tray_icon_path.exists():
-                tray_icon_path = ROOT_DIR / "icon.ico"
-            if tray_icon_path.exists():
+            tray_icon_path = _find_brand_icon()
+            if tray_icon_path is not None:
                 self.tray.setIcon(QIcon(str(tray_icon_path)))
 
             # 托盘菜单

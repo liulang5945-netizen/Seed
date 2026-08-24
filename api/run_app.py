@@ -53,6 +53,21 @@ from seed_platform.config import (
 from seed_platform.dependencies import dependency_manifest, legacy_requested
 
 
+def _find_brand_icon() -> str | None:
+    """解析开发与 PyInstaller 内置资源中的 Seed logo。"""
+    candidates = [
+        get_internal_path("frontend/dist/logo.svg"),
+        get_internal_path("frontend/dist/favicon.svg"),
+        get_external_path("icon.ico"),
+        get_internal_path("icon.ico"),
+        get_internal_path("frontend/dist/favicon.ico"),
+    ]
+    for candidate in candidates:
+        if os.path.isfile(candidate):
+            return candidate
+    return None
+
+
 def _check_module(import_name: str) -> bool:
     """检测单个 Python 模块是否可导入"""
     try:
@@ -824,16 +839,8 @@ def _real_main():
         window.setWindowTitle("Seed")
         window.resize(1200, 800)
 
-        base_path = get_external_path("")
-        icon_path = os.path.join(base_path, "icon.ico")
-        internal_icon = get_internal_path("icon.ico")
-
-        if os.path.exists(icon_path):
-            app_icon = QIcon(icon_path)
-        elif os.path.exists(internal_icon):
-            app_icon = QIcon(internal_icon)
-        else:
-            app_icon = QIcon(sys.executable)
+        icon_path = _find_brand_icon()
+        app_icon = QIcon(icon_path) if icon_path else QIcon(sys.executable)
 
         window.setWindowIcon(app_icon)
 

@@ -42,6 +42,7 @@ html, body {
   flex-shrink: 0;
   position: relative;
   z-index: 10;
+  overflow: hidden;
   /* 允许过渡动画 */
   transition: width 0.3s var(--ease);
 }
