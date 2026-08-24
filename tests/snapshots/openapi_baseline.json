@@ -6569,43 +6569,6 @@
         },
         "summary": "List Workspace Tree"
       }
-    },
-    "/{catchall}": {
-      "get": {
-        "operationId": "serve_spa__catchall__get",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "catchall",
-            "required": true,
-            "schema": {
-              "title": "Catchall",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Serve Spa"
-      }
     }
   }
 }

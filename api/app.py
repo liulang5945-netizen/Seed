@@ -260,7 +260,10 @@ def _mount_static_assets(app: FastAPI):
     if os.path.exists(assets_path):
         app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
 
-    @app.get("/{catchall:path}")
+    # include_in_schema=False：SPA 兜底路由不是 API 契约的一部分，且其注册取决于
+    # frontend/dist 是否已构建（该目录被 gitignore）。若纳入 schema，OpenAPI 快照会
+    # 随构建产物存在与否漂移——本地绿、CI 红。
+    @app.get("/{catchall:path}", include_in_schema=False)
     async def serve_spa(catchall: str):
         if catchall.startswith("api/") or catchall.startswith("ws/"):
             return JSONResponse(
