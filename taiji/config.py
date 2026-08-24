@@ -7,6 +7,77 @@ from typing import Any, Dict, Tuple
 
 
 @dataclass(frozen=True)
+class CapacityPolicy:
+    """Structural proportions used by the parameter-budget planner.
+
+    Dynamics stay in :class:`TaijiConfig`; this policy owns only dimensions
+    that may be searched or adapted between training runs.  Ratios are relative
+    to the first cortical region, so changing depth no longer requires copying
+    a complete configuration full of unrelated learning constants.
+    """
+
+    region_ratios: Tuple[float, ...] = (1.0, 0.75, 0.50)
+    synapse_fan_in_ratio: float = 0.1875
+    motor_fan_in_ratio: float = 0.375
+    memory_units_ratio: float = 1.50
+    memory_fan_in_ratio: float = 0.25
+    memory_meta_ratio: float = 0.375
+    memory_readout_fan_in_ratio: float = 0.375
+    lateral_fan_in_ratio: float = 0.125
+    alignment: int = 8
+
+    def __post_init__(self) -> None:
+        if not self.region_ratios or any(float(value) <= 0.0 for value in self.region_ratios):
+            raise ValueError("region_ratios must contain positive values")
+        for name in (
+            "synapse_fan_in_ratio",
+            "motor_fan_in_ratio",
+            "memory_units_ratio",
+            "memory_fan_in_ratio",
+            "memory_meta_ratio",
+            "memory_readout_fan_in_ratio",
+            "lateral_fan_in_ratio",
+        ):
+            if float(getattr(self, name)) <= 0.0:
+                raise ValueError(f"{name} must be positive")
+        if int(self.alignment) <= 0:
+            raise ValueError("alignment must be positive")
+
+    @classmethod
+    def from_config(
+        cls,
+        config: "TaijiConfig",
+        *,
+        alignment: int = 8,
+    ) -> "CapacityPolicy":
+        """Recover structural proportions from an existing configuration."""
+
+        width = float(config.region_sizes[0])
+        return cls(
+            region_ratios=tuple(float(size) / width for size in config.region_sizes),
+            synapse_fan_in_ratio=float(config.synapse_fan_in) / width,
+            motor_fan_in_ratio=float(config.motor_fan_in) / width,
+            memory_units_ratio=float(config.memory_units) / width,
+            memory_fan_in_ratio=float(config.memory_fan_in) / width,
+            memory_meta_ratio=float(config.memory_meta_dim) / width,
+            memory_readout_fan_in_ratio=float(config.memory_readout_fan_in) / width,
+            lateral_fan_in_ratio=float(config.lateral_fan_in) / width,
+            alignment=int(alignment),
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        payload = asdict(self)
+        payload["region_ratios"] = list(self.region_ratios)
+        return payload
+
+    @classmethod
+    def from_dict(cls, payload: Dict[str, Any]) -> "CapacityPolicy":
+        values = dict(payload)
+        values["region_ratios"] = tuple(float(value) for value in values["region_ratios"])
+        return cls(**values)
+
+
+@dataclass(frozen=True)
 class TaijiConfig:
     """Shape and dynamics of one Taiji predictive fabric.
 
@@ -253,63 +324,83 @@ class TaijiConfig:
         target_active_parameters: int,
         *,
         template: "TaijiConfig | None" = None,
+        policy: "CapacityPolicy | None" = None,
         seed: "int | None" = None,
-        alignment: int = 8,
+        alignment: "int | None" = None,
     ) -> "TaijiConfig":
         """Build the largest substrate that fits an active-parameter budget.
 
-        The template supplies architectural proportions and all dynamics.  The
-        planner scales only structural capacity (region widths, memory width
-        and physical fan-in), so callers can replace the default proportions
-        without adding another hard-coded profile.  The returned configuration
-        is deterministic and its exact learned-scalar count is available via
-        :attr:`planned_active_parameter_count` before any tensors are allocated.
+        The template supplies dynamics.  ``policy`` independently supplies
+        structural depth and proportions; when omitted, proportions are
+        recovered from the template for backward compatibility.  The returned
+        configuration is deterministic and its exact learned-scalar count is
+        available before any tensors are allocated.
         """
 
         target = int(target_active_parameters)
         if target <= 0:
             raise ValueError("target_active_parameters must be positive")
-        alignment = int(alignment)
-        if alignment <= 0:
-            raise ValueError("alignment must be positive")
-
         if template is None:
             base = cls(seed=cls.seed if seed is None else int(seed))
         else:
             base = template
+        if policy is None:
+            capacity = CapacityPolicy.from_config(
+                base,
+                alignment=8 if alignment is None else int(alignment),
+            )
+        else:
+            if alignment is not None:
+                raise ValueError("alignment belongs to policy when an explicit policy is supplied")
+            capacity = policy
         chosen_seed = base.seed if seed is None else int(seed)
-        base_width = int(base.region_sizes[0])
+        dimension_alignment = int(capacity.alignment)
+        first_region_ratio = float(capacity.region_ratios[0])
 
         def aligned_dimension(value: float, *, minimum: int) -> int:
-            units = max(1, int(round(float(value) / alignment)))
-            return max(int(minimum), units * alignment)
+            units = max(1, int(round(float(value) / dimension_alignment)))
+            return max(int(minimum), units * dimension_alignment)
 
         def candidate(width_units: int) -> "TaijiConfig":
-            primary_width = int(width_units) * alignment
-            scale = primary_width / base_width
+            primary_width = int(width_units) * dimension_alignment
             values = base.to_dict()
             values.update(
                 {
                     "region_sizes": [
-                        aligned_dimension(size * scale, minimum=max(2, alignment))
-                        for size in base.region_sizes
+                        aligned_dimension(
+                            primary_width * float(ratio) / first_region_ratio,
+                            minimum=max(2, dimension_alignment),
+                        )
+                        for ratio in capacity.region_ratios
                     ],
-                    "synapse_fan_in": max(1, int(round(base.synapse_fan_in * scale))),
-                    "motor_fan_in": max(1, int(round(base.motor_fan_in * scale))),
-                    "memory_units": aligned_dimension(
-                        base.memory_units * scale,
-                        minimum=max(2, alignment),
+                    "synapse_fan_in": max(
+                        1,
+                        int(round(primary_width * capacity.synapse_fan_in_ratio)),
                     ),
-                    "memory_fan_in": max(1, int(round(base.memory_fan_in * scale))),
+                    "motor_fan_in": max(
+                        1,
+                        int(round(primary_width * capacity.motor_fan_in_ratio)),
+                    ),
+                    "memory_units": aligned_dimension(
+                        primary_width * capacity.memory_units_ratio,
+                        minimum=max(2, dimension_alignment),
+                    ),
+                    "memory_fan_in": max(
+                        1,
+                        int(round(primary_width * capacity.memory_fan_in_ratio)),
+                    ),
                     "memory_meta_dim": aligned_dimension(
-                        base.memory_meta_dim * scale,
-                        minimum=max(2, alignment),
+                        primary_width * capacity.memory_meta_ratio,
+                        minimum=max(2, dimension_alignment),
                     ),
                     "memory_readout_fan_in": max(
                         1,
-                        int(round(base.memory_readout_fan_in * scale)),
+                        int(round(primary_width * capacity.memory_readout_fan_in_ratio)),
                     ),
-                    "lateral_fan_in": max(1, int(round(base.lateral_fan_in * scale))),
+                    "lateral_fan_in": max(
+                        1,
+                        int(round(primary_width * capacity.lateral_fan_in_ratio)),
+                    ),
                     "seed": chosen_seed,
                 }
             )

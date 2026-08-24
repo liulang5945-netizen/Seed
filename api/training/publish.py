@@ -10,7 +10,7 @@ import os
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 
-from neuroplex.core.utils import get_external_path
+from seed_platform.paths import get_external_path
 
 logger = logging.getLogger("ApiServer.Training")
 router = APIRouter()

@@ -9,7 +9,13 @@
 - 容量规划：`TaijiConfig.capacity_profile(target_active_parameters, template=...)` 以显式参数预算自动求最大可容纳区域、记忆宽度和 fan-in；`planned_active_parameter_count` 在分配张量前给出与 `Taiji.parameter_count()` 一致的精确学习标量数。默认 300,000 预算得到 `(200,152,96)` 区域、304 memory units、286,170 个 active learned scalars。
 - Legacy 边界：`seed/` 与 `taiji/` 已完全不导入 Transformer/Neuroplex，但 `api/`、桌面端、认证/工具/设置和旧训练脚本仍有大量 `neuroplex` 导入。现在删除 `neuroplex/` 会直接破坏产品壳；彻底摆脱是可行的迁移任务，不是安全的目录删除。
 
-**唯一下一步**：先把认证、路径、配置、应用状态、工具注册等平台能力从 `neuroplex` 移入中性 `seed_platform`，使 `api/app.py` 与 Seed 默认启动链不再导入 legacy model；只有当产品入口的 legacy import 门禁归零后，再归档并删除 Transformer/Cortex 训练代码与 `legacy` 依赖组。
+第二阶段已完成（2026-08-24）：
+
+- `CapacityPolicy` 将区域深度/比例、各类 fan-in 密度、memory/meta 比例和对齐粒度从完整动力学配置中拆出；策略可 JSON round-trip，`train_seed_corpus.py --capacity-policy ... --parameter-budget ...` 可直接用于架构搜索，最终 checkpoint 仍只保存展开后的 `TaijiConfig`，格式兼容。
+- `seed_platform.paths` 成为源运行/桌面打包路径的唯一平台实现，API 的工作区、聊天历史、RAG、更新、数据集与发布路径不再经由 `neuroplex.core.utils`。
+- `api/app.py` 不再直接导入任何 `neuroplex` 模块；Cortex 生命周期、自动重载、life scheduler 和显式 Cortex 路由集中到 `api/legacy_bridge.py`，AST 门禁阻止依赖重新散回入口。
+
+**唯一下一步**：把 `app_state`、认证和 settings service 依次迁到 `seed_platform`，让聊天、健康检查、训练控制与平台路由不再借用 Cortex 命名空间；完成后将 `legacy_bridge` 改为显式可选插件并让 Seed 成为无 Legacy 安装下的默认启动路径。
 
 ## 1. 当前架构
 

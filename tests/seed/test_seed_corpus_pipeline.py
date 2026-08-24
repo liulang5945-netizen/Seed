@@ -120,3 +120,30 @@ def test_training_device_resolution_is_explicit(monkeypatch) -> None:
     assert trainer.resolve_device("auto").type == "cpu"
     with pytest.raises(RuntimeError, match="CUDA"):
         trainer.resolve_device("cuda")
+
+
+def test_training_loads_an_external_capacity_policy(tmp_path) -> None:
+    trainer = _module()
+    path = tmp_path / "capacity.json"
+    path.write_text(
+        json.dumps(
+            {
+                "region_ratios": [1.0, 0.5, 0.25, 0.125],
+                "synapse_fan_in_ratio": 0.15,
+                "motor_fan_in_ratio": 0.30,
+                "memory_units_ratio": 1.25,
+                "memory_fan_in_ratio": 0.20,
+                "memory_meta_ratio": 0.30,
+                "memory_readout_fan_in_ratio": 0.25,
+                "lateral_fan_in_ratio": 0.10,
+                "alignment": 8,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    policy = trainer.load_capacity_policy(path)
+    profile = TaijiConfig.capacity_profile(250_000, policy=policy, seed=311)
+
+    assert len(profile.region_sizes) == 4
+    assert profile.planned_active_parameter_count <= 250_000
