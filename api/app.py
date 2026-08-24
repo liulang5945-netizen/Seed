@@ -215,9 +215,9 @@ def _load_optional_router(module_name: str):
 
 def _register_routers(app: FastAPI):
     agent_router = _load_optional_router("routes_agent")
-    from .routes_agent_mcp import router as agent_mcp_router
-    from .routes_agent_memory import router as agent_memory_router
-    from .routes_agent_workspace import router as agent_workspace_router
+    agent_mcp_router = _load_optional_router("routes_agent_mcp")
+    agent_memory_router = _load_optional_router("routes_agent_memory")
+    agent_workspace_router = _load_optional_router("routes_agent_workspace")
     from .routes_auth import router as auth_router
     from .routes_chat import router as chat_router
     from .routes_model_switch import router as model_switch_router
@@ -236,7 +236,13 @@ def _register_routers(app: FastAPI):
 
     app.include_router(auth_router)
     app.include_router(runtime_router)
-    for optional_router in (workflows_router, plugins_router):
+    for optional_router in (
+        workflows_router,
+        plugins_router,
+        agent_workspace_router,
+        agent_mcp_router,
+        agent_memory_router,
+    ):
         if optional_router is not None:
             app.include_router(optional_router)
     app.include_router(chat_router)
@@ -250,9 +256,6 @@ def _register_routers(app: FastAPI):
     app.include_router(model_switch_router)
     if agent_router is not None:
         app.include_router(agent_router)
-    app.include_router(agent_workspace_router)
-    app.include_router(agent_mcp_router)
-    app.include_router(agent_memory_router)
     app.include_router(terminal_router)
     register_legacy_routers(app)
 
