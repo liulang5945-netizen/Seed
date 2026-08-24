@@ -765,7 +765,14 @@ def main():
                 self.clearMask()
                 return
             path = QPainterPath()
-            path.addRoundedRect(self.rect(), self.WINDOW_RADIUS, self.WINDOW_RADIUS)
+            path.addRoundedRect(
+                0.0,
+                0.0,
+                float(self.width()),
+                float(self.height()),
+                float(self.WINDOW_RADIUS),
+                float(self.WINDOW_RADIUS),
+            )
             self.setMask(QRegion(path.toFillPolygon().toPolygon()))
 
         def resizeEvent(self, event):

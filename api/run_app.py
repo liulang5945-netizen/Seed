@@ -727,7 +727,14 @@ class MainWindow(QMainWindow):
         from PyQt6.QtGui import QPainterPath, QRegion
 
         path = QPainterPath()
-        path.addRoundedRect(self.rect(), 18, 18)
+        path.addRoundedRect(
+            0.0,
+            0.0,
+            float(self.width()),
+            float(self.height()),
+            18.0,
+            18.0,
+        )
         self.setMask(QRegion(path.toFillPolygon().toPolygon()))
 
     def resizeEvent(self, event):
