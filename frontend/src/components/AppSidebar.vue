@@ -9,7 +9,7 @@
     <div class="sidebar-header">
       <div class="sidebar-logo">
         <div class="logo-icon-wrap">
-          <img src="/logo-taiji-ink.jpg" class="logo-img" alt="Seed">
+          <TaijiLogo :size="38" :thinking="runtimeStore.health.state === 'connected'" />
         </div>
         <div class="brand-copy">
           <h2>{{ t('title') }}</h2>
@@ -77,6 +77,7 @@
       <span class="slp-label">{{ dominantNeedLabel }}</span>
       <span class="slp-value">{{ dominantNeedValue }}%</span>
     </div>
+
   </aside>
 </template>
 
@@ -87,6 +88,7 @@ import { Plus, MessageSquare, X, Search, BookOpen, Zap, Cpu, Layout, Settings, H
 import { useChatStore } from '@/stores/chatStore.js'
 import { useAppStore } from '@/stores/appStore.js'
 import { useRuntimeStore } from '@/stores/runtimeStore.js'
+import TaijiLogo from './TaijiLogo.vue'
 
 const props = defineProps({
   width: { type: Number, default: 248 },
