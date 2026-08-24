@@ -50,7 +50,7 @@ legacy = [
     "pandas>=2.0.0,<3.0.0",
     "matplotlib>=3.7.0,<4.0.0",
 ]
-gpu = ["bitsandbytes>=0.43.0", "scipy>=1.10.0"]
+gpu = ["bitsandbytes>=0.43.0", "scipy>=1.10.1"]
 voice = ["edge-tts", "pyttsx3", "SpeechRecognition"]
 desktop = ["PyQt6>=6.5.0", "PyQt6-WebEngine>=6.5.0"]
 build = ["pyinstaller>=6.0.0"]
