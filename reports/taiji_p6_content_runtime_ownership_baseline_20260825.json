@@ -1,0 +1,31 @@
+{
+  "format": "taiji-p6-content-runtime-ownership-v1",
+  "metrics": {
+    "selected_candidate": "ask",
+    "goal_residual": 1.0,
+    "world_uncertainty": 1.0,
+    "expression_modality": "text",
+    "expression_channel": "message",
+    "native_checkpoint_selection": "ask",
+    "native_checkpoint_expression": {
+      "expression_id": "intent:content:content:ask:expression:text",
+      "content_id": "intent:content:content:ask",
+      "modality": "text",
+      "channel": "message",
+      "fields": {
+        "intent_kind": "request_information",
+        "semantic_slots": {
+          "mode": "clarify"
+        },
+        "expected_outcome": ""
+      },
+      "confidence": 0.7,
+      "provenance": "selected",
+      "tick": 0
+    }
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "adapter selects content from current goal/world state, expresses it, and restores selector decision from native checkpoint"
+  }
+}

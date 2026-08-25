@@ -1,0 +1,17 @@
+{
+  "format": "taiji-p6-content-runtime-ownership-manifest-v1",
+  "task": "own learned content selection and ContentPlan-to-ExpressionPlan runtime state in the adapter",
+  "lesions": [
+    "selector_runtime",
+    "content_expression_bridge",
+    "native_checkpoint_content"
+  ],
+  "signals": [
+    "goal_residual",
+    "world_uncertainty",
+    "selected_candidate",
+    "expression",
+    "checkpoint"
+  ],
+  "boundary": "runtime ownership Gate only; no open-ended language generation claim"
+}
