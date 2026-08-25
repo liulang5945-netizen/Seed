@@ -61,6 +61,16 @@ from .episodic_memory import (
     EpisodicMemoryStore,
 )
 from .evaluation import A1EvaluationConfig, PerceptionCorpus, PerceptionEvaluator
+from .executive import (
+    EXECUTIVE_CANDIDATE_FEATURE_NAMES,
+    EXECUTIVE_CHECKPOINT_FORMAT,
+    EXECUTIVE_CONTEXT_FEATURE_NAMES,
+    ExecutiveCandidate,
+    ExecutiveContext,
+    ExecutiveController,
+    ExecutiveDecision,
+    ExecutiveTrainingExample,
+)
 from .fabric import TaijiFabric
 from .generation import (
     GENERATION_CHECKPOINT_FORMAT,
@@ -181,6 +191,14 @@ __all__ = [
     "EpisodicMemoryRecord",
     "EpisodicMemoryStore",
     "EPISODIC_MEMORY_CHECKPOINT_FORMAT",
+    "EXECUTIVE_CANDIDATE_FEATURE_NAMES",
+    "EXECUTIVE_CHECKPOINT_FORMAT",
+    "EXECUTIVE_CONTEXT_FEATURE_NAMES",
+    "ExecutiveCandidate",
+    "ExecutiveContext",
+    "ExecutiveController",
+    "ExecutiveDecision",
+    "ExecutiveTrainingExample",
     "EpisodicField",
     "EpisodicReplay",
     "EpisodicWrite",

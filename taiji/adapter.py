@@ -42,6 +42,12 @@ from .contracts import (
 from .contracts import MemoryState as NativeMemoryState
 from .environment import EnvironmentOutcome, TaijiToolEnvironment
 from .episodic_memory import EpisodicMemoryStore
+from .executive import (
+    ExecutiveCandidate,
+    ExecutiveContext,
+    ExecutiveController,
+    ExecutiveDecision,
+)
 from .generation import (
     ContentPlan,
     ExpressionPlan,
@@ -99,6 +105,9 @@ class TSKV8Adapter(Taiji):
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
+        self._executive: ExecutiveController | None = None
+        self._last_executive_decision: ExecutiveDecision | None = None
+        self._last_executive_prediction_error: float | None = None
         self._planned_rollout: ImaginedRollout | None = None
         self._replan_required = False
         self._last_rollout_prediction_error: float | None = None
@@ -254,6 +263,77 @@ class TSKV8Adapter(Taiji):
         state = replace(state, tick=self.tick)
         self._cognitive_state = replace(self._cognitive_state, homeostasis=state)
         return state
+
+    def attach_executive(self, controller: ExecutiveController | None) -> None:
+        """Attach the learned Taiji executive over structured candidates."""
+
+        if controller is not None and not isinstance(controller, ExecutiveController):
+            raise TypeError("controller must be an ExecutiveController or None")
+        self._executive = None if controller is None else controller.to(self.device)
+
+    @property
+    def last_executive_decision(self) -> ExecutiveDecision | None:
+        return self._last_executive_decision
+
+    @property
+    def last_executive_prediction_error(self) -> float | None:
+        return self._last_executive_prediction_error
+
+    def select_executive(
+        self,
+        candidates: Sequence[ExecutiveCandidate],
+        *,
+        novelty: float = 0.0,
+        resource_budget: float = 1.0,
+    ) -> ExecutiveDecision:
+        """Select an intent/content pair from current Taiji cognitive state."""
+
+        if self._executive is None:
+            raise RuntimeError("executive controller is not attached")
+        candidates = tuple(candidates)
+        context = ExecutiveContext.from_state(
+            self._cognitive_state,
+            novelty=novelty,
+            resource_budget=resource_budget,
+        )
+        decision = self._executive.select(candidates, context)
+        plan_candidates = tuple(
+            PlanCandidate(
+                plan_id=candidate.candidate_id,
+                action_kind=candidate.action_intent.kind,
+                expected_value=float(decision.scores[candidate.candidate_id]),
+                risk=candidate.features[4],
+            )
+            for candidate in candidates
+        )
+        self._last_executive_decision = decision
+        self._last_executive_prediction_error = None
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            plan=PlanState(
+                tick=self.tick,
+                candidates=plan_candidates,
+                selected_plan_id=decision.selected.candidate_id,
+            ),
+            action_intent=decision.action_intent,
+        )
+        return decision
+
+    def record_executive_outcome(self, outcome: Outcome) -> float:
+        """Train executive selection from an outcome produced by an environment."""
+
+        if self._executive is None:
+            raise RuntimeError("executive controller is not attached")
+        if self._last_executive_decision is None:
+            raise RuntimeError("executive outcome requires a prior selection")
+        if not isinstance(outcome, Outcome):
+            raise TypeError("outcome must be a Taiji Outcome")
+        if outcome.intent_id != self._last_executive_decision.action_intent.intent_id:
+            raise ValueError("executive outcome must reference the selected ActionIntent")
+        error = self._executive.update(self._last_executive_decision, outcome.reward)
+        self._last_executive_prediction_error = error
+        self._cognitive_state = replace(self._cognitive_state, outcome=outcome)
+        return error
 
     def attach_generation_controller(
         self, controller: GenerationController | None
@@ -626,6 +706,8 @@ class TSKV8Adapter(Taiji):
         self._replan_required = False
         self._last_rollout_prediction_error = None
         self._last_rollout_calibrated_confidence = None
+        self._last_executive_decision = None
+        self._last_executive_prediction_error = None
         self._last_generation_trace = None
         self._last_language_emission = None
         self._language_fallback_count = 0
@@ -1166,13 +1248,22 @@ class TSKV8Adapter(Taiji):
         return result
 
     def parameter_tensors(self) -> tuple[torch.Tensor, ...]:
-        return (*super().parameter_tensors(), *self.perception.parameter_tensors())
+        return (
+            *super().parameter_tensors(),
+            *self.perception.parameter_tensors(),
+            *(() if self._executive is None else self._executive.parameter_tensors()),
+        )
 
     def parameter_count(self, *, active_only: bool = True) -> int:
         del active_only
         return int(
             super().parameter_count()
             + sum(parameter.numel() for parameter in self.perception.parameters())
+            + (
+                0
+                if self._executive is None
+                else sum(parameter.numel() for parameter in self._executive.parameter_tensors())
+            )
         )
 
     def dense_equivalent_parameter_count(self) -> int:
@@ -1204,6 +1295,8 @@ class TSKV8Adapter(Taiji):
             payload["homeostasis"] = self._homeostatic_controller.checkpoint()
         if self._goal_planner is not None:
             payload["planning"] = self._goal_planner.checkpoint()
+        if self._executive is not None:
+            payload["executive"] = self._executive.checkpoint()
         if self._generation_controller is not None:
             payload["generation"] = self._generation_controller.checkpoint()
         if self._content_selector is not None:
@@ -1229,6 +1322,12 @@ class TSKV8Adapter(Taiji):
         )
         payload["last_content_prediction_error"] = self._last_content_prediction_error
         payload["content_feedback_applied"] = self._content_feedback_applied
+        payload["last_executive_decision"] = (
+            None
+            if self._last_executive_decision is None
+            else self._last_executive_decision.to_payload()
+        )
+        payload["last_executive_prediction_error"] = self._last_executive_prediction_error
         payload["language_fallback_count"] = self._language_fallback_count
         payload["language_fallback_requires_replan"] = self._language_fallback_requires_replan
         payload["last_language_emission"] = (
@@ -1249,6 +1348,7 @@ class TSKV8Adapter(Taiji):
         self._restore_procedural_memory(checkpoint.get("procedural_memory"))
         self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
         self._restore_goal_planner(checkpoint.get("planning"))
+        self._restore_executive(checkpoint.get("executive"))
         self._restore_generation_controller(checkpoint.get("generation"))
         self._restore_content_selector(checkpoint.get("content_selection"))
         self._restore_language_backend_registry(checkpoint.get("language_backend_registry"))
@@ -1257,6 +1357,7 @@ class TSKV8Adapter(Taiji):
         self._restore_rollout_state(checkpoint)
         self._restore_generation_trace(checkpoint)
         self._restore_content_selection(checkpoint)
+        self._restore_executive_state(checkpoint)
         self._restore_language_emission(checkpoint)
         self._restore_language_fallback_state(checkpoint)
 
@@ -1324,6 +1425,23 @@ class TSKV8Adapter(Taiji):
         self._goal_planner = (
             None if payload is None else GoalPlanner.from_checkpoint(dict(payload))
         )
+
+    def _restore_executive(self, payload: Any) -> None:
+        self._executive = (
+            None
+            if payload is None
+            else ExecutiveController.from_checkpoint(dict(payload)).to(self.device)
+        )
+
+    def _restore_executive_state(self, payload: Any) -> None:
+        decision = payload.get("last_executive_decision") if isinstance(payload, dict) else None
+        self._last_executive_decision = (
+            None
+            if decision is None
+            else ExecutiveDecision.from_payload(dict(decision), device=self.device)
+        )
+        error = payload.get("last_executive_prediction_error") if isinstance(payload, dict) else None
+        self._last_executive_prediction_error = None if error is None else float(error)
 
     def _restore_generation_controller(self, payload: Any) -> None:
         self._generation_controller = (
@@ -1441,6 +1559,8 @@ class TSKV8Adapter(Taiji):
             components["homeostasis"] = self._homeostatic_controller.checkpoint()
         if self._goal_planner is not None:
             components["planning"] = self._goal_planner.checkpoint()
+        if self._executive is not None:
+            components["executive"] = self._executive.checkpoint()
         if self._generation_controller is not None:
             components["generation"] = self._generation_controller.checkpoint()
         if self._content_selector is not None:
@@ -1471,6 +1591,12 @@ class TSKV8Adapter(Taiji):
         )
         components["last_content_prediction_error"] = self._last_content_prediction_error
         components["content_feedback_applied"] = self._content_feedback_applied
+        components["last_executive_decision"] = (
+            None
+            if self._last_executive_decision is None
+            else self._last_executive_decision.to_payload()
+        )
+        components["last_executive_prediction_error"] = self._last_executive_prediction_error
         components["language_fallback_count"] = self._language_fallback_count
         components["language_fallback_requires_replan"] = self._language_fallback_requires_replan
         components["last_language_emission"] = (
@@ -1499,6 +1625,7 @@ class TSKV8Adapter(Taiji):
         self._restore_procedural_memory(envelope.components.get("procedural_memory"))
         self._restore_homeostatic_controller(envelope.components.get("homeostasis"))
         self._restore_goal_planner(envelope.components.get("planning"))
+        self._restore_executive(envelope.components.get("executive"))
         self._restore_generation_controller(envelope.components.get("generation"))
         self._restore_content_selector(envelope.components.get("content_selection"))
         self._restore_language_backend_registry(
@@ -1509,6 +1636,7 @@ class TSKV8Adapter(Taiji):
         self._restore_rollout_state(envelope.components)
         self._restore_generation_trace(envelope.components)
         self._restore_content_selection(envelope.components)
+        self._restore_executive_state(envelope.components)
         self._restore_language_emission(envelope.components)
         self._restore_language_fallback_state(envelope.components)
         state = envelope.cognitive_state
