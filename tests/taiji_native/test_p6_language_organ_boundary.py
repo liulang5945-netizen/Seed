@@ -3,7 +3,9 @@ from __future__ import annotations
 import pytest
 
 from taiji import (
+    ContentCandidate,
     ContentPlan,
+    ContentSelector,
     ExternalTextDecoderLanguageOrgan,
     GenerationController,
     LanguageBackendRegistry,
@@ -24,6 +26,7 @@ def _expression():
         intent_id="language:intent",
         intent_kind="render_message",
         semantic_slots={"topic": "status", "format": "concise"},
+        required_terms=("稳定",),
         source_goal_id="language-goal",
         expected_outcome="user receives a message",
         confidence=0.8,
@@ -179,7 +182,6 @@ def test_realization_validator_falls_back_without_losing_expression_semantics() 
             backend_id="mature-decoder-v1",
         ),
         validator=validator,
-        required_terms_builder=lambda item: ("稳定",),
     )
     adapter = TSKV8Adapter()
     adapter.attach_language_backend_registry(registry)
@@ -208,7 +210,6 @@ def test_realization_validator_accepts_semantically_complete_external_text() -> 
             prompt_builder=lambda item: item.content_id,
             backend_id="mature-decoder-v1",
         ),
-        required_terms_builder=lambda item: ("稳定",),
     )
 
     emission = organ.emit(expression)
@@ -217,3 +218,55 @@ def test_realization_validator_accepts_semantically_complete_external_text() -> 
     assert emission.validation is not None
     assert emission.validation.accepted is True
     assert emission.validation.coverage == 1.0
+
+
+def test_language_fallback_assigns_content_credit_and_replan_signal() -> None:
+    class _ExternalDecoder:
+        def generate(self, prompt: str, *, max_tokens: int, temperature: float) -> str:
+            del prompt, max_tokens, temperature
+            return "操作员收到一条消息。"
+
+    candidate = ContentCandidate(
+        candidate_id="status",
+        intent_id="language:intent",
+        intent_kind="render_message",
+        semantic_slots={"topic": "status"},
+        required_terms=("稳定",),
+        confidence=0.8,
+    )
+    registry = LanguageBackendRegistry.default()
+    registry.register(
+        LanguageBackendSpec(
+            backend_id="mature-decoder-v1",
+            family="external-decoder",
+            training_contract="expression-to-text-v1",
+        )
+    )
+    guarded = ValidatedLanguageOrgan(
+        ExternalTextDecoderLanguageOrgan(
+            _ExternalDecoder(),
+            prompt_builder=lambda item: item.content_id,
+            backend_id="mature-decoder-v1",
+        )
+    )
+    adapter = TSKV8Adapter()
+    adapter.attach_generation_controller(GenerationController())
+    adapter.attach_content_selector(ContentSelector())
+    adapter.attach_language_backend_registry(registry)
+    adapter.attach_language_organ(guarded)
+    adapter.observe(97, learn=False)
+    adapter.select_content((candidate,))
+
+    emission = adapter.emit_language()
+
+    assert emission.fallback_used is True
+    assert adapter.language_fallback_count == 1
+    assert adapter.replan_required is True
+    assert adapter.last_content_prediction_error is not None
+    assert adapter.last_content_prediction_error > 0.0
+    assert adapter._content_feedback_applied is True
+    adapter.attach_language_organ(None)
+    restored = TSKV8Adapter.from_native_checkpoint(adapter.native_checkpoint())
+    assert restored.language_fallback_count == 1
+    assert restored.replan_required is True
+    assert restored.last_content_prediction_error == adapter.last_content_prediction_error

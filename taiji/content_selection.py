@@ -89,6 +89,7 @@ class ContentCandidate:
     intent_id: str
     intent_kind: str
     semantic_slots: Mapping[str, Any] = field(default_factory=dict)
+    required_terms: tuple[str, ...] = ()
     goal_id: str | None = None
     expected_outcome: str = ""
     goal_alignment: float = 0.0
@@ -103,6 +104,13 @@ class ContentCandidate:
         for name in ("candidate_id", "intent_id", "intent_kind"):
             if not str(getattr(self, name)):
                 raise ValueError(f"{name} cannot be empty")
+        if isinstance(self.required_terms, (str, bytes, bytearray)):
+            raise TypeError("required_terms must be a sequence of terms")
+        terms = tuple(str(term) for term in self.required_terms)
+        if any(not term for term in terms):
+            raise ValueError("required_terms cannot contain empty terms")
+        if len(set(terms)) != len(terms):
+            raise ValueError("required_terms cannot contain duplicate terms")
         if self.goal_id is not None and not str(self.goal_id):
             raise ValueError("goal_id cannot be empty when provided")
         for name in (
@@ -136,6 +144,7 @@ class ContentCandidate:
             intent_id=self.intent_id,
             intent_kind=self.intent_kind,
             semantic_slots=dict(self.semantic_slots),
+            required_terms=self.required_terms,
             source_goal_id=self.goal_id,
             expected_outcome=self.expected_outcome,
             confidence=self.confidence,
@@ -149,6 +158,7 @@ class ContentCandidate:
             "intent_id": self.intent_id,
             "intent_kind": self.intent_kind,
             "semantic_slots": dict(self.semantic_slots),
+            "required_terms": list(self.required_terms),
             "goal_id": self.goal_id,
             "expected_outcome": self.expected_outcome,
             "goal_alignment": self.goal_alignment,
@@ -170,6 +180,7 @@ class ContentCandidate:
             intent_id=str(payload["intent_id"]),
             intent_kind=str(payload["intent_kind"]),
             semantic_slots=dict(slots),
+            required_terms=tuple(str(term) for term in payload.get("required_terms", ())),
             goal_id=payload.get("goal_id"),
             expected_outcome=str(payload.get("expected_outcome", "")),
             goal_alignment=float(payload.get("goal_alignment", 0.0)),

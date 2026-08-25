@@ -145,6 +145,7 @@ def evaluate(model_dir: Path) -> dict[str, object]:
             intent_id=f"qwen:holdout:{case['case_id']}:intent",
             intent_kind=str(case["intent_kind"]),
             semantic_slots=dict(case["semantic_slots"]),
+            required_terms=tuple(str(term) for term in case["required_terms"]),
             source_goal_id="qwen-language-holdout-goal",
             expected_outcome="operator receives a concise message",
             confidence=0.82,

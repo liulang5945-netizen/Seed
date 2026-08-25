@@ -466,7 +466,7 @@ class ValidatedLanguageOrgan:
     def emit(self, expression: ExpressionPlan) -> LanguageEmission:
         candidate = self.primary.emit(expression)
         required_terms = (
-            ()
+            expression.required_terms
             if self.required_terms_builder is None
             else tuple(self.required_terms_builder(expression))
         )
