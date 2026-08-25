@@ -7,13 +7,14 @@
       "producer_lesion_degrades": 1.0,
       "feature_source_lesion_blocks_synthesis": 1.0,
       "first_failed": 1.0,
-      "second_succeeded": 1.0,
+      "all_intermediate_failed": 1.0,
+      "final_succeeded": 1.0,
       "checkpoint_pending_credit": 1.0,
       "first_lineage_complete": 1.0,
-      "second_lineage_complete": 1.0,
+      "horizon_lineage_complete": 1.0,
       "delayed_credit_complete": 1.0,
       "delayed_credit_lesion_effective": 1.0,
-      "replan_complete": 1.0
+      "continuous_replan_complete": 1.0
     },
     "runs": [
       {
@@ -24,17 +25,20 @@
         "producer_lesion_degrades": true,
         "feature_source_lesion_blocks_synthesis": true,
         "first_failed": true,
-        "second_succeeded": true,
+        "all_intermediate_failed": true,
+        "final_succeeded": true,
         "checkpoint_pending_credit": true,
         "first_lineage_complete": true,
-        "second_lineage_complete": true,
+        "horizon_lineage_complete": true,
         "delayed_credit_complete": true,
         "delayed_credit_lesion_effective": true,
-        "source_online_updates": 3,
-        "executive_training_steps": 723,
+        "source_online_updates": 7,
+        "executive_training_steps": 727,
         "executive_fit_steps": 720,
-        "replan_complete": true,
+        "continuous_replan_complete": true,
         "action_trace": [
+          10,
+          11,
           10,
           11
         ]
@@ -47,17 +51,20 @@
         "producer_lesion_degrades": true,
         "feature_source_lesion_blocks_synthesis": true,
         "first_failed": true,
-        "second_succeeded": true,
+        "all_intermediate_failed": true,
+        "final_succeeded": true,
         "checkpoint_pending_credit": true,
         "first_lineage_complete": true,
-        "second_lineage_complete": true,
+        "horizon_lineage_complete": true,
         "delayed_credit_complete": true,
         "delayed_credit_lesion_effective": true,
-        "source_online_updates": 3,
-        "executive_training_steps": 723,
+        "source_online_updates": 7,
+        "executive_training_steps": 727,
         "executive_fit_steps": 720,
-        "replan_complete": true,
+        "continuous_replan_complete": true,
         "action_trace": [
+          10,
+          11,
           10,
           11
         ]
@@ -70,17 +77,20 @@
         "producer_lesion_degrades": true,
         "feature_source_lesion_blocks_synthesis": true,
         "first_failed": true,
-        "second_succeeded": true,
+        "all_intermediate_failed": true,
+        "final_succeeded": true,
         "checkpoint_pending_credit": true,
         "first_lineage_complete": true,
-        "second_lineage_complete": true,
+        "horizon_lineage_complete": true,
         "delayed_credit_complete": true,
         "delayed_credit_lesion_effective": true,
-        "source_online_updates": 3,
-        "executive_training_steps": 723,
+        "source_online_updates": 7,
+        "executive_training_steps": 727,
         "executive_fit_steps": 720,
-        "replan_complete": true,
+        "continuous_replan_complete": true,
         "action_trace": [
+          10,
+          11,
           10,
           11
         ]
@@ -89,6 +99,6 @@
   },
   "gate": {
     "passed": true,
-    "criterion": "all seeds must transfer the holdout selection, preserve lineage and checkpoint credit, and show the declared producer, feature-source, and delayed-credit lesions"
+    "criterion": "all seeds must transfer the holdout selection, preserve lineage across four transitions and checkpoint credit, complete three failure replans with delayed credit, and show the declared lesions"
   }
 }

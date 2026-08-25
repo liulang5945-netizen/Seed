@@ -108,16 +108,22 @@ def _train_cases() -> tuple[tuple[WorldState, str, float], ...]:
     )
 
 
-class _TwoStepEnvironment:
+class _MultiStepEnvironment:
     def __init__(
         self,
-        after_states: tuple[WorldState, WorldState],
+        after_states: tuple[WorldState, ...],
         *,
         start_index: int = 0,
+        success_indices: frozenset[int] | None = None,
     ) -> None:
         self.after_states = after_states
         self.actions: list[int] = []
         self._step_index = int(start_index)
+        self.success_indices = (
+            frozenset({len(after_states) - 1})
+            if success_indices is None
+            else frozenset(int(item) for item in success_indices)
+        )
 
     def reset(self) -> tuple[int, tuple[int, ...]]:
         return 65, (10, 11)
@@ -126,11 +132,12 @@ class _TwoStepEnvironment:
         index = self._step_index
         self._step_index += 1
         self.actions.append(int(action_symbol))
+        success = index in self.success_indices
         return EnvironmentOutcome(
             sensation=43 + index,
-            reward=-1.0 if index == 0 else 1.0,
-            terminal=False,
-            success=index > 0,
+            reward=1.0 if success else -1.0,
+            terminal=index == len(self.after_states) - 1,
+            success=success,
             world_state=self.after_states[index],
         )
 
@@ -275,21 +282,23 @@ def evaluate_seed(seed: int) -> dict[str, object]:
     else:
         feature_source_lesion_blocks_synthesis = False
 
-    after_one = _world(
-        holdout.tick + 1,
-        actor="robot-holdout",
-        positive="green-holdout",
-        negative="yellow-holdout",
-        predicate="supports-after",
+    after_states = tuple(
+        _world(
+            holdout.tick + offset,
+            actor="robot-holdout",
+            positive="green-holdout",
+            negative="yellow-holdout",
+            predicate=predicate,
+        )
+        for offset, predicate in enumerate(
+            ("supports-after", "reaches-after", "tracks-after", "arrives-after"),
+            start=1,
+        )
     )
-    after_two = _world(
-        holdout.tick + 2,
-        actor="robot-holdout",
-        positive="green-holdout",
-        negative="yellow-holdout",
-        predicate="reaches-after",
+    environment = _MultiStepEnvironment(
+        after_states,
+        success_indices=frozenset({3}),
     )
-    environment = _TwoStepEnvironment((after_one, after_two))
     first = adapter.execute_executive_action(environment, learn=True)
     first_transition = adapter.cognitive_snapshot().world_transition
     if first_transition is None:
@@ -303,22 +312,31 @@ def evaluate_seed(seed: int) -> dict[str, object]:
     checkpoint_pending = restored._pending_executive_credit is not None
     restored.replan_executive_after_failure(candidates)
     restored.record_delayed_executive_credit(0.5)
-    second = restored.execute_executive_action(environment, learn=True)
-    second_transition = restored.cognitive_snapshot().world_transition
-    if second_transition is None:
-        raise RuntimeError("grounded multi-step evaluation lost second transition")
-    second_lineage = all(
+    transitions = [first_transition]
+    outcomes = [first]
+    for _ in range(1, len(after_states)):
+        outcome = restored.execute_executive_action(environment, learn=True)
+        transition = restored.cognitive_snapshot().world_transition
+        if transition is None:
+            raise RuntimeError("grounded multi-step evaluation lost a later transition")
+        transitions.append(transition)
+        outcomes.append(outcome)
+        if len(outcomes) < len(after_states):
+            restored.replan_executive_after_failure(candidates)
+            restored.record_delayed_executive_credit(0.5)
+    horizon_lineage = all(
         item.grounding_lineage
-        for item in (*second_transition.before.affordances, *second_transition.after.affordances)
+        for transition in transitions
+        for item in (*transition.before.affordances, *transition.after.affordances)
     )
     delayed_credit = bool(
         restored._affordance_features is not None
-        and restored._affordance_features.online_updates == 3
+        and restored._affordance_features.online_updates == 7
         and restored._executive is not None
-        and restored._executive.training_steps == executive_fit_steps + 3
+        and restored._executive.training_steps == executive_fit_steps + 7
     )
-    delayed_lesion_environment = _TwoStepEnvironment(
-        (after_one, after_two),
+    delayed_lesion_environment = _MultiStepEnvironment(
+        after_states,
         start_index=1,
     )
     delayed_lesion = TSKV8Adapter.from_native_checkpoint(checkpoint)
@@ -338,10 +356,13 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "producer_lesion_degrades": producer_lesion_degrades,
         "feature_source_lesion_blocks_synthesis": feature_source_lesion_blocks_synthesis,
         "first_failed": first.success is False,
-        "second_succeeded": second.success is True,
+        "all_intermediate_failed": all(
+            outcome.success is False for outcome in outcomes[:-1]
+        ),
+        "final_succeeded": outcomes[-1].success is True and outcomes[-1].terminal,
         "checkpoint_pending_credit": checkpoint_pending,
         "first_lineage_complete": first_lineage,
-        "second_lineage_complete": second_lineage,
+        "horizon_lineage_complete": horizon_lineage,
         "delayed_credit_complete": delayed_credit,
         "delayed_credit_lesion_effective": delayed_credit_lesion_effective,
         "source_online_updates": (
@@ -351,9 +372,10 @@ def evaluate_seed(seed: int) -> dict[str, object]:
             0 if restored._executive is None else restored._executive.training_steps
         ),
         "executive_fit_steps": executive_fit_steps,
-        "replan_complete": (
+        "continuous_replan_complete": (
             not restored.replan_required
-            and environment.actions[0] != environment.actions[1]
+            and len(environment.actions) == len(after_states)
+            and len(set(environment.actions)) > 1
         ),
         "action_trace": environment.actions,
     }
@@ -362,7 +384,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
 def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
     return {
         "format": MANIFEST_FORMAT,
-        "task": "grounded multi-step executive transfer with failure replan and delayed credit",
+        "task": "four-step grounded executive transfer with continuous failure replan and delayed credit",
         "train": {
             "examples": 4,
             "actor_ids": ["agent-a", "agent-b"],
@@ -372,7 +394,13 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "holdout": {
             "actor_ids": ["robot-holdout"],
             "target_ids": ["green-holdout", "yellow-holdout"],
-            "relation_predicates": ["supports-holdout", "supports-after", "reaches-after"],
+            "relation_predicates": [
+                "supports-holdout",
+                "supports-after",
+                "reaches-after",
+                "tracks-after",
+                "arrives-after",
+            ],
             "action_kinds": ["holdout-positive-action", "holdout-negative-action"],
         },
         "seeds": list(seeds),
@@ -393,13 +421,14 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "producer_lesion_degrades",
         "feature_source_lesion_blocks_synthesis",
         "first_failed",
-        "second_succeeded",
+        "all_intermediate_failed",
+        "final_succeeded",
         "checkpoint_pending_credit",
         "first_lineage_complete",
-        "second_lineage_complete",
+        "horizon_lineage_complete",
         "delayed_credit_complete",
         "delayed_credit_lesion_effective",
-        "replan_complete",
+        "continuous_replan_complete",
     )
     rates = {
         name: sum(bool(run[name]) for run in runs) / len(runs)
@@ -412,7 +441,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "metrics": {"cross_seed_rates": rates, "runs": runs},
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must transfer the holdout selection, preserve lineage and checkpoint credit, and show the declared producer, feature-source, and delayed-credit lesions",
+        "criterion": "all seeds must transfer the holdout selection, preserve lineage across four transitions and checkpoint credit, complete three failure replans with delayed credit, and show the declared lesions",
         },
     }
 
