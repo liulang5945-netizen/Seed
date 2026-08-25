@@ -514,6 +514,7 @@ class TSKV8Adapter(Taiji):
         decision: ExecutiveDecision | None = None,
         action_symbol: int | None = None,
         learn: bool = True,
+        learn_world: bool | None = None,
     ) -> Outcome:
         """Execute a selected executive intent through a motor environment.
 
@@ -590,6 +591,7 @@ class TSKV8Adapter(Taiji):
             terminal=result.terminal,
             world_state=result.world_state,
             world_action=world_action if result.world_state is not None else None,
+            learn_world=learn_world,
             provenance="experienced",
         )
         experienced = self._cognitive_state.outcome

@@ -16,7 +16,9 @@
       "delayed_credit_lesion_effective": 1.0,
       "continuous_replan_complete": 1.0,
       "variable_episode_gate": 1.0,
-      "world_prediction_gate": 1.0
+      "world_prediction_gate": 1.0,
+      "prediction_train_holdout_gate": 1.0,
+      "calibration_gate": 1.0
     },
     "runs": [
       {
@@ -39,6 +41,15 @@
         "executive_fit_steps": 720,
         "continuous_replan_complete": true,
         "world_prediction_gate": true,
+        "prediction_train_holdout_gate": true,
+        "calibration_gate": true,
+        "prediction_holdout_error_mean": 0.20010889321565628,
+        "calibration_before_error": 0.20010889321565628,
+        "calibration_after_error": 4.1006984474734054e-08,
+        "no_update_control_error": 0.20010889321565628,
+        "calibration_before_state_error": 0.20005597919225693,
+        "calibration_after_state_error": 4.063297609491201e-08,
+        "no_update_control_state_error": 0.20005597919225693,
         "world_prediction_state_error_mean": 0.15003782164994917,
         "world_prediction_reward_error_mean": 2.541071842115379,
         "variable_episode_gate": true,
@@ -119,6 +130,15 @@
         "executive_fit_steps": 720,
         "continuous_replan_complete": true,
         "world_prediction_gate": true,
+        "prediction_train_holdout_gate": true,
+        "calibration_gate": true,
+        "prediction_holdout_error_mean": 0.20042632520198822,
+        "calibration_before_error": 0.20042632520198822,
+        "calibration_after_error": 2.1310880526925757e-07,
+        "no_update_control_error": 0.20042632520198822,
+        "calibration_before_state_error": 0.2001829892396927,
+        "calibration_after_state_error": 2.12845222336e-07,
+        "no_update_control_state_error": 0.2001829892396927,
         "world_prediction_state_error_mean": 0.1503217001469359,
         "world_prediction_reward_error_mean": 2.3635003764121763,
         "variable_episode_gate": true,
@@ -199,6 +219,15 @@
         "executive_fit_steps": 720,
         "continuous_replan_complete": true,
         "world_prediction_gate": true,
+        "prediction_train_holdout_gate": true,
+        "calibration_gate": true,
+        "prediction_holdout_error_mean": 0.20019525289535522,
+        "calibration_before_error": 0.20019525289535522,
+        "calibration_after_error": 2.3385043412815776e-07,
+        "no_update_control_error": 0.20019525289535522,
+        "calibration_before_state_error": 0.20016209036111832,
+        "calibration_after_state_error": 2.2864994342342015e-07,
+        "no_update_control_state_error": 0.20016209036111832,
         "world_prediction_state_error_mean": 0.15020516781222248,
         "world_prediction_reward_error_mean": 2.4081246755732897,
         "variable_episode_gate": true,
@@ -263,6 +292,6 @@
   },
   "gate": {
     "passed": true,
-    "criterion": "all seeds must transfer the holdout selection, preserve lineage and credit across four transitions and variable 3/4/5-step episodes, complete the declared replans, and show the declared lesions"
+    "criterion": "all seeds must transfer the holdout selection, preserve lineage and credit across four transitions and variable 3/4/5-step episodes, complete the declared replans and lesions, emit finite world prediction errors, and show per-transition online calibration improvement over a no-update control"
   }
 }
