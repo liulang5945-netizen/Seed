@@ -113,6 +113,7 @@ class LearnedPerception(nn.Module):
         epochs: int = 1,
         learning_rate: float | None = None,
         temperature: float = 0.15,
+        assembly_prediction_weight: float = 0.5,
     ) -> list[float]:
         """Fit local features against the next-symbol predictive objective.
 
@@ -129,6 +130,8 @@ class LearnedPerception(nn.Module):
             raise ValueError("predictive learning_rate must be positive")
         if float(temperature) <= 0.0:
             raise ValueError("predictive temperature must be positive")
+        if float(assembly_prediction_weight) < 0.0:
+            raise ValueError("assembly_prediction_weight cannot be negative")
         training_sequences = tuple(
             tuple(int(symbol) for symbol in sequence) for sequence in sequences
         )
@@ -172,7 +175,22 @@ class LearnedPerception(nn.Module):
                 predicted = torch.stack([self.transition(feature) for feature in pooled])
                 target = torch.tensor(sequence[1:], dtype=torch.long, device=self.device)
                 logits = predicted @ self.embedding.weight.T
-                loss = torch.nn.functional.cross_entropy(logits / float(temperature), target)
+                next_symbol_loss = torch.nn.functional.cross_entropy(
+                    logits / float(temperature), target
+                )
+                future_targets = torch.stack(
+                    [
+                        self.embedding.weight[
+                            list(sequence[index + 1 : index + 1 + pool_window])
+                        ].mean(dim=0)
+                        for index in range(len(features) - 1)
+                    ]
+                )
+                assembly_loss = (
+                    1.0
+                    - torch.nn.functional.cosine_similarity(predicted, future_targets, dim=1).mean()
+                )
+                loss = next_symbol_loss + float(assembly_prediction_weight) * assembly_loss
                 optimizer.zero_grad(set_to_none=True)
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(self.parameters(), max_norm=1.0)

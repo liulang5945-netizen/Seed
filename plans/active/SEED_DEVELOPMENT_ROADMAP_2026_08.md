@@ -69,14 +69,14 @@ A1 评测合同已建立在 `taiji/evaluation.py`：训练集、未见组合、�
 输出均值、方差和明确的 `gate_passed`，评测器不内置词表或答案映射。
 
 P2 尚未退出。首份无预测训练的 smoke 基线保存在
-`reports/taiji_a1_perception_smoke_20260825.json`；加入可配置的下一观测预测训练后，
-`reports/taiji_a1_perception_predictive_20260825.json` 曾在 tick-level probe 上得到
-`+0.0284` gain，但加强评测改为 completed-assembly probe 并加入边界校准后，最新
-`reports/taiji_a1_perception_boundary_20260825.json` 的 primary 未见组合 gain 为
-`-0.0046`，marker score delta 为 `+0.0119`（门槛 `+0.05`），random-chunk drop 为
-`+0.0028`（门槛 `+0.005`），整体 boundary-rate delta 为 `+0.0011`（门槛 `+0.01`）。
-因此加强后的 A1 Gate 仍为 `false`；当前结论是“预测下一个 byte”还不足以形成稳定的
-assembly 语义，不再继续靠阈值微调掩盖这一差距。
+`reports/taiji_a1_perception_smoke_20260825.json`；tick-level next-byte 训练记录在
+`reports/taiji_a1_perception_predictive_20260825.json`，completed-assembly 与边界
+校准记录在 `reports/taiji_a1_perception_boundary_20260825.json`。加入 future-window
+assembly 目标后的最新报告为 `reports/taiji_a1_perception_assembly_20260825.json`：
+primary 未见组合 gain 为 `-0.0088`，marker score delta 为 `+0.0222`（门槛 `+0.05`），
+marker rate delta 为 `+0.0098`，random-chunk drop 为 `+0.0077`，跨 seed std 为
+`+0.0068`。A1 Gate 仍为 `false`；当前结论是仅预测下一个 byte 或未来 byte 窗口，
+仍不足以形成稳定的组合关系。
 
 ## 3. 执行原则
 
@@ -256,4 +256,4 @@ assembly 语义，不再继续靠阈值微调掩盖这一差距。
 
 ## 16. 当前唯一下一步
 
-**把 P2 训练目标提升到 assembly-level：由完成 assembly 的 pooled state 预测下一 assembly/组合转移，而不是只预测下一个 byte；保留 byte-only、boundary-marker 和 random-chunk 对照，在同一 manifest 上重跑加强后的 A1；在 assembly 级迁移和边界证据同时达标前不进入 P3。**
+**把 P2 训练目标改为自监督 assembly consistency/contrastive：同一局部组合在边界扰动下保持 pooled representation，random-chunk 作为负对照，同时保留 next-byte 辅助损失；在同一 manifest 上重跑加强后的 A1，在 assembly 级迁移和边界证据同时达标前不进入 P3。**
