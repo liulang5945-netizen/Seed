@@ -8,8 +8,6 @@ import sys
 from copy import deepcopy
 from pathlib import Path
 
-import torch
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -58,11 +56,7 @@ def _calibration_errors(
         prediction = calibration_learner.predict(current, template.action)
         actual = _advance_state(current, template.action.target_id)
         errors.append(
-            float(
-                torch.mean(
-                    (schema.state_values(prediction.state) - schema.state_values(actual)) ** 2
-                )
-            )
+            schema.normalized_state_error(prediction.state, actual)
         )
         calibration_learner.online_update(
             WorldTransition(
