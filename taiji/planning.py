@@ -29,6 +29,7 @@ class PlanningConfig:
     outcome_progress_gain: float = 0.40
     discount: float = 0.90
     replan_error_threshold: float = 0.25
+    recovery_error_threshold: float = 1.00
 
     def __post_init__(self) -> None:
         for name, value in self.__dict__.items():
@@ -37,6 +38,7 @@ class PlanningConfig:
         _unit(self.outcome_progress_gain, "outcome_progress_gain")
         _unit(self.discount, "discount")
         _unit(self.replan_error_threshold, "replan_error_threshold")
+        _unit(self.recovery_error_threshold, "recovery_error_threshold")
 
     def to_payload(self) -> dict[str, float]:
         return {name: float(value) for name, value in self.__dict__.items()}

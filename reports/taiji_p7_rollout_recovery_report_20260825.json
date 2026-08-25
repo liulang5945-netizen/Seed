@@ -1,0 +1,58 @@
+{
+  "format": "taiji-p7-rollout-recovery-v1",
+  "manifest_format": "taiji-p7-rollout-recovery-manifest-v1",
+  "metrics": {
+    "cross_seed_rates": {
+      "interruption_gate": 1.0,
+      "recovery_gate": 1.0
+    },
+    "runs": [
+      {
+        "seed": 11,
+        "interruption_gate": true,
+        "recovery_gate": true,
+        "action_trace": [
+          10,
+          10,
+          10
+        ],
+        "trace_length": 3,
+        "checkpoint_trace_length": 3,
+        "checkpoint_recovery_preserved": true,
+        "recovery_updates": 3
+      },
+      {
+        "seed": 23,
+        "interruption_gate": true,
+        "recovery_gate": true,
+        "action_trace": [
+          10,
+          10,
+          10
+        ],
+        "trace_length": 3,
+        "checkpoint_trace_length": 3,
+        "checkpoint_recovery_preserved": true,
+        "recovery_updates": 3
+      },
+      {
+        "seed": 37,
+        "interruption_gate": true,
+        "recovery_gate": true,
+        "action_trace": [
+          10,
+          10,
+          10
+        ],
+        "trace_length": 3,
+        "checkpoint_trace_length": 3,
+        "checkpoint_recovery_preserved": true,
+        "recovery_updates": 3
+      }
+    ]
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "all seeds must stop an imagined rollout after a positive-reward but high world-state error, preserve the error trace, replan with a recovery rollout, finish the recovery environment episode, and restore the complete trace and learner updates through checkpoint"
+  }
+}
