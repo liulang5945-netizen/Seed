@@ -9,10 +9,12 @@ from taiji import (
     LanguageBackendRegistry,
     LanguageBackendSpec,
     LanguageEmission,
+    LanguageRealizationValidator,
     LanguageTrainingExample,
     StructuredTextLanguageOrgan,
     TextExpressionCodec,
     TSKV8Adapter,
+    ValidatedLanguageOrgan,
 )
 
 
@@ -149,3 +151,69 @@ def test_external_decoder_realization_and_lesion_stay_outside_taiji_core() -> No
     assert adapter.cognitive_snapshot().action_intent is None
     with pytest.raises(RuntimeError, match="language organ is not attached"):
         adapter.emit_language(_expression())
+
+
+def test_realization_validator_falls_back_without_losing_expression_semantics() -> None:
+    class _ExternalDecoder:
+        def __init__(self, text: str) -> None:
+            self.text = text
+
+        def generate(self, prompt: str, *, max_tokens: int, temperature: float) -> str:
+            del prompt, max_tokens, temperature
+            return self.text
+
+    expression = _expression()
+    registry = LanguageBackendRegistry.default()
+    registry.register(
+        LanguageBackendSpec(
+            backend_id="mature-decoder-v1",
+            family="external-decoder",
+            training_contract="expression-to-text-v1",
+        )
+    )
+    validator = LanguageRealizationValidator(minimum_coverage=1.0)
+    guarded = ValidatedLanguageOrgan(
+        ExternalTextDecoderLanguageOrgan(
+            _ExternalDecoder("操作员收到一条消息。"),
+            prompt_builder=lambda item: item.content_id,
+            backend_id="mature-decoder-v1",
+        ),
+        validator=validator,
+        required_terms_builder=lambda item: ("稳定",),
+    )
+    adapter = TSKV8Adapter()
+    adapter.attach_language_backend_registry(registry)
+    adapter.attach_language_organ(guarded)
+    emission = adapter.emit_language(expression)
+    decoded_fallback = TextExpressionCodec.decode(emission.text_bytes)
+
+    assert emission.fallback_used is True
+    assert emission.validation is not None
+    assert emission.validation.accepted is False
+    assert emission.validation.missing_terms == ("稳定",)
+    assert emission.backend == "structured-stub"
+    assert decoded_fallback == expression
+    assert adapter.cognitive_snapshot().action_intent is None
+
+
+def test_realization_validator_accepts_semantically_complete_external_text() -> None:
+    expression = _expression()
+    organ = ValidatedLanguageOrgan(
+        ExternalTextDecoderLanguageOrgan(
+            type(
+                "Decoder",
+                (),
+                {"generate": lambda self, prompt, *, max_tokens, temperature: "当前状态稳定。"},
+            )(),
+            prompt_builder=lambda item: item.content_id,
+            backend_id="mature-decoder-v1",
+        ),
+        required_terms_builder=lambda item: ("稳定",),
+    )
+
+    emission = organ.emit(expression)
+
+    assert emission.fallback_used is False
+    assert emission.validation is not None
+    assert emission.validation.accepted is True
+    assert emission.validation.coverage == 1.0

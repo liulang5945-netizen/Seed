@@ -1,0 +1,52 @@
+{
+  "format": "taiji-p6-qwen-realization-guard-v1",
+  "model": {
+    "backend": "qwen2.5-0.5b-instruct",
+    "model_dir_name": "7ae557604adf67be50417f59c2c2f167def9a775",
+    "device": "cpu"
+  },
+  "metrics": {
+    "holdout_cases": 3,
+    "safe_realization_rate": 1.0,
+    "fallback_count": 2,
+    "organ_lesion": true,
+    "cognition_unchanged": true
+  },
+  "cases": [
+    {
+      "case_id": "status",
+      "fallback_used": true,
+      "validation_accepted": false,
+      "coverage": 0.0,
+      "reason": "missing-required-terms",
+      "missing_terms": [
+        "稳定"
+      ],
+      "fallback_semantics_preserved": true
+    },
+    {
+      "case_id": "maintenance",
+      "fallback_used": true,
+      "validation_accepted": false,
+      "coverage": 0.5,
+      "reason": "missing-required-terms",
+      "missing_terms": [
+        "维护窗口"
+      ],
+      "fallback_semantics_preserved": true
+    },
+    {
+      "case_id": "incident",
+      "fallback_used": false,
+      "validation_accepted": true,
+      "coverage": 1.0,
+      "reason": "accepted",
+      "missing_terms": [],
+      "fallback_semantics_preserved": false
+    }
+  ],
+  "gate": {
+    "passed": true,
+    "criterion": "every real decoder output is either semantically accepted or replaced by a lossless structured fallback, and the organ remains lesionable"
+  }
+}
