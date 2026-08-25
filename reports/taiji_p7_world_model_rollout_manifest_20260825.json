@@ -1,0 +1,19 @@
+{
+  "format": "taiji-p7-world-model-rollout-manifest-v1",
+  "task": "data-derived world-dynamics imagined rollout into GoalPlanner",
+  "seeds": [
+    11,
+    23,
+    37
+  ],
+  "horizons": [
+    3,
+    4,
+    5
+  ],
+  "controls": [
+    "native-checkpoint-continuation",
+    "world-model-lesion"
+  ],
+  "boundary": "numeric world prediction and structured planning provenance; not general semantics or long-horizon intelligence"
+}
