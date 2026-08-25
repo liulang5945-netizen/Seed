@@ -33,6 +33,7 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 
 - `taiji/` 不导入 `seed`、`neuroplex` 或 `transformers`；该独立性继续保留。
 - `seed/` 当前包装 `Taiji` kernel；P1 compatibility adapter 已迁移首个 v1 纵切片，不破坏产品 API 和旧 checkpoint。
+- P6 client input-boundary Gate 已通过：`InputFrame` 版本化承载客户端原始 bytes 与来源元数据，`TSKV8Adapter.ingest_input()` 将其逐字节转换为 Taiji-owned `Observation/PerceptEvent`，`InputTrace` 可检查并 round-trip；`ActionIntent` 保持为空，未引入固定意图映射。`SeedRuntime.chat` 已通过 `generate_input()` 走同一合同，仍保留 raw-byte 兼容输出。
 - `neuroplex/` 保持冻结，只用于离线对照和显式兼容。
 - `CapacityPolicy` 当前规划固定区域/fan-in/memory 资源；v1 中将降为资源治理器，不再规定认知结构。
 - N0–N11/M5–M7 保留为 TSK-v8 kernel 回归，不再作为概念、推理、语言或智能进展证明。
@@ -155,11 +156,11 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 client observability Gate 已通过：frontend runtime store 保存 `language_provider`，聊天页和异常中心可显示 active/fallback、
   回退原因与 structured-stub 恢复状态；前端只观察 runtime，不参与 provider 选择、认知决策或 decoder 装载。前端构建通过，Vitest
   `160 passed`。
-- 原生套件当前 `116 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
+- 原生套件当前 `120 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
   环境状态不作为代码能力结论。
 
 ## 当前唯一下一步
 
-下一决策入口：定义“客户端输入 → Taiji-owned `Observation/PerceptEvent` → `ActionIntent/ContentPlan`”的认知合同，再接入
-`ExpressionPlan → LanguageOrgan`；当前 `SeedRuntime.chat` 仍是 raw-byte 兼容通路，禁止用固定 prompt/intent 映射或 decoder 反推
-认知内容。
+下一决策入口：定义由持续 `Observation/PerceptEvent`、世界状态、目标和结果反馈学习产生
+`ActionIntent/ContentPlan` 的 Taiji executive 合同，并先建立可 lesion 的最小 Gate；禁止用固定意图映射、客户端 prompt
+模板或 decoder 反推认知内容。完成 executive 之前不把 `SeedRuntime.chat` 宣称为完整语义对话。

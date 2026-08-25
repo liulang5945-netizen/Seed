@@ -80,6 +80,7 @@ from .homeostasis import (
     HomeostaticController,
     HomeostaticDrive,
 )
+from .input_boundary import INPUT_BOUNDARY_FORMAT, InputFrame, InputTrace
 from .language_organ import (
     LANGUAGE_BACKEND_REGISTRY_FORMAT,
     LANGUAGE_BACKEND_SPEC_FORMAT,
@@ -259,6 +260,9 @@ __all__ = [
     "HomeostaticConfig",
     "HomeostaticController",
     "HomeostaticDrive",
+    "INPUT_BOUNDARY_FORMAT",
+    "InputFrame",
+    "InputTrace",
     "HOMEOSTASIS_CHECKPOINT_FORMAT",
     "LearningState",
     "LearnedPerception",
