@@ -1,0 +1,186 @@
+{
+  "format": "taiji-p7-imagined-execution-v1",
+  "manifest_format": "taiji-p7-imagined-execution-manifest-v1",
+  "metrics": {
+    "cross_seed_rates": {
+      "execution_gate": 1.0
+    },
+    "runs": [
+      {
+        "seed": 11,
+        "execution_gate": true,
+        "horizon_runs": [
+          {
+            "horizon": 3,
+            "executed_steps": 3,
+            "all_success": true,
+            "terminal_final": true,
+            "action_trace": [
+              10,
+              10,
+              10
+            ],
+            "prediction_trace_complete": true,
+            "replan_not_required": true,
+            "remaining_rollout_consumed": true,
+            "checkpoint_trace_complete": true,
+            "checkpoint_learner_updates": 3
+          },
+          {
+            "horizon": 4,
+            "executed_steps": 4,
+            "all_success": true,
+            "terminal_final": true,
+            "action_trace": [
+              10,
+              10,
+              10,
+              10
+            ],
+            "prediction_trace_complete": true,
+            "replan_not_required": true,
+            "remaining_rollout_consumed": true,
+            "checkpoint_trace_complete": true,
+            "checkpoint_learner_updates": 4
+          },
+          {
+            "horizon": 5,
+            "executed_steps": 5,
+            "all_success": true,
+            "terminal_final": true,
+            "action_trace": [
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "prediction_trace_complete": true,
+            "replan_not_required": true,
+            "remaining_rollout_consumed": true,
+            "checkpoint_trace_complete": true,
+            "checkpoint_learner_updates": 5
+          }
+        ]
+      },
+      {
+        "seed": 23,
+        "execution_gate": true,
+        "horizon_runs": [
+          {
+            "horizon": 3,
+            "executed_steps": 3,
+            "all_success": true,
+            "terminal_final": true,
+            "action_trace": [
+              10,
+              10,
+              10
+            ],
+            "prediction_trace_complete": true,
+            "replan_not_required": true,
+            "remaining_rollout_consumed": true,
+            "checkpoint_trace_complete": true,
+            "checkpoint_learner_updates": 3
+          },
+          {
+            "horizon": 4,
+            "executed_steps": 4,
+            "all_success": true,
+            "terminal_final": true,
+            "action_trace": [
+              10,
+              10,
+              10,
+              10
+            ],
+            "prediction_trace_complete": true,
+            "replan_not_required": true,
+            "remaining_rollout_consumed": true,
+            "checkpoint_trace_complete": true,
+            "checkpoint_learner_updates": 4
+          },
+          {
+            "horizon": 5,
+            "executed_steps": 5,
+            "all_success": true,
+            "terminal_final": true,
+            "action_trace": [
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "prediction_trace_complete": true,
+            "replan_not_required": true,
+            "remaining_rollout_consumed": true,
+            "checkpoint_trace_complete": true,
+            "checkpoint_learner_updates": 5
+          }
+        ]
+      },
+      {
+        "seed": 37,
+        "execution_gate": true,
+        "horizon_runs": [
+          {
+            "horizon": 3,
+            "executed_steps": 3,
+            "all_success": true,
+            "terminal_final": true,
+            "action_trace": [
+              10,
+              10,
+              10
+            ],
+            "prediction_trace_complete": true,
+            "replan_not_required": true,
+            "remaining_rollout_consumed": true,
+            "checkpoint_trace_complete": true,
+            "checkpoint_learner_updates": 3
+          },
+          {
+            "horizon": 4,
+            "executed_steps": 4,
+            "all_success": true,
+            "terminal_final": true,
+            "action_trace": [
+              10,
+              10,
+              10,
+              10
+            ],
+            "prediction_trace_complete": true,
+            "replan_not_required": true,
+            "remaining_rollout_consumed": true,
+            "checkpoint_trace_complete": true,
+            "checkpoint_learner_updates": 4
+          },
+          {
+            "horizon": 5,
+            "executed_steps": 5,
+            "all_success": true,
+            "terminal_final": true,
+            "action_trace": [
+              10,
+              10,
+              10,
+              10,
+              10
+            ],
+            "prediction_trace_complete": true,
+            "replan_not_required": true,
+            "remaining_rollout_consumed": true,
+            "checkpoint_trace_complete": true,
+            "checkpoint_learner_updates": 5
+          }
+        ]
+      }
+    ]
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "all seeds must execute imagined world rollouts at horizons 3/4/5 through the real environment, score each actual transition, consume the remaining plan, preserve prediction traces and learner updates through checkpoint, and avoid unnecessary replanning"
+  }
+}

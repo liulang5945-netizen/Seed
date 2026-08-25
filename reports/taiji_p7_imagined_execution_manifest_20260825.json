@@ -1,0 +1,20 @@
+{
+  "format": "taiji-p7-imagined-execution-manifest-v1",
+  "task": "consume data-derived imagined world rollouts in a real environment loop",
+  "seeds": [
+    11,
+    23,
+    37
+  ],
+  "horizons": [
+    3,
+    4,
+    5
+  ],
+  "controls": [
+    "prediction-error-trace",
+    "remaining-rollout-consumption",
+    "native-checkpoint-continuation"
+  ],
+  "boundary": "numeric world prediction to environment execution; not general planning or intelligence"
+}
