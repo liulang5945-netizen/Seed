@@ -31,7 +31,8 @@ def test_rename_file_success(client, ws_dir):
     src.write_text("hello", encoding="utf-8")
 
     response = client.post(
-        "/api/workspace/rename", json={"old_name": "a.txt", "new_name": "b.txt"}
+        "/api/workspace/rename",
+        json={"old_name": "a.txt", "new_name": "b.txt"},
     )
     assert response.status_code == 200
     payload = response.json()
@@ -47,7 +48,8 @@ def test_rename_directory_success(client, ws_dir):
     (subdir / "note.md").write_text("x", encoding="utf-8")
 
     response = client.post(
-        "/api/workspace/rename", json={"old_name": "docs", "new_name": "manual"}
+        "/api/workspace/rename",
+        json={"old_name": "docs", "new_name": "manual"},
     )
     assert response.status_code == 200
     assert response.json()["path"] == "manual"
@@ -74,7 +76,8 @@ def test_rename_target_exists_conflict(client, ws_dir):
     (ws_dir / "b.txt").write_text("b", encoding="utf-8")
 
     response = client.post(
-        "/api/workspace/rename", json={"old_name": "a.txt", "new_name": "b.txt"}
+        "/api/workspace/rename",
+        json={"old_name": "a.txt", "new_name": "b.txt"},
     )
     assert response.status_code == 409
     assert "已存在" in response.json()["detail"]
@@ -91,10 +94,13 @@ def test_rename_source_missing_404(client, ws_dir):
     assert "不存在" in response.json()["detail"]
 
 
-@pytest.mark.parametrize("payload", [
-    {"old_name": "../escape.txt", "new_name": "ok.txt"},
-    {"old_name": "a.txt", "new_name": "../outside.txt"},
-])
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {"old_name": "../escape.txt", "new_name": "ok.txt"},
+        {"old_name": "a.txt", "new_name": "../outside.txt"},
+    ],
+)
 def test_rename_traversal_rejected(client, ws_dir, payload):
     (ws_dir / "a.txt").write_text("a", encoding="utf-8")
     response = client.post("/api/workspace/rename", json=payload)
