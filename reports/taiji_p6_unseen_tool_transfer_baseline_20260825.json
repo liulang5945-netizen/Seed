@@ -1,0 +1,14 @@
+{
+  "format": "taiji-p6-unseen-tool-transfer-v1",
+  "metrics": {
+    "unseen_tool_name": "maps.search.v42",
+    "nested_parameter_round_trip": true,
+    "order_invariant_codec": true,
+    "adapter_parameter_preservation": true,
+    "execution_success": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "unseen tool name, nested parameters, and reordered keys survive generation/codec/execution without a fixed mapping"
+  }
+}

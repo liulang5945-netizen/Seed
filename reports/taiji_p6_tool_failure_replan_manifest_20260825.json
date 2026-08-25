@@ -1,0 +1,17 @@
+{
+  "format": "taiji-p6-tool-failure-replan-manifest-v1",
+  "task": "fail the first structured tool call, replan to a recovery tool, and retain both outcomes",
+  "lesions": [
+    "no_prediction_error_replan",
+    "no_recovery_tool",
+    "no_episodic_write"
+  ],
+  "signals": [
+    "tool_success",
+    "prediction_error",
+    "replan_required",
+    "tool_sequence",
+    "episodic_memory"
+  ],
+  "boundary": "simulated failure/replan Gate only; no broad reliability or general planning claim"
+}

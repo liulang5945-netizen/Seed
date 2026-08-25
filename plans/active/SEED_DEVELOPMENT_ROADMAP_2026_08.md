@@ -290,7 +290,13 @@ P4 的最小真实经历边界已落地：
 - `TaijiToolEnvironment` 与 `TSKV8Adapter.execute_tool_call()` 已通过 tool execution/outcome 窄 Gate：模拟环境执行结构化调用后，
   `Outcome` 保持 intent ID、success、reward、terminal 并进入 episodic memory；关闭 generation organ 的 direct-byte lesion 无法执行
   同一工具合同。报告和 manifest 为 `reports/taiji_p6_tool_execution_*_20260825.json`。该结果不代表外部服务可靠性或失败恢复。
-- 本轮 native 回归为 `94 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
+- `scripts/training/eval_taiji_p6_tool_failure_replan.py` 已通过 tool failure/replan 窄 Gate：首次工具失败 prediction error=`2.0`、触发
+  `replan_required`，recovery tool 成功后清除重规划，两个 Outcome 均保留在 episodic memory。报告和 manifest 为
+  `reports/taiji_p6_tool_failure_replan_*_20260825.json`。该结果不代表外部服务可靠性或通用长程规划。
+- `scripts/training/eval_taiji_p6_unseen_tool_transfer.py` 已通过 unseen-tool/parameter transfer 窄 Gate：未见工具名、嵌套参数与重排
+  key 顺序均保持并成功执行；同时 `act(world_action=...)` 已保留通用结构化参数与兼容 action metadata，报告和 manifest 为
+  `reports/taiji_p6_unseen_tool_transfer_*_20260825.json`。该结果关闭固定工具表/扁平参数假设，不代表广泛工具生态泛化。
+- 本轮 native 回归为 `97 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
 
 ### 工作项
 
@@ -394,4 +400,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**继续 P6 tool failure/replan Gate：让结构化工具失败产生可观测 prediction error，触发替代计划并把恢复结果写回记忆；不改变既有合同。**
+**继续 P6 cross-organ expression consistency Gate：让同一 `ContentPlan` 分别生成 tool 与 text 结构化表达，验证 semantic slots 一致且器官输出不改变目标/计划；不改变既有合同。**

@@ -1,0 +1,21 @@
+{
+  "format": "taiji-p6-tool-failure-replan-v1",
+  "metrics": {
+    "first_tool": "weather.lookup.v1",
+    "first_success": false,
+    "first_prediction_error": 2.0,
+    "replan_after_failure": true,
+    "recovery_tool": "weather.recover.v1",
+    "recovery_success": true,
+    "final_replan_required": false,
+    "episodic_memory_count": 2,
+    "tool_sequence": [
+      "weather.lookup.v1",
+      "weather.recover.v1"
+    ]
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "tool failure creates prediction error and replan, alternative tool succeeds, and both outcomes remain in episodic memory"
+  }
+}
