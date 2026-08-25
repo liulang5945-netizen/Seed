@@ -1,0 +1,24 @@
+{
+  "format": "taiji-p6-holdout-content-transfer-v1",
+  "metrics": {
+    "training_intent_kinds": [
+      "report_status",
+      "request_information"
+    ],
+    "holdout_intent_kind": "forecast_digest",
+    "holdout_candidate_id": "holdout-forecast-42",
+    "selected_candidate": "holdout-forecast-42",
+    "selected_slots": {
+      "format": "digest",
+      "regions": [
+        "east",
+        "south"
+      ]
+    },
+    "checkpoint_selection": "holdout-forecast-42"
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "a new intent kind, candidate ID, and nested slot structure use learned context utility without an answer table"
+  }
+}

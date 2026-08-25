@@ -1,0 +1,18 @@
+{
+  "format": "taiji-p6-holdout-content-transfer-manifest-v1",
+  "task": "select a holdout content candidate with unseen intent kind, ID, and semantic slot structure",
+  "lesions": [
+    "candidate_id_lookup",
+    "intent_kind_table",
+    "slot_shape_table",
+    "checkpoint_transfer"
+  ],
+  "signals": [
+    "goal_residual",
+    "world_uncertainty",
+    "novelty",
+    "candidate_features",
+    "holdout_selection"
+  ],
+  "boundary": "holdout content utility transfer Gate only; no open-ended semantic invention claim"
+}
