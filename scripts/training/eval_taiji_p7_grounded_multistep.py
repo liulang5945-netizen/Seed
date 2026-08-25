@@ -109,15 +109,22 @@ def _train_cases() -> tuple[tuple[WorldState, str, float], ...]:
 
 
 class _TwoStepEnvironment:
-    def __init__(self, after_states: tuple[WorldState, WorldState]) -> None:
+    def __init__(
+        self,
+        after_states: tuple[WorldState, WorldState],
+        *,
+        start_index: int = 0,
+    ) -> None:
         self.after_states = after_states
         self.actions: list[int] = []
+        self._step_index = int(start_index)
 
     def reset(self) -> tuple[int, tuple[int, ...]]:
         return 65, (10, 11)
 
     def step(self, action_symbol: int) -> EnvironmentOutcome:
-        index = len(self.actions)
+        index = self._step_index
+        self._step_index += 1
         self.actions.append(int(action_symbol))
         return EnvironmentOutcome(
             sensation=43 + index,
@@ -237,6 +244,36 @@ def evaluate_seed(seed: int) -> dict[str, object]:
     candidates = adapter.synthesize_executive_candidates()
     decision = adapter.select_executive(candidates)
     holdout_selected_positive = decision.selected.source_affordance_id == "positive-green-holdout"
+    holdout_by_id = {item.affordance_id: item for item in grounded_holdout}
+    lesioned_features = source.encode(
+        torch.zeros(GROUNDING_DIM),
+        percept_features=context_features,
+        world_latent=context_features,
+    ).detach()
+    producer_lesion_candidates = tuple(
+        _candidate(
+            holdout_by_id[affordance_id],
+            tick=runtime_context.tick,
+            features=lesioned_features,
+        )
+        for affordance_id in ("negative-yellow-holdout", "positive-green-holdout")
+    )
+    producer_lesion_decision = controller.select(
+        producer_lesion_candidates,
+        runtime_context,
+    )
+    producer_lesion_degrades = (
+        producer_lesion_decision.selected.source_affordance_id != "positive-green-holdout"
+    )
+    feature_lesion_adapter = TSKV8Adapter(_config(seed + 2000))
+    feature_lesion_adapter.observe(65, learn=False)
+    feature_lesion_adapter.attach_affordance_features(None)
+    try:
+        feature_lesion_adapter.synthesize_executive_candidates()
+    except RuntimeError as error:
+        feature_source_lesion_blocks_synthesis = "learned affordance feature source" in str(error)
+    else:
+        feature_source_lesion_blocks_synthesis = False
 
     after_one = _world(
         holdout.tick + 1,
@@ -280,17 +317,33 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         and restored._executive is not None
         and restored._executive.training_steps == executive_fit_steps + 3
     )
+    delayed_lesion_environment = _TwoStepEnvironment(
+        (after_one, after_two),
+        start_index=1,
+    )
+    delayed_lesion = TSKV8Adapter.from_native_checkpoint(checkpoint)
+    delayed_lesion.replan_executive_after_failure(candidates)
+    delayed_lesion.execute_executive_action(delayed_lesion_environment, learn=True)
+    delayed_credit_lesion_effective = bool(
+        delayed_lesion._affordance_features is not None
+        and delayed_lesion._affordance_features.online_updates == 2
+        and delayed_lesion._executive is not None
+        and delayed_lesion._executive.training_steps == executive_fit_steps + 2
+    )
     return {
         "seed": seed,
         "train_examples": len(train_examples),
         "holdout_affordances": len(grounded_holdout),
         "holdout_selected_positive": holdout_selected_positive,
+        "producer_lesion_degrades": producer_lesion_degrades,
+        "feature_source_lesion_blocks_synthesis": feature_source_lesion_blocks_synthesis,
         "first_failed": first.success is False,
         "second_succeeded": second.success is True,
         "checkpoint_pending_credit": checkpoint_pending,
         "first_lineage_complete": first_lineage,
         "second_lineage_complete": second_lineage,
         "delayed_credit_complete": delayed_credit,
+        "delayed_credit_lesion_effective": delayed_credit_lesion_effective,
         "source_online_updates": (
             0 if restored._affordance_features is None else restored._affordance_features.online_updates
         ),
@@ -323,7 +376,12 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "action_kinds": ["holdout-positive-action", "holdout-negative-action"],
         },
         "seeds": list(seeds),
-        "controls": ["native-checkpoint-continuation"],
+        "controls": [
+            "native-checkpoint-continuation",
+            "producer-lesion",
+            "feature-source-lesion",
+            "delayed-credit-lesion",
+        ],
         "boundary": "numeric world grounding and executive credit; not general semantics or intelligence",
     }
 
@@ -332,12 +390,15 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
     runs = [evaluate_seed(seed) for seed in seeds]
     metric_names = (
         "holdout_selected_positive",
+        "producer_lesion_degrades",
+        "feature_source_lesion_blocks_synthesis",
         "first_failed",
         "second_succeeded",
         "checkpoint_pending_credit",
         "first_lineage_complete",
         "second_lineage_complete",
         "delayed_credit_complete",
+        "delayed_credit_lesion_effective",
         "replan_complete",
     )
     rates = {
@@ -351,7 +412,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "metrics": {"cross_seed_rates": rates, "runs": runs},
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must transfer the holdout selection and preserve lineage, failure replan, delayed credit, and checkpoint continuation",
+            "criterion": "all seeds must transfer the holdout selection, preserve lineage and checkpoint credit, and show the declared producer, feature-source, and delayed-credit lesions",
         },
     }
 
