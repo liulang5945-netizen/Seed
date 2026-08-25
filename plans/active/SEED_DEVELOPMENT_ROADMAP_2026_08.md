@@ -370,7 +370,10 @@ P4 的最小真实经历边界已落地：
   affordance/action holdout 已通过，且 native checkpoint 可恢复该 source。
 - P7 affordance online-credit Gate 已通过：真实 `EnvironmentOutcome` 的 reward 会回写当前 selected affordance 的 feature source；source
   lesion 会阻断候选合成，online update 计数、预测误差和权重可经 native checkpoint continuation 恢复。
-- 本轮 native 回归为 `126 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
+- P7 contextual grounding Gate 已通过：adapter 强制 source 的 `context_dim` 对齐 Taiji perception，producer 读取
+  `Percept.features + WorldState.latent + uncertainty`；world latent 缺失时使用显式 percept fallback，context 改变会改变连续表示，
+  组合/扰动 holdout 已通过。
+- 本轮 native 回归为 `128 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
 ### 工作项
@@ -475,4 +478,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把 `WorldAffordance.features` 的 grounding 收口为 Taiji-owned world/percept grounding producer，并在 grounding-source lesion 与 compositional/perturbed holdout 上验证；不新增 action/intent 查表。**
+**下一步：把 raw `WorldAffordance.features` 接入真实 world-organ/`WorldState` 生成合同，在对象/关系绑定 holdout 上验证 grounding lineage；不新增 action/intent 查表。**

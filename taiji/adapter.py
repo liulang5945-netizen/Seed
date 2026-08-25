@@ -282,6 +282,10 @@ class TSKV8Adapter(Taiji):
 
         if source is not None and not isinstance(source, LearnedAffordanceFeatures):
             raise TypeError("source must be a LearnedAffordanceFeatures or None")
+        if source is not None and source.context_dim != self.perception.feature_dim:
+            raise ValueError(
+                "affordance feature source context_dim must match Taiji perception feature_dim"
+            )
         self._affordance_features = None if source is None else source.to(self.device)
 
     @property
@@ -355,14 +359,29 @@ class TSKV8Adapter(Taiji):
             raise RuntimeError(
                 "executive candidate synthesis requires an attached learned affordance feature source"
             )
+        percept_features, world_latent, world_uncertainty = self._affordance_context()
         feature_map = {
-            affordance.affordance_id: self._affordance_features.features_for(affordance)
+            affordance.affordance_id: self._affordance_features.features_for(
+                affordance,
+                percept_features=percept_features,
+                world_latent=world_latent,
+                world_uncertainty=world_uncertainty,
+            )
             for affordance in self._cognitive_state.world.affordances
         }
         return ExecutiveCandidate.synthesize_from_state(
             self._cognitive_state,
             features_by_affordance=feature_map,
         )
+
+    def _affordance_context(self) -> tuple[torch.Tensor, torch.Tensor, float]:
+        if self._cognitive_state.percept is None:
+            raise RuntimeError("affordance context requires a current perception")
+        percept_features = self._cognitive_state.percept.features
+        world_latent = self._cognitive_state.world.latent
+        if world_latent.numel() == 0:
+            world_latent = percept_features
+        return percept_features, world_latent, self._cognitive_state.world.uncertainty
 
     def record_executive_outcome(self, outcome: Outcome, *, learn: bool = True) -> float:
         """Train executive selection from an outcome produced by an environment."""
@@ -390,8 +409,15 @@ class TSKV8Adapter(Taiji):
                     None,
                 )
                 if affordance is not None:
+                    percept_features, world_latent, world_uncertainty = self._affordance_context()
                     self._last_affordance_prediction_error = (
-                        self._affordance_features.online_update(affordance, outcome.reward)
+                        self._affordance_features.online_update(
+                            affordance,
+                            outcome.reward,
+                            percept_features=percept_features,
+                            world_latent=world_latent,
+                            world_uncertainty=world_uncertainty,
+                        )
                     )
         self._cognitive_state = replace(self._cognitive_state, outcome=outcome)
         return error

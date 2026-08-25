@@ -173,7 +173,13 @@ def test_adapter_synthesizes_candidates_from_world_affordances() -> None:
     adapter = TSKV8Adapter(_config())
     adapter.observe(65, learn=False)
     adapter.set_goals((Goal("goal-1", "complete the task", priority=1.0),))
-    source = LearnedAffordanceFeatures(input_dim=3, feature_dim=6, seed=7)
+    context = torch.zeros(adapter.perception.feature_dim)
+    source = LearnedAffordanceFeatures(
+        input_dim=3,
+        feature_dim=6,
+        context_dim=adapter.perception.feature_dim,
+        seed=7,
+    )
     source.fit(
         (
             AffordanceFeatureTrainingExample(
@@ -182,6 +188,8 @@ def test_adapter_synthesizes_candidates_from_world_affordances() -> None:
                 "seen_open",
                 torch.tensor([1.0, 0.0, 0.0]),
                 1.0,
+                percept_features=context,
+                world_latent=context,
             ),
             AffordanceFeatureTrainingExample(
                 "train-close",
@@ -189,6 +197,8 @@ def test_adapter_synthesizes_candidates_from_world_affordances() -> None:
                 "seen_close",
                 torch.tensor([0.0, 1.0, 0.0]),
                 -1.0,
+                percept_features=context,
+                world_latent=context,
             ),
         ),
         epochs=80,
@@ -234,8 +244,18 @@ def test_adapter_synthesizes_candidates_from_world_affordances() -> None:
     assert decision.content_plan.provenance == "affordance-derived"
     restored = TSKV8Adapter.from_native_checkpoint(adapter.native_checkpoint())
     assert restored._affordance_features is not None
+    restored_state = restored.cognitive_snapshot()
+    assert restored_state.percept is not None
+    restored_world_latent = restored_state.world.latent
+    if restored_world_latent.numel() == 0:
+        restored_world_latent = restored_state.percept.features
     assert torch.equal(
-        restored._affordance_features.features_for(world.affordances[0]),
+        restored._affordance_features.features_for(
+            world.affordances[0],
+            percept_features=restored_state.percept.features,
+            world_latent=restored_world_latent,
+            world_uncertainty=restored_state.world.uncertainty,
+        ),
         candidate.feature_tensor(),
     )
 
@@ -293,7 +313,12 @@ def test_affordance_features_learn_from_environment_outcome_and_lesion() -> None
     adapter = TSKV8Adapter(_config())
     adapter.observe(65, learn=False)
     adapter.set_goals((Goal("goal-1", "complete the task", priority=1.0),))
-    source = LearnedAffordanceFeatures(input_dim=3, feature_dim=6, seed=19)
+    source = LearnedAffordanceFeatures(
+        input_dim=3,
+        feature_dim=6,
+        context_dim=adapter.perception.feature_dim,
+        seed=19,
+    )
     adapter.attach_affordance_features(source)
     adapter.attach_executive(ExecutiveController())
     world = WorldState(
@@ -331,3 +356,101 @@ def test_affordance_features_learn_from_environment_outcome_and_lesion() -> None
     adapter.attach_affordance_features(None)
     with pytest.raises(RuntimeError, match="learned affordance feature source"):
         adapter.synthesize_executive_candidates()
+
+
+def test_affordance_grounding_producer_reads_percept_and_world_context() -> None:
+    source = LearnedAffordanceFeatures(input_dim=2, feature_dim=4, context_dim=3, seed=23)
+    zero = torch.zeros(3)
+    source.fit(
+        (
+            AffordanceFeatureTrainingExample(
+                "context-fit",
+                "context-affordance",
+                "context-action",
+                torch.tensor([0.5, 0.5]),
+                0.25,
+                percept_features=zero,
+                world_latent=zero,
+            ),
+        ),
+        epochs=8,
+    )
+    affordance = WorldAffordance(
+        affordance_id="context-affordance",
+        action_kind="unseen-context-action",
+        features=torch.tensor([0.5, 0.5]),
+    )
+
+    base = source.features_for(
+        affordance,
+        percept_features=zero,
+        world_latent=zero,
+        world_uncertainty=0.0,
+    )
+    shifted = source.features_for(
+        affordance,
+        percept_features=torch.ones(3),
+        world_latent=torch.full((3,), 0.5),
+        world_uncertainty=0.8,
+    )
+
+    assert not torch.equal(base, shifted)
+
+
+def test_contextual_affordance_features_transfer_compositionally_to_holdout() -> None:
+    source = LearnedAffordanceFeatures(input_dim=2, feature_dim=4, context_dim=2, seed=31)
+    zero = torch.zeros(2)
+    source.fit(
+        (
+            AffordanceFeatureTrainingExample(
+                "holdout-fit-positive",
+                "known-positive",
+                "known-open",
+                torch.tensor([1.0, 0.0]),
+                1.0,
+                percept_features=zero,
+                world_latent=zero,
+            ),
+            AffordanceFeatureTrainingExample(
+                "holdout-fit-negative",
+                "known-negative",
+                "known-close",
+                torch.tensor([0.0, 1.0]),
+                -1.0,
+                percept_features=zero,
+                world_latent=zero,
+            ),
+            AffordanceFeatureTrainingExample(
+                "holdout-fit-neutral",
+                "known-neutral",
+                "known-hold",
+                torch.tensor([0.0, 0.0]),
+                0.0,
+                percept_features=zero,
+                world_latent=zero,
+            ),
+        ),
+        epochs=240,
+    )
+    unseen_positive = WorldAffordance(
+        affordance_id="holdout-unseen-positive",
+        action_kind="unseen-open-variant",
+        features=torch.tensor([0.8, 0.2]),
+    )
+    unseen_negative = WorldAffordance(
+        affordance_id="holdout-unseen-negative",
+        action_kind="unseen-close-variant",
+        features=torch.tensor([0.2, 0.8]),
+    )
+
+    positive = source.predict_affordance_reward(
+        unseen_positive,
+        percept_features=zero,
+        world_latent=zero,
+    )
+    negative = source.predict_affordance_reward(
+        unseen_negative,
+        percept_features=zero,
+        world_latent=zero,
+    )
+    assert positive > negative
