@@ -1,0 +1,43 @@
+{
+  "format": "taiji-p6-provider-artifact-loader-v1",
+  "artifact": {
+    "format": "taiji-language-provider-artifact-v1",
+    "artifact_id": "qwen-guarded-provider-v1",
+    "backend_id": "qwen2.5-0.5b-instruct",
+    "mode": "guarded",
+    "base_model": "C:\\Users\\23747\\.cache\\huggingface\\hub\\models--Qwen--Qwen2.5-0.5B-Instruct\\snapshots\\7ae557604adf67be50417f59c2c2f167def9a775",
+    "adapter_path": "C:\\Users\\23747\\AppData\\Local\\Temp\\seed-qwen-lora-20260825-final",
+    "training_corpus": "reports/taiji_p6_language_train_holdout_baseline_20260825.json",
+    "training_report": "reports/taiji_p6_qwen_lora_provider_baseline_20260825.json",
+    "safety_report": "reports/taiji_p6_qwen_lora_safety_baseline_20260825.json",
+    "rollback_strategy": "disable-adapter",
+    "default_enabled": false,
+    "provenance": "external-provider"
+  },
+  "mode": "guarded",
+  "emission": {
+    "backend": "qwen2.5-0.5b-instruct",
+    "fallback_used": false,
+    "validation": {
+      "format": "taiji-language-validation-v1",
+      "accepted": true,
+      "required_terms": [
+        "稳定"
+      ],
+      "matched_terms": [
+        "稳定"
+      ],
+      "missing_terms": [],
+      "coverage": 1.0,
+      "reason": "accepted"
+    }
+  },
+  "checkpoint": {
+    "artifact_round_trip": true,
+    "cognition_unchanged": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "artifact-selected provider mode loads at the integration edge, Taiji checkpoint preserves the manifest, and guarded output remains safe without cognition ownership"
+  }
+}

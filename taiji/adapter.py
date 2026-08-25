@@ -54,6 +54,7 @@ from .language_organ import (
     LanguageBackendRegistry,
     LanguageEmission,
     LanguageOrgan,
+    LanguageProviderArtifact,
     LanguageValidation,
     StructuredTextLanguageOrgan,
 )
@@ -107,6 +108,7 @@ class TSKV8Adapter(Taiji):
         self._last_content_prediction_error: float | None = None
         self._content_feedback_applied = False
         self._language_backend_registry = LanguageBackendRegistry.default()
+        self._language_provider_artifact: LanguageProviderArtifact | None = None
         self._language_organ: LanguageOrgan | None = None
         self._last_language_emission: LanguageEmission | None = None
         self._language_fallback_count = 0
@@ -386,8 +388,33 @@ class TSKV8Adapter(Taiji):
         """Attach a replaceable terminal text organ owned by Taiji's boundary."""
 
         if organ is not None:
+            if (
+                self._language_provider_artifact is not None
+                and organ.backend_id != self._language_provider_artifact.backend_id
+            ):
+                raise ValueError("language organ backend does not match provider artifact")
             self._language_backend_registry.validate(organ)
         self._language_organ = organ
+
+    def attach_language_provider_artifact(
+        self, artifact: LanguageProviderArtifact | None
+    ) -> None:
+        """Record an externally loaded provider without importing its runtime."""
+
+        if artifact is not None:
+            if not isinstance(artifact, LanguageProviderArtifact):
+                raise TypeError("artifact must be a LanguageProviderArtifact or None")
+            self._language_backend_registry.get(artifact.backend_id)
+            if (
+                self._language_organ is not None
+                and self._language_organ.backend_id != artifact.backend_id
+            ):
+                raise ValueError("provider artifact backend does not match language organ")
+        self._language_provider_artifact = artifact
+
+    @property
+    def language_provider_artifact(self) -> LanguageProviderArtifact | None:
+        return self._language_provider_artifact
 
     def attach_language_backend_registry(
         self, registry: LanguageBackendRegistry | None
@@ -1093,6 +1120,11 @@ class TSKV8Adapter(Taiji):
         if self._language_organ is not None:
             payload["language_organ"] = self._language_organ.checkpoint()
         payload["language_backend_registry"] = self._language_backend_registry.checkpoint()
+        payload["language_provider_artifact"] = (
+            None
+            if self._language_provider_artifact is None
+            else self._language_provider_artifact.to_payload()
+        )
         payload["planned_rollout"] = (
             None if self._planned_rollout is None else self._planned_rollout.to_payload()
         )
@@ -1129,6 +1161,7 @@ class TSKV8Adapter(Taiji):
         self._restore_generation_controller(checkpoint.get("generation"))
         self._restore_content_selector(checkpoint.get("content_selection"))
         self._restore_language_backend_registry(checkpoint.get("language_backend_registry"))
+        self._restore_language_provider_artifact(checkpoint)
         self._restore_language_organ(checkpoint.get("language_organ"))
         self._restore_rollout_state(checkpoint)
         self._restore_generation_trace(checkpoint)
@@ -1254,6 +1287,11 @@ class TSKV8Adapter(Taiji):
             )
         restored = StructuredTextLanguageOrgan.from_checkpoint(payload)
         self._language_backend_registry.validate(restored)
+        if (
+            self._language_provider_artifact is not None
+            and restored.backend_id != self._language_provider_artifact.backend_id
+        ):
+            raise ValueError("restored language organ backend does not match provider artifact")
         self._language_organ = restored
 
     def _restore_language_backend_registry(self, payload: Any) -> None:
@@ -1261,6 +1299,12 @@ class TSKV8Adapter(Taiji):
             LanguageBackendRegistry.default()
             if payload is None
             else LanguageBackendRegistry.from_checkpoint(dict(payload))
+        )
+
+    def _restore_language_provider_artifact(self, payload: Any) -> None:
+        artifact = payload.get("language_provider_artifact") if isinstance(payload, dict) else None
+        self._language_provider_artifact = (
+            None if artifact is None else LanguageProviderArtifact.from_payload(dict(artifact))
         )
 
     def _restore_language_emission(self, payload: Any) -> None:
@@ -1313,6 +1357,11 @@ class TSKV8Adapter(Taiji):
         if self._language_organ is not None:
             components["language_organ"] = self._language_organ.checkpoint()
         components["language_backend_registry"] = self._language_backend_registry.checkpoint()
+        components["language_provider_artifact"] = (
+            None
+            if self._language_provider_artifact is None
+            else self._language_provider_artifact.to_payload()
+        )
         components["planned_rollout"] = (
             None if self._planned_rollout is None else self._planned_rollout.to_payload()
         )
@@ -1364,6 +1413,7 @@ class TSKV8Adapter(Taiji):
         self._restore_language_backend_registry(
             envelope.components.get("language_backend_registry")
         )
+        self._restore_language_provider_artifact(envelope.components)
         self._restore_language_organ(envelope.components.get("language_organ"))
         self._restore_rollout_state(envelope.components)
         self._restore_generation_trace(envelope.components)

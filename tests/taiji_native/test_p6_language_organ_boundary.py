@@ -11,6 +11,7 @@ from taiji import (
     LanguageBackendRegistry,
     LanguageBackendSpec,
     LanguageEmission,
+    LanguageProviderArtifact,
     LanguageRealizationValidator,
     LanguageTrainingCorpus,
     LanguageTrainingExample,
@@ -411,3 +412,41 @@ def test_reset_dynamics_clears_language_replan_state() -> None:
 
     assert adapter.replan_required is False
     assert adapter.language_fallback_count == 0
+
+
+def test_provider_artifact_modes_and_checkpoint_are_explicit() -> None:
+    guarded = LanguageProviderArtifact(
+        artifact_id="qwen-lora-v1",
+        backend_id="mature-decoder-v1",
+        mode="guarded",
+        base_model="Qwen/Qwen2.5-0.5B-Instruct",
+        adapter_path="providers/qwen-lora-v1",
+        training_corpus="reports/train-holdout.json",
+        training_report="reports/trainer.json",
+        safety_report="reports/safety.json",
+    )
+    restored_manifest = LanguageProviderArtifact.from_payload(guarded.to_payload())
+    registry = LanguageBackendRegistry.default()
+    registry.register(
+        LanguageBackendSpec(
+            backend_id="mature-decoder-v1",
+            family="external-decoder",
+            training_contract="expression-to-text-v1",
+        )
+    )
+    adapter = TSKV8Adapter()
+    adapter.attach_language_backend_registry(registry)
+    adapter.attach_language_provider_artifact(guarded)
+    restored = TSKV8Adapter.from_native_checkpoint(adapter.native_checkpoint())
+
+    assert restored_manifest == guarded
+    assert restored.language_provider_artifact == guarded
+    with pytest.raises(ValueError, match="guarded provider artifacts must remain opt-in"):
+        LanguageProviderArtifact(
+            artifact_id="invalid",
+            backend_id="mature-decoder-v1",
+            mode="guarded",
+            base_model="Qwen/Qwen2.5-0.5B-Instruct",
+            adapter_path="providers/invalid",
+            default_enabled=True,
+        )

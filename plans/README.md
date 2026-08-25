@@ -145,10 +145,13 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 trained-provider safety integration Gate 已通过：加载训练后的 LoRA 到原始三类多样化 holdout，raw 必需语义词覆盖率=`0.5`，
   guarded adapted 的 `safe_realization_rate=1.0`、`fallback_count=1`；fallback case 触发 `replan_required`，后续新 episode 不继承
   stale signal，关闭 adapter 后输出与 raw 一致，cognition lesion 通过。该 Gate 允许“可验证的外部器官候选”，不自动把它设为产品默认。
-- 原生套件当前 `115 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
+- P6 provider artifact/loader Gate 已通过：`LanguageProviderArtifact` 统一记录 base model、adapter、train/safety report、rollback strategy
+  与 mode；integration-edge loader 成功加载 guarded LoRA，artifact checkpoint round-trip 与 cognition unchanged 通过，且
+  `default_enabled=false` 强制保持 opt-in。raw/LoRA/guarded 不再依赖散落路径或隐式分支。
+- 原生套件当前 `116 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
   环境状态不作为代码能力结论。
 
 ## 当前唯一下一步
 
-下一决策入口：建立 provider artifact manifest 与可配置 runtime loader，明确 raw/LoRA/guarded 三种模式的来源、回滚和默认策略；
-先保持 guarded provider 为显式 opt-in，不把 Transformer 或其他 decoder 变成认知主体。
+下一决策入口：将 artifact loader 接入 Seed 客户端的配置/启动链路，但继续保持 guarded provider 显式 opt-in，并为客户端启动增加
+provider 缺失、版本不匹配和回滚到 structured-stub 的可观测状态；不把 Transformer 或其他 decoder 变成认知主体。
