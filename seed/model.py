@@ -8,12 +8,12 @@ from typing import Any
 import torch
 
 from taiji import (
-    Taiji,
     TaijiConsolidation,
     TaijiDecision,
     TaijiOutcome,
     TaijiState,
     TaijiStep,
+    TSKV8Adapter,
 )
 
 from .config import SeedConfig
@@ -39,11 +39,20 @@ class Seed:
         episode_id: str = "episode-0",
     ) -> None:
         self.config = config or SeedConfig()
-        self.substrate = Taiji(
+        # ``substrate`` is a compatibility attribute.  The actual hosted
+        # architecture is the Taiji v1 contract surface exposed by this
+        # TSK-v8 adapter; old callers continue to see a Taiji instance.
+        self.substrate = TSKV8Adapter(
             self.config.taiji,
             device=device,
             episode_id=episode_id,
         )
+
+    @property
+    def architecture(self) -> TSKV8Adapter:
+        """The Taiji architecture hosted by Seed (legacy alias: substrate)."""
+
+        return self.substrate
 
     @property
     def device(self) -> torch.device:
@@ -153,6 +162,9 @@ class Seed:
         return {
             "format": self.CHECKPOINT_FORMAT,
             "config": self.config.to_dict(),
+            # Canonical v1 cognitive envelope.  ``substrate`` remains a
+            # readable compatibility payload for seed-native-v1 consumers.
+            "taiji": self.substrate.native_checkpoint(),
             "substrate": self.substrate.checkpoint(),
         }
 
@@ -162,7 +174,11 @@ class Seed:
         actual = SeedConfig.from_dict(checkpoint["config"])
         if actual != self.config:
             raise ValueError("checkpoint configuration does not match Seed")
-        self.substrate.restore(checkpoint["substrate"])
+        if "taiji" in checkpoint:
+            self.substrate.restore_native(checkpoint["taiji"])
+        else:
+            # Read old seed-native-v1 checkpoints produced before P1.
+            self.substrate.restore(checkpoint["substrate"])
 
     @classmethod
     def from_checkpoint(

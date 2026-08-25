@@ -32,13 +32,16 @@ Seed 可以决定“在哪台设备运行、加载哪个 checkpoint、使用什�
 
 | 维度 | 当前代码 | Taiji v1 目标 |
 |---|---|---|
-| 顶层入口 | `seed.model.Seed` 包装一个 `Taiji` 实例 | Seed runtime 启动一个完整 Taiji architecture |
+| 顶层入口 | `seed.model.Seed` 通过 `TSKV8Adapter` 承载 Taiji v1 合同 | Seed runtime 启动一个完整 Taiji architecture |
 | Taiji 能力 | TSK-v8 byte/fabric/episodic/motor kernel | 感知→世界模型→记忆→执行认知→生成完整闭环 |
-| checkpoint | `seed-native-v1` 外壳嵌套 kernel checkpoint | Seed 保存产品元数据，认知状态由 Taiji checkpoint 完整拥有 |
+| checkpoint | `seed-native-v1` 保留旧 `substrate` 载荷，并增加 Taiji v1 原子信封 | Seed 保存产品元数据，认知状态由 Taiji checkpoint 完整拥有 |
 | 输入 | UTF-8/raw byte 训练路径 | 多模态 Observation，经 Taiji 学习型感知形成内部表征 |
 | 输出 | byte motor/generation | ActionIntent 经语言、工具或身体效应器执行 |
 
 现有 API 和 checkpoint 不立刻破坏。P1 通过 compatibility adapter 保留行为，同时把新认知合同放到 Taiji 所有权下。
+
+当前实现入口是 `Seed.architecture`；`Seed.substrate` 仅是历史兼容别名。adapter 的职责是把
+TSK-v8 的旧 byte/fabric/action 信号映射到版本化 v1 合同，不把这个映射误报为完整 Taiji。
 
 ## 3. Seed 允许拥有的内容
 

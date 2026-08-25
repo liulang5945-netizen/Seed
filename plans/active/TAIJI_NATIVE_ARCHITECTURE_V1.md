@@ -6,6 +6,10 @@
 
 当前实现状态：尚未完成。仓库顶层 `taiji/` 当前运行的是 Taiji Substrate Kernel v8（TSK-v8），它是本架构可复用的低层实验内核，不是完整 Taiji。
 
+P1 兼容纵切片已完成：版本化 v1 合同、Taiji-owned `CognitiveState`/`NativeCheckpoint`、
+TSK-v8 adapter 和 Seed 所有权门禁已经进入代码。该纵切片只证明合同与闭环可恢复，
+不改变“TSK-v8 不是完整 Taiji”的能力声明。
+
 ## 0. 本次纠正
 
 此前路线把“原生”误解为“从最原始信号开始，并排除一切与 Transformer 功能相似的抽象”。这导致：
