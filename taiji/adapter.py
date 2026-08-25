@@ -625,8 +625,10 @@ class TSKV8Adapter(Taiji):
                 ),
                 learn=learn,
             )
+        replan_requested = self._replan_required
         self._replan_required = bool(
-            not result.terminal and (result.success is False or result.reward < 0.0)
+            not result.terminal
+            and (replan_requested or result.success is False or result.reward < 0.0)
         )
         self.observe(result.sensation, learn=learn)
         if transition is not None:
@@ -992,6 +994,57 @@ class TSKV8Adapter(Taiji):
             goals=replace(self._cognitive_state.goals, tick=self.tick),
         )
         return decision
+
+    def predict_world_candidates(
+        self,
+        candidates: Sequence[PlanningCandidate],
+    ) -> tuple[PlanningCandidate, ...]:
+        """Project structured candidates through the attached world learner.
+
+        Goal semantics such as expected progress remain planner-owned.  The
+        world learner supplies only the numeric consequence estimates and the
+        latest observed model error becomes candidate uncertainty.
+        """
+
+        if self._world_dynamics is None:
+            raise RuntimeError("world dynamics is not attached")
+        projected = []
+        model_error = self._cognitive_state.world_prediction
+        model_uncertainty = (
+            0.0
+            if model_error is None or model_error.state_error is None
+            else min(1.0, max(0.0, float(model_error.state_error)))
+        )
+        for candidate in candidates:
+            if not isinstance(candidate, PlanningCandidate):
+                raise TypeError("candidates must contain PlanningCandidate values")
+            if candidate.action.tick != self._cognitive_state.world.tick:
+                raise ValueError("world planning candidates must act at the current world tick")
+            prediction = self._world_dynamics.predict(
+                self._cognitive_state.world,
+                candidate.action,
+            )
+            projected.append(
+                replace(
+                    candidate,
+                    predicted_reward=prediction.reward,
+                    success_probability=prediction.success_probability,
+                    uncertainty=max(candidate.uncertainty, model_uncertainty),
+                )
+            )
+        if not projected:
+            raise ValueError("world planning requires executable candidates")
+        return tuple(projected)
+
+    def plan_world_actions(
+        self,
+        candidates: Sequence[PlanningCandidate],
+        *,
+        goal_id: str | None = None,
+    ) -> PlanningDecision:
+        """Plan executable candidates after world-dynamics projection."""
+
+        return self.plan_actions(self.predict_world_candidates(candidates), goal_id=goal_id)
 
     def plan_rollouts(
         self,
@@ -1474,6 +1527,7 @@ class TSKV8Adapter(Taiji):
         transition = None
         prediction_record = self._cognitive_state.world_prediction
         calibration_trace = self._cognitive_state.world_calibration_trace
+        world_model_replan = False
         if world_state is not None:
             if world_action is None:
                 if intent is None:
@@ -1515,6 +1569,13 @@ class TSKV8Adapter(Taiji):
                     state_error=float(torch.mean((predicted - actual) ** 2)),
                     reward_error=(prediction_record.predicted_reward - outcome.reward) ** 2,
                 )
+                world_model_replan = bool(
+                    not terminal
+                    and self._goal_planner is not None
+                    and prediction_record.state_error is not None
+                    and prediction_record.state_error
+                    > self._goal_planner.config.replan_error_threshold
+                )
                 if learn_world is None:
                     learn_world = bool(kwargs.get("learn", True))
                 if learn_world:
@@ -1551,6 +1612,7 @@ class TSKV8Adapter(Taiji):
                 rollout, outcome
             )
             self._planned_rollout = None
+        self._replan_required = bool(self._replan_required or world_model_replan)
         goals = self._cognitive_state.goals
         if self._goal_planner is not None:
             goals = self._goal_planner.apply_outcome(goals, outcome)
