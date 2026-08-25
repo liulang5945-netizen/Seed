@@ -50,7 +50,8 @@
     "delayed-credit-lesion",
     "world-prediction-train-holdout",
     "world-prediction-online-calibration",
-    "world-prediction-no-update-control"
+    "world-prediction-no-update-control",
+    "runtime-calibration-trace-multistep"
   ],
   "world_prediction": {
     "train_cases": 2,
@@ -58,7 +59,15 @@
     "calibration_metric": "state_prediction_mse",
     "online_update_learning_rate": 0.01,
     "online_update_repeats": 50,
-    "no_update_control": true
+    "no_update_control": true,
+    "runtime_trace": {
+      "checkpoint_continuation": true,
+      "variable_horizons": [
+        3,
+        4,
+        5
+      ]
+    }
   },
   "variable_episodes": [
     {

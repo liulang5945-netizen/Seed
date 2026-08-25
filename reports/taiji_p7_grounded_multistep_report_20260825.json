@@ -17,6 +17,7 @@
       "continuous_replan_complete": 1.0,
       "variable_episode_gate": 1.0,
       "world_prediction_gate": 1.0,
+      "runtime_calibration_trace_gate": 1.0,
       "prediction_train_holdout_gate": 1.0,
       "calibration_gate": 1.0
     },
@@ -41,6 +42,15 @@
         "executive_fit_steps": 720,
         "continuous_replan_complete": true,
         "world_prediction_gate": true,
+        "runtime_calibration_trace_gate": true,
+        "runtime_calibration_trace_length": 4,
+        "runtime_calibration_checkpoint_count": 1,
+        "runtime_calibration_update_counts": [
+          1,
+          2,
+          3,
+          4
+        ],
         "prediction_train_holdout_gate": true,
         "calibration_gate": true,
         "prediction_holdout_error_mean": 0.20010889321565628,
@@ -65,6 +75,7 @@
             ],
             "replans": 1,
             "lineage_complete": true,
+            "runtime_calibration_trace_complete": true,
             "final_success": true,
             "credit_updates_complete": true
           },
@@ -81,6 +92,7 @@
             ],
             "replans": 2,
             "lineage_complete": true,
+            "runtime_calibration_trace_complete": true,
             "final_success": true,
             "credit_updates_complete": true
           },
@@ -99,6 +111,7 @@
             ],
             "replans": 3,
             "lineage_complete": true,
+            "runtime_calibration_trace_complete": true,
             "final_success": true,
             "credit_updates_complete": true
           }
@@ -130,6 +143,15 @@
         "executive_fit_steps": 720,
         "continuous_replan_complete": true,
         "world_prediction_gate": true,
+        "runtime_calibration_trace_gate": true,
+        "runtime_calibration_trace_length": 4,
+        "runtime_calibration_checkpoint_count": 1,
+        "runtime_calibration_update_counts": [
+          1,
+          2,
+          3,
+          4
+        ],
         "prediction_train_holdout_gate": true,
         "calibration_gate": true,
         "prediction_holdout_error_mean": 0.20042632520198822,
@@ -154,6 +176,7 @@
             ],
             "replans": 1,
             "lineage_complete": true,
+            "runtime_calibration_trace_complete": true,
             "final_success": true,
             "credit_updates_complete": true
           },
@@ -170,6 +193,7 @@
             ],
             "replans": 2,
             "lineage_complete": true,
+            "runtime_calibration_trace_complete": true,
             "final_success": true,
             "credit_updates_complete": true
           },
@@ -188,6 +212,7 @@
             ],
             "replans": 3,
             "lineage_complete": true,
+            "runtime_calibration_trace_complete": true,
             "final_success": true,
             "credit_updates_complete": true
           }
@@ -219,6 +244,15 @@
         "executive_fit_steps": 720,
         "continuous_replan_complete": true,
         "world_prediction_gate": true,
+        "runtime_calibration_trace_gate": true,
+        "runtime_calibration_trace_length": 4,
+        "runtime_calibration_checkpoint_count": 1,
+        "runtime_calibration_update_counts": [
+          1,
+          2,
+          3,
+          4
+        ],
         "prediction_train_holdout_gate": true,
         "calibration_gate": true,
         "prediction_holdout_error_mean": 0.20019525289535522,
@@ -243,6 +277,7 @@
             ],
             "replans": 1,
             "lineage_complete": true,
+            "runtime_calibration_trace_complete": true,
             "final_success": true,
             "credit_updates_complete": true
           },
@@ -259,6 +294,7 @@
             ],
             "replans": 2,
             "lineage_complete": true,
+            "runtime_calibration_trace_complete": true,
             "final_success": true,
             "credit_updates_complete": true
           },
@@ -277,6 +313,7 @@
             ],
             "replans": 3,
             "lineage_complete": true,
+            "runtime_calibration_trace_complete": true,
             "final_success": true,
             "credit_updates_complete": true
           }
@@ -292,6 +329,6 @@
   },
   "gate": {
     "passed": true,
-    "criterion": "all seeds must transfer the holdout selection, preserve lineage and credit across four transitions and variable 3/4/5-step episodes, complete the declared replans and lesions, emit finite world prediction errors, and show per-transition online calibration improvement over a no-update control"
+    "criterion": "all seeds must transfer the holdout selection, preserve lineage and credit across four transitions and variable 3/4/5-step episodes, complete the declared replans and lesions, emit finite world prediction errors, show per-transition online calibration improvement over a no-update control, and preserve runtime calibration traces with contiguous update counts across checkpoint continuation"
   }
 }
