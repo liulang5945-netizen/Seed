@@ -50,6 +50,7 @@ from .generation import (
     ToolCall,
 )
 from .homeostasis import HomeostaticController, HomeostaticDrive
+from .input_boundary import InputFrame, InputTrace
 from .language_organ import (
     LanguageBackendRegistry,
     LanguageEmission,
@@ -85,6 +86,7 @@ class TSKV8Adapter(Taiji):
 
     ADAPTER_NAME = "tsk-v8"
     NATIVE_CHECKPOINT_FORMAT = CONTRACT_FORMAT
+    SUPPORTED_INPUT_MODALITIES = frozenset({"text", "text-utf8", "text-byte"})
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -782,6 +784,95 @@ class TSKV8Adapter(Taiji):
                 raise ValueError("observed world_state must match the adapter tick")
             self._cognitive_state = replace(self._cognitive_state, world=world_state)
         return step
+
+    def ingest_input(
+        self,
+        frame: InputFrame,
+        *,
+        learn: bool = True,
+        learn_motor: bool | None = None,
+        use_memory: bool = True,
+        workspace_candidates: Sequence[WorkspaceCandidate] | None = None,
+        workspace_mode: str = "learned",
+    ) -> InputTrace:
+        """Route one client frame through Taiji-owned perception.
+
+        The adapter currently exposes byte-level text perception.  The frame
+        keeps the product transport metadata intact, while each byte becomes
+        a versioned ``Observation`` and learned ``PerceptEvent``.  No action
+        intent is inferred at this boundary; an executive must earn that
+        decision from the resulting cognitive state.
+        """
+
+        if not isinstance(frame, InputFrame):
+            raise TypeError("frame must be a Taiji InputFrame")
+        if frame.modality not in self.SUPPORTED_INPUT_MODALITIES:
+            supported = ", ".join(sorted(self.SUPPORTED_INPUT_MODALITIES))
+            raise ValueError(f"unsupported input modality {frame.modality!r}; supported: {supported}")
+
+        observations: list[Observation] = []
+        percepts: list[Any] = []
+        for symbol in frame.payload:
+            observation = Observation(
+                modality="text-byte",
+                value=int(symbol),
+                timestamp=frame.timestamp,
+                source=frame.source,
+                provenance=frame.provenance,
+                confidence=frame.confidence,
+            )
+            self.observe_event(
+                observation,
+                learn=learn,
+                learn_motor=learn_motor,
+                use_memory=use_memory,
+                workspace_candidates=workspace_candidates,
+                workspace_mode=workspace_mode,
+            )
+            current = self.cognitive_snapshot()
+            if current.observation is None or current.percept is None:
+                raise RuntimeError("Taiji perception did not emit a complete input trace")
+            observations.append(current.observation)
+            percepts.append(current.percept)
+
+        current = self.cognitive_snapshot()
+        return InputTrace(
+            input_id=frame.input_id,
+            modality=frame.modality,
+            observations=tuple(observations),
+            percepts=tuple(percepts),
+            action_intent=current.action_intent,
+        )
+
+    @torch.no_grad()
+    def generate_input(
+        self,
+        frame: InputFrame,
+        length: int,
+        *,
+        stop_at_boundary: bool = False,
+        sample: bool = False,
+        reset: bool = True,
+    ) -> bytes:
+        """Generate from a validated Taiji input frame.
+
+        Generation remains a byte-level effector path for compatibility.  It
+        does not manufacture an ``ActionIntent`` or semantic ``ContentPlan``
+        from the client text.
+        """
+
+        if not isinstance(frame, InputFrame):
+            raise TypeError("frame must be a Taiji InputFrame")
+        if frame.modality not in self.SUPPORTED_INPUT_MODALITIES:
+            supported = ", ".join(sorted(self.SUPPORTED_INPUT_MODALITIES))
+            raise ValueError(f"unsupported input modality {frame.modality!r}; supported: {supported}")
+        return self.generate(
+            frame.payload,
+            length,
+            stop_at_boundary=stop_at_boundary,
+            sample=sample,
+            reset=reset,
+        )
 
     def act(self, available_actions: Any, *args: Any, **kwargs: Any) -> TaijiDecision:
         supplied_world_action = kwargs.pop("world_action", None)

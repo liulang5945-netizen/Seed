@@ -18,6 +18,8 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
+from taiji import InputFrame
+
 logger = logging.getLogger("ApiServer.SeedRuntime")
 
 DEFAULT_CHECKPOINT = Path(__file__).resolve().parent.parent / "checkpoints" / "seed_corpus.pt"
@@ -133,8 +135,17 @@ class SeedRuntime:
         prompt = (prompt or "")[:MAX_PROMPT_CHARS]
         text = self._serialize(prompt, history)
         with self._lock:
-            raw = self.model.generate(
-                text.encode("utf-8"),
+            frame = InputFrame(
+                input_id=f"chat:{self.model.tick}",
+                modality="text",
+                payload=text.encode("utf-8"),
+                source="seed.client.chat",
+                timestamp=self.model.tick,
+                provenance="external",
+                confidence=1.0,
+            )
+            raw = self.model.generate_input(
+                frame,
                 max_length,
                 stop_at_boundary=True,
                 sample=False,

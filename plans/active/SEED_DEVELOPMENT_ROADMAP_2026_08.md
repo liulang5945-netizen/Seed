@@ -351,7 +351,12 @@ P4 的最小真实经历边界已落地：
 - P6 provider artifact/loader Gate 已通过：`LanguageProviderArtifact` 统一记录 base model、adapter、train/safety report、rollback strategy
   与 mode；integration-edge loader 成功加载 guarded LoRA，artifact checkpoint round-trip 与 cognition unchanged 通过，且
   `default_enabled=false` 强制保持 opt-in。raw/LoRA/guarded 不再依赖散落路径或隐式分支。
-- 本轮 native 回归为 `116 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
+- P6 client input-boundary Gate 已通过：`InputFrame` 版本化承载客户端原始 bytes 与来源元数据；`TSKV8Adapter.ingest_input()` 将
+  当前支持的 text/text-utf8/text-byte 输入逐字节转换为 Taiji-owned `Observation/PerceptEvent`，`InputTrace` 提供可检查的
+  感知轨迹并支持合同 round-trip。`ActionIntent` 在该边界保持为空，禁止固定 intent 映射；`SeedRuntime.chat` 已通过
+  `generate_input()` 走同一输入合同，仍保留 raw-byte 兼容输出。该 Gate 只证明输入所有权与感知可观测性，不证明 executive、
+  语义对话或语言智能。
+- 本轮 native 回归为 `120 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
 ### 工作项
@@ -456,6 +461,6 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一决策入口：定义“客户端输入 → Taiji-owned `Observation/PerceptEvent` → `ActionIntent/ContentPlan`”的认知合同，再接入
-`ExpressionPlan → LanguageOrgan`；当前 `SeedRuntime.chat` 仍是 raw-byte 兼容通路，禁止用固定 prompt/intent 映射或 decoder 反推
-认知内容。**
+**下一决策入口：定义由持续 `Observation/PerceptEvent`、世界状态、目标和结果反馈学习产生
+`ActionIntent/ContentPlan` 的 Taiji executive 合同，并先建立可 lesion 的最小 Gate；禁止用固定意图映射、客户端 prompt 模板或
+decoder 反推认知内容。完成 executive 之前不把 `SeedRuntime.chat` 宣称为完整语义对话。**

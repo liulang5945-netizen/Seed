@@ -8,6 +8,7 @@ from typing import Any
 import torch
 
 from taiji import (
+    InputFrame,
     TaijiConsolidation,
     TaijiDecision,
     TaijiOutcome,
@@ -146,6 +147,25 @@ class Seed:
     ) -> bytes:
         return self.substrate.generate(
             prompt,
+            length,
+            stop_at_boundary=stop_at_boundary,
+            sample=sample,
+            reset=reset,
+        )
+
+    def generate_input(
+        self,
+        frame: InputFrame,
+        length: int,
+        *,
+        stop_at_boundary: bool = False,
+        sample: bool = False,
+        reset: bool = True,
+    ) -> bytes:
+        """Generate through the versioned Taiji client-input boundary."""
+
+        return self.substrate.generate_input(
+            frame,
             length,
             stop_at_boundary=stop_at_boundary,
             sample=sample,
