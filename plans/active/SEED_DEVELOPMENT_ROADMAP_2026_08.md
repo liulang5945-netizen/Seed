@@ -376,7 +376,10 @@ P4 的最小真实经历边界已落地：
 - P7 world-grounding lineage Gate 已通过：adapter 在 `observe_event` 与 `settle_action` 进入认知状态前统一由
   `WorldAffordanceGroundingProducer` 从 actor/target numeric object summary、relation binding、world latent 和 confidence 生成 raw
   grounding，并记录 `grounding_lineage`；`action_kind/affordance_id` 不参与特征查表。
-- 本轮 native 回归为 `129 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
+- P7 end-to-end grounding transfer Gate 已通过：`WorldAffordanceGroundingProducer → LearnedAffordanceFeatures → ExecutiveController`
+  在新对象、新关系谓词和新 action kind 的 holdout 上保持正确选择；producer lesion 会使选择退化，证明 executive 消费的是 grounding
+  表征而非符号表。
+- 本轮 native 回归为 `130 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
 ### 工作项
@@ -481,4 +484,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：完成 `WorldAffordanceGroundingProducer → LearnedAffordanceFeatures → ExecutiveController` 端到端对象/关系绑定 holdout，并验证 producer lesion 的能力下降；不新增 action/intent 查表。**
+**下一步：把端到端 grounding 链接入 adapter 的真实多步 `WorldTransition/EnvironmentOutcome` 与失败重规划，验证 lineage 在 action 前后持续存在和 delayed reward credit；不新增 action/intent 查表。**
