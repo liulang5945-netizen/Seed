@@ -610,6 +610,15 @@ class TSKV8Adapter(Taiji):
                 raise RuntimeError("kernel did not preserve a pending action")
             self._state.pending_action = replace(pending, action_symbol=selected_symbol)
             decision = replace(decision, action_symbol=selected_symbol)
+        intent_parameters = {
+            **(
+                {}
+                if supplied_world_action is None
+                else dict(supplied_world_action.parameters)
+            ),
+            "action_symbol": decision.action_symbol,
+            "available_actions": decision.available_actions,
+        }
         intent = ActionIntent(
             intent_id=f"{self._state.episode_id}:intent:{decision.tick}",
             kind=(
@@ -617,10 +626,7 @@ class TSKV8Adapter(Taiji):
                 if action_kinds is None
                 else action_kinds[decision.available_actions.index(decision.action_symbol)]
             ),
-            parameters={
-                "action_symbol": decision.action_symbol,
-                "available_actions": decision.available_actions,
-            },
+            parameters=intent_parameters,
             expected_outcome="environment-feedback",
             confidence=float(decision.policy_probabilities[decision.action_symbol]),
             tick=decision.tick,

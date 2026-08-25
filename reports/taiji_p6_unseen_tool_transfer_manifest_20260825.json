@@ -1,0 +1,16 @@
+{
+  "format": "taiji-p6-unseen-tool-transfer-manifest-v1",
+  "task": "execute an unseen structured tool with nested parameters and reordered keys",
+  "lesions": [
+    "fixed_tool_table",
+    "flat_parameter_only",
+    "order_sensitive_codec"
+  ],
+  "signals": [
+    "tool_name",
+    "nested_parameters",
+    "key_order",
+    "execution_success"
+  ],
+  "boundary": "unseen-tool transfer Gate only; no broad tool ecosystem or language generalization claim"
+}

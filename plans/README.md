@@ -91,10 +91,16 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 tool execution/outcome 窄 Gate 已通过：`TaijiToolEnvironment` 执行结构化 tool call 后，真实 `Outcome` 保持 intent ID、success、
   reward、terminal 并写入 episodic memory；无 generation organ 的 direct-byte lesion 不能执行同一工具合同。该 Gate 使用模拟环境，
   不代表外部服务可靠性或失败后的自动恢复。
+- P6 tool failure/replan 窄 Gate 已通过：首次工具失败产生 prediction error=`2.0` 并触发 `replan_required`，随后 planner 选择 recovery
+  tool，成功后清除重规划，两个工具 Outcome 均保留在 episodic memory。该 Gate 证明既有因果重规划可承接工具失败，不证明外部服务
+  可靠性或通用长程规划。
+- P6 unseen-tool/parameter transfer 窄 Gate 已通过：未见工具名 `maps.search.v42`、嵌套参数、重排 key 顺序均保持并成功执行；同时修复
+  `act(world_action=...)` 丢失结构化参数的问题，保留通用参数与兼容 action metadata。该结果关闭固定工具表与扁平参数假设，不证明广泛
+  工具生态或语言泛化。
 - 原生套件当前 94 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-继续 P6 tool failure/replan Gate：让结构化工具失败产生可观测 prediction error，触发替代计划并把恢复结果写回记忆；保留当前
-P3/P4/P5 Gate，不让 byte motor 或 Legacy Transformer 代替目标规划与内容决策。
+继续 P6 cross-organ expression consistency Gate：让同一 `ContentPlan` 分别生成 tool 与 text 结构化表达，验证 semantic slots 一致且
+器官输出不改变目标/计划；保留当前 P3/P4/P5 Gate，不让 byte motor 或 Legacy Transformer 代替目标规划与内容决策。
