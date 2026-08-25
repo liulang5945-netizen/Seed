@@ -926,6 +926,7 @@ class WorldInterventionCorpus:
 
     train: tuple[WorldInterventionCase, ...] = ()
     holdout: tuple[WorldInterventionCase, ...] = ()
+    time_shuffled: tuple[WorldInterventionCase, ...] = ()
     format: str = "taiji-world-intervention-v1"
     version: int = CONTRACT_VERSION
 
@@ -935,10 +936,15 @@ class WorldInterventionCorpus:
             raise ValueError(f"unsupported intervention corpus format: {self.format}")
         train_ids = {case.case_id for case in self.train}
         holdout_ids = {case.case_id for case in self.holdout}
-        if len(train_ids) != len(self.train) or len(holdout_ids) != len(self.holdout):
+        shuffled_ids = {case.case_id for case in self.time_shuffled}
+        if (
+            len(train_ids) != len(self.train)
+            or len(holdout_ids) != len(self.holdout)
+            or len(shuffled_ids) != len(self.time_shuffled)
+        ):
             raise ValueError("intervention case ids must be unique within each split")
-        if train_ids & holdout_ids:
-            raise ValueError("train and holdout intervention cases must be disjoint")
+        if (train_ids & holdout_ids) or (train_ids & shuffled_ids) or (holdout_ids & shuffled_ids):
+            raise ValueError("intervention splits must be disjoint")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -946,6 +952,7 @@ class WorldInterventionCorpus:
             "version": self.version,
             "train": [case.to_payload() for case in self.train],
             "holdout": [case.to_payload() for case in self.holdout],
+            "time_shuffled": [case.to_payload() for case in self.time_shuffled],
         }
 
     @classmethod
@@ -962,6 +969,10 @@ class WorldInterventionCorpus:
             holdout=tuple(
                 WorldInterventionCase.from_payload(item, device=device)
                 for item in payload.get("holdout", ())
+            ),
+            time_shuffled=tuple(
+                WorldInterventionCase.from_payload(item, device=device)
+                for item in payload.get("time_shuffled", ())
             ),
         )
 

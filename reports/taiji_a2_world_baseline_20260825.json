@@ -36,7 +36,20 @@
         "position"
       ]
     ],
+    "relation_slots": [
+      [
+        "blue",
+        "near",
+        "red"
+      ],
+      [
+        "red",
+        "near",
+        "blue"
+      ]
+    ],
     "action_kinds": [
+      "link",
       "move"
     ],
     "actor_ids": [
@@ -47,120 +60,143 @@
       "red"
     ],
     "parameter_names": [
+      "enabled",
       "step"
     ],
-    "target_parameter_interactions": 2,
-    "state_dim": 3,
-    "action_dim": 7,
-    "input_dim": 10
+    "target_parameter_interactions": 4,
+    "state_dim": 5,
+    "action_dim": 11,
+    "input_dim": 16
   },
-  "train_cases": 6,
-  "holdout_cases": 2,
+  "train_cases": 10,
+  "holdout_cases": 4,
+  "time_shuffled_cases": 1,
   "seeds": [
     {
       "seed": 11,
-      "training_loss": 0.0009445096948184073,
+      "training_loss": 0.0007140541565604508,
       "learned": {
-        "state_mse": 0.09906627610325813,
-        "reward_mse": 0.12982233588834902,
-        "success_bce": 3.434669636045871e-05,
-        "outcome_error": 0.12985668258470948,
+        "state_mse": 0.0385096859827172,
+        "reward_mse": 0.23624234581847148,
+        "success_bce": 1.3074823158869125e-05,
+        "outcome_error": 0.23625542064163035,
         "success_accuracy": 1.0
       },
       "target_binding_lesion": {
-        "state_mse": 0.7934887707233429,
-        "reward_mse": 0.8193546813882051,
-        "success_bce": 0.0007363982896998075,
-        "outcome_error": 0.820091079677905,
+        "state_mse": 0.38103609159588814,
+        "reward_mse": 0.35164418901246464,
+        "success_bce": 0.0007052736240413612,
+        "outcome_error": 0.352349462636506,
         "success_accuracy": 1.0
       },
       "frequency_baseline": {
-        "state_mse": 0.6666666865348816,
-        "reward_mse": 4.0,
+        "state_mse": 0.35000000335276127,
+        "reward_mse": 2.5,
         "success_bce": 0.6931471805599453,
-        "outcome_error": 4.693147180559945,
+        "outcome_error": 3.1931471805599454,
         "success_accuracy": 0.5
       },
       "action_only_baseline": {
-        "state_mse": 1.8518518209457397,
-        "reward_mse": 4.0,
+        "state_mse": 0.6055555231869221,
+        "reward_mse": 2.5,
         "success_bce": 0.6931471805599453,
-        "outcome_error": 4.693147180559945,
+        "outcome_error": 3.1931471805599454,
         "success_accuracy": 0.5
+      },
+      "time_shuffled": {
+        "state_mse": 0.09372531622648239,
+        "reward_mse": 0.1087027143260002,
+        "success_bce": 2.6584024921883562e-05,
+        "outcome_error": 0.10872929835092209,
+        "success_accuracy": 1.0
       }
     },
     {
       "seed": 29,
-      "training_loss": 0.00055936339776963,
+      "training_loss": 0.0009670659201219678,
       "learned": {
-        "state_mse": 0.2361971139907837,
-        "reward_mse": 0.16046252789249138,
-        "success_bce": 2.1681289207547906e-05,
-        "outcome_error": 0.16048420918169892,
+        "state_mse": 0.039227824890986085,
+        "reward_mse": 0.24005284850312592,
+        "success_bce": 2.7829812082455546e-05,
+        "outcome_error": 0.24008067831520838,
         "success_accuracy": 1.0
       },
       "target_binding_lesion": {
-        "state_mse": 0.948195070028305,
-        "reward_mse": 0.30676074223833893,
-        "success_bce": 0.00013430687568514755,
-        "outcome_error": 0.3068950491140241,
+        "state_mse": 0.2821156665449962,
+        "reward_mse": 0.3150339825538646,
+        "success_bce": 0.0007602963609034912,
+        "outcome_error": 0.3157942789147681,
         "success_accuracy": 1.0
       },
       "frequency_baseline": {
-        "state_mse": 0.6666666865348816,
-        "reward_mse": 4.0,
+        "state_mse": 0.35000000335276127,
+        "reward_mse": 2.5,
         "success_bce": 0.6931471805599453,
-        "outcome_error": 4.693147180559945,
+        "outcome_error": 3.1931471805599454,
         "success_accuracy": 0.5
       },
       "action_only_baseline": {
-        "state_mse": 1.8518518209457397,
-        "reward_mse": 4.0,
+        "state_mse": 0.6055555231869221,
+        "reward_mse": 2.5,
         "success_bce": 0.6931471805599453,
-        "outcome_error": 4.693147180559945,
+        "outcome_error": 3.1931471805599454,
         "success_accuracy": 0.5
+      },
+      "time_shuffled": {
+        "state_mse": 0.05954829603433609,
+        "reward_mse": 0.13150406869050357,
+        "success_bce": 4.66119185329516e-05,
+        "outcome_error": 0.13155068060903652,
+        "success_accuracy": 1.0
       }
     },
     {
       "seed": 47,
-      "training_loss": 0.0008839521906338632,
+      "training_loss": 0.0007621409022249281,
       "learned": {
-        "state_mse": 0.12957028299570084,
-        "reward_mse": 0.13209445238615558,
-        "success_bce": 3.836273861285982e-05,
-        "outcome_error": 0.13213281512476843,
+        "state_mse": 0.06151186185888946,
+        "reward_mse": 0.2578544110426684,
+        "success_bce": 1.6942774781522113e-05,
+        "outcome_error": 0.2578713538174499,
         "success_accuracy": 1.0
       },
       "target_binding_lesion": {
-        "state_mse": 0.7819540500640869,
-        "reward_mse": 0.7386641104261855,
-        "success_bce": 0.0005614513990808343,
-        "outcome_error": 0.7392255618252663,
+        "state_mse": 0.31386613519862294,
+        "reward_mse": 0.4403081215871367,
+        "success_bce": 0.0007672789800264356,
+        "outcome_error": 0.44107540056716316,
         "success_accuracy": 1.0
       },
       "frequency_baseline": {
-        "state_mse": 0.6666666865348816,
-        "reward_mse": 4.0,
+        "state_mse": 0.35000000335276127,
+        "reward_mse": 2.5,
         "success_bce": 0.6931471805599453,
-        "outcome_error": 4.693147180559945,
+        "outcome_error": 3.1931471805599454,
         "success_accuracy": 0.5
       },
       "action_only_baseline": {
-        "state_mse": 1.8518518209457397,
-        "reward_mse": 4.0,
+        "state_mse": 0.6055555231869221,
+        "reward_mse": 2.5,
         "success_bce": 0.6931471805599453,
-        "outcome_error": 4.693147180559945,
+        "outcome_error": 3.1931471805599454,
         "success_accuracy": 0.5
+      },
+      "time_shuffled": {
+        "state_mse": 0.07401525229215622,
+        "reward_mse": 0.10226763008576256,
+        "success_bce": 2.7180087392806906e-05,
+        "outcome_error": 0.10229481017315536,
+        "success_accuracy": 1.0
       }
     }
   ],
   "gate": {
-    "state_gain_min": 0.4304695725440979,
-    "outcome_gain_min": 4.5326629713782465,
-    "binding_drop_min": 0.6523837670683861,
-    "state_error_max": 0.2361971139907837,
-    "outcome_error_max": 0.16048420918169892,
-    "state_gain_std": 0.05878836289048195,
+    "state_gain_min": 0.2884881414938718,
+    "outcome_gain_min": 2.9352758267424957,
+    "binding_drop_min": 0.24288784165401012,
+    "state_error_max": 0.06151186185888946,
+    "outcome_error_max": 0.2578713538174499,
+    "state_gain_std": 0.01067808736115694,
     "passed": true
   },
   "benchmark": {
