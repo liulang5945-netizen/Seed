@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pytest
 import torch
 
 from scripts.training.eval_taiji_a2_world import build_corpus
@@ -7,9 +8,12 @@ from seed import Seed, SeedConfig
 from taiji import (
     CONTRACT_FORMAT,
     ActionIntent,
+    Goal,
+    GoalPlanner,
     NativeMemoryState,
     Observation,
     Outcome,
+    PlanningCandidate,
     TaijiConfig,
     TSKV8Adapter,
     WorldAction,
@@ -211,6 +215,86 @@ def test_tsk_v8_adapter_scores_runtime_world_prediction_and_restores_learner() -
     assert restored_trace.online_update_count_after == trace.online_update_count_after
     assert restored._world_dynamics is not None
     assert restored._world_dynamics.online_updates == 1
+
+
+def test_world_prediction_projects_into_planner_and_triggers_replan_lesion() -> None:
+    corpus = build_corpus()
+    schema = WorldSchema.from_corpus(corpus)
+    learner = WorldDynamicsLearner(schema, hidden_dim=32, seed=11)
+    learner.fit(corpus.train, epochs=200, learning_rate=0.01)
+
+    model = TSKV8Adapter(_config(), episode_id="world-planner")
+    model.attach_world_dynamics(learner)
+    model.attach_goal_planner(GoalPlanner())
+    model.set_goals((Goal("reach-world", "reach the world target", priority=1.0),))
+    corpus_initial = corpus.train[0].initial
+    initial = WorldState(
+        tick=1,
+        latent=torch.zeros(2),
+        objects=corpus_initial.objects,
+        relations=corpus_initial.relations,
+        events=corpus_initial.events,
+        affordances=corpus_initial.affordances,
+    )
+    model.observe_event(
+        Observation(
+            modality="text-byte",
+            value=97,
+            timestamp=0,
+            source="test-environment",
+        ),
+        learn=False,
+        world_state=initial,
+    )
+    action = WorldAction(
+        action_id="world-candidate",
+        kind="move",
+        tick=model.cognitive_snapshot().world.tick,
+        actor_id="agent",
+        target_id="red",
+        parameters={"step": 1.0},
+    )
+    candidate = PlanningCandidate(
+        candidate_id="model-route",
+        action=action,
+        predicted_reward=123.0,
+        success_probability=0.0,
+        expected_progress=0.8,
+    )
+    projected = model.predict_world_candidates((candidate,))
+    assert projected[0].predicted_reward != candidate.predicted_reward
+    assert projected[0].success_probability != candidate.success_probability
+    decision = model.plan_world_actions((candidate,))
+    assert decision.selected.candidate_id == "model-route"
+
+    model.act((97, 98), sample=False, world_action=action)
+    bad_objects = []
+    for item in initial.objects:
+        attributes = dict(item.attributes)
+        if item.object_id == "red":
+            attributes["position"] = 9.0
+        bad_objects.append(WorldObject(item.object_id, attributes=attributes, tags=item.tags))
+    bad_after = WorldState(
+        tick=initial.tick + 1,
+        latent=initial.latent,
+        objects=tuple(bad_objects),
+    )
+    model.settle_action(
+        1.0,
+        learn=False,
+        learn_world=False,
+        world_state=bad_after,
+        success=True,
+    )
+    state = model.cognitive_snapshot()
+    assert state.world_prediction is not None
+    assert state.world_prediction.state_error is not None
+    assert state.world_prediction.state_error > model._goal_planner.config.replan_error_threshold
+    assert model.replan_required is True
+
+    lesion = TSKV8Adapter(_config(), episode_id="world-planner-lesion")
+    with pytest.raises(RuntimeError, match="world dynamics is not attached"):
+        lesion.predict_world_candidates((candidate,))
 
 
 def test_native_checkpoint_is_atomic_and_deterministic() -> None:
