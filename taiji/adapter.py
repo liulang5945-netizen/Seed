@@ -1684,23 +1684,27 @@ class TSKV8Adapter(Taiji):
                     state_error=float(torch.mean((predicted - actual) ** 2)),
                     reward_error=(prediction_record.predicted_reward - outcome.reward) ** 2,
                 )
+                world_error_threshold = (
+                    None
+                    if self._goal_planner is None
+                    else self._goal_planner.world_prediction_error_threshold(
+                        recovery=recovery_state is not None,
+                        trigger_error=(
+                            None
+                            if recovery_state is None
+                            else recovery_state.prediction_error
+                        ),
+                    )
+                )
                 world_model_replan = bool(
                     not terminal
                     and self._goal_planner is not None
                     and prediction_record.state_error is not None
                     and prediction_record.state_error
-                    > (
-                        self._goal_planner.config.recovery_error_threshold
-                        if recovery_state is not None
-                        else self._goal_planner.config.replan_error_threshold
-                    )
+                    > world_error_threshold
                 )
                 if world_model_replan:
-                    threshold = (
-                        self._goal_planner.config.recovery_error_threshold
-                        if recovery_state is not None
-                        else self._goal_planner.config.replan_error_threshold
-                    )
+                    threshold = float(world_error_threshold)
                     recovery_state = PlanningRecoveryState(
                         mode="world-error-recovery",
                         trigger="world-prediction-error",
@@ -1742,10 +1746,11 @@ class TSKV8Adapter(Taiji):
         memory = self._cognitive_state.memory
         if self._planned_rollout is not None and self._goal_planner is not None:
             rollout = self._planned_rollout
-            planning_error_threshold = (
-                self._goal_planner.config.recovery_error_threshold
-                if recovery_state is not None
-                else self._goal_planner.config.replan_error_threshold
+            planning_error_threshold = self._goal_planner.world_prediction_error_threshold(
+                recovery=recovery_state is not None,
+                trigger_error=(
+                    None if recovery_state is None else recovery_state.prediction_error
+                ),
             )
             self._last_rollout_prediction_error = self._goal_planner.rollout_prediction_error(
                 rollout, outcome

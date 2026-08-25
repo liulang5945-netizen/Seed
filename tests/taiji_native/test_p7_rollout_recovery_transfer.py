@@ -10,3 +10,4 @@ def test_p7_rollout_recovery_transfer_gate() -> None:
     assert report["metrics"]["case_count"] == 27
     assert report["gate"]["passed"] is True
     assert report["metrics"]["cross_seed_rates"]["recovery_gate"] == 1.0
+    assert report["metrics"]["calibration_policy_lesion"]["detected"] is True

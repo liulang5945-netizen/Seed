@@ -8,6 +8,8 @@ import sys
 from copy import deepcopy
 from pathlib import Path
 
+import torch
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -25,16 +27,59 @@ from taiji import (  # noqa: E402
     Goal,
     GoalPlanner,
     Observation,
-    PlanningConfig,
+    Outcome,
     TSKV8Adapter,
     WorldDynamicsLearner,
     WorldSchema,
+    WorldTransition,
 )
 
 SEEDS = (11, 23, 37)
 HORIZONS = (3, 4, 5)
 MANIFEST_FORMAT = "taiji-p7-rollout-recovery-transfer-manifest-v1"
 REPORT_FORMAT = "taiji-p7-rollout-recovery-transfer-v1"
+
+
+def _calibration_errors(
+    learner: WorldDynamicsLearner,
+    schema: WorldSchema,
+    initial,
+) -> tuple[float, ...]:
+    calibration_learner = deepcopy(learner)
+    current = initial
+    templates = _templates(
+        start_tick=initial.tick,
+        target_ids=("red", "blue"),
+        prefix="calibration",
+        length=4,
+    )
+    errors = []
+    for template in templates:
+        prediction = calibration_learner.predict(current, template.action)
+        actual = _advance_state(current, template.action.target_id)
+        errors.append(
+            float(
+                torch.mean(
+                    (schema.state_values(prediction.state) - schema.state_values(actual)) ** 2
+                )
+            )
+        )
+        calibration_learner.online_update(
+            WorldTransition(
+                before=current,
+                action=template.action,
+                after=actual,
+                outcome=Outcome(
+                    intent_id=template.action.action_id,
+                    reward=1.0,
+                    success=True,
+                    terminal=False,
+                    tick=actual.tick,
+                ),
+            )
+        )
+        current = actual
+    return tuple(errors)
 
 
 def _run_case(
@@ -45,15 +90,17 @@ def _run_case(
     base_learner: WorldDynamicsLearner,
     initial,
     target_ids: tuple[str, ...],
+    calibration_errors: tuple[float, ...] | None,
 ) -> dict[str, object]:
     adapter = TSKV8Adapter(
         _config(seed),
         episode_id=f"rollout-recovery-transfer-{seed}-{horizon}-{failure_position}",
     )
     adapter.attach_world_dynamics(deepcopy(base_learner))
-    adapter.attach_goal_planner(
-        GoalPlanner(PlanningConfig(replan_error_threshold=4.0, recovery_error_threshold=4.0))
-    )
+    planner = GoalPlanner()
+    if calibration_errors is not None:
+        planner.calibrate_world_prediction_errors(calibration_errors)
+    adapter.attach_goal_planner(planner)
     adapter.set_goals((Goal("reach-world", "reach the world target", priority=1.0),))
     adapter.observe_event(
         Observation(
@@ -103,6 +150,7 @@ def _run_case(
     interrupted_state = adapter.cognitive_snapshot()
     checkpoint = TSKV8Adapter.from_native_checkpoint(adapter.native_checkpoint())
     checkpoint_interrupted_state = checkpoint.cognitive_snapshot()
+    calibrated_threshold = planner.world_prediction_error_threshold()
     remaining = horizon - failure_position - 1
     interruption_gate = bool(
         all(outcome.success is True and outcome.terminal is False for outcome in pre_failure_outcomes)
@@ -111,7 +159,10 @@ def _run_case(
         and interrupted_state.planning_recovery is not None
         and interrupted_state.planning_recovery.remaining_rollout_steps == remaining
         and interrupted_state.planning_recovery.prediction_error > 0.25
+        and interrupted_state.planning_recovery.threshold == calibrated_threshold
         and checkpoint_interrupted_state.planning_recovery == interrupted_state.planning_recovery
+        and checkpoint._goal_planner is not None
+        and checkpoint._goal_planner.world_prediction_error_threshold() == calibrated_threshold
     )
 
     adapter = checkpoint
@@ -152,12 +203,16 @@ def _run_case(
         and len(final_checkpoint_state.world_calibration_trace) == horizon
         and final_checkpoint._world_dynamics is not None
         and final_checkpoint._world_dynamics.online_updates == horizon
+        and final_checkpoint._goal_planner is not None
+        and final_checkpoint._goal_planner.world_prediction_error_threshold() == calibrated_threshold
     )
     return {
         "seed": seed,
         "horizon": horizon,
         "failure_position": failure_position,
         "remaining_recovery_steps": remaining,
+        "calibrated_threshold": calibrated_threshold,
+        "calibration_sample_count": planner.world_error_calibration_sample_count,
         "interruption_gate": interruption_gate,
         "recovery_gate": recovery_gate,
         "trace_length": len(final_state.world_calibration_trace),
@@ -173,6 +228,7 @@ def evaluate_seed(seed: int) -> list[dict[str, object]]:
     base_learner.fit(corpus.train, epochs=250, learning_rate=0.01)
     move_case = next(case for case in corpus.train if case.action.kind == "move")
     initial = _initial_state(move_case.initial)
+    calibration_errors = _calibration_errors(base_learner, schema, initial)
     cases = []
     for horizon in HORIZONS:
         for failure_position in range(horizon - 1):
@@ -184,13 +240,46 @@ def evaluate_seed(seed: int) -> list[dict[str, object]]:
                     base_learner=base_learner,
                     initial=initial,
                     target_ids=schema.target_ids,
+                    calibration_errors=calibration_errors,
                 )
             )
     return cases
 
 
+def evaluate_calibration_lesion(seed: int) -> dict[str, object]:
+    corpus = build_corpus()
+    schema = WorldSchema.from_corpus(corpus)
+    learner = WorldDynamicsLearner(schema, hidden_dim=32, seed=seed)
+    learner.fit(corpus.train, epochs=250, learning_rate=0.01)
+    move_case = next(case for case in corpus.train if case.action.kind == "move")
+    try:
+        result = _run_case(
+            seed=seed,
+            horizon=5,
+            failure_position=2,
+            base_learner=learner,
+            initial=_initial_state(move_case.initial),
+            target_ids=schema.target_ids,
+            calibration_errors=None,
+        )
+        return {
+            "seed": seed,
+            "recovery_gate": bool(result["recovery_gate"]),
+            "failed_closed": False,
+            "calibration_sample_count": int(result["calibration_sample_count"]),
+        }
+    except RuntimeError:
+        return {
+            "seed": seed,
+            "recovery_gate": False,
+            "failed_closed": True,
+            "calibration_sample_count": 0,
+        }
+
+
 def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
     runs = [run for seed in seeds for run in evaluate_seed(seed)]
+    lesions = [evaluate_calibration_lesion(seed) for seed in seeds]
     rates = {
         "interruption_gate": sum(bool(run["interruption_gate"]) for run in runs) / len(runs),
         "recovery_gate": sum(bool(run["recovery_gate"]) for run in runs) / len(runs),
@@ -203,10 +292,25 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "case_count": len(runs),
             "horizons": list(HORIZONS),
             "runs": runs,
+            "calibration_policy_lesion": {
+                "calibrated_source_owned": all(
+                    int(item["calibration_sample_count"]) > 0 for item in runs
+                ),
+                "lesion_source_removed": all(
+                    int(item["calibration_sample_count"]) == 0 for item in lesions
+                ),
+                "detected": (
+                    all(int(item["calibration_sample_count"]) > 0 for item in runs)
+                    and all(int(item["calibration_sample_count"]) == 0 for item in lesions)
+                ),
+                "runs": lesions,
+            },
         },
         "gate": {
-            "passed": all(rate == 1.0 for rate in rates.values()),
-            "criterion": "all seeds and all non-terminal failure positions across 3/4/5-step imagined rollouts must preserve explicit recovery state through checkpoint and finish without planner replacement",
+            "passed": all(rate == 1.0 for rate in rates.values())
+            and all(int(item["calibration_sample_count"]) > 0 for item in runs)
+            and all(int(item["calibration_sample_count"]) == 0 for item in lesions),
+            "criterion": "all calibrated seeds and all non-terminal failure positions across 3/4/5-step imagined rollouts must preserve explicit recovery state through checkpoint and finish without planner replacement, while the calibration-source lesion removes the runtime calibration samples",
         },
     }
 
@@ -218,7 +322,12 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "seeds": list(seeds),
         "horizons": list(HORIZONS),
         "failure_positions": "all non-terminal positions per horizon",
-        "controls": ["variable-horizon", "failure-position-transfer", "recovery-checkpoint-continuation"],
+        "controls": [
+            "variable-horizon",
+            "failure-position-transfer",
+            "recovery-checkpoint-continuation",
+            "calibration-policy-lesion",
+        ],
         "boundary": "runtime recovery state transfer; not general failure recovery or intelligence",
     }
 
