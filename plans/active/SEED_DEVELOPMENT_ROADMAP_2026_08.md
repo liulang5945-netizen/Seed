@@ -214,11 +214,15 @@ P3 的第一段合同与恢复边界已落地：
   可恢复。`TSKV8Adapter.observe/observe_event` 已接入同一 runtime tick，旧调用仍保留 predictive-context 回退。
 - Workspace 合同、监督训练、容量约束、none/random lesion、adapter runtime 接入和 checkpoint round-trip 已通过 4 项新测试；
   这只证明路由机制存在，不等于 A3 的异质协作或 `1+1>2` Gate 已通过。
+- `scripts/training/eval_taiji_a3_workspace.py` 已注册静态组合窄 Gate：两个异质源各提供目标的一半，干扰源提供独立噪声，
+  holdout 为新采样组合；3 seeds 的 learned exact route rate 最小值为 `1.0`，learned MSE 为 `0.0`，相对 strongest-single
+  平均 gain `+0.1922`，相对 dense mean 平均 gain `+0.7016`，报告与 manifest 为 `reports/taiji_a3_workspace_*_20260825.json`。
+  该结果只关闭 A3 的静态组合子门，不代表多步世界行动、目标规划或通用异质协作已通过。
 
 ### 工作项
 
 - 建立实体、属性、关系、事件和 affordance 的分布式动态绑定。
-- ~~引入容量受限、可学习的选择性路由与广播。~~ 已完成最小 runtime 机制；下一阶段转入 A3 协作基准。
+- ~~引入容量受限、可学习的选择性路由与广播。~~ 已完成最小 runtime 机制与静态组合窄 Gate；下一阶段转入 world-outcome 协作任务。
 - 把预测目标从 next byte 扩展到下一事件、状态变化和行动后果。
 - 在对象持续性、关系交换、时间打乱和干预任务上预注册 A2/A3。
 
@@ -317,4 +321,4 @@ P3 的第一段合同与恢复边界已落地：
 
 ## 16. 当前唯一下一步
 
-**进入 P3 A3 协作基准：构造多个异质候选源，在同一 runtime workspace 上比较 learned、最强单体、平均广播、固定/随机路由和无 workspace，预注册 `1+1>2` 与 lesion 判据；不改变已冻结的 world/action/outcome 合同。**
+**扩展 P3 A3：把 learned workspace 接入带 world outcome 的多步任务，在未见组合上比较 learned、最强单体、dense、固定/随机路由和无 workspace；不改变已冻结的 world/action/outcome 合同。**

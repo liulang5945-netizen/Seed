@@ -38,11 +38,13 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - N0–N11/M5–M7 保留为 TSK-v8 kernel 回归，不再作为概念、推理、语言或智能进展证明。
 - 旧 16M raw-byte 长训暂停；P2 学习型时间抽象通过前不恢复 100M 路线。
 - P3 已完成世界 transition lineage、预测误差在线校正，以及 WorkspaceCandidate/WorkspaceSelection 合同；
-  `WorkspaceRouter` 已提供容量受限 learned/none/random 路由和 native checkpoint，仍未宣称 A3 协作能力通过。
+  `WorkspaceRouter` 已提供容量受限 learned/none/random 路由和 native checkpoint。
+- A3 静态组合窄 Gate 已通过：3 seeds 的 learned 路由精确选中率均为 1.0，组合重建 MSE 为 0；相对最强单体
+  平均改善 `+0.1922`，相对 dense mean 平均改善 `+0.7016`。这不是多步世界任务或通用协作能力证明。
 - 原生套件当前 74 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-进入 P3 A3 协作基准：用多个异质候选源验证 learned workspace 路由是否形成容量约束下的 `1+1>2`，
-  并与最强单体、平均广播、固定/随机路由和无 workspace 做预注册对照；不提前进入语言或产品层。
+扩展 A3：把已通过的静态组合路由接入带真实 world outcome 的多步任务，并保持最强单体、dense、固定/随机和无 workspace 对照；
+  在未见组合上验证 workspace 选择是否改善后续行动结果，不提前进入语言或产品层。

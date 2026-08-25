@@ -439,4 +439,4 @@ taiji/
 
 ## 13. 当前唯一实现入口
 
-P1 已完成，P2 relation subgate 已收口。P3 的对象/事件/affordance/行动/结果合同、可恢复 `TaijiWorldState`、结构化对象/关系/时间打乱、多步 episode 窄 Gate、`TSKV8Adapter` transition lineage、runtime prediction record、error-driven online correction 和最小 WorkspaceRouter 已落地；当前实现入口转为 A3 协作基准。Workspace 已支持候选合同、容量受限 learned/none/random 路由、广播和 checkpoint，但尚未证明异质协作的 `1+1>2`。
+P1 已完成，P2 relation subgate 已收口。P3 的对象/事件/affordance/行动/结果合同、可恢复 `TaijiWorldState`、结构化对象/关系/时间打乱、多步 episode 窄 Gate、`TSKV8Adapter` transition lineage、runtime prediction record、error-driven online correction 和最小 WorkspaceRouter 已落地；A3 静态组合窄 Gate 已通过，但当前实现入口转为带 world outcome 的多步协作任务。Workspace 已支持候选合同、容量受限 learned/none/random 路由、广播和 checkpoint；静态信息重建的 `1+1>2` 不等于行动闭环中的异质协作。

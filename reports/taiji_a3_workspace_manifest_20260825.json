@@ -1,0 +1,25 @@
+{
+  "format": "taiji-a3-workspace-composition-manifest-v1",
+  "task": "recover the mean content of two relevant expert candidates",
+  "feature_dim": 4,
+  "content_dim": 2,
+  "capacity": 2,
+  "candidate_sources": [
+    "expert-a",
+    "expert-b",
+    "distractor",
+    "distractor"
+  ],
+  "relevant_candidate_count": 2,
+  "distractor_content": "independent Gaussian noise with scale 2",
+  "train_count": 64,
+  "holdout_count": 32,
+  "controls": [
+    "strongest_single",
+    "dense",
+    "fixed",
+    "random",
+    "none"
+  ],
+  "split_constraint": "holdout uses new sampled combinations and independent distractor noise"
+}
