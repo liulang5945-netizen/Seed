@@ -1,0 +1,16 @@
+{
+  "format": "taiji-p5-imagined-rollout-v1",
+  "metrics": {
+    "selected_rollout": "safe-rollout",
+    "selected_rollout_steps": 2,
+    "selected_provenance": "imagined",
+    "selected_confidence": 1.0,
+    "replan_required_after_error": true,
+    "rollout_prediction_error": 0.6,
+    "checkpoint_replan_required": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "multi-step imagined rollout is selected by value/risk, carries provenance, and real outcome error triggers a checkpointed replan flag"
+  }
+}

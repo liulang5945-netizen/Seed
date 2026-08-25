@@ -47,7 +47,7 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P4 最小记忆纵切片已落地：`WorkingMemoryItem`、`EpisodicMemoryRecord` 和可容量治理的 `EpisodicMemoryStore` 属于
   Taiji；adapter 在真实 action outcome 后写入经历、下一观察按 cue 检索，native checkpoint 可恢复记录与 working state。
   store 已改为 insertion-ordered dictionary，重复 memory_id 替换与容量淘汰不再每次全表重建；原生回归当前为
-  87 passed、1 skipped。
+  88 passed、1 skipped。
 - P4 cue-conditioned one-shot recall 窄 Gate 已通过：full、episode-ID lesion、checkpoint continuation 的 action recall
   均为 1.0，retrieval/write lesion 均为 0；报告和 manifest 为 `reports/taiji_p4_episodic_recall_*_20260825.json`。
   该结果证明经历检索和来源独立性，不证明从多次经历抽取新组合语义。
@@ -76,10 +76,12 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P5 goal-planning 窄 Gate 已通过：planner 综合 reward/success/progress/uncertainty/resource/conflict 选择 safe-route，
   reward-only lesion 选择 risky-route；adapter 真实执行 selected plan 后 goal progress=`0.4`，native checkpoint 保持 plan 和
   progress。该结果是单步可执行规划子门，不等于长程 rollout 或通用目标推理。
-- 原生套件当前 87 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
+- P5 imagined rollout Gate 已通过：planner 选择 2-step safe rollout（provenance=`imagined`、confidence=`1.0`），真实首步
+  reward 与预测差异 `0.6` 后设置 `replan_required`，该信号在 native checkpoint 中保持。当前只证明误差触发，不证明已执行替代计划。
+- 原生套件当前 88 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-继续 P5 imagined rollout：让 planner 比较多步 world-model rollout，记录 provenance/置信度，并在真实 outcome 产生预测
-误差后触发重规划；保留当前 P3/P4 与单步 goal Gate，不提前进入语言生成或产品层。
+继续 P5 replan execution：在预测误差后重新评分并执行替代 rollout，同时校准 confidence 与真实成功率；保留当前 P3/P4、
+单步 goal 和 imagined rollout Gate，不提前进入语言生成或产品层。

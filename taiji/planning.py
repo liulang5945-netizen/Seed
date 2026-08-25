@@ -27,12 +27,16 @@ class PlanningConfig:
     resource_weight: float = 0.40
     conflict_weight: float = 0.80
     outcome_progress_gain: float = 0.40
+    discount: float = 0.90
+    replan_error_threshold: float = 0.25
 
     def __post_init__(self) -> None:
         for name, value in self.__dict__.items():
             if float(value) < 0.0:
                 raise ValueError(f"planning {name} cannot be negative")
         _unit(self.outcome_progress_gain, "outcome_progress_gain")
+        _unit(self.discount, "discount")
+        _unit(self.replan_error_threshold, "replan_error_threshold")
 
     def to_payload(self) -> dict[str, float]:
         return {name: float(value) for name, value in self.__dict__.items()}
@@ -74,6 +78,76 @@ class PlanningDecision:
     goal_id: str
     plan: PlanState
     selected: PlanningCandidate
+
+
+@dataclass(frozen=True)
+class ImaginedRollout:
+    """A multi-step world-model hypothesis with explicit provenance."""
+
+    rollout_id: str
+    goal_id: str
+    steps: tuple[PlanningCandidate, ...]
+    confidence: float
+    provenance: str = "imagined"
+
+    def __post_init__(self) -> None:
+        if not self.rollout_id or not self.goal_id:
+            raise ValueError("imagined rollout ids cannot be empty")
+        if not self.steps:
+            raise ValueError("imagined rollout requires at least one step")
+        _unit(self.confidence, "rollout confidence")
+        if self.provenance != "imagined":
+            raise ValueError("rollout provenance must be imagined")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "rollout_id": self.rollout_id,
+            "goal_id": self.goal_id,
+            "confidence": self.confidence,
+            "provenance": self.provenance,
+            "steps": [
+                {
+                    "candidate_id": step.candidate_id,
+                    "action": step.action.to_payload(),
+                    "predicted_reward": step.predicted_reward,
+                    "success_probability": step.success_probability,
+                    "expected_progress": step.expected_progress,
+                    "uncertainty": step.uncertainty,
+                    "resource_cost": step.resource_cost,
+                    "conflict": step.conflict,
+                }
+                for step in self.steps
+            ],
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> ImaginedRollout:
+        return cls(
+            rollout_id=str(payload["rollout_id"]),
+            goal_id=str(payload["goal_id"]),
+            confidence=float(payload["confidence"]),
+            provenance=str(payload.get("provenance", "imagined")),
+            steps=tuple(
+                PlanningCandidate(
+                    candidate_id=str(item["candidate_id"]),
+                    action=WorldAction.from_payload(item["action"]),
+                    predicted_reward=float(item["predicted_reward"]),
+                    success_probability=float(item["success_probability"]),
+                    expected_progress=float(item["expected_progress"]),
+                    uncertainty=float(item.get("uncertainty", 0.0)),
+                    resource_cost=float(item.get("resource_cost", 0.0)),
+                    conflict=float(item.get("conflict", 0.0)),
+                )
+                for item in payload.get("steps", ())
+            ),
+        )
+
+
+@dataclass(frozen=True)
+class RolloutDecision:
+    goal_id: str
+    plan: PlanState
+    selected: ImaginedRollout
 
 
 class GoalPlanner:
@@ -142,6 +216,63 @@ class GoalPlanner:
             for goal in goals.goals
         )
         return GoalState(tick=outcome.tick, goals=updated, version=goals.version)
+
+    def plan_rollouts(
+        self,
+        goals: GoalState,
+        rollouts: tuple[ImaginedRollout, ...],
+        *,
+        tick: int,
+        goal_id: str | None = None,
+    ) -> RolloutDecision:
+        """Select among multi-step imagined world-model trajectories."""
+
+        if not rollouts:
+            raise ValueError("rollout planning requires imagined rollouts")
+        goal = self._select_goal(goals, goal_id)
+        if any(rollout.goal_id != goal.goal_id for rollout in rollouts):
+            raise ValueError("rollout goal ids must match the selected goal")
+        residual = 1.0 - goal.progress
+        scored: list[PlanCandidate] = []
+        for rollout in rollouts:
+            expected_value = 0.0
+            risk = 0.0
+            for index, step in enumerate(rollout.steps):
+                discount = self.config.discount**index
+                expected_value += discount * (
+                    self.config.reward_weight * step.predicted_reward
+                    + self.config.success_weight * step.success_probability
+                    - self.config.uncertainty_weight * step.uncertainty
+                    - self.config.resource_weight * step.resource_cost
+                    - self.config.conflict_weight * step.conflict
+                )
+                risk = max(risk, step.uncertainty, step.resource_cost, step.conflict)
+            expected_value += (
+                self.config.progress_weight
+                * residual
+                * rollout.steps[-1].expected_progress
+                * rollout.confidence
+            )
+            scored.append(
+                PlanCandidate(
+                    plan_id=rollout.rollout_id,
+                    action_kind=rollout.steps[0].action.kind,
+                    expected_value=expected_value,
+                    risk=risk,
+                )
+            )
+        selected_index = max(range(len(scored)), key=lambda index: scored[index].expected_value)
+        plan = PlanState(
+            tick=int(tick),
+            candidates=tuple(scored),
+            selected_plan_id=scored[selected_index].plan_id,
+        )
+        return RolloutDecision(goal.goal_id, plan, rollouts[selected_index])
+
+    def rollout_prediction_error(self, rollout: ImaginedRollout, outcome: Outcome) -> float:
+        """Score the first imagined step against the experienced outcome."""
+
+        return abs(float(rollout.steps[0].predicted_reward) - float(outcome.reward))
 
     def checkpoint(self) -> dict[str, Any]:
         return {

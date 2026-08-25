@@ -1,0 +1,15 @@
+{
+  "format": "taiji-p5-imagined-rollout-manifest-v1",
+  "task": "choose a safe two-step imagined rollout over a high-reward risky rollout",
+  "rollouts": [
+    "safe-rollout",
+    "risky-rollout"
+  ],
+  "provenance": "imagined",
+  "lesions": [
+    "rollout_bypass",
+    "uncertainty_weight",
+    "prediction_error_replan"
+  ],
+  "boundary": "short-horizon rollout and replan trigger only; not general planning or language generation"
+}
