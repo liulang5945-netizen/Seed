@@ -393,6 +393,7 @@ P4 的最小真实经历边界已落地：
 - P7 executive-to-world prediction/calibration Gate 已通过：executive bridge 现在把带 actor/target 的 `WorldAction` 送入 `WorldDynamicsLearner`，真实
   after-state settle 回写 state/reward error；data-derived schema 的 train/holdout 为 `2/2`，3 个 seed 均在逐条真实转移的 online correction 后降低状态预测误差，
   no-online-update clone 保持原误差。reward error 继续独立记录，不与状态校准混成一个指标；该 Gate 只证明窄数值世界上的预测误差可回写并校准，不证明开放世界预测精度。
+- P7 runtime calibration trace contract 已通过：每次带 `EnvironmentOutcome.world_state` 的结算都会把真实 `WorldTransition`、预测 state/reward error、是否执行 online update 及更新前后计数写入 `CognitiveState.world_calibration_trace`；历史容量由 `TaijiConfig.world_calibration_history_limit` 管理，并随 native checkpoint 恢复。该 Gate 证明运行时 ownership 和可恢复性，不代表多步 runtime calibration 已完成。
 - 本轮 native 回归为 `131 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
@@ -498,4 +499,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把已通过的 world-dynamics calibration 从评估脚本接入真实 runtime 的持续环境回写，要求每次 `EnvironmentOutcome.world_state` 都能产生可恢复的 prediction/error/calibration trace；不新增 action/intent 查表。**
+**下一步：把 runtime calibration trace 纳入现有 3-seed 多步 Gate，验证连续 4 步与变量 3/4/5 步环境中的 trace 完整性、online-update 计数连续性和 checkpoint 恢复；不新增 action/intent 查表。**

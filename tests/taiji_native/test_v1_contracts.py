@@ -193,11 +193,22 @@ def test_tsk_v8_adapter_scores_runtime_world_prediction_and_restores_learner() -
     assert state.world_prediction.reward_error is not None
     assert state.world_prediction.state_error < 1.0
     assert state.world_prediction.online_update_count == 1
+    assert len(state.world_calibration_trace) == 1
+    trace = state.world_calibration_trace[0]
+    assert trace.transition.action.action_id == state.action_intent.intent_id
+    assert trace.calibration_applied is True
+    assert trace.online_update_count_before == 0
+    assert trace.online_update_count_after == 1
 
     restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
     restored_state = restored.cognitive_snapshot()
     assert restored_state.world_prediction is not None
     assert restored_state.world_prediction.state_error == state.world_prediction.state_error
+    assert len(restored_state.world_calibration_trace) == 1
+    restored_trace = restored_state.world_calibration_trace[0]
+    assert restored_trace.transition.action.action_id == trace.transition.action.action_id
+    assert restored_trace.prediction.state_error == trace.prediction.state_error
+    assert restored_trace.online_update_count_after == trace.online_update_count_after
     assert restored._world_dynamics is not None
     assert restored._world_dynamics.online_updates == 1
 

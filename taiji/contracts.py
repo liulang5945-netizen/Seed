@@ -1135,6 +1135,62 @@ class WorldPredictionRecord:
 
 
 @dataclass(frozen=True)
+class WorldCalibrationTrace:
+    """One recoverable prediction/error/update record for a real transition."""
+
+    transition: WorldTransition
+    prediction: WorldPredictionRecord
+    calibration_applied: bool
+    online_update_count_before: int
+    online_update_count_after: int
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        if self.transition.action.action_id != self.prediction.action.action_id:
+            raise ValueError("calibration trace prediction must reference its transition action")
+        if self.prediction.state_error is None or self.prediction.reward_error is None:
+            raise ValueError("calibration trace requires scored prediction errors")
+        if int(self.online_update_count_before) < 0:
+            raise ValueError("online_update_count_before cannot be negative")
+        if int(self.online_update_count_after) < int(self.online_update_count_before):
+            raise ValueError("online update count cannot move backwards")
+        if int(self.prediction.online_update_count) != int(self.online_update_count_after):
+            raise ValueError("calibration trace count must match the prediction record")
+        if self.calibration_applied and int(self.online_update_count_after) <= int(
+            self.online_update_count_before
+        ):
+            raise ValueError("applied calibration must advance the online update count")
+        if not self.calibration_applied and int(self.online_update_count_after) != int(
+            self.online_update_count_before
+        ):
+            raise ValueError("disabled calibration cannot advance the online update count")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "transition": self.transition.to_payload(),
+            "prediction": self.prediction.to_payload(),
+            "calibration_applied": self.calibration_applied,
+            "online_update_count_before": self.online_update_count_before,
+            "online_update_count_after": self.online_update_count_after,
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> WorldCalibrationTrace:
+        return cls(
+            version=int(payload["version"]),
+            transition=WorldTransition.from_payload(payload["transition"], device=device),
+            prediction=WorldPredictionRecord.from_payload(payload["prediction"], device=device),
+            calibration_applied=bool(payload["calibration_applied"]),
+            online_update_count_before=int(payload["online_update_count_before"]),
+            online_update_count_after=int(payload["online_update_count_after"]),
+        )
+
+
+@dataclass(frozen=True)
 class EpisodicMemoryRecord:
     """One real experience owned by Taiji's episodic memory system."""
 
@@ -1558,6 +1614,7 @@ class CognitiveState:
     outcome: Outcome | None = None
     world_transition: WorldTransition | None = None
     world_prediction: WorldPredictionRecord | None = None
+    world_calibration_trace: tuple[WorldCalibrationTrace, ...] = ()
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -1592,6 +1649,9 @@ class CognitiveState:
             "world_prediction": (
                 None if self.world_prediction is None else self.world_prediction.to_payload()
             ),
+            "world_calibration_trace": [
+                item.to_payload() for item in self.world_calibration_trace
+            ],
         }
 
     @classmethod
@@ -1638,6 +1698,10 @@ class CognitiveState:
                 None
                 if world_prediction is None
                 else WorldPredictionRecord.from_payload(world_prediction, device=device)
+            ),
+            world_calibration_trace=tuple(
+                WorldCalibrationTrace.from_payload(item, device=device)
+                for item in payload.get("world_calibration_trace", ())
             ),
         )
 
