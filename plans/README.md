@@ -39,7 +39,7 @@
 
 2026-08-25 路线复核确认：GitHub `main` 远程读写已经恢复；Taiji 核心没有 Transformer/tokenizer/autograd 依赖。容量硬编码第三阶段已完成：`CapacityPolicy` + 参数预算现在同时规划区域/突触结构与 episodic memory 的时间、episode 编码维度，训练画像也会同步放大，旧 policy JSON 保持兼容。Transformer 清理边界第十二阶段已完成：训练推荐、数据集检查、检查点续训和前端 Seed 训练均已迁到 raw-byte Taiji 路径；桌面核心仍不自动安装 Transformer/RAG/Agent 依赖，只有显式 `SEED_ENABLE_LEGACY=1` 才启用 Legacy 清单；运行状态的 life/tools fallback 也已门控；真实 API 的 Legacy 开关矩阵与原生训练 SSE 有通过记录。
 
-当前工作区还有一批工程加固改动尚未形成最终可复现基线，因此唯一下一步调整为 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) 的 R0：先收敛改动、完成全门禁并让 `main` 干净，再进入真实 CUDA 测量。禁止直接续跑 100M、凭猜测开发 CUDA kernel 或删除 `neuroplex/` 造成产品壳断裂。
+R0 的工程收敛改动已经落到 `main`，当前进入统一路线的 S1 产品断点验收：知识库、生命状态、设置、聊天 chip、工作区重命名必须全部有真实行为和对应测试。S1 关闭后进入 S2 质量稳定性，再进入 S3 桌面发布。禁止直接续跑 100M、凭猜测开发 CUDA kernel 或删除 `neuroplex/` 造成产品壳断裂。
 
 M7 已闭合（七项判据全过）：accepted replay 用内生 `cortical_projection` 重建 cue 基底、把 action mode 写入慢通路，`act()` 显著高于 no-replay/content-lesion。阶段 1/2 完成：800K raw-byte 重训（byte_ppl 23.1，面板三组排序正确）、`seed/judge.py` 原生自我评估、A1 同判据验证通过。阶段 3 完成：原生 sleep 调度 + 主题探索环境，A2–A5/B1 五项判据在 800K 成熟检查点上全部 PASS（报告落盘 `reports/seed_a2/a3/a4_a5/b1_*.json`）；机制：`_development_ticks` 生命周期成熟门控、观察性夜晚（零漂移自我维持睡眠）、经验清醒预算封顶。阶段 4/5 完成：产品接入（api/前端/桌面端/移动端远程接入）全仓 108 项绿；超越证据报告见 `reports/seed_phase5_transcendence_20260823.md`。当前诚实边界：byte-level 生成尚未到人工可读。判据见 [SEED_ARCHITECTURE.md](active/SEED_ARCHITECTURE.md) §6 与 [BOOTSTRAP_CRITERIA.md](archive/authored/BOOTSTRAP_CRITERIA.md)。
 
