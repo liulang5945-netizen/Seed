@@ -14,6 +14,9 @@ if str(PROJECT_ROOT) not in sys.path:
 from taiji import (  # noqa: E402
     ContentPlan,
     GenerationController,
+    LanguageBackendRegistry,
+    LanguageBackendSpec,
+    LanguageTrainingExample,
     StructuredTextLanguageOrgan,
     TextExpressionCodec,
     TSKV8Adapter,
@@ -48,7 +51,33 @@ def evaluate() -> dict[str, object]:
     round_trip = TextExpressionCodec.decode(emission.text_bytes) == expression
     checkpoint_round_trip = restored.last_language_emission == emission
     cognition_unchanged = adapter.cognitive_snapshot().action_intent is None
-    gate_passed = bool(round_trip and checkpoint_round_trip and cognition_unchanged)
+    training_example = LanguageTrainingExample(
+        example_id="language-example-1",
+        expression=expression,
+        target_text="当前状态稳定。",
+        split="holdout",
+        provenance="human-reviewed",
+    )
+    registry = LanguageBackendRegistry.default()
+    registry.register(
+        LanguageBackendSpec(
+            backend_id="mature-decoder-v1",
+            family="external-decoder",
+            training_contract="expression-to-text-v1",
+        )
+    )
+    contract_round_trip = LanguageTrainingExample.from_payload(training_example.to_payload()) == training_example
+    registry_round_trip = (
+        LanguageBackendRegistry.from_checkpoint(registry.checkpoint()).get("mature-decoder-v1").training_contract
+        == "expression-to-text-v1"
+    )
+    gate_passed = bool(
+        round_trip
+        and checkpoint_round_trip
+        and cognition_unchanged
+        and contract_round_trip
+        and registry_round_trip
+    )
     return {
         "format": REPORT_FORMAT,
         "metrics": {
@@ -57,10 +86,12 @@ def evaluate() -> dict[str, object]:
             "expression_round_trip": round_trip,
             "native_checkpoint_round_trip": checkpoint_round_trip,
             "cognition_unchanged": cognition_unchanged,
+            "training_contract_round_trip": contract_round_trip,
+            "backend_registry_round_trip": registry_round_trip,
         },
         "gate": {
             "passed": gate_passed,
-            "criterion": "a replaceable terminal language organ emits Taiji-owned text expressions and restores without owning cognition",
+        "criterion": "a registry-described language organ consumes ExpressionPlan supervision and restores without owning cognition",
         },
     }
 
@@ -68,10 +99,10 @@ def evaluate() -> dict[str, object]:
 def build_manifest() -> dict[str, object]:
     return {
         "format": MANIFEST_FORMAT,
-        "task": "verify the terminal language-organ interface and lesion boundary",
+        "task": "verify the terminal language-organ interface, backend registry, and training contract",
         "lesions": ["language_organ_detached", "direct_byte_content", "cognitive_state_mutation"],
-        "signals": ["backend", "expression_round_trip", "native_checkpoint_round_trip", "cognition_unchanged"],
-        "boundary": "structured stub proves interface ownership only; no natural-language fluency or decoder capability claim",
+        "signals": ["backend", "expression_round_trip", "native_checkpoint_round_trip", "cognition_unchanged", "training_contract_round_trip", "backend_registry_round_trip"],
+        "boundary": "registry and structured stub prove interface/training ownership only; no natural-language fluency or decoder capability claim",
     }
 
 

@@ -51,6 +51,7 @@ from .generation import (
 )
 from .homeostasis import HomeostaticController, HomeostaticDrive
 from .language_organ import (
+    LanguageBackendRegistry,
     LanguageEmission,
     LanguageOrgan,
     StructuredTextLanguageOrgan,
@@ -104,6 +105,7 @@ class TSKV8Adapter(Taiji):
         self._last_content_selection: ContentSelectionDecision | None = None
         self._last_content_prediction_error: float | None = None
         self._content_feedback_applied = False
+        self._language_backend_registry = LanguageBackendRegistry.default()
         self._language_organ: LanguageOrgan | None = None
         self._last_language_emission: LanguageEmission | None = None
 
@@ -346,9 +348,21 @@ class TSKV8Adapter(Taiji):
     def attach_language_organ(self, organ: LanguageOrgan | None) -> None:
         """Attach a replaceable terminal text organ owned by Taiji's boundary."""
 
-        if organ is not None and not isinstance(organ, LanguageOrgan):
-            raise TypeError("organ must implement the LanguageOrgan protocol or be None")
+        if organ is not None:
+            self._language_backend_registry.validate(organ)
         self._language_organ = organ
+
+    def attach_language_backend_registry(
+        self, registry: LanguageBackendRegistry | None
+    ) -> None:
+        """Attach descriptors for allowed terminal language-organ backends."""
+
+        selected_registry = registry or LanguageBackendRegistry.default()
+        if not isinstance(selected_registry, LanguageBackendRegistry):
+            raise TypeError("registry must be a LanguageBackendRegistry or None")
+        if self._language_organ is not None:
+            selected_registry.validate(self._language_organ)
+        self._language_backend_registry = selected_registry
 
     @property
     def last_language_emission(self) -> LanguageEmission | None:
@@ -1018,6 +1032,7 @@ class TSKV8Adapter(Taiji):
             payload["content_selection"] = self._content_selector.checkpoint()
         if self._language_organ is not None:
             payload["language_organ"] = self._language_organ.checkpoint()
+        payload["language_backend_registry"] = self._language_backend_registry.checkpoint()
         payload["planned_rollout"] = (
             None if self._planned_rollout is None else self._planned_rollout.to_payload()
         )
@@ -1051,6 +1066,7 @@ class TSKV8Adapter(Taiji):
         self._restore_goal_planner(checkpoint.get("planning"))
         self._restore_generation_controller(checkpoint.get("generation"))
         self._restore_content_selector(checkpoint.get("content_selection"))
+        self._restore_language_backend_registry(checkpoint.get("language_backend_registry"))
         self._restore_language_organ(checkpoint.get("language_organ"))
         self._restore_rollout_state(checkpoint)
         self._restore_generation_trace(checkpoint)
@@ -1163,7 +1179,16 @@ class TSKV8Adapter(Taiji):
             raise ValueError(
                 "only the structured language-organ stub can be restored without a backend registry"
             )
-        self._language_organ = StructuredTextLanguageOrgan.from_checkpoint(payload)
+        restored = StructuredTextLanguageOrgan.from_checkpoint(payload)
+        self._language_backend_registry.validate(restored)
+        self._language_organ = restored
+
+    def _restore_language_backend_registry(self, payload: Any) -> None:
+        self._language_backend_registry = (
+            LanguageBackendRegistry.default()
+            if payload is None
+            else LanguageBackendRegistry.from_checkpoint(dict(payload))
+        )
 
     def _restore_language_emission(self, payload: Any) -> None:
         emission = payload.get("last_language_emission") if isinstance(payload, dict) else None
@@ -1214,6 +1239,7 @@ class TSKV8Adapter(Taiji):
             components["content_selection"] = self._content_selector.checkpoint()
         if self._language_organ is not None:
             components["language_organ"] = self._language_organ.checkpoint()
+        components["language_backend_registry"] = self._language_backend_registry.checkpoint()
         components["planned_rollout"] = (
             None if self._planned_rollout is None else self._planned_rollout.to_payload()
         )
@@ -1260,6 +1286,9 @@ class TSKV8Adapter(Taiji):
         self._restore_goal_planner(envelope.components.get("planning"))
         self._restore_generation_controller(envelope.components.get("generation"))
         self._restore_content_selector(envelope.components.get("content_selection"))
+        self._restore_language_backend_registry(
+            envelope.components.get("language_backend_registry")
+        )
         self._restore_language_organ(envelope.components.get("language_organ"))
         self._restore_rollout_state(envelope.components)
         self._restore_generation_trace(envelope.components)

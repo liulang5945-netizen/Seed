@@ -81,9 +81,15 @@ from .homeostasis import (
     HomeostaticDrive,
 )
 from .language_organ import (
+    LANGUAGE_BACKEND_REGISTRY_FORMAT,
+    LANGUAGE_BACKEND_SPEC_FORMAT,
     LANGUAGE_ORGAN_CHECKPOINT_FORMAT,
+    LANGUAGE_TRAINING_EXAMPLE_FORMAT,
+    LanguageBackendRegistry,
+    LanguageBackendSpec,
     LanguageEmission,
     LanguageOrgan,
+    LanguageTrainingExample,
     StructuredTextLanguageOrgan,
 )
 from .memory import EpisodicField, EpisodicReplay, EpisodicWrite
@@ -179,8 +185,14 @@ __all__ = [
     "TOOL_CALL_CODEC_FORMAT",
     "TEXT_EXPRESSION_CODEC_FORMAT",
     "LANGUAGE_ORGAN_CHECKPOINT_FORMAT",
+    "LANGUAGE_TRAINING_EXAMPLE_FORMAT",
+    "LANGUAGE_BACKEND_SPEC_FORMAT",
+    "LANGUAGE_BACKEND_REGISTRY_FORMAT",
+    "LanguageBackendRegistry",
+    "LanguageBackendSpec",
     "LanguageEmission",
     "LanguageOrgan",
+    "LanguageTrainingExample",
     "StructuredTextLanguageOrgan",
     "MemoryRecall",
     "MemoryState",

@@ -1,6 +1,6 @@
 {
   "format": "taiji-p6-language-organ-boundary-manifest-v1",
-  "task": "verify the terminal language-organ interface and lesion boundary",
+  "task": "verify the terminal language-organ interface, backend registry, and training contract",
   "lesions": [
     "language_organ_detached",
     "direct_byte_content",
@@ -10,7 +10,9 @@
     "backend",
     "expression_round_trip",
     "native_checkpoint_round_trip",
-    "cognition_unchanged"
+    "cognition_unchanged",
+    "training_contract_round_trip",
+    "backend_registry_round_trip"
   ],
-  "boundary": "structured stub proves interface ownership only; no natural-language fluency or decoder capability claim"
+  "boundary": "registry and structured stub prove interface/training ownership only; no natural-language fluency or decoder capability claim"
 }

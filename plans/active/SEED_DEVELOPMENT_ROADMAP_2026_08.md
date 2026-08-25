@@ -317,7 +317,10 @@ P4 的最小真实经历边界已落地：
 - `scripts/training/eval_taiji_p6_language_organ_boundary.py` 已通过 terminal language-organ boundary 窄 Gate：可替换的
   `LanguageOrgan` 只接收 Taiji-owned `ExpressionPlan`，默认 `structured-stub` 输出可回解码文本；detached-organ lesion、native
   checkpoint 和参数/认知不变性均通过。该结果只证明末端器官所有权与替换边界，不等于自然语言流畅性、句法或 decoder 智能。
-- 本轮 native 回归为 `107 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
+- `LanguageBackendRegistry` 与 `LanguageTrainingExample` 窄 Gate 已通过：registry 可登记未来成熟 decoder，但强制 text modality 与
+  `owns_cognition=False`；训练样本固定为 `ExpressionPlan → target_text`，可独立 checkpoint/holdout，不把目标、记忆或
+  `ActionIntent` 注入 decoder。该结果只证明接入/训练数据边界，不等于 decoder 能力。
+- 本轮 native 回归为 `108 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
 ### 工作项
@@ -422,5 +425,6 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一决策入口：为末端 language organ 建立 backend registry 与训练数据合同，再接入一个成熟 decoder 做可替换 realization
-Gate；decoder 只能消费 `ExpressionPlan`，Taiji 仍拥有 content、goal、world、memory、planning 和最终 `ActionIntent`。**
+**下一决策入口：接入一个真实成熟 decoder backend 做 realization/lesion Gate；只允许通过 registry 消费 `ExpressionPlan` 与
+`LanguageTrainingExample`，先验证可替换性和训练/推理隔离，再决定是否保留该 backend，绝不把 Transformer 或其他 decoder 变成
+认知主体。**

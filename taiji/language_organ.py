@@ -9,6 +9,7 @@ core.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any, Protocol, runtime_checkable
@@ -16,6 +17,9 @@ from typing import Any, Protocol, runtime_checkable
 from .generation import ExpressionPlan, TextExpressionCodec
 
 LANGUAGE_ORGAN_CHECKPOINT_FORMAT = "taiji-language-organ-v1"
+LANGUAGE_TRAINING_EXAMPLE_FORMAT = "taiji-language-training-example-v1"
+LANGUAGE_BACKEND_SPEC_FORMAT = "taiji-language-backend-spec-v1"
+LANGUAGE_BACKEND_REGISTRY_FORMAT = "taiji-language-backend-registry-v1"
 
 
 @dataclass(frozen=True)
@@ -64,6 +68,179 @@ class LanguageEmission:
             backend=str(payload["backend"]),
             provenance=str(payload.get("provenance", "language-organ")),
         )
+
+
+@dataclass(frozen=True)
+class LanguageTrainingExample:
+    """Supervision contract for a text organ, without cognitive labels."""
+
+    example_id: str
+    expression: ExpressionPlan
+    target_text: str
+    split: str = "train"
+    weight: float = 1.0
+    provenance: str = "supervised"
+
+    def __post_init__(self) -> None:
+        if not str(self.example_id):
+            raise ValueError("language training example_id cannot be empty")
+        if not isinstance(self.expression, ExpressionPlan):
+            raise TypeError("language training expression must be an ExpressionPlan")
+        if self.expression.modality != "text":
+            raise ValueError("language training expression must use text modality")
+        if not isinstance(self.target_text, str) or not self.target_text.strip():
+            raise ValueError("language training target_text cannot be empty")
+        if not str(self.split):
+            raise ValueError("language training split cannot be empty")
+        if not math.isfinite(float(self.weight)) or float(self.weight) <= 0.0:
+            raise ValueError("language training weight must be finite and positive")
+        if not str(self.provenance):
+            raise ValueError("language training provenance cannot be empty")
+
+    @property
+    def target_bytes(self) -> bytes:
+        return self.target_text.encode("utf-8")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": LANGUAGE_TRAINING_EXAMPLE_FORMAT,
+            "example_id": self.example_id,
+            "expression": self.expression.to_payload(),
+            "target_text": self.target_text,
+            "split": self.split,
+            "weight": self.weight,
+            "provenance": self.provenance,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> LanguageTrainingExample:
+        if payload.get("format") != LANGUAGE_TRAINING_EXAMPLE_FORMAT:
+            raise ValueError("unsupported language training example format")
+        expression = payload.get("expression")
+        if not isinstance(expression, Mapping):
+            raise ValueError("language training example is missing expression")
+        return cls(
+            example_id=str(payload["example_id"]),
+            expression=ExpressionPlan.from_payload(expression),
+            target_text=str(payload["target_text"]),
+            split=str(payload.get("split", "train")),
+            weight=float(payload.get("weight", 1.0)),
+            provenance=str(payload.get("provenance", "supervised")),
+        )
+
+
+@dataclass(frozen=True)
+class LanguageBackendSpec:
+    """Declarative backend metadata enforced at the effector boundary."""
+
+    backend_id: str
+    family: str
+    training_contract: str
+    supports_training: bool = True
+    modalities: tuple[str, ...] = ("text",)
+    owns_cognition: bool = False
+
+    def __post_init__(self) -> None:
+        for value, name in (
+            (self.backend_id, "backend_id"),
+            (self.family, "family"),
+            (self.training_contract, "training_contract"),
+        ):
+            if not str(value):
+                raise ValueError(f"language backend {name} cannot be empty")
+        if not self.modalities or "text" not in self.modalities:
+            raise ValueError("language backend must support text modality")
+        if self.owns_cognition:
+            raise ValueError("language backend cannot own Taiji cognition")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": LANGUAGE_BACKEND_SPEC_FORMAT,
+            "backend_id": self.backend_id,
+            "family": self.family,
+            "training_contract": self.training_contract,
+            "supports_training": self.supports_training,
+            "modalities": list(self.modalities),
+            "owns_cognition": self.owns_cognition,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> LanguageBackendSpec:
+        if payload.get("format") != LANGUAGE_BACKEND_SPEC_FORMAT:
+            raise ValueError("unsupported language backend spec format")
+        modalities = payload.get("modalities", ("text",))
+        if not isinstance(modalities, (list, tuple)):
+            raise ValueError("language backend modalities must be a sequence")
+        return cls(
+            backend_id=str(payload["backend_id"]),
+            family=str(payload["family"]),
+            training_contract=str(payload["training_contract"]),
+            supports_training=bool(payload.get("supports_training", True)),
+            modalities=tuple(str(modality) for modality in modalities),
+            owns_cognition=bool(payload.get("owns_cognition", False)),
+        )
+
+
+class LanguageBackendRegistry:
+    """Registry of replaceable text-organ descriptors, not cognitive modules."""
+
+    def __init__(self, specs: tuple[LanguageBackendSpec, ...] = ()) -> None:
+        self._specs: dict[str, LanguageBackendSpec] = {}
+        for spec in specs:
+            self.register(spec)
+
+    @classmethod
+    def default(cls) -> LanguageBackendRegistry:
+        registry = cls()
+        registry.register(
+            LanguageBackendSpec(
+                backend_id=StructuredTextLanguageOrgan.BACKEND_ID,
+                family="structured-codec",
+                training_contract="none",
+                supports_training=False,
+            )
+        )
+        return registry
+
+    @property
+    def specs(self) -> tuple[LanguageBackendSpec, ...]:
+        return tuple(self._specs.values())
+
+    def register(self, spec: LanguageBackendSpec) -> None:
+        if not isinstance(spec, LanguageBackendSpec):
+            raise TypeError("language backend registry accepts LanguageBackendSpec values")
+        if spec.backend_id in self._specs:
+            raise ValueError(f"language backend is already registered: {spec.backend_id}")
+        self._specs[spec.backend_id] = spec
+
+    def get(self, backend_id: str) -> LanguageBackendSpec:
+        try:
+            return self._specs[str(backend_id)]
+        except KeyError as exc:
+            raise KeyError(f"language backend is not registered: {backend_id}") from exc
+
+    def validate(self, organ: LanguageOrgan) -> LanguageBackendSpec:
+        if not isinstance(organ, LanguageOrgan):
+            raise TypeError("organ must implement the LanguageOrgan protocol")
+        spec = self.get(organ.backend_id)
+        if "text" not in spec.modalities:
+            raise ValueError("registered language backend does not support text")
+        return spec
+
+    def checkpoint(self) -> dict[str, Any]:
+        return {
+            "format": LANGUAGE_BACKEND_REGISTRY_FORMAT,
+            "specs": [spec.to_payload() for spec in self.specs],
+        }
+
+    @classmethod
+    def from_checkpoint(cls, payload: Mapping[str, Any]) -> LanguageBackendRegistry:
+        if payload.get("format") != LANGUAGE_BACKEND_REGISTRY_FORMAT:
+            raise ValueError("unsupported language backend registry format")
+        specs = payload.get("specs", ())
+        if not isinstance(specs, (list, tuple)):
+            raise ValueError("language backend registry specs must be a sequence")
+        return cls(tuple(LanguageBackendSpec.from_payload(spec) for spec in specs))
 
 
 @runtime_checkable

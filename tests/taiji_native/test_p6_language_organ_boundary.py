@@ -5,7 +5,10 @@ import pytest
 from taiji import (
     ContentPlan,
     GenerationController,
+    LanguageBackendRegistry,
+    LanguageBackendSpec,
     LanguageEmission,
+    LanguageTrainingExample,
     StructuredTextLanguageOrgan,
     TextExpressionCodec,
     TSKV8Adapter,
@@ -66,3 +69,37 @@ def test_language_organ_lesion_and_native_checkpoint_preserve_boundary() -> None
     assert restored.last_language_emission is not None
     assert restored.last_language_emission.backend == "structured-stub"
     assert TextExpressionCodec.decode(restored.last_language_emission.text_bytes) == expression
+
+
+def test_language_backend_registry_and_training_contract_are_model_agnostic() -> None:
+    expression = _expression()
+    example = LanguageTrainingExample(
+        example_id="language-example-1",
+        expression=expression,
+        target_text="当前状态稳定。",
+        split="holdout",
+        weight=0.75,
+        provenance="human-reviewed",
+    )
+    restored_example = LanguageTrainingExample.from_payload(example.to_payload())
+    registry = LanguageBackendRegistry.default()
+    registry.register(
+        LanguageBackendSpec(
+            backend_id="mature-decoder-v1",
+            family="external-decoder",
+            training_contract="expression-to-text-v1",
+        )
+    )
+    restored_registry = LanguageBackendRegistry.from_checkpoint(registry.checkpoint())
+
+    assert restored_example == example
+    assert example.target_bytes == "当前状态稳定。".encode()
+    assert restored_registry.get("mature-decoder-v1").training_contract == "expression-to-text-v1"
+    assert restored_registry.validate(StructuredTextLanguageOrgan()).backend_id == "structured-stub"
+    with pytest.raises(ValueError, match="cannot own Taiji cognition"):
+        LanguageBackendSpec(
+            backend_id="invalid-cognitive-backend",
+            family="external-decoder",
+            training_contract="expression-to-text-v1",
+            owns_cognition=True,
+        )

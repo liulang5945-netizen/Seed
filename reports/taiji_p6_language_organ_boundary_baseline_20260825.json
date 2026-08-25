@@ -5,10 +5,12 @@
     "encoded_bytes": 418,
     "expression_round_trip": true,
     "native_checkpoint_round_trip": true,
-    "cognition_unchanged": true
+    "cognition_unchanged": true,
+    "training_contract_round_trip": true,
+    "backend_registry_round_trip": true
   },
   "gate": {
     "passed": true,
-    "criterion": "a replaceable terminal language organ emits Taiji-owned text expressions and restores without owning cognition"
+    "criterion": "a registry-described language organ consumes ExpressionPlan supervision and restores without owning cognition"
   }
 }
