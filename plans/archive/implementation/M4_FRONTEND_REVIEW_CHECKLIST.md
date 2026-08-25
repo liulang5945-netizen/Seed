@@ -1,4 +1,6 @@
-# M4 前端联调评审清单
+# M4 前端联调评审清单（已归档）
+
+> 本阶段已完成。当前产品执行顺序见 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](../../active/SEED_DEVELOPMENT_ROADMAP_2026_08.md)。
 
 > 依据：公测（Public Beta）路线图 §1.5（前端/桌面端门槛）、`docs/design/taiji-front-redesign/`（项目既有设计标准）。
 > 评审方式：启动 `api` + `frontend` dev server，用浏览器逐页对照；桌面端走打包冒烟。

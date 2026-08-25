@@ -1,6 +1,6 @@
-# Seed 当前实施计划（Taiji 基底）
+# Seed 当前实施计划（Taiji 基底，已归档）
 
-> 本文件只记录当前源码状态、已复现实证与唯一下一步。历史 NeuroPlex/D1/PlayEngine 结论不混入当前执行线。
+> 本文件记录 2026-08-24 前的容量、CUDA 契约和 Legacy 解耦实施过程，现已归档。当前执行顺序见 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](../../active/SEED_DEVELOPMENT_ROADMAP_2026_08.md)，历史 NeuroPlex/D1/PlayEngine 结论不混入当前执行线。
 
 ## 2026-08-24：容量、CUDA 与 Legacy 解耦决策
 
@@ -345,11 +345,11 @@ inh_i ← λ·inh_i + (1−λ)·g·(1/k)·Σ_{j∈N(i)} W_ij·relu(membrane_j �
 
 ### 6.11 M7 cue-chain 闭合（PASS，2026-08-23）
 
-按 §6.10 路线实现：accepted replay 先以内生 `cortical_projection` 在无外部 sensation 下重建 cue basis，用 action mode 写慢通路，再执行现有 action→outcome 段；补齐 no-replay/content/order lesions。决定性机制是 `cue_learn_scale` 慢写门控。`verify_taiji_m7_cue_chain.py` 七项判据全过（800K 检查点）。至此 M5–M7、A1–B1 全部闭合，本文件不再有活跃下一步；现状总览见 [plans/README.md](../README.md)。
+按 §6.10 路线实现：accepted replay 先以内生 `cortical_projection` 在无外部 sensation 下重建 cue basis，用 action mode 写慢通路，再执行现有 action→outcome 段；补齐 no-replay/content/order lesions。决定性机制是 `cue_learn_scale` 慢写门控。`verify_taiji_m7_cue_chain.py` 七项判据全过（800K 检查点）。至此 M5–M7、A1–B1 全部闭合，本文件不再有活跃下一步；现状总览见 [plans/README.md](../../README.md)。
 
 ## 7. 附录：已废止的 D1 长程稳定性档案（NeuroPlex/PlayEngine）
 
-> 完整判定标准与所有方案讨论见 [BOOTSTRAP_CRITERIA.md](../archive/authored/BOOTSTRAP_CRITERIA.md) 第 4 节。本节只记录 v9 修复结论与对 Taiji 主线的隐含信号。
+> 完整判定标准与所有方案讨论见 [BOOTSTRAP_CRITERIA.md](../authored/BOOTSTRAP_CRITERIA.md) 第 4 节。本节只记录 v9 修复结论与对 Taiji 主线的隐含信号。
 
 - **D1 系列目标**：1000 步压力测试下，3 组（dialogue/knowledge/unfamiliar）std ratio ≥ pre × 0.90
 - **v3/v4/v5/v6/v7/v8 演化**：见 BOOTSTRAP_CRITERIA.md

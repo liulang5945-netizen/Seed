@@ -549,7 +549,7 @@ N9 的训练流显式设置 `include_boundary=False`，因为它检验无限循�
 
 M7 闭合的三条实测瓶颈及其机制修复：① 皮层读出在共享一次性学习率下行饱和塌缩（见 §7.5）；② 重建基底量级错配——回放投影的单位归一目标切片只有自然基底 1/70 的能量，重建切片按各自上界重标度（方向是记忆，量级回到唤醒尺度）；③ 慢通路读出按新鲜度缩放——`consolidated_decode` 读出端把 opponent trace 归一到 `max_trace_norm`（证据承载内容而非轨迹新旧），训练与前向保持原始基底不动，避免扰动睡眠写入与唤醒动力学。
 
-## 13. 当前唯一下一步
+## 13. 阶段收束记录与后续边界
 
 阶段 1 已落地：`TaijiConfig.training_profile(scale)` 提供放大画像（区域/维度/边密度等比放大，动力学常量不变）；`SparseSynapses` 初始化经实测确认**不可批量化重绘**（2D `randn` 与逐行 1D 抽取的随机流消耗不同，批量化会静默重随机全部模型），源码注释固化禁令；`.item()` 经 cProfile 实测占单 tick 成本 <3%，契约标量保留。`train_seed_corpus.py` 以 raw-byte 流（会话边界 = `boundary_symbol`）流式训练 + 周期落盘；进度条目含固定未见探针 `HOLDOUT_PROBE` 的 `holdout_surprise`——窗口统计测的是内容难度，单调进步只能由固定探针衡量。
 
@@ -565,5 +565,5 @@ M7 闭合的三条实测瓶颈及其机制修复：① 皮层读出在共享一�
 
 阶段 4 产品接入已完成（`api/seed_runtime.py` 热切换、聊天 seed 分支、前端运行环境分区、桌面端 `SEED_RUNTIME`/`SEED_HOST`），全仓 108 passed, 3 skipped。
 
-下一步：仍禁止引入 tokenizer、外部评分模型或对 `neuroplex` 的导入；生成可读性（byte-level 尚未到人工可读）为当前主要诚实边界。
+本节记录容量、衰减、生物启发器官和 M7 闭合过程，不再单独维护执行顺序。仍禁止引入 tokenizer、外部评分模型或对 `neuroplex` 的导入；生成可读性（byte-level 尚未到人工可读）是当前主要诚实边界。后续执行顺序统一见 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。
 

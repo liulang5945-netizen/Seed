@@ -1,4 +1,6 @@
-# Taiji Native v7 原生场记忆算法
+# Taiji Native v7 原生场记忆算法（已归档）
+
+> 本文保留 M7 尚未闭合时的场记忆设计记录。M7 后续已闭合，当前执行路线见 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](../../active/SEED_DEVELOPMENT_ROADMAP_2026_08.md)。
 
 > 权威实现：`taiji/memory.py`、`taiji/state.py`、`taiji/model.py`、`taiji/fabric.py`。
 >
