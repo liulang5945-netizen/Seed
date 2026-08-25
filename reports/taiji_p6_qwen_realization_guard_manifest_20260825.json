@@ -1,0 +1,16 @@
+{
+  "format": "taiji-p6-qwen-realization-guard-manifest-v1",
+  "task": "guard real Qwen language realization with Taiji-owned semantic validation and structured fallback",
+  "lesions": [
+    "language_organ_detached",
+    "missing_required_terms",
+    "structured_fallback_semantic_loss"
+  ],
+  "signals": [
+    "safe_realization_rate",
+    "fallback_count",
+    "organ_lesion",
+    "cognition_unchanged"
+  ],
+  "boundary": "safety/fallback Gate only; fallback is structured output, not a fluency or intelligence claim"
+}

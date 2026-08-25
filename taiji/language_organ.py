@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Protocol, runtime_checkable
 
 from .generation import ExpressionPlan, TextExpressionCodec
@@ -20,6 +20,49 @@ LANGUAGE_ORGAN_CHECKPOINT_FORMAT = "taiji-language-organ-v1"
 LANGUAGE_TRAINING_EXAMPLE_FORMAT = "taiji-language-training-example-v1"
 LANGUAGE_BACKEND_SPEC_FORMAT = "taiji-language-backend-spec-v1"
 LANGUAGE_BACKEND_REGISTRY_FORMAT = "taiji-language-backend-registry-v1"
+LANGUAGE_VALIDATION_FORMAT = "taiji-language-validation-v1"
+
+
+@dataclass(frozen=True)
+class LanguageValidation:
+    """Result of checking whether emitted text preserves required semantics."""
+
+    accepted: bool
+    required_terms: tuple[str, ...]
+    matched_terms: tuple[str, ...]
+    missing_terms: tuple[str, ...]
+    coverage: float
+    reason: str
+
+    def __post_init__(self) -> None:
+        if not 0.0 <= float(self.coverage) <= 1.0:
+            raise ValueError("language validation coverage must be in [0, 1]")
+        if not str(self.reason):
+            raise ValueError("language validation reason cannot be empty")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": LANGUAGE_VALIDATION_FORMAT,
+            "accepted": self.accepted,
+            "required_terms": list(self.required_terms),
+            "matched_terms": list(self.matched_terms),
+            "missing_terms": list(self.missing_terms),
+            "coverage": self.coverage,
+            "reason": self.reason,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> LanguageValidation:
+        if payload.get("format") != LANGUAGE_VALIDATION_FORMAT:
+            raise ValueError("unsupported language validation format")
+        return cls(
+            accepted=bool(payload.get("accepted", False)),
+            required_terms=tuple(str(term) for term in payload.get("required_terms", ())),
+            matched_terms=tuple(str(term) for term in payload.get("matched_terms", ())),
+            missing_terms=tuple(str(term) for term in payload.get("missing_terms", ())),
+            coverage=float(payload.get("coverage", 0.0)),
+            reason=str(payload.get("reason", "unknown")),
+        )
 
 
 @dataclass(frozen=True)
@@ -30,6 +73,8 @@ class LanguageEmission:
     text_bytes: bytes
     backend: str
     provenance: str = "language-organ"
+    validation: LanguageValidation | None = None
+    fallback_used: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.expression, ExpressionPlan):
@@ -42,6 +87,8 @@ class LanguageEmission:
             raise ValueError("language emission backend cannot be empty")
         if not str(self.provenance):
             raise ValueError("language emission provenance cannot be empty")
+        if self.validation is not None and not isinstance(self.validation, LanguageValidation):
+            raise TypeError("language emission validation must be a LanguageValidation")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -50,6 +97,8 @@ class LanguageEmission:
             "text_bytes": self.text_bytes,
             "backend": self.backend,
             "provenance": self.provenance,
+            "validation": None if self.validation is None else self.validation.to_payload(),
+            "fallback_used": self.fallback_used,
         }
 
     @classmethod
@@ -62,11 +111,18 @@ class LanguageEmission:
         expression = payload.get("expression")
         if not isinstance(expression, Mapping):
             raise ValueError("language emission payload is missing expression")
+        validation = payload.get("validation")
         return cls(
             expression=ExpressionPlan.from_payload(expression),
             text_bytes=text_bytes,
             backend=str(payload["backend"]),
             provenance=str(payload.get("provenance", "language-organ")),
+            validation=(
+                None
+                if validation is None
+                else LanguageValidation.from_payload(dict(validation))
+            ),
+            fallback_used=bool(payload.get("fallback_used", False)),
         )
 
 
@@ -256,6 +312,71 @@ class LanguageOrgan(Protocol):
         """Return a backend descriptor suitable for a Taiji checkpoint."""
 
 
+class LanguageRealizationValidator:
+    """Taiji-owned semantic safety check for terminal text emissions."""
+
+    def __init__(
+        self,
+        *,
+        minimum_coverage: float = 1.0,
+        reject_structured_leakage: bool = True,
+    ) -> None:
+        if not 0.0 <= float(minimum_coverage) <= 1.0:
+            raise ValueError("minimum_coverage must be in [0, 1]")
+        self.minimum_coverage = float(minimum_coverage)
+        self.reject_structured_leakage = bool(reject_structured_leakage)
+
+    def validate(
+        self,
+        expression: ExpressionPlan,
+        text_bytes: bytes,
+        *,
+        required_terms: tuple[str, ...] = (),
+    ) -> LanguageValidation:
+        if not isinstance(expression, ExpressionPlan):
+            raise TypeError("language validation requires an ExpressionPlan")
+        if expression.modality != "text":
+            raise ValueError("language validation requires a text ExpressionPlan")
+        if not isinstance(text_bytes, bytes):
+            raise TypeError("language validation text_bytes must be bytes")
+        try:
+            text = text_bytes.decode("utf-8")
+        except UnicodeDecodeError:
+            return LanguageValidation(
+                accepted=False,
+                required_terms=tuple(required_terms),
+                matched_terms=(),
+                missing_terms=tuple(required_terms),
+                coverage=0.0,
+                reason="invalid-utf8",
+            )
+        terms = tuple(dict.fromkeys(str(term) for term in required_terms if str(term)))
+        matched = tuple(term for term in terms if term in text)
+        missing = tuple(term for term in terms if term not in text)
+        coverage = len(matched) / max(1, len(terms))
+        leaked = self.reject_structured_leakage and any(
+            marker in text
+            for marker in ("semantic_slots", "intent_kind", "expected_outcome", "{", "}")
+        )
+        accepted = coverage >= self.minimum_coverage and not leaked and bool(text.strip())
+        if leaked:
+            reason = "structured-leakage"
+        elif coverage < self.minimum_coverage:
+            reason = "missing-required-terms"
+        elif not text.strip():
+            reason = "empty-text"
+        else:
+            reason = "accepted"
+        return LanguageValidation(
+            accepted=accepted,
+            required_terms=terms,
+            matched_terms=matched,
+            missing_terms=missing,
+            coverage=coverage,
+            reason=reason,
+        )
+
+
 @runtime_checkable
 class TextDecoder(Protocol):
     """Minimal external decoder surface accepted by Taiji."""
@@ -311,6 +432,69 @@ class StructuredTextLanguageOrgan:
         if payload.get("backend") != cls.BACKEND_ID:
             raise ValueError("unsupported structured language organ backend")
         return cls(max_bytes=int(payload.get("max_bytes", 1_000_000)))
+
+
+class ValidatedLanguageOrgan:
+    """Guard an external organ and fall back when semantic safety fails."""
+
+    def __init__(
+        self,
+        primary: LanguageOrgan,
+        *,
+        fallback: LanguageOrgan | None = None,
+        validator: LanguageRealizationValidator | None = None,
+        required_terms_builder: Callable[[ExpressionPlan], tuple[str, ...]] | None = None,
+    ) -> None:
+        if not isinstance(primary, LanguageOrgan):
+            raise TypeError("primary must implement the LanguageOrgan protocol")
+        selected_fallback = fallback or StructuredTextLanguageOrgan()
+        if not isinstance(selected_fallback, LanguageOrgan):
+            raise TypeError("fallback must implement the LanguageOrgan protocol")
+        if validator is not None and not isinstance(validator, LanguageRealizationValidator):
+            raise TypeError("validator must be a LanguageRealizationValidator or None")
+        if required_terms_builder is not None and not callable(required_terms_builder):
+            raise TypeError("required_terms_builder must be callable or None")
+        self.primary = primary
+        self.fallback = selected_fallback
+        self.validator = validator or LanguageRealizationValidator()
+        self.required_terms_builder = required_terms_builder
+
+    @property
+    def backend_id(self) -> str:
+        return self.primary.backend_id
+
+    def emit(self, expression: ExpressionPlan) -> LanguageEmission:
+        candidate = self.primary.emit(expression)
+        required_terms = (
+            ()
+            if self.required_terms_builder is None
+            else tuple(self.required_terms_builder(expression))
+        )
+        validation = self.validator.validate(
+            expression,
+            candidate.text_bytes,
+            required_terms=required_terms,
+        )
+        if validation.accepted:
+            return replace(candidate, validation=validation, fallback_used=False)
+        fallback = self.fallback.emit(expression)
+        return replace(
+            fallback,
+            provenance="validated-fallback",
+            validation=validation,
+            fallback_used=True,
+        )
+
+    def checkpoint(self) -> dict[str, Any]:
+        return {
+            "format": LANGUAGE_ORGAN_CHECKPOINT_FORMAT,
+            "backend": self.backend_id,
+            "wrapper": "validated-language-organ",
+            "primary": self.primary.checkpoint(),
+            "fallback": self.fallback.checkpoint(),
+            "minimum_coverage": self.validator.minimum_coverage,
+            "reject_structured_leakage": self.validator.reject_structured_leakage,
+        }
 
 
 class ExternalTextDecoderLanguageOrgan:

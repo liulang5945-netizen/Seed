@@ -127,10 +127,13 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 Qwen 多样化 holdout realization 质量 Gate 未通过：3 个 holdout 的非空率=`1.0`、结构化字段泄漏率=`0.0`，但必需语义词
   覆盖率仅=`0.5`；decoder 会生成文本，却丢失或改写关键 slot。Qwen 因此暂不能作为“语义保真”的已验收语言器官，只能作为
   外部候选 provider。
-- 原生套件当前 `109 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
+- P6 Taiji-owned realization validator/fallback Gate 已通过真实 Qwen：3 个 holdout 中 1 个文本通过语义检查，2 个丢失 slot 的
+  输出被拒绝并回退为无损结构化表达；`safe_realization_rate=1.0`、`fallback_count=2`，且 organ lesion/认知不变通过。该 Gate
+  证明安全边界，不等于 Qwen 语义质量已达标。
+- 原生套件当前 `111 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
   环境状态不作为代码能力结论。
 
 ## 当前唯一下一步
 
-下一决策入口：建立 Taiji-owned realization validator/fallback，在 decoder 输出丢失关键 slot 时拒绝该表达并回退到结构化器官；
-先保证语义保真，再决定是否继续训练或替换 Qwen provider，不把 Transformer 或其他 decoder 变成认知主体。
+下一决策入口：把 required semantic terms 从评估脚本临时映射提升为 runtime `ContentPlan` 的显式约束，并让 fallback 结果进入
+既有 content credit/replan 信号；不把 Transformer 或其他 decoder 变成认知主体。
