@@ -47,10 +47,13 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P4 最小记忆纵切片已落地：`WorkingMemoryItem`、`EpisodicMemoryRecord` 和可容量治理的 `EpisodicMemoryStore` 属于
   Taiji；adapter 在真实 action outcome 后写入经历、下一观察按 cue 检索，native checkpoint 可恢复记录与 working state。
   原生回归当前为 79 passed、1 skipped；这不等于跨 episode 语义巩固已完成。
+- P4 cue-conditioned one-shot recall 窄 Gate 已通过：full、episode-ID lesion、checkpoint continuation 的 action recall
+  均为 1.0，retrieval/write lesion 均为 0；报告和 manifest 为 `reports/taiji_p4_episodic_recall_*_20260825.json`。
+  该结果证明经历检索和来源独立性，不证明从多次经历抽取新组合语义。
 - 原生套件当前 74 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-扩展 P4：建立 cue-conditioned one-shot episodic recall 基准，加入跨 episode holdout、episode-ID lesion、检索/写入 lesion
-  和 checkpoint continuation 对照；保留 P3 world/workspace outcome 对照，不提前进入语言或产品层。
+扩展 P4：建立跨 episode 新组合语义基准，使用 replay/consolidation 把多次经历压缩成可迁移关系，并加入 episode、replay、
+  内容检索和 checkpoint continuation lesion；保留 P3 world/workspace outcome 对照，不提前进入语言或产品层。

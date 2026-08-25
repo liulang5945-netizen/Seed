@@ -1,0 +1,32 @@
+{
+  "format": "taiji-p4-episodic-recall-v1",
+  "cue_dim": 8,
+  "train_records": 8,
+  "holdout_queries": 8,
+  "conditions": {
+    "full": {
+      "action_recall": 1.0,
+      "mean_reward_error": 0.0
+    },
+    "episode_id_lesion": {
+      "action_recall": 1.0,
+      "mean_reward_error": 0.0
+    },
+    "retrieval_lesion": {
+      "action_recall": 0.0,
+      "mean_reward_error": 0.0
+    },
+    "write_lesion": {
+      "action_recall": 0.0,
+      "mean_reward_error": 0.0
+    },
+    "checkpoint_continuation": {
+      "action_recall": 1.0,
+      "mean_reward_error": 0.0
+    }
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "full/episode-ID-lesion/checkpoint recall = 1.0; retrieval/write lesions < 0.5"
+  }
+}

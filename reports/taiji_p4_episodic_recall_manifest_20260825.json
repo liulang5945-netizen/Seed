@@ -1,0 +1,33 @@
+{
+  "format": "taiji-p4-episodic-recall-manifest-v1",
+  "task": "one-shot cue-conditioned action and reward recall",
+  "cue_dim": 8,
+  "train_episode_ids": [
+    "train-episode-0",
+    "train-episode-1",
+    "train-episode-2",
+    "train-episode-3",
+    "train-episode-4",
+    "train-episode-5",
+    "train-episode-6",
+    "train-episode-7"
+  ],
+  "holdout_episode_ids": [
+    "holdout-episode-0",
+    "holdout-episode-1",
+    "holdout-episode-2",
+    "holdout-episode-3",
+    "holdout-episode-4",
+    "holdout-episode-5",
+    "holdout-episode-6",
+    "holdout-episode-7"
+  ],
+  "controls": [
+    "full",
+    "episode_id_lesion",
+    "retrieval_lesion",
+    "write_lesion",
+    "checkpoint_continuation"
+  ],
+  "boundary": "this is episodic recall, not cross-episode semantic composition"
+}
