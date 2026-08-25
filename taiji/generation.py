@@ -18,6 +18,7 @@ from .contracts import ActionIntent, WorldAction
 
 GENERATION_CHECKPOINT_FORMAT = "taiji-generation-v1"
 TOOL_CALL_CODEC_FORMAT = "taiji-tool-call-codec-v1"
+TEXT_EXPRESSION_CODEC_FORMAT = "taiji-text-expression-codec-v1"
 
 
 def _unit(value: float, name: str) -> float:
@@ -117,6 +118,7 @@ class ExpressionPlan:
     content_id: str
     modality: str
     channel: str
+    source_goal_id: str | None = None
     fields: Mapping[str, Any] = field(default_factory=dict)
     confidence: float = 0.0
     provenance: str = "planned"
@@ -127,6 +129,8 @@ class ExpressionPlan:
         _text(self.content_id, "content_id")
         _text(self.modality, "expression modality")
         _text(self.channel, "expression channel")
+        if self.source_goal_id is not None:
+            _text(self.source_goal_id, "expression source_goal_id")
         _text(self.provenance, "expression provenance")
         if int(self.tick) < 0:
             raise ValueError("expression tick cannot be negative")
@@ -138,6 +142,7 @@ class ExpressionPlan:
             "content_id": self.content_id,
             "modality": self.modality,
             "channel": self.channel,
+            "source_goal_id": self.source_goal_id,
             "fields": dict(self.fields),
             "confidence": self.confidence,
             "provenance": self.provenance,
@@ -154,6 +159,7 @@ class ExpressionPlan:
             content_id=str(payload["content_id"]),
             modality=str(payload["modality"]),
             channel=str(payload["channel"]),
+            source_goal_id=payload.get("source_goal_id"),
             fields=dict(fields),
             confidence=float(payload.get("confidence", 0.0)),
             provenance=str(payload.get("provenance", "planned")),
@@ -286,6 +292,36 @@ class StructuredToolCallCodec:
         return ToolCall.from_payload(call)
 
 
+class TextExpressionCodec:
+    """Lossless UTF-8 transport for a structured text-organ expression."""
+
+    @staticmethod
+    def encode(expression: ExpressionPlan) -> bytes:
+        payload = {
+            "format": TEXT_EXPRESSION_CODEC_FORMAT,
+            "expression": _json_value(expression.to_payload()),
+        }
+        return json.dumps(
+            payload,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+
+    @staticmethod
+    def decode(data: bytes | bytearray | memoryview) -> ExpressionPlan:
+        try:
+            payload = json.loads(bytes(data).decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise ValueError("invalid structured text-expression bytes") from exc
+        if not isinstance(payload, Mapping) or payload.get("format") != TEXT_EXPRESSION_CODEC_FORMAT:
+            raise ValueError("unsupported structured text-expression codec format")
+        expression = payload.get("expression")
+        if not isinstance(expression, Mapping):
+            raise ValueError("structured text-expression payload is missing expression")
+        return ExpressionPlan.from_payload(expression)
+
+
 class GenerationController:
     """Turn a Taiji action intent into an organ-specific tool emission."""
 
@@ -328,6 +364,7 @@ class GenerationController:
             content_id=content.content_id,
             modality=modality,
             channel=selected_channel,
+            source_goal_id=content.source_goal_id,
             fields={
                 "intent_kind": content.intent_kind,
                 "semantic_slots": dict(content.semantic_slots),
@@ -375,6 +412,7 @@ class GenerationController:
         return {
             "format": GENERATION_CHECKPOINT_FORMAT,
             "codec_format": TOOL_CALL_CODEC_FORMAT,
+            "text_codec_format": TEXT_EXPRESSION_CODEC_FORMAT,
         }
 
     @classmethod
@@ -383,5 +421,6 @@ class GenerationController:
             raise ValueError("unsupported generation checkpoint format")
         if payload.get("codec_format") != TOOL_CALL_CODEC_FORMAT:
             raise ValueError("unsupported generation codec format")
+        if payload.get("text_codec_format", TEXT_EXPRESSION_CODEC_FORMAT) != TEXT_EXPRESSION_CODEC_FORMAT:
+            raise ValueError("unsupported text expression codec format")
         return cls()
-

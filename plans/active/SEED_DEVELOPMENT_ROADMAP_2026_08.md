@@ -311,7 +311,10 @@ P4 的最小真实经历边界已落地：
 - `scripts/training/eval_taiji_p6_holdout_content_transfer.py` 已通过 holdout content transfer 窄 Gate：训练未见的 intent kind、候选 ID
   与嵌套 slot 结构仍按 learned context utility 被选中并由 checkpoint 恢复；报告和 manifest 为
   `reports/taiji_p6_holdout_content_transfer_*_20260825.json`。该结果不代表开放域语义发明。
-- 本轮 native 回归为 `103 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
+- `scripts/training/eval_taiji_p6_text_organ_codec.py` 已通过 text organ codec 窄 Gate：holdout `ContentPlan` 的 text expression 经
+  UTF-8 codec 后 semantic slots、confidence、`source_goal_id` 无损恢复；报告和 manifest 为
+  `reports/taiji_p6_text_organ_codec_*_20260825.json`。该结果不等于自然语言流畅性、句法或语言智能。
+- 本轮 native 回归为 `105 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
 
 ### 工作项
 
@@ -415,4 +418,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**继续 P6 text organ codec Gate：让 holdout `ContentPlan` 通过 text expression 的结构化 codec 无损往返 semantic slots、confidence 和 goal provenance；不改变既有合同。**
+**下一决策入口：规划 P6 learned text realization Gate，确定成熟 decoder 作为末端 language organ 的接口/训练/lesion 边界；Taiji 仍拥有 content、goal、world、memory、planning 和最终 ActionIntent。**
