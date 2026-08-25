@@ -501,6 +501,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
     checkpoint = adapter.native_checkpoint()
     restored = TSKV8Adapter.from_native_checkpoint(checkpoint)
     checkpoint_pending = restored._pending_executive_credit is not None
+    checkpoint_trace_count = len(restored.cognitive_snapshot().world_calibration_trace)
     restored.replan_executive_after_failure(candidates)
     restored.record_delayed_executive_credit(0.5)
     transitions = [first_transition]
@@ -560,6 +561,19 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         and restored._world_dynamics is not None
         and restored._world_dynamics.online_updates == len(after_states)
     )
+    runtime_trace = restored.cognitive_snapshot().world_calibration_trace
+    runtime_calibration_trace_gate = bool(
+        checkpoint_trace_count == 1
+        and len(runtime_trace) == len(after_states)
+        and tuple(item.online_update_count_after for item in runtime_trace)
+        == tuple(range(1, len(after_states) + 1))
+        and all(
+            item.calibration_applied
+            and item.prediction.state_error is not None
+            and item.prediction.reward_error is not None
+            for item in runtime_trace
+        )
+    )
     variable_episode_specs = (
         ("short-single-failure", 3, frozenset({0})),
         ("mid-late-failures", 4, frozenset({1, 2})),
@@ -614,6 +628,13 @@ def evaluate_seed(seed: int) -> dict[str, object]:
             for transition in variant_transitions
             for item in (*transition.before.affordances, *transition.after.affordances)
         )
+        variant_trace = variant.cognitive_snapshot().world_calibration_trace
+        runtime_trace_complete = bool(
+            len(variant_trace) == length
+            and tuple(item.online_update_count_after for item in variant_trace)
+            == tuple(range(1, length + 1))
+            and all(item.calibration_applied for item in variant_trace)
+        )
         variable_episode_runs.append(
             {
                 "name": variant_name,
@@ -622,6 +643,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
                 "observed_failure_indices": list(observed_failures),
                 "replans": replan_count,
                 "lineage_complete": lineage_complete,
+                "runtime_calibration_trace_complete": runtime_trace_complete,
                 "final_success": bool(
                     variant_outcomes[-1].success and variant_outcomes[-1].terminal
                 ),
@@ -637,6 +659,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         run["failure_indices"] == run["observed_failure_indices"]
         and run["replans"] == len(run["failure_indices"])
         and run["lineage_complete"]
+        and run["runtime_calibration_trace_complete"]
         and run["final_success"]
         and run["credit_updates_complete"]
         for run in variable_episode_runs
@@ -671,6 +694,12 @@ def evaluate_seed(seed: int) -> dict[str, object]:
             and len(set(environment.actions)) > 1
         ),
         "world_prediction_gate": world_prediction_gate,
+        "runtime_calibration_trace_gate": runtime_calibration_trace_gate,
+        "runtime_calibration_trace_length": len(runtime_trace),
+        "runtime_calibration_checkpoint_count": checkpoint_trace_count,
+        "runtime_calibration_update_counts": [
+            item.online_update_count_after for item in runtime_trace
+        ],
         "prediction_train_holdout_gate": prediction_train_holdout_gate,
         "calibration_gate": calibration_gate,
         "prediction_holdout_error_mean": sum(holdout_errors) / len(holdout_errors),
@@ -729,6 +758,7 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "world-prediction-train-holdout",
             "world-prediction-online-calibration",
             "world-prediction-no-update-control",
+            "runtime-calibration-trace-multistep",
         ],
         "world_prediction": {
             "train_cases": 2,
@@ -737,6 +767,10 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "online_update_learning_rate": 0.01,
             "online_update_repeats": 50,
             "no_update_control": True,
+            "runtime_trace": {
+                "checkpoint_continuation": True,
+                "variable_horizons": [3, 4, 5],
+            },
         },
         "variable_episodes": [
             {"name": "short-single-failure", "length": 3, "failure_indices": [0]},
@@ -764,6 +798,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "continuous_replan_complete",
         "variable_episode_gate",
         "world_prediction_gate",
+        "runtime_calibration_trace_gate",
         "prediction_train_holdout_gate",
         "calibration_gate",
     )
@@ -778,7 +813,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "metrics": {"cross_seed_rates": rates, "runs": runs},
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must transfer the holdout selection, preserve lineage and credit across four transitions and variable 3/4/5-step episodes, complete the declared replans and lesions, emit finite world prediction errors, and show per-transition online calibration improvement over a no-update control",
+            "criterion": "all seeds must transfer the holdout selection, preserve lineage and credit across four transitions and variable 3/4/5-step episodes, complete the declared replans and lesions, emit finite world prediction errors, show per-transition online calibration improvement over a no-update control, and preserve runtime calibration traces with contiguous update counts across checkpoint continuation",
         },
     }
 
