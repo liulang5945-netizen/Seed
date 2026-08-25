@@ -24,6 +24,11 @@ manifest 已生成；pair provenance 只用于评测，不进入模型。小规�
 已在三个 seed 上通过，但完整 P2 仍需更大 atom pool、独立语料分区和旧 byte-level
 对照；当前仍不能宣称 Taiji 已拥有通过完整 Gate 的学习型抽象能力。
 
+扩展验证已完成：在 `dialogue16` 和 `shared16` 两个独立语料分区、16 atoms、240
+ordered-pair 规模上，slot binding、boundary consistency 和 random binding lesion
+的跨 seed 最小值分别达到 `+0.9375/0.9841/+0.6875` 与 `+0.9219/0.9811/+0.6406`。
+这只关闭结构性 A1 relation subgate，不等于自然语言、世界模型或完整 Taiji 已实现。
+
 ## 0. 本次纠正
 
 此前路线把“原生”误解为“从最原始信号开始，并排除一切与 Transformer 功能相似的抽象”。这导致：
@@ -434,4 +439,4 @@ taiji/
 
 ## 13. 当前唯一实现入口
 
-P1 已完成。当前实现入口是 P2/A1 relation 扩展验证：扩大 atom pool 与语料分区，重复 completed assembly slot-binding evaluator、boundary、random-chunk 和 byte-only 对照，再以加强后的 Gate 结果决定是否进入 P3。
+P1 已完成，P2 relation subgate 已收口。当前实现入口是 P3 world-state/action-outcome 最小纵切片：定义对象、事件、行动结果和干预评测合同，再以 A2 Gate 决定是否继续扩展。

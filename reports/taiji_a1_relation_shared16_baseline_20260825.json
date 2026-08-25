@@ -1,0 +1,146 @@
+{
+  "contract": "taiji-a1-assembly-relation-v1",
+  "gate": "A1",
+  "gate_passed": true,
+  "config": {
+    "ridge": 0.001,
+    "training_epochs": 3,
+    "training_learning_rate": 0.01,
+    "training_temperature": 0.15,
+    "assembly_prediction_weight": 0.5,
+    "contrastive_weight": 0.1,
+    "contrastive_temperature": 0.2,
+    "minimum_slot_generalization_gain": 0.0,
+    "minimum_boundary_consistency": 0.7,
+    "minimum_random_binding_drop": 0.05,
+    "maximum_cross_seed_std": 0.25,
+    "seeds": [
+      11,
+      29,
+      47
+    ]
+  },
+  "primary": {
+    "seed": 11,
+    "predictive_training": {
+      "final_loss": 0.6281177614900199,
+      "loss_curve": [
+        2.558156391775066,
+        0.8984113281423395,
+        0.6281177614900199
+      ]
+    },
+    "slot_binding": {
+      "left_accuracy_learned": 0.953125,
+      "right_accuracy_learned": 0.96875,
+      "pair_exact_accuracy_learned": 0.9375,
+      "pair_exact_accuracy_byte_bag": 0.0,
+      "pair_exact_generalization_gain": 0.9375
+    },
+    "controls": {
+      "boundary_pair_exact_accuracy": 0.9375,
+      "random_chunk_pair_exact_accuracy": 0.296875,
+      "random_binding_drop": 0.640625
+    },
+    "consistency": {
+      "boundary_consistency": 0.9831729905812194,
+      "random_consistency": 0.9364322502848245,
+      "random_consistency_drop": 0.04674074029639497
+    }
+  },
+  "cross_seed": {
+    "slot_pair_exact_accuracy_mean": 0.9427083333333334,
+    "slot_pair_exact_accuracy_std": 0.01948779888944761,
+    "slot_generalization_gain_min": 0.921875,
+    "boundary_consistency_min": 0.9810620656895419,
+    "random_binding_drop_min": 0.640625,
+    "random_binding_drop_mean": 0.71875,
+    "runs": [
+      {
+        "seed": 11,
+        "predictive_training": {
+          "final_loss": 0.6281177614900199,
+          "loss_curve": [
+            2.558156391775066,
+            0.8984113281423395,
+            0.6281177614900199
+          ]
+        },
+        "slot_binding": {
+          "left_accuracy_learned": 0.953125,
+          "right_accuracy_learned": 0.96875,
+          "pair_exact_accuracy_learned": 0.9375,
+          "pair_exact_accuracy_byte_bag": 0.0,
+          "pair_exact_generalization_gain": 0.9375
+        },
+        "controls": {
+          "boundary_pair_exact_accuracy": 0.9375,
+          "random_chunk_pair_exact_accuracy": 0.296875,
+          "random_binding_drop": 0.640625
+        },
+        "consistency": {
+          "boundary_consistency": 0.9831729905812194,
+          "random_consistency": 0.9364322502848245,
+          "random_consistency_drop": 0.04674074029639497
+        }
+      },
+      {
+        "seed": 29,
+        "predictive_training": {
+          "final_loss": 0.6315329257737506,
+          "loss_curve": [
+            2.578257449648597,
+            0.9138889380476691,
+            0.6315329257737506
+          ]
+        },
+        "slot_binding": {
+          "left_accuracy_learned": 0.984375,
+          "right_accuracy_learned": 0.9375,
+          "pair_exact_accuracy_learned": 0.921875,
+          "pair_exact_accuracy_byte_bag": 0.0,
+          "pair_exact_generalization_gain": 0.921875
+        },
+        "controls": {
+          "boundary_pair_exact_accuracy": 0.859375,
+          "random_chunk_pair_exact_accuracy": 0.21875,
+          "random_binding_drop": 0.703125
+        },
+        "consistency": {
+          "boundary_consistency": 0.9854104473443068,
+          "random_consistency": 0.9417031759841387,
+          "random_consistency_drop": 0.043707271360168165
+        }
+      },
+      {
+        "seed": 47,
+        "predictive_training": {
+          "final_loss": 0.6470781364901499,
+          "loss_curve": [
+            2.5368546934967693,
+            0.9249007478356361,
+            0.6470781364901499
+          ]
+        },
+        "slot_binding": {
+          "left_accuracy_learned": 1.0,
+          "right_accuracy_learned": 0.96875,
+          "pair_exact_accuracy_learned": 0.96875,
+          "pair_exact_accuracy_byte_bag": 0.0,
+          "pair_exact_generalization_gain": 0.96875
+        },
+        "controls": {
+          "boundary_pair_exact_accuracy": 0.90625,
+          "random_chunk_pair_exact_accuracy": 0.15625,
+          "random_binding_drop": 0.8125
+        },
+        "consistency": {
+          "boundary_consistency": 0.9810620656895419,
+          "random_consistency": 0.9378083023259385,
+          "random_consistency_drop": 0.043253763363603426
+        }
+      }
+    ]
+  },
+  "failure_policy": "A1 remains open until unseen ordered-pair slot binding beats the fair byte-bag control, boundary perturbation preserves the relation, random chunk lesion breaks that relation, and cross-seed variance stays within budget."
+}

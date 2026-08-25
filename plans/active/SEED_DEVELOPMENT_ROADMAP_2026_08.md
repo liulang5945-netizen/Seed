@@ -96,6 +96,12 @@ consistency 最小 `0.9825`，random binding drop 最小 `+0.1875`，slot cross-
 std `0.1062`。这只证明当前结构性组合合同在小规模 manifest 上成立；旧 next-byte
 A1 仍未通过，完整 P2 不能因此退出。
 
+扩展验证已完成：`dialogue16` 独立 manifest 的 slot gain / boundary consistency /
+random binding drop 最小值为 `+0.9375 / 0.9841 / +0.6875`；`shared16` 独立
+manifest 为 `+0.9219 / 0.9811 / +0.6406`。因此 relation subgate 已在两个语料
+分区、16 atoms、240 个 ordered-pair 组合规模上稳定通过；旧 next-byte A1 仍保留为
+失败历史对照，不阻塞结构性 P2 relation subgate 的收口。
+
 ## 3. 执行原则
 
 1. 能力合同先于模块命名和代码目录。
@@ -274,4 +280,4 @@ A1 仍未通过，完整 P2 不能因此退出。
 
 ## 16. 当前唯一下一步
 
-**扩大 relation baseline：用更大的 atom pool 和独立语料分区重建 manifest，重复 slot binding、boundary consistency、random-chunk lesion 和 byte-only 对照，确认 relation subgate 不是 8-atom 小样本偶然结果。**
+**冻结 P2 relation 合同并进入 P3：建立 world-state/action-outcome 最小纵切片，先定义对象、事件、行动结果和干预评测合同，再实现可恢复的 Taiji-owned world state；不把 relation subgate 的通过宣传成完整智能。**
