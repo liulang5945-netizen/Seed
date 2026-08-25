@@ -500,6 +500,8 @@ class WorldAffordance:
     target_id: str = ""
     parameters: tuple[tuple[str, Any], ...] = ()
     confidence: float = 1.0
+    features: torch.Tensor = field(default_factory=lambda: torch.empty(0))
+    feature_provenance: str = "world-organ"
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -511,7 +513,13 @@ class WorldAffordance:
         if self.target_id:
             _check_text(self.target_id, "affordance target_id")
         _check_unit(self.confidence, "affordance confidence")
+        if self.features.ndim != 1:
+            raise ValueError("affordance features must be a vector")
+        if self.features.numel() and not bool(torch.isfinite(self.features).all()):
+            raise ValueError("affordance features must be finite")
+        _check_text(self.feature_provenance, "affordance feature_provenance")
         object.__setattr__(self, "parameters", _normalize_pairs(self.parameters, "affordance parameters"))
+        object.__setattr__(self, "features", self.features.detach().clone())
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -522,6 +530,8 @@ class WorldAffordance:
             "target_id": self.target_id,
             "parameters": _encode_value(dict(self.parameters)),
             "confidence": self.confidence,
+            "features": self.features.detach().cpu().clone(),
+            "feature_provenance": self.feature_provenance,
         }
 
     @classmethod
@@ -537,6 +547,8 @@ class WorldAffordance:
             target_id=str(payload.get("target_id", "")),
             parameters=parameters,
             confidence=float(payload.get("confidence", 1.0)),
+            features=payload.get("features", torch.empty(0)).detach().to(device).clone(),
+            feature_provenance=str(payload.get("feature_provenance", "world-organ")),
         )
 
 

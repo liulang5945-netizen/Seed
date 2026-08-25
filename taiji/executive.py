@@ -210,10 +210,10 @@ class ExecutiveCandidate:
         if self.source_affordance_id is not None and not str(self.source_affordance_id):
             raise ValueError("executive candidate source_affordance_id cannot be empty")
         values = tuple(float(value) for value in self.features)
-        if len(values) != len(EXECUTIVE_CANDIDATE_FEATURE_NAMES):
-            raise ValueError("executive candidate feature contract mismatch")
+        if not values:
+            raise ValueError("executive candidate features cannot be empty")
         for index, value in enumerate(values):
-            _unit(value, EXECUTIVE_CANDIDATE_FEATURE_NAMES[index])
+            _finite(value, f"executive candidate feature {index}")
         object.__setattr__(self, "features", values)
 
     @classmethod
@@ -243,11 +243,11 @@ class ExecutiveCandidate:
             parameters.setdefault("target_id", affordance.target_id)
         goal_id = None if goal is None else goal.goal_id
         confidence = affordance.confidence
-        candidate_features = (
-            tuple(float(value) for value in features)
-            if features is not None
-            else (0.0, confidence, 0.0, confidence, 1.0 - confidence, 0.0)
-        )
+        if features is None:
+            raise ValueError(
+                "world affordance candidate synthesis requires learned continuous features"
+            )
+        candidate_features = tuple(float(value) for value in features)
         intent = ActionIntent(
             intent_id=intent_id,
             kind=affordance.action_kind,
@@ -275,7 +275,7 @@ class ExecutiveCandidate:
             action_intent=intent,
             content_plan=content,
             features=candidate_features,
-            provenance="affordance-derived",
+            provenance="affordance-derived/learned",
             source_percept_id=None if percept is None else percept.event_id,
             source_affordance_id=affordance.affordance_id,
         )
@@ -294,7 +294,18 @@ class ExecutiveCandidate:
             key=lambda item: (item.priority, -item.progress, item.goal_id),
             default=None,
         )
-        feature_map = features_by_affordance or {}
+        if features_by_affordance is None:
+            raise ValueError(
+                "world affordance candidate synthesis requires a learned feature source"
+            )
+        feature_map = dict(features_by_affordance)
+        missing = [
+            affordance.affordance_id
+            for affordance in state.world.affordances
+            if affordance.affordance_id not in feature_map
+        ]
+        if missing:
+            raise ValueError(f"missing learned affordance features: {missing}")
         return tuple(
             cls.from_world_affordance(
                 affordance,
@@ -417,11 +428,12 @@ class ExecutiveTrainingExample:
 class ExecutiveController:
     """Learn a state-conditioned utility over structured executive candidates."""
 
-    def __init__(self, *, seed: int = 0) -> None:
+    def __init__(self, *, candidate_feature_dim: int = 6, seed: int = 0) -> None:
         del seed
-        feature_dim = len(EXECUTIVE_CANDIDATE_FEATURE_NAMES) + len(
-            EXECUTIVE_CONTEXT_FEATURE_NAMES
-        )
+        if int(candidate_feature_dim) <= 0:
+            raise ValueError("executive candidate_feature_dim must be positive")
+        self.candidate_feature_dim = int(candidate_feature_dim)
+        feature_dim = self.candidate_feature_dim + len(EXECUTIVE_CONTEXT_FEATURE_NAMES)
         self._model = nn.Linear(feature_dim, 1, bias=True)
         with torch.no_grad():
             self._model.weight.zero_()
@@ -437,7 +449,12 @@ class ExecutiveController:
 
     @property
     def feature_names(self) -> tuple[str, ...]:
-        return EXECUTIVE_CANDIDATE_FEATURE_NAMES + EXECUTIVE_CONTEXT_FEATURE_NAMES
+        candidate_names = (
+            EXECUTIVE_CANDIDATE_FEATURE_NAMES
+            if self.candidate_feature_dim == len(EXECUTIVE_CANDIDATE_FEATURE_NAMES)
+            else tuple(f"candidate_feature_{index}" for index in range(self.candidate_feature_dim))
+        )
+        return candidate_names + EXECUTIVE_CONTEXT_FEATURE_NAMES
 
     def _feature_matrix(
         self,
@@ -447,6 +464,8 @@ class ExecutiveController:
         candidates = tuple(candidates)
         if not candidates:
             raise ValueError("executive selection requires candidates")
+        if any(item.feature_tensor().numel() != self.candidate_feature_dim for item in candidates):
+            raise ValueError("executive candidate feature dimension does not match controller")
         candidate_features = torch.stack([item.feature_tensor() for item in candidates])
         context_features = context.features.detach().to(dtype=torch.float32)
         return torch.cat(
@@ -542,6 +561,7 @@ class ExecutiveController:
         return {
             "format": EXECUTIVE_CHECKPOINT_FORMAT,
             "feature_names": list(self.feature_names),
+            "candidate_feature_dim": self.candidate_feature_dim,
             "training_steps": self.training_steps,
             "state_dict": {
                 name: tensor.detach().cpu().clone()
@@ -553,7 +573,11 @@ class ExecutiveController:
     def from_checkpoint(cls, payload: Mapping[str, Any]) -> ExecutiveController:
         if payload.get("format") != EXECUTIVE_CHECKPOINT_FORMAT:
             raise ValueError("unsupported executive checkpoint format")
-        controller = cls()
+        controller = cls(
+            candidate_feature_dim=int(
+                payload.get("candidate_feature_dim", len(EXECUTIVE_CANDIDATE_FEATURE_NAMES))
+            )
+        )
         if tuple(payload.get("feature_names", ())) != controller.feature_names:
             raise ValueError("executive feature contract mismatch")
         controller._model.load_state_dict(payload["state_dict"])

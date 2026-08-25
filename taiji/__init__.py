@@ -5,6 +5,11 @@ runtime.  PyTorch is used only as a tensor execution engine.
 """
 
 from .adapter import TSKV8Adapter
+from .affordance import (
+    AFFORDANCE_FEATURE_CHECKPOINT_FORMAT,
+    AffordanceFeatureTrainingExample,
+    LearnedAffordanceFeatures,
+)
 from .assembly_evaluation import (
     AssemblyRelationEvaluationConfig,
     AssemblyRelationEvaluator,
@@ -169,6 +174,8 @@ from .world_learning import (
 __all__ = [
     "ByteMotor",
     "ByteSensor",
+    "AFFORDANCE_FEATURE_CHECKPOINT_FORMAT",
+    "AffordanceFeatureTrainingExample",
     "ActionIntent",
     "A1EvaluationConfig",
     "AssemblyRelationCorpus",
@@ -283,6 +290,7 @@ __all__ = [
     "InputTrace",
     "HOMEOSTASIS_CHECKPOINT_FORMAT",
     "LearningState",
+    "LearnedAffordanceFeatures",
     "LearnedPerception",
     "SelfState",
     "WorkspaceState",
