@@ -1,0 +1,21 @@
+{
+  "format": "taiji-p7-rollout-recovery-transfer-manifest-v1",
+  "task": "transfer runtime rollout recovery across horizon and failure position",
+  "seeds": [
+    11,
+    23,
+    37
+  ],
+  "horizons": [
+    3,
+    4,
+    5
+  ],
+  "failure_positions": "all non-terminal positions per horizon",
+  "controls": [
+    "variable-horizon",
+    "failure-position-transfer",
+    "recovery-checkpoint-continuation"
+  ],
+  "boundary": "runtime recovery state transfer; not general failure recovery or intelligence"
+}
