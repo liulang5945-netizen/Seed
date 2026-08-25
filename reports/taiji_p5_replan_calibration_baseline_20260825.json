@@ -1,0 +1,18 @@
+{
+  "format": "taiji-p5-replan-calibration-v1",
+  "metrics": {
+    "first_selected_rollout": "safe-rollout",
+    "first_replan_required": true,
+    "first_calibrated_confidence": 0.0,
+    "second_selected_rollout": "risky-rollout",
+    "second_replan_required": false,
+    "second_prediction_error": 0.0,
+    "second_calibrated_confidence": 1.0,
+    "checkpoint_safe_confidence": 0.0,
+    "checkpoint_risky_confidence": 1.0
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "prediction error causes an alternative rollout to execute and empirical success confidence is restored through checkpoint"
+  }
+}
