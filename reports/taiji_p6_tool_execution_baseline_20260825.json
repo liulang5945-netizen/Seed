@@ -1,0 +1,17 @@
+{
+  "format": "taiji-p6-tool-execution-v1",
+  "metrics": {
+    "tool_name": "weather.lookup.v1",
+    "tool_success": true,
+    "tool_reward": 1.0,
+    "tool_terminal": true,
+    "outcome_intent_match": true,
+    "episodic_memory_count": 1,
+    "outcome_recalled_from_memory": true,
+    "direct_byte_lesion_blocked": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "structured tool execution succeeds, outcome returns to episodic memory, and direct-byte-only runtime cannot replace the tool organ"
+  }
+}

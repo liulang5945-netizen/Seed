@@ -47,7 +47,7 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P4 最小记忆纵切片已落地：`WorkingMemoryItem`、`EpisodicMemoryRecord` 和可容量治理的 `EpisodicMemoryStore` 属于
   Taiji；adapter 在真实 action outcome 后写入经历、下一观察按 cue 检索，native checkpoint 可恢复记录与 working state。
   store 已改为 insertion-ordered dictionary，重复 memory_id 替换与容量淘汰不再每次全表重建；当前原生回归为
-  92 passed、1 skipped。
+  94 passed、1 skipped。
 - P4 cue-conditioned one-shot recall 窄 Gate 已通过：full、episode-ID lesion、checkpoint continuation 的 action recall
   均为 1.0，retrieval/write lesion 均为 0；报告和 manifest 为 `reports/taiji_p4_episodic_recall_*_20260825.json`。
   该结果证明经历检索和来源独立性，不证明从多次经历抽取新组合语义。
@@ -88,10 +88,13 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
   `intent_kind`、semantic slots、tool name 和 goal provenance；codec round-trip 后可还原为同一 intent 绑定的 `WorldAction`。
   `TSKV8Adapter` 已拥有 generation controller 与 native checkpoint 恢复。该 Gate 只证明结构化工具效应器边界，不证明语言流畅性、
   自主内容创造或真实外部工具成功。
-- 原生套件当前 92 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
+- P6 tool execution/outcome 窄 Gate 已通过：`TaijiToolEnvironment` 执行结构化 tool call 后，真实 `Outcome` 保持 intent ID、success、
+  reward、terminal 并写入 episodic memory；无 generation organ 的 direct-byte lesion 不能执行同一工具合同。该 Gate 使用模拟环境，
+  不代表外部服务可靠性或失败后的自动恢复。
+- 原生套件当前 94 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-继续 P6 tool execution/outcome Gate：把结构化 `ToolCall` 接入真实/模拟环境执行，并验证 outcome 回写、失败重规划和 direct-byte
-lesion；保留当前 P3/P4/P5 Gate，不让 byte motor 或 Legacy Transformer 代替目标规划与内容决策。
+继续 P6 tool failure/replan Gate：让结构化工具失败产生可观测 prediction error，触发替代计划并把恢复结果写回记忆；保留当前
+P3/P4/P5 Gate，不让 byte motor 或 Legacy Transformer 代替目标规划与内容决策。
