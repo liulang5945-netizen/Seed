@@ -1,0 +1,82 @@
+{
+  "format": "taiji-p7-grounded-multistep-v1",
+  "manifest_format": "taiji-p7-grounded-multistep-manifest-v1",
+  "metrics": {
+    "cross_seed_rates": {
+      "holdout_selected_positive": 1.0,
+      "first_failed": 1.0,
+      "second_succeeded": 1.0,
+      "checkpoint_pending_credit": 1.0,
+      "first_lineage_complete": 1.0,
+      "second_lineage_complete": 1.0,
+      "delayed_credit_complete": 1.0,
+      "replan_complete": 1.0
+    },
+    "runs": [
+      {
+        "seed": 11,
+        "train_examples": 4,
+        "holdout_affordances": 2,
+        "holdout_selected_positive": true,
+        "first_failed": true,
+        "second_succeeded": true,
+        "checkpoint_pending_credit": true,
+        "first_lineage_complete": true,
+        "second_lineage_complete": true,
+        "delayed_credit_complete": true,
+        "source_online_updates": 3,
+        "executive_training_steps": 723,
+        "executive_fit_steps": 720,
+        "replan_complete": true,
+        "action_trace": [
+          10,
+          11
+        ]
+      },
+      {
+        "seed": 23,
+        "train_examples": 4,
+        "holdout_affordances": 2,
+        "holdout_selected_positive": true,
+        "first_failed": true,
+        "second_succeeded": true,
+        "checkpoint_pending_credit": true,
+        "first_lineage_complete": true,
+        "second_lineage_complete": true,
+        "delayed_credit_complete": true,
+        "source_online_updates": 3,
+        "executive_training_steps": 723,
+        "executive_fit_steps": 720,
+        "replan_complete": true,
+        "action_trace": [
+          10,
+          11
+        ]
+      },
+      {
+        "seed": 37,
+        "train_examples": 4,
+        "holdout_affordances": 2,
+        "holdout_selected_positive": true,
+        "first_failed": true,
+        "second_succeeded": true,
+        "checkpoint_pending_credit": true,
+        "first_lineage_complete": true,
+        "second_lineage_complete": true,
+        "delayed_credit_complete": true,
+        "source_online_updates": 3,
+        "executive_training_steps": 723,
+        "executive_fit_steps": 720,
+        "replan_complete": true,
+        "action_trace": [
+          10,
+          11
+        ]
+      }
+    ]
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "all seeds must transfer the holdout selection and preserve lineage, failure replan, delayed credit, and checkpoint continuation"
+  }
+}
