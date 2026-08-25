@@ -8,7 +8,7 @@
   "training": {
     "training_applied": false,
     "reason": "this Gate validates the provider data boundary and baseline; no external trainer or weight update is hidden here",
-    "train_examples": 2,
+    "train_examples": 4,
     "holdout_examples": 2,
     "corpus_round_trip": true,
     "split_example_ids_disjoint": true,
@@ -17,29 +17,50 @@
   "train_metrics": {
     "examples": [
       {
-        "example_id": "qwen:train:status-train:example",
-        "output_text": "操作员收到一个简短的消息。",
+        "example_id": "qwen:train:database-train:example",
+        "output_text": "操作员收到一条简短的消息，预期结果是“操作员接收到一个简洁的通知”，意图类型是“",
         "output_nonempty": true,
         "required_terms": [
-          "稳定"
+          "数据库"
         ],
         "required_term_recall": 0.0,
         "prompt_or_json_leak": false
       },
       {
-        "example_id": "qwen:train:maintenance-train:example",
-        "output_text": "今晚十点，我们将对您的操作进行维护，请您稍等片刻。",
+        "example_id": "qwen:train:interface-train:example",
+        "output_text": "操作员收到一个简短的通知，告知他们即将接收到一个维护的服务通知。",
         "output_nonempty": true,
         "required_terms": [
-          "维护窗口",
-          "今晚十点"
+          "接口"
+        ],
+        "required_term_recall": 0.0,
+        "prompt_or_json_leak": false
+      },
+      {
+        "example_id": "qwen:train:cache-recovery-train:example",
+        "output_text": "操作员收到了一个简短的消息，表明他们正在处理缓存恢复的问题。",
+        "output_nonempty": true,
+        "required_terms": [
+          "缓存",
+          "恢复"
+        ],
+        "required_term_recall": 1.0,
+        "prompt_or_json_leak": false
+      },
+      {
+        "example_id": "qwen:train:cache-warning-train:example",
+        "output_text": "操作员收到一个简短的消息，提示他们可能需要处理一些缓存问题。",
+        "output_nonempty": true,
+        "required_terms": [
+          "缓存",
+          "警告"
         ],
         "required_term_recall": 0.5,
         "prompt_or_json_leak": false
       }
     ],
     "output_nonempty_rate": 1.0,
-    "required_term_recall": 0.25,
+    "required_term_recall": 0.375,
     "prompt_leakage_rate": 1.0
   },
   "holdout_metrics": {

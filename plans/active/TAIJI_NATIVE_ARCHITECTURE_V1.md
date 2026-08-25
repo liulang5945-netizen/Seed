@@ -272,6 +272,8 @@ Taiji v1 的完整认知状态至少包含：
   清除 `replan_required`；只设置一个布尔值不算完成闭环。
 - provider 训练数据必须由 Taiji-owned `LanguageTrainingCorpus` 明确分离 train/holdout，跨 split 禁止重复 example/expression ID；
   trainer 是外部器官适配层的可替换能力，必须报告是否真的更新权重，不能把“加载数据”冒充“已训练”。
+- provider trainer 可以使用 LoRA 等参数高效方法，但 base decoder 必须保持可回滚，训练质量必须在同一 holdout 上相对 raw baseline
+  提升，并在接入运行时前通过 validator/fallback、organ lesion 和认知不变性 Gate。
 - byte motor 可保留为最末端 codec/回退器官，不能继续直接承担全部认知输出。
 - 每次执行都生成可追踪的 pending action，真实 outcome 回写世界模型、记忆和 credit assignment。
 
