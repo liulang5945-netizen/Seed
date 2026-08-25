@@ -114,4 +114,4 @@ Taiji 不以“逐功能替换 TransformerBlock”为设计主轴。Transformer 
 
 ## 9. 当前唯一入口
 
-执行顺序只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。P1 已完成首个兼容纵切片，P2 已完成 assembly relation 数据合同与真实 manifest；当前唯一入口是实现 slot-binding relation baseline，避免继续叠加未验证的训练 loss。
+执行顺序只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。P1 已完成首个兼容纵切片，P2 已完成 assembly relation 数据合同与小规模 subgate baseline；当前唯一入口是扩大 atom pool 与独立语料分区验证，避免把小样本通过误认为完整能力。

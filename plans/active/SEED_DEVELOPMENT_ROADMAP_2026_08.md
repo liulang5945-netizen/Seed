@@ -89,6 +89,13 @@ composition，训练与未见组合共享 atom 但 pair 完全不重叠；
 16 unseen pairs）。pair provenance 只存在于评测 metadata，不进入模型输入；旧的
 next-byte A1 报告保留为历史对照，不再作为组合关系的唯一合同。
 
+`AssemblyRelationEvaluator` 已对该 manifest 生成
+`reports/taiji_a1_assembly_relation_baseline_20260825.json`。加强后的 relation
+subgate 在三个 seed 上通过：slot generalization gain 最小 `+0.75`，boundary
+consistency 最小 `0.9825`，random binding drop 最小 `+0.1875`，slot cross-seed
+std `0.1062`。这只证明当前结构性组合合同在小规模 manifest 上成立；旧 next-byte
+A1 仍未通过，完整 P2 不能因此退出。
+
 ## 3. 执行原则
 
 1. 能力合同先于模块命名和代码目录。
@@ -267,4 +274,4 @@ next-byte A1 报告保留为历史对照，不再作为组合关系的唯一合�
 
 ## 16. 当前唯一下一步
 
-**实现 `AssemblyRelationEvaluator`：在同一 relation manifest 上评估 completed assembly 的 left/right slot binding、boundary consistency、random-chunk lesion 和 byte-only 对照；先得到新的 A1 relation baseline，再决定训练目标。**
+**扩大 relation baseline：用更大的 atom pool 和独立语料分区重建 manifest，重复 slot binding、boundary consistency、random-chunk lesion 和 byte-only 对照，确认 relation subgate 不是 8-atom 小样本偶然结果。**
