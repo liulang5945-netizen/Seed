@@ -18,6 +18,7 @@ class HealthPayload(BaseModel):
     is_seed: bool = False  # Seed 原生运行时（taiji 基底）是否激活
     startup_complete: bool = False
     startup_error: str = ""
+    language_provider: dict = {}
 
 
 class MemoryPayload(BaseModel):

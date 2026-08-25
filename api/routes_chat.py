@@ -449,6 +449,7 @@ async def health_check():
     if app_state.startup_error:
         return {"status": "error", "message": app_state.startup_error}
 
+    seed_runtime = get_seed_runtime()
     payload = {
         "status": "ok",
         "service": "Taiji API",
@@ -457,6 +458,8 @@ async def health_check():
         "taiji_available": app_state.is_taiji(),
         "seed_active": is_seed_active(),
     }
+    if seed_runtime is not None:
+        payload["language_provider"] = seed_runtime.language_provider_status
 
     # Expose security middleware status so callers can detect silent degradation
     try:

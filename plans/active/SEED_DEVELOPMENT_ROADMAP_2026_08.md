@@ -456,5 +456,5 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一决策入口：将 artifact loader 接入 Seed 客户端的配置/启动链路，但继续保持 guarded provider 显式 opt-in，并为客户端启动增加
-provider 缺失、版本不匹配和回滚到 structured-stub 的可观测状态；不把 Transformer 或其他 decoder 变成认知主体。**
+**下一决策入口：将 `language_provider` 状态接入 frontend runtime store 与运行时提示，让客户端明确显示 active/fallback、回退原因和
+structured-stub 恢复状态；前端只展示，不参与认知决策或 provider 装载。**

@@ -22,6 +22,16 @@ export const useRuntimeStore = defineStore('runtime', () => {
     state: 'unknown',
     message: '',
     modelLoaded: false,
+    languageProvider: {
+      mode: 'unknown',
+      state: 'unknown',
+      provider: '',
+      backend_id: '',
+      artifact_id: '',
+      reason_code: '',
+      reason: '',
+      rollback: 'structured-stub',
+    },
     checkedAt: 0,
   })
   const memory = ref(null)
@@ -129,6 +139,18 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const runtimeNotice = computed(() => {
     if (modelLifecycle.value.state === 'ready') return null
     return modelLifecycle.value
+  })
+
+  const languageProviderNotice = computed(() => {
+    const provider = health.value.languageProvider || {}
+    if (provider.state !== 'fallback') return null
+    return {
+      state: 'warning',
+      title: '语言器官已回退',
+      message: provider.reason
+        ? `${provider.reason} 当前使用 structured-stub。`
+        : '外部语言器官不可用，当前使用 structured-stub。',
+    }
   })
 
   const normalizedTools = computed(() => tools.value.map(tool => ({
@@ -250,6 +272,13 @@ export const useRuntimeStore = defineStore('runtime', () => {
         message: memoryAvailableGb.value !== null ? `可用内存 ${memoryAvailableGb.value.toFixed(1)}GB，模型装载可能被延后。` : '系统内存不足。',
       })
     }
+    if (languageProviderNotice.value) {
+      list.push({
+        level: 'warning',
+        title: languageProviderNotice.value.title,
+        message: languageProviderNotice.value.message,
+      })
+    }
     if (toolError.value) {
       list.push({ level: 'warning', title: '工具状态异常', message: toolError.value })
     }
@@ -284,6 +313,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
         state: data.health.state || 'unknown',
         message: data.health.message || '',
         modelLoaded: !!data.health.model_loaded,
+        languageProvider: data.health.language_provider || health.value.languageProvider,
         modelName: data.health.model_name || '',
         isTaiji: !!data.health.is_taiji,
         switch: data.health.switch || {},
@@ -452,6 +482,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
     memoryAvailablePct,
     modelLifecycle,
     runtimeNotice,
+    languageProviderNotice,
     normalizedTools,
     toolGroups,
     toolCategories,

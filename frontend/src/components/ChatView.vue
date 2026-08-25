@@ -30,6 +30,10 @@
               <span class="ok-dot"></span>
               {{ runtimeStore.connectionStatus }} · {{ runtimeStore.health.isTaiji ? 'Taiji Native 原始字节通路' : 'Seed 运行时' }}
             </div>
+            <div v-if="runtimeStore.languageProviderNotice" class="provider-notice">
+              <span class="runtime-notice-dot warning"></span>
+              <span>{{ runtimeStore.languageProviderNotice.message }}</span>
+            </div>
           </section>
 
           <!-- 建议词云 -->
@@ -89,6 +93,13 @@
               <div>
                 <strong>{{ runtimeNotice.title }}</strong>
                 <p>{{ runtimeNotice.message }}</p>
+              </div>
+            </div>
+            <div v-if="runtimeStore.languageProviderNotice" class="runtime-notice warning">
+              <span class="runtime-notice-dot warning"></span>
+              <div>
+                <strong>{{ runtimeStore.languageProviderNotice.title }}</strong>
+                <p>{{ runtimeStore.languageProviderNotice.message }}</p>
               </div>
             </div>
 
@@ -666,12 +677,15 @@ onMounted(scrollToBottom)
   box-shadow: var(--shadow-sm);
 }
 .runtime-notice-dot { width: 8px; height: 8px; margin-top: 5px; border-radius: 50%; background: var(--muted-foreground); flex-shrink: 0; }
+.runtime-notice-dot.warning { background: var(--warning); }
 .runtime-notice.loading .runtime-notice-dot,
 .runtime-notice.connecting .runtime-notice-dot { background: var(--warning); }
 .runtime-notice.error .runtime-notice-dot { background: var(--destructive); }
 .runtime-notice.connected .runtime-notice-dot { background: var(--success); }
 .runtime-notice strong { display: block; color: var(--foreground); font-size: 13px; font-weight: 650; }
 .runtime-notice p { margin: 3px 0 0; color: var(--muted-foreground); font-size: 12px; line-height: 1.5; }
+.provider-notice { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; color: var(--warning); font-size: 12px; }
+.provider-notice .runtime-notice-dot { margin-top: 0; }
 
 /* 加载更多 */
 .load-more-row { text-align: center; padding: 4px 0; }

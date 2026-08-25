@@ -36,9 +36,26 @@ class SeedRuntime:
 
     RUNTIME_TYPE = "seed"
 
-    def __init__(self, model: Any, checkpoint_path: Path | None = None) -> None:
+    def __init__(
+        self,
+        model: Any,
+        checkpoint_path: Path | None = None,
+        provider_status: dict[str, str] | None = None,
+        provider_runtime: Any | None = None,
+    ) -> None:
         self.model = model
         self.checkpoint_path = checkpoint_path
+        self._provider_status = provider_status or {
+            "mode": "structured",
+            "state": "unconfigured",
+            "provider": "structured",
+            "backend_id": "structured-stub",
+            "artifact_id": "structured-stub",
+            "reason_code": "",
+            "reason": "",
+            "rollback": "structured-stub",
+        }
+        self._provider_runtime = provider_runtime
         self._lock = threading.Lock()
 
     @property
@@ -48,7 +65,12 @@ class SeedRuntime:
         return "seed:scratch"
 
     @classmethod
-    def load(cls, checkpoint_path: Path | str | None = None) -> SeedRuntime:
+    def load(
+        cls,
+        checkpoint_path: Path | str | None = None,
+        *,
+        provider_config: Any | None = None,
+    ) -> SeedRuntime:
         """从 seed-native-v1 检查点装配 Seed（与训练管线同一信封）。"""
         import torch
 
@@ -65,8 +87,18 @@ class SeedRuntime:
             )
             checkpoint = torch.load(path, map_location="cpu", weights_only=False)
         model = Seed.from_checkpoint(checkpoint)
+        from seed import LanguageProviderConfig
+        from seed.language_provider import activate_language_provider
+
+        selected_config = provider_config or LanguageProviderConfig.from_environment(
+            model.config.language_provider
+        )
+        provider_status, provider_runtime = activate_language_provider(
+            model.architecture,
+            selected_config,
+        )
         logger.info("Seed runtime loaded from %s", path)
-        return cls(model, path)
+        return cls(model, path, provider_status.to_dict(), provider_runtime)
 
     @staticmethod
     def _serialize(prompt: str, history: Sequence[tuple[str, str]] | None) -> str:
@@ -142,7 +174,12 @@ class SeedRuntime:
             "name": self.name,
             "tick": int(self.model.tick),
             "parameters": int(self.model.parameter_count()),
+            "language_provider": dict(self._provider_status),
         }
+
+    @property
+    def language_provider_status(self) -> dict[str, str]:
+        return dict(self._provider_status)
 
 
 # ---------------- 进程级单例与热切换 ----------------
@@ -161,11 +198,13 @@ def get_seed_runtime() -> SeedRuntime | None:
 
 def activate_seed(
     checkpoint_path: Path | str | None = None,
+    *,
+    provider_config: Any | None = None,
 ) -> SeedRuntime:
     """加载并激活 Seed 运行时（替换既有实例）。"""
     global _runtime
     with _runtime_lock:
-        runtime = SeedRuntime.load(checkpoint_path)
+        runtime = SeedRuntime.load(checkpoint_path, provider_config=provider_config)
         _runtime = runtime
         return runtime
 
