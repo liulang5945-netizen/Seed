@@ -1,0 +1,25 @@
+{
+  "format": "taiji-p4-procedural-robustness-v1",
+  "train_records": 168,
+  "holdout_episodes": 2,
+  "action_kinds": [
+    "advance",
+    "hold",
+    "prepare",
+    "retreat"
+  ],
+  "metrics": {
+    "baseline_loss": 0.0007329107029363513,
+    "baseline_transfer_accuracy": 1.0,
+    "similar_interference_loss": 0.012716523371636868,
+    "similar_interference_accuracy": 1.0,
+    "checkpoint_continuation_accuracy": 1.0,
+    "budgeted_store_records": 168,
+    "budgeted_accuracy_after_forgetting": 0.5,
+    "interference_store_records": 216
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "ordered multi-step skill transfers to unseen transitions, survives similar interference, and shows bounded-memory forgetting"
+  }
+}

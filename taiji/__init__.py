@@ -60,7 +60,9 @@ from .organs import ByteMotor, ByteSensor, SparseReceptorBank
 from .perception import LearnedPerception
 from .procedural_memory import (
     PROCEDURAL_MEMORY_CHECKPOINT_FORMAT,
+    SEQUENTIAL_PROCEDURAL_MEMORY_CHECKPOINT_FORMAT,
     ProceduralMemoryLearner,
+    ProceduralSequenceLearner,
 )
 from .semantic_memory import (
     SEMANTIC_MEMORY_CHECKPOINT_FORMAT,
@@ -131,6 +133,8 @@ __all__ = [
     "PerceptEvent",
     "ProceduralMemoryLearner",
     "PROCEDURAL_MEMORY_CHECKPOINT_FORMAT",
+    "ProceduralSequenceLearner",
+    "SEQUENTIAL_PROCEDURAL_MEMORY_CHECKPOINT_FORMAT",
     "PlanCandidate",
     "PlanState",
     "PendingAction",
