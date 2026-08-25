@@ -1191,6 +1191,59 @@ class WorldCalibrationTrace:
 
 
 @dataclass(frozen=True)
+class PlanningRecoveryState:
+    """Explicit runtime state entered after an imagined-world error."""
+
+    mode: str
+    trigger: str
+    prediction_error: float
+    threshold: float
+    source_rollout_id: str | None = None
+    remaining_rollout_steps: int = 0
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.mode, "planning recovery mode")
+        _check_text(self.trigger, "planning recovery trigger")
+        if not math.isfinite(float(self.prediction_error)) or float(self.prediction_error) < 0.0:
+            raise ValueError("planning recovery prediction_error must be finite and non-negative")
+        if not math.isfinite(float(self.threshold)) or float(self.threshold) < 0.0:
+            raise ValueError("planning recovery threshold must be finite and non-negative")
+        if self.source_rollout_id is not None and not str(self.source_rollout_id):
+            raise ValueError("planning recovery source_rollout_id cannot be empty")
+        if int(self.remaining_rollout_steps) < 0:
+            raise ValueError("planning recovery remaining_rollout_steps cannot be negative")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "mode": self.mode,
+            "trigger": self.trigger,
+            "prediction_error": self.prediction_error,
+            "threshold": self.threshold,
+            "source_rollout_id": self.source_rollout_id,
+            "remaining_rollout_steps": self.remaining_rollout_steps,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> PlanningRecoveryState:
+        return cls(
+            version=int(payload["version"]),
+            mode=str(payload["mode"]),
+            trigger=str(payload["trigger"]),
+            prediction_error=float(payload["prediction_error"]),
+            threshold=float(payload["threshold"]),
+            source_rollout_id=(
+                None
+                if payload.get("source_rollout_id") is None
+                else str(payload["source_rollout_id"])
+            ),
+            remaining_rollout_steps=int(payload.get("remaining_rollout_steps", 0)),
+        )
+
+
+@dataclass(frozen=True)
 class EpisodicMemoryRecord:
     """One real experience owned by Taiji's episodic memory system."""
 
@@ -1615,6 +1668,7 @@ class CognitiveState:
     world_transition: WorldTransition | None = None
     world_prediction: WorldPredictionRecord | None = None
     world_calibration_trace: tuple[WorldCalibrationTrace, ...] = ()
+    planning_recovery: PlanningRecoveryState | None = None
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -1652,6 +1706,9 @@ class CognitiveState:
             "world_calibration_trace": [
                 item.to_payload() for item in self.world_calibration_trace
             ],
+            "planning_recovery": (
+                None if self.planning_recovery is None else self.planning_recovery.to_payload()
+            ),
         }
 
     @classmethod
@@ -1702,6 +1759,11 @@ class CognitiveState:
             world_calibration_trace=tuple(
                 WorldCalibrationTrace.from_payload(item, device=device)
                 for item in payload.get("world_calibration_trace", ())
+            ),
+            planning_recovery=(
+                None
+                if payload.get("planning_recovery") is None
+                else PlanningRecoveryState.from_payload(payload["planning_recovery"])
             ),
         )
 

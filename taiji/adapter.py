@@ -29,6 +29,7 @@ from .contracts import (
     Observation,
     Outcome,
     PlanCandidate,
+    PlanningRecoveryState,
     PlanState,
     SelfState,
     WorkingMemoryItem,
@@ -1177,6 +1178,8 @@ class TSKV8Adapter(Taiji):
                 steps=rollout.steps[1:],
                 confidence=rollout.confidence,
             )
+        if result.terminal and self._cognitive_state.planning_recovery is not None:
+            self._cognitive_state = replace(self._cognitive_state, planning_recovery=None)
         return experienced
 
     @property
@@ -1190,6 +1193,12 @@ class TSKV8Adapter(Taiji):
     @property
     def last_rollout_calibrated_confidence(self) -> float | None:
         return self._last_rollout_calibrated_confidence
+
+    @property
+    def planning_recovery(self) -> PlanningRecoveryState | None:
+        """Return the explicit runtime recovery mode, if one is active."""
+
+        return self._cognitive_state.planning_recovery
 
     def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         super().reset_dynamics(episode_id=episode_id)
@@ -1632,6 +1641,7 @@ class TSKV8Adapter(Taiji):
         transition = None
         prediction_record = self._cognitive_state.world_prediction
         calibration_trace = self._cognitive_state.world_calibration_trace
+        recovery_state = self._cognitive_state.planning_recovery
         world_model_replan = False
         if world_state is not None:
             if world_action is None:
@@ -1679,8 +1689,34 @@ class TSKV8Adapter(Taiji):
                     and self._goal_planner is not None
                     and prediction_record.state_error is not None
                     and prediction_record.state_error
-                    > self._goal_planner.config.replan_error_threshold
+                    > (
+                        self._goal_planner.config.recovery_error_threshold
+                        if recovery_state is not None
+                        else self._goal_planner.config.replan_error_threshold
+                    )
                 )
+                if world_model_replan:
+                    threshold = (
+                        self._goal_planner.config.recovery_error_threshold
+                        if recovery_state is not None
+                        else self._goal_planner.config.replan_error_threshold
+                    )
+                    recovery_state = PlanningRecoveryState(
+                        mode="world-error-recovery",
+                        trigger="world-prediction-error",
+                        prediction_error=float(prediction_record.state_error),
+                        threshold=float(threshold),
+                        source_rollout_id=(
+                            None
+                            if self._planned_rollout is None
+                            else self._planned_rollout.rollout_id
+                        ),
+                        remaining_rollout_steps=(
+                            0
+                            if self._planned_rollout is None
+                            else max(0, len(self._planned_rollout.steps) - 1)
+                        ),
+                    )
                 if learn_world is None:
                     learn_world = bool(kwargs.get("learn", True))
                 if learn_world:
@@ -1706,12 +1742,17 @@ class TSKV8Adapter(Taiji):
         memory = self._cognitive_state.memory
         if self._planned_rollout is not None and self._goal_planner is not None:
             rollout = self._planned_rollout
+            planning_error_threshold = (
+                self._goal_planner.config.recovery_error_threshold
+                if recovery_state is not None
+                else self._goal_planner.config.replan_error_threshold
+            )
             self._last_rollout_prediction_error = self._goal_planner.rollout_prediction_error(
                 rollout, outcome
             )
             self._replan_required = self._language_fallback_requires_replan or (
                 self._last_rollout_prediction_error
-                > self._goal_planner.config.replan_error_threshold
+                > planning_error_threshold
             )
             self._last_rollout_calibrated_confidence = self._goal_planner.record_rollout_outcome(
                 rollout, outcome
@@ -1768,6 +1809,7 @@ class TSKV8Adapter(Taiji):
             world_transition=transition,
             world_prediction=prediction_record,
             world_calibration_trace=calibration_trace,
+            planning_recovery=recovery_state,
             learning=replace(
                 self._cognitive_state.learning,
                 tick=self.tick,
@@ -1845,6 +1887,11 @@ class TSKV8Adapter(Taiji):
             None if self._planned_rollout is None else self._planned_rollout.to_payload()
         )
         payload["replan_required"] = self._replan_required
+        payload["planning_recovery"] = (
+            None
+            if self._cognitive_state.planning_recovery is None
+            else self._cognitive_state.planning_recovery.to_payload()
+        )
         payload["last_rollout_prediction_error"] = self._last_rollout_prediction_error
         payload["last_rollout_calibrated_confidence"] = self._last_rollout_calibrated_confidence
         payload["last_content_selection"] = (
@@ -2165,6 +2212,13 @@ class TSKV8Adapter(Taiji):
         self._replan_required = bool(
             payload.get("replan_required", False) if isinstance(payload, dict) else False
         )
+        recovery = payload.get("planning_recovery") if isinstance(payload, dict) else None
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            planning_recovery=(
+                None if recovery is None else PlanningRecoveryState.from_payload(recovery)
+            ),
+        )
         error = payload.get("last_rollout_prediction_error") if isinstance(payload, dict) else None
         self._last_rollout_prediction_error = None if error is None else float(error)
         confidence = (
@@ -2214,6 +2268,11 @@ class TSKV8Adapter(Taiji):
             None if self._planned_rollout is None else self._planned_rollout.to_payload()
         )
         components["replan_required"] = self._replan_required
+        components["planning_recovery"] = (
+            None
+            if self._cognitive_state.planning_recovery is None
+            else self._cognitive_state.planning_recovery.to_payload()
+        )
         components["last_rollout_prediction_error"] = self._last_rollout_prediction_error
         components["last_rollout_calibrated_confidence"] = (
             self._last_rollout_calibrated_confidence
