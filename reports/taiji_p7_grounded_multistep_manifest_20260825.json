@@ -1,6 +1,6 @@
 {
   "format": "taiji-p7-grounded-multistep-manifest-v1",
-  "task": "grounded multi-step executive transfer with failure replan and delayed credit",
+  "task": "four-step grounded executive transfer with continuous failure replan and delayed credit",
   "train": {
     "examples": 4,
     "actor_ids": [
@@ -29,7 +29,9 @@
     "relation_predicates": [
       "supports-holdout",
       "supports-after",
-      "reaches-after"
+      "reaches-after",
+      "tracks-after",
+      "arrives-after"
     ],
     "action_kinds": [
       "holdout-positive-action",

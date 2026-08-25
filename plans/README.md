@@ -43,7 +43,7 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P7 world-grounding lineage Gate 已通过：adapter 在 `observe_event` 与 `settle_action` 进入认知状态前统一由 `WorldAffordanceGroundingProducer` 从 actor/target numeric object summary、relation binding、world latent 和 confidence 生成 raw grounding，并记录 `grounding_lineage`；`action_kind/affordance_id` 不参与特征查表。
 - P7 end-to-end grounding transfer Gate 已通过：`WorldAffordanceGroundingProducer → LearnedAffordanceFeatures → ExecutiveController` 在新对象、新关系谓词和新 action kind 的 holdout 上保持正确选择；producer lesion 会使选择退化，证明 executive 消费的是 grounding 表征而非符号表。
 - P7 grounded multi-step environment Gate 已通过：`EnvironmentOutcome.world_state` 进入真实 `WorldTransition` 后，adapter 在行动前后都保留 `grounding_lineage`；失败 action 触发 alternative replan，原决策的 delayed credit 可跨 replan 与 native checkpoint 恢复，并继续更新对应 affordance source。
-- P7 grounded multi-step train/holdout Gate 已通过：4 条 train affordance、未见 actor/target/relation/action kind 的 holdout 和 3 个 seed 均达到 holdout selection、两步 failure replan、before/after lineage、checkpoint pending credit 与 delayed credit `1.0`；manifest/report 为 `reports/taiji_p7_grounded_multistep_*_20260825.json`。该结果仍是小型数值世界 transfer，不代表通用关系推理。
+- P7 grounded multi-step train/holdout Gate 已通过：4 条 train affordance、未见 actor/target/relation/action kind 的 holdout 和 3 个 seed 均达到 holdout selection、四步链路中前三步连续 failure replan、全程 before/after lineage、checkpoint pending credit 与跨步 delayed credit `1.0`；manifest/report 为 `reports/taiji_p7_grounded_multistep_*_20260825.json`。该结果仍是小型数值世界 transfer，不代表通用关系推理。
 - P7 grounded multi-step causal-lesion Gate 已通过：3 个 seed 的 producer lesion 均使 holdout 选择退化，feature-source lesion 均阻断候选合成，跳过 delayed credit 均少一次 source/executive online update；结果与主 Gate 一起写入同一 report。该结果证明当前控制变量有因果效应，不代表长程规划。
 - `neuroplex/` 保持冻结，只用于离线对照和显式兼容。
 - `CapacityPolicy` 当前规划固定区域/fan-in/memory 资源；v1 中将降为资源治理器，不再规定认知结构。
@@ -172,4 +172,4 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 
 ## 当前唯一下一步
 
-下一步：把 grounded multi-step 从两步扩展到至少四步、允许连续失败重规划和跨步 delayed credit，验证 lineage 与信用链在更长 horizon 仍不丢失；不新增 action/intent 查表。
+下一步：在四步 Gate 基础上引入可变长度 episode、不同失败位置和多个 after-state relation 变化，验证 lineage 与跨步 delayed credit 不依赖固定四步序列；不新增 action/intent 查表。
