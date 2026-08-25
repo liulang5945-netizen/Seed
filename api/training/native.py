@@ -5,7 +5,6 @@ from __future__ import annotations
 import queue
 import threading
 from pathlib import Path
-from typing import List, Optional
 
 import torch
 from fastapi import APIRouter, HTTPException
@@ -14,9 +13,8 @@ from pydantic import BaseModel
 
 from seed import Seed, SeedConfig
 from seed.datasets import inspect_native_dataset
-from taiji import TaijiConfig
-
 from seed_platform.app_state import app_state
+from taiji import TaijiConfig
 
 from .resume import (
     _CHECKPOINT_DIR,
@@ -30,9 +28,9 @@ router = APIRouter()
 
 
 class NativeTrainRequest(BaseModel):
-    datasets: Optional[List[str]] = None
+    datasets: list[str] | None = None
     parameter_budget: int = 300_000
-    max_symbols: Optional[int] = None
+    max_symbols: int | None = None
     device: str = "auto"
     seed: int = 20260822
 
@@ -54,11 +52,12 @@ def _resolve_device(value: str) -> torch.device:
     return device
 
 
-def _resolve_native_datasets(names: Optional[List[str]]) -> list[Path]:
+def _resolve_native_datasets(names: list[str] | None) -> list[Path]:
     if names:
-        paths, missing = _resolve_datasets(names)
+        resolved, missing = _resolve_datasets(names)
         if missing:
             raise HTTPException(status_code=404, detail=f"数据集不存在: {', '.join(missing)}")
+        paths: list[Path] = [Path(p) for p in resolved]
     else:
         if not _DEFAULT_CORPUS.is_file():
             raise HTTPException(status_code=404, detail="默认原生语料缺失，请先上传 JSONL 数据集")
@@ -102,7 +101,7 @@ def train_native(req: NativeTrainRequest):
 
     _CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
     save_path = _CHECKPOINT_DIR / "seed_native.pt"
-    event_q: "queue.Queue" = queue.Queue(maxsize=256)
+    event_q: queue.Queue = queue.Queue(maxsize=256)
     thread = threading.Thread(
         target=_train_worker,
         args=(

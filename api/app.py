@@ -7,7 +7,7 @@ import os
 import sys
 import threading
 from contextlib import asynccontextmanager
-from typing import Any, Optional
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -39,14 +39,14 @@ try:
     SECURITY_MIDDLEWARE_AVAILABLE = True
 except ImportError:
     logger.warning("Security middleware not available, proceeding without it")
-    RateLimiter = None
-    create_rate_limit_middleware = None
+    RateLimiter = None  # type: ignore[misc,assignment]
+    create_rate_limit_middleware = None  # type: ignore[misc,assignment]
     SECURITY_MIDDLEWARE_AVAILABLE = False
 
-_global_rate_limiter: Optional[Any] = None
+_global_rate_limiter: Any | None = None
 
 
-def get_rate_limiter() -> Optional[Any]:
+def get_rate_limiter() -> Any | None:
     """Return the shared in-memory rate limiter instance."""
     global _global_rate_limiter
     if SECURITY_MIDDLEWARE_AVAILABLE and _global_rate_limiter is None:
@@ -196,7 +196,7 @@ def _configure_middlewares(app: FastAPI):
             app.middleware("http")(create_rate_limit_middleware(limiter))
             logger.info("Security middleware integrated")
 
-    app.add_middleware(JWTAuthMiddleware)
+    app.add_middleware(JWTAuthMiddleware)  # type: ignore[arg-type]
 
 
 def _load_optional_router(module_name: str):

@@ -42,14 +42,12 @@ C. 注意力转移：student attention 模式匹配 teacher
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Tuple
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 
-def build_layer_map(student_layers: int, teacher_layers: int) -> List[Tuple[int, int]]:
+def build_layer_map(student_layers: int, teacher_layers: int) -> list[tuple[int, int]]:
     """构建 student 层 → teacher 层映射（均匀采样）。
 
     保证每一对 (s_idx, t_idx) 覆盖从浅到深的结构位置：
@@ -124,9 +122,7 @@ class DistillationLoss(nn.Module):
         student_heads: int,
         teacher_heads: int,
         temperature: float = 4.0,  # 蒸馏温度（软化分布，保留类间关系）
-        vocab_alignment: Optional[
-            Dict[int, int]
-        ] = None,  # {student_id: teacher_id}, None=相同 vocab
+        vocab_alignment: dict[int, int] | None = None,  # {student_id: teacher_id}, None=相同 vocab
         attn_align_mode: str = "mean",  # "mean"=聚合 heads, "proj"=可学习 head 投影
     ):
         """Args:
@@ -147,7 +143,7 @@ class DistillationLoss(nn.Module):
         self.attn_align_mode = attn_align_mode
 
         # B. 层映射 + hidden 投影头
-        self.layer_map: List[Tuple[int, int]] = build_layer_map(student_layers, teacher_layers)
+        self.layer_map: list[tuple[int, int]] = build_layer_map(student_layers, teacher_layers)
         self.hidden_projectors = nn.ModuleList(
             [HiddenProjector(student_hidden, teacher_hidden) for _ in self.layer_map]
         )
@@ -159,10 +155,10 @@ class DistillationLoss(nn.Module):
             self.head_projector = nn.Identity()
 
         # 预计算 vocab 对齐索引（CUDA 加速用）
-        self._aligned_stu_ids: Optional[torch.Tensor] = None
-        self._aligned_tea_ids: Optional[torch.Tensor] = None
+        self._aligned_stu_ids: torch.Tensor | None = None
+        self._aligned_tea_ids: torch.Tensor | None = None
 
-    def _get_alignment_indices(self, device: torch.device) -> Tuple[torch.Tensor, torch.Tensor]:
+    def _get_alignment_indices(self, device: torch.device) -> tuple[torch.Tensor, torch.Tensor]:
         """返回 (student_ids, teacher_ids) 用于 gather 对齐 logits。"""
         if self.vocab_alignment is None:
             return None, None
@@ -179,7 +175,7 @@ class DistillationLoss(nn.Module):
         self,
         student_logits: torch.Tensor,  # [B, L, V_s]
         teacher_logits: torch.Tensor,  # [B, L, V_t]
-        mask: Optional[torch.Tensor] = None,  # [B, L] bool, True=有效
+        mask: torch.Tensor | None = None,  # [B, L] bool, True=有效
     ) -> torch.Tensor:
         """A. Logits 蒸馏：KL(student/T || teacher/T) * T^2。
 
@@ -213,7 +209,7 @@ class DistillationLoss(nn.Module):
         self,
         student_hiddens: torch.Tensor,  # [B, s_layers, L, s_hidden]
         teacher_hiddens: torch.Tensor,  # [B, t_layers, L, t_hidden]
-        mask: Optional[torch.Tensor] = None,
+        mask: torch.Tensor | None = None,
         mode: str = "cosine",  # "cosine" / "mse"
     ) -> torch.Tensor:
         """B. 中间层对齐：投影后 cosine/MSE。
@@ -221,7 +217,7 @@ class DistillationLoss(nn.Module):
         层映射由 self.layer_map 决定。mask 覆盖位置不参与（取均值向量）。
         """
         losses = []
-        for proj, (s_idx, t_idx) in zip(self.hidden_projectors, self.layer_map):
+        for proj, (s_idx, t_idx) in zip(self.hidden_projectors, self.layer_map, strict=False):
             s = student_hiddens[:, s_idx]  # [B, L, s_hidden]
             t = teacher_hiddens[:, t_idx]  # [B, L, t_hidden]
             s_proj = proj(s)  # [B, L, t_hidden]
@@ -282,11 +278,11 @@ class DistillationLoss(nn.Module):
         teacher_logits: torch.Tensor,
         student_hiddens: torch.Tensor,
         teacher_hiddens: torch.Tensor,
-        student_attns: Optional[torch.Tensor] = None,
-        teacher_attns: Optional[torch.Tensor] = None,
-        mask: Optional[torch.Tensor] = None,
+        student_attns: torch.Tensor | None = None,
+        teacher_attns: torch.Tensor | None = None,
+        mask: torch.Tensor | None = None,
         hidden_mode: str = "cosine",
-    ) -> Dict[str, torch.Tensor]:
+    ) -> dict[str, torch.Tensor]:
         """计算三联蒸馏 loss。
 
         Args:

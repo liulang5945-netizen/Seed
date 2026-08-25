@@ -91,6 +91,45 @@ async function shot(page, tag) {
   const enabledAfter = await sendBtn.isEnabled().catch(() => false);
   check('输入文本后发送按钮可用', enabledAfter);
 
+  // ---- 2.5 关键路径交互（R4 新增）----
+  console.log('\n[E2E] 关键路径交互');
+  // A. 建议词 → 输入回显：点击建议芯片后输入框应填入对应文本
+  await page.goto(BASE_URL + '/', { waitUntil: 'domcontentloaded', timeout: 10000 });
+  await page.waitForTimeout(1200);
+  const suggestion = page.locator('.suggestions .suggestion').first();
+  if (await suggestion.count()) {
+    const hint = (await suggestion.innerText()).trim();
+    await suggestion.click();
+    await page.waitForTimeout(300);
+    const echoed = await page.locator('.composer textarea').inputValue().catch(() => '');
+    check('点击建议词后输入框回显', echoed.trim() === hint, `期望「${hint}」 实际「${echoed}」`);
+  } else {
+    check('聊天页存在建议词芯片', false, '未找到 .suggestion');
+  }
+
+  // B. 新建对话按钮：点击后应回到聊天页并聚焦输入区
+  const newChatBtn = page.locator('.new-chat-btn');
+  if (await newChatBtn.count()) {
+    await newChatBtn.first().click();
+    await page.waitForTimeout(600);
+    check('新建对话后回到聊天页', page.url().includes('/'), page.url());
+    check('新建对话后输入区可见', await page.locator('.composer textarea').isVisible().catch(() => false));
+  } else {
+    check('侧边栏存在新建对话按钮', false, '未找到 .new-chat-btn');
+  }
+
+  // C. 训练页标签切换：超参数面板随点击激活
+  await page.goto(BASE_URL + '/#/train', { waitUntil: 'domcontentloaded', timeout: 10000 });
+  await page.waitForTimeout(1200);
+  const trainTabs = page.locator('.training-view .tabs button.tab');
+  if ((await trainTabs.count()) >= 2) {
+    await trainTabs.nth(1).click();
+    await page.waitForTimeout(400);
+    check('训练页标签切换后激活超参数页', await trainTabs.nth(1).evaluate((el) => el.classList.contains('active')).catch(() => false));
+  } else {
+    check('训练页存在标签栏', false, '未找到 .tabs button.tab');
+  }
+
   // ---- 3. 侧边导航完整性与跳转 ----
   console.log('\n[E2E] 侧边导航');
   const navLinks = page.locator('nav[aria-label="主导航"] a.nav-item');

@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
-from typing import Any, Dict, Mapping
+from typing import Any
 
 from taiji import TaijiConfig
 
@@ -14,9 +15,9 @@ class SeedConfig:
 
     taiji: TaijiConfig = field(default_factory=TaijiConfig)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {"taiji": self.taiji.to_dict()}
 
     @classmethod
-    def from_dict(cls, payload: Mapping[str, Any]) -> "SeedConfig":
+    def from_dict(cls, payload: Mapping[str, Any]) -> SeedConfig:
         return cls(taiji=TaijiConfig.from_dict(dict(payload["taiji"])))

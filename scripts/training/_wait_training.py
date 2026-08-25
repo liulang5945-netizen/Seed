@@ -10,7 +10,8 @@ deadline = time.time() + (int(sys.argv[2]) if len(sys.argv) > 2 else 1700)
 
 while time.time() < deadline:
     try:
-        lines = open(progress, encoding="utf-8").read().strip().splitlines()
+        with open(progress, encoding="utf-8") as fh:
+            lines = fh.read().strip().splitlines()
         entries = [json.loads(line) for line in lines if line.strip()]
     except OSError:
         entries = []

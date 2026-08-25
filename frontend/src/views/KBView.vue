@@ -37,11 +37,25 @@
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
             上传文件
           </button>
-          <button class="btn btn-outline">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M11 18h2"/></svg>
-            批量操作
+          <button class="btn btn-outline btn-danger" :disabled="!kbFiles.length" @click="clearKB">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            清空知识库
           </button>
           <span class="toolbar-meta">共 {{ kbFiles.length }} 个文件 · 已索引 {{ kbStats?.doc_count ?? kbFiles.length }}</span>
+        </div>
+
+        <!-- 上传组件（拖拽/选择文件，上传至 /api/rag/upload） -->
+        <div class="kb-upload">
+          <FileUploadQueue
+            ref="kbUploadRef"
+            upload-endpoint="/api/rag/upload"
+            accept=".txt,.md,.markdown,.pdf,.json,.jsonl,.csv,.html,.htm,.docx,.doc"
+            title="知识库上传队列"
+            drop-text="拖拽文件到此处加入知识库，或点击选择文件"
+            accept-hint="支持 TXT / Markdown / PDF / JSON / CSV / Word"
+            success-text="✅ 上传成功，后台索引中"
+            @all-uploaded="refreshKB"
+          />
         </div>
 
         <!-- 文件表格 -->
@@ -50,15 +64,14 @@
             <h2>知识库文件</h2>
             <span class="sub">· 默认知识库</span>
             <span class="spacer"></span>
-            <button class="btn btn-ghost btn-sm">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16l-6 7v5l-4 2v-7L4 5Z"/></svg>
-              筛选
-            </button>
+            <span v-if="ragStatus && ragStatus.status === 'ok'" class="head-status">
+              <span class="status-chip" :class="ragStatus.has_embeddings ? 'ok' : 'run'">{{ ragStatus.has_embeddings ? '索引就绪' : '索引中' }}</span>
+              {{ ragStatus.doc_count }} 文档 · {{ ragStatus.chunk_count }} 片段
+            </span>
           </div>
           <table v-if="filteredFiles(kbFiles).length">
             <thead>
               <tr>
-                <th style="width:36px"><input class="cb" type="checkbox" aria-label="全选"></th>
                 <th>文件名</th>
                 <th>类型</th>
                 <th>大小</th>
@@ -68,27 +81,29 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="f in filteredFiles(kbFiles)" :key="f">
-                <td><input class="cb" type="checkbox" :aria-label="String(f)"></td>
+              <tr v-for="f in filteredFiles(kbFiles)" :key="fileName(f)">
                 <td>
                   <span class="fname">
-                    <span class="file-ic" :class="fileBadge(f)">{{ (fileExt(f) || 'file').slice(0, 4).toUpperCase() }}</span>
+                    <span class="file-ic" :class="fileBadge(fileName(f))">{{ (fileExt(fileName(f)) || 'file').slice(0, 4).toUpperCase() }}</span>
                     <span class="meta-stack">
-                      <span class="name">{{ f }}</span>
-                      <span class="path">—</span>
+                      <span class="name">{{ fileName(f) }}</span>
                     </span>
                   </span>
                 </td>
-                <td><span class="type-tag">{{ fileTypeName(f) }}</span></td>
-                <td class="size-cell">—</td>
-                <td><span class="status-chip ok">已索引</span></td>
-                <td class="time-cell">—</td>
+                <td><span class="type-tag">{{ fileTypeName(fileName(f)) }}</span></td>
+                <td class="size-cell">{{ formatSize(f?.size) }}</td>
+                <td>
+                  <span v-if="f?.status === 'indexed'" class="status-chip ok">已索引</span>
+                  <span v-else-if="f?.status === 'pending'" class="status-chip run">索引中</span>
+                  <span v-else class="status-unknown">—</span>
+                </td>
+                <td class="time-cell">{{ formatTime(f?.mtime) }}</td>
                 <td>
                   <span class="row-actions">
-                    <button class="act" aria-label="预览" title="预览">
+                    <button class="act" aria-label="预览" title="预览" @click="openPreview(f)">
                       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
-                    <button class="act" aria-label="删除" title="删除文件" @click="deleteKBFile(f)">
+                    <button class="act" aria-label="删除" title="删除文件" @click="deleteKBFile(fileName(f))">
                       <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
                     </button>
                   </span>
@@ -115,20 +130,9 @@
                   <label>Top-K 召回数量</label>
                   <span class="val">{{ ragConfig.candidate_k }}</span>
                 </div>
-                <input type="range" class="slider" min="1" max="20" step="1" v-model.number="ragConfig.candidate_k" @change="saveRagConfig">
+                <input v-model.number="ragConfig.candidate_k" type="range" class="slider" min="1" max="20" step="1" @change="saveRagConfig">
                 <div class="slider-marks"><span>1</span><span>10</span><span>20</span></div>
                 <span class="hint">每次检索返回的相关片段数量，值越大召回越广但耗时增加。</span>
-              </div>
-
-              <!-- 相似度阈值（静态展示，script 中无对应变量） -->
-              <div class="form-row">
-                <div class="row-head">
-                  <label>相似度阈值</label>
-                  <span class="val">0.70</span>
-                </div>
-                <input type="range" class="slider" min="0" max="1" step="0.01" value="0.7" disabled>
-                <div class="slider-marks"><span>0.0</span><span>0.5</span><span>1.0</span></div>
-                <span class="hint">低于该分数的片段将被过滤，提高阈值可减少噪声但可能漏召回。</span>
               </div>
 
               <!-- 重排序开关 -->
@@ -137,21 +141,7 @@
                   <label>启用重排序</label>
                   <span class="hint">对召回结果进行二次精排，提升前列结果准确率。</span>
                 </div>
-                <input type="checkbox" class="toggle" v-model="ragConfig.enable_reranker" @change="saveRagConfig">
-              </div>
-
-              <!-- Embedding 模型（静态展示） -->
-              <div class="form-row">
-                <div class="row-head">
-                  <label>Embedding 模型</label>
-                </div>
-                <select class="select" disabled>
-                  <option value="doubao-emb-v2" selected>Seed Embedding v2（默认 · 1024 维）</option>
-                  <option value="doubao-emb-large">Seed Embedding Large（1536 维）</option>
-                  <option value="bge-m3">BGE-M3（多语言）</option>
-                  <option value="m3e-base">M3E-Base（轻量）</option>
-                </select>
-                <span class="hint">切换模型后需对全部文件重新索引，预计耗时数分钟。</span>
+                <input v-model="ragConfig.enable_reranker" type="checkbox" class="toggle" @change="saveRagConfig">
               </div>
 
               <div class="form-actions">
@@ -181,8 +171,6 @@
         <div v-if="kbSearched" class="test-meta">
           <span>Top-K = {{ ragConfig.candidate_k }}</span>
           <span class="dot"></span>
-          <span>相似度阈值 0.70</span>
-          <span class="dot"></span>
           <span>命中 {{ kbResults.length }} 条</span>
         </div>
 
@@ -198,17 +186,32 @@
         </div>
         <div v-else-if="kbSearched" class="empty-hint">未找到相关结果，尝试更换关键词</div>
       </div>
+
+      <!-- 预览弹窗 -->
+      <div v-if="previewDlg.visible" class="dlg-overlay" @click.self="closePreview">
+        <div class="dlg-box preview-box">
+          <h3>{{ previewDlg.title }}</h3>
+          <pre v-if="previewDlg.loading" class="preview-content preview-loading">加载中…</pre>
+          <pre v-else class="preview-content">{{ previewDlg.content }}</pre>
+          <div class="dlg-actions">
+            <button class="dlg-btn primary" @click="closePreview">关闭</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { BookOpen, Upload, BarChart3, Search, FolderOpen, Settings as SettingsIcon, Trash2, FileText } from 'lucide-vue-next';
+defineOptions({ name: 'KBView' })
+
+import { inject, ref } from 'vue';
 import FileUploadQueue from '../components/FileUploadQueue.vue';
-import { useApi } from '../composables/useApi.js';
 import { API_BASE, authFetch } from '../composables/apiClient.js';
-const { t } = useApi();
+
+const toast = inject('toast', () => {});
+const $confirm = inject('$confirm', () => Promise.resolve(true));
+
 const kbUploadRef = ref(null);
 const kbStats = ref(null);
 const kbSearchQuery = ref('');
@@ -218,24 +221,65 @@ const kbSearching = ref(false);
 const kbFiles = ref([]);
 const ragConfig = ref({ enable_hybrid: true, enable_reranker: true, enable_query_rewrite: false, candidate_k: 20 });
 const ragStatus = ref(null);
+const previewDlg = ref({ visible: false, title: '', content: '', loading: false });
 const loadRagConfig = async () => { try { const r = await authFetch(`${API_BASE}/api/rag/config`); if (r.ok) { const d = await r.json(); if (d.config) ragConfig.value = { ...ragConfig.value, ...d.config }; } } catch (e) {} };
 const loadRagStatus = async () => { try { const r = await authFetch(`${API_BASE}/api/rag/status`); if (r.ok) { const d = await r.json(); if (d.status === 'ok') ragStatus.value = d; } } catch (e) {} };
 const saveRagConfig = async () => { try { await authFetch(`${API_BASE}/api/rag/config`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ragConfig.value) }); } catch (e) {} };
 loadRagConfig(); loadRagStatus();
 const loadKBStats = async () => { try { const r = await authFetch(`${API_BASE}/api/rag/stats`); if (r.ok) kbStats.value = await r.json(); } catch (e) {} };
 const loadKBFiles = async () => { try { const r = await authFetch(`${API_BASE}/api/rag/files`); if (r.ok) { const d = await r.json(); kbFiles.value = d.files || []; } } catch (e) {} };
+// 上传完成 / 清空 / 删除后统一刷新列表、统计与索引状态
+const refreshKB = () => { loadKBFiles(); loadKBStats(); loadRagStatus(); };
 const searchKB = async () => { if (!kbSearchQuery.value.trim()) return; kbSearched.value = true; kbSearching.value = true; try { const r = await authFetch(`${API_BASE}/api/rag/search`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: kbSearchQuery.value, top_k: 5 }) }); const d = await r.json(); kbResults.value = d.results || []; } catch (e) { kbResults.value = []; } finally { kbSearching.value = false; } };
-const clearKB = async () => { try { await authFetch(`${API_BASE}/api/rag/clear`, { method: 'DELETE' }); kbStats.value = null; kbFiles.value = []; } catch (e) {} };
-const deleteKBFile = async (filename) => { try { await authFetch(`${API_BASE}/api/rag/file/${encodeURIComponent(filename)}`, { method: 'DELETE' }); loadKBFiles(); loadKBStats(); loadRagStatus(); } catch (e) {} };
+const clearKB = async () => {
+  const ok = await $confirm({ title: '清空知识库', message: `将删除全部 ${kbFiles.value.length} 个知识库文件与索引，且不可恢复。确定清空？`, type: 'danger' });
+  if (!ok) return;
+  try {
+    const r = await authFetch(`${API_BASE}/api/rag/clear`, { method: 'POST' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    toast('知识库已清空', 'success');
+    refreshKB();
+  } catch (e) {
+    toast('清空失败: ' + (e?.message || e), 'error');
+  }
+};
+const openPreview = async (f) => {
+  const name = fileName(f);
+  if (!name) return;
+  previewDlg.value = { visible: true, title: name, content: '', loading: true };
+  try {
+    const r = await authFetch(`${API_BASE}/api/rag/preview/${encodeURIComponent(name)}`);
+    const d = await r.json();
+    previewDlg.value = { visible: true, title: name, content: d.content || '(无内容)', loading: false };
+  } catch (e) {
+    previewDlg.value = { visible: true, title: name, content: '预览加载失败: ' + (e?.message || e), loading: false };
+  }
+};
+const closePreview = () => { previewDlg.value = { ...previewDlg.value, visible: false }; };
+const deleteKBFile = async (filename) => { try { await authFetch(`${API_BASE}/api/rag/file/${encodeURIComponent(filename)}`, { method: 'DELETE' }); refreshKB(); } catch (e) {} };
 loadKBStats(); loadKBFiles();
 
 // ── 标签页与文件过滤（纯 UI 状态，不影响业务逻辑） ──
 const activeTab = ref('files');
 const fileFilter = ref('');
+// 兼容后端新旧两种列表形状：字符串 或 {name, size, mtime, status}
+const fileName = (f) => (typeof f === 'string' ? f : (f?.name ?? ''));
 const fileExt = (name) => { const m = String(name).match(/\.(\w+)$/); return m ? m[1].toLowerCase() : ''; };
 const fileBadge = (name) => { const e = fileExt(name); if (e === 'pdf') return 'pdf'; if (['md', 'markdown'].includes(e)) return 'md'; if (['json', 'jsonl'].includes(e)) return 'json'; if (e === 'txt') return 'txt'; return 'doc'; };
 const fileTypeName = (name) => { const e = fileExt(name); const m = { pdf: 'PDF', md: 'Markdown', markdown: 'Markdown', json: 'JSON', jsonl: 'JSON', txt: 'TXT', csv: 'CSV', html: 'HTML', htm: 'HTML', docx: 'Word', doc: 'Word', pptx: 'PPT', xlsx: 'Excel', xls: 'Excel', py: 'Python', js: 'JavaScript', ts: 'TypeScript', yaml: 'YAML', yml: 'YAML' }; return m[e] || (e ? e.toUpperCase() : 'FILE'); };
-const filteredFiles = (files) => { if (!fileFilter.value) return files; const q = fileFilter.value.toLowerCase(); return files.filter(f => String(f).toLowerCase().includes(q)); };
+const formatSize = (bytes) => {
+  if (bytes == null || Number.isNaN(Number(bytes))) return '—';
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+};
+const formatTime = (ts) => {
+  if (ts == null || Number.isNaN(Number(ts))) return '—';
+  const d = new Date(Number(ts) * 1000);
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+const filteredFiles = (files) => { if (!fileFilter.value) return files; const q = fileFilter.value.toLowerCase(); return files.filter(f => fileName(f).toLowerCase().includes(q)); };
 </script>
 
 <style scoped>
@@ -325,6 +369,16 @@ const filteredFiles = (files) => { if (!fileFilter.value) return files; const q 
   font-size: 0.78rem;
   color: var(--muted-foreground);
 }
+.btn-danger {
+  color: var(--destructive);
+  border-color: color-mix(in srgb, var(--destructive) 35%, var(--border));
+}
+.btn-danger:hover {
+  background: color-mix(in srgb, var(--destructive) 10%, var(--background));
+}
+
+/* ===== 上传组件包裹 ===== */
+.kb-upload { margin-bottom: 16px; }
 
 /* ===== 搜索框 ===== */
 .search {
@@ -449,6 +503,14 @@ const filteredFiles = (files) => { if (!fileFilter.value) return files; const q 
   color: var(--muted-foreground);
 }
 .spacer { flex: 1; }
+.head-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  font-variant-numeric: tabular-nums;
+}
 
 table {
   width: 100%;
@@ -502,12 +564,6 @@ tbody tr:hover { background: color-mix(in srgb, var(--accent) 16%, transparent);
   white-space: nowrap;
   max-width: 260px;
 }
-.fname .path {
-  font-size: 0.7rem;
-  color: var(--muted-foreground);
-  margin-top: 1px;
-}
-
 .type-tag {
   display: inline-block;
   padding: 2px 9px;
@@ -554,6 +610,10 @@ tbody tr:hover { background: color-mix(in srgb, var(--accent) 16%, transparent);
   background: color-mix(in srgb, var(--destructive) 16%, transparent);
   color: var(--destructive);
 }
+.status-unknown {
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+}
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.35; transform: scale(0.6); }
@@ -586,12 +646,6 @@ tbody tr:hover { background: color-mix(in srgb, var(--accent) 16%, transparent);
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-.cb {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--primary);
-  cursor: pointer;
 }
 
 /* ===== 检索配置 ===== */
@@ -869,4 +923,66 @@ tbody tr:hover { background: color-mix(in srgb, var(--accent) 16%, transparent);
   .tab { padding: 10px 12px; }
   .toolbar { gap: 8px; }
 }
+
+/* ===== 预览弹窗（复用 WorkspaceView dlg 范式） ===== */
+.dlg-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(4px);
+}
+.dlg-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  min-width: 380px;
+  max-width: 90vw;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+.dlg-box h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: var(--foreground);
+  overflow-wrap: anywhere;
+}
+.dlg-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.dlg-btn {
+  padding: 7px 16px;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 0.6);
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.dlg-btn:hover { background: var(--muted); color: var(--foreground); }
+.dlg-btn.primary {
+  border: 0;
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.dlg-btn.primary:hover {
+  background: color-mix(in srgb, var(--primary) 90%, var(--foreground));
+}
+.preview-box { width: min(720px, 90vw); }
+.preview-content {
+  max-height: 55vh;
+  overflow: auto;
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) * 0.6);
+  background: var(--muted);
+  color: var(--foreground);
+  font: 12px/1.7 var(--font-mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.preview-loading { color: var(--muted-foreground); }
 </style>

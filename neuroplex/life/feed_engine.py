@@ -20,14 +20,15 @@
 5. 进食记录：追踪吃了什么、消化了多少
 """
 
-import os
-import json
-import time
-import logging
 import hashlib
-from typing import Dict, List, Optional, Any, Callable
+import json
+import logging
+import os
+import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Any
 
 import torch
 
@@ -61,9 +62,9 @@ class FeedReport:
     items_fed: int = 0
     items_rejected: int = 0
     samples_generated: int = 0
-    categories: Dict[str, int] = field(default_factory=dict)
+    categories: dict[str, int] = field(default_factory=dict)
     avg_quality: float = 0.0
-    recommendations: List[str] = field(default_factory=list)
+    recommendations: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -76,7 +77,7 @@ class FeedConfig:
     max_items_per_feed: int = 100  # 每次最多吃多少
     max_content_length: int = 10000  # 单条内容最大长度
     dedup_enabled: bool = True  # 去重
-    category_weights: Dict[str, float] = field(
+    category_weights: dict[str, float] = field(
         default_factory=lambda: {
             "code": 1.0,
             "knowledge": 0.8,
@@ -94,7 +95,7 @@ class FeedEngine:
     喂养引擎负责"吃"（收集数据），睡眠引擎负责"消化"（训练模型）。
     """
 
-    def __init__(self, config: Optional[FeedConfig] = None, data_dir: str = None):
+    def __init__(self, config: FeedConfig | None = None, data_dir: str = None):
         self.config = config or FeedConfig()
         if data_dir is None:
             try:
@@ -104,17 +105,17 @@ class FeedEngine:
             except ImportError:
                 data_dir = "taiji/feed_data"
         self.data_dir = data_dir
-        self._feed_history: List[FeedReport] = []
-        self._feed_items: List[FeedItem] = []
+        self._feed_history: list[FeedReport] = []
+        self._feed_items: list[FeedItem] = []
         self._content_hashes: set = set()  # 去重用
-        self._last_feed_time: Optional[datetime] = None
-        self._on_feed_complete: Optional[Callable] = None
+        self._last_feed_time: datetime | None = None
+        self._on_feed_complete: Callable | None = None
 
         # 神经元架构：按域分类存储待训练样本
-        self._domain_samples: Dict[str, list] = {}
+        self._domain_samples: dict[str, list] = {}
         # 神经元架构：按域统计成功/失败计数（供 neurogenesis 计算错误率）
-        self._domain_success_counts: Dict[str, int] = {}
-        self._domain_total_counts: Dict[str, int] = {}
+        self._domain_success_counts: dict[str, int] = {}
+        self._domain_total_counts: dict[str, int] = {}
 
         self._data_dir_ready = False
         self._load_history()
@@ -174,8 +175,8 @@ class FeedEngine:
         return report
 
     def feed_file(
-        self, file_path: str, category: str = "knowledge", domain: Optional[str] = None
-    ) -> Optional[FeedItem]:
+        self, file_path: str, category: str = "knowledge", domain: str | None = None
+    ) -> FeedItem | None:
         """
         喂态极吃一个文件。
 
@@ -201,7 +202,7 @@ class FeedEngine:
             return self.feed_multimodal("video", file_path=file_path)
 
         try:
-            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+            with open(file_path, encoding="utf-8", errors="ignore") as f:
                 content = f.read(self.config.max_content_length)
 
             return self._process_content(
@@ -220,8 +221,8 @@ class FeedEngine:
         text: str,
         source: str = "manual",
         category: str = "knowledge",
-        domain: Optional[str] = None,
-    ) -> Optional[FeedItem]:
+        domain: str | None = None,
+    ) -> FeedItem | None:
         """
         直接喂态极一段文字。
 
@@ -245,10 +246,10 @@ class FeedEngine:
     def feed_multimodal(
         self,
         modality: str,
-        data: Optional[torch.Tensor] = None,
-        file_path: Optional[str] = None,
+        data: torch.Tensor | None = None,
+        file_path: str | None = None,
         tokenizer_hub=None,
-    ) -> Optional[FeedItem]:
+    ) -> FeedItem | None:
         """
         喂态极多模态资料（图片/音频/视频）。
 
@@ -352,9 +353,9 @@ class FeedEngine:
     def feed_directory(
         self,
         dir_path: str,
-        extensions: List[str] = None,
+        extensions: list[str] = None,
         category: str = "code",
-        domain: Optional[str] = None,
+        domain: str | None = None,
     ) -> int:
         """
         喂态极吃一个目录下的所有文件。
@@ -395,7 +396,7 @@ class FeedEngine:
 
         return count
 
-    def get_pending_samples(self) -> List[dict]:
+    def get_pending_samples(self) -> list[dict]:
         """
         获取待消化的训练样本（供睡眠引擎调用）。
 
@@ -408,7 +409,7 @@ class FeedEngine:
 
         samples = []
         try:
-            with open(samples_path, "r", encoding="utf-8") as f:
+            with open(samples_path, encoding="utf-8") as f:
                 for line in f:
                     if line.strip():
                         samples.append(json.loads(line))
@@ -432,7 +433,7 @@ class FeedEngine:
         """检测文本所属域（P7: 简化回退到 general）。"""
         return "general"
 
-    def get_pending_samples_by_domain(self) -> Dict[str, list]:
+    def get_pending_samples_by_domain(self) -> dict[str, list]:
         """
         获取按域分类的待消化训练样本（供睡眠引擎训练 Cortex 神经元调用）。
 
@@ -445,7 +446,7 @@ class FeedEngine:
 
         # 回退：从 pending_samples.jsonl 读取并按 domain 字段分组
         all_samples = self.get_pending_samples()
-        by_domain: Dict[str, list] = {}
+        by_domain: dict[str, list] = {}
         for sample in all_samples:
             d = sample.get("domain", "general") if isinstance(sample, dict) else "general"
             by_domain.setdefault(d, []).append(sample)
@@ -453,7 +454,7 @@ class FeedEngine:
 
     def feed_from_practice(
         self, code: str, output: str = "", success: bool = True, domain: str = "code"
-    ) -> Optional[FeedItem]:
+    ) -> FeedItem | None:
         """
         从实践（代码执行/任务完成）中喂养样本（供 limbs 调用）。
 
@@ -486,14 +487,14 @@ class FeedEngine:
             domain=domain,
         )
 
-    def get_domain_error_rates(self) -> Dict[str, float]:
+    def get_domain_error_rates(self) -> dict[str, float]:
         """
         获取各域错误率（供 neurogenesis 决定是否触发新生神经元）。
 
         Returns:
             {domain: error_rate} 字典，error_rate ∈ [0, 1]
         """
-        error_rates: Dict[str, float] = {}
+        error_rates: dict[str, float] = {}
         for domain, total in self._domain_total_counts.items():
             if total > 0:
                 success = self._domain_success_counts.get(domain, 0)
@@ -519,8 +520,8 @@ class FeedEngine:
         source: str,
         source_path: str,
         category: str,
-        domain: Optional[str] = None,
-    ) -> Optional[FeedItem]:
+        domain: str | None = None,
+    ) -> FeedItem | None:
         """处理一段内容：评估质量、去重、生成样本（带域标签）"""
         # 去重
         content_hash = hashlib.md5(content.encode()).hexdigest()
@@ -619,7 +620,7 @@ class FeedEngine:
 
     def _generate_samples(
         self, content: str, category: str, source_path: str, domain: str = "general"
-    ) -> List[dict]:
+    ) -> list[dict]:
         """将内容转换为训练样本（带 domain 标签）"""
         samples = []
 
@@ -635,7 +636,7 @@ class FeedEngine:
 
         return samples
 
-    def _code_to_samples(self, code: str, source_path: str, domain: str = "general") -> List[dict]:
+    def _code_to_samples(self, code: str, source_path: str, domain: str = "general") -> list[dict]:
         """代码 -> ReAct 训练样本（带 domain 标签）"""
         samples = []
         fname = os.path.basename(source_path)
@@ -672,7 +673,7 @@ class FeedEngine:
 
         return samples
 
-    def _conversation_to_samples(self, content: str, domain: str = "general") -> List[dict]:
+    def _conversation_to_samples(self, content: str, domain: str = "general") -> list[dict]:
         """对话文本 -> 对话训练样本（带 domain 标签）"""
         samples = []
         lines = content.strip().split("\n")
@@ -699,7 +700,7 @@ class FeedEngine:
 
     def _knowledge_to_samples(
         self, content: str, source_path: str, domain: str = "general"
-    ) -> List[dict]:
+    ) -> list[dict]:
         """知识文本 -> 问答训练样本（带 domain 标签）"""
         samples = []
         # 阈值从 30 降至 10：中文句子字符数较短（每个汉字算 1），
@@ -732,7 +733,7 @@ class FeedEngine:
 
         return samples
 
-    def _split_code_segments(self, code: str) -> List[tuple]:
+    def _split_code_segments(self, code: str) -> list[tuple]:
         """将代码按函数/类分段，返回 [(name, code), ...]"""
         segments = []
         lines = code.split("\n")
@@ -868,7 +869,7 @@ class FeedEngine:
             os.makedirs(self.data_dir, exist_ok=True)
             self._data_dir_ready = True
 
-    def _append_samples(self, samples: List[dict]):
+    def _append_samples(self, samples: list[dict]):
         """追加训练样本到待消化队列"""
         self._ensure_data_dir()
         samples_path = os.path.join(self.data_dir, "pending_samples.jsonl")
@@ -929,7 +930,7 @@ class FeedEngine:
         if not os.path.exists(path):
             return
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = json.load(f)
             for item in data:
                 self._feed_history.append(FeedReport(**item))
@@ -940,7 +941,7 @@ class FeedEngine:
         items_path = os.path.join(self.data_dir, "feed_items.json")
         if os.path.exists(items_path):
             try:
-                with open(items_path, "r", encoding="utf-8") as f:
+                with open(items_path, encoding="utf-8") as f:
                     items_data = json.load(f)
                 for item_data in items_data:
                     self._content_hashes.add(item_data.get("content_hash", ""))
@@ -988,7 +989,7 @@ class FeedEngine:
 
         return "\n".join(lines)
 
-    def get_feed_plan(self) -> Dict[str, Any]:
+    def get_feed_plan(self) -> dict[str, Any]:
         """
         生成进食计划 — 根据能力短板推荐吃什么。
 
@@ -1036,10 +1037,10 @@ class FeedEngine:
 
 # ─── 全局实例 ─────────────────────────────────────
 
-_global_feed: Optional[FeedEngine] = None
+_global_feed: FeedEngine | None = None
 
 
-def get_feed_engine(config: Optional[FeedConfig] = None) -> FeedEngine:
+def get_feed_engine(config: FeedConfig | None = None) -> FeedEngine:
     """获取全局喂养引擎实例"""
     global _global_feed
     if _global_feed is None:

@@ -13,7 +13,7 @@
 
 import logging
 from collections import defaultdict
-from typing import Iterable
+from collections.abc import Iterable
 
 logger = logging.getLogger("CoactivationTracker")
 
@@ -109,7 +109,7 @@ class CoactivationTracker:
     def get_coactivation(self, nid_i: str, nid_j: str) -> float:
         """获取两个神经元的共激活强度（slow 矩阵值）。"""
         pair = tuple(sorted([nid_i, nid_j]))
-        return self._slow_matrix.get(pair, 0.0)
+        return float(self._slow_matrix.get(pair, 0.0))
 
     def get_tribe(self, nid: str, min_strength: float = 0.1) -> list:
         """获取某神经元的部落成员（共激活强度 > min_strength 的神经元）。"""

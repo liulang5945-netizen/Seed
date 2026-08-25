@@ -36,14 +36,13 @@ import re
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 REPO = Path(__file__).resolve().parents[2]
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
-import torch  # noqa: E402
 import _verify_emit  # noqa: E402
+import torch  # noqa: E402
 
 from seed import Seed  # noqa: E402
 
@@ -51,7 +50,7 @@ MAX_LENGTH = 256
 
 # ---------------- 固定题集（不随版本漂移；改动必须记录理由） ----------------
 
-SINGLE_TURN: Tuple[str, ...] = (
+SINGLE_TURN: tuple[str, ...] = (
     "你好，请介绍一下你自己。",
     "今天天气怎么样？",
     "1加1等于几？",
@@ -85,7 +84,7 @@ SINGLE_TURN: Tuple[str, ...] = (
 )
 
 # 多轮：第 1 轮植入事实，第 2 轮追问；关键词用于自动判定引用成功。
-MULTI_TURN: Tuple[Tuple[str, str, str], ...] = (
+MULTI_TURN: tuple[tuple[str, str, str], ...] = (
     ("我叫小明，请记住我的名字。", "我叫什么名字？", "小明"),
     ("我最喜欢的颜色是蓝色。", "我最喜欢的颜色是什么？", "蓝色"),
     ("我住在北京。", "我住在哪个城市？", "北京"),
@@ -109,13 +108,13 @@ _CJK_RE = re.compile(r"[\u4e00-\u9fff]")
 _ZH_PUNCT_RE = re.compile(r"[，。！？；：、“”‘’（）—…《》]")
 
 
-def _serialize(prompt: str, history: List[Tuple[str, str]]) -> str:
+def _serialize(prompt: str, history: list[tuple[str, str]]) -> str:
     parts = [f"问：{user}\n答：{assistant}" for user, assistant in history]
     parts.append(f"问：{prompt}\n答：")
     return "\n".join(parts)
 
 
-def _generate_reply(model: Seed, prompt: str, history: List[Tuple[str, str]]) -> Tuple[bytes, str]:
+def _generate_reply(model: Seed, prompt: str, history: list[tuple[str, str]]) -> tuple[bytes, str]:
     prefix = _serialize(prompt, history).encode("utf-8")
     raw = model.generate(prefix, MAX_LENGTH, stop_at_boundary=True, sample=False)
     answer = raw.decode("utf-8", errors="replace")
@@ -143,17 +142,17 @@ def _is_readable(answer: str) -> bool:
     if cjk / len(answer) < 0.6:
         return False
     # 单字符重复主导（如 "的的的的..."）不算可读。
-    counts: Dict[str, int] = {}
+    counts: dict[str, int] = {}
     for char in answer:
         counts[char] = counts.get(char, 0) + 1
     return max(counts.values()) / len(answer) <= 0.5
 
 
-def run_panel(checkpoint_path: Path) -> Dict[str, object]:
+def run_panel(checkpoint_path: Path) -> dict[str, object]:
     envelope = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
     model = Seed.from_checkpoint(envelope)
 
-    replies: List[Dict[str, object]] = []
+    replies: list[dict[str, object]] = []
     utf8_valid = 0
     readable = 0
     well_formed = 0
@@ -170,7 +169,7 @@ def run_panel(checkpoint_path: Path) -> Dict[str, object]:
 
     reference_hits = 0
     for plant, probe, keyword in MULTI_TURN:
-        history: List[Tuple[str, str]] = []
+        history: list[tuple[str, str]] = []
         for turn_index, prompt in enumerate((plant, probe)):
             raw, answer = _generate_reply(model, prompt, history)
             total_turns += 1

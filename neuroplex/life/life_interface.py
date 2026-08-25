@@ -9,11 +9,12 @@ Legacy NeuroPlex 生命系统线程安全API接口 (ThreadSafeLifeInterface)
 - 优雅的错误处理与日志
 """
 
-import threading
 import logging
-from typing import Dict, List, Optional, Any, Callable
+import threading
+from collections.abc import Callable
+from dataclasses import asdict, dataclass
 from datetime import datetime
-from dataclasses import dataclass, asdict
+from typing import Any
 
 logger = logging.getLogger("ThreadSafeLifeInterface")
 
@@ -28,10 +29,10 @@ class LifeStateSnapshot:
     boredom: float
     stress: float
     curiosity: float
-    activity_log: List[str]
-    last_action: Optional[str] = None
+    activity_log: list[str]
+    last_action: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
@@ -62,8 +63,8 @@ class ThreadSafeLifeInterface:
         """
         self._scheduler = scheduler
         self._lock = threading.RLock()  # 统一互斥锁，同步和异步方法共用
-        self._activity_log: List[str] = []
-        self._event_handlers: Dict[str, List[Callable]] = {
+        self._activity_log: list[str] = []
+        self._event_handlers: dict[str, list[Callable]] = {
             "on_feed": [],
             "on_sleep": [],
             "on_play": [],
@@ -191,7 +192,7 @@ class ThreadSafeLifeInterface:
                 logger.error(f"Play operation failed: {e}")
                 return False
 
-    def evolve(self, improvement: Dict[str, float]) -> bool:
+    def evolve(self, improvement: dict[str, float]) -> bool:
         """
         原子性地执行进化操作（改进多个需求指标）
 
@@ -271,7 +272,7 @@ class ThreadSafeLifeInterface:
         with self._lock:
             return self.play(enjoyment)
 
-    async def async_evolve(self, improvement: Dict[str, float]) -> bool:
+    async def async_evolve(self, improvement: dict[str, float]) -> bool:
         """异步进化操作"""
         with self._lock:
             return self.evolve(improvement)
@@ -345,7 +346,7 @@ class ThreadSafeLifeInterface:
             self._scheduler = scheduler
             logger.info("Scheduler set for ThreadSafeLifeInterface")
 
-    def get_activity_log(self, limit: int = 50) -> List[str]:
+    def get_activity_log(self, limit: int = 50) -> list[str]:
         """获取活动日志"""
         with self._lock:
             return self._activity_log[-limit:]
@@ -358,7 +359,7 @@ class ThreadSafeLifeInterface:
 
 
 # 全局接口实例（可选）
-_global_interface: Optional[ThreadSafeLifeInterface] = None
+_global_interface: ThreadSafeLifeInterface | None = None
 
 
 def get_global_interface() -> ThreadSafeLifeInterface:

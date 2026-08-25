@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Mapping, Optional, Sequence
+from collections.abc import Mapping, Sequence
+from typing import Any
 
 import torch
 
@@ -33,7 +34,7 @@ class Seed:
 
     def __init__(
         self,
-        config: Optional[SeedConfig] = None,
+        config: SeedConfig | None = None,
         *,
         device: torch.device | str = "cpu",
         episode_id: str = "episode-0",
@@ -56,7 +57,7 @@ class Seed:
     def snapshot(self) -> TaijiState:
         return self.substrate.snapshot()
 
-    def reset_dynamics(self, *, episode_id: Optional[str] = None) -> None:
+    def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         self.substrate.reset_dynamics(episode_id=episode_id)
 
     def observe(
@@ -64,7 +65,7 @@ class Seed:
         symbol: int,
         *,
         learn: bool = True,
-        learn_motor: Optional[bool] = None,
+        learn_motor: bool | None = None,
         use_memory: bool = True,
     ) -> TaijiStep:
         return self.substrate.observe(
@@ -111,7 +112,7 @@ class Seed:
         *,
         epochs: int = 1,
         include_boundary: bool = True,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         return self.substrate.learn_bytes(
             data,
             epochs=epochs,
@@ -123,7 +124,7 @@ class Seed:
         data: bytes,
         *,
         include_boundary: bool = True,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         return self.substrate.score_bytes(data, include_boundary=include_boundary)
 
     def generate(
@@ -149,7 +150,7 @@ class Seed:
     def dense_equivalent_parameter_count(self) -> int:
         return self.substrate.dense_equivalent_parameter_count()
 
-    def checkpoint(self) -> Dict[str, Any]:
+    def checkpoint(self) -> dict[str, Any]:
         return {
             "format": self.CHECKPOINT_FORMAT,
             "config": self.config.to_dict(),
@@ -170,7 +171,7 @@ class Seed:
         checkpoint: Mapping[str, Any],
         *,
         device: torch.device | str = "cpu",
-    ) -> "Seed":
+    ) -> Seed:
         if checkpoint.get("format") != cls.CHECKPOINT_FORMAT:
             raise ValueError("unsupported Seed checkpoint format")
         config = SeedConfig.from_dict(checkpoint["config"])

@@ -88,7 +88,7 @@ def test_learning_is_local_masked_and_has_no_autograd_parameters() -> None:
         model.observe(symbol, learn=True)
     after = model.parameter_tensors()
 
-    assert any(not torch.equal(left, right) for left, right in zip(before, after))
+    assert any(not torch.equal(left, right) for left, right in zip(before, after, strict=False))
     assert all(tensor.requires_grad is False for tensor in after)
     synapses = (
         *model.fabric.decoders,
@@ -178,7 +178,7 @@ def test_consolidation_rng_does_not_shift_existing_organs() -> None:
         right.memory.action_readout,
         right.memory.outcome_readout,
     )
-    for original, changed in zip(left_existing, right_existing):
+    for original, changed in zip(left_existing, right_existing, strict=False):
         assert torch.equal(original.pre_index, changed.pre_index)
         assert torch.equal(original.edge_weight, changed.edge_weight)
 
@@ -189,12 +189,16 @@ def test_waking_baseline_is_checkpointed_and_reset_invariant() -> None:
     for symbol in b"baseline traffic":
         model.observe(symbol, learn=True)
     learned = tuple(value.clone() for value in model.fabric.trace_baselines)
-    assert any(not torch.equal(a, b) for a, b in zip(initial, learned))
+    assert any(not torch.equal(a, b) for a, b in zip(initial, learned, strict=False))
 
     model.reset_dynamics(episode_id="baseline-reset")
-    assert all(torch.equal(a, b) for a, b in zip(learned, model.fabric.trace_baselines))
+    assert all(
+        torch.equal(a, b) for a, b in zip(learned, model.fabric.trace_baselines, strict=False)
+    )
     restored = Taiji.from_checkpoint(model.checkpoint())
-    assert all(torch.equal(a, b) for a, b in zip(learned, restored.fabric.trace_baselines))
+    assert all(
+        torch.equal(a, b) for a, b in zip(learned, restored.fabric.trace_baselines, strict=False)
+    )
 
 
 def test_checkpoint_preserves_learning_state_and_exact_next_step() -> None:
@@ -209,5 +213,5 @@ def test_checkpoint_preserves_learning_state_and_exact_next_step() -> None:
     assert left.predicted_symbol == right.predicted_symbol
     assert left.activity_rates == right.activity_rates
     assert torch.equal(left.probabilities, right.probabilities)
-    for a, b in zip(original.parameter_tensors(), restored.parameter_tensors()):
+    for a, b in zip(original.parameter_tensors(), restored.parameter_tensors(), strict=False):
         assert torch.equal(a, b)

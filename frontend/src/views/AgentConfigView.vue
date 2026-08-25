@@ -9,18 +9,18 @@
             <h2>基本信息</h2>
             <span class="sub">定义智能体身份与归属</span>
           </div>
-          <button class="btn btn-ghost sm" @click="refreshAgentRuntime" :disabled="runtimeStore.toolsLoading">
+          <button class="btn btn-ghost sm" :disabled="runtimeStore.toolsLoading" @click="refreshAgentRuntime">
             <RefreshCw :size="14" :class="{ spin: runtimeStore.toolsLoading }" /> 刷新
           </button>
         </div>
         <div class="form-grid">
           <div class="form-field">
             <label class="form-label" for="agent-name">智能体名称<span class="req">*</span></label>
-            <input class="input" id="agent-name" type="text" value="语言推理专家" readonly>
+            <input id="agent-name" class="input" type="text" value="语言推理专家" readonly>
           </div>
           <div class="form-field">
             <label class="form-label" for="agent-domain">所属域<span class="req">*</span></label>
-            <select class="select" id="agent-domain" disabled>
+            <select id="agent-domain" class="select" disabled>
               <option value="language">语言</option>
               <option value="reasoning" selected>推理</option>
               <option value="code">代码</option>
@@ -30,7 +30,7 @@
           </div>
           <div class="form-field full">
             <label class="form-label" for="agent-desc">描述</label>
-            <textarea class="textarea" id="agent-desc" rows="3" readonly>融合语言域和推理域神经元，处理复杂问答</textarea>
+            <textarea id="agent-desc" class="textarea" rows="3" readonly>融合语言域和推理域神经元，处理复杂问答</textarea>
           </div>
         </div>
       </section>
@@ -42,7 +42,7 @@
             <h2>参数配置</h2>
             <span class="sub">系统提示策略 · 温度 · 迭代上限</span>
           </div>
-          <button class="btn btn-primary sm" @click="saveAgentPrefs" :disabled="runtimeStore.toolsLoading">
+          <button class="btn btn-primary sm" :disabled="runtimeStore.toolsLoading" @click="saveAgentPrefs">
             <svg class="ic-svg" viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg>
             保存配置
           </button>
@@ -53,13 +53,13 @@
             <label class="form-label" for="ag-temp">
               <span>温度</span><span class="hint">0 - 2</span>
             </label>
-            <input id="ag-temp" class="input" v-model.number="temperature" type="number" min="0" max="2" step="0.1" @change="saveAgentPrefs" />
+            <input id="ag-temp" v-model.number="temperature" class="input" type="number" min="0" max="2" step="0.1" @change="saveAgentPrefs" />
           </div>
           <div class="form-field">
             <label class="form-label" for="ag-iter">
               <span>最大迭代</span><span class="hint">1 - 50</span>
             </label>
-            <input id="ag-iter" class="input" v-model.number="maxIterations" type="number" min="1" max="50" @change="saveAgentPrefs" />
+            <input id="ag-iter" v-model.number="maxIterations" class="input" type="number" min="1" max="50" @change="saveAgentPrefs" />
           </div>
         </div>
 
@@ -119,7 +119,7 @@
             <strong class="ov-value">{{ installedServers.filter(s => s.running).length }}<span class="ov-unit"> 个运行</span></strong>
           </div>
         </div>
-        <div class="ov-card" v-if="runtimeStore.memoryAvailableGb">
+        <div v-if="runtimeStore.memoryAvailableGb" class="ov-card">
           <span class="ov-ic">
             <svg class="ic-svg" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10v4M11 10v4M15 10v4"/></svg>
           </span>
@@ -144,7 +144,7 @@
             <Search :size="15" />
             <input v-model="toolQuery" placeholder="搜索工具名或描述..." />
           </div>
-          <select class="select" v-model="toolSource">
+          <select v-model="toolSource" class="select">
             <option value="">全部来源</option>
             <option v-for="s in toolSources" :key="s" :value="s">{{ s }}</option>
           </select>
@@ -193,17 +193,17 @@
                 <td><span class="mcp-endpoint">{{ server.npm_package || server.id }}</span></td>
                 <td>
                   <div class="row-actions">
-                    <button v-if="!server.running" class="act-btn" @click="startServer(server.id)" aria-label="启动"><svg class="ic-svg" viewBox="0 0 24 24"><path d="M7 5l12 7-12 7Z"/></svg></button>
-                    <button v-else class="act-btn" @click="stopServer(server.id)" aria-label="停止"><svg class="ic-svg" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
-                    <button v-if="server.running" class="act-btn" @click="restartServer(server.id)" aria-label="重启"><svg class="ic-svg" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button>
-                    <button class="act-btn" @click="uninstallServer(server.id)" aria-label="卸载"><svg class="ic-svg" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
+                    <button v-if="!server.running" class="act-btn" aria-label="启动" @click="startServer(server.id)"><svg class="ic-svg" viewBox="0 0 24 24"><path d="M7 5l12 7-12 7Z"/></svg></button>
+                    <button v-else class="act-btn" aria-label="停止" @click="stopServer(server.id)"><svg class="ic-svg" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
+                    <button v-if="server.running" class="act-btn" aria-label="重启" @click="restartServer(server.id)"><svg class="ic-svg" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button>
+                    <button class="act-btn" aria-label="卸载" @click="uninstallServer(server.id)"><svg class="ic-svg" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <div class="panel-foot" v-if="installedServers.length">
+        <div v-if="installedServers.length" class="panel-foot">
           <span class="foot-hint">{{ installedServers.filter(s => s.running).length }} 运行中 · {{ installedServers.filter(s => !s.running).length }} 已停止 · 共 {{ installedServers.length }} 个服务</span>
         </div>
         <div v-if="!installedServers.length" class="empty-msg">暂无已安装 MCP 服务</div>
@@ -216,11 +216,11 @@
             <Search :size="15" />
             <input v-model="mcpSearch" placeholder="搜索 MCP 服务..." @input="debounceSearch" />
           </div>
-          <select class="select" v-model="mcpCategory" @change="loadMarketplace">
+          <select v-model="mcpCategory" class="select" @change="loadMarketplace">
             <option value="">全部分类</option>
             <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
           </select>
-          <button class="btn btn-outline sm" @click="loadMarketplace" :disabled="mcpLoading">
+          <button class="btn btn-outline sm" :disabled="mcpLoading" @click="loadMarketplace">
             <RefreshCw :size="13" :class="{ spin: mcpLoading }" /> 同步
           </button>
         </div>
@@ -257,7 +257,8 @@
 </template>
 
 <script setup>
-import { computed, inject, onMounted, ref, watch } from 'vue'
+defineOptions({ name: 'AgentConfigView' })
+import { computed, inject, onActivated, onMounted, ref } from 'vue'
 import { RefreshCw, Play, Square, Trash2, Download, Search } from 'lucide-vue-next'
 import { useRuntimeStore } from '../stores/runtimeStore.js'
 import { API_BASE, authFetch } from '../composables/apiClient.js'
@@ -277,7 +278,6 @@ const categories = ref([])
 const mcpSearch = ref('')
 const mcpCategory = ref('')
 const mcpLoading = ref(false)
-const refreshing = ref(false)
 
 const toolSources = computed(() => {
   const sources = new Set(runtimeStore.tools.map(t => t.source).filter(Boolean))
@@ -294,23 +294,7 @@ const filteredTools = computed(() => {
   return list
 })
 
-function sourceLabel(source) {
-  const map = { mcp: 'MCP', local: '本地', core: '核心', builtin: '内置', plugin: '插件' }
-  return map[source] || source || '本地'
-}
-
-function categoryLabel(tool) {
-  if (tool.category) return tool.category
-  if (tool.name?.includes('web') || tool.name?.includes('search')) return '网络'
-  if (tool.name?.includes('file') || tool.name?.includes('read')) return '文件'
-  return '通用'
-}
-
-function permissionLabel(tool) {
-  if (tool.permission === 'dangerous') return '高权限'
-  if (tool.permission === 'read') return '只读'
-  return '标准'
-}
+// R5: sourceLabel/categoryLabel/permissionLabel 未被模板引用，已移除（需要时从 git 历史恢复）。
 
 function saveAgentPrefs() {
   localStorage.setItem('taiji_agent_max_iterations', String(maxIterations.value))
@@ -375,8 +359,9 @@ async function uninstallServer(id) {
 onMounted(() => {
   maxIterations.value = Number(localStorage.getItem('taiji_agent_max_iterations')) || 10
   temperature.value = Number(localStorage.getItem('taiji_agent_temperature')) || 0.7
-  refreshAgentRuntime()
 })
+// keep-alive 缓存后重新进入页面时也刷新运行时状态（首次挂载同样触发）
+onActivated(() => refreshAgentRuntime())
 </script>
 
 <style scoped>

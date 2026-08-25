@@ -17,7 +17,7 @@ from __future__ import annotations
 import logging
 from collections import deque
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 import torch
 
@@ -50,10 +50,10 @@ class NeuromodulatorState:
 
     def set_targets(
         self,
-        dopamine: Optional[float] = None,
-        serotonin: Optional[float] = None,
-        norepinephrine: Optional[float] = None,
-        acetylcholine: Optional[float] = None,
+        dopamine: float | None = None,
+        serotonin: float | None = None,
+        norepinephrine: float | None = None,
+        acetylcholine: float | None = None,
     ) -> None:
         """设置目标调质水平（由外部信号驱动）。"""
         if dopamine is not None:
@@ -210,9 +210,9 @@ class SleepConsolidator:
         field_state: torch.Tensor,
         resonance_score: float,
         step: int,
-        active_nids: Optional[list] = None,
+        active_nids: list | None = None,
         threshold: float = 0.5,
-        text: Optional[str] = None,
+        text: str | None = None,
     ) -> None:
         """记录一次高共振场状态（用于后续重放）。
 
@@ -252,9 +252,9 @@ class SleepConsolidator:
     def consolidate(
         self,
         neurons: dict,
-        coactivation_tracker: Optional[Any] = None,
+        coactivation_tracker: Any | None = None,
         current_step: int = 0,
-        stdp_tracker: Optional[Any] = None,
+        stdp_tracker: Any | None = None,
     ) -> dict:
         """执行一次睡眠巩固。
 
@@ -339,13 +339,13 @@ class SleepConsolidator:
                 logger.warning("STDP 结构演化失败（非关键）: %s", e)
 
         # 3. 修剪弱 side_channels
-        for nid, neuron in neurons.items():
+        for _nid, neuron in neurons.items():
             if hasattr(neuron, "prune_weak_channels"):
                 pruned = neuron.prune_weak_channels(threshold=0.01)
                 stats["channels_pruned"] += pruned
 
         # 4. 更新 fingerprint（将 slow EMA 趋势编码到长期方向）
-        for nid, neuron in neurons.items():
+        for _nid, neuron in neurons.items():
             if hasattr(neuron, "freeze_fingerprint"):
                 neuron.freeze_fingerprint()
                 stats["fingerprints_updated"] += 1

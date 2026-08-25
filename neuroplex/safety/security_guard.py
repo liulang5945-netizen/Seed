@@ -10,12 +10,11 @@
 """
 
 import ast
+import logging
 import os
 import re
-import logging
-import tempfile
 import subprocess
-from typing import Tuple, List, Optional
+import tempfile
 from dataclasses import dataclass
 
 logger = logging.getLogger("Taiji.SecurityGuard")
@@ -27,8 +26,8 @@ class SecurityCheckResult:
 
     passed: bool
     risk_level: str  # "safe", "low", "medium", "high", "critical"
-    violations: List[str]
-    sanitized_code: Optional[str] = None
+    violations: list[str]
+    sanitized_code: str | None = None
 
 
 class CodeSecurityGuard:
@@ -186,7 +185,7 @@ class CodeSecurityGuard:
             sanitized_code=self._sanitize(code) if passed else None,
         )
 
-    def _check_ast(self, tree: ast.AST) -> List[str]:
+    def _check_ast(self, tree: ast.AST) -> list[str]:
         """AST 级别的安全检查"""
         violations = []
 
@@ -256,7 +255,7 @@ class SandboxExecutor:
         self.max_memory = max_memory_mb
         self.allow_network = allow_network
 
-    def execute(self, code: str, inputs: dict = None) -> Tuple[bool, str]:
+    def execute(self, code: str, inputs: dict = None) -> tuple[bool, str]:
         """
         在沙盒中执行代码。
 
@@ -354,7 +353,7 @@ def check_code_safety(code: str, context: str = "") -> SecurityCheckResult:
     return _code_guard.check_code(code, context)
 
 
-def execute_in_sandbox(code: str, inputs: dict = None) -> Tuple[bool, str]:
+def execute_in_sandbox(code: str, inputs: dict = None) -> tuple[bool, str]:
     """在沙盒中执行代码"""
     # 先检查安全性
     check = _code_guard.check_code(code)

@@ -9,14 +9,13 @@
 策略：先 HTTP，失败或内容太少则回退 Browser。
 """
 
-import time
-import logging
 import concurrent.futures
+import logging
+import time
 from dataclasses import dataclass
-from typing import List, Optional
 from urllib.parse import urlparse
 
-from .discovery import http_get, _random_ua
+from .discovery import _random_ua, http_get
 
 logger = logging.getLogger("Taiji.Search.Fetcher")
 
@@ -93,10 +92,10 @@ class HttpFetcher:
             )
 
     def fetch_batch(
-        self, urls: List[str], max_workers: int = 4, timeout: int = 12
-    ) -> List[FetchedPage]:
+        self, urls: list[str], max_workers: int = 4, timeout: int = 12
+    ) -> list[FetchedPage]:
         """并行抓取多个 URL"""
-        results: List[FetchedPage] = [None] * len(urls)
+        results: list[FetchedPage] = [None] * len(urls)
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as pool:
             future_to_idx = {pool.submit(self.fetch, url, timeout): i for i, url in enumerate(urls)}
             for future in concurrent.futures.as_completed(future_to_idx, timeout=timeout + 5):
@@ -175,9 +174,9 @@ class BrowserFetcher:
                 error=str(e),
             )
 
-    def fetch_with_pagination(self, seed_url: str, max_pages: int = 10) -> List[FetchedPage]:
+    def fetch_with_pagination(self, seed_url: str, max_pages: int = 10) -> list[FetchedPage]:
         """模拟人类翻页：打开页面 → 提取"下一页"链接 → 跳转"""
-        pages: List[FetchedPage] = []
+        pages: list[FetchedPage] = []
         try:
             self._ensure_browser()
             context = self._browser.new_context(
@@ -210,7 +209,7 @@ class BrowserFetcher:
             logger.debug(f"  browser pagination 失败: {e}")
         return pages
 
-    def _find_next_page(self, page) -> Optional[str]:
+    def _find_next_page(self, page) -> str | None:
         """查找"下一页"链接"""
         try:
             js = (
@@ -267,7 +266,7 @@ class DualFetcher:
                 return bp
         return page
 
-    def fetch_batch(self, urls: List[str], max_workers: int = 4) -> List[FetchedPage]:
+    def fetch_batch(self, urls: list[str], max_workers: int = 4) -> list[FetchedPage]:
         """并行抓取多个 URL（仅 HTTP，浏览器串行）"""
         return self.http.fetch_batch(urls, max_workers=max_workers)
 
@@ -280,7 +279,7 @@ class DualFetcher:
 # 统一入口
 # ═══════════════════════════════════════════════
 
-_default_fetcher: Optional[DualFetcher] = None
+_default_fetcher: DualFetcher | None = None
 
 
 def get_fetcher() -> DualFetcher:

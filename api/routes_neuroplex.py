@@ -6,13 +6,13 @@ Cortex 神经元架构 API 路由（内部代号：Seed）。
 import logging
 import os
 import time
+from typing import Any
 
-from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi import APIRouter, File, HTTPException, UploadFile
 from pydantic import BaseModel
-from typing import List, Optional, Union
 
-from seed_platform.app_state import app_state
 from neuroplex.core.utils import get_external_path
+from seed_platform.app_state import app_state
 
 logger = logging.getLogger("ApiServer.Taiji")
 router = APIRouter()
@@ -109,7 +109,7 @@ def taiji_status():
     """获取 Cortex 神经元架构状态。"""
     if not _is_available():
         raise HTTPException(status_code=404, detail="接口不存在")
-    model = app_state.model
+    model: Any = app_state.model
     return _cortex_model_info(model)
 
 
@@ -131,14 +131,15 @@ async def taiji_upload(file: UploadFile = File(...)):
     try:
         upload_dir = get_external_path(os.path.join("user_data", "multimodal_uploads"))
         os.makedirs(upload_dir, exist_ok=True)
-        safe_name = f"{int(time.time() * 1000)}_{os.path.basename(file.filename)}"
+        upload_name = file.filename or "upload"
+        safe_name = f"{int(time.time() * 1000)}_{os.path.basename(upload_name)}"
         file_path = os.path.join(upload_dir, safe_name)
         with open(file_path, "wb") as buffer:
             import shutil
 
             shutil.copyfileobj(file.file, buffer)
 
-        ext = os.path.splitext(file.filename)[1].lower()
+        ext = os.path.splitext(upload_name)[1].lower()
         is_image = ext in {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp"}
         is_audio = ext in {".wav", ".mp3", ".ogg", ".flac", ".m4a", ".aac"}
         is_video = ext in {".mp4", ".avi", ".mov", ".mkv", ".webm", ".gif"}
@@ -161,7 +162,7 @@ async def taiji_upload(file: UploadFile = File(...)):
         }
     except Exception as e:
         logger.error(f"文件上传失败: {e}")
-        raise HTTPException(status_code=500, detail="文件上传失败，请查看服务端日志")
+        raise HTTPException(status_code=500, detail="文件上传失败，请查看服务端日志") from e
 
 
 # ======================== 喂养引擎（吃饭）========================
@@ -177,7 +178,7 @@ def feed_status():
         return {"status": "ok", "data": engine.get_status(), "summary": engine.get_summary()}
     except Exception as e:
         logger.error(f"获取喂养状态失败: {e}")
-        raise HTTPException(status_code=500, detail="获取喂养状态失败")
+        raise HTTPException(status_code=500, detail="获取喂养状态失败") from e
 
 
 @router.post("/api/taiji/feed")
@@ -199,7 +200,7 @@ def feed_taiji():
         }
     except Exception as e:
         logger.error(f"喂养失败: {e}")
-        raise HTTPException(status_code=500, detail="喂养失败，请查看服务端日志")
+        raise HTTPException(status_code=500, detail="喂养失败，请查看服务端日志") from e
 
 
 @router.post("/api/taiji/feed/text")
@@ -227,7 +228,7 @@ def feed_text(request: dict):
         raise
     except Exception as e:
         logger.error(f"文字喂养失败: {e}")
-        raise HTTPException(status_code=500, detail="文字喂养失败")
+        raise HTTPException(status_code=500, detail="文字喂养失败") from e
 
 
 def _validate_workspace_path(file_path: str) -> str:
@@ -271,7 +272,7 @@ def feed_file(request: dict):
         raise
     except Exception as e:
         logger.error(f"文件喂养失败: {e}")
-        raise HTTPException(status_code=500, detail="文件喂养失败")
+        raise HTTPException(status_code=500, detail="文件喂养失败") from e
 
 
 @router.post("/api/taiji/feed/multimodal")
@@ -300,7 +301,7 @@ def feed_multimodal(request: dict):
             raise HTTPException(status_code=404, detail="文件不存在")
 
         # 从 cortex 获取 tokenizer_hub
-        model = app_state.model
+        model: Any = app_state.model
         if model is None or not _is_cortex(model):
             raise HTTPException(status_code=503, detail="Cortex 未加载，无法处理多模态资料")
         hub = getattr(model, "_tokenizer_hub", None)
@@ -347,19 +348,19 @@ def feed_multimodal(request: dict):
         raise
     except Exception as e:
         logger.error(f"多模态喂养失败: {e}")
-        raise HTTPException(status_code=500, detail="多模态喂养失败")
+        raise HTTPException(status_code=500, detail="多模态喂养失败") from e
 
 
 class CortexGenRequest(BaseModel):
     """Cortex 原生多模态生成请求。"""
 
     modality: str  # "image" / "audio" / "video"
-    input_path: Optional[str] = None  # 参考文件路径（模仿生成）
-    max_tokens: Optional[int] = 0  # 0=自动用 codec 网格大小
-    temperature: Optional[float] = 1.0
-    top_k: Optional[int] = 0
-    seed: Optional[int] = None
-    output_path: Optional[str] = None  # 保存目录
+    input_path: str | None = None  # 参考文件路径（模仿生成）
+    max_tokens: int | None = 0  # 0=自动用 codec 网格大小
+    temperature: float | None = 1.0
+    top_k: int | None = 0
+    seed: int | None = None
+    output_path: str | None = None  # 保存目录
 
 
 @router.post("/api/taiji/cortex/generate")
@@ -371,7 +372,7 @@ def cortex_generate(req: CortexGenRequest):
     2. 随机生成：不提供 input_path → 用随机 latent 作为种子 → 生成
     """
     try:
-        model = app_state.model
+        model: Any = app_state.model
         if model is None or not _is_cortex(model):
             raise HTTPException(status_code=503, detail="Cortex 未加载")
         hub = getattr(model, "_tokenizer_hub", None)
@@ -398,7 +399,7 @@ def cortex_generate(req: CortexGenRequest):
             safe_path = _validate_workspace_path(req.input_path)
             if not os.path.isfile(safe_path):
                 raise HTTPException(status_code=404, detail="参考文件不存在")
-            from neuroplex.multimodal.io import load_image, load_audio, load_video
+            from neuroplex.multimodal.io import load_audio, load_image, load_video
 
             if modality == "image":
                 data = load_image(safe_path).to(device)
@@ -492,7 +493,7 @@ def cortex_generate(req: CortexGenRequest):
         raise
     except Exception as e:
         logger.error(f"Cortex 多模态生成失败: {e}")
-        raise HTTPException(status_code=500, detail="Cortex 多模态生成失败")
+        raise HTTPException(status_code=500, detail="Cortex 多模态生成失败") from e
 
 
 class CortexChatRequest(BaseModel):
@@ -501,10 +502,10 @@ class CortexChatRequest(BaseModel):
     prompt: str
     # 2026-08-04：默认值改为保守参数（验证过短问答质量最佳）
     # 原 256/0.8/50 在 5 神经元异构 ensemble 上长序列生成易崩坏
-    max_tokens: Optional[int] = 60
-    temperature: Optional[float] = 0.55
-    top_k: Optional[int] = 15
-    domain: Optional[str] = None  # "zh"/"en"/"code"/"math"/"general"，None=自动推断
+    max_tokens: int | None = 60
+    temperature: float | None = 0.55
+    top_k: int | None = 15
+    domain: str | None = None  # "zh"/"en"/"code"/"math"/"general"，None=自动推断
 
 
 @router.post("/api/taiji/cortex/chat")
@@ -515,7 +516,7 @@ def cortex_chat(req: CortexChatRequest):
     domain=None 时自动推断域（code/math/zh/en/general）。
     """
     try:
-        model = app_state.model
+        model: Any = app_state.model
         if model is None or not _is_cortex(model):
             raise HTTPException(status_code=503, detail="Cortex 未加载")
         if not req.prompt.strip():
@@ -559,7 +560,7 @@ def cortex_chat(req: CortexChatRequest):
         raise
     except Exception as e:
         logger.error(f"Cortex 文本对话失败: {e}")
-        raise HTTPException(status_code=500, detail="Cortex 文本对话失败")
+        raise HTTPException(status_code=500, detail="Cortex 文本对话失败") from e
 
 
 class TaskChainStageRequest(BaseModel):
@@ -567,20 +568,20 @@ class TaskChainStageRequest(BaseModel):
 
     prompt: str
     mode: str = "continuous"
-    domain: Optional[str] = None
-    active_nids: Optional[Union[str, List[str]]] = None
-    max_tokens: Optional[int] = None
-    temperature: Optional[float] = None
+    domain: str | None = None
+    active_nids: str | list[str] | None = None
+    max_tokens: int | None = None
+    temperature: float | None = None
     quality_gate: bool = True
     record_memory: bool = False
-    memory_label: Optional[str] = None
+    memory_label: str | None = None
 
 
 class CortexTaskChainRequest(BaseModel):
     """C26 增量八：多阶段任务模式链 v2 请求体。"""
 
-    stages: List[TaskChainStageRequest]
-    max_tokens_per_stage: Optional[int] = 32
+    stages: list[TaskChainStageRequest]
+    max_tokens_per_stage: int | None = 32
 
 
 @router.post("/api/taiji/cortex/task_chain")
@@ -591,7 +592,7 @@ def cortex_task_chain(req: CortexTaskChainRequest):
     三重传递（文本 prev + 场状态 seed_memories + 记忆写入）。生产入口。
     """
     try:
-        model = app_state.model
+        model: Any = app_state.model
         if model is None or not _is_cortex(model):
             raise HTTPException(status_code=503, detail="Cortex 未加载")
         if not req.stages:
@@ -626,7 +627,7 @@ def cortex_task_chain(req: CortexTaskChainRequest):
         raise
     except Exception as e:
         logger.error(f"Cortex 任务链失败: {e}")
-        raise HTTPException(status_code=500, detail="Cortex 任务链失败")
+        raise HTTPException(status_code=500, detail="Cortex 任务链失败") from e
 
 
 @router.post("/api/taiji/feed/directory")
@@ -649,7 +650,7 @@ def feed_directory(request: dict):
         raise
     except Exception as e:
         logger.error(f"目录喂养失败: {e}")
-        raise HTTPException(status_code=500, detail="目录喂养失败")
+        raise HTTPException(status_code=500, detail="目录喂养失败") from e
 
 
 @router.get("/api/taiji/feed/plan")
@@ -663,7 +664,7 @@ def feed_plan():
         return {"status": "ok", "plan": plan}
     except Exception as e:
         logger.error(f"获取进食计划失败: {e}")
-        raise HTTPException(status_code=500, detail="获取进食计划失败")
+        raise HTTPException(status_code=500, detail="获取进食计划失败") from e
 
 
 # ======================== 睡眠引擎 ========================
@@ -679,7 +680,7 @@ def sleep_status():
         return {"status": "ok", "data": engine.get_status(), "summary": engine.get_summary()}
     except Exception as e:
         logger.error(f"获取睡眠状态失败: {e}")
-        raise HTTPException(status_code=500, detail="获取睡眠状态失败")
+        raise HTTPException(status_code=500, detail="获取睡眠状态失败") from e
 
 
 @router.post("/api/taiji/sleep")
@@ -700,7 +701,7 @@ def sleep_taiji():
         }
     except Exception as e:
         logger.error(f"睡眠失败: {e}")
-        raise HTTPException(status_code=500, detail="睡眠失败，请查看服务端日志")
+        raise HTTPException(status_code=500, detail="睡眠失败，请查看服务端日志") from e
 
 
 # ======================== 玩耍引擎（娱乐）========================
@@ -716,7 +717,7 @@ def play_status():
         return {"status": "ok", "data": engine.get_status(), "summary": engine.get_summary()}
     except Exception as e:
         logger.error(f"获取玩耍状态失败: {e}")
-        raise HTTPException(status_code=500, detail="获取玩耍状态失败")
+        raise HTTPException(status_code=500, detail="获取玩耍状态失败") from e
 
 
 @router.post("/api/taiji/play")
@@ -747,7 +748,7 @@ def play_taiji():
         }
     except Exception as e:
         logger.error(f"玩耍失败: {e}")
-        raise HTTPException(status_code=500, detail="玩耍失败")
+        raise HTTPException(status_code=500, detail="玩耍失败") from e
 
 
 @router.get("/api/taiji/play/personality")
@@ -760,7 +761,7 @@ def play_personality():
         return {"status": "ok", "personality": engine.get_personality()}
     except Exception as e:
         logger.error(f"获取个性档案失败: {e}")
-        raise HTTPException(status_code=500, detail="获取个性档案失败")
+        raise HTTPException(status_code=500, detail="获取个性档案失败") from e
 
 
 # ======================== 生命调度器 ========================
@@ -776,7 +777,7 @@ def life_status():
         return {"status": "ok", "data": scheduler.get_status(), "summary": scheduler.get_summary()}
     except Exception as e:
         logger.error(f"获取生命状态失败: {e}")
-        raise HTTPException(status_code=500, detail="获取生命状态失败")
+        raise HTTPException(status_code=500, detail="获取生命状态失败") from e
 
 
 @router.post("/api/taiji/life/start")
@@ -790,7 +791,7 @@ def life_start():
         return {"status": "ok", "message": "🌱 生命已启动"}
     except Exception as e:
         logger.error(f"启动生命失败: {e}")
-        raise HTTPException(status_code=500, detail="启动生命失败")
+        raise HTTPException(status_code=500, detail="启动生命失败") from e
 
 
 @router.post("/api/taiji/life/stop")
@@ -804,7 +805,7 @@ def life_stop():
         return {"status": "ok", "message": "⏸️ 生命已暂停"}
     except Exception as e:
         logger.error(f"暂停生命失败: {e}")
-        raise HTTPException(status_code=500, detail="暂停生命失败")
+        raise HTTPException(status_code=500, detail="暂停生命失败") from e
 
 
 @router.post("/api/taiji/life/interact")
@@ -818,7 +819,7 @@ def life_interact(success: bool = True, topic: str = ""):
         return {"status": "ok", "needs": scheduler.needs.to_dict()}
     except Exception as e:
         logger.error(f"记录交互失败: {e}")
-        raise HTTPException(status_code=500, detail="记录交互失败")
+        raise HTTPException(status_code=500, detail="记录交互失败") from e
 
 
 @router.post("/api/taiji/life/action/{action}")
@@ -834,7 +835,7 @@ def life_force_action(action: str):
         return {"status": "ok", "result": result, "needs": scheduler.needs.to_dict()}
     except Exception as e:
         logger.error(f"执行操作失败: {e}")
-        raise HTTPException(status_code=500, detail="执行操作失败")
+        raise HTTPException(status_code=500, detail="执行操作失败") from e
 
 
 @router.get("/api/taiji/self_mod/status")
@@ -896,7 +897,7 @@ def life_timeline(hours: int = 24):
         return {"status": "ok", "timeline": timeline, "hours": hours}
     except Exception as e:
         logger.error(f"获取时间线失败: {e}")
-        raise HTTPException(status_code=500, detail="获取时间线失败")
+        raise HTTPException(status_code=500, detail="获取时间线失败") from e
 
 
 # ======================== 模型信息查询 ========================
@@ -907,7 +908,7 @@ def taiji_model_info():
     """获取当前 Cortex 神经元架构信息。"""
     if not _is_available():
         raise HTTPException(status_code=404, detail="接口不存在")
-    model = app_state.model
+    model: Any = app_state.model
     # Cortex 是唯一认知主体；非 Cortex 视为未加载
     if not _is_cortex(model):
         raise HTTPException(status_code=503, detail="Cortex 未加载")
@@ -967,7 +968,7 @@ def _cleanup_checkpoints(save_dir: str, keep: int = 3) -> int:
     # 删除旧的（保留最后 keep 个）
     to_delete = step_dirs[:-keep]
     deleted = 0
-    for step_num, dir_path in to_delete:
+    for _step_num, dir_path in to_delete:
         try:
             shutil.rmtree(dir_path)
             deleted += 1

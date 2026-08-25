@@ -119,7 +119,9 @@ def memory_longterm_list(category: str = "", limit: int = 50):
 
 
 @router.post("/api/agent/memory/clear")
-async def memory_clear(req: dict = {}):
+async def memory_clear(
+    req: dict = {},  # noqa: B006 — FastAPI 按请求解析体，默认值不被变更，改注解会改 OpenAPI 快照
+):
     """清除记忆"""
     scope = req.get("scope", "all")  # all / short_term / working / longterm
     try:

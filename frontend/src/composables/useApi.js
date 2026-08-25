@@ -160,7 +160,6 @@ export function useApi() {
   }
 
   function handleHealthFailure(message) {
-    const state = runtimeStore.health.state;
     const modelLoaded = runtimeStore.health.modelLoaded;
     const recentlyHealthy = lastHealthyAt && Date.now() - lastHealthyAt < 45000;
     if (recentlyHealthy || consecutiveFailures < 7) {

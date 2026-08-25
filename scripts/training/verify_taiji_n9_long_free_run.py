@@ -4,12 +4,11 @@ from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
 import sys
-from typing import Dict
+from pathlib import Path
 
-import torch
 import _verify_emit
+import torch
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
@@ -22,7 +21,7 @@ PROMPT = b"a"
 EXPECTED = b"bcda" * 32
 
 
-def _instrumented_free_run(model: Taiji) -> Dict[str, object]:
+def _instrumented_free_run(model: Taiji) -> dict[str, object]:
     model.reset_dynamics(episode_id="n9-instrumented")
     step = model.observe(model.config.boundary_symbol, learn=False)
     for symbol in PROMPT:
@@ -55,7 +54,7 @@ def _instrumented_free_run(model: Taiji) -> Dict[str, object]:
     output = bytes(generated)
     errors = [
         index
-        for index, (actual, expected) in enumerate(zip(output, EXPECTED))
+        for index, (actual, expected) in enumerate(zip(output, EXPECTED, strict=False))
         if actual != expected
     ]
     return {
@@ -72,7 +71,7 @@ def _instrumented_free_run(model: Taiji) -> Dict[str, object]:
     }
 
 
-def run_benchmark(*, epochs: int = 200, seed: int = 7) -> Dict[str, object]:
+def run_benchmark(*, epochs: int = 200, seed: int = 7) -> dict[str, object]:
     config = TaijiConfig(
         region_sizes=(64, 48),
         synapse_fan_in=16,

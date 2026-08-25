@@ -14,7 +14,6 @@ such as a RAG knowledge base after the platform state has been created.
 import logging
 import threading
 from dataclasses import dataclass, field
-from typing import Optional
 
 logger = logging.getLogger("AppState")
 
@@ -27,16 +26,16 @@ class AppState:
     """
 
     # 模型相关（高频访问）
-    trainer: Optional[object] = None
-    model: Optional[object] = None
-    tokenizer: Optional[object] = None
-    _loaded_model_name: Optional[str] = field(default=None, repr=False)
+    trainer: object | None = None
+    model: object | None = None
+    tokenizer: object | None = None
+    _loaded_model_name: str | None = field(default=None, repr=False)
 
     # 训练/微调状态
     is_training: bool = False
     stop_training_requested: bool = False
     pause_training_requested: bool = False
-    _trainer_ref: Optional[object] = field(default=None, repr=False)
+    _trainer_ref: object | None = field(default=None, repr=False)
 
     # 模型发布状态
     publishing: bool = False
@@ -46,7 +45,7 @@ class AppState:
     rag_kb: object = None
 
     # 启动状态（线程安全保护）
-    startup_error: Optional[str] = None
+    startup_error: str | None = None
     startup_complete: bool = False
 
     # 模型切换状态（异步切换用）
@@ -160,6 +159,7 @@ class AppState:
                 self.model = None
                 self.tokenizer = None
                 import gc
+
                 import torch
 
                 gc.collect()

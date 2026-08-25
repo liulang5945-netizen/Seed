@@ -3,23 +3,21 @@
 from __future__ import annotations
 
 import argparse
+import json
+import sys
 from collections import Counter
+from collections.abc import Mapping, Sequence
 from contextlib import contextmanager
 from copy import deepcopy
-import json
 from pathlib import Path
-import sys
-from typing import Dict, Mapping, Sequence
 
-import torch
 import _verify_emit
+import torch
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from taiji import Taiji  # noqa: E402
-from taiji.memory import EpisodicField  # noqa: E402
 from verify_taiji_m6_endogenous_replay import (  # noqa: E402
     FILLER,
     PROVENANCE,
@@ -27,12 +25,15 @@ from verify_taiji_m6_endogenous_replay import (  # noqa: E402
     _sleep,
 )
 
+from taiji import Taiji  # noqa: E402
+from taiji.memory import EpisodicField  # noqa: E402
+
 CUES = tuple(ord(value) for value in "ABCDEFGH")
 ACTIONS = tuple(ord(value) for value in "01")
 OUTCOMES = tuple(ord(value) for value in "+-")
 
 
-def _episodes() -> Dict[int, Dict[str, object]]:
+def _episodes() -> dict[int, dict[str, object]]:
     return {
         cue: {
             "action": ACTIONS[index % len(ACTIONS)],
@@ -111,7 +112,7 @@ def _restricted_metrics(
     evidence: torch.Tensor,
     candidates: Sequence[int],
     expected: int,
-) -> Dict[str, object]:
+) -> dict[str, object]:
     selector = torch.tensor(tuple(candidates), dtype=torch.long)
     probabilities = torch.softmax(evidence[selector], dim=0)
     target = tuple(candidates).index(int(expected))
@@ -127,7 +128,7 @@ def _restricted_metrics(
 def _evaluate_cue_actions(
     checkpoint: Mapping[str, object],
     episodes: Mapping[int, Mapping[str, object]],
-) -> Dict[str, object]:
+) -> dict[str, object]:
     rows = []
     behavior_correct = 0
     cortical_correct = 0
@@ -180,7 +181,7 @@ def _evaluate_cue_actions(
 def _evaluate_action_outcomes(
     checkpoint: Mapping[str, object],
     episodes: Mapping[int, Mapping[str, object]],
-) -> Dict[str, object]:
+) -> dict[str, object]:
     pairs = {int(event["action"]): int(event["outcome"]) for event in episodes.values()}
     rows = []
     correct = 0
@@ -222,7 +223,7 @@ def _readback_closed(rows: Sequence[Mapping[str, object]]) -> bool:
 def _cue_probes(
     checkpoint: Mapping[str, object],
     episodes: Mapping[int, Mapping[str, object]],
-) -> Dict[int, Dict[str, torch.Tensor]]:
+) -> dict[int, dict[str, torch.Tensor]]:
     probes = {}
     for cue, event in episodes.items():
         cortical_model = Taiji.from_checkpoint(deepcopy(checkpoint))
@@ -314,7 +315,7 @@ def _nearest(
 def _wake_jointness(
     probes: Mapping[int, Mapping[str, torch.Tensor]],
     episodes: Mapping[int, Mapping[str, object]],
-) -> Dict[str, object]:
+) -> dict[str, object]:
     action_matches = 0
     projection_matches = 0
     projection_counts = Counter()
@@ -341,7 +342,7 @@ def _replay_jointness(
     records: Sequence[Mapping[str, object]],
     probes: Mapping[int, Mapping[str, torch.Tensor]],
     episodes: Mapping[int, Mapping[str, object]],
-) -> Dict[str, object]:
+) -> dict[str, object]:
     action_counts = Counter()
     pattern_counts = Counter()
     cortical_counts = Counter()
@@ -424,7 +425,7 @@ def _replay_jointness(
     }
 
 
-def run_benchmark(*, seed: int = 29, cycles: int = 96) -> Dict[str, object]:
+def run_benchmark(*, seed: int = 29, cycles: int = 96) -> dict[str, object]:
     model = Taiji(_config(seed), episode_id="m7-bootstrap")
     pretrain = model.learn_bytes(_pretrain_corpus(), epochs=6)
     episodes = _episodes()

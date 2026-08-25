@@ -13,12 +13,11 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import math
 import os
 import random
-import hashlib
-import json
-from typing import List, Tuple
 
 import sentencepiece as spm
 import torch
@@ -29,15 +28,25 @@ from neuroplex.resonance.config import GENERAL_TOKENIZER_DOMAIN
 # P0 硬编码修复：路径/维度/ID 集中管理，从 experiment_config 导入
 from scripts.training.experiment_config import (
     DATA_DIR_STR as DATA_DIR,
-    OUTPUT_DIR_STR as OUTPUT_DIR,  # noqa: F401 – re-export for backward compat
-    DOMAIN_TOKENIZER_DIR_STR as DOMAIN_TOKENIZER_DIR,
-    SHARED_EMBEDDING_PATH_STR as SHARED_EMBEDDING_PATH,
-    SIMPLE_ZH_DIR_STR as SIMPLE_ZH_DIR,
-    GENERAL_VOCAB_SIZE,
-    SHARED_EMBED_DIM,
+)
+from scripts.training.experiment_config import (
     DIALOGUE_DATA_FILES,
     DIALOGUE_HF_SOURCES,
+    GENERAL_VOCAB_SIZE,
     SFT_ANSWER_MARKER,
+    SHARED_EMBED_DIM,
+)
+from scripts.training.experiment_config import (
+    DOMAIN_TOKENIZER_DIR_STR as DOMAIN_TOKENIZER_DIR,
+)
+from scripts.training.experiment_config import (
+    OUTPUT_DIR_STR as OUTPUT_DIR,  # noqa: F401 – re-export for backward compat
+)
+from scripts.training.experiment_config import (
+    SHARED_EMBEDDING_PATH_STR as SHARED_EMBEDDING_PATH,
+)
+from scripts.training.experiment_config import (
+    SIMPLE_ZH_DIR_STR as SIMPLE_ZH_DIR,
 )
 
 # ── HuggingFace 数据源映射（供 load_domain_texts 使用）──────────────────────
@@ -110,10 +119,7 @@ def load_domain_tokenizer(domain: str) -> spm.SentencePieceProcessor:
 
     general domain reuses en tokenizer.
     """
-    if domain == "general":
-        actual_domain = GENERAL_TOKENIZER_DOMAIN  # "en"
-    else:
-        actual_domain = domain
+    actual_domain = GENERAL_TOKENIZER_DOMAIN if domain == "general" else domain  # "en"
 
     model_path = os.path.join(DOMAIN_TOKENIZER_DIR, actual_domain, f"sp_{actual_domain}.model")
     if not os.path.exists(model_path):
@@ -168,10 +174,10 @@ def load_general_tokenizer(general_model_path: str = None) -> spm.SentencePieceP
 
 
 def split_train_eval(
-    texts: List[str],
+    texts: list[str],
     eval_ratio: float = 0.05,
     seed: int = 42,
-) -> Tuple[List[str], List[str]]:
+) -> tuple[list[str], list[str]]:
     """T1: 用 hash 分桶将数据分为训练集和 held-out 评估集。
 
     使用 hashlib 确定性 hash（不依赖 PYTHONHASHSEED），确保：
@@ -187,8 +193,8 @@ def split_train_eval(
     Returns:
         (train_texts, eval_texts): 互斥的训练集和评估集
     """
-    train_texts: List[str] = []
-    eval_texts: List[str] = []
+    train_texts: list[str] = []
+    eval_texts: list[str] = []
     threshold = int(eval_ratio * 1000)  # 用 1000 级粒度提高精度
 
     for text in texts:
@@ -202,7 +208,7 @@ def split_train_eval(
     return train_texts, eval_texts
 
 
-def load_domain_texts(domain: str, max_texts: int = 5000) -> List[str]:
+def load_domain_texts(domain: str, max_texts: int = 5000) -> list[str]:
     """Load raw text data for a domain from multiple HuggingFace datasets.
 
     Strategy:
@@ -214,7 +220,7 @@ def load_domain_texts(domain: str, max_texts: int = 5000) -> List[str]:
 
     if os.path.exists(cache_path):
         texts = []
-        with open(cache_path, "r", encoding="utf-8") as f:
+        with open(cache_path, encoding="utf-8") as f:
             for i, line in enumerate(f):
                 if i >= max_texts:
                     break
@@ -235,7 +241,7 @@ def load_domain_texts(domain: str, max_texts: int = 5000) -> List[str]:
     try:
         from datasets import load_dataset
     except ImportError:
-        raise RuntimeError("datasets library required: pip install datasets")
+        raise RuntimeError("datasets library required: pip install datasets") from None
 
     for src in sources:
         src_max = src.get("max_samples", max_texts)
@@ -272,11 +278,11 @@ def load_domain_texts(domain: str, max_texts: int = 5000) -> List[str]:
     return all_texts
 
 
-def load_all_texts(data_path: str, max_texts: int = 10000000, min_len: int = 10) -> List[str]:
+def load_all_texts(data_path: str, max_texts: int = 10000000, min_len: int = 10) -> list[str]:
     """加载全部文本（不分割，给 standard 族长独享全部数据）。"""
     print(f"  加载文本: {data_path}", flush=True)
     all_texts = []
-    with open(data_path, "r", encoding="utf-8") as f:
+    with open(data_path, encoding="utf-8") as f:
         for i, line in enumerate(f):
             if i >= max_texts:
                 break
@@ -290,7 +296,7 @@ def load_all_texts(data_path: str, max_texts: int = 10000000, min_len: int = 10)
     return all_texts
 
 
-def load_simple_zh_texts(data_files: List[str], max_texts: int = 10000000) -> List[str]:
+def load_simple_zh_texts(data_files: list[str], max_texts: int = 10000000) -> list[str]:
     """从 data/simple_zh/ 加载多个数据文件并合并（简单中文，匹配 36M 能力）。
 
     替代 load_domain_texts（维基百科数据对 compact 太复杂）。
@@ -302,7 +308,7 @@ def load_simple_zh_texts(data_files: List[str], max_texts: int = 10000000) -> Li
             print(f"  ⚠️ 文件不存在: {path}", flush=True)
             continue
         count = 0
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             for line in f:
                 if len(texts) >= max_texts:
                     break
@@ -323,11 +329,11 @@ def load_simple_zh_texts(data_files: List[str], max_texts: int = 10000000) -> Li
 
 def load_dialogue_texts_multi(
     data_dir: str,
-    filenames: List[str] = None,
+    filenames: list[str] = None,
     max_texts: int = 100000,
     answer_marker: str = SFT_ANSWER_MARKER,
     max_answer_chars: int = 0,
-) -> List[str]:
+) -> list[str]:
     """S5: 从多个 jsonl 文件加载对话数据（合并扩充）。
 
     每个文件格式：{"text": "问：...\\n答：..."}
@@ -356,7 +362,7 @@ def load_dialogue_texts_multi(
             print(f"  ⚠️ 文件不存在: {path}", flush=True)
             continue
         count = 0
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             for line in f:
                 if len(texts) >= max_texts:
                     break
@@ -398,11 +404,11 @@ def load_dialogue_texts_multi(
 
 
 def load_dialogue_texts_hf(
-    sources: List[dict] = None,
+    sources: list[dict] = None,
     max_texts: int = 100000,
     answer_marker: str = SFT_ANSWER_MARKER,
     cache_path: str = None,
-) -> List[str]:
+) -> list[str]:
     """S5: 从 HuggingFace 下载对话数据并转换为统一格式。
 
     将 instruction+output 转换为 "问：{instruction}\\n答：{output}" 格式。
@@ -423,7 +429,7 @@ def load_dialogue_texts_hf(
     # 优先从缓存加载
     if cache_path and os.path.exists(cache_path):
         texts = []
-        with open(cache_path, "r", encoding="utf-8") as f:
+        with open(cache_path, encoding="utf-8") as f:
             for i, line in enumerate(f):
                 if i >= max_texts:
                     break
@@ -463,10 +469,14 @@ def load_dialogue_texts_hf(
                 # 转换为 "问：{instruction}\n答：{output}" 格式
                 instruction = example.get("instruction", "")
                 output = example.get("output", "")
-                if isinstance(instruction, str) and isinstance(output, str):
-                    if instruction.strip() and output.strip():
-                        text = f"问：{instruction.strip()}\n答：{output.strip()}"
-                        all_texts.append(text)
+                if (
+                    isinstance(instruction, str)
+                    and isinstance(output, str)
+                    and instruction.strip()
+                    and output.strip()
+                ):
+                    text = f"问：{instruction.strip()}\n答：{output.strip()}"
+                    all_texts.append(text)
         except Exception as e:
             print(f"  ⚠️ {src['dataset']} 下载失败: {e}，跳过", flush=True)
 
@@ -502,10 +512,7 @@ def load_or_create_shared_embedding(device: str = "cpu") -> nn.Embedding:
     """Load existing shared embedding or create a new one."""
     if os.path.exists(SHARED_EMBEDDING_PATH):
         state = torch.load(SHARED_EMBEDDING_PATH, map_location="cpu", weights_only=True)
-        if isinstance(state, dict) and "weight" in state:
-            weight = state["weight"]
-        else:
-            weight = state
+        weight = state["weight"] if isinstance(state, dict) and "weight" in state else state
         emb = nn.Embedding(weight.shape[0], weight.shape[1])
         emb.weight.data.copy_(weight)
         emb.to(device)
@@ -535,7 +542,7 @@ class SequentialSampler:
     - 顺序采样：8000步×batch8=64K样本，前64K条全部唯一，利用率100%（无重复）
     """
 
-    def __init__(self, texts: List[str], batch_size: int, seed: int = 42):
+    def __init__(self, texts: list[str], batch_size: int, seed: int = 42):
         self.texts = texts
         self.batch_size = batch_size
         self.rng = random.Random(seed)
@@ -545,7 +552,7 @@ class SequentialSampler:
         self.epoch = 0
         self.n_texts = len(texts)
 
-    def sample_batch(self) -> List[str]:
+    def sample_batch(self) -> list[str]:
         """获取下一批，顺序遍历，epoch 结束自动重洗。"""
         if self.cursor + self.batch_size > self.n_texts:
             self.rng.shuffle(self.indices)

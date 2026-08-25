@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 import argparse
-from copy import deepcopy
 import json
-from pathlib import Path
 import sys
-from typing import Dict, Mapping
+from collections.abc import Mapping
+from copy import deepcopy
+from pathlib import Path
 
-import torch
 import _verify_emit
+import torch
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
@@ -38,7 +38,7 @@ def _config(seed: int) -> TaijiConfig:
     )
 
 
-def _episodes() -> Dict[int, Dict[str, object]]:
+def _episodes() -> dict[int, dict[str, object]]:
     return {
         cue: {
             "action": ACTIONS[index % len(ACTIONS)],
@@ -109,7 +109,7 @@ def _evaluate(
     episodes: Mapping[int, Mapping[str, object]],
     *,
     use_memory: bool,
-) -> Dict[str, object]:
+) -> dict[str, object]:
     rows = []
     action_correct = 0
     outcome_correct = 0
@@ -233,12 +233,14 @@ def _checkpoint_transaction_is_exact(
         and left.memory_write_strength > 0.0
         and all(
             torch.equal(a, b)
-            for a, b in zip(original.parameter_tensors(), restored.parameter_tensors())
+            for a, b in zip(
+                original.parameter_tensors(), restored.parameter_tensors(), strict=False
+            )
         )
     )
 
 
-def run_benchmark(*, seed: int = 23) -> Dict[str, object]:
+def run_benchmark(*, seed: int = 23) -> dict[str, object]:
     model = Taiji(_config(seed), episode_id="m5-bootstrap")
     episodes = _episodes()
     topology_before = model.memory.association.pre_index.clone()

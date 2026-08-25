@@ -38,7 +38,7 @@ export function useWebSocket() {
       if (!manuallyClosed) scheduleReconnect()
     }
 
-    ws.onerror = (error) => {
+    ws.onerror = () => {
       connected.value = false
     }
 

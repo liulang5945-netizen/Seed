@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 # Windows 终端 UTF-8 支持
 if sys.platform == "win32":
     try:
-        sys.stdout.reconfigure(encoding="utf-8")
-        sys.stderr.reconfigure(encoding="utf-8")
+        sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
+        sys.stderr.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
     except Exception as e:
         logger.debug("【main】处理失败（非致命）: %s", e)
 
@@ -33,9 +33,11 @@ base_dir = (
 if base_dir not in sys.path:
     sys.path.insert(0, base_dir)
 
-from seed_platform.config import get_config
-import uvicorn
 import logging
+
+import uvicorn
+
+from seed_platform.config import get_config
 
 logger = logging.getLogger(__name__)
 
@@ -54,10 +56,7 @@ def main():
     args, remaining = parser.parse_known_args()
 
     # 使用剩余参数（如果有）或 None 来获取训练配置
-    if remaining:
-        config = get_config(args=remaining)
-    else:
-        config = get_config(args=[])
+    config = get_config(args=remaining) if remaining else get_config(args=[])
 
     if args.model_name:
         config.model_name = args.model_name

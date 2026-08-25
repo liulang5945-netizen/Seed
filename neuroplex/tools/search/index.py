@@ -10,17 +10,16 @@
 - 增量更新：add_page() 实时加入索引
 """
 
+import atexit
+import json
+import logging
+import math
 import os
 import re
-import json
-import time
-import math
-import logging
 import threading
-import atexit
-from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Set, Tuple
+import time
 from collections import defaultdict
+from dataclasses import dataclass, field
 
 logger = logging.getLogger("Taiji.Search.Index")
 
@@ -32,7 +31,7 @@ class IndexedPage:
     url: str = ""
     title: str = ""
     text: str = ""
-    links: List[str] = field(default_factory=list)
+    links: list[str] = field(default_factory=list)
     crawled_at: float = 0.0
     word_count: int = 0
     source: str = ""  # discovery / crawl / browse
@@ -67,12 +66,12 @@ class Tokenizer:
     CJK_PATTERN = re.compile(r"[\u4e00-\u9fff\u3400-\u4dbf]")
     WORD_PATTERN = re.compile(r"[a-zA-Z]{2,}|\d+|[\u4e00-\u9fff]")
 
-    def tokenize(self, text: str) -> List[str]:
+    def tokenize(self, text: str) -> list[str]:
         """分词"""
         if not text:
             return []
         text = text.lower()
-        tokens: List[str] = []
+        tokens: list[str] = []
         i = 0
         while i < len(text):
             char = text[i]
@@ -102,7 +101,7 @@ class Tokenizer:
                 i += 1
         return tokens
 
-    def tokenize_query(self, query: str) -> List[str]:
+    def tokenize_query(self, query: str) -> list[str]:
         """查询分词（与文档分词相同）"""
         return self.tokenize(query)
 
@@ -127,10 +126,10 @@ class InvertedIndex:
         self.data_dir = data_dir or os.path.join("taiji_data", "search_index")
         os.makedirs(self.data_dir, exist_ok=True)
         self._tokenizer = Tokenizer()
-        self._pages: List[IndexedPage] = []
-        self._postings: Dict[str, Set[int]] = defaultdict(set)
-        self._doc_tokens: Dict[int, List[str]] = {}
-        self._url_to_idx: Dict[str, int] = {}
+        self._pages: list[IndexedPage] = []
+        self._postings: dict[str, set[int]] = defaultdict(set)
+        self._doc_tokens: dict[int, list[str]] = {}
+        self._url_to_idx: dict[str, int] = {}
         self._lock = threading.Lock()
         self._load()
         atexit.register(self.save)
@@ -156,7 +155,7 @@ class InvertedIndex:
             logger.debug(f"  索引 +1: {page.title[:40]} ({len(tokens)} tokens)")
             return True
 
-    def add_pages(self, pages: List[IndexedPage]) -> int:
+    def add_pages(self, pages: list[IndexedPage]) -> int:
         """批量添加"""
         count = 0
         for p in pages:
@@ -178,7 +177,7 @@ class InvertedIndex:
 
     # ─── 搜索 ───
 
-    def search(self, query: str, top_k: int = 10) -> List[SearchHit]:
+    def search(self, query: str, top_k: int = 10) -> list[SearchHit]:
         """BM25 搜索"""
         terms = self._tokenizer.tokenize_query(query)
         if not terms or not self._pages:
@@ -188,10 +187,10 @@ class InvertedIndex:
             N = len(self._pages)
             avgdl = sum(len(toks) for toks in self._doc_tokens.values()) / max(N, 1)
             k1, b = 1.5, 0.75
-            scored: List[Tuple[float, int]] = []
+            scored: list[tuple[float, int]] = []
 
             # 找候选文档（至少包含一个查询词）
-            candidates: Set[int] = set()
+            candidates: set[int] = set()
             for term in terms:
                 candidates.update(self._postings.get(term, set()))
             if not candidates:
@@ -216,7 +215,7 @@ class InvertedIndex:
                     scored.append((score, idx))
 
             scored.sort(key=lambda x: x[0], reverse=True)
-            hits: List[SearchHit] = []
+            hits: list[SearchHit] = []
             for score, idx in scored[:top_k]:
                 page = self._pages[idx]
                 snippet = self._make_snippet(page.text, terms)
@@ -230,7 +229,7 @@ class InvertedIndex:
                 )
             return hits
 
-    def _make_snippet(self, text: str, terms: List[str], window: int = 100) -> str:
+    def _make_snippet(self, text: str, terms: list[str], window: int = 100) -> str:
         """生成摘要"""
         low = text.lower()
         for t in terms:
@@ -254,7 +253,7 @@ class InvertedIndex:
             path = self._json_path()
             if not os.path.exists(path):
                 return
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = json.load(f)
             self._pages = [IndexedPage(**p) for p in data.get("pages", [])]
             # 重建倒排表
@@ -322,7 +321,7 @@ class InvertedIndex:
 # 统一入口
 # ═══════════════════════════════════════════════
 
-_default_index: Optional[InvertedIndex] = None
+_default_index: InvertedIndex | None = None
 
 
 def get_index() -> InvertedIndex:

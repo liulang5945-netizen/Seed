@@ -8,7 +8,7 @@ smaller local budget; it is never selected as the default production spec.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal, Optional
+from typing import Literal
 
 
 @dataclass
@@ -78,7 +78,7 @@ class NeuronConfig:
     # 模拟人脑突触可塑性（LTP/LTD）：不同类型神经元通过突触连接到统一网络
     # None = 不投影（向后兼容，field_dim 即场维度）
     # 设为统一值（如4096）时，field_projector: Linear(field_dim → unified_field_dim)
-    unified_field_dim: Optional[int] = None
+    unified_field_dim: int | None = None
 
     # ── C12: 评分投影（score_dim）──
     # 共振分数可比性修复：大神经元（shared_expert）系统性主导场状态方向，
@@ -95,7 +95,7 @@ class NeuronConfig:
     #
     # - None = 不投影（向后兼容，评分用原始 field_vector cosine）
     # - int = 评分投影维度（推荐 256，参数量 5×4096×256≈5.2M + 1×4096×256≈1M）
-    score_dim: Optional[int] = None
+    score_dim: int | None = None
 
     # ── C5: 多原型混合（num_prototypes）──
     # 单 EMA 原型只能跟踪单一模式，多原型覆盖多子分布。
@@ -110,7 +110,7 @@ class NeuronConfig:
 
     # ── Metadata ──
     spec: str = "standard"
-    neuron_id: Optional[str] = None
+    neuron_id: str | None = None
 
     # ── 神经元类型（人脑启发：兴奋性/抑制性分化）──
     # excitatory: 默认，对场做正向贡献（类比谷氨酸能）
@@ -149,7 +149,7 @@ class NeuronConfig:
     dendritic_enabled: bool = False
     # apical cross-attention 的 KV 来源维度（= field_dim，由 neuron 构建时传入）
     # None 时用 field_dim（向后兼容）
-    apical_kv_dim: Optional[int] = None
+    apical_kv_dim: int | None = None
 
     # ── Approximate parameter count (excluding shared embedding) ──
     @property
@@ -280,7 +280,7 @@ DOMAIN_VOCAB_SIZES = {
 GENERAL_TOKENIZER_DOMAIN = "en"
 
 
-def get_default_neuron_config(spec: str = None) -> "NeuronConfig":
+def get_default_neuron_config(spec: str | None = None) -> NeuronConfig:
     """根据 spec 名称返回 NeuronConfig 实例。
 
     Args:
@@ -310,7 +310,7 @@ def get_default_neuron_config(spec: str = None) -> "NeuronConfig":
     return replace(base)
 
 
-def get_domain_neuron_config(domain: str, spec: str = None) -> "NeuronConfig":
+def get_domain_neuron_config(domain: str, spec: str | None = None) -> NeuronConfig:
     """P7: 返回域专用 NeuronConfig（vocab_size 对齐域 tokenizer）。
 
     Args:

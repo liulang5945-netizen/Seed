@@ -16,16 +16,16 @@ Phase 4 (清醒): 自我评估 — 检查模型健康状态
 Phase 5 (梦境): 经验素材生成 — 态极生成下一轮群体训练数据
 """
 
-import os
 import json
-import time
 import logging
-import threading
 import math
-from datetime import datetime
-from typing import Dict, List, Optional, Any, Tuple
-from dataclasses import dataclass, field
+import os
+import threading
+import time
 from collections import deque
+from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Any
 
 import torch
 
@@ -69,7 +69,7 @@ except ImportError:
     LifecycleManager = None  # type: ignore
 
 try:
-    from neuroplex.resonance.neuro_modulation import SleepConsolidator, NeuromodulatorState
+    from neuroplex.resonance.neuro_modulation import NeuromodulatorState, SleepConsolidator
 except ImportError:
     SleepConsolidator = None  # type: ignore
     NeuromodulatorState = None  # type: ignore
@@ -86,32 +86,32 @@ class SleepReport:
 
     timestamp: str
     duration_seconds: float
-    phases_completed: List[str] = field(default_factory=list)
+    phases_completed: list[str] = field(default_factory=list)
     memory_entries_cleared: int = 0
     training_samples_used: int = 0
-    training_loss: Optional[float] = None
+    training_loss: float | None = None
     evolution_events: int = 0
     user_patterns_updated: int = 0
     health_status: str = "unknown"
-    recommendations: List[str] = field(default_factory=list)
+    recommendations: list[str] = field(default_factory=list)
     # C26: 场固化（Phase 1.5）——本次睡眠沉淀的场记忆条数
     field_memories_consolidated: int = 0
     # C26 增量三（Phase 1.6）：突触沉淀——高频场记忆重放进神经元权重的条数
     synaptic_consolidated: int = 0
-    synaptic_lora_loss: Optional[float] = None
+    synaptic_lora_loss: float | None = None
     # C26 增量六（Phase 1.7）：真正睡眠重放——记忆向量场条件化 forward 重放
     forward_replayed: int = 0
-    forward_replay_loss: Optional[float] = None
+    forward_replay_loss: float | None = None
     # 自举门槛 A2（2026-08-15）：judge 驱动的重放样本数——它自己判定短板优先
     judge_driven_replay: int = 0
     # C27 增量五（Phase 1.8）：振荡器节奏训练——o 型节奏参数随睡眠经验学习
     osc_trained: int = 0
-    osc_train_loss: Optional[float] = None
+    osc_train_loss: float | None = None
     # D1-fix v3（2026-08-20）：judge 驱动的衰减自调节——本次 forward_replay
     # 因 judge NLL std 健康而**跳过**衰减的次数（0 或 replayed_nids）
     decay_skipped_count: int = 0
-    decay_judge_std: Optional[float] = None  # 最近一次判定的 std
-    decay_baseline_std: Optional[float] = None  # 本轮 baseline std（重测）
+    decay_judge_std: float | None = None  # 最近一次判定的 std
+    decay_baseline_std: float | None = None  # 本轮 baseline std（重测）
     # D1-fix v4（2026-08-21）：hysteresis 复合——
     # 当前周期 SKIP 信号累计到阈值前，pending 计数（< hysteresis_n 时本轮
     # 不真正 skip，仍走衰减；达阈值才生效 +1）
@@ -120,9 +120,9 @@ class SleepReport:
     # ceiling_ratio 时即便 SKIP 也强制衰减的次数
     decay_ceiling_forced_count: int = 0
     # D1-fix v4：本轮 LoRA L2 测量值（ceiling 判定用）
-    decay_current_lora_l2: Optional[float] = None
+    decay_current_lora_l2: float | None = None
     # D1-fix v4：ceiling 参考基线 LoRA L2（首次测量写入或外部注入）
-    decay_lora_l2_baseline: Optional[float] = None
+    decay_lora_l2_baseline: float | None = None
     # D1-fix v9（2026-08-21）：baseline warmup 已收集的测量数（0 表示还在 warmup）
     decay_lora_l2_warmup_collected: int = 0
 
@@ -167,7 +167,7 @@ class SleepConfig:
     # baseline 在每次 sleep 周期重测（不是上次 std）——与 D1 pre/post 测量
     # 信号同源，std 收窄 = baseline 持续走低 → relative 阈值稳定触发。
     # 0.95 = 5% 下降触发；1.0 = 永不 skip（绝对判定）；0.0 = 永远 skip。
-    decay_baseline_prompts: Optional[Tuple[str, ...]] = None  # D1-fix v3
+    decay_baseline_prompts: tuple[str, ...] | None = None  # D1-fix v3
     # baseline 测量用的 prompt 集合——D1 脚本传 8+8+8=24 条；不传则用 bank
     # 随机采样（fallback）。设为元组避免外部修改。
     decay_baseline_sample_n: int = 8  # D1-fix v3 从 prompts 抽的条数（每组等比）
@@ -185,7 +185,7 @@ class SleepConfig:
     # D1-fix v4：外部注入的 pre LoRA L2 baseline（缺省时 SleepEngine
     # 在第一次测量时自动写）。用于跨进程/重启时让 ceiling 有稳定
     # 参考点；与 decay_lora_ceiling_ratio 配对使用。
-    pre_lora_l2_baseline: Optional[float] = None
+    pre_lora_l2_baseline: float | None = None
     # D1-fix v9（2026-08-21）：baseline 初始化策略——
     # "first_measurement"（旧）= 第一次 sleep 周期测量值（LoRA 尚未训练时
     # 拿到 0.0 → baseline 锁 0 → ceiling 机制数学上不可触发，v8 复现根因）；
@@ -219,7 +219,7 @@ class SleepEngine:
 
     def __init__(
         self,
-        config: Optional[SleepConfig] = None,
+        config: SleepConfig | None = None,
         data_dir: str = None,
         model_provider=None,
         tokenizer_provider=None,
@@ -242,11 +242,11 @@ class SleepEngine:
         self.data_dir = data_dir
         self._model_provider = model_provider
         self._tokenizer_provider = tokenizer_provider
-        self._last_sleep_time: Optional[datetime] = None
-        self._last_activity_time: Optional[datetime] = None
-        self._sleep_history: List[SleepReport] = []
+        self._last_sleep_time: datetime | None = None
+        self._last_activity_time: datetime | None = None
+        self._sleep_history: list[SleepReport] = []
         self._is_sleeping = False
-        self._auto_sleep_thread: Optional[threading.Thread] = None
+        self._auto_sleep_thread: threading.Thread | None = None
         self._stop_event = threading.Event()
         # D1-fix v4（2026-08-21）：hysteresis 计数器——连续 N 个 sleep 周期
         # 满足 v3 SKIP 条件时才真正跳过本轮衰减。reset 在每轮真正 skip 生效时
@@ -254,27 +254,27 @@ class SleepEngine:
         self._consecutive_skip_count: int = 0
         # D1-fix v4：LoRA L2 ceiling baseline——首次测量时写入，之后用
         # 同一 baseline 判定 ceiling；可被外部 pre_lora_l2_baseline 覆盖。
-        self._lora_l2_baseline: Optional[float] = None
+        self._lora_l2_baseline: float | None = None
         # D1-fix v9（2026-08-21）：warmup 样本桶——按
         # lora_l2_baseline_init 策略收前 N 步 LoRA L2 测量值，
         # 满 N 后取均值写 baseline。绕过 LoRA 刚初始化那段
         # 0.0 噪声，让 ceiling 真正能触发。
-        self._lora_l2_warmup_samples: List[float] = []
+        self._lora_l2_warmup_samples: list[float] = []
         # D1-fix v9：baseline 是否已锁定——锁定后不再收集样本，
         # 避免长程漂移让 baseline 跟着跑。
         self._lora_l2_baseline_locked: bool = False
 
         # 神经元架构接口（由 set_brain_interfaces 注入）
-        self.cortex: Optional[Any] = None  # Cortex 实例
-        self._lifecycle: Optional[Any] = None  # LifecycleManager
-        self._sleep_consolidator: Optional[Any] = None  # SleepConsolidator
+        self.cortex: Any | None = None  # Cortex 实例
+        self._lifecycle: Any | None = None  # LifecycleManager
+        self._sleep_consolidator: Any | None = None  # SleepConsolidator
         # C17（2026-08-08）：新生神经元无缝衔接引擎（懒加载，neurogenesis 后调用）
-        self._integrate_engine: Optional[Any] = None
-        self._stdp_tracker: Optional[Any] = None  # STDPTracker
-        self._feed_engine: Optional[Any] = None  # FeedEngine
+        self._integrate_engine: Any | None = None
+        self._stdp_tracker: Any | None = None  # STDPTracker
+        self._feed_engine: Any | None = None  # FeedEngine
         self._current_step: int = 0  # 全局步数计数器（供 SleepConsolidator）
         # C26（2026-08-11）：场记忆库——睡眠把场状态沉淀为持久记忆（可写记忆第 0 格）
-        self._field_memory: Optional[Any] = None  # FieldMemoryBank（懒加载）
+        self._field_memory: Any | None = None  # FieldMemoryBank（懒加载）
         self.pending_field_memories: list = []  # 待固化的 (vector, label)
         # P1-2: 神经调质状态（多巴胺/血清素/去甲肾上腺素）
         # 自主进化核心：双信号驱动调质，自动调节学习率
@@ -309,12 +309,12 @@ class SleepEngine:
 
     def set_brain_interfaces(
         self,
-        cortex: Optional[Any] = None,
-        lifecycle: Optional[Any] = None,
-        sleep_consolidator: Optional[Any] = None,
-        stdp_tracker: Optional[Any] = None,
-        feed_engine: Optional[Any] = None,
-        neuromodulator: Optional[Any] = None,
+        cortex: Any | None = None,
+        lifecycle: Any | None = None,
+        sleep_consolidator: Any | None = None,
+        stdp_tracker: Any | None = None,
+        feed_engine: Any | None = None,
+        neuromodulator: Any | None = None,
     ):
         """
         注入神经元架构组件（Cortex + ResonanceEnsemble 体系）。
@@ -616,7 +616,7 @@ class SleepEngine:
     # ─── C26: 场记忆（可写记忆第 0 格）─────────────────────────
 
     def record_field_memory(
-        self, vector, label: str, text: Optional[str] = None, phase: Optional[float] = None
+        self, vector, label: str, text: str | None = None, phase: float | None = None
     ) -> None:
         """C26: 记录一条待固化的场记忆（场状态快照 + 文本标签 + 内容）。
 
@@ -639,8 +639,8 @@ class SleepEngine:
         语义锚点空间进行；无产物时保持硬阈值 + 场空间检索（向后兼容）。
         """
         if self._field_memory is None:
-            from neuroplex.resonance.field_memory import FieldMemoryBank, WriteGate
             from neuroplex.resonance.field_alignment import AnchorProjector
+            from neuroplex.resonance.field_memory import FieldMemoryBank, WriteGate
 
             # 记忆空间 = 真实场空间（维度随装配规格动态匹配，避免硬编码错配）
             dim = 4096
@@ -736,6 +736,7 @@ class SleepEngine:
 
         # 组 SFT 重放样本（问答对 + 原文各一份 = 用户决策"两者混合"）
         import random
+
         import torch.nn.functional as F
 
         samples = []
@@ -877,7 +878,7 @@ class SleepEngine:
 
     def _sample_judge_nll(
         self, text: str, target_ids: list, device, shared_embedding
-    ) -> Optional[float]:
+    ) -> float | None:
         """②→③ 接线（自举门槛 A2，2026-08-15）：样本的 judge NLL。
 
         用 judge_lm_head（general 256K 统一判定空间）度量"它自己判定这段文本
@@ -1021,7 +1022,7 @@ class SleepEngine:
         sc = self._sleep_consolidator
 
         # 样本集：[(field_state 向量, 文本目标)]——混合记忆条目与场状态
-        samples: List[tuple] = []
+        samples: list[tuple] = []
         # 1. 已沉淀记忆（consolidated=True，vector + text 齐全）
         try:
             for e in bank.entries:
@@ -1464,7 +1465,7 @@ class SleepEngine:
             report.osc_trained = 0
             return
         # 样本源（与 Phase 1.7 同口径：已沉淀记忆 + 场状态重放文本）
-        samples: List[tuple] = []
+        samples: list[tuple] = []
         bank = self.get_field_memory()
         try:
             for e in bank.entries:
@@ -1635,7 +1636,7 @@ class SleepEngine:
         except Exception as e:
             logger.warning(f"  新生整合 {new_nid} 失败: {e}")
 
-    def _select_split_parent(self, domain: str) -> Optional[str]:
+    def _select_split_parent(self, domain: str) -> str | None:
         """选择分裂父 neuron（LuminaNet splitting 融合）。
 
         策略：选同域中共振分数最高的 neuron 作为父本，
@@ -1701,7 +1702,7 @@ class SleepEngine:
             logger.debug(f"metabolism 调质更新失败（非关键）: {e}")
 
         # 获取按域分类的训练样本
-        domain_samples: Dict[str, list] = {}
+        domain_samples: dict[str, list] = {}
         if self._feed_engine is not None:
             domain_samples = self._feed_engine.get_pending_samples_by_domain()
         else:
@@ -1755,7 +1756,7 @@ class SleepEngine:
             if shadow_emb is not None:
                 self.cortex._shared_embedding = shadow_emb
             try:
-                ppl_results: Dict[str, float] = {}
+                ppl_results: dict[str, float] = {}
                 total_loss = 0.0
                 trained_count = 0
                 # 供 Phase 4 凋亡评估使用（多维生存评分信号之一）
@@ -2092,7 +2093,7 @@ class SleepEngine:
         # EMA 趋近目标值（调质不会突变，而是缓慢调整）
         self._neuromodulator.step()
 
-    def _evaluate_next_token_accuracy(self) -> Optional[float]:
+    def _evaluate_next_token_accuracy(self) -> float | None:
         """评估 next-token 预测准确率（慢速信号）。
 
         用 feed_engine 中最近的样本做评估：
@@ -2399,7 +2400,7 @@ class SleepEngine:
         ppl = math.exp(min(avg_loss, 20))
         return avg_loss, ppl
 
-    def _train_contrastive_phase(self, cortex) -> Optional[float]:
+    def _train_contrastive_phase(self, cortex) -> float | None:
         """Contrastive phase: 三信号协同闭环（route + proto + align）——修复版。
 
         暴露并修复原版"机械塞入"死代码的三处结构性缺陷：
@@ -2454,7 +2455,7 @@ class SleepEngine:
         # 每域手工策划多条高域特异性样本（域特异性质量 >> 数量，详见 plan 9.8）
         # 实验证明：训练数据随机采样使 L2 回退（14%），因为短句域区分度低。
         # 策划原则：每域 3 条，域内多样化但域间最大区分（zh 全中文、code 全语法、math 全公式）
-        CURATED_SAMPLES: Dict[str, List[str]] = {
+        CURATED_SAMPLES: dict[str, list[str]] = {
             "zh": [
                 "神经元共振场架构设计原理",
                 "深度学习模型训练优化方法",
@@ -2485,7 +2486,7 @@ class SleepEngine:
         def _domain_of(nid: str) -> str:
             return nid.split("_")[0] if "_" in nid else nid
 
-        domain_texts: Dict[str, List[str]] = CURATED_SAMPLES
+        domain_texts: dict[str, list[str]] = CURATED_SAMPLES
 
         # ── 收集阶段（修复核心）：每个域样本喂给所有 neuron ──
         # 原版每个 neuron 只喂自己域文本，无法建立跨 neuron 路由比较。
@@ -2494,9 +2495,9 @@ class SleepEngine:
         # resp_hidden[D][nid]  = neuron nid 对样本 D 首条的 hidden_before_write [1, 768]
         # resp_field[D][nid]   = neuron nid 对样本 D 首条的 field_vector [1, field_dim]
         # sample_prompts       = [(domain, prompt_vec), ...] 多样本扁平列表
-        resp_hidden: Dict[str, Dict[str, torch.Tensor]] = {}
-        resp_field: Dict[str, Dict[str, torch.Tensor]] = {}
-        sample_prompts: List[tuple] = []  # [(domain, prompt_vec [512]), ...]
+        resp_hidden: dict[str, dict[str, torch.Tensor]] = {}
+        resp_field: dict[str, dict[str, torch.Tensor]] = {}
+        sample_prompts: list[tuple] = []  # [(domain, prompt_vec [512]), ...]
 
         for sample_domain, texts in domain_texts.items():
             first_encoded = False
@@ -2580,9 +2581,9 @@ class SleepEngine:
             return F.pad(vec, (0, target_dim - vec.size(-1)))
 
         # 每个 neuron 对自己域样本的响应（prototype 可训练代理）
-        self_hidden: Dict[str, torch.Tensor] = {}  # nid -> normed hidden [1, H_common]
-        self_field: Dict[str, torch.Tensor] = {}  # nid -> normed field [1, D_common]
-        self_hidden_raw: Dict[str, torch.Tensor] = {}  # nid -> 原始维度 hidden（prototype 更新用）
+        self_hidden: dict[str, torch.Tensor] = {}  # nid -> normed hidden [1, H_common]
+        self_field: dict[str, torch.Tensor] = {}  # nid -> normed field [1, D_common]
+        self_hidden_raw: dict[str, torch.Tensor] = {}  # nid -> 原始维度 hidden（prototype 更新用）
         for nid in all_nids:
             d = _domain_of(nid)
             if d in resp_hidden and nid in resp_hidden[d]:
@@ -2823,7 +2824,7 @@ class SleepEngine:
         target_tensor = torch.tensor(target_ids, dtype=torch.long, device=device).unsqueeze(0)
         target_feat = codebook(target_tensor)
 
-        neuron_embeddings: Dict[str, torch.Tensor] = {}
+        neuron_embeddings: dict[str, torch.Tensor] = {}
         for nid in mm_nids:
             neuron = cortex.neurons[nid]
             input_emb = neuron.encode_multimodal_input(input_feat, modality)
@@ -3239,9 +3240,9 @@ class SleepEngine:
         if not weaknesses:
             return
         try:
-            import os
-            import json
             import datetime as dt
+            import json
+            import os
 
             output_dir = os.path.join(self.data_dir, "weakness_training_data")
             os.makedirs(output_dir, exist_ok=True)
@@ -3313,7 +3314,7 @@ class SleepEngine:
             },
         ]
 
-    def _identify_weaknesses(self) -> List[str]:
+    def _identify_weaknesses(self) -> list[str]:
         """识别当前模型的弱点"""
         weaknesses = []
         try:
@@ -3341,7 +3342,7 @@ class SleepEngine:
 
         return weaknesses or ["信息不足，需要更多交互数据"]
 
-    def _identify_strengths(self) -> List[str]:
+    def _identify_strengths(self) -> list[str]:
         """识别当前模型的优势"""
         return ["中文理解", "身份稳定", "本地运行"]
 
@@ -3427,7 +3428,7 @@ class SleepEngine:
                 fpath = os.path.join(corpus_dir, fname)
                 if fname.endswith(".jsonl"):
                     try:
-                        with open(fpath, "r", encoding="utf-8") as f:
+                        with open(fpath, encoding="utf-8") as f:
                             for line in f:
                                 try:
                                     item = json.loads(line)
@@ -3518,7 +3519,7 @@ class SleepEngine:
         if not os.path.exists(path):
             return
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = json.load(f)
             for item in data:
                 self._sleep_history.append(SleepReport(**item))
@@ -3564,7 +3565,7 @@ class SleepEngine:
 
         return "\n".join(lines)
 
-    def get_sleep_trends(self) -> List[str]:
+    def get_sleep_trends(self) -> list[str]:
         """分析睡眠趋势"""
         if len(self._sleep_history) < 3:
             return ["数据不足，至少需要 3 次睡眠记录"]
@@ -3589,10 +3590,10 @@ class SleepEngine:
 
 # ─── 全局实例 ─────────────────────────────────────
 
-_global_sleep: Optional[SleepEngine] = None
+_global_sleep: SleepEngine | None = None
 
 
-def get_sleep_engine(config: Optional[SleepConfig] = None) -> SleepEngine:
+def get_sleep_engine(config: SleepConfig | None = None) -> SleepEngine:
     """获取全局睡眠引擎实例"""
     global _global_sleep
     if _global_sleep is None:

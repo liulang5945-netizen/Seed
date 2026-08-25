@@ -14,10 +14,10 @@ P8: 实现三个具体模态编码器，让 register_modality 有真实实现。
     video: 3D CNN VQ-VAE (复用 image codebook=8192, 空间 16x + 时间 4x)
 """
 
-from .vqvae import VQVAEImageCodec, VQVAE
-from .encodec import EnCodecAudioCodec, EnCodec
+from .encodec import EnCodec, EnCodecAudioCodec
+from .io import save_audio, save_image, save_video
 from .video import VideoCodec, VideoVQVAE
-from .io import save_image, save_audio, save_video
+from .vqvae import VQVAE, VQVAEImageCodec
 
 __all__ = [
     "VQVAEImageCodec",

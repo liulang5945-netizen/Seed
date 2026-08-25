@@ -114,5 +114,5 @@ def test_sleep_read_only_when_learn_disabled() -> None:
     scheduler.night([PATTERN.encode("ascii")], cycles_per_text=2, learn=False)
     after = model.substrate.parameter_tensors()
 
-    for previous, current in zip(before, after):
+    for previous, current in zip(before, after, strict=False):
         assert torch.equal(previous, current.detach()), "learn=False 的睡眠不得改变已学参数"

@@ -12,11 +12,12 @@
 5. 频率限制：防止疯狂调用
 """
 
+import logging
 import re
 import time
-import logging
-from typing import Any, Callable, Dict, List
 from collections import defaultdict
+from collections.abc import Callable
+from typing import Any
 
 logger = logging.getLogger("Taiji.Safety")
 
@@ -47,7 +48,7 @@ class SafetyGuard:
     ]
 
     def __init__(self, max_events_per_minute: int = 60):
-        self._rate_limits: Dict[str, List[float]] = defaultdict(list)
+        self._rate_limits: dict[str, list[float]] = defaultdict(list)
         self._max_events_per_minute = max_events_per_minute
         self._blocked_count = 0
         self._alert_count = 0

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from seed_platform.auth import AuthManager, JWTManager
 from seed_platform import auth_service
+from seed_platform.auth import AuthManager, JWTManager
 
 
 def test_jwt_roundtrip_and_refresh_are_platform_owned():

@@ -91,8 +91,8 @@
                   <p class="setting-desc">界面与交互的显示语言</p>
                 </div>
                 <div class="setting-right">
-                  <select aria-label="默认语言">
-                    <option value="zh-CN" selected>简体中文</option>
+                  <select v-model="uiLanguage" aria-label="默认语言" :disabled="savingSettings" @change="onUiLanguageChange">
+                    <option value="zh-CN">简体中文</option>
                     <option value="zh-TW">繁體中文</option>
                     <option value="en">English</option>
                     <option value="ja">日本語</option>
@@ -108,8 +108,8 @@
                   <p class="setting-desc">用于定时任务、日志时间戳等</p>
                 </div>
                 <div class="setting-right">
-                  <select aria-label="时区">
-                    <option value="Asia/Shanghai" selected>Asia/Shanghai (UTC+8)</option>
+                  <select v-model="timezone" aria-label="时区" :disabled="savingSettings" @change="onTimezoneChange">
+                    <option value="Asia/Shanghai">Asia/Shanghai (UTC+8)</option>
                     <option value="Asia/Tokyo">Asia/Tokyo (UTC+9)</option>
                     <option value="Asia/Seoul">Asia/Seoul (UTC+9)</option>
                     <option value="Asia/Singapore">Asia/Singapore (UTC+8)</option>
@@ -130,15 +130,15 @@
                 <div class="setting-right">
                   <div class="radio-group" role="radiogroup" aria-label="界面密度">
                     <label class="radio-chip">
-                      <input type="radio" name="density" value="compact">
+                      <input v-model="uiDensity" type="radio" name="density" value="compact" :disabled="savingSettings" @change="onDensityChange">
                       <span class="rc-label">紧凑</span>
                     </label>
                     <label class="radio-chip">
-                      <input type="radio" name="density" value="default" checked>
+                      <input v-model="uiDensity" type="radio" name="density" value="default" :disabled="savingSettings" @change="onDensityChange">
                       <span class="rc-label">默认</span>
                     </label>
                     <label class="radio-chip">
-                      <input type="radio" name="density" value="comfortable">
+                      <input v-model="uiDensity" type="radio" name="density" value="comfortable" :disabled="savingSettings" @change="onDensityChange">
                       <span class="rc-label">宽松</span>
                     </label>
                   </div>
@@ -158,8 +158,8 @@
                 </div>
                 <div class="setting-right">
                   <div class="range-wrap">
-                    <input type="range" min="0" max="1" step="0.01" value="0.72" aria-label="局部激活阈值" />
-                    <span class="range-value">0.72</span>
+                    <input v-model.number="activationThreshold" type="range" min="0" max="1" step="0.01" aria-label="局部激活阈值" :disabled="savingSettings" @change="onThresholdChange" />
+                    <span class="range-value">{{ Number(activationThreshold).toFixed(2) }}</span>
                   </div>
                 </div>
               </div>
@@ -171,7 +171,7 @@
                   <p class="setting-desc">一次状态推进等待后端返回的最长时间（毫秒）</p>
                 </div>
                 <div class="setting-right">
-                  <input type="number" min="10" max="10000" value="100" aria-label="响应超时" />
+                  <input v-model.number="responseTimeoutMs" type="number" min="10" max="10000" aria-label="响应超时" :disabled="savingSettings" @change="onResponseTimeoutChange" />
                 </div>
               </div>
 
@@ -183,7 +183,7 @@
                 </div>
                 <div class="setting-right">
                   <label class="toggle" aria-label="自动巩固开关">
-                    <input type="checkbox" checked />
+                    <input v-model="autoConsolidation" type="checkbox" :disabled="savingSettings" @change="onAutoConsolidationChange" />
                     <span class="track"><span class="thumb"></span></span>
                   </label>
                 </div>
@@ -197,7 +197,7 @@
                 </div>
                 <div class="setting-right">
                   <label class="toggle" aria-label="睡眠模式开关">
-                    <input type="checkbox" />
+                    <input v-model="sleepMode" type="checkbox" :disabled="savingSettings" @change="onSleepModeChange" />
                     <span class="track"><span class="thumb"></span></span>
                   </label>
                 </div>
@@ -228,6 +228,25 @@
                 </div>
               </div>
 
+              <!-- 终端访问（安全） -->
+              <div class="setting-row">
+                <div class="setting-left">
+                  <span class="setting-label">允许未认证终端访问</span>
+                  <p class="setting-desc">认证未启用时，允许工作台终端直接连接。开启会降低本地安全性，仅建议在受信任的本机环境使用。</p>
+                </div>
+                <div class="setting-right">
+                  <label class="toggle" aria-label="允许未认证终端访问开关">
+                    <input
+                      v-model="terminalAllowUnauth"
+                      type="checkbox"
+                      :disabled="savingTerminalSetting"
+                      @change="onTerminalUnauthChange"
+                    />
+                    <span class="track"><span class="thumb"></span></span>
+                  </label>
+                </div>
+              </div>
+
               <!-- 切换状态 -->
               <div class="setting-row setting-row--last">
                 <div class="setting-left">
@@ -248,9 +267,9 @@
                   <p class="setting-desc">历史对话的自动保留时长</p>
                 </div>
                 <div class="setting-right">
-                  <select aria-label="对话保留">
+                  <select v-model="chatRetentionDays" aria-label="对话保留" :disabled="savingSettings" @change="onRetentionChange">
                     <option value="30">30 天</option>
-                    <option value="90" selected>90 天</option>
+                    <option value="90">90 天</option>
                     <option value="180">180 天</option>
                     <option value="365">365 天</option>
                     <option value="forever">永久保留</option>
@@ -266,7 +285,7 @@
                 </div>
                 <div class="setting-right">
                   <label class="toggle" aria-label="自动清理开关">
-                    <input type="checkbox" checked />
+                    <input v-model="chatAutoCleanup" type="checkbox" :disabled="savingSettings" @change="onAutoCleanupChange" />
                     <span class="track"><span class="thumb"></span></span>
                   </label>
                 </div>
@@ -279,9 +298,9 @@
                   <p class="setting-desc">导出所有对话记录、配置快照与 Taiji 状态</p>
                 </div>
                 <div class="setting-right">
-                  <button class="btn-sm btn-outline" @click="toast('占位功能：导出数据尚未接入', 'info')">
+                  <button class="btn-sm btn-outline" :disabled="exporting" @click="onExportData">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
-                    导出
+                    {{ exporting ? '导出中…' : '导出' }}
                   </button>
                 </div>
               </div>
@@ -293,10 +312,10 @@
                     <svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
                     危险操作
                   </h3>
-                  <p>重置将清除所有本地配置、Taiji 状态与缓存文件，此操作不可撤销。建议先导出数据再进行重置。</p>
-                  <button class="btn-destructive" @click="toast('占位功能：重置尚未接入', 'warning')">
+                  <p>重置将清空所有本地对话会话记录；不会删除模型权重、检查点、Taiji 状态与配置项。此操作不可撤销，建议先导出数据再进行重置。</p>
+                  <button class="btn-destructive" :disabled="resetting" @click="onResetSeed">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5h5v6h-5z"/><path d="M14.5 9.5 13 7h-2l-1.5 2.5"/></svg>
-                    重置Seed
+                    {{ resetting ? '重置中…' : '重置Seed' }}
                   </button>
                 </div>
               </div>
@@ -331,7 +350,7 @@
                   <p class="setting-desc">查看本系统使用的第三方组件许可协议</p>
                 </div>
                 <div class="setting-right">
-                  <button class="btn-sm btn-ghost" @click="toast('占位功能：许可详情尚未接入', 'info')">
+                  <button class="btn-sm btn-ghost" @click="showLicense = true">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="M9 15h6"/></svg>
                     查看许可
                   </button>
@@ -343,18 +362,65 @@
         </div><!-- /.settings-layout -->
       </div><!-- /.settings-wrap -->
     </div><!-- /.settings-scroll -->
+
+    <!-- 开源许可弹窗（内嵌摘要，与根目录 LICENSE 一致：Apache-2.0） -->
+    <div
+      v-if="showLicense"
+      class="license-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="开源许可"
+      @click.self="showLicense = false"
+    >
+      <div class="license-panel">
+        <header class="license-head">
+          <span class="license-title">开源许可</span>
+          <button class="license-close" aria-label="关闭许可弹窗" @click="showLicense = false">✕</button>
+        </header>
+        <div class="license-body">
+          <p class="license-main">本项目基于 <strong>Apache License 2.0</strong> 开源。</p>
+          <p class="license-copy">Copyright 2026 NeuroPlex Contributors</p>
+          <div class="license-cols">
+            <div class="license-col">
+              <h4>允许</h4>
+              <ul>
+                <li>商业使用、修改、分发</li>
+                <li>私有使用、专利授权</li>
+              </ul>
+            </div>
+            <div class="license-col">
+              <h4>条件</h4>
+              <ul>
+                <li>保留许可证与版权声明</li>
+                <li>修改文件需携带变更说明</li>
+              </ul>
+            </div>
+            <div class="license-col">
+              <h4>限制</h4>
+              <ul>
+                <li>不提供任何担保</li>
+                <li>不承担使用责任</li>
+              </ul>
+            </div>
+          </div>
+          <p class="license-note">完整许可文本见项目根目录 LICENSE 文件，或访问
+            <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noopener">apache.org/licenses/LICENSE-2.0</a>。</p>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <script setup>
-import { ref, inject } from 'vue';
-import { Settings as SettingsIcon, Palette, MessageSquareText, RefreshCw, Image as ImageIcon } from 'lucide-vue-next';
+import { ref, reactive, inject } from 'vue';
 import { useAppStore } from '../stores/appStore.js';
+import { useChatStore } from '../stores/chatStore.js';
 import { API_BASE, authFetch } from '../composables/apiClient.js';
 
 const toast = inject('toast');
+const $confirm = inject('$confirm', () => Promise.resolve(false));
 const appStore = useAppStore();
-const t = (key, params) => appStore.t(key, params);
+const chatStore = useChatStore();
 
 // 左侧设置导航当前激活分区（v-if 切换右侧内容）
 const activeSection = ref('general');
@@ -405,52 +471,280 @@ const switchRuntime = async (target) => {
 };
 refreshRuntime();
 
-const defaultPrompt = '你是一个全能助手。请直接、简洁地回答问题。如果遇到错误或不知道的情况，请直接说明，无需冗长地道歉。';
-const systemPrompt = ref(localStorage.getItem('taiji_system_prompt') || defaultPrompt);
-const appVersion = ref('1.0.0');
-const updateChecking = ref(false);
-const updateAvailable = ref(false);
-const updateMsg = ref('');
-
-const onBgImageSelect = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = (ev) => {
-    appStore.setBgImage(ev.target.result);
-    toast('✅ 背景图已设置', 'success');
-  };
-  reader.readAsDataURL(file);
+// ── 持久化设置组（经 /api/settings 通道，范式对齐终端开关）──
+// 初值读 localStorage（App.vue 启动时已将服务端值镜像到 taiji_<key>），
+// 进入页面时用 GET /api/settings 校正；变更时 POST /api/settings 持久化，
+// 成功回写缓存，失败回滚 + toast；userModifiedKeys 防 GET/POST 竞态。
+// 键名约定：小写下划线，语义与后端 app_settings.json 一致。
+const SETTINGS_DEFAULTS = {
+  ui_language: 'zh-CN',                    // 默认语言（通用）
+  timezone: 'Asia/Shanghai',               // 时区（通用）
+  ui_density: 'default',                   // 界面密度（通用）
+  taiji_activation_threshold: 0.72,        // 局部激活阈值（Taiji）
+  taiji_response_timeout_ms: 100,          // 响应超时毫秒（Taiji）
+  taiji_auto_consolidation: true,          // 自动巩固（Taiji）
+  taiji_sleep_mode: false,                 // 睡眠模式（Taiji）
+  chat_retention_days: '90',               // 对话保留（数据与隐私）
+  chat_auto_cleanup: true,                 // 自动清理（数据与隐私）
 };
 
-const saveSettings = async () => {
-  localStorage.setItem('taiji_system_prompt', systemPrompt.value);
-  await authFetch(`${API_BASE}/api/settings`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      theme: appStore.currentTheme,
-      accent: appStore.currentAccent,
-      system_prompt: systemPrompt.value,
-    }),
-  });
-  toast('✅ 设置已保存', 'success');
-};
+// 从 localStorage 读初值，按默认值类型自动解析（镜像值由 App.vue 写入）
+function _readLocal(key, fallback) {
+  const raw = localStorage.getItem(`taiji_${key}`);
+  if (raw === null || raw === '') return fallback;
+  if (typeof fallback === 'boolean') return raw === 'true';
+  if (typeof fallback === 'number') {
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : fallback;
+  }
+  return raw;
+}
 
-const checkUpdate = async () => {
-  updateChecking.value = true; updateMsg.value = '';
+const uiLanguage = ref(_readLocal('ui_language', SETTINGS_DEFAULTS.ui_language));
+const timezone = ref(_readLocal('timezone', SETTINGS_DEFAULTS.timezone));
+const uiDensity = ref(_readLocal('ui_density', SETTINGS_DEFAULTS.ui_density));
+const activationThreshold = ref(
+  _readLocal('taiji_activation_threshold', SETTINGS_DEFAULTS.taiji_activation_threshold)
+);
+const responseTimeoutMs = ref(
+  _readLocal('taiji_response_timeout_ms', SETTINGS_DEFAULTS.taiji_response_timeout_ms)
+);
+const autoConsolidation = ref(
+  _readLocal('taiji_auto_consolidation', SETTINGS_DEFAULTS.taiji_auto_consolidation)
+);
+const sleepMode = ref(_readLocal('taiji_sleep_mode', SETTINGS_DEFAULTS.taiji_sleep_mode));
+const chatRetentionDays = ref(_readLocal('chat_retention_days', SETTINGS_DEFAULTS.chat_retention_days));
+const chatAutoCleanup = ref(_readLocal('chat_auto_cleanup', SETTINGS_DEFAULTS.chat_auto_cleanup));
+
+// 键 → ref 映射，供 GET 校正与失败回滚使用；confirmed 记录最后一次已确认值（回滚目标）
+const settingRefs = {
+  ui_language: uiLanguage,
+  timezone,
+  ui_density: uiDensity,
+  taiji_activation_threshold: activationThreshold,
+  taiji_response_timeout_ms: responseTimeoutMs,
+  taiji_auto_consolidation: autoConsolidation,
+  taiji_sleep_mode: sleepMode,
+  chat_retention_days: chatRetentionDays,
+  chat_auto_cleanup: chatAutoCleanup,
+};
+const confirmed = reactive(Object.fromEntries(
+  Object.entries(settingRefs).map(([k, r]) => [k, r.value])
+));
+
+const savingSettings = ref(false);
+// 用户已手动改过的键：迟到的 GET 响应不得用旧值覆盖（竞态防护）
+const userModifiedKeys = new Set();
+
+// 语言选项 → appStore 本地化语言（locales 仅支持 zh/en）双向映射
+const _mapLangToStore = (lang) => (lang === 'en' ? 'en' : 'zh');
+// 初始化同步：若 store 语言与已持久化偏好不一致，以持久化值为准（仅 zh/en 可映射）
+if (uiLanguage.value === 'en') appStore.currentLang = 'en';
+
+// 进入页面时拉取服务端设置并校正所有控件（含终端开关）
+const refreshPersistedSettings = async () => {
   try {
-    const r = await authFetch(`${API_BASE}/api/system/check_update`, { method: 'POST' });
+    const r = await authFetch(`${API_BASE}/api/settings`);
+    if (!r.ok) return;
     const d = await r.json();
-    updateAvailable.value = d.has_update;
-    updateMsg.value = d.has_update ? `${t('update_available')} v${d.version}` : (d.message || '已是最新版本');
-  } catch (e) { updateMsg.value = `❌ ${e.message}`; }
-  finally { updateChecking.value = false; }
+    if (!d || typeof d !== 'object') return;
+    for (const [key, target] of Object.entries(settingRefs)) {
+      const v = d[key];
+      const expectedType = typeof SETTINGS_DEFAULTS[key];
+      if (userModifiedKeys.has(key) || v === undefined || typeof v !== expectedType) continue;
+      target.value = v;
+      confirmed[key] = v;
+      localStorage.setItem(`taiji_${key}`, expectedType === 'string' ? v : JSON.stringify(v));
+    }
+    if (!userModifiedKeys.has('ui_language') && typeof d.ui_language === 'string') {
+      appStore.currentLang = _mapLangToStore(d.ui_language);
+    }
+    if (
+      !userModifiedKeys.has('terminal_allow_unauthenticated') &&
+      typeof d.terminal_allow_unauthenticated === 'boolean'
+    ) {
+      terminalAllowUnauth.value = d.terminal_allow_unauthenticated;
+      localStorage.setItem(
+        'taiji_terminal_allow_unauthenticated',
+        JSON.stringify(d.terminal_allow_unauthenticated)
+      );
+    }
+  } catch (e) {
+    // 拉取失败时沿用 localStorage 缓存值，不打断设置页
+  }
+};
+refreshPersistedSettings();
+
+// 通用保存：POST 单键，成功回写缓存，失败回滚 ref 并 toast
+const saveSetting = async (key, next, prev) => {
+  if (savingSettings.value) return;
+  savingSettings.value = true;
+  userModifiedKeys.add(key);
+  try {
+    const r = await authFetch(`${API_BASE}/api/settings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [key]: next }),
+    });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    confirmed[key] = next;
+    localStorage.setItem(`taiji_${key}`, typeof next === 'string' ? next : JSON.stringify(next));
+    toast('✅ 设置已保存', 'success');
+  } catch (e) {
+    settingRefs[key].value = prev;
+    toast(`❌ 保存设置失败：${e.message}`, 'error');
+  } finally {
+    savingSettings.value = false;
+  }
 };
 
-const applyUpdate = async () => {
-  try { await authFetch(`${API_BASE}/api/system/apply_update`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) }); } catch (e) {}
+// ── 各控件变更处理（prev 均取自最后一次已确认值）──
+const onUiLanguageChange = () => {
+  const prev = confirmed.ui_language;
+  appStore.currentLang = _mapLangToStore(uiLanguage.value);
+  saveSetting('ui_language', uiLanguage.value, prev);
 };
+const onTimezoneChange = () => saveSetting('timezone', timezone.value, confirmed.timezone);
+const onDensityChange = () => saveSetting('ui_density', uiDensity.value, confirmed.ui_density);
+const onThresholdChange = () => {
+  let v = Number(activationThreshold.value);
+  if (!Number.isFinite(v)) v = SETTINGS_DEFAULTS.taiji_activation_threshold;
+  v = Math.min(1, Math.max(0, v));
+  activationThreshold.value = v;
+  saveSetting('taiji_activation_threshold', v, confirmed.taiji_activation_threshold);
+};
+const onResponseTimeoutChange = () => {
+  let v = Math.round(Number(responseTimeoutMs.value));
+  if (!Number.isFinite(v)) v = SETTINGS_DEFAULTS.taiji_response_timeout_ms;
+  v = Math.min(10000, Math.max(10, v));
+  responseTimeoutMs.value = v;
+  saveSetting('taiji_response_timeout_ms', v, confirmed.taiji_response_timeout_ms);
+};
+const onAutoConsolidationChange = () => {
+  const next = autoConsolidation.value;
+  saveSetting('taiji_auto_consolidation', next, !next);
+};
+const onSleepModeChange = () => {
+  const next = sleepMode.value;
+  saveSetting('taiji_sleep_mode', next, !next);
+};
+const onRetentionChange = () =>
+  saveSetting('chat_retention_days', chatRetentionDays.value, confirmed.chat_retention_days);
+const onAutoCleanupChange = () => {
+  const next = chatAutoCleanup.value;
+  saveSetting('chat_auto_cleanup', next, !next);
+};
+
+// ── 导出数据：聚合会话列表（chatStore）+ 服务端设置，Blob 下载 ──
+const exporting = ref(false);
+const onExportData = async () => {
+  if (exporting.value) return;
+  exporting.value = true;
+  try {
+    let settings = {};
+    try {
+      const r = await authFetch(`${API_BASE}/api/settings`);
+      if (r.ok) settings = await r.json();
+    } catch (e) { /* 设置拉取失败不阻断导出，降级为空对象 */ }
+    const payload = {
+      app: 'Seed',
+      exported_at: new Date().toISOString(),
+      settings,
+      chat_sessions: chatStore.sessions,
+    };
+    const d = new Date();
+    const dateStr = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `seed-export-${dateStr}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast('✅ 数据已导出', 'success');
+  } catch (e) {
+    toast(`❌ 导出失败：${e.message}`, 'error');
+  } finally {
+    exporting.value = false;
+  }
+};
+
+// ── 重置 Seed：二次确认后调用 POST /api/system/reset（仅清空对话会话）──
+// 后端语义边界：不动模型权重 / checkpoints / Taiji 状态 / 配置项（见 routes_system.py）
+const resetting = ref(false);
+const onResetSeed = async () => {
+  if (resetting.value) return;
+  const ok = await $confirm({
+    title: '⚠️ 重置 Seed',
+    message:
+      '将清空所有本地对话会话记录，此操作不可撤销。\n\n模型权重、检查点、Taiji 状态与配置项不受影响。\n建议先通过“导出数据”备份后再继续。',
+    type: 'danger',
+  });
+  if (!ok) return;
+  resetting.value = true;
+  try {
+    const r = await authFetch(`${API_BASE}/api/system/reset`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scope: 'chat_sessions' }),
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || d.status !== 'ok') throw new Error(d.detail || d.message || `HTTP ${r.status}`);
+    toast(`✅ 重置完成：${d.message || '已清空对话会话'}`, 'success');
+    // 重置后刷新前端会话列表并重建新会话，避免引用已删除的会话
+    await chatStore.loadSessions();
+    if (chatStore.sessions.length === 0) chatStore.createNewSession();
+  } catch (e) {
+    toast(`❌ 重置失败：${e.message}`, 'error');
+  } finally {
+    resetting.value = false;
+  }
+};
+
+// ── 开源许可弹窗（内嵌摘要，与根目录 LICENSE 一致：Apache-2.0）──
+const showLicense = ref(false);
+
+// ── 安全：允许未认证终端访问（经 /api/settings 通道持久化）──
+// 读写模式对齐上方持久化设置组：初值读 localStorage（taiji_ 前缀缓存），
+// 进入页面时用 GET /api/settings 校正（见 refreshPersistedSettings）；
+// 切换时 POST /api/settings 持久化，成功后回写缓存，失败则 toast 并回滚。
+const terminalAllowUnauth = ref(
+  localStorage.getItem('taiji_terminal_allow_unauthenticated') === 'true'
+);
+const savingTerminalSetting = ref(false);
+
+const onTerminalUnauthChange = async () => {
+  userModifiedKeys.add('terminal_allow_unauthenticated');
+  const next = terminalAllowUnauth.value;
+  const prev = !next;
+  if (savingTerminalSetting.value) return;
+  savingTerminalSetting.value = true;
+  try {
+    const r = await authFetch(`${API_BASE}/api/settings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ terminal_allow_unauthenticated: next }),
+    });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    localStorage.setItem('taiji_terminal_allow_unauthenticated', JSON.stringify(next));
+    toast(next ? '✅ 已允许未认证终端访问' : '✅ 已关闭未认证终端访问', 'success');
+  } catch (e) {
+    terminalAllowUnauth.value = prev;
+    toast(`❌ 保存终端设置失败：${e.message}`, 'error');
+  } finally {
+    savingTerminalSetting.value = false;
+  }
+};
+
+// R5: systemPrompt/updateChecking/updateAvailable/updateMsg 仅被已移除的函数引用，
+// 模板未使用，一并移除（需要时从 git 历史恢复）。
+const appVersion = ref('1.0.0');
+
+
+// R5: onBgImageSelect/saveSettings/checkUpdate/applyUpdate 未被模板引用，已移除；
+// 需要时从 git 历史恢复并接入对应按钮。
 
 // Load app version
 (async () => {
@@ -972,6 +1266,129 @@ const applyUpdate = async () => {
   background: var(--muted);
   color: var(--muted-foreground);
   font-family: var(--font-mono);
+}
+
+/* --- 开源许可弹窗 --- */
+.license-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: color-mix(in srgb, var(--foreground) 32%, transparent);
+  backdrop-filter: blur(2px);
+  animation: license-fade 160ms ease;
+}
+@keyframes license-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.license-panel {
+  width: min(560px, 100%);
+  max-height: min(72vh, 640px);
+  display: flex;
+  flex-direction: column;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 12px 40px color-mix(in srgb, var(--foreground) 18%, transparent);
+  overflow: hidden;
+  animation: license-pop 180ms cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+@keyframes license-pop {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.license-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.license-title {
+  font-size: 0.92rem;
+  font-weight: 650;
+  color: var(--foreground);
+}
+.license-close {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 140ms ease, color 140ms ease;
+}
+.license-close:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+.license-body {
+  padding: 18px;
+  overflow-y: auto;
+  font-size: 0.82rem;
+  color: var(--foreground);
+  line-height: 1.6;
+}
+.license-main {
+  margin: 0 0 4px;
+  font-size: 0.88rem;
+}
+.license-copy {
+  margin: 0 0 16px;
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+}
+.license-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.license-col {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  background: color-mix(in srgb, var(--muted) 50%, transparent);
+}
+.license-col h4 {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  font-weight: 650;
+  color: var(--primary);
+}
+.license-col ul {
+  margin: 0;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--muted-foreground);
+  font-size: 0.76rem;
+}
+.license-note {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 0.76rem;
+}
+.license-note a {
+  color: var(--primary);
+  text-decoration: none;
+}
+.license-note a:hover {
+  text-decoration: underline;
+}
+@media (max-width: 560px) {
+  .license-cols {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* --- 响应式 --- */

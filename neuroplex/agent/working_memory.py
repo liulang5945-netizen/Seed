@@ -20,13 +20,13 @@
     final = memory.export("main.py")  # 导出修改后的内容
 """
 
-import re
-import logging
 import hashlib
-from datetime import datetime
-from typing import Dict, List, Optional, Any, Tuple
-from dataclasses import dataclass, field
+import logging
+import re
 from collections import OrderedDict
+from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Any
 
 logger = logging.getLogger("WorkingMemory")
 
@@ -39,7 +39,7 @@ class MemoryEntry:
     content: str  # 记住的内容
     timestamp: str  # 记住的时间
     source: str  # 来源（"file_read", "tool_result", "user_input"）
-    modifications: List[dict] = field(default_factory=list)  # 已做的修改记录
+    modifications: list[dict] = field(default_factory=list)  # 已做的修改记录
     original_hash: str = ""  # 原始内容的哈希（用于检测变更）
     access_count: int = 0  # 访问次数
 
@@ -122,7 +122,7 @@ class WorkingMemory:
         logger.debug(f"Remembered: {key} ({content_size} bytes, source: {source})")
         return True
 
-    def recall(self, key: str) -> Optional[str]:
+    def recall(self, key: str) -> str | None:
         """
         回忆一段记忆。
 
@@ -158,7 +158,7 @@ class WorkingMemory:
 
     # ─── 修改操作 ───────────────────────────────────
 
-    def modify(self, key: str, old_text: str, new_text: str) -> Tuple[bool, str]:
+    def modify(self, key: str, old_text: str, new_text: str) -> tuple[bool, str]:
         """
         在记忆中直接修改内容（不需要重新读取文件）。
 
@@ -199,7 +199,7 @@ class WorkingMemory:
 
         return True, f"已在 {key} 中替换 1 处（共 {count} 处匹配）"
 
-    def modify_all(self, key: str, old_text: str, new_text: str) -> Tuple[bool, str]:
+    def modify_all(self, key: str, old_text: str, new_text: str) -> tuple[bool, str]:
         """
         在记忆中全局替换所有匹配的文本。
 
@@ -238,7 +238,7 @@ class WorkingMemory:
 
         return True, f"已在 {key} 中全局替换 {count} 处"
 
-    def insert_at_line(self, key: str, line_num: int, text: str) -> Tuple[bool, str]:
+    def insert_at_line(self, key: str, line_num: int, text: str) -> tuple[bool, str]:
         """在指定行插入文本"""
         if key not in self._memory:
             return False, f"记忆中没有找到: {key}"
@@ -254,7 +254,7 @@ class WorkingMemory:
 
     # ─── 搜索操作 ───────────────────────────────────
 
-    def search(self, pattern: str, keys: Optional[List[str]] = None) -> List[Dict[str, Any]]:
+    def search(self, pattern: str, keys: list[str] | None = None) -> list[dict[str, Any]]:
         """
         在记忆中搜索文本。
 
@@ -295,7 +295,7 @@ class WorkingMemory:
 
         return results
 
-    def search_lines(self, key: str, keyword: str) -> List[Tuple[int, str]]:
+    def search_lines(self, key: str, keyword: str) -> list[tuple[int, str]]:
         """
         在指定记忆中搜索包含关键词的行。
 
@@ -320,7 +320,7 @@ class WorkingMemory:
 
     # ─── 导出操作 ───────────────────────────────────
 
-    def export(self, key: str) -> Optional[str]:
+    def export(self, key: str) -> str | None:
         """
         导出记忆的当前内容（可用于写回文件）。
 
@@ -332,11 +332,11 @@ class WorkingMemory:
         """
         return self.recall(key)
 
-    def export_all(self) -> Dict[str, str]:
+    def export_all(self) -> dict[str, str]:
         """导出所有记忆的内容"""
         return {key: entry.content for key, entry in self._memory.items()}
 
-    def get_modified_keys(self) -> List[str]:
+    def get_modified_keys(self) -> list[str]:
         """获取所有被修改过的记忆键"""
         return [key for key, entry in self._memory.items() if entry.modifications]
 
@@ -392,7 +392,7 @@ class WorkingMemory:
 
 # ─── 全局实例 ─────────────────────────────────────
 
-_global_memory: Optional[WorkingMemory] = None
+_global_memory: WorkingMemory | None = None
 
 
 def get_working_memory() -> WorkingMemory:

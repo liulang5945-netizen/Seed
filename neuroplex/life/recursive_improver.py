@@ -17,12 +17,11 @@
 态极不能改自己的权重，但可以设计更好的自己。
 """
 
-import os
 import json
 import logging
+import os
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
-from typing import Dict, List, Optional
-from dataclasses import dataclass, field, asdict
 
 logger = logging.getLogger("RecursiveImprover")
 
@@ -74,11 +73,11 @@ class RecursiveImprover:
         self._data_dir_ready = False
 
         # 策略记录
-        self._strategy_records: List[StrategyRecord] = []
+        self._strategy_records: list[StrategyRecord] = []
         self._load_records()
 
         # 当前最优策略
-        self._best_strategies: Dict[str, str] = {
+        self._best_strategies: dict[str, str] = {
             "system_prompt": "",
             "tool_priority": "",
             "reflection_template": "",
@@ -87,7 +86,7 @@ class RecursiveImprover:
         self._load_best_strategies()
 
         # 改进历史
-        self._improvements: List[ImprovementProposal] = []
+        self._improvements: list[ImprovementProposal] = []
 
         logger.info(f"RecursiveImprover initialized, records={len(self._strategy_records)}")
 
@@ -114,7 +113,7 @@ class RecursiveImprover:
 
     # ─── 策略分析与改进 ───────────────────────────────
 
-    def analyze_and_improve(self) -> List[ImprovementProposal]:
+    def analyze_and_improve(self) -> list[ImprovementProposal]:
         """
         分析历史策略数据，生成改进提案。
         在睡眠时调用（sleep_engine Phase 5）。
@@ -145,7 +144,7 @@ class RecursiveImprover:
         )
         return proposals
 
-    def _analyze_prompt_strategies(self) -> List[ImprovementProposal]:
+    def _analyze_prompt_strategies(self) -> list[ImprovementProposal]:
         """分析 prompt 策略，找出最有效的模式"""
         proposals = []
         prompt_records = [r for r in self._strategy_records if r.strategy_type == "prompt"]
@@ -178,7 +177,7 @@ class RecursiveImprover:
 
         return proposals
 
-    def _analyze_tool_strategies(self) -> List[ImprovementProposal]:
+    def _analyze_tool_strategies(self) -> list[ImprovementProposal]:
         """分析工具使用策略"""
         proposals = []
         tool_records = [r for r in self._strategy_records if r.strategy_type == "tool_choice"]
@@ -187,7 +186,7 @@ class RecursiveImprover:
             return proposals
 
         # 统计每种工具的成功率
-        tool_stats: Dict[str, Dict] = {}
+        tool_stats: dict[str, dict] = {}
         for r in tool_records:
             tool = r.strategy_content
             if tool not in tool_stats:
@@ -217,7 +216,7 @@ class RecursiveImprover:
 
         return proposals
 
-    def _analyze_reflection_strategies(self) -> List[ImprovementProposal]:
+    def _analyze_reflection_strategies(self) -> list[ImprovementProposal]:
         """分析反思策略是否有效"""
         proposals = []
         reflection_records = [r for r in self._strategy_records if r.strategy_type == "reflection"]
@@ -242,7 +241,7 @@ class RecursiveImprover:
 
         return proposals
 
-    def _extract_patterns(self, texts: List[str]) -> set:
+    def _extract_patterns(self, texts: list[str]) -> set:
         """提取文本中的共同模式"""
         patterns = set()
         for text in texts:
@@ -325,7 +324,7 @@ class RecursiveImprover:
 
 
 # B4 修复：全局单例，避免每次新建实例丢失历史记录
-_recursive_improver: Optional[RecursiveImprover] = None
+_recursive_improver: RecursiveImprover | None = None
 
 
 def get_recursive_improver() -> RecursiveImprover:

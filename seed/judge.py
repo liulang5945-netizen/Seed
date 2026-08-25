@@ -16,7 +16,7 @@ no-learning pass over the text, and restores the snapshot before returning.
 
 from __future__ import annotations
 
-from typing import Dict, Sequence, Tuple
+from collections.abc import Sequence
 
 import torch
 
@@ -45,7 +45,7 @@ class SeedJudge:
         self.weights = torch.tensor(DEFAULT_WEIGHTS, dtype=torch.float64, device=seed.device)
 
     @torch.no_grad()
-    def score(self, text: bytes) -> Dict[str, float]:
+    def score(self, text: bytes) -> dict[str, float]:
         """Return the self-referential quality report for ``text``.
 
         Higher ``quality`` means the organism handles the text better.  The
@@ -70,7 +70,7 @@ class SeedJudge:
                 if step.prior_prediction is None:
                     continue
                 observations += 1
-                surprise_sum += float(step.surprise)
+                surprise_sum += float(step.surprise or 0.0)
                 error_sum += sum(step.local_error_norms) / max(1, len(step.local_error_norms))
                 confidence_sum += float(step.memory_recall.confidence)
                 correct += int(step.prior_prediction == int(symbol))
@@ -112,7 +112,7 @@ class SeedJudge:
 
     def calibrate(
         self,
-        pairs: Sequence[Tuple[torch.Tensor, float]],
+        pairs: Sequence[tuple[torch.Tensor, float]],
         *,
         ridge: float = 1e-3,
     ) -> float:

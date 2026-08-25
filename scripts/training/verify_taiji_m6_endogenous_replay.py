@@ -3,22 +3,23 @@
 from __future__ import annotations
 
 import argparse
-from copy import deepcopy
 import json
 import math
-from pathlib import Path
 import sys
-from typing import Dict, Mapping, Sequence
+from collections.abc import Mapping, Sequence
+from copy import deepcopy
+from pathlib import Path
 
-import torch
 import _verify_emit
+import torch
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from taiji import Taiji, TaijiConfig
 import logging
+
+from taiji import Taiji, TaijiConfig
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +48,7 @@ def _config(seed: int) -> TaijiConfig:
     )
 
 
-def _episodes() -> Dict[int, Dict[str, object]]:
+def _episodes() -> dict[int, dict[str, object]]:
     """Eight one-shot episodes carrying a deterministic action to outcome map."""
 
     return {
@@ -62,8 +63,8 @@ def _episodes() -> Dict[int, Dict[str, object]]:
     }
 
 
-def _contingency(episodes: Mapping[int, Mapping[str, object]]) -> Dict[int, int]:
-    pairs: Dict[int, int] = {}
+def _contingency(episodes: Mapping[int, Mapping[str, object]]) -> dict[int, int]:
+    pairs: dict[int, int] = {}
     for event in episodes.values():
         pairs[int(event["action"])] = int(event["outcome"])
     return pairs
@@ -108,7 +109,7 @@ def _sleep(
     lesion: Sequence[str] = (),
     tag: str,
     replay_cue_chain: bool = True,
-) -> Dict[str, object]:
+) -> dict[str, object]:
     """Run one consolidation arm and audit what it was allowed to touch."""
 
     payload = deepcopy(checkpoint)
@@ -132,10 +133,11 @@ def _sleep(
     after = model.parameter_tensors()
     cortex_changed = any(
         not torch.equal(left, right)
-        for left, right in zip(before[:fabric_count], after[:fabric_count])
+        for left, right in zip(before[:fabric_count], after[:fabric_count], strict=False)
     )
     non_cortex_intact = all(
-        torch.equal(left, right) for left, right in zip(before[fabric_count:], after[fabric_count:])
+        torch.equal(left, right)
+        for left, right in zip(before[fabric_count:], after[fabric_count:], strict=False)
     )
     return {
         "checkpoint": model.checkpoint(),
@@ -164,7 +166,7 @@ def _sleep(
 def _evaluate_contingency(
     checkpoint: Mapping[str, object],
     pairs: Mapping[int, int],
-) -> Dict[str, object]:
+) -> dict[str, object]:
     """Probe action -> outcome with episodic action and readback fully closed.
 
     Two properties of the substrate dictate this protocol.
@@ -271,7 +273,7 @@ def _sleep_needs_a_written_field(seed: int) -> bool:
     return False
 
 
-def run_benchmark(*, seed: int = 29, cycles: int = 96) -> Dict[str, object]:
+def run_benchmark(*, seed: int = 29, cycles: int = 96) -> dict[str, object]:
     model = Taiji(_config(seed), episode_id="m6-bootstrap")
     corpus = _pretrain_corpus()
     pretrain = model.learn_bytes(corpus, epochs=6)
@@ -409,7 +411,7 @@ def run_benchmark(*, seed: int = 29, cycles: int = 96) -> Dict[str, object]:
     }
 
 
-def run_panel(*, seeds: Sequence[int] = SEED_PANEL, cycles: int = 96) -> Dict[str, object]:
+def run_panel(*, seeds: Sequence[int] = SEED_PANEL, cycles: int = 96) -> dict[str, object]:
     """Aggregate the benchmark over a seed panel.
 
     A single seed cannot separate a mechanism change from seed-specific

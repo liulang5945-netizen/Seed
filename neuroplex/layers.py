@@ -5,10 +5,12 @@ LLaMA 3 风格: RMSNorm + RoPE + GQA + SwiGLU + Pre-Norm
 
 import inspect
 import logging
+from collections import OrderedDict
+from typing import Any, cast
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import Optional, Tuple, Union
 
 logger = logging.getLogger(__name__)
 
@@ -24,10 +26,7 @@ except (TypeError, ValueError):
 # - 2 元组 (xk, xv)：旧格式，start_pos 按 cache 长度推断（仅无驱逐时正确）
 # - 3 元组 (xk, xv, abs_len)：S11 驱逐模式下由本模块返回，abs_len 为
 #   已消耗的绝对 token 数，保证驱逐后 RoPE 仍按绝对位置旋转
-KVCache = Union[
-    Tuple[torch.Tensor, torch.Tensor],
-    Tuple[torch.Tensor, torch.Tensor, int],
-]
+KVCache = tuple[torch.Tensor, torch.Tensor] | tuple[torch.Tensor, torch.Tensor, int]
 
 
 class RMSNorm(nn.Module):
@@ -56,11 +55,10 @@ class RotaryEmbedding(nn.Module):
         # 频率: 1 / (theta ^ (2i/dim))
         freqs = 1.0 / (theta ** (torch.arange(0, dim, 2).float() / dim))
         self.register_buffer("freqs", freqs, persistent=False)
-        # 使用 OrderedDict 作为 LRU 缓存，最多保留 4 个条目
-        from collections import OrderedDict
+        # 使用 OrderedDict 作为 LRU 缓存，最多保留 4 个条目（OrderedDict 已在模块顶部导入）
         import threading as _threading
 
-        self._cache = OrderedDict()
+        self._cache: OrderedDict = OrderedDict()
         self._max_cache_size = 4
         self._cache_lock = _threading.Lock()
 
@@ -77,7 +75,7 @@ class RotaryEmbedding(nn.Module):
                 return sin[:seq_len], cos[:seq_len]
 
         pos = torch.arange(bucket, device=device, dtype=torch.float32)
-        angles = torch.outer(pos, self.freqs.to(device))
+        angles = torch.outer(pos, cast(torch.Tensor, self.freqs).to(device))
         result = (
             torch.sin(angles).to(dtype),
             torch.cos(angles).to(dtype),
@@ -99,7 +97,7 @@ def apply_rotary_emb(
     xk: torch.Tensor,
     sin: torch.Tensor,
     cos: torch.Tensor,
-) -> Tuple[torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor]:
     """对 Q/K 应用旋转编码"""
     # xq, xk: [batch, seq, heads, head_dim]
     # sin, cos: [seq, head_dim/2]
@@ -158,7 +156,7 @@ class GroupedQueryAttention(nn.Module):
         self,
         xk: torch.Tensor,
         xv: torch.Tensor,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """S11: 滑动窗口 KV cache 驱逐。
 
         当 KV cache 超过 max_len 时，保留前 sink_size 个 token + 最近 window_size 个 token，
@@ -189,12 +187,12 @@ class GroupedQueryAttention(nn.Module):
     def forward(
         self,
         x: torch.Tensor,
-        mask: Optional[torch.Tensor] = None,
-        kv_cache: Optional[KVCache] = None,
+        mask: torch.Tensor | None = None,
+        kv_cache: KVCache | None = None,
         use_cache: bool = False,
         temp_gain: float = 1.0,
         return_attn_weights: bool = False,
-    ) -> Tuple[torch.Tensor, Optional[KVCache], Optional[torch.Tensor]]:
+    ) -> tuple[torch.Tensor, KVCache | None, torch.Tensor | None]:
         """S9: temp_gain 门控注意力温度（norepinephrine 驱动）。
 
         temp_gain > 1 → xq 放大 → logits 放大 → softmax 更尖锐（高警觉，聚焦）
@@ -286,7 +284,7 @@ class GroupedQueryAttention(nn.Module):
             attn_weights = scores  # [B, num_heads, L, L]
         else:
             try:
-                sdpa_kwargs = dict(
+                sdpa_kwargs: dict[str, Any] = dict(
                     is_causal=is_causal,
                     dropout_p=self.attn_dropout.p if self.training else 0.0,
                 )
@@ -332,7 +330,7 @@ class SwiGLU(nn.Module):
 
         gain 作用于残差路径（FFN 输出），不影响 Pre-Norm 的输入。
         """
-        out = self.w2(F.silu(self.w_gate(x)) * self.w1(x))
+        out: torch.Tensor = self.w2(F.silu(self.w_gate(x)) * self.w1(x))
         if gain != 1.0:
             out = out * gain
         return out
@@ -358,7 +356,7 @@ class TransformerBlock(nn.Module):
         bias: bool = False,
         dropout: float = 0.0,
         dendritic: bool = False,
-        apical_kv_dim: Optional[int] = None,
+        apical_kv_dim: int | None = None,
         attention_sink_size: int = 0,
         sliding_window_size: int = 0,
     ):
@@ -435,11 +433,10 @@ class TransformerBlock(nn.Module):
         """
         bsz, seqlen, _ = x.shape
 
-        # field_state: [B, D] → [B, 1, D]（单 token KV，全局上下文）
-        if field_state.dim() == 2:
-            fs = field_state.unsqueeze(1)  # [B, 1, D]
-        else:
-            fs = field_state  # [B, S, D]
+        # field_state: [B, D] 或 [B, 1, D]（单 token KV，全局上下文）
+        fs = (
+            field_state.unsqueeze(1) if field_state.dim() == 2 else field_state
+        )  # [B, 1, D] 或 [B, S, D]
         kv_len = fs.shape[1]
 
         # Q from x, K/V from field_state
@@ -481,19 +478,20 @@ class TransformerBlock(nn.Module):
             output = torch.matmul(scores, xv)
 
         output = output.transpose(1, 2).contiguous().view(bsz, seqlen, -1)
-        return self.apical_wo(output)
+        result: torch.Tensor = self.apical_wo(output)
+        return result
 
     def forward(
         self,
         x: torch.Tensor,
-        mask: Optional[torch.Tensor] = None,
-        kv_cache: Optional[KVCache] = None,
+        mask: torch.Tensor | None = None,
+        kv_cache: KVCache | None = None,
         use_cache: bool = False,
         temp_gain: float = 1.0,
         ffn_gain: float = 1.0,
-        field_state: Optional[torch.Tensor] = None,
+        field_state: torch.Tensor | None = None,
         return_attn_weights: bool = False,
-    ) -> Tuple[torch.Tensor, Optional[KVCache], Optional[torch.Tensor]]:
+    ) -> tuple[torch.Tensor, KVCache | None, torch.Tensor | None]:
         """S9+S10: 神经调质门控 + 树突化扩展。
 
         - temp_gain/ffn_gain: S9 神经调质信号（norepinephrine/dopamine）

@@ -26,7 +26,6 @@ C27 增量四（2026-08-14）：o 型从固定节奏源 → **可学习节奏控
 from __future__ import annotations
 
 import math
-from typing import List
 
 import torch
 import torch.nn as nn
@@ -116,7 +115,7 @@ class OscillatorNode(nn.Module):
         return torch.clamp(torch.cos(self.theta_tensor(t, device, dtype)), min=0.0)
 
 
-def make_default_oscillators(dim: int) -> List[OscillatorNode]:
+def make_default_oscillators(dim: int) -> list[OscillatorNode]:
     """装配默认双层振荡节点：theta 慢（节奏窗）+ gamma 快（同频锁相）。
 
     Args:

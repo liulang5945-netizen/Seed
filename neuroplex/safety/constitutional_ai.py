@@ -15,9 +15,8 @@
   5. 诚实性：不知道就说不知道
 """
 
-import re
 import logging
-from typing import Optional, Dict, List, Tuple
+import re
 from dataclasses import dataclass
 
 logger = logging.getLogger("Taiji.ConstitutionalAI")
@@ -38,8 +37,8 @@ class CritiqueResult:
     """批评结果"""
 
     passed: bool  # 是否通过所有检查
-    violations: List[Dict]  # 违规列表
-    revised_response: Optional[str] = None  # 修正后的回答
+    violations: list[dict]  # 违规列表
+    revised_response: str | None = None  # 修正后的回答
 
 
 class ConstitutionalAI:
@@ -55,7 +54,7 @@ class ConstitutionalAI:
         self._critique_count = 0
         self._violation_stats = {}  # 统计各类违规次数
 
-    def _build_constitution(self) -> List[Principle]:
+    def _build_constitution(self) -> list[Principle]:
         """构建宪法原则"""
         return [
             # === 安全性 ===
@@ -159,7 +158,7 @@ class ConstitutionalAI:
 
         return CritiqueResult(passed=True, violations=[])
 
-    def _revise(self, response: str, violations: List[Dict], context: dict = None) -> str:
+    def _revise(self, response: str, violations: list[dict], context: dict = None) -> str:
         """根据违规修正回答"""
         revised = response
 
@@ -194,7 +193,7 @@ class ConstitutionalAI:
 
     # === 原则检查函数 ===
 
-    def _check_illegal_request(self, response: str, context: dict) -> Tuple[bool, str]:
+    def _check_illegal_request(self, response: str, context: dict) -> tuple[bool, str]:
         """检查是否在帮助非法行为"""
         task = context.get("task", "").lower()
 
@@ -223,7 +222,7 @@ class ConstitutionalAI:
 
         return False, ""
 
-    def _check_harmful_content(self, response: str, context: dict) -> Tuple[bool, str]:
+    def _check_harmful_content(self, response: str, context: dict) -> tuple[bool, str]:
         """检查是否包含有害内容"""
         harmful_patterns = [
             (r"rm\s+-rf\s+/", "包含删除根目录的命令"),
@@ -239,7 +238,7 @@ class ConstitutionalAI:
 
         return False, ""
 
-    def _check_hallucination(self, response: str, context: dict) -> Tuple[bool, str]:
+    def _check_hallucination(self, response: str, context: dict) -> tuple[bool, str]:
         """检查是否编造了不存在的内容"""
         observation = context.get("observation", "")
 
@@ -264,7 +263,7 @@ class ConstitutionalAI:
 
         return False, ""
 
-    def _check_uncertainty(self, response: str, context: dict) -> Tuple[bool, str]:
+    def _check_uncertainty(self, response: str, context: dict) -> tuple[bool, str]:
         """检查是否在不确定时承认"""
         observation = context.get("observation", "")
 
@@ -276,7 +275,7 @@ class ConstitutionalAI:
 
         return False, ""
 
-    def _check_brevity(self, response: str, context: dict) -> Tuple[bool, str]:
+    def _check_brevity(self, response: str, context: dict) -> tuple[bool, str]:
         """检查回答是否太简短"""
         task = context.get("task", "")
 
@@ -297,7 +296,7 @@ class ConstitutionalAI:
 
         return False, ""
 
-    def _check_actionable(self, response: str, context: dict) -> Tuple[bool, str]:
+    def _check_actionable(self, response: str, context: dict) -> tuple[bool, str]:
         """检查回答是否有可操作信息"""
         task = context.get("task", "")
 
@@ -313,7 +312,7 @@ class ConstitutionalAI:
 
         return False, ""
 
-    def _check_truncation(self, response: str, context: dict) -> Tuple[bool, str]:
+    def _check_truncation(self, response: str, context: dict) -> tuple[bool, str]:
         """检查回答是否被截断"""
         if len(response) < 20:
             return False, ""
@@ -332,7 +331,7 @@ class ConstitutionalAI:
 
         return False, ""
 
-    def _check_fake_success(self, response: str, context: dict) -> Tuple[bool, str]:
+    def _check_fake_success(self, response: str, context: dict) -> tuple[bool, str]:
         """检查是否假装操作成功"""
         observation = context.get("observation", "")
 

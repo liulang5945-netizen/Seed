@@ -7,13 +7,14 @@ keeps its identity during normal execution.
 
 from __future__ import annotations
 
-from contextlib import contextmanager
 import logging
 import pickle
-from pathlib import Path
 import sys
+from collections.abc import Iterator
+from contextlib import contextmanager
+from pathlib import Path
 from threading import RLock
-from typing import Any, Iterator
+from typing import Any
 
 import torch
 

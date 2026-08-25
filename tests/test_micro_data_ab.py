@@ -1,16 +1,16 @@
 """Regression tests for the bounded 7.58M micro data pilot."""
 
+from scripts.archive.diagnostics.diag_dialogue_fusion_ab import FUSION_MODES
+from scripts.archive.diagnostics.diag_dialogue_population_subset_ab import SUBSETS
 from scripts.archive.diagnostics.diag_micro_data_ab import (
     _select_hf_for_ratio,
     _valid_first_token_position,
 )
+from scripts.archive.diagnostics.diag_micro_external_route import EXTERNAL_ROUTE_MODES
+from scripts.archive.diagnostics.diag_micro_route_canary import ROUTE_MODES
 from scripts.archive.diagnostics.diag_micro_spec_data_ab import SCREEN_SPECS, _make_config
 from scripts.archive.diagnostics.diag_micro_specialist_group import MICRO_SPEC, SPECIALIST_ROLES
 from scripts.archive.diagnostics.diag_micro_specialist_route_audit import TOP_K
-from scripts.archive.diagnostics.diag_micro_route_canary import ROUTE_MODES
-from scripts.archive.diagnostics.diag_micro_external_route import EXTERNAL_ROUTE_MODES
-from scripts.archive.diagnostics.diag_dialogue_fusion_ab import FUSION_MODES
-from scripts.archive.diagnostics.diag_dialogue_population_subset_ab import SUBSETS
 
 
 def test_first_token_metric_skips_answer_outside_truncated_window() -> None:

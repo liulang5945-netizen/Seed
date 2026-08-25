@@ -5,17 +5,17 @@
         ref="inputRef"
         :type="type === 'folder' ? 'text' : 'text'"
         :value="modelValue"
-        @input="onInput"
-        @keydown.enter="onEnter"
         class="path-input form-input"
         :placeholder="placeholder"
         :disabled="disabled"
+        @input="onInput"
+        @keydown.enter="onEnter"
       />
       <button
         class="path-btn browse-btn"
         :title="type === 'folder' ? '浏览文件夹' : '浏览文件'"
-        @click="browse"
         :disabled="disabled"
+        @click="browse"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
@@ -26,8 +26,8 @@
         v-if="showOpen && modelValue"
         class="path-btn open-btn"
         title="在资源管理器中打开"
-        @click="openInExplorer"
         :disabled="disabled"
+        @click="openInExplorer"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>

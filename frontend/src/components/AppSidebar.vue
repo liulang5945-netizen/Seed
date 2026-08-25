@@ -1,6 +1,7 @@
 <template>
   <aside class="sidebar" :style="{ width: width + 'px' }">
-    <div class="sidebar-resize-handle"
+    <div
+class="sidebar-resize-handle"
          :class="{ active: isResizing }"
          @mousedown="$emit('resize-start', $event)">
     </div>
@@ -20,13 +21,13 @@
       <!-- 搜索框 -->
       <div class="search-field">
         <Search :size="16" aria-hidden="true" />
-        <input :placeholder="t('search') || '搜索...'" aria-label="搜索" v-model="searchQuery">
+        <input v-model="searchQuery" :placeholder="t('search') || '搜索...'" aria-label="搜索">
         <span class="kbd">⌘K</span>
       </div>
     </div>
 
     <!-- 新建对话 -->
-    <button class="new-chat-btn" @click="handleNewChat" aria-label="新建对话">
+    <button class="new-chat-btn" aria-label="新建对话" @click="handleNewChat">
       <Plus :size="15" />
       <span>{{ t('new_chat') }}</span>
     </button>
@@ -39,19 +40,21 @@
           <span class="skeleton-bar" />
         </div>
       </div>
-      <div v-for="session in chatStore.sessions" :key="session.id"
+      <div
+v-for="session in chatStore.sessions" :key="session.id"
         v-memo="[session.id, session.name, chatStore.currentSessionId]"
         role="listitem"
         :class="['session-item', { active: chatStore.currentSessionId === session.id }]"
-        @click="openSession(session.id)"
         tabindex="0"
+        @click="openSession(session.id)"
         @keydown.enter="openSession(session.id)">
         <span class="session-name">
           <MessageSquare :size="14" class="session-icon" aria-hidden="true" />
           {{ session.name }}
         </span>
-        <button class="session-del-btn" @click.stop="chatStore.deleteSession(session.id)"
-          :aria-label="`删除会话 ${session.name}`">
+        <button
+class="session-del-btn" :aria-label="`删除会话 ${session.name}`"
+          @click.stop="chatStore.deleteSession(session.id)">
           <X :size="13" />
         </button>
       </div>
@@ -61,7 +64,8 @@
     <nav class="nav-scroll" aria-label="主导航">
       <div v-for="group in navGroups" :key="group.title">
         <div class="nav-section-label">{{ group.title }}</div>
-        <RouterLink v-for="item in group.items" :key="item.path"
+        <RouterLink
+v-for="item in group.items" :key="item.path"
           class="nav-item" :class="{ active: isActiveRoute(item.path) }" :to="item.path">
           <span class="nav-icon-wrap">
             <component :is="item.icon" :size="16" aria-hidden="true" />
@@ -72,7 +76,7 @@
     </nav>
 
     <!-- 生命状态指示器 -->
-    <div class="side-life-pulse" v-if="runtimeStore.life.is_running" @click="router.push('/life')" title="查看生命状态">
+    <div v-if="runtimeStore.life.is_running" class="side-life-pulse" title="查看生命状态" @click="router.push('/life')">
       <span class="slp-dot" :class="dominantNeedClass"></span>
       <span class="slp-label">{{ dominantNeedLabel }}</span>
       <span class="slp-value">{{ dominantNeedValue }}%</span>
@@ -90,7 +94,7 @@ import { useAppStore } from '@/stores/appStore.js'
 import { useRuntimeStore } from '@/stores/runtimeStore.js'
 import TaijiLogo from './TaijiLogo.vue'
 
-const props = defineProps({
+defineProps({
   width: { type: Number, default: 248 },
   isResizing: { type: Boolean, default: false },
 })

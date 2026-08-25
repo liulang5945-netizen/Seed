@@ -25,19 +25,18 @@ Usage:
 
 from __future__ import annotations
 
-import os
 import logging
+import os
 import re
 import threading
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Union
 
 import torch
+import torch.nn.functional as F
 
 # P2（2026-08-23）：纯算法辅助函数抽离，避免 Cortex 神对象继续膨胀。
 # 仅承载无 self 状态的纯函数；保持推理数学逐位等价。
 from neuroplex.brain import _cortex_helpers
-import torch.nn.functional as F
 
 logger = logging.getLogger("Cortex")
 
@@ -48,16 +47,16 @@ _CJK_OR_PUNCT_RE = re.compile(
 )
 
 from neuroplex.resonance import (
-    ResonanceNeuron,
-    ResonanceField,
-    ResonanceEnsemble,
     NeuronConfig,
+    ResonanceEnsemble,
+    ResonanceField,
+    ResonanceNeuron,
 )
+from neuroplex.resonance.dialogue_format import dialogue_prompt_requires_guard
 from neuroplex.resonance.translator import (
     build_position_alignment,
     tokenizer_fingerprint,
 )
-from neuroplex.resonance.dialogue_format import dialogue_prompt_requires_guard
 
 
 @dataclass
@@ -85,13 +84,13 @@ class TaskSet:
 
     prompt: str
     mode: str = "continuous"
-    domain: Optional[str] = None
-    active_nids: Optional[Union[str, List[str]]] = None
-    max_tokens: Optional[int] = None
-    temperature: Optional[float] = None
+    domain: str | None = None
+    active_nids: str | list[str] | None = None
+    max_tokens: int | None = None
+    temperature: float | None = None
     quality_gate: bool = True
     record_memory: bool = False
-    memory_label: Optional[str] = None
+    memory_label: str | None = None
 
 
 class Cortex:
@@ -106,9 +105,9 @@ class Cortex:
         neurons_dir: str = "data/neurons",
         device: str = "cpu",
         max_rounds: int = 3,
-        shared_embedding: Optional[torch.nn.Embedding] = None,
+        shared_embedding: torch.nn.Embedding | None = None,
         general_tokenizer=None,
-        neuron_ids: Optional[List[str]] = None,
+        neuron_ids: list[str] | None = None,
     ):
         self.device = device
         self.neurons_dir = neurons_dir
@@ -121,7 +120,7 @@ class Cortex:
         # ── Load neurons ──
         # neuron_ids 指定装配集合（如对话综合体 ENSEMBLE_DIALOGUE_IDS）；
         # None = 扫描全部 neuron_*.pt（向后兼容）
-        self.neurons: Dict[str, ResonanceNeuron] = {}
+        self.neurons: dict[str, ResonanceNeuron] = {}
         # 增删锁（热插拔：add/remove/isolate/revive 串行化；推理读走快照隔离不拿锁）
         self._neurons_lock = threading.RLock()
         self._load_neurons(neuron_ids=neuron_ids)
@@ -166,14 +165,14 @@ class Cortex:
         # ── Shared embedding (Layer 1: shared sensory) ──
         # nn.Embedding(256000, 512) — ALL neurons share this.
         # Can be hot-swapped for larger vocabs.
-        self._shared_embedding: Optional[torch.nn.Embedding] = shared_embedding
+        self._shared_embedding: torch.nn.Embedding | None = shared_embedding
 
         # ── Per-neuron shared embeddings（P7-修复 2026-08-04）──
         # 训练（finetune_cross_spec）时每个神经元从各自 ckpt 加载独立的
         # shared_embedding_state，推理若用单个 data/shared_embedding.pt 则与训练
         # 不一致 → 生成垃圾。此 dict 保存 {nid: nn.Embedding}，_generate_p7 用它
         # 构建 neuron_embeddings（与 eval 路径一致）。为空时回退 _shared_embedding。
-        self._neuron_shared_embeddings: Optional[Dict[str, torch.nn.Embedding]] = None
+        self._neuron_shared_embeddings: dict[str, torch.nn.Embedding] | None = None
 
         # ── General tokenizer (256K, hot-swappable I/O protocol) ──
         self._general_sp = general_tokenizer
@@ -181,7 +180,7 @@ class Cortex:
         # ── S6: Domain→General token 对齐表缓存 ──
         # 消除自回归生成时的 domain→text→general re-encode 往返
         # 格式：{domain_name: {"fp": ..., "alignment": {domain_token_id: [general_token_ids]}}}
-        self._domain_to_general_cache: Dict[str, Dict[int, list]] = {}
+        self._domain_to_general_cache: dict[str, dict[int, list]] = {}
         # 可编辑词库规则层（AlignmentRules）：人工覆盖自动转译，见 set_alignment_rules
         self._alignment_rules = None
 
@@ -195,7 +194,7 @@ class Cortex:
         # _executive_route 用 per-neuron EMA z-score（相对自身水平）聚合域分。
         # 样本数 < WARMUP 时不参与切换（回退纯启发式）；C20 训练 quality_head
         # 期间 EMA 自然积累，成熟后混合信号自动生效。
-        self._quality_logit_ema: Dict[str, dict] = {}
+        self._quality_logit_ema: dict[str, dict] = {}
         self._quality_ema_warmup = 20
         self._quality_ema_alpha = 0.05
 
@@ -203,7 +202,7 @@ class Cortex:
         self._tokenizer = None
 
         # ── Route tracking ──
-        self._last_routing: Optional[Dict] = None
+        self._last_routing: dict | None = None
 
         # ── P1-2: NeuromodulatorState（自主进化调质）──
         self._neuromodulator = None
@@ -234,7 +233,7 @@ class Cortex:
                 f"[Cortex] Shared embedding: {self._shared_embedding.num_embeddings} × {self._shared_embedding.embedding_dim}"
             )
 
-    def _load_neurons(self, neuron_ids: Optional[List[str]] = None):
+    def _load_neurons(self, neuron_ids: list[str] | None = None):
         """Load all trained neurons from disk.
 
         H3 修复：原来硬编码 5 域 ['zh','en','code','math','general']，
@@ -378,7 +377,7 @@ class Cortex:
         self._shared_embedding = embedding
 
     def set_neuron_shared_embeddings(
-        self, neuron_shared_embeddings: Dict[str, torch.nn.Embedding]
+        self, neuron_shared_embeddings: dict[str, torch.nn.Embedding]
     ) -> None:
         """P7-修复：设置 per-neuron shared embeddings（与训练一致）。
 
@@ -551,12 +550,9 @@ class Cortex:
             self._neuromodulator.load_state_dict(state["neuromodulator"])
             logger.info(
                 "[Cortex]   neuromodulator 已恢复 "
-                "(DA=%.2f, 5HT=%.2f, NE=%.2f)"
-                % (
-                    self._neuromodulator.dopamine,
-                    self._neuromodulator.serotonin,
-                    self._neuromodulator.norepinephrine,
-                )
+                f"(DA={self._neuromodulator.dopamine:.2f}, "
+                f"5HT={self._neuromodulator.serotonin:.2f}, "
+                f"NE={self._neuromodulator.norepinephrine:.2f})"
             )
 
         # coaction state 恢复（跨会话共激活追踪连续性）
@@ -564,11 +560,8 @@ class Cortex:
             self.coaction.load_state_dict(state["coaction"])
             logger.info(
                 "[Cortex]   coaction 已恢复 "
-                "(pairs=%d, neurons=%d)"
-                % (
-                    len(self.coaction._slow_matrix),
-                    len(self.coaction._activation_counts),
-                )
+                f"(pairs={len(self.coaction._slow_matrix)}, "
+                f"neurons={len(self.coaction._activation_counts)})"
             )
 
         # sleep_consolidator state 恢复（跨会话 replay buffer 连续性）
@@ -576,11 +569,8 @@ class Cortex:
             self._sleep_consolidator.load_state_dict(state["sleep_consolidator"])
             logger.info(
                 "[Cortex]   sleep_consolidator 已恢复 "
-                "(replay=%d, last_step=%d)"
-                % (
-                    len(self._sleep_consolidator._replay_buffer),
-                    self._sleep_consolidator._last_consolidation_step,
-                )
+                f"(replay={len(self._sleep_consolidator._replay_buffer)}, "
+                f"last_step={self._sleep_consolidator._last_consolidation_step})"
             )
         return True
 
@@ -601,8 +591,8 @@ class Cortex:
         from neuroplex.resonance.gamma_oscillator import apply_gamma_gate
 
         # 按 domain 分组 neuron
-        domain_to_nids: Dict[str, list] = {}
-        for nid in self.neurons.keys():
+        domain_to_nids: dict[str, list] = {}
+        for nid in self.neurons:
             # nid 可能是 "zh" / "math" / "code_xxx" 等
             domain = nid.split("_")[0] if "_" in nid else nid
             domain_to_nids.setdefault(domain, []).append(nid)
@@ -717,7 +707,7 @@ class Cortex:
         self._sleep_consolidator = sleep_consolidator
         print("[Cortex] SleepConsolidator registered (replay buffer 持久化)")
 
-    def add_neuron(self, domain: str, lifecycle=None, from_split: Optional[str] = None) -> str:
+    def add_neuron(self, domain: str, lifecycle=None, from_split: str | None = None) -> str:
         """运行时创建新神经元并加入 ensemble（neurogenesis 入口）。
 
         流程：
@@ -742,7 +732,7 @@ class Cortex:
         Returns:
             新神经元的 ID（如 "zh_1"）
         """
-        from neuroplex.resonance.config import get_domain_neuron_config, DOMAIN_VOCAB_SIZES
+        from neuroplex.resonance.config import DOMAIN_VOCAB_SIZES, get_domain_neuron_config
 
         if domain not in DOMAIN_VOCAB_SIZES:
             raise ValueError(f"未知 domain: {domain}. 可选: {list(DOMAIN_VOCAB_SIZES.keys())}")
@@ -814,11 +804,14 @@ class Cortex:
             parent_sd = self.neurons[from_split].state_dict()
             child_sd = neuron.state_dict()
             for key in child_sd:
-                if key in parent_sd and child_sd[key].shape == parent_sd[key].shape:
+                if (
+                    key in parent_sd
+                    and child_sd[key].shape == parent_sd[key].shape
+                    and child_sd[key].dtype in (torch.float32, torch.float16, torch.float64)
+                ):
                     # 只对 float 类型参数继承 + 噪声分化（跳过 int/refractory_counter 等）
-                    if child_sd[key].dtype in (torch.float32, torch.float16, torch.float64):
-                        noise = torch.randn_like(child_sd[key]) * 0.01
-                        child_sd[key] = parent_sd[key].clone().to(dtype=child_sd[key].dtype) + noise
+                    noise = torch.randn_like(child_sd[key]) * 0.01
+                    child_sd[key] = parent_sd[key].clone().to(dtype=child_sd[key].dtype) + noise
             neuron.load_state_dict(child_sd, strict=False)
             logger.info(f"[Cortex] split: {nid} 已继承 {from_split} 的权重 + 1% 噪声分化")
 
@@ -1003,7 +996,7 @@ class Cortex:
 
             # 记录恢复信息（ckpt 保留，未删除）
             if not hasattr(self, "_isolated"):
-                self._isolated: Dict[str, dict] = {}
+                self._isolated: dict[str, dict] = {}
             self._isolated[nid] = {
                 "domain": domain,
                 "ckpt": ckpt_path,
@@ -1078,14 +1071,14 @@ class Cortex:
 
     def think(
         self,
-        shared_embeddings: Optional[torch.Tensor] = None,
-        active_nids: Optional[List[str]] = None,
+        shared_embeddings: torch.Tensor | None = None,
+        active_nids: list[str] | None = None,
         fusion_mode: str = "soft",
-        neuron_embeddings: Optional[Dict[str, torch.Tensor]] = None,
+        neuron_embeddings: dict[str, torch.Tensor] | None = None,
         return_judge_logits: bool = False,
         collab_mode: str = "fusion",
-        memory_vectors: Optional[List] = None,
-    ) -> Dict:
+        memory_vectors: list | None = None,
+    ) -> dict:
         """Run one round of resonance thinking.
 
         All neurons receive the same shared_embeddings (from shared embedding table).
@@ -1180,11 +1173,11 @@ class Cortex:
         max_tokens: int = 60,
         temperature: float = 0.55,
         top_k: int = 15,
-        domain: Optional[str] = None,
+        domain: str | None = None,
         repetition_penalty: float = 1.4,
         n_candidates: int = 1,
         routing_level: int = 1,
-        active_nids: Optional[Union[str, List[str]]] = None,
+        active_nids: str | list[str] | None = None,
         collab_mode: str = "continuous",
         fusion_mode: str = "soft",
         # 口径守卫例外开关（2026-08-12）：base/域 neuron 评估用纯问题 prompt 时传 True。
@@ -1192,7 +1185,7 @@ class Cortex:
         # C26 增量二（2026-08-14）：记忆可读进生成——检索到的记忆向量
         # [{"vector": [D], "weight": sim} 或 (vec, weight)]，写入共振场做
         # 生成条件化（round2+ field_state 注入，区别于仅文本标签通道）。
-        memory_vectors: Optional[List] = None,
+        memory_vectors: list | None = None,
         # C26 增量四（2026-08-14）：自动记忆检索——未显式传 memory_vectors
         # 且注入过记忆库时，用 prompt 场状态自动检索 top-1 记忆注入生成
         # （记忆从"显式 API"走向"模型内在自动调取"）。
@@ -1333,10 +1326,7 @@ class Cortex:
                 continue
         if not candidates:
             return ""
-        if len(candidates) == 1:
-            best = candidates[0]
-        else:
-            best = self._select_best_candidate(candidates)
+        best = candidates[0] if len(candidates) == 1 else self._select_best_candidate(candidates)
         # C28 Gap 1：对最终选中候选做一次场记忆沉淀（SMCS 路径）
         if auto_capture and best.strip():
             self._capture_field_memory(prompt, best)
@@ -1349,13 +1339,13 @@ class Cortex:
 
     def generate_task_chain(
         self,
-        stages: List[TaskSet],
+        stages: list[TaskSet],
         max_tokens_per_stage: int = 32,
         temperature: float = 0.55,
         top_k: int = 15,
         repetition_penalty: float = 1.4,
         fusion_mode: str = "soft",
-    ) -> Dict[str, object]:
+    ) -> dict[str, object]:
         """多阶段任务模式链 v2（task-set 序列，人脑任务集切换）。
 
         一个任务 = TaskSet 序列，每阶段是一个任务集（激活模式 + 判定约束 +
@@ -1378,14 +1368,14 @@ class Cortex:
             {"outputs": [阶段文本...], "field_states": [场状态...],
              "gates": [{stage_i: "ok"|"retried"|"degenerate"}...]}
         """
-        outputs: List[str] = []
-        field_states: List[Optional[torch.Tensor]] = []
-        gates: List[Dict[str, str]] = []
+        outputs: list[str] = []
+        field_states: list[torch.Tensor | None] = []
+        gates: list[dict[str, str]] = []
         prev = ""
-        prev_fs: Optional[torch.Tensor] = None
+        prev_fs: torch.Tensor | None = None
         for i, st in enumerate(stages):
             tpl = st.prompt.strip()
-            gate_i: Dict[str, str] = {}
+            gate_i: dict[str, str] = {}
             if not tpl:
                 outputs.append("")
                 field_states.append(None)
@@ -1475,13 +1465,13 @@ class Cortex:
     # ── C25-F 兼容层（2026-08-11）：dict 阶段 → TaskSet 转发（生产不再推荐）──
     def generate_staged(
         self,
-        stages: List[Dict],
+        stages: list[dict],
         max_tokens_per_stage: int = 32,
         temperature: float = 0.55,
         top_k: int = 15,
         repetition_penalty: float = 1.4,
         fusion_mode: str = "soft",
-    ) -> List[str]:
+    ) -> list[str]:
         """C25-F 首步兼容入口：dict 阶段自动升级为 TaskSet 走 v2 调度器。
 
         生产路径推荐 generate_task_chain（TaskSet 序列，三重传递 + 质量门）。
@@ -1510,7 +1500,7 @@ class Cortex:
 
     # 注：R17 曾标 DEAD CODE（"仅 generate_staged 调用"），核实有误——本方法
     # 由 generate(n_candidates>1) 的 SMCS EPE 路径调用，是活跃生产代码。
-    def _select_best_candidate(self, candidates: List[str]) -> str:
+    def _select_best_candidate(self, candidates: list[str]) -> str:
         """SMCS EPE 混合后验评分选最优候选。
 
         评分维度：
@@ -1559,10 +1549,7 @@ class Cortex:
 
             # 重复率：单候选内部重复 token 比例
             tokens = text.split()
-            if tokens:
-                unique_ratio = len(set(tokens)) / len(tokens)
-            else:
-                unique_ratio = 0.0
+            unique_ratio = len(set(tokens)) / len(tokens) if tokens else 0.0
             repeat_penalty = (1 - unique_ratio) * 0.5
 
             total = inter_score + length_score - repeat_penalty
@@ -1571,7 +1558,7 @@ class Cortex:
         best_idx = scores.index(max(scores))
         return candidates[best_idx]
 
-    def detect_modality(self, input_data: Union[str, torch.Tensor, dict]) -> str:
+    def detect_modality(self, input_data: str | torch.Tensor | dict) -> str:
         """P8: 检测输入数据的模态。
 
         路由顺序：
@@ -1802,7 +1789,7 @@ class Cortex:
         domain = self._infer_domain(text)
         per_domain = {}  # {domain: mean quality z-score}
         quality_ready = False
-        judge_nll: Optional[Dict[str, float]] = None
+        judge_nll: dict[str, float] | None = None
         try:
             if self._neuron_shared_embeddings and self._general_sp is not None:
                 general_ids = self._general_sp.encode(text)
@@ -1866,7 +1853,7 @@ class Cortex:
                             else:
                                 zs.append(None)  # 未成熟，该 neuron 不参与
                         # 只聚合成熟 neuron 的 z；全未成熟 → quality_ready=False
-                        for i, nid in enumerate(nids):
+                        for i, _nid in enumerate(nids):
                             if zs[i] is None:
                                 quality_ready = False
                                 break
@@ -1880,9 +1867,9 @@ class Cortex:
         # ── C24 双头：judge NLL 域判定（主信号）──
         # 判定 = judge NLL 最低域；与启发式不同且显著占优（NLL 差 ≥ 1.0，
         # 诊断最小显著差 ~2）→ 切换（回退安全：judge 不显著时保留启发式）。
-        per_domain_nll: Optional[Dict[str, float]] = None
+        per_domain_nll: dict[str, float] | None = None
         if judge_nll:
-            agg: Dict[str, List[float]] = {}
+            agg: dict[str, list[float]] = {}
             for nid, v in judge_nll.items():
                 d = nid.split("_")[0]
                 agg.setdefault(d, []).append(v)
@@ -1913,9 +1900,9 @@ class Cortex:
 
     def _fingerprint_route(
         self,
-        general_ids: List[int],
+        general_ids: list[int],
         top_k: int = 2,
-    ) -> List[str]:
+    ) -> list[str]:
         """Level 2 prototype 路由：用 domain_prototype cosine 相似度选 top-k neuron。
 
         每个 neuron 用自己的 embed_adapter 投影 prompt，再与自己的 domain_prototype
@@ -1985,9 +1972,9 @@ class Cortex:
 
     def _auto_topk_route(
         self,
-        general_ids: List[int],
+        general_ids: list[int],
         top_k: int = 3,
-    ) -> List[str]:
+    ) -> list[str]:
         """自动选共振分 top-K 神经元（稀疏激活 auto_topK）。
 
         复用 _fingerprint_route 的 domain_prototype cosine 相似度计算，
@@ -2047,9 +2034,9 @@ class Cortex:
     def _reencode_domain_generation_context(
         self,
         prefix_text: str,
-        generated_ids: List[int],
+        generated_ids: list[int],
         decode_sp,
-    ) -> List[int]:
+    ) -> list[int]:
         """Re-encode the complete general context after a domain-token step.
 
         SentencePiece tokenization is boundary-sensitive: encoding a generated
@@ -2061,7 +2048,7 @@ class Cortex:
         general_ids = self._general_sp.encode(prefix_text + generated_text)
         return general_ids if general_ids else [0]
 
-    def _get_domain_to_general_alignment(self, domain: str, domain_sp) -> Dict[int, list]:
+    def _get_domain_to_general_alignment(self, domain: str, domain_sp) -> dict[int, list]:
         """S6: 构建 domain token ID → general token IDs 对齐表（带缓存 + 热插拔失效）。
 
         消除自回归生成时的 domain→text→general re-encode 往返。
@@ -2095,7 +2082,7 @@ class Cortex:
         if self._general_sp is None:
             return {}
 
-        alignment: Dict[int, list] = {}
+        alignment: dict[int, list] = {}
         vocab_size = domain_sp.GetPieceSize() if hasattr(domain_sp, "GetPieceSize") else 0
         for domain_id in range(vocab_size):
             piece = domain_sp.id_to_piece(domain_id)
@@ -2141,7 +2128,7 @@ class Cortex:
         """
         self._alignment_rules = rules
 
-    def invalidate_alignment_cache(self, domain: Optional[str] = None) -> None:
+    def invalidate_alignment_cache(self, domain: str | None = None) -> None:
         """词库热插拔手动失效：tokenizer 替换后强制重建对齐表缓存。
 
         指纹校验已覆盖大多数替换场景（自动失效）；此接口用于强制清空
@@ -2297,8 +2284,8 @@ class Cortex:
 
     def _probe_inactive_fused(
         self,
-        inactive_nids: List[str],
-        general_ids: List[int],
+        inactive_nids: list[str],
+        general_ids: list[int],
         gen_text: str,
         domain: str,
         window: int,
@@ -2337,17 +2324,17 @@ class Cortex:
 
     def _instance_route_evolve(
         self,
-        active_nids: List[str],
+        active_nids: list[str],
         result: dict,
         gen_text: str,
         domain: str,
-        streaks: Dict[str, int],
+        streaks: dict[str, int],
         window: int,
         evict_ratio: float,
         evict_streak: int,
         add_ratio: float,
         min_active: int,
-        general_ids: List[int],
+        general_ids: list[int],
         fusion_mode: str,
     ) -> tuple:
         """C27 增量一：实例级路由——chunk 级混合后验双向域内演化。
@@ -2413,10 +2400,7 @@ class Cortex:
                 new_streaks[nid] = 0
         # 5. 加入：未激活同域 neuron 后验显著高于激活集最小
         domain_keep = [k for k in keep if k in domain_all]
-        if domain_keep:
-            active_min = min(fused[k] for k in domain_keep if k in fused)
-        else:
-            active_min = None
+        active_min = min(fused[k] for k in domain_keep if k in fused) if domain_keep else None
         for nid, sc in fused.items():
             if nid in keep or nid not in domain_all:
                 continue
@@ -2445,10 +2429,10 @@ class Cortex:
         max_tokens: int,
         temperature: float,
         top_k: int,
-        domain: Optional[str] = None,
+        domain: str | None = None,
         repetition_penalty: float = 1.4,
         routing_level: int = 1,
-        active_nids: Optional[Union[str, List[str]]] = None,
+        active_nids: str | list[str] | None = None,
         collab_mode: str = "fusion",
         fusion_mode: str = "soft",
         # ── R1: 共振分数软路由 ──
@@ -2463,7 +2447,7 @@ class Cortex:
         # C26 增量二（2026-08-14）：记忆可读进生成——检索到的记忆向量
         # [{"vector": [D], "weight": sim} 或 (vec, weight)]，经 think 写入
         # 共振场，round2+ 场条件化 forward 让记忆直接参与 token 生成。
-        memory_vectors: Optional[List] = None,
+        memory_vectors: list | None = None,
         # C26 增量四（2026-08-14）：自动记忆检索（同 generate，见其签名说明）。
         auto_memory: bool = True,
         # C27 增量一（2026-08-14）：实例级路由（SMCS 借鉴）——continuous 生成
@@ -2589,7 +2573,7 @@ class Cortex:
         # C22（2026-08-08 收敛）：collab_mode="executive" 时跳过本块——executive 已有
         # 回合级判定（_executive_route），再跑 token 级共振校验会造成双路径打架
         # （共振校验可能覆盖 executive 的 dominant 判定）。C25-E "continuous" 同。
-        resonance_active_nids: Optional[List[str]] = None  # resonance 模式填充
+        resonance_active_nids: list[str] | None = None  # resonance 模式填充
         if (
             len(self.neurons) > 1
             and routing_mode != "keyword"
@@ -2727,10 +2711,10 @@ class Cortex:
         _c24_domain_nids = getattr(self, "_c24_domain_nids", None) or set()
         # C25-E 遗留（2026-08-14）：质量信号针对固定 prompt 不随生成增长，
         # 首次计算后缓存（避免每 token 重复 log_softmax 50000 词表）。
-        _leader_nll_quality_cache: Optional[dict] = None
+        _leader_nll_quality_cache: dict | None = None
         # C27 增量一（2026-08-14）：实例级路由演化状态——neuron 连续劣化
         # chunk 计数（迟滞防抖），chunk 边界在 _instance_route_evolve 更新。
-        _ir_streaks: Dict[str, int] = {}
+        _ir_streaks: dict[str, int] = {}
 
         for ir_step in range(max_tokens):
             # Trim context to prevent memory issues and maintain coherence
@@ -3101,13 +3085,13 @@ class Cortex:
     @torch.no_grad()
     def generate_multimodal(
         self,
-        input_data: Union[torch.Tensor, dict],
+        input_data: torch.Tensor | dict,
         max_tokens: int = 256,
         temperature: float = 0.8,
         top_k: int = 50,
-        domain: Optional[str] = None,
-        modality: Optional[str] = None,
-    ) -> Union[str, torch.Tensor]:
+        domain: str | None = None,
+        modality: str | None = None,
+    ) -> str | torch.Tensor:
         """P8: 多模态生成入口。
 
         与 generate() 并列，专用于非文本模态（图像/音频/视频）。
@@ -3219,7 +3203,7 @@ class Cortex:
 
         # 3. 为每个 neuron 预编码多模态 embedding
         # 每个 neuron 的 mm_projections 独立，所以 embedding 不同
-        neuron_embeddings: Dict[str, torch.Tensor] = {}
+        neuron_embeddings: dict[str, torch.Tensor] = {}
         for nid in mm_nids:
             neuron = self.neurons[nid]
             emb = neuron.encode_multimodal_input(features, modality)  # [1, L, base_embed_dim]
@@ -3234,7 +3218,7 @@ class Cortex:
         # 5. 自回归生成（多 neuron 共振）
         generated = []
 
-        for step in range(max_tokens):
+        for _step in range(max_tokens):
             # 多轮共振：输出统一走共享 general lm_head（256K vocab）
             res = self.ensemble.forward(
                 neuron_embeddings=neuron_embeddings,
@@ -3302,7 +3286,7 @@ class Cortex:
         """Get current resonance field state (consciousness snapshot)."""
         return self.field.get_state()
 
-    def get_last_phase(self) -> Optional[float]:
+    def get_last_phase(self) -> float | None:
         """C27 增量二（KoPE）：最近一次共振的加权均值相角（相位归属记忆）。
 
         记忆沉淀时随场快照记录该相位——注入时按记忆相位对齐 theta
@@ -3310,7 +3294,7 @@ class Cortex:
         """
         return getattr(self, "_last_phase_mean", None)
 
-    def get_last_field_state(self) -> Optional[torch.Tensor]:
+    def get_last_field_state(self) -> torch.Tensor | None:
         """最近一次共振后的任务场状态（推理实际写入的场）。
 
         get_field_state() 返回默认场（多线程推理下恒为陈旧/零状态）；
@@ -3347,7 +3331,7 @@ class Cortex:
         out = proj(fs)
         return out.squeeze(0) if field_state.dim() == 1 else out
 
-    def get_dominant_domain(self) -> Optional[str]:
+    def get_dominant_domain(self) -> str | None:
         """Identify which domain is dominating the current thought."""
         if not self.field.scores:
             return None

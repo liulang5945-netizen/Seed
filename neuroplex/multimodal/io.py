@@ -64,8 +64,8 @@ def save_audio(tensor: torch.Tensor, path: str, sample_rate: int = 16000) -> str
     Returns:
         保存的文件路径
     """
-    import wave
     import struct
+    import wave
 
     audio = tensor.detach().cpu().float()
     if audio.dim() == 2:
@@ -173,6 +173,7 @@ def load_audio(path: str, sample_rate: int = 16000) -> torch.Tensor:
         return torch.from_numpy(data).unsqueeze(0)
     except ImportError:
         import wave
+
         import numpy as np
 
         with wave.open(path, "rb") as wf:

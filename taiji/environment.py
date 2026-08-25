@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Protocol, Sequence, Tuple, runtime_checkable
+from typing import Protocol, runtime_checkable
 
 
 @dataclass(frozen=True)
@@ -19,7 +20,7 @@ class EnvironmentOutcome:
 class TaijiEnvironment(Protocol):
     """Protocol for environments whose transitions depend on Taiji actions."""
 
-    def reset(self) -> Tuple[int, Sequence[int]]:
+    def reset(self) -> tuple[int, Sequence[int]]:
         """Return the initial sensation and currently afforded actions."""
 
     def step(self, action_symbol: int) -> EnvironmentOutcome:

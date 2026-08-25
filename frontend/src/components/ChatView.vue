@@ -17,7 +17,7 @@
     </header>
 
     <!-- 对话滚动区 -->
-    <div class="scroll-area chat-scroll" ref="messagesArea">
+    <div ref="messagesArea" class="scroll-area chat-scroll">
       <div class="chat-stage">
         <!-- 欢迎区 + 建议词 + 示例对话（无消息时显示） -->
         <template v-if="chatStore.messages.length === 0">
@@ -34,96 +34,50 @@
 
           <!-- 建议词云 -->
           <div class="suggestions" role="list">
-            <button class="suggestion" v-for="hint in quickHints" :key="hint.text" @click="chatStore.chatInput = hint.text" type="button">
+            <button v-for="hint in quickHints" :key="hint.text" class="suggestion" type="button" @click="chatStore.chatInput = hint.text">
               <component :is="hint.icon" :size="16" class="sicon" />
               <span>{{ hint.text }}</span>
             </button>
           </div>
 
-          <!-- 示例对话分割线 -->
-          <div class="chat-thread">
-            <div class="thread-divider">示例对话</div>
+          <!-- 示例对话：默认收起，点击展开第一段示例 -->
+          <div class="chat-thread chat-thread-example">
+            <button class="thread-divider example-toggle" type="button" :aria-expanded="showExample" @click="showExample = !showExample">
+              <span class="example-toggle-text">{{ showExample ? '收起示例对话' : '查看示例对话' }}</span>
+              <ChevronDown class="example-chevron" :class="{ open: showExample }" :size="14" />
+            </button>
 
-            <!-- 示例用户提问 1 -->
-            <div class="msg msg-user">
-              <span class="av av-user" aria-label="用户">
-                <User :size="16" />
-              </span>
-              <div class="msg-body">
-                <span class="msg-name">你</span>
-                <div class="bubble">
-                  <p>Taiji 如何把原始字节推进成一次输出？</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- 示例 AI 回复 1 -->
-            <div class="msg msg-ai">
-              <TaijiLogo class="av av-ai" :size="32" :thinking="false" aria-label="Seed" />
-              <div class="msg-body">
-                <span class="msg-name">Seed</span>
-                <div class="bubble">
-                  <p><span class="lead">Taiji 的一次状态推进</span>从原始字节开始，不经过 tokenizer 或学习式 embedding。输入先进入 <code>ByteSensor</code>，再经过预测织体与 <code>EpisodicField</code>，最后由 <code>ByteMotor</code> 产生字节或动作。</p>
-                  <ol class="msg-steps">
-                    <li><strong>感觉</strong>：固定的 257 个感受器接收当前 byte 和 episode 边界。</li>
-                    <li><strong>预测与记忆</strong>：递归预测织体推进状态，情景场保存 episode 关联。</li>
-                    <li><strong>动作</strong>：稀疏 motor group 选择下一字节或动作，结果回到下一次感觉。</li>
-                  </ol>
-                  <p>这里的智能来自持续状态、预测误差和环境反馈的闭环，而不是一次性计算 token logits。</p>
-                </div>
-                <div class="msg-actions">
-                  <button type="button" class="msg-action-btn" title="复制"><Copy :size="14" /></button>
-                  <button type="button" class="msg-action-btn" title="赞"><ThumbsUp :size="14" /></button>
-                  <button type="button" class="msg-action-btn" title="重新生成"><RotateCcw :size="14" /></button>
-                </div>
-              </div>
-            </div>
-
-            <!-- 示例用户提问 2 -->
-            <div class="msg msg-user">
-              <span class="av av-user" aria-label="用户">
-                <User :size="16" />
-              </span>
-              <div class="msg-body">
-                <span class="msg-name">你</span>
-                <div class="bubble">
-                  <p>Taiji 的局部可塑性没有产生有效学习，应该怎么排查？</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- 示例 AI 回复 2 -->
-            <div class="msg msg-ai">
-              <TaijiLogo class="av av-ai" :size="32" :thinking="false" aria-label="Seed" />
-              <div class="msg-body">
-                <span class="msg-name">Seed</span>
-                <div class="bubble">
-                  <p>Taiji 不依赖 Transformer 的 BPTT 或全局梯度。先按一次真实状态推进检查局部误差与突触更新：</p>
-                  <ol class="msg-steps">
-                    <li>确认输入仍是原始 byte 流，并在 episode 边界处正确 reset。</li>
-                    <li>检查预测误差、递归误差和 action→outcome 误差是否有非零信号。</li>
-                    <li>确认局部 plasticity 只更新已有突触，且 checkpoint 保存了持续状态。</li>
-                  </ol>
-                  <p>可以先记录一个短 episode 的 observe→learn→generate 链路：</p>
-                  <div class="msg-code">
-                    <div class="code-head">
-                      <Code :size="14" />
-                      <span class="lang">taiji-native.json</span>
-                      <button class="copy" type="button"><Copy :size="13" />复制</button>
-                    </div>
-                    <pre><span class="k">input</span>: <span class="s">raw_bytes</span>
-  <span class="k">sensor</span>: <span class="s">ByteSensor(257)</span>
-  <span class="k">learning</span>: <span class="s">local_plasticity</span>
-  <span class="k">output</span>: <span class="s">ByteMotor</span></pre>
+            <template v-if="showExample">
+              <!-- 示例用户提问 -->
+              <div class="msg msg-user">
+                <span class="av av-user" aria-label="用户">
+                  <User :size="16" />
+                </span>
+                <div class="msg-body">
+                  <span class="msg-name">你</span>
+                  <div class="bubble">
+                    <p>Taiji 如何把原始字节推进成一次输出？</p>
                   </div>
                 </div>
-                <div class="msg-actions">
-                  <button type="button" class="msg-action-btn" title="复制"><Copy :size="14" /></button>
-                  <button type="button" class="msg-action-btn" title="赞"><ThumbsUp :size="14" /></button>
-                  <button type="button" class="msg-action-btn" title="重新生成"><RotateCcw :size="14" /></button>
+              </div>
+
+              <!-- 示例 AI 回复（静态演示，不提供操作按钮） -->
+              <div class="msg msg-ai">
+                <TaijiLogo class="av av-ai" :size="32" :thinking="false" aria-label="Seed" />
+                <div class="msg-body">
+                  <span class="msg-name">Seed</span>
+                  <div class="bubble">
+                    <p><span class="lead">Taiji 的一次状态推进</span>从原始字节开始，不经过 tokenizer 或学习式 embedding。输入先进入 <code>ByteSensor</code>，再经过预测织体与 <code>EpisodicField</code>，最后由 <code>ByteMotor</code> 产生字节或动作。</p>
+                    <ol class="msg-steps">
+                      <li><strong>感觉</strong>：固定的 257 个感受器接收当前 byte 和 episode 边界。</li>
+                      <li><strong>预测与记忆</strong>：递归预测织体推进状态，情景场保存 episode 关联。</li>
+                      <li><strong>动作</strong>：稀疏 motor group 选择下一字节或动作，结果回到下一次感觉。</li>
+                    </ol>
+                    <p>这里的智能来自持续状态、预测误差和环境反馈的闭环，而不是一次性计算 token logits。</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </template>
           </div>
         </template>
 
@@ -144,9 +98,10 @@
               </button>
             </div>
 
-            <article v-for="msg in displayedMessages" :key="msg.id"
-              :class="['msg', msg.role === 'user' ? 'msg-user' : 'msg-ai']"
-              v-memo="[msg.id, msg.content, msg.role]">
+            <article
+v-for="msg in displayedMessages" :key="msg.id"
+              v-memo="[msg.id, msg.content, msg.role]"
+              :class="['msg', msg.role === 'user' ? 'msg-user' : 'msg-ai']">
               <TaijiLogo v-if="msg.role === 'assistant'" class="av av-ai" :size="32" :thinking="false" aria-label="Seed" />
               <span v-else class="av av-user" aria-label="用户">
                 <User :size="16" />
@@ -158,9 +113,9 @@
                   <div v-else class="markdown-body" v-html="renderMarkdown(msg.content)" />
                 </div>
                 <div v-if="msg.role === 'assistant' && msg.content" class="msg-actions">
-                  <button class="msg-action-btn" @click="copyMsg(msg.content)" title="复制"><Copy :size="14" /></button>
-                  <button class="msg-action-btn" @click="likeMsg(msg.id)" title="赞"><ThumbsUp :size="14" /></button>
-                  <button class="msg-action-btn" @click="chatStore.regenerateMessage(msg.id)" title="重新生成"><RotateCcw :size="14" /></button>
+                  <button class="msg-action-btn" title="复制" @click="copyMsg(msg.content)"><Copy :size="14" /></button>
+                  <button class="msg-action-btn" title="赞" @click="likeMsg(msg.id)"><ThumbsUp :size="14" /></button>
+                  <button class="msg-action-btn" title="重新生成" @click="chatStore.regenerateMessage(msg.id)"><RotateCcw :size="14" /></button>
                 </div>
               </div>
             </article>
@@ -180,45 +135,50 @@
 
       <!-- 底部输入区：圆角胶囊形 + 工具芯片 -->
       <div class="composer-wrap">
-        <div class="stop-container" v-if="chatStore.isReceiving">
+        <div v-if="chatStore.isReceiving" class="stop-container">
           <button class="stop-btn" @click="chatStore.stopGeneration()">
             <Square :size="13" fill="currentColor" /> 中断执行
           </button>
         </div>
 
         <div class="composer">
-          <textarea ref="inputRef" v-model="chatStore.chatInput"
+          <textarea
+ref="inputRef" v-model="chatStore.chatInput"
             :placeholder="inputPlaceholder"
             rows="1" @keydown="onKeydown" />
           <div class="tools">
-            <button class="composer-chip round" type="button" title="添加" @click="onChipAdd">
+            <!-- 快捷提问面板（由"快速"chip 展开，复用首屏建议词） -->
+            <div v-if="showQuickPanel" class="quick-panel" role="menu" aria-label="快捷提问">
+              <button v-for="hint in quickHints" :key="hint.text" class="quick-item" type="button" role="menuitem" @click="applyQuickHint(hint.text)">
+                <component :is="hint.icon" :size="14" class="sicon" />
+                <span>{{ hint.text }}</span>
+              </button>
+            </div>
+            <button class="composer-chip round" type="button" title="添加附件" :disabled="uploading" @click="onChipAdd">
               <Plus :size="16" />
             </button>
-            <button class="composer-chip" type="button" title="快速">
+            <button class="composer-chip" type="button" title="快速" :class="{ open: showQuickPanel }" :aria-expanded="showQuickPanel" @click="showQuickPanel = !showQuickPanel">
               <Zap :size="16" />
               <span class="chip-label">快速</span>
             </button>
-            <button class="composer-chip" type="button" title="知识库">
-              <BookOpen :size="16" />
-              <span class="chip-label">知识库</span>
-            </button>
-            <button class="composer-chip" type="button" title="图像生成">
-              <ImageIcon :size="16" />
-              <span class="chip-label">图像生成</span>
-            </button>
-            <button class="composer-chip" type="button" title="代码">
+            <button class="composer-chip" type="button" title="代码" @click="insertTemplate(promptTemplates.code)">
               <Code :size="16" />
               <span class="chip-label">代码</span>
             </button>
-            <button class="composer-chip" type="button" title="更多" @click="onChipMore">
-              <MoreHorizontal :size="16" />
-              <span class="chip-label">更多</span>
+            <button class="composer-chip" type="button" title="总结" @click="insertTemplate(promptTemplates.summarize)">
+              <AlignLeft :size="16" />
+              <span class="chip-label">总结</span>
+            </button>
+            <button class="composer-chip" type="button" title="翻译" @click="insertTemplate(promptTemplates.translate)">
+              <Languages :size="16" />
+              <span class="chip-label">翻译</span>
             </button>
             <span class="spacer"></span>
-            <button class="send" type="button" :class="{ unavailable: !canSend }" :disabled="!canSend" @click="handleSend" title="发送">
+            <button class="send" type="button" :class="{ unavailable: !canSend }" :disabled="!canSend" title="发送" @click="handleSend">
               <Send :size="16" />
             </button>
           </div>
+          <input ref="fileInput" class="file-input-hidden" type="file" multiple tabindex="-1" aria-hidden="true" @change="onFilePicked">
         </div>
 
         <div class="composer-foot">
@@ -236,24 +196,25 @@
 <script setup>
 defineOptions({ name: 'ChatView' })
 import { ref, computed, watch, nextTick, onMounted, inject } from 'vue'
-import { Activity, User, Bot, RotateCcw, Copy, Square, Send, Lightbulb, Code, BookOpen, Mic, Image as ImageIcon, Video, FileText, Camera, ThumbsUp, Brain, Bug, SlidersHorizontal, LineChart, GitBranch, ScrollText, Plus, Zap, MoreHorizontal } from 'lucide-vue-next'
+import { User, RotateCcw, Copy, Square, Send, Code, ThumbsUp, Brain, Bug, SlidersHorizontal, LineChart, GitBranch, ScrollText, Plus, Zap, AlignLeft, Languages, ChevronDown } from 'lucide-vue-next'
 import TaijiLogo from './TaijiLogo.vue'
 import { useChatStore } from '@/stores/chatStore.js'
-import { useAppStore } from '@/stores/appStore.js'
 import { useRuntimeStore } from '@/stores/runtimeStore.js'
 import { useMarkdown } from '@/composables/useMarkdown.js'
-import { authFetch } from '@/composables/apiClient.js'
+import { API_BASE, authFetch } from '@/composables/apiClient.js'
 
 const chatStore = useChatStore()
-const appStore = useAppStore()
 const runtimeStore = useRuntimeStore()
 const { renderMarkdown } = useMarkdown()
 const toast = inject('toast', () => {})
-const t = (key) => appStore.t(key)
 
 const messagesArea = ref(null)
 const inputRef = ref(null)
+const fileInput = ref(null)
 const engineModel = ref('agent')  // 统一使用 ReAct 引擎
+const showExample = ref(false)  // 示例对话默认收起
+const showQuickPanel = ref(false)  // 快捷提问面板（"快速"chip）
+const uploading = ref(false)  // 附件上传中
 
 const vitalChips = computed(() => {
   const isTaiji = runtimeStore.health.isTaiji
@@ -303,101 +264,59 @@ function handleSend() {
 }
 function onKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }
 
-// 语音输入
-async function toggleVoice() {
-  if (isRecording.value) {
-    isRecording.value = false
-    // TODO: 停止录音并发送音频
-    toast('语音功能开发中', 'info')
-  } else {
-    isRecording.value = true
-    // TODO: 开始录音
-    toast('语音功能开发中', 'info')
-  }
-}
-
-// 图片上传
-async function onImageSelect(e) {
-  const file = e.target.files[0]
-  if (!file) return
-  const formData = new FormData()
-  formData.append('file', file)
-  try {
-    const resp = await authFetch('/api/taiji/upload', { method: 'POST', body: formData })
-    if (resp.ok) {
-      const data = await resp.json()
-      chatStore.chatInput += `[图片: ${data.filename}] `
-      toast('图片已上传', 'success')
-    } else {
-      toast('图片上传失败', 'error')
-    }
-  } catch (e) {
-    console.warn('[ChatView] image upload failed:', e.message)
-    toast('图片上传失败', 'error')
-  }
-  e.target.value = ''
-}
-
-// 视频上传
-async function onVideoSelect(e) {
-  const file = e.target.files[0]
-  if (!file) return
-  const formData = new FormData()
-  formData.append('file', file)
-  try {
-    const resp = await authFetch('/api/taiji/upload', { method: 'POST', body: formData })
-    if (resp.ok) {
-      const data = await resp.json()
-      chatStore.chatInput += `[视频: ${data.filename}] `
-      toast('视频已上传', 'success')
-    } else {
-      toast('视频上传失败', 'error')
-    }
-  } catch (e) {
-    console.warn('[ChatView] video upload failed:', e.message)
-    toast('视频上传失败', 'error')
-  }
-  e.target.value = ''
-}
-
-// 文件上传
-async function onFileSelect(e) {
-  const files = e.target.files
-  if (!files.length) return
-  for (const file of files) {
-    const formData = new FormData()
-    formData.append('file', file)
-    try {
-      const resp = await authFetch('/api/taiji/upload', { method: 'POST', body: formData })
-      if (resp.ok) {
-        const data = await resp.json()
-        chatStore.chatInput += `[文件: ${data.filename}] `
-      }
-    } catch (e) { console.warn('[ChatView] file upload failed:', e.message) }
-  }
-  toast(`已上传 ${files.length} 个文件`, 'success')
-  e.target.value = ''
-}
-
-// 拍照/录像
-async function toggleCamera() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-    // TODO: 实现拍照/录像逻辑
-    toast('摄像头功能开发中', 'info')
-    stream.getTracks().forEach(t => t.stop())
-  } catch (e) {
-    console.warn('[ChatView] camera access denied:', e.message)
-    toast('无法访问摄像头', 'error')
-  }
-}
+// R5: 语音/图片/视频/文件上传与拍照的 WIP 处理函数已移除（无对应模板入口，
+// 属未接入的死代码；需要时从 git 历史恢复）。
 
 async function copyMsg(content) { try { await navigator.clipboard.writeText(content); toast('已复制', 'success') } catch { toast('复制失败', 'error') } }
 function likeMsg() { toast('已点赞', 'success') }
 
-// composer chip 占位功能
-function onChipAdd() { toast('添加功能开发中', 'info') }
-function onChipMore() { toast('更多功能开发中', 'info') }
+// ===== composer chip 真实行为 =====
+// 提示词模板：代码问答 / 总结 / 翻译（纯前端可用能力）。
+// 知识库（/api/rag 对话挂载）与图像生成（/api/multimodal）后端未就绪，入口已下线，
+// 不保留无行为按钮；"更多"占位入口一并移除。
+const promptTemplates = {
+  code: '请帮我解释以下代码：\n```\n\n```',
+  summarize: '请帮我总结以下内容：\n',
+  translate: '请将以下内容翻译成中文：\n',
+}
+
+function insertTemplate(text) {
+  chatStore.chatInput = chatStore.chatInput.trim() ? `${chatStore.chatInput}\n${text}` : text
+  showQuickPanel.value = false
+  nextTick(() => inputRef.value?.focus())
+}
+
+function applyQuickHint(text) {
+  chatStore.chatInput = text
+  showQuickPanel.value = false
+  nextTick(() => inputRef.value?.focus())
+}
+
+// "添加"：打开文件选择，经 /api/chat/upload 解析后将内容注入输入框作为上下文。
+function onChipAdd() { fileInput.value?.click() }
+
+async function onFilePicked(e) {
+  const files = Array.from(e.target.files || [])
+  e.target.value = ''
+  if (!files.length) return
+  uploading.value = true
+  try {
+    for (const file of files) {
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await authFetch(`${API_BASE}/api/chat/upload`, { method: 'POST', body: formData })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.detail || `上传失败 (${res.status})`)
+      const block = `【附件：${file.name}】\n${data.parsed_text || ''}`.trimEnd()
+      chatStore.chatInput = chatStore.chatInput ? `${chatStore.chatInput}\n${block}` : block
+    }
+    toast(`已附加 ${files.length} 个附件`, 'success')
+  } catch (err) {
+    toast(`附件上传失败：${err.message}`, 'error')
+  } finally {
+    uploading.value = false
+  }
+}
 
 onMounted(scrollToBottom)
 </script>
@@ -595,6 +514,23 @@ onMounted(scrollToBottom)
   background: var(--border);
 }
 
+/* 示例对话折叠入口（复用 thread-divider 分割线形态） */
+.example-toggle {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+.example-toggle:hover .example-toggle-text { color: var(--foreground); }
+.example-toggle .example-chevron {
+  color: var(--muted-foreground);
+  transition: transform .18s ease;
+  flex: none;
+}
+.example-toggle .example-chevron.open { transform: rotate(180deg); }
+
 /* 消息行 */
 .msg {
   display: flex;
@@ -702,56 +638,6 @@ onMounted(scrollToBottom)
   border-radius: 6px;
 }
 
-/* 代码块 */
-.msg-code {
-  margin: 10px 0 0;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background: var(--muted);
-}
-.msg-code .code-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.74rem;
-  color: var(--muted-foreground);
-}
-.msg-code .code-head .lang {
-  font-family: var(--font-mono);
-  font-weight: 600;
-  color: var(--foreground);
-}
-.msg-code .code-head .copy {
-  margin-left: auto;
-  border: 0;
-  background: transparent;
-  color: var(--muted-foreground);
-  font-size: 0.72rem;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 7px;
-  border-radius: 7px;
-  transition: background .14s ease, color .14s ease;
-}
-.msg-code .code-head .copy:hover { background: var(--background); color: var(--foreground); }
-.msg-code pre {
-  margin: 0;
-  padding: 12px 14px;
-  overflow-x: auto;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  line-height: 1.6;
-  color: var(--foreground);
-}
-.msg-code .k { color: var(--chart-2); }
-.msg-code .n { color: var(--chart-4); }
-.msg-code .c { color: var(--muted-foreground); }
-
 /* 消息操作 */
 .msg-actions {
   display: flex;
@@ -849,7 +735,49 @@ onMounted(scrollToBottom)
   gap: 6px;
   flex-wrap: wrap;
   padding-top: 4px;
+  position: relative;
 }
+
+/* 快捷提问面板（"快速"chip 展开） */
+.quick-panel {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 300px;
+  max-width: min(440px, 100%);
+  padding: 6px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--foreground) 14%, transparent);
+  animation: quick-panel-in .16s ease;
+}
+@keyframes quick-panel-in {
+  from { opacity: 0; transform: translateY(4px); }
+}
+.quick-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  text-align: left;
+  color: var(--foreground);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background .14s ease, color .14s ease;
+}
+.quick-item:hover { background: var(--muted); color: var(--primary); }
+.quick-item .sicon { flex: none; color: var(--primary); }
+
+.file-input-hidden { display: none; }
 .composer-chip {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 11px;
@@ -860,6 +788,10 @@ onMounted(scrollToBottom)
   transition: background .14s ease, color .14s ease;
 }
 .composer-chip:hover { background: var(--muted); color: var(--foreground); }
+.composer-chip.open {
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+}
 .composer-chip.round {
   width: 32px; height: 32px;
   padding: 0;

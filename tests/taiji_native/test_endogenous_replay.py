@@ -74,13 +74,15 @@ def test_replay_reads_the_homeostatic_set_point_without_writing_it() -> None:
     assert summary.accepted > 0
 
     after = _thresholds(model)
-    for index, (start, end) in enumerate(zip(before, after)):
+    for index, (start, end) in enumerate(zip(before, after, strict=False)):
         assert torch.equal(start, end), f"region {index} set point drifted during sleep"
-    for index, (start, end) in enumerate(zip(baselines_before, _baselines(model))):
+    for index, (start, end) in enumerate(zip(baselines_before, _baselines(model), strict=False)):
         assert torch.equal(start, end), f"region {index} baseline drifted during sleep"
     assert any(
         not torch.equal(start, decoder.edge_weight)
-        for start, decoder in zip(consolidation_before, model.fabric.consolidation_decoders)
+        for start, decoder in zip(
+            consolidation_before, model.fabric.consolidation_decoders, strict=False
+        )
     ), "sleep did not write the slow consolidation pathway"
 
 
@@ -100,7 +102,7 @@ def test_waking_homeostasis_still_adapts() -> None:
     after = _thresholds(model)
 
     assert any(
-        not torch.equal(start, end) for start, end in zip(before, after)
+        not torch.equal(start, end) for start, end in zip(before, after, strict=False)
     ), "waking observation left every set point untouched"
 
 
@@ -151,5 +153,5 @@ def test_consolidation_leaves_the_field_untouched() -> None:
 
     after = model.memory.parameter_tensors()
     assert len(before) == len(after)
-    for index, (start, end) in enumerate(zip(before, after)):
+    for index, (start, end) in enumerate(zip(before, after, strict=False)):
         assert torch.equal(start, end), f"sleep modified memory tensor {index}"

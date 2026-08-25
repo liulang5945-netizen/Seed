@@ -29,7 +29,7 @@ Usage:
 from __future__ import annotations
 
 from collections import deque
-from typing import List
+
 import torch
 
 
@@ -47,7 +47,7 @@ class WorkingMemory:
         self.buffer: deque = deque(maxlen=max_tokens)
         # round_marks[i] = (start_idx, end_idx, importance) 第 i 轮的 token 范围
         # 注意：buffer 是 deque，旧 token 会被丢弃；round_marks 用相对当前 buffer 的索引
-        self.round_marks: List[tuple] = []
+        self.round_marks: list[tuple] = []
         self.current_round_start: int = 0
 
     def reset(self) -> None:
@@ -58,8 +58,8 @@ class WorkingMemory:
 
     def append_round(
         self,
-        prompt_ids: List[int],
-        generated_ids: List[int],
+        prompt_ids: list[int],
+        generated_ids: list[int],
         importance: float = 1.0,
     ) -> None:
         """追加一轮对话到工作记忆。
@@ -91,7 +91,7 @@ class WorkingMemory:
         if len(self.round_marks) > 20:
             self.round_marks = self.round_marks[-20:]
 
-    def get_context_ids(self) -> List[int]:
+    def get_context_ids(self) -> list[int]:
         """获取当前工作记忆的全部 token IDs（用作下次 generate 的前缀）。"""
         return list(self.buffer)
 
@@ -135,7 +135,7 @@ class WorkingMemory:
         )
 
     @classmethod
-    def load(cls, path: str) -> "WorkingMemory":
+    def load(cls, path: str) -> WorkingMemory:
         """从磁盘加载工作记忆（会话恢复时调用）。"""
         import logging
         import pickle

@@ -25,8 +25,8 @@ import argparse
 import json
 import sys
 import time
+from collections.abc import Iterator, Sequence
 from pathlib import Path
-from typing import Dict, Iterator, Optional, Sequence
 
 import torch
 
@@ -55,7 +55,7 @@ HOLDOUT_PROBE = (
     "水的沸点在标准大气压下是一百摄氏度。"
     "问：你好。\n答：你好，很高兴见到你。"
     "请解释一下牛顿第二定律和它的日常应用。"
-).encode("utf-8")
+).encode()
 
 
 def resolve_device(requested: str | torch.device) -> torch.device:
@@ -109,10 +109,10 @@ def run_training(
     progress_path: Path | str,
     checkpoint_every: int,
     progress_every: int,
-    max_symbols: Optional[int] = None,
-    resume_checkpoint: Optional[Path | str] = None,
+    max_symbols: int | None = None,
+    resume_checkpoint: Path | str | None = None,
     device: str | torch.device = "cpu",
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """Stream the corpus through ``Seed.observe`` with periodic persistence."""
 
     if epochs <= 0:
@@ -165,7 +165,7 @@ def run_training(
         with progress_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
-    for epoch in range(epochs):
+    for epoch in range(epochs):  # noqa: B007 — epoch 被 _flush 闭包引用（进度日志）
         for symbol in iter_corpus_symbols(corpus_paths, boundary=boundary):
             step = model.observe(symbol, learn=True)
             ticks += 1
@@ -189,7 +189,7 @@ def run_training(
     return _summary(model, ticks)
 
 
-def _summary(model: Seed, ticks: int) -> Dict[str, float]:
+def _summary(model: Seed, ticks: int) -> dict[str, float]:
     return {
         "ticks": float(ticks),
         "parameters": float(model.parameter_count()),

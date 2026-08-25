@@ -6,7 +6,6 @@ Cortex 规划系统
 """
 
 import logging
-from typing import Optional, Dict, List
 from dataclasses import dataclass
 from enum import IntEnum
 
@@ -41,9 +40,9 @@ class PlanStep:
     step_id: int
     description: str
     status: StepStatus = StepStatus.PENDING
-    tool_name: Optional[str] = None
-    result_summary: Optional[str] = None
-    error: Optional[str] = None
+    tool_name: str | None = None
+    result_summary: str | None = None
+    error: str | None = None
 
     def to_token_text(self) -> str:
         status_map = {
@@ -80,14 +79,14 @@ class PlanStep:
 class Plan:
     """完整计划"""
 
-    def __init__(self, task: str, steps: List[PlanStep] = None):
+    def __init__(self, task: str, steps: list[PlanStep] | None = None):
         self.task = task
-        self.steps: List[PlanStep] = steps or []
+        self.steps: list[PlanStep] = steps or []
         self.current_step_idx: int = 0
         self.replan_count: int = 0
 
     @property
-    def current_step(self) -> Optional[PlanStep]:
+    def current_step(self) -> PlanStep | None:
         if 0 <= self.current_step_idx < len(self.steps):
             return self.steps[self.current_step_idx]
         return None
@@ -103,7 +102,7 @@ class Plan:
     def is_complete(self) -> bool:
         return all(s.status in (StepStatus.DONE, StepStatus.SKIPPED) for s in self.steps)
 
-    def advance(self) -> Optional[PlanStep]:
+    def advance(self) -> PlanStep | None:
         """前进到下一步"""
         if self.current_step:
             self.current_step.status = StepStatus.DONE
@@ -159,8 +158,8 @@ class PlannerSystem:
     """
 
     def __init__(self):
-        self.current_plan: Optional[Plan] = None
-        self.plan_history: List[Dict] = []  # 历史计划记录
+        self.current_plan: Plan | None = None
+        self.plan_history: list[dict] = []  # 历史计划记录
 
         # 神经元架构组件引用（由 set_brain_interfaces 注入）
         self._feed_engine = None
@@ -197,7 +196,7 @@ class PlannerSystem:
             f"lifecycle={'✓' if self._lifecycle else '✗'}"
         )
 
-    def _feedback_plan_success(self, task: str, steps: List[PlanStep]):
+    def _feedback_plan_success(self, task: str, steps: list[PlanStep]):
         """计划成功反馈：喂养实践样本 + dopamine↑。
 
         B 方案：将成功的计划-执行轨迹转化为训练样本，
@@ -260,7 +259,7 @@ class PlannerSystem:
             except Exception as e:
                 logger.debug("【PlannerSystem._feedback_plan_failure】处理失败（非致命）: %s", e)
 
-    def create_plan(self, task: str, step_descriptions: List[str]) -> Plan:
+    def create_plan(self, task: str, step_descriptions: list[str]) -> Plan:
         """创建新计划"""
         steps = [
             PlanStep(step_id=i + 1, description=desc) for i, desc in enumerate(step_descriptions)
@@ -272,13 +271,13 @@ class PlannerSystem:
         logger.info(f"Plan created: {len(steps)} steps for '{task[:50]}'")
         return self.current_plan
 
-    def get_current_step(self) -> Optional[PlanStep]:
+    def get_current_step(self) -> PlanStep | None:
         """获取当前应执行的步骤"""
         if self.current_plan:
             return self.current_plan.current_step
         return None
 
-    def complete_current_step(self, result_summary: str = "") -> Optional[PlanStep]:
+    def complete_current_step(self, result_summary: str = "") -> PlanStep | None:
         """完成当前步骤，前进到下一步"""
         if not self.current_plan:
             return None
@@ -291,7 +290,7 @@ class PlannerSystem:
         if self.current_plan:
             self.current_plan.mark_failed(error)
 
-    def replan(self, new_steps: List[str]) -> Plan:
+    def replan(self, new_steps: list[str]) -> Plan:
         """重新规划（保留已完成步骤）"""
         if not self.current_plan:
             return self.create_plan("replan", new_steps)
@@ -313,8 +312,8 @@ class PlannerSystem:
         return self.current_plan
 
     def handle_action(
-        self, action: PlanAction, step_descs: List[str] = None, error: str = ""
-    ) -> Optional[str]:
+        self, action: PlanAction, step_descs: list[str] | None = None, error: str = ""
+    ) -> str | None:
         """
         处理规划头输出的动作
 
@@ -323,7 +322,8 @@ class PlannerSystem:
         """
         if action == PlanAction.NEW_PLAN and step_descs:
             self.create_plan("(自动规划)", step_descs)
-            return self.current_plan.to_token_text()
+            plan = self.current_plan
+            return plan.to_token_text() if plan else None
 
         elif action == PlanAction.NEXT_STEP:
             step = self.complete_current_step()
@@ -334,7 +334,8 @@ class PlannerSystem:
         elif action == PlanAction.REPLAN:
             if step_descs:
                 self.replan(step_descs)
-                return self.current_plan.to_token_text()
+                plan = self.current_plan
+                return plan.to_token_text() if plan else None
             return "需要重新规划。"
 
         elif action == PlanAction.SKIP_STEP:
@@ -368,7 +369,7 @@ class PlannerSystem:
         """获取当前计划的上下文 token"""
         if not self.current_plan:
             return []
-        return tokenizer._encode(self.current_plan.to_token_text())
+        return list(tokenizer._encode(self.current_plan.to_token_text()))
 
     def get_status(self) -> dict:
         """获取规划状态"""
@@ -387,7 +388,7 @@ class PlannerSystem:
             "replan_count": self.current_plan.replan_count,
         }
 
-    def parse_plan_tokens(self, token_ids: list, tokenizer) -> Optional[List[str]]:
+    def parse_plan_tokens(self, token_ids: list, tokenizer) -> list[str] | None:
         """从 token 序列解析计划步骤"""
         from neuroplex.config import SPECIAL_TOKENS
 
@@ -395,7 +396,7 @@ class PlannerSystem:
 
         steps = []
         in_plan = False
-        step_parts = []
+        step_parts: list = []
 
         for tid in ids:
             if tid == SPECIAL_TOKENS["plan_start"]:

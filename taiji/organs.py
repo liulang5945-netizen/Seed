@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import math
-from typing import Any, Dict, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 import torch
 
@@ -89,9 +90,10 @@ class SparseReceptorBank:
         norm = context.norm()
         if float(norm.item()) < 1e-8:
             return context
-        return context * (self.context_norm / norm)
+        scaled: torch.Tensor = context * (self.context_norm / norm)
+        return scaled
 
-    def to_payload(self) -> Dict[str, Any]:
+    def to_payload(self) -> dict[str, Any]:
         return {
             "in_features": self.in_features,
             "out_features": self.out_features,
@@ -221,7 +223,7 @@ class ByteMotor:
         self.bias.sub_(self.bias.mean())
         self.bias.clamp_(-self.config.max_weight_norm, self.config.max_weight_norm)
 
-    def to_payload(self) -> Dict[str, Any]:
+    def to_payload(self) -> dict[str, Any]:
         return {
             "receptors": self.receptors.to_payload(),
             "synapses": self.synapses.to_payload(),

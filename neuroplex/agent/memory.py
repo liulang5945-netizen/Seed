@@ -6,11 +6,10 @@ Cortex 记忆系统
 通过特殊 token 实现模型原生的读写操作。
 """
 
-import os
 import json
 import logging
+import os
 import time
-from typing import Optional, Dict, List
 
 logger = logging.getLogger("Cortex.Memory")
 
@@ -113,7 +112,7 @@ class MemorySystem:
         self.short_term[target].write(content, importance)
         return target
 
-    def consolidate(self) -> List[int]:
+    def consolidate(self) -> list[int]:
         """
         巩固机制: 将高重要性的短期记忆转为长期记忆
 
@@ -160,7 +159,7 @@ class MemorySystem:
             return []
 
         text = "<mem_read>" + "\n".join(lines) + "</mem_read>"
-        return tokenizer._encode(text)
+        return list(tokenizer._encode(text))
 
     def clear_short_term(self):
         """清空所有短期记忆"""
@@ -184,7 +183,7 @@ class MemorySystem:
         if not os.path.exists(fpath):
             return
         try:
-            with open(fpath, "r", encoding="utf-8") as f:
+            with open(fpath, encoding="utf-8") as f:
                 data = json.load(f)
             for i, d in enumerate(data.get("long_term", [])):
                 if i < len(self.long_term):
@@ -204,7 +203,7 @@ class MemorySystem:
             "long_term_total": len(self.long_term),
         }
 
-    def parse_write_command(self, token_ids: list, tokenizer) -> Optional[Dict]:
+    def parse_write_command(self, token_ids: list, tokenizer) -> dict | None:
         """
         从 token 序列中解析记忆写入命令
 

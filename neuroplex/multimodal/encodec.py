@@ -18,8 +18,6 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -225,7 +223,7 @@ class EnCodec(nn.Module):
         return indices
 
     def decode_from_indices(
-        self, indices: torch.Tensor, target_len: Optional[int] = None
+        self, indices: torch.Tensor, target_len: int | None = None
     ) -> torch.Tensor:
         quantized = self.quantizer.codebook(indices)  # [B, L, D]
         quantized = quantized.permute(0, 2, 1).contiguous()  # [B, D, L]
@@ -250,9 +248,9 @@ class EnCodecAudioCodec:
 
     def __init__(
         self,
-        model: Optional[EnCodec] = None,
+        model: EnCodec | None = None,
         sample_rate: int = 16000,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ):
         self.model = model or EnCodec(sample_rate=sample_rate)
         self.model.eval()
@@ -278,14 +276,14 @@ class EnCodecAudioCodec:
             audio = audio / audio.abs().max()
         return audio
 
-    def encode(self, audio: torch.Tensor) -> List[int]:
+    def encode(self, audio: torch.Tensor) -> list[int]:
         """音频 → codebook 索引序列。"""
         with torch.no_grad():
             x = self._preprocess(audio)
             indices = self.model.encode_to_indices(x)  # [B, L']
             return indices[0].tolist()
 
-    def decode(self, ids: List[int]) -> torch.Tensor:
+    def decode(self, ids: list[int]) -> torch.Tensor:
         """codebook 索引序列 → 重建音频。
 
         输出长度 = len(ids) * 128（每个 token 对应 128 个样本），

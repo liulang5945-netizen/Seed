@@ -1,7 +1,8 @@
 """Prometheus指标中间件"""
 
-from prometheus_client import Counter, Histogram, Gauge
 import time
+
+from prometheus_client import Counter, Gauge, Histogram
 
 # 定义指标
 requests_total = Counter("taiji_requests_total", "Total requests", ["method", "endpoint", "status"])

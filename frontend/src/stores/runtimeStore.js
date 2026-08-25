@@ -194,7 +194,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
 
   // WebSocket 生命事件处理
   function handleLifeEvent(event) {
-    const { event_type, data } = event
+    const { event_type } = event
     const needs = life.value?.needs || {}
 
     switch (event_type) {

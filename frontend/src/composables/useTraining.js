@@ -3,12 +3,8 @@
  * 训练相关状态和逻辑
  * 从 App.vue 拆出，减轻主文件臃肿
  *
- * 支持两种训练模式：
- * 1. 普通模式（Legacy 模型）— 保留旧的 LoRA 流程
- * 2. Seed 原生模式 — raw-byte Taiji 训练，走 /api/train/native
- *
- * 当加载 Cortex 神经元架构时，自动进入 Cortex 模式，显示生命活动面板。
- * 普通模型下不触发任何 Cortex 相关内容。
+ * 仅支持 Seed 原生模式 — raw-byte Taiji 训练，走 /api/train/native。
+ * Legacy LoRA /api/train/stream 后端已不存在，相关死路径已移除。
  */
 import { ref, reactive, nextTick } from 'vue';
 import { API_BASE, authFetch } from './apiClient.js';
@@ -18,11 +14,9 @@ import { API_BASE, authFetch } from './apiClient.js';
 export const trainState = ref('idle');            // idle | running | paused | completed
 export const trainLog = ref('');
 export const trainLoss = ref([]);
-export const trainPreset = ref('standard');
 export const trainFiles = ref([]);
 export const selectedDatasets = ref([]);
 export const trainPreview = ref(null);
-export const trainParams = reactive({ lora_r: 16, lora_alpha: 32, epochs: 3, learning_rate: 0.0002 });
 export let trainAbortController = null;
 export let trainReader = null;
 export const publishingState = ref('idle');
@@ -56,11 +50,8 @@ export const taijiLifeStatus = reactive({          // 生命状态
 });
 export const taijiTimeline = ref([]);              // 生命活动时间线
 export const taijiLifeLoading = ref(false);        // 生命活动操作中
-export const taijiTrainParams = reactive({         // Seed专属训练参数
-  parameter_budget: 300000, max_symbols: 200000, device: 'auto',
-  num_epochs: 5, batch_size: 4, learning_rate: 1e-4,
-  max_length: 512, save_steps: 50, log_steps: 5,
-  keep_checkpoints: 3,
+export const taijiTrainParams = reactive({         // Seed专属训练参数（与 /api/train/native 请求体对齐）
+  parameter_budget: 300000, max_symbols: 200000, device: 'auto', seed: 20260822,
 });
 
 // ===== 辅助函数 =====
@@ -82,18 +73,6 @@ export const autoScrollTrainLog = () => {
 };
 
 export const clearTrainLog = () => { trainLog.value = ''; };
-
-// ===== Preset =====
-
-export function applyPreset(preset) {
-  trainPreset.value = preset;
-  const presets = {
-    fast: { lora_r: 8, lora_alpha: 16, epochs: 1, learning_rate: 0.0005 },
-    standard: { lora_r: 16, lora_alpha: 32, epochs: 3, learning_rate: 0.0002 },
-    quality: { lora_r: 32, lora_alpha: 64, epochs: 5, learning_rate: 0.0001 },
-  };
-  if (presets[preset]) Object.assign(trainParams, presets[preset]);
-}
 
 // ===== 数据集管理 =====
 
@@ -161,144 +140,6 @@ export async function deleteSelectedDatasets(_toast) {
 
 // ===== 训练流程 =====
 
-export async function startTraining(toast) {
-  // Seed模式自动路由：调用Seed专属训练接口
-  if (isTaijiModel.value) {
-    return startTaijiTraining(toast);
-  }
-
-  if (selectedDatasets.value.length === 0) { toast('⚠ 请先选择数据集', 'warning'); return; }
-  trainState.value = 'running';
-  trainLog.value = '';
-  trainLoss.value = [];
-  trainProgress.value = 0;
-  trainProgressDesc.value = '⏳ 正在初始化训练环境...';
-  trainAbortController = new AbortController();
-  Object.assign(trainMetrics, { elapsed: 0, eta: null, lr: null, epoch: 1, total_epochs: trainParams.epochs, grad_norm: null, samples_per_sec: 0, total_steps: 0, current_loss: null });
-  Object.assign(trainDevice, { device_type: '', device_name: '', gpu_name: null, gpu_memory_gb: null, ram_gb: null, message: '' });
-
-  const body = {
-    dataset: selectedDatasets.value[0],
-    datasets: [...selectedDatasets.value],
-    lora_r: trainParams.lora_r,
-    lora_alpha: trainParams.lora_alpha,
-    epochs: trainParams.epochs,
-    learning_rate: trainParams.learning_rate,
-    batch_size: 4,
-  };
-
-  try {
-    const res = await authFetch(`${API_BASE}/api/train/stream`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      signal: trainAbortController.signal,
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ detail: res.statusText }));
-      throw new Error(err.detail || `HTTP ${res.status}`);
-    }
-
-    trainReader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = '';
-
-    while (true) {
-      const { done, value } = await trainReader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop() || '';
-
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const payload = line.slice(6);
-          if (payload === '[DONE]') {
-            if (trainState.value === 'running') trainState.value = 'completed';
-            break;
-          }
-          try {
-            const evt = JSON.parse(payload);
-            if (evt.type === 'progress') {
-              trainProgress.value = Math.round((evt.fraction || 0) * 100);
-              trainProgressDesc.value = evt.desc || '';
-              if (evt.memory_status) {
-                trainLog.value += `🧠 ${evt.memory_status}\n`;
-              } else {
-                trainLog.value += `${evt.desc}\n`;
-              }
-              if (evt.loss != null) trainLoss.value.push({ step: evt.step || 0, loss: evt.loss });
-              if (evt.elapsed != null) trainMetrics.elapsed = evt.elapsed;
-              if (evt.eta != null) trainMetrics.eta = evt.eta;
-              if (evt.lr != null) trainMetrics.lr = evt.lr;
-              if (evt.epoch != null) trainMetrics.epoch = evt.epoch;
-              if (evt.total_epochs != null) trainMetrics.total_epochs = evt.total_epochs;
-              if (evt.grad_norm != null) trainMetrics.grad_norm = evt.grad_norm;
-              if (evt.samples_per_sec != null) trainMetrics.samples_per_sec = evt.samples_per_sec;
-              if (evt.total_steps != null) trainMetrics.total_steps = evt.total_steps;
-              if (evt.loss != null) trainMetrics.current_loss = evt.loss;
-              if (evt.device_type && !trainDevice.device_type) {
-                trainDevice.device_type = evt.device_type;
-                trainDevice.device_name = evt.device_name || '';
-                trainDevice.gpu_name = evt.gpu_name || null;
-                trainDevice.gpu_memory_gb = evt.gpu_memory_gb || null;
-                trainDevice.ram_gb = evt.ram_gb || null;
-                if (evt.device_type === 'cuda') {
-                  trainDevice.message = `训练设备: ${evt.device_name || 'CUDA'} (${evt.gpu_memory_gb || '?'}GB 显存) — GPU 训练性能最优 ✓`;
-                } else if (evt.device_type === 'cpu') {
-                  trainDevice.message = `训练设备: CPU (${evt.ram_gb || '?'}GB 内存) — ⚠ CPU 训练较慢，建议使用 GPU`;
-                } else {
-                  trainDevice.message = `训练设备: ${evt.device_type || '未知'}`;
-                }
-              }
-              autoScrollTrainLog();
-            } else if (evt.type === 'hardware_diag') {
-              trainDevice.device_type = evt.device_type || '';
-              trainDevice.device_name = evt.device_name || '';
-              trainDevice.gpu_name = evt.gpu_name || null;
-              trainDevice.gpu_memory_gb = evt.gpu_memory_gb || null;
-              trainDevice.ram_gb = evt.ram_gb || null;
-              trainDevice.message = evt.message || '';
-              trainLog.value += `${evt.message}\n`;
-              autoScrollTrainLog();
-            } else if (evt.type === 'log') {
-              trainLog.value += evt.message + '\n';
-              if (evt.loss != null) trainLoss.value.push({ step: evt.step, loss: evt.loss });
-              autoScrollTrainLog();
-            } else if (evt.type === 'warning') {
-              trainLog.value += `⚠️ ${evt.message}\n`;
-              autoScrollTrainLog();
-            } else if (evt.type === 'error') {
-              trainLog.value += `❌ ${evt.message}\n`;
-              trainState.value = 'idle';
-              autoScrollTrainLog();
-              toast(`❌ 训练失败: ${evt.message}`, 'error');
-            } else if (evt.type === 'completed') {
-              trainLog.value += `✅ ${evt.message}\n`;
-              trainState.value = 'completed';
-              trainProgress.value = 100;
-              autoScrollTrainLog();
-            } else if (evt.type === 'stopped') {
-              trainLog.value += `⏹ ${evt.message}\n`;
-              trainState.value = 'idle';
-              autoScrollTrainLog();
-            }
-          } catch (e) { console.debug('[useTraining] parse error:', e.message) } /* skip */ }
-        }
-      }
-  } catch (err) {
-    if (err.name !== 'AbortError') {
-      trainLog.value += `❌ ${err.message}\n`;
-      trainState.value = 'idle';
-      autoScrollTrainLog();
-      toast(`❌ ${err.message}`, 'error');
-    } else {
-      trainState.value = 'idle';
-    }
-  }
-}
-
 export async function pauseTraining(toast) {
   try {
     await authFetch(`${API_BASE}/api/train/pause`, { method: 'POST' });
@@ -362,7 +203,7 @@ export async function resumeFromCheckpoint(toast, $confirm) {
   trainProgress.value = 0;
   trainProgressDesc.value = '🔄 正在从检查点恢复训练...';
   trainAbortController = new AbortController();
-  Object.assign(trainMetrics, { elapsed: 0, eta: null, lr: null, epoch: latestCkpt.epoch, total_epochs: latestCkpt.num_epochs || trainParams.epochs, grad_norm: null, samples_per_sec: 0, total_steps: 0, current_loss: null });
+  Object.assign(trainMetrics, { elapsed: 0, eta: null, lr: null, epoch: latestCkpt.epoch, total_epochs: latestCkpt.num_epochs || 1, grad_norm: null, samples_per_sec: 0, total_steps: 0, current_loss: null });
   Object.assign(trainDevice, { device_type: '', device_name: '', gpu_name: null, gpu_memory_gb: null, ram_gb: null, message: '' });
 
   const body = { checkpoint: latestCkpt.filename };
@@ -810,6 +651,8 @@ export async function startTaijiTraining(toast) {
         parameter_budget: taijiTrainParams.parameter_budget,
         max_symbols: taijiTrainParams.max_symbols || null,
         device: taijiTrainParams.device || 'auto',
+        // seed 被清空（null/非整数）时后端会返回 422，发送前兜底默认值
+        seed: Number.isInteger(taijiTrainParams.seed) ? taijiTrainParams.seed : 20260822,
       }),
       signal: trainAbortController.signal,
     });

@@ -3,6 +3,7 @@
 """
 
 import logging
+
 from fastapi import APIRouter, HTTPException
 
 from neuroplex.core.plugin_manager import PluginManager
@@ -25,7 +26,7 @@ async def enable_plugin(plugin_id: str):
         pm.load_plugin(plugin_id)
         return {"status": "success", "message": f"插件 {plugin_id} 已启用"}
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.post("/api/plugins/{plugin_id}/disable")
@@ -52,4 +53,4 @@ async def install_plugin(data: dict):
         plugin_id = pm.install_plugin(source)
         return {"status": "success", "plugin_id": plugin_id}
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e

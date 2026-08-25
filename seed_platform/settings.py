@@ -7,6 +7,7 @@ they are serialized.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import logging
 import os
@@ -51,10 +52,8 @@ def _write_settings(data: dict[str, Any]) -> None:
             handle.write("\n")
         os.replace(temporary_path, path)
     finally:
-        try:
+        with contextlib.suppress(FileNotFoundError):
             temporary_path.unlink()
-        except FileNotFoundError:
-            pass
 
 
 def get_setting(key: str, default: Any = None) -> Any:

@@ -9,9 +9,10 @@ model-specific preprocessing is part of this contract.
 from __future__ import annotations
 
 import json
+from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterator, Mapping, Sequence
+from typing import Any
 
 NATIVE_TEXT_FIELD = "text"
 _JSONL_SUFFIXES = {".jsonl", ".ndjson"}

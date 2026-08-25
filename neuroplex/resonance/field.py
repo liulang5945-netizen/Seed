@@ -30,7 +30,6 @@ Fixes (this version):
 from __future__ import annotations
 
 from collections import deque
-from typing import Deque, Dict, List, Optional
 
 import torch
 import torch.nn as nn
@@ -51,7 +50,7 @@ class ResonanceField(nn.Module):
     # 上千神经元 × 多轮共振时，无界 list 会导致内存爆炸
     HISTORY_MAXLEN: int = 4
 
-    def __init__(self, dim: int = 4096, device: Optional[torch.device] = None):
+    def __init__(self, dim: int = 4096, device: torch.device | None = None):
         super().__init__()
         self.dim = dim
         self._device = device or torch.device("cpu")
@@ -66,11 +65,11 @@ class ResonanceField(nn.Module):
         self.W_cond = nn.Parameter(torch.randn(dim, dim) * 0.02)
 
         # deque(maxlen=...) 自动丢弃最老条目，防止 N×R 轮后内存爆炸
-        self._write_history: Dict[str, Deque[torch.Tensor]] = {}
-        self._contributions: Dict[str, torch.Tensor] = {}
+        self._write_history: dict[str, deque[torch.Tensor]] = {}
+        self._contributions: dict[str, torch.Tensor] = {}
         # BioOSS: 抑制性神经元贡献追踪（用于 leave-one-out 撤销）
-        self._inhibit_contributions: Dict[str, torch.Tensor] = {}
-        self.scores: Dict[str, float] = {}
+        self._inhibit_contributions: dict[str, torch.Tensor] = {}
+        self.scores: dict[str, float] = {}
         self.n_active: int = 0
 
     def reset(self, batch_size: int = 1) -> None:
@@ -124,7 +123,7 @@ class ResonanceField(nn.Module):
             self.state = self.state.unsqueeze(0).expand(B, -1).clone()
             self.state = self.state + v_scaled
             self._batch_size = B
-        elif B == self._batch_size:
+        elif self._batch_size == B:
             if self.state.dim() == 1:
                 self.state = self.state.unsqueeze(0).expand(self._batch_size, -1).clone()
             self.state = self.state + v_scaled
@@ -164,9 +163,11 @@ class ResonanceField(nn.Module):
         # 减去旧贡献（_contributions 已存 scaled 版本，减法一致）
         old_contrib = self._contributions.get(neuron_id)
         if old_contrib is not None:
-            if self.state.dim() == 1 and old_contrib.dim() == 1:
-                self.state = self.state - old_contrib
-            elif self.state.dim() == old_contrib.dim():
+            if (
+                self.state.dim() == 1
+                and old_contrib.dim() == 1
+                or self.state.dim() == old_contrib.dim()
+            ):
                 self.state = self.state - old_contrib
             else:
                 # 维度不匹配时广播减法
@@ -180,7 +181,7 @@ class ResonanceField(nn.Module):
         B = v_scaled.shape[0]
         if B == 1 and self._batch_size == 1:
             self.state = self.state + v_scaled.squeeze(0)
-        elif B == self._batch_size:
+        elif self._batch_size == B:
             if self.state.dim() == 1:
                 self.state = self.state.unsqueeze(0).expand(self._batch_size, -1).clone()
             self.state = self.state + v_scaled
@@ -267,10 +268,7 @@ class ResonanceField(nn.Module):
         inhibition_strengths = {}
         for nid, decay in self._inhibit_contributions.items():
             # 抑制强度 = 1 - mean(decay)，decay∈[0,1]，越小抑制越强
-            if decay.dim() == 0:
-                strength = 1.0 - decay.item()
-            else:
-                strength = 1.0 - decay.mean().item()
+            strength = 1.0 - decay.item() if decay.dim() == 0 else 1.0 - decay.mean().item()
             inhibition_strengths[nid] = strength
 
         # 选 top-k 最强抑制
@@ -385,7 +383,7 @@ class ResonanceField(nn.Module):
         cond = torch.sigmoid(state_n @ self.W_cond)
         return state_n * cond
 
-    def score(self, vector: torch.Tensor, neuron_id: Optional[str] = None) -> float:
+    def score(self, vector: torch.Tensor, neuron_id: str | None = None) -> float:
         # P0#3: use effective state (excitatory ⊙ inhibitory_mask) for scoring
         effective = self.get_effective_state()
         score_state = self._leave_one_out_state(neuron_id) if neuron_id else effective
@@ -406,7 +404,7 @@ class ResonanceField(nn.Module):
         self,
         neuron_a_logits: torch.Tensor,
         neuron_b_logits: torch.Tensor,
-        targets: Optional[torch.Tensor] = None,
+        targets: torch.Tensor | None = None,
     ) -> float:
         """How much neuron B corrects neuron A's mistakes (H6 fix).
 
@@ -453,7 +451,7 @@ class ResonanceField(nn.Module):
         return float(boost.item())
 
     def directional_congestion(
-        self, vector: torch.Tensor, active_vectors: List[torch.Tensor]
+        self, vector: torch.Tensor, active_vectors: list[torch.Tensor]
     ) -> float:
         """计算 vector 与 active_vectors 的平均正向 cosine similarity。
 
@@ -495,7 +493,7 @@ class ResonanceField(nn.Module):
         """P0#3: 返回抑制掩码调制后的归一化场状态。"""
         return self.get_effective_state()
 
-    def write_history(self, neuron_id: str) -> List[torch.Tensor]:
+    def write_history(self, neuron_id: str) -> list[torch.Tensor]:
         # deque 支持 list() 转换和迭代，对外保持 list 语义
         return list(self._write_history.get(neuron_id, []))
 
@@ -522,7 +520,7 @@ class ResonanceField(nn.Module):
     def clear_history(self) -> None:
         self._write_history.clear()
 
-    def save_round_state(self) -> Dict[str, torch.Tensor]:
+    def save_round_state(self) -> dict[str, torch.Tensor]:
         """S12: 保存当前轮次的场状态快照（用于多轮对话持久化）。
 
         保存内容：
@@ -546,7 +544,7 @@ class ResonanceField(nn.Module):
             "batch_size": self._batch_size,
         }
 
-    def load_round_state(self, state_dict: Dict[str, torch.Tensor]) -> None:
+    def load_round_state(self, state_dict: dict[str, torch.Tensor]) -> None:
         """S12: 加载之前保存的场状态（多轮对话恢复上一轮上下文）。
 
         Args:

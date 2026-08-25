@@ -32,9 +32,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
 
+import _verify_emit  # noqa: E402
 import torch  # noqa: E402
 
-import _verify_emit  # noqa: E402
 from seed import Seed, SeedJudge  # noqa: E402
 
 
@@ -119,9 +119,9 @@ def main() -> None:
 
     comparable = 0
     agreeing = 0
-    for good_loss, good_data in good:
+    for _good_loss, good_data in good:
         good_quality = judge.score(good_data)["quality"]
-        for bad_loss, bad_data in bad:
+        for _bad_loss, bad_data in bad:
             bad_quality = judge.score(bad_data)["quality"]
             comparable += 1
             if good_quality > bad_quality:

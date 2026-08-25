@@ -8,8 +8,7 @@ from pathlib import Path
 import pytest
 from fastapi import HTTPException
 
-from api.training import recommend
-from api.training import native
+from api.training import native, recommend
 from seed.datasets import inspect_native_dataset, iter_native_documents
 
 REPO = Path(__file__).resolve().parents[2]
@@ -25,7 +24,7 @@ def test_native_jsonl_report_matches_streaming_training_contract() -> None:
     assert report.documents == 2
     assert report.empty_documents == 1
     assert report.blank_lines == 1
-    assert report.total_text_bytes == len("你好世界".encode("utf-8"))
+    assert report.total_text_bytes == len("你好世界".encode())
     assert list(iter_native_documents([path])) == ["你好", "世界"]
 
 

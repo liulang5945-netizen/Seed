@@ -44,7 +44,8 @@ def _save_runtime_pref(runtime: str, checkpoint: str = "") -> None:
 def load_runtime_pref() -> dict:
     """读取上次运行环境选择；无文件或损坏时返回空字典（默认 Cortex）。"""
     try:
-        return json.loads(_RUNTIME_PREF_PATH.read_text(encoding="utf-8"))
+        data: dict = json.loads(_RUNTIME_PREF_PATH.read_text(encoding="utf-8"))
+        return data
     except Exception:
         return {}
 

@@ -23,8 +23,9 @@ import re
 import unicodedata
 import zipfile
 from collections import Counter, defaultdict
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 from huggingface_hub import HfApi, hf_hub_download
 
@@ -119,9 +120,7 @@ def valid_pair(question: str, answer: str) -> bool:
     if "\x00" in question or "\x00" in answer:
         return False
     # Drop obvious empty/template answers while retaining ordinary terse replies.
-    if answer in {"无", "暂无", "不知道", "好的", "好的。", "...", "……"}:
-        return False
-    return True
+    return answer not in {"无", "暂无", "不知道", "好的", "好的。", "...", "……"}
 
 
 def chinese_ratio(text: str) -> float:

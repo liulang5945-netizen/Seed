@@ -5,7 +5,8 @@
 """
 
 import logging
-from neuroplex.agent_ext.tool_registry import registry, ToolDef
+
+from neuroplex.agent_ext.tool_registry import ToolDef, registry
 
 logger = logging.getLogger("Taiji.BuiltinTools")
 

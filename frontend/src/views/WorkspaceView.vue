@@ -4,14 +4,19 @@
     <header class="topbar">
       <div>
         <div class="topbar-title">IDE 工作区</div>
-        <div class="topbar-sub">Seed脚本与配置编辑</div>
+        <div class="topbar-sub topbar-path" :title="workspacePath">{{ workspacePath || 'Seed脚本与配置编辑' }}</div>
       </div>
       <div class="topbar-spacer"></div>
-      <button class="btn btn-primary">
-        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        运行
+      <button class="btn btn-outline" @click="openPathDialog">切换目录</button>
+      <button class="btn btn-outline" :class="{ active: showTerminal }" @click="showTerminal = !showTerminal">
+        <Terminal :size="15" />
+        {{ showTerminal ? '收起终端' : '终端' }}
       </button>
-      <button class="btn btn-outline">保存</button>
+      <button class="btn btn-primary" :disabled="running" @click="handleRun">
+        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        {{ running ? '运行中…' : '运行' }}
+      </button>
+      <button class="btn btn-outline" @click="handleSave">保存</button>
     </header>
 
     <!-- 主体工作区 -->
@@ -22,10 +27,17 @@
           <div class="panel-header">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
             项目文件
+            <span class="panel-header-spacer"></span>
+            <button class="icon-btn" title="新建文件" @click="handleNewFile">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
           </div>
           <div class="panel-body">
-            <div v-if="!fileTree.length" class="tree-empty">空工作台</div>
-            <template v-for="node in fileTree" :key="node.path">
+            <div v-if="!fileTree.length" class="tree-empty">
+              <p class="tree-empty-text">当前工作区还没有文件。<br>切换到已有目录，或新建第一个文件开始工作。</p>
+              <button class="btn btn-outline btn-sm" @click="openPathDialog">切换目录</button>
+            </div>
+            <template v-for="node in flatList" :key="node.path">
               <div
                 class="tree-item"
                 :class="{ 'tree-folder': node.type === 'directory' }"
@@ -44,7 +56,7 @@
         <!-- 中栏：编辑器 + 终端 -->
         <div class="panel panel-center">
           <div class="editor-area">
-            <MonacoEditor ref="monacoEditor" class="monaco-container" />
+            <MonacoEditor ref="monacoEditor" class="monaco-container" @saved="onFileSaved" @save-error="onSaveError" />
             <!-- 终端 -->
             <Transition name="term-slide">
               <div v-if="showTerminal" class="ide-terminal" :style="{ height: terminalHeight + 'px' }">
@@ -73,16 +85,13 @@
             </div>
             <div v-else class="prop-empty">未打开文件</div>
             <div class="prop-group">
-              <div class="prop-group-title">Seed检查器</div>
-              <div class="inspector-item"><span class="inspector-dot ok"></span><span class="inspector-text">YAML 语法校验</span><span class="inspector-meta">通过</span></div>
-              <div class="inspector-item"><span class="inspector-dot info"></span><span class="inspector-text">配置完整性</span><span class="inspector-meta">6/6 节</span></div>
-              <div class="inspector-item"><span class="inspector-dot ok"></span><span class="inspector-text">分布式策略对齐</span><span class="inspector-meta">128 GPU</span></div>
+              <div class="prop-group-title">工作区统计</div>
+              <div class="prop-row"><span class="prop-label">文件数</span><span class="prop-value">{{ workspaceStats.files }}</span></div>
+              <div class="prop-row"><span class="prop-label">目录数</span><span class="prop-value">{{ workspaceStats.dirs }}</span></div>
             </div>
             <div class="prop-group">
               <div class="prop-group-title">快捷操作</div>
-              <button class="quick-btn"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>运行全部测试</button>
-              <button class="quick-btn"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>导出配置</button>
-              <button class="quick-btn"><svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>在终端中打开</button>
+              <button class="quick-btn" @click="showTerminal = !showTerminal"><Terminal :size="15" class="icon-sm" />{{ showTerminal ? '收起终端' : '打开终端' }}</button>
             </div>
           </div>
         </div>
@@ -90,8 +99,8 @@
 
       <!-- 底部状态栏 -->
       <div class="status-bar">
-        <span class="status-item" v-if="monacoEditor?.activeTab"><Crosshair :size="12" />Ln {{ monacoEditor.cursorLine }}, Col {{ monacoEditor.cursorCol }}</span>
-        <span class="status-item" v-else><Crosshair :size="12" />—</span>
+        <span v-if="monacoEditor?.activeTab" class="status-item"><Crosshair :size="12" />Ln {{ monacoEditor.cursorLine }}, Col {{ monacoEditor.cursorCol }}</span>
+        <span v-else class="status-item"><Crosshair :size="12" />—</span>
         <span class="status-item"><FileText :size="12" />UTF-8</span>
         <span class="status-item"><FileCode :size="12" />{{ monacoEditor?.language?.toUpperCase() || '—' }}</span>
         <span v-if="monacoEditor?.isDirty" class="status-item status-dirty"><span class="dirty-dot"></span>未保存</span>
@@ -101,7 +110,6 @@
     </div>
 
     <!-- 对话框 -->
-    <input ref="folderPicker" type="file" webkitdirectory directory style="display:none" @change="onFolderSelected" />
     <div v-if="inputDialog.visible" class="dlg-overlay" @click.self="cancelInputDialog">
       <div class="dlg-box">
         <h3>{{ inputDialog.title }}</h3>
@@ -115,7 +123,7 @@
     <div v-if="showPathDialog" class="dlg-overlay" @click.self="showPathDialog = false">
       <div class="dlg-box">
         <h3>切换项目路径</h3>
-        <div class="quick-paths" v-if="quickPaths.length">
+        <div v-if="quickPaths.length" class="quick-paths">
           <button v-for="qp in quickPaths" :key="qp.path" class="qp-btn" @click="newPathInput = qp.path">
             <FolderOpen :size="11" /> {{ qp.label }}
           </button>
@@ -141,25 +149,26 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted, inject } from 'vue';
-import { useApi } from '../composables/useApi.js';
+import { ref, reactive, computed, onMounted, onUnmounted, onActivated, onDeactivated, inject } from 'vue';
 import { API_BASE, authFetch } from '../composables/apiClient.js';
-import { RefreshCw, FilePlus, FolderPlus, Terminal, FolderOpen, Folder, FileCode, FileText, Image as ImageIcon, Database, Edit3, Edit2, Trash2, Crosshair, Activity } from 'lucide-vue-next';
+import { Terminal, FolderOpen, Folder, FileCode, FileText, Image as ImageIcon, Database, Edit3, Edit2, Trash2, Crosshair, Activity } from 'lucide-vue-next';
 import MonacoEditor from '../components/MonacoEditor.vue';
 import WebTerminal from '../components/WebTerminal.vue';
 
-const { t } = useApi();
+defineOptions({ name: 'WorkspaceView' });
+
 const toast = inject('toast');
 const $confirm = inject('$confirm');
 
 const workspacePath = ref('');
 const fileTree = ref([]);
+const flatList = ref([]);
 const expandedDirs = reactive(new Set());
 const showTerminal = ref(false);
+const running = ref(false);
 const sidebarWidth = ref(220);
 const terminalHeight = ref(280);
 const monacoEditor = ref(null);
-const folderPicker = ref(null);
 const contextMenu = ref({ visible: false, x: 0, y: 0, node: null });
 const inputDialog = ref({ visible: false, title: '', value: '', placeholder: '', resolve: null });
 const showPathDialog = ref(false);
@@ -173,6 +182,19 @@ const currentFile = computed(() => {
   return monacoEditor.value.openTabs.find(t => t.path === monacoEditor.value.activeTab) || null;
 });
 
+// 工作区统计：基于已加载的 fileTree 递归计算，零新增请求
+const workspaceStats = computed(() => {
+  let files = 0, dirs = 0;
+  const walk = (nodes) => {
+    for (const n of nodes) {
+      if (n.type === 'directory') { dirs += 1; walk(n.children || []); }
+      else files += 1;
+    }
+  };
+  walk(fileTree.value);
+  return { files, dirs };
+});
+
 function formatFileSize(bytes) {
   if (bytes < 1024) return bytes + ' B';
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
@@ -184,11 +206,6 @@ function countLines(content) {
   return content.split('\n').length;
 }
 
-function showInputDialog(title, placeholder = '') {
-  return new Promise((resolve) => {
-    inputDialog.value = { visible: true, title, value: '', placeholder, resolve };
-  });
-}
 function confirmInputDialog() {
   const val = inputDialog.value.value.trim();
   inputDialog.value.visible = false;
@@ -199,14 +216,60 @@ function cancelInputDialog() {
   if (inputDialog.value.resolve) inputDialog.value.resolve(null);
 }
 
-function openFolderPicker() {
-  if (folderPicker.value) { folderPicker.value.value = ''; folderPicker.value.click(); }
+async function openPathDialog() {
+  showPathDialog.value = true;
+  pathDialogError.value = '';
+  if (quickPaths.value.length) return;
+  try {
+    const r = await authFetch(`${API_BASE}/api/workspace/quick_paths`);
+    if (r.ok) { const d = await r.json(); quickPaths.value = d.paths || []; }
+  } catch (e) { /* 快速路径仅为便捷入口，加载失败不打断对话框 */ }
 }
 
-function onFolderSelected(event) {
-  const files = event.target.files;
-  if (!files || files.length) return;
-  showPathDialog.value = true;
+function showInputDialog(title, placeholder, initialValue = '') {
+  return new Promise((resolve) => {
+    inputDialog.value = { visible: true, title, value: initialValue, placeholder, resolve };
+  });
+}
+
+async function handleNewFile() {
+  const name = await showInputDialog('新建文件', '输入文件名，如 main.py');
+  if (!name) return;
+  try {
+    const r = await authFetch(`${API_BASE}/api/workspace/file`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, content: '' }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (r.ok && data.status === 'ok') { toast(`已创建 ${name}`, 'success'); loadTree(); }
+    else toast(data.detail || data.message || '创建文件失败', 'error');
+  } catch (e) { toast('创建文件失败: ' + e.message, 'error'); }
+}
+
+async function handleSave() {
+  if (!monacoEditor.value?.activeTab) { toast('没有可保存的活动文件', 'info'); return; }
+  // 失败详情由 save-error 事件统一 toast（覆盖顶栏保存 / Ctrl+S / 编辑器工具栏三条入口）
+  await monacoEditor.value.saveFile();
+}
+
+function onFileSaved(path) { toast(`已保存 ${path}`, 'success'); }
+function onSaveError(detail) { toast(detail || '保存失败', 'error'); }
+
+async function handleRun() {
+  const tab = currentFile.value;
+  if (!tab) { toast('没有可运行的活动文件', 'info'); return; }
+  running.value = true;
+  try {
+    const r = await authFetch(`${API_BASE}/api/workspace/run`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: tab.content || '' }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) { toast(data.detail || `运行失败（HTTP ${r.status}）`, 'error'); return; }
+    if (data.success) toast(data.output ? `运行成功：${data.output}`.slice(0, 200) : '运行成功', 'success');
+    else toast(data.error || '运行失败', 'error');
+  } catch (e) { toast('运行失败: ' + e.message, 'error'); }
+  finally { running.value = false; }
 }
 
 async function applyNewPath() {
@@ -242,8 +305,12 @@ async function loadWorkspacePath() {
 async function loadTree() {
   try {
     const r = await authFetch(`${API_BASE}/api/workspace/tree`);
-    if (r.ok) { const d = await r.json(); fileTree.value = flattenTree(d.tree || [], 0); }
+    if (r.ok) { const d = await r.json(); fileTree.value = d.tree || []; recomputeFlatList(); }
   } catch (e) { toast('加载文件树失败: ' + e.message, 'error') }
+}
+
+function recomputeFlatList() {
+  flatList.value = flattenTree(fileTree.value, 0);
 }
 
 function flattenTree(nodes, depth) {
@@ -262,7 +329,7 @@ function handleTreeClick(node) {
   if (node.type === 'directory') {
     if (expandedDirs.has(node.path)) expandedDirs.delete(node.path);
     else expandedDirs.add(node.path);
-    loadTree();
+    recomputeFlatList();
   } else {
     if (monacoEditor.value) monacoEditor.value.openFile(node.path);
   }
@@ -276,7 +343,46 @@ function getFileIcon(name) {
 
 function showContextMenu(e, node) { contextMenu.value = { visible: true, x: e.clientX, y: e.clientY, node }; }
 function openInEditor() { if (contextMenu.value.node?.type === 'file' && monacoEditor.value) monacoEditor.value.openFile(contextMenu.value.node.path); }
-async function renameItem() { toast('重命名功能开发中', 'info'); }
+
+// 重命名后把已打开标签的路径/名称同步到新路径（支持目录前缀替换）
+function syncTabsAfterRename(oldPath, newPath) {
+  const editor = monacoEditor.value;
+  if (!editor?.openTabs) return;
+  // 分隔符沿用原路径风格（后端 relpath 在 Windows 上为 \）
+  const sep = oldPath.includes('\\') ? '\\' : '/';
+  for (const tab of editor.openTabs) {
+    let mapped = null;
+    if (tab.path === oldPath) mapped = newPath;
+    else if (tab.path.startsWith(oldPath + sep)) mapped = newPath + tab.path.slice(oldPath.length);
+    if (!mapped) continue;
+    if (editor.activeTab === tab.path) editor.activeTab = mapped;
+    tab.path = mapped;
+    tab.name = mapped.split(/[\\/]/).pop();
+  }
+}
+
+async function renameItem() {
+  const node = contextMenu.value.node;
+  if (!node) return;
+  const newName = await showInputDialog('重命名', '输入新名称', node.name);
+  if (!newName || newName === node.name) return;
+  // 新名称沿用原目录：取父路径前缀（兼容 / 与 \ 分隔符）
+  const sepIdx = Math.max(node.path.lastIndexOf('/'), node.path.lastIndexOf('\\'));
+  const parentPrefix = sepIdx >= 0 ? node.path.slice(0, sepIdx + 1) : '';
+  const newPath = parentPrefix + newName;
+  try {
+    const r = await authFetch(`${API_BASE}/api/workspace/rename`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ old_name: node.path, new_name: newPath }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (r.ok && data.status === 'ok') {
+      syncTabsAfterRename(node.path, data.path || newPath);
+      toast(`已重命名为 ${newName}`, 'success');
+      loadTree();
+    } else toast(data.detail || data.message || '重命名失败', 'error');
+  } catch (e) { toast('重命名失败: ' + e.message, 'error'); }
+}
 async function deleteItem() {
   const node = contextMenu.value.node;
   if (!node) return;
@@ -284,18 +390,8 @@ async function deleteItem() {
   if (!ok) return;
   try { const r = await authFetch(`${API_BASE}/api/workspace/delete/${node.path}`, { method: 'DELETE' }); if (r.ok) loadTree(); } catch (e) { toast('删除失败: ' + e.message, 'error') }
 }
-async function createNewFile() {
-  const name = await showInputDialog('文件名:');
-  if (!name) return;
-  try { await authFetch(`${API_BASE}/api/workspace/file`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, content: '' }) }); loadTree(); if (monacoEditor.value) monacoEditor.value.openFile(name); } catch (e) { toast('创建文件失败: ' + e.message, 'error') }
-}
-async function createNewFolder() {
-  const name = await showInputDialog('文件夹名:');
-  if (!name) return;
-  try { await authFetch(`${API_BASE}/api/workspace/file`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: name + '/.gitkeep', content: '' }) }); loadTree(); } catch (e) { toast('创建文件夹失败: ' + e.message, 'error') }
-}
 
-let resizing = false;
+let resizing = false; // eslint-disable-line no-unused-vars -- 仅供未来拖拽阈值判断读取
 function startResize(e) {
   resizing = true;
   const startX = e.clientX, startW = sidebarWidth.value;
@@ -317,8 +413,13 @@ function closeCtx() { contextMenu.value.visible = false; }
 onMounted(() => {
   document.addEventListener('click', closeCtx);
   loadWorkspacePath();
-  loadTree();
 });
+// keep-alive 组件首次挂载与重新激活都会触发 onActivated，
+// loadTree 统一由它负责，避免首次挂载双发请求。
+onActivated(() => { loadTree(); });
+// 离开页面（被 keep-alive 缓存）时收起终端，
+// v-if 卸载会触发 WebTerminal 的 onBeforeUnmount 清理（WS / xterm / ResizeObserver）。
+onDeactivated(() => { showTerminal.value = false; });
 onUnmounted(() => { document.removeEventListener('click', closeCtx); });
 </script>
 
@@ -345,6 +446,12 @@ onUnmounted(() => { document.removeEventListener('click', closeCtx); });
 }
 .topbar-title { font-size: 0.92rem; font-weight: 600; }
 .topbar-sub { font-size: 0.72rem; color: var(--muted-foreground); margin-top: 1px; }
+.topbar-path {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .topbar-spacer { flex: 1; }
 
 /* ── 按钮 ── */
@@ -368,6 +475,9 @@ onUnmounted(() => { document.removeEventListener('click', closeCtx); });
 .btn-primary:hover { background: color-mix(in srgb, var(--primary) 90%, var(--foreground)); }
 .btn-outline { background: var(--background); color: var(--foreground); border-color: var(--border); }
 .btn-outline:hover { background: var(--muted); }
+.btn-outline.active { border-color: var(--primary); color: var(--primary); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-sm { height: 28px; padding: 0 12px; font-size: 0.78rem; margin-top: 10px; }
 .icon-sm { width: 15px; height: 15px; flex: none; }
 
 /* ── 主体工作区 ── */
@@ -412,6 +522,21 @@ onUnmounted(() => { document.removeEventListener('click', closeCtx); });
   overflow-y: auto;
   padding: 8px;
 }
+.panel-header-spacer { flex: 1; }
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.icon-btn:hover { background: var(--muted); color: var(--foreground); }
+.icon-btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
 
 /* ── 文件树 ── */
 .tree-empty {
@@ -419,6 +544,10 @@ onUnmounted(() => { document.removeEventListener('click', closeCtx); });
   padding: 24px 12px;
   color: var(--muted-foreground);
   font-size: 0.8rem;
+}
+.tree-empty-text {
+  margin: 0 0 4px;
+  line-height: 1.7;
 }
 .tree-item {
   display: flex;
@@ -577,25 +706,6 @@ onUnmounted(() => { document.removeEventListener('click', closeCtx); });
   color: var(--muted-foreground);
   font-size: 0.8rem;
 }
-
-/* ── 检查器 ── */
-.inspector-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  border-radius: 6px;
-  font-size: 0.81rem;
-  cursor: pointer;
-  transition: background 120ms ease;
-}
-.inspector-item:hover { background: var(--muted); }
-.inspector-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
-.inspector-dot.ok { background: var(--chart-2); }
-.inspector-dot.warn { background: var(--chart-4); }
-.inspector-dot.info { background: var(--chart-1); }
-.inspector-text { flex: 1; min-width: 0; }
-.inspector-meta { font-size: 0.72rem; color: var(--muted-foreground); }
 
 /* ── 快捷按钮 ── */
 .quick-btn {

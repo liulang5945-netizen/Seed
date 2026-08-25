@@ -8,13 +8,11 @@ sys.path.insert(0, r"e:\Seed")
 
 import torch
 
-from seed import Seed
 from scripts.legacy import CHECKPOINT_DIR  # 公共检查点目录常量（scripts/legacy/__init__.py）
+from seed import Seed
 
 model = Seed.from_checkpoint(torch.load(CHECKPOINT_DIR / "seed_corpus.pt", weights_only=False))
-text = ("问：你好。\n答：你好，很高兴见到你。" "水的沸点在标准大气压下是一百摄氏度。").encode(
-    "utf-8"
-)
+text = ("问：你好。\n答：你好，很高兴见到你。" "水的沸点在标准大气压下是一百摄氏度。").encode()
 
 model.reset_dynamics(episode_id="diag")
 step = model.observe(256, learn=False)

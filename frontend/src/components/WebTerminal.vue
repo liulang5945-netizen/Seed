@@ -3,8 +3,8 @@
     <div class="terminal-toolbar">
       <span class="terminal-title"><TerminalIcon :size="14" /> Terminal</span>
       <div class="terminal-actions">
-        <button class="btn-term" @click="reconnect" title="重连"><RefreshCw :size="14" /></button>
-        <button class="btn-term" @click="clearTerminal" title="清屏"><Trash2 :size="14" /></button>
+        <button class="btn-term" title="重连" @click="reconnect"><RefreshCw :size="14" /></button>
+        <button class="btn-term" title="清屏" @click="clearTerminal"><Trash2 :size="14" /></button>
       </div>
     </div>
     <div ref="terminalContainer" class="terminal-container"></div>
@@ -185,7 +185,7 @@ function connectWs() {
     }
   };
 
-  ws.onerror = (e) => {
+  ws.onerror = () => {
     connectionStatus.value = 'disconnected';
     connectionError.value = '连接异常，请检查后端服务是否运行';
     runtimeStore.syncTerminal('disconnected', connectionError.value);

@@ -1,0 +1,11 @@
+{
+  "status": "complete",
+  "round": "R6",
+  "analyzed_at": "2026-08-24T21:40:00Z",
+  "fixed_at": "2026-08-24T21:40:00Z",
+  "score": "A",
+  "total_findings": 6,
+  "fixed": 6,
+  "remaining": 0,
+  "files": ["findings.json", "canvas.json", "report.canvas.tsx"]
+}

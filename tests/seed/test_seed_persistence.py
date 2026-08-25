@@ -25,13 +25,13 @@ def _tiny_seed() -> Seed:
 
 def test_atomic_save_roundtrip(tmp_path: Path) -> None:
     model = _tiny_seed()
-    model.learn_bytes("问：你好。\n答：你好。".encode("utf-8"))
+    model.learn_bytes("问：你好。\n答：你好。".encode())
     target = tmp_path / "ckpt.pt"
     atomic_save(model.checkpoint(), target)
 
     restored = Seed.from_checkpoint(torch.load(target, weights_only=False))
     assert restored.tick == model.tick
-    probe = "你好".encode("utf-8")
+    probe = "你好".encode()
     assert restored.score_bytes(probe) == model.score_bytes(probe)
 
 
@@ -62,7 +62,7 @@ def test_atomic_save_failure_keeps_previous_version(tmp_path: Path) -> None:
 
 def test_metadata_attached_and_load_ignores_it(tmp_path: Path) -> None:
     model = _tiny_seed()
-    model.learn_bytes("你好".encode("utf-8"))
+    model.learn_bytes("你好".encode())
     envelope = attach_metadata(
         model.checkpoint(),
         tick=model.tick,

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from typing import Any, Dict, Tuple
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -16,7 +16,7 @@ class CapacityPolicy:
     a complete configuration full of unrelated learning constants.
     """
 
-    region_ratios: Tuple[float, ...] = (1.0, 0.75, 0.50)
+    region_ratios: tuple[float, ...] = (1.0, 0.75, 0.50)
     synapse_fan_in_ratio: float = 0.1875
     motor_fan_in_ratio: float = 0.375
     memory_units_ratio: float = 1.50
@@ -50,10 +50,10 @@ class CapacityPolicy:
     @classmethod
     def from_config(
         cls,
-        config: "TaijiConfig",
+        config: TaijiConfig,
         *,
         alignment: int = 8,
-    ) -> "CapacityPolicy":
+    ) -> CapacityPolicy:
         """Recover structural proportions from an existing configuration."""
 
         width = float(config.region_sizes[0])
@@ -71,13 +71,13 @@ class CapacityPolicy:
             alignment=int(alignment),
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
         payload["region_ratios"] = list(self.region_ratios)
         return payload
 
     @classmethod
-    def from_dict(cls, payload: Dict[str, Any]) -> "CapacityPolicy":
+    def from_dict(cls, payload: dict[str, Any]) -> CapacityPolicy:
         values = dict(payload)
         values["region_ratios"] = tuple(float(value) for value in values["region_ratios"])
         # Keep policy JSON written before the memory-dimension ratios existed
@@ -97,7 +97,7 @@ class TaijiConfig:
 
     alphabet_size: int = 257
     boundary_symbol: int = 256
-    region_sizes: Tuple[int, ...] = (128, 96, 64)
+    region_sizes: tuple[int, ...] = (128, 96, 64)
     synapse_fan_in: int = 24
     motor_fan_in: int = 48
 
@@ -306,7 +306,7 @@ class TaijiConfig:
             raise ValueError("structural_error_threshold must be non-negative")
 
     @classmethod
-    def training_profile(cls, *, scale: int = 2, seed: int = 20260821) -> "TaijiConfig":
+    def training_profile(cls, *, scale: int = 2, seed: int = 20260821) -> TaijiConfig:
         """Enlarge regions, dimensions and edge density for corpus training.
 
         The profile changes capacity only: every dynamics constant and every
@@ -335,11 +335,11 @@ class TaijiConfig:
         cls,
         target_active_parameters: int,
         *,
-        template: "TaijiConfig | None" = None,
-        policy: "CapacityPolicy | None" = None,
-        seed: "int | None" = None,
-        alignment: "int | None" = None,
-    ) -> "TaijiConfig":
+        template: TaijiConfig | None = None,
+        policy: CapacityPolicy | None = None,
+        seed: int | None = None,
+        alignment: int | None = None,
+    ) -> TaijiConfig:
         """Build the largest substrate that fits an active-parameter budget.
 
         The template supplies dynamics.  ``policy`` independently supplies
@@ -352,10 +352,7 @@ class TaijiConfig:
         target = int(target_active_parameters)
         if target <= 0:
             raise ValueError("target_active_parameters must be positive")
-        if template is None:
-            base = cls(seed=cls.seed if seed is None else int(seed))
-        else:
-            base = template
+        base = cls(seed=cls.seed if seed is None else int(seed)) if template is None else template
         if policy is None:
             capacity = CapacityPolicy.from_config(
                 base,
@@ -373,7 +370,7 @@ class TaijiConfig:
             units = max(1, int(round(float(value) / dimension_alignment)))
             return max(int(minimum), units * dimension_alignment)
 
-        def candidate(width_units: int) -> "TaijiConfig":
+        def candidate(width_units: int) -> TaijiConfig:
             primary_width = int(width_units) * dimension_alignment
             values = base.to_dict()
             values.update(
@@ -461,7 +458,7 @@ class TaijiConfig:
 
         lower_sizes = (self.alphabet_size, *self.region_sizes[:-1])
         fabric = 0
-        for lower_size, region_size in zip(lower_sizes, self.region_sizes):
+        for lower_size, region_size in zip(lower_sizes, self.region_sizes, strict=False):
             fabric += lower_size * min(self.synapse_fan_in, region_size)
             fabric += lower_size * region_size
             fabric += region_size * min(self.synapse_fan_in, region_size - 1)
@@ -489,13 +486,13 @@ class TaijiConfig:
     def motor_context_dim(self) -> int:
         return self.motor_fan_in
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
         payload["region_sizes"] = list(self.region_sizes)
         return payload
 
     @classmethod
-    def from_dict(cls, payload: Dict[str, Any]) -> "TaijiConfig":
+    def from_dict(cls, payload: dict[str, Any]) -> TaijiConfig:
         values = dict(payload)
         values["region_sizes"] = tuple(values["region_sizes"])
         return cls(**values)

@@ -15,14 +15,15 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import tempfile
 import time
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Dict, Mapping, Optional
+from typing import Any
 
 import torch
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -59,10 +60,10 @@ def atomic_save(payload: Mapping[str, Any], path: Path | str) -> Path:
 def attach_metadata(
     envelope: Mapping[str, Any],
     *,
-    tick: Optional[int] = None,
-    corpus_fingerprint: Optional[str] = None,
-    extra: Optional[Mapping[str, Any]] = None,
-) -> Dict[str, Any]:
+    tick: int | None = None,
+    corpus_fingerprint: str | None = None,
+    extra: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
     """Return a shallow copy of ``envelope`` carrying a ``metadata`` block.
 
     Existing metadata (e.g. from a resumed envelope) is preserved and only
@@ -111,5 +112,5 @@ def corpus_fingerprint(paths: Any) -> str:
         except OSError:
             size = -1
         entries.append({"name": path.name, "bytes": size})
-    entries.sort(key=lambda item: item["name"])
+    entries.sort(key=lambda item: str(item["name"]))
     return json.dumps(entries, ensure_ascii=False, separators=(",", ":"))

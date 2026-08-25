@@ -25,7 +25,8 @@ module.exports = {
     },
   },
   rules: {
-    'no-console': 'warn',
+    // R5: 只限制 log/info/debug——warn/error 是应用正常运行时诊断通道，允许保留
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
     'no-debugger': 'warn',
     'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     'vue/multi-word-component-names': 'off',

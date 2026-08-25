@@ -14,22 +14,22 @@
         </button>
       </div>
       <div class="monaco-actions">
-        <select v-model="language" class="lang-select" @change="updateLanguage" :title="languageLabel">
+        <select v-model="language" class="lang-select" :title="languageLabel" @change="updateLanguage">
           <option v-for="lang in languages" :key="lang.id" :value="lang.id">{{ lang.label }}</option>
         </select>
-        <button class="btn-action" @click="saveFile" title="保存"><Save :size="14" /></button>
+        <button class="btn-action" title="保存" @click="saveFile"><Save :size="14" /></button>
       </div>
     </div>
-    <div class="monaco-loading" v-if="editorLoading">
+    <div v-if="editorLoading" class="monaco-loading">
       <div class="loading-spinner"></div>
       <span>编辑器加载中...</span>
     </div>
-    <div class="monaco-error" v-if="editorError">
+    <div v-if="editorError" class="monaco-error">
       <span class="error-icon">⚠️</span>
       <span>{{ editorError }}</span>
-      <button class="btn-action" @click="initMonaco" title="重试">重试</button>
+      <button class="btn-action" title="重试" @click="initMonaco">重试</button>
     </div>
-    <div ref="editorContainer" class="monaco-editor-container" v-show="!editorError && !editorFallback"></div>
+    <div v-show="!editorError && !editorFallback" ref="editorContainer" class="monaco-editor-container"></div>
     <!-- Fallback: 简单文本编辑器 -->
     <div v-if="editorFallback" class="fallback-editor">
       <textarea
@@ -52,14 +52,12 @@
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import { Save } from 'lucide-vue-next';
-import { useApi } from '../composables/useApi.js';
 import { API_BASE, authFetch } from '../composables/apiClient.js';
 import { useAppStore } from '../stores/appStore.js';
 
-const { t } = useApi();
 const appStore = useAppStore();
-const props = defineProps({ workspacePath: { type: String, default: '' } });
-const emit = defineEmits(['saved']);
+defineProps({ workspacePath: { type: String, default: '' } });
+const emit = defineEmits(['saved', 'save-error']);
 
 const editorContainer = ref(null);
 const editorLoading = ref(true);
@@ -216,9 +214,8 @@ async function openFile(filePath) {
 
       openTabs.value.push({ path: filePath, name, content: data.content || '', language: lang });
 
-      if (!activeTab.value) {
-        switchTab(filePath);
-      }
+      // 总是激活打开的标签，避免后续保存作用于旧标签
+      switchTab(filePath);
     }
   } catch (e) {
     console.error('打开文件失败:', e);
@@ -280,23 +277,29 @@ function updateLanguage() {
 }
 
 async function saveFile() {
-  if (!activeTab.value) return;
+  if (!activeTab.value) return false;
   const content = editor ? editor.getValue() : fallbackContent.value;
-  if (!content && content !== '') return;
+  if (!content && content !== '') return false;
   try {
     const r = await authFetch(`${API_BASE}/api/workspace/file`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: activeTab.value, content }),
     });
+    const data = await r.json().catch(() => ({}));
     if (r.ok) {
       isDirty.value = false;
       const tab = openTabs.value.find(t => t.path === activeTab.value);
       if (tab) tab.content = content;
       emit('saved', activeTab.value);
+      return true;
     }
+    // 非 2xx：把后端 detail（如「无权限写入」）抛给调用方展示，不再静默
+    emit('save-error', data.detail || data.message || `保存失败（HTTP ${r.status}）`);
+    return false;
   } catch (e) {
-    console.error('保存失败:', e);
+    emit('save-error', e.message || '保存失败');
+    return false;
   }
 }
 

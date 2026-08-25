@@ -12,7 +12,6 @@ import json
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 REPO = Path(__file__).resolve().parents[2]
 if str(REPO) not in sys.path:
@@ -31,7 +30,7 @@ def load_eval_module():
     return module
 
 
-def corpus_paths() -> List[Path]:
+def corpus_paths() -> list[Path]:
     base = REPO / "data" / "simple_zh"
     # 2026-08-23 数据整理：canonical 对话语料仅此一文件。
     return [
@@ -39,8 +38,8 @@ def corpus_paths() -> List[Path]:
     ]
 
 
-def corpus_documents(limit: int, skip: int = 0) -> List[str]:
-    documents: List[str] = []
+def corpus_documents(limit: int, skip: int = 0) -> list[str]:
+    documents: list[str] = []
     seen = 0
     for path in corpus_paths():
         with path.open("r", encoding="utf-8") as handle:
@@ -77,12 +76,12 @@ def calibrated_judge(model: Seed, documents: int = 48) -> SeedJudge:
     return judge
 
 
-def measure_panel(model: Seed, judge: SeedJudge) -> Dict[str, object]:
+def measure_panel(model: Seed, judge: SeedJudge) -> dict[str, object]:
     """24 条冻结面板的质量测量（三组 mean/std + 全体均值）。"""
 
     panel = load_eval_module().PROMPT_PANEL
-    groups: Dict[str, Dict[str, object]] = {}
-    all_means: List[float] = []
+    groups: dict[str, dict[str, object]] = {}
+    all_means: list[float] = []
     for group_name, prompts in panel.items():
         qualities = [float(judge.score(text.encode("utf-8"))["quality"]) for text in prompts]
         mean = sum(qualities) / len(qualities)
@@ -92,14 +91,17 @@ def measure_panel(model: Seed, judge: SeedJudge) -> Dict[str, object]:
     return {"groups": groups, "overall_mean": sum(all_means) / len(all_means)}
 
 
-def parameter_delta(model: Seed, before: List[torch.Tensor]) -> float:
+def parameter_delta(model: Seed, before: list[torch.Tensor]) -> float:
     after = model.substrate.parameter_tensors()
     return float(
-        sum(float((a.detach() - b.detach()).abs().sum().item()) for a, b in zip(after, before))
+        sum(
+            float((a.detach() - b.detach()).abs().sum().item())
+            for a, b in zip(after, before, strict=False)
+        )
     )
 
 
-def write_report(name: str, payload: Dict[str, object]) -> Path:
+def write_report(name: str, payload: dict[str, object]) -> Path:
     reports = REPO / "reports"
     reports.mkdir(exist_ok=True)
     out_path = reports / f"{name}_{time.strftime('%Y%m%d')}.json"
@@ -110,11 +112,11 @@ def write_report(name: str, payload: Dict[str, object]) -> Path:
 
 def panel_texts_by_quality(
     judge: SeedJudge,
-) -> List[Tuple[str, float, bytes]]:
+) -> list[tuple[str, float, bytes]]:
     """全部 24 条面板文本按 judge 质量升序（最差的在前）。"""
 
     panel = load_eval_module().PROMPT_PANEL
-    scored: List[Tuple[str, float, bytes]] = []
+    scored: list[tuple[str, float, bytes]] = []
     for group_name, prompts in panel.items():
         for text in prompts:
             data = text.encode("utf-8")

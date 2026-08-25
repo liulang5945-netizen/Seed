@@ -9,7 +9,6 @@
 
 import logging
 import os
-from typing import Optional
 
 logger = logging.getLogger("Taiji.Metabolism")
 
@@ -97,8 +96,8 @@ def update_neuromodulator():
 
         logger.debug(
             f"硬件调质更新: NE={norepinephrine_target:.2f} (cpu={cpu_percent:.0f}%), "
-            f"DA={'%.2f' % dopamine_target if dopamine_target is not None else 'skip'}, "
-            f"5HT={'%.2f' % serotonin_target if serotonin_target is not None else 'skip'}"
+            f"DA={format(dopamine_target, '.2f') if dopamine_target is not None else 'skip'}, "
+            f"5HT={format(serotonin_target, '.2f') if serotonin_target is not None else 'skip'}"
         )
     except Exception as e:
         logger.debug(f"神经调质更新失败（非关键）: {e}")
@@ -189,7 +188,10 @@ def analyze_hardware() -> HardwareInfo:
 
         if torch.cuda.is_available():
             info.device = "cuda"
-            info.vram_gb = round(torch.cuda.get_device_properties(0).total_mem / (1024**3), 1)
+            props = torch.cuda.get_device_properties(0)
+            info.vram_gb = round(
+                getattr(props, "total_memory", getattr(props, "total_mem", 0)) / (1024**3), 1
+            )
             info.gpu_name = torch.cuda.get_device_name(0)
         elif torch.backends.mps.is_available():
             info.device = "mps"
@@ -224,9 +226,7 @@ def get_optimal_dtype(device: str):
     try:
         import torch
 
-        if device == "cuda":
-            return torch.float16
-        elif device == "mps":
+        if device == "cuda" or device == "mps":
             return torch.float16
         else:
             return torch.float32
@@ -234,7 +234,7 @@ def get_optimal_dtype(device: str):
         return None
 
 
-def estimate_model_params(model) -> Optional[float]:
+def estimate_model_params(model) -> float | None:
     """
     估算模型参数量（单位：十亿）
 
@@ -255,12 +255,12 @@ def estimate_model_params(model) -> Optional[float]:
                 config, "n_params", None
             )
             if num_params:
-                return round(num_params / 1e9, 2)
+                return float(round(num_params / 1e9, 2))
 
         # 方式2: 计算实际参数量
         actual = sum(p.numel() for p in model.parameters())
         if actual > 1e6:
-            return round(actual / 1e9, 2)
+            return float(round(actual / 1e9, 2))
     except Exception as e:
         logger.debug("metabolism: non-critical %s", e, exc_info=True)
 

@@ -27,11 +27,11 @@
     playwright install chromium
 """
 
+import asyncio
+import logging
 import os
 import time
-import logging
-import asyncio
-from typing import List, Dict, Any
+from typing import Any
 
 logger = logging.getLogger("Taiji.Browser")
 
@@ -254,7 +254,7 @@ class Browser:
             return f"未找到元素: {selector}"
         return await self._page.content()
 
-    async def get_links(self) -> List[Dict[str, str]]:
+    async def get_links(self) -> list[dict[str, str]]:
         """获取页面所有链接"""
         links = await self._page.evaluate("""
             () => Array.from(document.querySelectorAll('a[href]')).map(a => ({
@@ -264,7 +264,7 @@ class Browser:
         """)
         return links
 
-    async def get_images(self) -> List[Dict[str, str]]:
+    async def get_images(self) -> list[dict[str, str]]:
         """获取页面所有图片"""
         images = await self._page.evaluate("""
             () => Array.from(document.querySelectorAll('img[src]')).map(img => ({
@@ -358,7 +358,7 @@ class Browser:
 
         return "\n".join(lines)
 
-    async def fill_form(self, form_data: Dict[str, str]) -> str:
+    async def fill_form(self, form_data: dict[str, str]) -> str:
         """
         填写表单。
 
@@ -377,7 +377,7 @@ class Browser:
                 results.append(f"填写失败 {selector}: {e}")
         return "\n".join(results)
 
-    async def get_page_info(self) -> Dict:
+    async def get_page_info(self) -> dict:
         """获取页面信息"""
         title = await self._page.title()
         url = self._page.url

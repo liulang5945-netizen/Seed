@@ -11,7 +11,6 @@
 
 from __future__ import annotations
 
-
 from seed import Seed, SeedConfig
 from taiji import TaijiConfig
 
@@ -44,9 +43,7 @@ def _decoder_mass(model: Seed) -> float:
 
 def test_streaming_training_does_not_evaporate_cortical_synapses() -> None:
     model = Seed(_tiny_config())
-    data = ("问：你好。\n答：你好，很高兴见到你。" "水的沸点在标准大气压下是一百摄氏度。").encode(
-        "utf-8"
-    )
+    data = ("问：你好。\n答：你好，很高兴见到你。" "水的沸点在标准大气压下是一百摄氏度。").encode()
 
     # 先建立记忆，再长时间持续暴露于同一内容（学会之后误差变小，
     # 正是旧全局衰减蒸发占主导的区间）。

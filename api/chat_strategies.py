@@ -17,7 +17,7 @@ import asyncio
 import json
 import logging
 import threading
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 
 from api.legacy_bridge import legacy_available
 
@@ -201,10 +201,7 @@ def _has_react_engine() -> bool:
 
     # 有 trainer（模型已加载）就支持 ReAct
     # _call_local_model 会自动根据 tokenizer 类型选择 prompt 格式
-    if app_state.trainer is not None:
-        return True
-
-    return False
+    return app_state.trainer is not None
 
 
 async def _iterate_sync_gen_in_thread(gen_factory, stop_event):
@@ -327,7 +324,7 @@ async def _stream_unified(request, prompt, app_state, stop_event, collector):
             engine = ReActEngine(max_steps=max_steps)
 
             def _gen_factory():
-                return engine.run_stream(
+                return engine.run_stream(  # type: ignore[attr-defined]  # 冻结存根接口，运行时由 except 兜底
                     task=enriched_prompt,
                     system_prompt=system_prompt,
                     history=history,
@@ -359,13 +356,17 @@ async def _stream_unified(request, prompt, app_state, stop_event, collector):
                     if tool_name:
                         tool_names.add(str(tool_name))
                     result_text = event_data.get("result", "")
-                    if tool_name and (
-                        "search" in tool_name.lower()
-                        or "fetch" in tool_name.lower()
-                        or "browse" in tool_name.lower()
+                    if (
+                        tool_name
+                        and (
+                            "search" in tool_name.lower()
+                            or "fetch" in tool_name.lower()
+                            or "browse" in tool_name.lower()
+                        )
+                        and result_text
+                        and len(str(result_text).strip()) > 50
                     ):
-                        if result_text and len(str(result_text).strip()) > 50:
-                            had_search_results = True
+                        had_search_results = True
 
                 yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
                 await asyncio.sleep(0.01)

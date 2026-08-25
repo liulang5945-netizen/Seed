@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Dict, Mapping, Optional, Tuple
+from typing import Any
 
 import torch
 
@@ -18,7 +19,7 @@ class RegionState:
     threshold: torch.Tensor
     inhibition: torch.Tensor
 
-    def clone(self) -> "RegionState":
+    def clone(self) -> RegionState:
         return RegionState(
             membrane=self.membrane.detach().clone(),
             activity=self.activity.detach().clone(),
@@ -29,7 +30,7 @@ class RegionState:
             inhibition=self.inhibition.detach().clone(),
         )
 
-    def to_payload(self) -> Dict[str, Any]:
+    def to_payload(self) -> dict[str, Any]:
         cloned = self.clone()
         return {
             "membrane": cloned.membrane.cpu(),
@@ -42,9 +43,7 @@ class RegionState:
         }
 
     @classmethod
-    def from_payload(
-        cls, payload: Mapping[str, Any], *, device: torch.device | str
-    ) -> "RegionState":
+    def from_payload(cls, payload: Mapping[str, Any], *, device: torch.device | str) -> RegionState:
         return cls(
             membrane=payload["membrane"].detach().to(device).clone(),
             activity=payload["activity"].detach().to(device).clone(),
@@ -67,7 +66,7 @@ class MemoryState:
     inhibition: float
     last_confidence: float
 
-    def clone(self) -> "MemoryState":
+    def clone(self) -> MemoryState:
         return MemoryState(
             activity=self.activity.detach().clone(),
             trace=self.trace.detach().clone(),
@@ -77,7 +76,7 @@ class MemoryState:
             last_confidence=float(self.last_confidence),
         )
 
-    def to_payload(self) -> Dict[str, Any]:
+    def to_payload(self) -> dict[str, Any]:
         cloned = self.clone()
         return {
             "activity": cloned.activity.cpu(),
@@ -89,9 +88,7 @@ class MemoryState:
         }
 
     @classmethod
-    def from_payload(
-        cls, payload: Mapping[str, Any], *, device: torch.device | str
-    ) -> "MemoryState":
+    def from_payload(cls, payload: Mapping[str, Any], *, device: torch.device | str) -> MemoryState:
         return cls(
             activity=payload["activity"].detach().to(device).clone(),
             trace=payload["trace"].detach().to(device).clone(),
@@ -108,11 +105,11 @@ class PendingAction:
 
     tick: int
     action_symbol: int
-    available_actions: Tuple[int, ...]
+    available_actions: tuple[int, ...]
     context: torch.Tensor
     policy_probabilities: torch.Tensor
 
-    def clone(self) -> "PendingAction":
+    def clone(self) -> PendingAction:
         return PendingAction(
             tick=int(self.tick),
             action_symbol=int(self.action_symbol),
@@ -121,7 +118,7 @@ class PendingAction:
             policy_probabilities=self.policy_probabilities.detach().clone(),
         )
 
-    def to_payload(self) -> Dict[str, Any]:
+    def to_payload(self) -> dict[str, Any]:
         cloned = self.clone()
         return {
             "tick": cloned.tick,
@@ -134,7 +131,7 @@ class PendingAction:
     @classmethod
     def from_payload(
         cls, payload: Mapping[str, Any], *, device: torch.device | str
-    ) -> "PendingAction":
+    ) -> PendingAction:
         return cls(
             tick=int(payload["tick"]),
             action_symbol=int(payload["action_symbol"]),
@@ -156,7 +153,7 @@ class PendingExperience:
     provenance: str
     learn_memory: bool
 
-    def clone(self) -> "PendingExperience":
+    def clone(self) -> PendingExperience:
         return PendingExperience(
             tick=int(self.tick),
             action_symbol=int(self.action_symbol),
@@ -167,7 +164,7 @@ class PendingExperience:
             learn_memory=bool(self.learn_memory),
         )
 
-    def to_payload(self) -> Dict[str, Any]:
+    def to_payload(self) -> dict[str, Any]:
         cloned = self.clone()
         return {
             "tick": cloned.tick,
@@ -182,7 +179,7 @@ class PendingExperience:
     @classmethod
     def from_payload(
         cls, payload: Mapping[str, Any], *, device: torch.device | str
-    ) -> "PendingExperience":
+    ) -> PendingExperience:
         return cls(
             tick=int(payload["tick"]),
             action_symbol=int(payload["action_symbol"]),
@@ -199,15 +196,15 @@ class TaijiState:
     version: int
     tick: int
     episode_id: str
-    regions: Tuple[RegionState, ...]
+    regions: tuple[RegionState, ...]
     memory: MemoryState
     motor_context: torch.Tensor
     motor_probabilities: torch.Tensor
-    last_symbol: Optional[int]
-    pending_action: Optional[PendingAction]
-    pending_experience: Optional[PendingExperience]
+    last_symbol: int | None
+    pending_action: PendingAction | None
+    pending_experience: PendingExperience | None
 
-    def clone(self) -> "TaijiState":
+    def clone(self) -> TaijiState:
         return TaijiState(
             version=int(self.version),
             tick=int(self.tick),
@@ -223,7 +220,7 @@ class TaijiState:
             ),
         )
 
-    def to_payload(self) -> Dict[str, Any]:
+    def to_payload(self) -> dict[str, Any]:
         return {
             "version": int(self.version),
             "tick": int(self.tick),
@@ -242,9 +239,7 @@ class TaijiState:
         }
 
     @classmethod
-    def from_payload(
-        cls, payload: Mapping[str, Any], *, device: torch.device | str
-    ) -> "TaijiState":
+    def from_payload(cls, payload: Mapping[str, Any], *, device: torch.device | str) -> TaijiState:
         return cls(
             version=int(payload["version"]),
             tick=int(payload["tick"]),
@@ -277,12 +272,12 @@ class TaijiStep:
     observed_symbol: int
     predicted_symbol: int
     probabilities: torch.Tensor
-    prior_prediction: Optional[int]
-    prior_probability: Optional[float]
-    surprise: Optional[float]
-    activity_rates: Tuple[float, ...]
-    local_error_norms: Tuple[float, ...]
-    memory_recall: "MemoryRecall"
+    prior_prediction: int | None
+    prior_probability: float | None
+    surprise: float | None
+    activity_rates: tuple[float, ...]
+    local_error_norms: tuple[float, ...]
+    memory_recall: MemoryRecall
     memory_write_strength: float
 
 
@@ -304,7 +299,7 @@ class MemoryRecall:
 class TaijiDecision:
     tick: int
     action_symbol: int
-    available_actions: Tuple[int, ...]
+    available_actions: tuple[int, ...]
     policy_probabilities: torch.Tensor
 
 

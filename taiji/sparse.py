@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 import torch
 
@@ -98,7 +99,8 @@ class SparseSynapses:
                 f"got {tuple(presynaptic.shape)}"
             )
         presynaptic = presynaptic.to(self.device)
-        return (self.edge_weight * presynaptic[self.pre_index]).sum(dim=1)
+        output: torch.Tensor = (self.edge_weight * presynaptic[self.pre_index]).sum(dim=1)
+        return output
 
     def backproject(self, postsynaptic_error: torch.Tensor) -> torch.Tensor:
         if postsynaptic_error.shape != (self.out_features,):
@@ -356,7 +358,7 @@ class SparseSynapses:
         scales = torch.clamp(self.max_weight_norm / norms, max=1.0)
         self.edge_weight.mul_(scales)
 
-    def to_payload(self) -> Dict[str, Any]:
+    def to_payload(self) -> dict[str, Any]:
         return {
             "storage": self.STORAGE_FORMAT,
             "out_features": self.out_features,

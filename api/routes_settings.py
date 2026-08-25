@@ -31,7 +31,7 @@ async def save_all_settings(req: dict):
         return {"status": "ok", "message": "Settings saved"}
     except Exception as exc:
         logger.warning(f"Failed to save settings: {exc}")
-        raise HTTPException(status_code=500, detail=f"Failed to save settings: {exc}")
+        raise HTTPException(status_code=500, detail=f"Failed to save settings: {exc}") from exc
 
 
 @router.post("/api/settings/model")
@@ -119,10 +119,13 @@ def get_current_model():
         pending_path = pending_gguf_path or pending_model_name
 
         is_pending = False
-        if pending_model_type and pending_model_type != (model_type or ""):
-            if not (pending_model_type == "gguf" and effective_type == "gguf"):
-                if not (pending_model_type == "self" and effective_type == "self"):
-                    is_pending = True
+        if (
+            pending_model_type
+            and pending_model_type != (model_type or "")
+            and not (pending_model_type == "gguf" and effective_type == "gguf")
+            and not (pending_model_type == "self" and effective_type == "self")
+        ):
+            is_pending = True
         if pending_path and pending_path != effective_path:
             is_pending = True
         if (

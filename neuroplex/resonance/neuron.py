@@ -16,7 +16,6 @@ general/domain token 映射，再查共享嵌入表。
 from __future__ import annotations
 
 import math
-from typing import Dict, List, Optional
 
 import torch
 import torch.nn as nn
@@ -34,7 +33,7 @@ class LoraPair(nn.Module):
     训练中低秩增量 ΔW = scale·BA 适配协作（collab 训练不再直接微调 body）。
     """
 
-    def __init__(self, in_dim: int, rank: int, alpha: Optional[float] = None):
+    def __init__(self, in_dim: int, rank: int, alpha: float | None = None):
         super().__init__()
         self.rank = rank
         # alpha/r 风格缩放（alpha 默认 = rank，即 scale=1.0，可调）
@@ -60,7 +59,7 @@ class ResonanceNeuron(nn.Module):
     - domain_prototype: EMA-updated data-driven典型响应向量 (for L2 prototype routing)
     """
 
-    def __init__(self, neuron_config: NeuronConfig, shared_lm_head: Optional[nn.Linear] = None):
+    def __init__(self, neuron_config: NeuronConfig, shared_lm_head: nn.Linear | None = None):
         super().__init__()
         self.config = neuron_config
         c = neuron_config
@@ -72,14 +71,14 @@ class ResonanceNeuron(nn.Module):
         # → quality_logit 膨胀常数头 → 判定退化）。双头方案：域头负责生成（C24 目标），
         # judge_lm_head 保留 general 空间判定信号（C20 信号链，天然可比）。
         # 由 loader/train 脚本注入（不在 config 中声明，避免破坏既有 ckpt 加载）。
-        self.judge_lm_head: Optional[nn.Linear] = None
+        self.judge_lm_head: nn.Linear | None = None
         # 判定空间统一化（2026-08-14）：判定头全局唯一（general 256K 空间，可比），
         # hidden≠判定空间维度（512）的 neuron（std0 768 / hub 1024）经 judge_proj
         # （hidden→512 小投影）适配后挂同一共享判定头——新 neuron 无论规格都获得
         # 可比判定能力，无需 per-neuron 131M 大判定头。None = 恒等（compact 512）。
         # 分工：judge_lm_head（标尺）全局唯一·冻结；judge_proj（翻译）每 neuron
         # 独立·可训练（协作/睡眠巩固阶段被共同塑造）。
-        self.judge_proj: Optional[nn.Linear] = None
+        self.judge_proj: nn.Linear | None = None
 
         # ── 神经元类型（人脑启发：兴奋性/抑制性分化）──
         # excitatory: 对场做正向贡献（默认）
@@ -136,7 +135,7 @@ class ResonanceNeuron(nn.Module):
         # 嵌套 ModuleDict：{str(层索引): ModuleDict({attn/ffn/blk: LoraPair})}
         self.lora_adapters = nn.ModuleDict()
         self.lora_enabled = False
-        self.lora_layers: List[int] = []
+        self.lora_layers: list[int] = []
 
         # ── Field write projection ──
         # C6: 多头 field write（num_field_heads > 1 时启用）
@@ -280,7 +279,7 @@ class ResonanceNeuron(nn.Module):
         # Auxiliary-loss-free balancing 运行时统计（不持久化）
         # _channel_usage[peer_id] = 最近一次 forward 的 |proj*scale+bias| 均值
         # 用于启发式 bias 更新：低 usage channel → 正 bias，高 usage → 负 bias
-        self._channel_usage: Dict[str, float] = {}
+        self._channel_usage: dict[str, float] = {}
 
     @property
     def side_channels(self) -> nn.ModuleDict:
@@ -290,7 +289,7 @@ class ResonanceNeuron(nn.Module):
     def establish_side_channel(
         self,
         peer_id: str,
-        peer_neuron: "ResonanceNeuron",
+        peer_neuron: ResonanceNeuron,
         channel_type: str = "excite",
         init_std: float = 0.01,
         init_scale: float = 50.0,
@@ -332,7 +331,7 @@ class ResonanceNeuron(nn.Module):
         else:
             self.register_buffer(f"inhibit_bias_{peer_id}", bias_buf)
 
-    def update_channel_bias(self, update_rate: float = 0.1) -> Dict[str, float]:
+    def update_channel_bias(self, update_rate: float = 0.1) -> dict[str, float]:
         """Auxiliary-loss-free balancing 启发式 bias 更新（借鉴 DeepSeek V3）。
 
         根据最近一次 forward 的 channel usage 统计，调整 bias：
@@ -353,7 +352,7 @@ class ResonanceNeuron(nn.Module):
 
         usages = list(self._channel_usage.values())
         avg_usage = sum(usages) / len(usages)
-        deltas: Dict[str, float] = {}
+        deltas: dict[str, float] = {}
 
         for key, usage in self._channel_usage.items():
             # 偏离平均的 channel 获得补偿 bias
@@ -371,7 +370,7 @@ class ResonanceNeuron(nn.Module):
 
         return deltas
 
-    def get_channel_usage_stats(self) -> Dict[str, float]:
+    def get_channel_usage_stats(self) -> dict[str, float]:
         """获取当前 channel usage 统计（用于日志/诊断）。"""
         return dict(self._channel_usage)
 
@@ -487,9 +486,12 @@ class ResonanceNeuron(nn.Module):
 
             # 获取 latent_dim（codebook 维度）
             latent_dim = 256
-            if hasattr(encoder, "model") and hasattr(encoder.model, "quantizer"):
-                if hasattr(encoder.model.quantizer, "codebook"):
-                    latent_dim = encoder.model.quantizer.codebook.weight.shape[-1]
+            if (
+                hasattr(encoder, "model")
+                and hasattr(encoder.model, "quantizer")
+                and hasattr(encoder.model.quantizer, "codebook")
+            ):
+                latent_dim = encoder.model.quantizer.codebook.weight.shape[-1]
 
             # 只注册输入投影（mm_lm_heads 已废弃）
             self.register_modality_projection(modality, raw_dim=latent_dim)
@@ -534,16 +536,16 @@ class ResonanceNeuron(nn.Module):
     def forward(
         self,
         shared_embeddings: torch.Tensor,
-        field_state: Optional[torch.Tensor] = None,
+        field_state: torch.Tensor | None = None,
         round_num: int = 1,
         return_logits: bool = False,
         return_judge_logits: bool = False,
-        side_signals: Optional[Dict[int, torch.Tensor]] = None,
+        side_signals: dict[int, torch.Tensor] | None = None,
         temp_gain: float = 1.0,
         ffn_gain: float = 1.0,
         return_intermediate: bool = False,
         return_quality_tokens: bool = False,
-    ) -> Dict[str, torch.Tensor]:
+    ) -> dict[str, torch.Tensor]:
         """Forward pass through the neuron.
 
         Args:
@@ -745,7 +747,7 @@ class ResonanceNeuron(nn.Module):
             field_confidence = torch.sigmoid(
                 hidden_last.norm(dim=-1) / math.sqrt(self.config.hidden_size)
             )  # [B] ∈ [0, 1]
-            result: Dict[str, torch.Tensor] = {
+            result: dict[str, torch.Tensor] = {
                 "field_vector": v,
                 "hidden_before_write": hidden_last,
                 "field_confidence": field_confidence,
@@ -779,7 +781,7 @@ class ResonanceNeuron(nn.Module):
             confidence_per_head = 1.0 - entropy_per_head / max_entropy  # [B, K]
             field_confidence = (gate * confidence_per_head).sum(dim=-1)  # [B]
 
-            result: Dict[str, torch.Tensor] = {
+            result: dict[str, torch.Tensor] = {
                 "field_vector": v,
                 "hidden_before_write": pooled.mean(
                     dim=1
@@ -804,7 +806,7 @@ class ResonanceNeuron(nn.Module):
             entropy = -(attn_weights * (attn_weights + 1e-8).log()).sum(dim=-1)  # [B]
             field_confidence = 1.0 - entropy / max_entropy  # [B] ∈ [0, 1]
 
-            result: Dict[str, torch.Tensor] = {
+            result: dict[str, torch.Tensor] = {
                 "field_vector": v,
                 "hidden_before_write": pooled,
                 "field_attn_weights": attn_weights,
@@ -951,7 +953,7 @@ class ResonanceNeuron(nn.Module):
         params += list(self.field_read_gate.parameters())
         return params
 
-    def enable_lora(self, rank: int, layers: Optional[List[int]] = None):
+    def enable_lora(self, rank: int, layers: list[int] | None = None):
         """C16: 启用尾层 LoRA 适配器（冻结 body，只训低秩增量）。
 
         Args:
@@ -977,7 +979,7 @@ class ResonanceNeuron(nn.Module):
             self.lora_adapters[str(i)] = layer_adapters
         return self.lora_adapters
 
-    def load_lora(self, sd: dict, layers: Optional[List[int]] = None) -> bool:
+    def load_lora(self, sd: dict, layers: list[int] | None = None) -> bool:
         """C26 增量三补：从 ckpt state_dict 恢复沉淀的 LoRA 增量。
 
         enable_lora 是运行时方法（不写 config），装配重建的 neuron 无

@@ -15,40 +15,40 @@ Core components:
 - TokenizerHub: domain-specific tokenizer hot-swap
 """
 
-from .field import ResonanceField
-from .neuron import ResonanceNeuron
-from .ensemble import ResonanceEnsemble
 from .config import (
-    NeuronConfig,
-    MICRO,
     COMPACT,
-    STANDARD,
-    FOUNDATION,
-    EXPERT,
-    TINY_TEST,
     DEFAULT_NEURON_SPEC,
-    get_default_neuron_config,
     DOMAIN_VOCAB_SIZES,
+    EXPERT,
+    FOUNDATION,
     GENERAL_TOKENIZER_DOMAIN,
+    MICRO,
+    STANDARD,
+    TINY_TEST,
+    NeuronConfig,
+    get_default_neuron_config,
     get_domain_neuron_config,
 )
-from .translator import (
-    TokenizerHub,
-    build_position_alignment,
-    batch_align_and_embed,
-)
-from .lifecycle import LifecycleManager, ApoptosisTracker, MaturityTracker, NeurogenesisTrigger
-from .stdp import STDPTracker, STDPRule, FiringRecord
-from .neuro_modulation import NeuromodulatorState, SleepConsolidator
+from .ensemble import ResonanceEnsemble
+from .field import ResonanceField
 from .gamma_oscillator import GammaOscillator, apply_gamma_gate
-from .phasor import PhasorDynamics
 from .geometry import NeuronGeometry
+from .lifecycle import ApoptosisTracker, LifecycleManager, MaturityTracker, NeurogenesisTrigger
+from .neuro_modulation import NeuromodulatorState, SleepConsolidator
+from .neuron import ResonanceNeuron
+from .phasor import PhasorDynamics
+from .stdp import FiringRecord, STDPRule, STDPTracker
 from .topology import (
     build_topology,
     establish_topology_channels,
     infer_topology_from_state,
-    topology_summary,
     topology_detail,
+    topology_summary,
+)
+from .translator import (
+    TokenizerHub,
+    batch_align_and_embed,
+    build_position_alignment,
 )
 
 __all__ = [

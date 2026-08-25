@@ -3,13 +3,14 @@
 提供：JWT/API Key 鉴权、速率限制、输入参数校验
 """
 
-from fastapi import Request
-from fastapi.responses import JSONResponse
 import os
+import re
 import time
 from collections import defaultdict
-from typing import Callable
-import re
+from collections.abc import Callable
+
+from fastapi import Request
+from fastapi.responses import JSONResponse
 
 
 # ===== 速率限制 =====
@@ -28,7 +29,7 @@ class RateLimiter:
     def __init__(self, max_requests: int = 100, window_seconds: int = 60):
         self.max_requests = max_requests
         self.window_seconds = window_seconds
-        self.requests = defaultdict(list)
+        self.requests: dict[str, list[float]] = defaultdict(list)
 
     def is_allowed(self, client_id: str) -> bool:
         now = time.time()
@@ -67,7 +68,8 @@ class AuthValidator:
         """获取客户端 ID（IP 或 API Key）"""
         if "X-API-Key" in request.headers:
             return f"api-{request.headers['X-API-Key']}"
-        return f"ip-{request.client.host}"
+        client_host = request.client.host if request.client else "unknown"
+        return f"ip-{client_host}"
 
 
 # ===== 输入校验 =====

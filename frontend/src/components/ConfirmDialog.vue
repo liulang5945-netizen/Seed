@@ -1,9 +1,9 @@
 <template>
-  <div v-if="visible" class="confirm-overlay" @click.self="handleCancel" @keydown.escape="handleCancel" tabindex="-1" ref="overlayRef">
+  <div v-if="visible" ref="overlayRef" class="confirm-overlay" tabindex="-1" @click.self="handleCancel" @keydown.escape="handleCancel">
     <div class="confirm-dialog" role="dialog" aria-modal="true" :aria-labelledby="title ? 'confirm-title' : undefined">
       <div class="confirm-icon"><component :is="type === 'danger' ? AlertTriangle : type === 'warning' ? Bell : MessageSquare" :size="24" /></div>
-      <div class="confirm-title" id="confirm-title">{{ title }}</div>
-      <div class="confirm-message" v-if="message">{{ message }}</div>
+      <div id="confirm-title" class="confirm-title">{{ title }}</div>
+      <div v-if="message" class="confirm-message">{{ message }}</div>
       <div class="confirm-actions">
         <button class="confirm-btn cancel" @click="handleCancel">{{ cancelText }}</button>
         <button :class="['confirm-btn', type]" @click="handleConfirm">{{ confirmText }}</button>
@@ -15,7 +15,7 @@
 <script setup>
 import { AlertTriangle, Bell, MessageSquare } from 'lucide-vue-next';
 
-import { ref, nextTick, watch } from 'vue'
+import { ref, nextTick } from 'vue'
 
 const visible = ref(false)
 const overlayRef = ref(null)

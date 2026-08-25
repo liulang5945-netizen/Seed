@@ -14,19 +14,20 @@
 而是沉淀到本地索引里，越用越聪明。
 """
 
-import time
-import logging
 import concurrent.futures
-from typing import List, Optional
+import logging
+import time
 
 from .discovery import (
-    WebSearchProvider,
     SitemapProvider,
+    WebSearchProvider,
+)
+from .discovery import (
     search as discovery_search,
 )
+from .extractor import PageContent, ReadabilityExtractor
 from .fetcher import DualFetcher
-from .extractor import ReadabilityExtractor, PageContent
-from .index import InvertedIndex, IndexedPage
+from .index import IndexedPage, InvertedIndex
 
 logger = logging.getLogger("Taiji.Search.Pipeline")
 
@@ -254,7 +255,7 @@ class SearchPipeline:
 
     # ─── 内部工具 ───
 
-    def _fetch_and_extract_single(self, url: str) -> Optional[PageContent]:
+    def _fetch_and_extract_single(self, url: str) -> PageContent | None:
         """抓取 + 提取单个 URL"""
         page = self.fetcher.fetch(url)
         if page.status != "ok":
@@ -264,10 +265,10 @@ class SearchPipeline:
         return content
 
     def _fetch_and_extract_batch(
-        self, urls: List[str], max_workers: int = 4
-    ) -> List[Optional[PageContent]]:
+        self, urls: list[str], max_workers: int = 4
+    ) -> list[PageContent | None]:
         """并行抓取 + 提取"""
-        results: List[Optional[PageContent]] = [None] * len(urls)
+        results: list[PageContent | None] = [None] * len(urls)
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as pool:
             future_to_idx = {
                 pool.submit(self._fetch_and_extract_single, url): i for i, url in enumerate(urls)
@@ -290,7 +291,7 @@ class SearchPipeline:
 # 统一入口 + 工具接口
 # ═══════════════════════════════════════════════
 
-_pipeline: Optional[SearchPipeline] = None
+_pipeline: SearchPipeline | None = None
 
 
 def get_pipeline() -> SearchPipeline:

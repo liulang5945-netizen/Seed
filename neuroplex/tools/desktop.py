@@ -21,12 +21,11 @@
     info = system_info()
 """
 
-import os
-import shutil
 import logging
-import subprocess
+import os
 import platform
-from typing import List
+import shutil
+import subprocess
 
 logger = logging.getLogger("Taiji.Desktop")
 
@@ -111,7 +110,7 @@ DANGEROUS_COMMANDS = {
 }
 
 
-def run_program(program: str, args: List[str] = None, wait: bool = False) -> str:
+def run_program(program: str, args: list[str] = None, wait: bool = False) -> str:
     """
     启动任意程序。
 
@@ -210,6 +209,7 @@ def run_command(command: str, timeout: int = 30) -> str:
 def system_info() -> str:
     """获取系统信息"""
     import platform
+
     import psutil
 
     info = {

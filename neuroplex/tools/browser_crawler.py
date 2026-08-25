@@ -2,11 +2,11 @@
 Browser crawler using Playwright for human-like browsing.
 """
 
-import os
-import time
 import json
 import logging
+import os
 import threading
+import time
 from dataclasses import dataclass, field
 
 logger = logging.getLogger("BrowserCrawler")

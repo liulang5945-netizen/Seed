@@ -21,11 +21,13 @@ import { CheckCircle, XCircle, Info, AlertTriangle } from 'lucide-vue-next';
 import { ref } from 'vue'
 
 const toasts = ref([])
+// R5: 此前映射为字符串，<component :is> 无法解析导入的组件（图标实际不渲染）；
+// 改为组件引用，同时消除 no-unused-vars。
 const icons = {
-  success: 'CheckCircle',
-  error: 'XCircle',
-  warning: 'AlertTriangle',
-  info: 'Info'
+  success: CheckCircle,
+  error: XCircle,
+  warning: AlertTriangle,
+  info: Info
 }
 
 let counter = 0

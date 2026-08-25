@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
 import sys
-from typing import Dict, Sequence, Tuple
+from collections.abc import Sequence
+from pathlib import Path
 
-import torch
 import _verify_emit
+import torch
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
@@ -28,7 +28,7 @@ class BinaryCueEnvironment:
         self.trial = 0
         self.current_cue: int | None = None
 
-    def reset(self) -> Tuple[int, Sequence[int]]:
+    def reset(self) -> tuple[int, Sequence[int]]:
         self.current_cue = CUES[self.trial % len(CUES)]
         self.trial += 1
         return self.current_cue, ACTIONS
@@ -60,7 +60,7 @@ def _interact(
     *,
     interactions: int,
     learn_action: bool,
-) -> Dict[str, object]:
+) -> dict[str, object]:
     environment = BinaryCueEnvironment()
     initial_motor = (
         model.motor.synapses.edge_weight.clone(),
@@ -120,7 +120,7 @@ def _interact(
     }
 
 
-def _deterministic_accuracy(model: Taiji) -> tuple[float, list[Dict[str, object]]]:
+def _deterministic_accuracy(model: Taiji) -> tuple[float, list[dict[str, object]]]:
     environment = BinaryCueEnvironment()
     rows = []
     for cue in CUES:
@@ -166,7 +166,7 @@ def _actions_change_sensation() -> bool:
     return True
 
 
-def run_benchmark(*, interactions: int = 200, seed: int = 7) -> Dict[str, object]:
+def run_benchmark(*, interactions: int = 200, seed: int = 7) -> dict[str, object]:
     learned_model = Taiji(_config(seed), episode_id="n11-learned")
     lesion_model = Taiji(_config(seed), episode_id="n11-lesion")
     learned = _interact(learned_model, interactions=interactions, learn_action=True)

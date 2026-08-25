@@ -3780,9 +3780,9 @@
       }
     },
     "/api/rag/clear": {
-      "delete": {
-        "description": "清空知识库索引（保留磁盘文件需另走逐文件删除）。",
-        "operationId": "clear_rag_api_rag_clear_delete",
+      "post": {
+        "description": "清空 RAG 知识库索引及本地文档（不可恢复，前端需二次确认）",
+        "operationId": "clear_rag_documents_api_rag_clear_post",
         "responses": {
           "200": {
             "content": {
@@ -3793,7 +3793,7 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Clear Rag"
+        "summary": "Clear Rag Documents"
       }
     },
     "/api/rag/config": {
@@ -3890,7 +3890,7 @@
     },
     "/api/rag/files": {
       "get": {
-        "description": "获取已挂载的 RAG 文件列表",
+        "description": "获取已挂载的 RAG 文件列表（含大小/修改时间/索引状态）\n\n返回 {\"files\": [{\"name\", \"size\"?, \"mtime\"?, \"status\"?}]}：\n- size/mtime 来自本地文档目录的文件系统信息，不可得时省略；\n- status 为 \"indexed\"（已建入索引）或 \"pending\"（仅落盘待索引）。",
         "operationId": "list_rag_files_api_rag_files_get",
         "responses": {
           "200": {
@@ -4641,6 +4641,45 @@
           }
         },
         "summary": "Reload Modules"
+      }
+    },
+    "/api/system/reset": {
+      "post": {
+        "description": "系统重置（安全子集）：按 scope 清除可安全重建的运行时数据。\n\n当前支持：\n- scope=\"chat_sessions\"：清空对话会话历史（user_data/chat_history/*.json）。\n\n不触及模型权重、检查点、Taiji 状态与持久化设置。",
+        "operationId": "reset_system_api_system_reset_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Req",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reset System"
       }
     },
     "/api/system/restart": {
@@ -6613,6 +6652,45 @@
           }
         },
         "summary": "Get Quick Paths"
+      }
+    },
+    "/api/workspace/rename": {
+      "post": {
+        "description": "Rename a file or directory inside the workspace.",
+        "operationId": "rename_workspace_item_api_workspace_rename_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Req",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rename Workspace Item"
       }
     },
     "/api/workspace/run": {

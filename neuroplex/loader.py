@@ -10,7 +10,7 @@ import logging
 import os
 import pickle
 import time
-from typing import Optional, Any
+from typing import Any
 
 import torch
 
@@ -38,7 +38,7 @@ ModelSelfTokenizer = TaijiNativeTokenizerV2
 
 # general 词表大小（判定/共享空间实例值，随 sp_general.model 动态获取，
 # 非架构硬编码——C25 用户决策"词库不做限制"，general 词表可重训/实时扩展）
-_GENERAL_VOCAB_CACHE: Optional[int] = None
+_GENERAL_VOCAB_CACHE: int | None = None
 
 
 def general_vocab_size() -> int:
@@ -72,7 +72,7 @@ def general_vocab_size() -> int:
 logger = logging.getLogger("Taiji")
 
 
-def _find_default_sentencepiece() -> Optional[str]:
+def _find_default_sentencepiece() -> str | None:
     """查找默认的 SentencePiece 路径。
 
     按优先级查找旧的共享 tokenizer 兼容路径。生产 P7 路径使用域
@@ -114,8 +114,8 @@ def create_cortex(
     device: str = "cpu",
     max_rounds: int = 3,
     sp_model_path: str | None = None,
-    neuron_ids: Optional[list] = None,
-) -> tuple[Any, Optional[Any]]:
+    neuron_ids: list | None = None,
+) -> tuple[Any, Any | None]:
     """创建 Cortex（运行时认知主体）+ tokenizer。
 
     若 neurons_dir 下没有可用的已训练神经元，进入"单神经元 fallback 模式"——
@@ -183,7 +183,7 @@ def load_cortex(
     device: str = "cpu",
     sp_model_path: str | None = None,
     max_rounds: int = 3,
-) -> tuple[Any, Optional[Any]]:
+) -> tuple[Any, Any | None]:
     """加载 Cortex（运行时认知主体）+ tokenizer。
 
     运行时加载入口。等价于 create_cortex，语义上用于"从已训练神经元加载"。
@@ -234,7 +234,7 @@ def _ensure_single_neuron_fallback(cortex, device: str):
     cortex.neurons["general"] = neuron
 
     # 重建 ensemble 以包含 fallback 神经元
-    from neuroplex.resonance import ResonanceField, ResonanceEnsemble
+    from neuroplex.resonance import ResonanceEnsemble, ResonanceField
 
     cortex.field = ResonanceField(dim=cfg.field_dim)
     cortex.ensemble = ResonanceEnsemble(
@@ -262,10 +262,10 @@ def assemble_cortex(
     max_rounds: int = 3,
     sp_model_path: str | None = None,
     wire_bio_modules: bool = True,
-    neuron_ids: Optional[list] = None,
+    neuron_ids: list | None = None,
     collab_name: str = "cross_spec_dialogue.pt",
-    extra_neurons_dir: Optional[str] = None,
-) -> tuple[Any, Optional[Any], dict]:
+    extra_neurons_dir: str | None = None,
+) -> tuple[Any, Any | None, dict]:
     """统一装配 Cortex，接线所有 bio-inspired 模块。
 
     生产环境推荐入口。在 create_cortex() 基础上额外完成：
@@ -709,8 +709,8 @@ def assemble_cortex(
     # 修复接线 bug：life_scheduler.set_brain_interfaces 未被调用，
     # 导致 _update_neuron_signals 中 hunger→neurogenesis 分支永远不执行。
     try:
-        from neuroplex.life.life_scheduler import get_life_scheduler
         from neuroplex.life.feed_engine import get_feed_engine
+        from neuroplex.life.life_scheduler import get_life_scheduler
 
         life_scheduler = get_life_scheduler()
         life_scheduler.set_brain_interfaces(
@@ -777,10 +777,10 @@ def assemble_cortex(
     # 修复：PerceptionSystem/PlannerSystem/ReflectorSystem/MemorySystem
     # 从未被实例化，Agent 五元闭环全死代码。
     try:
+        from neuroplex.agent.memory import MemorySystem
         from neuroplex.agent.perception import PerceptionSystem
         from neuroplex.agent.planner import PlannerSystem
         from neuroplex.agent.reflector import ReflectorSystem
-        from neuroplex.agent.memory import MemorySystem
         from neuroplex.life.feed_engine import get_feed_engine
 
         perception = PerceptionSystem(tokenizer=tokenizer)
@@ -825,9 +825,9 @@ def assemble_cortex(
     # checkpoint 不存在时跳过（非致命，保持向后兼容）
     # 注册到 TokenizerHub + 为所有 neuron 注册模态投影层
     try:
-        from neuroplex.multimodal.vqvae import VQVAE, VQVAEImageCodec
         from neuroplex.multimodal.encodec import EnCodec, EnCodecAudioCodec
-        from neuroplex.multimodal.video import VideoVQVAE, VideoCodec
+        from neuroplex.multimodal.video import VideoCodec, VideoVQVAE
+        from neuroplex.multimodal.vqvae import VQVAE, VQVAEImageCodec
 
         hub = modules.get("tokenizer_hub")
 
@@ -1156,7 +1156,7 @@ def _load_extra_neurons(cortex, extra_dir: str, device: str) -> list:
         except Exception as e:
             logger.warning("[assemble_cortex] extra neuron %s 加载失败: %s", nid, e)
     if c24_nids:
-        setattr(cortex, "_c24_domain_nids", set(c24_nids))
+        cortex._c24_domain_nids = set(c24_nids)
         logger.info("[assemble_cortex] C24 域头 SFT neurons（生成补分隔符）: %s", c24_nids)
     if added:
         logger.info("[assemble_cortex] extra neurons loaded: %s", added)

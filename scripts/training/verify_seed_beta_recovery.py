@@ -28,20 +28,19 @@ import json
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List
 
 REPO = Path(__file__).resolve().parents[2]
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
-import torch  # noqa: E402
 import _verify_emit  # noqa: E402
+import torch  # noqa: E402
 
 from seed import Seed, SeedConfig  # noqa: E402
 from seed.persistence import atomic_save, attach_metadata  # noqa: E402
 
 ROUNDS = 10
-PROBE = "问：你好。\n答：你好，很高兴见到你。".encode("utf-8")
+PROBE = "问：你好。\n答：你好，很高兴见到你。".encode()
 
 
 class _MidSerializationCrash:
@@ -61,7 +60,7 @@ def _fresh_model(round_index: int) -> Seed:
     return model
 
 
-def _tmp_residue(target: Path) -> List[str]:
+def _tmp_residue(target: Path) -> list[str]:
     return [p.name for p in target.parent.iterdir() if p.name.endswith(".tmp")]
 
 
@@ -71,8 +70,8 @@ def _state_matches(target: Path, model: Seed, score_before) -> bool:
     return restored.tick == model.tick and restored.score_bytes(PROBE) == score_before
 
 
-def _run_round(round_index: int, target: Path) -> Dict[str, object]:
-    results: Dict[str, object] = {}
+def _run_round(round_index: int, target: Path) -> dict[str, object]:
+    results: dict[str, object] = {}
 
     # 场景 0：正常落盘，记录崩溃前状态。
     model = _fresh_model(round_index)

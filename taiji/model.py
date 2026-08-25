@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import math
-from typing import Any, Dict, Mapping, Optional, Sequence, Tuple
+from collections.abc import Mapping, Sequence
+from typing import Any
 
 import torch
 
@@ -14,12 +15,12 @@ from .organs import ByteMotor, ByteSensor
 from .state import (
     PendingAction,
     PendingExperience,
+    RegionState,
     TaijiConsolidation,
     TaijiDecision,
     TaijiOutcome,
     TaijiState,
     TaijiStep,
-    RegionState,
 )
 
 
@@ -35,7 +36,7 @@ class Taiji:
 
     def __init__(
         self,
-        config: Optional[TaijiConfig] = None,
+        config: TaijiConfig | None = None,
         *,
         device: torch.device | str = "cpu",
         episode_id: str = "episode-0",
@@ -85,7 +86,7 @@ class Taiji:
     def snapshot(self) -> TaijiState:
         return self._state.clone()
 
-    def reset_dynamics(self, *, episode_id: Optional[str] = None) -> None:
+    def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         """Clear activity while preserving all learned synapses."""
 
         if self._state.pending_action is not None:
@@ -101,7 +102,7 @@ class Taiji:
         symbol: int,
         *,
         learn: bool = True,
-        learn_motor: Optional[bool] = None,
+        learn_motor: bool | None = None,
         use_memory: bool = True,
     ) -> TaijiStep:
         """Advance one sensation tick.
@@ -132,9 +133,9 @@ class Taiji:
                 )
                 memory_write_strength = memory_write.strength
 
-        prior_prediction: Optional[int] = None
-        prior_probability: Optional[float] = None
-        surprise: Optional[float] = None
+        prior_prediction: int | None = None
+        prior_probability: float | None = None
+        surprise: float | None = None
         if previous.last_symbol is not None:
             prior_prediction = int(previous.motor_probabilities.argmax().item())
             prior_probability = float(previous.motor_probabilities[symbol].item())
@@ -250,7 +251,7 @@ class Taiji:
         reward: float,
         *,
         learn: bool = True,
-        learn_memory: Optional[bool] = None,
+        learn_memory: bool | None = None,
         provenance: str = "experienced",
     ) -> TaijiOutcome:
         """Consume the pending action with a scalar environment outcome."""
@@ -435,7 +436,9 @@ class Taiji:
                 fast_offset = 0
                 trace_offset = sum(self.config.region_sizes)
                 cue_states = []
-                for region_size, previous_region in zip(self.config.region_sizes, cleared):
+                for region_size, previous_region in zip(
+                    self.config.region_sizes, cleared, strict=False
+                ):
                     activity = torch.relu(reinstated[fast_offset : fast_offset + region_size])
                     trace = reinstated[
                         trace_offset + fast_offset : trace_offset + fast_offset + region_size
@@ -617,7 +620,7 @@ class Taiji:
         *,
         epochs: int = 1,
         include_boundary: bool = True,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """Develop on a byte stream using only online local updates."""
 
         if epochs <= 0:
@@ -632,7 +635,7 @@ class Taiji:
                 if step.prior_prediction is not None:
                     observations += 1
                     correct += int(step.prior_prediction == symbol)
-                    surprise_sum += float(step.surprise)
+                    surprise_sum += float(step.surprise or 0.0)
         return {
             "observations": float(observations),
             "online_accuracy": correct / max(1, observations),
@@ -644,7 +647,7 @@ class Taiji:
         data: bytes,
         *,
         include_boundary: bool = True,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """Evaluate without changing learned parameters or persistent state."""
 
         checkpoint = self.checkpoint()
@@ -658,7 +661,7 @@ class Taiji:
                 if step.prior_prediction is not None:
                     observations += 1
                     correct += int(step.prior_prediction == symbol)
-                    surprise_sum += float(step.surprise)
+                    surprise_sum += float(step.surprise or 0.0)
             return {
                 "observations": float(observations),
                 "accuracy": correct / max(1, observations),
@@ -703,7 +706,7 @@ class Taiji:
             step = self.observe(next_symbol, learn=False)
         return bytes(generated)
 
-    def parameter_tensors(self) -> Tuple[torch.Tensor, ...]:
+    def parameter_tensors(self) -> tuple[torch.Tensor, ...]:
         return (
             *self.fabric.parameter_tensors(),
             self.motor.synapses.edge_weight,
@@ -732,7 +735,7 @@ class Taiji:
             + self.memory.dense_equivalent_edge_count()
         )
 
-    def checkpoint(self) -> Dict[str, Any]:
+    def checkpoint(self) -> dict[str, Any]:
         return {
             "format": self.CHECKPOINT_FORMAT,
             "config": self.config.to_dict(),
@@ -799,7 +802,7 @@ class Taiji:
         checkpoint: Mapping[str, Any],
         *,
         device: torch.device | str = "cpu",
-    ) -> "Taiji":
+    ) -> Taiji:
         config = TaijiConfig.from_dict(dict(checkpoint["config"]))
         model = cls(config, device=device)
         model.restore(checkpoint)

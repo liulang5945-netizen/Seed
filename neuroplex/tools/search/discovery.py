@@ -12,13 +12,12 @@
 输出统一 SearchResult(title, url, snippet, source)
 """
 
-import re
+import concurrent.futures
 import logging
+import re
 import urllib.parse
 import urllib.request
-import concurrent.futures
 from dataclasses import dataclass
-from typing import List, Optional
 
 logger = logging.getLogger("Taiji.Search.Discovery")
 
@@ -90,7 +89,7 @@ def _strip_tags(html: str) -> str:
 # ═══════════════════════════════════════════════
 
 
-def _search_duckduckgo(query: str, max_results: int = 8) -> List[SearchResult]:
+def _search_duckduckgo(query: str, max_results: int = 8) -> list[SearchResult]:
     """DuckDuckGo HTML 版搜索结果页爬取"""
     try:
         url = f"https://html.duckduckgo.com/html/?q={urllib.parse.quote(query)}"
@@ -123,7 +122,7 @@ def _search_duckduckgo(query: str, max_results: int = 8) -> List[SearchResult]:
         return []
 
 
-def _search_bing(query: str, max_results: int = 8) -> List[SearchResult]:
+def _search_bing(query: str, max_results: int = 8) -> list[SearchResult]:
     """Bing 搜索结果页爬取（2024+ 新 HTML 结构兼容）"""
     try:
         url = f"https://www.bing.com/search?q={urllib.parse.quote(query)}"
@@ -164,7 +163,7 @@ def _search_bing(query: str, max_results: int = 8) -> List[SearchResult]:
         return []
 
 
-def _search_baidu(query: str, max_results: int = 8) -> List[SearchResult]:
+def _search_baidu(query: str, max_results: int = 8) -> list[SearchResult]:
     """百度搜索结果页爬取"""
     try:
         url = f"https://www.baidu.com/s?wd={urllib.parse.quote(query)}"
@@ -202,7 +201,7 @@ def _search_baidu(query: str, max_results: int = 8) -> List[SearchResult]:
         return []
 
 
-def _search_wikipedia(query: str, max_results: int = 5) -> List[SearchResult]:
+def _search_wikipedia(query: str, max_results: int = 5) -> list[SearchResult]:
     """维基百科 API（免费、无密钥、结构化 JSON）"""
     try:
         url = (
@@ -233,7 +232,7 @@ def _search_wikipedia(query: str, max_results: int = 5) -> List[SearchResult]:
         return []
 
 
-def _search_google(query: str, max_results: int = 8) -> List[SearchResult]:
+def _search_google(query: str, max_results: int = 8) -> list[SearchResult]:
     """Google 搜索结果页爬取（纯 stdlib）"""
     try:
         url = f"https://www.google.com/search?q={urllib.parse.quote(query)}&num={max_results}"
@@ -274,7 +273,7 @@ def _search_google(query: str, max_results: int = 8) -> List[SearchResult]:
         return []
 
 
-def _search_yandex(query: str, max_results: int = 8) -> List[SearchResult]:
+def _search_yandex(query: str, max_results: int = 8) -> list[SearchResult]:
     """Yandex 搜索结果页爬取"""
     try:
         url = f"https://yandex.com/search/?text={urllib.parse.quote(query)}"
@@ -302,7 +301,7 @@ def _search_yandex(query: str, max_results: int = 8) -> List[SearchResult]:
         return []
 
 
-def _search_mojeek(query: str, max_results: int = 8) -> List[SearchResult]:
+def _search_mojeek(query: str, max_results: int = 8) -> list[SearchResult]:
     """Mojeek（独立搜索引擎，无 Google 依赖）"""
     try:
         url = f"https://www.mojeek.com/search?q={urllib.parse.quote(query)}"
@@ -330,7 +329,7 @@ def _search_mojeek(query: str, max_results: int = 8) -> List[SearchResult]:
         return []
 
 
-def _search_searx(query: str, max_results: int = 8) -> List[SearchResult]:
+def _search_searx(query: str, max_results: int = 8) -> list[SearchResult]:
     """Searx 公共实例（元搜索引擎，聚合多个后端）"""
     instances = [
         "https://searx.be/search",
@@ -361,7 +360,7 @@ def _search_searx(query: str, max_results: int = 8) -> List[SearchResult]:
     return []
 
 
-def _search_arxiv(query: str, max_results: int = 5) -> List[SearchResult]:
+def _search_arxiv(query: str, max_results: int = 5) -> list[SearchResult]:
     """arXiv API（学术论文，免费无密钥，SSL 容错）"""
     try:
         url = (
@@ -390,7 +389,7 @@ def _search_arxiv(query: str, max_results: int = 5) -> List[SearchResult]:
         return []
 
 
-def _search_hackernews(query: str, max_results: int = 5) -> List[SearchResult]:
+def _search_hackernews(query: str, max_results: int = 5) -> list[SearchResult]:
     """Hacker News Algolia API（免费、无密钥、结构化 JSON）"""
     try:
         url = (
@@ -419,7 +418,7 @@ def _search_hackernews(query: str, max_results: int = 5) -> List[SearchResult]:
         return []
 
 
-def _search_reddit(query: str, max_results: int = 5) -> List[SearchResult]:
+def _search_reddit(query: str, max_results: int = 5) -> list[SearchResult]:
     """Reddit 搜索（JSON API，无密钥）"""
     try:
         url = (
@@ -451,7 +450,7 @@ def _search_reddit(query: str, max_results: int = 5) -> List[SearchResult]:
         return []
 
 
-def _search_stackoverflow(query: str, max_results: int = 5) -> List[SearchResult]:
+def _search_stackoverflow(query: str, max_results: int = 5) -> list[SearchResult]:
     """Stack Overflow API（免费、无密钥、结构化 JSON）"""
     try:
         url = (
@@ -479,7 +478,7 @@ def _search_stackoverflow(query: str, max_results: int = 5) -> List[SearchResult
         return []
 
 
-def _search_github(query: str, max_results: int = 5) -> List[SearchResult]:
+def _search_github(query: str, max_results: int = 5) -> list[SearchResult]:
     """GitHub 搜索（无密钥时有限速但有结果）"""
     try:
         url = (
@@ -533,7 +532,7 @@ class WebSearchProvider:
         "github": _search_github,
     }
 
-    def __init__(self, engines: Optional[List[str]] = None):
+    def __init__(self, engines: list[str] | None = None):
         # 默认引擎：5 个 JSON API（快、稳定）+ 2 个 HTML 爬取（Baidu/Bing）
         # Google/Yandex/Mojeek/Searx/DDG 作为可选，需手动指定
         # 因为它们的 HTML 结构频繁变化或被反爬虫挡
@@ -549,7 +548,7 @@ class WebSearchProvider:
             "bing",
         ]
 
-    def search(self, query: str, max_results: int = 8) -> List[SearchResult]:
+    def search(self, query: str, max_results: int = 8) -> list[SearchResult]:
         """
         并行搜索所有引擎，合并去重，按引擎分组排序。
 
@@ -568,7 +567,7 @@ class WebSearchProvider:
         if not engines_to_use:
             return []
 
-        all_results: List[SearchResult] = []
+        all_results: list[SearchResult] = []
         engine_results: dict = {}
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=len(engines_to_use)) as pool:
@@ -607,7 +606,7 @@ class WebSearchProvider:
                             return all_results
         return all_results
 
-    def search_single(self, query: str, engine: str, max_results: int = 8) -> List[SearchResult]:
+    def search_single(self, query: str, engine: str, max_results: int = 8) -> list[SearchResult]:
         """单引擎搜索"""
         func = self.ENGINES.get(engine)
         if not func:
@@ -623,7 +622,7 @@ class WebSearchProvider:
 class SitemapProvider:
     """通过 robots.txt 和 sitemap.xml 发现站点 URL"""
 
-    def discover(self, seed_url: str, max_urls: int = 200) -> List[str]:
+    def discover(self, seed_url: str, max_urls: int = 200) -> list[str]:
         """
         从种子 URL 出发：
         1. 尝试 /robots.txt 找 Sitemap
@@ -651,7 +650,7 @@ class SitemapProvider:
             sitemap_urls.append(f"{base}/sitemap.xml")
 
         # 3. 解析 sitemap
-        all_urls: List[str] = []
+        all_urls: list[str] = []
         for sm_url in sitemap_urls[:3]:
             urls = self._parse_sitemap(sm_url)
             all_urls.extend(urls)
@@ -660,7 +659,7 @@ class SitemapProvider:
 
         return all_urls[:max_urls]
 
-    def _parse_sitemap(self, sitemap_url: str) -> List[str]:
+    def _parse_sitemap(self, sitemap_url: str) -> list[str]:
         """解析 sitemap.xml，支持 sitemap index"""
         try:
             xml = http_get(sitemap_url, timeout=10)
@@ -683,7 +682,7 @@ class SitemapProvider:
 # 统一入口
 # ═══════════════════════════════════════════════
 
-_default_provider: Optional[WebSearchProvider] = None
+_default_provider: WebSearchProvider | None = None
 
 
 def get_search_provider() -> WebSearchProvider:
@@ -693,6 +692,6 @@ def get_search_provider() -> WebSearchProvider:
     return _default_provider
 
 
-def search(query: str, max_results: int = 8) -> List[SearchResult]:
+def search(query: str, max_results: int = 8) -> list[SearchResult]:
     """快捷搜索接口"""
     return get_search_provider().search(query, max_results)

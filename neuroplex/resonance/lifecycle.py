@@ -16,7 +16,7 @@ from __future__ import annotations
 import logging
 import os
 from dataclasses import dataclass, field
-from typing import Any, Dict, Optional
+from typing import Any
 
 logger = logging.getLogger("Taiji.Lifecycle")
 
@@ -114,7 +114,7 @@ class ApoptosisTracker:
 
     # ── 种群级状态机步进（睡眠 Phase 4 主入口）──────────
 
-    def step_population(self, metrics_map: Dict[str, dict], step_round: int) -> Dict[str, str]:
+    def step_population(self, metrics_map: dict[str, dict], step_round: int) -> dict[str, str]:
         """种群级凋亡状态机步进，返回 {nid: new_state}。
 
         metrics_map: {nid: metrics}，先计算种群 ppl 百分位（若注入 ppl），再逐 nid 流转。
@@ -195,7 +195,7 @@ class ApoptosisTracker:
     # ── 状态查询 ───────────────────────────────────────
 
     def get_state(self, neuron_id: str) -> str:
-        return self._states.get(neuron_id, "active")
+        return str(self._states.get(neuron_id, "active"))
 
     def get_states(self) -> dict:
         return dict(self._states)
@@ -236,8 +236,8 @@ class ApoptosisTracker:
     def cleanup_neuron(
         self,
         neuron_id: str,
-        ckpt_path: Optional[str] = None,
-        ensemble: Optional[Any] = None,
+        ckpt_path: str | None = None,
+        ensemble: Any | None = None,
     ) -> bool:
         """清理凋亡神经元的资源。
 
@@ -253,10 +253,9 @@ class ApoptosisTracker:
             return False
 
         # 从 ensemble 移除
-        if ensemble is not None and hasattr(ensemble, "neurons"):
-            if neuron_id in ensemble.neurons:
-                del ensemble.neurons[neuron_id]
-                logger.info("已从 ensemble 移除凋亡神经元 %s", neuron_id)
+        if ensemble is not None and hasattr(ensemble, "neurons") and neuron_id in ensemble.neurons:
+            del ensemble.neurons[neuron_id]
+            logger.info("已从 ensemble 移除凋亡神经元 %s", neuron_id)
 
         # 移动 ckpt 到回收站目录（人脑：凋亡清除不是销毁信息，而是移出工作集）
         if ckpt_path is not None and os.path.exists(ckpt_path):
@@ -273,7 +272,7 @@ class ApoptosisTracker:
         # 清理其他神经元的 side_channels
         if ensemble is not None and hasattr(ensemble, "neurons"):
             key = str(neuron_id)
-            for other_nid, other_neuron in ensemble.neurons.items():
+            for _other_nid, other_neuron in ensemble.neurons.items():
                 if hasattr(other_neuron, "excite_channels") and key in other_neuron.excite_channels:
                     del other_neuron.excite_channels[key]
                 if (
@@ -287,7 +286,7 @@ class ApoptosisTracker:
     # ── 突触修剪（层级 0：先修剪连接，不动神经元本体）────
 
     def prune_synapses(
-        self, neurons: Dict[str, Any], min_usage: float = 0.01, stale_rounds: int = 10
+        self, neurons: dict[str, Any], min_usage: float = 0.01, stale_rounds: int = 10
     ) -> int:
         """修剪弱突触（side_channels）——人脑突触修剪（Synaptic Pruning）。
 
@@ -419,7 +418,7 @@ class MaturityTracker:
         """
         if neuron_id not in self._maturity:
             return 1.0  # 未注册视为已成熟
-        return min(1.0, self._maturity[neuron_id] / self.maturity_rounds)
+        return float(min(1.0, self._maturity[neuron_id] / self.maturity_rounds))
 
     def get_lr_multiplier(self, neuron_id: str) -> float:
         """获取学习率倍数（幼稚态高，成熟态低）。"""
@@ -490,11 +489,11 @@ class NeurogenesisTrigger:
         xs = list(range(n))
         mean_x = sum(xs) / n
         mean_y = sum(values) / n
-        num = sum((x - mean_x) * (y - mean_y) for x, y in zip(xs, values))
+        num = sum((x - mean_x) * (y - mean_y) for x, y in zip(xs, values, strict=False))
         den = sum((x - mean_x) ** 2 for x in xs)
         if den == 0:
             return 0.0
-        return num / den
+        return float(num / den)
 
     def diagnose_domain(self, domain: str) -> str:
         """诊断某 domain 当前处于哪种状态（不触发任何动作）。
@@ -669,9 +668,11 @@ class NeurogenesisTrigger:
                 # 跳过幼稚态神经元（maturity < min_maturity_ratio）：
                 # 新 neuron 天然没有共激活历史，100% 的 pair 都是低频，
                 # 会形成"检测孤立 → 创建新 neuron → 新 neuron 又孤立"的正反馈
-                if maturity_tracker is not None:
-                    if maturity_tracker.get_maturity_ratio(nid) < min_maturity_ratio:
-                        continue
+                if (
+                    maturity_tracker is not None
+                    and maturity_tracker.get_maturity_ratio(nid) < min_maturity_ratio
+                ):
+                    continue
                 if nid not in pair_stats:
                     pair_stats[nid] = [0, 0]
                 pair_stats[nid][0] += 1
@@ -716,9 +717,9 @@ class LifecycleManager:
         self,
         metrics_map: dict,
         ensemble: Any,
-        ckpt_dir: Optional[str] = None,
+        ckpt_dir: str | None = None,
         step_round: int = 0,
-        prune_neurons: Optional[Dict[str, Any]] = None,
+        prune_neurons: dict[str, Any] | None = None,
     ) -> dict:
         """执行一次生命周期步进（v2：多维生存评分 + 分层状态机）。
 

@@ -4,11 +4,10 @@
 路径白名单、命令黑名单、审计日志。
 """
 
+import json
 import logging
 import os
-import json
 import time
-from typing import Optional
 
 logger = logging.getLogger("SandboxSecurity")
 
@@ -184,7 +183,7 @@ def is_command_safe(command: str) -> bool:
 class AuditLogger:
     """沙箱操作审计日志"""
 
-    def __init__(self, log_dir: Optional[str] = None):
+    def __init__(self, log_dir: str | None = None):
         if log_dir is None:
             log_dir = os.path.join(get_project_root(), "taiji_data", "audit_logs")
         os.makedirs(log_dir, exist_ok=True)
@@ -209,7 +208,7 @@ class AuditLogger:
         """获取最近的审计事件"""
         events = []
         try:
-            with open(self.log_file, "r", encoding="utf-8") as f:
+            with open(self.log_file, encoding="utf-8") as f:
                 lines = f.readlines()
                 for line in lines[-count:]:
                     events.append(json.loads(line))

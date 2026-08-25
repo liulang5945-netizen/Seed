@@ -22,9 +22,8 @@ SearXNG 优势：
 
 import json
 import logging
-import urllib.request
 import urllib.parse
-from typing import List, Dict, Optional
+import urllib.request
 
 logger = logging.getLogger("Taiji.SearXNG")
 
@@ -82,7 +81,7 @@ class SearXNGClient:
 
     def search(
         self, query: str, categories: str = "general", language: str = "auto", max_results: int = 10
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """
         搜索。
 
@@ -138,21 +137,21 @@ class SearXNGClient:
             logger.warning(f"SearXNG 搜索失败: {e}")
             return []
 
-    def search_news(self, query: str, max_results: int = 5) -> List[Dict]:
+    def search_news(self, query: str, max_results: int = 5) -> list[dict]:
         """新闻搜索"""
         return self.search(query, categories="news", max_results=max_results)
 
-    def search_science(self, query: str, max_results: int = 5) -> List[Dict]:
+    def search_science(self, query: str, max_results: int = 5) -> list[dict]:
         """学术搜索"""
         return self.search(query, categories="science", max_results=max_results)
 
-    def search_it(self, query: str, max_results: int = 5) -> List[Dict]:
+    def search_it(self, query: str, max_results: int = 5) -> list[dict]:
         """IT/技术搜索"""
         return self.search(query, categories="it", max_results=max_results)
 
 
 # 全局客户端
-_client: Optional[SearXNGClient] = None
+_client: SearXNGClient | None = None
 
 
 def get_searxng_client() -> SearXNGClient:

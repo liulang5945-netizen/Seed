@@ -10,6 +10,7 @@ Taiji 安全模块
 - AuditLogger: 安全操作审计日志
 """
 
+import base64
 import hashlib
 import hmac
 import json
@@ -18,9 +19,7 @@ import os
 import secrets
 import struct
 import time
-import base64
 from datetime import datetime
-from typing import Optional, List
 
 from seed_platform.paths import get_external_path
 from seed_platform.settings import load_settings, update_settings
@@ -49,7 +48,7 @@ class JWTManager:
     - 刷新即将过期的 Token
     """
 
-    def __init__(self, secret_key: str = None, token_expire_hours: int = 24):
+    def __init__(self, secret_key: str | None = None, token_expire_hours: int = 24):
         self.secret_key = secret_key or self._load_or_generate_secret()
         self.token_expire_hours = token_expire_hours
 
@@ -61,7 +60,7 @@ class JWTManager:
         key_path = self._secret_path()
         if os.path.exists(key_path):
             try:
-                with open(key_path, "r") as f:
+                with open(key_path) as f:
                     key = f.read().strip()
                 if len(key) >= 32:
                     return key
@@ -97,7 +96,7 @@ class JWTManager:
         ).digest()
         return self._b64_encode(sig)
 
-    def create_token(self, username: str, extra_claims: dict = None) -> str:
+    def create_token(self, username: str, extra_claims: dict | None = None) -> str:
         """创建 JWT Token"""
         # Header
         header = self._b64_encode(json.dumps({"alg": "HS256", "typ": "JWT"}).encode())
@@ -119,7 +118,7 @@ class JWTManager:
 
         return f"{message}.{signature}"
 
-    def verify_token(self, token: str) -> Optional[dict]:
+    def verify_token(self, token: str) -> dict | None:
         """验证 JWT Token，返回 payload 或 None"""
         try:
             parts = token.split(".")
@@ -135,20 +134,19 @@ class JWTManager:
                 return None
 
             # 解码 payload
-            payload_data = json.loads(self._b64_decode(payload))
+            payload_data: dict = json.loads(self._b64_decode(payload))
 
             # 检查过期时间
-            if "exp" in payload_data:
-                if time.time() > payload_data["exp"]:
-                    logger.info("JWT Token 已过期")
-                    return None
+            if "exp" in payload_data and time.time() > payload_data["exp"]:
+                logger.info("JWT Token 已过期")
+                return None
 
             return payload_data
         except Exception as e:
             logger.warning(f"JWT 验证失败: {e}")
             return None
 
-    def refresh_token(self, token: str) -> Optional[str]:
+    def refresh_token(self, token: str) -> str | None:
         """刷新即将过期的 Token（过期前 2 小时内可刷新）"""
         payload = self.verify_token(token)
         if not payload:
@@ -297,7 +295,7 @@ class SecureStorage:
 
             # XOR 解密
             key_stream = self._legacy_keystream(master_key, iv, len(encrypted))
-            decrypted = bytes(a ^ b for a, b in zip(encrypted, key_stream))
+            decrypted = bytes(a ^ b for a, b in zip(encrypted, key_stream, strict=False))
             return decrypted.decode("utf-8")
         except Exception as e:
             logger.warning(f"解密失败: {e}")
@@ -320,7 +318,7 @@ class SecureStorage:
 class AuditLogger:
     """安全操作审计日志"""
 
-    def __init__(self, log_dir: str = None):
+    def __init__(self, log_dir: str | None = None):
         self.log_dir = log_dir or os.path.join(_security_dir(), "audit_logs")
         os.makedirs(self.log_dir, exist_ok=True)
 
@@ -330,7 +328,11 @@ class AuditLogger:
         return os.path.join(self.log_dir, f"audit_{today}.jsonl")
 
     def log_event(
-        self, event_type: str, detail: dict = None, user: str = "local", ip: str = "127.0.0.1"
+        self,
+        event_type: str,
+        detail: dict | None = None,
+        user: str = "local",
+        ip: str = "127.0.0.1",
     ):
         """记录安全事件"""
         event = {
@@ -346,7 +348,7 @@ class AuditLogger:
         except Exception as e:
             logger.warning(f"审计日志写入失败: {e}")
 
-    def get_recent_events(self, limit: int = 100, days: int = 7) -> List[dict]:
+    def get_recent_events(self, limit: int = 100, days: int = 7) -> list[dict]:
         """获取最近的审计事件"""
         events = []
         try:
@@ -357,7 +359,7 @@ class AuditLogger:
                 day = today - timedelta(days=d)
                 path = os.path.join(self.log_dir, f"audit_{day.strftime('%Y-%m-%d')}.jsonl")
                 if os.path.exists(path):
-                    with open(path, "r", encoding="utf-8") as f:
+                    with open(path, encoding="utf-8") as f:
                         for line in f:
                             line = line.strip()
                             if line:
@@ -378,7 +380,15 @@ class AuditLogger:
 class AuthManager:
     """认证管理器（单例）"""
 
-    _instance = None
+    # R5: 类级属性声明——__new__ 中赋值的实例属性需显式声明，
+    # 否则 mypy 无法推断（_jwt/_storage/_audit 系列 attr-defined）。
+    _instance: "AuthManager | None" = None
+    _jwt: "JWTManager"
+    _storage: "SecureStorage"
+    _audit: "AuditLogger"
+    enabled: bool
+    username: str
+    password_hash: str
 
     def __new__(cls):
         if cls._instance is None:
@@ -417,7 +427,7 @@ class AuthManager:
             logger.warning(f"保存认证配置失败: {e}")
 
     @staticmethod
-    def _hash_password(password: str, salt: str = None) -> str:
+    def _hash_password(password: str, salt: str | None = None) -> str:
         """密码哈希（SHA-256 + 随机 salt）"""
         if salt is None:
             salt = secrets.token_hex(16)
@@ -451,7 +461,7 @@ class AuthManager:
             legacy_hash = hashlib.sha256(f"{legacy_salt}{password}".encode()).hexdigest()
             return hmac.compare_digest(legacy_hash, self.password_hash)
 
-    def login(self, username: str, password: str) -> Optional[str]:
+    def login(self, username: str, password: str) -> str | None:
         """用户登录，返回 JWT Token 或 None。
 
         安全策略：
@@ -486,7 +496,7 @@ class AuthManager:
         self._audit.log_event("login_success", {"user": username})
         return token
 
-    def verify_token(self, token: str) -> Optional[dict]:
+    def verify_token(self, token: str) -> dict | None:
         """验证 Token"""
         return self._jwt.verify_token(token)
 

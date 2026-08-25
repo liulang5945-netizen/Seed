@@ -10,8 +10,9 @@ from __future__ import annotations
 
 import hashlib
 import math
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Dict, Mapping, Tuple
+from typing import Any
 
 import torch
 
@@ -216,7 +217,7 @@ class EpisodicField:
             raise ValueError("episodic tick cannot be negative")
         pairs = self.config.memory_time_dim // 2
         tick_value = float(tick)
-        values = []
+        values: list[float] = []
         for index in range(pairs):
             period = float(2**index)
             values.extend(
@@ -247,7 +248,7 @@ class EpisodicField:
         self,
         drive: torch.Tensor,
         threshold: torch.Tensor,
-    ) -> Tuple[torch.Tensor, float]:
+    ) -> tuple[torch.Tensor, float]:
         positive = torch.relu(drive - threshold)
         inhibition = self.config.memory_inhibition_gain * float(positive.mean().item())
         activity = torch.tanh(torch.relu(drive - threshold - inhibition))
@@ -283,7 +284,7 @@ class EpisodicField:
         previous: MemoryState,
         *,
         use_long_term: bool = True,
-    ) -> Tuple[MemoryState, MemoryRecall]:
+    ) -> tuple[MemoryState, MemoryRecall]:
         """Complete a distributed cue and expose recalled causal evidence."""
 
         cue_drive = self._encode_cue(cortical_context)
@@ -646,7 +647,7 @@ class EpisodicField:
         *,
         tick: int,
         generator: torch.Generator,
-    ) -> Tuple[MemoryState, EpisodicReplay]:
+    ) -> tuple[MemoryState, EpisodicReplay]:
         """Spontaneously regenerate one engram without any external cue.
 
         No stored event list is consulted.  The seed is built only from field
@@ -803,7 +804,7 @@ class EpisodicField:
         )
         return next_state, event
 
-    def parameter_tensors(self) -> Tuple[torch.Tensor, ...]:
+    def parameter_tensors(self) -> tuple[torch.Tensor, ...]:
         return (
             self.association.edge_weight,
             self.action_readout.edge_weight,
@@ -848,7 +849,7 @@ class EpisodicField:
             )
         )
 
-    def to_payload(self) -> Dict[str, Any]:
+    def to_payload(self) -> dict[str, Any]:
         return {
             "cue_encoder": self.cue_encoder.to_payload(),
             "action_encoder": self.action_encoder.to_payload(),

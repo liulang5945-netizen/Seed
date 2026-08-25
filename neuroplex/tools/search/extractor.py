@@ -10,11 +10,10 @@
 统一输出 PageContent(url, title, text, markdown, links)
 """
 
-import re
 import logging
+import re
 import urllib.parse
 from dataclasses import dataclass, field
-from typing import List, Optional
 
 logger = logging.getLogger("Taiji.Search.Extractor")
 
@@ -27,7 +26,7 @@ class PageContent:
     title: str = ""
     text: str = ""  # 纯文本正文
     markdown: str = ""  # Markdown 格式
-    links: List[str] = field(default_factory=list)
+    links: list[str] = field(default_factory=list)
     word_count: int = 0
     extract_method: str = "readability"  # readability / fallback
 
@@ -212,7 +211,7 @@ class ReadabilityExtractor:
         text = re.sub(r"&#(\d+);", lambda m: chr(int(m.group(1))), text)
         return text
 
-    def _extract_links(self, html: str, base_url: str) -> List[str]:
+    def _extract_links(self, html: str, base_url: str) -> list[str]:
         """提取同域链接（含相对路径转绝对路径）"""
         if not base_url:
             return []
@@ -311,7 +310,7 @@ class ReadabilityExtractor:
 # 统一入口
 # ═══════════════════════════════════════════════
 
-_default_extractor: Optional[ReadabilityExtractor] = None
+_default_extractor: ReadabilityExtractor | None = None
 
 
 def get_extractor() -> ReadabilityExtractor:

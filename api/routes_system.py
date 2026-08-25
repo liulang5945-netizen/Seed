@@ -43,7 +43,8 @@ def get_system_hardware():
 
         if torch.cuda.is_available():
             gpu_info = torch.cuda.get_device_name(0)
-            vram_bytes = torch.cuda.get_device_properties(0).total_mem
+            props = torch.cuda.get_device_properties(0)
+            vram_bytes = getattr(props, "total_memory", getattr(props, "total_mem", 0))
             vram_info = f"{vram_bytes / (1024**3):.1f} GB"
             gpu_backends = ["cuda"]
         elif hasattr(torch, "directml") and torch.directml.is_available():
@@ -121,6 +122,76 @@ def restart_system(request: Request):
     t = threading.Thread(target=_restart, daemon=True)
     t.start()
     return {"status": "ok", "message": "正在重启..."}
+
+
+# ======================== 系统重置（安全子集） ========================
+#
+# 语义边界（重要）：
+# - 当前仅支持 scope="chat_sessions"：清空本地对话会话历史文件。
+# - 明确不动：模型权重 / checkpoints、Taiji 持续状态、app_settings.json 配置。
+# - 未来如需扩展重置范围，必须新增显式 scope 值并单独评审，不得隐式扩大。
+_RESET_SCOPES = {"chat_sessions"}
+
+
+def _require_admin_auth(request: Request):
+    """敏感系统操作的鉴权门（对齐 /api/system/restart 的策略）。
+
+    - 认证启用时：必须携带有效 Bearer Token，否则 401。
+    - 认证未启用时：视为本机受信环境，放行本地操作（桌面端默认模式）。
+    """
+    from seed_platform.auth import AuthManager
+
+    auth = AuthManager()
+
+    if auth.enabled:
+        auth_header = request.headers.get("Authorization", "")
+        if not auth_header.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="缺少认证 Token")
+        token = auth_header[7:]
+        payload = auth.verify_token(token)
+        if not payload:
+            raise HTTPException(status_code=401, detail="Token 无效或已过期")
+        return payload
+    return None
+
+
+@router.post("/api/system/reset")
+async def reset_system(req: dict, request: Request):
+    """系统重置（安全子集）：按 scope 清除可安全重建的运行时数据。
+
+    当前支持：
+    - scope="chat_sessions"：清空对话会话历史（user_data/chat_history/*.json）。
+
+    不触及模型权重、检查点、Taiji 状态与持久化设置。
+    """
+    _require_admin_auth(request)
+
+    scope = req.get("scope", "")
+    if scope not in _RESET_SCOPES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"不支持的重置范围: {scope!r}；当前仅支持 {sorted(_RESET_SCOPES)}",
+        )
+
+    history_dir = get_external_path(os.path.join("user_data", "chat_history"))
+    removed = 0
+    if os.path.isdir(history_dir):
+        for name in os.listdir(history_dir):
+            if not name.endswith(".json"):
+                continue
+            try:
+                os.remove(os.path.join(history_dir, name))
+                removed += 1
+            except OSError as exc:
+                logger.warning(f"重置：删除会话文件失败 {name}: {exc}")
+
+    logger.info(f"系统重置完成: scope={scope}, 清除会话 {removed} 个")
+    return {
+        "status": "ok",
+        "scope": scope,
+        "removed_sessions": removed,
+        "message": f"已清空 {removed} 个对话会话（模型权重与配置未受影响）",
+    }
 
 
 # ======================== 路径与文件选择 ========================

@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger("Hardware")
 
 
-def resolve_device(config: "TrainingConfig") -> str:
+def resolve_device(config: TrainingConfig) -> str:
     """自动判断最优的运算设备（cuda > mps > directml > cpu）"""
     if config.device != "auto":
         return config.device
@@ -36,7 +36,7 @@ def resolve_device(config: "TrainingConfig") -> str:
         import torch_directml
 
         if torch_directml.is_available():
-            return torch_directml.device()
+            return str(torch_directml.device())
     except ImportError as e:
         logger.debug("【resolve_device】处理失败（非致命）: %s", e)
     return "cpu"
@@ -94,7 +94,7 @@ def estimate_params_b(config, loaded_model=None) -> tuple:
         cfg_json = os.path.join(config.model_name, "config.json")
         if os.path.exists(cfg_json):
             try:
-                with open(cfg_json, "r", encoding="utf-8") as f:
+                with open(cfg_json, encoding="utf-8") as f:
                     cdata = json.load(f)
                 for key in ("num_parameters", "n_params"):
                     v = cdata.get(key, 0)
@@ -120,7 +120,7 @@ def estimate_params_b(config, loaded_model=None) -> tuple:
             _cfg_json = os.path.join(config.model_name, "config.json")
             if os.path.exists(_cfg_json):
                 try:
-                    with open(_cfg_json, "r", encoding="utf-8") as _f:
+                    with open(_cfg_json, encoding="utf-8") as _f:
                         _cdata = json.load(_f)
                     _dtype = str(_cdata.get("torch_dtype", "")).lower()
                     if "float32" in _dtype or "fp32" in _dtype:
@@ -194,7 +194,10 @@ def auto_configure_for_hardware(config, loaded_model=None) -> dict:
     gpu_name = ""
     is_gpu = device == "cuda" and _t.cuda.is_available()
     if is_gpu:
-        vram_gb = round(_t.cuda.get_device_properties(0).total_mem / (1024**3), 1)
+        props = _t.cuda.get_device_properties(0)
+        vram_gb = round(
+            getattr(props, "total_memory", getattr(props, "total_mem", 0)) / (1024**3), 1
+        )
         gpu_name = _t.cuda.get_device_name(0)
         effective_mem = max(0.5, vram_gb - 1.5)
     else:
@@ -420,7 +423,10 @@ def analyze_hardware() -> HardwareInfo:
 
         if torch.cuda.is_available():
             info.device = "cuda"
-            info.vram_gb = round(torch.cuda.get_device_properties(0).total_mem / (1024**3), 1)
+            props = torch.cuda.get_device_properties(0)
+            info.vram_gb = round(
+                getattr(props, "total_memory", getattr(props, "total_mem", 0)) / (1024**3), 1
+            )
             info.gpu_name = torch.cuda.get_device_name(0)
         else:
             info.device = "cpu"

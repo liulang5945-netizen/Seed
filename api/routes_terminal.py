@@ -11,13 +11,16 @@ Web 终端 WebSocket 路由
 """
 
 import asyncio
+import codecs
 import json
+import locale
 import logging
 import os
 import sys
 import threading
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+
 from seed_platform.settings import get_setting
 
 logger = logging.getLogger("ApiServer.Terminal")
@@ -100,6 +103,37 @@ def _get_default_shell() -> tuple:
         return shell, []
 
 
+def _get_console_encoding() -> str:
+    """获取子进程（shell）管道输出所用的编码。
+
+    Windows 上 cmd.exe 经管道输出使用控制台代码页（中文系统为 cp936/GBK），
+    若按 UTF-8 解码会得到乱码；其他平台按系统首选编码处理。
+    """
+    if sys.platform == "win32":
+        try:
+            import ctypes
+
+            cp = ctypes.windll.kernel32.GetConsoleOutputCP()
+            if cp:
+                return f"cp{cp}"
+        except Exception as e:
+            logger.debug("【_get_console_encoding】获取控制台代码页失败（非致命）: %s", e)
+    return locale.getpreferredencoding(False) or "utf-8"
+
+
+def _normalize_terminal_input(text: str) -> str:
+    """规范化键盘输入的换行符为 CRLF（仅 Windows）。
+
+    xterm 键盘按 Enter 发送的是裸 `\r`，而管道方式启动的 cmd.exe 不把单独 `\r`
+    视为行终止符：命令会停留在输入缓冲不执行，后续输入还会被拼接在同一行。
+    这里先将所有 `\r\n` / 裸 `\r` 归一为 `\n`，再统一转成 `\r\n`（已含 `\r\n`
+    的不会被重复转换），多行粘贴也能正确拆行。非 win32 平台保持原样。
+    """
+    if sys.platform != "win32":
+        return text
+    return text.replace("\r\n", "\n").replace("\r", "\n").replace("\n", "\r\n")
+
+
 async def _read_stream(stream, ws: WebSocket, prefix: str):
     """从子进程流读取并发送到 WebSocket"""
     try:
@@ -167,6 +201,7 @@ async def terminal_websocket(ws: WebSocket):
             logger.debug("【terminal_websocket】处理失败（非致命）: %s", e)
 
         # 获取 shell
+        shell_args: list[str]
         if sys.platform == "win32":
             shell_cmd, shell_args = "cmd.exe", []
         else:
@@ -200,8 +235,11 @@ async def terminal_websocket(ws: WebSocket):
         # 后台线程读取子进程 stdout → asyncio queue（有界，防背压撑爆内存）
         import queue
 
-        output_queue = queue.Queue(maxsize=1000)
+        output_queue: queue.Queue[str | None] = queue.Queue(maxsize=1000)
         _dropped = [0]
+        # Windows 管道 stdin 的 write 会同步阻塞（管道满时挂起），
+        # 必须丢进线程池执行，否则会卡住事件循环（输入分发/心跳）
+        _stdin_codec = _get_console_encoding()
 
         def _put_bounded(q, item):
             """有界入队：满时丢弃最旧数据并告警（节流），保证读者始终看到最新输出"""
@@ -223,14 +261,22 @@ async def terminal_websocket(ws: WebSocket):
                 logger.debug("【terminal_websocket._put_bounded】处理失败（非致命）: %s", e)
 
         def _read_output(stream, q):
+            # 注意：必须用 read1()（单次底层原始读，有数据立即返回）。
+            # BufferedReader.read(4096) 在 Windows 管道上会阻塞到攒满 4KB 或 EOF，
+            # 导致输出积压到子进程退出才一次性涌出（实测复现，见任务 #13）。
+            decoder = codecs.getincrementaldecoder(_get_console_encoding())("replace")
             try:
                 while True:
-                    data = stream.read(4096)
+                    data = stream.read1(4096)
                     if not data:
                         break
-                    _put_bounded(q, data)
+                    # 增量解码：多字节字符可能被拆在两个块边界，避免乱码后丢弃
+                    _put_bounded(q, decoder.decode(data))
             except Exception as e:
                 logger.debug("【terminal_websocket._read_output】处理失败（非致命）: %s", e)
+            tail = decoder.decode(b"", True)
+            if tail:
+                _put_bounded(q, tail)
             _put_bounded(q, None)
 
         _stdout_thread = threading.Thread(
@@ -244,16 +290,17 @@ async def terminal_websocket(ws: WebSocket):
 
         # 后台任务：从 queue 读取 → WebSocket
         async def _drain_output():
+            _eof_left = 2  # stdout / stderr 两个读取线程各发一个 None 哨兵
             while True:
                 try:
                     data = await loop.run_in_executor(None, output_queue.get, True, 0.5)
                     if data is None:
-                        break
+                        _eof_left -= 1
+                        if _eof_left <= 0:
+                            break
+                        continue
                     await ws.send_text(
-                        json.dumps(
-                            {"type": "output", "data": data.decode("utf-8", errors="replace")},
-                            ensure_ascii=False,
-                        )
+                        json.dumps({"type": "output", "data": data}, ensure_ascii=False)
                     )
                 except queue.Empty:
                     continue
@@ -285,9 +332,12 @@ async def terminal_websocket(ws: WebSocket):
                 msg = json.loads(raw)
                 t = msg.get("type", "")
                 if t == "input" and process.stdin and not process.stdin.closed:
-                    data = msg.get("data", "")
-                    process.stdin.write(data.encode("utf-8"))
-                    process.stdin.flush()
+                    data = _normalize_terminal_input(msg.get("data", ""))
+                    text = await loop.run_in_executor(
+                        None, lambda: data.encode(_stdin_codec, "replace")
+                    )
+                    await loop.run_in_executor(None, process.stdin.write, text)
+                    await loop.run_in_executor(None, process.stdin.flush)
                     # 审计日志：脱敏，仅记录输入长度（DEBUG 级）
                     if data.strip():
                         logger.debug(f"终端[PID={_pid}] 输入: {len(data)} chars")
@@ -295,8 +345,10 @@ async def terminal_websocket(ws: WebSocket):
                     await ws.send_text(json.dumps({"type": "pong"}))
         except json.JSONDecodeError:
             if process.stdin and not process.stdin.closed:
-                process.stdin.write(raw.encode("utf-8"))
-                process.stdin.flush()
+                raw = _normalize_terminal_input(raw)
+                text = await loop.run_in_executor(None, lambda: raw.encode(_stdin_codec, "replace"))
+                await loop.run_in_executor(None, process.stdin.write, text)
+                await loop.run_in_executor(None, process.stdin.flush)
                 if raw.strip():
                     logger.debug(f"终端[PID={_pid}] 输入: {len(raw)} chars")
         except WebSocketDisconnect as e:

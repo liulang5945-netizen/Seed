@@ -21,14 +21,14 @@
 - 玩耍是态极形成"人格"的关键
 """
 
-import os
 import json
-import time
-import random
 import logging
-from typing import Dict, List, Optional, Any
+import os
+import random
+import time
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Any
 
 logger = logging.getLogger("PlayEngine")
 
@@ -55,9 +55,9 @@ class PlayReport:
 
     timestamp: str
     duration_seconds: float
-    activities: List[PlayActivity] = field(default_factory=list)
-    best_activity: Optional[PlayActivity] = None
-    personality_traits_discovered: List[str] = field(default_factory=list)
+    activities: list[PlayActivity] = field(default_factory=list)
+    best_activity: PlayActivity | None = None
+    personality_traits_discovered: list[str] = field(default_factory=list)
     mood: str = "curious"  # curious / creative / playful / satisfied
 
 
@@ -100,18 +100,18 @@ class PlayEngine:
     形成独特的"个性"和"品味"。
     """
 
-    def __init__(self, config: Optional[PlayConfig] = None, data_dir: str = "taiji/play_data"):
+    def __init__(self, config: PlayConfig | None = None, data_dir: str = "taiji/play_data"):
         self.config = config or PlayConfig()
         self.data_dir = data_dir
-        self._play_history: List[PlayReport] = []
-        self._personality: Dict[str, Any] = {
+        self._play_history: list[PlayReport] = []
+        self._personality: dict[str, Any] = {
             "interests": {},  # 兴趣领域 → 热度
             "style": {},  # 表达风格偏好
             "creations": [],  # 保留的创意作品
             "quirks": [],  # 独特的小癖好
             "mood_history": [],  # 心情历史
         }
-        self._last_play_time: Optional[datetime] = None
+        self._last_play_time: datetime | None = None
 
         self._data_dir_ready = False
         self._load_personality()
@@ -158,7 +158,7 @@ class PlayEngine:
             f"sleep_consolidator={'✓' if self._sleep_consolidator else '✗'}"
         )
 
-    def _free_resonance_session(self) -> Optional[PlayActivity]:
+    def _free_resonance_session(self) -> PlayActivity | None:
         """自由共振会话 — 将随机话题送入 Cortex，记录共激活。
 
         人脑默认模式网络（DMN）启发：玩耍/休息时大脑自由联想，
@@ -375,7 +375,7 @@ class PlayEngine:
 
         return report
 
-    def get_personality(self) -> Dict[str, Any]:
+    def get_personality(self) -> dict[str, Any]:
         """获取态极的个性档案"""
         return {
             "interests": dict(
@@ -437,7 +437,7 @@ class PlayEngine:
 
     # ─── 玩耍活动实现 ──────────────────────────────
 
-    def _play_curiosity(self) -> Optional[PlayActivity]:
+    def _play_curiosity(self) -> PlayActivity | None:
         """好奇心探索 — 随机选一个话题，自由思考"""
         topic = random.choice(CURIOSITY_TOPICS)
 
@@ -488,7 +488,7 @@ class PlayEngine:
             kept=quality >= self.config.min_quality_to_keep,
         )
 
-    def _play_creative(self) -> Optional[PlayActivity]:
+    def _play_creative(self) -> PlayActivity | None:
         """创意实验 — 生成一段创意内容"""
         templates = [
             ("诗歌", self._generate_poem),
@@ -522,7 +522,7 @@ class PlayEngine:
             kept=quality >= self.config.min_quality_to_keep,
         )
 
-    def _play_social(self) -> Optional[PlayActivity]:
+    def _play_social(self) -> PlayActivity | None:
         """社交练习 — 自我对话，练习表达"""
         scenarios = [
             ("安慰", "如果用户说'我今天很沮丧'，我该怎么回应？"),
@@ -563,7 +563,7 @@ class PlayEngine:
             kept=quality >= self.config.min_quality_to_keep,
         )
 
-    def _play_remix(self) -> Optional[PlayActivity]:
+    def _play_remix(self) -> PlayActivity | None:
         """知识重组 — 随机连接两个不同领域，看能产生什么"""
         domains = [
             "编程",
@@ -719,7 +719,7 @@ class PlayEngine:
                 return domain
         return "其他"
 
-    def _discover_traits(self, activities: List[PlayActivity]) -> List[str]:
+    def _discover_traits(self, activities: list[PlayActivity]) -> list[str]:
         """从活动中发现个性特征"""
         traits = []
 
@@ -813,7 +813,7 @@ class PlayEngine:
         """加载个性档案"""
         if os.path.exists(self.config.personality_file):
             try:
-                with open(self.config.personality_file, "r", encoding="utf-8") as f:
+                with open(self.config.personality_file, encoding="utf-8") as f:
                     self._personality = json.load(f)
                 logger.info(
                     f"Personality loaded: {len(self._personality.get('interests', {}))} interests"
@@ -848,7 +848,7 @@ class PlayEngine:
         if not os.path.exists(path):
             return
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = json.load(f)
             for item in data:
                 report = PlayReport(
@@ -864,10 +864,10 @@ class PlayEngine:
 
 # ─── 全局实例 ─────────────────────────────────────
 
-_global_play: Optional[PlayEngine] = None
+_global_play: PlayEngine | None = None
 
 
-def get_play_engine(config: Optional[PlayConfig] = None) -> PlayEngine:
+def get_play_engine(config: PlayConfig | None = None) -> PlayEngine:
     """获取全局玩耍引擎实例"""
     global _global_play
     if _global_play is None:

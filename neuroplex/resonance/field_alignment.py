@@ -23,7 +23,6 @@ from __future__ import annotations
 import logging
 import os
 import pickle
-from typing import Dict, List, Tuple
 
 import torch
 import torch.nn as nn
@@ -59,7 +58,8 @@ class AnchorProjector(nn.Module):
             [..., proj_dim] 归一化锚点向量
         """
         y = self.net(x)
-        return y / (y.norm(dim=-1, keepdim=True) + 1e-8)
+        out: torch.Tensor = y / (y.norm(dim=-1, keepdim=True) + 1e-8)
+        return out
 
     def save(self, path: str) -> None:
         os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
@@ -102,9 +102,9 @@ class AnchorProjector(nn.Module):
 
 
 def train_anchor_projector(
-    vectors: Dict[str, torch.Tensor],
-    pos_pairs: List[Tuple[str, str]],
-    neg_pairs: List[Tuple[str, str]],
+    vectors: dict[str, torch.Tensor],
+    pos_pairs: list[tuple[str, str]],
+    neg_pairs: list[tuple[str, str]],
     proj_dim: int = 128,
     steps: int = 300,
     lr: float = 1e-3,
@@ -145,10 +145,10 @@ def train_anchor_projector(
 
 def evaluate_alignment(
     proj: AnchorProjector,
-    vectors: Dict[str, torch.Tensor],
-    pos_pairs: List[Tuple[str, str]],
-    neg_pairs: List[Tuple[str, str]],
-) -> Tuple[float, float, float]:
+    vectors: dict[str, torch.Tensor],
+    pos_pairs: list[tuple[str, str]],
+    neg_pairs: list[tuple[str, str]],
+) -> tuple[float, float, float]:
     """评估投影空间的跨域对齐质量。
 
     Returns:

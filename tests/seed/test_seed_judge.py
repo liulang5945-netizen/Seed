@@ -38,16 +38,14 @@ def _small_config() -> SeedConfig:
 
 def _trained_seed() -> Seed:
     model = Seed(_small_config())
-    data = ("问：你好。\n答：你好，很高兴见到你。" "水的沸点在标准大气压下是一百摄氏度。").encode(
-        "utf-8"
-    )
+    data = ("问：你好。\n答：你好，很高兴见到你。" "水的沸点在标准大气压下是一百摄氏度。").encode()
     model.learn_bytes(data, epochs=3)
     return model
 
 
 def test_judge_report_contains_self_referential_signals() -> None:
     judge = SeedJudge(_trained_seed())
-    report = judge.score("水的沸点是一百摄氏度。".encode("utf-8"))
+    report = judge.score("水的沸点是一百摄氏度。".encode())
 
     for key in (
         "quality",
@@ -67,7 +65,7 @@ def test_judge_report_contains_self_referential_signals() -> None:
 def test_judge_is_read_only_and_deterministic() -> None:
     model = _trained_seed()
     judge = SeedJudge(model)
-    text = "问：推荐一本书。\n答：可以读一读《活着》。".encode("utf-8")
+    text = "问：推荐一本书。\n答：可以读一读《活着》。".encode()
 
     before = [tensor.detach().clone() for tensor in model.substrate.parameter_tensors()]
     first = judge.score(text)
@@ -77,7 +75,7 @@ def test_judge_is_read_only_and_deterministic() -> None:
     assert first["quality"] == second["quality"]
     assert first["mean_surprise"] == second["mean_surprise"]
     assert len(before) == len(after)
-    for previous, current in zip(before, after):
+    for previous, current in zip(before, after, strict=False):
         assert torch.equal(previous, current.detach()), "judge 判分不得改变已学参数"
 
 
@@ -85,9 +83,9 @@ def test_judge_ranks_learned_text_above_noise() -> None:
     model = _trained_seed()
     judge = SeedJudge(model)
 
-    learned = judge.score("问：你好。\n答：你好，很高兴见到你。".encode("utf-8"))
+    learned = judge.score("问：你好。\n答：你好，很高兴见到你。".encode())
     # 同一批字节打乱顺序后不再具备学到的结构，质量必须更低。
-    raw = "问：你好。\n答：你好，很高兴见到你。".encode("utf-8")
+    raw = "问：你好。\n答：你好，很高兴见到你。".encode()
     permuted = torch.randperm(len(raw), generator=torch.Generator().manual_seed(7))
     shuffled = bytes(raw[index] for index in permuted.tolist())
     corrupted = judge.score(shuffled)

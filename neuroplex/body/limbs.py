@@ -12,7 +12,6 @@ import logging
 import os
 import subprocess
 import sys
-from typing import Optional
 
 logger = logging.getLogger("Taiji.Limbs")
 
@@ -65,7 +64,7 @@ def _get_workspace() -> str:
     return _WORKSPACE_DIR
 
 
-def _resolve_safe_path(target: str) -> Optional[str]:
+def _resolve_safe_path(target: str) -> str | None:
     """安全解析路径，防止目录穿越"""
     ws = os.path.abspath(_get_workspace())
     result = os.path.abspath(os.path.join(ws, target))
@@ -109,7 +108,7 @@ def read_file(file_path: str, page: int = 1) -> str:
         if not _check_path_security(file_path):
             return f"⚠️ 安全限制: 不允许访问系统关键路径 '{file_path}'"
 
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             text = f.read()
 
         if not text:
@@ -170,7 +169,7 @@ def edit_file(file_path: str, old_text: str, new_text: str) -> str:
             return f"❌ 路径不安全或超出工作台目录: {file_path}"
         if not os.path.exists(resolved):
             return f"错误: 文件不存在 '{resolved}'"
-        with open(resolved, "r", encoding="utf-8") as f:
+        with open(resolved, encoding="utf-8") as f:
             content = f.read()
         if old_text not in content:
             stripped_old = old_text.strip()
@@ -304,7 +303,7 @@ def analyze_code(file_path: str) -> dict:
             return {"error": f"文件不存在 '{resolved}'"}
 
         ext = os.path.splitext(resolved)[1].lower()
-        with open(resolved, "r", encoding="utf-8") as f:
+        with open(resolved, encoding="utf-8") as f:
             lines = f.readlines()
 
         result = {

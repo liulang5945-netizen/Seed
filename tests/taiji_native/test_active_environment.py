@@ -60,7 +60,7 @@ def test_pending_action_is_atomic_and_checkpointed() -> None:
 
     assert left.action_symbol == decision.action_symbol
     assert left == right
-    for a, b in zip(original.parameter_tensors(), restored.parameter_tensors()):
+    for a, b in zip(original.parameter_tensors(), restored.parameter_tensors(), strict=False):
         assert torch.equal(a, b)
 
 

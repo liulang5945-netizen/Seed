@@ -4,22 +4,22 @@ from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
 import sys
-from typing import Dict
+from pathlib import Path
 
-import torch
 import _verify_emit
+import torch
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from taiji import SparseSynapses, Taiji
 from verify_taiji_n7_context import run_benchmark as run_n7
 from verify_taiji_n8_delayed_trace import run_benchmark as run_n8
 from verify_taiji_n9_long_free_run import run_benchmark as run_n9
 from verify_taiji_native_v7 import run_benchmark as run_native
+
+from taiji import SparseSynapses, Taiji
 
 
 def _dense_view(synapses: SparseSynapses) -> torch.Tensor:
@@ -29,7 +29,7 @@ def _dense_view(synapses: SparseSynapses) -> torch.Tensor:
     return dense
 
 
-def _operator_equivalence() -> Dict[str, object]:
+def _operator_equivalence() -> dict[str, object]:
     synapses = SparseSynapses(
         out_features=7,
         in_features=11,
@@ -85,7 +85,7 @@ def _operator_equivalence() -> Dict[str, object]:
     }
 
 
-def run_benchmark(*, epochs: int = 200, seed: int = 7) -> Dict[str, object]:
+def run_benchmark(*, epochs: int = 200, seed: int = 7) -> dict[str, object]:
     operators = _operator_equivalence()
     native = run_native(epochs=epochs, seed=seed)
     n7 = run_n7(epochs=epochs, seed=seed)

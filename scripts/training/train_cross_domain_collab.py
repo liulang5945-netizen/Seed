@@ -71,7 +71,6 @@ import random
 import sys
 import time
 from datetime import datetime
-from typing import Dict, List, Optional, Tuple
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
@@ -80,9 +79,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from neuroplex.resonance import (
-    ResonanceNeuron,
-    ResonanceField,
     ResonanceEnsemble,
+    ResonanceField,
+    ResonanceNeuron,
     get_domain_neuron_config,
 )
 from neuroplex.resonance.geometry import NeuronGeometry
@@ -92,20 +91,20 @@ from neuroplex.resonance.topology import (
     topology_detail,
 )
 from neuroplex.resonance.translator import (
-    TokenizerHub,
     AlignmentRules,
+    TokenizerHub,
     batch_align_and_embed,
 )
+from scripts.training.experiment_config import SFT_ANSWER_MARKER
 from scripts.training.utils import (
+    DOMAIN_TOKENIZER_DIR,
+    OUTPUT_DIR,
+    build_muon_adamw_optimizers,
+    create_shared_embedding,
+    load_dialogue_texts_multi,
     load_domain_tokenizer,
     load_general_tokenizer,
-    create_shared_embedding,
-    build_muon_adamw_optimizers,
-    load_dialogue_texts_multi,
-    OUTPUT_DIR,
-    DOMAIN_TOKENIZER_DIR,
 )
-from scripts.training.experiment_config import SFT_ANSWER_MARKER
 
 DEVICE = "cpu"
 
@@ -119,7 +118,9 @@ class TeeLogger:
     def __init__(self, log_path: str):
         self.log_path = log_path
         os.makedirs(os.path.dirname(log_path), exist_ok=True)
-        self.fp = open(log_path, "w", encoding="utf-8", buffering=1)
+        self.fp = open(  # noqa: SIM115 — 日志器生命周期内持有，随 close() 释放
+            log_path, "w", encoding="utf-8", buffering=1
+        )
 
     def write(self, msg: str):
         sys.__stdout__.write(msg)
@@ -134,7 +135,7 @@ class TeeLogger:
 
 
 def load_neuron(
-    nid: str, neuron_dir: str, device: str, shared_lm_head: Optional[nn.Linear] = None
+    nid: str, neuron_dir: str, device: str, shared_lm_head: nn.Linear | None = None
 ) -> ResonanceNeuron:
     """加载单个域 neuron（兼容 verify_v3 与训练产物格式）。
 
@@ -160,7 +161,7 @@ def load_neuron(
     return neuron
 
 
-def load_shared_lm_head(neuron_dir: str, hidden_size: int, device: str) -> Optional[nn.Linear]:
+def load_shared_lm_head(neuron_dir: str, hidden_size: int, device: str) -> nn.Linear | None:
     """统一输出空间：加载共享 general 256K lm_head（shared_lm_head.pt）。
 
     general 基座（--target-space general）产物：neuron ckpt 已剥离 131M head，
@@ -191,7 +192,7 @@ def load_shared_embedding(neuron_dir: str, device: str) -> nn.Embedding:
     return emb
 
 
-def load_hub_neuron(hub_path: str, device: str) -> Tuple[ResonanceNeuron, nn.Embedding]:
+def load_hub_neuron(hub_path: str, device: str) -> tuple[ResonanceNeuron, nn.Embedding]:
     """加载 hub neuron（缺口 L：联合皮层）进协作阵容。
 
     hub 与 general 基座同 256K 空间协作：保留自带 general lm_head（1024→256000，
@@ -224,8 +225,8 @@ def load_hub_neuron(hub_path: str, device: str) -> Tuple[ResonanceNeuron, nn.Emb
 
 def compute_hub_anchor_loss(
     ensemble,
-    neurons: Dict[str, ResonanceNeuron],
-    neuron_embeddings: Dict[str, torch.Tensor],
+    neurons: dict[str, ResonanceNeuron],
+    neuron_embeddings: dict[str, torch.Tensor],
     nid: str,
 ) -> torch.Tensor:
     """hub 锚定 loss（缺口 L 阶段 3 第三部分，决策 4B→4C 渐进第一步）。
@@ -261,7 +262,7 @@ PAIRS_PATH = os.path.join(
 )
 
 
-def load_pairs_texts(max_pairs: int = 0) -> List[Tuple[str, str]]:
+def load_pairs_texts(max_pairs: int = 0) -> list[tuple[str, str]]:
     """加载跨域平行语料（zh↔code 同义对，阶段 1 产物 1629 对）。"""
     if not os.path.exists(PAIRS_PATH):
         return []
@@ -281,13 +282,13 @@ def load_pairs_texts(max_pairs: int = 0) -> List[Tuple[str, str]]:
 
 def compute_hub_contrastive_loss(
     ensemble,
-    neurons: Dict[str, ResonanceNeuron],
-    shared_embeddings: Dict[str, torch.nn.Embedding],
+    neurons: dict[str, ResonanceNeuron],
+    shared_embeddings: dict[str, torch.nn.Embedding],
     general_sp,
     zh_id: str,
     code_id: str,
-    zh_texts: List[str],
-    code_texts: List[str],
+    zh_texts: list[str],
+    code_texts: list[str],
     tau: float = 0.1,
     max_seq_len: int = 64,
 ) -> torch.Tensor:
@@ -352,7 +353,7 @@ def load_tokenizer_for_vocab(domain: str, vocab_size: int):
     return sp
 
 
-def load_sft_texts(data_dir: str, domain: str, max_texts: int) -> List[str]:
+def load_sft_texts(data_dir: str, domain: str, max_texts: int) -> list[str]:
     """加载域 SFT 数据（取 full 字段完整文本）。"""
     path = os.path.join(data_dir, f"{domain}_sft.pt")
     if not os.path.exists(path):
@@ -569,10 +570,8 @@ def load_training_state(
 
     total_steps = ck.get("total_steps", 0)
     resume_pos = ck.get("resume_pos")
-    if resume_pos is not None:
-        start_epoch = resume_pos.get("epoch", 0)
-    else:
-        start_epoch = ck.get("epoch", 0)  # 旧 ckpt：epoch 语义为 epoch+1（训练循环下标）
+    # 旧 ckpt：epoch 语义为 epoch+1（训练循环下标）
+    start_epoch = resume_pos.get("epoch", 0) if resume_pos is not None else ck.get("epoch", 0)
     loss_history = ck.get("loss_history", []) or []
     print(
         f"  [resume] 恢复 total_steps={total_steps} epoch={start_epoch} "
@@ -1106,7 +1105,7 @@ def main():
 
     # 7. 加载各域数据
     print("\n[7] 加载训练数据...", flush=True)
-    domain_texts: Dict[str, List[str]] = {}
+    domain_texts: dict[str, list[str]] = {}
     for dom in domains:
         domain_texts[dom] = load_sft_texts(args.data_dir, dom, args.max_texts_per_domain)
     data_sources = list(domains)
@@ -1119,7 +1118,7 @@ def main():
         data_sources.append("dialogue")
         print(f"  dialogue: {len(domain_texts['dialogue'])} 条对话（短答案 ≤150 字）", flush=True)
     # 阶段 3 第三部分·渐进第二步：跨域平行语料桶（zh↔code 同义对，对比 loss 数据源）
-    pairs_texts: List[Tuple[str, str]] = []
+    pairs_texts: list[tuple[str, str]] = []
     if args.hub_path and args.hub_contrastive_weight > 0:
         assert (
             args.hub_contrastive_zh in neurons
@@ -1138,13 +1137,13 @@ def main():
     random.seed(42)
     torch.manual_seed(42)
     total_steps = 0
-    loss_history: List[dict] = []
+    loss_history: list[dict] = []
     ckpt_path = os.path.join(OUTPUT_DIR, f"{args.save_name}.ckpt.pt")
     field_warmup_steps = max(1, int(total_steps_per_epoch * args.epochs * 0.1))
 
     # 断点续训（2026-08-16）：恢复协作层权重/优化器/断点位置
     start_epoch = 0
-    resume_pos: Optional[dict] = None
+    resume_pos: dict | None = None
     if args.resume_from and os.path.exists(args.resume_from):
         start_epoch, total_steps, loss_history, resume_pos = load_training_state(
             args.resume_from,
@@ -1160,21 +1159,21 @@ def main():
     for epoch in range(start_epoch, args.epochs):
         epoch_start = time.time()
         for domain in data_sources:
-            # 断点续训：跳过已完成的 domain（2026-08-16）
+            # 断点续训：跳过已完成的 domain（2026-08-16）；
+            # 仅在 resume domain 之后（data_sources 有序）才需跳过其之前的 domain
             if (
                 resume_pos is not None
                 and epoch == resume_pos["epoch"]
                 and domain != resume_pos["domain"]
+                and data_sources.index(domain) < data_sources.index(resume_pos["domain"])
             ):
-                # 仅在 resume domain 之后（data_sources 有序）才需跳过其之前的 domain
-                if data_sources.index(domain) < data_sources.index(resume_pos["domain"]):
-                    # RNG 流一致性修复（2026-08-23）：被跳过的 domain 也要消耗
-                    # 等量的 random.shuffle，否则 resume 后后续 domain 的 shuffle
-                    # 结果与从头训练不一致（侵入最小方案：等效消耗而非改确定性顺序）。
-                    # 注意：resume domain 内被跳过的 batch 若开启 hub 对比 loss
-                    # （random.sample 按 batch 消耗 RNG）仍可能轻微漂移，暂不在此修复。
-                    random.shuffle(domain_texts[domain])
-                    continue
+                # RNG 流一致性修复（2026-08-23）：被跳过的 domain 也要消耗
+                # 等量的 random.shuffle，否则 resume 后后续 domain 的 shuffle
+                # 结果与从头训练不一致（侵入最小方案：等效消耗而非改确定性顺序）。
+                # 注意：resume domain 内被跳过的 batch 若开启 hub 对比 loss
+                # （random.sample 按 batch 消耗 RNG）仍可能轻微漂移，暂不在此修复。
+                random.shuffle(domain_texts[domain])
+                continue
             texts = domain_texts[domain]
             random.shuffle(texts)
             # general_mode 下 domain_sp 不使用（输入/目标都 general 编码）；dialogue 桶亦然
