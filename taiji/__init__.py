@@ -60,6 +60,13 @@ from .state import (
     TaijiStep,
 )
 from .world import WORLD_STATE_CHECKPOINT_FORMAT, TaijiWorldState
+from .world_learning import (
+    WorldDynamicsLearner,
+    WorldInterventionEvaluationConfig,
+    WorldInterventionEvaluator,
+    WorldPrediction,
+    WorldSchema,
+)
 
 __all__ = [
     "ByteMotor",
@@ -123,4 +130,9 @@ __all__ = [
     "WorldTransition",
     "TaijiWorldState",
     "WORLD_STATE_CHECKPOINT_FORMAT",
+    "WorldDynamicsLearner",
+    "WorldInterventionEvaluationConfig",
+    "WorldInterventionEvaluator",
+    "WorldPrediction",
+    "WorldSchema",
 ]

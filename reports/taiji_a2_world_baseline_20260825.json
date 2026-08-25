@@ -1,0 +1,171 @@
+{
+  "format": "taiji-a2-world-intervention-v1",
+  "config": {
+    "seeds": [
+      11,
+      29,
+      47
+    ],
+    "hidden_dim": 32,
+    "epochs": 350,
+    "learning_rate": 0.01,
+    "minimum_state_gain": 0.05,
+    "minimum_outcome_gain": 0.02,
+    "minimum_binding_drop": 0.05,
+    "maximum_state_mse": 0.25,
+    "maximum_outcome_error": 1.0,
+    "maximum_cross_seed_std": 0.2
+  },
+  "schema": {
+    "object_ids": [
+      "agent",
+      "blue",
+      "red"
+    ],
+    "state_slots": [
+      [
+        "agent",
+        "energy"
+      ],
+      [
+        "blue",
+        "position"
+      ],
+      [
+        "red",
+        "position"
+      ]
+    ],
+    "action_kinds": [
+      "move"
+    ],
+    "actor_ids": [
+      "agent"
+    ],
+    "target_ids": [
+      "blue",
+      "red"
+    ],
+    "parameter_names": [
+      "step"
+    ],
+    "target_parameter_interactions": 2,
+    "state_dim": 3,
+    "action_dim": 7,
+    "input_dim": 10
+  },
+  "train_cases": 6,
+  "holdout_cases": 2,
+  "seeds": [
+    {
+      "seed": 11,
+      "training_loss": 0.0009445096948184073,
+      "learned": {
+        "state_mse": 0.09906627610325813,
+        "reward_mse": 0.12982233588834902,
+        "success_bce": 3.434669636045871e-05,
+        "outcome_error": 0.12985668258470948,
+        "success_accuracy": 1.0
+      },
+      "target_binding_lesion": {
+        "state_mse": 0.7934887707233429,
+        "reward_mse": 0.8193546813882051,
+        "success_bce": 0.0007363982896998075,
+        "outcome_error": 0.820091079677905,
+        "success_accuracy": 1.0
+      },
+      "frequency_baseline": {
+        "state_mse": 0.6666666865348816,
+        "reward_mse": 4.0,
+        "success_bce": 0.6931471805599453,
+        "outcome_error": 4.693147180559945,
+        "success_accuracy": 0.5
+      },
+      "action_only_baseline": {
+        "state_mse": 1.8518518209457397,
+        "reward_mse": 4.0,
+        "success_bce": 0.6931471805599453,
+        "outcome_error": 4.693147180559945,
+        "success_accuracy": 0.5
+      }
+    },
+    {
+      "seed": 29,
+      "training_loss": 0.00055936339776963,
+      "learned": {
+        "state_mse": 0.2361971139907837,
+        "reward_mse": 0.16046252789249138,
+        "success_bce": 2.1681289207547906e-05,
+        "outcome_error": 0.16048420918169892,
+        "success_accuracy": 1.0
+      },
+      "target_binding_lesion": {
+        "state_mse": 0.948195070028305,
+        "reward_mse": 0.30676074223833893,
+        "success_bce": 0.00013430687568514755,
+        "outcome_error": 0.3068950491140241,
+        "success_accuracy": 1.0
+      },
+      "frequency_baseline": {
+        "state_mse": 0.6666666865348816,
+        "reward_mse": 4.0,
+        "success_bce": 0.6931471805599453,
+        "outcome_error": 4.693147180559945,
+        "success_accuracy": 0.5
+      },
+      "action_only_baseline": {
+        "state_mse": 1.8518518209457397,
+        "reward_mse": 4.0,
+        "success_bce": 0.6931471805599453,
+        "outcome_error": 4.693147180559945,
+        "success_accuracy": 0.5
+      }
+    },
+    {
+      "seed": 47,
+      "training_loss": 0.0008839521906338632,
+      "learned": {
+        "state_mse": 0.12957028299570084,
+        "reward_mse": 0.13209445238615558,
+        "success_bce": 3.836273861285982e-05,
+        "outcome_error": 0.13213281512476843,
+        "success_accuracy": 1.0
+      },
+      "target_binding_lesion": {
+        "state_mse": 0.7819540500640869,
+        "reward_mse": 0.7386641104261855,
+        "success_bce": 0.0005614513990808343,
+        "outcome_error": 0.7392255618252663,
+        "success_accuracy": 1.0
+      },
+      "frequency_baseline": {
+        "state_mse": 0.6666666865348816,
+        "reward_mse": 4.0,
+        "success_bce": 0.6931471805599453,
+        "outcome_error": 4.693147180559945,
+        "success_accuracy": 0.5
+      },
+      "action_only_baseline": {
+        "state_mse": 1.8518518209457397,
+        "reward_mse": 4.0,
+        "success_bce": 0.6931471805599453,
+        "outcome_error": 4.693147180559945,
+        "success_accuracy": 0.5
+      }
+    }
+  ],
+  "gate": {
+    "state_gain_min": 0.4304695725440979,
+    "outcome_gain_min": 4.5326629713782465,
+    "binding_drop_min": 0.6523837670683861,
+    "state_error_max": 0.2361971139907837,
+    "outcome_error_max": 0.16048420918169892,
+    "state_gain_std": 0.05878836289048195,
+    "passed": true
+  },
+  "benchmark": {
+    "format": "taiji-a2-world-shift-v1",
+    "manifest": "reports\\taiji_a2_world_manifest_20260825.json",
+    "purpose": "one-step structured state and action-outcome intervention prediction"
+  }
+}
