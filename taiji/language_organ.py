@@ -22,6 +22,7 @@ LANGUAGE_TRAINING_CORPUS_FORMAT = "taiji-language-training-corpus-v1"
 LANGUAGE_BACKEND_SPEC_FORMAT = "taiji-language-backend-spec-v1"
 LANGUAGE_BACKEND_REGISTRY_FORMAT = "taiji-language-backend-registry-v1"
 LANGUAGE_VALIDATION_FORMAT = "taiji-language-validation-v1"
+LANGUAGE_PROVIDER_ARTIFACT_FORMAT = "taiji-language-provider-artifact-v1"
 
 
 @dataclass(frozen=True)
@@ -236,6 +237,90 @@ class LanguageTrainingCorpus:
         return cls(
             train=tuple(LanguageTrainingExample.from_payload(dict(example)) for example in train),
             holdout=tuple(LanguageTrainingExample.from_payload(dict(example)) for example in holdout),
+        )
+
+
+@dataclass(frozen=True)
+class LanguageProviderArtifact:
+    """Auditable external provider selection and rollback metadata."""
+
+    artifact_id: str
+    backend_id: str
+    mode: str
+    base_model: str
+    adapter_path: str | None = None
+    training_corpus: str | None = None
+    training_report: str | None = None
+    safety_report: str | None = None
+    rollback_strategy: str = "disable-adapter"
+    default_enabled: bool = False
+    provenance: str = "external-provider"
+
+    def __post_init__(self) -> None:
+        for value, name in (
+            (self.artifact_id, "artifact_id"),
+            (self.backend_id, "backend_id"),
+            (self.base_model, "base_model"),
+            (self.rollback_strategy, "rollback_strategy"),
+            (self.provenance, "provenance"),
+        ):
+            if not str(value):
+                raise ValueError(f"provider artifact {name} cannot be empty")
+        if self.mode not in {"raw", "lora", "guarded"}:
+            raise ValueError("provider artifact mode must be raw, lora, or guarded")
+        if self.mode in {"lora", "guarded"} and not str(self.adapter_path or ""):
+            raise ValueError(f"provider artifact mode {self.mode} requires adapter_path")
+        if self.mode == "raw" and self.adapter_path is not None:
+            raise ValueError("raw provider artifact cannot carry adapter_path")
+        if self.mode == "guarded" and self.default_enabled:
+            raise ValueError("guarded provider artifacts must remain opt-in")
+        for value, name in (
+            (self.adapter_path, "adapter_path"),
+            (self.training_corpus, "training_corpus"),
+            (self.training_report, "training_report"),
+            (self.safety_report, "safety_report"),
+        ):
+            if value is not None and not str(value):
+                raise ValueError(f"provider artifact {name} cannot be empty when provided")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": LANGUAGE_PROVIDER_ARTIFACT_FORMAT,
+            "artifact_id": self.artifact_id,
+            "backend_id": self.backend_id,
+            "mode": self.mode,
+            "base_model": self.base_model,
+            "adapter_path": self.adapter_path,
+            "training_corpus": self.training_corpus,
+            "training_report": self.training_report,
+            "safety_report": self.safety_report,
+            "rollback_strategy": self.rollback_strategy,
+            "default_enabled": self.default_enabled,
+            "provenance": self.provenance,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> LanguageProviderArtifact:
+        if payload.get("format") != LANGUAGE_PROVIDER_ARTIFACT_FORMAT:
+            raise ValueError("unsupported language provider artifact format")
+        return cls(
+            artifact_id=str(payload["artifact_id"]),
+            backend_id=str(payload["backend_id"]),
+            mode=str(payload["mode"]),
+            base_model=str(payload["base_model"]),
+            adapter_path=(None if payload.get("adapter_path") is None else str(payload["adapter_path"])),
+            training_corpus=(
+                None if payload.get("training_corpus") is None else str(payload["training_corpus"])
+            ),
+            training_report=(
+                None if payload.get("training_report") is None else str(payload["training_report"])
+            ),
+            safety_report=(
+                None if payload.get("safety_report") is None else str(payload["safety_report"])
+            ),
+            rollback_strategy=str(payload.get("rollback_strategy", "disable-adapter")),
+            default_enabled=bool(payload.get("default_enabled", False)),
+            provenance=str(payload.get("provenance", "external-provider")),
         )
 
 

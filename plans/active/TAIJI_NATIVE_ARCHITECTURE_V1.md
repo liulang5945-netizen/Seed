@@ -276,6 +276,8 @@ Taiji v1 的完整认知状态至少包含：
   提升，并在接入运行时前通过 validator/fallback、organ lesion 和认知不变性 Gate。
 - provider artifact 必须显式记录 base model、adapter、训练 corpus、评测报告、回滚方式和 runtime mode；raw、LoRA、guarded 不是
   隐式硬编码分支，产品默认仍由 Seed 配置选择，Taiji 只消费已注册的 terminal organ。
+- 客户端启动只能通过 artifact loader 选择 provider；模型缺失、版本/报告不匹配或加载失败必须可观测，并回退到
+  `structured-stub`，不能静默引入一个未经登记的 decoder。
 - byte motor 可保留为最末端 codec/回退器官，不能继续直接承担全部认知输出。
 - 每次执行都生成可追踪的 pending action，真实 outcome 回写世界模型、记忆和 credit assignment。
 
