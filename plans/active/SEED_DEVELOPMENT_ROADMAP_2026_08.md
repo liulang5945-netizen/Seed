@@ -82,6 +82,13 @@ random-chunk drop 为 `+0.0048`，跨 seed std 为 `+0.0101`。A1 Gate 仍为 `f
 连续的 next-byte、future-window 和 consistency/contrastive 目标都没有让 completed
 assembly 稳定超过 byte-only，这已经是 P2 目标定义需要重审的架构信号。
 
+P2/A1 合同已完成一次结构性重定：`taiji/assembly_relations.py` 定义 ordered atom
+composition，训练与未见组合共享 atom 但 pair 完全不重叠；
+`scripts/training/build_taiji_a1_relation_manifest.py` 已从真实语料生成
+`reports/taiji_a1_assembly_relation_manifest_20260825.json`（8 atoms、40 train pairs、
+16 unseen pairs）。pair provenance 只存在于评测 metadata，不进入模型输入；旧的
+next-byte A1 报告保留为历史对照，不再作为组合关系的唯一合同。
+
 ## 3. 执行原则
 
 1. 能力合同先于模块命名和代码目录。
@@ -260,4 +267,4 @@ assembly 稳定超过 byte-only，这已经是 P2 目标定义需要重审的架
 
 ## 16. 当前唯一下一步
 
-**暂停继续叠加训练 loss，先完成 P2 组合关系重设计决策：明确 assembly 的可迁移对象、正/负样本构造、byte-only 的公平比较和 completed-assembly 目标，再据此重写 A1 合同；在该合同重新确认前不进入 P3。**
+**实现 `AssemblyRelationEvaluator`：在同一 relation manifest 上评估 completed assembly 的 left/right slot binding、boundary consistency、random-chunk lesion 和 byte-only 对照；先得到新的 A1 relation baseline，再决定训练目标。**

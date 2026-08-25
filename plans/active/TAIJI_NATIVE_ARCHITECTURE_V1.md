@@ -18,8 +18,11 @@ marker rate delta 为 `+0.0098`、random-chunk drop 为 `+0.0077`，仍未达到
 Gate 要求。随后加入自监督 assembly consistency/contrastive 目标，最新结果仍为未见
 组合 gain `-0.0225`、marker score delta `+0.0184`、marker rate delta `+0.0401`、
 random-chunk drop `+0.0048`，没有超过 Gate。连续目标失败说明问题已从实现细节升级
-为 P2 组合关系定义：下一步必须先重定可迁移对象、正负样本和公平 byte-only 比较，
-再继续实现；当前仍不能宣称 Taiji 已拥有通过 Gate 的学习型抽象能力。
+为 P2 组合关系定义。当前已完成合同重定：`AssemblyRelationCorpus` 以共享 atom、
+不重叠 ordered pair、boundary/random controls 作为 A1 relation v1 数据边界，真实
+manifest 已生成；pair provenance 只用于评测，不进入模型。下一步是实现 relation
+evaluator，再据新的 slot-binding baseline 决定训练目标；当前仍不能宣称 Taiji 已拥有
+通过 Gate 的学习型抽象能力。
 
 ## 0. 本次纠正
 
@@ -431,4 +434,4 @@ taiji/
 
 ## 13. 当前唯一实现入口
 
-P1 已完成。当前实现入口暂时停在 P2/A1 架构决策点：重定 assembly 组合关系与 A1 合同，保持 boundary、random-chunk 和 byte-only 对照，再以加强后的 Gate 结果决定是否进入 P3。
+P1 已完成。当前实现入口是 P2/A1 relation baseline：实现 completed assembly 的 slot-binding evaluator，保持 boundary、random-chunk 和 byte-only 对照，再以加强后的 Gate 结果决定是否进入 P3。
