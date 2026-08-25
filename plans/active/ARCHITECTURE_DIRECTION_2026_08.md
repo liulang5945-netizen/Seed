@@ -1,109 +1,117 @@
-# Seed 架构方向决策：Taiji 替代 Transformer 底层
+# Seed / Taiji 架构方向决策
 
-> 决策日期：2026-08-21（Seed 命名迁移 2026-08-22）
+> 初始决策：2026-08-21
 >
-> 决策：项目和模型是 **Seed**；**Taiji 是 Seed 的底层基底，全面替代 Transformer 的计算职责**，不作为 Legacy NeuroPlex 的成员插件。
+> 重大修订：2026-08-25
+>
+> 当前决策：**Taiji 是完整原生认知架构；Seed 是项目、产品和运行时；TSK-v8 是可复用 kernel，不是完整 Taiji。**
 
-## 0. 规范词表（唯一口径）
+项目长期目的与不可归档的根需求见 [TAIJI_CORE_REQUIREMENTS.md](TAIJI_CORE_REQUIREMENTS.md)。本文只维护身份、技术采纳和不可回退边界。
 
-“Taiji / 太极 / 态极”在历史文档里被用于五种不同含义。此后只允许下表左列的写法：
+## 0. 规范词表
 
-| 规范名 | 指代 | 代码/文件事实 |
+| 规范名 | 指代 | 当前代码/文档事实 |
 |---|---|---|
-| **Seed** | 项目与模型级主体 | 顶层 `seed/`；分发名 `seed`；拥有模型组合与 `seed-native-v1` checkpoint envelope |
-| **Taiji / Taiji Predictive Fabric（TPF）** | Seed 的**底层基底**，替代 Transformer | 顶层 `taiji/` 9 个模块；当前 checkpoint line Native v7；不导入 `seed`、`neuroplex` 或 `transformers` |
-| **Legacy NeuroPlex** | 冻结的 Transformer 基线（9 个成员） | `neuroplex/` 包（113 文件 / 36420 行）；底层 Transformer 是 `neuroplex/layers.py::TransformerBlock`，live 消费点 3 处（见下） |
-| **`taiji.*`（历史 import 别名）** | `neuroplex/` 的旧包名 | 只在历史 pickle 与 `scripts/archive/` 中出现；由 `neuroplex/legacy_checkpoint.py` 在受控作用域内临时映射 |
-| **`taiji` / `taiji_model`（历史 HTTP 路径与指标名）** | Legacy 应用兼容契约，**不定义 Seed/Taiji 新边界** | 在 Seed 原生服务路径完成前保持兼容；新增 API 必须使用 Seed 命名 |
-| ~~态极~~ | Legacy NeuroPlex 的旧中文称呼，**不指新基底** | 冻结代码内仍有 202 处 / 55 文件（日志与用户文案），不改名；**新文档与新代码禁止使用**，需要指代时写 “Legacy NeuroPlex” |
+| **Seed** | 项目、产品、分发与运行时 | `seed/`、`api/`、`frontend/`、`desktop/`；承载 Taiji，不拥有隐藏认知 |
+| **Taiji** | 完整原生认知架构与模型 | 目标合同为 [TAIJI_NATIVE_ARCHITECTURE_V1.md](TAIJI_NATIVE_ARCHITECTURE_V1.md)；当前尚未完整实现 |
+| **Taiji Substrate Kernel v8（TSK-v8）** | 当前可执行低层研究 kernel | 顶层 `taiji/` 现有 byte/fabric/memory/motor 实现；精确历史规范见归档 |
+| **Legacy NeuroPlex** | 冻结的 Transformer 基线 | `neuroplex/`；只用于离线比较和显式兼容，不进入 Taiji cognition |
+| **`taiji.*` 历史别名** | Legacy NeuroPlex 的旧 pickle/import 路径 | 只在受控兼容和 `scripts/archive/` 中解释，不指当前 Taiji |
+| ~~态极~~ | Legacy NeuroPlex 的旧中文称呼 | 冻结历史可保留，新代码与新文档不使用 |
 
-被替代的边界是明确的：Taiji 顶掉 `neuroplex/layers.py::TransformerBlock` 承担的计算职责，而不是顶掉 `api/`、`neuroplex/life/` 等外围工程层。
+“Taiji Predictive Fabric（TPF）”从完整架构名降为 TSK-v8 中 predictive dynamics 的历史/候选内核名，不再代表 Taiji 全部。
 
-该 Transformer 底层当前的 **live 消费点恰好 3 处**（`scripts/archive/` 冻结层不计）：
+## 1. 被纠正的旧决策
+
+以下旧表述失效：
+
+- “Seed 是模型主体，Taiji 是底层 substrate”；
+- “raw-byte sensor → predictive fabric → episodic field → byte motor 是完整 Taiji”；
+- “Taiji 必须禁止 tokenizer、embedding、attention、optimizer 和 autograd”；
+- “固定稀疏连接、局部单 tick 更新和单 byte motor 是不可回退身份”；
+- “N/M kernel 机制通过等于 Taiji 智能能力前进”。
+
+错误根源是用“反 Transformer”定义 Taiji，而没有用项目需要的认知能力正向定义 Taiji。这会让系统越独立越原始。
+
+## 2. 不可回退的新边界
+
+1. Taiji 拥有感知表征、持续状态、工作空间、世界/自我模型、记忆、目标、推理、规划、行动、生成和学习。
+2. Seed 只拥有产品/runtime/训练与设备调度，不得实现隐藏认知后把结果包装成 Taiji。
+3. raw byte、像素和波形只属于器官边界；Taiji 必须学习高层 assembly、事件、概念和关系。
+4. Taiji 可以复用成熟算法和工程，包括 embedding、attention-like routing、SSM、图计算、optimizer、RL、检索和 CUDA。
+5. 复用成熟组件不能把 Transformer/Legacy/外部 teacher 重新变成运行时认知主体。
+6. 终身学习、真实行动因果和 checkpoint 自足继续是原生性的核心要求。
+7. TSK-v8 作为 compatibility/kernel 基线冻结扩张，只做回归、兼容和候选算子验证。
+8. Legacy NeuroPlex 继续冻结；Taiji 不导入它，它也不反向依赖 Taiji。
+
+## 3. 原生性的判据
+
+一个能力可以称为 Taiji 原生能力，当且仅当：
+
+- 状态与参数属于 Taiji checkpoint；
+- 输入来自版本化 Observation/Memory/Goal 合同；
+- 决策由 Taiji 内部状态产生，而不是外部模型返回；
+- 结果能通过真实 outcome 进入 Taiji 学习；
+- 能力可被独立损伤、替换和测量；
+- Seed/Legacy 被移除后，认知纵切片仍可运行。
+
+因此，使用 PyTorch optimizer 训练 Taiji-owned encoder 不自动破坏原生性；运行时调用 Legacy LM 生成计划则一定破坏原生性。
+
+## 4. 站在巨人肩膀上的采纳规则
+
+优先采用成熟方法，只在证据表明其不满足目标时自研。每项采纳必须记录：
+
+| 问题 | 必须回答 |
+|---|---|
+| 能力缺口 | 它解决感知、记忆、路由、规划、生成或执行中的什么问题？ |
+| 所有权 | 参数、状态和决策是否在 Taiji 内？ |
+| 因果证据 | 移除/替换后有什么可测损失？ |
+| 运行依赖 | 是否需要 Transformer/teacher 在运行时继续思考？ |
+| 资源边界 | CPU/CUDA、内存、延迟和扩展行为是否符合产品目标？ |
+
+允许“借算法”，禁止“借认知主体”。Taiji 的创新可以来自系统级组织、持续学习和因果闭环，不要求每个矩阵运算都从零发明。
+
+## 5. TSK-v8 的保留边界
+
+当前 `taiji/` 已证明的事实仍然有效：
+
+- 不导入 `seed`、`neuroplex` 或 `transformers`；
+- 有持续状态、局部预测更新、情景原型和 pending action/outcome；
+- checkpoint、CPU/CUDA device 语义与 N0–N11/M5–M7 kernel 回归可复现；
+- raw-byte codec 可无损接入文本流。
+
+但它只证明一个非 Transformer 低层闭环能运行，不证明学会语言、概念、世界模型、推理或 AGI。旧精确状态方程和门槛保存在 [TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md](../archive/implementation/TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md)。
+
+P1 前不大规模搬动当前源码；先加 v1 合同与 adapter，再决定哪些 kernel 组件进入 perception/dynamics/memory/effectors。
+
+## 6. Transformer 与 Legacy 边界
+
+Taiji 不以“逐功能替换 TransformerBlock”为设计主轴。Transformer 仅是一个离线比较对象。
+
+当前被替代的 Legacy `TransformerBlock` live 消费点继续封闭为三处：
 
 | 消费点 | 性质 |
 |---|---|
-| `neuroplex/resonance/neuron.py:25` | Legacy 基线自身的构成部分 |
-| `scripts/training/train_tinystories.py:26` | **有意保留**的纯 Transformer 对照实验（验证 training pipeline 正确性） |
-| `scripts/training/train_tinystories_field.py:32` | 同上，field 变体 |
+| `neuroplex/resonance/neuron.py` | Legacy 基线内部 |
+| `scripts/training/train_tinystories.py` | 离线 Transformer 对照 |
+| `scripts/training/train_tinystories_field.py` | 离线 field 对照 |
 
-这份名单由 `tests/taiji_native/test_naming_boundary_contract.py` 按 import 语句（AST，非文本匹配）强制封闭：新增任何消费点都会让 CI 失败，必须先在本文件记录“为什么还要在被替代的底层上继续投入”。
+允许研究 attention、embedding 或 optimizer，不允许新增对 `neuroplex/layers.py::TransformerBlock` 的正式消费者。前者是复用成熟算法，后者是把被替代的认知主体重新接回产品。
 
-## 1. 不可回退边界
+## 7. 包与 checkpoint 迁移
 
-1. `Seed` 指模型主体；`Taiji` 指完整原生底层基底，不指 cell、adapter、router 或 memory plugin。
-2. 模型代码位于顶层 `seed/`，基底代码位于顶层 `taiji/`；`neuroplex/` 是冻结 Legacy 基线。
-3. Taiji 自己定义输入表示、时间状态、上下文计算、学习、输出、生成和 substrate checkpoint；Seed 只组合公开合同。
-4. Taiji forward 不调用 tokenizer、Transformer、attention、KV cache、Cortex、ResonanceEnsemble 或 Legacy LM head。
-5. 旧 1.5B 蒸馏、7.58M/10M 小 Transformer、5/9 成员装配都不能成为 Taiji 的身份。
-6. Legacy 可做离线同预算对照，但不能向 Taiji 提供 hidden state、teacher logits 或运行时决策。
+- `taiji/` 继续作为正式认知命名空间。
+- 当前 `Taiji` 类和 `taiji-native-v8` checkpoint 进入 TSK-v8 compatibility line。
+- v1 建立新的认知 state/envelope，明确嵌套或迁移 kernel payload，不静默猜测格式。
+- `seed-native-v1` 在过渡期继续可读；最终 Seed envelope 只保存产品元数据和完整 Taiji checkpoint 引用/载荷。
+- 历史 pickle alias 继续由受控兼容代码处理，不能污染 `sys.modules` 中的正式 Taiji。
 
-## 2. 正式算法名称与组成
+## 8. 能力声明
 
-基础算法称为 **Taiji Predictive Fabric（TPF）**。Native v5 是其当前可执行参考实现：
+当前可以声明“Taiji v1 目标架构已定基线，TSK-v8 kernel 可执行”。不能声明“完整 Taiji 已实现”。
 
-- raw event receptor population；
-- hierarchical reciprocal prediction error；
-- local recurrent transition；
-- inhibitory/homeostatic state dynamics；
-- fast activity + slow trace；
-- balanced sparse cortical receptor bank；
-- shared motor evidence and one action organ；
-- compressed existing-edge local plasticity；
-- closed autoregressive action feedback；
-- atomic cognition checkpoint。
-- compressed fixed-fan-in edge execution。
-- pending action eligibility + reward-modulated local policy learning。
-- fixed-population distributed episodic field + recurrent pattern completion。
-- novelty/reward-gated cue/action/outcome/time/episode/provenance binding。
-- resonance-gated motor evidence + one-tick cortical memory feedback。
+完整能力必须依次通过 A0–A9：所有权、学习型抽象、世界状态、自适应协作、情景到语义、生命调节、目标规划、原生生成、持续进化和多模态具身。旧 K/N/M 结果只作为 kernel 回归证据。
 
-公式、张量形状、精确 tick 顺序、局部更新和代码映射见 [TAIJI_SUBSTRATE_ARCHITECTURE.md](TAIJI_SUBSTRATE_ARCHITECTURE.md)。这些内容构成实现合同，变更状态顺序或张量语义必须升级 state/checkpoint 版本并重新通过 N0–N11/M0–M5。
+## 9. 当前唯一入口
 
-## 3. 本轮结构决策：公共运动感受器
-
-动作单元不能各自读取随机且不同的皮层子空间，否则 softmax 比较的是不同证据；也不能共同只取一个 48/224 坐标子集，否则有效上下文会被结构性丢弃。Native v5 固定采用平衡单 fan-out receptor map：全部皮层 activity/trace 坐标各进入一个公共运动通道，257 个动作共享全部 48 个通道。场 readout 同样先进入共享 `K_m` 通道再比较动作证据。
-
-## 4. 包和兼容边界
-
-`neuroplex/__init__.py` 不再把 `taiji` 全局映射为 `neuroplex`。历史 pickle 由 `neuroplex.legacy_checkpoint` 在受控作用域内加载，结束后恢复原生 Taiji 命名空间。
-
-旧 `neuroplex/taiji/` 已删除。历史代码可从 Git 提交恢复，不在当前包中暴露。
-
-`scripts/archive/` 里 98 个文件的 301 处 `from taiji.<legacy>` 属于历史别名（含义＝`neuroplex`），在当前包布局下会误解析到新基底 `taiji/`。处置口径：**不重写、不改名**，因为其依赖的 Legacy 符号与数据路径本身已不存在（`scripts/archive/architecture_verification.py:8-10` 已自证），重写只会产出可导入但不可运行的假活代码。风险已被界定：`scripts/archive/` 无 `test_*.py`，pytest 不收集；CI 只跑 `tests/taiji_native` 与 `tests/`；无任何在用代码引用该目录。判定依据写在 `scripts/archive/README.md`。
-
-### 4.1 是否删除 Legacy NeuroPlex（`neuroplex/`）
-
-判定：**现在不删**。不是出于工作量，而是因为删除会同时摧毁两样东西：对外服务层，以及本项目核心主张的举证能力。实测依赖事实：
-
-| 方向 | 实测 | 含义 |
-|---|---|---|
-| `taiji/` → `neuroplex` | **0** | 新基底自足，删除不影响基底本身 |
-| `taiji/` → `transformers` | **0** | 基底与 Transformer 生态无关 |
-| `neuroplex/` → `taiji` | **0** | 替代关系单向，基线是干净参照系 |
-| `neuroplex/` → `transformers` | **0** | HF transformers 只是 `legacy` extra，未实际 import |
-| `api/` → `neuroplex` | **40+ import 行**（5 个路由文件，多为函数内懒加载） | 删除即整个服务层失效 |
-| `tests/` → `neuroplex` | **13 import 行**（10+ 文件） | 删除即丢失这批回归 |
-| `scripts/training/` → `neuroplex` | **100+ import 行**（约 50 个诊断/对照脚本） | 删除即丢失全部对照实验能力 |
-
-两条不可忽视的理由：
-
-1. **举证依赖对照。** 本项目的核心主张是“Transformer 不能达到目标、Taiji 能”。这是一个**比较性命题**，它的证据形式必然是同预算对照。删掉 Transformer 基线，等于删掉唯一的对照臂——此后 Taiji 的任何指标都变成无参照的绝对数字，无法反驳“换个 Transformer 配置也能做到”。`scripts/training/train_tinystories.py` 正是为此有意保留的纯 Transformer 对照（其 docstring 自陈“目标：验证训练 pipeline 是否正确”）。
-2. **`api/` 的 `taiji` 是对外契约。** `api/` 内约 60 处 `taiji` 是 HTTP 路径与 Prometheus 指标名（`/api/taiji/*`、`taiji_requests_total`），已被外部消费者依赖。它们既不指新基底也不指 Legacy，删除或改名属于破坏性变更。
-
-**允许删除的前置条件**（全部满足才重新评估，缺一即维持不删）：
-
-1. Taiji 通过语言能力反证门槛，并在**同预算**下给出优于 Legacy 基线的实测结果（对照结论一旦落定并归档，对照臂才失去价值）；
-2. `api/` 已有一条不经 `neuroplex/` 的 Taiji 原生服务路径，且旧路由的对外契约有迁移或兼容方案；
-3. `tests/` 中依赖 `neuroplex` 的 13 处已迁移或明确废弃；
-4. `scripts/training/` 的对照结论已归档到 plans，脚本不再是唯一证据载体。
-
-**在此之前的正确做法是"冻结"而非"删除"**：`neuroplex/` 不接受新功能，只做不改变行为的修复；边界由 `tests/taiji_native/test_naming_boundary_contract.py` 强制——新增 Transformer 底层消费点会让 CI 失败。冻结保留了对照能力和回滚余地，删除则不可逆。
-
-## 5. 能力声明边界
-
-Native v5 是完整可运行的非 Transformer 感知—状态—情景—行动参考架构，已通过在线学习、128 步自由回灌、二阶上下文、固定延迟 trace、真实按边执行、主动环境和八条 one-shot 跨 episode 情景反证。它尚未证明大容量记忆、巩固、语言能力、组合推理或 AGI。后续仍由可反证门槛决定，不由“类脑”命名、参数规模或单个 demo 决定。
-
-## 6. 阶段收束与后续入口
-
-Native v7 的 signed consolidation 与 winner resource 已落地并通过 12/12 M6 和全回归；M7 cue-chain 已闭合，相关旧失败口径已移入 [归档](../archive/history/AGI_FIELD_MEMORY_PLAN.md)。本文件不再维护独立“下一步”，只维护命名与不可回退边界；当前执行顺序统一见 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。
+执行顺序只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。当前进入 P1：v1 合同、认知所有权测试和 TSK-v8 compatibility adapter。

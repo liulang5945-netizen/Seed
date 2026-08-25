@@ -1,24 +1,43 @@
-# Seed — powered by the Taiji Native Predictive Substrate
+# Seed — runtime for the Taiji Native Cognitive Architecture
 
-**Seed** is the project and model. **Taiji** is Seed's native computational substrate, built to replace the Transformer bottom layer outright: it defines its own input representation, persistent state transition, distributed episodic field, local learning rules, motor output, active-environment loop, free-running generation, and checkpoint format.
+**Taiji** is the native cognitive architecture and model. **Seed** is the project, product and runtime that trains, evaluates, deploys and hosts Taiji. Taiji is being redesigned around learned perception, world state, workspace, memory, goals, reasoning, planning and generation while reusing mature algorithms where they fit the project—not rebuilding intelligence from primitive one-hot mechanisms.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 
-> Current status: executable research prototype, not an AGI claim and not a language-quality replacement yet.
+> Current status: the Taiji Native Architecture v1 target is specified; the executable code is still the lower-level Taiji Substrate Kernel v8 (TSK-v8), not a completed cognitive architecture or AGI claim.
 
 ## Naming
 
 | Name | Meaning |
 |---|---|
-| **Seed** | the project and model-level organism; distribution/package `seed` |
-| **Taiji** / Taiji Predictive Fabric (TPF) | Seed's computational substrate replacing the Transformer; package `taiji/`, current checkpoint line Native v7 |
+| **Seed** | project, product, distribution and runtime; package `seed` |
+| **Taiji** | complete native cognitive architecture and model; target package `taiji/` |
+| **TSK-v8** | current executable byte/fabric/memory/motor research kernel and compatibility line |
 | **Legacy NeuroPlex** | the frozen Transformer baseline in `neuroplex/`; the replaced bottom layer is `neuroplex/layers.py::TransformerBlock` |
-| `taiji.*` in `scripts/archive/` | a historical import alias for `neuroplex`, not this substrate |
+| `taiji.*` in `scripts/archive/` | a historical import alias for `neuroplex`, not the current architecture |
 
-## What Taiji replaces
+## Architecture direction
 
-Taiji does not wrap a Transformer in neuron terminology. The native path is:
+Taiji is capability-first, not anti-Transformer by ideology. It may reuse learned embeddings, attention-like routing, state-space or graph operators, optimizers, reinforcement learning, retrieval infrastructure and CUDA kernels. The invariant is that Taiji owns the cognitive state and decision path; no Transformer, Legacy runtime or teacher model may remain the runtime cognitive subject.
+
+The target path is:
+
+```text
+multimodal observations
+  → learned perception and variable-duration abstractions
+  → predictive world/self state + workspace
+  ↔ working / episodic / semantic / procedural memory
+  → goals / reasoning / imagination / planning
+  → language / tool / body action
+  → real outcome and continued learning
+```
+
+See the [core project requirements](plans/active/TAIJI_CORE_REQUIREMENTS.md), [Taiji Native Architecture v1](plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md), and the [current roadmap](plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md).
+
+## Current TSK-v8 kernel baseline
+
+The current executable kernel does not wrap a Transformer. Its narrower path is:
 
 ```text
 raw byte receptors
@@ -30,7 +49,7 @@ raw byte receptors
   → emitted action returns as the next sensation
 ```
 
-| Transformer responsibility | Taiji Native v7 |
+| Transformer responsibility | Current TSK-v8 experiment |
 |---|---|
 | tokenizer + learned embedding | 256 raw-byte receptors + boundary receptor |
 | positional encoding | causal ticks and persistent state |
@@ -97,7 +116,7 @@ h^{event}=\phi(Qs+\gamma_e(Aa+Oo+r\rho+Tt+Ee+Pp)),
 
 Every update is restricted to stored fixed-fan-in edges. There is no dense structural mask, attention matrix, context window, optimizer, `backward()`, teacher model, or distillation path.
 
-The complete tensor shapes, update order, state contract, complexity, and code mapping are in [the architecture specification](plans/active/TAIJI_SUBSTRATE_ARCHITECTURE.md).
+The kernel tensor shapes, update order, state contract, complexity, and code mapping are preserved in the [archived TSK-v8 implementation specification](plans/archive/implementation/TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md). These equations are candidate substrate mechanisms, not the complete Taiji architecture.
 
 ## Quick start
 
@@ -113,7 +132,7 @@ python scripts/training/verify_taiji_m5_episodic_field.py
 python -m pytest tests/taiji_native -q
 ```
 
-Seed model API:
+Seed runtime compatibility API:
 
 ```python
 from seed import Seed
@@ -128,7 +147,7 @@ checkpoint = model.checkpoint()
 restored = Seed.from_checkpoint(checkpoint)
 ```
 
-Researchers may still import `Taiji` directly for substrate-only falsification experiments. Production-facing composition belongs in `seed/`.
+Researchers may still import the current `Taiji` class directly for TSK-v8 kernel falsification experiments. During P1, Seed remains the product-facing runtime while cognitive ownership moves into the Taiji v1 contract.
 
 ## Public Beta
 
@@ -145,13 +164,13 @@ cd frontend && npm run dev                                     # frontend dev se
 Environment knobs: `SEED_PORT` (default 8000), `SEED_HOST` (default 127.0.0.1),
 `SEED_RUNTIME=1` (activate the Seed native runtime on startup).
 
-Beta verification evidence lives in `reports/` (API stress 1000/1000, checkpoint crash-recovery
-10/10, latency/throughput baselines, frontend review) and the release report
-`reports/seed_public_beta_release_20260823.md`. End-user instructions (install, chat, training,
-known limits) are in [docs/seed_public_beta_user_guide.md](docs/seed_public_beta_user_guide.md).
-Current checkpoints are early-stage: garbled replies are expected model behavior, not defects.
+Historical beta verification evidence lives in `reports/` (API stress 1000/1000, checkpoint
+crash-recovery 10/10, latency/throughput baselines and frontend review) and
+`reports/seed_public_beta_release_20260823.md`. It documents the TSK-v8 product shell rather than
+Taiji v1 capability. Current checkpoints are early-stage: garbled replies are expected kernel
+behavior, not a completed language architecture.
 
-## Reproducible Taiji substrate results
+## Reproducible TSK-v8 kernel results
 
 The committed verification uses two regions `[64, 48]`, seed `7`, and raw bytes:
 
@@ -188,11 +207,11 @@ A single seed cannot separate a mechanism change from seed-specific idiosyncrasy
 
 ```text
 seed/
-├── config.py    Seed-level composition contract
-└── model.py     public model boundary wrapping one Taiji substrate
+├── config.py    Seed runtime compatibility configuration
+└── model.py     product-facing compatibility wrapper around TSK-v8
 
 taiji/
-├── config.py    architecture and dynamics contract
+├── config.py    current kernel resource and dynamics contract
 ├── sparse.py    fixed fan-in synapses and local updates
 ├── state.py     persistent region and whole-system state
 ├── memory.py    distributed episodic encoding, completion, and readback
@@ -201,7 +220,7 @@ taiji/
 ├── fabric.py    predictive recurrent tick
 └── model.py     observe, learn, score, generate, checkpoint
 
-tests/taiji_native/                 native architecture contracts
+tests/taiji_native/                 kernel regression and ownership contracts
 scripts/training/verify_taiji_native_v7.py
 scripts/training/verify_taiji_m5_episodic_field.py
 scripts/training/verify_taiji_n10_sparse_migration.py
@@ -209,7 +228,8 @@ scripts/training/verify_taiji_n11_active_environment.py
 scripts/training/verify_taiji_n7_context.py
 scripts/training/verify_taiji_n8_delayed_trace.py
 scripts/training/verify_taiji_n9_long_free_run.py
-plans/active/TAIJI_SUBSTRATE_ARCHITECTURE.md
+plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md
+plans/archive/implementation/TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md
 ```
 
 ## Legacy NeuroPlex
@@ -224,9 +244,9 @@ Install legacy application dependencies only when reproducing that baseline:
 python -m pip install -e ".[legacy]"
 ```
 
-## Current falsification target
+## Current implementation target
 
-Native v7 now implements a slow signed shared-support consolidation pathway beside the fast sparse predictor. A waking-only baseline defines signed eligibility; each endogenous replay winner owns a bout-local resource retained at `0.9`; a dedicated RNG stream prevents the new pathway from shifting existing organs. The strict M6 panel reaches 4/4 on all 12 seeds, while every no-replay control stays at chance (25%). M7 now provides the next biting baseline: action→outcome remains 100%, but cue→action cortical evidence is exactly zero and behavior does not beat no replay. The current implementation target is an endogenous cue-reinstatement phase before the existing action→outcome burst.
+M6/M7 and N0–N11 remain reproducible TSK-v8 kernel evidence. They no longer define the research frontier. The current target is roadmap P1: versioned Taiji v1 observation/state/goal/plan/action contracts, cognitive-ownership tests, and a TSK-v8 compatibility adapter that preserves current checkpoints and product APIs. Learned temporal abstraction begins only after that boundary is executable.
 
 ## License
 

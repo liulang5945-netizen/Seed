@@ -4,7 +4,7 @@
 >
 > 本文以源码函数体、调用者、状态读写和可复现实验为唯一依据。计划文件中的“已接入”只有在这里找到真实入口后才成立。行号按本次审计时的工作区记录，代码改动后应重新核对。
 >
-> **2026-08-21 架构边界**：本文现在是 Legacy NeuroPlex（现有 9 个 Transformer 成员）的事实基线，不是 Taiji 新底座规范。Taiji 的替换设计见 [TAIJI_SUBSTRATE_ARCHITECTURE.md](../../active/TAIJI_SUBSTRATE_ARCHITECTURE.md)；本审计保留用于解释底层替换原因和后续同预算/消融对照。
+> **2026-08-25 架构边界**：本文是 Legacy NeuroPlex（现有 9 个 Transformer 成员）的事实基线，不是 Taiji Native v1 规范。完整目标见 [TAIJI_NATIVE_ARCHITECTURE_V1.md](../../active/TAIJI_NATIVE_ARCHITECTURE_V1.md)，旧 substrate 对照见 [TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md](../implementation/TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md)；本审计只用于历史解释和同预算/消融对照。
 
 ## 0. 审计结论先行
 
@@ -560,4 +560,4 @@ TypeError: 'dict_values' object is not an iterator
 
 ## 16. 当前归属
 
-§14–§15 的修复已并入代码，但它们属于冻结的 Legacy NeuroPlex 运行事实，不进入原生 Taiji forward。项目当前名称、Seed 上层模型与 Taiji 基底的边界，以 `ARCHITECTURE_DIRECTION_2026_08.md` 和 `TAIJI_SUBSTRATE_ARCHITECTURE.md` 为准；本文件不再发布项目主线的“下一步”。
+§14–§15 的修复已并入代码，但它们属于冻结的 Legacy NeuroPlex 运行事实，不进入 Taiji cognition。当前身份与完整架构以 `ARCHITECTURE_DIRECTION_2026_08.md` 和 `TAIJI_NATIVE_ARCHITECTURE_V1.md` 为准；本文件不再发布项目主线的“下一步”。

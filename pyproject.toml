@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "seed"
 version = "1.6.0"
-description = "Seed model built on the native Taiji predictive substrate"
+description = "Seed product runtime for the Taiji native cognitive architecture"
 readme = "README.md"
 license = {text = "Apache-2.0"}
 requires-python = ">=3.10"

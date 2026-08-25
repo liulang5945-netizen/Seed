@@ -1,6 +1,6 @@
-# Taiji Substrate Code Wiki
+# Taiji Substrate Kernel v8 Code Wiki
 
-This page maps the executable Taiji algorithm to source code. **Scope: the top-level `taiji/` substrate only** — the Seed model boundary is in [`seed/`](seed), while the frozen Legacy NeuroPlex Transformer baseline in `neuroplex/` is documented in [INTERFACE_REFERENCE.md](INTERFACE_REFERENCE.md). The formal equations and ordering contract are in [TAIJI_SUBSTRATE_ARCHITECTURE.md](plans/active/TAIJI_SUBSTRATE_ARCHITECTURE.md).
+This page maps the current executable TSK-v8 kernel to source code. It is not the complete Taiji cognitive architecture. The product/runtime wrapper is in [`seed/`](seed), the Taiji v1 target is in [TAIJI_NATIVE_ARCHITECTURE_V1.md](plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md), the kernel equations are preserved in [TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md](plans/archive/implementation/TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md), and the frozen Legacy NeuroPlex baseline is documented in [INTERFACE_REFERENCE.md](INTERFACE_REFERENCE.md).
 
 ## Runtime path
 
@@ -44,7 +44,7 @@ Taiji.observe(outcome, learn_motor=False)
 
 ### `taiji/config.py`
 
-`TaijiConfig` is the complete architecture contract: alphabet, region and field sizes, fan-in, dynamics, homeostasis, cortical/episodic learning rates, norm limits, memory completion/readback gains, motor temperature, and seed. A config is serialized inside every checkpoint.
+`TaijiConfig` is the complete **kernel** contract: alphabet, region and field sizes, fan-in, dynamics, kernel homeostasis, cortical/episodic learning rates, norm limits, memory completion/readback gains, motor temperature, and seed. It is serialized inside every TSK-v8 checkpoint; Taiji v1 adds higher-level cognitive state contracts rather than treating this config as the whole architecture.
 
 ### `taiji/sparse.py`
 

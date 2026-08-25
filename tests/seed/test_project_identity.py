@@ -17,6 +17,7 @@ def test_distribution_and_readme_are_seed() -> None:
     readme = (REPO / "README.md").read_text(encoding="utf-8")
 
     assert pyproject["project"]["name"] == "seed"
+    assert "runtime" in pyproject["project"]["description"].lower()
     assert "seed*" in pyproject["tool"]["setuptools"]["packages"]["find"]["include"]
     assert readme.startswith("# Seed —")
     assert "Seed is the project" not in readme  # avoid reintroducing two identities
@@ -43,3 +44,30 @@ def test_legacy_neuroplex_is_explicitly_a_frozen_comparison() -> None:
     assert (REPO / "neuroplex").is_dir()
     assert "**Legacy NeuroPlex**" in text
     assert "冻结的 Transformer 基线" in text
+
+
+def test_taiji_is_the_cognitive_architecture_and_seed_is_the_runtime() -> None:
+    active = REPO / "plans" / "active"
+    direction = (active / "ARCHITECTURE_DIRECTION_2026_08.md").read_text(encoding="utf-8")
+    seed_architecture = (active / "SEED_ARCHITECTURE.md").read_text(encoding="utf-8")
+    core_requirements = active / "TAIJI_CORE_REQUIREMENTS.md"
+    taiji_architecture = active / "TAIJI_NATIVE_ARCHITECTURE_V1.md"
+    archived_kernel = (
+        REPO / "plans" / "archive" / "implementation" / "TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md"
+    )
+
+    assert core_requirements.is_file()
+    assert taiji_architecture.is_file()
+    assert archived_kernel.is_file()
+    assert not (active / "TAIJI_SUBSTRATE_ARCHITECTURE.md").exists()
+    assert {path.name for path in active.glob("*.md")} == {
+        "ARCHITECTURE_DIRECTION_2026_08.md",
+        "SEED_ARCHITECTURE.md",
+        "SEED_DEVELOPMENT_ROADMAP_2026_08.md",
+        "TAIJI_CORE_REQUIREMENTS.md",
+        "TAIJI_NATIVE_ARCHITECTURE_V1.md",
+    }
+    assert "Taiji 是完整原生认知架构" in direction
+    assert "Seed 是项目、产品和运行时" in direction
+    assert "Seed 可以决定" in seed_architecture
+    assert "不能决定" in seed_architecture
