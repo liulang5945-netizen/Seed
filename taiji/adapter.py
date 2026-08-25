@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import replace
 from typing import Any
 
@@ -21,6 +22,8 @@ from .contracts import (
     PlanCandidate,
     PlanState,
     SelfState,
+    WorkspaceCandidate,
+    WorkspaceSelection,
     WorkspaceState,
     WorldAction,
     WorldPredictionRecord,
@@ -31,6 +34,7 @@ from .contracts import MemoryState as NativeMemoryState
 from .model import Taiji
 from .perception import LearnedPerception
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
+from .workspace import WorkspaceRouter
 from .world_learning import WorldDynamicsLearner, WorldSchema
 
 
@@ -51,6 +55,7 @@ class TSKV8Adapter(Taiji):
         self.perception = LearnedPerception(self.config, device=self.device)
         self._cognitive_state = self._empty_cognitive_state(self._state.episode_id)
         self._world_dynamics: WorldDynamicsLearner | None = None
+        self._workspace_router: WorkspaceRouter | None = None
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -90,12 +95,23 @@ class TSKV8Adapter(Taiji):
             raise TypeError("learner must be a WorldDynamicsLearner or None")
         self._world_dynamics = learner
 
+    def attach_workspace_router(self, router: WorkspaceRouter | None) -> None:
+        """Attach the capacity-limited candidate router used by runtime cognition."""
+
+        if router is not None and not isinstance(router, WorkspaceRouter):
+            raise TypeError("router must be a WorkspaceRouter or None")
+        self._workspace_router = router
+
     def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         super().reset_dynamics(episode_id=episode_id)
         self.perception.reset_dynamics()
         self._cognitive_state = self._empty_cognitive_state(self._state.episode_id)
 
     def observe(self, symbol: int, *args: Any, **kwargs: Any) -> TaijiStep:
+        workspace_candidates: Sequence[WorkspaceCandidate] | None = kwargs.pop(
+            "workspace_candidates", None
+        )
+        workspace_mode = str(kwargs.pop("workspace_mode", "learned"))
         step = super().observe(symbol, *args, **kwargs)
         observation = Observation(
             modality="text-byte",
@@ -113,12 +129,32 @@ class TSKV8Adapter(Taiji):
         features = percept.features.detach().clone()
         recall = step.memory_recall
         previous = self._cognitive_state
-        workspace = WorkspaceState(
-            tick=self.tick,
-            focus=("predictive-context",),
-            broadcast=features,
-            capacity=1,
-        )
+        selection: WorkspaceSelection | None = None
+        candidates: tuple[WorkspaceCandidate, ...] = ()
+        if self._workspace_router is not None and (
+            workspace_candidates is not None or workspace_mode != "learned"
+        ):
+            candidates = tuple(workspace_candidates or ())
+            selection = self._workspace_router.route(
+                candidates,
+                tick=self.tick,
+                mode=workspace_mode,
+            )
+            workspace = WorkspaceState(
+                tick=self.tick,
+                focus=selection.selected_ids,
+                broadcast=selection.broadcast,
+                capacity=selection.capacity,
+                candidates=candidates,
+                selection=selection,
+            )
+        else:
+            workspace = WorkspaceState(
+                tick=self.tick,
+                focus=("predictive-context",),
+                broadcast=features,
+                capacity=1,
+            )
         world = WorldState(
             tick=self.tick,
             latent=features,
@@ -173,6 +209,8 @@ class TSKV8Adapter(Taiji):
         learn_motor: bool | None = None,
         use_memory: bool = True,
         world_state: WorldState | None = None,
+        workspace_candidates: Sequence[WorkspaceCandidate] | None = None,
+        workspace_mode: str = "learned",
     ) -> TaijiStep:
         """Ingest a v1 ``Observation`` while retaining the kernel API."""
 
@@ -183,6 +221,8 @@ class TSKV8Adapter(Taiji):
             learn=learn,
             learn_motor=learn_motor,
             use_memory=use_memory,
+            workspace_candidates=workspace_candidates,
+            workspace_mode=workspace_mode,
         )
         self._cognitive_state = replace(self._cognitive_state, observation=observation)
         if world_state is not None:
@@ -363,6 +403,11 @@ class TSKV8Adapter(Taiji):
         return int(
             super().dense_equivalent_parameter_count()
             + sum(parameter.numel() for parameter in self.perception.parameters())
+            + (
+                0
+                if self._workspace_router is None
+                else sum(parameter.numel() for parameter in self._workspace_router.parameters())
+            )
         )
 
     def checkpoint(self) -> dict[str, Any]:
@@ -371,6 +416,8 @@ class TSKV8Adapter(Taiji):
         payload["perception"] = self.perception.checkpoint()
         if self._world_dynamics is not None:
             payload["world_dynamics"] = self._world_dynamics_checkpoint()
+        if self._workspace_router is not None:
+            payload["workspace_router"] = self._workspace_router.checkpoint()
         return payload
 
     def restore(self, checkpoint: dict[str, Any]) -> None:
@@ -378,6 +425,7 @@ class TSKV8Adapter(Taiji):
         if "perception" in checkpoint:
             self.perception.restore(checkpoint["perception"])
         self._restore_world_dynamics(checkpoint.get("world_dynamics"))
+        self._restore_workspace_router(checkpoint.get("workspace_router"))
 
     def _world_dynamics_checkpoint(self) -> dict[str, Any]:
         if self._world_dynamics is None:
@@ -406,12 +454,19 @@ class TSKV8Adapter(Taiji):
         learner.online_updates = int(payload.get("online_updates", 0))
         self._world_dynamics = learner
 
+    def _restore_workspace_router(self, payload: Any) -> None:
+        self._workspace_router = (
+            None if payload is None else WorkspaceRouter.from_checkpoint(dict(payload), device=self.device)
+        )
+
     def native_checkpoint(self) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
 
         components: dict[str, Any] = {"perception": self.perception.checkpoint()}
         if self._world_dynamics is not None:
             components["world_dynamics"] = self._world_dynamics_checkpoint()
+        if self._workspace_router is not None:
+            components["workspace_router"] = self._workspace_router.checkpoint()
         return NativeCheckpoint(
             kernel=super().checkpoint(),
             cognitive_state=self.cognitive_snapshot(),
@@ -427,6 +482,7 @@ class TSKV8Adapter(Taiji):
         if "perception" in envelope.components:
             self.perception.restore(envelope.components["perception"])
         self._restore_world_dynamics(envelope.components.get("world_dynamics"))
+        self._restore_workspace_router(envelope.components.get("workspace_router"))
         state = envelope.cognitive_state
         if state.tick != self.tick or state.episode_id != self._state.episode_id:
             raise ValueError("native cognitive state is out of sync with kernel state")

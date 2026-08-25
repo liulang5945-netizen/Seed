@@ -227,6 +227,108 @@ class PerceptEvent:
 
 
 @dataclass(frozen=True)
+class WorkspaceCandidate:
+    """A candidate that may enter the shared workspace."""
+
+    candidate_id: str
+    features: torch.Tensor
+    salience: float = 0.0
+    source: str = "external"
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.candidate_id, "workspace candidate_id")
+        _check_text(self.source, "workspace candidate source")
+        _check_unit(self.salience, "workspace candidate salience")
+        if self.features.ndim != 1:
+            raise ValueError("workspace candidate features must be a vector")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "candidate_id": self.candidate_id,
+            "features": self.features.detach().cpu().clone(),
+            "salience": self.salience,
+            "source": self.source,
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> WorkspaceCandidate:
+        return cls(
+            version=int(payload["version"]),
+            candidate_id=str(payload["candidate_id"]),
+            features=payload["features"].detach().to(device).clone(),
+            salience=float(payload.get("salience", 0.0)),
+            source=str(payload.get("source", "external")),
+        )
+
+
+@dataclass(frozen=True)
+class WorkspaceSelection:
+    """The auditable result of routing candidates through the workspace."""
+
+    tick: int
+    mode: str
+    candidate_ids: tuple[str, ...] = ()
+    selected_ids: tuple[str, ...] = ()
+    scores: tuple[float, ...] = ()
+    broadcast: torch.Tensor = field(default_factory=lambda: torch.empty(0))
+    capacity: int = 0
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        if int(self.tick) < 0:
+            raise ValueError("workspace selection tick cannot be negative")
+        if self.mode not in {"learned", "none", "random"}:
+            raise ValueError(f"unsupported workspace selection mode: {self.mode}")
+        if int(self.capacity) < 0:
+            raise ValueError("workspace selection capacity cannot be negative")
+        if len(set(self.candidate_ids)) != len(self.candidate_ids):
+            raise ValueError("workspace candidate ids must be unique")
+        if len(self.scores) != len(self.candidate_ids):
+            raise ValueError("workspace scores must align with candidate ids")
+        if not set(self.selected_ids).issubset(self.candidate_ids):
+            raise ValueError("workspace selection contains an unknown candidate")
+        if self.capacity != 0 and len(self.selected_ids) > self.capacity:
+            raise ValueError("workspace selection exceeds capacity")
+        if any(not math.isfinite(float(score)) for score in self.scores):
+            raise ValueError("workspace scores must be finite")
+        if self.broadcast.ndim != 1:
+            raise ValueError("workspace selection broadcast must be a vector")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "tick": self.tick,
+            "mode": self.mode,
+            "candidate_ids": list(self.candidate_ids),
+            "selected_ids": list(self.selected_ids),
+            "scores": list(self.scores),
+            "broadcast": self.broadcast.detach().cpu().clone(),
+            "capacity": self.capacity,
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> WorkspaceSelection:
+        return cls(
+            version=int(payload["version"]),
+            tick=int(payload["tick"]),
+            mode=str(payload.get("mode", "learned")),
+            candidate_ids=tuple(str(item) for item in payload.get("candidate_ids", ())),
+            selected_ids=tuple(str(item) for item in payload.get("selected_ids", ())),
+            scores=tuple(float(item) for item in payload.get("scores", ())),
+            broadcast=payload["broadcast"].detach().to(device).clone(),
+            capacity=int(payload.get("capacity", 0)),
+        )
+
+
+@dataclass(frozen=True)
 class WorkspaceState:
     """Capacity-limited focus and broadcast state."""
 
@@ -235,6 +337,8 @@ class WorkspaceState:
     bindings: tuple[tuple[str, str], ...] = ()
     broadcast: torch.Tensor = field(default_factory=lambda: torch.empty(0))
     capacity: int = 0
+    candidates: tuple[WorkspaceCandidate, ...] = ()
+    selection: WorkspaceSelection | None = None
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -247,6 +351,14 @@ class WorkspaceState:
             raise ValueError("workspace focus exceeds capacity")
         if self.broadcast.ndim != 1:
             raise ValueError("workspace broadcast must be a vector")
+        if self.selection is not None:
+            if self.selection.tick != self.tick:
+                raise ValueError("workspace selection tick must match workspace tick")
+            candidate_ids = tuple(candidate.candidate_id for candidate in self.candidates)
+            if candidate_ids != self.selection.candidate_ids:
+                raise ValueError("workspace selection must align with workspace candidates")
+            if tuple(self.focus) != self.selection.selected_ids:
+                raise ValueError("workspace focus must match workspace selection")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -256,6 +368,8 @@ class WorkspaceState:
             "bindings": [list(pair) for pair in self.bindings],
             "broadcast": self.broadcast.detach().cpu().clone(),
             "capacity": self.capacity,
+            "candidates": [candidate.to_payload() for candidate in self.candidates],
+            "selection": None if self.selection is None else self.selection.to_payload(),
         }
 
     @classmethod
@@ -269,6 +383,15 @@ class WorkspaceState:
             bindings=tuple((str(pair[0]), str(pair[1])) for pair in payload.get("bindings", ())),
             broadcast=payload["broadcast"].detach().to(device).clone(),
             capacity=int(payload.get("capacity", 0)),
+            candidates=tuple(
+                WorkspaceCandidate.from_payload(item, device=device)
+                for item in payload.get("candidates", ())
+            ),
+            selection=(
+                None
+                if payload.get("selection") is None
+                else WorkspaceSelection.from_payload(payload["selection"], device=device)
+            ),
         )
 
 

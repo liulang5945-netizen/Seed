@@ -207,11 +207,18 @@ P3 的第一段合同与恢复边界已落地：
   误差观测与 lineage 固化，尚未宣称在线权重校正已经有效。
 - `WorldDynamicsLearner.online_update(transition)` 已接入 adapter 的 `learn_world` 路径；重复干预测试显示
   error-driven update 优于 no-update lesion，`online_update_count` 和 learner 参数可随 native checkpoint 恢复。
+- Workspace 路由已从单一 broadcast 提升为可审计的候选选择合同：`WorkspaceCandidate` 描述候选及其特征，
+  `WorkspaceSelection` 保存全体分数、选中 ID、容量和 broadcast；`WorkspaceState` 保存候选与选择结果并校验二者对齐。
+- `taiji/workspace.py` 的 `WorkspaceRouter` 用独立候选 scorer 学习相关性，执行 capacity-limited top-k；
+  `learned`、`none`、`random` 三种模式分别作为主路径与 workspace lesion，且路由参数、训练计数和 native checkpoint
+  可恢复。`TSKV8Adapter.observe/observe_event` 已接入同一 runtime tick，旧调用仍保留 predictive-context 回退。
+- Workspace 合同、监督训练、容量约束、none/random lesion、adapter runtime 接入和 checkpoint round-trip 已通过 4 项新测试；
+  这只证明路由机制存在，不等于 A3 的异质协作或 `1+1>2` Gate 已通过。
 
 ### 工作项
 
 - 建立实体、属性、关系、事件和 affordance 的分布式动态绑定。
-- 引入容量受限、可学习的选择性路由与广播。
+- ~~引入容量受限、可学习的选择性路由与广播。~~ 已完成最小 runtime 机制；下一阶段转入 A3 协作基准。
 - 把预测目标从 next byte 扩展到下一事件、状态变化和行动后果。
 - 在对象持续性、关系交换、时间打乱和干预任务上预注册 A2/A3。
 
@@ -310,4 +317,4 @@ P3 的第一段合同与恢复边界已落地：
 
 ## 16. 当前唯一下一步
 
-**进入 P3 workspace 路由：把容量受限的对象/关系选择与 broadcast 接入同一 runtime transition loop，加入无 workspace/随机路由 lesion；不改变已冻结的 world/action/outcome 合同。**
+**进入 P3 A3 协作基准：构造多个异质候选源，在同一 runtime workspace 上比较 learned、最强单体、平均广播、固定/随机路由和无 workspace，预注册 `1+1>2` 与 lesion 判据；不改变已冻结的 world/action/outcome 合同。**

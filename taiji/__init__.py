@@ -28,6 +28,8 @@ from .contracts import (
     PlanCandidate,
     PlanState,
     SelfState,
+    WorkspaceCandidate,
+    WorkspaceSelection,
     WorkspaceState,
     WorldAction,
     WorldAffordance,
@@ -62,6 +64,7 @@ from .state import (
     TaijiState,
     TaijiStep,
 )
+from .workspace import WorkspaceRouter, WorkspaceRoutingExample
 from .world import WORLD_STATE_CHECKPOINT_FORMAT, TaijiWorldState
 from .world_learning import (
     WorldDynamicsLearner,
@@ -126,6 +129,10 @@ __all__ = [
     "LearnedPerception",
     "SelfState",
     "WorkspaceState",
+    "WorkspaceCandidate",
+    "WorkspaceSelection",
+    "WorkspaceRouter",
+    "WorkspaceRoutingExample",
     "WorldState",
     "WorldAction",
     "WorldAffordance",
