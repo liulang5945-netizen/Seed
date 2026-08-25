@@ -1,0 +1,18 @@
+{
+  "format": "taiji-p5-goal-planning-manifest-v1",
+  "task": "choose between safe and risky executable world actions for a registered goal",
+  "signals": [
+    "predicted_reward",
+    "success_probability",
+    "expected_progress",
+    "uncertainty",
+    "resource_cost",
+    "conflict"
+  ],
+  "lesions": [
+    "reward_only",
+    "runtime_plan_bypass",
+    "checkpoint_continuation"
+  ],
+  "boundary": "goal-directed candidate ranking and progress update only; not long-horizon planning or language generation"
+}

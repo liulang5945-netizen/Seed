@@ -14,6 +14,7 @@ from .contracts import (
     CognitiveState,
     DevelopmentState,
     EpisodicMemoryRecord,
+    Goal,
     GoalState,
     HomeostaticState,
     LearningState,
@@ -37,6 +38,7 @@ from .episodic_memory import EpisodicMemoryStore
 from .homeostasis import HomeostaticController, HomeostaticDrive
 from .model import Taiji
 from .perception import LearnedPerception
+from .planning import GoalPlanner, PlanningCandidate, PlanningDecision
 from .procedural_memory import ProceduralMemoryLearner
 from .semantic_memory import SemanticMemoryLearner
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
@@ -66,6 +68,7 @@ class TSKV8Adapter(Taiji):
         self._semantic_memory: SemanticMemoryLearner | None = None
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
+        self._goal_planner: GoalPlanner | None = None
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -205,6 +208,47 @@ class TSKV8Adapter(Taiji):
         state = replace(state, tick=self.tick)
         self._cognitive_state = replace(self._cognitive_state, homeostasis=state)
         return state
+
+    def attach_goal_planner(self, planner: GoalPlanner | None) -> None:
+        """Attach the Taiji-owned planner for executable goal candidates."""
+
+        if planner is not None and not isinstance(planner, GoalPlanner):
+            raise TypeError("planner must be a GoalPlanner or None")
+        self._goal_planner = planner
+
+    def set_goals(self, goals: Sequence[Goal]) -> None:
+        """Register the current goal hierarchy in the Taiji cognitive state."""
+
+        goals = tuple(goals)
+        if any(not isinstance(goal, Goal) for goal in goals):
+            raise TypeError("goals must contain Goal contracts")
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            goals=GoalState(tick=self.tick, goals=goals),
+        )
+
+    def plan_actions(
+        self,
+        candidates: Sequence[PlanningCandidate],
+        *,
+        goal_id: str | None = None,
+    ) -> PlanningDecision:
+        """Compare executable world candidates and persist the selected plan."""
+
+        if self._goal_planner is None:
+            raise RuntimeError("goal planner is not attached")
+        decision = self._goal_planner.plan(
+            self._cognitive_state.goals,
+            tuple(candidates),
+            tick=self.tick,
+            goal_id=goal_id,
+        )
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            plan=decision.plan,
+            goals=replace(self._cognitive_state.goals, tick=self.tick),
+        )
+        return decision
 
     def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         super().reset_dynamics(episode_id=episode_id)
@@ -366,6 +410,25 @@ class TSKV8Adapter(Taiji):
         supplied_world_action = kwargs.pop("world_action", None)
         procedural_action_kinds = kwargs.pop("procedural_action_kinds", None)
         use_procedural = bool(kwargs.pop("use_procedural", False))
+        use_plan = bool(kwargs.pop("use_plan", False))
+        planned_kind = None
+        if use_plan:
+            if use_procedural:
+                raise ValueError("use_plan and use_procedural cannot be enabled together")
+            selected_plan_id = self._cognitive_state.plan.selected_plan_id
+            if selected_plan_id is None:
+                raise RuntimeError("planned action routing requires a selected plan")
+            selected_plan = next(
+                (
+                    candidate
+                    for candidate in self._cognitive_state.plan.candidates
+                    if candidate.plan_id == selected_plan_id
+                ),
+                None,
+            )
+            if selected_plan is None:
+                raise RuntimeError("selected plan is missing from the current plan state")
+            planned_kind = selected_plan.action_kind
         action_kinds = (
             None
             if procedural_action_kinds is None
@@ -391,10 +454,16 @@ class TSKV8Adapter(Taiji):
                 raise ValueError("procedural learner predicted an unavailable action kind")
         else:
             predicted_kind = None
+        if planned_kind is not None:
+            if action_kinds is None:
+                raise ValueError("planned action routing requires procedural_action_kinds")
+            if planned_kind not in action_kinds:
+                raise ValueError("selected plan is not available in the current affordances")
         decision = super().act(available_actions, *args, **kwargs)
-        if use_procedural:
+        route_kind = predicted_kind if use_procedural else planned_kind
+        if route_kind is not None:
             assert action_kinds is not None
-            selected_action = tuple(action_kinds).index(predicted_kind)
+            selected_action = tuple(action_kinds).index(route_kind)
             selected_symbol = tuple(int(action) for action in available_actions)[selected_action]
             pending = self._state.pending_action
             if pending is None:
@@ -425,6 +494,15 @@ class TSKV8Adapter(Taiji):
             for index, action in enumerate(decision.available_actions)
         )
         selected_index = decision.available_actions.index(decision.action_symbol)
+        plan_state = (
+            replace(self._cognitive_state.plan, tick=self.tick)
+            if use_plan
+            else PlanState(
+                tick=self.tick,
+                candidates=candidates,
+                selected_plan_id=(candidates[selected_index].plan_id if candidates else None),
+            )
+        )
         world_action = None
         if supplied_world_action is not None:
             if not isinstance(supplied_world_action, WorldAction):
@@ -459,11 +537,7 @@ class TSKV8Adapter(Taiji):
             )
         self._cognitive_state = replace(
             self._cognitive_state,
-            plan=PlanState(
-                tick=self.tick,
-                candidates=candidates,
-                selected_plan_id=(candidates[selected_index].plan_id if candidates else None),
-            ),
+            plan=plan_state,
             action_intent=intent,
             world_prediction=world_prediction,
         )
@@ -543,6 +617,9 @@ class TSKV8Adapter(Taiji):
                         online_update_count=self._world_dynamics.online_updates,
                     )
         memory = self._cognitive_state.memory
+        goals = self._cognitive_state.goals
+        if self._goal_planner is not None:
+            goals = self._goal_planner.apply_outcome(goals, outcome)
         homeostasis = self._cognitive_state.homeostasis
         if self._homeostatic_controller is not None:
             homeostasis = self._homeostatic_controller.update(
@@ -584,6 +661,7 @@ class TSKV8Adapter(Taiji):
             tick=self.tick,
             world=(world_state if world_state is not None else self._cognitive_state.world),
             memory=memory,
+            goals=goals,
             homeostasis=homeostasis,
             outcome=outcome,
             world_transition=transition,
@@ -634,6 +712,8 @@ class TSKV8Adapter(Taiji):
             payload["procedural_memory"] = self._procedural_memory.checkpoint()
         if self._homeostatic_controller is not None:
             payload["homeostasis"] = self._homeostatic_controller.checkpoint()
+        if self._goal_planner is not None:
+            payload["planning"] = self._goal_planner.checkpoint()
         return payload
 
     def restore(self, checkpoint: dict[str, Any]) -> None:
@@ -646,6 +726,7 @@ class TSKV8Adapter(Taiji):
         self._restore_semantic_memory(checkpoint.get("semantic_memory"))
         self._restore_procedural_memory(checkpoint.get("procedural_memory"))
         self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
+        self._restore_goal_planner(checkpoint.get("planning"))
 
     def _world_dynamics_checkpoint(self) -> dict[str, Any]:
         if self._world_dynamics is None:
@@ -707,6 +788,11 @@ class TSKV8Adapter(Taiji):
             else HomeostaticController.from_checkpoint(dict(payload))
         )
 
+    def _restore_goal_planner(self, payload: Any) -> None:
+        self._goal_planner = (
+            None if payload is None else GoalPlanner.from_checkpoint(dict(payload))
+        )
+
     def native_checkpoint(self) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
 
@@ -723,6 +809,8 @@ class TSKV8Adapter(Taiji):
             components["procedural_memory"] = self._procedural_memory.checkpoint()
         if self._homeostatic_controller is not None:
             components["homeostasis"] = self._homeostatic_controller.checkpoint()
+        if self._goal_planner is not None:
+            components["planning"] = self._goal_planner.checkpoint()
         return NativeCheckpoint(
             kernel=super().checkpoint(),
             cognitive_state=self.cognitive_snapshot(),
@@ -743,6 +831,7 @@ class TSKV8Adapter(Taiji):
         self._restore_semantic_memory(envelope.components.get("semantic_memory"))
         self._restore_procedural_memory(envelope.components.get("procedural_memory"))
         self._restore_homeostatic_controller(envelope.components.get("homeostasis"))
+        self._restore_goal_planner(envelope.components.get("planning"))
         state = envelope.cognitive_state
         if state.tick != self.tick or state.episode_id != self._state.episode_id:
             raise ValueError("native cognitive state is out of sync with kernel state")

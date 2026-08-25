@@ -234,7 +234,7 @@ P4 的最小真实经历边界已落地：
   `ActionIntent`、`Outcome` 和可选 `WorldTransition`，不依赖领域事实表或固定事件槽；
 - `TSKV8Adapter` 在真实 `settle_action` 后写入一条 `EpisodicMemoryRecord`，后续 `observe` 检索相关记录，store 与认知
   state 一起进入 legacy/native checkpoint；
-- working item、写入/检索、容量淘汰、真实 outcome 绑定和 checkpoint round-trip 已通过定向测试；本轮原生回归为 `86 passed,
+- working item、写入/检索、容量淘汰、真实 outcome 绑定和 checkpoint round-trip 已通过定向测试；本轮原生回归为 `87 passed,
   1 skipped`（另 2 个旧 manifest 测试仍受本机 pytest 系统临时目录权限影响）。该入口只完成经历保持与检索，不宣称
   已形成语义/程序记忆或跨 episode 迁移。
 - `scripts/training/eval_taiji_p4_episodic_recall.py` 已完成 cue-conditioned one-shot recall 窄 Gate：8 条训练经历、8 条
@@ -269,7 +269,11 @@ P4 的最小真实经历边界已落地：
 - `taiji/homeostasis.py` 已提供事件驱动 `HomeostaticController`，adapter 在 observation/outcome 更新内部状态，并把 controller
   配置纳入 native checkpoint；高误差/负 reward 自动选择 sleep，sleep/play/fixed/random/no-modulator lesions 均通过。报告和
   manifest 为 `reports/taiji_p4_homeostasis_*_20260825.json`。
-- 本轮 native 回归为 `86 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
+- `taiji/planning.py` 已提供 `GoalPlanner`：对真实 `WorldAction` 候选综合 predicted reward、success、progress、uncertainty、
+  resource cost 和 conflict，adapter 通过 goal→plan→act→outcome 更新 progress 并恢复 plan；safe/risky 单步 Gate 与
+  reward-only lesion 已通过，报告和 manifest 为 `reports/taiji_p5_goal_planning_*_20260825.json`。当前仍需多步 imagined rollout
+  和 prediction-error-driven replanning。
+- 本轮 native 回归为 `87 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
 
 ### 工作项
 
@@ -373,4 +377,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**继续 P5 goal-directed cognition：建立目标层级、价值、不确定性、冲突和进度状态，让 planner 比较真实可执行候选并把 world outcome 回写；不改变既有合同。**
+**继续 P5 imagined rollout：让 planner 比较多步 world-model rollout，记录 provenance/置信度，并在真实 outcome 产生预测误差后触发重规划；不改变既有合同。**

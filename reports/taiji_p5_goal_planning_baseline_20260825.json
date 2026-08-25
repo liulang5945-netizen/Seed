@@ -1,0 +1,16 @@
+{
+  "format": "taiji-p5-goal-planning-v1",
+  "metrics": {
+    "selected_candidate": "safe-route",
+    "selected_expected_value": 1.44,
+    "uncertainty_aware_lesion_candidate": "risky-route",
+    "runtime_selected_action_kind": "safe",
+    "runtime_goal_progress": 0.4,
+    "checkpoint_goal_progress": 0.4,
+    "checkpoint_plan_id": "safe-route"
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "planner selects an executable low-risk candidate, runtime executes it, and experienced outcome advances the goal through checkpoint"
+  }
+}
