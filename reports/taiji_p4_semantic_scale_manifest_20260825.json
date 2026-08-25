@@ -1,0 +1,21 @@
+{
+  "format": "taiji-p4-semantic-scale-manifest-v1",
+  "task": "infer the held-out all-active composition from noisy multi-factor episodes",
+  "factor_count": 4,
+  "seen_combinations": 15,
+  "held_out_combination": [
+    1,
+    1,
+    1,
+    1
+  ],
+  "repeats_per_seen_combination": 4,
+  "noise_scale": 0.05,
+  "controls": [
+    "episodic_nearest",
+    "replay_lesion",
+    "episode_id_lesion",
+    "checkpoint_continuation"
+  ],
+  "boundary": "additive multi-factor relation only; not general semantic or language competence"
+}
