@@ -3,9 +3,9 @@
 这些测试把 ARCHITECTURE_DIRECTION_2026_08.md §0 规范词表从"文档约定"变成
 "机器强制约束"。文档只能建议，测试才能阻止回退。
 
-守护的四条不可回退事实：
-  1. Seed 是项目/模型，seed/ 只能通过公开 API 组合 taiji/
-  2. taiji/ 是自足基底：不导入 seed、neuroplex 或 transformers（含子包）
+守护的五条不可回退事实：
+  1. Seed 是项目/产品运行时，只能通过公开 API 承载 taiji/
+  2. taiji/ 是自足认知命名空间：不导入 seed、neuroplex 或 transformers（含子包）
   3. neuroplex/ 不反向依赖 seed/ 或 taiji/：冻结基线保持独立
   4. Transformer 底层的 live 消费点是封闭且已知的：新增消费点必须显式改这里
   5. taiji/ 内禁止出现"态极"：新基底不复用 Legacy NeuroPlex 的旧中文称呼
@@ -83,12 +83,12 @@ def test_taiji_substrate_never_imports_legacy_or_transformers() -> None:
             offenders[path.relative_to(REPO).as_posix()] = forbidden
 
     assert not offenders, (
-        "Taiji 是 Seed 的自足基底，不得依赖 Seed 上层、Legacy NeuroPlex "
+        "Taiji 是自足认知架构，不得依赖 Seed 运行时、Legacy NeuroPlex "
         f"或 HuggingFace transformers：{offenders}"
     )
 
 
-def test_seed_only_composes_the_public_taiji_substrate() -> None:
+def test_seed_runtime_only_hosts_the_public_taiji_architecture() -> None:
     offenders: dict[str, set[str]] = {}
     taiji_imports = 0
     for path in _iter_python_files("seed"):
@@ -100,7 +100,7 @@ def test_seed_only_composes_the_public_taiji_substrate() -> None:
         if forbidden:
             offenders[path.relative_to(REPO).as_posix()] = forbidden
 
-    assert taiji_imports > 0, "Seed 必须实际组合 Taiji，而不是只在文档中声明。"
+    assert taiji_imports > 0, "Seed runtime 必须实际承载 Taiji，而不是只在文档中声明。"
     assert not offenders, f"Seed 不得反向接入 Legacy/Transformer：{offenders}"
 
 

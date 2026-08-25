@@ -288,7 +288,7 @@
 - 100 步（完整）Δ = +0.194 / +0.212 / +0.225
 - 增长放大约 2-3 倍（曲线持续涨到 50-70 步才饱和），**不是早期冲击而是真实累积**
 
-**当时的后继建议（已暂停）**：修复 PlayEngine 运行契约。当前执行顺序改由 [TAIJI_SUBSTRATE_ARCHITECTURE.md](../../active/TAIJI_SUBSTRATE_ARCHITECTURE.md) 与 [BIO_INSPIRED_ARCHITECTURE_PLAN.md](../implementation/BIO_INSPIRED_ARCHITECTURE_PLAN.md) 决定。旧 Taiji-0/T4/T5 路线已经废止；正式顶层 Taiji Native v5 已闭合 raw-byte 感知、预测 fabric、分布式情景场、运动感受器、局部学习、主动 reward action、motor 生成和真实按边内核，并通过 N7–N11/M5；当前进入 M6 内生 replay/巩固。
+**当时的后继建议（已暂停）**：修复 PlayEngine 运行契约。当时执行顺序由 [TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md](../implementation/TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md) 与 [BIO_INSPIRED_ARCHITECTURE_PLAN.md](../implementation/BIO_INSPIRED_ARCHITECTURE_PLAN.md) 决定。旧 Taiji-0/T4/T5 路线已经废止；当时的 Native v5 已闭合 raw-byte 感知、预测 fabric、分布式情景场、运动感受器、局部学习、主动 reward action、motor 生成和真实按边内核，并通过 N7–N11/M5。该路线现已被 Taiji Native Architecture v1 取代。
 
 > **✅ PlayEngine 运行契约修复落地（2026-08-20）**：§NEUROPLEX_MECHANISM_RUNTIME_MAP_20260820 §13 唯一下一步已实现。三处源码修复（`neuroplex/life/play_engine.py::_free_resonance_session`）：
 >

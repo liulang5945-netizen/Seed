@@ -1,6 +1,6 @@
 # Legacy NeuroPlex 接口速查与易错点手册（INTERFACE_REFERENCE）
 
-> **边界**：本文只服务冻结的 `neuroplex/` Transformer 基线，不是 Seed 或顶层 `taiji/` 的接口文档。Taiji API 见 [TAIJI_CODE_WIKI.md](TAIJI_CODE_WIKI.md)。
+> **边界**：本文只服务冻结的 `neuroplex/` Transformer 基线，不是 Seed runtime 或 Taiji v1 的接口文档。当前 TSK-v8 kernel 代码映射见 [TAIJI_CODE_WIKI.md](TAIJI_CODE_WIKI.md)，完整目标见 [TAIJI_NATIVE_ARCHITECTURE_V1.md](plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md)。
 
 > 目的：解决"经常用错接口"的问题。按**易错点**组织（不是完整 API 参考），每个点给出 错→对 用法。
 > 全部条目基于源码实读（2026-08-10），行号随版本可能漂移，以文件为锚。

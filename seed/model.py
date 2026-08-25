@@ -1,4 +1,4 @@
-"""Seed model boundary built on the native Taiji substrate."""
+"""Seed product/runtime compatibility boundary hosting Taiji."""
 
 from __future__ import annotations
 
@@ -20,14 +20,13 @@ from .config import SeedConfig
 
 
 class Seed:
-    """The model-level organism; Taiji is its computational substrate.
+    """Product-facing runtime wrapper for the current Taiji kernel.
 
-    This first Seed runtime intentionally adds no second learning algorithm.
-    Sensation, persistent dynamics, local plasticity, episodic completion,
-    action and replay all cross the single ``substrate`` boundary.  Future
-    organs and population coordination belong here and may consume Taiji's
-    public state/action contracts, but may not reach around them to install a
-    Transformer, teacher logits or an external event K/V store.
+    The public class name and ``substrate`` attribute remain compatible with
+    ``seed-native-v1`` checkpoints while Taiji Native Architecture v1 is
+    introduced. Seed owns product lifecycle and serialization wrapping; Taiji
+    owns perception, cognition, learning and action. No second cognitive
+    algorithm may be hidden in this runtime boundary.
     """
 
     CHECKPOINT_FORMAT = "seed-native-v1"

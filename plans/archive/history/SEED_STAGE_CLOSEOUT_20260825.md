@@ -22,7 +22,7 @@ active 目录只保留四份当前有效文档：
 
 1. `SEED_DEVELOPMENT_ROADMAP_2026_08.md`：唯一执行顺序。
 2. `SEED_ARCHITECTURE.md`：Seed/Taiji/Legacy 所有权与产品边界。
-3. `TAIJI_SUBSTRATE_ARCHITECTURE.md`：算法、状态、局部学习和机制合同。
+3. `TAIJI_SUBSTRATE_ARCHITECTURE.md`：当时的算法、状态、局部学习和机制合同；现已归档为 `TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md`。
 4. `ARCHITECTURE_DIRECTION_2026_08.md`：命名和不可回退决策。
 
 以下文件移动到 archive，仅保留追溯价值：旧 M7 失败口径、800K 公测路线、容量/Legacy 实施过程、M4 前端检查清单。

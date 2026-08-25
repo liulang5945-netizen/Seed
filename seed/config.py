@@ -1,4 +1,4 @@
-"""Top-level configuration for the Seed model."""
+"""Top-level configuration for the Seed product/runtime wrapper."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from taiji import TaijiConfig
 
 @dataclass(frozen=True)
 class SeedConfig:
-    """Seed owns model-level composition; Taiji owns substrate dynamics."""
+    """Compatibility configuration; Taiji owns cognitive architecture state."""
 
     taiji: TaijiConfig = field(default_factory=TaijiConfig)
 
