@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from copy import deepcopy
+
 import torch
 
 from scripts.training.eval_taiji_a2_world import build_corpus
@@ -14,6 +16,7 @@ from taiji import (
     WorldObject,
     WorldSchema,
     WorldState,
+    WorldTransition,
 )
 
 
@@ -128,3 +131,34 @@ def test_expanded_world_benchmark_contains_relation_and_time_controls() -> None:
     assert schema.relation_slots == (("blue", "near", "red"), ("red", "near", "blue"))
     assert report["time_shuffled_cases"] == 1
     assert report["seeds"][0]["time_shuffled"]["success_accuracy"] == 1.0
+
+
+def test_online_world_error_update_beats_no_update_lesion() -> None:
+    corpus = _corpus()
+    schema = WorldSchema.from_corpus(corpus)
+    learner = WorldDynamicsLearner(schema, hidden_dim=32, seed=11)
+    learner.fit(corpus.train, epochs=350, learning_rate=0.01)
+    lesion = deepcopy(learner)
+    case = corpus.holdout[0]
+    transition = WorldTransition(
+        before=case.initial,
+        action=case.action,
+        after=case.expected_state,
+        outcome=case.expected_outcome,
+    )
+
+    def error(model: WorldDynamicsLearner) -> float:
+        prediction = model.predict(case.initial, case.action)
+        state_error = torch.mean(
+            (schema.state_values(prediction.state) - schema.state_values(case.expected_state)) ** 2
+        )
+        return float(state_error + (prediction.reward - case.expected_outcome.reward) ** 2)
+
+    before = error(learner)
+    no_update = error(lesion)
+    learner.online_update(transition, learning_rate=0.01, repeats=50)
+    after = error(learner)
+
+    assert after < before
+    assert abs(no_update - before) < 1e-8
+    assert learner.online_updates == 1

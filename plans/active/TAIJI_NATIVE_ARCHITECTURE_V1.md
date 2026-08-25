@@ -439,4 +439,4 @@ taiji/
 
 ## 13. 当前唯一实现入口
 
-P1 已完成，P2 relation subgate 已收口。P3 的对象/事件/affordance/行动/结果合同、可恢复 `TaijiWorldState`、结构化对象/关系/时间打乱、多步 episode 窄 Gate、`TSKV8Adapter` transition lineage 和 runtime prediction record 已落地；当前实现入口是 error-driven online correction，再决定是否扩展 workspace 路由和更大规模多步任务。
+P1 已完成，P2 relation subgate 已收口。P3 的对象/事件/affordance/行动/结果合同、可恢复 `TaijiWorldState`、结构化对象/关系/时间打乱、多步 episode 窄 Gate、`TSKV8Adapter` transition lineage、runtime prediction record 和 error-driven online correction 已落地；当前实现入口是 workspace 路由与 lesion，再决定是否扩展更大规模多步任务。
