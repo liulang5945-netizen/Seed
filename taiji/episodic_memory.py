@@ -34,11 +34,11 @@ class EpisodicMemoryStore:
             raise ValueError("episodic memory cue_dim must be positive")
         self.capacity = int(capacity)
         self.cue_dim = None if cue_dim is None else int(cue_dim)
-        self._records: list[EpisodicMemoryRecord] = []
+        self._records: dict[str, EpisodicMemoryRecord] = {}
 
     @property
     def records(self) -> tuple[EpisodicMemoryRecord, ...]:
-        return tuple(self._records)
+        return tuple(self._records.values())
 
     @property
     def count(self) -> int:
@@ -51,10 +51,11 @@ class EpisodicMemoryStore:
             self.cue_dim = int(record.cue.numel())
         if record.cue.numel() != self.cue_dim:
             raise ValueError("episodic memory cue dimension does not match the store")
-        self._records = [item for item in self._records if item.memory_id != record.memory_id]
-        self._records.append(EpisodicMemoryRecord.from_payload(record.to_payload()))
-        if len(self._records) > self.capacity:
-            self._records = self._records[-self.capacity :]
+        self._records.pop(record.memory_id, None)
+        self._records[record.memory_id] = EpisodicMemoryRecord.from_payload(record.to_payload())
+        while len(self._records) > self.capacity:
+            oldest_id = next(iter(self._records))
+            del self._records[oldest_id]
 
     def retrieve(self, cue: torch.Tensor, *, limit: int = 1) -> tuple[EpisodicMemoryHit, ...]:
         if cue.ndim != 1:
@@ -65,10 +66,11 @@ class EpisodicMemoryStore:
             return ()
         if not self._records:
             return ()
+        records = tuple(self._records.values())
         query = cue.detach().to(dtype=torch.float32)
         query_norm = torch.linalg.vector_norm(query)
         if float(query_norm) <= 1e-8:
-            scores = [0.0 for _ in self._records]
+            scores = [0.0 for _ in records]
         else:
             scores = [
                 float(
@@ -79,11 +81,11 @@ class EpisodicMemoryStore:
                         + 1e-8
                     )
                 )
-                for record in self._records
+                for record in records
             ]
         order = sorted(range(len(self._records)), key=lambda index: (-scores[index], -index))
         return tuple(
-            EpisodicMemoryHit(self._records[index], scores[index])
+            EpisodicMemoryHit(records[index], scores[index])
             for index in order[: int(limit)]
         )
 
@@ -92,7 +94,7 @@ class EpisodicMemoryStore:
             "format": EPISODIC_MEMORY_CHECKPOINT_FORMAT,
             "capacity": self.capacity,
             "cue_dim": self.cue_dim,
-            "records": [record.to_payload() for record in self._records],
+            "records": [record.to_payload() for record in self._records.values()],
         }
 
     @classmethod

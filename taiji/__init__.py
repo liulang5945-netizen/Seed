@@ -58,6 +58,10 @@ from .memory import EpisodicField, EpisodicReplay, EpisodicWrite
 from .model import Taiji
 from .organs import ByteMotor, ByteSensor, SparseReceptorBank
 from .perception import LearnedPerception
+from .procedural_memory import (
+    PROCEDURAL_MEMORY_CHECKPOINT_FORMAT,
+    ProceduralMemoryLearner,
+)
 from .semantic_memory import (
     SEMANTIC_MEMORY_CHECKPOINT_FORMAT,
     SemanticMemoryLearner,
@@ -125,6 +129,8 @@ __all__ = [
     "PerceptionCorpus",
     "PerceptionEvaluator",
     "PerceptEvent",
+    "ProceduralMemoryLearner",
+    "PROCEDURAL_MEMORY_CHECKPOINT_FORMAT",
     "PlanCandidate",
     "PlanState",
     "PendingAction",
