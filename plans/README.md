@@ -107,10 +107,12 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 online content credit assignment 窄 Gate 已通过：真实 adapter reward 对已选 semantic content 执行一次 utility 更新；失败候选被降权、
   成功候选被提升并迁移，prediction error、training step 和 applied 标记均可 checkpoint。该 Gate 证明反馈回路存在，不证明开放域
   语义学习或长期概念形成。
+- P6 holdout content transfer 窄 Gate 已通过：训练未见的 `forecast_digest`、新候选 ID 与嵌套 slot 结构仍按 learned context utility 被选中，
+  checkpoint 后保持。该结果关闭候选名/intent kind/slot shape 固定表假设，不证明开放域语义发明。
 - 原生套件当前 94 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-继续 P6 holdout content transfer Gate：使用训练未见的 `intent_kind`、semantic slot 结构和候选 ID，验证 utility 迁移不读取固定答案表；
-保留当前 P3/P4/P5 Gate，不让 byte motor 或 Legacy Transformer 代替目标规划与内容决策。
+继续 P6 text organ codec Gate：让 holdout `ContentPlan` 通过 text expression 的结构化 codec 无损往返 semantic slots、confidence 和
+goal provenance；先保持语言器官边界，不把 codec 结果宣传为语言流畅性。保留当前 P3/P4/P5 Gate。
