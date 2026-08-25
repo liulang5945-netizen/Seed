@@ -5,6 +5,7 @@ import torch
 
 from taiji import (
     ActionIntent,
+    AffordanceFeatureTrainingExample,
     ContentPlan,
     EnvironmentOutcome,
     ExecutiveCandidate,
@@ -12,6 +13,7 @@ from taiji import (
     ExecutiveController,
     ExecutiveTrainingExample,
     Goal,
+    LearnedAffordanceFeatures,
     Observation,
     Outcome,
     TaijiConfig,
@@ -171,6 +173,27 @@ def test_adapter_synthesizes_candidates_from_world_affordances() -> None:
     adapter = TSKV8Adapter(_config())
     adapter.observe(65, learn=False)
     adapter.set_goals((Goal("goal-1", "complete the task", priority=1.0),))
+    source = LearnedAffordanceFeatures(input_dim=3, feature_dim=6, seed=7)
+    source.fit(
+        (
+            AffordanceFeatureTrainingExample(
+                "train-open",
+                "open-v1",
+                "seen_open",
+                torch.tensor([1.0, 0.0, 0.0]),
+                1.0,
+            ),
+            AffordanceFeatureTrainingExample(
+                "train-close",
+                "close-v1",
+                "seen_close",
+                torch.tensor([0.0, 1.0, 0.0]),
+                -1.0,
+            ),
+        ),
+        epochs=80,
+    )
+    adapter.attach_affordance_features(source)
     adapter.attach_executive(ExecutiveController())
     world = WorldState(
         tick=adapter.tick + 1,
@@ -180,6 +203,8 @@ def test_adapter_synthesizes_candidates_from_world_affordances() -> None:
                 action_kind="unseen_action",
                 parameters={"action_symbol": 10},
                 confidence=0.75,
+                features=torch.tensor([0.8, 0.2, 0.0]),
+                feature_provenance="world-organ-test",
             ),
         ),
     )
@@ -197,7 +222,7 @@ def test_adapter_synthesizes_candidates_from_world_affordances() -> None:
     candidates = adapter.synthesize_executive_candidates()
     assert len(candidates) == 1
     candidate = candidates[0]
-    assert candidate.provenance == "affordance-derived"
+    assert candidate.provenance == "affordance-derived/learned"
     assert candidate.source_affordance_id == "unseen.affordance.v2"
     assert candidate.source_percept_id is not None
     assert candidate.action_intent.kind == "unseen_action"
@@ -207,3 +232,58 @@ def test_adapter_synthesizes_candidates_from_world_affordances() -> None:
     decision = adapter.select_executive()
     assert decision.selected.candidate_id == candidate.candidate_id
     assert decision.content_plan.provenance == "affordance-derived"
+    restored = TSKV8Adapter.from_native_checkpoint(adapter.native_checkpoint())
+    assert restored._affordance_features is not None
+    assert torch.equal(
+        restored._affordance_features.features_for(world.affordances[0]),
+        candidate.feature_tensor(),
+    )
+
+
+def test_affordance_features_transfer_to_unseen_affordance_and_action() -> None:
+    source = LearnedAffordanceFeatures(input_dim=3, feature_dim=6, seed=13)
+    source.fit(
+        (
+            AffordanceFeatureTrainingExample(
+                "train-positive",
+                "known-positive",
+                "known_open",
+                torch.tensor([1.0, 0.0, 0.0]),
+                1.0,
+            ),
+            AffordanceFeatureTrainingExample(
+                "train-negative",
+                "known-negative",
+                "known_close",
+                torch.tensor([0.0, 1.0, 0.0]),
+                -1.0,
+            ),
+            AffordanceFeatureTrainingExample(
+                "train-neutral",
+                "known-neutral",
+                "known_hold",
+                torch.tensor([0.0, 0.0, 1.0]),
+                0.0,
+            ),
+        ),
+        epochs=240,
+    )
+
+    unseen_positive = WorldAffordance(
+        affordance_id="never-seen-affordance",
+        action_kind="never-seen-action",
+        features=torch.tensor([0.8, 0.2, 0.0]),
+    )
+    unseen_negative = WorldAffordance(
+        affordance_id="never-seen-affordance-2",
+        action_kind="never-seen-action-2",
+        features=torch.tensor([0.2, 0.8, 0.0]),
+    )
+
+    assert source.predict_affordance_reward(unseen_positive) > source.predict_affordance_reward(
+        unseen_negative
+    )
+    assert not torch.equal(
+        source.features_for(unseen_positive),
+        source.features_for(unseen_negative),
+    )

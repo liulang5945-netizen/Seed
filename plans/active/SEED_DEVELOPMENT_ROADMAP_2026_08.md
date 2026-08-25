@@ -365,7 +365,10 @@ P4 的最小真实经历边界已落地：
 - P7 candidate synthesis contract Gate 已通过：adapter 从当前 `PerceptEvent`、`WorldState.affordances` 和 active `GoalState` 自动产生
   带 provenance 的 `ExecutiveCandidate`，不需要客户端候选表；当前 affordance 特征仍是保守 scaffold，不宣称已学会通用 affordance
   表征。
-- 本轮 native 回归为 `124 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
+- P7 affordance feature transfer Gate 已通过：`WorldAffordance` 携带带 provenance 的 numeric grounding，`LearnedAffordanceFeatures`
+  由 Taiji-owned outcome objective 学习连续投影；candidate synthesis 只消费该投影，不读取 `affordance_id/action_kind` 查表，未见
+  affordance/action holdout 已通过，且 native checkpoint 可恢复该 source。
+- 本轮 native 回归为 `125 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
 ### 工作项
@@ -470,4 +473,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：为 `WorldAffordance` 建立 Taiji-owned 可学习连续特征来源，并在未见 affordance/action holdout 上验证 transfer；在该特征合同确定前，不扩展固定 action/intent 表。**
+**下一步：把 `LearnedAffordanceFeatures` 接入真实 `WorldTransition/EnvironmentOutcome` 的在线 outcome correction，并验证 feature-source lesion 与 checkpoint continuation；不新增 action/intent 查表。**

@@ -8,6 +8,7 @@ from typing import Any
 
 import torch
 
+from .affordance import LearnedAffordanceFeatures
 from .content_selection import (
     ContentCandidate,
     ContentSelectionContext,
@@ -105,6 +106,7 @@ class TSKV8Adapter(Taiji):
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
+        self._affordance_features: LearnedAffordanceFeatures | None = None
         self._executive: ExecutiveController | None = None
         self._last_executive_decision: ExecutiveDecision | None = None
         self._last_executive_prediction_error: float | None = None
@@ -272,6 +274,15 @@ class TSKV8Adapter(Taiji):
             raise TypeError("controller must be an ExecutiveController or None")
         self._executive = None if controller is None else controller.to(self.device)
 
+    def attach_affordance_features(
+        self, source: LearnedAffordanceFeatures | None
+    ) -> None:
+        """Attach the learned numeric feature source for world affordances."""
+
+        if source is not None and not isinstance(source, LearnedAffordanceFeatures):
+            raise TypeError("source must be a LearnedAffordanceFeatures or None")
+        self._affordance_features = None if source is None else source.to(self.device)
+
     @property
     def last_executive_decision(self) -> ExecutiveDecision | None:
         return self._last_executive_decision
@@ -311,7 +322,7 @@ class TSKV8Adapter(Taiji):
                 plan_id=candidate.candidate_id,
                 action_kind=candidate.action_intent.kind,
                 expected_value=float(decision.scores[candidate.candidate_id]),
-                risk=candidate.features[4],
+                risk=1.0 - candidate.action_intent.confidence,
             )
             for candidate in candidates
         )
@@ -334,7 +345,18 @@ class TSKV8Adapter(Taiji):
 
         if self._cognitive_state.percept is None:
             raise RuntimeError("executive candidate synthesis requires a current perception")
-        return ExecutiveCandidate.synthesize_from_state(self._cognitive_state)
+        if self._affordance_features is None:
+            raise RuntimeError(
+                "executive candidate synthesis requires an attached learned affordance feature source"
+            )
+        feature_map = {
+            affordance.affordance_id: self._affordance_features.features_for(affordance)
+            for affordance in self._cognitive_state.world.affordances
+        }
+        return ExecutiveCandidate.synthesize_from_state(
+            self._cognitive_state,
+            features_by_affordance=feature_map,
+        )
 
     def record_executive_outcome(self, outcome: Outcome) -> float:
         """Train executive selection from an outcome produced by an environment."""
@@ -1406,6 +1428,8 @@ class TSKV8Adapter(Taiji):
             payload["homeostasis"] = self._homeostatic_controller.checkpoint()
         if self._goal_planner is not None:
             payload["planning"] = self._goal_planner.checkpoint()
+        if self._affordance_features is not None:
+            payload["affordance_features"] = self._affordance_features.checkpoint()
         if self._executive is not None:
             payload["executive"] = self._executive.checkpoint()
         if self._generation_controller is not None:
@@ -1464,6 +1488,7 @@ class TSKV8Adapter(Taiji):
         self._restore_procedural_memory(checkpoint.get("procedural_memory"))
         self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
         self._restore_goal_planner(checkpoint.get("planning"))
+        self._restore_affordance_features(checkpoint.get("affordance_features"))
         self._restore_executive(checkpoint.get("executive"))
         self._restore_generation_controller(checkpoint.get("generation"))
         self._restore_content_selector(checkpoint.get("content_selection"))
@@ -1540,6 +1565,13 @@ class TSKV8Adapter(Taiji):
     def _restore_goal_planner(self, payload: Any) -> None:
         self._goal_planner = (
             None if payload is None else GoalPlanner.from_checkpoint(dict(payload))
+        )
+
+    def _restore_affordance_features(self, payload: Any) -> None:
+        self._affordance_features = (
+            None
+            if payload is None
+            else LearnedAffordanceFeatures.from_checkpoint(dict(payload)).to(self.device)
         )
 
     def _restore_executive(self, payload: Any) -> None:
@@ -1681,6 +1713,8 @@ class TSKV8Adapter(Taiji):
             components["homeostasis"] = self._homeostatic_controller.checkpoint()
         if self._goal_planner is not None:
             components["planning"] = self._goal_planner.checkpoint()
+        if self._affordance_features is not None:
+            components["affordance_features"] = self._affordance_features.checkpoint()
         if self._executive is not None:
             components["executive"] = self._executive.checkpoint()
         if self._generation_controller is not None:
@@ -1752,6 +1786,7 @@ class TSKV8Adapter(Taiji):
         self._restore_procedural_memory(envelope.components.get("procedural_memory"))
         self._restore_homeostatic_controller(envelope.components.get("homeostasis"))
         self._restore_goal_planner(envelope.components.get("planning"))
+        self._restore_affordance_features(envelope.components.get("affordance_features"))
         self._restore_executive(envelope.components.get("executive"))
         self._restore_generation_controller(envelope.components.get("generation"))
         self._restore_content_selector(envelope.components.get("content_selection"))
