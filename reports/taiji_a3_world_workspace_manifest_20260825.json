@@ -1,0 +1,19 @@
+{
+  "format": "taiji-a3-world-workspace-manifest-v1",
+  "task": "two-step assemble then commit; commit succeeds only after a correct workspace composition",
+  "world_state": "TaijiWorldState owns task object and two contiguous transitions",
+  "action_kinds": [
+    "assemble",
+    "commit"
+  ],
+  "outcome_rule": "assemble succeeds only when workspace content exactly reconstructs the hidden two-source target",
+  "controls": [
+    "learned",
+    "strongest_single",
+    "dense",
+    "fixed",
+    "random",
+    "none"
+  ],
+  "split_constraint": "holdout uses new sampled combinations and independent distractor noise"
+}
