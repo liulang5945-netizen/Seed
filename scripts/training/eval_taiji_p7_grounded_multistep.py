@@ -36,6 +36,7 @@ from taiji import (  # noqa: E402
     WorldObject,
     WorldSchema,
     WorldState,
+    WorldTransition,
 )
 
 MANIFEST_FORMAT = "taiji-p7-grounded-multistep-manifest-v1"
@@ -177,6 +178,28 @@ def _candidate(
         features=tuple(float(item) for item in features),
         source_affordance_id=affordance.affordance_id,
         provenance="evaluation-grounded",
+    )
+
+
+def _prediction_error(prediction: object, case: WorldInterventionCase, schema: WorldSchema) -> float:
+    state = prediction.state
+    state_error = torch.mean(
+        (schema.state_values(state) - schema.state_values(case.expected_state)) ** 2
+    )
+    reward_error = (prediction.reward - case.expected_outcome.reward) ** 2
+    return float(state_error + reward_error)
+
+
+def _state_prediction_error(
+    prediction: object,
+    case: WorldInterventionCase,
+    schema: WorldSchema,
+) -> float:
+    return float(
+        torch.mean(
+            (schema.state_values(prediction.state) - schema.state_values(case.expected_state))
+            ** 2
+        )
     )
 
 
@@ -335,8 +358,131 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         )
     dynamics_corpus = WorldInterventionCorpus(train=tuple(dynamics_cases))
     dynamics_schema = WorldSchema.from_corpus(dynamics_corpus)
+    dynamics_holdout_cases = []
+    for affordance, reward, success in (
+        (grounded_holdout[0], 1.0, True),
+        (grounded_holdout[1], -1.0, False),
+    ):
+        action_id = f"dynamics-holdout:{affordance.affordance_id}"
+        action = WorldAction(
+            action_id=action_id,
+            kind=affordance.action_kind,
+            tick=after_states[0].tick,
+            actor_id=affordance.actor_id,
+            target_id=affordance.target_id,
+            parameters={
+                "action_symbol": float(dict(affordance.parameters)["action_symbol"])
+            },
+            provenance="evaluation-holdout",
+        )
+        dynamics_holdout_cases.append(
+            WorldInterventionCase(
+                case_id=action_id,
+                initial=after_states[0],
+                action=action,
+                expected_state=after_states[1],
+                expected_outcome=Outcome(
+                    intent_id=action_id,
+                    reward=reward,
+                    success=success,
+                    tick=after_states[1].tick,
+                    provenance="evaluation-holdout",
+                ),
+            )
+        )
+    dynamics_corpus = WorldInterventionCorpus(
+        train=tuple(dynamics_cases),
+        holdout=tuple(dynamics_holdout_cases),
+    )
     dynamics = WorldDynamicsLearner(dynamics_schema, hidden_dim=32, seed=seed + 3000)
     dynamics.fit(tuple(dynamics_cases), epochs=120, learning_rate=0.01)
+    holdout_predictions = tuple(
+        dynamics.predict(case.initial, case.action) for case in dynamics_holdout_cases
+    )
+    holdout_errors = tuple(
+        _prediction_error(prediction, case, dynamics_schema)
+        for prediction, case in zip(holdout_predictions, dynamics_holdout_cases, strict=True)
+    )
+    calibration = WorldDynamicsLearner(
+        dynamics_schema,
+        hidden_dim=32,
+        seed=seed + 3000,
+    )
+    calibration.fit(tuple(dynamics_cases), epochs=120, learning_rate=0.01)
+    no_update_control = WorldDynamicsLearner(
+        dynamics_schema,
+        hidden_dim=32,
+        seed=seed + 3000,
+    )
+    no_update_control.load_state_dict(calibration.state_dict())
+    calibration_before_predictions = tuple(
+        calibration.predict(case.initial, case.action) for case in dynamics_holdout_cases
+    )
+    no_update_predictions = tuple(
+        no_update_control.predict(case.initial, case.action)
+        for case in dynamics_holdout_cases
+    )
+    calibration_before_errors = tuple(
+        _prediction_error(prediction, case, dynamics_schema)
+        for prediction, case in zip(
+            calibration_before_predictions,
+            dynamics_holdout_cases,
+            strict=True,
+        )
+    )
+    calibration_before_state_errors = tuple(
+        _state_prediction_error(prediction, case, dynamics_schema)
+        for prediction, case in zip(
+            calibration_before_predictions,
+            dynamics_holdout_cases,
+            strict=True,
+        )
+    )
+    no_update_errors = tuple(
+        _prediction_error(prediction, case, dynamics_schema)
+        for prediction, case in zip(no_update_predictions, dynamics_holdout_cases, strict=True)
+    )
+    no_update_state_errors = tuple(
+        _state_prediction_error(prediction, case, dynamics_schema)
+        for prediction, case in zip(no_update_predictions, dynamics_holdout_cases, strict=True)
+    )
+    calibration_after_errors = []
+    calibration_after_state_errors = []
+    for case in dynamics_holdout_cases:
+        calibration.online_update(
+            WorldTransition(
+                before=case.initial,
+                action=case.action,
+                after=case.expected_state,
+                outcome=case.expected_outcome,
+            ),
+            learning_rate=0.01,
+            repeats=50,
+        )
+        prediction = calibration.predict(case.initial, case.action)
+        calibration_after_errors.append(_prediction_error(prediction, case, dynamics_schema))
+        calibration_after_state_errors.append(
+            _state_prediction_error(prediction, case, dynamics_schema)
+        )
+    calibration_before_error = sum(calibration_before_errors) / len(calibration_before_errors)
+    calibration_after_error = sum(calibration_after_errors) / len(calibration_after_errors)
+    no_update_error = sum(no_update_errors) / len(no_update_errors)
+    calibration_before_state_error = sum(calibration_before_state_errors) / len(
+        calibration_before_state_errors
+    )
+    calibration_after_state_error = sum(calibration_after_state_errors) / len(
+        calibration_after_state_errors
+    )
+    no_update_state_error = sum(no_update_state_errors) / len(no_update_state_errors)
+    prediction_train_holdout_gate = bool(
+        len(dynamics_cases) == 2
+        and len(dynamics_holdout_cases) == 2
+        and all(float(error) >= 0.0 for error in holdout_errors)
+    )
+    calibration_gate = bool(
+        calibration_after_state_error < calibration_before_state_error
+        and abs(no_update_state_error - calibration_before_state_error) < 1e-8
+    )
     adapter.attach_world_dynamics(dynamics)
     base_checkpoint = adapter.native_checkpoint()
     environment = _MultiStepEnvironment(
@@ -525,6 +671,15 @@ def evaluate_seed(seed: int) -> dict[str, object]:
             and len(set(environment.actions)) > 1
         ),
         "world_prediction_gate": world_prediction_gate,
+        "prediction_train_holdout_gate": prediction_train_holdout_gate,
+        "calibration_gate": calibration_gate,
+        "prediction_holdout_error_mean": sum(holdout_errors) / len(holdout_errors),
+        "calibration_before_error": calibration_before_error,
+        "calibration_after_error": calibration_after_error,
+        "no_update_control_error": no_update_error,
+        "calibration_before_state_error": calibration_before_state_error,
+        "calibration_after_state_error": calibration_after_state_error,
+        "no_update_control_state_error": no_update_state_error,
         "world_prediction_state_error_mean": (
             sum(float(item.state_error) for item in world_prediction_errors)
             / len(world_prediction_errors)
@@ -571,7 +726,18 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "producer-lesion",
             "feature-source-lesion",
             "delayed-credit-lesion",
+            "world-prediction-train-holdout",
+            "world-prediction-online-calibration",
+            "world-prediction-no-update-control",
         ],
+        "world_prediction": {
+            "train_cases": 2,
+            "holdout_cases": 2,
+            "calibration_metric": "state_prediction_mse",
+            "online_update_learning_rate": 0.01,
+            "online_update_repeats": 50,
+            "no_update_control": True,
+        },
         "variable_episodes": [
             {"name": "short-single-failure", "length": 3, "failure_indices": [0]},
             {"name": "mid-late-failures", "length": 4, "failure_indices": [1, 2]},
@@ -598,6 +764,8 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "continuous_replan_complete",
         "variable_episode_gate",
         "world_prediction_gate",
+        "prediction_train_holdout_gate",
+        "calibration_gate",
     )
     rates = {
         name: sum(bool(run[name]) for run in runs) / len(runs)
@@ -610,7 +778,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "metrics": {"cross_seed_rates": rates, "runs": runs},
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must transfer the holdout selection, preserve lineage and credit across four transitions and variable 3/4/5-step episodes, complete the declared replans, show the declared lesions, and emit finite world prediction errors with online correction",
+            "criterion": "all seeds must transfer the holdout selection, preserve lineage and credit across four transitions and variable 3/4/5-step episodes, complete the declared replans and lesions, emit finite world prediction errors, and show per-transition online calibration improvement over a no-update control",
         },
     }
 

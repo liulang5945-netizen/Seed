@@ -47,8 +47,19 @@
     "native-checkpoint-continuation",
     "producer-lesion",
     "feature-source-lesion",
-    "delayed-credit-lesion"
+    "delayed-credit-lesion",
+    "world-prediction-train-holdout",
+    "world-prediction-online-calibration",
+    "world-prediction-no-update-control"
   ],
+  "world_prediction": {
+    "train_cases": 2,
+    "holdout_cases": 2,
+    "calibration_metric": "state_prediction_mse",
+    "online_update_learning_rate": 0.01,
+    "online_update_repeats": 50,
+    "no_update_control": true
+  },
   "variable_episodes": [
     {
       "name": "short-single-failure",
