@@ -40,6 +40,7 @@ class A1EvaluationConfig:
     minimum_generalization_gain: float = 0.0
     maximum_cross_seed_std: float = 0.25
     minimum_boundary_rate_delta: float = 0.01
+    minimum_marker_boundary_score_delta: float = 0.05
     minimum_random_chunk_drop: float = 0.005
     predictive_epochs: int = 3
     predictive_learning_rate: float = 0.01
@@ -53,6 +54,8 @@ class A1EvaluationConfig:
             raise ValueError("A1 maximum_cross_seed_std cannot be negative")
         if self.minimum_boundary_rate_delta < 0.0:
             raise ValueError("A1 minimum_boundary_rate_delta cannot be negative")
+        if self.minimum_marker_boundary_score_delta < 0.0:
+            raise ValueError("A1 minimum_marker_boundary_score_delta cannot be negative")
         if self.minimum_random_chunk_drop < 0.0:
             raise ValueError("A1 minimum_random_chunk_drop cannot be negative")
         if self.predictive_epochs <= 0:
@@ -96,6 +99,8 @@ class PerceptionEvaluator:
             primary["boundary_perturbed"]["boundary_rate"]
             - primary["assembly"]["boundary_rate_unseen"]
         )
+        marker_score_delta = float(primary["boundary_perturbed"]["marker_score_delta_from_unseen"])
+        marker_rate_delta = float(primary["boundary_perturbed"]["marker_rate_delta_from_unseen"])
         random_chunk_drop = float(
             primary["unseen_composition"]["learned_accuracy"]
             - primary["random_chunk_control"]["learned_accuracy"]
@@ -105,6 +110,7 @@ class PerceptionEvaluator:
             and gain >= float(self.evaluation.minimum_generalization_gain)
             and seed_std <= float(self.evaluation.maximum_cross_seed_std)
             and boundary_rate_delta >= float(self.evaluation.minimum_boundary_rate_delta)
+            and marker_score_delta >= float(self.evaluation.minimum_marker_boundary_score_delta)
             and random_chunk_drop >= float(self.evaluation.minimum_random_chunk_drop)
         )
         return {
@@ -116,6 +122,9 @@ class PerceptionEvaluator:
                 "minimum_generalization_gain": self.evaluation.minimum_generalization_gain,
                 "maximum_cross_seed_std": self.evaluation.maximum_cross_seed_std,
                 "minimum_boundary_rate_delta": self.evaluation.minimum_boundary_rate_delta,
+                "minimum_marker_boundary_score_delta": (
+                    self.evaluation.minimum_marker_boundary_score_delta
+                ),
                 "minimum_random_chunk_drop": self.evaluation.minimum_random_chunk_drop,
                 "predictive_epochs": self.evaluation.predictive_epochs,
                 "predictive_learning_rate": self.evaluation.predictive_learning_rate,
@@ -130,6 +139,8 @@ class PerceptionEvaluator:
             },
             "diagnostics": {
                 "boundary_rate_delta": boundary_rate_delta,
+                "marker_score_delta": marker_score_delta,
+                "marker_rate_delta": marker_rate_delta,
                 "random_chunk_drop": random_chunk_drop,
             },
             "failure_policy": (
@@ -148,10 +159,24 @@ class PerceptionEvaluator:
             learning_rate=self.evaluation.predictive_learning_rate,
             temperature=self.evaluation.predictive_temperature,
         )
-        train = self._collect(model, corpus.train, learn=False, label="train")
-        unseen = self._collect(model, corpus.unseen_composition, learn=False, label="unseen")
-        boundary = self._collect(model, corpus.boundary_perturbed, learn=False, label="boundary")
-        random_chunk = self._collect(model, corpus.random_chunk, learn=False, label="random")
+        train = self._collect(model, corpus.train, learn=False, label="train", completed_only=True)
+        unseen = self._collect(
+            model, corpus.unseen_composition, learn=False, label="unseen", completed_only=True
+        )
+        boundary = self._collect(
+            model,
+            corpus.boundary_perturbed,
+            learn=False,
+            label="boundary",
+            completed_only=True,
+        )
+        random_chunk = self._collect(
+            model,
+            corpus.random_chunk,
+            learn=False,
+            label="random",
+            completed_only=True,
+        )
 
         learned_probe = self._fit_probe(train["features"], train["targets"])
         byte_probe = self._fit_probe(train["byte_features"], train["targets"])
@@ -173,6 +198,12 @@ class PerceptionEvaluator:
                 "boundary_rate": boundary["boundary_rate"],
                 "score_delta_from_unseen": (
                     boundary["mean_boundary_score"] - unseen["mean_boundary_score"]
+                ),
+                "marker_score_delta_from_unseen": (
+                    boundary["marker_boundary_score"] - unseen["mean_boundary_score"]
+                ),
+                "marker_rate_delta_from_unseen": (
+                    boundary["marker_boundary_rate"] - unseen["boundary_rate"]
                 ),
             },
             "random_chunk_control": {
@@ -203,6 +234,7 @@ class PerceptionEvaluator:
         *,
         learn: bool,
         label: str,
+        completed_only: bool,
     ) -> dict[str, Any]:
         features: list[torch.Tensor] = []
         byte_features: list[torch.Tensor] = []
@@ -210,6 +242,8 @@ class PerceptionEvaluator:
         durations: list[int] = []
         boundary_scores: list[float] = []
         boundaries: list[bool] = []
+        marker_scores: list[float] = []
+        marker_boundaries: list[bool] = []
         for sequence_index, sequence in enumerate(sequences):
             model.reset_dynamics()
             for tick, raw_symbol in enumerate(sequence):
@@ -222,7 +256,15 @@ class PerceptionEvaluator:
                     stream_id=f"a1:{label}:{sequence_index}",
                     learn=learn,
                 )
+                if label == "boundary" and symbol == int(self.config.boundary_symbol):
+                    marker_scores.append(float(event.boundary_score))
+                    marker_boundaries.append(bool(event.boundary))
+                durations.append(int(event.duration))
+                boundary_scores.append(float(event.boundary_score))
+                boundaries.append(bool(event.boundary))
                 if tick + 1 >= len(sequence):
+                    continue
+                if completed_only and not event.boundary:
                     continue
                 features.append(event.features.detach().cpu())
                 byte_features.append(
@@ -231,9 +273,6 @@ class PerceptionEvaluator:
                     ).to(dtype=torch.float32)
                 )
                 targets.append(int(sequence[tick + 1]))
-                durations.append(int(event.duration))
-                boundary_scores.append(float(event.boundary_score))
-                boundaries.append(bool(event.boundary))
         if not features:
             raise ValueError(f"A1 {label} corpus produced no probe samples")
         return {
@@ -244,6 +283,12 @@ class PerceptionEvaluator:
             "unique_durations": len(set(durations)),
             "mean_boundary_score": float(sum(boundary_scores) / len(boundary_scores)),
             "boundary_rate": float(sum(boundaries) / len(boundaries)),
+            "marker_boundary_score": (
+                float(sum(marker_scores) / len(marker_scores)) if marker_scores else 0.0
+            ),
+            "marker_boundary_rate": (
+                float(sum(marker_boundaries) / len(marker_boundaries)) if marker_boundaries else 0.0
+            ),
         }
 
     def _fit_probe(self, features: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:

@@ -99,6 +99,8 @@ class PerceptionConfig:
     change_gain: float = 0.55
     surprise_gain: float = 0.45
     learning_rate: float = 0.02
+    surprise_baseline_rate: float = 0.1
+    boundary_hysteresis: float = 0.05
     seed_offset: int = 3251
 
     def __post_init__(self) -> None:
@@ -118,6 +120,10 @@ class PerceptionConfig:
             raise ValueError("at least one perception boundary gain must be active")
         if not 0.0 < self.learning_rate <= 1.0:
             raise ValueError("perception learning_rate must be in (0, 1]")
+        if not 0.0 < self.surprise_baseline_rate <= 1.0:
+            raise ValueError("perception surprise_baseline_rate must be in (0, 1]")
+        if not 0.0 <= self.boundary_hysteresis <= 1.0:
+            raise ValueError("perception boundary_hysteresis must be in [0, 1]")
         if self.seed_offset <= 0:
             raise ValueError("perception seed_offset must be positive")
 

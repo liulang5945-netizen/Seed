@@ -70,12 +70,13 @@ A1 评测合同已建立在 `taiji/evaluation.py`：训练集、未见组合、�
 
 P2 尚未退出。首份无预测训练的 smoke 基线保存在
 `reports/taiji_a1_perception_smoke_20260825.json`；加入可配置的下一观测预测训练后，
-正式 predictive 报告为 `reports/taiji_a1_perception_predictive_20260825.json`。在同一
-manifest 上，primary seed 的未见组合 learned accuracy 为 `0.2763`，byte-only 为
-`0.2479`，generalization gain 为 `+0.0284`；随机 chunk drop 为 `+0.0064`，跨 seed
-标准差为 `0.0064`。但边界扰动 boundary-rate delta 只有 `+0.0010`，低于预注册的
-`+0.01`，所以加强后的 A1 Gate 仍为 `false`。当前瓶颈已从表征迁移转为边界信号
-校准；代码仍是可回归的感知纵切片，不是已经通过 A1 Gate 的最终感知层。
+`reports/taiji_a1_perception_predictive_20260825.json` 曾在 tick-level probe 上得到
+`+0.0284` gain，但加强评测改为 completed-assembly probe 并加入边界校准后，最新
+`reports/taiji_a1_perception_boundary_20260825.json` 的 primary 未见组合 gain 为
+`-0.0046`，marker score delta 为 `+0.0119`（门槛 `+0.05`），random-chunk drop 为
+`+0.0028`（门槛 `+0.005`），整体 boundary-rate delta 为 `+0.0011`（门槛 `+0.01`）。
+因此加强后的 A1 Gate 仍为 `false`；当前结论是“预测下一个 byte”还不足以形成稳定的
+assembly 语义，不再继续靠阈值微调掩盖这一差距。
 
 ## 3. 执行原则
 
@@ -255,4 +256,4 @@ manifest 上，primary seed 的未见组合 learned accuracy 为 `0.2763`，byte
 
 ## 16. 当前唯一下一步
 
-**校准 assembly 的边界信号，避免高熵输入上几乎每个 byte 都切分：为 prediction surprise 增加可学习的稳定性/迟滞控制，保持 boundary-rate delta 与 random-chunk lesion 对照，再用同一份 manifest 重跑加强后的 A1；在边界证据达标前不进入 P3。**
+**把 P2 训练目标提升到 assembly-level：由完成 assembly 的 pooled state 预测下一 assembly/组合转移，而不是只预测下一个 byte；保留 byte-only、boundary-marker 和 random-chunk 对照，在同一 manifest 上重跑加强后的 A1；在 assembly 级迁移和边界证据同时达标前不进入 P3。**

@@ -12,7 +12,7 @@ from torch import nn
 from .config import TaijiConfig
 from .contracts import PerceptEvent
 
-PERCEPTION_STATE_VERSION = 1
+PERCEPTION_STATE_VERSION = 2
 
 
 class LearnedPerception(nn.Module):
@@ -72,6 +72,8 @@ class LearnedPerception(nn.Module):
         self._assembly_index = 0
         self._history: list[int] = []
         self._last_prediction_error = 0.0
+        self._surprise_baseline = 0.0
+        self._boundary_threshold_state = float(self.config.boundary_threshold)
 
     def _local_feature(self, symbol: int) -> torch.Tensor:
         window = self._history[-(int(self.config.local_window) - 1) :]
@@ -155,7 +157,19 @@ class LearnedPerception(nn.Module):
                     history.append(symbol)
                     history = history[-int(self.config.local_window) :]
                     recurrent_state = feature
-                predicted = torch.stack([self.transition(feature) for feature in features[:-1]])
+                pool_window = min(
+                    int(self.config.local_window),
+                    int(self.config.maximum_assembly_duration),
+                )
+                pooled = torch.stack(
+                    [
+                        torch.stack(features[max(0, index + 1 - pool_window) : index + 1]).mean(
+                            dim=0
+                        )
+                        for index in range(len(features) - 1)
+                    ]
+                )
+                predicted = torch.stack([self.transition(feature) for feature in pooled])
                 target = torch.tensor(sequence[1:], dtype=torch.long, device=self.device)
                 logits = predicted @ self.embedding.weight.T
                 loss = torch.nn.functional.cross_entropy(logits / float(temperature), target)
@@ -192,7 +206,7 @@ class LearnedPerception(nn.Module):
         has_previous = bool(self._history)
         predicted = self.transition(self._previous_feature)
         if has_previous:
-            prediction_error = float(
+            feature_prediction_error = float(
                 (feature - predicted).norm().item() / (feature.norm().item() + 1e-6)
             )
             change = float(
@@ -204,16 +218,21 @@ class LearnedPerception(nn.Module):
                     ).item()
                 )
             )
+            logits = predicted @ self.embedding.weight.T
+            symbol_probability = float(torch.nn.functional.softmax(logits, dim=0)[symbol].item())
+            prediction_error = max(feature_prediction_error, 1.0 - symbol_probability)
         else:
             prediction_error = 0.0
             change = 0.0
         surprise = max(0.0, min(1.0, prediction_error / 2.0))
+        baseline = float(self._surprise_baseline)
+        calibrated_surprise = max(0.0, min(1.0, (surprise - baseline) / max(1e-6, 1.0 - baseline)))
         boundary_score = max(
             0.0,
             min(
                 1.0,
                 float(self.config.change_gain) * change
-                + float(self.config.surprise_gain) * surprise,
+                + float(self.config.surprise_gain) * calibrated_surprise,
             ),
         )
 
@@ -223,7 +242,7 @@ class LearnedPerception(nn.Module):
         reaches_maximum = duration >= int(self.config.maximum_assembly_duration)
         reaches_signal = duration >= int(
             self.config.minimum_assembly_duration
-        ) and boundary_score >= float(self.config.boundary_threshold)
+        ) and boundary_score >= float(self._boundary_threshold_state)
         boundary = bool(reaches_maximum or reaches_signal)
         pooled = self._assembly_sum / float(duration)
         event = PerceptEvent(
@@ -244,6 +263,21 @@ class LearnedPerception(nn.Module):
             update = float(self.config.learning_rate) * torch.outer(error, self._previous_feature)
             self.transition.weight.add_(update.clamp(-0.05, 0.05))
             self.embedding.weight[symbol].lerp_(feature, float(self.config.learning_rate))
+        if has_previous:
+            baseline_rate = float(self.config.surprise_baseline_rate)
+            self._surprise_baseline = (1.0 - baseline_rate) * baseline + baseline_rate * surprise
+        if boundary:
+            hysteresis = float(self.config.boundary_hysteresis)
+            self._boundary_threshold_state = min(
+                1.0,
+                float(self._boundary_threshold_state)
+                + hysteresis * (1.0 - float(self._boundary_threshold_state)),
+            )
+        else:
+            self._boundary_threshold_state = max(
+                float(self.config.boundary_threshold),
+                float(self._boundary_threshold_state) - float(self.config.boundary_hysteresis),
+            )
         self._previous_feature.copy_(feature)
         self._recurrent_state.copy_(feature)
         self._history.append(symbol)
@@ -273,6 +307,8 @@ class LearnedPerception(nn.Module):
                 "assembly_index": self._assembly_index,
                 "history": list(self._history),
                 "last_prediction_error": self._last_prediction_error,
+                "surprise_baseline": self._surprise_baseline,
+                "boundary_threshold_state": self._boundary_threshold_state,
             },
             "rng_state": self._rng.get_state().clone(),
         }
@@ -280,7 +316,8 @@ class LearnedPerception(nn.Module):
     def restore(self, payload: Mapping[str, Any]) -> None:
         if payload.get("format") != "taiji-perception-v1":
             raise ValueError("unsupported perception checkpoint format")
-        if int(payload.get("version")) != PERCEPTION_STATE_VERSION:
+        version = int(payload.get("version"))
+        if version not in (1, PERCEPTION_STATE_VERSION):
             raise ValueError("unsupported perception checkpoint version")
         state_dict = {
             name: value.detach().to(self.device).clone()
@@ -295,4 +332,8 @@ class LearnedPerception(nn.Module):
         self._assembly_index = int(dynamic["assembly_index"])
         self._history = [int(symbol) for symbol in dynamic["history"]]
         self._last_prediction_error = float(dynamic["last_prediction_error"])
+        self._surprise_baseline = float(dynamic.get("surprise_baseline", 0.0))
+        self._boundary_threshold_state = float(
+            dynamic.get("boundary_threshold_state", self.config.boundary_threshold)
+        )
         self._rng.set_state(payload["rng_state"].detach().cpu())

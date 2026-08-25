@@ -114,4 +114,4 @@ Taiji 不以“逐功能替换 TransformerBlock”为设计主轴。Transformer 
 
 ## 9. 当前唯一入口
 
-执行顺序只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。P1 已完成首个兼容纵切片，P2 已有感知原型、预测训练、加强后的 A1 合同和首份未通过报告；当前唯一执行入口是校准边界稳定性并在同一 manifest 上复测，决定 assembly 是否获得完整 Gate 证据。
+执行顺序只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。P1 已完成首个兼容纵切片，P2 已有感知原型、预测训练、completed-assembly probe、加强后的 A1 合同和最新未通过报告；当前唯一执行入口是建立 assembly-level 组合转移目标并在同一 manifest 上复测，决定 assembly 是否获得完整 Gate 证据。
