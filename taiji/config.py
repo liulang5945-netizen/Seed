@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from typing import Any
 
 
@@ -85,6 +85,48 @@ class CapacityPolicy:
         values.setdefault("memory_time_ratio", cls.memory_time_ratio)
         values.setdefault("memory_episode_ratio", cls.memory_episode_ratio)
         return cls(**values)
+
+
+@dataclass(frozen=True)
+class PerceptionConfig:
+    """Learned local-feature and variable-duration assembly controls."""
+
+    feature_dim: int = 32
+    local_window: int = 4
+    minimum_assembly_duration: int = 1
+    maximum_assembly_duration: int = 16
+    boundary_threshold: float = 0.55
+    change_gain: float = 0.55
+    surprise_gain: float = 0.45
+    learning_rate: float = 0.02
+    seed_offset: int = 3251
+
+    def __post_init__(self) -> None:
+        if self.feature_dim <= 0:
+            raise ValueError("perception feature_dim must be positive")
+        if self.local_window <= 0:
+            raise ValueError("perception local_window must be positive")
+        if self.minimum_assembly_duration <= 0:
+            raise ValueError("minimum assembly duration must be positive")
+        if self.maximum_assembly_duration < self.minimum_assembly_duration:
+            raise ValueError("maximum assembly duration cannot be below minimum")
+        if not 0.0 <= self.boundary_threshold <= 1.0:
+            raise ValueError("perception boundary_threshold must be in [0, 1]")
+        if self.change_gain < 0.0 or self.surprise_gain < 0.0:
+            raise ValueError("perception boundary gains cannot be negative")
+        if self.change_gain + self.surprise_gain <= 0.0:
+            raise ValueError("at least one perception boundary gain must be active")
+        if not 0.0 < self.learning_rate <= 1.0:
+            raise ValueError("perception learning_rate must be in (0, 1]")
+        if self.seed_offset <= 0:
+            raise ValueError("perception seed_offset must be positive")
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, payload: dict[str, Any]) -> PerceptionConfig:
+        return cls(**dict(payload))
 
 
 @dataclass(frozen=True)
@@ -176,6 +218,7 @@ class TaijiConfig:
     structural_capture_target: float = 0.90
     structural_error_threshold: float = 0.35
     seed: int = 20260821
+    perception: PerceptionConfig = field(default_factory=PerceptionConfig)
 
     def __post_init__(self) -> None:
         if self.alphabet_size < 2:
@@ -327,6 +370,7 @@ class TaijiConfig:
             memory_meta_dim=base.memory_meta_dim * scale,
             memory_time_dim=base.memory_time_dim * scale,
             memory_episode_dim=base.memory_episode_dim * scale,
+            perception=base.perception,
             seed=seed,
         )
 
@@ -495,4 +539,7 @@ class TaijiConfig:
     def from_dict(cls, payload: dict[str, Any]) -> TaijiConfig:
         values = dict(payload)
         values["region_sizes"] = tuple(values["region_sizes"])
+        perception = values.get("perception")
+        if perception is not None and not isinstance(perception, PerceptionConfig):
+            values["perception"] = PerceptionConfig.from_dict(dict(perception))
         return cls(**values)

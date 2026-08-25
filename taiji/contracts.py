@@ -142,6 +142,10 @@ class PerceptEvent:
     observation_tick: int
     modality: str
     features: torch.Tensor
+    assembly_id: str = ""
+    duration: int = 1
+    boundary_score: float = 0.0
+    prediction_error: float = 0.0
     boundary: bool = False
     confidence: float = 1.0
     version: int = CONTRACT_VERSION
@@ -150,10 +154,16 @@ class PerceptEvent:
         _check_version(self.version)
         _check_text(self.event_id, "event_id")
         _check_text(self.modality, "modality")
+        if not self.assembly_id:
+            object.__setattr__(self, "assembly_id", self.event_id)
         if int(self.observation_tick) < 0:
             raise ValueError("observation_tick cannot be negative")
         if self.features.ndim != 1:
             raise ValueError("percept features must be a vector")
+        if int(self.duration) <= 0:
+            raise ValueError("percept duration must be positive")
+        _check_unit(self.boundary_score, "boundary_score")
+        _check_unit(self.prediction_error, "prediction_error")
         _check_unit(self.confidence, "confidence")
 
     def to_payload(self) -> dict[str, Any]:
@@ -163,6 +173,10 @@ class PerceptEvent:
             "observation_tick": self.observation_tick,
             "modality": self.modality,
             "features": self.features.detach().cpu().clone(),
+            "assembly_id": self.assembly_id,
+            "duration": self.duration,
+            "boundary_score": self.boundary_score,
+            "prediction_error": self.prediction_error,
             "boundary": self.boundary,
             "confidence": self.confidence,
         }
@@ -177,6 +191,10 @@ class PerceptEvent:
             observation_tick=int(payload["observation_tick"]),
             modality=str(payload["modality"]),
             features=payload["features"].detach().to(device).clone(),
+            assembly_id=str(payload.get("assembly_id", payload["event_id"])),
+            duration=int(payload.get("duration", 1)),
+            boundary_score=float(payload.get("boundary_score", 0.0)),
+            prediction_error=float(payload.get("prediction_error", 0.0)),
             boundary=bool(payload.get("boundary", False)),
             confidence=float(payload.get("confidence", 1.0)),
         )
@@ -771,6 +789,7 @@ class NativeCheckpoint:
 
     kernel: Mapping[str, Any]
     cognitive_state: CognitiveState
+    components: Mapping[str, Any] = field(default_factory=dict)
     adapter: str = "tsk-v8"
     format: str = CONTRACT_FORMAT
     version: int = CONTRACT_VERSION
@@ -788,6 +807,7 @@ class NativeCheckpoint:
             "adapter": self.adapter,
             "kernel": dict(self.kernel),
             "cognitive_state": self.cognitive_state.to_payload(),
+            "components": dict(self.components),
         }
 
     @classmethod
@@ -800,4 +820,5 @@ class NativeCheckpoint:
             adapter=str(payload["adapter"]),
             kernel=payload["kernel"],
             cognitive_state=CognitiveState.from_payload(payload["cognitive_state"], device=device),
+            components=payload.get("components", {}),
         )

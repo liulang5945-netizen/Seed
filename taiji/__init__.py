@@ -5,7 +5,7 @@ runtime.  PyTorch is used only as a tensor execution engine.
 """
 
 from .adapter import TSKV8Adapter
-from .config import CapacityPolicy, TaijiConfig
+from .config import CapacityPolicy, PerceptionConfig, TaijiConfig
 from .contracts import (
     CONTRACT_FORMAT,
     CONTRACT_VERSION,
@@ -32,6 +32,7 @@ from .fabric import TaijiFabric
 from .memory import EpisodicField, EpisodicReplay, EpisodicWrite
 from .model import Taiji
 from .organs import ByteMotor, ByteSensor, SparseReceptorBank
+from .perception import LearnedPerception
 from .sparse import SparseSynapses
 from .state import (
     MemoryRecall,
@@ -65,6 +66,7 @@ __all__ = [
     "NativeMemoryState",
     "Observation",
     "Outcome",
+    "PerceptionConfig",
     "PerceptEvent",
     "PlanCandidate",
     "PlanState",
@@ -87,6 +89,7 @@ __all__ = [
     "GoalState",
     "HomeostaticState",
     "LearningState",
+    "LearnedPerception",
     "SelfState",
     "WorkspaceState",
     "WorldState",
