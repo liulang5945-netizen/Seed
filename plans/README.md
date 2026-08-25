@@ -46,8 +46,8 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
   这只证明当前小型组合任务的 workspace→action→outcome 因果链，不代表一般规划或通用智能。
 - P4 最小记忆纵切片已落地：`WorkingMemoryItem`、`EpisodicMemoryRecord` 和可容量治理的 `EpisodicMemoryStore` 属于
   Taiji；adapter 在真实 action outcome 后写入经历、下一观察按 cue 检索，native checkpoint 可恢复记录与 working state。
-  store 已改为 insertion-ordered dictionary，重复 memory_id 替换与容量淘汰不再每次全表重建；原生回归当前为
-  90 passed、1 skipped。
+  store 已改为 insertion-ordered dictionary，重复 memory_id 替换与容量淘汰不再每次全表重建；当前原生回归为
+  92 passed、1 skipped。
 - P4 cue-conditioned one-shot recall 窄 Gate 已通过：full、episode-ID lesion、checkpoint continuation 的 action recall
   均为 1.0，retrieval/write lesion 均为 0；报告和 manifest 为 `reports/taiji_p4_episodic_recall_*_20260825.json`。
   该结果证明经历检索和来源独立性，不证明从多次经历抽取新组合语义。
@@ -84,10 +84,14 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P5 intervention/latency 窄 Gate 已通过：完整 planner 选择 delayed-safe，reactive 与 discount=0 world-model lesion 均选择
   immediate-risky；planner 成功概率优势=`0.4`，真实干预触发 replan 并执行 recovery，最终 goal progress=`0.16`。这关闭 P5
   的首个 delayed reward/intervention 子门，不等于长程规划或通用目标推理。
-- 原生套件当前 90 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
+- P6 structured generation 窄 Gate 已通过：`ActionIntent → ContentPlan → ExpressionPlan → ToolCall → UTF-8 codec` 保持
+  `intent_kind`、semantic slots、tool name 和 goal provenance；codec round-trip 后可还原为同一 intent 绑定的 `WorldAction`。
+  `TSKV8Adapter` 已拥有 generation controller 与 native checkpoint 恢复。该 Gate 只证明结构化工具效应器边界，不证明语言流畅性、
+  自主内容创造或真实外部工具成功。
+- 原生套件当前 92 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-继续 P6 language/tool generation：拆分 content plan、expression plan 与 byte/organ codec，先建立结构化工具调用闭环；
-保留当前 P3/P4/P5 Gate，不让 byte motor 或 Legacy Transformer 代替目标规划与内容决策。
+继续 P6 tool execution/outcome Gate：把结构化 `ToolCall` 接入真实/模拟环境执行，并验证 outcome 回写、失败重规划和 direct-byte
+lesion；保留当前 P3/P4/P5 Gate，不让 byte motor 或 Legacy Transformer 代替目标规划与内容决策。
