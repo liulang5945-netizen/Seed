@@ -19,6 +19,8 @@ from taiji import (
     TaijiConfig,
     TSKV8Adapter,
     WorldAffordance,
+    WorldAffordanceGroundingProducer,
+    WorldObject,
     WorldState,
 )
 
@@ -231,6 +233,9 @@ def test_adapter_synthesizes_candidates_from_world_affordances() -> None:
 
     candidates = adapter.synthesize_executive_candidates()
     assert len(candidates) == 1
+    grounded_world_affordance = adapter.cognitive_snapshot().world.affordances[0]
+    assert grounded_world_affordance.feature_provenance == "world-state-grounding"
+    assert f"world-state:{world.tick}" in grounded_world_affordance.grounding_lineage
     candidate = candidates[0]
     assert candidate.provenance == "affordance-derived/learned"
     assert candidate.source_affordance_id == "unseen.affordance.v2"
@@ -251,7 +256,7 @@ def test_adapter_synthesizes_candidates_from_world_affordances() -> None:
         restored_world_latent = restored_state.percept.features
     assert torch.equal(
         restored._affordance_features.features_for(
-            world.affordances[0],
+            restored_state.world.affordances[0],
             percept_features=restored_state.percept.features,
             world_latent=restored_world_latent,
             world_uncertainty=restored_state.world.uncertainty,
@@ -454,3 +459,51 @@ def test_contextual_affordance_features_transfer_compositionally_to_holdout() ->
         world_latent=zero,
     )
     assert positive > negative
+
+
+def test_world_grounding_lineage_tracks_unseen_object_relation_binding() -> None:
+    producer = WorldAffordanceGroundingProducer(grounding_dim=5)
+    affordance = WorldAffordance(
+        affordance_id="holdout-affordance",
+        action_kind="unseen-action-kind",
+        actor_id="agent",
+        target_id="token",
+    )
+    state = WorldState(
+        tick=4,
+        latent=torch.tensor([0.0, 1.0]),
+        relations=(("agent", "near", "token"),),
+        objects=(
+            WorldObject("agent", attributes={"energy": 1.0}),
+            WorldObject("token", attributes={"position": 1.0}),
+        ),
+    )
+    perturbed = WorldState(
+        tick=4,
+        latent=torch.tensor([0.0, 1.0]),
+        relations=(("agent", "near", "token"), ("agent", "supports", "token")),
+        objects=(
+            WorldObject("agent", attributes={"energy": 1.0}),
+            WorldObject("token", attributes={"position": 2.0}),
+        ),
+    )
+    grounded = producer.ground(state, affordance)
+    perturbed_grounded = producer.ground(perturbed, affordance)
+    alternate_action = producer.ground(
+        state,
+        WorldAffordance(
+            affordance_id="different-id",
+            action_kind="another-unseen-action-kind",
+            actor_id="agent",
+            target_id="token",
+        ),
+    )
+
+    assert grounded.feature_provenance == "world-state-grounding"
+    assert "world-state:4" in grounded.grounding_lineage
+    assert "object:agent" in grounded.grounding_lineage
+    assert "object:token" in grounded.grounding_lineage
+    assert "relation:agent:near:token" in grounded.grounding_lineage
+    assert "relation:agent:supports:token" in perturbed_grounded.grounding_lineage
+    assert not torch.equal(grounded.features, perturbed_grounded.features)
+    assert torch.equal(grounded.features, alternate_action.features)
