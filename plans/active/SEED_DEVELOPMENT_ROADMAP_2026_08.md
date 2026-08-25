@@ -385,6 +385,9 @@ P4 的最小真实经历边界已落地：
 - P7 grounded multi-step train/holdout Gate 已通过：4 条 train affordance、未见 actor/target/relation/action kind 的 holdout 和 3 个 seed
   均达到 holdout selection、两步 failure replan、before/after lineage、checkpoint pending credit 与 delayed credit `1.0`；
   manifest/report 为 `reports/taiji_p7_grounded_multistep_*_20260825.json`。该结果仍是小型数值世界 transfer，不代表通用关系推理。
+- P7 grounded multi-step causal-lesion Gate 已通过：3 个 seed 的 producer lesion 均使 holdout 选择退化，feature-source lesion 均阻断候选
+  合成，跳过 delayed credit 均少一次 source/executive online update；结果与主 Gate 一起写入同一 report。该结果证明当前控制变量有因果
+  效应，不代表长程规划。
 - 本轮 native 回归为 `131 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
@@ -490,4 +493,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：为 grounded multi-step 增加 producer/feature-source lesion 与 delayed-credit lesion 对照，量化 grounding、信用回传和重规划各自的因果损失；不新增 action/intent 查表。**
+**下一步：把 grounded multi-step 从两步扩展到至少四步、允许连续失败重规划和跨步 delayed credit，验证 lineage 与信用链在更长 horizon 仍不丢失；不新增 action/intent 查表。**

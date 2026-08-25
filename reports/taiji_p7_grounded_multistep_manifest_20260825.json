@@ -42,7 +42,10 @@
     37
   ],
   "controls": [
-    "native-checkpoint-continuation"
+    "native-checkpoint-continuation",
+    "producer-lesion",
+    "feature-source-lesion",
+    "delayed-credit-lesion"
   ],
   "boundary": "numeric world grounding and executive credit; not general semantics or intelligence"
 }
