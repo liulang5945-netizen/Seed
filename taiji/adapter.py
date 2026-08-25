@@ -97,6 +97,8 @@ class TSKV8Adapter(Taiji):
         self._last_generation_trace: GenerationTrace | None = None
         self._content_selector: ContentSelector | None = None
         self._last_content_selection: ContentSelectionDecision | None = None
+        self._last_content_prediction_error: float | None = None
+        self._content_feedback_applied = False
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -288,6 +290,10 @@ class TSKV8Adapter(Taiji):
     def last_content_selection(self) -> ContentSelectionDecision | None:
         return self._last_content_selection
 
+    @property
+    def last_content_prediction_error(self) -> float | None:
+        return self._last_content_prediction_error
+
     def select_content(
         self,
         candidates: Sequence[ContentCandidate],
@@ -307,6 +313,8 @@ class TSKV8Adapter(Taiji):
         )
         decision = self._content_selector.select(tuple(candidates), context)
         self._last_content_selection = decision
+        self._last_content_prediction_error = None
+        self._content_feedback_applied = False
         return decision
 
     def selected_content_plan(self) -> ContentPlan:
@@ -460,6 +468,8 @@ class TSKV8Adapter(Taiji):
         self._cognitive_state = self._empty_cognitive_state(self._state.episode_id)
         self._last_generation_trace = None
         self._last_content_selection = None
+        self._last_content_prediction_error = None
+        self._content_feedback_applied = False
 
     def observe(self, symbol: int, *args: Any, **kwargs: Any) -> TaijiStep:
         workspace_candidates: Sequence[WorkspaceCandidate] | None = kwargs.pop(
@@ -785,6 +795,17 @@ class TSKV8Adapter(Taiji):
             provenance=str(kwargs.get("provenance", "experienced")),
             tick=(self.tick if world_state is None else int(world_state.tick)),
         )
+        if (
+            self._content_selector is not None
+            and self._last_content_selection is not None
+            and not self._content_feedback_applied
+        ):
+            self._last_content_prediction_error = self._content_selector.update(
+                self._last_content_selection.selected,
+                self._last_content_selection.context,
+                outcome.reward,
+            )
+            self._content_feedback_applied = True
         transition = None
         prediction_record = self._cognitive_state.world_prediction
         if world_state is not None:
@@ -956,6 +977,8 @@ class TSKV8Adapter(Taiji):
             if self._last_content_selection is None
             else self._last_content_selection.to_payload()
         )
+        payload["last_content_prediction_error"] = self._last_content_prediction_error
+        payload["content_feedback_applied"] = self._content_feedback_applied
         return payload
 
     def restore(self, checkpoint: dict[str, Any]) -> None:
@@ -1065,6 +1088,11 @@ class TSKV8Adapter(Taiji):
             if selection is None
             else ContentSelectionDecision.from_payload(dict(selection))
         )
+        error = payload.get("last_content_prediction_error") if isinstance(payload, dict) else None
+        self._last_content_prediction_error = None if error is None else float(error)
+        self._content_feedback_applied = bool(
+            payload.get("content_feedback_applied", False) if isinstance(payload, dict) else False
+        )
 
     def _restore_rollout_state(self, payload: Any) -> None:
         rollout = payload.get("planned_rollout") if isinstance(payload, dict) else None
@@ -1123,6 +1151,8 @@ class TSKV8Adapter(Taiji):
             if self._last_content_selection is None
             else self._last_content_selection.to_payload()
         )
+        components["last_content_prediction_error"] = self._last_content_prediction_error
+        components["content_feedback_applied"] = self._content_feedback_applied
         return NativeCheckpoint(
             kernel=super().checkpoint(),
             cognitive_state=self.cognitive_snapshot(),

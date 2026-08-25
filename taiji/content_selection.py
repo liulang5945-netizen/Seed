@@ -291,6 +291,31 @@ class ContentSelector:
         self.training_steps += int(epochs) * len(examples)
         return final_loss
 
+    def update(
+        self,
+        candidate: ContentCandidate,
+        context: ContentSelectionContext,
+        reward: float,
+        *,
+        learning_rate: float = 0.05,
+    ) -> float:
+        """Apply one online credit-assignment update from a real outcome."""
+
+        if not math.isfinite(float(reward)):
+            raise ValueError("content feedback reward must be finite")
+        if float(learning_rate) <= 0.0:
+            raise ValueError("content online learning_rate must be positive")
+        features = candidate.features(context)
+        target = torch.tensor(float(reward), dtype=features.dtype)
+        prediction = self._model(features).reshape(())
+        loss = (prediction - target) ** 2
+        optimizer = torch.optim.SGD(self._model.parameters(), lr=float(learning_rate))
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        self.training_steps += 1
+        return float((prediction.detach() - target).item())
+
     def checkpoint(self) -> dict[str, Any]:
         return {
             "format": CONTENT_SELECTION_CHECKPOINT_FORMAT,

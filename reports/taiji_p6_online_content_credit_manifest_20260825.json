@@ -1,0 +1,17 @@
+{
+  "format": "taiji-p6-online-content-credit-manifest-v1",
+  "task": "update selected semantic content utility from successive failed and successful adapter outcomes",
+  "lesions": [
+    "no_online_credit",
+    "duplicate_feedback",
+    "content_feedback_checkpoint"
+  ],
+  "signals": [
+    "reward",
+    "prediction_error",
+    "candidate_migration",
+    "training_steps",
+    "checkpoint"
+  ],
+  "boundary": "online content credit Gate only; no open-ended semantic learning claim"
+}
