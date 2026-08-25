@@ -114,4 +114,4 @@ Taiji 不以“逐功能替换 TransformerBlock”为设计主轴。Transformer 
 
 ## 9. 当前唯一入口
 
-执行顺序只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。P1 已完成首个兼容纵切片，P2 relation subgate 已在两个独立语料分区通过，P3 world-state/action-outcome 合同、可恢复 state store 和结构化对象/关系/时间打乱窄 Gate 已落地；当前唯一入口是多步 episode 与跨 episode 持续性评测，避免把窄 benchmark 通过误认为完整能力。
+执行顺序只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。P1 已完成首个兼容纵切片，P2 relation subgate 已在两个独立语料分区通过，P3 world-state/action-outcome 合同、可恢复 state store、结构化对象/关系/时间打乱和多步 episode 窄 Gate 已落地；当前唯一入口是把 transition lineage 接入 `TSKV8Adapter` 的真实 cognitive snapshot，避免 evaluator 通过与 runtime 能力脱节。

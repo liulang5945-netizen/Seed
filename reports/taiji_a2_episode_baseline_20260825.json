@@ -1,0 +1,102 @@
+{
+  "format": "taiji-a2-world-episode-v1",
+  "config": {
+    "seeds": [
+      11,
+      29,
+      47
+    ],
+    "hidden_dim": 32,
+    "epochs": 350,
+    "learning_rate": 0.01,
+    "maximum_rollout_state_mse": 0.25,
+    "maximum_final_state_mse": 0.5
+  },
+  "schema": {
+    "object_ids": [
+      "agent",
+      "blue",
+      "red"
+    ],
+    "state_slots": [
+      [
+        "agent",
+        "energy"
+      ],
+      [
+        "blue",
+        "position"
+      ],
+      [
+        "red",
+        "position"
+      ]
+    ],
+    "relation_slots": [],
+    "action_kinds": [
+      "move"
+    ],
+    "actor_ids": [
+      "agent"
+    ],
+    "target_ids": [
+      "blue",
+      "red"
+    ],
+    "parameter_names": [
+      "step"
+    ],
+    "target_parameter_interactions": 2,
+    "state_dim": 3,
+    "action_dim": 7,
+    "input_dim": 10
+  },
+  "train_episodes": 3,
+  "holdout_episodes": 2,
+  "seeds": [
+    {
+      "seed": 11,
+      "training_loss": 0.00045279148616828024,
+      "rollout": {
+        "rollout_state_mse": 0.0053602417671674285,
+        "final_state_mse": 0.006247609620913863,
+        "reward_mse": 0.0015257710531546564,
+        "success_accuracy": 1.0
+      },
+      "schema_uses_episode_id": false
+    },
+    {
+      "seed": 29,
+      "training_loss": 0.0003941324248444289,
+      "rollout": {
+        "rollout_state_mse": 0.0016433015519625727,
+        "final_state_mse": 0.002541095658671111,
+        "reward_mse": 0.0007537443533776056,
+        "success_accuracy": 1.0
+      },
+      "schema_uses_episode_id": false
+    },
+    {
+      "seed": 47,
+      "training_loss": 0.0005086848977953196,
+      "rollout": {
+        "rollout_state_mse": 0.0011088444134443876,
+        "final_state_mse": 0.0021408075117506087,
+        "reward_mse": 0.00047520104999332347,
+        "success_accuracy": 1.0
+      },
+      "schema_uses_episode_id": false
+    }
+  ],
+  "gate": {
+    "rollout_state_mse_max": 0.0053602417671674285,
+    "final_state_mse_max": 0.006247609620913863,
+    "checkpoint_recovery": true,
+    "passed": true
+  },
+  "benchmark": {
+    "format": "taiji-a2-world-episode-shift-v1",
+    "manifest": "reports\\taiji_a2_episode_manifest_20260825.json",
+    "purpose": "multi-step rollout, cross-episode object persistence and checkpoint continuation"
+  }
+}

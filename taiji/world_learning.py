@@ -9,7 +9,15 @@ from typing import Any
 import torch
 from torch import nn
 
-from .contracts import WorldInterventionCase, WorldInterventionCorpus, WorldObject, WorldState
+from .contracts import (
+    WorldEpisode,
+    WorldEpisodeCorpus,
+    WorldInterventionCase,
+    WorldInterventionCorpus,
+    WorldObject,
+    WorldState,
+)
+from .world import TaijiWorldState, _world_state_equal
 
 
 def _numeric(value: Any, name: str) -> float:
@@ -161,6 +169,16 @@ class WorldPrediction:
     state: WorldState
     reward: float
     success_probability: float
+
+
+@dataclass(frozen=True)
+class WorldEpisodeRollout:
+    episode_id: str
+    predictions: tuple[WorldPrediction, ...]
+
+    @property
+    def final_state(self) -> WorldState:
+        return self.predictions[-1].state
 
 
 def _replace_numeric_state(state: WorldState, schema: WorldSchema, values: torch.Tensor) -> WorldState:
@@ -492,6 +510,176 @@ class WorldInterventionEvaluator:
             "train_cases": len(corpus.train),
             "holdout_cases": len(corpus.holdout),
             "time_shuffled_cases": len(corpus.time_shuffled),
+            "seeds": seed_results,
+            "gate": gate,
+        }
+
+
+def _case_from_transition(transition: Any, case_id: str) -> WorldInterventionCase:
+    return WorldInterventionCase(
+        case_id=case_id,
+        initial=transition.before,
+        action=transition.action,
+        expected_state=transition.after,
+        expected_outcome=transition.outcome,
+    )
+
+
+def rollout_episode(
+    learner: WorldDynamicsLearner,
+    episode: WorldEpisode,
+    *,
+    bind_target: bool = True,
+) -> WorldEpisodeRollout:
+    current = episode.initial
+    predictions = []
+    for transition in episode.transitions:
+        prediction = learner.predict(current, transition.action, bind_target=bind_target)
+        predictions.append(prediction)
+        current = prediction.state
+    return WorldEpisodeRollout(episode_id=episode.episode_id, predictions=tuple(predictions))
+
+
+def _episode_metrics(
+    rollouts: tuple[WorldEpisodeRollout, ...],
+    episodes: tuple[WorldEpisode, ...],
+    schema: WorldSchema,
+) -> dict[str, float]:
+    state_errors = []
+    final_errors = []
+    reward_errors = []
+    success_correct = []
+    for rollout, episode in zip(rollouts, episodes, strict=True):
+        episode_final_error = None
+        for prediction, transition in zip(rollout.predictions, episode.transitions, strict=True):
+            state_error = float(
+                torch.mean(
+                    (schema.state_values(prediction.state) - schema.state_values(transition.after))
+                    ** 2
+                )
+            )
+            state_errors.append(state_error)
+            episode_final_error = state_error
+            reward_errors.append((prediction.reward - transition.outcome.reward) ** 2)
+            expected_success = bool(
+                transition.outcome.success
+                if transition.outcome.success is not None
+                else transition.outcome.reward > 0.0
+            )
+            success_correct.append(
+                float((prediction.success_probability >= 0.5) == expected_success)
+            )
+        final_errors.append(float(episode_final_error))
+    return {
+        "rollout_state_mse": sum(state_errors) / len(state_errors),
+        "final_state_mse": sum(final_errors) / len(final_errors),
+        "reward_mse": sum(reward_errors) / len(reward_errors),
+        "success_accuracy": sum(success_correct) / len(success_correct),
+    }
+
+
+def _checkpoint_recovery(episodes: tuple[WorldEpisode, ...]) -> bool:
+    for episode in episodes:
+        store = TaijiWorldState(episode.initial)
+        midpoint = max(1, len(episode.transitions) // 2)
+        restored = None
+        checkpoint_state = None
+        for index, transition in enumerate(episode.transitions):
+            store.apply(transition)
+            if index + 1 == midpoint:
+                restored = TaijiWorldState.from_checkpoint(store.checkpoint())
+                checkpoint_state = transition.after
+        if restored is None:
+            return False
+        if checkpoint_state is None or not _world_state_equal(restored.state, checkpoint_state):
+            return False
+        for transition in episode.transitions[midpoint:]:
+            restored.apply(transition)
+        if not _world_state_equal(restored.state, episode.final_state):
+            return False
+    return True
+
+
+@dataclass(frozen=True)
+class WorldEpisodeEvaluationConfig:
+    seeds: tuple[int, ...] = (11, 29, 47)
+    hidden_dim: int = 64
+    epochs: int = 250
+    learning_rate: float = 0.01
+    maximum_rollout_state_mse: float = 0.25
+    maximum_final_state_mse: float = 0.5
+
+
+class WorldEpisodeEvaluator:
+    """Evaluate multi-step rollout, episode-ID independence and recovery."""
+
+    FORMAT = "taiji-a2-world-episode-v1"
+
+    def __init__(self, config: WorldEpisodeEvaluationConfig | None = None) -> None:
+        self.config = config or WorldEpisodeEvaluationConfig()
+
+    def evaluate(self, corpus: WorldEpisodeCorpus) -> dict[str, Any]:
+        if not corpus.train or not corpus.holdout:
+            raise ValueError("episode evaluation requires train and holdout episodes")
+        train_cases = tuple(
+            _case_from_transition(transition, f"{episode.episode_id}:{index}")
+            for episode in corpus.train
+            for index, transition in enumerate(episode.transitions)
+        )
+        holdout_cases = tuple(
+            _case_from_transition(transition, f"{episode.episode_id}:{index}")
+            for episode in corpus.holdout
+            for index, transition in enumerate(episode.transitions)
+        )
+        intervention_corpus = WorldInterventionCorpus(train=train_cases, holdout=holdout_cases)
+        schema = WorldSchema.from_corpus(intervention_corpus)
+        seed_results = []
+        for seed in self.config.seeds:
+            learner = WorldDynamicsLearner(
+                schema,
+                hidden_dim=self.config.hidden_dim,
+                seed=int(seed),
+            )
+            losses = learner.fit(
+                train_cases,
+                epochs=self.config.epochs,
+                learning_rate=self.config.learning_rate,
+            )
+            rollouts = tuple(rollout_episode(learner, episode) for episode in corpus.holdout)
+            seed_results.append(
+                {
+                    "seed": int(seed),
+                    "training_loss": float(losses[-1]),
+                    "rollout": _episode_metrics(rollouts, corpus.holdout, schema),
+                    "schema_uses_episode_id": False,
+                }
+            )
+        rollout_errors = [item["rollout"]["rollout_state_mse"] for item in seed_results]
+        final_errors = [item["rollout"]["final_state_mse"] for item in seed_results]
+        checkpoint_passed = _checkpoint_recovery(corpus.holdout)
+        gate = {
+            "rollout_state_mse_max": max(rollout_errors),
+            "final_state_mse_max": max(final_errors),
+            "checkpoint_recovery": checkpoint_passed,
+            "passed": (
+                max(rollout_errors) <= self.config.maximum_rollout_state_mse
+                and max(final_errors) <= self.config.maximum_final_state_mse
+                and checkpoint_passed
+            ),
+        }
+        return {
+            "format": self.FORMAT,
+            "config": {
+                "seeds": list(self.config.seeds),
+                "hidden_dim": self.config.hidden_dim,
+                "epochs": self.config.epochs,
+                "learning_rate": self.config.learning_rate,
+                "maximum_rollout_state_mse": self.config.maximum_rollout_state_mse,
+                "maximum_final_state_mse": self.config.maximum_final_state_mse,
+            },
+            "schema": schema.payload(),
+            "train_episodes": len(corpus.train),
+            "holdout_episodes": len(corpus.holdout),
             "seeds": seed_results,
             "gate": gate,
         }

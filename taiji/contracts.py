@@ -978,6 +978,102 @@ class WorldInterventionCorpus:
 
 
 @dataclass(frozen=True)
+class WorldEpisode:
+    """A contiguous multi-step world experience owned by Taiji."""
+
+    episode_id: str
+    initial: WorldState
+    transitions: tuple[WorldTransition, ...] = ()
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.episode_id, "world episode_id")
+        if not self.transitions:
+            raise ValueError("world episode must contain at least one transition")
+        action_ids = tuple(item.action.action_id for item in self.transitions)
+        if len(set(action_ids)) != len(action_ids):
+            raise ValueError("world episode actions must have unique action_id values")
+        if self.transitions[0].before.tick != self.initial.tick:
+            raise ValueError("world episode must start at the initial-state tick")
+        for previous, current in zip(self.transitions, self.transitions[1:], strict=False):
+            if previous.after.tick != current.before.tick:
+                raise ValueError("world episode transitions must be contiguous")
+
+    @property
+    def final_state(self) -> WorldState:
+        return self.transitions[-1].after
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "episode_id": self.episode_id,
+            "initial": self.initial.to_payload(),
+            "transitions": [item.to_payload() for item in self.transitions],
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> WorldEpisode:
+        return cls(
+            version=int(payload["version"]),
+            episode_id=str(payload["episode_id"]),
+            initial=WorldState.from_payload(payload["initial"], device=device),
+            transitions=tuple(
+                WorldTransition.from_payload(item, device=device)
+                for item in payload.get("transitions", ())
+            ),
+        )
+
+
+@dataclass(frozen=True)
+class WorldEpisodeCorpus:
+    """Train/holdout episodes for multi-step and cross-episode evaluation."""
+
+    train: tuple[WorldEpisode, ...] = ()
+    holdout: tuple[WorldEpisode, ...] = ()
+    format: str = "taiji-world-episode-v1"
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        if self.format != "taiji-world-episode-v1":
+            raise ValueError(f"unsupported world episode corpus format: {self.format}")
+        train_ids = {episode.episode_id for episode in self.train}
+        holdout_ids = {episode.episode_id for episode in self.holdout}
+        if len(train_ids) != len(self.train) or len(holdout_ids) != len(self.holdout):
+            raise ValueError("world episode ids must be unique within each split")
+        if train_ids & holdout_ids:
+            raise ValueError("world episode train and holdout splits must be disjoint")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": self.format,
+            "version": self.version,
+            "train": [episode.to_payload() for episode in self.train],
+            "holdout": [episode.to_payload() for episode in self.holdout],
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> WorldEpisodeCorpus:
+        return cls(
+            format=str(payload["format"]),
+            version=int(payload["version"]),
+            train=tuple(
+                WorldEpisode.from_payload(item, device=device)
+                for item in payload.get("train", ())
+            ),
+            holdout=tuple(
+                WorldEpisode.from_payload(item, device=device)
+                for item in payload.get("holdout", ())
+            ),
+        )
+
+
+@dataclass(frozen=True)
 class SelfState:
     tick: int
     confidence: float = 0.0
