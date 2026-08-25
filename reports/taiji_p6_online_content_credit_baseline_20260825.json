@@ -1,0 +1,25 @@
+{
+  "format": "taiji-p6-online-content-credit-v1",
+  "metrics": {
+    "first_content": "answer",
+    "first_outcome_reward": -1.0,
+    "first_prediction_error": 1.0,
+    "second_content": "ask",
+    "second_outcome_reward": 1.0,
+    "second_prediction_error": -1.223080039024353,
+    "scores_after_failure": [
+      -0.2340400218963623,
+      -0.22308000922203064
+    ],
+    "scores_after_success": [
+      0.038804687559604645,
+      0.17217053472995758
+    ],
+    "training_steps": 2,
+    "checkpoint_feedback_applied": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "real adapter outcomes demote failed content, promote successful content, and restore one-time credit state from checkpoint"
+  }
+}

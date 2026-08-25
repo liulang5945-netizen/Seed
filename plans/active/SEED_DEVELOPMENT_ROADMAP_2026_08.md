@@ -305,7 +305,10 @@ P4 的最小真实经历边界已落地：
 - `scripts/training/eval_taiji_p6_content_runtime_ownership.py` 已通过 runtime content-selection ownership 窄 Gate：adapter 读取
   current goal/world state 选择 content、生成 `ExpressionPlan`，native checkpoint 恢复 selector/decision/expression；报告和 manifest
   为 `reports/taiji_p6_content_runtime_ownership_*_20260825.json`。selector 仍需真实 Outcome 在线 credit assignment。
-- 本轮 native 回归为 `101 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
+- `scripts/training/eval_taiji_p6_online_content_credit.py` 已通过 online content credit assignment 窄 Gate：真实 adapter reward 对已选
+  semantic content 执行一次 utility 更新，失败候选降权、成功候选提升并迁移，prediction error/training step/applied 标记进入 checkpoint；
+  报告和 manifest 为 `reports/taiji_p6_online_content_credit_*_20260825.json`。该结果不代表开放域语义学习。
+- 本轮 native 回归为 `102 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
 
 ### 工作项
 
@@ -409,4 +412,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**继续 P6 online content credit assignment：让真实工具/环境 `Outcome` 更新已选 semantic content 的 utility，并验证成功/失败候选迁移；不改变既有合同。**
+**继续 P6 holdout content transfer Gate：使用训练未见的 `intent_kind`、semantic slot 结构和候选 ID，验证 utility 迁移不读取固定答案表；不改变既有合同。**
