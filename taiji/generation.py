@@ -35,6 +35,17 @@ def _text(value: str, name: str) -> str:
     return value
 
 
+def _terms(values: Sequence[str], name: str) -> tuple[str, ...]:
+    if isinstance(values, (str, bytes, bytearray)):
+        raise TypeError(f"{name} must be a sequence of terms")
+    terms = tuple(str(value) for value in values)
+    if any(not term for term in terms):
+        raise ValueError(f"{name} cannot contain empty terms")
+    if len(set(terms)) != len(terms):
+        raise ValueError(f"{name} cannot contain duplicate terms")
+    return terms
+
+
 def _json_value(value: Any, path: str = "value") -> Any:
     """Validate and detach the JSON subset accepted by an external tool."""
 
@@ -62,6 +73,7 @@ class ContentPlan:
     intent_id: str
     intent_kind: str
     semantic_slots: Mapping[str, Any] = field(default_factory=dict)
+    required_terms: tuple[str, ...] = ()
     source_goal_id: str | None = None
     expected_outcome: str = ""
     confidence: float = 0.0
@@ -72,6 +84,7 @@ class ContentPlan:
         _text(self.content_id, "content_id")
         _text(self.intent_id, "intent_id")
         _text(self.intent_kind, "intent_kind")
+        _terms(self.required_terms, "content required_terms")
         if self.source_goal_id is not None:
             _text(self.source_goal_id, "source_goal_id")
         _text(self.provenance, "provenance")
@@ -85,6 +98,7 @@ class ContentPlan:
             "intent_id": self.intent_id,
             "intent_kind": self.intent_kind,
             "semantic_slots": dict(self.semantic_slots),
+            "required_terms": list(self.required_terms),
             "source_goal_id": self.source_goal_id,
             "expected_outcome": self.expected_outcome,
             "confidence": self.confidence,
@@ -102,6 +116,7 @@ class ContentPlan:
             intent_id=str(payload["intent_id"]),
             intent_kind=str(payload["intent_kind"]),
             semantic_slots=dict(slots),
+            required_terms=tuple(str(term) for term in payload.get("required_terms", ())),
             source_goal_id=payload.get("source_goal_id"),
             expected_outcome=str(payload.get("expected_outcome", "")),
             confidence=float(payload.get("confidence", 0.0)),
@@ -120,6 +135,7 @@ class ExpressionPlan:
     channel: str
     source_goal_id: str | None = None
     fields: Mapping[str, Any] = field(default_factory=dict)
+    required_terms: tuple[str, ...] = ()
     confidence: float = 0.0
     provenance: str = "planned"
     tick: int = 0
@@ -129,6 +145,7 @@ class ExpressionPlan:
         _text(self.content_id, "content_id")
         _text(self.modality, "expression modality")
         _text(self.channel, "expression channel")
+        _terms(self.required_terms, "expression required_terms")
         if self.source_goal_id is not None:
             _text(self.source_goal_id, "expression source_goal_id")
         _text(self.provenance, "expression provenance")
@@ -144,6 +161,7 @@ class ExpressionPlan:
             "channel": self.channel,
             "source_goal_id": self.source_goal_id,
             "fields": dict(self.fields),
+            "required_terms": list(self.required_terms),
             "confidence": self.confidence,
             "provenance": self.provenance,
             "tick": self.tick,
@@ -161,6 +179,7 @@ class ExpressionPlan:
             channel=str(payload["channel"]),
             source_goal_id=payload.get("source_goal_id"),
             fields=dict(fields),
+            required_terms=tuple(str(term) for term in payload.get("required_terms", ())),
             confidence=float(payload.get("confidence", 0.0)),
             provenance=str(payload.get("provenance", "planned")),
             tick=int(payload.get("tick", 0)),
@@ -334,6 +353,7 @@ class GenerationController:
         *,
         source_goal_id: str | None = None,
         provenance: str = "planned",
+        required_terms: Sequence[str] = (),
     ) -> ContentPlan:
         if not isinstance(intent, ActionIntent):
             raise TypeError("intent must be an ActionIntent")
@@ -342,6 +362,7 @@ class GenerationController:
             intent_id=intent.intent_id,
             intent_kind=intent.kind,
             semantic_slots=dict(intent.parameters),
+            required_terms=tuple(str(term) for term in required_terms),
             source_goal_id=(source_goal_id if source_goal_id is not None else intent.source_goal_id),
             expected_outcome=intent.expected_outcome,
             confidence=intent.confidence,
@@ -370,6 +391,7 @@ class GenerationController:
                 "semantic_slots": dict(content.semantic_slots),
                 "expected_outcome": content.expected_outcome,
             },
+            required_terms=content.required_terms,
             confidence=content.confidence,
             provenance=content.provenance,
             tick=content.tick,

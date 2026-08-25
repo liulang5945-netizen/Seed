@@ -54,6 +54,7 @@ from .language_organ import (
     LanguageBackendRegistry,
     LanguageEmission,
     LanguageOrgan,
+    LanguageValidation,
     StructuredTextLanguageOrgan,
 )
 from .model import Taiji
@@ -108,6 +109,8 @@ class TSKV8Adapter(Taiji):
         self._language_backend_registry = LanguageBackendRegistry.default()
         self._language_organ: LanguageOrgan | None = None
         self._last_language_emission: LanguageEmission | None = None
+        self._language_fallback_count = 0
+        self._language_fallback_requires_replan = False
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -368,6 +371,27 @@ class TSKV8Adapter(Taiji):
     def last_language_emission(self) -> LanguageEmission | None:
         return self._last_language_emission
 
+    @property
+    def last_language_validation(self) -> LanguageValidation | None:
+        return None if self._last_language_emission is None else self._last_language_emission.validation
+
+    @property
+    def language_fallback_count(self) -> int:
+        return self._language_fallback_count
+
+    def _apply_content_feedback(self, reward: float) -> None:
+        if (
+            self._content_selector is not None
+            and self._last_content_selection is not None
+            and not self._content_feedback_applied
+        ):
+            self._last_content_prediction_error = self._content_selector.update(
+                self._last_content_selection.selected,
+                self._last_content_selection.context,
+                reward,
+            )
+            self._content_feedback_applied = True
+
     def emit_language(
         self,
         expression: ExpressionPlan | None = None,
@@ -397,6 +421,11 @@ class TSKV8Adapter(Taiji):
         if not isinstance(emission, LanguageEmission):
             raise TypeError("language organ must return a LanguageEmission")
         self._last_language_emission = emission
+        if emission.fallback_used:
+            self._language_fallback_count += 1
+            self._language_fallback_requires_replan = True
+            self._replan_required = True
+            self._apply_content_feedback(-1.0)
         return emission
 
     def execute_tool_call(
@@ -504,6 +533,7 @@ class TSKV8Adapter(Taiji):
         )
         self._planned_rollout = decision.selected
         self._replan_required = False
+        self._language_fallback_requires_replan = False
         self._last_rollout_prediction_error = None
         self._last_rollout_calibrated_confidence = None
         self._cognitive_state = replace(
@@ -531,6 +561,8 @@ class TSKV8Adapter(Taiji):
         self._cognitive_state = self._empty_cognitive_state(self._state.episode_id)
         self._last_generation_trace = None
         self._last_language_emission = None
+        self._language_fallback_count = 0
+        self._language_fallback_requires_replan = False
         self._last_content_selection = None
         self._last_content_prediction_error = None
         self._content_feedback_applied = False
@@ -859,17 +891,7 @@ class TSKV8Adapter(Taiji):
             provenance=str(kwargs.get("provenance", "experienced")),
             tick=(self.tick if world_state is None else int(world_state.tick)),
         )
-        if (
-            self._content_selector is not None
-            and self._last_content_selection is not None
-            and not self._content_feedback_applied
-        ):
-            self._last_content_prediction_error = self._content_selector.update(
-                self._last_content_selection.selected,
-                self._last_content_selection.context,
-                outcome.reward,
-            )
-            self._content_feedback_applied = True
+        self._apply_content_feedback(outcome.reward)
         transition = None
         prediction_record = self._cognitive_state.world_prediction
         if world_state is not None:
@@ -921,7 +943,7 @@ class TSKV8Adapter(Taiji):
             self._last_rollout_prediction_error = self._goal_planner.rollout_prediction_error(
                 rollout, outcome
             )
-            self._replan_required = (
+            self._replan_required = self._language_fallback_requires_replan or (
                 self._last_rollout_prediction_error
                 > self._goal_planner.config.replan_error_threshold
             )
@@ -1046,6 +1068,8 @@ class TSKV8Adapter(Taiji):
         )
         payload["last_content_prediction_error"] = self._last_content_prediction_error
         payload["content_feedback_applied"] = self._content_feedback_applied
+        payload["language_fallback_count"] = self._language_fallback_count
+        payload["language_fallback_requires_replan"] = self._language_fallback_requires_replan
         payload["last_language_emission"] = (
             None
             if self._last_language_emission is None
@@ -1072,6 +1096,7 @@ class TSKV8Adapter(Taiji):
         self._restore_generation_trace(checkpoint)
         self._restore_content_selection(checkpoint)
         self._restore_language_emission(checkpoint)
+        self._restore_language_fallback_state(checkpoint)
 
     def _world_dynamics_checkpoint(self) -> dict[str, Any]:
         if self._world_dynamics is None:
@@ -1169,6 +1194,16 @@ class TSKV8Adapter(Taiji):
             payload.get("content_feedback_applied", False) if isinstance(payload, dict) else False
         )
 
+    def _restore_language_fallback_state(self, payload: Any) -> None:
+        self._language_fallback_count = int(
+            payload.get("language_fallback_count", 0) if isinstance(payload, dict) else 0
+        )
+        self._language_fallback_requires_replan = bool(
+            payload.get("language_fallback_requires_replan", False)
+            if isinstance(payload, dict)
+            else False
+        )
+
     def _restore_language_organ(self, payload: Any) -> None:
         if payload is None:
             self._language_organ = None
@@ -1258,6 +1293,8 @@ class TSKV8Adapter(Taiji):
         )
         components["last_content_prediction_error"] = self._last_content_prediction_error
         components["content_feedback_applied"] = self._content_feedback_applied
+        components["language_fallback_count"] = self._language_fallback_count
+        components["language_fallback_requires_replan"] = self._language_fallback_requires_replan
         components["last_language_emission"] = (
             None
             if self._last_language_emission is None
@@ -1294,6 +1331,7 @@ class TSKV8Adapter(Taiji):
         self._restore_generation_trace(envelope.components)
         self._restore_content_selection(envelope.components)
         self._restore_language_emission(envelope.components)
+        self._restore_language_fallback_state(envelope.components)
         state = envelope.cognitive_state
         if state.tick != self.tick or state.episode_id != self._state.episode_id:
             raise ValueError("native cognitive state is out of sync with kernel state")

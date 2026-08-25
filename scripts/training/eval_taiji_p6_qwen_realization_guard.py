@@ -39,6 +39,7 @@ def _expression(controller: GenerationController, case: dict[str, object]):
         intent_id=f"qwen:holdout:{case['case_id']}:intent",
         intent_kind=str(case["intent_kind"]),
         semantic_slots=dict(case["semantic_slots"]),
+        required_terms=tuple(str(term) for term in case["required_terms"]),
         source_goal_id="qwen-language-holdout-goal",
         expected_outcome="operator receives a concise message",
         confidence=0.82,
@@ -59,12 +60,6 @@ def evaluate(model_dir: Path) -> dict[str, object]:
             training_contract="expression-to-text-v1",
         )
     )
-    required_terms_by_content = {
-        f"qwen:holdout:{case['case_id']}:content": tuple(
-            str(term) for term in case["required_terms"]
-        )
-        for case in HOLDOUT_CASES
-    }
     primary = ExternalTextDecoderLanguageOrgan(
         decoder,
         prompt_builder=_prompt,
@@ -75,7 +70,6 @@ def evaluate(model_dir: Path) -> dict[str, object]:
     guarded = ValidatedLanguageOrgan(
         primary,
         validator=LanguageRealizationValidator(minimum_coverage=1.0),
-        required_terms_builder=lambda expression: required_terms_by_content[expression.content_id],
     )
     adapter = TSKV8Adapter()
     adapter.attach_language_backend_registry(registry)
