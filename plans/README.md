@@ -136,10 +136,14 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 language fallback/replan 窄 Gate 已通过：首个缺失必需语义词的 `status` 表达被安全回退并产生 `prediction_error=1.0`，
   Taiji 排除失败候选后选择 `recovery`，生成的新 `ExpressionPlan` 通过验证；最终 `replan_required=false`，且 checkpoint 恢复
   替代 content 与 fallback 计数。该 Gate 证明回退信号已被 planner 消费，不代表开放域语言质量。
-- 原生套件当前 `113 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
+- P6 language train/holdout boundary 与 provider baseline Gate 已通过：`LanguageTrainingCorpus` 强制 train/holdout 非空、样本 ID
+  与 expression ID 跨 split 不重复，并可 checkpoint round-trip；真实 Qwen provider 在未更新权重的前提下完成 2/2 train、2/2 holdout
+  测量，holdout 非空率=`1.0`、必需语义词覆盖率=`0.75`、结构化泄漏率=`0.0`。该 Gate 证明数据边界和基线测量，不宣称已训练 Qwen。
+- 原生套件当前 `114 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
   环境状态不作为代码能力结论。
 
 ## 当前唯一下一步
 
-下一决策入口：建立 `LanguageTrainingExample → external language-organ provider` 的 train/holdout 纵切片，提升 Qwen 候选的必需
-语义词覆盖率，同时保留 Taiji 的 validator/fallback/replan 安全边界；不把 Transformer 或其他 decoder 变成认知主体。
+下一决策入口：为已验证的 train/holdout corpus 接入一个显式 provider trainer（先做参数高效/可回滚方案），在同一 holdout 上证明
+必需语义词覆盖率相对 raw baseline 提升，同时保留 Taiji 的 validator/fallback/replan 安全边界；不把 Transformer 或其他 decoder 变成
+认知主体。

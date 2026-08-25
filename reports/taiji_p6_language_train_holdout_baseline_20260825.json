@@ -1,0 +1,84 @@
+{
+  "format": "taiji-p6-language-train-holdout-v1",
+  "model": {
+    "backend": "qwen2.5-0.5b-instruct",
+    "model_dir_name": "7ae557604adf67be50417f59c2c2f167def9a775",
+    "device": "cpu"
+  },
+  "training": {
+    "training_applied": false,
+    "reason": "this Gate validates the provider data boundary and baseline; no external trainer or weight update is hidden here",
+    "train_examples": 2,
+    "holdout_examples": 2,
+    "corpus_round_trip": true,
+    "split_example_ids_disjoint": true,
+    "split_expression_ids_disjoint": true
+  },
+  "train_metrics": {
+    "examples": [
+      {
+        "example_id": "qwen:train:status-train:example",
+        "output_text": "操作员收到一个简短的消息。",
+        "output_nonempty": true,
+        "required_terms": [
+          "稳定"
+        ],
+        "required_term_recall": 0.0,
+        "prompt_or_json_leak": false
+      },
+      {
+        "example_id": "qwen:train:maintenance-train:example",
+        "output_text": "今晚十点，我们将对您的操作进行维护，请您稍等片刻。",
+        "output_nonempty": true,
+        "required_terms": [
+          "维护窗口",
+          "今晚十点"
+        ],
+        "required_term_recall": 0.5,
+        "prompt_or_json_leak": false
+      }
+    ],
+    "output_nonempty_rate": 1.0,
+    "required_term_recall": 0.25,
+    "prompt_leakage_rate": 1.0
+  },
+  "holdout_metrics": {
+    "examples": [
+      {
+        "example_id": "qwen:holdout:incident-holdout:example",
+        "output_text": "操作员正在检查数据库，等级为警告。",
+        "output_nonempty": true,
+        "required_terms": [
+          "警告",
+          "数据库"
+        ],
+        "required_term_recall": 1.0,
+        "prompt_or_json_leak": false
+      },
+      {
+        "example_id": "qwen:holdout:recovery-holdout:example",
+        "output_text": "操作员收到一条简短的消息，告知他们即将恢复服务。",
+        "output_nonempty": true,
+        "required_terms": [
+          "恢复",
+          "接口"
+        ],
+        "required_term_recall": 0.5,
+        "prompt_or_json_leak": false
+      }
+    ],
+    "output_nonempty_rate": 1.0,
+    "required_term_recall": 0.75,
+    "prompt_leakage_rate": 1.0
+  },
+  "gates": {
+    "train_holdout_boundary": {
+      "passed": true,
+      "criterion": "provider receives disjoint Taiji-owned train/holdout ExpressionPlan examples, registry/checkpoint round-trip is preserved, and the organ remains lesionable"
+    },
+    "raw_provider_quality": {
+      "passed": true,
+      "criterion": "raw external provider reaches non-empty holdout text, required-term recall >= 0.67, and no structured prompt leakage"
+    }
+  }
+}

@@ -12,6 +12,7 @@ from taiji import (
     LanguageBackendSpec,
     LanguageEmission,
     LanguageRealizationValidator,
+    LanguageTrainingCorpus,
     LanguageTrainingExample,
     StructuredTextLanguageOrgan,
     TextExpressionCodec,
@@ -96,6 +97,7 @@ def test_language_backend_registry_and_training_contract_are_model_agnostic() ->
             training_contract="expression-to-text-v1",
         )
     )
+
     restored_registry = LanguageBackendRegistry.from_checkpoint(registry.checkpoint())
 
     assert restored_example == example
@@ -109,6 +111,46 @@ def test_language_backend_registry_and_training_contract_are_model_agnostic() ->
             training_contract="expression-to-text-v1",
             owns_cognition=True,
         )
+
+
+def test_language_training_corpus_keeps_train_and_holdout_disjoint() -> None:
+    expression = _expression()
+    train = LanguageTrainingExample(
+        example_id="language-train-1",
+        expression=expression,
+        target_text="当前状态稳定。",
+        split="train",
+    )
+    holdout_expression = GenerationController().plan_expression(
+        ContentPlan(
+            content_id="language:holdout:content",
+            intent_id="language:holdout",
+            intent_kind="render_alert",
+            semantic_slots={"topic": "incident"},
+            required_terms=("警告",),
+        ),
+        modality="text",
+        channel="message",
+    )
+    holdout = LanguageTrainingExample(
+        example_id="language-holdout-1",
+        expression=holdout_expression,
+        target_text="出现警告。",
+        split="holdout",
+    )
+    corpus = LanguageTrainingCorpus(train=(train,), holdout=(holdout,))
+    restored = LanguageTrainingCorpus.from_payload(corpus.to_payload())
+
+    assert corpus.size == 2
+    assert restored == corpus
+    duplicate_holdout = LanguageTrainingExample(
+        example_id=train.example_id,
+        expression=holdout_expression,
+        target_text=holdout.target_text,
+        split="holdout",
+    )
+    with pytest.raises(ValueError, match="example IDs must be unique"):
+        LanguageTrainingCorpus(train=(train,), holdout=(duplicate_holdout,))
 
 
 def test_external_decoder_realization_and_lesion_stay_outside_taiji_core() -> None:

@@ -1,0 +1,17 @@
+{
+  "format": "taiji-p6-language-train-holdout-manifest-v1",
+  "task": "separate LanguageTrainingExample train/holdout data and measure a real external provider without leaking cognition",
+  "lesions": [
+    "split_leakage",
+    "hidden_provider_training",
+    "language_organ_detached"
+  ],
+  "signals": [
+    "corpus_round_trip",
+    "split_disjoint",
+    "train_metrics",
+    "holdout_metrics",
+    "raw_provider_quality"
+  ],
+  "boundary": "provider data/quality baseline only; no claim that Qwen training has occurred or that the decoder owns Taiji cognition"
+}
