@@ -1,0 +1,169 @@
+{
+  "contract": "taiji-a1-perception-v1",
+  "gate": "A1",
+  "gate_passed": false,
+  "config": {
+    "ridge": 0.001,
+    "minimum_generalization_gain": 0.0,
+    "maximum_cross_seed_std": 0.25,
+    "minimum_boundary_rate_delta": 0.01,
+    "minimum_marker_boundary_score_delta": 0.05,
+    "minimum_random_chunk_drop": 0.005,
+    "predictive_epochs": 3,
+    "predictive_learning_rate": 0.01,
+    "predictive_temperature": 0.15,
+    "assembly_prediction_weight": 0.5,
+    "contrastive_weight": 0.1,
+    "contrastive_temperature": 0.2,
+    "seeds": [
+      11,
+      29,
+      47
+    ]
+  },
+  "primary": {
+    "seed": 11,
+    "predictive_training": {
+      "final_loss": 3.4319383800029755,
+      "loss_curve": [
+        5.002609923481941,
+        3.797207571566105,
+        3.4319383800029755
+      ]
+    },
+    "unseen_composition": {
+      "learned_accuracy": 0.23314606741573032,
+      "byte_only_accuracy": 0.2556179775280899,
+      "generalization_gain": -0.022471910112359578
+    },
+    "boundary_perturbed": {
+      "mean_boundary_score": 0.6327388941607627,
+      "boundary_rate": 0.7100297914597815,
+      "score_delta_from_unseen": -0.0005627265170096152,
+      "marker_score_delta_from_unseen": 0.01843593509056851,
+      "marker_rate_delta_from_unseen": 0.04011425732737206
+    },
+    "random_chunk_control": {
+      "learned_accuracy": 0.22839072382290934,
+      "byte_only_accuracy": 0.25368938861560086
+    },
+    "assembly": {
+      "mean_duration_train": 1.3765822784810127,
+      "mean_duration_unseen": 1.3591654247391953,
+      "unique_durations": 11,
+      "boundary_rate_unseen": 0.7098857426726279
+    }
+  },
+  "cross_seed": {
+    "learned_accuracy_mean": 0.2208706853242093,
+    "learned_accuracy_std": 0.010106991939096581,
+    "runs": [
+      {
+        "seed": 11,
+        "predictive_training": {
+          "final_loss": 3.4319383800029755,
+          "loss_curve": [
+            5.002609923481941,
+            3.797207571566105,
+            3.4319383800029755
+          ]
+        },
+        "unseen_composition": {
+          "learned_accuracy": 0.23314606741573032,
+          "byte_only_accuracy": 0.2556179775280899,
+          "generalization_gain": -0.022471910112359578
+        },
+        "boundary_perturbed": {
+          "mean_boundary_score": 0.6327388941607627,
+          "boundary_rate": 0.7100297914597815,
+          "score_delta_from_unseen": -0.0005627265170096152,
+          "marker_score_delta_from_unseen": 0.01843593509056851,
+          "marker_rate_delta_from_unseen": 0.04011425732737206
+        },
+        "random_chunk_control": {
+          "learned_accuracy": 0.22839072382290934,
+          "byte_only_accuracy": 0.25368938861560086
+        },
+        "assembly": {
+          "mean_duration_train": 1.3765822784810127,
+          "mean_duration_unseen": 1.3591654247391953,
+          "unique_durations": 11,
+          "boundary_rate_unseen": 0.7098857426726279
+        }
+      },
+      {
+        "seed": 29,
+        "predictive_training": {
+          "final_loss": 3.4317023381590843,
+          "loss_curve": [
+            5.020057797431946,
+            3.820765011012554,
+            3.4317023381590843
+          ]
+        },
+        "unseen_composition": {
+          "learned_accuracy": 0.22107438016528927,
+          "byte_only_accuracy": 0.2396694214876033,
+          "generalization_gain": -0.018595041322314043
+        },
+        "boundary_perturbed": {
+          "mean_boundary_score": 0.6654769706395496,
+          "boundary_rate": 0.7239324726911619,
+          "score_delta_from_unseen": -3.0841265321601696e-05,
+          "marker_score_delta_from_unseen": 0.05827864003043126,
+          "marker_rate_delta_from_unseen": 0.026204669647292622
+        },
+        "random_chunk_control": {
+          "learned_accuracy": 0.2140399174122505,
+          "byte_only_accuracy": 0.23331039229181005
+        },
+        "assembly": {
+          "mean_duration_train": 1.4353902953586497,
+          "mean_duration_unseen": 1.410829607550919,
+          "unique_durations": 14,
+          "boundary_rate_unseen": 0.7237953303527074
+        }
+      },
+      {
+        "seed": 47,
+        "predictive_training": {
+          "final_loss": 3.438363328576088,
+          "loss_curve": [
+            4.900138422846794,
+            3.810872696340084,
+            3.438363328576088
+          ]
+        },
+        "unseen_composition": {
+          "learned_accuracy": 0.2083916083916084,
+          "byte_only_accuracy": 0.24685314685314685,
+          "generalization_gain": -0.038461538461538464
+        },
+        "boundary_perturbed": {
+          "mean_boundary_score": 0.6476387873014496,
+          "boundary_rate": 0.7125124131082423,
+          "score_delta_from_unseen": -0.0011362233481612138,
+          "marker_score_delta_from_unseen": 0.03334417062529127,
+          "marker_rate_delta_from_unseen": 0.03564331843020363
+        },
+        "random_chunk_control": {
+          "learned_accuracy": 0.20868347338935575,
+          "byte_only_accuracy": 0.2415966386554622
+        },
+        "assembly": {
+          "mean_duration_train": 1.3826476793248945,
+          "mean_duration_unseen": 1.3715846994535519,
+          "unique_durations": 8,
+          "boundary_rate_unseen": 0.7143566815697964
+        }
+      }
+    ]
+  },
+  "diagnostics": {
+    "boundary_rate_delta": 0.00014404878715357228,
+    "marker_score_delta": 0.01843593509056851,
+    "marker_rate_delta": 0.04011425732737206,
+    "random_chunk_drop": 0.004755343592820982
+  },
+  "failure_policy": "A1 remains open until learned assembly beats byte-only on unseen composition, responds to boundary perturbation, degrades under random chunk lesion, retains variable duration, and stays within the cross-seed variance budget."
+}

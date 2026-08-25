@@ -75,8 +75,12 @@ P2 尚未退出。首份无预测训练的 smoke 基线保存在
 assembly 目标后的最新报告为 `reports/taiji_a1_perception_assembly_20260825.json`：
 primary 未见组合 gain 为 `-0.0088`，marker score delta 为 `+0.0222`（门槛 `+0.05`），
 marker rate delta 为 `+0.0098`，random-chunk drop 为 `+0.0077`，跨 seed std 为
-`+0.0068`。A1 Gate 仍为 `false`；当前结论是仅预测下一个 byte 或未来 byte 窗口，
-仍不足以形成稳定的组合关系。
+`+0.0068`。随后加入 assembly consistency/contrastive 目标，最新报告为
+`reports/taiji_a1_perception_contrastive_20260825.json`：primary 未见组合 gain 为
+`-0.0225`，marker score delta 为 `+0.0184`，marker rate delta 为 `+0.0401`，
+random-chunk drop 为 `+0.0048`，跨 seed std 为 `+0.0101`。A1 Gate 仍为 `false`；
+连续的 next-byte、future-window 和 consistency/contrastive 目标都没有让 completed
+assembly 稳定超过 byte-only，这已经是 P2 目标定义需要重审的架构信号。
 
 ## 3. 执行原则
 
@@ -256,4 +260,4 @@ marker rate delta 为 `+0.0098`，random-chunk drop 为 `+0.0077`，跨 seed std
 
 ## 16. 当前唯一下一步
 
-**把 P2 训练目标改为自监督 assembly consistency/contrastive：同一局部组合在边界扰动下保持 pooled representation，random-chunk 作为负对照，同时保留 next-byte 辅助损失；在同一 manifest 上重跑加强后的 A1，在 assembly 级迁移和边界证据同时达标前不进入 P3。**
+**暂停继续叠加训练 loss，先完成 P2 组合关系重设计决策：明确 assembly 的可迁移对象、正/负样本构造、byte-only 的公平比较和 completed-assembly 目标，再据此重写 A1 合同；在该合同重新确认前不进入 P3。**

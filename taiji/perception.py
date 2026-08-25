@@ -114,6 +114,8 @@ class LearnedPerception(nn.Module):
         learning_rate: float | None = None,
         temperature: float = 0.15,
         assembly_prediction_weight: float = 0.5,
+        contrastive_weight: float = 0.1,
+        contrastive_temperature: float = 0.2,
     ) -> list[float]:
         """Fit local features against the next-symbol predictive objective.
 
@@ -132,6 +134,10 @@ class LearnedPerception(nn.Module):
             raise ValueError("predictive temperature must be positive")
         if float(assembly_prediction_weight) < 0.0:
             raise ValueError("assembly_prediction_weight cannot be negative")
+        if float(contrastive_weight) < 0.0:
+            raise ValueError("contrastive_weight cannot be negative")
+        if float(contrastive_temperature) <= 0.0:
+            raise ValueError("contrastive temperature must be positive")
         training_sequences = tuple(
             tuple(int(symbol) for symbol in sequence) for sequence in sequences
         )
@@ -190,7 +196,32 @@ class LearnedPerception(nn.Module):
                     1.0
                     - torch.nn.functional.cosine_similarity(predicted, future_targets, dim=1).mean()
                 )
-                loss = next_symbol_loss + float(assembly_prediction_weight) * assembly_loss
+                short_window = max(1, pool_window - 1)
+                positive = torch.stack(
+                    [
+                        torch.stack(features[max(0, index + 1 - short_window) : index + 1]).mean(
+                            dim=0
+                        )
+                        for index in range(len(features) - 1)
+                    ]
+                )
+                anchor = torch.nn.functional.normalize(pooled, dim=1)
+                positive = torch.nn.functional.normalize(positive, dim=1)
+                negative = torch.nn.functional.normalize(pooled.roll(1, dims=0), dim=1)
+                positive_logits = (anchor * positive).sum(dim=1, keepdim=True)
+                negative_logits = anchor @ negative.T
+                contrastive_logits = torch.cat((positive_logits, negative_logits), dim=1)
+                contrastive_targets = torch.zeros(
+                    contrastive_logits.shape[0], dtype=torch.long, device=self.device
+                )
+                contrastive_loss = torch.nn.functional.cross_entropy(
+                    contrastive_logits / float(contrastive_temperature), contrastive_targets
+                )
+                loss = (
+                    next_symbol_loss
+                    + float(assembly_prediction_weight) * assembly_loss
+                    + float(contrastive_weight) * contrastive_loss
+                )
                 optimizer.zero_grad(set_to_none=True)
                 loss.backward()
                 torch.nn.utils.clip_grad_norm_(self.parameters(), max_norm=1.0)
