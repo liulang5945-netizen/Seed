@@ -120,11 +120,12 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 external decoder realization/lesion 窄 Gate 已通过：`ExternalTextDecoderLanguageOrgan` 通过注入的 prompt builder 调用外部
   `generate()`，输入仍只有 Taiji-owned `ExpressionPlan`；detached-organ lesion 通过，且 Taiji 核心未导入 Legacy/Transformer。
   该结果只证明外部适配器边界，不证明具体模型已加载、训练质量或自然语言流畅性。
+- P6 decoder provider inventory 已完成：当前项目有 `0` 个 `data/neurons` Legacy 权重、`4` 个 `seed-native-v1` 原生 checkpoint
+  和 `11` 个 Legacy tokenizer 文件；因此真实 Legacy decoder Gate 暂不能执行，原生 checkpoint 不得冒充 Transformer provider。
 - 原生套件当前 `109 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
   环境状态不作为代码能力结论。
 
 ## 当前唯一下一步
 
-下一决策入口：绑定一个实际可用的 decoder provider（现有 Legacy Cortex 或其他成熟模型）的 checkpoint/tokenizer，运行真实
-holdout realization/lesion Gate；只允许通过 registry 消费 `ExpressionPlan` 与 `LanguageTrainingExample`，不把 Transformer 或
-其他 decoder 变成认知主体。
+下一决策入口：补齐一个实际可用的 Legacy Cortex checkpoint/tokenizer 配对，再运行真实 holdout realization/lesion Gate；只允许
+通过 registry 消费 `ExpressionPlan` 与 `LanguageTrainingExample`，不把 Transformer 或其他 decoder 变成认知主体。
