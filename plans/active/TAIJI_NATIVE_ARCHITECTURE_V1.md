@@ -439,4 +439,4 @@ taiji/
 
 ## 13. 当前唯一实现入口
 
-P1 已完成，P2 relation subgate 已收口。P3 的对象/事件/affordance/行动/结果合同与可恢复 `TaijiWorldState` 已落地；当前实现入口是 P3 干预预测评测，再以 A2 Gate 决定是否继续扩展 workspace 路由和多步任务。
+P1 已完成，P2 relation subgate 已收口。P3 的对象/事件/affordance/行动/结果合同、可恢复 `TaijiWorldState` 和一步 target-binding 干预窄 Gate 已落地；当前实现入口是扩展 A2 的对象持续性、关系变化和时间打乱评测，再决定是否扩展 workspace 路由和多步任务。

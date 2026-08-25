@@ -188,7 +188,12 @@ P3 的第一段合同与恢复边界已落地：
 - `taiji/world.py` 的 `TaijiWorldState` 持有当前结构化世界状态和可选 transition history，
   并把它们放进 Taiji-owned checkpoint；外部环境只能提交与当前状态严格衔接的 transition；
 - 合同、因果 tick、动作—结果绑定、恢复连续性和干预 split 泄漏均有测试覆盖；
-- 这只完成 A2 的输入/输出/恢复合同，不等于已经学会世界动力学，也不等于 A2 Gate 通过。
+- `taiji/world_learning.py` 已提供 data-derived schema、target/parameter 组合特征、状态/结果预测器，
+  并以 frequency、action-only、target-binding lesion 做对照；
+- `scripts/training/eval_taiji_a2_world.py` 的一步 target-shift benchmark 在 3 seed 通过首个窄 A2 Gate：
+  `state_error_max=0.2362`、`outcome_error_max=0.1605`、最小 state gain `+0.4305`、最小 binding
+  lesion drop `+0.6524`；报告和 manifest 保存在 `reports/taiji_a2_world_*_20260825.json`；
+- 该 Gate 只证明结构化一步干预切片，不等于已经学会一般世界动力学；对象持续性、关系变化和时间打乱仍未通过。
 
 ### 工作项
 
@@ -292,4 +297,4 @@ P3 的第一段合同与恢复边界已落地：
 
 ## 16. 当前唯一下一步
 
-**在已完成的 P3 合同上实现可训练的干预预测器与 A2 评测：对下一状态和 action outcome 做未见组合、时间打乱、无关系绑定和 reactive/frequency 对照；只有通过预注册 Gate 后才扩展 workspace 路由。**
+**扩展 A2 干预评测到对象持续性、关系变化和时间打乱：保持同一 Taiji-owned state/action/outcome 合同，加入对应 lesion 与 reactive/frequency 对照；只有扩展 Gate 通过后才扩展 workspace 路由。**

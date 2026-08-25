@@ -1,0 +1,63 @@
+{
+  "format": "taiji-a2-world-shift-v1",
+  "objects": [
+    "agent",
+    "red",
+    "blue"
+  ],
+  "state_attributes": {
+    "agent": [
+      "energy"
+    ],
+    "red": [
+      "position"
+    ],
+    "blue": [
+      "position"
+    ]
+  },
+  "action": {
+    "kind": "move",
+    "actor": "agent",
+    "parameter": "step",
+    "intervention_rule": "target.position += step",
+    "outcome_rule": "reward = step; success = step > 0"
+  },
+  "train": [
+    {
+      "target": "red",
+      "step": -2.0
+    },
+    {
+      "target": "red",
+      "step": -1.0
+    },
+    {
+      "target": "red",
+      "step": 1.0
+    },
+    {
+      "target": "blue",
+      "step": -1.0
+    },
+    {
+      "target": "blue",
+      "step": 1.0
+    },
+    {
+      "target": "blue",
+      "step": 2.0
+    }
+  ],
+  "holdout": [
+    {
+      "target": "red",
+      "step": 2.0
+    },
+    {
+      "target": "blue",
+      "step": -2.0
+    }
+  ],
+  "split_constraint": "holdout is unseen target-by-step composition, not a new object vocabulary"
+}
