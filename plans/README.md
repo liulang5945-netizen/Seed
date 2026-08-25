@@ -120,12 +120,17 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 external decoder realization/lesion 窄 Gate 已通过：`ExternalTextDecoderLanguageOrgan` 通过注入的 prompt builder 调用外部
   `generate()`，输入仍只有 Taiji-owned `ExpressionPlan`；detached-organ lesion 通过，且 Taiji 核心未导入 Legacy/Transformer。
   该结果只证明外部适配器边界，不证明具体模型已加载、训练质量或自然语言流畅性。
-- P6 decoder provider inventory 已完成：当前项目有 `0` 个 `data/neurons` Legacy 权重、`4` 个 `seed-native-v1` 原生 checkpoint
-  和 `11` 个 Legacy tokenizer 文件；因此真实 Legacy decoder Gate 暂不能执行，原生 checkpoint 不得冒充 Transformer provider。
+- P6 decoder provider inventory 与真实 provider smoke Gate 已完成：当前项目有 `0` 个 `data/neurons` Legacy 权重、`4` 个
+  `seed-native-v1` 原生 checkpoint 和 `11` 个 Legacy tokenizer 文件；但本机 Hugging Face 缓存提供 Qwen2.5-0.5B-Instruct 权重与
+  tokenizer。该 provider 已通过真实 `generate()`、非空文本、detached-organ lesion、认知不变、registry checkpoint 和训练合同
+  Gate；这只是外部 provider smoke/ownership 结果，不证明语言质量或通用智能。
+- P6 Qwen 多样化 holdout realization 质量 Gate 未通过：3 个 holdout 的非空率=`1.0`、结构化字段泄漏率=`0.0`，但必需语义词
+  覆盖率仅=`0.5`；decoder 会生成文本，却丢失或改写关键 slot。Qwen 因此暂不能作为“语义保真”的已验收语言器官，只能作为
+  外部候选 provider。
 - 原生套件当前 `109 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
   环境状态不作为代码能力结论。
 
 ## 当前唯一下一步
 
-下一决策入口：补齐一个实际可用的 Legacy Cortex checkpoint/tokenizer 配对，再运行真实 holdout realization/lesion Gate；只允许
-通过 registry 消费 `ExpressionPlan` 与 `LanguageTrainingExample`，不把 Transformer 或其他 decoder 变成认知主体。
+下一决策入口：建立 Taiji-owned realization validator/fallback，在 decoder 输出丢失关键 slot 时拒绝该表达并回退到结构化器官；
+先保证语义保真，再决定是否继续训练或替换 Qwen provider，不把 Transformer 或其他 decoder 变成认知主体。

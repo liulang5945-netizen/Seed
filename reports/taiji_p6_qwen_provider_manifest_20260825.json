@@ -1,0 +1,25 @@
+{
+  "format": "taiji-p6-qwen-provider-manifest-v1",
+  "task": "run a local Qwen causal decoder as an external Taiji language organ",
+  "required_assets": [
+    "local checkpoint directory",
+    "local tokenizer files",
+    "transformers",
+    "safetensors"
+  ],
+  "lesions": [
+    "language_organ_detached",
+    "cognitive_state_mutation",
+    "registry_state_loss"
+  ],
+  "signals": [
+    "output_nonempty_rate",
+    "required_term_recall",
+    "prompt_leakage_rate",
+    "organ_lesion",
+    "cognition_unchanged",
+    "training_contract_round_trip",
+    "registry_checkpoint_round_trip"
+  ],
+  "boundary": "small holdout realization Gate only; no fluency, factuality, or general intelligence claim"
+}
