@@ -1,0 +1,19 @@
+{
+  "format": "taiji-p5-intervention-latency-v1",
+  "metrics": {
+    "planner_rollout": "delayed-safe",
+    "reactive_rollout": "immediate-risky",
+    "value_world_model_lesion_rollout": "immediate-risky",
+    "delayed_first_reward": 0.0,
+    "delayed_final_reward": 1.0,
+    "planner_vs_reactive_success_gain": 0.3999999999999999,
+    "intervention_replan_required": true,
+    "recovery_rollout": "recovery",
+    "final_replan_required": false,
+    "final_goal_progress": 0.16000000000000003
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "planning beats immediate-reward reactive selection on delayed reward, lesions prefer risk, and intervention recovery executes"
+  }
+}
