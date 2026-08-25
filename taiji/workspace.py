@@ -29,6 +29,167 @@ class WorkspaceRoutingExample:
             raise ValueError("workspace example tick cannot be negative")
 
 
+@dataclass(frozen=True)
+class WorkspaceCompositionSample:
+    """A holdout sample whose target is composed from multiple candidates."""
+
+    candidates: tuple[WorkspaceCandidate, ...]
+    target: torch.Tensor
+    relevant_ids: tuple[str, ...]
+    tick: int = 0
+
+    def __post_init__(self) -> None:
+        candidate_ids = {candidate.candidate_id for candidate in self.candidates}
+        if len(candidate_ids) != len(self.candidates):
+            raise ValueError("workspace composition candidate ids must be unique")
+        if not set(self.relevant_ids).issubset(candidate_ids):
+            raise ValueError("workspace composition relevance contains an unknown candidate")
+        if not self.relevant_ids:
+            raise ValueError("workspace composition needs at least one relevant candidate")
+        if self.target.ndim != 1:
+            raise ValueError("workspace composition target must be a vector")
+        if self.tick < 0:
+            raise ValueError("workspace composition tick cannot be negative")
+
+
+class WorkspaceCollaborationEvaluator:
+    """Evaluate whether selective routing preserves a multi-source composition.
+
+    The evaluator scores a fixed target reconstruction contract rather than a
+    trainable answer head.  This keeps the result about workspace information
+    selection: the target is the mean content of the registered relevant
+    candidates, while distractors add independent content noise.
+    """
+
+    def __init__(self, *, content_dim: int, seeds: tuple[int, ...] = (11, 29, 47)) -> None:
+        if int(content_dim) <= 0:
+            raise ValueError("workspace content_dim must be positive")
+        if not seeds:
+            raise ValueError("workspace collaboration evaluator needs at least one seed")
+        self.content_dim = int(content_dim)
+        self.seeds = tuple(int(seed) for seed in seeds)
+
+    def _feature_dim(self, samples: tuple[WorkspaceCompositionSample, ...]) -> int:
+        if not samples:
+            raise ValueError("workspace collaboration evaluation needs samples")
+        dimensions = {candidate.features.numel() for sample in samples for candidate in sample.candidates}
+        if len(dimensions) != 1:
+            raise ValueError("workspace composition candidate dimensions must be consistent")
+        feature_dim = next(iter(dimensions))
+        if feature_dim < self.content_dim:
+            raise ValueError("workspace feature dimension must cover content_dim")
+        return feature_dim
+
+    def _mse(self, value: torch.Tensor, target: torch.Tensor) -> float:
+        return float(torch.mean((value[: self.content_dim] - target) ** 2))
+
+    def _mean_content(
+        self, candidates: tuple[WorkspaceCandidate, ...], target: torch.Tensor
+    ) -> float:
+        if not candidates:
+            return self._mse(torch.zeros(self.content_dim), target)
+        return self._mse(torch.stack([candidate.features for candidate in candidates]).mean(dim=0), target)
+
+    def evaluate(
+        self,
+        train: Iterable[WorkspaceCompositionSample],
+        holdout: Iterable[WorkspaceCompositionSample],
+        *,
+        capacity: int,
+        epochs: int = 100,
+        learning_rate: float = 0.2,
+    ) -> dict[str, object]:
+        train = tuple(train)
+        holdout = tuple(holdout)
+        if not train or not holdout:
+            raise ValueError("workspace collaboration evaluation needs train and holdout samples")
+        if int(capacity) <= 0:
+            raise ValueError("workspace collaboration capacity must be positive")
+        feature_dim = self._feature_dim(train + holdout)
+        if any(len(sample.relevant_ids) > capacity for sample in train + holdout):
+            raise ValueError("workspace capacity cannot fit the registered composition")
+        seed_reports: list[dict[str, object]] = []
+        for seed in self.seeds:
+            router = WorkspaceRouter(feature_dim, capacity=capacity, seed=seed)
+            router.fit(
+                tuple(
+                    WorkspaceRoutingExample(
+                        candidates=sample.candidates,
+                        relevant_ids=sample.relevant_ids,
+                        tick=sample.tick,
+                    )
+                    for sample in train
+                ),
+                epochs=epochs,
+                learning_rate=learning_rate,
+            )
+            totals = {
+                "learned": 0.0,
+                "random": 0.0,
+                "none": 0.0,
+                "fixed": 0.0,
+                "dense": 0.0,
+                "strongest_single": 0.0,
+            }
+            exact_routes = 0
+            for index, sample in enumerate(holdout):
+                learned = router.route(sample.candidates, tick=sample.tick, mode="learned")
+                random_route = router.route(
+                    sample.candidates,
+                    tick=sample.tick,
+                    mode="random",
+                    random_seed=seed + index,
+                )
+                none_route = router.route(sample.candidates, tick=sample.tick, mode="none")
+                totals["learned"] += self._mse(learned.broadcast, sample.target)
+                totals["random"] += self._mse(random_route.broadcast, sample.target)
+                totals["none"] += self._mse(none_route.broadcast, sample.target)
+                fixed_candidates = sample.candidates[:capacity]
+                totals["fixed"] += self._mean_content(fixed_candidates, sample.target)
+                totals["dense"] += self._mean_content(sample.candidates, sample.target)
+                totals["strongest_single"] += min(
+                    self._mse(candidate.features, sample.target) for candidate in sample.candidates
+                )
+                if set(learned.selected_ids) == set(sample.relevant_ids):
+                    exact_routes += 1
+            count = float(len(holdout))
+            metrics = {name: value / count for name, value in totals.items()}
+            metrics["learned_gain_vs_strongest_single"] = (
+                metrics["strongest_single"] - metrics["learned"]
+            )
+            metrics["learned_gain_vs_dense"] = metrics["dense"] - metrics["learned"]
+            metrics["exact_route_rate"] = exact_routes / count
+            metrics["router_fit_updates"] = router.fit_updates
+            seed_reports.append(metrics)
+        aggregate = {
+            name: sum(float(report[name]) for report in seed_reports) / len(seed_reports)
+            for name in seed_reports[0]
+            if name != "router_fit_updates"
+        }
+        aggregate["learned_gain_vs_strongest_single_min"] = min(
+            float(report["learned_gain_vs_strongest_single"]) for report in seed_reports
+        )
+        aggregate["exact_route_rate_min"] = min(float(report["exact_route_rate"]) for report in seed_reports)
+        aggregate["passed"] = bool(
+            aggregate["learned_gain_vs_strongest_single_min"] > 0.05
+            and aggregate["learned_gain_vs_dense"] > 0.05
+            and aggregate["exact_route_rate_min"] >= 0.9
+        )
+        return {
+            "format": "taiji-a3-workspace-composition-v1",
+            "content_dim": self.content_dim,
+            "capacity": int(capacity),
+            "train_samples": len(train),
+            "holdout_samples": len(holdout),
+            "seeds": seed_reports,
+            "aggregate": aggregate,
+            "gate": {
+                "passed": aggregate["passed"],
+                "criterion": "learned workspace beats strongest single and dense mean by >0.05 MSE; exact route rate >= 0.90",
+            },
+        }
+
+
 class WorkspaceRouter(nn.Module):
     """Learn a scalar access score, then select at most ``capacity`` items.
 

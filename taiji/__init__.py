@@ -64,7 +64,12 @@ from .state import (
     TaijiState,
     TaijiStep,
 )
-from .workspace import WorkspaceRouter, WorkspaceRoutingExample
+from .workspace import (
+    WorkspaceCollaborationEvaluator,
+    WorkspaceCompositionSample,
+    WorkspaceRouter,
+    WorkspaceRoutingExample,
+)
 from .world import WORLD_STATE_CHECKPOINT_FORMAT, TaijiWorldState
 from .world_learning import (
     WorldDynamicsLearner,
@@ -133,6 +138,8 @@ __all__ = [
     "WorkspaceSelection",
     "WorkspaceRouter",
     "WorkspaceRoutingExample",
+    "WorkspaceCompositionSample",
+    "WorkspaceCollaborationEvaluator",
     "WorldState",
     "WorldAction",
     "WorldAffordance",
