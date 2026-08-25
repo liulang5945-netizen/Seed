@@ -1084,6 +1084,7 @@ class WorldPredictionRecord:
     predicted_reward: float
     predicted_success_probability: float
     state_error: float | None = None
+    raw_state_error: float | None = None
     reward_error: float | None = None
     online_update_count: int = 0
     version: int = CONTRACT_VERSION
@@ -1097,6 +1098,10 @@ class WorldPredictionRecord:
             not math.isfinite(float(self.state_error)) or float(self.state_error) < 0.0
         ):
             raise ValueError("state_error must be a finite non-negative value")
+        if self.raw_state_error is not None and (
+            not math.isfinite(float(self.raw_state_error)) or float(self.raw_state_error) < 0.0
+        ):
+            raise ValueError("raw_state_error must be a finite non-negative value")
         if self.reward_error is not None and not math.isfinite(float(self.reward_error)):
             raise ValueError("reward_error must be finite")
         if int(self.online_update_count) < 0:
@@ -1110,6 +1115,7 @@ class WorldPredictionRecord:
             "predicted_reward": self.predicted_reward,
             "predicted_success_probability": self.predicted_success_probability,
             "state_error": self.state_error,
+            "raw_state_error": self.raw_state_error,
             "reward_error": self.reward_error,
             "online_update_count": self.online_update_count,
         }
@@ -1126,6 +1132,11 @@ class WorldPredictionRecord:
             predicted_success_probability=float(payload["predicted_success_probability"]),
             state_error=(
                 None if payload.get("state_error") is None else float(payload["state_error"])
+            ),
+            raw_state_error=(
+                None
+                if payload.get("raw_state_error") is None
+                else float(payload["raw_state_error"])
             ),
             reward_error=(
                 None if payload.get("reward_error") is None else float(payload["reward_error"])

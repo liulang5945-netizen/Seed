@@ -40,6 +40,15 @@ class WorldSchema:
     actor_ids: tuple[str, ...]
     target_ids: tuple[str, ...]
     parameter_names: tuple[str, ...]
+    state_scales: tuple[float, ...] = ()
+
+    def __post_init__(self) -> None:
+        scales = self.state_scales or (1.0,) * self.state_dim
+        if len(scales) != self.state_dim:
+            raise ValueError("world state scales must match state_dim")
+        if any(not math.isfinite(float(scale)) or float(scale) <= 0.0 for scale in scales):
+            raise ValueError("world state scales must be finite and positive")
+        object.__setattr__(self, "state_scales", tuple(float(scale) for scale in scales))
 
     @classmethod
     def from_corpus(cls, corpus: WorldInterventionCorpus) -> WorldSchema:
@@ -71,14 +80,30 @@ class WorldSchema:
                 parameter_names.add(name)
         if not state_slots:
             raise ValueError("world dynamics requires numeric object attributes")
+        sorted_state_slots = tuple(sorted(state_slots))
+        state_scales = []
+        for object_id, name in sorted_state_slots:
+            values = []
+            for case in corpus.train:
+                for state in (case.initial, case.expected_state):
+                    item = next(
+                        (candidate for candidate in state.objects if candidate.object_id == object_id),
+                        None,
+                    )
+                    if item is not None:
+                        values.append(
+                            abs(_numeric(item.attribute(name, 0.0), f"{object_id}.{name}"))
+                        )
+            state_scales.append(max(1.0, *values))
         return cls(
             object_ids=tuple(sorted(object_ids)),
-            state_slots=tuple(sorted(state_slots)),
+            state_slots=sorted_state_slots,
             relation_slots=tuple(sorted(relation_slots)),
             action_kinds=tuple(sorted(action_kinds)),
             actor_ids=tuple(sorted(actor_ids)),
             target_ids=tuple(sorted(target_ids)),
             parameter_names=tuple(sorted(parameter_names)),
+            state_scales=tuple(state_scales) + (1.0,) * len(relation_slots),
         )
 
     @property
@@ -113,6 +138,14 @@ class WorldSchema:
         relation_set = set(state.relations)
         values.extend(float(relation in relation_set) for relation in self.relation_slots)
         return torch.tensor(values, dtype=torch.float32)
+
+    def normalized_state_error(self, predicted: WorldState, actual: WorldState) -> float:
+        """Compare world states after applying schema-owned per-slot scales."""
+
+        predicted_values = self.state_values(predicted)
+        actual_values = self.state_values(actual)
+        scales = torch.tensor(self.state_scales, dtype=torch.float32)
+        return float(torch.mean(((predicted_values - actual_values) / scales) ** 2))
 
     def encode(self, state: WorldState, action: Any, *, bind_target: bool = True) -> torch.Tensor:
         state_values = self.state_values(state)
@@ -165,6 +198,7 @@ class WorldSchema:
             "state_dim": self.state_dim,
             "action_dim": self.action_dim,
             "input_dim": self.input_dim,
+            "state_scales": list(self.state_scales),
         }
 
     @classmethod
@@ -180,6 +214,7 @@ class WorldSchema:
             actor_ids=tuple(str(item) for item in payload["actor_ids"]),
             target_ids=tuple(str(item) for item in payload["target_ids"]),
             parameter_names=tuple(str(item) for item in payload["parameter_names"]),
+            state_scales=tuple(float(item) for item in payload.get("state_scales", ())),
         )
 
 

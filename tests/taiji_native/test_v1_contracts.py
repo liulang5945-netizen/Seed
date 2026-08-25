@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 import torch
 
@@ -195,6 +197,7 @@ def test_tsk_v8_adapter_scores_runtime_world_prediction_and_restores_learner() -
     state = model.cognitive_snapshot()
     assert state.world_prediction is not None
     assert state.world_prediction.state_error is not None
+    assert state.world_prediction.raw_state_error is not None
     assert state.world_prediction.reward_error is not None
     assert state.world_prediction.state_error < 1.0
     assert state.world_prediction.online_update_count == 1
@@ -213,9 +216,32 @@ def test_tsk_v8_adapter_scores_runtime_world_prediction_and_restores_learner() -
     restored_trace = restored_state.world_calibration_trace[0]
     assert restored_trace.transition.action.action_id == trace.transition.action.action_id
     assert restored_trace.prediction.state_error == trace.prediction.state_error
+    assert restored_trace.prediction.raw_state_error == trace.prediction.raw_state_error
     assert restored_trace.online_update_count_after == trace.online_update_count_after
     assert restored._world_dynamics is not None
     assert restored._world_dynamics.online_updates == 1
+
+
+def test_world_schema_scale_separates_raw_and_normalized_error() -> None:
+    corpus = build_corpus()
+    schema = WorldSchema.from_corpus(corpus)
+    case = corpus.train[0]
+
+    raw_error = float(
+        torch.mean(
+            (schema.state_values(case.initial) - schema.state_values(case.expected_state)) ** 2
+        )
+    )
+    normalized_error = schema.normalized_state_error(case.initial, case.expected_state)
+    scaled_schema = replace(
+        schema,
+        state_scales=tuple(scale * 10.0 for scale in schema.state_scales),
+    )
+
+    assert raw_error > 0.0
+    assert 0.0 < normalized_error <= raw_error
+    assert scaled_schema.normalized_state_error(case.initial, case.expected_state) < normalized_error
+    assert WorldSchema.from_payload(schema.payload()).state_scales == schema.state_scales
 
 
 def test_world_prediction_projects_into_planner_and_triggers_replan_lesion() -> None:

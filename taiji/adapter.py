@@ -1679,9 +1679,14 @@ class TSKV8Adapter(Taiji):
                     prediction_record.predicted_state
                 )
                 actual = self._world_dynamics.schema.state_values(world_state)
+                raw_state_error = float(torch.mean((predicted - actual) ** 2))
                 prediction_record = replace(
                     prediction_record,
-                    state_error=float(torch.mean((predicted - actual) ** 2)),
+                    state_error=self._world_dynamics.schema.normalized_state_error(
+                        prediction_record.predicted_state,
+                        world_state,
+                    ),
+                    raw_state_error=raw_state_error,
                     reward_error=(prediction_record.predicted_reward - outcome.reward) ** 2,
                 )
                 world_error_threshold = (
