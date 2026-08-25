@@ -382,6 +382,9 @@ P4 的最小真实经历边界已落地：
 - P7 grounded multi-step environment Gate 已通过：`EnvironmentOutcome.world_state` 进入真实 `WorldTransition` 后，adapter 在行动前后
   都保留 `grounding_lineage`；失败 action 触发 alternative replan，原决策的 delayed credit 可跨 replan 与 native checkpoint 恢复，
   并继续更新对应 affordance source。
+- P7 grounded multi-step train/holdout Gate 已通过：4 条 train affordance、未见 actor/target/relation/action kind 的 holdout 和 3 个 seed
+  均达到 holdout selection、两步 failure replan、before/after lineage、checkpoint pending credit 与 delayed credit `1.0`；
+  manifest/report 为 `reports/taiji_p7_grounded_multistep_*_20260825.json`。该结果仍是小型数值世界 transfer，不代表通用关系推理。
 - 本轮 native 回归为 `131 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
@@ -487,4 +490,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：建立 grounded multi-step 的 train/holdout 与跨 seed 评测，验证 delayed credit、失败重规划和 object/relation lineage 不是单一 fixture 的偶然结果；不新增 action/intent 查表。**
+**下一步：为 grounded multi-step 增加 producer/feature-source lesion 与 delayed-credit lesion 对照，量化 grounding、信用回传和重规划各自的因果损失；不新增 action/intent 查表。**

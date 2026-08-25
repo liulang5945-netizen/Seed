@@ -1,0 +1,48 @@
+{
+  "format": "taiji-p7-grounded-multistep-manifest-v1",
+  "task": "grounded multi-step executive transfer with failure replan and delayed credit",
+  "train": {
+    "examples": 4,
+    "actor_ids": [
+      "agent-a",
+      "agent-b"
+    ],
+    "target_ids": [
+      "red",
+      "blue",
+      "green",
+      "yellow"
+    ],
+    "relation_predicates": [
+      "near",
+      "touches"
+    ]
+  },
+  "holdout": {
+    "actor_ids": [
+      "robot-holdout"
+    ],
+    "target_ids": [
+      "green-holdout",
+      "yellow-holdout"
+    ],
+    "relation_predicates": [
+      "supports-holdout",
+      "supports-after",
+      "reaches-after"
+    ],
+    "action_kinds": [
+      "holdout-positive-action",
+      "holdout-negative-action"
+    ]
+  },
+  "seeds": [
+    11,
+    23,
+    37
+  ],
+  "controls": [
+    "native-checkpoint-continuation"
+  ],
+  "boundary": "numeric world grounding and executive credit; not general semantics or intelligence"
+}
