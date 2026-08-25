@@ -194,8 +194,11 @@ P3 的第一段合同与恢复边界已落地：
   的扩展 A2 Gate 通过：`state_error_max=0.0615`、`outcome_error_max=0.2579`、最小 state gain
   `+0.2885`、最小 target-binding lesion drop `+0.2429`，time-shuffled split 的 success accuracy
   为 1.0；报告和 manifest 保存在 `reports/taiji_a2_world_*_20260825.json`；
-- 该 Gate 仍只证明固定小型 benchmark 的结构化一步干预，不等于已经学会一般世界动力学；多步 episode、
-  更大对象/关系组合和跨 episode 持续性仍未通过。
+- 该 Gate 仍只证明固定小型 benchmark 的结构化一步干预，不等于已经学会一般世界动力学；更大对象/关系组合和
+  更长跨 episode 持续性仍未通过。
+- 多步扩展已通过独立 episode-ID holdout：3 个训练 episode、2 个新 episode 的 3-seed
+  `rollout_state_mse_max=0.00536`、`final_state_mse_max=0.00625`、success accuracy=1.0，
+  checkpoint continuation=true；该结果仍是小型 move benchmark，尚未接入 adapter 的真实认知循环。
 
 ### 工作项
 
@@ -299,4 +302,4 @@ P3 的第一段合同与恢复边界已落地：
 
 ## 16. 当前唯一下一步
 
-**把已通过的固定小型 A2 benchmark 扩展为多步 episode 与跨 episode 对象持续性评测：保留关系绑定、时间打乱、frequency/reactive 对照和 checkpoint 恢复门禁；只有扩展 Gate 通过后才扩展 workspace 路由。**
+**把已通过的 world transition/episode 路径接入 `TSKV8Adapter` 的真实 cognitive snapshot：观察、ActionIntent、环境 Outcome 和 TaijiWorldState 必须形成可恢复的同一 transition lineage；先完成 adapter contract/恢复回归，再扩展 workspace 路由。**

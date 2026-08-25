@@ -1,0 +1,83 @@
+{
+  "format": "taiji-a2-world-episode-shift-v1",
+  "objects": [
+    "agent",
+    "red",
+    "blue"
+  ],
+  "dynamics": "each move adds step to target.position and emits reward=step",
+  "train": [
+    {
+      "episode_id": "train-0",
+      "steps": [
+        [
+          "red",
+          1.0
+        ],
+        [
+          "blue",
+          -1.0
+        ]
+      ]
+    },
+    {
+      "episode_id": "train-1",
+      "steps": [
+        [
+          "red",
+          -1.0
+        ],
+        [
+          "blue",
+          1.0
+        ]
+      ]
+    },
+    {
+      "episode_id": "train-2",
+      "steps": [
+        [
+          "blue",
+          1.0
+        ],
+        [
+          "red",
+          1.0
+        ]
+      ]
+    }
+  ],
+  "holdout": [
+    {
+      "episode_id": "unseen-episode-a",
+      "steps": [
+        [
+          "red",
+          1.0
+        ],
+        [
+          "blue",
+          1.0
+        ]
+      ]
+    },
+    {
+      "episode_id": "unseen-episode-b",
+      "steps": [
+        [
+          "blue",
+          -1.0
+        ],
+        [
+          "red",
+          -1.0
+        ]
+      ]
+    }
+  ],
+  "constraints": [
+    "episode IDs are disjoint and never enter the learned schema",
+    "every transition tick is contiguous",
+    "checkpoint is restored after the first transition before continuing"
+  ]
+}
