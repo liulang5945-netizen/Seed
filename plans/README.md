@@ -35,13 +35,14 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - `seed/` 当前包装 `Taiji` kernel；P1 compatibility adapter 已迁移首个 v1 纵切片，不破坏产品 API 和旧 checkpoint。
 - P6 client input-boundary Gate 已通过：`InputFrame` 版本化承载客户端原始 bytes 与来源元数据，`TSKV8Adapter.ingest_input()` 将其逐字节转换为 Taiji-owned `Observation/PerceptEvent`，`InputTrace` 可检查并 round-trip；`ActionIntent` 保持为空，未引入固定意图映射。`SeedRuntime.chat` 已通过 `generate_input()` 走同一合同，仍保留 raw-byte 兼容输出。
 - P7 executive contract Gate 已通过：`ExecutiveController` 从 percept/world/memory/goal/homeostasis context 学习候选 utility，选择结果保持结构化 `ActionIntent + ContentPlan` 配对；adapter 提供选择、Outcome 反馈、lesion-safe checkpoint 与 round-trip。该 Gate 证明学习型候选选择，不证明已完成真实环境 action/outcome 闭环。
-- P7 executive environment-loop Gate 已通过：`ExecutiveDecision` 通过显式 `WorldAction` 元数据和 motor `action_symbol` 接入 `TaijiEnvironment.step()`，真实 `EnvironmentOutcome` 回写 utility、感知和失败重规划；selected/alternative、checkpoint continuation、utility update 与 executive lesion 均有测试。该 Gate 不伪造环境 after-state，也不等于长程规划或通用智能。
+- P7 executive environment-loop Gate 已通过：`ExecutiveDecision` 通过显式 `WorldAction` 元数据和 motor `action_symbol` 接入 `TaijiEnvironment.step()`，真实 `EnvironmentOutcome` 回写 utility、感知和失败重规划；selected/alternative、checkpoint continuation、utility update 与 executive lesion 均有测试。环境可显式返回行动后 `WorldState`，但不会由 adapter 伪造。
 - P7 candidate synthesis contract Gate 已通过：adapter 从当前 `PerceptEvent`、`WorldState.affordances` 和 active `GoalState` 自动生成带 provenance 的 `ExecutiveCandidate`，不需要客户端候选表；当前 affordance 特征仍是保守 scaffold，不宣称已学会通用 affordance 表征。
 - P7 affordance feature transfer Gate 已通过：`WorldAffordance` 携带带 provenance 的 numeric grounding，`LearnedAffordanceFeatures` 由 Taiji-owned outcome objective 学习连续投影；candidate synthesis 只消费该投影，不读取 `affordance_id/action_kind` 查表，未见 affordance/action holdout 已通过，且 native checkpoint 可恢复该 source。
 - P7 affordance online-credit Gate 已通过：真实 `EnvironmentOutcome` 的 reward 会回写当前 selected affordance 的 feature source；source lesion 会阻断候选合成，online update 计数、预测误差和权重可经 native checkpoint continuation 恢复。
 - P7 contextual grounding Gate 已通过：adapter 强制 source 的 `context_dim` 对齐 Taiji perception，producer 读取 `Percept.features + WorldState.latent + uncertainty`；world latent 缺失时使用显式 percept fallback，context 改变会改变连续表示，组合/扰动 holdout 已通过。
 - P7 world-grounding lineage Gate 已通过：adapter 在 `observe_event` 与 `settle_action` 进入认知状态前统一由 `WorldAffordanceGroundingProducer` 从 actor/target numeric object summary、relation binding、world latent 和 confidence 生成 raw grounding，并记录 `grounding_lineage`；`action_kind/affordance_id` 不参与特征查表。
 - P7 end-to-end grounding transfer Gate 已通过：`WorldAffordanceGroundingProducer → LearnedAffordanceFeatures → ExecutiveController` 在新对象、新关系谓词和新 action kind 的 holdout 上保持正确选择；producer lesion 会使选择退化，证明 executive 消费的是 grounding 表征而非符号表。
+- P7 grounded multi-step environment Gate 已通过：`EnvironmentOutcome.world_state` 进入真实 `WorldTransition` 后，adapter 在行动前后都保留 `grounding_lineage`；失败 action 触发 alternative replan，原决策的 delayed credit 可跨 replan 与 native checkpoint 恢复，并继续更新对应 affordance source。
 - `neuroplex/` 保持冻结，只用于离线对照和显式兼容。
 - `CapacityPolicy` 当前规划固定区域/fan-in/memory 资源；v1 中将降为资源治理器，不再规定认知结构。
 - N0–N11/M5–M7 保留为 TSK-v8 kernel 回归，不再作为概念、推理、语言或智能进展证明。
@@ -164,9 +165,9 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 client observability Gate 已通过：frontend runtime store 保存 `language_provider`，聊天页和异常中心可显示 active/fallback、
   回退原因与 structured-stub 恢复状态；前端只观察 runtime，不参与 provider 选择、认知决策或 decoder 装载。前端构建通过，Vitest
   `160 passed`。
-- 原生套件当前 `130 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
+- 原生套件当前 `131 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
   环境状态不作为代码能力结论。
 
 ## 当前唯一下一步
 
-下一步：把端到端 grounding 链接入 adapter 的真实多步 `WorldTransition/EnvironmentOutcome` 与失败重规划，验证 lineage 在 action 前后持续存在和 delayed reward credit；不新增 action/intent 查表。
+下一步：建立 grounded multi-step 的 train/holdout 与跨 seed 评测，验证 delayed credit、失败重规划和 object/relation lineage 不是单一 fixture 的偶然结果；不新增 action/intent 查表。

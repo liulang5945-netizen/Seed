@@ -379,7 +379,10 @@ P4 的最小真实经历边界已落地：
 - P7 end-to-end grounding transfer Gate 已通过：`WorldAffordanceGroundingProducer → LearnedAffordanceFeatures → ExecutiveController`
   在新对象、新关系谓词和新 action kind 的 holdout 上保持正确选择；producer lesion 会使选择退化，证明 executive 消费的是 grounding
   表征而非符号表。
-- 本轮 native 回归为 `130 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
+- P7 grounded multi-step environment Gate 已通过：`EnvironmentOutcome.world_state` 进入真实 `WorldTransition` 后，adapter 在行动前后
+  都保留 `grounding_lineage`；失败 action 触发 alternative replan，原决策的 delayed credit 可跨 replan 与 native checkpoint 恢复，
+  并继续更新对应 affordance source。
+- 本轮 native 回归为 `131 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
 ### 工作项
@@ -484,4 +487,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把端到端 grounding 链接入 adapter 的真实多步 `WorldTransition/EnvironmentOutcome` 与失败重规划，验证 lineage 在 action 前后持续存在和 delayed reward credit；不新增 action/intent 查表。**
+**下一步：建立 grounded multi-step 的 train/holdout 与跨 seed 评测，验证 delayed credit、失败重规划和 object/relation lineage 不是单一 fixture 的偶然结果；不新增 action/intent 查表。**

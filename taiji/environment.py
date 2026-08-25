@@ -6,6 +6,8 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any, Protocol, runtime_checkable
 
+from .contracts import WorldState
+
 
 @dataclass(frozen=True)
 class EnvironmentOutcome:
@@ -15,6 +17,7 @@ class EnvironmentOutcome:
     reward: float
     terminal: bool = False
     success: bool | None = None
+    world_state: WorldState | None = None
 
 
 @runtime_checkable

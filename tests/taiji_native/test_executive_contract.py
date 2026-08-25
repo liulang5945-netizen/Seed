@@ -139,6 +139,27 @@ class ExecutiveEnvironment:
         )
 
 
+class MultiStepGroundedEnvironment:
+    def __init__(self, after_states: tuple[WorldState, ...]) -> None:
+        self.after_states = after_states
+        self.actions: list[int] = []
+
+    def reset(self) -> tuple[int, tuple[int, ...]]:
+        return 65, (10, 11)
+
+    def step(self, action_symbol: int) -> EnvironmentOutcome:
+        index = len(self.actions)
+        self.actions.append(action_symbol)
+        success = index > 0
+        return EnvironmentOutcome(
+            sensation=43 + index,
+            reward=1.0 if success else -1.0,
+            terminal=False,
+            success=success,
+            world_state=self.after_states[index],
+        )
+
+
 def test_executive_environment_loop_updates_and_replans() -> None:
     adapter = TSKV8Adapter(_config())
     adapter.observe(65, learn=False)
@@ -169,6 +190,97 @@ def test_executive_environment_loop_updates_and_replans() -> None:
     adapter.attach_executive(None)
     with pytest.raises(RuntimeError, match="executive controller is not attached"):
         adapter.execute_executive_action(environment, learn=False)
+
+
+def test_multistep_environment_preserves_grounding_and_delayed_credit_across_replan() -> None:
+    adapter = TSKV8Adapter(_config())
+    adapter.observe(65, learn=False)
+    source = LearnedAffordanceFeatures(
+        input_dim=8,
+        feature_dim=4,
+        context_dim=adapter.perception.feature_dim,
+        seed=67,
+    )
+    adapter.attach_affordance_features(source)
+    adapter.attach_executive(ExecutiveController(candidate_feature_dim=4))
+
+    def world(tick: int, relation: str) -> WorldState:
+        return WorldState(
+            tick=tick,
+            relations=(("agent", relation, "target"),),
+            objects=(
+                WorldObject("agent", attributes={"energy": 1.0}),
+                WorldObject("target", attributes={"position": float(tick)}),
+            ),
+            affordances=(
+                WorldAffordance(
+                    affordance_id="grounded-a",
+                    action_kind="unseen-action-a",
+                    actor_id="agent",
+                    target_id="target",
+                    parameters={"action_symbol": 10, "available_actions": (10, 11)},
+                ),
+                WorldAffordance(
+                    affordance_id="grounded-b",
+                    action_kind="unseen-action-b",
+                    actor_id="agent",
+                    target_id="target",
+                    parameters={"action_symbol": 11, "available_actions": (10, 11)},
+                ),
+            ),
+        )
+
+    initial = world(adapter.tick + 1, "near")
+    adapter.observe_event(
+        Observation(
+            modality="text-byte",
+            value=66,
+            timestamp=adapter.tick,
+            source="test.multistep-world",
+        ),
+        learn=False,
+        world_state=initial,
+    )
+    candidates = adapter.synthesize_executive_candidates()
+    environment = MultiStepGroundedEnvironment(
+        (world(adapter.tick + 1, "supports"), world(adapter.tick + 2, "reaches"))
+    )
+
+    adapter.select_executive(candidates)
+    first = adapter.execute_executive_action(environment, learn=True)
+    first_transition = adapter.cognitive_snapshot().world_transition
+    assert first.success is False
+    assert first_transition is not None
+    assert first_transition.before.tick == initial.tick
+    assert first_transition.after.tick == initial.tick + 1
+    assert all(item.grounding_lineage for item in first_transition.before.affordances)
+    assert all(item.grounding_lineage for item in first_transition.after.affordances)
+    assert first_transition.after.relations == (("agent", "supports", "target"),)
+    assert adapter.replan_required is True
+
+    restored = TSKV8Adapter.from_native_checkpoint(adapter.native_checkpoint())
+    assert restored._pending_executive_credit is not None
+    restored.replan_executive_after_failure(candidates)
+    delayed_error = restored.record_delayed_executive_credit(0.5)
+    assert restored.last_delayed_executive_prediction_error == delayed_error
+    assert restored._affordance_features is not None
+    assert restored._affordance_features.online_updates == 2
+
+    second = restored.execute_executive_action(environment, learn=True)
+    second_transition = restored.cognitive_snapshot().world_transition
+    assert second.success is True
+    assert second_transition is not None
+    assert second_transition.before.tick == first_transition.after.tick
+    assert second_transition.after.tick == second_transition.before.tick + 1
+    assert all(item.grounding_lineage for item in second_transition.before.affordances)
+    assert all(item.grounding_lineage for item in second_transition.after.affordances)
+    assert restored._affordance_features.online_updates == 3
+    assert restored._executive is not None
+    assert restored._executive.training_steps == 3
+    assert environment.actions == [
+        dict(first_transition.action.parameters)["action_symbol"],
+        dict(second_transition.action.parameters)["action_symbol"],
+    ]
 
 
 def test_adapter_synthesizes_candidates_from_world_affordances() -> None:
