@@ -64,7 +64,10 @@ class WorldSchema:
             actor_ids.add(case.action.actor_id)
             target_ids.add(case.action.target_id)
             for name, value in case.action.parameters:
-                _numeric(value, f"action parameter {name}")
+                try:
+                    _numeric(value, f"action parameter {name}")
+                except ValueError:
+                    continue
                 parameter_names.add(name)
         if not state_slots:
             raise ValueError("world dynamics requires numeric object attributes")

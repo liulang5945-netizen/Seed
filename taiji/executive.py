@@ -382,11 +382,14 @@ class ExecutiveDecision:
     ) -> WorldAction:
         """Materialize the selected intent as a world-action contract."""
 
+        parameters = dict(self.action_intent.parameters)
         return WorldAction(
             action_id=self.action_intent.intent_id,
             kind=self.action_intent.kind,
             tick=self.context.tick if tick is None else int(tick),
-            parameters=self.action_intent.parameters,
+            actor_id=str(parameters.get("actor_id", "")),
+            target_id=str(parameters.get("target_id", "")),
+            parameters=parameters,
             provenance=provenance,
         )
 

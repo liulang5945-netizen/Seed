@@ -24,11 +24,17 @@ from taiji import (  # noqa: E402
     ExecutiveTrainingExample,
     LearnedAffordanceFeatures,
     Observation,
+    Outcome,
     TaijiConfig,
     TSKV8Adapter,
+    WorldAction,
     WorldAffordance,
     WorldAffordanceGroundingProducer,
+    WorldDynamicsLearner,
+    WorldInterventionCase,
+    WorldInterventionCorpus,
     WorldObject,
+    WorldSchema,
     WorldState,
 )
 
@@ -251,7 +257,6 @@ def evaluate_seed(seed: int) -> dict[str, object]:
     candidates = adapter.synthesize_executive_candidates()
     decision = adapter.select_executive(candidates)
     holdout_selected_positive = decision.selected.source_affordance_id == "positive-green-holdout"
-    base_checkpoint = adapter.native_checkpoint()
     holdout_by_id = {item.affordance_id: item for item in grounded_holdout}
     lesioned_features = source.encode(
         torch.zeros(GROUNDING_DIM),
@@ -296,12 +301,51 @@ def evaluate_seed(seed: int) -> dict[str, object]:
             start=1,
         )
     )
+    dynamics_cases = []
+    for affordance, reward, success in (
+        (grounded_holdout[0], 1.0, True),
+        (grounded_holdout[1], -1.0, False),
+    ):
+        action_id = f"dynamics:{affordance.affordance_id}"
+        action = WorldAction(
+            action_id=action_id,
+            kind=affordance.action_kind,
+            tick=holdout.tick,
+            actor_id=affordance.actor_id,
+            target_id=affordance.target_id,
+            parameters={
+                "action_symbol": float(dict(affordance.parameters)["action_symbol"])
+            },
+            provenance="evaluation-training",
+        )
+        dynamics_cases.append(
+            WorldInterventionCase(
+                case_id=action_id,
+                initial=holdout,
+                action=action,
+                expected_state=after_states[0],
+                expected_outcome=Outcome(
+                    intent_id=action_id,
+                    reward=reward,
+                    success=success,
+                    tick=after_states[0].tick,
+                    provenance="evaluation-training",
+                ),
+            )
+        )
+    dynamics_corpus = WorldInterventionCorpus(train=tuple(dynamics_cases))
+    dynamics_schema = WorldSchema.from_corpus(dynamics_corpus)
+    dynamics = WorldDynamicsLearner(dynamics_schema, hidden_dim=32, seed=seed + 3000)
+    dynamics.fit(tuple(dynamics_cases), epochs=120, learning_rate=0.01)
+    adapter.attach_world_dynamics(dynamics)
+    base_checkpoint = adapter.native_checkpoint()
     environment = _MultiStepEnvironment(
         after_states,
         success_indices=frozenset({3}),
     )
     first = adapter.execute_executive_action(environment, learn=True)
-    first_transition = adapter.cognitive_snapshot().world_transition
+    first_snapshot = adapter.cognitive_snapshot()
+    first_transition = first_snapshot.world_transition
     if first_transition is None:
         raise RuntimeError("grounded multi-step evaluation lost first transition")
     first_lineage = all(
@@ -315,13 +359,16 @@ def evaluate_seed(seed: int) -> dict[str, object]:
     restored.record_delayed_executive_credit(0.5)
     transitions = [first_transition]
     outcomes = [first]
+    predictions = [first_snapshot.world_prediction]
     for _ in range(1, len(after_states)):
         outcome = restored.execute_executive_action(environment, learn=True)
-        transition = restored.cognitive_snapshot().world_transition
+        snapshot = restored.cognitive_snapshot()
+        transition = snapshot.world_transition
         if transition is None:
             raise RuntimeError("grounded multi-step evaluation lost a later transition")
         transitions.append(transition)
         outcomes.append(outcome)
+        predictions.append(snapshot.world_prediction)
         if len(outcomes) < len(after_states):
             restored.replan_executive_after_failure(candidates)
             restored.record_delayed_executive_credit(0.5)
@@ -348,6 +395,24 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         and delayed_lesion._affordance_features.online_updates == 2
         and delayed_lesion._executive is not None
         and delayed_lesion._executive.training_steps == executive_fit_steps + 2
+    )
+    world_prediction_errors = [
+        prediction
+        for prediction in predictions
+        if prediction is not None
+        and prediction.state_error is not None
+        and prediction.reward_error is not None
+    ]
+    world_prediction_gate = bool(
+        len(predictions) == len(after_states)
+        and len(world_prediction_errors) == len(after_states)
+        and all(
+            float(prediction.state_error) >= 0.0
+            and float(prediction.reward_error) >= 0.0
+            for prediction in world_prediction_errors
+        )
+        and restored._world_dynamics is not None
+        and restored._world_dynamics.online_updates == len(after_states)
     )
     variable_episode_specs = (
         ("short-single-failure", 3, frozenset({0})),
@@ -459,6 +524,19 @@ def evaluate_seed(seed: int) -> dict[str, object]:
             and len(environment.actions) == len(after_states)
             and len(set(environment.actions)) > 1
         ),
+        "world_prediction_gate": world_prediction_gate,
+        "world_prediction_state_error_mean": (
+            sum(float(item.state_error) for item in world_prediction_errors)
+            / len(world_prediction_errors)
+            if world_prediction_errors
+            else None
+        ),
+        "world_prediction_reward_error_mean": (
+            sum(float(item.reward_error) for item in world_prediction_errors)
+            / len(world_prediction_errors)
+            if world_prediction_errors
+            else None
+        ),
         "variable_episode_gate": variable_episode_gate,
         "variable_episode_runs": variable_episode_runs,
         "action_trace": environment.actions,
@@ -519,6 +597,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "delayed_credit_lesion_effective",
         "continuous_replan_complete",
         "variable_episode_gate",
+        "world_prediction_gate",
     )
     rates = {
         name: sum(bool(run[name]) for run in runs) / len(runs)
@@ -531,7 +610,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "metrics": {"cross_seed_rates": rates, "runs": runs},
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must transfer the holdout selection, preserve lineage and credit across four transitions and variable 3/4/5-step episodes, complete the declared replans, and show the declared lesions",
+            "criterion": "all seeds must transfer the holdout selection, preserve lineage and credit across four transitions and variable 3/4/5-step episodes, complete the declared replans, show the declared lesions, and emit finite world prediction errors with online correction",
         },
     }
 
