@@ -1,0 +1,114 @@
+{
+  "contract": "taiji-a1-perception-v1",
+  "gate": "A1",
+  "gate_passed": false,
+  "config": {
+    "ridge": 0.001,
+    "minimum_generalization_gain": 0.0,
+    "maximum_cross_seed_std": 0.25,
+    "seeds": [
+      11,
+      29,
+      47
+    ]
+  },
+  "primary": {
+    "seed": 11,
+    "unseen_composition": {
+      "learned_accuracy": 0.0773067331670823,
+      "byte_only_accuracy": 0.24788029925187033,
+      "generalization_gain": -0.17057356608478802
+    },
+    "boundary_perturbed": {
+      "mean_boundary_score": 0.30038633492408756,
+      "boundary_rate": 0.06031904287138584,
+      "score_delta_from_unseen": 0.0028633423018349924
+    },
+    "random_chunk_control": {
+      "learned_accuracy": 0.08217131474103585,
+      "byte_only_accuracy": 0.24302788844621515
+    },
+    "assembly": {
+      "mean_duration_train": 7.49417372881356,
+      "mean_duration_unseen": 8.41795511221945,
+      "unique_durations": 16,
+      "boundary_rate_unseen": 0.059850374064837904
+    }
+  },
+  "cross_seed": {
+    "learned_accuracy_mean": 0.08113050706566917,
+    "learned_accuracy_std": 0.003266314664071236,
+    "runs": [
+      {
+        "seed": 11,
+        "unseen_composition": {
+          "learned_accuracy": 0.0773067331670823,
+          "byte_only_accuracy": 0.24788029925187033,
+          "generalization_gain": -0.17057356608478802
+        },
+        "boundary_perturbed": {
+          "mean_boundary_score": 0.30038633492408756,
+          "boundary_rate": 0.06031904287138584,
+          "score_delta_from_unseen": 0.0028633423018349924
+        },
+        "random_chunk_control": {
+          "learned_accuracy": 0.08217131474103585,
+          "byte_only_accuracy": 0.24302788844621515
+        },
+        "assembly": {
+          "mean_duration_train": 7.49417372881356,
+          "mean_duration_unseen": 8.41795511221945,
+          "unique_durations": 16,
+          "boundary_rate_unseen": 0.059850374064837904
+        }
+      },
+      {
+        "seed": 29,
+        "unseen_composition": {
+          "learned_accuracy": 0.08528678304239401,
+          "byte_only_accuracy": 0.24788029925187033,
+          "generalization_gain": -0.16259351620947632
+        },
+        "boundary_perturbed": {
+          "mean_boundary_score": 0.19213200879763814,
+          "boundary_rate": 0.058823529411764705,
+          "score_delta_from_unseen": 0.002794049130330184
+        },
+        "random_chunk_control": {
+          "learned_accuracy": 0.08515936254980079,
+          "byte_only_accuracy": 0.24302788844621515
+        },
+        "assembly": {
+          "mean_duration_train": 7.708686440677966,
+          "mean_duration_unseen": 8.461845386533666,
+          "unique_durations": 16,
+          "boundary_rate_unseen": 0.05885286783042394
+        }
+      },
+      {
+        "seed": 47,
+        "unseen_composition": {
+          "learned_accuracy": 0.08079800498753117,
+          "byte_only_accuracy": 0.24788029925187033,
+          "generalization_gain": -0.16708229426433915
+        },
+        "boundary_perturbed": {
+          "mean_boundary_score": 0.32596245620599623,
+          "boundary_rate": 0.06181455633100698,
+          "score_delta_from_unseen": 0.0021987343644649937
+        },
+        "random_chunk_control": {
+          "learned_accuracy": 0.07420318725099602,
+          "byte_only_accuracy": 0.24302788844621515
+        },
+        "assembly": {
+          "mean_duration_train": 7.477224576271187,
+          "mean_duration_unseen": 8.339152119700747,
+          "unique_durations": 16,
+          "boundary_rate_unseen": 0.061845386533665836
+        }
+      }
+    ]
+  },
+  "failure_policy": "A1 remains open until learned assembly beats byte-only on unseen composition, retains variable duration, and stays within the cross-seed variance budget."
+}
