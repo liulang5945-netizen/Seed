@@ -552,6 +552,21 @@ class TSKV8Adapter(Taiji):
         if kernel_decision.action_symbol != int(selected_symbol):
             raise RuntimeError("Taiji motor bridge did not preserve executive action_symbol")
         self._last_executive_world_action = world_action
+        if self._world_dynamics is not None:
+            prediction = self._world_dynamics.predict(
+                self._cognitive_state.world,
+                world_action,
+            )
+            self._cognitive_state = replace(
+                self._cognitive_state,
+                world_prediction=WorldPredictionRecord(
+                    action=world_action,
+                    predicted_state=prediction.state,
+                    predicted_reward=prediction.reward,
+                    predicted_success_probability=prediction.success_probability,
+                    online_update_count=self._world_dynamics.online_updates,
+                ),
+            )
         selected_affordance = next(
             (
                 item
@@ -581,6 +596,7 @@ class TSKV8Adapter(Taiji):
         if experienced is None:
             raise RuntimeError("executive environment outcome was not recorded")
         transition = self._cognitive_state.world_transition
+        prediction_record = self._cognitive_state.world_prediction
         self.record_executive_outcome(
             experienced,
             learn=learn,
@@ -616,6 +632,7 @@ class TSKV8Adapter(Taiji):
                 action_intent=selected.action_intent,
                 outcome=experienced,
                 world_transition=transition,
+                world_prediction=prediction_record,
             )
         return experienced
 

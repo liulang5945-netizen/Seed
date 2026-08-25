@@ -390,6 +390,9 @@ P4 的最小真实经历边界已落地：
   效应，不代表长程规划。
 - P7 variable-horizon episode Gate 已通过：同一 train/holdout 学习结果在 3/4/5 步 episode、不同失败位置和多个 after-state relation
   变化下，3 个 seed 均完成预期 replan、全程 lineage 与每个非终止步的 delayed credit。该结果扩大了 horizon 边界，但仍不是长程规划证明。
+- P7 executive-to-world prediction Gate 已通过：executive bridge 现在把带 actor/target 的 `WorldAction` 送入 `WorldDynamicsLearner`，真实
+  after-state settle 回写 state/reward error，并在 3-seed 四步链路中完成 4 次 online correction；report 记录了 finite prediction errors。
+  该 Gate 证明预测误差闭环接通，不证明预测精度已经校准。
 - 本轮 native 回归为 `131 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
@@ -495,4 +498,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把变量 horizon 评测接入真实 world-dynamics prediction/error calibration，验证 after-state 变化、重规划和 delayed credit 能被预测误差共同约束；不新增 action/intent 查表。**
+**下一步：为 world dynamics 增加 prediction train/holdout 与 no-online-update calibration control，验证误差回写确实改善后续预测，而不是只记录 error；不新增 action/intent 查表。**
