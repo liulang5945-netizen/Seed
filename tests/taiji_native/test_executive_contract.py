@@ -507,3 +507,108 @@ def test_world_grounding_lineage_tracks_unseen_object_relation_binding() -> None
     assert "relation:agent:supports:token" in perturbed_grounded.grounding_lineage
     assert not torch.equal(grounded.features, perturbed_grounded.features)
     assert torch.equal(grounded.features, alternate_action.features)
+
+
+def test_end_to_end_grounding_to_executive_transfers_object_relation_binding() -> None:
+    producer = WorldAffordanceGroundingProducer(grounding_dim=8)
+    source = LearnedAffordanceFeatures(input_dim=8, feature_dim=4, seed=41)
+
+    def world(actor: str, positive: str, negative: str, predicate: str) -> WorldState:
+        return WorldState(
+            tick=0,
+            relations=((actor, predicate, positive),),
+            objects=(
+                WorldObject(actor, attributes={"energy": 1.0}),
+                WorldObject(positive, attributes={"position": 1.0}),
+                WorldObject(negative, attributes={"position": 0.0}),
+            ),
+        )
+
+    def affordance(target: str, action_kind: str) -> WorldAffordance:
+        return WorldAffordance(
+            affordance_id=f"candidate-{target}-{action_kind}",
+            action_kind=action_kind,
+            actor_id="agent",
+            target_id=target,
+        )
+
+    train_cases = (
+        (world("agent", "red", "blue", "near"), affordance("red", "known-open"), 1.0),
+        (world("agent", "red", "blue", "near"), affordance("blue", "known-close"), -1.0),
+        (world("agent", "blue", "red", "near"), affordance("blue", "known-open"), 1.0),
+        (world("agent", "blue", "red", "near"), affordance("red", "known-close"), -1.0),
+    )
+    grounded_train = tuple(
+        (producer.ground(state, item), reward) for state, item, reward in train_cases
+    )
+    source.fit(
+        tuple(
+            AffordanceFeatureTrainingExample(
+                f"grounding-train-{index}",
+                grounded.affordance_id,
+                grounded.action_kind,
+                grounded.features,
+                reward,
+            )
+            for index, (grounded, reward) in enumerate(grounded_train)
+        ),
+        epochs=220,
+    )
+    context = ExecutiveContext(features=torch.zeros(25), tick=0)
+
+    def candidate(grounded: WorldAffordance) -> ExecutiveCandidate:
+        return ExecutiveCandidate.from_world_affordance(
+            grounded,
+            tick=0,
+            features=source.features_for(grounded),
+        )
+
+    controller = ExecutiveController(candidate_feature_dim=4)
+    controller.fit(
+        tuple(
+            ExecutiveTrainingExample(candidate(grounded), context, reward)
+            for (grounded, reward) in grounded_train
+        ),
+        epochs=180,
+    )
+
+    holdout_state = world("robot", "green", "yellow", "supports")
+    holdout_positive = producer.ground(
+        holdout_state,
+        WorldAffordance(
+            affordance_id="unseen-green",
+            action_kind="unseen-action-green",
+            actor_id="robot",
+            target_id="green",
+        ),
+    )
+    holdout_negative = producer.ground(
+        holdout_state,
+        WorldAffordance(
+            affordance_id="unseen-yellow",
+            action_kind="unseen-action-yellow",
+            actor_id="robot",
+            target_id="yellow",
+        ),
+    )
+    decision = controller.select(
+        (candidate(holdout_negative), candidate(holdout_positive)),
+        context,
+    )
+    assert decision.selected.source_affordance_id == "unseen-green"
+
+    lesioned_positive = ExecutiveCandidate.from_world_affordance(
+        holdout_positive,
+        tick=0,
+        features=source.encode(torch.zeros(8)).detach(),
+    )
+    lesioned_negative = ExecutiveCandidate.from_world_affordance(
+        holdout_negative,
+        tick=0,
+        features=source.encode(torch.zeros(8)).detach(),
+    )
+    lesioned_decision = controller.select(
+        (lesioned_negative, lesioned_positive),
+        context,
+    )
+    assert lesioned_decision.selected.source_affordance_id != "unseen-green"
