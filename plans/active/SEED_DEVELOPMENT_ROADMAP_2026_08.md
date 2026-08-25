@@ -190,10 +190,12 @@ P3 的第一段合同与恢复边界已落地：
 - 合同、因果 tick、动作—结果绑定、恢复连续性和干预 split 泄漏均有测试覆盖；
 - `taiji/world_learning.py` 已提供 data-derived schema、target/parameter 组合特征、状态/结果预测器，
   并以 frequency、action-only、target-binding lesion 做对照；
-- `scripts/training/eval_taiji_a2_world.py` 的一步 target-shift benchmark 在 3 seed 通过首个窄 A2 Gate：
-  `state_error_max=0.2362`、`outcome_error_max=0.1605`、最小 state gain `+0.4305`、最小 binding
-  lesion drop `+0.6524`；报告和 manifest 保存在 `reports/taiji_a2_world_*_20260825.json`；
-- 该 Gate 只证明结构化一步干预切片，不等于已经学会一般世界动力学；对象持续性、关系变化和时间打乱仍未通过。
+- `scripts/training/eval_taiji_a2_world.py` 已扩展到对象持续、关系槽位变化和时间打乱 control；3 seed
+  的扩展 A2 Gate 通过：`state_error_max=0.0615`、`outcome_error_max=0.2579`、最小 state gain
+  `+0.2885`、最小 target-binding lesion drop `+0.2429`，time-shuffled split 的 success accuracy
+  为 1.0；报告和 manifest 保存在 `reports/taiji_a2_world_*_20260825.json`；
+- 该 Gate 仍只证明固定小型 benchmark 的结构化一步干预，不等于已经学会一般世界动力学；多步 episode、
+  更大对象/关系组合和跨 episode 持续性仍未通过。
 
 ### 工作项
 
@@ -297,4 +299,4 @@ P3 的第一段合同与恢复边界已落地：
 
 ## 16. 当前唯一下一步
 
-**扩展 A2 干预评测到对象持续性、关系变化和时间打乱：保持同一 Taiji-owned state/action/outcome 合同，加入对应 lesion 与 reactive/frequency 对照；只有扩展 Gate 通过后才扩展 workspace 路由。**
+**把已通过的固定小型 A2 benchmark 扩展为多步 episode 与跨 episode 对象持续性评测：保留关系绑定、时间打乱、frequency/reactive 对照和 checkpoint 恢复门禁；只有扩展 Gate 通过后才扩展 workspace 路由。**

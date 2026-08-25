@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import torch
 
+from scripts.training.eval_taiji_a2_world import build_corpus
 from taiji import (
     Outcome,
     WorldAction,
@@ -115,3 +116,15 @@ def test_world_intervention_evaluator_reports_a2_gate() -> None:
     assert report["schema"]["target_ids"] == ["blue", "red"]
     assert report["gate"]["passed"] is True
     assert report["gate"]["binding_drop_min"] > 0.1
+
+
+def test_expanded_world_benchmark_contains_relation_and_time_controls() -> None:
+    corpus = build_corpus()
+    schema = WorldSchema.from_corpus(corpus)
+    report = WorldInterventionEvaluator(
+        WorldInterventionEvaluationConfig(seeds=(11,), hidden_dim=32, epochs=350)
+    ).evaluate(corpus)
+
+    assert schema.relation_slots == (("blue", "near", "red"), ("red", "near", "blue"))
+    assert report["time_shuffled_cases"] == 1
+    assert report["seeds"][0]["time_shuffled"]["success_accuracy"] == 1.0
