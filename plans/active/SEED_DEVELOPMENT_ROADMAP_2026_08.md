@@ -336,7 +336,10 @@ P4 的最小真实经历边界已落地：
 - P6 runtime semantic constraint/feedback 窄 Gate 已通过：`ContentPlan.required_terms` 是语义保真约束的唯一运行时来源，
   自动传播到 `ExpressionPlan`；评估脚本不再维护第二份 content-ID 映射。语言回退会更新已选 content 的在线信用、标记
   `replan_required`，并在 legacy/native checkpoint 中恢复；真实 Qwen guard 复跑仍为 `safe_realization_rate=1.0`、`fallback_count=2`。
-- 本轮 native 回归为 `112 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
+- P6 language fallback/replan 窄 Gate 已通过：首个缺失必需语义词的 `status` 表达被安全回退并产生 `prediction_error=1.0`，
+  Taiji 排除失败候选后选择 `recovery`，生成的新 `ExpressionPlan` 通过验证；最终 `replan_required=false`，且 checkpoint 恢复
+  替代 content 与 fallback 计数。该 Gate 证明回退信号已被 planner 消费，不代表开放域语言质量。
+- 本轮 native 回归为 `113 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
 ### 工作项
@@ -441,5 +444,5 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一决策入口：扩展现有 P5 planner Gate，验证语言回退不仅设置信号，还能被 Taiji 真实消费为替代 content/expression 计划；不把
-Transformer 或其他 decoder 变成认知主体。**
+**下一决策入口：建立 `LanguageTrainingExample → external language-organ provider` 的 train/holdout 纵切片，提升 Qwen 候选的必需
+语义词覆盖率，同时保留 Taiji 的 validator/fallback/replan 安全边界；不把 Transformer 或其他 decoder 变成认知主体。**

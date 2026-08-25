@@ -268,6 +268,8 @@ Taiji v1 的完整认知状态至少包含：
 - 语言生成至少区分内容规划、表达规划和最终 byte 编码。
 - 语义保真约束由 Taiji-owned `ContentPlan.required_terms` 持有并传播到 `ExpressionPlan`；末端语言器官只能接受该约束并返回验证结果，
   缺失关键项时由 Taiji 触发结构化回退、内容信用更新和重规划，不允许评估脚本或外部 decoder 另存一份隐藏映射。
+- 回退后的重规划必须真实消费失败结果：排除失败 content、重新选择 Taiji-owned candidate、重新生成 expression，并在安全表达成功后
+  清除 `replan_required`；只设置一个布尔值不算完成闭环。
 - byte motor 可保留为最末端 codec/回退器官，不能继续直接承担全部认知输出。
 - 每次执行都生成可追踪的 pending action，真实 outcome 回写世界模型、记忆和 credit assignment。
 
