@@ -10,12 +10,12 @@ P1 兼容纵切片已完成：版本化 v1 合同、Taiji-owned `CognitiveState`
 TSK-v8 adapter 和 Seed 所有权门禁已经进入代码。该纵切片只证明合同与闭环可恢复，
 不改变“TSK-v8 不是完整 Taiji”的能力声明。
 
-P2 已开始：`LearnedPerception` 提供连续局部特征、递归预测误差和可变时长 assembly，
-并随 v1 adapter checkpoint 保存。A1 评测合同已在 `taiji/evaluation.py` 建立，项目
-正式语料上的首份 smoke 证据已生成，且 Gate 明确未通过：learned assembly 在未见组合
-上的准确率低于 byte-only 对照（`0.0773` vs `0.2479`，gain `-0.1706`），跨 seed
-标准差为 `0.0033`。这把下一步定位为表示学习目标改进，而非继续扩大模型或掩盖失败；
-当前仍不能宣称 Taiji 已拥有通过 Gate 的学习型抽象能力。
+P2 已开始：`LearnedPerception` 提供连续局部特征、递归预测误差、可配置的下一观测
+预测训练和可变时长 assembly，并随 v1 adapter checkpoint 保存。A1 合同还要求边界
+扰动与随机 chunk lesion 证据。加入预测训练后，同一正式 manifest 的未见组合 gain
+为 `+0.0284`、random-chunk drop 为 `+0.0064`，但 boundary-rate delta 只有 `+0.0010`
+而门槛为 `+0.01`，所以加强后的 A1 Gate 仍未通过。当前下一步是边界信号校准，而非
+继续扩大模型；当前仍不能宣称 Taiji 已拥有通过 Gate 的学习型抽象能力。
 
 ## 0. 本次纠正
 
@@ -427,4 +427,4 @@ taiji/
 
 ## 13. 当前唯一实现入口
 
-P1 已完成。当前实现入口是 P2/A1：在现有不泄漏 manifest 上改进 assembly 的可预测局部/组合学习目标，保持 boundary、random-chunk 和 byte-only 对照，再以 Gate 结果决定是否进入 P3。
+P1 已完成。当前实现入口是 P2/A1：校准 assembly 的边界稳定性与迟滞，保持 boundary、random-chunk 和 byte-only 对照，再以加强后的 Gate 结果决定是否进入 P3。
