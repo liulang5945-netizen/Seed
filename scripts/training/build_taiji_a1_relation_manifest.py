@@ -72,9 +72,20 @@ def _example(
         observed_split = split_index + 1
     elif perturbation == "random_chunk":
         generator = random.Random(int(seed))
-        position = generator.randint(1, len(clean) - 1)
-        sequence = _insert_at(clean, position, BOUNDARY_SYMBOL)
-        observed_split = split_index + int(position <= split_index)
+        positions = sorted(generator.sample(range(1, len(clean)), 3))
+        chunks: list[tuple[int, ...]] = []
+        previous = 0
+        for position in positions:
+            chunks.append(clean[previous:position])
+            previous = position
+        chunks.append(clean[previous:])
+        generator.shuffle(chunks)
+        sequence = tuple(
+            symbol
+            for index, chunk in enumerate(chunks)
+            for symbol in ((*chunk, BOUNDARY_SYMBOL) if index + 1 < len(chunks) else chunk)
+        )
+        observed_split = max(1, min(len(sequence) - 1, split_index))
     else:
         raise ValueError(f"unsupported assembly relation perturbation: {perturbation}")
     return AssemblyRelationExample(
@@ -179,6 +190,7 @@ def build_relation_manifest(
             "max_atom_symbols": max_atom_symbols,
             "boundary_symbol": BOUNDARY_SYMBOL,
             "pair_split": "(left * 31 + right + seed) % 4 == 0 is holdout",
+            "random_chunk_control": "deterministically permuted chunks with marker separators",
         },
         "atoms": [list(atom) for atom in atoms],
         "roles": {
