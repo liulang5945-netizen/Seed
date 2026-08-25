@@ -329,6 +329,40 @@ class TSKV8Adapter(Taiji):
         self._content_feedback_applied = False
         return decision
 
+    def replan_content_after_language_fallback(
+        self,
+        candidates: Sequence[ContentCandidate],
+        *,
+        novelty: float = 0.0,
+        resource_budget: float = 1.0,
+    ) -> ContentSelectionDecision:
+        """Select an alternative semantic plan after unsafe text realization.
+
+        The failed candidate is excluded for this replan attempt.  The
+        language organ remains an effector: this method only chooses a new
+        Taiji-owned content plan; ``express_selected_content`` performs the
+        subsequent organ-specific realization.
+        """
+
+        if not self._language_fallback_requires_replan:
+            raise RuntimeError("language fallback has not requested content replanning")
+        if self._last_content_selection is None:
+            raise RuntimeError("language fallback replanning requires a prior content selection")
+        previous_id = self._last_content_selection.selected.candidate_id
+        alternatives = tuple(
+            candidate for candidate in candidates if candidate.candidate_id != previous_id
+        )
+        if not alternatives:
+            raise RuntimeError("language fallback replanning requires an alternative content candidate")
+        decision = self.select_content(
+            alternatives,
+            novelty=novelty,
+            resource_budget=resource_budget,
+        )
+        self._replan_required = False
+        self._language_fallback_requires_replan = False
+        return decision
+
     def selected_content_plan(self) -> ContentPlan:
         if self._last_content_selection is None:
             raise RuntimeError("content selection has not been performed")

@@ -1,0 +1,21 @@
+{
+  "format": "taiji-p6-language-fallback-replan-v1",
+  "metrics": {
+    "first_content": "status",
+    "first_fallback": true,
+    "first_content_prediction_error": 1.0,
+    "replacement_content": "recovery",
+    "replacement_expression_slots": {
+      "topic": "recovery"
+    },
+    "replacement_fallback": false,
+    "language_fallback_count": 1,
+    "final_replan_required": false,
+    "checkpoint_replacement_content": "recovery",
+    "checkpoint_fallback_count": 1
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "unsafe language realization is credited as a content failure, an alternative ContentPlan is selected and expressed safely, and checkpoint state remains consistent"
+  }
+}

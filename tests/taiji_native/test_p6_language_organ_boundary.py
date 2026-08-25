@@ -270,3 +270,66 @@ def test_language_fallback_assigns_content_credit_and_replan_signal() -> None:
     assert restored.language_fallback_count == 1
     assert restored.replan_required is True
     assert restored.last_content_prediction_error == adapter.last_content_prediction_error
+
+
+def test_language_fallback_replans_to_an_alternative_expression() -> None:
+    class _ExternalDecoder:
+        def generate(self, prompt: str, *, max_tokens: int, temperature: float) -> str:
+            del max_tokens, temperature
+            return "当前状态稳定。" if "recovery" in prompt else "操作员收到一条消息。"
+
+    candidates = (
+        ContentCandidate(
+            candidate_id="status",
+            intent_id="language:intent",
+            intent_kind="render_message",
+            semantic_slots={"topic": "status"},
+            required_terms=("稳定",),
+            confidence=0.8,
+        ),
+        ContentCandidate(
+            candidate_id="recovery",
+            intent_id="language:intent",
+            intent_kind="render_message",
+            semantic_slots={"topic": "recovery"},
+            required_terms=("稳定",),
+            confidence=0.8,
+        ),
+    )
+    registry = LanguageBackendRegistry.default()
+    registry.register(
+        LanguageBackendSpec(
+            backend_id="mature-decoder-v1",
+            family="external-decoder",
+            training_contract="expression-to-text-v1",
+        )
+    )
+    adapter = TSKV8Adapter()
+    adapter.attach_generation_controller(GenerationController())
+    adapter.attach_content_selector(ContentSelector())
+    adapter.attach_language_backend_registry(registry)
+    adapter.attach_language_organ(
+        ValidatedLanguageOrgan(
+            ExternalTextDecoderLanguageOrgan(
+                _ExternalDecoder(),
+                prompt_builder=lambda item: item.fields["semantic_slots"]["topic"]
+                if "semantic_slots" in item.fields
+                else item.content_id,
+                backend_id="mature-decoder-v1",
+            )
+        )
+    )
+    adapter.observe(97, learn=False)
+    first = adapter.select_content(candidates)
+    first_emission = adapter.emit_language()
+    replanned = adapter.replan_content_after_language_fallback(candidates)
+    second_expression = adapter.express_selected_content(modality="text", channel="message")
+    second_emission = adapter.emit_language(second_expression)
+
+    assert first.selected.candidate_id == "status"
+    assert first_emission.fallback_used is True
+    assert replanned.selected.candidate_id == "recovery"
+    assert second_expression.fields["semantic_slots"] == {"topic": "recovery"}
+    assert second_emission.fallback_used is False
+    assert adapter.language_fallback_count == 1
+    assert adapter.replan_required is False
