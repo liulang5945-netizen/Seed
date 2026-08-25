@@ -14,7 +14,8 @@
       "horizon_lineage_complete": 1.0,
       "delayed_credit_complete": 1.0,
       "delayed_credit_lesion_effective": 1.0,
-      "continuous_replan_complete": 1.0
+      "continuous_replan_complete": 1.0,
+      "variable_episode_gate": 1.0
     },
     "runs": [
       {
@@ -36,6 +37,57 @@
         "executive_training_steps": 727,
         "executive_fit_steps": 720,
         "continuous_replan_complete": true,
+        "variable_episode_gate": true,
+        "variable_episode_runs": [
+          {
+            "name": "short-single-failure",
+            "length": 3,
+            "failure_indices": [
+              0
+            ],
+            "observed_failure_indices": [
+              0
+            ],
+            "replans": 1,
+            "lineage_complete": true,
+            "final_success": true,
+            "credit_updates_complete": true
+          },
+          {
+            "name": "mid-late-failures",
+            "length": 4,
+            "failure_indices": [
+              1,
+              2
+            ],
+            "observed_failure_indices": [
+              1,
+              2
+            ],
+            "replans": 2,
+            "lineage_complete": true,
+            "final_success": true,
+            "credit_updates_complete": true
+          },
+          {
+            "name": "long-interleaved-failures",
+            "length": 5,
+            "failure_indices": [
+              0,
+              2,
+              3
+            ],
+            "observed_failure_indices": [
+              0,
+              2,
+              3
+            ],
+            "replans": 3,
+            "lineage_complete": true,
+            "final_success": true,
+            "credit_updates_complete": true
+          }
+        ],
         "action_trace": [
           10,
           11,
@@ -62,6 +114,57 @@
         "executive_training_steps": 727,
         "executive_fit_steps": 720,
         "continuous_replan_complete": true,
+        "variable_episode_gate": true,
+        "variable_episode_runs": [
+          {
+            "name": "short-single-failure",
+            "length": 3,
+            "failure_indices": [
+              0
+            ],
+            "observed_failure_indices": [
+              0
+            ],
+            "replans": 1,
+            "lineage_complete": true,
+            "final_success": true,
+            "credit_updates_complete": true
+          },
+          {
+            "name": "mid-late-failures",
+            "length": 4,
+            "failure_indices": [
+              1,
+              2
+            ],
+            "observed_failure_indices": [
+              1,
+              2
+            ],
+            "replans": 2,
+            "lineage_complete": true,
+            "final_success": true,
+            "credit_updates_complete": true
+          },
+          {
+            "name": "long-interleaved-failures",
+            "length": 5,
+            "failure_indices": [
+              0,
+              2,
+              3
+            ],
+            "observed_failure_indices": [
+              0,
+              2,
+              3
+            ],
+            "replans": 3,
+            "lineage_complete": true,
+            "final_success": true,
+            "credit_updates_complete": true
+          }
+        ],
         "action_trace": [
           10,
           11,
@@ -88,6 +191,57 @@
         "executive_training_steps": 727,
         "executive_fit_steps": 720,
         "continuous_replan_complete": true,
+        "variable_episode_gate": true,
+        "variable_episode_runs": [
+          {
+            "name": "short-single-failure",
+            "length": 3,
+            "failure_indices": [
+              0
+            ],
+            "observed_failure_indices": [
+              0
+            ],
+            "replans": 1,
+            "lineage_complete": true,
+            "final_success": true,
+            "credit_updates_complete": true
+          },
+          {
+            "name": "mid-late-failures",
+            "length": 4,
+            "failure_indices": [
+              1,
+              2
+            ],
+            "observed_failure_indices": [
+              1,
+              2
+            ],
+            "replans": 2,
+            "lineage_complete": true,
+            "final_success": true,
+            "credit_updates_complete": true
+          },
+          {
+            "name": "long-interleaved-failures",
+            "length": 5,
+            "failure_indices": [
+              0,
+              2,
+              3
+            ],
+            "observed_failure_indices": [
+              0,
+              2,
+              3
+            ],
+            "replans": 3,
+            "lineage_complete": true,
+            "final_success": true,
+            "credit_updates_complete": true
+          }
+        ],
         "action_trace": [
           10,
           11,
