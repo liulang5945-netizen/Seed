@@ -99,10 +99,13 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
   工具生态或语言泛化。
 - P6 cross-organ expression consistency 窄 Gate 已通过：同一 `ContentPlan` 同时生成 tool 与 text 结构化表达，`content_id`、semantic slots、
   confidence 和 goal provenance 保持一致，只改变 modality/channel。该结果证明表达器不夺取目标/计划所有权，不证明语言流畅性。
+- P6 learned content selection 窄 Gate 已通过：可学习 utility 在相同候选下按 world uncertainty 在 `answer`/`ask` 之间切换，选择结果与
+  semantic slots 可转成 `ContentPlan`，checkpoint 后选择保持一致。该 Gate 证明内容选择不必原样复制 `ActionIntent`，但尚未接入 adapter
+  runtime，也不证明开放域语义生成。
 - 原生套件当前 94 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-继续 P6 learned content selection Gate：让 content planner 从 goal/world/context 选择可解释 semantic slots，而不是直接复制
-`ActionIntent`；保留当前 P3/P4/P5 Gate，不让 byte motor 或 Legacy Transformer 代替目标规划与内容决策。
+继续 P6 runtime content-selection ownership：把 learned selector 接入 adapter 的 goal/world/context 与 native checkpoint，再连接
+`ContentPlan → ExpressionPlan`；保留当前 P3/P4/P5 Gate，不让 byte motor 或 Legacy Transformer 代替目标规划与内容决策。

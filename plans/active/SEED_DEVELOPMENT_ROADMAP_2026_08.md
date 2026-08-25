@@ -299,7 +299,10 @@ P4 的最小真实经历边界已落地：
 - `scripts/training/eval_taiji_p6_cross_organ_expression.py` 已通过 cross-organ expression consistency 窄 Gate：同一 `ContentPlan` 同时
   生成 tool/text 结构化表达，content ID、semantic slots、confidence 和 goal provenance 一致，只改变 modality/channel；报告和
   manifest 为 `reports/taiji_p6_cross_organ_expression_*_20260825.json`。该结果不等于语言流畅性。
-- 本轮 native 回归为 `99 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
+- `taiji/content_selection.py` 已通过 learned content selection 窄 Gate：utility 在相同候选下按 world uncertainty 选择不同 semantic
+  content，并从 checkpoint 恢复选择；报告和 manifest 为 `reports/taiji_p6_learned_content_selection_*_20260825.json`。这是独立
+  selector 证据，尚未宣称 adapter runtime 已拥有内容选择或开放域语义生成。
+- 本轮 native 回归为 `100 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
 
 ### 工作项
 
@@ -403,4 +406,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**继续 P6 learned content selection Gate：让 content planner 从 goal/world/context 选择可解释 semantic slots，而不是直接复制 `ActionIntent`；不改变既有合同。**
+**继续 P6 runtime content-selection ownership：把 learned selector 接入 adapter 的 goal/world/context 与 native checkpoint，再连接 `ContentPlan → ExpressionPlan`；不改变既有合同。**
