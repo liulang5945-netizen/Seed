@@ -18,6 +18,13 @@ def _unit(value: float, name: str) -> float:
     return value
 
 
+def _nonnegative_finite(value: float, name: str) -> float:
+    value = float(value)
+    if not math.isfinite(value) or value < 0.0:
+        raise ValueError(f"{name} must be finite and non-negative")
+    return value
+
+
 @dataclass(frozen=True)
 class PlanningConfig:
     reward_weight: float = 0.60
@@ -37,8 +44,8 @@ class PlanningConfig:
                 raise ValueError(f"planning {name} cannot be negative")
         _unit(self.outcome_progress_gain, "outcome_progress_gain")
         _unit(self.discount, "discount")
-        _unit(self.replan_error_threshold, "replan_error_threshold")
-        _unit(self.recovery_error_threshold, "recovery_error_threshold")
+        _nonnegative_finite(self.replan_error_threshold, "replan_error_threshold")
+        _nonnegative_finite(self.recovery_error_threshold, "recovery_error_threshold")
 
     def to_payload(self) -> dict[str, float]:
         return {name: float(value) for name, value in self.__dict__.items()}
