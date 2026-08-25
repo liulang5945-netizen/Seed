@@ -1,0 +1,29 @@
+{
+  "format": "taiji-p4-homeostasis-v1",
+  "metrics": {
+    "signal_state": {
+      "curiosity": 0.5850000000000001,
+      "fatigue": 0.3,
+      "stress": 0.95
+    },
+    "adaptive_mode": "sleep",
+    "fixed_schedule_lesion_mode": "wake",
+    "random_drive_lesion_mode": "wake",
+    "sleep_fatigue": 0.053551875000000006,
+    "sleep_lesion_fatigue": 0.21491788800000006,
+    "sleep_stress": 0.12311999999999998,
+    "sleep_lesion_stress": 0.623295,
+    "play_stress": 0.3,
+    "play_lesion_stress": 0.5,
+    "no_modulator_state": {
+      "curiosity": 0.0,
+      "fatigue": 0.0,
+      "stress": 0.0
+    },
+    "runtime_checkpoint_restored": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "internal drives respond to event signals, select rest/play, and sleep/play/no-modulator lesions cause measurable loss"
+  }
+}

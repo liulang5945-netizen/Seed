@@ -34,6 +34,7 @@ from .contracts import (
 )
 from .contracts import MemoryState as NativeMemoryState
 from .episodic_memory import EpisodicMemoryStore
+from .homeostasis import HomeostaticController, HomeostaticDrive
 from .model import Taiji
 from .perception import LearnedPerception
 from .procedural_memory import ProceduralMemoryLearner
@@ -64,6 +65,7 @@ class TSKV8Adapter(Taiji):
         self._episodic_memory: EpisodicMemoryStore | None = None
         self._semantic_memory: SemanticMemoryLearner | None = None
         self._procedural_memory: ProceduralMemoryLearner | None = None
+        self._homeostatic_controller: HomeostaticController | None = None
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -165,6 +167,45 @@ class TSKV8Adapter(Taiji):
             learning_rate=learning_rate,
         )
 
+    def attach_homeostatic_controller(
+        self, controller: HomeostaticController | None
+    ) -> None:
+        """Attach the event-driven controller for Taiji internal drives."""
+
+        if controller is not None and not isinstance(controller, HomeostaticController):
+            raise TypeError("controller must be a HomeostaticController or None")
+        self._homeostatic_controller = controller
+
+    def homeostatic_drive(self) -> HomeostaticDrive:
+        if self._homeostatic_controller is None:
+            raise RuntimeError("homeostatic controller is not attached")
+        return self._homeostatic_controller.drive(self._cognitive_state.homeostasis)
+
+    def homeostatic_transition(
+        self,
+        *,
+        mode: str = "auto",
+        prediction_error: float = 0.0,
+        novelty: float = 0.0,
+        reward: float = 0.0,
+        resource_cost: float = 0.0,
+    ) -> HomeostaticState:
+        if self._homeostatic_controller is None:
+            raise RuntimeError("homeostatic controller is not attached")
+        if mode == "auto":
+            mode = self._homeostatic_controller.select_mode(self._cognitive_state.homeostasis)
+        state = self._homeostatic_controller.update(
+            self._cognitive_state.homeostasis,
+            prediction_error=prediction_error,
+            novelty=novelty,
+            reward=reward,
+            resource_cost=resource_cost,
+            mode=mode,
+        )
+        state = replace(state, tick=self.tick)
+        self._cognitive_state = replace(self._cognitive_state, homeostasis=state)
+        return state
+
     def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         super().reset_dynamics(episode_id=episode_id)
         self.perception.reset_dynamics()
@@ -192,6 +233,15 @@ class TSKV8Adapter(Taiji):
         features = percept.features.detach().clone()
         recall = step.memory_recall
         previous = self._cognitive_state
+        homeostasis = previous.homeostasis
+        if self._homeostatic_controller is not None:
+            homeostasis = self._homeostatic_controller.update(
+                previous.homeostasis,
+                prediction_error=percept.prediction_error,
+                novelty=max(percept.prediction_error, 1.0 - recall.confidence),
+                resource_cost=0.05,
+                mode="wake",
+            )
         selection: WorkspaceSelection | None = None
         candidates: tuple[WorkspaceCandidate, ...] = ()
         if self._workspace_router is not None and (
@@ -266,7 +316,7 @@ class TSKV8Adapter(Taiji):
                 tick=self.tick,
                 confidence=max(0.0, min(1.0, recall.confidence)),
             ),
-            homeostasis=replace(previous.homeostasis, tick=self.tick),
+            homeostasis=replace(homeostasis, tick=self.tick),
             development=replace(previous.development, tick=self.tick),
             learning=replace(
                 previous.learning,
@@ -493,6 +543,19 @@ class TSKV8Adapter(Taiji):
                         online_update_count=self._world_dynamics.online_updates,
                     )
         memory = self._cognitive_state.memory
+        homeostasis = self._cognitive_state.homeostasis
+        if self._homeostatic_controller is not None:
+            homeostasis = self._homeostatic_controller.update(
+                homeostasis,
+                prediction_error=(
+                    0.0
+                    if prediction_record is None or prediction_record.state_error is None
+                    else prediction_record.state_error
+                ),
+                reward=outcome.reward,
+                resource_cost=0.10,
+                mode="wake",
+            )
         if self._episodic_memory is not None:
             cue = (
                 self._cognitive_state.percept.features
@@ -521,6 +584,7 @@ class TSKV8Adapter(Taiji):
             tick=self.tick,
             world=(world_state if world_state is not None else self._cognitive_state.world),
             memory=memory,
+            homeostasis=homeostasis,
             outcome=outcome,
             world_transition=transition,
             world_prediction=prediction_record,
@@ -568,6 +632,8 @@ class TSKV8Adapter(Taiji):
             payload["semantic_memory"] = self._semantic_memory.checkpoint()
         if self._procedural_memory is not None:
             payload["procedural_memory"] = self._procedural_memory.checkpoint()
+        if self._homeostatic_controller is not None:
+            payload["homeostasis"] = self._homeostatic_controller.checkpoint()
         return payload
 
     def restore(self, checkpoint: dict[str, Any]) -> None:
@@ -579,6 +645,7 @@ class TSKV8Adapter(Taiji):
         self._restore_episodic_memory(checkpoint.get("episodic_memory"))
         self._restore_semantic_memory(checkpoint.get("semantic_memory"))
         self._restore_procedural_memory(checkpoint.get("procedural_memory"))
+        self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
 
     def _world_dynamics_checkpoint(self) -> dict[str, Any]:
         if self._world_dynamics is None:
@@ -633,6 +700,13 @@ class TSKV8Adapter(Taiji):
             else ProceduralMemoryLearner.from_checkpoint(dict(payload), device=self.device)
         )
 
+    def _restore_homeostatic_controller(self, payload: Any) -> None:
+        self._homeostatic_controller = (
+            None
+            if payload is None
+            else HomeostaticController.from_checkpoint(dict(payload))
+        )
+
     def native_checkpoint(self) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
 
@@ -647,6 +721,8 @@ class TSKV8Adapter(Taiji):
             components["semantic_memory"] = self._semantic_memory.checkpoint()
         if self._procedural_memory is not None:
             components["procedural_memory"] = self._procedural_memory.checkpoint()
+        if self._homeostatic_controller is not None:
+            components["homeostasis"] = self._homeostatic_controller.checkpoint()
         return NativeCheckpoint(
             kernel=super().checkpoint(),
             cognitive_state=self.cognitive_snapshot(),
@@ -666,6 +742,7 @@ class TSKV8Adapter(Taiji):
         self._restore_episodic_memory(envelope.components.get("episodic_memory"))
         self._restore_semantic_memory(envelope.components.get("semantic_memory"))
         self._restore_procedural_memory(envelope.components.get("procedural_memory"))
+        self._restore_homeostatic_controller(envelope.components.get("homeostasis"))
         state = envelope.cognitive_state
         if state.tick != self.tick or state.episode_id != self._state.episode_id:
             raise ValueError("native cognitive state is out of sync with kernel state")

@@ -1,0 +1,23 @@
+{
+  "format": "taiji-p4-homeostasis-manifest-v1",
+  "task": "drive wake, sleep, and play from prediction error, novelty, reward, and resource cost",
+  "signals": [
+    "prediction_error",
+    "novelty",
+    "reward",
+    "resource_cost"
+  ],
+  "modes": [
+    "wake",
+    "sleep",
+    "play"
+  ],
+  "lesions": [
+    "fixed_schedule",
+    "random_drive",
+    "no_modulator",
+    "sleep",
+    "play"
+  ],
+  "boundary": "homeostatic state regulation and runtime checkpoint only; not a complete life system"
+}

@@ -47,7 +47,7 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P4 最小记忆纵切片已落地：`WorkingMemoryItem`、`EpisodicMemoryRecord` 和可容量治理的 `EpisodicMemoryStore` 属于
   Taiji；adapter 在真实 action outcome 后写入经历、下一观察按 cue 检索，native checkpoint 可恢复记录与 working state。
   store 已改为 insertion-ordered dictionary，重复 memory_id 替换与容量淘汰不再每次全表重建；原生回归当前为
-  85 passed、1 skipped。
+  86 passed、1 skipped。
 - P4 cue-conditioned one-shot recall 窄 Gate 已通过：full、episode-ID lesion、checkpoint continuation 的 action recall
   均为 1.0，retrieval/write lesion 均为 0；报告和 manifest 为 `reports/taiji_p4_episodic_recall_*_20260825.json`。
   该结果证明经历检索和来源独立性，不证明从多次经历抽取新组合语义。
@@ -70,10 +70,13 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P4 procedural robustness Gate 已通过：GRU 按 `episode_id/tick` 学习多步 `prepare→transition`，未见 transition transfer 与
   checkpoint continuation 均为 `1.0`，相似 cue 干扰后为 `1.0`；当 episodic capacity 等于原训练集并加入干扰时，迁移准确率降为
   `0.5`，形成可测的资源受限遗忘边界。该结果证明序列技能 replay 原型，不等于规划或长期自我调节。
-- 原生套件当前 85 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
+- P4 homeostatic regulation Gate 已通过：高 prediction error/负 reward/资源成本驱动 curiosity=`0.585`、fatigue=`0.3`、stress=`0.95`
+  并自动选择 sleep；sleep、play、fixed schedule、random drive 和 no-modulator lesion 均产生预期差异；adapter outcome 更新与
+  native checkpoint round-trip 已通过。这是内部调节子门，不等于完整生命系统。
+- 原生套件当前 86 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-继续 P4 homeostatic regulation：让 fatigue/curiosity/stress 等内部状态根据预测误差、资源和结果调节探索、学习与 replay，
-并加入固定调度、随机 drive、无调质和 sleep/play lesion；保留当前记忆与 procedural Gate，不提前进入语言或产品层。
+继续 P5 goal-directed cognition：建立目标层级、价值、不确定性、冲突和进度状态，让 planner 比较真实可执行候选并把
+world outcome 回写；保留当前 P3/P4 Gate，不提前进入语言生成或产品层。
