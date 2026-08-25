@@ -7,6 +7,7 @@ from taiji import (
     EpisodicMemoryRecord,
     EpisodicMemoryStore,
     Outcome,
+    SemanticMemoryLearner,
     TSKV8Adapter,
 )
 
@@ -55,9 +56,11 @@ def test_episodic_memory_capacity_keeps_latest_real_records() -> None:
 def test_adapter_writes_real_outcome_and_restores_episodic_memory() -> None:
     model = TSKV8Adapter()
     model.attach_episodic_memory(EpisodicMemoryStore(capacity=8))
+    model.attach_semantic_memory(SemanticMemoryLearner(model.perception.feature_dim))
     model.observe(97, learn=False)
     model.act((97, 98), sample=False)
     model.settle_action(1.0, learn=False)
+    model.consolidate_semantic_memory(epochs=100, learning_rate=0.1)
 
     state = model.cognitive_snapshot()
     assert model._episodic_memory is not None
@@ -73,4 +76,6 @@ def test_adapter_writes_real_outcome_and_restores_episodic_memory() -> None:
     restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
     assert restored._episodic_memory is not None
     assert restored._episodic_memory.count == 1
+    assert restored._semantic_memory is not None
+    assert restored._semantic_memory.consolidation_count == 1
     assert restored.cognitive_snapshot().memory.episodic_ids == state.memory.episodic_ids

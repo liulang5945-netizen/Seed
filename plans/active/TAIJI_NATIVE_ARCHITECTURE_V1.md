@@ -439,4 +439,4 @@ taiji/
 
 ## 13. 当前唯一实现入口
 
-P1 已完成，P2 relation subgate 已收口。P3 的对象/事件/affordance/行动/结果合同、可恢复 `TaijiWorldState`、结构化对象/关系/时间打乱、多步 episode 窄 Gate、`TSKV8Adapter` transition lineage、runtime prediction record、error-driven online correction 和最小 WorkspaceRouter 已落地；A3 静态组合与 `assemble → commit` world-outcome 窄 Gate 已通过，P4 working/episodic memory 最小真实经历、cue-conditioned one-shot recall 和 additive semantic consolidation 窄 Gate 已通过，下一入口是把 semantic learner 接入 adapter runtime/checkpoint。当前结果仍是小型数值关系/两步/保持检索能力，不等于一般语义巩固、长程规划或通用智能。
+P1 已完成，P2 relation subgate 已收口。P3 的对象/事件/affordance/行动/结果合同、可恢复 `TaijiWorldState`、结构化对象/关系/时间打乱、多步 episode 窄 Gate、`TSKV8Adapter` transition lineage、runtime prediction record、error-driven online correction 和最小 WorkspaceRouter 已落地；A3 静态组合与 `assemble → commit` world-outcome 窄 Gate 已通过，P4 working/episodic memory 最小真实经历、cue-conditioned one-shot recall、additive semantic consolidation 和 runtime ownership/checkpoint 子门已通过，下一入口是多关系/多噪声/更大 episode 的语义 Gate。当前结果仍是小型数值关系/两步/保持检索能力，不等于一般语义巩固、长程规划或通用智能。

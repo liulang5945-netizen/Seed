@@ -36,6 +36,7 @@ from .contracts import MemoryState as NativeMemoryState
 from .episodic_memory import EpisodicMemoryStore
 from .model import Taiji
 from .perception import LearnedPerception
+from .semantic_memory import SemanticMemoryLearner
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
 from .workspace import WorkspaceRouter
 from .world_learning import WorldDynamicsLearner, WorldSchema
@@ -60,6 +61,7 @@ class TSKV8Adapter(Taiji):
         self._world_dynamics: WorldDynamicsLearner | None = None
         self._workspace_router: WorkspaceRouter | None = None
         self._episodic_memory: EpisodicMemoryStore | None = None
+        self._semantic_memory: SemanticMemoryLearner | None = None
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -112,6 +114,30 @@ class TSKV8Adapter(Taiji):
         if store is not None and not isinstance(store, EpisodicMemoryStore):
             raise TypeError("store must be an EpisodicMemoryStore or None")
         self._episodic_memory = store
+
+    def attach_semantic_memory(self, learner: SemanticMemoryLearner | None) -> None:
+        """Attach the slow semantic learner fed by Taiji episodic outcomes."""
+
+        if learner is not None and not isinstance(learner, SemanticMemoryLearner):
+            raise TypeError("learner must be a SemanticMemoryLearner or None")
+        if learner is not None and learner.cue_dim != self.perception.feature_dim:
+            raise ValueError("semantic learner cue_dim must match the perception feature dimension")
+        self._semantic_memory = learner
+
+    def consolidate_semantic_memory(
+        self, *, epochs: int = 300, learning_rate: float = 0.1
+    ) -> float:
+        """Replay Taiji-owned episodic outcomes into the attached semantic learner."""
+
+        if self._semantic_memory is None:
+            raise RuntimeError("semantic memory learner is not attached")
+        if self._episodic_memory is None or self._episodic_memory.count == 0:
+            raise RuntimeError("semantic consolidation requires episodic records")
+        return self._semantic_memory.consolidate(
+            self._episodic_memory,
+            epochs=epochs,
+            learning_rate=learning_rate,
+        )
 
     def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         super().reset_dynamics(episode_id=episode_id)
@@ -472,6 +498,8 @@ class TSKV8Adapter(Taiji):
             payload["workspace_router"] = self._workspace_router.checkpoint()
         if self._episodic_memory is not None:
             payload["episodic_memory"] = self._episodic_memory.checkpoint()
+        if self._semantic_memory is not None:
+            payload["semantic_memory"] = self._semantic_memory.checkpoint()
         return payload
 
     def restore(self, checkpoint: dict[str, Any]) -> None:
@@ -481,6 +509,7 @@ class TSKV8Adapter(Taiji):
         self._restore_world_dynamics(checkpoint.get("world_dynamics"))
         self._restore_workspace_router(checkpoint.get("workspace_router"))
         self._restore_episodic_memory(checkpoint.get("episodic_memory"))
+        self._restore_semantic_memory(checkpoint.get("semantic_memory"))
 
     def _world_dynamics_checkpoint(self) -> dict[str, Any]:
         if self._world_dynamics is None:
@@ -521,6 +550,13 @@ class TSKV8Adapter(Taiji):
             else EpisodicMemoryStore.from_checkpoint(dict(payload), device=self.device)
         )
 
+    def _restore_semantic_memory(self, payload: Any) -> None:
+        self._semantic_memory = (
+            None
+            if payload is None
+            else SemanticMemoryLearner.from_checkpoint(dict(payload), device=self.device)
+        )
+
     def native_checkpoint(self) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
 
@@ -531,6 +567,8 @@ class TSKV8Adapter(Taiji):
             components["workspace_router"] = self._workspace_router.checkpoint()
         if self._episodic_memory is not None:
             components["episodic_memory"] = self._episodic_memory.checkpoint()
+        if self._semantic_memory is not None:
+            components["semantic_memory"] = self._semantic_memory.checkpoint()
         return NativeCheckpoint(
             kernel=super().checkpoint(),
             cognitive_state=self.cognitive_snapshot(),
@@ -548,6 +586,7 @@ class TSKV8Adapter(Taiji):
         self._restore_world_dynamics(envelope.components.get("world_dynamics"))
         self._restore_workspace_router(envelope.components.get("workspace_router"))
         self._restore_episodic_memory(envelope.components.get("episodic_memory"))
+        self._restore_semantic_memory(envelope.components.get("semantic_memory"))
         state = envelope.cognitive_state
         if state.tick != self.tick or state.episode_id != self._state.episode_id:
             raise ValueError("native cognitive state is out of sync with kernel state")
