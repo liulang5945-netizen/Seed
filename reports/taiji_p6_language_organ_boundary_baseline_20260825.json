@@ -1,0 +1,14 @@
+{
+  "format": "taiji-p6-language-organ-boundary-v1",
+  "metrics": {
+    "backend": "structured-stub",
+    "encoded_bytes": 418,
+    "expression_round_trip": true,
+    "native_checkpoint_round_trip": true,
+    "cognition_unchanged": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "a replaceable terminal language organ emits Taiji-owned text expressions and restores without owning cognition"
+  }
+}

@@ -314,7 +314,11 @@ P4 的最小真实经历边界已落地：
 - `scripts/training/eval_taiji_p6_text_organ_codec.py` 已通过 text organ codec 窄 Gate：holdout `ContentPlan` 的 text expression 经
   UTF-8 codec 后 semantic slots、confidence、`source_goal_id` 无损恢复；报告和 manifest 为
   `reports/taiji_p6_text_organ_codec_*_20260825.json`。该结果不等于自然语言流畅性、句法或语言智能。
-- 本轮 native 回归为 `105 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
+- `scripts/training/eval_taiji_p6_language_organ_boundary.py` 已通过 terminal language-organ boundary 窄 Gate：可替换的
+  `LanguageOrgan` 只接收 Taiji-owned `ExpressionPlan`，默认 `structured-stub` 输出可回解码文本；detached-organ lesion、native
+  checkpoint 和参数/认知不变性均通过。该结果只证明末端器官所有权与替换边界，不等于自然语言流畅性、句法或 decoder 智能。
+- 本轮 native 回归为 `107 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
+  环境状态不作为代码能力结论。
 
 ### 工作项
 
@@ -418,4 +422,5 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一决策入口：规划 P6 learned text realization Gate，确定成熟 decoder 作为末端 language organ 的接口/训练/lesion 边界；Taiji 仍拥有 content、goal、world、memory、planning 和最终 ActionIntent。**
+**下一决策入口：为末端 language organ 建立 backend registry 与训练数据合同，再接入一个成熟 decoder 做可替换 realization
+Gate；decoder 只能消费 `ExpressionPlan`，Taiji 仍拥有 content、goal、world、memory、planning 和最终 `ActionIntent`。**

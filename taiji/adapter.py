@@ -50,6 +50,11 @@ from .generation import (
     ToolCall,
 )
 from .homeostasis import HomeostaticController, HomeostaticDrive
+from .language_organ import (
+    LanguageEmission,
+    LanguageOrgan,
+    StructuredTextLanguageOrgan,
+)
 from .model import Taiji
 from .perception import LearnedPerception
 from .planning import (
@@ -99,6 +104,8 @@ class TSKV8Adapter(Taiji):
         self._last_content_selection: ContentSelectionDecision | None = None
         self._last_content_prediction_error: float | None = None
         self._content_feedback_applied = False
+        self._language_organ: LanguageOrgan | None = None
+        self._last_language_emission: LanguageEmission | None = None
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -336,6 +343,48 @@ class TSKV8Adapter(Taiji):
             channel=channel,
         )
 
+    def attach_language_organ(self, organ: LanguageOrgan | None) -> None:
+        """Attach a replaceable terminal text organ owned by Taiji's boundary."""
+
+        if organ is not None and not isinstance(organ, LanguageOrgan):
+            raise TypeError("organ must implement the LanguageOrgan protocol or be None")
+        self._language_organ = organ
+
+    @property
+    def last_language_emission(self) -> LanguageEmission | None:
+        return self._last_language_emission
+
+    def emit_language(
+        self,
+        expression: ExpressionPlan | None = None,
+        *,
+        channel: str = "message",
+    ) -> LanguageEmission:
+        """Emit text through the terminal organ without creating cognition.
+
+        When no expression is supplied, the expression is derived from the
+        already selected semantic content.  The organ cannot create content,
+        goals, plans, or actions on its own.
+        """
+
+        if self._language_organ is None:
+            raise RuntimeError("language organ is not attached")
+        selected_expression = expression
+        if selected_expression is None:
+            selected_expression = self.express_selected_content(
+                modality="text",
+                channel=channel,
+            )
+        if not isinstance(selected_expression, ExpressionPlan):
+            raise TypeError("language emission requires an ExpressionPlan")
+        if selected_expression.modality != "text":
+            raise ValueError("language emission requires a text ExpressionPlan")
+        emission = self._language_organ.emit(selected_expression)
+        if not isinstance(emission, LanguageEmission):
+            raise TypeError("language organ must return a LanguageEmission")
+        self._last_language_emission = emission
+        return emission
+
     def execute_tool_call(
         self,
         environment: TaijiToolEnvironment,
@@ -467,6 +516,7 @@ class TSKV8Adapter(Taiji):
         self.perception.reset_dynamics()
         self._cognitive_state = self._empty_cognitive_state(self._state.episode_id)
         self._last_generation_trace = None
+        self._last_language_emission = None
         self._last_content_selection = None
         self._last_content_prediction_error = None
         self._content_feedback_applied = False
@@ -966,6 +1016,8 @@ class TSKV8Adapter(Taiji):
             payload["generation"] = self._generation_controller.checkpoint()
         if self._content_selector is not None:
             payload["content_selection"] = self._content_selector.checkpoint()
+        if self._language_organ is not None:
+            payload["language_organ"] = self._language_organ.checkpoint()
         payload["planned_rollout"] = (
             None if self._planned_rollout is None else self._planned_rollout.to_payload()
         )
@@ -979,6 +1031,11 @@ class TSKV8Adapter(Taiji):
         )
         payload["last_content_prediction_error"] = self._last_content_prediction_error
         payload["content_feedback_applied"] = self._content_feedback_applied
+        payload["last_language_emission"] = (
+            None
+            if self._last_language_emission is None
+            else self._last_language_emission.to_payload()
+        )
         return payload
 
     def restore(self, checkpoint: dict[str, Any]) -> None:
@@ -994,9 +1051,11 @@ class TSKV8Adapter(Taiji):
         self._restore_goal_planner(checkpoint.get("planning"))
         self._restore_generation_controller(checkpoint.get("generation"))
         self._restore_content_selector(checkpoint.get("content_selection"))
+        self._restore_language_organ(checkpoint.get("language_organ"))
         self._restore_rollout_state(checkpoint)
         self._restore_generation_trace(checkpoint)
         self._restore_content_selection(checkpoint)
+        self._restore_language_emission(checkpoint)
 
     def _world_dynamics_checkpoint(self) -> dict[str, Any]:
         if self._world_dynamics is None:
@@ -1094,6 +1153,24 @@ class TSKV8Adapter(Taiji):
             payload.get("content_feedback_applied", False) if isinstance(payload, dict) else False
         )
 
+    def _restore_language_organ(self, payload: Any) -> None:
+        if payload is None:
+            self._language_organ = None
+            return
+        if not isinstance(payload, dict):
+            raise ValueError("language organ checkpoint must be a mapping")
+        if payload.get("backend") != StructuredTextLanguageOrgan.BACKEND_ID:
+            raise ValueError(
+                "only the structured language-organ stub can be restored without a backend registry"
+            )
+        self._language_organ = StructuredTextLanguageOrgan.from_checkpoint(payload)
+
+    def _restore_language_emission(self, payload: Any) -> None:
+        emission = payload.get("last_language_emission") if isinstance(payload, dict) else None
+        self._last_language_emission = (
+            None if emission is None else LanguageEmission.from_payload(dict(emission))
+        )
+
     def _restore_rollout_state(self, payload: Any) -> None:
         rollout = payload.get("planned_rollout") if isinstance(payload, dict) else None
         self._planned_rollout = (
@@ -1135,6 +1212,8 @@ class TSKV8Adapter(Taiji):
             components["generation"] = self._generation_controller.checkpoint()
         if self._content_selector is not None:
             components["content_selection"] = self._content_selector.checkpoint()
+        if self._language_organ is not None:
+            components["language_organ"] = self._language_organ.checkpoint()
         components["planned_rollout"] = (
             None if self._planned_rollout is None else self._planned_rollout.to_payload()
         )
@@ -1153,6 +1232,11 @@ class TSKV8Adapter(Taiji):
         )
         components["last_content_prediction_error"] = self._last_content_prediction_error
         components["content_feedback_applied"] = self._content_feedback_applied
+        components["last_language_emission"] = (
+            None
+            if self._last_language_emission is None
+            else self._last_language_emission.to_payload()
+        )
         return NativeCheckpoint(
             kernel=super().checkpoint(),
             cognitive_state=self.cognitive_snapshot(),
@@ -1176,9 +1260,11 @@ class TSKV8Adapter(Taiji):
         self._restore_goal_planner(envelope.components.get("planning"))
         self._restore_generation_controller(envelope.components.get("generation"))
         self._restore_content_selector(envelope.components.get("content_selection"))
+        self._restore_language_organ(envelope.components.get("language_organ"))
         self._restore_rollout_state(envelope.components)
         self._restore_generation_trace(envelope.components)
         self._restore_content_selection(envelope.components)
+        self._restore_language_emission(envelope.components)
         state = envelope.cognitive_state
         if state.tick != self.tick or state.episode_id != self._state.episode_id:
             raise ValueError("native cognitive state is out of sync with kernel state")

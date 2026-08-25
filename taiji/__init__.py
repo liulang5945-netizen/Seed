@@ -80,6 +80,12 @@ from .homeostasis import (
     HomeostaticController,
     HomeostaticDrive,
 )
+from .language_organ import (
+    LANGUAGE_ORGAN_CHECKPOINT_FORMAT,
+    LanguageEmission,
+    LanguageOrgan,
+    StructuredTextLanguageOrgan,
+)
 from .memory import EpisodicField, EpisodicReplay, EpisodicWrite
 from .model import Taiji
 from .organs import ByteMotor, ByteSensor, SparseReceptorBank
@@ -172,6 +178,10 @@ __all__ = [
     "GENERATION_CHECKPOINT_FORMAT",
     "TOOL_CALL_CODEC_FORMAT",
     "TEXT_EXPRESSION_CODEC_FORMAT",
+    "LANGUAGE_ORGAN_CHECKPOINT_FORMAT",
+    "LanguageEmission",
+    "LanguageOrgan",
+    "StructuredTextLanguageOrgan",
     "MemoryRecall",
     "MemoryState",
     "NativeCheckpoint",
