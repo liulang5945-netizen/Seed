@@ -32,12 +32,17 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 ## 当前代码事实
 
 - `taiji/` 不导入 `seed`、`neuroplex` 或 `transformers`；该独立性继续保留。
-- `seed/` 当前包装 `Taiji` kernel；P1 将通过 compatibility adapter 迁移到 v1 所有权，不立即破坏产品 API 和旧 checkpoint。
+- `seed/` 当前包装 `Taiji` kernel；P1 compatibility adapter 已迁移首个 v1 纵切片，不破坏产品 API 和旧 checkpoint。
 - `neuroplex/` 保持冻结，只用于离线对照和显式兼容。
 - `CapacityPolicy` 当前规划固定区域/fan-in/memory 资源；v1 中将降为资源治理器，不再规定认知结构。
 - N0–N11/M5–M7 保留为 TSK-v8 kernel 回归，不再作为概念、推理、语言或智能进展证明。
 - 旧 16M raw-byte 长训暂停；P2 学习型时间抽象通过前不恢复 100M 路线。
+- P3 已完成世界 transition lineage、预测误差在线校正，以及 WorkspaceCandidate/WorkspaceSelection 合同；
+  `WorkspaceRouter` 已提供容量受限 learned/none/random 路由和 native checkpoint，仍未宣称 A3 协作能力通过。
+- 原生套件当前 74 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
+  尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-实施 P1：建立 Taiji v1 事件/状态/行动合同、认知所有权测试和 TSK-v8 compatibility adapter，并保持现有 checkpoint、Seed API 与 kernel 回归可用。
+进入 P3 A3 协作基准：用多个异质候选源验证 learned workspace 路由是否形成容量约束下的 `1+1>2`，
+  并与最强单体、平均广播、固定/随机路由和无 workspace 做预注册对照；不提前进入语言或产品层。
