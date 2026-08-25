@@ -17,7 +17,7 @@ from typing import Any
 import torch
 from torch import nn
 
-from .contracts import ActionIntent, CognitiveState
+from .contracts import ActionIntent, CognitiveState, WorldAction
 from .generation import ContentPlan
 
 EXECUTIVE_CHECKPOINT_FORMAT = "taiji-executive-v1"
@@ -250,6 +250,22 @@ class ExecutiveDecision:
     @property
     def content_plan(self) -> ContentPlan:
         return self.selected.content_plan
+
+    def to_world_action(
+        self,
+        *,
+        tick: int | None = None,
+        provenance: str = "planned",
+    ) -> WorldAction:
+        """Materialize the selected intent as a world-action contract."""
+
+        return WorldAction(
+            action_id=self.action_intent.intent_id,
+            kind=self.action_intent.kind,
+            tick=self.context.tick if tick is None else int(tick),
+            parameters=self.action_intent.parameters,
+            provenance=provenance,
+        )
 
     def to_payload(self) -> dict[str, Any]:
         return {
