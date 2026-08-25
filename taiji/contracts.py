@@ -883,6 +883,7 @@ class WorldPredictionRecord:
     predicted_success_probability: float
     state_error: float | None = None
     reward_error: float | None = None
+    online_update_count: int = 0
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -896,6 +897,8 @@ class WorldPredictionRecord:
             raise ValueError("state_error must be a finite non-negative value")
         if self.reward_error is not None and not math.isfinite(float(self.reward_error)):
             raise ValueError("reward_error must be finite")
+        if int(self.online_update_count) < 0:
+            raise ValueError("online_update_count cannot be negative")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -906,6 +909,7 @@ class WorldPredictionRecord:
             "predicted_success_probability": self.predicted_success_probability,
             "state_error": self.state_error,
             "reward_error": self.reward_error,
+            "online_update_count": self.online_update_count,
         }
 
     @classmethod
@@ -924,6 +928,7 @@ class WorldPredictionRecord:
             reward_error=(
                 None if payload.get("reward_error") is None else float(payload["reward_error"])
             ),
+            online_update_count=int(payload.get("online_update_count", 0)),
         )
 
 

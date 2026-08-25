@@ -118,7 +118,7 @@ def test_tsk_v8_adapter_commits_structured_world_transition_lineage() -> None:
         objects=(WorldObject("token", attributes={"position": 1.0}),),
     )
 
-    model.settle_action(1.0, learn=False, world_state=after, success=True)
+    model.settle_action(1.0, learn=False, learn_world=True, world_state=after, success=True)
     state = model.cognitive_snapshot()
 
     assert state.world.objects[0].attribute("position") == 1.0
@@ -186,17 +186,20 @@ def test_tsk_v8_adapter_scores_runtime_world_prediction_and_restores_learner() -
         ),
     )
 
-    model.settle_action(1.0, learn=False, world_state=after, success=True)
+    model.settle_action(1.0, learn=False, learn_world=True, world_state=after, success=True)
     state = model.cognitive_snapshot()
     assert state.world_prediction is not None
     assert state.world_prediction.state_error is not None
     assert state.world_prediction.reward_error is not None
     assert state.world_prediction.state_error < 1.0
+    assert state.world_prediction.online_update_count == 1
 
     restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
     restored_state = restored.cognitive_snapshot()
     assert restored_state.world_prediction is not None
     assert restored_state.world_prediction.state_error == state.world_prediction.state_error
+    assert restored._world_dynamics is not None
+    assert restored._world_dynamics.online_updates == 1
 
 
 def test_native_checkpoint_is_atomic_and_deterministic() -> None:

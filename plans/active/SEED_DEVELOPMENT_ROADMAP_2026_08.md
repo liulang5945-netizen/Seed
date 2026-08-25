@@ -205,6 +205,8 @@ P3 的第一段合同与恢复边界已落地：
 - `TSKV8Adapter` 可注入 `WorldDynamicsLearner`：动作前记录 `world_prediction`，真实 transition 到达后
   回写 state/reward error，并把 learner/schema 与 prediction record 放入 native checkpoint；当前只完成
   误差观测与 lineage 固化，尚未宣称在线权重校正已经有效。
+- `WorldDynamicsLearner.online_update(transition)` 已接入 adapter 的 `learn_world` 路径；重复干预测试显示
+  error-driven update 优于 no-update lesion，`online_update_count` 和 learner 参数可随 native checkpoint 恢复。
 
 ### 工作项
 
@@ -308,4 +310,4 @@ P3 的第一段合同与恢复边界已落地：
 
 ## 16. 当前唯一下一步
 
-**用真实 `WorldTransition` 的 prediction error 驱动 `WorldDynamicsLearner` 的在线校正：验证重复干预误差下降、更新可 checkpoint 恢复，并加入 no-update lesion；通过后再扩展 workspace 路由。**
+**进入 P3 workspace 路由：把容量受限的对象/关系选择与 broadcast 接入同一 runtime transition loop，加入无 workspace/随机路由 lesion；不改变已冻结的 world/action/outcome 合同。**

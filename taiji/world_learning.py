@@ -16,6 +16,7 @@ from .contracts import (
     WorldInterventionCorpus,
     WorldObject,
     WorldState,
+    WorldTransition,
 )
 from .world import TaijiWorldState, _world_state_equal
 
@@ -234,6 +235,7 @@ class WorldDynamicsLearner(nn.Module):
         torch.manual_seed(int(seed))
         self.schema = schema
         self.hidden_dim = int(hidden_dim)
+        self.online_updates = 0
         self.network = nn.Sequential(
             nn.Linear(schema.input_dim, self.hidden_dim),
             nn.Tanh(),
@@ -302,6 +304,55 @@ class WorldDynamicsLearner(nn.Module):
             loss.backward()
             optimizer.step()
             losses.append(float(loss.detach()))
+        return losses
+
+    def online_update(
+        self,
+        transition: WorldTransition,
+        *,
+        learning_rate: float = 0.005,
+        repeats: int = 1,
+    ) -> list[float]:
+        """Apply local error-driven correction from one experienced transition."""
+
+        if float(learning_rate) <= 0.0 or int(repeats) <= 0:
+            raise ValueError("learning_rate and repeats must be positive")
+        features = self.schema.encode(transition.before, transition.action).unsqueeze(0)
+        target = torch.cat(
+            (
+                self.schema.state_values(transition.after)
+                - self.schema.state_values(transition.before),
+                torch.tensor(
+                    [
+                        float(transition.outcome.reward),
+                        float(
+                            transition.outcome.success
+                            if transition.outcome.success is not None
+                            else transition.outcome.reward > 0.0
+                        ),
+                    ],
+                    dtype=torch.float32,
+                ),
+            )
+        ).unsqueeze(0)
+        optimizer = torch.optim.SGD(self.parameters(), lr=float(learning_rate))
+        losses = []
+        self.train()
+        for _ in range(int(repeats)):
+            optimizer.zero_grad(set_to_none=True)
+            output = self.network(features)
+            delta_loss = torch.nn.functional.mse_loss(
+                output[:, : self.schema.state_dim], target[:, : self.schema.state_dim]
+            )
+            reward_loss = torch.nn.functional.mse_loss(output[:, -2], target[:, -2])
+            success_loss = torch.nn.functional.binary_cross_entropy_with_logits(
+                output[:, -1], target[:, -1]
+            )
+            loss = delta_loss + reward_loss + success_loss
+            loss.backward()
+            optimizer.step()
+            losses.append(float(loss.detach()))
+        self.online_updates += 1
         return losses
 
 

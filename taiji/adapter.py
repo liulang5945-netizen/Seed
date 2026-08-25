@@ -246,6 +246,7 @@ class TSKV8Adapter(Taiji):
                 predicted_state=prediction.state,
                 predicted_reward=prediction.reward,
                 predicted_success_probability=prediction.success_probability,
+                online_update_count=self._world_dynamics.online_updates,
             )
         self._cognitive_state = replace(
             self._cognitive_state,
@@ -264,6 +265,9 @@ class TSKV8Adapter(Taiji):
         world_state = kwargs.pop("world_state", None)
         world_action = kwargs.pop("world_action", None)
         success = kwargs.pop("success", None)
+        learn_world = kwargs.pop("learn_world", None)
+        world_learning_rate = float(kwargs.pop("world_learning_rate", 0.005))
+        world_learning_repeats = int(kwargs.pop("world_learning_repeats", 1))
         intent_id = intent.intent_id if intent is not None else f"kernel-action:{self.tick}"
         before = self._cognitive_state.world
         if world_state is not None:
@@ -317,6 +321,18 @@ class TSKV8Adapter(Taiji):
                     state_error=float(torch.mean((predicted - actual) ** 2)),
                     reward_error=(prediction_record.predicted_reward - outcome.reward) ** 2,
                 )
+                if learn_world is None:
+                    learn_world = bool(kwargs.get("learn", True))
+                if learn_world:
+                    self._world_dynamics.online_update(
+                        transition,
+                        learning_rate=world_learning_rate,
+                        repeats=world_learning_repeats,
+                    )
+                    prediction_record = replace(
+                        prediction_record,
+                        online_update_count=self._world_dynamics.online_updates,
+                    )
         self._cognitive_state = replace(
             self._cognitive_state,
             tick=self.tick,
@@ -369,6 +385,7 @@ class TSKV8Adapter(Taiji):
         return {
             "schema": self._world_dynamics.schema.payload(),
             "hidden_dim": self._world_dynamics.hidden_dim,
+            "online_updates": self._world_dynamics.online_updates,
             "state_dict": {
                 name: tensor.detach().cpu().clone()
                 for name, tensor in self._world_dynamics.state_dict().items()
@@ -386,6 +403,7 @@ class TSKV8Adapter(Taiji):
             seed=0,
         )
         learner.load_state_dict(payload["state_dict"])
+        learner.online_updates = int(payload.get("online_updates", 0))
         self._world_dynamics = learner
 
     def native_checkpoint(self) -> dict[str, Any]:
