@@ -509,4 +509,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：先完成 Taiji 架构澄清闸门：为神经元/群体/assembly/共振、感知概念、世界/自我模型、工作空间、记忆、目标/推理/规划、生命调节、学习平面、自进化和智能判据补齐 owner/input/state/update/output/resource/lesion/checkpoint/evidence；将未闭合项登记为明确的后续 Gate。澄清完成前不新增核心认知模块、不把同名原型升级为完整能力；完成后再恢复 schema-scale runtime recovery report。**
+**下一步：把核心对象术语表和状态图落成最小版本化合同，优先覆盖 `Assembly`、`Event`、`Concept`、`SelfState`/`DevelopmentState` 的 lineage、更新来源、checkpoint 和 lesion 字段；禁止新增无合同的认知模块，完成合同回归后再恢复 schema-scale runtime recovery report。**

@@ -245,6 +245,118 @@ evidence            用什么未见任务证明它不是查表或旁路
 
 因此，后续不再用“已经有一个同名模块”作为完成标准。每个模块必须先完成术语表、状态转移图、所有权表和最小因果 Gate；只有能回答上述十个字段，才允许进入主运行时。
 
+### 4.2 Taiji 核心对象术语表 v1
+
+以下定义是当前实现和后续目标之间的唯一翻译层。当前代码中尚未出现同名字段的对象，先作为架构语义存在；在实现前必须增加版本化合同，不能用 Python 临时对象或隐藏字典替代。
+
+| 对象 | 精确定义 | 拥有者 | 不等同于 |
+|---|---|---|---|
+| `Observation` | 器官从环境取得的带时间、模态、来源和置信度的外部事实 | Taiji 输入边界 | byte、token 或概念 |
+| `PerceptEvent` | Taiji 对一个或一段观察形成的带来源特征、边界和不确定性的内部事件 | 感知系统 | 原始输入的复制 |
+| `Feature` | 可被下游预测、组合或检索的连续局部模式 | 感知系统 | 固定语义标签 |
+| `Assembly` | 在一个时间窗口内协同激活、具有共同预测/路由贡献的神经群体 | 感知/工作空间 | 永久概念、固定专家或单个神经元 |
+| `Event` | 具有开始/结束和状态变化的时间结构，可由多个 assembly 组成 | 世界模型 | 一个 tick 或一串 token |
+| `Object` | 在多个观察之间保持身份假设、属性和状态的实体 | 世界模型 | 数据库中的静态字典项 |
+| `Relation` | 连接对象、事件、目标或结果的带时间和置信度关系 | 世界模型 | 手写谓词表 |
+| `Concept` | 跨多个经历稳定、可压缩、可迁移的对象/事件/关系不变量 | 语义记忆 | 情景记忆中的一次样本 |
+| `WorkspaceCandidate` | 当前可被竞争和广播的局部内容候选 | 工作空间 | 已经选定的结论 |
+| `WorkspaceSelection` | 在容量和稳态约束下暂时进入焦点并广播的内容 | 工作空间 | 永久记忆 |
+| `WorldState` | Taiji 对当前实体、关系、事件、可行动性和不确定性的持久信念 | 世界模型 | 环境真实状态本身 |
+| `SelfState` | Taiji 对自身能力、资源、身体、工具、历史和承诺的可更新信念 | 自我模型 | persona 文本或 UI 配置 |
+| `Goal` | 希望世界/自我状态达到的条件、价值、期限和约束 | 执行认知 | 用户界面上的一句话 |
+| `PlanCandidate` | 带行动序列、想象结果、风险、成本和 provenance 的候选轨迹 | 规划系统 | 语言解释或 token 序列 |
+| `ActionIntent` | Taiji 决定尝试的结构化干预意图及预期结果 | 执行认知 | 具体设备协议 |
+| `WorldAction` | 将意图映射到环境可执行参数的效应器合同 | 运动/工具器官 | 认知决策本身 |
+| `Outcome` | 环境或工具实际返回的成功、奖励、终止、后状态和错误事实 | 环境反馈边界 | Taiji 的预测 |
+| `MemoryRecord` | 带 episode、tick、来源和结果的可恢复经历记录 | 记忆系统 | 外部 RAG 命中 |
+| `HomeostaticState` | 对好奇、疲劳、压力、安全、资源和唤醒的内部调节状态 | 生命调节系统 | 外部 scheduler 的百分比 |
+| `DevelopmentState` | 当前能力缺口、结构候选、容量预算、成熟度和 lineage | 发展系统 | 模型版本号 |
+
+### 4.3 状态转移图
+
+Taiji 的最小认知事务必须遵守以下顺序。允许各区域异步运行，但事件因果顺序和 provenance 不能丢失：
+
+```text
+外部环境/器官
+      │  Observation
+      ▼
+L0 输入边界
+      │  PerceptEvent + provenance + confidence
+      ▼
+L1 感知与时间抽象
+      │  Feature / Assembly / Event
+      ├───────────────┐
+      ▼               │ prediction / uncertainty
+L2 持续动力学 ────────┘
+      │
+      ▼
+L3 Workspace：候选竞争、绑定、焦点和广播
+      │
+      ├──► L4 Memory：写入、检索、重放、巩固、遗忘
+      ├──► L5 World/Self：实体、关系、因果、能力和资源信念
+      └──► L6 Executive：Goal → PlanCandidate → ActionIntent
+                                      │
+                                      ▼
+                              L7 WorldAction/器官
+                                      │
+                                      ▼
+                              环境真实执行
+                                      │ Outcome
+                                      ▼
+       ┌──────────────────────────────────────────────────────┐
+       │ WorldTransition + prediction error + reward + credit │
+       └──────────────────────────────────────────────────────┘
+          │              │             │              │
+          ▼              ▼             ▼              ▼
+       世界校准       记忆写入       局部/终身学习    稳态调节
+          │              │             │              │
+          └──────────────┴─────────────┴──────────────┘
+                                         │
+                                         ▼
+                         Development proposal / checkpoint
+                         grow / reconnect / consolidate / prune
+                                         │
+                                         └──► 下一认知事务
+```
+
+以下旁路明确禁止：
+
+```text
+Observation ──► 外部模型 ──► 最终行动
+Observation ──► 固定意图表 ──► ActionIntent
+Outcome ──► 只改 UI/Seed 指标，不回写 Taiji
+新增神经元 ──► 直接并入主网络，不经评估和回滚
+```
+
+### 4.4 核心对象的状态、反馈与验收边界
+
+| 对象 | 最小持续状态 | 更新来源 | 输出 | 最小验收/lesion |
+|---|---|---|---|---|
+| 神经群体 | 活动、阈值、时间常数、资格迹、稀疏连接 | 局部活动、预测误差、调制和结果 | 下一时刻活动、候选 assembly | 移除群体后对应迁移能力下降；不能只看参数变化 |
+| Assembly | 成员/活动轨迹、时间边界、预测贡献、路由贡献 | 共现、预测稳定性、目标贡献、竞争 | 可绑定、广播、组合的候选 | 未见组合迁移；随机 chunk/成员 lesion 必须造成可解释损失 |
+| PerceptEvent | 特征、模态、时间、来源、置信度 | 输入预测误差和跨模态共现 | 工作空间候选和世界更新 | 改变输入关系而非字面名时，内部表征仍能迁移 |
+| WorldState | 对象、关系、状态、可行动性、不确定性 | 观察、行动后状态、干预结果 | 预测、规划约束、affordance | world-model lesion 应阻断因果预测/重规划，而非只降低文本质量 |
+| MemoryState | 工作焦点、情景记录、语义结构、程序技能 | 经历写入、检索、replay、sleep、遗忘 | 可迁移记忆上下文 | episode-ID/replay/semantic lesion 分别产生不同损失 |
+| WorkspaceState | 候选、焦点、绑定、容量、广播记录 | 内容、目标、不确定性、资源 | 当前认知上下文 | random/dense/无 workspace 对照必须可区分 |
+| Goal/Plan | 条件、约束、价值、候选轨迹、风险、provenance | 用户任务、内在需求、世界状态和结果 | ActionIntent | 未见目标和 delayed outcome 仍能规划；plan lesion 可测 |
+| SelfState/Homeostasis | 能力置信度、资源、疲劳、压力、好奇、安全 | 真实结果、误差、资源变化、休息/睡眠 | 路由、探索、学习和结构预算调制 | 移除调制后应改变真实行为，不得只改变 UI 数字 |
+| DevelopmentState | 缺口、预算、结构候选、成熟度、父 checkpoint | 持续失败、冗余、利用率、迁移收益 | growth/reconnect/prune proposal | 结构变化必须可回滚、可审计、通过旧能力回归 |
+| Outcome/LearningTrace | 真实结果、预测误差、信用来源、更新前后计数 | 环境/工具实际反馈 | 校准、记忆、参数和结构更新 | no-online-update、source lesion 和 checkpoint continuation 可区分 |
+
+### 4.5 当前实现与目标的明确分界
+
+当前 `CognitiveState` 已经承载 `Observation/PerceptEvent/Workspace/World/Memory/Goal/Plan/Self/Homeostasis/Development/Learning` 以及 action/outcome/prediction/calibration/recovery 状态；`RegionState` 已承载 membrane/activity/trace/prediction/error/threshold/inhibition。它们证明的是状态容器和窄闭环，不等于每个对象的完整认知机制已经存在。
+
+因此当前应使用以下能力声明：
+
+```text
+已实现：结构化状态、可恢复事务、局部预测、记忆原型、目标/行动/结果闭环
+部分实现：学习型抽象、工作空间协作、世界模型、自我/稳态调制、跨时间尺度 credit
+未实现：通用 assembly/concept 形成、显式共振动力学、自动结构增长/剪枝、完整递归自进化
+```
+
+所有新增代码必须先选择上表中的一个对象，明确它改变哪个状态、消费哪个反馈、产生哪个可验证输出；不允许继续以“智能模块”“共振模块”“自进化模块”等无合同名称直接扩展运行时。
+
 ## 5. 各层设计
 
 ### 5.1 L0：器官适配器
