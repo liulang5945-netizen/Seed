@@ -18,6 +18,7 @@ from .generation import ExpressionPlan, TextExpressionCodec
 
 LANGUAGE_ORGAN_CHECKPOINT_FORMAT = "taiji-language-organ-v1"
 LANGUAGE_TRAINING_EXAMPLE_FORMAT = "taiji-language-training-example-v1"
+LANGUAGE_TRAINING_CORPUS_FORMAT = "taiji-language-training-corpus-v1"
 LANGUAGE_BACKEND_SPEC_FORMAT = "taiji-language-backend-spec-v1"
 LANGUAGE_BACKEND_REGISTRY_FORMAT = "taiji-language-backend-registry-v1"
 LANGUAGE_VALIDATION_FORMAT = "taiji-language-validation-v1"
@@ -182,6 +183,59 @@ class LanguageTrainingExample:
             split=str(payload.get("split", "train")),
             weight=float(payload.get("weight", 1.0)),
             provenance=str(payload.get("provenance", "supervised")),
+        )
+
+
+@dataclass(frozen=True)
+class LanguageTrainingCorpus:
+    """Disjoint train/holdout supervision owned by the provider boundary."""
+
+    train: tuple[LanguageTrainingExample, ...]
+    holdout: tuple[LanguageTrainingExample, ...]
+
+    def __post_init__(self) -> None:
+        train = tuple(self.train)
+        holdout = tuple(self.holdout)
+        object.__setattr__(self, "train", train)
+        object.__setattr__(self, "holdout", holdout)
+        if not train or not holdout:
+            raise ValueError("language training corpus requires non-empty train and holdout splits")
+        examples = train + holdout
+        if any(not isinstance(example, LanguageTrainingExample) for example in examples):
+            raise TypeError("language training corpus accepts LanguageTrainingExample values")
+        if any(example.split != "train" for example in train):
+            raise ValueError("language training corpus train split contains a non-train example")
+        if any(example.split != "holdout" for example in holdout):
+            raise ValueError("language training corpus holdout split contains a non-holdout example")
+        example_ids = tuple(example.example_id for example in examples)
+        if len(set(example_ids)) != len(example_ids):
+            raise ValueError("language training corpus example IDs must be unique")
+        expression_ids = tuple(example.expression.expression_id for example in examples)
+        if len(set(expression_ids)) != len(expression_ids):
+            raise ValueError("language training corpus expression IDs must be unique")
+
+    @property
+    def size(self) -> int:
+        return len(self.train) + len(self.holdout)
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": LANGUAGE_TRAINING_CORPUS_FORMAT,
+            "train": [example.to_payload() for example in self.train],
+            "holdout": [example.to_payload() for example in self.holdout],
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> LanguageTrainingCorpus:
+        if payload.get("format") != LANGUAGE_TRAINING_CORPUS_FORMAT:
+            raise ValueError("unsupported language training corpus format")
+        train = payload.get("train", ())
+        holdout = payload.get("holdout", ())
+        if not isinstance(train, (list, tuple)) or not isinstance(holdout, (list, tuple)):
+            raise ValueError("language training corpus splits must be sequences")
+        return cls(
+            train=tuple(LanguageTrainingExample.from_payload(dict(example)) for example in train),
+            holdout=tuple(LanguageTrainingExample.from_payload(dict(example)) for example in holdout),
         )
 
 
