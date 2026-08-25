@@ -1,0 +1,61 @@
+{
+  "format": "taiji-p4-procedural-robustness-manifest-v1",
+  "task": "learn prepare plus transition actions and transfer to held-out state transitions",
+  "training_transitions": [
+    [
+      0.0,
+      1.0,
+      "advance"
+    ],
+    [
+      1.0,
+      0.0,
+      "retreat"
+    ],
+    [
+      1.0,
+      2.0,
+      "advance"
+    ],
+    [
+      2.0,
+      1.0,
+      "retreat"
+    ],
+    [
+      0.0,
+      0.0,
+      "hold"
+    ],
+    [
+      1.0,
+      1.0,
+      "hold"
+    ],
+    [
+      2.0,
+      2.0,
+      "hold"
+    ]
+  ],
+  "heldout_transitions": [
+    [
+      0.0,
+      2.0,
+      "advance"
+    ],
+    [
+      2.0,
+      0.0,
+      "retreat"
+    ]
+  ],
+  "interference": "nearby cues with a data-derived inspect action",
+  "resource_budget": "bounded episodic capacity equal to the original training corpus",
+  "controls": [
+    "checkpoint_continuation",
+    "similar_interference",
+    "bounded_forgetting"
+  ],
+  "boundary": "multi-step procedural transfer only; episode identity remains sequence structure, not answer content"
+}

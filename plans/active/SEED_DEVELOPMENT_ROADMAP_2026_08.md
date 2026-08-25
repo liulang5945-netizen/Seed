@@ -234,7 +234,7 @@ P4 的最小真实经历边界已落地：
   `ActionIntent`、`Outcome` 和可选 `WorldTransition`，不依赖领域事实表或固定事件槽；
 - `TSKV8Adapter` 在真实 `settle_action` 后写入一条 `EpisodicMemoryRecord`，后续 `observe` 检索相关记录，store 与认知
   state 一起进入 legacy/native checkpoint；
-- working item、写入/检索、容量淘汰、真实 outcome 绑定和 checkpoint round-trip 已通过定向测试；本轮原生回归为 `84 passed,
+- working item、写入/检索、容量淘汰、真实 outcome 绑定和 checkpoint round-trip 已通过定向测试；本轮原生回归为 `85 passed,
   1 skipped`（另 2 个旧 manifest 测试仍受本机 pytest 系统临时目录权限影响）。该入口只完成经历保持与检索，不宣称
   已形成语义/程序记忆或跨 episode 迁移。
 - `scripts/training/eval_taiji_p4_episodic_recall.py` 已完成 cue-conditioned one-shot recall 窄 Gate：8 条训练经历、8 条
@@ -263,7 +263,10 @@ P4 的最小真实经历边界已落地：
   改写真实 motor action；`settle_action()` 将类别写回 `ActionIntent.kind`，adapter consolidation 与 native checkpoint
   均已接通。runtime Gate 为 procedural=`1.0`、route lesion=`0.0`、episode-ID/checkpoint=`1.0`，报告和 manifest 为
   `reports/taiji_p4_procedural_runtime_*_20260825.json`。
-- 本轮 native 回归为 `84 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
+- `taiji/procedural_memory.py` 已增加 `ProceduralSequenceLearner`：按 episode/tick 聚合多步轨迹，使用 recurrent procedural
+  context；未见 transition transfer=`1.0`、相似 cue 干扰后=`1.0`、checkpoint=`1.0`，容量等于原训练集并加入干扰后准确率=`0.5`。
+  报告和 manifest 为 `reports/taiji_p4_procedural_robustness_*_20260825.json`。这证明序列技能与资源失忆边界，不代表规划。
+- 本轮 native 回归为 `85 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
 
 ### 工作项
 
@@ -367,4 +370,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**继续 P4 procedural robustness：扩展到多步技能组合，并加入技能遗忘、资源预算和干扰后的迁移 Gate；不改变既有合同。**
+**继续 P4 homeostatic regulation：让 fatigue/curiosity/stress 等内部状态根据预测误差、资源和结果调节探索、学习与 replay，并加入固定调度、随机 drive、无调质和 sleep/play lesion；不改变既有合同。**
