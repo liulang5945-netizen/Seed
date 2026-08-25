@@ -1,0 +1,15 @@
+{
+  "format": "taiji-p6-text-organ-codec-v1",
+  "metrics": {
+    "encoded_bytes": 426,
+    "modality": "text",
+    "channel": "message",
+    "semantic_slots_round_trip": true,
+    "confidence_round_trip": true,
+    "goal_provenance_round_trip": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "structured text expression preserves semantic slots, confidence, and goal provenance through UTF-8 codec"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "format": "taiji-p6-text-organ-codec-manifest-v1",
+  "task": "round-trip a selected ContentPlan through the structured text organ codec",
+  "lesions": [
+    "direct_byte_content",
+    "goal_provenance_drop",
+    "semantic_slot_rewrite"
+  ],
+  "signals": [
+    "modality",
+    "channel",
+    "semantic_slots",
+    "confidence",
+    "source_goal_id"
+  ],
+  "boundary": "structured text-organ codec Gate only; no fluency, syntax, or language-model capability claim"
+}

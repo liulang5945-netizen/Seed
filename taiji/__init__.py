@@ -64,12 +64,14 @@ from .evaluation import A1EvaluationConfig, PerceptionCorpus, PerceptionEvaluato
 from .fabric import TaijiFabric
 from .generation import (
     GENERATION_CHECKPOINT_FORMAT,
+    TEXT_EXPRESSION_CODEC_FORMAT,
     TOOL_CALL_CODEC_FORMAT,
     ContentPlan,
     ExpressionPlan,
     GenerationController,
     GenerationTrace,
     StructuredToolCallCodec,
+    TextExpressionCodec,
     ToolCall,
 )
 from .homeostasis import (
@@ -165,9 +167,11 @@ __all__ = [
     "GenerationController",
     "GenerationTrace",
     "StructuredToolCallCodec",
+    "TextExpressionCodec",
     "ToolCall",
     "GENERATION_CHECKPOINT_FORMAT",
     "TOOL_CALL_CODEC_FORMAT",
+    "TEXT_EXPRESSION_CODEC_FORMAT",
     "MemoryRecall",
     "MemoryState",
     "NativeCheckpoint",
