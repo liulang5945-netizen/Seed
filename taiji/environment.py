@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 
 @dataclass(frozen=True)
@@ -14,6 +14,7 @@ class EnvironmentOutcome:
     sensation: int
     reward: float
     terminal: bool = False
+    success: bool | None = None
 
 
 @runtime_checkable
@@ -25,3 +26,13 @@ class TaijiEnvironment(Protocol):
 
     def step(self, action_symbol: int) -> EnvironmentOutcome:
         """Execute an action and return its sensation, reward and terminal flag."""
+
+
+@runtime_checkable
+class TaijiToolEnvironment(Protocol):
+    """Protocol for environments that accept structured tool organs."""
+
+    def execute_tool(
+        self, tool_name: str, parameters: Mapping[str, Any]
+    ) -> EnvironmentOutcome:
+        """Execute one structured tool call and return its causal outcome."""

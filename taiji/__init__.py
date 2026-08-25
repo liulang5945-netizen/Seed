@@ -46,7 +46,7 @@ from .contracts import (
     WorldTransition,
 )
 from .contracts import MemoryState as NativeMemoryState
-from .environment import EnvironmentOutcome, TaijiEnvironment
+from .environment import EnvironmentOutcome, TaijiEnvironment, TaijiToolEnvironment
 from .episodic_memory import (
     EPISODIC_MEMORY_CHECKPOINT_FORMAT,
     EpisodicMemoryHit,
@@ -189,6 +189,7 @@ __all__ = [
     "TaijiConsolidation",
     "TaijiDecision",
     "TaijiEnvironment",
+    "TaijiToolEnvironment",
     "TaijiFabric",
     "TaijiOutcome",
     "TaijiState",

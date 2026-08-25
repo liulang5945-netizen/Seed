@@ -1,0 +1,18 @@
+{
+  "format": "taiji-p6-tool-execution-manifest-v1",
+  "task": "execute a generated structured tool call and close the outcome feedback loop",
+  "lesions": [
+    "direct_byte_only",
+    "generation_organ",
+    "episodic_outcome_write"
+  ],
+  "signals": [
+    "tool_name",
+    "parameters",
+    "success",
+    "reward",
+    "terminal",
+    "intent_id"
+  ],
+  "boundary": "simulated structured tool execution Gate only; no external service reliability or general language claim"
+}

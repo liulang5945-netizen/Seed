@@ -287,7 +287,10 @@ P4 的最小真实经历边界已落地：
   保持 intent kind、semantic slots、tool name 和 goal provenance，并可由 `ToolCall.to_world_action()` 回到同一 intent 的因果行动合同；
   `TSKV8Adapter` 的 generation trace/controller 已纳入 native checkpoint。报告和 manifest 为
   `reports/taiji_p6_generation_*_20260825.json`。该结果不等于语言流畅性、自主内容创造或真实外部工具成功。
-- 本轮 native 回归为 `92 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
+- `TaijiToolEnvironment` 与 `TSKV8Adapter.execute_tool_call()` 已通过 tool execution/outcome 窄 Gate：模拟环境执行结构化调用后，
+  `Outcome` 保持 intent ID、success、reward、terminal 并进入 episodic memory；关闭 generation organ 的 direct-byte lesion 无法执行
+  同一工具合同。报告和 manifest 为 `reports/taiji_p6_tool_execution_*_20260825.json`。该结果不代表外部服务可靠性或失败恢复。
+- 本轮 native 回归为 `94 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
 
 ### 工作项
 
@@ -391,4 +394,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**继续 P6 tool execution/outcome Gate：将结构化 `ToolCall` 接入真实/模拟环境，验证 outcome 回写、失败重规划和 direct-byte lesion；不改变既有合同。**
+**继续 P6 tool failure/replan Gate：让结构化工具失败产生可观测 prediction error，触发替代计划并把恢复结果写回记忆；不改变既有合同。**

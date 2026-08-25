@@ -34,6 +34,7 @@ from .contracts import (
     WorldTransition,
 )
 from .contracts import MemoryState as NativeMemoryState
+from .environment import EnvironmentOutcome, TaijiToolEnvironment
 from .episodic_memory import EpisodicMemoryStore
 from .generation import GenerationController, GenerationTrace, ToolCall
 from .homeostasis import HomeostaticController, HomeostaticDrive
@@ -261,6 +262,52 @@ class TSKV8Adapter(Taiji):
         )
         self._last_generation_trace = trace
         return trace.tool_call
+
+    def execute_tool_call(
+        self,
+        environment: TaijiToolEnvironment,
+        *,
+        call: ToolCall | None = None,
+        learn: bool = True,
+    ) -> Outcome:
+        """Execute a generated call and feed its outcome back into Taiji."""
+
+        if not isinstance(environment, TaijiToolEnvironment):
+            raise TypeError("environment must implement TaijiToolEnvironment")
+        selected_call = call
+        if selected_call is None:
+            if self._last_generation_trace is None:
+                raise RuntimeError("tool execution requires a generated ToolCall")
+            selected_call = self._last_generation_trace.tool_call
+        intent = self._cognitive_state.action_intent
+        if intent is None or intent.intent_id != selected_call.intent_id:
+            raise ValueError("tool call must reference the pending ActionIntent")
+        result = environment.execute_tool(
+            selected_call.tool_name,
+            dict(selected_call.parameters),
+        )
+        if not isinstance(result, EnvironmentOutcome):
+            raise TypeError("tool environment must return an EnvironmentOutcome")
+        taiji_outcome = self.settle_action(
+            result.reward,
+            learn=learn,
+            success=result.success,
+            terminal=result.terminal,
+            provenance="experienced",
+        )
+        experienced = self._cognitive_state.outcome
+        self.observe(result.sensation, learn=learn)
+        return (
+            experienced
+            if experienced is not None
+            else Outcome(
+                intent_id=intent.intent_id,
+                reward=taiji_outcome.reward,
+                success=result.success,
+                terminal=result.terminal,
+                tick=taiji_outcome.tick,
+            )
+        )
 
     def attach_goal_planner(self, planner: GoalPlanner | None) -> None:
         """Attach the Taiji-owned planner for executable goal candidates."""
@@ -641,6 +688,7 @@ class TSKV8Adapter(Taiji):
         world_state = kwargs.pop("world_state", None)
         world_action = kwargs.pop("world_action", None)
         success = kwargs.pop("success", None)
+        terminal = bool(kwargs.pop("terminal", False))
         learn_world = kwargs.pop("learn_world", None)
         world_learning_rate = float(kwargs.pop("world_learning_rate", 0.005))
         world_learning_repeats = int(kwargs.pop("world_learning_repeats", 1))
@@ -661,6 +709,7 @@ class TSKV8Adapter(Taiji):
             intent_id=intent_id,
             reward=float(result.reward),
             success=(float(result.reward) > 0.0 if success is None else bool(success)),
+            terminal=terminal,
             provenance=str(kwargs.get("provenance", "experienced")),
             tick=(self.tick if world_state is None else int(world_state.tick)),
         )
