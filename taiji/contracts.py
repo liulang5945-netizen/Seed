@@ -113,6 +113,21 @@ def _normalize_tags(value: Any, name: str) -> tuple[str, ...]:
     return tuple(sorted(tags))
 
 
+def _normalize_ids(value: Any, name: str) -> tuple[str, ...]:
+    ids = tuple(_check_text(str(item), name) for item in value)
+    if len(set(ids)) != len(ids):
+        raise ValueError(f"{name} cannot contain duplicate values")
+    return ids
+
+
+def _normalize_unit_pairs(value: Any, name: str) -> tuple[tuple[str, float], ...]:
+    pairs = _normalize_pairs(value, name)
+    normalized: list[tuple[str, float]] = []
+    for key, item in pairs:
+        normalized.append((key, _check_unit(float(item), f"{name}[{key}]")))
+    return tuple(normalized)
+
+
 @dataclass(frozen=True)
 class Observation:
     """A versioned sensation entering Taiji through an organ boundary."""
@@ -223,6 +238,224 @@ class PerceptEvent:
             prediction_error=float(payload.get("prediction_error", 0.0)),
             boundary=bool(payload.get("boundary", False)),
             confidence=float(payload.get("confidence", 1.0)),
+        )
+
+
+@dataclass(frozen=True)
+class Assembly:
+    """A time-bounded, causally testable coalition of neural activity."""
+
+    assembly_id: str
+    start_tick: int
+    end_tick: int
+    activity: torch.Tensor = field(default_factory=lambda: torch.empty(0))
+    member_indices: tuple[int, ...] = ()
+    source_event_ids: tuple[str, ...] = ()
+    coherence: float = 0.0
+    prediction_error: float = 0.0
+    route_score: float = 0.0
+    provenance: str = "learned"
+    confidence: float = 0.0
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.assembly_id, "assembly_id")
+        _check_text(self.provenance, "assembly provenance")
+        if int(self.start_tick) < 0 or int(self.end_tick) < int(self.start_tick):
+            raise ValueError("assembly ticks must be non-negative and ordered")
+        if self.activity.ndim != 1:
+            raise ValueError("assembly activity must be a vector")
+        members = tuple(int(index) for index in self.member_indices)
+        if any(index < 0 for index in members):
+            raise ValueError("assembly member indices cannot be negative")
+        if len(set(members)) != len(members):
+            raise ValueError("assembly member indices cannot contain duplicates")
+        object.__setattr__(self, "member_indices", members)
+        object.__setattr__(
+            self, "source_event_ids", _normalize_ids(self.source_event_ids, "assembly source_event_ids")
+        )
+        _check_unit(self.coherence, "assembly coherence")
+        _check_unit(self.prediction_error, "assembly prediction_error")
+        _check_unit(self.route_score, "assembly route_score")
+        _check_unit(self.confidence, "assembly confidence")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "assembly_id": self.assembly_id,
+            "start_tick": self.start_tick,
+            "end_tick": self.end_tick,
+            "activity": self.activity.detach().cpu().clone(),
+            "member_indices": list(self.member_indices),
+            "source_event_ids": list(self.source_event_ids),
+            "coherence": self.coherence,
+            "prediction_error": self.prediction_error,
+            "route_score": self.route_score,
+            "provenance": self.provenance,
+            "confidence": self.confidence,
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> Assembly:
+        return cls(
+            version=int(payload["version"]),
+            assembly_id=str(payload["assembly_id"]),
+            start_tick=int(payload["start_tick"]),
+            end_tick=int(payload["end_tick"]),
+            activity=payload["activity"].detach().to(device).clone(),
+            member_indices=tuple(int(index) for index in payload.get("member_indices", ())),
+            source_event_ids=tuple(str(item) for item in payload.get("source_event_ids", ())),
+            coherence=float(payload.get("coherence", 0.0)),
+            prediction_error=float(payload.get("prediction_error", 0.0)),
+            route_score=float(payload.get("route_score", 0.0)),
+            provenance=str(payload.get("provenance", "learned")),
+            confidence=float(payload.get("confidence", 0.0)),
+        )
+
+
+@dataclass(frozen=True)
+class Event:
+    """A learned temporal structure composed from perceptual assemblies."""
+
+    event_id: str
+    start_tick: int
+    end_tick: int
+    latent: torch.Tensor = field(default_factory=lambda: torch.empty(0))
+    assembly_ids: tuple[str, ...] = ()
+    parent_event_ids: tuple[str, ...] = ()
+    object_ids: tuple[str, ...] = ()
+    relation_ids: tuple[str, ...] = ()
+    prediction_error: float = 0.0
+    confidence: float = 0.0
+    provenance: str = "learned"
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.event_id, "event_id")
+        _check_text(self.provenance, "event provenance")
+        if int(self.start_tick) < 0 or int(self.end_tick) < int(self.start_tick):
+            raise ValueError("event ticks must be non-negative and ordered")
+        if self.latent.ndim != 1:
+            raise ValueError("event latent must be a vector")
+        for field_name in ("assembly_ids", "parent_event_ids", "object_ids", "relation_ids"):
+            object.__setattr__(
+                self,
+                field_name,
+                _normalize_ids(getattr(self, field_name), f"event {field_name}"),
+            )
+        _check_unit(self.prediction_error, "event prediction_error")
+        _check_unit(self.confidence, "event confidence")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "event_id": self.event_id,
+            "start_tick": self.start_tick,
+            "end_tick": self.end_tick,
+            "latent": self.latent.detach().cpu().clone(),
+            "assembly_ids": list(self.assembly_ids),
+            "parent_event_ids": list(self.parent_event_ids),
+            "object_ids": list(self.object_ids),
+            "relation_ids": list(self.relation_ids),
+            "prediction_error": self.prediction_error,
+            "confidence": self.confidence,
+            "provenance": self.provenance,
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> Event:
+        return cls(
+            version=int(payload["version"]),
+            event_id=str(payload["event_id"]),
+            start_tick=int(payload["start_tick"]),
+            end_tick=int(payload["end_tick"]),
+            latent=payload["latent"].detach().to(device).clone(),
+            assembly_ids=tuple(str(item) for item in payload.get("assembly_ids", ())),
+            parent_event_ids=tuple(str(item) for item in payload.get("parent_event_ids", ())),
+            object_ids=tuple(str(item) for item in payload.get("object_ids", ())),
+            relation_ids=tuple(str(item) for item in payload.get("relation_ids", ())),
+            prediction_error=float(payload.get("prediction_error", 0.0)),
+            confidence=float(payload.get("confidence", 0.0)),
+            provenance=str(payload.get("provenance", "learned")),
+        )
+
+
+@dataclass(frozen=True)
+class Concept:
+    """A cross-experience invariant, not a label or an episode copy."""
+
+    concept_id: str
+    prototype: torch.Tensor = field(default_factory=lambda: torch.empty(0))
+    support_event_ids: tuple[str, ...] = ()
+    support_assembly_ids: tuple[str, ...] = ()
+    relation_ids: tuple[str, ...] = ()
+    maturity: float = 0.0
+    stability: float = 0.0
+    confidence: float = 0.0
+    update_count: int = 0
+    last_updated_tick: int = 0
+    provenance: str = "consolidated"
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.concept_id, "concept_id")
+        _check_text(self.provenance, "concept provenance")
+        if self.prototype.ndim != 1:
+            raise ValueError("concept prototype must be a vector")
+        for field_name in ("support_event_ids", "support_assembly_ids", "relation_ids"):
+            object.__setattr__(
+                self,
+                field_name,
+                _normalize_ids(getattr(self, field_name), f"concept {field_name}"),
+            )
+        _check_unit(self.maturity, "concept maturity")
+        _check_unit(self.stability, "concept stability")
+        _check_unit(self.confidence, "concept confidence")
+        if int(self.update_count) < 0 or int(self.last_updated_tick) < 0:
+            raise ValueError("concept update counters cannot be negative")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "concept_id": self.concept_id,
+            "prototype": self.prototype.detach().cpu().clone(),
+            "support_event_ids": list(self.support_event_ids),
+            "support_assembly_ids": list(self.support_assembly_ids),
+            "relation_ids": list(self.relation_ids),
+            "maturity": self.maturity,
+            "stability": self.stability,
+            "confidence": self.confidence,
+            "update_count": self.update_count,
+            "last_updated_tick": self.last_updated_tick,
+            "provenance": self.provenance,
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> Concept:
+        return cls(
+            version=int(payload["version"]),
+            concept_id=str(payload["concept_id"]),
+            prototype=payload["prototype"].detach().to(device).clone(),
+            support_event_ids=tuple(str(item) for item in payload.get("support_event_ids", ())),
+            support_assembly_ids=tuple(
+                str(item) for item in payload.get("support_assembly_ids", ())
+            ),
+            relation_ids=tuple(str(item) for item in payload.get("relation_ids", ())),
+            maturity=float(payload.get("maturity", 0.0)),
+            stability=float(payload.get("stability", 0.0)),
+            confidence=float(payload.get("confidence", 0.0)),
+            update_count=int(payload.get("update_count", 0)),
+            last_updated_tick=int(payload.get("last_updated_tick", 0)),
+            provenance=str(payload.get("provenance", "consolidated")),
         )
 
 
@@ -1537,12 +1770,44 @@ class SelfState:
     tick: int
     confidence: float = 0.0
     resource_fraction: float = 1.0
+    capability_confidence: tuple[tuple[str, float], ...] = ()
+    available_tool_ids: tuple[str, ...] = ()
+    autobiographical_ids: tuple[str, ...] = ()
+    commitment_ids: tuple[str, ...] = ()
+    last_outcome_id: str | None = None
+    last_update_source: str = "bootstrap"
+    last_prediction_error: float = 0.0
+    update_count: int = 0
+    lineage: tuple[str, ...] = ()
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
         _check_version(self.version)
         _check_unit(self.confidence, "self confidence")
         _check_unit(self.resource_fraction, "resource_fraction")
+        _check_text(self.last_update_source, "self update source")
+        object.__setattr__(
+            self,
+            "capability_confidence",
+            _normalize_unit_pairs(self.capability_confidence, "capability_confidence"),
+        )
+        for field_name in (
+            "available_tool_ids",
+            "autobiographical_ids",
+            "commitment_ids",
+            "lineage",
+        ):
+            object.__setattr__(
+                self,
+                field_name,
+                _normalize_ids(getattr(self, field_name), f"self {field_name}"),
+            )
+        if self.last_outcome_id is not None:
+            _check_text(self.last_outcome_id, "self last_outcome_id")
+        if not math.isfinite(float(self.last_prediction_error)) or float(self.last_prediction_error) < 0.0:
+            raise ValueError("self last_prediction_error must be finite and non-negative")
+        if int(self.tick) < 0 or int(self.update_count) < 0:
+            raise ValueError("self counters cannot be negative")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -1550,6 +1815,15 @@ class SelfState:
             "tick": self.tick,
             "confidence": self.confidence,
             "resource_fraction": self.resource_fraction,
+            "capability_confidence": list(self.capability_confidence),
+            "available_tool_ids": list(self.available_tool_ids),
+            "autobiographical_ids": list(self.autobiographical_ids),
+            "commitment_ids": list(self.commitment_ids),
+            "last_outcome_id": self.last_outcome_id,
+            "last_update_source": self.last_update_source,
+            "last_prediction_error": self.last_prediction_error,
+            "update_count": self.update_count,
+            "lineage": list(self.lineage),
         }
 
     @classmethod
@@ -1559,6 +1833,24 @@ class SelfState:
             tick=int(payload["tick"]),
             confidence=float(payload.get("confidence", 0.0)),
             resource_fraction=float(payload.get("resource_fraction", 1.0)),
+            capability_confidence=tuple(
+                (str(key), float(value))
+                for key, value in payload.get("capability_confidence", ())
+            ),
+            available_tool_ids=tuple(str(item) for item in payload.get("available_tool_ids", ())),
+            autobiographical_ids=tuple(
+                str(item) for item in payload.get("autobiographical_ids", ())
+            ),
+            commitment_ids=tuple(str(item) for item in payload.get("commitment_ids", ())),
+            last_outcome_id=(
+                None
+                if payload.get("last_outcome_id") is None
+                else str(payload["last_outcome_id"])
+            ),
+            last_update_source=str(payload.get("last_update_source", "bootstrap")),
+            last_prediction_error=float(payload.get("last_prediction_error", 0.0)),
+            update_count=int(payload.get("update_count", 0)),
+            lineage=tuple(str(item) for item in payload.get("lineage", ())),
         )
 
 
@@ -1601,12 +1893,46 @@ class DevelopmentState:
     tick: int
     stage: str = "bootstrap"
     structural_budget: int = 0
+    resource_utilization: float = 0.0
+    capability_gaps: tuple[str, ...] = ()
+    proposal_ids: tuple[str, ...] = ()
+    parent_checkpoint_id: str | None = None
+    last_update_source: str = "bootstrap"
+    last_validation_status: str = "none"
+    validation_evidence_ids: tuple[str, ...] = ()
+    growth_count: int = 0
+    prune_count: int = 0
+    split_merge_count: int = 0
+    lineage: tuple[str, ...] = ()
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
         _check_version(self.version)
         _check_text(self.stage, "development stage")
-        if int(self.tick) < 0 or int(self.structural_budget) < 0:
+        _check_text(self.last_update_source, "development update source")
+        if self.last_validation_status not in {"none", "pending", "accepted", "rejected", "rolled_back"}:
+            raise ValueError("unsupported development validation status")
+        _check_unit(self.resource_utilization, "development resource_utilization")
+        object.__setattr__(
+            self,
+            "capability_gaps",
+            _normalize_ids(self.capability_gaps, "development capability_gaps"),
+        )
+        for field_name in ("proposal_ids", "validation_evidence_ids", "lineage"):
+            object.__setattr__(
+                self,
+                field_name,
+                _normalize_ids(getattr(self, field_name), f"development {field_name}"),
+            )
+        if self.parent_checkpoint_id is not None:
+            _check_text(self.parent_checkpoint_id, "development parent_checkpoint_id")
+        if (
+            int(self.tick) < 0
+            or int(self.structural_budget) < 0
+            or int(self.growth_count) < 0
+            or int(self.prune_count) < 0
+            or int(self.split_merge_count) < 0
+        ):
             raise ValueError("development counters cannot be negative")
 
     def to_payload(self) -> dict[str, Any]:
@@ -1615,6 +1941,17 @@ class DevelopmentState:
             "tick": self.tick,
             "stage": self.stage,
             "structural_budget": self.structural_budget,
+            "resource_utilization": self.resource_utilization,
+            "capability_gaps": list(self.capability_gaps),
+            "proposal_ids": list(self.proposal_ids),
+            "parent_checkpoint_id": self.parent_checkpoint_id,
+            "last_update_source": self.last_update_source,
+            "last_validation_status": self.last_validation_status,
+            "validation_evidence_ids": list(self.validation_evidence_ids),
+            "growth_count": self.growth_count,
+            "prune_count": self.prune_count,
+            "split_merge_count": self.split_merge_count,
+            "lineage": list(self.lineage),
         }
 
     @classmethod
@@ -1624,6 +1961,23 @@ class DevelopmentState:
             tick=int(payload["tick"]),
             stage=str(payload.get("stage", "bootstrap")),
             structural_budget=int(payload.get("structural_budget", 0)),
+            resource_utilization=float(payload.get("resource_utilization", 0.0)),
+            capability_gaps=tuple(str(item) for item in payload.get("capability_gaps", ())),
+            proposal_ids=tuple(str(item) for item in payload.get("proposal_ids", ())),
+            parent_checkpoint_id=(
+                None
+                if payload.get("parent_checkpoint_id") is None
+                else str(payload["parent_checkpoint_id"])
+            ),
+            last_update_source=str(payload.get("last_update_source", "bootstrap")),
+            last_validation_status=str(payload.get("last_validation_status", "none")),
+            validation_evidence_ids=tuple(
+                str(item) for item in payload.get("validation_evidence_ids", ())
+            ),
+            growth_count=int(payload.get("growth_count", 0)),
+            prune_count=int(payload.get("prune_count", 0)),
+            split_merge_count=int(payload.get("split_merge_count", 0)),
+            lineage=tuple(str(item) for item in payload.get("lineage", ())),
         )
 
 
@@ -1680,6 +2034,9 @@ class CognitiveState:
     world_prediction: WorldPredictionRecord | None = None
     world_calibration_trace: tuple[WorldCalibrationTrace, ...] = ()
     planning_recovery: PlanningRecoveryState | None = None
+    assemblies: tuple[Assembly, ...] = ()
+    events: tuple[Event, ...] = ()
+    concepts: tuple[Concept, ...] = ()
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -1720,6 +2077,9 @@ class CognitiveState:
             "planning_recovery": (
                 None if self.planning_recovery is None else self.planning_recovery.to_payload()
             ),
+            "assemblies": [item.to_payload() for item in self.assemblies],
+            "events": [item.to_payload() for item in self.events],
+            "concepts": [item.to_payload() for item in self.concepts],
         }
 
     @classmethod
@@ -1775,6 +2135,17 @@ class CognitiveState:
                 None
                 if payload.get("planning_recovery") is None
                 else PlanningRecoveryState.from_payload(payload["planning_recovery"])
+            ),
+            assemblies=tuple(
+                Assembly.from_payload(item, device=device)
+                for item in payload.get("assemblies", ())
+            ),
+            events=tuple(
+                Event.from_payload(item, device=device) for item in payload.get("events", ())
+            ),
+            concepts=tuple(
+                Concept.from_payload(item, device=device)
+                for item in payload.get("concepts", ())
             ),
         )
 
