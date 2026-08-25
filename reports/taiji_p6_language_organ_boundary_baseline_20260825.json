@@ -7,7 +7,9 @@
     "native_checkpoint_round_trip": true,
     "cognition_unchanged": true,
     "training_contract_round_trip": true,
-    "backend_registry_round_trip": true
+    "backend_registry_round_trip": true,
+    "external_realization": true,
+    "external_organ_lesion": true
   },
   "gate": {
     "passed": true,

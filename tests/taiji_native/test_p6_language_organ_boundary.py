@@ -4,6 +4,7 @@ import pytest
 
 from taiji import (
     ContentPlan,
+    ExternalTextDecoderLanguageOrgan,
     GenerationController,
     LanguageBackendRegistry,
     LanguageBackendSpec,
@@ -103,3 +104,48 @@ def test_language_backend_registry_and_training_contract_are_model_agnostic() ->
             training_contract="expression-to-text-v1",
             owns_cognition=True,
         )
+
+
+def test_external_decoder_realization_and_lesion_stay_outside_taiji_core() -> None:
+    class _ExternalDecoder:
+        def __init__(self) -> None:
+            self.calls: list[tuple[str, int, float]] = []
+
+        def generate(self, prompt: str, *, max_tokens: int, temperature: float) -> str:
+            self.calls.append((prompt, max_tokens, temperature))
+            return "外部 decoder 已完成表达。"
+
+    decoder = _ExternalDecoder()
+    organ = ExternalTextDecoderLanguageOrgan(
+        decoder,
+        prompt_builder=lambda expression: f"render:{expression.channel}:{expression.content_id}",
+        max_tokens=32,
+        temperature=0.1,
+    )
+    registry = LanguageBackendRegistry.default()
+    registry.register(
+        LanguageBackendSpec(
+            backend_id="mature-decoder-v1",
+            family="external-decoder",
+            training_contract="expression-to-text-v1",
+        )
+    )
+    adapter = TSKV8Adapter()
+    adapter.attach_language_backend_registry(registry)
+    adapter.attach_language_organ(organ)
+    emission = adapter.emit_language(_expression())
+    restored_organ = ExternalTextDecoderLanguageOrgan.from_checkpoint(
+        organ.checkpoint(),
+        decoder,
+        prompt_builder=organ.prompt_builder,
+    )
+    restored_emission = restored_organ.emit(_expression())
+    adapter.attach_language_organ(None)
+
+    assert emission.text_bytes == "外部 decoder 已完成表达。".encode()
+    assert restored_emission.text_bytes == emission.text_bytes
+    assert decoder.calls[0][0].startswith("render:message:")
+    assert decoder.calls[0][1:] == (32, 0.1)
+    assert adapter.cognitive_snapshot().action_intent is None
+    with pytest.raises(RuntimeError, match="language organ is not attached"):
+        adapter.emit_language(_expression())
