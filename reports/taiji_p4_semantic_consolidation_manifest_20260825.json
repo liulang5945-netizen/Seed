@@ -1,0 +1,33 @@
+{
+  "format": "taiji-p4-semantic-consolidation-manifest-v1",
+  "task": "infer the unseen [1,1] composition reward from [0,0], [1,0], [0,1] episodes",
+  "train_episodes": [
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      1
+    ]
+  ],
+  "holdout_composition": [
+    1,
+    1
+  ],
+  "holdout_reward": 2,
+  "controls": [
+    "episodic_nearest",
+    "replay_lesion",
+    "episode_id_lesion",
+    "checkpoint_continuation"
+  ],
+  "boundary": "one additive semantic relation only; not a general language or concept benchmark"
+}

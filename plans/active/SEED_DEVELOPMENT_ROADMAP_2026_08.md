@@ -241,6 +241,10 @@ P4 的最小真实经历边界已落地：
   新 episode 查询中，full/episode-ID lesion/checkpoint continuation action recall 均为 `1.0`，retrieval/write lesion 均为
   `0.0`；报告与 manifest 为 `reports/taiji_p4_episodic_recall_*_20260825.json`。这只关闭 fast episodic retrieval 子门，
   不代表多次经历已巩固为可迁移语义。
+- `taiji/semantic_memory.py` 的 `SemanticMemoryLearner` 已完成最小 replay/consolidation：从 3 条 `[0,0]→0`、`[1,0]→1`、
+  `[0,1]→1` 经历预测未见 `[1,1]→2`，episodic nearest error=`1.0`，semantic error≈`0.0045`；replay lesion error=`2.0`，
+  episode-ID lesion 和 checkpoint continuation error≈`0.0045`。报告与 manifest 为 `reports/taiji_p4_semantic_consolidation_*_20260825.json`。
+  这是 additive numeric relation 子门，不是一般语义巩固；当前 learner 还未接入 adapter runtime。
 
 ### 工作项
 
@@ -344,4 +348,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**扩展 P4：建立跨 episode 新组合语义基准，使用 replay/consolidation 把多次经历压缩成可迁移关系，并加入 episode、replay、内容检索和 checkpoint continuation lesion；保留 P3 world/workspace outcome 对照，不改变既有合同。**
+**接入 P4 semantic learner：让 `SemanticMemoryLearner` 消费 adapter 的真实 episodic outcomes 并进入 native checkpoint，验证语义状态不是独立脚本旁路；保留 P3 world/workspace outcome 对照，不改变既有合同。**

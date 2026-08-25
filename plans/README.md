@@ -50,10 +50,13 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P4 cue-conditioned one-shot recall 窄 Gate 已通过：full、episode-ID lesion、checkpoint continuation 的 action recall
   均为 1.0，retrieval/write lesion 均为 0；报告和 manifest 为 `reports/taiji_p4_episodic_recall_*_20260825.json`。
   该结果证明经历检索和来源独立性，不证明从多次经历抽取新组合语义。
+- P4 additive semantic consolidation 窄 Gate 已通过：3 条 episodic records 对未见 `[1,1]` 组合的最近情景误差为 `1.0`，
+  consolidation 误差约 `0.0045`；replay lesion 误差 `2.0`，episode-ID lesion 与 checkpoint continuation 误差约 `0.0045`。
+  这只证明一类数值关系可从经历中压缩，不证明一般概念、语言或程序技能。
 - 原生套件当前 74 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-扩展 P4：建立跨 episode 新组合语义基准，使用 replay/consolidation 把多次经历压缩成可迁移关系，并加入 episode、replay、
-  内容检索和 checkpoint continuation lesion；保留 P3 world/workspace outcome 对照，不提前进入语言或产品层。
+把 `SemanticMemoryLearner` 接入 adapter 的真实 outcome 写入与 native checkpoint，验证语义状态不是独立脚本旁路；随后再扩展
+  多关系、多噪声和更大 episode holdout。保留 P3 world/workspace outcome 对照，不提前进入语言或产品层。

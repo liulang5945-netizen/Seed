@@ -1,0 +1,17 @@
+{
+  "format": "taiji-p4-semantic-consolidation-v1",
+  "train_records": 3,
+  "holdout_queries": 1,
+  "metrics": {
+    "episodic_nearest_error": 1.0,
+    "semantic_consolidated_error": 0.0044831037521362305,
+    "replay_lesion_error": 2.0,
+    "episode_id_lesion_error": 0.0044831037521362305,
+    "checkpoint_continuation_error": 0.0044831037521362305,
+    "consolidation_count": 1
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "consolidation beats nearest episode on an unseen composition; replay and checkpoint controls are causal"
+  }
+}
