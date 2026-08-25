@@ -64,8 +64,18 @@ P1 的剩余工作只限于回归门禁与边界维护；下一阶段进入 P2 �
 - 感知动态与参数进入 Taiji v1 checkpoint，Seed 不保存第二份感知状态；
 - 已有单元测试证明连续特征、可变时长、冻结学习和恢复确定性。
 
+A1 评测合同已建立在 `taiji/evaluation.py`：训练集、未见组合、边界扰动和随机 chunk
+对照分开输入；同一个 ridge probe 同时报告 learned assembly 与 byte-only；多个 seed
+输出均值、方差和明确的 `gate_passed`，评测器不内置词表或答案映射。
+
 P2 尚未退出：未见词形/未见组合、边界扰动、随机 chunk、byte-only 对照和跨 seed holdout
-评测仍需建立。当前代码是可回归的感知纵切片，不是已经通过 A1 Gate 的最终感知层。
+在项目正式语料上的结果仍需建立。当前已生成首份可审计 smoke 证据：
+`reports/taiji_a1_manifest_smoke_20260825.json` 与
+`reports/taiji_a1_perception_smoke_20260825.json`。该报告的 A1 Gate 明确为
+`false`：primary seed 的未见组合 learned accuracy 为 `0.0773`，byte-only 为
+`0.2479`，generalization gain 为 `-0.1706`；跨 seed learned accuracy 标准差为
+`0.0033`。因此当前瓶颈是表示迁移能力，不是随机种子不稳定；代码仍是可回归的
+感知纵切片，不是已经通过 A1 Gate 的最终感知层。
 
 ## 3. 执行原则
 
@@ -245,4 +255,4 @@ P2 尚未退出：未见词形/未见组合、边界扰动、随机 chunk、byte
 
 ## 16. 当前唯一下一步
 
-**建立 P2/A1 感知评测合同：加入未见词形/组合、边界扰动、随机 chunk、byte-only 对照和跨 seed holdout，先量化当前 assembly 是否真正带来迁移收益。**
+**围绕失败的 byte-only 对照修正 P2 表示学习目标：先让 assembly 在训练中学习可预测的局部/组合目标，并保留 boundary、random-chunk 和 byte-only 对照，再用同一份 manifest 重跑 A1；在结果恢复正增益前不进入 P3。**

@@ -11,8 +11,11 @@ TSK-v8 adapter 和 Seed 所有权门禁已经进入代码。该纵切片只证�
 不改变“TSK-v8 不是完整 Taiji”的能力声明。
 
 P2 已开始：`LearnedPerception` 提供连续局部特征、递归预测误差和可变时长 assembly，
-并随 v1 adapter checkpoint 保存。A1 的未见组合迁移证据尚未完成，因此当前仍不能宣称
-Taiji 已拥有通过 Gate 的学习型抽象能力。
+并随 v1 adapter checkpoint 保存。A1 评测合同已在 `taiji/evaluation.py` 建立，项目
+正式语料上的首份 smoke 证据已生成，且 Gate 明确未通过：learned assembly 在未见组合
+上的准确率低于 byte-only 对照（`0.0773` vs `0.2479`，gain `-0.1706`），跨 seed
+标准差为 `0.0033`。这把下一步定位为表示学习目标改进，而非继续扩大模型或掩盖失败；
+当前仍不能宣称 Taiji 已拥有通过 Gate 的学习型抽象能力。
 
 ## 0. 本次纠正
 
@@ -424,4 +427,4 @@ taiji/
 
 ## 13. 当前唯一实现入口
 
-先实现 A0/P1：建立 v1 状态与事件合同、认知所有权测试和 `TSK-v8` compatibility adapter；保持现有行为与 checkpoint 可恢复。完成后才进入 A1 学习型时间抽象纵切片。
+P1 已完成。当前实现入口是 P2/A1：在现有不泄漏 manifest 上改进 assembly 的可预测局部/组合学习目标，保持 boundary、random-chunk 和 byte-only 对照，再以 Gate 结果决定是否进入 P3。

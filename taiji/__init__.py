@@ -28,6 +28,7 @@ from .contracts import (
 )
 from .contracts import MemoryState as NativeMemoryState
 from .environment import EnvironmentOutcome, TaijiEnvironment
+from .evaluation import A1EvaluationConfig, PerceptionCorpus, PerceptionEvaluator
 from .fabric import TaijiFabric
 from .memory import EpisodicField, EpisodicReplay, EpisodicWrite
 from .model import Taiji
@@ -51,6 +52,7 @@ __all__ = [
     "ByteMotor",
     "ByteSensor",
     "ActionIntent",
+    "A1EvaluationConfig",
     "CapacityPolicy",
     "CognitiveState",
     "CONTRACT_FORMAT",
@@ -67,6 +69,8 @@ __all__ = [
     "Observation",
     "Outcome",
     "PerceptionConfig",
+    "PerceptionCorpus",
+    "PerceptionEvaluator",
     "PerceptEvent",
     "PlanCandidate",
     "PlanState",
