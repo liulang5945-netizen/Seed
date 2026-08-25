@@ -1,4 +1,0 @@
-{
-  "status": "compile-error",
-  "diagnosticsText": "✘ [ERROR] Expected \">\" but found \"·\"\n\n    report.canvas.tsx:428:87:\n      428 │ ...itle} <span style={s({ color:\"#9ca3af\", fontWeight:400 })}· {f.hours}h</span></span>\n          │                                                              ~\n          ╵                                                              >"
-}

@@ -1,4 +1,0 @@
-{
-  "status": "compile-error",
-  "diagnosticsText": "✘ [ERROR] Expected \")\" but found \"}\"\n\n    report.canvas.tsx:211:57:\n      211 │ ...style={s({ fontSize:10, color:\"#9ca3af\" }}>R1 · {DELTA.before.findings} findings<...\n          │                                             ^\n          ╵                                             )"
-}
