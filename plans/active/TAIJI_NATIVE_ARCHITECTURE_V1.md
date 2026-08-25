@@ -439,4 +439,4 @@ taiji/
 
 ## 13. 当前唯一实现入口
 
-P1 已完成，P2 relation subgate 已收口。当前实现入口是 P3 world-state/action-outcome 最小纵切片：定义对象、事件、行动结果和干预评测合同，再以 A2 Gate 决定是否继续扩展。
+P1 已完成，P2 relation subgate 已收口。P3 的对象/事件/affordance/行动/结果合同与可恢复 `TaijiWorldState` 已落地；当前实现入口是 P3 干预预测评测，再以 A2 Gate 决定是否继续扩展 workspace 路由和多步任务。

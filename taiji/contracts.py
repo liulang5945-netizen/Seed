@@ -87,6 +87,32 @@ def _decode_value(value: Any, *, device: torch.device | str) -> Any:
     raise ValueError(f"unsupported contract value kind: {kind}")
 
 
+def _normalize_pairs(value: Any, name: str) -> tuple[tuple[str, Any], ...]:
+    """Freeze a user-facing mapping into deterministic contract metadata."""
+
+    items = value.items() if isinstance(value, Mapping) else value
+    normalized: dict[str, Any] = {}
+    try:
+        iterator = iter(items)
+    except TypeError as exc:
+        raise ValueError(f"{name} must be a mapping or pair sequence") from exc
+    for pair in iterator:
+        if not isinstance(pair, (tuple, list)) or len(pair) != 2:
+            raise ValueError(f"{name} entries must be key/value pairs")
+        key = _check_text(str(pair[0]), f"{name} key")
+        if key in normalized:
+            raise ValueError(f"{name} contains duplicate key: {key}")
+        normalized[key] = _clone_value(pair[1])
+    return tuple(sorted(normalized.items()))
+
+
+def _normalize_tags(value: Any, name: str) -> tuple[str, ...]:
+    tags = tuple(_check_text(str(item), name) for item in value)
+    if len(set(tags)) != len(tags):
+        raise ValueError(f"{name} cannot contain duplicate values")
+    return tuple(sorted(tags))
+
+
 @dataclass(frozen=True)
 class Observation:
     """A versioned sensation entering Taiji through an organ boundary."""
@@ -247,13 +273,161 @@ class WorkspaceState:
 
 
 @dataclass(frozen=True)
+class WorldObject:
+    """A persistent object with learned-facing, schema-free attributes."""
+
+    object_id: str
+    attributes: tuple[tuple[str, Any], ...] = ()
+    tags: tuple[str, ...] = ()
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.object_id, "object_id")
+        object.__setattr__(self, "attributes", _normalize_pairs(self.attributes, "object attributes"))
+        object.__setattr__(self, "tags", _normalize_tags(self.tags, "object tags"))
+
+    def attribute(self, name: str, default: Any = None) -> Any:
+        key = str(name)
+        return dict(self.attributes).get(key, default)
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "object_id": self.object_id,
+            "attributes": _encode_value(dict(self.attributes)),
+            "tags": list(self.tags),
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> WorldObject:
+        attributes = _decode_value(payload.get("attributes", {}), device=device)
+        return cls(
+            version=int(payload["version"]),
+            object_id=str(payload["object_id"]),
+            attributes=attributes,
+            tags=tuple(str(item) for item in payload.get("tags", ())),
+        )
+
+
+@dataclass(frozen=True)
+class WorldEvent:
+    """A time-indexed event that can update or explain world state."""
+
+    event_id: str
+    kind: str
+    tick: int
+    subject_id: str = ""
+    object_id: str = ""
+    attributes: tuple[tuple[str, Any], ...] = ()
+    provenance: str = "experienced"
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.event_id, "event_id")
+        _check_text(self.kind, "event kind")
+        _check_text(self.provenance, "event provenance")
+        if int(self.tick) < 0:
+            raise ValueError("event tick cannot be negative")
+        if self.subject_id:
+            _check_text(self.subject_id, "event subject_id")
+        if self.object_id:
+            _check_text(self.object_id, "event object_id")
+        object.__setattr__(self, "attributes", _normalize_pairs(self.attributes, "event attributes"))
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "event_id": self.event_id,
+            "kind": self.kind,
+            "tick": self.tick,
+            "subject_id": self.subject_id,
+            "object_id": self.object_id,
+            "attributes": _encode_value(dict(self.attributes)),
+            "provenance": self.provenance,
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> WorldEvent:
+        attributes = _decode_value(payload.get("attributes", {}), device=device)
+        return cls(
+            version=int(payload["version"]),
+            event_id=str(payload["event_id"]),
+            kind=str(payload["kind"]),
+            tick=int(payload["tick"]),
+            subject_id=str(payload.get("subject_id", "")),
+            object_id=str(payload.get("object_id", "")),
+            attributes=attributes,
+            provenance=str(payload.get("provenance", "experienced")),
+        )
+
+
+@dataclass(frozen=True)
+class WorldAffordance:
+    """An action possibility grounded in the current world state."""
+
+    affordance_id: str
+    action_kind: str
+    actor_id: str = ""
+    target_id: str = ""
+    parameters: tuple[tuple[str, Any], ...] = ()
+    confidence: float = 1.0
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.affordance_id, "affordance_id")
+        _check_text(self.action_kind, "affordance action_kind")
+        if self.actor_id:
+            _check_text(self.actor_id, "affordance actor_id")
+        if self.target_id:
+            _check_text(self.target_id, "affordance target_id")
+        _check_unit(self.confidence, "affordance confidence")
+        object.__setattr__(self, "parameters", _normalize_pairs(self.parameters, "affordance parameters"))
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "affordance_id": self.affordance_id,
+            "action_kind": self.action_kind,
+            "actor_id": self.actor_id,
+            "target_id": self.target_id,
+            "parameters": _encode_value(dict(self.parameters)),
+            "confidence": self.confidence,
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> WorldAffordance:
+        parameters = _decode_value(payload.get("parameters", {}), device=device)
+        return cls(
+            version=int(payload["version"]),
+            affordance_id=str(payload["affordance_id"]),
+            action_kind=str(payload["action_kind"]),
+            actor_id=str(payload.get("actor_id", "")),
+            target_id=str(payload.get("target_id", "")),
+            parameters=parameters,
+            confidence=float(payload.get("confidence", 1.0)),
+        )
+
+
+@dataclass(frozen=True)
 class WorldState:
-    """Persistent latent world state and explicit relation handles."""
+    """Persistent object/event state and explicit relation handles."""
 
     tick: int
     latent: torch.Tensor = field(default_factory=lambda: torch.empty(0))
     entities: tuple[str, ...] = ()
     relations: tuple[tuple[str, str, str], ...] = ()
+    objects: tuple[WorldObject, ...] = ()
+    events: tuple[WorldEvent, ...] = ()
+    affordances: tuple[WorldAffordance, ...] = ()
     uncertainty: float = 1.0
     version: int = CONTRACT_VERSION
 
@@ -264,6 +438,19 @@ class WorldState:
         if self.latent.ndim != 1:
             raise ValueError("world latent must be a vector")
         _check_unit(self.uncertainty, "uncertainty")
+        object_ids = tuple(item.object_id for item in self.objects)
+        if len(set(object_ids)) != len(object_ids):
+            raise ValueError("world objects must have unique object_id values")
+        if self.entities and object_ids and set(self.entities) != set(object_ids):
+            raise ValueError("world entities and objects must describe the same ids")
+        if object_ids and not self.entities:
+            object.__setattr__(self, "entities", object_ids)
+        event_ids = tuple(item.event_id for item in self.events)
+        if len(set(event_ids)) != len(event_ids):
+            raise ValueError("world events must have unique event_id values")
+        affordance_ids = tuple(item.affordance_id for item in self.affordances)
+        if len(set(affordance_ids)) != len(affordance_ids):
+            raise ValueError("world affordances must have unique affordance_id values")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -272,6 +459,9 @@ class WorldState:
             "latent": self.latent.detach().cpu().clone(),
             "entities": list(self.entities),
             "relations": [list(item) for item in self.relations],
+            "objects": [item.to_payload() for item in self.objects],
+            "events": [item.to_payload() for item in self.events],
+            "affordances": [item.to_payload() for item in self.affordances],
             "uncertainty": self.uncertainty,
         }
 
@@ -286,6 +476,18 @@ class WorldState:
             entities=tuple(str(item) for item in payload.get("entities", ())),
             relations=tuple(
                 (str(item[0]), str(item[1]), str(item[2])) for item in payload.get("relations", ())
+            ),
+            objects=tuple(
+                WorldObject.from_payload(item, device=device)
+                for item in payload.get("objects", ())
+            ),
+            events=tuple(
+                WorldEvent.from_payload(item, device=device)
+                for item in payload.get("events", ())
+            ),
+            affordances=tuple(
+                WorldAffordance.from_payload(item, device=device)
+                for item in payload.get("affordances", ())
             ),
             uncertainty=float(payload.get("uncertainty", 1.0)),
         )
@@ -465,6 +667,61 @@ class PlanState:
 
 
 @dataclass(frozen=True)
+class WorldAction:
+    """A concrete intervention against a world object or relation."""
+
+    action_id: str
+    kind: str
+    tick: int
+    actor_id: str = ""
+    target_id: str = ""
+    parameters: tuple[tuple[str, Any], ...] = ()
+    provenance: str = "experienced"
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.action_id, "action_id")
+        _check_text(self.kind, "action kind")
+        _check_text(self.provenance, "action provenance")
+        if int(self.tick) < 0:
+            raise ValueError("action tick cannot be negative")
+        if self.actor_id:
+            _check_text(self.actor_id, "action actor_id")
+        if self.target_id:
+            _check_text(self.target_id, "action target_id")
+        object.__setattr__(self, "parameters", _normalize_pairs(self.parameters, "action parameters"))
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "action_id": self.action_id,
+            "kind": self.kind,
+            "tick": self.tick,
+            "actor_id": self.actor_id,
+            "target_id": self.target_id,
+            "parameters": _encode_value(dict(self.parameters)),
+            "provenance": self.provenance,
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> WorldAction:
+        parameters = _decode_value(payload.get("parameters", {}), device=device)
+        return cls(
+            version=int(payload["version"]),
+            action_id=str(payload["action_id"]),
+            kind=str(payload["kind"]),
+            tick=int(payload["tick"]),
+            actor_id=str(payload.get("actor_id", "")),
+            target_id=str(payload.get("target_id", "")),
+            parameters=parameters,
+            provenance=str(payload.get("provenance", "experienced")),
+        )
+
+
+@dataclass(frozen=True)
 class ActionIntent:
     """A Taiji decision before an organ encodes it for an environment."""
 
@@ -570,6 +827,142 @@ class Outcome:
             ),
             provenance=str(payload.get("provenance", "experienced")),
             tick=int(payload.get("tick", 0)),
+        )
+
+
+@dataclass(frozen=True)
+class WorldTransition:
+    """A single causal step joining an action, outcome and next world state."""
+
+    before: WorldState
+    action: WorldAction
+    after: WorldState
+    outcome: Outcome
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        if self.action.tick != self.before.tick:
+            raise ValueError("world action must act at the before-state tick")
+        if self.after.tick <= self.before.tick:
+            raise ValueError("world transition must advance the world tick")
+        if self.outcome.intent_id != self.action.action_id:
+            raise ValueError("world outcome must reference the world action")
+        if self.outcome.tick != self.after.tick:
+            raise ValueError("world outcome must be recorded at the after-state tick")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "before": self.before.to_payload(),
+            "action": self.action.to_payload(),
+            "after": self.after.to_payload(),
+            "outcome": self.outcome.to_payload(),
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> WorldTransition:
+        return cls(
+            version=int(payload["version"]),
+            before=WorldState.from_payload(payload["before"], device=device),
+            action=WorldAction.from_payload(payload["action"], device=device),
+            after=WorldState.from_payload(payload["after"], device=device),
+            outcome=Outcome.from_payload(payload["outcome"], device=device),
+        )
+
+
+@dataclass(frozen=True)
+class WorldInterventionCase:
+    """One registered causal intervention with hidden expected consequence."""
+
+    case_id: str
+    initial: WorldState
+    action: WorldAction
+    expected_state: WorldState
+    expected_outcome: Outcome
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.case_id, "intervention case_id")
+        if self.action.tick != self.initial.tick:
+            raise ValueError("intervention action must start at the initial tick")
+        if self.expected_state.tick <= self.initial.tick:
+            raise ValueError("intervention expected state must advance the initial tick")
+        if self.expected_outcome.intent_id != self.action.action_id:
+            raise ValueError("intervention outcome must reference the action")
+        if self.expected_outcome.tick != self.expected_state.tick:
+            raise ValueError("intervention outcome must match the expected state tick")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "case_id": self.case_id,
+            "initial": self.initial.to_payload(),
+            "action": self.action.to_payload(),
+            "expected_state": self.expected_state.to_payload(),
+            "expected_outcome": self.expected_outcome.to_payload(),
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> WorldInterventionCase:
+        return cls(
+            version=int(payload["version"]),
+            case_id=str(payload["case_id"]),
+            initial=WorldState.from_payload(payload["initial"], device=device),
+            action=WorldAction.from_payload(payload["action"], device=device),
+            expected_state=WorldState.from_payload(payload["expected_state"], device=device),
+            expected_outcome=Outcome.from_payload(payload["expected_outcome"], device=device),
+        )
+
+
+@dataclass(frozen=True)
+class WorldInterventionCorpus:
+    """Train/holdout intervention cases with disjoint registered identities."""
+
+    train: tuple[WorldInterventionCase, ...] = ()
+    holdout: tuple[WorldInterventionCase, ...] = ()
+    format: str = "taiji-world-intervention-v1"
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        if self.format != "taiji-world-intervention-v1":
+            raise ValueError(f"unsupported intervention corpus format: {self.format}")
+        train_ids = {case.case_id for case in self.train}
+        holdout_ids = {case.case_id for case in self.holdout}
+        if len(train_ids) != len(self.train) or len(holdout_ids) != len(self.holdout):
+            raise ValueError("intervention case ids must be unique within each split")
+        if train_ids & holdout_ids:
+            raise ValueError("train and holdout intervention cases must be disjoint")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": self.format,
+            "version": self.version,
+            "train": [case.to_payload() for case in self.train],
+            "holdout": [case.to_payload() for case in self.holdout],
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> WorldInterventionCorpus:
+        return cls(
+            format=str(payload["format"]),
+            version=int(payload["version"]),
+            train=tuple(
+                WorldInterventionCase.from_payload(item, device=device)
+                for item in payload.get("train", ())
+            ),
+            holdout=tuple(
+                WorldInterventionCase.from_payload(item, device=device)
+                for item in payload.get("holdout", ())
+            ),
         )
 
 

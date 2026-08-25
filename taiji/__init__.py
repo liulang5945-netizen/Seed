@@ -29,7 +29,14 @@ from .contracts import (
     PlanState,
     SelfState,
     WorkspaceState,
+    WorldAction,
+    WorldAffordance,
+    WorldEvent,
+    WorldInterventionCase,
+    WorldInterventionCorpus,
+    WorldObject,
     WorldState,
+    WorldTransition,
 )
 from .contracts import MemoryState as NativeMemoryState
 from .environment import EnvironmentOutcome, TaijiEnvironment
@@ -52,6 +59,7 @@ from .state import (
     TaijiState,
     TaijiStep,
 )
+from .world import WORLD_STATE_CHECKPOINT_FORMAT, TaijiWorldState
 
 __all__ = [
     "ByteMotor",
@@ -106,4 +114,13 @@ __all__ = [
     "SelfState",
     "WorkspaceState",
     "WorldState",
+    "WorldAction",
+    "WorldAffordance",
+    "WorldEvent",
+    "WorldInterventionCase",
+    "WorldInterventionCorpus",
+    "WorldObject",
+    "WorldTransition",
+    "TaijiWorldState",
+    "WORLD_STATE_CHECKPOINT_FORMAT",
 ]

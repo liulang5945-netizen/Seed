@@ -178,6 +178,18 @@ manifest 为 `+0.9219 / 0.9811 / +0.6406`。因此 relation subgate 已在两个
 
 ## 8. P3：世界状态与工作空间
 
+### 8.1 当前实现状态（2026-08-25）
+
+P3 的第一段合同与恢复边界已落地：
+
+- `taiji/contracts.py` 增加 `WorldObject`、`WorldEvent`、`WorldAffordance`、`WorldAction`、
+  `WorldTransition` 和 train/holdout 分离的 `WorldInterventionCase/Corpus`；属性和参数不使用
+  固定领域字段，而是以可序列化的键值对承载；
+- `taiji/world.py` 的 `TaijiWorldState` 持有当前结构化世界状态和可选 transition history，
+  并把它们放进 Taiji-owned checkpoint；外部环境只能提交与当前状态严格衔接的 transition；
+- 合同、因果 tick、动作—结果绑定、恢复连续性和干预 split 泄漏均有测试覆盖；
+- 这只完成 A2 的输入/输出/恢复合同，不等于已经学会世界动力学，也不等于 A2 Gate 通过。
+
 ### 工作项
 
 - 建立实体、属性、关系、事件和 affordance 的分布式动态绑定。
@@ -280,4 +292,4 @@ manifest 为 `+0.9219 / 0.9811 / +0.6406`。因此 relation subgate 已在两个
 
 ## 16. 当前唯一下一步
 
-**冻结 P2 relation 合同并进入 P3：建立 world-state/action-outcome 最小纵切片，先定义对象、事件、行动结果和干预评测合同，再实现可恢复的 Taiji-owned world state；不把 relation subgate 的通过宣传成完整智能。**
+**在已完成的 P3 合同上实现可训练的干预预测器与 A2 评测：对下一状态和 action outcome 做未见组合、时间打乱、无关系绑定和 reactive/frequency 对照；只有通过预注册 Gate 后才扩展 workspace 路由。**
