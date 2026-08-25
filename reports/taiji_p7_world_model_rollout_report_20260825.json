@@ -1,0 +1,273 @@
+{
+  "format": "taiji-p7-world-model-rollout-v1",
+  "manifest_format": "taiji-p7-world-model-rollout-manifest-v1",
+  "metrics": {
+    "cross_seed_rates": {
+      "horizon_gate": 1.0
+    },
+    "runs": [
+      {
+        "seed": 11,
+        "train_examples": 10,
+        "schema": {
+          "object_ids": [
+            "agent",
+            "blue",
+            "red"
+          ],
+          "state_slots": [
+            [
+              "agent",
+              "energy"
+            ],
+            [
+              "blue",
+              "position"
+            ],
+            [
+              "red",
+              "position"
+            ]
+          ],
+          "relation_slots": [
+            [
+              "blue",
+              "near",
+              "red"
+            ],
+            [
+              "red",
+              "near",
+              "blue"
+            ]
+          ],
+          "action_kinds": [
+            "link",
+            "move"
+          ],
+          "actor_ids": [
+            "agent"
+          ],
+          "target_ids": [
+            "blue",
+            "red"
+          ],
+          "parameter_names": [
+            "enabled",
+            "step"
+          ],
+          "target_parameter_interactions": 4,
+          "state_dim": 5,
+          "action_dim": 11,
+          "input_dim": 16
+        },
+        "horizon_gate": true,
+        "horizon_runs": [
+          {
+            "horizon": 3,
+            "rollout_length": 3,
+            "selected_rollout": "world-rollout-h3",
+            "provenance_complete": true,
+            "tick_chain_complete": true,
+            "checkpoint_complete": true,
+            "world_model_lesion_complete": true
+          },
+          {
+            "horizon": 4,
+            "rollout_length": 4,
+            "selected_rollout": "world-rollout-h4",
+            "provenance_complete": true,
+            "tick_chain_complete": true,
+            "checkpoint_complete": true,
+            "world_model_lesion_complete": true
+          },
+          {
+            "horizon": 5,
+            "rollout_length": 5,
+            "selected_rollout": "world-rollout-h5",
+            "provenance_complete": true,
+            "tick_chain_complete": true,
+            "checkpoint_complete": true,
+            "world_model_lesion_complete": true
+          }
+        ]
+      },
+      {
+        "seed": 23,
+        "train_examples": 10,
+        "schema": {
+          "object_ids": [
+            "agent",
+            "blue",
+            "red"
+          ],
+          "state_slots": [
+            [
+              "agent",
+              "energy"
+            ],
+            [
+              "blue",
+              "position"
+            ],
+            [
+              "red",
+              "position"
+            ]
+          ],
+          "relation_slots": [
+            [
+              "blue",
+              "near",
+              "red"
+            ],
+            [
+              "red",
+              "near",
+              "blue"
+            ]
+          ],
+          "action_kinds": [
+            "link",
+            "move"
+          ],
+          "actor_ids": [
+            "agent"
+          ],
+          "target_ids": [
+            "blue",
+            "red"
+          ],
+          "parameter_names": [
+            "enabled",
+            "step"
+          ],
+          "target_parameter_interactions": 4,
+          "state_dim": 5,
+          "action_dim": 11,
+          "input_dim": 16
+        },
+        "horizon_gate": true,
+        "horizon_runs": [
+          {
+            "horizon": 3,
+            "rollout_length": 3,
+            "selected_rollout": "world-rollout-h3",
+            "provenance_complete": true,
+            "tick_chain_complete": true,
+            "checkpoint_complete": true,
+            "world_model_lesion_complete": true
+          },
+          {
+            "horizon": 4,
+            "rollout_length": 4,
+            "selected_rollout": "world-rollout-h4",
+            "provenance_complete": true,
+            "tick_chain_complete": true,
+            "checkpoint_complete": true,
+            "world_model_lesion_complete": true
+          },
+          {
+            "horizon": 5,
+            "rollout_length": 5,
+            "selected_rollout": "world-rollout-h5",
+            "provenance_complete": true,
+            "tick_chain_complete": true,
+            "checkpoint_complete": true,
+            "world_model_lesion_complete": true
+          }
+        ]
+      },
+      {
+        "seed": 37,
+        "train_examples": 10,
+        "schema": {
+          "object_ids": [
+            "agent",
+            "blue",
+            "red"
+          ],
+          "state_slots": [
+            [
+              "agent",
+              "energy"
+            ],
+            [
+              "blue",
+              "position"
+            ],
+            [
+              "red",
+              "position"
+            ]
+          ],
+          "relation_slots": [
+            [
+              "blue",
+              "near",
+              "red"
+            ],
+            [
+              "red",
+              "near",
+              "blue"
+            ]
+          ],
+          "action_kinds": [
+            "link",
+            "move"
+          ],
+          "actor_ids": [
+            "agent"
+          ],
+          "target_ids": [
+            "blue",
+            "red"
+          ],
+          "parameter_names": [
+            "enabled",
+            "step"
+          ],
+          "target_parameter_interactions": 4,
+          "state_dim": 5,
+          "action_dim": 11,
+          "input_dim": 16
+        },
+        "horizon_gate": true,
+        "horizon_runs": [
+          {
+            "horizon": 3,
+            "rollout_length": 3,
+            "selected_rollout": "world-rollout-h3",
+            "provenance_complete": true,
+            "tick_chain_complete": true,
+            "checkpoint_complete": true,
+            "world_model_lesion_complete": true
+          },
+          {
+            "horizon": 4,
+            "rollout_length": 4,
+            "selected_rollout": "world-rollout-h4",
+            "provenance_complete": true,
+            "tick_chain_complete": true,
+            "checkpoint_complete": true,
+            "world_model_lesion_complete": true
+          },
+          {
+            "horizon": 5,
+            "rollout_length": 5,
+            "selected_rollout": "world-rollout-h5",
+            "provenance_complete": true,
+            "tick_chain_complete": true,
+            "checkpoint_complete": true,
+            "world_model_lesion_complete": true
+          }
+        ]
+      }
+    ]
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "all seeds must generate and select data-derived world-model rollouts at horizons 3/4/5, preserve per-step prediction provenance and tick chains through native checkpoint continuation, and fail closed when the world-model organ is lesioned"
+  }
+}
