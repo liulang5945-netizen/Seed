@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from typing import Any
 
 import torch
@@ -36,6 +36,7 @@ from .contracts import (
     WorkspaceSelection,
     WorkspaceState,
     WorldAction,
+    WorldAffordance,
     WorldPredictionRecord,
     WorldState,
     WorldTransition,
@@ -82,6 +83,18 @@ from .workspace import WorkspaceRouter
 from .world_learning import WorldDynamicsLearner, WorldSchema
 
 
+@dataclass(frozen=True)
+class _PendingExecutiveCredit:
+    """Keep an executive decision's causal context across a replan."""
+
+    decision: ExecutiveDecision
+    affordance: WorldAffordance | None
+    percept_features: torch.Tensor | None
+    world_latent: torch.Tensor | None
+    world_uncertainty: float
+    learn: bool
+
+
 class TSKV8Adapter(Taiji):
     """Keep the TSK-v8 API while making v1 ownership explicit.
 
@@ -111,8 +124,10 @@ class TSKV8Adapter(Taiji):
         self._executive: ExecutiveController | None = None
         self._last_executive_decision: ExecutiveDecision | None = None
         self._last_executive_prediction_error: float | None = None
+        self._last_delayed_executive_prediction_error: float | None = None
         self._last_affordance_prediction_error: float | None = None
         self._last_executive_world_action: WorldAction | None = None
+        self._pending_executive_credit: _PendingExecutiveCredit | None = None
         self._planned_rollout: ImaginedRollout | None = None
         self._replan_required = False
         self._last_rollout_prediction_error: float | None = None
@@ -318,6 +333,10 @@ class TSKV8Adapter(Taiji):
         return self._last_executive_prediction_error
 
     @property
+    def last_delayed_executive_prediction_error(self) -> float | None:
+        return self._last_delayed_executive_prediction_error
+
+    @property
     def last_affordance_prediction_error(self) -> float | None:
         return self._last_affordance_prediction_error
 
@@ -358,8 +377,10 @@ class TSKV8Adapter(Taiji):
         )
         self._last_executive_decision = decision
         self._last_executive_prediction_error = None
+        self._last_delayed_executive_prediction_error = None
         self._last_affordance_prediction_error = None
         self._last_executive_world_action = None
+        self._pending_executive_credit = None
         self._cognitive_state = replace(
             self._cognitive_state,
             plan=PlanState(
@@ -404,7 +425,14 @@ class TSKV8Adapter(Taiji):
             world_latent = percept_features
         return percept_features, world_latent, self._cognitive_state.world.uncertainty
 
-    def record_executive_outcome(self, outcome: Outcome, *, learn: bool = True) -> float:
+    def record_executive_outcome(
+        self,
+        outcome: Outcome,
+        *,
+        learn: bool = True,
+        source_affordance: WorldAffordance | None = None,
+        affordance_context: tuple[torch.Tensor, torch.Tensor, float] | None = None,
+    ) -> float:
         """Train executive selection from an outcome produced by an environment."""
 
         if self._executive is None:
@@ -420,7 +448,10 @@ class TSKV8Adapter(Taiji):
         self._last_affordance_prediction_error = None
         if learn and self._affordance_features is not None:
             affordance_id = self._last_executive_decision.selected.source_affordance_id
-            if affordance_id is not None:
+            affordance = source_affordance
+            if affordance is not None and affordance.affordance_id != affordance_id:
+                raise ValueError("source_affordance must match the selected executive candidate")
+            if affordance_id is not None and affordance is None:
                 affordance = next(
                     (
                         item
@@ -429,18 +460,51 @@ class TSKV8Adapter(Taiji):
                     ),
                     None,
                 )
-                if affordance is not None:
-                    percept_features, world_latent, world_uncertainty = self._affordance_context()
-                    self._last_affordance_prediction_error = (
-                        self._affordance_features.online_update(
-                            affordance,
-                            outcome.reward,
-                            percept_features=percept_features,
-                            world_latent=world_latent,
-                            world_uncertainty=world_uncertainty,
-                        )
+            if affordance is not None:
+                if affordance_context is None:
+                    affordance_context = self._affordance_context()
+                percept_features, world_latent, world_uncertainty = affordance_context
+                self._last_affordance_prediction_error = (
+                    self._affordance_features.online_update(
+                        affordance,
+                        outcome.reward,
+                        percept_features=percept_features,
+                        world_latent=world_latent,
+                        world_uncertainty=world_uncertainty,
                     )
+                )
         self._cognitive_state = replace(self._cognitive_state, outcome=outcome)
+        return error
+
+    def record_delayed_executive_credit(
+        self,
+        reward: float,
+        *,
+        learn: bool | None = None,
+    ) -> float:
+        """Credit the action that led to a later reward, even after replanning."""
+
+        if self._executive is None:
+            raise RuntimeError("executive controller is not attached")
+        pending = self._pending_executive_credit
+        if pending is None:
+            raise RuntimeError("delayed executive credit requires an executed action")
+        apply_learning = pending.learn if learn is None else bool(learn)
+        error = self._executive.update(pending.decision, float(reward))
+        self._last_delayed_executive_prediction_error = error
+        self._last_executive_prediction_error = error
+        self._last_affordance_prediction_error = None
+        if apply_learning and self._affordance_features is not None and pending.affordance is not None:
+            if pending.percept_features is None or pending.world_latent is None:
+                raise RuntimeError("delayed affordance credit is missing its causal context")
+            self._last_affordance_prediction_error = self._affordance_features.online_update(
+                pending.affordance,
+                float(reward),
+                percept_features=pending.percept_features,
+                world_latent=pending.world_latent,
+                world_uncertainty=pending.world_uncertainty,
+            )
+        self._pending_executive_credit = None
         return error
 
     def execute_executive_action(
@@ -488,6 +552,19 @@ class TSKV8Adapter(Taiji):
         if kernel_decision.action_symbol != int(selected_symbol):
             raise RuntimeError("Taiji motor bridge did not preserve executive action_symbol")
         self._last_executive_world_action = world_action
+        selected_affordance = next(
+            (
+                item
+                for item in self._cognitive_state.world.affordances
+                if item.affordance_id == selected.selected.source_affordance_id
+            ),
+            None,
+        )
+        affordance_context = (
+            self._affordance_context()
+            if selected_affordance is not None and self._affordance_features is not None
+            else None
+        )
         result = environment.step(int(selected_symbol))
         if not isinstance(result, EnvironmentOutcome):
             raise TypeError("environment must return an EnvironmentOutcome")
@@ -496,16 +573,50 @@ class TSKV8Adapter(Taiji):
             learn=learn,
             success=result.success,
             terminal=result.terminal,
+            world_state=result.world_state,
+            world_action=world_action if result.world_state is not None else None,
             provenance="experienced",
         )
         experienced = self._cognitive_state.outcome
         if experienced is None:
             raise RuntimeError("executive environment outcome was not recorded")
-        self.record_executive_outcome(experienced, learn=learn)
+        transition = self._cognitive_state.world_transition
+        self.record_executive_outcome(
+            experienced,
+            learn=learn,
+            source_affordance=selected_affordance,
+            affordance_context=affordance_context,
+        )
+        if not result.terminal:
+            self._pending_executive_credit = _PendingExecutiveCredit(
+                decision=selected,
+                affordance=selected_affordance,
+                percept_features=(
+                    None
+                    if affordance_context is None
+                    else affordance_context[0].detach().clone()
+                ),
+                world_latent=(
+                    None
+                    if affordance_context is None
+                    else affordance_context[1].detach().clone()
+                ),
+                world_uncertainty=(
+                    0.0 if affordance_context is None else affordance_context[2]
+                ),
+                learn=learn,
+            )
         self._replan_required = bool(
             not result.terminal and (result.success is False or result.reward < 0.0)
         )
         self.observe(result.sensation, learn=learn)
+        if transition is not None:
+            self._cognitive_state = replace(
+                self._cognitive_state,
+                action_intent=selected.action_intent,
+                outcome=experienced,
+                world_transition=transition,
+            )
         return experienced
 
     def replan_executive_after_failure(
@@ -528,11 +639,14 @@ class TSKV8Adapter(Taiji):
         )
         if not alternatives:
             raise RuntimeError("executive replanning requires an alternative candidate")
+        pending_credit = self._pending_executive_credit
         decision = self.select_executive(
             alternatives,
             novelty=novelty,
             resource_budget=resource_budget,
         )
+        if pending_credit is not None:
+            self._pending_executive_credit = pending_credit
         self._replan_required = False
         return decision
 
@@ -1537,12 +1651,16 @@ class TSKV8Adapter(Taiji):
             else self._last_executive_decision.to_payload()
         )
         payload["last_executive_prediction_error"] = self._last_executive_prediction_error
+        payload["last_delayed_executive_prediction_error"] = (
+            self._last_delayed_executive_prediction_error
+        )
         payload["last_affordance_prediction_error"] = self._last_affordance_prediction_error
         payload["last_executive_world_action"] = (
             None
             if self._last_executive_world_action is None
             else self._last_executive_world_action.to_payload()
         )
+        payload["pending_executive_credit"] = self._pending_executive_credit_checkpoint()
         payload["language_fallback_count"] = self._language_fallback_count
         payload["language_fallback_requires_replan"] = self._language_fallback_requires_replan
         payload["last_language_emission"] = (
@@ -1670,6 +1788,14 @@ class TSKV8Adapter(Taiji):
         )
         error = payload.get("last_executive_prediction_error") if isinstance(payload, dict) else None
         self._last_executive_prediction_error = None if error is None else float(error)
+        delayed_error = (
+            payload.get("last_delayed_executive_prediction_error")
+            if isinstance(payload, dict)
+            else None
+        )
+        self._last_delayed_executive_prediction_error = (
+            None if delayed_error is None else float(delayed_error)
+        )
         affordance_error = (
             payload.get("last_affordance_prediction_error")
             if isinstance(payload, dict)
@@ -1683,6 +1809,64 @@ class TSKV8Adapter(Taiji):
             None
             if action is None
             else WorldAction.from_payload(dict(action), device=self.device)
+        )
+        self._restore_pending_executive_credit(
+            payload.get("pending_executive_credit") if isinstance(payload, dict) else None
+        )
+
+    def _pending_executive_credit_checkpoint(self) -> dict[str, Any] | None:
+        pending = self._pending_executive_credit
+        if pending is None:
+            return None
+        return {
+            "decision": pending.decision.to_payload(),
+            "affordance": (
+                None if pending.affordance is None else pending.affordance.to_payload()
+            ),
+            "percept_features": (
+                None
+                if pending.percept_features is None
+                else pending.percept_features.detach().cpu().clone()
+            ),
+            "world_latent": (
+                None
+                if pending.world_latent is None
+                else pending.world_latent.detach().cpu().clone()
+            ),
+            "world_uncertainty": pending.world_uncertainty,
+            "learn": pending.learn,
+        }
+
+    def _restore_pending_executive_credit(self, payload: Any) -> None:
+        if payload is None:
+            self._pending_executive_credit = None
+            return
+        if not isinstance(payload, dict):
+            raise ValueError("pending executive credit checkpoint must be a mapping")
+        affordance_payload = payload.get("affordance")
+        self._pending_executive_credit = _PendingExecutiveCredit(
+            decision=ExecutiveDecision.from_payload(
+                dict(payload["decision"]), device=self.device
+            ),
+            affordance=(
+                None
+                if affordance_payload is None
+                else WorldAffordance.from_payload(
+                    dict(affordance_payload), device=self.device
+                )
+            ),
+            percept_features=(
+                None
+                if payload.get("percept_features") is None
+                else payload["percept_features"].detach().to(self.device).clone()
+            ),
+            world_latent=(
+                None
+                if payload.get("world_latent") is None
+                else payload["world_latent"].detach().to(self.device).clone()
+            ),
+            world_uncertainty=float(payload.get("world_uncertainty", 1.0)),
+            learn=bool(payload.get("learn", True)),
         )
 
     def _restore_generation_controller(self, payload: Any) -> None:
@@ -1841,12 +2025,16 @@ class TSKV8Adapter(Taiji):
             else self._last_executive_decision.to_payload()
         )
         components["last_executive_prediction_error"] = self._last_executive_prediction_error
+        components["last_delayed_executive_prediction_error"] = (
+            self._last_delayed_executive_prediction_error
+        )
         components["last_affordance_prediction_error"] = self._last_affordance_prediction_error
         components["last_executive_world_action"] = (
             None
             if self._last_executive_world_action is None
             else self._last_executive_world_action.to_payload()
         )
+        components["pending_executive_credit"] = self._pending_executive_credit_checkpoint()
         components["language_fallback_count"] = self._language_fallback_count
         components["language_fallback_requires_replan"] = self._language_fallback_requires_replan
         components["last_language_emission"] = (
