@@ -245,6 +245,9 @@ P4 的最小真实经历边界已落地：
   `[0,1]→1` 经历预测未见 `[1,1]→2`，episodic nearest error=`1.0`，semantic error≈`0.0045`；replay lesion error=`2.0`，
   episode-ID lesion 和 checkpoint continuation error≈`0.0045`。报告与 manifest 为 `reports/taiji_p4_semantic_consolidation_*_20260825.json`。
   这是 additive numeric relation 子门，不是一般语义巩固；当前 learner 还未接入 adapter runtime。
+- `TSKV8Adapter.attach_semantic_memory()` 和 `consolidate_semantic_memory()` 已把 learner 接入真实 episodic outcome 写入链；
+  semantic state 与 episodic store 一起进入 legacy/native checkpoint，相关 ownership/checkpoint 回归通过。该接入只关闭
+  runtime ownership 子门，仍需多关系、多噪声和更大 episode holdout 才能评估语义巩固稳定性。
 
 ### 工作项
 
@@ -348,4 +351,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**接入 P4 semantic learner：让 `SemanticMemoryLearner` 消费 adapter 的真实 episodic outcomes 并进入 native checkpoint，验证语义状态不是独立脚本旁路；保留 P3 world/workspace outcome 对照，不改变既有合同。**
+**扩展 P4 semantic Gate：加入多关系、多噪声和更大 episode holdout，验证 consolidation 在相似经历干扰下仍优于 episodic 最近邻，并保留 replay/episode/checkpoint lesion；不改变既有合同。**
