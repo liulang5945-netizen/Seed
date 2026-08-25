@@ -388,6 +388,8 @@ P4 的最小真实经历边界已落地：
 - P7 grounded multi-step causal-lesion Gate 已通过：3 个 seed 的 producer lesion 均使 holdout 选择退化，feature-source lesion 均阻断候选
   合成，跳过 delayed credit 均少一次 source/executive online update；结果与主 Gate 一起写入同一 report。该结果证明当前控制变量有因果
   效应，不代表长程规划。
+- P7 variable-horizon episode Gate 已通过：同一 train/holdout 学习结果在 3/4/5 步 episode、不同失败位置和多个 after-state relation
+  变化下，3 个 seed 均完成预期 replan、全程 lineage 与每个非终止步的 delayed credit。该结果扩大了 horizon 边界，但仍不是长程规划证明。
 - 本轮 native 回归为 `131 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
@@ -493,4 +495,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：在四步 Gate 基础上引入可变长度 episode、不同失败位置和多个 after-state relation 变化，验证 lineage 与跨步 delayed credit 不依赖固定四步序列；不新增 action/intent 查表。**
+**下一步：把变量 horizon 评测接入真实 world-dynamics prediction/error calibration，验证 after-state 变化、重规划和 delayed credit 能被预测误差共同约束；不新增 action/intent 查表。**

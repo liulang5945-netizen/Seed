@@ -251,6 +251,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
     candidates = adapter.synthesize_executive_candidates()
     decision = adapter.select_executive(candidates)
     holdout_selected_positive = decision.selected.source_affordance_id == "positive-green-holdout"
+    base_checkpoint = adapter.native_checkpoint()
     holdout_by_id = {item.affordance_id: item for item in grounded_holdout}
     lesioned_features = source.encode(
         torch.zeros(GROUNDING_DIM),
@@ -348,6 +349,87 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         and delayed_lesion._executive is not None
         and delayed_lesion._executive.training_steps == executive_fit_steps + 2
     )
+    variable_episode_specs = (
+        ("short-single-failure", 3, frozenset({0})),
+        ("mid-late-failures", 4, frozenset({1, 2})),
+        ("long-interleaved-failures", 5, frozenset({0, 2, 3})),
+    )
+    variable_episode_runs: list[dict[str, object]] = []
+    for variant_name, length, failure_indices in variable_episode_specs:
+        variant = TSKV8Adapter.from_native_checkpoint(base_checkpoint)
+        variant.select_executive(candidates)
+        predicates = tuple(f"{variant_name}-relation-{index}" for index in range(length))
+        variant_after_states = tuple(
+            _world(
+                holdout.tick + index + 1,
+                actor="robot-holdout",
+                positive="green-holdout",
+                negative="yellow-holdout",
+                predicate=predicate,
+            )
+            for index, predicate in enumerate(predicates)
+        )
+        variant_environment = _MultiStepEnvironment(
+            variant_after_states,
+            success_indices=frozenset(set(range(length)) - set(failure_indices)),
+        )
+        variant_outcomes: list[EnvironmentOutcome] = []
+        variant_transitions = []
+        replan_count = 0
+        for index in range(length):
+            outcome = variant.execute_executive_action(
+                variant_environment,
+                learn=True,
+            )
+            transition = variant.cognitive_snapshot().world_transition
+            if transition is None:
+                raise RuntimeError(f"variable episode lost transition: {variant_name}")
+            variant_outcomes.append(outcome)
+            variant_transitions.append(transition)
+            if index < length - 1:
+                if outcome.success is False:
+                    replan_count += 1
+                    variant.replan_executive_after_failure(candidates)
+                    variant.record_delayed_executive_credit(0.25)
+                else:
+                    variant.record_delayed_executive_credit(0.25)
+                    variant.select_executive(candidates)
+        expected_updates = (2 * length) - 1
+        observed_failures = tuple(
+            index for index, outcome in enumerate(variant_outcomes) if outcome.success is False
+        )
+        lineage_complete = all(
+            item.grounding_lineage
+            for transition in variant_transitions
+            for item in (*transition.before.affordances, *transition.after.affordances)
+        )
+        variable_episode_runs.append(
+            {
+                "name": variant_name,
+                "length": length,
+                "failure_indices": sorted(failure_indices),
+                "observed_failure_indices": list(observed_failures),
+                "replans": replan_count,
+                "lineage_complete": lineage_complete,
+                "final_success": bool(
+                    variant_outcomes[-1].success and variant_outcomes[-1].terminal
+                ),
+                "credit_updates_complete": bool(
+                    variant._affordance_features is not None
+                    and variant._affordance_features.online_updates == expected_updates
+                    and variant._executive is not None
+                    and variant._executive.training_steps == executive_fit_steps + expected_updates
+                ),
+            }
+        )
+    variable_episode_gate = all(
+        run["failure_indices"] == run["observed_failure_indices"]
+        and run["replans"] == len(run["failure_indices"])
+        and run["lineage_complete"]
+        and run["final_success"]
+        and run["credit_updates_complete"]
+        for run in variable_episode_runs
+    )
     return {
         "seed": seed,
         "train_examples": len(train_examples),
@@ -377,6 +459,8 @@ def evaluate_seed(seed: int) -> dict[str, object]:
             and len(environment.actions) == len(after_states)
             and len(set(environment.actions)) > 1
         ),
+        "variable_episode_gate": variable_episode_gate,
+        "variable_episode_runs": variable_episode_runs,
         "action_trace": environment.actions,
     }
 
@@ -410,6 +494,11 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "feature-source-lesion",
             "delayed-credit-lesion",
         ],
+        "variable_episodes": [
+            {"name": "short-single-failure", "length": 3, "failure_indices": [0]},
+            {"name": "mid-late-failures", "length": 4, "failure_indices": [1, 2]},
+            {"name": "long-interleaved-failures", "length": 5, "failure_indices": [0, 2, 3]},
+        ],
         "boundary": "numeric world grounding and executive credit; not general semantics or intelligence",
     }
 
@@ -429,6 +518,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "delayed_credit_complete",
         "delayed_credit_lesion_effective",
         "continuous_replan_complete",
+        "variable_episode_gate",
     )
     rates = {
         name: sum(bool(run[name]) for run in runs) / len(runs)
@@ -441,7 +531,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "metrics": {"cross_seed_rates": rates, "runs": runs},
         "gate": {
             "passed": passed,
-        "criterion": "all seeds must transfer the holdout selection, preserve lineage across four transitions and checkpoint credit, complete three failure replans with delayed credit, and show the declared lesions",
+            "criterion": "all seeds must transfer the holdout selection, preserve lineage and credit across four transitions and variable 3/4/5-step episodes, complete the declared replans, and show the declared lesions",
         },
     }
 
