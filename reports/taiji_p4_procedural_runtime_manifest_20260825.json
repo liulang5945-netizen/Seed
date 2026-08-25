@@ -1,0 +1,28 @@
+{
+  "format": "taiji-p4-procedural-runtime-manifest-v1",
+  "task": "route real adapter action selection from a replayed cue-to-action skill",
+  "training_inputs": [
+    [
+      97,
+      "left"
+    ],
+    [
+      98,
+      "right"
+    ]
+  ],
+  "available_actions": [
+    10,
+    11
+  ],
+  "action_kinds": [
+    "right",
+    "left"
+  ],
+  "controls": [
+    "runtime_lesion",
+    "episode_id_lesion",
+    "checkpoint_continuation"
+  ],
+  "boundary": "explicit action-kind routing only; not general planning or motor competence"
+}

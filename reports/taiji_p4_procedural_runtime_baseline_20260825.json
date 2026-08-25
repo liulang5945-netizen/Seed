@@ -1,0 +1,20 @@
+{
+  "format": "taiji-p4-procedural-runtime-v1",
+  "train_records": 18,
+  "action_kinds": [
+    "left",
+    "right"
+  ],
+  "consolidation_loss": 0.02971014566719532,
+  "metrics": {
+    "procedural_runtime_accuracy": 1.0,
+    "runtime_lesion_accuracy": 0.0,
+    "episode_id_lesion_accuracy": 1.0,
+    "checkpoint_continuation_accuracy": 1.0,
+    "procedural_selections": 2
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "procedural learner controls adapter action selection and survives runtime, episode-id, and checkpoint lesions"
+  }
+}

@@ -234,7 +234,7 @@ P4 的最小真实经历边界已落地：
   `ActionIntent`、`Outcome` 和可选 `WorldTransition`，不依赖领域事实表或固定事件槽；
 - `TSKV8Adapter` 在真实 `settle_action` 后写入一条 `EpisodicMemoryRecord`，后续 `observe` 检索相关记录，store 与认知
   state 一起进入 legacy/native checkpoint；
-- working item、写入/检索、容量淘汰、真实 outcome 绑定和 checkpoint round-trip 已通过定向测试；本轮原生回归为 `83 passed,
+- working item、写入/检索、容量淘汰、真实 outcome 绑定和 checkpoint round-trip 已通过定向测试；本轮原生回归为 `84 passed,
   1 skipped`（另 2 个旧 manifest 测试仍受本机 pytest 系统临时目录权限影响）。该入口只完成经历保持与检索，不宣称
   已形成语义/程序记忆或跨 episode 迁移。
 - `scripts/training/eval_taiji_p4_episodic_recall.py` 已完成 cue-conditioned one-shot recall 窄 Gate：8 条训练经历、8 条
@@ -259,7 +259,11 @@ P4 的最小真实经历边界已落地：
   cue→action holdout 准确率=`1.0`，skill lesion=`0.25`，episode-ID lesion 与 checkpoint continuation=`1.0`；报告和
   manifest 为 `reports/taiji_p4_capacity_procedural_*_20260825.json`。当前仍是独立 consolidation 原型，尚未接入
   adapter action selection。
-- 本轮 native 回归为 `83 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
+- `TSKV8Adapter` 已拥有 procedural runtime ownership：显式 action-kind affordance 合同接入 `act()`，由 learner 预测类别并
+  改写真实 motor action；`settle_action()` 将类别写回 `ActionIntent.kind`，adapter consolidation 与 native checkpoint
+  均已接通。runtime Gate 为 procedural=`1.0`、route lesion=`0.0`、episode-ID/checkpoint=`1.0`，报告和 manifest 为
+  `reports/taiji_p4_procedural_runtime_*_20260825.json`。
+- 本轮 native 回归为 `84 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
 
 ### 工作项
 
@@ -363,4 +367,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**继续 P4 runtime ownership：把 `ProceduralMemoryLearner` 接入 adapter 的 action selection、settle/outcome 更新与 native checkpoint，并加入 procedural runtime lesion；不改变既有合同。**
+**继续 P4 procedural robustness：扩展到多步技能组合，并加入技能遗忘、资源预算和干扰后的迁移 Gate；不改变既有合同。**

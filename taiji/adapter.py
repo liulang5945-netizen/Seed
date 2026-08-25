@@ -36,6 +36,7 @@ from .contracts import MemoryState as NativeMemoryState
 from .episodic_memory import EpisodicMemoryStore
 from .model import Taiji
 from .perception import LearnedPerception
+from .procedural_memory import ProceduralMemoryLearner
 from .semantic_memory import SemanticMemoryLearner
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
 from .workspace import WorkspaceRouter
@@ -62,6 +63,7 @@ class TSKV8Adapter(Taiji):
         self._workspace_router: WorkspaceRouter | None = None
         self._episodic_memory: EpisodicMemoryStore | None = None
         self._semantic_memory: SemanticMemoryLearner | None = None
+        self._procedural_memory: ProceduralMemoryLearner | None = None
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -134,6 +136,30 @@ class TSKV8Adapter(Taiji):
         if self._episodic_memory is None or self._episodic_memory.count == 0:
             raise RuntimeError("semantic consolidation requires episodic records")
         return self._semantic_memory.consolidate(
+            self._episodic_memory,
+            epochs=epochs,
+            learning_rate=learning_rate,
+        )
+
+    def attach_procedural_memory(self, learner: ProceduralMemoryLearner | None) -> None:
+        """Attach the slow procedural learner used by explicit action routing."""
+
+        if learner is not None and not isinstance(learner, ProceduralMemoryLearner):
+            raise TypeError("learner must be a ProceduralMemoryLearner or None")
+        if learner is not None and learner.cue_dim != self.perception.feature_dim:
+            raise ValueError("procedural learner cue_dim must match the perception feature dimension")
+        self._procedural_memory = learner
+
+    def consolidate_procedural_memory(
+        self, *, epochs: int = 300, learning_rate: float = 0.1
+    ) -> float:
+        """Replay Taiji-owned action experiences into the procedural learner."""
+
+        if self._procedural_memory is None:
+            raise RuntimeError("procedural memory learner is not attached")
+        if self._episodic_memory is None or self._episodic_memory.count == 0:
+            raise RuntimeError("procedural consolidation requires episodic records")
+        return self._procedural_memory.consolidate(
             self._episodic_memory,
             epochs=epochs,
             learning_rate=learning_rate,
@@ -288,10 +314,50 @@ class TSKV8Adapter(Taiji):
 
     def act(self, available_actions: Any, *args: Any, **kwargs: Any) -> TaijiDecision:
         supplied_world_action = kwargs.pop("world_action", None)
+        procedural_action_kinds = kwargs.pop("procedural_action_kinds", None)
+        use_procedural = bool(kwargs.pop("use_procedural", False))
+        action_kinds = (
+            None
+            if procedural_action_kinds is None
+            else tuple(str(kind) for kind in procedural_action_kinds)
+        )
+        if action_kinds is not None:
+            action_symbols = tuple(int(action) for action in available_actions)
+            if len(action_kinds) != len(action_symbols):
+                raise ValueError("procedural_action_kinds must align with available_actions")
+            if len(set(action_kinds)) != len(action_kinds):
+                raise ValueError("procedural_action_kinds must be unique")
+        if use_procedural:
+            if self._procedural_memory is None:
+                raise RuntimeError("procedural action routing requires an attached learner")
+            if action_kinds is None:
+                raise ValueError("procedural action routing requires procedural_action_kinds")
+            if self._cognitive_state.percept is None:
+                raise RuntimeError("procedural action routing requires a current perception")
+            predicted_kind = self._procedural_memory.predict(
+                self._cognitive_state.percept.features
+            )
+            if predicted_kind not in action_kinds:
+                raise ValueError("procedural learner predicted an unavailable action kind")
+        else:
+            predicted_kind = None
         decision = super().act(available_actions, *args, **kwargs)
+        if use_procedural:
+            assert action_kinds is not None
+            selected_action = tuple(action_kinds).index(predicted_kind)
+            selected_symbol = tuple(int(action) for action in available_actions)[selected_action]
+            pending = self._state.pending_action
+            if pending is None:
+                raise RuntimeError("kernel did not preserve a pending action")
+            self._state.pending_action = replace(pending, action_symbol=selected_symbol)
+            decision = replace(decision, action_symbol=selected_symbol)
         intent = ActionIntent(
             intent_id=f"{self._state.episode_id}:intent:{decision.tick}",
-            kind="byte-motor",
+            kind=(
+                "byte-motor"
+                if action_kinds is None
+                else action_kinds[decision.available_actions.index(decision.action_symbol)]
+            ),
             parameters={
                 "action_symbol": decision.action_symbol,
                 "available_actions": decision.available_actions,
@@ -303,7 +369,7 @@ class TSKV8Adapter(Taiji):
         candidates = tuple(
             PlanCandidate(
                 plan_id=f"{intent.intent_id}:candidate:{index}",
-                action_kind="byte-motor",
+                action_kind=("byte-motor" if action_kinds is None else action_kinds[index]),
                 expected_value=float(decision.policy_probabilities[action]),
             )
             for index, action in enumerate(decision.available_actions)
@@ -500,6 +566,8 @@ class TSKV8Adapter(Taiji):
             payload["episodic_memory"] = self._episodic_memory.checkpoint()
         if self._semantic_memory is not None:
             payload["semantic_memory"] = self._semantic_memory.checkpoint()
+        if self._procedural_memory is not None:
+            payload["procedural_memory"] = self._procedural_memory.checkpoint()
         return payload
 
     def restore(self, checkpoint: dict[str, Any]) -> None:
@@ -510,6 +578,7 @@ class TSKV8Adapter(Taiji):
         self._restore_workspace_router(checkpoint.get("workspace_router"))
         self._restore_episodic_memory(checkpoint.get("episodic_memory"))
         self._restore_semantic_memory(checkpoint.get("semantic_memory"))
+        self._restore_procedural_memory(checkpoint.get("procedural_memory"))
 
     def _world_dynamics_checkpoint(self) -> dict[str, Any]:
         if self._world_dynamics is None:
@@ -557,6 +626,13 @@ class TSKV8Adapter(Taiji):
             else SemanticMemoryLearner.from_checkpoint(dict(payload), device=self.device)
         )
 
+    def _restore_procedural_memory(self, payload: Any) -> None:
+        self._procedural_memory = (
+            None
+            if payload is None
+            else ProceduralMemoryLearner.from_checkpoint(dict(payload), device=self.device)
+        )
+
     def native_checkpoint(self) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
 
@@ -569,6 +645,8 @@ class TSKV8Adapter(Taiji):
             components["episodic_memory"] = self._episodic_memory.checkpoint()
         if self._semantic_memory is not None:
             components["semantic_memory"] = self._semantic_memory.checkpoint()
+        if self._procedural_memory is not None:
+            components["procedural_memory"] = self._procedural_memory.checkpoint()
         return NativeCheckpoint(
             kernel=super().checkpoint(),
             cognitive_state=self.cognitive_snapshot(),
@@ -587,6 +665,7 @@ class TSKV8Adapter(Taiji):
         self._restore_workspace_router(envelope.components.get("workspace_router"))
         self._restore_episodic_memory(envelope.components.get("episodic_memory"))
         self._restore_semantic_memory(envelope.components.get("semantic_memory"))
+        self._restore_procedural_memory(envelope.components.get("procedural_memory"))
         state = envelope.cognitive_state
         if state.tick != self.tick or state.episode_id != self._state.episode_id:
             raise ValueError("native cognitive state is out of sync with kernel state")
