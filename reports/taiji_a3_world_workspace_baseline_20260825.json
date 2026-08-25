@@ -1,0 +1,128 @@
+{
+  "format": "taiji-a3-world-workspace-v1",
+  "capacity": 2,
+  "train_samples": 64,
+  "holdout_samples": 32,
+  "seeds": [
+    {
+      "learned": {
+        "first_success_accuracy": 1.0,
+        "final_success_accuracy": 1.0,
+        "mean_total_reward": 2.0
+      },
+      "strongest_single": {
+        "first_success_accuracy": 0.0,
+        "final_success_accuracy": 0.0,
+        "mean_total_reward": -2.0
+      },
+      "dense": {
+        "first_success_accuracy": 0.0,
+        "final_success_accuracy": 0.0,
+        "mean_total_reward": -2.0
+      },
+      "fixed": {
+        "first_success_accuracy": 0.28125,
+        "final_success_accuracy": 0.28125,
+        "mean_total_reward": -0.875
+      },
+      "random": {
+        "first_success_accuracy": 0.125,
+        "final_success_accuracy": 0.125,
+        "mean_total_reward": -1.5
+      },
+      "none": {
+        "first_success_accuracy": 0.0,
+        "final_success_accuracy": 0.0,
+        "mean_total_reward": -2.0
+      },
+      "learned_gain_vs_strongest_single": 1.0,
+      "learned_gain_vs_dense": 1.0,
+      "router_fit_updates": 1
+    },
+    {
+      "learned": {
+        "first_success_accuracy": 1.0,
+        "final_success_accuracy": 1.0,
+        "mean_total_reward": 2.0
+      },
+      "strongest_single": {
+        "first_success_accuracy": 0.0,
+        "final_success_accuracy": 0.0,
+        "mean_total_reward": -2.0
+      },
+      "dense": {
+        "first_success_accuracy": 0.0,
+        "final_success_accuracy": 0.0,
+        "mean_total_reward": -2.0
+      },
+      "fixed": {
+        "first_success_accuracy": 0.28125,
+        "final_success_accuracy": 0.28125,
+        "mean_total_reward": -0.875
+      },
+      "random": {
+        "first_success_accuracy": 0.3125,
+        "final_success_accuracy": 0.3125,
+        "mean_total_reward": -0.75
+      },
+      "none": {
+        "first_success_accuracy": 0.0,
+        "final_success_accuracy": 0.0,
+        "mean_total_reward": -2.0
+      },
+      "learned_gain_vs_strongest_single": 1.0,
+      "learned_gain_vs_dense": 1.0,
+      "router_fit_updates": 1
+    },
+    {
+      "learned": {
+        "first_success_accuracy": 1.0,
+        "final_success_accuracy": 1.0,
+        "mean_total_reward": 2.0
+      },
+      "strongest_single": {
+        "first_success_accuracy": 0.0,
+        "final_success_accuracy": 0.0,
+        "mean_total_reward": -2.0
+      },
+      "dense": {
+        "first_success_accuracy": 0.0,
+        "final_success_accuracy": 0.0,
+        "mean_total_reward": -2.0
+      },
+      "fixed": {
+        "first_success_accuracy": 0.28125,
+        "final_success_accuracy": 0.28125,
+        "mean_total_reward": -0.875
+      },
+      "random": {
+        "first_success_accuracy": 0.25,
+        "final_success_accuracy": 0.25,
+        "mean_total_reward": -1.0
+      },
+      "none": {
+        "first_success_accuracy": 0.0,
+        "final_success_accuracy": 0.0,
+        "mean_total_reward": -2.0
+      },
+      "learned_gain_vs_strongest_single": 1.0,
+      "learned_gain_vs_dense": 1.0,
+      "router_fit_updates": 1
+    }
+  ],
+  "aggregate": {
+    "learned_final_success_accuracy": 1.0,
+    "strongest_single_final_success_accuracy": 0.0,
+    "dense_final_success_accuracy": 0.0,
+    "random_final_success_accuracy": 0.22916666666666666,
+    "none_final_success_accuracy": 0.0,
+    "learned_gain_vs_strongest_single_min": 1.0,
+    "learned_gain_vs_dense_min": 1.0,
+    "history_length": 2,
+    "passed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "learned workspace final success >= 0.95 and beats strongest single/dense by >= 0.2"
+  }
+}

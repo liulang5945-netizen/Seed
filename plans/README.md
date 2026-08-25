@@ -41,10 +41,13 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
   `WorkspaceRouter` 已提供容量受限 learned/none/random 路由和 native checkpoint。
 - A3 静态组合窄 Gate 已通过：3 seeds 的 learned 路由精确选中率均为 1.0，组合重建 MSE 为 0；相对最强单体
   平均改善 `+0.1922`，相对 dense mean 平均改善 `+0.7016`。这不是多步世界任务或通用协作能力证明。
+- A3 world-outcome 窄 Gate 也已通过：`assemble → commit` 两步 `TaijiWorldState` episode 中，learned 路由 3 seeds
+  的 final success 均为 1.0、mean reward 为 2.0；strongest-single/dense 均为 0，random 平均为 0.2292，none 为 0。
+  这只证明当前小型组合任务的 workspace→action→outcome 因果链，不代表一般规划或通用智能。
 - 原生套件当前 74 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-扩展 A3：把已通过的静态组合路由接入带真实 world outcome 的多步任务，并保持最强单体、dense、固定/随机和无 workspace 对照；
-  在未见组合上验证 workspace 选择是否改善后续行动结果，不提前进入语言或产品层。
+进入 P4 多系统记忆：先建立 Taiji-owned working/episodic memory 合同和最小真实经历写入—检索—checkpoint 纵切片，
+  保留 P3 world/workspace outcome 对照，不提前进入语言或产品层。

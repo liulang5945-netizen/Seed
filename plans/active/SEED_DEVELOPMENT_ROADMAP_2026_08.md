@@ -218,11 +218,16 @@ P3 的第一段合同与恢复边界已落地：
   holdout 为新采样组合；3 seeds 的 learned exact route rate 最小值为 `1.0`，learned MSE 为 `0.0`，相对 strongest-single
   平均 gain `+0.1922`，相对 dense mean 平均 gain `+0.7016`，报告与 manifest 为 `reports/taiji_a3_workspace_*_20260825.json`。
   该结果只关闭 A3 的静态组合子门，不代表多步世界行动、目标规划或通用异质协作已通过。
+- `scripts/training/eval_taiji_a3_world_workspace.py` 已把 learned workspace 接入真实 `TaijiWorldState` 两步 transition：
+  `assemble` 依据 workspace 组合是否正确产生 outcome，`commit` 只在第一步成功后完成；3 seeds 的 learned final success
+  均为 `1.0`、mean total reward 均为 `2.0`，strongest-single/dense final success 均为 `0`，random 平均为 `0.2292`，
+  none 为 `0`；报告和 manifest 为 `reports/taiji_a3_world_workspace_*_20260825.json`。这关闭 A3 的小型 world-outcome
+  子门，但仍不是长程规划、动态容量或一般异质群体证明。
 
 ### 工作项
 
 - 建立实体、属性、关系、事件和 affordance 的分布式动态绑定。
-- ~~引入容量受限、可学习的选择性路由与广播。~~ 已完成最小 runtime 机制与静态组合窄 Gate；下一阶段转入 world-outcome 协作任务。
+- ~~引入容量受限、可学习的选择性路由与广播。~~ 已完成最小 runtime 机制及静态/world-outcome 窄 Gate；下一阶段转入 P4 记忆合同。
 - 把预测目标从 next byte 扩展到下一事件、状态变化和行动后果。
 - 在对象持续性、关系交换、时间打乱和干预任务上预注册 A2/A3。
 
@@ -321,4 +326,4 @@ P3 的第一段合同与恢复边界已落地：
 
 ## 16. 当前唯一下一步
 
-**扩展 P3 A3：把 learned workspace 接入带 world outcome 的多步任务，在未见组合上比较 learned、最强单体、dense、固定/随机路由和无 workspace；不改变已冻结的 world/action/outcome 合同。**
+**进入 P4 多系统记忆：建立 Taiji-owned working/episodic memory 合同和最小真实经历写入—检索—checkpoint 纵切片；保留 P3 world/workspace outcome 对照，不改变既有合同。**
