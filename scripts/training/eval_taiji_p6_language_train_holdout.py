@@ -32,18 +32,32 @@ REPORT_FORMAT = "taiji-p6-language-train-holdout-v1"
 
 TRAIN_CASES = (
     {
-        "case_id": "status-train",
-        "intent_kind": "render_status_digest",
-        "semantic_slots": {"状态": "稳定", "受众": "操作员", "格式": "一句话"},
-        "target_text": "当前状态稳定。",
-        "required_terms": ("稳定",),
+        "case_id": "database-train",
+        "intent_kind": "render_database_notice",
+        "semantic_slots": {"系统": "数据库", "状态": "正常", "受众": "操作员"},
+        "target_text": "数据库运行正常。",
+        "required_terms": ("数据库",),
     },
     {
-        "case_id": "maintenance-train",
-        "intent_kind": "render_maintenance_notice",
-        "semantic_slots": {"事件": "维护窗口", "时间": "今晚十点", "受众": "操作员"},
-        "target_text": "今晚十点有维护窗口。",
-        "required_terms": ("维护窗口", "今晚十点"),
+        "case_id": "interface-train",
+        "intent_kind": "render_interface_notice",
+        "semantic_slots": {"服务": "接口", "状态": "维护", "受众": "操作员"},
+        "target_text": "接口进入维护。",
+        "required_terms": ("接口",),
+    },
+    {
+        "case_id": "cache-recovery-train",
+        "intent_kind": "render_cache_recovery",
+        "semantic_slots": {"服务": "缓存", "状态": "恢复", "受众": "操作员"},
+        "target_text": "缓存已经恢复。",
+        "required_terms": ("缓存", "恢复"),
+    },
+    {
+        "case_id": "cache-warning-train",
+        "intent_kind": "render_cache_warning",
+        "semantic_slots": {"服务": "缓存", "级别": "警告", "受众": "操作员"},
+        "target_text": "缓存出现警告。",
+        "required_terms": ("缓存", "警告"),
     },
 )
 

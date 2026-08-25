@@ -1,0 +1,16 @@
+{
+  "format": "taiji-p6-qwen-lora-provider-manifest-v1",
+  "task": "train a rollbackable Qwen LoRA language-organ adapter from Taiji-owned train examples and evaluate the unchanged holdout",
+  "lesions": [
+    "no_lora_update",
+    "adapter_disabled_rollback",
+    "taiji_cognition_dependency"
+  ],
+  "signals": [
+    "trainable_parameter_count",
+    "holdout_required_term_recall",
+    "prompt_leakage_rate",
+    "rollback_outputs_match_base"
+  ],
+  "boundary": "external provider adaptation only; LoRA never owns Taiji goals, memory, planning, or action decisions"
+}

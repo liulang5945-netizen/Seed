@@ -1,0 +1,238 @@
+{
+  "format": "taiji-p6-qwen-lora-provider-v1",
+  "model": {
+    "backend": "qwen2.5-0.5b-instruct",
+    "model_dir_name": "7ae557604adf67be50417f59c2c2f167def9a775",
+    "device": "cpu",
+    "adapter_dir": "C:\\Users\\23747\\AppData\\Local\\Temp\\seed-qwen-lora-20260825-final"
+  },
+  "training": {
+    "training_applied": true,
+    "method": "peft-lora",
+    "rank": 4,
+    "alpha": 8,
+    "epochs": 4,
+    "learning_rate": 0.0005,
+    "trainable_parameter_count": 270336,
+    "optimizer_steps": 16,
+    "losses": [
+      3.615009307861328,
+      4.197261333465576,
+      2.0403220653533936,
+      1.583910584449768,
+      1.075659990310669,
+      2.2478408813476562,
+      0.6714388132095337,
+      0.6461731791496277,
+      0.34496334195137024,
+      1.5109015703201294,
+      0.4984906315803528,
+      0.30677011609077454,
+      0.09597603231668472,
+      1.096311092376709,
+      0.23224656283855438,
+      0.14067284762859344
+    ],
+    "base_checkpoint_untouched": true
+  },
+  "base_metrics": {
+    "train": {
+      "examples": [
+        {
+          "example_id": "qwen:train:database-train:example",
+          "output_text": "操作员收到一条简短的消息，预期结果是“操作员接收到一个简洁的通知”，意图类型是“",
+          "output_nonempty": true,
+          "required_terms": [
+            "数据库"
+          ],
+          "required_term_recall": 0.0,
+          "prompt_or_json_leak": false
+        },
+        {
+          "example_id": "qwen:train:interface-train:example",
+          "output_text": "操作员收到一个简短的通知，告知他们即将接收到一个维护的服务通知。",
+          "output_nonempty": true,
+          "required_terms": [
+            "接口"
+          ],
+          "required_term_recall": 0.0,
+          "prompt_or_json_leak": false
+        },
+        {
+          "example_id": "qwen:train:cache-recovery-train:example",
+          "output_text": "操作员收到了一个简短的消息，表明他们正在处理缓存恢复的问题。",
+          "output_nonempty": true,
+          "required_terms": [
+            "缓存",
+            "恢复"
+          ],
+          "required_term_recall": 1.0,
+          "prompt_or_json_leak": false
+        },
+        {
+          "example_id": "qwen:train:cache-warning-train:example",
+          "output_text": "操作员收到一个简短的消息，提示他们可能需要处理一些缓存问题。",
+          "output_nonempty": true,
+          "required_terms": [
+            "缓存",
+            "警告"
+          ],
+          "required_term_recall": 0.5,
+          "prompt_or_json_leak": false
+        }
+      ],
+      "output_nonempty_rate": 1.0,
+      "required_term_recall": 0.375,
+      "prompt_leakage_rate": 1.0
+    },
+    "holdout": {
+      "examples": [
+        {
+          "example_id": "qwen:holdout:incident-holdout:example",
+          "output_text": "操作员正在检查数据库，等级为警告。",
+          "output_nonempty": true,
+          "required_terms": [
+            "警告",
+            "数据库"
+          ],
+          "required_term_recall": 1.0,
+          "prompt_or_json_leak": false
+        },
+        {
+          "example_id": "qwen:holdout:recovery-holdout:example",
+          "output_text": "操作员收到一条简短的消息，告知他们即将恢复服务。",
+          "output_nonempty": true,
+          "required_terms": [
+            "恢复",
+            "接口"
+          ],
+          "required_term_recall": 0.5,
+          "prompt_or_json_leak": false
+        }
+      ],
+      "output_nonempty_rate": 1.0,
+      "required_term_recall": 0.75,
+      "prompt_leakage_rate": 1.0
+    }
+  },
+  "adapted_metrics": {
+    "train": {
+      "examples": [
+        {
+          "example_id": "qwen:train:database-train:example",
+          "output_text": "数据库运行正常。",
+          "output_nonempty": true,
+          "required_terms": [
+            "数据库"
+          ],
+          "required_term_recall": 1.0,
+          "prompt_or_json_leak": false
+        },
+        {
+          "example_id": "qwen:train:interface-train:example",
+          "output_text": "接口正在维护。",
+          "output_nonempty": true,
+          "required_terms": [
+            "接口"
+          ],
+          "required_term_recall": 1.0,
+          "prompt_or_json_leak": false
+        },
+        {
+          "example_id": "qwen:train:cache-recovery-train:example",
+          "output_text": "缓存已经成功恢复。",
+          "output_nonempty": true,
+          "required_terms": [
+            "缓存",
+            "恢复"
+          ],
+          "required_term_recall": 1.0,
+          "prompt_or_json_leak": false
+        },
+        {
+          "example_id": "qwen:train:cache-warning-train:example",
+          "output_text": "缓存出现警告。",
+          "output_nonempty": true,
+          "required_terms": [
+            "缓存",
+            "警告"
+          ],
+          "required_term_recall": 1.0,
+          "prompt_or_json_leak": false
+        }
+      ],
+      "output_nonempty_rate": 1.0,
+      "required_term_recall": 1.0,
+      "prompt_leakage_rate": 1.0
+    },
+    "holdout": {
+      "examples": [
+        {
+          "example_id": "qwen:holdout:incident-holdout:example",
+          "output_text": "数据库出现警告。",
+          "output_nonempty": true,
+          "required_terms": [
+            "警告",
+            "数据库"
+          ],
+          "required_term_recall": 1.0,
+          "prompt_or_json_leak": false
+        },
+        {
+          "example_id": "qwen:holdout:recovery-holdout:example",
+          "output_text": "接口已成功恢复。",
+          "output_nonempty": true,
+          "required_terms": [
+            "恢复",
+            "接口"
+          ],
+          "required_term_recall": 1.0,
+          "prompt_or_json_leak": false
+        }
+      ],
+      "output_nonempty_rate": 1.0,
+      "required_term_recall": 1.0,
+      "prompt_leakage_rate": 1.0
+    }
+  },
+  "rollback": {
+    "holdout": {
+      "examples": [
+        {
+          "example_id": "qwen:holdout:incident-holdout:example",
+          "output_text": "操作员正在检查数据库，等级为警告。",
+          "output_nonempty": true,
+          "required_terms": [
+            "警告",
+            "数据库"
+          ],
+          "required_term_recall": 1.0,
+          "prompt_or_json_leak": false
+        },
+        {
+          "example_id": "qwen:holdout:recovery-holdout:example",
+          "output_text": "操作员收到一条简短的消息，告知他们即将恢复服务。",
+          "output_nonempty": true,
+          "required_terms": [
+            "恢复",
+            "接口"
+          ],
+          "required_term_recall": 0.5,
+          "prompt_or_json_leak": false
+        }
+      ],
+      "output_nonempty_rate": 1.0,
+      "required_term_recall": 0.75,
+      "prompt_leakage_rate": 1.0
+    },
+    "outputs_match_base": true,
+    "adapted_outputs": [
+      "数据库出现警告。",
+      "接口已成功恢复。"
+    ]
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "a real LoRA adapter updates only external provider parameters, improves the same holdout required-term recall without leakage, and disabling the adapter reproduces the raw provider output"
+  }
+}

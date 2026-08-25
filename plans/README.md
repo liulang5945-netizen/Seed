@@ -139,11 +139,13 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 language train/holdout boundary 与 provider baseline Gate 已通过：`LanguageTrainingCorpus` 强制 train/holdout 非空、样本 ID
   与 expression ID 跨 split 不重复，并可 checkpoint round-trip；真实 Qwen provider 在未更新权重的前提下完成 2/2 train、2/2 holdout
   测量，holdout 非空率=`1.0`、必需语义词覆盖率=`0.75`、结构化泄漏率=`0.0`。该 Gate 证明数据边界和基线测量，不宣称已训练 Qwen。
+- P6 rollbackable provider trainer Gate 已通过：真实 Qwen 上以 `peft-LoRA` 更新 `270336` 个外部 adapter 参数，4 epochs/16 steps，
+  共享词汇与未见组合 holdout 的必需语义词覆盖率从 raw=`0.75` 提升到 adapted=`1.0`，结构化泄漏率=`0.0`；关闭 adapter 后输出与
+  raw 完全一致，base checkpoint 未修改，Taiji cognition 仍可 lesion。该 Gate 证明外部器官训练和回滚边界，不等于开放域语言智能。
 - 原生套件当前 `114 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
   环境状态不作为代码能力结论。
 
 ## 当前唯一下一步
 
-下一决策入口：为已验证的 train/holdout corpus 接入一个显式 provider trainer（先做参数高效/可回滚方案），在同一 holdout 上证明
-必需语义词覆盖率相对 raw baseline 提升，同时保留 Taiji 的 validator/fallback/replan 安全边界；不把 Transformer 或其他 decoder 变成
-认知主体。
+下一决策入口：把已训练 LoRA provider 接入 Taiji validator/fallback/replan，并在原始三类多样化 holdout 上与 raw provider 做安全
+对比；只有通过语义安全、回滚和 cognition lesion，才允许进入客户端默认器官，不把 Transformer 或其他 decoder 变成认知主体。
