@@ -359,7 +359,10 @@ P4 的最小真实经历边界已落地：
 - P7 executive contract Gate 已通过：`ExecutiveController` 使用 percept/world/memory/goal/homeostasis 派生 context 学习候选
   utility，输出保持同一候选携带的结构化 `ActionIntent + ContentPlan`；`TSKV8Adapter` 已接入选择、Outcome 反馈、native checkpoint
   和 parameter surface。该 Gate 只证明学习型候选选择与所有权，不证明真实环境 action/outcome 闭环或语言智能。
-- 本轮 native 回归为 `122 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
+- P7 executive environment-loop Gate 已通过：`ExecutiveDecision` 通过显式 `WorldAction` 元数据和 motor `action_symbol` 接入
+  `TaijiEnvironment.step()`，真实 `EnvironmentOutcome` 回写 executive utility、下一感知并触发失败重规划；selected/alternative、
+  checkpoint continuation、utility update 与 executive lesion 均有测试。该 Gate 不伪造环境 after-state，不证明长程规划或通用智能。
+- 本轮 native 回归为 `123 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
 ### 工作项
@@ -464,5 +467,5 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把 `ExecutiveDecision` 接入真实 `WorldAction → TaijiEnvironment → Outcome` 闭环，让每次实际结果更新 executive
-utility，并验证 selected/alternative、失败重规划、checkpoint continuation 和 executive lesion；禁止让聊天 decoder 代替环境反馈。**
+**下一步：建立 Taiji-owned candidate synthesis 合同：`PerceptEvent + WorldState.affordances + GoalState` 产生带 provenance 的
+`ExecutiveCandidate` 集合，再交给 executive 选择；验证未见 affordance/action transfer，禁止固定 action/intent 表和客户端候选硬编码。**

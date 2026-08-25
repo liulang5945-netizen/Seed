@@ -40,7 +40,7 @@ from .contracts import (
     WorldTransition,
 )
 from .contracts import MemoryState as NativeMemoryState
-from .environment import EnvironmentOutcome, TaijiToolEnvironment
+from .environment import EnvironmentOutcome, TaijiEnvironment, TaijiToolEnvironment
 from .episodic_memory import EpisodicMemoryStore
 from .executive import (
     ExecutiveCandidate,
@@ -108,6 +108,7 @@ class TSKV8Adapter(Taiji):
         self._executive: ExecutiveController | None = None
         self._last_executive_decision: ExecutiveDecision | None = None
         self._last_executive_prediction_error: float | None = None
+        self._last_executive_world_action: WorldAction | None = None
         self._planned_rollout: ImaginedRollout | None = None
         self._replan_required = False
         self._last_rollout_prediction_error: float | None = None
@@ -279,6 +280,10 @@ class TSKV8Adapter(Taiji):
     def last_executive_prediction_error(self) -> float | None:
         return self._last_executive_prediction_error
 
+    @property
+    def last_executive_world_action(self) -> WorldAction | None:
+        return self._last_executive_world_action
+
     def select_executive(
         self,
         candidates: Sequence[ExecutiveCandidate],
@@ -308,6 +313,7 @@ class TSKV8Adapter(Taiji):
         )
         self._last_executive_decision = decision
         self._last_executive_prediction_error = None
+        self._last_executive_world_action = None
         self._cognitive_state = replace(
             self._cognitive_state,
             plan=PlanState(
@@ -334,6 +340,99 @@ class TSKV8Adapter(Taiji):
         self._last_executive_prediction_error = error
         self._cognitive_state = replace(self._cognitive_state, outcome=outcome)
         return error
+
+    def execute_executive_action(
+        self,
+        environment: TaijiEnvironment,
+        *,
+        decision: ExecutiveDecision | None = None,
+        action_symbol: int | None = None,
+        learn: bool = True,
+    ) -> Outcome:
+        """Execute a selected executive intent through a motor environment.
+
+        ``TaijiEnvironment`` currently exposes an integer motor channel.  The
+        selected structured intent remains the owner of the action metadata;
+        only its explicit ``action_symbol`` parameter crosses this terminal
+        organ boundary.  The environment's returned sensation is fed back as
+        the next Taiji observation.
+        """
+
+        if self._executive is None:
+            raise RuntimeError("executive controller is not attached")
+        if not isinstance(environment, TaijiEnvironment):
+            raise TypeError("environment must implement TaijiEnvironment")
+        selected = decision or self._last_executive_decision
+        if selected is None:
+            raise RuntimeError("executive action requires a prior selection")
+        if decision is not None:
+            self._last_executive_decision = decision
+            self._cognitive_state = replace(
+                self._cognitive_state,
+                action_intent=decision.action_intent,
+            )
+        parameters = selected.action_intent.parameters
+        selected_symbol = parameters.get("action_symbol") if action_symbol is None else action_symbol
+        if isinstance(selected_symbol, bool) or not isinstance(selected_symbol, int):
+            raise ValueError("executive ActionIntent requires an integer action_symbol")
+        available = parameters.get("available_actions")
+        if available is not None and int(selected_symbol) not in tuple(int(item) for item in available):
+            raise ValueError("executive action_symbol is not in the ActionIntent available_actions")
+        world_action = selected.to_world_action(
+            tick=self._cognitive_state.world.tick,
+            provenance="planned",
+        )
+        kernel_decision = super().act((int(selected_symbol),), sample=False)
+        if kernel_decision.action_symbol != int(selected_symbol):
+            raise RuntimeError("Taiji motor bridge did not preserve executive action_symbol")
+        self._last_executive_world_action = world_action
+        result = environment.step(int(selected_symbol))
+        if not isinstance(result, EnvironmentOutcome):
+            raise TypeError("environment must return an EnvironmentOutcome")
+        self.settle_action(
+            result.reward,
+            learn=learn,
+            success=result.success,
+            terminal=result.terminal,
+            provenance="experienced",
+        )
+        experienced = self._cognitive_state.outcome
+        if experienced is None:
+            raise RuntimeError("executive environment outcome was not recorded")
+        self.record_executive_outcome(experienced)
+        self._replan_required = bool(
+            not result.terminal and (result.success is False or result.reward < 0.0)
+        )
+        self.observe(result.sensation, learn=learn)
+        return experienced
+
+    def replan_executive_after_failure(
+        self,
+        candidates: Sequence[ExecutiveCandidate],
+        *,
+        novelty: float = 0.0,
+        resource_budget: float = 1.0,
+    ) -> ExecutiveDecision:
+        """Select an alternative executive candidate after a failed action."""
+
+        if not self._replan_required:
+            raise RuntimeError("executive replanning has not been requested")
+        if self._last_executive_decision is None:
+            raise RuntimeError("executive replanning requires a prior selection")
+        alternatives = tuple(
+            candidate
+            for candidate in candidates
+            if candidate.candidate_id != self._last_executive_decision.selected.candidate_id
+        )
+        if not alternatives:
+            raise RuntimeError("executive replanning requires an alternative candidate")
+        decision = self.select_executive(
+            alternatives,
+            novelty=novelty,
+            resource_budget=resource_budget,
+        )
+        self._replan_required = False
+        return decision
 
     def attach_generation_controller(
         self, controller: GenerationController | None
@@ -708,6 +807,7 @@ class TSKV8Adapter(Taiji):
         self._last_rollout_calibrated_confidence = None
         self._last_executive_decision = None
         self._last_executive_prediction_error = None
+        self._last_executive_world_action = None
         self._last_generation_trace = None
         self._last_language_emission = None
         self._language_fallback_count = 0
@@ -1328,6 +1428,11 @@ class TSKV8Adapter(Taiji):
             else self._last_executive_decision.to_payload()
         )
         payload["last_executive_prediction_error"] = self._last_executive_prediction_error
+        payload["last_executive_world_action"] = (
+            None
+            if self._last_executive_world_action is None
+            else self._last_executive_world_action.to_payload()
+        )
         payload["language_fallback_count"] = self._language_fallback_count
         payload["language_fallback_requires_replan"] = self._language_fallback_requires_replan
         payload["last_language_emission"] = (
@@ -1442,6 +1547,12 @@ class TSKV8Adapter(Taiji):
         )
         error = payload.get("last_executive_prediction_error") if isinstance(payload, dict) else None
         self._last_executive_prediction_error = None if error is None else float(error)
+        action = payload.get("last_executive_world_action") if isinstance(payload, dict) else None
+        self._last_executive_world_action = (
+            None
+            if action is None
+            else WorldAction.from_payload(dict(action), device=self.device)
+        )
 
     def _restore_generation_controller(self, payload: Any) -> None:
         self._generation_controller = (
@@ -1597,6 +1708,11 @@ class TSKV8Adapter(Taiji):
             else self._last_executive_decision.to_payload()
         )
         components["last_executive_prediction_error"] = self._last_executive_prediction_error
+        components["last_executive_world_action"] = (
+            None
+            if self._last_executive_world_action is None
+            else self._last_executive_world_action.to_payload()
+        )
         components["language_fallback_count"] = self._language_fallback_count
         components["language_fallback_requires_replan"] = self._language_fallback_requires_replan
         components["last_language_emission"] = (
