@@ -1,0 +1,16 @@
+{
+  "format": "taiji-p6-cross-organ-expression-v1",
+  "metrics": {
+    "content_id": "episode:intent:cross-organ:content",
+    "tool_modality": "tool",
+    "text_modality": "text",
+    "tool_channel": "rpc",
+    "text_channel": "message",
+    "semantic_slots_consistent": true,
+    "goal_provenance": "stay-informed"
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "one ContentPlan feeds tool and text expression organs without changing semantic slots, confidence, or goal provenance"
+  }
+}

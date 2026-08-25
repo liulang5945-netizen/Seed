@@ -296,7 +296,10 @@ P4 的最小真实经历边界已落地：
 - `scripts/training/eval_taiji_p6_unseen_tool_transfer.py` 已通过 unseen-tool/parameter transfer 窄 Gate：未见工具名、嵌套参数与重排
   key 顺序均保持并成功执行；同时 `act(world_action=...)` 已保留通用结构化参数与兼容 action metadata，报告和 manifest 为
   `reports/taiji_p6_unseen_tool_transfer_*_20260825.json`。该结果关闭固定工具表/扁平参数假设，不代表广泛工具生态泛化。
-- 本轮 native 回归为 `97 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
+- `scripts/training/eval_taiji_p6_cross_organ_expression.py` 已通过 cross-organ expression consistency 窄 Gate：同一 `ContentPlan` 同时
+  生成 tool/text 结构化表达，content ID、semantic slots、confidence 和 goal provenance 一致，只改变 modality/channel；报告和
+  manifest 为 `reports/taiji_p6_cross_organ_expression_*_20260825.json`。该结果不等于语言流畅性。
+- 本轮 native 回归为 `99 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
 
 ### 工作项
 
@@ -400,4 +403,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**继续 P6 cross-organ expression consistency Gate：让同一 `ContentPlan` 分别生成 tool 与 text 结构化表达，验证 semantic slots 一致且器官输出不改变目标/计划；不改变既有合同。**
+**继续 P6 learned content selection Gate：让 content planner 从 goal/world/context 选择可解释 semantic slots，而不是直接复制 `ActionIntent`；不改变既有合同。**
