@@ -9,6 +9,7 @@ from .affordance import (
     AFFORDANCE_FEATURE_CHECKPOINT_FORMAT,
     AffordanceFeatureTrainingExample,
     LearnedAffordanceFeatures,
+    WorldAffordanceGroundingProducer,
 )
 from .assembly_evaluation import (
     AssemblyRelationEvaluationConfig,
@@ -291,6 +292,7 @@ __all__ = [
     "HOMEOSTASIS_CHECKPOINT_FORMAT",
     "LearningState",
     "LearnedAffordanceFeatures",
+    "WorldAffordanceGroundingProducer",
     "LearnedPerception",
     "SelfState",
     "WorkspaceState",

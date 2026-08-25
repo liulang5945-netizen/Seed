@@ -502,6 +502,7 @@ class WorldAffordance:
     confidence: float = 1.0
     features: torch.Tensor = field(default_factory=lambda: torch.empty(0))
     feature_provenance: str = "world-organ"
+    grounding_lineage: tuple[str, ...] = ()
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -519,6 +520,11 @@ class WorldAffordance:
             raise ValueError("affordance features must be finite")
         _check_text(self.feature_provenance, "affordance feature_provenance")
         object.__setattr__(self, "parameters", _normalize_pairs(self.parameters, "affordance parameters"))
+        object.__setattr__(
+            self,
+            "grounding_lineage",
+            _normalize_tags(self.grounding_lineage, "affordance grounding_lineage"),
+        )
         object.__setattr__(self, "features", self.features.detach().clone())
 
     def to_payload(self) -> dict[str, Any]:
@@ -532,6 +538,7 @@ class WorldAffordance:
             "confidence": self.confidence,
             "features": self.features.detach().cpu().clone(),
             "feature_provenance": self.feature_provenance,
+            "grounding_lineage": list(self.grounding_lineage),
         }
 
     @classmethod
@@ -549,6 +556,9 @@ class WorldAffordance:
             confidence=float(payload.get("confidence", 1.0)),
             features=payload.get("features", torch.empty(0)).detach().to(device).clone(),
             feature_provenance=str(payload.get("feature_provenance", "world-organ")),
+            grounding_lineage=tuple(
+                str(item) for item in payload.get("grounding_lineage", ())
+            ),
         )
 
 

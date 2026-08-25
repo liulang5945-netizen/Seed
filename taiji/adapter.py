@@ -8,7 +8,7 @@ from typing import Any
 
 import torch
 
-from .affordance import LearnedAffordanceFeatures
+from .affordance import LearnedAffordanceFeatures, WorldAffordanceGroundingProducer
 from .content_selection import (
     ContentCandidate,
     ContentSelectionContext,
@@ -107,6 +107,7 @@ class TSKV8Adapter(Taiji):
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
         self._affordance_features: LearnedAffordanceFeatures | None = None
+        self._affordance_grounding: WorldAffordanceGroundingProducer | None = None
         self._executive: ExecutiveController | None = None
         self._last_executive_decision: ExecutiveDecision | None = None
         self._last_executive_prediction_error: float | None = None
@@ -287,6 +288,26 @@ class TSKV8Adapter(Taiji):
                 "affordance feature source context_dim must match Taiji perception feature_dim"
             )
         self._affordance_features = None if source is None else source.to(self.device)
+        self._affordance_grounding = (
+            None
+            if source is None
+            else WorldAffordanceGroundingProducer(source.input_dim)
+        )
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            world=self._ground_world_state(self._cognitive_state.world),
+        )
+
+    def _ground_world_state(self, world: WorldState) -> WorldState:
+        if self._affordance_grounding is None or not world.affordances:
+            return world
+        return replace(
+            world,
+            affordances=tuple(
+                self._affordance_grounding.ground(world, affordance)
+                for affordance in world.affordances
+            ),
+        )
 
     @property
     def last_executive_decision(self) -> ExecutiveDecision | None:
@@ -1046,7 +1067,10 @@ class TSKV8Adapter(Taiji):
                 raise TypeError("world_state must be a Taiji WorldState")
             if world_state.tick != self.tick:
                 raise ValueError("observed world_state must match the adapter tick")
-            self._cognitive_state = replace(self._cognitive_state, world=world_state)
+            self._cognitive_state = replace(
+                self._cognitive_state,
+                world=self._ground_world_state(world_state),
+            )
         return step
 
     def ingest_input(
@@ -1297,6 +1321,7 @@ class TSKV8Adapter(Taiji):
                 raise TypeError("world_state must be a Taiji WorldState")
             if world_state.tick != before.tick + 1:
                 raise ValueError("world_state must advance the cognitive world tick by one")
+            world_state = self._ground_world_state(world_state)
             if world_action is not None:
                 if not isinstance(world_action, WorldAction):
                     raise TypeError("world_action must be a Taiji WorldAction")
@@ -1622,6 +1647,11 @@ class TSKV8Adapter(Taiji):
             None
             if payload is None
             else LearnedAffordanceFeatures.from_checkpoint(dict(payload)).to(self.device)
+        )
+        self._affordance_grounding = (
+            None
+            if self._affordance_features is None
+            else WorldAffordanceGroundingProducer(self._affordance_features.input_dim)
         )
 
     def _restore_executive(self, payload: Any) -> None:

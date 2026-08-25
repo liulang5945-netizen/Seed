@@ -11,15 +11,151 @@ from __future__ import annotations
 
 import math
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 import torch
 from torch import nn
 
-from .contracts import WorldAffordance
+from .contracts import WorldAffordance, WorldState
 
 AFFORDANCE_FEATURE_CHECKPOINT_FORMAT = "taiji-affordance-features-v1"
+
+
+def _attribute_number(value: Any) -> float | None:
+    if isinstance(value, bool):
+        return float(value)
+    if isinstance(value, (int, float)) and math.isfinite(float(value)):
+        return float(value)
+    if isinstance(value, torch.Tensor) and value.ndim == 0:
+        scalar = float(value.detach().cpu())
+        return scalar if math.isfinite(scalar) else None
+    return None
+
+
+def _summary(values: Sequence[float]) -> torch.Tensor:
+    if not values:
+        return torch.zeros(4, dtype=torch.float32)
+    tensor = torch.tensor(tuple(values), dtype=torch.float32)
+    return torch.stack(
+        (
+            tensor.mean(),
+            tensor.std(unbiased=False),
+            torch.linalg.vector_norm(tensor) / math.sqrt(float(tensor.numel())),
+            tensor.max() - tensor.min(),
+        )
+    )
+
+
+class WorldAffordanceGroundingProducer:
+    """Create raw affordance grounding from object/relation world lineage.
+
+    This is a world-organ boundary, not a symbolic action encoder.  It uses
+    only numeric state summaries and binding structure; ``action_kind`` and
+    ``affordance_id`` never become feature-table indices.
+    """
+
+    BASE_FEATURE_DIM = 17
+
+    def __init__(self, grounding_dim: int) -> None:
+        if int(grounding_dim) <= 0:
+            raise ValueError("world affordance grounding_dim must be positive")
+        self.grounding_dim = int(grounding_dim)
+
+    def _base_features(
+        self,
+        state: WorldState,
+        affordance: WorldAffordance,
+    ) -> tuple[torch.Tensor, tuple[str, ...]]:
+        objects = {item.object_id: item for item in state.objects}
+        lineage = {f"world-state:{state.tick}"}
+
+        def object_summary(object_id: str) -> torch.Tensor:
+            if not object_id:
+                return torch.zeros(4, dtype=torch.float32)
+            lineage.add(f"object:{object_id}")
+            obj = objects.get(object_id)
+            if obj is None:
+                lineage.add(f"object-missing:{object_id}")
+                return torch.zeros(4, dtype=torch.float32)
+            values = [
+                number
+                for _, value in obj.attributes
+                if (number := _attribute_number(value)) is not None
+            ]
+            return _summary(values)
+
+        actor = object_summary(affordance.actor_id)
+        target = object_summary(affordance.target_id)
+        relevant_relations = tuple(
+            relation
+            for relation in state.relations
+            if affordance.actor_id
+            and affordance.target_id
+            and (
+                relation[0] in (affordance.actor_id, affordance.target_id)
+                or relation[2] in (affordance.actor_id, affordance.target_id)
+            )
+        )
+        for subject_id, predicate, object_id in relevant_relations:
+            lineage.add(f"relation:{subject_id}:{predicate}:{object_id}")
+        direct_relations = tuple(
+            relation
+            for relation in relevant_relations
+            if (
+                relation[0] == affordance.actor_id
+                and relation[2] == affordance.target_id
+            )
+            or (
+                relation[0] == affordance.target_id
+                and relation[2] == affordance.actor_id
+            )
+        )
+        relation_features = torch.tensor(
+            (
+                float(len(state.relations)),
+                float(len(relevant_relations)),
+                float(len(direct_relations)),
+                float(len({relation[1] for relation in relevant_relations})),
+            ),
+            dtype=torch.float32,
+        )
+        latent = _summary(
+            [
+                number
+                for value in state.latent.detach().flatten().cpu().tolist()
+                if (number := _attribute_number(value)) is not None
+            ]
+        )
+        base = torch.cat(
+            (
+                actor,
+                target,
+                relation_features,
+                latent,
+                torch.tensor((affordance.confidence,), dtype=torch.float32),
+            )
+        )
+        return base, tuple(sorted(lineage))
+
+    def ground(self, state: WorldState, affordance: WorldAffordance) -> WorldAffordance:
+        if not isinstance(state, WorldState):
+            raise TypeError("state must be a WorldState")
+        if not isinstance(affordance, WorldAffordance):
+            raise TypeError("affordance must be a WorldAffordance")
+        base, lineage = self._base_features(state, affordance)
+        pooled = torch.stack(
+            tuple(base[index % base.numel() :: self.grounding_dim].mean()
+                  if index < base.numel()
+                  else base[index % base.numel()]
+                  for index in range(self.grounding_dim))
+        )
+        return replace(
+            affordance,
+            features=pooled,
+            feature_provenance="world-state-grounding",
+            grounding_lineage=lineage,
+        )
 
 
 def _finite(value: float, name: str) -> float:
