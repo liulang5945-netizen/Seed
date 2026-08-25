@@ -54,6 +54,16 @@ from .episodic_memory import (
 )
 from .evaluation import A1EvaluationConfig, PerceptionCorpus, PerceptionEvaluator
 from .fabric import TaijiFabric
+from .generation import (
+    GENERATION_CHECKPOINT_FORMAT,
+    TOOL_CALL_CODEC_FORMAT,
+    ContentPlan,
+    ExpressionPlan,
+    GenerationController,
+    GenerationTrace,
+    StructuredToolCallCodec,
+    ToolCall,
+)
 from .homeostasis import (
     HOMEOSTASIS_CHECKPOINT_FORMAT,
     HomeostaticConfig,
@@ -136,6 +146,14 @@ __all__ = [
     "EpisodicField",
     "EpisodicReplay",
     "EpisodicWrite",
+    "ContentPlan",
+    "ExpressionPlan",
+    "GenerationController",
+    "GenerationTrace",
+    "StructuredToolCallCodec",
+    "ToolCall",
+    "GENERATION_CHECKPOINT_FORMAT",
+    "TOOL_CALL_CODEC_FORMAT",
     "MemoryRecall",
     "MemoryState",
     "NativeCheckpoint",

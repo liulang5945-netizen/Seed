@@ -1,0 +1,17 @@
+{
+  "format": "taiji-p6-generation-manifest-v1",
+  "task": "preserve one ActionIntent through content, expression, tool-call, and UTF-8 codec stages",
+  "lesions": [
+    "direct_byte_output",
+    "content_plan",
+    "expression_plan",
+    "codec_round_trip"
+  ],
+  "signals": [
+    "intent_kind",
+    "semantic_slots",
+    "tool_name",
+    "world_action"
+  ],
+  "boundary": "structured tool generation Gate only; no language-model training or general language fluency claim"
+}

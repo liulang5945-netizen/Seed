@@ -35,6 +35,7 @@ from .contracts import (
 )
 from .contracts import MemoryState as NativeMemoryState
 from .episodic_memory import EpisodicMemoryStore
+from .generation import GenerationController, GenerationTrace, ToolCall
 from .homeostasis import HomeostaticController, HomeostaticDrive
 from .model import Taiji
 from .perception import LearnedPerception
@@ -79,6 +80,8 @@ class TSKV8Adapter(Taiji):
         self._replan_required = False
         self._last_rollout_prediction_error: float | None = None
         self._last_rollout_calibrated_confidence: float | None = None
+        self._generation_controller: GenerationController | None = None
+        self._last_generation_trace: GenerationTrace | None = None
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -219,6 +222,46 @@ class TSKV8Adapter(Taiji):
         self._cognitive_state = replace(self._cognitive_state, homeostasis=state)
         return state
 
+    def attach_generation_controller(
+        self, controller: GenerationController | None
+    ) -> None:
+        """Attach the organ bridge for content and structured tool generation."""
+
+        if controller is not None and not isinstance(controller, GenerationController):
+            raise TypeError("controller must be a GenerationController or None")
+        self._generation_controller = controller
+
+    @property
+    def generation_trace(self) -> GenerationTrace | None:
+        return self._last_generation_trace
+
+    def generate_tool_call(
+        self,
+        *,
+        tool_name: str | None = None,
+        channel: str | None = None,
+        provenance: str = "planned",
+    ) -> ToolCall:
+        """Render the current Taiji action intent through the tool organ."""
+
+        if self._generation_controller is None:
+            raise RuntimeError("generation controller is not attached")
+        intent = self._cognitive_state.action_intent
+        if intent is None:
+            raise RuntimeError("tool generation requires a pending ActionIntent")
+        source_goal_id = intent.source_goal_id
+        if source_goal_id is None and self._planned_rollout is not None:
+            source_goal_id = self._planned_rollout.goal_id
+        trace = self._generation_controller.generate_tool_call(
+            intent,
+            tool_name=tool_name,
+            source_goal_id=source_goal_id,
+            channel=channel,
+            provenance=provenance,
+        )
+        self._last_generation_trace = trace
+        return trace.tool_call
+
     def attach_goal_planner(self, planner: GoalPlanner | None) -> None:
         """Attach the Taiji-owned planner for executable goal candidates."""
 
@@ -303,6 +346,7 @@ class TSKV8Adapter(Taiji):
         super().reset_dynamics(episode_id=episode_id)
         self.perception.reset_dynamics()
         self._cognitive_state = self._empty_cognitive_state(self._state.episode_id)
+        self._last_generation_trace = None
 
     def observe(self, symbol: int, *args: Any, **kwargs: Any) -> TaijiStep:
         workspace_candidates: Sequence[WorkspaceCandidate] | None = kwargs.pop(
@@ -776,6 +820,8 @@ class TSKV8Adapter(Taiji):
             payload["homeostasis"] = self._homeostatic_controller.checkpoint()
         if self._goal_planner is not None:
             payload["planning"] = self._goal_planner.checkpoint()
+        if self._generation_controller is not None:
+            payload["generation"] = self._generation_controller.checkpoint()
         payload["planned_rollout"] = (
             None if self._planned_rollout is None else self._planned_rollout.to_payload()
         )
@@ -795,7 +841,9 @@ class TSKV8Adapter(Taiji):
         self._restore_procedural_memory(checkpoint.get("procedural_memory"))
         self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
         self._restore_goal_planner(checkpoint.get("planning"))
+        self._restore_generation_controller(checkpoint.get("generation"))
         self._restore_rollout_state(checkpoint)
+        self._restore_generation_trace(checkpoint)
 
     def _world_dynamics_checkpoint(self) -> dict[str, Any]:
         if self._world_dynamics is None:
@@ -862,6 +910,19 @@ class TSKV8Adapter(Taiji):
             None if payload is None else GoalPlanner.from_checkpoint(dict(payload))
         )
 
+    def _restore_generation_controller(self, payload: Any) -> None:
+        self._generation_controller = (
+            None
+            if payload is None
+            else GenerationController.from_checkpoint(dict(payload))
+        )
+
+    def _restore_generation_trace(self, payload: Any) -> None:
+        trace = payload.get("last_generation_trace") if isinstance(payload, dict) else None
+        self._last_generation_trace = (
+            None if trace is None else GenerationTrace.from_payload(dict(trace))
+        )
+
     def _restore_rollout_state(self, payload: Any) -> None:
         rollout = payload.get("planned_rollout") if isinstance(payload, dict) else None
         self._planned_rollout = (
@@ -899,6 +960,8 @@ class TSKV8Adapter(Taiji):
             components["homeostasis"] = self._homeostatic_controller.checkpoint()
         if self._goal_planner is not None:
             components["planning"] = self._goal_planner.checkpoint()
+        if self._generation_controller is not None:
+            components["generation"] = self._generation_controller.checkpoint()
         components["planned_rollout"] = (
             None if self._planned_rollout is None else self._planned_rollout.to_payload()
         )
@@ -906,6 +969,9 @@ class TSKV8Adapter(Taiji):
         components["last_rollout_prediction_error"] = self._last_rollout_prediction_error
         components["last_rollout_calibrated_confidence"] = (
             self._last_rollout_calibrated_confidence
+        )
+        components["last_generation_trace"] = (
+            None if self._last_generation_trace is None else self._last_generation_trace.to_payload()
         )
         return NativeCheckpoint(
             kernel=super().checkpoint(),
@@ -928,7 +994,9 @@ class TSKV8Adapter(Taiji):
         self._restore_procedural_memory(envelope.components.get("procedural_memory"))
         self._restore_homeostatic_controller(envelope.components.get("homeostasis"))
         self._restore_goal_planner(envelope.components.get("planning"))
+        self._restore_generation_controller(envelope.components.get("generation"))
         self._restore_rollout_state(envelope.components)
+        self._restore_generation_trace(envelope.components)
         state = envelope.cognitive_state
         if state.tick != self.tick or state.episode_id != self._state.episode_id:
             raise ValueError("native cognitive state is out of sync with kernel state")

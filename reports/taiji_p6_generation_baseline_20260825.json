@@ -1,0 +1,20 @@
+{
+  "format": "taiji-p6-generation-v1",
+  "metrics": {
+    "content_intent_kind": "lookup_weather",
+    "expression_modality": "tool",
+    "expression_channel": "rpc",
+    "tool_name": "weather.lookup.v1",
+    "parameter_keys": [
+      "city",
+      "days"
+    ],
+    "encoded_bytes": 331,
+    "codec_round_trip": true,
+    "world_action_kind": "weather.lookup.v1"
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "content and expression preserve intent semantics and structured tool bytes round-trip into a world action"
+  }
+}
