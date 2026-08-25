@@ -58,6 +58,10 @@ from .memory import EpisodicField, EpisodicReplay, EpisodicWrite
 from .model import Taiji
 from .organs import ByteMotor, ByteSensor, SparseReceptorBank
 from .perception import LearnedPerception
+from .semantic_memory import (
+    SEMANTIC_MEMORY_CHECKPOINT_FORMAT,
+    SemanticMemoryLearner,
+)
 from .sparse import SparseSynapses
 from .state import (
     MemoryRecall,
@@ -128,6 +132,8 @@ __all__ = [
     "RegionState",
     "SparseReceptorBank",
     "SparseSynapses",
+    "SemanticMemoryLearner",
+    "SEMANTIC_MEMORY_CHECKPOINT_FORMAT",
     "Taiji",
     "TaijiConfig",
     "TaijiConsolidation",
