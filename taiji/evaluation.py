@@ -45,6 +45,7 @@ class A1EvaluationConfig:
     predictive_epochs: int = 3
     predictive_learning_rate: float = 0.01
     predictive_temperature: float = 0.15
+    assembly_prediction_weight: float = 0.5
     seeds: tuple[int, ...] = (11, 29, 47)
 
     def __post_init__(self) -> None:
@@ -64,6 +65,8 @@ class A1EvaluationConfig:
             raise ValueError("A1 predictive_learning_rate must be positive")
         if self.predictive_temperature <= 0.0:
             raise ValueError("A1 predictive_temperature must be positive")
+        if self.assembly_prediction_weight < 0.0:
+            raise ValueError("A1 assembly_prediction_weight cannot be negative")
         if not self.seeds:
             raise ValueError("A1 requires at least one evaluation seed")
 
@@ -129,6 +132,7 @@ class PerceptionEvaluator:
                 "predictive_epochs": self.evaluation.predictive_epochs,
                 "predictive_learning_rate": self.evaluation.predictive_learning_rate,
                 "predictive_temperature": self.evaluation.predictive_temperature,
+                "assembly_prediction_weight": self.evaluation.assembly_prediction_weight,
                 "seeds": list(self.evaluation.seeds),
             },
             "primary": primary,
@@ -158,6 +162,7 @@ class PerceptionEvaluator:
             epochs=self.evaluation.predictive_epochs,
             learning_rate=self.evaluation.predictive_learning_rate,
             temperature=self.evaluation.predictive_temperature,
+            assembly_prediction_weight=self.evaluation.assembly_prediction_weight,
         )
         train = self._collect(model, corpus.train, learn=False, label="train", completed_only=True)
         unseen = self._collect(

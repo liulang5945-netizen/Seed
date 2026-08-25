@@ -12,11 +12,11 @@ TSK-v8 adapter 和 Seed 所有权门禁已经进入代码。该纵切片只证�
 
 P2 已开始：`LearnedPerception` 提供连续局部特征、递归预测误差、可配置的下一观测
 预测训练和可变时长 assembly，并随 v1 adapter checkpoint 保存。A1 合同还要求完成
-assembly 迁移、边界扰动与 random chunk lesion 证据。最新 completed-assembly probe
-报告显示未见组合 gain 为 `-0.0046`、marker score delta 为 `+0.0119`、random-chunk
-drop 为 `+0.0028`、boundary-rate delta 为 `+0.0011`，均未达到加强后的 Gate 要求。
-因此下一步提升的是训练目标的层级：从 next-byte prediction 进入 assembly-level
-组合转移；当前仍不能宣称 Taiji 已拥有通过 Gate 的学习型抽象能力。
+assembly 迁移、边界扰动与 random chunk lesion 证据。加入 future-window assembly
+目标后的最新报告显示未见组合 gain 为 `-0.0088`、marker score delta 为 `+0.0222`、
+marker rate delta 为 `+0.0098`、random-chunk drop 为 `+0.0077`，仍未达到加强后的
+Gate 要求。因此下一步改为自监督 assembly consistency/contrastive 目标，而不是
+继续扩大 byte 预测窗口；当前仍不能宣称 Taiji 已拥有通过 Gate 的学习型抽象能力。
 
 ## 0. 本次纠正
 
@@ -428,4 +428,4 @@ taiji/
 
 ## 13. 当前唯一实现入口
 
-P1 已完成。当前实现入口是 P2/A1：建立 assembly-level 组合转移目标，保持 boundary、random-chunk 和 byte-only 对照，再以加强后的 Gate 结果决定是否进入 P3。
+P1 已完成。当前实现入口是 P2/A1：建立自监督 assembly consistency/contrastive 目标，保持 boundary、random-chunk 和 byte-only 对照，再以加强后的 Gate 结果决定是否进入 P3。
