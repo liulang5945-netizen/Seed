@@ -47,7 +47,7 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P4 最小记忆纵切片已落地：`WorkingMemoryItem`、`EpisodicMemoryRecord` 和可容量治理的 `EpisodicMemoryStore` 属于
   Taiji；adapter 在真实 action outcome 后写入经历、下一观察按 cue 检索，native checkpoint 可恢复记录与 working state。
   store 已改为 insertion-ordered dictionary，重复 memory_id 替换与容量淘汰不再每次全表重建；原生回归当前为
-  89 passed、1 skipped。
+  90 passed、1 skipped。
 - P4 cue-conditioned one-shot recall 窄 Gate 已通过：full、episode-ID lesion、checkpoint continuation 的 action recall
   均为 1.0，retrieval/write lesion 均为 0；报告和 manifest 为 `reports/taiji_p4_episodic_recall_*_20260825.json`。
   该结果证明经历检索和来源独立性，不证明从多次经历抽取新组合语义。
@@ -80,11 +80,14 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
   reward 与预测差异 `0.6` 后设置 `replan_required`，该信号在 native checkpoint 中保持。当前只证明误差触发，不证明已执行替代计划。
 - P5 replan/calibration Gate 已通过：首个 safe rollout 失败后 confidence 降至 `0.0` 并触发 replan；第二次实际执行 risky
   alternative，成功后 replan 清除、confidence 恢复至 `1.0`，safe/risky success calibration 均进入 native checkpoint。这证明
- 了替代计划闭环，不等于 delayed-reward 或环境干预泛化。
-- 原生套件当前 89 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
+  了替代计划闭环，不等于 delayed-reward 或环境干预泛化。
+- P5 intervention/latency 窄 Gate 已通过：完整 planner 选择 delayed-safe，reactive 与 discount=0 world-model lesion 均选择
+  immediate-risky；planner 成功概率优势=`0.4`，真实干预触发 replan 并执行 recovery，最终 goal progress=`0.16`。这关闭 P5
+  的首个 delayed reward/intervention 子门，不等于长程规划或通用目标推理。
+- 原生套件当前 90 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-继续 P5 intervention/latency Gate：加入 delayed reward、环境干预以及 reactive/value/world-model lesion，对比规划成功率、
-置信度校准和资源分配；保留当前 P3/P4 与 replan Gate，不提前进入语言生成或产品层。
+继续 P6 language/tool generation：拆分 content plan、expression plan 与 byte/organ codec，先建立结构化工具调用闭环；
+保留当前 P3/P4/P5 Gate，不让 byte motor 或 Legacy Transformer 代替目标规划与内容决策。

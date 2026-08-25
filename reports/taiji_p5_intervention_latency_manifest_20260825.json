@@ -1,0 +1,17 @@
+{
+  "format": "taiji-p5-intervention-latency-manifest-v1",
+  "task": "compare delayed safe rollout with immediate risky shortcut and recover after intervention",
+  "lesions": [
+    "reactive_immediate_reward",
+    "value_world_model",
+    "no_replan_recovery"
+  ],
+  "signals": [
+    "delayed_reward",
+    "success_probability",
+    "uncertainty",
+    "resource_cost",
+    "conflict"
+  ],
+  "boundary": "short delayed-reward intervention Gate only; not general long-horizon planning"
+}
