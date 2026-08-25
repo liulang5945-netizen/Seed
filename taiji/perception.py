@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 import torch
@@ -84,6 +84,90 @@ class LearnedPerception(nn.Module):
         local = self.local_projection(torch.cat(vectors, dim=0))
         context = self.context_projection(self._recurrent_state)
         return torch.nn.functional.normalize(torch.tanh(local + context), dim=0)
+
+    def _training_feature(
+        self,
+        symbol: int,
+        history: Sequence[int],
+        recurrent_state: torch.Tensor,
+    ) -> torch.Tensor:
+        """Build a differentiable local feature for predictive fitting."""
+
+        window = list(history[-(int(self.config.local_window) - 1) :])
+        window.append(int(symbol))
+        missing = int(self.config.local_window) - len(window)
+        vectors = [
+            torch.zeros(self.feature_dim, device=self.device) for _ in range(max(0, missing))
+        ]
+        vectors.extend(self.embedding.weight[index] for index in window)
+        local = self.local_projection(torch.cat(vectors, dim=0))
+        context = self.context_projection(recurrent_state)
+        return torch.nn.functional.normalize(torch.tanh(local + context), dim=0)
+
+    def fit_predictive(
+        self,
+        sequences: Sequence[Sequence[int]],
+        *,
+        epochs: int = 1,
+        learning_rate: float | None = None,
+        temperature: float = 0.15,
+    ) -> list[float]:
+        """Fit local features against the next-symbol predictive objective.
+
+        The target is the next observed symbol's learned embedding, not a
+        hand-authored vocabulary or a fixed assembly table.  Cosine-style
+        logits through ``transition`` make local context and recurrent state
+        useful only when they improve prediction of the next observation.
+        """
+
+        if int(epochs) <= 0:
+            raise ValueError("predictive epochs must be positive")
+        rate = float(self.config.learning_rate if learning_rate is None else learning_rate)
+        if rate <= 0.0:
+            raise ValueError("predictive learning_rate must be positive")
+        if float(temperature) <= 0.0:
+            raise ValueError("predictive temperature must be positive")
+        training_sequences = tuple(
+            tuple(int(symbol) for symbol in sequence) for sequence in sequences
+        )
+        if not training_sequences or any(len(sequence) < 2 for sequence in training_sequences):
+            raise ValueError(
+                "predictive fitting requires non-empty sequences of at least two symbols"
+            )
+        if any(
+            any(not 0 <= symbol < self.alphabet_size for symbol in sequence)
+            for sequence in training_sequences
+        ):
+            raise ValueError("predictive training symbol is outside the configured alphabet")
+
+        optimizer = torch.optim.Adam(self.parameters(), lr=rate)
+        losses: list[float] = []
+        self.train()
+        for _ in range(int(epochs)):
+            epoch_losses: list[float] = []
+            for sequence in training_sequences:
+                history: list[int] = []
+                recurrent_state = torch.zeros(self.feature_dim, device=self.device)
+                features: list[torch.Tensor] = []
+                for symbol in sequence:
+                    feature = self._training_feature(symbol, history, recurrent_state)
+                    features.append(feature)
+                    history.append(symbol)
+                    history = history[-int(self.config.local_window) :]
+                    recurrent_state = feature
+                predicted = torch.stack([self.transition(feature) for feature in features[:-1]])
+                target = torch.tensor(sequence[1:], dtype=torch.long, device=self.device)
+                logits = predicted @ self.embedding.weight.T
+                loss = torch.nn.functional.cross_entropy(logits / float(temperature), target)
+                optimizer.zero_grad(set_to_none=True)
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(self.parameters(), max_norm=1.0)
+                optimizer.step()
+                epoch_losses.append(float(loss.detach().cpu()))
+            losses.append(sum(epoch_losses) / len(epoch_losses))
+        self.eval()
+        self.reset_dynamics()
+        return losses
 
     @torch.no_grad()
     def observe(

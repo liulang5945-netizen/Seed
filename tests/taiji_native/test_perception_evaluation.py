@@ -66,6 +66,7 @@ def test_a1_report_keeps_unseen_and_control_roles_separate() -> None:
     assert isinstance(report["gate_passed"], bool)
     assert set(report["primary"]) == {
         "seed",
+        "predictive_training",
         "unseen_composition",
         "boundary_perturbed",
         "random_chunk_control",
@@ -101,3 +102,17 @@ def test_a1_corpus_rejects_empty_or_negative_sequences() -> None:
             boundary_perturbed=((1, 2),),
             random_chunk=((1, 2),),
         )
+
+
+def test_a1_gate_keeps_boundary_and_chunk_lesion_requirements() -> None:
+    report = PerceptionEvaluator(
+        _config(),
+        evaluation=A1EvaluationConfig(
+            seeds=(11,),
+            minimum_boundary_rate_delta=1.0,
+            minimum_random_chunk_drop=1.0,
+        ),
+    ).evaluate(_corpus())
+
+    assert report["gate_passed"] is False
+    assert set(report["diagnostics"]) == {"boundary_rate_delta", "random_chunk_drop"}

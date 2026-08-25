@@ -52,6 +52,21 @@ def test_perception_local_learning_changes_embedding_but_not_when_frozen() -> No
     assert torch.equal(before_frozen, frozen.embedding.weight)
 
 
+def test_perception_predictive_fit_updates_local_representation() -> None:
+    perception = LearnedPerception(_config())
+    before_projection = perception.local_projection.weight.detach().clone()
+
+    losses = perception.fit_predictive(
+        ((97, 98, 99, 97, 98, 99), (99, 98, 97, 99, 98, 97)),
+        epochs=2,
+        learning_rate=0.01,
+    )
+
+    assert len(losses) == 2
+    assert all(torch.isfinite(torch.tensor(loss)) for loss in losses)
+    assert not torch.equal(before_projection, perception.local_projection.weight)
+
+
 def test_perception_checkpoint_restores_dynamic_assembly_and_weights() -> None:
     original = LearnedPerception(_config())
     for index, symbol in enumerate((97, 98)):
