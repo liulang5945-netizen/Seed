@@ -5,6 +5,7 @@ runtime.  PyTorch is used only as a tensor execution engine.
 """
 
 from .adapter import TSKV8Adapter
+from .assembly_relations import AssemblyRelationCorpus, AssemblyRelationExample
 from .config import CapacityPolicy, PerceptionConfig, TaijiConfig
 from .contracts import (
     CONTRACT_FORMAT,
@@ -53,6 +54,8 @@ __all__ = [
     "ByteSensor",
     "ActionIntent",
     "A1EvaluationConfig",
+    "AssemblyRelationCorpus",
+    "AssemblyRelationExample",
     "CapacityPolicy",
     "CognitiveState",
     "CONTRACT_FORMAT",
