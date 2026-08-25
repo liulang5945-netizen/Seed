@@ -17,7 +17,14 @@ from typing import Any
 import torch
 from torch import nn
 
-from .contracts import ActionIntent, CognitiveState, WorldAction
+from .contracts import (
+    ActionIntent,
+    CognitiveState,
+    Goal,
+    PerceptEvent,
+    WorldAction,
+    WorldAffordance,
+)
 from .generation import ContentPlan
 
 EXECUTIVE_CHECKPOINT_FORMAT = "taiji-executive-v1"
@@ -183,6 +190,9 @@ class ExecutiveCandidate:
     action_intent: ActionIntent
     content_plan: ContentPlan
     features: tuple[float, ...]
+    provenance: str = "external"
+    source_percept_id: str | None = None
+    source_affordance_id: str | None = None
 
     def __post_init__(self) -> None:
         if not str(self.candidate_id):
@@ -193,12 +203,108 @@ class ExecutiveCandidate:
             raise TypeError("executive candidate content_plan must be ContentPlan")
         if self.action_intent.intent_id != self.content_plan.intent_id:
             raise ValueError("executive candidate action/content intent ids must match")
+        if not str(self.provenance):
+            raise ValueError("executive candidate provenance cannot be empty")
+        if self.source_percept_id is not None and not str(self.source_percept_id):
+            raise ValueError("executive candidate source_percept_id cannot be empty")
+        if self.source_affordance_id is not None and not str(self.source_affordance_id):
+            raise ValueError("executive candidate source_affordance_id cannot be empty")
         values = tuple(float(value) for value in self.features)
         if len(values) != len(EXECUTIVE_CANDIDATE_FEATURE_NAMES):
             raise ValueError("executive candidate feature contract mismatch")
         for index, value in enumerate(values):
             _unit(value, EXECUTIVE_CANDIDATE_FEATURE_NAMES[index])
         object.__setattr__(self, "features", values)
+
+    @classmethod
+    def from_world_affordance(
+        cls,
+        affordance: WorldAffordance,
+        *,
+        tick: int,
+        goal: Goal | None = None,
+        percept: PerceptEvent | None = None,
+        features: Sequence[float] | None = None,
+    ) -> ExecutiveCandidate:
+        """Convert a learned/world affordance without an action lookup table."""
+
+        if not isinstance(affordance, WorldAffordance):
+            raise TypeError("affordance must be a WorldAffordance")
+        candidate_id = (
+            f"{percept.event_id}:{affordance.affordance_id}"
+            if percept is not None
+            else affordance.affordance_id
+        )
+        intent_id = f"{candidate_id}:intent"
+        parameters = dict(affordance.parameters)
+        if affordance.actor_id:
+            parameters.setdefault("actor_id", affordance.actor_id)
+        if affordance.target_id:
+            parameters.setdefault("target_id", affordance.target_id)
+        goal_id = None if goal is None else goal.goal_id
+        confidence = affordance.confidence
+        candidate_features = (
+            tuple(float(value) for value in features)
+            if features is not None
+            else (0.0, confidence, 0.0, confidence, 1.0 - confidence, 0.0)
+        )
+        intent = ActionIntent(
+            intent_id=intent_id,
+            kind=affordance.action_kind,
+            parameters=parameters,
+            source_goal_id=goal_id,
+            confidence=confidence,
+            tick=int(tick),
+        )
+        content = ContentPlan(
+            content_id=f"{intent_id}:content",
+            intent_id=intent_id,
+            intent_kind=affordance.action_kind,
+            semantic_slots={
+                "actor_id": affordance.actor_id,
+                "target_id": affordance.target_id,
+                "parameters": parameters,
+            },
+            source_goal_id=goal_id,
+            confidence=confidence,
+            provenance="affordance-derived",
+            tick=int(tick),
+        )
+        return cls(
+            candidate_id=candidate_id,
+            action_intent=intent,
+            content_plan=content,
+            features=candidate_features,
+            provenance="affordance-derived",
+            source_percept_id=None if percept is None else percept.event_id,
+            source_affordance_id=affordance.affordance_id,
+        )
+
+    @classmethod
+    def synthesize_from_state(
+        cls,
+        state: CognitiveState,
+        *,
+        features_by_affordance: Mapping[str, Sequence[float]] | None = None,
+    ) -> tuple[ExecutiveCandidate, ...]:
+        """Produce candidates from current Taiji affordances and active goal."""
+
+        active_goal = max(
+            state.goals.goals,
+            key=lambda item: (item.priority, -item.progress, item.goal_id),
+            default=None,
+        )
+        feature_map = features_by_affordance or {}
+        return tuple(
+            cls.from_world_affordance(
+                affordance,
+                tick=state.tick,
+                goal=active_goal,
+                percept=state.percept,
+                features=feature_map.get(affordance.affordance_id),
+            )
+            for affordance in state.world.affordances
+        )
 
     def feature_tensor(self) -> torch.Tensor:
         return torch.tensor(self.features, dtype=torch.float32)
@@ -210,6 +316,9 @@ class ExecutiveCandidate:
             "action_intent": self.action_intent.to_payload(),
             "content_plan": self.content_plan.to_payload(),
             "features": list(self.features),
+            "provenance": self.provenance,
+            "source_percept_id": self.source_percept_id,
+            "source_affordance_id": self.source_affordance_id,
         }
 
     @classmethod
@@ -226,6 +335,9 @@ class ExecutiveCandidate:
             action_intent=ActionIntent.from_payload(payload["action_intent"], device=device),
             content_plan=ContentPlan.from_payload(payload["content_plan"]),
             features=tuple(float(value) for value in payload["features"]),
+            provenance=str(payload.get("provenance", "external")),
+            source_percept_id=payload.get("source_percept_id"),
+            source_affordance_id=payload.get("source_affordance_id"),
         )
 
 

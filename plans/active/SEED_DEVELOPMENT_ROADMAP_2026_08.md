@@ -362,7 +362,10 @@ P4 的最小真实经历边界已落地：
 - P7 executive environment-loop Gate 已通过：`ExecutiveDecision` 通过显式 `WorldAction` 元数据和 motor `action_symbol` 接入
   `TaijiEnvironment.step()`，真实 `EnvironmentOutcome` 回写 executive utility、下一感知并触发失败重规划；selected/alternative、
   checkpoint continuation、utility update 与 executive lesion 均有测试。该 Gate 不伪造环境 after-state，不证明长程规划或通用智能。
-- 本轮 native 回归为 `123 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
+- P7 candidate synthesis contract Gate 已通过：adapter 从当前 `PerceptEvent`、`WorldState.affordances` 和 active `GoalState` 自动产生
+  带 provenance 的 `ExecutiveCandidate`，不需要客户端候选表；当前 affordance 特征仍是保守 scaffold，不宣称已学会通用 affordance
+  表征。
+- 本轮 native 回归为 `124 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
 ### 工作项
@@ -467,5 +470,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：建立 Taiji-owned candidate synthesis 合同：`PerceptEvent + WorldState.affordances + GoalState` 产生带 provenance 的
-`ExecutiveCandidate` 集合，再交给 executive 选择；验证未见 affordance/action transfer，禁止固定 action/intent 表和客户端候选硬编码。**
+**下一步：为 `WorldAffordance` 建立 Taiji-owned 可学习连续特征来源，并在未见 affordance/action holdout 上验证 transfer；在该特征合同确定前，不扩展固定 action/intent 表。**

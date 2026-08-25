@@ -36,6 +36,7 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 client input-boundary Gate 已通过：`InputFrame` 版本化承载客户端原始 bytes 与来源元数据，`TSKV8Adapter.ingest_input()` 将其逐字节转换为 Taiji-owned `Observation/PerceptEvent`，`InputTrace` 可检查并 round-trip；`ActionIntent` 保持为空，未引入固定意图映射。`SeedRuntime.chat` 已通过 `generate_input()` 走同一合同，仍保留 raw-byte 兼容输出。
 - P7 executive contract Gate 已通过：`ExecutiveController` 从 percept/world/memory/goal/homeostasis context 学习候选 utility，选择结果保持结构化 `ActionIntent + ContentPlan` 配对；adapter 提供选择、Outcome 反馈、lesion-safe checkpoint 与 round-trip。该 Gate 证明学习型候选选择，不证明已完成真实环境 action/outcome 闭环。
 - P7 executive environment-loop Gate 已通过：`ExecutiveDecision` 通过显式 `WorldAction` 元数据和 motor `action_symbol` 接入 `TaijiEnvironment.step()`，真实 `EnvironmentOutcome` 回写 utility、感知和失败重规划；selected/alternative、checkpoint continuation、utility update 与 executive lesion 均有测试。该 Gate 不伪造环境 after-state，也不等于长程规划或通用智能。
+- P7 candidate synthesis contract Gate 已通过：adapter 从当前 `PerceptEvent`、`WorldState.affordances` 和 active `GoalState` 自动生成带 provenance 的 `ExecutiveCandidate`，不需要客户端候选表；当前 affordance 特征仍是保守 scaffold，不宣称已学会通用 affordance 表征。
 - `neuroplex/` 保持冻结，只用于离线对照和显式兼容。
 - `CapacityPolicy` 当前规划固定区域/fan-in/memory 资源；v1 中将降为资源治理器，不再规定认知结构。
 - N0–N11/M5–M7 保留为 TSK-v8 kernel 回归，不再作为概念、推理、语言或智能进展证明。
@@ -158,10 +159,9 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 client observability Gate 已通过：frontend runtime store 保存 `language_provider`，聊天页和异常中心可显示 active/fallback、
   回退原因与 structured-stub 恢复状态；前端只观察 runtime，不参与 provider 选择、认知决策或 decoder 装载。前端构建通过，Vitest
   `160 passed`。
-- 原生套件当前 `123 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
+- 原生套件当前 `124 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
   环境状态不作为代码能力结论。
 
 ## 当前唯一下一步
 
-下一步：建立 Taiji-owned candidate synthesis 合同：`PerceptEvent + WorldState.affordances + GoalState` 产生带 provenance 的
-`ExecutiveCandidate` 集合，再交给 executive 选择；验证未见 affordance/action transfer，禁止固定 action/intent 表和客户端候选硬编码。
+下一步：为 `WorldAffordance` 建立 Taiji-owned 可学习连续特征来源，并在未见 affordance/action holdout 上验证 transfer；在该特征合同确定前，不扩展固定 action/intent 表。

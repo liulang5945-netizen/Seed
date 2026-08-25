@@ -11,9 +11,13 @@ from taiji import (
     ExecutiveContext,
     ExecutiveController,
     ExecutiveTrainingExample,
+    Goal,
+    Observation,
     Outcome,
     TaijiConfig,
     TSKV8Adapter,
+    WorldAffordance,
+    WorldState,
 )
 
 
@@ -161,3 +165,45 @@ def test_executive_environment_loop_updates_and_replans() -> None:
     adapter.attach_executive(None)
     with pytest.raises(RuntimeError, match="executive controller is not attached"):
         adapter.execute_executive_action(environment, learn=False)
+
+
+def test_adapter_synthesizes_candidates_from_world_affordances() -> None:
+    adapter = TSKV8Adapter(_config())
+    adapter.observe(65, learn=False)
+    adapter.set_goals((Goal("goal-1", "complete the task", priority=1.0),))
+    adapter.attach_executive(ExecutiveController())
+    world = WorldState(
+        tick=adapter.tick + 1,
+        affordances=(
+            WorldAffordance(
+                affordance_id="unseen.affordance.v2",
+                action_kind="unseen_action",
+                parameters={"action_symbol": 10},
+                confidence=0.75,
+            ),
+        ),
+    )
+    adapter.observe_event(
+        Observation(
+            modality="text-byte",
+            value=66,
+            timestamp=world.tick,
+            source="test.world",
+        ),
+        learn=False,
+        world_state=world,
+    )
+
+    candidates = adapter.synthesize_executive_candidates()
+    assert len(candidates) == 1
+    candidate = candidates[0]
+    assert candidate.provenance == "affordance-derived"
+    assert candidate.source_affordance_id == "unseen.affordance.v2"
+    assert candidate.source_percept_id is not None
+    assert candidate.action_intent.kind == "unseen_action"
+    assert candidate.action_intent.source_goal_id == "goal-1"
+    assert candidate.action_intent.parameters["action_symbol"] == 10
+
+    decision = adapter.select_executive()
+    assert decision.selected.candidate_id == candidate.candidate_id
+    assert decision.content_plan.provenance == "affordance-derived"

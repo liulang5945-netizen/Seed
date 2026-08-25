@@ -286,7 +286,7 @@ class TSKV8Adapter(Taiji):
 
     def select_executive(
         self,
-        candidates: Sequence[ExecutiveCandidate],
+        candidates: Sequence[ExecutiveCandidate] | None = None,
         *,
         novelty: float = 0.0,
         resource_budget: float = 1.0,
@@ -295,7 +295,11 @@ class TSKV8Adapter(Taiji):
 
         if self._executive is None:
             raise RuntimeError("executive controller is not attached")
-        candidates = tuple(candidates)
+        candidates = (
+            self.synthesize_executive_candidates()
+            if candidates is None
+            else tuple(candidates)
+        )
         context = ExecutiveContext.from_state(
             self._cognitive_state,
             novelty=novelty,
@@ -324,6 +328,13 @@ class TSKV8Adapter(Taiji):
             action_intent=decision.action_intent,
         )
         return decision
+
+    def synthesize_executive_candidates(self) -> tuple[ExecutiveCandidate, ...]:
+        """Derive structured candidates from Taiji-owned current affordances."""
+
+        if self._cognitive_state.percept is None:
+            raise RuntimeError("executive candidate synthesis requires a current perception")
+        return ExecutiveCandidate.synthesize_from_state(self._cognitive_state)
 
     def record_executive_outcome(self, outcome: Outcome) -> float:
         """Train executive selection from an outcome produced by an environment."""
