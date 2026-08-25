@@ -375,3 +375,39 @@ def test_language_fallback_replans_to_an_alternative_expression() -> None:
     assert second_emission.fallback_used is False
     assert adapter.language_fallback_count == 1
     assert adapter.replan_required is False
+
+
+def test_reset_dynamics_clears_language_replan_state() -> None:
+    class _ExternalDecoder:
+        def generate(self, prompt: str, *, max_tokens: int, temperature: float) -> str:
+            del prompt, max_tokens, temperature
+            return "操作员收到一条消息。"
+
+    expression = _expression()
+    registry = LanguageBackendRegistry.default()
+    registry.register(
+        LanguageBackendSpec(
+            backend_id="mature-decoder-v1",
+            family="external-decoder",
+            training_contract="expression-to-text-v1",
+        )
+    )
+    adapter = TSKV8Adapter()
+    adapter.attach_language_backend_registry(registry)
+    adapter.attach_language_organ(
+        ValidatedLanguageOrgan(
+            ExternalTextDecoderLanguageOrgan(
+                _ExternalDecoder(),
+                prompt_builder=lambda item: item.content_id,
+                backend_id="mature-decoder-v1",
+            )
+        )
+    )
+
+    adapter.emit_language(expression)
+    assert adapter.replan_required is True
+
+    adapter.reset_dynamics()
+
+    assert adapter.replan_required is False
+    assert adapter.language_fallback_count == 0

@@ -274,6 +274,8 @@ Taiji v1 的完整认知状态至少包含：
   trainer 是外部器官适配层的可替换能力，必须报告是否真的更新权重，不能把“加载数据”冒充“已训练”。
 - provider trainer 可以使用 LoRA 等参数高效方法，但 base decoder 必须保持可回滚，训练质量必须在同一 holdout 上相对 raw baseline
   提升，并在接入运行时前通过 validator/fallback、organ lesion 和认知不变性 Gate。
+- provider artifact 必须显式记录 base model、adapter、训练 corpus、评测报告、回滚方式和 runtime mode；raw、LoRA、guarded 不是
+  隐式硬编码分支，产品默认仍由 Seed 配置选择，Taiji 只消费已注册的 terminal organ。
 - byte motor 可保留为最末端 codec/回退器官，不能继续直接承担全部认知输出。
 - 每次执行都生成可追踪的 pending action，真实 outcome 回写世界模型、记忆和 credit assignment。
 

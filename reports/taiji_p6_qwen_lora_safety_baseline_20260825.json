@@ -1,0 +1,71 @@
+{
+  "format": "taiji-p6-qwen-lora-safety-v1",
+  "model": {
+    "backend": "qwen2.5-0.5b-instruct",
+    "model_dir_name": "7ae557604adf67be50417f59c2c2f167def9a775",
+    "adapter_dir_name": "seed-qwen-lora-20260825-final",
+    "device": "cpu"
+  },
+  "raw": {
+    "output_nonempty_rate": 1.0,
+    "required_term_recall": 0.5,
+    "outputs": [
+      "操作员收到一个简短的消息。",
+      "今晚十点，我们将对您的操作进行维护，请您稍等片刻。",
+      "操作员正在检查数据库，等级为警告。"
+    ]
+  },
+  "adapted": {
+    "cases": [
+      {
+        "case_id": "status",
+        "output_text": "操作员收到一条稳定的更新。",
+        "fallback_used": false,
+        "validation_accepted": true,
+        "coverage": 1.0,
+        "missing_terms": [],
+        "replan_required": false
+      },
+      {
+        "case_id": "maintenance",
+        "output_text": "{\"expression\":{\"channel\":\"message\",\"confidence\":0.82,\"content_id\":\"qwen:holdout:maintenance:content\",\"expression_id\":\"qwen:holdout:maintenance:content:expression:text\",\"fields\":{\"expected_outcome\":\"operator receives a concise message\",\"intent_kind\":\"render_maintenance_notice\",\"semantic_slots\":{\"事件\":\"维护窗口\",\"受众\":\"操作员\",\"时间\":\"今晚十点\"}},\"modality\":\"text\",\"provenance\":\"holdout\",\"required_terms\":[\"维护窗口\",\"今晚十点\"],\"source_goal_id\":\"qwen-language-holdout-goal\",\"tick\":0},\"format\":\"taiji-text-expression-codec-v1\"}",
+        "fallback_used": true,
+        "validation_accepted": false,
+        "coverage": 0.0,
+        "missing_terms": [
+          "维护窗口",
+          "今晚十点"
+        ],
+        "replan_required": true
+      },
+      {
+        "case_id": "incident",
+        "output_text": "数据库出现警告。",
+        "fallback_used": false,
+        "validation_accepted": true,
+        "coverage": 1.0,
+        "missing_terms": [],
+        "replan_required": false
+      }
+    ],
+    "safe_realization_rate": 1.0,
+    "fallback_count": 1,
+    "outputs": [
+      "操作员收到一条稳定的更新。",
+      "{\"expression\":{\"channel\":\"message\",\"confidence\":0.82,\"content_id\":\"qwen:holdout:maintenance:content\",\"expression_id\":\"qwen:holdout:maintenance:content:expression:text\",\"fields\":{\"expected_outcome\":\"operator receives a concise message\",\"intent_kind\":\"render_maintenance_notice\",\"semantic_slots\":{\"事件\":\"维护窗口\",\"受众\":\"操作员\",\"时间\":\"今晚十点\"}},\"modality\":\"text\",\"provenance\":\"holdout\",\"required_terms\":[\"维护窗口\",\"今晚十点\"],\"source_goal_id\":\"qwen-language-holdout-goal\",\"tick\":0},\"format\":\"taiji-text-expression-codec-v1\"}",
+      "数据库出现警告。"
+    ]
+  },
+  "rollback": {
+    "outputs_match_raw": true,
+    "outputs": [
+      "操作员收到一个简短的消息。",
+      "今晚十点，我们将对您的操作进行维护，请您稍等片刻。",
+      "操作员正在检查数据库，等级为警告。"
+    ]
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "trained external LoRA is guarded by Taiji semantic validation/fallback/replan, rollback reproduces raw output, and cognition remains unchanged"
+  }
+}

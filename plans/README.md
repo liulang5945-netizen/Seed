@@ -142,10 +142,13 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 rollbackable provider trainer Gate 已通过：真实 Qwen 上以 `peft-LoRA` 更新 `270336` 个外部 adapter 参数，4 epochs/16 steps，
   共享词汇与未见组合 holdout 的必需语义词覆盖率从 raw=`0.75` 提升到 adapted=`1.0`，结构化泄漏率=`0.0`；关闭 adapter 后输出与
   raw 完全一致，base checkpoint 未修改，Taiji cognition 仍可 lesion。该 Gate 证明外部器官训练和回滚边界，不等于开放域语言智能。
-- 原生套件当前 `114 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
+- P6 trained-provider safety integration Gate 已通过：加载训练后的 LoRA 到原始三类多样化 holdout，raw 必需语义词覆盖率=`0.5`，
+  guarded adapted 的 `safe_realization_rate=1.0`、`fallback_count=1`；fallback case 触发 `replan_required`，后续新 episode 不继承
+  stale signal，关闭 adapter 后输出与 raw 一致，cognition lesion 通过。该 Gate 允许“可验证的外部器官候选”，不自动把它设为产品默认。
+- 原生套件当前 `115 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
   环境状态不作为代码能力结论。
 
 ## 当前唯一下一步
 
-下一决策入口：把已训练 LoRA provider 接入 Taiji validator/fallback/replan，并在原始三类多样化 holdout 上与 raw provider 做安全
-对比；只有通过语义安全、回滚和 cognition lesion，才允许进入客户端默认器官，不把 Transformer 或其他 decoder 变成认知主体。
+下一决策入口：建立 provider artifact manifest 与可配置 runtime loader，明确 raw/LoRA/guarded 三种模式的来源、回滚和默认策略；
+先保持 guarded provider 为显式 opt-in，不把 Transformer 或其他 decoder 变成认知主体。
