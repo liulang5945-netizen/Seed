@@ -1,5 +1,6 @@
-# Seed 公测（Public Beta）路线图
+# Seed 公测（Public Beta）路线图（已被统一路线替代）
 
+> 本文保留 800K 公测阶段的指标和历史训练记录，不再作为执行计划。当前路线见 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](../../active/SEED_DEVELOPMENT_ROADMAP_2026_08.md)。
 > 依据：`reports/structure_cleanup_20260823.md`（结构整理）、成熟封装五维分析（2026-08-23）、
 > 训练配套对比评估（2026-08-23）。本文是公测前唯一权威执行计划；各阶段完成判据全部可量化。
 
@@ -143,7 +144,7 @@ M0 工程硬化 ────┼─→ M3 服务稳定性 ───┤
   ② 暴露真实缺陷：进程被杀留下的半写 `.tmp` 残留，`atomic_save` 下次保存不清理。
 - 修复：`seed/persistence.py` atomic_save 落盘前清扫同目录陈旧 `<目标名>.*.tmp`（目录自愈）。
 - 复跑 10/10 PASS；pytest 113 passed / 4 skipped 全绿。**M3 判据全部达成**，仅余 M1 训练完成后的性能守卫基线复核。
-- 下一步：M4 前端评审（按 `plans/active/M4_FRONTEND_REVIEW_CHECKLIST.md` 起服务逐页对照）。
+- 下一步：M4 前端评审（按 `plans/archive/implementation/M4_FRONTEND_REVIEW_CHECKLIST.md` 起服务逐页对照）。
 
 ### 2026-08-23 M4 前端评审：三轮浏览器评审 + 实现层欠账清理
 - 首轮暴露阻断链：`runtime_service` 零参 stub 被 1 参调用 → 500 → 健康态永不 connected → 发送按钮恒禁用；

@@ -104,6 +104,6 @@
 
 Native v5 是完整可运行的非 Transformer 感知—状态—情景—行动参考架构，已通过在线学习、128 步自由回灌、二阶上下文、固定延迟 trace、真实按边执行、主动环境和八条 one-shot 跨 episode 情景反证。它尚未证明大容量记忆、巩固、语言能力、组合推理或 AGI。后续仍由可反证门槛决定，不由“类脑”命名、参数规模或单个 demo 决定。
 
-## 6. 当前唯一下一步
+## 6. 阶段收束与后续入口
 
-Native v7 的 signed consolidation 与 winner resource 已落地并通过 12/12 M6 和全回归。M7 基准已确认现有 replay 的 cue 慢通路为零；当前唯一下一步见 [SEED_ARCHITECTURE.md](SEED_ARCHITECTURE.md) §6：用内生 cortical reinstatement 补齐 cue→action，再保留现有 action→outcome。本文件只维护决策与命名边界。
+Native v7 的 signed consolidation 与 winner resource 已落地并通过 12/12 M6 和全回归；M7 cue-chain 已闭合，相关旧失败口径已移入 [归档](../archive/history/AGI_FIELD_MEMORY_PLAN.md)。本文件不再维护独立“下一步”，只维护命名与不可回退边界；当前执行顺序统一见 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。

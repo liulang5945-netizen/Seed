@@ -3,7 +3,7 @@
 <!-- 整合来源: 全部对话讨论内容 -->
 
 > **⚠️ 已归档（2026-07-28）**
-> 本文档为 v1.0 设计文档，最后更新 2026-07-22，已被 `plans/active/BIO_INSPIRED_ARCHITECTURE_PLAN.md` 取代。
+> 本文档为 v1.0 设计文档，最后更新 2026-07-22，已被 `plans/archive/implementation/BIO_INSPIRED_ARCHITECTURE_PLAN.md` 取代。
 > 保留作为历史参考，不再维护。当前活跃 plan 见 `plans/active/`，导航见 `plans/README.md`。
 
 # 态极神经元架构全面计划

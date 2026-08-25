@@ -182,7 +182,7 @@ checkpoint-481000 绝对路径（scripts/data_prep/download_sft_data.py:63、fil
 ## P4 — 文档校准
 
 ### R20: 主 plan 声明降级/对齐 ✅
-`plans/active/BIO_INSPIRED_ARCHITECTURE_PLAN.md` 1.3 状态表："✅ 记忆可读"→标注"验证脚本级，生产待接线"；"verify 10/10"与代码阈值对齐（N4）；"降 79%"注明口径（同分布列表式，提问式仅 33%）。
+`plans/archive/implementation/BIO_INSPIRED_ARCHITECTURE_PLAN.md` 1.3 状态表："✅ 记忆可读"→标注"验证脚本级，生产待接线"；"verify 10/10"与代码阈值对齐（N4）；"降 79%"注明口径（同分布列表式，提问式仅 33%）。
 
 ### R21: README/CODE_WIKI 修正 ✅
 field_dim 声明修正：COMPACT=2048 / STANDARD=3072 / FOUNDATION=4096 / EXPERT=4096（原文"统一 4096"过时）；README checkpoint 路径更新。

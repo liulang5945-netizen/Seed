@@ -89,4 +89,4 @@ Native v7 已把反证结果落实为双时间尺度 cortical path：清醒快�
 
 ## 6. 当前构建上限与运行边界
 
-M7 cue-chain 已闭合，原生训练入口现在由 `seed.datasets`、`api/training/native.py` 和 Seed 前端共同提供 raw-byte 路径。真实 API 的 `SEED_ENABLE_LEGACY=0/1` 装配矩阵已验证；当前仍诚实保留 `neuroplex/` 作为冻结对照，旧 Transformer 消费点只允许存在于测试列出的三处，Legacy 产品路由和桌面依赖必须通过显式开关进入。下一步是在真实 CUDA 机器上测量大容量 Taiji 的吞吐、显存和稀疏算子收益，而不是删除 Legacy 目录；删除会破坏产品壳的兼容契约。
+M7 cue-chain 已闭合，原生训练入口现在由 `seed.datasets`、`api/training/native.py` 和 Seed 前端共同提供 raw-byte 路径。真实 API 的 `SEED_ENABLE_LEGACY=0/1` 装配矩阵已验证；当前仍诚实保留 `neuroplex/` 作为冻结对照，旧 Transformer 消费点只允许存在于测试列出的三处，Legacy 产品路由和桌面依赖必须通过显式开关进入。当前执行顺序统一由 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md) 管理；CUDA 测量和 Legacy 删除仍受该路线的证据门槛约束。

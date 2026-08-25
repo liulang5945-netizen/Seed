@@ -1,6 +1,6 @@
 # M4 前端联调评审报告（2026-08-23）
 
-> 依据：公测路线图 §1.5、`plans/active/M4_FRONTEND_REVIEW_CHECKLIST.md`。
+> 依据：公测路线图 §1.5、`plans/archive/implementation/M4_FRONTEND_REVIEW_CHECKLIST.md`。
 > 方式：API（127.0.0.1:8000）+ Vite dev（localhost:5173），浏览器三轮评审。
 > 结论：**页面评审与主路径验证通过**；桌面端打包冒烟待执行；对话质量受限于
 > 早期检查点（800K，可读率 0%）——属 M1/M2 范畴，非前端缺陷。

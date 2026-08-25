@@ -2,7 +2,7 @@
 
 > 状态：**草稿（待 M1 大预算长训完成后定稿）**
 > 日期：2026-08-23
-> 依据：`plans/active/SEED_PUBLIC_BETA_ROADMAP.md` 五维验收标准
+> 依据：`plans/archive/history/SEED_PUBLIC_BETA_ROADMAP.md` 五维验收标准
 > 本报告为公测发布交付物的主体，证据均指向 `reports/` 下的原始产物；
 > 标记 ⏳ 的维度依赖 M1 长训（用户指示暂停，4M 检查点待续）。
 
