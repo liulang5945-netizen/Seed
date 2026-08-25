@@ -10,6 +10,10 @@ P1 兼容纵切片已完成：版本化 v1 合同、Taiji-owned `CognitiveState`
 TSK-v8 adapter 和 Seed 所有权门禁已经进入代码。该纵切片只证明合同与闭环可恢复，
 不改变“TSK-v8 不是完整 Taiji”的能力声明。
 
+P2 已开始：`LearnedPerception` 提供连续局部特征、递归预测误差和可变时长 assembly，
+并随 v1 adapter checkpoint 保存。A1 的未见组合迁移证据尚未完成，因此当前仍不能宣称
+Taiji 已拥有通过 Gate 的学习型抽象能力。
+
 ## 0. 本次纠正
 
 此前路线把“原生”误解为“从最原始信号开始，并排除一切与 Transformer 功能相似的抽象”。这导致：

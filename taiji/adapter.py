@@ -18,7 +18,6 @@ from .contracts import (
     NativeCheckpoint,
     Observation,
     Outcome,
-    PerceptEvent,
     PlanCandidate,
     PlanState,
     SelfState,
@@ -27,6 +26,7 @@ from .contracts import (
 )
 from .contracts import MemoryState as NativeMemoryState
 from .model import Taiji
+from .perception import LearnedPerception
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
 
 
@@ -44,6 +44,7 @@ class TSKV8Adapter(Taiji):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        self.perception = LearnedPerception(self.config, device=self.device)
         self._cognitive_state = self._empty_cognitive_state(self._state.episode_id)
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
@@ -79,6 +80,7 @@ class TSKV8Adapter(Taiji):
 
     def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         super().reset_dynamics(episode_id=episode_id)
+        self.perception.reset_dynamics()
         self._cognitive_state = self._empty_cognitive_state(self._state.episode_id)
 
     def observe(self, symbol: int, *args: Any, **kwargs: Any) -> TaijiStep:
@@ -90,15 +92,13 @@ class TSKV8Adapter(Taiji):
             source="byte-sensor",
             provenance="external",
         )
-        features = self._state.motor_context.detach().clone()
-        percept = PerceptEvent(
-            event_id=f"{self._state.episode_id}:percept:{self.tick}",
-            observation_tick=self.tick,
-            modality=observation.modality,
-            features=features,
-            boundary=int(symbol) == self.config.boundary_symbol,
-            confidence=1.0,
+        percept = self.perception.observe(
+            int(symbol),
+            tick=self.tick,
+            stream_id=self._state.episode_id,
+            learn=bool(kwargs.get("learn", True)),
         )
+        features = percept.features.detach().clone()
         recall = step.memory_recall
         workspace = WorkspaceState(
             tick=self.tick,
@@ -224,6 +224,33 @@ class TSKV8Adapter(Taiji):
         )
         return result
 
+    def parameter_tensors(self) -> tuple[torch.Tensor, ...]:
+        return (*super().parameter_tensors(), *self.perception.parameter_tensors())
+
+    def parameter_count(self, *, active_only: bool = True) -> int:
+        del active_only
+        return int(
+            super().parameter_count()
+            + sum(parameter.numel() for parameter in self.perception.parameters())
+        )
+
+    def dense_equivalent_parameter_count(self) -> int:
+        return int(
+            super().dense_equivalent_parameter_count()
+            + sum(parameter.numel() for parameter in self.perception.parameters())
+        )
+
+    def checkpoint(self) -> dict[str, Any]:
+        payload = super().checkpoint()
+        payload["adapter"] = self.ADAPTER_NAME
+        payload["perception"] = self.perception.checkpoint()
+        return payload
+
+    def restore(self, checkpoint: dict[str, Any]) -> None:
+        super().restore(checkpoint)
+        if "perception" in checkpoint:
+            self.perception.restore(checkpoint["perception"])
+
     def native_checkpoint(self) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
 
@@ -231,6 +258,7 @@ class TSKV8Adapter(Taiji):
             kernel=super().checkpoint(),
             cognitive_state=self.cognitive_snapshot(),
             adapter=self.ADAPTER_NAME,
+            components={"perception": self.perception.checkpoint()},
         ).to_payload()
 
     def restore_native(self, checkpoint: dict[str, Any]) -> None:
@@ -238,6 +266,8 @@ class TSKV8Adapter(Taiji):
         if envelope.adapter != self.ADAPTER_NAME:
             raise ValueError(f"unsupported Taiji adapter: {envelope.adapter}")
         super().restore(envelope.kernel)
+        if "perception" in envelope.components:
+            self.perception.restore(envelope.components["perception"])
         state = envelope.cognitive_state
         if state.tick != self.tick or state.episode_id != self._state.episode_id:
             raise ValueError("native cognitive state is out of sync with kernel state")
