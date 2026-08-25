@@ -1,0 +1,55 @@
+{
+  "format": "taiji-p4-capacity-procedural-v1",
+  "capacity_curve": [
+    {
+      "capacity": 100,
+      "writes": 101,
+      "retained_records": 100,
+      "target_evicted_by_interference": true,
+      "latest_recalled": true,
+      "write_seconds": 0.0011068999883718789,
+      "writes_per_second": 91245.8226226556
+    },
+    {
+      "capacity": 1000,
+      "writes": 1001,
+      "retained_records": 1000,
+      "target_evicted_by_interference": true,
+      "latest_recalled": true,
+      "write_seconds": 0.007941699994262308,
+      "writes_per_second": 126043.54240568128
+    },
+    {
+      "capacity": 10000,
+      "writes": 10001,
+      "retained_records": 10000,
+      "target_evicted_by_interference": true,
+      "latest_recalled": true,
+      "write_seconds": 0.08221300001605414,
+      "writes_per_second": 121647.42799857754
+    }
+  ],
+  "procedural": {
+    "train_records": 64,
+    "action_kinds_discovered": [
+      "both",
+      "idle",
+      "left",
+      "right"
+    ],
+    "consolidation_loss": 0.34490132331848145,
+    "holdout_records": 4
+  },
+  "metrics": {
+    "episodic_nearest_accuracy": 1.0,
+    "procedural_accuracy": 1.0,
+    "skill_lesion_accuracy": 0.25,
+    "episode_id_lesion_accuracy": 1.0,
+    "checkpoint_continuation_accuracy": 1.0,
+    "capacity_curve_passed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "bounded episodic retention plus data-driven procedural skill survives episode-id and checkpoint controls"
+  }
+}

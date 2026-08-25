@@ -1,0 +1,35 @@
+{
+  "format": "taiji-p4-capacity-procedural-manifest-v1",
+  "task": "measure episodic capacity/interference and consolidate cue-to-action skill",
+  "capacities": [
+    100,
+    1000,
+    10000
+  ],
+  "skill_patterns": [
+    [
+      0,
+      0
+    ],
+    [
+      1,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      1
+    ]
+  ],
+  "action_labels": "discovered from action_intent.kind in training records",
+  "controls": [
+    "episodic_nearest",
+    "procedural_skill_lesion",
+    "episode_id_lesion",
+    "checkpoint_continuation"
+  ],
+  "boundary": "capacity and cue-to-action procedural consolidation only; not general planning or language competence"
+}

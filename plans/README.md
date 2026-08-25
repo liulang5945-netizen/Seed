@@ -46,7 +46,8 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
   这只证明当前小型组合任务的 workspace→action→outcome 因果链，不代表一般规划或通用智能。
 - P4 最小记忆纵切片已落地：`WorkingMemoryItem`、`EpisodicMemoryRecord` 和可容量治理的 `EpisodicMemoryStore` 属于
   Taiji；adapter 在真实 action outcome 后写入经历、下一观察按 cue 检索，native checkpoint 可恢复记录与 working state。
-  原生回归当前为 79 passed、1 skipped；这不等于跨 episode 语义巩固已完成。
+  store 已改为 insertion-ordered dictionary，重复 memory_id 替换与容量淘汰不再每次全表重建；原生回归当前为
+  83 passed、1 skipped。
 - P4 cue-conditioned one-shot recall 窄 Gate 已通过：full、episode-ID lesion、checkpoint continuation 的 action recall
   均为 1.0，retrieval/write lesion 均为 0；报告和 manifest 为 `reports/taiji_p4_episodic_recall_*_20260825.json`。
   该结果证明经历检索和来源独立性，不证明从多次经历抽取新组合语义。
@@ -59,10 +60,15 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P4 multi-factor/noisy semantic Gate 已通过：60 条经历覆盖 15 个已见组合，留出全激活组合；semantic error≈`0.0082`，
   episodic nearest error=`1.0`，replay lesion error=`4.0`，episode-ID/checkpoint error≈`0.0082`。这仍是 additive relation
   子门，不代表一般语义、程序技能或长期容量已通过。
-- 原生套件当前 74 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
+- P4 capacity/procedural Gate 已通过：`100/1000/10000` 三档均严格保留容量上限，最旧目标在相似经历干扰下被淘汰，最新记录可
+  召回；`ProceduralMemoryLearner` 从 `action_intent.kind` 数据发现动作类别，在四类 cue→action holdout 上准确率=`1.0`，
+  skill lesion 基线=`0.25`，episode-ID lesion/checkpoint continuation 均=`1.0`。这证明资源边界与独立的程序性巩固原型，
+  尚未证明 adapter runtime 已用该技能作出真实决策。
+- 原生套件当前 83 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-继续 P4 容量与干扰验证：把 semantic consolidation 扩展到 10²→10⁴ episode 曲线，并加入相似经历干扰、遗忘/资源预算和
-  procedural skill lesion；保留当前多因子 Gate 与 P3 world/workspace outcome 对照，不提前进入语言或产品层。
+继续 P4 runtime ownership：把 `ProceduralMemoryLearner` 接入 adapter 的 action selection、settle/outcome 更新与
+native checkpoint，并增加 procedural runtime lesion；保留当前容量、多因子 semantic 和 P3 world/workspace Gate，
+不提前进入语言或产品层。
