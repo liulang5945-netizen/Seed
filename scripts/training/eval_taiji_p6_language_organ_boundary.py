@@ -13,6 +13,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from taiji import (  # noqa: E402
     ContentPlan,
+    ExternalTextDecoderLanguageOrgan,
     GenerationController,
     LanguageBackendRegistry,
     LanguageBackendSpec,
@@ -71,12 +72,35 @@ def evaluate() -> dict[str, object]:
         LanguageBackendRegistry.from_checkpoint(registry.checkpoint()).get("mature-decoder-v1").training_contract
         == "expression-to-text-v1"
     )
+    class ExternalDecoder:
+        def generate(self, prompt: str, *, max_tokens: int, temperature: float) -> str:
+            del max_tokens, temperature
+            return f"realized:{prompt}"
+
+    external = ExternalTextDecoderLanguageOrgan(
+        ExternalDecoder(),
+        prompt_builder=lambda item: f"render:{item.channel}:{item.content_id}",
+        max_tokens=32,
+        temperature=0.1,
+    )
+    adapter.attach_language_backend_registry(registry)
+    adapter.attach_language_organ(external)
+    external_emission = adapter.emit_language(expression)
+    external_lesion = False
+    adapter.attach_language_organ(None)
+    try:
+        adapter.emit_language(expression)
+    except RuntimeError:
+        external_lesion = True
+    external_realization = external_emission.text_bytes.decode("utf-8").startswith("realized:render:")
     gate_passed = bool(
         round_trip
         and checkpoint_round_trip
         and cognition_unchanged
         and contract_round_trip
         and registry_round_trip
+        and external_realization
+        and external_lesion
     )
     return {
         "format": REPORT_FORMAT,
@@ -88,10 +112,12 @@ def evaluate() -> dict[str, object]:
             "cognition_unchanged": cognition_unchanged,
             "training_contract_round_trip": contract_round_trip,
             "backend_registry_round_trip": registry_round_trip,
+            "external_realization": external_realization,
+            "external_organ_lesion": external_lesion,
         },
         "gate": {
             "passed": gate_passed,
-        "criterion": "a registry-described language organ consumes ExpressionPlan supervision and restores without owning cognition",
+            "criterion": "a registry-described language organ consumes ExpressionPlan supervision and restores without owning cognition",
         },
     }
 

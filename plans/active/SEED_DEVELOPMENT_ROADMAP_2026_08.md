@@ -320,7 +320,10 @@ P4 的最小真实经历边界已落地：
 - `LanguageBackendRegistry` 与 `LanguageTrainingExample` 窄 Gate 已通过：registry 可登记未来成熟 decoder，但强制 text modality 与
   `owns_cognition=False`；训练样本固定为 `ExpressionPlan → target_text`，可独立 checkpoint/holdout，不把目标、记忆或
   `ActionIntent` 注入 decoder。该结果只证明接入/训练数据边界，不等于 decoder 能力。
-- 本轮 native 回归为 `108 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
+- `ExternalTextDecoderLanguageOrgan` external decoder realization/lesion 窄 Gate 已通过：通过注入的 prompt builder 调用外部
+  `generate()`，输入仍只有 Taiji-owned `ExpressionPlan`；detached-organ lesion 通过，且 Taiji 核心未导入 Legacy/Transformer。
+  该结果只证明外部适配器边界，不等于具体模型已加载、训练质量或自然语言流畅性。
+- 本轮 native 回归为 `109 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
 ### 工作项
@@ -425,6 +428,6 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一决策入口：接入一个真实成熟 decoder backend 做 realization/lesion Gate；只允许通过 registry 消费 `ExpressionPlan` 与
-`LanguageTrainingExample`，先验证可替换性和训练/推理隔离，再决定是否保留该 backend，绝不把 Transformer 或其他 decoder 变成
-认知主体。**
+**下一决策入口：绑定一个实际可用的 decoder provider（现有 Legacy Cortex 或其他成熟模型）的 checkpoint/tokenizer，运行真实
+holdout realization/lesion Gate；只允许通过 registry 消费 `ExpressionPlan` 与 `LanguageTrainingExample`，不把 Transformer 或
+其他 decoder 变成认知主体。**

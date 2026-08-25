@@ -10,7 +10,7 @@ core.
 from __future__ import annotations
 
 import math
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from typing import Any, Protocol, runtime_checkable
 
@@ -256,6 +256,14 @@ class LanguageOrgan(Protocol):
         """Return a backend descriptor suitable for a Taiji checkpoint."""
 
 
+@runtime_checkable
+class TextDecoder(Protocol):
+    """Minimal external decoder surface accepted by Taiji."""
+
+    def generate(self, prompt: str, *, max_tokens: int, temperature: float) -> str:
+        """Generate text from a terminal-organ prompt."""
+
+
 class StructuredTextLanguageOrgan:
     """Deterministic baseline organ used to prove the boundary.
 
@@ -303,3 +311,100 @@ class StructuredTextLanguageOrgan:
         if payload.get("backend") != cls.BACKEND_ID:
             raise ValueError("unsupported structured language organ backend")
         return cls(max_bytes=int(payload.get("max_bytes", 1_000_000)))
+
+
+class ExternalTextDecoderLanguageOrgan:
+    """Adapt a mature external decoder without importing it into Taiji.
+
+    The caller supplies both the decoder and the expression-to-prompt codec.
+    This keeps tokenization, model loading, device placement, and decoder
+    training outside Taiji while preserving a strict one-way effector input.
+    """
+
+    def __init__(
+        self,
+        decoder: TextDecoder,
+        *,
+        prompt_builder: Callable[[ExpressionPlan], str],
+        backend_id: str = "mature-decoder-v1",
+        max_tokens: int = 128,
+        temperature: float = 0.2,
+        prompt_contract: str = "expression-to-text-v1",
+    ) -> None:
+        if not isinstance(decoder, TextDecoder):
+            raise TypeError("decoder must implement the TextDecoder protocol")
+        if not callable(prompt_builder):
+            raise TypeError("prompt_builder must be callable")
+        if not str(backend_id):
+            raise ValueError("external decoder backend_id cannot be empty")
+        if int(max_tokens) <= 0:
+            raise ValueError("external decoder max_tokens must be positive")
+        if float(temperature) < 0.0:
+            raise ValueError("external decoder temperature cannot be negative")
+        if not str(prompt_contract):
+            raise ValueError("external decoder prompt_contract cannot be empty")
+        self.decoder = decoder
+        self.prompt_builder = prompt_builder
+        self._backend_id = str(backend_id)
+        self.max_tokens = int(max_tokens)
+        self.temperature = float(temperature)
+        self.prompt_contract = str(prompt_contract)
+
+    @property
+    def backend_id(self) -> str:
+        return self._backend_id
+
+    def emit(self, expression: ExpressionPlan) -> LanguageEmission:
+        if not isinstance(expression, ExpressionPlan):
+            raise TypeError("external decoder requires an ExpressionPlan")
+        if expression.modality != "text":
+            raise ValueError("external decoder only accepts text ExpressionPlan values")
+        prompt = self.prompt_builder(expression)
+        if not isinstance(prompt, str) or not prompt:
+            raise ValueError("prompt_builder must return non-empty text")
+        text = self.decoder.generate(
+            prompt,
+            max_tokens=self.max_tokens,
+            temperature=self.temperature,
+        )
+        if not isinstance(text, str) or not text:
+            raise ValueError("external decoder must return non-empty text")
+        return LanguageEmission(
+            expression=expression,
+            text_bytes=text.encode("utf-8"),
+            backend=self.backend_id,
+            provenance="external-decoder",
+        )
+
+    def checkpoint(self) -> dict[str, Any]:
+        """Persist only the boundary config; model state stays external."""
+
+        return {
+            "format": LANGUAGE_ORGAN_CHECKPOINT_FORMAT,
+            "backend": self.backend_id,
+            "max_tokens": self.max_tokens,
+            "temperature": self.temperature,
+            "prompt_contract": self.prompt_contract,
+            "model_state": "external",
+        }
+
+    @classmethod
+    def from_checkpoint(
+        cls,
+        payload: Mapping[str, Any],
+        decoder: TextDecoder,
+        *,
+        prompt_builder: Callable[[ExpressionPlan], str],
+    ) -> ExternalTextDecoderLanguageOrgan:
+        if payload.get("format") != LANGUAGE_ORGAN_CHECKPOINT_FORMAT:
+            raise ValueError("unsupported external language organ checkpoint format")
+        if payload.get("model_state") != "external":
+            raise ValueError("external language organ checkpoint must reference external model state")
+        return cls(
+            decoder,
+            prompt_builder=prompt_builder,
+            backend_id=str(payload["backend"]),
+            max_tokens=int(payload.get("max_tokens", 128)),
+            temperature=float(payload.get("temperature", 0.2)),
+            prompt_contract=str(payload.get("prompt_contract", "expression-to-text-v1")),
+        )

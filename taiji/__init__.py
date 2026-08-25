@@ -85,12 +85,14 @@ from .language_organ import (
     LANGUAGE_BACKEND_SPEC_FORMAT,
     LANGUAGE_ORGAN_CHECKPOINT_FORMAT,
     LANGUAGE_TRAINING_EXAMPLE_FORMAT,
+    ExternalTextDecoderLanguageOrgan,
     LanguageBackendRegistry,
     LanguageBackendSpec,
     LanguageEmission,
     LanguageOrgan,
     LanguageTrainingExample,
     StructuredTextLanguageOrgan,
+    TextDecoder,
 )
 from .memory import EpisodicField, EpisodicReplay, EpisodicWrite
 from .model import Taiji
@@ -193,7 +195,9 @@ __all__ = [
     "LanguageEmission",
     "LanguageOrgan",
     "LanguageTrainingExample",
+    "ExternalTextDecoderLanguageOrgan",
     "StructuredTextLanguageOrgan",
+    "TextDecoder",
     "MemoryRecall",
     "MemoryState",
     "NativeCheckpoint",
