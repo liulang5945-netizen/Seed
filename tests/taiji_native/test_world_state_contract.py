@@ -101,6 +101,25 @@ def test_world_objects_events_and_interventions_round_trip() -> None:
     assert torch.equal(restored_case.expected_state.latent, expected.latent)
 
 
+def test_intervention_corpus_round_trips_time_shuffled_split() -> None:
+    initial = _world(0, 0)
+    expected = _world(1, 1)
+    transition = _transition(initial, expected, "move-0")
+    shuffled = WorldInterventionCase(
+        case_id="shuffled-0",
+        initial=initial,
+        action=transition.action,
+        expected_state=expected,
+        expected_outcome=transition.outcome,
+    )
+    corpus = WorldInterventionCorpus(time_shuffled=(shuffled,))
+
+    restored = WorldInterventionCorpus.from_payload(corpus.to_payload())
+
+    assert len(restored.time_shuffled) == 1
+    assert restored.time_shuffled[0].case_id == "shuffled-0"
+
+
 def test_taiji_world_state_owns_transition_and_checkpoint() -> None:
     initial = _world(0, 0)
     expected = _world(1, 1)
