@@ -37,6 +37,7 @@ from .contracts import (
     WorkspaceState,
     WorldAction,
     WorldAffordance,
+    WorldCalibrationTrace,
     WorldPredictionRecord,
     WorldState,
     WorldTransition,
@@ -1472,6 +1473,7 @@ class TSKV8Adapter(Taiji):
         self._apply_content_feedback(outcome.reward)
         transition = None
         prediction_record = self._cognitive_state.world_prediction
+        calibration_trace = self._cognitive_state.world_calibration_trace
         if world_state is not None:
             if world_action is None:
                 if intent is None:
@@ -1486,6 +1488,15 @@ class TSKV8Adapter(Taiji):
                     parameters=intent.parameters,
                     provenance=str(kwargs.get("provenance", "experienced")),
                     )
+                    )
+            if prediction_record is None and self._world_dynamics is not None:
+                prediction = self._world_dynamics.predict(before, world_action)
+                prediction_record = WorldPredictionRecord(
+                    action=world_action,
+                    predicted_state=prediction.state,
+                    predicted_reward=prediction.reward,
+                    predicted_success_probability=prediction.success_probability,
+                    online_update_count=self._world_dynamics.online_updates,
                 )
             transition = WorldTransition(
                 before=before,
@@ -1494,6 +1505,7 @@ class TSKV8Adapter(Taiji):
                 outcome=outcome,
             )
             if prediction_record is not None and self._world_dynamics is not None:
+                online_update_count_before = self._world_dynamics.online_updates
                 predicted = self._world_dynamics.schema.state_values(
                     prediction_record.predicted_state
                 )
@@ -1515,6 +1527,16 @@ class TSKV8Adapter(Taiji):
                         prediction_record,
                         online_update_count=self._world_dynamics.online_updates,
                     )
+                calibration_trace = (
+                    *calibration_trace,
+                    WorldCalibrationTrace(
+                        transition=transition,
+                        prediction=prediction_record,
+                        calibration_applied=bool(learn_world),
+                        online_update_count_before=online_update_count_before,
+                        online_update_count_after=self._world_dynamics.online_updates,
+                    ),
+                )[-self.config.world_calibration_history_limit :]
         memory = self._cognitive_state.memory
         if self._planned_rollout is not None and self._goal_planner is not None:
             rollout = self._planned_rollout
@@ -1578,6 +1600,7 @@ class TSKV8Adapter(Taiji):
             outcome=outcome,
             world_transition=transition,
             world_prediction=prediction_record,
+            world_calibration_trace=calibration_trace,
             learning=replace(
                 self._cognitive_state.learning,
                 tick=self.tick,

@@ -223,6 +223,7 @@ class TaijiConfig:
     structural_turnover_ratio: float = 0.25
     structural_capture_target: float = 0.90
     structural_error_threshold: float = 0.35
+    world_calibration_history_limit: int = 128
     seed: int = 20260821
     perception: PerceptionConfig = field(default_factory=PerceptionConfig)
 
@@ -353,6 +354,8 @@ class TaijiConfig:
             raise ValueError("structural_capture_target must be in (0, 1]")
         if self.structural_error_threshold < 0.0:
             raise ValueError("structural_error_threshold must be non-negative")
+        if self.world_calibration_history_limit <= 0:
+            raise ValueError("world_calibration_history_limit must be positive")
 
     @classmethod
     def training_profile(cls, *, scale: int = 2, seed: int = 20260821) -> TaijiConfig:

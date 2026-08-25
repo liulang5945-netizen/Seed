@@ -47,6 +47,7 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P7 grounded multi-step causal-lesion Gate 已通过：3 个 seed 的 producer lesion 均使 holdout 选择退化，feature-source lesion 均阻断候选合成，跳过 delayed credit 均少一次 source/executive online update；结果与主 Gate 一起写入同一 report。该结果证明当前控制变量有因果效应，不代表长程规划。
 - P7 variable-horizon episode Gate 已通过：同一 train/holdout 学习结果在 3/4/5 步 episode、不同失败位置和多个 after-state relation 变化下，3 个 seed 均完成预期 replan、全程 lineage 与每个非终止步的 delayed credit。该结果扩大了 horizon 边界，但仍不是长程规划证明。
 - P7 executive-to-world prediction/calibration Gate 已通过：executive bridge 现在把带 actor/target 的 `WorldAction` 送入 `WorldDynamicsLearner`，真实 after-state settle 回写 state/reward error；data-derived schema 的 train/holdout 为 `2/2`，3 个 seed 均在逐条真实转移的 online correction 后降低状态预测误差，no-online-update clone 保持原误差。reward error 继续独立记录，不与状态校准混成一个指标；该 Gate 只证明窄数值世界上的预测误差可回写并校准，不证明开放世界预测精度。
+- P7 runtime calibration trace contract 已通过：每次带 `EnvironmentOutcome.world_state` 的结算都会把真实 `WorldTransition`、预测 state/reward error、是否执行 online update 及更新前后计数写入 `CognitiveState.world_calibration_trace`；历史容量由 `TaijiConfig.world_calibration_history_limit` 管理，并随 native checkpoint 恢复。该 Gate 证明运行时 ownership 和可恢复性，不代表多步 runtime calibration 已完成。
 - `neuroplex/` 保持冻结，只用于离线对照和显式兼容。
 - `CapacityPolicy` 当前规划固定区域/fan-in/memory 资源；v1 中将降为资源治理器，不再规定认知结构。
 - N0–N11/M5–M7 保留为 TSK-v8 kernel 回归，不再作为概念、推理、语言或智能进展证明。
@@ -174,4 +175,4 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 
 ## 当前唯一下一步
 
-下一步：把已通过的 world-dynamics calibration 从评估脚本接入真实 runtime 的持续环境回写，要求每次 `EnvironmentOutcome.world_state` 都能产生可恢复的 prediction/error/calibration trace；不新增 action/intent 查表。
+下一步：把 runtime calibration trace 纳入现有 3-seed 多步 Gate，验证连续 4 步与变量 3/4/5 步环境中的 trace 完整性、online-update 计数连续性和 checkpoint 恢复；不新增 action/intent 查表。
