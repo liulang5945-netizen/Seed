@@ -104,6 +104,31 @@ def test_seed_runtime_only_hosts_the_public_taiji_architecture() -> None:
     assert not offenders, f"Seed 不得反向接入 Legacy/Transformer：{offenders}"
 
 
+def test_seed_does_not_redefine_taiji_v1_cognitive_contracts() -> None:
+    """认知合同和状态只能由 taiji/ 拥有，Seed 只能调度公开边界。"""
+
+    forbidden_classes = {
+        "Observation",
+        "PerceptEvent",
+        "WorkspaceState",
+        "WorldState",
+        "GoalState",
+        "PlanState",
+        "ActionIntent",
+        "Outcome",
+    }
+    offenders: list[str] = []
+    for path in _iter_python_files("seed"):
+        for node in ast.walk(_parse(path)):
+            if isinstance(node, ast.ClassDef) and node.name in forbidden_classes:
+                offenders.append(path.relative_to(REPO).as_posix())
+
+    assert not offenders, (
+        "Seed 不得重新定义 Taiji v1 认知合同；请把状态和协议放回 taiji/："
+        f"{offenders}"
+    )
+
+
 def test_legacy_baseline_never_depends_on_seed_or_the_new_substrate() -> None:
     """替代关系必须是单向的：冻结基线不得反向依赖新基底。
 

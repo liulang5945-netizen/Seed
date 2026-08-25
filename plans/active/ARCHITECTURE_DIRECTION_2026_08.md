@@ -114,4 +114,4 @@ Taiji 不以“逐功能替换 TransformerBlock”为设计主轴。Transformer 
 
 ## 9. 当前唯一入口
 
-执行顺序只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。当前进入 P1：v1 合同、认知所有权测试和 TSK-v8 compatibility adapter。
+执行顺序只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。P1 已完成首个兼容纵切片：v1 合同、认知所有权测试和 TSK-v8 compatibility adapter 已进入 `taiji/`；当前下一阶段为 P2 学习型感知与时间抽象。

@@ -36,6 +36,23 @@ Legacy NeuroPlex is a frozen offline comparison
 - N0–N11/M5–M7 只证明 kernel 机制，不证明概念、推理、语言或 AGI。
 - Seed 不再拥有认知器官、目标和自我模型；这些属于 Taiji。
 
+### 2.3 P1 当前实现状态（2026-08-25）
+
+P1 已在当前分支落地为兼容纵切片：
+
+- `taiji/contracts.py` 定义版本化的 `Observation`、`PerceptEvent`、`WorkspaceState`、
+  `WorldState`、`MemoryState`、`GoalState`、`PlanState`、`ActionIntent`、`Outcome`，
+  并提供可恢复的 `CognitiveState` 与 `NativeCheckpoint`；
+- `taiji/adapter.py` 的 `TSKV8Adapter` 保留 TSK-v8 公开 API，同时把观察→感知事件→
+  工作空间/世界/记忆摘要→行动意图→环境结果接入 Taiji-owned v1 状态；
+- `Seed.architecture` 是正式入口，`Seed.substrate` 仅保留为旧调用方的兼容别名；
+- Seed 的 `seed-native-v1` 旧 checkpoint 仍可读取，新 checkpoint 增加 Taiji v1 原子信封，
+  认知状态由 Taiji 序列化和恢复；
+- 旧 TSK-v8 行为、参数和 kernel checkpoint 仍保持原路径，不把 adapter 的桥接摘要宣称为
+  完整 Taiji 智能。
+
+P1 的剩余工作只限于回归门禁与边界维护；下一阶段进入 P2 学习型感知与时间抽象。
+
 ## 3. 执行原则
 
 1. 能力合同先于模块命名和代码目录。
@@ -214,4 +231,4 @@ Legacy NeuroPlex is a frozen offline comparison
 
 ## 16. 当前唯一下一步
 
-**实施 P1：建立 Taiji v1 事件/状态/行动合同、认知所有权测试和 TSK-v8 compatibility adapter，在不破坏当前 checkpoint 与产品 API 的前提下完成第一个 v1 认知纵切片。**
+**实施 P2：在保留 byte 无损回退的前提下，加入学习型局部特征、可变时长 assembly 和时间抽象，并用未见组合 holdout 验证它确实超越 byte-only 基线。**
