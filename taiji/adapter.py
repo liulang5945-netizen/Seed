@@ -38,7 +38,13 @@ from .episodic_memory import EpisodicMemoryStore
 from .homeostasis import HomeostaticController, HomeostaticDrive
 from .model import Taiji
 from .perception import LearnedPerception
-from .planning import GoalPlanner, PlanningCandidate, PlanningDecision
+from .planning import (
+    GoalPlanner,
+    ImaginedRollout,
+    PlanningCandidate,
+    PlanningDecision,
+    RolloutDecision,
+)
 from .procedural_memory import ProceduralMemoryLearner
 from .semantic_memory import SemanticMemoryLearner
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
@@ -69,6 +75,9 @@ class TSKV8Adapter(Taiji):
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
+        self._planned_rollout: ImaginedRollout | None = None
+        self._replan_required = False
+        self._last_rollout_prediction_error: float | None = None
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -249,6 +258,40 @@ class TSKV8Adapter(Taiji):
             goals=replace(self._cognitive_state.goals, tick=self.tick),
         )
         return decision
+
+    def plan_rollouts(
+        self,
+        rollouts: Sequence[ImaginedRollout],
+        *,
+        goal_id: str | None = None,
+    ) -> RolloutDecision:
+        """Persist the selected multi-step imagined rollout for execution."""
+
+        if self._goal_planner is None:
+            raise RuntimeError("goal planner is not attached")
+        decision = self._goal_planner.plan_rollouts(
+            self._cognitive_state.goals,
+            tuple(rollouts),
+            tick=self.tick,
+            goal_id=goal_id,
+        )
+        self._planned_rollout = decision.selected
+        self._replan_required = False
+        self._last_rollout_prediction_error = None
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            plan=decision.plan,
+            goals=replace(self._cognitive_state.goals, tick=self.tick),
+        )
+        return decision
+
+    @property
+    def replan_required(self) -> bool:
+        return self._replan_required
+
+    @property
+    def last_rollout_prediction_error(self) -> float | None:
+        return self._last_rollout_prediction_error
 
     def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         super().reset_dynamics(episode_id=episode_id)
@@ -617,6 +660,15 @@ class TSKV8Adapter(Taiji):
                         online_update_count=self._world_dynamics.online_updates,
                     )
         memory = self._cognitive_state.memory
+        if self._planned_rollout is not None and self._goal_planner is not None:
+            self._last_rollout_prediction_error = self._goal_planner.rollout_prediction_error(
+                self._planned_rollout, outcome
+            )
+            self._replan_required = (
+                self._last_rollout_prediction_error
+                > self._goal_planner.config.replan_error_threshold
+            )
+            self._planned_rollout = None
         goals = self._cognitive_state.goals
         if self._goal_planner is not None:
             goals = self._goal_planner.apply_outcome(goals, outcome)
@@ -714,6 +766,11 @@ class TSKV8Adapter(Taiji):
             payload["homeostasis"] = self._homeostatic_controller.checkpoint()
         if self._goal_planner is not None:
             payload["planning"] = self._goal_planner.checkpoint()
+        payload["planned_rollout"] = (
+            None if self._planned_rollout is None else self._planned_rollout.to_payload()
+        )
+        payload["replan_required"] = self._replan_required
+        payload["last_rollout_prediction_error"] = self._last_rollout_prediction_error
         return payload
 
     def restore(self, checkpoint: dict[str, Any]) -> None:
@@ -727,6 +784,7 @@ class TSKV8Adapter(Taiji):
         self._restore_procedural_memory(checkpoint.get("procedural_memory"))
         self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
         self._restore_goal_planner(checkpoint.get("planning"))
+        self._restore_rollout_state(checkpoint)
 
     def _world_dynamics_checkpoint(self) -> dict[str, Any]:
         if self._world_dynamics is None:
@@ -793,6 +851,17 @@ class TSKV8Adapter(Taiji):
             None if payload is None else GoalPlanner.from_checkpoint(dict(payload))
         )
 
+    def _restore_rollout_state(self, payload: Any) -> None:
+        rollout = payload.get("planned_rollout") if isinstance(payload, dict) else None
+        self._planned_rollout = (
+            None if rollout is None else ImaginedRollout.from_payload(dict(rollout))
+        )
+        self._replan_required = bool(
+            payload.get("replan_required", False) if isinstance(payload, dict) else False
+        )
+        error = payload.get("last_rollout_prediction_error") if isinstance(payload, dict) else None
+        self._last_rollout_prediction_error = None if error is None else float(error)
+
     def native_checkpoint(self) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
 
@@ -811,6 +880,11 @@ class TSKV8Adapter(Taiji):
             components["homeostasis"] = self._homeostatic_controller.checkpoint()
         if self._goal_planner is not None:
             components["planning"] = self._goal_planner.checkpoint()
+        components["planned_rollout"] = (
+            None if self._planned_rollout is None else self._planned_rollout.to_payload()
+        )
+        components["replan_required"] = self._replan_required
+        components["last_rollout_prediction_error"] = self._last_rollout_prediction_error
         return NativeCheckpoint(
             kernel=super().checkpoint(),
             cognitive_state=self.cognitive_snapshot(),
@@ -832,6 +906,7 @@ class TSKV8Adapter(Taiji):
         self._restore_procedural_memory(envelope.components.get("procedural_memory"))
         self._restore_homeostatic_controller(envelope.components.get("homeostasis"))
         self._restore_goal_planner(envelope.components.get("planning"))
+        self._restore_rollout_state(envelope.components)
         state = envelope.cognitive_state
         if state.tick != self.tick or state.episode_id != self._state.episode_id:
             raise ValueError("native cognitive state is out of sync with kernel state")

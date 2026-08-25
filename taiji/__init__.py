@@ -67,9 +67,11 @@ from .perception import LearnedPerception
 from .planning import (
     PLANNING_CHECKPOINT_FORMAT,
     GoalPlanner,
+    ImaginedRollout,
     PlanningCandidate,
     PlanningConfig,
     PlanningDecision,
+    RolloutDecision,
 )
 from .procedural_memory import (
     PROCEDURAL_MEMORY_CHECKPOINT_FORMAT,
@@ -145,9 +147,11 @@ __all__ = [
     "PerceptionEvaluator",
     "PerceptEvent",
     "GoalPlanner",
+    "ImaginedRollout",
     "PlanningCandidate",
     "PlanningConfig",
     "PlanningDecision",
+    "RolloutDecision",
     "PLANNING_CHECKPOINT_FORMAT",
     "ProceduralMemoryLearner",
     "PROCEDURAL_MEMORY_CHECKPOINT_FORMAT",
