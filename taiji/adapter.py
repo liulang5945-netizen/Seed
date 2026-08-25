@@ -22,7 +22,9 @@ from .contracts import (
     PlanState,
     SelfState,
     WorkspaceState,
+    WorldAction,
     WorldState,
+    WorldTransition,
 )
 from .contracts import MemoryState as NativeMemoryState
 from .model import Taiji
@@ -100,6 +102,7 @@ class TSKV8Adapter(Taiji):
         )
         features = percept.features.detach().clone()
         recall = step.memory_recall
+        previous = self._cognitive_state
         workspace = WorkspaceState(
             tick=self.tick,
             focus=("predictive-context",),
@@ -109,6 +112,11 @@ class TSKV8Adapter(Taiji):
         world = WorldState(
             tick=self.tick,
             latent=features,
+            entities=previous.world.entities,
+            relations=previous.world.relations,
+            objects=previous.world.objects,
+            events=previous.world.events,
+            affordances=previous.world.affordances,
             uncertainty=max(0.0, min(1.0, 1.0 - recall.confidence)),
         )
         memory = NativeMemoryState(
@@ -117,7 +125,6 @@ class TSKV8Adapter(Taiji):
             semantic_context=recall.cortical_feedback.detach().clone(),
             procedural_context=recall.action_evidence.detach().clone(),
         )
-        previous = self._cognitive_state
         self._cognitive_state = replace(
             previous,
             tick=self.tick,
@@ -143,6 +150,7 @@ class TSKV8Adapter(Taiji):
             ),
             action_intent=None,
             outcome=None,
+            world_transition=None,
         )
         return step
 
@@ -202,19 +210,53 @@ class TSKV8Adapter(Taiji):
 
     def settle_action(self, reward: float, *args: Any, **kwargs: Any) -> TaijiOutcome:
         intent = self._cognitive_state.action_intent
+        world_state = kwargs.pop("world_state", None)
+        world_action = kwargs.pop("world_action", None)
+        success = kwargs.pop("success", None)
+        intent_id = intent.intent_id if intent is not None else f"kernel-action:{self.tick}"
+        before = self._cognitive_state.world
+        if world_state is not None:
+            if not isinstance(world_state, WorldState):
+                raise TypeError("world_state must be a Taiji WorldState")
+            if world_state.tick != before.tick + 1:
+                raise ValueError("world_state must advance the cognitive world tick by one")
+            if world_action is not None:
+                if not isinstance(world_action, WorldAction):
+                    raise TypeError("world_action must be a Taiji WorldAction")
+                if world_action.action_id != intent_id:
+                    raise ValueError("world_action must reference the pending ActionIntent")
         result = super().settle_action(reward, *args, **kwargs)
-        intent_id = intent.intent_id if intent is not None else f"kernel-action:{result.tick}"
         outcome = Outcome(
             intent_id=intent_id,
             reward=float(result.reward),
-            success=float(result.reward) > 0.0,
+            success=(float(result.reward) > 0.0 if success is None else bool(success)),
             provenance=str(kwargs.get("provenance", "experienced")),
-            tick=self.tick,
+            tick=(self.tick if world_state is None else int(world_state.tick)),
         )
+        transition = None
+        if world_state is not None:
+            if world_action is None:
+                if intent is None:
+                    raise RuntimeError("world_state requires a pending ActionIntent")
+                world_action = WorldAction(
+                    action_id=intent_id,
+                    kind=intent.kind,
+                    tick=before.tick,
+                    parameters=intent.parameters,
+                    provenance=str(kwargs.get("provenance", "experienced")),
+                )
+            transition = WorldTransition(
+                before=before,
+                action=world_action,
+                after=world_state,
+                outcome=outcome,
+            )
         self._cognitive_state = replace(
             self._cognitive_state,
             tick=self.tick,
+            world=(world_state if world_state is not None else self._cognitive_state.world),
             outcome=outcome,
+            world_transition=transition,
             learning=replace(
                 self._cognitive_state.learning,
                 tick=self.tick,
