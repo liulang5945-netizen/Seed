@@ -10,7 +10,12 @@ from seed import Seed, SeedConfig
 from taiji import (
     CONTRACT_FORMAT,
     ActionIntent,
+    Assembly,
+    CognitiveState,
+    Concept,
+    DevelopmentState,
     EnvironmentOutcome,
+    Event,
     Goal,
     GoalPlanner,
     NativeMemoryState,
@@ -42,6 +47,106 @@ def _config() -> TaijiConfig:
         lateral_fan_in=4,
         seed=71,
     )
+
+
+def test_core_object_contracts_round_trip_and_cognitive_state_lineage() -> None:
+    assembly = Assembly(
+        assembly_id="assembly-1",
+        start_tick=2,
+        end_tick=3,
+        activity=torch.tensor([0.1, 0.9]),
+        member_indices=(1, 4),
+        source_event_ids=("percept-1",),
+        coherence=0.8,
+        prediction_error=0.2,
+        route_score=0.7,
+        provenance="learned",
+        confidence=0.9,
+    )
+    event = Event(
+        event_id="event-1",
+        start_tick=2,
+        end_tick=3,
+        latent=torch.tensor([0.2, 0.8]),
+        assembly_ids=(assembly.assembly_id,),
+        object_ids=("object-1",),
+        relation_ids=("relation-1",),
+        confidence=0.75,
+        provenance="experienced",
+    )
+    concept = Concept(
+        concept_id="concept-1",
+        prototype=torch.tensor([0.3, 0.7]),
+        support_event_ids=(event.event_id,),
+        support_assembly_ids=(assembly.assembly_id,),
+        relation_ids=("relation-1",),
+        maturity=0.4,
+        stability=0.6,
+        confidence=0.8,
+        update_count=2,
+        last_updated_tick=3,
+    )
+
+    restored_assembly = Assembly.from_payload(assembly.to_payload())
+    restored_event = Event.from_payload(event.to_payload())
+    restored_concept = Concept.from_payload(concept.to_payload())
+
+    assert torch.equal(restored_assembly.activity, assembly.activity)
+    assert restored_event.assembly_ids == (assembly.assembly_id,)
+    assert torch.equal(restored_concept.prototype, concept.prototype)
+
+    model = TSKV8Adapter(_config(), episode_id="core-object-lineage")
+    snapshot = model.cognitive_snapshot()
+    enriched = replace(
+        snapshot,
+        assemblies=(assembly,),
+        events=(event,),
+        concepts=(concept,),
+        self_state=replace(
+            snapshot.self_state,
+            capability_confidence=(("planning", 0.75),),
+            available_tool_ids=("tool-1",),
+            autobiographical_ids=("memory-1",),
+            commitment_ids=("goal-1",),
+            last_outcome_id="outcome-1",
+            last_update_source="outcome-1",
+            last_prediction_error=0.25,
+            update_count=2,
+            lineage=("checkpoint-0",),
+        ),
+        development=replace(
+            snapshot.development,
+            stage="specializing",
+            structural_budget=3,
+            resource_utilization=0.5,
+            capability_gaps=("long-horizon",),
+            proposal_ids=("proposal-1",),
+            parent_checkpoint_id="checkpoint-0",
+            last_update_source="evaluation-1",
+            last_validation_status="pending",
+            validation_evidence_ids=("report-1",),
+            growth_count=1,
+            lineage=("checkpoint-0",),
+        ),
+    )
+    restored_state = CognitiveState.from_payload(enriched.to_payload())
+
+    assert restored_state.assemblies[0].assembly_id == assembly.assembly_id
+    assert restored_state.events[0].event_id == event.event_id
+    assert restored_state.concepts[0].concept_id == concept.concept_id
+    assert restored_state.self_state.capability_confidence == (("planning", 0.75),)
+    assert restored_state.development.parent_checkpoint_id == "checkpoint-0"
+
+
+def test_core_object_contracts_reject_invalid_lineage_and_growth_state() -> None:
+    with pytest.raises(ValueError, match="assembly ticks"):
+        Assembly(assembly_id="bad", start_tick=2, end_tick=1)
+
+    with pytest.raises(ValueError, match="duplicate"):
+        Event(event_id="bad", start_tick=0, end_tick=0, assembly_ids=("a", "a"))
+
+    with pytest.raises(ValueError, match="validation status"):
+        DevelopmentState(tick=0, last_validation_status="unknown")
 
 
 def test_v1_contracts_round_trip_tensor_and_action_data() -> None:
@@ -137,7 +242,9 @@ def test_tsk_v8_adapter_commits_structured_world_transition_lineage() -> None:
     restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
     restored_state = restored.cognitive_snapshot()
     assert restored_state.world_transition is not None
-    assert restored_state.world_transition.action.action_id == state.world_transition.action.action_id
+    assert (
+        restored_state.world_transition.action.action_id == state.world_transition.action.action_id
+    )
     assert restored_state.world.objects[0].attribute("position") == 1.0
 
     restored.observe(100, learn=False)
@@ -240,7 +347,9 @@ def test_world_schema_scale_separates_raw_and_normalized_error() -> None:
 
     assert raw_error > 0.0
     assert 0.0 < normalized_error <= raw_error
-    assert scaled_schema.normalized_state_error(case.initial, case.expected_state) < normalized_error
+    assert (
+        scaled_schema.normalized_state_error(case.initial, case.expected_state) < normalized_error
+    )
     assert WorldSchema.from_payload(schema.payload()).state_scales == schema.state_scales
 
 
@@ -259,9 +368,7 @@ def test_world_schema_scale_transfer_preserves_normalized_policy() -> None:
             objects=tuple(
                 WorldObject(
                     item.object_id,
-                    attributes={
-                        name: float(value) * factor for name, value in item.attributes
-                    },
+                    attributes={name: float(value) * factor for name, value in item.attributes},
                     tags=item.tags,
                 )
                 for item in state.objects
@@ -380,9 +487,7 @@ def test_world_prediction_projects_into_planner_and_triggers_replan_lesion() -> 
         ),
     )
     assert len(rollout.steps) == 2
-    assert all(
-        step.prediction_provenance == "world-dynamics" for step in rollout.steps
-    )
+    assert all(step.prediction_provenance == "world-dynamics" for step in rollout.steps)
     assert all(step.action.provenance == "world-dynamics" for step in rollout.steps)
     rollout_decision = model.plan_rollouts((rollout,))
     assert rollout_decision.selected.rollout_id == "world-rollout"

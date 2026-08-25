@@ -509,4 +509,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把核心对象术语表和状态图落成最小版本化合同，优先覆盖 `Assembly`、`Event`、`Concept`、`SelfState`/`DevelopmentState` 的 lineage、更新来源、checkpoint 和 lesion 字段；禁止新增无合同的认知模块，完成合同回归后再恢复 schema-scale runtime recovery report。**
+**下一步：把已落地的 `Assembly`、`Event`、`Concept`、`SelfState`/`DevelopmentState` 合同接入真实 runtime lineage：观察产生 assembly/event，跨经历巩固产生 concept，Outcome 更新 self/development，所有路径可经 native checkpoint 恢复并支持 source/semantic lesion；禁止用测试侧直接注入对象冒充运行时形成。**
