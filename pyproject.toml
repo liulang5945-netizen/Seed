@@ -17,6 +17,7 @@ dependencies = [
 dev = ["pytest", "pytest-cov", "httpx", "black", "ruff", "tomli>=2.0.0; python_version < '3.11'"]
 legacy = [
     "transformers>=4.40.0,<5.0.0",
+    "safetensors>=0.4.0,<1.0.0",
     "huggingface_hub>=0.20.0,<1.0.0",
     "sentencepiece>=0.2.0,<1.0.0",
     "peft>=0.8.0,<1.0.0",
