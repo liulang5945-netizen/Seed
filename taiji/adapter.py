@@ -1046,6 +1046,52 @@ class TSKV8Adapter(Taiji):
 
         return self.plan_actions(self.predict_world_candidates(candidates), goal_id=goal_id)
 
+    def imagine_world_rollout(
+        self,
+        rollout_id: str,
+        goal_id: str,
+        steps: Sequence[PlanningCandidate],
+        *,
+        confidence: float = 1.0,
+    ) -> ImaginedRollout:
+        """Roll the attached world learner forward over structured actions."""
+
+        if self._world_dynamics is None:
+            raise RuntimeError("world dynamics is not attached")
+        if not steps:
+            raise ValueError("world rollout requires at least one step")
+        imagined_state = self._cognitive_state.world
+        latest_prediction = self._cognitive_state.world_prediction
+        model_uncertainty = (
+            0.0
+            if latest_prediction is None or latest_prediction.state_error is None
+            else min(1.0, max(0.0, float(latest_prediction.state_error)))
+        )
+        imagined_steps = []
+        for template in steps:
+            if not isinstance(template, PlanningCandidate):
+                raise TypeError("world rollout steps must contain PlanningCandidate values")
+            if template.action.tick != imagined_state.tick:
+                raise ValueError("world rollout actions must follow predicted world ticks")
+            prediction = self._world_dynamics.predict(imagined_state, template.action)
+            imagined_steps.append(
+                replace(
+                    template,
+                    action=replace(template.action, provenance="world-dynamics"),
+                    predicted_reward=prediction.reward,
+                    success_probability=prediction.success_probability,
+                    uncertainty=max(template.uncertainty, model_uncertainty),
+                    prediction_provenance="world-dynamics",
+                )
+            )
+            imagined_state = prediction.state
+        return ImaginedRollout(
+            rollout_id=rollout_id,
+            goal_id=goal_id,
+            steps=tuple(imagined_steps),
+            confidence=confidence,
+        )
+
     def plan_rollouts(
         self,
         rollouts: Sequence[ImaginedRollout],

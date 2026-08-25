@@ -266,6 +266,35 @@ def test_world_prediction_projects_into_planner_and_triggers_replan_lesion() -> 
     assert projected[0].success_probability != candidate.success_probability
     decision = model.plan_world_actions((candidate,))
     assert decision.selected.candidate_id == "model-route"
+    second_action = WorldAction(
+        action_id="world-candidate-next",
+        kind="move",
+        tick=action.tick + 1,
+        actor_id="agent",
+        target_id="blue",
+        parameters={"step": 1.0},
+    )
+    rollout = model.imagine_world_rollout(
+        "world-rollout",
+        "reach-world",
+        (
+            candidate,
+            PlanningCandidate(
+                candidate_id="model-route-next",
+                action=second_action,
+                predicted_reward=0.0,
+                success_probability=0.0,
+                expected_progress=0.9,
+            ),
+        ),
+    )
+    assert len(rollout.steps) == 2
+    assert all(
+        step.prediction_provenance == "world-dynamics" for step in rollout.steps
+    )
+    assert all(step.action.provenance == "world-dynamics" for step in rollout.steps)
+    rollout_decision = model.plan_rollouts((rollout,))
+    assert rollout_decision.selected.rollout_id == "world-rollout"
 
     model.act((97, 98), sample=False, world_action=action)
     bad_objects = []

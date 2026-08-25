@@ -58,6 +58,7 @@ class PlanningCandidate:
     uncertainty: float = 0.0
     resource_cost: float = 0.0
     conflict: float = 0.0
+    prediction_provenance: str = "planner"
 
     def __post_init__(self) -> None:
         if not self.candidate_id:
@@ -69,6 +70,8 @@ class PlanningCandidate:
         _unit(self.uncertainty, "uncertainty")
         _unit(self.resource_cost, "resource_cost")
         _unit(self.conflict, "conflict")
+        if not self.prediction_provenance:
+            raise ValueError("prediction provenance cannot be empty")
 
 
 @dataclass(frozen=True)
@@ -115,6 +118,7 @@ class ImaginedRollout:
                     "uncertainty": step.uncertainty,
                     "resource_cost": step.resource_cost,
                     "conflict": step.conflict,
+                    "prediction_provenance": step.prediction_provenance,
                 }
                 for step in self.steps
             ],
@@ -137,6 +141,7 @@ class ImaginedRollout:
                     uncertainty=float(item.get("uncertainty", 0.0)),
                     resource_cost=float(item.get("resource_cost", 0.0)),
                     conflict=float(item.get("conflict", 0.0)),
+                    prediction_provenance=str(item.get("prediction_provenance", "planner")),
                 )
                 for item in payload.get("steps", ())
             ),
