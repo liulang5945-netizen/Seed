@@ -356,7 +356,10 @@ P4 的最小真实经历边界已落地：
   感知轨迹并支持合同 round-trip。`ActionIntent` 在该边界保持为空，禁止固定 intent 映射；`SeedRuntime.chat` 已通过
   `generate_input()` 走同一输入合同，仍保留 raw-byte 兼容输出。该 Gate 只证明输入所有权与感知可观测性，不证明 executive、
   语义对话或语言智能。
-- 本轮 native 回归为 `120 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
+- P7 executive contract Gate 已通过：`ExecutiveController` 使用 percept/world/memory/goal/homeostasis 派生 context 学习候选
+  utility，输出保持同一候选携带的结构化 `ActionIntent + ContentPlan`；`TSKV8Adapter` 已接入选择、Outcome 反馈、native checkpoint
+  和 parameter surface。该 Gate 只证明学习型候选选择与所有权，不证明真实环境 action/outcome 闭环或语言智能。
+- 本轮 native 回归为 `122 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
 ### 工作项
@@ -461,6 +464,5 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一决策入口：定义由持续 `Observation/PerceptEvent`、世界状态、目标和结果反馈学习产生
-`ActionIntent/ContentPlan` 的 Taiji executive 合同，并先建立可 lesion 的最小 Gate；禁止用固定意图映射、客户端 prompt 模板或
-decoder 反推认知内容。完成 executive 之前不把 `SeedRuntime.chat` 宣称为完整语义对话。**
+**下一步：把 `ExecutiveDecision` 接入真实 `WorldAction → TaijiEnvironment → Outcome` 闭环，让每次实际结果更新 executive
+utility，并验证 selected/alternative、失败重规划、checkpoint continuation 和 executive lesion；禁止让聊天 decoder 代替环境反馈。**
