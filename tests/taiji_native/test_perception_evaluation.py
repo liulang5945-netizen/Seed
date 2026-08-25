@@ -110,9 +110,15 @@ def test_a1_gate_keeps_boundary_and_chunk_lesion_requirements() -> None:
         evaluation=A1EvaluationConfig(
             seeds=(11,),
             minimum_boundary_rate_delta=1.0,
+            minimum_marker_boundary_score_delta=1.0,
             minimum_random_chunk_drop=1.0,
         ),
     ).evaluate(_corpus())
 
     assert report["gate_passed"] is False
-    assert set(report["diagnostics"]) == {"boundary_rate_delta", "random_chunk_drop"}
+    assert set(report["diagnostics"]) == {
+        "boundary_rate_delta",
+        "marker_score_delta",
+        "marker_rate_delta",
+        "random_chunk_drop",
+    }
