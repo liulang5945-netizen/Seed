@@ -34,7 +34,9 @@ def collect_hardware_diag(device_str: str) -> dict:
         device_type = "cuda"
         try:
             gpu_name = torch.cuda.get_device_name(0)
-            gpu_memory_gb = round(torch.cuda.get_device_properties(0).total_mem / (1024**3), 1)
+            props = torch.cuda.get_device_properties(0)
+            total_bytes = getattr(props, "total_memory", getattr(props, "total_mem", 0))
+            gpu_memory_gb = round(total_bytes / (1024**3), 1)
             device_name = gpu_name
         except Exception:
             device_name = "CUDA GPU"

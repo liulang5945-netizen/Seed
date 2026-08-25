@@ -1,12 +1,12 @@
 <template>
   <!-- 隐藏的文件输入框 -->
   <input
-    type="file"
     ref="fileInputRef"
+    type="file"
     multiple
     :accept="accept"
-    @change="onFileSelect"
     style="display: none"
+    @change="onFileSelect"
   />
 
   <!-- 拖拽区域 -->
@@ -20,21 +20,21 @@
   >
     <component :is="uploadIcon" class="dropzone-icon" :size="32" />
     <p class="dropzone-text">{{ dropText }}</p>
-    <p class="dropzone-hint" v-if="acceptHint">{{ acceptHint }}</p>
+    <p v-if="acceptHint" class="dropzone-hint">{{ acceptHint }}</p>
   </div>
 
   <!-- 上传队列面板 -->
-  <div class="panel-section" v-if="queue.length > 0">
+  <div v-if="queue.length > 0" class="panel-section">
     <div class="panel-header">
       <h3><Clock :size="14" class="queue-title-icon" /> {{ title }}</h3>
-      <button class="icon-btn" @click="queue = []" title="清空"><X :size="14" /></button>
+      <button class="icon-btn" title="清空" @click="queue = []"><X :size="14" /></button>
     </div>
     <div class="panel-content">
-      <div class="file-item" v-for="(file, idx) in queue" :key="file.id">
+      <div v-for="(file, idx) in queue" :key="file.id" class="file-item">
         <div class="file-info"><component :is="icon" :size="14" class="file-icon" /> {{ file.name }}</div>
         <div class="file-actions">
           <span :class="['status-tag', file.status]">{{ file.statusText }}</span>
-          <button class="delete-btn" @click="removeFromQueue(idx)" v-if="file.status !== 'uploading'"><X :size="14" /></button>
+          <button v-if="file.status !== 'uploading'" class="delete-btn" @click="removeFromQueue(idx)"><X :size="14" /></button>
         </div>
       </div>
     </div>
@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { UploadCloud, X, FileText, Library, BarChart2, Download, Clock } from 'lucide-vue-next';
+import { X, Clock } from 'lucide-vue-next';
 
 import { ref } from 'vue';
 import { API_BASE, authFetch } from '../composables/apiClient.js';

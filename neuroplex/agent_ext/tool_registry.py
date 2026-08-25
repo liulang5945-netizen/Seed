@@ -8,8 +8,8 @@ canonical ``handler`` keyword and the legacy ``func`` alias used by
 """
 
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -20,15 +20,15 @@ class ToolDef:
 
     name: str = ""
     description: str = ""
-    parameters: dict = None
-    handler: Callable = None
-    func: Callable = None  # legacy alias for handler
+    parameters: dict | None = None
+    handler: Callable | None = None
+    func: Callable | None = None  # legacy alias for handler
     category: str = ""
     source: str = "builtin"
 
     @property
-    def callable(self) -> Optional[Callable]:
-        return self.handler or self.func
+    def callable(self) -> Callable | None:
+        return self.handler if self.handler is not None else self.func
 
 
 class ToolRegistry:
@@ -43,10 +43,10 @@ class ToolRegistry:
             return
         self._tools[tool.name] = tool
 
-    def list_tools(self) -> List[ToolDef]:
+    def list_tools(self) -> list[ToolDef]:
         return list(self._tools.values())
 
-    def get_tool(self, name: str) -> Optional[ToolDef]:
+    def get_tool(self, name: str) -> ToolDef | None:
         return self._tools.get(name)
 
     def execute(self, name: str, **kwargs):

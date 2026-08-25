@@ -30,19 +30,18 @@ sys.path.insert(0, str(SCRIPTS))
 
 import _seed_verify_common as common  # noqa: E402
 import _verify_emit  # noqa: E402
-
 import torch  # noqa: E402
 
 from seed import TopicWorld, play  # noqa: E402
 
 # 6 主题池：中文短句；首字节互不相同保证选择时刻候选可区分。
 TOPICS = [
-    "0 太阳每天从东方升起，照亮山川。".encode("utf-8"),
-    "1 河水向东流入大海，永不停歇。".encode("utf-8"),
-    "2 风穿过森林，树叶轻轻摇摆。".encode("utf-8"),
-    "3 星星在夜里闪烁，像远方的灯。".encode("utf-8"),
-    "4 雨水落在田野，庄稼慢慢长大。".encode("utf-8"),
-    "5 月亮绕着地球转动，周而复始。".encode("utf-8"),
+    "0 太阳每天从东方升起，照亮山川。".encode(),
+    "1 河水向东流入大海，永不停歇。".encode(),
+    "2 风穿过森林，树叶轻轻摇摆。".encode(),
+    "3 星星在夜里闪烁，像远方的灯。".encode(),
+    "4 雨水落在田野，庄稼慢慢长大。".encode(),
+    "5 月亮绕着地球转动，周而复始。".encode(),
 ]
 
 
@@ -79,7 +78,7 @@ def main() -> None:
     sequence = [int(index) for index in stats["topic_sequence"]]
     counts = Counter(sequence)
     distinct = len(counts)
-    switch_count = sum(1 for a, b in zip(sequence, sequence[1:]) if a != b)
+    switch_count = sum(1 for a, b in zip(sequence, sequence[1:], strict=False) if a != b)
     top_share = max(counts.values()) / max(1, len(sequence))
     finite = all(
         bool(torch.isfinite(tensor).all().item()) for tensor in model.substrate.parameter_tensors()

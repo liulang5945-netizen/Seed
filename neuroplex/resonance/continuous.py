@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import math
 import os
-from typing import List, Optional, Tuple
 
 import torch
 import torch.nn as nn
@@ -101,9 +100,9 @@ class ContinuousResonance(nn.Module):
     def activations_from_phasors(
         self,
         phasor,
-        ids: List[str],
+        ids: list[str],
         coactivation=None,
-        phasors: Optional[torch.Tensor] = None,
+        phasors: torch.Tensor | None = None,
     ) -> torch.Tensor:
         """由相位直接算激活（一步到位，供主循环用）。"""
         binding = phasor.binding_tensor(ids, coactivation, phasors=phasors)
@@ -125,8 +124,8 @@ class ContinuousResonance(nn.Module):
 
     def converged(
         self,
-        binding_history: List[torch.Tensor],
-        tol: Optional[float] = None,
+        binding_history: list[torch.Tensor],
+        tol: float | None = None,
     ) -> bool:
         """绑定分布稳定 = 锁定（方差相邻步变化 < tol）。
 
@@ -209,10 +208,10 @@ class ContinuousResonance(nn.Module):
     def step(
         self,
         phasor,
-        ids: List[str],
+        ids: list[str],
         coactivation=None,
-        dt: Optional[float] = None,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        dt: float | None = None,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """推进相位（可微 Kuramoto）+ 返回本步激活。
 
         Returns:

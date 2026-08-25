@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import math
-from typing import Any, Dict, Mapping, Optional, Sequence, Tuple
+from collections.abc import Mapping, Sequence
+from typing import Any
 
 import torch
 
@@ -41,7 +42,7 @@ class TaijiFabric:
                 max_weight_norm=config.max_weight_norm,
                 device=self.device,
             )
-            for lower_size, region_size in zip(lower_sizes, config.region_sizes)
+            for lower_size, region_size in zip(lower_sizes, config.region_sizes, strict=False)
         )
         # A separate slow consolidation pathway keeps sleep learning from
         # overwriting the fast sparse predictor.  Every row shares the complete
@@ -59,7 +60,7 @@ class TaijiFabric:
                 max_weight_norm=config.max_weight_norm,
                 device=self.device,
             )
-            for lower_size, region_size in zip(lower_sizes, config.region_sizes)
+            for lower_size, region_size in zip(lower_sizes, config.region_sizes, strict=False)
         )
         for decoder in self.consolidation_decoders:
             decoder.edge_weight.zero_()
@@ -117,10 +118,10 @@ class TaijiFabric:
         # describes the run, not the network, so it stays out of the payload.
         self.structural_events = 0
 
-    def initial_state(self) -> Tuple[RegionState, ...]:
+    def initial_state(self) -> tuple[RegionState, ...]:
         lower_sizes = (self.config.alphabet_size, *self.config.region_sizes[:-1])
         states = []
-        for lower_size, region_size in zip(lower_sizes, self.config.region_sizes):
+        for lower_size, region_size in zip(lower_sizes, self.config.region_sizes, strict=False):
             zero = torch.zeros(region_size, device=self.device)
             states.append(
                 RegionState(
@@ -192,13 +193,13 @@ class TaijiFabric:
         previous: Sequence[RegionState],
         *,
         learn: bool,
-        episodic_feedback: Optional[torch.Tensor] = None,
+        episodic_feedback: torch.Tensor | None = None,
         learn_scale: float = 1.0,
         consolidation_learn_scale: float = 0.0,
         use_consolidated: bool = True,
         restructure: bool = False,
         adapt_homeostasis: bool = True,
-    ) -> Tuple[Tuple[RegionState, ...], Tuple[float, ...], Tuple[float, ...]]:
+    ) -> tuple[tuple[RegionState, ...], tuple[float, ...], tuple[float, ...]]:
         if sensory_activity.shape != (self.config.alphabet_size,):
             raise ValueError("sensory activity does not match the receptor population")
         if len(previous) != len(self.config.region_sizes):
@@ -222,7 +223,7 @@ class TaijiFabric:
         feedback_trace_offset = sum(self.config.region_sizes)
 
         for index, (region_size, decoder, transition) in enumerate(
-            zip(self.config.region_sizes, self.decoders, self.transitions)
+            zip(self.config.region_sizes, self.decoders, self.transitions, strict=False)
         ):
             old = previous[index]
             signed_trace = self.opponent_trace(index, old.trace)
@@ -428,7 +429,7 @@ class TaijiFabric:
 
         return tuple(next_states), tuple(activity_rates), tuple(error_norms)
 
-    def clear_dynamics(self, regions: Sequence[RegionState]) -> Tuple[RegionState, ...]:
+    def clear_dynamics(self, regions: Sequence[RegionState]) -> tuple[RegionState, ...]:
         """Silence activity while keeping every homeostatic set point.
 
         Unlike ``initial_state`` this preserves each region's adapted threshold and
@@ -462,7 +463,7 @@ class TaijiFabric:
             dim=0,
         )
 
-    def to_payload(self) -> Dict[str, Any]:
+    def to_payload(self) -> dict[str, Any]:
         return {
             "decoders": [decoder.to_payload() for decoder in self.decoders],
             "consolidation_decoders": [
@@ -486,23 +487,25 @@ class TaijiFabric:
             raise ValueError("transition count does not match architecture")
         if len(payload["laterals"]) != len(self.laterals):
             raise ValueError("lateral count does not match architecture")
-        for synapses, state in zip(self.decoders, payload["decoders"]):
+        for synapses, state in zip(self.decoders, payload["decoders"], strict=False):
             synapses.load_payload(state)
-        for synapses, state in zip(self.consolidation_decoders, payload["consolidation_decoders"]):
+        for synapses, state in zip(
+            self.consolidation_decoders, payload["consolidation_decoders"], strict=False
+        ):
             synapses.load_payload(state)
-        for target, stored in zip(self.trace_baselines, payload["trace_baselines"]):
+        for target, stored in zip(self.trace_baselines, payload["trace_baselines"], strict=False):
             baseline = stored.detach().to(self.device, dtype=torch.float32)
             if baseline.shape != target.shape:
                 raise ValueError("trace baseline shape does not match architecture")
             if not bool(torch.isfinite(baseline).all()):
                 raise ValueError("trace baseline contains a non-finite value")
             target.copy_(baseline)
-        for synapses, state in zip(self.transitions, payload["transitions"]):
+        for synapses, state in zip(self.transitions, payload["transitions"], strict=False):
             synapses.load_payload(state)
-        for synapses, state in zip(self.laterals, payload["laterals"]):
+        for synapses, state in zip(self.laterals, payload["laterals"], strict=False):
             synapses.load_payload(state)
 
-    def parameter_tensors(self) -> Tuple[torch.Tensor, ...]:
+    def parameter_tensors(self) -> tuple[torch.Tensor, ...]:
         return tuple(
             synapses.edge_weight
             for synapses in (

@@ -64,7 +64,7 @@ def test_panel_matches_the_frozen_a1_contract() -> None:
 def test_evaluation_reports_ppl_panel_scores_and_generation(tmp_path) -> None:
     evaluator = _module()
     model = Seed(_small_config(), episode_id="eval-test")
-    holdout = "水的沸点在标准大气压下是一百摄氏度。".encode("utf-8")
+    holdout = "水的沸点在标准大气压下是一百摄氏度。".encode()
     report_path = tmp_path / "eval.json"
 
     report = evaluator.evaluate_seed(
@@ -126,7 +126,7 @@ def test_evaluation_records_leakage_metadata(tmp_path) -> None:
     model = Seed(_small_config(), episode_id="eval-meta-test")
     report = evaluator.evaluate_seed(
         model,
-        holdout_bytes="水的沸点在标准大气压下是一百摄氏度。".encode("utf-8"),
+        holdout_bytes="水的沸点在标准大气压下是一百摄氏度。".encode(),
         report_path=tmp_path / "eval.json",
         generation_length=12,
         holdout_source="data/simple_zh/dialogue_extended_clean.jsonl",

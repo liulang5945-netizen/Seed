@@ -8,7 +8,7 @@ import logging
 import os
 import shutil
 
-from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi import APIRouter, File, HTTPException, UploadFile
 
 from seed_platform.paths import get_external_path
 
@@ -22,7 +22,8 @@ async def upload_dataset(file: UploadFile = File(...)):
     try:
         data_dir = get_external_path("data")
         os.makedirs(data_dir, exist_ok=True)
-        file_path = os.path.join(data_dir, os.path.basename(file.filename))
+        upload_name = file.filename or "dataset"
+        file_path = os.path.join(data_dir, os.path.basename(upload_name))
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         return {
@@ -32,7 +33,7 @@ async def upload_dataset(file: UploadFile = File(...)):
         }
     except Exception as e:
         logger.error(f"数据集上传失败: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 def _get_all_data_dirs() -> list:
@@ -81,7 +82,7 @@ def delete_train_file(filename: str):
                 return {"status": "success"}
         return {"status": "error", "message": "文件不存在"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.get("/api/train/preview/{filename:path}")
@@ -98,12 +99,13 @@ def train_preview(filename: str):
                 break
         if not data_path:
             return {"samples": [], "count": 0}
+        resolved_path = data_path
 
         import jsonlines
 
         samples = []
         count = 0
-        with jsonlines.open(data_path) as reader:
+        with jsonlines.open(resolved_path) as reader:
             for item in reader:
                 if count < 5:
                     instruction = item.get(
@@ -115,11 +117,11 @@ def train_preview(filename: str):
         return {"samples": samples, "count": count}
     except Exception as e:
         try:
-            with open(data_path, "r", encoding="utf-8") as f:
+            with open(resolved_path, encoding="utf-8") as f:
                 data = json.load(f)
             if isinstance(data, list):
                 samples = []
-                for i, item in enumerate(data[:5]):
+                for _i, item in enumerate(data[:5]):
                     instruction = item.get("instruction", item.get("question", ""))
                     output = item.get("output", item.get("answer", ""))
                     samples.append(
@@ -128,4 +130,4 @@ def train_preview(filename: str):
                 return {"samples": samples, "count": len(data)}
         except Exception as fallback_e:
             logger.debug(f"JSON 回退读取也失败: {fallback_e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

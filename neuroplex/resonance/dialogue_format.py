@@ -13,7 +13,7 @@
 
 from __future__ import annotations
 
-from typing import Iterable, Optional
+from collections.abc import Iterable
 
 SFT_ANSWER_MARKER = "答："
 Q_MARKER = "问："
@@ -34,7 +34,7 @@ def build_dialogue_prompt(question: str) -> str:
 def dialogue_prompt_requires_guard(
     prompt: str,
     domain: str,
-    active_nids: Optional[Iterable[str]],
+    active_nids: Iterable[str] | None,
     allow_plain_prompt: bool = False,
 ) -> bool:
     """判断给定 prompt 是否触发对话口径守卫（硬失败）。

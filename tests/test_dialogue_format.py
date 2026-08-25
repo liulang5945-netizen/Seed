@@ -14,8 +14,8 @@
 import unittest
 
 from neuroplex.resonance.dialogue_format import (
-    SFT_ANSWER_MARKER,
     Q_MARKER,
+    SFT_ANSWER_MARKER,
     build_dialogue_prompt,
     dialogue_prompt_requires_guard,
 )

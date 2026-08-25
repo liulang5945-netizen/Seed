@@ -2,22 +2,21 @@
 API 请求/响应数据模型（Pydantic）
 """
 
-from typing import List, Optional
 from pydantic import BaseModel
 
 
 class ChatRequest(BaseModel):
     prompt: str
     system_prompt: str = "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"
-    history: List[List[str]] = []
+    history: list[list[str]] = []
     engine: str = "taiji"  # "taiji"（思维）| "agent"（行动）
-    agent_max_iterations: Optional[int] = 10
-    agent_temperature: Optional[float] = 0.7
+    agent_max_iterations: int | None = 10
+    agent_temperature: float | None = 0.7
 
 
 class TrainRequest(BaseModel):
     dataset: str = ""
-    datasets: List[str] = []
+    datasets: list[str] = []
     lora_r: int = 8
     lora_alpha: int = 32
     epochs: int = 3
@@ -59,6 +58,6 @@ class TaijiTrainRequest(BaseModel):
     max_length: int = 512
     save_steps: int = 50
     log_steps: int = 5
-    extra_react_data: Optional[List[dict]] = None
-    extra_conv_data: Optional[List[dict]] = None
+    extra_react_data: list[dict] | None = None
+    extra_conv_data: list[dict] | None = None
     keep_checkpoints: int = 3  # 保留最近 N 个中间 checkpoint + best

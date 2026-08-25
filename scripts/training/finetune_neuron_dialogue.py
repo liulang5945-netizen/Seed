@@ -33,21 +33,23 @@ import torch.nn.functional as F
 
 from neuroplex.resonance import ResonanceNeuron, get_domain_neuron_config
 from neuroplex.resonance.translator import batch_align_and_embed
+from scripts.training.experiment_config import (
+    DEFAULT_DOMAIN as DOMAIN,
+)
+from scripts.training.experiment_config import (
+    DIALOGUE_PROMPTS,
+    SAMPLING_TOP_K,
+    SFT_ANSWER_MARKER,
+)
 from scripts.training.utils import (
-    load_domain_tokenizer,
-    load_general_tokenizer,
     OUTPUT_DIR,
     SequentialSampler,
     create_shared_embedding,
-    make_wsd_scheduler,
     load_dialogue_texts_multi,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+    make_wsd_scheduler,
     split_train_eval,
-)
-from scripts.training.experiment_config import (
-    DEFAULT_DOMAIN as DOMAIN,
-    SAMPLING_TOP_K,
-    DIALOGUE_PROMPTS,
-    SFT_ANSWER_MARKER,
 )
 
 DEVICE = "cpu"
@@ -76,7 +78,9 @@ class TeeLogger:
     def __init__(self, log_path: str):
         self.log_path = log_path
         os.makedirs(os.path.dirname(log_path), exist_ok=True)
-        self.fp = open(log_path, "w", encoding="utf-8", buffering=1)
+        self.fp = open(  # noqa: SIM115 — 日志器生命周期内持有，随 close() 释放
+            log_path, "w", encoding="utf-8", buffering=1
+        )
 
     def write(self, msg: str):
         sys.__stdout__.write(msg)
@@ -93,7 +97,7 @@ class TeeLogger:
 def load_dialogue_texts(jsonl_path: str, max_texts: int = 100000) -> list:
     """加载对话训练数据。"""
     texts = []
-    with open(jsonl_path, "r", encoding="utf-8") as f:
+    with open(jsonl_path, encoding="utf-8") as f:
         for line in f:
             item = json.loads(line)
             text = item.get("text", "")

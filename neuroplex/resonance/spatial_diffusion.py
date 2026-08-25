@@ -32,8 +32,6 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
-
 import torch
 import torch.nn.functional as F
 
@@ -52,10 +50,10 @@ class SpatialDiffuser:
 
     def __init__(
         self,
-        neuron_ids: List[str],
+        neuron_ids: list[str],
         geometry,  # NeuronGeometry
         alpha: float = 0.1,
-        sigma: Optional[float] = None,
+        sigma: float | None = None,
     ):
         self.neuron_ids = list(neuron_ids)
         self.alpha = alpha
@@ -96,7 +94,7 @@ class SpatialDiffuser:
 
         return L
 
-    def _get_sub_laplacian(self, active_ids: List[str]) -> torch.Tensor:
+    def _get_sub_laplacian(self, active_ids: list[str]) -> torch.Tensor:
         """获取 active_ids 对应的子图拉普拉斯。
 
         若 active_ids 与 self.neuron_ids 完全一致，直接返回完整 L；
@@ -115,8 +113,8 @@ class SpatialDiffuser:
     def diffuse(
         self,
         per_neuron_vectors: torch.Tensor,
-        active_ids: Optional[List[str]] = None,
-        alpha: Optional[float] = None,
+        active_ids: list[str] | None = None,
+        alpha: float | None = None,
     ) -> torch.Tensor:
         """对 per-neuron vectors 做图拉普拉斯扩散。
 
@@ -157,7 +155,7 @@ class SpatialDiffuser:
         # 重新归一化（保持单位向量语义，扩散只改变方向）
         return F.normalize(diffused, dim=-1)
 
-    def rebuild(self, neuron_ids: List[str], geometry) -> None:
+    def rebuild(self, neuron_ids: list[str], geometry) -> None:
         """重建图拉普拉斯（geometry 更新后调用）。"""
         self.neuron_ids = list(neuron_ids)
         self.graph_laplacian = self._build_graph_laplacian(geometry)

@@ -19,8 +19,6 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -247,7 +245,7 @@ class VideoVQVAE(nn.Module):
         return indices
 
     def decode_from_indices(
-        self, indices: torch.Tensor, target_shape: Optional[tuple] = None
+        self, indices: torch.Tensor, target_shape: tuple | None = None
     ) -> torch.Tensor:
         B, T, H, W = indices.shape
         quantized = self.quantizer.codebook(indices)  # [B, T, H, W, D]
@@ -275,10 +273,10 @@ class VideoCodec:
 
     def __init__(
         self,
-        model: Optional[VideoVQVAE] = None,
+        model: VideoVQVAE | None = None,
         frame_size: int = 224,
         num_frames: int = 16,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
     ):
         self.model = model or VideoVQVAE()
         self.model.eval()
@@ -315,15 +313,15 @@ class VideoCodec:
 
         # Resize 空间维度到 frame_size
         B, C, T, H, W = video.shape
-        if H != self.frame_size or W != self.frame_size:
+        if self.frame_size != H or self.frame_size != W:
             video = video.view(B * T, C, H, W)
             video = F.interpolate(video, size=(self.frame_size, self.frame_size), mode="bilinear")
             video = video.view(B, C, T, self.frame_size, self.frame_size)
 
         # 裁剪/补齐时间维度到 num_frames
-        if T > self.num_frames:
+        if self.num_frames < T:
             video = video[:, :, : self.num_frames]
-        elif T < self.num_frames:
+        elif self.num_frames > T:
             pad = torch.zeros(
                 B, C, self.num_frames - T, self.frame_size, self.frame_size, device=self.device
             )
@@ -331,14 +329,14 @@ class VideoCodec:
 
         return video
 
-    def encode(self, video: torch.Tensor) -> List[int]:
+    def encode(self, video: torch.Tensor) -> list[int]:
         """视频 → codebook 索引序列。"""
         with torch.no_grad():
             x = self._preprocess(video)
             indices = self.model.encode_to_indices(x)  # [B, T', H', W']
             return indices[0].flatten().tolist()
 
-    def decode(self, ids: List[int]) -> torch.Tensor:
+    def decode(self, ids: list[int]) -> torch.Tensor:
         """codebook 索引序列 → 重建视频。"""
         with torch.no_grad():
             len(ids)

@@ -11,15 +11,15 @@
 6. 睡眠整合：与 SleepEngine 联动巩固记忆
 """
 
+import json
+import logging
+import math
 import os
 import re
-import json
 import time
-import math
-import logging
-from typing import Dict, List, Optional
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import cast
 
 logger = logging.getLogger("ContextManager")
 
@@ -35,7 +35,7 @@ class ContextItem:
     token_count: int = 0
     key: str = ""
     access_count: int = 0
-    keywords: List[str] = field(default_factory=list)  # 关键词索引
+    keywords: list[str] = field(default_factory=list)  # 关键词索引
     decay_rate: float = 0.01  # 衰减速率
 
 
@@ -61,22 +61,22 @@ class ContextManager:
         self._memory_system = None
 
         # 对话历史
-        self._conversation_history: List[Dict] = []
+        self._conversation_history: list[dict] = []
         self._max_history_turns = 20
-        self._conversation_summaries: List[str] = []  # 压缩的旧对话摘要
+        self._conversation_summaries: list[str] = []  # 压缩的旧对话摘要
 
         # 上下文缓存
-        self._context_cache: Dict[str, ContextItem] = {}
+        self._context_cache: dict[str, ContextItem] = {}
 
         # 跨会话记忆
-        self._persistent_memories: Dict[str, ContextItem] = {}
-        self._persistent_path = None
+        self._persistent_memories: dict[str, ContextItem] = {}
+        self._persistent_path: str | None = None
 
         # 语义记忆（向量检索）
         self._semantic_memory = None
 
         # 关键词索引（用于相关性检索）
-        self._keyword_index: Dict[str, List[str]] = {}  # keyword -> [item_keys]
+        self._keyword_index: dict[str, list[str]] = {}  # keyword -> [item_keys]
 
         logger.info(f"ContextManager v2 initialized (max_tokens={max_context_tokens})")
 
@@ -98,7 +98,7 @@ class ContextManager:
 
     # ─── 对话历史管理 ─────────────────────────────────
 
-    def add_message(self, role: str, content: str, metadata: Dict = None):
+    def add_message(self, role: str, content: str, metadata: dict | None = None):
         """
         添加对话消息，自动管理历史长度。
 
@@ -131,7 +131,7 @@ class ContextManager:
                 if len(self._conversation_summaries) > 5:
                     self._conversation_summaries = self._conversation_summaries[-5:]
 
-    def get_history(self, max_turns: int = None) -> List[Dict]:
+    def get_history(self, max_turns: int | None = None) -> list[dict]:
         if max_turns:
             return self._conversation_history[-max_turns * 2 :]
         return self._conversation_history.copy()
@@ -146,7 +146,7 @@ class ContextManager:
         key: str,
         content: str,
         source: str = "user",
-        importance: float = None,
+        importance: float | None = None,
         persistent: bool = False,
     ):
         """
@@ -208,7 +208,7 @@ class ContextManager:
             except Exception as e:
                 logger.debug("【ContextManager.remember】处理失败（非致命）: %s", e)
 
-    def recall(self, key: str) -> Optional[str]:
+    def recall(self, key: str) -> str | None:
         """回忆信息"""
         if key in self._context_cache:
             item = self._context_cache[key]
@@ -225,7 +225,7 @@ class ContextManager:
 
         return None
 
-    def search(self, query: str, top_k: int = 5) -> List[Dict]:
+    def search(self, query: str, top_k: int = 5) -> list[dict]:
         """搜索记忆（语义检索优先，关键词回退）"""
         # 优先使用语义检索
         if self._semantic_memory:
@@ -278,7 +278,7 @@ class ContextManager:
                     }
                 )
 
-        results.sort(key=lambda x: x["relevance"], reverse=True)
+        results.sort(key=lambda x: cast(float, x["relevance"]), reverse=True)
         return results[:top_k]
 
     # ─── 上下文构建（相关性驱动 + 任务自适应）────────
@@ -330,8 +330,8 @@ class ContextManager:
         system_prompt: str = "",
         include_history: bool = True,
         include_memory: bool = True,
-        max_tokens: int = None,
-        task_type: str = None,
+        max_tokens: int | None = None,
+        task_type: str | None = None,
     ) -> str:
         """
         构建完整的上下文字符串。
@@ -417,7 +417,7 @@ class ContextManager:
 
         # 组装
         context = ""
-        for part_type, content, tokens in parts:
+        for part_type, content, _tokens in parts:
             if part_type == "system":
                 context += f"[系统] {content}\n\n"
             elif part_type == "long_term_memory":
@@ -439,7 +439,7 @@ class ContextManager:
         system_prompt: str = "",
         include_history: bool = True,
         include_memory: bool = True,
-        max_tokens: int = None,
+        max_tokens: int | None = None,
     ) -> tuple:
         """
         自适应上下文构建 — 自动检测任务类型并调整策略。
@@ -464,7 +464,7 @@ class ContextManager:
         system_prompt: str = "",
         include_history: bool = True,
         include_memory: bool = True,
-    ) -> List[Dict]:
+    ) -> list[dict]:
         """构建消息列表（用于 ReAct 引擎）"""
         messages = []
 
@@ -548,7 +548,7 @@ class ContextManager:
 
         lines = []
         used_tokens = 0
-        for score, key, item in scored[:10]:
+        for _score, key, item in scored[:10]:
             truncated = item.content[:200]
             tokens = self._estimate_tokens(truncated)
             if used_tokens + tokens > token_budget:
@@ -558,7 +558,7 @@ class ContextManager:
 
         return "\n".join(lines)
 
-    def _relevance_score(self, query_keywords: List[str], item: ContextItem) -> float:
+    def _relevance_score(self, query_keywords: list[str], item: ContextItem) -> float:
         """计算查询与记忆条目的相关性分数"""
         if not query_keywords:
             return 0.0
@@ -633,7 +633,7 @@ class ContextManager:
 
         return max(0.1, min(1.0, base))
 
-    def _extract_keywords(self, text: str) -> List[str]:
+    def _extract_keywords(self, text: str) -> list[str]:
         """提取关键词（简单的分词 + 停用词过滤）"""
         if not text:
             return []
@@ -771,7 +771,7 @@ class ContextManager:
 
         # 近期对话
         if self._conversation_history:
-            lines = []
+            lines: list = []
             used_tokens = 0
             for msg in reversed(self._conversation_history):
                 role = msg["role"]
@@ -786,7 +786,7 @@ class ContextManager:
 
         return "\n\n".join(parts)
 
-    def _get_recent_history_messages(self, max_turns: int = 10) -> List[Dict]:
+    def _get_recent_history_messages(self, max_turns: int = 10) -> list[dict]:
         recent = self._conversation_history[-max_turns * 2 :]
         return [{"role": m["role"], "content": m["content"]} for m in recent]
 
@@ -824,7 +824,7 @@ class ContextManager:
 
         return "\n".join(parts)
 
-    def _compress_messages(self, messages: List[Dict]) -> str:
+    def _compress_messages(self, messages: list[dict]) -> str:
         """压缩多条消息为摘要（尝试用模型，回退到简单提取）"""
         if not messages:
             return ""
@@ -842,7 +842,7 @@ class ContextManager:
                     conversation += f"{role}: {m['content'][:100]}\n"
 
                 prompt = f"请用一句话总结以下对话的要点：\n{conversation}\n摘要："
-                summary = model.generate(prompt, max_tokens=100, temperature=0.3)
+                summary: str = model.generate(prompt, max_tokens=100, temperature=0.3)
                 if summary and len(summary) > 10:
                     return summary.strip()[:200]
         except Exception as e:
@@ -911,7 +911,7 @@ class ContextManager:
         """
         # 提升高频记忆到 MemorySystem
         if self._memory_system:
-            for key, item in self._context_cache.items():
+            for _key, item in self._context_cache.items():
                 if item.access_count >= 3 and item.importance >= 0.5:
                     self._memory_system.auto_write(item.content, item.importance)
 
@@ -955,7 +955,7 @@ class ContextManager:
         if not self._persistent_path or not os.path.exists(self._persistent_path):
             return
         try:
-            with open(self._persistent_path, "r", encoding="utf-8") as f:
+            with open(self._persistent_path, encoding="utf-8") as f:
                 data = json.load(f)
             for k, v in data.get("memories", {}).items():
                 self._persistent_memories[k] = ContextItem(
@@ -989,7 +989,7 @@ class ContextManager:
 
 # ─── 全局实例 ─────────────────────────────────────
 
-_global_context: Optional[ContextManager] = None
+_global_context: ContextManager | None = None
 
 
 def get_context_manager(max_context_tokens: int = 2048, tokenizer=None) -> ContextManager:

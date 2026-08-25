@@ -10,7 +10,6 @@ import logging
 import os
 import shutil
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
 
 logger = logging.getLogger("PluginManager")
 
@@ -25,9 +24,9 @@ class PluginManifest:
     description: str = ""
     author: str = ""
     enabled: bool = True
-    tools: List[dict] = field(default_factory=list)
+    tools: list[dict] = field(default_factory=list)
     entry_point: str = "__init__.py"
-    dependencies: List[str] = field(default_factory=list)
+    dependencies: list[str] = field(default_factory=list)
 
 
 class PluginManager:
@@ -39,8 +38,8 @@ class PluginManager:
             plugins_dir = os.path.join(base_dir, "plugins")
         self._dir = plugins_dir
         os.makedirs(self._dir, exist_ok=True)
-        self._plugins: Dict[str, PluginManifest] = {}
-        self._loaded_modules: Dict[str, object] = {}
+        self._plugins: dict[str, PluginManifest] = {}
+        self._loaded_modules: dict[str, object] = {}
         self._discover()
 
     def _discover(self):
@@ -49,7 +48,7 @@ class PluginManager:
             manifest_path = os.path.join(self._dir, item, "manifest.json")
             if os.path.isfile(manifest_path):
                 try:
-                    with open(manifest_path, "r", encoding="utf-8") as f:
+                    with open(manifest_path, encoding="utf-8") as f:
                         data = json.load(f)
                     manifest = PluginManifest(
                         **{
@@ -72,7 +71,7 @@ class PluginManager:
                 except Exception as e:
                     logger.warning(f"自动加载插件 {plugin_id} 失败: {e}")
 
-    def list_plugins(self) -> List[dict]:
+    def list_plugins(self) -> list[dict]:
         """列出所有插件"""
         return [
             {
@@ -87,7 +86,7 @@ class PluginManager:
             for p in self._plugins.values()
         ]
 
-    def get_plugin(self, plugin_id: str) -> Optional[PluginManifest]:
+    def get_plugin(self, plugin_id: str) -> PluginManifest | None:
         return self._plugins.get(plugin_id)
 
     def load_plugin(self, plugin_id: str) -> bool:
@@ -104,6 +103,8 @@ class PluginManager:
 
         # 动态导入
         spec = importlib.util.spec_from_file_location(f"plugin_{plugin_id}", entry_path)
+        if spec is None or spec.loader is None:
+            raise ImportError(f"无法创建插件模块 spec: {entry_path}")
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         self._loaded_modules[plugin_id] = module
@@ -133,6 +134,7 @@ class PluginManager:
         manifest.enabled = True
         self._save_manifest(manifest)
         logger.info(f"插件 {plugin_id} 已加载")
+        return True
 
     def unload_plugin(self, plugin_id: str):
         """卸载插件"""
@@ -160,10 +162,10 @@ class PluginManager:
         if not os.path.exists(manifest_path):
             raise ValueError("插件目录中缺少 manifest.json")
 
-        with open(manifest_path, "r", encoding="utf-8") as f:
+        with open(manifest_path, encoding="utf-8") as f:
             data = json.load(f)
 
-        plugin_id = data.get("id", os.path.basename(source_path))
+        plugin_id = str(data.get("id", os.path.basename(source_path)))
         dest = os.path.join(self._dir, plugin_id)
 
         if os.path.exists(dest):

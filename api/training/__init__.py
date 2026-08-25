@@ -19,12 +19,12 @@ from fastapi import APIRouter
 router = APIRouter()
 
 from .checkpoints import router as checkpoints_router
-from .resume import router as resume_router
 from .control import router as control_router
 from .datasets import router as datasets_router
-from .publish import router as publish_router
 from .native import router as native_router
+from .publish import router as publish_router
 from .recommend import router as recommend_router
+from .resume import router as resume_router
 
 router.include_router(recommend_router)
 router.include_router(control_router)

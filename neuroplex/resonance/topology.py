@@ -37,11 +37,14 @@ Usage:
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Dict, List, Optional, Set, Tuple
+from typing import TYPE_CHECKING
 
 import torch
 
 from .geometry import NeuronGeometry
+
+if TYPE_CHECKING:
+    from .neuron import ResonanceNeuron
 
 # ── Hub selection helpers ────────────────────────────────────────────────
 
@@ -53,7 +56,7 @@ def _spec_capacity(neuron) -> int:
     Standard (768×10=7680) > Compact (512×6=3072) > Foundation (384×6=2304).
     """
     c = neuron.config
-    return c.hidden_size * c.num_hidden_layers
+    return int(c.hidden_size * c.num_hidden_layers)
 
 
 def _domain_of(nid: str) -> str:
@@ -65,13 +68,13 @@ def _domain_of(nid: str) -> str:
 
 
 def build_topology(
-    neurons: Dict[str, object],
-    geometry: Optional[NeuronGeometry] = None,
+    neurons: dict[str, ResonanceNeuron],
+    geometry: NeuronGeometry | None = None,
     mode: str = "hybrid",
     k: int = 3,
     n_hubs: int = 1,
     intra_group_full: bool = True,
-) -> Dict[str, List[str]]:
+) -> dict[str, list[str]]:
     """Build side-channel topology adjacency.
 
     Args:
@@ -111,28 +114,28 @@ def build_topology(
     raise ValueError(f"Unknown topology mode: {mode} (expected: full|knn|hub_spoke|hybrid)")
 
 
-def _ensure_positions(geometry: NeuronGeometry, nids: List[str]) -> None:
+def _ensure_positions(geometry: NeuronGeometry, nids: list[str]) -> None:
     """Auto-assign geometry positions if any neuron is missing."""
     if set(nids) <= set(geometry.positions.keys()):
         return
-    domain_to_nids: Dict[str, List[str]] = defaultdict(list)
+    domain_to_nids: dict[str, list[str]] = defaultdict(list)
     for nid in nids:
         domain_to_nids[_domain_of(nid)].append(nid)
     geometry.assign_domain_positions(dict(domain_to_nids))
 
 
 def _build_knn(
-    nids: List[str],
+    nids: list[str],
     geometry: NeuronGeometry,
     k: int = 3,
-) -> Dict[str, List[str]]:
+) -> dict[str, list[str]]:
     """Symmetric k-nearest-neighbor topology.
 
     Each neuron connects to its k nearest neighbors. If A is in B's k-NN,
     B is also connected to A (symmetric), ensuring bidirectional signal flow.
     """
     k = min(k, len(nids) - 1)
-    edges: Set[Tuple[str, str]] = set()
+    edges: set[tuple[str, str]] = set()
     for nid in nids:
         dists = sorted(
             ((geometry.distance(nid, other), other) for other in nids if other != nid),
@@ -142,7 +145,7 @@ def _build_knn(
             # Symmetric: add both directions
             edges.add((nid, other))
             edges.add((other, nid))
-    adj: Dict[str, List[str]] = {nid: [] for nid in nids}
+    adj: dict[str, list[str]] = {nid: [] for nid in nids}
     for post, pre in edges:
         if pre not in adj[post]:
             adj[post].append(pre)
@@ -150,11 +153,11 @@ def _build_knn(
 
 
 def _select_hubs(
-    nids: List[str],
-    neurons: Dict[str, object],
+    nids: list[str],
+    neurons: dict[str, ResonanceNeuron],
     geometry: NeuronGeometry,
     n_hubs: int = 1,
-) -> List[str]:
+) -> list[str]:
     """Select hub neurons: highest capacity, tiebreak by centroid proximity.
 
     Hub selection mirrors biology: larger-capacity neurons (association cortex)
@@ -170,7 +173,7 @@ def _select_hubs(
     else:
         centroid = torch.zeros(geometry.embedding_dim)
 
-    scored: List[Tuple[int, float, str]] = []
+    scored: list[tuple[int, float, str]] = []
     for nid in nids:
         cap = _spec_capacity(neurons[nid])
         pos = geometry.positions.get(nid, centroid)
@@ -182,18 +185,18 @@ def _select_hubs(
 
 
 def _build_hub_spoke(
-    nids: List[str],
-    neurons: Dict[str, object],
+    nids: list[str],
+    neurons: dict[str, ResonanceNeuron],
     geometry: NeuronGeometry,
     n_hubs: int = 1,
-) -> Dict[str, List[str]]:
+) -> dict[str, list[str]]:
     """Hub-spoke topology: hubs connect to all; non-hubs connect only to hubs.
 
     Hub reads from all spokes; spokes read from hub (and hub reads from them).
     Non-hub pairs do NOT connect directly — all traffic goes through hub.
     """
     hubs = set(_select_hubs(nids, neurons, geometry, n_hubs=n_hubs))
-    adj: Dict[str, List[str]] = {nid: [] for nid in nids}
+    adj: dict[str, list[str]] = {nid: [] for nid in nids}
     for post in nids:
         for pre in nids:
             if pre == post:
@@ -205,12 +208,12 @@ def _build_hub_spoke(
 
 
 def _build_hybrid(
-    nids: List[str],
-    neurons: Dict[str, object],
+    nids: list[str],
+    neurons: dict[str, ResonanceNeuron],
     geometry: NeuronGeometry,
     n_hubs: int = 1,
     intra_group_full: bool = True,
-) -> Dict[str, List[str]]:
+) -> dict[str, list[str]]:
     """Hybrid topology — cortical hierarchy (default, highest upper limit).
 
     Three-tier connectivity mirroring cortical architecture:
@@ -231,15 +234,15 @@ def _build_hybrid(
     global_hubs = set(_select_hubs(nids, neurons, geometry, n_hubs=n_hubs))
 
     # Per-domain spec-hub: highest-capacity neuron in each domain
-    domain_to_spec_hub: Dict[str, str] = {}
+    domain_to_spec_hub: dict[str, str] = {}
     for nid in nids:
         domain = _domain_of(nid)
-        if domain not in domain_to_spec_hub:
-            domain_to_spec_hub[domain] = nid
-        elif _spec_capacity(neurons[nid]) > _spec_capacity(neurons[domain_to_spec_hub[domain]]):
+        if domain not in domain_to_spec_hub or _spec_capacity(neurons[nid]) > _spec_capacity(
+            neurons[domain_to_spec_hub[domain]]
+        ):
             domain_to_spec_hub[domain] = nid
 
-    adj: Dict[str, List[str]] = {nid: [] for nid in nids}
+    adj: dict[str, list[str]] = {nid: [] for nid in nids}
     for post in nids:
         post_domain = _domain_of(post)
         post_spec = neurons[post].config.spec
@@ -274,12 +277,12 @@ def _build_hybrid(
 
 
 def establish_topology_channels(
-    neurons: Dict[str, object],
-    topology: Dict[str, List[str]],
-    geometry: Optional[NeuronGeometry] = None,
+    neurons: dict[str, ResonanceNeuron],
+    topology: dict[str, list[str]],
+    geometry: NeuronGeometry | None = None,
     channel_type: str = "excite",
     distance_gated_scale: bool = True,
-) -> Dict[str, int]:
+) -> dict[str, int]:
     """Establish side_channels according to topology adjacency.
 
     Replaces the nested-loop `for post: for pre: establish...` pattern with
@@ -298,7 +301,7 @@ def establish_topology_channels(
     Returns:
         stats: {nid: n_channels_established}
     """
-    stats: Dict[str, int] = {}
+    stats: dict[str, int] = {}
     for post_id, pre_ids in topology.items():
         if post_id not in neurons:
             continue
@@ -330,7 +333,7 @@ def establish_topology_channels(
 # ── Checkpoint inference ─────────────────────────────────────────────────
 
 
-def infer_topology_from_state(side_channels_state: Dict) -> Dict[str, List[str]]:
+def infer_topology_from_state(side_channels_state: dict) -> dict[str, list[str]]:
     """Reconstruct topology adjacency from checkpoint's side_channels_state.
 
     Eval scripts call this to auto-match the topology used during training,
@@ -343,7 +346,7 @@ def infer_topology_from_state(side_channels_state: Dict) -> Dict[str, List[str]]
     Returns:
         adjacency: {post_id: [pre_id, ...]}
     """
-    adj: Dict[str, List[str]] = {}
+    adj: dict[str, list[str]] = {}
     for post_id, channels in side_channels_state.items():
         pre_ids = list(channels.get("excite", {}).keys())
         adj[post_id] = pre_ids
@@ -353,7 +356,7 @@ def infer_topology_from_state(side_channels_state: Dict) -> Dict[str, List[str]]
 # ── Diagnostics ──────────────────────────────────────────────────────────
 
 
-def topology_summary(topology: Dict[str, List[str]]) -> str:
+def topology_summary(topology: dict[str, list[str]]) -> str:
     """Human-readable topology summary for logging."""
     n = len(topology)
     edges = sum(len(v) for v in topology.values())
@@ -367,14 +370,14 @@ def topology_summary(topology: Dict[str, List[str]]) -> str:
 
 
 def topology_detail(
-    topology: Dict[str, List[str]],
-    neurons: Optional[Dict[str, object]] = None,
+    topology: dict[str, list[str]],
+    neurons: dict[str, object] | None = None,
 ) -> str:
     """Detailed topology report with hub identification (for training logs)."""
     lines = [topology_summary(topology)]
     if neurons:
         # Identify hubs (highest indegree)
-        indegree: Dict[str, int] = defaultdict(int)
+        indegree: dict[str, int] = defaultdict(int)
         for pre_ids in topology.values():
             for pre in pre_ids:
                 indegree[pre] += 1

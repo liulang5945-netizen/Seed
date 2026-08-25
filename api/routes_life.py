@@ -5,9 +5,9 @@ Seed生命状态 API
 """
 
 import logging
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import Optional
 
 logger = logging.getLogger("RoutesLife")
 router = APIRouter(prefix="/api/life", tags=["life"])
@@ -16,7 +16,7 @@ router = APIRouter(prefix="/api/life", tags=["life"])
 class LifeActionResponse(BaseModel):
     success: bool
     message: str
-    data: Optional[dict] = None
+    data: dict | None = None
 
 
 @router.get("/status")
@@ -37,7 +37,7 @@ async def get_life_status():
     except Exception as e:
         logger.error(f"获取生命状态失败: {e}")
         logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from e
 
 
 @router.post("/feed")

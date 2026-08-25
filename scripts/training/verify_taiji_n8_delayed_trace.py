@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 import argparse
-from collections import Counter, defaultdict
 import json
-from pathlib import Path
 import sys
-from typing import Dict, Literal, Tuple
+from collections import Counter, defaultdict
+from pathlib import Path
+from typing import Literal
 
-import torch
 import _verify_emit
+import torch
 import torch.nn.functional as F
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -26,7 +26,7 @@ PROBE = ord("x")
 def _first_order_accuracy(data: bytes) -> float:
     followers: Counter[int] = Counter()
     targets = []
-    for current, following in zip(data, data[1:]):
+    for current, following in zip(data, data[1:], strict=False):
         if current == PROBE:
             followers[int(following)] += 1
             targets.append(int(following))
@@ -35,7 +35,7 @@ def _first_order_accuracy(data: bytes) -> float:
     return sum(target == prediction for target in targets) / len(targets)
 
 
-def _centroid_cosine(groups: Dict[int, list[torch.Tensor]]) -> float:
+def _centroid_cosine(groups: dict[int, list[torch.Tensor]]) -> float:
     labels = sorted(groups)
     left = torch.stack(groups[labels[0]]).mean(dim=0)
     right = torch.stack(groups[labels[1]]).mean(dim=0)
@@ -67,14 +67,14 @@ def _evaluate(
     model: Taiji,
     *,
     mode: Literal["full", "no_trace", "trace_only", "all"],
-) -> Tuple[float, list[Dict[str, int]], Dict[str, float]]:
+) -> tuple[float, list[dict[str, int]], dict[str, float]]:
     model.reset_dynamics(episode_id=f"n8-{mode}")
     sequence = (model.config.boundary_symbol, *DATA, model.config.boundary_symbol)
     hits = []
     rows = []
-    pre_fast: Dict[int, list[torch.Tensor]] = defaultdict(list)
-    pre_trace: Dict[int, list[torch.Tensor]] = defaultdict(list)
-    post_context: Dict[int, list[torch.Tensor]] = defaultdict(list)
+    pre_fast: dict[int, list[torch.Tensor]] = defaultdict(list)
+    pre_trace: dict[int, list[torch.Tensor]] = defaultdict(list)
+    post_context: dict[int, list[torch.Tensor]] = defaultdict(list)
 
     for index, symbol in enumerate(sequence[:-1]):
         if symbol != PROBE:
@@ -114,7 +114,7 @@ def _evaluate(
     return sum(hits) / len(hits), rows, diagnostics
 
 
-def run_benchmark(*, epochs: int = 200, seed: int = 7) -> Dict[str, object]:
+def run_benchmark(*, epochs: int = 200, seed: int = 7) -> dict[str, object]:
     config = TaijiConfig(
         region_sizes=(64, 48),
         synapse_fan_in=16,

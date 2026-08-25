@@ -6,6 +6,8 @@
 
 import logging
 import os
+from typing import cast
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
@@ -42,14 +44,15 @@ def _detect_hardware() -> dict:
 
         cuda_available = torch.cuda.is_available()
         gpu_name = ""
-        vram_gb = 0
+        vram_gb = 0.0
         if cuda_available:
             gpu_name = torch.cuda.get_device_name(0)
-            vram_gb = torch.cuda.get_device_properties(0).total_mem / (1024**3)
+            props = torch.cuda.get_device_properties(0)
+            vram_gb = getattr(props, "total_memory", getattr(props, "total_mem", 0)) / (1024**3)
     except ImportError:
         cuda_available = False
         gpu_name = ""
-        vram_gb = 0
+        vram_gb = 0.0
     return {
         "cpu_cores": cpu_count,
         "ram_gb": round(ram_gb, 1),
@@ -113,7 +116,7 @@ async def get_training_recommendation(req: RecommendRequest):
             raise HTTPException(status_code=400, detail="parameter_budget 必须为正数")
         hw = _detect_hardware()
         selected = _NATIVE_PRESETS[req.preset]
-        budget = int(req.parameter_budget or selected["parameter_budget"])
+        budget = int(req.parameter_budget or cast(int, selected["parameter_budget"]))
         return {
             "status": "success",
             "hardware": hw,
@@ -128,7 +131,9 @@ async def get_training_recommendation(req: RecommendRequest):
             "presets": {
                 key: {
                     **value,
-                    "capacity": _native_capacity(int(value["parameter_budget"]), req.seed),
+                    "capacity": _native_capacity(
+                        int(cast(int, value["parameter_budget"])), req.seed
+                    ),
                 }
                 for key, value in _NATIVE_PRESETS.items()
             },
@@ -137,7 +142,7 @@ async def get_training_recommendation(req: RecommendRequest):
         raise
     except Exception as e:
         logger.error(f"获取训练推荐失败: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @router.post("/api/training/check_dataset")
@@ -149,9 +154,9 @@ async def check_dataset_quality(req: DatasetCheckRequest):
         result = inspect_native_dataset(req.file_path)
         return {"status": "success", **result.to_dict()}
     except FileNotFoundError:
-        raise HTTPException(status_code=404, detail=f"数据集不存在: {req.file_path}")
+        raise HTTPException(status_code=404, detail=f"数据集不存在: {req.file_path}") from None
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"数据集检查失败: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e

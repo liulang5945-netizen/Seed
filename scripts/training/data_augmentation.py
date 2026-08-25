@@ -26,7 +26,6 @@
 from __future__ import annotations
 
 import random
-from typing import List, Optional, Tuple
 
 # ── 对话格式常量（与 experiment_config.SFT_ANSWER_MARKER 一致）──
 Q_MARKER = "问："
@@ -73,7 +72,7 @@ QUESTION_SUFFIXES = [
 ROLE_PREFIXES = ["", "", "我是学生，", "我在学习，", "我很好奇，"]
 
 
-def parse_dialogue(text: str) -> Optional[Tuple[str, str]]:
+def parse_dialogue(text: str) -> tuple[str, str] | None:
     """解析对话文本为 (question, answer)。
 
     格式: "问：Q\n答：A"（第一个问/答标记切分）。
@@ -166,9 +165,9 @@ def augment_dialogue_text(
 
 def multi_turn_concatenate(
     text: str,
-    context_pool: List[str],
+    context_pool: list[str],
     rng: random.Random,
-    extra_turns: Tuple[int, int] = (1, 2),
+    extra_turns: tuple[int, int] = (1, 2),
     prob: float = 0.4,
 ) -> str:
     """多轮拼接：从对话池取 1-2 条作为前序轮次，拼接到当前对话前。
@@ -222,7 +221,7 @@ def multi_turn_concatenate(
 
 
 def generate_neuron_augmented_data(
-    texts: List[str],
+    texts: list[str],
     neuron,
     shared_emb,
     domain_sp,
@@ -232,7 +231,7 @@ def generate_neuron_augmented_data(
     temperature: float = 0.9,
     top_k: int = 40,
     max_samples: int = 200,
-) -> List[str]:
+) -> list[str]:
     """神经元改写（离线可选）：用本地对话神经元生成 question 的 paraphrase。
 
     上限最高：神经元的改写反映其真实语言能力分布，与训练分布一致。
@@ -254,6 +253,7 @@ def generate_neuron_augmented_data(
     """
     import torch
     import torch.nn.functional as F
+
     from neuroplex.resonance.translator import build_position_alignment
 
     augmented = []
@@ -261,7 +261,7 @@ def generate_neuron_augmented_data(
     candidates = rng.sample(texts, min(max_samples, len(texts)))
     pad_id = 0
 
-    def _tokenize(text: str) -> List[int]:
+    def _tokenize(text: str) -> list[int]:
         g_ids, _ = build_position_alignment(text, domain_sp, general_sp)
         return g_ids
 
@@ -343,14 +343,14 @@ class DialogueAugmenter:
         self.synonym_prob = synonym_prob
         self._rng = random.Random(42)
         self._epoch = 0
-        self._context_pool: List[str] = []
+        self._context_pool: list[str] = []
 
     def set_epoch(self, epoch: int) -> None:
         """设置 epoch（种子 = 42 + epoch，保证每 epoch 变体不同）。"""
         self._epoch = epoch
         self._rng = random.Random(42 + epoch * 1000)
 
-    def set_context_pool(self, pool: List[str]) -> None:
+    def set_context_pool(self, pool: list[str]) -> None:
         """设置多轮拼接的上下文池（通常是全部对话）。"""
         self._context_pool = pool
 

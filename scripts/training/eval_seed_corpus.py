@@ -22,7 +22,7 @@ import statistics
 import sys
 import time
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 import torch
 
@@ -34,7 +34,7 @@ from seed import Seed  # noqa: E402
 BASELINE_REPORT = "a1_judge_nll_std_real_20260820.json"
 
 # Frozen 24-prompt panel from BOOTSTRAP A1 (verify_a1_judge_signal_real.py).
-PROMPT_PANEL: Dict[str, tuple] = {
+PROMPT_PANEL: dict[str, tuple] = {
     "dialogue": (
         "你好，请问今天感觉怎么样？",
         "能帮我解释一下你最近在想什么吗？",
@@ -68,7 +68,7 @@ PROMPT_PANEL: Dict[str, tuple] = {
 }
 
 
-def _baseline_reference() -> Dict[str, Any]:
+def _baseline_reference() -> dict[str, Any]:
     path = PROJECT_ROOT / "reports" / BASELINE_REPORT
     if not path.is_file():
         return {"report": BASELINE_REPORT, "available": False, "groups": {}}
@@ -90,13 +90,13 @@ def evaluate_seed(
     model: Seed,
     *,
     holdout_bytes: bytes,
-    report_path: Optional[Path | str] = None,
+    report_path: Path | str | None = None,
     generation_length: int = 64,
-    holdout_source: Optional[str] = None,
-    holdout_selection: Optional[str] = None,
-    train_corpus: Optional[str] = None,
+    holdout_source: str | None = None,
+    holdout_selection: str | None = None,
+    train_corpus: str | None = None,
     leakage_risk: bool = False,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Measure holdout PPL, panel self-surprise and sampled continuations.
 
     holdout_source/holdout_selection/train_corpus/leakage_risk 为防泄漏元数据：
@@ -114,7 +114,7 @@ def evaluate_seed(
         "byte_ppl": math.exp(scored["mean_surprise"]),
     }
 
-    panel: Dict[str, Any] = {}
+    panel: dict[str, Any] = {}
     samples = []
     for group, prompts in PROMPT_PANEL.items():
         surprises = []

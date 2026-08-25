@@ -24,7 +24,7 @@ _LOG_FORMAT = logging.Formatter(
 )
 
 # 已注册的 logger 缓存
-_loggers: dict = {}
+_loggers: dict[str, logging.Logger] = {}
 
 # 默认日志级别
 _DEFAULT_LEVEL = logging.INFO
@@ -47,7 +47,7 @@ def setup_logging(level: str = "INFO"):
         root_logger.addHandler(console_handler)
 
 
-def get_logger(name: str, level: str = None) -> logging.Logger:
+def get_logger(name: str, level: str | None = None) -> logging.Logger:
     """
     获取（或创建）统一配置的 Logger。
     所有模块应使用此函数代替 logging.getLogger()
@@ -66,7 +66,7 @@ def get_logger(name: str, level: str = None) -> logging.Logger:
         logger.setLevel(_DEFAULT_LEVEL)
 
     # 确保有 Handler（如果没有父级 Handler）
-    if not logger.handlers and not logger.parent.handlers:
+    if not logger.handlers and not getattr(logger.parent, "handlers", None):
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(_LOG_FORMAT)
         logger.addHandler(console_handler)
@@ -110,18 +110,18 @@ def ensure_dir(path: str) -> str:
 # ======================== JSON 工具 ========================
 
 
-def safe_json_load(file_path: str, default=None) -> dict:
+def safe_json_load(file_path: str, default: dict | None = None) -> dict:
     """安全加载 JSON 文件"""
-    if default is None:
-        default = {}
+    base = default if default is not None else {}
     if not os.path.exists(file_path):
-        return default
+        return base
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+        with open(file_path, encoding="utf-8") as f:
+            data: dict = json.load(f)
+            return data
     except Exception as e:
         logger.warning(f"加载 JSON 失败 ({file_path}): {e}")
-        return default
+        return base
 
 
 def safe_json_save(file_path: str, data: dict):
@@ -177,7 +177,7 @@ def build_toast_html(msg: str, type_: str = "info") -> str:
 
 def normalize_history(history: list) -> list:
     """规范化聊天历史为 list[list] 格式"""
-    norm_history = []
+    norm_history: list = []
     if not history or not isinstance(history, list):
         return norm_history
 
@@ -210,7 +210,7 @@ def filter_by_query(items: list, query: str) -> list:
     return [d for d in items if q in d.lower()]
 
 
-def generate_bg_css(img_path: str, base_dir: str = None) -> str:
+def generate_bg_css(img_path: str, base_dir: str | None = None) -> str:
     """
     生成自定义背景 CSS
     使用 file:/// 引用避免 base64 内联膨胀

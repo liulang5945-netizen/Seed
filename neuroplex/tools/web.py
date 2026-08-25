@@ -17,18 +17,17 @@
     content = fetch("https://example.com")
 """
 
-import os
-import re
 import concurrent.futures
-import json
-import time
 import hashlib
+import json
 import logging
+import os
 import random
-import urllib.request
-import urllib.parse
+import re
+import time
 import urllib.error
-from typing import List, Optional
+import urllib.parse
+import urllib.request
 from dataclasses import dataclass
 
 logger = logging.getLogger("Taiji.Web")
@@ -83,14 +82,14 @@ class WebCache:
     def _key(self, url: str) -> str:
         return hashlib.md5(url.encode()).hexdigest()
 
-    def get(self, url: str) -> Optional[str]:
+    def get(self, url: str) -> str | None:
         """获取缓存"""
         key = self._key(url)
         path = os.path.join(self.cache_dir, f"{key}.json")
         if not os.path.exists(path):
             return None
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = json.load(f)
             if time.time() - data.get("timestamp", 0) > self.ttl:
                 os.remove(path)
@@ -180,7 +179,7 @@ def _http_get(url: str, timeout: int = 10) -> str:
         return resp.read().decode("utf-8", errors="ignore")
 
 
-def _search_duckduckgo(query: str, max_results: int = 5) -> List[SearchResult]:
+def _search_duckduckgo(query: str, max_results: int = 5) -> list[SearchResult]:
     """DuckDuckGo 搜索（纯 stdlib，通过 HTML 版搜索页抓取）"""
     try:
         url = f"https://html.duckduckgo.com/html/?q={urllib.parse.quote(query)}"
@@ -215,7 +214,7 @@ def _search_duckduckgo(query: str, max_results: int = 5) -> List[SearchResult]:
         return []
 
 
-def _search_bing(query: str, max_results: int = 5) -> List[SearchResult]:
+def _search_bing(query: str, max_results: int = 5) -> list[SearchResult]:
     """Bing 搜索（纯 stdlib，网页抓取 + regex 解析）"""
     try:
         url = f"https://www.bing.com/search?q={urllib.parse.quote(query)}"
@@ -239,7 +238,7 @@ def _search_bing(query: str, max_results: int = 5) -> List[SearchResult]:
         return []
 
 
-def _search_baidu(query: str, max_results: int = 5) -> List[SearchResult]:
+def _search_baidu(query: str, max_results: int = 5) -> list[SearchResult]:
     """百度搜索（纯 stdlib，网页抓取 + regex 解析）"""
     try:
         url = f"https://www.baidu.com/s?wd={urllib.parse.quote(query)}"
@@ -288,7 +287,7 @@ def _search_baidu(query: str, max_results: int = 5) -> List[SearchResult]:
         return []
 
 
-def search(query: str, max_results: int = 5, engine: str = "auto") -> List[SearchResult]:
+def search(query: str, max_results: int = 5, engine: str = "auto") -> list[SearchResult]:
     """
     搜索互联网。
 

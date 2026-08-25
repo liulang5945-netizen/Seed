@@ -8,14 +8,15 @@ Agent 核心功能 API 路由（精简版）
 - routes_agent_memory.py   → 记忆系统（短期/工作/长期记忆）
 """
 
+import asyncio
 import json
 import logging
+
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
-import asyncio
 
-from neuroplex.services.tool_service import list_tools, get_registry_schemas, execute_tool
 from neuroplex.services import agent_service
+from neuroplex.services.tool_service import execute_tool, get_registry_schemas, list_tools
 
 logger = logging.getLogger("ApiServer.Agent")
 router = APIRouter()

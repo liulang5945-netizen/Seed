@@ -22,7 +22,6 @@ from __future__ import annotations
 
 import math
 import random
-from typing import Dict, List, Optional, Tuple
 
 import torch
 
@@ -39,7 +38,7 @@ class NeuronGeometry:
     def __init__(self, embedding_dim: int = 8, sigma: float = 0.5):
         self.embedding_dim = embedding_dim
         self.sigma = sigma
-        self.positions: Dict[str, torch.Tensor] = {}
+        self.positions: dict[str, torch.Tensor] = {}
 
     def assign_position(self, nid: str, position: torch.Tensor) -> None:
         """手动设置 neuron 坐标。"""
@@ -47,7 +46,7 @@ class NeuronGeometry:
 
     def assign_domain_positions(
         self,
-        domain_to_nids: Dict[str, List[str]],
+        domain_to_nids: dict[str, list[str]],
         intra_domain_radius: float = 0.2,
         inter_domain_radius: float = 1.0,
         seed: int = 42,
@@ -71,7 +70,7 @@ class NeuronGeometry:
             return
 
         # 为每个域生成一个中心点（均匀分布在球面上）
-        domain_centers: Dict[str, torch.Tensor] = {}
+        domain_centers: dict[str, torch.Tensor] = {}
         for i, domain in enumerate(domains):
             if n_domains == 1:
                 # 单域：中心在原点
@@ -111,7 +110,7 @@ class NeuronGeometry:
         """计算两个 neuron 之间的欧氏距离。"""
         if nid_a not in self.positions or nid_b not in self.positions:
             return 1.0  # 未注册的 neuron 默认距离 = 1（非近邻）
-        return (self.positions[nid_a] - self.positions[nid_b]).norm().item()
+        return float((self.positions[nid_a] - self.positions[nid_b]).norm().item())
 
     def distance_gate(self, nid_a: str, nid_b: str) -> float:
         """Gaussian 距离衰减门控：exp(-dist² / (2σ²))。
@@ -125,18 +124,18 @@ class NeuronGeometry:
         dist = self.distance(nid_a, nid_b)
         return math.exp(-(dist**2) / (2 * self.sigma**2))
 
-    def batch_distance_gates(self, nids: List[str]) -> Dict[Tuple[str, str], float]:
+    def batch_distance_gates(self, nids: list[str]) -> dict[tuple[str, str], float]:
         """批量计算所有 pair 的距离门控。"""
         gates = {}
         for i, ni in enumerate(nids):
-            for j, nj in enumerate(nids[i + 1 :], i + 1):
+            for _j, nj in enumerate(nids[i + 1 :], i + 1):
                 gates[(ni, nj)] = self.distance_gate(ni, nj)
         return gates
 
-    def get_position(self, nid: str) -> Optional[torch.Tensor]:
+    def get_position(self, nid: str) -> torch.Tensor | None:
         return self.positions.get(nid)
 
-    def list_positions(self) -> Dict[str, torch.Tensor]:
+    def list_positions(self) -> dict[str, torch.Tensor]:
         return dict(self.positions)
 
     def get_state_dict(self) -> dict:

@@ -38,9 +38,10 @@ import random
 import sys
 import time
 from datetime import datetime
-from typing import List, Optional, Tuple
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+import logging
 
 import torch
 import torch.nn.functional as F
@@ -48,7 +49,6 @@ import torch.nn.functional as F
 from neuroplex.resonance import ResonanceNeuron
 from neuroplex.resonance.config import get_default_neuron_config
 from scripts.training.utils import load_general_tokenizer
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -71,13 +71,13 @@ PAIRS_QUOTA = 3000  # 平行语料全量 1629 对 < 配额
 # ======================== 数据 ========================
 
 
-def load_sft(domain: str) -> List[dict]:
+def load_sft(domain: str) -> list[dict]:
     path = os.path.join(SFT_DIR, f"{domain}_sft.pt")
     data = torch.load(path, map_location="cpu", weights_only=False)
     return list(data)
 
 
-def load_pairs() -> List[dict]:
+def load_pairs() -> list[dict]:
     """平行语料 → SFT 样本：zh 指令 → code 响应（天然跨域 QA 对）。"""
     out = []
     if not os.path.exists(PAIRS_PATH):
@@ -92,9 +92,9 @@ def load_pairs() -> List[dict]:
     return out
 
 
-def build_mixed_samples(args) -> List[dict]:
+def build_mixed_samples(args) -> list[dict]:
     """跨域混合样本：域 SFT 采样 + 平行语料（zh 指令→code 响应）。"""
-    samples: List[dict] = []
+    samples: list[dict] = []
     for domain, quota in DOMAIN_QUOTA.items():
         try:
             d = load_sft(domain)
@@ -115,7 +115,7 @@ def build_mixed_samples(args) -> List[dict]:
     return samples
 
 
-def build_sample(text: str, prompt: str, general_sp) -> Tuple[List[int], int]:
+def build_sample(text: str, prompt: str, general_sp) -> tuple[list[int], int]:
     """general 同空间样本：g_ids + answer 起始位置（prompt+"\n" 前缀匹配）。"""
     g_ids = general_sp.encode(text)
     p_ids = general_sp.encode(prompt + "\n")
@@ -126,7 +126,7 @@ def build_sample(text: str, prompt: str, general_sp) -> Tuple[List[int], int]:
     return g_ids, k
 
 
-def build_batch(samples, general_sp, shared_emb) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+def build_batch(samples, general_sp, shared_emb) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """批量样本：emb + targets（非 answer 为 -100）+ attn mask。"""
     try:
         eos = general_sp.eos_id()
@@ -163,7 +163,7 @@ def build_batch(samples, general_sp, shared_emb) -> Tuple[torch.Tensor, torch.Te
 # ======================== 模型 ========================
 
 
-def build_hub_neuron(device: str) -> Tuple[ResonanceNeuron, torch.nn.Embedding]:
+def build_hub_neuron(device: str) -> tuple[ResonanceNeuron, torch.nn.Embedding]:
     """hub = EXPERT 规格 + general 256K lm_head（从零训练，无基座）。"""
     cfg = get_default_neuron_config("expert")
     cfg.vocab_size = GENERAL_VOCAB
@@ -192,7 +192,7 @@ def build_hub_neuron(device: str) -> Tuple[ResonanceNeuron, torch.nn.Embedding]:
 # ======================== 保存 + 回读验证（用户规则） ========================
 
 
-def verify_checkpoint(eval_samples: List[dict], general_sp, emb, n_check: int = 4) -> float:
+def verify_checkpoint(eval_samples: list[dict], general_sp, emb, n_check: int = 4) -> float:
     """保存后立即回读：重算 answer-masked val PPL，防坏 checkpoint。"""
     ckpt = torch.load(
         os.path.join(OUT_DIR, "neuron_hub.pt"), map_location="cpu", weights_only=False
@@ -230,7 +230,7 @@ def save_checkpoint(
     neuron,
     shared_emb,
     step: int,
-    ppl: Optional[float],
+    ppl: float | None,
     loss_history: list,
     out_name: str = "neuron_hub",
 ):
@@ -339,7 +339,7 @@ def main():
     loss_history = []
     step = 0
     best_ppl = None
-    for epoch in range(args.epochs):
+    for _epoch in range(args.epochs):
         random.shuffle(train_samples)
         for i in range(0, len(train_samples), BATCH_SIZE):
             if step >= total_steps:

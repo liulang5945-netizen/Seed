@@ -41,7 +41,7 @@ def _require_admin_auth(request: Request):
 
 def _get_workspace_dir() -> str:
     """Return the current workspace directory."""
-    custom_path = get_setting("workspace_path", "")
+    custom_path = str(get_setting("workspace_path", "") or "")
     if custom_path and os.path.isdir(custom_path):
         return os.path.abspath(custom_path)
     return get_external_path("agent_workspace")
@@ -134,7 +134,7 @@ def list_workspace_tree():
     os.makedirs(ws_dir, exist_ok=True)
 
     def build_tree(dir_path: str) -> list:
-        entries = []
+        entries: list[dict[str, object]] = []
         try:
             items = sorted(os.listdir(dir_path))
             for name in items:
@@ -177,11 +177,11 @@ def get_workspace_file(name: str):
         return {"content": "", "error": "路径不安全"}
     if os.path.exists(file_path) and os.path.isfile(file_path):
         try:
-            with open(file_path, "r", encoding="utf-8") as handle:
+            with open(file_path, encoding="utf-8") as handle:
                 return {"content": handle.read(), "size": os.path.getsize(file_path)}
         except UnicodeDecodeError:
             try:
-                with open(file_path, "r", encoding="gbk") as handle:
+                with open(file_path, encoding="gbk") as handle:
                     return {"content": handle.read(), "size": os.path.getsize(file_path)}
             except Exception:
                 return {"content": "(二进制文件)", "size": os.path.getsize(file_path)}
@@ -207,9 +207,9 @@ def save_workspace_file(req: FileSaveRequest):
         with open(safe_path, "w", encoding="utf-8") as handle:
             handle.write(req.content)
     except IsADirectoryError:
-        raise HTTPException(status_code=422, detail=f"'{req.name}' 是目录不是文件")
+        raise HTTPException(status_code=422, detail=f"'{req.name}' 是目录不是文件") from None
     except PermissionError as exc:
-        raise HTTPException(status_code=403, detail=f"无权限写入: {exc}")
+        raise HTTPException(status_code=403, detail=f"无权限写入: {exc}") from exc
 
     return {"status": "ok", "path": os.path.relpath(safe_path, ws_dir)}
 
@@ -221,7 +221,7 @@ def run_workspace_code(req: CodeRunRequest, request: Request):
     try:
         from neuroplex.agent_ext.sandbox_executor import execute_python_with_files
 
-        result = execute_python_with_files(req.code)
+        result = execute_python_with_files({}, req.code)
         return {
             "output": result.get("output", ""),
             "files_created": result.get("files_created", []),
@@ -244,7 +244,7 @@ async def create_project(req: CreateProjectRequest):
         return {"status": "ok", "message": result}
     except Exception as exc:
         logger.error(f"Request failed: {exc}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from exc
 
 
 @router.delete("/api/workspace/delete/{name:path}")
@@ -266,7 +266,35 @@ def delete_workspace_item(name: str):
         raise
     except Exception as exc:
         logger.error(f"Request failed: {exc}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from exc
+
+
+@router.post("/api/workspace/rename")
+def rename_workspace_item(req: dict):
+    """Rename a file or directory inside the workspace."""
+    old_name = str(req.get("old_name") or "").strip()
+    new_name = str(req.get("new_name") or "").strip()
+    if not old_name or not new_name:
+        raise HTTPException(status_code=400, detail="旧名称和新名称不能为空")
+    try:
+        ws_dir, old_path = _resolve_workspace_path(old_name)
+        if old_path == ws_dir or not old_path.startswith(ws_dir + os.sep):
+            raise HTTPException(status_code=403, detail="路径不安全")
+        _, new_path = _resolve_workspace_path(new_name)
+        if new_path == ws_dir or not new_path.startswith(ws_dir + os.sep):
+            raise HTTPException(status_code=403, detail="路径不安全")
+        if not os.path.exists(old_path):
+            raise HTTPException(status_code=404, detail=f"源不存在: {old_name}")
+        if old_path != new_path and os.path.exists(new_path):
+            raise HTTPException(status_code=409, detail=f"目标已存在: {new_name}")
+        os.rename(old_path, new_path)
+        logger.info(f"工作区重命名: {old_name} -> {new_name}")
+        return {"status": "ok", "path": os.path.relpath(new_path, ws_dir)}
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.error(f"Request failed: {exc}")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from exc
 
 
 @router.post("/api/agent/analyze_code")
@@ -337,7 +365,8 @@ async def upload_plugin(request: Request, file: UploadFile = File(...)):
     try:
         plugins_dir = get_external_path("plugins")
         os.makedirs(plugins_dir, exist_ok=True)
-        file_path = os.path.join(plugins_dir, os.path.basename(file.filename))
+        upload_name = file.filename or "plugin"
+        file_path = os.path.join(plugins_dir, os.path.basename(upload_name))
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         return {
@@ -347,7 +376,7 @@ async def upload_plugin(request: Request, file: UploadFile = File(...)):
     except Exception as exc:
         logger.error(f"插件安装失败: {exc}")
         logger.error(f"Request failed: {exc}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from exc
 
 
 @router.get("/api/workspace/quick_paths")

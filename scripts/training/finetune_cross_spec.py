@@ -30,11 +30,11 @@ import torch
 import torch.nn.functional as F
 
 from neuroplex.resonance import (
-    ResonanceNeuron,
-    ResonanceField,
-    ResonanceEnsemble,
-    get_domain_neuron_config,
     NeuronGeometry,
+    ResonanceEnsemble,
+    ResonanceField,
+    ResonanceNeuron,
+    get_domain_neuron_config,
 )
 from neuroplex.resonance.topology import (
     build_topology,
@@ -42,23 +42,26 @@ from neuroplex.resonance.topology import (
     topology_detail,
 )
 from neuroplex.resonance.translator import batch_align_and_embed
-from scripts.training.utils import (
-    load_domain_tokenizer,
-    load_general_tokenizer,
-    OUTPUT_DIR,
-    load_simple_zh_texts,
-    create_shared_embedding,
-    make_wsd_scheduler,
-    build_muon_adamw_optimizers,
-    load_dialogue_texts_multi,
+from scripts.training.data_augmentation import DialogueAugmenter
+from scripts.training.experiment_config import (
+    DEFAULT_DOMAIN as DOMAIN,
 )
-
 from scripts.training.experiment_config import (
     ENSEMBLE_DIALOGUE_IDS as NEURON_IDS,
-    DEFAULT_DOMAIN as DOMAIN,
+)
+from scripts.training.experiment_config import (
     SFT_ANSWER_MARKER,
 )
-from scripts.training.data_augmentation import DialogueAugmenter
+from scripts.training.utils import (
+    OUTPUT_DIR,
+    build_muon_adamw_optimizers,
+    create_shared_embedding,
+    load_dialogue_texts_multi,
+    load_domain_tokenizer,
+    load_general_tokenizer,
+    load_simple_zh_texts,
+    make_wsd_scheduler,
+)
 
 DEVICE = "cpu"
 
@@ -75,7 +78,9 @@ class TeeLogger:
     def __init__(self, log_path: str):
         self.log_path = log_path
         os.makedirs(os.path.dirname(log_path), exist_ok=True)
-        self.fp = open(log_path, "w", encoding="utf-8", buffering=1)
+        self.fp = open(  # noqa: SIM115 — 日志器生命周期内持有，随 close() 释放
+            log_path, "w", encoding="utf-8", buffering=1
+        )
 
     def write(self, msg: str):
         sys.__stdout__.write(msg)
@@ -319,7 +324,7 @@ def load_dialogue_texts(jsonl_path: str, max_texts: int = 10000) -> list:
     每条格式: "问：{instruction}\n答：{output}"
     """
     texts = []
-    with open(jsonl_path, "r", encoding="utf-8") as f:
+    with open(jsonl_path, encoding="utf-8") as f:
         for line in f:
             item = json.loads(line)
             texts.append(item["text"])
@@ -507,7 +512,7 @@ def main():
 
     # 3. 冻结核心参数，仅 side_channels + scale + (S8: 最后N层) 可训练
     print(f"\n[3] 冻结核心参数 (unfreeze_layers={args.unfreeze_layers})...", flush=True)
-    for nid, neuron in neurons.items():
+    for _nid, neuron in neurons.items():
         for p in neuron.parameters():
             p.requires_grad = False
         # side_channels 可训练
@@ -591,7 +596,7 @@ def main():
     trainable_side = 0
     trainable_body = 0
     trainable_emb = 0
-    for nid, neuron in neurons.items():
+    for _nid, neuron in neurons.items():
         for name, p in neuron.named_parameters():
             if not p.requires_grad:
                 continue
@@ -661,7 +666,7 @@ def main():
     muon_params = []  # 2D weight (side_channels + 跨规格投影层)
     adamw_params = []  # 1D bias/norm + 0D scale (side_channels only)
     body_params = []  # S8: unfrozen neuron body params
-    for nid, neuron in neurons.items():
+    for _nid, neuron in neurons.items():
         for ch in neuron.excite_channels.values():
             for p in ch.parameters():
                 if not p.requires_grad:
@@ -943,7 +948,7 @@ def main():
             total_steps += 1
 
             if total_steps % BIAS_UPDATE_EVERY == 0:
-                for nid, neuron in neurons.items():
+                for _nid, neuron in neurons.items():
                     neuron.update_channel_bias(update_rate=BIAS_UPDATE_RATE)
 
             if total_steps % LOG_EVERY == 0:

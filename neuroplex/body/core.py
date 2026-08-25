@@ -15,7 +15,7 @@
 
 import logging
 import threading
-from typing import Callable
+from collections.abc import Callable
 
 logger = logging.getLogger("Taiji.Body")
 
@@ -43,7 +43,7 @@ class BodyCore:
         self._action_provider = None
         self._data_collector = None
         self._lock = threading.Lock()
-        self._callbacks = {
+        self._callbacks: dict[str, list] = {
             "model_change": [],
         }
 
@@ -220,8 +220,9 @@ class BodyCore:
 
             if torch.cuda.is_available():
                 result["gpu_name"] = torch.cuda.get_device_name(0)
+                props = torch.cuda.get_device_properties(0)
                 result["gpu_memory_total_gb"] = round(
-                    torch.cuda.get_device_properties(0).total_mem / (1024**3), 1
+                    getattr(props, "total_memory", getattr(props, "total_mem", 0)) / (1024**3), 1
                 )
                 result["gpu_memory_used_gb"] = round(torch.cuda.memory_allocated(0) / (1024**3), 1)
         except Exception as e:
@@ -241,10 +242,9 @@ class BodyCore:
                 return False
         except ImportError as e:
             logger.debug("【BodyCore.is_healthy】处理失败（非致命）: %s", e)
-        # 大脑必须加载
+        # 大脑必须加载：存在且带 is_loaded 属性时，以其加载状态为准
         if self._cortex is not None and hasattr(self._cortex, "is_loaded"):
-            if not self._cortex.is_loaded:
-                return False
+            return bool(self._cortex.is_loaded)
         return True
 
     def cleanup(self):
@@ -253,6 +253,7 @@ class BodyCore:
             if self._model is not None:
                 try:
                     import gc
+
                     import torch
 
                     if hasattr(self._model, "to"):
@@ -270,6 +271,7 @@ class BodyCore:
             if self._cortex is not None:
                 try:
                     import gc
+
                     import torch
 
                     del self._cortex

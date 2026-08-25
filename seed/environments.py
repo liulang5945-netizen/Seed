@@ -24,7 +24,7 @@ real ``experienced`` engrams ready for endogenous replay.
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Sequence, Tuple
+from collections.abc import Sequence
 
 from taiji import EnvironmentOutcome
 
@@ -50,7 +50,7 @@ class TopicWorld:
         for topic in topics:
             if not topic:
                 raise ValueError("topics cannot be empty")
-        self.topics: List[bytes] = [bytes(topic) for topic in topics]
+        self.topics: list[bytes] = [bytes(topic) for topic in topics]
         self.boundary_symbol = int(boundary_symbol)
         if force_switch_streak <= 0:
             raise ValueError("force_switch_streak must be positive")
@@ -59,14 +59,14 @@ class TopicWorld:
         self.force_switch_streak = int(force_switch_streak)
         self.recency_window = int(recency_window)
         self.streak = 0
-        self.last_topic_index: Optional[int] = None
-        self.topics_visited: List[int] = []
+        self.last_topic_index: int | None = None
+        self.topics_visited: list[int] = []
         self.forced_switches = 0
-        self._excluded: Optional[int] = None
+        self._excluded: int | None = None
         self._choosing = True
-        self._index: Optional[int] = None
+        self._index: int | None = None
         self._position = 0
-        self._previous_index: Optional[int] = None
+        self._previous_index: int | None = None
 
     @property
     def choosing(self) -> bool:
@@ -80,7 +80,7 @@ class TopicWorld:
             blocked.update(self.topics_visited[-self.recency_window :])
         return blocked
 
-    def available_actions(self) -> List[int]:
+    def available_actions(self) -> list[int]:
         """Afforded choice bytes: one per un-blocked topic's opening byte.
 
         Blocking comes from two anti-lock-in scaffolds: the streak exclusion
@@ -91,7 +91,7 @@ class TopicWorld:
         """
 
         blocked = self._blocked_indices()
-        actions: List[int] = []
+        actions: list[int] = []
         for index, topic in enumerate(self.topics):
             if index in blocked:
                 continue
@@ -105,10 +105,10 @@ class TopicWorld:
                     actions.append(symbol)
         return actions
 
-    def reset(self) -> Tuple[int, Sequence[int]]:
+    def reset(self) -> tuple[int, Sequence[int]]:
         return self.reset_choice()
 
-    def reset_choice(self) -> Tuple[int, Sequence[int]]:
+    def reset_choice(self) -> tuple[int, Sequence[int]]:
         """Enter a choice moment: boundary sensation plus afforded directions."""
 
         self._choosing = True
@@ -153,9 +153,9 @@ class TopicWorld:
                 reward=MISS_REWARD,
                 terminal=terminal,
             )
-        index = self._index
-        assert index is not None
-        topic = self.topics[index]
+        chosen = self._index
+        assert chosen is not None
+        topic = self.topics[chosen]
         expected = int(topic[self._position])
         reward = COMPLETION_REWARD if action_symbol == expected else MISS_REWARD
         self._position += 1
@@ -173,7 +173,7 @@ def play(
     episodes: int,
     sample: bool = True,
     learn: bool = True,
-) -> Dict[str, object]:
+) -> dict[str, object]:
     """Run the canonical observe/act/step/settle/observe loop over episodes.
 
     Each episode ends with a boundary observation that closes the last pending
@@ -187,7 +187,7 @@ def play(
     actions = 0
     reward_sum = 0.0
     crashes = 0
-    topic_sequence: List[int] = []
+    topic_sequence: list[int] = []
     for episode in range(int(episodes)):
         sensation, affordances = world.reset()
         seed.reset_dynamics(episode_id=f"play-{episode}")
@@ -210,7 +210,10 @@ def play(
                 actions += 1
                 reward_sum += float(outcome.reward)
             seed.observe(boundary, learn=bool(learn), learn_motor=False)
-            topic_sequence.append(int(world.last_topic_index))
+            last_index = world.last_topic_index
+            if last_index is None:
+                raise ValueError("topic index missing")
+            topic_sequence.append(int(last_index))
         except Exception:
             crashes += 1
             seed.reset_dynamics(episode_id=f"play-crash-{episode}")

@@ -26,7 +26,8 @@ kuramoto_step / gate_factor / batch_gate_factors / pairwise_binding），
 from __future__ import annotations
 
 import math
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -67,20 +68,20 @@ class PhasorDynamics(nn.Module):
         self.binding_scale = binding_scale
         self.dt = dt
         self.omega_init = omega_init
-        self._id_to_idx: Dict[str, int] = {}
+        self._id_to_idx: dict[str, int] = {}
         self.register_parameter("coupling_k", nn.Parameter(torch.tensor(float(coupling_init))))
         # phasors/omega 在 register_neurons 时注册为 Parameter（None 不会被 nn.Module
         # 注册，避免空 buffer 与后续 Parameter 同名冲突）
-        self.phasors: Optional[nn.Parameter] = None
-        self.omega: Optional[nn.Parameter] = None
+        self.phasors: nn.Parameter | None = None
+        self.omega: nn.Parameter | None = None
         self.global_phase: float = 0.0
 
     # ── 注册 / 相位分配（兼容标量接口）──
 
     def register_neurons(
         self,
-        ids: List[str],
-        phases: Optional[List[float]] = None,
+        ids: list[str],
+        phases: list[float] | None = None,
     ) -> None:
         """一次性注册所有 neuron，构建 phasors/omega 参数。
 
@@ -117,22 +118,22 @@ class PhasorDynamics(nn.Module):
         else:
             # 未注册：暂存（register_neurons 时消费）
             if not hasattr(self, "_pending_phases"):
-                self._pending_phases: Dict[str, float] = {}
+                self._pending_phases: dict[str, float] = {}
             self._pending_phases[neuron_id] = phase
 
     def assign_phase_by_domain(
         self,
-        domain_to_nids: Dict[str, list],
+        domain_to_nids: dict[str, list],
         phase_offset_per_domain: float = math.pi / 3,
     ) -> None:
         """按 domain 批量分配相位（兼容标量接口）：同 domain 同相、跨 domain 等距。
 
         收集全部 (nid, phase) 后统一 register_neurons。
         """
-        ids: List[str] = []
-        phases: List[float] = []
+        ids: list[str] = []
+        phases: list[float] = []
         pending = getattr(self, "_pending_phases", {})
-        for i, (domain, nids) in enumerate(domain_to_nids.items()):
+        for i, (_domain, nids) in enumerate(domain_to_nids.items()):
             base = i * phase_offset_per_domain
             for nid in nids:
                 ids.append(nid)
@@ -173,9 +174,9 @@ class PhasorDynamics(nn.Module):
 
     def binding_tensor(
         self,
-        active_ids: Optional[List[str]] = None,
-        coactivation: Optional[Any] = None,
-        phasors: Optional[torch.Tensor] = None,
+        active_ids: list[str] | None = None,
+        coactivation: Any | None = None,
+        phasors: torch.Tensor | None = None,
     ) -> torch.Tensor:
         """可微平均相位绑定：[N] 张量，梯度可达 phasors/omega/coupling_k。
 
@@ -214,12 +215,12 @@ class PhasorDynamics(nn.Module):
 
     def evolve(
         self,
-        active_ids: Optional[List[str]] = None,
-        coactivation: Optional[Any] = None,
-        dt: Optional[float] = None,
-        coupling_strength: Optional[float] = None,
-        external_phases: Optional[Any] = None,
-        external_weights: Optional[List[float]] = None,
+        active_ids: list[str] | None = None,
+        coactivation: Any | None = None,
+        dt: float | None = None,
+        coupling_strength: float | None = None,
+        external_phases: Any | None = None,
+        external_weights: list[float] | None = None,
     ) -> torch.Tensor:
         """可微 Kuramoto 演化：返回归一化后的新相位 [N,2]（梯度到 ω/K/phasors）。
 
@@ -296,12 +297,12 @@ class PhasorDynamics(nn.Module):
 
     def kuramoto_step(
         self,
-        coupling_strength: Optional[float] = None,
-        active_ids: Optional[List[str]] = None,
-        coactivation: Optional[Any] = None,
-        dt: Optional[float] = None,
-        external_phases: Optional[Any] = None,
-        external_weights: Optional[List[float]] = None,
+        coupling_strength: float | None = None,
+        active_ids: list[str] | None = None,
+        coactivation: Any | None = None,
+        dt: float | None = None,
+        external_phases: Any | None = None,
+        external_weights: list[float] | None = None,
     ) -> None:
         """可微 Kuramoto 相位耦合（状态推进，no_grad）。
 
@@ -379,24 +380,24 @@ class PhasorDynamics(nn.Module):
         c = self.coherence(neuron_id)
         return self.min_gate + (self.max_gate - self.min_gate) * (c + 1.0) / 2.0
 
-    def batch_gate_factors(self, neuron_ids: List[str]) -> torch.Tensor:
+    def batch_gate_factors(self, neuron_ids: list[str]) -> torch.Tensor:
         return torch.tensor([self.gate_factor(nid) for nid in neuron_ids], dtype=torch.float32)
 
     def pairwise_binding(
         self,
-        active_ids: Optional[List[str]] = None,
-        coactivation: Optional[Any] = None,
-    ) -> Dict[str, float]:
+        active_ids: list[str] | None = None,
+        coactivation: Any | None = None,
+    ) -> dict[str, float]:
         """dict 版绑定（兼容 ensemble 推理标量路径；可微路径用 binding_tensor）。"""
         b = self.binding_tensor(active_ids, coactivation)
         ids = active_ids if active_ids is not None else list(self._id_to_idx.keys())
         return {nid: float(b[i].detach()) for i, nid in enumerate(ids) if i < len(b)}
 
-    def list_phases(self) -> Dict[str, float]:
+    def list_phases(self) -> dict[str, float]:
         return {nid: self.phase_of(nid) for nid in self._id_to_idx}
 
     @property
-    def phases(self) -> Dict[str, float]:
+    def phases(self) -> dict[str, float]:
         """兼容标量 GammaOscillator 的 `phases` dict（{nid: 弧度}）。
 
         apply_gamma_gate / cortex.set_gamma_oscillator / loader 日志都读取
@@ -405,7 +406,7 @@ class PhasorDynamics(nn.Module):
         """
         return {nid: self.phase_of(nid) for nid in self._id_to_idx}
 
-    def get_phase(self, neuron_id: str) -> Optional[float]:
+    def get_phase(self, neuron_id: str) -> float | None:
         """兼容标量接口：返回相位弧度（None = 未注册）。"""
         if neuron_id not in self._id_to_idx:
             return None

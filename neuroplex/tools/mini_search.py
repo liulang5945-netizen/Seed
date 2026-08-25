@@ -16,17 +16,17 @@
     results = engine.search("async programming")
 """
 
-import os
-import re
-import json
-import time
-import logging
-import threading
 import concurrent.futures
+import json
+import logging
+import os
 import random
+import re
+import threading
+import threading as _thr
+import time
 import urllib.parse
 import urllib.robotparser
-import threading as _thr
 
 _tokenizer_lock = _thr.Lock()
 _cached_tokenizer = None
@@ -49,7 +49,6 @@ def _get_tokenizer():
             return None
 
 
-from typing import List, Optional
 from dataclasses import dataclass, field
 
 logger = logging.getLogger("MiniSearch")
@@ -62,7 +61,7 @@ class CrawledPage:
     url: str
     title: str = ""
     text: str = ""
-    links: List[str] = field(default_factory=list)
+    links: list[str] = field(default_factory=list)
     crawled_at: float = 0
 
 
@@ -119,7 +118,7 @@ class MiniSearchEngine:
         try:
             jp = self._json_path()
             if os.path.exists(jp):
-                with open(jp, "r", encoding="utf-8") as fh:
+                with open(jp, encoding="utf-8") as fh:
                     self._memory_pages = json.load(fh)
         except Exception:
             self._memory_pages = []
@@ -137,8 +136,9 @@ class MiniSearchEngine:
         sitemap_first: bool = True,
     ) -> int:
         """Concurrent crawler with rate limiting, robots.txt, sitemap, smart extraction"""
-        from neuroplex.tools.web import fetch as web_fetch
         import queue
+
+        from neuroplex.tools.web import fetch as web_fetch
 
         visited_lock = threading.Lock()
         visited = set()
@@ -351,7 +351,7 @@ class MiniSearchEngine:
         """Backward-compatible wrapper"""
         return self._extract_main_content(html)
 
-    def _extract_links(self, html: str, base_url: str) -> List[str]:
+    def _extract_links(self, html: str, base_url: str) -> list[str]:
         """提取页面中的同域链接"""
         base_domain = urllib.parse.urlparse(base_url).netloc
         links = re.findall(r'href="(https?://[^"]+)"', html, re.IGNORECASE)
@@ -367,7 +367,7 @@ class MiniSearchEngine:
                 logger.debug("【MiniSearchEngine._extract_links】处理失败（非致命）: %s", e)
         return list(set(result))  # 去重
 
-    def _save_page(self, url: str, title: str, text: str, links: List[str]):
+    def _save_page(self, url: str, title: str, text: str, links: list[str]):
         """存储页面到内存列表"""
         with self._lock:
             entry = {
@@ -388,7 +388,7 @@ class MiniSearchEngine:
     # 2+3+4. 搜索 —— 分词 → 倒排查 → BM25 排序
     # ═══════════════════════════════════════════
 
-    def search(self, query: str, top_k: int = 10) -> List[SearchHit]:
+    def search(self, query: str, top_k: int = 10) -> list[SearchHit]:
         """BM25 内存搜索"""
         terms = self._tokenize(query)
         if not terms or not self._memory_pages:
@@ -480,7 +480,7 @@ class MiniSearchEngine:
 # 全局单例 + 工具接口
 # ═══════════════════════════════════════════
 
-_engine: Optional[MiniSearchEngine] = None
+_engine: MiniSearchEngine | None = None
 
 
 def get_mini_search() -> MiniSearchEngine:

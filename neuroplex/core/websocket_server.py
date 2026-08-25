@@ -19,7 +19,7 @@ import asyncio
 import json
 import logging
 import urllib.request
-from typing import Optional, Set
+from typing import Any
 
 import websockets
 
@@ -57,8 +57,8 @@ class TaijiWebSocketServer:
     def __init__(self, host: str = "localhost", port: int = 8765):
         self.host = host
         self.port = port
-        self.clients: Set[websockets.WebSocketServerProtocol] = set()
-        self.server = None
+        self.clients: set[websockets.WebSocketServerProtocol] = set()
+        self.server: Any = None
 
     async def start(self):
         """启动 WebSocket 服务器"""
@@ -120,8 +120,10 @@ class TaijiWebSocketServer:
                 },
             )
 
-            # 监听客户端消息
+            # 监听客户端消息（websockets 可能传入 bytes，统一转 str）
             async for message in websocket:
+                if isinstance(message, bytes):
+                    message = message.decode("utf-8", errors="replace")
                 await self.handle_message(websocket, message)
 
         except websockets.exceptions.ConnectionClosed:
@@ -274,7 +276,7 @@ class TaijiWebSocketServer:
 
 
 # 全局服务器实例
-_server: Optional[TaijiWebSocketServer] = None
+_server: TaijiWebSocketServer | None = None
 
 
 async def start_server(host: str = "localhost", port: int = 8765):
@@ -292,7 +294,7 @@ async def stop_server():
         _server = None
 
 
-def get_server() -> Optional[TaijiWebSocketServer]:
+def get_server() -> TaijiWebSocketServer | None:
     """获取服务器实例"""
     return _server
 

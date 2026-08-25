@@ -19,16 +19,15 @@ import queue
 import threading
 import time
 from pathlib import Path
-from typing import List, Optional
 
 import torch
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from seed_platform.app_state import app_state
 from seed import Seed, iter_native_documents
 from seed.persistence import atomic_save, attach_metadata, corpus_fingerprint
+from seed_platform.app_state import app_state
 
 from .common import collect_hardware_diag, safe_put
 from .datasets import _get_all_data_dirs
@@ -47,16 +46,16 @@ CHECKPOINT_EVERY = 250_000  # 周期落盘间隔（ticks）
 
 class ResumeRequest(BaseModel):
     checkpoint: str
-    datasets: Optional[List[str]] = None
+    datasets: list[str] | None = None
     # 测试/冒烟用的预算上限；前端不发送，缺省跑满整个数据集一遍。
-    max_ticks: Optional[int] = None
+    max_ticks: int | None = None
 
 
-def _resolve_datasets(names: List[str]):
+def _resolve_datasets(names: list[str]):
     """在全部数据目录中解析数据集文件名（防目录穿越，仅取 basename）。"""
     dirs = [Path(d) for d in _get_all_data_dirs()]
-    resolved: List[Path] = []
-    missing: List[str] = []
+    resolved: list[Path] = []
+    missing: list[str] = []
     for name in names:
         safe_name = Path(name).name
         hit = next((d / safe_name for d in dirs if (d / safe_name).is_file()), None)
@@ -67,7 +66,7 @@ def _resolve_datasets(names: List[str]):
     return resolved, missing
 
 
-def _iter_symbols(paths: List[Path], boundary: int):
+def _iter_symbols(paths: list[Path], boundary: int):
     """逐文档流式产出 (符号, 该字节是否计入进度)。"""
     for text in iter_native_documents(paths):
         raw = text.encode("utf-8")
@@ -78,11 +77,11 @@ def _iter_symbols(paths: List[Path], boundary: int):
 
 def _train_worker(
     model: Seed,
-    corpus_paths: List[Path],
+    corpus_paths: list[Path],
     total_bytes: int,
     save_path: Path,
     event_q: "queue.Queue",
-    max_ticks: Optional[int],
+    max_ticks: int | None,
     start_description: str = "已从检查点恢复，开始流式续训…",
 ) -> None:
     """后台训练线程：逐字节观察语料，周期发进度与落盘，响应停止/暂停。"""
@@ -161,7 +160,7 @@ def _train_worker(
             consumed += byte_len
             if step.prior_prediction is not None:
                 window_ticks += 1
-                window_surprise += float(step.surprise)
+                window_surprise += float(step.surprise or 0.0)
             if ticks % PROGRESS_EVERY == 0:
                 _emit_progress()
                 window_ticks = 0
@@ -201,7 +200,7 @@ def _train_worker(
 def stream_training_events(
     event_q: "queue.Queue",
     thread: threading.Thread,
-    initial_events: Optional[list[dict]] = None,
+    initial_events: list[dict] | None = None,
 ):
     """Yield one shared SSE contract for native training endpoints."""
 
@@ -257,11 +256,11 @@ def resume_checkpoint(req: ResumeRequest):
         model = Seed.from_checkpoint(envelope)
     except Exception as exc:
         logger.error(f"checkpoint load failed ({name}): {exc}")
-        raise HTTPException(status_code=500, detail=f"检查点加载失败: {exc}")
+        raise HTTPException(status_code=500, detail=f"检查点加载失败: {exc}") from exc
 
     # 语料漂移预警：检查点元数据记录了原训练语料指纹，本次续训语料不一致时
     # 发 warning 事件（不阻断——混合/换语料续训可能是有意为之）。
-    corpus_drift_warning: Optional[str] = None
+    corpus_drift_warning: str | None = None
     meta = envelope.get("metadata") if isinstance(envelope, dict) else None
     prev_fp = (meta or {}).get("corpus_fingerprint") if isinstance(meta, dict) else None
     if prev_fp:
@@ -274,7 +273,7 @@ def resume_checkpoint(req: ResumeRequest):
 
     total_bytes = sum(p.stat().st_size for p in corpus_paths)
     save_path = _CHECKPOINT_DIR / f"resumed_{name}"
-    event_q: "queue.Queue" = queue.Queue(maxsize=256)
+    event_q: queue.Queue = queue.Queue(maxsize=256)
     thread = threading.Thread(
         target=_train_worker,
         args=(model, corpus_paths, total_bytes, save_path, event_q, req.max_ticks),

@@ -30,7 +30,8 @@ jobs:
         # 另带 pydantic+anyio（FastAPI 内部用）确保类型解析工作正常
         # tomli 仅 3.10 需要：tomllib 自 3.11 才进标准库，环境标记让 3.12 自动跳过
         # cryptography：SecureStorage 的 Fernet 加密后端，缺失会让 AuthManager 构造失败 → 中间件 503
-        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography ruff black mypy pip-audit "tomli>=2.0.0; python_version < '3.11'"
+        # F08: 锁定 ruff/black 版本与 .pre-commit-config.yaml 一致，避免本地/CI lint 结果不一致
+        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography ruff==0.9.0 black==24.12.0 mypy pip-audit "tomli>=2.0.0; python_version < '3.11'"
 
       - name: Install package (editable)
         run: pip install -e . --no-deps
@@ -38,26 +39,41 @@ jobs:
       - name: Check version consistency
         run: python scripts/sync_version.py --check
 
+      # R4: ruff 主门禁已包含 I（isort）+ UP（pyupgrade）——存量 1922 处已清零，
+      # advisory 步骤已转正移除，新违规直接阻断。
       - name: Lint with ruff
         run: ruff check .
 
-      # F08: import 排序（I）与 pyupgrade（UP）现代化规则追踪。
-      # 存量 ~1886 处，尚不适合阻断；以 advisory 模式跟踪，待逐步清理至可控后转 blocking。
-      # 本地可用 `ruff check . --select I,UP --fix` 批量修复可自动修复项。
-      - name: Track import-sorting / pyupgrade debt (advisory)
-        run: ruff check . --select I,UP --statistics
-        continue-on-error: true
+      # R6: B（bugbear）/ SIM（simplify）已转正为 blocking——存量 202 → 32（<50），
+      # B008 为 FastAPI Depends/File 惯用法显式忽略，冻结模块经 pyproject
+      # per-file-ignores 排除（名单与 mypy overrides 一致，解冻时同步移除）。
+      - name: Lint with ruff bugbear/simplify rules (blocking)
+        run: ruff check . --select B,SIM --ignore B008
 
       - name: Format check with black
         run: black --check .
 
-      # F03: mypy 静态类型检查（advisory 模式，待存量错误清理后改 blocking）
-      - name: Type check with mypy
-        run: mypy seed taiji neuroplex api
-        continue-on-error: true
+      # R4: mypy 双层门禁（原 advisory 已转正）
+      # 1) 核心模块 seed/taiji：blocking，0 错误。follow-imports=silent
+      #    隔离遗留模块的错误上报，只对核心代码自身错误阻断。
+      - name: Type check core modules with mypy (blocking)
+        run: mypy --follow-imports=silent seed taiji
 
-      # F10: 依赖 CVE 扫描（advisory 模式，报告已知漏洞）
-      - name: Audit dependencies for known CVEs
+      # 2) 全仓债务棘轮：总错误数不得超过基线 212（全部为 neuroplex 深层
+      #    torch 模块遗留；R6 将 0% 覆盖冻结模块移出度量面（251 错）并对其余模块
+      #    实修消减至 212，基线更新 2026-08-24）。只允许下降，回升即阻断。
+      - name: Track mypy legacy debt (ratchet, baseline 212)
+        run: |
+          errors=$(mypy seed taiji neuroplex api | tail -n1 | grep -oE '[0-9]+' | head -n1)
+          echo "mypy total errors: $errors (baseline 212, must not increase)"
+          test -n "$errors" && test "$errors" -le 212
+
+      # F10-R3: 依赖 CVE 扫描（advisory 模式）
+      # 转正计划：发现 HIGH/CRITICAL CVE 时立即修复；连续 2 次 CI 无高危后改 blocking。
+      # R6 评估：仍存在中高危（aiohttp 3.14.2→3.14.3、datasets 5.0.0→5.0.1 为传递依赖，
+      #   pip/setuptools 为 CI 工具链），未达「连续无高危」条件，维持 advisory；
+      #   传递依赖修复列入 R7（避免升级扰动大型遗留栈）。
+      - name: Audit dependencies for known CVEs (advisory → blocking when 0 HIGH)
         run: pip-audit --desc
         continue-on-error: true
 
@@ -104,6 +120,23 @@ jobs:
         # Legacy real-checkpoint tests skip when local artifacts are absent.
         run: python -m pytest tests/ -q --cov --junitxml=report.xml --cov-report=xml:coverage.xml
 
+      # R4: 覆盖率趋势可见性——把总覆盖率写入 job summary，跨运行可对比；
+      # 硬门禁仍由 pyproject.toml fail_under（当前 21%）执行，只升不降。
+      - name: Coverage trend summary
+        if: always()
+        run: |
+          total=$(python - <<'PY'
+          import xml.etree.ElementTree as ET
+          try:
+              root = ET.parse("coverage.xml").getroot()
+              print(f"{float(root.get('line-rate', 0)) * 100:.2f}")
+          except Exception:
+              print("unavailable")
+          PY
+          )
+          echo "### Coverage trend" >> "$GITHUB_STEP_SUMMARY"
+          echo "Total line coverage: **${total}%** (gate: fail_under=21.8%)" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
@@ -146,6 +179,79 @@ jobs:
         run: |
           test -f frontend/dist/index.html || (echo "dist/index.html missing" && exit 1)
           echo "Frontend build OK"
+
+      # F04-R3: 前端依赖 CVE 扫描——与后端 pip-audit 对等
+      - name: Audit frontend dependencies for known CVEs
+        working-directory: frontend
+        run: npm audit --production --audit-level=high
+
+      # F02-R3: Playwright E2E 冒烟测试——build 后启动 preview 服务器运行 E2E
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E smoke tests
+        env:
+          SEED_E2E_BASE_URL: http://localhost:4173
+        working-directory: frontend
+        run: |
+          npx vite preview --port 4173 &
+          sleep 3
+          node e2e/smoke.cjs
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      # R4: 用 compose 构建（同时验证 docker-compose.yml 可解析），镜像标签 seed:latest
+      - name: Build image via docker compose
+        run: docker compose build
+
+      - name: Verify Docker image metadata
+        run: |
+          docker inspect seed:latest --format='{{.Config.ExposedPorts}}' | grep -q '8000' && echo "Port 8000 exposed: OK"
+          docker inspect seed:latest --format='{{.Config.Healthcheck}}' | grep -q 'health' && echo "Healthcheck configured: OK"
+
+      # R4: 启动冒烟——compose up 后轮询 /api/health 直到可用，
+      # 再确认容器自身 HEALTHCHECK 进入 healthy，验证健康检查接线真实有效。
+      - name: Startup smoke and healthcheck
+        run: |
+          docker compose up -d
+          ok=0
+          for i in $(seq 1 45); do
+            if curl -fsS http://localhost:8000/api/health > /dev/null; then
+              echo "Health endpoint OK after $((i * 2))s"
+              ok=1
+              break
+            fi
+            sleep 2
+          done
+          if [ "$ok" -ne 1 ]; then
+            echo "Health endpoint never became ready"
+            docker compose logs
+            exit 1
+          fi
+          healthy=0
+          for i in $(seq 1 30); do
+            status=$(docker inspect seed-api --format='{{.State.Health.Status}}' || echo unknown)
+            if [ "$status" = "healthy" ]; then
+              echo "Container HEALTHCHECK reports healthy"
+              healthy=1
+              break
+            fi
+            sleep 4
+          done
+          if [ "$healthy" -ne 1 ]; then
+            echo "Container never reached healthy status"
+            docker inspect seed-api --format='{{json .State.Health}}'
+            exit 1
+          fi
+
+      - name: Compose cleanup
+        if: always()
+        run: docker compose down -v --remove-orphans
 
   startup-smoke:
     name: Startup smoke (${{ matrix.profile }})
@@ -210,13 +316,11 @@ jobs:
       - name: Install package (editable)
         run: pip install -e . --no-deps
 
-      # F07: Windows 核心测试 + 覆盖率 + JUnit 报告，便于跨平台对比
-      # 覆盖率度量面必须与测试范围对齐：本 job 只跑 tests/taiji_native 与 tests/seed，
-      # 若沿用 [tool.coverage.run] 的全量 source（含 neuroplex/api），分母会掺入大量
-      # 该子集根本不触及的代码，得出 9% 的假低值并误触 fail_under=17。
-      # 显式限定为 seed/taiji/seed_platform 后真实覆盖率为 71%。
-      - name: Run core tests on Windows
-        run: python -m pytest tests/taiji_native tests/seed -q --cov=seed --cov=taiji --cov=seed_platform --junitxml=report-win.xml --cov-report=xml:coverage-win.xml
+      # F06-R3: Windows 核心测试 + 顶层回归 + 覆盖率 + JUnit 报告，便于跨平台对比
+      # 覆盖率度量面必须与测试范围对齐：本 job 跑全量 tests/（排除 slow），
+      # 与 Ubuntu test job 保持一致范围，便于跨平台对比。
+      - name: Run full regression tests on Windows
+        run: python -m pytest tests/ -q -m "not slow" --cov --junitxml=report-win.xml --cov-report=xml:coverage-win.xml
 
       - name: Upload Windows test results
         if: always()

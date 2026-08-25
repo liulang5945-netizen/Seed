@@ -23,19 +23,19 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 import torch
 import torch.nn.functional as F
 
-from neuroplex.resonance import ResonanceField, ResonanceEnsemble
+from neuroplex.resonance import ResonanceEnsemble, ResonanceField
 from neuroplex.resonance.geometry import NeuronGeometry
 from neuroplex.resonance.topology import build_topology, establish_topology_channels
 from neuroplex.resonance.translator import TokenizerHub, batch_align_and_embed
+from scripts.training.eval_dialogue import load_cross_spec_weights
+from scripts.training.experiment_config import SFT_ANSWER_MARKER
 from scripts.training.train_cross_domain_collab import (
     load_neuron,
     load_shared_embedding,
     load_shared_lm_head,
     load_tokenizer_for_vocab,
 )
-from scripts.training.eval_dialogue import load_cross_spec_weights
 from scripts.training.utils import load_general_tokenizer
-from scripts.training.experiment_config import SFT_ANSWER_MARKER
 
 DEVICE = "cpu"
 DOMAINS = ["code", "math", "zh", "en"]
@@ -188,8 +188,8 @@ def _resolve_generation_tokenizer(logits, target_sp, general_sp):
     if logits_vocab == general_vocab:
         return general_sp
     raise RuntimeError(
-        "无法确定生成词表：logits vocab=%d，target vocab=%d，general vocab=%d"
-        % (logits_vocab, target_vocab, general_vocab)
+        f"无法确定生成词表：logits vocab={logits_vocab}，"
+        f"target vocab={target_vocab}，general vocab={general_vocab}"
     )
 
 

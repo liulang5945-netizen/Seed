@@ -19,10 +19,10 @@
 """
 
 import os
-import sys
-import traceback
-import threading
 import subprocess
+import sys
+import threading
+import traceback
 
 # 修复 PyQt6 QWebEngine GPU 渲染导致的 segfault（必须在导入 PyQt6 之前设置）
 os.environ.setdefault("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu")
@@ -209,21 +209,21 @@ if missing_modules:
 else:
     print("[DependencyCheck] OK 所有核心依赖已就绪")
 
-from PyQt6.QtCore import QThread, QObject, pyqtSignal, QUrl, Qt, QEvent, QTimer
-from PyQt6.QtGui import QIcon, QAction
+from PyQt6.QtCore import QEvent, QObject, Qt, QThread, QTimer, QUrl, pyqtSignal
+from PyQt6.QtGui import QAction, QIcon
+from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import (
     QApplication,
-    QSystemTrayIcon,
+    QHBoxLayout,
+    QLabel,
+    QMainWindow,
     QMenu,
     QMessageBox,
-    QMainWindow,
-    QVBoxLayout,
-    QHBoxLayout,
-    QWidget,
     QPushButton,
-    QLabel,
+    QSystemTrayIcon,
+    QVBoxLayout,
+    QWidget,
 )
-from PyQt6.QtWebEngineWidgets import QWebEngineView
 
 # 应用配置（通过 config.py 集中管理镜像源等设置）
 apply_env_overrides()
@@ -236,7 +236,8 @@ if getattr(sys, "frozen", False):
     writable_base = get_writable_base_dir()
     log_path = os.path.join(writable_base, "app.log")
     try:
-        sys.stdout = open(log_path, "a", encoding="utf-8", buffering=1)
+        # 有意保持进程级打开（重定向 stdout/stderr 至日志），不适用上下文管理器
+        sys.stdout = open(log_path, "a", encoding="utf-8", buffering=1)  # noqa: SIM115
         sys.stderr = sys.stdout
     except Exception:
 
@@ -277,8 +278,8 @@ sys.path.insert(0, ext_libs_dir)
 # ==========================================
 # 热更新/补丁系统（增强版）
 # ==========================================
-import importlib.util
 import importlib
+import importlib.util
 import logging
 
 logger = logging.getLogger(__name__)
@@ -355,9 +356,13 @@ class HotUpdateImporter:
                 if spec is None:
                     print(f"[HotUpdate] X 无法创建模块 spec: {module_name}")
                     return False
+                loader = spec.loader
+                if loader is None:
+                    print(f"[HotUpdate] X 模块 spec 无 loader: {module_name}")
+                    return False
                 new_module = importlib.util.module_from_spec(spec)
                 sys.modules[module_name] = new_module
-                spec.loader.exec_module(new_module)
+                loader.exec_module(new_module)
                 self._loaded_from_patch.add(module_name)
                 print(f"[HotUpdate] OK 模块热重载成功: {module_name}")
                 return True
@@ -372,7 +377,7 @@ class HotUpdateImporter:
 
     def reload_all_patches(self) -> dict:
         """重载所有已安装的补丁（递归扫描子目录）"""
-        results = {}
+        results: dict[str, bool] = {}
         if not os.path.exists(self.update_dir):
             return results
         for root, dirs, files in os.walk(self.update_dir):
@@ -387,7 +392,7 @@ class HotUpdateImporter:
 
     def get_available_patches(self) -> list:
         """列出可用补丁（递归扫描子目录）"""
-        patches = []
+        patches: list[str] = []
         if not os.path.exists(self.update_dir):
             return patches
         for root, dirs, files in os.walk(self.update_dir):
@@ -432,12 +437,14 @@ class Worker(QObject):
         try:
             self.progress.emit("正在启动后端服务...")
             print("[Worker] 后台线程启动，启动 FastAPI 服务...")
-            from api.app import app
-            import uvicorn
+            import json
             import threading as py_threading
             import time
             import urllib.request
-            import json
+
+            import uvicorn
+
+            from api.app import app
             from seed_platform.config import MODEL_LOAD_TIMEOUT
 
             def start_server():
@@ -619,11 +626,16 @@ class _EdgeResizeFilter(QObject):
 class MainWindow(QMainWindow):
     """主窗口 - QMainWindow 内含 QWebEngineView，正确支持托盘行为"""
 
+    # R5: _real_main 中动态挂载的边缘缩放过滤器，声明以消除 attr-defined
+    _edge_resize_filter: "_EdgeResizeFilter"
+
     def __init__(self):
         super().__init__()
         self.tray_icon = None
         try:
-            self.menuBar().hide()
+            menubar = self.menuBar()
+            if menubar is not None:
+                menubar.hide()
             self.setMenuWidget(None)
         except Exception as e:
             logger.debug("【MainWindow.__init__】处理失败（非致命）: %s", e)
@@ -637,9 +649,11 @@ class MainWindow(QMainWindow):
         # 🔧 启用跨域访问，允许前端 JS 通过 fetch 调用同源 API
         from PyQt6.QtWebEngineCore import QWebEngineSettings
 
-        self._web_view.settings().setAttribute(
-            QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
-        )
+        web_settings = self._web_view.settings()
+        if web_settings is not None:
+            web_settings.setAttribute(
+                QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
+            )
 
         # 中央区域 = 自绘标题栏 + Web 视图（无边框窗口）
         central = QWidget()
@@ -679,7 +693,9 @@ class MainWindow(QMainWindow):
             self.dev_window = QWebEngineView()
             self.dev_window.setWindowTitle("Seed 开发者工具 (F12)")
             self.dev_window.resize(900, 600)
-            self._web_view.page().setDevToolsPage(self.dev_window.page())
+            page = self._web_view.page()
+            if page is not None:
+                page.setDevToolsPage(self.dev_window.page())
 
         if self.dev_window.isVisible():
             self.dev_window.hide()
@@ -752,10 +768,12 @@ class MainWindow(QMainWindow):
     def _sync_titlebar_theme(self):
         """前端就绪后读取其主题，同步标题栏配色。"""
         try:
-            self._web_view.page().runJavaScript(
-                "document.documentElement.getAttribute('data-theme') || ''",
-                self._apply_titlebar_theme,
-            )
+            page = self._web_view.page()
+            if page is not None:
+                page.runJavaScript(
+                    "document.documentElement.getAttribute('data-theme') || ''",
+                    self._apply_titlebar_theme,
+                )
         except Exception as e:
             logger.debug("【_sync_titlebar_theme】处理失败（非致命）: %s", e)
 
@@ -800,8 +818,8 @@ class MainWindow(QMainWindow):
         close_btn.clicked.connect(self.close)
         layout.addWidget(close_btn)
 
-        bar.mousePressEvent = self._titlebar_mouse_press
-        bar.mouseDoubleClickEvent = self._titlebar_double_click
+        bar.mousePressEvent = self._titlebar_mouse_press  # type: ignore[method-assign]
+        bar.mouseDoubleClickEvent = self._titlebar_double_click  # type: ignore[method-assign]
         return bar
 
     def _titlebar_mouse_press(self, event):
@@ -838,6 +856,11 @@ class MainWindow(QMainWindow):
             )
 
 
+# R5: 模块级声明——_real_main 内通过 global 赋值，嵌套闭包直接引用；
+# 无初值声明会让 mypy 报 name-defined。
+app: QApplication
+
+
 def _real_main():
     global app  # noqa — 使 app 在 _real_main 作用域内可见给嵌套函数使用
     app = QApplication(sys.argv)
@@ -851,10 +874,11 @@ def _real_main():
         from PyQt6.QtWebEngineCore import QWebEngineProfile
 
         profile = QWebEngineProfile.defaultProfile()
-        profile.setPersistentStoragePath(get_external_path("user_data"))
-        profile.setPersistentCookiesPolicy(
-            QWebEngineProfile.PersistentCookiesPolicy.ForcePersistentCookies
-        )
+        if profile is not None:
+            profile.setPersistentStoragePath(get_external_path("user_data"))
+            profile.setPersistentCookiesPolicy(
+                QWebEngineProfile.PersistentCookiesPolicy.ForcePersistentCookies
+            )
     except Exception as e:
         print(f"配置浏览器持久化失败: {e}")
 
@@ -909,7 +933,9 @@ def _real_main():
         def clear_web_cache():
             from PyQt6.QtWebEngineCore import QWebEngineProfile
 
-            QWebEngineProfile.defaultProfile().clearHttpCache()
+            profile = QWebEngineProfile.defaultProfile()
+            if profile is not None:
+                profile.clearHttpCache()
             window.get_web_view().reload()
 
         clear_cache_action.triggered.connect(clear_web_cache)
@@ -1027,7 +1053,8 @@ if __name__ == "__main__":
             _f.write(f"Taiji 启动崩溃\n{'=' * 60}\n{_tb.format_exc()}")
         # 尝试弹框提示
         try:
-            from PyQt6.QtWidgets import QApplication as _QA, QMessageBox as _QMB
+            from PyQt6.QtWidgets import QApplication as _QA
+            from PyQt6.QtWidgets import QMessageBox as _QMB
 
             _tmp_app = _QA(sys.argv)
             _msg = _QMB()

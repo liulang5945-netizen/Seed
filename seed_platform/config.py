@@ -13,14 +13,17 @@
 
 from __future__ import annotations
 
+import logging
 import os
 from dataclasses import dataclass, field
-from typing import List, Optional
-import logging
 
 from seed_platform.paths import (
     get_external_path as get_external_path,
+)
+from seed_platform.paths import (
     get_internal_path as get_internal_path,
+)
+from seed_platform.paths import (
     get_writable_base_dir as get_writable_base_dir,
 )
 
@@ -54,7 +57,7 @@ class TrainingConfig:
     n_gpu_layers: int = 0
     n_ctx: int = 2048
     # 内部附加（hw_diag 等）
-    _hw_diag: Optional[dict] = field(default=None, repr=False)
+    _hw_diag: dict | None = field(default=None, repr=False)
 
     def resolve_device(self) -> str:
         """自动判断最优运算设备（cuda > mps > cpu）。"""
@@ -68,7 +71,7 @@ class TrainingConfig:
         try:
             import psutil
 
-            return round(psutil.virtual_memory().total / (1024**3), 1)
+            return float(round(psutil.virtual_memory().total / (1024**3), 1))
         except Exception:
             try:
                 return max(16.0, 0.0)
@@ -76,7 +79,7 @@ class TrainingConfig:
                 return 16.0
 
 
-def get_config(args: Optional[List[str]] = None) -> TrainingConfig:
+def get_config(args: list[str] | None = None) -> TrainingConfig:
     """获取配置。
 
     Args:
@@ -94,7 +97,7 @@ def get_config(args: Optional[List[str]] = None) -> TrainingConfig:
         return config
 
     # 支持 --key value 与 key=value 两种形式
-    pairs: List[str] = []
+    pairs: list[str] = []
     i = 0
     while i < len(args):
         a = args[i]
@@ -127,7 +130,7 @@ def get_config(args: Optional[List[str]] = None) -> TrainingConfig:
     return config
 
 
-def save_config(config: TrainingConfig, path: Optional[str] = None) -> str:
+def save_config(config: TrainingConfig, path: str | None = None) -> str:
     """保存配置到 JSON 文件。
 
     Args:

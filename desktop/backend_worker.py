@@ -26,6 +26,7 @@ def main() -> None:
     port = int(sys.argv[2]) if len(sys.argv) > 2 else 8000
 
     import uvicorn
+
     from api.app import app
 
     uvicorn.run(app, host=host, port=port, log_level="info")

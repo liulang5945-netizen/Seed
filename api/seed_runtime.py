@@ -14,8 +14,9 @@ from __future__ import annotations
 import logging
 import pickle
 import threading
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import Any
 
 logger = logging.getLogger("ApiServer.SeedRuntime")
 
@@ -35,7 +36,7 @@ class SeedRuntime:
 
     RUNTIME_TYPE = "seed"
 
-    def __init__(self, model: Any, checkpoint_path: Optional[Path] = None) -> None:
+    def __init__(self, model: Any, checkpoint_path: Path | None = None) -> None:
         self.model = model
         self.checkpoint_path = checkpoint_path
         self._lock = threading.Lock()
@@ -47,7 +48,7 @@ class SeedRuntime:
         return "seed:scratch"
 
     @classmethod
-    def load(cls, checkpoint_path: Optional[Path | str] = None) -> "SeedRuntime":
+    def load(cls, checkpoint_path: Path | str | None = None) -> SeedRuntime:
         """从 seed-native-v1 检查点装配 Seed（与训练管线同一信封）。"""
         import torch
 
@@ -68,15 +69,15 @@ class SeedRuntime:
         return cls(model, path)
 
     @staticmethod
-    def _serialize(prompt: str, history: Sequence[Tuple[str, str]] | None) -> str:
+    def _serialize(prompt: str, history: Sequence[tuple[str, str]] | None) -> str:
         """沿用训练语料的 问：/答： 标记把多轮对话铺成一段文本。
 
         前缀总长受 ``MAX_PROMPT_CHARS`` 保护：超限时从最早的轮次开始丢弃，
         保留最近上下文（多轮引用的新鲜度优先级高于久远历史）。
         """
-        parts: List[str] = []
+        parts: list[str] = []
         budget = MAX_PROMPT_CHARS - len(prompt) - len("问：\n答：")
-        kept: List[str] = []
+        kept: list[str] = []
         for user, assistant in reversed(list(history or [])):
             if user and assistant:
                 part = f"问：{user}\n答：{assistant}"
@@ -92,7 +93,7 @@ class SeedRuntime:
         self,
         prompt: str,
         *,
-        history: Sequence[Tuple[str, str]] | None = None,
+        history: Sequence[tuple[str, str]] | None = None,
         max_length: int = 256,
         learn: bool = True,
     ) -> str:
@@ -106,7 +107,7 @@ class SeedRuntime:
                 stop_at_boundary=True,
                 sample=False,
             )
-            answer = raw.decode("utf-8", errors="replace")
+            answer: str = raw.decode("utf-8", errors="replace")
             if learn:
                 # 多轮上下文由基底持久状态天然承担：整段会话文本一次写回，
                 # 与 learn_bytes 的训练语义完全一致。
@@ -120,7 +121,7 @@ class SeedRuntime:
                 answer = answer[:index]
         return answer.strip()
 
-    def save(self, path: Optional[Path | str] = None) -> Path:
+    def save(self, path: Path | str | None = None) -> Path:
         """落盘当前状态（默认写回来源检查点；原子写，崩溃不产生半写文件）。"""
         from seed.persistence import atomic_save, attach_metadata
 
@@ -135,7 +136,7 @@ class SeedRuntime:
         logger.info("Seed runtime saved to %s", target)
         return target
 
-    def status(self) -> Dict[str, Any]:
+    def status(self) -> dict[str, Any]:
         return {
             "runtime_type": self.RUNTIME_TYPE,
             "name": self.name,
@@ -146,7 +147,7 @@ class SeedRuntime:
 
 # ---------------- 进程级单例与热切换 ----------------
 
-_runtime: Optional[SeedRuntime] = None
+_runtime: SeedRuntime | None = None
 _runtime_lock = threading.Lock()
 
 
@@ -154,12 +155,12 @@ def is_seed_active() -> bool:
     return _runtime is not None
 
 
-def get_seed_runtime() -> Optional[SeedRuntime]:
+def get_seed_runtime() -> SeedRuntime | None:
     return _runtime
 
 
 def activate_seed(
-    checkpoint_path: Optional[Path | str] = None,
+    checkpoint_path: Path | str | None = None,
 ) -> SeedRuntime:
     """加载并激活 Seed 运行时（替换既有实例）。"""
     global _runtime
@@ -178,7 +179,7 @@ def deactivate_seed() -> None:
         _runtime = None
 
 
-def seed_status() -> Dict[str, Any]:
+def seed_status() -> dict[str, Any]:
     runtime = _runtime
     if runtime is None:
         return {"runtime_type": "seed", "active": False}

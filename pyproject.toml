@@ -98,8 +98,28 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-select = ["E", "F", "W"]
-ignore = ["E501", "E402", "E741"]
+# R4: I（isort）与 UP（pyupgrade）已从 advisory 转正为 blocking——
+# 存量 1922 处已清零（1761 自动修 + 275 废弃导入移除 + 10 处手工），随主门禁强制执行。
+# R6: B（bugbear）/ SIM（simplify）仍在 advisory（CI --select B,SIM 棘轮追踪）；
+# B008 为 FastAPI Depends/File 惯用法忽略；存量降至 <50 后评估并入主 select。
+select = ["E", "F", "W", "I", "UP"]
+ignore = ["E501", "E402", "E741", "B008"]
+
+[tool.ruff.lint.per-file-ignores]
+# R6: neuroplex 冻结模块（0% 覆盖，无回归兜底）——与 [tool.mypy.overrides] 名单一致，
+# 解冻时同步移除两处豁免。
+"neuroplex/life/*" = ["B", "SIM"]
+"neuroplex/multimodal/*" = ["B", "SIM"]
+"neuroplex/safety/*" = ["B", "SIM"]
+"neuroplex/loader.py" = ["B", "SIM"]
+"neuroplex/tools/browser.py" = ["B", "SIM"]
+"neuroplex/tools/browser_crawler.py" = ["B", "SIM"]
+"neuroplex/tools/builtin_tools.py" = ["B", "SIM"]
+"neuroplex/tools/desktop.py" = ["B", "SIM"]
+"neuroplex/tools/mini_search.py" = ["B", "SIM"]
+"neuroplex/tools/searxng.py" = ["B", "SIM"]
+"neuroplex/tools/web.py" = ["B", "SIM"]
+"neuroplex/tools/search/*" = ["B", "SIM"]
 
 [tool.black]
 line-length = 100
@@ -112,15 +132,24 @@ omit = ["tests/*", "scripts/*"]
 
 [tool.coverage.report]
 show_missing = true
-# F02: 覆盖率门禁——设为 17% 防止退化；随覆盖率提升逐步上调。
+# R5: 覆盖率门禁 21 → 21.5；R6 再提至 21.8（实测 21.91%）：新增 SSRF 防护 +
+# chat_strategies 纯函数共 15 用例。分母含大量 0% 的 neuroplex 遗留代码（~1.5万句），
+# 每 +0.5% 都需上百条新覆盖语句，后续继续按轮 +0.5-1% 向 40% 基线推进。
 # 注意：本阈值按「全量 tests/ + 全量 source」标定。任何只跑测试子集的 job
-# （如 CI 的 test-windows 只跑 tests/taiji_native tests/seed）必须用 --cov=<pkg>
-# 显式收窄度量面，否则分母掺入未触及代码会产生假低覆盖率并误触本门禁。
-# seed/taiji 核心模块已达 84-100%，neuroplex/tools 与 api 路由待补齐。
-fail_under = 17
+# 必须用 --cov=<pkg> 显式收窄度量面，否则分母掺入未触及代码会产生假低覆盖率。
+# seed/taiji 核心模块已达 84-100%，seed_platform 大幅补齐，api 路由持续补齐中。
+fail_under = 21.8
 
 [tool.mypy]
-python_version = "3.10"
+# R4: 目标设为 3.12——numpy 2.x 存根使用 3.12+ 语法（type 语句），
+# 低版本目标下解析即报致命 syntax 错误。代码的 3.10 运行时兼容性由
+# CI 的 Python 3.10 矩阵（实际导入+跑测试）与 ruff target-version=py310 把关。
+#
+# R4 建立基线，R5 消减，R6 冻结边界分治（2026-08-24，总 212 错误）：
+#   seed/taiji/seed_platform/api 全部 0；neuroplex 冻结模块已移出度量面（见下），
+#   剩余 212 集中在 13 个深层 torch 模块（ensemble 74 / cortex 40 / neuron 34 / stdp 28 等），
+#   无测试兜底，按解冻条件逐步处理。CI 棘轮只许下降。
+python_version = "3.12"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
@@ -133,3 +162,26 @@ exclude = [
     "tests/",
     "scripts/",
 ]
+
+# R6: neuroplex 冻结模块——覆盖率 0%，无回归兜底，盲改类型风险大于收益。
+# 移出 mypy 度量面，冻结时错误数（合计 251）登记如下，解冻须先补测试再清零：
+#   life/*: 106（sleep_engine 43 / integrate 18 / scheduler 15 / feed 11 / 其余 19）
+#   tools 爬虫族: 79（browser 46 / mini_search 8 / search/* 10 / web 5 / 其余 10）
+#   multimodal/*: 54（vqvae 18 / encodec 16 / video 16 / io 4）
+#   safety/*: 7；loader: 5
+[[tool.mypy.overrides]]
+module = [
+    "neuroplex.life.*",
+    "neuroplex.multimodal.*",
+    "neuroplex.safety.*",
+    "neuroplex.loader",
+    "neuroplex.tools.browser",
+    "neuroplex.tools.browser_crawler",
+    "neuroplex.tools.builtin_tools",
+    "neuroplex.tools.desktop",
+    "neuroplex.tools.mini_search",
+    "neuroplex.tools.searxng",
+    "neuroplex.tools.web",
+    "neuroplex.tools.search.*",
+]
+ignore_errors = true

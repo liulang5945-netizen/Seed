@@ -10,8 +10,8 @@ from fastapi.testclient import TestClient
 
 @pytest.fixture()
 def seed_client(monkeypatch):
-    from api.app import create_app
     import api.seed_runtime as seed_runtime
+    from api.app import create_app
     from api.seed_runtime import SeedRuntime
     from seed import Seed
 

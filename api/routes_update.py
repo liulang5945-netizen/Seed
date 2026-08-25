@@ -8,7 +8,7 @@ import os
 import shutil
 import threading
 
-from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Request
+from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 
 from seed_platform.paths import get_external_path
 
@@ -85,9 +85,9 @@ def _validate_update_url(url: str):
         candidates = [hostname]
     except ValueError:
         try:
-            candidates = list({info[4][0] for info in socket.getaddrinfo(hostname, None)})
+            candidates = list({str(info[4][0]) for info in socket.getaddrinfo(hostname, None)})
         except Exception:
-            raise HTTPException(status_code=400, detail="更新地址主机名无法解析")
+            raise HTTPException(status_code=400, detail="更新地址主机名无法解析") from None
 
     if any(_is_forbidden(addr) for addr in candidates):
         raise HTTPException(status_code=400, detail="更新地址不允许指向私网或保留地址")
@@ -122,14 +122,14 @@ def get_system_version():
 
 
 @router.post("/api/system/check_update")
-def check_update(request: Request, req: dict = {}):
+def check_update(request: Request, req: dict = {}):  # noqa: B006 — FastAPI 体参数，默认值不被变更
     """检查远程更新 - 需要管理员认证（自定义 URL 经 SSRF 校验）"""
     _require_admin_auth(request)
     repo = req.get("repo", "")
     if repo and repo.startswith("http"):
         _validate_update_url(repo)
     try:
-        from build_scripts.updater import VersionManager, UpdateChecker
+        from build_scripts.updater import UpdateChecker, VersionManager
 
         vm = VersionManager()
         checker = UpdateChecker(vm)
@@ -166,7 +166,7 @@ def check_update(request: Request, req: dict = {}):
 
 
 @router.post("/api/system/apply_update")
-def apply_update(request: Request, req: dict = {}):
+def apply_update(request: Request, req: dict = {}):  # noqa: B006 — FastAPI 体参数，默认值不被变更
     """应用更新（从 URL 下载并安装更新包）- 需要管理员认证"""
     _require_admin_auth(request)
     try:
@@ -196,8 +196,9 @@ async def upload_update(request: Request, file: UploadFile = File(...)):
     import zipfile
 
     try:
-        from build_scripts.updater import UpdatePackageInstaller
         import tempfile
+
+        from build_scripts.updater import UpdatePackageInstaller
 
         fd, tmp_path = tempfile.mkstemp(suffix=".zip")
         os.close(fd)
@@ -365,7 +366,7 @@ async def upload_patch(request: Request, file: UploadFile = File(...), target_pa
     except Exception as e:
         logger.error(f"上传补丁失败: {e}")
         logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from e
 
 
 @router.post("/api/system/upload_ui")
@@ -398,4 +399,4 @@ async def upload_ui_zip(request: Request, file: UploadFile = File(...)):
     except Exception as e:
         logger.error(f"UI更新失败: {e}")
         logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from e

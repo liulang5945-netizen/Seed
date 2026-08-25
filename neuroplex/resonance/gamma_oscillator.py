@@ -33,7 +33,8 @@ Usage:
 from __future__ import annotations
 
 import math
-from typing import Any, Dict, Optional
+from typing import Any
+
 import torch
 
 
@@ -62,7 +63,7 @@ class GammaOscillator:
                            >0 时相位同步度直接驱动共振强度（同相群体增强/异相解绑）；
                            0 = 关闭绑定（仅保留写入门控，兼容旧行为）。
         """
-        self.phases: Dict[str, float] = {}
+        self.phases: dict[str, float] = {}
         self.global_phase: float = 0.0
         self.omega = omega
         self.min_gate = min_gate
@@ -75,7 +76,7 @@ class GammaOscillator:
 
     def assign_phase_by_domain(
         self,
-        domain_to_nids: Dict[str, list],
+        domain_to_nids: dict[str, list],
         phase_offset_per_domain: float = math.pi / 3,
     ) -> None:
         """按 domain 批量分配 phase：同 domain 同 phase，跨 domain 等距分布。
@@ -84,7 +85,7 @@ class GammaOscillator:
             domain_to_nids: {domain_name: [neuron_id, ...]}
             phase_offset_per_domain: 跨 domain 的 phase 步长（默认 π/3，6 个域均匀分布）
         """
-        for i, (domain, nids) in enumerate(domain_to_nids.items()):
+        for i, (_domain, nids) in enumerate(domain_to_nids.items()):
             phase = i * phase_offset_per_domain
             for nid in nids:
                 self.assign_phase(nid, phase)
@@ -104,8 +105,8 @@ class GammaOscillator:
     def kuramoto_step(
         self,
         coupling_strength: float = 0.05,
-        active_ids: Optional[list] = None,
-        coactivation: Optional[Any] = None,
+        active_ids: list | None = None,
+        coactivation: Any | None = None,
     ) -> None:
         """KoPE-inspired Kuramoto 相位耦合。
 
@@ -179,9 +180,9 @@ class GammaOscillator:
 
     def pairwise_binding(
         self,
-        active_ids: Optional[list] = None,
-        coactivation: Optional[Any] = None,
-    ) -> Dict[str, float]:
+        active_ids: list | None = None,
+        coactivation: Any | None = None,
+    ) -> dict[str, float]:
         """计算每个 neuron 与其他激活 neuron 的平均相位同步度（pairwise 关系）。
 
         C23（2026-08-08）：相位同步本体化——相位不再是"对全局相位的标量门控"，
@@ -207,7 +208,7 @@ class GammaOscillator:
         ids = [nid for nid in ids if nid in self.phases]
         if len(ids) < 2:
             return {nid: 0.0 for nid in ids}
-        result: Dict[str, float] = {}
+        result: dict[str, float] = {}
         for nid_i in ids:
             theta_i = self.phases[nid_i]
             total = 0.0
@@ -225,16 +226,16 @@ class GammaOscillator:
         """重置全局 phase 到 0（新输入开始时调用）。"""
         self.global_phase = 0.0
 
-    def get_phase(self, neuron_id: str) -> Optional[float]:
+    def get_phase(self, neuron_id: str) -> float | None:
         return self.phases.get(neuron_id)
 
-    def list_phases(self) -> Dict[str, float]:
+    def list_phases(self) -> dict[str, float]:
         return dict(self.phases)
 
 
 def apply_gamma_gate(
     field,
-    gamma_oscillator: Optional[GammaOscillator],
+    gamma_oscillator: GammaOscillator | None,
 ) -> None:
     """把 GammaOscillator 注入到 ResonanceField（不破坏现有接口）。
 
@@ -246,25 +247,24 @@ def apply_gamma_gate(
         gamma_oscillator: GammaOscillator 实例或 None
     """
     field._gamma_oscillator = gamma_oscillator
-    if gamma_oscillator is not None:
+    if gamma_oscillator is not None and not hasattr(field, "_original_write"):
         # monkey-patch write/update（保留原方法）
-        if not hasattr(field, "_original_write"):
-            field._original_write = field.write
-            field._original_update = field.update
+        field._original_write = field.write
+        field._original_update = field.update
 
-            def gated_write(neuron_id, vector, scale=1.0):
-                osc = field._gamma_oscillator
-                if osc is not None and neuron_id in osc.phases:
-                    gate = osc.gate_factor(neuron_id)
-                    vector = vector * gate
-                return field._original_write(neuron_id, vector, scale=scale)
+        def gated_write(neuron_id, vector, scale=1.0):
+            osc = field._gamma_oscillator
+            if osc is not None and neuron_id in osc.phases:
+                gate = osc.gate_factor(neuron_id)
+                vector = vector * gate
+            return field._original_write(neuron_id, vector, scale=scale)
 
-            def gated_update(neuron_id, vector, scale=1.0):
-                osc = field._gamma_oscillator
-                if osc is not None and neuron_id in osc.phases:
-                    gate = osc.gate_factor(neuron_id)
-                    vector = vector * gate
-                return field._original_update(neuron_id, vector, scale=scale)
+        def gated_update(neuron_id, vector, scale=1.0):
+            osc = field._gamma_oscillator
+            if osc is not None and neuron_id in osc.phases:
+                gate = osc.gate_factor(neuron_id)
+                vector = vector * gate
+            return field._original_update(neuron_id, vector, scale=scale)
 
-            field.write = gated_write
-            field.update = gated_update
+        field.write = gated_write
+        field.update = gated_update

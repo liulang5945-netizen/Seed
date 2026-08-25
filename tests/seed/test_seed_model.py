@@ -52,6 +52,7 @@ def test_seed_checkpoint_wraps_taiji_and_continues_exactly() -> None:
     for left, right in zip(
         model.substrate.parameter_tensors(),
         restored.substrate.parameter_tensors(),
+        strict=False,
     ):
         assert torch.equal(left, right)
 

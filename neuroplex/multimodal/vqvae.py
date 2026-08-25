@@ -19,8 +19,6 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -360,9 +358,9 @@ class VQVAEImageCodec:
 
     def __init__(
         self,
-        model: Optional[VQVAE] = None,
+        model: VQVAE | None = None,
         image_size: int = 224,
-        device: Optional[torch.device] = None,
+        device: torch.device | None = None,
         downsample: int = 8,
     ):
         """Args:
@@ -396,7 +394,7 @@ class VQVAEImageCodec:
             image = image / 255.0
         return image.to(self.device)
 
-    def encode(self, image: torch.Tensor) -> List[int]:
+    def encode(self, image: torch.Tensor) -> list[int]:
         """图像 → codebook 索引序列。
 
         Args:
@@ -411,7 +409,7 @@ class VQVAEImageCodec:
             # 展平为 1D 列表（batch=0）
             return indices[0].flatten().tolist()
 
-    def decode(self, ids: List[int]) -> torch.Tensor:
+    def decode(self, ids: list[int]) -> torch.Tensor:
         """codebook 索引序列 → 重建图像。
 
         Args:

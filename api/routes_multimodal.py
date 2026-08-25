@@ -4,12 +4,12 @@
 让前端能调用Seed的多模态输出能力。
 """
 
-import os
 import logging
+import os
+
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from typing import Optional
 
 logger = logging.getLogger("ApiServer.Multimodal")
 router = APIRouter()
@@ -31,7 +31,7 @@ def _get_output_engine():
 
 class TTSRequest(BaseModel):
     text: str
-    voice: Optional[str] = None  # xiaoxiao/yunxi/yunyang/xiaoyi/yunjian
+    voice: str | None = None  # xiaoxiao/yunxi/yunyang/xiaoyi/yunjian
 
 
 @router.post("/api/multimodal/tts")
@@ -54,7 +54,7 @@ async def text_to_speech(request: TTSRequest):
         raise
     except Exception as e:
         logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from e
 
 
 @router.get("/api/multimodal/voices")
@@ -71,7 +71,7 @@ async def list_voices():
 
 class ImageGenRequest(BaseModel):
     prompt: str
-    negative_prompt: Optional[str] = None
+    negative_prompt: str | None = None
     width: int = 512
     height: int = 512
     steps: int = 30
@@ -105,7 +105,7 @@ async def generate_image(request: ImageGenRequest):
         raise
     except Exception as e:
         logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from e
 
 
 # ======================== 图像描述 ========================
@@ -127,7 +127,7 @@ async def describe_image(request: ImageDescribeRequest):
         return {"description": description}
     except Exception as e:
         logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from e
 
 
 # ======================== 状态查询 ========================

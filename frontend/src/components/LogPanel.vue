@@ -14,13 +14,13 @@
           <option value="model">模型</option>
           <option value="error">错误</option>
         </select>
-        <button class="log-btn" @click="clearLogs" title="清空"><Trash2 :size="13" /></button>
-        <button class="log-btn" :class="{ on: autoScroll }" @click="autoScroll = !autoScroll" title="自动滚动">
+        <button class="log-btn" title="清空" @click="clearLogs"><Trash2 :size="13" /></button>
+        <button class="log-btn" :class="{ on: autoScroll }" title="自动滚动" @click="autoScroll = !autoScroll">
           <ArrowDown :size="13" />
         </button>
       </div>
     </div>
-    <div class="log-body" ref="logBody">
+    <div ref="logBody" class="log-body">
       <div v-if="!filteredLogs.length" class="log-empty">暂无日志</div>
       <div v-for="(log, i) in filteredLogs" :key="i" class="log-entry" :class="'log-' + log.level">
         <span class="log-time">{{ formatTime(log.timestamp) }}</span>
@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, nextTick, onMounted } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { Terminal, Trash2, ArrowDown } from 'lucide-vue-next'
 import { useRuntimeStore } from '@/stores/runtimeStore.js'
 

@@ -13,8 +13,6 @@ This is the single entry point for all training tasks in the neuron era.
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional
-
 import torch
 
 
@@ -32,13 +30,13 @@ class TrainingScheduler:
 
     def __init__(
         self,
-        neurons: Dict[str, object],
+        neurons: dict[str, object],
         field: object = None,
     ):
         self.neurons = neurons
         self.field = field
 
-    def find_best_neuron(self, domain_embedding: torch.Tensor) -> Optional[str]:
+    def find_best_neuron(self, domain_embedding: torch.Tensor) -> str | None:
         """Find the neuron most relevant to the new domain.
 
         Args:
@@ -69,7 +67,7 @@ class TrainingScheduler:
 
         return best_nid
 
-    def schedule(self, domain_data, domain_embedding: Optional[torch.Tensor] = None):
+    def schedule(self, domain_data, domain_embedding: torch.Tensor | None = None):
         """Schedule a training task for new domain data.
 
         Args:
@@ -122,7 +120,7 @@ SpawnNeuronTask = GrowNeuronTask
 class NewNeuronTask:
     """Train a new neuron from scratch."""
 
-    def __init__(self, data, seed_neurons: Optional[List[str]] = None):
+    def __init__(self, data, seed_neurons: list[str] | None = None):
         self.data = data
         self.seed_neurons = seed_neurons or []
         self.task_type = "new"

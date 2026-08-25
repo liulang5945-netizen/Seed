@@ -9,11 +9,9 @@
 
 from __future__ import annotations
 
-from taiji import TaijiEnvironment
-
 from seed import Seed, SeedConfig
 from seed.environments import TopicWorld, play
-from taiji import TaijiConfig
+from taiji import TaijiConfig, TaijiEnvironment
 
 
 def _small_seed() -> Seed:

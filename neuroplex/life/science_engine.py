@@ -18,12 +18,11 @@
 - 数学实验：验证数学猜想
 """
 
-import os
 import json
-import time
 import logging
+import os
 import random
-from typing import Dict, List, Optional
+import time
 from dataclasses import dataclass, field
 from datetime import datetime
 
@@ -75,7 +74,7 @@ class Discovery:
     id: str
     hypothesis_id: str
     conclusion: str
-    evidence: List[str] = field(default_factory=list)
+    evidence: list[str] = field(default_factory=list)
     confidence: float = 0.0
     domain: str = ""
     created_at: str = ""
@@ -101,9 +100,9 @@ class ScienceEngine:
             except ImportError:
                 data_dir = "taiji/science_data"
         self.data_dir = data_dir
-        self.hypotheses: Dict[str, Hypothesis] = {}
-        self.experiments: Dict[str, Experiment] = {}
-        self.discoveries: Dict[str, Discovery] = {}
+        self.hypotheses: dict[str, Hypothesis] = {}
+        self.experiments: dict[str, Experiment] = {}
+        self.discoveries: dict[str, Discovery] = {}
 
         self._data_dir_ready = False
         self._load_data()
@@ -242,7 +241,7 @@ class ScienceEngine:
         logger.info(f"发现: {conclusion[:100]}...")
         return d
 
-    def auto_discover(self, topic: str = "") -> Dict:
+    def auto_discover(self, topic: str = "") -> dict:
         """
         自主发现流程：提出假设 → 实验 → 结论。
 
@@ -277,7 +276,7 @@ class ScienceEngine:
         logger.info(f"自主发现完成: {result['conclusion'][:80]}")
         return result
 
-    def get_status(self) -> Dict:
+    def get_status(self) -> dict:
         """获取科学发现引擎状态"""
         return {
             "hypotheses": len(self.hypotheses),
@@ -749,7 +748,7 @@ print("结论: 数据呈均匀分布")
         if not os.path.exists(path):
             return
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = json.load(f)
             for k, v in data.get("hypotheses", {}).items():
                 self.hypotheses[k] = Hypothesis(**v)
@@ -763,7 +762,7 @@ print("结论: 数据呈均匀分布")
 
 # ─── 全局实例 ─────────────────────────────────────
 
-_global_science: Optional[ScienceEngine] = None
+_global_science: ScienceEngine | None = None
 
 
 def get_science_engine() -> ScienceEngine:

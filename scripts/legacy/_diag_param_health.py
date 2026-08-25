@@ -8,8 +8,8 @@ sys.path.insert(0, r"e:\Seed")
 
 import torch
 
-from seed import Seed
 from scripts.legacy import CHECKPOINT_DIR  # 公共检查点目录常量（scripts/legacy/__init__.py）
+from seed import Seed
 
 model = Seed.from_checkpoint(torch.load(CHECKPOINT_DIR / "seed_corpus.pt", weights_only=False))
 tensors = model.substrate.parameter_tensors()

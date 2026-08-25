@@ -10,8 +10,8 @@ from __future__ import annotations
 import json
 import os
 import threading
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional
 
 import torch
 
@@ -22,7 +22,7 @@ class TaijiNativeTokenizerV2:
     def __init__(
         self,
         sp_model_path: str,
-        contract_path: Optional[str] = None,
+        contract_path: str | None = None,
     ) -> None:
         import sentencepiece as spm
 
@@ -31,7 +31,7 @@ class TaijiNativeTokenizerV2:
             contract_path = str(Path(__file__).with_name("tokenizer_contract.json"))
         self.contract_path = str(contract_path)
 
-        with open(self.contract_path, "r", encoding="utf-8") as f:
+        with open(self.contract_path, encoding="utf-8") as f:
             self.contract = json.load(f)
 
         self.text_offset = int(self.contract["text_offset"])
@@ -41,7 +41,7 @@ class TaijiNativeTokenizerV2:
         self._tool_start = int(tool_tokens["start"])
         self._tool_limit = self._tool_start + int(tool_tokens["count"])
 
-        self.special_text_to_id: Dict[str, int] = {
+        self.special_text_to_id: dict[str, int] = {
             k: int(v) for k, v in self.contract["special_tokens"].items()
         }
         self.special_text_to_id.update(
@@ -54,8 +54,8 @@ class TaijiNativeTokenizerV2:
             for i in range(count):
                 self.special_text_to_id[pattern.format(i=i)] = start + i
 
-        self._tool_name_to_id: Dict[str, int] = {}
-        self._id_to_tool_name: Dict[int, str] = {}
+        self._tool_name_to_id: dict[str, int] = {}
+        self._id_to_tool_name: dict[int, str] = {}
         self._next_tool_id = self._tool_start
         self._tool_lock = threading.Lock()
         self.special_id_to_text = {v: k for k, v in self.special_text_to_id.items()}
@@ -111,13 +111,13 @@ class TaijiNativeTokenizerV2:
             self._refresh_special_index()
             return token_id
 
-    def get_tool_id(self, tool_name: str) -> Optional[int]:
+    def get_tool_id(self, tool_name: str) -> int | None:
         return self._tool_name_to_id.get(tool_name)
 
-    def get_tool_name(self, tool_id: int) -> Optional[str]:
+    def get_tool_name(self, tool_id: int) -> str | None:
         return self._id_to_tool_name.get(tool_id)
 
-    def get_all_tool_ids(self) -> Dict[str, int]:
+    def get_all_tool_ids(self) -> dict[str, int]:
         return dict(self._tool_name_to_id)
 
     def encode(
@@ -127,8 +127,8 @@ class TaijiNativeTokenizerV2:
         add_eos: bool = False,
         add_special_tokens: bool = False,
         allow_special: bool = True,
-    ) -> List[int]:
-        ids: List[int] = []
+    ) -> list[int]:
+        ids: list[int] = []
         if add_bos or add_special_tokens:
             ids.append(self.bos_token_id)
 
@@ -160,10 +160,10 @@ class TaijiNativeTokenizerV2:
             ids.append(self.eos_token_id)
         return ids
 
-    def _encode(self, text: str) -> List[int]:
+    def _encode(self, text: str) -> list[int]:
         return self.encode(text)
 
-    def _encode_text(self, text: str) -> List[int]:
+    def _encode_text(self, text: str) -> list[int]:
         if not text:
             return []
         return [self.text_offset + i for i in self.sp.EncodeAsIds(text)]
@@ -171,8 +171,8 @@ class TaijiNativeTokenizerV2:
     def decode(self, ids: Iterable[int] | torch.Tensor, skip_special_tokens: bool = True) -> str:
         if isinstance(ids, torch.Tensor):
             ids = ids.tolist()
-        parts: List[str] = []
-        text_ids: List[int] = []
+        parts: list[str] = []
+        text_ids: list[int] = []
 
         # P0-2: sentencepiece 实际 vocab 可能 < contract 的 text_vocab_size,
         # 超出 sp.GetPieceSize() 的 text_id 会让 sp.DecodeIds OUT_OF_RANGE 崩溃。
@@ -209,12 +209,12 @@ class TaijiNativeTokenizerV2:
 
     def __call__(
         self,
-        text: str | List[str],
-        return_tensors: Optional[str] = None,
+        text: str | list[str],
+        return_tensors: str | None = None,
         padding: bool | str = False,
         truncation: bool = False,
-        max_length: Optional[int] = None,
-    ) -> Dict[str, torch.Tensor | List[List[int]]]:
+        max_length: int | None = None,
+    ) -> dict[str, torch.Tensor | list[list[int]]]:
         texts = text if isinstance(text, list) else [text]
         encoded = [self.encode(t) for t in texts]
         if truncation and max_length is not None:
@@ -272,14 +272,14 @@ class TaijiNativeTokenizerV2:
             )
 
     @classmethod
-    def load(cls, path: str) -> "TaijiNativeTokenizerV2":
+    def load(cls, path: str) -> TaijiNativeTokenizerV2:
         tokenizer = cls(
             sp_model_path=os.path.join(path, "sentencepiece.model"),
             contract_path=os.path.join(path, "tokenizer_contract.json"),
         )
         state_path = os.path.join(path, "tokenizer_native_v2.json")
         if os.path.exists(state_path):
-            with open(state_path, "r", encoding="utf-8") as f:
+            with open(state_path, encoding="utf-8") as f:
                 state = json.load(f)
             for tool_name, token_id in state.get("tool_mappings", {}).items():
                 token_id = int(token_id)

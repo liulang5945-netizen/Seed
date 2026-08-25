@@ -20,13 +20,13 @@
 详见 docs/ENTRYPOINTS.md
 """
 
-import os
-import sys
 import json
-import time
 import logging
+import os
 import subprocess
+import sys
 import threading
+import time
 from pathlib import Path
 
 # 设置日志：开发模式输出到控制台；打包（windowed）模式无 stderr，
@@ -37,10 +37,7 @@ logger = logging.getLogger("SeedDesktop")
 # 项目根目录：打包（frozen）模式下以 exe 所在目录为准，
 # 开发模式下为仓库根（本文件的上级目录）。
 FROZEN = getattr(sys, "frozen", False)
-if FROZEN:
-    ROOT_DIR = Path(sys.executable).resolve().parent
-else:
-    ROOT_DIR = Path(__file__).parent.parent
+ROOT_DIR = Path(sys.executable).resolve().parent if FROZEN else Path(__file__).parent.parent
 SETTINGS_FILE = ROOT_DIR / "desktop" / "settings.json"
 LOG_DIR = ROOT_DIR / "logs"
 
@@ -99,7 +96,7 @@ def load_settings() -> dict:
     """加载窗口设置"""
     if SETTINGS_FILE.exists():
         try:
-            with open(SETTINGS_FILE, "r") as f:
+            with open(SETTINGS_FILE) as f:
                 return json.load(f)
         except Exception as e:
             logger.warning(f"Failed to load settings, using defaults: {e}")
@@ -225,8 +222,8 @@ class BackendManager:
 
     def _wait_for_ready(self, timeout: int = 30):
         """等待后端就绪"""
-        import urllib.request
         import urllib.error
+        import urllib.request
 
         start = time.time()
         while time.time() - start < timeout:
@@ -318,6 +315,7 @@ class WebSocketManager:
         def _run():
             try:
                 import asyncio
+
                 from neuroplex.core.websocket_server import start_server
 
                 asyncio.run(start_server())
@@ -449,41 +447,41 @@ def main():
         except OSError as e:
             logger.debug("【main】处理失败（非致命）: %s", e)
     try:
-        from PyQt6.QtWidgets import (
-            QApplication,
-            QMainWindow,
-            QSystemTrayIcon,
-            QMenu,
-            QVBoxLayout,
-            QHBoxLayout,
-            QWidget,
-            QMessageBox,  # noqa: F401
-            QSplashScreen,  # noqa: F401
-            QLabel,
-            QPushButton,
-        )
         from PyQt6.QtCore import (  # noqa: F401
-            QUrl,
-            Qt,
-            QTimer,
-            QSize,
-            QPoint,
-            QThread,
             QEvent,
             QObject,
+            QPoint,
+            QSize,
+            Qt,
+            QThread,
+            QTimer,
+            QUrl,
         )
-        from PyQt6.QtGui import (
-            QIcon,
+        from PyQt6.QtGui import (  # noqa: F401
             QAction,
-            QPixmap,
             QColor,
-            QPainter,
             QFont,
+            QIcon,
+            QPainter,
             QPainterPath,
+            QPixmap,
             QRegion,
-        )  # noqa: F401
+        )
+        from PyQt6.QtWebEngineCore import QWebEngineProfile, QWebEngineSettings  # noqa: F401
         from PyQt6.QtWebEngineWidgets import QWebEngineView
-        from PyQt6.QtWebEngineCore import QWebEngineSettings, QWebEngineProfile  # noqa: F401
+        from PyQt6.QtWidgets import (
+            QApplication,
+            QHBoxLayout,
+            QLabel,
+            QMainWindow,
+            QMenu,
+            QMessageBox,  # noqa: F401
+            QPushButton,
+            QSplashScreen,  # noqa: F401
+            QSystemTrayIcon,
+            QVBoxLayout,
+            QWidget,
+        )
     except ImportError:
         logger.error("PyQt6 not installed. Run: pip install PyQt6 PyQt6-WebEngine")
         sys.exit(1)

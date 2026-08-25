@@ -6,7 +6,7 @@
       "version": "22"
     }
   },
-  "postCreateCommand": "pip install -e '.[dev]' && cd frontend && npm ci",
+  "postCreateCommand": "pip install -e '.[dev,legacy]' && cd frontend && npm ci",
   "customizations": {
     "vscode": {
       "extensions": [

@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 import os
-from typing import Mapping
-
+from collections.abc import Mapping
 
 # These packages are required to show the desktop shell and start the Seed API.
 # Keep the manifest independent from the frozen NeuroPlex/Transformer baseline.

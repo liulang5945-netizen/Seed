@@ -21,7 +21,7 @@ phase 3).
 
 from __future__ import annotations
 
-from typing import Dict, List, Sequence
+from collections.abc import Sequence
 
 import torch
 
@@ -41,7 +41,7 @@ class SeedSleepScheduler:
         self.seed = seed
         self.judge = judge
 
-    def select_for_sleep(self, texts: Sequence[bytes], *, k: int) -> List[bytes]:
+    def select_for_sleep(self, texts: Sequence[bytes], *, k: int) -> list[bytes]:
         """Return the ``k`` texts the organism handles worst.
 
         Lower judge quality means the organism predicts the text worse, so
@@ -61,7 +61,7 @@ class SeedSleepScheduler:
         *,
         learn: bool = True,
         max_symbols: int | None = None,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """Live the text once so the episodic field holds a real engram.
 
         Each tick observes the true byte, acts on the organism's own top
@@ -119,7 +119,7 @@ class SeedSleepScheduler:
         learn: bool,
         max_symbols: int | None = None,
         observational: bool = False,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """Experience the selected texts, then sleep on what the field holds.
 
         Consolidation is entirely endogenous: ``consolidate`` reactivates
@@ -204,7 +204,7 @@ class SeedSleepScheduler:
         self.seed.observe(boundary, learn=False)
 
 
-def top_candidates(probabilities: torch.Tensor, count: int) -> List[int]:
+def top_candidates(probabilities: torch.Tensor, count: int) -> list[int]:
     """Return the ``count`` strongest byte candidates from a policy vector."""
 
     _values, indices = torch.sort(probabilities.detach(), descending=True)

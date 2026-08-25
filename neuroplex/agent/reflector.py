@@ -6,12 +6,12 @@ Cortex 反思系统 v2
 v2 新增：执行前自验证、多路径探索、工具成功率统计。
 """
 
+import logging
 import os
 import re
-import logging
-from typing import Any, Optional, Dict, List, Tuple
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 logger = logging.getLogger("Cortex.Reflector")
 
@@ -33,7 +33,7 @@ class ReflectionResult:
     message: str
     confidence: float = 0.0  # 0-1 置信度
     should_retry: bool = False
-    correction_hint: Optional[str] = None
+    correction_hint: str | None = None
 
     def to_token_text(self) -> str:
         if self.type == ReflectionType.CONFIRM:
@@ -128,12 +128,12 @@ class ReflectorSystem:
         ],
     }
 
-    def __init__(self, save_dir: str = None):
-        self.reflection_history: List[ReflectionResult] = []
+    def __init__(self, save_dir: str | None = None):
+        self.reflection_history: list[ReflectionResult] = []
         self.consecutive_errors: int = 0
         self.max_retries: int = 3
         # v2: 工具成功率统计（用于自验证置信度）
-        self._tool_stats: Dict[str, Dict[str, int]] = {}  # tool -> {"success": N, "fail": N}
+        self._tool_stats: dict[str, dict[str, int]] = {}  # tool -> {"success": N, "fail": N}
         self._save_path = os.path.join(save_dir, "tool_stats.json") if save_dir else None
         self._load_stats()
 
@@ -144,7 +144,7 @@ class ReflectorSystem:
         try:
             import json
 
-            with open(self._save_path, "r", encoding="utf-8") as f:
+            with open(self._save_path, encoding="utf-8") as f:
                 self._tool_stats = json.load(f)
         except Exception as e:
             logger.debug("【ReflectorSystem._load_stats】处理失败（非致命）: %s", e)
@@ -200,7 +200,7 @@ class ReflectorSystem:
         tool_name: str,
         action_args: dict,
         context: str = "",
-    ) -> Tuple[float, List[str]]:
+    ) -> tuple[float, list[str]]:
         """
         【v2】执行前自验证：在调用工具前预测成功率。
 
@@ -285,8 +285,8 @@ class ReflectorSystem:
         self,
         tool_name: str,
         action_args: dict,
-        available_tools: List[str],
-    ) -> List[Dict[str, Any]]:
+        available_tools: list[str],
+    ) -> list[dict[str, Any]]:
         """
         【v2】多路径探索：当主方案置信度低时，生成备选方案。
 
@@ -405,9 +405,9 @@ class ReflectorSystem:
         # 只取最近 3 条反思
         recent = self.reflection_history[-3:]
         text = "".join(r.to_token_text() for r in recent)
-        return tokenizer._encode(text)
+        return list(tokenizer._encode(text))
 
-    def _detect_error(self, text: str) -> Optional[Tuple[str, str, str]]:
+    def _detect_error(self, text: str) -> tuple[str, str, str] | None:
         """
         检测文本中的错误模式
 

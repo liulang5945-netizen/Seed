@@ -17,7 +17,6 @@ from __future__ import annotations
 import math
 import os
 import sys
-from typing import Optional
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
@@ -25,9 +24,9 @@ import torch
 import torch.nn.functional as F
 
 from neuroplex.resonance import (
-    ResonanceField,
-    ResonanceEnsemble,
     NeuronGeometry,
+    ResonanceEnsemble,
+    ResonanceField,
 )
 from neuroplex.resonance.topology import (
     build_topology,
@@ -36,26 +35,30 @@ from neuroplex.resonance.topology import (
     topology_detail,
 )
 from neuroplex.resonance.translator import batch_align_and_embed
-from scripts.training.utils import (
-    load_domain_tokenizer,
-    load_general_tokenizer,
-    OUTPUT_DIR,
-)
-from scripts.training.finetune_cross_spec import load_dialogue_texts, load_neuron_with_embedding
 from scripts.training.experiment_config import (
-    ENSEMBLE_DIALOGUE_IDS as NEURON_IDS,
     DEFAULT_DOMAIN as DOMAIN,
+)
+from scripts.training.experiment_config import (
+    DIALOGUE_PROMPTS,
+    SAMPLING_MAX_TOKENS,
+    SAMPLING_REPETITION_PENALTY,
     SAMPLING_TEMPERATURE,
     SAMPLING_TOP_K,
-    SAMPLING_REPETITION_PENALTY,
-    SAMPLING_MAX_TOKENS,
-    DIALOGUE_PROMPTS,
+)
+from scripts.training.experiment_config import (
+    ENSEMBLE_DIALOGUE_IDS as NEURON_IDS,
+)
+from scripts.training.finetune_cross_spec import load_dialogue_texts, load_neuron_with_embedding
+from scripts.training.utils import (
+    OUTPUT_DIR,
+    load_domain_tokenizer,
+    load_general_tokenizer,
 )
 
 DEVICE = "cpu"
 
 
-def _resolve_weights_path(weights_type: str, ckpt_path: Optional[str] = None) -> Optional[str]:
+def _resolve_weights_path(weights_type: str, ckpt_path: str | None = None) -> str | None:
     """解析权重路径。
 
     §4.0d+: ckpt_path 显式指定任意 checkpoint 文件（早停对比用），
@@ -71,7 +74,7 @@ def _resolve_weights_path(weights_type: str, ckpt_path: Optional[str] = None) ->
 
 
 def load_neurons_and_weights(
-    weights_type: str = "dialogue", topology_mode: str = "hybrid", ckpt_path: Optional[str] = None
+    weights_type: str = "dialogue", topology_mode: str = "hybrid", ckpt_path: str | None = None
 ):
     """加载神经元和指定类型的权重。
 
@@ -151,9 +154,7 @@ def load_neurons_and_weights(
     return neurons, shared_embeddings
 
 
-def load_cross_spec_weights(
-    ensemble, weights_type: str = "dialogue", ckpt_path: Optional[str] = None
-):
+def load_cross_spec_weights(ensemble, weights_type: str = "dialogue", ckpt_path: str | None = None):
     """加载跨规格投影层权重 + 协作层训练产物（side_channels/scale_bias/body）。
 
     §4.0d+: ckpt_path 显式指定任意 checkpoint 文件（早停对比用），
@@ -262,7 +263,7 @@ def load_cross_spec_weights(
             )
 
 
-def _checkpoint_has_router(weights_type: str = "dialogue", ckpt_path: Optional[str] = None) -> bool:
+def _checkpoint_has_router(weights_type: str = "dialogue", ckpt_path: str | None = None) -> bool:
     """§4.0c: 检测 checkpoint 是否含 Sparse Router 状态。
 
     §4.0d+: ckpt_path 显式指定任意 checkpoint 文件（早停对比用），
@@ -285,7 +286,7 @@ def eval_dialogue_ppl(
     general_sp,
     weights_type: str = "dialogue",
     n_eval: int = 100,
-    ckpt_path: Optional[str] = None,
+    ckpt_path: str | None = None,
 ):
     """对话 PPL 评估（alpaca-zh 评估集）。"""
     print("\n" + "=" * 70, flush=True)
@@ -531,7 +532,7 @@ def eval_conversation(
     domain_sp,
     general_sp,
     weights_type: str = "dialogue",
-    ckpt_path: Optional[str] = None,
+    ckpt_path: str | None = None,
 ):
     """实际对话生成质量评估（单轮）。"""
     print("\n" + "=" * 70, flush=True)
@@ -559,7 +560,7 @@ def eval_multi_turn_conversation(
     domain_sp,
     general_sp,
     weights_type: str = "dialogue",
-    ckpt_path: Optional[str] = None,
+    ckpt_path: str | None = None,
 ):
     """多轮对话评测（缺口 H 修复）：测试综合体维持上下文的能力。
 

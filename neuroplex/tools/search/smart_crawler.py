@@ -18,17 +18,16 @@
     crawler.crawl_topic("https://docs.python.org/3/", "async programming", max_pages=30)
 """
 
-import re
-import time
 import hashlib
 import logging
+import re
+import time
 import urllib.parse
 from dataclasses import dataclass
-from typing import List, Optional, Set, Tuple
 
+from .extractor import PageContent, ReadabilityExtractor
 from .fetcher import DualFetcher
-from .extractor import ReadabilityExtractor, PageContent
-from .index import InvertedIndex, IndexedPage, Tokenizer
+from .index import IndexedPage, InvertedIndex, Tokenizer
 
 logger = logging.getLogger("Taiji.Search.SmartCrawler")
 
@@ -89,7 +88,7 @@ class LinkScorer:
         self.tokenizer = Tokenizer()
 
     def score(
-        self, link_url: str, anchor_text: str, topic_terms: Set[str], position: str = "content"
+        self, link_url: str, anchor_text: str, topic_terms: set[str], position: str = "content"
     ) -> float:
         """
         给链接打分。
@@ -146,8 +145,8 @@ class LinkScorer:
         return max(0, score)
 
     def rank_links(
-        self, links: List[Tuple[str, str, str]], topic_terms: Set[str], top_n: int = 10
-    ) -> List[Tuple[str, float]]:
+        self, links: list[tuple[str, str, str]], topic_terms: set[str], top_n: int = 10
+    ) -> list[tuple[str, float]]:
         """
         对页面上的所有链接排序，返回 top_n 个最值得爬的。
 
@@ -178,7 +177,7 @@ class ContentQuality:
     def __init__(self):
         self.tokenizer = Tokenizer()
 
-    def assess(self, content: PageContent, topic_terms: Set[str]) -> Tuple[float, str]:
+    def assess(self, content: PageContent, topic_terms: set[str]) -> tuple[float, str]:
         """
         评估页面质量。
 
@@ -311,7 +310,7 @@ class SmartCrawler:
     5. 实时入索引
     """
 
-    def __init__(self, index: Optional[InvertedIndex] = None):
+    def __init__(self, index: InvertedIndex | None = None):
         self.fetcher = DualFetcher(use_browser=True)
         self.extractor = ReadabilityExtractor()
         self.index = index or InvertedIndex()
@@ -345,11 +344,11 @@ class SmartCrawler:
         # 优先队列：(score, url, depth)
         import heapq
 
-        queue: List[Tuple[float, str, int]] = []
+        queue: list[tuple[float, str, int]] = []
         heapq.heappush(queue, (-100, seed_url, 0))  # 种子页给高分
 
-        visited: Set[str] = set()
-        content_hashes: Set[str] = set()
+        visited: set[str] = set()
+        content_hashes: set[str] = set()
 
         while queue and stats.visited < max_pages:
             neg_score, url, depth = heapq.heappop(queue)
@@ -482,7 +481,7 @@ class SmartCrawler:
         )
         return total_stats
 
-    def _extract_links_with_context(self, html: str, base_url: str) -> List[Tuple[str, str, str]]:
+    def _extract_links_with_context(self, html: str, base_url: str) -> list[tuple[str, str, str]]:
         """
         提取链接及其锚文本和位置。
 
@@ -561,7 +560,7 @@ class SmartCrawler:
 # 统一入口
 # ═══════════════════════════════════════════════
 
-_default_crawler: Optional[SmartCrawler] = None
+_default_crawler: SmartCrawler | None = None
 
 
 def get_smart_crawler() -> SmartCrawler:

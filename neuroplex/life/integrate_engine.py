@@ -23,7 +23,6 @@ from __future__ import annotations
 
 import logging
 import random
-from typing import Dict, List, Optional
 
 import torch
 import torch.nn.functional as F
@@ -56,7 +55,7 @@ class IntegrateEngine:
         lifecycle=None,
         feed_engine=None,
         memory_bank=None,
-        device: Optional[str] = None,
+        device: str | None = None,
     ):
         self.cortex = cortex
         self.lifecycle = lifecycle
@@ -65,12 +64,12 @@ class IntegrateEngine:
         self.device = device or (cortex.device if hasattr(cortex, "device") else "cpu")
 
         # 记录每个新 neuron 的整合进度（跨 sleep 会话）
-        self._progress: Dict[str, int] = {}  # nid -> 已完成训练步数
+        self._progress: dict[str, int] = {}  # nid -> 已完成训练步数
 
     # ──────────────────────────────────────────────
     # 主入口
     # ──────────────────────────────────────────────
-    def integrate(self, new_nid: str) -> Dict[str, object]:
+    def integrate(self, new_nid: str) -> dict[str, object]:
         """整合一个新生 neuron（由 sleep_engine 在 neurogenesis 后调用）。
 
         Returns:
@@ -126,12 +125,12 @@ class IntegrateEngine:
     # ──────────────────────────────────────────────
     def _integrate_session(
         self,
-        shadow_modules: Dict[str, object],
+        shadow_modules: dict[str, object],
         shadow_emb,
         new_nid: str,
         domain: str,
         samples: list,
-    ) -> Dict[str, object]:
+    ) -> dict[str, object]:
         ensemble = self.cortex.ensemble
         hub = self.cortex._tokenizer_hub
         general_sp = self.cortex._general_sp
@@ -269,7 +268,7 @@ class IntegrateEngine:
     # C26 增量七：自组织新生——记忆条件化预训练
     # ──────────────────────────────────────────────
     def _memory_pretrain(
-        self, shadow_modules: Dict[str, object], shadow_emb, new_nid: str, domain: str
+        self, shadow_modules: dict[str, object], shadow_emb, new_nid: str, domain: str
     ) -> int:
         """记忆注意窗预训练（从经验生长，非中心模型迁移）。
 
@@ -437,11 +436,11 @@ class IntegrateEngine:
     def _verify_commit(
         self,
         new_nid: str,
-        shadow_modules: Dict[str, object],
+        shadow_modules: dict[str, object],
         shadow_emb,
         domain: str,
         samples: list,
-    ) -> Dict[str, object]:
+    ) -> dict[str, object]:
         """有 vs 无新 neuron 的 ensemble CE 对比：贡献为正 → commit；负 → 凋零信号。"""
 
         ensemble = self.cortex.ensemble
@@ -530,7 +529,7 @@ class IntegrateEngine:
     # ──────────────────────────────────────────────
     # 辅助
     # ──────────────────────────────────────────────
-    def _prepare_trainable(self, shadow_modules: Dict[str, object], new_nid: str) -> None:
+    def _prepare_trainable(self, shadow_modules: dict[str, object], new_nid: str) -> None:
         """冻结成熟 neuron 全部参数；新 neuron 只解冻协作层（side/quality_head/LoRA）。"""
         for nid, neuron in shadow_modules.items():
             for p in neuron.parameters():
@@ -555,7 +554,7 @@ class IntegrateEngine:
                 if name.startswith("field_read_layers") or name.startswith("field_read_gate"):
                     p.requires_grad = True
 
-    def _neighbor_ids(self, neuron) -> List[str]:
+    def _neighbor_ids(self, neuron) -> list[str]:
         """拓扑邻居 = side_channel 输入源（excite_channels 的 key = pre neuron id）。"""
         try:
             return [pid for pid in neuron.excite_channels.keys()]
@@ -628,7 +627,7 @@ class IntegrateEngine:
             logger.debug(f"[IntegrateEngine] 对齐失败: {e}")
             return None
 
-    def _extract_texts(self, samples: list, limit: int) -> List[str]:
+    def _extract_texts(self, samples: list, limit: int) -> list[str]:
         texts = []
         for sample in samples:
             if isinstance(sample, dict):

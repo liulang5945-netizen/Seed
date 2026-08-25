@@ -24,14 +24,13 @@ import json
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List
 
 REPO = Path(__file__).resolve().parents[2]
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
-import torch  # noqa: E402
 import _verify_emit  # noqa: E402
+import torch  # noqa: E402
 
 PROMPTS = (
     "你好，请介绍一下你自己。",
@@ -50,8 +49,8 @@ THRESHOLDS = {"success_rate": 0.99, "max_requests_without_crash": None}
 def _build_client():
     from fastapi.testclient import TestClient
 
-    from api.app import create_app
     import api.seed_runtime as seed_runtime_module
+    from api.app import create_app
     from api.seed_runtime import SeedRuntime
     from seed import Seed
 
@@ -91,7 +90,7 @@ def main() -> int:
     client = _build_client()
 
     # ---- 异常输入审计 ------------------------------------------------
-    hostile_cases: List[Dict[str, object]] = [
+    hostile_cases: list[dict[str, object]] = [
         {"name": "empty_prompt", "payload": {"prompt": "", "history": []}},
         {"name": "long_prompt_100k", "payload": {"prompt": "词" * 50000, "history": []}},
         {
@@ -132,7 +131,7 @@ def main() -> int:
 
     # ---- 可用性压测 ----------------------------------------------------
     successes = 0
-    errors: List[Dict[str, object]] = []
+    errors: list[dict[str, object]] = []
     latency_sum = 0.0
     start_wall = time.time()
     for index in range(args.requests):

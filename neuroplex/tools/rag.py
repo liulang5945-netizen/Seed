@@ -11,13 +11,14 @@ import re
 import threading
 import time
 from collections import Counter
+from collections.abc import Iterable
 from contextlib import suppress
-from typing import Any, Dict, Iterable, List, Optional, Tuple
+from typing import Any
 
-from seed_platform.memory import MemoryWatchdog, memory_guarded
 from neuroplex.core.utils import safe_json_load, safe_json_save
-from seed_platform.settings import load_settings, update_settings
 from neuroplex.tools.file_parser import parse_file_to_text
+from seed_platform.memory import MemoryWatchdog, memory_guarded
+from seed_platform.settings import load_settings, update_settings
 
 logger = logging.getLogger("RAG")
 
@@ -57,10 +58,10 @@ def _trusted_pickle_path(persist_dir: str, path: str) -> str:
     return file_real
 
 
-def _fallback_tokens(text: str) -> List[str]:
+def _fallback_tokens(text: str) -> list[str]:
     """Return deterministic local tokens without external tokenizers."""
 
-    tokens: List[str] = []
+    tokens: list[str] = []
     for piece in re.findall(r"[\u4e00-\u9fff]+|[A-Za-z0-9_]+", str(text).lower()):
         if _CJK_BLOCK_RE.fullmatch(piece):
             chars = [ch for ch in piece if ch.strip()]
@@ -77,8 +78,10 @@ def _fallback_tokens(text: str) -> List[str]:
 class RAGConfig:
     """RAG retrieval configuration persisted into the unified settings store."""
 
-    _instance: "RAGConfig | None" = None
+    _instance: RAGConfig | None = None
     _lock = threading.Lock()
+    # R6: __new__ 中赋值的实例属性需类级声明，消除 attr-defined 系列错误。
+    _config: dict[str, Any]
 
     DEFAULTS = {
         "enable_hybrid": True,
@@ -90,7 +93,7 @@ class RAGConfig:
         "reranker_model": DEFAULT_RERANKER_MODEL,
     }
 
-    def __new__(cls) -> "RAGConfig":
+    def __new__(cls) -> RAGConfig:
         with cls._lock:
             if cls._instance is None:
                 instance = super().__new__(cls)
@@ -140,9 +143,9 @@ class BM25Index:
         self.b = b
         self.doc_count = 0
         self.avg_dl = 0.0
-        self.doc_lengths: List[int] = []
-        self.doc_freqs: List[Counter[str]] = []
-        self.idf: Dict[str, float] = {}
+        self.doc_lengths: list[int] = []
+        self.doc_freqs: list[Counter[str]] = []
+        self.idf: dict[str, float] = {}
         self._stopwords = self._default_stopwords()
 
     @staticmethod
@@ -201,19 +204,17 @@ class BM25Index:
             "which",
         }
 
-    def _normalize_tokens(self, tokens: Iterable[str]) -> List[str]:
-        cleaned: List[str] = []
+    def _normalize_tokens(self, tokens: Iterable[str]) -> list[str]:
+        cleaned: list[str] = []
         for token in tokens:
             value = str(token).strip().lower()
             if not value or value in self._stopwords:
                 continue
-            if _CJK_BLOCK_RE.fullmatch(value):
-                cleaned.append(value)
-            elif len(value) > 1:
+            if _CJK_BLOCK_RE.fullmatch(value) or len(value) > 1:
                 cleaned.append(value)
         return cleaned
 
-    def _tokenize(self, text: str) -> List[str]:
+    def _tokenize(self, text: str) -> list[str]:
         lowered = str(text).lower()
         try:
             import jieba
@@ -222,7 +223,7 @@ class BM25Index:
         except ImportError:
             return self._normalize_tokens(_fallback_tokens(lowered))
 
-    def build(self, chunks: List[Tuple[str, str, int]]) -> None:
+    def build(self, chunks: list[tuple[str, str, int]]) -> None:
         self.doc_count = len(chunks)
         self.avg_dl = 0.0
         self.doc_lengths = []
@@ -242,7 +243,7 @@ class BM25Index:
         for term, df in df_counter.items():
             self.idf[term] = math.log((self.doc_count - df + 0.5) / (df + 0.5) + 1.0)
 
-    def search(self, query: str, top_k: int = 20) -> List[Tuple[int, float]]:
+    def search(self, query: str, top_k: int = 20) -> list[tuple[int, float]]:
         if self.doc_count == 0:
             return []
 
@@ -250,7 +251,7 @@ class BM25Index:
         if not query_tokens:
             return []
 
-        scores: List[Tuple[int, float]] = []
+        scores: list[tuple[int, float]] = []
         for doc_idx in range(self.doc_count):
             score = 0.0
             doc_length = self.doc_lengths[doc_idx]
@@ -283,7 +284,7 @@ class BM25Index:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "BM25Index":
+    def from_dict(cls, data: dict) -> BM25Index:
         obj = cls(k1=data.get("k1", 1.5), b=data.get("b", 0.75))
         obj.doc_count = int(data.get("doc_count", 0))
         obj.avg_dl = float(data.get("avg_dl", 0.0))
@@ -328,8 +329,8 @@ class CrossEncoderReranker:
             return False
 
     def rerank(
-        self, query: str, passages: List[str], top_k: int = DEFAULT_TOP_K
-    ) -> List[Tuple[int, float]]:
+        self, query: str, passages: list[str], top_k: int = DEFAULT_TOP_K
+    ) -> list[tuple[int, float]]:
         if not passages:
             return []
 
@@ -351,15 +352,15 @@ class CrossEncoderReranker:
 class RAGKnowledgeBase:
     """Semantic knowledge base with persistence and local fallback embeddings."""
 
-    def __init__(self, persist_dir: Optional[str] = None) -> None:
-        self.documents: Dict[str, str] = {}
-        self.chunks: List[Tuple[str, str, int]] = []
+    def __init__(self, persist_dir: str | None = None) -> None:
+        self.documents: dict[str, str] = {}
+        self.chunks: list[tuple[str, str, int]] = []
         self.embeddings: Any | None = None
         self._embedder: Any | None = None
         self._embed_dim = 0
         self.persist_dir = persist_dir
-        self._bm25_index: Optional[BM25Index] = None
-        self._reranker: Optional[CrossEncoderReranker] = None
+        self._bm25_index: BM25Index | None = None
+        self._reranker: CrossEncoderReranker | None = None
         self._rag_config = RAGConfig()
 
         if self.persist_dir and self._has_persisted_state(self.persist_dir):
@@ -387,11 +388,11 @@ class RAGKnowledgeBase:
             self._embedder = None
             self._embed_dim = 0
 
-    def _fallback_embed_texts(self, texts: List[str]) -> Any:
+    def _fallback_embed_texts(self, texts: list[str]) -> Any:
         import numpy as np
 
         dim = 256
-        vectors: List[Any] = []
+        vectors: list[Any] = []
         for text in texts:
             vec = np.zeros(dim, dtype=np.float32)
             for token in _fallback_tokens(text):
@@ -447,7 +448,7 @@ class RAGKnowledgeBase:
         self._embed_dim = 256
         return None
 
-    def _build_embeddings(self, texts: List[str], batch_size: int = 32) -> Any:
+    def _build_embeddings(self, texts: list[str], batch_size: int = 32) -> Any:
         import numpy as np
 
         if not texts:
@@ -482,7 +483,7 @@ class RAGKnowledgeBase:
         text: str,
         chunk_size: int = CHUNK_SIZE,
         overlap: int = CHUNK_OVERLAP,
-    ) -> List[str]:
+    ) -> list[str]:
         if not text or not text.strip():
             return []
 
@@ -491,7 +492,7 @@ class RAGKnowledgeBase:
         if not paragraphs:
             return []
 
-        merged: List[str] = []
+        merged: list[str] = []
         buffer = ""
         for paragraph in paragraphs:
             candidate = paragraph if not buffer else f"{buffer}\n\n{paragraph}"
@@ -503,7 +504,7 @@ class RAGKnowledgeBase:
         if buffer:
             merged.append(buffer)
 
-        chunks: List[str] = []
+        chunks: list[str] = []
         for paragraph in merged:
             if len(paragraph) <= chunk_size:
                 chunks.append(paragraph)
@@ -541,7 +542,7 @@ class RAGKnowledgeBase:
         if overlap <= 0 or len(chunks) <= 1:
             return [chunk for chunk in chunks if chunk.strip()]
 
-        overlapped: List[str] = [chunks[0]]
+        overlapped: list[str] = [chunks[0]]
         for chunk in chunks[1:]:
             previous = overlapped[-1]
             prefix = previous[-overlap:] if len(previous) > overlap else previous
@@ -597,7 +598,7 @@ class RAGKnowledgeBase:
         self.embeddings = None
         self._bm25_index = None
 
-        all_chunk_texts: List[str] = []
+        all_chunk_texts: list[str] = []
         for filename, text in self.documents.items():
             file_chunks = self._chunk_text(text)
             for index, chunk in enumerate(file_chunks):
@@ -623,7 +624,7 @@ class RAGKnowledgeBase:
         if not can_build:
             self._save()
             logger.warning("RAG rebuild aborted by embedding memory estimate: %s", build_message)
-            return build_message
+            return str(build_message)
 
         start_time = time.time()
         batch_size = 32
@@ -637,7 +638,7 @@ class RAGKnowledgeBase:
             if embedder is None:
                 self.embeddings = self._fallback_embed_texts(all_chunk_texts)
             else:
-                all_embeddings: List[Any] = []
+                all_embeddings: list[Any] = []
                 for start in range(0, len(all_chunk_texts), batch_size):
                     if start and watchdog.status.level >= 3:
                         self.embeddings = None
@@ -685,7 +686,7 @@ class RAGKnowledgeBase:
             f"{len(self.chunks)} chunks, dim {embedding_dim} in {elapsed:.1f}s."
         )
 
-    def search(self, query: str, top_k: int = DEFAULT_TOP_K) -> List[Tuple[str, str, float]]:
+    def search(self, query: str, top_k: int = DEFAULT_TOP_K) -> list[tuple[str, str, float]]:
         import numpy as np
 
         if self.embeddings is None or len(self.chunks) == 0:
@@ -704,7 +705,7 @@ class RAGKnowledgeBase:
         top_k = min(top_k, len(scores))
         top_indices = np.argsort(scores)[::-1][:top_k]
 
-        results: List[Tuple[str, str, float]] = []
+        results: list[tuple[str, str, float]] = []
         for index in top_indices:
             score = float(scores[index])
             if score <= 0.0:
@@ -713,7 +714,7 @@ class RAGKnowledgeBase:
             results.append((filename, chunk_text, score))
         return results
 
-    def _dense_search(self, query: str, top_k: int = 20) -> List[Tuple[int, float]]:
+    def _dense_search(self, query: str, top_k: int = 20) -> list[tuple[int, float]]:
         import numpy as np
 
         if self.embeddings is None or len(self.chunks) == 0:
@@ -732,7 +733,7 @@ class RAGKnowledgeBase:
         top_k = min(top_k, len(scores))
         indices = np.argsort(scores)[::-1][:top_k]
 
-        results: List[Tuple[int, float]] = []
+        results: list[tuple[int, float]] = []
         for index in indices:
             score = float(scores[index])
             if score <= 0.0:
@@ -745,12 +746,12 @@ class RAGKnowledgeBase:
         query: str,
         top_k: int = DEFAULT_TOP_K,
         candidate_k: int | None = None,
-    ) -> List[Tuple[str, str, float]]:
+    ) -> list[tuple[str, str, float]]:
         if candidate_k is None:
             candidate_k = int(self._rag_config.get("candidate_k", HYBRID_CANDIDATE_K))
 
         dense_results = self._dense_search(query, top_k=candidate_k)
-        bm25_results: List[Tuple[int, float]] = []
+        bm25_results: list[tuple[int, float]] = []
         if self._bm25_index is not None:
             try:
                 bm25_results = self._bm25_index.search(query, top_k=candidate_k)
@@ -770,13 +771,13 @@ class RAGKnowledgeBase:
                 for index, score in bm25_results[:top_k]
             ]
 
-        rrf_scores: Dict[int, float] = {}
+        rrf_scores: dict[int, float] = {}
         for rank, (index, _) in enumerate(dense_results):
             rrf_scores[index] = rrf_scores.get(index, 0.0) + 1.0 / (RRF_K + rank + 1)
         for rank, (index, _) in enumerate(bm25_results):
             rrf_scores[index] = rrf_scores.get(index, 0.0) + 1.0 / (RRF_K + rank + 1)
 
-        results: List[Tuple[str, str, float]] = []
+        results: list[tuple[str, str, float]] = []
         for index, score in sorted(rrf_scores.items(), key=lambda item: item[1], reverse=True)[
             :top_k
         ]:
@@ -785,7 +786,7 @@ class RAGKnowledgeBase:
                 results.append((filename, chunk_text, score))
         return results
 
-    def _get_reranker(self) -> Optional[CrossEncoderReranker]:
+    def _get_reranker(self) -> CrossEncoderReranker | None:
         if not self._rag_config.get("enable_reranker", True):
             return None
         if self._reranker is None:
@@ -799,9 +800,9 @@ class RAGKnowledgeBase:
     def _rerank_results(
         self,
         query: str,
-        results: List[Tuple[str, str, float]],
+        results: list[tuple[str, str, float]],
         top_k: int = DEFAULT_TOP_K,
-    ) -> List[Tuple[str, str, float]]:
+    ) -> list[tuple[str, str, float]]:
         if len(results) <= 1:
             return results[:top_k]
 
@@ -812,7 +813,7 @@ class RAGKnowledgeBase:
         passages = [text for _, text, _ in results]
         reranked = reranker.rerank(query, passages, top_k=top_k)
 
-        output: List[Tuple[str, str, float]] = []
+        output: list[tuple[str, str, float]] = []
         for original_index, rerank_score in reranked:
             if 0 <= original_index < len(results):
                 filename, chunk_text, _ = results[original_index]
@@ -824,7 +825,7 @@ class RAGKnowledgeBase:
         query: str,
         top_k: int = DEFAULT_TOP_K,
         fallback_keyword: bool = True,
-    ) -> List[str]:
+    ) -> list[str]:
         config = self._rag_config
         use_hybrid = bool(config.get("enable_hybrid", True)) and self._bm25_index is not None
         use_reranker = bool(config.get("enable_reranker", True))
@@ -852,7 +853,7 @@ class RAGKnowledgeBase:
         if "reranker_model" in updates:
             self._reranker = None
 
-    def _keyword_search(self, query: str, top_k: int = 3) -> List[Tuple[str, str, float]]:
+    def _keyword_search(self, query: str, top_k: int = 3) -> list[tuple[str, str, float]]:
         try:
             import jieba
 
@@ -863,7 +864,7 @@ class RAGKnowledgeBase:
         if not query_terms:
             return []
 
-        results: List[Tuple[str, str, float]] = []
+        results: list[tuple[str, str, float]] = []
         for filename, chunk_text, _ in self.chunks:
             haystack = chunk_text.lower()
             score = 0.0

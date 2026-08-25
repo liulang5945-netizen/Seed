@@ -22,7 +22,6 @@ from __future__ import annotations
 import logging
 from collections import deque
 from dataclasses import dataclass
-from typing import Optional
 
 import torch
 import torch.nn as nn
@@ -138,7 +137,7 @@ class STDPTracker:
     def __init__(
         self,
         history_length: int = 5,
-        stdp_rule: Optional[STDPRule] = None,
+        stdp_rule: STDPRule | None = None,
     ):
         self.history_length = history_length
         self.stdp_rule = stdp_rule or STDPRule()
@@ -442,7 +441,7 @@ class STDPTracker:
                 getattr(post_neuron, "excite_channels", {}),
                 getattr(post_neuron, "inhibit_channels", {}),
             ]:
-                for key in channel_dict.keys():
+                for key in channel_dict:
                     pre_id = key
                     if pre_id in neurons or pre_id in self._firing_history:
                         updates = self.apply_updates(post_neuron, pre_id)

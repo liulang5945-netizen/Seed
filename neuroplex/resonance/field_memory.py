@@ -24,7 +24,7 @@ import logging
 import os
 import pickle
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, cast
 
 import torch
 import torch.nn as nn
@@ -110,8 +110,8 @@ class FieldMemoryBank:
         self,
         dim: int = 4096,
         cosine_threshold: float = 0.92,
-        gate: Optional[WriteGate] = None,
-        projector: Optional[Any] = None,
+        gate: WriteGate | None = None,
+        projector: Any | None = None,
     ):
         self.dim = dim
         # 去重阈值：与现存记忆余弦 > threshold 视为重复（只保留显著新模式）
@@ -121,17 +121,17 @@ class FieldMemoryBank:
         # 缺口 L：跨域语义锚点投影（AnchorProjector）——检索在锚点空间进行
         # （跨域语义对齐的共享语义空间，而非原始场空间）；None = 场空间检索
         self.projector = projector
-        self.entries: List[Dict] = []
+        self.entries: list[dict] = []
 
     # ─── 固化 ───────────────────────────────────────────
 
     def consolidate(
         self,
-        vectors: List[torch.Tensor],
-        labels: List[str],
-        gate: Optional[WriteGate] = None,
-        texts: Optional[List[Optional[str]]] = None,
-        phases: Optional[List[Optional[float]]] = None,
+        vectors: list[torch.Tensor],
+        labels: list[str],
+        gate: WriteGate | None = None,
+        texts: list[str | None] | None = None,
+        phases: list[float | None] | None = None,
     ) -> int:
         """固化一批场记忆：L2 归一化 + 去重决策后追加。
 
@@ -155,7 +155,7 @@ class FieldMemoryBank:
             raise ValueError(f"vectors({len(vectors)}) 与 labels({len(labels)}) 数量不一致")
         gate = gate if gate is not None else self.gate
         added = 0
-        for i, (vec, label) in enumerate(zip(vectors, labels)):
+        for i, (vec, label) in enumerate(zip(vectors, labels, strict=False)):
             v = self._normalize(vec)
             if v is None:
                 continue
@@ -187,7 +187,7 @@ class FieldMemoryBank:
                     # C27 增量二（2026-08-14）：相位归属记忆（KoPE）——记忆沉淀
                     # 时的加权均值相角，注入时按该相位对齐 theta（None = 无相位）。
                     "phase": (
-                        float(phases[i])
+                        float(cast(float, phases[i]))
                         if phases and i < len(phases) and phases[i] is not None
                         else None
                     ),
@@ -196,14 +196,15 @@ class FieldMemoryBank:
             added += 1
         return added
 
-    def _normalize(self, vec: torch.Tensor) -> Optional[torch.Tensor]:
+    def _normalize(self, vec: torch.Tensor) -> torch.Tensor | None:
         v = vec.detach().float().flatten()
         if v.numel() != self.dim:
             return None
         norm = v.norm()
         if norm < 1e-8:
             return None
-        return v / norm
+        out: torch.Tensor = v / norm
+        return out
 
     def _max_sim(self, v: torch.Tensor) -> float:
         """与既有记忆的最近邻余弦（写门控的关键输入特征）。"""
@@ -219,7 +220,7 @@ class FieldMemoryBank:
 
     # ─── 检索 ───────────────────────────────────────────
 
-    def retrieve(self, query_vector: torch.Tensor, top_k: int = 1) -> List[Tuple[str, float]]:
+    def retrieve(self, query_vector: torch.Tensor, top_k: int = 1) -> list[tuple[str, float]]:
         """用查询向量对记忆库做余弦 top-k 检索（仅标签与相似度）。
 
         检索空间（二选一）：
@@ -238,7 +239,7 @@ class FieldMemoryBank:
 
     def retrieve_vectors(
         self, query_vector: torch.Tensor, top_k: int = 1
-    ) -> List[Tuple[str, float, torch.Tensor]]:
+    ) -> list[tuple[str, float, torch.Tensor]]:
         """带记忆向量的检索——C26 增量二"记忆可读进生成"的向量来源。
 
         与 retrieve 同检索逻辑，额外返回记忆向量本身（统一场空间快照，
@@ -263,7 +264,7 @@ class FieldMemoryBank:
         self,
         query_vector: torch.Tensor,
         top_k: int = 1,
-    ) -> List[Tuple[str, float, torch.Tensor, Optional[float]]]:
+    ) -> list[tuple[str, float, torch.Tensor, float | None]]:
         """带记忆相位的检索——C27 增量二（KoPE）相位归属记忆。
 
         与 retrieve_vectors 同检索逻辑，额外返回记忆沉淀时的加权均值相角
@@ -311,7 +312,7 @@ class FieldMemoryBank:
             for i in idx
         ]
 
-    def frequent_entries(self, min_access: int = 2, limit: Optional[int] = None) -> List[Dict]:
+    def frequent_entries(self, min_access: int = 2, limit: int | None = None) -> list[dict]:
         """高频未沉淀条目——海马→皮层沉淀候选（C26 增量三）。
 
         人脑对应：反复重放（高频检索）的记忆才值得从海马迁移到皮层；
@@ -335,7 +336,7 @@ class FieldMemoryBank:
             cands = cands[:limit]
         return [dict(e, idx=i) for i, e in cands]
 
-    def mark_consolidated(self, idxs: List[int]) -> int:
+    def mark_consolidated(self, idxs: list[int]) -> int:
         """标记条目已沉淀进皮层（重置访问计数，防重复重放）。
 
         Returns:
@@ -357,7 +358,7 @@ class FieldMemoryBank:
             "cosine_threshold": self.cosine_threshold,
             "entries": [
                 {
-                    "vector": e["vector"].cpu(),
+                    "vector": cast(torch.Tensor, e["vector"]).cpu(),
                     "anchor": e.get("anchor").cpu() if e.get("anchor") is not None else None,
                     "label": e["label"],
                     "text": e.get("text", e["label"]),

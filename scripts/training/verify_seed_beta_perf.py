@@ -28,14 +28,13 @@ import json
 import sys
 import time
 from pathlib import Path
-from typing import List
 
 REPO = Path(__file__).resolve().parents[2]
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
-import torch  # noqa: E402
 import _verify_emit  # noqa: E402
+import torch  # noqa: E402
 
 from seed import Seed  # noqa: E402
 
@@ -68,7 +67,7 @@ THROUGHPUT_PROMPTS = (
 
 
 def _prefix(prompt: str) -> bytes:
-    return f"问：{prompt}\n答：".encode("utf-8")
+    return f"问：{prompt}\n答：".encode()
 
 
 def main() -> int:
@@ -86,7 +85,7 @@ def main() -> int:
     model = Seed.from_checkpoint(envelope)
     load_seconds = time.perf_counter() - start
 
-    first_byte_samples: List[float] = []
+    first_byte_samples: list[float] = []
     for prompt in LATENCY_PROMPTS:
         start = time.perf_counter()
         model.generate(_prefix(prompt), 1, sample=False)

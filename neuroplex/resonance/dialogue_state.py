@@ -16,7 +16,7 @@
 from __future__ import annotations
 
 from collections import deque
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import torch
 
@@ -47,7 +47,7 @@ class DialogueState:
     def __init__(
         self,
         max_rounds: int = 5,
-        round_token_id: Optional[int] = None,
+        round_token_id: int | None = None,
     ):
         """初始化对话状态管理器。
 
@@ -68,7 +68,7 @@ class DialogueState:
         self._current_round: int = -1
 
         # 对话历史（文本，用于 debug/日志，不参与推理）
-        self._dialogue_history: List[Dict[str, str]] = []
+        self._dialogue_history: list[dict[str, str]] = []
 
     @property
     def current_round(self) -> int:
@@ -80,7 +80,7 @@ class DialogueState:
         """已完成的轮次数。"""
         return len(self._round_states)
 
-    def start_round(self, field: Optional[Any] = None) -> Optional[Dict[str, torch.Tensor]]:
+    def start_round(self, field: Any | None = None) -> dict[str, torch.Tensor] | None:
         """开始新一轮对话。
 
         如果有保存的 field_state，加载最近一轮的 state 到 field。
@@ -100,7 +100,7 @@ class DialogueState:
             return None
 
         # 加载最近一轮的 field_state
-        last_state = self._round_states[-1]
+        last_state: dict = self._round_states[-1]
         if field is not None:
             field.load_round_state(last_state)
         return last_state
@@ -129,7 +129,7 @@ class DialogueState:
         if len(self._dialogue_history) > self.max_rounds * 2 + 2:
             self._dialogue_history = self._dialogue_history[-(self.max_rounds * 2 + 2) :]
 
-    def get_dialogue_history(self) -> List[Dict[str, str]]:
+    def get_dialogue_history(self) -> list[dict[str, str]]:
         """获取对话历史（用于 debug/日志）。"""
         return list(self._dialogue_history)
 
@@ -140,7 +140,7 @@ class DialogueState:
         """
         return self.round_token_id is not None and self._current_round > 0
 
-    def prepend_round_token(self, general_ids: List[int]) -> List[int]:
+    def prepend_round_token(self, general_ids: list[int]) -> list[int]:
         """在 prompt general_ids 前插入轮次标记 token。
 
         Args:
@@ -151,7 +151,10 @@ class DialogueState:
         """
         if not self.should_prepend_round_token():
             return general_ids
-        return [self.round_token_id] + general_ids
+        token_id = self.round_token_id
+        if token_id is None:
+            return general_ids
+        return [token_id] + general_ids
 
     def reset(self) -> None:
         """重置对话状态（新会话开始时调用）。"""

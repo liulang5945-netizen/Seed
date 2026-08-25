@@ -1,0 +1,125 @@
+{
+  "canvas_version": "1.1",
+  "project": "Seed",
+  "round": "R6",
+  "analyzed_at": "2026-08-24T21:40:00Z",
+  "fixed_at": "2026-08-24T21:40:00Z",
+  "layout": {
+    "type": "grid",
+    "columns": 2,
+    "gap": 16,
+    "max_width": 1080
+  },
+  "sections": [
+    {
+      "id": "header",
+      "type": "hero",
+      "span": "full",
+      "title": "Seed — Harness 实践分析报告 (R6 — 深度消减轮)",
+      "subtitle": "R6 全部 6 项已修复 · mypy/B/SIM 深度消减 + 覆盖率/安全评估 — 0 项待办",
+      "score": "A",
+      "score_rationale": "neuroplex mypy 按冻结边界分治（移出 251 + 实修至 212，棘轮 580→212）；ruff B/SIM 202→0 转正 blocking（补 56 处异常链）；补 15 用例门禁 21.8（实测 21.91%）；pip-audit 完成转正评估（维持 advisory）。",
+      "quick_wins": [],
+      "category_scores": {
+        "ci_cd": "A", "testing": "A", "code_quality": "A",
+        "build_packaging": "A", "security": "A-", "dev_workflow": "A-"
+      }
+    },
+    {
+      "id": "severity_distribution",
+      "type": "donut_chart",
+      "span": 1,
+      "title": "严重度分布（R6）",
+      "data": [
+        { "label": "Critical", "value": 0, "color": "#ef4444" },
+        { "label": "High", "value": 2, "color": "#f97316", "note": "fixed" },
+        { "label": "Medium", "value": 2, "color": "#eab308", "note": "fixed" },
+        { "label": "Low", "value": 2, "color": "#22c55e", "note": "fixed" }
+      ]
+    },
+    {
+      "id": "gate_state",
+      "type": "list",
+      "span": 1,
+      "title": "门禁现状（R6 后）",
+      "items": [
+        "ruff E/F/W/I/UP → blocking（0 违规）",
+        "ruff B/SIM → blocking（202 → 0，B008/冻结模块豁免）",
+        "black → blocking（288 文件 clean）",
+        "mypy 核心 seed/taiji → blocking（0 错误）",
+        "mypy 全量 → 棘轮 ≤212（580 → 212，冻结模块移出度量面）",
+        "覆盖率 → fail_under=21.8（实测 21.91%）+ CI 趋势摘要",
+        "ESLint → errors blocking（0 errors / 18 warnings）",
+        "Docker → compose build + 启动冒烟 + HEALTHCHECK",
+        "pip-audit → advisory（评估完成，传递依赖修复列入 R7）"
+      ]
+    },
+    {
+      "id": "improvement_delta",
+      "type": "comparison",
+      "span": "full",
+      "title": "R1 → R6 改进轨迹",
+      "trajectory": [
+        { "round": "R1", "score": "C+", "findings": 18, "critical": 2, "high": 5, "key_gaps": ["无 lint 门禁", "前端零测试", "无 pre-commit"] },
+        { "round": "R2", "score": "B-", "findings": 14, "critical": 0, "high": 3, "key_gaps": ["ESLint advisory", "覆盖率=0", "mypy 未入 CI"] },
+        { "round": "R3", "score": "B+", "findings": 9, "critical": 0, "high": 0, "key_gaps": ["E2E 未入 CI", "Docker 未验证"] },
+        { "round": "R4", "score": "A", "findings": 8, "critical": 0, "high": 1, "key_gaps": ["I/UP 1922 清债", "mypy 基线", "组件测试"] },
+        { "round": "R5", "score": "A", "findings": 7, "critical": 0, "high": 0, "key_gaps": ["mypy 消减", "ESLint 207→18", "覆盖率爬坡"] },
+        { "round": "R6", "score": "A", "findings": 0, "critical": 0, "high": 0, "key_gaps": [], "note": "深度消减轮：mypy 580→212 / B/SIM 202→0 / 门禁 21.8 / 安全评估" }
+      ]
+    },
+    {
+      "id": "metrics",
+      "type": "stat_row",
+      "span": "full",
+      "title": "R6 量化成果",
+      "items": [
+        { "label": "mypy 全量错误", "before": "580", "after": "212（冻结移出 251 + 实修消减）" },
+        { "label": "ruff B/SIM", "before": "202", "after": "0（转 blocking）" },
+        { "label": "异常链补全", "before": "63 处缺失", "after": "56 from e + 6 from None" },
+        { "label": "覆盖率", "before": "21.74%（门禁 21.5）", "after": "21.91%（门禁 21.8）" },
+        { "label": "Python 测试", "before": "240", "after": "255 (+15)" },
+        { "label": "pip-audit", "before": "未评估", "after": "评估完成，维持 advisory" }
+      ]
+    },
+    {
+      "id": "all_findings",
+      "type": "finding_cards",
+      "span": "full",
+      "title": "全部发现（R6，均已修复）",
+      "findings_ref": ["I01", "I02", "I03", "I04", "I05", "I06"]
+    },
+    {
+      "id": "next_round",
+      "type": "roadmap",
+      "span": "full",
+      "title": "R7 候选方向",
+      "phases": [
+        {
+          "name": "mypy 深水区",
+          "time": "持续",
+          "items": [
+            { "text": "neuroplex 212 按模块分批消减（先补测试再解冻）" },
+            { "text": "棘轮 212 → 100 → 0" }
+          ]
+        },
+        {
+          "name": "依赖安全",
+          "time": "1 周",
+          "items": [
+            { "text": "aiohttp 3.14.2→3.14.3 / datasets 5.0.0→5.0.1" },
+            { "text": "pip-audit 连续无高危后转 blocking" }
+          ]
+        },
+        {
+          "name": "覆盖率爬坡",
+          "time": "每轮 +0.5-1%",
+          "items": [
+            { "text": "routes_terminal / routes_rag / routes_neuroplex 补测" },
+            { "text": "fail_under 21.8 → 22.5 → 23" }
+          ]
+        }
+      ]
+    }
+  ]
+}

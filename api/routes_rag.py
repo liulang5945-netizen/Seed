@@ -5,12 +5,13 @@ RAG 知识库 API 路由
 import logging
 import os
 import shutil
+from typing import Any
 
-from fastapi import APIRouter, HTTPException, UploadFile, File, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, File, HTTPException, UploadFile
 
+from neuroplex.tools.rag import RAGConfig, RAGKnowledgeBase
 from seed_platform.app_state import app_state
 from seed_platform.paths import get_external_path
-from neuroplex.tools.rag import RAGKnowledgeBase, RAGConfig
 
 from .models import RAGSearchRequest
 
@@ -18,7 +19,7 @@ logger = logging.getLogger("ApiServer.RAG")
 router = APIRouter()
 
 
-def _ensure_rag_kb() -> object | None:
+def _ensure_rag_kb() -> Any | None:
     """Create the optional Legacy RAG adapter without coupling platform state to it."""
 
     if app_state.rag_kb is None:
@@ -53,7 +54,8 @@ def upload_rag_document(
     try:
         doc_dir = get_external_path("docs")
         os.makedirs(doc_dir, exist_ok=True)
-        file_path = os.path.join(doc_dir, os.path.basename(file.filename))
+        upload_name = file.filename or "document"
+        file_path = os.path.join(doc_dir, os.path.basename(upload_name))
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         bg_tasks.add_task(_process_rag_file_background, file_path)
@@ -64,29 +66,66 @@ def upload_rag_document(
     except Exception as e:
         logger.error(f"RAG 添加文件失败: {e}")
         logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from e
 
 
-@router.delete("/api/rag/clear")
+@router.post("/api/rag/clear")
 async def clear_rag_documents():
-    """清空 RAG 知识库及本地文档"""
+    """清空 RAG 知识库索引及本地文档（不可恢复，前端需二次确认）"""
     try:
         doc_dir = get_external_path("docs")
         if os.path.exists(doc_dir):
             shutil.rmtree(doc_dir, ignore_errors=True)
-        app_state.update_rag_kb(RAGKnowledgeBase(persist_dir=get_external_path("rag_data")))
-        return {"status": "success", "message": "知识库已清空！"}
+        removed = 0
+        kb: Any = app_state.rag_kb
+        if kb is not None:
+            names = list(kb.get_doc_names())
+            removed = len(names)
+            for name in names:
+                kb.remove_file(name)
+            kb.rebuild_index()
+        return {"status": "success", "removed": removed, "message": "知识库已清空！"}
     except Exception as e:
         logger.error(f"RAG 清空失败: {e}")
         logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from e
 
 
 @router.get("/api/rag/files")
 def list_rag_files():
-    """获取已挂载的 RAG 文件列表"""
+    """获取已挂载的 RAG 文件列表（含大小/修改时间/索引状态）
+
+    返回 {"files": [{"name", "size"?, "mtime"?, "status"?}]}：
+    - size/mtime 来自本地文档目录的文件系统信息，不可得时省略；
+    - status 为 "indexed"（已建入索引）或 "pending"（仅落盘待索引）。
+    """
     kb = _ensure_rag_kb()
-    return {"files": kb.get_doc_names() if kb is not None else []}
+    indexed = set(kb.get_doc_names()) if kb is not None else set()
+    doc_dir = get_external_path("docs")
+    files: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    try:
+        names = sorted(os.listdir(doc_dir)) if os.path.isdir(doc_dir) else []
+    except OSError:
+        names = []
+    for name in names:
+        file_path = os.path.join(doc_dir, name)
+        if not os.path.isfile(file_path):
+            continue
+        seen.add(name)
+        entry: dict[str, Any] = {"name": name}
+        try:
+            stat = os.stat(file_path)
+            entry["size"] = stat.st_size
+            entry["mtime"] = stat.st_mtime
+        except OSError:
+            pass
+        entry["status"] = "indexed" if name in indexed else "pending"
+        files.append(entry)
+    # 索引中存在但本地文档目录已缺失的记录（如持久化残留）
+    for name in sorted(indexed - seen):
+        files.append({"name": name, "status": "indexed"})
+    return {"files": files}
 
 
 @router.delete("/api/rag/file/{filename:path}")
@@ -108,7 +147,7 @@ def delete_rag_file(filename: str):
         raise
     except Exception as e:
         logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from e
 
 
 # ======================== RAG 检索策略配置 API ========================
@@ -123,7 +162,7 @@ async def get_rag_config():
     except Exception as e:
         logger.error(f"获取 RAG 配置失败: {e}")
         logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from e
 
 
 @router.put("/api/rag/config")
@@ -150,14 +189,14 @@ async def update_rag_config(updates: dict):
     except Exception as e:
         logger.error(f"更新 RAG 配置失败: {e}")
         logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from e
 
 
 @router.get("/api/rag/status")
 async def get_rag_status():
     """获取 RAG 知识库状态信息"""
     try:
-        kb = app_state.rag_kb
+        kb: Any = app_state.rag_kb
         if not kb:
             return {"status": "not_initialized"}
         return {
@@ -172,14 +211,14 @@ async def get_rag_status():
     except Exception as e:
         logger.error(f"获取 RAG 状态失败: {e}")
         logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from e
 
 
 @router.get("/api/rag/stats")
 async def get_rag_stats():
     """知识库统计（前端 KB 页工具栏用，形状与 /api/rag/status 对齐）。"""
     try:
-        kb = app_state.rag_kb
+        kb: Any = app_state.rag_kb
         if not kb:
             return {"status": "ok", "doc_count": 0, "chunk_count": 0}
         return {
@@ -193,30 +232,14 @@ async def get_rag_stats():
         return {"status": "error", "doc_count": 0, "chunk_count": 0}
 
 
-@router.delete("/api/rag/clear")
-async def clear_rag():
-    """清空知识库索引（保留磁盘文件需另走逐文件删除）。"""
-    try:
-        kb = app_state.rag_kb
-        if not kb:
-            return {"status": "success", "removed": 0}
-        removed = len(kb.get_doc_names())
-        for name in list(kb.get_doc_names()):
-            kb.remove_file(name)
-        kb.rebuild_index()
-        return {"status": "success", "removed": removed}
-    except Exception as e:
-        logger.error(f"清空 RAG 知识库失败: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
-
-
 @router.post("/api/rag/search")
 async def rag_search(req: RAGSearchRequest):
     """在知识库中进行语义搜索"""
     try:
-        if not app_state.rag_kb or not app_state.rag_kb.chunks:
+        kb: Any = app_state.rag_kb
+        if not kb or not kb.chunks:
             return {"results": []}
-        results = app_state.rag_kb.search(req.query, top_k=req.top_k)
+        results = kb.search(req.query, top_k=req.top_k)
         return {"results": results}
     except Exception as e:
         logger.error(f"RAG 搜索失败: {e}")
@@ -232,7 +255,7 @@ def rag_preview(filename: str):
         if not (doc_path == doc_dir or doc_path.startswith(doc_dir + os.sep)):
             raise HTTPException(status_code=403, detail="路径不安全")
         if os.path.exists(doc_path):
-            with open(doc_path, "r", encoding="utf-8", errors="replace") as f:
+            with open(doc_path, encoding="utf-8", errors="replace") as f:
                 content = f.read(10000)
             return {"content": content}
         return {"content": "(文件不存在)"}
@@ -240,4 +263,4 @@ def rag_preview(filename: str):
         raise
     except Exception as e:
         logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from e

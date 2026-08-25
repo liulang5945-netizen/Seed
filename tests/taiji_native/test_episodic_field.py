@@ -109,7 +109,7 @@ def test_action_outcome_experience_is_atomic_and_checkpoint_exact() -> None:
 
     assert left.memory_write_strength == right.memory_write_strength
     assert left.memory_write_strength > 0.0
-    for a, b in zip(original.parameter_tensors(), restored.parameter_tensors()):
+    for a, b in zip(original.parameter_tensors(), restored.parameter_tensors(), strict=False):
         assert torch.equal(a, b)
 
 

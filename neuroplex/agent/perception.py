@@ -5,9 +5,8 @@ Cortex 感知系统
 将 Taiji 的工作台状态、文件树、系统信息编码为模型可理解的 token 序列。
 """
 
-import os
 import logging
-from typing import Dict
+import os
 
 logger = logging.getLogger("Cortex.Perception")
 
@@ -42,9 +41,9 @@ class PerceptionSystem:
 
         tree_text = self._build_file_tree(workspace_path)
         encoded = self.tokenizer._encode(f"<observe><tree>{tree_text}</tree></observe>")
-        return encoded
+        return list(encoded)
 
-    def encode_system_state(self, state: Dict) -> list:
+    def encode_system_state(self, state: dict) -> list:
         """
         编码系统状态
 
@@ -54,7 +53,7 @@ class PerceptionSystem:
         输出: <observe><state>device=cpu\nmemory=8GB\nmodel=125M</state></observe>
         """
         state_text = "\n".join(f"{k}={v}" for k, v in state.items())
-        return self.tokenizer._encode(f"<observe><state>{state_text}</state></observe>")
+        return list(self.tokenizer._encode(f"<observe><state>{state_text}</state></observe>"))
 
     def encode_tool_result(self, tool_name: str, result: str, max_len: int = 400) -> list:
         """
@@ -64,11 +63,11 @@ class PerceptionSystem:
         """
         if len(result) > max_len:
             result = result[:max_len] + "...(截断)"
-        return self.tokenizer._encode(f"<tool_result>{result}</tool_result>")
+        return list(self.tokenizer._encode(f"<tool_result>{result}</tool_result>"))
 
     def encode_observe(self, content: str) -> list:
         """通用观察编码"""
-        return self.tokenizer._encode(f"<observe>{content}</observe>")
+        return list(self.tokenizer._encode(f"<observe>{content}</observe>"))
 
     def _build_file_tree(self, path: str) -> str:
         """构建文件树文本"""

@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 import argparse
-from collections import Counter, defaultdict
 import json
-from pathlib import Path
 import sys
-from typing import Dict, Literal, Tuple
+from collections import Counter, defaultdict
+from pathlib import Path
+from typing import Literal
 
-import torch
 import _verify_emit
+import torch
 import torch.nn.functional as F
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -24,8 +24,8 @@ AMBIGUOUS = ord("x")
 
 
 def _first_order_accuracy(data: bytes) -> float:
-    followers: Dict[int, Counter[int]] = defaultdict(Counter)
-    for current, following in zip(data, data[1:]):
+    followers: dict[int, Counter[int]] = defaultdict(Counter)
+    for current, following in zip(data, data[1:], strict=False):
         followers[int(current)][int(following)] += 1
     counts = followers[AMBIGUOUS]
     best_count = max(counts.values())
@@ -34,7 +34,7 @@ def _first_order_accuracy(data: bytes) -> float:
     return sum(target == prediction for target in targets) / len(targets)
 
 
-def _centroid_cosine(groups: Dict[int, list[torch.Tensor]]) -> float:
+def _centroid_cosine(groups: dict[int, list[torch.Tensor]]) -> float:
     ordered = sorted(groups)
     if len(ordered) != 2:
         raise ValueError("N7 requires exactly two ambiguous successor groups")
@@ -47,14 +47,14 @@ def _evaluate(
     model: Taiji,
     *,
     lesion: Literal["none", "trace", "all"] = "none",
-) -> Tuple[float, Dict[str, float], list[Dict[str, int]]]:
+) -> tuple[float, dict[str, float], list[dict[str, int]]]:
     model.reset_dynamics(episode_id=f"n7-{lesion}")
     sequence = (model.config.boundary_symbol, *DATA, model.config.boundary_symbol)
     hits = []
     rows = []
-    contexts: Dict[int, list[torch.Tensor]] = defaultdict(list)
-    fast: Dict[int, list[torch.Tensor]] = defaultdict(list)
-    slow: Dict[int, list[torch.Tensor]] = defaultdict(list)
+    contexts: dict[int, list[torch.Tensor]] = defaultdict(list)
+    fast: dict[int, list[torch.Tensor]] = defaultdict(list)
+    slow: dict[int, list[torch.Tensor]] = defaultdict(list)
     for index, symbol in enumerate(sequence[:-1]):
         if lesion == "all":
             model.reset_dynamics(episode_id=f"n7-all-{index}")
@@ -87,7 +87,7 @@ def _evaluate(
     return sum(hits) / len(hits), diagnostics, rows
 
 
-def run_benchmark(*, epochs: int = 200, seed: int = 7) -> Dict[str, object]:
+def run_benchmark(*, epochs: int = 200, seed: int = 7) -> dict[str, object]:
     config = TaijiConfig(
         region_sizes=(64, 48),
         synapse_fan_in=16,

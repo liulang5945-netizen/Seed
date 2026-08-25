@@ -21,12 +21,11 @@
   多个需求同时高时，优先级竞争
 """
 
-import os
 import json
-import time
 import logging
+import os
 import threading
-from typing import List, Optional
+import time
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -119,11 +118,11 @@ class LifeScheduler:
         self.needs = NeedsState()
         self._life_state = "idle"  # idle / feeding / sleeping / playing / working
         self._is_running = False
-        self._thread: Optional[threading.Thread] = None
+        self._thread: threading.Thread | None = None
         self._stop_event = threading.Event()
-        self._event_log: List[LifeEvent] = []
-        self._last_heartbeat: Optional[datetime] = None
-        self._last_activity: Optional[datetime] = None
+        self._event_log: list[LifeEvent] = []
+        self._last_heartbeat: datetime | None = None
+        self._last_activity: datetime | None = None
         self._total_heartbeats = 0
         self._lock = threading.Lock()
 
@@ -250,9 +249,9 @@ class LifeScheduler:
                     logger.debug(
                         f"生命调质覆盖: stress={needs.stress:.0f} curiosity={needs.curiosity:.0f} "
                         f"boredom={needs.boredom:.0f} fatigue={needs.fatigue:.0f} → "
-                        f"DA={'%.2f' % dopamine_target if dopamine_target is not None else 'skip'}, "
-                        f"5HT={'%.2f' % serotonin_target if serotonin_target is not None else 'skip'}, "
-                        f"NE={'%.2f' % norepinephrine_target if norepinephrine_target is not None else 'skip'}"
+                        f"DA={format(dopamine_target, '.2f') if dopamine_target is not None else 'skip'}, "
+                        f"5HT={format(serotonin_target, '.2f') if serotonin_target is not None else 'skip'}, "
+                        f"NE={format(norepinephrine_target, '.2f') if norepinephrine_target is not None else 'skip'}"
                     )
 
                 # EMA 趋近（让调质缓慢变化）
@@ -473,7 +472,7 @@ class LifeScheduler:
             "total_events": len(self._event_log),
         }
 
-    def get_timeline(self, hours: int = 24) -> List[dict]:
+    def get_timeline(self, hours: int = 24) -> list[dict]:
         """获取最近 N 小时的生命时间线"""
         cutoff = datetime.now().timestamp() - hours * 3600
         timeline = []
@@ -627,7 +626,7 @@ class LifeScheduler:
 
         self.needs.clamp_all()
 
-    def _decide_action(self) -> Optional[str]:
+    def _decide_action(self) -> str | None:
         """
         根据当前需求决定下一步行动。
 
@@ -959,7 +958,7 @@ class LifeScheduler:
         if not os.path.exists(path):
             return
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 state = json.load(f)
             needs = state.get("needs", {})
             self.needs.hunger = needs.get("hunger", 30)
@@ -976,7 +975,7 @@ class LifeScheduler:
         events_path = os.path.join(self.data_dir, "life_events.json")
         if os.path.exists(events_path):
             try:
-                with open(events_path, "r", encoding="utf-8") as f:
+                with open(events_path, encoding="utf-8") as f:
                     events_data = json.load(f)
                 for item in events_data:
                     self._event_log.append(LifeEvent(**item))
@@ -986,7 +985,7 @@ class LifeScheduler:
 
 # ─── 全局实例 ─────────────────────────────────────
 
-_global_life: Optional[LifeScheduler] = None
+_global_life: LifeScheduler | None = None
 
 
 def get_life_scheduler() -> LifeScheduler:

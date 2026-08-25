@@ -15,14 +15,15 @@
 4. 从错误中学习 —— 每一次失败都是进化的养料
 """
 
-import os
 import json
 import logging
+import os
 import threading
-from datetime import datetime
-from typing import Dict, List, Optional, Any, Callable
-from dataclasses import dataclass, field
 from collections import deque
+from collections.abc import Callable
+from dataclasses import dataclass, field
+from datetime import datetime
+from typing import Any
 
 logger = logging.getLogger("EvolutionEngine")
 
@@ -34,7 +35,7 @@ class EvolutionEvent:
     timestamp: str
     event_type: str  # "task_success" | "task_failure" | "tool_error" | "new_pattern"
     task: str = ""
-    details: Dict[str, Any] = field(default_factory=dict)
+    details: dict[str, Any] = field(default_factory=dict)
     impact_score: float = 0.0  # 对进化的影响分数
 
 
@@ -48,8 +49,8 @@ class GrowthMetrics:
     tool_calls_correct: int = 0
     evolution_cycles: int = 0
     current_phase: str = "infant"  # infant → child → adolescent → adult
-    knowledge_domains: Dict[str, float] = field(default_factory=dict)
-    user_patterns: Dict[str, int] = field(default_factory=dict)
+    knowledge_domains: dict[str, float] = field(default_factory=dict)
+    user_patterns: dict[str, int] = field(default_factory=dict)
 
 
 class EvolutionEngine:
@@ -94,7 +95,7 @@ class EvolutionEngine:
         self,
         data_dir: str = None,
         auto_evolve: bool = True,
-        evolve_callback: Optional[Callable] = None,
+        evolve_callback: Callable | None = None,
     ):
         if data_dir is None:
             try:
@@ -125,11 +126,11 @@ class EvolutionEngine:
         self._recent_train_losses: deque = deque(maxlen=200)
 
         # 用户习惯追踪
-        self._user_tool_preferences: Dict[str, int] = {}
-        self._user_task_types: Dict[str, int] = {}
+        self._user_tool_preferences: dict[str, int] = {}
+        self._user_task_types: dict[str, int] = {}
 
         # 上次进化时间
-        self._last_evolution_time: Optional[datetime] = None
+        self._last_evolution_time: datetime | None = None
         self._tasks_since_evolution = 0
 
         # 神经元架构组件引用（由 set_brain_interfaces 注入）
@@ -261,7 +262,7 @@ class EvolutionEngine:
 
     # ─── 事件记录 ───────────────────────────────────
 
-    def record_task_success(self, task: str, steps: List[dict], final_answer: str):
+    def record_task_success(self, task: str, steps: list[dict], final_answer: str):
         """记录一次成功的任务完成"""
         with self._lock:
             self.metrics.tasks_completed += 1
@@ -311,7 +312,7 @@ class EvolutionEngine:
 
             self._save_metrics()
 
-    def record_task_failure(self, task: str, error: str, steps: Optional[List[dict]] = None):
+    def record_task_failure(self, task: str, error: str, steps: list[dict] | None = None):
         """记录一次失败的任务"""
         with self._lock:
             self.metrics.tasks_failed += 1
@@ -595,7 +596,7 @@ class EvolutionEngine:
         success_rate: float,
         top_tools: list,
         top_task_types: list,
-    ) -> List[str]:
+    ) -> list[str]:
         """基于数据分析生成进化建议"""
         recs = []
 
@@ -684,7 +685,7 @@ class EvolutionEngine:
         if not os.path.exists(path):
             return
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = json.load(f)
             self.metrics.tasks_completed = data.get("tasks_completed", 0)
             self.metrics.tasks_failed = data.get("tasks_failed", 0)
@@ -730,7 +731,7 @@ class EvolutionEngine:
             )[0],
         }
 
-    def get_training_recommendations(self) -> List[dict]:
+    def get_training_recommendations(self) -> list[dict]:
         """
         生成训练数据建议。
 
@@ -802,7 +803,7 @@ class EvolutionEngine:
 
 # ─── 全局实例 ─────────────────────────────────────
 
-_global_evolution: Optional[EvolutionEngine] = None
+_global_evolution: EvolutionEngine | None = None
 
 
 def get_evolution_engine() -> EvolutionEngine:

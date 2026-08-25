@@ -14,7 +14,7 @@
       >
         {{ runtimeStore.connectionStatus }}
       </n-tag>
-      <button class="btn btn-outline" @click="toast('生命状态报告导出中...', 'info')">
+      <button class="btn btn-outline" @click="exportReport">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
           <polyline points="7 10 12 15 17 10" />
@@ -26,6 +26,27 @@
 
     <!-- ═══ 滚动内容区 ═══ -->
     <div class="scroll-area">
+
+      <!-- ═══ 生命活动操作栏（从 git 历史恢复，接 /api/life/*） ═══ -->
+      <section class="action-bar">
+        <span class="action-bar-title">生命活动</span>
+        <div class="action-buttons">
+          <button class="btn btn-life" style="--life-color: var(--chart-2);" :disabled="actionLoading" @click="feedTaiji">
+            <span class="life-btn-emoji">🍚</span>喂养
+          </button>
+          <button class="btn btn-life" style="--life-color: var(--chart-1);" :disabled="actionLoading" @click="sleepTaiji">
+            <span class="life-btn-emoji">💤</span>睡眠
+          </button>
+          <button class="btn btn-life" style="--life-color: var(--chart-3);" :disabled="actionLoading" @click="playTaiji">
+            <span class="life-btn-emoji">🎮</span>玩耍
+          </button>
+          <button class="btn btn-life" style="--life-color: var(--chart-4);" :disabled="actionLoading" @click="evolveTaiji">
+            <span class="life-btn-emoji">🧬</span>进化
+          </button>
+        </div>
+        <span v-if="currentActivity" class="action-current">{{ currentActivity }}</span>
+        <span v-if="actionResult" class="action-result">{{ actionResult }}</span>
+      </section>
 
       <template v-if="runtimeStore.health.isTaiji">
         <section class="native-taiji-status">
@@ -81,269 +102,137 @@
 
       <template v-else>
 
-      <!-- ═══ KPI 卡片行 ═══ -->
+      <!-- ═══ KPI 卡片行（全部来自 /api/life/status 与运行时实测，无估算值） ═══ -->
       <div class="kpi-grid">
-        <!-- 卡1：神经元总数 -->
+        <!-- 卡1：累计交互 -->
         <div class="kpi-card" style="--kpi-color: var(--chart-1);">
           <div class="kpi-label">
-            <svg class="kpi-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="9" r="1.8"/><circle cx="15" cy="9" r="1.8"/><circle cx="12" cy="15" r="1.8"/><path d="M12 3v1.5M12 19.5V21M3 12h1.5M19.5 12H21"/></svg>
-            神经元总数
+            <svg class="kpi-icon" viewBox="0 0 24 24"><path d="M8 10h8M8 14h5"/><path d="M21 12a8 8 0 0 1-11.6 7.2L4 21l1.8-5.4A8 8 0 1 1 21 12Z"/></svg>
+            累计交互
           </div>
-          <div class="kpi-value">{{ (1247 + (life.total_interactions || 0)).toLocaleString() }}</div>
-          <div class="kpi-trend trend-up">
-            <svg class="tr-icon" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
-            ↑12
-          </div>
+          <div class="kpi-value">{{ life.total_interactions != null ? Number(life.total_interactions).toLocaleString() : '暂无数据' }}</div>
+          <div class="kpi-trend trend-stable"><span class="kpi-src">来自 /api/life/status</span></div>
         </div>
 
-        <!-- 卡2：活跃神经元 -->
+        <!-- 卡2：运行时长 -->
         <div class="kpi-card" style="--kpi-color: var(--chart-2);">
           <div class="kpi-label">
-            <svg class="kpi-icon" viewBox="0 0 24 24"><path d="M3 12h3l1.5-6 3 12 1.5-6h8"/></svg>
-            活跃神经元
+            <svg class="kpi-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+            运行时长
           </div>
-          <div class="kpi-value">{{ Math.round((1247 + (life.total_interactions || 0)) * 0.873).toLocaleString() }}</div>
-          <div class="kpi-trend trend-up">
-            <svg class="tr-icon" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></svg>
-            ↑47
-          </div>
+          <div class="kpi-value">{{ life.uptime_seconds != null ? fmtTime(life.uptime_seconds) : '暂无数据' }}</div>
+          <div class="kpi-trend trend-stable"><span class="kpi-src">调度器 uptime</span></div>
         </div>
 
-        <!-- 卡3：共振强度 -->
+        <!-- 卡3：生命调度器 -->
         <div class="kpi-card" style="--kpi-color: var(--chart-3);">
           <div class="kpi-label">
-            <svg class="kpi-icon" viewBox="0 0 24 24"><path d="M3 12h2M7 8v8M11 5v14M15 8v8M19 12h2"/></svg>
-            共振强度
+            <svg class="kpi-icon" viewBox="0 0 24 24"><path d="M3 12h3l1.5-6 3 12 1.5-6h8"/></svg>
+            生命调度器
           </div>
-          <div class="kpi-value">{{ (life.needs && life.needs.curiosity != null ? Math.min(0.99, 0.5 + life.needs.curiosity / 200) : 0.72).toFixed(2) }}</div>
-          <div class="kpi-trend trend-stable">
-            <svg class="tr-icon" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
-            稳定
-          </div>
+          <div class="kpi-value">{{ life.is_running != null ? (life.is_running ? '运行中' : '未启动') : '暂无数据' }}</div>
+          <div class="kpi-trend trend-stable"><span class="kpi-src">life_scheduler 状态</span></div>
         </div>
 
-        <!-- 卡4：系统能量 -->
+        <!-- 卡4：内存余量 -->
         <div class="kpi-card" style="--kpi-color: var(--chart-4);">
           <div class="kpi-label">
             <svg class="kpi-icon" viewBox="0 0 24 24"><rect x="7" y="5" width="4" height="14" rx="1"/><rect x="13" y="7" width="4" height="10" rx="1"/></svg>
-            系统能量
+            内存余量
           </div>
-          <div class="kpi-value">{{ runtimeStore.memoryAvailablePct != null ? Math.round(runtimeStore.memoryAvailablePct) + '%' : '87%' }}</div>
-          <div class="kpi-trend trend-down">
-            <svg class="tr-icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
-            ↓3
-          </div>
+          <div class="kpi-value">{{ runtimeStore.memoryAvailablePct != null ? Math.round(runtimeStore.memoryAvailablePct) + '%' : '暂无数据' }}</div>
+          <div class="kpi-trend trend-stable"><span class="kpi-src">系统可用内存</span></div>
         </div>
       </div>
 
-      <!-- ═══ 双图表行 ═══ -->
+      <!-- ═══ 双面板行：需求五维雷达（真实需求值）+ 生命表达 ═══ -->
       <div class="chart-grid">
-        <!-- 能力雷达图 -->
         <div class="panel">
           <div class="panel-head">
             <span class="panel-title">
               <svg class="pt-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" opacity="0.3"/></svg>
-              能力雷达图
+              需求五维雷达
             </span>
-            <span class="panel-sub">六维度评估</span>
+            <span class="panel-sub">实时需求值</span>
           </div>
           <div class="chart-wrap">
-            <svg viewBox="0 0 400 300">
-              <!-- 网格六边形 -->
-              <polygon points="200,50 329.9,125 329.9,225 200,300 70.1,225 70.1,125" fill="none" stroke="var(--border)" stroke-width="1" opacity="0.6"/>
-              <polygon points="200,75 297.5,131.5 297.5,218.5 200,275 102.5,218.5 102.5,131.5" fill="none" stroke="var(--border)" stroke-width="0.6" opacity="0.4"/>
-              <polygon points="200,100 265,137.5 265,212.5 200,250 135,212.5 135,137.5" fill="none" stroke="var(--border)" stroke-width="0.6" opacity="0.4"/>
-              <!-- 轴线 -->
-              <line x1="200" y1="150" x2="200" y2="45" stroke="var(--border)" stroke-width="0.8" opacity="0.5"/>
-              <line x1="200" y1="150" x2="333.9" y2="125" stroke="var(--border)" stroke-width="0.8" opacity="0.5"/>
-              <line x1="200" y1="150" x2="333.9" y2="225" stroke="var(--border)" stroke-width="0.8" opacity="0.5"/>
-              <line x1="200" y1="150" x2="200" y2="305" stroke="var(--border)" stroke-width="0.8" opacity="0.5"/>
-              <line x1="200" y1="150" x2="66.1" y2="225" stroke="var(--border)" stroke-width="0.8" opacity="0.5"/>
-              <line x1="200" y1="150" x2="66.1" y2="125" stroke="var(--border)" stroke-width="0.8" opacity="0.5"/>
-              <!-- 数据填充 - 语言85 推理92 代码70 知识80 记忆88 学习65 -->
-              <polygon points="200,65 279.7,104 260.6,185 200,230 123.8,194 143.7,117.5" fill="var(--chart-1)" opacity="0.18" stroke="var(--chart-1)" stroke-width="2" stroke-linejoin="round"/>
-              <!-- 数据点 -->
-              <circle cx="200" cy="65" r="4" fill="var(--chart-1)" stroke="var(--background)" stroke-width="2"/>
-              <circle cx="279.7" cy="104" r="4" fill="var(--chart-1)" stroke="var(--background)" stroke-width="2"/>
-              <circle cx="260.6" cy="185" r="4" fill="var(--chart-1)" stroke="var(--background)" stroke-width="2"/>
-              <circle cx="200" cy="230" r="4" fill="var(--chart-1)" stroke="var(--background)" stroke-width="2"/>
-              <circle cx="123.8" cy="194" r="4" fill="var(--chart-1)" stroke="var(--background)" stroke-width="2"/>
-              <circle cx="143.7" cy="117.5" r="4" fill="var(--chart-1)" stroke="var(--background)" stroke-width="2"/>
-              <!-- 维度标签 -->
-              <text x="200" y="34" text-anchor="middle" font-size="12" fill="var(--muted-foreground)" font-family="var(--font-sans)">语言</text>
-              <text x="310" y="99" text-anchor="start" font-size="12" fill="var(--muted-foreground)" font-family="var(--font-sans)">推理</text>
-              <text x="310" y="218" text-anchor="start" font-size="12" fill="var(--muted-foreground)" font-family="var(--font-sans)">代码</text>
-              <text x="200" y="290" text-anchor="middle" font-size="12" fill="var(--muted-foreground)" font-family="var(--font-sans)">知识</text>
-              <text x="95" y="218" text-anchor="end" font-size="12" fill="var(--muted-foreground)" font-family="var(--font-sans)">记忆</text>
-              <text x="95" y="99" text-anchor="end" font-size="12" fill="var(--muted-foreground)" font-family="var(--font-sans)">学习</text>
-            </svg>
+            <NeedsPentagram :needs="life.needs || {}" :alive="!!life.is_running" />
           </div>
+          <p v-if="!hasNeedsData" class="panel-empty">暂无需求数据——生命调度器尚未上报 needs。</p>
         </div>
 
-        <!-- 共振波形图 -->
         <div class="panel">
           <div class="panel-head">
             <span class="panel-title">
-              <svg class="pt-icon" viewBox="0 0 24 24"><path d="M3 12h2.5L7 6l3 12 2.5-6h2"/><path d="M17.5 8v8M21 6v12"/></svg>
-              共振波形图
+              <svg class="pt-icon" viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 0-9-9c0 1.6.4 3.1 1.2 4.4L3 21l4.6-1.2A9 9 0 0 0 12 21Z"/></svg>
+              生命表达
             </span>
-            <span class="panel-sub">24h 趋势</span>
+            <span class="panel-sub">由需求状态推导</span>
           </div>
-          <div class="chart-wrap">
-            <svg viewBox="0 0 400 300">
-              <!-- 渐变定义 -->
-              <defs>
-                <linearGradient id="waveGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="var(--chart-2)" stop-opacity="0.25"/>
-                  <stop offset="100%" stop-color="var(--chart-2)" stop-opacity="0.02"/>
-                </linearGradient>
-              </defs>
-              <!-- Y轴网格 -->
-              <line x1="40" y1="44" x2="380" y2="44" stroke="var(--border)" stroke-width="0.8" opacity="0.5"/>
-              <line x1="40" y1="98" x2="380" y2="98" stroke="var(--border)" stroke-width="0.8" opacity="0.5"/>
-              <line x1="40" y1="152" x2="380" y2="152" stroke="var(--border)" stroke-width="0.8" opacity="0.5"/>
-              <line x1="40" y1="206" x2="380" y2="206" stroke="var(--border)" stroke-width="0.8" opacity="0.5"/>
-              <line x1="40" y1="260" x2="380" y2="260" stroke="var(--border)" stroke-width="0.8" opacity="0.5"/>
-              <!-- 填充多边形 -->
-              <polygon points="40,260 40,144.8 68.3,159.2 96.7,140 125,116 153.3,87.2 181.7,58.4 210,72.8 238.3,44 266.7,77.6 295,82.4 323.3,87.2 351.7,116 380,140 380,260" fill="url(#waveGrad)"/>
-              <!-- 折线 -->
-              <polyline points="40,144.8 68.3,159.2 96.7,140 125,116 153.3,87.2 181.7,58.4 210,72.8 238.3,44 266.7,77.6 295,82.4 323.3,87.2 351.7,116 380,140" fill="none" stroke="var(--chart-2)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
-              <!-- 数据点 -->
-              <circle cx="40" cy="144.8" r="3.5" fill="var(--chart-2)"/>
-              <circle cx="210" cy="72.8" r="3.5" fill="var(--chart-2)"/>
-              <circle cx="238.3" cy="44" r="4" fill="var(--chart-2)" stroke="var(--background)" stroke-width="2"/>
-              <circle cx="380" cy="140" r="3.5" fill="var(--chart-2)"/>
-              <!-- X轴标签 -->
-              <text x="40" y="278" text-anchor="middle" font-size="11" fill="var(--muted-foreground)" font-family="var(--font-sans)">00:00</text>
-              <text x="125" y="278" text-anchor="middle" font-size="11" fill="var(--muted-foreground)" font-family="var(--font-sans)">06:00</text>
-              <text x="210" y="278" text-anchor="middle" font-size="11" fill="var(--muted-foreground)" font-family="var(--font-sans)">12:00</text>
-              <text x="295" y="278" text-anchor="middle" font-size="11" fill="var(--muted-foreground)" font-family="var(--font-sans)">18:00</text>
-              <text x="380" y="278" text-anchor="middle" font-size="11" fill="var(--muted-foreground)" font-family="var(--font-sans)">24:00</text>
-              <!-- Y轴标签 -->
-              <text x="36" y="48" text-anchor="end" font-size="10" fill="var(--muted-foreground)" font-family="var(--font-sans)">100</text>
-              <text x="36" y="156" text-anchor="end" font-size="10" fill="var(--muted-foreground)" font-family="var(--font-sans)">50</text>
-              <text x="36" y="264" text-anchor="end" font-size="10" fill="var(--muted-foreground)" font-family="var(--font-sans)">0</text>
-              <!-- 峰值标注 -->
-              <text x="238.3" y="32" text-anchor="middle" font-size="11" fill="var(--chart-2)" font-family="var(--font-sans)" font-weight="600">90</text>
-              <line x1="238.3" y1="38" x2="238.3" y2="44" stroke="var(--chart-2)" stroke-width="1" stroke-dasharray="3 3"/>
-            </svg>
+          <div v-if="runtimeStore.lifeExpressions.length" class="expr-list">
+            <div
+              v-for="(expr, i) in runtimeStore.lifeExpressions"
+              :key="i"
+              class="expr-item"
+              :class="'expr-' + expr.priority"
+            >
+              <span class="expr-emoji">{{ expr.emoji }}</span>
+              <span class="expr-text">{{ expr.text }}</span>
+            </div>
           </div>
+          <p v-else class="panel-empty">当前没有主动表达——各项需求都在平稳区间。</p>
         </div>
       </div>
 
       <!-- ═══ 底部双列 ═══ -->
       <div class="bottom-grid">
-        <!-- 左：神经元健康列表 -->
+        <!-- 左：需求明细（真实 needs 数值） -->
         <div class="panel">
           <div class="panel-head">
             <span class="panel-title">
               <svg class="pt-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>
-              神经元健康列表
+              需求明细
             </span>
-            <span class="panel-sub">共 6 个</span>
+            <span class="panel-sub">共 {{ needRows.length }} 项</span>
           </div>
           <table class="neuron-table">
             <thead>
               <tr>
-                <th>神经元 ID</th>
-                <th>域</th>
+                <th>需求</th>
+                <th>当前值</th>
+                <th>强度</th>
                 <th>状态</th>
-                <th>活跃度</th>
-                <th>最后激活</th>
-                <th>操作</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td><span class="n-id">N-0842</span></td>
-                <td><span class="n-domain">语言理解</span></td>
-                <td><span class="chip chip-active">活跃</span></td>
+              <tr v-for="row in needRows" :key="row.key">
+                <td><span class="n-domain">{{ row.label }}</span></td>
+                <td><span class="n-id">{{ row.value != null ? Math.round(row.value) : '暂无数据' }}</span></td>
                 <td>
                   <div class="n-activity">
-                    <div class="n-progress"><div class="n-progress-bar" style="width:94%"></div></div>
-                    <span class="n-progress-text">94%</span>
+                    <div class="n-progress"><div class="n-progress-bar" :style="{ width: (row.value != null ? row.value : 0) + '%' }"></div></div>
+                    <span class="n-progress-text">{{ row.value != null ? Math.round(row.value) + '%' : '--' }}</span>
                   </div>
                 </td>
-                <td><span class="n-time">2分钟前</span></td>
-                <td><button class="n-action"><svg class="ac-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>详情</button></td>
-              </tr>
-              <tr>
-                <td><span class="n-id">N-1205</span></td>
-                <td><span class="n-domain">推理逻辑</span></td>
-                <td><span class="chip chip-active">活跃</span></td>
                 <td>
-                  <div class="n-activity">
-                    <div class="n-progress"><div class="n-progress-bar" style="width:87%"></div></div>
-                    <span class="n-progress-text">87%</span>
-                  </div>
+                  <span v-if="row.value == null" class="chip chip-dormant">暂无数据</span>
+                  <span v-else-if="row.state === 'alert'" class="chip chip-alert">偏高</span>
+                  <span v-else-if="row.state === 'watch'" class="chip chip-learning">关注</span>
+                  <span v-else class="chip chip-active">平稳</span>
                 </td>
-                <td><span class="n-time">5分钟前</span></td>
-                <td><button class="n-action"><svg class="ac-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>详情</button></td>
-              </tr>
-              <tr>
-                <td><span class="n-id">N-0317</span></td>
-                <td><span class="n-domain">代码生成</span></td>
-                <td><span class="chip chip-active">活跃</span></td>
-                <td>
-                  <div class="n-activity">
-                    <div class="n-progress"><div class="n-progress-bar" style="width:91%"></div></div>
-                    <span class="n-progress-text">91%</span>
-                  </div>
-                </td>
-                <td><span class="n-time">12秒前</span></td>
-                <td><button class="n-action"><svg class="ac-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>详情</button></td>
-              </tr>
-              <tr>
-                <td><span class="n-id">N-0721</span></td>
-                <td><span class="n-domain">知识检索</span></td>
-                <td><span class="chip chip-learning">学习中</span></td>
-                <td>
-                  <div class="n-activity">
-                    <div class="n-progress"><div class="n-progress-bar" style="width:76%"></div></div>
-                    <span class="n-progress-text">76%</span>
-                  </div>
-                </td>
-                <td><span class="n-time">28分钟前</span></td>
-                <td><button class="n-action"><svg class="ac-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>详情</button></td>
-              </tr>
-              <tr>
-                <td><span class="n-id">N-1053</span></td>
-                <td><span class="n-domain">记忆回响</span></td>
-                <td><span class="chip chip-dormant">休眠</span></td>
-                <td>
-                  <div class="n-activity">
-                    <div class="n-progress"><div class="n-progress-bar" style="width:62%"></div></div>
-                    <span class="n-progress-text">62%</span>
-                  </div>
-                </td>
-                <td><span class="n-time">47分钟前</span></td>
-                <td><button class="n-action"><svg class="ac-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>详情</button></td>
-              </tr>
-              <tr>
-                <td><span class="n-id">N-0014</span></td>
-                <td><span class="n-domain">学习适配</span></td>
-                <td><span class="chip chip-active">活跃</span></td>
-                <td>
-                  <div class="n-activity">
-                    <div class="n-progress"><div class="n-progress-bar" style="width:89%"></div></div>
-                    <span class="n-progress-text">89%</span>
-                  </div>
-                </td>
-                <td><span class="n-time">3分钟前</span></td>
-                <td><button class="n-action"><svg class="ac-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>详情</button></td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <!-- 右：事件流（绑定 activityLog） -->
+        <!-- 右：生命事件流（本页操作记录，无硬编码演示事件） -->
         <div class="panel">
           <div class="panel-head">
             <span class="panel-title">
               <svg class="pt-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              系统事件流
+              生命事件流
             </span>
-            <span class="panel-sub">实时</span>
+            <span class="panel-sub">本页操作记录</span>
           </div>
           <div class="event-list">
             <template v-if="activityLog.length">
@@ -362,53 +251,9 @@
                 </div>
               </div>
             </template>
-            <template v-else>
-              <div class="event-item">
-                <div class="event-dot">
-                  <svg class="ev-icon" viewBox="0 0 24 24"><path d="M13 3 5 14h6l-1 7 8-11h-6l1-7Z"/></svg>
-                </div>
-                <div class="event-body">
-                  <div class="event-text">神经元 N-0317 在代码生成域完成一次共振峰值检测</div>
-                  <div class="event-meta">12秒前</div>
-                </div>
-              </div>
-              <div class="event-item">
-                <div class="event-dot" style="background:color-mix(in srgb, var(--chart-2) 14%, transparent); color:var(--chart-2);">
-                  <svg class="ev-icon" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
-                </div>
-                <div class="event-body">
-                  <div class="event-text">自动优化：调整语言理解域 3 个神经元权重参数</div>
-                  <div class="event-meta">2分钟前</div>
-                </div>
-              </div>
-              <div class="event-item">
-                <div class="event-dot" style="background:color-mix(in srgb, var(--destructive) 12%, transparent); color:var(--destructive);">
-                  <svg class="ev-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
-                </div>
-                <div class="event-body">
-                  <div class="event-text">监测告警：推理逻辑域 N-1205 活跃度突破阈值</div>
-                  <div class="event-meta">8分钟前</div>
-                </div>
-              </div>
-              <div class="event-item">
-                <div class="event-dot" style="background:color-mix(in srgb, var(--chart-3) 14%, transparent); color:var(--chart-3);">
-                  <svg class="ev-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18"/></svg>
-                </div>
-                <div class="event-body">
-                  <div class="event-text">系统更新：知识检索域新增 4 个训练数据批次</div>
-                  <div class="event-meta">23分钟前</div>
-                </div>
-              </div>
-              <div class="event-item">
-                <div class="event-dot" style="background:color-mix(in srgb, var(--chart-1) 14%, transparent); color:var(--chart-1);">
-                  <svg class="ev-icon" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6h6v6"/></svg>
-                </div>
-                <div class="event-body">
-                  <div class="event-text">神经元 N-0842 激活，加入Seed网络主干</div>
-                  <div class="event-meta">41分钟前</div>
-                </div>
-              </div>
-            </template>
+            <p v-else class="event-empty">
+              暂无生命事件。点击上方「喂养 / 睡眠 / 玩耍 / 进化」触发一次生命活动，或等待调度器自动运行。
+            </p>
           </div>
         </div>
       </div>
@@ -418,60 +263,43 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, inject } from 'vue'
+defineOptions({ name: 'LifeStatusView' })
+import { ref, computed, onActivated, onDeactivated, onUnmounted, inject } from 'vue'
 import { useRuntimeStore } from '@/stores/runtimeStore.js'
 import { API_BASE, authFetch } from '@/composables/apiClient.js'
-import {
-  Heart, Footprints, Zap, Eye,
-  Apple, Moon, Gamepad2,
-  Activity
-} from 'lucide-vue-next'
+import { isTaijiModel, fmtTime } from '@/composables/useTraining.js'
 import NeedsPentagram from '@/components/NeedsPentagram.vue'
 
 const runtimeStore = useRuntimeStore()
 const toast = inject('toast', () => {})
 
-const actionResult = ref('')
 const activityLog = ref([])
 const currentActivity = ref('')
+const actionResult = ref('')
 const actionLoading = ref(false)
 
-// 从 runtimeStore 获取生命数据
+// 从 runtimeStore 获取生命数据（来源 /api/runtime/status 聚合的 /api/life/status）
 const life = computed(() => runtimeStore.life || {})
+const hasNeedsData = computed(() => Object.keys(life.value?.needs || {}).length > 0)
 
-// 生命状态文本
-const lifeStateText = computed(() => {
-  const stateMap = { idle: '清醒', sleeping: '睡眠', feeding: '吸收', playing: '探索', working: '执行' }
-  return stateMap[life.value.life_state || 'idle'] || '清醒'
-})
+// 需求明细：只展示后端真实上报的五个 needs 维度
+const NEED_META = [
+  { key: 'hunger', label: '饥饿 · 知识摄取' },
+  { key: 'fatigue', label: '疲劳 · 睡眠需求' },
+  { key: 'curiosity', label: '好奇 · 探索驱动' },
+  { key: 'stress', label: '压力 · 错误负担' },
+  { key: 'boredom', label: '无聊 · 活动需求' },
+]
+const needRows = computed(() => NEED_META.map((meta) => {
+  const raw = life.value?.needs?.[meta.key]
+  const value = typeof raw === 'number' && Number.isFinite(raw)
+    ? Math.max(0, Math.min(100, raw))
+    : null
+  const state = value == null ? 'none' : value > 70 ? 'alert' : value >= 40 ? 'watch' : 'calm'
+  return { ...meta, value, state }
+}))
 
-// 工具是否可用
-const toolsAvailable = computed(() => {
-  return runtimeStore.tools && runtimeStore.tools.length > 0
-})
-
-// 最强烈的需求文本
-const dominantNeedText = computed(() => {
-  const needMap = {
-    hunger: '🍚 饥饿 - 需要喂养',
-    fatigue: '😴 疲劳 - 需要休息',
-    boredom: '🎮 无聊 - 需要玩耍',
-    stress: '😰 压力 - 需要放松',
-    curiosity: '🔍 好奇 - 需要探索',
-  }
-  return needMap[life.value.dominant_need] || life.value.dominant_need || ''
-})
-
-// 格式化运行时间
-function formatUptime(seconds) {
-  if (!seconds || seconds <= 0) return '-'
-  const h = Math.floor(seconds / 3600)
-  const m = Math.floor((seconds % 3600) / 60)
-  if (h > 0) return `${h}小时${m}分钟`
-  return `${m}分钟`
-}
-
-// 添加日志
+// 添加事件记录（仅记录真实发生的操作与后端回执）
 function addLog(type, emoji, message) {
   activityLog.value.unshift({
     time: new Date().toLocaleTimeString(),
@@ -479,90 +307,126 @@ function addLog(type, emoji, message) {
     emoji,
     message,
   })
-  if (activityLog.value.length > 30) {
+  if (activityLog.value.length > 50) {
     activityLog.value.pop()
   }
 }
 
-// 通用生命活动调用
+// 与 useTraining.js 的 feedTaiji/sleepTaiji/playTaiji 门控协同：
+// Seed 原生运行时给出既有提示而非静默；Cortex 对照运行时调用 /api/life/*。
+const NATIVE_RUNTIME_TIP = 'Seed 原生运行时不启用 Legacy 生命活动接口'
 async function callLifeAction(action) {
+  if (runtimeStore.health.isTaiji || isTaijiModel.value) {
+    currentActivity.value = ''
+    toast(NATIVE_RUNTIME_TIP, 'info')
+    addLog(action, 'ℹ️', '原生运行时：未调用 Legacy 生命活动接口')
+    return
+  }
   actionLoading.value = true
   actionResult.value = ''
   try {
     const resp = await authFetch(`${API_BASE}/api/life/${action}`, { method: 'POST' })
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
     const data = await resp.json()
     if (data.success) {
       actionResult.value = data.message
-      const emojiMap = { feed: '🍚', sleep: '💤', play: '🎮' }
-      addLog(action, emojiMap[action] || '✅', data.message)
+      const emojiMap = { feed: '🍚', sleep: '💤', play: '🎮', evolve: '🧬' }
+      addLog(action, emojiMap[action] || '✨', data.message)
       toast(`✅ ${data.message}`, 'success')
     } else {
       actionResult.value = `失败: ${data.message}`
-      addLog(action, '❌', `失败: ${data.message}`)
+      addLog(action, '⚠️', `失败: ${data.message}`)
       toast(`❌ ${data.message}`, 'error')
     }
   } catch (e) {
     actionResult.value = `请求失败: ${e.message}`
-    addLog(action, '❌', `请求失败: ${e.message}`)
+    addLog(action, '⚠️', `请求失败: ${e.message}`)
     toast(`❌ 请求失败: ${e.message}`, 'error')
   } finally {
     actionLoading.value = false
     currentActivity.value = ''
-    // 刷新状态
-    runtimeStore.refreshAll()
+    // 操作后刷新生命状态（与 R5 前接线一致）
+    runtimeStore.refreshAll().catch(() => {})
   }
 }
 
 function feedTaiji() {
-  currentActivity.value = '🍚 正在吃饭...'
+  currentActivity.value = '🍚 喂养中...'
   callLifeAction('feed')
 }
-
 function sleepTaiji() {
-  currentActivity.value = '💤 正在睡觉...'
+  currentActivity.value = '💤 睡眠中...'
   callLifeAction('sleep')
 }
-
 function playTaiji() {
-  currentActivity.value = '🎮 正在玩耍...'
+  currentActivity.value = '🎮 玩耍中...'
   callLifeAction('play')
 }
+function evolveTaiji() {
+  currentActivity.value = '🧬 进化查询中...'
+  callLifeAction('evolve')
+}
 
-async function trainTaiji() {
-  actionLoading.value = true
-  currentActivity.value = '🧠 正在睡眠训练...'
-  try {
-    // Cortex 模式下训练走睡眠引擎（sleep_engine）
-    const resp = await authFetch(`${API_BASE}/api/taiji/sleep`, {
-      method: 'POST',
-    })
-    const data = await resp.json()
-    actionResult.value = data.message || `睡眠训练完成（${data.phases_completed || 0} 阶段）`
-    addLog('train', '🧠', `睡眠训练：${data.phases_completed || 0} 阶段，${data.training_samples_used || 0} 样本`)
-  } catch (e) {
-    actionResult.value = `训练请求失败: ${e.message}`
-  } finally {
-    actionLoading.value = false
-    currentActivity.value = ''
+// 导出报告：聚合当前页面真实数据为 JSON 快照并 Blob 下载
+function exportReport() {
+  const snapshot = {
+    exported_at: new Date().toISOString(),
+    source: 'LifeStatusView 快照（仅含真实数据）',
+    runtime: {
+      connection: runtimeStore.connectionStatus,
+      health_state: runtimeStore.health.state,
+      is_taiji: !!runtimeStore.health.isTaiji,
+    },
+    life: JSON.parse(JSON.stringify(life.value || {})),
+    memory: {
+      available_pct: runtimeStore.memoryAvailablePct,
+      available_gb: runtimeStore.memoryAvailableGb,
+      level: runtimeStore.memoryLevel,
+    },
+    life_expressions: runtimeStore.lifeExpressions.map((e) => ({
+      type: e.type,
+      text: e.text,
+      priority: e.priority,
+    })),
+    activity_log: [...activityLog.value],
   }
+  const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `life-status-${new Date().toISOString().replace(/[:.]/g, '-')}.json`
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(url)
+  addLog('export', '📄', '已导出生命状态快照（JSON）')
+  toast('✅ 生命状态快照已导出', 'success')
 }
 
 let refreshInterval = null
-onMounted(() => {
-  runtimeStore.refreshAll()
-  // App 级健康检查每 15 秒已刷新同一负载（/api/runtime/status），
-  // 本页只做低频兼容刷新，避免重复轮询。
+
+// App 级健康检查每 15 秒已刷新同一负载（/api/runtime/status），
+// 本页只做低频兼容刷新，避免重复轮询。
+function startPolling() {
+  stopPolling() // 先清后启，避免重复启动
+  runtimeStore.refreshAll().catch(() => {})
   refreshInterval = setInterval(() => {
     runtimeStore.refreshAll().catch(() => {})
   }, 60000)
-})
-
-onUnmounted(() => {
+}
+function stopPolling() {
   if (refreshInterval) {
     clearInterval(refreshInterval)
     refreshInterval = null
   }
-})
+}
+
+// keep-alive 缓存后离开页面时停止轮询，回来时恢复（首次挂载同样触发 onActivated）
+onActivated(() => startPolling())
+onDeactivated(() => stopPolling())
+
+// 兜底：组件真正卸载时也清理定时器
+onUnmounted(() => stopPolling())
 </script>
 
 <style scoped>
@@ -693,7 +557,7 @@ onUnmounted(() => {
   .native-pipeline-arrow { transform: rotate(90deg); align-self: flex-start; }
 }
 
-/* ═══ 视图容器（豆包设计 token） ═══ */
+/* ═══ 视图容器 ═══ */
 .life-status-view {
   --chart-1: var(--primary);
   --chart-2: var(--success, #10b981);
@@ -758,6 +622,10 @@ onUnmounted(() => {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 .btn-outline {
   background: var(--background);
   color: var(--foreground);
@@ -765,6 +633,50 @@ onUnmounted(() => {
 }
 .btn-outline:hover {
   background: var(--muted);
+}
+
+/* ═══ 生命活动操作栏 ═══ */
+.action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+}
+.action-bar-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.btn-life {
+  background: color-mix(in srgb, var(--life-color, var(--primary)) 10%, var(--background));
+  border-color: color-mix(in srgb, var(--life-color, var(--primary)) 34%, var(--border));
+  color: var(--foreground);
+}
+.btn-life:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--life-color, var(--primary)) 18%, var(--background));
+  border-color: color-mix(in srgb, var(--life-color, var(--primary)) 55%, var(--border));
+}
+.life-btn-emoji {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+.action-current {
+  font-size: 0.78rem;
+  color: var(--muted-foreground);
+}
+.action-result {
+  flex-basis: 100%;
+  font-size: 0.78rem;
+  color: var(--muted-foreground);
 }
 
 /* ═══ 滚动内容区 ═══ */
@@ -842,18 +754,10 @@ onUnmounted(() => {
   align-items: center;
   gap: 4px;
 }
-.tr-icon {
-  width: 13px;
-  height: 13px;
-  flex: none;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.kpi-src {
+  font-weight: 400;
+  color: var(--muted-foreground);
 }
-.trend-up { color: var(--chart-2); }
-.trend-down { color: var(--destructive); }
 .trend-stable { color: var(--muted-foreground); }
 
 /* ═══ 图表面板 ═══ */
@@ -899,16 +803,52 @@ onUnmounted(() => {
   font-size: 0.74rem;
   color: var(--muted-foreground);
 }
+.panel-empty {
+  margin: auto 0;
+  padding: 24px 8px;
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  text-align: center;
+}
 .chart-wrap {
   flex: 1;
   display: grid;
   place-items: center;
   min-height: 260px;
 }
-.chart-wrap svg {
+.chart-wrap > * {
   width: 100%;
-  height: auto;
-  max-height: 300px;
+  max-width: 320px;
+}
+
+/* ═══ 生命表达 ═══ */
+.expr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 6px 0;
+}
+.expr-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.expr-item.expr-high {
+  border-color: color-mix(in srgb, var(--destructive) 40%, var(--border));
+}
+.expr-emoji {
+  font-size: 1.05rem;
+  line-height: 1.4;
+}
+.expr-text {
+  font-size: 0.82rem;
+  color: var(--foreground);
+  line-height: 1.5;
 }
 
 /* ═══ 底部双列 ═══ */
@@ -919,7 +859,7 @@ onUnmounted(() => {
   align-items: start;
 }
 
-/* ═══ 神经元健康表 ═══ */
+/* ═══ 需求明细表 ═══ */
 .neuron-table {
   width: 100%;
   border-collapse: collapse;
@@ -951,10 +891,6 @@ onUnmounted(() => {
   color: var(--foreground);
 }
 .n-domain { color: var(--muted-foreground); }
-.n-time {
-  color: var(--muted-foreground);
-  font-size: 0.78rem;
-}
 .n-activity {
   display: flex;
   align-items: center;
@@ -972,40 +908,14 @@ onUnmounted(() => {
   height: 100%;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--chart-1), var(--chart-2));
+  transition: width 300ms ease;
 }
 .n-progress-text {
   font-size: 0.76rem;
   color: var(--muted-foreground);
   font-variant-numeric: tabular-nums;
-  width: 32px;
+  width: 36px;
   text-align: right;
-}
-.n-action {
-  border: 0;
-  background: transparent;
-  color: var(--primary);
-  font-size: 0.78rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  transition: background 140ms ease;
-  font-weight: 500;
-  cursor: pointer;
-}
-.n-action:hover {
-  background: color-mix(in srgb, var(--primary) 12%, transparent);
-}
-.ac-icon {
-  width: 13px;
-  height: 13px;
-  flex: none;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
 /* ═══ 状态 Chip ═══ */
@@ -1036,8 +946,12 @@ onUnmounted(() => {
   background: color-mix(in srgb, var(--muted-foreground) 14%, transparent);
 }
 .chip-learning {
-  color: var(--chart-1);
-  background: color-mix(in srgb, var(--chart-1) 14%, transparent);
+  color: var(--chart-3);
+  background: color-mix(in srgb, var(--chart-3) 14%, transparent);
+}
+.chip-alert {
+  color: var(--destructive);
+  background: color-mix(in srgb, var(--destructive) 14%, transparent);
 }
 
 /* ═══ 事件流 ═══ */
@@ -1068,16 +982,6 @@ onUnmounted(() => {
   background: color-mix(in srgb, var(--chart-1) 14%, transparent);
   color: var(--chart-1);
 }
-.ev-icon {
-  width: 15px;
-  height: 15px;
-  flex: none;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
 .ev-emoji {
   font-size: 1rem;
   line-height: 1;
@@ -1096,6 +1000,13 @@ onUnmounted(() => {
   color: var(--muted-foreground);
   margin-top: 4px;
 }
+.event-empty {
+  margin: 0;
+  padding: 20px 6px;
+  color: var(--muted-foreground);
+  font-size: 0.8rem;
+  line-height: 1.7;
+}
 
 /* 事件类型色（绑定 activityLog type） */
 .ev-feed .event-dot {
@@ -1110,7 +1021,11 @@ onUnmounted(() => {
   background: color-mix(in srgb, var(--chart-3) 14%, transparent);
   color: var(--chart-3);
 }
-.ev-train .event-dot {
+.ev-evolve .event-dot {
+  background: color-mix(in srgb, var(--chart-4) 14%, transparent);
+  color: var(--chart-4);
+}
+.ev-export .event-dot {
   background: color-mix(in srgb, var(--primary) 14%, transparent);
   color: var(--primary);
 }

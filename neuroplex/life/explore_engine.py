@@ -19,12 +19,11 @@
   知识积累 → 睡眠整合
 """
 
-import os
-import json
-import time
-import logging
 import hashlib
-from typing import List, Optional
+import json
+import logging
+import os
+import time
 from dataclasses import dataclass, field
 from datetime import datetime
 
@@ -40,7 +39,7 @@ class ExploreResult:
     pages_read: int = 0
     knowledge_stored: int = 0
     duration_seconds: float = 0
-    discoveries: List[str] = field(default_factory=list)
+    discoveries: list[str] = field(default_factory=list)
     timestamp: str = ""
 
     def __post_init__(self):
@@ -67,7 +66,7 @@ class ExploreEngine:
     好奇心驱动，自动搜索、阅读、学习。
     """
 
-    def __init__(self, config: Optional[ExploreConfig] = None, data_dir: str = None):
+    def __init__(self, config: ExploreConfig | None = None, data_dir: str = None):
         self.config = config or ExploreConfig()
         if data_dir is None:
             try:
@@ -77,10 +76,10 @@ class ExploreEngine:
             except ImportError:
                 data_dir = "taiji/explore_data"
         self.data_dir = data_dir
-        self._explore_history: List[ExploreResult] = []
+        self._explore_history: list[ExploreResult] = []
         self._known_topics: set = set()  # 已探索的主题
         self._content_hashes: set = set()  # 去重用
-        self._last_explore_time: Optional[datetime] = None
+        self._last_explore_time: datetime | None = None
         self._is_exploring = False
 
         self._data_dir_ready = False
@@ -233,7 +232,7 @@ class ExploreEngine:
 
         return topic
 
-    def _search(self, query: str) -> List[str]:
+    def _search(self, query: str) -> list[str]:
         """搜索互联网，返回 URL 列表"""
         try:
             from neuroplex.agent_ext.tool_registry import registry
@@ -258,7 +257,7 @@ class ExploreEngine:
             logger.debug(f"Search failed: {e}")
         return []
 
-    def _read_page(self, url: str) -> Optional[str]:
+    def _read_page(self, url: str) -> str | None:
         """阅读网页内容"""
         try:
             from neuroplex.agent_ext.tool_registry import registry
@@ -338,7 +337,7 @@ class ExploreEngine:
             logger.warning(f"Store knowledge failed: {e}")
             return False
 
-    def _extract_discoveries(self, topic: str, urls: List[str]) -> List[str]:
+    def _extract_discoveries(self, topic: str, urls: list[str]) -> list[str]:
         """从探索中提取发现"""
         discoveries = []
         if urls:
@@ -387,7 +386,7 @@ class ExploreEngine:
         if not os.path.exists(path):
             return
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = json.load(f)
             for item in data:
                 self._explore_history.append(ExploreResult(**item))
@@ -398,7 +397,7 @@ class ExploreEngine:
 
 # ─── 全局实例 ─────────────────────────────────────
 
-_global_explore: Optional[ExploreEngine] = None
+_global_explore: ExploreEngine | None = None
 
 
 def get_explore_engine() -> ExploreEngine:

@@ -15,12 +15,12 @@
     pip install sentence-transformers numpy
 """
 
-import os
 import json
-import time
 import logging
+import os
+import time
+
 import numpy as np
-from typing import Dict, List, Optional, Tuple
 
 logger = logging.getLogger("SemanticMemory")
 
@@ -33,7 +33,7 @@ class SemanticMemory:
     通过余弦相似度实现语义检索。
     """
 
-    def __init__(self, model_name: str = "all-MiniLM-L6-v2", persist_dir: str = None):
+    def __init__(self, model_name: str = "all-MiniLM-L6-v2", persist_dir: str | None = None):
         """
         Args:
             model_name: sentence-transformers 模型名
@@ -43,7 +43,7 @@ class SemanticMemory:
         self.persist_dir = persist_dir or os.path.join("taiji_data", "semantic_memory")
 
         # 记忆存储
-        self._memories: Dict[str, dict] = {}  # key -> {content, embedding, metadata}
+        self._memories: dict[str, dict] = {}  # key -> {content, embedding, metadata}
         self._embedder = None
         self._embedding_dim = 384  # MiniLM 默认维度
 
@@ -72,7 +72,7 @@ class SemanticMemory:
                 return None
         return self._embedder
 
-    def add(self, key: str, content: str, metadata: dict = None):
+    def add(self, key: str, content: str, metadata: dict | None = None):
         """
         添加记忆并生成向量。
 
@@ -100,7 +100,7 @@ class SemanticMemory:
         except Exception as e:
             logger.warning(f"Failed to add semantic memory: {e}")
 
-    def search(self, query: str, top_k: int = 5, min_score: float = 0.3) -> List[dict]:
+    def search(self, query: str, top_k: int = 5, min_score: float = 0.3) -> list[dict]:
         """
         语义检索。
 
@@ -201,7 +201,7 @@ class SemanticMemory:
             return
 
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 data = json.load(f)
 
             for k, v in data.get("memories", {}).items():
@@ -218,7 +218,7 @@ class SemanticMemory:
 
     # ─── 批量操作 ─────────────────────────────────────
 
-    def batch_add(self, items: List[Tuple[str, str, dict]]):
+    def batch_add(self, items: list[tuple[str, str, dict]]):
         """
         批量添加记忆（更高效）。
 
@@ -235,7 +235,7 @@ class SemanticMemory:
                 contents, convert_to_numpy=True, batch_size=32, show_progress_bar=False
             )
 
-            for (key, content, metadata), embedding in zip(items, embeddings):
+            for (key, content, metadata), embedding in zip(items, embeddings, strict=False):
                 self._memories[key] = {
                     "content": content,
                     "embedding": embedding.tolist(),
@@ -259,7 +259,7 @@ class SemanticMemory:
 
 # ─── 全局实例 ─────────────────────────────────────
 
-_global_semantic: Optional[SemanticMemory] = None
+_global_semantic: SemanticMemory | None = None
 
 
 def get_semantic_memory() -> SemanticMemory:

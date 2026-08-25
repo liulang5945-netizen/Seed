@@ -12,15 +12,15 @@ import logging
 import os
 import time
 
-from fastapi import APIRouter, HTTPException, UploadFile, File, Request
+from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 from fastapi.responses import StreamingResponse
 
+from api.chat_strategies import create_event_generator
 from api.legacy_bridge import legacy_available
+from api.models import ChatRequest
+from api.seed_runtime import get_seed_runtime, is_seed_active
 from seed_platform.app_state import app_state
 from seed_platform.paths import get_external_path
-from api.models import ChatRequest
-from api.chat_strategies import create_event_generator
-from api.seed_runtime import get_seed_runtime, is_seed_active
 
 logger = logging.getLogger("ApiServer.Chat")
 router = APIRouter()
@@ -88,7 +88,7 @@ async def chat_stream(request: ChatRequest):
         try:
             from neuroplex.agent_ext.data_collector import DataCollector
 
-            return DataCollector(
+            return DataCollector(  # type: ignore[call-arg]  # 冻结存根无显式 __init__，运行时由 except 兜底
                 save_path=get_external_path(
                     os.path.join("agent", "conversations", f"{int(time.time())}.jsonl")
                 )
@@ -136,7 +136,7 @@ async def save_chat_history(session_id: str, request: Request):
     try:
         body = await request.json()
     except Exception:
-        raise HTTPException(status_code=400, detail="无效的 JSON 请求体")
+        raise HTTPException(status_code=400, detail="无效的 JSON 请求体") from None
 
     session_file = os.path.join(_history_dir, f"{session_id}.json")
 
@@ -144,7 +144,7 @@ async def save_chat_history(session_id: str, request: Request):
     existing = {}
     if os.path.exists(session_file):
         try:
-            with open(session_file, "r", encoding="utf-8") as f:
+            with open(session_file, encoding="utf-8") as f:
                 existing = json.load(f)
         except Exception as e:
             logger.debug("【save_chat_history】处理失败（非致命）: %s", e)
@@ -162,7 +162,7 @@ async def save_chat_history(session_id: str, request: Request):
             json.dump(existing, f, ensure_ascii=False, indent=2)
     except Exception as e:
         logger.error(f"保存会话历史失败: {e}")
-        raise HTTPException(status_code=500, detail="保存会话历史失败")
+        raise HTTPException(status_code=500, detail="保存会话历史失败") from e
 
     return {"status": "ok", "session_id": session_id}
 
@@ -176,12 +176,12 @@ async def get_chat_history(session_id: str):
         raise HTTPException(status_code=404, detail="会话不存在")
 
     try:
-        with open(session_file, "r", encoding="utf-8") as f:
+        with open(session_file, encoding="utf-8") as f:
             data = json.load(f)
         return data
     except Exception as e:
         logger.error(f"读取会话历史失败: {e}")
-        raise HTTPException(status_code=500, detail="读取会话历史失败")
+        raise HTTPException(status_code=500, detail="读取会话历史失败") from e
 
 
 @router.post("/api/chat/sessions")
@@ -190,7 +190,7 @@ async def create_chat_session(request: Request):
     try:
         body = await request.json()
     except Exception:
-        raise HTTPException(status_code=400, detail="无效的 JSON 请求体")
+        raise HTTPException(status_code=400, detail="无效的 JSON 请求体") from None
     sid = str(body.get("id") or int(time.time()))
     name = body.get("name", "")
     session_file = os.path.join(_history_dir, f"{sid}.json")
@@ -205,7 +205,7 @@ async def create_chat_session(request: Request):
             json.dump(data, f, ensure_ascii=False, indent=2)
     except Exception as e:
         logger.error(f"创建会话失败: {e}")
-        raise HTTPException(status_code=500, detail="创建会话失败")
+        raise HTTPException(status_code=500, detail="创建会话失败") from e
     return {"status": "ok", "session_id": sid}
 
 
@@ -218,7 +218,7 @@ async def list_chat_sessions():
             if fname.endswith(".json"):
                 fpath = os.path.join(_history_dir, fname)
                 try:
-                    with open(fpath, "r", encoding="utf-8") as f:
+                    with open(fpath, encoding="utf-8") as f:
                         data = json.load(f)
                     sessions.append(
                         {
@@ -242,7 +242,7 @@ async def delete_chat_history(session_id: str):
             os.remove(session_file)
         except Exception as e:
             logger.error(f"删除会话历史失败: {e}")
-            raise HTTPException(status_code=500, detail="删除会话历史失败")
+            raise HTTPException(status_code=500, detail="删除会话历史失败") from e
     return {"status": "ok"}
 
 
@@ -326,7 +326,7 @@ async def upload_chat_file(file: UploadFile = File(...)):
     try:
         content = await file.read()
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"读取文件失败: {e}")
+        raise HTTPException(status_code=400, detail=f"读取文件失败: {e}") from e
 
     if len(content) > MAX_UPLOAD_SIZE:
         raise HTTPException(status_code=413, detail="文件过大，最大支持 20MB")

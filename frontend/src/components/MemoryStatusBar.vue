@@ -2,7 +2,8 @@
   <div :class="['memory-ring', levelClass]" :title="tooltipText">
     <svg viewBox="0 0 28 28">
       <circle class="ring-bg" cx="14" cy="14" r="11" />
-      <circle class="ring-fill" cx="14" cy="14" r="11"
+      <circle
+class="ring-fill" cx="14" cy="14" r="11"
         :stroke-dasharray="circumference"
         :stroke-dashoffset="dashOffset" />
     </svg>

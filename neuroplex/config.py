@@ -7,11 +7,11 @@ token/multimodal 合约以及旧 checkpoint 所需的轻量配置兼容层。
 from __future__ import annotations
 
 import json
+import logging
 import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,8 @@ logger = logging.getLogger(__name__)
 def _load_native_v2_contract() -> dict[str, Any]:
     contract_path = Path(__file__).with_name("tokenizer_contract.json")
     with contract_path.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
+        data: dict[str, Any] = json.load(handle)
+        return data
 
 
 NATIVE_V2_TOKENIZER_CONTRACT = _load_native_v2_contract()
@@ -259,7 +260,7 @@ class ModelConfig:
         return asdict(self)
 
     @classmethod
-    def from_dict(cls, data: dict) -> "ModelConfig":
+    def from_dict(cls, data: dict) -> ModelConfig:
         """Deserialise from dict with sensible defaults."""
         defaults = {
             "vocab_size": int(NATIVE_V2_TOKENIZER_CONTRACT["total_vocab_size"]),

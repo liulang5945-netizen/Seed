@@ -7,8 +7,8 @@ Endpoints:
 
 from fastapi import APIRouter, Request
 
-from seed_platform.runtime_service import get_runtime_status, get_bootstrap_status
-from api.models_runtime import RuntimeStatusPayload, BootstrapPayload
+from api.models_runtime import BootstrapPayload, RuntimeStatusPayload
+from seed_platform.runtime_service import get_bootstrap_status, get_runtime_status
 
 router = APIRouter(prefix="/api/runtime", tags=["runtime"])
 

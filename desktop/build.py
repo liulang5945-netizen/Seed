@@ -13,9 +13,9 @@ Seed桌面客户端打包脚本
 """
 
 import os
-import sys
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).parent.parent

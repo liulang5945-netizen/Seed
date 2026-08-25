@@ -19,9 +19,12 @@
               <!-- === Router View === -->
               <div class="router-wrapper">
                 <RouteErrorView v-if="routeError" :message="routeError" />
-                <router-view v-else v-slot="{ Component, route }">
-                  <keep-alive include="ChatView">
-                    <component :is="Component" :key="route.path" />
+                <router-view v-else v-slot="{ Component }">
+                  <keep-alive
+                    :include="['ChatView', 'TrainingView', 'WorkspaceView', 'KBView', 'AgentConfigView', 'LifeStatusView']"
+                    :max="6"
+                  >
+                    <component :is="Component" />
                   </keep-alive>
                 </router-view>
               </div>

@@ -5,10 +5,9 @@ from __future__ import annotations
 import argparse
 import ast
 import json
-from pathlib import Path
 import sys
 import time
-from typing import Dict
+from pathlib import Path
 
 import torch
 
@@ -91,7 +90,7 @@ def _stored_synapses(model: Taiji) -> tuple[object, ...]:
     )
 
 
-def run_benchmark(*, epochs: int = 200, seed: int = 7) -> Dict[str, object]:
+def run_benchmark(*, epochs: int = 200, seed: int = 7) -> dict[str, object]:
     config = TaijiConfig(
         region_sizes=(64, 48),
         synapse_fan_in=16,
@@ -111,7 +110,9 @@ def run_benchmark(*, epochs: int = 200, seed: int = 7) -> Dict[str, object]:
     generated = model.generate(b"a", 8)
     changed_tensors = sum(
         not torch.equal(before_tensor, after_tensor)
-        for before_tensor, after_tensor in zip(initial_parameters, model.parameter_tensors())
+        for before_tensor, after_tensor in zip(
+            initial_parameters, model.parameter_tensors(), strict=False
+        )
     )
 
     checkpoint = model.checkpoint()
@@ -123,7 +124,9 @@ def run_benchmark(*, epochs: int = 200, seed: int = 7) -> Dict[str, object]:
         and torch.equal(next_left.probabilities, next_right.probabilities)
         and all(
             torch.equal(left, right)
-            for left, right in zip(model.parameter_tensors(), restored.parameter_tensors())
+            for left, right in zip(
+                model.parameter_tensors(), restored.parameter_tensors(), strict=False
+            )
         )
     )
 

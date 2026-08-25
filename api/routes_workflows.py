@@ -3,6 +3,7 @@
 """
 
 import logging
+
 from fastapi import APIRouter, HTTPException
 
 from neuroplex.agent_ext.workflow_engine import WorkflowDefinition, WorkflowEngine, WorkflowStore
@@ -40,7 +41,7 @@ async def create_workflow(data: dict):
         store.save(wf)
         return {"status": "success", "id": wf.id}
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
 
 
 @router.delete("/api/workflows/{workflow_id}")
@@ -63,4 +64,4 @@ async def execute_workflow(workflow_id: str):
         return {"status": "success", "result": asdict(result)}
     except Exception as e:
         logger.error(f"Request failed: {e}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志")
+        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from e

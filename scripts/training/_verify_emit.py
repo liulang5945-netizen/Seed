@@ -15,7 +15,8 @@ from __future__ import annotations
 
 import json
 import numbers
-from typing import Any, Dict, Mapping
+from collections.abc import Mapping
+from typing import Any
 
 VERIFY_RESULT_PREFIX = "VERIFY_RESULT: "
 
@@ -26,7 +27,7 @@ def _coerce_pass(value: Any) -> bool:
     return bool(value)
 
 
-def normalize(name: str, report: Mapping[str, Any]) -> Dict[str, Any]:
+def normalize(name: str, report: Mapping[str, Any]) -> dict[str, Any]:
     """归一化任意 verify 报告为统一 schema。"""
 
     if "status" in report:
@@ -53,7 +54,7 @@ def normalize(name: str, report: Mapping[str, Any]) -> Dict[str, Any]:
     return {"name": name, "status": status, "metrics": dict(metrics), "checks": dict(checks)}
 
 
-def emit(name: str, report: Mapping[str, Any]) -> Dict[str, Any]:
+def emit(name: str, report: Mapping[str, Any]) -> dict[str, Any]:
     """打印 VERIFY_RESULT 行并返回归一化结果。"""
 
     result = normalize(name, report)

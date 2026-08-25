@@ -11,7 +11,7 @@
 
 import logging
 import time
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 
 logger = logging.getLogger("Taiji.Senses")
 
@@ -25,7 +25,7 @@ class InputSensor:
 
     def __init__(self):
         self._request_count = 0
-        self._last_request_time = 0
+        self._last_request_time = 0.0
         self._engine = None
         self._cortex = None  # 大脑（Cortex）
 
@@ -113,16 +113,19 @@ class InputSensor:
 
     async def _generate(self, text: str, max_tokens: int, temperature: float) -> str:
         """同步生成"""
-        if hasattr(self._engine, "generate"):
-            return self._engine.generate(text, max_new_tokens=max_tokens, temperature=temperature)
+        engine = self._engine
+        if engine is not None and hasattr(engine, "generate"):
+            result: str = engine.generate(text, max_new_tokens=max_tokens, temperature=temperature)
+            return result
         return "引擎不支持生成"
 
     async def _stream_generate(
         self, text: str, max_tokens: int, temperature: float
     ) -> AsyncGenerator[str, None]:
         """流式生成"""
-        if hasattr(self._engine, "generate_stream"):
-            async for chunk in self._engine.generate_stream(
+        engine = self._engine
+        if engine is not None and hasattr(engine, "generate_stream"):
+            async for chunk in engine.generate_stream(
                 text, max_new_tokens=max_tokens, temperature=temperature
             ):
                 yield chunk

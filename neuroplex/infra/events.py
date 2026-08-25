@@ -16,7 +16,7 @@ import logging
 import threading
 import time
 from collections import defaultdict
-from typing import Callable, Dict, List, Optional
+from collections.abc import Callable
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +27,8 @@ class EventBus:
     """线程安全的同步事件总线。"""
 
     def __init__(self) -> None:
-        self._subscribers: Dict[str, List[Callable]] = defaultdict(list)
-        self._broadcast_callback: Optional[Callable] = None
+        self._subscribers: dict[str, list[Callable]] = defaultdict(list)
+        self._broadcast_callback: Callable | None = None
         self._lock = threading.Lock()
 
     def subscribe(self, event_type: str, handler: Callable) -> None:
@@ -46,7 +46,7 @@ class EventBus:
         with self._lock:
             self._broadcast_callback = callback
 
-    def publish(self, event_type: str, data: Optional[dict] = None, source: str = "") -> dict:
+    def publish(self, event_type: str, data: dict | None = None, source: str = "") -> dict:
         message = {
             "event_type": event_type,
             "data": data or {},
