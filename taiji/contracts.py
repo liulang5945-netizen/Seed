@@ -1217,6 +1217,7 @@ class CognitiveState:
     learning: LearningState
     action_intent: ActionIntent | None = None
     outcome: Outcome | None = None
+    world_transition: WorldTransition | None = None
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -1245,6 +1246,9 @@ class CognitiveState:
                 None if self.action_intent is None else self.action_intent.to_payload()
             ),
             "outcome": None if self.outcome is None else self.outcome.to_payload(),
+            "world_transition": (
+                None if self.world_transition is None else self.world_transition.to_payload()
+            ),
         }
 
     @classmethod
@@ -1255,6 +1259,7 @@ class CognitiveState:
         percept = payload.get("percept")
         intent = payload.get("action_intent")
         outcome = payload.get("outcome")
+        world_transition = payload.get("world_transition")
         return cls(
             version=int(payload["version"]),
             episode_id=str(payload["episode_id"]),
@@ -1280,6 +1285,11 @@ class CognitiveState:
                 None if intent is None else ActionIntent.from_payload(intent, device=device)
             ),
             outcome=None if outcome is None else Outcome.from_payload(outcome, device=device),
+            world_transition=(
+                None
+                if world_transition is None
+                else WorldTransition.from_payload(world_transition, device=device)
+            ),
         )
 
 

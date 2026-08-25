@@ -199,6 +199,9 @@ P3 的第一段合同与恢复边界已落地：
 - 多步扩展已通过独立 episode-ID holdout：3 个训练 episode、2 个新 episode 的 3-seed
   `rollout_state_mse_max=0.00536`、`final_state_mse_max=0.00625`、success accuracy=1.0，
   checkpoint continuation=true；该结果仍是小型 move benchmark，尚未接入 adapter 的真实认知循环。
+- `TSKV8Adapter` 已接入结构化 transition lineage：`settle_action(world_state=...)` 生成并保存
+  `CognitiveState.world_transition`，后续 observe 保留对象/关系/event，native checkpoint 可恢复；
+  旧 scalar reward API 保持兼容。该 adapter contract 只证明状态所有权和恢复，不证明 runtime 已能预测世界。
 
 ### 工作项
 
@@ -302,4 +305,4 @@ P3 的第一段合同与恢复边界已落地：
 
 ## 16. 当前唯一下一步
 
-**把已通过的 world transition/episode 路径接入 `TSKV8Adapter` 的真实 cognitive snapshot：观察、ActionIntent、环境 Outcome 和 TaijiWorldState 必须形成可恢复的同一 transition lineage；先完成 adapter contract/恢复回归，再扩展 workspace 路由。**
+**让 `TSKV8Adapter` 在 ActionIntent 前记录 Taiji-owned dynamics prediction，并在真实 `WorldTransition` 回写后计算 prediction error/校正；先完成预测—干预—校正 contract，再扩展 workspace 路由。**

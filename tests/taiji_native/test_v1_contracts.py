@@ -11,6 +11,8 @@ from taiji import (
     Outcome,
     TaijiConfig,
     TSKV8Adapter,
+    WorldObject,
+    WorldState,
 )
 
 
@@ -91,6 +93,44 @@ def test_tsk_v8_adapter_exposes_observation_action_outcome_contracts() -> None:
     assert state.outcome is not None
     assert state.outcome.intent_id == state.action_intent.intent_id
     assert state.outcome.reward == 1.0
+
+
+def test_tsk_v8_adapter_commits_structured_world_transition_lineage() -> None:
+    model = TSKV8Adapter(_config(), episode_id="world-lineage")
+    model.observe_event(
+        Observation(
+            modality="text-byte",
+            value=97,
+            timestamp=0,
+            source="test-environment",
+        ),
+        learn=False,
+    )
+    model.act((97, 98), sample=False)
+    before = model.cognitive_snapshot().world
+    after = WorldState(
+        tick=before.tick + 1,
+        latent=torch.zeros(2),
+        objects=(WorldObject("token", attributes={"position": 1.0}),),
+    )
+
+    model.settle_action(1.0, learn=False, world_state=after, success=True)
+    state = model.cognitive_snapshot()
+
+    assert state.world.objects[0].attribute("position") == 1.0
+    assert state.world_transition is not None
+    assert state.world_transition.before.tick == before.tick
+    assert state.world_transition.after.tick == after.tick
+    assert state.world_transition.outcome.intent_id == state.action_intent.intent_id
+
+    restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
+    restored_state = restored.cognitive_snapshot()
+    assert restored_state.world_transition is not None
+    assert restored_state.world_transition.action.action_id == state.world_transition.action.action_id
+    assert restored_state.world.objects[0].attribute("position") == 1.0
+
+    restored.observe(100, learn=False)
+    assert restored.cognitive_snapshot().world.objects[0].attribute("position") == 1.0
 
 
 def test_native_checkpoint_is_atomic_and_deterministic() -> None:
