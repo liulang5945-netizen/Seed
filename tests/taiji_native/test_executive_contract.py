@@ -287,3 +287,47 @@ def test_affordance_features_transfer_to_unseen_affordance_and_action() -> None:
         source.features_for(unseen_positive),
         source.features_for(unseen_negative),
     )
+
+
+def test_affordance_features_learn_from_environment_outcome_and_lesion() -> None:
+    adapter = TSKV8Adapter(_config())
+    adapter.observe(65, learn=False)
+    adapter.set_goals((Goal("goal-1", "complete the task", priority=1.0),))
+    source = LearnedAffordanceFeatures(input_dim=3, feature_dim=6, seed=19)
+    adapter.attach_affordance_features(source)
+    adapter.attach_executive(ExecutiveController())
+    world = WorldState(
+        tick=adapter.tick + 1,
+        affordances=(
+            WorldAffordance(
+                affordance_id="runtime-affordance",
+                action_kind="runtime_action",
+                parameters={"action_symbol": 10, "available_actions": (10, 11)},
+                features=torch.tensor([0.7, 0.3, 0.0]),
+            ),
+        ),
+    )
+    adapter.observe_event(
+        Observation(
+            modality="text-byte",
+            value=66,
+            timestamp=world.tick,
+            source="test.runtime-world",
+        ),
+        learn=False,
+        world_state=world,
+    )
+
+    adapter.select_executive()
+    adapter.execute_executive_action(ExecutiveEnvironment(), learn=True)
+
+    assert source.online_updates == 1
+    assert adapter.last_affordance_prediction_error is not None
+    restored = TSKV8Adapter.from_native_checkpoint(adapter.native_checkpoint())
+    assert restored._affordance_features is not None
+    assert restored._affordance_features.online_updates == 1
+    assert restored.last_affordance_prediction_error == adapter.last_affordance_prediction_error
+
+    adapter.attach_affordance_features(None)
+    with pytest.raises(RuntimeError, match="learned affordance feature source"):
+        adapter.synthesize_executive_candidates()

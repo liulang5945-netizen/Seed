@@ -368,7 +368,9 @@ P4 的最小真实经历边界已落地：
 - P7 affordance feature transfer Gate 已通过：`WorldAffordance` 携带带 provenance 的 numeric grounding，`LearnedAffordanceFeatures`
   由 Taiji-owned outcome objective 学习连续投影；candidate synthesis 只消费该投影，不读取 `affordance_id/action_kind` 查表，未见
   affordance/action holdout 已通过，且 native checkpoint 可恢复该 source。
-- 本轮 native 回归为 `125 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
+- P7 affordance online-credit Gate 已通过：真实 `EnvironmentOutcome` 的 reward 会回写当前 selected affordance 的 feature source；source
+  lesion 会阻断候选合成，online update 计数、预测误差和权重可经 native checkpoint continuation 恢复。
+- 本轮 native 回归为 `126 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
 
 ### 工作项
@@ -473,4 +475,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把 `LearnedAffordanceFeatures` 接入真实 `WorldTransition/EnvironmentOutcome` 的在线 outcome correction，并验证 feature-source lesion 与 checkpoint continuation；不新增 action/intent 查表。**
+**下一步：把 `WorldAffordance.features` 的 grounding 收口为 Taiji-owned world/percept grounding producer，并在 grounding-source lesion 与 compositional/perturbed holdout 上验证；不新增 action/intent 查表。**

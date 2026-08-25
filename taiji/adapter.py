@@ -110,6 +110,7 @@ class TSKV8Adapter(Taiji):
         self._executive: ExecutiveController | None = None
         self._last_executive_decision: ExecutiveDecision | None = None
         self._last_executive_prediction_error: float | None = None
+        self._last_affordance_prediction_error: float | None = None
         self._last_executive_world_action: WorldAction | None = None
         self._planned_rollout: ImaginedRollout | None = None
         self._replan_required = False
@@ -292,6 +293,10 @@ class TSKV8Adapter(Taiji):
         return self._last_executive_prediction_error
 
     @property
+    def last_affordance_prediction_error(self) -> float | None:
+        return self._last_affordance_prediction_error
+
+    @property
     def last_executive_world_action(self) -> WorldAction | None:
         return self._last_executive_world_action
 
@@ -328,6 +333,7 @@ class TSKV8Adapter(Taiji):
         )
         self._last_executive_decision = decision
         self._last_executive_prediction_error = None
+        self._last_affordance_prediction_error = None
         self._last_executive_world_action = None
         self._cognitive_state = replace(
             self._cognitive_state,
@@ -358,7 +364,7 @@ class TSKV8Adapter(Taiji):
             features_by_affordance=feature_map,
         )
 
-    def record_executive_outcome(self, outcome: Outcome) -> float:
+    def record_executive_outcome(self, outcome: Outcome, *, learn: bool = True) -> float:
         """Train executive selection from an outcome produced by an environment."""
 
         if self._executive is None:
@@ -371,6 +377,22 @@ class TSKV8Adapter(Taiji):
             raise ValueError("executive outcome must reference the selected ActionIntent")
         error = self._executive.update(self._last_executive_decision, outcome.reward)
         self._last_executive_prediction_error = error
+        self._last_affordance_prediction_error = None
+        if learn and self._affordance_features is not None:
+            affordance_id = self._last_executive_decision.selected.source_affordance_id
+            if affordance_id is not None:
+                affordance = next(
+                    (
+                        item
+                        for item in self._cognitive_state.world.affordances
+                        if item.affordance_id == affordance_id
+                    ),
+                    None,
+                )
+                if affordance is not None:
+                    self._last_affordance_prediction_error = (
+                        self._affordance_features.online_update(affordance, outcome.reward)
+                    )
         self._cognitive_state = replace(self._cognitive_state, outcome=outcome)
         return error
 
@@ -432,7 +454,7 @@ class TSKV8Adapter(Taiji):
         experienced = self._cognitive_state.outcome
         if experienced is None:
             raise RuntimeError("executive environment outcome was not recorded")
-        self.record_executive_outcome(experienced)
+        self.record_executive_outcome(experienced, learn=learn)
         self._replan_required = bool(
             not result.terminal and (result.success is False or result.reward < 0.0)
         )
@@ -840,6 +862,7 @@ class TSKV8Adapter(Taiji):
         self._last_rollout_calibrated_confidence = None
         self._last_executive_decision = None
         self._last_executive_prediction_error = None
+        self._last_affordance_prediction_error = None
         self._last_executive_world_action = None
         self._last_generation_trace = None
         self._last_language_emission = None
@@ -1463,6 +1486,7 @@ class TSKV8Adapter(Taiji):
             else self._last_executive_decision.to_payload()
         )
         payload["last_executive_prediction_error"] = self._last_executive_prediction_error
+        payload["last_affordance_prediction_error"] = self._last_affordance_prediction_error
         payload["last_executive_world_action"] = (
             None
             if self._last_executive_world_action is None
@@ -1590,6 +1614,14 @@ class TSKV8Adapter(Taiji):
         )
         error = payload.get("last_executive_prediction_error") if isinstance(payload, dict) else None
         self._last_executive_prediction_error = None if error is None else float(error)
+        affordance_error = (
+            payload.get("last_affordance_prediction_error")
+            if isinstance(payload, dict)
+            else None
+        )
+        self._last_affordance_prediction_error = (
+            None if affordance_error is None else float(affordance_error)
+        )
         action = payload.get("last_executive_world_action") if isinstance(payload, dict) else None
         self._last_executive_world_action = (
             None
@@ -1753,6 +1785,7 @@ class TSKV8Adapter(Taiji):
             else self._last_executive_decision.to_payload()
         )
         components["last_executive_prediction_error"] = self._last_executive_prediction_error
+        components["last_affordance_prediction_error"] = self._last_affordance_prediction_error
         components["last_executive_world_action"] = (
             None
             if self._last_executive_world_action is None

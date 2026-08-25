@@ -86,6 +86,7 @@ class LearnedAffordanceFeatures(nn.Module):
             self.encoder = nn.Linear(self.input_dim, self.feature_dim)
             self.outcome_head = nn.Linear(self.feature_dim, 1)
         self.fit_updates = 0
+        self.online_updates = 0
 
     def encode(self, grounding: torch.Tensor) -> torch.Tensor:
         """Return a bounded learned vector without using symbolic identifiers."""
@@ -152,12 +153,52 @@ class LearnedAffordanceFeatures(nn.Module):
         self.fit_updates += int(epochs) * len(examples)
         return losses
 
+    def online_update(
+        self,
+        affordance: WorldAffordance,
+        reward: float,
+        *,
+        learning_rate: float = 0.01,
+        repeats: int = 1,
+    ) -> float:
+        """Correct the source from one experienced world outcome."""
+
+        if not isinstance(affordance, WorldAffordance):
+            raise TypeError("affordance must be a WorldAffordance")
+        if float(learning_rate) <= 0.0 or int(repeats) <= 0:
+            raise ValueError("affordance online learning_rate and repeats must be positive")
+        grounding = _vector(
+            affordance.features,
+            name="affordance grounding",
+            dimension=self.input_dim,
+        ).to(self.encoder.weight.device)
+        target = torch.tensor(
+            float(_finite(reward, "affordance online reward")),
+            dtype=torch.float32,
+            device=grounding.device,
+        )
+        optimizer = torch.optim.SGD(self.parameters(), lr=float(learning_rate))
+        self.train()
+        error = 0.0
+        for _ in range(int(repeats)):
+            prediction = self.outcome_head(torch.tanh(self.encoder(grounding))).reshape(())
+            error = float((prediction.detach() - target).cpu())
+            loss = (prediction - target) ** 2
+            optimizer.zero_grad(set_to_none=True)
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(self.parameters(), max_norm=1.0)
+            optimizer.step()
+        self.eval()
+        self.online_updates += 1
+        return error
+
     def checkpoint(self) -> dict[str, Any]:
         return {
             "format": AFFORDANCE_FEATURE_CHECKPOINT_FORMAT,
             "input_dim": self.input_dim,
             "feature_dim": self.feature_dim,
             "fit_updates": self.fit_updates,
+            "online_updates": self.online_updates,
             "state_dict": {
                 name: tensor.detach().cpu().clone()
                 for name, tensor in self.state_dict().items()
@@ -175,5 +216,6 @@ class LearnedAffordanceFeatures(nn.Module):
         )
         learner.load_state_dict(payload["state_dict"])
         learner.fit_updates = int(payload.get("fit_updates", 0))
+        learner.online_updates = int(payload.get("online_updates", 0))
         learner.eval()
         return learner
