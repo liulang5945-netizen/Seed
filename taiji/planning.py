@@ -155,6 +155,7 @@ class GoalPlanner:
 
     def __init__(self, config: PlanningConfig | None = None) -> None:
         self.config = config or PlanningConfig()
+        self._calibration: dict[str, tuple[int, int]] = {}
 
     def plan(
         self,
@@ -274,17 +275,39 @@ class GoalPlanner:
 
         return abs(float(rollout.steps[0].predicted_reward) - float(outcome.reward))
 
+    def record_rollout_outcome(self, rollout: ImaginedRollout, outcome: Outcome) -> float:
+        """Update empirical success calibration for an imagined rollout."""
+
+        attempts, successes = self._calibration.get(rollout.rollout_id, (0, 0))
+        attempts += 1
+        successes += int(outcome.success is True or (outcome.success is None and outcome.reward > 0.0))
+        self._calibration[rollout.rollout_id] = (attempts, successes)
+        return successes / attempts
+
+    def calibrated_confidence(self, rollout_id: str) -> float | None:
+        stats = self._calibration.get(rollout_id)
+        return None if stats is None else stats[1] / stats[0]
+
     def checkpoint(self) -> dict[str, Any]:
         return {
             "format": PLANNING_CHECKPOINT_FORMAT,
             "config": self.config.to_payload(),
+            "calibration": {
+                rollout_id: [attempts, successes]
+                for rollout_id, (attempts, successes) in self._calibration.items()
+            },
         }
 
     @classmethod
     def from_checkpoint(cls, payload: dict[str, Any]) -> GoalPlanner:
         if payload.get("format") != PLANNING_CHECKPOINT_FORMAT:
             raise ValueError("unsupported planning checkpoint format")
-        return cls(PlanningConfig.from_payload(dict(payload.get("config", {}))))
+        planner = cls(PlanningConfig.from_payload(dict(payload.get("config", {}))))
+        planner._calibration = {
+            str(rollout_id): (int(stats[0]), int(stats[1]))
+            for rollout_id, stats in dict(payload.get("calibration", {})).items()
+        }
+        return planner
 
     @staticmethod
     def _select_goal(goals: GoalState, goal_id: str | None) -> Goal:

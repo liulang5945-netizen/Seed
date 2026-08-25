@@ -78,6 +78,7 @@ class TSKV8Adapter(Taiji):
         self._planned_rollout: ImaginedRollout | None = None
         self._replan_required = False
         self._last_rollout_prediction_error: float | None = None
+        self._last_rollout_calibrated_confidence: float | None = None
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -278,6 +279,7 @@ class TSKV8Adapter(Taiji):
         self._planned_rollout = decision.selected
         self._replan_required = False
         self._last_rollout_prediction_error = None
+        self._last_rollout_calibrated_confidence = None
         self._cognitive_state = replace(
             self._cognitive_state,
             plan=decision.plan,
@@ -292,6 +294,10 @@ class TSKV8Adapter(Taiji):
     @property
     def last_rollout_prediction_error(self) -> float | None:
         return self._last_rollout_prediction_error
+
+    @property
+    def last_rollout_calibrated_confidence(self) -> float | None:
+        return self._last_rollout_calibrated_confidence
 
     def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         super().reset_dynamics(episode_id=episode_id)
@@ -661,12 +667,16 @@ class TSKV8Adapter(Taiji):
                     )
         memory = self._cognitive_state.memory
         if self._planned_rollout is not None and self._goal_planner is not None:
+            rollout = self._planned_rollout
             self._last_rollout_prediction_error = self._goal_planner.rollout_prediction_error(
-                self._planned_rollout, outcome
+                rollout, outcome
             )
             self._replan_required = (
                 self._last_rollout_prediction_error
                 > self._goal_planner.config.replan_error_threshold
+            )
+            self._last_rollout_calibrated_confidence = self._goal_planner.record_rollout_outcome(
+                rollout, outcome
             )
             self._planned_rollout = None
         goals = self._cognitive_state.goals
@@ -771,6 +781,7 @@ class TSKV8Adapter(Taiji):
         )
         payload["replan_required"] = self._replan_required
         payload["last_rollout_prediction_error"] = self._last_rollout_prediction_error
+        payload["last_rollout_calibrated_confidence"] = self._last_rollout_calibrated_confidence
         return payload
 
     def restore(self, checkpoint: dict[str, Any]) -> None:
@@ -861,6 +872,14 @@ class TSKV8Adapter(Taiji):
         )
         error = payload.get("last_rollout_prediction_error") if isinstance(payload, dict) else None
         self._last_rollout_prediction_error = None if error is None else float(error)
+        confidence = (
+            payload.get("last_rollout_calibrated_confidence")
+            if isinstance(payload, dict)
+            else None
+        )
+        self._last_rollout_calibrated_confidence = (
+            None if confidence is None else float(confidence)
+        )
 
     def native_checkpoint(self) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
@@ -885,6 +904,9 @@ class TSKV8Adapter(Taiji):
         )
         components["replan_required"] = self._replan_required
         components["last_rollout_prediction_error"] = self._last_rollout_prediction_error
+        components["last_rollout_calibrated_confidence"] = (
+            self._last_rollout_calibrated_confidence
+        )
         return NativeCheckpoint(
             kernel=super().checkpoint(),
             cognitive_state=self.cognitive_snapshot(),
