@@ -11,6 +11,14 @@ from .assembly_evaluation import (
 )
 from .assembly_relations import AssemblyRelationCorpus, AssemblyRelationExample
 from .config import CapacityPolicy, PerceptionConfig, TaijiConfig
+from .content_selection import (
+    CONTENT_SELECTION_CHECKPOINT_FORMAT,
+    ContentCandidate,
+    ContentSelectionContext,
+    ContentSelectionDecision,
+    ContentSelector,
+    ContentTrainingExample,
+)
 from .contracts import (
     CONTRACT_FORMAT,
     CONTRACT_VERSION,
@@ -134,6 +142,12 @@ __all__ = [
     "AssemblyRelationEvaluationConfig",
     "AssemblyRelationEvaluator",
     "CapacityPolicy",
+    "ContentCandidate",
+    "ContentSelectionContext",
+    "ContentSelectionDecision",
+    "ContentSelector",
+    "ContentTrainingExample",
+    "CONTENT_SELECTION_CHECKPOINT_FORMAT",
     "CognitiveState",
     "CONTRACT_FORMAT",
     "CONTRACT_VERSION",

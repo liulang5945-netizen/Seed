@@ -1,0 +1,18 @@
+{
+  "format": "taiji-p6-learned-content-selection-v1",
+  "metrics": {
+    "fit_loss": 0.19078871607780457,
+    "certain_context_selection": "answer",
+    "uncertain_context_selection": "ask",
+    "selected_content_kind": "request_information",
+    "selected_semantic_slots": {
+      "mode": "clarify"
+    },
+    "checkpoint_selection": "ask",
+    "training_steps": 1600
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "learned utility selects different semantic content under different world uncertainty and restores the same selection from checkpoint"
+  }
+}

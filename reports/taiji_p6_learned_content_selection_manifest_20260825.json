@@ -1,0 +1,18 @@
+{
+  "format": "taiji-p6-learned-content-selection-manifest-v1",
+  "task": "learn context-conditioned content selection from goal/world/context signals",
+  "lesions": [
+    "copy_action_intent",
+    "fixed_content_table",
+    "world_context",
+    "content_selector_checkpoint"
+  ],
+  "signals": [
+    "goal_residual",
+    "world_uncertainty",
+    "novelty",
+    "resource_budget",
+    "semantic_slots"
+  ],
+  "boundary": "learned content selection Gate only; no natural-language fluency or open-ended semantic invention claim"
+}
