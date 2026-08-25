@@ -163,6 +163,21 @@ class WorldSchema:
             "input_dim": self.input_dim,
         }
 
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> WorldSchema:
+        return cls(
+            object_ids=tuple(str(item) for item in payload["object_ids"]),
+            state_slots=tuple((str(item[0]), str(item[1])) for item in payload["state_slots"]),
+            relation_slots=tuple(
+                (str(item[0]), str(item[1]), str(item[2]))
+                for item in payload.get("relation_slots", ())
+            ),
+            action_kinds=tuple(str(item) for item in payload["action_kinds"]),
+            actor_ids=tuple(str(item) for item in payload["actor_ids"]),
+            target_ids=tuple(str(item) for item in payload["target_ids"]),
+            parameter_names=tuple(str(item) for item in payload["parameter_names"]),
+        )
+
 
 @dataclass(frozen=True)
 class WorldPrediction:
@@ -218,10 +233,11 @@ class WorldDynamicsLearner(nn.Module):
             raise ValueError("hidden_dim must be positive")
         torch.manual_seed(int(seed))
         self.schema = schema
+        self.hidden_dim = int(hidden_dim)
         self.network = nn.Sequential(
-            nn.Linear(schema.input_dim, int(hidden_dim)),
+            nn.Linear(schema.input_dim, self.hidden_dim),
             nn.Tanh(),
-            nn.Linear(int(hidden_dim), schema.state_dim + 2),
+            nn.Linear(self.hidden_dim, schema.state_dim + 2),
         )
 
     def predict(

@@ -37,6 +37,7 @@ from .contracts import (
     WorldInterventionCase,
     WorldInterventionCorpus,
     WorldObject,
+    WorldPredictionRecord,
     WorldState,
     WorldTransition,
 )
@@ -134,6 +135,7 @@ __all__ = [
     "WorldEpisode",
     "WorldEpisodeCorpus",
     "WorldObject",
+    "WorldPredictionRecord",
     "WorldTransition",
     "TaijiWorldState",
     "WORLD_STATE_CHECKPOINT_FORMAT",

@@ -23,6 +23,7 @@ from .contracts import (
     SelfState,
     WorkspaceState,
     WorldAction,
+    WorldPredictionRecord,
     WorldState,
     WorldTransition,
 )
@@ -30,6 +31,7 @@ from .contracts import MemoryState as NativeMemoryState
 from .model import Taiji
 from .perception import LearnedPerception
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
+from .world_learning import WorldDynamicsLearner, WorldSchema
 
 
 class TSKV8Adapter(Taiji):
@@ -48,6 +50,7 @@ class TSKV8Adapter(Taiji):
         super().__init__(*args, **kwargs)
         self.perception = LearnedPerception(self.config, device=self.device)
         self._cognitive_state = self._empty_cognitive_state(self._state.episode_id)
+        self._world_dynamics: WorldDynamicsLearner | None = None
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -79,6 +82,13 @@ class TSKV8Adapter(Taiji):
         """Return a detached contract snapshot owned by Taiji."""
 
         return CognitiveState.from_payload(self._cognitive_state.to_payload(), device=self.device)
+
+    def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:
+        """Attach a Taiji-owned predictor used for runtime intervention scoring."""
+
+        if learner is not None and not isinstance(learner, WorldDynamicsLearner):
+            raise TypeError("learner must be a WorldDynamicsLearner or None")
+        self._world_dynamics = learner
 
     def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         super().reset_dynamics(episode_id=episode_id)
@@ -151,6 +161,7 @@ class TSKV8Adapter(Taiji):
             action_intent=None,
             outcome=None,
             world_transition=None,
+            world_prediction=None,
         )
         return step
 
@@ -161,6 +172,7 @@ class TSKV8Adapter(Taiji):
         learn: bool = True,
         learn_motor: bool | None = None,
         use_memory: bool = True,
+        world_state: WorldState | None = None,
     ) -> TaijiStep:
         """Ingest a v1 ``Observation`` while retaining the kernel API."""
 
@@ -173,9 +185,16 @@ class TSKV8Adapter(Taiji):
             use_memory=use_memory,
         )
         self._cognitive_state = replace(self._cognitive_state, observation=observation)
+        if world_state is not None:
+            if not isinstance(world_state, WorldState):
+                raise TypeError("world_state must be a Taiji WorldState")
+            if world_state.tick != self.tick:
+                raise ValueError("observed world_state must match the adapter tick")
+            self._cognitive_state = replace(self._cognitive_state, world=world_state)
         return step
 
     def act(self, available_actions: Any, *args: Any, **kwargs: Any) -> TaijiDecision:
+        supplied_world_action = kwargs.pop("world_action", None)
         decision = super().act(available_actions, *args, **kwargs)
         intent = ActionIntent(
             intent_id=f"{self._state.episode_id}:intent:{decision.tick}",
@@ -197,6 +216,37 @@ class TSKV8Adapter(Taiji):
             for index, action in enumerate(decision.available_actions)
         )
         selected_index = decision.available_actions.index(decision.action_symbol)
+        world_action = None
+        if supplied_world_action is not None:
+            if not isinstance(supplied_world_action, WorldAction):
+                raise TypeError("world_action must be a Taiji WorldAction")
+            if supplied_world_action.tick != self._cognitive_state.world.tick:
+                raise ValueError("world_action must act at the current world tick")
+            world_action = WorldAction(
+                action_id=intent.intent_id,
+                kind=supplied_world_action.kind,
+                tick=supplied_world_action.tick,
+                actor_id=supplied_world_action.actor_id,
+                target_id=supplied_world_action.target_id,
+                parameters=supplied_world_action.parameters,
+                provenance=supplied_world_action.provenance,
+            )
+        elif self._world_dynamics is not None:
+            world_action = WorldAction(
+                action_id=intent.intent_id,
+                kind=intent.kind,
+                tick=self._cognitive_state.world.tick,
+                parameters=intent.parameters,
+            )
+        world_prediction = None
+        if self._world_dynamics is not None and world_action is not None:
+            prediction = self._world_dynamics.predict(self._cognitive_state.world, world_action)
+            world_prediction = WorldPredictionRecord(
+                action=world_action,
+                predicted_state=prediction.state,
+                predicted_reward=prediction.reward,
+                predicted_success_probability=prediction.success_probability,
+            )
         self._cognitive_state = replace(
             self._cognitive_state,
             plan=PlanState(
@@ -205,6 +255,7 @@ class TSKV8Adapter(Taiji):
                 selected_plan_id=(candidates[selected_index].plan_id if candidates else None),
             ),
             action_intent=intent,
+            world_prediction=world_prediction,
         )
         return decision
 
@@ -234,16 +285,21 @@ class TSKV8Adapter(Taiji):
             tick=(self.tick if world_state is None else int(world_state.tick)),
         )
         transition = None
+        prediction_record = self._cognitive_state.world_prediction
         if world_state is not None:
             if world_action is None:
                 if intent is None:
                     raise RuntimeError("world_state requires a pending ActionIntent")
-                world_action = WorldAction(
+                world_action = (
+                    prediction_record.action
+                    if prediction_record is not None
+                    else WorldAction(
                     action_id=intent_id,
                     kind=intent.kind,
                     tick=before.tick,
                     parameters=intent.parameters,
                     provenance=str(kwargs.get("provenance", "experienced")),
+                    )
                 )
             transition = WorldTransition(
                 before=before,
@@ -251,12 +307,23 @@ class TSKV8Adapter(Taiji):
                 after=world_state,
                 outcome=outcome,
             )
+            if prediction_record is not None and self._world_dynamics is not None:
+                predicted = self._world_dynamics.schema.state_values(
+                    prediction_record.predicted_state
+                )
+                actual = self._world_dynamics.schema.state_values(world_state)
+                prediction_record = replace(
+                    prediction_record,
+                    state_error=float(torch.mean((predicted - actual) ** 2)),
+                    reward_error=(prediction_record.predicted_reward - outcome.reward) ** 2,
+                )
         self._cognitive_state = replace(
             self._cognitive_state,
             tick=self.tick,
             world=(world_state if world_state is not None else self._cognitive_state.world),
             outcome=outcome,
             world_transition=transition,
+            world_prediction=prediction_record,
             learning=replace(
                 self._cognitive_state.learning,
                 tick=self.tick,
@@ -286,21 +353,52 @@ class TSKV8Adapter(Taiji):
         payload = super().checkpoint()
         payload["adapter"] = self.ADAPTER_NAME
         payload["perception"] = self.perception.checkpoint()
+        if self._world_dynamics is not None:
+            payload["world_dynamics"] = self._world_dynamics_checkpoint()
         return payload
 
     def restore(self, checkpoint: dict[str, Any]) -> None:
         super().restore(checkpoint)
         if "perception" in checkpoint:
             self.perception.restore(checkpoint["perception"])
+        self._restore_world_dynamics(checkpoint.get("world_dynamics"))
+
+    def _world_dynamics_checkpoint(self) -> dict[str, Any]:
+        if self._world_dynamics is None:
+            raise RuntimeError("world dynamics is not attached")
+        return {
+            "schema": self._world_dynamics.schema.payload(),
+            "hidden_dim": self._world_dynamics.hidden_dim,
+            "state_dict": {
+                name: tensor.detach().cpu().clone()
+                for name, tensor in self._world_dynamics.state_dict().items()
+            },
+        }
+
+    def _restore_world_dynamics(self, payload: Any) -> None:
+        if payload is None:
+            self._world_dynamics = None
+            return
+        schema = WorldSchema.from_payload(dict(payload["schema"]))
+        learner = WorldDynamicsLearner(
+            schema,
+            hidden_dim=int(payload["hidden_dim"]),
+            seed=0,
+        )
+        learner.load_state_dict(payload["state_dict"])
+        self._world_dynamics = learner
 
     def native_checkpoint(self) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
 
+        components: dict[str, Any] = {"perception": self.perception.checkpoint()}
+        if self._world_dynamics is not None:
+            components["world_dynamics"] = self._world_dynamics_checkpoint()
         return NativeCheckpoint(
             kernel=super().checkpoint(),
             cognitive_state=self.cognitive_snapshot(),
             adapter=self.ADAPTER_NAME,
-            components={"perception": self.perception.checkpoint()},
+            components=components,
         ).to_payload()
 
     def restore_native(self, checkpoint: dict[str, Any]) -> None:
@@ -310,6 +408,7 @@ class TSKV8Adapter(Taiji):
         super().restore(envelope.kernel)
         if "perception" in envelope.components:
             self.perception.restore(envelope.components["perception"])
+        self._restore_world_dynamics(envelope.components.get("world_dynamics"))
         state = envelope.cognitive_state
         if state.tick != self.tick or state.episode_id != self._state.episode_id:
             raise ValueError("native cognitive state is out of sync with kernel state")

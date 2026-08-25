@@ -202,6 +202,9 @@ P3 的第一段合同与恢复边界已落地：
 - `TSKV8Adapter` 已接入结构化 transition lineage：`settle_action(world_state=...)` 生成并保存
   `CognitiveState.world_transition`，后续 observe 保留对象/关系/event，native checkpoint 可恢复；
   旧 scalar reward API 保持兼容。该 adapter contract 只证明状态所有权和恢复，不证明 runtime 已能预测世界。
+- `TSKV8Adapter` 可注入 `WorldDynamicsLearner`：动作前记录 `world_prediction`，真实 transition 到达后
+  回写 state/reward error，并把 learner/schema 与 prediction record 放入 native checkpoint；当前只完成
+  误差观测与 lineage 固化，尚未宣称在线权重校正已经有效。
 
 ### 工作项
 
@@ -305,4 +308,4 @@ P3 的第一段合同与恢复边界已落地：
 
 ## 16. 当前唯一下一步
 
-**让 `TSKV8Adapter` 在 ActionIntent 前记录 Taiji-owned dynamics prediction，并在真实 `WorldTransition` 回写后计算 prediction error/校正；先完成预测—干预—校正 contract，再扩展 workspace 路由。**
+**用真实 `WorldTransition` 的 prediction error 驱动 `WorldDynamicsLearner` 的在线校正：验证重复干预误差下降、更新可 checkpoint 恢复，并加入 no-update lesion；通过后再扩展 workspace 路由。**

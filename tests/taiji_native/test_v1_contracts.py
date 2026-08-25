@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import torch
 
+from scripts.training.eval_taiji_a2_world import build_corpus
 from seed import Seed, SeedConfig
 from taiji import (
     CONTRACT_FORMAT,
@@ -11,7 +12,10 @@ from taiji import (
     Outcome,
     TaijiConfig,
     TSKV8Adapter,
+    WorldAction,
+    WorldDynamicsLearner,
     WorldObject,
+    WorldSchema,
     WorldState,
 )
 
@@ -131,6 +135,68 @@ def test_tsk_v8_adapter_commits_structured_world_transition_lineage() -> None:
 
     restored.observe(100, learn=False)
     assert restored.cognitive_snapshot().world.objects[0].attribute("position") == 1.0
+
+
+def test_tsk_v8_adapter_scores_runtime_world_prediction_and_restores_learner() -> None:
+    corpus = build_corpus()
+    schema = WorldSchema.from_corpus(corpus)
+    learner = WorldDynamicsLearner(schema, hidden_dim=32, seed=11)
+    learner.fit(corpus.train, epochs=200, learning_rate=0.01)
+
+    model = TSKV8Adapter(_config(), episode_id="world-prediction")
+    model.attach_world_dynamics(learner)
+    initial = corpus.train[0].initial
+    initial = WorldState(
+        tick=1,
+        latent=torch.zeros(2),
+        objects=initial.objects,
+        relations=initial.relations,
+        events=initial.events,
+        affordances=initial.affordances,
+    )
+    model.observe_event(
+        Observation(
+            modality="text-byte",
+            value=97,
+            timestamp=0,
+            source="test-environment",
+        ),
+        learn=False,
+        world_state=initial,
+    )
+    model.act(
+        (97, 98),
+        sample=False,
+        world_action=WorldAction(
+            action_id="pending",
+            kind="move",
+            tick=model.tick,
+            actor_id="agent",
+            target_id="red",
+            parameters={"step": 1.0},
+        ),
+    )
+    after = WorldState(
+        tick=2,
+        latent=torch.zeros(2),
+        objects=(
+            WorldObject("agent", attributes={"energy": 1.0}),
+            WorldObject("red", attributes={"position": 1.0}),
+            WorldObject("blue", attributes={"position": 0.0}),
+        ),
+    )
+
+    model.settle_action(1.0, learn=False, world_state=after, success=True)
+    state = model.cognitive_snapshot()
+    assert state.world_prediction is not None
+    assert state.world_prediction.state_error is not None
+    assert state.world_prediction.reward_error is not None
+    assert state.world_prediction.state_error < 1.0
+
+    restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
+    restored_state = restored.cognitive_snapshot()
+    assert restored_state.world_prediction is not None
+    assert restored_state.world_prediction.state_error == state.world_prediction.state_error
 
 
 def test_native_checkpoint_is_atomic_and_deterministic() -> None:

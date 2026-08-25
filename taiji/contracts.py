@@ -874,6 +874,60 @@ class WorldTransition:
 
 
 @dataclass(frozen=True)
+class WorldPredictionRecord:
+    """A runtime prediction that is later scored against a real transition."""
+
+    action: WorldAction
+    predicted_state: WorldState
+    predicted_reward: float
+    predicted_success_probability: float
+    state_error: float | None = None
+    reward_error: float | None = None
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        if not math.isfinite(float(self.predicted_reward)):
+            raise ValueError("predicted_reward must be finite")
+        _check_unit(self.predicted_success_probability, "predicted_success_probability")
+        if self.state_error is not None and (
+            not math.isfinite(float(self.state_error)) or float(self.state_error) < 0.0
+        ):
+            raise ValueError("state_error must be a finite non-negative value")
+        if self.reward_error is not None and not math.isfinite(float(self.reward_error)):
+            raise ValueError("reward_error must be finite")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "action": self.action.to_payload(),
+            "predicted_state": self.predicted_state.to_payload(),
+            "predicted_reward": self.predicted_reward,
+            "predicted_success_probability": self.predicted_success_probability,
+            "state_error": self.state_error,
+            "reward_error": self.reward_error,
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> WorldPredictionRecord:
+        return cls(
+            version=int(payload["version"]),
+            action=WorldAction.from_payload(payload["action"], device=device),
+            predicted_state=WorldState.from_payload(payload["predicted_state"], device=device),
+            predicted_reward=float(payload["predicted_reward"]),
+            predicted_success_probability=float(payload["predicted_success_probability"]),
+            state_error=(
+                None if payload.get("state_error") is None else float(payload["state_error"])
+            ),
+            reward_error=(
+                None if payload.get("reward_error") is None else float(payload["reward_error"])
+            ),
+        )
+
+
+@dataclass(frozen=True)
 class WorldInterventionCase:
     """One registered causal intervention with hidden expected consequence."""
 
@@ -1218,6 +1272,7 @@ class CognitiveState:
     action_intent: ActionIntent | None = None
     outcome: Outcome | None = None
     world_transition: WorldTransition | None = None
+    world_prediction: WorldPredictionRecord | None = None
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -1249,6 +1304,9 @@ class CognitiveState:
             "world_transition": (
                 None if self.world_transition is None else self.world_transition.to_payload()
             ),
+            "world_prediction": (
+                None if self.world_prediction is None else self.world_prediction.to_payload()
+            ),
         }
 
     @classmethod
@@ -1260,6 +1318,7 @@ class CognitiveState:
         intent = payload.get("action_intent")
         outcome = payload.get("outcome")
         world_transition = payload.get("world_transition")
+        world_prediction = payload.get("world_prediction")
         return cls(
             version=int(payload["version"]),
             episode_id=str(payload["episode_id"]),
@@ -1289,6 +1348,11 @@ class CognitiveState:
                 None
                 if world_transition is None
                 else WorldTransition.from_payload(world_transition, device=device)
+            ),
+            world_prediction=(
+                None
+                if world_prediction is None
+                else WorldPredictionRecord.from_payload(world_prediction, device=device)
             ),
         )
 
