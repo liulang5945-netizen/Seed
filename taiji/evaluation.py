@@ -46,6 +46,8 @@ class A1EvaluationConfig:
     predictive_learning_rate: float = 0.01
     predictive_temperature: float = 0.15
     assembly_prediction_weight: float = 0.5
+    contrastive_weight: float = 0.1
+    contrastive_temperature: float = 0.2
     seeds: tuple[int, ...] = (11, 29, 47)
 
     def __post_init__(self) -> None:
@@ -67,6 +69,10 @@ class A1EvaluationConfig:
             raise ValueError("A1 predictive_temperature must be positive")
         if self.assembly_prediction_weight < 0.0:
             raise ValueError("A1 assembly_prediction_weight cannot be negative")
+        if self.contrastive_weight < 0.0:
+            raise ValueError("A1 contrastive_weight cannot be negative")
+        if self.contrastive_temperature <= 0.0:
+            raise ValueError("A1 contrastive_temperature must be positive")
         if not self.seeds:
             raise ValueError("A1 requires at least one evaluation seed")
 
@@ -133,6 +139,8 @@ class PerceptionEvaluator:
                 "predictive_learning_rate": self.evaluation.predictive_learning_rate,
                 "predictive_temperature": self.evaluation.predictive_temperature,
                 "assembly_prediction_weight": self.evaluation.assembly_prediction_weight,
+                "contrastive_weight": self.evaluation.contrastive_weight,
+                "contrastive_temperature": self.evaluation.contrastive_temperature,
                 "seeds": list(self.evaluation.seeds),
             },
             "primary": primary,
@@ -163,6 +171,8 @@ class PerceptionEvaluator:
             learning_rate=self.evaluation.predictive_learning_rate,
             temperature=self.evaluation.predictive_temperature,
             assembly_prediction_weight=self.evaluation.assembly_prediction_weight,
+            contrastive_weight=self.evaluation.contrastive_weight,
+            contrastive_temperature=self.evaluation.contrastive_temperature,
         )
         train = self._collect(model, corpus.train, learn=False, label="train", completed_only=True)
         unseen = self._collect(
