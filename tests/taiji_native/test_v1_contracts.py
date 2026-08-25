@@ -244,6 +244,70 @@ def test_world_schema_scale_separates_raw_and_normalized_error() -> None:
     assert WorldSchema.from_payload(schema.payload()).state_scales == schema.state_scales
 
 
+def test_world_schema_scale_transfer_preserves_normalized_policy() -> None:
+    corpus = build_corpus()
+    schema = WorldSchema.from_corpus(corpus)
+    case = corpus.train[0]
+    factor = 10.0
+
+    def scale_state(state):
+        return WorldState(
+            tick=state.tick,
+            latent=state.latent,
+            entities=state.entities,
+            relations=state.relations,
+            objects=tuple(
+                WorldObject(
+                    item.object_id,
+                    attributes={
+                        name: float(value) * factor for name, value in item.attributes
+                    },
+                    tags=item.tags,
+                )
+                for item in state.objects
+            ),
+            events=state.events,
+            affordances=state.affordances,
+            uncertainty=state.uncertainty,
+        )
+
+    scaled_schema = replace(
+        schema,
+        state_scales=tuple(
+            scale * (factor if index < schema.object_state_dim else 1.0)
+            for index, scale in enumerate(schema.state_scales)
+        ),
+    )
+    base_normalized = schema.normalized_state_error(case.initial, case.expected_state)
+    scaled_initial = scale_state(case.initial)
+    scaled_expected = scale_state(case.expected_state)
+    scaled_raw = float(
+        torch.mean(
+            (
+                scaled_schema.state_values(scaled_initial)
+                - scaled_schema.state_values(scaled_expected)
+            )
+            ** 2
+        )
+    )
+    base_raw = float(
+        torch.mean(
+            (schema.state_values(case.initial) - schema.state_values(case.expected_state)) ** 2
+        )
+    )
+
+    assert scaled_raw > base_raw
+    assert scaled_schema.normalized_state_error(scaled_initial, scaled_expected) == pytest.approx(
+        base_normalized
+    )
+    planner = GoalPlanner()
+    base_threshold = planner.calibrate_world_prediction_errors((base_normalized,))
+    scaled_threshold = planner.calibrate_world_prediction_errors(
+        (scaled_schema.normalized_state_error(scaled_initial, scaled_expected),)
+    )
+    assert scaled_threshold == pytest.approx(base_threshold)
+
+
 def test_world_prediction_projects_into_planner_and_triggers_replan_lesion() -> None:
     corpus = build_corpus()
     schema = WorldSchema.from_corpus(corpus)
