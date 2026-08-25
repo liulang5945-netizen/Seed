@@ -593,6 +593,10 @@ class TSKV8Adapter(Taiji):
         super().reset_dynamics(episode_id=episode_id)
         self.perception.reset_dynamics()
         self._cognitive_state = self._empty_cognitive_state(self._state.episode_id)
+        self._planned_rollout = None
+        self._replan_required = False
+        self._last_rollout_prediction_error = None
+        self._last_rollout_calibrated_confidence = None
         self._last_generation_trace = None
         self._last_language_emission = None
         self._language_fallback_count = 0

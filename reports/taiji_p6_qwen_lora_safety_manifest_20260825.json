@@ -1,0 +1,18 @@
+{
+  "format": "taiji-p6-qwen-lora-safety-manifest-v1",
+  "task": "load a trained Qwen LoRA provider into Taiji's validator/fallback/replan boundary",
+  "lesions": [
+    "raw_provider_quality",
+    "semantic_validator",
+    "adapter_rollback",
+    "cognition_dependency"
+  ],
+  "signals": [
+    "raw_required_term_recall",
+    "safe_realization_rate",
+    "fallback_count",
+    "replan_required",
+    "rollback_outputs_match_raw"
+  ],
+  "boundary": "integration safety Gate only; passing does not make the external decoder a Taiji cognition owner"
+}
