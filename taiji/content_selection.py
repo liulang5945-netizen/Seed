@@ -63,6 +63,23 @@ class ContentSelectionContext:
             resource_budget=resource_budget,
         )
 
+    def to_payload(self) -> dict[str, float]:
+        return {
+            "goal_residual": self.goal_residual,
+            "world_uncertainty": self.world_uncertainty,
+            "novelty": self.novelty,
+            "resource_budget": self.resource_budget,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> ContentSelectionContext:
+        return cls(
+            goal_residual=float(payload["goal_residual"]),
+            world_uncertainty=float(payload["world_uncertainty"]),
+            novelty=float(payload.get("novelty", 0.0)),
+            resource_budget=float(payload.get("resource_budget", 1.0)),
+        )
+
 
 @dataclass(frozen=True)
 class ContentCandidate:
@@ -126,6 +143,44 @@ class ContentCandidate:
             tick=self.tick,
         )
 
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "candidate_id": self.candidate_id,
+            "intent_id": self.intent_id,
+            "intent_kind": self.intent_kind,
+            "semantic_slots": dict(self.semantic_slots),
+            "goal_id": self.goal_id,
+            "expected_outcome": self.expected_outcome,
+            "goal_alignment": self.goal_alignment,
+            "world_relevance": self.world_relevance,
+            "information_gain": self.information_gain,
+            "confidence": self.confidence,
+            "uncertainty": self.uncertainty,
+            "resource_cost": self.resource_cost,
+            "tick": self.tick,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> ContentCandidate:
+        slots = payload.get("semantic_slots", {})
+        if not isinstance(slots, Mapping):
+            raise ValueError("content candidate semantic_slots must be a mapping")
+        return cls(
+            candidate_id=str(payload["candidate_id"]),
+            intent_id=str(payload["intent_id"]),
+            intent_kind=str(payload["intent_kind"]),
+            semantic_slots=dict(slots),
+            goal_id=payload.get("goal_id"),
+            expected_outcome=str(payload.get("expected_outcome", "")),
+            goal_alignment=float(payload.get("goal_alignment", 0.0)),
+            world_relevance=float(payload.get("world_relevance", 0.0)),
+            information_gain=float(payload.get("information_gain", 0.0)),
+            confidence=float(payload.get("confidence", 0.0)),
+            uncertainty=float(payload.get("uncertainty", 0.0)),
+            resource_cost=float(payload.get("resource_cost", 0.0)),
+            tick=int(payload.get("tick", 0)),
+        )
+
 
 @dataclass(frozen=True)
 class ContentTrainingExample:
@@ -143,6 +198,24 @@ class ContentSelectionDecision:
     selected: ContentCandidate
     scores: Mapping[str, float]
     context: ContentSelectionContext
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "selected": self.selected.to_payload(),
+            "scores": {str(key): float(value) for key, value in self.scores.items()},
+            "context": self.context.to_payload(),
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> ContentSelectionDecision:
+        scores = payload.get("scores", {})
+        if not isinstance(scores, Mapping):
+            raise ValueError("content selection scores must be a mapping")
+        return cls(
+            selected=ContentCandidate.from_payload(payload["selected"]),
+            scores={str(key): float(value) for key, value in scores.items()},
+            context=ContentSelectionContext.from_payload(payload["context"]),
+        )
 
 
 class ContentSelector:
@@ -239,4 +312,3 @@ class ContentSelector:
         selector._model.load_state_dict(payload["state_dict"])
         selector.training_steps = int(payload.get("training_steps", 0))
         return selector
-

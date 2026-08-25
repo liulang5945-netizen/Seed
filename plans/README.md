@@ -102,10 +102,12 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 learned content selection 窄 Gate 已通过：可学习 utility 在相同候选下按 world uncertainty 在 `answer`/`ask` 之间切换，选择结果与
   semantic slots 可转成 `ContentPlan`，checkpoint 后选择保持一致。该 Gate 证明内容选择不必原样复制 `ActionIntent`，但尚未接入 adapter
   runtime，也不证明开放域语义生成。
+- P6 runtime content-selection ownership 窄 Gate 已通过：adapter 从当前 goal/world state 选择 content，生成 `ExpressionPlan`，并在
+  native checkpoint 恢复 selector、decision 与表达结果。该 Gate 关闭独立模块漂移，但 selector 仍需真实 Outcome 在线 credit assignment。
 - 原生套件当前 94 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-继续 P6 runtime content-selection ownership：把 learned selector 接入 adapter 的 goal/world/context 与 native checkpoint，再连接
-`ContentPlan → ExpressionPlan`；保留当前 P3/P4/P5 Gate，不让 byte motor 或 Legacy Transformer 代替目标规划与内容决策。
+继续 P6 online content credit assignment：让真实工具/环境 `Outcome` 更新已选 semantic content 的 utility，并验证成功/失败候选迁移；
+保留当前 P3/P4/P5 Gate，不让 byte motor 或 Legacy Transformer 代替目标规划与内容决策。

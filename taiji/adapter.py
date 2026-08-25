@@ -8,6 +8,12 @@ from typing import Any
 
 import torch
 
+from .content_selection import (
+    ContentCandidate,
+    ContentSelectionContext,
+    ContentSelectionDecision,
+    ContentSelector,
+)
 from .contracts import (
     CONTRACT_FORMAT,
     ActionIntent,
@@ -36,7 +42,13 @@ from .contracts import (
 from .contracts import MemoryState as NativeMemoryState
 from .environment import EnvironmentOutcome, TaijiToolEnvironment
 from .episodic_memory import EpisodicMemoryStore
-from .generation import GenerationController, GenerationTrace, ToolCall
+from .generation import (
+    ContentPlan,
+    ExpressionPlan,
+    GenerationController,
+    GenerationTrace,
+    ToolCall,
+)
 from .homeostasis import HomeostaticController, HomeostaticDrive
 from .model import Taiji
 from .perception import LearnedPerception
@@ -83,6 +95,8 @@ class TSKV8Adapter(Taiji):
         self._last_rollout_calibrated_confidence: float | None = None
         self._generation_controller: GenerationController | None = None
         self._last_generation_trace: GenerationTrace | None = None
+        self._content_selector: ContentSelector | None = None
+        self._last_content_selection: ContentSelectionDecision | None = None
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -263,6 +277,57 @@ class TSKV8Adapter(Taiji):
         self._last_generation_trace = trace
         return trace.tool_call
 
+    def attach_content_selector(self, selector: ContentSelector | None) -> None:
+        """Attach Taiji-owned learned selection of semantic content candidates."""
+
+        if selector is not None and not isinstance(selector, ContentSelector):
+            raise TypeError("selector must be a ContentSelector or None")
+        self._content_selector = selector
+
+    @property
+    def last_content_selection(self) -> ContentSelectionDecision | None:
+        return self._last_content_selection
+
+    def select_content(
+        self,
+        candidates: Sequence[ContentCandidate],
+        *,
+        novelty: float = 0.0,
+        resource_budget: float = 1.0,
+    ) -> ContentSelectionDecision:
+        """Select semantic content from the current Taiji goal/world state."""
+
+        if self._content_selector is None:
+            raise RuntimeError("content selector is not attached")
+        context = ContentSelectionContext.from_state(
+            self._cognitive_state.goals,
+            self._cognitive_state.world,
+            novelty=novelty,
+            resource_budget=resource_budget,
+        )
+        decision = self._content_selector.select(tuple(candidates), context)
+        self._last_content_selection = decision
+        return decision
+
+    def selected_content_plan(self) -> ContentPlan:
+        if self._last_content_selection is None:
+            raise RuntimeError("content selection has not been performed")
+        return self._last_content_selection.selected.to_content_plan()
+
+    def express_selected_content(
+        self,
+        *,
+        modality: str = "tool",
+        channel: str | None = None,
+    ) -> ExpressionPlan:
+        if self._generation_controller is None:
+            raise RuntimeError("generation controller is not attached")
+        return self._generation_controller.plan_expression(
+            self.selected_content_plan(),
+            modality=modality,
+            channel=channel,
+        )
+
     def execute_tool_call(
         self,
         environment: TaijiToolEnvironment,
@@ -394,6 +459,7 @@ class TSKV8Adapter(Taiji):
         self.perception.reset_dynamics()
         self._cognitive_state = self._empty_cognitive_state(self._state.episode_id)
         self._last_generation_trace = None
+        self._last_content_selection = None
 
     def observe(self, symbol: int, *args: Any, **kwargs: Any) -> TaijiStep:
         workspace_candidates: Sequence[WorkspaceCandidate] | None = kwargs.pop(
@@ -877,12 +943,19 @@ class TSKV8Adapter(Taiji):
             payload["planning"] = self._goal_planner.checkpoint()
         if self._generation_controller is not None:
             payload["generation"] = self._generation_controller.checkpoint()
+        if self._content_selector is not None:
+            payload["content_selection"] = self._content_selector.checkpoint()
         payload["planned_rollout"] = (
             None if self._planned_rollout is None else self._planned_rollout.to_payload()
         )
         payload["replan_required"] = self._replan_required
         payload["last_rollout_prediction_error"] = self._last_rollout_prediction_error
         payload["last_rollout_calibrated_confidence"] = self._last_rollout_calibrated_confidence
+        payload["last_content_selection"] = (
+            None
+            if self._last_content_selection is None
+            else self._last_content_selection.to_payload()
+        )
         return payload
 
     def restore(self, checkpoint: dict[str, Any]) -> None:
@@ -897,8 +970,10 @@ class TSKV8Adapter(Taiji):
         self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
         self._restore_goal_planner(checkpoint.get("planning"))
         self._restore_generation_controller(checkpoint.get("generation"))
+        self._restore_content_selector(checkpoint.get("content_selection"))
         self._restore_rollout_state(checkpoint)
         self._restore_generation_trace(checkpoint)
+        self._restore_content_selection(checkpoint)
 
     def _world_dynamics_checkpoint(self) -> dict[str, Any]:
         if self._world_dynamics is None:
@@ -978,6 +1053,19 @@ class TSKV8Adapter(Taiji):
             None if trace is None else GenerationTrace.from_payload(dict(trace))
         )
 
+    def _restore_content_selector(self, payload: Any) -> None:
+        self._content_selector = (
+            None if payload is None else ContentSelector.from_checkpoint(dict(payload))
+        )
+
+    def _restore_content_selection(self, payload: Any) -> None:
+        selection = payload.get("last_content_selection") if isinstance(payload, dict) else None
+        self._last_content_selection = (
+            None
+            if selection is None
+            else ContentSelectionDecision.from_payload(dict(selection))
+        )
+
     def _restore_rollout_state(self, payload: Any) -> None:
         rollout = payload.get("planned_rollout") if isinstance(payload, dict) else None
         self._planned_rollout = (
@@ -1017,6 +1105,8 @@ class TSKV8Adapter(Taiji):
             components["planning"] = self._goal_planner.checkpoint()
         if self._generation_controller is not None:
             components["generation"] = self._generation_controller.checkpoint()
+        if self._content_selector is not None:
+            components["content_selection"] = self._content_selector.checkpoint()
         components["planned_rollout"] = (
             None if self._planned_rollout is None else self._planned_rollout.to_payload()
         )
@@ -1027,6 +1117,11 @@ class TSKV8Adapter(Taiji):
         )
         components["last_generation_trace"] = (
             None if self._last_generation_trace is None else self._last_generation_trace.to_payload()
+        )
+        components["last_content_selection"] = (
+            None
+            if self._last_content_selection is None
+            else self._last_content_selection.to_payload()
         )
         return NativeCheckpoint(
             kernel=super().checkpoint(),
@@ -1050,8 +1145,10 @@ class TSKV8Adapter(Taiji):
         self._restore_homeostatic_controller(envelope.components.get("homeostasis"))
         self._restore_goal_planner(envelope.components.get("planning"))
         self._restore_generation_controller(envelope.components.get("generation"))
+        self._restore_content_selector(envelope.components.get("content_selection"))
         self._restore_rollout_state(envelope.components)
         self._restore_generation_trace(envelope.components)
+        self._restore_content_selection(envelope.components)
         state = envelope.cognitive_state
         if state.tick != self.tick or state.episode_id != self._state.episode_id:
             raise ValueError("native cognitive state is out of sync with kernel state")
