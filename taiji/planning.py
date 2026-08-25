@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -37,6 +38,9 @@ class PlanningConfig:
     discount: float = 0.90
     replan_error_threshold: float = 0.25
     recovery_error_threshold: float = 1.00
+    world_calibration_quantile: float = 0.95
+    world_calibration_std_multiplier: float = 2.0
+    world_calibration_margin: float = 0.0
 
     def __post_init__(self) -> None:
         for name, value in self.__dict__.items():
@@ -46,6 +50,12 @@ class PlanningConfig:
         _unit(self.discount, "discount")
         _nonnegative_finite(self.replan_error_threshold, "replan_error_threshold")
         _nonnegative_finite(self.recovery_error_threshold, "recovery_error_threshold")
+        _unit(self.world_calibration_quantile, "world_calibration_quantile")
+        _nonnegative_finite(
+            self.world_calibration_std_multiplier,
+            "world_calibration_std_multiplier",
+        )
+        _nonnegative_finite(self.world_calibration_margin, "world_calibration_margin")
 
     def to_payload(self) -> dict[str, float]:
         return {name: float(value) for name, value in self.__dict__.items()}
@@ -170,6 +180,58 @@ class GoalPlanner:
     def __init__(self, config: PlanningConfig | None = None) -> None:
         self.config = config or PlanningConfig()
         self._calibration: dict[str, tuple[int, int]] = {}
+        self._world_error_calibration: tuple[float, ...] = ()
+
+    def calibrate_world_prediction_errors(self, errors: Sequence[float]) -> float:
+        """Install a data-derived baseline for world prediction error policy."""
+
+        values = tuple(float(error) for error in errors)
+        if not values:
+            raise ValueError("world error calibration requires at least one sample")
+        if any(not math.isfinite(error) or error < 0.0 for error in values):
+            raise ValueError("world error calibration samples must be finite and non-negative")
+        self._world_error_calibration = values
+        return self.world_prediction_error_threshold()
+
+    def world_prediction_error_threshold(
+        self,
+        *,
+        recovery: bool = False,
+        trigger_error: float | None = None,
+    ) -> float:
+        """Return a threshold on the world-error scale, not a probability scale."""
+
+        threshold = (
+            self.config.recovery_error_threshold
+            if recovery
+            else self.config.replan_error_threshold
+        )
+        if self._world_error_calibration:
+            ordered = sorted(self._world_error_calibration)
+            index = min(
+                len(ordered) - 1,
+                max(0, math.ceil((len(ordered) - 1) * self.config.world_calibration_quantile)),
+            )
+            threshold = max(
+                threshold,
+                ordered[index]
+                + self.config.world_calibration_std_multiplier
+                * math.sqrt(
+                    sum((error - sum(ordered) / len(ordered)) ** 2 for error in ordered)
+                    / len(ordered)
+                )
+                + self.config.world_calibration_margin,
+            )
+        if recovery and trigger_error is not None:
+            trigger_error = float(trigger_error)
+            if not math.isfinite(trigger_error) or trigger_error < 0.0:
+                raise ValueError("trigger_error must be finite and non-negative")
+            threshold = max(threshold, trigger_error)
+        return float(threshold)
+
+    @property
+    def world_error_calibration_sample_count(self) -> int:
+        return len(self._world_error_calibration)
 
     def plan(
         self,
@@ -310,6 +372,7 @@ class GoalPlanner:
                 rollout_id: [attempts, successes]
                 for rollout_id, (attempts, successes) in self._calibration.items()
             },
+            "world_error_calibration": list(self._world_error_calibration),
         }
 
     @classmethod
@@ -321,6 +384,9 @@ class GoalPlanner:
             str(rollout_id): (int(stats[0]), int(stats[1]))
             for rollout_id, stats in dict(payload.get("calibration", {})).items()
         }
+        planner._world_error_calibration = tuple(
+            float(error) for error in payload.get("world_error_calibration", ())
+        )
         return planner
 
     @staticmethod

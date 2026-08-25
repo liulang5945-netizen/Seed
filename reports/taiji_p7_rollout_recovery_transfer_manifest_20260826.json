@@ -15,7 +15,8 @@
   "controls": [
     "variable-horizon",
     "failure-position-transfer",
-    "recovery-checkpoint-continuation"
+    "recovery-checkpoint-continuation",
+    "calibration-policy-lesion"
   ],
   "boundary": "runtime recovery state transfer; not general failure recovery or intelligence"
 }
