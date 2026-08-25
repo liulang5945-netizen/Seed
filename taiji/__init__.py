@@ -54,6 +54,12 @@ from .episodic_memory import (
 )
 from .evaluation import A1EvaluationConfig, PerceptionCorpus, PerceptionEvaluator
 from .fabric import TaijiFabric
+from .homeostasis import (
+    HOMEOSTASIS_CHECKPOINT_FORMAT,
+    HomeostaticConfig,
+    HomeostaticController,
+    HomeostaticDrive,
+)
 from .memory import EpisodicField, EpisodicReplay, EpisodicWrite
 from .model import Taiji
 from .organs import ByteMotor, ByteSensor, SparseReceptorBank
@@ -157,6 +163,10 @@ __all__ = [
     "Goal",
     "GoalState",
     "HomeostaticState",
+    "HomeostaticConfig",
+    "HomeostaticController",
+    "HomeostaticDrive",
+    "HOMEOSTASIS_CHECKPOINT_FORMAT",
     "LearningState",
     "LearnedPerception",
     "SelfState",

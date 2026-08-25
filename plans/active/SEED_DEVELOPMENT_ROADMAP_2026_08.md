@@ -234,7 +234,7 @@ P4 的最小真实经历边界已落地：
   `ActionIntent`、`Outcome` 和可选 `WorldTransition`，不依赖领域事实表或固定事件槽；
 - `TSKV8Adapter` 在真实 `settle_action` 后写入一条 `EpisodicMemoryRecord`，后续 `observe` 检索相关记录，store 与认知
   state 一起进入 legacy/native checkpoint；
-- working item、写入/检索、容量淘汰、真实 outcome 绑定和 checkpoint round-trip 已通过定向测试；本轮原生回归为 `85 passed,
+- working item、写入/检索、容量淘汰、真实 outcome 绑定和 checkpoint round-trip 已通过定向测试；本轮原生回归为 `86 passed,
   1 skipped`（另 2 个旧 manifest 测试仍受本机 pytest 系统临时目录权限影响）。该入口只完成经历保持与检索，不宣称
   已形成语义/程序记忆或跨 episode 迁移。
 - `scripts/training/eval_taiji_p4_episodic_recall.py` 已完成 cue-conditioned one-shot recall 窄 Gate：8 条训练经历、8 条
@@ -266,7 +266,10 @@ P4 的最小真实经历边界已落地：
 - `taiji/procedural_memory.py` 已增加 `ProceduralSequenceLearner`：按 episode/tick 聚合多步轨迹，使用 recurrent procedural
   context；未见 transition transfer=`1.0`、相似 cue 干扰后=`1.0`、checkpoint=`1.0`，容量等于原训练集并加入干扰后准确率=`0.5`。
   报告和 manifest 为 `reports/taiji_p4_procedural_robustness_*_20260825.json`。这证明序列技能与资源失忆边界，不代表规划。
-- 本轮 native 回归为 `85 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
+- `taiji/homeostasis.py` 已提供事件驱动 `HomeostaticController`，adapter 在 observation/outcome 更新内部状态，并把 controller
+  配置纳入 native checkpoint；高误差/负 reward 自动选择 sleep，sleep/play/fixed/random/no-modulator lesions 均通过。报告和
+  manifest 为 `reports/taiji_p4_homeostasis_*_20260825.json`。
+- 本轮 native 回归为 `86 passed, 1 skipped`；跳过项仍是本机 Windows pytest 系统临时目录权限问题，不作为代码能力结论。
 
 ### 工作项
 
@@ -370,4 +373,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**继续 P4 homeostatic regulation：让 fatigue/curiosity/stress 等内部状态根据预测误差、资源和结果调节探索、学习与 replay，并加入固定调度、随机 drive、无调质和 sleep/play lesion；不改变既有合同。**
+**继续 P5 goal-directed cognition：建立目标层级、价值、不确定性、冲突和进度状态，让 planner 比较真实可执行候选并把 world outcome 回写；不改变既有合同。**
