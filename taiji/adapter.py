@@ -13,6 +13,7 @@ from .contracts import (
     ActionIntent,
     CognitiveState,
     DevelopmentState,
+    EpisodicMemoryRecord,
     GoalState,
     HomeostaticState,
     LearningState,
@@ -22,6 +23,7 @@ from .contracts import (
     PlanCandidate,
     PlanState,
     SelfState,
+    WorkingMemoryItem,
     WorkspaceCandidate,
     WorkspaceSelection,
     WorkspaceState,
@@ -31,6 +33,7 @@ from .contracts import (
     WorldTransition,
 )
 from .contracts import MemoryState as NativeMemoryState
+from .episodic_memory import EpisodicMemoryStore
 from .model import Taiji
 from .perception import LearnedPerception
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
@@ -56,6 +59,7 @@ class TSKV8Adapter(Taiji):
         self._cognitive_state = self._empty_cognitive_state(self._state.episode_id)
         self._world_dynamics: WorldDynamicsLearner | None = None
         self._workspace_router: WorkspaceRouter | None = None
+        self._episodic_memory: EpisodicMemoryStore | None = None
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -101,6 +105,13 @@ class TSKV8Adapter(Taiji):
         if router is not None and not isinstance(router, WorkspaceRouter):
             raise TypeError("router must be a WorkspaceRouter or None")
         self._workspace_router = router
+
+    def attach_episodic_memory(self, store: EpisodicMemoryStore | None) -> None:
+        """Attach Taiji-owned working/episodic memory for the v1 runtime."""
+
+        if store is not None and not isinstance(store, EpisodicMemoryStore):
+            raise TypeError("store must be an EpisodicMemoryStore or None")
+        self._episodic_memory = store
 
     def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         super().reset_dynamics(episode_id=episode_id)
@@ -170,6 +181,22 @@ class TSKV8Adapter(Taiji):
             episodic_confidence=max(0.0, min(1.0, recall.confidence)),
             semantic_context=recall.cortical_feedback.detach().clone(),
             procedural_context=recall.action_evidence.detach().clone(),
+            working_ids=(f"{self._state.episode_id}:working:{self.tick}",),
+            working_items=(
+                WorkingMemoryItem(
+                    item_id=f"{self._state.episode_id}:working:{self.tick}",
+                    value=features,
+                    salience=max(0.0, min(1.0, recall.confidence)),
+                ),
+            ),
+            episodic_ids=(
+                ()
+                if self._episodic_memory is None
+                else tuple(
+                    hit.record.memory_id
+                    for hit in self._episodic_memory.retrieve(features, limit=3)
+                )
+            ),
         )
         self._cognitive_state = replace(
             previous,
@@ -373,10 +400,35 @@ class TSKV8Adapter(Taiji):
                         prediction_record,
                         online_update_count=self._world_dynamics.online_updates,
                     )
+        memory = self._cognitive_state.memory
+        if self._episodic_memory is not None:
+            cue = (
+                self._cognitive_state.percept.features
+                if self._cognitive_state.percept is not None
+                else self._cognitive_state.world.latent
+            )
+            record = EpisodicMemoryRecord(
+                memory_id=f"{self._state.episode_id}:memory:{self.tick}:{intent_id}",
+                episode_id=self._state.episode_id,
+                tick=outcome.tick,
+                cue=cue.detach().clone(),
+                action_intent=intent,
+                outcome=outcome,
+                world_transition=transition,
+                provenance=outcome.provenance,
+            )
+            self._episodic_memory.write(record)
+            memory = replace(
+                memory,
+                tick=self.tick,
+                episodic_confidence=1.0,
+                episodic_ids=(record.memory_id,),
+            )
         self._cognitive_state = replace(
             self._cognitive_state,
             tick=self.tick,
             world=(world_state if world_state is not None else self._cognitive_state.world),
+            memory=memory,
             outcome=outcome,
             world_transition=transition,
             world_prediction=prediction_record,
@@ -418,6 +470,8 @@ class TSKV8Adapter(Taiji):
             payload["world_dynamics"] = self._world_dynamics_checkpoint()
         if self._workspace_router is not None:
             payload["workspace_router"] = self._workspace_router.checkpoint()
+        if self._episodic_memory is not None:
+            payload["episodic_memory"] = self._episodic_memory.checkpoint()
         return payload
 
     def restore(self, checkpoint: dict[str, Any]) -> None:
@@ -426,6 +480,7 @@ class TSKV8Adapter(Taiji):
             self.perception.restore(checkpoint["perception"])
         self._restore_world_dynamics(checkpoint.get("world_dynamics"))
         self._restore_workspace_router(checkpoint.get("workspace_router"))
+        self._restore_episodic_memory(checkpoint.get("episodic_memory"))
 
     def _world_dynamics_checkpoint(self) -> dict[str, Any]:
         if self._world_dynamics is None:
@@ -459,6 +514,13 @@ class TSKV8Adapter(Taiji):
             None if payload is None else WorkspaceRouter.from_checkpoint(dict(payload), device=self.device)
         )
 
+    def _restore_episodic_memory(self, payload: Any) -> None:
+        self._episodic_memory = (
+            None
+            if payload is None
+            else EpisodicMemoryStore.from_checkpoint(dict(payload), device=self.device)
+        )
+
     def native_checkpoint(self) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
 
@@ -467,6 +529,8 @@ class TSKV8Adapter(Taiji):
             components["world_dynamics"] = self._world_dynamics_checkpoint()
         if self._workspace_router is not None:
             components["workspace_router"] = self._workspace_router.checkpoint()
+        if self._episodic_memory is not None:
+            components["episodic_memory"] = self._episodic_memory.checkpoint()
         return NativeCheckpoint(
             kernel=super().checkpoint(),
             cognitive_state=self.cognitive_snapshot(),
@@ -483,6 +547,7 @@ class TSKV8Adapter(Taiji):
             self.perception.restore(envelope.components["perception"])
         self._restore_world_dynamics(envelope.components.get("world_dynamics"))
         self._restore_workspace_router(envelope.components.get("workspace_router"))
+        self._restore_episodic_memory(envelope.components.get("episodic_memory"))
         state = envelope.cognitive_state
         if state.tick != self.tick or state.episode_id != self._state.episode_id:
             raise ValueError("native cognitive state is out of sync with kernel state")

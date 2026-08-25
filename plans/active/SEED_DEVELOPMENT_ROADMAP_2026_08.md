@@ -224,10 +224,24 @@ P3 的第一段合同与恢复边界已落地：
   none 为 `0`；报告和 manifest 为 `reports/taiji_a3_world_workspace_*_20260825.json`。这关闭 A3 的小型 world-outcome
   子门，但仍不是长程规划、动态容量或一般异质群体证明。
 
+### 8.2 P4 记忆入口（2026-08-25）
+
+P4 的最小真实经历边界已落地：
+
+- `taiji/contracts.py` 增加 `WorkingMemoryItem`、`EpisodicMemoryRecord`；`MemoryState` 同时保存当前 working items、
+  working capacity、检索到的 episodic IDs 和现有语义/程序上下文，旧 payload 仍可按默认值恢复；
+- `taiji/episodic_memory.py` 提供容量可配置的 `EpisodicMemoryStore`，以 cue cosine similarity 做内容寻址，记录真实
+  `ActionIntent`、`Outcome` 和可选 `WorldTransition`，不依赖领域事实表或固定事件槽；
+- `TSKV8Adapter` 在真实 `settle_action` 后写入一条 `EpisodicMemoryRecord`，后续 `observe` 检索相关记录，store 与认知
+  state 一起进入 legacy/native checkpoint；
+- working item、写入/检索、容量淘汰、真实 outcome 绑定和 checkpoint round-trip 已通过定向测试，原生回归为 `79 passed,
+  1 skipped`（另 2 个旧 manifest 测试仍受本机 pytest 系统临时目录权限影响）。该入口只完成经历保持与检索，不宣称
+  已形成语义/程序记忆或跨 episode 迁移。
+
 ### 工作项
 
 - 建立实体、属性、关系、事件和 affordance 的分布式动态绑定。
-- ~~引入容量受限、可学习的选择性路由与广播。~~ 已完成最小 runtime 机制及静态/world-outcome 窄 Gate；下一阶段转入 P4 记忆合同。
+- ~~引入容量受限、可学习的选择性路由与广播。~~ 已完成最小 runtime 机制及静态/world-outcome 窄 Gate；P4 记忆合同最小纵切片已进入。
 - 把预测目标从 next byte 扩展到下一事件、状态变化和行动后果。
 - 在对象持续性、关系交换、时间打乱和干预任务上预注册 A2/A3。
 
@@ -326,4 +340,4 @@ P3 的第一段合同与恢复边界已落地：
 
 ## 16. 当前唯一下一步
 
-**进入 P4 多系统记忆：建立 Taiji-owned working/episodic memory 合同和最小真实经历写入—检索—checkpoint 纵切片；保留 P3 world/workspace outcome 对照，不改变既有合同。**
+**扩展 P4：建立 cue-conditioned one-shot episodic recall 基准，加入跨 episode holdout、episode-ID lesion、检索/写入 lesion 和 checkpoint continuation 对照；保留 P3 world/workspace outcome 对照，不改变既有合同。**

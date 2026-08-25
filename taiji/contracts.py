@@ -617,6 +617,40 @@ class WorldState:
 
 
 @dataclass(frozen=True)
+class WorkingMemoryItem:
+    """One capacity-governed item held in the current working context."""
+
+    item_id: str
+    value: Any
+    salience: float = 0.0
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.item_id, "working memory item_id")
+        _check_unit(self.salience, "working memory salience")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "item_id": self.item_id,
+            "value": _encode_value(self.value),
+            "salience": self.salience,
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> WorkingMemoryItem:
+        return cls(
+            version=int(payload["version"]),
+            item_id=str(payload["item_id"]),
+            value=_decode_value(payload.get("value"), device=device),
+            salience=float(payload.get("salience", 0.0)),
+        )
+
+
+@dataclass(frozen=True)
 class MemoryState:
     """Cross-system memory summary owned by Taiji, not a Seed cache."""
 
@@ -624,6 +658,10 @@ class MemoryState:
     episodic_confidence: float = 0.0
     semantic_context: torch.Tensor = field(default_factory=lambda: torch.empty(0))
     procedural_context: torch.Tensor = field(default_factory=lambda: torch.empty(0))
+    working_ids: tuple[str, ...] = ()
+    episodic_ids: tuple[str, ...] = ()
+    working_items: tuple[WorkingMemoryItem, ...] = ()
+    working_capacity: int = 4
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -633,6 +671,14 @@ class MemoryState:
         _check_unit(self.episodic_confidence, "episodic_confidence")
         if self.semantic_context.ndim != 1 or self.procedural_context.ndim != 1:
             raise ValueError("memory contexts must be vectors")
+        if any(not str(item) for item in (*self.working_ids, *self.episodic_ids)):
+            raise ValueError("memory ids cannot be empty")
+        if int(self.working_capacity) <= 0:
+            raise ValueError("working memory capacity must be positive")
+        if len(self.working_items) > int(self.working_capacity):
+            raise ValueError("working memory items exceed capacity")
+        if len({item.item_id for item in self.working_items}) != len(self.working_items):
+            raise ValueError("working memory item ids must be unique")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -641,6 +687,10 @@ class MemoryState:
             "episodic_confidence": self.episodic_confidence,
             "semantic_context": self.semantic_context.detach().cpu().clone(),
             "procedural_context": self.procedural_context.detach().cpu().clone(),
+            "working_ids": list(self.working_ids),
+            "episodic_ids": list(self.episodic_ids),
+            "working_items": [item.to_payload() for item in self.working_items],
+            "working_capacity": self.working_capacity,
         }
 
     @classmethod
@@ -653,6 +703,13 @@ class MemoryState:
             episodic_confidence=float(payload.get("episodic_confidence", 0.0)),
             semantic_context=payload["semantic_context"].detach().to(device).clone(),
             procedural_context=payload["procedural_context"].detach().to(device).clone(),
+            working_ids=tuple(str(item) for item in payload.get("working_ids", ())),
+            episodic_ids=tuple(str(item) for item in payload.get("episodic_ids", ())),
+            working_items=tuple(
+                WorkingMemoryItem.from_payload(item, device=device)
+                for item in payload.get("working_items", ())
+            ),
+            working_capacity=int(payload.get("working_capacity", 4)),
         )
 
 
@@ -1052,6 +1109,84 @@ class WorldPredictionRecord:
                 None if payload.get("reward_error") is None else float(payload["reward_error"])
             ),
             online_update_count=int(payload.get("online_update_count", 0)),
+        )
+
+
+@dataclass(frozen=True)
+class EpisodicMemoryRecord:
+    """One real experience owned by Taiji's episodic memory system."""
+
+    memory_id: str
+    episode_id: str
+    tick: int
+    cue: torch.Tensor
+    action_intent: ActionIntent | None = None
+    outcome: Outcome | None = None
+    world_transition: WorldTransition | None = None
+    provenance: str = "experienced"
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.memory_id, "episodic memory_id")
+        _check_text(self.episode_id, "episodic episode_id")
+        _check_text(self.provenance, "episodic provenance")
+        if int(self.tick) < 0:
+            raise ValueError("episodic memory tick cannot be negative")
+        if self.cue.ndim != 1:
+            raise ValueError("episodic memory cue must be a vector")
+        if self.action_intent is not None and self.action_intent.tick > self.tick:
+            raise ValueError("episodic action intent cannot occur after the record tick")
+        if self.outcome is not None and self.outcome.tick != self.tick:
+            raise ValueError("episodic outcome tick must match the record tick")
+        if self.world_transition is not None:
+            if self.world_transition.after.tick != self.tick:
+                raise ValueError("episodic world transition tick must match the record tick")
+            if self.world_transition.outcome.tick != self.tick:
+                raise ValueError("episodic transition outcome tick must match the record tick")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "memory_id": self.memory_id,
+            "episode_id": self.episode_id,
+            "tick": self.tick,
+            "cue": self.cue.detach().cpu().clone(),
+            "action_intent": (
+                None if self.action_intent is None else self.action_intent.to_payload()
+            ),
+            "outcome": None if self.outcome is None else self.outcome.to_payload(),
+            "world_transition": (
+                None if self.world_transition is None else self.world_transition.to_payload()
+            ),
+            "provenance": self.provenance,
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> EpisodicMemoryRecord:
+        action_intent = payload.get("action_intent")
+        outcome = payload.get("outcome")
+        world_transition = payload.get("world_transition")
+        return cls(
+            version=int(payload["version"]),
+            memory_id=str(payload["memory_id"]),
+            episode_id=str(payload["episode_id"]),
+            tick=int(payload["tick"]),
+            cue=payload["cue"].detach().to(device).clone(),
+            action_intent=(
+                None
+                if action_intent is None
+                else ActionIntent.from_payload(action_intent, device=device)
+            ),
+            outcome=None if outcome is None else Outcome.from_payload(outcome, device=device),
+            world_transition=(
+                None
+                if world_transition is None
+                else WorldTransition.from_payload(world_transition, device=device)
+            ),
+            provenance=str(payload.get("provenance", "experienced")),
         )
 
 

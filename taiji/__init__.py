@@ -17,6 +17,7 @@ from .contracts import (
     ActionIntent,
     CognitiveState,
     DevelopmentState,
+    EpisodicMemoryRecord,
     Goal,
     GoalState,
     HomeostaticState,
@@ -28,6 +29,7 @@ from .contracts import (
     PlanCandidate,
     PlanState,
     SelfState,
+    WorkingMemoryItem,
     WorkspaceCandidate,
     WorkspaceSelection,
     WorkspaceState,
@@ -45,6 +47,11 @@ from .contracts import (
 )
 from .contracts import MemoryState as NativeMemoryState
 from .environment import EnvironmentOutcome, TaijiEnvironment
+from .episodic_memory import (
+    EPISODIC_MEMORY_CHECKPOINT_FORMAT,
+    EpisodicMemoryHit,
+    EpisodicMemoryStore,
+)
 from .evaluation import A1EvaluationConfig, PerceptionCorpus, PerceptionEvaluator
 from .fabric import TaijiFabric
 from .memory import EpisodicField, EpisodicReplay, EpisodicWrite
@@ -97,6 +104,10 @@ __all__ = [
     "CONTRACT_VERSION",
     "DevelopmentState",
     "EnvironmentOutcome",
+    "EpisodicMemoryHit",
+    "EpisodicMemoryRecord",
+    "EpisodicMemoryStore",
+    "EPISODIC_MEMORY_CHECKPOINT_FORMAT",
     "EpisodicField",
     "EpisodicReplay",
     "EpisodicWrite",
@@ -140,6 +151,7 @@ __all__ = [
     "WorkspaceRoutingExample",
     "WorkspaceCompositionSample",
     "WorkspaceCollaborationEvaluator",
+    "WorkingMemoryItem",
     "WorldState",
     "WorldAction",
     "WorldAffordance",

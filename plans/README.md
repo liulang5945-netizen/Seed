@@ -44,10 +44,13 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - A3 world-outcome 窄 Gate 也已通过：`assemble → commit` 两步 `TaijiWorldState` episode 中，learned 路由 3 seeds
   的 final success 均为 1.0、mean reward 为 2.0；strongest-single/dense 均为 0，random 平均为 0.2292，none 为 0。
   这只证明当前小型组合任务的 workspace→action→outcome 因果链，不代表一般规划或通用智能。
+- P4 最小记忆纵切片已落地：`WorkingMemoryItem`、`EpisodicMemoryRecord` 和可容量治理的 `EpisodicMemoryStore` 属于
+  Taiji；adapter 在真实 action outcome 后写入经历、下一观察按 cue 检索，native checkpoint 可恢复记录与 working state。
+  原生回归当前为 79 passed、1 skipped；这不等于跨 episode 语义巩固已完成。
 - 原生套件当前 74 passed、1 skipped；另 2 个旧 manifest 测试在本机 pytest 系统临时目录创建阶段受 Windows 权限影响，
   尚未把该环境问题误记为代码通过。
 
 ## 当前唯一下一步
 
-进入 P4 多系统记忆：先建立 Taiji-owned working/episodic memory 合同和最小真实经历写入—检索—checkpoint 纵切片，
-  保留 P3 world/workspace outcome 对照，不提前进入语言或产品层。
+扩展 P4：建立 cue-conditioned one-shot episodic recall 基准，加入跨 episode holdout、episode-ID lesion、检索/写入 lesion
+  和 checkpoint continuation 对照；保留 P3 world/workspace outcome 对照，不提前进入语言或产品层。
