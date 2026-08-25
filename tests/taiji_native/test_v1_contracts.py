@@ -8,6 +8,7 @@ from seed import Seed, SeedConfig
 from taiji import (
     CONTRACT_FORMAT,
     ActionIntent,
+    EnvironmentOutcome,
     Goal,
     GoalPlanner,
     NativeMemoryState,
@@ -324,6 +325,141 @@ def test_world_prediction_projects_into_planner_and_triggers_replan_lesion() -> 
     lesion = TSKV8Adapter(_config(), episode_id="world-planner-lesion")
     with pytest.raises(RuntimeError, match="world dynamics is not attached"):
         lesion.predict_world_candidates((candidate,))
+
+
+def test_imagined_rollout_executes_real_steps_and_consumes_remaining_plan() -> None:
+    corpus = build_corpus()
+    schema = WorldSchema.from_corpus(corpus)
+    learner = WorldDynamicsLearner(schema, hidden_dim=32, seed=11)
+    learner.fit(corpus.train, epochs=250, learning_rate=0.01)
+
+    class RolloutEnvironment:
+        def __init__(self, states: tuple[WorldState, ...]) -> None:
+            self.states = states
+            self.index = 0
+            self.actions: list[int] = []
+
+        def reset(self) -> tuple[int, tuple[int, ...]]:
+            self.index = 0
+            self.actions.clear()
+            return 97, (10, 11)
+
+        def step(self, action_symbol: int) -> EnvironmentOutcome:
+            self.actions.append(action_symbol)
+            state = self.states[self.index]
+            self.index += 1
+            return EnvironmentOutcome(
+                sensation=97 + self.index,
+                reward=1.0,
+                success=True,
+                terminal=self.index == len(self.states),
+                world_state=state,
+            )
+
+    base = corpus.train[0].initial
+    initial = WorldState(
+        tick=1,
+        latent=base.latent,
+        objects=base.objects,
+        relations=base.relations,
+        events=base.events,
+        affordances=base.affordances,
+    )
+    after_one = WorldState(
+        tick=2,
+        latent=base.latent,
+        objects=(
+            WorldObject("agent", attributes={"energy": 1.0}),
+            WorldObject("red", attributes={"position": 1.0}),
+            WorldObject("blue", attributes={"position": 0.0}),
+        ),
+    )
+    after_two = WorldState(
+        tick=3,
+        latent=base.latent,
+        objects=(
+            WorldObject("agent", attributes={"energy": 1.0}),
+            WorldObject("red", attributes={"position": 1.0}),
+            WorldObject("blue", attributes={"position": 1.0}),
+        ),
+    )
+    model = TSKV8Adapter(_config(), episode_id="imagined-execution")
+    model.attach_world_dynamics(learner)
+    model.attach_goal_planner(GoalPlanner())
+    model.set_goals((Goal("reach-world", "reach the world target", priority=1.0),))
+    model.observe_event(
+        Observation(
+            modality="text-byte",
+            value=97,
+            timestamp=0,
+            source="test-environment",
+        ),
+        learn=False,
+        world_state=initial,
+    )
+    start_tick = model.cognitive_snapshot().world.tick
+    rollout = model.imagine_world_rollout(
+        "imagined-execution-rollout",
+        "reach-world",
+        (
+            PlanningCandidate(
+                candidate_id="red-step",
+                action=WorldAction(
+                    action_id="red-step",
+                    kind="move",
+                    tick=start_tick,
+                    actor_id="agent",
+                    target_id="red",
+                    parameters={"step": 1.0, "action_symbol": 10},
+                ),
+                predicted_reward=0.0,
+                success_probability=0.0,
+                expected_progress=0.5,
+            ),
+            PlanningCandidate(
+                candidate_id="blue-step",
+                action=WorldAction(
+                    action_id="blue-step",
+                    kind="move",
+                    tick=start_tick + 1,
+                    actor_id="agent",
+                    target_id="blue",
+                    parameters={"step": 1.0, "action_symbol": 11},
+                ),
+                predicted_reward=0.0,
+                success_probability=0.0,
+                expected_progress=1.0,
+            ),
+        ),
+    )
+    model.plan_rollouts((rollout,))
+    environment = RolloutEnvironment((after_one, after_two))
+
+    first = model.execute_imagined_rollout_step(
+        environment,
+        available_actions=(10, 11),
+        action_kinds=("move", "idle"),
+        learn=False,
+        learn_world=True,
+    )
+    assert first.success is True
+    assert model._planned_rollout is not None
+    assert len(model._planned_rollout.steps) == 1
+
+    second = model.execute_imagined_rollout_step(
+        environment,
+        available_actions=(10, 11),
+        action_kinds=("idle", "move"),
+        learn=False,
+        learn_world=True,
+    )
+    assert second.success is True
+    assert environment.actions == [10, 11]
+    assert model._planned_rollout is None
+    snapshot = model.cognitive_snapshot()
+    assert snapshot.world.tick == 3
+    assert len(snapshot.world_calibration_trace) == 2
+    assert all(item.calibration_applied for item in snapshot.world_calibration_trace)
 
 
 def test_native_checkpoint_is_atomic_and_deterministic() -> None:

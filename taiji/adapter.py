@@ -1120,6 +1120,65 @@ class TSKV8Adapter(Taiji):
         )
         return decision
 
+    def execute_imagined_rollout_step(
+        self,
+        environment: TaijiEnvironment,
+        *,
+        available_actions: Sequence[int],
+        action_kinds: Sequence[str],
+        learn: bool = True,
+        learn_world: bool | None = None,
+    ) -> Outcome:
+        """Execute one planned rollout step through the real environment."""
+
+        if not isinstance(environment, TaijiEnvironment):
+            raise TypeError("environment must implement TaijiEnvironment")
+        rollout = self._planned_rollout
+        if rollout is None:
+            raise RuntimeError("imagined rollout execution requires a planned rollout")
+        step = rollout.steps[0]
+        parameters = dict(step.action.parameters)
+        action_symbol = parameters.get("action_symbol")
+        if isinstance(action_symbol, bool) or not isinstance(action_symbol, int):
+            raise ValueError("imagined rollout action requires an integer action_symbol")
+        decision = self.act(
+            available_actions,
+            sample=False,
+            procedural_action_kinds=action_kinds,
+            use_plan=True,
+            world_action=step.action,
+        )
+        if decision.action_symbol != int(action_symbol):
+            raise ValueError("imagined rollout action_symbol does not match motor routing")
+        result = environment.step(decision.action_symbol)
+        if not isinstance(result, EnvironmentOutcome):
+            raise TypeError("environment must return an EnvironmentOutcome")
+        if result.world_state is None:
+            raise ValueError("imagined rollout execution requires an EnvironmentOutcome.world_state")
+        self.settle_action(
+            result.reward,
+            learn=learn,
+            learn_world=learn_world,
+            success=result.success,
+            terminal=result.terminal,
+            world_state=result.world_state,
+            provenance="experienced",
+        )
+        experienced = self._cognitive_state.outcome
+        if experienced is None:
+            raise RuntimeError("imagined rollout environment outcome was not recorded")
+        self.observe(result.sensation, learn=learn)
+        if self.replan_required or result.terminal or len(rollout.steps) == 1:
+            self._planned_rollout = None
+        else:
+            self._planned_rollout = ImaginedRollout(
+                rollout_id=rollout.rollout_id,
+                goal_id=rollout.goal_id,
+                steps=rollout.steps[1:],
+                confidence=rollout.confidence,
+            )
+        return experienced
+
     @property
     def replan_required(self) -> bool:
         return self._replan_required
