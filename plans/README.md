@@ -148,10 +148,14 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 provider artifact/loader Gate 已通过：`LanguageProviderArtifact` 统一记录 base model、adapter、train/safety report、rollback strategy
   与 mode；integration-edge loader 成功加载 guarded LoRA，artifact checkpoint round-trip 与 cognition unchanged 通过，且
   `default_enabled=false` 强制保持 opt-in。raw/LoRA/guarded 不再依赖散落路径或隐式分支。
+- P6 Seed client provider startup Gate 已通过：`SeedConfig` 提供 structured/raw/LoRA/guarded 的产品侧选择，默认只装配
+  `structured-stub`；显式 provider 由 Seed runtime 启动链路调用 artifact loader，缺失、可选依赖缺失、manifest mismatch 和其他
+  加载异常都会回退到 structured-stub，并通过 `/api/health` 与 `/api/runtime/status` 暴露 `language_provider` 状态。Seed 静态边界
+  不绑定 Transformer，guarded 仍强制显式 opt-in。
 - 原生套件当前 `116 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
   环境状态不作为代码能力结论。
 
 ## 当前唯一下一步
 
-下一决策入口：将 artifact loader 接入 Seed 客户端的配置/启动链路，但继续保持 guarded provider 显式 opt-in，并为客户端启动增加
-provider 缺失、版本不匹配和回滚到 structured-stub 的可观测状态；不把 Transformer 或其他 decoder 变成认知主体。
+下一决策入口：将 `language_provider` 状态接入 frontend runtime store 与运行时提示，让客户端明确显示 active/fallback、回退原因和
+structured-stub 恢复状态；前端只展示，不参与认知决策或 provider 装载。

@@ -1,6 +1,6 @@
 """Seed: an AGI-directed model built on the Taiji predictive substrate."""
 
-from .config import SeedConfig
+from .config import LanguageProviderConfig, SeedConfig
 from .datasets import (
     NativeDatasetError,
     NativeDatasetReport,
@@ -14,6 +14,7 @@ from .sleep import SeedSleepScheduler
 
 __all__ = [
     "Seed",
+    "LanguageProviderConfig",
     "SeedConfig",
     "NativeDatasetError",
     "NativeDatasetReport",

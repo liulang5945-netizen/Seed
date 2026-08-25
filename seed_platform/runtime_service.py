@@ -37,6 +37,7 @@ def _health_section() -> dict:
             runtime = get_seed_runtime()
             if runtime is not None:
                 health["model_name"] = runtime.name
+                health["language_provider"] = runtime.language_provider_status
     except Exception as exc:  # pragma: no cover - defensive
         logger.warning(f"runtime_service: seed status unavailable: {exc}")
 
