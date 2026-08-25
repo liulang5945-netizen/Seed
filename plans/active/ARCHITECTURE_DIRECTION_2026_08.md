@@ -114,4 +114,4 @@ Taiji 不以“逐功能替换 TransformerBlock”为设计主轴。Transformer 
 
 ## 9. 当前唯一入口
 
-执行顺序只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。P1 已完成首个兼容纵切片，P2 relation subgate 已在两个独立语料分区通过，P3 world-state/action-outcome 合同、可恢复 state store、结构化对象/关系/时间打乱、多步 episode 窄 Gate、adapter transition lineage、runtime prediction record、error-driven online correction、最小 workspace 路由/lesion 以及 A3 静态/world-outcome 窄 Gate 已落地；P4 working/episodic memory 最小纵切片已落地，当前唯一入口是 cue-conditioned one-shot recall 基准，避免跳到语言/产品层伪造能力。
+执行顺序只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。P1 已完成首个兼容纵切片，P2 relation subgate 已在两个独立语料分区通过，P3 world-state/action-outcome 合同、可恢复 state store、结构化对象/关系/时间打乱、多步 episode 窄 Gate、adapter transition lineage、runtime prediction record、error-driven online correction、最小 workspace 路由/lesion 以及 A3 静态/world-outcome 窄 Gate 已落地；P4 working/episodic memory 最小纵切片和 cue-conditioned one-shot recall 窄 Gate 已通过，当前唯一入口是跨 episode 新组合语义与 replay lesion，避免跳到语言/产品层伪造能力。

@@ -237,6 +237,10 @@ P4 的最小真实经历边界已落地：
 - working item、写入/检索、容量淘汰、真实 outcome 绑定和 checkpoint round-trip 已通过定向测试，原生回归为 `79 passed,
   1 skipped`（另 2 个旧 manifest 测试仍受本机 pytest 系统临时目录权限影响）。该入口只完成经历保持与检索，不宣称
   已形成语义/程序记忆或跨 episode 迁移。
+- `scripts/training/eval_taiji_p4_episodic_recall.py` 已完成 cue-conditioned one-shot recall 窄 Gate：8 条训练经历、8 条
+  新 episode 查询中，full/episode-ID lesion/checkpoint continuation action recall 均为 `1.0`，retrieval/write lesion 均为
+  `0.0`；报告与 manifest 为 `reports/taiji_p4_episodic_recall_*_20260825.json`。这只关闭 fast episodic retrieval 子门，
+  不代表多次经历已巩固为可迁移语义。
 
 ### 工作项
 
@@ -340,4 +344,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**扩展 P4：建立 cue-conditioned one-shot episodic recall 基准，加入跨 episode holdout、episode-ID lesion、检索/写入 lesion 和 checkpoint continuation 对照；保留 P3 world/workspace outcome 对照，不改变既有合同。**
+**扩展 P4：建立跨 episode 新组合语义基准，使用 replay/consolidation 把多次经历压缩成可迁移关系，并加入 episode、replay、内容检索和 checkpoint continuation lesion；保留 P3 world/workspace outcome 对照，不改变既有合同。**
