@@ -456,5 +456,6 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一决策入口：将 `language_provider` 状态接入 frontend runtime store 与运行时提示，让客户端明确显示 active/fallback、回退原因和
-structured-stub 恢复状态；前端只展示，不参与认知决策或 provider 装载。**
+**下一决策入口：定义“客户端输入 → Taiji-owned `Observation/PerceptEvent` → `ActionIntent/ContentPlan`”的认知合同，再接入
+`ExpressionPlan → LanguageOrgan`；当前 `SeedRuntime.chat` 仍是 raw-byte 兼容通路，禁止用固定 prompt/intent 映射或 decoder 反推
+认知内容。**

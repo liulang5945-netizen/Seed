@@ -152,10 +152,14 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
   `structured-stub`；显式 provider 由 Seed runtime 启动链路调用 artifact loader，缺失、可选依赖缺失、manifest mismatch 和其他
   加载异常都会回退到 structured-stub，并通过 `/api/health` 与 `/api/runtime/status` 暴露 `language_provider` 状态。Seed 静态边界
   不绑定 Transformer，guarded 仍强制显式 opt-in。
+- P6 client observability Gate 已通过：frontend runtime store 保存 `language_provider`，聊天页和异常中心可显示 active/fallback、
+  回退原因与 structured-stub 恢复状态；前端只观察 runtime，不参与 provider 选择、认知决策或 decoder 装载。前端构建通过，Vitest
+  `160 passed`。
 - 原生套件当前 `116 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
   环境状态不作为代码能力结论。
 
 ## 当前唯一下一步
 
-下一决策入口：将 `language_provider` 状态接入 frontend runtime store 与运行时提示，让客户端明确显示 active/fallback、回退原因和
-structured-stub 恢复状态；前端只展示，不参与认知决策或 provider 装载。
+下一决策入口：定义“客户端输入 → Taiji-owned `Observation/PerceptEvent` → `ActionIntent/ContentPlan`”的认知合同，再接入
+`ExpressionPlan → LanguageOrgan`；当前 `SeedRuntime.chat` 仍是 raw-byte 兼容通路，禁止用固定 prompt/intent 映射或 decoder 反推
+认知内容。
