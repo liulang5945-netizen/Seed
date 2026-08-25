@@ -16,6 +16,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from taiji import (  # noqa: E402
     Outcome,
     WorldAction,
+    WorldEvent,
     WorldInterventionCase,
     WorldInterventionCorpus,
     WorldInterventionEvaluationConfig,
@@ -36,20 +37,34 @@ def _state() -> WorldState:
             WorldObject("red", attributes={"position": 0.0}),
             WorldObject("blue", attributes={"position": 0.0}),
         ),
+        events=(
+            WorldEvent("context-a", "context", 0, subject_id="agent"),
+            WorldEvent("context-b", "context", 0, subject_id="agent"),
+        ),
     )
 
 
-def _case(target: str, step: float, index: int) -> WorldInterventionCase:
-    initial = _state()
+def _case(
+    target: str,
+    step: float,
+    index: int,
+    *,
+    initial: WorldState | None = None,
+) -> WorldInterventionCase:
+    initial = _state() if initial is None else initial
     updated = {obj.object_id: dict(obj.attributes) for obj in initial.objects}
     updated[target]["position"] += step
     expected = WorldState(
         tick=1,
         latent=initial.latent,
+        relations=initial.relations,
         objects=tuple(
             WorldObject(obj.object_id, attributes=updated[obj.object_id], tags=obj.tags)
             for obj in initial.objects
         ),
+        events=initial.events,
+        affordances=initial.affordances,
+        uncertainty=initial.uncertainty,
     )
     action_id = f"move-{index}"
     action = WorldAction(
@@ -74,6 +89,41 @@ def _case(target: str, step: float, index: int) -> WorldInterventionCase:
     )
 
 
+def _relation_case(target: str, enabled: float, index: int) -> WorldInterventionCase:
+    initial = _state()
+    relation = (target, "near", "blue" if target == "red" else "red")
+    expected = WorldState(
+        tick=1,
+        latent=initial.latent,
+        relations=(relation,) if enabled > 0.0 else (),
+        objects=initial.objects,
+        events=initial.events,
+        affordances=initial.affordances,
+        uncertainty=initial.uncertainty,
+    )
+    action_id = f"link-{index}"
+    action = WorldAction(
+        action_id=action_id,
+        kind="link",
+        tick=0,
+        actor_id="agent",
+        target_id=target,
+        parameters={"enabled": enabled},
+    )
+    return WorldInterventionCase(
+        case_id=f"relation-case-{index}",
+        initial=initial,
+        action=action,
+        expected_state=expected,
+        expected_outcome=Outcome(
+            intent_id=action_id,
+            reward=1.0 if enabled > 0.0 else -1.0,
+            success=enabled > 0.0,
+            tick=1,
+        ),
+    )
+
+
 def build_corpus() -> WorldInterventionCorpus:
     train = []
     index = 0
@@ -83,8 +133,35 @@ def build_corpus() -> WorldInterventionCorpus:
                 continue
             train.append(_case(target, step, index))
             index += 1
-    holdout = (_case("red", 2.0, 100), _case("blue", -2.0, 101))
-    return WorldInterventionCorpus(train=tuple(train), holdout=holdout)
+    relation_train = []
+    relation_index = 0
+    for target in ("red", "blue"):
+        for enabled in (-1.0, 1.0):
+            relation_train.append(_relation_case(target, enabled, relation_index))
+            relation_index += 1
+    train.extend(relation_train)
+    holdout = (
+        _case("red", 2.0, 100),
+        _case("blue", -2.0, 101),
+        _relation_case("red", 2.0, 102),
+        _relation_case("blue", -2.0, 103),
+    )
+    base = _state()
+    shuffled = WorldState(
+        tick=base.tick,
+        latent=base.latent,
+        relations=base.relations,
+        objects=base.objects,
+        events=tuple(reversed(base.events)),
+        affordances=base.affordances,
+        uncertainty=base.uncertainty,
+    )
+    time_shuffled = (_case("red", 2.0, 200, initial=shuffled),)
+    return WorldInterventionCorpus(
+        train=tuple(train),
+        holdout=holdout,
+        time_shuffled=time_shuffled,
+    )
 
 
 def build_manifest() -> dict[str, object]:
@@ -93,11 +170,17 @@ def build_manifest() -> dict[str, object]:
         "objects": ["agent", "red", "blue"],
         "state_attributes": {"agent": ["energy"], "red": ["position"], "blue": ["position"]},
         "action": {
-            "kind": "move",
+            "kinds": ["move", "link"],
             "actor": "agent",
-            "parameter": "step",
-            "intervention_rule": "target.position += step",
-            "outcome_rule": "reward = step; success = step > 0",
+            "parameters": ["step", "enabled"],
+            "intervention_rules": [
+                "move: target.position += step",
+                "link: add target.near.other_target when enabled > 0",
+            ],
+            "outcome_rules": [
+                "move: reward = step; success = step > 0",
+                "link: reward = 1 when enabled > 0 else -1",
+            ],
         },
         "train": [
             {"target": target, "step": step}
@@ -108,6 +191,11 @@ def build_manifest() -> dict[str, object]:
         "holdout": [
             {"target": "red", "step": 2.0},
             {"target": "blue", "step": -2.0},
+            {"target": "red", "enabled": 2.0},
+            {"target": "blue", "enabled": -2.0},
+        ],
+        "time_shuffled": [
+            {"target": "red", "step": 2.0, "event_order": "reversed"},
         ],
         "split_constraint": "holdout is unseen target-by-step composition, not a new object vocabulary",
     }

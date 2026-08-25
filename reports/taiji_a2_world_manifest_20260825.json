@@ -17,11 +17,23 @@
     ]
   },
   "action": {
-    "kind": "move",
+    "kinds": [
+      "move",
+      "link"
+    ],
     "actor": "agent",
-    "parameter": "step",
-    "intervention_rule": "target.position += step",
-    "outcome_rule": "reward = step; success = step > 0"
+    "parameters": [
+      "step",
+      "enabled"
+    ],
+    "intervention_rules": [
+      "move: target.position += step",
+      "link: add target.near.other_target when enabled > 0"
+    ],
+    "outcome_rules": [
+      "move: reward = step; success = step > 0",
+      "link: reward = 1 when enabled > 0 else -1"
+    ]
   },
   "train": [
     {
@@ -57,6 +69,21 @@
     {
       "target": "blue",
       "step": -2.0
+    },
+    {
+      "target": "red",
+      "enabled": 2.0
+    },
+    {
+      "target": "blue",
+      "enabled": -2.0
+    }
+  ],
+  "time_shuffled": [
+    {
+      "target": "red",
+      "step": 2.0,
+      "event_order": "reversed"
     }
   ],
   "split_constraint": "holdout is unseen target-by-step composition, not a new object vocabulary"

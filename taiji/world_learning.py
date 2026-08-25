@@ -26,6 +26,7 @@ class WorldSchema:
 
     object_ids: tuple[str, ...]
     state_slots: tuple[tuple[str, str], ...]
+    relation_slots: tuple[tuple[str, str, str], ...]
     action_kinds: tuple[str, ...]
     actor_ids: tuple[str, ...]
     target_ids: tuple[str, ...]
@@ -37,6 +38,7 @@ class WorldSchema:
             raise ValueError("world dynamics requires at least one training case")
         object_ids: set[str] = set()
         state_slots: set[tuple[str, str]] = set()
+        relation_slots: set[tuple[str, str, str]] = set()
         action_kinds: set[str] = set()
         actor_ids: set[str] = set()
         target_ids: set[str] = set()
@@ -47,6 +49,8 @@ class WorldSchema:
                 for name, value in obj.attributes:
                     _numeric(value, f"{obj.object_id}.{name}")
                     state_slots.add((obj.object_id, name))
+            relation_slots.update(case.initial.relations)
+            relation_slots.update(case.expected_state.relations)
             action_kinds.add(case.action.kind)
             actor_ids.add(case.action.actor_id)
             target_ids.add(case.action.target_id)
@@ -58,6 +62,7 @@ class WorldSchema:
         return cls(
             object_ids=tuple(sorted(object_ids)),
             state_slots=tuple(sorted(state_slots)),
+            relation_slots=tuple(sorted(relation_slots)),
             action_kinds=tuple(sorted(action_kinds)),
             actor_ids=tuple(sorted(actor_ids)),
             target_ids=tuple(sorted(target_ids)),
@@ -66,6 +71,10 @@ class WorldSchema:
 
     @property
     def state_dim(self) -> int:
+        return len(self.state_slots) + len(self.relation_slots)
+
+    @property
+    def object_state_dim(self) -> int:
         return len(self.state_slots)
 
     @property
@@ -89,6 +98,8 @@ class WorldSchema:
             if object_id not in objects:
                 raise ValueError(f"world state is missing object: {object_id}")
             values.append(_numeric(objects[object_id].attribute(name, 0.0), f"{object_id}.{name}"))
+        relation_set = set(state.relations)
+        values.extend(float(relation in relation_set) for relation in self.relation_slots)
         return torch.tensor(values, dtype=torch.float32)
 
     def encode(self, state: WorldState, action: Any, *, bind_target: bool = True) -> torch.Tensor:
@@ -121,9 +132,9 @@ class WorldSchema:
             offset += 1
         if bind_target:
             target_index = self.target_ids.index(action.target_id)
-            for value in parameter_values:
-                action_values[offset + target_index * len(self.parameter_names)] = value
-                offset += len(self.parameter_names)
+            interaction_offset = offset + target_index * len(self.parameter_names)
+            for parameter_index, value in enumerate(parameter_values):
+                action_values[interaction_offset + parameter_index] = value
         return torch.cat((state_values, action_values))
 
     def delta_target(self, case: WorldInterventionCase) -> torch.Tensor:
@@ -133,6 +144,7 @@ class WorldSchema:
         return {
             "object_ids": list(self.object_ids),
             "state_slots": [list(item) for item in self.state_slots],
+            "relation_slots": [list(item) for item in self.relation_slots],
             "action_kinds": list(self.action_kinds),
             "actor_ids": list(self.actor_ids),
             "target_ids": list(self.target_ids),
@@ -160,11 +172,18 @@ def _replace_numeric_state(state: WorldState, schema: WorldSchema, values: torch
         attributes = dict(obj.attributes)
         attributes.update(updates.get(obj.object_id, {}))
         objects.append(WorldObject(obj.object_id, attributes=attributes, tags=obj.tags))
+    known_relations = set(schema.relation_slots)
+    relations = {relation for relation in state.relations if relation not in known_relations}
+    relations.update(
+        relation
+        for index, relation in enumerate(schema.relation_slots)
+        if float(values[schema.object_state_dim + index].detach().cpu()) >= 0.5
+    )
     return WorldState(
         tick=state.tick + 1,
         latent=state.latent.detach().clone(),
         entities=state.entities,
-        relations=state.relations,
+        relations=tuple(sorted(relations)),
         objects=tuple(objects),
         events=state.events,
         affordances=state.affordances,
@@ -406,16 +425,22 @@ class WorldInterventionEvaluator:
                 rewards=action_rewards,
                 successes=action_successes,
             )
-            seed_results.append(
-                {
-                    "seed": int(seed),
-                    "training_loss": float(losses[-1]),
-                    "learned": _metrics(learned, corpus.holdout, schema),
-                    "target_binding_lesion": _metrics(lesion, corpus.holdout, schema),
-                    "frequency_baseline": _metrics(frequency, corpus.holdout, schema),
-                    "action_only_baseline": _metrics(action_only, corpus.holdout, schema),
-                }
-            )
+            seed_result = {
+                "seed": int(seed),
+                "training_loss": float(losses[-1]),
+                "learned": _metrics(learned, corpus.holdout, schema),
+                "target_binding_lesion": _metrics(lesion, corpus.holdout, schema),
+                "frequency_baseline": _metrics(frequency, corpus.holdout, schema),
+                "action_only_baseline": _metrics(action_only, corpus.holdout, schema),
+            }
+            if corpus.time_shuffled:
+                shuffled = tuple(
+                    learner.predict(case.initial, case.action) for case in corpus.time_shuffled
+                )
+                seed_result["time_shuffled"] = _metrics(
+                    shuffled, corpus.time_shuffled, schema
+                )
+            seed_results.append(seed_result)
         state_gains = [
             item["frequency_baseline"]["state_mse"] - item["learned"]["state_mse"]
             for item in seed_results
@@ -466,6 +491,7 @@ class WorldInterventionEvaluator:
             "schema": schema.payload(),
             "train_cases": len(corpus.train),
             "holdout_cases": len(corpus.holdout),
+            "time_shuffled_cases": len(corpus.time_shuffled),
             "seeds": seed_results,
             "gate": gate,
         }
