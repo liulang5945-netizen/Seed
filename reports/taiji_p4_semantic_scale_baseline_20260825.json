@@ -1,0 +1,19 @@
+{
+  "format": "taiji-p4-semantic-scale-v1",
+  "factor_count": 4,
+  "train_records": 60,
+  "holdout_combinations": 1,
+  "noise_scale": 0.05,
+  "metrics": {
+    "episodic_nearest_error": 1.0,
+    "semantic_consolidated_error": 0.008165359497070312,
+    "replay_lesion_error": 4.0,
+    "episode_id_lesion_error": 0.008165359497070312,
+    "checkpoint_continuation_error": 0.008165359497070312,
+    "consolidation_count": 1
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "multi-factor noisy consolidation beats episodic nearest neighbor and preserves replay/episode/checkpoint controls"
+  }
+}
