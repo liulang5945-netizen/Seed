@@ -509,4 +509,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把已落地的 `Assembly`、`Event`、`Concept`、`SelfState`/`DevelopmentState` 合同接入真实 runtime lineage：观察产生 assembly/event，跨经历巩固产生 concept，Outcome 更新 self/development，所有路径可经 native checkpoint 恢复并支持 source/semantic lesion；禁止用测试侧直接注入对象冒充运行时形成。**
+**下一步：在真实 runtime lineage 之上建立多信号 Concept 形成 Gate：同时使用 percept latent、world object/relation 和 Outcome 证据，验证跨 schema、未见 episode 的概念稳定性与迁移；保留 checkpoint/rollback，并用 source/semantic lesion 证明每类信号确实被使用。**

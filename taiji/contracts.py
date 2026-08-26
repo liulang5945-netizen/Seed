@@ -1125,7 +1125,9 @@ class WorldAction:
             _check_text(self.actor_id, "action actor_id")
         if self.target_id:
             _check_text(self.target_id, "action target_id")
-        object.__setattr__(self, "parameters", _normalize_pairs(self.parameters, "action parameters"))
+        object.__setattr__(
+            self, "parameters", _normalize_pairs(self.parameters, "action parameters")
+        )
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -1499,6 +1501,8 @@ class EpisodicMemoryRecord:
     outcome: Outcome | None = None
     world_transition: WorldTransition | None = None
     provenance: str = "experienced"
+    event_ids: tuple[str, ...] = ()
+    assembly_ids: tuple[str, ...] = ()
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -1506,6 +1510,10 @@ class EpisodicMemoryRecord:
         _check_text(self.memory_id, "episodic memory_id")
         _check_text(self.episode_id, "episodic episode_id")
         _check_text(self.provenance, "episodic provenance")
+        object.__setattr__(self, "event_ids", _normalize_ids(self.event_ids, "episodic event_ids"))
+        object.__setattr__(
+            self, "assembly_ids", _normalize_ids(self.assembly_ids, "episodic assembly_ids")
+        )
         if int(self.tick) < 0:
             raise ValueError("episodic memory tick cannot be negative")
         if self.cue.ndim != 1:
@@ -1535,6 +1543,8 @@ class EpisodicMemoryRecord:
                 None if self.world_transition is None else self.world_transition.to_payload()
             ),
             "provenance": self.provenance,
+            "event_ids": list(self.event_ids),
+            "assembly_ids": list(self.assembly_ids),
         }
 
     @classmethod
@@ -1562,6 +1572,8 @@ class EpisodicMemoryRecord:
                 else WorldTransition.from_payload(world_transition, device=device)
             ),
             provenance=str(payload.get("provenance", "experienced")),
+            event_ids=tuple(str(item) for item in payload.get("event_ids", ())),
+            assembly_ids=tuple(str(item) for item in payload.get("assembly_ids", ())),
         )
 
 

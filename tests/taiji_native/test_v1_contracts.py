@@ -15,6 +15,7 @@ from taiji import (
     Concept,
     DevelopmentState,
     EnvironmentOutcome,
+    EpisodicMemoryStore,
     Event,
     Goal,
     GoalPlanner,
@@ -22,6 +23,7 @@ from taiji import (
     Observation,
     Outcome,
     PlanningCandidate,
+    SemanticMemoryLearner,
     TaijiConfig,
     TSKV8Adapter,
     WorldAction,
@@ -209,6 +211,74 @@ def test_tsk_v8_adapter_exposes_observation_action_outcome_contracts() -> None:
     assert state.outcome is not None
     assert state.outcome.intent_id == state.action_intent.intent_id
     assert state.outcome.reward == 1.0
+
+
+def test_tsk_v8_runtime_materializes_lineage_growth_and_checkpoint_before_training() -> None:
+    model = TSKV8Adapter(_config(), episode_id="runtime-lineage-0")
+    episodic = EpisodicMemoryStore(cue_dim=model.perception.feature_dim)
+    semantic = SemanticMemoryLearner(model.perception.feature_dim)
+    model.attach_episodic_memory(episodic)
+    model.attach_semantic_memory(semantic)
+
+    for index, episode_id in enumerate(("runtime-lineage-0", "runtime-lineage-1")):
+        if index:
+            model = TSKV8Adapter(_config(), episode_id=episode_id)
+            model.attach_episodic_memory(episodic)
+            model.attach_semantic_memory(semantic)
+        model.observe_event(
+            Observation(
+                modality="text-byte",
+                value=97,
+                timestamp=0,
+                source="test-environment",
+            ),
+            learn=False,
+        )
+        observed = model.cognitive_snapshot()
+        assert len(observed.events) == 1
+        assert len(observed.assemblies) == 1
+        assert observed.events[-1].assembly_ids == (observed.assemblies[-1].assembly_id,)
+
+        model.act((97, 98), sample=False)
+        model.settle_action(1.0, learn=False, provenance="experienced")
+
+    state = model.cognitive_snapshot()
+    assert episodic.count == 2
+    assert all(record.event_ids and record.assembly_ids for record in episodic.records)
+    assert state.self_state.last_outcome_id == state.outcome.intent_id
+    assert state.self_state.capability_confidence
+    assert state.development.validation_evidence_ids == (state.outcome.intent_id,)
+
+    # No learning call is allowed before this atomic native checkpoint check.
+    checkpoint = model.native_checkpoint()
+    restored = TSKV8Adapter.from_native_checkpoint(checkpoint)
+    restored_state = restored.cognitive_snapshot()
+    assert len(restored_state.events) == 1
+    assert len(restored_state.assemblies) == 1
+    assert restored_state.self_state.last_outcome_id == state.self_state.last_outcome_id
+    assert restored._episodic_memory is not None
+    assert restored._episodic_memory.count == 2
+
+    model.consolidate_semantic_memory(epochs=2, learning_rate=0.01)
+    consolidated = model.cognitive_snapshot()
+    assert len(consolidated.concepts) == 1
+    concept = consolidated.concepts[0]
+    assert len(concept.support_event_ids) == 2
+    assert len(concept.support_assembly_ids) == 2
+    assert consolidated.development.last_update_source == "semantic-consolidation"
+
+    model.consolidate_semantic_memory(epochs=1, learning_rate=0.01)
+    assert model.cognitive_snapshot().concepts[0].update_count == 2
+
+    # A semantic lesion that removes event/assembly provenance must not create a concept.
+    lesioned = EpisodicMemoryStore(cue_dim=model.perception.feature_dim)
+    for record in episodic.records:
+        lesioned.write(replace(record, event_ids=(), assembly_ids=()))
+    lesioned_model = TSKV8Adapter(_config(), episode_id="semantic-lesion")
+    lesioned_model.attach_episodic_memory(lesioned)
+    lesioned_model.attach_semantic_memory(SemanticMemoryLearner(model.perception.feature_dim))
+    lesioned_model.consolidate_semantic_memory(epochs=1, learning_rate=0.01)
+    assert lesioned_model.cognitive_snapshot().concepts == ()
 
 
 def test_tsk_v8_adapter_commits_structured_world_transition_lineage() -> None:
