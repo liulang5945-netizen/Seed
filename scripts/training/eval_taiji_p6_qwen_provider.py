@@ -174,7 +174,8 @@ def evaluate(model_dir: Path) -> dict[str, object]:
                 "required_terms": list(required_terms),
                 "required_term_recall": term_hits / max(1, len(required_terms)),
                 "prompt_or_json_leak": any(
-                    marker in output_text for marker in ("semantic_slots", "intent_kind", "expected_outcome", "{", "}")
+                    marker in output_text
+                    for marker in ("semantic_slots", "intent_kind", "expected_outcome", "{", "}")
                 ),
             }
         )
@@ -185,7 +186,9 @@ def evaluate(model_dir: Path) -> dict[str, object]:
     except RuntimeError:
         lesion_passed = True
     restored = TSKV8Adapter.from_native_checkpoint(adapter.native_checkpoint())
-    cognition_unchanged = action_before is None and adapter.cognitive_snapshot().action_intent is None
+    cognition_unchanged = (
+        action_before is None and adapter.cognitive_snapshot().action_intent is None
+    )
     contract_round_trip = all(
         LanguageTrainingExample.from_payload(example.to_payload()) == example
         for example in training_examples
@@ -193,9 +196,15 @@ def evaluate(model_dir: Path) -> dict[str, object]:
     registry_round_trip = restored._language_backend_registry.get(BACKEND_ID).family == (
         "external-causal-decoder"
     )
-    output_nonempty_rate = sum(result["output_nonempty"] for result in holdout_results) / len(holdout_results)
-    required_term_recall = sum(result["required_term_recall"] for result in holdout_results) / len(holdout_results)
-    prompt_leakage_rate = sum(not result["prompt_or_json_leak"] for result in holdout_results) / len(holdout_results)
+    output_nonempty_rate = sum(result["output_nonempty"] for result in holdout_results) / len(
+        holdout_results
+    )
+    required_term_recall = sum(result["required_term_recall"] for result in holdout_results) / len(
+        holdout_results
+    )
+    prompt_leakage_rate = sum(
+        not result["prompt_or_json_leak"] for result in holdout_results
+    ) / len(holdout_results)
     gate_passed = bool(
         output_nonempty_rate == 1.0
         and required_term_recall >= 0.67
@@ -234,9 +243,22 @@ def build_manifest() -> dict[str, object]:
     return {
         "format": MANIFEST_FORMAT,
         "task": "run a local Qwen causal decoder as an external Taiji language organ",
-        "required_assets": ["local checkpoint directory", "local tokenizer files", "transformers", "safetensors"],
+        "required_assets": [
+            "local checkpoint directory",
+            "local tokenizer files",
+            "transformers",
+            "safetensors",
+        ],
         "lesions": ["language_organ_detached", "cognitive_state_mutation", "registry_state_loss"],
-        "signals": ["output_nonempty_rate", "required_term_recall", "prompt_leakage_rate", "organ_lesion", "cognition_unchanged", "training_contract_round_trip", "registry_checkpoint_round_trip"],
+        "signals": [
+            "output_nonempty_rate",
+            "required_term_recall",
+            "prompt_leakage_rate",
+            "organ_lesion",
+            "cognition_unchanged",
+            "training_contract_round_trip",
+            "registry_checkpoint_round_trip",
+        ],
         "boundary": "small holdout realization Gate only; no fluency, factuality, or general intelligence claim",
     }
 
@@ -260,7 +282,9 @@ def main() -> None:
     report = evaluate(args.model)
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if not report["gate"]["passed"]:

@@ -107,9 +107,11 @@ def evaluate() -> dict[str, object]:
             "selected_candidate": decision.selected.candidate_id,
             "selected_expected_value": selected_plan.expected_value,
             "uncertainty_aware_lesion_candidate": lesion_decision.selected.candidate_id,
-            "runtime_selected_action_kind": after_outcome.action_intent.kind
-            if after_outcome.action_intent is not None
-            else None,
+            "runtime_selected_action_kind": (
+                after_outcome.action_intent.kind
+                if after_outcome.action_intent is not None
+                else None
+            ),
             "runtime_goal_progress": after_outcome.goals.goals[0].progress,
             "checkpoint_goal_progress": restored_state.goals.goals[0].progress,
             "checkpoint_plan_id": restored_state.plan.selected_plan_id,
@@ -154,7 +156,9 @@ def main() -> None:
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

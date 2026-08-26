@@ -128,10 +128,12 @@ class ExecutiveContext:
         _unit(novelty, "executive novelty")
         _unit(resource_budget, "executive resource budget")
         percept = state.percept
-        goal = max(state.goals.goals, key=lambda item: (item.priority, -item.progress, item.goal_id), default=None)
-        percept_summary = _tensor_summary(
-            torch.empty(0) if percept is None else percept.features
+        goal = max(
+            state.goals.goals,
+            key=lambda item: (item.priority, -item.progress, item.goal_id),
+            default=None,
         )
+        percept_summary = _tensor_summary(torch.empty(0) if percept is None else percept.features)
         world_summary = _tensor_summary(state.world.latent)
         memory_summary = _tensor_summary(state.memory.semantic_context)
         values = (
@@ -498,7 +500,9 @@ class ExecutiveController:
         selected_index = max(range(len(candidates)), key=lambda index: values[index])
         return ExecutiveDecision(
             selected=candidates[selected_index],
-            scores={candidate.candidate_id: values[index] for index, candidate in enumerate(candidates)},
+            scores={
+                candidate.candidate_id: values[index] for index, candidate in enumerate(candidates)
+            },
             context=context,
         )
 

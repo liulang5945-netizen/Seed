@@ -54,9 +54,7 @@ def build_corpus(
         raise ValueError("A3 train_count and holdout_count must be positive")
     generator = torch.Generator(device="cpu").manual_seed(seed)
     train = tuple(_sample(index, generator) for index in range(train_count))
-    holdout = tuple(
-        _sample(train_count + index, generator) for index in range(holdout_count)
-    )
+    holdout = tuple(_sample(train_count + index, generator) for index in range(holdout_count))
     return train, holdout
 
 
@@ -98,7 +96,9 @@ def main() -> None:
     )
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

@@ -91,11 +91,12 @@ def main() -> None:
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
     main()
-

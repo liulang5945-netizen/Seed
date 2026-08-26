@@ -102,14 +102,8 @@ class WorldAffordanceGroundingProducer:
         direct_relations = tuple(
             relation
             for relation in relevant_relations
-            if (
-                relation[0] == affordance.actor_id
-                and relation[2] == affordance.target_id
-            )
-            or (
-                relation[0] == affordance.target_id
-                and relation[2] == affordance.actor_id
-            )
+            if (relation[0] == affordance.actor_id and relation[2] == affordance.target_id)
+            or (relation[0] == affordance.target_id and relation[2] == affordance.actor_id)
         )
         relation_features = torch.tensor(
             (
@@ -145,10 +139,14 @@ class WorldAffordanceGroundingProducer:
             raise TypeError("affordance must be a WorldAffordance")
         base, lineage = self._base_features(state, affordance)
         pooled = torch.stack(
-            tuple(base[index % base.numel() :: self.grounding_dim].mean()
-                  if index < base.numel()
-                  else base[index % base.numel()]
-                  for index in range(self.grounding_dim))
+            tuple(
+                (
+                    base[index % base.numel() :: self.grounding_dim].mean()
+                    if index < base.numel()
+                    else base[index % base.numel()]
+                )
+                for index in range(self.grounding_dim)
+            )
         )
         return replace(
             affordance,
@@ -313,12 +311,16 @@ class LearnedAffordanceFeatures(nn.Module):
             raise ValueError(
                 "WorldAffordance requires numeric grounding before learned feature synthesis"
             )
-        return self.encode(
-            affordance.features,
-            percept_features=percept_features,
-            world_latent=world_latent,
-            world_uncertainty=world_uncertainty,
-        ).detach().clone()
+        return (
+            self.encode(
+                affordance.features,
+                percept_features=percept_features,
+                world_latent=world_latent,
+                world_uncertainty=world_uncertainty,
+            )
+            .detach()
+            .clone()
+        )
 
     @torch.no_grad()
     def predict_reward(
@@ -450,8 +452,7 @@ class LearnedAffordanceFeatures(nn.Module):
             "fit_updates": self.fit_updates,
             "online_updates": self.online_updates,
             "state_dict": {
-                name: tensor.detach().cpu().clone()
-                for name, tensor in self.state_dict().items()
+                name: tensor.detach().cpu().clone() for name, tensor in self.state_dict().items()
             },
         }
 

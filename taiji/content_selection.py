@@ -268,7 +268,9 @@ class ContentSelector:
         selected_index = max(range(len(candidates)), key=lambda index: values[index])
         return ContentSelectionDecision(
             selected=candidates[selected_index],
-            scores={candidate.candidate_id: values[index] for index, candidate in enumerate(candidates)},
+            scores={
+                candidate.candidate_id: values[index] for index, candidate in enumerate(candidates)
+            },
             context=context,
         )
 

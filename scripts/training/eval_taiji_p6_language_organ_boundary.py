@@ -67,11 +67,16 @@ def evaluate() -> dict[str, object]:
             training_contract="expression-to-text-v1",
         )
     )
-    contract_round_trip = LanguageTrainingExample.from_payload(training_example.to_payload()) == training_example
+    contract_round_trip = (
+        LanguageTrainingExample.from_payload(training_example.to_payload()) == training_example
+    )
     registry_round_trip = (
-        LanguageBackendRegistry.from_checkpoint(registry.checkpoint()).get("mature-decoder-v1").training_contract
+        LanguageBackendRegistry.from_checkpoint(registry.checkpoint())
+        .get("mature-decoder-v1")
+        .training_contract
         == "expression-to-text-v1"
     )
+
     class ExternalDecoder:
         def generate(self, prompt: str, *, max_tokens: int, temperature: float) -> str:
             del max_tokens, temperature
@@ -92,7 +97,9 @@ def evaluate() -> dict[str, object]:
         adapter.emit_language(expression)
     except RuntimeError:
         external_lesion = True
-    external_realization = external_emission.text_bytes.decode("utf-8").startswith("realized:render:")
+    external_realization = external_emission.text_bytes.decode("utf-8").startswith(
+        "realized:render:"
+    )
     gate_passed = bool(
         round_trip
         and checkpoint_round_trip
@@ -127,7 +134,14 @@ def build_manifest() -> dict[str, object]:
         "format": MANIFEST_FORMAT,
         "task": "verify the terminal language-organ interface, backend registry, and training contract",
         "lesions": ["language_organ_detached", "direct_byte_content", "cognitive_state_mutation"],
-        "signals": ["backend", "expression_round_trip", "native_checkpoint_round_trip", "cognition_unchanged", "training_contract_round_trip", "backend_registry_round_trip"],
+        "signals": [
+            "backend",
+            "expression_round_trip",
+            "native_checkpoint_round_trip",
+            "cognition_unchanged",
+            "training_contract_round_trip",
+            "backend_registry_round_trip",
+        ],
         "boundary": "registry and structured stub prove interface/training ownership only; no natural-language fluency or decoder capability claim",
     }
 
@@ -137,18 +151,24 @@ def main() -> None:
     parser.add_argument(
         "--manifest",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_p6_language_organ_boundary_manifest_20260825.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_p6_language_organ_boundary_manifest_20260825.json",
     )
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_p6_language_organ_boundary_baseline_20260825.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_p6_language_organ_boundary_baseline_20260825.json",
     )
     args = parser.parse_args()
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

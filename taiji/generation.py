@@ -56,10 +56,7 @@ def _json_value(value: Any, path: str = "value") -> Any:
             raise ValueError(f"{path} must contain finite numbers")
         return value
     if isinstance(value, Mapping):
-        return {
-            str(key): _json_value(item, f"{path}.{key}")
-            for key, item in value.items()
-        }
+        return {str(key): _json_value(item, f"{path}.{key}") for key, item in value.items()}
     if isinstance(value, Sequence) and not isinstance(value, (bytes, bytearray, str)):
         return [_json_value(item, f"{path}[{index}]") for index, item in enumerate(value)]
     raise TypeError(f"{path} is not JSON-compatible tool data: {type(value).__name__}")
@@ -333,7 +330,10 @@ class TextExpressionCodec:
             payload = json.loads(bytes(data).decode("utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError) as exc:
             raise ValueError("invalid structured text-expression bytes") from exc
-        if not isinstance(payload, Mapping) or payload.get("format") != TEXT_EXPRESSION_CODEC_FORMAT:
+        if (
+            not isinstance(payload, Mapping)
+            or payload.get("format") != TEXT_EXPRESSION_CODEC_FORMAT
+        ):
             raise ValueError("unsupported structured text-expression codec format")
         expression = payload.get("expression")
         if not isinstance(expression, Mapping):
@@ -363,7 +363,9 @@ class GenerationController:
             intent_kind=intent.kind,
             semantic_slots=dict(intent.parameters),
             required_terms=tuple(str(term) for term in required_terms),
-            source_goal_id=(source_goal_id if source_goal_id is not None else intent.source_goal_id),
+            source_goal_id=(
+                source_goal_id if source_goal_id is not None else intent.source_goal_id
+            ),
             expected_outcome=intent.expected_outcome,
             confidence=intent.confidence,
             provenance=provenance,
@@ -443,6 +445,9 @@ class GenerationController:
             raise ValueError("unsupported generation checkpoint format")
         if payload.get("codec_format") != TOOL_CALL_CODEC_FORMAT:
             raise ValueError("unsupported generation codec format")
-        if payload.get("text_codec_format", TEXT_EXPRESSION_CODEC_FORMAT) != TEXT_EXPRESSION_CODEC_FORMAT:
+        if (
+            payload.get("text_codec_format", TEXT_EXPRESSION_CODEC_FORMAT)
+            != TEXT_EXPRESSION_CODEC_FORMAT
+        ):
             raise ValueError("unsupported text expression codec format")
         return cls()

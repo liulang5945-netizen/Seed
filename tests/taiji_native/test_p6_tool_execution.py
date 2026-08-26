@@ -86,4 +86,3 @@ def test_direct_byte_lesion_cannot_execute_structured_tool() -> None:
     adapter = _adapter(generation=False)
     with pytest.raises(RuntimeError, match="generated ToolCall"):
         adapter.execute_tool_call(WeatherToolEnvironment(), learn=False)
-

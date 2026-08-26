@@ -62,10 +62,11 @@ def evaluate_capacity(capacities: tuple[int, ...] = (100, 1000, 10000)) -> list[
                 "capacity": capacity,
                 "writes": capacity + 1,
                 "retained_records": store.count,
-                "target_evicted_by_interference": "capacity-target" not in {
-                    record.memory_id for record in store.records
-                },
-                "latest_recalled": bool(latest_hits and latest_hits[0].record.memory_id == latest_id),
+                "target_evicted_by_interference": "capacity-target"
+                not in {record.memory_id for record in store.records},
+                "latest_recalled": bool(
+                    latest_hits and latest_hits[0].record.memory_id == latest_id
+                ),
                 "write_seconds": elapsed,
                 "writes_per_second": (capacity + 1) / elapsed if elapsed > 0.0 else None,
             }
@@ -104,8 +105,7 @@ def _build_skill_corpus(
             )
     holdout = tuple(
         (
-            pattern
-            + torch.randn(2, generator=generator, dtype=torch.float32) * noise_scale,
+            pattern + torch.randn(2, generator=generator, dtype=torch.float32) * noise_scale,
             action_kind,
         )
         for pattern, action_kind in patterns
@@ -134,7 +134,8 @@ def evaluate() -> dict[str, object]:
     consolidation_loss = procedural.consolidate(store, epochs=300, learning_rate=0.1)
     predictions = tuple(procedural.predict(cue) for cue, _ in holdout)
     procedural_accuracy = sum(
-        int(predicted == expected) for predicted, (_, expected) in zip(predictions, holdout)
+        int(predicted == expected)
+        for predicted, (_, expected) in zip(predictions, holdout, strict=True)
     ) / len(holdout)
     checkpoint = ProceduralMemoryLearner.from_checkpoint(procedural.checkpoint())
     checkpoint_accuracy = sum(
@@ -150,8 +151,7 @@ def evaluate() -> dict[str, object]:
     episode_id_lesion_learner = ProceduralMemoryLearner(cue_dim=2)
     episode_id_lesion_learner.consolidate(episode_id_lesion, epochs=300, learning_rate=0.1)
     episode_id_lesion_accuracy = sum(
-        int(episode_id_lesion_learner.predict(cue) == expected)
-        for cue, expected in holdout
+        int(episode_id_lesion_learner.predict(cue) == expected) for cue, expected in holdout
     ) / len(holdout)
     skill_lesion_accuracy = 1.0 / len(action_kinds)
     nearest_accuracy = _episodic_nearest_accuracy(store, holdout)
@@ -225,7 +225,9 @@ def main() -> None:
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

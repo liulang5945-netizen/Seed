@@ -363,6 +363,8 @@ S2 的首批任务为 aiohttp/datasets 补丁升级、连续两次无 HIGH 后�
 
 ## 15. 当前唯一下一步
 
-**立即完成 R0 质量闭环：在 CI 固定的 Black 24.12.0 环境复验 `black --check .`，随后进入 S2 工程质量与稳定性阶段。**
+~~**立即完成 R0 质量闭环：在 CI 固定的 Black 24.12.0 环境复验 `black --check .`，随后进入 S2 工程质量与稳定性阶段。**~~
 
-S1 功能验收结果记录在 `reports/seed_s1_acceptance_20260825.md`。当前 R0 代码收敛已落到 `main`，只剩固定 Black 版本的退出状态需要确认。在 R0/S1 关闭前不续跑 100M、不改 Taiji 学习方程、不写自定义 CUDA kernel，也不删除 `neuroplex/`。
+> **2026-08-26 更正（本文件已归档，此"唯一下一步"作废）**：Black 24.12.0 在 PyPI 与 `psf/black` 的 tag 列表中均不存在（24.10.0 之后直接跳到 25.1.0），所谓"CI 固定的 Black 24.12.0 环境"从未存在过——该 pin 使 CI 的依赖安装步骤直接失败，其后全部门禁被跳过。R0 的 black 闭环已于 2026-08-26 在 `black==26.5.1` 下完成（68 个文件一次性格式化，`black --check .` 仍为阻塞门禁）。当前唯一下一步以 [plans/README.md](../../README.md) 为准，门禁纪律与类型债见 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](../../active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) 第 14 节。
+
+~~S1 功能验收结果记录在 `reports/seed_s1_acceptance_20260825.md`。当前 R0 代码收敛已落到 `main`，只剩固定 Black 版本的退出状态需要确认。~~在 R0/S1 关闭前不续跑 100M、不改 Taiji 学习方程、不写自定义 CUDA kernel，也不删除 `neuroplex/`。

@@ -35,7 +35,5 @@ class TaijiEnvironment(Protocol):
 class TaijiToolEnvironment(Protocol):
     """Protocol for environments that accept structured tool organs."""
 
-    def execute_tool(
-        self, tool_name: str, parameters: Mapping[str, Any]
-    ) -> EnvironmentOutcome:
+    def execute_tool(self, tool_name: str, parameters: Mapping[str, Any]) -> EnvironmentOutcome:
         """Execute one structured tool call and return its causal outcome."""

@@ -496,6 +496,39 @@ P4 的最小真实经历边界已落地：
 
 辅助训练结果必须标记 `native-assisted`；只有不依赖辅助 teacher 决策且能继续终身学习的路径才能标记 `native-local`。A0–A9 的目的追溯和 Gate 定义以 Taiji v1 架构文档为准。
 
+### 14.1 门禁自身的可信度纪律（2026-08-26 事故后新增）
+
+一次 CI 事故暴露出「门禁写下来」不等于「门禁跑过」：提交 `470f2af` 同时引入了 `black==24.12.0` 这个 **PyPI 上不存在的版本**（`24.10.0` 之后直接是 `25.1.0`）和多道新 blocking 门禁及「存量已清零」注释。依赖安装步骤因此在 30 秒内失败，其后 **全部门禁被跳过**，CI 连续 8 天红灯，期间累积的 84 个提交没有被任何门禁检验过。
+
+因此以下规则生效：
+
+- 任何 pin 的版本号必须先确认上游真实存在。PyPI pin 查 PyPI，pre-commit `rev:` 查上游 **git tag**（两者是不同的命名空间，`24.12.0` 在两边都不存在）。
+- `.github/workflows/ci.yml` 的 pip pin 与 `.pre-commit-config.yaml` 的 `rev:` 必须同步改动，保持本地钩子与 CI 同版本。当前统一为 `ruff==0.16.4` / `black==26.5.1`。
+- 门禁注释里的数字必须是**实测值**，不是期望值。声明「存量已清零」之前必须有一次真正跑绿的 run 作为证据。
+- 依赖安装步骤失败会让后续门禁静默跳过（显示 `-` 而非 ✗）。判断 CI 是否真的验证过代码，要看步骤是否执行，而不只看 job 的红绿。
+
+### 14.2 mypy 类型债（advisory，待实修后转正）
+
+2026-08-26 修好 pin 后，上述 blocking 门禁首次真正执行，实测与注释不符：
+
+| 门禁 | 原注释声称 | 实测（本机 py3.12） | 处置 |
+|---|---|---|---|
+| `ruff check .` | 存量已清零 | 0 | 保持 blocking |
+| `ruff check . --select B,SIM` | 存量 32 | 4 | 已实修，保持 blocking |
+| `black --check .` | — | 68 个文件待重排 | 已一次性格式化，保持 blocking |
+| `mypy --follow-imports=silent seed taiji` | 0 错误 | **47 错误** | 回退 advisory |
+| 全仓 mypy 棘轮 | 基线 212 | **259 错误** | 回退 advisory |
+
+47 个核心错误经与最后一次绿色提交 `42d268e` 对比确认**不是新增退化**（那时 mypy 仍是 `continue-on-error: true`），属存量类型债，集中在 `taiji/workspace.py`、`taiji/world_learning.py`、`taiji/adapter.py`，主因是 checkpoint / `state_dict` 反序列化后为 `object | Any` 缺少类型收窄。这类缺陷与 checkpoint 结构变更时的静默失败直接相关，须实修而非长期忽略。
+
+不直接把阈值改钉为 259 的原因：mypy 报错总数随 Python 版本变化，CI 为 3.10 / 3.12 双矩阵，本机单版本数字不能作为阻塞阈值。
+
+转正条件：
+
+1. 先让 CI 双矩阵各跑一次 advisory，取得两个版本的真实错误数；
+2. 实修核心 `seed`/`taiji` 至 0 错误后恢复 `Type check core modules with mypy` 为 blocking；
+3. 全仓棘轮以双矩阵中的较大值为基线，再恢复 blocking，此后只允许下降。
+
 ## 15. 停止项
 
 在 P2 通过前：

@@ -1,12 +1,15 @@
+# rev 必须是上游真实存在的 git tag，且与 .github/workflows/ci.yml 的 pip pin 保持一致。
+# 教训：曾把 black 钉在 24.12.0——PyPI 与 psf/black 的 tag 列表里都没有这个版本
+# （24.10.0 之后直接跳到 25.1.0），CI 装依赖即失败，本地钩子同样装不上。
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.9.0
+    rev: v0.16.4
     hooks:
       - id: ruff
         args: [--fix]
 
   - repo: https://github.com/psf/black
-    rev: 24.12.0
+    rev: 26.5.1
     hooks:
       - id: black
 

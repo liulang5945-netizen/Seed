@@ -92,9 +92,7 @@ def evaluate() -> dict[str, object]:
             conflict_weight=0.0,
             discount=0.0,
         )
-    ).plan_rollouts(
-        goal_state, rollouts, tick=0
-    )
+    ).plan_rollouts(goal_state, rollouts, tick=0)
 
     runtime = TSKV8Adapter()
     runtime.attach_goal_planner(planner)
@@ -128,7 +126,9 @@ def evaluate() -> dict[str, object]:
     )
     runtime.settle_action(0.4, success=True, learn=False)
     final_state = runtime.cognitive_snapshot()
-    planner_gain = decision.selected.steps[0].success_probability - reactive.steps[0].success_probability
+    planner_gain = (
+        decision.selected.steps[0].success_probability - reactive.steps[0].success_probability
+    )
     gate_passed = bool(
         decision.selected.rollout_id == "delayed-safe"
         and reactive.rollout_id == "immediate-risky"
@@ -165,7 +165,13 @@ def build_manifest() -> dict[str, object]:
         "format": MANIFEST_FORMAT,
         "task": "compare delayed safe rollout with immediate risky shortcut and recover after intervention",
         "lesions": ["reactive_immediate_reward", "value_world_model", "no_replan_recovery"],
-        "signals": ["delayed_reward", "success_probability", "uncertainty", "resource_cost", "conflict"],
+        "signals": [
+            "delayed_reward",
+            "success_probability",
+            "uncertainty",
+            "resource_cost",
+            "conflict",
+        ],
         "boundary": "short delayed-reward intervention Gate only; not general long-horizon planning",
     }
 
@@ -186,7 +192,9 @@ def main() -> None:
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

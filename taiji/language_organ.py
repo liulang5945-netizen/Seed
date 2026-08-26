@@ -120,9 +120,7 @@ class LanguageEmission:
             backend=str(payload["backend"]),
             provenance=str(payload.get("provenance", "language-organ")),
             validation=(
-                None
-                if validation is None
-                else LanguageValidation.from_payload(dict(validation))
+                None if validation is None else LanguageValidation.from_payload(dict(validation))
             ),
             fallback_used=bool(payload.get("fallback_used", False)),
         )
@@ -207,7 +205,9 @@ class LanguageTrainingCorpus:
         if any(example.split != "train" for example in train):
             raise ValueError("language training corpus train split contains a non-train example")
         if any(example.split != "holdout" for example in holdout):
-            raise ValueError("language training corpus holdout split contains a non-holdout example")
+            raise ValueError(
+                "language training corpus holdout split contains a non-holdout example"
+            )
         example_ids = tuple(example.example_id for example in examples)
         if len(set(example_ids)) != len(example_ids):
             raise ValueError("language training corpus example IDs must be unique")
@@ -236,7 +236,9 @@ class LanguageTrainingCorpus:
             raise ValueError("language training corpus splits must be sequences")
         return cls(
             train=tuple(LanguageTrainingExample.from_payload(dict(example)) for example in train),
-            holdout=tuple(LanguageTrainingExample.from_payload(dict(example)) for example in holdout),
+            holdout=tuple(
+                LanguageTrainingExample.from_payload(dict(example)) for example in holdout
+            ),
         )
 
 
@@ -308,7 +310,9 @@ class LanguageProviderArtifact:
             backend_id=str(payload["backend_id"]),
             mode=str(payload["mode"]),
             base_model=str(payload["base_model"]),
-            adapter_path=(None if payload.get("adapter_path") is None else str(payload["adapter_path"])),
+            adapter_path=(
+                None if payload.get("adapter_path") is None else str(payload["adapter_path"])
+            ),
             training_corpus=(
                 None if payload.get("training_corpus") is None else str(payload["training_corpus"])
             ),
@@ -722,7 +726,9 @@ class ExternalTextDecoderLanguageOrgan:
         if payload.get("format") != LANGUAGE_ORGAN_CHECKPOINT_FORMAT:
             raise ValueError("unsupported external language organ checkpoint format")
         if payload.get("model_state") != "external":
-            raise ValueError("external language organ checkpoint must reference external model state")
+            raise ValueError(
+                "external language organ checkpoint must reference external model state"
+            )
         return cls(
             decoder,
             prompt_builder=prompt_builder,

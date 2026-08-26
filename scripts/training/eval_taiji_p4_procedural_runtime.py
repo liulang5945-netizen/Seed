@@ -37,9 +37,7 @@ def _observe_feature(model: TSKV8Adapter, symbol: int, episode_id: str) -> torch
     return percept.features.detach().clone()
 
 
-def _build_runtime_corpus(
-    model: TSKV8Adapter, *, repeats: int = 8
-) -> EpisodicMemoryStore:
+def _build_runtime_corpus(model: TSKV8Adapter, *, repeats: int = 8) -> EpisodicMemoryStore:
     store = EpisodicMemoryStore(
         capacity=len(TRAINING_SYMBOLS) * repeats + 16,
         cue_dim=model.perception.feature_dim,
@@ -127,9 +125,7 @@ def evaluate() -> dict[str, object]:
             )
         )
     episode_id_lesion_learner = ProceduralMemoryLearner(model.perception.feature_dim)
-    episode_id_lesion_learner.consolidate(
-        episode_id_lesion_store, epochs=300, learning_rate=0.1
-    )
+    episode_id_lesion_learner.consolidate(episode_id_lesion_store, epochs=300, learning_rate=0.1)
     episode_id_model = TSKV8Adapter.from_native_checkpoint(checkpoint)
     episode_id_model.attach_episodic_memory(episode_id_lesion_store)
     episode_id_model.attach_procedural_memory(episode_id_lesion_learner)
@@ -193,7 +189,9 @@ def main() -> None:
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

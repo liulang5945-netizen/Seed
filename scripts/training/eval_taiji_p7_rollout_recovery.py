@@ -226,7 +226,12 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "format": MANIFEST_FORMAT,
         "task": "recover an imagined rollout after a high-error real world transition",
         "seeds": list(seeds),
-        "controls": ["positive-reward-world-error", "rollout-interruption", "recovery-rollout", "native-checkpoint-continuation"],
+        "controls": [
+            "positive-reward-world-error",
+            "rollout-interruption",
+            "recovery-rollout",
+            "native-checkpoint-continuation",
+        ],
         "boundary": "numeric world prediction error and structured replan recovery; not general failure recovery or intelligence",
     }
 
@@ -247,7 +252,9 @@ def main() -> None:
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

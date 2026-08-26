@@ -85,8 +85,7 @@ class EpisodicMemoryStore:
             ]
         order = sorted(range(len(self._records)), key=lambda index: (-scores[index], -index))
         return tuple(
-            EpisodicMemoryHit(records[index], scores[index])
-            for index in order[: int(limit)]
+            EpisodicMemoryHit(records[index], scores[index]) for index in order[: int(limit)]
         )
 
     def checkpoint(self) -> dict[str, Any]:

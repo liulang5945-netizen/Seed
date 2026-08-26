@@ -102,4 +102,3 @@ def test_tool_failure_replans_and_recovers_through_existing_planner() -> None:
     assert environment.calls == ["weather.lookup.v1", "weather.recover.v1"]
     assert adapter._episodic_memory is not None
     assert adapter._episodic_memory.count == 2
-

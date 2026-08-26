@@ -42,4 +42,3 @@ def test_generation_checkpoint_accepts_text_codec_boundary() -> None:
     controller = GenerationController()
     restored = GenerationController.from_checkpoint(controller.checkpoint())
     assert restored.checkpoint() == controller.checkpoint()
-

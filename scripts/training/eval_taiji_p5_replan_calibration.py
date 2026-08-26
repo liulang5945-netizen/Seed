@@ -45,8 +45,16 @@ def evaluate() -> dict[str, object]:
     )
     runtime.settle_action(0.9, success=True, learn=False)
     restored = TSKV8Adapter.from_native_checkpoint(runtime.native_checkpoint())
-    safe_calibration = None if restored._goal_planner is None else restored._goal_planner.calibrated_confidence("safe-rollout")
-    risky_calibration = None if restored._goal_planner is None else restored._goal_planner.calibrated_confidence("risky-rollout")
+    safe_calibration = (
+        None
+        if restored._goal_planner is None
+        else restored._goal_planner.calibrated_confidence("safe-rollout")
+    )
+    risky_calibration = (
+        None
+        if restored._goal_planner is None
+        else restored._goal_planner.calibrated_confidence("risky-rollout")
+    )
     gate_passed = bool(
         first_decision.selected.rollout_id == "safe-rollout"
         and first_replan_required
@@ -82,7 +90,11 @@ def build_manifest() -> dict[str, object]:
     return {
         "format": MANIFEST_FORMAT,
         "task": "fail the first safe rollout, replan to an alternative, execute it, and calibrate confidence",
-        "phases": ["safe_rollout_failure", "alternative_rollout_execution", "confidence_calibration"],
+        "phases": [
+            "safe_rollout_failure",
+            "alternative_rollout_execution",
+            "confidence_calibration",
+        ],
         "controls": ["replan_flag", "success_rate", "native_checkpoint"],
         "boundary": "two-rollout replan and empirical confidence only; not long-horizon policy evaluation",
     }
@@ -104,7 +116,9 @@ def main() -> None:
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

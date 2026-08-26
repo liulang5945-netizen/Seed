@@ -72,7 +72,9 @@ class WorkspaceCollaborationEvaluator:
     def _feature_dim(self, samples: tuple[WorkspaceCompositionSample, ...]) -> int:
         if not samples:
             raise ValueError("workspace collaboration evaluation needs samples")
-        dimensions = {candidate.features.numel() for sample in samples for candidate in sample.candidates}
+        dimensions = {
+            candidate.features.numel() for sample in samples for candidate in sample.candidates
+        }
         if len(dimensions) != 1:
             raise ValueError("workspace composition candidate dimensions must be consistent")
         feature_dim = next(iter(dimensions))
@@ -88,7 +90,9 @@ class WorkspaceCollaborationEvaluator:
     ) -> float:
         if not candidates:
             return self._mse(torch.zeros(self.content_dim), target)
-        return self._mse(torch.stack([candidate.features for candidate in candidates]).mean(dim=0), target)
+        return self._mse(
+            torch.stack([candidate.features for candidate in candidates]).mean(dim=0), target
+        )
 
     def evaluate(
         self,
@@ -169,7 +173,9 @@ class WorkspaceCollaborationEvaluator:
         aggregate["learned_gain_vs_strongest_single_min"] = min(
             float(report["learned_gain_vs_strongest_single"]) for report in seed_reports
         )
-        aggregate["exact_route_rate_min"] = min(float(report["exact_route_rate"]) for report in seed_reports)
+        aggregate["exact_route_rate_min"] = min(
+            float(report["exact_route_rate"]) for report in seed_reports
+        )
         aggregate["passed"] = bool(
             aggregate["learned_gain_vs_strongest_single_min"] > 0.05
             and aggregate["learned_gain_vs_dense"] > 0.05
@@ -211,7 +217,9 @@ class WorkspaceRouter(nn.Module):
         self.scorer = nn.Linear(self.feature_dim, 1)
         generator = torch.Generator(device="cpu").manual_seed(int(seed))
         with torch.no_grad():
-            self.scorer.weight.copy_(torch.randn(self.scorer.weight.shape, generator=generator) * 0.02)
+            self.scorer.weight.copy_(
+                torch.randn(self.scorer.weight.shape, generator=generator) * 0.02
+            )
             self.scorer.bias.zero_()
 
     def _features(self, candidates: tuple[WorkspaceCandidate, ...]) -> torch.Tensor:
@@ -246,7 +254,10 @@ class WorkspaceRouter(nn.Module):
             for example in examples:
                 features = self._features(example.candidates)
                 targets = torch.tensor(
-                    [candidate.candidate_id in example.relevant_ids for candidate in example.candidates],
+                    [
+                        candidate.candidate_id in example.relevant_ids
+                        for candidate in example.candidates
+                    ],
                     dtype=features.dtype,
                     device=features.device,
                 )
@@ -288,7 +299,9 @@ class WorkspaceRouter(nn.Module):
             generator = torch.Generator(device="cpu").manual_seed(
                 int(random_seed) if random_seed is not None else 0
             )
-            selected_indices = torch.randperm(len(candidates), generator=generator).tolist()[: self.capacity]
+            selected_indices = torch.randperm(len(candidates), generator=generator).tolist()[
+                : self.capacity
+            ]
             scores = tuple(0.0 for _ in candidates)
         else:
             selected_indices = []

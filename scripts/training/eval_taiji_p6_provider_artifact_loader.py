@@ -45,13 +45,17 @@ def evaluate(
         base_model=str(model_dir),
         adapter_path=None if adapter_dir is None else str(adapter_dir),
         training_corpus=(
-            None if mode == "raw" else "reports/taiji_p6_language_train_holdout_baseline_20260825.json"
+            None
+            if mode == "raw"
+            else "reports/taiji_p6_language_train_holdout_baseline_20260825.json"
         ),
         training_report=(
             None if mode == "raw" else "reports/taiji_p6_qwen_lora_provider_baseline_20260825.json"
         ),
         safety_report=(
-            None if mode != "guarded" else "reports/taiji_p6_qwen_lora_safety_baseline_20260825.json"
+            None
+            if mode != "guarded"
+            else "reports/taiji_p6_qwen_lora_safety_baseline_20260825.json"
         ),
         default_enabled=False,
     )
@@ -117,22 +121,30 @@ def main() -> None:
     parser.add_argument(
         "--manifest",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_p6_provider_artifact_loader_manifest_20260825.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_p6_provider_artifact_loader_manifest_20260825.json",
     )
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_p6_provider_artifact_loader_baseline_20260825.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_p6_provider_artifact_loader_baseline_20260825.json",
     )
     args = parser.parse_args()
     if not args.model.is_dir():
         raise SystemExit(f"local Qwen model directory not found: {args.model}")
-    if args.mode in {"lora", "guarded"} and (args.adapter_dir is None or not args.adapter_dir.is_dir()):
+    if args.mode in {"lora", "guarded"} and (
+        args.adapter_dir is None or not args.adapter_dir.is_dir()
+    ):
         raise SystemExit("LoRA and guarded modes require an existing --adapter-dir")
     report = evaluate(args.model, mode=args.mode, adapter_dir=args.adapter_dir)
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if not report["gate"]["passed"]:

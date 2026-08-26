@@ -181,7 +181,9 @@ def _candidate(
     )
 
 
-def _prediction_error(prediction: object, case: WorldInterventionCase, schema: WorldSchema) -> float:
+def _prediction_error(
+    prediction: object, case: WorldInterventionCase, schema: WorldSchema
+) -> float:
     state = prediction.state
     state_error = torch.mean(
         (schema.state_values(state) - schema.state_values(case.expected_state)) ** 2
@@ -197,8 +199,7 @@ def _state_prediction_error(
 ) -> float:
     return float(
         torch.mean(
-            (schema.state_values(prediction.state) - schema.state_values(case.expected_state))
-            ** 2
+            (schema.state_values(prediction.state) - schema.state_values(case.expected_state)) ** 2
         )
     )
 
@@ -236,9 +237,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
     )
     train_examples: list[AffordanceFeatureTrainingExample] = []
     for index, (state, affordance_id, reward) in enumerate(_train_cases()):
-        affordance = next(
-            item for item in state.affordances if item.affordance_id == affordance_id
-        )
+        affordance = next(item for item in state.affordances if item.affordance_id == affordance_id)
         grounded = producer.ground(state, affordance)
         train_examples.append(
             AffordanceFeatureTrainingExample(
@@ -258,9 +257,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
     controller = ExecutiveController(candidate_feature_dim=FEATURE_DIM)
     training_candidates: list[ExecutiveTrainingExample] = []
     for state, affordance_id, reward in _train_cases():
-        affordance = next(
-            item for item in state.affordances if item.affordance_id == affordance_id
-        )
+        affordance = next(item for item in state.affordances if item.affordance_id == affordance_id)
         grounded = producer.ground(state, affordance)
         features = source.features_for(
             grounded,
@@ -336,9 +333,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
             tick=holdout.tick,
             actor_id=affordance.actor_id,
             target_id=affordance.target_id,
-            parameters={
-                "action_symbol": float(dict(affordance.parameters)["action_symbol"])
-            },
+            parameters={"action_symbol": float(dict(affordance.parameters)["action_symbol"])},
             provenance="evaluation-training",
         )
         dynamics_cases.append(
@@ -370,9 +365,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
             tick=after_states[0].tick,
             actor_id=affordance.actor_id,
             target_id=affordance.target_id,
-            parameters={
-                "action_symbol": float(dict(affordance.parameters)["action_symbol"])
-            },
+            parameters={"action_symbol": float(dict(affordance.parameters)["action_symbol"])},
             provenance="evaluation-holdout",
         )
         dynamics_holdout_cases.append(
@@ -419,8 +412,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         calibration.predict(case.initial, case.action) for case in dynamics_holdout_cases
     )
     no_update_predictions = tuple(
-        no_update_control.predict(case.initial, case.action)
-        for case in dynamics_holdout_cases
+        no_update_control.predict(case.initial, case.action) for case in dynamics_holdout_cases
     )
     calibration_before_errors = tuple(
         _prediction_error(prediction, case, dynamics_schema)
@@ -554,8 +546,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         len(predictions) == len(after_states)
         and len(world_prediction_errors) == len(after_states)
         and all(
-            float(prediction.state_error) >= 0.0
-            and float(prediction.reward_error) >= 0.0
+            float(prediction.state_error) >= 0.0 and float(prediction.reward_error) >= 0.0
             for prediction in world_prediction_errors
         )
         and restored._world_dynamics is not None
@@ -672,9 +663,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "producer_lesion_degrades": producer_lesion_degrades,
         "feature_source_lesion_blocks_synthesis": feature_source_lesion_blocks_synthesis,
         "first_failed": first.success is False,
-        "all_intermediate_failed": all(
-            outcome.success is False for outcome in outcomes[:-1]
-        ),
+        "all_intermediate_failed": all(outcome.success is False for outcome in outcomes[:-1]),
         "final_succeeded": outcomes[-1].success is True and outcomes[-1].terminal,
         "checkpoint_pending_credit": checkpoint_pending,
         "first_lineage_complete": first_lineage,
@@ -682,7 +671,9 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "delayed_credit_complete": delayed_credit,
         "delayed_credit_lesion_effective": delayed_credit_lesion_effective,
         "source_online_updates": (
-            0 if restored._affordance_features is None else restored._affordance_features.online_updates
+            0
+            if restored._affordance_features is None
+            else restored._affordance_features.online_updates
         ),
         "executive_training_steps": (
             0 if restored._executive is None else restored._executive.training_steps
@@ -802,10 +793,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "prediction_train_holdout_gate",
         "calibration_gate",
     )
-    rates = {
-        name: sum(bool(run[name]) for run in runs) / len(runs)
-        for name in metric_names
-    }
+    rates = {name: sum(bool(run[name]) for run in runs) / len(runs) for name in metric_names}
     passed = all(rate == 1.0 for rate in rates.values())
     return {
         "format": REPORT_FORMAT,
@@ -820,14 +808,26 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--manifest", type=Path, default=PROJECT_ROOT / "reports" / "taiji_p7_grounded_multistep_manifest_20260825.json")
-    parser.add_argument("--report", type=Path, default=PROJECT_ROOT / "reports" / "taiji_p7_grounded_multistep_report_20260825.json")
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=PROJECT_ROOT / "reports" / "taiji_p7_grounded_multistep_manifest_20260825.json",
+    )
+    parser.add_argument(
+        "--report",
+        type=Path,
+        default=PROJECT_ROOT / "reports" / "taiji_p7_grounded_multistep_report_20260825.json",
+    )
     args = parser.parse_args()
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    args.report.write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 

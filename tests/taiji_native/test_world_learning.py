@@ -35,7 +35,8 @@ def _state() -> WorldState:
 def _case(target: str, step: float, index: int) -> WorldInterventionCase:
     initial = _state()
     updated = {
-        object_id: dict(obj.attributes) for object_id, obj in ((obj.object_id, obj) for obj in initial.objects)
+        object_id: dict(obj.attributes)
+        for object_id, obj in ((obj.object_id, obj) for obj in initial.objects)
     }
     updated[target]["position"] += step
     expected = WorldState(
@@ -93,11 +94,21 @@ def test_world_dynamics_learns_target_bound_state_change() -> None:
         learner.predict(case.initial, case.action, bind_target=False) for case in corpus.holdout
     )
     full_error = sum(
-        float(torch.mean((schema.state_values(prediction.state) - schema.state_values(case.expected_state)) ** 2))
+        float(
+            torch.mean(
+                (schema.state_values(prediction.state) - schema.state_values(case.expected_state))
+                ** 2
+            )
+        )
         for prediction, case in zip(full, corpus.holdout, strict=True)
     ) / len(full)
     lesion_error = sum(
-        float(torch.mean((schema.state_values(prediction.state) - schema.state_values(case.expected_state)) ** 2))
+        float(
+            torch.mean(
+                (schema.state_values(prediction.state) - schema.state_values(case.expected_state))
+                ** 2
+            )
+        )
         for prediction, case in zip(lesion, corpus.holdout, strict=True)
     ) / len(lesion)
 

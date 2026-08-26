@@ -122,8 +122,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
             and restored_rollout.rollout_id == rollout.rollout_id
             and len(restored_rollout.steps) == horizon
             and all(
-                step.prediction_provenance == "world-dynamics"
-                for step in restored_rollout.steps
+                step.prediction_provenance == "world-dynamics" for step in restored_rollout.steps
             )
         )
         lesion = TSKV8Adapter(_config(seed), episode_id=f"world-rollout-lesion-{seed}")
@@ -147,9 +146,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
                     and step.action.provenance == "world-dynamics"
                     for step in rollout.steps
                 ),
-                "tick_chain_complete": tuple(
-                    step.action.tick for step in rollout.steps
-                )
+                "tick_chain_complete": tuple(step.action.tick for step in rollout.steps)
                 == tuple(start_tick + index for index in range(horizon)),
                 "checkpoint_complete": checkpoint_complete,
                 "world_model_lesion_complete": lesion_complete,
@@ -216,7 +213,9 @@ def main() -> None:
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

@@ -82,7 +82,9 @@ def evaluate(model_dir: Path) -> dict[str, object]:
         validation = emission.validation
         fallback_semantics_preserved = False
         if emission.fallback_used:
-            fallback_semantics_preserved = TextExpressionCodec.decode(emission.text_bytes) == expression
+            fallback_semantics_preserved = (
+                TextExpressionCodec.decode(emission.text_bytes) == expression
+            )
         results.append(
             {
                 "case_id": case["case_id"],
@@ -100,7 +102,9 @@ def evaluate(model_dir: Path) -> dict[str, object]:
         adapter.emit_language(_expression(controller, HOLDOUT_CASES[0]))
     except RuntimeError:
         lesion_passed = True
-    cognition_unchanged = action_before is None and adapter.cognitive_snapshot().action_intent is None
+    cognition_unchanged = (
+        action_before is None and adapter.cognitive_snapshot().action_intent is None
+    )
     all_safe = all(
         bool(result["validation_accepted"]) or bool(result["fallback_semantics_preserved"])
         for result in results
@@ -113,8 +117,7 @@ def evaluate(model_dir: Path) -> dict[str, object]:
         "metrics": {
             "holdout_cases": len(results),
             "safe_realization_rate": sum(
-                bool(result["validation_accepted"])
-                or bool(result["fallback_semantics_preserved"])
+                bool(result["validation_accepted"]) or bool(result["fallback_semantics_preserved"])
                 for result in results
             )
             / len(results),
@@ -134,8 +137,17 @@ def build_manifest() -> dict[str, object]:
     return {
         "format": MANIFEST_FORMAT,
         "task": "guard real Qwen language realization with Taiji-owned semantic validation and structured fallback",
-        "lesions": ["language_organ_detached", "missing_required_terms", "structured_fallback_semantic_loss"],
-        "signals": ["safe_realization_rate", "fallback_count", "organ_lesion", "cognition_unchanged"],
+        "lesions": [
+            "language_organ_detached",
+            "missing_required_terms",
+            "structured_fallback_semantic_loss",
+        ],
+        "signals": [
+            "safe_realization_rate",
+            "fallback_count",
+            "organ_lesion",
+            "cognition_unchanged",
+        ],
         "boundary": "safety/fallback Gate only; fallback is structured output, not a fluency or intelligence claim",
     }
 
@@ -159,7 +171,9 @@ def main() -> None:
     report = evaluate(args.model)
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if not report["gate"]["passed"]:

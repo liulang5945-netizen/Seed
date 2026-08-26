@@ -36,7 +36,9 @@ def build_corpus(
     if factor_count <= 0 or repeats_per_pattern <= 0:
         raise ValueError("semantic scale factor_count and repeats must be positive")
     generator = torch.Generator(device="cpu").manual_seed(seed)
-    store = EpisodicMemoryStore(capacity=(2**factor_count) * repeats_per_pattern, cue_dim=factor_count)
+    store = EpisodicMemoryStore(
+        capacity=(2**factor_count) * repeats_per_pattern, cue_dim=factor_count
+    )
     index = 0
     for pattern in range(2**factor_count - 1):
         bits = torch.tensor(
@@ -71,7 +73,11 @@ def evaluate_scale() -> dict[str, object]:
     episode_lesion = SemanticMemoryLearner(cue_dim=query.numel())
     episode_lesion.consolidate(episode_lesion_store, epochs=500, learning_rate=0.05)
     nearest = store.retrieve(query, limit=1)
-    nearest_prediction = 0.0 if not nearest or nearest[0].record.outcome is None else nearest[0].record.outcome.reward
+    nearest_prediction = (
+        0.0
+        if not nearest or nearest[0].record.outcome is None
+        else nearest[0].record.outcome.reward
+    )
     semantic_error = abs(semantic.predict(query) - target)
     replay_error = abs(SemanticMemoryLearner(query.numel()).predict(query) - target)
     return {
@@ -110,7 +116,12 @@ def build_manifest() -> dict[str, object]:
         "held_out_combination": [1, 1, 1, 1],
         "repeats_per_seen_combination": 4,
         "noise_scale": 0.05,
-        "controls": ["episodic_nearest", "replay_lesion", "episode_id_lesion", "checkpoint_continuation"],
+        "controls": [
+            "episodic_nearest",
+            "replay_lesion",
+            "episode_id_lesion",
+            "checkpoint_continuation",
+        ],
         "boundary": "additive multi-factor relation only; not general semantic or language competence",
     }
 
@@ -131,7 +142,9 @@ def main() -> None:
     report = evaluate_scale()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

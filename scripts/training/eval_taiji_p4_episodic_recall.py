@@ -33,7 +33,9 @@ class RecallQuery:
     episode_id: str
 
 
-def build_corpus(*, cue_dim: int = 8) -> tuple[tuple[EpisodicMemoryRecord, ...], tuple[RecallQuery, ...]]:
+def build_corpus(
+    *, cue_dim: int = 8
+) -> tuple[tuple[EpisodicMemoryRecord, ...], tuple[RecallQuery, ...]]:
     if int(cue_dim) <= 0:
         raise ValueError("P4 cue_dim must be positive")
     train = tuple(
@@ -69,7 +71,9 @@ def build_corpus(*, cue_dim: int = 8) -> tuple[tuple[EpisodicMemoryRecord, ...],
     return train, queries
 
 
-def _recall_accuracy(store: EpisodicMemoryStore, queries: tuple[RecallQuery, ...]) -> dict[str, float]:
+def _recall_accuracy(
+    store: EpisodicMemoryStore, queries: tuple[RecallQuery, ...]
+) -> dict[str, float]:
     action_hits = 0
     reward_errors: list[float] = []
     for query in queries:
@@ -130,7 +134,13 @@ def build_manifest(*, cue_dim: int = 8) -> dict[str, object]:
         "cue_dim": cue_dim,
         "train_episode_ids": [f"train-episode-{index}" for index in range(cue_dim)],
         "holdout_episode_ids": [f"holdout-episode-{index}" for index in range(cue_dim)],
-        "controls": ["full", "episode_id_lesion", "retrieval_lesion", "write_lesion", "checkpoint_continuation"],
+        "controls": [
+            "full",
+            "episode_id_lesion",
+            "retrieval_lesion",
+            "write_lesion",
+            "checkpoint_continuation",
+        ],
         "boundary": "this is episodic recall, not cross-episode semantic composition",
     }
 
@@ -152,7 +162,9 @@ def main() -> None:
     report = evaluate_recall(train, queries)
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

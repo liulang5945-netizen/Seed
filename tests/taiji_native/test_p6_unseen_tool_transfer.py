@@ -96,4 +96,3 @@ def test_parameter_order_is_not_a_fixed_mapping_and_adapter_executes_it() -> Non
     call = adapter.generate_tool_call(tool_name="maps.search.v42")
     outcome = adapter.execute_tool_call(UnseenMapsToolEnvironment(), call=call, learn=False)
     assert outcome.success is True
-
