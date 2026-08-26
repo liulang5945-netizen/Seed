@@ -542,4 +542,6 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把 growth/pruning/split/merge 四类结构 proposal 接入真实 runtime tick：从区域 activity、route evidence、prediction error 和资源状态自动形成可 checkpoint 的维护观测，只有通过 holdout、预算、trial 和 reverse rollback 才改变 live topology；继续禁止用 action/intent 表决定结构维护。**
+**已完成：`TSKV8Adapter.step_cross_region_network()` 已把 growth/pruning/split/merge 所需的 activity、route evidence、prediction error、learning gain、holdout transfer 和资源压力接入可 checkpoint 的 runtime observation；Gate 为 `reports/taiji_runtime_structure_20260826.json`。无 expected activity 时不伪造 growth supervision，route credit 来自实际 target activity，runtime tick 不直接改变 topology。**
+
+**下一步：把这些真实观测汇聚成不依赖 action/intent 查表的 proposal candidate 队列，再交给统一 ledger 完成 holdout、预算、trial checkpoint、commit 与 reverse rollback。**

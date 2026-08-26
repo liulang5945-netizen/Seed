@@ -1,0 +1,21 @@
+{
+  "format": "taiji-runtime-structure-manifest-v1",
+  "task": "runtime-owned structural evidence",
+  "report": "reports/taiji_runtime_structure_20260826.json",
+  "seed": 71,
+  "controls": [
+    "real_network_tick",
+    "activity_observation",
+    "prediction_error_observation",
+    "resource_observation",
+    "growth_controller_runtime_ownership",
+    "pruning_controller_runtime_ownership",
+    "route_credit",
+    "checkpoint_continuation",
+    "topology_no_implicit_mutation"
+  ],
+  "gate": {
+    "passed": true,
+    "criterion": "real native network ticks must emit checkpointable activity, prediction-error, learning-gain and resource observations; attached structural organs and route credit must continue across checkpoint, while topology remains unchanged until a separate holdout/budget/trial/rollback transaction commits it"
+  }
+}

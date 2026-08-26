@@ -9,6 +9,7 @@ from typing import Any
 
 STRUCTURAL_GROWTH_CHECKPOINT_FORMAT = "taiji-structural-growth-v1"
 STRUCTURAL_PRUNING_CHECKPOINT_FORMAT = "taiji-structural-pruning-v1"
+STRUCTURAL_RUNTIME_OBSERVATION_CHECKPOINT_FORMAT = "taiji-structural-runtime-observation-v1"
 
 
 def _unit(value: float, name: str) -> float:
@@ -16,6 +17,86 @@ def _unit(value: float, name: str) -> float:
     if not math.isfinite(value) or not 0.0 <= value <= 1.0:
         raise ValueError(f"{name} must be a finite value in [0, 1]")
     return value
+
+
+@dataclass(frozen=True)
+class StructuralRuntimeObservation:
+    """One checkpointable structural observation produced by a real runtime tick.
+
+    ``prediction_error`` is optional because a tick without an expected
+    activity target can still provide usage and resource evidence for
+    pruning, but it must not be mistaken for supervised growth evidence.
+    """
+
+    network_id: str
+    region_id: str
+    tick: int
+    usage: float
+    resource_pressure: float
+    prediction_error: float | None
+    learning_gain: float
+    holdout_transfer: float
+    evidence_id: str
+
+    def __post_init__(self) -> None:
+        if not str(self.network_id):
+            raise ValueError("structural runtime network_id must not be empty")
+        if not str(self.region_id):
+            raise ValueError("structural runtime region_id must not be empty")
+        if int(self.tick) <= 0:
+            raise ValueError("structural runtime tick must be positive")
+        _unit(self.usage, "structural runtime usage")
+        _unit(self.resource_pressure, "structural runtime resource_pressure")
+        if self.prediction_error is not None:
+            _unit(self.prediction_error, "structural runtime prediction_error")
+        _unit(self.learning_gain, "structural runtime learning_gain")
+        _unit(self.holdout_transfer, "structural runtime holdout_transfer")
+        if not str(self.evidence_id):
+            raise ValueError("structural runtime evidence_id must not be empty")
+        object.__setattr__(self, "network_id", str(self.network_id))
+        object.__setattr__(self, "region_id", str(self.region_id))
+        object.__setattr__(self, "tick", int(self.tick))
+        object.__setattr__(self, "usage", float(self.usage))
+        object.__setattr__(self, "resource_pressure", float(self.resource_pressure))
+        object.__setattr__(
+            self,
+            "prediction_error",
+            None if self.prediction_error is None else float(self.prediction_error),
+        )
+        object.__setattr__(self, "learning_gain", float(self.learning_gain))
+        object.__setattr__(self, "holdout_transfer", float(self.holdout_transfer))
+        object.__setattr__(self, "evidence_id", str(self.evidence_id))
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": STRUCTURAL_RUNTIME_OBSERVATION_CHECKPOINT_FORMAT,
+            "network_id": self.network_id,
+            "region_id": self.region_id,
+            "tick": self.tick,
+            "usage": self.usage,
+            "resource_pressure": self.resource_pressure,
+            "prediction_error": self.prediction_error,
+            "learning_gain": self.learning_gain,
+            "holdout_transfer": self.holdout_transfer,
+            "evidence_id": self.evidence_id,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> StructuralRuntimeObservation:
+        if payload.get("format") != STRUCTURAL_RUNTIME_OBSERVATION_CHECKPOINT_FORMAT:
+            raise ValueError("unsupported structural runtime observation format")
+        error = payload.get("prediction_error")
+        return cls(
+            network_id=str(payload["network_id"]),
+            region_id=str(payload["region_id"]),
+            tick=int(payload["tick"]),
+            usage=float(payload["usage"]),
+            resource_pressure=float(payload["resource_pressure"]),
+            prediction_error=None if error is None else float(error),
+            learning_gain=float(payload["learning_gain"]),
+            holdout_transfer=float(payload.get("holdout_transfer", 0.0)),
+            evidence_id=str(payload["evidence_id"]),
+        )
 
 
 @dataclass(frozen=True)

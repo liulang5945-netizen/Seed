@@ -97,6 +97,7 @@ from .structural_growth import (
     AdaptiveStructuralPruningController,
     StructuralGrowthDecision,
     StructuralPruningDecision,
+    StructuralRuntimeObservation,
 )
 from .workspace import WorkspaceRouter
 from .world_learning import WorldDynamicsLearner, WorldSchema
@@ -154,6 +155,9 @@ class TSKV8Adapter(Taiji):
         self._neuron_networks: dict[str, AdaptiveNeuronNetwork] = {}
         self._structural_growth_controller: AdaptiveStructuralGrowthController | None = None
         self._structural_pruning_controller: AdaptiveStructuralPruningController | None = None
+        self._structural_runtime_tick = 0
+        self._structural_runtime_observations: list[StructuralRuntimeObservation] = []
+        self._structural_runtime_previous_errors: dict[str, float] = {}
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
@@ -258,6 +262,12 @@ class TSKV8Adapter(Taiji):
         """Return the optional substrate-driven structural pruning organ."""
 
         return self._structural_pruning_controller
+
+    @property
+    def structural_runtime_observations(self) -> tuple[StructuralRuntimeObservation, ...]:
+        """Return recent structural evidence emitted by native network ticks."""
+
+        return tuple(self._structural_runtime_observations)
 
     @staticmethod
     def _growth_request_identity(
@@ -2677,13 +2687,20 @@ class TSKV8Adapter(Taiji):
             network = self._neuron_networks[str(network_id)]
         except KeyError as exc:
             raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
-        return network.step(
+        activities = network.step(
             external_inputs,
             expected_activities=expected_activities,
             resource_budget=resource_budget,
             max_connections=max_connections,
             holdout=holdout,
         )
+        self._observe_cross_region_structure(
+            str(network_id),
+            activities,
+            expected_activities,
+            holdout=holdout,
+        )
+        return activities
 
     def propose_cross_region_connection(
         self,
@@ -3104,6 +3121,150 @@ class TSKV8Adapter(Taiji):
             if payload is None
             else AdaptiveStructuralPruningController.from_payload(payload)
         )
+
+    def _structural_runtime_resource_state(self) -> float:
+        """Map the live structural budget to a bounded resource state."""
+
+        budget = max(0, int(self._cognitive_state.development.structural_budget))
+        configured = max(1, int(self.config.development_structural_budget))
+        return min(1.0, float(budget) / float(configured))
+
+    def _observe_cross_region_structure(
+        self,
+        network_id: str,
+        activities: Mapping[str, torch.Tensor],
+        expected_activities: Mapping[str, torch.Tensor] | None,
+        *,
+        holdout: bool,
+    ) -> tuple[StructuralRuntimeObservation, ...]:
+        """Feed real network activity into the structural maintenance organs."""
+
+        network = self._neuron_networks[str(network_id)]
+        self._structural_runtime_tick += 1
+        runtime_tick = self._structural_runtime_tick
+        resource_state = self._structural_runtime_resource_state()
+        resource_pressure = 1.0 - resource_state
+        expected = {} if expected_activities is None else dict(expected_activities)
+        observations: list[StructuralRuntimeObservation] = []
+        for region_id in network.execution_order:
+            activity = activities[region_id]
+            usage = float(torch.mean(torch.abs(activity)).clamp(0.0, 1.0).item())
+            expected_activity = expected.get(region_id)
+            prediction_error: float | None = None
+            learning_gain = 0.0
+            holdout_transfer = 0.0
+            error_key = f"network:{network_id}:region:{region_id}"
+            if expected_activity is not None:
+                expected_value = expected_activity.to(activity.device)
+                if expected_value.shape != activity.shape:
+                    raise ValueError(
+                        f"structural runtime activity shape mismatch for region {region_id}"
+                    )
+                prediction_error = float(
+                    torch.mean(torch.abs(activity - expected_value)).clamp(0.0, 1.0).item()
+                )
+                previous_error = self._structural_runtime_previous_errors.get(error_key)
+                if previous_error is not None:
+                    learning_gain = max(0.0, min(1.0, previous_error - prediction_error))
+                self._structural_runtime_previous_errors[error_key] = prediction_error
+                if holdout:
+                    holdout_transfer = 1.0 - prediction_error
+            evidence_id = (
+                f"runtime-structure:{network_id}:{region_id}:{runtime_tick}"
+            )
+            substrate_id = f"network:{network_id}:region:{region_id}"
+            if self._structural_growth_controller is not None and prediction_error is not None:
+                self._structural_growth_controller.observe(
+                    substrate_id,
+                    prediction_error=prediction_error,
+                    resource_state=resource_state,
+                    holdout_transfer=holdout_transfer,
+                    evidence_ids=(evidence_id,),
+                )
+            if self._structural_pruning_controller is not None:
+                self._structural_pruning_controller.observe_substrate(
+                    substrate_id,
+                    usage=usage,
+                    resource_pressure=resource_pressure,
+                    learning_gain=learning_gain,
+                    evidence_ids=(evidence_id,),
+                )
+            observations.append(
+                StructuralRuntimeObservation(
+                    network_id=str(network_id),
+                    region_id=region_id,
+                    tick=runtime_tick,
+                    usage=usage,
+                    resource_pressure=resource_pressure,
+                    prediction_error=prediction_error,
+                    learning_gain=learning_gain,
+                    holdout_transfer=holdout_transfer,
+                    evidence_id=evidence_id,
+                )
+            )
+        self._structural_runtime_observations.extend(observations)
+        self._structural_runtime_observations = self._structural_runtime_observations[
+            -self._lineage_limit() :
+        ]
+        if observations:
+            previous = self._cognitive_state.development
+            self._cognitive_state = replace(
+                self._cognitive_state,
+                development=replace(
+                    previous,
+                    stage="structural-observation",
+                    resource_utilization=resource_pressure,
+                    last_update_source="runtime-structural-observation",
+                    last_validation_status="pending",
+                    validation_evidence_ids=self._bounded_ids(
+                        previous.validation_evidence_ids,
+                        observations[-1].evidence_id,
+                        limit=self._lineage_limit(),
+                    ),
+                ),
+            )
+        return tuple(observations)
+
+    def _structural_runtime_checkpoint(self) -> dict[str, Any]:
+        return {
+            "runtime_tick": self._structural_runtime_tick,
+            "observations": [
+                observation.to_payload()
+                for observation in self._structural_runtime_observations
+            ],
+            "previous_errors": dict(self._structural_runtime_previous_errors),
+        }
+
+    def _restore_structural_runtime(self, payload: Any) -> None:
+        self._structural_runtime_tick = 0
+        self._structural_runtime_observations = []
+        self._structural_runtime_previous_errors = {}
+        if payload is None:
+            return
+        if not isinstance(payload, Mapping):
+            raise ValueError("structural runtime checkpoint must be a mapping")
+        runtime_tick = int(payload.get("runtime_tick", 0))
+        if runtime_tick < 0:
+            raise ValueError("structural runtime tick cannot be negative")
+        observations_payload = payload.get("observations", ())
+        previous_errors = payload.get("previous_errors", {})
+        if not isinstance(observations_payload, (tuple, list)):
+            raise ValueError("structural runtime observations must be a sequence")
+        if not isinstance(previous_errors, Mapping):
+            raise ValueError("structural runtime previous_errors must be a mapping")
+        if any(not isinstance(item, Mapping) for item in observations_payload):
+            raise ValueError("structural runtime observation entry must be a mapping")
+        observations = tuple(
+            StructuralRuntimeObservation.from_payload(item)
+            for item in observations_payload
+        )
+        if any(item.tick > runtime_tick for item in observations):
+            raise ValueError("structural runtime observation is ahead of runtime tick")
+        self._structural_runtime_tick = runtime_tick
+        self._structural_runtime_observations = list(observations[-self._lineage_limit() :])
+        self._structural_runtime_previous_errors = {
+            str(key): float(value) for key, value in previous_errors.items()
+        }
 
     def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:
         """Attach a Taiji-owned predictor used for runtime intervention scoring."""
@@ -5550,6 +5711,7 @@ class TSKV8Adapter(Taiji):
         components["neuron_networks"] = self._neuron_networks_checkpoint()
         components["structural_growth"] = self._structural_growth_checkpoint()
         components["structural_pruning"] = self._structural_pruning_checkpoint()
+        components["structural_runtime"] = self._structural_runtime_checkpoint()
         components["online_concept_branches"] = self._online_concept_branches_checkpoint()
         if self._procedural_memory is not None:
             components["procedural_memory"] = self._procedural_memory.checkpoint()
@@ -5644,6 +5806,7 @@ class TSKV8Adapter(Taiji):
         self._restore_neuron_networks(envelope.components.get("neuron_networks"))
         self._restore_structural_growth(envelope.components.get("structural_growth"))
         self._restore_structural_pruning(envelope.components.get("structural_pruning"))
+        self._restore_structural_runtime(envelope.components.get("structural_runtime"))
         self._restore_online_concept_branches(
             envelope.components.get("online_concept_branches")
         )

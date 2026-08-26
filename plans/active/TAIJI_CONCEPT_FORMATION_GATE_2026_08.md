@@ -131,3 +131,11 @@ merge 的冗余证据、连接迁移、未见 holdout、预算和 reverse rollba
 `reports/taiji_region_merge_20260826.json`：兼容区域和外部 route 的单位/state/evidence 聚合、
 内部连接 fail-closed、checkpoint continuation、预算与 reverse rollback 均有覆盖。当前下一步
 转为将四类结构 proposal 接入真实 runtime tick 的活动、预测误差和资源观测。
+
+真实 runtime tick 接入已完成并通过 `reports/taiji_runtime_structure_20260826.json`：
+`step_cross_region_network()` 对每个区域产生可恢复的 activity/usage、prediction error、
+learning gain、resource pressure、holdout transfer 与 evidence ID；expected activity 缺失时
+不会伪造 growth supervision，route credit 仍来自实际 target activity。native checkpoint 可恢复
+runtime clock、观测历史、controller state 与跨 tick error continuity；runtime tick 不直接变更
+拓扑，必须继续经过 holdout、budget、trial 和 reverse rollback。下一步转为将这些证据汇聚成
+不依赖 action/intent 查表的 proposal candidate 队列。
