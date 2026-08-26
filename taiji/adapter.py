@@ -160,6 +160,7 @@ class TSKV8Adapter(Taiji):
         self._structural_runtime_observations: list[StructuralRuntimeObservation] = []
         self._structural_runtime_previous_errors: dict[str, float] = {}
         self._structural_proposal_candidates: dict[str, StructuralProposalCandidate] = {}
+        self._structural_candidate_proposals: dict[str, str] = {}
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
@@ -276,6 +277,120 @@ class TSKV8Adapter(Taiji):
         """Return pending structural candidates awaiting explicit ledger validation."""
 
         return tuple(self._structural_proposal_candidates.values())
+
+    def materialize_structural_candidate(
+        self,
+        candidate_id: str,
+    ) -> StructuralTopologyProposal | None:
+        """Turn one candidate into a pending topology proposal without applying it."""
+
+        key = str(candidate_id)
+        existing_proposal_id = self._structural_candidate_proposals.get(key)
+        if existing_proposal_id is not None:
+            return self._topology_proposals.get(existing_proposal_id)
+        candidate = self._structural_proposal_candidates.get(key)
+        if candidate is None:
+            return None
+        try:
+            network = self._neuron_networks[candidate.network_id]
+        except KeyError as exc:
+            raise ValueError(
+                f"unknown adaptive neuron network: {candidate.network_id}"
+            ) from exc
+        specification = dict(candidate.specification)
+        parent_checkpoint_id = f"candidate-parent:{candidate.candidate_id}"
+        if candidate.operation == "split":
+            proposal = network.propose_region_split(
+                region_id=str(specification.get("region_id", candidate.substrate_ids[0])),
+                first_unit_count=int(specification["first_unit_count"]),
+                evidence_ids=candidate.evidence_ids,
+                parent_checkpoint_id=parent_checkpoint_id,
+                resource_cost=candidate.resource_cost,
+            )
+        elif candidate.operation == "merge":
+            region_ids = tuple(
+                str(item) for item in specification.get("region_ids", candidate.substrate_ids)
+            )
+            proposal = network.propose_region_merge(
+                region_ids=region_ids,
+                evidence_ids=candidate.evidence_ids,
+                parent_checkpoint_id=parent_checkpoint_id,
+                resource_cost=candidate.resource_cost,
+            )
+        elif candidate.operation == "prune" and candidate.target_kind == "region":
+            proposal = network.propose_region_prune(
+                region_id=str(specification.get("region_id", candidate.substrate_ids[0])),
+                evidence_ids=candidate.evidence_ids,
+                parent_checkpoint_id=parent_checkpoint_id,
+                resource_cost=candidate.resource_cost,
+            )
+        elif candidate.operation == "prune" and candidate.target_kind == "connection":
+            proposal = network.propose_connection_prune(
+                connection_id=str(
+                    specification.get("connection_id", candidate.substrate_ids[0])
+                ),
+                evidence_ids=candidate.evidence_ids,
+                parent_checkpoint_id=parent_checkpoint_id,
+                resource_cost=candidate.resource_cost,
+            )
+        else:
+            raise ValueError(
+                f"candidate operation cannot be materialized: {candidate.operation}/"
+                f"{candidate.target_kind}"
+            )
+        self._topology_proposals[proposal.proposal_id] = proposal
+        self._topology_network_ids[proposal.proposal_id] = candidate.network_id
+        self._structural_candidate_proposals[key] = proposal.proposal_id
+        self._structural_proposal_candidates.pop(key)
+        return proposal
+
+    def validate_structural_candidate_holdout(
+        self,
+        candidate_id: str,
+        *,
+        holdout_inputs: Sequence[Mapping[str, torch.Tensor]],
+        expected_activities: Sequence[Mapping[str, torch.Tensor]],
+    ) -> bool:
+        """Dispatch one materialized candidate to its operation-specific holdout gate."""
+
+        proposal = self.materialize_structural_candidate(candidate_id)
+        if proposal is None:
+            raise ValueError(f"unknown structural proposal candidate: {candidate_id}")
+        network_id = self._topology_network_ids.get(proposal.proposal_id)
+        if network_id is None:
+            raise ValueError("structural candidate proposal is not attached to a network")
+        role = dict(proposal.specification).get("topology_role")
+        if proposal.operation == "split" and role == "region_split":
+            return self.validate_region_split_holdout(
+                network_id=network_id,
+                proposal_id=proposal.proposal_id,
+                holdout_inputs=holdout_inputs,
+                expected_activities=expected_activities,
+            )
+        if proposal.operation == "merge" and role == "region_merge":
+            return self.validate_region_merge_holdout(
+                network_id=network_id,
+                proposal_id=proposal.proposal_id,
+                holdout_inputs=holdout_inputs,
+                expected_activities=expected_activities,
+            )
+        if proposal.operation == "prune" and role == "region_prune":
+            return self.validate_region_prune_holdout(
+                network_id=network_id,
+                proposal_id=proposal.proposal_id,
+                holdout_inputs=holdout_inputs,
+                expected_activities=expected_activities,
+            )
+        if proposal.operation == "prune" and role == "cross_region_connection_prune":
+            return self.validate_cross_region_connection_prune_holdout(
+                network_id=network_id,
+                proposal_id=proposal.proposal_id,
+                holdout_inputs=holdout_inputs,
+                expected_activities=expected_activities,
+            )
+        raise ValueError(
+            f"candidate proposal has no holdout validator: {proposal.operation}/{role}"
+        )
 
     @staticmethod
     def _growth_request_identity(
@@ -3454,6 +3569,7 @@ class TSKV8Adapter(Taiji):
                 candidate.to_payload()
                 for candidate in self._structural_proposal_candidates.values()
             ],
+            "candidate_proposals": dict(self._structural_candidate_proposals),
         }
 
     def _restore_structural_runtime(self, payload: Any) -> None:
@@ -3461,6 +3577,7 @@ class TSKV8Adapter(Taiji):
         self._structural_runtime_observations = []
         self._structural_runtime_previous_errors = {}
         self._structural_proposal_candidates = {}
+        self._structural_candidate_proposals = {}
         if payload is None:
             return
         if not isinstance(payload, Mapping):
@@ -3475,8 +3592,11 @@ class TSKV8Adapter(Taiji):
         if not isinstance(previous_errors, Mapping):
             raise ValueError("structural runtime previous_errors must be a mapping")
         candidates_payload = payload.get("proposal_candidates", ())
+        candidate_proposals = payload.get("candidate_proposals", {})
         if not isinstance(candidates_payload, (tuple, list)):
             raise ValueError("structural proposal candidates must be a sequence")
+        if not isinstance(candidate_proposals, Mapping):
+            raise ValueError("structural candidate_proposals must be a mapping")
         if any(not isinstance(item, Mapping) for item in observations_payload):
             raise ValueError("structural runtime observation entry must be a mapping")
         observations = tuple(
@@ -3497,6 +3617,15 @@ class TSKV8Adapter(Taiji):
             if candidate.source_tick > runtime_tick:
                 raise ValueError("structural proposal candidate is ahead of runtime tick")
             self._queue_structural_proposal_candidate(candidate)
+        self._structural_candidate_proposals = {
+            str(candidate_id): str(proposal_id)
+            for candidate_id, proposal_id in candidate_proposals.items()
+        }
+        if any(
+            proposal_id not in self._topology_proposals
+            for proposal_id in self._structural_candidate_proposals.values()
+        ):
+            raise ValueError("structural candidate proposal mapping references an unknown proposal")
 
     def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:
         """Attach a Taiji-owned predictor used for runtime intervention scoring."""

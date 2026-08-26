@@ -6,7 +6,8 @@
     "observations_after_checkpoint": 6,
     "growth_observations": 2,
     "pruning_observations": 7,
-    "proposal_candidates": 2,
+    "proposal_candidates": 1,
+    "candidate_holdout_validated": true,
     "route_evidence_count": 2,
     "checkpoint_continuation": true,
     "topology_unchanged": true

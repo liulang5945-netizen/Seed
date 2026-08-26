@@ -546,4 +546,8 @@ P4 的最小真实经历边界已落地：
 
 **已完成：真实 runtime evidence 已汇聚为有边界、可 checkpoint、按 substrate 去重的 `StructuralProposalCandidate` 队列；候选覆盖 split、region/connection prune 和兼容 region merge，保存证据、source tick、priority、参数与 resource cost，且不会绕过 ledger 直接改变 topology。**
 
-**下一步：将 candidate 显式 materialize 为统一 `StructuralTopologyProposal`，再交给 ledger 完成 holdout、预算、trial checkpoint、commit 与 reverse rollback。**
+**已完成：candidate 可幂等 materialize 为 pending `StructuralTopologyProposal`，candidate→proposal lineage 随 native checkpoint 恢复；materialization 不改变 live topology。**
+
+**已完成：split、region-prune、connection-prune、merge candidate 已接入统一 holdout validator dispatch；验证只更新 pending proposal 的 validation score/status，未验证 candidate 仍被 commit gate 阻断。**
+
+**下一步：建立统一 commit dispatcher，集中执行 budget、trial checkpoint、commit 与 reverse rollback。**

@@ -193,13 +193,28 @@ def test_runtime_tick_feeds_structural_organs_and_checkpoint_continues() -> None
         ("source",),
         ("target",),
     }
+    candidate = model.structural_proposal_candidates[0]
+    materialized = model.materialize_structural_candidate(candidate.candidate_id)
+    assert materialized is not None
+    assert materialized.status == "pending"
+    assert model.neuron_networks[0].region_ids == ("source", "target")
+    assert candidate not in model.structural_proposal_candidates
+    assert model.validate_structural_candidate_holdout(
+        candidate.candidate_id,
+        holdout_inputs=({"source": torch.ones(3)},),
+        expected_activities=(first,),
+    ) is True
+    materialized = next(
+        item for item in model.topology_proposals if item.proposal_id == materialized.proposal_id
+    )
     assert model.cognitive_snapshot().development.last_update_source == (
-        "runtime-structural-observation"
+        "region-split-holdout-validation"
     )
 
     restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
     assert restored.structural_runtime_observations == model.structural_runtime_observations
     assert restored.structural_proposal_candidates == model.structural_proposal_candidates
+    assert restored.materialize_structural_candidate(candidate.candidate_id) == materialized
     assert restored.structural_growth_controller is not None
     assert restored.structural_growth_controller.total_observations == 2
     restored.step_cross_region_network(

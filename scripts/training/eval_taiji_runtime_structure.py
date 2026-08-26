@@ -108,6 +108,18 @@ def evaluate() -> dict[str, object]:
         holdout=True,
     )
     before_checkpoint = tuple(model.structural_runtime_observations)
+    candidate = model.structural_proposal_candidates[0]
+    materialized = model.materialize_structural_candidate(candidate.candidate_id)
+    assert materialized is not None
+    assert materialized.status == "pending"
+    holdout_validated = model.validate_structural_candidate_holdout(
+        candidate.candidate_id,
+        holdout_inputs=({"source": torch.ones(3)},),
+        expected_activities=(first,),
+    )
+    materialized = next(
+        item for item in model.topology_proposals if item.proposal_id == materialized.proposal_id
+    )
     before_topology = model.neuron_networks[0].region_ids, model.neuron_networks[0].connection_ids
     checkpoint = model.native_checkpoint()
     restored = TSKV8Adapter.from_native_checkpoint(checkpoint)
@@ -125,7 +137,7 @@ def evaluate() -> dict[str, object]:
         and restored.structural_growth_controller.total_observations == 4
         and restored.structural_pruning_controller is not None
         and restored.structural_pruning_controller.total_observations == 11
-        and len(restored.structural_proposal_candidates) == 2
+        and restored.materialize_structural_candidate(candidate.candidate_id) == materialized
     )
     route_state = restored_network.cooperation_learner.route_state(route.substrate_id)
 
@@ -138,6 +150,9 @@ def evaluate() -> dict[str, object]:
             and model.structural_growth_controller.total_observations == 2
             and model.structural_pruning_controller is not None
             and model.structural_pruning_controller.total_observations == 7
+            and len(model.structural_proposal_candidates) == 1
+            and materialized.status == "pending"
+            and holdout_validated
             and route_state.evidence_count == 2
             and before_topology == (restored_network.region_ids, restored_network.connection_ids)
             and checkpoint_continuation
@@ -158,6 +173,7 @@ def evaluate() -> dict[str, object]:
             "growth_observations": model.structural_growth_controller.total_observations,
             "pruning_observations": model.structural_pruning_controller.total_observations,
             "proposal_candidates": len(model.structural_proposal_candidates),
+            "candidate_holdout_validated": holdout_validated,
             "route_evidence_count": route_state.evidence_count,
             "checkpoint_continuation": checkpoint_continuation,
             "topology_unchanged": before_topology
