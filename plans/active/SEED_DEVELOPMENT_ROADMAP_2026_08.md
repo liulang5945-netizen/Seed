@@ -542,4 +542,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：在同一 Concept 的多分支 trace 上加入容量/干扰曲线与分支增删，验证 after-state 与 outcome/error 仍能选择正确分支，并在 runtime continuation、lesion 和 checkpoint 后保持其他分支不受破坏。**
+**下一步：把未命中已有 trace 的真实 transition 形成 online branch birth，使新分支带稳定 trace_id、经容量治理后可被 after-state 检索，并在失败 feedback 与 checkpoint continuation 中保持已有分支不被覆盖。**

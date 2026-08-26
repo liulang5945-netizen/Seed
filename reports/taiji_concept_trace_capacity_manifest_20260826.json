@@ -1,0 +1,12 @@
+{
+  "format": "taiji-concept-trace-capacity-manifest-v1",
+  "task": "same-concept multi-branch trace capacity and selective lesion",
+  "trace_capacities": [
+    1,
+    2,
+    4
+  ],
+  "branch_add": "consolidating a second episode family adds its trace when capacity allows",
+  "branch_remove": "lesion one trace_id while retaining the other trace",
+  "checkpoint": "remaining trace identity survives ConceptFormationOrgan checkpoint"
+}
