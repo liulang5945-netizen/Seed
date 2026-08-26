@@ -1,0 +1,46 @@
+{
+  "format": "taiji-concept-suffix-v1",
+  "metrics": {
+    "concept_count": 1,
+    "trace_visits": 2,
+    "trace_action_kinds": [
+      "approach",
+      "confirm",
+      "archive"
+    ],
+    "trace_step_credit": [
+      0.6845504711851167,
+      0.6317045486873843,
+      0.5642391233933647
+    ],
+    "trace_prediction_errors": [
+      0.0,
+      0.2,
+      0.4
+    ],
+    "full_affinity": 0.5014651048708975,
+    "suffix_affinity": 0.41858028522826213,
+    "reversed_affinity": 0.16715503495696582,
+    "reordered_affinity": 0.0,
+    "wrong_state_affinity": 0.0,
+    "checkpoint_recovery": true,
+    "runtime": {
+      "selected_full_rollout": "suffix-good",
+      "selected_after_checkpoint": "suffix-good",
+      "remaining_action_kinds": [
+        "confirm",
+        "archive"
+      ],
+      "suffix_affinity_after_execution": 0.3348356013421462,
+      "suffix_affinity_after_checkpoint": 0.3348356013421462,
+      "environment_actions": [
+        10
+      ]
+    }
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "learn after-state-conditioned sequence traces from real transitions, assign future-weighted credit using outcomes and prediction errors, retrieve a remaining suffix after partial execution, and preserve the trace and suffix affinity through native checkpoint recovery"
+  },
+  "boundary": "This is a closed-world sequence-memory gate; it does not claim open-domain planning or general intelligence."
+}

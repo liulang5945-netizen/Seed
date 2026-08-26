@@ -5,12 +5,12 @@ from __future__ import annotations
 import hashlib
 import math
 from collections.abc import Iterable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 import torch
 
-from .contracts import Concept, EpisodicMemoryRecord
+from .contracts import Concept, ConceptSequenceTrace, EpisodicMemoryRecord, WorldState
 
 CONCEPT_FORMATION_CHECKPOINT_FORMAT = "taiji-concept-formation-v1"
 
@@ -42,12 +42,14 @@ class ConceptFormationOrgan:
         capacity: int = 256,
         plasticity_rate: float = 0.25,
         prune_threshold: float = 0.15,
+        credit_discount: float = 0.90,
     ) -> None:
         self.similarity_threshold = float(similarity_threshold)
         self.signal_weights = tuple(float(weight) for weight in signal_weights)
         self.capacity = int(capacity)
         self.plasticity_rate = float(plasticity_rate)
         self.prune_threshold = float(prune_threshold)
+        self.credit_discount = float(credit_discount)
         if not 0.0 < self.similarity_threshold <= 1.0:
             raise ValueError("concept similarity threshold must be in (0, 1]")
         if (
@@ -62,6 +64,8 @@ class ConceptFormationOrgan:
             raise ValueError("concept formation plasticity rate must be in (0, 1]")
         if not 0.0 <= self.prune_threshold <= 1.0:
             raise ValueError("concept formation prune threshold must be in [0, 1]")
+        if not 0.0 <= self.credit_discount <= 1.0:
+            raise ValueError("concept formation credit_discount must be in [0, 1]")
         self._concepts: tuple[Concept, ...] = ()
 
     @property
@@ -216,11 +220,68 @@ class ConceptFormationOrgan:
         query = tuple(str(item) for item in action_kinds)
         if not query:
             return 0.0
+        if concept.sequence_traces:
+            return max(
+                self._sequence_similarity(query, trace.action_kinds)
+                * sum(trace.step_credit) / len(trace.step_credit)
+                * (1.0 - sum(trace.prediction_errors) / len(trace.prediction_errors))
+                for trace in concept.sequence_traces
+            )
         sequences = concept.action_sequences or tuple((kind,) for kind in concept.action_kinds)
         return max(
             (self._sequence_similarity(query, sequence) for sequence in sequences),
             default=0.0,
         )
+
+    @staticmethod
+    def _state_similarity(left: torch.Tensor, right: torch.Tensor) -> float:
+        if left.numel() == 0 or right.numel() == 0 or left.numel() != right.numel():
+            return 0.0
+        left_norm = float(torch.linalg.vector_norm(left))
+        right_norm = float(torch.linalg.vector_norm(right))
+        if left_norm == 0.0 or right_norm == 0.0:
+            return 0.0
+        similarity = float(torch.nn.functional.cosine_similarity(left.unsqueeze(0), right.unsqueeze(0)).item())
+        return max(0.0, min(1.0, similarity))
+
+    def suffix_sequence_affinity(
+        self,
+        concept: Concept,
+        action_kinds: Sequence[str],
+        *,
+        current_state: WorldState | None = None,
+    ) -> float:
+        """Retrieve an ordered suffix using the state at its current boundary."""
+
+        query = tuple(str(item) for item in action_kinds)
+        if not query:
+            return 0.0
+        if not concept.sequence_traces:
+            return self.action_sequence_affinity(concept, query)
+        current_latent = None if current_state is None else current_state.latent
+        candidates: list[float] = []
+        for trace in concept.sequence_traces:
+            if len(query) > len(trace.action_kinds):
+                continue
+            for start in range(len(trace.action_kinds) - len(query) + 1):
+                action_similarity = self._sequence_similarity(
+                    query, trace.action_kinds[start : start + len(query)]
+                )
+                expected_state = (
+                    trace.before_prototype
+                    if start == 0
+                    else trace.after_prototypes[start - 1]
+                )
+                state_similarity = (
+                    1.0
+                    if current_latent is None
+                    else self._state_similarity(current_latent, expected_state)
+                )
+                credits = trace.step_credit[start : start + len(query)]
+                errors = trace.prediction_errors[start : start + len(query)]
+                quality = sum(credits) / len(credits) * (1.0 - sum(errors) / len(errors))
+                candidates.append(action_similarity * state_similarity * quality)
+        return max(candidates, default=0.0)
 
     @staticmethod
     def _action_sequences(
@@ -242,6 +303,123 @@ class ConceptFormationOrgan:
             if sequence and sequence not in sequences:
                 sequences.append(sequence)
         return tuple(sequences)
+
+    def _sequence_traces(
+        self, records: Sequence[EpisodicMemoryRecord]
+    ) -> tuple[ConceptSequenceTrace, ...]:
+        grouped: dict[str, list[EpisodicMemoryRecord]] = {}
+        for record in records:
+            if record.action_intent is None or record.world_transition is None:
+                continue
+            grouped.setdefault(record.episode_id, []).append(record)
+        traces: list[ConceptSequenceTrace] = []
+        for episode_id in sorted(grouped):
+            ordered = sorted(grouped[episode_id], key=lambda item: (item.tick, item.memory_id))
+            if not ordered or any(
+                item.action_intent is None or item.world_transition is None for item in ordered
+            ):
+                continue
+            transitions = tuple(item.world_transition for item in ordered)
+            if any(transition is None for transition in transitions):
+                continue
+            transitions = tuple(transition for transition in transitions if transition is not None)
+            if not transitions:
+                continue
+            actions = tuple(item.action_intent.kind for item in ordered if item.action_intent is not None)
+            if len(actions) != len(transitions):
+                continue
+            before_prototype = transitions[0].before.latent
+            after_prototypes = tuple(transition.after.latent for transition in transitions)
+            if any(
+                prototype.numel() != before_prototype.numel()
+                for prototype in (*after_prototypes,)
+            ):
+                continue
+            prediction_errors = tuple(
+                max(0.0, min(1.0, float(item.prediction_error))) for item in ordered
+            )
+            outcome_scores = tuple(self._outcome_score(item) for item in ordered)
+            step_quality = tuple(
+                outcome * (1.0 - error)
+                for outcome, error in zip(outcome_scores, prediction_errors, strict=True)
+            )
+            credits = [0.0] * len(step_quality)
+            running = 0.0
+            for index in range(len(step_quality) - 1, -1, -1):
+                running = step_quality[index] + self.credit_discount * running
+                normalizer = sum(
+                    self.credit_discount**offset
+                    for offset in range(len(step_quality) - index)
+                )
+                credits[index] = running / normalizer if normalizer else 0.0
+            traces.append(
+                ConceptSequenceTrace(
+                    action_kinds=actions,
+                    before_prototype=before_prototype,
+                    after_prototypes=after_prototypes,
+                    step_credit=tuple(credits),
+                    prediction_errors=prediction_errors,
+                    outcome_mean=sum(outcome_scores) / len(outcome_scores),
+                )
+            )
+        return tuple(traces)
+
+    def _merge_sequence_traces(
+        self,
+        existing: Sequence[ConceptSequenceTrace],
+        incoming: Sequence[ConceptSequenceTrace],
+    ) -> tuple[ConceptSequenceTrace, ...]:
+        merged = list(existing)
+        for candidate in incoming:
+            match_index = next(
+                (
+                    index
+                    for index, trace in enumerate(merged)
+                    if trace.action_kinds == candidate.action_kinds
+                    and self._state_similarity(trace.before_prototype, candidate.before_prototype)
+                    >= self.similarity_threshold
+                ),
+                None,
+            )
+            if match_index is None:
+                merged.append(candidate)
+                continue
+            previous = merged[match_index]
+            previous_weight = float(previous.visits)
+            candidate_weight = float(candidate.visits)
+            total_weight = previous_weight + candidate_weight
+            after_prototypes = tuple(
+                (previous_weight * left + candidate_weight * right) / total_weight
+                for left, right in zip(
+                    previous.after_prototypes, candidate.after_prototypes, strict=True
+                )
+            )
+            merged[match_index] = replace(
+                previous,
+                before_prototype=(
+                    previous_weight * previous.before_prototype
+                    + candidate_weight * candidate.before_prototype
+                )
+                / total_weight,
+                after_prototypes=after_prototypes,
+                step_credit=tuple(
+                    (previous_weight * left + candidate_weight * right) / total_weight
+                    for left, right in zip(previous.step_credit, candidate.step_credit, strict=True)
+                ),
+                prediction_errors=tuple(
+                    (previous_weight * left + candidate_weight * right) / total_weight
+                    for left, right in zip(
+                        previous.prediction_errors, candidate.prediction_errors, strict=True
+                    )
+                ),
+                outcome_mean=(
+                    previous_weight * previous.outcome_mean
+                    + candidate_weight * candidate.outcome_mean
+                )
+                / total_weight,
+                visits=previous.visits + candidate.visits,
+            )
+        return tuple(merged)
 
     @staticmethod
     def _outcome_score(record: EpisodicMemoryRecord) -> float:
@@ -352,6 +530,7 @@ class ConceptFormationOrgan:
                 )
             )
             action_sequences = self._action_sequences(cluster)
+            sequence_traces = self._merge_sequence_traces((), self._sequence_traces(cluster))
             prototype = torch.nn.functional.normalize(
                 torch.stack([item.cue for item in cluster]).mean(dim=0), dim=0
             )
@@ -412,6 +591,9 @@ class ConceptFormationOrgan:
                 action_sequences = tuple(
                     dict.fromkeys((*previous_concept.action_sequences, *action_sequences))
                 )
+                sequence_traces = self._merge_sequence_traces(
+                    previous_concept.sequence_traces, sequence_traces
+                )
                 prototype = torch.nn.functional.normalize(
                     (1.0 - self.plasticity_rate) * previous_concept.prototype
                     + self.plasticity_rate * prototype,
@@ -426,6 +608,7 @@ class ConceptFormationOrgan:
                 relation_ids=relation_ids,
                 action_kinds=action_kinds,
                 action_sequences=action_sequences,
+                sequence_traces=sequence_traces,
                 maturity=max(
                     previous_concept.maturity if previous_concept is not None else 0.0,
                     max(0.0, min(1.0, 1.0 - 1.0 / len(episode_ids))),
@@ -457,6 +640,7 @@ class ConceptFormationOrgan:
             "capacity": self.capacity,
             "plasticity_rate": self.plasticity_rate,
             "prune_threshold": self.prune_threshold,
+            "credit_discount": self.credit_discount,
             "concepts": [item.to_payload() for item in self._concepts],
         }
 
@@ -472,6 +656,7 @@ class ConceptFormationOrgan:
             capacity=int(payload.get("capacity", 256)),
             plasticity_rate=float(payload.get("plasticity_rate", 0.25)),
             prune_threshold=float(payload.get("prune_threshold", 0.15)),
+            credit_discount=float(payload.get("credit_discount", 0.90)),
         )
         organ._concepts = tuple(
             Concept.from_payload(item, device=device) for item in payload.get("concepts", ())
