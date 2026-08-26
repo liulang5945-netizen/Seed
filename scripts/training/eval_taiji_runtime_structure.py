@@ -262,12 +262,12 @@ def evaluate() -> dict[str, object]:
         network_id="standalone:adaptive.cortex",
         target_kind="region",
         operation="split",
-        substrate_ids=(guard_region.region_id,),
+        substrate_ids=("adaptive.third",),
         evidence_ids=("runtime:guard-dependent",),
         source_tick=2,
         priority=0.7,
         specification=(
-            ("region_id", guard_region.region_id),
+            ("region_id", "adaptive.third"),
             ("first_unit_count", 1),
         ),
         depends_on_candidate_ids=(dependency.candidate_id,),
@@ -379,7 +379,8 @@ def evaluate() -> dict[str, object]:
             "learning-gain and resource observations; attached structural organs and route "
             "credit must continue across checkpoint, while topology remains unchanged until "
             "a separate holdout/budget/trial/rollback transaction commits it; standalone "
-            "native neuron ticks must use the same governed birth path"
+            "native neuron ticks must use the same governed birth path; candidate dependencies "
+            "must execute in order and candidate conflicts must fail closed"
         ),
     }
     return {

@@ -556,4 +556,6 @@ P4 的最小真实经历边界已落地：
 
 **已完成：直接 neuron birth (`add`) 已纳入同一 candidate contract；`TSKV8Adapter.step_adaptive_neuron_region()` 从真实 standalone region tick 生成带 substrate/evidence/source tick/priority/resource cost 的候选，统一 materialize、holdout validator、commit/rollback dispatcher 和 native checkpoint 均已通过 `reports/taiji_runtime_structure_20260826.json` 的 direct-add 子门禁。**
 
-**当前唯一下一步：为 maintenance cycle 增加显式 candidate dependency/conflict 判定；同一 substrate 的竞争变更、父子拓扑顺序和已失效候选必须逐项 fail-closed，不能依赖异常碰撞来兜底。**
+**已完成：maintenance cycle 已具备显式 candidate dependency/conflict 判定；反向输入仍按依赖拓扑顺序执行，依赖失败会阻断下游，同一 substrate 的竞争变更全部 `failed_closed`；不同 neuron identity 的 `add` 可并存并按依赖连续出生，队列只对同一目标 unit 去重。**
+
+**当前唯一下一步：建立三层以上自适应区域的规模化结构维护 Gate，覆盖跨区域 route、混合 add/split/prune、资源竞争、checkpoint continuation 和拓扑不变量。**

@@ -601,8 +601,35 @@ class TSKV8Adapter(Taiji):
     ) -> tuple[str, ...]:
         if candidate.conflict_keys:
             return candidate.conflict_keys
+        specification = dict(candidate.specification)
+        if candidate.target_kind == "neuron" and candidate.operation == "add":
+            unit_id = str(specification.get("unit_id", ""))
+            if unit_id:
+                return (
+                    f"{candidate.network_id}:neuron:{candidate.substrate_ids[0]}:{unit_id}",
+                )
         substrate = "|".join(sorted(candidate.substrate_ids))
         return (f"{candidate.network_id}:substrate:{substrate}",)
+
+    @staticmethod
+    def _candidates_conflict(
+        first: StructuralProposalCandidate,
+        second: StructuralProposalCandidate,
+    ) -> bool:
+        if first.network_id != second.network_id:
+            return False
+        if not set(first.substrate_ids).intersection(second.substrate_ids):
+            return False
+        if (
+            first.target_kind == "neuron"
+            and first.operation == "add"
+            and second.target_kind == "neuron"
+            and second.operation == "add"
+        ):
+            first_unit = dict(first.specification).get("unit_id")
+            second_unit = dict(second.specification).get("unit_id")
+            return first_unit == second_unit
+        return True
 
     def _prepare_structural_maintenance_cycle(
         self,
@@ -630,6 +657,14 @@ class TSKV8Adapter(Taiji):
             )
             for candidate_id in group:
                 errors[candidate_id] = message
+        queued_items = tuple(queued.items())
+        for first_index, (first_id, first) in enumerate(queued_items):
+            for second_id, second in queued_items[first_index + 1 :]:
+                if not self._candidates_conflict(first, second):
+                    continue
+                message = f"candidate conflict between {first_id} and {second_id}"
+                errors[first_id] = message
+                errors[second_id] = message
 
         visiting: list[str] = []
         visited: set[str] = set()
@@ -3774,7 +3809,12 @@ class TSKV8Adapter(Taiji):
         self,
         candidate: StructuralProposalCandidate,
     ) -> None:
-        """Keep one pending candidate per substrate transformation."""
+        """Keep one pending candidate per transformation identity.
+
+        Region-level rewrites remain substrate-deduplicated.  Neuron births
+        are narrower: two different unit identities may be queued so a
+        dependency chain can grow a population over multiple ledger commits.
+        """
 
         for existing in self._structural_proposal_candidates.values():
             if (
@@ -3782,6 +3822,15 @@ class TSKV8Adapter(Taiji):
                 and existing.operation == candidate.operation
                 and existing.substrate_ids == candidate.substrate_ids
             ):
+                if (
+                    candidate.target_kind == "neuron"
+                    and candidate.operation == "add"
+                    and existing.target_kind == "neuron"
+                ):
+                    existing_unit_id = dict(existing.specification).get("unit_id")
+                    candidate_unit_id = dict(candidate.specification).get("unit_id")
+                    if existing_unit_id != candidate_unit_id:
+                        continue
                 return
         self._structural_proposal_candidates[candidate.candidate_id] = candidate
         limit = self._lineage_limit()

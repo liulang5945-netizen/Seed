@@ -154,6 +154,8 @@ cycle 已通过：两个 runtime candidates 完成 materialize、holdout、commi
 holdout/异常不会改变 live topology，结果含 proposal lineage、score/status/error 并可 checkpoint
 恢复。直接 neuron birth (`add`) 现已纳入同一 candidate contract：standalone native tick 生成
 候选并通过统一 materialize、holdout、budget、trial checkpoint、commit/rollback 与 checkpoint
-continuation；direct-add 子门禁已写入 `reports/taiji_runtime_structure_20260826.json`。下一步
-转为为 candidate maintenance cycle 增加显式 dependency/conflict 判定，对竞争变更、父子拓扑
-顺序和失效候选逐项 fail-closed。
+continuation；direct-add 子门禁已写入 `reports/taiji_runtime_structure_20260826.json`。candidate
+maintenance cycle 也已具备显式 dependency/conflict 判定：依赖按拓扑顺序执行，依赖失败阻断
+下游，同一 substrate 的竞争变更逐项 `failed_closed`，不同 neuron identity 的 `add` 可按依赖
+连续出生。下一步转为建立三层以上自适应区域的规模化结构维护 Gate，覆盖跨区域 route、混合
+add/split/prune、资源竞争、checkpoint continuation 和拓扑不变量。
