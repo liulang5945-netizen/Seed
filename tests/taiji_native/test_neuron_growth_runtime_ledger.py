@@ -173,6 +173,126 @@ def test_runtime_standalone_tick_owns_neuron_birth_candidate() -> None:
     assert restored.cognitive_snapshot().development.structural_budget == 1
 
 
+def test_neuron_birth_candidates_can_grow_one_population_in_dependency_order() -> None:
+    model = TSKV8Adapter(_config(budget=2), episode_id="sequential-neuron-birth")
+    region = _region()
+    model.attach_adaptive_neuron_region(region)
+    model.attach_structural_growth_controller(
+        AdaptiveStructuralGrowthController(
+            dynamics=StructuralGrowthDynamics(
+                ema_rate=1.0,
+                error_threshold=0.0,
+                holdout_transfer_threshold=0.0,
+                minimum_resource_state=0.0,
+                required_error_steps=1,
+            )
+        )
+    )
+    first_proposal = model.propose_neuron_add(
+        region_id=region.region_id,
+        unit_id="adaptive.cortex.first",
+        evidence_ids=("runtime:first-birth",),
+    )
+    second_proposal = StructuralProposalCandidate(
+        candidate_id="candidate:second-birth",
+        network_id="standalone:adaptive.cortex",
+        target_kind="neuron",
+        operation="add",
+        substrate_ids=(region.region_id,),
+        evidence_ids=("runtime:second-birth",),
+        source_tick=2,
+        priority=0.8,
+        specification=(
+            ("region_id", region.region_id),
+            ("unit_id", "adaptive.cortex.second"),
+        ),
+        depends_on_candidate_ids=("candidate:first-birth",),
+    )
+    first_candidate = StructuralProposalCandidate(
+        candidate_id="candidate:first-birth",
+        network_id="standalone:adaptive.cortex",
+        target_kind="neuron",
+        operation="add",
+        substrate_ids=(region.region_id,),
+        evidence_ids=("runtime:first-birth",),
+        source_tick=1,
+        priority=0.9,
+        specification=(
+            ("region_id", region.region_id),
+            ("unit_id", "adaptive.cortex.first"),
+        ),
+    )
+    model._queue_structural_proposal_candidate(first_candidate)
+    model._queue_structural_proposal_candidate(second_proposal)
+
+    first_trial = AdaptiveNeuronRegion.from_payload(
+        region.to_payload(),
+        generator=torch.Generator().manual_seed(0),
+    )
+    first_trial.apply_topology_proposal(
+        first_proposal,
+        generator=torch.Generator().manual_seed(0),
+    )
+    first_input = torch.zeros(5)
+    first_input[first_trial.incoming.pre_index[-1]] = torch.sign(
+        first_trial.incoming.edge_weight[-1]
+    )
+    first_expected = first_trial.step(first_input)
+
+    second_parent = AdaptiveNeuronRegion.from_payload(
+        region.to_payload(),
+        generator=torch.Generator().manual_seed(0),
+    )
+    second_parent.apply_topology_proposal(
+        first_proposal,
+        generator=torch.Generator().manual_seed(0),
+    )
+    second_proposal_for_trial = second_parent.propose_unit_add(
+        unit_id="adaptive.cortex.second",
+        evidence_ids=("runtime:second-birth",),
+    )
+    second_trial = AdaptiveNeuronRegion.from_payload(
+        second_parent.to_payload(),
+        generator=torch.Generator().manual_seed(0),
+    )
+    second_trial.apply_topology_proposal(
+        second_proposal_for_trial,
+        generator=torch.Generator().manual_seed(0),
+    )
+    second_input = torch.zeros(5)
+    second_input[second_trial.incoming.pre_index[-1]] = torch.sign(
+        second_trial.incoming.edge_weight[-1]
+    )
+    second_expected = second_trial.step(second_input)
+
+    results = model.run_structural_maintenance_cycle(
+        candidate_ids=(second_proposal.candidate_id, first_candidate.candidate_id),
+        holdout_inputs_by_candidate={
+            first_candidate.candidate_id: (first_input,),
+            second_proposal.candidate_id: (second_input,),
+        },
+        expected_activities_by_candidate={
+            first_candidate.candidate_id: (first_expected,),
+            second_proposal.candidate_id: (second_expected,),
+        },
+    )
+    assert tuple(item.candidate_id for item in results) == (
+        first_candidate.candidate_id,
+        second_proposal.candidate_id,
+    )
+    assert all(item.status == "committed" for item in results)
+    assert region.unit_ids == (
+        "u0",
+        "u1",
+        "adaptive.cortex.first",
+        "adaptive.cortex.second",
+    )
+    assert model.cognitive_snapshot().development.structural_budget == 0
+    assert model.rollback_structural_candidate(second_proposal.candidate_id) is True
+    assert model.rollback_structural_candidate(first_candidate.candidate_id) is True
+    assert model.neuron_regions[0].unit_ids == ("u0", "u1")
+
+
 def test_structural_maintenance_cycle_fails_closed_on_dependency_and_conflict() -> None:
     model = TSKV8Adapter(_config(budget=1), episode_id="maintenance-guards")
     region = _region()
@@ -197,12 +317,12 @@ def test_structural_maintenance_cycle_fails_closed_on_dependency_and_conflict() 
         network_id="standalone:adaptive.cortex",
         target_kind="region",
         operation="split",
-        substrate_ids=(region.region_id,),
+        substrate_ids=("adaptive.other",),
         evidence_ids=("runtime:dependent",),
         source_tick=2,
         priority=0.7,
         specification=(
-            ("region_id", region.region_id),
+            ("region_id", "adaptive.other"),
             ("unit_id", "adaptive.cortex.child"),
         ),
         depends_on_candidate_ids=(dependency.candidate_id,),
