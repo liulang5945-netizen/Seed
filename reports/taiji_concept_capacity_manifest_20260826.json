@@ -1,0 +1,17 @@
+{
+  "format": "taiji-concept-capacity-manifest-v1",
+  "task": "measure concept registry capacity and causal lesion behavior",
+  "capacities": [
+    1,
+    2,
+    4
+  ],
+  "concept_patterns": 4,
+  "repeats_per_pattern": 2,
+  "controls": [
+    "capacity_curve",
+    "checkpoint_continuation",
+    "concept_lesion"
+  ],
+  "boundary": "registry capacity and concept-state control only; not open-domain semantic competence"
+}

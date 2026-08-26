@@ -285,6 +285,12 @@ def test_tsk_v8_runtime_materializes_lineage_growth_and_checkpoint_before_traini
     assert concept.outcome_consistency > 0.99
     assert consolidated.development.last_update_source == "semantic-consolidation"
 
+    trained_checkpoint = model.native_checkpoint()
+    assert "concept_formation" in trained_checkpoint["components"]
+    trained_restored = TSKV8Adapter.from_native_checkpoint(trained_checkpoint)
+    assert trained_restored.cognitive_snapshot().concepts[0].concept_id == concept.concept_id
+    assert trained_restored._concept_formation.concepts[0].update_count == concept.update_count
+
     model.consolidate_semantic_memory(epochs=1, learning_rate=0.01)
     assert model.cognitive_snapshot().concepts[0].update_count == 2
 

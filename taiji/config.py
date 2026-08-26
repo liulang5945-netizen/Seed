@@ -227,6 +227,9 @@ class TaijiConfig:
     cognitive_lineage_history_limit: int = 256
     concept_similarity_threshold: float = 0.85
     concept_signal_weights: tuple[float, float, float] = (0.45, 0.35, 0.20)
+    concept_capacity: int = 256
+    concept_plasticity_rate: float = 0.25
+    concept_prune_threshold: float = 0.15
     self_capability_learning_rate: float = 0.20
     seed: int = 20260821
     perception: PerceptionConfig = field(default_factory=PerceptionConfig)
@@ -370,6 +373,12 @@ class TaijiConfig:
             or abs(sum(float(weight) for weight in self.concept_signal_weights) - 1.0) > 1e-6
         ):
             raise ValueError("concept_signal_weights must be three positive weights summing to 1")
+        if self.concept_capacity <= 0:
+            raise ValueError("concept_capacity must be positive")
+        if not 0.0 < self.concept_plasticity_rate <= 1.0:
+            raise ValueError("concept_plasticity_rate must be in (0, 1]")
+        if not 0.0 <= self.concept_prune_threshold <= 1.0:
+            raise ValueError("concept_prune_threshold must be in [0, 1]")
         if not 0.0 < self.self_capability_learning_rate <= 1.0:
             raise ValueError("self_capability_learning_rate must be in (0, 1]")
 

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
-import math
 from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from typing import Any
@@ -11,6 +9,7 @@ from typing import Any
 import torch
 
 from .affordance import LearnedAffordanceFeatures, WorldAffordanceGroundingProducer
+from .concept_formation import ConceptFormationOrgan
 from .content_selection import (
     ContentCandidate,
     ContentSelectionContext,
@@ -124,6 +123,13 @@ class TSKV8Adapter(Taiji):
         self._workspace_router: WorkspaceRouter | None = None
         self._episodic_memory: EpisodicMemoryStore | None = None
         self._semantic_memory: SemanticMemoryLearner | None = None
+        self._concept_formation = ConceptFormationOrgan(
+            similarity_threshold=self.config.concept_similarity_threshold,
+            signal_weights=self.config.concept_signal_weights,
+            capacity=self.config.concept_capacity,
+            plasticity_rate=self.config.concept_plasticity_rate,
+            prune_threshold=self.config.concept_prune_threshold,
+        )
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
@@ -184,6 +190,12 @@ class TSKV8Adapter(Taiji):
 
         return CognitiveState.from_payload(self._cognitive_state.to_payload(), device=self.device)
 
+    @property
+    def concept_formation(self) -> ConceptFormationOrgan:
+        """Expose the Taiji-owned concept registry for inspection and lesion tests."""
+
+        return self._concept_formation
+
     def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:
         """Attach a Taiji-owned predictor used for runtime intervention scoring."""
 
@@ -228,7 +240,10 @@ class TSKV8Adapter(Taiji):
             epochs=epochs,
             learning_rate=learning_rate,
         )
-        concepts = self._consolidate_concepts()
+        concepts = self._concept_formation.consolidate(
+            self._episodic_memory.records,
+            tick=self.tick,
+        )
         development = replace(
             self._cognitive_state.development,
             tick=self.tick,
@@ -1388,141 +1403,15 @@ class TSKV8Adapter(Taiji):
         )
         return self_state, development
 
-    @staticmethod
-    def _jaccard(left: Sequence[str], right: Sequence[str]) -> float:
-        left_set = set(left)
-        right_set = set(right)
-        union = left_set | right_set
-        return 1.0 if not union else len(left_set & right_set) / len(union)
-
-    @staticmethod
-    def _relation_shapes(relation_ids: Sequence[str]) -> tuple[str, ...]:
-        shapes = []
-        for relation_id in relation_ids:
-            parts = str(relation_id).split(":", 2)
-            shapes.append(parts[1] if len(parts) == 3 else str(relation_id))
-        return tuple(dict.fromkeys(shapes))
-
-    @staticmethod
-    def _outcome_score(record: EpisodicMemoryRecord) -> float:
-        if record.outcome is None:
-            return 0.0
-        bounded_reward = 0.5 * (1.0 + math.tanh(float(record.outcome.reward)))
-        return 0.5 * float(bool(record.outcome.success)) + 0.5 * bounded_reward
-
-    def _world_signal_similarity(
-        self, left: EpisodicMemoryRecord, right: EpisodicMemoryRecord
-    ) -> float:
-        if not left.object_ids and not right.object_ids:
-            object_similarity = 1.0
-        elif not left.object_ids or not right.object_ids:
-            object_similarity = 0.0
-        else:
-            count_similarity = 1.0 - abs(len(left.object_ids) - len(right.object_ids)) / max(
-                len(left.object_ids), len(right.object_ids)
-            )
-            object_similarity = max(
-                self._jaccard(left.object_ids, right.object_ids),
-                0.5 * count_similarity,
-            )
-
-        if not left.relation_ids and not right.relation_ids:
-            relation_similarity = 1.0
-        elif not left.relation_ids or not right.relation_ids:
-            relation_similarity = 0.0
-        else:
-            relation_similarity = max(
-                self._jaccard(left.relation_ids, right.relation_ids),
-                self._jaccard(
-                    self._relation_shapes(left.relation_ids),
-                    self._relation_shapes(right.relation_ids),
-                ),
-            )
-        return 0.5 * (object_similarity + relation_similarity)
-
-    def _concept_similarity(
-        self, left: EpisodicMemoryRecord, right: EpisodicMemoryRecord
-    ) -> float:
-        latent_similarity = float(
-            torch.nn.functional.cosine_similarity(
-                left.cue.unsqueeze(0), right.cue.unsqueeze(0)
-            ).item()
-        )
-        world_similarity = self._world_signal_similarity(left, right)
-        outcome_similarity = 1.0 - abs(self._outcome_score(left) - self._outcome_score(right))
-        latent_weight, world_weight, outcome_weight = self.config.concept_signal_weights
-        return max(
-            0.0,
-            min(
-                1.0,
-                latent_weight * latent_similarity
-                + world_weight * world_similarity
-                + outcome_weight * outcome_similarity,
-            ),
-        )
-
     def _consolidate_concepts(self) -> tuple[Concept, ...]:
-        """Create provisional concepts only from similar experiences in episodes."""
+        """Keep legacy callers pointed at the Taiji-owned concept organ."""
 
         if self._episodic_memory is None:
-            return self._cognitive_state.concepts
-        records = tuple(
-            record
-            for record in self._episodic_memory.records
-            if record.outcome is not None and record.event_ids
+            return self._concept_formation.concepts
+        return self._concept_formation.consolidate(
+            self._episodic_memory.records,
+            tick=self.tick,
         )
-        if not records:
-            return self._cognitive_state.concepts
-        threshold = float(self.config.concept_similarity_threshold)
-        clusters: list[list[EpisodicMemoryRecord]] = []
-        for record in records:
-            destination: list[EpisodicMemoryRecord] | None = None
-            for cluster in clusters:
-                similarity = sum(
-                    self._concept_similarity(record, item) for item in cluster
-                ) / len(cluster)
-                if similarity >= threshold:
-                    destination = cluster
-                    break
-            if destination is None:
-                clusters.append([record])
-            else:
-                destination.append(record)
-        concepts = {item.concept_id: item for item in self._cognitive_state.concepts}
-        for cluster in clusters:
-            episode_ids = {item.episode_id for item in cluster}
-            if len(episode_ids) < 2:
-                continue
-            event_ids = tuple(dict.fromkeys(event_id for item in cluster for event_id in item.event_ids))
-            assembly_ids = tuple(
-                dict.fromkeys(assembly_id for item in cluster for assembly_id in item.assembly_ids)
-            )
-            if not event_ids:
-                continue
-            digest = hashlib.sha256("|".join(sorted(event_ids)).encode("utf-8")).hexdigest()[:16]
-            prototype = torch.stack([item.cue for item in cluster]).mean(dim=0)
-            prototype = torch.nn.functional.normalize(prototype, dim=0)
-            stability = float(
-                torch.nn.functional.cosine_similarity(
-                    torch.stack([item.cue for item in cluster]), prototype.unsqueeze(0)
-                ).mean()
-            )
-            concept_id = f"concept:{digest}"
-            previous_concept = concepts.get(concept_id)
-            concept = Concept(
-                concept_id=concept_id,
-                prototype=prototype,
-                support_event_ids=event_ids,
-                support_assembly_ids=assembly_ids,
-                maturity=max(0.0, min(1.0, 1.0 - 1.0 / len(episode_ids))),
-                stability=max(0.0, min(1.0, stability)),
-                confidence=max(0.0, min(1.0, stability)),
-                update_count=(1 if previous_concept is None else previous_concept.update_count + 1),
-                last_updated_tick=self.tick,
-                provenance="semantic-consolidation",
-            )
-            concepts[concept.concept_id] = concept
-        return tuple(concepts.values())
 
     def _refresh_last_event_world_lineage(self, world: WorldState) -> None:
         """Attach an externally supplied world observation to the current event."""
@@ -2220,6 +2109,7 @@ class TSKV8Adapter(Taiji):
             payload["episodic_memory"] = self._episodic_memory.checkpoint()
         if self._semantic_memory is not None:
             payload["semantic_memory"] = self._semantic_memory.checkpoint()
+        payload["concept_formation"] = self._concept_formation.checkpoint()
         if self._procedural_memory is not None:
             payload["procedural_memory"] = self._procedural_memory.checkpoint()
         if self._homeostatic_controller is not None:
@@ -2293,6 +2183,7 @@ class TSKV8Adapter(Taiji):
         self._restore_workspace_router(checkpoint.get("workspace_router"))
         self._restore_episodic_memory(checkpoint.get("episodic_memory"))
         self._restore_semantic_memory(checkpoint.get("semantic_memory"))
+        self._restore_concept_formation(checkpoint.get("concept_formation"))
         self._restore_procedural_memory(checkpoint.get("procedural_memory"))
         self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
         self._restore_goal_planner(checkpoint.get("planning"))
@@ -2354,6 +2245,19 @@ class TSKV8Adapter(Taiji):
             None
             if payload is None
             else SemanticMemoryLearner.from_checkpoint(dict(payload), device=self.device)
+        )
+
+    def _restore_concept_formation(self, payload: Any) -> None:
+        self._concept_formation = (
+            ConceptFormationOrgan(
+                similarity_threshold=self.config.concept_similarity_threshold,
+                signal_weights=self.config.concept_signal_weights,
+                capacity=self.config.concept_capacity,
+                plasticity_rate=self.config.concept_plasticity_rate,
+                prune_threshold=self.config.concept_prune_threshold,
+            )
+            if payload is None
+            else ConceptFormationOrgan.from_checkpoint(dict(payload), device=self.device)
         )
 
     def _restore_procedural_memory(self, payload: Any) -> None:
@@ -2601,6 +2505,7 @@ class TSKV8Adapter(Taiji):
             components["episodic_memory"] = self._episodic_memory.checkpoint()
         if self._semantic_memory is not None:
             components["semantic_memory"] = self._semantic_memory.checkpoint()
+        components["concept_formation"] = self._concept_formation.checkpoint()
         if self._procedural_memory is not None:
             components["procedural_memory"] = self._procedural_memory.checkpoint()
         if self._homeostatic_controller is not None:
@@ -2687,6 +2592,7 @@ class TSKV8Adapter(Taiji):
         self._restore_workspace_router(envelope.components.get("workspace_router"))
         self._restore_episodic_memory(envelope.components.get("episodic_memory"))
         self._restore_semantic_memory(envelope.components.get("semantic_memory"))
+        self._restore_concept_formation(envelope.components.get("concept_formation"))
         self._restore_procedural_memory(envelope.components.get("procedural_memory"))
         self._restore_homeostatic_controller(envelope.components.get("homeostasis"))
         self._restore_goal_planner(envelope.components.get("planning"))

@@ -1,0 +1,35 @@
+{
+  "format": "taiji-concept-capacity-v1",
+  "train_records": 8,
+  "candidate_concepts": 4,
+  "capacity_curve": [
+    {
+      "capacity": 1,
+      "candidate_concepts": 4,
+      "retained_concepts": 1,
+      "capacity_respected": true
+    },
+    {
+      "capacity": 2,
+      "candidate_concepts": 4,
+      "retained_concepts": 2,
+      "capacity_respected": true
+    },
+    {
+      "capacity": 4,
+      "candidate_concepts": 4,
+      "retained_concepts": 4,
+      "capacity_respected": true
+    }
+  ],
+  "metrics": {
+    "capacity_curve_passed": true,
+    "checkpoint_continuation": true,
+    "lesion_removed_concept": true,
+    "post_lesion_concepts": 3
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "concept registry obeys capacity, preserves state through checkpoint, and responds to an explicit lesion"
+  }
+}

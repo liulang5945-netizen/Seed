@@ -509,4 +509,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：将多信号 Concept 形成从 TSKV8Adapter 提取为 Taiji 自有语义器官/注册表，独立拥有稳定概念 identity、支持集更新、容量策略、lesion 与可回滚 checkpoint；随后重新验收跨 schema、未见任务迁移和容量/干扰曲线。**
+**下一步：把已具备容量、塑性、剪枝和 lesion 的 `ConceptFormationOrgan` 接入语义检索/规划的真实消费路径，再用跨 schema、未见任务、容量/干扰和三类信号 lesion 重新验收。**
