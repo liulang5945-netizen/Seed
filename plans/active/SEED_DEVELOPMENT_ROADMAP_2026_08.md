@@ -737,4 +737,10 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 
 **已完成：A1 Gate 已收紧为所有 seed 的最差 generalization、marker score/rate 和 random-chunk drop，而不是只看 primary seed；正式报告 `reports/taiji_a1_perception_20260827.json` 如实为 `gate_passed=false`：primary gain=`+0.0089`，但最差 seed gain=`-0.0398`，最差 random-chunk drop=`+0.0030`，marker score/rate 最差仍为 `+0.1299/+0.1095`。这关闭了“单个幸运 seed 收口”的评测漏洞，同时证明 novelty 已修复边界响应但未完成稳健组合迁移。**
 
-**当前唯一下一步：继续提升 assembly 的跨 seed 组合迁移与随机 chunk 抗性，优先检查顺序敏感读出对多步预测信用的分配；仍以最差 seed 的 next-byte/relation 双合同、holdout、boundary marker、random lesion 和 checkpoint continuation 验收，CUDA 保持暂缓。**
+**已完成：A1 predictive temperature 从 `0.15` 调整为 `0.5`，同一 32/16 smoke manifest 在严格最差 seed 口径下通过：三 seed 的 generalization gain=`+0.0022/+0.0035/+0.0231`，random-chunk drop=`+0.0135/+0.0092/+0.0116`，marker score/rate 最小=`+0.2025/+0.4262`，报告为 `reports/taiji_a1_perception_20260827.json`。**
+
+**已完成：独立规模化验证已执行于 `shared_core` 的 128 train / 64 holdout manifest，报告为 `reports/taiji_a1_perception_shared128_20260827.json`；跨 seed std=`0.0048`、marker score/rate 最小=`+0.2872/+0.5606`，但最差 generalization gain=`-0.0058`、最差 random-chunk drop=`+0.0023`，Gate 仍为 `false`。这说明 temperature 修复和边界 novelty 已有效，但 assembly 的组合迁移和 lesion 抗性尚未规模化稳定。**
+
+**已完成：顺序敏感 assembly 已加入可 checkpoint 的多步预测信用分配；`multi_step_prediction_weight=0.05`、`horizon=4` 纳入 A1 默认，误差沿连续 transition 展开并回写 assembly/transition/embedding 的原生局部梯度。smoke 32/16 在三 seed 下 Gate 通过；128/64 独立 manifest 仍为 false（最差 gain=`-0.0010`、最差 random drop=`-0.0001`），故没有用多步模块掩盖规模化失败。**
+
+**当前唯一下一步：针对 `shared128` 的最差 seed，继续提升 assembly 的组合迁移与 random-chunk 抗性，优先引入跨 assembly 的边界后多步目标/负样本结构，而不是继续增加训练轮数；每次改动仍需最差 seed、marker、lesion、checkpoint continuation 和 relation subgate 同时验收，CUDA 保持暂缓。**

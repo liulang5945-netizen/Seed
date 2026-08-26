@@ -61,6 +61,8 @@ def test_perception_predictive_fit_updates_local_representation() -> None:
         ((97, 98, 99, 97, 98, 99), (99, 98, 97, 99, 98, 97)),
         epochs=2,
         learning_rate=0.01,
+        multi_step_prediction_weight=0.05,
+        multi_step_prediction_horizon=3,
     )
 
     assert len(losses) == 2

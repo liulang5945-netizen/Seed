@@ -1,0 +1,172 @@
+{
+  "contract": "taiji-a1-perception-v1",
+  "gate": "A1",
+  "gate_passed": false,
+  "config": {
+    "ridge": 0.001,
+    "minimum_generalization_gain": 0.0,
+    "maximum_cross_seed_std": 0.25,
+    "minimum_boundary_rate_delta": 0.01,
+    "minimum_marker_boundary_score_delta": 0.05,
+    "minimum_marker_boundary_rate_delta": 0.01,
+    "minimum_random_chunk_drop": 0.005,
+    "predictive_epochs": 3,
+    "predictive_learning_rate": 0.01,
+    "predictive_temperature": 0.5,
+    "multi_step_prediction_weight": 0.05,
+    "multi_step_prediction_horizon": 4,
+    "assembly_prediction_weight": 0.5,
+    "contrastive_weight": 0.1,
+    "contrastive_temperature": 0.2,
+    "seeds": [
+      11,
+      29,
+      47
+    ]
+  },
+  "primary": {
+    "seed": 11,
+    "predictive_training": {
+      "final_loss": 3.283060918500026,
+      "loss_curve": [
+        4.224913867687186,
+        3.4027344045539696,
+        3.283060918500026
+      ]
+    },
+    "unseen_composition": {
+      "learned_accuracy": 0.225778915919761,
+      "byte_only_accuracy": 0.22556551429790866,
+      "generalization_gain": 0.0002134016218523216
+    },
+    "boundary_perturbed": {
+      "mean_boundary_score": 0.5693405859799068,
+      "boundary_rate": 0.5923344947735192,
+      "score_delta_from_unseen": 0.0038392400944924354,
+      "marker_score_delta_from_unseen": 0.19779463237549055,
+      "marker_rate_delta_from_unseen": 0.4149134818872152
+    },
+    "random_chunk_control": {
+      "learned_accuracy": 0.2178627760252366,
+      "byte_only_accuracy": 0.2182570977917981
+    },
+    "assembly": {
+      "mean_duration_train": 2.673968400061359,
+      "mean_duration_unseen": 2.4020913730860203,
+      "unique_durations": 16,
+      "boundary_rate_unseen": 0.5850865181127848
+    }
+  },
+  "cross_seed": {
+    "learned_accuracy_mean": 0.22560422957057683,
+    "learned_accuracy_std": 0.009065209147681687,
+    "runs": [
+      {
+        "seed": 11,
+        "predictive_training": {
+          "final_loss": 3.283060918500026,
+          "loss_curve": [
+            4.224913867687186,
+            3.4027344045539696,
+            3.283060918500026
+          ]
+        },
+        "unseen_composition": {
+          "learned_accuracy": 0.225778915919761,
+          "byte_only_accuracy": 0.22556551429790866,
+          "generalization_gain": 0.0002134016218523216
+        },
+        "boundary_perturbed": {
+          "mean_boundary_score": 0.5693405859799068,
+          "boundary_rate": 0.5923344947735192,
+          "score_delta_from_unseen": 0.0038392400944924354,
+          "marker_score_delta_from_unseen": 0.19779463237549055,
+          "marker_rate_delta_from_unseen": 0.4149134818872152
+        },
+        "random_chunk_control": {
+          "learned_accuracy": 0.2178627760252366,
+          "byte_only_accuracy": 0.2182570977917981
+        },
+        "assembly": {
+          "mean_duration_train": 2.673968400061359,
+          "mean_duration_unseen": 2.4020913730860203,
+          "unique_durations": 16,
+          "boundary_rate_unseen": 0.5850865181127848
+        }
+      },
+      {
+        "seed": 29,
+        "predictive_training": {
+          "final_loss": 3.313753592673068,
+          "loss_curve": [
+            4.352251146237055,
+            3.447087442285071,
+            3.313753592673068
+          ]
+        },
+        "unseen_composition": {
+          "learned_accuracy": 0.23661842407535033,
+          "byte_only_accuracy": 0.2361589708247186,
+          "generalization_gain": 0.00045945325063173614
+        },
+        "boundary_perturbed": {
+          "mean_boundary_score": 0.552088890604536,
+          "boundary_rate": 0.5591090094574415,
+          "score_delta_from_unseen": 0.009030814800373155,
+          "marker_score_delta_from_unseen": 0.222129583539724,
+          "marker_rate_delta_from_unseen": 0.456865430100834
+        },
+        "random_chunk_control": {
+          "learned_accuracy": 0.22599917593737123,
+          "byte_only_accuracy": 0.22661722290894107
+        },
+        "assembly": {
+          "mean_duration_train": 2.8134069642583217,
+          "mean_duration_unseen": 2.9010332378936887,
+          "unique_durations": 16,
+          "boundary_rate_unseen": 0.543134569899166
+        }
+      },
+      {
+        "seed": 47,
+        "predictive_training": {
+          "final_loss": 3.2975470658546935,
+          "loss_curve": [
+            4.20684942722631,
+            3.4309755044213186,
+            3.2975470658546935
+          ]
+        },
+        "unseen_composition": {
+          "learned_accuracy": 0.21441534871661913,
+          "byte_only_accuracy": 0.21545242416385793,
+          "generalization_gain": -0.0010370754472388
+        },
+        "boundary_perturbed": {
+          "mean_boundary_score": 0.5098382537765553,
+          "boundary_rate": 0.48992035838725734,
+          "score_delta_from_unseen": 0.006224685600321522,
+          "marker_score_delta_from_unseen": 0.24890281965769667,
+          "marker_rate_delta_from_unseen": 0.4874852172289307
+        },
+        "random_chunk_control": {
+          "learned_accuracy": 0.2145029239766082,
+          "byte_only_accuracy": 0.20935672514619882
+        },
+        "assembly": {
+          "mean_duration_train": 3.2834177021015494,
+          "mean_duration_unseen": 3.560811651935765,
+          "unique_durations": 16,
+          "boundary_rate_unseen": 0.4812647827710693
+        }
+      }
+    ]
+  },
+  "diagnostics": {
+    "boundary_rate_delta": 0.007247976660734401,
+    "marker_score_delta": 0.19779463237549055,
+    "marker_rate_delta": 0.4149134818872152,
+    "random_chunk_drop": -8.757525998906446e-05
+  },
+  "failure_policy": "A1 remains open until learned assembly beats byte-only on unseen composition, responds at marker positions to boundary perturbation, degrades under random chunk lesion, retains variable duration, and stays within the cross-seed variance budget. Aggregate boundary-rate change remains a diagnostic because marker insertion changes sequence length and can repartition neighboring spans."
+}
