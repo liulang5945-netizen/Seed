@@ -542,4 +542,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：在状态条件 suffix Gate 上加入变量 horizon、同前缀分支竞争、trace lesion 与实际 outcome/error 增量更新，并在部分执行、失败重规划和 checkpoint continuation 下验收。**
+**下一步：在同一 Concept 的多分支 trace 上加入容量/干扰曲线与分支增删，验证 after-state 与 outcome/error 仍能选择正确分支，并在 runtime continuation、lesion 和 checkpoint 后保持其他分支不受破坏。**

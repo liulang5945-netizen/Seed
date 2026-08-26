@@ -10,7 +10,13 @@ from typing import Any
 
 import torch
 
-from .contracts import Concept, ConceptSequenceTrace, EpisodicMemoryRecord, WorldState
+from .contracts import (
+    Concept,
+    ConceptSequenceTrace,
+    EpisodicMemoryRecord,
+    Outcome,
+    WorldState,
+)
 
 CONCEPT_FORMATION_CHECKPOINT_FORMAT = "taiji-concept-formation-v1"
 
@@ -107,6 +113,30 @@ class ConceptFormationOrgan:
                 concept for concept in self._concepts if concept.concept_id not in removed_set
             )
         return removed
+
+    def lesion_sequence_traces(self, concept_ids: Iterable[str]) -> tuple[str, ...]:
+        """Disable learned sequence traces while retaining concept identity."""
+
+        requested = tuple(dict.fromkeys(str(concept_id) for concept_id in concept_ids))
+        requested_set = set(requested)
+        updated: list[Concept] = []
+        removed: list[str] = []
+        for concept in self._concepts:
+            if concept.concept_id not in requested_set:
+                updated.append(concept)
+                continue
+            if concept.sequence_traces or not concept.sequence_traces_lesioned:
+                removed.append(concept.concept_id)
+            updated.append(
+                replace(
+                    concept,
+                    sequence_traces=(),
+                    sequence_traces_lesioned=True,
+                    update_count=concept.update_count + 1,
+                )
+            )
+        self._concepts = tuple(updated)
+        return tuple(removed)
 
     @staticmethod
     def _world_ids_similarity(
@@ -257,6 +287,8 @@ class ConceptFormationOrgan:
         if not query:
             return 0.0
         if not concept.sequence_traces:
+            if concept.sequence_traces_lesioned:
+                return 0.0
             return self.action_sequence_affinity(concept, query)
         current_latent = None if current_state is None else current_state.latent
         candidates: list[float] = []
@@ -420,6 +452,108 @@ class ConceptFormationOrgan:
                 visits=previous.visits + candidate.visits,
             )
         return tuple(merged)
+
+    def update_sequence_trace(
+        self,
+        action_kind: str,
+        *,
+        before_state: WorldState,
+        after_state: WorldState,
+        outcome: Outcome,
+        prediction_error: float = 0.0,
+        learning_rate: float | None = None,
+    ) -> int:
+        """Apply one experienced transition to the matching sequence traces."""
+
+        action_kind = str(action_kind)
+        if not action_kind:
+            raise ValueError("sequence trace action_kind cannot be empty")
+        if not math.isfinite(float(prediction_error)) or float(prediction_error) < 0.0:
+            raise ValueError("sequence trace prediction_error must be finite and non-negative")
+        rate = self.plasticity_rate if learning_rate is None else float(learning_rate)
+        if not 0.0 < rate <= 1.0:
+            raise ValueError("sequence trace learning_rate must be in (0, 1]")
+        if after_state.tick <= before_state.tick:
+            raise ValueError("sequence trace update must advance the world tick")
+        bounded_error = max(0.0, min(1.0, float(prediction_error)))
+        bounded_reward = 0.5 * (1.0 + math.tanh(float(outcome.reward)))
+        outcome_score = 0.5 * float(bool(outcome.success)) + 0.5 * bounded_reward
+        quality = outcome_score * (1.0 - bounded_error)
+        candidates: list[tuple[float, int, int, int]] = []
+        for concept_index, concept in enumerate(self._concepts):
+            for trace_index, trace in enumerate(concept.sequence_traces):
+                for start, kind in enumerate(trace.action_kinds):
+                    if kind != action_kind:
+                        continue
+                    expected_state = (
+                        trace.before_prototype
+                        if start == 0
+                        else trace.after_prototypes[start - 1]
+                    )
+                    candidates.append(
+                        (
+                            self._state_similarity(before_state.latent, expected_state),
+                            concept_index,
+                            trace_index,
+                            start,
+                        )
+                    )
+        if not candidates:
+            return 0
+        best_state_score = max(item[0] for item in candidates)
+        if best_state_score <= 0.0:
+            return 0
+        concepts = list(self._concepts)
+        updated: set[tuple[int, int]] = set()
+        before_latent = before_state.latent.detach()
+        after_latent = after_state.latent.detach()
+        for state_score, concept_index, trace_index, start in candidates:
+            if state_score < best_state_score:
+                continue
+            key = (concept_index, trace_index)
+            if key in updated:
+                continue
+            concept = concepts[concept_index]
+            trace = concept.sequence_traces[trace_index]
+            before_prototype = (
+                (1.0 - rate) * trace.before_prototype + rate * before_latent.to(trace.before_prototype)
+                if start == 0
+                else trace.before_prototype
+            )
+            after_prototypes = list(trace.after_prototypes)
+            after_prototypes[start] = (
+                (1.0 - rate) * after_prototypes[start]
+                + rate * after_latent.to(after_prototypes[start])
+            )
+            prediction_errors = list(trace.prediction_errors)
+            prediction_errors[start] = (
+                (1.0 - rate) * prediction_errors[start] + rate * bounded_error
+            )
+            step_credit = list(trace.step_credit)
+            for index in range(start + 1):
+                target = quality * self.credit_discount ** (start - index)
+                step_credit[index] = (
+                    (1.0 - rate) * step_credit[index] + rate * target
+                )
+            traces = list(concept.sequence_traces)
+            traces[trace_index] = replace(
+                trace,
+                before_prototype=before_prototype,
+                after_prototypes=tuple(after_prototypes),
+                step_credit=tuple(step_credit),
+                prediction_errors=tuple(prediction_errors),
+                visits=trace.visits + 1,
+            )
+            concepts[concept_index] = replace(
+                concept,
+                sequence_traces=tuple(traces),
+                outcome_mean=(1.0 - rate) * concept.outcome_mean + rate * outcome_score,
+                update_count=concept.update_count + 1,
+                last_updated_tick=after_state.tick,
+            )
+            updated.add(key)
+        self._concepts = tuple(concepts)
+        return len(updated)
 
     @staticmethod
     def _outcome_score(record: EpisodicMemoryRecord) -> float:

@@ -31,8 +31,8 @@
         "confirm",
         "archive"
       ],
-      "suffix_affinity_after_execution": 0.3348356013421462,
-      "suffix_affinity_after_checkpoint": 0.3348356013421462,
+      "suffix_affinity_after_execution": 0.3253200404229888,
+      "suffix_affinity_after_checkpoint": 0.3253200404229888,
       "environment_actions": [
         10
       ]

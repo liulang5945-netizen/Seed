@@ -44,6 +44,12 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
   的 before/after latent、prediction error 和未来折扣后的 step credit；部分执行后能从
   after-state 重新检索剩余 suffix，完全错位动作与错误状态 fail-closed；运行时保留环境
   after-state，不被后续感知覆盖，organ/native checkpoint 恢复 trace、计划和 suffix affinity。
+- 变量 horizon / 分支塑性 Gate 已通过：同一 Concept 内保留共享前缀后的两条不同 trace，
+  `suffix_sequence_affinity` 能在 horizon=1/2/3 下区分正确分支和反转动作；即时收益略高的
+  对照分支仍被正确 suffix prior 淘汰。对分支特有的 `confirm` 真实转移进行 outcome/error
+  增量更新时只命中对应 trace，visits 与 step credit 发生 EMA 更新，另一条分支保持不变；
+  trace lesion 保留 Concept identity 但使 sequence prior 为零，organ checkpoint 恢复更新后的
+  visits/credit。该 Gate 报告为 `reports/taiji_concept_branch_20260826.json`。
 
 ## 边界与已知限制
 
@@ -54,6 +60,6 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 
 ## 下一步唯一入口
 
-在状态条件 suffix Gate 上加入变量 horizon、同前缀分支竞争和 trace lesion，并把真实执行
-后的 outcome/prediction error 增量写回 trace；要求分支选择、部分执行、失败后重规划、
-checkpoint continuation 在不同长度下均通过，不能退化为固定动作序列表。
+在同一 Concept 的多分支 trace 上加入容量/干扰曲线与分支增删：验证分支数量增长时正确
+分支仍可由 after-state 与 outcome/error 选择，淘汰或 lesion 单一 trace 不得破坏其他分支，
+并在多分支 runtime continuation 与 checkpoint 后保持一致；继续禁止固定 action/intent 表。

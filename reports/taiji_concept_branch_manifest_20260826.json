@@ -1,0 +1,19 @@
+{
+  "format": "taiji-concept-branch-manifest-v1",
+  "task": "variable-horizon shared-prefix branch competition and trace plasticity",
+  "branches": {
+    "good": [
+      "approach",
+      "confirm",
+      "archive"
+    ],
+    "alternative": [
+      "approach",
+      "inspect",
+      "wait"
+    ]
+  },
+  "feedback": "one experienced branch-specific confirm transition updates only the matching trace",
+  "lesion": "sequence_traces disabled while concept identity remains",
+  "checkpoint": "ConceptFormationOrgan checkpoint after online update"
+}

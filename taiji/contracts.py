@@ -500,6 +500,7 @@ class Concept:
     action_kinds: tuple[str, ...] = ()
     action_sequences: tuple[tuple[str, ...], ...] = ()
     sequence_traces: tuple[ConceptSequenceTrace, ...] = ()
+    sequence_traces_lesioned: bool = False
     maturity: float = 0.0
     stability: float = 0.0
     confidence: float = 0.0
@@ -558,6 +559,7 @@ class Concept:
             "action_kinds": list(self.action_kinds),
             "action_sequences": [list(sequence) for sequence in self.action_sequences],
             "sequence_traces": [item.to_payload() for item in self.sequence_traces],
+            "sequence_traces_lesioned": self.sequence_traces_lesioned,
             "maturity": self.maturity,
             "stability": self.stability,
             "confidence": self.confidence,
@@ -591,6 +593,7 @@ class Concept:
                 ConceptSequenceTrace.from_payload(item, device=device)
                 for item in payload.get("sequence_traces", ())
             ),
+            sequence_traces_lesioned=bool(payload.get("sequence_traces_lesioned", False)),
             maturity=float(payload.get("maturity", 0.0)),
             stability=float(payload.get("stability", 0.0)),
             confidence=float(payload.get("confidence", 0.0)),
