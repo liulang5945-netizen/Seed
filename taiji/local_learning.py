@@ -57,6 +57,7 @@ not also change its optimiser and invalidate every tuned learning rate above it.
 from __future__ import annotations
 
 from collections.abc import Sequence
+from typing import cast
 
 import torch
 from torch import nn
@@ -261,10 +262,10 @@ def gru_forward_trace(
     if inputs.ndim != 2 or inputs.shape[1] != cell.input_size:
         raise ValueError("gru trace needs a (steps, input_size) input matrix")
     hidden_size = int(cell.hidden_size)
-    input_weight = cell.weight_ih_l0
-    hidden_weight = cell.weight_hh_l0
-    input_bias = cell.bias_ih_l0 if cell.bias else None
-    hidden_bias = cell.bias_hh_l0 if cell.bias else None
+    input_weight = cast(torch.Tensor, cell.weight_ih_l0)
+    hidden_weight = cast(torch.Tensor, cell.weight_hh_l0)
+    input_bias = cast(torch.Tensor, cell.bias_ih_l0) if cell.bias else None
+    hidden_bias = cast(torch.Tensor, cell.bias_hh_l0) if cell.bias else None
     hidden = torch.zeros(hidden_size, device=inputs.device, dtype=inputs.dtype)
     states: list[torch.Tensor] = []
     trace: list[dict[str, torch.Tensor]] = []
@@ -321,11 +322,12 @@ def gru_gradients(
     hidden_size = int(cell.hidden_size)
     if hidden_error.shape[1] != hidden_size:
         raise ValueError("gru gradients need a hidden error width of hidden_size")
-    input_gradient = torch.zeros_like(cell.weight_ih_l0)
-    hidden_gradient = torch.zeros_like(cell.weight_hh_l0)
+    input_weight = cast(torch.Tensor, cell.weight_ih_l0)
+    input_gradient = torch.zeros_like(input_weight)
+    hidden_weight = cast(torch.Tensor, cell.weight_hh_l0)
+    hidden_gradient = torch.zeros_like(hidden_weight)
     input_bias_gradient = torch.zeros(3 * hidden_size, device=hidden_error.device)
     hidden_bias_gradient = torch.zeros(3 * hidden_size, device=hidden_error.device)
-    hidden_weight = cell.weight_hh_l0
     carry = torch.zeros(hidden_size, device=hidden_error.device, dtype=hidden_error.dtype)
     for step in range(steps - 1, -1, -1):
         entry = trace[step]

@@ -28,7 +28,7 @@ def _value_equal(left: Any, right: Any) -> bool:
             _value_equal(item_left, item_right)
             for item_left, item_right in zip(left, right, strict=False)
         )
-    return left == right
+    return bool(left == right)
 
 
 def _world_state_equal(left: WorldState, right: WorldState) -> bool:

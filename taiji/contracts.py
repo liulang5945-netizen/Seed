@@ -74,7 +74,9 @@ def _decode_value(value: Any, *, device: torch.device | str) -> Any:
     if not isinstance(value, Mapping) or "kind" not in value:
         return value
     kind = value["kind"]
-    payload = value.get("value")
+    if "value" not in value:
+        raise ValueError(f"encoded contract value kind {kind!r} is missing its payload")
+    payload: Any = value["value"]
     if kind == "tensor":
         return payload.detach().to(device).clone()
     if kind == "bytes":
