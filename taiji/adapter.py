@@ -299,6 +299,20 @@ class TSKV8Adapter(Taiji):
         candidate = self._structural_proposal_candidates.get(key)
         if candidate is None:
             return None
+        if candidate.target_kind == "neuron" and candidate.operation == "add":
+            specification = dict(candidate.specification)
+            proposal = self.propose_neuron_add(
+                region_id=str(specification.get("region_id", candidate.substrate_ids[0])),
+                unit_id=str(specification["unit_id"]),
+                evidence_ids=candidate.evidence_ids,
+                parent_checkpoint_id=f"candidate-parent:{candidate.candidate_id}",
+                resource_cost=candidate.resource_cost,
+            )
+            self._topology_proposals[proposal.proposal_id] = proposal
+            self._topology_network_ids[proposal.proposal_id] = candidate.network_id
+            self._structural_candidate_proposals[key] = proposal.proposal_id
+            self._structural_proposal_candidates.pop(key)
+            return proposal
         try:
             network = self._neuron_networks[candidate.network_id]
         except KeyError as exc:
@@ -352,20 +366,128 @@ class TSKV8Adapter(Taiji):
         self._structural_proposal_candidates.pop(key)
         return proposal
 
+    def validate_neuron_add_holdout(
+        self,
+        *,
+        proposal_id: str,
+        holdout_inputs: Sequence[torch.Tensor],
+        expected_activities: Sequence[torch.Tensor],
+    ) -> bool:
+        """Validate direct neuron birth against a zero-padded parent baseline."""
+
+        if self._structural_growth_controller is None:
+            raise RuntimeError("structural growth controller is not attached")
+        proposal = self._topology_proposals.get(str(proposal_id))
+        if (
+            proposal is None
+            or proposal.status != "pending"
+            or proposal.target_kind != "neuron"
+            or proposal.operation != "add"
+        ):
+            raise ValueError("proposal is not a pending neuron add")
+        if len(holdout_inputs) == 0 or len(holdout_inputs) != len(expected_activities):
+            raise ValueError("neuron add holdout inputs and expected activities must have equal size")
+        try:
+            parent = self._neuron_regions[proposal.substrate_id]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron region: {proposal.substrate_id}") from exc
+        parent_payload = parent.to_payload()
+        baseline = AdaptiveNeuronRegion.from_payload(
+            parent_payload,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        candidate = AdaptiveNeuronRegion.from_payload(
+            parent_payload,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        candidate.apply_topology_proposal(proposal, generator=self._checkpoint_region_generator())
+        baseline_errors: list[float] = []
+        candidate_errors: list[float] = []
+        for external_input, expected_activity in zip(
+            holdout_inputs,
+            expected_activities,
+            strict=True,
+        ):
+            expected_value = expected_activity.to(self.device)
+            if expected_value.shape != (candidate.unit_count,):
+                raise ValueError("neuron add expected activity shape does not match grown region")
+            candidate_activity = candidate.step(external_input)
+            baseline_activity = baseline.step(external_input)
+            padded_baseline = torch.cat(
+                (
+                    baseline_activity,
+                    torch.zeros(candidate.unit_count - baseline.unit_count, device=self.device),
+                )
+            )
+            baseline_errors.append(
+                float(
+                    torch.mean(torch.abs(padded_baseline - expected_value))
+                    .clamp(0.0, 1.0)
+                    .item()
+                )
+            )
+            candidate_errors.append(
+                float(
+                    torch.mean(torch.abs(candidate_activity - expected_value))
+                    .clamp(0.0, 1.0)
+                    .item()
+                )
+            )
+        baseline_error = sum(baseline_errors) / len(baseline_errors)
+        candidate_error = sum(candidate_errors) / len(candidate_errors)
+        gain = max(0.0, baseline_error - candidate_error)
+        score = 0.0 if baseline_error <= 1e-8 else min(1.0, gain / baseline_error)
+        validated = score >= float(self._structural_growth_controller.dynamics.minimum_holdout_gain)
+        self._topology_proposals[str(proposal_id)] = replace(
+            proposal,
+            validation_score=score,
+        )
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                last_update_source="neuron-add-holdout-validation",
+                last_validation_status="validated" if validated else "rejected",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    f"holdout:{proposal_id}",
+                    limit=self._lineage_limit(),
+                ),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    f"holdout:{proposal_id}",
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return validated
+
     def validate_structural_candidate_holdout(
         self,
         candidate_id: str,
         *,
-        holdout_inputs: Sequence[Mapping[str, torch.Tensor]],
-        expected_activities: Sequence[Mapping[str, torch.Tensor]],
+        holdout_inputs: Sequence[Any],
+        expected_activities: Sequence[Any],
     ) -> bool:
         """Dispatch one materialized candidate to its operation-specific holdout gate."""
 
         proposal = self.materialize_structural_candidate(candidate_id)
         if proposal is None:
             raise ValueError(f"unknown structural proposal candidate: {candidate_id}")
+        if proposal.target_kind == "neuron" and proposal.operation == "add":
+            return self.validate_neuron_add_holdout(
+                proposal_id=proposal.proposal_id,
+                holdout_inputs=holdout_inputs,
+                expected_activities=expected_activities,
+            )
         network_id = self._topology_network_ids.get(proposal.proposal_id)
         if network_id is None:
+            if proposal.target_kind == "neuron" and proposal.operation == "add":
+                return self.commit_neuron_add(proposal)
             raise ValueError("structural candidate proposal is not attached to a network")
         role = dict(proposal.specification).get("topology_role")
         if proposal.operation == "split" and role == "region_split":
@@ -406,6 +528,8 @@ class TSKV8Adapter(Taiji):
         proposal = self.materialize_structural_candidate(candidate_id)
         if proposal is None:
             raise ValueError(f"unknown structural proposal candidate: {candidate_id}")
+        if proposal.target_kind == "neuron" and proposal.operation == "add":
+            return self.commit_neuron_add(proposal)
         network_id = self._topology_network_ids.get(proposal.proposal_id)
         if network_id is None:
             raise ValueError("structural candidate proposal is not attached to a network")
@@ -432,6 +556,8 @@ class TSKV8Adapter(Taiji):
         proposal = self._topology_proposals.get(proposal_id)
         if proposal is None:
             raise ValueError("structural candidate proposal is missing")
+        if proposal.target_kind == "neuron" and proposal.operation == "add":
+            return self.rollback_neuron_add(proposal_id)
         role = dict(proposal.specification).get("topology_role")
         if proposal.operation == "split" and role == "region_split":
             return self.rollback_region_split(proposal_id)
@@ -462,15 +588,90 @@ class TSKV8Adapter(Taiji):
             -self._lineage_limit() :
         ]
 
+    def _accepted_structural_candidate(self, candidate_id: str) -> bool:
+        proposal_id = self._structural_candidate_proposals.get(str(candidate_id))
+        if proposal_id is None:
+            return False
+        proposal = self._topology_proposals.get(proposal_id)
+        return proposal is not None and proposal.status == "accepted"
+
+    @staticmethod
+    def _candidate_conflict_keys(
+        candidate: StructuralProposalCandidate,
+    ) -> tuple[str, ...]:
+        if candidate.conflict_keys:
+            return candidate.conflict_keys
+        substrate = "|".join(sorted(candidate.substrate_ids))
+        return (f"{candidate.network_id}:substrate:{substrate}",)
+
+    def _prepare_structural_maintenance_cycle(
+        self,
+        candidate_ids: Sequence[str],
+    ) -> tuple[tuple[str, ...], dict[str, str]]:
+        """Resolve dependencies and reject conflicting queued candidates first."""
+
+        ids = tuple(dict.fromkeys(str(item) for item in candidate_ids))
+        queued = {
+            candidate_id: self._structural_proposal_candidates[candidate_id]
+            for candidate_id in ids
+            if candidate_id in self._structural_proposal_candidates
+        }
+        errors: dict[str, str] = {}
+        conflict_groups: dict[str, list[str]] = {}
+        for candidate_id, candidate in queued.items():
+            for conflict_key in self._candidate_conflict_keys(candidate):
+                conflict_groups.setdefault(conflict_key, []).append(candidate_id)
+        for conflict_key, group in conflict_groups.items():
+            if len(group) <= 1:
+                continue
+            message = (
+                f"candidate conflict on {conflict_key}: "
+                + ", ".join(group)
+            )
+            for candidate_id in group:
+                errors[candidate_id] = message
+
+        visiting: list[str] = []
+        visited: set[str] = set()
+        ordered: list[str] = []
+
+        def visit(candidate_id: str) -> None:
+            if candidate_id in visited:
+                return
+            if candidate_id in visiting:
+                cycle_start = visiting.index(candidate_id)
+                cycle = visiting[cycle_start:]
+                message = "candidate dependency cycle: " + " -> ".join(cycle)
+                for item in cycle:
+                    errors[item] = message
+                return
+            visiting.append(candidate_id)
+            candidate = queued[candidate_id]
+            for dependency_id in candidate.depends_on_candidate_ids:
+                if dependency_id in queued:
+                    visit(dependency_id)
+                    if dependency_id in errors:
+                        errors[candidate_id] = (
+                            f"candidate dependency is not admissible: {dependency_id}"
+                        )
+                elif not self._accepted_structural_candidate(dependency_id):
+                    errors[candidate_id] = (
+                        f"candidate dependency is missing or not accepted: {dependency_id}"
+                    )
+            visiting.pop()
+            visited.add(candidate_id)
+            if candidate_id not in errors:
+                ordered.append(candidate_id)
+
+        for candidate_id in queued:
+            visit(candidate_id)
+        return tuple(ordered), errors
+
     def run_structural_maintenance_cycle(
         self,
         *,
-        holdout_inputs_by_candidate: Mapping[
-            str, Sequence[Mapping[str, torch.Tensor]]
-        ],
-        expected_activities_by_candidate: Mapping[
-            str, Sequence[Mapping[str, torch.Tensor]]
-        ],
+        holdout_inputs_by_candidate: Mapping[str, Sequence[Any]],
+        expected_activities_by_candidate: Mapping[str, Sequence[Any]],
         candidate_ids: Sequence[str] | None = None,
     ) -> tuple[StructuralMaintenanceResult, ...]:
         """Process candidates independently through materialize/validate/commit gates."""
@@ -480,8 +681,43 @@ class TSKV8Adapter(Taiji):
             if candidate_ids is None
             else tuple(str(item) for item in candidate_ids)
         )
+        ordered_ids, preflight_errors = self._prepare_structural_maintenance_cycle(ids)
+        execution_ids = ordered_ids + tuple(
+            candidate_id for candidate_id in ids if candidate_id not in ordered_ids
+        )
         results: list[StructuralMaintenanceResult] = []
-        for candidate_id in ids:
+        results_by_candidate: dict[str, StructuralMaintenanceResult] = {}
+        for candidate_id in execution_ids:
+            if candidate_id in preflight_errors:
+                result = StructuralMaintenanceResult(
+                    candidate_id=candidate_id,
+                    proposal_id=self._structural_candidate_proposals.get(candidate_id),
+                    status="failed_closed",
+                    error=preflight_errors[candidate_id],
+                )
+                self._record_structural_maintenance_result(result)
+                results.append(result)
+                results_by_candidate[candidate_id] = result
+                continue
+            candidate = self._structural_proposal_candidates.get(candidate_id)
+            blocked_dependency = None
+            if candidate is not None:
+                for dependency_id in candidate.depends_on_candidate_ids:
+                    dependency_result = results_by_candidate.get(dependency_id)
+                    if dependency_result is not None and dependency_result.status != "committed":
+                        blocked_dependency = dependency_id
+                        break
+            if blocked_dependency is not None:
+                result = StructuralMaintenanceResult(
+                    candidate_id=candidate_id,
+                    proposal_id=self._structural_candidate_proposals.get(candidate_id),
+                    status="failed_closed",
+                    error=f"candidate dependency did not commit: {blocked_dependency}",
+                )
+                self._record_structural_maintenance_result(result)
+                results.append(result)
+                results_by_candidate[candidate_id] = result
+                continue
             holdout_inputs = holdout_inputs_by_candidate.get(candidate_id)
             expected_activities = expected_activities_by_candidate.get(candidate_id)
             if not holdout_inputs or not expected_activities:
@@ -493,6 +729,7 @@ class TSKV8Adapter(Taiji):
                 )
                 self._record_structural_maintenance_result(result)
                 results.append(result)
+                results_by_candidate[candidate_id] = result
                 continue
             try:
                 proposal = self.materialize_structural_candidate(candidate_id)
@@ -507,6 +744,7 @@ class TSKV8Adapter(Taiji):
                     )
                     self._record_structural_maintenance_result(result)
                     results.append(result)
+                    results_by_candidate[candidate_id] = result
                     continue
                 validated = self.validate_structural_candidate_holdout(
                     candidate_id,
@@ -538,6 +776,7 @@ class TSKV8Adapter(Taiji):
                 )
             self._record_structural_maintenance_result(result)
             results.append(result)
+            results_by_candidate[candidate_id] = result
         return tuple(results)
 
     @staticmethod
@@ -1042,6 +1281,137 @@ class TSKV8Adapter(Taiji):
         if region.region_id in self._neuron_regions:
             raise ValueError(f"adaptive neuron region already attached: {region.region_id}")
         self._neuron_regions[region.region_id] = region
+
+    def step_adaptive_neuron_region(
+        self,
+        region_id: str,
+        external_input: torch.Tensor,
+        *,
+        expected_activity: torch.Tensor | None = None,
+        holdout: bool = False,
+    ) -> torch.Tensor:
+        """Run one standalone native neuron tick and emit structural evidence.
+
+        A standalone region is a valid native substrate, not a test-only
+        topology object.  Runtime evidence can therefore request one new
+        neuron through the same candidate/holdout/ledger path used by
+        cross-region networks, while the live region remains unchanged until
+        a separate commit.
+        """
+
+        try:
+            region = self._neuron_regions[str(region_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron region: {region_id}") from exc
+        activity = region.step(external_input)
+        self._structural_runtime_tick += 1
+        runtime_tick = self._structural_runtime_tick
+        resource_state = self._structural_runtime_resource_state()
+        resource_pressure = 1.0 - resource_state
+        usage = float(torch.mean(torch.abs(activity)).clamp(0.0, 1.0).item())
+        prediction_error: float | None = None
+        learning_gain = 0.0
+        holdout_transfer = 0.0
+        error_key = f"standalone:{region.region_id}"
+        if expected_activity is not None:
+            expected_value = expected_activity.to(activity.device)
+            if expected_value.shape != activity.shape:
+                raise ValueError(
+                    f"standalone activity shape mismatch for region {region.region_id}"
+                )
+            prediction_error = float(
+                torch.mean(torch.abs(activity - expected_value)).clamp(0.0, 1.0).item()
+            )
+            previous_error = self._structural_runtime_previous_errors.get(error_key)
+            if previous_error is not None:
+                learning_gain = max(0.0, min(1.0, previous_error - prediction_error))
+            self._structural_runtime_previous_errors[error_key] = prediction_error
+            if holdout:
+                holdout_transfer = 1.0 - prediction_error
+
+            if self._structural_growth_controller is not None:
+                growth_decision = self._structural_growth_controller.observe(
+                    region.region_id,
+                    prediction_error=prediction_error,
+                    resource_state=resource_state,
+                    holdout_transfer=holdout_transfer,
+                    evidence_ids=(
+                        f"runtime-structure:{region.region_id}:{runtime_tick}",
+                    ),
+                )
+                if growth_decision.should_grow:
+                    unit_id = self._structural_growth_controller.next_unit_id(
+                        region.region_id,
+                        region.unit_ids,
+                    )
+                    self._queue_structural_proposal_candidate(
+                        StructuralProposalCandidate(
+                            candidate_id=(
+                                f"candidate:standalone:{region.region_id}:add:"
+                                f"{growth_decision.proposal_ordinal}"
+                            ),
+                            network_id=f"standalone:{region.region_id}",
+                            target_kind="neuron",
+                            operation="add",
+                            substrate_ids=(region.region_id,),
+                            evidence_ids=growth_decision.evidence_ids,
+                            source_tick=runtime_tick,
+                            priority=min(
+                                1.0,
+                                growth_decision.error_ema
+                                * max(growth_decision.holdout_transfer_ema, 0.0),
+                            ),
+                            specification=self._candidate_specification(
+                                region_id=region.region_id,
+                                unit_id=unit_id,
+                            ),
+                            resource_cost=(
+                                self._structural_growth_controller.dynamics.growth_resource_cost
+                            ),
+                        )
+                    )
+
+        evidence_id = f"runtime-structure:{region.region_id}:{runtime_tick}"
+        if self._structural_pruning_controller is not None:
+            self._structural_pruning_controller.observe_substrate(
+                region.region_id,
+                usage=usage,
+                resource_pressure=resource_pressure,
+                learning_gain=learning_gain,
+                evidence_ids=(evidence_id,),
+            )
+        observation = StructuralRuntimeObservation(
+            network_id=f"standalone:{region.region_id}",
+            region_id=region.region_id,
+            tick=runtime_tick,
+            usage=usage,
+            resource_pressure=resource_pressure,
+            prediction_error=prediction_error,
+            learning_gain=learning_gain,
+            holdout_transfer=holdout_transfer,
+            evidence_id=evidence_id,
+        )
+        self._structural_runtime_observations.append(observation)
+        self._structural_runtime_observations = self._structural_runtime_observations[
+            -self._lineage_limit() :
+        ]
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                stage="structural-observation",
+                resource_utilization=resource_pressure,
+                last_update_source="runtime-structural-observation",
+                last_validation_status="pending",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    evidence_id,
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return activity
 
     def attach_structural_growth_controller(
         self,

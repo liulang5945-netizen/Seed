@@ -11,6 +11,11 @@
     "growth_controller_runtime_ownership",
     "pruning_controller_runtime_ownership",
     "route_credit",
+    "standalone_neuron_tick",
+    "direct_neuron_birth_candidate",
+    "direct_neuron_birth_holdout",
+    "candidate_dependency_order",
+    "candidate_conflict_fail_closed",
     "checkpoint_continuation",
     "topology_no_implicit_mutation"
   ],
@@ -33,8 +38,15 @@
       "cycle_topology": true,
       "route_evidence": true,
       "restored_topology": true,
-      "checkpoint": true
+      "checkpoint": true,
+      "direct_add_candidate": true,
+      "direct_add_holdout": true,
+      "direct_add_commit": true,
+      "direct_add_rollback": true,
+      "direct_add_checkpoint": true,
+      "dependency_fail_closed": true,
+      "conflict_fail_closed": true
     },
-    "criterion": "real native network ticks must emit checkpointable activity, prediction-error, learning-gain and resource observations; attached structural organs and route credit must continue across checkpoint, while topology remains unchanged until a separate holdout/budget/trial/rollback transaction commits it"
+    "criterion": "real native network ticks must emit checkpointable activity, prediction-error, learning-gain and resource observations; attached structural organs and route credit must continue across checkpoint, while topology remains unchanged until a separate holdout/budget/trial/rollback transaction commits it; standalone native neuron ticks must use the same governed birth path"
   }
 }

@@ -17,6 +17,13 @@
     ],
     "maintenance_cycle_status": "committed",
     "maintenance_cycle_rolled_back": true,
+    "direct_add_candidate": "candidate:standalone:adaptive.cortex:add:1",
+    "direct_add_holdout_validated": true,
+    "direct_add_committed": true,
+    "direct_add_rolled_back": true,
+    "direct_add_checkpoint": true,
+    "dependency_fail_closed": true,
+    "conflict_fail_closed": true,
     "route_evidence_count": 2,
     "checkpoint_continuation": true,
     "checkpoint_checks": {
@@ -48,9 +55,16 @@
       "cycle_topology": true,
       "route_evidence": true,
       "restored_topology": true,
-      "checkpoint": true
+      "checkpoint": true,
+      "direct_add_candidate": true,
+      "direct_add_holdout": true,
+      "direct_add_commit": true,
+      "direct_add_rollback": true,
+      "direct_add_checkpoint": true,
+      "dependency_fail_closed": true,
+      "conflict_fail_closed": true
     },
-    "criterion": "real native network ticks must emit checkpointable activity, prediction-error, learning-gain and resource observations; attached structural organs and route credit must continue across checkpoint, while topology remains unchanged until a separate holdout/budget/trial/rollback transaction commits it"
+    "criterion": "real native network ticks must emit checkpointable activity, prediction-error, learning-gain and resource observations; attached structural organs and route credit must continue across checkpoint, while topology remains unchanged until a separate holdout/budget/trial/rollback transaction commits it; standalone native neuron ticks must use the same governed birth path"
   },
   "boundary": "This gate proves runtime evidence ownership and checkpoint continuation. It does not claim that a tick may bypass holdout validation, resource budget, trial checkpoint or reverse rollback to mutate live topology."
 }

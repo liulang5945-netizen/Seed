@@ -554,4 +554,6 @@ P4 的最小真实经历边界已落地：
 
 **已完成：candidate queue 已与真实 holdout 数据绑定为逐项 fail-closed maintenance cycle；两个 runtime candidates 完成 materialize、holdout、commit、rollback，缺数据/异常/预算不足不会绕过 ledger，`StructuralMaintenanceResult` 随 native checkpoint 恢复。**
 
-**下一步：把直接 neuron birth (`add`) 纳入同一 candidate contract，并验证候选之间依赖顺序与冲突的 fail-closed 行为。**
+**已完成：直接 neuron birth (`add`) 已纳入同一 candidate contract；`TSKV8Adapter.step_adaptive_neuron_region()` 从真实 standalone region tick 生成带 substrate/evidence/source tick/priority/resource cost 的候选，统一 materialize、holdout validator、commit/rollback dispatcher 和 native checkpoint 均已通过 `reports/taiji_runtime_structure_20260826.json` 的 direct-add 子门禁。**
+
+**当前唯一下一步：为 maintenance cycle 增加显式 candidate dependency/conflict 判定；同一 substrate 的竞争变更、父子拓扑顺序和已失效候选必须逐项 fail-closed，不能依赖异常碰撞来兜底。**
