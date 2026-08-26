@@ -141,4 +141,9 @@ runtime clock、观测历史、controller state 与跨 tick error continuity；r
 `StructuralProposalCandidate` 队列也已完成：真实 tick 可产生 split、region/connection prune 和
 兼容 region merge 候选，候选含稳定 substrate、evidence、source tick、priority、参数和 resource
 cost，并支持 checkpoint 恢复与去重；candidate 仍不会直接改变 live topology。下一步转为将候选
-显式 materialize 为统一 `StructuralTopologyProposal`。
+显式 materialize 为统一 `StructuralTopologyProposal`。该 materialization 已完成：candidate 可
+幂等地产生 pending proposal，candidate→proposal lineage 纳入 native checkpoint，且不改变
+live topology。统一 holdout validator dispatch 也已完成：split、region-prune、connection-prune
+和 merge 按 topology role 复用现有验证器，验证只更新 pending proposal，不修改 live topology；
+未验证 candidate 仍会被 commit gate 阻断。下一步转为统一 commit dispatcher，集中执行 budget、
+trial checkpoint 和 reverse rollback。

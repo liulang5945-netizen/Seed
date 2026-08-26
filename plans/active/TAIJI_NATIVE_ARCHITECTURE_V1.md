@@ -637,7 +637,13 @@ taiji/
 > `StructuralProposalCandidate` 已由真实 tick 生成并 checkpoint：候选保存 split、region/connection
 > prune 或兼容 region merge 的稳定 substrate、证据、优先级、参数和资源成本，并做 substrate
 > 去重与容量边界；candidate 仍不是 live proposal。下一入口是把候选显式 materialize 为
-> `StructuralTopologyProposal`，再交给统一 ledger 验证和提交。
+> `StructuralTopologyProposal`，再交给统一 ledger 验证和提交。该 materialization 已完成且可
+> checkpoint/idempotent recovery：它只登记 pending proposal，不改变 live topology，并保存
+> candidate→proposal 映射。下一入口是为 split/prune/merge candidate 接通统一 holdout validator
+> dispatch，禁止未验证 candidate 进入 commit。该 dispatch 已完成，按 proposal topology role
+> 复用现有 split、region-prune、connection-prune 和 merge holdout gate；只写入 validation
+> score/status，不改变 live topology。下一入口是统一 commit dispatcher，继续保留 budget、trial
+> roundtrip 和 reverse rollback。
 
 本步设计已收敛并通过 Gate：新增独立的 `CrossRegionCooperationLearner`，为每条显式跨区连接维护
 可 checkpoint 的 prediction-error EMA、holdout-transfer EMA、resource-state EMA、证据次数
