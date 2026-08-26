@@ -94,7 +94,9 @@ from .semantic_memory import SemanticMemoryLearner
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
 from .structural_growth import (
     AdaptiveStructuralGrowthController,
+    AdaptiveStructuralPruningController,
     StructuralGrowthDecision,
+    StructuralPruningDecision,
 )
 from .workspace import WorkspaceRouter
 from .world_learning import WorldDynamicsLearner, WorldSchema
@@ -147,9 +149,11 @@ class TSKV8Adapter(Taiji):
         self._growth_request_snapshots: dict[str, dict[str, Any]] = {}
         self._topology_proposals: dict[str, StructuralTopologyProposal] = {}
         self._topology_parent_snapshots: dict[str, dict[str, Any]] = {}
+        self._topology_network_ids: dict[str, str] = {}
         self._neuron_regions: dict[str, AdaptiveNeuronRegion] = {}
         self._neuron_networks: dict[str, AdaptiveNeuronNetwork] = {}
         self._structural_growth_controller: AdaptiveStructuralGrowthController | None = None
+        self._structural_pruning_controller: AdaptiveStructuralPruningController | None = None
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
@@ -248,6 +252,12 @@ class TSKV8Adapter(Taiji):
         """Return the optional substrate-driven structural development organ."""
 
         return self._structural_growth_controller
+
+    @property
+    def structural_pruning_controller(self) -> AdaptiveStructuralPruningController | None:
+        """Return the optional substrate-driven structural pruning organ."""
+
+        return self._structural_pruning_controller
 
     @staticmethod
     def _growth_request_identity(
@@ -476,11 +486,21 @@ class TSKV8Adapter(Taiji):
         consume_budget: bool,
         evidence_id: str,
         source: str = "synapse-topology-rewire",
+        counter: str = "growth_count",
     ) -> None:
+        if counter not in {"growth_count", "prune_count", "split_merge_count"}:
+            raise ValueError(f"unsupported topology development counter: {counter}")
         previous = self._cognitive_state.development
         budget = int(previous.structural_budget)
         if consume_budget:
             budget -= int(proposal.resource_cost)
+        counter_updates = {
+            "growth_count": previous.growth_count,
+            "prune_count": previous.prune_count,
+            "split_merge_count": previous.split_merge_count,
+        }
+        if consume_budget:
+            counter_updates[counter] += int(proposal.requested_units)
         self._cognitive_state = replace(
             self._cognitive_state,
             development=replace(
@@ -501,11 +521,9 @@ class TSKV8Adapter(Taiji):
                     evidence_id,
                     limit=self._lineage_limit(),
                 ),
-                growth_count=(
-                    previous.growth_count + int(proposal.requested_units)
-                    if consume_budget
-                    else previous.growth_count
-                ),
+                growth_count=counter_updates["growth_count"],
+                prune_count=counter_updates["prune_count"],
+                split_merge_count=counter_updates["split_merge_count"],
                 lineage=self._bounded_ids(
                     previous.lineage,
                     proposal.proposal_id,
@@ -758,6 +776,21 @@ class TSKV8Adapter(Taiji):
                 "controller must be an AdaptiveStructuralGrowthController or None"
             )
         self._structural_growth_controller = controller
+
+    def attach_structural_pruning_controller(
+        self,
+        controller: AdaptiveStructuralPruningController | None,
+    ) -> None:
+        """Attach or remove the substrate-only structural pruning organ."""
+
+        if controller is not None and not isinstance(
+            controller,
+            AdaptiveStructuralPruningController,
+        ):
+            raise TypeError(
+                "controller must be an AdaptiveStructuralPruningController or None"
+            )
+        self._structural_pruning_controller = controller
 
     def propose_neuron_growth_from_error(
         self,
@@ -1033,6 +1066,328 @@ class TSKV8Adapter(Taiji):
                     limit=self._lineage_limit(),
                 ),
                 growth_count=max(0, previous.growth_count - proposal.requested_units),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    key,
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return True
+
+    def propose_region_prune_from_underuse(
+        self,
+        *,
+        network_id: str,
+        region_id: str,
+        usage: float,
+        resource_pressure: float,
+        learning_gain: float,
+        evidence_ids: Sequence[str],
+    ) -> StructuralTopologyProposal | None:
+        """Turn persistent underuse and resource pressure into a prune proposal."""
+
+        if self._structural_pruning_controller is None:
+            raise RuntimeError("structural pruning controller is not attached")
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        region_key = str(region_id)
+        if region_key not in network.region_ids:
+            raise ValueError(f"unknown adaptive network region: {region_id}")
+        decision: StructuralPruningDecision = self._structural_pruning_controller.observe(
+            region_key,
+            usage=usage,
+            resource_pressure=resource_pressure,
+            learning_gain=learning_gain,
+            evidence_ids=evidence_ids,
+        )
+        if not decision.should_prune:
+            return None
+        proposal = network.propose_region_prune(
+            region_id=region_key,
+            evidence_ids=decision.evidence_ids,
+            parent_checkpoint_id=(
+                f"region-prune-signal:{region_key}:{decision.proposal_ordinal}"
+            ),
+            resource_cost=self._structural_pruning_controller.dynamics.pruning_resource_cost,
+        )
+        self._topology_proposals[proposal.proposal_id] = proposal
+        self._topology_network_ids[proposal.proposal_id] = str(network_id)
+        return proposal
+
+    def validate_region_prune_holdout(
+        self,
+        *,
+        network_id: str,
+        proposal_id: str,
+        holdout_inputs: Sequence[Mapping[str, torch.Tensor]],
+        expected_activities: Sequence[Mapping[str, torch.Tensor]],
+    ) -> bool:
+        """Validate that removing a region does not regress unseen network behavior."""
+
+        if self._structural_pruning_controller is None:
+            raise RuntimeError("structural pruning controller is not attached")
+        proposal = self._topology_proposals.get(str(proposal_id))
+        if (
+            proposal is None
+            or proposal.status != "pending"
+            or proposal.target_kind != "region"
+            or proposal.operation != "prune"
+            or dict(proposal.specification).get("topology_role") != "region_prune"
+        ):
+            raise ValueError("proposal is not a pending region prune")
+        if len(holdout_inputs) == 0 or len(holdout_inputs) != len(expected_activities):
+            raise ValueError("region prune holdout inputs and expected activities must have equal size")
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        if self._topology_network_ids.get(str(proposal_id)) != str(network_id):
+            raise ValueError("region prune proposal belongs to another network")
+        payload = network.to_payload()
+        intact = AdaptiveNeuronNetwork.from_payload(
+            payload,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        pruned = AdaptiveNeuronNetwork.from_payload(
+            payload,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        pruned.apply_region_prune(proposal)
+        expected_region_ids = set(pruned.region_ids)
+        baseline_errors: list[float] = []
+        pruned_errors: list[float] = []
+        for inputs, expected in zip(holdout_inputs, expected_activities, strict=True):
+            if not expected or not set(expected).issubset(expected_region_ids):
+                raise ValueError("region prune expected activities must target surviving regions")
+            intact_activities = intact.step(
+                inputs,
+                connection_ids=intact.connection_ids,
+            )
+            pruned_activities = pruned.step(
+                inputs,
+                connection_ids=pruned.connection_ids,
+            )
+            for expected_region_id, expected_activity in expected.items():
+                expected_value = expected_activity.to(self.device)
+                intact_activity = intact_activities[expected_region_id]
+                pruned_activity = pruned_activities[expected_region_id]
+                if expected_value.shape != intact_activity.shape:
+                    raise ValueError(
+                        f"region prune expected activity shape mismatch for {expected_region_id}"
+                    )
+                baseline_errors.append(
+                    float(
+                        torch.mean(torch.abs(intact_activity - expected_value))
+                        .clamp(0.0, 1.0)
+                        .item()
+                    )
+                )
+                pruned_errors.append(
+                    float(
+                        torch.mean(torch.abs(pruned_activity - expected_value))
+                        .clamp(0.0, 1.0)
+                        .item()
+                    )
+                )
+        if not baseline_errors:
+            raise ValueError("region prune holdout must contain at least one expected activity")
+        baseline_error = sum(baseline_errors) / len(baseline_errors)
+        pruned_error = sum(pruned_errors) / len(pruned_errors)
+        regression = max(0.0, pruned_error - baseline_error)
+        score = max(0.0, min(1.0, 1.0 - regression))
+        maximum_regression = self._structural_pruning_controller.dynamics.maximum_holdout_regression
+        validated = regression <= float(maximum_regression)
+        self._topology_proposals[str(proposal_id)] = replace(
+            proposal,
+            validation_score=score,
+        )
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                last_update_source="region-prune-holdout-validation",
+                last_validation_status="validated" if validated else "rejected",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    f"holdout:{proposal_id}",
+                    limit=self._lineage_limit(),
+                ),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    f"holdout:{proposal_id}",
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return validated
+
+    def commit_region_prune(
+        self,
+        network_id: str,
+        proposal: StructuralTopologyProposal,
+    ) -> bool:
+        """Commit a validated region removal through the runtime ledger."""
+
+        existing = self._topology_proposals.get(proposal.proposal_id)
+        if existing is not None:
+            if existing.status == "accepted":
+                return True
+            if existing.status == "rejected" or existing.status == "rolled_back":
+                return False
+            proposal = existing
+        if proposal.status != "pending":
+            raise ValueError("only pending region prune proposals can be committed")
+        if (
+            proposal.target_kind != "region"
+            or proposal.operation != "prune"
+            or dict(proposal.specification).get("topology_role") != "region_prune"
+        ):
+            raise ValueError("proposal is not a region prune")
+        if self._structural_pruning_controller is None:
+            raise RuntimeError("structural pruning controller is not attached")
+        if self._topology_network_ids.get(proposal.proposal_id) not in {None, str(network_id)}:
+            raise ValueError("region prune proposal belongs to another network")
+        minimum_score = 1.0 - float(
+            self._structural_pruning_controller.dynamics.maximum_holdout_regression
+        )
+        if proposal.validation_score < minimum_score:
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(
+                    proposal.evidence_ids[0]
+                    if proposal.evidence_ids
+                    else proposal.proposal_id
+                ),
+                source="region-topology-pruning",
+            )
+            return False
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        if self._cognitive_state.development.structural_budget < proposal.resource_cost:
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(
+                    proposal.evidence_ids[0]
+                    if proposal.evidence_ids
+                    else proposal.proposal_id
+                ),
+                source="region-topology-pruning",
+            )
+            return False
+        parent_snapshot = network.to_payload()
+        try:
+            network.apply_region_prune(proposal)
+            accepted_snapshot = network.to_payload()
+            trial = AdaptiveNeuronNetwork.from_payload(
+                accepted_snapshot,
+                generator=self._checkpoint_region_generator(),
+                device=self.device,
+            )
+            if (
+                trial.region_ids != network.region_ids
+                or trial.execution_order != network.execution_order
+                or trial.connection_ids != network.connection_ids
+            ):
+                raise ValueError("region prune checkpoint roundtrip changed topology identities")
+        except (IndexError, KeyError, RuntimeError, ValueError):
+            self._neuron_networks[str(network_id)] = AdaptiveNeuronNetwork.from_payload(
+                parent_snapshot,
+                generator=self._checkpoint_region_generator(),
+                device=self.device,
+            )
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(
+                    proposal.evidence_ids[0]
+                    if proposal.evidence_ids
+                    else proposal.proposal_id
+                ),
+                source="region-topology-pruning",
+            )
+            return False
+        accepted = replace(proposal, status="accepted")
+        self._topology_proposals[proposal.proposal_id] = accepted
+        self._topology_parent_snapshots[proposal.proposal_id] = parent_snapshot
+        self._topology_network_ids[proposal.proposal_id] = str(network_id)
+        self._record_topology_development(
+            accepted,
+            consume_budget=True,
+            evidence_id=(
+                proposal.evidence_ids[0]
+                if proposal.evidence_ids
+                else proposal.proposal_id
+            ),
+            source="region-topology-pruning",
+            counter="prune_count",
+        )
+        return True
+
+    def rollback_region_prune(self, proposal_id: str) -> bool:
+        """Rollback only the latest accepted region removal."""
+
+        key = str(proposal_id)
+        proposal = self._topology_proposals.get(key)
+        snapshot = self._topology_parent_snapshots.get(key)
+        network_id = self._topology_network_ids.get(key)
+        if (
+            proposal is None
+            or proposal.status != "accepted"
+            or proposal.target_kind != "region"
+            or proposal.operation != "prune"
+            or dict(proposal.specification).get("topology_role") != "region_prune"
+            or snapshot is None
+            or network_id is None
+        ):
+            return False
+        active = [
+            item.proposal_id
+            for item in self._topology_proposals.values()
+            if item.status == "accepted" and item.proposal_id in self._topology_parent_snapshots
+        ]
+        if not active or active[-1] != key:
+            return False
+        self._neuron_networks[network_id] = AdaptiveNeuronNetwork.from_payload(
+            snapshot,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        rolled_back = replace(proposal, status="rolled_back", validation_score=0.0)
+        self._topology_proposals[key] = rolled_back
+        self._topology_parent_snapshots.pop(key, None)
+        self._topology_network_ids.pop(key, None)
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                structural_budget=previous.structural_budget + proposal.resource_cost,
+                last_update_source="region-topology-prune-rollback",
+                last_validation_status="rolled_back",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    key,
+                    limit=self._lineage_limit(),
+                ),
+                prune_count=max(0, previous.prune_count - proposal.requested_units),
                 lineage=self._bounded_ids(
                     previous.lineage,
                     key,
@@ -1577,11 +1932,13 @@ class TSKV8Adapter(Taiji):
                 proposal.to_payload() for proposal in self._topology_proposals.values()
             ],
             "snapshots": dict(self._topology_parent_snapshots),
+            "network_ids": dict(self._topology_network_ids),
         }
 
     def _restore_topology_proposals(self, payload: Any) -> None:
         self._topology_proposals = {}
         self._topology_parent_snapshots = {}
+        self._topology_network_ids = {}
         if not isinstance(payload, dict):
             return
         proposals = payload.get("proposals", ())
@@ -1599,6 +1956,13 @@ class TSKV8Adapter(Taiji):
             str(proposal_id): dict(snapshot)
             for proposal_id, snapshot in snapshots.items()
             if isinstance(snapshot, dict)
+        }
+        network_ids = payload.get("network_ids", {})
+        if not isinstance(network_ids, dict):
+            raise ValueError("topology proposal checkpoint network_ids must be a mapping")
+        self._topology_network_ids = {
+            str(proposal_id): str(network_id)
+            for proposal_id, network_id in network_ids.items()
         }
 
     def _neuron_regions_checkpoint(self) -> dict[str, Any]:
@@ -1664,6 +2028,20 @@ class TSKV8Adapter(Taiji):
             None
             if payload is None
             else AdaptiveStructuralGrowthController.from_payload(payload)
+        )
+
+    def _structural_pruning_checkpoint(self) -> dict[str, Any] | None:
+        return (
+            None
+            if self._structural_pruning_controller is None
+            else self._structural_pruning_controller.to_payload()
+        )
+
+    def _restore_structural_pruning(self, payload: Any) -> None:
+        self._structural_pruning_controller = (
+            None
+            if payload is None
+            else AdaptiveStructuralPruningController.from_payload(payload)
         )
 
     def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:
@@ -1737,7 +2115,9 @@ class TSKV8Adapter(Taiji):
         if learner is not None and not isinstance(learner, ProceduralMemoryLearner):
             raise TypeError("learner must be a ProceduralMemoryLearner or None")
         if learner is not None and learner.cue_dim != self.perception.feature_dim:
-            raise ValueError("procedural learner cue_dim must match the perception feature dimension")
+            raise ValueError(
+                "procedural learner cue_dim must match the perception feature dimension"
+            )
         self._procedural_memory = learner
 
     def consolidate_procedural_memory(
@@ -1755,9 +2135,7 @@ class TSKV8Adapter(Taiji):
             learning_rate=learning_rate,
         )
 
-    def attach_homeostatic_controller(
-        self, controller: HomeostaticController | None
-    ) -> None:
+    def attach_homeostatic_controller(self, controller: HomeostaticController | None) -> None:
         """Attach the event-driven controller for Taiji internal drives."""
 
         if controller is not None and not isinstance(controller, HomeostaticController):
@@ -1801,9 +2179,7 @@ class TSKV8Adapter(Taiji):
             raise TypeError("controller must be an ExecutiveController or None")
         self._executive = None if controller is None else controller.to(self.device)
 
-    def attach_affordance_features(
-        self, source: LearnedAffordanceFeatures | None
-    ) -> None:
+    def attach_affordance_features(self, source: LearnedAffordanceFeatures | None) -> None:
         """Attach the learned numeric feature source for world affordances."""
 
         if source is not None and not isinstance(source, LearnedAffordanceFeatures):
@@ -1814,9 +2190,7 @@ class TSKV8Adapter(Taiji):
             )
         self._affordance_features = None if source is None else source.to(self.device)
         self._affordance_grounding = (
-            None
-            if source is None
-            else WorldAffordanceGroundingProducer(source.input_dim)
+            None if source is None else WorldAffordanceGroundingProducer(source.input_dim)
         )
         self._cognitive_state = replace(
             self._cognitive_state,
@@ -1866,9 +2240,7 @@ class TSKV8Adapter(Taiji):
         if self._executive is None:
             raise RuntimeError("executive controller is not attached")
         candidates = (
-            self.synthesize_executive_candidates()
-            if candidates is None
-            else tuple(candidates)
+            self.synthesize_executive_candidates() if candidates is None else tuple(candidates)
         )
         context = ExecutiveContext.from_state(
             self._cognitive_state,
@@ -1974,14 +2346,12 @@ class TSKV8Adapter(Taiji):
                 if affordance_context is None:
                     affordance_context = self._affordance_context()
                 percept_features, world_latent, world_uncertainty = affordance_context
-                self._last_affordance_prediction_error = (
-                    self._affordance_features.online_update(
-                        affordance,
-                        outcome.reward,
-                        percept_features=percept_features,
-                        world_latent=world_latent,
-                        world_uncertainty=world_uncertainty,
-                    )
+                self._last_affordance_prediction_error = self._affordance_features.online_update(
+                    affordance,
+                    outcome.reward,
+                    percept_features=percept_features,
+                    world_latent=world_latent,
+                    world_uncertainty=world_uncertainty,
                 )
         self._cognitive_state = replace(self._cognitive_state, outcome=outcome)
         return error
@@ -2004,7 +2374,11 @@ class TSKV8Adapter(Taiji):
         self._last_delayed_executive_prediction_error = error
         self._last_executive_prediction_error = error
         self._last_affordance_prediction_error = None
-        if apply_learning and self._affordance_features is not None and pending.affordance is not None:
+        if (
+            apply_learning
+            and self._affordance_features is not None
+            and pending.affordance is not None
+        ):
             if pending.percept_features is None or pending.world_latent is None:
                 raise RuntimeError("delayed affordance credit is missing its causal context")
             self._last_affordance_prediction_error = self._affordance_features.online_update(
@@ -2049,11 +2423,15 @@ class TSKV8Adapter(Taiji):
                 action_intent=decision.action_intent,
             )
         parameters = selected.action_intent.parameters
-        selected_symbol = parameters.get("action_symbol") if action_symbol is None else action_symbol
+        selected_symbol = (
+            parameters.get("action_symbol") if action_symbol is None else action_symbol
+        )
         if isinstance(selected_symbol, bool) or not isinstance(selected_symbol, int):
             raise ValueError("executive ActionIntent requires an integer action_symbol")
         available = parameters.get("available_actions")
-        if available is not None and int(selected_symbol) not in tuple(int(item) for item in available):
+        if available is not None and int(selected_symbol) not in tuple(
+            int(item) for item in available
+        ):
             raise ValueError("executive action_symbol is not in the ActionIntent available_actions")
         world_action = selected.to_world_action(
             tick=self._cognitive_state.world.tick,
@@ -2120,18 +2498,12 @@ class TSKV8Adapter(Taiji):
                 decision=selected,
                 affordance=selected_affordance,
                 percept_features=(
-                    None
-                    if affordance_context is None
-                    else affordance_context[0].detach().clone()
+                    None if affordance_context is None else affordance_context[0].detach().clone()
                 ),
                 world_latent=(
-                    None
-                    if affordance_context is None
-                    else affordance_context[1].detach().clone()
+                    None if affordance_context is None else affordance_context[1].detach().clone()
                 ),
-                world_uncertainty=(
-                    0.0 if affordance_context is None else affordance_context[2]
-                ),
+                world_uncertainty=(0.0 if affordance_context is None else affordance_context[2]),
                 learn=learn,
             )
         replan_requested = self._replan_required
@@ -2181,9 +2553,7 @@ class TSKV8Adapter(Taiji):
         self._replan_required = False
         return decision
 
-    def attach_generation_controller(
-        self, controller: GenerationController | None
-    ) -> None:
+    def attach_generation_controller(self, controller: GenerationController | None) -> None:
         """Attach the organ bridge for content and structured tool generation."""
 
         if controller is not None and not isinstance(controller, GenerationController):
@@ -2283,7 +2653,9 @@ class TSKV8Adapter(Taiji):
             candidate for candidate in candidates if candidate.candidate_id != previous_id
         )
         if not alternatives:
-            raise RuntimeError("language fallback replanning requires an alternative content candidate")
+            raise RuntimeError(
+                "language fallback replanning requires an alternative content candidate"
+            )
         decision = self.select_content(
             alternatives,
             novelty=novelty,
@@ -2324,9 +2696,7 @@ class TSKV8Adapter(Taiji):
             self._language_backend_registry.validate(organ)
         self._language_organ = organ
 
-    def attach_language_provider_artifact(
-        self, artifact: LanguageProviderArtifact | None
-    ) -> None:
+    def attach_language_provider_artifact(self, artifact: LanguageProviderArtifact | None) -> None:
         """Record an externally loaded provider without importing its runtime."""
 
         if artifact is not None:
@@ -2344,9 +2714,7 @@ class TSKV8Adapter(Taiji):
     def language_provider_artifact(self) -> LanguageProviderArtifact | None:
         return self._language_provider_artifact
 
-    def attach_language_backend_registry(
-        self, registry: LanguageBackendRegistry | None
-    ) -> None:
+    def attach_language_backend_registry(self, registry: LanguageBackendRegistry | None) -> None:
         """Attach descriptors for allowed terminal language-organ backends."""
 
         selected_registry = registry or LanguageBackendRegistry.default()
@@ -2362,7 +2730,11 @@ class TSKV8Adapter(Taiji):
 
     @property
     def last_language_validation(self) -> LanguageValidation | None:
-        return None if self._last_language_emission is None else self._last_language_emission.validation
+        return (
+            None
+            if self._last_language_emission is None
+            else self._last_language_emission.validation
+        )
 
     @property
     def language_fallback_count(self) -> int:
@@ -2712,7 +3084,9 @@ class TSKV8Adapter(Taiji):
         if not isinstance(result, EnvironmentOutcome):
             raise TypeError("environment must return an EnvironmentOutcome")
         if result.world_state is None:
-            raise ValueError("imagined rollout execution requires an EnvironmentOutcome.world_state")
+            raise ValueError(
+                "imagined rollout execution requires an EnvironmentOutcome.world_state"
+            )
         self.settle_action(
             result.reward,
             learn=learn,
@@ -3179,7 +3553,9 @@ class TSKV8Adapter(Taiji):
             raise TypeError("frame must be a Taiji InputFrame")
         if frame.modality not in self.SUPPORTED_INPUT_MODALITIES:
             supported = ", ".join(sorted(self.SUPPORTED_INPUT_MODALITIES))
-            raise ValueError(f"unsupported input modality {frame.modality!r}; supported: {supported}")
+            raise ValueError(
+                f"unsupported input modality {frame.modality!r}; supported: {supported}"
+            )
 
         observations: list[Observation] = []
         percepts: list[Any] = []
@@ -3236,7 +3612,9 @@ class TSKV8Adapter(Taiji):
             raise TypeError("frame must be a Taiji InputFrame")
         if frame.modality not in self.SUPPORTED_INPUT_MODALITIES:
             supported = ", ".join(sorted(self.SUPPORTED_INPUT_MODALITIES))
-            raise ValueError(f"unsupported input modality {frame.modality!r}; supported: {supported}")
+            raise ValueError(
+                f"unsupported input modality {frame.modality!r}; supported: {supported}"
+            )
         return self.generate(
             frame.payload,
             length,
@@ -3286,9 +3664,7 @@ class TSKV8Adapter(Taiji):
                 raise ValueError("procedural action routing requires procedural_action_kinds")
             if self._cognitive_state.percept is None:
                 raise RuntimeError("procedural action routing requires a current perception")
-            predicted_kind = self._procedural_memory.predict(
-                self._cognitive_state.percept.features
-            )
+            predicted_kind = self._procedural_memory.predict(self._cognitive_state.percept.features)
             if predicted_kind not in action_kinds:
                 raise ValueError("procedural learner predicted an unavailable action kind")
         else:
@@ -3310,11 +3686,7 @@ class TSKV8Adapter(Taiji):
             self._state.pending_action = replace(pending, action_symbol=selected_symbol)
             decision = replace(decision, action_symbol=selected_symbol)
         intent_parameters = {
-            **(
-                {}
-                if supplied_world_action is None
-                else dict(supplied_world_action.parameters)
-            ),
+            **({} if supplied_world_action is None else dict(supplied_world_action.parameters)),
             "action_symbol": decision.action_symbol,
             "available_actions": decision.available_actions,
         }
@@ -3434,13 +3806,13 @@ class TSKV8Adapter(Taiji):
                     prediction_record.action
                     if prediction_record is not None
                     else WorldAction(
-                    action_id=intent_id,
-                    kind=intent.kind,
-                    tick=before.tick,
-                    parameters=intent.parameters,
-                    provenance=str(kwargs.get("provenance", "experienced")),
+                        action_id=intent_id,
+                        kind=intent.kind,
+                        tick=before.tick,
+                        parameters=intent.parameters,
+                        provenance=str(kwargs.get("provenance", "experienced")),
                     )
-                    )
+                )
             if prediction_record is None and self._world_dynamics is not None:
                 prediction = self._world_dynamics.predict(before, world_action)
                 prediction_record = WorldPredictionRecord(
@@ -3478,9 +3850,7 @@ class TSKV8Adapter(Taiji):
                     else self._goal_planner.world_prediction_error_threshold(
                         recovery=recovery_state is not None,
                         trigger_error=(
-                            None
-                            if recovery_state is None
-                            else recovery_state.prediction_error
+                            None if recovery_state is None else recovery_state.prediction_error
                         ),
                     )
                 )
@@ -3488,8 +3858,7 @@ class TSKV8Adapter(Taiji):
                     not terminal
                     and self._goal_planner is not None
                     and prediction_record.state_error is not None
-                    and prediction_record.state_error
-                    > world_error_threshold
+                    and prediction_record.state_error > world_error_threshold
                 )
                 if world_model_replan:
                     threshold = float(world_error_threshold)
@@ -3727,6 +4096,7 @@ class TSKV8Adapter(Taiji):
         payload["neuron_regions"] = self._neuron_regions_checkpoint()
         payload["neuron_networks"] = self._neuron_networks_checkpoint()
         payload["structural_growth"] = self._structural_growth_checkpoint()
+        payload["structural_pruning"] = self._structural_pruning_checkpoint()
         payload["online_concept_branches"] = self._online_concept_branches_checkpoint()
         if self._procedural_memory is not None:
             payload["procedural_memory"] = self._procedural_memory.checkpoint()
@@ -3807,6 +4177,7 @@ class TSKV8Adapter(Taiji):
         self._restore_neuron_regions(checkpoint.get("neuron_regions"))
         self._restore_neuron_networks(checkpoint.get("neuron_networks"))
         self._restore_structural_growth(checkpoint.get("structural_growth"))
+        self._restore_structural_pruning(checkpoint.get("structural_pruning"))
         self._restore_online_concept_branches(checkpoint.get("online_concept_branches"))
         self._restore_procedural_memory(checkpoint.get("procedural_memory"))
         self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
@@ -3854,7 +4225,9 @@ class TSKV8Adapter(Taiji):
 
     def _restore_workspace_router(self, payload: Any) -> None:
         self._workspace_router = (
-            None if payload is None else WorkspaceRouter.from_checkpoint(dict(payload), device=self.device)
+            None
+            if payload is None
+            else WorkspaceRouter.from_checkpoint(dict(payload), device=self.device)
         )
 
     def _restore_episodic_memory(self, payload: Any) -> None:
@@ -3893,15 +4266,11 @@ class TSKV8Adapter(Taiji):
 
     def _restore_homeostatic_controller(self, payload: Any) -> None:
         self._homeostatic_controller = (
-            None
-            if payload is None
-            else HomeostaticController.from_checkpoint(dict(payload))
+            None if payload is None else HomeostaticController.from_checkpoint(dict(payload))
         )
 
     def _restore_goal_planner(self, payload: Any) -> None:
-        self._goal_planner = (
-            None if payload is None else GoalPlanner.from_checkpoint(dict(payload))
-        )
+        self._goal_planner = None if payload is None else GoalPlanner.from_checkpoint(dict(payload))
 
     def _restore_affordance_features(self, payload: Any) -> None:
         self._affordance_features = (
@@ -3929,7 +4298,9 @@ class TSKV8Adapter(Taiji):
             if decision is None
             else ExecutiveDecision.from_payload(dict(decision), device=self.device)
         )
-        error = payload.get("last_executive_prediction_error") if isinstance(payload, dict) else None
+        error = (
+            payload.get("last_executive_prediction_error") if isinstance(payload, dict) else None
+        )
         self._last_executive_prediction_error = None if error is None else float(error)
         delayed_error = (
             payload.get("last_delayed_executive_prediction_error")
@@ -3940,18 +4311,14 @@ class TSKV8Adapter(Taiji):
             None if delayed_error is None else float(delayed_error)
         )
         affordance_error = (
-            payload.get("last_affordance_prediction_error")
-            if isinstance(payload, dict)
-            else None
+            payload.get("last_affordance_prediction_error") if isinstance(payload, dict) else None
         )
         self._last_affordance_prediction_error = (
             None if affordance_error is None else float(affordance_error)
         )
         action = payload.get("last_executive_world_action") if isinstance(payload, dict) else None
         self._last_executive_world_action = (
-            None
-            if action is None
-            else WorldAction.from_payload(dict(action), device=self.device)
+            None if action is None else WorldAction.from_payload(dict(action), device=self.device)
         )
         self._restore_pending_executive_credit(
             payload.get("pending_executive_credit") if isinstance(payload, dict) else None
@@ -3963,9 +4330,7 @@ class TSKV8Adapter(Taiji):
             return None
         return {
             "decision": pending.decision.to_payload(),
-            "affordance": (
-                None if pending.affordance is None else pending.affordance.to_payload()
-            ),
+            "affordance": (None if pending.affordance is None else pending.affordance.to_payload()),
             "percept_features": (
                 None
                 if pending.percept_features is None
@@ -3988,15 +4353,11 @@ class TSKV8Adapter(Taiji):
             raise ValueError("pending executive credit checkpoint must be a mapping")
         affordance_payload = payload.get("affordance")
         self._pending_executive_credit = _PendingExecutiveCredit(
-            decision=ExecutiveDecision.from_payload(
-                dict(payload["decision"]), device=self.device
-            ),
+            decision=ExecutiveDecision.from_payload(dict(payload["decision"]), device=self.device),
             affordance=(
                 None
                 if affordance_payload is None
-                else WorldAffordance.from_payload(
-                    dict(affordance_payload), device=self.device
-                )
+                else WorldAffordance.from_payload(dict(affordance_payload), device=self.device)
             ),
             percept_features=(
                 None
@@ -4014,9 +4375,7 @@ class TSKV8Adapter(Taiji):
 
     def _restore_generation_controller(self, payload: Any) -> None:
         self._generation_controller = (
-            None
-            if payload is None
-            else GenerationController.from_checkpoint(dict(payload))
+            None if payload is None else GenerationController.from_checkpoint(dict(payload))
         )
 
     def _restore_generation_trace(self, payload: Any) -> None:
@@ -4033,9 +4392,7 @@ class TSKV8Adapter(Taiji):
     def _restore_content_selection(self, payload: Any) -> None:
         selection = payload.get("last_content_selection") if isinstance(payload, dict) else None
         self._last_content_selection = (
-            None
-            if selection is None
-            else ContentSelectionDecision.from_payload(dict(selection))
+            None if selection is None else ContentSelectionDecision.from_payload(dict(selection))
         )
         error = payload.get("last_content_prediction_error") if isinstance(payload, dict) else None
         self._last_content_prediction_error = None if error is None else float(error)
@@ -4109,13 +4466,9 @@ class TSKV8Adapter(Taiji):
         error = payload.get("last_rollout_prediction_error") if isinstance(payload, dict) else None
         self._last_rollout_prediction_error = None if error is None else float(error)
         confidence = (
-            payload.get("last_rollout_calibrated_confidence")
-            if isinstance(payload, dict)
-            else None
+            payload.get("last_rollout_calibrated_confidence") if isinstance(payload, dict) else None
         )
-        self._last_rollout_calibrated_confidence = (
-            None if confidence is None else float(confidence)
-        )
+        self._last_rollout_calibrated_confidence = None if confidence is None else float(confidence)
 
     def native_checkpoint(self) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
@@ -4135,6 +4488,7 @@ class TSKV8Adapter(Taiji):
         components["neuron_regions"] = self._neuron_regions_checkpoint()
         components["neuron_networks"] = self._neuron_networks_checkpoint()
         components["structural_growth"] = self._structural_growth_checkpoint()
+        components["structural_pruning"] = self._structural_pruning_checkpoint()
         components["online_concept_branches"] = self._online_concept_branches_checkpoint()
         if self._procedural_memory is not None:
             components["procedural_memory"] = self._procedural_memory.checkpoint()
@@ -4168,11 +4522,11 @@ class TSKV8Adapter(Taiji):
             else self._cognitive_state.planning_recovery.to_payload()
         )
         components["last_rollout_prediction_error"] = self._last_rollout_prediction_error
-        components["last_rollout_calibrated_confidence"] = (
-            self._last_rollout_calibrated_confidence
-        )
+        components["last_rollout_calibrated_confidence"] = self._last_rollout_calibrated_confidence
         components["last_generation_trace"] = (
-            None if self._last_generation_trace is None else self._last_generation_trace.to_payload()
+            None
+            if self._last_generation_trace is None
+            else self._last_generation_trace.to_payload()
         )
         components["last_content_selection"] = (
             None
@@ -4227,6 +4581,8 @@ class TSKV8Adapter(Taiji):
         self._restore_topology_proposals(envelope.components.get("topology_proposals"))
         self._restore_neuron_regions(envelope.components.get("neuron_regions"))
         self._restore_neuron_networks(envelope.components.get("neuron_networks"))
+        self._restore_structural_growth(envelope.components.get("structural_growth"))
+        self._restore_structural_pruning(envelope.components.get("structural_pruning"))
         self._restore_online_concept_branches(
             envelope.components.get("online_concept_branches")
         )

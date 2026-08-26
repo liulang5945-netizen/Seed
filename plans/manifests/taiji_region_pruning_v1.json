@@ -1,0 +1,22 @@
+{
+  "format": "taiji-region-pruning-manifest-v1",
+  "task": "resource-aware structural region pruning",
+  "report": "reports/taiji_region_pruning_20260826.json",
+  "seed": 71,
+  "controls": [
+    "persistent_low_usage",
+    "resource_pressure",
+    "learning_stagnation",
+    "unseen_holdout_regression_gate",
+    "budget_validation",
+    "checkpoint_continuation",
+    "owned_connection_removal",
+    "reverse_rollback",
+    "high_gain_suppression",
+    "zero_budget"
+  ],
+  "gate": {
+    "passed": true,
+    "criterion": "persistent low usage, high resource pressure and long-term learning stagnation must emit a non-semantic region prune proposal; unseen-input regression must stay within threshold before ledger commit, checkpoint continuation must preserve the decision, pruning must remove owned connections, reverse rollback must restore the parent topology, high learning gain must suppress pruning, and zero budget must fail closed"
+  }
+}

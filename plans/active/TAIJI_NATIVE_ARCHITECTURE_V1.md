@@ -605,15 +605,17 @@ taiji/
 
 > 实时覆写（2026-08-26）：下方滚动记录中的旧“下一入口”由本段最新 Gate 状态覆盖；
 > synapse topology proposal、runtime topology ledger、neuron growth、cross-region wiring、
-> learning-driven route selection、online credit、region growth 与 post-growth holdout validation
-> 已完成。`AdaptiveNeuronNetwork`
+> learning-driven route selection、online credit、region growth、post-growth holdout validation
+> 与 region retention/pruning 已完成。`AdaptiveNeuronNetwork`
 > 现在可以在稳定区域身份和执行顺序下追加由 substrate 压力触发的 child region；proposal 显式
 > 保存区域动力学、单位身份和 topology role，adapter 通过统一 DevelopmentState ledger 执行
 > 预算、checkpoint trial、功能性 region lesion 与逆向 rollback，并可在新区域后建立显式跨区
 > 稀疏连接。post-growth validation 在 candidate/baseline 副本上比较未见输入误差，只有达到
 > 配置化最小相对增益才允许建立跨区连接；checkpoint continuation 与 holdout 失败阻断均已
-> 覆盖。当前唯一入口转为资源感知的结构保留/剪枝：低使用、长期无增益且移除后 holdout 不
-> 退化的区域或连接才可申请 pruning proposal；继续禁止按 action/intent 表决定增长。
+> 覆盖。region retention/pruning 已通过 `reports/taiji_region_pruning_20260826.json`：低使用、
+> 高资源压力、长期 learning stagnation 且移除后 holdout 不退化的区域才可申请 pruning proposal，
+> 并经统一 budget、checkpoint、所属连接移除和 reverse rollback。当前唯一入口转为独立跨区域
+> connection retention/pruning；继续禁止按 action/intent 表决定结构维护。
 
 本步设计已收敛并通过 Gate：新增独立的 `CrossRegionCooperationLearner`，为每条显式跨区连接维护
 可 checkpoint 的 prediction-error EMA、holdout-transfer EMA、resource-state EMA、证据次数

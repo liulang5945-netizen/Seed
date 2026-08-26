@@ -8,6 +8,7 @@ from dataclasses import asdict, dataclass
 from typing import Any
 
 STRUCTURAL_GROWTH_CHECKPOINT_FORMAT = "taiji-structural-growth-v1"
+STRUCTURAL_PRUNING_CHECKPOINT_FORMAT = "taiji-structural-pruning-v1"
 
 
 def _unit(value: float, name: str) -> float:
@@ -253,4 +254,221 @@ class AdaptiveStructuralGrowthController:
         controller.total_observations = int(payload.get("total_observations", 0))
         if controller.total_observations < 0:
             raise ValueError("structural growth total_observations cannot be negative")
+        return controller
+
+
+@dataclass(frozen=True)
+class StructuralPruningDynamics:
+    """Configurable persistence and evidence policy for structural removal."""
+
+    ema_rate: float = 0.25
+    maximum_usage: float = 0.15
+    minimum_resource_pressure: float = 0.65
+    maximum_learning_gain: float = 0.10
+    required_underuse_steps: int = 3
+    maximum_holdout_regression: float = 0.05
+    pruning_resource_cost: int = 1
+
+    def __post_init__(self) -> None:
+        if not 0.0 < float(self.ema_rate) <= 1.0:
+            raise ValueError("structural pruning ema_rate must be in (0, 1]")
+        _unit(self.maximum_usage, "structural pruning maximum_usage")
+        _unit(
+            self.minimum_resource_pressure,
+            "structural pruning minimum_resource_pressure",
+        )
+        _unit(self.maximum_learning_gain, "structural pruning maximum_learning_gain")
+        if int(self.required_underuse_steps) <= 0:
+            raise ValueError("structural pruning required_underuse_steps must be positive")
+        _unit(
+            self.maximum_holdout_regression,
+            "structural pruning maximum_holdout_regression",
+        )
+        if int(self.pruning_resource_cost) <= 0:
+            raise ValueError("structural pruning resource cost must be positive")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {key: value for key, value in asdict(self).items()}
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> StructuralPruningDynamics:
+        return cls(**dict(payload))
+
+
+@dataclass
+class StructuralPruningRegionState:
+    """Online evidence state for one candidate region."""
+
+    region_id: str
+    usage_ema: float = 1.0
+    resource_pressure_ema: float = 0.0
+    learning_gain_ema: float = 1.0
+    consecutive_underuse_steps: int = 0
+    proposal_count: int = 0
+    observation_count: int = 0
+
+    def __post_init__(self) -> None:
+        if not self.region_id:
+            raise ValueError("structural pruning region_id must not be empty")
+        self.usage_ema = _unit(self.usage_ema, "structural pruning usage_ema")
+        self.resource_pressure_ema = _unit(
+            self.resource_pressure_ema,
+            "structural pruning resource_pressure_ema",
+        )
+        self.learning_gain_ema = _unit(
+            self.learning_gain_ema,
+            "structural pruning learning_gain_ema",
+        )
+        if min(
+            int(self.consecutive_underuse_steps),
+            int(self.proposal_count),
+            int(self.observation_count),
+        ) < 0:
+            raise ValueError("structural pruning counters cannot be negative")
+        self.consecutive_underuse_steps = int(self.consecutive_underuse_steps)
+        self.proposal_count = int(self.proposal_count)
+        self.observation_count = int(self.observation_count)
+
+    def to_payload(self) -> dict[str, Any]:
+        return {key: value for key, value in asdict(self).items()}
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> StructuralPruningRegionState:
+        return cls(
+            region_id=str(payload["region_id"]),
+            usage_ema=float(payload.get("usage_ema", 1.0)),
+            resource_pressure_ema=float(payload.get("resource_pressure_ema", 0.0)),
+            learning_gain_ema=float(payload.get("learning_gain_ema", 1.0)),
+            consecutive_underuse_steps=int(payload.get("consecutive_underuse_steps", 0)),
+            proposal_count=int(payload.get("proposal_count", 0)),
+            observation_count=int(payload.get("observation_count", 0)),
+        )
+
+
+@dataclass(frozen=True)
+class StructuralPruningDecision:
+    """An auditable decision to emit a substrate pruning proposal."""
+
+    region_id: str
+    should_prune: bool
+    proposal_ordinal: int
+    evidence_ids: tuple[str, ...]
+    usage_ema: float
+    resource_pressure_ema: float
+    learning_gain_ema: float
+    consecutive_underuse_steps: int
+
+
+class AdaptiveStructuralPruningController:
+    """Turn persistent underuse, pressure and learning stagnation into signals."""
+
+    def __init__(
+        self,
+        *,
+        dynamics: StructuralPruningDynamics | None = None,
+    ) -> None:
+        self.dynamics = dynamics or StructuralPruningDynamics()
+        self._regions: dict[str, StructuralPruningRegionState] = {}
+        self.total_observations = 0
+
+    @property
+    def regions(self) -> tuple[StructuralPruningRegionState, ...]:
+        return tuple(self._regions.values())
+
+    def _region(self, region_id: str) -> StructuralPruningRegionState:
+        key = str(region_id)
+        if not key:
+            raise ValueError("structural pruning region_id must not be empty")
+        return self._regions.setdefault(key, StructuralPruningRegionState(key))
+
+    def observe(
+        self,
+        region_id: str,
+        *,
+        usage: float,
+        resource_pressure: float,
+        learning_gain: float,
+        evidence_ids: Sequence[str],
+    ) -> StructuralPruningDecision:
+        """Update regional underuse evidence and optionally emit one prune signal."""
+
+        ids = tuple(str(item) for item in evidence_ids)
+        if not ids or any(not item for item in ids):
+            raise ValueError("structural pruning evidence_ids must not be empty")
+        if len(set(ids)) != len(ids):
+            raise ValueError("structural pruning evidence_ids cannot contain duplicates")
+        usage_value = _unit(usage, "structural pruning usage")
+        pressure_value = _unit(resource_pressure, "structural pruning resource_pressure")
+        gain_value = _unit(learning_gain, "structural pruning learning_gain")
+        region = self._region(region_id)
+        rate = float(self.dynamics.ema_rate)
+        region.usage_ema = (1.0 - rate) * region.usage_ema + rate * usage_value
+        region.resource_pressure_ema = (
+            (1.0 - rate) * region.resource_pressure_ema + rate * pressure_value
+        )
+        region.learning_gain_ema = (
+            (1.0 - rate) * region.learning_gain_ema + rate * gain_value
+        )
+        region.consecutive_underuse_steps = (
+            region.consecutive_underuse_steps + 1
+            if (
+                region.usage_ema <= float(self.dynamics.maximum_usage)
+                and region.resource_pressure_ema
+                >= float(self.dynamics.minimum_resource_pressure)
+                and region.learning_gain_ema
+                <= float(self.dynamics.maximum_learning_gain)
+            )
+            else 0
+        )
+        region.observation_count += 1
+        self.total_observations += 1
+        should_prune = region.consecutive_underuse_steps >= int(
+            self.dynamics.required_underuse_steps
+        )
+        if should_prune:
+            region.proposal_count += 1
+            region.consecutive_underuse_steps = 0
+        return StructuralPruningDecision(
+            region_id=region.region_id,
+            should_prune=should_prune,
+            proposal_ordinal=region.proposal_count,
+            evidence_ids=ids,
+            usage_ema=region.usage_ema,
+            resource_pressure_ema=region.resource_pressure_ema,
+            learning_gain_ema=region.learning_gain_ema,
+            consecutive_underuse_steps=region.consecutive_underuse_steps,
+        )
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": STRUCTURAL_PRUNING_CHECKPOINT_FORMAT,
+            "dynamics": self.dynamics.to_payload(),
+            "total_observations": self.total_observations,
+            "regions": {
+                region_id: region.to_payload()
+                for region_id, region in self._regions.items()
+            },
+        }
+
+    @classmethod
+    def from_payload(
+        cls,
+        payload: Mapping[str, Any],
+    ) -> AdaptiveStructuralPruningController:
+        if payload.get("format") != STRUCTURAL_PRUNING_CHECKPOINT_FORMAT:
+            raise ValueError("unsupported structural pruning checkpoint format")
+        dynamics_payload = payload.get("dynamics", {})
+        regions_payload = payload.get("regions", {})
+        if not isinstance(dynamics_payload, Mapping) or not isinstance(regions_payload, Mapping):
+            raise ValueError("structural pruning checkpoint fields must be mappings")
+        controller = cls(dynamics=StructuralPruningDynamics.from_payload(dynamics_payload))
+        controller._regions = {
+            str(region_id): StructuralPruningRegionState.from_payload(region_payload)
+            for region_id, region_payload in regions_payload.items()
+        }
+        if set(controller._regions) != {str(key) for key in regions_payload}:
+            raise ValueError("structural pruning region identities do not match")
+        controller.total_observations = int(payload.get("total_observations", 0))
+        if controller.total_observations < 0:
+            raise ValueError("structural pruning total_observations cannot be negative")
         return controller

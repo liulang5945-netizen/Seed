@@ -1,0 +1,51 @@
+{
+  "format": "taiji-region-pruning-v1",
+  "proposal": {
+    "version": 1,
+    "proposal_id": "topology:bottleneck:region:prune",
+    "substrate_id": "bottleneck",
+    "target_kind": "region",
+    "operation": "prune",
+    "specification": {
+      "region_id": "bottleneck",
+      "topology_role": "region_prune"
+    },
+    "requested_units": 1,
+    "resource_cost": 1,
+    "evidence_ids": [
+      "prune:tick:2"
+    ],
+    "parent_checkpoint_id": "region-prune-signal:bottleneck:1",
+    "status": "pending",
+    "validation_score": 0.0
+  },
+  "metrics": {
+    "required_underuse_steps": 2,
+    "proposal_emitted_after_steps": 2,
+    "region_id": "bottleneck",
+    "usage_ema": 0.05,
+    "resource_pressure_ema": 0.9,
+    "learning_gain_ema": 0.0,
+    "holdout_validation_score": 1.0,
+    "holdout_validated": true,
+    "region_ids_after_pruning": [
+      "source"
+    ],
+    "connection_ids_after_pruning": [],
+    "checkpoint_continuation": true,
+    "rollback_region": true,
+    "rollback_connection": true,
+    "region_ids_after_rollback": [
+      "source",
+      "bottleneck"
+    ],
+    "connection_ids_after_rollback": [],
+    "high_gain_suppressed": true,
+    "rejected_without_budget": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "persistent low usage, high resource pressure and long-term learning stagnation must emit a non-semantic region prune proposal; unseen-input regression must stay within threshold before ledger commit, checkpoint continuation must preserve the decision, pruning must remove owned connections, reverse rollback must restore the parent topology, high learning gain must suppress pruning, and zero budget must fail closed"
+  },
+  "boundary": "This gate proves controlled resource-aware region retention and pruning; it does not claim unrestricted self-evolution, automatic semantic invention, or general intelligence."
+}
