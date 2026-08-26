@@ -29,16 +29,19 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
   更新和 checkpoint；adapter 现在只负责把 episodic evidence 接入该器官。
 - 器官现在具有可配置容量、塑性率、强度剪枝和显式 `lesion`；容量曲线在 1/2/4 个槽位下
   分别保留 1/2/4 个概念，checkpoint 与 lesion 对照均通过。
+- `ConceptMatch` 已成为器官的查询边界；运行时把匹配 concept IDs 写入 `MemoryState`，并把
+  匹配度 × 概念置信度 × outcome 质量映射为 `PlanningCandidate.concept_affinity`，由 planner
+  的可配置 `concept_weight` 消费；lesion 后该 prior 为零并改变窄规划对照。
 
 ## 边界与已知限制
 
 这只是数据驱动的临时形成 Gate，不等同于开放域语义、符号知识或通用理解。形成、匹配、
 更新和证据索引现在由 Taiji 自有 `ConceptFormationOrgan`/注册表负责；`TSKV8Adapter` 只
 保留兼容 API 与接线，不再承载概念形成规则。器官已有独立 checkpoint、容量治理、塑性更新、
-剪枝和 lesion；这些控制仍只证明注册表行为，不等于概念已经被下游决策使用。
+剪枝和 lesion，并已通过语义检索→规划的窄消费路径；这仍不等于开放域概念已被充分验证。
 
 ## 下一步唯一入口
 
-把 `ConceptFormationOrgan` 接入语义检索/规划的真实消费路径，证明跨 schema、未见任务迁移
-与容量干扰变化能影响下游行为，并保留三类信号 lesion 和 checkpoint 控制；不得把扩大参数
-量或增加固定标签表作为替代。
+完成跨 schema、未见任务的下游迁移验收，测量概念容量变化对规划干扰的影响，并保留三类
+信号 lesion、checkpoint 和无 concept prior 对照；不得把扩大参数量或增加固定标签表作为
+替代。

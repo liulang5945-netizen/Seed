@@ -43,6 +43,15 @@ def test_concept_formation_capacity_checkpoint_and_lesion() -> None:
     concepts = organ.consolidate(records, tick=1)
 
     assert len(concepts) == 1
+    retrieval_organ = ConceptFormationOrgan(capacity=4, prune_threshold=0.0)
+    retrieval_concepts = retrieval_organ.consolidate(records[:2], tick=1)
+    match = retrieval_organ.retrieve(
+        records[0].cue,
+        object_ids=("unseen-object",),
+        relation_ids=("agent:near:unseen-object",),
+    )
+    assert match and match[0].concept.concept_id == retrieval_concepts[0].concept_id
+    assert match[0].score >= retrieval_organ.similarity_threshold
     checkpoint = organ.checkpoint()
     restored = ConceptFormationOrgan.from_checkpoint(checkpoint)
     assert restored.capacity == 1
