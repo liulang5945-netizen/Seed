@@ -394,10 +394,13 @@ class Concept:
     prototype: torch.Tensor = field(default_factory=lambda: torch.empty(0))
     support_event_ids: tuple[str, ...] = ()
     support_assembly_ids: tuple[str, ...] = ()
+    object_ids: tuple[str, ...] = ()
     relation_ids: tuple[str, ...] = ()
     maturity: float = 0.0
     stability: float = 0.0
     confidence: float = 0.0
+    outcome_mean: float = 0.0
+    outcome_consistency: float = 0.0
     update_count: int = 0
     last_updated_tick: int = 0
     provenance: str = "consolidated"
@@ -409,7 +412,12 @@ class Concept:
         _check_text(self.provenance, "concept provenance")
         if self.prototype.ndim != 1:
             raise ValueError("concept prototype must be a vector")
-        for field_name in ("support_event_ids", "support_assembly_ids", "relation_ids"):
+        for field_name in (
+            "support_event_ids",
+            "support_assembly_ids",
+            "object_ids",
+            "relation_ids",
+        ):
             object.__setattr__(
                 self,
                 field_name,
@@ -418,6 +426,8 @@ class Concept:
         _check_unit(self.maturity, "concept maturity")
         _check_unit(self.stability, "concept stability")
         _check_unit(self.confidence, "concept confidence")
+        _check_unit(self.outcome_mean, "concept outcome_mean")
+        _check_unit(self.outcome_consistency, "concept outcome_consistency")
         if int(self.update_count) < 0 or int(self.last_updated_tick) < 0:
             raise ValueError("concept update counters cannot be negative")
 
@@ -428,10 +438,13 @@ class Concept:
             "prototype": self.prototype.detach().cpu().clone(),
             "support_event_ids": list(self.support_event_ids),
             "support_assembly_ids": list(self.support_assembly_ids),
+            "object_ids": list(self.object_ids),
             "relation_ids": list(self.relation_ids),
             "maturity": self.maturity,
             "stability": self.stability,
             "confidence": self.confidence,
+            "outcome_mean": self.outcome_mean,
+            "outcome_consistency": self.outcome_consistency,
             "update_count": self.update_count,
             "last_updated_tick": self.last_updated_tick,
             "provenance": self.provenance,
@@ -856,12 +869,10 @@ class WorldState:
                 (str(item[0]), str(item[1]), str(item[2])) for item in payload.get("relations", ())
             ),
             objects=tuple(
-                WorldObject.from_payload(item, device=device)
-                for item in payload.get("objects", ())
+                WorldObject.from_payload(item, device=device) for item in payload.get("objects", ())
             ),
             events=tuple(
-                WorldEvent.from_payload(item, device=device)
-                for item in payload.get("events", ())
+                WorldEvent.from_payload(item, device=device) for item in payload.get("events", ())
             ),
             affordances=tuple(
                 WorldAffordance.from_payload(item, device=device)
@@ -1503,6 +1514,8 @@ class EpisodicMemoryRecord:
     provenance: str = "experienced"
     event_ids: tuple[str, ...] = ()
     assembly_ids: tuple[str, ...] = ()
+    object_ids: tuple[str, ...] = ()
+    relation_ids: tuple[str, ...] = ()
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -1513,6 +1526,10 @@ class EpisodicMemoryRecord:
         object.__setattr__(self, "event_ids", _normalize_ids(self.event_ids, "episodic event_ids"))
         object.__setattr__(
             self, "assembly_ids", _normalize_ids(self.assembly_ids, "episodic assembly_ids")
+        )
+        object.__setattr__(self, "object_ids", _normalize_ids(self.object_ids, "episodic object_ids"))
+        object.__setattr__(
+            self, "relation_ids", _normalize_ids(self.relation_ids, "episodic relation_ids")
         )
         if int(self.tick) < 0:
             raise ValueError("episodic memory tick cannot be negative")
@@ -1545,6 +1562,8 @@ class EpisodicMemoryRecord:
             "provenance": self.provenance,
             "event_ids": list(self.event_ids),
             "assembly_ids": list(self.assembly_ids),
+            "object_ids": list(self.object_ids),
+            "relation_ids": list(self.relation_ids),
         }
 
     @classmethod
