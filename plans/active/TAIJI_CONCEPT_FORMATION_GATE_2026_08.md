@@ -175,3 +175,7 @@ runtime hardening 已完成并通过：设备不一致才执行输入转换，no
 回归与 runtime structure Gate 均通过，重跑 profile 仍为 CPU-only 且 checkpoint continuation
 误差为零。热点现已主要落在显式 sparse gather/reduction；下一步固化性能回归基线，并等待
 CUDA-capable 主机复跑同一 workload。
+
+固定 workload、manifest、CPU profile、checkpoint continuation 与 scratch 复用回归已提交；
+吞吐保留为当前主机的观测值，不作为跨设备硬阈值。下一步只能在 CUDA-capable 主机上复跑同一
+workload，验证跨设备输出与 checkpoint continuation，再决定是否进入 fused/sparse kernel 评审。
