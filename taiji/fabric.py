@@ -9,6 +9,7 @@ from typing import Any
 import torch
 
 from .config import TaijiConfig
+from .contracts import StructuralTopologyProposal
 from .sparse import SparseSynapses, bound_norm
 from .state import RegionState
 
@@ -117,6 +118,65 @@ class TaijiFabric:
         # Audit counter only: how many contacts the substrate has rewired.  It
         # describes the run, not the network, so it stays out of the payload.
         self.structural_events = 0
+
+    def _topology_bank(self, substrate_id: str) -> SparseSynapses:
+        """Resolve a Taiji-owned synapse bank by stable substrate identity."""
+
+        banks: dict[str, SparseSynapses] = {
+            **{
+                f"fabric.decoder.{index}": bank
+                for index, bank in enumerate(self.decoders)
+            },
+            **{
+                f"fabric.consolidation_decoder.{index}": bank
+                for index, bank in enumerate(self.consolidation_decoders)
+            },
+            **{
+                f"fabric.transition.{index}": bank
+                for index, bank in enumerate(self.transitions)
+            },
+            **{
+                f"fabric.lateral.{index}": bank
+                for index, bank in enumerate(self.laterals)
+            },
+        }
+        try:
+            return banks[str(substrate_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown Taiji synapse substrate: {substrate_id}") from exc
+
+    def propose_synapse_rewire(
+        self,
+        *,
+        substrate_id: str,
+        post_index: int,
+        slot_index: int,
+        replacement_pre_index: int,
+        evidence_ids: Sequence[str],
+        parent_checkpoint_id: str | None = None,
+        resource_cost: int = 1,
+    ) -> StructuralTopologyProposal:
+        """Create a topology proposal without changing any live bank."""
+
+        return self._topology_bank(substrate_id).propose_topology_rewire(
+            substrate_id=substrate_id,
+            post_index=post_index,
+            slot_index=slot_index,
+            replacement_pre_index=replacement_pre_index,
+            evidence_ids=evidence_ids,
+            parent_checkpoint_id=parent_checkpoint_id,
+            resource_cost=resource_cost,
+        )
+
+    def apply_synapse_rewire(self, proposal: StructuralTopologyProposal) -> bool:
+        """Apply a pending substrate proposal through the owning fabric."""
+
+        return self._topology_bank(proposal.substrate_id).apply_topology_proposal(proposal)
+
+    def lesion_synapse_rewire(self, proposal: StructuralTopologyProposal) -> bool:
+        """Functionally lesion the proposal's new contact for a causal control."""
+
+        return self._topology_bank(proposal.substrate_id).lesion_topology_proposal(proposal)
 
     def initial_state(self) -> tuple[RegionState, ...]:
         lower_sizes = (self.config.alphabet_size, *self.config.region_sizes[:-1])

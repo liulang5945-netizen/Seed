@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 import torch
+
+from .contracts import StructuralTopologyProposal
 
 
 def bound_norm(value: torch.Tensor, limit: float) -> torch.Tensor:
@@ -351,6 +353,109 @@ class SparseSynapses:
         )
         self.edge_weight[rows[chosen], retire_order[chosen]] = 0.0
         return int(chosen.sum().item())
+
+    def propose_topology_rewire(
+        self,
+        *,
+        substrate_id: str,
+        post_index: int,
+        slot_index: int,
+        replacement_pre_index: int,
+        evidence_ids: Sequence[str],
+        parent_checkpoint_id: str | None = None,
+        resource_cost: int = 1,
+    ) -> StructuralTopologyProposal:
+        """Describe one support change without mutating the synapse bank."""
+
+        post = int(post_index)
+        slot = int(slot_index)
+        replacement = int(replacement_pre_index)
+        if not 0 <= post < self.out_features:
+            raise IndexError("topology proposal post index outside the population")
+        if not 0 <= slot < self.row_fan_in:
+            raise IndexError("topology proposal slot outside the row")
+        if not 0 <= replacement < self.in_features:
+            raise IndexError("topology proposal replacement outside the population")
+        if self.excludes_self and post == replacement:
+            raise ValueError("topology proposal would create a self-contact")
+        row = self.pre_index[post].long()
+        if bool((row == replacement).any()):
+            raise ValueError("topology proposal replacement is already connected")
+        retired = int(self.pre_index[post, slot].item())
+        proposal_id = (
+            f"topology:{substrate_id}:post:{post}:slot:{slot}:"
+            f"pre:{retired}>{replacement}"
+        )
+        return StructuralTopologyProposal(
+            proposal_id=proposal_id,
+            substrate_id=str(substrate_id),
+            target_kind="synapse",
+            operation="rewire",
+            specification=(
+                ("post_index", post),
+                ("slot_index", slot),
+                ("retired_pre_index", retired),
+                ("replacement_pre_index", replacement),
+            ),
+            evidence_ids=tuple(str(item) for item in evidence_ids),
+            parent_checkpoint_id=parent_checkpoint_id,
+            resource_cost=int(resource_cost),
+        )
+
+    def _rewire_coordinates(
+        self, proposal: StructuralTopologyProposal
+    ) -> tuple[int, int, int, int]:
+        if proposal.target_kind != "synapse" or proposal.operation != "rewire":
+            raise ValueError("proposal is not a synapse rewire")
+        specification = dict(proposal.specification)
+        required = (
+            "post_index",
+            "slot_index",
+            "retired_pre_index",
+            "replacement_pre_index",
+        )
+        if any(key not in specification for key in required):
+            raise ValueError("synapse rewire proposal is missing coordinates")
+        post, slot, retired, replacement = tuple(int(specification[key]) for key in required)
+        if not 0 <= post < self.out_features:
+            raise IndexError("topology proposal post index outside the population")
+        if not 0 <= slot < self.row_fan_in:
+            raise IndexError("topology proposal slot outside the row")
+        if not 0 <= retired < self.in_features or not 0 <= replacement < self.in_features:
+            raise IndexError("topology proposal presynaptic index outside the population")
+        if retired == replacement:
+            raise ValueError("topology proposal must change the presynaptic partner")
+        if self.excludes_self and post == replacement:
+            raise ValueError("topology proposal would create a self-contact")
+        return post, slot, retired, replacement
+
+    @torch.no_grad()
+    def apply_topology_proposal(self, proposal: StructuralTopologyProposal) -> bool:
+        """Apply one auditable rewire after validating its current parent edge."""
+
+        if proposal.status != "pending":
+            raise ValueError("only pending topology proposals can be applied")
+        if not proposal.evidence_ids:
+            raise ValueError("topology proposal requires evidence_ids")
+        post, slot, retired, replacement = self._rewire_coordinates(proposal)
+        row = self.pre_index[post].long()
+        if int(row[slot].item()) != retired:
+            raise ValueError("topology proposal parent edge no longer matches")
+        if bool((row == replacement).any()):
+            raise ValueError("topology proposal replacement is already connected")
+        self.pre_index[post, slot] = replacement
+        self.edge_weight[post, slot] = 0.0
+        return True
+
+    @torch.no_grad()
+    def lesion_topology_proposal(self, proposal: StructuralTopologyProposal) -> bool:
+        """Neutralize the new edge while preserving fixed-fan-in shape invariants."""
+
+        post, slot, _, replacement = self._rewire_coordinates(proposal)
+        if int(self.pre_index[post, slot].item()) != replacement:
+            raise ValueError("topology lesion target is not the proposal replacement")
+        self.edge_weight[post, slot] = 0.0
+        return True
 
     @torch.no_grad()
     def _bound_rows(self) -> None:

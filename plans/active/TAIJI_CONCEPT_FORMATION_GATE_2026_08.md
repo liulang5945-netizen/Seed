@@ -73,6 +73,11 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
   trace lesion 与 replayability 验证，接受后扣减 `DevelopmentState.structural_budget`，native
   checkpoint 可恢复 request，rollback 可恢复父结构并返还预算。该 Gate 报告为
   `reports/taiji_structural_growth_20260826.json`。
+- synapse topology proposal Gate 已通过：`StructuralTopologyProposal` 使用稳定的 substrate 与
+  单元坐标描述一次 rewire，不依赖 action/intent；`TaijiFabric` 只允许对现有合法固定 fan-in
+  bank 提案和应用，局部学习后的 donor response 在 holdout probe 上提升，fabric checkpoint
+  可恢复拓扑，functional lesion 会移除新增接触的贡献，父 payload 可恢复原拓扑。该 Gate 报告为
+  `reports/taiji_topology_proposal_20260826.json`。
 
 ## 边界与已知限制
 
@@ -83,7 +88,7 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 
 ## 下一步唯一入口
 
-将结构成长请求从 branch trace 扩展为可配置的多尺度神经元/突触拓扑 proposal：统一描述新增
-单元、连接、专用区域、证据、资源成本与父 checkpoint，并先实现一个可 checkpoint、lesion、
-holdout 验证和 rollback 的小型突触重连 Gate；继续以预测误差、资源瓶颈和迁移收益驱动增长，
+将 `StructuralTopologyProposal` 接入 `DevelopmentState` 的统一预算与 runtime ledger：拓扑
+proposal 只能由真实误差、资源瓶颈和迁移收益产生，必须经过预算、holdout/lesion、native
+checkpoint continuation 与 rollback 后才能改变在线结构；随后再扩展到神经元/区域新增，继续
 禁止按固定 action/intent 表写死拓扑。

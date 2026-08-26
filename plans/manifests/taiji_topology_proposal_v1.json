@@ -1,0 +1,16 @@
+{
+  "format": "taiji-topology-proposal-manifest-v1",
+  "task": "substrate-level synapse topology proposal",
+  "report": "reports/taiji_topology_proposal_20260826.json",
+  "seed": 71,
+  "controls": [
+    "proposal_roundtrip",
+    "holdout_response",
+    "functional_lesion",
+    "parent_rollback"
+  ],
+  "gate": {
+    "passed": true,
+    "criterion": "a substrate proposal must change only an admissible synapse, improve a held-out donor response after local learning, survive topology checkpoint roundtrip, fail under functional lesion, and restore its parent topology"
+  }
+}
