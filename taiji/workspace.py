@@ -113,7 +113,7 @@ class WorkspaceCollaborationEvaluator:
         feature_dim = self._feature_dim(train + holdout)
         if any(len(sample.relevant_ids) > capacity for sample in train + holdout):
             raise ValueError("workspace capacity cannot fit the registered composition")
-        seed_reports: list[dict[str, object]] = []
+        seed_reports: list[dict[str, float]] = []
         for seed in self.seeds:
             router = WorkspaceRouter(feature_dim, capacity=capacity, seed=seed)
             router.fit(
@@ -128,7 +128,7 @@ class WorkspaceCollaborationEvaluator:
                 epochs=epochs,
                 learning_rate=learning_rate,
             )
-            totals = {
+            totals: dict[str, float] = {
                 "learned": 0.0,
                 "random": 0.0,
                 "none": 0.0,
@@ -158,7 +158,9 @@ class WorkspaceCollaborationEvaluator:
                 if set(learned.selected_ids) == set(sample.relevant_ids):
                     exact_routes += 1
             count = float(len(holdout))
-            metrics = {name: value / count for name, value in totals.items()}
+            metrics: dict[str, float] = {
+                name: value / count for name, value in totals.items()
+            }
             metrics["learned_gain_vs_strongest_single"] = (
                 metrics["strongest_single"] - metrics["learned"]
             )
@@ -166,7 +168,7 @@ class WorkspaceCollaborationEvaluator:
             metrics["exact_route_rate"] = exact_routes / count
             metrics["router_fit_updates"] = router.fit_updates
             seed_reports.append(metrics)
-        aggregate = {
+        aggregate: dict[str, float] = {
             name: sum(float(report[name]) for report in seed_reports) / len(seed_reports)
             for name in seed_reports[0]
             if name != "router_fit_updates"
@@ -177,7 +179,7 @@ class WorkspaceCollaborationEvaluator:
         aggregate["exact_route_rate_min"] = min(
             float(report["exact_route_rate"]) for report in seed_reports
         )
-        aggregate["passed"] = bool(
+        passed = bool(
             aggregate["learned_gain_vs_strongest_single_min"] > 0.05
             and aggregate["learned_gain_vs_dense"] > 0.05
             and aggregate["exact_route_rate_min"] >= 0.9
@@ -189,9 +191,9 @@ class WorkspaceCollaborationEvaluator:
             "train_samples": len(train),
             "holdout_samples": len(holdout),
             "seeds": seed_reports,
-            "aggregate": aggregate,
+            "aggregate": {**aggregate, "passed": passed},
             "gate": {
-                "passed": aggregate["passed"],
+                "passed": passed,
                 "criterion": "learned workspace beats strongest single and dense mean by >0.05 MSE; exact route rate >= 0.90",
             },
         }
@@ -353,8 +355,23 @@ class WorkspaceRouter(nn.Module):
     def from_checkpoint(
         cls, payload: dict[str, object], *, device: torch.device | str = "cpu"
     ) -> WorkspaceRouter:
-        router = cls(int(payload["feature_dim"]), capacity=int(payload["capacity"]), seed=0)
-        router.load_state_dict(payload["state_dict"])
+        feature_dim = payload.get("feature_dim")
+        capacity = payload.get("capacity")
+        state_dict_payload = payload.get("state_dict")
+        if not isinstance(feature_dim, int) or not isinstance(capacity, int):
+            raise ValueError("workspace checkpoint dimensions must be integers")
+        if not isinstance(state_dict_payload, dict):
+            raise ValueError("workspace checkpoint state_dict must be a mapping")
+        state_dict: dict[str, torch.Tensor] = {}
+        for name, value in state_dict_payload.items():
+            if not isinstance(name, str) or not isinstance(value, torch.Tensor):
+                raise ValueError("workspace checkpoint state_dict must contain tensors")
+            state_dict[name] = value
+        router = cls(feature_dim, capacity=capacity, seed=0)
+        router.load_state_dict(state_dict)
         router.to(device)
-        router.fit_updates = int(payload.get("fit_updates", 0))
+        fit_updates = payload.get("fit_updates", 0)
+        if not isinstance(fit_updates, int):
+            raise ValueError("workspace checkpoint fit_updates must be an integer")
+        router.fit_updates = fit_updates
         return router
