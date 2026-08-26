@@ -52,9 +52,11 @@ RUN pip install -e ".[legacy]"
 # 拷贝前端构建产物（后端以此为静态资源）
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 
-# 训练脚本与数据目录（部分 API 路由会引用）
+# 训练脚本进镜像；data/ 不进——它被 .gitignore 忽略（CI 全新 checkout 下不存在），
+# 且本机体量约 1.9GB，与 checkpoints 同为本地运行时资源，统一由 compose 挂载提供。
+# 这里只建空目录，保证 routes_model_switch / training.resume 在无挂载时也能正常降级。
 COPY scripts/ ./scripts/
-COPY data/ ./data/
+RUN mkdir -p ./data
 
 # 运行用户与端口
 EXPOSE 8000
