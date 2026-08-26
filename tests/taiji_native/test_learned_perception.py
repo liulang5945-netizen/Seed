@@ -55,6 +55,7 @@ def test_perception_local_learning_changes_embedding_but_not_when_frozen() -> No
 def test_perception_predictive_fit_updates_local_representation() -> None:
     perception = LearnedPerception(_config())
     before_projection = perception.local_projection.weight.detach().clone()
+    before_recency = perception.assembly_recency_logit.detach().clone()
 
     losses = perception.fit_predictive(
         ((97, 98, 99, 97, 98, 99), (99, 98, 97, 99, 98, 97)),
@@ -65,6 +66,26 @@ def test_perception_predictive_fit_updates_local_representation() -> None:
     assert len(losses) == 2
     assert all(torch.isfinite(torch.tensor(loss)) for loss in losses)
     assert not torch.equal(before_projection, perception.local_projection.weight)
+    assert not torch.equal(before_recency, perception.assembly_recency_logit)
+
+
+def test_training_assembly_rollout_matches_runtime_boundary_clock() -> None:
+    sequence = (97, 97, 97, 97, 97, 97)
+    perception = LearnedPerception(_config())
+    features, _, _, _ = perception._sequence_features(sequence)
+
+    training_spans = perception._rollout_assembly_spans(sequence, features)
+
+    perception.reset_dynamics()
+    runtime_spans: list[tuple[int, int]] = []
+    start = 0
+    for index, symbol in enumerate(sequence):
+        event = perception.observe(symbol, tick=index, stream_id="alignment", learn=False)
+        if event.boundary:
+            runtime_spans.append((start, index + 1))
+            start = index + 1
+
+    assert training_spans == runtime_spans
 
 
 def test_perception_checkpoint_restores_dynamic_assembly_and_weights() -> None:

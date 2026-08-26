@@ -41,6 +41,7 @@ class A1EvaluationConfig:
     maximum_cross_seed_std: float = 0.25
     minimum_boundary_rate_delta: float = 0.01
     minimum_marker_boundary_score_delta: float = 0.05
+    minimum_marker_boundary_rate_delta: float = 0.01
     minimum_random_chunk_drop: float = 0.005
     predictive_epochs: int = 3
     predictive_learning_rate: float = 0.01
@@ -59,6 +60,8 @@ class A1EvaluationConfig:
             raise ValueError("A1 minimum_boundary_rate_delta cannot be negative")
         if self.minimum_marker_boundary_score_delta < 0.0:
             raise ValueError("A1 minimum_marker_boundary_score_delta cannot be negative")
+        if self.minimum_marker_boundary_rate_delta < 0.0:
+            raise ValueError("A1 minimum_marker_boundary_rate_delta cannot be negative")
         if self.minimum_random_chunk_drop < 0.0:
             raise ValueError("A1 minimum_random_chunk_drop cannot be negative")
         if self.predictive_epochs <= 0:
@@ -102,23 +105,42 @@ class PerceptionEvaluator:
         mean_score = float(holdout_scores.mean())
         seed_std = float(holdout_scores.std(unbiased=False))
         primary = seed_reports[0]
-        gain = float(primary["unseen_composition"]["generalization_gain"])
-        variable_duration = primary["assembly"]["unique_durations"] > 1
-        boundary_rate_delta = float(
-            primary["boundary_perturbed"]["boundary_rate"]
-            - primary["assembly"]["boundary_rate_unseen"]
+        # A single favourable seed cannot close a learning gate.  Keep the
+        # first seed as the human-readable primary trace, but use worst-case
+        # evidence across all seeds for every capability criterion.
+        gain = min(
+            float(report["unseen_composition"]["generalization_gain"]) for report in seed_reports
         )
-        marker_score_delta = float(primary["boundary_perturbed"]["marker_score_delta_from_unseen"])
-        marker_rate_delta = float(primary["boundary_perturbed"]["marker_rate_delta_from_unseen"])
-        random_chunk_drop = float(
-            primary["unseen_composition"]["learned_accuracy"]
-            - primary["random_chunk_control"]["learned_accuracy"]
+        variable_duration = all(
+            report["assembly"]["unique_durations"] > 1 for report in seed_reports
+        )
+        boundary_rate_delta = min(
+            float(report["boundary_perturbed"]["boundary_rate"])
+            - float(report["assembly"]["boundary_rate_unseen"])
+            for report in seed_reports
+        )
+        marker_score_delta = min(
+            float(report["boundary_perturbed"]["marker_score_delta_from_unseen"])
+            for report in seed_reports
+        )
+        marker_rate_delta = min(
+            float(report["boundary_perturbed"]["marker_rate_delta_from_unseen"])
+            for report in seed_reports
+        )
+        random_chunk_drop = min(
+            float(report["unseen_composition"]["learned_accuracy"])
+            - float(report["random_chunk_control"]["learned_accuracy"])
+            for report in seed_reports
         )
         gate_passed = bool(
             variable_duration
             and gain >= float(self.evaluation.minimum_generalization_gain)
             and seed_std <= float(self.evaluation.maximum_cross_seed_std)
-            and boundary_rate_delta >= float(self.evaluation.minimum_boundary_rate_delta)
+            # Inserting one marker changes sequence length and can legitimately
+            # repartition nearby assemblies.  The causal boundary evidence is
+            # the boundary rate at marker positions, not the aggregate rate
+            # over the perturbed sequence.
+            and marker_rate_delta >= float(self.evaluation.minimum_marker_boundary_rate_delta)
             and marker_score_delta >= float(self.evaluation.minimum_marker_boundary_score_delta)
             and random_chunk_drop >= float(self.evaluation.minimum_random_chunk_drop)
         )
@@ -134,6 +156,7 @@ class PerceptionEvaluator:
                 "minimum_marker_boundary_score_delta": (
                     self.evaluation.minimum_marker_boundary_score_delta
                 ),
+                "minimum_marker_boundary_rate_delta": self.evaluation.minimum_marker_boundary_rate_delta,
                 "minimum_random_chunk_drop": self.evaluation.minimum_random_chunk_drop,
                 "predictive_epochs": self.evaluation.predictive_epochs,
                 "predictive_learning_rate": self.evaluation.predictive_learning_rate,
@@ -157,8 +180,10 @@ class PerceptionEvaluator:
             },
             "failure_policy": (
                 "A1 remains open until learned assembly beats byte-only on unseen composition, "
-                "responds to boundary perturbation, degrades under random chunk lesion, retains "
-                "variable duration, and stays within the cross-seed variance budget."
+                "responds at marker positions to boundary perturbation, degrades under random "
+                "chunk lesion, retains variable duration, and stays within the cross-seed "
+                "variance budget. Aggregate boundary-rate change remains a diagnostic because "
+                "marker insertion changes sequence length and can repartition neighboring spans."
             ),
         }
 

@@ -180,8 +180,12 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 client observability Gate 已通过：frontend runtime store 保存 `language_provider`，聊天页和异常中心可显示 active/fallback、
   回退原因与 structured-stub 恢复状态；前端只观察 runtime，不参与 provider 选择、认知决策或 decoder 装载。前端构建通过，Vitest
   `160 passed`。
-- 原生套件当前 `131 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
-  环境状态不作为代码能力结论。
+- 原生 `tests/taiji_native` 最近一次完整执行为 `192 passed, 1 skipped, 2 errors`；两个 error 均发生在
+  Windows pytest 临时目录锁创建阶段，未进入测试体，不作为代码断言失败或能力结论。
+- P2 感知训练已改为复用运行时的动态边界时钟：训练按同一 adaptive assembly 起点监督每个活动前缀，
+  不再使用与运行时不一致的固定滑窗；CUDA 实际 profile 暂缓到具备 CUDA 主机后再做，不阻塞当前 CPU 开发。
+- A1 评测已使用 marker-specific boundary evidence，并要求所有 seed 的最差指标共同满足 Gate；最新
+  `reports/taiji_a1_perception_20260827.json` 的 Gate 如实为 `false`，因此当前仍未宣称 P2 完成。
 - 2026-08-26 门禁与 checkpoint 收口：CI 因 pin 了不存在的 `black==24.12.0` 连续 8 天红灯且期间所有门禁被静默跳过，已改钉
   `ruff==0.16.4` / `black==26.5.1`；`TSKV8Adapter.checkpoint()`/`restore()` 补齐 `cognitive_state` 往返后，全量测试为
   `437 passed, 5 skipped`。门禁可信度、mypy 类型债、checkpoint 往返不变量和本目录编制纪律见总路线第 14.1–14.4 节。

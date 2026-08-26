@@ -21,7 +21,7 @@ from .local_learning import (
     softmax_error_delta,
 )
 
-PERCEPTION_STATE_VERSION = 2
+PERCEPTION_STATE_VERSION = 3
 
 
 class LearnedPerception(nn.Module):
@@ -44,8 +44,14 @@ class LearnedPerception(nn.Module):
         self.local_projection = nn.Linear(feature_dim * int(self.config.local_window), feature_dim)
         self.context_projection = nn.Linear(feature_dim, feature_dim, bias=False)
         self.transition = nn.Linear(feature_dim, feature_dim, bias=False)
+        # A positive, locally learned readout gain gives the current feature
+        # an adaptive recency weight.  This is the smallest order-sensitive
+        # assembly state that remains compatible with the existing vector
+        # contract; it is not a fixed hand-tuned pooling constant.
+        self.assembly_recency_logit = nn.Parameter(torch.empty(1))
         self._rng = torch.Generator(device="cpu")
         self._rng.manual_seed(int(config.seed + self.config.seed_offset) % (2**63 - 1))
+        self._symbol_exposure = torch.zeros(self.alphabet_size, device=self.device)
         self._initialize_parameters()
         freeze_parameters(self)
         self.to(self.device)
@@ -67,6 +73,7 @@ class LearnedPerception(nn.Module):
                 )
                 parameter.copy_(values * scale)
             self.local_projection.bias.zero_()
+            self.assembly_recency_logit.fill_(math.log(math.expm1(1.0)))
 
     @property
     def feature_dim(self) -> int:
@@ -105,7 +112,31 @@ class LearnedPerception(nn.Module):
             self.local_projection.bias,
             self.context_projection.weight,
             self.transition.weight,
+            self.assembly_recency_logit,
         )
+
+    def _assembly_recency(self) -> tuple[float, torch.Tensor]:
+        """Return the learned positive recency gain and its local derivative."""
+
+        logit = self.assembly_recency_logit
+        gain = float(torch.nn.functional.softplus(logit).item())
+        derivative = torch.sigmoid(logit).detach().clone()
+        return gain, derivative
+
+    def _pool_assembly_spans(
+        self, stacked: torch.Tensor, spans: Sequence[tuple[int, int]]
+    ) -> tuple[torch.Tensor, float]:
+        """Pool variable spans with a learned current-feature recency weight."""
+
+        gain, _ = self._assembly_recency()
+        pooled = torch.stack(
+            [
+                (stacked[start:stop].sum(dim=0) + gain * stacked[stop - 1])
+                / (float(stop - start) + gain)
+                for start, stop in spans
+            ]
+        )
+        return pooled, gain
 
     def _sequence_features(
         self, sequence: Sequence[int]
@@ -150,6 +181,135 @@ class LearnedPerception(nn.Module):
                 recurrent_state = feature
         return features, pre_activations, norms, windows
 
+    def _predictive_signal(
+        self,
+        feature: torch.Tensor,
+        previous_feature: torch.Tensor,
+        symbol: int,
+        *,
+        has_previous: bool,
+        surprise_baseline: float,
+        boundary_threshold_state: float,
+        duration: int,
+    ) -> tuple[float, float, float, float, bool]:
+        """Calculate the boundary signal shared by training and inference.
+
+        Keeping this calculation in one place is important: the assembly
+        schedule is part of the learned representation contract.  A training
+        pass that pools fixed windows while inference pools adaptive spans
+        silently trains one representation and emits another.
+        """
+
+        predicted = self.transition(previous_feature)
+        if has_previous:
+            feature_prediction_error = float(
+                (feature - predicted).norm().item() / (feature.norm().item() + 1e-6)
+            )
+            change = float(
+                0.5
+                * (
+                    1.0
+                    - torch.nn.functional.cosine_similarity(
+                        feature.unsqueeze(0), previous_feature.unsqueeze(0)
+                    ).item()
+                )
+            )
+            logits = predicted @ self.embedding.weight.T
+            symbol_probability = float(torch.nn.functional.softmax(logits, dim=0)[symbol].item())
+            prediction_error = max(feature_prediction_error, 1.0 - symbol_probability)
+        else:
+            prediction_error = 0.0
+            change = 0.0
+        surprise = max(0.0, min(1.0, prediction_error / 2.0))
+        calibrated_surprise = max(
+            0.0,
+            min(
+                1.0,
+                (surprise - float(surprise_baseline)) / max(1e-6, 1.0 - float(surprise_baseline)),
+            ),
+        )
+        novelty = float(1.0 / (1.0 + self._symbol_exposure[symbol].item()))
+        total_gain = (
+            float(self.config.change_gain)
+            + float(self.config.surprise_gain)
+            + float(self.config.novelty_gain)
+        )
+        boundary_score = max(
+            0.0,
+            min(
+                1.0,
+                (
+                    float(self.config.change_gain) * change
+                    + float(self.config.surprise_gain) * calibrated_surprise
+                    + float(self.config.novelty_gain) * novelty
+                )
+                / total_gain,
+            ),
+        )
+        reaches_maximum = int(duration) >= int(self.config.maximum_assembly_duration)
+        reaches_signal = int(duration) >= int(
+            self.config.minimum_assembly_duration
+        ) and boundary_score >= float(boundary_threshold_state)
+        return (
+            prediction_error,
+            surprise,
+            change,
+            boundary_score,
+            bool(reaches_maximum or reaches_signal),
+        )
+
+    def _rollout_assembly_spans(
+        self, sequence: Sequence[int], features: Sequence[torch.Tensor]
+    ) -> list[tuple[int, int]]:
+        """Replay the inference boundary clock over a detached feature chain.
+
+        Returned spans use half-open indices and include only assemblies that
+        actually closed on an observed boundary.  The training caller may
+        explicitly flush the final partial span when a next-symbol target is
+        still available; inference itself never invents that boundary.
+        """
+
+        if len(sequence) != len(features):
+            raise ValueError("assembly rollout sequence and feature lengths must match")
+        previous_feature = torch.zeros(self.feature_dim, device=self.device)
+        surprise_baseline = 0.0
+        boundary_threshold_state = float(self.config.boundary_threshold)
+        start = 0
+        duration = 0
+        spans: list[tuple[int, int]] = []
+        for index, (symbol, feature) in enumerate(zip(sequence, features, strict=True)):
+            duration += 1
+            _, surprise, _, _, boundary = self._predictive_signal(
+                feature,
+                previous_feature,
+                int(symbol),
+                has_previous=index > 0,
+                surprise_baseline=surprise_baseline,
+                boundary_threshold_state=boundary_threshold_state,
+                duration=duration,
+            )
+            if index > 0:
+                baseline_rate = float(self.config.surprise_baseline_rate)
+                surprise_baseline = (
+                    1.0 - baseline_rate
+                ) * surprise_baseline + baseline_rate * surprise
+            if boundary:
+                spans.append((start, index + 1))
+                start = index + 1
+                duration = 0
+                hysteresis = float(self.config.boundary_hysteresis)
+                boundary_threshold_state = min(
+                    1.0,
+                    boundary_threshold_state + hysteresis * (1.0 - boundary_threshold_state),
+                )
+            else:
+                boundary_threshold_state = max(
+                    float(self.config.boundary_threshold),
+                    boundary_threshold_state - float(self.config.boundary_hysteresis),
+                )
+            previous_feature = feature
+        return spans
+
     def _local_sequence_pass(
         self,
         sequence: Sequence[int],
@@ -171,38 +331,51 @@ class LearnedPerception(nn.Module):
         """
 
         features, pre_activations, norms, windows = self._sequence_features(sequence)
-        steps = len(features) - 1
+        completed_spans = [
+            (start, stop)
+            for start, stop in self._rollout_assembly_spans(sequence, features)
+            if stop < len(sequence)
+        ]
+        boundary_stops = {stop for _, stop in completed_spans}
+        # Every active prefix is a valid runtime assembly state.  Supervising
+        # all of them keeps long assemblies from starving the local learner,
+        # while the start index still follows the exact adaptive boundary
+        # clock instead of reverting to a fixed sliding window.
+        assembly_spans: list[tuple[int, int]] = []
+        start = 0
+        for stop in range(1, len(sequence)):
+            assembly_spans.append((start, stop))
+            if stop in boundary_stops:
+                start = stop
+        positive_spans = [(min(stop - 1, start + 1), stop) for start, stop in assembly_spans]
+        steps = len(assembly_spans)
         pool_window = min(
-            int(self.config.local_window),
             int(self.config.maximum_assembly_duration),
+            max(1, int(self.config.local_window)),
         )
-        short_window = max(1, pool_window - 1)
         feature_dim = self.feature_dim
         window_size = int(self.config.local_window)
-
-        def pooled_spans(width: int) -> list[tuple[int, int]]:
-            return [(max(0, index + 1 - width), index + 1) for index in range(steps)]
-
-        long_spans = pooled_spans(pool_window)
-        short_spans = pooled_spans(short_window)
+        long_spans = assembly_spans
+        short_spans = positive_spans
 
         with torch.no_grad():
             stacked = torch.stack(features)
-            pooled = torch.stack([stacked[start:stop].mean(dim=0) for start, stop in long_spans])
-            positive_pool = torch.stack(
-                [stacked[start:stop].mean(dim=0) for start, stop in short_spans]
-            )
+            pooled, recency_gain = self._pool_assembly_spans(stacked, long_spans)
+            positive_pool, _ = self._pool_assembly_spans(stacked, short_spans)
             predicted = pooled @ self.transition.weight.transpose(0, 1)
-            target = torch.tensor(list(sequence[1:]), dtype=torch.long, device=self.device)
+            target_indices = [stop for _, stop in long_spans]
+            target = torch.tensor(
+                [sequence[index] for index in target_indices],
+                dtype=torch.long,
+                device=self.device,
+            )
             logits = predicted @ self.embedding.weight.transpose(0, 1)
             scaled_logits = logits / float(temperature)
             next_symbol_loss = float(torch.nn.functional.cross_entropy(scaled_logits, target))
             future_targets = torch.stack(
                 [
-                    self.embedding.weight[list(sequence[index + 1 : index + 1 + pool_window])].mean(
-                        dim=0
-                    )
-                    for index in range(steps)
+                    self.embedding.weight[list(sequence[index : index + pool_window])].mean(dim=0)
+                    for index in target_indices
                 ]
             )
             similarity = torch.nn.functional.cosine_similarity(predicted, future_targets, dim=1)
@@ -233,6 +406,7 @@ class LearnedPerception(nn.Module):
 
             embedding_gradient = torch.zeros_like(self.embedding.weight)
             transition_gradient = torch.zeros_like(self.transition.weight)
+            recency_gradient = torch.zeros_like(self.assembly_recency_logit)
             predicted_error = torch.zeros_like(predicted)
             pooled_error = torch.zeros_like(pooled)
             positive_pool_error = torch.zeros_like(positive_pool)
@@ -249,8 +423,8 @@ class LearnedPerception(nn.Module):
                 factor = -weight / float(steps)
                 predicted_error += factor * predicted_delta
                 target_error = factor * target_delta
-                for index in range(steps):
-                    rows = list(sequence[index + 1 : index + 1 + pool_window])
+                for index, target_index in enumerate(target_indices):
+                    rows = list(sequence[target_index : target_index + pool_window])
                     share = target_error[index] / float(len(rows))
                     for row in rows:
                         embedding_gradient[row] += share
@@ -280,10 +454,25 @@ class LearnedPerception(nn.Module):
             pooled_error += predicted_error @ self.transition.weight
 
             feature_error = torch.zeros((len(features), feature_dim), device=self.device)
-            for index, (start, stop) in enumerate(long_spans):
-                feature_error[start:stop] += pooled_error[index] / float(stop - start)
-            for index, (start, stop) in enumerate(short_spans):
-                feature_error[start:stop] += positive_pool_error[index] / float(stop - start)
+            _, recency_derivative = self._assembly_recency()
+
+            def scatter_pool_error(
+                spans: Sequence[tuple[int, int]],
+                pool: torch.Tensor,
+                errors: torch.Tensor,
+            ) -> None:
+                nonlocal recency_gradient
+                for index, (start, stop) in enumerate(spans):
+                    denominator = float(stop - start) + recency_gain
+                    error = errors[index]
+                    feature_error[start:stop] += error / denominator
+                    feature_error[stop - 1] += error * recency_gain / denominator
+                    recency_gradient += (
+                        (error * (stacked[stop - 1] - pool[index])) / denominator
+                    ).sum() * recency_derivative
+
+            scatter_pool_error(long_spans, pooled, pooled_error)
+            scatter_pool_error(short_spans, positive_pool, positive_pool_error)
 
             local_gradient = torch.zeros_like(self.local_projection.weight)
             local_bias_gradient = torch.zeros_like(self.local_projection.bias)
@@ -323,6 +512,7 @@ class LearnedPerception(nn.Module):
                 local_bias_gradient,
                 context_gradient,
                 transition_gradient,
+                recency_gradient,
             ),
             max_norm=1.0,
         )
@@ -373,6 +563,16 @@ class LearnedPerception(nn.Module):
         ):
             raise ValueError("predictive training symbol is outside the configured alphabet")
 
+        exposure_counts = torch.zeros(self.alphabet_size, device=self.device)
+        for sequence in training_sequences:
+            exposure_counts.add_(
+                torch.bincount(
+                    torch.tensor(sequence, dtype=torch.long, device=self.device),
+                    minlength=self.alphabet_size,
+                ).to(dtype=exposure_counts.dtype)
+            )
+        self._symbol_exposure.add_(exposure_counts)
+
         optimizer = LocalAdam(self._trainable, learning_rate=rate)
         losses: list[float] = []
         self.train()
@@ -415,46 +615,22 @@ class LearnedPerception(nn.Module):
         feature = self._local_feature(symbol)
         has_previous = bool(self._history)
         predicted = self.transition(self._previous_feature)
-        if has_previous:
-            feature_prediction_error = float(
-                (feature - predicted).norm().item() / (feature.norm().item() + 1e-6)
-            )
-            change = float(
-                0.5
-                * (
-                    1.0
-                    - torch.nn.functional.cosine_similarity(
-                        feature.unsqueeze(0), self._previous_feature.unsqueeze(0)
-                    ).item()
-                )
-            )
-            logits = predicted @ self.embedding.weight.T
-            symbol_probability = float(torch.nn.functional.softmax(logits, dim=0)[symbol].item())
-            prediction_error = max(feature_prediction_error, 1.0 - symbol_probability)
-        else:
-            prediction_error = 0.0
-            change = 0.0
-        surprise = max(0.0, min(1.0, prediction_error / 2.0))
-        baseline = float(self._surprise_baseline)
-        calibrated_surprise = max(0.0, min(1.0, (surprise - baseline) / max(1e-6, 1.0 - baseline)))
-        boundary_score = max(
-            0.0,
-            min(
-                1.0,
-                float(self.config.change_gain) * change
-                + float(self.config.surprise_gain) * calibrated_surprise,
-            ),
+        prediction_error, surprise, _, boundary_score, boundary = self._predictive_signal(
+            feature,
+            self._previous_feature,
+            symbol,
+            has_previous=has_previous,
+            surprise_baseline=self._surprise_baseline,
+            boundary_threshold_state=self._boundary_threshold_state,
+            duration=self._assembly_duration + 1,
         )
+        baseline = float(self._surprise_baseline)
 
         self._assembly_sum.add_(feature)
         self._assembly_duration += 1
         duration = int(self._assembly_duration)
-        reaches_maximum = duration >= int(self.config.maximum_assembly_duration)
-        reaches_signal = duration >= int(
-            self.config.minimum_assembly_duration
-        ) and boundary_score >= float(self._boundary_threshold_state)
-        boundary = bool(reaches_maximum or reaches_signal)
-        pooled = self._assembly_sum / float(duration)
+        recency_gain, _ = self._assembly_recency()
+        pooled = (self._assembly_sum + recency_gain * feature) / (float(duration) + recency_gain)
         event = PerceptEvent(
             event_id=f"{stream_id}:assembly:{self._assembly_index}",
             assembly_id=f"{stream_id}:assembly:{self._assembly_index}",
@@ -473,6 +649,8 @@ class LearnedPerception(nn.Module):
             update = float(self.config.learning_rate) * torch.outer(error, self._previous_feature)
             self.transition.weight.add_(update.clamp(-0.05, 0.05))
             self.embedding.weight[symbol].lerp_(feature, float(self.config.learning_rate))
+        if learn:
+            self._symbol_exposure[symbol].add_(1.0)
         if has_previous:
             baseline_rate = float(self.config.surprise_baseline_rate)
             self._surprise_baseline = (1.0 - baseline_rate) * baseline + baseline_rate * surprise
@@ -523,6 +701,7 @@ class LearnedPerception(nn.Module):
                 "last_prediction_error": self._last_prediction_error,
                 "surprise_baseline": self._surprise_baseline,
                 "boundary_threshold_state": self._boundary_threshold_state,
+                "symbol_exposure": self._symbol_exposure.detach().cpu().clone(),
             },
             "rng_state": self._rng.get_state().clone(),
         }
@@ -534,7 +713,7 @@ class LearnedPerception(nn.Module):
         if not isinstance(version_payload, int) or isinstance(version_payload, bool):
             raise ValueError("perception checkpoint version must be an integer")
         version = version_payload
-        if version not in (1, PERCEPTION_STATE_VERSION):
+        if version not in (1, 2, PERCEPTION_STATE_VERSION):
             raise ValueError("unsupported perception checkpoint version")
         state_dict = {
             name: value.detach().to(self.device).clone()
@@ -553,4 +732,8 @@ class LearnedPerception(nn.Module):
         self._boundary_threshold_state = float(
             dynamic.get("boundary_threshold_state", self.config.boundary_threshold)
         )
+        symbol_exposure = dynamic.get(
+            "symbol_exposure", torch.zeros(self.alphabet_size, dtype=torch.float32)
+        )
+        self._symbol_exposure = symbol_exposure.detach().to(self.device).clone()
         self._rng.set_state(payload["rng_state"].detach().cpu())

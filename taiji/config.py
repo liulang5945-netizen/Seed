@@ -98,6 +98,7 @@ class PerceptionConfig:
     boundary_threshold: float = 0.55
     change_gain: float = 0.55
     surprise_gain: float = 0.45
+    novelty_gain: float = 0.15
     learning_rate: float = 0.02
     surprise_baseline_rate: float = 0.1
     boundary_hysteresis: float = 0.05
@@ -114,9 +115,9 @@ class PerceptionConfig:
             raise ValueError("maximum assembly duration cannot be below minimum")
         if not 0.0 <= self.boundary_threshold <= 1.0:
             raise ValueError("perception boundary_threshold must be in [0, 1]")
-        if self.change_gain < 0.0 or self.surprise_gain < 0.0:
+        if self.change_gain < 0.0 or self.surprise_gain < 0.0 or self.novelty_gain < 0.0:
             raise ValueError("perception boundary gains cannot be negative")
-        if self.change_gain + self.surprise_gain <= 0.0:
+        if self.change_gain + self.surprise_gain + self.novelty_gain <= 0.0:
             raise ValueError("at least one perception boundary gain must be active")
         if not 0.0 < self.learning_rate <= 1.0:
             raise ValueError("perception learning_rate must be in (0, 1]")
