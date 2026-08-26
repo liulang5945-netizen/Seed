@@ -152,5 +152,8 @@ live topology 变更、latest-change reverse rollback 与 checkpoint continuatio
 candidate queue 和真实 holdout 数据绑定为可批量、逐项 fail-closed 的 maintenance cycle。该
 cycle 已通过：两个 runtime candidates 完成 materialize、holdout、commit、rollback，缺失
 holdout/异常不会改变 live topology，结果含 proposal lineage、score/status/error 并可 checkpoint
-恢复。下一步转为把直接 neuron birth (`add`) 纳入同一 candidate contract，并验证候选依赖与冲突
-的 fail-closed 行为。
+恢复。直接 neuron birth (`add`) 现已纳入同一 candidate contract：standalone native tick 生成
+候选并通过统一 materialize、holdout、budget、trial checkpoint、commit/rollback 与 checkpoint
+continuation；direct-add 子门禁已写入 `reports/taiji_runtime_structure_20260826.json`。下一步
+转为为 candidate maintenance cycle 增加显式 dependency/conflict 判定，对竞争变更、父子拓扑
+顺序和失效候选逐项 fail-closed。

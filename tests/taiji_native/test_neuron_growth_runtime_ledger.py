@@ -9,6 +9,7 @@ from taiji import (
     AdaptiveStructuralPruningController,
     CrossRegionCooperationLearner,
     StructuralGrowthDynamics,
+    StructuralProposalCandidate,
     StructuralPruningDynamics,
     TaijiConfig,
     TSKV8Adapter,
@@ -99,6 +100,184 @@ def test_runtime_neuron_ledger_rejects_growth_without_budget() -> None:
     assert model.neuron_regions[0].unit_ids == ("u0", "u1")
     assert model.topology_proposals[-1].status == "rejected"
     assert model.cognitive_snapshot().development.structural_budget == 0
+
+
+def test_runtime_standalone_tick_owns_neuron_birth_candidate() -> None:
+    model = TSKV8Adapter(_config(budget=1), episode_id="standalone-runtime")
+    region = _region()
+    model.attach_adaptive_neuron_region(region)
+    model.attach_structural_growth_controller(
+        AdaptiveStructuralGrowthController(
+            dynamics=StructuralGrowthDynamics(
+                ema_rate=1.0,
+                error_threshold=0.0,
+                holdout_transfer_threshold=0.0,
+                minimum_resource_state=0.0,
+                minimum_holdout_gain=0.05,
+                required_error_steps=1,
+            )
+        )
+    )
+
+    first = model.step_adaptive_neuron_region(region.region_id, torch.ones(5))
+    model.step_adaptive_neuron_region(
+        region.region_id,
+        torch.ones(5),
+        expected_activity=first,
+        holdout=True,
+    )
+    observations = model.structural_runtime_observations
+    assert len(observations) == 2
+    assert observations[0].prediction_error is None
+    assert observations[1].prediction_error is not None
+    candidates = model.structural_proposal_candidates
+    assert len(candidates) == 1
+    candidate = candidates[0]
+    assert candidate.target_kind == "neuron"
+    assert candidate.operation == "add"
+    assert candidate.substrate_ids == (region.region_id,)
+    original_unit_ids = region.unit_ids
+
+    proposal = model.materialize_structural_candidate(candidate.candidate_id)
+    assert proposal is not None
+    assert model.structural_proposal_candidates == ()
+    trial = AdaptiveNeuronRegion.from_payload(
+        region.to_payload(),
+        generator=torch.Generator().manual_seed(0),
+    )
+    trial.apply_topology_proposal(
+        proposal,
+        generator=torch.Generator().manual_seed(0),
+    )
+    holdout_input = torch.zeros(5)
+    holdout_input[trial.incoming.pre_index[-1]] = torch.sign(
+        trial.incoming.edge_weight[-1]
+    )
+    expected = trial.step(holdout_input)
+    assert model.validate_structural_candidate_holdout(
+        candidate.candidate_id,
+        holdout_inputs=(holdout_input,),
+        expected_activities=(expected,),
+    ) is True
+    assert model.commit_structural_candidate(candidate.candidate_id) is True
+    assert model.neuron_regions[0].unit_count == 3
+
+    restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
+    assert restored.neuron_regions[0].unit_ids == original_unit_ids + (
+        "adaptive.cortex.grown.1",
+    )
+    assert restored.structural_runtime_observations == observations
+    assert restored.topology_proposals[-1].status == "accepted"
+    assert restored.rollback_structural_candidate(candidate.candidate_id) is True
+    assert restored.neuron_regions[0].unit_ids == original_unit_ids
+    assert restored.cognitive_snapshot().development.structural_budget == 1
+
+
+def test_structural_maintenance_cycle_fails_closed_on_dependency_and_conflict() -> None:
+    model = TSKV8Adapter(_config(budget=1), episode_id="maintenance-guards")
+    region = _region()
+    model.attach_adaptive_neuron_region(region)
+    dependency = StructuralProposalCandidate(
+        candidate_id="candidate:dependency",
+        network_id="standalone:adaptive.cortex",
+        target_kind="neuron",
+        operation="add",
+        substrate_ids=(region.region_id,),
+        evidence_ids=("runtime:dependency",),
+        source_tick=1,
+        priority=0.8,
+        specification=(
+            ("region_id", region.region_id),
+            ("unit_id", "adaptive.cortex.dep"),
+        ),
+        conflict_keys=("dependency-domain",),
+    )
+    dependent = StructuralProposalCandidate(
+        candidate_id="candidate:dependent",
+        network_id="standalone:adaptive.cortex",
+        target_kind="region",
+        operation="split",
+        substrate_ids=(region.region_id,),
+        evidence_ids=("runtime:dependent",),
+        source_tick=2,
+        priority=0.7,
+        specification=(
+            ("region_id", region.region_id),
+            ("unit_id", "adaptive.cortex.child"),
+        ),
+        depends_on_candidate_ids=(dependency.candidate_id,),
+        conflict_keys=("dependent-domain",),
+    )
+    model._queue_structural_proposal_candidate(dependency)
+    model._queue_structural_proposal_candidate(dependent)
+
+    results = model.run_structural_maintenance_cycle(
+        candidate_ids=(
+            dependent.candidate_id,
+            dependency.candidate_id,
+        ),
+        holdout_inputs_by_candidate={
+            dependent.candidate_id: (torch.ones(5),),
+        },
+        expected_activities_by_candidate={
+            dependent.candidate_id: (torch.zeros(3),),
+        },
+    )
+    assert tuple(item.candidate_id for item in results) == (
+        dependency.candidate_id,
+        dependent.candidate_id,
+    )
+    assert results[0].status == "missing_holdout"
+    assert "dependency" in (results[1].error or "")
+    assert results[1].status == "failed_closed"
+    assert region.unit_ids == ("u0", "u1")
+    assert model.topology_proposals == ()
+
+    conflict_model = TSKV8Adapter(_config(budget=1), episode_id="maintenance-conflict")
+    conflict_region = _region()
+    conflict_model.attach_adaptive_neuron_region(conflict_region)
+    conflict_add = StructuralProposalCandidate(
+        candidate_id="candidate:conflict-add",
+        network_id="standalone:adaptive.cortex",
+        target_kind="neuron",
+        operation="add",
+        substrate_ids=(conflict_region.region_id,),
+        evidence_ids=("runtime:conflict-add",),
+        source_tick=1,
+        priority=0.8,
+        specification=(
+            ("region_id", conflict_region.region_id),
+            ("unit_id", "adaptive.cortex.conflict"),
+        ),
+    )
+    conflict_prune = StructuralProposalCandidate(
+        candidate_id="candidate:conflict-prune",
+        network_id="standalone:adaptive.cortex",
+        target_kind="region",
+        operation="prune",
+        substrate_ids=(conflict_region.region_id,),
+        evidence_ids=("runtime:conflict-prune",),
+        source_tick=2,
+        priority=0.7,
+        specification=(("region_id", conflict_region.region_id),),
+    )
+    conflict_model._queue_structural_proposal_candidate(conflict_add)
+    conflict_model._queue_structural_proposal_candidate(conflict_prune)
+    conflict_results = conflict_model.run_structural_maintenance_cycle(
+        candidate_ids=(conflict_add.candidate_id, conflict_prune.candidate_id),
+        holdout_inputs_by_candidate={
+            conflict_add.candidate_id: (torch.ones(5),),
+            conflict_prune.candidate_id: (torch.ones(5),),
+        },
+        expected_activities_by_candidate={
+            conflict_add.candidate_id: (torch.zeros(3),),
+            conflict_prune.candidate_id: (torch.zeros(3),),
+        },
+    )
+    assert all(item.status == "failed_closed" for item in conflict_results)
+    assert all("conflict" in (item.error or "") for item in conflict_results)
+    assert conflict_region.unit_ids == ("u0", "u1")
+    assert conflict_model.topology_proposals == ()
 
 
 def test_runtime_cross_region_ledger_owns_connection_and_rolls_back() -> None:

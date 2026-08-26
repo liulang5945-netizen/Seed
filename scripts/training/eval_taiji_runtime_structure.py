@@ -20,6 +20,7 @@ from taiji import (  # noqa: E402
     AdaptiveStructuralPruningController,
     CrossRegionCooperationLearner,
     StructuralGrowthDynamics,
+    StructuralProposalCandidate,
     StructuralPruningDynamics,
     TaijiConfig,
     TSKV8Adapter,
@@ -61,6 +62,16 @@ def _network() -> AdaptiveNeuronNetwork:
     return AdaptiveNeuronNetwork(
         (make("source"), make("target")),
         execution_order=("source", "target"),
+    )
+
+
+def _region() -> AdaptiveNeuronRegion:
+    return AdaptiveNeuronRegion(
+        region_id="adaptive.cortex",
+        input_dim=5,
+        unit_ids=("u0", "u1"),
+        fan_in=2,
+        generator=torch.Generator().manual_seed(7),
     )
 
 
@@ -174,6 +185,155 @@ def evaluate() -> dict[str, object]:
         all(checkpoint_checks.values())
     )
     route_state = restored_network.cooperation_learner.route_state(route.substrate_id)
+
+    direct_model = TSKV8Adapter(_config(budget=1), episode_id="runtime-standalone-neuron")
+    direct_region = _region()
+    direct_model.attach_adaptive_neuron_region(direct_region)
+    direct_model.attach_structural_growth_controller(_growth_controller())
+    direct_first = direct_model.step_adaptive_neuron_region(
+        direct_region.region_id,
+        torch.ones(5),
+    )
+    direct_model.step_adaptive_neuron_region(
+        direct_region.region_id,
+        torch.ones(5),
+        expected_activity=direct_first,
+        holdout=True,
+    )
+    direct_candidate = direct_model.structural_proposal_candidates[0]
+    direct_proposal = direct_model.materialize_structural_candidate(
+        direct_candidate.candidate_id
+    )
+    assert direct_proposal is not None
+    direct_trial = AdaptiveNeuronRegion.from_payload(
+        direct_region.to_payload(),
+        generator=torch.Generator().manual_seed(0),
+    )
+    direct_trial.apply_topology_proposal(
+        direct_proposal,
+        generator=torch.Generator().manual_seed(0),
+    )
+    direct_holdout_input = torch.zeros(5)
+    direct_holdout_input[direct_trial.incoming.pre_index[-1]] = torch.sign(
+        direct_trial.incoming.edge_weight[-1]
+    )
+    direct_expected = direct_trial.step(direct_holdout_input)
+    direct_holdout_validated = direct_model.validate_structural_candidate_holdout(
+        direct_candidate.candidate_id,
+        holdout_inputs=(direct_holdout_input,),
+        expected_activities=(direct_expected,),
+    )
+    direct_committed = direct_model.commit_structural_candidate(
+        direct_candidate.candidate_id
+    )
+    direct_checkpoint_model = TSKV8Adapter.from_native_checkpoint(
+        direct_model.native_checkpoint()
+    )
+    direct_checkpoint = bool(
+        direct_checkpoint_model.neuron_regions[0].unit_ids
+        == ("u0", "u1", "adaptive.cortex.grown.1")
+        and direct_checkpoint_model.structural_runtime_observations
+        == direct_model.structural_runtime_observations
+    )
+    direct_rolled_back = direct_checkpoint_model.rollback_structural_candidate(
+        direct_candidate.candidate_id
+    )
+
+    guard_model = TSKV8Adapter(_config(budget=1), episode_id="runtime-maintenance-guards")
+    guard_region = _region()
+    guard_model.attach_adaptive_neuron_region(guard_region)
+    dependency = StructuralProposalCandidate(
+        candidate_id="candidate:guard-dependency",
+        network_id="standalone:adaptive.cortex",
+        target_kind="neuron",
+        operation="add",
+        substrate_ids=(guard_region.region_id,),
+        evidence_ids=("runtime:guard-dependency",),
+        source_tick=1,
+        priority=0.8,
+        specification=(
+            ("region_id", guard_region.region_id),
+            ("unit_id", "adaptive.cortex.guard"),
+        ),
+        conflict_keys=("guard-dependency",),
+    )
+    dependent = StructuralProposalCandidate(
+        candidate_id="candidate:guard-dependent",
+        network_id="standalone:adaptive.cortex",
+        target_kind="region",
+        operation="split",
+        substrate_ids=(guard_region.region_id,),
+        evidence_ids=("runtime:guard-dependent",),
+        source_tick=2,
+        priority=0.7,
+        specification=(
+            ("region_id", guard_region.region_id),
+            ("first_unit_count", 1),
+        ),
+        depends_on_candidate_ids=(dependency.candidate_id,),
+        conflict_keys=("guard-dependent",),
+    )
+    guard_model._queue_structural_proposal_candidate(dependency)
+    guard_model._queue_structural_proposal_candidate(dependent)
+    dependency_results = guard_model.run_structural_maintenance_cycle(
+        candidate_ids=(dependent.candidate_id, dependency.candidate_id),
+        holdout_inputs_by_candidate={dependent.candidate_id: (torch.ones(5),)},
+        expected_activities_by_candidate={dependent.candidate_id: (torch.zeros(3),)},
+    )
+    conflict_split = StructuralProposalCandidate(
+        candidate_id="candidate:guard-conflict-split",
+        network_id="standalone:adaptive.cortex",
+        target_kind="region",
+        operation="split",
+        substrate_ids=("adaptive.other",),
+        evidence_ids=("runtime:guard-conflict-split",),
+        source_tick=3,
+        priority=0.6,
+        specification=(
+            ("region_id", "adaptive.other"),
+            ("first_unit_count", 1),
+        ),
+        conflict_keys=("guard-conflict-domain",),
+    )
+    conflict_prune = StructuralProposalCandidate(
+        candidate_id="candidate:guard-conflict-prune",
+        network_id="standalone:adaptive.cortex",
+        target_kind="region",
+        operation="prune",
+        substrate_ids=(guard_region.region_id,),
+        evidence_ids=("runtime:guard-conflict-prune",),
+        source_tick=4,
+        priority=0.5,
+        specification=(("region_id", guard_region.region_id),),
+        conflict_keys=("guard-conflict-domain",),
+    )
+    guard_model._queue_structural_proposal_candidate(conflict_split)
+    guard_model._queue_structural_proposal_candidate(conflict_prune)
+    conflict_results = guard_model.run_structural_maintenance_cycle(
+        candidate_ids=(conflict_split.candidate_id, conflict_prune.candidate_id),
+        holdout_inputs_by_candidate={
+            conflict_split.candidate_id: (torch.ones(5),),
+            conflict_prune.candidate_id: (torch.ones(5),),
+        },
+        expected_activities_by_candidate={
+            conflict_split.candidate_id: (torch.zeros(3),),
+            conflict_prune.candidate_id: (torch.zeros(3),),
+        },
+    )
+    dependency_guard = bool(
+        tuple(item.candidate_id for item in dependency_results)
+        == (dependency.candidate_id, dependent.candidate_id)
+        and dependency_results[0].status == "missing_holdout"
+        and dependency_results[1].status == "failed_closed"
+        and "dependency" in (dependency_results[1].error or "")
+    )
+    conflict_guard = bool(
+        len(conflict_results) == 2
+        and all(item.status == "failed_closed" for item in conflict_results)
+        and all("conflict" in (item.error or "") for item in conflict_results)
+        and guard_region.unit_ids == ("u0", "u1")
+    )
+
     gate_checks = {
         "observation_count": len(before_checkpoint) == 4,
         "first_without_error": before_checkpoint[0].prediction_error is None,
@@ -199,6 +359,16 @@ def evaluate() -> dict[str, object]:
         "restored_topology": before_topology
         == (restored_network.region_ids, restored_network.connection_ids),
         "checkpoint": checkpoint_continuation,
+        "direct_add_candidate": (
+            direct_candidate.target_kind == "neuron"
+            and direct_candidate.operation == "add"
+        ),
+        "direct_add_holdout": direct_holdout_validated,
+        "direct_add_commit": direct_committed,
+        "direct_add_rollback": direct_rolled_back,
+        "direct_add_checkpoint": direct_checkpoint,
+        "dependency_fail_closed": dependency_guard,
+        "conflict_fail_closed": conflict_guard,
     }
 
     gate = {
@@ -208,7 +378,8 @@ def evaluate() -> dict[str, object]:
             "real native network ticks must emit checkpointable activity, prediction-error, "
             "learning-gain and resource observations; attached structural organs and route "
             "credit must continue across checkpoint, while topology remains unchanged until "
-            "a separate holdout/budget/trial/rollback transaction commits it"
+            "a separate holdout/budget/trial/rollback transaction commits it; standalone "
+            "native neuron ticks must use the same governed birth path"
         ),
     }
     return {
@@ -226,6 +397,13 @@ def evaluate() -> dict[str, object]:
             "topology_after_candidate_commit": list(topology_after_commit[0]),
             "maintenance_cycle_status": cycle_results[0].status,
             "maintenance_cycle_rolled_back": cycle_rolled_back,
+            "direct_add_candidate": direct_candidate.candidate_id,
+            "direct_add_holdout_validated": direct_holdout_validated,
+            "direct_add_committed": direct_committed,
+            "direct_add_rolled_back": direct_rolled_back,
+            "direct_add_checkpoint": direct_checkpoint,
+            "dependency_fail_closed": dependency_guard,
+            "conflict_fail_closed": conflict_guard,
             "route_evidence_count": route_state.evidence_count,
             "checkpoint_continuation": checkpoint_continuation,
             "checkpoint_checks": checkpoint_checks,
@@ -274,6 +452,11 @@ def main() -> int:
             "growth_controller_runtime_ownership",
             "pruning_controller_runtime_ownership",
             "route_credit",
+            "standalone_neuron_tick",
+            "direct_neuron_birth_candidate",
+            "direct_neuron_birth_holdout",
+            "candidate_dependency_order",
+            "candidate_conflict_fail_closed",
             "checkpoint_continuation",
             "topology_no_implicit_mutation",
         ],

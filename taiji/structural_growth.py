@@ -115,6 +115,8 @@ class StructuralProposalCandidate:
     priority: float
     specification: tuple[tuple[str, Any], ...] = ()
     resource_cost: int = 1
+    depends_on_candidate_ids: tuple[str, ...] = ()
+    conflict_keys: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not str(self.candidate_id):
@@ -141,6 +143,18 @@ class StructuralProposalCandidate:
         specification = tuple((str(key), value) for key, value in self.specification)
         if len({key for key, _ in specification}) != len(specification):
             raise ValueError("structural candidate specification keys must be unique")
+        dependencies = tuple(str(item) for item in self.depends_on_candidate_ids)
+        if any(not item for item in dependencies):
+            raise ValueError("structural candidate dependencies must not be empty")
+        if len(set(dependencies)) != len(dependencies):
+            raise ValueError("structural candidate dependencies cannot contain duplicates")
+        if str(self.candidate_id) in dependencies:
+            raise ValueError("structural candidate cannot depend on itself")
+        conflicts = tuple(str(item) for item in self.conflict_keys)
+        if any(not item for item in conflicts):
+            raise ValueError("structural candidate conflict_keys must not be empty")
+        if len(set(conflicts)) != len(conflicts):
+            raise ValueError("structural candidate conflict_keys cannot contain duplicates")
         object.__setattr__(self, "candidate_id", str(self.candidate_id))
         object.__setattr__(self, "network_id", str(self.network_id))
         object.__setattr__(self, "substrate_ids", substrates)
@@ -149,6 +163,8 @@ class StructuralProposalCandidate:
         object.__setattr__(self, "priority", float(self.priority))
         object.__setattr__(self, "specification", specification)
         object.__setattr__(self, "resource_cost", int(self.resource_cost))
+        object.__setattr__(self, "depends_on_candidate_ids", dependencies)
+        object.__setattr__(self, "conflict_keys", conflicts)
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -163,6 +179,8 @@ class StructuralProposalCandidate:
             "priority": self.priority,
             "specification": {key: value for key, value in self.specification},
             "resource_cost": self.resource_cost,
+            "depends_on_candidate_ids": list(self.depends_on_candidate_ids),
+            "conflict_keys": list(self.conflict_keys),
         }
 
     @classmethod
@@ -183,6 +201,10 @@ class StructuralProposalCandidate:
             priority=float(payload["priority"]),
             specification=tuple((str(key), value) for key, value in specification.items()),
             resource_cost=int(payload.get("resource_cost", 1)),
+            depends_on_candidate_ids=tuple(
+                str(item) for item in payload.get("depends_on_candidate_ids", ())
+            ),
+            conflict_keys=tuple(str(item) for item in payload.get("conflict_keys", ())),
         )
 
 
