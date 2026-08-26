@@ -21,6 +21,7 @@
     "cpu_network_profiler",
     "cpu_checkpoint_roundtrip",
     "cpu_checkpoint_continuation",
+    "runtime_scratch_reuse_regression",
     "cuda_profile_when_available",
     "cross_device_checkpoint_when_available",
     "cross_device_numerical_consistency_when_available"

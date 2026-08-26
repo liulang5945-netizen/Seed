@@ -673,6 +673,11 @@ device/dtype/limit 缓存，`AdaptiveNeuronNetwork` 复用按区域的运行时 
 均通过，当前 CPU 热点主要是 `aten::index`、`aten::sum` 和少量 copy。下一入口是固化性能
 回归基线，并在 CUDA-capable 主机上复跑相同 workload；在此之前不写自定义 fused/sparse kernel。
 
+固定 workload 与 manifest、CPU profile 报告、checkpoint roundtrip/continuation 和 scratch
+复用回归测试现已提交；吞吐只是当前 CPU 主机观测，不被硬编码为跨设备性能阈值。下一入口是
+在 CUDA-capable 主机上复跑相同 workload，取得真实跨设备输出/checkpoint continuation 证据，
+再决定是否评审 fused/sparse kernel；当前 CPU-only 环境不宣称 CUDA 已验证。
+
 本步设计已收敛并通过 Gate：新增独立的 `CrossRegionCooperationLearner`，为每条显式跨区连接维护
 可 checkpoint 的 prediction-error EMA、holdout-transfer EMA、resource-state EMA、证据次数
 与选择次数；连接选择采用可配置的质量/迁移/资源/代价权重和探索项，输入是区域与连接身份，

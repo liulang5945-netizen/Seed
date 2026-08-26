@@ -571,3 +571,7 @@ P4 的最小真实经历边界已落地：
 **已完成：native tick hardening 已落地并通过；稀疏输入仅在设备不一致时转换，norm 常量按 device/dtype/limit 缓存，network 的 zero scratch vector 按区域复用且不进入 checkpoint。重跑 profile 仍通过 CPU profile、checkpoint roundtrip 与 continuation，热点收敛到 `aten::index`、`aten::sum` 及少量 copy；本机仍无 CUDA，故没有伪造 CUDA 结论。**
 
 **当前唯一下一步：将当前 profile 固化为稳定的性能回归基线，并在 CUDA-capable 主机上复跑同一 workload；在此之前不引入自定义 fused/sparse kernel。**
+
+**已完成：profile 固定 workload 与 manifest 已提交，CPU profile 报告、checkpoint roundtrip/continuation 和 network scratch 复用回归测试均已固化；吞吐仅作为本机观测，不钉死为跨设备硬阈值。**
+
+**当前唯一下一步：在 CUDA-capable 主机上复跑同一 workload，完成跨设备输出/checkpoint continuation 验证，再依据真实热点决定是否引入 fused/sparse kernel。当前 CPU-only 环境不宣称 CUDA 已验证。**
