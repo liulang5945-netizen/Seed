@@ -2,7 +2,7 @@
 
 状态：**当前唯一执行路线**
 
-更新时间：2026-08-25（Taiji 架构重新定基线）
+更新时间：2026-08-26（Taiji 架构重新定基线）
 
 ## 1. 目标与纠正后的边界
 
@@ -542,4 +542,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：为多 concept 同时激活场景建立 branch attribution owner，按 match confidence、after-state 与 prediction error 选择唯一归属，验证 owner lesion、低置信度、跨 concept 干扰、episode buffer 与 native checkpoint continuation。**
+**下一步：把 branch birth 接入 `DevelopmentState` 结构成长预算与 rollback 合同，要求 owner 只能提交一条带证据的 growth request，并通过资源预算、holdout/lesion、容量 pruning 与 native checkpoint 回滚门控后才进入主概念结构。**

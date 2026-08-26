@@ -407,6 +407,125 @@ class ConceptFormationOrgan:
                 candidates.append(action_similarity * state_similarity * quality)
         return max(candidates, default=0.0)
 
+    def _sequence_transition_signals(
+        self,
+        concept: Concept,
+        transition: WorldTransition,
+        prediction_error: float,
+    ) -> tuple[float, float, bool]:
+        """Return state and prediction-fit evidence for one concept transition."""
+
+        if concept.sequence_traces_lesioned:
+            return 0.0, 0.0, False
+        if not concept.sequence_traces:
+            return 0.0, 0.0, False
+        error = float(prediction_error)
+        if not math.isfinite(error) or error < 0.0:
+            raise ValueError("prediction_error must be finite and non-negative")
+        candidates: list[tuple[float, float, float, str]] = []
+        for trace in concept.sequence_traces:
+            for index, action_kind in enumerate(trace.action_kinds):
+                if action_kind != transition.action.kind:
+                    continue
+                expected_before = (
+                    trace.before_prototype
+                    if index == 0
+                    else trace.after_prototypes[index - 1]
+                )
+                before_similarity = self._state_similarity(
+                    transition.before.latent, expected_before
+                )
+                after_similarity = self._state_similarity(
+                    transition.after.latent, trace.after_prototypes[index]
+                )
+                state_score = before_similarity * after_similarity
+                prediction_fit = max(
+                    0.0,
+                    1.0 - abs(error - float(trace.prediction_errors[index])),
+                )
+                evidence = (
+                    state_score
+                    * prediction_fit
+                    * float(trace.step_credit[index])
+                )
+                candidates.append((evidence, state_score, prediction_fit, trace.trace_id))
+        if not candidates:
+            return 0.0, 0.0, False
+        _, state_score, prediction_fit, _ = max(
+            candidates,
+            key=lambda item: (item[0], item[1], item[2], item[3]),
+        )
+        return state_score, prediction_fit, True
+
+    def select_sequence_owner(
+        self,
+        matches: Sequence[ConceptMatch],
+        transition: WorldTransition,
+        prediction_error: float,
+        *,
+        weights: tuple[float, float, float] = (0.45, 0.40, 0.15),
+        min_score: float = 0.65,
+        min_margin: float = 0.05,
+    ) -> str | None:
+        """Select one concept owner for a real transition or fail closed.
+
+        The score combines retrieval confidence, learned before/after-state
+        evidence and prediction-error fit.  A minimum retrieval score and a
+        winner margin prevent low-confidence or cross-concept interference
+        from silently assigning one episode to multiple concepts.
+        """
+
+        if not isinstance(transition, WorldTransition):
+            raise TypeError("transition must be a WorldTransition")
+        if (
+            len(weights) != 3
+            or any(not math.isfinite(float(weight)) or float(weight) <= 0.0 for weight in weights)
+            or abs(sum(float(weight) for weight in weights) - 1.0) > 1e-6
+        ):
+            raise ValueError("owner weights must be three positive weights summing to 1")
+        if not 0.0 <= float(min_score) <= 1.0:
+            raise ValueError("owner min_score must be in [0, 1]")
+        if not 0.0 <= float(min_margin) <= 1.0:
+            raise ValueError("owner min_margin must be in [0, 1]")
+        candidates: dict[str, tuple[float, ConceptMatch, bool]] = {}
+        for match in matches:
+            if not isinstance(match, ConceptMatch) or match.score < float(min_score):
+                continue
+            state_score, prediction_fit, has_transition_evidence = self._sequence_transition_signals(
+                match.concept,
+                transition,
+                prediction_error,
+            )
+            score = (
+                float(weights[0]) * float(match.score)
+                + float(weights[1]) * state_score
+                + float(weights[2]) * prediction_fit
+            )
+            previous = candidates.get(match.concept.concept_id)
+            if previous is None or score > previous[0]:
+                candidates[match.concept.concept_id] = (
+                    score,
+                    match,
+                    has_transition_evidence,
+                )
+        ranked = sorted(
+            candidates.items(),
+            key=lambda item: (-item[1][0], item[0]),
+        )
+        if not ranked:
+            return None
+        winner_score, winner_match, winner_has_evidence = ranked[0][1]
+        if len(ranked) > 1:
+            if winner_score < float(min_score):
+                return None
+            if winner_score - ranked[1][1][0] < float(min_margin):
+                return None
+        elif winner_score < float(min_score) and (
+            winner_has_evidence or winner_match.concept.sequence_traces_lesioned
+        ):
+            return None
+        return ranked[0][0]
+
     @staticmethod
     def _action_sequences(
         records: Sequence[EpisodicMemoryRecord],

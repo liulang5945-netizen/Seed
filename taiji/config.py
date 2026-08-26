@@ -230,6 +230,9 @@ class TaijiConfig:
     concept_capacity: int = 256
     concept_plasticity_rate: float = 0.25
     concept_prune_threshold: float = 0.15
+    concept_branch_owner_weights: tuple[float, float, float] = (0.45, 0.40, 0.15)
+    concept_branch_owner_min_score: float = 0.65
+    concept_branch_owner_min_margin: float = 0.05
     self_capability_learning_rate: float = 0.20
     seed: int = 20260821
     perception: PerceptionConfig = field(default_factory=PerceptionConfig)
@@ -379,6 +382,21 @@ class TaijiConfig:
             raise ValueError("concept_plasticity_rate must be in (0, 1]")
         if not 0.0 <= self.concept_prune_threshold <= 1.0:
             raise ValueError("concept_prune_threshold must be in [0, 1]")
+        if (
+            len(self.concept_branch_owner_weights) != 3
+            or any(
+                float(weight) <= 0.0 for weight in self.concept_branch_owner_weights
+            )
+            or abs(sum(float(weight) for weight in self.concept_branch_owner_weights) - 1.0)
+            > 1e-6
+        ):
+            raise ValueError(
+                "concept_branch_owner_weights must be three positive weights summing to 1"
+            )
+        if not 0.0 <= self.concept_branch_owner_min_score <= 1.0:
+            raise ValueError("concept_branch_owner_min_score must be in [0, 1]")
+        if not 0.0 <= self.concept_branch_owner_min_margin <= 1.0:
+            raise ValueError("concept_branch_owner_min_margin must be in [0, 1]")
         if not 0.0 < self.self_capability_learning_rate <= 1.0:
             raise ValueError("self_capability_learning_rate must be in (0, 1]")
 
@@ -575,6 +593,8 @@ class TaijiConfig:
         values["region_sizes"] = tuple(values["region_sizes"])
         if "concept_signal_weights" in values:
             values["concept_signal_weights"] = tuple(values["concept_signal_weights"])
+        if "concept_branch_owner_weights" in values:
+            values["concept_branch_owner_weights"] = tuple(values["concept_branch_owner_weights"])
         perception = values.get("perception")
         if perception is not None and not isinstance(perception, PerceptionConfig):
             values["perception"] = PerceptionConfig.from_dict(dict(perception))

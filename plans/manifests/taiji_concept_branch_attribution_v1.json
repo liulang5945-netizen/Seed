@@ -1,0 +1,15 @@
+{
+  "format": "taiji-concept-branch-attribution-manifest-v1",
+  "task": "unique owner attribution for online concept branch birth",
+  "owner_signals": [
+    "concept match confidence",
+    "learned before/after state",
+    "prediction-error fit"
+  ],
+  "fail_closed": [
+    "low confidence",
+    "close cross-concept competition",
+    "owner trace lesion"
+  ],
+  "continuation": "episode buffer and native checkpoint must preserve the selected owner only"
+}

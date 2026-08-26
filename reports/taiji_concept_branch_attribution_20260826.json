@@ -1,0 +1,25 @@
+{
+  "format": "taiji-concept-branch-attribution-v1",
+  "metrics": {
+    "concept_count": 2,
+    "owner_rescue": "concept:ccc52b871af987a5",
+    "owner_handoff": "concept:ccc52b871af987a5",
+    "low_confidence_owner": null,
+    "interference_owner": null,
+    "owner_after_lesion": null,
+    "buffer_owner_count_before_checkpoint": 1,
+    "owner_trace_count_before_birth": 1,
+    "owner_trace_count_after_birth": 2,
+    "other_trace_count_after_birth": 1,
+    "automatic_trace_ids": [
+      "trace:20f4e5d54869aa83",
+      "trace:9b6187a641ba25ed"
+    ],
+    "checkpoint_recovery": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "simultaneously active concepts must select one owner from match confidence, learned after-state and prediction-error fit; low confidence, close competition and owner lesion must fail closed, while buffered birth and checkpoint continuation remain intact"
+  },
+  "boundary": "This is a closed-world branch-attribution gate; it does not claim open-domain planning or general intelligence."
+}
