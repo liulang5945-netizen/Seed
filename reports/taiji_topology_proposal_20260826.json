@@ -1,0 +1,38 @@
+{
+  "format": "taiji-topology-proposal-v1",
+  "proposal": {
+    "version": 1,
+    "proposal_id": "topology:fabric.decoder.0:post:0:slot:0:pre:3>0",
+    "substrate_id": "fabric.decoder.0",
+    "target_kind": "synapse",
+    "operation": "rewire",
+    "specification": {
+      "post_index": 0,
+      "replacement_pre_index": 0,
+      "retired_pre_index": 3,
+      "slot_index": 0
+    },
+    "requested_units": 1,
+    "resource_cost": 1,
+    "evidence_ids": [
+      "holdout:donor-response"
+    ],
+    "parent_checkpoint_id": "fabric-parent:0",
+    "status": "pending",
+    "validation_score": 0.0
+  },
+  "metrics": {
+    "applied": true,
+    "holdout_before": 0.0,
+    "holdout_after_learning": 0.5120000243186951,
+    "checkpoint_score": 0.5120000243186951,
+    "lesion_score": 0.0,
+    "rollback_score": 0.0,
+    "proposal_roundtrip": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "a substrate proposal must change only an admissible synapse, improve a held-out donor response after local learning, survive topology checkpoint roundtrip, fail under functional lesion, and restore its parent topology"
+  },
+  "boundary": "This gate proves auditable fixed-fan-in synapse rewiring only; it does not claim neuron birth, region birth, open-domain self-evolution or general intelligence."
+}

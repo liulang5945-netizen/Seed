@@ -2151,6 +2151,97 @@ class StructuralGrowthRequest:
 
 
 @dataclass(frozen=True)
+class StructuralTopologyProposal:
+    """A versioned proposal for changing a Taiji-owned substrate topology.
+
+    ``specification`` deliberately carries substrate coordinates instead of
+    naming an action, intent, token or task.  The contract can therefore cover
+    synapse rewiring now and neuron/region growth later without making those
+    mechanisms part of the cognitive vocabulary.
+    """
+
+    proposal_id: str
+    substrate_id: str
+    target_kind: str
+    operation: str
+    specification: tuple[tuple[str, Any], ...] = ()
+    requested_units: int = 1
+    resource_cost: int = 1
+    evidence_ids: tuple[str, ...] = ()
+    parent_checkpoint_id: str | None = None
+    status: str = "pending"
+    validation_score: float = 0.0
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.proposal_id, "topology proposal_id")
+        _check_text(self.substrate_id, "topology substrate_id")
+        _check_text(self.target_kind, "topology target_kind")
+        _check_text(self.operation, "topology operation")
+        if self.target_kind not in {"synapse", "neuron", "region"}:
+            raise ValueError("unsupported topology target_kind")
+        if self.operation not in {"add", "rewire", "prune"}:
+            raise ValueError("unsupported topology operation")
+        if int(self.requested_units) <= 0:
+            raise ValueError("topology requested_units must be positive")
+        if int(self.resource_cost) <= 0:
+            raise ValueError("topology resource_cost must be positive")
+        object.__setattr__(
+            self,
+            "specification",
+            _normalize_pairs(self.specification, "topology specification"),
+        )
+        object.__setattr__(
+            self,
+            "evidence_ids",
+            _normalize_ids(self.evidence_ids, "topology evidence_ids"),
+        )
+        if self.parent_checkpoint_id is not None:
+            _check_text(self.parent_checkpoint_id, "topology parent_checkpoint_id")
+        if self.status not in {"pending", "accepted", "rejected", "rolled_back"}:
+            raise ValueError("unsupported topology proposal status")
+        _check_unit(self.validation_score, "topology validation_score")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "proposal_id": self.proposal_id,
+            "substrate_id": self.substrate_id,
+            "target_kind": self.target_kind,
+            "operation": self.operation,
+            "specification": {key: _clone_value(value) for key, value in self.specification},
+            "requested_units": self.requested_units,
+            "resource_cost": self.resource_cost,
+            "evidence_ids": list(self.evidence_ids),
+            "parent_checkpoint_id": self.parent_checkpoint_id,
+            "status": self.status,
+            "validation_score": self.validation_score,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> StructuralTopologyProposal:
+        return cls(
+            version=int(payload["version"]),
+            proposal_id=str(payload["proposal_id"]),
+            substrate_id=str(payload["substrate_id"]),
+            target_kind=str(payload["target_kind"]),
+            operation=str(payload["operation"]),
+            specification=payload.get("specification", {}),
+            requested_units=int(payload.get("requested_units", 1)),
+            resource_cost=int(payload.get("resource_cost", 1)),
+            evidence_ids=tuple(str(item) for item in payload.get("evidence_ids", ())),
+            parent_checkpoint_id=(
+                None
+                if payload.get("parent_checkpoint_id") is None
+                else str(payload["parent_checkpoint_id"])
+            ),
+            status=str(payload.get("status", "pending")),
+            validation_score=float(payload.get("validation_score", 0.0)),
+        )
+
+
+@dataclass(frozen=True)
 class DevelopmentState:
     tick: int
     stage: str = "bootstrap"
