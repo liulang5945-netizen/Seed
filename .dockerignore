@@ -34,6 +34,7 @@ dist
 
 # 大体积 / 本地专属资源（通过 volume 挂载提供，不进镜像上下文）
 checkpoints
+data
 logs
 reports
 artifacts

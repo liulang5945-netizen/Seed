@@ -19,6 +19,8 @@ services:
     volumes:
       # 模型检查点（必需，否则后端以无模型降级模式启动）
       - ./checkpoints:/app/checkpoints
+      # 语料与运行时偏好（不进镜像：被 .gitignore 忽略且体量大，见 Dockerfile）
+      - ./data:/app/data
       # 用户数据与运行时产物持久化
       - seed_user_data:/app/user_data
       - seed_rag_data:/app/rag_data
