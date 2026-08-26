@@ -227,7 +227,9 @@ class AdaptiveNeuronRegion:
                     f"additional drive shape must be ({self.unit_count},), "
                     f"got {tuple(additional_drive.shape)}"
                 )
-            drive = drive + additional_drive.to(self.device)
+            if additional_drive.device != self.device:
+                additional_drive = additional_drive.to(self.device)
+            drive = drive + additional_drive
         if self.recurrent is not None:
             drive = drive + float(self.dynamics.recurrent_gain) * self.recurrent.forward(
                 self.activity
