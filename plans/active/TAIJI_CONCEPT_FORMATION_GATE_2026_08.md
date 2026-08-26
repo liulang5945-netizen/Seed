@@ -146,4 +146,7 @@ cost，并支持 checkpoint 恢复与去重；candidate 仍不会直接改变 li
 live topology。统一 holdout validator dispatch 也已完成：split、region-prune、connection-prune
 和 merge 按 topology role 复用现有验证器，验证只更新 pending proposal，不修改 live topology；
 未验证 candidate 仍会被 commit gate 阻断。下一步转为统一 commit dispatcher，集中执行 budget、
-trial checkpoint 和 reverse rollback。
+trial checkpoint 和 reverse rollback。统一 commit/rollback dispatcher 已完成：candidate 按
+topology role 路由到对应 ledger，Gate 覆盖 holdout 后 commit、预算拒绝、trial roundtrip、
+live topology 变更、latest-change reverse rollback 与 checkpoint continuation。下一步转为将
+candidate queue 和真实 holdout 数据绑定为可批量、逐项 fail-closed 的 maintenance cycle。

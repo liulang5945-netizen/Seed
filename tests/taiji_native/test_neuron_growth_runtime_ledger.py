@@ -210,6 +210,18 @@ def test_runtime_tick_feeds_structural_organs_and_checkpoint_continues() -> None
     assert model.cognitive_snapshot().development.last_update_source == (
         "region-split-holdout-validation"
     )
+    assert model.commit_structural_candidate(candidate.candidate_id) is True
+    assert model.neuron_networks[0].region_ids == (
+        "source",
+        "target",
+        "source.split.1",
+    )
+    assert model.rollback_structural_candidate(candidate.candidate_id) is True
+    assert model.neuron_networks[0].region_ids == ("source", "target")
+    materialized = next(
+        item for item in model.topology_proposals if item.proposal_id == materialized.proposal_id
+    )
+    assert materialized.status == "rolled_back"
 
     restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
     assert restored.structural_runtime_observations == model.structural_runtime_observations

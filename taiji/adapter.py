@@ -392,6 +392,51 @@ class TSKV8Adapter(Taiji):
             f"candidate proposal has no holdout validator: {proposal.operation}/{role}"
         )
 
+    def commit_structural_candidate(self, candidate_id: str) -> bool:
+        """Dispatch one candidate through the operation-specific topology ledger."""
+
+        proposal = self.materialize_structural_candidate(candidate_id)
+        if proposal is None:
+            raise ValueError(f"unknown structural proposal candidate: {candidate_id}")
+        network_id = self._topology_network_ids.get(proposal.proposal_id)
+        if network_id is None:
+            raise ValueError("structural candidate proposal is not attached to a network")
+        role = dict(proposal.specification).get("topology_role")
+        if proposal.operation == "split" and role == "region_split":
+            return self.commit_region_split(network_id, proposal)
+        if proposal.operation == "merge" and role == "region_merge":
+            return self.commit_region_merge(network_id, proposal)
+        if proposal.operation == "prune" and role == "region_prune":
+            return self.commit_region_prune(network_id, proposal)
+        if proposal.operation == "prune" and role == "cross_region_connection_prune":
+            return self.commit_cross_region_connection_prune(network_id, proposal)
+        raise ValueError(
+            f"candidate proposal has no commit dispatcher: {proposal.operation}/{role}"
+        )
+
+    def rollback_structural_candidate(self, candidate_id: str) -> bool:
+        """Dispatch reverse rollback for the latest accepted candidate change."""
+
+        key = str(candidate_id)
+        proposal_id = self._structural_candidate_proposals.get(key)
+        if proposal_id is None:
+            raise ValueError(f"unknown materialized structural candidate: {candidate_id}")
+        proposal = self._topology_proposals.get(proposal_id)
+        if proposal is None:
+            raise ValueError("structural candidate proposal is missing")
+        role = dict(proposal.specification).get("topology_role")
+        if proposal.operation == "split" and role == "region_split":
+            return self.rollback_region_split(proposal_id)
+        if proposal.operation == "merge" and role == "region_merge":
+            return self.rollback_region_merge(proposal_id)
+        if proposal.operation == "prune" and role == "region_prune":
+            return self.rollback_region_prune(proposal_id)
+        if proposal.operation == "prune" and role == "cross_region_connection_prune":
+            return self.rollback_cross_region_connection_prune(proposal_id)
+        raise ValueError(
+            f"candidate proposal has no rollback dispatcher: {proposal.operation}/{role}"
+        )
+
     @staticmethod
     def _growth_request_identity(
         concept_id: str,

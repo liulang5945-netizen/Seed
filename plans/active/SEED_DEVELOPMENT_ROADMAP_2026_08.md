@@ -550,4 +550,6 @@ P4 的最小真实经历边界已落地：
 
 **已完成：split、region-prune、connection-prune、merge candidate 已接入统一 holdout validator dispatch；验证只更新 pending proposal 的 validation score/status，未验证 candidate 仍被 commit gate 阻断。**
 
-**下一步：建立统一 commit dispatcher，集中执行 budget、trial checkpoint、commit 与 reverse rollback。**
+**已完成：统一 commit/rollback dispatcher 已按 topology role 路由 candidate，依次执行 holdout score、budget、trial checkpoint、live topology mutation 和 latest-change reverse rollback；runtime Gate 覆盖 commit 后拓扑变化、父结构恢复和 checkpoint continuation。**
+
+**下一步：把 candidate queue 与真实 holdout 数据绑定为可批量但逐项 fail-closed 的 maintenance cycle。**

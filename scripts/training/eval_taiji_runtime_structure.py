@@ -83,7 +83,7 @@ def _pruning_controller() -> AdaptiveStructuralPruningController:
 
 
 def evaluate() -> dict[str, object]:
-    model = TSKV8Adapter(_config(budget=1), episode_id="runtime-structure")
+    model = TSKV8Adapter(_config(budget=2), episode_id="runtime-structure")
     model.attach_adaptive_neuron_network("cortex", _network())
     route = model.propose_cross_region_connection(
         network_id="cortex",
@@ -120,6 +120,15 @@ def evaluate() -> dict[str, object]:
     materialized = next(
         item for item in model.topology_proposals if item.proposal_id == materialized.proposal_id
     )
+    committed = model.commit_structural_candidate(candidate.candidate_id)
+    topology_after_commit = (
+        model.neuron_networks[0].region_ids,
+        model.neuron_networks[0].connection_ids,
+    )
+    rolled_back = model.rollback_structural_candidate(candidate.candidate_id)
+    materialized = next(
+        item for item in model.topology_proposals if item.proposal_id == materialized.proposal_id
+    )
     before_topology = model.neuron_networks[0].region_ids, model.neuron_networks[0].connection_ids
     checkpoint = model.native_checkpoint()
     restored = TSKV8Adapter.from_native_checkpoint(checkpoint)
@@ -151,8 +160,11 @@ def evaluate() -> dict[str, object]:
             and model.structural_pruning_controller is not None
             and model.structural_pruning_controller.total_observations == 7
             and len(model.structural_proposal_candidates) == 1
-            and materialized.status == "pending"
+            and materialized.status == "rolled_back"
             and holdout_validated
+            and committed
+            and rolled_back
+            and topology_after_commit[0] == ("source", "target", "source.split.1")
             and route_state.evidence_count == 2
             and before_topology == (restored_network.region_ids, restored_network.connection_ids)
             and checkpoint_continuation
@@ -174,6 +186,9 @@ def evaluate() -> dict[str, object]:
             "pruning_observations": model.structural_pruning_controller.total_observations,
             "proposal_candidates": len(model.structural_proposal_candidates),
             "candidate_holdout_validated": holdout_validated,
+            "candidate_committed": committed,
+            "candidate_rolled_back": rolled_back,
+            "topology_after_candidate_commit": list(topology_after_commit[0]),
             "route_evidence_count": route_state.evidence_count,
             "checkpoint_continuation": checkpoint_continuation,
             "topology_unchanged": before_topology
