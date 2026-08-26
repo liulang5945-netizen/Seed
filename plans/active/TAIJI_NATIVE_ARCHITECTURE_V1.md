@@ -646,7 +646,10 @@ taiji/
 > roundtrip 和 reverse rollback。统一 commit/rollback dispatcher 现已完成：候选按 topology role
 > 进入对应 ledger，验证、预算、trial、上线和最新变更回滚顺序可 checkpoint 且幂等；Gate 已
 > 覆盖 candidate commit 后 live topology 改变与 rollback 后父结构恢复。下一入口是将 candidate
-> queue 与真实 holdout 数据绑定成 fail-closed maintenance cycle。
+> queue 与真实 holdout 数据绑定成 fail-closed maintenance cycle。该 cycle 已完成并可恢复：
+> 它逐项 dispatch candidate，缺 holdout 或单项验证/预算/拓扑异常只生成当前项的拒绝结果，不
+> 绕过其他项；maintenance result 记录随 native checkpoint 保存。下一入口是把直接 neuron birth
+> (`add`) 纳入同一 candidate contract，并为候选依赖/冲突建立 fail-closed 规则。
 
 本步设计已收敛并通过 Gate：新增独立的 `CrossRegionCooperationLearner`，为每条显式跨区连接维护
 可 checkpoint 的 prediction-error EMA、holdout-transfer EMA、resource-state EMA、证据次数

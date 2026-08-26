@@ -11,6 +11,7 @@ STRUCTURAL_GROWTH_CHECKPOINT_FORMAT = "taiji-structural-growth-v1"
 STRUCTURAL_PRUNING_CHECKPOINT_FORMAT = "taiji-structural-pruning-v1"
 STRUCTURAL_RUNTIME_OBSERVATION_CHECKPOINT_FORMAT = "taiji-structural-runtime-observation-v1"
 STRUCTURAL_PROPOSAL_CANDIDATE_FORMAT = "taiji-structural-proposal-candidate-v1"
+STRUCTURAL_MAINTENANCE_RESULT_FORMAT = "taiji-structural-maintenance-result-v1"
 
 
 def _unit(value: float, name: str) -> float:
@@ -182,6 +183,65 @@ class StructuralProposalCandidate:
             priority=float(payload["priority"]),
             specification=tuple((str(key), value) for key, value in specification.items()),
             resource_cost=int(payload.get("resource_cost", 1)),
+        )
+
+
+@dataclass(frozen=True)
+class StructuralMaintenanceResult:
+    """Auditable result for one item in a structural maintenance cycle."""
+
+    candidate_id: str
+    proposal_id: str | None
+    status: str
+    validation_score: float = 0.0
+    error: str | None = None
+
+    def __post_init__(self) -> None:
+        if not str(self.candidate_id):
+            raise ValueError("structural maintenance candidate_id must not be empty")
+        if self.proposal_id is not None and not str(self.proposal_id):
+            raise ValueError("structural maintenance proposal_id must not be empty")
+        if self.status not in {
+            "committed",
+            "rejected",
+            "missing_holdout",
+            "failed_closed",
+            "already_applied",
+        }:
+            raise ValueError("unsupported structural maintenance status")
+        _unit(self.validation_score, "structural maintenance validation_score")
+        if self.error is not None and not str(self.error):
+            raise ValueError("structural maintenance error must not be empty")
+        object.__setattr__(self, "candidate_id", str(self.candidate_id))
+        object.__setattr__(
+            self,
+            "proposal_id",
+            None if self.proposal_id is None else str(self.proposal_id),
+        )
+        object.__setattr__(self, "validation_score", float(self.validation_score))
+        object.__setattr__(self, "error", None if self.error is None else str(self.error))
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": STRUCTURAL_MAINTENANCE_RESULT_FORMAT,
+            "candidate_id": self.candidate_id,
+            "proposal_id": self.proposal_id,
+            "status": self.status,
+            "validation_score": self.validation_score,
+            "error": self.error,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> StructuralMaintenanceResult:
+        if payload.get("format") != STRUCTURAL_MAINTENANCE_RESULT_FORMAT:
+            raise ValueError("unsupported structural maintenance result format")
+        proposal_id = payload.get("proposal_id")
+        return cls(
+            candidate_id=str(payload["candidate_id"]),
+            proposal_id=None if proposal_id is None else str(proposal_id),
+            status=str(payload["status"]),
+            validation_score=float(payload.get("validation_score", 0.0)),
+            error=None if payload.get("error") is None else str(payload["error"]),
         )
 
 

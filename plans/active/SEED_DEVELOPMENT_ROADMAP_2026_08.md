@@ -552,4 +552,6 @@ P4 的最小真实经历边界已落地：
 
 **已完成：统一 commit/rollback dispatcher 已按 topology role 路由 candidate，依次执行 holdout score、budget、trial checkpoint、live topology mutation 和 latest-change reverse rollback；runtime Gate 覆盖 commit 后拓扑变化、父结构恢复和 checkpoint continuation。**
 
-**下一步：把 candidate queue 与真实 holdout 数据绑定为可批量但逐项 fail-closed 的 maintenance cycle。**
+**已完成：candidate queue 已与真实 holdout 数据绑定为逐项 fail-closed maintenance cycle；两个 runtime candidates 完成 materialize、holdout、commit、rollback，缺数据/异常/预算不足不会绕过 ledger，`StructuralMaintenanceResult` 随 native checkpoint 恢复。**
+
+**下一步：把直接 neuron birth (`add`) 纳入同一 candidate contract，并验证候选之间依赖顺序与冲突的 fail-closed 行为。**
