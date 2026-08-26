@@ -19,7 +19,4 @@ def test_state_conditioned_concept_suffix_gate() -> None:
     assert runtime["selected_after_checkpoint"] == "suffix-good"
     assert runtime["remaining_action_kinds"] == ("confirm", "archive")
     assert runtime["suffix_affinity_after_execution"] > 0.0
-    assert (
-        runtime["suffix_affinity_after_checkpoint"]
-        == runtime["suffix_affinity_after_execution"]
-    )
+    assert runtime["suffix_affinity_after_checkpoint"] == runtime["suffix_affinity_after_execution"]

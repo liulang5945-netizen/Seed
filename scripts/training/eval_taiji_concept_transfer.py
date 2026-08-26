@@ -196,17 +196,21 @@ def _signal_lesion_results(records: tuple[EpisodicMemoryRecord, ...]) -> dict[st
             replace(record, event_ids=(), assembly_ids=()) for record in records
         ),
         "world": tuple(
-            replace(record, object_ids=(), relation_ids=())
-            if record.memory_id.endswith(("0", "2", "4", "6"))
-            else record
+            (
+                replace(record, object_ids=(), relation_ids=())
+                if record.memory_id.endswith(("0", "2", "4", "6"))
+                else record
+            )
             for record in records
         ),
         "outcome": tuple(
             replace(
                 record,
-                outcome=replace(record.outcome, reward=-1.0, success=False)
-                if record.memory_id.endswith(("0", "2", "4", "6"))
-                else record.outcome,
+                outcome=(
+                    replace(record.outcome, reward=-1.0, success=False)
+                    if record.memory_id.endswith(("0", "2", "4", "6"))
+                    else record.outcome
+                ),
             )
             for record in records
         ),
@@ -265,10 +269,7 @@ def evaluate_schema_scale(schema_count: int) -> dict[str, object]:
         "train_records": len(records),
         "concept_count": len(concepts),
         "holdout_tasks": [near, far],
-        "holdout_transfer_rate": sum(
-            bool(item["transferred"]) for item in (near, far)
-        )
-        / 2.0,
+        "holdout_transfer_rate": sum(bool(item["transferred"]) for item in (near, far)) / 2.0,
     }
 
 
@@ -319,7 +320,7 @@ def evaluate() -> dict[str, object]:
             and left.relation_ids == right.relation_ids
             and left.action_kinds == right.action_kinds
             and left.update_count == right.update_count
-            for left, right in zip(checkpoint.concepts, concepts)
+            for left, right in zip(checkpoint.concepts, concepts, strict=True)
         )
     )
 
@@ -369,8 +370,7 @@ def evaluate() -> dict[str, object]:
                 "near": transferred_near,
                 "far": transferred_far,
                 "rate": sum(
-                    bool(item["transferred"])
-                    for item in (transferred_near, transferred_far)
+                    bool(item["transferred"]) for item in (transferred_near, transferred_far)
                 )
                 / 2.0,
             },

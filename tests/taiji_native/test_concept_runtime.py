@@ -64,9 +64,7 @@ def test_concept_registry_is_consumed_by_planning_and_lesion_removes_prior() -> 
     assert concepts[0].action_kinds == ("preferred",)
     assert model.concept_formation.retrieve(cue)[0].concept.concept_id == concepts[0].concept_id
 
-    model.attach_goal_planner(
-        GoalPlanner(PlanningConfig(concept_weight=0.40))
-    )
+    model.attach_goal_planner(GoalPlanner(PlanningConfig(concept_weight=0.40)))
     model.set_goals((Goal("goal", "prefer the experienced route", priority=1.0),))
     tick = model.cognitive_snapshot().world.tick
     preferred = PlanningCandidate(
