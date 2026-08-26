@@ -196,6 +196,21 @@ class TSKV8Adapter(Taiji):
 
         return self._concept_formation
 
+    def grow_online_concept_branch(
+        self,
+        concept_id: str,
+        transitions: Sequence[tuple[WorldTransition, float]],
+    ) -> str | None:
+        """Birth a novel real-transition branch and publish it to cognitive state."""
+
+        trace_id = self._concept_formation.grow_sequence_trace(concept_id, transitions)
+        if trace_id is not None:
+            self._cognitive_state = replace(
+                self._cognitive_state,
+                concepts=self._concept_formation.concepts,
+            )
+        return trace_id
+
     def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:
         """Attach a Taiji-owned predictor used for runtime intervention scoring."""
 

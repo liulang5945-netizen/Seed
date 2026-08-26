@@ -16,6 +16,7 @@ from .contracts import (
     EpisodicMemoryRecord,
     Outcome,
     WorldState,
+    WorldTransition,
 )
 
 CONCEPT_FORMATION_CHECKPOINT_FORMAT = "taiji-concept-formation-v1"
@@ -174,6 +175,60 @@ class ConceptFormationOrgan:
         concepts[target_index] = updated
         self._concepts = tuple(concepts)
         return removed
+
+    def grow_sequence_trace(
+        self,
+        concept_id: str,
+        transitions: Sequence[tuple[WorldTransition, float]],
+    ) -> str | None:
+        """Birth one novel online branch from a contiguous real transition chain."""
+
+        items = tuple(transitions)
+        if not items:
+            return None
+        target_index = next(
+            (index for index, concept in enumerate(self._concepts) if concept.concept_id == concept_id),
+            None,
+        )
+        if target_index is None:
+            return None
+        previous_after: WorldState | None = None
+        for transition, prediction_error in items:
+            if not isinstance(transition, WorldTransition):
+                raise TypeError("online sequence branch transitions must be WorldTransition values")
+            if not math.isfinite(float(prediction_error)) or float(prediction_error) < 0.0:
+                raise ValueError("online sequence branch prediction_error must be finite and non-negative")
+            if previous_after is not None and transition.before.tick != previous_after.tick:
+                raise ValueError("online sequence branch transitions must be contiguous")
+            previous_after = transition.after
+        action_kinds = tuple(transition.action.kind for transition, _ in items)
+        concept = self._concepts[target_index]
+        if any(
+            trace.action_kinds == action_kinds
+            and self._state_similarity(trace.before_prototype, items[0][0].before.latent)
+            >= self.similarity_threshold
+            for trace in concept.sequence_traces
+        ):
+            return None
+        trace = self._trace_from_transitions(items)
+        updated_traces = self._prune_sequence_traces((*concept.sequence_traces, trace))
+        updated = replace(
+            concept,
+            action_kinds=tuple(dict.fromkeys((*concept.action_kinds, *action_kinds))),
+            action_sequences=tuple(dict.fromkeys((*concept.action_sequences, action_kinds))),
+            sequence_traces=updated_traces,
+            sequence_traces_lesioned=False,
+            update_count=concept.update_count + 1,
+            last_updated_tick=items[-1][0].after.tick,
+        )
+        concepts = list(self._concepts)
+        concepts[target_index] = updated
+        self._concepts = tuple(concepts)
+        return (
+            trace.trace_id
+            if trace.trace_id in {item.trace_id for item in updated_traces}
+            else None
+        )
 
     @staticmethod
     def _world_ids_similarity(
@@ -372,6 +427,51 @@ class ConceptFormationOrgan:
             if sequence and sequence not in sequences:
                 sequences.append(sequence)
         return tuple(sequences)
+
+    @staticmethod
+    def _outcome_value(outcome: Outcome) -> float:
+        bounded_reward = 0.5 * (1.0 + math.tanh(float(outcome.reward)))
+        return 0.5 * float(bool(outcome.success)) + 0.5 * bounded_reward
+
+    def _trace_from_transitions(
+        self, transitions: Sequence[tuple[WorldTransition, float]]
+    ) -> ConceptSequenceTrace:
+        first_transition = transitions[0][0]
+        action_kinds = tuple(transition.action.kind for transition, _ in transitions)
+        before_prototype = first_transition.before.latent
+        after_prototypes = tuple(transition.after.latent for transition, _ in transitions)
+        if any(
+            prototype.numel() != before_prototype.numel()
+            for prototype in after_prototypes
+        ):
+            raise ValueError("online sequence branch states must share one latent dimension")
+        prediction_errors = tuple(
+            max(0.0, min(1.0, float(prediction_error)))
+            for _, prediction_error in transitions
+        )
+        outcome_scores = tuple(
+            self._outcome_value(transition.outcome) for transition, _ in transitions
+        )
+        step_quality = tuple(
+            outcome * (1.0 - error)
+            for outcome, error in zip(outcome_scores, prediction_errors, strict=True)
+        )
+        credits = [0.0] * len(step_quality)
+        running = 0.0
+        for index in range(len(step_quality) - 1, -1, -1):
+            running = step_quality[index] + self.credit_discount * running
+            normalizer = sum(
+                self.credit_discount**offset for offset in range(len(step_quality) - index)
+            )
+            credits[index] = running / normalizer if normalizer else 0.0
+        return ConceptSequenceTrace(
+            action_kinds=action_kinds,
+            before_prototype=before_prototype,
+            after_prototypes=after_prototypes,
+            step_credit=tuple(credits),
+            prediction_errors=prediction_errors,
+            outcome_mean=sum(outcome_scores) / len(outcome_scores),
+        )
 
     def _sequence_traces(
         self, records: Sequence[EpisodicMemoryRecord]
@@ -620,8 +720,7 @@ class ConceptFormationOrgan:
     def _outcome_score(record: EpisodicMemoryRecord) -> float:
         if record.outcome is None:
             return 0.0
-        bounded_reward = 0.5 * (1.0 + math.tanh(float(record.outcome.reward)))
-        return 0.5 * float(bool(record.outcome.success)) + 0.5 * bounded_reward
+        return ConceptFormationOrgan._outcome_value(record.outcome)
 
     def _world_signal_similarity(
         self, left: EpisodicMemoryRecord, right: EpisodicMemoryRecord

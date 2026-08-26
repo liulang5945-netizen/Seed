@@ -1,0 +1,11 @@
+{
+  "format": "taiji-concept-online-birth-manifest-v1",
+  "task": "online birth of a novel same-concept sequence trace",
+  "novel_actions": [
+    "rescue",
+    "handoff"
+  ],
+  "duplicate_policy": "do not create a second trace when action and initial state already match",
+  "feedback": "negative rescue outcome and high prediction error lower branch credit without deleting the trace",
+  "checkpoint": "trace identity, visits, and credit survive organ checkpoint"
+}
