@@ -2065,6 +2065,14 @@ class TSKV8Adapter(Taiji):
             if prediction_record is None or prediction_record.state_error is None
             else prediction_record.state_error
         )
+        if transition is not None and intent is not None:
+            self._concept_formation.update_sequence_trace(
+                intent.kind,
+                before_state=transition.before,
+                after_state=transition.after,
+                outcome=outcome,
+                prediction_error=prediction_error,
+            )
         memory = self._cognitive_state.memory
         if self._planned_rollout is not None and self._goal_planner is not None:
             rollout = self._planned_rollout
@@ -2151,6 +2159,7 @@ class TSKV8Adapter(Taiji):
             self._cognitive_state,
             tick=self.tick,
             world=(world_state if world_state is not None else self._cognitive_state.world),
+            concepts=self._concept_formation.concepts,
             memory=memory,
             self_state=self_state,
             development=development,

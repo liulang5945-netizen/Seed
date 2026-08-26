@@ -1,0 +1,29 @@
+{
+  "format": "taiji-concept-branch-v1",
+  "metrics": {
+    "concept_count": 1,
+    "trace_count": 2,
+    "good_suffix_affinity": 0.7886873874609053,
+    "alt_suffix_affinity": 0.4690701942503812,
+    "horizon_affinity": {
+      "1": 0.8537732970964934,
+      "2": 0.8349337614876103,
+      "3": 0.8103637192790138
+    },
+    "reordered_affinity": 0.0,
+    "selected_branch": "branch-good",
+    "trace_updates": 1,
+    "trace_visits_before": 2,
+    "trace_visits_after": 3,
+    "step_credit_before": 0.8589113418524508,
+    "step_credit_after": 0.8919352301440766,
+    "alternative_trace_visits": 2,
+    "lesioned_affinity": 0.0,
+    "checkpoint_recovery": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "shared-prefix branches must compete across variable horizons, the better suffix must win from learned after-state and credit, trace lesion must remove the sequence prior, and experienced outcome/error feedback must update and checkpoint the existing trace"
+  },
+  "boundary": "This is a closed-world branch-memory gate; it does not claim open-domain planning or general intelligence."
+}
