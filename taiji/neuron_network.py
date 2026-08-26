@@ -238,6 +238,8 @@ class AdaptiveNeuronNetwork:
             raise ValueError("region split new_region_id must be a fresh identity")
         connection_migrations: list[tuple[str, tuple[str, ...]]] = []
         for connection_id, (source_id, target_id, _) in self._connections.items():
+            if retained_id not in {source_id, target_id}:
+                continue
             source_ids = (
                 (retained_id, candidate) if source_id == retained_id else (source_id,)
             )

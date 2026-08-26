@@ -65,6 +65,22 @@ def _network() -> AdaptiveNeuronNetwork:
     )
 
 
+def _three_region_network() -> AdaptiveNeuronNetwork:
+    def make(region_id: str) -> AdaptiveNeuronRegion:
+        return AdaptiveNeuronRegion(
+            region_id=region_id,
+            input_dim=3,
+            unit_ids=(f"{region_id}.u0", f"{region_id}.u1"),
+            fan_in=2,
+            generator=torch.Generator().manual_seed(len(region_id) + 11),
+        )
+
+    return AdaptiveNeuronNetwork(
+        (make("source"), make("relay"), make("target")),
+        execution_order=("source", "relay", "target"),
+    )
+
+
 def _region() -> AdaptiveNeuronRegion:
     return AdaptiveNeuronRegion(
         region_id="adaptive.cortex",
@@ -334,6 +350,130 @@ def evaluate() -> dict[str, object]:
         and guard_region.unit_ids == ("u0", "u1")
     )
 
+    scale_model = TSKV8Adapter(_config(budget=6), episode_id="runtime-three-region")
+    scale_network = _three_region_network()
+    scale_model.attach_adaptive_neuron_network("cortex", scale_network)
+    scale_source_relay = scale_model.propose_cross_region_connection(
+        network_id="cortex",
+        source_region_id="source",
+        target_region_id="relay",
+        evidence_ids=("runtime:scale-source-relay",),
+        fan_in=1,
+    )
+    scale_relay_target = scale_model.propose_cross_region_connection(
+        network_id="cortex",
+        source_region_id="relay",
+        target_region_id="target",
+        evidence_ids=("runtime:scale-relay-target",),
+        fan_in=1,
+    )
+    assert scale_model.commit_cross_region_connection("cortex", scale_source_relay)
+    assert scale_model.commit_cross_region_connection("cortex", scale_relay_target)
+    scale_original_regions = scale_network.region_ids
+    scale_original_connections = scale_network.connection_ids
+    scale_model.attach_cross_region_cooperation("cortex", CrossRegionCooperationLearner())
+    scale_model.attach_structural_growth_controller(_growth_controller())
+    scale_first = scale_model.step_cross_region_network(
+        "cortex",
+        {"source": torch.ones(3)},
+        max_connections=2,
+    )
+    scale_model.step_cross_region_network(
+        "cortex",
+        {"source": torch.ones(3)},
+        expected_activities=scale_first,
+        holdout=True,
+        max_connections=2,
+    )
+    scale_standalone = _region()
+    scale_model.attach_adaptive_neuron_region(scale_standalone)
+    scale_standalone_first = scale_model.step_adaptive_neuron_region(
+        scale_standalone.region_id,
+        torch.ones(5),
+    )
+    scale_model.step_adaptive_neuron_region(
+        scale_standalone.region_id,
+        torch.ones(5),
+        expected_activity=scale_standalone_first,
+        holdout=True,
+    )
+    scale_split_candidate = next(
+        item
+        for item in scale_model.structural_proposal_candidates
+        if item.network_id == "cortex" and item.operation == "split"
+    )
+    scale_add_candidate = next(
+        item
+        for item in scale_model.structural_proposal_candidates
+        if item.network_id == "standalone:adaptive.cortex"
+        and item.target_kind == "neuron"
+    )
+    scale_add_proposal = scale_model.propose_neuron_add(
+        region_id=scale_standalone.region_id,
+        unit_id=dict(scale_add_candidate.specification)["unit_id"],
+        evidence_ids=scale_add_candidate.evidence_ids,
+    )
+    scale_add_trial = AdaptiveNeuronRegion.from_payload(
+        scale_standalone.to_payload(),
+        generator=torch.Generator().manual_seed(0),
+    )
+    scale_add_trial.apply_topology_proposal(
+        scale_add_proposal,
+        generator=torch.Generator().manual_seed(0),
+    )
+    scale_add_input = torch.zeros(5)
+    scale_add_input[scale_add_trial.incoming.pre_index[-1]] = torch.sign(
+        scale_add_trial.incoming.edge_weight[-1]
+    )
+    scale_add_expected = scale_add_trial.step(scale_add_input)
+    scale_results = scale_model.run_structural_maintenance_cycle(
+        candidate_ids=(scale_add_candidate.candidate_id, scale_split_candidate.candidate_id),
+        holdout_inputs_by_candidate={
+            scale_add_candidate.candidate_id: (scale_add_input,),
+            scale_split_candidate.candidate_id: ({"source": torch.ones(3)},),
+        },
+        expected_activities_by_candidate={
+            scale_add_candidate.candidate_id: (scale_add_expected,),
+            scale_split_candidate.candidate_id: (scale_first,),
+        },
+    )
+    scale_topology_after_commit = (
+        scale_model.neuron_networks[0].region_ids,
+        scale_model.neuron_networks[0].connection_ids,
+    )
+    scale_checkpoint_model = TSKV8Adapter.from_native_checkpoint(
+        scale_model.native_checkpoint()
+    )
+    scale_checkpoint = bool(
+        scale_checkpoint_model.neuron_regions[0].unit_count == 3
+        and scale_checkpoint_model.neuron_networks[0].region_ids
+        == scale_topology_after_commit[0]
+        and scale_checkpoint_model.neuron_networks[0].connection_ids
+        == scale_topology_after_commit[1]
+    )
+    scale_rollback = bool(
+        scale_checkpoint_model.rollback_structural_candidate(
+            scale_split_candidate.candidate_id
+        )
+        and scale_checkpoint_model.rollback_structural_candidate(
+            scale_add_candidate.candidate_id
+        )
+        and scale_checkpoint_model.neuron_networks[0].region_ids
+        == scale_original_regions
+        and scale_checkpoint_model.neuron_networks[0].connection_ids
+        == scale_original_connections
+        and scale_checkpoint_model.neuron_regions[0].unit_count == 2
+    )
+    scale_gate = bool(
+        len(scale_results) == 2
+        and all(item.status == "committed" for item in scale_results)
+        and len(scale_topology_after_commit[0]) == 4
+        and "connection:relay->target" in scale_topology_after_commit[1]
+        and len(scale_topology_after_commit[1]) == 3
+        and scale_checkpoint
+        and scale_rollback
+    )
+
     gate_checks = {
         "observation_count": len(before_checkpoint) == 4,
         "first_without_error": before_checkpoint[0].prediction_error is None,
@@ -369,6 +509,7 @@ def evaluate() -> dict[str, object]:
         "direct_add_checkpoint": direct_checkpoint,
         "dependency_fail_closed": dependency_guard,
         "conflict_fail_closed": conflict_guard,
+        "multi_region_mixed_maintenance": scale_gate,
     }
 
     gate = {
@@ -380,7 +521,9 @@ def evaluate() -> dict[str, object]:
             "credit must continue across checkpoint, while topology remains unchanged until "
             "a separate holdout/budget/trial/rollback transaction commits it; standalone "
             "native neuron ticks must use the same governed birth path; candidate dependencies "
-            "must execute in order and candidate conflicts must fail closed"
+            "must execute in order and candidate conflicts must fail closed; a three-region "
+            "network must preserve unaffected routes while connected split and standalone add "
+            "are maintained together"
         ),
     }
     return {
@@ -405,6 +548,11 @@ def evaluate() -> dict[str, object]:
             "direct_add_checkpoint": direct_checkpoint,
             "dependency_fail_closed": dependency_guard,
             "conflict_fail_closed": conflict_guard,
+            "multi_region_mixed_maintenance": scale_gate,
+            "multi_region_topology_after_commit": list(scale_topology_after_commit[0]),
+            "multi_region_connections_after_commit": list(scale_topology_after_commit[1]),
+            "multi_region_checkpoint": scale_checkpoint,
+            "multi_region_rollback": scale_rollback,
             "route_evidence_count": route_state.evidence_count,
             "checkpoint_continuation": checkpoint_continuation,
             "checkpoint_checks": checkpoint_checks,
@@ -458,6 +606,8 @@ def main() -> int:
             "direct_neuron_birth_holdout",
             "candidate_dependency_order",
             "candidate_conflict_fail_closed",
+            "multi_region_route_migration",
+            "mixed_add_split_maintenance",
             "checkpoint_continuation",
             "topology_no_implicit_mutation",
         ],
