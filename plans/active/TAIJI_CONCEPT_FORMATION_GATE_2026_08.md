@@ -104,7 +104,9 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 
 ## 下一步唯一入口
 
-下一步进入学习型跨区域协作：在两个以上自适应区域之间加入由 prediction error、资源状态和
-holdout transfer 共同调制的竞争/协作连接选择；必须证明被选中的跨区路径比固定全连接或随机
-连接在未见模式上更好，并通过 connection/region lesion 与 checkpoint continuation。继续禁止
+学习型跨区域协作 Gate 已完成：`CrossRegionCooperationLearner` 为显式连接维护可 checkpoint
+的 prediction-error、holdout-transfer、resource-state EMA 与探索状态，`AdaptiveNeuronNetwork`
+按 learner 和资源预算选择路径；学习路径在 holdout 证据上优于固定全连接/随机基线，并通过
+connection/region lesion 与 checkpoint continuation。下一步进入真实 runtime 在线 credit loop，
+由实际 target prediction error、资源消耗/可用性和 holdout transfer 自动更新路由证据，继续禁止
 按固定 action/intent 表写死路由。

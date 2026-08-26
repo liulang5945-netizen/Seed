@@ -1,0 +1,20 @@
+{
+  "format": "taiji-cross-region-learning-manifest-v1",
+  "task": "learned cross-region cooperation",
+  "report": "reports/taiji_cross_region_learning_20260826.json",
+  "seed": 71,
+  "controls": [
+    "prediction_error_credit",
+    "holdout_transfer_selection",
+    "resource_state_selection",
+    "fixed_full_baseline",
+    "random_baseline",
+    "connection_lesion",
+    "region_lesion",
+    "network_checkpoint_continuation"
+  ],
+  "gate": {
+    "passed": true,
+    "criterion": "cross-region route selection must learn from prediction error, holdout transfer and resource state; outperform fixed-full and random baselines on holdout evidence; obey resource feasibility; and survive checkpoint continuation plus connection/region lesion"
+  }
+}

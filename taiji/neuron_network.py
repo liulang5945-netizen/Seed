@@ -8,6 +8,7 @@ from typing import Any
 import torch
 
 from .contracts import StructuralTopologyProposal
+from .cross_region_learning import CrossRegionCooperationLearner
 from .neuron_region import AdaptiveNeuronRegion
 from .sparse import SparseSynapses
 
@@ -43,7 +44,10 @@ class AdaptiveNeuronNetwork:
             raise ValueError("execution_order must contain each region exactly once")
         self.execution_order = selected_order
         self._connections: dict[str, tuple[str, str, SparseSynapses]] = {}
+        self._connection_resource_costs: dict[str, float] = {}
         self._lesioned_connections: set[str] = set()
+        self._lesioned_regions: set[str] = set()
+        self._cooperation_learner: CrossRegionCooperationLearner | None = None
 
     @property
     def regions(self) -> tuple[AdaptiveNeuronRegion, ...]:
@@ -67,6 +71,29 @@ class AdaptiveNeuronNetwork:
     @property
     def edge_count(self) -> int:
         return sum(synapses.edge_count for _, _, synapses in self._connections.values())
+
+    @property
+    def cooperation_learner(self) -> CrossRegionCooperationLearner | None:
+        return self._cooperation_learner
+
+    def attach_cooperation_learner(
+        self,
+        learner: CrossRegionCooperationLearner | None,
+    ) -> None:
+        """Attach the learner that selects among this network's explicit routes."""
+
+        if learner is not None and not isinstance(learner, CrossRegionCooperationLearner):
+            raise TypeError("learner must be a CrossRegionCooperationLearner or None")
+        self._cooperation_learner = learner
+        if learner is not None:
+            for connection_id, _, _, connection in self.connections:
+                learner.register_connection(
+                    connection_id,
+                    resource_cost=self._connection_resource_costs.get(
+                        connection_id,
+                        1.0,
+                    ),
+                )
 
     def _region(self, region_id: str) -> AdaptiveNeuronRegion:
         try:
@@ -197,6 +224,12 @@ class AdaptiveNeuronNetwork:
             device=target.device,
         )
         self._connections[connection_id] = (source.region_id, target.region_id, connection)
+        self._connection_resource_costs[connection_id] = float(proposal.resource_cost)
+        if self._cooperation_learner is not None:
+            self._cooperation_learner.register_connection(
+                connection_id,
+                resource_cost=float(proposal.resource_cost),
+            )
         return True
 
     @torch.no_grad()
@@ -253,8 +286,135 @@ class AdaptiveNeuronNetwork:
         self._lesioned_connections.add(connection_id)
         return True
 
-    def step(self, external_inputs: Mapping[str, torch.Tensor]) -> dict[str, torch.Tensor]:
-        """Run one feed-forward tick in explicit region order."""
+    def lesion_region(self, region_id: str) -> bool:
+        """Functionally silence one region while retaining its topology."""
+
+        region = self._region(region_id)
+        self._lesioned_regions.add(region.region_id)
+        region.activity.zero_()
+        return True
+
+    def observe_connection(
+        self,
+        connection_id: str,
+        *,
+        prediction_error: float,
+        holdout_transfer: float,
+        resource_state: float,
+        selected: bool = True,
+    ) -> float:
+        """Credit one route with outcome evidence through the attached learner."""
+
+        if self._cooperation_learner is None:
+            raise RuntimeError("cross-region cooperation learner is not attached")
+        if str(connection_id) not in self._connections:
+            raise ValueError(f"unknown cross-region connection: {connection_id}")
+        return self._cooperation_learner.observe(
+            connection_id,
+            prediction_error=prediction_error,
+            holdout_transfer=holdout_transfer,
+            resource_state=resource_state,
+            selected=selected,
+        )
+
+    def credit_routes_from_outcome(
+        self,
+        actual_activities: Mapping[str, torch.Tensor],
+        expected_activities: Mapping[str, torch.Tensor],
+        *,
+        active_connection_ids: Sequence[str],
+        resource_budget: float,
+        holdout: bool = False,
+    ) -> dict[str, float]:
+        """Convert target activity error into route-owned online credit.
+
+        The caller supplies the expected target activity from the current
+        experience, not a precomputed route score.  The network derives the
+        prediction error and available-resource fraction, then optionally
+        derives holdout transfer from the same unseen experience.  This keeps
+        the route learner connected to a real runtime outcome instead of an
+        evaluator-only manual feedback path.
+        """
+
+        if self._cooperation_learner is None:
+            raise RuntimeError("cross-region cooperation learner is not attached")
+        budget = float(resource_budget)
+        if budget <= 0.0:
+            raise ValueError("cross-region resource_budget must be positive")
+        errors: dict[str, float] = {}
+        for connection_id in tuple(str(item) for item in active_connection_ids):
+            if connection_id not in self._connections:
+                raise ValueError(f"unknown cross-region connection: {connection_id}")
+            _, target_id, _ = self._connections[connection_id]
+            actual = actual_activities.get(target_id)
+            expected = expected_activities.get(target_id)
+            if actual is None or expected is None:
+                raise ValueError(
+                    f"route credit requires actual and expected activity for target {target_id}"
+                )
+            if actual.shape != expected.shape:
+                raise ValueError(f"route credit activity shape mismatch for target {target_id}")
+            prediction_error = float(torch.mean(torch.abs(actual - expected)).clamp(0.0, 1.0).item())
+            resource_state = budget / (budget + self._cooperation_learner.resource_cost(connection_id))
+            route = self._cooperation_learner.route_state(connection_id)
+            self.observe_connection(
+                connection_id,
+                prediction_error=prediction_error,
+                holdout_transfer=(1.0 - prediction_error if holdout else route.holdout_transfer),
+                resource_state=resource_state,
+                selected=True,
+            )
+            errors[connection_id] = prediction_error
+        return errors
+
+    def selected_connection_ids(
+        self,
+        *,
+        resource_budget: float = 1.0,
+        max_connections: int = 1,
+    ) -> tuple[str, ...]:
+        """Return the learned feasible routes, excluding functional lesions."""
+
+        candidates = tuple(
+            connection_id
+            for connection_id in self.connection_ids
+            if connection_id not in self._lesioned_connections
+            and self._connections[connection_id][0] not in self._lesioned_regions
+            and self._connections[connection_id][1] not in self._lesioned_regions
+        )
+        if self._cooperation_learner is None:
+            return candidates[: int(max_connections)]
+        return self._cooperation_learner.select(
+            candidates,
+            resource_budget=resource_budget,
+            max_connections=max_connections,
+        )
+
+    def step(
+        self,
+        external_inputs: Mapping[str, torch.Tensor],
+        *,
+        connection_ids: Sequence[str] | None = None,
+        resource_budget: float = 1.0,
+        max_connections: int = 1,
+        expected_activities: Mapping[str, torch.Tensor] | None = None,
+        holdout: bool = False,
+    ) -> dict[str, torch.Tensor]:
+        """Run one feed-forward tick with optional learned route selection."""
+
+        active_connection_ids = (
+            self.selected_connection_ids(
+                resource_budget=resource_budget,
+                max_connections=max_connections,
+            )
+            if connection_ids is None
+            else tuple(str(item) for item in connection_ids)
+        )
+        if len(set(active_connection_ids)) != len(active_connection_ids):
+            raise ValueError("cross-region step cannot contain duplicate connections")
+        for connection_id in active_connection_ids:
+            if connection_id not in self._connections:
+                raise ValueError(f"unknown cross-region connection: {connection_id}")
 
         activities: dict[str, torch.Tensor] = {}
         for region_id in self.execution_order:
@@ -263,10 +423,24 @@ class AdaptiveNeuronNetwork:
             if external is None:
                 external = torch.zeros(region.input_dim, device=region.device)
             cross_drive = torch.zeros(region.unit_count, device=region.device)
-            for source_id, target_id, connection in self._connections.values():
+            for connection_id in active_connection_ids:
+                if connection_id in self._lesioned_connections:
+                    continue
+                source_id, target_id, connection = self._connections[connection_id]
                 if target_id == region_id and source_id in activities:
                     cross_drive.add_(connection.forward(activities[source_id]))
             activities[region_id] = region.step(external, additional_drive=cross_drive)
+            if region_id in self._lesioned_regions:
+                activities[region_id].zero_()
+                region.activity.zero_()
+        if expected_activities is not None:
+            self.credit_routes_from_outcome(
+                activities,
+                expected_activities,
+                active_connection_ids=active_connection_ids,
+                resource_budget=resource_budget,
+                holdout=holdout,
+            )
         return {region_id: value.clone() for region_id, value in activities.items()}
 
     def to_payload(self) -> dict[str, Any]:
@@ -281,11 +455,18 @@ class AdaptiveNeuronNetwork:
                 connection_id: {
                     "source_region_id": source_id,
                     "target_region_id": target_id,
+                    "resource_cost": self._connection_resource_costs[connection_id],
                     "synapses": synapses.to_payload(),
                 }
                 for connection_id, (source_id, target_id, synapses) in self._connections.items()
             },
             "lesioned_connections": list(self._lesioned_connections),
+            "lesioned_regions": list(self._lesioned_regions),
+            "cooperation_learner": (
+                None
+                if self._cooperation_learner is None
+                else self._cooperation_learner.to_payload()
+            ),
         }
 
     def load_payload(self, payload: Mapping[str, Any]) -> None:
@@ -302,6 +483,7 @@ class AdaptiveNeuronNetwork:
         if not isinstance(connections, dict):
             raise ValueError("adaptive network connections must be a mapping")
         self._connections = {}
+        self._connection_resource_costs = {}
         for connection_id, connection_payload in connections.items():
             if not isinstance(connection_payload, dict):
                 raise ValueError("adaptive network connection must be a mapping")
@@ -321,10 +503,26 @@ class AdaptiveNeuronNetwork:
             )
             synapses.load_payload(synapse_payload)
             self._connections[str(connection_id)] = (source_id, target_id, synapses)
+            self._connection_resource_costs[str(connection_id)] = float(
+                connection_payload.get("resource_cost", 1.0)
+            )
         lesioned = {str(item) for item in payload.get("lesioned_connections", ())}
         if not lesioned.issubset(set(self._connections)):
             raise ValueError("lesioned connection identity is not present")
         self._lesioned_connections = lesioned
+        lesioned_regions = {str(item) for item in payload.get("lesioned_regions", ())}
+        if not lesioned_regions.issubset(set(self._regions)):
+            raise ValueError("lesioned region identity is not present")
+        self._lesioned_regions = lesioned_regions
+        learner_payload = payload.get("cooperation_learner")
+        self._cooperation_learner = (
+            None
+            if learner_payload is None
+            else CrossRegionCooperationLearner.from_payload(learner_payload)
+        )
+        if self._cooperation_learner is not None:
+            if set(self._cooperation_learner.route_ids) != set(self._connections):
+                raise ValueError("cross-region learning route identities do not match network")
 
     @classmethod
     def from_payload(
