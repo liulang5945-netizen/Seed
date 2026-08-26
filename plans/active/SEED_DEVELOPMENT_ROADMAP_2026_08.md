@@ -725,4 +725,16 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 
 **已完成：核心 mypy 类型债已归零。2026-08-27 在当前固定工具链 `mypy==2.3.1` 下，`python -m mypy --follow-imports=silent seed taiji` 对 44 个源文件报告 0 错误；修复覆盖 checkpoint/state_dict 类型收窄、可选值边界、结构化参数契约、局部 GRU 学习张量和可替换语言器官协议。定向 ruff 通过，相关回归 46 passed。`.github/workflows/ci.yml` 的 `MYPY_CORE_BASELINE` 已同步从 63 收紧至 0。**
 
-**当前唯一下一步：把本地已归零的提交推送后，完成 CI 的 3.10/3.12 双矩阵实跑，确认核心 mypy 门禁在两腿都输出 0 且下游门禁未被 `needs:` 跳过；在此之前不宣称 CI 已验证。**
+**已完成：核心类型债提交 `11ca75c` 已在当前 `main` 与 `origin/main` 同步；本地 `mypy==2.3.1` 对 `seed taiji` 的 44 个源文件保持 0 错误。GitHub Actions 实跑仍未因 CLI 未认证而声称完成。**
+
+**已完成：P2/A1 感知训练—运行时边界合同已修正。`LearnedPerception.fit_predictive()` 现在复用与 `observe()` 相同的 prediction-error、surprise baseline、hysteresis 和 maximum-duration 边界时钟；训练使用动态 assembly 的每个活动前缀监督，运行时与训练不再分别使用固定滑窗/可变切段。新增训练 rollout 与 runtime boundary 的回归测试；定向 P2 回归 8 passed，完整 `tests/taiji_native` 为 192 passed、1 skipped，另有 2 个 Windows pytest 临时锁 setup error。旧 next-byte A1 在真实 manifest 上仍未通过，说明评测任务本身还需继续提高语义层级，不能把这次合同修复冒充 Gate 通过。**
+
+**已决定：CUDA 相关 profile、跨设备 checkpoint 和 fused/sparse kernel 暂缓，直到具备 CUDA-capable 主机；本轮继续推进 CPU 可验证的 Taiji 能力，不修改 CUDA 结论。**
+
+**已完成：动态 assembly pooled state 已从无序均值提升为可学习的顺序敏感读出。`assembly_recency_logit` 通过正值 softplus 增益学习当前活动的 recency 权重；训练、运行时和 checkpoint 共用同一池化公式，不新增固定词表或 Transformer 组件。训练暴露统计又形成连续 novelty 信号，参与 boundary competition 并随 checkpoint 保存、在线更新；checkpoint 往返、mypy 0、ruff 通过，P2 定向回归 9 passed。**
+
+**已完成：A1 边界合同已改为以 marker 位置的 boundary rate 作为因果指标；整段 aggregate boundary rate 仍保留为诊断，因为插入 marker 会改变序列长度并重排邻近 assembly。**
+
+**已完成：A1 Gate 已收紧为所有 seed 的最差 generalization、marker score/rate 和 random-chunk drop，而不是只看 primary seed；正式报告 `reports/taiji_a1_perception_20260827.json` 如实为 `gate_passed=false`：primary gain=`+0.0089`，但最差 seed gain=`-0.0398`，最差 random-chunk drop=`+0.0030`，marker score/rate 最差仍为 `+0.1299/+0.1095`。这关闭了“单个幸运 seed 收口”的评测漏洞，同时证明 novelty 已修复边界响应但未完成稳健组合迁移。**
+
+**当前唯一下一步：继续提升 assembly 的跨 seed 组合迁移与随机 chunk 抗性，优先检查顺序敏感读出对多步预测信用的分配；仍以最差 seed 的 next-byte/relation 双合同、holdout、boundary marker、random lesion 和 checkpoint continuation 验收，CUDA 保持暂缓。**
