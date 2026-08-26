@@ -5,7 +5,11 @@ import torch
 from taiji import (
     AdaptiveNeuronNetwork,
     AdaptiveNeuronRegion,
+    AdaptiveStructuralGrowthController,
+    AdaptiveStructuralPruningController,
     CrossRegionCooperationLearner,
+    StructuralGrowthDynamics,
+    StructuralPruningDynamics,
     TaijiConfig,
     TSKV8Adapter,
 )
@@ -138,3 +142,65 @@ def test_runtime_cross_region_ledger_owns_connection_and_rolls_back() -> None:
     assert restored.rollback_cross_region_connection(proposal.proposal_id) is True
     assert restored.neuron_networks[0].connection_ids == ()
     assert restored.cognitive_snapshot().development.structural_budget == 1
+
+
+def test_runtime_tick_feeds_structural_organs_and_checkpoint_continues() -> None:
+    model = TSKV8Adapter(_config(budget=1), episode_id="runtime-structure")
+    model.attach_adaptive_neuron_network("cortex", _network())
+    model.attach_cross_region_cooperation("cortex", CrossRegionCooperationLearner())
+    model.attach_structural_growth_controller(
+        AdaptiveStructuralGrowthController(
+            dynamics=StructuralGrowthDynamics(
+                ema_rate=1.0,
+                error_threshold=0.0,
+                holdout_transfer_threshold=0.0,
+                minimum_resource_state=0.0,
+                required_error_steps=1,
+            )
+        )
+    )
+    model.attach_structural_pruning_controller(
+        AdaptiveStructuralPruningController(
+            dynamics=StructuralPruningDynamics(ema_rate=1.0)
+        )
+    )
+
+    first = model.step_cross_region_network(
+        "cortex",
+        {"source": torch.ones(3)},
+    )
+    observations = model.structural_runtime_observations
+    assert len(observations) == 2
+    assert observations[0].tick == 1
+    assert observations[0].prediction_error is None
+    assert model.structural_growth_controller is not None
+    assert model.structural_growth_controller.total_observations == 0
+    assert model.structural_pruning_controller is not None
+    assert model.structural_pruning_controller.total_observations == 2
+
+    model.step_cross_region_network(
+        "cortex",
+        {"source": torch.ones(3)},
+        expected_activities=first,
+        holdout=True,
+    )
+    assert len(model.structural_runtime_observations) == 4
+    assert all(item.prediction_error is not None for item in model.structural_runtime_observations[2:])
+    assert model.structural_growth_controller.total_observations == 2
+    assert model.structural_pruning_controller.total_observations == 4
+    assert model.cognitive_snapshot().development.last_update_source == (
+        "runtime-structural-observation"
+    )
+
+    restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
+    assert restored.structural_runtime_observations == model.structural_runtime_observations
+    assert restored.structural_growth_controller is not None
+    assert restored.structural_growth_controller.total_observations == 2
+    restored.step_cross_region_network(
+        "cortex",
+        {"source": torch.ones(3)},
+        expected_activities=first,
+        holdout=True,
+    )
+    assert restored.structural_runtime_observations[-1].tick == 3
+    assert restored.structural_growth_controller.total_observations == 4

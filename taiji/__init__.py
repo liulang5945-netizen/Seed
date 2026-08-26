@@ -185,6 +185,7 @@ from .state import (
 from .structural_growth import (
     STRUCTURAL_GROWTH_CHECKPOINT_FORMAT,
     STRUCTURAL_PRUNING_CHECKPOINT_FORMAT,
+    STRUCTURAL_RUNTIME_OBSERVATION_CHECKPOINT_FORMAT,
     AdaptiveStructuralGrowthController,
     AdaptiveStructuralPruningController,
     StructuralGrowthDecision,
@@ -193,6 +194,7 @@ from .structural_growth import (
     StructuralPruningDecision,
     StructuralPruningDynamics,
     StructuralPruningRegionState,
+    StructuralRuntimeObservation,
 )
 from .workspace import (
     WorkspaceCollaborationEvaluator,
@@ -344,10 +346,12 @@ __all__ = [
     "StructuralGrowthDynamics",
     "StructuralGrowthRegionState",
     "STRUCTURAL_PRUNING_CHECKPOINT_FORMAT",
+    "STRUCTURAL_RUNTIME_OBSERVATION_CHECKPOINT_FORMAT",
     "AdaptiveStructuralPruningController",
     "StructuralPruningDecision",
     "StructuralPruningDynamics",
     "StructuralPruningRegionState",
+    "StructuralRuntimeObservation",
     "TSKV8Adapter",
     "Goal",
     "GoalState",

@@ -1,0 +1,18 @@
+{
+  "format": "taiji-runtime-structure-v1",
+  "metrics": {
+    "runtime_ticks": 3,
+    "observations_before_checkpoint": 4,
+    "observations_after_checkpoint": 6,
+    "growth_observations": 2,
+    "pruning_observations": 4,
+    "route_evidence_count": 2,
+    "checkpoint_continuation": true,
+    "topology_unchanged": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "real native network ticks must emit checkpointable activity, prediction-error, learning-gain and resource observations; attached structural organs and route credit must continue across checkpoint, while topology remains unchanged until a separate holdout/budget/trial/rollback transaction commits it"
+  },
+  "boundary": "This gate proves runtime evidence ownership and checkpoint continuation. It does not claim that a tick may bypass holdout validation, resource budget, trial checkpoint or reverse rollback to mutate live topology."
+}

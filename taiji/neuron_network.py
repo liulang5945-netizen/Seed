@@ -923,6 +923,10 @@ class AdaptiveNeuronNetwork:
             raise ValueError("region merge unit identities have drifted")
         if first.input_dim != second.input_dim or first.fan_in != second.fan_in:
             raise ValueError("region merge dimensions have drifted")
+        if first.input_source_id != second.input_source_id:
+            raise ValueError("region merge input sources have drifted")
+        if first.dynamics.to_payload() != second.dynamics.to_payload():
+            raise ValueError("region merge dynamics have drifted")
         merge_set = set(selected)
         if first.region_id in self._lesioned_regions or second.region_id in self._lesioned_regions:
             raise ValueError("region merge cannot absorb a lesioned region")

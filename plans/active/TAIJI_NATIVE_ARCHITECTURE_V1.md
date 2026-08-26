@@ -625,6 +625,17 @@ taiji/
 > rollback 均覆盖。下一入口是将 growth/pruning/split/merge proposal 接入真实 runtime tick 的
 > 活动、预测误差和资源观测，形成自动维护闭环，继续禁止按 action/intent 表决定结构维护。
 
+> 实时覆写（2026-08-26）：真实入口已落地为 `TSKV8Adapter.step_cross_region_network()`。
+> 它按网络 tick 生成区域级 activity/usage、prediction error、learning gain、resource pressure、
+> holdout transfer 和 stable evidence ID，驱动已挂载的 growth/pruning controller，并保留 route
+> learner 的 target-activity credit；无 expected activity 时不产生伪造的 growth supervision。
+> `native_checkpoint`/`from_native_checkpoint` 会恢复 runtime clock、bounded observation history
+> 与跨 tick error continuity。观测阶段不允许 live topology 变更，proposal 仍须通过 holdout、
+> budget、trial roundtrip 和 reverse rollback。Gate 报告为
+> `reports/taiji_runtime_structure_20260826.json`，manifest 为
+> `plans/manifests/taiji_runtime_structure_v1.json`。下一入口是把真实观测汇聚成可审计 proposal
+> candidates，再交给统一 ledger 验证和提交。
+
 本步设计已收敛并通过 Gate：新增独立的 `CrossRegionCooperationLearner`，为每条显式跨区连接维护
 可 checkpoint 的 prediction-error EMA、holdout-transfer EMA、resource-state EMA、证据次数
 与选择次数；连接选择采用可配置的质量/迁移/资源/代价权重和探索项，输入是区域与连接身份，
