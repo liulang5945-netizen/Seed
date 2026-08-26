@@ -78,6 +78,7 @@ from .language_organ import (
     StructuredTextLanguageOrgan,
 )
 from .model import Taiji
+from .neuron_network import AdaptiveNeuronNetwork
 from .neuron_region import AdaptiveNeuronRegion
 from .perception import LearnedPerception
 from .planning import (
@@ -142,6 +143,7 @@ class TSKV8Adapter(Taiji):
         self._topology_proposals: dict[str, StructuralTopologyProposal] = {}
         self._topology_parent_snapshots: dict[str, dict[str, Any]] = {}
         self._neuron_regions: dict[str, AdaptiveNeuronRegion] = {}
+        self._neuron_networks: dict[str, AdaptiveNeuronNetwork] = {}
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
@@ -228,6 +230,12 @@ class TSKV8Adapter(Taiji):
         """Return explicitly attached adaptive regions owned by Taiji."""
 
         return tuple(self._neuron_regions.values())
+
+    @property
+    def neuron_networks(self) -> tuple[AdaptiveNeuronNetwork, ...]:
+        """Return explicitly attached cross-region networks owned by Taiji."""
+
+        return tuple(self._neuron_networks.values())
 
     @staticmethod
     def _growth_request_identity(
@@ -796,6 +804,194 @@ class TSKV8Adapter(Taiji):
         )
         return True
 
+    def attach_adaptive_neuron_network(
+        self,
+        network_id: str,
+        network: AdaptiveNeuronNetwork | None,
+    ) -> None:
+        """Attach an explicit cross-region network to the Taiji runtime."""
+
+        key = str(network_id)
+        if not key:
+            raise ValueError("network_id must not be empty")
+        if network is not None and not isinstance(network, AdaptiveNeuronNetwork):
+            raise TypeError("network must be an AdaptiveNeuronNetwork or None")
+        if network is None:
+            self._neuron_networks.pop(key, None)
+            return
+        if key in self._neuron_networks:
+            raise ValueError(f"adaptive neuron network already attached: {key}")
+        if any(region.region_id in self._neuron_regions for region in network.regions):
+            raise ValueError("network regions cannot also be attached as standalone regions")
+        self._neuron_networks[key] = network
+
+    def propose_cross_region_connection(
+        self,
+        *,
+        network_id: str,
+        source_region_id: str,
+        target_region_id: str,
+        evidence_ids: Sequence[str],
+        fan_in: int,
+        parent_checkpoint_id: str | None = None,
+        resource_cost: int = 1,
+    ) -> StructuralTopologyProposal:
+        """Create a cross-region connection proposal for the runtime ledger."""
+
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        proposal = network.propose_connection_add(
+            source_region_id=source_region_id,
+            target_region_id=target_region_id,
+            evidence_ids=evidence_ids,
+            fan_in=fan_in,
+            parent_checkpoint_id=parent_checkpoint_id,
+            resource_cost=resource_cost,
+        )
+        if proposal.parent_checkpoint_id is None:
+            proposal = replace(
+                proposal,
+                parent_checkpoint_id=f"cross-region-parent:{proposal.proposal_id}",
+            )
+        return proposal
+
+    def commit_cross_region_connection(
+        self,
+        network_id: str,
+        proposal: StructuralTopologyProposal,
+    ) -> bool:
+        """Commit a cross-region connection only after ledger validation."""
+
+        existing = self._topology_proposals.get(proposal.proposal_id)
+        if existing is not None:
+            if existing.status == "accepted":
+                return True
+            if existing.status in {"rejected", "rolled_back"}:
+                return False
+        if proposal.status != "pending":
+            raise ValueError("only pending cross-region proposals can be committed")
+        if proposal.target_kind != "region" or proposal.operation != "add":
+            raise ValueError("proposal is not a cross-region connection add")
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        if self._cognitive_state.development.structural_budget < proposal.resource_cost:
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+                source="cross-region-topology-growth",
+            )
+            return False
+
+        parent_snapshot = network.to_payload()
+        try:
+            network.apply_topology_proposal(proposal, generator=self._rng)
+            accepted_snapshot = network.to_payload()
+            trial = AdaptiveNeuronNetwork.from_payload(
+                accepted_snapshot,
+                generator=self._checkpoint_region_generator(),
+                device=self.device,
+            )
+            if trial.region_ids != network.region_ids or trial.connection_ids != network.connection_ids:
+                raise ValueError("cross-region checkpoint roundtrip changed identities")
+            for current, restored in zip(network.connections, trial.connections, strict=True):
+                if not torch.equal(current[3].pre_index, restored[3].pre_index):
+                    raise ValueError("cross-region checkpoint roundtrip changed support")
+        except (IndexError, KeyError, RuntimeError, ValueError):
+            self._neuron_networks[str(network_id)] = AdaptiveNeuronNetwork.from_payload(
+                parent_snapshot,
+                generator=self._checkpoint_region_generator(),
+                device=self.device,
+            )
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+                source="cross-region-topology-growth",
+            )
+            return False
+
+        accepted = replace(proposal, status="accepted", validation_score=1.0)
+        self._topology_proposals[proposal.proposal_id] = accepted
+        self._topology_parent_snapshots[proposal.proposal_id] = parent_snapshot
+        self._record_topology_development(
+            accepted,
+            consume_budget=True,
+            evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+            source="cross-region-topology-growth",
+        )
+        return True
+
+    def rollback_cross_region_connection(self, proposal_id: str) -> bool:
+        """Rollback only the latest accepted cross-region connection."""
+
+        key = str(proposal_id)
+        proposal = self._topology_proposals.get(key)
+        snapshot = self._topology_parent_snapshots.get(key)
+        if (
+            proposal is None
+            or proposal.status != "accepted"
+            or proposal.target_kind != "region"
+            or snapshot is None
+        ):
+            return False
+        active = [
+            item.proposal_id
+            for item in self._topology_proposals.values()
+            if item.status == "accepted" and item.proposal_id in self._topology_parent_snapshots
+        ]
+        if not active or active[-1] != key:
+            return False
+        network_id = next(
+            (
+                network_key
+                for network_key, network in self._neuron_networks.items()
+                if proposal.substrate_id in network.connection_ids
+            ),
+            None,
+        )
+        if network_id is None:
+            return False
+        self._neuron_networks[network_id] = AdaptiveNeuronNetwork.from_payload(
+            snapshot,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        rolled_back = replace(proposal, status="rolled_back", validation_score=0.0)
+        self._topology_proposals[key] = rolled_back
+        self._topology_parent_snapshots.pop(key, None)
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                structural_budget=previous.structural_budget + proposal.resource_cost,
+                last_update_source="cross-region-topology-rollback",
+                last_validation_status="rolled_back",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    key,
+                    limit=self._lineage_limit(),
+                ),
+                growth_count=max(0, previous.growth_count - proposal.requested_units),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    key,
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return True
+
     def _record_online_concept_transition(
         self,
         transition: WorldTransition,
@@ -962,6 +1158,30 @@ class TSKV8Adapter(Taiji):
             if region.region_id != str(region_id):
                 raise ValueError("adaptive neuron checkpoint region identity does not match")
             self._neuron_regions[region.region_id] = region
+
+    def _neuron_networks_checkpoint(self) -> dict[str, Any]:
+        return {
+            "networks": {
+                network_id: network.to_payload()
+                for network_id, network in self._neuron_networks.items()
+            }
+        }
+
+    def _restore_neuron_networks(self, payload: Any) -> None:
+        self._neuron_networks = {}
+        if not isinstance(payload, dict):
+            return
+        networks = payload.get("networks", {})
+        if not isinstance(networks, dict):
+            raise ValueError("adaptive neuron checkpoint networks must be a mapping")
+        for network_id, network_payload in networks.items():
+            if not isinstance(network_payload, dict):
+                raise ValueError("adaptive neuron network checkpoint entry must be a mapping")
+            self._neuron_networks[str(network_id)] = AdaptiveNeuronNetwork.from_payload(
+                network_payload,
+                generator=self._checkpoint_region_generator(),
+                device=self.device,
+            )
 
     def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:
         """Attach a Taiji-owned predictor used for runtime intervention scoring."""
@@ -2959,6 +3179,7 @@ class TSKV8Adapter(Taiji):
             *super().parameter_tensors(),
             *self.perception.parameter_tensors(),
             *(tensor for region in self._neuron_regions.values() for tensor in region.parameter_tensors()),
+            *(tensor for network in self._neuron_networks.values() for tensor in network.parameter_tensors()),
             *(() if self._executive is None else self._executive.parameter_tensors()),
         )
 
@@ -2968,6 +3189,7 @@ class TSKV8Adapter(Taiji):
             super().parameter_count()
             + sum(parameter.numel() for parameter in self.perception.parameters())
             + sum(region.edge_count for region in self._neuron_regions.values())
+            + sum(network.edge_count for network in self._neuron_networks.values())
             + (
                 0
                 if self._executive is None
@@ -2987,6 +3209,15 @@ class TSKV8Adapter(Taiji):
                     else region.recurrent.out_features * region.recurrent.in_features
                 )
                 for region in self._neuron_regions.values()
+            )
+            + sum(
+                source.unit_count * target.unit_count
+                for network in self._neuron_networks.values()
+                for _, source_id, target_id, _ in network.connections
+                for source in network.regions
+                if source.region_id == source_id
+                for target in network.regions
+                if target.region_id == target_id
             )
             + (
                 0
@@ -3011,6 +3242,7 @@ class TSKV8Adapter(Taiji):
         payload["growth_requests"] = self._growth_requests_checkpoint()
         payload["topology_proposals"] = self._topology_proposals_checkpoint()
         payload["neuron_regions"] = self._neuron_regions_checkpoint()
+        payload["neuron_networks"] = self._neuron_networks_checkpoint()
         payload["online_concept_branches"] = self._online_concept_branches_checkpoint()
         if self._procedural_memory is not None:
             payload["procedural_memory"] = self._procedural_memory.checkpoint()
@@ -3088,6 +3320,8 @@ class TSKV8Adapter(Taiji):
         self._restore_concept_formation(checkpoint.get("concept_formation"))
         self._restore_growth_requests(checkpoint.get("growth_requests"))
         self._restore_topology_proposals(checkpoint.get("topology_proposals"))
+        self._restore_neuron_regions(checkpoint.get("neuron_regions"))
+        self._restore_neuron_networks(checkpoint.get("neuron_networks"))
         self._restore_online_concept_branches(checkpoint.get("online_concept_branches"))
         self._restore_procedural_memory(checkpoint.get("procedural_memory"))
         self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
@@ -3505,6 +3739,7 @@ class TSKV8Adapter(Taiji):
         self._restore_growth_requests(envelope.components.get("growth_requests"))
         self._restore_topology_proposals(envelope.components.get("topology_proposals"))
         self._restore_neuron_regions(envelope.components.get("neuron_regions"))
+        self._restore_neuron_networks(envelope.components.get("neuron_networks"))
         self._restore_online_concept_branches(
             envelope.components.get("online_concept_branches")
         )

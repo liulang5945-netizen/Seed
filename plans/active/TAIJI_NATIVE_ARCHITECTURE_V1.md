@@ -609,7 +609,9 @@ taiji/
 > 与 rollback 约束。该入口已完成：`AdaptiveNeuronRegion` 现在提供稳定 `unit_id`、显式活动/
 > 阈值/膜电位/trace、稀疏输入与递归突触、局部学习、functional lesion 和 checkpoint；
 > `TSKV8Adapter` 已把 neuron add 接入同一 topology ledger。当前入口转为多个自适应区域之间的
-> 显式跨区域 proposal、holdout transfer 与 cross-region lesion。
+> 显式跨区域 proposal、holdout transfer 与 cross-region lesion；该入口也已完成：
+> `AdaptiveNeuronNetwork`、跨区稀疏连接迁移及 adapter ledger 均已通过。当前入口转为由
+> prediction error、资源状态和 holdout transfer 共同调制的学习型跨区域协作。
 
 状态已滚动更新：上段记录的 producer/feature-source/delayed-credit lesion 已完成并通过 3-seed Gate；当前四步延伸、3/4/5 步变量 episode、不同失败位置和 after-state relation 变化、executive-to-world prediction train/holdout 与 no-online-update calibration control、runtime calibration trace 的多步连续性/恢复、world-model planner projection/replan lesion、跨 seed 的 3/4/5 步 world-dynamics imagined rollout、imagined-to-real execution、runtime recovery state、recovery transfer、world-error calibration policy、normalized world-error contract 及 schema-scale transfer contract Gate 也已通过；结构成长 budget/rollback Gate 已通过版本化 `StructuralGrowthRequest`、trial checkpoint roundtrip、trace lesion、replayability、预算拒绝、native checkpoint continuation 与父结构 rollback；synapse topology proposal Gate 已通过 substrate 坐标合同、holdout donor response、fabric checkpoint roundtrip、functional lesion 与父拓扑恢复；下一步是把 `StructuralTopologyProposal` 接入 `DevelopmentState` 的统一预算与 runtime ledger，禁止以评估侧固定阈值代替架构能力。
 

@@ -89,6 +89,11 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
   失效，器官 checkpoint 与 `TSKV8Adapter` native checkpoint 均能恢复；runtime ledger 负责预算、
   接受、零预算拒绝和最新顺序 rollback。该 Gate 报告为
   `reports/taiji_neuron_growth_20260826.json`。
+- cross-region wiring Gate 已通过：`AdaptiveNeuronNetwork` 以显式 source/target region 和
+  stable `connection_id` 建立稀疏跨区突触；上游活动能驱动下游，连接 lesion 后下游活动归零；
+  上游 neuron growth 会迁移连接输入维度并保持旧支持/权重，网络 checkpoint、native checkpoint、
+  预算接受/拒绝和逆序 rollback 均已覆盖。该 Gate 报告为
+  `reports/taiji_cross_region_20260826.json`。
 
 ## 边界与已知限制
 
@@ -99,7 +104,7 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 
 ## 下一步唯一入口
 
-下一步进入跨区域结构：在不改写固定 `TaijiFabric` 尺寸的前提下，定义多个
-`AdaptiveNeuronRegion` 之间的显式输入源、跨区域 proposal 和资源账本；先用两个区域的
-holdout transfer 与 cross-region lesion 证明新单元确实被上游活动驱动并改善未见模式，之后
-才允许把该器官接入更高层认知通路。继续禁止按固定 action/intent 表写死拓扑。
+下一步进入学习型跨区域协作：在两个以上自适应区域之间加入由 prediction error、资源状态和
+holdout transfer 共同调制的竞争/协作连接选择；必须证明被选中的跨区路径比固定全连接或随机
+连接在未见模式上更好，并通过 connection/region lesion 与 checkpoint continuation。继续禁止
+按固定 action/intent 表写死路由。
