@@ -601,11 +601,13 @@ class ConceptFormationOrgan:
                 item.action_intent is None or item.world_transition is None for item in ordered
             ):
                 continue
-            transitions = tuple(item.world_transition for item in ordered)
-            if any(transition is None for transition in transitions):
-                continue
-            transitions = tuple(transition for transition in transitions if transition is not None)
-            if not transitions:
+            transitions: list[WorldTransition] = []
+            for item in ordered:
+                transition = item.world_transition
+                if transition is None:
+                    break
+                transitions.append(transition)
+            if len(transitions) != len(ordered):
                 continue
             actions = tuple(
                 item.action_intent.kind for item in ordered if item.action_intent is not None
@@ -1030,9 +1032,12 @@ class ConceptFormationOrgan:
     ) -> ConceptFormationOrgan:
         if payload.get("format") != CONCEPT_FORMATION_CHECKPOINT_FORMAT:
             raise ValueError("unsupported concept formation checkpoint format")
+        signal_weights = tuple(float(item) for item in payload["signal_weights"])
+        if len(signal_weights) != 3:
+            raise ValueError("concept formation signal_weights must contain three values")
         organ = cls(
             similarity_threshold=float(payload["similarity_threshold"]),
-            signal_weights=tuple(float(item) for item in payload["signal_weights"]),
+            signal_weights=(signal_weights[0], signal_weights[1], signal_weights[2]),
             capacity=int(payload.get("capacity", 256)),
             plasticity_rate=float(payload.get("plasticity_rate", 0.25)),
             prune_threshold=float(payload.get("prune_threshold", 0.15)),

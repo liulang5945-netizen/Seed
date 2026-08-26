@@ -863,7 +863,9 @@ class AdaptiveNeuronNetwork:
         for source_id, target_id, connection in old_connections:
             old_source = source_regions[source_id]
             old_target = target_regions[target_id]
-            source_index = {unit_id: index for index, unit_id in enumerate(source_region.unit_ids)}
+            source_indices = {
+                unit_id: index for index, unit_id in enumerate(source_region.unit_ids)
+            }
             target_index = {unit_id: index for index, unit_id in enumerate(target_region.unit_ids)}
             for old_target_index, target_unit_id in enumerate(old_target.unit_ids):
                 new_target_index = target_index[target_unit_id]
@@ -871,7 +873,7 @@ class AdaptiveNeuronNetwork:
                 for slot in range(connection.row_fan_in):
                     old_source_index = int(connection.pre_index[old_target_index, slot].item())
                     source_unit_id = old_source.unit_ids[old_source_index]
-                    new_source_index = source_index[source_unit_id]
+                    new_source_index = source_indices[source_unit_id]
                     row[new_source_index] = row.get(new_source_index, 0.0) + float(
                         connection.edge_weight[old_target_index, slot].item()
                     )
@@ -887,10 +889,10 @@ class AdaptiveNeuronNetwork:
         )
         merged.edge_weight.zero_()
         for row_index, supports in rows.items():
-            for slot, (source_index, weight) in enumerate(sorted(supports.items())):
+            for slot, (source_slot_index, weight) in enumerate(sorted(supports.items())):
                 if slot >= merged.row_fan_in:
                     break
-                merged.pre_index[row_index, slot] = source_index
+                merged.pre_index[row_index, slot] = source_slot_index
                 merged.edge_weight[row_index, slot] = weight
         return merged
 
@@ -998,8 +1000,8 @@ class AdaptiveNeuronNetwork:
                     new_id,
                     resource_cost=migrated_costs[new_id],
                 )
-        for connection_id in actual_groups.values():
-            for old_id in connection_id:
+        for old_connection_ids in actual_groups.values():
+            for old_id in old_connection_ids:
                 self._connections.pop(old_id)
                 self._connection_resource_costs.pop(old_id, None)
                 self._lesioned_connections.discard(old_id)

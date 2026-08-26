@@ -530,7 +530,10 @@ class LearnedPerception(nn.Module):
     def restore(self, payload: Mapping[str, Any]) -> None:
         if payload.get("format") != "taiji-perception-v1":
             raise ValueError("unsupported perception checkpoint format")
-        version = int(payload.get("version"))
+        version_payload = payload.get("version")
+        if not isinstance(version_payload, int) or isinstance(version_payload, bool):
+            raise ValueError("perception checkpoint version must be an integer")
+        version = version_payload
         if version not in (1, PERCEPTION_STATE_VERSION):
             raise ValueError("unsupported perception checkpoint version")
         state_dict = {

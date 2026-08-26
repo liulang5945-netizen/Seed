@@ -3874,8 +3874,9 @@ class TSKV8Adapter(Taiji):
                         )
                     )
             pruning_decision: StructuralPruningDecision | None = None
-            if self._structural_pruning_controller is not None:
-                pruning_decision = self._structural_pruning_controller.observe_substrate(
+            pruning_controller = self._structural_pruning_controller
+            if pruning_controller is not None:
+                pruning_decision = pruning_controller.observe_substrate(
                     substrate_id,
                     usage=usage,
                     resource_pressure=resource_pressure,
@@ -3896,7 +3897,11 @@ class TSKV8Adapter(Taiji):
                 )
             )
             region_observation_by_id[region_id] = observations[-1]
-            if pruning_decision is not None and pruning_decision.should_prune:
+            if (
+                pruning_decision is not None
+                and pruning_decision.should_prune
+                and pruning_controller is not None
+            ):
                 self._queue_structural_proposal_candidate(
                     StructuralProposalCandidate(
                         candidate_id=(
@@ -3915,9 +3920,7 @@ class TSKV8Adapter(Taiji):
                             * (1.0 - pruning_decision.learning_gain_ema),
                         ),
                         specification=self._candidate_specification(region_id=region_id),
-                        resource_cost=(
-                            self._structural_pruning_controller.dynamics.pruning_resource_cost
-                        ),
+                        resource_cost=(pruning_controller.dynamics.pruning_resource_cost),
                     )
                 )
         learner = network.cooperation_learner
@@ -4394,11 +4397,16 @@ class TSKV8Adapter(Taiji):
             )
         percept_features, world_latent, world_uncertainty = self._affordance_context()
         feature_map = {
-            affordance.affordance_id: self._affordance_features.features_for(
-                affordance,
-                percept_features=percept_features,
-                world_latent=world_latent,
-                world_uncertainty=world_uncertainty,
+            affordance.affordance_id: tuple(
+                float(value)
+                for value in self._affordance_features.features_for(
+                    affordance,
+                    percept_features=percept_features,
+                    world_latent=world_latent,
+                    world_uncertainty=world_uncertainty,
+                )
+                .detach()
+                .flatten()
             )
             for affordance in self._cognitive_state.world.affordances
         }
@@ -5444,7 +5452,7 @@ class TSKV8Adapter(Taiji):
             cues.append(world.latent)
         if self._cognitive_state.percept is not None:
             cues.append(self._cognitive_state.percept.features)
-        matches = ()
+        matches: tuple[ConceptMatch, ...] = ()
         for cue in cues:
             matches = self._concept_formation.retrieve(
                 cue,
@@ -5852,7 +5860,7 @@ class TSKV8Adapter(Taiji):
                 action_id=intent.intent_id,
                 kind=intent.kind,
                 tick=self._cognitive_state.world.tick,
-                parameters=intent.parameters,
+                parameters=tuple(sorted(intent.parameters.items())),
             )
         world_prediction = None
         if self._world_dynamics is not None and world_action is not None:
@@ -5921,7 +5929,7 @@ class TSKV8Adapter(Taiji):
                         action_id=intent_id,
                         kind=intent.kind,
                         tick=before.tick,
-                        parameters=intent.parameters,
+                        parameters=tuple(sorted(intent.parameters.items())),
                         provenance=str(kwargs.get("provenance", "experienced")),
                     )
                 )
@@ -5970,9 +5978,12 @@ class TSKV8Adapter(Taiji):
                     not terminal
                     and self._goal_planner is not None
                     and prediction_record.state_error is not None
+                    and world_error_threshold is not None
                     and prediction_record.state_error > world_error_threshold
                 )
                 if world_model_replan:
+                    assert world_error_threshold is not None
+                    assert prediction_record.state_error is not None
                     threshold = float(world_error_threshold)
                     recovery_state = PlanningRecoveryState(
                         mode="world-error-recovery",
@@ -6284,7 +6295,7 @@ class TSKV8Adapter(Taiji):
         payload["cognitive_state"] = self._cognitive_state.to_payload()
         return payload
 
-    def restore(self, checkpoint: dict[str, Any]) -> None:
+    def restore(self, checkpoint: Mapping[str, Any]) -> None:
         super().restore(checkpoint)
         self._restore_cognitive_state(checkpoint)
         if "perception" in checkpoint:
@@ -6757,7 +6768,7 @@ class TSKV8Adapter(Taiji):
         return model
 
     @staticmethod
-    def _config_from_kernel_checkpoint(checkpoint: dict[str, Any]) -> Any:
+    def _config_from_kernel_checkpoint(checkpoint: Mapping[str, Any]) -> Any:
         # Import locally so the adapter's public import surface stays small.
         from .config import TaijiConfig
 

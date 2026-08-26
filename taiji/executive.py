@@ -100,7 +100,8 @@ def _tensor_summary(value: torch.Tensor) -> tuple[float, float, float, float]:
             flat.abs().max(),
         )
     )
-    return tuple(float(item) for item in torch.tanh(summary))
+    values = tuple(float(item) for item in torch.tanh(summary))
+    return (values[0], values[1], values[2], values[3])
 
 
 @dataclass(frozen=True)
@@ -397,7 +398,7 @@ class ExecutiveDecision:
             tick=self.context.tick if tick is None else int(tick),
             actor_id=str(parameters.get("actor_id", "")),
             target_id=str(parameters.get("target_id", "")),
-            parameters=parameters,
+            parameters=tuple(sorted(parameters.items())),
             provenance=provenance,
         )
 

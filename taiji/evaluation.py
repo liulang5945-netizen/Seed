@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import torch
 
@@ -314,7 +314,7 @@ class PerceptionEvaluator:
         )
         gram = features.T @ features
         ridge = float(self.evaluation.ridge) * torch.eye(features.shape[1], dtype=torch.float64)
-        return torch.linalg.solve(gram + ridge, features.T @ outputs)
+        return cast(torch.Tensor, torch.linalg.solve(gram + ridge, features.T @ outputs))
 
     @staticmethod
     def _accuracy(probe: torch.Tensor, features: torch.Tensor, targets: torch.Tensor) -> float:

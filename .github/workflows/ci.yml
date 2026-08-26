@@ -68,17 +68,12 @@ jobs:
       #   全仓 seed+taiji+neuroplex+api = 281 错（3.10 与 3.12 完全一致）
       #   两版 Python 数字相同，说明存量类型债与版本无关，"随版本变化故不能设阈值"
       #   这一顾虑已被实测否证，双矩阵取较大值即等于 63，可以直接钉。
-      # 为什么用棘轮而非等修到 0 再 blocking：advisory 对退化零约束——63 涨到 100
-      #   也照样绿灯，门禁形同不存在。棘轮把「不许变差」立刻变成硬约束，
-      #   同时不阻塞开发；每次实修下降后把 MYPY_CORE_BASELINE 调低即单向收紧。
-      # 存量债分布（63 错）：taiji/adapter.py 12、world_learning.py 9、workspace.py 8、
-      #   local_learning.py 7、contracts.py 5、procedural_memory.py 4、
-      #   seed/language_provider.py 4，其余 14 文件各 1-3；主因是 checkpoint /
-      #   state_dict 反序列化后为 object|Any 缺少类型收窄。
+      # 为什么用棘轮：advisory 对退化零约束，错误数增加也可能绿灯；棘轮把
+      #   「不许变差」变成硬约束。核心债已在 2026-08-27 实修归零，基线固定为 0。
       # 详见 plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md 第 14.2 / 14.11 节。
-      - name: Type check core modules with mypy (ratchet, baseline 63)
+      - name: Type check core modules with mypy (ratchet, baseline 0)
         env:
-          MYPY_CORE_BASELINE: "63"
+          MYPY_CORE_BASELINE: "0"
         run: |
           set -o pipefail
           mypy --follow-imports=silent seed taiji | tee mypy-core.log || true

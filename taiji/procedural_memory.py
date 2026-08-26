@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Iterable, Sequence
-from typing import Any
+from typing import Any, cast
 
 import torch
 from torch import nn
@@ -49,20 +49,26 @@ class ProceduralMemoryLearner(nn.Module):
         records = tuple(records)
         if not records:
             raise ValueError("procedural consolidation needs episodic records")
-        if any(record.action_intent is None for record in records):
-            raise ValueError("procedural consolidation needs records with action intents")
-        action_kinds = tuple(sorted({record.action_intent.kind for record in records}))
+        action_kinds_set: set[str] = set()
+        for record in records:
+            action_intent = record.action_intent
+            if action_intent is None:
+                raise ValueError("procedural consolidation needs records with action intents")
+            action_kinds_set.add(action_intent.kind)
+        action_kinds = tuple(sorted(action_kinds_set))
         if not action_kinds:
             raise ValueError("procedural consolidation needs at least one action kind")
         cues = torch.stack([record.cue.detach().to(dtype=torch.float32) for record in records])
         if cues.ndim != 2 or cues.shape[1] != self.cue_dim:
             raise ValueError("procedural record cue dimensions do not match the learner")
         kind_to_index = {kind: index for index, kind in enumerate(action_kinds)}
-        targets = torch.tensor(
-            [kind_to_index[record.action_intent.kind] for record in records],
-            dtype=torch.long,
-            device=cues.device,
-        )
+        target_indices: list[int] = []
+        for record in records:
+            action_intent = record.action_intent
+            if action_intent is None:
+                raise ValueError("procedural consolidation needs records with action intents")
+            target_indices.append(kind_to_index[action_intent.kind])
+        targets = torch.tensor(target_indices, dtype=torch.long, device=cues.device)
         return cues, targets, action_kinds
 
     def _ensure_readout(self, action_kinds: tuple[str, ...]) -> None:
@@ -249,10 +255,10 @@ class ProceduralSequenceLearner(nn.Module):
             )
             batches.append((cues, targets))
         trainable = (
-            self.encoder.weight_ih_l0,
-            self.encoder.weight_hh_l0,
-            self.encoder.bias_ih_l0,
-            self.encoder.bias_hh_l0,
+            cast(torch.Tensor, self.encoder.weight_ih_l0),
+            cast(torch.Tensor, self.encoder.weight_hh_l0),
+            cast(torch.Tensor, self.encoder.bias_ih_l0),
+            cast(torch.Tensor, self.encoder.bias_hh_l0),
             self.readout.weight,
             self.readout.bias,
         )
