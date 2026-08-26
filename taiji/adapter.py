@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from typing import Any
@@ -18,9 +19,12 @@ from .content_selection import (
 from .contracts import (
     CONTRACT_FORMAT,
     ActionIntent,
+    Assembly,
     CognitiveState,
+    Concept,
     DevelopmentState,
     EpisodicMemoryRecord,
+    Event,
     Goal,
     GoalState,
     HomeostaticState,
@@ -28,6 +32,7 @@ from .contracts import (
     NativeCheckpoint,
     Observation,
     Outcome,
+    PerceptEvent,
     PlanCandidate,
     PlanningRecoveryState,
     PlanState,
@@ -217,11 +222,28 @@ class TSKV8Adapter(Taiji):
             raise RuntimeError("semantic memory learner is not attached")
         if self._episodic_memory is None or self._episodic_memory.count == 0:
             raise RuntimeError("semantic consolidation requires episodic records")
-        return self._semantic_memory.consolidate(
+        loss = self._semantic_memory.consolidate(
             self._episodic_memory,
             epochs=epochs,
             learning_rate=learning_rate,
         )
+        concepts = self._consolidate_concepts()
+        development = replace(
+            self._cognitive_state.development,
+            tick=self.tick,
+            last_update_source="semantic-consolidation",
+            lineage=self._bounded_ids(
+                self._cognitive_state.development.lineage,
+                f"semantic-consolidation:{self.tick}",
+                limit=self._lineage_limit(),
+            ),
+        )
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            concepts=concepts,
+            development=development,
+        )
+        return loss
 
     def attach_procedural_memory(self, learner: ProceduralMemoryLearner | None) -> None:
         """Attach the slow procedural learner used by explicit action routing."""
@@ -1220,6 +1242,230 @@ class TSKV8Adapter(Taiji):
         self._last_content_prediction_error = None
         self._content_feedback_applied = False
 
+    def _lineage_limit(self) -> int:
+        return int(self.config.cognitive_lineage_history_limit)
+
+    @staticmethod
+    def _bounded_ids(existing: Sequence[str], *new_ids: str, limit: int) -> tuple[str, ...]:
+        values = [str(item) for item in existing]
+        for item in new_ids:
+            if item and item not in values:
+                values.append(str(item))
+        return tuple(values[-int(limit) :])
+
+    @staticmethod
+    def _world_object_ids(world: WorldState) -> tuple[str, ...]:
+        values = [str(item) for item in world.entities]
+        values.extend(item.object_id for item in world.objects)
+        return tuple(dict.fromkeys(values))
+
+    @staticmethod
+    def _world_relation_ids(world: WorldState) -> tuple[str, ...]:
+        return tuple(f"{subject}:{predicate}:{object_id}" for subject, predicate, object_id in world.relations)
+
+    def _record_percept_lineage(
+        self, percept: PerceptEvent, world: WorldState
+    ) -> tuple[tuple[Assembly, ...], tuple[Event, ...]]:
+        """Materialize percept output as traceable assembly/event state."""
+
+        previous = self._cognitive_state
+        event_id = f"{self._state.episode_id}:event:{self.tick}"
+        parent_event_ids = (
+            () if not previous.events else (previous.events[-1].event_id,)
+        )
+        event = Event(
+            event_id=event_id,
+            start_tick=max(0, int(self.tick) - int(percept.duration) + 1),
+            end_tick=int(self.tick),
+            latent=percept.features.detach().clone(),
+            assembly_ids=(percept.assembly_id,),
+            parent_event_ids=parent_event_ids,
+            object_ids=self._world_object_ids(world),
+            relation_ids=self._world_relation_ids(world),
+            prediction_error=percept.prediction_error,
+            confidence=percept.confidence,
+            provenance="perceptual",
+        )
+        existing = next(
+            (item for item in previous.assemblies if item.assembly_id == percept.assembly_id),
+            None,
+        )
+        coherence = 1.0
+        if existing is not None and existing.activity.numel() and percept.features.numel():
+            coherence = float(
+                0.5
+                * (
+                    1.0
+                    + torch.nn.functional.cosine_similarity(
+                        existing.activity.unsqueeze(0), percept.features.unsqueeze(0)
+                    ).item()
+                )
+            )
+        assembly = Assembly(
+            assembly_id=percept.assembly_id,
+            start_tick=(
+                int(percept.observation_tick) - int(percept.duration) + 1
+                if existing is None
+                else min(existing.start_tick, int(percept.observation_tick) - int(percept.duration) + 1)
+            ),
+            end_tick=int(percept.observation_tick),
+            activity=percept.features.detach().clone(),
+            source_event_ids=(
+                (event_id,)
+                if existing is None
+                else self._bounded_ids(
+                    existing.source_event_ids,
+                    event_id,
+                    limit=self._lineage_limit(),
+                )
+            ),
+            coherence=max(0.0, min(1.0, coherence)),
+            prediction_error=percept.prediction_error,
+            route_score=percept.confidence,
+            provenance="perception",
+            confidence=percept.confidence,
+        )
+        assemblies = [
+            item for item in previous.assemblies if item.assembly_id != assembly.assembly_id
+        ]
+        assemblies.append(assembly)
+        events = (*previous.events, event)
+        limit = self._lineage_limit()
+        return tuple(assemblies[-limit:]), tuple(events[-limit:])
+
+    def _record_outcome_self_and_development(
+        self,
+        outcome: Outcome,
+        *,
+        prediction_error: float = 0.0,
+    ) -> tuple[SelfState, DevelopmentState]:
+        """Update self/development evidence only from a real outcome."""
+
+        previous_self = self._cognitive_state.self_state
+        previous_development = self._cognitive_state.development
+        capability = dict(previous_self.capability_confidence)
+        if self._cognitive_state.action_intent is not None:
+            capability_key = self._cognitive_state.action_intent.kind
+            old_confidence = float(capability.get(capability_key, 0.0))
+            target = 1.0 if bool(outcome.success) else 0.0
+            update_rate = float(self.config.self_capability_learning_rate)
+            capability[capability_key] = old_confidence + update_rate * (target - old_confidence)
+        confidence = max(0.0, min(1.0, sum(capability.values()) / len(capability))) if capability else previous_self.confidence
+        self_state = replace(
+            previous_self,
+            tick=self.tick,
+            confidence=confidence,
+            capability_confidence=tuple(capability.items()),
+            last_outcome_id=outcome.intent_id,
+            last_update_source=outcome.provenance,
+            last_prediction_error=max(0.0, float(prediction_error)),
+            update_count=previous_self.update_count + 1,
+            lineage=self._bounded_ids(
+                previous_self.lineage,
+                outcome.intent_id,
+                limit=self._lineage_limit(),
+            ),
+        )
+        validation_status = previous_development.last_validation_status
+        if previous_development.proposal_ids:
+            validation_status = "accepted" if bool(outcome.success) else "rejected"
+        development = replace(
+            previous_development,
+            tick=self.tick,
+            last_update_source=outcome.provenance,
+            last_validation_status=validation_status,
+            validation_evidence_ids=self._bounded_ids(
+                previous_development.validation_evidence_ids,
+                outcome.intent_id,
+                limit=self._lineage_limit(),
+            ),
+            lineage=self._bounded_ids(
+                previous_development.lineage,
+                outcome.intent_id,
+                limit=self._lineage_limit(),
+            ),
+        )
+        return self_state, development
+
+    def _consolidate_concepts(self) -> tuple[Concept, ...]:
+        """Create provisional concepts only from similar experiences in episodes."""
+
+        if self._episodic_memory is None:
+            return self._cognitive_state.concepts
+        records = tuple(
+            record
+            for record in self._episodic_memory.records
+            if record.outcome is not None and record.event_ids
+        )
+        if not records:
+            return self._cognitive_state.concepts
+        threshold = float(self.config.concept_similarity_threshold)
+        clusters: list[list[EpisodicMemoryRecord]] = []
+        for record in records:
+            destination: list[EpisodicMemoryRecord] | None = None
+            for cluster in clusters:
+                prototype = torch.stack([item.cue for item in cluster]).mean(dim=0)
+                similarity = float(
+                    torch.nn.functional.cosine_similarity(
+                        prototype.unsqueeze(0), record.cue.unsqueeze(0)
+                    ).item()
+                )
+                if similarity >= threshold:
+                    destination = cluster
+                    break
+            if destination is None:
+                clusters.append([record])
+            else:
+                destination.append(record)
+        concepts = {item.concept_id: item for item in self._cognitive_state.concepts}
+        for cluster in clusters:
+            episode_ids = {item.episode_id for item in cluster}
+            if len(episode_ids) < 2:
+                continue
+            event_ids = tuple(dict.fromkeys(event_id for item in cluster for event_id in item.event_ids))
+            assembly_ids = tuple(
+                dict.fromkeys(assembly_id for item in cluster for assembly_id in item.assembly_ids)
+            )
+            if not event_ids:
+                continue
+            digest = hashlib.sha256("|".join(sorted(event_ids)).encode("utf-8")).hexdigest()[:16]
+            prototype = torch.stack([item.cue for item in cluster]).mean(dim=0)
+            prototype = torch.nn.functional.normalize(prototype, dim=0)
+            stability = float(
+                torch.nn.functional.cosine_similarity(
+                    torch.stack([item.cue for item in cluster]), prototype.unsqueeze(0)
+                ).mean()
+            )
+            concept_id = f"concept:{digest}"
+            previous_concept = concepts.get(concept_id)
+            concept = Concept(
+                concept_id=concept_id,
+                prototype=prototype,
+                support_event_ids=event_ids,
+                support_assembly_ids=assembly_ids,
+                maturity=max(0.0, min(1.0, 1.0 - 1.0 / len(episode_ids))),
+                stability=max(0.0, min(1.0, stability)),
+                confidence=max(0.0, min(1.0, stability)),
+                update_count=(1 if previous_concept is None else previous_concept.update_count + 1),
+                last_updated_tick=self.tick,
+                provenance="semantic-consolidation",
+            )
+            concepts[concept.concept_id] = concept
+        return tuple(concepts.values())
+
+    def _refresh_last_event_world_lineage(self, world: WorldState) -> None:
+        """Attach an externally supplied world observation to the current event."""
+
+        if not self._cognitive_state.events:
+            return
+        events = self._cognitive_state.events
+        event = replace(
+            events[-1],
+            object_ids=self._world_object_ids(world),
+            relation_ids=self._world_relation_ids(world),
+        )
+        self._cognitive_state = replace(self._cognitive_state, events=(*events[:-1], event))
+
     def observe(self, symbol: int, *args: Any, **kwargs: Any) -> TaijiStep:
         workspace_candidates: Sequence[WorkspaceCandidate] | None = kwargs.pop(
             "workspace_candidates", None
@@ -1287,6 +1533,7 @@ class TSKV8Adapter(Taiji):
             affordances=previous.world.affordances,
             uncertainty=max(0.0, min(1.0, 1.0 - recall.confidence)),
         )
+        assemblies, events = self._record_percept_lineage(percept, world)
         memory = NativeMemoryState(
             tick=self.tick,
             episodic_confidence=max(0.0, min(1.0, recall.confidence)),
@@ -1318,6 +1565,8 @@ class TSKV8Adapter(Taiji):
             workspace=workspace,
             world=world,
             memory=memory,
+            assemblies=assemblies,
+            events=events,
             goals=replace(previous.goals, tick=self.tick),
             plan=replace(previous.plan, tick=self.tick),
             self_state=replace(
@@ -1372,6 +1621,7 @@ class TSKV8Adapter(Taiji):
                 self._cognitive_state,
                 world=self._ground_world_state(world_state),
             )
+            self._refresh_last_event_world_lineage(self._cognitive_state.world)
         return step
 
     def ingest_input(
@@ -1753,16 +2003,13 @@ class TSKV8Adapter(Taiji):
             rollout = self._planned_rollout
             planning_error_threshold = self._goal_planner.world_prediction_error_threshold(
                 recovery=recovery_state is not None,
-                trigger_error=(
-                    None if recovery_state is None else recovery_state.prediction_error
-                ),
+                trigger_error=(None if recovery_state is None else recovery_state.prediction_error),
             )
             self._last_rollout_prediction_error = self._goal_planner.rollout_prediction_error(
                 rollout, outcome
             )
             self._replan_required = self._language_fallback_requires_replan or (
-                self._last_rollout_prediction_error
-                > planning_error_threshold
+                self._last_rollout_prediction_error > planning_error_threshold
             )
             self._last_rollout_calibrated_confidence = self._goal_planner.record_rollout_outcome(
                 rollout, outcome
@@ -1800,6 +2047,16 @@ class TSKV8Adapter(Taiji):
                 outcome=outcome,
                 world_transition=transition,
                 provenance=outcome.provenance,
+                event_ids=(
+                    ()
+                    if not self._cognitive_state.events
+                    else (self._cognitive_state.events[-1].event_id,)
+                ),
+                assembly_ids=(
+                    ()
+                    if not self._cognitive_state.assemblies
+                    else (self._cognitive_state.assemblies[-1].assembly_id,)
+                ),
             )
             self._episodic_memory.write(record)
             memory = replace(

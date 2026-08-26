@@ -224,6 +224,9 @@ class TaijiConfig:
     structural_capture_target: float = 0.90
     structural_error_threshold: float = 0.35
     world_calibration_history_limit: int = 128
+    cognitive_lineage_history_limit: int = 256
+    concept_similarity_threshold: float = 0.85
+    self_capability_learning_rate: float = 0.20
     seed: int = 20260821
     perception: PerceptionConfig = field(default_factory=PerceptionConfig)
 
@@ -356,6 +359,12 @@ class TaijiConfig:
             raise ValueError("structural_error_threshold must be non-negative")
         if self.world_calibration_history_limit <= 0:
             raise ValueError("world_calibration_history_limit must be positive")
+        if self.cognitive_lineage_history_limit <= 0:
+            raise ValueError("cognitive_lineage_history_limit must be positive")
+        if not 0.0 < self.concept_similarity_threshold <= 1.0:
+            raise ValueError("concept_similarity_threshold must be in (0, 1]")
+        if not 0.0 < self.self_capability_learning_rate <= 1.0:
+            raise ValueError("self_capability_learning_rate must be in (0, 1]")
 
     @classmethod
     def training_profile(cls, *, scale: int = 2, seed: int = 20260821) -> TaijiConfig:
