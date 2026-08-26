@@ -1032,6 +1032,25 @@ class TSKV8Adapter(Taiji):
             for candidate in candidates
         )
 
+    def _apply_concept_sequence_affinity(
+        self, rollout: ImaginedRollout
+    ) -> ImaginedRollout:
+        action_kinds = tuple(step.action.kind for step in rollout.steps)
+        matches = self._concept_matches_for_world(self._cognitive_state.world)
+        sequence_affinity = max(
+            (
+                match.score
+                * match.concept.confidence
+                * match.concept.outcome_mean
+                * self._concept_formation.action_sequence_affinity(
+                    match.concept, action_kinds
+                )
+                for match in matches
+            ),
+            default=rollout.concept_sequence_affinity,
+        )
+        return replace(rollout, concept_sequence_affinity=sequence_affinity)
+
     def plan_actions(
         self,
         candidates: Sequence[PlanningCandidate],
@@ -1164,7 +1183,9 @@ class TSKV8Adapter(Taiji):
         if self._goal_planner is None:
             raise RuntimeError("goal planner is not attached")
         enriched_rollouts = tuple(
-            replace(rollout, steps=self._apply_concept_affinity(rollout.steps))
+            self._apply_concept_sequence_affinity(
+                replace(rollout, steps=self._apply_concept_affinity(rollout.steps))
+            )
             for rollout in rollouts
         )
         decision = self._goal_planner.plan_rollouts(

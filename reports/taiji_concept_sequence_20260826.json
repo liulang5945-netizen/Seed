@@ -1,0 +1,50 @@
+{
+  "format": "taiji-concept-sequence-v1",
+  "manifest_format": "taiji-concept-sequence-manifest-v1",
+  "train_records": 32,
+  "candidate_concepts": 2,
+  "metrics": {
+    "baseline_without_sequence_prior": "sequence-reversed",
+    "sequence_prior_selection": "sequence-good",
+    "learned_prefix_affinity": 0.5,
+    "reversed_sequence_affinity": 0.0,
+    "concept_lesion_selection": "sequence-reversed",
+    "organ_checkpoint_continuation": true,
+    "schema_scale": [
+      {
+        "schema_count": 1,
+        "train_records": 8,
+        "concept_count": 2,
+        "selected": "sequence-good"
+      },
+      {
+        "schema_count": 2,
+        "train_records": 16,
+        "concept_count": 2,
+        "selected": "sequence-good"
+      },
+      {
+        "schema_count": 4,
+        "train_records": 32,
+        "concept_count": 2,
+        "selected": "sequence-good"
+      },
+      {
+        "schema_count": 8,
+        "train_records": 64,
+        "concept_count": 2,
+        "selected": "sequence-good"
+      }
+    ],
+    "native_runtime": {
+      "selected_before_failure": true,
+      "checkpoint_recovery": true,
+      "feedback_replan": true,
+      "feedback_checkpoint_recovery": true
+    }
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "ordered action sequences learned from episode timelines must select the correct multi-step rollout over a higher-immediate-value reversal, transfer across unseen schemas, fail after concept lesion, and preserve runtime recovery with execution-feedback replanning"
+  }
+}

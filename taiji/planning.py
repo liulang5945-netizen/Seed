@@ -35,6 +35,7 @@ class PlanningConfig:
     resource_weight: float = 0.40
     conflict_weight: float = 0.80
     concept_weight: float = 0.40
+    concept_sequence_weight: float = 0.60
     outcome_progress_gain: float = 0.40
     discount: float = 0.90
     replan_error_threshold: float = 0.25
@@ -114,6 +115,7 @@ class ImaginedRollout:
     steps: tuple[PlanningCandidate, ...]
     confidence: float
     provenance: str = "imagined"
+    concept_sequence_affinity: float = 0.0
 
     def __post_init__(self) -> None:
         if not self.rollout_id or not self.goal_id:
@@ -121,6 +123,7 @@ class ImaginedRollout:
         if not self.steps:
             raise ValueError("imagined rollout requires at least one step")
         _unit(self.confidence, "rollout confidence")
+        _unit(self.concept_sequence_affinity, "concept_sequence_affinity")
         if self.provenance != "imagined":
             raise ValueError("rollout provenance must be imagined")
 
@@ -130,6 +133,7 @@ class ImaginedRollout:
             "goal_id": self.goal_id,
             "confidence": self.confidence,
             "provenance": self.provenance,
+            "concept_sequence_affinity": self.concept_sequence_affinity,
             "steps": [
                 {
                     "candidate_id": step.candidate_id,
@@ -154,6 +158,7 @@ class ImaginedRollout:
             goal_id=str(payload["goal_id"]),
             confidence=float(payload["confidence"]),
             provenance=str(payload.get("provenance", "imagined")),
+            concept_sequence_affinity=float(payload.get("concept_sequence_affinity", 0.0)),
             steps=tuple(
                 PlanningCandidate(
                     candidate_id=str(item["candidate_id"]),
@@ -336,6 +341,9 @@ class GoalPlanner:
                 * residual
                 * rollout.steps[-1].expected_progress
                 * rollout.confidence
+            )
+            expected_value += (
+                self.config.concept_sequence_weight * rollout.concept_sequence_affinity
             )
             scored.append(
                 PlanCandidate(

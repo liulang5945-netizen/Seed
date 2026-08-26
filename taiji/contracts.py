@@ -120,6 +120,18 @@ def _normalize_ids(value: Any, name: str) -> tuple[str, ...]:
     return ids
 
 
+def _normalize_sequences(value: Any, name: str) -> tuple[tuple[str, ...], ...]:
+    sequences: list[tuple[str, ...]] = []
+    for sequence in value:
+        normalized = tuple(_check_text(str(item), f"{name} item") for item in sequence)
+        if not normalized:
+            raise ValueError(f"{name} cannot contain empty sequences")
+        if normalized in sequences:
+            raise ValueError(f"{name} cannot contain duplicate sequences")
+        sequences.append(normalized)
+    return tuple(sequences)
+
+
 def _normalize_unit_pairs(value: Any, name: str) -> tuple[tuple[str, float], ...]:
     pairs = _normalize_pairs(value, name)
     normalized: list[tuple[str, float]] = []
@@ -397,6 +409,7 @@ class Concept:
     object_ids: tuple[str, ...] = ()
     relation_ids: tuple[str, ...] = ()
     action_kinds: tuple[str, ...] = ()
+    action_sequences: tuple[tuple[str, ...], ...] = ()
     maturity: float = 0.0
     stability: float = 0.0
     confidence: float = 0.0
@@ -427,6 +440,11 @@ class Concept:
         object.__setattr__(
             self, "action_kinds", _normalize_ids(self.action_kinds, "concept action_kinds")
         )
+        object.__setattr__(
+            self,
+            "action_sequences",
+            _normalize_sequences(self.action_sequences, "concept action_sequences"),
+        )
         _check_unit(self.maturity, "concept maturity")
         _check_unit(self.stability, "concept stability")
         _check_unit(self.confidence, "concept confidence")
@@ -445,6 +463,7 @@ class Concept:
             "object_ids": list(self.object_ids),
             "relation_ids": list(self.relation_ids),
             "action_kinds": list(self.action_kinds),
+            "action_sequences": [list(sequence) for sequence in self.action_sequences],
             "maturity": self.maturity,
             "stability": self.stability,
             "confidence": self.confidence,

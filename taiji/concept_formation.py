@@ -200,6 +200,50 @@ class ConceptFormationOrgan:
         return tuple(dict.fromkeys(shapes))
 
     @staticmethod
+    def _sequence_similarity(
+        left: Sequence[str], right: Sequence[str]
+    ) -> float:
+        if not left or not right:
+            return 0.0
+        matches = sum(left_item == right_item for left_item, right_item in zip(left, right))
+        return matches / max(len(left), len(right))
+
+    def action_sequence_affinity(
+        self, concept: Concept, action_kinds: Sequence[str]
+    ) -> float:
+        """Return learned ordered-action affinity for one candidate rollout."""
+
+        query = tuple(str(item) for item in action_kinds)
+        if not query:
+            return 0.0
+        sequences = concept.action_sequences or tuple((kind,) for kind in concept.action_kinds)
+        return max(
+            (self._sequence_similarity(query, sequence) for sequence in sequences),
+            default=0.0,
+        )
+
+    @staticmethod
+    def _action_sequences(
+        records: Sequence[EpisodicMemoryRecord],
+    ) -> tuple[tuple[str, ...], ...]:
+        grouped: dict[str, list[tuple[int, str, str]]] = {}
+        for record in records:
+            if record.action_intent is None:
+                continue
+            grouped.setdefault(record.episode_id, []).append(
+                (record.tick, record.memory_id, record.action_intent.kind)
+            )
+        sequences: list[tuple[str, ...]] = []
+        for episode_id in sorted(grouped):
+            sequence = tuple(
+                action_kind
+                for _, _, action_kind in sorted(grouped[episode_id], key=lambda item: item[:2])
+            )
+            if sequence and sequence not in sequences:
+                sequences.append(sequence)
+        return tuple(sequences)
+
+    @staticmethod
     def _outcome_score(record: EpisodicMemoryRecord) -> float:
         if record.outcome is None:
             return 0.0
@@ -307,6 +351,7 @@ class ConceptFormationOrgan:
                     if item.action_intent is not None
                 )
             )
+            action_sequences = self._action_sequences(cluster)
             prototype = torch.nn.functional.normalize(
                 torch.stack([item.cue for item in cluster]).mean(dim=0), dim=0
             )
@@ -348,6 +393,7 @@ class ConceptFormationOrgan:
                         *sorted(self._relation_shapes(relation_ids)),
                         str(len(object_ids)),
                         f"{outcome_mean:.3f}",
+                        *(f"sequence:{'->'.join(sequence)}" for sequence in action_sequences),
                         *(f"{value:.4f}" for value in prototype.tolist()),
                     )
                 )
@@ -363,6 +409,9 @@ class ConceptFormationOrgan:
                 action_kinds = tuple(
                     dict.fromkeys((*previous_concept.action_kinds, *action_kinds))
                 )
+                action_sequences = tuple(
+                    dict.fromkeys((*previous_concept.action_sequences, *action_sequences))
+                )
                 prototype = torch.nn.functional.normalize(
                     (1.0 - self.plasticity_rate) * previous_concept.prototype
                     + self.plasticity_rate * prototype,
@@ -376,6 +425,7 @@ class ConceptFormationOrgan:
                 object_ids=object_ids,
                 relation_ids=relation_ids,
                 action_kinds=action_kinds,
+                action_sequences=action_sequences,
                 maturity=max(
                     previous_concept.maturity if previous_concept is not None else 0.0,
                     max(0.0, min(1.0, 1.0 - 1.0 / len(episode_ids))),
