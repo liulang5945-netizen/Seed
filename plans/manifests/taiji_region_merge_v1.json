@@ -1,0 +1,22 @@
+{
+  "format": "taiji-region-merge-manifest-v1",
+  "task": "resource-governed compatible region merge",
+  "report": "reports/taiji_region_merge_20260826.json",
+  "seed": 71,
+  "controls": [
+    "persistent_redundancy_evidence",
+    "compatible_unit_state_merge",
+    "external_sparse_connection_aggregation",
+    "route_learner_lineage",
+    "unseen_holdout_regression_gate",
+    "budget_validation",
+    "checkpoint_continuation",
+    "reverse_rollback",
+    "internal_connection_fail_closed",
+    "zero_budget"
+  ],
+  "gate": {
+    "passed": true,
+    "criterion": "persistent redundancy evidence must emit a region merge proposal; compatible unit identities and local state must be combined, external sparse connections and route learner evidence must aggregate explicitly, unseen holdout regression must stay within threshold, checkpoint and reverse rollback must work, internal connections and zero budget must fail closed"
+  }
+}

@@ -1761,6 +1761,350 @@ class TSKV8Adapter(Taiji):
         )
         return True
 
+    def propose_region_merge_from_redundancy(
+        self,
+        *,
+        network_id: str,
+        region_ids: Sequence[str],
+        usage: float,
+        resource_pressure: float,
+        learning_gain: float,
+        evidence_ids: Sequence[str],
+    ) -> StructuralTopologyProposal | None:
+        """Turn persistent redundant substrate pressure into a merge proposal."""
+
+        if self._structural_pruning_controller is None:
+            raise RuntimeError("structural pruning controller is not attached")
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        selected = tuple(str(item) for item in region_ids)
+        for region_id in selected:
+            if region_id not in network.region_ids:
+                raise ValueError(f"unknown adaptive network region: {region_id}")
+        substrate_id = "merge:" + "+".join(selected)
+        decision = self._structural_pruning_controller.observe_substrate(
+            substrate_id,
+            usage=usage,
+            resource_pressure=resource_pressure,
+            learning_gain=learning_gain,
+            evidence_ids=evidence_ids,
+        )
+        if not decision.should_prune:
+            return None
+        proposal = network.propose_region_merge(
+            region_ids=selected,
+            evidence_ids=decision.evidence_ids,
+            parent_checkpoint_id=(
+                f"region-merge-signal:{substrate_id}:{decision.proposal_ordinal}"
+            ),
+            resource_cost=self._structural_pruning_controller.dynamics.pruning_resource_cost,
+        )
+        self._topology_proposals[proposal.proposal_id] = proposal
+        self._topology_network_ids[proposal.proposal_id] = str(network_id)
+        return proposal
+
+    def validate_region_merge_holdout(
+        self,
+        *,
+        network_id: str,
+        proposal_id: str,
+        holdout_inputs: Sequence[Mapping[str, torch.Tensor]],
+        expected_activities: Sequence[Mapping[str, torch.Tensor]],
+    ) -> bool:
+        """Validate a merge against unseen inputs in the combined unit space."""
+
+        if self._structural_pruning_controller is None:
+            raise RuntimeError("structural pruning controller is not attached")
+        proposal = self._topology_proposals.get(str(proposal_id))
+        if (
+            proposal is None
+            or proposal.status != "pending"
+            or proposal.target_kind != "region"
+            or proposal.operation != "merge"
+            or dict(proposal.specification).get("topology_role") != "region_merge"
+        ):
+            raise ValueError("proposal is not a pending region merge")
+        if len(holdout_inputs) == 0 or len(holdout_inputs) != len(expected_activities):
+            raise ValueError(
+                "region merge holdout inputs and expected activities must have equal size"
+            )
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        if self._topology_network_ids.get(str(proposal_id)) != str(network_id):
+            raise ValueError("region merge proposal belongs to another network")
+        specification = dict(proposal.specification)
+        selected = tuple(str(item) for item in specification.get("region_ids", ()))
+        if len(selected) != 2:
+            raise ValueError("region merge proposal must name two regions")
+        retained_id, absorbed_id = selected
+        payload = network.to_payload()
+        intact = AdaptiveNeuronNetwork.from_payload(
+            payload,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        merged = AdaptiveNeuronNetwork.from_payload(
+            payload,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        merged.apply_region_merge(proposal, generator=self._checkpoint_region_generator())
+        baseline_errors: list[float] = []
+        merged_errors: list[float] = []
+        for inputs, expected in zip(holdout_inputs, expected_activities, strict=True):
+            if not expected:
+                raise ValueError("region merge holdout must contain expected activities")
+            if retained_id not in inputs or absorbed_id not in inputs:
+                raise ValueError("region merge holdout inputs must contain both source regions")
+            merged_inputs = dict(inputs)
+            merged_inputs.pop(absorbed_id)
+            intact_activities = intact.step(inputs)
+            merged_activities = merged.step(merged_inputs)
+            for expected_region_id, expected_activity in expected.items():
+                expected_value = expected_activity.to(self.device)
+                if expected_region_id == retained_id:
+                    intact_activity = torch.cat(
+                        (intact_activities[retained_id], intact_activities[absorbed_id])
+                    )
+                    merged_activity = merged_activities[retained_id]
+                else:
+                    if expected_region_id not in merged_activities:
+                        raise ValueError(
+                            "region merge expected activity targets a missing region"
+                        )
+                    intact_activity = intact_activities[expected_region_id]
+                    merged_activity = merged_activities[expected_region_id]
+                if expected_value.shape != intact_activity.shape:
+                    raise ValueError(
+                        f"region merge expected activity shape mismatch for {expected_region_id}"
+                    )
+                baseline_errors.append(
+                    float(
+                        torch.mean(torch.abs(intact_activity - expected_value))
+                        .clamp(0.0, 1.0)
+                        .item()
+                    )
+                )
+                merged_errors.append(
+                    float(
+                        torch.mean(torch.abs(merged_activity - expected_value))
+                        .clamp(0.0, 1.0)
+                        .item()
+                    )
+                )
+        baseline_error = sum(baseline_errors) / len(baseline_errors)
+        merged_error = sum(merged_errors) / len(merged_errors)
+        regression = max(0.0, merged_error - baseline_error)
+        score = max(0.0, min(1.0, 1.0 - regression))
+        maximum_regression = (
+            self._structural_pruning_controller.dynamics.maximum_holdout_regression
+        )
+        validated = regression <= float(maximum_regression)
+        self._topology_proposals[str(proposal_id)] = replace(
+            proposal,
+            validation_score=score,
+        )
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                last_update_source="region-merge-holdout-validation",
+                last_validation_status="validated" if validated else "rejected",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    f"holdout:{proposal_id}",
+                    limit=self._lineage_limit(),
+                ),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    f"holdout:{proposal_id}",
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return validated
+
+    def commit_region_merge(
+        self,
+        network_id: str,
+        proposal: StructuralTopologyProposal,
+    ) -> bool:
+        """Commit a validated region merge through the runtime ledger."""
+
+        existing = self._topology_proposals.get(proposal.proposal_id)
+        if existing is not None:
+            if existing.status == "accepted":
+                return True
+            if existing.status in {"rejected", "rolled_back"}:
+                return False
+            proposal = existing
+        if proposal.status != "pending":
+            raise ValueError("only pending region merge proposals can be committed")
+        if (
+            proposal.target_kind != "region"
+            or proposal.operation != "merge"
+            or dict(proposal.specification).get("topology_role") != "region_merge"
+        ):
+            raise ValueError("proposal is not a region merge")
+        if self._structural_pruning_controller is None:
+            raise RuntimeError("structural pruning controller is not attached")
+        if self._topology_network_ids.get(proposal.proposal_id) not in {
+            None,
+            str(network_id),
+        }:
+            raise ValueError("region merge proposal belongs to another network")
+        minimum_score = 1.0 - float(
+            self._structural_pruning_controller.dynamics.maximum_holdout_regression
+        )
+        if proposal.validation_score < minimum_score:
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(
+                    proposal.evidence_ids[0]
+                    if proposal.evidence_ids
+                    else proposal.proposal_id
+                ),
+                source="region-topology-merge",
+            )
+            return False
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        if self._cognitive_state.development.structural_budget < proposal.resource_cost:
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(
+                    proposal.evidence_ids[0]
+                    if proposal.evidence_ids
+                    else proposal.proposal_id
+                ),
+                source="region-topology-merge",
+            )
+            return False
+        parent_snapshot = network.to_payload()
+        try:
+            network.apply_region_merge(
+                proposal,
+                generator=self._checkpoint_region_generator(),
+            )
+            accepted_snapshot = network.to_payload()
+            trial = AdaptiveNeuronNetwork.from_payload(
+                accepted_snapshot,
+                generator=self._checkpoint_region_generator(),
+                device=self.device,
+            )
+            if (
+                trial.region_ids != network.region_ids
+                or trial.execution_order != network.execution_order
+                or trial.connection_ids != network.connection_ids
+            ):
+                raise ValueError("region merge checkpoint roundtrip changed topology identities")
+        except (IndexError, KeyError, RuntimeError, ValueError):
+            self._neuron_networks[str(network_id)] = AdaptiveNeuronNetwork.from_payload(
+                parent_snapshot,
+                generator=self._checkpoint_region_generator(),
+                device=self.device,
+            )
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(
+                    proposal.evidence_ids[0]
+                    if proposal.evidence_ids
+                    else proposal.proposal_id
+                ),
+                source="region-topology-merge",
+            )
+            return False
+        accepted = replace(proposal, status="accepted")
+        self._topology_proposals[proposal.proposal_id] = accepted
+        self._topology_parent_snapshots[proposal.proposal_id] = parent_snapshot
+        self._topology_network_ids[proposal.proposal_id] = str(network_id)
+        self._record_topology_development(
+            accepted,
+            consume_budget=True,
+            evidence_id=(
+                proposal.evidence_ids[0]
+                if proposal.evidence_ids
+                else proposal.proposal_id
+            ),
+            source="region-topology-merge",
+            counter="split_merge_count",
+        )
+        return True
+
+    def rollback_region_merge(self, proposal_id: str) -> bool:
+        """Rollback only the latest accepted region merge."""
+
+        key = str(proposal_id)
+        proposal = self._topology_proposals.get(key)
+        snapshot = self._topology_parent_snapshots.get(key)
+        network_id = self._topology_network_ids.get(key)
+        if (
+            proposal is None
+            or proposal.status != "accepted"
+            or proposal.target_kind != "region"
+            or proposal.operation != "merge"
+            or dict(proposal.specification).get("topology_role") != "region_merge"
+            or snapshot is None
+            or network_id is None
+        ):
+            return False
+        active = [
+            item.proposal_id
+            for item in self._topology_proposals.values()
+            if item.status == "accepted" and item.proposal_id in self._topology_parent_snapshots
+        ]
+        if not active or active[-1] != key:
+            return False
+        self._neuron_networks[network_id] = AdaptiveNeuronNetwork.from_payload(
+            snapshot,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        rolled_back = replace(proposal, status="rolled_back", validation_score=0.0)
+        self._topology_proposals[key] = rolled_back
+        self._topology_parent_snapshots.pop(key, None)
+        self._topology_network_ids.pop(key, None)
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                structural_budget=previous.structural_budget + proposal.resource_cost,
+                last_update_source="region-topology-merge-rollback",
+                last_validation_status="rolled_back",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    key,
+                    limit=self._lineage_limit(),
+                ),
+                split_merge_count=max(0, previous.split_merge_count - proposal.requested_units),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    key,
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return True
+
     def propose_region_split_from_error(
         self,
         *,

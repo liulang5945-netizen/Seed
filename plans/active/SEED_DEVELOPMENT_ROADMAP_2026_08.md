@@ -542,4 +542,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：建立 merge 的结构生命周期闭环：只有冗余证据充分、连接迁移与 route learner lineage 可追溯、未见 holdout 不退化且预算/checkpoint trial/functional lesion/reverse rollback 全部通过时才允许合并区域；继续禁止用 action/intent 表决定结构维护。**
+**下一步：把 growth/pruning/split/merge 四类结构 proposal 接入真实 runtime tick：从区域 activity、route evidence、prediction error 和资源状态自动形成可 checkpoint 的维护观测，只有通过 holdout、预算、trial 和 reverse rollback 才改变 live topology；继续禁止用 action/intent 表决定结构维护。**

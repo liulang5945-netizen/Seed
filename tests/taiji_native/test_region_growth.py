@@ -512,3 +512,121 @@ def test_connected_region_split_migrates_connections_and_route_lineage() -> None
     assert restored.neuron_networks[0].cooperation_learner.route_ids == (
         connection.substrate_id,
     )
+
+
+def test_region_merge_aggregates_external_connections_and_is_reversible() -> None:
+    model = TSKV8Adapter(_config(budget=3), episode_id="region-merge")
+
+    def make(region_id: str) -> AdaptiveNeuronRegion:
+        return AdaptiveNeuronRegion(
+            region_id=region_id,
+            input_dim=3,
+            unit_ids=(f"{region_id}.u0", f"{region_id}.u1"),
+            fan_in=2,
+            generator=torch.Generator().manual_seed(len(region_id)),
+        )
+
+    model.attach_adaptive_neuron_network(
+        "cortex",
+        AdaptiveNeuronNetwork(
+            (make("source"), make("bottleneck"), make("sink")),
+            execution_order=("source", "bottleneck", "sink"),
+        ),
+    )
+    first_connection = model.propose_cross_region_connection(
+        network_id="cortex",
+        source_region_id="source",
+        target_region_id="sink",
+        evidence_ids=("merge:first",),
+        fan_in=1,
+    )
+    second_connection = model.propose_cross_region_connection(
+        network_id="cortex",
+        source_region_id="bottleneck",
+        target_region_id="sink",
+        evidence_ids=("merge:second",),
+        fan_in=1,
+    )
+    assert model.commit_cross_region_connection("cortex", first_connection) is True
+    assert model.commit_cross_region_connection("cortex", second_connection) is True
+    network = model.neuron_networks[0]
+    network.attach_cooperation_learner(
+        CrossRegionCooperationLearner(
+            dynamics=CrossRegionLearningDynamics(ema_rate=1.0),
+        )
+    )
+    for connection_id in network.connection_ids:
+        network.observe_connection(
+            connection_id,
+            prediction_error=0.5,
+            holdout_transfer=0.5,
+            resource_state=0.8,
+            selected=True,
+        )
+    for region in network.regions:
+        region.incoming.edge_weight.zero_()
+        region.activity.zero_()
+    for _, _, _, connection in network.connections:
+        connection.edge_weight.zero_()
+    model.attach_structural_pruning_controller(_pruning_controller())
+
+    first = model.propose_region_merge_from_redundancy(
+        network_id="cortex",
+        region_ids=("source", "bottleneck"),
+        usage=0.05,
+        resource_pressure=0.9,
+        learning_gain=0.0,
+        evidence_ids=("merge:tick:1",),
+    )
+    proposal = model.propose_region_merge_from_redundancy(
+        network_id="cortex",
+        region_ids=("source", "bottleneck"),
+        usage=0.05,
+        resource_pressure=0.9,
+        learning_gain=0.0,
+        evidence_ids=("merge:tick:2",),
+    )
+    assert first is None
+    assert proposal is not None
+    assert model.validate_region_merge_holdout(
+        network_id="cortex",
+        proposal_id=proposal.proposal_id,
+        holdout_inputs=(
+            {
+                "source": torch.ones(3),
+                "bottleneck": torch.ones(3),
+            },
+        ),
+        expected_activities=(
+            {"source": torch.zeros(4)},
+        ),
+    ) is True
+    assert model.commit_region_merge("cortex", proposal) is True
+    assert network.region_ids == ("source", "sink")
+    assert network.execution_order == network.region_ids
+    assert network.regions[0].unit_ids == (
+        "source.u0",
+        "source.u1",
+        "bottleneck.u0",
+        "bottleneck.u1",
+    )
+    assert network.connection_ids == ("connection:source->sink",)
+    assert network.cooperation_learner is not None
+    assert network.cooperation_learner.route_ids == network.connection_ids
+    assert network.cooperation_learner.routes[0].evidence_count == 2
+    assert model.cognitive_snapshot().development.split_merge_count == 1
+
+    restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
+    assert restored.rollback_region_merge(proposal.proposal_id) is True
+    assert restored.neuron_networks[0].region_ids == (
+        "source",
+        "bottleneck",
+        "sink",
+    )
+    assert restored.neuron_networks[0].connection_ids == (
+        first_connection.substrate_id,
+        second_connection.substrate_id,
+    )
+    assert restored.rollback_cross_region_connection(second_connection.proposal_id) is True
+    assert restored.rollback_cross_region_connection(first_connection.proposal_id) is True
+    assert restored.cognitive_snapshot().development.structural_budget == 3
