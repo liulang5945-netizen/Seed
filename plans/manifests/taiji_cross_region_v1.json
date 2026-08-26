@@ -1,0 +1,20 @@
+{
+  "format": "taiji-cross-region-manifest-v1",
+  "task": "explicit cross-region adaptive wiring",
+  "report": "reports/taiji_cross_region_20260826.json",
+  "seed": 71,
+  "controls": [
+    "upstream_drive",
+    "connection_lesion",
+    "region_growth_migration",
+    "network_checkpoint",
+    "budget_consumption",
+    "native_checkpoint",
+    "reverse_rollback",
+    "zero_budget"
+  ],
+  "gate": {
+    "passed": true,
+    "criterion": "cross-region wiring must be explicit, drive a downstream region from upstream activity, fail under connection lesion, migrate across region growth without redrawing old support, survive checkpoint continuation, and obey ledger budget/rollback"
+  }
+}

@@ -133,6 +133,10 @@ from .language_organ import (
 )
 from .memory import EpisodicField, EpisodicReplay, EpisodicWrite
 from .model import Taiji
+from .neuron_network import (
+    ADAPTIVE_NEURON_NETWORK_CHECKPOINT_FORMAT,
+    AdaptiveNeuronNetwork,
+)
 from .neuron_region import (
     ADAPTIVE_NEURON_REGION_CHECKPOINT_FORMAT,
     AdaptiveNeuronRegion,
@@ -195,6 +199,8 @@ __all__ = [
     "ByteSensor",
     "ADAPTIVE_NEURON_REGION_CHECKPOINT_FORMAT",
     "AdaptiveNeuronRegion",
+    "ADAPTIVE_NEURON_NETWORK_CHECKPOINT_FORMAT",
+    "AdaptiveNeuronNetwork",
     "AFFORDANCE_FEATURE_CHECKPOINT_FORMAT",
     "AffordanceFeatureTrainingExample",
     "ActionIntent",

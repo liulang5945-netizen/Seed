@@ -207,7 +207,12 @@ class AdaptiveNeuronRegion:
         target.pre_index[: source.out_features].copy_(source.pre_index)
         target.edge_weight[: source.out_features].copy_(source.edge_weight)
 
-    def step(self, input_activity: torch.Tensor) -> torch.Tensor:
+    def step(
+        self,
+        input_activity: torch.Tensor,
+        *,
+        additional_drive: torch.Tensor | None = None,
+    ) -> torch.Tensor:
         """Advance the region one tick and return its non-negative activity."""
 
         if input_activity.shape != (self.input_dim,):
@@ -216,6 +221,13 @@ class AdaptiveNeuronRegion:
                 f"got {tuple(input_activity.shape)}"
             )
         drive = self.incoming.forward(input_activity)
+        if additional_drive is not None:
+            if additional_drive.shape != (self.unit_count,):
+                raise ValueError(
+                    f"additional drive shape must be ({self.unit_count},), "
+                    f"got {tuple(additional_drive.shape)}"
+                )
+            drive = drive + additional_drive.to(self.device)
         if self.recurrent is not None:
             drive = drive + float(self.dynamics.recurrent_gain) * self.recurrent.forward(
                 self.activity
