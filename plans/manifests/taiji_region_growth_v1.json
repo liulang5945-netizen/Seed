@@ -1,0 +1,22 @@
+{
+  "format": "taiji-region-growth-manifest-v1",
+  "task": "substrate-driven automatic region growth",
+  "report": "reports/taiji_region_growth_20260826.json",
+  "seed": 71,
+  "controls": [
+    "persistent_regional_prediction_error",
+    "holdout_transfer_gate",
+    "resource_availability_gate",
+    "non_semantic_region_identity",
+    "budget_validation",
+    "checkpoint_trial",
+    "explicit_cross_region_wiring",
+    "functional_region_lesion",
+    "reverse_rollback",
+    "zero_budget"
+  ],
+  "gate": {
+    "passed": true,
+    "criterion": "persistent regional prediction error plus holdout transfer and available resources must emit a non-semantic child-region proposal; the ledger must validate budget and checkpoint trial, preserve order and identity, permit explicit cross-region wiring, silence the grown region functionally, and reverse both structural mutations"
+  }
+}

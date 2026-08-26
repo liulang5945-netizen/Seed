@@ -204,6 +204,21 @@ class AdaptiveStructuralGrowthController:
                 return candidate
             ordinal += 1
 
+    def next_region_id(self, parent_region_id: str, existing_region_ids: Sequence[str]) -> str:
+        """Allocate a collision-free child region identity from substrate lineage."""
+
+        parent = str(parent_region_id)
+        if not parent:
+            raise ValueError("structural growth parent_region_id must not be empty")
+        existing = {str(item) for item in existing_region_ids}
+        region = self._region(parent)
+        ordinal = max(1, region.proposal_count)
+        while True:
+            candidate = f"{parent}.region.{ordinal}"
+            if candidate not in existing:
+                return candidate
+            ordinal += 1
+
     def to_payload(self) -> dict[str, Any]:
         return {
             "format": STRUCTURAL_GROWTH_CHECKPOINT_FORMAT,

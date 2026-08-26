@@ -1,0 +1,147 @@
+from __future__ import annotations
+
+import torch
+
+from taiji import (
+    AdaptiveNeuronNetwork,
+    AdaptiveNeuronRegion,
+    AdaptiveStructuralGrowthController,
+    StructuralGrowthDynamics,
+    TaijiConfig,
+    TSKV8Adapter,
+)
+
+
+def _config(*, budget: int) -> TaijiConfig:
+    return TaijiConfig(
+        alphabet_size=257,
+        boundary_symbol=256,
+        region_sizes=(8, 6),
+        synapse_fan_in=3,
+        motor_fan_in=4,
+        lateral_fan_in=3,
+        memory_units=12,
+        memory_fan_in=3,
+        memory_readout_fan_in=4,
+        memory_meta_dim=4,
+        memory_time_dim=4,
+        memory_episode_dim=4,
+        development_structural_budget=budget,
+        seed=71,
+    )
+
+
+def _network() -> AdaptiveNeuronNetwork:
+    def make(region_id: str) -> AdaptiveNeuronRegion:
+        return AdaptiveNeuronRegion(
+            region_id=region_id,
+            input_dim=3,
+            unit_ids=(f"{region_id}.u0", f"{region_id}.u1"),
+            fan_in=2,
+            generator=torch.Generator().manual_seed(len(region_id)),
+        )
+
+    return AdaptiveNeuronNetwork(
+        (make("source"), make("bottleneck")),
+        execution_order=("source", "bottleneck"),
+    )
+
+
+def _controller() -> AdaptiveStructuralGrowthController:
+    return AdaptiveStructuralGrowthController(
+        dynamics=StructuralGrowthDynamics(
+            ema_rate=1.0,
+            error_threshold=0.6,
+            holdout_transfer_threshold=0.7,
+            minimum_resource_state=0.5,
+            required_error_steps=2,
+        )
+    )
+
+
+def test_region_growth_is_explicit_connected_checkpointed_and_reversible() -> None:
+    model = TSKV8Adapter(_config(budget=2), episode_id="region-growth")
+    model.attach_adaptive_neuron_network("cortex", _network())
+    model.attach_structural_growth_controller(_controller())
+
+    first = model.propose_region_growth_from_error(
+        network_id="cortex",
+        bottleneck_region_id="bottleneck",
+        input_dim=3,
+        unit_count=2,
+        fan_in=2,
+        prediction_error=0.9,
+        resource_state=0.8,
+        holdout_transfer=0.9,
+        evidence_ids=("region:tick:1",),
+    )
+    proposal = model.propose_region_growth_from_error(
+        network_id="cortex",
+        bottleneck_region_id="bottleneck",
+        input_dim=3,
+        unit_count=2,
+        fan_in=2,
+        prediction_error=0.9,
+        resource_state=0.8,
+        holdout_transfer=0.9,
+        evidence_ids=("region:tick:2",),
+    )
+
+    assert first is None
+    assert proposal is not None
+    assert proposal.substrate_id == "bottleneck.region.1"
+    assert dict(proposal.specification)["topology_role"] == "region"
+    assert model.commit_region_add("cortex", proposal) is True
+    network = model.neuron_networks[0]
+    assert network.region_ids == ("source", "bottleneck", "bottleneck.region.1")
+    assert network.execution_order == network.region_ids
+    assert network.regions[-1].unit_ids == (
+        "bottleneck.region.1.u0",
+        "bottleneck.region.1.u1",
+    )
+
+    connection = model.propose_cross_region_connection(
+        network_id="cortex",
+        source_region_id="source",
+        target_region_id="bottleneck.region.1",
+        evidence_ids=("region:connection:holdout",),
+        fan_in=1,
+    )
+    assert model.commit_cross_region_connection("cortex", connection) is True
+    assert network.connection_ids == ("connection:source->bottleneck.region.1",)
+
+    restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
+    restored_network = restored.neuron_networks[0]
+    assert restored_network.region_ids == network.region_ids
+    assert restored_network.execution_order == network.execution_order
+    assert restored_network.connection_ids == network.connection_ids
+    restored_network.lesion_region("bottleneck.region.1")
+    assert restored.select_cross_region_connections("cortex") == ()
+
+    assert restored.rollback_cross_region_connection(connection.proposal_id) is True
+    assert restored.rollback_region_add(proposal.proposal_id) is True
+    assert restored.neuron_networks[0].region_ids == ("source", "bottleneck")
+    assert restored.cognitive_snapshot().development.structural_budget == 2
+
+
+def test_region_growth_rejects_without_budget_and_does_not_mutate_network() -> None:
+    model = TSKV8Adapter(_config(budget=0), episode_id="region-growth-no-budget")
+    model.attach_adaptive_neuron_network("cortex", _network())
+    model.attach_structural_growth_controller(_controller())
+    proposal = None
+    for index in range(1, 3):
+        proposal = model.propose_region_growth_from_error(
+            network_id="cortex",
+            bottleneck_region_id="bottleneck",
+            input_dim=3,
+            unit_count=2,
+            fan_in=2,
+            prediction_error=0.9,
+            resource_state=0.8,
+            holdout_transfer=0.9,
+            evidence_ids=(f"region:no-budget:{index}",),
+        )
+    assert proposal is not None
+    assert model.commit_region_add("cortex", proposal) is False
+    assert model.neuron_networks[0].region_ids == ("source", "bottleneck")
+    assert model.topology_proposals[-1].status == "rejected"

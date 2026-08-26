@@ -542,4 +542,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把已通过的 substrate 驱动 neuron-growth 闭环扩展到区域级生长：由持续区域 prediction error、资源可用性和 holdout 增益生成 region proposal，接入 `DevelopmentState` ledger，并在 checkpoint trial、functional region lesion、holdout improvement 和 reverse rollback 通过后接入显式跨区域网络；继续禁止用 action/intent 表决定增长。**
+**下一步：为已通过 ledger/生长/连接 Gate 的 child region 增加独立 post-growth holdout validation：对比新区域及其显式连接启用前后的未见目标误差，要求跨重复输入与 checkpoint continuation 均有改善，未通过则保持 proposal 或执行 rollback；继续禁止用 action/intent 表决定增长。**

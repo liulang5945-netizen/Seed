@@ -744,6 +744,213 @@ class TSKV8Adapter(Taiji):
             )
         return proposal
 
+    def propose_region_growth_from_error(
+        self,
+        *,
+        network_id: str,
+        bottleneck_region_id: str,
+        input_dim: int,
+        unit_count: int,
+        fan_in: int,
+        prediction_error: float,
+        resource_state: float,
+        holdout_transfer: float,
+        evidence_ids: Sequence[str],
+    ) -> StructuralTopologyProposal | None:
+        """Turn persistent regional pressure into a ledger-ready region birth."""
+
+        if self._structural_growth_controller is None:
+            raise RuntimeError("structural growth controller is not attached")
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        region_id = str(bottleneck_region_id)
+        if region_id not in network.region_ids:
+            raise ValueError(f"unknown adaptive network region: {bottleneck_region_id}")
+        decision = self._structural_growth_controller.observe(
+            region_id,
+            prediction_error=prediction_error,
+            resource_state=resource_state,
+            holdout_transfer=holdout_transfer,
+            evidence_ids=evidence_ids,
+        )
+        if not decision.should_grow:
+            return None
+        child_region_id = self._structural_growth_controller.next_region_id(
+            region_id,
+            network.region_ids,
+        )
+        return network.propose_region_add(
+            region_id=child_region_id,
+            input_dim=input_dim,
+            unit_count=unit_count,
+            fan_in=fan_in,
+            evidence_ids=decision.evidence_ids,
+            parent_checkpoint_id=(
+                f"region-growth-signal:{region_id}:{decision.proposal_ordinal}"
+            ),
+            resource_cost=self._structural_growth_controller.dynamics.growth_resource_cost,
+        )
+
+    def commit_region_add(
+        self,
+        network_id: str,
+        proposal: StructuralTopologyProposal,
+    ) -> bool:
+        """Commit one region birth transactionally through the runtime ledger."""
+
+        existing = self._topology_proposals.get(proposal.proposal_id)
+        if existing is not None:
+            if existing.status == "accepted":
+                return True
+            if existing.status in {"rejected", "rolled_back"}:
+                return False
+        if proposal.status != "pending":
+            raise ValueError("only pending region proposals can be committed")
+        specification = dict(proposal.specification)
+        if (
+            proposal.target_kind != "region"
+            or proposal.operation != "add"
+            or specification.get("topology_role") != "region"
+        ):
+            raise ValueError("proposal is not a region add")
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        if self._cognitive_state.development.structural_budget < proposal.resource_cost:
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(
+                    proposal.evidence_ids[0]
+                    if proposal.evidence_ids
+                    else proposal.proposal_id
+                ),
+                source="region-topology-growth",
+            )
+            return False
+
+        parent_snapshot = network.to_payload()
+        try:
+            network.apply_region_proposal(proposal, generator=self._rng)
+            accepted_snapshot = network.to_payload()
+            trial = AdaptiveNeuronNetwork.from_payload(
+                accepted_snapshot,
+                generator=self._checkpoint_region_generator(),
+                device=self.device,
+            )
+            if (
+                trial.region_ids != network.region_ids
+                or trial.execution_order != network.execution_order
+                or trial.connection_ids != network.connection_ids
+            ):
+                raise ValueError("region checkpoint roundtrip changed topology identities")
+            current = network.regions[-1]
+            restored = trial.regions[-1]
+            if current.unit_ids != restored.unit_ids:
+                raise ValueError("region checkpoint roundtrip changed unit identities")
+        except (IndexError, KeyError, RuntimeError, ValueError):
+            self._neuron_networks[str(network_id)] = AdaptiveNeuronNetwork.from_payload(
+                parent_snapshot,
+                generator=self._checkpoint_region_generator(),
+                device=self.device,
+            )
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(
+                    proposal.evidence_ids[0]
+                    if proposal.evidence_ids
+                    else proposal.proposal_id
+                ),
+                source="region-topology-growth",
+            )
+            return False
+
+        accepted = replace(proposal, status="accepted", validation_score=1.0)
+        self._topology_proposals[proposal.proposal_id] = accepted
+        self._topology_parent_snapshots[proposal.proposal_id] = parent_snapshot
+        self._record_topology_development(
+            accepted,
+            consume_budget=True,
+            evidence_id=(
+                proposal.evidence_ids[0]
+                if proposal.evidence_ids
+                else proposal.proposal_id
+            ),
+            source="region-topology-growth",
+        )
+        return True
+
+    def rollback_region_add(self, proposal_id: str) -> bool:
+        """Rollback only the latest accepted region birth."""
+
+        key = str(proposal_id)
+        proposal = self._topology_proposals.get(key)
+        snapshot = self._topology_parent_snapshots.get(key)
+        if (
+            proposal is None
+            or proposal.status != "accepted"
+            or proposal.target_kind != "region"
+            or dict(proposal.specification).get("topology_role") != "region"
+            or snapshot is None
+        ):
+            return False
+        active = [
+            item.proposal_id
+            for item in self._topology_proposals.values()
+            if item.status == "accepted" and item.proposal_id in self._topology_parent_snapshots
+        ]
+        if not active or active[-1] != key:
+            return False
+        network_id = next(
+            (
+                network_key
+                for network_key, network in self._neuron_networks.items()
+                if proposal.substrate_id in network.region_ids
+            ),
+            None,
+        )
+        if network_id is None:
+            return False
+        self._neuron_networks[network_id] = AdaptiveNeuronNetwork.from_payload(
+            snapshot,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        rolled_back = replace(proposal, status="rolled_back", validation_score=0.0)
+        self._topology_proposals[key] = rolled_back
+        self._topology_parent_snapshots.pop(key, None)
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                structural_budget=previous.structural_budget + proposal.resource_cost,
+                last_update_source="region-topology-rollback",
+                last_validation_status="rolled_back",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    key,
+                    limit=self._lineage_limit(),
+                ),
+                growth_count=max(0, previous.growth_count - proposal.requested_units),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    key,
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return True
+
     def commit_neuron_add(self, proposal: StructuralTopologyProposal) -> bool:
         """Commit a neuron birth transactionally through budget and checkpoint gates."""
 
@@ -1018,7 +1225,12 @@ class TSKV8Adapter(Taiji):
                 return False
         if proposal.status != "pending":
             raise ValueError("only pending cross-region proposals can be committed")
-        if proposal.target_kind != "region" or proposal.operation != "add":
+        if (
+            proposal.target_kind != "region"
+            or proposal.operation != "add"
+            or dict(proposal.specification).get("topology_role")
+            != "cross_region_connection"
+        ):
             raise ValueError("proposal is not a cross-region connection add")
         try:
             network = self._neuron_networks[str(network_id)]
@@ -3403,6 +3615,7 @@ class TSKV8Adapter(Taiji):
         payload["topology_proposals"] = self._topology_proposals_checkpoint()
         payload["neuron_regions"] = self._neuron_regions_checkpoint()
         payload["neuron_networks"] = self._neuron_networks_checkpoint()
+        payload["structural_growth"] = self._structural_growth_checkpoint()
         payload["online_concept_branches"] = self._online_concept_branches_checkpoint()
         if self._procedural_memory is not None:
             payload["procedural_memory"] = self._procedural_memory.checkpoint()
@@ -3482,6 +3695,7 @@ class TSKV8Adapter(Taiji):
         self._restore_topology_proposals(checkpoint.get("topology_proposals"))
         self._restore_neuron_regions(checkpoint.get("neuron_regions"))
         self._restore_neuron_networks(checkpoint.get("neuron_networks"))
+        self._restore_structural_growth(checkpoint.get("structural_growth"))
         self._restore_online_concept_branches(checkpoint.get("online_concept_branches"))
         self._restore_procedural_memory(checkpoint.get("procedural_memory"))
         self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
@@ -3808,6 +4022,8 @@ class TSKV8Adapter(Taiji):
         components["growth_requests"] = self._growth_requests_checkpoint()
         components["topology_proposals"] = self._topology_proposals_checkpoint()
         components["neuron_regions"] = self._neuron_regions_checkpoint()
+        components["neuron_networks"] = self._neuron_networks_checkpoint()
+        components["structural_growth"] = self._structural_growth_checkpoint()
         components["online_concept_branches"] = self._online_concept_branches_checkpoint()
         if self._procedural_memory is not None:
             components["procedural_memory"] = self._procedural_memory.checkpoint()

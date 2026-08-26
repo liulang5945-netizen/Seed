@@ -1,0 +1,74 @@
+{
+  "format": "taiji-region-growth-v1",
+  "proposal": {
+    "version": 1,
+    "proposal_id": "topology:bottleneck.region.1:region:add",
+    "substrate_id": "bottleneck.region.1",
+    "target_kind": "region",
+    "operation": "add",
+    "specification": {
+      "dynamics": {
+        "membrane_decay": 0.65,
+        "trace_decay": 0.82,
+        "recurrent_gain": 0.55,
+        "learning_rate": 0.025,
+        "threshold_learning_rate": 0.015,
+        "target_activity": 0.12,
+        "threshold_base": 0.02,
+        "threshold_min": -0.2,
+        "threshold_max": 1.5,
+        "weight_decay": 1e-05,
+        "weight_init_scale": 0.45,
+        "max_weight_norm": 2.5,
+        "max_state_norm": 8.0
+      },
+      "fan_in": 2,
+      "input_dim": 3,
+      "region_id": "bottleneck.region.1",
+      "topology_role": "region",
+      "unit_count": 2,
+      "unit_ids": [
+        "bottleneck.region.1.u0",
+        "bottleneck.region.1.u1"
+      ]
+    },
+    "requested_units": 1,
+    "resource_cost": 1,
+    "evidence_ids": [
+      "region:tick:2"
+    ],
+    "parent_checkpoint_id": "region-growth-signal:bottleneck:1",
+    "status": "pending",
+    "validation_score": 0.0
+  },
+  "metrics": {
+    "persistent_error_required_steps": 2,
+    "proposal_emitted_after_steps": 2,
+    "region_id": "bottleneck.region.1",
+    "region_ids_after_growth": [
+      "source",
+      "bottleneck",
+      "bottleneck.region.1"
+    ],
+    "execution_order_after_growth": [
+      "source",
+      "bottleneck",
+      "bottleneck.region.1"
+    ],
+    "connection_id": "connection:source->bottleneck.region.1",
+    "checkpoint_continuation": true,
+    "functional_region_lesion": true,
+    "rollback_connection": true,
+    "rollback_region": true,
+    "region_ids_after_rollback": [
+      "source",
+      "bottleneck"
+    ],
+    "rejected_without_budget": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "persistent regional prediction error plus holdout transfer and available resources must emit a non-semantic child-region proposal; the ledger must validate budget and checkpoint trial, preserve order and identity, permit explicit cross-region wiring, silence the grown region functionally, and reverse both structural mutations"
+  },
+  "boundary": "This gate proves controlled substrate-driven region birth and explicit wiring; it does not claim unrestricted self-evolution, automatic semantic invention, or general intelligence."
+}
