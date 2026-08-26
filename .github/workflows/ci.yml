@@ -33,7 +33,11 @@ jobs:
         # F08: 锁定 ruff/black 版本与 .pre-commit-config.yaml 一致，避免本地/CI lint 结果不一致
         # 版本必须真实存在：曾误钉 black==24.12.0（PyPI 无此版本，24.10.0 之后直接是 25.1.0），
         # 导致本步骤安装失败、其后全部门禁被跳过。改钉三处实际在用的 26.5.1 / 0.16.4。
-        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography ruff==0.16.4 black==26.5.1 mypy pip-audit "tomli>=2.0.0; python_version < '3.11'"
+        # R7: mypy / pip-audit 原为浮动版本——这是「基线数字不可复现」的根因：门禁阈值
+        #   是某一版检查器的产物，检查器静默升级（新增检查项）会让阈值凭空失效，
+        #   表现为无人改代码而门禁数字自己变（实测 47→63、259→281 即由此产生）。
+        #   凡「拿输出数字当阈值」的工具都必须钉版本，否则棘轮基线没有意义。
+        run: pip install sentencepiece pytest pytest-cov httpx fastapi python-multipart pydantic anyio cryptography ruff==0.16.4 black==26.5.1 mypy==2.3.1 pip-audit==2.10.1 "tomli>=2.0.0; python_version < '3.11'"
 
       - name: Install package (editable)
         run: pip install -e . --no-deps
@@ -55,28 +59,52 @@ jobs:
       - name: Format check with black
         run: black --check .
 
-      # R4: mypy 双层门禁（当前为 advisory，2026-08-26 由 blocking 回退）
-      # 回退原因：470f2af 同时引入了幻觉版本 pin（black==24.12.0）与这两道 blocking
-      #   门禁及「0 错误 / 基线 212」注释。pin 使 Install 步骤直接失败，这两道门禁
-      #   自引入起从未真正执行过一次，注释里的数字是未经验证的期望值而非实测值。
-      # 实测基线（2026-08-26，本机 mypy + Python 3.12）：
-      #   核心 seed/taiji = 47 错（非新增退化，为存量类型债；集中在
-      #     taiji/workspace.py、taiji/world_learning.py、taiji/adapter.py，
-      #     主因是 checkpoint / state_dict 反序列化后为 object|Any 缺少类型收窄）
-      #   全仓 seed+taiji+neuroplex+api = 259 错（原注释称 212）
-      # 维持 advisory 而不直接改钉新阈值的原因：mypy 报错总数随 Python 版本变化，
-      #   CI 为 3.10 / 3.12 双矩阵，本机单版本测得的 259 不能直接作为阻塞阈值。
-      # 转正条件：先在 CI 双矩阵上各跑一次取得真实数字，核心模块实修至 0 后
-      #   恢复 blocking；棘轮以两个矩阵中的较大值为基线再转 blocking。
-      # 详见 plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md 第 14.2 节。
-      - name: Type check core modules with mypy (advisory, 47 known errors)
-        run: mypy --follow-imports=silent seed taiji
-        continue-on-error: true
+      # R7: mypy 双层门禁——核心层已由 advisory 升为「棘轮 blocking」，遗留层维持观测。
+      # 历史：470f2af 同时引入了幻觉版本 pin（black==24.12.0）与 blocking 门禁及
+      #   「0 错误 / 基线 212」注释；pin 使 Install 步骤直接失败，门禁自引入起从未
+      #   真正执行过一次，那些数字是未经验证的期望值。2026-08-26 回退为 advisory。
+      # 本次转正依据（run 32986602722，3.10 与 3.12 两条矩阵腿均已 success）：
+      #   核心 seed/taiji           = 63 错 / 17 文件（3.10 与 3.12 完全一致）
+      #   全仓 seed+taiji+neuroplex+api = 281 错（3.10 与 3.12 完全一致）
+      #   两版 Python 数字相同，说明存量类型债与版本无关，"随版本变化故不能设阈值"
+      #   这一顾虑已被实测否证，双矩阵取较大值即等于 63，可以直接钉。
+      # 为什么用棘轮而非等修到 0 再 blocking：advisory 对退化零约束——63 涨到 100
+      #   也照样绿灯，门禁形同不存在。棘轮把「不许变差」立刻变成硬约束，
+      #   同时不阻塞开发；每次实修下降后把 MYPY_CORE_BASELINE 调低即单向收紧。
+      # 存量债分布（63 错）：taiji/adapter.py 12、world_learning.py 9、workspace.py 8、
+      #   local_learning.py 7、contracts.py 5、procedural_memory.py 4、
+      #   seed/language_provider.py 4，其余 14 文件各 1-3；主因是 checkpoint /
+      #   state_dict 反序列化后为 object|Any 缺少类型收窄。
+      # 详见 plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md 第 14.2 / 14.11 节。
+      - name: Type check core modules with mypy (ratchet, baseline 63)
+        env:
+          MYPY_CORE_BASELINE: "63"
+        run: |
+          set -o pipefail
+          mypy --follow-imports=silent seed taiji | tee mypy-core.log || true
+          if grep -q "^Success: no issues found" mypy-core.log; then
+            errors=0
+          else
+            errors=$(grep -oE "^Found [0-9]+ error" mypy-core.log | grep -oE "[0-9]+" | head -n1)
+          fi
+          if [ -z "$errors" ]; then
+            echo "::error::无法从 mypy 输出解析错误数——门禁不能在解析失败时静默放行"
+            tail -n 20 mypy-core.log
+            exit 1
+          fi
+          echo "mypy core errors: $errors (baseline $MYPY_CORE_BASELINE)"
+          if [ "$errors" -gt "$MYPY_CORE_BASELINE" ]; then
+            echo "::error::核心类型错误 $errors 超过基线 $MYPY_CORE_BASELINE，存在新增类型退化"
+            exit 1
+          fi
+          if [ "$errors" -lt "$MYPY_CORE_BASELINE" ]; then
+            echo "::notice::核心类型错误已降至 $errors，请把 MYPY_CORE_BASELINE 下调至该值以单向收紧棘轮"
+          fi
 
-      - name: Track mypy legacy debt (advisory, measured 259 on py3.12)
+      - name: Track mypy legacy debt (advisory, measured 281 on both matrices)
         run: |
           errors=$(mypy seed taiji neuroplex api | tail -n1 | grep -oE '[0-9]+' | head -n1)
-          echo "mypy total errors: $errors (locally measured 259 on py3.12; advisory only)"
+          echo "mypy total errors: $errors (CI-measured 281 on both 3.10 and 3.12; advisory only)"
         continue-on-error: true
 
       # F10-R3: 依赖 CVE 扫描（advisory 模式）

@@ -517,27 +517,27 @@ P4 的最小真实经历边界已落地：
 - 门禁注释里的数字必须是**实测值**，不是期望值。声明「存量已清零」之前必须有一次真正跑绿的 run 作为证据。
 - 依赖安装步骤失败会让后续门禁静默跳过（显示 `-` 而非 ✗）。判断 CI 是否真的验证过代码，要看步骤是否执行，而不只看 job 的红绿。
 
-### 14.2 mypy 类型债（advisory，待实修后转正）
+### 14.2 mypy 类型债（核心层已转棘轮 blocking，2026-08-26 收口）
 
 2026-08-26 修好 pin 后，上述 blocking 门禁首次真正执行，实测与注释不符：
 
-| 门禁 | 原注释声称 | 实测（本机 py3.12） | 处置 |
-|---|---|---|---|
-| `ruff check .` | 存量已清零 | 0 | 保持 blocking |
-| `ruff check . --select B,SIM` | 存量 32 | 4 | 已实修，保持 blocking |
-| `black --check .` | — | 68 个文件待重排 | 已一次性格式化，保持 blocking |
-| `mypy --follow-imports=silent seed taiji` | 0 错误 | **47 错误** | 回退 advisory |
-| 全仓 mypy 棘轮 | 基线 212 | **259 错误** | 回退 advisory |
+| 门禁 | 原注释声称 | 本机首测（py3.12） | CI 实测（run 32986602722，3.10/3.12） | 现状 |
+|---|---|---|---|---|
+| `ruff check .` | 存量已清零 | 0 | 0 | blocking |
+| `ruff check . --select B,SIM` | 存量 32 | 4 | 0 | blocking |
+| `black --check .` | — | 68 个文件待重排 | 0 | blocking |
+| `mypy --follow-imports=silent seed taiji` | 0 错误 | 47 → **63** | **63**（两腿一致） | **棘轮 blocking，基线 63** |
+| 全仓 mypy | 基线 212 | 259 → **275** | **281**（两腿一致） | advisory 观测 |
 
-47 个核心错误经与最后一次绿色提交 `42d268e` 对比确认**不是新增退化**（那时 mypy 仍是 `continue-on-error: true`），属存量类型债，集中在 `taiji/workspace.py`、`taiji/world_learning.py`、`taiji/adapter.py`，主因是 checkpoint / `state_dict` 反序列化后为 `object | Any` 缺少类型收窄。这类缺陷与 checkpoint 结构变更时的静默失败直接相关，须实修而非长期忽略。
+**47→63 / 259→281 的漂移根因不是代码退化，而是 `mypy` 与 `pip-audit` 在 CI 里从未钉版本。** `ruff`/`black` 早已按 `.pre-commit-config.yaml` 钉死（0.16.4 / 26.5.1），唯独这两个漏了。检查器静默升版会带来新检查项，于是**没人改代码，门禁数字自己会变**。由此确立通用规则：**凡把工具输出数字当阈值的门禁，工具本身必须钉版本**，否则棘轮基线随时失效。现已钉 `mypy==2.3.1`、`pip-audit==2.10.1`。
 
-不直接把阈值改钉为 259 的原因：mypy 报错总数随 Python 版本变化，CI 为 3.10 / 3.12 双矩阵，本机单版本数字不能作为阻塞阈值。
+原先「不能设阈值」的顾虑（mypy 报错数随 Python 版本变化，本机单版本数字不足为凭）已被双矩阵实测**否证**：3.10 与 3.12 的核心数（63）与全仓数（281）完全相同，双矩阵取较大值即等于单值，可直接钉。
 
-转正条件：
+核心 63 错经与最后一次绿色提交 `42d268e` 对比确认**不是新增退化**（那时 mypy 仍是 `continue-on-error: true`），属存量类型债。分布：`taiji/adapter.py` 12、`world_learning.py` 9、`workspace.py` 8、`local_learning.py` 7、`contracts.py` 5、`procedural_memory.py` 4、`seed/language_provider.py` 4，其余 14 文件各 1–3。主因是 checkpoint / `state_dict` 反序列化后为 `object | Any` 缺少类型收窄——这类缺陷与 14.3 记录的 checkpoint 静默失败同源，须实修而非长期忽略。
 
-1. 先让 CI 双矩阵各跑一次 advisory，取得两个版本的真实错误数；
-2. 实修核心 `seed`/`taiji` 至 0 错误后恢复 `Type check core modules with mypy` 为 blocking；
-3. 全仓棘轮以双矩阵中的较大值为基线，再恢复 blocking，此后只允许下降。
+**为什么选棘轮而不是「等实修到 0 再转 blocking」**：advisory 对退化零约束，63 涨到 100 也照样绿灯，门禁形同不存在；而等清完 63 项再上门禁，这期间新增退化无人拦。棘轮（`errors > MYPY_CORE_BASELINE` 即失败）把「不许变差」立刻变成硬约束，又不阻塞开发。步骤同时对解析失败显式 `exit 1`——门禁绝不允许在读不到数字时静默放行，这是 14.1 的直接应用。
+
+收紧路径：每次实修使核心数下降后，把 `ci.yml` 中的 `MYPY_CORE_BASELINE` 同步下调（步骤会打 `::notice::` 提示当前实际值），单向收紧至 0；全仓层待核心归零后按同一棘轮形式转正。
 
 ### 14.3 checkpoint 往返对称不变量（2026-08-26 回归后新增）
 
@@ -628,6 +628,17 @@ P4 的最小真实经历边界已落地：
 - README 首屏顺序是唯一不依赖令牌权限的杠杆，且转化价值高于 topics（topics 带人进来，首屏决定是否留下）。原首屏被"命名分工 + 免责声明"占据，而最有传播力的两个资产（Transformer 责任对照表、`0%→94.12%` / `98.02%` 数字）分别埋在 L52 与 L184。已重排为：一句话机制主张 → badge → 对照表 → 实测数字 → 明示 status。**诚实声明一条未删**，只是移出首屏主位，并新增 `## Project scope` 承接原命名段。
 - 改 README 首屏必须回原文核对每个被前移的数字有出处（实测首屏 `94.12/5.4041/0.1069/98.02/83,841` 全部对应 L203-L210 原表），并确认锚点标题真实存在（`#reproducible-tsk-v8-kernel-results` → L197）以及旧免责声明残留计数为 0——Markdown 锚点失效与声明重复都不会报错，只会静默劣化。
 
+### 14.11 平台停机产生的「假红」：run 级结论不可信，须看 job 级是否真的跑过（2026-08-26 新增）
+
+这是「假绿」的镜像形态，同样会误导收口判断：CI 显示红，但代码毫无问题。
+
+- **事实**：`2026-08-26T15:11:58Z` 起 GitHub Actions 发生 `impact: critical` 停机（incident `y1t7p9fzrlj2`，15:48 的官方更新为「throttled inbound traffic … upstream Vitess issues」）。期间三次推送的 run 呈现三种异常：`560525c` → `startup_failure`；`c8acff5`、`4e6a827` → run 级 `failure`；以及推送后一段时间内根本不产生 run。
+- **判别手法（关键）**：不要看 `gh run view <id>` 的 run 级 `conclusion`，要看 `gh api repos/{o}/{r}/actions/runs/<id>/jobs`。实测 `32986449122` 的 5 个测试 job 全部 `status=queued` / `conclusion=null`，`32985649140` 的 5 个 job 全部 `cancelled`，两者的 `build-frontend`/`docker-build` 均 `skipped`。**job 从未被分配 runner 却出现 run 级 failure，这种形状不可能由测试失败产生**——测试失败必然伴随 job 已 `completed` 且有真实耗时。据此可判定为平台产物而非本仓缺陷。
+- **同时排除本仓嫌疑的四项旁证**：`ci.yml` 在该时段无改动；`git diff dae6464..HEAD` 的非文档代码差异为空；`gh workflow list` 显示工作流仍 `active`（未被禁用）；`HEAD == origin/main`。另有一条**反向证据陷阱**：此时 `gh workflow run` 返回 403，容易被误读为「工作流被停用」，实为 `ghu_` 令牌缺 `actions:write`（见 14.10），与停机无关。
+- **停机期间的正确动作**：把 CI 的门禁在本机跑一遍，作为唯一还能推进「代码是否真绿」的手段；平台恢复后立即以新 run 取代本机结论，并停掉本机长任务（本机只能覆盖 lint/版本/类型，覆盖不了 docker/前端/多矩阵）。
+- **恢复后的权威结论**：`3e6e5b0` 的 run `32986602722` 为 `status=completed` / `conclusion=success`，5 个 job（`test 3.10`、`test 3.12`、`test-windows`、`Startup smoke (legacy)`、`Startup smoke (no-legacy)`）全绿。停机期那三次红全部作废，不需要任何代码修复。
+- **通用纪律**：判定 CI 结论前先确认**job 真的执行过**（有 `started_at`、有耗时、`conclusion` 非 null）。这与 14.1「依赖安装失败会让后续门禁静默跳过」是同一条原则的两面——红与绿都不可只看颜色，要看执行事实。
+
 ## 15. 停止项
 
 在 P2 通过前：
@@ -641,7 +652,7 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：由你在 GitHub 网页 Settings 页一次性填入 description + 13 个 topics + social preview 图。** 这三项已实测确认无法由 agent 写入（`ghu_` App 令牌缺 `administration:write`，REST 与 GraphQL 三条路线全部 403，详见 14.10），继续在令牌上换写法是无效动作。写完后我用 `gh repo view --json description,repositoryTopics,usesCustomOpenGraphImage` 复核（读取只需 `metadata=read`，当前令牌可用）。
+**并行的用户侧动作（不占用「当前唯一下一步」名额，因为它不是 agent 可执行项）：由你在 GitHub 网页 Settings 页一次性填入 description + 13 个 topics + social preview 图。** 这三项已实测确认无法由 agent 写入（`ghu_` App 令牌缺 `administration:write`，REST 与 GraphQL 三条路线全部 403，且换新会话后复测仍全部 403，详见 14.10），继续在令牌上换写法是无效动作。写完后我用 `gh repo view --json description,repositoryTopics,usesCustomOpenGraphImage` 复核（读取只需 `metadata=read`，当前令牌可用）。
 
 入口：`https://github.com/liulang5945-netizen/Seed` 顶部 **⚙ Settings**（description/topics 也可在仓库首页右侧 About 的齿轮里改）。
 
@@ -709,4 +720,6 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 **已完成：`test` 转绿后首次真正执行的 `build-frontend` / `docker-build` 双红已定位并修复（详见 14.8）。两者因 `needs: test` 在此前 7 次连续红期间一直是 skipped、从未运行，故属被遮蔽的既存缺陷而非本次回归。`docker-build` 的 `COPY data/` 已收敛到项目既有的挂载约定；`build-frontend` 的 2 个 high CVE 已用 `overrides` 全树强制到安全版。前端四道门禁本机全绿：audit 退出 0（余 2 moderate 不阻塞）、eslint 0 errors / 17 warnings、vitest 19 files 160 passed、build 成功且 `dist/index.html` 存在，`npm ci --dry-run` 退出 0 证明 lock 与 package.json 同步。Docker 侧因本机无 Docker 未做构建验证，改以 `COPY` 源跟踪文件数静态审计替代，并已如实记录。**
 
 **已完成：`build-frontend` 已在 CI 实证转绿（`32982579047`，1m37s），5 个上游 job 亦全绿（test 3.10 13m25s、test 3.12 13m8s、test-windows 6m27s、两个 startup smoke）。`docker-build` 的 `COPY data/` 根因确认修复——`Build image via docker compose` 与 `Verify Docker image metadata` 均已打勾；但其后从未运行过的 `Startup smoke and healthcheck` 暴露出下一层缺陷 `ModuleNotFoundError: No module named 'seed_platform'`。根因是 Dockerfile 手工 `COPY` 清单漏了 pyproject 已声明的 `seed_platform*`，而 `packages.find` 静默跳过缺失目录使 `pip install` 仍退出 0（详见 14.8）。修法为补齐 `COPY` 并加构建期导入断言 `RUN python -c "import api.app"`，使漏拷贝此后在 build 层即刻失败；清单与 pyproject 已复核对齐（`MISSING: none`），断言语句本机实测退出 0 证明不会误红。**
-**当前唯一下一步：把 mypy 核心门禁（`mypy --follow-imports=silent seed taiji`，实测 47 存量错误）实修至 0 并恢复 blocking——这些错误集中在 `taiji/workspace.py`、`taiji/world_learning.py`、`taiji/contracts.py`、`taiji/perception.py` 的 checkpoint/`state_dict` 反序列化缺类型收窄处（`Item "None" of "Any | None" has no attribute ...`、`Value of type "object" is not indexable`），与 14.3 的 checkpoint 静默失效同源，是当前唯一还在 advisory 状态的阻塞级缺陷类。**
+**已完成：CI 的「基线不可复现」根因已修。`ci.yml` 原只钉 `ruff`/`black`，`mypy`/`pip-audit` 浮动，导致门禁数字在无人改代码时自己漂移（核心 47→63、全仓 259→281）；现已钉 `mypy==2.3.1`、`pip-audit==2.10.1`，并确立通用规则「凡把工具输出数字当阈值的门禁，工具本身必须钉版本」。同时 mypy 核心门禁由 advisory 升为**棘轮 blocking**（`MYPY_CORE_BASELINE=63`，超基线即 `exit 1`，解析不到数字亦 `exit 1` 绝不静默放行，低于基线打 `::notice::` 提示下调）。双矩阵实测否证了「报错数随 Python 版本变化故不能设阈值」——3.10 与 3.12 的核心数 63、全仓数 281 完全相同（详见 14.2）。停机期三次假红已判定为平台产物并记入 14.11。**
+
+**当前唯一下一步：实修核心 mypy 63 处类型错误并逐次下调 `MYPY_CORE_BASELINE` 至 0，从错误最密的 `taiji/adapter.py`（12）、`taiji/world_learning.py`（9）、`taiji/workspace.py`（8）、`taiji/local_learning.py`（7）入手——主因是 checkpoint/`state_dict` 反序列化后为 `object | Any` 缺类型收窄，与 14.3 的 checkpoint 静默失效同源，其中 `local_learning.py` 正是原生局部学习平面的核心模块。**
