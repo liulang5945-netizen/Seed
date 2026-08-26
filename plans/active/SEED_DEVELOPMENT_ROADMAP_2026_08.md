@@ -542,4 +542,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把未命中已有 trace 的真实 transition 形成 online branch birth，使新分支带稳定 trace_id、经容量治理后可被 after-state 检索，并在失败 feedback 与 checkpoint continuation 中保持已有分支不被覆盖。**
+**下一步：把 branch birth 接入 settle_action 的 episode buffer，按 concept 上下文收集连续真实 transition，在 terminal/边界时一次形成新 trace，并验证 buffer、容量 pruning、失败 feedback 与 native checkpoint continuation。**

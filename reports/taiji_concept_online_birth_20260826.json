@@ -1,0 +1,27 @@
+{
+  "format": "taiji-concept-online-birth-v1",
+  "metrics": {
+    "trace_count_before_birth": 1,
+    "trace_count_after_birth": 2,
+    "novel_trace_id": "trace:403d012d86650dd8",
+    "duplicate_birth": null,
+    "novel_affinity_before_feedback": 0.8026266450936391,
+    "feedback_updates": 1,
+    "novel_visits_before_feedback": 1,
+    "novel_visits_after_feedback": 2,
+    "credit_before_feedback": 0.889050277274578,
+    "credit_after_feedback": 0.6682777444812099,
+    "checkpoint_trace_id": "trace:403d012d86650dd8",
+    "checkpoint_recovery": true,
+    "runtime_trace_id": "trace:403d012d86650dd8",
+    "runtime_checkpoint_trace_ids": [
+      "trace:a6ef9dd6fed3f766",
+      "trace:403d012d86650dd8"
+    ]
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "a contiguous real transition chain that misses existing traces must birth one stable trace, reject duplicate birth, become retrievable immediately, accept later outcome/error plasticity, and recover through checkpoint"
+  },
+  "boundary": "This is a closed-world online branch-birth gate; it does not claim open-domain planning or general intelligence."
+}
