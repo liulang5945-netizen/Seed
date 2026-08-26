@@ -223,24 +223,45 @@ class TSKV8Adapter(Taiji):
     ) -> tuple[str, ...]:
         """Buffer real transitions and birth novel branches at episode boundaries."""
 
-        active_ids = self._cognitive_state.memory.concept_ids
+        active_ids = set(self._cognitive_state.memory.concept_ids)
         if not active_ids:
             if boundary:
                 self._online_concept_branches.clear()
             return ()
+        matches = tuple(
+            match
+            for match in self._concept_matches_for_world(transition.before)
+            if match.concept.concept_id in active_ids
+        )
+        owner_id = self._concept_formation.select_sequence_owner(
+            matches,
+            transition,
+            prediction_error,
+            weights=self.config.concept_branch_owner_weights,
+            min_score=self.config.concept_branch_owner_min_score,
+            min_margin=self.config.concept_branch_owner_min_margin,
+        )
+        if owner_id is None:
+            self._online_concept_branches.clear()
+            return ()
+        if len(self._online_concept_branches) > 1:
+            self._online_concept_branches.clear()
+            return ()
+        if self._online_concept_branches and owner_id not in self._online_concept_branches:
+            self._online_concept_branches.clear()
+            return ()
         born: list[str] = []
-        for concept_id in active_ids:
-            history = self._online_concept_branches.get(concept_id, ())
-            if history and history[-1][0].after.tick != transition.before.tick:
-                history = ()
-            history = (*history, (transition, float(prediction_error)))
-            if boundary:
-                trace_id = self.grow_online_concept_branch(concept_id, history)
-                if trace_id is not None:
-                    born.append(trace_id)
-                self._online_concept_branches.pop(concept_id, None)
-            else:
-                self._online_concept_branches[concept_id] = history
+        history = self._online_concept_branches.get(owner_id, ())
+        if history and history[-1][0].after.tick != transition.before.tick:
+            history = ()
+        history = (*history, (transition, float(prediction_error)))
+        if boundary:
+            trace_id = self.grow_online_concept_branch(owner_id, history)
+            if trace_id is not None:
+                born.append(trace_id)
+            self._online_concept_branches.pop(owner_id, None)
+        else:
+            self._online_concept_branches[owner_id] = history
         return tuple(born)
 
     def _online_concept_branches_checkpoint(self) -> dict[str, list[dict[str, Any]]]:

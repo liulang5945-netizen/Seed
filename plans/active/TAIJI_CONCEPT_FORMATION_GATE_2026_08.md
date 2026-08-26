@@ -62,6 +62,12 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
   `settle_action` 的 episode buffer 可在 terminal 时自动触发 branch birth，中途 checkpoint
   恢复 1 步 buffer 后继续完成同一分支。该 Gate 报告为
   `reports/taiji_concept_online_birth_20260826.json`。
+- branch attribution Gate 已通过：多个同时激活的 Concept 不再共享写入同一条在线链；器官
+   按 match confidence、已学习的 before/after-state 证据和 prediction-error fit 选择唯一
+   owner。低置信度、近似平分的跨 concept 干扰和 owner trace lesion 均 fail-closed；真实
+   `settle_action` episode buffer 只保留 owner，并可经 native checkpoint 继续完成 branch
+   birth。配置中的权重、最低分数和最小胜出间隔均由 `TaijiConfig` 管理。该 Gate 报告为
+   `reports/taiji_concept_branch_attribution_20260826.json`。
 
 ## 边界与已知限制
 
@@ -72,7 +78,7 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 
 ## 下一步唯一入口
 
-为多 concept 同时激活的场景建立 branch attribution：按 concept match confidence、当前
-after-state 和 prediction error 选择唯一 owner，禁止同一新链被无条件复制到多个 Concept；
-要求 owner lesion、低置信度和跨 concept 干扰均 fail-closed，同时保留 episode buffer、
-branch birth、容量 pruning 与 native checkpoint continuation；继续禁止固定 action/intent 表。
+将 branch birth 接入 `DevelopmentState` 的结构成长预算与 rollback 合同：owner 只能提交一条
+带证据的 growth request，必须经过资源预算、holdout/lesion 和 checkpoint 回滚门控后才进入
+主概念结构；容量 pruning 和跨 concept owner attribution 继续作为前置约束，禁止固定
+action/intent 表。
