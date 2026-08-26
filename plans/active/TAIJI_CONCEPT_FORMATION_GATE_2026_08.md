@@ -78,6 +78,11 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
   bank 提案和应用，局部学习后的 donor response 在 holdout probe 上提升，fabric checkpoint
   可恢复拓扑，functional lesion 会移除新增接触的贡献，父 payload 可恢复原拓扑。该 Gate 报告为
   `reports/taiji_topology_proposal_20260826.json`。
+- runtime topology ledger Gate 已通过：`TSKV8Adapter` 接管 topology proposal 的 parent
+  checkpoint、资源成本与 `DevelopmentState.structural_budget`；proposal 经 fabric checkpoint
+  roundtrip 后才能接受，native checkpoint 能继续恢复 ledger，rollback 只允许按最新接受顺序
+  执行，预算耗尽时 fail-closed。该 Gate 报告为
+  `reports/taiji_topology_runtime_ledger_20260826.json`。
 
 ## 边界与已知限制
 
@@ -88,7 +93,7 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 
 ## 下一步唯一入口
 
-将 `StructuralTopologyProposal` 接入 `DevelopmentState` 的统一预算与 runtime ledger：拓扑
-proposal 只能由真实误差、资源瓶颈和迁移收益产生，必须经过预算、holdout/lesion、native
-checkpoint continuation 与 rollback 后才能改变在线结构；随后再扩展到神经元/区域新增，继续
+将同一 ledger 扩展到 neuron/region proposal：先定义可迁移的 unit identity、状态维度、
+跨区域连接和资源成本合同，再实现一个能通过 holdout/lesion、native checkpoint continuation
+与 rollback 的小型神经元单元新增 Gate；新增结构仍必须由真实误差、资源瓶颈和迁移收益驱动，
 禁止按固定 action/intent 表写死拓扑。

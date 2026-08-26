@@ -1,0 +1,16 @@
+{
+  "format": "taiji-topology-runtime-ledger-manifest-v1",
+  "task": "runtime topology proposal ledger",
+  "report": "reports/taiji_topology_runtime_ledger_20260826.json",
+  "seed": 71,
+  "controls": [
+    "budget_consumption",
+    "native_checkpoint",
+    "reverse_rollback",
+    "zero_budget"
+  ],
+  "gate": {
+    "passed": true,
+    "criterion": "runtime topology proposals must be ledger-owned, consume structural budget only after checkpoint validation, survive native checkpoint continuation, rollback in reverse order, and fail closed when budget is exhausted"
+  }
+}
