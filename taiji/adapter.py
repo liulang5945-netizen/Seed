@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from typing import Any
 
@@ -51,6 +51,7 @@ from .contracts import (
     WorldTransition,
 )
 from .contracts import MemoryState as NativeMemoryState
+from .cross_region_learning import CrossRegionCooperationLearner
 from .environment import EnvironmentOutcome, TaijiEnvironment, TaijiToolEnvironment
 from .episodic_memory import EpisodicMemoryStore
 from .executive import (
@@ -824,6 +825,85 @@ class TSKV8Adapter(Taiji):
         if any(region.region_id in self._neuron_regions for region in network.regions):
             raise ValueError("network regions cannot also be attached as standalone regions")
         self._neuron_networks[key] = network
+
+    def attach_cross_region_cooperation(
+        self,
+        network_id: str,
+        learner: CrossRegionCooperationLearner | None,
+    ) -> None:
+        """Attach or remove the learner that selects this network's routes."""
+
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        network.attach_cooperation_learner(learner)
+
+    def select_cross_region_connections(
+        self,
+        network_id: str,
+        *,
+        resource_budget: float = 1.0,
+        max_connections: int = 1,
+    ) -> tuple[str, ...]:
+        """Expose learned cross-region competition through the runtime owner."""
+
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        return network.selected_connection_ids(
+            resource_budget=resource_budget,
+            max_connections=max_connections,
+        )
+
+    def observe_cross_region_connection(
+        self,
+        network_id: str,
+        connection_id: str,
+        *,
+        prediction_error: float,
+        holdout_transfer: float,
+        resource_state: float,
+        selected: bool = True,
+    ) -> float:
+        """Route outcome evidence to the attached cross-region learner."""
+
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        return network.observe_connection(
+            connection_id,
+            prediction_error=prediction_error,
+            holdout_transfer=holdout_transfer,
+            resource_state=resource_state,
+            selected=selected,
+        )
+
+    def step_cross_region_network(
+        self,
+        network_id: str,
+        external_inputs: Mapping[str, torch.Tensor],
+        *,
+        expected_activities: Mapping[str, torch.Tensor] | None = None,
+        resource_budget: float = 1.0,
+        max_connections: int = 1,
+        holdout: bool = False,
+    ) -> dict[str, torch.Tensor]:
+        """Run a native network tick and optionally credit its real outcome."""
+
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        return network.step(
+            external_inputs,
+            expected_activities=expected_activities,
+            resource_budget=resource_budget,
+            max_connections=max_connections,
+            holdout=holdout,
+        )
 
     def propose_cross_region_connection(
         self,

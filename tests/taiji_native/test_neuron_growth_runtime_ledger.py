@@ -2,7 +2,13 @@ from __future__ import annotations
 
 import torch
 
-from taiji import AdaptiveNeuronNetwork, AdaptiveNeuronRegion, TaijiConfig, TSKV8Adapter
+from taiji import (
+    AdaptiveNeuronNetwork,
+    AdaptiveNeuronRegion,
+    CrossRegionCooperationLearner,
+    TaijiConfig,
+    TSKV8Adapter,
+)
 
 
 def _config(*, budget: int) -> TaijiConfig:
@@ -111,11 +117,24 @@ def test_runtime_cross_region_ledger_owns_connection_and_rolls_back() -> None:
     assert model.cognitive_snapshot().development.last_update_source == (
         "cross-region-topology-growth"
     )
+    model.attach_cross_region_cooperation("cortex", CrossRegionCooperationLearner())
+    first = model.step_cross_region_network(
+        "cortex",
+        {"source": torch.ones(3)},
+    )
+    model.step_cross_region_network(
+        "cortex",
+        {"source": torch.ones(3)},
+        expected_activities={"target": first["target"]},
+        holdout=True,
+    )
+    assert model.select_cross_region_connections("cortex") == (proposal.substrate_id,)
 
     restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
     assert restored.neuron_networks[0].connection_ids == (
         "connection:source->target",
     )
+    assert restored.select_cross_region_connections("cortex") == (proposal.substrate_id,)
     assert restored.rollback_cross_region_connection(proposal.proposal_id) is True
     assert restored.neuron_networks[0].connection_ids == ()
     assert restored.cognitive_snapshot().development.structural_budget == 1

@@ -1,0 +1,27 @@
+{
+  "format": "taiji-cross-region-learning-v1",
+  "routes": [
+    "connection:signal->target",
+    "connection:distractor->target"
+  ],
+  "metrics": {
+    "selected_routes": [
+      "connection:signal->target"
+    ],
+    "selected_holdout_transfer": 0.95,
+    "fixed_full_holdout_transfer": 0.5499999999999999,
+    "random_holdout_transfer": 0.5499999999999999,
+    "selected_target_activity": 1.4728171825408936,
+    "fixed_full_target_activity": 0.0,
+    "checkpoint_continuation": true,
+    "connection_lesion_excludes_selected": true,
+    "region_lesion_excludes_routes": true,
+    "region_lesion_target_activity": 0.0,
+    "resource_constrained_selection": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "cross-region route selection must learn from prediction error, holdout transfer and resource state; outperform fixed-full and random baselines on holdout evidence; obey resource feasibility; and survive checkpoint continuation plus connection/region lesion"
+  },
+  "boundary": "This gate proves evidence-driven selection among explicit native regions; it does not claim unrestricted self-evolution, open-domain language acquisition, or general intelligence."
+}

@@ -542,4 +542,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：推进学习型跨区域协作 Gate：在两个以上 `AdaptiveNeuronRegion` 之间由 prediction error、资源状态和 holdout transfer 共同调制连接选择，证明学习到的跨区路径优于固定全连接/随机连接，并通过 connection/region lesion 与 checkpoint continuation；继续禁止固定 action/intent 表。**
+**下一步：把 `CrossRegionCooperationLearner` 接入真实 percept/world runtime 的在线 credit loop：由实际 target prediction error、资源消耗/可用性和 holdout transfer 记录自动更新路由证据；必须通过无手工注入的多步 train/holdout、route/region lesion、checkpoint continuation，并证明在线更新后的路径优于未学习路由；继续禁止固定 action/intent 表。**
