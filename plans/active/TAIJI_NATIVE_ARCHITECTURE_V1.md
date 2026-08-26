@@ -470,7 +470,7 @@ Taiji 同时拥有两条学习平面。
 
 ### 6.1 发展训练
 
-用于形成感知层级、世界模型、语义记忆、语言器官和通用技能。允许批处理、并行模拟和 CUDA；可使用 autograd/optimizer 作为阶段性实验工具，但必须满足：
+用于形成感知层级、世界模型、语义记忆、语言器官和通用技能。允许批处理、并行模拟和 CUDA；曾允许 autograd/optimizer 作为阶段性实验工具，条件是：
 
 - 不以 Transformer hidden state、teacher logits 或外部模型决策作为 Taiji 的运行时依赖；
 - 报告明确区分 `native-local`、`native-assisted` 和 `evaluation-only`；
@@ -478,6 +478,15 @@ Taiji 同时拥有两条学习平面。
 - 每个辅助训练机制都必须有移除后果和迁移到原生学习规则的计划。
 
 因此，“是否使用 optimizer”不再是身份判据；真正判据是认知能力是否由 Taiji 参数与状态承载，以及离线训练后能否继续原生适应。
+
+**2026-08-26 收口：上述"迁移到原生学习规则的计划"已执行完毕，`taiji/` 内不再存在 autograd 学习平面。** 迁移前 8 个模块（`perception`、`world_learning`、`affordance`、`executive`、`content_selection`、`semantic_memory`、`workspace`、`procedural_memory`）共 13 处 `SGD/Adam + loss.backward()`，与内核的 detached delta 规则构成双学习栈；`verify_taiji_native_v7.py` 的原生性 AST 契约把 `backward` 列为禁用属性，该契约因此长期失效。收口内容：
+
+- 新增 `taiji/local_learning.py` 作为原生局部信用分配的唯一来源，提供误差 delta（MSE / squared / logistic / softmax）、`linear_gradients`/`apply_linear_delta`/`backproject_linear`/`tanh_delta`、`normalize_delta`、`cosine_similarity_delta`、`gru_forward_trace`/`gru_gradients`、`clip_gradient_norm`、`apply_sgd_step` 与 `LocalAdam`；每条规则都对 autograd 做过逐位等价验证，最差偏差 5.96e-08。
+- 保留 Adam 而非降级为 SGD：`LocalAdam` 在 detached 张量上复现含偏差校正的 Adam 更新式，使上层已调好的学习率与收敛阈值继续有效。
+- `no_autograd_parameters` 曾是假绿——`PerceptionModule.parameter_tensors()` 返回 `detach()` 视图，`requires_grad` 恒为 False。改为返回活体参数后该检查成为真检查，并通过。
+- 结果：15/15 检查为 true，8 道阻塞 verify 全 pass，`tests/` 437 passed / 5 skipped。
+
+自此，发展训练平面与终身学习平面使用同一套原生规则，差别只在批量与调度，不再是两种数学。
 
 ### 6.2 终身学习
 

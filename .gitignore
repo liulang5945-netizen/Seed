@@ -166,3 +166,9 @@ _add_*.py
 
 # Auto-generated cache
 neuroplex/agent_ext/mcp_remote_cache.json
+# black 的默认缓存目录在沙箱下不可写，会让 black 反复重试建临时文件而空转烧 CPU，
+# 因此本地统一 BLACK_CACHE_DIR=<repo>/.black_cache，缓存本身不入库。
+.black_cache/
+
+# CI verify 产物：ci.yml 的 8 道 verify 门禁用 --output 写入此目录，属运行产物
+reports/ci_verify/

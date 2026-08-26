@@ -9,6 +9,7 @@ import torch
 from torch import nn
 
 from .contracts import WorkspaceCandidate, WorkspaceSelection
+from .local_learning import apply_linear_delta, freeze_parameters, logistic_error_delta
 
 
 @dataclass(frozen=True)
@@ -221,6 +222,7 @@ class WorkspaceRouter(nn.Module):
                 torch.randn(self.scorer.weight.shape, generator=generator) * 0.02
             )
             self.scorer.bias.zero_()
+        freeze_parameters(self)
 
     def _features(self, candidates: tuple[WorkspaceCandidate, ...]) -> torch.Tensor:
         if not candidates:
@@ -246,13 +248,16 @@ class WorkspaceRouter(nn.Module):
             raise ValueError("workspace router needs at least one training example")
         if int(epochs) <= 0 or float(learning_rate) <= 0.0:
             raise ValueError("workspace fit epochs and learning_rate must be positive")
-        optimizer = torch.optim.SGD(self.parameters(), lr=float(learning_rate))
-        loss = torch.tensor(0.0, device=self.scorer.weight.device)
+        scale = 1.0 / len(examples)
+        final_loss = 0.0
         for _ in range(int(epochs)):
-            optimizer.zero_grad()
-            losses: list[torch.Tensor] = []
+            feature_rows: list[torch.Tensor] = []
+            error_rows: list[torch.Tensor] = []
+            losses: list[float] = []
             for example in examples:
                 features = self._features(example.candidates)
+                if features.shape[0] == 0:
+                    raise ValueError("workspace routing example needs at least one candidate")
                 targets = torch.tensor(
                     [
                         candidate.candidate_id in example.relevant_ids
@@ -260,14 +265,27 @@ class WorkspaceRouter(nn.Module):
                     ],
                     dtype=features.dtype,
                     device=features.device,
-                )
-                logits = self.scorer(features).squeeze(-1)
-                losses.append(nn.functional.binary_cross_entropy_with_logits(logits, targets))
-            loss = torch.stack(losses).mean()
-            loss.backward()
-            optimizer.step()
+                ).unsqueeze(-1)
+                with torch.no_grad():
+                    logits = self.scorer(features)
+                    losses.append(
+                        float(
+                            nn.functional.binary_cross_entropy_with_logits(
+                                logits.squeeze(-1), targets.squeeze(-1)
+                            )
+                        )
+                    )
+                feature_rows.append(features)
+                error_rows.append(logistic_error_delta(logits, targets) * scale)
+            final_loss = sum(losses) * scale
+            apply_linear_delta(
+                self.scorer,
+                torch.cat(feature_rows, dim=0),
+                torch.cat(error_rows, dim=0),
+                float(learning_rate),
+            )
         self.fit_updates += 1
-        return float(loss.detach())
+        return final_loss
 
     @torch.no_grad()
     def route(

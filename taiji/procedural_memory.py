@@ -11,6 +11,16 @@ from torch import nn
 
 from .contracts import EpisodicMemoryRecord
 from .episodic_memory import EpisodicMemoryStore
+from .local_learning import (
+    LocalAdam,
+    apply_linear_delta,
+    backproject_linear,
+    freeze_parameters,
+    gru_forward_trace,
+    gru_gradients,
+    linear_gradients,
+    softmax_error_delta,
+)
 
 PROCEDURAL_MEMORY_CHECKPOINT_FORMAT = "taiji-procedural-memory-v1"
 
@@ -62,6 +72,7 @@ class ProceduralMemoryLearner(nn.Module):
             with torch.no_grad():
                 self.readout.weight.zero_()
                 self.readout.bias.zero_()
+            freeze_parameters(self.readout)
             return
         if self.action_kinds != action_kinds:
             raise ValueError("procedural action kinds changed after consolidation")
@@ -83,15 +94,19 @@ class ProceduralMemoryLearner(nn.Module):
         assert self.readout is not None
         cues = cues.to(self.readout.weight.device)
         targets = targets.to(self.readout.weight.device)
-        optimizer = torch.optim.SGD(self.parameters(), lr=float(learning_rate))
-        loss = torch.tensor(0.0, device=cues.device)
+        final_loss = 0.0
         for _ in range(int(epochs)):
-            optimizer.zero_grad()
-            loss = nn.functional.cross_entropy(self.readout(cues), targets)
-            loss.backward()
-            optimizer.step()
+            with torch.no_grad():
+                logits = self.readout(cues)
+                final_loss = float(nn.functional.cross_entropy(logits, targets))
+            apply_linear_delta(
+                self.readout,
+                cues,
+                softmax_error_delta(logits, targets),
+                float(learning_rate),
+            )
         self.consolidation_count += 1
-        return float(loss.detach())
+        return final_loss
 
     @torch.no_grad()
     def predict(self, cue: torch.Tensor) -> str:
@@ -157,6 +172,7 @@ class ProceduralSequenceLearner(nn.Module):
         with torch.random.fork_rng(devices=[]):
             torch.manual_seed(self.seed)
             self.encoder = nn.GRU(self.cue_dim, self.hidden_dim, batch_first=True)
+        freeze_parameters(self.encoder)
         self.action_kinds: tuple[str, ...] = ()
         self.readout: nn.Linear | None = None
         self.consolidation_count = 0
@@ -184,6 +200,7 @@ class ProceduralSequenceLearner(nn.Module):
             with torch.no_grad():
                 self.readout.weight.zero_()
                 self.readout.bias.zero_()
+            freeze_parameters(self.readout)
             return
         if self.action_kinds != action_kinds:
             raise ValueError("sequential procedural action kinds changed after consolidation")
@@ -217,28 +234,57 @@ class ProceduralSequenceLearner(nn.Module):
             raise ValueError("sequential consolidation needs action kinds")
         self._ensure_readout(action_kinds)
         assert self.readout is not None
-        optimizer = torch.optim.Adam(self.parameters(), lr=float(learning_rate))
-        loss = torch.tensor(0.0)
+        batches = []
+        for episode in episodes:
+            cues = torch.stack([record.cue.detach().to(dtype=torch.float32) for record in episode])
+            if cues.ndim != 2 or cues.shape[1] != self.cue_dim:
+                raise ValueError("sequential record cue dimensions do not match the learner")
+            targets = torch.tensor(
+                [
+                    self.action_kinds.index(record.action_intent.kind)
+                    for record in episode
+                    if record.action_intent is not None
+                ],
+                dtype=torch.long,
+            )
+            batches.append((cues, targets))
+        trainable = (
+            self.encoder.weight_ih_l0,
+            self.encoder.weight_hh_l0,
+            self.encoder.bias_ih_l0,
+            self.encoder.bias_hh_l0,
+            self.readout.weight,
+            self.readout.bias,
+        )
+        optimizer = LocalAdam(trainable, learning_rate=float(learning_rate))
+        episode_count = float(len(batches))
+        final_loss = 0.0
         for _ in range(int(epochs)):
-            optimizer.zero_grad()
-            losses = []
-            for episode in episodes:
-                cues = torch.stack(
-                    [record.cue.detach().to(dtype=torch.float32) for record in episode]
-                )
-                if cues.ndim != 2 or cues.shape[1] != self.cue_dim:
-                    raise ValueError("sequential record cue dimensions do not match the learner")
-                targets = torch.tensor(
-                    [self.action_kinds.index(record.action_intent.kind) for record in episode],
-                    dtype=torch.long,
-                )
-                hidden, _ = self.encoder(cues.unsqueeze(0))
-                losses.append(nn.functional.cross_entropy(self.readout(hidden.squeeze(0)), targets))
-            loss = torch.stack(losses).mean()
-            loss.backward()
-            optimizer.step()
+            gradients = [torch.zeros_like(parameter) for parameter in trainable]
+            total_loss = 0.0
+            for cues, targets in batches:
+                hidden, trace = gru_forward_trace(self.encoder, cues)
+                with torch.no_grad():
+                    logits = self.readout(hidden)
+                    total_loss += float(nn.functional.cross_entropy(logits, targets))
+                # The objective averages each episode's own mean cross entropy,
+                # so the per-episode delta carries a second ``1 / episodes``
+                # factor on top of the ``1 / steps`` that the mean already
+                # contributes.  Every episode accumulates into one gradient
+                # buffer before a single optimiser step, exactly as the shared
+                # ``optimizer.zero_grad()`` boundary used to arrange.
+                logit_error = softmax_error_delta(logits, targets) / episode_count
+                hidden_error = backproject_linear(self.readout, logit_error)
+                recurrent = gru_gradients(self.encoder, trace, hidden_error)
+                readout_gradients = linear_gradients(self.readout, hidden, logit_error)
+                for buffer, gradient in zip(
+                    gradients, (*recurrent, *readout_gradients), strict=True
+                ):
+                    buffer += gradient
+            final_loss = total_loss / episode_count
+            optimizer.apply(gradients)
         self.consolidation_count += 1
-        return float(loss.detach())
+        return final_loss
 
     @torch.no_grad()
     def predict_episode(self, cues: Sequence[torch.Tensor]) -> tuple[str, ...]:
