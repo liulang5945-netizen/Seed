@@ -605,13 +605,15 @@ taiji/
 
 > 实时覆写（2026-08-26）：下方滚动记录中的旧“下一入口”由本段最新 Gate 状态覆盖；
 > synapse topology proposal、runtime topology ledger、neuron growth、cross-region wiring、
-> learning-driven route selection、online credit 与 region growth 已完成。`AdaptiveNeuronNetwork`
+> learning-driven route selection、online credit、region growth 与 post-growth holdout validation
+> 已完成。`AdaptiveNeuronNetwork`
 > 现在可以在稳定区域身份和执行顺序下追加由 substrate 压力触发的 child region；proposal 显式
 > 保存区域动力学、单位身份和 topology role，adapter 通过统一 DevelopmentState ledger 执行
 > 预算、checkpoint trial、功能性 region lesion 与逆向 rollback，并可在新区域后建立显式跨区
-> 稀疏连接。当前唯一入口转为 post-growth holdout validation：新区域及其显式连接必须在未见
-> 输入上产生可重复目标改善，才算完成从结构出生到有效模块的闭环；继续禁止按 action/intent
-> 表决定增长。
+> 稀疏连接。post-growth validation 在 candidate/baseline 副本上比较未见输入误差，只有达到
+> 配置化最小相对增益才允许建立跨区连接；checkpoint continuation 与 holdout 失败阻断均已
+> 覆盖。当前唯一入口转为资源感知的结构保留/剪枝：低使用、长期无增益且移除后 holdout 不
+> 退化的区域或连接才可申请 pruning proposal；继续禁止按 action/intent 表决定增长。
 
 本步设计已收敛并通过 Gate：新增独立的 `CrossRegionCooperationLearner`，为每条显式跨区连接维护
 可 checkpoint 的 prediction-error EMA、holdout-transfer EMA、resource-state EMA、证据次数

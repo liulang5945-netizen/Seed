@@ -25,6 +25,7 @@ class StructuralGrowthDynamics:
     error_threshold: float = 0.65
     holdout_transfer_threshold: float = 0.60
     minimum_resource_state: float = 0.40
+    minimum_holdout_gain: float = 0.05
     required_error_steps: int = 3
     growth_resource_cost: int = 1
 
@@ -34,6 +35,7 @@ class StructuralGrowthDynamics:
         _unit(self.error_threshold, "structural growth error_threshold")
         _unit(self.holdout_transfer_threshold, "structural growth holdout_transfer_threshold")
         _unit(self.minimum_resource_state, "structural growth minimum_resource_state")
+        _unit(self.minimum_holdout_gain, "structural growth minimum_holdout_gain")
         if int(self.required_error_steps) <= 0:
             raise ValueError("structural growth required_error_steps must be positive")
         if int(self.growth_resource_cost) <= 0:
