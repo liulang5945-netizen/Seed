@@ -542,4 +542,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把 `CrossRegionCooperationLearner` 接入真实 percept/world runtime 的在线 credit loop：由实际 target prediction error、资源消耗/可用性和 holdout transfer 记录自动更新路由证据；必须通过无手工注入的多步 train/holdout、route/region lesion、checkpoint continuation，并证明在线更新后的路径优于未学习路由；继续禁止固定 action/intent 表。**
+**下一步：把已通过的 substrate 驱动 neuron-growth 闭环扩展到区域级生长：由持续区域 prediction error、资源可用性和 holdout 增益生成 region proposal，接入 `DevelopmentState` ledger，并在 checkpoint trial、functional region lesion、holdout improvement 和 reverse rollback 通过后接入显式跨区域网络；继续禁止用 action/intent 表决定增长。**

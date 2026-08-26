@@ -92,6 +92,10 @@ from .planning import (
 from .procedural_memory import ProceduralMemoryLearner
 from .semantic_memory import SemanticMemoryLearner
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
+from .structural_growth import (
+    AdaptiveStructuralGrowthController,
+    StructuralGrowthDecision,
+)
 from .workspace import WorkspaceRouter
 from .world_learning import WorldDynamicsLearner, WorldSchema
 
@@ -145,6 +149,7 @@ class TSKV8Adapter(Taiji):
         self._topology_parent_snapshots: dict[str, dict[str, Any]] = {}
         self._neuron_regions: dict[str, AdaptiveNeuronRegion] = {}
         self._neuron_networks: dict[str, AdaptiveNeuronNetwork] = {}
+        self._structural_growth_controller: AdaptiveStructuralGrowthController | None = None
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
@@ -237,6 +242,12 @@ class TSKV8Adapter(Taiji):
         """Return explicitly attached cross-region networks owned by Taiji."""
 
         return tuple(self._neuron_networks.values())
+
+    @property
+    def structural_growth_controller(self) -> AdaptiveStructuralGrowthController | None:
+        """Return the optional substrate-driven structural development organ."""
+
+        return self._structural_growth_controller
 
     @staticmethod
     def _growth_request_identity(
@@ -641,6 +652,61 @@ class TSKV8Adapter(Taiji):
         if region.region_id in self._neuron_regions:
             raise ValueError(f"adaptive neuron region already attached: {region.region_id}")
         self._neuron_regions[region.region_id] = region
+
+    def attach_structural_growth_controller(
+        self,
+        controller: AdaptiveStructuralGrowthController | None,
+    ) -> None:
+        """Attach or remove the substrate-only automatic growth signal organ."""
+
+        if controller is not None and not isinstance(
+            controller,
+            AdaptiveStructuralGrowthController,
+        ):
+            raise TypeError(
+                "controller must be an AdaptiveStructuralGrowthController or None"
+            )
+        self._structural_growth_controller = controller
+
+    def propose_neuron_growth_from_error(
+        self,
+        *,
+        region_id: str,
+        prediction_error: float,
+        resource_state: float,
+        holdout_transfer: float,
+        evidence_ids: Sequence[str],
+    ) -> StructuralTopologyProposal | None:
+        """Turn persistent substrate evidence into a ledger-ready neuron proposal."""
+
+        if self._structural_growth_controller is None:
+            raise RuntimeError("structural growth controller is not attached")
+        try:
+            region = self._neuron_regions[str(region_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron region: {region_id}") from exc
+        decision: StructuralGrowthDecision = self._structural_growth_controller.observe(
+            region.region_id,
+            prediction_error=prediction_error,
+            resource_state=resource_state,
+            holdout_transfer=holdout_transfer,
+            evidence_ids=evidence_ids,
+        )
+        if not decision.should_grow:
+            return None
+        unit_id = self._structural_growth_controller.next_unit_id(
+            region.region_id,
+            region.unit_ids,
+        )
+        return self.propose_neuron_add(
+            region_id=region.region_id,
+            unit_id=unit_id,
+            evidence_ids=decision.evidence_ids,
+            parent_checkpoint_id=(
+                f"growth-signal:{region.region_id}:{decision.proposal_ordinal}"
+            ),
+            resource_cost=self._structural_growth_controller.dynamics.growth_resource_cost,
+        )
 
     @staticmethod
     def _checkpoint_region_generator() -> torch.Generator:
@@ -1262,6 +1328,20 @@ class TSKV8Adapter(Taiji):
                 generator=self._checkpoint_region_generator(),
                 device=self.device,
             )
+
+    def _structural_growth_checkpoint(self) -> dict[str, Any] | None:
+        return (
+            None
+            if self._structural_growth_controller is None
+            else self._structural_growth_controller.to_payload()
+        )
+
+    def _restore_structural_growth(self, payload: Any) -> None:
+        self._structural_growth_controller = (
+            None
+            if payload is None
+            else AdaptiveStructuralGrowthController.from_payload(payload)
+        )
 
     def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:
         """Attach a Taiji-owned predictor used for runtime intervention scoring."""

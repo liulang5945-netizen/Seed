@@ -1,0 +1,43 @@
+{
+  "format": "taiji-auto-growth-v1",
+  "proposal": {
+    "version": 1,
+    "proposal_id": "topology:adaptive.cortex:neuron:add:adaptive.cortex.grown.1",
+    "substrate_id": "adaptive.cortex",
+    "target_kind": "neuron",
+    "operation": "add",
+    "specification": {
+      "existing_unit_count": 2,
+      "input_dim": 7,
+      "region_id": "adaptive.cortex",
+      "unit_id": "adaptive.cortex.grown.1"
+    },
+    "requested_units": 1,
+    "resource_cost": 1,
+    "evidence_ids": [
+      "tick:3"
+    ],
+    "parent_checkpoint_id": "growth-signal:adaptive.cortex:1",
+    "status": "pending",
+    "validation_score": 0.0
+  },
+  "metrics": {
+    "persistent_error_required_steps": 3,
+    "proposal_emitted_after_steps": 3,
+    "unit_id": "adaptive.cortex.grown.1",
+    "committed": true,
+    "unit_count_after_growth": 3,
+    "holdout_before": 0.0,
+    "holdout_after_local_learning": 0.04330127313733101,
+    "lesion_activity": 0.0,
+    "checkpoint_continuation": true,
+    "rollback": true,
+    "unit_count_after_rollback": 2,
+    "rejected_without_budget": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "persistent substrate prediction error plus holdout transfer and available resources must emit a non-semantic neuron proposal; the runtime ledger must validate budget and checkpoint trial, the new unit must improve a holdout signal and fail under lesion, and the parent structure must be recoverable by reverse rollback"
+  },
+  "boundary": "This gate proves substrate-driven proposal emission and controlled neuron birth; it does not claim unrestricted self-evolution, automatic region invention, or general intelligence."
+}

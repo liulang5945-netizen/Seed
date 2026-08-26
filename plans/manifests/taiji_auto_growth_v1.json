@@ -1,0 +1,22 @@
+{
+  "format": "taiji-auto-growth-manifest-v1",
+  "task": "substrate-driven automatic neuron growth",
+  "report": "reports/taiji_auto_growth_20260826.json",
+  "seed": 71,
+  "controls": [
+    "persistent_prediction_error",
+    "holdout_transfer_gate",
+    "resource_availability_gate",
+    "non_semantic_identity",
+    "budget_validation",
+    "checkpoint_trial",
+    "holdout_learning",
+    "functional_lesion",
+    "reverse_rollback",
+    "zero_budget"
+  ],
+  "gate": {
+    "passed": true,
+    "criterion": "persistent substrate prediction error plus holdout transfer and available resources must emit a non-semantic neuron proposal; the runtime ledger must validate budget and checkpoint trial, the new unit must improve a holdout signal and fail under lesion, and the parent structure must be recoverable by reverse rollback"
+  }
+}
