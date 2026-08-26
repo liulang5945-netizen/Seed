@@ -12,7 +12,7 @@ import json
 import logging
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import torch
 
@@ -20,6 +20,7 @@ from taiji import (
     ExternalTextDecoderLanguageOrgan,
     LanguageBackendRegistry,
     LanguageBackendSpec,
+    LanguageOrgan,
     LanguageProviderArtifact,
     LanguageRealizationValidator,
     StructuredTextLanguageOrgan,
@@ -97,7 +98,10 @@ class _QwenTextDecoder:
                 pad_token_id=self.tokenizer.eos_token_id,
             )
         prompt_length = encoded["input_ids"].shape[1]
-        return self.tokenizer.decode(generated[0, prompt_length:], skip_special_tokens=True).strip()
+        return cast(
+            str,
+            self.tokenizer.decode(generated[0, prompt_length:], skip_special_tokens=True).strip(),
+        )
 
 
 def _prompt(expression: Any) -> str:
@@ -167,7 +171,7 @@ def load_qwen_language_provider(
             is_trainable=False,
         )
         decoder.model.eval()
-    organ: object = ExternalTextDecoderLanguageOrgan(
+    organ: LanguageOrgan = ExternalTextDecoderLanguageOrgan(
         decoder,
         prompt_builder=_prompt,
         backend_id=artifact.backend_id,

@@ -44,8 +44,14 @@ class SemanticMemoryLearner(nn.Module):
         cues = torch.stack([record.cue.detach().to(dtype=torch.float32) for record in records])
         if cues.ndim != 2 or cues.shape[1] != self.cue_dim:
             raise ValueError("semantic record cue dimensions do not match the learner")
+        rewards: list[float] = []
+        for record in records:
+            outcome = record.outcome
+            if outcome is None:
+                raise ValueError("semantic consolidation needs records with outcomes")
+            rewards.append(float(outcome.reward))
         targets = torch.tensor(
-            [float(record.outcome.reward) for record in records],
+            rewards,
             dtype=cues.dtype,
             device=cues.device,
         ).unsqueeze(-1)

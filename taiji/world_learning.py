@@ -259,7 +259,9 @@ def _replace_numeric_state(
     for obj in state.objects:
         attributes = dict(obj.attributes)
         attributes.update(updates.get(obj.object_id, {}))
-        objects.append(WorldObject(obj.object_id, attributes=attributes, tags=obj.tags))
+        objects.append(
+            WorldObject(obj.object_id, attributes=tuple(sorted(attributes.items())), tags=obj.tags)
+        )
     known_relations = set(schema.relation_slots)
     relations = {relation for relation in state.relations if relation not in known_relations}
     relations.update(
@@ -578,7 +580,7 @@ class WorldInterventionEvaluator:
         action_deltas, action_rewards, action_successes = _action_only_statistics(
             corpus.train, schema
         )
-        seed_results = []
+        seed_results: list[dict[str, Any]] = []
         for seed in self.config.seeds:
             learner = WorldDynamicsLearner(
                 schema,
@@ -733,7 +735,9 @@ def _episode_metrics(
             success_correct.append(
                 float((prediction.success_probability >= 0.5) == expected_success)
             )
-        final_errors.append(float(episode_final_error))
+        if episode_final_error is None:
+            raise ValueError("world episode must contain at least one transition")
+        final_errors.append(episode_final_error)
     return {
         "rollout_state_mse": sum(state_errors) / len(state_errors),
         "final_state_mse": sum(final_errors) / len(final_errors),
@@ -797,7 +801,7 @@ class WorldEpisodeEvaluator:
         )
         intervention_corpus = WorldInterventionCorpus(train=train_cases, holdout=holdout_cases)
         schema = WorldSchema.from_corpus(intervention_corpus)
-        seed_results = []
+        seed_results: list[dict[str, Any]] = []
         for seed in self.config.seeds:
             learner = WorldDynamicsLearner(
                 schema,

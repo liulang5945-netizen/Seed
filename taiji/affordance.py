@@ -470,9 +470,15 @@ class LearnedAffordanceFeatures(nn.Module):
                 for item in examples
             ]
             groundings = torch.stack([grounding for _, grounding in produced])
-            producer_inputs = (
-                torch.stack([inputs for inputs, _ in produced]) if self.context_dim else None
-            )
+            if self.context_dim:
+                producer_input_values: list[torch.Tensor] = []
+                for inputs, _ in produced:
+                    if inputs is None:
+                        raise RuntimeError("context affordance examples must produce inputs")
+                    producer_input_values.append(inputs)
+                producer_inputs = torch.stack(producer_input_values)
+            else:
+                producer_inputs = None
             prediction, gradients = self._local_pass(producer_inputs, groundings, targets)
             losses.append(float(torch.mean((prediction - targets) ** 2)))
             optimizer.apply(gradients)

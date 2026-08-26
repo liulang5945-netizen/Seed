@@ -526,7 +526,7 @@ P4 的最小真实经历边界已落地：
 | `ruff check .` | 存量已清零 | 0 | 0 | blocking |
 | `ruff check . --select B,SIM` | 存量 32 | 4 | 0 | blocking |
 | `black --check .` | — | 68 个文件待重排 | 0 | blocking |
-| `mypy --follow-imports=silent seed taiji` | 0 错误 | 47 → **63** | **63**（两腿一致） | **棘轮 blocking，基线 63** |
+| `mypy --follow-imports=silent seed taiji` | 0 错误 | 47 → **63** | **63**（两腿一致） | **棘轮 blocking，基线已降至 0；待新提交 CI 双矩阵复核** |
 | 全仓 mypy | 基线 212 | 259 → **275** | **281**（两腿一致） | advisory 观测 |
 
 **47→63 / 259→281 的漂移根因不是代码退化，而是 `mypy` 与 `pip-audit` 在 CI 里从未钉版本。** `ruff`/`black` 早已按 `.pre-commit-config.yaml` 钉死（0.16.4 / 26.5.1），唯独这两个漏了。检查器静默升版会带来新检查项，于是**没人改代码，门禁数字自己会变**。由此确立通用规则：**凡把工具输出数字当阈值的门禁，工具本身必须钉版本**，否则棘轮基线随时失效。现已钉 `mypy==2.3.1`、`pip-audit==2.10.1`。
@@ -537,7 +537,7 @@ P4 的最小真实经历边界已落地：
 
 **为什么选棘轮而不是「等实修到 0 再转 blocking」**：advisory 对退化零约束，63 涨到 100 也照样绿灯，门禁形同不存在；而等清完 63 项再上门禁，这期间新增退化无人拦。棘轮（`errors > MYPY_CORE_BASELINE` 即失败）把「不许变差」立刻变成硬约束，又不阻塞开发。步骤同时对解析失败显式 `exit 1`——门禁绝不允许在读不到数字时静默放行，这是 14.1 的直接应用。
 
-收紧路径：每次实修使核心数下降后，把 `ci.yml` 中的 `MYPY_CORE_BASELINE` 同步下调（步骤会打 `::notice::` 提示当前实际值），单向收紧至 0；全仓层待核心归零后按同一棘轮形式转正。
+收紧路径：每次实修使核心数下降后，把 `ci.yml` 中的 `MYPY_CORE_BASELINE` 同步下调（步骤会打 `::notice::` 提示当前实际值），单向收紧至 0；全仓层待核心归零后按同一棘轮形式转正。2026-08-27 已完成核心层归零：本机 `mypy==2.3.1` 对 `seed taiji` 的 44 个源文件报告 `Success: no issues found`，因此门禁基线已从 63 下调为 0；这只证明当前 checkout，不能替代 CI 的 3.10/3.12 双矩阵实跑。
 
 ### 14.3 checkpoint 往返对称不变量（2026-08-26 回归后新增）
 
@@ -721,6 +721,8 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 **已完成：`test` 转绿后首次真正执行的 `build-frontend` / `docker-build` 双红已定位并修复（详见 14.8）。两者因 `needs: test` 在此前 7 次连续红期间一直是 skipped、从未运行，故属被遮蔽的既存缺陷而非本次回归。`docker-build` 的 `COPY data/` 已收敛到项目既有的挂载约定；`build-frontend` 的 2 个 high CVE 已用 `overrides` 全树强制到安全版。前端四道门禁本机全绿：audit 退出 0（余 2 moderate 不阻塞）、eslint 0 errors / 17 warnings、vitest 19 files 160 passed、build 成功且 `dist/index.html` 存在，`npm ci --dry-run` 退出 0 证明 lock 与 package.json 同步。Docker 侧因本机无 Docker 未做构建验证，改以 `COPY` 源跟踪文件数静态审计替代，并已如实记录。**
 
 **已完成：`build-frontend` 已在 CI 实证转绿（`32982579047`，1m37s），5 个上游 job 亦全绿（test 3.10 13m25s、test 3.12 13m8s、test-windows 6m27s、两个 startup smoke）。`docker-build` 的 `COPY data/` 根因确认修复——`Build image via docker compose` 与 `Verify Docker image metadata` 均已打勾；但其后从未运行过的 `Startup smoke and healthcheck` 暴露出下一层缺陷 `ModuleNotFoundError: No module named 'seed_platform'`。根因是 Dockerfile 手工 `COPY` 清单漏了 pyproject 已声明的 `seed_platform*`，而 `packages.find` 静默跳过缺失目录使 `pip install` 仍退出 0（详见 14.8）。修法为补齐 `COPY` 并加构建期导入断言 `RUN python -c "import api.app"`，使漏拷贝此后在 build 层即刻失败；清单与 pyproject 已复核对齐（`MISSING: none`），断言语句本机实测退出 0 证明不会误红。**
-**已完成：CI 的「基线不可复现」根因已修。`ci.yml` 原只钉 `ruff`/`black`，`mypy`/`pip-audit` 浮动，导致门禁数字在无人改代码时自己漂移（核心 47→63、全仓 259→281）；现已钉 `mypy==2.3.1`、`pip-audit==2.10.1`，并确立通用规则「凡把工具输出数字当阈值的门禁，工具本身必须钉版本」。同时 mypy 核心门禁由 advisory 升为**棘轮 blocking**（`MYPY_CORE_BASELINE=63`，超基线即 `exit 1`，解析不到数字亦 `exit 1` 绝不静默放行，低于基线打 `::notice::` 提示下调）。双矩阵实测否证了「报错数随 Python 版本变化故不能设阈值」——3.10 与 3.12 的核心数 63、全仓数 281 完全相同（详见 14.2）。停机期三次假红已判定为平台产物并记入 14.11。**
+**已完成：CI 的「基线不可复现」根因已修。`ci.yml` 原只钉 `ruff`/`black`，`mypy`/`pip-audit` 浮动，导致门禁数字在无人改代码时自己漂移（核心 47→63、全仓 259→281）；现已钉 `mypy==2.3.1`、`pip-audit==2.10.1`，并确立通用规则「凡把工具输出数字当阈值的门禁，工具本身必须钉版本」。同时 mypy 核心门禁由 advisory 升为**棘轮 blocking**（初始 `MYPY_CORE_BASELINE=63`，超基线即 `exit 1`，解析不到数字亦 `exit 1` 绝不静默放行，低于基线打 `::notice::` 提示下调；当前基线已收紧为 0）。双矩阵实测否证了「报错数随 Python 版本变化故不能设阈值」——3.10 与 3.12 的核心数 63、全仓数 281 完全相同（详见 14.2）。停机期三次假红已判定为平台产物并记入 14.11。**
 
-**当前唯一下一步：实修核心 mypy 63 处类型错误并逐次下调 `MYPY_CORE_BASELINE` 至 0，从错误最密的 `taiji/adapter.py`（12）、`taiji/world_learning.py`（9）、`taiji/workspace.py`（8）、`taiji/local_learning.py`（7）入手——主因是 checkpoint/`state_dict` 反序列化后为 `object | Any` 缺类型收窄，与 14.3 的 checkpoint 静默失效同源，其中 `local_learning.py` 正是原生局部学习平面的核心模块。**
+**已完成：核心 mypy 类型债已归零。2026-08-27 在当前固定工具链 `mypy==2.3.1` 下，`python -m mypy --follow-imports=silent seed taiji` 对 44 个源文件报告 0 错误；修复覆盖 checkpoint/state_dict 类型收窄、可选值边界、结构化参数契约、局部 GRU 学习张量和可替换语言器官协议。定向 ruff 通过，相关回归 46 passed。`.github/workflows/ci.yml` 的 `MYPY_CORE_BASELINE` 已同步从 63 收紧至 0。**
+
+**当前唯一下一步：把本地已归零的提交推送后，完成 CI 的 3.10/3.12 双矩阵实跑，确认核心 mypy 门禁在两腿都输出 0 且下游门禁未被 `needs:` 跳过；在此之前不宣称 CI 已验证。**

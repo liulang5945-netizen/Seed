@@ -158,9 +158,7 @@ class WorkspaceCollaborationEvaluator:
                 if set(learned.selected_ids) == set(sample.relevant_ids):
                     exact_routes += 1
             count = float(len(holdout))
-            metrics: dict[str, float] = {
-                name: value / count for name, value in totals.items()
-            }
+            metrics: dict[str, float] = {name: value / count for name, value in totals.items()}
             metrics["learned_gain_vs_strongest_single"] = (
                 metrics["strongest_single"] - metrics["learned"]
             )

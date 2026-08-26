@@ -276,13 +276,13 @@ class LanguageProviderArtifact:
             raise ValueError("raw provider artifact cannot carry adapter_path")
         if self.mode == "guarded" and self.default_enabled:
             raise ValueError("guarded provider artifacts must remain opt-in")
-        for value, name in (
+        for optional_value, name in (
             (self.adapter_path, "adapter_path"),
             (self.training_corpus, "training_corpus"),
             (self.training_report, "training_report"),
             (self.safety_report, "safety_report"),
         ):
-            if value is not None and not str(value):
+            if optional_value is not None and not str(optional_value):
                 raise ValueError(f"provider artifact {name} cannot be empty when provided")
 
     def to_payload(self) -> dict[str, Any]:
@@ -446,7 +446,9 @@ class LanguageBackendRegistry:
 class LanguageOrgan(Protocol):
     """Replaceable terminal language-organ contract."""
 
-    backend_id: str
+    @property
+    def backend_id(self) -> str:
+        """Stable registry identifier for this organ."""
 
     def emit(self, expression: ExpressionPlan) -> LanguageEmission:
         """Render a Taiji-owned text expression without changing cognition."""
