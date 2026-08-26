@@ -9,7 +9,7 @@ from typing import Any
 import torch
 
 from .affordance import LearnedAffordanceFeatures, WorldAffordanceGroundingProducer
-from .concept_formation import ConceptFormationOrgan
+from .concept_formation import ConceptFormationOrgan, ConceptMatch
 from .content_selection import (
     ContentCandidate,
     ContentSelectionContext,
@@ -1042,8 +1042,10 @@ class TSKV8Adapter(Taiji):
                 match.score
                 * match.concept.confidence
                 * match.concept.outcome_mean
-                * self._concept_formation.action_sequence_affinity(
-                    match.concept, action_kinds
+                * self._concept_formation.suffix_sequence_affinity(
+                    match.concept,
+                    action_kinds,
+                    current_state=self._cognitive_state.world,
                 )
                 for match in matches
             ),
@@ -1253,16 +1255,23 @@ class TSKV8Adapter(Taiji):
         experienced = self._cognitive_state.outcome
         if experienced is None:
             raise RuntimeError("imagined rollout environment outcome was not recorded")
+        experienced_world = result.world_state
         self.observe(result.sensation, learn=learn)
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            world=replace(experienced_world, tick=self.tick),
+        )
+        self._refresh_concept_memory()
         if self.replan_required or result.terminal or len(rollout.steps) == 1:
             self._planned_rollout = None
         else:
-            self._planned_rollout = ImaginedRollout(
+            suffix = ImaginedRollout(
                 rollout_id=rollout.rollout_id,
                 goal_id=rollout.goal_id,
                 steps=rollout.steps[1:],
                 confidence=rollout.confidence,
             )
+            self._planned_rollout = self._apply_concept_sequence_affinity(suffix)
         if result.terminal and self._cognitive_state.planning_recovery is not None:
             self._cognitive_state = replace(self._cognitive_state, planning_recovery=None)
         return experienced
@@ -1474,16 +1483,29 @@ class TSKV8Adapter(Taiji):
         self._cognitive_state = replace(self._cognitive_state, events=(*events[:-1], event))
 
     def _concept_matches_for_world(self, world: WorldState) -> tuple[Any, ...]:
-        cue = (
-            self._cognitive_state.percept.features
-            if self._cognitive_state.percept is not None
-            else world.latent
-        )
-        return self._concept_formation.retrieve(
-            cue,
-            object_ids=self._world_object_ids(world),
-            relation_ids=self._world_relation_ids(world),
-            limit=self.config.concept_capacity,
+        cues = []
+        if world.latent.numel():
+            cues.append(world.latent)
+        if self._cognitive_state.percept is not None:
+            cues.append(self._cognitive_state.percept.features)
+        matches = ()
+        for cue in cues:
+            matches = self._concept_formation.retrieve(
+                cue,
+                object_ids=self._world_object_ids(world),
+                relation_ids=self._world_relation_ids(world),
+                limit=self.config.concept_capacity,
+            )
+            if matches:
+                break
+        if matches or not self._cognitive_state.memory.concept_ids:
+            return matches
+        active_ids = set(self._cognitive_state.memory.concept_ids)
+        active_score = self._cognitive_state.memory.concept_confidence
+        return tuple(
+            ConceptMatch(concept=concept, score=active_score)
+            for concept in self._concept_formation.concepts
+            if concept.concept_id in active_ids
         )
 
     def _refresh_concept_memory(self) -> None:
@@ -1523,6 +1545,8 @@ class TSKV8Adapter(Taiji):
             features,
             limit=self.config.concept_capacity,
         )
+        if not concept_matches and previous.memory.concept_ids:
+            concept_matches = self._concept_matches_for_world(previous.world)
         homeostasis = previous.homeostasis
         if self._homeostatic_controller is not None:
             homeostasis = self._homeostatic_controller.update(
@@ -2036,6 +2060,11 @@ class TSKV8Adapter(Taiji):
                         online_update_count_after=self._world_dynamics.online_updates,
                     ),
                 )[-self.config.world_calibration_history_limit :]
+        prediction_error = (
+            0.0
+            if prediction_record is None or prediction_record.state_error is None
+            else prediction_record.state_error
+        )
         memory = self._cognitive_state.memory
         if self._planned_rollout is not None and self._goal_planner is not None:
             rollout = self._planned_rollout
@@ -2084,6 +2113,7 @@ class TSKV8Adapter(Taiji):
                 action_intent=intent,
                 outcome=outcome,
                 world_transition=transition,
+                prediction_error=prediction_error,
                 provenance=outcome.provenance,
                 event_ids=(
                     ()
@@ -2113,11 +2143,6 @@ class TSKV8Adapter(Taiji):
                 episodic_confidence=1.0,
                 episodic_ids=(record.memory_id,),
             )
-        prediction_error = (
-            0.0
-            if prediction_record is None or prediction_record.state_error is None
-            else prediction_record.state_error
-        )
         self_state, development = self._record_outcome_self_and_development(
             outcome,
             prediction_error=prediction_error,

@@ -509,4 +509,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把多步 sequence prior 扩展为 after-state/预测误差/outcome 条件化的剩余 suffix 检索与序列级 credit assignment，在变量 horizon、分支干扰、lesion 与 checkpoint continuation 下验收。**
+**下一步：在状态条件 suffix Gate 上加入变量 horizon、同前缀分支竞争、trace lesion 与实际 outcome/error 增量更新，并在部分执行、失败重规划和 checkpoint continuation 下验收。**

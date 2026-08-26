@@ -132,6 +132,13 @@ def _normalize_sequences(value: Any, name: str) -> tuple[tuple[str, ...], ...]:
     return tuple(sequences)
 
 
+def _normalize_text_sequence(value: Any, name: str) -> tuple[str, ...]:
+    sequence = tuple(_check_text(str(item), f"{name} item") for item in value)
+    if not sequence:
+        raise ValueError(f"{name} cannot be empty")
+    return sequence
+
+
 def _normalize_unit_pairs(value: Any, name: str) -> tuple[tuple[str, float], ...]:
     pairs = _normalize_pairs(value, name)
     normalized: list[tuple[str, float]] = []
@@ -399,6 +406,88 @@ class Event:
 
 
 @dataclass(frozen=True)
+class ConceptSequenceTrace:
+    """A learned sequence trace with state-conditioned credit."""
+
+    action_kinds: tuple[str, ...]
+    before_prototype: torch.Tensor
+    after_prototypes: tuple[torch.Tensor, ...]
+    step_credit: tuple[float, ...]
+    prediction_errors: tuple[float, ...]
+    outcome_mean: float = 0.0
+    visits: int = 1
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        object.__setattr__(
+            self,
+            "action_kinds",
+            _normalize_text_sequence(self.action_kinds, "sequence trace action_kinds"),
+        )
+        if self.before_prototype.ndim != 1:
+            raise ValueError("sequence trace before_prototype must be a vector")
+        after_prototypes = tuple(item.detach().clone() for item in self.after_prototypes)
+        if len(after_prototypes) != len(self.action_kinds):
+            raise ValueError("sequence trace after_prototypes must match action_kinds")
+        if any(item.ndim != 1 for item in after_prototypes):
+            raise ValueError("sequence trace after_prototypes must be vectors")
+        if any(item.numel() != self.before_prototype.numel() for item in after_prototypes):
+            raise ValueError("sequence trace state prototypes must share one dimension")
+        object.__setattr__(self, "before_prototype", self.before_prototype.detach().clone())
+        object.__setattr__(self, "after_prototypes", after_prototypes)
+        if len(self.step_credit) != len(self.action_kinds):
+            raise ValueError("sequence trace step_credit must match action_kinds")
+        if len(self.prediction_errors) != len(self.action_kinds):
+            raise ValueError("sequence trace prediction_errors must match action_kinds")
+        object.__setattr__(
+            self,
+            "step_credit",
+            tuple(_check_unit(value, "sequence trace step_credit") for value in self.step_credit),
+        )
+        object.__setattr__(
+            self,
+            "prediction_errors",
+            tuple(
+                _check_unit(value, "sequence trace prediction_error")
+                for value in self.prediction_errors
+            ),
+        )
+        _check_unit(self.outcome_mean, "sequence trace outcome_mean")
+        if int(self.visits) <= 0:
+            raise ValueError("sequence trace visits must be positive")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "action_kinds": list(self.action_kinds),
+            "before_prototype": self.before_prototype.detach().cpu().clone(),
+            "after_prototypes": [item.detach().cpu().clone() for item in self.after_prototypes],
+            "step_credit": list(self.step_credit),
+            "prediction_errors": list(self.prediction_errors),
+            "outcome_mean": self.outcome_mean,
+            "visits": self.visits,
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> ConceptSequenceTrace:
+        return cls(
+            version=int(payload["version"]),
+            action_kinds=tuple(str(item) for item in payload["action_kinds"]),
+            before_prototype=payload["before_prototype"].detach().to(device).clone(),
+            after_prototypes=tuple(
+                item.detach().to(device).clone() for item in payload["after_prototypes"]
+            ),
+            step_credit=tuple(float(item) for item in payload["step_credit"]),
+            prediction_errors=tuple(float(item) for item in payload["prediction_errors"]),
+            outcome_mean=float(payload.get("outcome_mean", 0.0)),
+            visits=int(payload.get("visits", 1)),
+        )
+
+
+@dataclass(frozen=True)
 class Concept:
     """A cross-experience invariant, not a label or an episode copy."""
 
@@ -410,6 +499,7 @@ class Concept:
     relation_ids: tuple[str, ...] = ()
     action_kinds: tuple[str, ...] = ()
     action_sequences: tuple[tuple[str, ...], ...] = ()
+    sequence_traces: tuple[ConceptSequenceTrace, ...] = ()
     maturity: float = 0.0
     stability: float = 0.0
     confidence: float = 0.0
@@ -445,6 +535,9 @@ class Concept:
             "action_sequences",
             _normalize_sequences(self.action_sequences, "concept action_sequences"),
         )
+        if any(not isinstance(item, ConceptSequenceTrace) for item in self.sequence_traces):
+            raise ValueError("concept sequence_traces must contain ConceptSequenceTrace values")
+        object.__setattr__(self, "sequence_traces", tuple(self.sequence_traces))
         _check_unit(self.maturity, "concept maturity")
         _check_unit(self.stability, "concept stability")
         _check_unit(self.confidence, "concept confidence")
@@ -464,6 +557,7 @@ class Concept:
             "relation_ids": list(self.relation_ids),
             "action_kinds": list(self.action_kinds),
             "action_sequences": [list(sequence) for sequence in self.action_sequences],
+            "sequence_traces": [item.to_payload() for item in self.sequence_traces],
             "maturity": self.maturity,
             "stability": self.stability,
             "confidence": self.confidence,
@@ -489,6 +583,14 @@ class Concept:
             object_ids=tuple(str(item) for item in payload.get("object_ids", ())),
             relation_ids=tuple(str(item) for item in payload.get("relation_ids", ())),
             action_kinds=tuple(str(item) for item in payload.get("action_kinds", ())),
+            action_sequences=tuple(
+                tuple(str(action) for action in sequence)
+                for sequence in payload.get("action_sequences", ())
+            ),
+            sequence_traces=tuple(
+                ConceptSequenceTrace.from_payload(item, device=device)
+                for item in payload.get("sequence_traces", ())
+            ),
             maturity=float(payload.get("maturity", 0.0)),
             stability=float(payload.get("stability", 0.0)),
             confidence=float(payload.get("confidence", 0.0)),
@@ -1548,6 +1650,7 @@ class EpisodicMemoryRecord:
     action_intent: ActionIntent | None = None
     outcome: Outcome | None = None
     world_transition: WorldTransition | None = None
+    prediction_error: float = 0.0
     provenance: str = "experienced"
     event_ids: tuple[str, ...] = ()
     assembly_ids: tuple[str, ...] = ()
@@ -1581,6 +1684,8 @@ class EpisodicMemoryRecord:
                 raise ValueError("episodic world transition tick must match the record tick")
             if self.world_transition.outcome.tick != self.tick:
                 raise ValueError("episodic transition outcome tick must match the record tick")
+        if not math.isfinite(float(self.prediction_error)) or float(self.prediction_error) < 0.0:
+            raise ValueError("episodic prediction_error must be finite and non-negative")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -1596,6 +1701,7 @@ class EpisodicMemoryRecord:
             "world_transition": (
                 None if self.world_transition is None else self.world_transition.to_payload()
             ),
+            "prediction_error": self.prediction_error,
             "provenance": self.provenance,
             "event_ids": list(self.event_ids),
             "assembly_ids": list(self.assembly_ids),
@@ -1627,6 +1733,7 @@ class EpisodicMemoryRecord:
                 if world_transition is None
                 else WorldTransition.from_payload(world_transition, device=device)
             ),
+            prediction_error=float(payload.get("prediction_error", 0.0)),
             provenance=str(payload.get("provenance", "experienced")),
             event_ids=tuple(str(item) for item in payload.get("event_ids", ())),
             assembly_ids=tuple(str(item) for item in payload.get("assembly_ids", ())),

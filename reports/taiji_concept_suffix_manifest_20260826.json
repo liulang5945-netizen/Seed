@@ -1,0 +1,11 @@
+{
+  "format": "taiji-concept-suffix-manifest-v1",
+  "task": "state-conditioned suffix retrieval and sequence-level credit assignment",
+  "records": "two episodes with real WorldTransition after-states, bounded outcomes, and prediction errors",
+  "lesions": [
+    "reversed-sequence",
+    "wrong-after-state",
+    "concept-trace-checkpoint"
+  ],
+  "checkpoint": "ConceptFormationOrgan and native TSKV8 runtime"
+}
