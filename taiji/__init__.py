@@ -182,6 +182,13 @@ from .state import (
     TaijiState,
     TaijiStep,
 )
+from .structural_growth import (
+    STRUCTURAL_GROWTH_CHECKPOINT_FORMAT,
+    AdaptiveStructuralGrowthController,
+    StructuralGrowthDecision,
+    StructuralGrowthDynamics,
+    StructuralGrowthRegionState,
+)
 from .workspace import (
     WorkspaceCollaborationEvaluator,
     WorkspaceCompositionSample,
@@ -326,6 +333,11 @@ __all__ = [
     "TaijiOutcome",
     "TaijiState",
     "TaijiStep",
+    "STRUCTURAL_GROWTH_CHECKPOINT_FORMAT",
+    "AdaptiveStructuralGrowthController",
+    "StructuralGrowthDecision",
+    "StructuralGrowthDynamics",
+    "StructuralGrowthRegionState",
     "TSKV8Adapter",
     "Goal",
     "GoalState",

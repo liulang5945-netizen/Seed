@@ -613,7 +613,11 @@ taiji/
 > `AdaptiveNeuronNetwork`、跨区稀疏连接迁移及 adapter ledger 均已通过。当前入口转为由
 > prediction error、资源状态和 holdout transfer 共同调制的学习型跨区域协作；该 Gate 已
 > 通过。当前唯一入口转为把 route learner 接入真实 percept/world runtime 的在线 credit loop，
-> 自动从实际 outcome 更新路由证据，避免评估脚本手工注入反馈。
+> 自动从实际 outcome 更新路由证据，避免评估脚本手工注入反馈；该 Gate 已通过。当前唯一
+> 入口转为让持续 prediction error、资源可用性和 holdout 增益触发可审计的结构成长 proposal，
+> 再经统一 ledger 的预算、checkpoint、lesion 与 rollback 才能提交；neuron-growth Gate 已通过。
+> 当前入口转为同一闭环的区域级生长：持续区域瓶颈生成 region proposal，并在 holdout 验证后
+> 接入显式跨区域网络。
 
 本步设计已收敛并通过 Gate：新增独立的 `CrossRegionCooperationLearner`，为每条显式跨区连接维护
 可 checkpoint 的 prediction-error EMA、holdout-transfer EMA、resource-state EMA、证据次数
@@ -622,7 +626,9 @@ taiji/
 按资源预算选择连接，显式 connection_ids 仍可用于对照和 lesion；网络 checkpoint 同时保存
 连接、区域和 learner 状态；报告位于
 `reports/taiji_cross_region_learning_20260826.json`，manifest 位于
-`plans/manifests/taiji_cross_region_learning_v1.json`。
+`plans/manifests/taiji_cross_region_learning_v1.json`；自动 neuron-growth 报告位于
+`reports/taiji_auto_growth_20260826.json`，manifest 位于
+`plans/manifests/taiji_auto_growth_v1.json`。
 
 状态已滚动更新：上段记录的 producer/feature-source/delayed-credit lesion 已完成并通过 3-seed Gate；当前四步延伸、3/4/5 步变量 episode、不同失败位置和 after-state relation 变化、executive-to-world prediction train/holdout 与 no-online-update calibration control、runtime calibration trace 的多步连续性/恢复、world-model planner projection/replan lesion、跨 seed 的 3/4/5 步 world-dynamics imagined rollout、imagined-to-real execution、runtime recovery state、recovery transfer、world-error calibration policy、normalized world-error contract 及 schema-scale transfer contract Gate 也已通过；结构成长 budget/rollback Gate 已通过版本化 `StructuralGrowthRequest`、trial checkpoint roundtrip、trace lesion、replayability、预算拒绝、native checkpoint continuation 与父结构 rollback；synapse topology proposal Gate 已通过 substrate 坐标合同、holdout donor response、fabric checkpoint roundtrip、functional lesion 与父拓扑恢复；下一步是把 `StructuralTopologyProposal` 接入 `DevelopmentState` 的统一预算与 runtime ledger，禁止以评估侧固定阈值代替架构能力。
 
