@@ -1,0 +1,62 @@
+{
+  "format": "taiji-region-split-v1",
+  "proposal": {
+    "version": 1,
+    "proposal_id": "topology:bottleneck:split:bottleneck.split.1",
+    "substrate_id": "bottleneck",
+    "target_kind": "region",
+    "operation": "split",
+    "specification": {
+      "new_region_id": "bottleneck.split.1",
+      "new_unit_ids": [
+        "bottleneck.u1"
+      ],
+      "parent_region_id": "bottleneck",
+      "parent_unit_count": 2,
+      "retained_region_id": "bottleneck",
+      "retained_unit_ids": [
+        "bottleneck.u0"
+      ],
+      "topology_role": "region_split"
+    },
+    "requested_units": 1,
+    "resource_cost": 1,
+    "evidence_ids": [
+      "split:tick:2"
+    ],
+    "parent_checkpoint_id": "region-split-signal:bottleneck:1",
+    "status": "pending",
+    "validation_score": 0.0
+  },
+  "metrics": {
+    "required_error_steps": 2,
+    "proposal_emitted_after_steps": 2,
+    "parent_region_id": "bottleneck",
+    "child_region_id": "bottleneck.split.1",
+    "holdout_validation_score": 1.0,
+    "holdout_validated": true,
+    "region_ids_after_split": [
+      "source",
+      "bottleneck",
+      "bottleneck.split.1"
+    ],
+    "execution_order_after_split": [
+      "source",
+      "bottleneck",
+      "bottleneck.split.1"
+    ],
+    "checkpoint_continuation": true,
+    "rollback": true,
+    "region_ids_after_rollback": [
+      "source",
+      "bottleneck"
+    ],
+    "connected_region_rejected": true,
+    "rejected_without_budget": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "persistent substrate pressure must emit a region split proposal that preserves the parent region identity, partitions unit identities and local state, passes unseen holdout validation, survives checkpoint continuation, consumes the ledger budget, and reverses cleanly; connected regions and zero-budget splits must fail closed"
+  },
+  "boundary": "This gate proves identity-preserving split for isolated regions only; connected split requires a separate explicit connection-migration contract and no claim of unrestricted self-evolution or general intelligence is made."
+}

@@ -617,7 +617,10 @@ taiji/
 > 并经统一 budget、checkpoint、所属连接移除和 reverse rollback。当前唯一入口转为独立跨区域
 > connection retention/pruning，且该 Gate 已由 `reports/taiji_connection_pruning_20260826.json`
 > 证明既有 route learner 证据可驱动单连接移除、checkpoint continuation 与 reverse rollback；
-> 下一入口是区域 split/merge 的 lineage 与可逆生命周期治理，继续禁止按 action/intent 表决定结构维护。
+> isolated-region split Gate 已通过 `reports/taiji_region_split_20260826.json`：稳定单位分区、父
+> 区域身份保留、局部状态迁移、holdout/checkpoint/预算/reverse rollback 均有证据；已有跨区连接
+> 的 split 明确 fail-closed。下一入口是 connected split 的显式连接迁移与 route learner lineage，
+> 完成后再进入 merge 生命周期治理，继续禁止按 action/intent 表决定结构维护。
 
 本步设计已收敛并通过 Gate：新增独立的 `CrossRegionCooperationLearner`，为每条显式跨区连接维护
 可 checkpoint 的 prediction-error EMA、holdout-transfer EMA、resource-state EMA、证据次数

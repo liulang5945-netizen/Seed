@@ -210,6 +210,53 @@ class AdaptiveNeuronNetwork:
             resource_cost=int(resource_cost),
         )
 
+    def propose_region_split(
+        self,
+        *,
+        region_id: str,
+        first_unit_count: int,
+        new_region_id: str | None = None,
+        evidence_ids: Sequence[str],
+        parent_checkpoint_id: str | None = None,
+        resource_cost: int = 1,
+    ) -> StructuralTopologyProposal:
+        """Describe a stable partition of an isolated region into two regions."""
+
+        region = self._region(region_id)
+        if region.unit_count < 2:
+            raise ValueError("region split requires at least two units")
+        split_count = int(first_unit_count)
+        if not 0 < split_count < region.unit_count:
+            raise ValueError("region split first_unit_count must leave both partitions non-empty")
+        if any(region_id in {source_id, target_id} for source_id, target_id, _ in self._connections.values()):
+            raise ValueError("region split currently requires an isolated region")
+        retained_id = region.region_id
+        candidate = (
+            f"{retained_id}.split.1"
+            if new_region_id is None
+            else str(new_region_id)
+        )
+        if not candidate or candidate == retained_id or candidate in self._regions:
+            raise ValueError("region split new_region_id must be a fresh identity")
+        return StructuralTopologyProposal(
+            proposal_id=f"topology:{retained_id}:split:{candidate}",
+            substrate_id=retained_id,
+            target_kind="region",
+            operation="split",
+            specification=(
+                ("parent_region_id", retained_id),
+                ("retained_region_id", retained_id),
+                ("new_region_id", candidate),
+                ("retained_unit_ids", region.unit_ids[:split_count]),
+                ("new_unit_ids", region.unit_ids[split_count:]),
+                ("parent_unit_count", region.unit_count),
+                ("topology_role", "region_split"),
+            ),
+            evidence_ids=tuple(str(item) for item in evidence_ids),
+            parent_checkpoint_id=parent_checkpoint_id,
+            resource_cost=int(resource_cost),
+        )
+
     def propose_connection_prune(
         self,
         *,
@@ -419,6 +466,112 @@ class AdaptiveNeuronNetwork:
             item for item in self.execution_order if item != region_id
         )
         self._lesioned_regions.discard(region_id)
+        return True
+
+    @staticmethod
+    @torch.no_grad()
+    def _partition_region(
+        region: AdaptiveNeuronRegion,
+        *,
+        region_id: str,
+        unit_ids: Sequence[str],
+        generator: torch.Generator,
+    ) -> AdaptiveNeuronRegion:
+        """Copy one identity-preserving unit partition into a new region object."""
+
+        selected = tuple(str(item) for item in unit_ids)
+        old_indices = tuple(region.unit_index(item) for item in selected)
+        recurrent_fan_in = (
+            None if region.recurrent is None else region.recurrent.row_fan_in
+        )
+        partition = AdaptiveNeuronRegion(
+            region_id=region_id,
+            input_dim=region.input_dim,
+            unit_ids=selected,
+            fan_in=region.fan_in,
+            generator=generator,
+            input_source_id=region.input_source_id,
+            dynamics=region.dynamics,
+            recurrent_fan_in=recurrent_fan_in,
+            device=region.device,
+        )
+        row_index = torch.tensor(old_indices, dtype=torch.long, device=region.device)
+        partition.incoming.pre_index.copy_(region.incoming.pre_index.index_select(0, row_index))
+        partition.incoming.edge_weight.copy_(region.incoming.edge_weight.index_select(0, row_index))
+        for target_index, source_index in enumerate(old_indices):
+            partition.membrane[target_index] = region.membrane[source_index]
+            partition.activity[target_index] = region.activity[source_index]
+            partition.trace[target_index] = region.trace[source_index]
+            partition.threshold[target_index] = region.threshold[source_index]
+        if partition.recurrent is not None and region.recurrent is not None:
+            old_to_new = {old: new for new, old in enumerate(old_indices)}
+            partition.recurrent.edge_weight.zero_()
+            for new_row, old_row in enumerate(old_indices):
+                new_slot = 0
+                for slot in range(region.recurrent.row_fan_in):
+                    old_pre = int(region.recurrent.pre_index[old_row, slot].item())
+                    if old_pre not in old_to_new or new_slot >= partition.recurrent.row_fan_in:
+                        continue
+                    partition.recurrent.pre_index[new_row, new_slot] = old_to_new[old_pre]
+                    partition.recurrent.edge_weight[new_row, new_slot] = (
+                        region.recurrent.edge_weight[old_row, slot]
+                    )
+                    new_slot += 1
+        partition._lesioned_units = {
+            unit_id for unit_id in selected if unit_id in region._lesioned_units
+        }
+        return partition
+
+    @torch.no_grad()
+    def apply_region_split(
+        self,
+        proposal: StructuralTopologyProposal,
+        *,
+        generator: torch.Generator,
+    ) -> bool:
+        """Split an isolated region while preserving unit identities and local state."""
+
+        if proposal.status != "pending":
+            raise ValueError("only pending topology proposals can be applied")
+        if proposal.target_kind != "region" or proposal.operation != "split":
+            raise ValueError("proposal is not a region split")
+        if dict(proposal.specification).get("topology_role") != "region_split":
+            raise ValueError("proposal is not a region split")
+        specification = dict(proposal.specification)
+        parent_id = str(specification.get("parent_region_id", ""))
+        retained_id = str(specification.get("retained_region_id", ""))
+        new_region_id = str(specification.get("new_region_id", ""))
+        if parent_id != proposal.substrate_id or retained_id != parent_id:
+            raise ValueError("region split parent identity does not match proposal")
+        if not new_region_id or new_region_id in self._regions:
+            raise ValueError("region split child identity is not fresh")
+        if any(parent_id in {source_id, target_id} for source_id, target_id, _ in self._connections.values()):
+            raise ValueError("region split currently requires an isolated region")
+        parent = self._region(parent_id)
+        retained_units = tuple(str(item) for item in specification.get("retained_unit_ids", ()))
+        new_units = tuple(str(item) for item in specification.get("new_unit_ids", ()))
+        if (
+            not retained_units
+            or not new_units
+            or retained_units + new_units != parent.unit_ids
+            or int(specification.get("parent_unit_count", -1)) != parent.unit_count
+        ):
+            raise ValueError("region split unit partition has drifted")
+        retained = self._partition_region(
+            parent,
+            region_id=retained_id,
+            unit_ids=retained_units,
+            generator=generator,
+        )
+        child = self._partition_region(
+            parent,
+            region_id=new_region_id,
+            unit_ids=new_units,
+            generator=generator,
+        )
+        self._regions[retained_id] = retained
+        self._regions[new_region_id] = child
+        self.execution_order = (*self.execution_order, new_region_id)
         return True
 
     @torch.no_grad()

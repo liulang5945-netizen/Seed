@@ -378,3 +378,60 @@ def test_cross_region_connection_pruning_is_checkpointed_and_reversible() -> Non
     assert restored.rollback_cross_region_connection(connection.proposal_id) is True
     assert restored.neuron_networks[0].connection_ids == ()
     assert restored.cognitive_snapshot().development.structural_budget == 2
+
+
+def test_region_split_preserves_unit_lineage_and_is_reversible() -> None:
+    model = TSKV8Adapter(_config(budget=2), episode_id="region-split")
+    model.attach_adaptive_neuron_network("cortex", _network())
+    model.attach_structural_growth_controller(_controller())
+    network = model.neuron_networks[0]
+    network.regions[1].incoming.edge_weight.zero_()
+    network.regions[1].activity.zero_()
+
+    first = model.propose_region_split_from_error(
+        network_id="cortex",
+        region_id="bottleneck",
+        first_unit_count=1,
+        prediction_error=0.9,
+        resource_state=0.8,
+        holdout_transfer=0.9,
+        evidence_ids=("split:tick:1",),
+    )
+    proposal = model.propose_region_split_from_error(
+        network_id="cortex",
+        region_id="bottleneck",
+        first_unit_count=1,
+        prediction_error=0.9,
+        resource_state=0.8,
+        holdout_transfer=0.9,
+        evidence_ids=("split:tick:2",),
+    )
+    assert first is None
+    assert proposal is not None
+    assert model.validate_region_split_holdout(
+        network_id="cortex",
+        proposal_id=proposal.proposal_id,
+        holdout_inputs=(
+            {"bottleneck": torch.ones(3)},
+            {"bottleneck": torch.ones(3)},
+        ),
+        expected_activities=(
+            {"bottleneck": torch.zeros(2)},
+            {"bottleneck": torch.zeros(2)},
+        ),
+    ) is True
+    assert model.commit_region_split("cortex", proposal) is True
+    assert network.region_ids == ("source", "bottleneck", "bottleneck.split.1")
+    assert network.execution_order == network.region_ids
+    assert network.regions[1].unit_ids == ("bottleneck.u0",)
+    assert network.regions[2].unit_ids == ("bottleneck.u1",)
+    assert model.cognitive_snapshot().development.split_merge_count == 1
+
+    restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
+    assert restored.rollback_region_split(proposal.proposal_id) is True
+    assert restored.neuron_networks[0].region_ids == ("source", "bottleneck")
+    assert restored.neuron_networks[0].regions[1].unit_ids == (
+        "bottleneck.u0",
+        "bottleneck.u1",
+    )
+    assert restored.cognitive_snapshot().development.structural_budget == 2
