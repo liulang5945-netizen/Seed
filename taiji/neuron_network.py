@@ -9,7 +9,7 @@ import torch
 
 from .contracts import StructuralTopologyProposal
 from .cross_region_learning import CrossRegionCooperationLearner
-from .neuron_region import AdaptiveNeuronRegion
+from .neuron_region import AdaptiveNeuronRegion, NeuronRegionDynamics
 from .sparse import SparseSynapses
 
 ADAPTIVE_NEURON_NETWORK_CHECKPOINT_FORMAT = "adaptive-neuron-network-v1"
@@ -134,6 +134,49 @@ class AdaptiveNeuronNetwork:
                 ("source_unit_count", source.unit_count),
                 ("target_unit_count", target.unit_count),
                 ("fan_in", int(fan_in)),
+                ("topology_role", "cross_region_connection"),
+            ),
+            evidence_ids=tuple(str(item) for item in evidence_ids),
+            parent_checkpoint_id=parent_checkpoint_id,
+            resource_cost=int(resource_cost),
+        )
+
+    def propose_region_add(
+        self,
+        *,
+        region_id: str,
+        input_dim: int,
+        unit_count: int,
+        fan_in: int,
+        evidence_ids: Sequence[str],
+        parent_checkpoint_id: str | None = None,
+        resource_cost: int = 1,
+        dynamics: NeuronRegionDynamics | None = None,
+    ) -> StructuralTopologyProposal:
+        """Describe a new adaptive region without mutating the network."""
+
+        key = str(region_id)
+        if not key:
+            raise ValueError("adaptive region_id must not be empty")
+        if key in self._regions:
+            raise ValueError("adaptive region already exists")
+        if int(input_dim) <= 0 or int(unit_count) <= 0 or int(fan_in) <= 0:
+            raise ValueError("adaptive region dimensions must be positive")
+        selected_dynamics = dynamics or NeuronRegionDynamics()
+        unit_ids = tuple(f"{key}.u{index}" for index in range(int(unit_count)))
+        return StructuralTopologyProposal(
+            proposal_id=f"topology:{key}:region:add",
+            substrate_id=key,
+            target_kind="region",
+            operation="add",
+            specification=(
+                ("region_id", key),
+                ("input_dim", int(input_dim)),
+                ("unit_count", int(unit_count)),
+                ("unit_ids", unit_ids),
+                ("fan_in", int(fan_in)),
+                ("dynamics", selected_dynamics.to_payload()),
+                ("topology_role", "region"),
             ),
             evidence_ids=tuple(str(item) for item in evidence_ids),
             parent_checkpoint_id=parent_checkpoint_id,
@@ -204,6 +247,8 @@ class AdaptiveNeuronNetwork:
         if not proposal.evidence_ids:
             raise ValueError("cross-region proposal requires evidence_ids")
         specification = dict(proposal.specification)
+        if specification.get("topology_role") != "cross_region_connection":
+            raise ValueError("proposal is not a cross-region connection add")
         connection_id = str(specification.get("connection_id", ""))
         if connection_id != proposal.substrate_id:
             raise ValueError("cross-region connection identity does not match")
@@ -231,6 +276,55 @@ class AdaptiveNeuronNetwork:
                 resource_cost=float(proposal.resource_cost),
             )
         return True
+
+    @torch.no_grad()
+    def apply_region_proposal(
+        self,
+        proposal: StructuralTopologyProposal,
+        *,
+        generator: torch.Generator,
+    ) -> bool:
+        """Append one substrate region while preserving existing region order."""
+
+        if proposal.status != "pending":
+            raise ValueError("only pending region proposals can be applied")
+        if proposal.target_kind != "region" or proposal.operation != "add":
+            raise ValueError("proposal is not a region add")
+        if not proposal.evidence_ids:
+            raise ValueError("region proposal requires evidence_ids")
+        specification = dict(proposal.specification)
+        if specification.get("topology_role") != "region":
+            raise ValueError("proposal is not a region add")
+        region_id = str(specification.get("region_id", ""))
+        if region_id != proposal.substrate_id:
+            raise ValueError("region identity does not match proposal")
+        if region_id in self._regions:
+            raise ValueError("adaptive region already exists")
+        unit_ids = tuple(str(item) for item in specification.get("unit_ids", ()))
+        input_dim = int(specification.get("input_dim", 0))
+        fan_in = int(specification.get("fan_in", 0))
+        if int(specification.get("unit_count", -1)) != len(unit_ids):
+            raise ValueError("region unit count does not match unit identities")
+        if not unit_ids or input_dim <= 0 or fan_in <= 0:
+            raise ValueError("region specification dimensions must be positive")
+        dynamics_payload = specification.get("dynamics", {})
+        if not isinstance(dynamics_payload, Mapping):
+            raise ValueError("region dynamics must be a mapping")
+        region = AdaptiveNeuronRegion(
+            region_id=region_id,
+            input_dim=input_dim,
+            unit_ids=unit_ids,
+            fan_in=fan_in,
+            dynamics=NeuronRegionDynamics.from_payload(dynamics_payload),
+            generator=generator,
+            device=self._region_device(),
+        )
+        self._regions[region_id] = region
+        self.execution_order = (*self.execution_order, region_id)
+        return True
+
+    def _region_device(self) -> torch.device:
+        return self.regions[0].device
 
     @torch.no_grad()
     def migrate_region_growth(

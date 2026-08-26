@@ -604,20 +604,14 @@ taiji/
 ## 13. 当前唯一实现入口
 
 > 实时覆写（2026-08-26）：下方滚动记录中的旧“下一入口”由本段最新 Gate 状态覆盖；
-> synapse topology proposal 与 runtime topology ledger 已完成，当前入口是把同一 ledger
-> 扩展到可迁移的 neuron/region proposal，并保持预算、holdout、lesion、checkpoint continuation
-> 与 rollback 约束。该入口已完成：`AdaptiveNeuronRegion` 现在提供稳定 `unit_id`、显式活动/
-> 阈值/膜电位/trace、稀疏输入与递归突触、局部学习、functional lesion 和 checkpoint；
-> `TSKV8Adapter` 已把 neuron add 接入同一 topology ledger。当前入口转为多个自适应区域之间的
-> 显式跨区域 proposal、holdout transfer 与 cross-region lesion；该入口也已完成：
-> `AdaptiveNeuronNetwork`、跨区稀疏连接迁移及 adapter ledger 均已通过。当前入口转为由
-> prediction error、资源状态和 holdout transfer 共同调制的学习型跨区域协作；该 Gate 已
-> 通过。当前唯一入口转为把 route learner 接入真实 percept/world runtime 的在线 credit loop，
-> 自动从实际 outcome 更新路由证据，避免评估脚本手工注入反馈；该 Gate 已通过。当前唯一
-> 入口转为让持续 prediction error、资源可用性和 holdout 增益触发可审计的结构成长 proposal，
-> 再经统一 ledger 的预算、checkpoint、lesion 与 rollback 才能提交；neuron-growth Gate 已通过。
-> 当前入口转为同一闭环的区域级生长：持续区域瓶颈生成 region proposal，并在 holdout 验证后
-> 接入显式跨区域网络。
+> synapse topology proposal、runtime topology ledger、neuron growth、cross-region wiring、
+> learning-driven route selection、online credit 与 region growth 已完成。`AdaptiveNeuronNetwork`
+> 现在可以在稳定区域身份和执行顺序下追加由 substrate 压力触发的 child region；proposal 显式
+> 保存区域动力学、单位身份和 topology role，adapter 通过统一 DevelopmentState ledger 执行
+> 预算、checkpoint trial、功能性 region lesion 与逆向 rollback，并可在新区域后建立显式跨区
+> 稀疏连接。当前唯一入口转为 post-growth holdout validation：新区域及其显式连接必须在未见
+> 输入上产生可重复目标改善，才算完成从结构出生到有效模块的闭环；继续禁止按 action/intent
+> 表决定增长。
 
 本步设计已收敛并通过 Gate：新增独立的 `CrossRegionCooperationLearner`，为每条显式跨区连接维护
 可 checkpoint 的 prediction-error EMA、holdout-transfer EMA、resource-state EMA、证据次数

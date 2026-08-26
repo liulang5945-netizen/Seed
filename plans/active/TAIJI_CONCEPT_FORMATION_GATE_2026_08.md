@@ -111,5 +111,9 @@ connection/region lesion 与 checkpoint continuation；在线 credit loop 已接
 由 expected target activity 自动计算 prediction error 和 holdout transfer。下一步进入 substrate
 驱动的自动结构成长 Gate 已完成：持续误差、资源可用性和 holdout 增益只能生成 neuron proposal，
 必须通过 DevelopmentState budget、checkpoint trial、functional lesion 与 reverse rollback 才能
-出生。下一步把同一规则扩展到区域级 proposal：区域瓶颈需在 holdout 上证明新区域有增益后，
-才能接入跨区域网络；继续禁止按固定 action/intent 表决定增长。
+出生。区域级 proposal Gate 也已完成：持续区域瓶颈可以生成带非语义 child region identity、
+显式 dynamics 和 topology role 的 region proposal；`AdaptiveNeuronNetwork` 保持已有区域和
+执行顺序，adapter ledger 负责预算、checkpoint trial、functional region lesion、显式跨区域
+连接和逆向 rollback，且零预算 fail-closed。该 Gate 报告为
+`reports/taiji_region_growth_20260826.json`。当前下一步是独立验证新生区域及其连接在未见输入上的
+holdout 目标改善，再允许其进入长期发展记录；继续禁止按固定 action/intent 表决定增长。
