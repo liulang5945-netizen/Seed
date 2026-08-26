@@ -1,11 +1,35 @@
 # Seed — runtime for the Taiji Native Cognitive Architecture
 
-**Taiji** is the native cognitive architecture and model. **Seed** is the project, product and runtime that trains, evaluates, deploys and hosts Taiji. Taiji is being redesigned around learned perception, world state, workspace, memory, goals, reasoning, planning and generation while reusing mature algorithms where they fit the project—not rebuilding intelligence from primitive one-hot mechanisms.
+A byte-level predictive-coding kernel that learns **online from local prediction errors** — no
+backpropagation, no attention matrix, no optimizer, no context window, no teacher model. Sparse
+fixed-fan-in synapses carry every update, and episodic memory is a shared distributed field that
+allocates **zero slots per event**. Every claim below is backed by a committed, lesion-controlled
+verification script.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 
-> Current status: the Taiji Native Architecture v1 target is specified; the executable code is still the lower-level Taiji Substrate Kernel v8 (TSK-v8), not a completed cognitive architecture or AGI claim.
+| What a Transformer does | What this kernel does instead |
+|---|---|
+| tokenizer + learned embedding | 256 raw-byte receptors + boundary receptor |
+| self-attention | sparse reciprocal prediction and recurrent transitions |
+| KV cache / external retrieval | one shared engram field, no per-event K/V slots |
+| global backpropagation | local prediction/state/motor/memory deltas |
+| autoregressive decode | motor byte fed back through the same sensor |
+
+Measured on the committed two-region `[64, 48]` byte-cycle benchmark (seed `7`): byte-cycle accuracy
+**0% → 94.12%**, mean surprise **5.4041 → 0.1069** (**98.02%** reduction), free generation exact for
+all eight steps, 83,841 learned scalars. Ablations are reported, not hidden — see
+[reproducible results](#reproducible-tsk-v8-kernel-results).
+
+> **Status, stated plainly:** the Taiji Native Architecture v1 target is specified, but the executable
+> code is still the lower-level Taiji Substrate Kernel v8 (TSK-v8). This is a substrate-mechanism
+> research kernel — **not** a completed cognitive architecture, not a language model, and **not an AGI
+> claim**. Current checkpoints are early-stage: garbled text replies are expected kernel behavior.
+
+## Project scope
+
+**Taiji** is the native cognitive architecture and model. **Seed** is the project, product and runtime that trains, evaluates, deploys and hosts Taiji. Taiji is being redesigned around learned perception, world state, workspace, memory, goals, reasoning, planning and generation while reusing mature algorithms where they fit the project—not rebuilding intelligence from primitive one-hot mechanisms.
 
 ## Naming
 

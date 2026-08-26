@@ -613,6 +613,15 @@ P4 的最小真实经历边界已落地：
 - Windows PowerShell 5.1 的 `ConvertFrom-Json` 无法处理空字符串键，而 lockfileVersion 3 的根条目正是 `packages[""]`；检查 lock 结构要用 `node -e`。
 - 前端门禁必须四道齐验，只跑 audit 不够：`npm audit --production --audit-level=high`、`npx eslint src --ext .js,.vue`（0 errors，warnings 容忍）、`npx vitest run`、`npm run build` + `dist/index.html` 存在性。
 
+### 14.10 仓库可发现性：元数据是必要条件，且受令牌能力边界限制（2026-08-26 新增）
+
+- 实测 `gh repo view --json` 确认：仓库自 2026-07-15 公开，但 `description=""`、`repositoryTopics=null`、`homepageUrl=""`、`usesCustomOpenGraphImage=false`，1 star / 0 fork / 0 watcher。GitHub 用于分发流量的字段全空，这不是"设计不佳"而是该层未填写。
+- `repositoryTopics=null` 的后果是**缺席全部 topic 浏览页**（不是排名靠后，是不在列表里）；`description=""` 则把搜索匹配面全部推给 README 全文，而仓库名 `Seed` 是高冲突通用词，几乎不可能靠名字被检索到。
+- topic 选择必须按**真实仓库规模**取中间区间，不能取最热。实测 `gh api search/repositories?q=topic:<t>` 计数：`local-learning` 25、`sparse-neural-networks` 43、`predictive-coding` 116、`episodic-memory` 140、`hebbian-learning` 148、`neuromorphic-computing` 328、`world-models` 551、`computational-neuroscience` 728、`cognitive-architecture` 784、`online-learning` 888、`pytorch` 59222、`artificial-intelligence` 47251、`deep-learning` 104237、`machine-learning` 235783。在 116 个仓库的页面里会被看到，在 235783 个里等于不存在，故 `machine-learning` 不贴；`spiking-neural-networks`（597）虽在好区间也不贴，因为内核不是脉冲网络，贴上是误导。禁贴 `agi`——README 自身声明 `not an AGI claim`，贴上即自相矛盾。
+- **令牌能力边界（重要）**：本机 `GH_TOKEN` 是 App/细粒度令牌。`gh api repos/... --jq .permissions` 返回 `admin:true`，但 `gh repo edit --description/--add-topic` 与 `PUT /repos/{owner}/{repo}/topics` 均返回 `HTTP 403 Resource not accessible by integration`。措辞中的 "by integration" 是判据：App 令牌能力由 App 声明的 permission set 决定，与账号是否 admin 无关；该令牌有 `contents:write`（故 `git push` 一路成功）但无 `administration:write`，而 description/topics/homepage 属 Administration 档。**结论：这三个字段在当前环境下无法由 agent 写入，必须人工在网页操作，不要反复换写法撞同一面墙。** social preview 图 GitHub 从未提供 REST 接口，本来也只能网页上传。
+- README 首屏顺序是唯一不依赖令牌权限的杠杆，且转化价值高于 topics（topics 带人进来，首屏决定是否留下）。原首屏被"命名分工 + 免责声明"占据，而最有传播力的两个资产（Transformer 责任对照表、`0%→94.12%` / `98.02%` 数字）分别埋在 L52 与 L184。已重排为：一句话机制主张 → badge → 对照表 → 实测数字 → 明示 status。**诚实声明一条未删**，只是移出首屏主位，并新增 `## Project scope` 承接原命名段。
+- 改 README 首屏必须回原文核对每个被前移的数字有出处（实测首屏 `94.12/5.4041/0.1069/98.02/83,841` 全部对应 L203-L210 原表），并确认锚点标题真实存在（`#reproducible-tsk-v8-kernel-results` → L197）以及旧免责声明残留计数为 0——Markdown 锚点失效与声明重复都不会报错，只会静默劣化。
+
 ## 15. 停止项
 
 在 P2 通过前：
@@ -625,6 +634,14 @@ P4 的最小真实经历边界已落地：
 - 不把旧 N/M 通过记录宣传为完整智能进展。
 
 ## 16. 当前唯一下一步
+
+**待人工执行（agent 令牌无 `administration:write`，见 14.10）：在 GitHub 网页 Settings/首页填入以下已定稿内容。**
+
+- description（252 字符，350 上限内，前 100 字符已承载核心主张）：
+  `Byte-level predictive-coding kernel that learns online from local prediction errors: no backpropagation, no attention matrix, no optimizer. Sparse fixed-fan-in synapses, slot-free distributed episodic memory, lesion-controlled reproducible experiments.`
+- topics（13 个，精准优先、覆盖面兜底）：`predictive-coding` `cognitive-architecture` `episodic-memory` `hebbian-learning` `local-learning` `online-learning` `computational-neuroscience` `neuromorphic-computing` `sparse-neural-networks` `world-models` `pytorch` `deep-learning` `artificial-intelligence`
+- homepage：留空或指向 README 的 reproducible results 锚点，不要指向尚未上线的站点。
+- social preview：GitHub 无 REST 接口，只能网页上传；建议图上直接写 `0% → 94.12%` 与 `no backprop / no attention`。
 
 **已完成：`TSKV8Adapter.step_cross_region_network()` 已把 growth/pruning/split/merge 所需的 activity、route evidence、prediction error、learning gain、holdout transfer 和资源压力接入可 checkpoint 的 runtime observation；Gate 为 `reports/taiji_runtime_structure_20260826.json`。无 expected activity 时不伪造 growth supervision，route credit 来自实际 target activity，runtime tick 不直接改变 topology。**
 
