@@ -188,8 +188,7 @@ def evaluate(model_dir: Path) -> dict[str, object]:
         and split_ids
         and split_expression_ids
         and lesion_passed
-        and restored._language_backend_registry.get(BACKEND_ID).family
-        == "external-causal-decoder"
+        and restored._language_backend_registry.get(BACKEND_ID).family == "external-causal-decoder"
     )
     raw_quality_passed = bool(
         holdout_metrics["output_nonempty_rate"] == 1.0
@@ -232,7 +231,13 @@ def build_manifest() -> dict[str, object]:
         "format": MANIFEST_FORMAT,
         "task": "separate LanguageTrainingExample train/holdout data and measure a real external provider without leaking cognition",
         "lesions": ["split_leakage", "hidden_provider_training", "language_organ_detached"],
-        "signals": ["corpus_round_trip", "split_disjoint", "train_metrics", "holdout_metrics", "raw_provider_quality"],
+        "signals": [
+            "corpus_round_trip",
+            "split_disjoint",
+            "train_metrics",
+            "holdout_metrics",
+            "raw_provider_quality",
+        ],
         "boundary": "provider data/quality baseline only; no claim that Qwen training has occurred or that the decoder owns Taiji cognition",
     }
 
@@ -256,7 +261,9 @@ def main() -> None:
     report = evaluate(args.model)
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if not report["gates"]["train_holdout_boundary"]["passed"]:

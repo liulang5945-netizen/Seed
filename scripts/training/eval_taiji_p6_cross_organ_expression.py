@@ -66,7 +66,11 @@ def build_manifest() -> dict[str, object]:
     return {
         "format": MANIFEST_FORMAT,
         "task": "render one content plan through tool and text expression organs",
-        "lesions": ["independent_content_per_organ", "expression_overwrites_goal", "direct_byte_content"],
+        "lesions": [
+            "independent_content_per_organ",
+            "expression_overwrites_goal",
+            "direct_byte_content",
+        ],
         "signals": ["content_id", "semantic_slots", "confidence", "goal_provenance", "modality"],
         "boundary": "structured cross-organ consistency Gate only; text modality is not a language fluency claim",
     }
@@ -88,11 +92,12 @@ def main() -> None:
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
     main()
-

@@ -106,7 +106,13 @@ def build_manifest() -> dict[str, object]:
         "format": MANIFEST_FORMAT,
         "task": "update selected semantic content utility from successive failed and successful adapter outcomes",
         "lesions": ["no_online_credit", "duplicate_feedback", "content_feedback_checkpoint"],
-        "signals": ["reward", "prediction_error", "candidate_migration", "training_steps", "checkpoint"],
+        "signals": [
+            "reward",
+            "prediction_error",
+            "candidate_migration",
+            "training_steps",
+            "checkpoint",
+        ],
         "boundary": "online content credit Gate only; no open-ended semantic learning claim",
     }
 
@@ -127,7 +133,9 @@ def main() -> None:
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

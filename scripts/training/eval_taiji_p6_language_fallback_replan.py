@@ -127,8 +127,17 @@ def build_manifest() -> dict[str, object]:
     return {
         "format": MANIFEST_FORMAT,
         "task": "consume a language realization fallback through alternative Taiji content replanning",
-        "lesions": ["no_fallback_feedback", "no_alternative_content_replan", "checkpoint_feedback_loss"],
-        "signals": ["first_fallback", "content_prediction_error", "replacement_content", "final_replan_required"],
+        "lesions": [
+            "no_fallback_feedback",
+            "no_alternative_content_replan",
+            "checkpoint_feedback_loss",
+        ],
+        "signals": [
+            "first_fallback",
+            "content_prediction_error",
+            "replacement_content",
+            "final_replan_required",
+        ],
         "boundary": "content/expression replan Gate only; no claim about open-domain language quality",
     }
 
@@ -138,18 +147,24 @@ def main() -> None:
     parser.add_argument(
         "--manifest",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_p6_language_fallback_replan_manifest_20260825.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_p6_language_fallback_replan_manifest_20260825.json",
     )
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_p6_language_fallback_replan_baseline_20260825.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_p6_language_fallback_replan_baseline_20260825.json",
     )
     args = parser.parse_args()
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if not report["gate"]["passed"]:

@@ -212,9 +212,7 @@ class GoalPlanner:
         """Return a threshold on the world-error scale, not a probability scale."""
 
         threshold = (
-            self.config.recovery_error_threshold
-            if recovery
-            else self.config.replan_error_threshold
+            self.config.recovery_error_threshold if recovery else self.config.replan_error_threshold
         )
         if self._world_error_calibration:
             ordered = sorted(self._world_error_calibration)
@@ -371,7 +369,9 @@ class GoalPlanner:
 
         attempts, successes = self._calibration.get(rollout.rollout_id, (0, 0))
         attempts += 1
-        successes += int(outcome.success is True or (outcome.success is None and outcome.reward > 0.0))
+        successes += int(
+            outcome.success is True or (outcome.success is None and outcome.reward > 0.0)
+        )
         self._calibration[rollout.rollout_id] = (attempts, successes)
         return successes / attempts
 

@@ -105,7 +105,7 @@ def build_manifest(
     for raw_path in corpus_paths:
         path = Path(raw_path)
         with path.open("r", encoding="utf-8") as handle:
-            for line_number, line in enumerate(handle, start=1):
+            for line in handle:
                 scanned += 1
                 try:
                     record = json.loads(line)

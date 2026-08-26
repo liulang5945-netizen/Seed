@@ -103,7 +103,12 @@ def build_manifest() -> dict[str, object]:
         "train_episodes": [[0, 0, 0], [1, 0, 1], [0, 1, 1]],
         "holdout_composition": [1, 1],
         "holdout_reward": 2,
-        "controls": ["episodic_nearest", "replay_lesion", "episode_id_lesion", "checkpoint_continuation"],
+        "controls": [
+            "episodic_nearest",
+            "replay_lesion",
+            "episode_id_lesion",
+            "checkpoint_continuation",
+        ],
         "boundary": "one additive semantic relation only; not a general language or concept benchmark",
     }
 
@@ -124,7 +129,9 @@ def main() -> None:
     report = evaluate_consolidation()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

@@ -11,4 +11,7 @@ def test_p4_procedural_runtime_ownership_gate() -> None:
     assert report["metrics"]["procedural_runtime_accuracy"] == 1.0
     assert report["metrics"]["episode_id_lesion_accuracy"] == 1.0
     assert report["metrics"]["checkpoint_continuation_accuracy"] == 1.0
-    assert report["metrics"]["procedural_runtime_accuracy"] > report["metrics"]["runtime_lesion_accuracy"]
+    assert (
+        report["metrics"]["procedural_runtime_accuracy"]
+        > report["metrics"]["runtime_lesion_accuracy"]
+    )

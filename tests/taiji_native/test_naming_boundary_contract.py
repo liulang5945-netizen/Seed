@@ -124,8 +124,7 @@ def test_seed_does_not_redefine_taiji_v1_cognitive_contracts() -> None:
                 offenders.append(path.relative_to(REPO).as_posix())
 
     assert not offenders, (
-        "Seed 不得重新定义 Taiji v1 认知合同；请把状态和协议放回 taiji/："
-        f"{offenders}"
+        "Seed 不得重新定义 Taiji v1 认知合同；请把状态和协议放回 taiji/：" f"{offenders}"
     )
 
 

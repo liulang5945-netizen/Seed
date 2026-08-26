@@ -143,7 +143,13 @@ def build_manifest() -> dict[str, object]:
         "format": MANIFEST_FORMAT,
         "task": "fail the first structured tool call, replan to a recovery tool, and retain both outcomes",
         "lesions": ["no_prediction_error_replan", "no_recovery_tool", "no_episodic_write"],
-        "signals": ["tool_success", "prediction_error", "replan_required", "tool_sequence", "episodic_memory"],
+        "signals": [
+            "tool_success",
+            "prediction_error",
+            "replan_required",
+            "tool_sequence",
+            "episodic_memory",
+        ],
         "boundary": "simulated failure/replan Gate only; no broad reliability or general planning claim",
     }
 
@@ -164,11 +170,12 @@ def main() -> None:
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
     main()
-

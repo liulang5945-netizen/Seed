@@ -14,8 +14,10 @@ WORLD_STATE_CHECKPOINT_FORMAT = "taiji-world-state-v1"
 
 def _value_equal(left: Any, right: Any) -> bool:
     if isinstance(left, torch.Tensor) or isinstance(right, torch.Tensor):
-        return isinstance(left, torch.Tensor) and isinstance(right, torch.Tensor) and torch.equal(
-            left, right
+        return (
+            isinstance(left, torch.Tensor)
+            and isinstance(right, torch.Tensor)
+            and torch.equal(left, right)
         )
     if isinstance(left, Mapping) and isinstance(right, Mapping):
         return left.keys() == right.keys() and all(
@@ -56,9 +58,7 @@ class TaijiWorldState:
 
     @property
     def history(self) -> tuple[WorldTransition, ...]:
-        return tuple(
-            WorldTransition.from_payload(item.to_payload()) for item in self._history
-        )
+        return tuple(WorldTransition.from_payload(item.to_payload()) for item in self._history)
 
     def apply(self, transition: WorldTransition) -> WorldState:
         """Commit one causally linked action/outcome/next-state transition."""

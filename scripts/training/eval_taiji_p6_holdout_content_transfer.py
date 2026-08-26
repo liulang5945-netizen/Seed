@@ -121,8 +121,19 @@ def build_manifest() -> dict[str, object]:
     return {
         "format": MANIFEST_FORMAT,
         "task": "select a holdout content candidate with unseen intent kind, ID, and semantic slot structure",
-        "lesions": ["candidate_id_lookup", "intent_kind_table", "slot_shape_table", "checkpoint_transfer"],
-        "signals": ["goal_residual", "world_uncertainty", "novelty", "candidate_features", "holdout_selection"],
+        "lesions": [
+            "candidate_id_lookup",
+            "intent_kind_table",
+            "slot_shape_table",
+            "checkpoint_transfer",
+        ],
+        "signals": [
+            "goal_residual",
+            "world_uncertainty",
+            "novelty",
+            "candidate_features",
+            "holdout_selection",
+        ],
         "boundary": "holdout content utility transfer Gate only; no open-ended semantic invention claim",
     }
 
@@ -132,22 +143,27 @@ def main() -> None:
     parser.add_argument(
         "--manifest",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_p6_holdout_content_transfer_manifest_20260825.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_p6_holdout_content_transfer_manifest_20260825.json",
     )
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_p6_holdout_content_transfer_baseline_20260825.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_p6_holdout_content_transfer_baseline_20260825.json",
     )
     args = parser.parse_args()
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
     main()
-

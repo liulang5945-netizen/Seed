@@ -55,9 +55,7 @@ def _calibration_errors(
     for template in templates:
         prediction = calibration_learner.predict(current, template.action)
         actual = _advance_state(current, template.action.target_id)
-        errors.append(
-            schema.normalized_state_error(prediction.state, actual)
-        )
+        errors.append(schema.normalized_state_error(prediction.state, actual))
         calibration_learner.online_update(
             WorldTransition(
                 before=current,
@@ -114,11 +112,13 @@ def _run_case(
         length=horizon,
     )
     adapter.plan_rollouts(
-        (adapter.imagine_world_rollout(
-            f"h{horizon}-f{failure_position}-initial-rollout",
-            "reach-world",
-            templates,
-        ),)
+        (
+            adapter.imagine_world_rollout(
+                f"h{horizon}-f{failure_position}-initial-rollout",
+                "reach-world",
+                templates,
+            ),
+        )
     )
 
     actual_states = []
@@ -147,7 +147,10 @@ def _run_case(
     calibrated_threshold = planner.world_prediction_error_threshold()
     remaining = horizon - failure_position - 1
     interruption_gate = bool(
-        all(outcome.success is True and outcome.terminal is False for outcome in pre_failure_outcomes)
+        all(
+            outcome.success is True and outcome.terminal is False
+            for outcome in pre_failure_outcomes
+        )
         and adapter.replan_required
         and adapter._planned_rollout is None
         and interrupted_state.planning_recovery is not None
@@ -167,11 +170,13 @@ def _run_case(
         length=remaining,
     )
     adapter.plan_rollouts(
-        (adapter.imagine_world_rollout(
-            f"h{horizon}-f{failure_position}-recovery-rollout",
-            "reach-world",
-            recovery_templates,
-        ),)
+        (
+            adapter.imagine_world_rollout(
+                f"h{horizon}-f{failure_position}-recovery-rollout",
+                "reach-world",
+                recovery_templates,
+            ),
+        )
     )
     recovery_outcomes = [
         adapter.execute_imagined_rollout_step(
@@ -198,7 +203,8 @@ def _run_case(
         and final_checkpoint._world_dynamics is not None
         and final_checkpoint._world_dynamics.online_updates == horizon
         and final_checkpoint._goal_planner is not None
-        and final_checkpoint._goal_planner.world_prediction_error_threshold() == calibrated_threshold
+        and final_checkpoint._goal_planner.world_prediction_error_threshold()
+        == calibrated_threshold
     )
     return {
         "seed": seed,
@@ -331,18 +337,24 @@ def main() -> None:
     parser.add_argument(
         "--manifest",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_p7_rollout_recovery_transfer_manifest_20260826.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_p7_rollout_recovery_transfer_manifest_20260826.json",
     )
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_p7_rollout_recovery_transfer_report_20260826.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_p7_rollout_recovery_transfer_report_20260826.json",
     )
     args = parser.parse_args()
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

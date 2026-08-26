@@ -113,7 +113,13 @@ def build_manifest() -> dict[str, object]:
         "format": MANIFEST_FORMAT,
         "task": "own learned content selection and ContentPlan-to-ExpressionPlan runtime state in the adapter",
         "lesions": ["selector_runtime", "content_expression_bridge", "native_checkpoint_content"],
-        "signals": ["goal_residual", "world_uncertainty", "selected_candidate", "expression", "checkpoint"],
+        "signals": [
+            "goal_residual",
+            "world_uncertainty",
+            "selected_candidate",
+            "expression",
+            "checkpoint",
+        ],
         "boundary": "runtime ownership Gate only; no open-ended language generation claim",
     }
 
@@ -123,22 +129,27 @@ def main() -> None:
     parser.add_argument(
         "--manifest",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_p6_content_runtime_ownership_manifest_20260825.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_p6_content_runtime_ownership_manifest_20260825.json",
     )
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_p6_content_runtime_ownership_baseline_20260825.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_p6_content_runtime_ownership_baseline_20260825.json",
     )
     args = parser.parse_args()
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
     main()
-

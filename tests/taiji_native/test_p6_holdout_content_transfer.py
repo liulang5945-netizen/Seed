@@ -82,4 +82,3 @@ def test_holdout_content_uses_learned_context_utility_not_candidate_names() -> N
     assert decision.selected.candidate_id == "holdout-forecast-42"
     assert decision.selected.intent_kind == "forecast_digest"
     assert decision.selected.semantic_slots == {"format": "digest", "regions": ["east", "south"]}
-

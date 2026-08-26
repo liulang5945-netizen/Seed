@@ -97,9 +97,7 @@ class _QwenTextDecoder:
                 pad_token_id=self.tokenizer.eos_token_id,
             )
         prompt_length = encoded["input_ids"].shape[1]
-        return self.tokenizer.decode(
-            generated[0, prompt_length:], skip_special_tokens=True
-        ).strip()
+        return self.tokenizer.decode(generated[0, prompt_length:], skip_special_tokens=True).strip()
 
 
 def _prompt(expression: Any) -> str:

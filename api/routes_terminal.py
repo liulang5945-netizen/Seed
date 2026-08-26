@@ -333,9 +333,7 @@ async def terminal_websocket(ws: WebSocket):
                 t = msg.get("type", "")
                 if t == "input" and process.stdin and not process.stdin.closed:
                     data = _normalize_terminal_input(msg.get("data", ""))
-                    text = await loop.run_in_executor(
-                        None, lambda: data.encode(_stdin_codec, "replace")
-                    )
+                    text = await loop.run_in_executor(None, data.encode, _stdin_codec, "replace")
                     await loop.run_in_executor(None, process.stdin.write, text)
                     await loop.run_in_executor(None, process.stdin.flush)
                     # 审计日志：脱敏，仅记录输入长度（DEBUG 级）

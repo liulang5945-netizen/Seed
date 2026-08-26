@@ -38,5 +38,6 @@ Playwright 原断言要求“输入文本后立即允许发送”，但 `ChatVie
 ## 遗留门项
 
 - Black 首次检查只发现 `tests/test_workspace_routes.py`，该文件已按格式规范整理。当前开发机的 Black 26.5.1 编译运行器在检查完成后长时间不退出，无法把本地进程退出状态作为可靠证据；CI 使用固定的 Black 24.12.0，R0 关闭前必须在固定版本上复验 `black --check .`。
+  - **2026-08-26 关闭**：此门项作废并已实际闭合。Black 24.12.0 不存在（PyPI 与 `psf/black` tag 均无，24.10.0 之后是 25.1.0），CI 的 pin 从未安装成功，因此"在固定版本上复验"不可执行。现已把 `.github/workflows/ci.yml` 与 `.pre-commit-config.yaml` 统一钉到 `black==26.5.1` / `ruff==0.16.4`，并用 black 进程内 API（`black.format_file_contents`，绕开本机运行器不退出的问题）一次性格式化 68 个文件，复核归零，`black --check .` 保持阻塞门禁。本机 Black 运行器不退出的现象仍存在，验证一律走进程内 API。
 - ESLint 的 17 条 warning 和 production build 的 chunk size/plugin timing warning 不阻断 S1，但进入 S2 门禁收紧清单。
 - 本报告不宣称 API-backed 浏览器数据操作已经完成真实后端 E2E；这些行为目前由前端组件测试和后端 TestClient 路由测试覆盖，S2 再补带后端的浏览器链路。

@@ -52,7 +52,8 @@ def evaluate() -> dict[str, object]:
             "encoded_bytes": len(encoded),
             "modality": restored.modality,
             "channel": restored.channel,
-            "semantic_slots_round_trip": restored.fields["semantic_slots"] == content.semantic_slots,
+            "semantic_slots_round_trip": restored.fields["semantic_slots"]
+            == content.semantic_slots,
             "confidence_round_trip": restored.confidence == content.confidence,
             "goal_provenance_round_trip": restored.source_goal_id == content.source_goal_id,
         },
@@ -89,11 +90,12 @@ def main() -> None:
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
     main()
-

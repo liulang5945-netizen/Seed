@@ -71,8 +71,7 @@ def evaluate(model_dir: Path, adapter_dir: Path) -> dict[str, object]:
     adapter.attach_language_backend_registry(registry)
     adapter.attach_language_organ(raw_organ)
     raw_outputs = [
-        adapter.emit_language(expression).text_bytes.decode("utf-8")
-        for expression in expressions
+        adapter.emit_language(expression).text_bytes.decode("utf-8") for expression in expressions
     ]
     adapted_model = PeftModel.from_pretrained(decoder.model, adapter_dir, is_trainable=False)
     adapted_model.eval()
@@ -120,7 +119,9 @@ def evaluate(model_dir: Path, adapter_dir: Path) -> dict[str, object]:
     ) / len(guarded_results)
     gate_passed = bool(
         safe_rate == 1.0
-        and all(bool(result["replan_required"]) for result in guarded_results if result["fallback_used"])
+        and all(
+            bool(result["replan_required"]) for result in guarded_results if result["fallback_used"]
+        )
         and all(
             not bool(result["replan_required"])
             for result in guarded_results
@@ -159,8 +160,19 @@ def build_manifest() -> dict[str, object]:
     return {
         "format": MANIFEST_FORMAT,
         "task": "load a trained Qwen LoRA provider into Taiji's validator/fallback/replan boundary",
-        "lesions": ["raw_provider_quality", "semantic_validator", "adapter_rollback", "cognition_dependency"],
-        "signals": ["raw_required_term_recall", "safe_realization_rate", "fallback_count", "replan_required", "rollback_outputs_match_raw"],
+        "lesions": [
+            "raw_provider_quality",
+            "semantic_validator",
+            "adapter_rollback",
+            "cognition_dependency",
+        ],
+        "signals": [
+            "raw_required_term_recall",
+            "safe_realization_rate",
+            "fallback_count",
+            "replan_required",
+            "rollback_outputs_match_raw",
+        ],
         "boundary": "integration safety Gate only; passing does not make the external decoder a Taiji cognition owner",
     }
 
@@ -185,7 +197,9 @@ def main() -> None:
     report = evaluate(args.model, args.adapter_dir)
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if not report["gate"]["passed"]:

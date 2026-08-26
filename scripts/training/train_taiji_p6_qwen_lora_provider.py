@@ -103,7 +103,9 @@ def _training_batch(tokenizer, example) -> tuple[torch.Tensor, torch.Tensor]:
     return encoded["input_ids"], labels
 
 
-def _train_lora(model, tokenizer, corpus: LanguageTrainingCorpus, *, epochs: int, learning_rate: float) -> dict[str, object]:
+def _train_lora(
+    model, tokenizer, corpus: LanguageTrainingCorpus, *, epochs: int, learning_rate: float
+) -> dict[str, object]:
     config = LoraConfig(
         r=LORA_RANK,
         lora_alpha=LORA_ALPHA,
@@ -189,19 +191,12 @@ def evaluate(
     output_dir.mkdir(parents=True, exist_ok=True)
     adapted_model.save_pretrained(output_dir)
     tokenizer.save_pretrained(output_dir)
-    adapted_outputs = [
-        str(example["output_text"])
-        for example in adapted_holdout["examples"]
-    ]
+    adapted_outputs = [str(example["output_text"]) for example in adapted_holdout["examples"]]
     adapted_model.disable_adapter_layers()
     rollback_holdout = _measure(adapter, corpus.holdout)
-    rollback_outputs = [
-        str(example["output_text"])
-        for example in rollback_holdout["examples"]
-    ]
+    rollback_outputs = [str(example["output_text"]) for example in rollback_holdout["examples"]]
     rollback_outputs_match_base = rollback_outputs == [
-        str(example["output_text"])
-        for example in base_holdout["examples"]
+        str(example["output_text"]) for example in base_holdout["examples"]
     ]
     adapter.attach_language_organ(None)
     restored = TSKV8Adapter.from_native_checkpoint(adapter.native_checkpoint())
@@ -256,7 +251,12 @@ def build_manifest() -> dict[str, object]:
         "format": MANIFEST_FORMAT,
         "task": "train a rollbackable Qwen LoRA language-organ adapter from Taiji-owned train examples and evaluate the unchanged holdout",
         "lesions": ["no_lora_update", "adapter_disabled_rollback", "taiji_cognition_dependency"],
-        "signals": ["trainable_parameter_count", "holdout_required_term_recall", "prompt_leakage_rate", "rollback_outputs_match_base"],
+        "signals": [
+            "trainable_parameter_count",
+            "holdout_required_term_recall",
+            "prompt_leakage_rate",
+            "rollback_outputs_match_base",
+        ],
         "boundary": "external provider adaptation only; LoRA never owns Taiji goals, memory, planning, or action decisions",
     }
 
@@ -290,7 +290,9 @@ def main() -> None:
     )
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if not report["gate"]["passed"]:

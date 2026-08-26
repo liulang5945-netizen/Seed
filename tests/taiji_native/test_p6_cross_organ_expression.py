@@ -45,4 +45,3 @@ def test_expression_organ_cannot_change_content_identity_or_goal_provenance() ->
     assert expression.fields["intent_kind"] == content.intent_kind
     assert content.source_goal_id == "finish-task"
     assert "source_goal_id" not in expression.fields
-

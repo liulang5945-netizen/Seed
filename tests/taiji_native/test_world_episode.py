@@ -66,7 +66,9 @@ def _episode(episode_id: str, steps: tuple[tuple[str, float], ...]) -> WorldEpis
         transition = _step(state, target, amount, index)
         transitions.append(transition)
         state = transition.after
-    return WorldEpisode(episode_id=episode_id, initial=transitions[0].before, transitions=tuple(transitions))
+    return WorldEpisode(
+        episode_id=episode_id, initial=transitions[0].before, transitions=tuple(transitions)
+    )
 
 
 def test_world_episode_contract_round_trip_and_contiguity() -> None:

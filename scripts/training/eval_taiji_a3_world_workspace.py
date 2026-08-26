@@ -143,7 +143,10 @@ def evaluate_world_workspace(
         feature_dim = train[0].candidates[0].features.numel()
         router = WorkspaceRouter(feature_dim, capacity=capacity, seed=seed)
         router.fit(
-            tuple(WorkspaceRoutingExample(sample.candidates, sample.relevant_ids, sample.tick) for sample in train),
+            tuple(
+                WorkspaceRoutingExample(sample.candidates, sample.relevant_ids, sample.tick)
+                for sample in train
+            ),
             epochs=epochs,
             learning_rate=learning_rate,
         )
@@ -173,7 +176,9 @@ def evaluate_world_workspace(
             single_results = [
                 _world_episode(sample, candidate.features) for candidate in sample.candidates
             ]
-            best_single = max(single_results, key=lambda result: (result["final_success"], result["total_reward"]))
+            best_single = max(
+                single_results, key=lambda result: (result["final_success"], result["total_reward"])
+            )
             condition_results["strongest_single"] = best_single
             for condition, result in condition_results.items():
                 totals[condition]["first_success"] += int(result["first_success"])
@@ -222,7 +227,9 @@ def evaluate_world_workspace(
         "learned_gain_vs_strongest_single_min": min(
             float(report["learned_gain_vs_strongest_single"]) for report in reports
         ),
-        "learned_gain_vs_dense_min": min(float(report["learned_gain_vs_dense"]) for report in reports),
+        "learned_gain_vs_dense_min": min(
+            float(report["learned_gain_vs_dense"]) for report in reports
+        ),
         "history_length": 2,
     }
     aggregate["passed"] = bool(
@@ -273,7 +280,9 @@ def main() -> None:
     report = evaluate_world_workspace(train, holdout)
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

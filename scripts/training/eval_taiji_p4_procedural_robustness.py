@@ -22,9 +22,15 @@ from taiji import (  # noqa: E402
 
 MANIFEST_FORMAT = "taiji-p4-procedural-robustness-manifest-v1"
 REPORT_FORMAT = "taiji-p4-procedural-robustness-v1"
-TRAINING_PAIRS = ((0.0, 1.0, "advance"), (1.0, 0.0, "retreat"), (1.0, 2.0, "advance"),
-                  (2.0, 1.0, "retreat"), (0.0, 0.0, "hold"), (1.0, 1.0, "hold"),
-                  (2.0, 2.0, "hold"))
+TRAINING_PAIRS = (
+    (0.0, 1.0, "advance"),
+    (1.0, 0.0, "retreat"),
+    (1.0, 2.0, "advance"),
+    (2.0, 1.0, "retreat"),
+    (0.0, 0.0, "hold"),
+    (1.0, 1.0, "hold"),
+    (2.0, 2.0, "hold"),
+)
 HOLDOUT_PAIRS = ((0.0, 2.0, "advance"), (2.0, 0.0, "retreat"))
 
 
@@ -73,11 +79,13 @@ def _accuracy(
     correct_steps = 0
     total_steps = 0
     for left, right, transition_kind in pairs:
-        predicted = learner.predict_episode(
-            (torch.tensor([left]), torch.tensor([right]))
-        )
+        predicted = learner.predict_episode((torch.tensor([left]), torch.tensor([right])))
         expected = ("prepare", transition_kind)
-        correct_steps += sum(int(actual == target) for actual, target in zip(predicted, expected))
+        # 预测序列长度可能短于期望序列，缺失步骤按错误计入（分母固定为 len(expected)），
+        # 因此这里的截断是刻意的，不能用 strict=True。
+        correct_steps += sum(
+            int(actual == target) for actual, target in zip(predicted, expected, strict=False)
+        )
         total_steps += len(expected)
     return correct_steps / total_steps
 
@@ -164,7 +172,9 @@ def main() -> None:
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

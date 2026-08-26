@@ -108,12 +108,14 @@ class ProceduralMemoryLearner(nn.Module):
             "cue_dim": self.cue_dim,
             "action_kinds": list(self.action_kinds),
             "consolidation_count": self.consolidation_count,
-            "state_dict": None
-            if self.readout is None
-            else {
-                name: tensor.detach().cpu().clone()
-                for name, tensor in self.state_dict().items()
-            },
+            "state_dict": (
+                None
+                if self.readout is None
+                else {
+                    name: tensor.detach().cpu().clone()
+                    for name, tensor in self.state_dict().items()
+                }
+            ),
         }
 
     @classmethod
@@ -225,9 +227,7 @@ class ProceduralSequenceLearner(nn.Module):
                     [record.cue.detach().to(dtype=torch.float32) for record in episode]
                 )
                 if cues.ndim != 2 or cues.shape[1] != self.cue_dim:
-                    raise ValueError(
-                        "sequential record cue dimensions do not match the learner"
-                    )
+                    raise ValueError("sequential record cue dimensions do not match the learner")
                 targets = torch.tensor(
                     [self.action_kinds.index(record.action_intent.kind) for record in episode],
                     dtype=torch.long,
@@ -261,12 +261,14 @@ class ProceduralSequenceLearner(nn.Module):
             "seed": self.seed,
             "action_kinds": list(self.action_kinds),
             "consolidation_count": self.consolidation_count,
-            "state_dict": None
-            if self.readout is None
-            else {
-                name: tensor.detach().cpu().clone()
-                for name, tensor in self.state_dict().items()
-            },
+            "state_dict": (
+                None
+                if self.readout is None
+                else {
+                    name: tensor.detach().cpu().clone()
+                    for name, tensor in self.state_dict().items()
+                }
+            ),
         }
 
     @classmethod

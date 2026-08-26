@@ -76,4 +76,3 @@ def test_content_selection_learns_context_conditioned_content() -> None:
 
     restored = ContentSelector.from_checkpoint(selector.checkpoint())
     assert restored.select((answer, ask), uncertain).selected == uncertain_decision.selected
-

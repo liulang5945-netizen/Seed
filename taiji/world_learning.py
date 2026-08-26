@@ -87,7 +87,11 @@ class WorldSchema:
             for case in corpus.train:
                 for state in (case.initial, case.expected_state):
                     item = next(
-                        (candidate for candidate in state.objects if candidate.object_id == object_id),
+                        (
+                            candidate
+                            for candidate in state.objects
+                            if candidate.object_id == object_id
+                        ),
                         None,
                     )
                     if item is not None:
@@ -235,7 +239,9 @@ class WorldEpisodeRollout:
         return self.predictions[-1].state
 
 
-def _replace_numeric_state(state: WorldState, schema: WorldSchema, values: torch.Tensor) -> WorldState:
+def _replace_numeric_state(
+    state: WorldState, schema: WorldSchema, values: torch.Tensor
+) -> WorldState:
     updates: dict[str, dict[str, float]] = {}
     for index, (object_id, name) in enumerate(schema.state_slots):
         updates.setdefault(object_id, {})[name] = float(values[index].detach().cpu())
@@ -333,7 +339,9 @@ class WorldDynamicsLearner(nn.Module):
         for _ in range(int(epochs)):
             optimizer.zero_grad(set_to_none=True)
             output = self.network(features)
-            delta_loss = torch.nn.functional.mse_loss(output[:, : self.schema.state_dim], targets[:, : self.schema.state_dim])
+            delta_loss = torch.nn.functional.mse_loss(
+                output[:, : self.schema.state_dim], targets[:, : self.schema.state_dim]
+            )
             reward_loss = torch.nn.functional.mse_loss(output[:, -2], targets[:, -2])
             success_loss = torch.nn.functional.binary_cross_entropy_with_logits(
                 output[:, -1], targets[:, -1]
@@ -433,9 +441,14 @@ def _metrics(
         expected_success = _outcome_success(case)
         probability = min(max(prediction.success_probability, 1e-6), 1.0 - 1e-6)
         success_losses.append(
-            -(expected_success * math.log(probability) + (1.0 - expected_success) * math.log(1.0 - probability))
+            -(
+                expected_success * math.log(probability)
+                + (1.0 - expected_success) * math.log(1.0 - probability)
+            )
         )
-        success_correct.append(float((prediction.success_probability >= 0.5) == bool(expected_success)))
+        success_correct.append(
+            float((prediction.success_probability >= 0.5) == bool(expected_success))
+        )
     state_mse = sum(state_errors) / len(state_errors)
     reward_mse = sum(reward_errors) / len(reward_errors)
     success_bce = sum(success_losses) / len(success_losses)
@@ -527,9 +540,7 @@ class WorldInterventionEvaluator:
                 epochs=self.config.epochs,
                 learning_rate=self.config.learning_rate,
             )
-            learned = tuple(
-                learner.predict(case.initial, case.action) for case in corpus.holdout
-            )
+            learned = tuple(learner.predict(case.initial, case.action) for case in corpus.holdout)
             lesion = tuple(
                 learner.predict(case.initial, case.action, bind_target=False)
                 for case in corpus.holdout
@@ -560,9 +571,7 @@ class WorldInterventionEvaluator:
                 shuffled = tuple(
                     learner.predict(case.initial, case.action) for case in corpus.time_shuffled
                 )
-                seed_result["time_shuffled"] = _metrics(
-                    shuffled, corpus.time_shuffled, schema
-                )
+                seed_result["time_shuffled"] = _metrics(shuffled, corpus.time_shuffled, schema)
             seed_results.append(seed_result)
         state_gains = [
             item["frequency_baseline"]["state_mse"] - item["learned"]["state_mse"]

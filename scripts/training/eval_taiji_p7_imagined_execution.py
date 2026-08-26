@@ -124,9 +124,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
     for horizon in HORIZONS:
         adapter = TSKV8Adapter(_config(seed), episode_id=f"imagined-execution-{seed}-{horizon}")
         adapter.attach_world_dynamics(deepcopy(base_learner))
-        adapter.attach_goal_planner(
-            GoalPlanner(PlanningConfig(replan_error_threshold=1.0))
-        )
+        adapter.attach_goal_planner(GoalPlanner(PlanningConfig(replan_error_threshold=1.0)))
         adapter.set_goals((Goal("reach-world", "reach the world target", priority=1.0),))
         initial = _initial_state(move_case.initial)
         adapter.observe_event(
@@ -246,7 +244,11 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         "task": "consume data-derived imagined world rollouts in a real environment loop",
         "seeds": list(seeds),
         "horizons": list(HORIZONS),
-        "controls": ["prediction-error-trace", "remaining-rollout-consumption", "native-checkpoint-continuation"],
+        "controls": [
+            "prediction-error-trace",
+            "remaining-rollout-consumption",
+            "native-checkpoint-continuation",
+        ],
         "boundary": "numeric world prediction to environment execution; not general planning or intelligence",
     }
 
@@ -267,7 +269,9 @@ def main() -> None:
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 

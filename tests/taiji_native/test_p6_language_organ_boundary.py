@@ -355,9 +355,11 @@ def test_language_fallback_replans_to_an_alternative_expression() -> None:
         ValidatedLanguageOrgan(
             ExternalTextDecoderLanguageOrgan(
                 _ExternalDecoder(),
-                prompt_builder=lambda item: item.fields["semantic_slots"]["topic"]
-                if "semantic_slots" in item.fields
-                else item.content_id,
+                prompt_builder=lambda item: (
+                    item.fields["semantic_slots"]["topic"]
+                    if "semantic_slots" in item.fields
+                    else item.content_id
+                ),
                 backend_id="mature-decoder-v1",
             )
         )

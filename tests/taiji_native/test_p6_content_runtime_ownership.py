@@ -78,4 +78,3 @@ def test_adapter_owns_content_selection_and_expression_checkpoint() -> None:
     restored = TSKV8Adapter.from_native_checkpoint(adapter.native_checkpoint())
     assert restored.last_content_selection == decision
     assert restored.express_selected_content(modality="text", channel="message") == expression
-

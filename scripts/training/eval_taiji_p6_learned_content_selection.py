@@ -100,8 +100,19 @@ def build_manifest() -> dict[str, object]:
     return {
         "format": MANIFEST_FORMAT,
         "task": "learn context-conditioned content selection from goal/world/context signals",
-        "lesions": ["copy_action_intent", "fixed_content_table", "world_context", "content_selector_checkpoint"],
-        "signals": ["goal_residual", "world_uncertainty", "novelty", "resource_budget", "semantic_slots"],
+        "lesions": [
+            "copy_action_intent",
+            "fixed_content_table",
+            "world_context",
+            "content_selector_checkpoint",
+        ],
+        "signals": [
+            "goal_residual",
+            "world_uncertainty",
+            "novelty",
+            "resource_budget",
+            "semantic_slots",
+        ],
         "boundary": "learned content selection Gate only; no natural-language fluency or open-ended semantic invention claim",
     }
 
@@ -111,22 +122,27 @@ def main() -> None:
     parser.add_argument(
         "--manifest",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_p6_learned_content_selection_manifest_20260825.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_p6_learned_content_selection_manifest_20260825.json",
     )
     parser.add_argument(
         "--report",
         type=Path,
-        default=PROJECT_ROOT / "reports" / "taiji_p6_learned_content_selection_baseline_20260825.json",
+        default=PROJECT_ROOT
+        / "reports"
+        / "taiji_p6_learned_content_selection_baseline_20260825.json",
     )
     args = parser.parse_args()
     report = evaluate()
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
     main()
-
