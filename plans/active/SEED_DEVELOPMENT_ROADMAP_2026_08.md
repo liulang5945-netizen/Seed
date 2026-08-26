@@ -563,3 +563,11 @@ P4 的最小真实经历边界已落地：
 **已完成：三层自适应区域规模化结构维护 Gate 已通过；`source→relay→target` 显式 route 在 connected split 后保留并按受影响边展开，standalone neuron `add` 可与 network split 混合进入同一 maintenance cycle，checkpoint continuation、资源预算和双向 rollback 均通过。**
 
 **当前唯一下一步：对已落地的 native sparse neuron/network runtime 做 CPU/CUDA 实际热点剖析，建立跨设备 checkpoint 恢复与数值一致性基线，再决定是否需要 fused/sparse kernel。**
+
+**已完成：native sparse neuron/network runtime profile 已执行并通过；本机为 `torch 2.13.0+cpu` 且无 CUDA，报告明确记录 CUDA 未执行。CPU region/network 热点、CPU checkpoint roundtrip 和 continuation 均通过，CPU 实测分别约为 `18,735 ticks/s` 与 `5,291 ticks/s`，主要热点为 `aten::_to_copy`、`aten::to`、`aten::index`。**
+
+**当前唯一下一步：消除 native tick 中可避免的设备/标量转换与临时分配，复跑同一 profile 并比较热点/吞吐；在获得 CUDA-capable 主机前不写 fused/sparse kernel。**
+
+**已完成：native tick hardening 已落地并通过；稀疏输入仅在设备不一致时转换，norm 常量按 device/dtype/limit 缓存，network 的 zero scratch vector 按区域复用且不进入 checkpoint。重跑 profile 仍通过 CPU profile、checkpoint roundtrip 与 continuation，热点收敛到 `aten::index`、`aten::sum` 及少量 copy；本机仍无 CUDA，故没有伪造 CUDA 结论。**
+
+**当前唯一下一步：将当前 profile 固化为稳定的性能回归基线，并在 CUDA-capable 主机上复跑同一 workload；在此之前不引入自定义 fused/sparse kernel。**

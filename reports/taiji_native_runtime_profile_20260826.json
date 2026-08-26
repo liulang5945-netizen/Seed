@@ -1,0 +1,193 @@
+{
+  "format": "taiji-native-runtime-profile-v1",
+  "environment": {
+    "torch_version": "2.13.0+cpu",
+    "cuda_available": false,
+    "cuda_device_count": 0,
+    "cuda_device_name": null
+  },
+  "workload": {
+    "input_dim": 64,
+    "unit_count_per_region": 48,
+    "fan_in": 12,
+    "regions": [
+      "source",
+      "relay",
+      "target"
+    ],
+    "connections": [
+      "connection:source->relay",
+      "connection:relay->target"
+    ],
+    "warmup_ticks": 6,
+    "timed_ticks": 48,
+    "profile_ticks": 8
+  },
+  "implementation": {
+    "device_transfer_guard": true,
+    "cached_norm_constants": true,
+    "reused_network_scratch_vectors": true,
+    "custom_cuda_kernel": false
+  },
+  "cpu": {
+    "device": "cpu",
+    "region_ticks": 48,
+    "network_ticks": 48,
+    "region_seconds": 0.00207,
+    "network_seconds": 0.00919,
+    "region_ticks_per_second": 23183.926,
+    "network_ticks_per_second": 5222.898,
+    "region_tick_ms": 0.0431,
+    "network_tick_ms": 0.1915,
+    "top_region_ops": [
+      {
+        "name": "aten::index",
+        "calls": 16,
+        "self_cpu_time_us": 176.2,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::_to_copy",
+        "calls": 40,
+        "self_cpu_time_us": 156.7,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::sum",
+        "calls": 16,
+        "self_cpu_time_us": 93.9,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::copy_",
+        "calls": 72,
+        "self_cpu_time_us": 92.3,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::mul",
+        "calls": 40,
+        "self_cpu_time_us": 70.1,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::linalg_vector_norm",
+        "calls": 16,
+        "self_cpu_time_us": 58.6,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::to",
+        "calls": 40,
+        "self_cpu_time_us": 56.4,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::as_strided",
+        "calls": 48,
+        "self_cpu_time_us": 53.4,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::empty_strided",
+        "calls": 48,
+        "self_cpu_time_us": 41.8,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::mul_",
+        "calls": 16,
+        "self_cpu_time_us": 39.0,
+        "self_cuda_time_us": 0.0
+      }
+    ],
+    "top_network_ops": [
+      {
+        "name": "aten::index",
+        "calls": 64,
+        "self_cpu_time_us": 514.3,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::_to_copy",
+        "calls": 136,
+        "self_cpu_time_us": 403.9,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::sum",
+        "calls": 64,
+        "self_cpu_time_us": 319.4,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::copy_",
+        "calls": 256,
+        "self_cpu_time_us": 232.7,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::linalg_vector_norm",
+        "calls": 48,
+        "self_cpu_time_us": 196.7,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::mul",
+        "calls": 136,
+        "self_cpu_time_us": 184.5,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::clone",
+        "calls": 48,
+        "self_cpu_time_us": 168.8,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::to",
+        "calls": 136,
+        "self_cpu_time_us": 155.1,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::as_strided",
+        "calls": 176,
+        "self_cpu_time_us": 126.9,
+        "self_cuda_time_us": 0.0
+      },
+      {
+        "name": "aten::clamp_min",
+        "calls": 72,
+        "self_cpu_time_us": 120.9,
+        "self_cuda_time_us": 0.0
+      }
+    ]
+  },
+  "cuda": null,
+  "cuda_error": null,
+  "checkpoint": {
+    "cpu_roundtrip": true,
+    "cpu_continuation_max_abs_error": 0.0,
+    "cpu_continuation": true,
+    "cross_device_roundtrip": null,
+    "cross_device_continuation_max_abs_error": null,
+    "cross_device_continuation": null
+  },
+  "gate": {
+    "passed": true,
+    "checks": {
+      "cpu_profile": true,
+      "cpu_checkpoint_roundtrip": true,
+      "cpu_checkpoint_continuation": true,
+      "cuda_status_explicit": true,
+      "cuda_profile": true,
+      "cross_device_checkpoint": true,
+      "cross_device_output": true,
+      "cross_device_continuation": true
+    },
+    "output_tolerance": 1e-05,
+    "criterion": "native sparse region and network runtime must expose CPU hotspots, save and restore exact topology/state, and preserve numerical outputs across CUDA when CUDA is available; unavailable CUDA is reported rather than being claimed",
+    "boundary": "This profile establishes a measured baseline only. It does not justify a fused or custom sparse kernel until the recorded hotspots and a CUDA capable host are reviewed."
+  }
+}

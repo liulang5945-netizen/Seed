@@ -163,3 +163,15 @@ add/split/prune、资源竞争、checkpoint continuation 和拓扑不变量。
 边，standalone neuron `add` 与 network split 可在同一 maintenance cycle 中提交，checkpoint、预算
 和 rollback 均通过。下一步转为对 native sparse neuron/network runtime 做 CPU/CUDA 实际热点剖析，
 建立跨设备 checkpoint 恢复与数值一致性基线，再决定是否需要 fused/sparse kernel。
+
+native sparse neuron/network runtime profile 已执行并通过，报告为
+`reports/taiji_native_runtime_profile_20260826.json`：本机 `torch 2.13.0+cpu` 无 CUDA，
+因此只保留 CPU 实测，不把 CUDA 标记为已验证；CPU region/network profile、checkpoint roundtrip
+与 continuation 均通过，热点集中在 `aten::_to_copy`、`aten::to` 和 `aten::index`。下一步收紧
+每 tick 的设备/标量转换与临时分配，再复跑同一 profile。
+
+runtime hardening 已完成并通过：设备不一致才执行输入转换，norm 常量按 device/dtype/limit
+缓存，network scratch vector 按区域复用且不写入 checkpoint；35 项 native growth/structure
+回归与 runtime structure Gate 均通过，重跑 profile 仍为 CPU-only 且 checkpoint continuation
+误差为零。热点现已主要落在显式 sparse gather/reduction；下一步固化性能回归基线，并等待
+CUDA-capable 主机复跑同一 workload。

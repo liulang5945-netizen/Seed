@@ -48,6 +48,11 @@ class AdaptiveNeuronNetwork:
         self._lesioned_connections: set[str] = set()
         self._lesioned_regions: set[str] = set()
         self._cooperation_learner: CrossRegionCooperationLearner | None = None
+        # Scratch vectors are runtime-only and deliberately excluded from the
+        # checkpoint.  Reusing them removes an allocation from every network
+        # tick while shape/device checks keep structural growth safe.
+        self._runtime_external_inputs: dict[str, torch.Tensor] = {}
+        self._runtime_cross_drives: dict[str, torch.Tensor] = {}
 
     @property
     def regions(self) -> tuple[AdaptiveNeuronRegion, ...]:
@@ -100,6 +105,27 @@ class AdaptiveNeuronNetwork:
             return self._regions[str(region_id)]
         except KeyError as exc:
             raise ValueError(f"unknown adaptive region: {region_id}") from exc
+
+    def _runtime_vector(
+        self,
+        cache: dict[str, torch.Tensor],
+        region: AdaptiveNeuronRegion,
+        *,
+        size: int,
+    ) -> torch.Tensor:
+        """Return a zeroed reusable vector for one region's runtime scratch."""
+
+        vector = cache.get(region.region_id)
+        if (
+            vector is None
+            or vector.shape != (int(size),)
+            or vector.device != region.device
+        ):
+            vector = torch.zeros(int(size), device=region.device)
+            cache[region.region_id] = vector
+        else:
+            vector.zero_()
+        return vector
 
     def propose_connection_add(
         self,
@@ -1249,13 +1275,27 @@ class AdaptiveNeuronNetwork:
             if connection_id not in self._connections:
                 raise ValueError(f"unknown cross-region connection: {connection_id}")
 
+        active_regions = set(self._regions)
+        for cache in (self._runtime_external_inputs, self._runtime_cross_drives):
+            for region_id in tuple(cache):
+                if region_id not in active_regions:
+                    del cache[region_id]
+
         activities: dict[str, torch.Tensor] = {}
         for region_id in self.execution_order:
             region = self._regions[region_id]
             external = external_inputs.get(region_id)
             if external is None:
-                external = torch.zeros(region.input_dim, device=region.device)
-            cross_drive = torch.zeros(region.unit_count, device=region.device)
+                external = self._runtime_vector(
+                    self._runtime_external_inputs,
+                    region,
+                    size=region.input_dim,
+                )
+            cross_drive = self._runtime_vector(
+                self._runtime_cross_drives,
+                region,
+                size=region.unit_count,
+            )
             for connection_id in active_connection_ids:
                 if connection_id in self._lesioned_connections:
                     continue
@@ -1305,6 +1345,8 @@ class AdaptiveNeuronNetwork:
     def load_payload(self, payload: Mapping[str, Any]) -> None:
         if payload.get("storage") != ADAPTIVE_NEURON_NETWORK_CHECKPOINT_FORMAT:
             raise ValueError("unsupported adaptive neuron network format")
+        self._runtime_external_inputs.clear()
+        self._runtime_cross_drives.clear()
         if tuple(str(item) for item in payload["execution_order"]) != self.execution_order:
             raise ValueError("adaptive network execution order does not match")
         region_payloads = payload.get("regions", {})

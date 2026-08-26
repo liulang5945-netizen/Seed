@@ -9,12 +9,28 @@ import torch
 
 from .contracts import StructuralTopologyProposal
 
+_NORM_CONSTANTS: dict[
+    tuple[torch.device, torch.dtype, float], tuple[torch.Tensor, torch.Tensor]
+] = {}
+
 
 def bound_norm(value: torch.Tensor, limit: float) -> torch.Tensor:
     """Return ``value`` with a bounded whole-vector norm."""
 
     norm = value.norm()
-    scale = torch.clamp(value.new_tensor(limit) / norm.clamp_min(1e-8), max=1.0)
+    # Cache the two scalar constants per device/dtype/limit.  Creating them
+    # once avoids a host-to-device scalar conversion in every norm-bound tick,
+    # while keeping the operation device-native for a future CUDA backend.
+    key = (value.device, value.dtype, float(limit))
+    constants = _NORM_CONSTANTS.get(key)
+    if constants is None:
+        constants = (
+            torch.tensor(float(limit), device=value.device, dtype=value.dtype),
+            torch.ones((), device=value.device, dtype=value.dtype),
+        )
+        _NORM_CONSTANTS[key] = constants
+    limit_tensor, one_tensor = constants
+    scale = torch.minimum(limit_tensor / norm.clamp_min(1e-8), one_tensor)
     return value * scale
 
 
@@ -100,7 +116,8 @@ class SparseSynapses:
                 f"presynaptic shape must be ({self.in_features},), "
                 f"got {tuple(presynaptic.shape)}"
             )
-        presynaptic = presynaptic.to(self.device)
+        if presynaptic.device != self.device:
+            presynaptic = presynaptic.to(self.device)
         output: torch.Tensor = (self.edge_weight * presynaptic[self.pre_index]).sum(dim=1)
         return output
 
@@ -110,7 +127,8 @@ class SparseSynapses:
                 f"error shape must be ({self.out_features},), "
                 f"got {tuple(postsynaptic_error.shape)}"
             )
-        postsynaptic_error = postsynaptic_error.to(self.device)
+        if postsynaptic_error.device != self.device:
+            postsynaptic_error = postsynaptic_error.to(self.device)
         projected = torch.zeros(
             self.in_features,
             device=self.device,
@@ -149,8 +167,10 @@ class SparseSynapses:
             raise ValueError("postsynaptic error dimension mismatch")
         if presynaptic_trace.shape != (self.in_features,):
             raise ValueError("presynaptic trace dimension mismatch")
-        postsynaptic_error = postsynaptic_error.to(self.device)
-        presynaptic_trace = presynaptic_trace.to(self.device)
+        if postsynaptic_error.device != self.device:
+            postsynaptic_error = postsynaptic_error.to(self.device)
+        if presynaptic_trace.device != self.device:
+            presynaptic_trace = presynaptic_trace.to(self.device)
         scale = max(1.0, float((presynaptic_trace != 0).sum().item()) ** 0.5)
         if weight_decay:
             silent = (presynaptic_trace[self.pre_index] == 0).to(self.edge_weight.dtype)
@@ -186,7 +206,9 @@ class SparseSynapses:
             raise ValueError("postsynaptic activity dimension mismatch")
         if self.out_features != self.in_features:
             raise ValueError("anti-Hebbian competition requires a recurrent bank")
-        activity = postsynaptic_activity.to(self.device)
+        activity = postsynaptic_activity
+        if activity.device != self.device:
+            activity = activity.to(self.device)
         self.edge_weight.add_(
             float(learning_rate)
             * (activity.unsqueeze(1) * activity[self.pre_index] - float(baseline))
@@ -277,8 +299,10 @@ class SparseSynapses:
         if self.row_fan_in >= self.in_features:
             return 0
 
-        postsynaptic_error = postsynaptic_error.to(self.device)
-        presynaptic_trace = presynaptic_trace.to(self.device)
+        if postsynaptic_error.device != self.device:
+            postsynaptic_error = postsynaptic_error.to(self.device)
+        if presynaptic_trace.device != self.device:
+            presynaptic_trace = presynaptic_trace.to(self.device)
         activity = presynaptic_trace.abs()
         contacts = self.pre_index.long()
 

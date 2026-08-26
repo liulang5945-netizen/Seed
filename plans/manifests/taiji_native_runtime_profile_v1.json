@@ -1,0 +1,33 @@
+{
+  "format": "taiji-native-runtime-profile-manifest-v1",
+  "task": "native sparse runtime hotspot and checkpoint baseline",
+  "script": "scripts/training/eval_taiji_native_runtime_profile.py",
+  "report": "reports/taiji_native_runtime_profile_20260826.json",
+  "implementation": {
+    "device_transfer_guard": true,
+    "cached_norm_constants": true,
+    "reused_network_scratch_vectors": true,
+    "custom_cuda_kernel": false
+  },
+  "workload": {
+    "input_dim": 64,
+    "unit_count_per_region": 48,
+    "fan_in": 12,
+    "regions": ["source", "relay", "target"],
+    "connections": ["connection:source->relay", "connection:relay->target"]
+  },
+  "controls": [
+    "cpu_region_profiler",
+    "cpu_network_profiler",
+    "cpu_checkpoint_roundtrip",
+    "cpu_checkpoint_continuation",
+    "cuda_profile_when_available",
+    "cross_device_checkpoint_when_available",
+    "cross_device_numerical_consistency_when_available"
+  ],
+  "gate": {
+    "passed": true,
+    "criterion": "Profile the existing native sparse runtime and verify checkpoint identity before choosing any fused or custom kernel. CUDA must be measured when available and explicitly reported as unavailable otherwise.",
+    "boundary": "This is a performance and persistence baseline, not a training result and not a claim of CUDA support on a CPU-only host."
+  }
+}

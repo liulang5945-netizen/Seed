@@ -693,3 +693,38 @@ def test_runtime_tick_feeds_structural_organs_and_checkpoint_continues() -> None
     )
     assert restored.structural_runtime_observations[-1].tick == 3
     assert restored.structural_growth_controller.total_observations == 4
+
+
+def test_network_runtime_scratch_reuse_does_not_enter_checkpoint() -> None:
+    network = _network()
+    inputs = {"source": torch.ones(3)}
+
+    network.step(inputs)
+    cross_drive_ids = {
+        region_id: id(vector)
+        for region_id, vector in network._runtime_cross_drives.items()
+    }
+    external_input_ids = {
+        region_id: id(vector)
+        for region_id, vector in network._runtime_external_inputs.items()
+    }
+
+    network.step(inputs)
+    assert {
+        region_id: id(vector)
+        for region_id, vector in network._runtime_cross_drives.items()
+    } == cross_drive_ids
+    assert {
+        region_id: id(vector)
+        for region_id, vector in network._runtime_external_inputs.items()
+    } == external_input_ids
+
+    payload = network.to_payload()
+    assert "_runtime_cross_drives" not in payload
+    assert "_runtime_external_inputs" not in payload
+    restored = AdaptiveNeuronNetwork.from_payload(
+        payload,
+        generator=torch.Generator().manual_seed(0),
+    )
+    assert restored._runtime_cross_drives == {}
+    assert restored._runtime_external_inputs == {}

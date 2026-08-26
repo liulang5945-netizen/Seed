@@ -661,6 +661,18 @@ taiji/
 > 资源预算和双向 rollback 均通过。下一入口是对 native sparse neuron/network runtime 做 CPU/CUDA
 > 实际热点剖析，建立跨设备 checkpoint 恢复与数值一致性基线，再决定是否需要 fused/sparse kernel。
 
+native runtime profile 已落地并通过：`scripts/training/eval_taiji_native_runtime_profile.py`
+生成 `reports/taiji_native_runtime_profile_20260826.json`；当前主机为 `torch 2.13.0+cpu`、
+无 CUDA，故报告只包含 CPU profile。CPU region/network 热点、checkpoint roundtrip 与 continuation
+均通过，主要热点是 `aten::_to_copy`、`aten::to` 和 `aten::index`。下一入口是先消除每 tick
+可避免的设备/标量转换与临时分配，再复跑 profile；在没有 CUDA 实测前不引入 fused/sparse kernel。
+
+runtime hardening 已完成并通过：`SparseSynapses` 只在设备不一致时搬运输入，norm 常量按
+device/dtype/limit 缓存，`AdaptiveNeuronNetwork` 复用按区域的运行时 scratch vector；scratch
+不进入 checkpoint。35 项 native growth/structure 回归、runtime structure Gate 与重跑 profile
+均通过，当前 CPU 热点主要是 `aten::index`、`aten::sum` 和少量 copy。下一入口是固化性能
+回归基线，并在 CUDA-capable 主机上复跑相同 workload；在此之前不写自定义 fused/sparse kernel。
+
 本步设计已收敛并通过 Gate：新增独立的 `CrossRegionCooperationLearner`，为每条显式跨区连接维护
 可 checkpoint 的 prediction-error EMA、holdout-transfer EMA、resource-state EMA、证据次数
 与选择次数；连接选择采用可配置的质量/迁移/资源/代价权重和探索项，输入是区域与连接身份，
