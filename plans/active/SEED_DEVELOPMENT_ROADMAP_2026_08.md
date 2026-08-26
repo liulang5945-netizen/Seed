@@ -542,4 +542,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把 `StructuralTopologyProposal` 接入 `DevelopmentState` 的统一预算与 runtime ledger，要求拓扑 proposal 只能由真实误差、资源瓶颈和迁移收益产生，并通过预算、holdout/lesion、native checkpoint continuation 与 rollback 后才改变在线结构；随后再扩展到神经元/区域新增，继续禁止固定 action/intent 表。**
+**下一步：把统一 ledger 扩展到 neuron/region proposal，先定义可迁移的 unit identity、状态维度、跨区域连接和资源成本合同，再通过 holdout/lesion、native checkpoint continuation 与 rollback 的小型神经元单元新增 Gate；继续禁止固定 action/intent 表。**

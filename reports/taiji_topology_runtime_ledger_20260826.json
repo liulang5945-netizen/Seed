@@ -1,0 +1,40 @@
+{
+  "format": "taiji-topology-runtime-ledger-v1",
+  "proposal": {
+    "version": 1,
+    "proposal_id": "topology:fabric.decoder.0:post:0:slot:0:pre:3>0",
+    "substrate_id": "fabric.decoder.0",
+    "target_kind": "synapse",
+    "operation": "rewire",
+    "specification": {
+      "post_index": 0,
+      "replacement_pre_index": 0,
+      "retired_pre_index": 3,
+      "slot_index": 0
+    },
+    "requested_units": 1,
+    "resource_cost": 1,
+    "evidence_ids": [
+      "runtime:topology-holdout"
+    ],
+    "parent_checkpoint_id": "topology-parent:topology:fabric.decoder.0:post:0:slot:0:pre:3>0",
+    "status": "pending",
+    "validation_score": 0.0
+  },
+  "metrics": {
+    "accepted": true,
+    "accepted_status": "accepted",
+    "budget_after_accept": 0,
+    "checkpoint_status": "accepted",
+    "rollback": true,
+    "budget_after_rollback": 1,
+    "rollback_topology": true,
+    "rejected_without_budget": true,
+    "rejected_status": "rejected"
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "runtime topology proposals must be ledger-owned, consume structural budget only after checkpoint validation, survive native checkpoint continuation, rollback in reverse order, and fail closed when budget is exhausted"
+  },
+  "boundary": "This gate proves runtime budget and rollback ownership for synapse rewiring only; it does not claim neuron/region birth or open-domain self-evolution."
+}

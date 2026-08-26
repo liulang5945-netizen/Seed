@@ -38,6 +38,7 @@ from .contracts import (
     PlanState,
     SelfState,
     StructuralGrowthRequest,
+    StructuralTopologyProposal,
     WorkingMemoryItem,
     WorkspaceCandidate,
     WorkspaceSelection,
@@ -58,6 +59,7 @@ from .executive import (
     ExecutiveController,
     ExecutiveDecision,
 )
+from .fabric import TaijiFabric
 from .generation import (
     ContentPlan,
     ExpressionPlan,
@@ -136,6 +138,8 @@ class TSKV8Adapter(Taiji):
         ] = {}
         self._growth_requests: dict[str, StructuralGrowthRequest] = {}
         self._growth_request_snapshots: dict[str, dict[str, Any]] = {}
+        self._topology_proposals: dict[str, StructuralTopologyProposal] = {}
+        self._topology_parent_snapshots: dict[str, dict[str, Any]] = {}
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
@@ -210,6 +214,12 @@ class TSKV8Adapter(Taiji):
         """Return structural growth decisions owned by the Taiji state."""
 
         return tuple(self._growth_requests.values())
+
+    @property
+    def topology_proposals(self) -> tuple[StructuralTopologyProposal, ...]:
+        """Return substrate topology decisions owned by the Taiji state."""
+
+        return tuple(self._topology_proposals.values())
 
     @staticmethod
     def _growth_request_identity(
@@ -431,6 +441,178 @@ class TSKV8Adapter(Taiji):
         )
         return True
 
+    def _record_topology_development(
+        self,
+        proposal: StructuralTopologyProposal,
+        *,
+        consume_budget: bool,
+        evidence_id: str,
+    ) -> None:
+        previous = self._cognitive_state.development
+        budget = int(previous.structural_budget)
+        if consume_budget:
+            budget -= int(proposal.resource_cost)
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                stage="growth",
+                structural_budget=budget,
+                proposal_ids=self._bounded_ids(
+                    previous.proposal_ids,
+                    proposal.proposal_id,
+                    limit=self._lineage_limit(),
+                ),
+                parent_checkpoint_id=proposal.parent_checkpoint_id,
+                last_update_source="synapse-topology-rewire",
+                last_validation_status=proposal.status,
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    evidence_id,
+                    limit=self._lineage_limit(),
+                ),
+                growth_count=(
+                    previous.growth_count + int(proposal.requested_units)
+                    if consume_budget
+                    else previous.growth_count
+                ),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    proposal.proposal_id,
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+
+    def propose_synapse_rewire(
+        self,
+        *,
+        substrate_id: str,
+        post_index: int,
+        slot_index: int,
+        replacement_pre_index: int,
+        evidence_ids: Sequence[str],
+        parent_checkpoint_id: str | None = None,
+        resource_cost: int = 1,
+    ) -> StructuralTopologyProposal:
+        """Create a topology proposal without bypassing the Taiji ledger."""
+
+        proposal = self.fabric.propose_synapse_rewire(
+            substrate_id=substrate_id,
+            post_index=post_index,
+            slot_index=slot_index,
+            replacement_pre_index=replacement_pre_index,
+            evidence_ids=evidence_ids,
+            parent_checkpoint_id=parent_checkpoint_id,
+            resource_cost=resource_cost,
+        )
+        if proposal.parent_checkpoint_id is None:
+            proposal = replace(
+                proposal,
+                parent_checkpoint_id=f"topology-parent:{proposal.proposal_id}",
+            )
+        return proposal
+
+    def commit_synapse_rewire(self, proposal: StructuralTopologyProposal) -> bool:
+        """Validate, budget and commit a topology proposal transactionally."""
+
+        existing = self._topology_proposals.get(proposal.proposal_id)
+        if existing is not None:
+            if existing.status == "accepted":
+                return True
+            if existing.status == "rolled_back":
+                return False
+        if proposal.status != "pending":
+            raise ValueError("only pending topology proposals can be committed")
+        if self._cognitive_state.development.structural_budget < proposal.resource_cost:
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+            )
+            return False
+
+        parent_snapshot = self.fabric.to_payload()
+        try:
+            self.fabric.apply_synapse_rewire(proposal)
+            accepted_snapshot = self.fabric.to_payload()
+            trial = TaijiFabric(
+                self.config,
+                generator=torch.Generator(device="cpu").manual_seed(self.config.seed),
+                device=self.device,
+            )
+            trial.load_payload(accepted_snapshot)
+            source = self.fabric._topology_bank(proposal.substrate_id)
+            restored = trial._topology_bank(proposal.substrate_id)
+            if not torch.equal(source.pre_index, restored.pre_index):
+                raise ValueError("topology checkpoint roundtrip changed the support")
+        except (IndexError, KeyError, RuntimeError, ValueError):
+            self.fabric.load_payload(parent_snapshot)
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+            )
+            return False
+
+        accepted = replace(proposal, status="accepted", validation_score=1.0)
+        self._topology_proposals[proposal.proposal_id] = accepted
+        self._topology_parent_snapshots[proposal.proposal_id] = parent_snapshot
+        self._record_topology_development(
+            accepted,
+            consume_budget=True,
+            evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+        )
+        return True
+
+    def rollback_synapse_rewire(self, proposal_id: str) -> bool:
+        """Rollback only the latest accepted topology proposal."""
+
+        key = str(proposal_id)
+        proposal = self._topology_proposals.get(key)
+        snapshot = self._topology_parent_snapshots.get(key)
+        if proposal is None or proposal.status != "accepted" or snapshot is None:
+            return False
+        active = [
+            item.proposal_id
+            for item in self._topology_proposals.values()
+            if item.status == "accepted" and item.proposal_id in self._topology_parent_snapshots
+        ]
+        if not active or active[-1] != key:
+            return False
+        self.fabric.load_payload(snapshot)
+        rolled_back = replace(proposal, status="rolled_back", validation_score=0.0)
+        self._topology_proposals[key] = rolled_back
+        self._topology_parent_snapshots.pop(key, None)
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                structural_budget=previous.structural_budget + proposal.resource_cost,
+                last_update_source="topology-rollback",
+                last_validation_status="rolled_back",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    key,
+                    limit=self._lineage_limit(),
+                ),
+                growth_count=max(0, previous.growth_count - proposal.requested_units),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    key,
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return True
+
     def _record_online_concept_transition(
         self,
         transition: WorldTransition,
@@ -538,6 +720,36 @@ class TSKV8Adapter(Taiji):
         self._growth_request_snapshots = {
             str(request_id): dict(snapshot)
             for request_id, snapshot in snapshots.items()
+            if isinstance(snapshot, dict)
+        }
+
+    def _topology_proposals_checkpoint(self) -> dict[str, Any]:
+        return {
+            "proposals": [
+                proposal.to_payload() for proposal in self._topology_proposals.values()
+            ],
+            "snapshots": dict(self._topology_parent_snapshots),
+        }
+
+    def _restore_topology_proposals(self, payload: Any) -> None:
+        self._topology_proposals = {}
+        self._topology_parent_snapshots = {}
+        if not isinstance(payload, dict):
+            return
+        proposals = payload.get("proposals", ())
+        if not isinstance(proposals, (list, tuple)):
+            raise ValueError("topology proposal checkpoint proposals must be a sequence")
+        for item in proposals:
+            if not isinstance(item, dict):
+                raise ValueError("topology proposal checkpoint entry must be a mapping")
+            proposal = StructuralTopologyProposal.from_payload(item)
+            self._topology_proposals[proposal.proposal_id] = proposal
+        snapshots = payload.get("snapshots", {})
+        if not isinstance(snapshots, dict):
+            raise ValueError("topology proposal checkpoint snapshots must be a mapping")
+        self._topology_parent_snapshots = {
+            str(proposal_id): dict(snapshot)
+            for proposal_id, snapshot in snapshots.items()
             if isinstance(snapshot, dict)
         }
 
@@ -2576,6 +2788,7 @@ class TSKV8Adapter(Taiji):
             payload["semantic_memory"] = self._semantic_memory.checkpoint()
         payload["concept_formation"] = self._concept_formation.checkpoint()
         payload["growth_requests"] = self._growth_requests_checkpoint()
+        payload["topology_proposals"] = self._topology_proposals_checkpoint()
         payload["online_concept_branches"] = self._online_concept_branches_checkpoint()
         if self._procedural_memory is not None:
             payload["procedural_memory"] = self._procedural_memory.checkpoint()
@@ -2652,6 +2865,7 @@ class TSKV8Adapter(Taiji):
         self._restore_semantic_memory(checkpoint.get("semantic_memory"))
         self._restore_concept_formation(checkpoint.get("concept_formation"))
         self._restore_growth_requests(checkpoint.get("growth_requests"))
+        self._restore_topology_proposals(checkpoint.get("topology_proposals"))
         self._restore_online_concept_branches(checkpoint.get("online_concept_branches"))
         self._restore_procedural_memory(checkpoint.get("procedural_memory"))
         self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
@@ -2976,6 +3190,7 @@ class TSKV8Adapter(Taiji):
             components["semantic_memory"] = self._semantic_memory.checkpoint()
         components["concept_formation"] = self._concept_formation.checkpoint()
         components["growth_requests"] = self._growth_requests_checkpoint()
+        components["topology_proposals"] = self._topology_proposals_checkpoint()
         components["online_concept_branches"] = self._online_concept_branches_checkpoint()
         if self._procedural_memory is not None:
             components["procedural_memory"] = self._procedural_memory.checkpoint()
@@ -3065,6 +3280,7 @@ class TSKV8Adapter(Taiji):
         self._restore_semantic_memory(envelope.components.get("semantic_memory"))
         self._restore_concept_formation(envelope.components.get("concept_formation"))
         self._restore_growth_requests(envelope.components.get("growth_requests"))
+        self._restore_topology_proposals(envelope.components.get("topology_proposals"))
         self._restore_online_concept_branches(
             envelope.components.get("online_concept_branches")
         )
