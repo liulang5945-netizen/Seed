@@ -1,0 +1,20 @@
+{
+  "format": "taiji-concept-sequence-manifest-v1",
+  "task": "evaluate ordered concept sequences in multi-step imagined planning",
+  "schema_scales": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "controls": [
+    "no-sequence-prior rollout baseline",
+    "ordered-vs-reversed sequence",
+    "variable-horizon prefix affinity",
+    "concept registry lesion",
+    "schema-scale transfer",
+    "organ and native runtime checkpoint recovery",
+    "execution-feedback replan"
+  ],
+  "boundary": "closed-world ordered rollout transfer; not open-domain planning or general intelligence"
+}

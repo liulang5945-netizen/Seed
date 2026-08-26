@@ -509,4 +509,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把已通过的单动作 concept prior 扩展到多步 concept sequence/rollout，在变量 horizon、未见动作组合、分支干扰、执行反馈、lesion 与 checkpoint continuation 下验收序列级迁移。**
+**下一步：把多步 sequence prior 扩展为 after-state/预测误差/outcome 条件化的剩余 suffix 检索与序列级 credit assignment，在变量 horizon、分支干扰、lesion 与 checkpoint continuation 下验收。**

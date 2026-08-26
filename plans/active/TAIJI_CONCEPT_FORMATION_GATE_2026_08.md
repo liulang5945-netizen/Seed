@@ -36,6 +36,10 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
   无 concept prior 的对照不迁移，容量 1/2 显示可测的概念干扰；event/assembly、world、
   outcome 三类证据 lesion 均 fail-closed；器官 checkpoint 和 native runtime checkpoint
   均恢复相同概念与查询能力。
+- 多步 sequence Gate 已通过：Concept 从 episode 的时间顺序形成 `action_sequences`，
+  rollout 以可配置 `concept_sequence_weight` 消费；正确顺序击败高即时收益的反转序列，
+  1/2/4/8 schema scale 均通过，前缀匹配有效、反转匹配为零；concept lesion 后选择回到
+  反转对照，adapter native checkpoint 恢复选择结果，真实失败仍触发并恢复 replan 状态。
 
 ## 边界与已知限制
 
@@ -46,6 +50,7 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 
 ## 下一步唯一入口
 
-将已通过的单动作 concept prior 扩展为多步 concept sequence/rollout 消费：在变量 horizon、
-未见动作组合和分支干扰下验证序列级迁移、执行反馈、lesion 与 checkpoint continuation；
-不得把扩大参数量或增加固定标签表作为替代。
+将多步 sequence prior 进一步变成状态条件化的 rollout 记忆：按每一步的 after-state、
+预测误差和实际 outcome 做序列级 credit assignment，并在部分执行后对剩余 suffix 重新检索；
+变量 horizon、分支干扰、lesion 与 checkpoint continuation 必须继续保持，不能退化为固定
+动作序列表。
