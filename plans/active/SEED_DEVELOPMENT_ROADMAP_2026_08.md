@@ -574,12 +574,22 @@ P4 的最小真实经历边界已落地：
 - 布尔检查必须能失败。`detach()`、`copy()`、`float()` 之类的转换会顺手清掉 `requires_grad`、梯度和设备信息，把断言变成恒真式；断言 `requires_grad`/`grad`/`device` 之类元数据时必须作用于活体对象。
 - 新增一条检查后必须构造一次**故意的失败**来证明它会红，否则它只是装饰。
 - 手写梯度替换 autograd 时，必须逐处对 autograd 做数值等价验证再删除对照代码；GRU 的 reset gate 会给 `_hh` 侧 n 段多乘一个 `reset` 因子，这类不对称写错时**不会报错、只会静默学不动**。
+- **假绿的第二种形态：被测函数自带早退门（platform / feature flag / 环境变量），测试没钉住该门，断言就在部分平台上根本没进被测分支。** 实例：`api/routes_terminal.py::_normalize_terminal_input` 首行是 `if sys.platform != "win32": return text`，而 `tests/test_terminal_input_normalization.py` 里断言「已转成 CRLF」的 3 条用例未钉 `sys.platform`，于是它们在 Windows 本机绿、在 Linux CI 红；同文件的 `test_existing_crlf_not_double_converted` 更隐蔽——它在 Linux 上也绿，但绿的原因是压根没进转换分支，验证不了「不重复转换」。修法是用 fixture 显式 `monkeypatch.setattr(mod.sys, "platform", "win32")` 钉住转换分支，另设一条独立用例验非 win32 的原样返回。**凡断言「发生了某个转换」的用例，都要能说清它在哪个分支里被执行。**
 
 ### 14.6 本机工具链环境事实（沙箱）
 
 - `black` 的默认缓存目录 `%LOCALAPPDATA%\black\black\Cache\<ver>\` 在本沙箱下不可写。black 不会报错退出，而是反复重试建临时文件，表现为**永不返回并满载 CPU**（实测单文件 30 秒墙钟烧掉 651 秒 CPU），且其多进程池被中断后会**泄漏 worker 进程**（一次排查中发现 ~90 个残留 `python.exe` + 3 个 `black.exe`）。修复方式是把缓存指进工作区：`$env:BLACK_CACHE_DIR="<repo>\.black_cache"`，之后 `black --check .` 4 秒完成。`.black_cache/` 已入 `.gitignore`。
 - 诊断这类「无输出挂死」不能靠 stdout——输出重定向同样为空。有效手段是在新终端观察副作用（`git diff --stat` 看文件是否已被改写、`Get-Process` 看进程与 CPU、`Get-CimInstance Win32_Process` 取准确命令行），必要时用 `faulthandler.dump_traceback_later(N, exit=True)` 强制打栈。
 - `reports/ci_verify/` 是 `ci.yml` 中 8 道 verify 门禁的 `--output` 产物目录，属运行产物，不入库。
+
+### 14.7 「本地绿 / CI 红」的排查纪律（2026-08-26 新增）
+
+本机是 Windows，CI 的 `test (3.10)` / `test (3.12)` 是 Linux，`test-windows` 才是 Windows。因此本地全绿从不等于 CI 会绿，**本地跑过不构成推送前的充分证据**。出现分歧时按此顺序排查，不许先归因为「环境差异」：
+
+1. **先确认两边跑的是不是同一份代码。** 本次分歧的真实原因就在这一步：CI 红的那次跑的是 `ffe1da2`（迁移前，`taiji/` 内 14 处 `.backward()`，AST 契约理应 false），而本地 pass 时工作区已是迁移后的未提交代码。用 `git grep -c "<pattern>" <commit> -- <path>` 直接查历史提交的内容，而不是看当前工作区。**CI 报红时默认它是对的。**
+2. **再看失败项是否平台相关。** 断言里出现 `\r\n`、路径分隔符、大小写敏感、文件锁、`sys.platform` 分支时，优先怀疑测试自身缺平台钉定（见 14.5 最后一条）。
+3. **在本机复现 CI 的平台条件，而不是等下一次 CI。** 对纯逻辑的平台门，直接改 `mod.sys.platform` 后跑该测试文件即可复现；复现后必须验证「旧断言在此条件下确实红、新写法确实绿」，两侧都验才算修好。
+4. **读日志要认准步骤归属。** `gh run view --job=<id> --log-failed` 的输出里混有 advisory 步骤（mypy 的 47/259 条错误）的大量噪声，它们不是失败原因；用 `Select-String "FAILED|VERIFY_RESULT|Process completed"` 定位，并核对行首的步骤名。
 
 ## 15. 停止项
 
@@ -630,4 +640,6 @@ P4 的最小真实经历边界已落地：
 
 **已完成：`taiji/` 的 autograd 学习平面已整体替换为原生局部信用分配（详见 14.5）。8 个模块 13 处 `loss.backward()` 全部迁移至 `taiji/local_learning.py`，`no_autograd_parameters` 从假绿转为真检查并通过；原生性契约 15/15、8 道阻塞 verify 全 pass、`tests/` 437 passed / 5 skipped、lint 三件套与版本一致性全绿。`LocalAdam` 保留 Adam 更新式，因此未连带改变任何已调优的学习率。**
 
-**当前唯一下一步：把 mypy 核心门禁（`mypy --follow-imports=silent seed taiji`，实测 47 存量错误）实修至 0 并恢复 blocking——这些错误集中在 `taiji/workspace.py`、`taiji/world_learning.py`、`taiji/adapter.py` 的 checkpoint/`state_dict` 反序列化缺类型收窄处，与 14.3 的 checkpoint 静默失效同源，是当前唯一还在 advisory 状态的阻塞级缺陷类。**
+**已完成：迁移已获 CI 实证。`02f6602` 的 Linux job 上 8 道阻塞 verify 全部转绿，其中 `no_legacy_or_transformer_dependency` 从 `ffe1da2` 的 false 变为 true——该项此前红了 7 次连续构建，根因确为 autograd 学习平面，不是环境差异（详见 14.7）。同一构建暴露出唯一剩余红点 `tests/test_terminal_input_normalization.py` 的 3 条平台未钉定用例，与本次迁移无关，已按 14.5 修复并在本机复现 Linux 条件验证。**
+
+**当前唯一下一步：把 mypy 核心门禁（`mypy --follow-imports=silent seed taiji`，实测 47 存量错误）实修至 0 并恢复 blocking——这些错误集中在 `taiji/workspace.py`、`taiji/world_learning.py`、`taiji/contracts.py`、`taiji/perception.py` 的 checkpoint/`state_dict` 反序列化缺类型收窄处（`Item "None" of "Any | None" has no attribute ...`、`Value of type "object" is not indexable`），与 14.3 的 checkpoint 静默失效同源，是当前唯一还在 advisory 状态的阻塞级缺陷类。**
