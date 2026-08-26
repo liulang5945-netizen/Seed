@@ -9,9 +9,9 @@
     "retreat"
   ],
   "metrics": {
-    "baseline_loss": 0.0007329107029363513,
+    "baseline_loss": 0.0007329107112517315,
     "baseline_transfer_accuracy": 1.0,
-    "similar_interference_loss": 0.012716523371636868,
+    "similar_interference_loss": 0.015436475592044493,
     "similar_interference_accuracy": 1.0,
     "checkpoint_continuation_accuracy": 1.0,
     "budgeted_store_records": 168,

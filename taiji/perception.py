@@ -11,6 +11,15 @@ from torch import nn
 
 from .config import TaijiConfig
 from .contracts import PerceptEvent
+from .local_learning import (
+    LocalAdam,
+    backproject_linear,
+    clip_gradient_norm,
+    cosine_similarity_delta,
+    freeze_parameters,
+    normalize_delta,
+    softmax_error_delta,
+)
 
 PERCEPTION_STATE_VERSION = 2
 
@@ -38,6 +47,7 @@ class LearnedPerception(nn.Module):
         self._rng = torch.Generator(device="cpu")
         self._rng.manual_seed(int(config.seed + self.config.seed_offset) % (2**63 - 1))
         self._initialize_parameters()
+        freeze_parameters(self)
         self.to(self.device)
         self.reset_dynamics()
 
@@ -87,24 +97,236 @@ class LearnedPerception(nn.Module):
         context = self.context_projection(self._recurrent_state)
         return torch.nn.functional.normalize(torch.tanh(local + context), dim=0)
 
-    def _training_feature(
-        self,
-        symbol: int,
-        history: Sequence[int],
-        recurrent_state: torch.Tensor,
-    ) -> torch.Tensor:
-        """Build a differentiable local feature for predictive fitting."""
+    @property
+    def _trainable(self) -> tuple[torch.Tensor, ...]:
+        return (
+            self.embedding.weight,
+            self.local_projection.weight,
+            self.local_projection.bias,
+            self.context_projection.weight,
+            self.transition.weight,
+        )
 
-        window = list(history[-(int(self.config.local_window) - 1) :])
-        window.append(int(symbol))
-        missing = int(self.config.local_window) - len(window)
-        vectors = [
-            torch.zeros(self.feature_dim, device=self.device) for _ in range(max(0, missing))
-        ]
-        vectors.extend(self.embedding.weight[index] for index in window)
-        local = self.local_projection(torch.cat(vectors, dim=0))
-        context = self.context_projection(recurrent_state)
-        return torch.nn.functional.normalize(torch.tanh(local + context), dim=0)
+    def _sequence_features(
+        self, sequence: Sequence[int]
+    ) -> tuple[list[torch.Tensor], list[torch.Tensor], list[torch.Tensor], list[list[int]]]:
+        """Roll the recurrent feature chain forward, retaining backward state.
+
+        Local credit assignment through this chain needs three quantities a
+        plain forward pass throws away: the pre-normalisation activation, the
+        norm used to normalise it, and the exact embedding rows the local
+        window consumed.  They are collected here so the backward sweep can
+        replay the chain without a graph.
+        """
+
+        window_size = int(self.config.local_window)
+        features: list[torch.Tensor] = []
+        pre_activations: list[torch.Tensor] = []
+        norms: list[torch.Tensor] = []
+        windows: list[list[int]] = []
+        history: list[int] = []
+        recurrent_state = torch.zeros(self.feature_dim, device=self.device)
+        with torch.no_grad():
+            for symbol in sequence:
+                window = list(history[-(window_size - 1) :])
+                window.append(int(symbol))
+                missing = window_size - len(window)
+                vectors = [
+                    torch.zeros(self.feature_dim, device=self.device)
+                    for _ in range(max(0, missing))
+                ]
+                vectors.extend(self.embedding.weight[index] for index in window)
+                local = self.local_projection(torch.cat(vectors, dim=0))
+                context = self.context_projection(recurrent_state)
+                pre = torch.tanh(local + context)
+                norm = torch.linalg.vector_norm(pre).clamp_min(1e-12)
+                feature = pre / norm
+                features.append(feature)
+                pre_activations.append(pre)
+                norms.append(norm.reshape(1))
+                windows.append(window)
+                history.append(int(symbol))
+                history = history[-window_size:]
+                recurrent_state = feature
+        return features, pre_activations, norms, windows
+
+    def _local_sequence_pass(
+        self,
+        sequence: Sequence[int],
+        *,
+        temperature: float,
+        assembly_prediction_weight: float,
+        contrastive_weight: float,
+        contrastive_temperature: float,
+    ) -> tuple[float, tuple[torch.Tensor, ...]]:
+        """Return the composite loss and its native gradients for one sequence.
+
+        The objective sums three terms over the same pooled features, so the
+        pooled error is the sum of three independently derived deltas.  The
+        embedding matrix receives credit along three separate routes -- as the
+        local window input, as the next-symbol logit basis and as the assembly
+        target -- and those contributions are accumulated into one gradient.
+        Finally the pooled error is scattered back over the feature chain and
+        swept in reverse time through ``context_projection``.
+        """
+
+        features, pre_activations, norms, windows = self._sequence_features(sequence)
+        steps = len(features) - 1
+        pool_window = min(
+            int(self.config.local_window),
+            int(self.config.maximum_assembly_duration),
+        )
+        short_window = max(1, pool_window - 1)
+        feature_dim = self.feature_dim
+        window_size = int(self.config.local_window)
+
+        def pooled_spans(width: int) -> list[tuple[int, int]]:
+            return [(max(0, index + 1 - width), index + 1) for index in range(steps)]
+
+        long_spans = pooled_spans(pool_window)
+        short_spans = pooled_spans(short_window)
+
+        with torch.no_grad():
+            stacked = torch.stack(features)
+            pooled = torch.stack([stacked[start:stop].mean(dim=0) for start, stop in long_spans])
+            positive_pool = torch.stack(
+                [stacked[start:stop].mean(dim=0) for start, stop in short_spans]
+            )
+            predicted = pooled @ self.transition.weight.transpose(0, 1)
+            target = torch.tensor(list(sequence[1:]), dtype=torch.long, device=self.device)
+            logits = predicted @ self.embedding.weight.transpose(0, 1)
+            scaled_logits = logits / float(temperature)
+            next_symbol_loss = float(torch.nn.functional.cross_entropy(scaled_logits, target))
+            future_targets = torch.stack(
+                [
+                    self.embedding.weight[list(sequence[index + 1 : index + 1 + pool_window])].mean(
+                        dim=0
+                    )
+                    for index in range(steps)
+                ]
+            )
+            similarity = torch.nn.functional.cosine_similarity(predicted, future_targets, dim=1)
+            assembly_loss = float(1.0 - similarity.mean())
+            anchor_norms = torch.linalg.vector_norm(pooled, dim=1, keepdim=True).clamp_min(1e-12)
+            anchor = pooled / anchor_norms
+            positive_norms = torch.linalg.vector_norm(positive_pool, dim=1, keepdim=True).clamp_min(
+                1e-12
+            )
+            positive = positive_pool / positive_norms
+            rolled = pooled.roll(1, dims=0)
+            negative_norms = torch.linalg.vector_norm(rolled, dim=1, keepdim=True).clamp_min(1e-12)
+            negative = rolled / negative_norms
+            positive_logits = (anchor * positive).sum(dim=1, keepdim=True)
+            negative_logits = anchor @ negative.transpose(0, 1)
+            contrastive_logits = torch.cat((positive_logits, negative_logits), dim=1)
+            contrastive_targets = torch.zeros(steps, dtype=torch.long, device=self.device)
+            contrastive_loss = float(
+                torch.nn.functional.cross_entropy(
+                    contrastive_logits / float(contrastive_temperature), contrastive_targets
+                )
+            )
+            loss = (
+                next_symbol_loss
+                + float(assembly_prediction_weight) * assembly_loss
+                + float(contrastive_weight) * contrastive_loss
+            )
+
+            embedding_gradient = torch.zeros_like(self.embedding.weight)
+            transition_gradient = torch.zeros_like(self.transition.weight)
+            predicted_error = torch.zeros_like(predicted)
+            pooled_error = torch.zeros_like(pooled)
+            positive_pool_error = torch.zeros_like(positive_pool)
+
+            logit_error = softmax_error_delta(scaled_logits, target) / float(temperature)
+            predicted_error += logit_error @ self.embedding.weight
+            embedding_gradient += logit_error.transpose(0, 1) @ predicted
+
+            weight = float(assembly_prediction_weight)
+            if weight != 0.0:
+                predicted_delta, target_delta = cosine_similarity_delta(
+                    predicted, future_targets, dim=1
+                )
+                factor = -weight / float(steps)
+                predicted_error += factor * predicted_delta
+                target_error = factor * target_delta
+                for index in range(steps):
+                    rows = list(sequence[index + 1 : index + 1 + pool_window])
+                    share = target_error[index] / float(len(rows))
+                    for row in rows:
+                        embedding_gradient[row] += share
+
+            weight = float(contrastive_weight)
+            if weight != 0.0:
+                contrastive_error = (
+                    weight
+                    * softmax_error_delta(
+                        contrastive_logits / float(contrastive_temperature), contrastive_targets
+                    )
+                    / float(contrastive_temperature)
+                )
+                positive_column = contrastive_error[:, :1]
+                negative_columns = contrastive_error[:, 1:]
+                anchor_error = positive_column * positive + negative_columns @ negative
+                positive_error = positive_column * anchor
+                negative_error = negative_columns.transpose(0, 1) @ anchor
+                pooled_error += normalize_delta(anchor_error, anchor, anchor_norms, dim=1)
+                positive_pool_error += normalize_delta(
+                    positive_error, positive, positive_norms, dim=1
+                )
+                rolled_error = normalize_delta(negative_error, negative, negative_norms, dim=1)
+                pooled_error += rolled_error.roll(-1, dims=0)
+
+            transition_gradient += predicted_error.transpose(0, 1) @ pooled
+            pooled_error += predicted_error @ self.transition.weight
+
+            feature_error = torch.zeros((len(features), feature_dim), device=self.device)
+            for index, (start, stop) in enumerate(long_spans):
+                feature_error[start:stop] += pooled_error[index] / float(stop - start)
+            for index, (start, stop) in enumerate(short_spans):
+                feature_error[start:stop] += positive_pool_error[index] / float(stop - start)
+
+            local_gradient = torch.zeros_like(self.local_projection.weight)
+            local_bias_gradient = torch.zeros_like(self.local_projection.bias)
+            context_gradient = torch.zeros_like(self.context_projection.weight)
+            for index in range(len(features) - 1, -1, -1):
+                error = normalize_delta(
+                    feature_error[index].reshape(1, -1),
+                    features[index].reshape(1, -1),
+                    norms[index].reshape(1, 1),
+                    dim=1,
+                )
+                pre_error = error * (1.0 - pre_activations[index] ** 2).reshape(1, -1)
+                window = windows[index]
+                offset = (window_size - len(window)) * feature_dim
+                inputs = torch.zeros((1, window_size * feature_dim), device=self.device)
+                for position, row in enumerate(window):
+                    begin = offset + position * feature_dim
+                    inputs[0, begin : begin + feature_dim] = self.embedding.weight[row]
+                local_gradient += pre_error.transpose(0, 1) @ inputs
+                local_bias_gradient += pre_error.reshape(-1)
+                input_error = backproject_linear(self.local_projection, pre_error)
+                for position, row in enumerate(window):
+                    begin = offset + position * feature_dim
+                    embedding_gradient[row] += input_error[0, begin : begin + feature_dim]
+                if index == 0:
+                    continue
+                previous = features[index - 1].reshape(1, -1)
+                context_gradient += pre_error.transpose(0, 1) @ previous
+                feature_error[index - 1] += backproject_linear(
+                    self.context_projection, pre_error
+                ).reshape(-1)
+
+        gradients = clip_gradient_norm(
+            (
+                embedding_gradient,
+                local_gradient,
+                local_bias_gradient,
+                context_gradient,
+                transition_gradient,
+            ),
+            max_norm=1.0,
+        )
+        return loss, gradients
 
     def fit_predictive(
         self,
@@ -151,82 +373,21 @@ class LearnedPerception(nn.Module):
         ):
             raise ValueError("predictive training symbol is outside the configured alphabet")
 
-        optimizer = torch.optim.Adam(self.parameters(), lr=rate)
+        optimizer = LocalAdam(self._trainable, learning_rate=rate)
         losses: list[float] = []
         self.train()
         for _ in range(int(epochs)):
             epoch_losses: list[float] = []
             for sequence in training_sequences:
-                history: list[int] = []
-                recurrent_state = torch.zeros(self.feature_dim, device=self.device)
-                features: list[torch.Tensor] = []
-                for symbol in sequence:
-                    feature = self._training_feature(symbol, history, recurrent_state)
-                    features.append(feature)
-                    history.append(symbol)
-                    history = history[-int(self.config.local_window) :]
-                    recurrent_state = feature
-                pool_window = min(
-                    int(self.config.local_window),
-                    int(self.config.maximum_assembly_duration),
+                loss, gradients = self._local_sequence_pass(
+                    sequence,
+                    temperature=float(temperature),
+                    assembly_prediction_weight=float(assembly_prediction_weight),
+                    contrastive_weight=float(contrastive_weight),
+                    contrastive_temperature=float(contrastive_temperature),
                 )
-                pooled = torch.stack(
-                    [
-                        torch.stack(features[max(0, index + 1 - pool_window) : index + 1]).mean(
-                            dim=0
-                        )
-                        for index in range(len(features) - 1)
-                    ]
-                )
-                predicted = torch.stack([self.transition(feature) for feature in pooled])
-                target = torch.tensor(sequence[1:], dtype=torch.long, device=self.device)
-                logits = predicted @ self.embedding.weight.T
-                next_symbol_loss = torch.nn.functional.cross_entropy(
-                    logits / float(temperature), target
-                )
-                future_targets = torch.stack(
-                    [
-                        self.embedding.weight[
-                            list(sequence[index + 1 : index + 1 + pool_window])
-                        ].mean(dim=0)
-                        for index in range(len(features) - 1)
-                    ]
-                )
-                assembly_loss = (
-                    1.0
-                    - torch.nn.functional.cosine_similarity(predicted, future_targets, dim=1).mean()
-                )
-                short_window = max(1, pool_window - 1)
-                positive = torch.stack(
-                    [
-                        torch.stack(features[max(0, index + 1 - short_window) : index + 1]).mean(
-                            dim=0
-                        )
-                        for index in range(len(features) - 1)
-                    ]
-                )
-                anchor = torch.nn.functional.normalize(pooled, dim=1)
-                positive = torch.nn.functional.normalize(positive, dim=1)
-                negative = torch.nn.functional.normalize(pooled.roll(1, dims=0), dim=1)
-                positive_logits = (anchor * positive).sum(dim=1, keepdim=True)
-                negative_logits = anchor @ negative.T
-                contrastive_logits = torch.cat((positive_logits, negative_logits), dim=1)
-                contrastive_targets = torch.zeros(
-                    contrastive_logits.shape[0], dtype=torch.long, device=self.device
-                )
-                contrastive_loss = torch.nn.functional.cross_entropy(
-                    contrastive_logits / float(contrastive_temperature), contrastive_targets
-                )
-                loss = (
-                    next_symbol_loss
-                    + float(assembly_prediction_weight) * assembly_loss
-                    + float(contrastive_weight) * contrastive_loss
-                )
-                optimizer.zero_grad(set_to_none=True)
-                loss.backward()
-                torch.nn.utils.clip_grad_norm_(self.parameters(), max_norm=1.0)
-                optimizer.step()
-                epoch_losses.append(float(loss.detach().cpu()))
+                optimizer.apply(gradients)
+                epoch_losses.append(loss)
             losses.append(sum(epoch_losses) / len(epoch_losses))
         self.eval()
         self.reset_dynamics()
@@ -339,7 +500,11 @@ class LearnedPerception(nn.Module):
         return event
 
     def parameter_tensors(self) -> tuple[torch.Tensor, ...]:
-        return tuple(parameter.detach() for parameter in self.parameters())
+        # These are the live parameters, not detached views: the native-purity
+        # contract inspects ``requires_grad`` on whatever this returns, and a
+        # ``detach()`` here would launder every flag to ``False`` and make the
+        # check pass regardless of the module's actual autograd state.
+        return tuple(self.parameters())
 
     def checkpoint(self) -> dict[str, Any]:
         return {

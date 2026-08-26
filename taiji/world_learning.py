@@ -18,6 +18,16 @@ from .contracts import (
     WorldState,
     WorldTransition,
 )
+from .local_learning import (
+    LocalAdam,
+    apply_sgd_step,
+    backproject_linear,
+    freeze_parameters,
+    linear_gradients,
+    logistic_error_delta,
+    mean_squared_error_delta,
+    tanh_delta,
+)
 from .world import TaijiWorldState, _world_state_equal
 
 
@@ -285,6 +295,63 @@ class WorldDynamicsLearner(nn.Module):
             nn.Tanh(),
             nn.Linear(self.hidden_dim, schema.state_dim + 2),
         )
+        freeze_parameters(self)
+
+    @property
+    def _input_layer(self) -> nn.Linear:
+        layer = self.network[0]
+        assert isinstance(layer, nn.Linear)
+        return layer
+
+    @property
+    def _output_layer(self) -> nn.Linear:
+        layer = self.network[2]
+        assert isinstance(layer, nn.Linear)
+        return layer
+
+    @property
+    def _trainable(self) -> tuple[torch.Tensor, ...]:
+        return (
+            self._input_layer.weight,
+            self._input_layer.bias,
+            self._output_layer.weight,
+            self._output_layer.bias,
+        )
+
+    def _local_pass(
+        self, features: torch.Tensor, targets: torch.Tensor
+    ) -> tuple[float, tuple[torch.Tensor, ...]]:
+        """Run one detached forward pass and derive the composite-loss gradients.
+
+        The objective is ``mse(delta) + mse(reward) + bce_with_logits(success)``
+        over disjoint output slices, so the output error is the sum of three
+        slice-local deltas.  It is then carried one hop back through the
+        ``Tanh`` to reach the input layer, which reproduces exactly what
+        ``loss.backward()`` used to compute.
+        """
+
+        state_dim = self.schema.state_dim
+        input_layer = self._input_layer
+        output_layer = self._output_layer
+        with torch.no_grad():
+            hidden = self.network[1](input_layer(features))
+            output = output_layer(hidden)
+            delta_loss = torch.nn.functional.mse_loss(output[:, :state_dim], targets[:, :state_dim])
+            reward_loss = torch.nn.functional.mse_loss(output[:, -2], targets[:, -2])
+            success_loss = torch.nn.functional.binary_cross_entropy_with_logits(
+                output[:, -1], targets[:, -1]
+            )
+            loss = float(delta_loss + reward_loss + success_loss)
+        error = torch.zeros_like(output)
+        error[:, :state_dim] = mean_squared_error_delta(
+            output[:, :state_dim], targets[:, :state_dim]
+        )
+        error[:, -2] += mean_squared_error_delta(output[:, -2], targets[:, -2])
+        error[:, -1] += logistic_error_delta(output[:, -1], targets[:, -1])
+        output_gradients = linear_gradients(output_layer, hidden, error)
+        hidden_error = tanh_delta(backproject_linear(output_layer, error), hidden)
+        input_gradients = linear_gradients(input_layer, features, hidden_error)
+        return loss, (*input_gradients, *output_gradients)
 
     def predict(
         self, state: WorldState, action: Any, *, bind_target: bool = True
@@ -333,23 +400,16 @@ class WorldDynamicsLearner(nn.Module):
                 for case in cases
             ]
         )
-        optimizer = torch.optim.Adam(self.parameters(), lr=float(learning_rate))
+        optimizer = LocalAdam(
+            self._trainable,
+            learning_rate=float(learning_rate),
+        )
         losses = []
         self.train()
         for _ in range(int(epochs)):
-            optimizer.zero_grad(set_to_none=True)
-            output = self.network(features)
-            delta_loss = torch.nn.functional.mse_loss(
-                output[:, : self.schema.state_dim], targets[:, : self.schema.state_dim]
-            )
-            reward_loss = torch.nn.functional.mse_loss(output[:, -2], targets[:, -2])
-            success_loss = torch.nn.functional.binary_cross_entropy_with_logits(
-                output[:, -1], targets[:, -1]
-            )
-            loss = delta_loss + reward_loss + success_loss
-            loss.backward()
-            optimizer.step()
-            losses.append(float(loss.detach()))
+            loss, gradients = self._local_pass(features, targets)
+            optimizer.apply(gradients)
+            losses.append(loss)
         return losses
 
     def online_update(
@@ -381,23 +441,13 @@ class WorldDynamicsLearner(nn.Module):
                 ),
             )
         ).unsqueeze(0)
-        optimizer = torch.optim.SGD(self.parameters(), lr=float(learning_rate))
+        rate = float(learning_rate)
         losses = []
         self.train()
         for _ in range(int(repeats)):
-            optimizer.zero_grad(set_to_none=True)
-            output = self.network(features)
-            delta_loss = torch.nn.functional.mse_loss(
-                output[:, : self.schema.state_dim], target[:, : self.schema.state_dim]
-            )
-            reward_loss = torch.nn.functional.mse_loss(output[:, -2], target[:, -2])
-            success_loss = torch.nn.functional.binary_cross_entropy_with_logits(
-                output[:, -1], target[:, -1]
-            )
-            loss = delta_loss + reward_loss + success_loss
-            loss.backward()
-            optimizer.step()
-            losses.append(float(loss.detach()))
+            loss, gradients = self._local_pass(features, target)
+            apply_sgd_step(self._trainable, gradients, rate)
+            losses.append(loss)
         self.online_updates += 1
         return losses
 

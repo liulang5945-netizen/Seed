@@ -26,6 +26,12 @@ from .contracts import (
     WorldAffordance,
 )
 from .generation import ContentPlan
+from .local_learning import (
+    apply_linear_delta,
+    freeze_parameters,
+    mean_squared_error_delta,
+    squared_error_delta,
+)
 
 EXECUTIVE_CHECKPOINT_FORMAT = "taiji-executive-v1"
 EXECUTIVE_CANDIDATE_FEATURE_NAMES = (
@@ -443,6 +449,7 @@ class ExecutiveController:
         with torch.no_grad():
             self._model.weight.zero_()
             self._model.bias.zero_()
+        freeze_parameters(self._model)
         self.training_steps = 0
 
     def to(self, device: torch.device | str) -> ExecutiveController:
@@ -528,16 +535,18 @@ class ExecutiveController:
             [float(example.reward) for example in examples],
             dtype=features.dtype,
             device=features.device,
-        )
-        optimizer = torch.optim.SGD(self._model.parameters(), lr=float(learning_rate))
+        ).unsqueeze(-1)
         final_loss = 0.0
         for _ in range(int(epochs)):
-            prediction = self._model(features).flatten()
-            loss = torch.mean((prediction - targets) ** 2)
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            final_loss = float(loss.detach())
+            with torch.no_grad():
+                prediction = self._model(features)
+                final_loss = float(torch.mean((prediction - targets) ** 2))
+            apply_linear_delta(
+                self._model,
+                features,
+                mean_squared_error_delta(prediction, targets),
+                float(learning_rate),
+            )
         self.training_steps += int(epochs) * len(examples)
         return final_loss
 
@@ -554,15 +563,13 @@ class ExecutiveController:
         if float(learning_rate) <= 0.0:
             raise ValueError("executive online learning_rate must be positive")
         features = self._feature_matrix((decision.selected,), decision.context)
-        target = torch.tensor(float(reward), dtype=features.dtype, device=features.device)
-        prediction = self._model(features).reshape(())
-        loss = (prediction - target) ** 2
-        optimizer = torch.optim.SGD(self._model.parameters(), lr=float(learning_rate))
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+        target = torch.tensor([[float(reward)]], dtype=features.dtype, device=features.device)
+        with torch.no_grad():
+            prediction = self._model(features)
+        error = squared_error_delta(prediction, target)
+        apply_linear_delta(self._model, features, error, float(learning_rate))
         self.training_steps += 1
-        return float((prediction.detach() - target).item())
+        return float((prediction - target).reshape(()).item())
 
     def checkpoint(self) -> dict[str, Any]:
         return {

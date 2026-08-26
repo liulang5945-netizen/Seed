@@ -18,6 +18,16 @@ import torch
 from torch import nn
 
 from .contracts import WorldAffordance, WorldState
+from .local_learning import (
+    LocalAdam,
+    apply_sgd_step,
+    backproject_linear,
+    clip_gradient_norm,
+    freeze_parameters,
+    linear_gradients,
+    mean_squared_error_delta,
+    tanh_delta,
+)
 
 AFFORDANCE_FEATURE_CHECKPOINT_FORMAT = "taiji-affordance-features-v1"
 
@@ -240,8 +250,55 @@ class LearnedAffordanceFeatures(nn.Module):
             self.grounding_producer = nn.Linear(producer_input_dim, self.input_dim)
             self.encoder = nn.Linear(self.input_dim, self.feature_dim)
             self.outcome_head = nn.Linear(self.feature_dim, 1)
+        freeze_parameters(self)
         self.fit_updates = 0
         self.online_updates = 0
+
+    @property
+    def _trainable(self) -> tuple[torch.Tensor, ...]:
+        layers = (self.grounding_producer, self.encoder, self.outcome_head)
+        return tuple(tensor for layer in layers for tensor in (layer.weight, layer.bias))
+
+    def _local_pass(
+        self, producer_inputs: torch.Tensor | None, groundings: torch.Tensor, targets: torch.Tensor
+    ) -> tuple[torch.Tensor, tuple[torch.Tensor, ...]]:
+        """Derive the mean-squared-error gradients of the whole reward stack.
+
+        ``groundings`` is the ``(rows, input_dim)`` producer output (or the raw
+        grounding when ``context_dim`` is zero and the producer is bypassed).
+        ``producer_inputs`` is the matrix that produced it, or ``None`` when the
+        producer took no part in the forward pass, in which case its gradients
+        are reported as zeros so the parameter tuple stays stable.
+
+        The prediction is returned rather than a scalar loss because the two
+        callers need different scalars from it: ``fit`` reports the mean squared
+        error while ``online_update`` reports the signed residual, and a loss
+        alone has already discarded the sign.
+        """
+
+        with torch.no_grad():
+            features = torch.tanh(self.encoder(groundings))
+            prediction = self.outcome_head(features)
+        error = mean_squared_error_delta(prediction, targets)
+        head_gradients = linear_gradients(self.outcome_head, features, error)
+        feature_error = tanh_delta(backproject_linear(self.outcome_head, error), features)
+        encoder_gradients = linear_gradients(self.encoder, groundings, feature_error)
+        if producer_inputs is None:
+            producer_gradients: tuple[torch.Tensor, ...] = (
+                torch.zeros_like(self.grounding_producer.weight),
+                torch.zeros_like(self.grounding_producer.bias),
+            )
+        else:
+            grounding_error = tanh_delta(
+                backproject_linear(self.encoder, feature_error), groundings
+            )
+            producer_gradients = linear_gradients(
+                self.grounding_producer, producer_inputs, grounding_error
+            )
+        gradients = clip_gradient_norm(
+            (*producer_gradients, *encoder_gradients, *head_gradients), max_norm=1.0
+        )
+        return prediction, gradients
 
     def _produced_grounding(
         self,
@@ -253,11 +310,34 @@ class LearnedAffordanceFeatures(nn.Module):
     ) -> torch.Tensor:
         """Build the Taiji-owned grounding without symbolic action lookup."""
 
+        return self._grounding_with_producer_input(
+            grounding,
+            percept_features=percept_features,
+            world_latent=world_latent,
+            world_uncertainty=world_uncertainty,
+        )[1]
+
+    def _grounding_with_producer_input(
+        self,
+        grounding: torch.Tensor,
+        *,
+        percept_features: torch.Tensor | None = None,
+        world_latent: torch.Tensor | None = None,
+        world_uncertainty: float = 0.0,
+    ) -> tuple[torch.Tensor | None, torch.Tensor]:
+        """Return the producer input alongside the grounding it produced.
+
+        Local credit assignment needs the producer's own input to build its
+        weight gradient, which a plain forward pass would otherwise discard.
+        The input is ``None`` when ``context_dim`` is zero, because the producer
+        is then bypassed entirely.
+        """
+
         vector = _vector(grounding, name="affordance grounding", dimension=self.input_dim)
         device = self.encoder.weight.device
         vector = vector.to(device)
         if self.context_dim == 0:
-            return vector
+            return None, vector
         if percept_features is None or world_latent is None:
             raise ValueError("contextual affordance grounding requires percept and world features")
         percept = _vector(
@@ -275,7 +355,9 @@ class LearnedAffordanceFeatures(nn.Module):
         producer_input = torch.cat(
             (vector, percept, world, torch.tensor([float(world_uncertainty)], device=device))
         )
-        return torch.tanh(self.grounding_producer(producer_input))
+        with torch.no_grad():
+            produced = torch.tanh(self.grounding_producer(producer_input))
+        return producer_input, produced
 
     def encode(
         self,
@@ -373,29 +455,27 @@ class LearnedAffordanceFeatures(nn.Module):
             [item.reward for item in examples],
             dtype=torch.float32,
             device=self.encoder.weight.device,
-        )
-        optimizer = torch.optim.Adam(self.parameters(), lr=float(learning_rate))
+        ).reshape(-1, 1)
+        optimizer = LocalAdam(self._trainable, learning_rate=float(learning_rate))
         losses: list[float] = []
         self.train()
         for _ in range(int(epochs)):
-            groundings = torch.stack(
-                [
-                    self._produced_grounding(
-                        item.grounding,
-                        percept_features=(item.percept_features if self.context_dim else None),
-                        world_latent=(item.world_latent if self.context_dim else None),
-                        world_uncertainty=item.world_uncertainty,
-                    )
-                    for item in examples
-                ]
+            produced = [
+                self._grounding_with_producer_input(
+                    item.grounding,
+                    percept_features=(item.percept_features if self.context_dim else None),
+                    world_latent=(item.world_latent if self.context_dim else None),
+                    world_uncertainty=item.world_uncertainty,
+                )
+                for item in examples
+            ]
+            groundings = torch.stack([grounding for _, grounding in produced])
+            producer_inputs = (
+                torch.stack([inputs for inputs, _ in produced]) if self.context_dim else None
             )
-            prediction = self.outcome_head(torch.tanh(self.encoder(groundings))).flatten()
-            loss = torch.mean((prediction - targets) ** 2)
-            optimizer.zero_grad(set_to_none=True)
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(self.parameters(), max_norm=1.0)
-            optimizer.step()
-            losses.append(float(loss.detach().cpu()))
+            prediction, gradients = self._local_pass(producer_inputs, groundings, targets)
+            losses.append(float(torch.mean((prediction - targets) ** 2)))
+            optimizer.apply(gradients)
         self.eval()
         self.fit_updates += int(epochs) * len(examples)
         return losses
@@ -417,7 +497,7 @@ class LearnedAffordanceFeatures(nn.Module):
             raise TypeError("affordance must be a WorldAffordance")
         if float(learning_rate) <= 0.0 or int(repeats) <= 0:
             raise ValueError("affordance online learning_rate and repeats must be positive")
-        grounding = self._produced_grounding(
+        producer_inputs, grounding = self._grounding_with_producer_input(
             affordance.features,
             percept_features=percept_features,
             world_latent=world_latent,
@@ -427,18 +507,15 @@ class LearnedAffordanceFeatures(nn.Module):
             float(_finite(reward, "affordance online reward")),
             dtype=torch.float32,
             device=grounding.device,
-        )
-        optimizer = torch.optim.SGD(self.parameters(), lr=float(learning_rate))
+        ).reshape(1, 1)
+        rows = grounding.reshape(1, -1)
+        producer_rows = None if producer_inputs is None else producer_inputs.reshape(1, -1)
         self.train()
         error = 0.0
         for _ in range(int(repeats)):
-            prediction = self.outcome_head(torch.tanh(self.encoder(grounding))).reshape(())
-            error = float((prediction.detach() - target).cpu())
-            loss = (prediction - target) ** 2
-            optimizer.zero_grad(set_to_none=True)
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(self.parameters(), max_norm=1.0)
-            optimizer.step()
+            prediction, gradients = self._local_pass(producer_rows, rows, target)
+            error = float((prediction - target).reshape(()).cpu())
+            apply_sgd_step(self._trainable, gradients, float(learning_rate))
         self.eval()
         self.online_updates += 1
         return error

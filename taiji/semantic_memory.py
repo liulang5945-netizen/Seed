@@ -10,6 +10,7 @@ from torch import nn
 
 from .contracts import EpisodicMemoryRecord
 from .episodic_memory import EpisodicMemoryStore
+from .local_learning import apply_linear_delta, freeze_parameters, mean_squared_error_delta
 
 SEMANTIC_MEMORY_CHECKPOINT_FORMAT = "taiji-semantic-memory-v1"
 
@@ -31,6 +32,7 @@ class SemanticMemoryLearner(nn.Module):
         with torch.no_grad():
             self.readout.weight.zero_()
             self.readout.bias.zero_()
+        freeze_parameters(self)
         self.consolidation_count = 0
 
     def _batch(self, records: Iterable[EpisodicMemoryRecord]) -> tuple[torch.Tensor, torch.Tensor]:
@@ -64,16 +66,19 @@ class SemanticMemoryLearner(nn.Module):
         cues, targets = self._batch(records)
         cues = cues.to(self.readout.weight.device)
         targets = targets.to(self.readout.weight.device)
-        optimizer = torch.optim.SGD(self.parameters(), lr=float(learning_rate))
-        loss = torch.tensor(0.0, device=cues.device)
+        final_loss = 0.0
         for _ in range(int(epochs)):
-            optimizer.zero_grad()
-            prediction = self.readout(cues)
-            loss = torch.mean((prediction - targets) ** 2)
-            loss.backward()
-            optimizer.step()
+            with torch.no_grad():
+                prediction = self.readout(cues)
+                final_loss = float(torch.mean((prediction - targets) ** 2))
+            apply_linear_delta(
+                self.readout,
+                cues,
+                mean_squared_error_delta(prediction, targets),
+                float(learning_rate),
+            )
         self.consolidation_count += 1
-        return float(loss.detach())
+        return final_loss
 
     @torch.no_grad()
     def predict(self, cue: torch.Tensor) -> float:
