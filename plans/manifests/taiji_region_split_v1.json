@@ -1,6 +1,6 @@
 {
   "format": "taiji-region-split-manifest-v1",
-  "task": "identity-preserving isolated region split",
+  "task": "identity-preserving region split with connection migration",
   "report": "reports/taiji_region_split_20260826.json",
   "seed": 71,
   "controls": [
@@ -11,11 +11,12 @@
     "budget_validation",
     "checkpoint_continuation",
     "reverse_rollback",
-    "connected_region_fail_closed",
+    "connected_connection_migration",
+    "route_learner_lineage",
     "zero_budget"
   ],
   "gate": {
     "passed": true,
-    "criterion": "persistent substrate pressure must emit a region split proposal that preserves the parent region identity, partitions unit identities and local state, passes unseen holdout validation, survives checkpoint continuation, consumes the ledger budget, and reverses cleanly; connected regions and zero-budget splits must fail closed"
+    "criterion": "persistent substrate pressure must emit a region split proposal that preserves the parent region identity, partitions unit identities and local state, passes unseen holdout validation, survives checkpoint continuation, consumes the ledger budget, and reverses cleanly; connected regions must migrate their routes explicitly and zero-budget splits must fail closed"
   }
 }

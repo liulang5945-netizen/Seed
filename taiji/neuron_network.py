@@ -220,7 +220,7 @@ class AdaptiveNeuronNetwork:
         parent_checkpoint_id: str | None = None,
         resource_cost: int = 1,
     ) -> StructuralTopologyProposal:
-        """Describe a stable partition of an isolated region into two regions."""
+        """Describe a stable partition of one region with explicit route migration."""
 
         region = self._region(region_id)
         if region.unit_count < 2:
@@ -228,8 +228,6 @@ class AdaptiveNeuronNetwork:
         split_count = int(first_unit_count)
         if not 0 < split_count < region.unit_count:
             raise ValueError("region split first_unit_count must leave both partitions non-empty")
-        if any(region_id in {source_id, target_id} for source_id, target_id, _ in self._connections.values()):
-            raise ValueError("region split currently requires an isolated region")
         retained_id = region.region_id
         candidate = (
             f"{retained_id}.split.1"
@@ -238,6 +236,20 @@ class AdaptiveNeuronNetwork:
         )
         if not candidate or candidate == retained_id or candidate in self._regions:
             raise ValueError("region split new_region_id must be a fresh identity")
+        connection_migrations: list[tuple[str, tuple[str, ...]]] = []
+        for connection_id, (source_id, target_id, _) in self._connections.items():
+            source_ids = (
+                (retained_id, candidate) if source_id == retained_id else (source_id,)
+            )
+            target_ids = (
+                (retained_id, candidate) if target_id == retained_id else (target_id,)
+            )
+            child_ids = tuple(
+                f"connection:{child_source}->{child_target}"
+                for child_source in source_ids
+                for child_target in target_ids
+            )
+            connection_migrations.append((connection_id, child_ids))
         return StructuralTopologyProposal(
             proposal_id=f"topology:{retained_id}:split:{candidate}",
             substrate_id=retained_id,
@@ -250,6 +262,7 @@ class AdaptiveNeuronNetwork:
                 ("retained_unit_ids", region.unit_ids[:split_count]),
                 ("new_unit_ids", region.unit_ids[split_count:]),
                 ("parent_unit_count", region.unit_count),
+                ("connection_migrations", tuple(connection_migrations)),
                 ("topology_role", "region_split"),
             ),
             evidence_ids=tuple(str(item) for item in evidence_ids),
@@ -529,7 +542,7 @@ class AdaptiveNeuronNetwork:
         *,
         generator: torch.Generator,
     ) -> bool:
-        """Split an isolated region while preserving unit identities and local state."""
+        """Split a region while preserving units, local state and affected routes."""
 
         if proposal.status != "pending":
             raise ValueError("only pending topology proposals can be applied")
@@ -545,8 +558,6 @@ class AdaptiveNeuronNetwork:
             raise ValueError("region split parent identity does not match proposal")
         if not new_region_id or new_region_id in self._regions:
             raise ValueError("region split child identity is not fresh")
-        if any(parent_id in {source_id, target_id} for source_id, target_id, _ in self._connections.values()):
-            raise ValueError("region split currently requires an isolated region")
         parent = self._region(parent_id)
         retained_units = tuple(str(item) for item in specification.get("retained_unit_ids", ()))
         new_units = tuple(str(item) for item in specification.get("new_unit_ids", ()))
@@ -557,6 +568,25 @@ class AdaptiveNeuronNetwork:
             or int(specification.get("parent_unit_count", -1)) != parent.unit_count
         ):
             raise ValueError("region split unit partition has drifted")
+        migration_payload = specification.get("connection_migrations", ())
+        if not isinstance(migration_payload, (tuple, list)):
+            raise ValueError("region split connection migrations must be a sequence")
+        expected_migrations: dict[str, tuple[str, ...]] = {}
+        for item in migration_payload:
+            if not isinstance(item, (tuple, list)) or len(item) != 2:
+                raise ValueError("region split connection migration must be a pair")
+            old_id = str(item[0])
+            child_ids = tuple(str(child_id) for child_id in item[1])
+            if not old_id or not child_ids or old_id in expected_migrations:
+                raise ValueError("region split connection migration identities are invalid")
+            expected_migrations[old_id] = child_ids
+        actual_touched = {
+            connection_id: (source_id, target_id, connection)
+            for connection_id, (source_id, target_id, connection) in self._connections.items()
+            if parent_id in {source_id, target_id}
+        }
+        if set(expected_migrations) != set(actual_touched):
+            raise ValueError("region split connection migrations do not match current topology")
         retained = self._partition_region(
             parent,
             region_id=retained_id,
@@ -569,9 +599,129 @@ class AdaptiveNeuronNetwork:
             unit_ids=new_units,
             generator=generator,
         )
+        migrated_connections: dict[str, tuple[str, str, SparseSynapses]] = {}
+        migrated_costs: dict[str, float] = {}
+        migrated_lesions: set[str] = set()
+        for old_id, child_ids in expected_migrations.items():
+            source_id, target_id, old_connection = actual_touched[old_id]
+            source_ids = (
+                (retained_id, new_region_id) if source_id == parent_id else (source_id,)
+            )
+            target_ids = (
+                (retained_id, new_region_id) if target_id == parent_id else (target_id,)
+            )
+            expected_child_ids = tuple(
+                f"connection:{child_source}->{child_target}"
+                for child_source in source_ids
+                for child_target in target_ids
+            )
+            if child_ids != expected_child_ids:
+                raise ValueError("region split connection child identities have drifted")
+            source_partitions = {
+                retained_id: retained,
+                new_region_id: child,
+            }
+            old_source = parent if source_id == parent_id else self._region(source_id)
+            old_target = parent if target_id == parent_id else self._region(target_id)
+            child_pairs = tuple(
+                (child_source_id, child_target_id)
+                for child_source_id in source_ids
+                for child_target_id in target_ids
+            )
+            for (child_source_id, child_target_id), child_connection_id in zip(
+                child_pairs,
+                child_ids,
+                strict=True,
+            ):
+                child_source = (
+                    source_partitions[child_source_id]
+                    if child_source_id in source_partitions
+                    else self._region(child_source_id)
+                )
+                child_target = (
+                    source_partitions[child_target_id]
+                    if child_target_id in source_partitions
+                    else self._region(child_target_id)
+                )
+                migrated = SparseSynapses(
+                    child_target.unit_count,
+                    child_source.unit_count,
+                    old_connection.row_fan_in,
+                    generator=generator,
+                    init_scale=child_target.dynamics.weight_init_scale,
+                    max_weight_norm=old_connection.max_weight_norm,
+                    device=child_target.device,
+                )
+                migrated.edge_weight.zero_()
+                old_source_units = old_source.unit_ids
+                old_target_units = old_target.unit_ids
+                child_source_unit_index = {
+                    unit_id: index
+                    for index, unit_id in enumerate(child_source.unit_ids)
+                }
+                child_target_unit_index = {
+                    unit_id: index
+                    for index, unit_id in enumerate(child_target.unit_ids)
+                }
+                target_unit_ids = child_target.unit_ids
+                old_target_index = {unit_id: index for index, unit_id in enumerate(old_target_units)}
+                for child_target_unit in target_unit_ids:
+                    new_target_index = child_target_unit_index[child_target_unit]
+                    old_target_index_value = old_target_index[child_target_unit]
+                    new_slot = 0
+                    for old_slot in range(old_connection.row_fan_in):
+                        old_source_index_value = int(
+                            old_connection.pre_index[old_target_index_value, old_slot].item()
+                        )
+                        old_source_unit = old_source_units[old_source_index_value]
+                        if old_source_unit not in child_source_unit_index:
+                            continue
+                        if new_slot >= migrated.row_fan_in:
+                            break
+                        migrated.pre_index[new_target_index, new_slot] = (
+                            child_source_unit_index[old_source_unit]
+                        )
+                        migrated.edge_weight[new_target_index, new_slot] = (
+                            old_connection.edge_weight[old_target_index_value, old_slot]
+                        )
+                        new_slot += 1
+                migrated_connections[child_connection_id] = (
+                    child_source_id,
+                    child_target_id,
+                    migrated,
+                )
+                migrated_costs[child_connection_id] = self._connection_resource_costs.get(
+                    old_id,
+                    1.0,
+                )
+                if old_id in self._lesioned_connections:
+                    migrated_lesions.add(child_connection_id)
+                if (
+                    self._cooperation_learner is not None
+                    and child_connection_id != old_id
+                ):
+                    self._cooperation_learner.fork_connection(old_id, child_connection_id)
         self._regions[retained_id] = retained
         self._regions[new_region_id] = child
-        self.execution_order = (*self.execution_order, new_region_id)
+        split_order: list[str] = []
+        for item in self.execution_order:
+            if item == parent_id:
+                split_order.extend((retained_id, new_region_id))
+            else:
+                split_order.append(item)
+        self.execution_order = tuple(split_order)
+        for old_id in actual_touched:
+            self._connections.pop(old_id)
+            self._connection_resource_costs.pop(old_id, None)
+            self._lesioned_connections.discard(old_id)
+            if (
+                self._cooperation_learner is not None
+                and old_id not in migrated_connections
+            ):
+                self._cooperation_learner.unregister_connection(old_id)
+        self._connections.update(migrated_connections)
+        self._connection_resource_costs.update(migrated_costs)
+        self._lesioned_connections.update(migrated_lesions)
         return True
 
     @torch.no_grad()

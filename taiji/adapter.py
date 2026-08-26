@@ -1772,7 +1772,7 @@ class TSKV8Adapter(Taiji):
         holdout_transfer: float,
         evidence_ids: Sequence[str],
     ) -> StructuralTopologyProposal | None:
-        """Turn persistent substrate pressure into an isolated region split proposal."""
+        """Turn persistent substrate pressure into a region split proposal."""
 
         if self._structural_growth_controller is None:
             raise RuntimeError("structural growth controller is not attached")
@@ -1813,7 +1813,7 @@ class TSKV8Adapter(Taiji):
         holdout_inputs: Sequence[Mapping[str, torch.Tensor]],
         expected_activities: Sequence[Mapping[str, torch.Tensor]],
     ) -> bool:
-        """Validate an isolated split against unseen inputs in parent coordinates."""
+        """Validate a split against unseen inputs in the parent coordinate space."""
 
         if self._structural_growth_controller is None:
             raise RuntimeError("structural growth controller is not attached")
@@ -1945,7 +1945,7 @@ class TSKV8Adapter(Taiji):
         network_id: str,
         proposal: StructuralTopologyProposal,
     ) -> bool:
-        """Commit a validated isolated region split through the runtime ledger."""
+        """Commit a validated region split through the runtime ledger."""
 
         existing = self._topology_proposals.get(proposal.proposal_id)
         if existing is not None:
