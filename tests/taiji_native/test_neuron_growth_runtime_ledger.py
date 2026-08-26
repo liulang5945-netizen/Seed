@@ -222,10 +222,31 @@ def test_runtime_tick_feeds_structural_organs_and_checkpoint_continues() -> None
         item for item in model.topology_proposals if item.proposal_id == materialized.proposal_id
     )
     assert materialized.status == "rolled_back"
+    remaining = model.structural_proposal_candidates[0]
+    cycle = model.run_structural_maintenance_cycle(
+        candidate_ids=(remaining.candidate_id,),
+        holdout_inputs_by_candidate={
+            remaining.candidate_id: ({"target": torch.ones(3)},),
+        },
+        expected_activities_by_candidate={
+            remaining.candidate_id: (first,),
+        },
+    )
+    assert len(cycle) == 1
+    assert cycle[0].status == "committed"
+    assert model.neuron_networks[0].region_ids == (
+        "source",
+        "target",
+        "target.split.1",
+    )
+    assert model.rollback_structural_candidate(remaining.candidate_id) is True
+    assert model.neuron_networks[0].region_ids == ("source", "target")
+    assert model.structural_maintenance_results[-1].status == "committed"
 
     restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
     assert restored.structural_runtime_observations == model.structural_runtime_observations
     assert restored.structural_proposal_candidates == model.structural_proposal_candidates
+    assert restored.structural_maintenance_results == model.structural_maintenance_results
     assert restored.materialize_structural_candidate(candidate.candidate_id) == materialized
     assert restored.structural_growth_controller is not None
     assert restored.structural_growth_controller.total_observations == 2

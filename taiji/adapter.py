@@ -96,6 +96,7 @@ from .structural_growth import (
     AdaptiveStructuralGrowthController,
     AdaptiveStructuralPruningController,
     StructuralGrowthDecision,
+    StructuralMaintenanceResult,
     StructuralProposalCandidate,
     StructuralPruningDecision,
     StructuralRuntimeObservation,
@@ -161,6 +162,7 @@ class TSKV8Adapter(Taiji):
         self._structural_runtime_previous_errors: dict[str, float] = {}
         self._structural_proposal_candidates: dict[str, StructuralProposalCandidate] = {}
         self._structural_candidate_proposals: dict[str, str] = {}
+        self._structural_maintenance_results: list[StructuralMaintenanceResult] = []
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
@@ -277,6 +279,12 @@ class TSKV8Adapter(Taiji):
         """Return pending structural candidates awaiting explicit ledger validation."""
 
         return tuple(self._structural_proposal_candidates.values())
+
+    @property
+    def structural_maintenance_results(self) -> tuple[StructuralMaintenanceResult, ...]:
+        """Return recent per-candidate results from maintenance cycles."""
+
+        return tuple(self._structural_maintenance_results)
 
     def materialize_structural_candidate(
         self,
@@ -436,6 +444,101 @@ class TSKV8Adapter(Taiji):
         raise ValueError(
             f"candidate proposal has no rollback dispatcher: {proposal.operation}/{role}"
         )
+
+    def _pending_structural_candidate_ids(self) -> tuple[str, ...]:
+        ids = list(self._structural_proposal_candidates)
+        for candidate_id, proposal_id in self._structural_candidate_proposals.items():
+            proposal = self._topology_proposals.get(proposal_id)
+            if proposal is not None and proposal.status == "pending" and candidate_id not in ids:
+                ids.append(candidate_id)
+        return tuple(ids)
+
+    def _record_structural_maintenance_result(
+        self,
+        result: StructuralMaintenanceResult,
+    ) -> None:
+        self._structural_maintenance_results.append(result)
+        self._structural_maintenance_results = self._structural_maintenance_results[
+            -self._lineage_limit() :
+        ]
+
+    def run_structural_maintenance_cycle(
+        self,
+        *,
+        holdout_inputs_by_candidate: Mapping[
+            str, Sequence[Mapping[str, torch.Tensor]]
+        ],
+        expected_activities_by_candidate: Mapping[
+            str, Sequence[Mapping[str, torch.Tensor]]
+        ],
+        candidate_ids: Sequence[str] | None = None,
+    ) -> tuple[StructuralMaintenanceResult, ...]:
+        """Process candidates independently through materialize/validate/commit gates."""
+
+        ids = (
+            self._pending_structural_candidate_ids()
+            if candidate_ids is None
+            else tuple(str(item) for item in candidate_ids)
+        )
+        results: list[StructuralMaintenanceResult] = []
+        for candidate_id in ids:
+            holdout_inputs = holdout_inputs_by_candidate.get(candidate_id)
+            expected_activities = expected_activities_by_candidate.get(candidate_id)
+            if not holdout_inputs or not expected_activities:
+                result = StructuralMaintenanceResult(
+                    candidate_id=candidate_id,
+                    proposal_id=self._structural_candidate_proposals.get(candidate_id),
+                    status="missing_holdout",
+                    error="candidate requires non-empty holdout inputs and expected activities",
+                )
+                self._record_structural_maintenance_result(result)
+                results.append(result)
+                continue
+            try:
+                proposal = self.materialize_structural_candidate(candidate_id)
+                if proposal is None:
+                    raise ValueError("candidate is not available for materialization")
+                if proposal.status != "pending":
+                    result = StructuralMaintenanceResult(
+                        candidate_id=candidate_id,
+                        proposal_id=proposal.proposal_id,
+                        status="already_applied",
+                        validation_score=proposal.validation_score,
+                    )
+                    self._record_structural_maintenance_result(result)
+                    results.append(result)
+                    continue
+                validated = self.validate_structural_candidate_holdout(
+                    candidate_id,
+                    holdout_inputs=holdout_inputs,
+                    expected_activities=expected_activities,
+                )
+                current = self._topology_proposals[proposal.proposal_id]
+                if not validated:
+                    self.commit_structural_candidate(candidate_id)
+                    status = "rejected"
+                else:
+                    committed = self.commit_structural_candidate(candidate_id)
+                    status = "committed" if committed else "rejected"
+                result = StructuralMaintenanceResult(
+                    candidate_id=candidate_id,
+                    proposal_id=proposal.proposal_id,
+                    status=status,
+                    validation_score=current.validation_score,
+                )
+            except (IndexError, KeyError, RuntimeError, ValueError) as exc:
+                proposal_id = self._structural_candidate_proposals.get(candidate_id)
+                proposal = None if proposal_id is None else self._topology_proposals.get(proposal_id)
+                result = StructuralMaintenanceResult(
+                    candidate_id=candidate_id,
+                    proposal_id=proposal_id,
+                    status="failed_closed",
+                    validation_score=0.0 if proposal is None else proposal.validation_score,
+                    error=str(exc),
+                )
+            self._record_structural_maintenance_result(result)
+            results.append(result)
+        return tuple(results)
 
     @staticmethod
     def _growth_request_identity(
@@ -3615,6 +3718,10 @@ class TSKV8Adapter(Taiji):
                 for candidate in self._structural_proposal_candidates.values()
             ],
             "candidate_proposals": dict(self._structural_candidate_proposals),
+            "maintenance_results": [
+                result.to_payload()
+                for result in self._structural_maintenance_results
+            ],
         }
 
     def _restore_structural_runtime(self, payload: Any) -> None:
@@ -3623,6 +3730,7 @@ class TSKV8Adapter(Taiji):
         self._structural_runtime_previous_errors = {}
         self._structural_proposal_candidates = {}
         self._structural_candidate_proposals = {}
+        self._structural_maintenance_results = []
         if payload is None:
             return
         if not isinstance(payload, Mapping):
@@ -3638,10 +3746,13 @@ class TSKV8Adapter(Taiji):
             raise ValueError("structural runtime previous_errors must be a mapping")
         candidates_payload = payload.get("proposal_candidates", ())
         candidate_proposals = payload.get("candidate_proposals", {})
+        maintenance_results = payload.get("maintenance_results", ())
         if not isinstance(candidates_payload, (tuple, list)):
             raise ValueError("structural proposal candidates must be a sequence")
         if not isinstance(candidate_proposals, Mapping):
             raise ValueError("structural candidate_proposals must be a mapping")
+        if not isinstance(maintenance_results, (tuple, list)):
+            raise ValueError("structural maintenance results must be a sequence")
         if any(not isinstance(item, Mapping) for item in observations_payload):
             raise ValueError("structural runtime observation entry must be a mapping")
         observations = tuple(
@@ -3671,6 +3782,12 @@ class TSKV8Adapter(Taiji):
             for proposal_id in self._structural_candidate_proposals.values()
         ):
             raise ValueError("structural candidate proposal mapping references an unknown proposal")
+        for item in maintenance_results:
+            if not isinstance(item, Mapping):
+                raise ValueError("structural maintenance result entry must be a mapping")
+            self._record_structural_maintenance_result(
+                StructuralMaintenanceResult.from_payload(item)
+            )
 
     def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:
         """Attach a Taiji-owned predictor used for runtime intervention scoring."""

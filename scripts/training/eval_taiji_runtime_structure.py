@@ -129,6 +129,22 @@ def evaluate() -> dict[str, object]:
     materialized = next(
         item for item in model.topology_proposals if item.proposal_id == materialized.proposal_id
     )
+    remaining = model.structural_proposal_candidates[0]
+    cycle_results = model.run_structural_maintenance_cycle(
+        candidate_ids=(remaining.candidate_id,),
+        holdout_inputs_by_candidate={
+            remaining.candidate_id: ({"target": torch.ones(3)},),
+        },
+        expected_activities_by_candidate={
+            remaining.candidate_id: (first,),
+        },
+    )
+    cycle_committed = cycle_results[0].status == "committed"
+    cycle_topology = (
+        model.neuron_networks[0].region_ids,
+        model.neuron_networks[0].connection_ids,
+    )
+    cycle_rolled_back = model.rollback_structural_candidate(remaining.candidate_id)
     before_topology = model.neuron_networks[0].region_ids, model.neuron_networks[0].connection_ids
     checkpoint = model.native_checkpoint()
     restored = TSKV8Adapter.from_native_checkpoint(checkpoint)
@@ -139,36 +155,55 @@ def evaluate() -> dict[str, object]:
         holdout=True,
     )
     restored_network = restored.neuron_networks[0]
+    restored_candidate = restored.materialize_structural_candidate(candidate.candidate_id)
+    checkpoint_checks = {
+        "observations": restored.structural_runtime_observations[:4] == before_checkpoint,
+        "tick": restored.structural_runtime_observations[-1].tick == 3,
+        "growth": (
+            restored.structural_growth_controller is not None
+            and restored.structural_growth_controller.total_observations == 4
+        ),
+        "pruning": (
+            restored.structural_pruning_controller is not None
+            and restored.structural_pruning_controller.total_observations == 11
+        ),
+        "candidate": restored_candidate == materialized,
+        "maintenance_results": len(restored.structural_maintenance_results) == 1,
+    }
     checkpoint_continuation = bool(
-        restored.structural_runtime_observations[:4] == before_checkpoint
-        and restored.structural_runtime_observations[-1].tick == 3
-        and restored.structural_growth_controller is not None
-        and restored.structural_growth_controller.total_observations == 4
-        and restored.structural_pruning_controller is not None
-        and restored.structural_pruning_controller.total_observations == 11
-        and restored.materialize_structural_candidate(candidate.candidate_id) == materialized
+        all(checkpoint_checks.values())
     )
     route_state = restored_network.cooperation_learner.route_state(route.substrate_id)
+    gate_checks = {
+        "observation_count": len(before_checkpoint) == 4,
+        "first_without_error": before_checkpoint[0].prediction_error is None,
+        "holdout_errors": all(item.prediction_error is not None for item in before_checkpoint[2:]),
+        "growth_count": (
+            model.structural_growth_controller is not None
+            and model.structural_growth_controller.total_observations == 2
+        ),
+        "pruning_count": (
+            model.structural_pruning_controller is not None
+            and model.structural_pruning_controller.total_observations == 7
+        ),
+        "queue_drained": len(model.structural_proposal_candidates) == 0,
+        "first_rolled_back": materialized.status == "rolled_back",
+        "first_holdout": holdout_validated,
+        "first_commit": committed,
+        "first_rollback": rolled_back,
+        "first_topology": topology_after_commit[0] == ("source", "target", "source.split.1"),
+        "cycle_commit": cycle_committed,
+        "cycle_rollback": cycle_rolled_back,
+        "cycle_topology": cycle_topology[0] == ("source", "target", "target.split.1"),
+        "route_evidence": route_state.evidence_count == 2,
+        "restored_topology": before_topology
+        == (restored_network.region_ids, restored_network.connection_ids),
+        "checkpoint": checkpoint_continuation,
+    }
 
     gate = {
-        "passed": bool(
-            len(before_checkpoint) == 4
-            and before_checkpoint[0].prediction_error is None
-            and all(item.prediction_error is not None for item in before_checkpoint[2:])
-            and model.structural_growth_controller is not None
-            and model.structural_growth_controller.total_observations == 2
-            and model.structural_pruning_controller is not None
-            and model.structural_pruning_controller.total_observations == 7
-            and len(model.structural_proposal_candidates) == 1
-            and materialized.status == "rolled_back"
-            and holdout_validated
-            and committed
-            and rolled_back
-            and topology_after_commit[0] == ("source", "target", "source.split.1")
-            and route_state.evidence_count == 2
-            and before_topology == (restored_network.region_ids, restored_network.connection_ids)
-            and checkpoint_continuation
-        ),
+        "passed": all(gate_checks.values()),
+        "checks": gate_checks,
         "criterion": (
             "real native network ticks must emit checkpointable activity, prediction-error, "
             "learning-gain and resource observations; attached structural organs and route "
@@ -189,8 +224,11 @@ def evaluate() -> dict[str, object]:
             "candidate_committed": committed,
             "candidate_rolled_back": rolled_back,
             "topology_after_candidate_commit": list(topology_after_commit[0]),
+            "maintenance_cycle_status": cycle_results[0].status,
+            "maintenance_cycle_rolled_back": cycle_rolled_back,
             "route_evidence_count": route_state.evidence_count,
             "checkpoint_continuation": checkpoint_continuation,
+            "checkpoint_checks": checkpoint_checks,
             "topology_unchanged": before_topology
             == (restored_network.region_ids, restored_network.connection_ids),
         },

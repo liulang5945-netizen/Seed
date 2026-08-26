@@ -149,4 +149,8 @@ live topology。统一 holdout validator dispatch 也已完成：split、region-
 trial checkpoint 和 reverse rollback。统一 commit/rollback dispatcher 已完成：candidate 按
 topology role 路由到对应 ledger，Gate 覆盖 holdout 后 commit、预算拒绝、trial roundtrip、
 live topology 变更、latest-change reverse rollback 与 checkpoint continuation。下一步转为将
-candidate queue 和真实 holdout 数据绑定为可批量、逐项 fail-closed 的 maintenance cycle。
+candidate queue 和真实 holdout 数据绑定为可批量、逐项 fail-closed 的 maintenance cycle。该
+cycle 已通过：两个 runtime candidates 完成 materialize、holdout、commit、rollback，缺失
+holdout/异常不会改变 live topology，结果含 proposal lineage、score/status/error 并可 checkpoint
+恢复。下一步转为把直接 neuron birth (`add`) 纳入同一 candidate contract，并验证候选依赖与冲突
+的 fail-closed 行为。

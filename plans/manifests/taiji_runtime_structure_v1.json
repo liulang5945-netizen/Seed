@@ -16,6 +16,25 @@
   ],
   "gate": {
     "passed": true,
+    "checks": {
+      "observation_count": true,
+      "first_without_error": true,
+      "holdout_errors": true,
+      "growth_count": true,
+      "pruning_count": true,
+      "queue_drained": true,
+      "first_rolled_back": true,
+      "first_holdout": true,
+      "first_commit": true,
+      "first_rollback": true,
+      "first_topology": true,
+      "cycle_commit": true,
+      "cycle_rollback": true,
+      "cycle_topology": true,
+      "route_evidence": true,
+      "restored_topology": true,
+      "checkpoint": true
+    },
     "criterion": "real native network ticks must emit checkpointable activity, prediction-error, learning-gain and resource observations; attached structural organs and route credit must continue across checkpoint, while topology remains unchanged until a separate holdout/budget/trial/rollback transaction commits it"
   }
 }
