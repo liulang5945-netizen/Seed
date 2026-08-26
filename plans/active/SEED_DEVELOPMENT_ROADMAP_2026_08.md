@@ -542,4 +542,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把统一 ledger 扩展到 neuron/region proposal，先定义可迁移的 unit identity、状态维度、跨区域连接和资源成本合同，再通过 holdout/lesion、native checkpoint continuation 与 rollback 的小型神经元单元新增 Gate；继续禁止固定 action/intent 表。**
+**下一步：推进跨区域结构 Gate：在 `AdaptiveNeuronRegion` 之间建立显式输入源和跨区域 proposal/资源账本，用两个区域的 holdout transfer 与 cross-region lesion 证明新增单元由上游活动驱动且提高未见模式迁移；继续禁止固定 action/intent 表。**

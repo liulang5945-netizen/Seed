@@ -83,6 +83,12 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
   roundtrip 后才能接受，native checkpoint 能继续恢复 ledger，rollback 只允许按最新接受顺序
   执行，预算耗尽时 fail-closed。该 Gate 报告为
   `reports/taiji_topology_runtime_ledger_20260826.json`。
+- neuron growth Gate 已通过：`AdaptiveNeuronRegion` 使用稳定 `unit_id`、显式活动/阈值/膜电位/
+  trace 状态、稀疏输入与递归突触；新增单元只追加状态和新突触行，旧单元的身份、拓扑和权重
+  保持不变。新单元可通过局部 error × eligibility 学习 holdout，functional lesion 会使其活动
+  失效，器官 checkpoint 与 `TSKV8Adapter` native checkpoint 均能恢复；runtime ledger 负责预算、
+  接受、零预算拒绝和最新顺序 rollback。该 Gate 报告为
+  `reports/taiji_neuron_growth_20260826.json`。
 
 ## 边界与已知限制
 
@@ -93,7 +99,7 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 
 ## 下一步唯一入口
 
-将同一 ledger 扩展到 neuron/region proposal：先定义可迁移的 unit identity、状态维度、
-跨区域连接和资源成本合同，再实现一个能通过 holdout/lesion、native checkpoint continuation
-与 rollback 的小型神经元单元新增 Gate；新增结构仍必须由真实误差、资源瓶颈和迁移收益驱动，
-禁止按固定 action/intent 表写死拓扑。
+下一步进入跨区域结构：在不改写固定 `TaijiFabric` 尺寸的前提下，定义多个
+`AdaptiveNeuronRegion` 之间的显式输入源、跨区域 proposal 和资源账本；先用两个区域的
+holdout transfer 与 cross-region lesion 证明新单元确实被上游活动驱动并改善未见模式，之后
+才允许把该器官接入更高层认知通路。继续禁止按固定 action/intent 表写死拓扑。

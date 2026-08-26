@@ -1,0 +1,47 @@
+{
+  "format": "taiji-neuron-growth-v1",
+  "proposal": {
+    "version": 1,
+    "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+    "substrate_id": "adaptive.cortex",
+    "target_kind": "neuron",
+    "operation": "add",
+    "specification": {
+      "existing_unit_count": 2,
+      "input_dim": 7,
+      "region_id": "adaptive.cortex",
+      "source_region_id": "fabric.region.0",
+      "unit_id": "u2"
+    },
+    "requested_units": 1,
+    "resource_cost": 1,
+    "evidence_ids": [
+      "holdout:novel-unit"
+    ],
+    "parent_checkpoint_id": "parent:region",
+    "status": "pending",
+    "validation_score": 0.0
+  },
+  "metrics": {
+    "identity_preserved": true,
+    "support_preserved": true,
+    "unit_count_after_growth": 3,
+    "holdout_before": 0.0,
+    "holdout_after_local_learning": 0.04330127313733101,
+    "lesion_activity": 0.0,
+    "checkpoint_roundtrip": true,
+    "runtime_accepted": true,
+    "runtime_accepted_status": "accepted",
+    "budget_after_accept": 0,
+    "checkpoint_status": "accepted",
+    "runtime_rollback": true,
+    "budget_after_rollback": 1,
+    "rejected_without_budget": true,
+    "rejected_status": "rejected"
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "neuron birth must append a stable identity, preserve existing sparse support and state coordinates, learn a holdout signal locally, fail under functional lesion, survive checkpoint continuation, consume ledger budget, and rollback in reverse order"
+  },
+  "boundary": "This gate proves one adaptive neuron organ and its runtime ledger; it does not yet claim automatic multi-region routing, open-domain self-evolution, or general intelligence."
+}

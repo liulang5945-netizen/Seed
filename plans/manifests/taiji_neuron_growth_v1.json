@@ -1,0 +1,20 @@
+{
+  "format": "taiji-neuron-growth-manifest-v1",
+  "task": "identity-preserving neuron growth",
+  "report": "reports/taiji_neuron_growth_20260826.json",
+  "seed": 71,
+  "controls": [
+    "stable_identity",
+    "support_preservation",
+    "local_holdout_learning",
+    "functional_lesion",
+    "checkpoint_continuation",
+    "budget_consumption",
+    "reverse_rollback",
+    "zero_budget"
+  ],
+  "gate": {
+    "passed": true,
+    "criterion": "neuron birth must append a stable identity, preserve existing sparse support and state coordinates, learn a holdout signal locally, fail under functional lesion, survive checkpoint continuation, consume ledger budget, and rollback in reverse order"
+  }
+}

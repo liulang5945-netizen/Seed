@@ -133,6 +133,11 @@ from .language_organ import (
 )
 from .memory import EpisodicField, EpisodicReplay, EpisodicWrite
 from .model import Taiji
+from .neuron_region import (
+    ADAPTIVE_NEURON_REGION_CHECKPOINT_FORMAT,
+    AdaptiveNeuronRegion,
+    NeuronRegionDynamics,
+)
 from .organs import ByteMotor, ByteSensor, SparseReceptorBank
 from .perception import LearnedPerception
 from .planning import (
@@ -188,6 +193,8 @@ from .world_learning import (
 __all__ = [
     "ByteMotor",
     "ByteSensor",
+    "ADAPTIVE_NEURON_REGION_CHECKPOINT_FORMAT",
+    "AdaptiveNeuronRegion",
     "AFFORDANCE_FEATURE_CHECKPOINT_FORMAT",
     "AffordanceFeatureTrainingExample",
     "ActionIntent",
@@ -265,6 +272,7 @@ __all__ = [
     "MemoryState",
     "NativeCheckpoint",
     "NativeMemoryState",
+    "NeuronRegionDynamics",
     "Observation",
     "Outcome",
     "PerceptionConfig",
