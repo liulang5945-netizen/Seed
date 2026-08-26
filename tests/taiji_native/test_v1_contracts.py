@@ -81,10 +81,13 @@ def test_core_object_contracts_round_trip_and_cognitive_state_lineage() -> None:
         prototype=torch.tensor([0.3, 0.7]),
         support_event_ids=(event.event_id,),
         support_assembly_ids=(assembly.assembly_id,),
+        object_ids=("object-1",),
         relation_ids=("relation-1",),
         maturity=0.4,
         stability=0.6,
         confidence=0.8,
+        outcome_mean=0.7,
+        outcome_consistency=0.9,
         update_count=2,
         last_updated_tick=3,
     )
@@ -136,6 +139,8 @@ def test_core_object_contracts_round_trip_and_cognitive_state_lineage() -> None:
     assert restored_state.assemblies[0].assembly_id == assembly.assembly_id
     assert restored_state.events[0].event_id == event.event_id
     assert restored_state.concepts[0].concept_id == concept.concept_id
+    assert restored_state.concepts[0].object_ids == ("object-1",)
+    assert restored_state.concepts[0].outcome_consistency == 0.9
     assert restored_state.self_state.capability_confidence == (("planning", 0.75),)
     assert restored_state.development.parent_checkpoint_id == "checkpoint-0"
 
@@ -225,6 +230,7 @@ def test_tsk_v8_runtime_materializes_lineage_growth_and_checkpoint_before_traini
             model = TSKV8Adapter(_config(), episode_id=episode_id)
             model.attach_episodic_memory(episodic)
             model.attach_semantic_memory(semantic)
+        world_object_id = f"schema-{index}-object"
         model.observe_event(
             Observation(
                 modality="text-byte",
@@ -233,11 +239,19 @@ def test_tsk_v8_runtime_materializes_lineage_growth_and_checkpoint_before_traini
                 source="test-environment",
             ),
             learn=False,
+            world_state=WorldState(
+                tick=model.tick + 1,
+                latent=torch.zeros(2),
+                objects=(WorldObject(world_object_id),),
+                relations=(("agent", "near", world_object_id),),
+            ),
         )
         observed = model.cognitive_snapshot()
         assert len(observed.events) == 1
         assert len(observed.assemblies) == 1
         assert observed.events[-1].assembly_ids == (observed.assemblies[-1].assembly_id,)
+        assert observed.events[-1].object_ids == (world_object_id,)
+        assert observed.events[-1].relation_ids == (f"agent:near:{world_object_id}",)
 
         model.act((97, 98), sample=False)
         model.settle_action(1.0, learn=False, provenance="experienced")
@@ -265,10 +279,42 @@ def test_tsk_v8_runtime_materializes_lineage_growth_and_checkpoint_before_traini
     concept = consolidated.concepts[0]
     assert len(concept.support_event_ids) == 2
     assert len(concept.support_assembly_ids) == 2
+    assert len(concept.object_ids) == 2
+    assert len(concept.relation_ids) == 2
+    assert concept.outcome_mean > 0.9
+    assert concept.outcome_consistency > 0.99
     assert consolidated.development.last_update_source == "semantic-consolidation"
 
     model.consolidate_semantic_memory(epochs=1, learning_rate=0.01)
     assert model.cognitive_snapshot().concepts[0].update_count == 2
+
+    # A third, unseen object identity with the same relation shape grows the existing concept.
+    unseen_model = TSKV8Adapter(_config(), episode_id="runtime-lineage-unseen")
+    unseen_model.attach_episodic_memory(episodic)
+    unseen_model.attach_semantic_memory(semantic)
+    unseen_object_id = "schema-unseen-object"
+    unseen_model.observe_event(
+        Observation(
+            modality="text-byte",
+            value=97,
+            timestamp=0,
+            source="holdout-environment",
+        ),
+        learn=False,
+        world_state=WorldState(
+            tick=unseen_model.tick + 1,
+            latent=torch.zeros(2),
+            objects=(WorldObject(unseen_object_id),),
+            relations=(("agent", "near", unseen_object_id),),
+        ),
+    )
+    unseen_model.act((97, 98), sample=False)
+    unseen_model.settle_action(1.0, learn=False, provenance="experienced")
+    model.consolidate_semantic_memory(epochs=1, learning_rate=0.01)
+    grown_concept = model.cognitive_snapshot().concepts[0]
+    assert len(grown_concept.support_event_ids) == 3
+    assert unseen_object_id in grown_concept.object_ids
+    assert grown_concept.update_count == 3
 
     # A semantic lesion that removes event/assembly provenance must not create a concept.
     lesioned = EpisodicMemoryStore(cue_dim=model.perception.feature_dim)
@@ -279,6 +325,33 @@ def test_tsk_v8_runtime_materializes_lineage_growth_and_checkpoint_before_traini
     lesioned_model.attach_semantic_memory(SemanticMemoryLearner(model.perception.feature_dim))
     lesioned_model.consolidate_semantic_memory(epochs=1, learning_rate=0.01)
     assert lesioned_model.cognitive_snapshot().concepts == ()
+
+    world_lesioned = EpisodicMemoryStore(cue_dim=model.perception.feature_dim)
+    for index, record in enumerate(episodic.records[:2]):
+        world_lesioned.write(
+            replace(
+                record,
+                object_ids=(() if index == 0 else record.object_ids),
+                relation_ids=(() if index == 0 else record.relation_ids),
+            )
+        )
+    world_lesioned_model = TSKV8Adapter(_config(), episode_id="world-signal-lesion")
+    world_lesioned_model.attach_episodic_memory(world_lesioned)
+    world_lesioned_model.attach_semantic_memory(SemanticMemoryLearner(model.perception.feature_dim))
+    world_lesioned_model.consolidate_semantic_memory(epochs=1, learning_rate=0.01)
+    assert world_lesioned_model.cognitive_snapshot().concepts == ()
+
+    outcome_lesioned = EpisodicMemoryStore(cue_dim=model.perception.feature_dim)
+    for index, record in enumerate(episodic.records[:2]):
+        if index == 0:
+            assert record.outcome is not None
+            record = replace(record, outcome=replace(record.outcome, reward=-1.0, success=False))
+        outcome_lesioned.write(record)
+    outcome_lesioned_model = TSKV8Adapter(_config(), episode_id="outcome-signal-lesion")
+    outcome_lesioned_model.attach_episodic_memory(outcome_lesioned)
+    outcome_lesioned_model.attach_semantic_memory(SemanticMemoryLearner(model.perception.feature_dim))
+    outcome_lesioned_model.consolidate_semantic_memory(epochs=1, learning_rate=0.01)
+    assert outcome_lesioned_model.cognitive_snapshot().concepts == ()
 
 
 def test_tsk_v8_adapter_commits_structured_world_transition_lineage() -> None:

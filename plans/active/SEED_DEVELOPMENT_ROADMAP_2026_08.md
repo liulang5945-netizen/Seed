@@ -509,4 +509,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：在真实 runtime lineage 之上建立多信号 Concept 形成 Gate：同时使用 percept latent、world object/relation 和 Outcome 证据，验证跨 schema、未见 episode 的概念稳定性与迁移；保留 checkpoint/rollback，并用 source/semantic lesion 证明每类信号确实被使用。**
+**下一步：将多信号 Concept 形成从 TSKV8Adapter 提取为 Taiji 自有语义器官/注册表，独立拥有稳定概念 identity、支持集更新、容量策略、lesion 与可回滚 checkpoint；随后重新验收跨 schema、未见任务迁移和容量/干扰曲线。**

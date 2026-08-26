@@ -226,6 +226,7 @@ class TaijiConfig:
     world_calibration_history_limit: int = 128
     cognitive_lineage_history_limit: int = 256
     concept_similarity_threshold: float = 0.85
+    concept_signal_weights: tuple[float, float, float] = (0.45, 0.35, 0.20)
     self_capability_learning_rate: float = 0.20
     seed: int = 20260821
     perception: PerceptionConfig = field(default_factory=PerceptionConfig)
@@ -363,6 +364,12 @@ class TaijiConfig:
             raise ValueError("cognitive_lineage_history_limit must be positive")
         if not 0.0 < self.concept_similarity_threshold <= 1.0:
             raise ValueError("concept_similarity_threshold must be in (0, 1]")
+        if (
+            len(self.concept_signal_weights) != 3
+            or any(float(weight) <= 0.0 for weight in self.concept_signal_weights)
+            or abs(sum(float(weight) for weight in self.concept_signal_weights) - 1.0) > 1e-6
+        ):
+            raise ValueError("concept_signal_weights must be three positive weights summing to 1")
         if not 0.0 < self.self_capability_learning_rate <= 1.0:
             raise ValueError("self_capability_learning_rate must be in (0, 1]")
 
@@ -557,6 +564,8 @@ class TaijiConfig:
     def from_dict(cls, payload: dict[str, Any]) -> TaijiConfig:
         values = dict(payload)
         values["region_sizes"] = tuple(values["region_sizes"])
+        if "concept_signal_weights" in values:
+            values["concept_signal_weights"] = tuple(values["concept_signal_weights"])
         perception = values.get("perception")
         if perception is not None and not isinstance(perception, PerceptionConfig):
             values["perception"] = PerceptionConfig.from_dict(dict(perception))
