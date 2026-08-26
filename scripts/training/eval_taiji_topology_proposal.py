@@ -138,7 +138,12 @@ def main() -> None:
         "task": "substrate-level synapse topology proposal",
         "report": str(report_path.relative_to(PROJECT_ROOT)).replace("\\", "/"),
         "seed": 71,
-        "controls": ["proposal_roundtrip", "holdout_response", "functional_lesion", "parent_rollback"],
+        "controls": [
+            "proposal_roundtrip",
+            "holdout_response",
+            "functional_lesion",
+            "parent_rollback",
+        ],
         "gate": report["gate"],
     }
     manifest_path.parent.mkdir(parents=True, exist_ok=True)

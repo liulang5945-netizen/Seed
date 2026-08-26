@@ -13,6 +13,7 @@
 | [SEED_STAGE_CLOSEOUT_20260825.md](history/SEED_STAGE_CLOSEOUT_20260825.md) | 本轮阶段收束、证据和延期事项 |
 | [TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md](implementation/TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md) | raw-byte/fabric/memory/motor 精确规范仍是 kernel 证据，但不再定义完整 Taiji |
 | [SEED_DEVELOPMENT_ROADMAP_PRE_NATIVE_V1_20260825.md](history/SEED_DEVELOPMENT_ROADMAP_PRE_NATIVE_V1_20260825.md) | R0–R7 研究顺序建立在旧 substrate 定位上，已由 Native v1 的 P0–P8 替代 |
+| [TAIJI_CONCEPT_FORMATION_GATE_2026_08.md](implementation/TAIJI_CONCEPT_FORMATION_GATE_2026_08.md) | 概念/结构/区域 Gate 事实已归并进总路线图 P7 清单，其“下一步唯一入口”与总路线第 16 节重复且构成第二个权威源，已删除 |
 
 ## 使用规则
 

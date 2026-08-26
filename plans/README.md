@@ -182,7 +182,11 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
   `160 passed`。
 - 原生套件当前 `131 passed, 1 skipped`（命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试）；该
   环境状态不作为代码能力结论。
+- 2026-08-26 门禁与 checkpoint 收口：CI 因 pin 了不存在的 `black==24.12.0` 连续 8 天红灯且期间所有门禁被静默跳过，已改钉
+  `ruff==0.16.4` / `black==26.5.1`；`TSKV8Adapter.checkpoint()`/`restore()` 补齐 `cognitive_state` 往返后，全量测试为
+  `437 passed, 5 skipped`。门禁可信度、mypy 类型债、checkpoint 往返不变量和本目录编制纪律见总路线第 14.1–14.4 节。
 
 ## 当前唯一下一步
 
-下一步：把 schema-scale transfer 从 contract test 扩展到 3-seed runtime recovery report，加入 raw-threshold/normalized-threshold policy lesion，验证同一 recovery episode 的行为与 checkpoint 结果；不新增 action/intent 查表。
+当前唯一下一步只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) 第 16 节，本文件不再复制该结论。
+按总路线第 14.4 节，「当前唯一下一步」在全仓只允许有一个权威源；此处保留指针是为了避免再次出现相互竞争的下一步表述。

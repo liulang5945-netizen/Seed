@@ -142,18 +142,14 @@ def evaluate() -> dict[str, object]:
         and restored_network.execution_order == network.execution_order
         and restored_network.connection_ids == network.connection_ids
         and next(
-            item
-            for item in restored.topology_proposals
-            if item.proposal_id == proposal.proposal_id
+            item for item in restored.topology_proposals if item.proposal_id == proposal.proposal_id
         ).validation_score
         > 0.05
         and checkpoint_holdout
     )
     restored_network.lesion_region(proposal.substrate_id)
     lesion = restored.select_cross_region_connections("cortex") == ()
-    rollback_connection = restored.rollback_cross_region_connection(
-        connection.proposal_id
-    )
+    rollback_connection = restored.rollback_cross_region_connection(connection.proposal_id)
     rollback_region = restored.rollback_region_add(proposal.proposal_id)
 
     no_budget = TSKV8Adapter(_config(budget=0), episode_id="region-growth-no-budget")

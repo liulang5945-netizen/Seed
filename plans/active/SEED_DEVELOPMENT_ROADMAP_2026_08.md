@@ -406,6 +406,16 @@ P4 的最小真实经历边界已落地：
 - P7 schema-scale transfer contract Gate 已通过：同一 world state 差异整体放大 10 倍时 raw MSE 放大，而 schema-normalized error、calibrated planner threshold 与 checkpoint payload 保持；该行为已纳入 v1 contract tests，仍不替代多 seed runtime scale transfer。
 - 本轮 native 回归为 `131 passed, 1 skipped`；命令显式排除两个受本机 Windows pytest 临时目录权限影响的旧 manifest 测试，
   环境状态不作为代码能力结论。
+- 多信号 concept formation Gate 已通过（2026-08-26 由 `TAIJI_CONCEPT_FORMATION_GATE_2026_08.md` 归并）：概念形成同时受感知 latent、世界对象/关系结构与 outcome 三类证据约束，组合权重由 `TaijiConfig.concept_signal_weights` 配置（默认 `latent=0.45 / world=0.35 / outcome=0.20`）；语义巩固只接受有事件血缘且跨至少两个 episode 的经历，删除任一类证据都 fail-closed。该 Gate 是数据驱动的临时不变量形成，不等同于开放域语义或符号知识。
+- `ConceptFormationOrgan` 已从 `TSKV8Adapter` 提取为独立器官，自持多信号匹配、概念 identity、支持集更新、可配置容量、塑性率、强度剪枝、显式 `lesion` 与独立 checkpoint；adapter 只保留接线与兼容 API，不再承载概念形成规则。容量 1/2/4 槽位分别保留 1/2/4 个概念。
+- 概念到规划的窄消费路径已通过：`ConceptMatch` 把匹配 concept IDs 写入 `MemoryState`，并以匹配度 × 置信度 × outcome 质量映射为 `PlanningCandidate.concept_affinity`，由 planner 可配置 `concept_weight` 消费；lesion 后该 prior 归零并改变对照。schema 数量 1/2/4/8 的未见对象与关系查询保持 100% 规划迁移，容量 1/2 显示可测的概念干扰。
+- 多步 sequence 与状态条件 suffix Gate 已通过：Concept 由 episode 时间顺序形成 `action_sequences`，rollout 按 `concept_sequence_weight` 消费，正确顺序击败高即时收益的反转序列；`ConceptSequenceTrace` 从真实 `WorldTransition` 保存每步 before/after latent、prediction error 与折扣后 step credit，部分执行后可按 after-state 重新检索剩余 suffix，错位动作与错误状态 fail-closed。
+- 分支塑性、trace 容量与在线分支出生 Gate 已通过，报告为 `reports/taiji_concept_branch_20260826.json`、`reports/taiji_concept_trace_capacity_20260826.json`、`reports/taiji_concept_online_birth_20260826.json`：`suffix_sequence_affinity` 在 horizon=1/2/3 下区分正确分支与反转动作，真实 `confirm` 转移只对对应 trace 做 EMA 更新；`trace_capacity=1/2/4` 分别保留 1/2/2 条分支且按 trace strength 取舍；`TSKV8Adapter.grow_online_concept_branch` 可从不命中已有 trace 的真实转移链形成稳定 `trace_id` 新分支，重复链不产生副本，`settle_action` 的 episode buffer 可在 terminal 自动触发并经 checkpoint 续接。
+- branch attribution Gate 已通过，报告为 `reports/taiji_concept_branch_attribution_20260826.json`：多个同时激活的 Concept 不再共享写入同一在线链，器官按 match confidence、已学习 before/after-state 证据和 prediction-error fit 选出唯一 owner；低置信度、近似平分的跨 concept 干扰与 owner trace lesion 均 fail-closed，权重与最小胜出间隔由 `TaijiConfig` 管理。
+- 结构生长与拓扑 ledger Gate 已通过，报告为 `reports/taiji_structural_growth_20260826.json`、`reports/taiji_topology_proposal_20260826.json`、`reports/taiji_topology_runtime_ledger_20260826.json`：`StructuralGrowthRequest` 把结构变更记录为版本化 proposal，必须经 trial checkpoint roundtrip、trace lesion 与 replayability 验证才扣减 `DevelopmentState.structural_budget`；`StructuralTopologyProposal` 只描述现有合法固定 fan-in bank 的 rewire，不依赖 action/intent；runtime ledger 负责资源成本、预算耗尽 fail-closed 与按最新接受顺序的 rollback。
+- neuron growth 与 cross-region wiring Gate 已通过，报告为 `reports/taiji_neuron_growth_20260826.json`、`reports/taiji_cross_region_20260826.json`：`AdaptiveNeuronRegion` 以稳定 `unit_id` 与显式活动/阈值/膜电位/trace 状态承载稀疏突触，新增单元只追加状态和突触行、不改动旧单元身份与权重；`AdaptiveNeuronNetwork` 以稳定 `connection_id` 建立稀疏跨区突触，上游生长会迁移连接输入维度并保留旧支持/权重，连接 lesion 后下游活动归零。
+- 学习型跨区域协作 Gate 已通过：`CrossRegionCooperationLearner` 为显式连接维护可 checkpoint 的 prediction-error、holdout-transfer、resource-state EMA 与探索状态，学习路径在 holdout 证据上优于固定全连接/随机基线，并通过 connection/region lesion 与 checkpoint continuation；在线 credit loop 已接入真实 network tick，由 expected target activity 自动计算 prediction error 与 holdout transfer。
+- 区域生命周期 Gate 已通过，报告为 `reports/taiji_region_growth_20260826.json`、`reports/taiji_region_pruning_20260826.json`、`reports/taiji_connection_pruning_20260826.json`、`reports/taiji_region_split_20260826.json`、`reports/taiji_region_merge_20260826.json`：持续区域瓶颈可生成带非语义 child identity 的 region proposal，post-growth validation 的相对 holdout gain 为 `0.8735` 且未通过验证的区域会阻断跨区连接；低使用 + 高资源压力 + learning stagnation 且移除后 holdout 不退化才允许 region/connection pruning；split 保持父区域与单位身份可追溯并迁移 route learner lineage，merge 需冗余证据且内部连接 fail-closed。以上全部覆盖预算、checkpoint continuation 与 reverse rollback。
 
 ### 工作项
 
@@ -528,6 +538,29 @@ P4 的最小真实经历边界已落地：
 1. 先让 CI 双矩阵各跑一次 advisory，取得两个版本的真实错误数；
 2. 实修核心 `seed`/`taiji` 至 0 错误后恢复 `Type check core modules with mypy` 为 blocking；
 3. 全仓棘轮以双矩阵中的较大值为基线，再恢复 blocking，此后只允许下降。
+
+### 14.3 checkpoint 往返对称不变量（2026-08-26 回归后新增）
+
+停写后复跑全量测试暴露一处真实回归：`TSKV8Adapter.checkpoint()` 从不写出 `cognitive_state`、`restore()` 也从不恢复它，而 `reset_dynamics()` **会**覆写 `_cognitive_state`。于是 `TaijiModel.score_bytes()` 的 `checkpoint → reset_dynamics(episode_id="evaluation") → finally restore` 三段式只回滚了内核状态，认知状态被永久留在 `evaluation` episode 上并带着漂移的 tick；`native_checkpoint()` 随后把这对不一致的状态写盘，`restore_native()` 的一致性校验抛出 `native cognitive state is out of sync with kernel state`。触发路径是 `scripts/training/train_seed_corpus.py` 的 `_flush()` 调用 `score_bytes()`，而 `_flush(final=True)` 紧接 `_persist()`——**每一次最终 checkpoint 都写在被污染之后**。
+
+因此以下规则生效：
+
+- 任何被 `reset_dynamics()`（或其他 in-place 状态重置）改写的字段，必须同时出现在 `checkpoint()` 的 payload 和 `restore()` 的恢复路径里。三者缺一即为缺陷，不是风格问题。
+- `checkpoint()`/`restore()` 是成对契约，新增可变运行时状态时必须同步改这两处，并补一条往返断言，而不是等 `restore_native()` 的不变量在训练末期才爆。
+- 新增 payload 键必须带向后兼容分支：旧信封缺键时按内核状态重建，而不是抛错或静默留下不一致值。
+- 该缺陷类会让长训在最后一步失败并丢弃 checkpoint，直接违反「训练之前检查是否能够正确保存 checkpoints」这条前置要求；因此 checkpoint 往返测试属于阻塞级，不接受 advisory。
+
+### 14.4 `plans/active` 编制与单一下一步纪律（2026-08-26 收敛后新增）
+
+同一轮排查发现 `plans/active/` 出现第 6 份文档 `TAIJI_CONCEPT_FORMATION_GATE_2026_08.md`，全仓无任何引用（README、测试、脚本均未提及），但自带一节「下一步唯一入口」，其后半段与本文件第 16 节的 Gate 链几乎逐字重复——即**存在第二个「唯一下一步」权威源**，这才是 `tests/seed/test_project_identity.py` 失败的实质，而不是文件数量超限。
+
+处置方式是归并而非改名或放宽白名单：其独有的运行时事实已并入上文 P7 事实清单，重复的下一步整节删除，原文件移入 `plans/archive/implementation/` 并在归档索引登记，`plans/README.md` 与身份测试均不改动。
+
+因此以下规则生效：
+
+- 「当前唯一下一步」只允许出现在本文件第 16 节。任何其他文档若要记录进展，只能写已完成事实，不得设立自己的下一步入口。
+- 新增 `plans/active/` 文档前必须先确认它不是既有文档某节的复制品；能并入现有章节的一律并入。白名单是编制约束，冲突时收敛内容，不是放宽白名单。
+- 归档文档必须显式声明其历史「下一步」不得恢复执行，避免残留方向在后续调用中与总路线竞争。
 
 ## 15. 停止项
 

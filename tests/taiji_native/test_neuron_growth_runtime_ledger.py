@@ -166,22 +166,21 @@ def test_runtime_standalone_tick_owns_neuron_birth_candidate() -> None:
         generator=torch.Generator().manual_seed(0),
     )
     holdout_input = torch.zeros(5)
-    holdout_input[trial.incoming.pre_index[-1]] = torch.sign(
-        trial.incoming.edge_weight[-1]
-    )
+    holdout_input[trial.incoming.pre_index[-1]] = torch.sign(trial.incoming.edge_weight[-1])
     expected = trial.step(holdout_input)
-    assert model.validate_structural_candidate_holdout(
-        candidate.candidate_id,
-        holdout_inputs=(holdout_input,),
-        expected_activities=(expected,),
-    ) is True
+    assert (
+        model.validate_structural_candidate_holdout(
+            candidate.candidate_id,
+            holdout_inputs=(holdout_input,),
+            expected_activities=(expected,),
+        )
+        is True
+    )
     assert model.commit_structural_candidate(candidate.candidate_id) is True
     assert model.neuron_regions[0].unit_count == 3
 
     restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
-    assert restored.neuron_regions[0].unit_ids == original_unit_ids + (
-        "adaptive.cortex.grown.1",
-    )
+    assert restored.neuron_regions[0].unit_ids == original_unit_ids + ("adaptive.cortex.grown.1",)
     assert restored.structural_runtime_observations == observations
     assert restored.topology_proposals[-1].status == "accepted"
     assert restored.rollback_structural_candidate(candidate.candidate_id) is True
@@ -376,8 +375,7 @@ def test_three_region_maintenance_preserves_routes_across_mixed_growth() -> None
     add_candidate = next(
         item
         for item in model.structural_proposal_candidates
-        if item.network_id == "standalone:adaptive.cortex"
-        and item.target_kind == "neuron"
+        if item.network_id == "standalone:adaptive.cortex" and item.target_kind == "neuron"
     )
     add_proposal = model.propose_neuron_add(
         region_id=standalone.region_id,
@@ -393,9 +391,7 @@ def test_three_region_maintenance_preserves_routes_across_mixed_growth() -> None
         generator=torch.Generator().manual_seed(0),
     )
     add_input = torch.zeros(5)
-    add_input[add_trial.incoming.pre_index[-1]] = torch.sign(
-        add_trial.incoming.edge_weight[-1]
-    )
+    add_input[add_trial.incoming.pre_index[-1]] = torch.sign(add_trial.incoming.edge_weight[-1])
     add_expected = add_trial.step(add_input)
 
     results = model.run_structural_maintenance_cycle(
@@ -549,9 +545,7 @@ def test_runtime_cross_region_ledger_owns_connection_and_rolls_back() -> None:
     )
 
     assert model.commit_cross_region_connection("cortex", proposal) is True
-    assert model.neuron_networks[0].connection_ids == (
-        "connection:source->target",
-    )
+    assert model.neuron_networks[0].connection_ids == ("connection:source->target",)
     assert model.cognitive_snapshot().development.structural_budget == 0
     assert model.cognitive_snapshot().development.last_update_source == (
         "cross-region-topology-growth"
@@ -570,9 +564,7 @@ def test_runtime_cross_region_ledger_owns_connection_and_rolls_back() -> None:
     assert model.select_cross_region_connections("cortex") == (proposal.substrate_id,)
 
     restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
-    assert restored.neuron_networks[0].connection_ids == (
-        "connection:source->target",
-    )
+    assert restored.neuron_networks[0].connection_ids == ("connection:source->target",)
     assert restored.select_cross_region_connections("cortex") == (proposal.substrate_id,)
     assert restored.rollback_cross_region_connection(proposal.proposal_id) is True
     assert restored.neuron_networks[0].connection_ids == ()
@@ -595,9 +587,7 @@ def test_runtime_tick_feeds_structural_organs_and_checkpoint_continues() -> None
         )
     )
     model.attach_structural_pruning_controller(
-        AdaptiveStructuralPruningController(
-            dynamics=StructuralPruningDynamics(ema_rate=1.0)
-        )
+        AdaptiveStructuralPruningController(dynamics=StructuralPruningDynamics(ema_rate=1.0))
     )
 
     first = model.step_cross_region_network(
@@ -620,7 +610,9 @@ def test_runtime_tick_feeds_structural_organs_and_checkpoint_continues() -> None
         holdout=True,
     )
     assert len(model.structural_runtime_observations) == 4
-    assert all(item.prediction_error is not None for item in model.structural_runtime_observations[2:])
+    assert all(
+        item.prediction_error is not None for item in model.structural_runtime_observations[2:]
+    )
     assert model.structural_growth_controller.total_observations == 2
     assert model.structural_pruning_controller.total_observations == 5
     assert {item.operation for item in model.structural_proposal_candidates} == {"split"}
@@ -634,11 +626,14 @@ def test_runtime_tick_feeds_structural_organs_and_checkpoint_continues() -> None
     assert materialized.status == "pending"
     assert model.neuron_networks[0].region_ids == ("source", "target")
     assert candidate not in model.structural_proposal_candidates
-    assert model.validate_structural_candidate_holdout(
-        candidate.candidate_id,
-        holdout_inputs=({"source": torch.ones(3)},),
-        expected_activities=(first,),
-    ) is True
+    assert (
+        model.validate_structural_candidate_holdout(
+            candidate.candidate_id,
+            holdout_inputs=({"source": torch.ones(3)},),
+            expected_activities=(first,),
+        )
+        is True
+    )
     materialized = next(
         item for item in model.topology_proposals if item.proposal_id == materialized.proposal_id
     )
@@ -701,22 +696,18 @@ def test_network_runtime_scratch_reuse_does_not_enter_checkpoint() -> None:
 
     network.step(inputs)
     cross_drive_ids = {
-        region_id: id(vector)
-        for region_id, vector in network._runtime_cross_drives.items()
+        region_id: id(vector) for region_id, vector in network._runtime_cross_drives.items()
     }
     external_input_ids = {
-        region_id: id(vector)
-        for region_id, vector in network._runtime_external_inputs.items()
+        region_id: id(vector) for region_id, vector in network._runtime_external_inputs.items()
     }
 
     network.step(inputs)
     assert {
-        region_id: id(vector)
-        for region_id, vector in network._runtime_cross_drives.items()
+        region_id: id(vector) for region_id, vector in network._runtime_cross_drives.items()
     } == cross_drive_ids
     assert {
-        region_id: id(vector)
-        for region_id, vector in network._runtime_external_inputs.items()
+        region_id: id(vector) for region_id, vector in network._runtime_external_inputs.items()
     } == external_input_ids
 
     payload = network.to_payload()

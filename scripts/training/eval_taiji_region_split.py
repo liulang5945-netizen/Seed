@@ -186,10 +186,7 @@ def evaluate() -> dict[str, object]:
         )
         and connected_after.cooperation_learner is not None
         and connected_after.cooperation_learner.route_ids == connected_after.connection_ids
-        and all(
-            route.evidence_count == 1
-            for route in connected_after.cooperation_learner.routes
-        )
+        and all(route.evidence_count == 1 for route in connected_after.cooperation_learner.routes)
         and connected.rollback_region_split(connected_proposal.proposal_id)
         and connected.neuron_networks[0].connection_ids == (connection.substrate_id,)
     )

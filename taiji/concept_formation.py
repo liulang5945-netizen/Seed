@@ -86,9 +86,7 @@ class ConceptFormationOrgan:
     @staticmethod
     def _concept_strength(concept: Concept) -> float:
         return (
-            float(concept.confidence)
-            + float(concept.stability)
-            + float(concept.maturity)
+            float(concept.confidence) + float(concept.stability) + float(concept.maturity)
         ) / 3.0
 
     def _prune_to_capacity(self, concepts: dict[str, Concept]) -> None:
@@ -143,23 +141,27 @@ class ConceptFormationOrgan:
         self._concepts = tuple(updated)
         return tuple(removed)
 
-    def lesion_sequence_trace(
-        self, concept_id: str, trace_ids: Iterable[str]
-    ) -> tuple[str, ...]:
+    def lesion_sequence_trace(self, concept_id: str, trace_ids: Iterable[str]) -> tuple[str, ...]:
         """Remove selected sequence branches while retaining the other traces."""
 
         requested = tuple(dict.fromkeys(str(trace_id) for trace_id in trace_ids))
         if not requested:
             return ()
         target_index = next(
-            (index for index, concept in enumerate(self._concepts) if concept.concept_id == concept_id),
+            (
+                index
+                for index, concept in enumerate(self._concepts)
+                if concept.concept_id == concept_id
+            ),
             None,
         )
         if target_index is None:
             return ()
         concept = self._concepts[target_index]
         requested_set = set(requested)
-        removed = tuple(trace.trace_id for trace in concept.sequence_traces if trace.trace_id in requested_set)
+        removed = tuple(
+            trace.trace_id for trace in concept.sequence_traces if trace.trace_id in requested_set
+        )
         if not removed:
             return ()
         remaining = tuple(
@@ -187,7 +189,11 @@ class ConceptFormationOrgan:
         if not items:
             return None
         target_index = next(
-            (index for index, concept in enumerate(self._concepts) if concept.concept_id == concept_id),
+            (
+                index
+                for index, concept in enumerate(self._concepts)
+                if concept.concept_id == concept_id
+            ),
             None,
         )
         if target_index is None:
@@ -197,7 +203,9 @@ class ConceptFormationOrgan:
             if not isinstance(transition, WorldTransition):
                 raise TypeError("online sequence branch transitions must be WorldTransition values")
             if not math.isfinite(float(prediction_error)) or float(prediction_error) < 0.0:
-                raise ValueError("online sequence branch prediction_error must be finite and non-negative")
+                raise ValueError(
+                    "online sequence branch prediction_error must be finite and non-negative"
+                )
             if previous_after is not None and transition.before.tick != previous_after.tick:
                 raise ValueError("online sequence branch transitions must be contiguous")
             previous_after = transition.after
@@ -225,9 +233,7 @@ class ConceptFormationOrgan:
         concepts[target_index] = updated
         self._concepts = tuple(concepts)
         return (
-            trace.trace_id
-            if trace.trace_id in {item.trace_id for item in updated_traces}
-            else None
+            trace.trace_id if trace.trace_id in {item.trace_id for item in updated_traces} else None
         )
 
     @staticmethod
@@ -258,11 +264,7 @@ class ConceptFormationOrgan:
                 ConceptFormationOrgan._relation_shapes(right_relations),
             ),
         )
-        return (
-            max(object_similarity, relation_similarity)
-            if left_relations
-            else object_similarity
-        )
+        return max(object_similarity, relation_similarity) if left_relations else object_similarity
 
     def retrieve(
         self,
@@ -326,17 +328,16 @@ class ConceptFormationOrgan:
         return tuple(dict.fromkeys(shapes))
 
     @staticmethod
-    def _sequence_similarity(
-        left: Sequence[str], right: Sequence[str]
-    ) -> float:
+    def _sequence_similarity(left: Sequence[str], right: Sequence[str]) -> float:
         if not left or not right:
             return 0.0
-        matches = sum(left_item == right_item for left_item, right_item in zip(left, right))
+        # strict=False：长度不等时按短序列比对，长度差异已由 max() 分母惩罚。
+        matches = sum(
+            left_item == right_item for left_item, right_item in zip(left, right, strict=False)
+        )
         return matches / max(len(left), len(right))
 
-    def action_sequence_affinity(
-        self, concept: Concept, action_kinds: Sequence[str]
-    ) -> float:
+    def action_sequence_affinity(self, concept: Concept, action_kinds: Sequence[str]) -> float:
         """Return learned ordered-action affinity for one candidate rollout."""
 
         query = tuple(str(item) for item in action_kinds)
@@ -345,7 +346,8 @@ class ConceptFormationOrgan:
         if concept.sequence_traces:
             return max(
                 self._sequence_similarity(query, trace.action_kinds)
-                * sum(trace.step_credit) / len(trace.step_credit)
+                * sum(trace.step_credit)
+                / len(trace.step_credit)
                 * (1.0 - sum(trace.prediction_errors) / len(trace.prediction_errors))
                 for trace in concept.sequence_traces
             )
@@ -363,7 +365,9 @@ class ConceptFormationOrgan:
         right_norm = float(torch.linalg.vector_norm(right))
         if left_norm == 0.0 or right_norm == 0.0:
             return 0.0
-        similarity = float(torch.nn.functional.cosine_similarity(left.unsqueeze(0), right.unsqueeze(0)).item())
+        similarity = float(
+            torch.nn.functional.cosine_similarity(left.unsqueeze(0), right.unsqueeze(0)).item()
+        )
         return max(0.0, min(1.0, similarity))
 
     def suffix_sequence_affinity(
@@ -392,9 +396,7 @@ class ConceptFormationOrgan:
                     query, trace.action_kinds[start : start + len(query)]
                 )
                 expected_state = (
-                    trace.before_prototype
-                    if start == 0
-                    else trace.after_prototypes[start - 1]
+                    trace.before_prototype if start == 0 else trace.after_prototypes[start - 1]
                 )
                 state_similarity = (
                     1.0
@@ -428,9 +430,7 @@ class ConceptFormationOrgan:
                 if action_kind != transition.action.kind:
                     continue
                 expected_before = (
-                    trace.before_prototype
-                    if index == 0
-                    else trace.after_prototypes[index - 1]
+                    trace.before_prototype if index == 0 else trace.after_prototypes[index - 1]
                 )
                 before_similarity = self._state_similarity(
                     transition.before.latent, expected_before
@@ -443,11 +443,7 @@ class ConceptFormationOrgan:
                     0.0,
                     1.0 - abs(error - float(trace.prediction_errors[index])),
                 )
-                evidence = (
-                    state_score
-                    * prediction_fit
-                    * float(trace.step_credit[index])
-                )
+                evidence = state_score * prediction_fit * float(trace.step_credit[index])
                 candidates.append((evidence, state_score, prediction_fit, trace.trace_id))
         if not candidates:
             return 0.0, 0.0, False
@@ -491,10 +487,12 @@ class ConceptFormationOrgan:
         for match in matches:
             if not isinstance(match, ConceptMatch) or match.score < float(min_score):
                 continue
-            state_score, prediction_fit, has_transition_evidence = self._sequence_transition_signals(
-                match.concept,
-                transition,
-                prediction_error,
+            state_score, prediction_fit, has_transition_evidence = (
+                self._sequence_transition_signals(
+                    match.concept,
+                    transition,
+                    prediction_error,
+                )
             )
             score = (
                 float(weights[0]) * float(match.score)
@@ -559,14 +557,10 @@ class ConceptFormationOrgan:
         action_kinds = tuple(transition.action.kind for transition, _ in transitions)
         before_prototype = first_transition.before.latent
         after_prototypes = tuple(transition.after.latent for transition, _ in transitions)
-        if any(
-            prototype.numel() != before_prototype.numel()
-            for prototype in after_prototypes
-        ):
+        if any(prototype.numel() != before_prototype.numel() for prototype in after_prototypes):
             raise ValueError("online sequence branch states must share one latent dimension")
         prediction_errors = tuple(
-            max(0.0, min(1.0, float(prediction_error)))
-            for _, prediction_error in transitions
+            max(0.0, min(1.0, float(prediction_error))) for _, prediction_error in transitions
         )
         outcome_scores = tuple(
             self._outcome_value(transition.outcome) for transition, _ in transitions
@@ -613,41 +607,20 @@ class ConceptFormationOrgan:
             transitions = tuple(transition for transition in transitions if transition is not None)
             if not transitions:
                 continue
-            actions = tuple(item.action_intent.kind for item in ordered if item.action_intent is not None)
+            actions = tuple(
+                item.action_intent.kind for item in ordered if item.action_intent is not None
+            )
             if len(actions) != len(transitions):
                 continue
-            before_prototype = transitions[0].before.latent
-            after_prototypes = tuple(transition.after.latent for transition in transitions)
-            if any(
-                prototype.numel() != before_prototype.numel()
-                for prototype in (*after_prototypes,)
-            ):
-                continue
-            prediction_errors = tuple(
-                max(0.0, min(1.0, float(item.prediction_error))) for item in ordered
-            )
-            outcome_scores = tuple(self._outcome_score(item) for item in ordered)
-            step_quality = tuple(
-                outcome * (1.0 - error)
-                for outcome, error in zip(outcome_scores, prediction_errors, strict=True)
-            )
-            credits = [0.0] * len(step_quality)
-            running = 0.0
-            for index in range(len(step_quality) - 1, -1, -1):
-                running = step_quality[index] + self.credit_discount * running
-                normalizer = sum(
-                    self.credit_discount**offset
-                    for offset in range(len(step_quality) - index)
-                )
-                credits[index] = running / normalizer if normalizer else 0.0
             traces.append(
-                ConceptSequenceTrace(
-                    action_kinds=actions,
-                    before_prototype=before_prototype,
-                    after_prototypes=after_prototypes,
-                    step_credit=tuple(credits),
-                    prediction_errors=prediction_errors,
-                    outcome_mean=sum(outcome_scores) / len(outcome_scores),
+                self._trace_from_transitions(
+                    tuple(
+                        (
+                            transition,
+                            max(0.0, min(1.0, float(item.prediction_error))),
+                        )
+                        for item, transition in zip(ordered, transitions, strict=True)
+                    )
                 )
             )
         return tuple(traces)
@@ -766,9 +739,7 @@ class ConceptFormationOrgan:
                     if kind != action_kind:
                         continue
                     expected_state = (
-                        trace.before_prototype
-                        if start == 0
-                        else trace.after_prototypes[start - 1]
+                        trace.before_prototype if start == 0 else trace.after_prototypes[start - 1]
                     )
                     candidates.append(
                         (
@@ -796,25 +767,23 @@ class ConceptFormationOrgan:
             concept = concepts[concept_index]
             trace = concept.sequence_traces[trace_index]
             before_prototype = (
-                (1.0 - rate) * trace.before_prototype + rate * before_latent.to(trace.before_prototype)
+                (1.0 - rate) * trace.before_prototype
+                + rate * before_latent.to(trace.before_prototype)
                 if start == 0
                 else trace.before_prototype
             )
             after_prototypes = list(trace.after_prototypes)
-            after_prototypes[start] = (
-                (1.0 - rate) * after_prototypes[start]
-                + rate * after_latent.to(after_prototypes[start])
-            )
+            after_prototypes[start] = (1.0 - rate) * after_prototypes[
+                start
+            ] + rate * after_latent.to(after_prototypes[start])
             prediction_errors = list(trace.prediction_errors)
-            prediction_errors[start] = (
-                (1.0 - rate) * prediction_errors[start] + rate * bounded_error
-            )
+            prediction_errors[start] = (1.0 - rate) * prediction_errors[
+                start
+            ] + rate * bounded_error
             step_credit = list(trace.step_credit)
             for index in range(start + 1):
                 target = quality * self.credit_discount ** (start - index)
-                step_credit[index] = (
-                    (1.0 - rate) * step_credit[index] + rate * target
-                )
+                step_credit[index] = (1.0 - rate) * step_credit[index] + rate * target
             traces = list(concept.sequence_traces)
             traces[trace_index] = replace(
                 trace,
@@ -899,9 +868,7 @@ class ConceptFormationOrgan:
         """Update the concept registry from real episodic records."""
 
         records = tuple(
-            record
-            for record in source
-            if record.outcome is not None and record.event_ids
+            record for record in source if record.outcome is not None and record.event_ids
         )
         if not records:
             return self._concepts
@@ -927,19 +894,21 @@ class ConceptFormationOrgan:
             episode_ids = {item.episode_id for item in cluster}
             if len(episode_ids) < 2:
                 continue
-            event_ids = tuple(dict.fromkeys(event_id for item in cluster for event_id in item.event_ids))
+            event_ids = tuple(
+                dict.fromkeys(event_id for item in cluster for event_id in item.event_ids)
+            )
             assembly_ids = tuple(
                 dict.fromkeys(assembly_id for item in cluster for assembly_id in item.assembly_ids)
             )
-            object_ids = tuple(dict.fromkeys(object_id for item in cluster for object_id in item.object_ids))
+            object_ids = tuple(
+                dict.fromkeys(object_id for item in cluster for object_id in item.object_ids)
+            )
             relation_ids = tuple(
                 dict.fromkeys(relation_id for item in cluster for relation_id in item.relation_ids)
             )
             action_kinds = tuple(
                 dict.fromkeys(
-                    item.action_intent.kind
-                    for item in cluster
-                    if item.action_intent is not None
+                    item.action_intent.kind for item in cluster if item.action_intent is not None
                 )
             )
             action_sequences = self._action_sequences(cluster)
@@ -974,8 +943,7 @@ class ConceptFormationOrgan:
                         self._relation_shapes(relation_ids),
                     )
                     >= self.similarity_threshold
-                    and 1.0 - abs(item.outcome_mean - outcome_mean)
-                    >= self.similarity_threshold
+                    and 1.0 - abs(item.outcome_mean - outcome_mean) >= self.similarity_threshold
                 ),
                 None,
             )
@@ -998,9 +966,7 @@ class ConceptFormationOrgan:
                 )
                 object_ids = tuple(dict.fromkeys((*previous_concept.object_ids, *object_ids)))
                 relation_ids = tuple(dict.fromkeys((*previous_concept.relation_ids, *relation_ids)))
-                action_kinds = tuple(
-                    dict.fromkeys((*previous_concept.action_kinds, *action_kinds))
-                )
+                action_kinds = tuple(dict.fromkeys((*previous_concept.action_kinds, *action_kinds)))
                 action_sequences = tuple(
                     dict.fromkeys((*previous_concept.action_sequences, *action_sequences))
                 )

@@ -123,22 +123,13 @@ class TaijiFabric:
         """Resolve a Taiji-owned synapse bank by stable substrate identity."""
 
         banks: dict[str, SparseSynapses] = {
-            **{
-                f"fabric.decoder.{index}": bank
-                for index, bank in enumerate(self.decoders)
-            },
+            **{f"fabric.decoder.{index}": bank for index, bank in enumerate(self.decoders)},
             **{
                 f"fabric.consolidation_decoder.{index}": bank
                 for index, bank in enumerate(self.consolidation_decoders)
             },
-            **{
-                f"fabric.transition.{index}": bank
-                for index, bank in enumerate(self.transitions)
-            },
-            **{
-                f"fabric.lateral.{index}": bank
-                for index, bank in enumerate(self.laterals)
-            },
+            **{f"fabric.transition.{index}": bank for index, bank in enumerate(self.transitions)},
+            **{f"fabric.lateral.{index}": bank for index, bank in enumerate(self.laterals)},
         }
         try:
             return banks[str(substrate_id)]

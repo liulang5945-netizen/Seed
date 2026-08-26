@@ -240,8 +240,7 @@ def evaluate() -> dict[str, object]:
             and restored.cognitive_snapshot().development.structural_budget == 3
             and internal_rejected
             and not rejected
-            and no_budget.neuron_networks[0].region_ids
-            == ("source", "bottleneck", "sink")
+            and no_budget.neuron_networks[0].region_ids == ("source", "bottleneck", "sink")
         ),
         "criterion": (
             "persistent redundancy evidence must emit a region merge proposal; compatible unit "

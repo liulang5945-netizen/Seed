@@ -452,9 +452,7 @@ class AdaptiveNeuronRegion:
             ),
             dynamics=dynamics,
             recurrent_fan_in=(
-                None
-                if payload.get("recurrent") is None
-                else int(payload["recurrent"]["fan_in"])
+                None if payload.get("recurrent") is None else int(payload["recurrent"]["fan_in"])
             ),
             generator=generator,
             device=device,

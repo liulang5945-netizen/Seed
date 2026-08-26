@@ -45,9 +45,7 @@ def _make_network() -> AdaptiveNeuronNetwork:
         AdaptiveNeuronRegion(
             region_id=region_id,
             input_dim=DEFAULT_INPUT_DIM,
-            unit_ids=tuple(
-                f"{region_id}.u{index}" for index in range(DEFAULT_UNIT_COUNT)
-            ),
+            unit_ids=tuple(f"{region_id}.u{index}" for index in range(DEFAULT_UNIT_COUNT)),
             fan_in=DEFAULT_FAN_IN,
             generator=_generator(71 + index),
         )
@@ -57,9 +55,7 @@ def _make_network() -> AdaptiveNeuronNetwork:
         regions,
         execution_order=("source", "relay", "target"),
     )
-    for index, (source_id, target_id) in enumerate(
-        (("source", "relay"), ("relay", "target"))
-    ):
+    for index, (source_id, target_id) in enumerate((("source", "relay"), ("relay", "target"))):
         proposal = network.propose_connection_add(
             source_region_id=source_id,
             target_region_id=target_id,
@@ -74,9 +70,8 @@ def _payload_equal(left: Any, right: Any) -> bool:
     if isinstance(left, torch.Tensor) and isinstance(right, torch.Tensor):
         return bool(torch.equal(left.detach().cpu(), right.detach().cpu()))
     if isinstance(left, dict) and isinstance(right, dict):
-        return (
-            set(left) == set(right)
-            and all(_payload_equal(left[key], right[key]) for key in left)
+        return set(left) == set(right) and all(
+            _payload_equal(left[key], right[key]) for key in left
         )
     if isinstance(left, (tuple, list)) and isinstance(right, (tuple, list)):
         return len(left) == len(right) and all(
@@ -378,10 +373,8 @@ def evaluate(
             and cuda_result["region_ticks_per_second"] > 0
             and cuda_result["network_ticks_per_second"] > 0
         ),
-        "cross_device_checkpoint": not cuda_available
-        or bool(checkpoint["cross_device_roundtrip"]),
-        "cross_device_output": not cuda_available
-        or bool(checkpoint.get("cross_device_output")),
+        "cross_device_checkpoint": not cuda_available or bool(checkpoint["cross_device_roundtrip"]),
+        "cross_device_output": not cuda_available or bool(checkpoint.get("cross_device_output")),
         "cross_device_continuation": not cuda_available
         or bool(checkpoint.get("cross_device_continuation")),
     }
@@ -391,9 +384,7 @@ def evaluate(
             "torch_version": torch.__version__,
             "cuda_available": cuda_available,
             "cuda_device_count": int(torch.cuda.device_count()) if cuda_available else 0,
-            "cuda_device_name": (
-                torch.cuda.get_device_name(0) if cuda_available else None
-            ),
+            "cuda_device_name": (torch.cuda.get_device_name(0) if cuda_available else None),
         },
         "workload": {
             "input_dim": DEFAULT_INPUT_DIM,

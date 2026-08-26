@@ -76,17 +76,19 @@ def evaluate() -> dict[str, object]:
     transitions = _novel_transitions()
     novel_trace_id = organ.grow_sequence_trace(
         concept.concept_id,
-        tuple((transition, error) for transition, error in zip(transitions, (0.05, 0.10), strict=True)),
+        tuple(
+            (transition, error) for transition, error in zip(transitions, (0.05, 0.10), strict=True)
+        ),
     )
     grown = organ.concepts[0]
     duplicate = organ.grow_sequence_trace(
         grown.concept_id,
-        tuple((transition, error) for transition, error in zip(transitions, (0.05, 0.10), strict=True)),
+        tuple(
+            (transition, error) for transition, error in zip(transitions, (0.05, 0.10), strict=True)
+        ),
     )
     grown = organ.concepts[0]
-    novel_trace = next(
-        trace for trace in grown.sequence_traces if trace.trace_id == novel_trace_id
-    )
+    novel_trace = next(trace for trace in grown.sequence_traces if trace.trace_id == novel_trace_id)
     affinity_before_feedback = organ.suffix_sequence_affinity(
         grown,
         ("rescue", "handoff"),
@@ -121,13 +123,14 @@ def evaluate() -> dict[str, object]:
     )
     runtime_trace_id = runtime.grow_online_concept_branch(
         runtime.concept_formation.concepts[0].concept_id,
-        tuple((transition, error) for transition, error in zip(transitions, (0.05, 0.10), strict=True)),
+        tuple(
+            (transition, error) for transition, error in zip(transitions, (0.05, 0.10), strict=True)
+        ),
     )
     runtime_snapshot = runtime.cognitive_snapshot()
     runtime_restored = TSKV8Adapter.from_native_checkpoint(runtime.native_checkpoint())
     runtime_checkpoint_ids = tuple(
-        trace.trace_id
-        for trace in runtime_restored.concept_formation.concepts[0].sequence_traces
+        trace.trace_id for trace in runtime_restored.concept_formation.concepts[0].sequence_traces
     )
     automatic = TSKV8Adapter(_runtime_config(), episode_id="online-birth-buffer")
     automatic.concept_formation.consolidate(good_records, tick=3)
@@ -182,9 +185,7 @@ def evaluate() -> dict[str, object]:
     )
     automatic_concept = recovered_mid.concept_formation.concepts[0]
     automatic_trace_ids = tuple(trace.trace_id for trace in automatic_concept.sequence_traces)
-    automatic_checkpoint = TSKV8Adapter.from_native_checkpoint(
-        recovered_mid.native_checkpoint()
-    )
+    automatic_checkpoint = TSKV8Adapter.from_native_checkpoint(recovered_mid.native_checkpoint())
     automatic_checkpoint_ids = tuple(
         trace.trace_id
         for trace in automatic_checkpoint.concept_formation.concepts[0].sequence_traces

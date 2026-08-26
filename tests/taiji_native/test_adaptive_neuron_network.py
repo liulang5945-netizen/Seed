@@ -40,10 +40,13 @@ def _connection_proposal(network: AdaptiveNeuronNetwork):
 def test_cross_region_projection_drives_target_and_lesion_is_causal() -> None:
     network = _network()
     proposal = _connection_proposal(network)
-    assert network.apply_topology_proposal(
-        proposal,
-        generator=torch.Generator().manual_seed(99),
-    ) is True
+    assert (
+        network.apply_topology_proposal(
+            proposal,
+            generator=torch.Generator().manual_seed(99),
+        )
+        is True
+    )
     connection = network.connections[0][3]
     connection.edge_weight.fill_(1.0)
     source = network.regions[0]

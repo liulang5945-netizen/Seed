@@ -191,11 +191,19 @@ class CrossRegionCooperationLearner:
         self._routes[str(target_id)] = CrossRegionRouteState(
             connection_id=str(target_id),
             resource_cost=cost,
-            prediction_error=sum(route.prediction_error * weight for route, weight in zip(routes, weights, strict=True))
+            prediction_error=sum(
+                route.prediction_error * weight
+                for route, weight in zip(routes, weights, strict=True)
+            )
             / denominator,
-            holdout_transfer=sum(route.holdout_transfer * weight for route, weight in zip(routes, weights, strict=True))
+            holdout_transfer=sum(
+                route.holdout_transfer * weight
+                for route, weight in zip(routes, weights, strict=True)
+            )
             / denominator,
-            resource_state=sum(route.resource_state * weight for route, weight in zip(routes, weights, strict=True))
+            resource_state=sum(
+                route.resource_state * weight for route, weight in zip(routes, weights, strict=True)
+            )
             / denominator,
             evidence_count=sum(route.evidence_count for route in routes),
             selection_count=sum(route.selection_count for route in routes),
@@ -280,7 +288,11 @@ class CrossRegionCooperationLearner:
 
         if int(max_connections) <= 0:
             raise ValueError("cross-region max_connections must be positive")
-        candidates = self.route_ids if connection_ids is None else tuple(str(item) for item in connection_ids)
+        candidates = (
+            self.route_ids
+            if connection_ids is None
+            else tuple(str(item) for item in connection_ids)
+        )
         if len(set(candidates)) != len(candidates):
             raise ValueError("cross-region selection cannot contain duplicate routes")
         for connection_id in candidates:
@@ -291,7 +303,10 @@ class CrossRegionCooperationLearner:
                 for connection_id in candidates
                 if self._route(connection_id).resource_cost <= float(resource_budget)
             ),
-            key=lambda connection_id: (-self.score(connection_id, resource_budget=resource_budget), connection_id),
+            key=lambda connection_id: (
+                -self.score(connection_id, resource_budget=resource_budget),
+                connection_id,
+            ),
         )
         return tuple(ranked[: int(max_connections)])
 
@@ -301,7 +316,11 @@ class CrossRegionCooperationLearner:
         *,
         resource_budget: float = 1.0,
     ) -> dict[str, float]:
-        candidates = self.route_ids if connection_ids is None else tuple(str(item) for item in connection_ids)
+        candidates = (
+            self.route_ids
+            if connection_ids is None
+            else tuple(str(item) for item in connection_ids)
+        )
         return {
             connection_id: self.score(connection_id, resource_budget=resource_budget)
             for connection_id in candidates
@@ -313,8 +332,7 @@ class CrossRegionCooperationLearner:
             "dynamics": self.dynamics.to_payload(),
             "total_evidence": self.total_evidence,
             "routes": {
-                connection_id: route.to_payload()
-                for connection_id, route in self._routes.items()
+                connection_id: route.to_payload() for connection_id, route in self._routes.items()
             },
         }
 

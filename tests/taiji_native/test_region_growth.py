@@ -123,18 +123,21 @@ def test_region_growth_is_explicit_connected_checkpointed_and_reversible() -> No
     child.incoming.edge_weight.zero_()
     for _ in range(32):
         child.learn(holdout_input, expected_activity - child.activity)
-    assert model.validate_region_growth_holdout(
-        network_id="cortex",
-        proposal_id=proposal.proposal_id,
-        holdout_inputs=(
-            {proposal.substrate_id: holdout_input},
-            {proposal.substrate_id: holdout_input},
-        ),
-        expected_activities=(
-            {proposal.substrate_id: expected_activity},
-            {proposal.substrate_id: expected_activity},
-        ),
-    ) is True
+    assert (
+        model.validate_region_growth_holdout(
+            network_id="cortex",
+            proposal_id=proposal.proposal_id,
+            holdout_inputs=(
+                {proposal.substrate_id: holdout_input},
+                {proposal.substrate_id: holdout_input},
+            ),
+            expected_activities=(
+                {proposal.substrate_id: expected_activity},
+                {proposal.substrate_id: expected_activity},
+            ),
+        )
+        is True
+    )
     assert model.topology_proposals[-1].validation_score > 0.05
     assert model.cognitive_snapshot().development.last_validation_status == "validated"
 
@@ -204,12 +207,15 @@ def test_region_connection_is_blocked_until_holdout_gain_clears_threshold() -> N
         )
     assert proposal is not None
     assert model.commit_region_add("cortex", proposal) is True
-    assert model.validate_region_growth_holdout(
-        network_id="cortex",
-        proposal_id=proposal.proposal_id,
-        holdout_inputs=({proposal.substrate_id: torch.ones(3)},),
-        expected_activities=({proposal.substrate_id: torch.ones(2)},),
-    ) is False
+    assert (
+        model.validate_region_growth_holdout(
+            network_id="cortex",
+            proposal_id=proposal.proposal_id,
+            holdout_inputs=({proposal.substrate_id: torch.ones(3)},),
+            expected_activities=({proposal.substrate_id: torch.ones(2)},),
+        )
+        is False
+    )
     assert model.cognitive_snapshot().development.last_validation_status == "rejected"
     connection = model.propose_cross_region_connection(
         network_id="cortex",
@@ -253,15 +259,18 @@ def test_region_pruning_is_resource_aware_checkpointed_and_reversible() -> None:
     )
     assert first is None
     assert proposal is not None
-    assert model.validate_region_prune_holdout(
-        network_id="cortex",
-        proposal_id=proposal.proposal_id,
-        holdout_inputs=({"source": torch.ones(3)}, {"source": torch.ones(3)}),
-        expected_activities=(
-            {"source": torch.zeros(2)},
-            {"source": torch.zeros(2)},
-        ),
-    ) is True
+    assert (
+        model.validate_region_prune_holdout(
+            network_id="cortex",
+            proposal_id=proposal.proposal_id,
+            holdout_inputs=({"source": torch.ones(3)}, {"source": torch.ones(3)}),
+            expected_activities=(
+                {"source": torch.zeros(2)},
+                {"source": torch.zeros(2)},
+            ),
+        )
+        is True
+    )
     assert model.commit_region_prune("cortex", proposal) is True
     assert model.neuron_networks[0].region_ids == ("source",)
     assert model.neuron_networks[0].connection_ids == ()
@@ -282,22 +291,28 @@ def test_region_pruning_requires_learning_stagnation() -> None:
     model.attach_adaptive_neuron_network("cortex", _network())
     model.attach_structural_pruning_controller(_pruning_controller())
 
-    assert model.propose_region_prune_from_underuse(
-        network_id="cortex",
-        region_id="bottleneck",
-        usage=0.05,
-        resource_pressure=0.9,
-        learning_gain=1.0,
-        evidence_ids=("prune:gain:tick:1",),
-    ) is None
-    assert model.propose_region_prune_from_underuse(
-        network_id="cortex",
-        region_id="bottleneck",
-        usage=0.05,
-        resource_pressure=0.9,
-        learning_gain=1.0,
-        evidence_ids=("prune:gain:tick:2",),
-    ) is None
+    assert (
+        model.propose_region_prune_from_underuse(
+            network_id="cortex",
+            region_id="bottleneck",
+            usage=0.05,
+            resource_pressure=0.9,
+            learning_gain=1.0,
+            evidence_ids=("prune:gain:tick:1",),
+        )
+        is None
+    )
+    assert (
+        model.propose_region_prune_from_underuse(
+            network_id="cortex",
+            region_id="bottleneck",
+            usage=0.05,
+            resource_pressure=0.9,
+            learning_gain=1.0,
+            evidence_ids=("prune:gain:tick:2",),
+        )
+        is None
+    )
     state = model.structural_pruning_controller.regions[0]
     assert state.learning_gain_ema == 1.0
     assert state.proposal_count == 0
@@ -352,18 +367,21 @@ def test_cross_region_connection_pruning_is_checkpointed_and_reversible() -> Non
     )
     assert first is None
     assert proposal is not None
-    assert model.validate_cross_region_connection_prune_holdout(
-        network_id="cortex",
-        proposal_id=proposal.proposal_id,
-        holdout_inputs=(
-            {"source": torch.ones(3)},
-            {"source": torch.ones(3)},
-        ),
-        expected_activities=(
-            {"source": torch.zeros(2), "bottleneck": torch.zeros(2)},
-            {"source": torch.zeros(2), "bottleneck": torch.zeros(2)},
-        ),
-    ) is True
+    assert (
+        model.validate_cross_region_connection_prune_holdout(
+            network_id="cortex",
+            proposal_id=proposal.proposal_id,
+            holdout_inputs=(
+                {"source": torch.ones(3)},
+                {"source": torch.ones(3)},
+            ),
+            expected_activities=(
+                {"source": torch.zeros(2), "bottleneck": torch.zeros(2)},
+                {"source": torch.zeros(2), "bottleneck": torch.zeros(2)},
+            ),
+        )
+        is True
+    )
     assert model.commit_cross_region_connection_prune("cortex", proposal) is True
     assert model.neuron_networks[0].region_ids == ("source", "bottleneck")
     assert model.neuron_networks[0].connection_ids == ()
@@ -408,18 +426,21 @@ def test_region_split_preserves_unit_lineage_and_is_reversible() -> None:
     )
     assert first is None
     assert proposal is not None
-    assert model.validate_region_split_holdout(
-        network_id="cortex",
-        proposal_id=proposal.proposal_id,
-        holdout_inputs=(
-            {"bottleneck": torch.ones(3)},
-            {"bottleneck": torch.ones(3)},
-        ),
-        expected_activities=(
-            {"bottleneck": torch.zeros(2)},
-            {"bottleneck": torch.zeros(2)},
-        ),
-    ) is True
+    assert (
+        model.validate_region_split_holdout(
+            network_id="cortex",
+            proposal_id=proposal.proposal_id,
+            holdout_inputs=(
+                {"bottleneck": torch.ones(3)},
+                {"bottleneck": torch.ones(3)},
+            ),
+            expected_activities=(
+                {"bottleneck": torch.zeros(2)},
+                {"bottleneck": torch.zeros(2)},
+            ),
+        )
+        is True
+    )
     assert model.commit_region_split("cortex", proposal) is True
     assert network.region_ids == ("source", "bottleneck", "bottleneck.split.1")
     assert network.execution_order == network.region_ids
@@ -487,12 +508,15 @@ def test_connected_region_split_migrates_connections_and_route_lineage() -> None
     )
     assert first is None
     assert proposal is not None
-    assert model.validate_region_split_holdout(
-        network_id="cortex",
-        proposal_id=proposal.proposal_id,
-        holdout_inputs=({"source": torch.ones(3), "bottleneck": torch.zeros(3)},),
-        expected_activities=({"bottleneck": torch.zeros(2)},),
-    ) is True
+    assert (
+        model.validate_region_split_holdout(
+            network_id="cortex",
+            proposal_id=proposal.proposal_id,
+            holdout_inputs=({"source": torch.ones(3), "bottleneck": torch.zeros(3)},),
+            expected_activities=({"bottleneck": torch.zeros(2)},),
+        )
+        is True
+    )
     assert model.commit_region_split("cortex", proposal) is True
     assert network.region_ids == ("source", "bottleneck", "bottleneck.split.1")
     assert network.execution_order == network.region_ids
@@ -509,9 +533,7 @@ def test_connected_region_split_migrates_connections_and_route_lineage() -> None
     assert restored.neuron_networks[0].region_ids == ("source", "bottleneck")
     assert restored.neuron_networks[0].connection_ids == (connection.substrate_id,)
     assert restored.neuron_networks[0].cooperation_learner is not None
-    assert restored.neuron_networks[0].cooperation_learner.route_ids == (
-        connection.substrate_id,
-    )
+    assert restored.neuron_networks[0].cooperation_learner.route_ids == (connection.substrate_id,)
 
 
 def test_region_merge_aggregates_external_connections_and_is_reversible() -> None:
@@ -588,19 +610,20 @@ def test_region_merge_aggregates_external_connections_and_is_reversible() -> Non
     )
     assert first is None
     assert proposal is not None
-    assert model.validate_region_merge_holdout(
-        network_id="cortex",
-        proposal_id=proposal.proposal_id,
-        holdout_inputs=(
-            {
-                "source": torch.ones(3),
-                "bottleneck": torch.ones(3),
-            },
-        ),
-        expected_activities=(
-            {"source": torch.zeros(4)},
-        ),
-    ) is True
+    assert (
+        model.validate_region_merge_holdout(
+            network_id="cortex",
+            proposal_id=proposal.proposal_id,
+            holdout_inputs=(
+                {
+                    "source": torch.ones(3),
+                    "bottleneck": torch.ones(3),
+                },
+            ),
+            expected_activities=({"source": torch.zeros(4)},),
+        )
+        is True
+    )
     assert model.commit_region_merge("cortex", proposal) is True
     assert network.region_ids == ("source", "sink")
     assert network.execution_order == network.region_ids

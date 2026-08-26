@@ -407,8 +407,7 @@ class SparseSynapses:
             raise ValueError("topology proposal replacement is already connected")
         retired = int(self.pre_index[post, slot].item())
         proposal_id = (
-            f"topology:{substrate_id}:post:{post}:slot:{slot}:"
-            f"pre:{retired}>{replacement}"
+            f"topology:{substrate_id}:post:{post}:slot:{slot}:" f"pre:{retired}>{replacement}"
         )
         return StructuralTopologyProposal(
             proposal_id=proposal_id,

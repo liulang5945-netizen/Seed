@@ -36,13 +36,18 @@ def test_neuron_growth_preserves_identity_support_and_state_dimensions() -> None
     old_incoming_index = region.incoming.pre_index.clone()
     old_incoming_weight = region.incoming.edge_weight.clone()
     old_recurrent_index = None if region.recurrent is None else region.recurrent.pre_index.clone()
-    old_recurrent_weight = None if region.recurrent is None else region.recurrent.edge_weight.clone()
+    old_recurrent_weight = (
+        None if region.recurrent is None else region.recurrent.edge_weight.clone()
+    )
     proposal = _proposal(region)
 
-    assert region.apply_topology_proposal(
-        proposal,
-        generator=torch.Generator().manual_seed(99),
-    ) is True
+    assert (
+        region.apply_topology_proposal(
+            proposal,
+            generator=torch.Generator().manual_seed(99),
+        )
+        is True
+    )
     assert region.unit_ids == (*old_ids, "u2")
     assert region.unit_count == 3
     assert region.membrane.shape == (3,)

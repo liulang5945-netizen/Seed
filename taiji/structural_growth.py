@@ -328,11 +328,14 @@ class StructuralGrowthRegionState:
             self.resource_state_ema,
             "structural growth resource_state_ema",
         )
-        if min(
-            int(self.consecutive_error_steps),
-            int(self.proposal_count),
-            int(self.observation_count),
-        ) < 0:
+        if (
+            min(
+                int(self.consecutive_error_steps),
+                int(self.proposal_count),
+                int(self.observation_count),
+            )
+            < 0
+        ):
             raise ValueError("structural growth counters cannot be negative")
         self.consecutive_error_steps = int(self.consecutive_error_steps)
         self.proposal_count = int(self.proposal_count)
@@ -420,9 +423,7 @@ class AdaptiveStructuralGrowthController:
         rate = float(self.dynamics.ema_rate)
         region.error_ema = (1.0 - rate) * region.error_ema + rate * error
         region.resource_state_ema = (1.0 - rate) * region.resource_state_ema + rate * resource
-        region.holdout_transfer_ema = (
-            (1.0 - rate) * region.holdout_transfer_ema + rate * transfer
-        )
+        region.holdout_transfer_ema = (1.0 - rate) * region.holdout_transfer_ema + rate * transfer
         region.consecutive_error_steps = (
             region.consecutive_error_steps + 1
             if region.error_ema >= float(self.dynamics.error_threshold)
@@ -482,8 +483,7 @@ class AdaptiveStructuralGrowthController:
             "dynamics": self.dynamics.to_payload(),
             "total_observations": self.total_observations,
             "regions": {
-                region_id: region.to_payload()
-                for region_id, region in self._regions.items()
+                region_id: region.to_payload() for region_id, region in self._regions.items()
             },
         }
 
@@ -573,11 +573,14 @@ class StructuralPruningRegionState:
             self.learning_gain_ema,
             "structural pruning learning_gain_ema",
         )
-        if min(
-            int(self.consecutive_underuse_steps),
-            int(self.proposal_count),
-            int(self.observation_count),
-        ) < 0:
+        if (
+            min(
+                int(self.consecutive_underuse_steps),
+                int(self.proposal_count),
+                int(self.observation_count),
+            )
+            < 0
+        ):
             raise ValueError("structural pruning counters cannot be negative")
         self.consecutive_underuse_steps = int(self.consecutive_underuse_steps)
         self.proposal_count = int(self.proposal_count)
@@ -677,19 +680,15 @@ class AdaptiveStructuralPruningController:
         rate = float(self.dynamics.ema_rate)
         region.usage_ema = (1.0 - rate) * region.usage_ema + rate * usage_value
         region.resource_pressure_ema = (
-            (1.0 - rate) * region.resource_pressure_ema + rate * pressure_value
-        )
-        region.learning_gain_ema = (
-            (1.0 - rate) * region.learning_gain_ema + rate * gain_value
-        )
+            1.0 - rate
+        ) * region.resource_pressure_ema + rate * pressure_value
+        region.learning_gain_ema = (1.0 - rate) * region.learning_gain_ema + rate * gain_value
         region.consecutive_underuse_steps = (
             region.consecutive_underuse_steps + 1
             if (
                 region.usage_ema <= float(self.dynamics.maximum_usage)
-                and region.resource_pressure_ema
-                >= float(self.dynamics.minimum_resource_pressure)
-                and region.learning_gain_ema
-                <= float(self.dynamics.maximum_learning_gain)
+                and region.resource_pressure_ema >= float(self.dynamics.minimum_resource_pressure)
+                and region.learning_gain_ema <= float(self.dynamics.maximum_learning_gain)
             )
             else 0
         )
@@ -718,8 +717,7 @@ class AdaptiveStructuralPruningController:
             "dynamics": self.dynamics.to_payload(),
             "total_observations": self.total_observations,
             "regions": {
-                region_id: region.to_payload()
-                for region_id, region in self._regions.items()
+                region_id: region.to_payload() for region_id, region in self._regions.items()
             },
         }
 

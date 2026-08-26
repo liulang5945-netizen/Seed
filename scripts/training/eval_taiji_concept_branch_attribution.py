@@ -149,10 +149,14 @@ def evaluate() -> dict[str, object]:
     if len(concepts) != 2:
         raise RuntimeError(f"expected two competing concepts, got {len(concepts)}")
     concept_a = next(
-        concept for concept in concepts if any(item.startswith("owner-a-") for item in concept.object_ids)
+        concept
+        for concept in concepts
+        if any(item.startswith("owner-a-") for item in concept.object_ids)
     )
     concept_b = next(
-        concept for concept in concepts if any(item.startswith("owner-b-") for item in concept.object_ids)
+        concept
+        for concept in concepts
+        if any(item.startswith("owner-b-") for item in concept.object_ids)
     )
     matches = (ConceptMatch(concept_a, 0.95), ConceptMatch(concept_b, 0.95))
     common = _state(1, torch.tensor([0.0, 1.0, 0.0, 0.0]), "holdout")
@@ -217,7 +221,9 @@ def evaluate() -> dict[str, object]:
         concepts=recovered.concept_formation.concepts,
         memory=replace(
             recovered._cognitive_state.memory,
-            concept_ids=tuple(concept.concept_id for concept in recovered.concept_formation.concepts),
+            concept_ids=tuple(
+                concept.concept_id for concept in recovered.concept_formation.concepts
+            ),
             concept_confidence=1.0,
         ),
     )
@@ -288,7 +294,11 @@ def build_manifest() -> dict[str, object]:
     return {
         "format": MANIFEST_FORMAT,
         "task": "unique owner attribution for online concept branch birth",
-        "owner_signals": ["concept match confidence", "learned before/after state", "prediction-error fit"],
+        "owner_signals": [
+            "concept match confidence",
+            "learned before/after state",
+            "prediction-error fit",
+        ],
         "fail_closed": ["low confidence", "close cross-concept competition", "owner trace lesion"],
         "continuation": "episode buffer and native checkpoint must preserve the selected owner only",
     }
@@ -296,14 +306,26 @@ def build_manifest() -> dict[str, object]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--report", type=Path, default=Path("reports/taiji_concept_branch_attribution_20260826.json"))
-    parser.add_argument("--manifest", type=Path, default=Path("plans/manifests/taiji_concept_branch_attribution_v1.json"))
+    parser.add_argument(
+        "--report",
+        type=Path,
+        default=Path("reports/taiji_concept_branch_attribution_20260826.json"),
+    )
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=Path("plans/manifests/taiji_concept_branch_attribution_v1.json"),
+    )
     args = parser.parse_args()
     report = evaluate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0 if report["gate"]["passed"] else 1
 
