@@ -1761,6 +1761,359 @@ class TSKV8Adapter(Taiji):
         )
         return True
 
+    def propose_region_split_from_error(
+        self,
+        *,
+        network_id: str,
+        region_id: str,
+        first_unit_count: int,
+        prediction_error: float,
+        resource_state: float,
+        holdout_transfer: float,
+        evidence_ids: Sequence[str],
+    ) -> StructuralTopologyProposal | None:
+        """Turn persistent substrate pressure into an isolated region split proposal."""
+
+        if self._structural_growth_controller is None:
+            raise RuntimeError("structural growth controller is not attached")
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        region_key = str(region_id)
+        if region_key not in network.region_ids:
+            raise ValueError(f"unknown adaptive network region: {region_id}")
+        decision = self._structural_growth_controller.observe(
+            region_key,
+            prediction_error=prediction_error,
+            resource_state=resource_state,
+            holdout_transfer=holdout_transfer,
+            evidence_ids=evidence_ids,
+        )
+        if not decision.should_grow:
+            return None
+        proposal = network.propose_region_split(
+            region_id=region_key,
+            first_unit_count=first_unit_count,
+            evidence_ids=decision.evidence_ids,
+            parent_checkpoint_id=(
+                f"region-split-signal:{region_key}:{decision.proposal_ordinal}"
+            ),
+            resource_cost=self._structural_growth_controller.dynamics.growth_resource_cost,
+        )
+        self._topology_proposals[proposal.proposal_id] = proposal
+        self._topology_network_ids[proposal.proposal_id] = str(network_id)
+        return proposal
+
+    def validate_region_split_holdout(
+        self,
+        *,
+        network_id: str,
+        proposal_id: str,
+        holdout_inputs: Sequence[Mapping[str, torch.Tensor]],
+        expected_activities: Sequence[Mapping[str, torch.Tensor]],
+    ) -> bool:
+        """Validate an isolated split against unseen inputs in parent coordinates."""
+
+        if self._structural_growth_controller is None:
+            raise RuntimeError("structural growth controller is not attached")
+        proposal = self._topology_proposals.get(str(proposal_id))
+        if (
+            proposal is None
+            or proposal.status != "pending"
+            or proposal.target_kind != "region"
+            or proposal.operation != "split"
+            or dict(proposal.specification).get("topology_role") != "region_split"
+        ):
+            raise ValueError("proposal is not a pending region split")
+        if len(holdout_inputs) == 0 or len(holdout_inputs) != len(expected_activities):
+            raise ValueError(
+                "region split holdout inputs and expected activities must have equal size"
+            )
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        if self._topology_network_ids.get(str(proposal_id)) != str(network_id):
+            raise ValueError("region split proposal belongs to another network")
+        specification = dict(proposal.specification)
+        parent_id = str(specification.get("parent_region_id", ""))
+        retained_id = str(specification.get("retained_region_id", ""))
+        new_region_id = str(specification.get("new_region_id", ""))
+        retained_units = tuple(str(item) for item in specification.get("retained_unit_ids", ()))
+        new_units = tuple(str(item) for item in specification.get("new_unit_ids", ()))
+        payload = network.to_payload()
+        intact = AdaptiveNeuronNetwork.from_payload(
+            payload,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        split = AdaptiveNeuronNetwork.from_payload(
+            payload,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        split.apply_region_split(proposal, generator=self._checkpoint_region_generator())
+        baseline_errors: list[float] = []
+        split_errors: list[float] = []
+        for inputs, expected in zip(holdout_inputs, expected_activities, strict=True):
+            if not expected:
+                raise ValueError("region split holdout must contain expected activities")
+            if parent_id not in inputs:
+                raise ValueError("region split holdout inputs must contain the parent region")
+            split_inputs = dict(inputs)
+            parent_input = split_inputs.pop(parent_id)
+            split_inputs[retained_id] = parent_input
+            split_inputs[new_region_id] = parent_input
+            intact_activities = intact.step(inputs)
+            split_activities = split.step(split_inputs)
+            for expected_region_id, expected_activity in expected.items():
+                expected_value = expected_activity.to(self.device)
+                if expected_region_id == parent_id:
+                    intact_activity = intact_activities[parent_id]
+                    retained_activity = split_activities[retained_id]
+                    new_activity = split_activities[new_region_id]
+                    split_activity = torch.cat(
+                        (
+                            retained_activity[
+                                : len(retained_units)
+                            ],
+                            new_activity[: len(new_units)],
+                        )
+                    )
+                else:
+                    if expected_region_id not in split_activities:
+                        raise ValueError(
+                            "region split expected activity targets a missing region"
+                        )
+                    intact_activity = intact_activities[expected_region_id]
+                    split_activity = split_activities[expected_region_id]
+                if expected_value.shape != intact_activity.shape:
+                    raise ValueError(
+                        f"region split expected activity shape mismatch for {expected_region_id}"
+                    )
+                baseline_errors.append(
+                    float(
+                        torch.mean(torch.abs(intact_activity - expected_value))
+                        .clamp(0.0, 1.0)
+                        .item()
+                    )
+                )
+                split_errors.append(
+                    float(
+                        torch.mean(torch.abs(split_activity - expected_value))
+                        .clamp(0.0, 1.0)
+                        .item()
+                    )
+                )
+        baseline_error = sum(baseline_errors) / len(baseline_errors)
+        split_error = sum(split_errors) / len(split_errors)
+        regression = max(0.0, split_error - baseline_error)
+        score = max(0.0, min(1.0, 1.0 - regression))
+        maximum_regression = (
+            self._structural_growth_controller.dynamics.maximum_restructure_holdout_regression
+        )
+        validated = regression <= float(maximum_regression)
+        self._topology_proposals[str(proposal_id)] = replace(
+            proposal,
+            validation_score=score,
+        )
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                last_update_source="region-split-holdout-validation",
+                last_validation_status="validated" if validated else "rejected",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    f"holdout:{proposal_id}",
+                    limit=self._lineage_limit(),
+                ),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    f"holdout:{proposal_id}",
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return validated
+
+    def commit_region_split(
+        self,
+        network_id: str,
+        proposal: StructuralTopologyProposal,
+    ) -> bool:
+        """Commit a validated isolated region split through the runtime ledger."""
+
+        existing = self._topology_proposals.get(proposal.proposal_id)
+        if existing is not None:
+            if existing.status == "accepted":
+                return True
+            if existing.status in {"rejected", "rolled_back"}:
+                return False
+            proposal = existing
+        if proposal.status != "pending":
+            raise ValueError("only pending region split proposals can be committed")
+        if (
+            proposal.target_kind != "region"
+            or proposal.operation != "split"
+            or dict(proposal.specification).get("topology_role") != "region_split"
+        ):
+            raise ValueError("proposal is not a region split")
+        if self._structural_growth_controller is None:
+            raise RuntimeError("structural growth controller is not attached")
+        if self._topology_network_ids.get(proposal.proposal_id) not in {
+            None,
+            str(network_id),
+        }:
+            raise ValueError("region split proposal belongs to another network")
+        minimum_score = 1.0 - float(
+            self._structural_growth_controller.dynamics.maximum_restructure_holdout_regression
+        )
+        if proposal.validation_score < minimum_score:
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(
+                    proposal.evidence_ids[0]
+                    if proposal.evidence_ids
+                    else proposal.proposal_id
+                ),
+                source="region-topology-split",
+            )
+            return False
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        if self._cognitive_state.development.structural_budget < proposal.resource_cost:
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(
+                    proposal.evidence_ids[0]
+                    if proposal.evidence_ids
+                    else proposal.proposal_id
+                ),
+                source="region-topology-split",
+            )
+            return False
+        parent_snapshot = network.to_payload()
+        try:
+            network.apply_region_split(
+                proposal,
+                generator=self._checkpoint_region_generator(),
+            )
+            accepted_snapshot = network.to_payload()
+            trial = AdaptiveNeuronNetwork.from_payload(
+                accepted_snapshot,
+                generator=self._checkpoint_region_generator(),
+                device=self.device,
+            )
+            if (
+                trial.region_ids != network.region_ids
+                or trial.execution_order != network.execution_order
+            ):
+                raise ValueError("region split checkpoint roundtrip changed topology identities")
+        except (IndexError, KeyError, RuntimeError, ValueError):
+            self._neuron_networks[str(network_id)] = AdaptiveNeuronNetwork.from_payload(
+                parent_snapshot,
+                generator=self._checkpoint_region_generator(),
+                device=self.device,
+            )
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(
+                    proposal.evidence_ids[0]
+                    if proposal.evidence_ids
+                    else proposal.proposal_id
+                ),
+                source="region-topology-split",
+            )
+            return False
+        accepted = replace(proposal, status="accepted")
+        self._topology_proposals[proposal.proposal_id] = accepted
+        self._topology_parent_snapshots[proposal.proposal_id] = parent_snapshot
+        self._topology_network_ids[proposal.proposal_id] = str(network_id)
+        self._record_topology_development(
+            accepted,
+            consume_budget=True,
+            evidence_id=(
+                proposal.evidence_ids[0]
+                if proposal.evidence_ids
+                else proposal.proposal_id
+            ),
+            source="region-topology-split",
+            counter="split_merge_count",
+        )
+        return True
+
+    def rollback_region_split(self, proposal_id: str) -> bool:
+        """Rollback only the latest accepted region split."""
+
+        key = str(proposal_id)
+        proposal = self._topology_proposals.get(key)
+        snapshot = self._topology_parent_snapshots.get(key)
+        network_id = self._topology_network_ids.get(key)
+        if (
+            proposal is None
+            or proposal.status != "accepted"
+            or proposal.target_kind != "region"
+            or proposal.operation != "split"
+            or dict(proposal.specification).get("topology_role") != "region_split"
+            or snapshot is None
+            or network_id is None
+        ):
+            return False
+        active = [
+            item.proposal_id
+            for item in self._topology_proposals.values()
+            if item.status == "accepted" and item.proposal_id in self._topology_parent_snapshots
+        ]
+        if not active or active[-1] != key:
+            return False
+        self._neuron_networks[network_id] = AdaptiveNeuronNetwork.from_payload(
+            snapshot,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        rolled_back = replace(proposal, status="rolled_back", validation_score=0.0)
+        self._topology_proposals[key] = rolled_back
+        self._topology_parent_snapshots.pop(key, None)
+        self._topology_network_ids.pop(key, None)
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                structural_budget=previous.structural_budget + proposal.resource_cost,
+                last_update_source="region-topology-split-rollback",
+                last_validation_status="rolled_back",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    key,
+                    limit=self._lineage_limit(),
+                ),
+                split_merge_count=max(0, previous.split_merge_count - proposal.requested_units),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    key,
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return True
+
     def commit_neuron_add(self, proposal: StructuralTopologyProposal) -> bool:
         """Commit a neuron birth transactionally through budget and checkpoint gates."""
 

@@ -542,4 +542,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：建立区域 split/merge 的结构生命周期闭环：只有可解释的 substrate 压力或冗余证据、未见 holdout 不退化、lineage 可追溯且预算/checkpoint trial/functional lesion/reverse rollback 全部通过时才允许改变区域边界；继续禁止用 action/intent 表决定结构维护。**
+**下一步：补齐 connected split 的结构生命周期闭环：区域边界改变时必须显式迁移受影响连接、保存 route learner lineage，并通过 substrate 压力、未见 holdout、预算、checkpoint trial、functional lesion 与 reverse rollback；继续禁止用 action/intent 表决定结构维护。**

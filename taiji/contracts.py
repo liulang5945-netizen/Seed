@@ -804,7 +804,9 @@ class WorldObject:
     def __post_init__(self) -> None:
         _check_version(self.version)
         _check_text(self.object_id, "object_id")
-        object.__setattr__(self, "attributes", _normalize_pairs(self.attributes, "object attributes"))
+        object.__setattr__(
+            self, "attributes", _normalize_pairs(self.attributes, "object attributes")
+        )
         object.__setattr__(self, "tags", _normalize_tags(self.tags, "object tags"))
 
     def attribute(self, name: str, default: Any = None) -> Any:
@@ -856,7 +858,9 @@ class WorldEvent:
             _check_text(self.subject_id, "event subject_id")
         if self.object_id:
             _check_text(self.object_id, "event object_id")
-        object.__setattr__(self, "attributes", _normalize_pairs(self.attributes, "event attributes"))
+        object.__setattr__(
+            self, "attributes", _normalize_pairs(self.attributes, "event attributes")
+        )
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -916,7 +920,9 @@ class WorldAffordance:
         if self.features.numel() and not bool(torch.isfinite(self.features).all()):
             raise ValueError("affordance features must be finite")
         _check_text(self.feature_provenance, "affordance feature_provenance")
-        object.__setattr__(self, "parameters", _normalize_pairs(self.parameters, "affordance parameters"))
+        object.__setattr__(
+            self, "parameters", _normalize_pairs(self.parameters, "affordance parameters")
+        )
         object.__setattr__(
             self,
             "grounding_lineage",
@@ -953,9 +959,7 @@ class WorldAffordance:
             confidence=float(payload.get("confidence", 1.0)),
             features=payload.get("features", torch.empty(0)).detach().to(device).clone(),
             feature_provenance=str(payload.get("feature_provenance", "world-organ")),
-            grounding_lineage=tuple(
-                str(item) for item in payload.get("grounding_lineage", ())
-            ),
+            grounding_lineage=tuple(str(item) for item in payload.get("grounding_lineage", ())),
         )
 
 
@@ -1953,8 +1957,7 @@ class WorldEpisodeCorpus:
             format=str(payload["format"]),
             version=int(payload["version"]),
             train=tuple(
-                WorldEpisode.from_payload(item, device=device)
-                for item in payload.get("train", ())
+                WorldEpisode.from_payload(item, device=device) for item in payload.get("train", ())
             ),
             holdout=tuple(
                 WorldEpisode.from_payload(item, device=device)
@@ -2181,7 +2184,7 @@ class StructuralTopologyProposal:
         _check_text(self.operation, "topology operation")
         if self.target_kind not in {"synapse", "neuron", "region"}:
             raise ValueError("unsupported topology target_kind")
-        if self.operation not in {"add", "rewire", "prune"}:
+        if self.operation not in {"add", "rewire", "prune", "split", "merge"}:
             raise ValueError("unsupported topology operation")
         if int(self.requested_units) <= 0:
             raise ValueError("topology requested_units must be positive")
@@ -2431,9 +2434,7 @@ class CognitiveState:
             "world_prediction": (
                 None if self.world_prediction is None else self.world_prediction.to_payload()
             ),
-            "world_calibration_trace": [
-                item.to_payload() for item in self.world_calibration_trace
-            ],
+            "world_calibration_trace": [item.to_payload() for item in self.world_calibration_trace],
             "planning_recovery": (
                 None if self.planning_recovery is None else self.planning_recovery.to_payload()
             ),
