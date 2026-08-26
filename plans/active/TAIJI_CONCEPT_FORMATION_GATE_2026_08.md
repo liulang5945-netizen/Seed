@@ -116,4 +116,7 @@ connection/region lesion 与 checkpoint continuation；在线 credit loop 已接
 执行顺序，adapter ledger 负责预算、checkpoint trial、functional region lesion、显式跨区域
 连接和逆向 rollback，且零预算 fail-closed。该 Gate 报告为
 `reports/taiji_region_growth_20260826.json`。当前下一步是独立验证新生区域及其连接在未见输入上的
-holdout 目标改善，再允许其进入长期发展记录；继续禁止按固定 action/intent 表决定增长。
+holdout 目标改善，再允许其进入长期发展记录；该 post-growth validation Gate 已通过：两次
+未见输入的相对 holdout gain 为 `0.8735`，checkpoint continuation 后仍通过，未通过验证的
+区域会阻断跨区连接。当前下一步是建立资源感知的 retention/pruning Gate，继续禁止按固定
+action/intent 表决定增长。

@@ -599,6 +599,97 @@ class TSKV8Adapter(Taiji):
         )
         return True
 
+    def validate_region_growth_holdout(
+        self,
+        *,
+        network_id: str,
+        proposal_id: str,
+        holdout_inputs: Sequence[Mapping[str, torch.Tensor]],
+        expected_activities: Sequence[Mapping[str, torch.Tensor]],
+    ) -> bool:
+        """Validate a born region against a silent baseline on unseen inputs."""
+
+        if self._structural_growth_controller is None:
+            raise RuntimeError("structural growth controller is not attached")
+        proposal = self._topology_proposals.get(str(proposal_id))
+        if (
+            proposal is None
+            or proposal.status != "accepted"
+            or proposal.target_kind != "region"
+            or dict(proposal.specification).get("topology_role") != "region"
+        ):
+            raise ValueError("proposal is not an accepted region add")
+        if len(holdout_inputs) == 0 or len(holdout_inputs) != len(expected_activities):
+            raise ValueError("region holdout inputs and expected activities must have equal size")
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        child_id = proposal.substrate_id
+        try:
+            child = next(region for region in network.regions if region.region_id == child_id)
+        except StopIteration as exc:
+            raise ValueError(f"unknown grown region: {child_id}") from exc
+        payload = network.to_payload()
+        candidate = AdaptiveNeuronNetwork.from_payload(
+            payload,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        baseline = AdaptiveNeuronNetwork.from_payload(
+            payload,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        baseline.lesion_region(child_id)
+        candidate_errors: list[float] = []
+        baseline_errors: list[float] = []
+        for inputs, expected in zip(holdout_inputs, expected_activities, strict=True):
+            expected_activity = expected.get(child_id)
+            if expected_activity is None:
+                raise ValueError(f"region holdout expected activity is missing {child_id}")
+            if expected_activity.shape != (child.unit_count,):
+                raise ValueError(f"region holdout expected activity shape mismatch for {child_id}")
+            candidate_activity = candidate.step(inputs, connection_ids=())[child_id]
+            baseline_activity = baseline.step(inputs, connection_ids=())[child_id]
+            expected_value = expected_activity.to(self.device)
+            candidate_errors.append(
+                float(torch.mean(torch.abs(candidate_activity - expected_value)).clamp(0.0, 1.0).item())
+            )
+            baseline_errors.append(
+                float(torch.mean(torch.abs(baseline_activity - expected_value)).clamp(0.0, 1.0).item())
+            )
+        baseline_error = sum(baseline_errors) / len(baseline_errors)
+        candidate_error = sum(candidate_errors) / len(candidate_errors)
+        gain = max(0.0, baseline_error - candidate_error)
+        score = 0.0 if baseline_error <= 1e-8 else min(1.0, gain / baseline_error)
+        validated = score >= float(self._structural_growth_controller.dynamics.minimum_holdout_gain)
+        self._topology_proposals[str(proposal_id)] = replace(
+            proposal,
+            validation_score=score,
+        )
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                last_update_source="region-holdout-validation",
+                last_validation_status="validated" if validated else "rejected",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    f"holdout:{proposal_id}",
+                    limit=self._lineage_limit(),
+                ),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    f"holdout:{proposal_id}",
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return validated
+
     def rollback_synapse_rewire(self, proposal_id: str) -> bool:
         """Rollback only the latest accepted topology proposal."""
 
@@ -873,7 +964,7 @@ class TSKV8Adapter(Taiji):
             )
             return False
 
-        accepted = replace(proposal, status="accepted", validation_score=1.0)
+        accepted = replace(proposal, status="accepted", validation_score=0.0)
         self._topology_proposals[proposal.proposal_id] = accepted
         self._topology_parent_snapshots[proposal.proposal_id] = parent_snapshot
         self._record_topology_development(
@@ -1232,6 +1323,26 @@ class TSKV8Adapter(Taiji):
             != "cross_region_connection"
         ):
             raise ValueError("proposal is not a cross-region connection add")
+        specification = dict(proposal.specification)
+        for endpoint_key in ("source_region_id", "target_region_id"):
+            endpoint_id = str(specification.get(endpoint_key, ""))
+            pending_region = next(
+                (
+                    item
+                    for item in self._topology_proposals.values()
+                    if item.status == "accepted"
+                    and item.substrate_id == endpoint_id
+                    and dict(item.specification).get("topology_role") == "region"
+                ),
+                None,
+            )
+            if (
+                pending_region is not None
+                and self._structural_growth_controller is not None
+                and pending_region.validation_score
+                < self._structural_growth_controller.dynamics.minimum_holdout_gain
+            ):
+                raise ValueError(f"region {endpoint_id} has not passed holdout validation")
         try:
             network = self._neuron_networks[str(network_id)]
         except KeyError as exc:

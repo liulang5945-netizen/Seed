@@ -55,6 +55,9 @@
       "bottleneck",
       "bottleneck.region.1"
     ],
+    "holdout_validation_score": 0.873462768294472,
+    "holdout_validated_before_connection": true,
+    "holdout_validated_after_checkpoint": true,
     "connection_id": "connection:source->bottleneck.region.1",
     "checkpoint_continuation": true,
     "functional_region_lesion": true,
@@ -68,7 +71,7 @@
   },
   "gate": {
     "passed": true,
-    "criterion": "persistent regional prediction error plus holdout transfer and available resources must emit a non-semantic child-region proposal; the ledger must validate budget and checkpoint trial, preserve order and identity, permit explicit cross-region wiring, silence the grown region functionally, and reverse both structural mutations"
+    "criterion": "persistent regional prediction error plus holdout transfer and available resources must emit a non-semantic child-region proposal; the ledger must validate budget and checkpoint trial, require post-growth unseen-input improvement before explicit wiring, preserve order and identity, silence the grown region functionally, and reverse both structural mutations"
   },
   "boundary": "This gate proves controlled substrate-driven region birth and explicit wiring; it does not claim unrestricted self-evolution, automatic semantic invention, or general intelligence."
 }

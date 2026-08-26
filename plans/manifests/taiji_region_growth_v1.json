@@ -17,6 +17,6 @@
   ],
   "gate": {
     "passed": true,
-    "criterion": "persistent regional prediction error plus holdout transfer and available resources must emit a non-semantic child-region proposal; the ledger must validate budget and checkpoint trial, preserve order and identity, permit explicit cross-region wiring, silence the grown region functionally, and reverse both structural mutations"
+    "criterion": "persistent regional prediction error plus holdout transfer and available resources must emit a non-semantic child-region proposal; the ledger must validate budget and checkpoint trial, require post-growth unseen-input improvement before explicit wiring, preserve order and identity, silence the grown region functionally, and reverse both structural mutations"
   }
 }

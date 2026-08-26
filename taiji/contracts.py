@@ -2263,7 +2263,14 @@ class DevelopmentState:
         _check_version(self.version)
         _check_text(self.stage, "development stage")
         _check_text(self.last_update_source, "development update source")
-        if self.last_validation_status not in {"none", "pending", "accepted", "rejected", "rolled_back"}:
+        if self.last_validation_status not in {
+            "none",
+            "pending",
+            "accepted",
+            "validated",
+            "rejected",
+            "rolled_back",
+        }:
             raise ValueError("unsupported development validation status")
         _check_unit(self.resource_utilization, "development resource_utilization")
         object.__setattr__(

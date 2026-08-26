@@ -95,6 +95,25 @@ def evaluate() -> dict[str, object]:
     assert proposal is not None
     committed = model.commit_region_add("cortex", proposal)
     network = model.neuron_networks[0]
+    child = network.regions[-1]
+    holdout_input = torch.ones(3)
+    expected_activity = torch.full((child.unit_count,), 0.8)
+    child.incoming.edge_weight.zero_()
+    for _ in range(32):
+        child.learn(holdout_input, expected_activity - child.activity)
+    holdout_validated = model.validate_region_growth_holdout(
+        network_id="cortex",
+        proposal_id=proposal.proposal_id,
+        holdout_inputs=(
+            {proposal.substrate_id: holdout_input},
+            {proposal.substrate_id: holdout_input},
+        ),
+        expected_activities=(
+            {proposal.substrate_id: expected_activity},
+            {proposal.substrate_id: expected_activity},
+        ),
+    )
+    validated_proposal = model.topology_proposals[-1]
     connection = model.propose_cross_region_connection(
         network_id="cortex",
         source_region_id="source",
@@ -106,11 +125,29 @@ def evaluate() -> dict[str, object]:
 
     restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
     restored_network = restored.neuron_networks[0]
+    checkpoint_holdout = restored.validate_region_growth_holdout(
+        network_id="cortex",
+        proposal_id=proposal.proposal_id,
+        holdout_inputs=(
+            {proposal.substrate_id: holdout_input},
+            {proposal.substrate_id: holdout_input},
+        ),
+        expected_activities=(
+            {proposal.substrate_id: expected_activity},
+            {proposal.substrate_id: expected_activity},
+        ),
+    )
     checkpoint_continuation = bool(
         restored_network.region_ids == network.region_ids
         and restored_network.execution_order == network.execution_order
         and restored_network.connection_ids == network.connection_ids
-        and restored.topology_proposals[-1].status == "accepted"
+        and next(
+            item
+            for item in restored.topology_proposals
+            if item.proposal_id == proposal.proposal_id
+        ).validation_score
+        > 0.05
+        and checkpoint_holdout
     )
     restored_network.lesion_region(proposal.substrate_id)
     lesion = restored.select_cross_region_connections("cortex") == ()
@@ -143,6 +180,7 @@ def evaluate() -> dict[str, object]:
         "passed": bool(
             proposals[0] is None
             and committed
+            and holdout_validated
             and connection_committed
             and checkpoint_continuation
             and lesion
@@ -156,8 +194,9 @@ def evaluate() -> dict[str, object]:
         "criterion": (
             "persistent regional prediction error plus holdout transfer and available resources "
             "must emit a non-semantic child-region proposal; the ledger must validate budget and "
-            "checkpoint trial, preserve order and identity, permit explicit cross-region wiring, "
-            "silence the grown region functionally, and reverse both structural mutations"
+            "checkpoint trial, require post-growth unseen-input improvement before explicit wiring, "
+            "preserve order and identity, silence the grown region functionally, and reverse both "
+            "structural mutations"
         ),
     }
     return {
@@ -169,6 +208,9 @@ def evaluate() -> dict[str, object]:
             "region_id": proposal.substrate_id,
             "region_ids_after_growth": list(network.region_ids),
             "execution_order_after_growth": list(network.execution_order),
+            "holdout_validation_score": validated_proposal.validation_score,
+            "holdout_validated_before_connection": holdout_validated,
+            "holdout_validated_after_checkpoint": checkpoint_holdout,
             "connection_id": connection.substrate_id,
             "checkpoint_continuation": checkpoint_continuation,
             "functional_region_lesion": lesion,

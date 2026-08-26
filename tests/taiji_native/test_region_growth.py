@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pytest
 import torch
 
 from taiji import (
@@ -99,6 +100,26 @@ def test_region_growth_is_explicit_connected_checkpointed_and_reversible() -> No
         "bottleneck.region.1.u0",
         "bottleneck.region.1.u1",
     )
+    child = network.regions[-1]
+    holdout_input = torch.ones(3)
+    expected_activity = torch.full((child.unit_count,), 0.8)
+    child.incoming.edge_weight.zero_()
+    for _ in range(32):
+        child.learn(holdout_input, expected_activity - child.activity)
+    assert model.validate_region_growth_holdout(
+        network_id="cortex",
+        proposal_id=proposal.proposal_id,
+        holdout_inputs=(
+            {proposal.substrate_id: holdout_input},
+            {proposal.substrate_id: holdout_input},
+        ),
+        expected_activities=(
+            {proposal.substrate_id: expected_activity},
+            {proposal.substrate_id: expected_activity},
+        ),
+    ) is True
+    assert model.topology_proposals[-1].validation_score > 0.05
+    assert model.cognitive_snapshot().development.last_validation_status == "validated"
 
     connection = model.propose_cross_region_connection(
         network_id="cortex",
@@ -145,3 +166,40 @@ def test_region_growth_rejects_without_budget_and_does_not_mutate_network() -> N
     assert model.commit_region_add("cortex", proposal) is False
     assert model.neuron_networks[0].region_ids == ("source", "bottleneck")
     assert model.topology_proposals[-1].status == "rejected"
+
+
+def test_region_connection_is_blocked_until_holdout_gain_clears_threshold() -> None:
+    model = TSKV8Adapter(_config(budget=2), episode_id="region-growth-holdout-block")
+    model.attach_adaptive_neuron_network("cortex", _network())
+    model.attach_structural_growth_controller(_controller())
+    proposal = None
+    for index in range(1, 3):
+        proposal = model.propose_region_growth_from_error(
+            network_id="cortex",
+            bottleneck_region_id="bottleneck",
+            input_dim=3,
+            unit_count=2,
+            fan_in=2,
+            prediction_error=0.9,
+            resource_state=0.8,
+            holdout_transfer=0.9,
+            evidence_ids=(f"region:blocked:{index}",),
+        )
+    assert proposal is not None
+    assert model.commit_region_add("cortex", proposal) is True
+    assert model.validate_region_growth_holdout(
+        network_id="cortex",
+        proposal_id=proposal.proposal_id,
+        holdout_inputs=({proposal.substrate_id: torch.ones(3)},),
+        expected_activities=({proposal.substrate_id: torch.ones(2)},),
+    ) is False
+    assert model.cognitive_snapshot().development.last_validation_status == "rejected"
+    connection = model.propose_cross_region_connection(
+        network_id="cortex",
+        source_region_id="source",
+        target_region_id=proposal.substrate_id,
+        evidence_ids=("region:blocked:connection",),
+        fan_in=1,
+    )
+    with pytest.raises(ValueError, match="holdout validation"):
+        model.commit_cross_region_connection("cortex", connection)
