@@ -1,0 +1,183 @@
+{
+  "format": "taiji-concept-transfer-v1",
+  "manifest_format": "taiji-concept-transfer-manifest-v1",
+  "train_records": 16,
+  "candidate_concepts": 2,
+  "metrics": {
+    "cross_schema_identity": true,
+    "baseline_without_concept_prior": {
+      "relation": "near",
+      "target_kind": "approach",
+      "selected_kind": "wait",
+      "selected_candidate": "holdout-near-distractor",
+      "target_prior": 0.0,
+      "transferred": false
+    },
+    "unseen_task_transfer": {
+      "near": {
+        "relation": "near",
+        "target_kind": "approach",
+        "selected_kind": "approach",
+        "selected_candidate": "holdout-near-target",
+        "target_prior": 0.8698686485647705,
+        "transferred": true
+      },
+      "far": {
+        "relation": "far",
+        "target_kind": "wait",
+        "selected_kind": "wait",
+        "selected_candidate": "holdout-far-target",
+        "target_prior": 0.8698686485647705,
+        "transferred": true
+      },
+      "rate": 1.0
+    },
+    "schema_scale": [
+      {
+        "schema_count": 1,
+        "train_records": 4,
+        "concept_count": 2,
+        "holdout_tasks": [
+          {
+            "relation": "near",
+            "target_kind": "approach",
+            "selected_kind": "approach",
+            "selected_candidate": "holdout-near-target",
+            "target_prior": 0.9403985389889412,
+            "transferred": true
+          },
+          {
+            "relation": "far",
+            "target_kind": "wait",
+            "selected_kind": "wait",
+            "selected_candidate": "holdout-far-target",
+            "target_prior": 0.9403985389889412,
+            "transferred": true
+          }
+        ],
+        "holdout_transfer_rate": 1.0
+      },
+      {
+        "schema_count": 2,
+        "train_records": 8,
+        "concept_count": 2,
+        "holdout_tasks": [
+          {
+            "relation": "near",
+            "target_kind": "approach",
+            "selected_kind": "approach",
+            "selected_candidate": "holdout-near-target",
+            "target_prior": 0.8855419575479195,
+            "transferred": true
+          },
+          {
+            "relation": "far",
+            "target_kind": "wait",
+            "selected_kind": "wait",
+            "selected_candidate": "holdout-far-target",
+            "target_prior": 0.8855419575479195,
+            "transferred": true
+          }
+        ],
+        "holdout_transfer_rate": 1.0
+      },
+      {
+        "schema_count": 4,
+        "train_records": 16,
+        "concept_count": 2,
+        "holdout_tasks": [
+          {
+            "relation": "near",
+            "target_kind": "approach",
+            "selected_kind": "approach",
+            "selected_candidate": "holdout-near-target",
+            "target_prior": 0.8698686485647705,
+            "transferred": true
+          },
+          {
+            "relation": "far",
+            "target_kind": "wait",
+            "selected_kind": "wait",
+            "selected_candidate": "holdout-far-target",
+            "target_prior": 0.8698686485647705,
+            "transferred": true
+          }
+        ],
+        "holdout_transfer_rate": 1.0
+      },
+      {
+        "schema_count": 8,
+        "train_records": 32,
+        "concept_count": 2,
+        "holdout_tasks": [
+          {
+            "relation": "near",
+            "target_kind": "approach",
+            "selected_kind": "approach",
+            "selected_candidate": "holdout-near-target",
+            "target_prior": 0.8635993249715109,
+            "transferred": true
+          },
+          {
+            "relation": "far",
+            "target_kind": "wait",
+            "selected_kind": "wait",
+            "selected_candidate": "holdout-far-target",
+            "target_prior": 0.8635993249715109,
+            "transferred": true
+          }
+        ],
+        "holdout_transfer_rate": 1.0
+      }
+    ],
+    "capacity_interference": {
+      "curve": [
+        {
+          "capacity": 1,
+          "retained_concepts": 1,
+          "holdout_hits": 1
+        },
+        {
+          "capacity": 2,
+          "retained_concepts": 2,
+          "holdout_hits": 2
+        }
+      ],
+      "capacity_respected": true,
+      "interference_detected": true
+    },
+    "signal_lesions": {
+      "event_assembly": true,
+      "world": true,
+      "outcome": true
+    },
+    "concept_lesion": {
+      "passed": true,
+      "removed": [
+        "concept:ef21d245089f1855"
+      ],
+      "before": {
+        "relation": "near",
+        "target_kind": "approach",
+        "selected_kind": "approach",
+        "selected_candidate": "holdout-near-target",
+        "target_prior": 0.8698686485647705,
+        "transferred": true
+      },
+      "after": {
+        "relation": "near",
+        "target_kind": "approach",
+        "selected_kind": "wait",
+        "selected_candidate": "holdout-near-distractor",
+        "target_prior": 0.0,
+        "transferred": false
+      }
+    },
+    "organ_checkpoint_continuation": true,
+    "native_runtime_checkpoint_recovery": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "learned concepts must transfer to unseen object schemas and downstream planning, expose bounded capacity interference, fail closed under event/world/outcome evidence lesions, and survive native runtime checkpoint recovery"
+  }
+}
