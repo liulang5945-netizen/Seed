@@ -239,9 +239,7 @@ def _rollouts(
     return reversed_rollout, good
 
 
-def _plan(
-    rollouts: tuple[ImaginedRollout, ImaginedRollout], *, sequence_weight: float
-) -> str:
+def _plan(rollouts: tuple[ImaginedRollout, ImaginedRollout], *, sequence_weight: float) -> str:
     decision = GoalPlanner(
         PlanningConfig(concept_weight=0.40, concept_sequence_weight=sequence_weight)
     ).plan_rollouts(
@@ -334,9 +332,7 @@ def evaluate() -> dict[str, object]:
     baseline_selected = _plan(rollouts, sequence_weight=0.0)
     sequence_selected = _plan(rollouts, sequence_weight=0.80)
     prefix_affinity = organ.action_sequence_affinity(near_concept, ("approach",))
-    reversed_affinity = organ.action_sequence_affinity(
-        near_concept, ("confirm", "approach")
-    )
+    reversed_affinity = organ.action_sequence_affinity(near_concept, ("confirm", "approach"))
     checkpoint = ConceptFormationOrgan.from_checkpoint(organ.checkpoint())
     checkpoint_recovery = (
         tuple(item.concept_id for item in checkpoint.concepts)

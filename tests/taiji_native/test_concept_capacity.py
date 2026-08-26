@@ -11,7 +11,4 @@ def test_concept_capacity_checkpoint_and_lesion_gate() -> None:
     assert report["metrics"]["capacity_curve_passed"] is True
     assert report["metrics"]["checkpoint_continuation"] is True
     assert report["metrics"]["lesion_removed_concept"] is True
-    assert all(
-        item["retained_concepts"] == item["capacity"]
-        for item in report["capacity_curve"]
-    )
+    assert all(item["retained_concepts"] == item["capacity"] for item in report["capacity_curve"])

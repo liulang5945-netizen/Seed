@@ -355,7 +355,9 @@ def test_tsk_v8_runtime_materializes_lineage_growth_and_checkpoint_before_traini
         outcome_lesioned.write(record)
     outcome_lesioned_model = TSKV8Adapter(_config(), episode_id="outcome-signal-lesion")
     outcome_lesioned_model.attach_episodic_memory(outcome_lesioned)
-    outcome_lesioned_model.attach_semantic_memory(SemanticMemoryLearner(model.perception.feature_dim))
+    outcome_lesioned_model.attach_semantic_memory(
+        SemanticMemoryLearner(model.perception.feature_dim)
+    )
     outcome_lesioned_model.consolidate_semantic_memory(epochs=1, learning_rate=0.01)
     assert outcome_lesioned_model.cognitive_snapshot().concepts == ()
 

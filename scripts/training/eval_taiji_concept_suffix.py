@@ -89,8 +89,7 @@ def build_records(
     for episode_index in range(episode_count):
         object_id = f"suffix-object-{episode_index}"
         states = (_state(0, start, object_id),) + tuple(
-            _state(tick, basis[tick - 1], object_id)
-            for tick in range(1, len(ACTION_SEQUENCE) + 1)
+            _state(tick, basis[tick - 1], object_id) for tick in range(1, len(ACTION_SEQUENCE) + 1)
         )
         for tick, action_kind in enumerate(ACTION_SEQUENCE, start=1):
             intent_id = f"suffix-intent-{index}"
@@ -226,9 +225,7 @@ def _runtime_gate() -> dict[str, object]:
         concepts=runtime.concept_formation.concepts,
     )
     runtime._refresh_concept_memory()
-    runtime.attach_goal_planner(
-        GoalPlanner(PlanningConfig(concept_sequence_weight=2.0))
-    )
+    runtime.attach_goal_planner(GoalPlanner(PlanningConfig(concept_sequence_weight=2.0)))
     runtime.set_goals((Goal("complete-suffix", "complete the learned suffix", 1.0),))
     rollouts = _rollouts(runtime.tick)
     decision = runtime.plan_rollouts(rollouts)
@@ -261,8 +258,8 @@ def _runtime_gate() -> dict[str, object]:
     return {
         "selected_full_rollout": selected,
         "selected_after_checkpoint": restored_selected,
-        "remaining_action_kinds": () if remaining is None else tuple(
-            step.action.kind for step in remaining.steps
+        "remaining_action_kinds": (
+            () if remaining is None else tuple(step.action.kind for step in remaining.steps)
         ),
         "suffix_affinity_after_execution": suffix_affinity,
         "suffix_affinity_after_checkpoint": restored_suffix_affinity,
@@ -283,9 +280,7 @@ def evaluate() -> dict[str, object]:
     after_first = records[0].world_transition.after if records[0].world_transition else None
     if initial is None or after_first is None:
         raise RuntimeError("suffix evaluation records lack transition states")
-    full_affinity = organ.suffix_sequence_affinity(
-        concept, ACTION_SEQUENCE, current_state=initial
-    )
+    full_affinity = organ.suffix_sequence_affinity(concept, ACTION_SEQUENCE, current_state=initial)
     suffix_affinity = organ.suffix_sequence_affinity(
         concept, ACTION_SEQUENCE[1:], current_state=after_first
     )
