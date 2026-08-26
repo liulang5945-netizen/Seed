@@ -68,6 +68,11 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
    `settle_action` episode buffer 只保留 owner，并可经 native checkpoint 继续完成 branch
    birth。配置中的权重、最低分数和最小胜出间隔均由 `TaijiConfig` 管理。该 Gate 报告为
    `reports/taiji_concept_branch_attribution_20260826.json`。
+- structural growth budget/rollback Gate 已通过：`StructuralGrowthRequest` 将 owner 的新分支
+  变更记录为版本化 proposal；预算不足时 fail-closed，候选必须经过 trial checkpoint roundtrip、
+  trace lesion 与 replayability 验证，接受后扣减 `DevelopmentState.structural_budget`，native
+  checkpoint 可恢复 request，rollback 可恢复父结构并返还预算。该 Gate 报告为
+  `reports/taiji_structural_growth_20260826.json`。
 
 ## 边界与已知限制
 
@@ -78,7 +83,7 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 
 ## 下一步唯一入口
 
-将 branch birth 接入 `DevelopmentState` 的结构成长预算与 rollback 合同：owner 只能提交一条
-带证据的 growth request，必须经过资源预算、holdout/lesion 和 checkpoint 回滚门控后才进入
-主概念结构；容量 pruning 和跨 concept owner attribution 继续作为前置约束，禁止固定
-action/intent 表。
+将结构成长请求从 branch trace 扩展为可配置的多尺度神经元/突触拓扑 proposal：统一描述新增
+单元、连接、专用区域、证据、资源成本与父 checkpoint，并先实现一个可 checkpoint、lesion、
+holdout 验证和 rollback 的小型突触重连 Gate；继续以预测误差、资源瓶颈和迁移收益驱动增长，
+禁止按固定 action/intent 表写死拓扑。
