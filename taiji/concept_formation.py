@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import math
 from collections.abc import Iterable, Sequence
+from dataclasses import dataclass
 from typing import Any
 
 import torch
@@ -12,6 +13,18 @@ import torch
 from .contracts import Concept, EpisodicMemoryRecord
 
 CONCEPT_FORMATION_CHECKPOINT_FORMAT = "taiji-concept-formation-v1"
+
+
+@dataclass(frozen=True)
+class ConceptMatch:
+    """A content-addressed concept match exposed to downstream organs."""
+
+    concept: Concept
+    score: float
+
+    def __post_init__(self) -> None:
+        if not 0.0 <= float(self.score) <= 1.0:
+            raise ValueError("concept match score must be in [0, 1]")
 
 
 class ConceptFormationOrgan:
@@ -90,6 +103,86 @@ class ConceptFormationOrgan:
                 concept for concept in self._concepts if concept.concept_id not in removed_set
             )
         return removed
+
+    @staticmethod
+    def _world_ids_similarity(
+        left_objects: Sequence[str],
+        left_relations: Sequence[str],
+        right_objects: Sequence[str],
+        right_relations: Sequence[str],
+    ) -> float:
+        if not left_objects and not left_relations:
+            return 0.0
+        if not left_objects and not right_objects:
+            object_similarity = 1.0
+        elif not left_objects or not right_objects:
+            object_similarity = 0.0
+        else:
+            count_similarity = 1.0 - abs(len(left_objects) - len(right_objects)) / max(
+                len(left_objects), len(right_objects)
+            )
+            object_similarity = max(
+                ConceptFormationOrgan._jaccard(left_objects, right_objects),
+                0.5 * count_similarity,
+            )
+        relation_similarity = max(
+            ConceptFormationOrgan._jaccard(left_relations, right_relations),
+            ConceptFormationOrgan._jaccard(
+                ConceptFormationOrgan._relation_shapes(left_relations),
+                ConceptFormationOrgan._relation_shapes(right_relations),
+            ),
+        )
+        return (
+            max(object_similarity, relation_similarity)
+            if left_relations
+            else object_similarity
+        )
+
+    def retrieve(
+        self,
+        cue: torch.Tensor,
+        *,
+        object_ids: Sequence[str] = (),
+        relation_ids: Sequence[str] = (),
+        limit: int = 1,
+    ) -> tuple[ConceptMatch, ...]:
+        """Retrieve concepts by current latent and optional world evidence."""
+
+        if cue.ndim != 1:
+            raise ValueError("concept retrieval cue must be a vector")
+        if int(limit) <= 0:
+            return ()
+        matches: list[ConceptMatch] = []
+        has_world_evidence = bool(object_ids or relation_ids)
+        latent_weight, world_weight, _ = self.signal_weights
+        normalizer = latent_weight + (world_weight if has_world_evidence else 0.0)
+        for concept in self._concepts:
+            if concept.prototype.numel() != cue.numel():
+                continue
+            latent_similarity = float(
+                torch.nn.functional.cosine_similarity(
+                    concept.prototype.unsqueeze(0), cue.unsqueeze(0)
+                ).item()
+            )
+            score = latent_weight * max(0.0, latent_similarity)
+            if has_world_evidence:
+                score += world_weight * self._world_ids_similarity(
+                    object_ids,
+                    relation_ids,
+                    concept.object_ids,
+                    concept.relation_ids,
+                )
+            score = max(0.0, min(1.0, score / normalizer))
+            if score >= self.similarity_threshold:
+                matches.append(ConceptMatch(concept=concept, score=score))
+        matches.sort(
+            key=lambda item: (
+                -item.score,
+                -self._concept_strength(item.concept),
+                item.concept.concept_id,
+            )
+        )
+        return tuple(matches[: int(limit)])
 
     @staticmethod
     def _jaccard(left: Sequence[str], right: Sequence[str]) -> float:
@@ -207,6 +300,13 @@ class ConceptFormationOrgan:
             relation_ids = tuple(
                 dict.fromkeys(relation_id for item in cluster for relation_id in item.relation_ids)
             )
+            action_kinds = tuple(
+                dict.fromkeys(
+                    item.action_intent.kind
+                    for item in cluster
+                    if item.action_intent is not None
+                )
+            )
             prototype = torch.nn.functional.normalize(
                 torch.stack([item.cue for item in cluster]).mean(dim=0), dim=0
             )
@@ -260,6 +360,9 @@ class ConceptFormationOrgan:
                 )
                 object_ids = tuple(dict.fromkeys((*previous_concept.object_ids, *object_ids)))
                 relation_ids = tuple(dict.fromkeys((*previous_concept.relation_ids, *relation_ids)))
+                action_kinds = tuple(
+                    dict.fromkeys((*previous_concept.action_kinds, *action_kinds))
+                )
                 prototype = torch.nn.functional.normalize(
                     (1.0 - self.plasticity_rate) * previous_concept.prototype
                     + self.plasticity_rate * prototype,
@@ -272,6 +375,7 @@ class ConceptFormationOrgan:
                 support_assembly_ids=assembly_ids,
                 object_ids=object_ids,
                 relation_ids=relation_ids,
+                action_kinds=action_kinds,
                 maturity=max(
                     previous_concept.maturity if previous_concept is not None else 0.0,
                     max(0.0, min(1.0, 1.0 - 1.0 / len(episode_ids))),

@@ -34,6 +34,7 @@ class PlanningConfig:
     uncertainty_weight: float = 1.20
     resource_weight: float = 0.40
     conflict_weight: float = 0.80
+    concept_weight: float = 0.40
     outcome_progress_gain: float = 0.40
     discount: float = 0.90
     replan_error_threshold: float = 0.25
@@ -77,6 +78,7 @@ class PlanningCandidate:
     uncertainty: float = 0.0
     resource_cost: float = 0.0
     conflict: float = 0.0
+    concept_affinity: float = 0.0
     prediction_provenance: str = "planner"
 
     def __post_init__(self) -> None:
@@ -89,6 +91,7 @@ class PlanningCandidate:
         _unit(self.uncertainty, "uncertainty")
         _unit(self.resource_cost, "resource_cost")
         _unit(self.conflict, "conflict")
+        _unit(self.concept_affinity, "concept_affinity")
         if not self.prediction_provenance:
             raise ValueError("prediction provenance cannot be empty")
 
@@ -137,6 +140,7 @@ class ImaginedRollout:
                     "uncertainty": step.uncertainty,
                     "resource_cost": step.resource_cost,
                     "conflict": step.conflict,
+                    "concept_affinity": step.concept_affinity,
                     "prediction_provenance": step.prediction_provenance,
                 }
                 for step in self.steps
@@ -160,6 +164,7 @@ class ImaginedRollout:
                     uncertainty=float(item.get("uncertainty", 0.0)),
                     resource_cost=float(item.get("resource_cost", 0.0)),
                     conflict=float(item.get("conflict", 0.0)),
+                    concept_affinity=float(item.get("concept_affinity", 0.0)),
                     prediction_provenance=str(item.get("prediction_provenance", "planner")),
                 )
                 for item in payload.get("steps", ())
@@ -256,6 +261,7 @@ class GoalPlanner:
                 - self.config.uncertainty_weight * candidate.uncertainty
                 - self.config.resource_weight * candidate.resource_cost
                 - self.config.conflict_weight * candidate.conflict
+                + self.config.concept_weight * candidate.concept_affinity
             )
             risk = max(candidate.uncertainty, candidate.resource_cost, candidate.conflict)
             scored.append(
@@ -322,6 +328,7 @@ class GoalPlanner:
                     - self.config.uncertainty_weight * step.uncertainty
                     - self.config.resource_weight * step.resource_cost
                     - self.config.conflict_weight * step.conflict
+                    + self.config.concept_weight * step.concept_affinity
                 )
                 risk = max(risk, step.uncertainty, step.resource_cost, step.conflict)
             expected_value += (

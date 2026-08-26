@@ -396,6 +396,7 @@ class Concept:
     support_assembly_ids: tuple[str, ...] = ()
     object_ids: tuple[str, ...] = ()
     relation_ids: tuple[str, ...] = ()
+    action_kinds: tuple[str, ...] = ()
     maturity: float = 0.0
     stability: float = 0.0
     confidence: float = 0.0
@@ -423,6 +424,9 @@ class Concept:
                 field_name,
                 _normalize_ids(getattr(self, field_name), f"concept {field_name}"),
             )
+        object.__setattr__(
+            self, "action_kinds", _normalize_ids(self.action_kinds, "concept action_kinds")
+        )
         _check_unit(self.maturity, "concept maturity")
         _check_unit(self.stability, "concept stability")
         _check_unit(self.confidence, "concept confidence")
@@ -440,6 +444,7 @@ class Concept:
             "support_assembly_ids": list(self.support_assembly_ids),
             "object_ids": list(self.object_ids),
             "relation_ids": list(self.relation_ids),
+            "action_kinds": list(self.action_kinds),
             "maturity": self.maturity,
             "stability": self.stability,
             "confidence": self.confidence,
@@ -462,10 +467,14 @@ class Concept:
             support_assembly_ids=tuple(
                 str(item) for item in payload.get("support_assembly_ids", ())
             ),
+            object_ids=tuple(str(item) for item in payload.get("object_ids", ())),
             relation_ids=tuple(str(item) for item in payload.get("relation_ids", ())),
+            action_kinds=tuple(str(item) for item in payload.get("action_kinds", ())),
             maturity=float(payload.get("maturity", 0.0)),
             stability=float(payload.get("stability", 0.0)),
             confidence=float(payload.get("confidence", 0.0)),
+            outcome_mean=float(payload.get("outcome_mean", 0.0)),
+            outcome_consistency=float(payload.get("outcome_consistency", 0.0)),
             update_count=int(payload.get("update_count", 0)),
             last_updated_tick=int(payload.get("last_updated_tick", 0)),
             provenance=str(payload.get("provenance", "consolidated")),
@@ -926,6 +935,8 @@ class MemoryState:
     procedural_context: torch.Tensor = field(default_factory=lambda: torch.empty(0))
     working_ids: tuple[str, ...] = ()
     episodic_ids: tuple[str, ...] = ()
+    concept_ids: tuple[str, ...] = ()
+    concept_confidence: float = 0.0
     working_items: tuple[WorkingMemoryItem, ...] = ()
     working_capacity: int = 4
     version: int = CONTRACT_VERSION
@@ -939,6 +950,9 @@ class MemoryState:
             raise ValueError("memory contexts must be vectors")
         if any(not str(item) for item in (*self.working_ids, *self.episodic_ids)):
             raise ValueError("memory ids cannot be empty")
+        if any(not str(item) for item in self.concept_ids):
+            raise ValueError("memory concept ids cannot be empty")
+        _check_unit(self.concept_confidence, "concept confidence")
         if int(self.working_capacity) <= 0:
             raise ValueError("working memory capacity must be positive")
         if len(self.working_items) > int(self.working_capacity):
@@ -955,6 +969,8 @@ class MemoryState:
             "procedural_context": self.procedural_context.detach().cpu().clone(),
             "working_ids": list(self.working_ids),
             "episodic_ids": list(self.episodic_ids),
+            "concept_ids": list(self.concept_ids),
+            "concept_confidence": self.concept_confidence,
             "working_items": [item.to_payload() for item in self.working_items],
             "working_capacity": self.working_capacity,
         }
@@ -971,6 +987,8 @@ class MemoryState:
             procedural_context=payload["procedural_context"].detach().to(device).clone(),
             working_ids=tuple(str(item) for item in payload.get("working_ids", ())),
             episodic_ids=tuple(str(item) for item in payload.get("episodic_ids", ())),
+            concept_ids=tuple(str(item) for item in payload.get("concept_ids", ())),
+            concept_confidence=float(payload.get("concept_confidence", 0.0)),
             working_items=tuple(
                 WorkingMemoryItem.from_payload(item, device=device)
                 for item in payload.get("working_items", ())
@@ -1593,6 +1611,8 @@ class EpisodicMemoryRecord:
             provenance=str(payload.get("provenance", "experienced")),
             event_ids=tuple(str(item) for item in payload.get("event_ids", ())),
             assembly_ids=tuple(str(item) for item in payload.get("assembly_ids", ())),
+            object_ids=tuple(str(item) for item in payload.get("object_ids", ())),
+            relation_ids=tuple(str(item) for item in payload.get("relation_ids", ())),
         )
 
 

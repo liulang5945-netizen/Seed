@@ -509,4 +509,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把已具备容量、塑性、剪枝和 lesion 的 `ConceptFormationOrgan` 接入语义检索/规划的真实消费路径，再用跨 schema、未见任务、容量/干扰和三类信号 lesion 重新验收。**
+**下一步：完成 `ConceptFormationOrgan` 经语义检索/规划的跨 schema、未见任务下游迁移验收，再恢复 schema-scale runtime recovery report。**

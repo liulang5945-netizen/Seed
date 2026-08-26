@@ -1011,6 +1011,27 @@ class TSKV8Adapter(Taiji):
             goals=GoalState(tick=self.tick, goals=goals),
         )
 
+    def _apply_concept_affinity(
+        self, candidates: Sequence[PlanningCandidate]
+    ) -> tuple[PlanningCandidate, ...]:
+        matches = self._concept_matches_for_world(self._cognitive_state.world)
+        return tuple(
+            replace(
+                candidate,
+                concept_affinity=max(
+                    (
+                        match.score
+                        * match.concept.confidence
+                        * match.concept.outcome_mean
+                        for match in matches
+                        if candidate.action.kind in match.concept.action_kinds
+                    ),
+                    default=candidate.concept_affinity,
+                ),
+            )
+            for candidate in candidates
+        )
+
     def plan_actions(
         self,
         candidates: Sequence[PlanningCandidate],
@@ -1021,9 +1042,10 @@ class TSKV8Adapter(Taiji):
 
         if self._goal_planner is None:
             raise RuntimeError("goal planner is not attached")
+        enriched_candidates = self._apply_concept_affinity(tuple(candidates))
         decision = self._goal_planner.plan(
             self._cognitive_state.goals,
-            tuple(candidates),
+            enriched_candidates,
             tick=self.tick,
             goal_id=goal_id,
         )
@@ -1141,9 +1163,13 @@ class TSKV8Adapter(Taiji):
 
         if self._goal_planner is None:
             raise RuntimeError("goal planner is not attached")
+        enriched_rollouts = tuple(
+            replace(rollout, steps=self._apply_concept_affinity(rollout.steps))
+            for rollout in rollouts
+        )
         decision = self._goal_planner.plan_rollouts(
             self._cognitive_state.goals,
-            tuple(rollouts),
+            enriched_rollouts,
             tick=self.tick,
             goal_id=goal_id,
         )
@@ -1426,6 +1452,30 @@ class TSKV8Adapter(Taiji):
         )
         self._cognitive_state = replace(self._cognitive_state, events=(*events[:-1], event))
 
+    def _concept_matches_for_world(self, world: WorldState) -> tuple[Any, ...]:
+        cue = (
+            self._cognitive_state.percept.features
+            if self._cognitive_state.percept is not None
+            else world.latent
+        )
+        return self._concept_formation.retrieve(
+            cue,
+            object_ids=self._world_object_ids(world),
+            relation_ids=self._world_relation_ids(world),
+            limit=self.config.concept_capacity,
+        )
+
+    def _refresh_concept_memory(self) -> None:
+        matches = self._concept_matches_for_world(self._cognitive_state.world)
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            memory=replace(
+                self._cognitive_state.memory,
+                concept_ids=tuple(match.concept.concept_id for match in matches),
+                concept_confidence=(matches[0].score if matches else 0.0),
+            ),
+        )
+
     def observe(self, symbol: int, *args: Any, **kwargs: Any) -> TaijiStep:
         workspace_candidates: Sequence[WorkspaceCandidate] | None = kwargs.pop(
             "workspace_candidates", None
@@ -1448,6 +1498,10 @@ class TSKV8Adapter(Taiji):
         features = percept.features.detach().clone()
         recall = step.memory_recall
         previous = self._cognitive_state
+        concept_matches = self._concept_formation.retrieve(
+            features,
+            limit=self.config.concept_capacity,
+        )
         homeostasis = previous.homeostasis
         if self._homeostatic_controller is not None:
             homeostasis = self._homeostatic_controller.update(
@@ -1515,6 +1569,8 @@ class TSKV8Adapter(Taiji):
                     for hit in self._episodic_memory.retrieve(features, limit=3)
                 )
             ),
+            concept_ids=tuple(match.concept.concept_id for match in concept_matches),
+            concept_confidence=(concept_matches[0].score if concept_matches else 0.0),
         )
         self._cognitive_state = replace(
             previous,
@@ -1582,6 +1638,7 @@ class TSKV8Adapter(Taiji):
                 world=self._ground_world_state(world_state),
             )
             self._refresh_last_event_world_lineage(self._cognitive_state.world)
+            self._refresh_concept_memory()
         return step
 
     def ingest_input(
