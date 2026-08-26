@@ -17,6 +17,8 @@ from taiji import (  # noqa: E402
     AdaptiveNeuronNetwork,
     AdaptiveNeuronRegion,
     AdaptiveStructuralGrowthController,
+    CrossRegionCooperationLearner,
+    CrossRegionLearningDynamics,
     StructuralGrowthDynamics,
     TaijiConfig,
     TSKV8Adapter,
@@ -134,15 +136,63 @@ def evaluate() -> dict[str, object]:
         fan_in=1,
     )
     assert connected.commit_cross_region_connection("cortex", connection)
-    connected_rejected = False
-    try:
-        connected.neuron_networks[0].propose_region_split(
+    connected_network = connected.neuron_networks[0]
+    connected_network.attach_cooperation_learner(
+        CrossRegionCooperationLearner(
+            dynamics=CrossRegionLearningDynamics(ema_rate=1.0),
+        )
+    )
+    connected_network.observe_connection(
+        connection.substrate_id,
+        prediction_error=0.5,
+        holdout_transfer=0.5,
+        resource_state=0.8,
+        selected=True,
+    )
+    for region in connected_network.regions:
+        region.incoming.edge_weight.zero_()
+        region.activity.zero_()
+    connected_network.connections[0][3].edge_weight.zero_()
+    connected.attach_structural_growth_controller(_controller())
+    connected_proposals = [
+        connected.propose_region_split_from_error(
+            network_id="cortex",
             region_id="bottleneck",
             first_unit_count=1,
-            evidence_ids=("split:connected:reject",),
+            prediction_error=0.9,
+            resource_state=0.8,
+            holdout_transfer=0.9,
+            evidence_ids=(f"split:connected:{index}",),
         )
-    except ValueError as exc:
-        connected_rejected = "isolated region" in str(exc)
+        for index in range(1, 3)
+    ]
+    connected_proposal = connected_proposals[-1]
+    assert connected_proposal is not None
+    connected_holdout = connected.validate_region_split_holdout(
+        network_id="cortex",
+        proposal_id=connected_proposal.proposal_id,
+        holdout_inputs=({"source": torch.ones(3), "bottleneck": torch.zeros(3)},),
+        expected_activities=({"bottleneck": torch.zeros(2)},),
+    )
+    connected_committed = connected.commit_region_split("cortex", connected_proposal)
+    connected_after = connected.neuron_networks[0]
+    connected_migrated = bool(
+        connected_holdout
+        and connected_committed
+        and connected_after.connection_ids
+        == (
+            "connection:source->bottleneck",
+            "connection:source->bottleneck.split.1",
+        )
+        and connected_after.cooperation_learner is not None
+        and connected_after.cooperation_learner.route_ids == connected_after.connection_ids
+        and all(
+            route.evidence_count == 1
+            for route in connected_after.cooperation_learner.routes
+        )
+        and connected.rollback_region_split(connected_proposal.proposal_id)
+        and connected.neuron_networks[0].connection_ids == (connection.substrate_id,)
+    )
 
     no_budget = TSKV8Adapter(_config(budget=0), episode_id="region-split-no-budget")
     no_budget.attach_adaptive_neuron_network("cortex", _network())
@@ -185,7 +235,7 @@ def evaluate() -> dict[str, object]:
             and final_network.region_ids == ("source", "bottleneck")
             and final_network.regions[1].unit_ids == ("bottleneck.u0", "bottleneck.u1")
             and restored.cognitive_snapshot().development.structural_budget == 2
-            and connected_rejected
+            and connected_migrated
             and not rejected
             and no_budget.neuron_networks[0].region_ids == ("source", "bottleneck")
         ),
@@ -193,7 +243,8 @@ def evaluate() -> dict[str, object]:
             "persistent substrate pressure must emit a region split proposal that preserves the "
             "parent region identity, partitions unit identities and local state, passes unseen "
             "holdout validation, survives checkpoint continuation, consumes the ledger budget, "
-            "and reverses cleanly; connected regions and zero-budget splits must fail closed"
+            "and reverses cleanly; connected regions must migrate their routes explicitly and "
+            "zero-budget splits must fail closed"
         ),
     }
     return {
@@ -211,14 +262,14 @@ def evaluate() -> dict[str, object]:
             "checkpoint_continuation": checkpoint_continuation,
             "rollback": rollback,
             "region_ids_after_rollback": list(final_network.region_ids),
-            "connected_region_rejected": connected_rejected,
+            "connected_split_migrated": connected_migrated,
             "rejected_without_budget": not rejected,
         },
         "gate": gate,
         "boundary": (
-            "This gate proves identity-preserving split for isolated regions only; connected "
-            "split requires a separate explicit connection-migration contract and no claim of "
-            "unrestricted self-evolution or general intelligence is made."
+            "This gate proves identity-preserving split for isolated and connected regions with "
+            "explicit sparse connection migration; it makes no claim of unrestricted "
+            "self-evolution or general intelligence."
         ),
     }
 
@@ -245,7 +296,7 @@ def main() -> int:
     )
     manifest = {
         "format": MANIFEST_FORMAT,
-        "task": "identity-preserving isolated region split",
+        "task": "identity-preserving region split with connection migration",
         "report": str(report_path.relative_to(PROJECT_ROOT)).replace("\\", "/"),
         "seed": 71,
         "controls": [
@@ -256,7 +307,8 @@ def main() -> int:
             "budget_validation",
             "checkpoint_continuation",
             "reverse_rollback",
-            "connected_region_fail_closed",
+            "connected_connection_migration",
+            "route_learner_lineage",
             "zero_budget",
         ],
         "gate": report["gate"],

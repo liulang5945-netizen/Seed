@@ -146,6 +146,25 @@ class CrossRegionCooperationLearner:
     def unregister_connection(self, connection_id: str) -> None:
         self._routes.pop(str(connection_id), None)
 
+    def fork_connection(self, source_id: str, target_id: str) -> None:
+        """Copy route evidence to a child projection created by region split."""
+
+        source = self._route(source_id)
+        child_key = str(target_id)
+        if not child_key:
+            raise ValueError("cross-region child connection_id must not be empty")
+        if child_key in self._routes:
+            raise ValueError("cross-region child connection already exists")
+        self._routes[child_key] = CrossRegionRouteState(
+            connection_id=child_key,
+            resource_cost=source.resource_cost,
+            prediction_error=source.prediction_error,
+            holdout_transfer=source.holdout_transfer,
+            resource_state=source.resource_state,
+            evidence_count=source.evidence_count,
+            selection_count=source.selection_count,
+        )
+
     def resource_cost(self, connection_id: str) -> float:
         """Return the declared structural cost for one registered route."""
 

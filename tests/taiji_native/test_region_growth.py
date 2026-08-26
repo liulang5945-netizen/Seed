@@ -435,3 +435,80 @@ def test_region_split_preserves_unit_lineage_and_is_reversible() -> None:
         "bottleneck.u1",
     )
     assert restored.cognitive_snapshot().development.structural_budget == 2
+
+
+def test_connected_region_split_migrates_connections_and_route_lineage() -> None:
+    model = TSKV8Adapter(_config(budget=2), episode_id="connected-region-split")
+    model.attach_adaptive_neuron_network("cortex", _network())
+    connection = model.propose_cross_region_connection(
+        network_id="cortex",
+        source_region_id="source",
+        target_region_id="bottleneck",
+        evidence_ids=("split:route",),
+        fan_in=1,
+    )
+    assert model.commit_cross_region_connection("cortex", connection) is True
+    network = model.neuron_networks[0]
+    network.attach_cooperation_learner(
+        CrossRegionCooperationLearner(
+            dynamics=CrossRegionLearningDynamics(ema_rate=1.0),
+        )
+    )
+    network.observe_connection(
+        connection.substrate_id,
+        prediction_error=0.5,
+        holdout_transfer=0.5,
+        resource_state=0.8,
+        selected=True,
+    )
+    for region in network.regions:
+        region.incoming.edge_weight.zero_()
+        region.activity.zero_()
+    network.connections[0][3].edge_weight.zero_()
+    model.attach_structural_growth_controller(_controller())
+
+    first = model.propose_region_split_from_error(
+        network_id="cortex",
+        region_id="bottleneck",
+        first_unit_count=1,
+        prediction_error=0.9,
+        resource_state=0.8,
+        holdout_transfer=0.9,
+        evidence_ids=("split:connected:tick:1",),
+    )
+    proposal = model.propose_region_split_from_error(
+        network_id="cortex",
+        region_id="bottleneck",
+        first_unit_count=1,
+        prediction_error=0.9,
+        resource_state=0.8,
+        holdout_transfer=0.9,
+        evidence_ids=("split:connected:tick:2",),
+    )
+    assert first is None
+    assert proposal is not None
+    assert model.validate_region_split_holdout(
+        network_id="cortex",
+        proposal_id=proposal.proposal_id,
+        holdout_inputs=({"source": torch.ones(3), "bottleneck": torch.zeros(3)},),
+        expected_activities=({"bottleneck": torch.zeros(2)},),
+    ) is True
+    assert model.commit_region_split("cortex", proposal) is True
+    assert network.region_ids == ("source", "bottleneck", "bottleneck.split.1")
+    assert network.execution_order == network.region_ids
+    assert network.connection_ids == (
+        "connection:source->bottleneck",
+        "connection:source->bottleneck.split.1",
+    )
+    assert network.cooperation_learner is not None
+    assert network.cooperation_learner.route_ids == network.connection_ids
+    assert all(route.evidence_count == 1 for route in network.cooperation_learner.routes)
+
+    restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
+    assert restored.rollback_region_split(proposal.proposal_id) is True
+    assert restored.neuron_networks[0].region_ids == ("source", "bottleneck")
+    assert restored.neuron_networks[0].connection_ids == (connection.substrate_id,)
+    assert restored.neuron_networks[0].cooperation_learner is not None
+    assert restored.neuron_networks[0].cooperation_learner.route_ids == (
+        connection.substrate_id,
+    )

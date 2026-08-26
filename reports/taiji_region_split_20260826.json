@@ -7,6 +7,7 @@
     "target_kind": "region",
     "operation": "split",
     "specification": {
+      "connection_migrations": [],
       "new_region_id": "bottleneck.split.1",
       "new_unit_ids": [
         "bottleneck.u1"
@@ -51,12 +52,12 @@
       "source",
       "bottleneck"
     ],
-    "connected_region_rejected": true,
+    "connected_split_migrated": true,
     "rejected_without_budget": true
   },
   "gate": {
     "passed": true,
-    "criterion": "persistent substrate pressure must emit a region split proposal that preserves the parent region identity, partitions unit identities and local state, passes unseen holdout validation, survives checkpoint continuation, consumes the ledger budget, and reverses cleanly; connected regions and zero-budget splits must fail closed"
+    "criterion": "persistent substrate pressure must emit a region split proposal that preserves the parent region identity, partitions unit identities and local state, passes unseen holdout validation, survives checkpoint continuation, consumes the ledger budget, and reverses cleanly; connected regions must migrate their routes explicitly and zero-budget splits must fail closed"
   },
-  "boundary": "This gate proves identity-preserving split for isolated regions only; connected split requires a separate explicit connection-migration contract and no claim of unrestricted self-evolution or general intelligence is made."
+  "boundary": "This gate proves identity-preserving split for isolated and connected regions with explicit sparse connection migration; it makes no claim of unrestricted self-evolution or general intelligence."
 }
