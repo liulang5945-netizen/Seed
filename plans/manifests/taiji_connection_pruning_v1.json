@@ -1,0 +1,23 @@
+{
+  "format": "taiji-connection-pruning-manifest-v1",
+  "task": "resource-aware structural cross-region connection pruning",
+  "report": "reports/taiji_connection_pruning_20260826.json",
+  "seed": 71,
+  "controls": [
+    "route_learner_evidence",
+    "persistent_low_usage",
+    "resource_pressure",
+    "learning_stagnation",
+    "unseen_holdout_regression_gate",
+    "budget_validation",
+    "checkpoint_continuation",
+    "connection_only_removal",
+    "reverse_rollback",
+    "high_gain_suppression",
+    "zero_budget"
+  ],
+  "gate": {
+    "passed": true,
+    "criterion": "persistent low route usage, high resource pressure and route learning stagnation must emit a connection prune proposal from existing route evidence; unseen-input regression must stay within threshold before ledger commit, checkpoint continuation must preserve the decision, pruning must remove only the owned connection, reverse rollback must restore it, high route gain must suppress pruning, and zero budget must fail closed"
+  }
+}

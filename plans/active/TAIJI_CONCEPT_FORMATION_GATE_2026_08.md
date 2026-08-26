@@ -120,5 +120,8 @@ connection/region lesion 与 checkpoint continuation；在线 credit loop 已接
 连接。随后建立的 region retention/pruning Gate 也已通过，报告为
 `reports/taiji_region_pruning_20260826.json`：只有低使用、高资源压力、长期 learning stagnation
 且移除后未见 holdout 不退化的区域才可进入 proposal/ledger，并通过 checkpoint、所属连接移除、
-预算与 reverse rollback。当前下一步是把同一治理扩展到独立跨区域 connection pruning，继续禁止按
-固定 action/intent 表决定结构维护。
+预算与 reverse rollback。独立跨区域 connection pruning Gate 也已通过，报告为
+`reports/taiji_connection_pruning_20260826.json`：既有 route learner 的证据可驱动低使用、资源
+压力和 learning stagnation 判据，并通过未见 holdout、checkpoint continuation、连接级移除、
+预算和 reverse rollback；当前下一步是建立区域 split/merge 的 lineage、holdout、预算和可逆
+生命周期治理，继续禁止按固定 action/intent 表决定结构维护。

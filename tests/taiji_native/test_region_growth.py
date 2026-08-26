@@ -8,6 +8,8 @@ from taiji import (
     AdaptiveNeuronRegion,
     AdaptiveStructuralGrowthController,
     AdaptiveStructuralPruningController,
+    CrossRegionCooperationLearner,
+    CrossRegionLearningDynamics,
     StructuralGrowthDynamics,
     StructuralPruningDynamics,
     TaijiConfig,
@@ -299,3 +301,80 @@ def test_region_pruning_requires_learning_stagnation() -> None:
     state = model.structural_pruning_controller.regions[0]
     assert state.learning_gain_ema == 1.0
     assert state.proposal_count == 0
+
+
+def test_cross_region_connection_pruning_is_checkpointed_and_reversible() -> None:
+    model = TSKV8Adapter(_config(budget=2), episode_id="connection-pruning")
+    model.attach_adaptive_neuron_network("cortex", _network())
+    connection = model.propose_cross_region_connection(
+        network_id="cortex",
+        source_region_id="source",
+        target_region_id="bottleneck",
+        evidence_ids=("route:connection",),
+        fan_in=1,
+    )
+    assert model.commit_cross_region_connection("cortex", connection) is True
+    network = model.neuron_networks[0]
+    network.attach_cooperation_learner(
+        CrossRegionCooperationLearner(
+            dynamics=CrossRegionLearningDynamics(ema_rate=1.0),
+        )
+    )
+    network.observe_connection(
+        connection.substrate_id,
+        prediction_error=1.0,
+        holdout_transfer=0.0,
+        resource_state=0.1,
+        selected=False,
+    )
+    network.observe_connection(
+        connection.substrate_id,
+        prediction_error=1.0,
+        holdout_transfer=0.0,
+        resource_state=0.1,
+        selected=False,
+    )
+    for region in network.regions:
+        region.incoming.edge_weight.zero_()
+        region.activity.zero_()
+    network.connections[0][3].edge_weight.zero_()
+    model.attach_structural_pruning_controller(_pruning_controller())
+
+    first = model.propose_cross_region_connection_prune_from_route(
+        network_id="cortex",
+        connection_id=connection.substrate_id,
+        evidence_ids=("route:tick:1",),
+    )
+    proposal = model.propose_cross_region_connection_prune_from_route(
+        network_id="cortex",
+        connection_id=connection.substrate_id,
+        evidence_ids=("route:tick:2",),
+    )
+    assert first is None
+    assert proposal is not None
+    assert model.validate_cross_region_connection_prune_holdout(
+        network_id="cortex",
+        proposal_id=proposal.proposal_id,
+        holdout_inputs=(
+            {"source": torch.ones(3)},
+            {"source": torch.ones(3)},
+        ),
+        expected_activities=(
+            {"source": torch.zeros(2), "bottleneck": torch.zeros(2)},
+            {"source": torch.zeros(2), "bottleneck": torch.zeros(2)},
+        ),
+    ) is True
+    assert model.commit_cross_region_connection_prune("cortex", proposal) is True
+    assert model.neuron_networks[0].region_ids == ("source", "bottleneck")
+    assert model.neuron_networks[0].connection_ids == ()
+    assert model.cognitive_snapshot().development.prune_count == 1
+
+    restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
+    assert restored.structural_pruning_controller is not None
+    assert restored.structural_pruning_controller.total_observations == 2
+    assert restored.rollback_cross_region_connection_prune(proposal.proposal_id) is True
+    assert restored.neuron_networks[0].connection_ids == (connection.substrate_id,)
+    assert restored.cognitive_snapshot().development.structural_budget == 1
+    assert restored.rollback_cross_region_connection(connection.proposal_id) is True
+    assert restored.neuron_networks[0].connection_ids == ()
+    assert restored.cognitive_snapshot().development.structural_budget == 2

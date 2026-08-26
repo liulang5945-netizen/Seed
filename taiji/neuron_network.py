@@ -210,6 +210,40 @@ class AdaptiveNeuronNetwork:
             resource_cost=int(resource_cost),
         )
 
+    def propose_connection_prune(
+        self,
+        *,
+        connection_id: str,
+        evidence_ids: Sequence[str],
+        parent_checkpoint_id: str | None = None,
+        resource_cost: int = 1,
+    ) -> StructuralTopologyProposal:
+        """Describe removal of one explicit cross-region connection."""
+
+        key = str(connection_id)
+        try:
+            source_id, target_id, connection = self._connections[key]
+        except KeyError as exc:
+            raise ValueError(f"unknown cross-region connection: {connection_id}") from exc
+        return StructuralTopologyProposal(
+            proposal_id=f"topology:{key}:prune",
+            substrate_id=key,
+            target_kind="region",
+            operation="prune",
+            specification=(
+                ("connection_id", key),
+                ("source_region_id", source_id),
+                ("target_region_id", target_id),
+                ("source_unit_count", self._region(source_id).unit_count),
+                ("target_unit_count", self._region(target_id).unit_count),
+                ("edge_count", connection.edge_count),
+                ("topology_role", "cross_region_connection_prune"),
+            ),
+            evidence_ids=tuple(str(item) for item in evidence_ids),
+            parent_checkpoint_id=parent_checkpoint_id,
+            resource_cost=int(resource_cost),
+        )
+
     @staticmethod
     def _new_connection(
         source: AdaptiveNeuronRegion,
@@ -385,6 +419,37 @@ class AdaptiveNeuronNetwork:
             item for item in self.execution_order if item != region_id
         )
         self._lesioned_regions.discard(region_id)
+        return True
+
+    @torch.no_grad()
+    def apply_connection_prune(
+        self,
+        proposal: StructuralTopologyProposal,
+    ) -> bool:
+        """Remove one explicit cross-region projection while retaining regions."""
+
+        if proposal.status != "pending":
+            raise ValueError("only pending topology proposals can be applied")
+        if proposal.target_kind != "region" or proposal.operation != "prune":
+            raise ValueError("proposal is not a cross-region connection prune")
+        if (
+            dict(proposal.specification).get("topology_role")
+            != "cross_region_connection_prune"
+        ):
+            raise ValueError("proposal is not a cross-region connection prune")
+        specification = dict(proposal.specification)
+        connection_id = str(specification.get("connection_id", ""))
+        if connection_id != proposal.substrate_id:
+            raise ValueError("connection identity does not match proposal")
+        try:
+            self._connections[connection_id]
+        except KeyError as exc:
+            raise ValueError(f"unknown cross-region connection: {connection_id}") from exc
+        self._connections.pop(connection_id)
+        self._connection_resource_costs.pop(connection_id, None)
+        self._lesioned_connections.discard(connection_id)
+        if self._cooperation_learner is not None:
+            self._cooperation_learner.unregister_connection(connection_id)
         return True
 
     def _region_device(self) -> torch.device:

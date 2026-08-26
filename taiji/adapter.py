@@ -1117,6 +1117,370 @@ class TSKV8Adapter(Taiji):
         self._topology_network_ids[proposal.proposal_id] = str(network_id)
         return proposal
 
+    def propose_cross_region_connection_prune_from_underuse(
+        self,
+        *,
+        network_id: str,
+        connection_id: str,
+        usage: float,
+        resource_pressure: float,
+        learning_gain: float,
+        evidence_ids: Sequence[str],
+    ) -> StructuralTopologyProposal | None:
+        """Turn persistent route underuse and stagnation into a prune proposal."""
+
+        if self._structural_pruning_controller is None:
+            raise RuntimeError("structural pruning controller is not attached")
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        connection_key = str(connection_id)
+        if connection_key not in network.connection_ids:
+            raise ValueError(f"unknown adaptive network connection: {connection_id}")
+        decision: StructuralPruningDecision = (
+            self._structural_pruning_controller.observe_substrate(
+                connection_key,
+                usage=usage,
+                resource_pressure=resource_pressure,
+                learning_gain=learning_gain,
+                evidence_ids=evidence_ids,
+            )
+        )
+        if not decision.should_prune:
+            return None
+        proposal = network.propose_connection_prune(
+            connection_id=connection_key,
+            evidence_ids=decision.evidence_ids,
+            parent_checkpoint_id=(
+                f"connection-prune-signal:{connection_key}:{decision.proposal_ordinal}"
+            ),
+            resource_cost=self._structural_pruning_controller.dynamics.pruning_resource_cost,
+        )
+        self._topology_proposals[proposal.proposal_id] = proposal
+        self._topology_network_ids[proposal.proposal_id] = str(network_id)
+        return proposal
+
+    def propose_cross_region_connection_prune_from_route(
+        self,
+        *,
+        network_id: str,
+        connection_id: str,
+        evidence_ids: Sequence[str],
+    ) -> StructuralTopologyProposal | None:
+        """Derive route maintenance evidence from the existing cooperation learner."""
+
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        learner = network.cooperation_learner
+        if learner is None:
+            raise RuntimeError("cross-region cooperation learner is not attached")
+        route = learner.route_state(connection_id)
+        evidence_count = max(1, int(route.evidence_count))
+        usage = min(1.0, float(route.selection_count) / float(evidence_count))
+        resource_pressure = 1.0 - float(route.resource_state)
+        learning_gain = float(route.holdout_transfer) * (1.0 - float(route.prediction_error))
+        return self.propose_cross_region_connection_prune_from_underuse(
+            network_id=network_id,
+            connection_id=connection_id,
+            usage=usage,
+            resource_pressure=resource_pressure,
+            learning_gain=learning_gain,
+            evidence_ids=evidence_ids,
+        )
+
+    def validate_cross_region_connection_prune_holdout(
+        self,
+        *,
+        network_id: str,
+        proposal_id: str,
+        holdout_inputs: Sequence[Mapping[str, torch.Tensor]],
+        expected_activities: Sequence[Mapping[str, torch.Tensor]],
+    ) -> bool:
+        """Validate that removing a route does not regress unseen network behavior."""
+
+        if self._structural_pruning_controller is None:
+            raise RuntimeError("structural pruning controller is not attached")
+        proposal = self._topology_proposals.get(str(proposal_id))
+        if (
+            proposal is None
+            or proposal.status != "pending"
+            or proposal.target_kind != "region"
+            or proposal.operation != "prune"
+            or dict(proposal.specification).get("topology_role")
+            != "cross_region_connection_prune"
+        ):
+            raise ValueError("proposal is not a pending cross-region connection prune")
+        if len(holdout_inputs) == 0 or len(holdout_inputs) != len(expected_activities):
+            raise ValueError(
+                "connection prune holdout inputs and expected activities must have equal size"
+            )
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        if self._topology_network_ids.get(str(proposal_id)) != str(network_id):
+            raise ValueError("connection prune proposal belongs to another network")
+        payload = network.to_payload()
+        intact = AdaptiveNeuronNetwork.from_payload(
+            payload,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        pruned = AdaptiveNeuronNetwork.from_payload(
+            payload,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        pruned.apply_connection_prune(proposal)
+        expected_region_ids = set(pruned.region_ids)
+        baseline_errors: list[float] = []
+        pruned_errors: list[float] = []
+        for inputs, expected in zip(holdout_inputs, expected_activities, strict=True):
+            if not expected or not set(expected).issubset(expected_region_ids):
+                raise ValueError("connection prune expected activities must target surviving regions")
+            intact_activities = intact.step(
+                inputs,
+                connection_ids=intact.connection_ids,
+            )
+            pruned_activities = pruned.step(
+                inputs,
+                connection_ids=pruned.connection_ids,
+            )
+            for expected_region_id, expected_activity in expected.items():
+                expected_value = expected_activity.to(self.device)
+                intact_activity = intact_activities[expected_region_id]
+                pruned_activity = pruned_activities[expected_region_id]
+                if expected_value.shape != intact_activity.shape:
+                    raise ValueError(
+                        f"connection prune expected activity shape mismatch for {expected_region_id}"
+                    )
+                baseline_errors.append(
+                    float(
+                        torch.mean(torch.abs(intact_activity - expected_value))
+                        .clamp(0.0, 1.0)
+                        .item()
+                    )
+                )
+                pruned_errors.append(
+                    float(
+                        torch.mean(torch.abs(pruned_activity - expected_value))
+                        .clamp(0.0, 1.0)
+                        .item()
+                    )
+                )
+        if not baseline_errors:
+            raise ValueError("connection prune holdout must contain expected activities")
+        baseline_error = sum(baseline_errors) / len(baseline_errors)
+        pruned_error = sum(pruned_errors) / len(pruned_errors)
+        regression = max(0.0, pruned_error - baseline_error)
+        score = max(0.0, min(1.0, 1.0 - regression))
+        maximum_regression = (
+            self._structural_pruning_controller.dynamics.maximum_holdout_regression
+        )
+        validated = regression <= float(maximum_regression)
+        self._topology_proposals[str(proposal_id)] = replace(
+            proposal,
+            validation_score=score,
+        )
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                last_update_source="connection-prune-holdout-validation",
+                last_validation_status="validated" if validated else "rejected",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    f"holdout:{proposal_id}",
+                    limit=self._lineage_limit(),
+                ),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    f"holdout:{proposal_id}",
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return validated
+
+    def commit_cross_region_connection_prune(
+        self,
+        network_id: str,
+        proposal: StructuralTopologyProposal,
+    ) -> bool:
+        """Commit a validated route removal through the runtime ledger."""
+
+        existing = self._topology_proposals.get(proposal.proposal_id)
+        if existing is not None:
+            if existing.status == "accepted":
+                return True
+            if existing.status in {"rejected", "rolled_back"}:
+                return False
+            proposal = existing
+        if proposal.status != "pending":
+            raise ValueError("only pending connection prune proposals can be committed")
+        if (
+            proposal.target_kind != "region"
+            or proposal.operation != "prune"
+            or dict(proposal.specification).get("topology_role")
+            != "cross_region_connection_prune"
+        ):
+            raise ValueError("proposal is not a cross-region connection prune")
+        if self._structural_pruning_controller is None:
+            raise RuntimeError("structural pruning controller is not attached")
+        if self._topology_network_ids.get(proposal.proposal_id) not in {
+            None,
+            str(network_id),
+        }:
+            raise ValueError("connection prune proposal belongs to another network")
+        minimum_score = 1.0 - float(
+            self._structural_pruning_controller.dynamics.maximum_holdout_regression
+        )
+        if proposal.validation_score < minimum_score:
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(
+                    proposal.evidence_ids[0]
+                    if proposal.evidence_ids
+                    else proposal.proposal_id
+                ),
+                source="cross-region-topology-pruning",
+            )
+            return False
+        try:
+            network = self._neuron_networks[str(network_id)]
+        except KeyError as exc:
+            raise ValueError(f"unknown adaptive neuron network: {network_id}") from exc
+        if self._cognitive_state.development.structural_budget < proposal.resource_cost:
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(
+                    proposal.evidence_ids[0]
+                    if proposal.evidence_ids
+                    else proposal.proposal_id
+                ),
+                source="cross-region-topology-pruning",
+            )
+            return False
+        parent_snapshot = network.to_payload()
+        try:
+            network.apply_connection_prune(proposal)
+            accepted_snapshot = network.to_payload()
+            trial = AdaptiveNeuronNetwork.from_payload(
+                accepted_snapshot,
+                generator=self._checkpoint_region_generator(),
+                device=self.device,
+            )
+            if (
+                trial.region_ids != network.region_ids
+                or trial.execution_order != network.execution_order
+                or trial.connection_ids != network.connection_ids
+            ):
+                raise ValueError("connection prune checkpoint roundtrip changed topology identities")
+        except (IndexError, KeyError, RuntimeError, ValueError):
+            self._neuron_networks[str(network_id)] = AdaptiveNeuronNetwork.from_payload(
+                parent_snapshot,
+                generator=self._checkpoint_region_generator(),
+                device=self.device,
+            )
+            rejected = replace(proposal, status="rejected")
+            self._topology_proposals[proposal.proposal_id] = rejected
+            self._record_topology_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=(
+                    proposal.evidence_ids[0]
+                    if proposal.evidence_ids
+                    else proposal.proposal_id
+                ),
+                source="cross-region-topology-pruning",
+            )
+            return False
+        accepted = replace(proposal, status="accepted")
+        self._topology_proposals[proposal.proposal_id] = accepted
+        self._topology_parent_snapshots[proposal.proposal_id] = parent_snapshot
+        self._topology_network_ids[proposal.proposal_id] = str(network_id)
+        self._record_topology_development(
+            accepted,
+            consume_budget=True,
+            evidence_id=(
+                proposal.evidence_ids[0]
+                if proposal.evidence_ids
+                else proposal.proposal_id
+            ),
+            source="cross-region-topology-pruning",
+            counter="prune_count",
+        )
+        return True
+
+    def rollback_cross_region_connection_prune(self, proposal_id: str) -> bool:
+        """Rollback only the latest accepted cross-region connection removal."""
+
+        key = str(proposal_id)
+        proposal = self._topology_proposals.get(key)
+        snapshot = self._topology_parent_snapshots.get(key)
+        network_id = self._topology_network_ids.get(key)
+        if (
+            proposal is None
+            or proposal.status != "accepted"
+            or proposal.target_kind != "region"
+            or proposal.operation != "prune"
+            or dict(proposal.specification).get("topology_role")
+            != "cross_region_connection_prune"
+            or snapshot is None
+            or network_id is None
+        ):
+            return False
+        active = [
+            item.proposal_id
+            for item in self._topology_proposals.values()
+            if item.status == "accepted" and item.proposal_id in self._topology_parent_snapshots
+        ]
+        if not active or active[-1] != key:
+            return False
+        self._neuron_networks[network_id] = AdaptiveNeuronNetwork.from_payload(
+            snapshot,
+            generator=self._checkpoint_region_generator(),
+            device=self.device,
+        )
+        rolled_back = replace(proposal, status="rolled_back", validation_score=0.0)
+        self._topology_proposals[key] = rolled_back
+        self._topology_parent_snapshots.pop(key, None)
+        self._topology_network_ids.pop(key, None)
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                structural_budget=previous.structural_budget + proposal.resource_cost,
+                last_update_source="cross-region-topology-prune-rollback",
+                last_validation_status="rolled_back",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    key,
+                    limit=self._lineage_limit(),
+                ),
+                prune_count=max(0, previous.prune_count - proposal.requested_units),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    key,
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return True
+
     def validate_region_prune_holdout(
         self,
         *,
