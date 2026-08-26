@@ -137,5 +137,8 @@ merge 的冗余证据、连接迁移、未见 holdout、预算和 reverse rollba
 learning gain、resource pressure、holdout transfer 与 evidence ID；expected activity 缺失时
 不会伪造 growth supervision，route credit 仍来自实际 target activity。native checkpoint 可恢复
 runtime clock、观测历史、controller state 与跨 tick error continuity；runtime tick 不直接变更
-拓扑，必须继续经过 holdout、budget、trial 和 reverse rollback。下一步转为将这些证据汇聚成
-不依赖 action/intent 查表的 proposal candidate 队列。
+拓扑，必须继续经过 holdout、budget、trial 和 reverse rollback。基于这些证据的
+`StructuralProposalCandidate` 队列也已完成：真实 tick 可产生 split、region/connection prune 和
+兼容 region merge 候选，候选含稳定 substrate、evidence、source tick、priority、参数和 resource
+cost，并支持 checkpoint 恢复与去重；candidate 仍不会直接改变 live topology。下一步转为将候选
+显式 materialize 为统一 `StructuralTopologyProposal`。

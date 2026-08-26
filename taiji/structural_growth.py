@@ -10,6 +10,7 @@ from typing import Any
 STRUCTURAL_GROWTH_CHECKPOINT_FORMAT = "taiji-structural-growth-v1"
 STRUCTURAL_PRUNING_CHECKPOINT_FORMAT = "taiji-structural-pruning-v1"
 STRUCTURAL_RUNTIME_OBSERVATION_CHECKPOINT_FORMAT = "taiji-structural-runtime-observation-v1"
+STRUCTURAL_PROPOSAL_CANDIDATE_FORMAT = "taiji-structural-proposal-candidate-v1"
 
 
 def _unit(value: float, name: str) -> float:
@@ -96,6 +97,91 @@ class StructuralRuntimeObservation:
             learning_gain=float(payload["learning_gain"]),
             holdout_transfer=float(payload.get("holdout_transfer", 0.0)),
             evidence_id=str(payload["evidence_id"]),
+        )
+
+
+@dataclass(frozen=True)
+class StructuralProposalCandidate:
+    """A runtime-evidence candidate awaiting the topology ledger."""
+
+    candidate_id: str
+    network_id: str
+    target_kind: str
+    operation: str
+    substrate_ids: tuple[str, ...]
+    evidence_ids: tuple[str, ...]
+    source_tick: int
+    priority: float
+    specification: tuple[tuple[str, Any], ...] = ()
+    resource_cost: int = 1
+
+    def __post_init__(self) -> None:
+        if not str(self.candidate_id):
+            raise ValueError("structural candidate_id must not be empty")
+        if not str(self.network_id):
+            raise ValueError("structural candidate network_id must not be empty")
+        if self.target_kind not in {"neuron", "region", "connection"}:
+            raise ValueError("unsupported structural candidate target_kind")
+        if self.operation not in {"add", "prune", "split", "merge"}:
+            raise ValueError("unsupported structural candidate operation")
+        substrates = tuple(str(item) for item in self.substrate_ids)
+        evidence = tuple(str(item) for item in self.evidence_ids)
+        if not substrates or any(not item for item in substrates):
+            raise ValueError("structural candidate substrate_ids must not be empty")
+        if not evidence or any(not item for item in evidence):
+            raise ValueError("structural candidate evidence_ids must not be empty")
+        if len(set(evidence)) != len(evidence):
+            raise ValueError("structural candidate evidence_ids cannot contain duplicates")
+        if int(self.source_tick) <= 0:
+            raise ValueError("structural candidate source_tick must be positive")
+        _unit(self.priority, "structural candidate priority")
+        if int(self.resource_cost) <= 0:
+            raise ValueError("structural candidate resource_cost must be positive")
+        specification = tuple((str(key), value) for key, value in self.specification)
+        if len({key for key, _ in specification}) != len(specification):
+            raise ValueError("structural candidate specification keys must be unique")
+        object.__setattr__(self, "candidate_id", str(self.candidate_id))
+        object.__setattr__(self, "network_id", str(self.network_id))
+        object.__setattr__(self, "substrate_ids", substrates)
+        object.__setattr__(self, "evidence_ids", evidence)
+        object.__setattr__(self, "source_tick", int(self.source_tick))
+        object.__setattr__(self, "priority", float(self.priority))
+        object.__setattr__(self, "specification", specification)
+        object.__setattr__(self, "resource_cost", int(self.resource_cost))
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": STRUCTURAL_PROPOSAL_CANDIDATE_FORMAT,
+            "candidate_id": self.candidate_id,
+            "network_id": self.network_id,
+            "target_kind": self.target_kind,
+            "operation": self.operation,
+            "substrate_ids": list(self.substrate_ids),
+            "evidence_ids": list(self.evidence_ids),
+            "source_tick": self.source_tick,
+            "priority": self.priority,
+            "specification": {key: value for key, value in self.specification},
+            "resource_cost": self.resource_cost,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> StructuralProposalCandidate:
+        if payload.get("format") != STRUCTURAL_PROPOSAL_CANDIDATE_FORMAT:
+            raise ValueError("unsupported structural proposal candidate format")
+        specification = payload.get("specification", {})
+        if not isinstance(specification, Mapping):
+            raise ValueError("structural candidate specification must be a mapping")
+        return cls(
+            candidate_id=str(payload["candidate_id"]),
+            network_id=str(payload["network_id"]),
+            target_kind=str(payload["target_kind"]),
+            operation=str(payload["operation"]),
+            substrate_ids=tuple(str(item) for item in payload.get("substrate_ids", ())),
+            evidence_ids=tuple(str(item) for item in payload.get("evidence_ids", ())),
+            source_tick=int(payload["source_tick"]),
+            priority=float(payload["priority"]),
+            specification=tuple((str(key), value) for key, value in specification.items()),
+            resource_cost=int(payload.get("resource_cost", 1)),
         )
 
 

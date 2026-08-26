@@ -187,13 +187,19 @@ def test_runtime_tick_feeds_structural_organs_and_checkpoint_continues() -> None
     assert len(model.structural_runtime_observations) == 4
     assert all(item.prediction_error is not None for item in model.structural_runtime_observations[2:])
     assert model.structural_growth_controller.total_observations == 2
-    assert model.structural_pruning_controller.total_observations == 4
+    assert model.structural_pruning_controller.total_observations == 5
+    assert {item.operation for item in model.structural_proposal_candidates} == {"split"}
+    assert {item.substrate_ids for item in model.structural_proposal_candidates} == {
+        ("source",),
+        ("target",),
+    }
     assert model.cognitive_snapshot().development.last_update_source == (
         "runtime-structural-observation"
     )
 
     restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
     assert restored.structural_runtime_observations == model.structural_runtime_observations
+    assert restored.structural_proposal_candidates == model.structural_proposal_candidates
     assert restored.structural_growth_controller is not None
     assert restored.structural_growth_controller.total_observations == 2
     restored.step_cross_region_network(

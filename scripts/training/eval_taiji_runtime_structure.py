@@ -124,7 +124,8 @@ def evaluate() -> dict[str, object]:
         and restored.structural_growth_controller is not None
         and restored.structural_growth_controller.total_observations == 4
         and restored.structural_pruning_controller is not None
-        and restored.structural_pruning_controller.total_observations == 6
+        and restored.structural_pruning_controller.total_observations == 11
+        and len(restored.structural_proposal_candidates) == 2
     )
     route_state = restored_network.cooperation_learner.route_state(route.substrate_id)
 
@@ -136,7 +137,7 @@ def evaluate() -> dict[str, object]:
             and model.structural_growth_controller is not None
             and model.structural_growth_controller.total_observations == 2
             and model.structural_pruning_controller is not None
-            and model.structural_pruning_controller.total_observations == 4
+            and model.structural_pruning_controller.total_observations == 7
             and route_state.evidence_count == 2
             and before_topology == (restored_network.region_ids, restored_network.connection_ids)
             and checkpoint_continuation
@@ -156,6 +157,7 @@ def evaluate() -> dict[str, object]:
             "observations_after_checkpoint": len(restored.structural_runtime_observations),
             "growth_observations": model.structural_growth_controller.total_observations,
             "pruning_observations": model.structural_pruning_controller.total_observations,
+            "proposal_candidates": len(model.structural_proposal_candidates),
             "route_evidence_count": route_state.evidence_count,
             "checkpoint_continuation": checkpoint_continuation,
             "topology_unchanged": before_topology

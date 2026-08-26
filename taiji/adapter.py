@@ -96,6 +96,7 @@ from .structural_growth import (
     AdaptiveStructuralGrowthController,
     AdaptiveStructuralPruningController,
     StructuralGrowthDecision,
+    StructuralProposalCandidate,
     StructuralPruningDecision,
     StructuralRuntimeObservation,
 )
@@ -158,6 +159,7 @@ class TSKV8Adapter(Taiji):
         self._structural_runtime_tick = 0
         self._structural_runtime_observations: list[StructuralRuntimeObservation] = []
         self._structural_runtime_previous_errors: dict[str, float] = {}
+        self._structural_proposal_candidates: dict[str, StructuralProposalCandidate] = {}
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
@@ -268,6 +270,12 @@ class TSKV8Adapter(Taiji):
         """Return recent structural evidence emitted by native network ticks."""
 
         return tuple(self._structural_runtime_observations)
+
+    @property
+    def structural_proposal_candidates(self) -> tuple[StructuralProposalCandidate, ...]:
+        """Return pending structural candidates awaiting explicit ledger validation."""
+
+        return tuple(self._structural_proposal_candidates.values())
 
     @staticmethod
     def _growth_request_identity(
@@ -3129,6 +3137,32 @@ class TSKV8Adapter(Taiji):
         configured = max(1, int(self.config.development_structural_budget))
         return min(1.0, float(budget) / float(configured))
 
+    def _queue_structural_proposal_candidate(
+        self,
+        candidate: StructuralProposalCandidate,
+    ) -> None:
+        """Keep one pending candidate per substrate transformation."""
+
+        for existing in self._structural_proposal_candidates.values():
+            if (
+                existing.network_id == candidate.network_id
+                and existing.operation == candidate.operation
+                and existing.substrate_ids == candidate.substrate_ids
+            ):
+                return
+        self._structural_proposal_candidates[candidate.candidate_id] = candidate
+        limit = self._lineage_limit()
+        while len(self._structural_proposal_candidates) > limit:
+            self._structural_proposal_candidates.pop(
+                next(iter(self._structural_proposal_candidates))
+            )
+
+    def _candidate_specification(
+        self,
+        **values: Any,
+    ) -> tuple[tuple[str, Any], ...]:
+        return tuple((str(key), value) for key, value in values.items())
+
     def _observe_cross_region_structure(
         self,
         network_id: str,
@@ -3146,6 +3180,8 @@ class TSKV8Adapter(Taiji):
         resource_pressure = 1.0 - resource_state
         expected = {} if expected_activities is None else dict(expected_activities)
         observations: list[StructuralRuntimeObservation] = []
+        region_by_id = {region.region_id: region for region in network.regions}
+        region_observation_by_id: dict[str, StructuralRuntimeObservation] = {}
         for region_id in network.execution_order:
             activity = activities[region_id]
             usage = float(torch.mean(torch.abs(activity)).clamp(0.0, 1.0).item())
@@ -3173,16 +3209,46 @@ class TSKV8Adapter(Taiji):
                 f"runtime-structure:{network_id}:{region_id}:{runtime_tick}"
             )
             substrate_id = f"network:{network_id}:region:{region_id}"
+            growth_decision: StructuralGrowthDecision | None = None
             if self._structural_growth_controller is not None and prediction_error is not None:
-                self._structural_growth_controller.observe(
+                growth_decision = self._structural_growth_controller.observe(
                     substrate_id,
                     prediction_error=prediction_error,
                     resource_state=resource_state,
                     holdout_transfer=holdout_transfer,
                     evidence_ids=(evidence_id,),
                 )
+                region = region_by_id[region_id]
+                if growth_decision.should_grow and region.unit_count >= 2:
+                    self._queue_structural_proposal_candidate(
+                        StructuralProposalCandidate(
+                            candidate_id=(
+                                f"candidate:{network_id}:split:{region_id}:"
+                                f"{growth_decision.proposal_ordinal}"
+                            ),
+                            network_id=str(network_id),
+                            target_kind="region",
+                            operation="split",
+                            substrate_ids=(region_id,),
+                            evidence_ids=growth_decision.evidence_ids,
+                            source_tick=runtime_tick,
+                            priority=min(
+                                1.0,
+                                growth_decision.error_ema
+                                * max(growth_decision.holdout_transfer_ema, 0.0),
+                            ),
+                            specification=self._candidate_specification(
+                                region_id=region_id,
+                                first_unit_count=max(1, region.unit_count // 2),
+                            ),
+                            resource_cost=(
+                                self._structural_growth_controller.dynamics.growth_resource_cost
+                            ),
+                        )
+                    )
+            pruning_decision: StructuralPruningDecision | None = None
             if self._structural_pruning_controller is not None:
-                self._structural_pruning_controller.observe_substrate(
+                pruning_decision = self._structural_pruning_controller.observe_substrate(
                     substrate_id,
                     usage=usage,
                     resource_pressure=resource_pressure,
@@ -3202,6 +3268,157 @@ class TSKV8Adapter(Taiji):
                     evidence_id=evidence_id,
                 )
             )
+            region_observation_by_id[region_id] = observations[-1]
+            if pruning_decision is not None and pruning_decision.should_prune:
+                self._queue_structural_proposal_candidate(
+                    StructuralProposalCandidate(
+                        candidate_id=(
+                            f"candidate:{network_id}:prune:region:{region_id}:"
+                            f"{pruning_decision.proposal_ordinal}"
+                        ),
+                        network_id=str(network_id),
+                        target_kind="region",
+                        operation="prune",
+                        substrate_ids=(region_id,),
+                        evidence_ids=pruning_decision.evidence_ids,
+                        source_tick=runtime_tick,
+                        priority=min(
+                            1.0,
+                            pruning_decision.resource_pressure_ema
+                            * (1.0 - pruning_decision.learning_gain_ema),
+                        ),
+                        specification=self._candidate_specification(region_id=region_id),
+                        resource_cost=(
+                            self._structural_pruning_controller.dynamics.pruning_resource_cost
+                        ),
+                    )
+                )
+        learner = network.cooperation_learner
+        if learner is not None and self._structural_pruning_controller is not None:
+            for connection_id in network.connection_ids:
+                route = learner.route_state(connection_id)
+                route_key = f"network:{network_id}:route:{connection_id}"
+                previous_error = self._structural_runtime_previous_errors.get(route_key)
+                route_gain = 0.0
+                if previous_error is not None:
+                    route_gain = max(0.0, min(1.0, previous_error - route.prediction_error))
+                self._structural_runtime_previous_errors[route_key] = route.prediction_error
+                route_usage = min(
+                    1.0,
+                    float(route.selection_count) / float(max(1, runtime_tick)),
+                )
+                route_evidence_id = (
+                    f"runtime-structure:{network_id}:route:{connection_id}:{runtime_tick}"
+                )
+                route_decision = self._structural_pruning_controller.observe_substrate(
+                    connection_id,
+                    usage=route_usage,
+                    resource_pressure=1.0 - route.resource_state,
+                    learning_gain=route_gain,
+                    evidence_ids=(route_evidence_id,),
+                )
+                if route_decision.should_prune:
+                    self._queue_structural_proposal_candidate(
+                        StructuralProposalCandidate(
+                            candidate_id=(
+                                f"candidate:{network_id}:prune:connection:{connection_id}:"
+                                f"{route_decision.proposal_ordinal}"
+                            ),
+                            network_id=str(network_id),
+                            target_kind="connection",
+                            operation="prune",
+                            substrate_ids=(connection_id,),
+                            evidence_ids=route_decision.evidence_ids,
+                            source_tick=runtime_tick,
+                            priority=min(
+                                1.0,
+                                route_decision.resource_pressure_ema
+                                * (1.0 - route_decision.learning_gain_ema),
+                            ),
+                            specification=self._candidate_specification(
+                                connection_id=connection_id,
+                            ),
+                            resource_cost=(
+                                self._structural_pruning_controller.dynamics.pruning_resource_cost
+                            ),
+                        )
+                    )
+        if self._structural_pruning_controller is not None:
+            regions = network.regions
+            for first_index, first in enumerate(regions):
+                for second in regions[first_index + 1 :]:
+                    if (
+                        first.input_source_id != second.input_source_id
+                        or first.input_dim != second.input_dim
+                        or first.fan_in != second.fan_in
+                        or first.dynamics.to_payload() != second.dynamics.to_payload()
+                    ):
+                        continue
+                    first_observation = region_observation_by_id[first.region_id]
+                    second_observation = region_observation_by_id[second.region_id]
+                    if first_observation.prediction_error is None or second_observation.prediction_error is None:
+                        continue
+                    first_activity = activities[first.region_id]
+                    second_activity = activities[second.region_id]
+                    if first_activity.shape == second_activity.shape:
+                        redundancy_usage = float(
+                            torch.mean(torch.abs(first_activity - second_activity))
+                            .clamp(0.0, 1.0)
+                            .item()
+                        )
+                    else:
+                        redundancy_usage = min(
+                            1.0,
+                            abs(first_observation.usage - second_observation.usage),
+                        )
+                    merge_evidence_id = (
+                        f"runtime-structure:{network_id}:merge:{first.region_id}+"
+                        f"{second.region_id}:{runtime_tick}"
+                    )
+                    merge_decision = self._structural_pruning_controller.observe_substrate(
+                        f"network:{network_id}:merge:{first.region_id}+{second.region_id}",
+                        usage=redundancy_usage,
+                        resource_pressure=resource_pressure,
+                        learning_gain=min(
+                            1.0,
+                            (first_observation.learning_gain + second_observation.learning_gain)
+                            / 2.0,
+                        ),
+                        evidence_ids=(merge_evidence_id,),
+                    )
+                    if not merge_decision.should_prune:
+                        continue
+                    try:
+                        network.propose_region_merge(
+                            region_ids=(first.region_id, second.region_id),
+                            evidence_ids=merge_decision.evidence_ids,
+                            resource_cost=(
+                                self._structural_pruning_controller.dynamics.pruning_resource_cost
+                            ),
+                        )
+                    except ValueError:
+                        continue
+                    self._queue_structural_proposal_candidate(
+                        StructuralProposalCandidate(
+                            candidate_id=(
+                                f"candidate:{network_id}:merge:{first.region_id}+"
+                                f"{second.region_id}:{merge_decision.proposal_ordinal}"
+                            ),
+                            network_id=str(network_id),
+                            target_kind="region",
+                            operation="merge",
+                            substrate_ids=(first.region_id, second.region_id),
+                            evidence_ids=merge_decision.evidence_ids,
+                            source_tick=runtime_tick,
+                            priority=min(1.0, 1.0 - redundancy_usage),
+                            specification=self._candidate_specification(
+                                region_ids=(first.region_id, second.region_id),
+                            ),
+                            resource_cost=(
+                                self._structural_pruning_controller.dynamics.pruning_resource_cost
+                            ),
+                        )
+                    )
         self._structural_runtime_observations.extend(observations)
         self._structural_runtime_observations = self._structural_runtime_observations[
             -self._lineage_limit() :
@@ -3233,12 +3450,17 @@ class TSKV8Adapter(Taiji):
                 for observation in self._structural_runtime_observations
             ],
             "previous_errors": dict(self._structural_runtime_previous_errors),
+            "proposal_candidates": [
+                candidate.to_payload()
+                for candidate in self._structural_proposal_candidates.values()
+            ],
         }
 
     def _restore_structural_runtime(self, payload: Any) -> None:
         self._structural_runtime_tick = 0
         self._structural_runtime_observations = []
         self._structural_runtime_previous_errors = {}
+        self._structural_proposal_candidates = {}
         if payload is None:
             return
         if not isinstance(payload, Mapping):
@@ -3252,6 +3474,9 @@ class TSKV8Adapter(Taiji):
             raise ValueError("structural runtime observations must be a sequence")
         if not isinstance(previous_errors, Mapping):
             raise ValueError("structural runtime previous_errors must be a mapping")
+        candidates_payload = payload.get("proposal_candidates", ())
+        if not isinstance(candidates_payload, (tuple, list)):
+            raise ValueError("structural proposal candidates must be a sequence")
         if any(not isinstance(item, Mapping) for item in observations_payload):
             raise ValueError("structural runtime observation entry must be a mapping")
         observations = tuple(
@@ -3265,6 +3490,13 @@ class TSKV8Adapter(Taiji):
         self._structural_runtime_previous_errors = {
             str(key): float(value) for key, value in previous_errors.items()
         }
+        for item in candidates_payload:
+            if not isinstance(item, Mapping):
+                raise ValueError("structural proposal candidate entry must be a mapping")
+            candidate = StructuralProposalCandidate.from_payload(item)
+            if candidate.source_tick > runtime_tick:
+                raise ValueError("structural proposal candidate is ahead of runtime tick")
+            self._queue_structural_proposal_candidate(candidate)
 
     def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:
         """Attach a Taiji-owned predictor used for runtime intervention scoring."""
