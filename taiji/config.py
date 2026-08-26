@@ -385,11 +385,8 @@ class TaijiConfig:
             raise ValueError("concept_prune_threshold must be in [0, 1]")
         if (
             len(self.concept_branch_owner_weights) != 3
-            or any(
-                float(weight) <= 0.0 for weight in self.concept_branch_owner_weights
-            )
-            or abs(sum(float(weight) for weight in self.concept_branch_owner_weights) - 1.0)
-            > 1e-6
+            or any(float(weight) <= 0.0 for weight in self.concept_branch_owner_weights)
+            or abs(sum(float(weight) for weight in self.concept_branch_owner_weights) - 1.0) > 1e-6
         ):
             raise ValueError(
                 "concept_branch_owner_weights must be three positive weights summing to 1"

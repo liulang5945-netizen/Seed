@@ -92,9 +92,7 @@ def evaluate() -> dict[str, object]:
     alternative_trace = next(
         trace for trace in after_add.sequence_traces if trace.action_kinds == ALT_SEQUENCE
     )
-    removed = incremental.lesion_sequence_trace(
-        after_add.concept_id, (alternative_trace.trace_id,)
-    )
+    removed = incremental.lesion_sequence_trace(after_add.concept_id, (alternative_trace.trace_id,))
     after_remove = incremental.concepts[0]
     good_after_remove = next(
         trace for trace in after_remove.sequence_traces if trace.action_kinds == GOOD_SEQUENCE

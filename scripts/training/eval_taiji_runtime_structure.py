@@ -104,9 +104,7 @@ def _growth_controller() -> AdaptiveStructuralGrowthController:
 
 
 def _pruning_controller() -> AdaptiveStructuralPruningController:
-    return AdaptiveStructuralPruningController(
-        dynamics=StructuralPruningDynamics(ema_rate=1.0)
-    )
+    return AdaptiveStructuralPruningController(dynamics=StructuralPruningDynamics(ema_rate=1.0))
 
 
 def evaluate() -> dict[str, object]:
@@ -197,9 +195,7 @@ def evaluate() -> dict[str, object]:
         "candidate": restored_candidate == materialized,
         "maintenance_results": len(restored.structural_maintenance_results) == 1,
     }
-    checkpoint_continuation = bool(
-        all(checkpoint_checks.values())
-    )
+    checkpoint_continuation = bool(all(checkpoint_checks.values()))
     route_state = restored_network.cooperation_learner.route_state(route.substrate_id)
 
     direct_model = TSKV8Adapter(_config(budget=1), episode_id="runtime-standalone-neuron")
@@ -217,9 +213,7 @@ def evaluate() -> dict[str, object]:
         holdout=True,
     )
     direct_candidate = direct_model.structural_proposal_candidates[0]
-    direct_proposal = direct_model.materialize_structural_candidate(
-        direct_candidate.candidate_id
-    )
+    direct_proposal = direct_model.materialize_structural_candidate(direct_candidate.candidate_id)
     assert direct_proposal is not None
     direct_trial = AdaptiveNeuronRegion.from_payload(
         direct_region.to_payload(),
@@ -239,12 +233,8 @@ def evaluate() -> dict[str, object]:
         holdout_inputs=(direct_holdout_input,),
         expected_activities=(direct_expected,),
     )
-    direct_committed = direct_model.commit_structural_candidate(
-        direct_candidate.candidate_id
-    )
-    direct_checkpoint_model = TSKV8Adapter.from_native_checkpoint(
-        direct_model.native_checkpoint()
-    )
+    direct_committed = direct_model.commit_structural_candidate(direct_candidate.candidate_id)
+    direct_checkpoint_model = TSKV8Adapter.from_native_checkpoint(direct_model.native_checkpoint())
     direct_checkpoint = bool(
         direct_checkpoint_model.neuron_regions[0].unit_ids
         == ("u0", "u1", "adaptive.cortex.grown.1")
@@ -405,8 +395,7 @@ def evaluate() -> dict[str, object]:
     scale_add_candidate = next(
         item
         for item in scale_model.structural_proposal_candidates
-        if item.network_id == "standalone:adaptive.cortex"
-        and item.target_kind == "neuron"
+        if item.network_id == "standalone:adaptive.cortex" and item.target_kind == "neuron"
     )
     scale_add_proposal = scale_model.propose_neuron_add(
         region_id=scale_standalone.region_id,
@@ -441,27 +430,18 @@ def evaluate() -> dict[str, object]:
         scale_model.neuron_networks[0].region_ids,
         scale_model.neuron_networks[0].connection_ids,
     )
-    scale_checkpoint_model = TSKV8Adapter.from_native_checkpoint(
-        scale_model.native_checkpoint()
-    )
+    scale_checkpoint_model = TSKV8Adapter.from_native_checkpoint(scale_model.native_checkpoint())
     scale_checkpoint = bool(
         scale_checkpoint_model.neuron_regions[0].unit_count == 3
-        and scale_checkpoint_model.neuron_networks[0].region_ids
-        == scale_topology_after_commit[0]
+        and scale_checkpoint_model.neuron_networks[0].region_ids == scale_topology_after_commit[0]
         and scale_checkpoint_model.neuron_networks[0].connection_ids
         == scale_topology_after_commit[1]
     )
     scale_rollback = bool(
-        scale_checkpoint_model.rollback_structural_candidate(
-            scale_split_candidate.candidate_id
-        )
-        and scale_checkpoint_model.rollback_structural_candidate(
-            scale_add_candidate.candidate_id
-        )
-        and scale_checkpoint_model.neuron_networks[0].region_ids
-        == scale_original_regions
-        and scale_checkpoint_model.neuron_networks[0].connection_ids
-        == scale_original_connections
+        scale_checkpoint_model.rollback_structural_candidate(scale_split_candidate.candidate_id)
+        and scale_checkpoint_model.rollback_structural_candidate(scale_add_candidate.candidate_id)
+        and scale_checkpoint_model.neuron_networks[0].region_ids == scale_original_regions
+        and scale_checkpoint_model.neuron_networks[0].connection_ids == scale_original_connections
         and scale_checkpoint_model.neuron_regions[0].unit_count == 2
     )
     scale_gate = bool(
@@ -500,8 +480,7 @@ def evaluate() -> dict[str, object]:
         == (restored_network.region_ids, restored_network.connection_ids),
         "checkpoint": checkpoint_continuation,
         "direct_add_candidate": (
-            direct_candidate.target_kind == "neuron"
-            and direct_candidate.operation == "add"
+            direct_candidate.target_kind == "neuron" and direct_candidate.operation == "add"
         ),
         "direct_add_holdout": direct_holdout_validated,
         "direct_add_commit": direct_committed,

@@ -102,80 +102,9 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 保留兼容 API 与接线，不再承载概念形成规则。器官已有独立 checkpoint、容量治理、塑性更新、
 剪枝和 lesion，并已通过语义检索→规划的窄消费路径；这仍不等于开放域概念已被充分验证。
 
-## 下一步唯一入口
+## 归档说明（2026-08-26）
 
-学习型跨区域协作 Gate 已完成：`CrossRegionCooperationLearner` 为显式连接维护可 checkpoint
-的 prediction-error、holdout-transfer、resource-state EMA 与探索状态，`AdaptiveNeuronNetwork`
-按 learner 和资源预算选择路径；学习路径在 holdout 证据上优于固定全连接/随机基线，并通过
-connection/region lesion 与 checkpoint continuation；在线 credit loop 已接入真实 network tick，
-由 expected target activity 自动计算 prediction error 和 holdout transfer。下一步进入 substrate
-驱动的自动结构成长 Gate 已完成：持续误差、资源可用性和 holdout 增益只能生成 neuron proposal，
-必须通过 DevelopmentState budget、checkpoint trial、functional lesion 与 reverse rollback 才能
-出生。区域级 proposal Gate 也已完成：持续区域瓶颈可以生成带非语义 child region identity、
-显式 dynamics 和 topology role 的 region proposal；`AdaptiveNeuronNetwork` 保持已有区域和
-执行顺序，adapter ledger 负责预算、checkpoint trial、functional region lesion、显式跨区域
-连接和逆向 rollback，且零预算 fail-closed。该 Gate 报告为
-`reports/taiji_region_growth_20260826.json`。post-growth validation Gate 已通过：两次未见输入的
-相对 holdout gain 为 `0.8735`，checkpoint continuation 后仍通过，未通过验证的区域会阻断跨区
-连接。随后建立的 region retention/pruning Gate 也已通过，报告为
-`reports/taiji_region_pruning_20260826.json`：只有低使用、高资源压力、长期 learning stagnation
-且移除后未见 holdout 不退化的区域才可进入 proposal/ledger，并通过 checkpoint、所属连接移除、
-预算与 reverse rollback。独立跨区域 connection pruning Gate 也已通过，报告为
-`reports/taiji_connection_pruning_20260826.json`：既有 route learner 的证据可驱动低使用、资源
-压力和 learning stagnation 判据，并通过未见 holdout、checkpoint continuation、连接级移除、
-预算和 reverse rollback。isolated-region split Gate 也已通过，报告为
-`reports/taiji_region_split_20260826.json`：父区域身份和单位身份保持可追溯，局部状态迁移、
-未见 holdout、checkpoint continuation、预算和 reverse rollback 均通过；有跨区连接的区域会
-fail-closed。connected split 的连接迁移与 route learner lineage 已补齐并通过同一报告；当前
-merge 的冗余证据、连接迁移、未见 holdout、预算和 reverse rollback 生命周期治理已通过，报告为
-`reports/taiji_region_merge_20260826.json`：兼容区域和外部 route 的单位/state/evidence 聚合、
-内部连接 fail-closed、checkpoint continuation、预算与 reverse rollback 均有覆盖。当前下一步
-转为将四类结构 proposal 接入真实 runtime tick 的活动、预测误差和资源观测。
-
-真实 runtime tick 接入已完成并通过 `reports/taiji_runtime_structure_20260826.json`：
-`step_cross_region_network()` 对每个区域产生可恢复的 activity/usage、prediction error、
-learning gain、resource pressure、holdout transfer 与 evidence ID；expected activity 缺失时
-不会伪造 growth supervision，route credit 仍来自实际 target activity。native checkpoint 可恢复
-runtime clock、观测历史、controller state 与跨 tick error continuity；runtime tick 不直接变更
-拓扑，必须继续经过 holdout、budget、trial 和 reverse rollback。基于这些证据的
-`StructuralProposalCandidate` 队列也已完成：真实 tick 可产生 split、region/connection prune 和
-兼容 region merge 候选，候选含稳定 substrate、evidence、source tick、priority、参数和 resource
-cost，并支持 checkpoint 恢复与去重；candidate 仍不会直接改变 live topology。下一步转为将候选
-显式 materialize 为统一 `StructuralTopologyProposal`。该 materialization 已完成：candidate 可
-幂等地产生 pending proposal，candidate→proposal lineage 纳入 native checkpoint，且不改变
-live topology。统一 holdout validator dispatch 也已完成：split、region-prune、connection-prune
-和 merge 按 topology role 复用现有验证器，验证只更新 pending proposal，不修改 live topology；
-未验证 candidate 仍会被 commit gate 阻断。下一步转为统一 commit dispatcher，集中执行 budget、
-trial checkpoint 和 reverse rollback。统一 commit/rollback dispatcher 已完成：candidate 按
-topology role 路由到对应 ledger，Gate 覆盖 holdout 后 commit、预算拒绝、trial roundtrip、
-live topology 变更、latest-change reverse rollback 与 checkpoint continuation。下一步转为将
-candidate queue 和真实 holdout 数据绑定为可批量、逐项 fail-closed 的 maintenance cycle。该
-cycle 已通过：两个 runtime candidates 完成 materialize、holdout、commit、rollback，缺失
-holdout/异常不会改变 live topology，结果含 proposal lineage、score/status/error 并可 checkpoint
-恢复。直接 neuron birth (`add`) 现已纳入同一 candidate contract：standalone native tick 生成
-候选并通过统一 materialize、holdout、budget、trial checkpoint、commit/rollback 与 checkpoint
-continuation；direct-add 子门禁已写入 `reports/taiji_runtime_structure_20260826.json`。candidate
-maintenance cycle 也已具备显式 dependency/conflict 判定：依赖按拓扑顺序执行，依赖失败阻断
-下游，同一 substrate 的竞争变更逐项 `failed_closed`，不同 neuron identity 的 `add` 可按依赖
-连续出生。下一步转为建立三层以上自适应区域的规模化结构维护 Gate，覆盖跨区域 route、混合
-add/split/prune、资源竞争、checkpoint continuation 和拓扑不变量。
-三层规模化 Gate 已通过：`source→relay→target` route 在 connected split 后正确保留并展开受影响
-边，standalone neuron `add` 与 network split 可在同一 maintenance cycle 中提交，checkpoint、预算
-和 rollback 均通过。下一步转为对 native sparse neuron/network runtime 做 CPU/CUDA 实际热点剖析，
-建立跨设备 checkpoint 恢复与数值一致性基线，再决定是否需要 fused/sparse kernel。
-
-native sparse neuron/network runtime profile 已执行并通过，报告为
-`reports/taiji_native_runtime_profile_20260826.json`：本机 `torch 2.13.0+cpu` 无 CUDA，
-因此只保留 CPU 实测，不把 CUDA 标记为已验证；CPU region/network profile、checkpoint roundtrip
-与 continuation 均通过，热点集中在 `aten::_to_copy`、`aten::to` 和 `aten::index`。下一步收紧
-每 tick 的设备/标量转换与临时分配，再复跑同一 profile。
-
-runtime hardening 已完成并通过：设备不一致才执行输入转换，norm 常量按 device/dtype/limit
-缓存，network scratch vector 按区域复用且不写入 checkpoint；35 项 native growth/structure
-回归与 runtime structure Gate 均通过，重跑 profile 仍为 CPU-only 且 checkpoint continuation
-误差为零。热点现已主要落在显式 sparse gather/reduction；下一步固化性能回归基线，并等待
-CUDA-capable 主机复跑同一 workload。
-
-固定 workload、manifest、CPU profile、checkpoint continuation 与 scratch 复用回归已提交；
-吞吐保留为当前主机的观测值，不作为跨设备硬阈值。下一步只能在 CUDA-capable 主机上复跑同一
-workload，验证跨设备输出与 checkpoint continuation，再决定是否进入 fused/sparse kernel 评审。
+本文档已归档。原“下一步唯一入口”一节与 `plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md`
+第 16 节的 Gate 链完全重复，构成第二个“唯一下一步”权威源，违反 `plans/README.md` 的单一
+执行顺序规则，已整节删除。上文的运行时事实已归并进总路线图 P7 事实清单；当前唯一下一步
+只看总路线图第 16 节，本文档的任何历史“下一步”均不得恢复执行。

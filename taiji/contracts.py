@@ -293,7 +293,9 @@ class Assembly:
             raise ValueError("assembly member indices cannot contain duplicates")
         object.__setattr__(self, "member_indices", members)
         object.__setattr__(
-            self, "source_event_ids", _normalize_ids(self.source_event_ids, "assembly source_event_ids")
+            self,
+            "source_event_ids",
+            _normalize_ids(self.source_event_ids, "assembly source_event_ids"),
         )
         _check_unit(self.coherence, "assembly coherence")
         _check_unit(self.prediction_error, "assembly prediction_error")
@@ -1692,7 +1694,9 @@ class EpisodicMemoryRecord:
         object.__setattr__(
             self, "assembly_ids", _normalize_ids(self.assembly_ids, "episodic assembly_ids")
         )
-        object.__setattr__(self, "object_ids", _normalize_ids(self.object_ids, "episodic object_ids"))
+        object.__setattr__(
+            self, "object_ids", _normalize_ids(self.object_ids, "episodic object_ids")
+        )
         object.__setattr__(
             self, "relation_ids", _normalize_ids(self.relation_ids, "episodic relation_ids")
         )
@@ -2005,7 +2009,10 @@ class SelfState:
             )
         if self.last_outcome_id is not None:
             _check_text(self.last_outcome_id, "self last_outcome_id")
-        if not math.isfinite(float(self.last_prediction_error)) or float(self.last_prediction_error) < 0.0:
+        if (
+            not math.isfinite(float(self.last_prediction_error))
+            or float(self.last_prediction_error) < 0.0
+        ):
             raise ValueError("self last_prediction_error must be finite and non-negative")
         if int(self.tick) < 0 or int(self.update_count) < 0:
             raise ValueError("self counters cannot be negative")
@@ -2035,8 +2042,7 @@ class SelfState:
             confidence=float(payload.get("confidence", 0.0)),
             resource_fraction=float(payload.get("resource_fraction", 1.0)),
             capability_confidence=tuple(
-                (str(key), float(value))
-                for key, value in payload.get("capability_confidence", ())
+                (str(key), float(value)) for key, value in payload.get("capability_confidence", ())
             ),
             available_tool_ids=tuple(str(item) for item in payload.get("available_tool_ids", ())),
             autobiographical_ids=tuple(
@@ -2044,9 +2050,7 @@ class SelfState:
             ),
             commitment_ids=tuple(str(item) for item in payload.get("commitment_ids", ())),
             last_outcome_id=(
-                None
-                if payload.get("last_outcome_id") is None
-                else str(payload["last_outcome_id"])
+                None if payload.get("last_outcome_id") is None else str(payload["last_outcome_id"])
             ),
             last_update_source=str(payload.get("last_update_source", "bootstrap")),
             last_prediction_error=float(payload.get("last_prediction_error", 0.0)),
@@ -2498,15 +2502,13 @@ class CognitiveState:
                 else PlanningRecoveryState.from_payload(payload["planning_recovery"])
             ),
             assemblies=tuple(
-                Assembly.from_payload(item, device=device)
-                for item in payload.get("assemblies", ())
+                Assembly.from_payload(item, device=device) for item in payload.get("assemblies", ())
             ),
             events=tuple(
                 Event.from_payload(item, device=device) for item in payload.get("events", ())
             ),
             concepts=tuple(
-                Concept.from_payload(item, device=device)
-                for item in payload.get("concepts", ())
+                Concept.from_payload(item, device=device) for item in payload.get("concepts", ())
             ),
         )
 

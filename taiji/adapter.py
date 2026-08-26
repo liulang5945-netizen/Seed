@@ -145,9 +145,7 @@ class TSKV8Adapter(Taiji):
             plasticity_rate=self.config.concept_plasticity_rate,
             prune_threshold=self.config.concept_prune_threshold,
         )
-        self._online_concept_branches: dict[
-            str, tuple[tuple[WorldTransition, float], ...]
-        ] = {}
+        self._online_concept_branches: dict[str, tuple[tuple[WorldTransition, float], ...]] = {}
         self._growth_requests: dict[str, StructuralGrowthRequest] = {}
         self._growth_request_snapshots: dict[str, dict[str, Any]] = {}
         self._topology_proposals: dict[str, StructuralTopologyProposal] = {}
@@ -316,9 +314,7 @@ class TSKV8Adapter(Taiji):
         try:
             network = self._neuron_networks[candidate.network_id]
         except KeyError as exc:
-            raise ValueError(
-                f"unknown adaptive neuron network: {candidate.network_id}"
-            ) from exc
+            raise ValueError(f"unknown adaptive neuron network: {candidate.network_id}") from exc
         specification = dict(candidate.specification)
         parent_checkpoint_id = f"candidate-parent:{candidate.candidate_id}"
         if candidate.operation == "split":
@@ -348,9 +344,7 @@ class TSKV8Adapter(Taiji):
             )
         elif candidate.operation == "prune" and candidate.target_kind == "connection":
             proposal = network.propose_connection_prune(
-                connection_id=str(
-                    specification.get("connection_id", candidate.substrate_ids[0])
-                ),
+                connection_id=str(specification.get("connection_id", candidate.substrate_ids[0])),
                 evidence_ids=candidate.evidence_ids,
                 parent_checkpoint_id=parent_checkpoint_id,
                 resource_cost=candidate.resource_cost,
@@ -386,7 +380,9 @@ class TSKV8Adapter(Taiji):
         ):
             raise ValueError("proposal is not a pending neuron add")
         if len(holdout_inputs) == 0 or len(holdout_inputs) != len(expected_activities):
-            raise ValueError("neuron add holdout inputs and expected activities must have equal size")
+            raise ValueError(
+                "neuron add holdout inputs and expected activities must have equal size"
+            )
         try:
             parent = self._neuron_regions[proposal.substrate_id]
         except KeyError as exc:
@@ -423,9 +419,7 @@ class TSKV8Adapter(Taiji):
             )
             baseline_errors.append(
                 float(
-                    torch.mean(torch.abs(padded_baseline - expected_value))
-                    .clamp(0.0, 1.0)
-                    .item()
+                    torch.mean(torch.abs(padded_baseline - expected_value)).clamp(0.0, 1.0).item()
                 )
             )
             candidate_errors.append(
@@ -605,9 +599,7 @@ class TSKV8Adapter(Taiji):
         if candidate.target_kind == "neuron" and candidate.operation == "add":
             unit_id = str(specification.get("unit_id", ""))
             if unit_id:
-                return (
-                    f"{candidate.network_id}:neuron:{candidate.substrate_ids[0]}:{unit_id}",
-                )
+                return (f"{candidate.network_id}:neuron:{candidate.substrate_ids[0]}:{unit_id}",)
         substrate = "|".join(sorted(candidate.substrate_ids))
         return (f"{candidate.network_id}:substrate:{substrate}",)
 
@@ -651,10 +643,7 @@ class TSKV8Adapter(Taiji):
         for conflict_key, group in conflict_groups.items():
             if len(group) <= 1:
                 continue
-            message = (
-                f"candidate conflict on {conflict_key}: "
-                + ", ".join(group)
-            )
+            message = f"candidate conflict on {conflict_key}: " + ", ".join(group)
             for candidate_id in group:
                 errors[candidate_id] = message
         queued_items = tuple(queued.items())
@@ -801,7 +790,9 @@ class TSKV8Adapter(Taiji):
                 )
             except (IndexError, KeyError, RuntimeError, ValueError) as exc:
                 proposal_id = self._structural_candidate_proposals.get(candidate_id)
-                proposal = None if proposal_id is None else self._topology_proposals.get(proposal_id)
+                proposal = (
+                    None if proposal_id is None else self._topology_proposals.get(proposal_id)
+                )
                 result = StructuralMaintenanceResult(
                     candidate_id=candidate_id,
                     proposal_id=proposal_id,
@@ -918,11 +909,7 @@ class TSKV8Adapter(Taiji):
             device=self.device,
         )
         checkpoint_concept = next(
-            (
-                concept
-                for concept in checkpoint_trial.concepts
-                if concept.concept_id == concept_id
-            ),
+            (concept for concept in checkpoint_trial.concepts if concept.concept_id == concept_id),
             None,
         )
         checkpoint_trace = (
@@ -942,15 +929,17 @@ class TSKV8Adapter(Taiji):
             device=self.device,
         )
         lesion_removed = lesion_trial.lesion_sequence_trace(concept_id, (trace_id,))
-        replay_score = checkpoint_trial.suffix_sequence_affinity(
-            checkpoint_concept,
-            tuple(transition.action.kind for transition, _ in items),
-            current_state=items[0][0].before,
-        ) if checkpoint_concept is not None else 0.0
+        replay_score = (
+            checkpoint_trial.suffix_sequence_affinity(
+                checkpoint_concept,
+                tuple(transition.action.kind for transition, _ in items),
+                current_state=items[0][0].before,
+            )
+            if checkpoint_concept is not None
+            else 0.0
+        )
         validated = bool(
-            checkpoint_trace is not None
-            and lesion_removed == (trace_id,)
-            and replay_score > 0.0
+            checkpoint_trace is not None and lesion_removed == (trace_id,) and replay_score > 0.0
         )
         if not validated:
             rejected = replace(
@@ -1133,7 +1122,9 @@ class TSKV8Adapter(Taiji):
             self._record_topology_development(
                 rejected,
                 consume_budget=False,
-                evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+                evidence_id=(
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
+                ),
             )
             return False
 
@@ -1158,7 +1149,9 @@ class TSKV8Adapter(Taiji):
             self._record_topology_development(
                 rejected,
                 consume_budget=False,
-                evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+                evidence_id=(
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
+                ),
             )
             return False
 
@@ -1168,7 +1161,9 @@ class TSKV8Adapter(Taiji):
         self._record_topology_development(
             accepted,
             consume_budget=True,
-            evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+            evidence_id=(
+                proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
+            ),
         )
         return True
 
@@ -1227,10 +1222,16 @@ class TSKV8Adapter(Taiji):
             baseline_activity = baseline.step(inputs, connection_ids=())[child_id]
             expected_value = expected_activity.to(self.device)
             candidate_errors.append(
-                float(torch.mean(torch.abs(candidate_activity - expected_value)).clamp(0.0, 1.0).item())
+                float(
+                    torch.mean(torch.abs(candidate_activity - expected_value))
+                    .clamp(0.0, 1.0)
+                    .item()
+                )
             )
             baseline_errors.append(
-                float(torch.mean(torch.abs(baseline_activity - expected_value)).clamp(0.0, 1.0).item())
+                float(
+                    torch.mean(torch.abs(baseline_activity - expected_value)).clamp(0.0, 1.0).item()
+                )
             )
         baseline_error = sum(baseline_errors) / len(baseline_errors)
         candidate_error = sum(candidate_errors) / len(candidate_errors)
@@ -1370,9 +1371,7 @@ class TSKV8Adapter(Taiji):
                     prediction_error=prediction_error,
                     resource_state=resource_state,
                     holdout_transfer=holdout_transfer,
-                    evidence_ids=(
-                        f"runtime-structure:{region.region_id}:{runtime_tick}",
-                    ),
+                    evidence_ids=(f"runtime-structure:{region.region_id}:{runtime_tick}",),
                 )
                 if growth_decision.should_grow:
                     unit_id = self._structural_growth_controller.next_unit_id(
@@ -1458,9 +1457,7 @@ class TSKV8Adapter(Taiji):
             controller,
             AdaptiveStructuralGrowthController,
         ):
-            raise TypeError(
-                "controller must be an AdaptiveStructuralGrowthController or None"
-            )
+            raise TypeError("controller must be an AdaptiveStructuralGrowthController or None")
         self._structural_growth_controller = controller
 
     def attach_structural_pruning_controller(
@@ -1473,9 +1470,7 @@ class TSKV8Adapter(Taiji):
             controller,
             AdaptiveStructuralPruningController,
         ):
-            raise TypeError(
-                "controller must be an AdaptiveStructuralPruningController or None"
-            )
+            raise TypeError("controller must be an AdaptiveStructuralPruningController or None")
         self._structural_pruning_controller = controller
 
     def propose_neuron_growth_from_error(
@@ -1512,9 +1507,7 @@ class TSKV8Adapter(Taiji):
             region_id=region.region_id,
             unit_id=unit_id,
             evidence_ids=decision.evidence_ids,
-            parent_checkpoint_id=(
-                f"growth-signal:{region.region_id}:{decision.proposal_ordinal}"
-            ),
+            parent_checkpoint_id=(f"growth-signal:{region.region_id}:{decision.proposal_ordinal}"),
             resource_cost=self._structural_growth_controller.dynamics.growth_resource_cost,
         )
 
@@ -1597,9 +1590,7 @@ class TSKV8Adapter(Taiji):
             unit_count=unit_count,
             fan_in=fan_in,
             evidence_ids=decision.evidence_ids,
-            parent_checkpoint_id=(
-                f"region-growth-signal:{region_id}:{decision.proposal_ordinal}"
-            ),
+            parent_checkpoint_id=(f"region-growth-signal:{region_id}:{decision.proposal_ordinal}"),
             resource_cost=self._structural_growth_controller.dynamics.growth_resource_cost,
         )
 
@@ -1636,9 +1627,7 @@ class TSKV8Adapter(Taiji):
                 rejected,
                 consume_budget=False,
                 evidence_id=(
-                    proposal.evidence_ids[0]
-                    if proposal.evidence_ids
-                    else proposal.proposal_id
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
                 ),
                 source="region-topology-growth",
             )
@@ -1675,9 +1664,7 @@ class TSKV8Adapter(Taiji):
                 rejected,
                 consume_budget=False,
                 evidence_id=(
-                    proposal.evidence_ids[0]
-                    if proposal.evidence_ids
-                    else proposal.proposal_id
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
                 ),
                 source="region-topology-growth",
             )
@@ -1690,9 +1677,7 @@ class TSKV8Adapter(Taiji):
             accepted,
             consume_budget=True,
             evidence_id=(
-                proposal.evidence_ids[0]
-                if proposal.evidence_ids
-                else proposal.proposal_id
+                proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
             ),
             source="region-topology-growth",
         )
@@ -1794,9 +1779,7 @@ class TSKV8Adapter(Taiji):
         proposal = network.propose_region_prune(
             region_id=region_key,
             evidence_ids=decision.evidence_ids,
-            parent_checkpoint_id=(
-                f"region-prune-signal:{region_key}:{decision.proposal_ordinal}"
-            ),
+            parent_checkpoint_id=(f"region-prune-signal:{region_key}:{decision.proposal_ordinal}"),
             resource_cost=self._structural_pruning_controller.dynamics.pruning_resource_cost,
         )
         self._topology_proposals[proposal.proposal_id] = proposal
@@ -1824,14 +1807,12 @@ class TSKV8Adapter(Taiji):
         connection_key = str(connection_id)
         if connection_key not in network.connection_ids:
             raise ValueError(f"unknown adaptive network connection: {connection_id}")
-        decision: StructuralPruningDecision = (
-            self._structural_pruning_controller.observe_substrate(
-                connection_key,
-                usage=usage,
-                resource_pressure=resource_pressure,
-                learning_gain=learning_gain,
-                evidence_ids=evidence_ids,
-            )
+        decision: StructuralPruningDecision = self._structural_pruning_controller.observe_substrate(
+            connection_key,
+            usage=usage,
+            resource_pressure=resource_pressure,
+            learning_gain=learning_gain,
+            evidence_ids=evidence_ids,
         )
         if not decision.should_prune:
             return None
@@ -1895,8 +1876,7 @@ class TSKV8Adapter(Taiji):
             or proposal.status != "pending"
             or proposal.target_kind != "region"
             or proposal.operation != "prune"
-            or dict(proposal.specification).get("topology_role")
-            != "cross_region_connection_prune"
+            or dict(proposal.specification).get("topology_role") != "cross_region_connection_prune"
         ):
             raise ValueError("proposal is not a pending cross-region connection prune")
         if len(holdout_inputs) == 0 or len(holdout_inputs) != len(expected_activities):
@@ -1926,7 +1906,9 @@ class TSKV8Adapter(Taiji):
         pruned_errors: list[float] = []
         for inputs, expected in zip(holdout_inputs, expected_activities, strict=True):
             if not expected or not set(expected).issubset(expected_region_ids):
-                raise ValueError("connection prune expected activities must target surviving regions")
+                raise ValueError(
+                    "connection prune expected activities must target surviving regions"
+                )
             intact_activities = intact.step(
                 inputs,
                 connection_ids=intact.connection_ids,
@@ -1963,9 +1945,7 @@ class TSKV8Adapter(Taiji):
         pruned_error = sum(pruned_errors) / len(pruned_errors)
         regression = max(0.0, pruned_error - baseline_error)
         score = max(0.0, min(1.0, 1.0 - regression))
-        maximum_regression = (
-            self._structural_pruning_controller.dynamics.maximum_holdout_regression
-        )
+        maximum_regression = self._structural_pruning_controller.dynamics.maximum_holdout_regression
         validated = regression <= float(maximum_regression)
         self._topology_proposals[str(proposal_id)] = replace(
             proposal,
@@ -2012,8 +1992,7 @@ class TSKV8Adapter(Taiji):
         if (
             proposal.target_kind != "region"
             or proposal.operation != "prune"
-            or dict(proposal.specification).get("topology_role")
-            != "cross_region_connection_prune"
+            or dict(proposal.specification).get("topology_role") != "cross_region_connection_prune"
         ):
             raise ValueError("proposal is not a cross-region connection prune")
         if self._structural_pruning_controller is None:
@@ -2033,9 +2012,7 @@ class TSKV8Adapter(Taiji):
                 rejected,
                 consume_budget=False,
                 evidence_id=(
-                    proposal.evidence_ids[0]
-                    if proposal.evidence_ids
-                    else proposal.proposal_id
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
                 ),
                 source="cross-region-topology-pruning",
             )
@@ -2051,9 +2028,7 @@ class TSKV8Adapter(Taiji):
                 rejected,
                 consume_budget=False,
                 evidence_id=(
-                    proposal.evidence_ids[0]
-                    if proposal.evidence_ids
-                    else proposal.proposal_id
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
                 ),
                 source="cross-region-topology-pruning",
             )
@@ -2072,7 +2047,9 @@ class TSKV8Adapter(Taiji):
                 or trial.execution_order != network.execution_order
                 or trial.connection_ids != network.connection_ids
             ):
-                raise ValueError("connection prune checkpoint roundtrip changed topology identities")
+                raise ValueError(
+                    "connection prune checkpoint roundtrip changed topology identities"
+                )
         except (IndexError, KeyError, RuntimeError, ValueError):
             self._neuron_networks[str(network_id)] = AdaptiveNeuronNetwork.from_payload(
                 parent_snapshot,
@@ -2085,9 +2062,7 @@ class TSKV8Adapter(Taiji):
                 rejected,
                 consume_budget=False,
                 evidence_id=(
-                    proposal.evidence_ids[0]
-                    if proposal.evidence_ids
-                    else proposal.proposal_id
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
                 ),
                 source="cross-region-topology-pruning",
             )
@@ -2100,9 +2075,7 @@ class TSKV8Adapter(Taiji):
             accepted,
             consume_budget=True,
             evidence_id=(
-                proposal.evidence_ids[0]
-                if proposal.evidence_ids
-                else proposal.proposal_id
+                proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
             ),
             source="cross-region-topology-pruning",
             counter="prune_count",
@@ -2121,8 +2094,7 @@ class TSKV8Adapter(Taiji):
             or proposal.status != "accepted"
             or proposal.target_kind != "region"
             or proposal.operation != "prune"
-            or dict(proposal.specification).get("topology_role")
-            != "cross_region_connection_prune"
+            or dict(proposal.specification).get("topology_role") != "cross_region_connection_prune"
             or snapshot is None
             or network_id is None
         ):
@@ -2189,7 +2161,9 @@ class TSKV8Adapter(Taiji):
         ):
             raise ValueError("proposal is not a pending region prune")
         if len(holdout_inputs) == 0 or len(holdout_inputs) != len(expected_activities):
-            raise ValueError("region prune holdout inputs and expected activities must have equal size")
+            raise ValueError(
+                "region prune holdout inputs and expected activities must have equal size"
+            )
         try:
             network = self._neuron_networks[str(network_id)]
         except KeyError as exc:
@@ -2314,9 +2288,7 @@ class TSKV8Adapter(Taiji):
                 rejected,
                 consume_budget=False,
                 evidence_id=(
-                    proposal.evidence_ids[0]
-                    if proposal.evidence_ids
-                    else proposal.proposal_id
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
                 ),
                 source="region-topology-pruning",
             )
@@ -2332,9 +2304,7 @@ class TSKV8Adapter(Taiji):
                 rejected,
                 consume_budget=False,
                 evidence_id=(
-                    proposal.evidence_ids[0]
-                    if proposal.evidence_ids
-                    else proposal.proposal_id
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
                 ),
                 source="region-topology-pruning",
             )
@@ -2366,9 +2336,7 @@ class TSKV8Adapter(Taiji):
                 rejected,
                 consume_budget=False,
                 evidence_id=(
-                    proposal.evidence_ids[0]
-                    if proposal.evidence_ids
-                    else proposal.proposal_id
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
                 ),
                 source="region-topology-pruning",
             )
@@ -2381,9 +2349,7 @@ class TSKV8Adapter(Taiji):
             accepted,
             consume_budget=True,
             evidence_id=(
-                proposal.evidence_ids[0]
-                if proposal.evidence_ids
-                else proposal.proposal_id
+                proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
             ),
             source="region-topology-pruning",
             counter="prune_count",
@@ -2559,9 +2525,7 @@ class TSKV8Adapter(Taiji):
                     merged_activity = merged_activities[retained_id]
                 else:
                     if expected_region_id not in merged_activities:
-                        raise ValueError(
-                            "region merge expected activity targets a missing region"
-                        )
+                        raise ValueError("region merge expected activity targets a missing region")
                     intact_activity = intact_activities[expected_region_id]
                     merged_activity = merged_activities[expected_region_id]
                 if expected_value.shape != intact_activity.shape:
@@ -2586,9 +2550,7 @@ class TSKV8Adapter(Taiji):
         merged_error = sum(merged_errors) / len(merged_errors)
         regression = max(0.0, merged_error - baseline_error)
         score = max(0.0, min(1.0, 1.0 - regression))
-        maximum_regression = (
-            self._structural_pruning_controller.dynamics.maximum_holdout_regression
-        )
+        maximum_regression = self._structural_pruning_controller.dynamics.maximum_holdout_regression
         validated = regression <= float(maximum_regression)
         self._topology_proposals[str(proposal_id)] = replace(
             proposal,
@@ -2655,9 +2617,7 @@ class TSKV8Adapter(Taiji):
                 rejected,
                 consume_budget=False,
                 evidence_id=(
-                    proposal.evidence_ids[0]
-                    if proposal.evidence_ids
-                    else proposal.proposal_id
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
                 ),
                 source="region-topology-merge",
             )
@@ -2673,9 +2633,7 @@ class TSKV8Adapter(Taiji):
                 rejected,
                 consume_budget=False,
                 evidence_id=(
-                    proposal.evidence_ids[0]
-                    if proposal.evidence_ids
-                    else proposal.proposal_id
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
                 ),
                 source="region-topology-merge",
             )
@@ -2710,9 +2668,7 @@ class TSKV8Adapter(Taiji):
                 rejected,
                 consume_budget=False,
                 evidence_id=(
-                    proposal.evidence_ids[0]
-                    if proposal.evidence_ids
-                    else proposal.proposal_id
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
                 ),
                 source="region-topology-merge",
             )
@@ -2725,9 +2681,7 @@ class TSKV8Adapter(Taiji):
             accepted,
             consume_budget=True,
             evidence_id=(
-                proposal.evidence_ids[0]
-                if proposal.evidence_ids
-                else proposal.proposal_id
+                proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
             ),
             source="region-topology-merge",
             counter="split_merge_count",
@@ -2826,9 +2780,7 @@ class TSKV8Adapter(Taiji):
             region_id=region_key,
             first_unit_count=first_unit_count,
             evidence_ids=decision.evidence_ids,
-            parent_checkpoint_id=(
-                f"region-split-signal:{region_key}:{decision.proposal_ordinal}"
-            ),
+            parent_checkpoint_id=(f"region-split-signal:{region_key}:{decision.proposal_ordinal}"),
             resource_cost=self._structural_growth_controller.dynamics.growth_resource_cost,
         )
         self._topology_proposals[proposal.proposal_id] = proposal
@@ -2905,17 +2857,13 @@ class TSKV8Adapter(Taiji):
                     new_activity = split_activities[new_region_id]
                     split_activity = torch.cat(
                         (
-                            retained_activity[
-                                : len(retained_units)
-                            ],
+                            retained_activity[: len(retained_units)],
                             new_activity[: len(new_units)],
                         )
                     )
                 else:
                     if expected_region_id not in split_activities:
-                        raise ValueError(
-                            "region split expected activity targets a missing region"
-                        )
+                        raise ValueError("region split expected activity targets a missing region")
                     intact_activity = intact_activities[expected_region_id]
                     split_activity = split_activities[expected_region_id]
                 if expected_value.shape != intact_activity.shape:
@@ -3009,9 +2957,7 @@ class TSKV8Adapter(Taiji):
                 rejected,
                 consume_budget=False,
                 evidence_id=(
-                    proposal.evidence_ids[0]
-                    if proposal.evidence_ids
-                    else proposal.proposal_id
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
                 ),
                 source="region-topology-split",
             )
@@ -3027,9 +2973,7 @@ class TSKV8Adapter(Taiji):
                 rejected,
                 consume_budget=False,
                 evidence_id=(
-                    proposal.evidence_ids[0]
-                    if proposal.evidence_ids
-                    else proposal.proposal_id
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
                 ),
                 source="region-topology-split",
             )
@@ -3063,9 +3007,7 @@ class TSKV8Adapter(Taiji):
                 rejected,
                 consume_budget=False,
                 evidence_id=(
-                    proposal.evidence_ids[0]
-                    if proposal.evidence_ids
-                    else proposal.proposal_id
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
                 ),
                 source="region-topology-split",
             )
@@ -3078,9 +3020,7 @@ class TSKV8Adapter(Taiji):
             accepted,
             consume_budget=True,
             evidence_id=(
-                proposal.evidence_ids[0]
-                if proposal.evidence_ids
-                else proposal.proposal_id
+                proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
             ),
             source="region-topology-split",
             counter="split_merge_count",
@@ -3162,16 +3102,16 @@ class TSKV8Adapter(Taiji):
         try:
             region = self._neuron_regions[proposal.substrate_id]
         except KeyError as exc:
-            raise ValueError(
-                f"unknown adaptive neuron region: {proposal.substrate_id}"
-            ) from exc
+            raise ValueError(f"unknown adaptive neuron region: {proposal.substrate_id}") from exc
         if self._cognitive_state.development.structural_budget < proposal.resource_cost:
             rejected = replace(proposal, status="rejected")
             self._topology_proposals[proposal.proposal_id] = rejected
             self._record_topology_development(
                 rejected,
                 consume_budget=False,
-                evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+                evidence_id=(
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
+                ),
                 source="neuron-topology-growth",
             )
             return False
@@ -3189,9 +3129,12 @@ class TSKV8Adapter(Taiji):
                 raise ValueError("neuron checkpoint roundtrip changed unit identities")
             if not torch.equal(trial.incoming.pre_index, region.incoming.pre_index):
                 raise ValueError("neuron checkpoint roundtrip changed input support")
-            if trial.recurrent is not None and region.recurrent is not None:
-                if not torch.equal(trial.recurrent.pre_index, region.recurrent.pre_index):
-                    raise ValueError("neuron checkpoint roundtrip changed recurrent support")
+            if (
+                trial.recurrent is not None
+                and region.recurrent is not None
+                and not torch.equal(trial.recurrent.pre_index, region.recurrent.pre_index)
+            ):
+                raise ValueError("neuron checkpoint roundtrip changed recurrent support")
         except (IndexError, KeyError, RuntimeError, ValueError):
             self._neuron_regions[proposal.substrate_id] = AdaptiveNeuronRegion.from_payload(
                 parent_snapshot,
@@ -3203,7 +3146,9 @@ class TSKV8Adapter(Taiji):
             self._record_topology_development(
                 rejected,
                 consume_budget=False,
-                evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+                evidence_id=(
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
+                ),
                 source="neuron-topology-growth",
             )
             return False
@@ -3214,7 +3159,9 @@ class TSKV8Adapter(Taiji):
         self._record_topology_development(
             accepted,
             consume_budget=True,
-            evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+            evidence_id=(
+                proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
+            ),
             source="neuron-topology-growth",
         )
         return True
@@ -3428,8 +3375,7 @@ class TSKV8Adapter(Taiji):
         if (
             proposal.target_kind != "region"
             or proposal.operation != "add"
-            or dict(proposal.specification).get("topology_role")
-            != "cross_region_connection"
+            or dict(proposal.specification).get("topology_role") != "cross_region_connection"
         ):
             raise ValueError("proposal is not a cross-region connection add")
         specification = dict(proposal.specification)
@@ -3462,7 +3408,9 @@ class TSKV8Adapter(Taiji):
             self._record_topology_development(
                 rejected,
                 consume_budget=False,
-                evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+                evidence_id=(
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
+                ),
                 source="cross-region-topology-growth",
             )
             return False
@@ -3476,7 +3424,10 @@ class TSKV8Adapter(Taiji):
                 generator=self._checkpoint_region_generator(),
                 device=self.device,
             )
-            if trial.region_ids != network.region_ids or trial.connection_ids != network.connection_ids:
+            if (
+                trial.region_ids != network.region_ids
+                or trial.connection_ids != network.connection_ids
+            ):
                 raise ValueError("cross-region checkpoint roundtrip changed identities")
             for current, restored in zip(network.connections, trial.connections, strict=True):
                 if not torch.equal(current[3].pre_index, restored[3].pre_index):
@@ -3492,7 +3443,9 @@ class TSKV8Adapter(Taiji):
             self._record_topology_development(
                 rejected,
                 consume_budget=False,
-                evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+                evidence_id=(
+                    proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
+                ),
                 source="cross-region-topology-growth",
             )
             return False
@@ -3503,7 +3456,9 @@ class TSKV8Adapter(Taiji):
         self._record_topology_development(
             accepted,
             consume_budget=True,
-            evidence_id=(proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id),
+            evidence_id=(
+                proposal.evidence_ids[0] if proposal.evidence_ids else proposal.proposal_id
+            ),
             source="cross-region-topology-growth",
         )
         return True
@@ -3682,9 +3637,7 @@ class TSKV8Adapter(Taiji):
 
     def _topology_proposals_checkpoint(self) -> dict[str, Any]:
         return {
-            "proposals": [
-                proposal.to_payload() for proposal in self._topology_proposals.values()
-            ],
+            "proposals": [proposal.to_payload() for proposal in self._topology_proposals.values()],
             "snapshots": dict(self._topology_parent_snapshots),
             "network_ids": dict(self._topology_network_ids),
         }
@@ -3715,15 +3668,13 @@ class TSKV8Adapter(Taiji):
         if not isinstance(network_ids, dict):
             raise ValueError("topology proposal checkpoint network_ids must be a mapping")
         self._topology_network_ids = {
-            str(proposal_id): str(network_id)
-            for proposal_id, network_id in network_ids.items()
+            str(proposal_id): str(network_id) for proposal_id, network_id in network_ids.items()
         }
 
     def _neuron_regions_checkpoint(self) -> dict[str, Any]:
         return {
             "regions": {
-                region_id: region.to_payload()
-                for region_id, region in self._neuron_regions.items()
+                region_id: region.to_payload() for region_id, region in self._neuron_regions.items()
             }
         }
 
@@ -3779,9 +3730,7 @@ class TSKV8Adapter(Taiji):
 
     def _restore_structural_growth(self, payload: Any) -> None:
         self._structural_growth_controller = (
-            None
-            if payload is None
-            else AdaptiveStructuralGrowthController.from_payload(payload)
+            None if payload is None else AdaptiveStructuralGrowthController.from_payload(payload)
         )
 
     def _structural_pruning_checkpoint(self) -> dict[str, Any] | None:
@@ -3793,9 +3742,7 @@ class TSKV8Adapter(Taiji):
 
     def _restore_structural_pruning(self, payload: Any) -> None:
         self._structural_pruning_controller = (
-            None
-            if payload is None
-            else AdaptiveStructuralPruningController.from_payload(payload)
+            None if payload is None else AdaptiveStructuralPruningController.from_payload(payload)
         )
 
     def _structural_runtime_resource_state(self) -> float:
@@ -3887,9 +3834,7 @@ class TSKV8Adapter(Taiji):
                 self._structural_runtime_previous_errors[error_key] = prediction_error
                 if holdout:
                     holdout_transfer = 1.0 - prediction_error
-            evidence_id = (
-                f"runtime-structure:{network_id}:{region_id}:{runtime_tick}"
-            )
+            evidence_id = f"runtime-structure:{network_id}:{region_id}:{runtime_tick}"
             substrate_id = f"network:{network_id}:region:{region_id}"
             growth_decision: StructuralGrowthDecision | None = None
             if self._structural_growth_controller is not None and prediction_error is not None:
@@ -4038,7 +3983,10 @@ class TSKV8Adapter(Taiji):
                         continue
                     first_observation = region_observation_by_id[first.region_id]
                     second_observation = region_observation_by_id[second.region_id]
-                    if first_observation.prediction_error is None or second_observation.prediction_error is None:
+                    if (
+                        first_observation.prediction_error is None
+                        or second_observation.prediction_error is None
+                    ):
                         continue
                     first_activity = activities[first.region_id]
                     second_activity = activities[second.region_id]
@@ -4128,8 +4076,7 @@ class TSKV8Adapter(Taiji):
         return {
             "runtime_tick": self._structural_runtime_tick,
             "observations": [
-                observation.to_payload()
-                for observation in self._structural_runtime_observations
+                observation.to_payload() for observation in self._structural_runtime_observations
             ],
             "previous_errors": dict(self._structural_runtime_previous_errors),
             "proposal_candidates": [
@@ -4138,8 +4085,7 @@ class TSKV8Adapter(Taiji):
             ],
             "candidate_proposals": dict(self._structural_candidate_proposals),
             "maintenance_results": [
-                result.to_payload()
-                for result in self._structural_maintenance_results
+                result.to_payload() for result in self._structural_maintenance_results
             ],
         }
 
@@ -4175,8 +4121,7 @@ class TSKV8Adapter(Taiji):
         if any(not isinstance(item, Mapping) for item in observations_payload):
             raise ValueError("structural runtime observation entry must be a mapping")
         observations = tuple(
-            StructuralRuntimeObservation.from_payload(item)
-            for item in observations_payload
+            StructuralRuntimeObservation.from_payload(item) for item in observations_payload
         )
         if any(item.tick > runtime_tick for item in observations):
             raise ValueError("structural runtime observation is ahead of runtime tick")
@@ -5026,9 +4971,7 @@ class TSKV8Adapter(Taiji):
                 candidate,
                 concept_affinity=max(
                     (
-                        match.score
-                        * match.concept.confidence
-                        * match.concept.outcome_mean
+                        match.score * match.concept.confidence * match.concept.outcome_mean
                         for match in matches
                         if candidate.action.kind in match.concept.action_kinds
                     ),
@@ -5038,9 +4981,7 @@ class TSKV8Adapter(Taiji):
             for candidate in candidates
         )
 
-    def _apply_concept_sequence_affinity(
-        self, rollout: ImaginedRollout
-    ) -> ImaginedRollout:
+    def _apply_concept_sequence_affinity(self, rollout: ImaginedRollout) -> ImaginedRollout:
         action_kinds = tuple(step.action.kind for step in rollout.steps)
         matches = self._concept_matches_for_world(self._cognitive_state.world)
         sequence_affinity = max(
@@ -5341,7 +5282,10 @@ class TSKV8Adapter(Taiji):
 
     @staticmethod
     def _world_relation_ids(world: WorldState) -> tuple[str, ...]:
-        return tuple(f"{subject}:{predicate}:{object_id}" for subject, predicate, object_id in world.relations)
+        return tuple(
+            f"{subject}:{predicate}:{object_id}"
+            for subject, predicate, object_id in world.relations
+        )
 
     def _record_percept_lineage(
         self, percept: PerceptEvent, world: WorldState
@@ -5350,9 +5294,7 @@ class TSKV8Adapter(Taiji):
 
         previous = self._cognitive_state
         event_id = f"{self._state.episode_id}:event:{self.tick}"
-        parent_event_ids = (
-            () if not previous.events else (previous.events[-1].event_id,)
-        )
+        parent_event_ids = () if not previous.events else (previous.events[-1].event_id,)
         event = Event(
             event_id=event_id,
             start_tick=max(0, int(self.tick) - int(percept.duration) + 1),
@@ -5386,7 +5328,9 @@ class TSKV8Adapter(Taiji):
             start_tick=(
                 int(percept.observation_tick) - int(percept.duration) + 1
                 if existing is None
-                else min(existing.start_tick, int(percept.observation_tick) - int(percept.duration) + 1)
+                else min(
+                    existing.start_tick, int(percept.observation_tick) - int(percept.duration) + 1
+                )
             ),
             end_tick=int(percept.observation_tick),
             activity=percept.features.detach().clone(),
@@ -5430,7 +5374,11 @@ class TSKV8Adapter(Taiji):
             target = 1.0 if bool(outcome.success) else 0.0
             update_rate = float(self.config.self_capability_learning_rate)
             capability[capability_key] = old_confidence + update_rate * (target - old_confidence)
-        confidence = max(0.0, min(1.0, sum(capability.values()) / len(capability))) if capability else previous_self.confidence
+        confidence = (
+            max(0.0, min(1.0, sum(capability.values()) / len(capability)))
+            if capability
+            else previous_self.confidence
+        )
         self_state = replace(
             previous_self,
             tick=self.tick,
@@ -6194,8 +6142,16 @@ class TSKV8Adapter(Taiji):
         return (
             *super().parameter_tensors(),
             *self.perception.parameter_tensors(),
-            *(tensor for region in self._neuron_regions.values() for tensor in region.parameter_tensors()),
-            *(tensor for network in self._neuron_networks.values() for tensor in network.parameter_tensors()),
+            *(
+                tensor
+                for region in self._neuron_regions.values()
+                for tensor in region.parameter_tensors()
+            ),
+            *(
+                tensor
+                for network in self._neuron_networks.values()
+                for tensor in network.parameter_tensors()
+            ),
             *(() if self._executive is None else self._executive.parameter_tensors()),
         )
 
@@ -6325,10 +6281,12 @@ class TSKV8Adapter(Taiji):
             if self._last_language_emission is None
             else self._last_language_emission.to_payload()
         )
+        payload["cognitive_state"] = self._cognitive_state.to_payload()
         return payload
 
     def restore(self, checkpoint: dict[str, Any]) -> None:
         super().restore(checkpoint)
+        self._restore_cognitive_state(checkpoint)
         if "perception" in checkpoint:
             self.perception.restore(checkpoint["perception"])
         self._restore_world_dynamics(checkpoint.get("world_dynamics"))
@@ -6612,6 +6570,16 @@ class TSKV8Adapter(Taiji):
             None if emission is None else LanguageEmission.from_payload(dict(emission))
         )
 
+    def _restore_cognitive_state(self, payload: Any) -> None:
+        state = payload.get("cognitive_state") if isinstance(payload, dict) else None
+        if state is None:
+            # 2026-08-26：旧信封没有该键，按内核状态重建，保证 tick/episode_id 与内核同步。
+            self._cognitive_state = replace(
+                self._empty_cognitive_state(self._state.episode_id), tick=self.tick
+            )
+            return
+        self._cognitive_state = CognitiveState.from_payload(state, device=self.device)
+
     def _restore_rollout_state(self, payload: Any) -> None:
         rollout = payload.get("planned_rollout") if isinstance(payload, dict) else None
         self._planned_rollout = (
@@ -6749,9 +6717,7 @@ class TSKV8Adapter(Taiji):
         self._restore_structural_growth(envelope.components.get("structural_growth"))
         self._restore_structural_pruning(envelope.components.get("structural_pruning"))
         self._restore_structural_runtime(envelope.components.get("structural_runtime"))
-        self._restore_online_concept_branches(
-            envelope.components.get("online_concept_branches")
-        )
+        self._restore_online_concept_branches(envelope.components.get("online_concept_branches"))
         self._restore_procedural_memory(envelope.components.get("procedural_memory"))
         self._restore_homeostatic_controller(envelope.components.get("homeostasis"))
         self._restore_goal_planner(envelope.components.get("planning"))

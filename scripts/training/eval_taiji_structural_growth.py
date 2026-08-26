@@ -47,7 +47,9 @@ def evaluate() -> dict[str, object]:
     before_trace_count = len(concept.sequence_traces)
     trace_id = runtime.grow_online_concept_branch(
         concept.concept_id,
-        tuple((transition, error) for transition, error in zip(transitions, (0.05, 0.10), strict=True)),
+        tuple(
+            (transition, error) for transition, error in zip(transitions, (0.05, 0.10), strict=True)
+        ),
     )
     request = runtime.growth_requests[-1]
     accepted_checkpoint = runtime.native_checkpoint()
@@ -62,7 +64,9 @@ def evaluate() -> dict[str, object]:
     exhausted_concept = exhausted.concept_formation.concepts[0]
     rejected_trace = exhausted.grow_online_concept_branch(
         exhausted_concept.concept_id,
-        tuple((transition, error) for transition, error in zip(transitions, (0.05, 0.10), strict=True)),
+        tuple(
+            (transition, error) for transition, error in zip(transitions, (0.05, 0.10), strict=True)
+        ),
     )
     rejected_request = exhausted.growth_requests[-1]
     gate_passed = bool(
@@ -109,7 +113,12 @@ def build_manifest() -> dict[str, object]:
     return {
         "format": MANIFEST_FORMAT,
         "task": "budgeted and rollbackable online Taiji structural growth",
-        "approval": ["resource budget", "checkpoint roundtrip", "selective lesion", "trace replayability"],
+        "approval": [
+            "resource budget",
+            "checkpoint roundtrip",
+            "selective lesion",
+            "trace replayability",
+        ],
         "rollback": "restore the parent concept checkpoint, return the budget, and mark the request rolled_back",
         "failure": "zero structural budget rejects growth without mutating the concept",
     }
@@ -117,14 +126,22 @@ def build_manifest() -> dict[str, object]:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--report", type=Path, default=Path("reports/taiji_structural_growth_20260826.json"))
-    parser.add_argument("--manifest", type=Path, default=Path("plans/manifests/taiji_structural_growth_v1.json"))
+    parser.add_argument(
+        "--report", type=Path, default=Path("reports/taiji_structural_growth_20260826.json")
+    )
+    parser.add_argument(
+        "--manifest", type=Path, default=Path("plans/manifests/taiji_structural_growth_v1.json")
+    )
     args = parser.parse_args()
     report = evaluate()
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    args.report.write_text(
+        json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
     args.manifest.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest.write_text(json.dumps(build_manifest(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    args.manifest.write_text(
+        json.dumps(build_manifest(), indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
     print(json.dumps(report, indent=2, ensure_ascii=False))
     return 0 if report["gate"]["passed"] else 1
 

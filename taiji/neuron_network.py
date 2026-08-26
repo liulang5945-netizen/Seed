@@ -91,7 +91,7 @@ class AdaptiveNeuronNetwork:
             raise TypeError("learner must be a CrossRegionCooperationLearner or None")
         self._cooperation_learner = learner
         if learner is not None:
-            for connection_id, _, _, connection in self.connections:
+            for connection_id, _, _, _ in self.connections:
                 learner.register_connection(
                     connection_id,
                     resource_cost=self._connection_resource_costs.get(
@@ -116,11 +116,7 @@ class AdaptiveNeuronNetwork:
         """Return a zeroed reusable vector for one region's runtime scratch."""
 
         vector = cache.get(region.region_id)
-        if (
-            vector is None
-            or vector.shape != (int(size),)
-            or vector.device != region.device
-        ):
+        if vector is None or vector.shape != (int(size),) or vector.device != region.device:
             vector = torch.zeros(int(size), device=region.device)
             cache[region.region_id] = vector
         else:
@@ -255,23 +251,15 @@ class AdaptiveNeuronNetwork:
         if not 0 < split_count < region.unit_count:
             raise ValueError("region split first_unit_count must leave both partitions non-empty")
         retained_id = region.region_id
-        candidate = (
-            f"{retained_id}.split.1"
-            if new_region_id is None
-            else str(new_region_id)
-        )
+        candidate = f"{retained_id}.split.1" if new_region_id is None else str(new_region_id)
         if not candidate or candidate == retained_id or candidate in self._regions:
             raise ValueError("region split new_region_id must be a fresh identity")
         connection_migrations: list[tuple[str, tuple[str, ...]]] = []
         for connection_id, (source_id, target_id, _) in self._connections.items():
             if retained_id not in {source_id, target_id}:
                 continue
-            source_ids = (
-                (retained_id, candidate) if source_id == retained_id else (source_id,)
-            )
-            target_ids = (
-                (retained_id, candidate) if target_id == retained_id else (target_id,)
-            )
+            source_ids = (retained_id, candidate) if source_id == retained_id else (source_id,)
+            target_ids = (retained_id, candidate) if target_id == retained_id else (target_id,)
             child_ids = tuple(
                 f"connection:{child_source}->{child_target}"
                 for child_source in source_ids
@@ -345,10 +333,12 @@ class AdaptiveNeuronNetwork:
                 ("region_ids", selected),
                 ("retained_region_id", first.region_id),
                 ("merged_unit_ids", merged_unit_ids),
-                ("connection_merges", tuple(
-                    (new_id, tuple(old_ids))
-                    for new_id, old_ids in connection_merges.items()
-                )),
+                (
+                    "connection_merges",
+                    tuple(
+                        (new_id, tuple(old_ids)) for new_id, old_ids in connection_merges.items()
+                    ),
+                ),
                 ("topology_role", "region_merge"),
             ),
             evidence_ids=tuple(str(item) for item in evidence_ids),
@@ -561,9 +551,7 @@ class AdaptiveNeuronNetwork:
             if self._cooperation_learner is not None:
                 self._cooperation_learner.unregister_connection(connection_id)
         self._regions.pop(region_id)
-        self.execution_order = tuple(
-            item for item in self.execution_order if item != region_id
-        )
+        self.execution_order = tuple(item for item in self.execution_order if item != region_id)
         self._lesioned_regions.discard(region_id)
         return True
 
@@ -580,9 +568,7 @@ class AdaptiveNeuronNetwork:
 
         selected = tuple(str(item) for item in unit_ids)
         old_indices = tuple(region.unit_index(item) for item in selected)
-        recurrent_fan_in = (
-            None if region.recurrent is None else region.recurrent.row_fan_in
-        )
+        recurrent_fan_in = None if region.recurrent is None else region.recurrent.row_fan_in
         partition = AdaptiveNeuronRegion(
             region_id=region_id,
             input_dim=region.input_dim,
@@ -690,12 +676,8 @@ class AdaptiveNeuronNetwork:
         migrated_lesions: set[str] = set()
         for old_id, child_ids in expected_migrations.items():
             source_id, target_id, old_connection = actual_touched[old_id]
-            source_ids = (
-                (retained_id, new_region_id) if source_id == parent_id else (source_id,)
-            )
-            target_ids = (
-                (retained_id, new_region_id) if target_id == parent_id else (target_id,)
-            )
+            source_ids = (retained_id, new_region_id) if source_id == parent_id else (source_id,)
+            target_ids = (retained_id, new_region_id) if target_id == parent_id else (target_id,)
             expected_child_ids = tuple(
                 f"connection:{child_source}->{child_target}"
                 for child_source in source_ids
@@ -742,15 +724,15 @@ class AdaptiveNeuronNetwork:
                 old_source_units = old_source.unit_ids
                 old_target_units = old_target.unit_ids
                 child_source_unit_index = {
-                    unit_id: index
-                    for index, unit_id in enumerate(child_source.unit_ids)
+                    unit_id: index for index, unit_id in enumerate(child_source.unit_ids)
                 }
                 child_target_unit_index = {
-                    unit_id: index
-                    for index, unit_id in enumerate(child_target.unit_ids)
+                    unit_id: index for index, unit_id in enumerate(child_target.unit_ids)
                 }
                 target_unit_ids = child_target.unit_ids
-                old_target_index = {unit_id: index for index, unit_id in enumerate(old_target_units)}
+                old_target_index = {
+                    unit_id: index for index, unit_id in enumerate(old_target_units)
+                }
                 for child_target_unit in target_unit_ids:
                     new_target_index = child_target_unit_index[child_target_unit]
                     old_target_index_value = old_target_index[child_target_unit]
@@ -764,9 +746,9 @@ class AdaptiveNeuronNetwork:
                             continue
                         if new_slot >= migrated.row_fan_in:
                             break
-                        migrated.pre_index[new_target_index, new_slot] = (
-                            child_source_unit_index[old_source_unit]
-                        )
+                        migrated.pre_index[new_target_index, new_slot] = child_source_unit_index[
+                            old_source_unit
+                        ]
                         migrated.edge_weight[new_target_index, new_slot] = (
                             old_connection.edge_weight[old_target_index_value, old_slot]
                         )
@@ -782,10 +764,7 @@ class AdaptiveNeuronNetwork:
                 )
                 if old_id in self._lesioned_connections:
                     migrated_lesions.add(child_connection_id)
-                if (
-                    self._cooperation_learner is not None
-                    and child_connection_id != old_id
-                ):
+                if self._cooperation_learner is not None and child_connection_id != old_id:
                     self._cooperation_learner.fork_connection(old_id, child_connection_id)
         self._regions[retained_id] = retained
         self._regions[new_region_id] = child
@@ -800,10 +779,7 @@ class AdaptiveNeuronNetwork:
             self._connections.pop(old_id)
             self._connection_resource_costs.pop(old_id, None)
             self._lesioned_connections.discard(old_id)
-            if (
-                self._cooperation_learner is not None
-                and old_id not in migrated_connections
-            ):
+            if self._cooperation_learner is not None and old_id not in migrated_connections:
                 self._cooperation_learner.unregister_connection(old_id)
         self._connections.update(migrated_connections)
         self._connection_resource_costs.update(migrated_costs)
@@ -858,16 +834,15 @@ class AdaptiveNeuronNetwork:
                     continue
                 for row in range(source_region.unit_count):
                     new_row = offset + row
-                    new_slot = 0
-                    for slot in range(source_region.recurrent.row_fan_in):
-                        if new_slot >= merged.recurrent.row_fan_in:
-                            break
+                    carried_slots = min(
+                        source_region.recurrent.row_fan_in, merged.recurrent.row_fan_in
+                    )
+                    for slot in range(carried_slots):
                         old_pre = int(source_region.recurrent.pre_index[row, slot].item())
-                        merged.recurrent.pre_index[new_row, new_slot] = offset + old_pre
-                        merged.recurrent.edge_weight[new_row, new_slot] = (
+                        merged.recurrent.pre_index[new_row, slot] = offset + old_pre
+                        merged.recurrent.edge_weight[new_row, slot] = (
                             source_region.recurrent.edge_weight[row, slot]
                         )
-                        new_slot += 1
         merged._lesioned_units = first._lesioned_units | second._lesioned_units
         return merged
 
@@ -888,12 +863,8 @@ class AdaptiveNeuronNetwork:
         for source_id, target_id, connection in old_connections:
             old_source = source_regions[source_id]
             old_target = target_regions[target_id]
-            source_index = {
-                unit_id: index for index, unit_id in enumerate(source_region.unit_ids)
-            }
-            target_index = {
-                unit_id: index for index, unit_id in enumerate(target_region.unit_ids)
-            }
+            source_index = {unit_id: index for index, unit_id in enumerate(source_region.unit_ids)}
+            target_index = {unit_id: index for index, unit_id in enumerate(target_region.unit_ids)}
             for old_target_index, target_unit_id in enumerate(old_target.unit_ids):
                 new_target_index = target_index[target_unit_id]
                 row = rows.setdefault(new_target_index, {})
@@ -911,9 +882,7 @@ class AdaptiveNeuronNetwork:
             fan_in,
             generator=generator,
             init_scale=target_region.dynamics.weight_init_scale,
-            max_weight_norm=max(
-                connection.max_weight_norm for _, _, connection in old_connections
-            ),
+            max_weight_norm=max(connection.max_weight_norm for _, _, connection in old_connections),
             device=target_region.device,
         )
         merged.edge_weight.zero_()
@@ -995,25 +964,22 @@ class AdaptiveNeuronNetwork:
             source_id = first.region_id if old_entries[0][0] in merge_set else old_entries[0][0]
             target_id = first.region_id if old_entries[0][1] in merge_set else old_entries[0][1]
             source_region = (
-                merged_region
-                if source_id == first.region_id
-                else self._region(source_id)
+                merged_region if source_id == first.region_id else self._region(source_id)
             )
             target_region = (
-                merged_region
-                if target_id == first.region_id
-                else self._region(target_id)
+                merged_region if target_id == first.region_id else self._region(target_id)
             )
             source_regions = {
-                old_source_id: self._region(old_source_id)
-                for old_source_id, _, _ in old_entries
+                old_source_id: self._region(old_source_id) for old_source_id, _, _ in old_entries
             }
             target_regions = {
-                old_target_id: self._region(old_target_id)
-                for _, old_target_id, _ in old_entries
+                old_target_id: self._region(old_target_id) for _, old_target_id, _ in old_entries
             }
             projection = self._merge_connection_projection(
-                tuple((old_source_id, old_target_id, connection) for old_source_id, old_target_id, connection in old_entries),
+                tuple(
+                    (old_source_id, old_target_id, connection)
+                    for old_source_id, old_target_id, connection in old_entries
+                ),
                 source_region=source_region,
                 target_region=target_region,
                 source_regions=source_regions,
@@ -1022,8 +988,7 @@ class AdaptiveNeuronNetwork:
             )
             migrated_connections[new_id] = (source_id, target_id, projection)
             migrated_costs[new_id] = max(
-                self._connection_resource_costs.get(old_id, 1.0)
-                for old_id in old_ids
+                self._connection_resource_costs.get(old_id, 1.0) for old_id in old_ids
             )
             if all(old_id in self._lesioned_connections for old_id in old_ids):
                 migrated_lesions.add(new_id)
@@ -1051,9 +1016,7 @@ class AdaptiveNeuronNetwork:
                 merged_regions[region_id] = region
         self._regions = merged_regions
         self.execution_order = tuple(
-            region_id
-            for region_id in self.execution_order
-            if region_id != second.region_id
+            region_id for region_id in self.execution_order if region_id != second.region_id
         )
         return True
 
@@ -1068,10 +1031,7 @@ class AdaptiveNeuronNetwork:
             raise ValueError("only pending topology proposals can be applied")
         if proposal.target_kind != "region" or proposal.operation != "prune":
             raise ValueError("proposal is not a cross-region connection prune")
-        if (
-            dict(proposal.specification).get("topology_role")
-            != "cross_region_connection_prune"
-        ):
+        if dict(proposal.specification).get("topology_role") != "cross_region_connection_prune":
             raise ValueError("proposal is not a cross-region connection prune")
         specification = dict(proposal.specification)
         connection_id = str(specification.get("connection_id", ""))
@@ -1213,8 +1173,12 @@ class AdaptiveNeuronNetwork:
                 )
             if actual.shape != expected.shape:
                 raise ValueError(f"route credit activity shape mismatch for target {target_id}")
-            prediction_error = float(torch.mean(torch.abs(actual - expected)).clamp(0.0, 1.0).item())
-            resource_state = budget / (budget + self._cooperation_learner.resource_cost(connection_id))
+            prediction_error = float(
+                torch.mean(torch.abs(actual - expected)).clamp(0.0, 1.0).item()
+            )
+            resource_state = budget / (
+                budget + self._cooperation_learner.resource_cost(connection_id)
+            )
             route = self._cooperation_learner.route_state(connection_id)
             self.observe_connection(
                 connection_id,
@@ -1321,8 +1285,7 @@ class AdaptiveNeuronNetwork:
             "storage": ADAPTIVE_NEURON_NETWORK_CHECKPOINT_FORMAT,
             "execution_order": list(self.execution_order),
             "regions": {
-                region_id: region.to_payload()
-                for region_id, region in self._regions.items()
+                region_id: region.to_payload() for region_id, region in self._regions.items()
             },
             "connections": {
                 connection_id: {
@@ -1395,9 +1358,10 @@ class AdaptiveNeuronNetwork:
             if learner_payload is None
             else CrossRegionCooperationLearner.from_payload(learner_payload)
         )
-        if self._cooperation_learner is not None:
-            if set(self._cooperation_learner.route_ids) != set(self._connections):
-                raise ValueError("cross-region learning route identities do not match network")
+        if self._cooperation_learner is not None and set(
+            self._cooperation_learner.route_ids
+        ) != set(self._connections):
+            raise ValueError("cross-region learning route identities do not match network")
 
     @classmethod
     def from_payload(

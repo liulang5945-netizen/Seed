@@ -71,9 +71,7 @@ def test_structural_growth_requires_persistent_error_transfer_and_resources() ->
 
     assert first.should_grow is False
     assert second.should_grow is True
-    assert controller.next_unit_id("adaptive.cortex", ("u0", "u1")) == (
-        "adaptive.cortex.grown.1"
-    )
+    assert controller.next_unit_id("adaptive.cortex", ("u0", "u1")) == ("adaptive.cortex.grown.1")
     restored = AdaptiveStructuralGrowthController.from_payload(controller.to_payload())
     assert restored.total_observations == 2
     assert restored.regions[0].proposal_count == 1
@@ -84,13 +82,16 @@ def test_runtime_structural_growth_proposal_enters_ledger_and_rolls_back() -> No
     model.attach_adaptive_neuron_region(_region())
     model.attach_structural_growth_controller(_controller())
 
-    assert model.propose_neuron_growth_from_error(
-        region_id="adaptive.cortex",
-        prediction_error=0.9,
-        resource_state=0.8,
-        holdout_transfer=0.9,
-        evidence_ids=("tick:1",),
-    ) is None
+    assert (
+        model.propose_neuron_growth_from_error(
+            region_id="adaptive.cortex",
+            prediction_error=0.9,
+            resource_state=0.8,
+            holdout_transfer=0.9,
+            evidence_ids=("tick:1",),
+        )
+        is None
+    )
     proposal = model.propose_neuron_growth_from_error(
         region_id="adaptive.cortex",
         prediction_error=0.9,
