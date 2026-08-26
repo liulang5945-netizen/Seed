@@ -8,6 +8,13 @@
     "pruning_observations": 7,
     "proposal_candidates": 1,
     "candidate_holdout_validated": true,
+    "candidate_committed": true,
+    "candidate_rolled_back": true,
+    "topology_after_candidate_commit": [
+      "source",
+      "target",
+      "source.split.1"
+    ],
     "route_evidence_count": 2,
     "checkpoint_continuation": true,
     "topology_unchanged": true
