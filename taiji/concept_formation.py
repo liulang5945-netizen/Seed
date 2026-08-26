@@ -49,6 +49,7 @@ class ConceptFormationOrgan:
         plasticity_rate: float = 0.25,
         prune_threshold: float = 0.15,
         credit_discount: float = 0.90,
+        trace_capacity: int = 32,
     ) -> None:
         self.similarity_threshold = float(similarity_threshold)
         self.signal_weights = tuple(float(weight) for weight in signal_weights)
@@ -56,6 +57,7 @@ class ConceptFormationOrgan:
         self.plasticity_rate = float(plasticity_rate)
         self.prune_threshold = float(prune_threshold)
         self.credit_discount = float(credit_discount)
+        self.trace_capacity = int(trace_capacity)
         if not 0.0 < self.similarity_threshold <= 1.0:
             raise ValueError("concept similarity threshold must be in (0, 1]")
         if (
@@ -72,6 +74,8 @@ class ConceptFormationOrgan:
             raise ValueError("concept formation prune threshold must be in [0, 1]")
         if not 0.0 <= self.credit_discount <= 1.0:
             raise ValueError("concept formation credit_discount must be in [0, 1]")
+        if self.trace_capacity <= 0:
+            raise ValueError("concept sequence trace capacity must be positive")
         self._concepts: tuple[Concept, ...] = ()
 
     @property
@@ -137,6 +141,39 @@ class ConceptFormationOrgan:
             )
         self._concepts = tuple(updated)
         return tuple(removed)
+
+    def lesion_sequence_trace(
+        self, concept_id: str, trace_ids: Iterable[str]
+    ) -> tuple[str, ...]:
+        """Remove selected sequence branches while retaining the other traces."""
+
+        requested = tuple(dict.fromkeys(str(trace_id) for trace_id in trace_ids))
+        if not requested:
+            return ()
+        target_index = next(
+            (index for index, concept in enumerate(self._concepts) if concept.concept_id == concept_id),
+            None,
+        )
+        if target_index is None:
+            return ()
+        concept = self._concepts[target_index]
+        requested_set = set(requested)
+        removed = tuple(trace.trace_id for trace in concept.sequence_traces if trace.trace_id in requested_set)
+        if not removed:
+            return ()
+        remaining = tuple(
+            trace for trace in concept.sequence_traces if trace.trace_id not in requested_set
+        )
+        updated = replace(
+            concept,
+            sequence_traces=remaining,
+            sequence_traces_lesioned=not remaining,
+            update_count=concept.update_count + 1,
+        )
+        concepts = list(self._concepts)
+        concepts[target_index] = updated
+        self._concepts = tuple(concepts)
+        return removed
 
     @staticmethod
     def _world_ids_similarity(
@@ -451,7 +488,31 @@ class ConceptFormationOrgan:
                 / total_weight,
                 visits=previous.visits + candidate.visits,
             )
-        return tuple(merged)
+        return self._prune_sequence_traces(tuple(merged))
+
+    @staticmethod
+    def _sequence_trace_strength(trace: ConceptSequenceTrace) -> float:
+        if not trace.step_credit:
+            return 0.0
+        credit = sum(trace.step_credit) / len(trace.step_credit)
+        error = sum(trace.prediction_errors) / len(trace.prediction_errors)
+        return credit * (1.0 - error) * trace.outcome_mean
+
+    def _prune_sequence_traces(
+        self, traces: Sequence[ConceptSequenceTrace]
+    ) -> tuple[ConceptSequenceTrace, ...]:
+        if len(traces) <= self.trace_capacity:
+            return tuple(traces)
+        ranked = sorted(
+            traces,
+            key=lambda trace: (
+                self._sequence_trace_strength(trace),
+                trace.visits,
+                trace.trace_id,
+            ),
+        )
+        keep = {trace.trace_id for trace in ranked[-self.trace_capacity :]}
+        return tuple(trace for trace in traces if trace.trace_id in keep)
 
     def update_sequence_trace(
         self,
@@ -775,6 +836,7 @@ class ConceptFormationOrgan:
             "plasticity_rate": self.plasticity_rate,
             "prune_threshold": self.prune_threshold,
             "credit_discount": self.credit_discount,
+            "trace_capacity": self.trace_capacity,
             "concepts": [item.to_payload() for item in self._concepts],
         }
 
@@ -791,6 +853,7 @@ class ConceptFormationOrgan:
             plasticity_rate=float(payload.get("plasticity_rate", 0.25)),
             prune_threshold=float(payload.get("prune_threshold", 0.15)),
             credit_discount=float(payload.get("credit_discount", 0.90)),
+            trace_capacity=int(payload.get("trace_capacity", 32)),
         )
         organ._concepts = tuple(
             Concept.from_payload(item, device=device) for item in payload.get("concepts", ())

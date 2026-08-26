@@ -8,6 +8,7 @@ inside a future Taiji implementation.
 
 from __future__ import annotations
 
+import hashlib
 import math
 from collections.abc import Mapping
 from dataclasses import dataclass, field
@@ -414,6 +415,7 @@ class ConceptSequenceTrace:
     after_prototypes: tuple[torch.Tensor, ...]
     step_credit: tuple[float, ...]
     prediction_errors: tuple[float, ...]
+    trace_id: str = ""
     outcome_mean: float = 0.0
     visits: int = 1
     version: int = CONTRACT_VERSION
@@ -436,6 +438,20 @@ class ConceptSequenceTrace:
             raise ValueError("sequence trace state prototypes must share one dimension")
         object.__setattr__(self, "before_prototype", self.before_prototype.detach().clone())
         object.__setattr__(self, "after_prototypes", after_prototypes)
+        trace_id = str(self.trace_id)
+        if not trace_id:
+            signature = repr(
+                (
+                    self.action_kinds,
+                    tuple(round(float(value), 6) for value in self.before_prototype.tolist()),
+                    tuple(
+                        tuple(round(float(value), 6) for value in prototype.tolist())
+                        for prototype in after_prototypes
+                    ),
+                )
+            )
+            trace_id = f"trace:{hashlib.sha256(signature.encode('utf-8')).hexdigest()[:16]}"
+        object.__setattr__(self, "trace_id", _check_text(trace_id, "sequence trace trace_id"))
         if len(self.step_credit) != len(self.action_kinds):
             raise ValueError("sequence trace step_credit must match action_kinds")
         if len(self.prediction_errors) != len(self.action_kinds):
@@ -460,6 +476,7 @@ class ConceptSequenceTrace:
     def to_payload(self) -> dict[str, Any]:
         return {
             "version": self.version,
+            "trace_id": self.trace_id,
             "action_kinds": list(self.action_kinds),
             "before_prototype": self.before_prototype.detach().cpu().clone(),
             "after_prototypes": [item.detach().cpu().clone() for item in self.after_prototypes],
@@ -475,6 +492,7 @@ class ConceptSequenceTrace:
     ) -> ConceptSequenceTrace:
         return cls(
             version=int(payload["version"]),
+            trace_id=str(payload.get("trace_id", "")),
             action_kinds=tuple(str(item) for item in payload["action_kinds"]),
             before_prototype=payload["before_prototype"].detach().to(device).clone(),
             after_prototypes=tuple(

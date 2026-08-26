@@ -50,6 +50,11 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
   增量更新时只命中对应 trace，visits 与 step credit 发生 EMA 更新，另一条分支保持不变；
   trace lesion 保留 Concept identity 但使 sequence prior 为零，organ checkpoint 恢复更新后的
   visits/credit。该 Gate 报告为 `reports/taiji_concept_branch_20260826.json`。
+- trace capacity / selective branch Gate 已通过：`trace_capacity=1/2/4` 分别保留 1/2/2 条
+  分支，容量为 1 时按 trace strength 保留更强的 good 分支，容量为 2/4 时 alternative
+  分支可加入但不会压过正确 suffix；增量巩固会在同一 Concept 中加入新 trace，按稳定
+  `trace_id` 删除单一分支后其他分支不变，checkpoint 恢复剩余 trace identity。该 Gate 报告为
+  `reports/taiji_concept_trace_capacity_20260826.json`。
 
 ## 边界与已知限制
 
@@ -60,6 +65,7 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 
 ## 下一步唯一入口
 
-在同一 Concept 的多分支 trace 上加入容量/干扰曲线与分支增删：验证分支数量增长时正确
-分支仍可由 after-state 与 outcome/error 选择，淘汰或 lesion 单一 trace 不得破坏其他分支，
-并在多分支 runtime continuation 与 checkpoint 后保持一致；继续禁止固定 action/intent 表。
+把新颖且未命中已有 trace 的真实 transition 接入在线 branch birth：由连续真实 transition
+形成带稳定 `trace_id` 的新分支，经过容量治理后立即可被 after-state 条件检索；要求新分支
+能够进入 runtime 计划、失败 feedback 可继续更新、checkpoint continuation 保持 identity，
+且已有分支不因一次未命中而被覆盖；继续禁止固定 action/intent 表。

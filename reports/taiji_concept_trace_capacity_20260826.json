@@ -1,0 +1,39 @@
+{
+  "format": "taiji-concept-trace-capacity-v1",
+  "metrics": {
+    "capacity_curve": {
+      "1": {
+        "trace_count": 1,
+        "good_affinity": 0.7886873874609053,
+        "alternative_affinity": 0.0,
+        "selected_branch": "branch-good"
+      },
+      "2": {
+        "trace_count": 2,
+        "good_affinity": 0.7886873874609053,
+        "alternative_affinity": 0.4690701942503812,
+        "selected_branch": "branch-good"
+      },
+      "4": {
+        "trace_count": 2,
+        "good_affinity": 0.7886873874609053,
+        "alternative_affinity": 0.4690701942503812,
+        "selected_branch": "branch-good"
+      }
+    },
+    "branch_count_before_add": 1,
+    "branch_count_after_add": 2,
+    "removed_trace_id": "trace:23f9671199a6f1f6",
+    "remaining_trace_ids": [
+      "trace:a6ef9dd6fed3f766"
+    ],
+    "checkpoint_remaining_trace_ids": [
+      "trace:a6ef9dd6fed3f766"
+    ]
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "trace capacity must preserve the strongest branch under interference, permit a second learned branch when capacity allows, selectively remove one branch without damaging the other, and recover the remaining branch through checkpoint"
+  },
+  "boundary": "This is a closed-world branch-capacity gate; it does not claim open-domain planning or general intelligence."
+}
