@@ -1,0 +1,22 @@
+{
+  "format": "taiji-structural-growth-v1",
+  "metrics": {
+    "before_trace_count": 1,
+    "accepted_trace_id": "trace:403d012d86650dd8",
+    "accepted_request_id": "growth:candidate:concept:439dd6b69061b9a4:1:3:rescue>handoff",
+    "accepted_validation_score": 1.0,
+    "budget_after_accept": 0,
+    "checkpoint_request_status": "accepted",
+    "rollback": true,
+    "budget_after_rollback": 1,
+    "growth_count_after_rollback": 0,
+    "trace_count_after_rollback": 1,
+    "rejected_request_status": "rejected",
+    "budget_after_rejection": 0
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "online branch birth must consume a versioned structural budget only after checkpoint and lesion validation, preserve a parent snapshot for native-checkpoint rollback, and reject growth without budget"
+  },
+  "boundary": "This is a closed-world structural-growth governance gate; it does not claim unrestricted self-evolution or general intelligence."
+}

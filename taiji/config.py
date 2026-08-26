@@ -233,6 +233,7 @@ class TaijiConfig:
     concept_branch_owner_weights: tuple[float, float, float] = (0.45, 0.40, 0.15)
     concept_branch_owner_min_score: float = 0.65
     concept_branch_owner_min_margin: float = 0.05
+    development_structural_budget: int = 32
     self_capability_learning_rate: float = 0.20
     seed: int = 20260821
     perception: PerceptionConfig = field(default_factory=PerceptionConfig)
@@ -397,6 +398,8 @@ class TaijiConfig:
             raise ValueError("concept_branch_owner_min_score must be in [0, 1]")
         if not 0.0 <= self.concept_branch_owner_min_margin <= 1.0:
             raise ValueError("concept_branch_owner_min_margin must be in [0, 1]")
+        if self.development_structural_budget < 0:
+            raise ValueError("development_structural_budget must be non-negative")
         if not 0.0 < self.self_capability_learning_rate <= 1.0:
             raise ValueError("self_capability_learning_rate must be in (0, 1]")
 

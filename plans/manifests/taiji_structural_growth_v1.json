@@ -1,0 +1,12 @@
+{
+  "format": "taiji-structural-growth-manifest-v1",
+  "task": "budgeted and rollbackable online Taiji structural growth",
+  "approval": [
+    "resource budget",
+    "checkpoint roundtrip",
+    "selective lesion",
+    "trace replayability"
+  ],
+  "rollback": "restore the parent concept checkpoint, return the budget, and mark the request rolled_back",
+  "failure": "zero structural budget rejects growth without mutating the concept"
+}

@@ -2087,6 +2087,70 @@ class HomeostaticState:
 
 
 @dataclass(frozen=True)
+class StructuralGrowthRequest:
+    """A versioned proposal to add one validated Taiji structure unit."""
+
+    request_id: str
+    concept_id: str
+    candidate_trace_id: str
+    requested_units: int = 1
+    evidence_ids: tuple[str, ...] = ()
+    parent_checkpoint_id: str | None = None
+    status: str = "pending"
+    validation_score: float = 0.0
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        _check_text(self.request_id, "growth request_id")
+        _check_text(self.concept_id, "growth concept_id")
+        _check_text(self.candidate_trace_id, "growth candidate_trace_id")
+        if int(self.requested_units) <= 0:
+            raise ValueError("growth requested_units must be positive")
+        object.__setattr__(
+            self,
+            "evidence_ids",
+            _normalize_ids(self.evidence_ids, "growth evidence_ids"),
+        )
+        if self.parent_checkpoint_id is not None:
+            _check_text(self.parent_checkpoint_id, "growth parent_checkpoint_id")
+        if self.status not in {"pending", "accepted", "rejected", "rolled_back"}:
+            raise ValueError("unsupported growth request status")
+        _check_unit(self.validation_score, "growth validation_score")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "request_id": self.request_id,
+            "concept_id": self.concept_id,
+            "candidate_trace_id": self.candidate_trace_id,
+            "requested_units": self.requested_units,
+            "evidence_ids": list(self.evidence_ids),
+            "parent_checkpoint_id": self.parent_checkpoint_id,
+            "status": self.status,
+            "validation_score": self.validation_score,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> StructuralGrowthRequest:
+        return cls(
+            version=int(payload["version"]),
+            request_id=str(payload["request_id"]),
+            concept_id=str(payload["concept_id"]),
+            candidate_trace_id=str(payload["candidate_trace_id"]),
+            requested_units=int(payload.get("requested_units", 1)),
+            evidence_ids=tuple(str(item) for item in payload.get("evidence_ids", ())),
+            parent_checkpoint_id=(
+                None
+                if payload.get("parent_checkpoint_id") is None
+                else str(payload["parent_checkpoint_id"])
+            ),
+            status=str(payload.get("status", "pending")),
+            validation_score=float(payload.get("validation_score", 0.0)),
+        )
+
+
+@dataclass(frozen=True)
 class DevelopmentState:
     tick: int
     stage: str = "bootstrap"

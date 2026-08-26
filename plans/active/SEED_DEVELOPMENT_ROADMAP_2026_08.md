@@ -542,4 +542,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把 branch birth 接入 `DevelopmentState` 结构成长预算与 rollback 合同，要求 owner 只能提交一条带证据的 growth request，并通过资源预算、holdout/lesion、容量 pruning 与 native checkpoint 回滚门控后才进入主概念结构。**
+**下一步：把结构成长合同扩展到可配置的多尺度神经元/突触拓扑 proposal，统一描述新增单元、连接、专用区域、证据与资源成本，并通过首个可 checkpoint、lesion、holdout 验证和 rollback 的小型突触重连 Gate；继续禁止固定 action/intent 表。**

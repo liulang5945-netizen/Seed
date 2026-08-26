@@ -37,6 +37,7 @@ from .contracts import (
     PlanningRecoveryState,
     PlanState,
     SelfState,
+    StructuralGrowthRequest,
     WorkingMemoryItem,
     WorkspaceCandidate,
     WorkspaceSelection,
@@ -133,6 +134,8 @@ class TSKV8Adapter(Taiji):
         self._online_concept_branches: dict[
             str, tuple[tuple[WorldTransition, float], ...]
         ] = {}
+        self._growth_requests: dict[str, StructuralGrowthRequest] = {}
+        self._growth_request_snapshots: dict[str, dict[str, Any]] = {}
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
@@ -180,7 +183,10 @@ class TSKV8Adapter(Taiji):
             plan=PlanState(tick=0),
             self_state=SelfState(tick=0),
             homeostasis=HomeostaticState(tick=0),
-            development=DevelopmentState(tick=0),
+            development=DevelopmentState(
+                tick=0,
+                structural_budget=self.config.development_structural_budget,
+            ),
             learning=LearningState(tick=0),
         )
 
@@ -199,20 +205,231 @@ class TSKV8Adapter(Taiji):
 
         return self._concept_formation
 
+    @property
+    def growth_requests(self) -> tuple[StructuralGrowthRequest, ...]:
+        """Return structural growth decisions owned by the Taiji state."""
+
+        return tuple(self._growth_requests.values())
+
+    @staticmethod
+    def _growth_request_identity(
+        concept_id: str,
+        transitions: Sequence[tuple[WorldTransition, float]],
+    ) -> tuple[str, str]:
+        items = tuple(transitions)
+        actions = ">".join(transition.action.kind for transition, _ in items)
+        first = items[0][0]
+        last = items[-1][0]
+        candidate_id = f"candidate:{concept_id}:{first.before.tick}:{last.after.tick}:{actions}"
+        return f"growth:{candidate_id}", candidate_id
+
+    def _record_growth_development(
+        self,
+        request: StructuralGrowthRequest,
+        *,
+        consume_budget: bool,
+        evidence_id: str,
+    ) -> None:
+        previous = self._cognitive_state.development
+        budget = int(previous.structural_budget)
+        if consume_budget:
+            budget -= int(request.requested_units)
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                tick=self.tick,
+                stage="growth",
+                structural_budget=budget,
+                proposal_ids=self._bounded_ids(
+                    previous.proposal_ids,
+                    request.request_id,
+                    limit=self._lineage_limit(),
+                ),
+                parent_checkpoint_id=request.parent_checkpoint_id,
+                last_update_source="online-branch-growth",
+                last_validation_status=request.status,
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    evidence_id,
+                    limit=self._lineage_limit(),
+                ),
+                growth_count=(
+                    previous.growth_count + int(request.requested_units)
+                    if consume_budget
+                    else previous.growth_count
+                ),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    request.request_id,
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+
+    def _commit_online_concept_branch(
+        self,
+        concept_id: str,
+        transitions: Sequence[tuple[WorldTransition, float]],
+    ) -> str | None:
+        items = tuple(transitions)
+        if not items:
+            return None
+        request_id, candidate_id = self._growth_request_identity(concept_id, items)
+        existing = self._growth_requests.get(request_id)
+        if existing is not None and existing.status == "accepted":
+            return existing.candidate_trace_id
+        parent_checkpoint_id = f"growth-parent:{request_id}"
+        pending = StructuralGrowthRequest(
+            request_id=request_id,
+            concept_id=str(concept_id),
+            candidate_trace_id=candidate_id,
+            evidence_ids=(),
+            parent_checkpoint_id=parent_checkpoint_id,
+            status="pending",
+        )
+        if self._cognitive_state.development.structural_budget < pending.requested_units:
+            rejected = replace(pending, status="rejected")
+            self._growth_requests[request_id] = rejected
+            self._record_growth_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=candidate_id,
+            )
+            return None
+        parent_snapshot = self._concept_formation.checkpoint()
+        trial = ConceptFormationOrgan.from_checkpoint(parent_snapshot, device=self.device)
+        trace_id = trial.grow_sequence_trace(concept_id, items)
+        if trace_id is None:
+            rejected = replace(pending, status="rejected")
+            self._growth_requests[request_id] = rejected
+            self._record_growth_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=candidate_id,
+            )
+            return None
+        trial_checkpoint = trial.checkpoint()
+        checkpoint_trial = ConceptFormationOrgan.from_checkpoint(
+            trial_checkpoint,
+            device=self.device,
+        )
+        checkpoint_concept = next(
+            (
+                concept
+                for concept in checkpoint_trial.concepts
+                if concept.concept_id == concept_id
+            ),
+            None,
+        )
+        checkpoint_trace = (
+            None
+            if checkpoint_concept is None
+            else next(
+                (
+                    trace
+                    for trace in checkpoint_concept.sequence_traces
+                    if trace.trace_id == trace_id
+                ),
+                None,
+            )
+        )
+        lesion_trial = ConceptFormationOrgan.from_checkpoint(
+            trial_checkpoint,
+            device=self.device,
+        )
+        lesion_removed = lesion_trial.lesion_sequence_trace(concept_id, (trace_id,))
+        replay_score = checkpoint_trial.suffix_sequence_affinity(
+            checkpoint_concept,
+            tuple(transition.action.kind for transition, _ in items),
+            current_state=items[0][0].before,
+        ) if checkpoint_concept is not None else 0.0
+        validated = bool(
+            checkpoint_trace is not None
+            and lesion_removed == (trace_id,)
+            and replay_score > 0.0
+        )
+        if not validated:
+            rejected = replace(
+                pending,
+                status="rejected",
+                validation_score=max(0.0, min(1.0, float(replay_score))),
+            )
+            self._growth_requests[request_id] = rejected
+            self._record_growth_development(
+                rejected,
+                consume_budget=False,
+                evidence_id=candidate_id,
+            )
+            return None
+        accepted = replace(
+            pending,
+            candidate_trace_id=trace_id,
+            evidence_ids=(trace_id,),
+            status="accepted",
+            validation_score=1.0,
+        )
+        self._concept_formation = trial
+        self._growth_requests[request_id] = accepted
+        self._growth_request_snapshots[request_id] = parent_snapshot
+        self._record_growth_development(
+            accepted,
+            consume_budget=True,
+            evidence_id=trace_id,
+        )
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            concepts=self._concept_formation.concepts,
+        )
+        return trace_id
+
     def grow_online_concept_branch(
         self,
         concept_id: str,
         transitions: Sequence[tuple[WorldTransition, float]],
     ) -> str | None:
-        """Birth a novel real-transition branch and publish it to cognitive state."""
+        """Request, validate and commit a novel real-transition branch."""
 
-        trace_id = self._concept_formation.grow_sequence_trace(concept_id, transitions)
-        if trace_id is not None:
-            self._cognitive_state = replace(
-                self._cognitive_state,
-                concepts=self._concept_formation.concepts,
-            )
-        return trace_id
+        return self._commit_online_concept_branch(concept_id, transitions)
+
+    def rollback_growth_request(self, request_id: str) -> bool:
+        """Restore the parent concept checkpoint for the latest accepted growth."""
+
+        request = self._growth_requests.get(str(request_id))
+        snapshot = self._growth_request_snapshots.get(str(request_id))
+        if request is None or request.status != "accepted" or snapshot is None:
+            return False
+        self._concept_formation = ConceptFormationOrgan.from_checkpoint(
+            snapshot,
+            device=self.device,
+        )
+        rolled_back = replace(request, status="rolled_back", validation_score=0.0)
+        self._growth_requests[str(request_id)] = rolled_back
+        self._growth_request_snapshots.pop(str(request_id), None)
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            concepts=self._concept_formation.concepts,
+            development=replace(
+                previous,
+                tick=self.tick,
+                structural_budget=previous.structural_budget + request.requested_units,
+                last_update_source="growth-rollback",
+                last_validation_status="rolled_back",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    request.request_id,
+                    limit=self._lineage_limit(),
+                ),
+                growth_count=max(0, previous.growth_count - request.requested_units),
+                lineage=self._bounded_ids(
+                    previous.lineage,
+                    request.request_id,
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return True
 
     def _record_online_concept_transition(
         self,
@@ -295,6 +512,34 @@ class TSKV8Adapter(Taiji):
                 )
             if history:
                 self._online_concept_branches[str(concept_id)] = tuple(history)
+
+    def _growth_requests_checkpoint(self) -> dict[str, Any]:
+        return {
+            "requests": [request.to_payload() for request in self._growth_requests.values()],
+            "snapshots": dict(self._growth_request_snapshots),
+        }
+
+    def _restore_growth_requests(self, payload: Any) -> None:
+        self._growth_requests = {}
+        self._growth_request_snapshots = {}
+        if not isinstance(payload, dict):
+            return
+        requests = payload.get("requests", ())
+        if not isinstance(requests, (list, tuple)):
+            raise ValueError("growth request checkpoint requests must be a sequence")
+        for item in requests:
+            if not isinstance(item, dict):
+                raise ValueError("growth request checkpoint entry must be a mapping")
+            request = StructuralGrowthRequest.from_payload(item)
+            self._growth_requests[request.request_id] = request
+        snapshots = payload.get("snapshots", {})
+        if not isinstance(snapshots, dict):
+            raise ValueError("growth request checkpoint snapshots must be a mapping")
+        self._growth_request_snapshots = {
+            str(request_id): dict(snapshot)
+            for request_id, snapshot in snapshots.items()
+            if isinstance(snapshot, dict)
+        }
 
     def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:
         """Attach a Taiji-owned predictor used for runtime intervention scoring."""
@@ -2330,6 +2575,7 @@ class TSKV8Adapter(Taiji):
         if self._semantic_memory is not None:
             payload["semantic_memory"] = self._semantic_memory.checkpoint()
         payload["concept_formation"] = self._concept_formation.checkpoint()
+        payload["growth_requests"] = self._growth_requests_checkpoint()
         payload["online_concept_branches"] = self._online_concept_branches_checkpoint()
         if self._procedural_memory is not None:
             payload["procedural_memory"] = self._procedural_memory.checkpoint()
@@ -2405,6 +2651,7 @@ class TSKV8Adapter(Taiji):
         self._restore_episodic_memory(checkpoint.get("episodic_memory"))
         self._restore_semantic_memory(checkpoint.get("semantic_memory"))
         self._restore_concept_formation(checkpoint.get("concept_formation"))
+        self._restore_growth_requests(checkpoint.get("growth_requests"))
         self._restore_online_concept_branches(checkpoint.get("online_concept_branches"))
         self._restore_procedural_memory(checkpoint.get("procedural_memory"))
         self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
@@ -2728,6 +2975,7 @@ class TSKV8Adapter(Taiji):
         if self._semantic_memory is not None:
             components["semantic_memory"] = self._semantic_memory.checkpoint()
         components["concept_formation"] = self._concept_formation.checkpoint()
+        components["growth_requests"] = self._growth_requests_checkpoint()
         components["online_concept_branches"] = self._online_concept_branches_checkpoint()
         if self._procedural_memory is not None:
             components["procedural_memory"] = self._procedural_memory.checkpoint()
@@ -2816,6 +3064,7 @@ class TSKV8Adapter(Taiji):
         self._restore_episodic_memory(envelope.components.get("episodic_memory"))
         self._restore_semantic_memory(envelope.components.get("semantic_memory"))
         self._restore_concept_formation(envelope.components.get("concept_formation"))
+        self._restore_growth_requests(envelope.components.get("growth_requests"))
         self._restore_online_concept_branches(
             envelope.components.get("online_concept_branches")
         )
