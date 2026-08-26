@@ -130,6 +130,9 @@ class TSKV8Adapter(Taiji):
             plasticity_rate=self.config.concept_plasticity_rate,
             prune_threshold=self.config.concept_prune_threshold,
         )
+        self._online_concept_branches: dict[
+            str, tuple[tuple[WorldTransition, float], ...]
+        ] = {}
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
@@ -210,6 +213,67 @@ class TSKV8Adapter(Taiji):
                 concepts=self._concept_formation.concepts,
             )
         return trace_id
+
+    def _record_online_concept_transition(
+        self,
+        transition: WorldTransition,
+        prediction_error: float,
+        *,
+        boundary: bool,
+    ) -> tuple[str, ...]:
+        """Buffer real transitions and birth novel branches at episode boundaries."""
+
+        active_ids = self._cognitive_state.memory.concept_ids
+        if not active_ids:
+            if boundary:
+                self._online_concept_branches.clear()
+            return ()
+        born: list[str] = []
+        for concept_id in active_ids:
+            history = self._online_concept_branches.get(concept_id, ())
+            if history and history[-1][0].after.tick != transition.before.tick:
+                history = ()
+            history = (*history, (transition, float(prediction_error)))
+            if boundary:
+                trace_id = self.grow_online_concept_branch(concept_id, history)
+                if trace_id is not None:
+                    born.append(trace_id)
+                self._online_concept_branches.pop(concept_id, None)
+            else:
+                self._online_concept_branches[concept_id] = history
+        return tuple(born)
+
+    def _online_concept_branches_checkpoint(self) -> dict[str, list[dict[str, Any]]]:
+        return {
+            concept_id: [
+                {
+                    "transition": transition.to_payload(),
+                    "prediction_error": prediction_error,
+                }
+                for transition, prediction_error in history
+            ]
+            for concept_id, history in self._online_concept_branches.items()
+        }
+
+    def _restore_online_concept_branches(self, payload: Any) -> None:
+        self._online_concept_branches = {}
+        if not isinstance(payload, dict):
+            return
+        for concept_id, entries in payload.items():
+            if not isinstance(entries, (list, tuple)):
+                raise ValueError("online concept branch checkpoint entries must be a sequence")
+            history: list[tuple[WorldTransition, float]] = []
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    raise ValueError("online concept branch checkpoint entry must be a mapping")
+                history.append(
+                    (
+                        WorldTransition.from_payload(entry["transition"], device=self.device),
+                        float(entry.get("prediction_error", 0.0)),
+                    )
+                )
+            if history:
+                self._online_concept_branches[str(concept_id)] = tuple(history)
 
     def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:
         """Attach a Taiji-owned predictor used for runtime intervention scoring."""
@@ -1939,6 +2003,7 @@ class TSKV8Adapter(Taiji):
         world_action = kwargs.pop("world_action", None)
         success = kwargs.pop("success", None)
         terminal = bool(kwargs.pop("terminal", False))
+        sequence_boundary = bool(kwargs.pop("sequence_boundary", terminal))
         learn_world = kwargs.pop("learn_world", None)
         world_learning_rate = float(kwargs.pop("world_learning_rate", 0.005))
         world_learning_repeats = int(kwargs.pop("world_learning_repeats", 1))
@@ -2088,6 +2153,13 @@ class TSKV8Adapter(Taiji):
                 outcome=outcome,
                 prediction_error=prediction_error,
             )
+            self._record_online_concept_transition(
+                transition,
+                prediction_error,
+                boundary=sequence_boundary,
+            )
+        elif sequence_boundary:
+            self._online_concept_branches.clear()
         memory = self._cognitive_state.memory
         if self._planned_rollout is not None and self._goal_planner is not None:
             rollout = self._planned_rollout
@@ -2237,6 +2309,7 @@ class TSKV8Adapter(Taiji):
         if self._semantic_memory is not None:
             payload["semantic_memory"] = self._semantic_memory.checkpoint()
         payload["concept_formation"] = self._concept_formation.checkpoint()
+        payload["online_concept_branches"] = self._online_concept_branches_checkpoint()
         if self._procedural_memory is not None:
             payload["procedural_memory"] = self._procedural_memory.checkpoint()
         if self._homeostatic_controller is not None:
@@ -2311,6 +2384,7 @@ class TSKV8Adapter(Taiji):
         self._restore_episodic_memory(checkpoint.get("episodic_memory"))
         self._restore_semantic_memory(checkpoint.get("semantic_memory"))
         self._restore_concept_formation(checkpoint.get("concept_formation"))
+        self._restore_online_concept_branches(checkpoint.get("online_concept_branches"))
         self._restore_procedural_memory(checkpoint.get("procedural_memory"))
         self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
         self._restore_goal_planner(checkpoint.get("planning"))
@@ -2633,6 +2707,7 @@ class TSKV8Adapter(Taiji):
         if self._semantic_memory is not None:
             components["semantic_memory"] = self._semantic_memory.checkpoint()
         components["concept_formation"] = self._concept_formation.checkpoint()
+        components["online_concept_branches"] = self._online_concept_branches_checkpoint()
         if self._procedural_memory is not None:
             components["procedural_memory"] = self._procedural_memory.checkpoint()
         if self._homeostatic_controller is not None:
@@ -2720,6 +2795,9 @@ class TSKV8Adapter(Taiji):
         self._restore_episodic_memory(envelope.components.get("episodic_memory"))
         self._restore_semantic_memory(envelope.components.get("semantic_memory"))
         self._restore_concept_formation(envelope.components.get("concept_formation"))
+        self._restore_online_concept_branches(
+            envelope.components.get("online_concept_branches")
+        )
         self._restore_procedural_memory(envelope.components.get("procedural_memory"))
         self._restore_homeostatic_controller(envelope.components.get("homeostasis"))
         self._restore_goal_planner(envelope.components.get("planning"))

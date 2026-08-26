@@ -542,4 +542,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：把 branch birth 接入 settle_action 的 episode buffer，按 concept 上下文收集连续真实 transition，在 terminal/边界时一次形成新 trace，并验证 buffer、容量 pruning、失败 feedback 与 native checkpoint continuation。**
+**下一步：为多 concept 同时激活场景建立 branch attribution owner，按 match confidence、after-state 与 prediction error 选择唯一归属，验证 owner lesion、低置信度、跨 concept 干扰、episode buffer 与 native checkpoint continuation。**

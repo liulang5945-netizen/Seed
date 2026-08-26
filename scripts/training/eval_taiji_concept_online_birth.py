@@ -21,6 +21,7 @@ from scripts.training.eval_taiji_concept_branch import (  # noqa: E402
 from scripts.training.eval_taiji_concept_suffix import _runtime_config  # noqa: E402
 from taiji import (  # noqa: E402
     ConceptFormationOrgan,
+    Observation,
     Outcome,
     TSKV8Adapter,
     WorldAction,
@@ -128,6 +129,66 @@ def evaluate() -> dict[str, object]:
         trace.trace_id
         for trace in runtime_restored.concept_formation.concepts[0].sequence_traces
     )
+    automatic = TSKV8Adapter(_runtime_config(), episode_id="online-birth-buffer")
+    automatic.concept_formation.consolidate(good_records, tick=3)
+    automatic.observe_event(
+        Observation("text-byte", 97, timestamp=0, source="online-birth-evaluation"),
+        learn=False,
+        world_state=transitions[0].before,
+    )
+    automatic._cognitive_state = replace(
+        automatic._cognitive_state,
+        memory=replace(
+            automatic._cognitive_state.memory,
+            concept_ids=(automatic.concept_formation.concepts[0].concept_id,),
+            concept_confidence=1.0,
+        ),
+    )
+    automatic.act((10,), procedural_action_kinds=("rescue",))
+    automatic.settle_action(
+        1.0,
+        world_state=transitions[0].after,
+        success=True,
+        terminal=False,
+        learn=False,
+    )
+    mid_checkpoint = automatic.native_checkpoint()
+    recovered_mid = TSKV8Adapter.from_native_checkpoint(mid_checkpoint)
+    mid_buffer_steps = len(
+        recovered_mid._online_concept_branches[
+            recovered_mid.concept_formation.concepts[0].concept_id
+        ]
+    )
+    recovered_mid.observe_event(
+        Observation("text-byte", 98, timestamp=1, source="online-birth-evaluation"),
+        learn=False,
+        world_state=transitions[0].after,
+    )
+    recovered_mid._cognitive_state = replace(
+        recovered_mid._cognitive_state,
+        memory=replace(
+            recovered_mid._cognitive_state.memory,
+            concept_ids=(recovered_mid.concept_formation.concepts[0].concept_id,),
+            concept_confidence=1.0,
+        ),
+    )
+    recovered_mid.act((11,), procedural_action_kinds=("handoff",))
+    recovered_mid.settle_action(
+        1.0,
+        world_state=transitions[1].after,
+        success=True,
+        terminal=True,
+        learn=False,
+    )
+    automatic_concept = recovered_mid.concept_formation.concepts[0]
+    automatic_trace_ids = tuple(trace.trace_id for trace in automatic_concept.sequence_traces)
+    automatic_checkpoint = TSKV8Adapter.from_native_checkpoint(
+        recovered_mid.native_checkpoint()
+    )
+    automatic_checkpoint_ids = tuple(
+        trace.trace_id
+        for trace in automatic_checkpoint.concept_formation.concepts[0].sequence_traces
+    )
     gate_passed = bool(
         novel_trace_id is not None
         and duplicate is None
@@ -143,6 +204,10 @@ def evaluate() -> dict[str, object]:
         and runtime_trace_id is not None
         and runtime_snapshot.concepts[0].sequence_traces[-1].trace_id == runtime_trace_id
         and runtime_trace_id in runtime_checkpoint_ids
+        and mid_buffer_steps == 1
+        and len(automatic_trace_ids) == 2
+        and novel_trace_id in automatic_trace_ids
+        and automatic_checkpoint_ids == automatic_trace_ids
     )
     return {
         "format": REPORT_FORMAT,
@@ -161,6 +226,9 @@ def evaluate() -> dict[str, object]:
             "checkpoint_recovery": restored_trace.visits == updated_trace.visits,
             "runtime_trace_id": runtime_trace_id,
             "runtime_checkpoint_trace_ids": list(runtime_checkpoint_ids),
+            "mid_buffer_steps_after_checkpoint": mid_buffer_steps,
+            "automatic_runtime_trace_ids": list(automatic_trace_ids),
+            "automatic_runtime_checkpoint_trace_ids": list(automatic_checkpoint_ids),
         },
         "gate": {
             "passed": gate_passed,
