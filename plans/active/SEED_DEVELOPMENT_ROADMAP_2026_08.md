@@ -542,4 +542,4 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：为已通过生长/连接/holdout Gate 的结构建立资源感知 retention/pruning 闭环：低使用、长期无增益且移除后未见 holdout 不退化时才生成 prune proposal，并经 `DevelopmentState` 预算、checkpoint trial、functional lesion 与 reverse rollback 验证；继续禁止用 action/intent 表决定结构维护。**
+**下一步：将已通过的资源感知 retention/pruning 闭环扩展到独立跨区域连接：只有连接低使用、长期 learning stagnation 且移除后未见 holdout 不退化时才生成 connection prune proposal，并经 `DevelopmentState` 预算、checkpoint trial、functional lesion 与 reverse rollback 验证；继续禁止用 action/intent 表决定结构维护。**

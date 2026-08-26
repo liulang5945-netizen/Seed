@@ -183,6 +183,33 @@ class AdaptiveNeuronNetwork:
             resource_cost=int(resource_cost),
         )
 
+    def propose_region_prune(
+        self,
+        *,
+        region_id: str,
+        evidence_ids: Sequence[str],
+        parent_checkpoint_id: str | None = None,
+        resource_cost: int = 1,
+    ) -> StructuralTopologyProposal:
+        """Describe removal of one region without mutating the live network."""
+
+        region = self._region(region_id)
+        if len(self._regions) <= 1:
+            raise ValueError("adaptive neuron network cannot prune its only region")
+        return StructuralTopologyProposal(
+            proposal_id=f"topology:{region.region_id}:region:prune",
+            substrate_id=region.region_id,
+            target_kind="region",
+            operation="prune",
+            specification=(
+                ("region_id", region.region_id),
+                ("topology_role", "region_prune"),
+            ),
+            evidence_ids=tuple(str(item) for item in evidence_ids),
+            parent_checkpoint_id=parent_checkpoint_id,
+            resource_cost=int(resource_cost),
+        )
+
     @staticmethod
     def _new_connection(
         source: AdaptiveNeuronRegion,
@@ -321,6 +348,43 @@ class AdaptiveNeuronNetwork:
         )
         self._regions[region_id] = region
         self.execution_order = (*self.execution_order, region_id)
+        return True
+
+    @torch.no_grad()
+    def apply_region_prune(
+        self,
+        proposal: StructuralTopologyProposal,
+    ) -> bool:
+        """Remove one region and every owned cross-region projection touching it."""
+
+        if proposal.status != "pending":
+            raise ValueError("only pending region proposals can be applied")
+        if proposal.target_kind != "region" or proposal.operation != "prune":
+            raise ValueError("proposal is not a region prune")
+        if dict(proposal.specification).get("topology_role") != "region_prune":
+            raise ValueError("proposal is not a region prune")
+        specification = dict(proposal.specification)
+        region_id = str(specification.get("region_id", ""))
+        if region_id != proposal.substrate_id:
+            raise ValueError("region identity does not match proposal")
+        if len(self._regions) <= 1:
+            raise ValueError("adaptive neuron network cannot prune its only region")
+        self._region(region_id)
+        removed_connections = tuple(
+            connection_id
+            for connection_id, (source_id, target_id, _) in self._connections.items()
+            if region_id in {source_id, target_id}
+        )
+        for connection_id in removed_connections:
+            self._connections.pop(connection_id)
+            self._connection_resource_costs.pop(connection_id, None)
+            if self._cooperation_learner is not None:
+                self._cooperation_learner.unregister_connection(connection_id)
+        self._regions.pop(region_id)
+        self.execution_order = tuple(
+            item for item in self.execution_order if item != region_id
+        )
+        self._lesioned_regions.discard(region_id)
         return True
 
     def _region_device(self) -> torch.device:

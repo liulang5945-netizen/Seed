@@ -7,7 +7,9 @@ from taiji import (
     AdaptiveNeuronNetwork,
     AdaptiveNeuronRegion,
     AdaptiveStructuralGrowthController,
+    AdaptiveStructuralPruningController,
     StructuralGrowthDynamics,
+    StructuralPruningDynamics,
     TaijiConfig,
     TSKV8Adapter,
 )
@@ -56,6 +58,19 @@ def _controller() -> AdaptiveStructuralGrowthController:
             holdout_transfer_threshold=0.7,
             minimum_resource_state=0.5,
             required_error_steps=2,
+        )
+    )
+
+
+def _pruning_controller() -> AdaptiveStructuralPruningController:
+    return AdaptiveStructuralPruningController(
+        dynamics=StructuralPruningDynamics(
+            ema_rate=1.0,
+            maximum_usage=0.2,
+            minimum_resource_pressure=0.7,
+            maximum_learning_gain=0.1,
+            required_underuse_steps=2,
+            maximum_holdout_regression=0.05,
         )
     )
 
@@ -203,3 +218,84 @@ def test_region_connection_is_blocked_until_holdout_gain_clears_threshold() -> N
     )
     with pytest.raises(ValueError, match="holdout validation"):
         model.commit_cross_region_connection("cortex", connection)
+
+
+def test_region_pruning_is_resource_aware_checkpointed_and_reversible() -> None:
+    model = TSKV8Adapter(_config(budget=2), episode_id="region-pruning")
+    model.attach_adaptive_neuron_network("cortex", _network())
+    connection = model.propose_cross_region_connection(
+        network_id="cortex",
+        source_region_id="source",
+        target_region_id="bottleneck",
+        evidence_ids=("prune:connection",),
+        fan_in=1,
+    )
+    assert model.commit_cross_region_connection("cortex", connection) is True
+    model.attach_structural_pruning_controller(_pruning_controller())
+
+    first = model.propose_region_prune_from_underuse(
+        network_id="cortex",
+        region_id="bottleneck",
+        usage=0.05,
+        resource_pressure=0.9,
+        learning_gain=0.0,
+        evidence_ids=("prune:tick:1",),
+    )
+    proposal = model.propose_region_prune_from_underuse(
+        network_id="cortex",
+        region_id="bottleneck",
+        usage=0.05,
+        resource_pressure=0.9,
+        learning_gain=0.0,
+        evidence_ids=("prune:tick:2",),
+    )
+    assert first is None
+    assert proposal is not None
+    assert model.validate_region_prune_holdout(
+        network_id="cortex",
+        proposal_id=proposal.proposal_id,
+        holdout_inputs=({"source": torch.ones(3)}, {"source": torch.ones(3)}),
+        expected_activities=(
+            {"source": torch.zeros(2)},
+            {"source": torch.zeros(2)},
+        ),
+    ) is True
+    assert model.commit_region_prune("cortex", proposal) is True
+    assert model.neuron_networks[0].region_ids == ("source",)
+    assert model.neuron_networks[0].connection_ids == ()
+    assert model.cognitive_snapshot().development.prune_count == 1
+
+    restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
+    assert restored.structural_pruning_controller is not None
+    assert restored.structural_pruning_controller.total_observations == 2
+    assert restored.rollback_region_prune(proposal.proposal_id) is True
+    assert restored.neuron_networks[0].region_ids == ("source", "bottleneck")
+    assert restored.neuron_networks[0].connection_ids == (connection.substrate_id,)
+    assert restored.rollback_cross_region_connection(connection.proposal_id) is True
+    assert restored.cognitive_snapshot().development.structural_budget == 2
+
+
+def test_region_pruning_requires_learning_stagnation() -> None:
+    model = TSKV8Adapter(_config(budget=2), episode_id="region-pruning-gain")
+    model.attach_adaptive_neuron_network("cortex", _network())
+    model.attach_structural_pruning_controller(_pruning_controller())
+
+    assert model.propose_region_prune_from_underuse(
+        network_id="cortex",
+        region_id="bottleneck",
+        usage=0.05,
+        resource_pressure=0.9,
+        learning_gain=1.0,
+        evidence_ids=("prune:gain:tick:1",),
+    ) is None
+    assert model.propose_region_prune_from_underuse(
+        network_id="cortex",
+        region_id="bottleneck",
+        usage=0.05,
+        resource_pressure=0.9,
+        learning_gain=1.0,
+        evidence_ids=("prune:gain:tick:2",),
+    ) is None
+    state = model.structural_pruning_controller.regions[0]
+    assert state.learning_gain_ema == 1.0
+    assert state.proposal_count == 0
