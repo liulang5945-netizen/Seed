@@ -25,17 +25,20 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 - 删除事件/程序集、对象/关系或 Outcome 证据中的任一类信号都会阻止该概念形成；
 - `Concept` 保存 support event/assembly/object/relation IDs、latent prototype、outcome
   均值与一致性，可经 native checkpoint 恢复；训练前 checkpoint 检查仍是前置条件。
+- `ConceptFormationOrgan` 已从 `TSKV8Adapter` 提取，独立拥有多信号匹配、概念 identity、支持集
+  更新和 checkpoint；adapter 现在只负责把 episodic evidence 接入该器官。
+- 器官现在具有可配置容量、塑性率、强度剪枝和显式 `lesion`；容量曲线在 1/2/4 个槽位下
+  分别保留 1/2/4 个概念，checkpoint 与 lesion 对照均通过。
 
 ## 边界与已知限制
 
-这只是数据驱动的临时形成 Gate，不等同于开放域语义、符号知识或通用理解。当前实现暂时
-位于 `TSKV8Adapter`，用于证明真实 runtime lineage；不得继续在 adapter 中无界增加认知
-逻辑。下一步应把形成、匹配、更新和证据索引提取到 Taiji 自有语义器官/注册表，使其拥有
-独立 checkpoint、容量策略、可塑性和 lesion 接口。
+这只是数据驱动的临时形成 Gate，不等同于开放域语义、符号知识或通用理解。形成、匹配、
+更新和证据索引现在由 Taiji 自有 `ConceptFormationOrgan`/注册表负责；`TSKV8Adapter` 只
+保留兼容 API 与接线，不再承载概念形成规则。器官已有独立 checkpoint、容量治理、塑性更新、
+剪枝和 lesion；这些控制仍只证明注册表行为，不等于概念已经被下游决策使用。
 
 ## 下一步唯一入口
 
-提取 `ConceptFormationOrgan`（名称可在实现时确定）并让 adapter 只负责调用边界：该器官
-接收版本化经历证据，产生稳定的 concept identity、支持集更新和可回滚 checkpoint；随后用
-跨 schema/未见任务迁移、容量/干扰曲线和三类信号 lesion 重新验收。不得把扩大参数量或
-增加固定标签表作为替代。
+把 `ConceptFormationOrgan` 接入语义检索/规划的真实消费路径，证明跨 schema、未见任务迁移
+与容量干扰变化能影响下游行为，并保留三类信号 lesion 和 checkpoint 控制；不得把扩大参数
+量或增加固定标签表作为替代。

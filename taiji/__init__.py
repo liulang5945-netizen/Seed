@@ -16,6 +16,10 @@ from .assembly_evaluation import (
     AssemblyRelationEvaluator,
 )
 from .assembly_relations import AssemblyRelationCorpus, AssemblyRelationExample
+from .concept_formation import (
+    CONCEPT_FORMATION_CHECKPOINT_FORMAT,
+    ConceptFormationOrgan,
+)
 from .config import CapacityPolicy, PerceptionConfig, TaijiConfig
 from .content_selection import (
     CONTENT_SELECTION_CHECKPOINT_FORMAT,
@@ -190,6 +194,8 @@ __all__ = [
     "AssemblyRelationEvaluationConfig",
     "AssemblyRelationEvaluator",
     "CapacityPolicy",
+    "ConceptFormationOrgan",
+    "CONCEPT_FORMATION_CHECKPOINT_FORMAT",
     "ContentCandidate",
     "ContentSelectionContext",
     "ContentSelectionDecision",
