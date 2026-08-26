@@ -159,3 +159,7 @@ maintenance cycle 也已具备显式 dependency/conflict 判定：依赖按拓�
 下游，同一 substrate 的竞争变更逐项 `failed_closed`，不同 neuron identity 的 `add` 可按依赖
 连续出生。下一步转为建立三层以上自适应区域的规模化结构维护 Gate，覆盖跨区域 route、混合
 add/split/prune、资源竞争、checkpoint continuation 和拓扑不变量。
+三层规模化 Gate 已通过：`source→relay→target` route 在 connected split 后正确保留并展开受影响
+边，standalone neuron `add` 与 network split 可在同一 maintenance cycle 中提交，checkpoint、预算
+和 rollback 均通过。下一步转为对 native sparse neuron/network runtime 做 CPU/CUDA 实际热点剖析，
+建立跨设备 checkpoint 恢复与数值一致性基线，再决定是否需要 fused/sparse kernel。

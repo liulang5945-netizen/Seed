@@ -61,6 +61,22 @@ def _network() -> AdaptiveNeuronNetwork:
     )
 
 
+def _three_region_network() -> AdaptiveNeuronNetwork:
+    def make(region_id: str) -> AdaptiveNeuronRegion:
+        return AdaptiveNeuronRegion(
+            region_id=region_id,
+            input_dim=3,
+            unit_ids=(f"{region_id}.u0", f"{region_id}.u1"),
+            fan_in=2,
+            generator=torch.Generator().manual_seed(len(region_id) + 11),
+        )
+
+    return AdaptiveNeuronNetwork(
+        (make("source"), make("relay"), make("target")),
+        execution_order=("source", "relay", "target"),
+    )
+
+
 def test_runtime_neuron_ledger_consumes_budget_and_rolls_back_native() -> None:
     model = TSKV8Adapter(_config(budget=1), episode_id="neuron-ledger")
     region = _region()
@@ -291,6 +307,126 @@ def test_neuron_birth_candidates_can_grow_one_population_in_dependency_order() -
     assert model.rollback_structural_candidate(second_proposal.candidate_id) is True
     assert model.rollback_structural_candidate(first_candidate.candidate_id) is True
     assert model.neuron_regions[0].unit_ids == ("u0", "u1")
+
+
+def test_three_region_maintenance_preserves_routes_across_mixed_growth() -> None:
+    model = TSKV8Adapter(_config(budget=6), episode_id="three-region-maintenance")
+    network = _three_region_network()
+    model.attach_adaptive_neuron_network("cortex", network)
+    source_relay = model.propose_cross_region_connection(
+        network_id="cortex",
+        source_region_id="source",
+        target_region_id="relay",
+        evidence_ids=("runtime:source-relay",),
+        fan_in=1,
+    )
+    relay_target = model.propose_cross_region_connection(
+        network_id="cortex",
+        source_region_id="relay",
+        target_region_id="target",
+        evidence_ids=("runtime:relay-target",),
+        fan_in=1,
+    )
+    assert model.commit_cross_region_connection("cortex", source_relay) is True
+    assert model.commit_cross_region_connection("cortex", relay_target) is True
+    original_region_ids = network.region_ids
+    original_connection_ids = network.connection_ids
+    model.attach_cross_region_cooperation("cortex", CrossRegionCooperationLearner())
+    model.attach_structural_growth_controller(
+        AdaptiveStructuralGrowthController(
+            dynamics=StructuralGrowthDynamics(
+                ema_rate=1.0,
+                error_threshold=0.0,
+                holdout_transfer_threshold=0.0,
+                minimum_resource_state=0.0,
+                required_error_steps=1,
+            )
+        )
+    )
+    first = model.step_cross_region_network(
+        "cortex",
+        {"source": torch.ones(3)},
+        max_connections=2,
+    )
+    model.step_cross_region_network(
+        "cortex",
+        {"source": torch.ones(3)},
+        expected_activities=first,
+        holdout=True,
+        max_connections=2,
+    )
+
+    standalone = _region()
+    model.attach_adaptive_neuron_region(standalone)
+    standalone_first = model.step_adaptive_neuron_region(
+        standalone.region_id,
+        torch.ones(5),
+    )
+    model.step_adaptive_neuron_region(
+        standalone.region_id,
+        torch.ones(5),
+        expected_activity=standalone_first,
+        holdout=True,
+    )
+    split_candidate = next(
+        item
+        for item in model.structural_proposal_candidates
+        if item.network_id == "cortex" and item.operation == "split"
+    )
+    add_candidate = next(
+        item
+        for item in model.structural_proposal_candidates
+        if item.network_id == "standalone:adaptive.cortex"
+        and item.target_kind == "neuron"
+    )
+    add_proposal = model.propose_neuron_add(
+        region_id=standalone.region_id,
+        unit_id=dict(add_candidate.specification)["unit_id"],
+        evidence_ids=add_candidate.evidence_ids,
+    )
+    add_trial = AdaptiveNeuronRegion.from_payload(
+        standalone.to_payload(),
+        generator=torch.Generator().manual_seed(0),
+    )
+    add_trial.apply_topology_proposal(
+        add_proposal,
+        generator=torch.Generator().manual_seed(0),
+    )
+    add_input = torch.zeros(5)
+    add_input[add_trial.incoming.pre_index[-1]] = torch.sign(
+        add_trial.incoming.edge_weight[-1]
+    )
+    add_expected = add_trial.step(add_input)
+
+    results = model.run_structural_maintenance_cycle(
+        candidate_ids=(add_candidate.candidate_id, split_candidate.candidate_id),
+        holdout_inputs_by_candidate={
+            add_candidate.candidate_id: (add_input,),
+            split_candidate.candidate_id: ({"source": torch.ones(3)},),
+        },
+        expected_activities_by_candidate={
+            add_candidate.candidate_id: (add_expected,),
+            split_candidate.candidate_id: (first,),
+        },
+    )
+    assert all(item.status == "committed" for item in results)
+    assert model.neuron_regions[0].unit_count == 3
+    assert len(model.neuron_networks[0].region_ids) == 4
+    assert model.neuron_networks[0].connection_ids == (
+        "connection:relay->target",
+        "connection:source->relay",
+        "connection:source.split.1->relay",
+    )
+
+    restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
+    assert restored.neuron_regions[0].unit_count == 3
+    assert len(restored.neuron_networks[0].region_ids) == 4
+    assert restored.neuron_networks[0].connection_ids == model.neuron_networks[0].connection_ids
+    assert restored.rollback_structural_candidate(split_candidate.candidate_id) is True
+    assert restored.rollback_structural_candidate(add_candidate.candidate_id) is True
+    assert restored.neuron_regions[0].unit_count == 2
+    assert restored.neuron_networks[0].region_ids == original_region_ids
+    assert restored.neuron_networks[0].connection_ids == original_connection_ids
 
 
 def test_structural_maintenance_cycle_fails_closed_on_dependency_and_conflict() -> None:

@@ -559,3 +559,7 @@ P4 的最小真实经历边界已落地：
 **已完成：maintenance cycle 已具备显式 candidate dependency/conflict 判定；反向输入仍按依赖拓扑顺序执行，依赖失败会阻断下游，同一 substrate 的竞争变更全部 `failed_closed`；不同 neuron identity 的 `add` 可并存并按依赖连续出生，队列只对同一目标 unit 去重。**
 
 **当前唯一下一步：建立三层以上自适应区域的规模化结构维护 Gate，覆盖跨区域 route、混合 add/split/prune、资源竞争、checkpoint continuation 和拓扑不变量。**
+
+**已完成：三层自适应区域规模化结构维护 Gate 已通过；`source→relay→target` 显式 route 在 connected split 后保留并按受影响边展开，standalone neuron `add` 可与 network split 混合进入同一 maintenance cycle，checkpoint continuation、资源预算和双向 rollback 均通过。**
+
+**当前唯一下一步：对已落地的 native sparse neuron/network runtime 做 CPU/CUDA 实际热点剖析，建立跨设备 checkpoint 恢复与数值一致性基线，再决定是否需要 fused/sparse kernel。**

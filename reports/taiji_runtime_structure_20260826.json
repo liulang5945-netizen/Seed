@@ -24,6 +24,20 @@
     "direct_add_checkpoint": true,
     "dependency_fail_closed": true,
     "conflict_fail_closed": true,
+    "multi_region_mixed_maintenance": true,
+    "multi_region_topology_after_commit": [
+      "source",
+      "relay",
+      "target",
+      "source.split.1"
+    ],
+    "multi_region_connections_after_commit": [
+      "connection:relay->target",
+      "connection:source->relay",
+      "connection:source.split.1->relay"
+    ],
+    "multi_region_checkpoint": true,
+    "multi_region_rollback": true,
     "route_evidence_count": 2,
     "checkpoint_continuation": true,
     "checkpoint_checks": {
@@ -62,9 +76,10 @@
       "direct_add_rollback": true,
       "direct_add_checkpoint": true,
       "dependency_fail_closed": true,
-      "conflict_fail_closed": true
+      "conflict_fail_closed": true,
+      "multi_region_mixed_maintenance": true
     },
-    "criterion": "real native network ticks must emit checkpointable activity, prediction-error, learning-gain and resource observations; attached structural organs and route credit must continue across checkpoint, while topology remains unchanged until a separate holdout/budget/trial/rollback transaction commits it; standalone native neuron ticks must use the same governed birth path; candidate dependencies must execute in order and candidate conflicts must fail closed"
+    "criterion": "real native network ticks must emit checkpointable activity, prediction-error, learning-gain and resource observations; attached structural organs and route credit must continue across checkpoint, while topology remains unchanged until a separate holdout/budget/trial/rollback transaction commits it; standalone native neuron ticks must use the same governed birth path; candidate dependencies must execute in order and candidate conflicts must fail closed; a three-region network must preserve unaffected routes while connected split and standalone add are maintained together"
   },
   "boundary": "This gate proves runtime evidence ownership and checkpoint continuation. It does not claim that a tick may bypass holdout validation, resource budget, trial checkpoint or reverse rollback to mutate live topology."
 }
