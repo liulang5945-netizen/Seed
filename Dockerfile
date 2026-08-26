@@ -42,12 +42,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl \
 RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
 
 # 拷贝打包元数据并安装项目（legacy extras 提供 FastAPI/uvicorn 等 API 依赖）
+# 下面的目录清单必须与 pyproject.toml 的 [tool.setuptools.packages.find].include
+# 保持一致：packages.find 对缺失目录是静默跳过的，漏拷一个包 pip install 依然成功，
+# 缺失只会在容器启动时以 ModuleNotFoundError 暴露（seed_platform 曾因此漏拷）。
 COPY pyproject.toml README.md ./
 COPY seed/ ./seed/
 COPY taiji/ ./taiji/
+COPY seed_platform/ ./seed_platform/
 COPY neuroplex/ ./neuroplex/
 COPY api/ ./api/
 RUN pip install -e ".[legacy]"
+
+# 构建期导入断言：把「镜像内缺包」从运行时 smoke 前移到 build 层，漏拷贝即刻失败。
+RUN python -c "import api.app"
 
 # 拷贝前端构建产物（后端以此为静态资源）
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
