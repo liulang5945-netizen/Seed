@@ -58,8 +58,10 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 - online branch birth Gate 已通过：`ConceptFormationOrgan` 接受不命中已有 trace 的连续真实
   `WorldTransition` 链，形成带稳定 `trace_id` 的新分支；重复链不产生副本，新分支立即可按
   after-state 检索，负 outcome/高 prediction error 会降低其 credit 而不抹掉 identity，
-  `TSKV8Adapter.grow_online_concept_branch` 发布后 native checkpoint 仍能恢复该分支。该 Gate
-  报告为 `reports/taiji_concept_online_birth_20260826.json`。
+  `TSKV8Adapter.grow_online_concept_branch` 发布后 native checkpoint 仍能恢复该分支；
+  `settle_action` 的 episode buffer 可在 terminal 时自动触发 branch birth，中途 checkpoint
+  恢复 1 步 buffer 后继续完成同一分支。该 Gate 报告为
+  `reports/taiji_concept_online_birth_20260826.json`。
 
 ## 边界与已知限制
 
@@ -70,7 +72,7 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 
 ## 下一步唯一入口
 
-把在线 branch birth 从显式链路接入 `settle_action` 的 episode buffer：真实运行中按 concept
-上下文收集连续 transition，在 terminal/边界时一次形成新 trace，避免每一步产生孤立单步
-分支；要求 buffer、branch birth、失败 feedback、容量 pruning 与 native checkpoint continuation
-均可恢复，且已有分支不因一次未命中而被覆盖；继续禁止固定 action/intent 表。
+为多 concept 同时激活的场景建立 branch attribution：按 concept match confidence、当前
+after-state 和 prediction error 选择唯一 owner，禁止同一新链被无条件复制到多个 Concept；
+要求 owner lesion、低置信度和跨 concept 干扰均 fail-closed，同时保留 episode buffer、
+branch birth、容量 pruning 与 native checkpoint continuation；继续禁止固定 action/intent 表。

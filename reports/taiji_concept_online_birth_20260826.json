@@ -17,6 +17,15 @@
     "runtime_checkpoint_trace_ids": [
       "trace:a6ef9dd6fed3f766",
       "trace:403d012d86650dd8"
+    ],
+    "mid_buffer_steps_after_checkpoint": 1,
+    "automatic_runtime_trace_ids": [
+      "trace:a6ef9dd6fed3f766",
+      "trace:403d012d86650dd8"
+    ],
+    "automatic_runtime_checkpoint_trace_ids": [
+      "trace:a6ef9dd6fed3f766",
+      "trace:403d012d86650dd8"
     ]
   },
   "gate": {
