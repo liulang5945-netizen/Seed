@@ -165,6 +165,45 @@ class CrossRegionCooperationLearner:
             selection_count=source.selection_count,
         )
 
+    def merge_connections(
+        self,
+        source_ids: Sequence[str],
+        target_id: str,
+        *,
+        resource_cost: float,
+    ) -> None:
+        """Aggregate route evidence when several projections become one route."""
+
+        old_ids = tuple(str(item) for item in source_ids)
+        if not old_ids or len(set(old_ids)) != len(old_ids):
+            raise ValueError("cross-region merge requires unique source routes")
+        routes = tuple(self._route(connection_id) for connection_id in old_ids)
+        cost = float(resource_cost)
+        if not math.isfinite(cost) or cost <= 0.0:
+            raise ValueError("cross-region merged resource_cost must be positive")
+        total = sum(route.evidence_count for route in routes)
+        weights = (
+            tuple(route.evidence_count for route in routes)
+            if total > 0
+            else tuple(1 for _ in routes)
+        )
+        denominator = float(sum(weights))
+        self._routes[str(target_id)] = CrossRegionRouteState(
+            connection_id=str(target_id),
+            resource_cost=cost,
+            prediction_error=sum(route.prediction_error * weight for route, weight in zip(routes, weights, strict=True))
+            / denominator,
+            holdout_transfer=sum(route.holdout_transfer * weight for route, weight in zip(routes, weights, strict=True))
+            / denominator,
+            resource_state=sum(route.resource_state * weight for route, weight in zip(routes, weights, strict=True))
+            / denominator,
+            evidence_count=sum(route.evidence_count for route in routes),
+            selection_count=sum(route.selection_count for route in routes),
+        )
+        for connection_id in old_ids:
+            if connection_id != str(target_id):
+                self._routes.pop(connection_id, None)
+
     def resource_cost(self, connection_id: str) -> float:
         """Return the declared structural cost for one registered route."""
 

@@ -127,5 +127,7 @@ connection/region lesion 与 checkpoint continuation；在线 credit loop 已接
 `reports/taiji_region_split_20260826.json`：父区域身份和单位身份保持可追溯，局部状态迁移、
 未见 holdout、checkpoint continuation、预算和 reverse rollback 均通过；有跨区连接的区域会
 fail-closed。connected split 的连接迁移与 route learner lineage 已补齐并通过同一报告；当前
-下一步是 merge 的冗余证据、连接迁移、未见 holdout、预算和 reverse rollback 生命周期治理，
-继续禁止按固定 action/intent 表决定结构维护。
+merge 的冗余证据、连接迁移、未见 holdout、预算和 reverse rollback 生命周期治理已通过，报告为
+`reports/taiji_region_merge_20260826.json`：兼容区域和外部 route 的单位/state/evidence 聚合、
+内部连接 fail-closed、checkpoint continuation、预算与 reverse rollback 均有覆盖。当前下一步
+转为将四类结构 proposal 接入真实 runtime tick 的活动、预测误差和资源观测。

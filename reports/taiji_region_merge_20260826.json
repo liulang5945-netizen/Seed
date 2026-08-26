@@ -1,0 +1,72 @@
+{
+  "format": "taiji-region-merge-v1",
+  "proposal": {
+    "version": 1,
+    "proposal_id": "topology:source+bottleneck:merge",
+    "substrate_id": "source",
+    "target_kind": "region",
+    "operation": "merge",
+    "specification": {
+      "connection_merges": [
+        [
+          "connection:source->sink",
+          [
+            "connection:source->sink",
+            "connection:bottleneck->sink"
+          ]
+        ]
+      ],
+      "merged_unit_ids": [
+        "source.u0",
+        "source.u1",
+        "bottleneck.u0",
+        "bottleneck.u1"
+      ],
+      "region_ids": [
+        "source",
+        "bottleneck"
+      ],
+      "retained_region_id": "source",
+      "topology_role": "region_merge"
+    },
+    "requested_units": 1,
+    "resource_cost": 1,
+    "evidence_ids": [
+      "merge:tick:2"
+    ],
+    "parent_checkpoint_id": "region-merge-signal:merge:source+bottleneck:1",
+    "status": "pending",
+    "validation_score": 0.0
+  },
+  "metrics": {
+    "required_redundancy_steps": 2,
+    "proposal_emitted_after_steps": 2,
+    "retained_region_id": "source",
+    "absorbed_region_id": "bottleneck",
+    "holdout_validation_score": 1.0,
+    "holdout_validated": true,
+    "region_ids_after_merge": [
+      "source",
+      "sink"
+    ],
+    "connection_ids_after_merge": [
+      "connection:source->sink"
+    ],
+    "merged_route_evidence_count": 2,
+    "checkpoint_continuation": true,
+    "rollback_merge": true,
+    "rollback_connections": true,
+    "region_ids_after_rollback": [
+      "source",
+      "bottleneck",
+      "sink"
+    ],
+    "internal_connection_rejected": true,
+    "rejected_without_budget": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "persistent redundancy evidence must emit a region merge proposal; compatible unit identities and local state must be combined, external sparse connections and route learner evidence must aggregate explicitly, unseen holdout regression must stay within threshold, checkpoint and reverse rollback must work, internal connections and zero budget must fail closed"
+  },
+  "boundary": "This gate proves controlled compatible-region merge with explicit external-route aggregation; it does not claim unrestricted self-evolution, automatic semantic invention, or general intelligence."
+}

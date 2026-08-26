@@ -620,8 +620,10 @@ taiji/
 > isolated-region split Gate 已通过 `reports/taiji_region_split_20260826.json`：稳定单位分区、父
 > 区域身份保留、局部状态迁移、holdout/checkpoint/预算/reverse rollback 均有证据；已有跨区连接
 > 的 split 明确 fail-closed；connected split 的显式稀疏连接迁移与 route learner lineage 已由同一
-> report 通过。下一入口是 merge 的冗余证据、连接迁移、holdout、预算和可逆生命周期治理，继续
-> 禁止按 action/intent 表决定结构维护。
+> report 通过。merge Gate 也已通过 `reports/taiji_region_merge_20260826.json`：兼容区域单位/state
+> 与外部 route 可显式聚合，内部连接、holdout 失败、预算不足均 fail-closed，checkpoint 与
+> rollback 均覆盖。下一入口是将 growth/pruning/split/merge proposal 接入真实 runtime tick 的
+> 活动、预测误差和资源观测，形成自动维护闭环，继续禁止按 action/intent 表决定结构维护。
 
 本步设计已收敛并通过 Gate：新增独立的 `CrossRegionCooperationLearner`，为每条显式跨区连接维护
 可 checkpoint 的 prediction-error EMA、holdout-transfer EMA、resource-state EMA、证据次数

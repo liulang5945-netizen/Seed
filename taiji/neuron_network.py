@@ -270,6 +270,64 @@ class AdaptiveNeuronNetwork:
             resource_cost=int(resource_cost),
         )
 
+    def propose_region_merge(
+        self,
+        *,
+        region_ids: Sequence[str],
+        evidence_ids: Sequence[str],
+        parent_checkpoint_id: str | None = None,
+        resource_cost: int = 1,
+    ) -> StructuralTopologyProposal:
+        """Describe a two-region merge with explicit external route aggregation."""
+
+        selected = tuple(str(item) for item in region_ids)
+        if len(selected) != 2 or len(set(selected)) != 2:
+            raise ValueError("region merge requires two distinct regions")
+        first = self._region(selected[0])
+        second = self._region(selected[1])
+        if first.input_dim != second.input_dim or first.fan_in != second.fan_in:
+            raise ValueError("region merge requires matching input dimensions and fan_in")
+        if first.input_source_id != second.input_source_id:
+            raise ValueError("region merge requires matching input source identities")
+        if first.dynamics.to_payload() != second.dynamics.to_payload():
+            raise ValueError("region merge requires matching region dynamics")
+        if selected[0] in self._lesioned_regions or selected[1] in self._lesioned_regions:
+            raise ValueError("region merge cannot absorb a lesioned region")
+        merge_set = set(selected)
+        for source_id, target_id, _ in self._connections.values():
+            if source_id in merge_set and target_id in merge_set:
+                raise ValueError("region merge cannot absorb an internal cross-region connection")
+        merged_unit_ids = first.unit_ids + second.unit_ids
+        if len(set(merged_unit_ids)) != len(merged_unit_ids):
+            raise ValueError("region merge requires globally unique unit identities")
+        connection_merges: dict[str, list[str]] = {}
+        for connection_id, (source_id, target_id, _) in self._connections.items():
+            if source_id not in merge_set and target_id not in merge_set:
+                continue
+            merged_source = first.region_id if source_id in merge_set else source_id
+            merged_target = first.region_id if target_id in merge_set else target_id
+            new_connection_id = f"connection:{merged_source}->{merged_target}"
+            connection_merges.setdefault(new_connection_id, []).append(connection_id)
+        return StructuralTopologyProposal(
+            proposal_id=f"topology:{first.region_id}+{second.region_id}:merge",
+            substrate_id=first.region_id,
+            target_kind="region",
+            operation="merge",
+            specification=(
+                ("region_ids", selected),
+                ("retained_region_id", first.region_id),
+                ("merged_unit_ids", merged_unit_ids),
+                ("connection_merges", tuple(
+                    (new_id, tuple(old_ids))
+                    for new_id, old_ids in connection_merges.items()
+                )),
+                ("topology_role", "region_merge"),
+            ),
+            evidence_ids=tuple(str(item) for item in evidence_ids),
+            parent_checkpoint_id=parent_checkpoint_id,
+            resource_cost=int(resource_cost),
+        )
+
     def propose_connection_prune(
         self,
         *,
@@ -722,6 +780,249 @@ class AdaptiveNeuronNetwork:
         self._connections.update(migrated_connections)
         self._connection_resource_costs.update(migrated_costs)
         self._lesioned_connections.update(migrated_lesions)
+        return True
+
+    @staticmethod
+    @torch.no_grad()
+    def _merge_regions(
+        first: AdaptiveNeuronRegion,
+        second: AdaptiveNeuronRegion,
+        *,
+        generator: torch.Generator,
+    ) -> AdaptiveNeuronRegion:
+        """Combine two compatible regions while retaining both unit coordinate sets."""
+
+        merged_unit_ids = first.unit_ids + second.unit_ids
+        recurrent_fan_in = (
+            None
+            if first.recurrent is None
+            else max(
+                first.recurrent.row_fan_in,
+                1 if second.recurrent is None else second.recurrent.row_fan_in,
+            )
+        )
+        merged = AdaptiveNeuronRegion(
+            region_id=first.region_id,
+            input_dim=first.input_dim,
+            unit_ids=merged_unit_ids,
+            fan_in=first.fan_in,
+            generator=generator,
+            input_source_id=first.input_source_id,
+            dynamics=first.dynamics,
+            recurrent_fan_in=recurrent_fan_in,
+            device=first.device,
+        )
+        incoming_rows = first.incoming.out_features + second.incoming.out_features
+        if incoming_rows != merged.unit_count:
+            raise ValueError("region merge incoming dimensions are inconsistent")
+        merged.incoming.pre_index[: first.unit_count].copy_(first.incoming.pre_index)
+        merged.incoming.edge_weight[: first.unit_count].copy_(first.incoming.edge_weight)
+        merged.incoming.pre_index[first.unit_count :].copy_(second.incoming.pre_index)
+        merged.incoming.edge_weight[first.unit_count :].copy_(second.incoming.edge_weight)
+        merged.membrane = torch.cat((first.membrane, second.membrane)).to(merged.device)
+        merged.activity = torch.cat((first.activity, second.activity)).to(merged.device)
+        merged.trace = torch.cat((first.trace, second.trace)).to(merged.device)
+        merged.threshold = torch.cat((first.threshold, second.threshold)).to(merged.device)
+        if merged.recurrent is not None:
+            merged.recurrent.edge_weight.zero_()
+            for source_region, offset in ((first, 0), (second, first.unit_count)):
+                if source_region.recurrent is None:
+                    continue
+                for row in range(source_region.unit_count):
+                    new_row = offset + row
+                    new_slot = 0
+                    for slot in range(source_region.recurrent.row_fan_in):
+                        if new_slot >= merged.recurrent.row_fan_in:
+                            break
+                        old_pre = int(source_region.recurrent.pre_index[row, slot].item())
+                        merged.recurrent.pre_index[new_row, new_slot] = offset + old_pre
+                        merged.recurrent.edge_weight[new_row, new_slot] = (
+                            source_region.recurrent.edge_weight[row, slot]
+                        )
+                        new_slot += 1
+        merged._lesioned_units = first._lesioned_units | second._lesioned_units
+        return merged
+
+    @staticmethod
+    @torch.no_grad()
+    def _merge_connection_projection(
+        old_connections: Sequence[tuple[str, str, SparseSynapses]],
+        *,
+        source_region: AdaptiveNeuronRegion,
+        target_region: AdaptiveNeuronRegion,
+        source_regions: Mapping[str, AdaptiveNeuronRegion],
+        target_regions: Mapping[str, AdaptiveNeuronRegion],
+        generator: torch.Generator,
+    ) -> SparseSynapses:
+        """Aggregate old sparse supports into one explicit merged projection."""
+
+        rows: dict[int, dict[int, float]] = {}
+        for source_id, target_id, connection in old_connections:
+            old_source = source_regions[source_id]
+            old_target = target_regions[target_id]
+            source_index = {
+                unit_id: index for index, unit_id in enumerate(source_region.unit_ids)
+            }
+            target_index = {
+                unit_id: index for index, unit_id in enumerate(target_region.unit_ids)
+            }
+            for old_target_index, target_unit_id in enumerate(old_target.unit_ids):
+                new_target_index = target_index[target_unit_id]
+                row = rows.setdefault(new_target_index, {})
+                for slot in range(connection.row_fan_in):
+                    old_source_index = int(connection.pre_index[old_target_index, slot].item())
+                    source_unit_id = old_source.unit_ids[old_source_index]
+                    new_source_index = source_index[source_unit_id]
+                    row[new_source_index] = row.get(new_source_index, 0.0) + float(
+                        connection.edge_weight[old_target_index, slot].item()
+                    )
+        fan_in = max((len(row) for row in rows.values()), default=1)
+        merged = SparseSynapses(
+            target_region.unit_count,
+            source_region.unit_count,
+            fan_in,
+            generator=generator,
+            init_scale=target_region.dynamics.weight_init_scale,
+            max_weight_norm=max(
+                connection.max_weight_norm for _, _, connection in old_connections
+            ),
+            device=target_region.device,
+        )
+        merged.edge_weight.zero_()
+        for row_index, supports in rows.items():
+            for slot, (source_index, weight) in enumerate(sorted(supports.items())):
+                if slot >= merged.row_fan_in:
+                    break
+                merged.pre_index[row_index, slot] = source_index
+                merged.edge_weight[row_index, slot] = weight
+        return merged
+
+    @torch.no_grad()
+    def apply_region_merge(
+        self,
+        proposal: StructuralTopologyProposal,
+        *,
+        generator: torch.Generator,
+    ) -> bool:
+        """Merge compatible regions and aggregate every affected external route."""
+
+        if proposal.status != "pending":
+            raise ValueError("only pending topology proposals can be applied")
+        if proposal.target_kind != "region" or proposal.operation != "merge":
+            raise ValueError("proposal is not a region merge")
+        specification = dict(proposal.specification)
+        if specification.get("topology_role") != "region_merge":
+            raise ValueError("proposal is not a region merge")
+        selected = tuple(str(item) for item in specification.get("region_ids", ()))
+        if len(selected) != 2 or proposal.substrate_id != selected[0]:
+            raise ValueError("region merge identities do not match proposal")
+        first = self._region(selected[0])
+        second = self._region(selected[1])
+        expected_units = tuple(str(item) for item in specification.get("merged_unit_ids", ()))
+        if expected_units != first.unit_ids + second.unit_ids:
+            raise ValueError("region merge unit identities have drifted")
+        if first.input_dim != second.input_dim or first.fan_in != second.fan_in:
+            raise ValueError("region merge dimensions have drifted")
+        merge_set = set(selected)
+        if first.region_id in self._lesioned_regions or second.region_id in self._lesioned_regions:
+            raise ValueError("region merge cannot absorb a lesioned region")
+        for source_id, target_id, _ in self._connections.values():
+            if source_id in merge_set and target_id in merge_set:
+                raise ValueError("region merge cannot absorb an internal cross-region connection")
+        payload = specification.get("connection_merges", ())
+        if not isinstance(payload, (tuple, list)):
+            raise ValueError("region merge connection migrations must be a sequence")
+        expected_groups: dict[str, tuple[str, ...]] = {}
+        for item in payload:
+            if not isinstance(item, (tuple, list)) or len(item) != 2:
+                raise ValueError("region merge connection migration must be a pair")
+            new_id = str(item[0])
+            old_ids = tuple(str(old_id) for old_id in item[1])
+            if not new_id or not old_ids or len(set(old_ids)) != len(old_ids):
+                raise ValueError("region merge connection migration identities are invalid")
+            expected_groups[new_id] = old_ids
+        actual_groups: dict[str, list[str]] = {}
+        actual_connections = dict(self._connections)
+        for connection_id, (source_id, target_id, _) in actual_connections.items():
+            if source_id not in merge_set and target_id not in merge_set:
+                continue
+            merged_source = first.region_id if source_id in merge_set else source_id
+            merged_target = first.region_id if target_id in merge_set else target_id
+            actual_groups.setdefault(
+                f"connection:{merged_source}->{merged_target}",
+                [],
+            ).append(connection_id)
+        if {key: tuple(value) for key, value in actual_groups.items()} != expected_groups:
+            raise ValueError("region merge connection migrations do not match topology")
+        merged_region = self._merge_regions(first, second, generator=generator)
+        migrated_connections: dict[str, tuple[str, str, SparseSynapses]] = {}
+        migrated_costs: dict[str, float] = {}
+        migrated_lesions: set[str] = set()
+        for new_id, old_ids in expected_groups.items():
+            old_entries = tuple(actual_connections[old_id] for old_id in old_ids)
+            source_id = first.region_id if old_entries[0][0] in merge_set else old_entries[0][0]
+            target_id = first.region_id if old_entries[0][1] in merge_set else old_entries[0][1]
+            source_region = (
+                merged_region
+                if source_id == first.region_id
+                else self._region(source_id)
+            )
+            target_region = (
+                merged_region
+                if target_id == first.region_id
+                else self._region(target_id)
+            )
+            source_regions = {
+                old_source_id: self._region(old_source_id)
+                for old_source_id, _, _ in old_entries
+            }
+            target_regions = {
+                old_target_id: self._region(old_target_id)
+                for _, old_target_id, _ in old_entries
+            }
+            projection = self._merge_connection_projection(
+                tuple((old_source_id, old_target_id, connection) for old_source_id, old_target_id, connection in old_entries),
+                source_region=source_region,
+                target_region=target_region,
+                source_regions=source_regions,
+                target_regions=target_regions,
+                generator=generator,
+            )
+            migrated_connections[new_id] = (source_id, target_id, projection)
+            migrated_costs[new_id] = max(
+                self._connection_resource_costs.get(old_id, 1.0)
+                for old_id in old_ids
+            )
+            if all(old_id in self._lesioned_connections for old_id in old_ids):
+                migrated_lesions.add(new_id)
+            if self._cooperation_learner is not None:
+                self._cooperation_learner.merge_connections(
+                    old_ids,
+                    new_id,
+                    resource_cost=migrated_costs[new_id],
+                )
+        for connection_id in actual_groups.values():
+            for old_id in connection_id:
+                self._connections.pop(old_id)
+                self._connection_resource_costs.pop(old_id, None)
+                self._lesioned_connections.discard(old_id)
+        self._connections.update(migrated_connections)
+        self._connection_resource_costs.update(migrated_costs)
+        self._lesioned_connections.update(migrated_lesions)
+        merged_regions: dict[str, AdaptiveNeuronRegion] = {}
+        for region_id, region in self._regions.items():
+            if region_id == first.region_id:
+                merged_regions[region_id] = merged_region
+            elif region_id == second.region_id:
+                continue
+            else:
+                merged_regions[region_id] = region
+        self._regions = merged_regions
+        self.execution_order = tuple(
+            region_id
+            for region_id in self.execution_order
+            if region_id != second.region_id
+        )
         return True
 
     @torch.no_grad()
