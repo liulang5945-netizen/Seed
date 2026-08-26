@@ -619,8 +619,12 @@ P4 的最小真实经历边界已落地：
 - 实测 `gh repo view --json` 确认：仓库自 2026-07-15 公开，但 `description=""`、`repositoryTopics=null`、`homepageUrl=""`、`usesCustomOpenGraphImage=false`，1 star / 0 fork / 0 watcher。GitHub 用于分发流量的字段全空，这不是"设计不佳"而是该层未填写。
 - `repositoryTopics=null` 的后果是**缺席全部 topic 浏览页**（不是排名靠后，是不在列表里）；`description=""` 则把搜索匹配面全部推给 README 全文，而仓库名 `Seed` 是高冲突通用词，几乎不可能靠名字被检索到。
 - topic 选择必须按**真实仓库规模**取中间区间，不能取最热。实测 `gh api search/repositories?q=topic:<t>` 计数：`local-learning` 25、`sparse-neural-networks` 43、`predictive-coding` 116、`episodic-memory` 140、`hebbian-learning` 148、`neuromorphic-computing` 328、`world-models` 551、`computational-neuroscience` 728、`cognitive-architecture` 784、`online-learning` 888、`pytorch` 59222、`artificial-intelligence` 47251、`deep-learning` 104237、`machine-learning` 235783。在 116 个仓库的页面里会被看到，在 235783 个里等于不存在，故 `machine-learning` 不贴；`spiking-neural-networks`（597）虽在好区间也不贴，因为内核不是脉冲网络，贴上是误导。禁贴 `agi`——README 自身声明 `not an AGI claim`，贴上即自相矛盾。
-- **令牌能力边界（重要）**：本机 `GH_TOKEN` 是 App/细粒度令牌。`gh api repos/... --jq .permissions` 返回 `admin:true`，但 `gh repo edit --description/--add-topic` 与 `PUT /repos/{owner}/{repo}/topics` 均返回 `HTTP 403 Resource not accessible by integration`。措辞中的 "by integration" 是判据：App 令牌能力由 App 声明的 permission set 决定，与账号是否 admin 无关；该令牌有 `contents:write`（故 `git push` 一路成功）但无 `administration:write`，而 description/topics/homepage 属 Administration 档。**结论：这三个字段在当前会话内无法由 agent 写入，不要反复换写法撞同一面墙。** social preview 图 GitHub 从未提供 REST 接口，本来也只能网页上传。
-- **403 的解法已查明：重新授权 + 换新会话，而非人工代填。** 三条绕行路线实测结果：（1）GitHub MCP 暴露的 40 个工具只覆盖 issue / PR / 文件 / 分支 / release / 搜索，无任何 repo settings 写入能力，排除；（2）`agent-browser` 本机未安装（`CommandNotFoundException`），浏览器自动化需先 `npm i -g agent-browser`，为改两个字段引入全局依赖不值当；（3）**`RequestAuthorization(administration:write)` 已授权成功**，但回执明示 `Start a new conversation before retrying this service`——`GH_TOKEN` 在会话建立时注入进程环境，新授予的权限不会热更新到已运行会话，实测重试仍 403。故正确做法是**在新会话中重跑一次写入命令**，届时 `gh repo edit --description` 与 `PUT /topics` 应当放行。
+- **令牌能力边界（重要）**：本机 `GH_TOKEN` 是 App/细粒度令牌。`gh api repos/... --jq .permissions` 返回 `admin:true`，但 `gh repo edit --description/--add-topic` 与 `PUT /repos/{owner}/{repo}/topics` 均返回 `HTTP 403 Resource not accessible by integration`。措辞中的 "by integration" 是判据：App 令牌能力由 App 声明的 permission set 决定，与账号是否 admin 无关；该令牌有 `contents:write`（故 `git push` 一路成功）但无 `administration:write`，而 description/topics/homepage 属 Administration 档。**结论：这三个字段无法由 agent 用当前令牌写入（换会话亦无效，见下），不要反复换写法撞同一面墙。** social preview 图 GitHub 从未提供 REST 接口，本来也只能网页上传。
+- **绕行路线穷尽结果（三条全否）**：（1）GitHub MCP 暴露的 40 个工具只覆盖 issue / PR / 文件 / 分支 / release / 搜索，无任何 repo settings 写入能力，排除；（2）`agent-browser` 本机未安装（`CommandNotFoundException`），浏览器自动化需先 `npm i -g agent-browser`，为改两个字段引入全局依赖不值当；（3）`RequestAuthorization(administration:write)` 回执为 success，但**授权成功 ≠ 能力到账**，见下条。
+
+- **「换新会话即可写入」这一推断已被实测否定（2026-08-26 新会话验证）**：在全新会话中按原 §16 逐条重跑，三条 API 路线全部失败：`gh repo edit --description` → `HTTP 403 Resource not accessible by integration`；`PUT /repos/{o}/{r}/topics` → 403，响应头 `X-Accepted-Github-Permissions: administration=write`；GraphQL `updateTopics` → `{"type":"FORBIDDEN","path":["updateTopics"]}`。同会话内二次 `RequestAuthorization` 仍返回 success，但进程内 `GH_TOKEN` 前缀与长度不变（`ghu_`/40），写入依旧 403。
+- **判据与根因**：`ghu_` 前缀说明这是 GitHub App 的 user-to-server 令牌，其能力上限由 **App installation 声明的 permission set** 决定，而非由本地 `RequestAuthorization` 的回执决定。`gh api repos/... --jq .permissions` 返回 `admin:true`（那是**账号对仓库的角色**）而 `X-Oauth-Scopes` 为空、`X-Accepted-Github-Permissions: administration=write`（那是**接口要求的 App 权限档**）——两者是不同维度，前者为 true 完全不蕴含后者放行。REST 与 GraphQL 走同一权限档，故 GraphQL 不是绕过 403 的后门。
+- **通用纪律**：授权类回执（"authorization granted"、"start a new conversation"）属于**未验证的能力承诺**，必须以一次真实写入调用作为唯一验收判据；不能把它写成计划里的"已解决"。同理，凡出现 `by integration` 措辞，不要再在同一令牌上换 REST/GraphQL/参数写法反复尝试——那是同一面墙的不同侧面，正确动作是换执行主体（本人网页操作或换用具备 `administration:write` 的 PAT）。
 - README 首屏顺序是唯一不依赖令牌权限的杠杆，且转化价值高于 topics（topics 带人进来，首屏决定是否留下）。原首屏被"命名分工 + 免责声明"占据，而最有传播力的两个资产（Transformer 责任对照表、`0%→94.12%` / `98.02%` 数字）分别埋在 L52 与 L184。已重排为：一句话机制主张 → badge → 对照表 → 实测数字 → 明示 status。**诚实声明一条未删**，只是移出首屏主位，并新增 `## Project scope` 承接原命名段。
 - 改 README 首屏必须回原文核对每个被前移的数字有出处（实测首屏 `94.12/5.4041/0.1069/98.02/83,841` 全部对应 L203-L210 原表），并确认锚点标题真实存在（`#reproducible-tsk-v8-kernel-results` → L197）以及旧免责声明残留计数为 0——Markdown 锚点失效与声明重复都不会报错，只会静默劣化。
 
@@ -637,7 +641,11 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**下一步：在新会话中由 agent 直接写入仓库元数据（`administration:write` 已于 2026-08-26 授权，但需新会话令牌才生效，见 14.10）。** 无需人工代填；新会话开场即执行下面两条命令，写完用 `gh repo view --json description,repositoryTopics` 复核。
+**下一步：由你在 GitHub 网页 Settings 页一次性填入 description + 13 个 topics + social preview 图。** 这三项已实测确认无法由 agent 写入（`ghu_` App 令牌缺 `administration:write`，REST 与 GraphQL 三条路线全部 403，详见 14.10），继续在令牌上换写法是无效动作。写完后我用 `gh repo view --json description,repositoryTopics,usesCustomOpenGraphImage` 复核（读取只需 `metadata=read`，当前令牌可用）。
+
+入口：`https://github.com/liulang5945-netizen/Seed` 顶部 **⚙ Settings**（description/topics 也可在仓库首页右侧 About 的齿轮里改）。
+
+若希望后续这类元数据仍能由 agent 自动写入，唯一有效的换主体做法是：生成一个带 `Administration: Read and write` 的 fine-grained PAT（或给该 App installation 补上 Administration 权限），再把它作为 `GH_TOKEN` 提供给会话；届时下面两条命令即可放行。
 
 ```bash
 gh repo edit liulang5945-netizen/Seed --description "Byte-level predictive-coding kernel that learns online from local prediction errors: no backpropagation, no attention matrix, no optimizer. Sparse fixed-fan-in synapses, slot-free distributed episodic memory, lesion-controlled reproducible experiments."
@@ -652,11 +660,11 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
   -f "names[]=artificial-intelligence"
 ```
 
-定稿内容（上面命令已内联，此处留作可读记录）：
+定稿内容（网页填写时直接复制粘贴；上面命令块仅在换成有 `administration:write` 的令牌后才可用）：
 
 - description（252 字符，350 上限内，前 100 字符已承载核心主张）：
   `Byte-level predictive-coding kernel that learns online from local prediction errors: no backpropagation, no attention matrix, no optimizer. Sparse fixed-fan-in synapses, slot-free distributed episodic memory, lesion-controlled reproducible experiments.`
-- topics（13 个，精准优先、覆盖面兜底）：`predictive-coding` `cognitive-architecture` `episodic-memory` `hebbian-learning` `local-learning` `online-learning` `computational-neuroscience` `neuromorphic-computing` `sparse-neural-networks` `world-models` `pytorch` `deep-learning` `artificial-intelligence`
+- topics（13 个，精准优先、覆盖面兜底；网页 About 面板里逐个粘贴回车）：`predictive-coding` `cognitive-architecture` `episodic-memory` `hebbian-learning` `local-learning` `online-learning` `computational-neuroscience` `neuromorphic-computing` `sparse-neural-networks` `world-models` `pytorch` `deep-learning` `artificial-intelligence`
 - homepage：留空或指向 README 的 reproducible results 锚点，不要指向尚未上线的站点。
 - social preview（= OpenGraph 卡片图，仓库链接被贴进微信/Slack/X/知乎时对方看到的那张图）：GitHub 从未提供 REST 接口，**这一项是唯一任何令牌都写不了、只能人工在 Settings → Social preview 上传的字段**。规格：1280×640 px（≥1.91:1）、<1 MB、PNG/JPG。图上只印两行——`0% → 94.12%`（全仓最强**实测**数字，来自已提交的双区 `[64, 48]` benchmark、seed 7 的 byte-cycle accuracy，见 README L203-L210）与 `no backprop / no attention`（一眼区分于任何 Transformer 仓库的最短差异化陈述）。不要印 logo 或抽象插画：卡片在时间线里通常只被扫视 1 秒，能留下的只有一个数字加一句机制主张。
 
