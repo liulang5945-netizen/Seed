@@ -297,7 +297,7 @@ class StructuralPruningDynamics:
 
 @dataclass
 class StructuralPruningRegionState:
-    """Online evidence state for one candidate region."""
+    """Online evidence state for one candidate structural substrate."""
 
     region_id: str
     usage_ema: float = 1.0
@@ -360,7 +360,7 @@ class StructuralPruningDecision:
 
 
 class AdaptiveStructuralPruningController:
-    """Turn persistent underuse, pressure and learning stagnation into signals."""
+    """Turn persistent substrate underuse, pressure and stagnation into signals."""
 
     def __init__(
         self,
@@ -390,7 +390,26 @@ class AdaptiveStructuralPruningController:
         learning_gain: float,
         evidence_ids: Sequence[str],
     ) -> StructuralPruningDecision:
-        """Update regional underuse evidence and optionally emit one prune signal."""
+        """Update substrate evidence and optionally emit one prune signal."""
+
+        return self.observe_substrate(
+            region_id,
+            usage=usage,
+            resource_pressure=resource_pressure,
+            learning_gain=learning_gain,
+            evidence_ids=evidence_ids,
+        )
+
+    def observe_substrate(
+        self,
+        substrate_id: str,
+        *,
+        usage: float,
+        resource_pressure: float,
+        learning_gain: float,
+        evidence_ids: Sequence[str],
+    ) -> StructuralPruningDecision:
+        """Update any substrate identity, including a region or a connection."""
 
         ids = tuple(str(item) for item in evidence_ids)
         if not ids or any(not item for item in ids):
@@ -400,7 +419,7 @@ class AdaptiveStructuralPruningController:
         usage_value = _unit(usage, "structural pruning usage")
         pressure_value = _unit(resource_pressure, "structural pruning resource_pressure")
         gain_value = _unit(learning_gain, "structural pruning learning_gain")
-        region = self._region(region_id)
+        region = self._region(substrate_id)
         rate = float(self.dynamics.ema_rate)
         region.usage_ema = (1.0 - rate) * region.usage_ema + rate * usage_value
         region.resource_pressure_ema = (

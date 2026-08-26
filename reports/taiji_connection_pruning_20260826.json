@@ -1,0 +1,49 @@
+{
+  "format": "taiji-connection-pruning-v1",
+  "proposal": {
+    "version": 1,
+    "proposal_id": "topology:connection:source->bottleneck:prune",
+    "substrate_id": "connection:source->bottleneck",
+    "target_kind": "region",
+    "operation": "prune",
+    "specification": {
+      "connection_id": "connection:source->bottleneck",
+      "edge_count": 2,
+      "source_region_id": "source",
+      "source_unit_count": 2,
+      "target_region_id": "bottleneck",
+      "target_unit_count": 2,
+      "topology_role": "cross_region_connection_prune"
+    },
+    "requested_units": 1,
+    "resource_cost": 1,
+    "evidence_ids": [
+      "route:tick:2"
+    ],
+    "parent_checkpoint_id": "connection-prune-signal:connection:source->bottleneck:1",
+    "status": "pending",
+    "validation_score": 0.0
+  },
+  "metrics": {
+    "connection_id": "connection:source->bottleneck",
+    "route_evidence_count": 2,
+    "route_selection_count": 0,
+    "route_usage": 0.0,
+    "route_resource_pressure": 0.9,
+    "route_learning_gain": 0.0,
+    "holdout_validation_score": 1.0,
+    "holdout_validated": true,
+    "connection_ids_after_pruning": [],
+    "checkpoint_continuation": true,
+    "rollback_connection_prune": true,
+    "rollback_connection_add": true,
+    "connection_ids_after_rollback": [],
+    "high_gain_suppressed": true,
+    "rejected_without_budget": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "persistent low route usage, high resource pressure and route learning stagnation must emit a connection prune proposal from existing route evidence; unseen-input regression must stay within threshold before ledger commit, checkpoint continuation must preserve the decision, pruning must remove only the owned connection, reverse rollback must restore it, high route gain must suppress pruning, and zero budget must fail closed"
+  },
+  "boundary": "This gate proves controlled route-level structural maintenance; it does not claim unrestricted self-evolution, automatic semantic invention, or general intelligence."
+}

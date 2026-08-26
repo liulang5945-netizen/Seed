@@ -615,7 +615,9 @@ taiji/
 > 覆盖。region retention/pruning 已通过 `reports/taiji_region_pruning_20260826.json`：低使用、
 > 高资源压力、长期 learning stagnation 且移除后 holdout 不退化的区域才可申请 pruning proposal，
 > 并经统一 budget、checkpoint、所属连接移除和 reverse rollback。当前唯一入口转为独立跨区域
-> connection retention/pruning；继续禁止按 action/intent 表决定结构维护。
+> connection retention/pruning，且该 Gate 已由 `reports/taiji_connection_pruning_20260826.json`
+> 证明既有 route learner 证据可驱动单连接移除、checkpoint continuation 与 reverse rollback；
+> 下一入口是区域 split/merge 的 lineage 与可逆生命周期治理，继续禁止按 action/intent 表决定结构维护。
 
 本步设计已收敛并通过 Gate：新增独立的 `CrossRegionCooperationLearner`，为每条显式跨区连接维护
 可 checkpoint 的 prediction-error EMA、holdout-transfer EMA、resource-state EMA、证据次数
