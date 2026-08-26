@@ -315,6 +315,8 @@ class LearnedPerception(nn.Module):
         sequence: Sequence[int],
         *,
         temperature: float,
+        multi_step_prediction_weight: float,
+        multi_step_prediction_horizon: int,
         assembly_prediction_weight: float,
         contrastive_weight: float,
         contrastive_temperature: float,
@@ -414,6 +416,61 @@ class LearnedPerception(nn.Module):
             logit_error = softmax_error_delta(scaled_logits, target) / float(temperature)
             predicted_error += logit_error @ self.embedding.weight
             embedding_gradient += logit_error.transpose(0, 1) @ predicted
+
+            multi_step_weight = float(multi_step_prediction_weight)
+            multi_step_horizon = int(multi_step_prediction_horizon)
+            multi_step_states = [predicted]
+            if multi_step_weight > 0.0 and multi_step_horizon > 1:
+                for _ in range(2, multi_step_horizon + 1):
+                    multi_step_states.append(
+                        multi_step_states[-1] @ self.transition.weight.transpose(0, 1)
+                    )
+            multi_step_state_errors = [torch.zeros_like(state) for state in multi_step_states]
+            if multi_step_weight > 0.0 and multi_step_horizon > 1:
+                horizon_count = float(multi_step_horizon - 1)
+                for horizon, state in enumerate(multi_step_states[1:], start=2):
+                    valid_rows = [
+                        index
+                        for index, target_index in enumerate(target_indices)
+                        if target_index + horizon - 1 < len(sequence)
+                    ]
+                    if not valid_rows:
+                        continue
+                    row_indices = torch.tensor(valid_rows, dtype=torch.long, device=self.device)
+                    horizon_targets = torch.tensor(
+                        [sequence[target_indices[index] + horizon - 1] for index in valid_rows],
+                        dtype=torch.long,
+                        device=self.device,
+                    )
+                    scaled_horizon_logits = (
+                        state[row_indices] @ self.embedding.weight.transpose(0, 1)
+                    ) / float(temperature)
+                    loss += (
+                        multi_step_weight
+                        / horizon_count
+                        * float(
+                            torch.nn.functional.cross_entropy(
+                                scaled_horizon_logits, horizon_targets
+                            )
+                        )
+                    )
+                    horizon_error = (
+                        multi_step_weight
+                        / horizon_count
+                        * softmax_error_delta(scaled_horizon_logits, horizon_targets)
+                        / float(temperature)
+                    )
+                    embedding_gradient += horizon_error.transpose(0, 1) @ state[row_indices]
+                    multi_step_state_errors[horizon - 1][row_indices] += (
+                        horizon_error @ self.embedding.weight
+                    )
+                for state_index in range(len(multi_step_states) - 1, 0, -1):
+                    state_error = multi_step_state_errors[state_index]
+                    transition_gradient += (
+                        state_error.transpose(0, 1) @ multi_step_states[state_index - 1]
+                    )
+                    multi_step_state_errors[state_index - 1] += state_error @ self.transition.weight
+                predicted_error += multi_step_state_errors[0]
 
             weight = float(assembly_prediction_weight)
             if weight != 0.0:
@@ -525,6 +582,8 @@ class LearnedPerception(nn.Module):
         epochs: int = 1,
         learning_rate: float | None = None,
         temperature: float = 0.15,
+        multi_step_prediction_weight: float = 0.0,
+        multi_step_prediction_horizon: int = 4,
         assembly_prediction_weight: float = 0.5,
         contrastive_weight: float = 0.1,
         contrastive_temperature: float = 0.2,
@@ -544,6 +603,10 @@ class LearnedPerception(nn.Module):
             raise ValueError("predictive learning_rate must be positive")
         if float(temperature) <= 0.0:
             raise ValueError("predictive temperature must be positive")
+        if float(multi_step_prediction_weight) < 0.0:
+            raise ValueError("multi_step_prediction_weight cannot be negative")
+        if int(multi_step_prediction_horizon) <= 0:
+            raise ValueError("multi_step_prediction_horizon must be positive")
         if float(assembly_prediction_weight) < 0.0:
             raise ValueError("assembly_prediction_weight cannot be negative")
         if float(contrastive_weight) < 0.0:
@@ -582,6 +645,8 @@ class LearnedPerception(nn.Module):
                 loss, gradients = self._local_sequence_pass(
                     sequence,
                     temperature=float(temperature),
+                    multi_step_prediction_weight=float(multi_step_prediction_weight),
+                    multi_step_prediction_horizon=int(multi_step_prediction_horizon),
                     assembly_prediction_weight=float(assembly_prediction_weight),
                     contrastive_weight=float(contrastive_weight),
                     contrastive_temperature=float(contrastive_temperature),

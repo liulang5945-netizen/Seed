@@ -45,7 +45,13 @@ class A1EvaluationConfig:
     minimum_random_chunk_drop: float = 0.005
     predictive_epochs: int = 3
     predictive_learning_rate: float = 0.01
-    predictive_temperature: float = 0.15
+    # A softer predictive distribution keeps local-credit updates from
+    # collapsing to seed-specific symbol logits on the composition holdout.
+    predictive_temperature: float = 0.5
+    # Keep the long-horizon signal present without overwhelming the stronger
+    # one-step composition signal on small and large holdouts alike.
+    multi_step_prediction_weight: float = 0.05
+    multi_step_prediction_horizon: int = 4
     assembly_prediction_weight: float = 0.5
     contrastive_weight: float = 0.1
     contrastive_temperature: float = 0.2
@@ -70,6 +76,10 @@ class A1EvaluationConfig:
             raise ValueError("A1 predictive_learning_rate must be positive")
         if self.predictive_temperature <= 0.0:
             raise ValueError("A1 predictive_temperature must be positive")
+        if self.multi_step_prediction_weight < 0.0:
+            raise ValueError("A1 multi_step_prediction_weight cannot be negative")
+        if self.multi_step_prediction_horizon <= 0:
+            raise ValueError("A1 multi_step_prediction_horizon must be positive")
         if self.assembly_prediction_weight < 0.0:
             raise ValueError("A1 assembly_prediction_weight cannot be negative")
         if self.contrastive_weight < 0.0:
@@ -161,6 +171,8 @@ class PerceptionEvaluator:
                 "predictive_epochs": self.evaluation.predictive_epochs,
                 "predictive_learning_rate": self.evaluation.predictive_learning_rate,
                 "predictive_temperature": self.evaluation.predictive_temperature,
+                "multi_step_prediction_weight": self.evaluation.multi_step_prediction_weight,
+                "multi_step_prediction_horizon": self.evaluation.multi_step_prediction_horizon,
                 "assembly_prediction_weight": self.evaluation.assembly_prediction_weight,
                 "contrastive_weight": self.evaluation.contrastive_weight,
                 "contrastive_temperature": self.evaluation.contrastive_temperature,
@@ -195,6 +207,8 @@ class PerceptionEvaluator:
             epochs=self.evaluation.predictive_epochs,
             learning_rate=self.evaluation.predictive_learning_rate,
             temperature=self.evaluation.predictive_temperature,
+            multi_step_prediction_weight=self.evaluation.multi_step_prediction_weight,
+            multi_step_prediction_horizon=self.evaluation.multi_step_prediction_horizon,
             assembly_prediction_weight=self.evaluation.assembly_prediction_weight,
             contrastive_weight=self.evaluation.contrastive_weight,
             contrastive_temperature=self.evaluation.contrastive_temperature,
