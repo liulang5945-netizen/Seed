@@ -633,8 +633,11 @@ taiji/
 > 与跨 tick error continuity。观测阶段不允许 live topology 变更，proposal 仍须通过 holdout、
 > budget、trial roundtrip 和 reverse rollback。Gate 报告为
 > `reports/taiji_runtime_structure_20260826.json`，manifest 为
-> `plans/manifests/taiji_runtime_structure_v1.json`。下一入口是把真实观测汇聚成可审计 proposal
-> candidates，再交给统一 ledger 验证和提交。
+> `plans/manifests/taiji_runtime_structure_v1.json`。其上的
+> `StructuralProposalCandidate` 已由真实 tick 生成并 checkpoint：候选保存 split、region/connection
+> prune 或兼容 region merge 的稳定 substrate、证据、优先级、参数和资源成本，并做 substrate
+> 去重与容量边界；candidate 仍不是 live proposal。下一入口是把候选显式 materialize 为
+> `StructuralTopologyProposal`，再交给统一 ledger 验证和提交。
 
 本步设计已收敛并通过 Gate：新增独立的 `CrossRegionCooperationLearner`，为每条显式跨区连接维护
 可 checkpoint 的 prediction-error EMA、holdout-transfer EMA、resource-state EMA、证据次数

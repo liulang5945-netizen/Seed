@@ -184,6 +184,7 @@ from .state import (
 )
 from .structural_growth import (
     STRUCTURAL_GROWTH_CHECKPOINT_FORMAT,
+    STRUCTURAL_PROPOSAL_CANDIDATE_FORMAT,
     STRUCTURAL_PRUNING_CHECKPOINT_FORMAT,
     STRUCTURAL_RUNTIME_OBSERVATION_CHECKPOINT_FORMAT,
     AdaptiveStructuralGrowthController,
@@ -191,6 +192,7 @@ from .structural_growth import (
     StructuralGrowthDecision,
     StructuralGrowthDynamics,
     StructuralGrowthRegionState,
+    StructuralProposalCandidate,
     StructuralPruningDecision,
     StructuralPruningDynamics,
     StructuralPruningRegionState,
@@ -341,6 +343,7 @@ __all__ = [
     "TaijiState",
     "TaijiStep",
     "STRUCTURAL_GROWTH_CHECKPOINT_FORMAT",
+    "STRUCTURAL_PROPOSAL_CANDIDATE_FORMAT",
     "AdaptiveStructuralGrowthController",
     "StructuralGrowthDecision",
     "StructuralGrowthDynamics",
@@ -351,6 +354,7 @@ __all__ = [
     "StructuralPruningDecision",
     "StructuralPruningDynamics",
     "StructuralPruningRegionState",
+    "StructuralProposalCandidate",
     "StructuralRuntimeObservation",
     "TSKV8Adapter",
     "Goal",
