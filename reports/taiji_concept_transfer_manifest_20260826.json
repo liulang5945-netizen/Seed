@@ -1,0 +1,20 @@
+{
+  "format": "taiji-concept-transfer-manifest-v1",
+  "task": "evaluate concept transfer from cross-schema experience into unseen-task planning",
+  "schema_scales": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "controls": [
+    "no-concept-prior baseline",
+    "unseen-object-and-relation-schema transfer",
+    "capacity-interference curve",
+    "event-assembly/world/outcome evidence lesions",
+    "organ-checkpoint-continuation",
+    "native-runtime-checkpoint-recovery",
+    "concept-registry-lesion"
+  ],
+  "boundary": "closed-world downstream transfer evidence; not open-domain semantic competence or general intelligence"
+}

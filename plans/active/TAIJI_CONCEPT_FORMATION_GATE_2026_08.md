@@ -32,6 +32,10 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 - `ConceptMatch` 已成为器官的查询边界；运行时把匹配 concept IDs 写入 `MemoryState`，并把
   匹配度 × 概念置信度 × outcome 质量映射为 `PlanningCandidate.concept_affinity`，由 planner
   的可配置 `concept_weight` 消费；lesion 后该 prior 为零并改变窄规划对照。
+- 下游迁移 Gate 已通过：schema 数量 1/2/4/8 的未见对象与关系查询均保持 100% 规划迁移；
+  无 concept prior 的对照不迁移，容量 1/2 显示可测的概念干扰；event/assembly、world、
+  outcome 三类证据 lesion 均 fail-closed；器官 checkpoint 和 native runtime checkpoint
+  均恢复相同概念与查询能力。
 
 ## 边界与已知限制
 
@@ -42,6 +46,6 @@ Concept 必须是跨经历形成的可追踪不变量，而不是把单个 cue�
 
 ## 下一步唯一入口
 
-完成跨 schema、未见任务的下游迁移验收，测量概念容量变化对规划干扰的影响，并保留三类
-信号 lesion、checkpoint 和无 concept prior 对照；不得把扩大参数量或增加固定标签表作为
-替代。
+将已通过的单动作 concept prior 扩展为多步 concept sequence/rollout 消费：在变量 horizon、
+未见动作组合和分支干扰下验证序列级迁移、执行反馈、lesion 与 checkpoint continuation；
+不得把扩大参数量或增加固定标签表作为替代。
