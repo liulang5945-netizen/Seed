@@ -38,6 +38,7 @@ from .contracts import (
     PlanningRecoveryState,
     PlanState,
     RecoveryBranchState,
+    RecoveryBudgetState,
     SelfState,
     StructuralGrowthRequest,
     StructuralTopologyProposal,
@@ -4203,6 +4204,7 @@ class TSKV8Adapter(Taiji):
             world_prediction=None,
             planning_recovery=None,
             recovery_branch=None,
+            recovery_budget=None,
             environment_capability=None,
             learning=replace(previous.learning, tick=self.tick),
         )
@@ -5278,6 +5280,22 @@ class TSKV8Adapter(Taiji):
                 float(resource_budget),
                 recovery_branch.remaining_resource,
             )
+        recovery_budget = self._cognitive_state.recovery_budget
+        if recovery_budget is None:
+            recovery_budget = RecoveryBudgetState(total_budget=float(resource_budget))
+        elif recovery_budget.total_budget is None:
+            recovery_budget = replace(
+                recovery_budget,
+                total_budget=float(resource_budget),
+            )
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            recovery_budget=recovery_budget,
+        )
+        available_resource_budget = min(
+            available_resource_budget,
+            recovery_budget.remaining_resource,
+        )
         rejected_key = None
         if recovery_branch is not None:
             rejected_key = self._world_dynamics.schema_registry.action_semantic_key(
@@ -5326,7 +5344,11 @@ class TSKV8Adapter(Taiji):
                     candidate_id=(
                         f"recovery:{self._state.episode_id}:{affordance.affordance_id}:step:{index}"
                     ),
-                    action=replace(first_action, tick=start_tick + index),
+                    action=replace(
+                        first_action,
+                        action_id=f"{first_action.action_id}:step:{index}",
+                        tick=start_tick + index,
+                    ),
                     predicted_reward=0.0,
                     success_probability=0.0,
                     expected_progress=affordance.confidence,
@@ -5645,6 +5667,12 @@ class TSKV8Adapter(Taiji):
         """Return the latest capability boundary reported by the environment."""
 
         return self._cognitive_state.environment_capability
+
+    @property
+    def recovery_budget(self) -> RecoveryBudgetState | None:
+        """Return the episode-global recovery resource ledger."""
+
+        return self._cognitive_state.recovery_budget
 
     def _record_environment_capability(self, result: EnvironmentOutcome) -> None:
         actions = tuple(int(action) for action in result.available_actions)
@@ -6338,6 +6366,19 @@ class TSKV8Adapter(Taiji):
             if self._cognitive_state.recovery_branch is None or planned_rollout is None
             else float(planned_rollout.steps[0].resource_cost)
         )
+        planned_recovery_action_id = (
+            None
+            if self._cognitive_state.recovery_branch is None or planned_rollout is None
+            else planned_rollout.steps[0].action.action_id
+        )
+        recovery_budget = self._cognitive_state.recovery_budget
+        planned_recovery_resource_delta = planned_recovery_resource
+        if (
+            planned_recovery_action_id is not None
+            and recovery_budget is not None
+            and planned_recovery_action_id in recovery_budget.consumed_action_ids
+        ):
+            planned_recovery_resource_delta = 0.0
         if world_state is not None:
             if not isinstance(world_state, WorldState):
                 raise TypeError("world_state must be a Taiji WorldState")
@@ -6541,7 +6582,7 @@ class TSKV8Adapter(Taiji):
                                 if recovery_branch is None
                                 else recovery_branch.consumed_resource
                             )
-                            + planned_recovery_resource,
+                            + planned_recovery_resource_delta,
                             failure_count=(
                                 0 if recovery_branch is None else recovery_branch.failure_count
                             )
@@ -6571,14 +6612,28 @@ class TSKV8Adapter(Taiji):
                         ledger_evidence_count=ledger_evidence_count,
                     ),
                 )[-self.config.world_calibration_history_limit :]
+        if recovery_branch is not None and planned_recovery_action_id is not None:
+            if recovery_budget is None:
+                recovery_budget = RecoveryBudgetState(
+                    total_budget=(
+                        1.0
+                        if recovery_branch.resource_budget is None
+                        else recovery_branch.resource_budget
+                    )
+                )
+            recovery_budget = recovery_budget.consume(
+                planned_recovery_action_id,
+                planned_recovery_resource,
+            )
         if (
             recovery_branch is not None
-            and planned_recovery_resource > 0.0
+            and planned_recovery_resource_delta > 0.0
             and not world_outcome_replan
         ):
             recovery_branch = replace(
                 recovery_branch,
-                consumed_resource=recovery_branch.consumed_resource + planned_recovery_resource,
+                consumed_resource=recovery_branch.consumed_resource
+                + planned_recovery_resource_delta,
                 failure_count=recovery_branch.failure_count
                 + int(not terminal and (outcome.success is False or outcome.reward < 0.0)),
             )
@@ -6702,6 +6757,7 @@ class TSKV8Adapter(Taiji):
             world_calibration_trace=calibration_trace,
             planning_recovery=recovery_state,
             recovery_branch=recovery_branch,
+            recovery_budget=recovery_budget,
             learning=replace(
                 self._cognitive_state.learning,
                 tick=self.tick,

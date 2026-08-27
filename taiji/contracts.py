@@ -11,7 +11,7 @@ from __future__ import annotations
 import hashlib
 import math
 from collections.abc import Mapping
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 import torch
@@ -1827,6 +1827,65 @@ class RecoveryBranchState:
 
 
 @dataclass(frozen=True)
+class RecoveryBudgetState:
+    """Episode-global resource ledger shared by parallel recovery branches."""
+
+    total_budget: float | None = None
+    consumed_resource: float = 0.0
+    consumed_action_ids: tuple[str, ...] = ()
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        if self.total_budget is not None:
+            _check_unit(self.total_budget, "recovery total_budget")
+        if not math.isfinite(float(self.consumed_resource)) or self.consumed_resource < 0.0:
+            raise ValueError("recovery global consumed_resource must be finite and non-negative")
+        object.__setattr__(
+            self,
+            "consumed_action_ids",
+            _normalize_ids(self.consumed_action_ids, "recovery consumed_action_ids"),
+        )
+
+    @property
+    def remaining_resource(self) -> float:
+        budget = 1.0 if self.total_budget is None else float(self.total_budget)
+        return max(0.0, budget - float(self.consumed_resource))
+
+    def consume(self, action_id: str, resource_cost: float) -> RecoveryBudgetState:
+        """Consume one action exactly once, including after checkpoint replay."""
+
+        _check_text(action_id, "recovery consumed action_id")
+        _check_unit(resource_cost, "recovery resource_cost")
+        if action_id in self.consumed_action_ids:
+            return self
+        return replace(
+            self,
+            consumed_resource=self.consumed_resource + float(resource_cost),
+            consumed_action_ids=(*self.consumed_action_ids, action_id),
+        )
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "total_budget": self.total_budget,
+            "consumed_resource": self.consumed_resource,
+            "consumed_action_ids": list(self.consumed_action_ids),
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> RecoveryBudgetState:
+        return cls(
+            version=int(payload["version"]),
+            total_budget=(
+                None if payload.get("total_budget") is None else float(payload["total_budget"])
+            ),
+            consumed_resource=float(payload.get("consumed_resource", 0.0)),
+            consumed_action_ids=tuple(str(item) for item in payload.get("consumed_action_ids", ())),
+        )
+
+
+@dataclass(frozen=True)
 class PlanningRecoveryState:
     """Explicit runtime state entered after an imagined-world error."""
 
@@ -2616,6 +2675,7 @@ class CognitiveState:
     world_calibration_trace: tuple[WorldCalibrationTrace, ...] = ()
     planning_recovery: PlanningRecoveryState | None = None
     recovery_branch: RecoveryBranchState | None = None
+    recovery_budget: RecoveryBudgetState | None = None
     assemblies: tuple[Assembly, ...] = ()
     events: tuple[Event, ...] = ()
     concepts: tuple[Concept, ...] = ()
@@ -2664,6 +2724,9 @@ class CognitiveState:
             ),
             "recovery_branch": (
                 None if self.recovery_branch is None else self.recovery_branch.to_payload()
+            ),
+            "recovery_budget": (
+                None if self.recovery_budget is None else self.recovery_budget.to_payload()
             ),
             "assemblies": [item.to_payload() for item in self.assemblies],
             "events": [item.to_payload() for item in self.events],
@@ -2734,6 +2797,11 @@ class CognitiveState:
                 None
                 if payload.get("recovery_branch") is None
                 else RecoveryBranchState.from_payload(payload["recovery_branch"], device=device)
+            ),
+            recovery_budget=(
+                None
+                if payload.get("recovery_budget") is None
+                else RecoveryBudgetState.from_payload(payload["recovery_budget"])
             ),
             assemblies=tuple(
                 Assembly.from_payload(item, device=device) for item in payload.get("assemblies", ())
