@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import torch
+
 from taiji import (
     ActionIntent,
     EpisodicMemoryRecord,
@@ -8,13 +10,75 @@ from taiji import (
     GoalPlanner,
     Observation,
     Outcome,
+    PerceptionConfig,
     PlanningCandidate,
     PlanningConfig,
     SemanticMemoryLearner,
     TaijiConfig,
     TSKV8Adapter,
     WorldAction,
+    WorldState,
 )
+
+
+def test_percept_lineage_reaches_workspace_and_world_and_survives_checkpoint() -> None:
+    config = TaijiConfig(
+        region_sizes=(12, 8),
+        synapse_fan_in=4,
+        motor_fan_in=6,
+        memory_units=16,
+        memory_fan_in=4,
+        memory_readout_fan_in=6,
+        memory_meta_dim=6,
+        memory_iterations=2,
+        memory_time_dim=4,
+        memory_episode_dim=4,
+        lateral_fan_in=4,
+        perception=PerceptionConfig(maximum_assembly_duration=2),
+    )
+    model = TSKV8Adapter(config, episode_id="percept-lineage")
+
+    closed_state = None
+    for tick, symbol in enumerate((97, 98, 99)):
+        world_state = (
+            None
+            if tick != 2
+            else WorldState(tick=model.tick + 1, latent=torch.zeros(2))
+        )
+        model.observe_event(
+            Observation(
+                modality="text-byte",
+                value=symbol,
+                timestamp=tick,
+                source="lineage-test",
+            ),
+            learn=False,
+            world_state=world_state,
+        )
+        if tick == 1:
+            closed_state = model.cognitive_snapshot()
+
+    state = model.cognitive_snapshot()
+    assert closed_state is not None
+    assert closed_state.percept is not None
+    assert closed_state.percept.boundary is True
+    assert closed_state.workspace.percept_boundary_closed is True
+    assert closed_state.world.percept_boundary_closed is True
+    assert state.percept is not None
+    assert state.events
+    event = state.events[-1]
+    assert state.workspace.percept_event_id == event.event_id
+    assert state.workspace.percept_assembly_id == state.percept.assembly_id
+    assert state.workspace.percept_boundary_closed == state.percept.boundary
+    assert state.world.percept_event_id == event.event_id
+    assert state.world.percept_assembly_id == state.percept.assembly_id
+    assert state.world.percept_boundary_closed == state.percept.boundary
+
+    restored = TSKV8Adapter.from_native_checkpoint(model.native_checkpoint())
+    restored_state = restored.cognitive_snapshot()
+    assert restored_state.workspace.percept_event_id == event.event_id
+    assert restored_state.world.percept_assembly_id == state.percept.assembly_id
+    assert restored_state.world.percept_boundary_closed == state.percept.boundary
 
 
 def test_concept_registry_is_consumed_by_planning_and_lesion_removes_prior() -> None:

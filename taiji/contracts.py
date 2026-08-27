@@ -740,6 +740,9 @@ class WorkspaceState:
     capacity: int = 0
     candidates: tuple[WorkspaceCandidate, ...] = ()
     selection: WorkspaceSelection | None = None
+    percept_event_id: str = ""
+    percept_assembly_id: str = ""
+    percept_boundary_closed: bool = False
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -752,6 +755,12 @@ class WorkspaceState:
             raise ValueError("workspace focus exceeds capacity")
         if self.broadcast.ndim != 1:
             raise ValueError("workspace broadcast must be a vector")
+        if self.percept_boundary_closed and (
+            not self.percept_event_id or not self.percept_assembly_id
+        ):
+            raise ValueError(
+                "closed workspace percept lineage requires event and assembly ids"
+            )
         if self.selection is not None:
             if self.selection.tick != self.tick:
                 raise ValueError("workspace selection tick must match workspace tick")
@@ -771,6 +780,9 @@ class WorkspaceState:
             "capacity": self.capacity,
             "candidates": [candidate.to_payload() for candidate in self.candidates],
             "selection": None if self.selection is None else self.selection.to_payload(),
+            "percept_event_id": self.percept_event_id,
+            "percept_assembly_id": self.percept_assembly_id,
+            "percept_boundary_closed": self.percept_boundary_closed,
         }
 
     @classmethod
@@ -793,6 +805,9 @@ class WorkspaceState:
                 if payload.get("selection") is None
                 else WorkspaceSelection.from_payload(payload["selection"], device=device)
             ),
+            percept_event_id=str(payload.get("percept_event_id", "")),
+            percept_assembly_id=str(payload.get("percept_assembly_id", "")),
+            percept_boundary_closed=bool(payload.get("percept_boundary_closed", False)),
         )
 
 
@@ -979,6 +994,9 @@ class WorldState:
     events: tuple[WorldEvent, ...] = ()
     affordances: tuple[WorldAffordance, ...] = ()
     uncertainty: float = 1.0
+    percept_event_id: str = ""
+    percept_assembly_id: str = ""
+    percept_boundary_closed: bool = False
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -988,6 +1006,10 @@ class WorldState:
         if self.latent.ndim != 1:
             raise ValueError("world latent must be a vector")
         _check_unit(self.uncertainty, "uncertainty")
+        if self.percept_boundary_closed and (
+            not self.percept_event_id or not self.percept_assembly_id
+        ):
+            raise ValueError("closed world percept lineage requires event and assembly ids")
         object_ids = tuple(item.object_id for item in self.objects)
         if len(set(object_ids)) != len(object_ids):
             raise ValueError("world objects must have unique object_id values")
@@ -1013,6 +1035,9 @@ class WorldState:
             "events": [item.to_payload() for item in self.events],
             "affordances": [item.to_payload() for item in self.affordances],
             "uncertainty": self.uncertainty,
+            "percept_event_id": self.percept_event_id,
+            "percept_assembly_id": self.percept_assembly_id,
+            "percept_boundary_closed": self.percept_boundary_closed,
         }
 
     @classmethod
@@ -1038,6 +1063,9 @@ class WorldState:
                 for item in payload.get("affordances", ())
             ),
             uncertainty=float(payload.get("uncertainty", 1.0)),
+            percept_event_id=str(payload.get("percept_event_id", "")),
+            percept_assembly_id=str(payload.get("percept_assembly_id", "")),
+            percept_boundary_closed=bool(payload.get("percept_boundary_closed", False)),
         )
 
 

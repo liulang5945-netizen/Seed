@@ -192,6 +192,10 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
   boundary 后续 assembly 的跨段负样本对比目标（`cross_assembly_negative_weight=0.01`）；边界后逐符号
   CE 保留为显式可选实验项，默认关闭以避免重复监督。shared128 最差泛化=`0.0`、最差 random-chunk
   drop=`+0.00527`、marker score/rate 最小=`+0.2161/+0.4483`、cross-seed std=`0.00834`，Gate 为 true。
+- P2→P3 lineage contract 已落地：`PerceptEvent` 的 event/assembly 来源与 `boundary_closed` 状态
+  同时进入 `WorkspaceState` 和 `WorldState`；外部环境替换 world state 时不丢失当前感知 lineage，
+  native checkpoint 往返保持一致，相关定向回归 `21 passed`。这只收口来源可审计性，不等于 perception-to-world
+  的 holdout 能力已经通过。
 - 2026-08-26 门禁与 checkpoint 收口：CI 因 pin 了不存在的 `black==24.12.0` 连续 8 天红灯且期间所有门禁被静默跳过，已改钉
   `ruff==0.16.4` / `black==26.5.1`；`TSKV8Adapter.checkpoint()`/`restore()` 补齐 `cognitive_state` 往返后，全量测试为
   `437 passed, 5 skipped`。门禁可信度、mypy 类型债、checkpoint 往返不变量和本目录编制纪律见总路线第 14.1–14.4 节。
