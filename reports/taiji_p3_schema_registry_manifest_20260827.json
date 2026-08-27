@@ -1,0 +1,15 @@
+{
+  "format": "taiji-p3-schema-registry-manifest-v1",
+  "task": "cross-episode world schema registry lifecycle",
+  "controls": [
+    "canonical object alias merge",
+    "mixed old/new schema prediction",
+    "revision proposal and checkpoint lineage",
+    "contradictory outcome feedback fail-closed",
+    "resource-budget fail-closed growth",
+    "prune and tombstone re-add blocking",
+    "network schema rollback",
+    "adapter checkpoint continuation"
+  ],
+  "boundary": "schema lifecycle safety; not open-domain semantics or general intelligence"
+}

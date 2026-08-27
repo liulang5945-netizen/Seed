@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from collections.abc import Mapping
+from dataclasses import dataclass, replace
 from typing import Any
 
 import torch
@@ -29,6 +30,8 @@ from .local_learning import (
     tanh_delta,
 )
 from .world import TaijiWorldState, _world_state_equal
+
+WORLD_SCHEMA_REGISTRY_CHECKPOINT_FORMAT = "taiji-world-schema-registry-v1"
 
 
 def _numeric(value: Any, name: str) -> float:
@@ -353,6 +356,493 @@ class WorldSchema:
             open_set=bool(payload.get("open_set", False)),
         )
 
+    def without_features(self, feature_keys: tuple[tuple[str, ...], ...]) -> WorldSchema:
+        """Remove active feature slots while preserving semantic scale metadata."""
+
+        requested = set(feature_keys)
+        state_slots = set(self.state_slots)
+        relation_slots = set(self.relation_slots)
+        action_kinds = set(self.action_kinds)
+        actor_ids = set(self.actor_ids)
+        target_ids = set(self.target_ids)
+        parameter_names = set(self.parameter_names)
+        active = set(self.input_feature_keys) | set(self.state_feature_keys)
+        unknown = requested - active
+        if unknown:
+            raise ValueError(f"cannot prune unknown world schema features: {sorted(unknown)}")
+        for key in requested:
+            kind = key[0]
+            if kind == "state" and len(key) == 3:
+                state_slots.discard((key[1], key[2]))
+            elif kind == "relation" and len(key) == 4:
+                relation_slots.discard((key[1], key[2], key[3]))
+            elif kind == "action-kind" and len(key) == 2:
+                action_kinds.discard(key[1])
+            elif kind == "actor" and len(key) == 2:
+                actor_ids.discard(key[1])
+            elif kind == "target" and len(key) == 2:
+                target_ids.discard(key[1])
+            elif kind == "parameter" and len(key) == 2:
+                parameter_names.discard(key[1])
+            elif kind == "interaction":
+                raise ValueError(
+                    "interaction features are derived; prune their target or parameter"
+                )
+            else:
+                raise ValueError(f"invalid world schema feature key: {key}")
+        if not state_slots and not relation_slots:
+            raise ValueError("world schema must retain at least one state feature")
+        old_scales = {
+            key: float(self.state_scales[index])
+            for index, key in enumerate(self.state_feature_keys)
+        }
+        sorted_state_slots = tuple(sorted(state_slots))
+        sorted_relation_slots = tuple(sorted(relation_slots))
+        state_scales = tuple(
+            old_scales[key]
+            for key in (
+                tuple(("state", object_id, name) for object_id, name in sorted_state_slots)
+                + tuple(
+                    ("relation", subject, predicate, object_id)
+                    for subject, predicate, object_id in sorted_relation_slots
+                )
+            )
+        )
+        return WorldSchema(
+            object_ids=self.object_ids,
+            state_slots=sorted_state_slots,
+            relation_slots=sorted_relation_slots,
+            action_kinds=tuple(sorted(action_kinds)),
+            actor_ids=tuple(sorted(actor_ids)),
+            target_ids=tuple(sorted(target_ids)),
+            parameter_names=tuple(sorted(parameter_names)),
+            state_scales=state_scales,
+            open_set=True,
+        )
+
+
+class WorldSchemaRegistryError(ValueError):
+    """Base error for fail-closed world schema lifecycle operations."""
+
+
+class WorldSchemaConflictError(WorldSchemaRegistryError):
+    """Raised when a schema operation would silently contradict known evidence."""
+
+
+class WorldSchemaBudgetError(WorldSchemaRegistryError):
+    """Raised when schema growth exceeds the registry resource budget."""
+
+
+@dataclass(frozen=True)
+class WorldSchemaProposal:
+    """An auditable schema change waiting for learner/network commit."""
+
+    base_version: int
+    schema: WorldSchema
+    operation: str
+    added_features: tuple[tuple[str, ...], ...] = ()
+    removed_features: tuple[tuple[str, ...], ...] = ()
+    evidence_ids: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        if int(self.base_version) < 0:
+            raise ValueError("schema proposal base_version must be non-negative")
+        if not str(self.operation):
+            raise ValueError("schema proposal operation cannot be empty")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "base_version": self.base_version,
+            "schema": self.schema.payload(),
+            "operation": self.operation,
+            "added_features": [list(key) for key in self.added_features],
+            "removed_features": [list(key) for key in self.removed_features],
+            "evidence_ids": list(self.evidence_ids),
+        }
+
+
+class WorldSchemaRegistry:
+    """Versioned, checkpointable identity and feature lifecycle for world learning."""
+
+    def __init__(
+        self,
+        schema: WorldSchema,
+        *,
+        max_feature_count: int = 4096,
+        history_limit: int = 64,
+    ) -> None:
+        if not isinstance(schema, WorldSchema):
+            raise TypeError("world schema registry requires a WorldSchema")
+        if int(max_feature_count) <= 0:
+            raise ValueError("world schema registry max_feature_count must be positive")
+        if int(history_limit) <= 0:
+            raise ValueError("world schema registry history_limit must be positive")
+        self._schema = schema
+        self._max_feature_count = int(max_feature_count)
+        self._history_limit = int(history_limit)
+        self._revisions: dict[int, WorldSchema] = {0: schema}
+        self._active_version = 0
+        self._next_version = 1
+        self._aliases: dict[str, str] = {}
+        self._confidence: dict[tuple[str, ...], float] = {
+            key: 0.0 for key in self._known_feature_keys(schema)
+        }
+        self._feedback: dict[tuple[str, ...], float] = {}
+        self._tombstones: set[tuple[str, ...]] = set()
+        self._conflicts: list[dict[str, Any]] = []
+        self._lineage: list[dict[str, Any]] = []
+
+    @staticmethod
+    def _known_feature_keys(schema: WorldSchema) -> tuple[tuple[str, ...], ...]:
+        return tuple(sorted(set(schema.input_feature_keys) | set(schema.state_feature_keys)))
+
+    @staticmethod
+    def _feature_count(schema: WorldSchema) -> int:
+        return int(schema.input_dim + schema.state_dim)
+
+    @property
+    def schema(self) -> WorldSchema:
+        return self._schema
+
+    @property
+    def active_version(self) -> int:
+        return self._active_version
+
+    @property
+    def revision_versions(self) -> tuple[int, ...]:
+        return tuple(sorted(self._revisions))
+
+    @property
+    def max_feature_count(self) -> int:
+        return self._max_feature_count
+
+    @property
+    def aliases(self) -> tuple[tuple[str, str], ...]:
+        return tuple(sorted(self._aliases.items()))
+
+    @property
+    def tombstones(self) -> tuple[tuple[str, ...], ...]:
+        return tuple(sorted(self._tombstones))
+
+    @property
+    def feature_confidence(self) -> dict[tuple[str, ...], float]:
+        return dict(self._confidence)
+
+    @property
+    def conflicts(self) -> tuple[dict[str, Any], ...]:
+        return tuple(dict(item) for item in self._conflicts)
+
+    @property
+    def lineage(self) -> tuple[dict[str, Any], ...]:
+        return tuple(dict(item) for item in self._lineage)
+
+    @property
+    def contradiction_count(self) -> int:
+        return len(self._conflicts)
+
+    def schema_at(self, version: int) -> WorldSchema:
+        try:
+            return self._revisions[int(version)]
+        except KeyError as exc:
+            raise WorldSchemaRegistryError(
+                f"world schema revision is not available: {version}"
+            ) from exc
+
+    def canonical_object_id(self, object_id: str) -> str:
+        current = str(object_id)
+        visited: set[str] = set()
+        while current in self._aliases:
+            if current in visited:
+                raise WorldSchemaConflictError("world schema alias cycle detected")
+            visited.add(current)
+            current = self._aliases[current]
+        return current
+
+    def register_alias(self, alias: str, canonical: str) -> bool:
+        alias = str(alias)
+        canonical = self.canonical_object_id(str(canonical))
+        if not alias or not canonical:
+            raise ValueError("world schema aliases cannot be empty")
+        if alias == canonical:
+            return False
+        if canonical not in self._schema.object_ids:
+            raise WorldSchemaConflictError(
+                f"world schema alias target is not registered: {canonical}"
+            )
+        existing = self._aliases.get(alias)
+        if existing is not None:
+            if self.canonical_object_id(existing) != canonical:
+                raise WorldSchemaConflictError(
+                    f"world schema alias already points to {existing}: {alias}"
+                )
+            return False
+        if alias in self._schema.object_ids:
+            raise WorldSchemaConflictError(
+                f"world schema alias collides with canonical object: {alias}"
+            )
+        self._aliases[alias] = canonical
+        self._lineage.append(
+            {
+                "operation": "merge-alias",
+                "version": self._active_version,
+                "alias": alias,
+                "canonical": canonical,
+            }
+        )
+        return True
+
+    def normalize_state(self, state: WorldState) -> WorldState:
+        if not isinstance(state, WorldState):
+            raise TypeError("world schema registry requires a WorldState")
+        objects = []
+        seen: set[str] = set()
+        for obj in state.objects:
+            canonical = self.canonical_object_id(obj.object_id)
+            if canonical in seen:
+                raise WorldSchemaConflictError(
+                    f"world schema alias merge produced duplicate object: {canonical}"
+                )
+            seen.add(canonical)
+            objects.append(replace(obj, object_id=canonical))
+        relations = tuple(
+            sorted(
+                {
+                    (
+                        self.canonical_object_id(subject),
+                        str(predicate),
+                        self.canonical_object_id(object_id),
+                    )
+                    for subject, predicate, object_id in state.relations
+                }
+            )
+        )
+        entities = tuple(self.canonical_object_id(entity) for entity in state.entities)
+        return replace(state, entities=entities, objects=tuple(objects), relations=relations)
+
+    def normalize_action(self, action: Any) -> Any:
+        if not hasattr(action, "actor_id") or not hasattr(action, "target_id"):
+            raise TypeError("world schema registry requires a structured world action")
+        return replace(
+            action,
+            actor_id=self.canonical_object_id(action.actor_id),
+            target_id=self.canonical_object_id(action.target_id),
+        )
+
+    def _record_conflict(self, key: tuple[str, ...], expected: float, observed: float) -> None:
+        self._conflicts.append(
+            {
+                "key": list(key),
+                "expected": float(expected),
+                "observed": float(observed),
+                "version": self._active_version,
+            }
+        )
+
+    def record_feedback(
+        self,
+        feature_key: tuple[str, ...],
+        observed: float,
+        *,
+        expected: float | None = None,
+        tolerance: float = 0.0,
+    ) -> bool:
+        key = tuple(str(item) for item in feature_key)
+        value = float(observed)
+        if not math.isfinite(value) or float(tolerance) < 0.0:
+            raise ValueError("world schema feedback must be finite with non-negative tolerance")
+        if expected is not None:
+            expected_value = float(expected)
+            if not math.isfinite(expected_value):
+                raise ValueError("world schema feedback expected value must be finite")
+            if abs(value - expected_value) > float(tolerance):
+                self._record_conflict(key, expected_value, value)
+                return False
+        previous = self._feedback.get(key)
+        if previous is not None and abs(previous - value) > float(tolerance):
+            self._record_conflict(key, previous, value)
+            return False
+        self._feedback[key] = value
+        self._confidence[key] = min(1.0, self._confidence.get(key, 0.0) + 0.1)
+        return True
+
+    def propose_open_set(
+        self,
+        *,
+        states: tuple[WorldState, ...] = (),
+        actions: tuple[Any, ...] = (),
+        register_parameters: bool = True,
+        evidence_ids: tuple[str, ...] = (),
+    ) -> WorldSchemaProposal | None:
+        if not states and not actions:
+            raise ValueError("world schema proposal needs an observed state or action")
+        normalized_states = tuple(self.normalize_state(state) for state in states)
+        normalized_actions = tuple(self.normalize_action(action) for action in actions)
+        candidate = self._schema.evolve_open_set(
+            states=normalized_states,
+            actions=normalized_actions,
+            include_action_parameters=register_parameters,
+        )
+        if candidate == self._schema:
+            return None
+        old_features = set(self._known_feature_keys(self._schema))
+        new_features = set(self._known_feature_keys(candidate))
+        added = tuple(sorted(new_features - old_features))
+        blocked = set(added) & self._tombstones
+        if blocked:
+            key = tuple(sorted(blocked))[0]
+            self._record_conflict(key, 0.0, 1.0)
+            raise WorldSchemaConflictError(
+                f"world schema feature is tombstoned and needs explicit reactivation: {key}"
+            )
+        if self._feature_count(candidate) > self._max_feature_count:
+            raise WorldSchemaBudgetError(
+                "world schema feature budget would be exceeded; prune or merge before growth"
+            )
+        return WorldSchemaProposal(
+            base_version=self._active_version,
+            schema=candidate,
+            operation="open-set-grow",
+            added_features=added,
+            evidence_ids=tuple(str(item) for item in evidence_ids),
+        )
+
+    def propose_prune(
+        self,
+        feature_keys: tuple[tuple[str, ...], ...],
+        *,
+        evidence_ids: tuple[str, ...] = (),
+    ) -> WorldSchemaProposal:
+        requested = tuple(sorted(set(tuple(str(item) for item in key) for key in feature_keys)))
+        if not requested:
+            raise ValueError("world schema prune needs at least one feature")
+        candidate = self._schema.without_features(requested)
+        return WorldSchemaProposal(
+            base_version=self._active_version,
+            schema=candidate,
+            operation="prune-tombstone",
+            removed_features=requested,
+            evidence_ids=tuple(str(item) for item in evidence_ids),
+        )
+
+    def commit(self, proposal: WorldSchemaProposal) -> int:
+        if not isinstance(proposal, WorldSchemaProposal):
+            raise TypeError("world schema registry commits WorldSchemaProposal values")
+        if proposal.base_version != self._active_version:
+            raise WorldSchemaConflictError("world schema proposal is based on a stale revision")
+        if proposal.schema == self._schema:
+            return self._active_version
+        version = self._next_version
+        self._next_version += 1
+        self._schema = proposal.schema
+        self._active_version = version
+        self._revisions[version] = proposal.schema
+        for key in proposal.added_features:
+            self._confidence.setdefault(key, 0.0)
+        self._tombstones.update(proposal.removed_features)
+        self._lineage.append(
+            {
+                "operation": proposal.operation,
+                "from_version": proposal.base_version,
+                "to_version": version,
+                "added_features": [list(key) for key in proposal.added_features],
+                "removed_features": [list(key) for key in proposal.removed_features],
+                "evidence_ids": list(proposal.evidence_ids),
+            }
+        )
+        while len(self._revisions) > self._history_limit:
+            oldest = min(self._revisions)
+            if oldest == self._active_version:
+                break
+            del self._revisions[oldest]
+        return version
+
+    def rollback(self, version: int) -> bool:
+        target_version = int(version)
+        target = self.schema_at(target_version)
+        if target_version == self._active_version:
+            return False
+        previous = self._active_version
+        self._active_version = target_version
+        self._schema = target
+        self._lineage.append(
+            {
+                "operation": "rollback",
+                "from_version": previous,
+                "to_version": target_version,
+            }
+        )
+        return True
+
+    def checkpoint(self) -> dict[str, Any]:
+        return {
+            "format": WORLD_SCHEMA_REGISTRY_CHECKPOINT_FORMAT,
+            "schema": self._schema.payload(),
+            "active_version": self._active_version,
+            "next_version": self._next_version,
+            "max_feature_count": self._max_feature_count,
+            "history_limit": self._history_limit,
+            "revisions": [
+                {"version": version, "schema": schema.payload()}
+                for version, schema in sorted(self._revisions.items())
+            ],
+            "aliases": [[alias, canonical] for alias, canonical in self.aliases],
+            "confidence": [
+                {"key": list(key), "value": value}
+                for key, value in sorted(self._confidence.items())
+            ],
+            "feedback": [
+                {"key": list(key), "value": value} for key, value in sorted(self._feedback.items())
+            ],
+            "tombstones": [list(key) for key in self.tombstones],
+            "conflicts": [dict(item) for item in self._conflicts],
+            "lineage": [dict(item) for item in self._lineage],
+        }
+
+    @classmethod
+    def from_checkpoint(cls, payload: Mapping[str, Any]) -> WorldSchemaRegistry:
+        if payload.get("format") != WORLD_SCHEMA_REGISTRY_CHECKPOINT_FORMAT:
+            raise ValueError("unsupported world schema registry checkpoint format")
+        registry = cls(
+            WorldSchema.from_payload(dict(payload["schema"])),
+            max_feature_count=int(payload.get("max_feature_count", 4096)),
+            history_limit=int(payload.get("history_limit", 64)),
+        )
+        revisions = payload.get("revisions", ())
+        if not isinstance(revisions, (list, tuple)):
+            raise ValueError("world schema registry revisions must be a sequence")
+        registry._revisions = {
+            int(item["version"]): WorldSchema.from_payload(dict(item["schema"]))
+            for item in revisions
+        }
+        if not registry._revisions:
+            raise ValueError("world schema registry checkpoint has no revisions")
+        registry._active_version = int(payload["active_version"])
+        if registry._active_version not in registry._revisions:
+            raise ValueError("world schema registry active revision is missing")
+        registry._schema = registry._revisions[registry._active_version]
+        if (
+            registry._schema.payload()
+            != WorldSchema.from_payload(dict(payload["schema"])).payload()
+        ):
+            raise ValueError("world schema registry active schema does not match checkpoint")
+        registry._next_version = int(payload.get("next_version", max(registry._revisions) + 1))
+        aliases = payload.get("aliases", ())
+        registry._aliases = {str(item[0]): str(item[1]) for item in aliases}
+        registry._confidence = {
+            tuple(str(value) for value in item["key"]): float(item["value"])
+            for item in payload.get("confidence", ())
+        }
+        registry._feedback = {
+            tuple(str(value) for value in item["key"]): float(item["value"])
+            for item in payload.get("feedback", ())
+        }
+        registry._tombstones = {
+            tuple(str(value) for value in key) for key in payload.get("tombstones", ())
+        }
+        registry._conflicts = [dict(item) for item in payload.get("conflicts", ())]
+        registry._lineage = [dict(item) for item in payload.get("lineage", ())]
+        return registry
+
 
 @dataclass(frozen=True)
 class WorldPrediction:
@@ -409,12 +899,24 @@ def _replace_numeric_state(
 class WorldDynamicsLearner(nn.Module):
     """A compact learned transition model with no sequence-model dependency."""
 
-    def __init__(self, schema: WorldSchema, *, hidden_dim: int = 64, seed: int = 0) -> None:
+    def __init__(
+        self,
+        schema: WorldSchema,
+        *,
+        hidden_dim: int = 64,
+        seed: int = 0,
+        schema_registry: WorldSchemaRegistry | None = None,
+    ) -> None:
         super().__init__()
         if int(hidden_dim) <= 0:
             raise ValueError("hidden_dim must be positive")
         torch.manual_seed(int(seed))
+        if schema_registry is not None and schema_registry.schema != schema:
+            raise ValueError("world schema registry schema must match learner schema")
         self.schema = schema
+        self.schema_registry = (
+            WorldSchemaRegistry(schema) if schema_registry is None else schema_registry
+        )
         self.hidden_dim = int(hidden_dim)
         self.online_updates = 0
         self.schema_evolution_count = 0
@@ -424,6 +926,12 @@ class WorldDynamicsLearner(nn.Module):
             nn.Linear(self.hidden_dim, schema.state_dim + 2),
         )
         freeze_parameters(self)
+        self._schema_snapshots: dict[int, dict[str, torch.Tensor]] = {
+            self.schema_registry.active_version: self._snapshot_state_dict()
+        }
+
+    def _snapshot_state_dict(self) -> dict[str, torch.Tensor]:
+        return {name: tensor.detach().cpu().clone() for name, tensor in self.state_dict().items()}
 
     def _resize_for_schema(self, schema: WorldSchema) -> None:
         old_schema = self.schema
@@ -483,17 +991,69 @@ class WorldDynamicsLearner(nn.Module):
             raise ValueError("open-set registration needs an observed state or action")
         observed_states = tuple(states)
         observed_actions = () if action is None else (action,)
-        evolved = self.schema.evolve_open_set(
+        proposal = self.schema_registry.propose_open_set(
             states=observed_states,
             actions=observed_actions,
-            include_action_parameters=register_parameters,
+            register_parameters=register_parameters,
         )
-        if evolved == self.schema:
+        if proposal is None:
             return False
-        self._resize_for_schema(evolved)
-        self.schema = evolved
+        self._resize_for_schema(proposal.schema)
+        version = self.schema_registry.commit(proposal)
+        self.schema = self.schema_registry.schema
+        self._schema_snapshots[version] = self._snapshot_state_dict()
         self.schema_evolution_count += 1
         return True
+
+    def register_schema_alias(self, alias: str, canonical: str) -> bool:
+        return self.schema_registry.register_alias(alias, canonical)
+
+    def prune_schema(
+        self,
+        *feature_keys: tuple[str, ...],
+        evidence_ids: tuple[str, ...] = (),
+    ) -> bool:
+        proposal = self.schema_registry.propose_prune(
+            tuple(feature_keys), evidence_ids=evidence_ids
+        )
+        self._resize_for_schema(proposal.schema)
+        version = self.schema_registry.commit(proposal)
+        self.schema = self.schema_registry.schema
+        self._schema_snapshots[version] = self._snapshot_state_dict()
+        self.schema_evolution_count += 1
+        return True
+
+    def rollback_schema(self, version: int) -> bool:
+        target_version = int(version)
+        if target_version == self.schema_registry.active_version:
+            return False
+        snapshot = self._schema_snapshots.get(target_version)
+        if snapshot is None:
+            raise WorldSchemaRegistryError(
+                f"world learner has no network checkpoint for schema revision {target_version}"
+            )
+        target_schema = self.schema_registry.schema_at(target_version)
+        self._resize_for_schema(target_schema)
+        self.schema_registry.rollback(target_version)
+        self.schema = target_schema
+        self.load_state_dict(snapshot)
+        freeze_parameters(self)
+        return True
+
+    def record_schema_feedback(
+        self,
+        feature_key: tuple[str, ...],
+        observed: float,
+        *,
+        expected: float | None = None,
+        tolerance: float = 0.0,
+    ) -> bool:
+        return self.schema_registry.record_feedback(
+            feature_key,
+            observed,
+            expected=expected,
+            tolerance=tolerance,
+        )
 
     @property
     def _input_layer(self) -> nn.Linear:
@@ -559,18 +1119,22 @@ class WorldDynamicsLearner(nn.Module):
         bind_target: bool = True,
         register_parameters: bool = True,
     ) -> WorldPrediction:
+        normalized_state = self.schema_registry.normalize_state(state)
+        normalized_action = self.schema_registry.normalize_action(action)
         self.register_open_set(
-            state,
-            action=action,
+            normalized_state,
+            action=normalized_action,
             register_parameters=register_parameters,
         )
         self.eval()
         with torch.no_grad():
-            output = self.network(self.schema.encode(state, action, bind_target=bind_target))
+            output = self.network(
+                self.schema.encode(normalized_state, normalized_action, bind_target=bind_target)
+            )
         delta = output[: self.schema.state_dim]
-        values = self.schema.state_values(state) + delta
+        values = self.schema.state_values(normalized_state) + delta
         return WorldPrediction(
-            state=_replace_numeric_state(state, self.schema, values),
+            state=_replace_numeric_state(normalized_state, self.schema, values),
             reward=float(output[-2]),
             success_probability=float(torch.sigmoid(output[-1])),
         )
@@ -632,24 +1196,32 @@ class WorldDynamicsLearner(nn.Module):
 
         if float(learning_rate) <= 0.0 or int(repeats) <= 0:
             raise ValueError("learning_rate and repeats must be positive")
+        normalized_transition = replace(
+            transition,
+            before=self.schema_registry.normalize_state(transition.before),
+            action=self.schema_registry.normalize_action(transition.action),
+            after=self.schema_registry.normalize_state(transition.after),
+        )
         self.register_open_set(
-            transition.before,
-            transition.after,
-            action=transition.action,
+            normalized_transition.before,
+            normalized_transition.after,
+            action=normalized_transition.action,
             register_parameters=register_parameters,
         )
-        features = self.schema.encode(transition.before, transition.action).unsqueeze(0)
+        features = self.schema.encode(
+            normalized_transition.before, normalized_transition.action
+        ).unsqueeze(0)
         target = torch.cat(
             (
-                self.schema.state_values(transition.after)
-                - self.schema.state_values(transition.before),
+                self.schema.state_values(normalized_transition.after)
+                - self.schema.state_values(normalized_transition.before),
                 torch.tensor(
                     [
-                        float(transition.outcome.reward),
+                        float(normalized_transition.outcome.reward),
                         float(
-                            transition.outcome.success
-                            if transition.outcome.success is not None
-                            else transition.outcome.reward > 0.0
+                            normalized_transition.outcome.success
+                            if normalized_transition.outcome.success is not None
+                            else normalized_transition.outcome.reward > 0.0
                         ),
                     ],
                     dtype=torch.float32,
