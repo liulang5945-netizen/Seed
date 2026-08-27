@@ -522,6 +522,47 @@ P4 的最小真实经历边界已落地：
 
 遗留（下一轮候选）：语言器官接入真实后端（P6）才能真正消除乱码；终端默认 shell 仍是 cmd.exe；侧边栏搜索框尚未接线为会话过滤。
 
+### 13.2 打包链收敛与客户端重打包（2026-08-27）
+
+上一轮十项修复提交后，用户实测反馈「没有重新构建前端和打包客户端」。核查结论一分为二：`frontend/dist` 确已重建（构建产物含全部修复），但 `dist/Seed/Seed.exe` 仍是 08-24 17:40 的旧包（45.43 MB），内置 `index.html` 哈希与源码构建不一致 ⇒ 客户端里跑的是三天前、不含任何修复的前端。
+
+**机制层根因**：存在两条重叠的桌面打包入口，而被文档推荐的那条恰好缺少防漂移断言。
+
+| 入口 | 独有能力 | 缺陷 |
+|---|---|---|
+| `scripts/release.py`（CONTRIBUTING 推荐） | 前端 + PyInstaller + NSIS 编排、产物验证 | **缺少**「源码 dist == 客户端内置 dist」字节断言；无旧产物清理 |
+| `desktop/build.py` | 字节级前端一致性断言、dist/build 清理、运行时可写目录后处理 | 未被文档与 CI 之外的任何流程调用 |
+
+按「机制演化时收敛、清理旧的」收敛为**唯一入口** `scripts/release.py`：
+
+- 并入 `_verify_packaged_frontend()`——对比 `frontend/dist/index.html` 与 `dist/Seed/_internal/frontend/dist/index.html` 字节，把「改了前端却打出旧包」从静默漂移变成显式构建失败；在 PyInstaller 之后作硬门禁，并复用于 `_verify_artifacts()`。
+- 并入 `clean_outputs()`（dist/build 清理，新增 `--no-clean` 供增量调试）与 `postprocess()`（随包复制 `knowledge_store/`、`user_data/`、`security/`，创建 `agent_workspace/`、`taiji_data/{feed,sleep,life,evolution}_data/`）。
+- 步骤重编号为 [1/4]…[4/4]；`_verify_artifacts()` 修正为按 `seed.spec` 的 `COLLECT name="Seed"` 检查 `dist/Seed/{Seed,SeedBackend}.exe`（非 Windows 跳过 SeedBackend）。
+- 删除 `desktop/build.py`；同步更新 `ci.yml` F05 步骤（不再 py_compile 已删文件）与 `seed.spec` 文档字符串。
+
+顺带修掉三个会让完整发布必然失败的 NSIS 缺陷（`makensis` 的 `OutFile`/`File` 相对**工作目录** `desktop/` 解析，而非 .nsi 所在目录）：
+
+| 缺陷 | 现象 | 修复 |
+|---|---|---|
+| `OutFile "SeedSetup.exe"` | 装机包落在 `desktop/`，而验证步骤查 `dist/SeedSetup.exe` ⇒ 永远失败 | `OutFile "..\dist\SeedSetup.exe"` |
+| `File /r "dist\Seed\*.*"` | 去找不存在的 `desktop/dist/Seed`，与同文件 `..\icon.ico` 自相矛盾 | `File /r "..\dist\Seed\*.*"` |
+| `APP_VERSION "1.6.0\"` 多余反斜杠 | 版本串被污染 | 源头在 `scripts/sync_version.py` 的 raw f-string `rf"...\""`（raw 串里 `\"` 会把反斜杠写进文件），改为单引号 f-string `rf'\g<1>{ver}"'`，杜绝再生 |
+
+**重打包实测证据**（`python scripts/release.py --skip-nsis`，本机无 NSIS）：
+
+| 指标 | 结果 |
+|---|---|
+| 流水线 | 清理 dist/build → 前端构建 → 一致性校验通过 → 后处理 → 产物验证通过，`Seed v1.6.0 构建完成`，1273.7 MB / 9111 文件 |
+| `dist/Seed/Seed.exe` | 69.14 MB @ 2026-08-27 23:46:56（旧包 45.43 MB @ 08-24 17:40:58）|
+| `dist/Seed/SeedBackend.exe` | 69.07 MB，同时间戳 |
+| index.html 哈希 | 源码 == 打包 == `76E4B2B8…17BA`，**MATCH** |
+| 打包内资产抽查 | CSS `flex:1 0 auto`、`contain-intrinsic-size:auto 140px`、JS `raw-output` 均命中；`seed_corpus.pt`、`tokenizer_contract.json`、`agent_workspace/`、`taiji_data/life_data/` 就位 |
+| 冷启动冒烟 | `Seed` + `SeedBackend` 双进程存活，`GET /api/health` 200，`model_loaded:true`、`seed_active:true`、`security_middleware:true` |
+
+冒烟返回的 `language_provider.backend_id = "structured-stub"` 再次确认 §13.1 第 7 项（乱码）的根因仍在语言器官，**下一步应做 P6 真实语言器官接入**，而非继续在 UI 侧修补。
+
+附注：`seed.spec` 的 `_datas` 用 `if src.exists()` 软条件，`version.json` / `app_settings.json` 在仓库中本就不存在且无任何代码读取，被静默跳过属预期，不是本次打包缺陷。
+
 ## 14. 持续门禁
 
 - Taiji/Seed/Legacy 所有权 AST 测试；

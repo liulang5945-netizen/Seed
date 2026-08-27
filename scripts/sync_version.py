@@ -24,10 +24,11 @@ TARGETS = [
         ),
     ),
     # desktop/installer.nsi  →  !define APP_VERSION "X.Y.Z"
+    # 注意：替换串必须用单引号 f-string 写出闭合双引号，raw string 里的 \" 会把反斜杠写进文件
     (
         "desktop/installer.nsi",
         lambda content, ver: re.sub(
-            r'(!define\s+APP_VERSION\s+")[^"]*"', rf"\g<1>{ver}\"", content, count=1
+            r'(!define\s+APP_VERSION\s+")[^"]*"', rf'\g<1>{ver}"', content, count=1
         ),
     ),
     # desktop/main.py  →  setApplicationVersion("X.Y.Z")  +  SeedDesktop/X.Y.Z

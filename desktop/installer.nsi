@@ -3,20 +3,20 @@
 ;
 ;使用方式：
 ;  1. 安装 NSIS: https://nsis.sourceforge.io/
-;  2. 先运行 build_desktop.bat 打包
-;  3. 右键此文件 → Compile NSIS Script
+;  2. 运行 python scripts/release.py（唯一发布入口，会自动调用 makensis）
+;  3. 或手动: cd desktop && makensis installer.nsi
 ;
-;输出：SeedSetup.exe
+;输出：dist/SeedSetup.exe（OutFile 相对 desktop/ 解析，故写作 ..\dist\）
 
 !define APP_NAME "Seed"
-!define APP_VERSION "1.6.0\"
+!define APP_VERSION "1.6.0"
 !define APP_PUBLISHER "Seed Project"
 !define APP_EXE "Seed.exe"
 !define APP_DIR "Seed"
 
 ; 安装器属性
 Name "${APP_NAME} ${APP_VERSION}"
-OutFile "SeedSetup.exe"
+OutFile "..\dist\SeedSetup.exe"
 InstallDir "$PROGRAMFILES\${APP_DIR}"
 InstallDirRegKey HKLM "Software\${APP_DIR}" "InstallDir"
 RequestExecutionLevel admin
@@ -43,8 +43,8 @@ RequestExecutionLevel admin
 Section "安装"
     SetOutPath "$INSTDIR"
 
-    ; 复制所有文件
-    File /r "dist\Seed\*.*"
+    ; 复制所有文件（相对 makensis 工作目录 desktop/ 解析，与 ..\icon.ico 保持一致）
+    File /r "..\dist\Seed\*.*"
 
     ; 创建卸载器
     WriteUninstaller "$INSTDIR\Uninstall.exe"
