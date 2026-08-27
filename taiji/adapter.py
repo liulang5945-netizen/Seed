@@ -5480,12 +5480,80 @@ class TSKV8Adapter(Taiji):
                 confidence=rollout.confidence,
                 recovery_lineage=rollout.recovery_lineage,
             )
-            self._planned_rollout = self._apply_concept_sequence_affinity(suffix)
+            refreshed_suffix = self._refresh_recovery_rollout_suffix(suffix)
+            if refreshed_suffix is None:
+                self._planned_rollout = None
+                self._replan_required = True
+            else:
+                self._planned_rollout = self._apply_concept_sequence_affinity(refreshed_suffix)
         if result.terminal and self._cognitive_state.planning_recovery is not None:
             self._cognitive_state = replace(self._cognitive_state, planning_recovery=None)
         if result.terminal and self._cognitive_state.recovery_branch is not None:
             self._cognitive_state = replace(self._cognitive_state, recovery_branch=None)
         return experienced
+
+    def _refresh_recovery_rollout_suffix(self, rollout: ImaginedRollout) -> ImaginedRollout | None:
+        """Rebind the next recovery step to the post-action runtime boundary."""
+
+        if rollout.recovery_lineage is None:
+            return rollout
+        if not rollout.steps or self._world_dynamics is None:
+            return None
+        capability = self._cognitive_state.environment_capability
+        if capability is None or capability.tick != self._cognitive_state.world.tick:
+            return None
+        lineage = rollout.recovery_lineage
+        affordance = next(
+            (
+                item
+                for item in self._cognitive_state.world.affordances
+                if item.affordance_id == lineage.affordance_id
+            ),
+            None,
+        )
+        if affordance is None or affordance.content_identity != lineage.affordance_content_identity:
+            return None
+        next_action = rollout.steps[0].action
+        try:
+            capability_index = capability.action_kinds.index(next_action.kind)
+        except ValueError:
+            return None
+        if (
+            dict(next_action.parameters).get("action_symbol")
+            != capability.actions[capability_index]
+        ):
+            return None
+        rebased_steps = tuple(
+            replace(
+                step,
+                action=replace(step.action, tick=self._cognitive_state.world.tick + index),
+            )
+            for index, step in enumerate(rollout.steps)
+        )
+        for step in rebased_steps:
+            self._world_dynamics.register_open_set(
+                self._cognitive_state.world,
+                action=step.action,
+                register_parameters=False,
+            )
+        refreshed_lineage = RecoveryRolloutLineage(
+            capability_tick=capability.tick,
+            capability_actions=capability.actions,
+            capability_action_kinds=capability.action_kinds,
+            affordance_id=affordance.affordance_id,
+            affordance_content_identity=affordance.content_identity,
+            action_semantic_key=self._world_dynamics.schema_registry.action_semantic_key(
+                rebased_steps[0].action
+            ),
+            schema_revision=self._world_dynamics.schema_registry.active_version,
+        )
+        return self.imagine_world_rollout(
+            rollout.rollout_id,
+            rollout.goal_id,
+            rebased_steps,
+            confidence=rollout.confidence,
+            recovery_lineage=refreshed_lineage,
+        )
 
     def _recovery_rollout_is_fresh(self, rollout: ImaginedRollout) -> bool:
         lineage = rollout.recovery_lineage
