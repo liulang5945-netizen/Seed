@@ -379,6 +379,7 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     recovery_before = restored.cognitive_snapshot().world
     synthesized_recovery = restored.synthesize_recovery_rollouts(
         goal_id="reach-world",
+        horizon=2,
         resource_budget=1.0,
     )
     capability = restored.environment_capability
@@ -470,7 +471,23 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
             replace(
                 _transition_state(
                     recovery_before,
-                    sample_id=f"recovery:{seed}",
+                    sample_id=f"recovery:{seed}:1",
+                    target_id="target",
+                    phase=1,
+                    success=True,
+                ),
+                affordances=_recovery_affordances(),
+            ),
+            replace(
+                _transition_state(
+                    _transition_state(
+                        recovery_before,
+                        sample_id=f"recovery:{seed}:1",
+                        target_id="target",
+                        phase=1,
+                        success=True,
+                    ),
+                    sample_id=f"recovery:{seed}:2",
                     target_id="target",
                     phase=1,
                     success=True,
@@ -478,9 +495,9 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
                 affordances=_recovery_affordances(),
             ),
         ),
-        rewards=(1.0,),
-        successes=(True,),
-        terminals=(True,),
+        rewards=(1.0, 1.0),
+        successes=(True, True),
+        terminals=(False, True),
         available_actions=(11,),
         action_kinds=("idle",),
     )
@@ -511,6 +528,7 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     )
     synthesized_recovery = restored.synthesize_recovery_rollouts(
         goal_id="reach-world",
+        horizon=2,
         resource_budget=1.0,
     )
     recovery_rollout = next(
@@ -521,6 +539,23 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     )
     restored.plan_rollouts(synthesized_recovery)
     planned_recovery_branch = restored.recovery_branch
+    recovery_first = restored.execute_imagined_rollout_step(
+        recovery_environment,
+        available_actions=(11,),
+        action_kinds=("idle",),
+        learn=False,
+        learn_world=True,
+    )
+    rebound_rollout = restored._planned_rollout
+    recovery_suffix_rebound = bool(
+        recovery_first.success is True
+        and not recovery_first.terminal
+        and rebound_rollout is not None
+        and len(rebound_rollout.steps) == 1
+        and rebound_rollout.recovery_lineage is not None
+        and rebound_rollout.recovery_lineage.capability_tick
+        == restored.cognitive_snapshot().world.tick
+    )
     recovery = restored.execute_imagined_rollout_step(
         recovery_environment,
         available_actions=(11,),
@@ -587,6 +622,7 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         "stale_action_rejected": stale_action_rejected,
         "stale_execution_rejected": stale_execution_rejected,
         "checkpoint_lineage_preserved": checkpoint_lineage_preserved,
+        "recovery_suffix_rebound": recovery_suffix_rebound,
         "recovery_synthesized_candidates": [
             {
                 "kind": rollout.steps[0].action.kind,
@@ -607,11 +643,12 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
             and restored.recovery_branch is None
         ),
         "trace_complete": bool(
-            len(final.world_calibration_trace) == 2
+            len(final.world_calibration_trace) == 3
             and final.world_calibration_trace[0].adjudication == "rejected"
             and final.world_calibration_trace[1].adjudication == "accepted"
+            and final.world_calibration_trace[2].adjudication == "accepted"
         ),
-        "checkpoint_trace_complete": len(final_checkpoint_state.world_calibration_trace) == 2,
+        "checkpoint_trace_complete": len(final_checkpoint_state.world_calibration_trace) == 3,
         "checkpoint_capability_preserved": bool(
             checkpoint_capability is not None
             and checkpoint_capability.actions == (10, 11, 12, 13)
@@ -743,6 +780,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "stale_action_rejected",
         "stale_execution_rejected",
         "checkpoint_lineage_preserved",
+        "recovery_suffix_rebound",
         "recovery_complete",
         "trace_complete",
         "checkpoint_trace_complete",
@@ -788,6 +826,7 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "stale-action-semantic-rejection",
             "stale-execution-rejection",
             "recovery-lineage-checkpoint",
+            "stepwise-recovery-rebinding",
             "checkpoint-no-replay",
             "recovery-rollout-continuation",
         ],
@@ -807,7 +846,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         },
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce motor capability and resource budget, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve and restore that lineage through checkpoint, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
+            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce motor capability and resource budget, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve and restore that lineage through checkpoint, rebind the remaining suffix after a successful non-terminal step, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
         },
     }
 

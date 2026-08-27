@@ -25,6 +25,7 @@
         "stale_action_rejected": true,
         "stale_execution_rejected": true,
         "checkpoint_lineage_preserved": true,
+        "recovery_suffix_rebound": true,
         "recovery_synthesized_candidates": [
           {
             "kind": "idle",
@@ -53,8 +54,8 @@
         "checkpoint_capability_preserved": true,
         "capability_refresh_filters_next_candidates": true,
         "outcome_count": 2,
-        "online_updates": 5,
-        "transition_acceptances": 5,
+        "online_updates": 6,
+        "transition_acceptances": 6,
         "transition_rejections": 3,
         "failure_success": false,
         "failure_adjudication": "accepted",
@@ -87,6 +88,7 @@
         "stale_action_rejected": true,
         "stale_execution_rejected": true,
         "checkpoint_lineage_preserved": true,
+        "recovery_suffix_rebound": true,
         "recovery_synthesized_candidates": [
           {
             "kind": "idle",
@@ -115,8 +117,8 @@
         "checkpoint_capability_preserved": true,
         "capability_refresh_filters_next_candidates": true,
         "outcome_count": 2,
-        "online_updates": 5,
-        "transition_acceptances": 5,
+        "online_updates": 6,
+        "transition_acceptances": 6,
         "transition_rejections": 3,
         "failure_success": false,
         "failure_adjudication": "accepted",
@@ -149,6 +151,7 @@
         "stale_action_rejected": true,
         "stale_execution_rejected": true,
         "checkpoint_lineage_preserved": true,
+        "recovery_suffix_rebound": true,
         "recovery_synthesized_candidates": [
           {
             "kind": "idle",
@@ -177,8 +180,8 @@
         "checkpoint_capability_preserved": true,
         "capability_refresh_filters_next_candidates": true,
         "outcome_count": 2,
-        "online_updates": 5,
-        "transition_acceptances": 5,
+        "online_updates": 6,
+        "transition_acceptances": 6,
         "transition_rejections": 3,
         "failure_success": false,
         "failure_adjudication": "accepted",
@@ -194,6 +197,6 @@
   },
   "gate": {
     "passed": true,
-    "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce motor capability and resource budget, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve and restore that lineage through checkpoint, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout"
+    "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce motor capability and resource budget, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve and restore that lineage through checkpoint, rebind the remaining suffix after a successful non-terminal step, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout"
   }
 }

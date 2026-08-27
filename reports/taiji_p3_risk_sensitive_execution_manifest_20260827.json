@@ -22,6 +22,7 @@
     "stale-action-semantic-rejection",
     "stale-execution-rejection",
     "recovery-lineage-checkpoint",
+    "stepwise-recovery-rebinding",
     "checkpoint-no-replay",
     "recovery-rollout-continuation"
   ],
