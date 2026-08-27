@@ -1473,6 +1473,48 @@ class Outcome:
 
 
 @dataclass(frozen=True)
+class EnvironmentCapability:
+    """The environment's currently available motor/action-kind boundary."""
+
+    actions: tuple[int, ...]
+    action_kinds: tuple[str, ...]
+    tick: int
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        if not self.actions or len(self.actions) != len(self.action_kinds):
+            raise ValueError("environment capability actions and kinds must be aligned")
+        if len(set(self.actions)) != len(self.actions):
+            raise ValueError("environment capability actions must be unique")
+        if len(set(self.action_kinds)) != len(self.action_kinds):
+            raise ValueError("environment capability action_kinds must be unique")
+        if any(int(action) < 0 for action in self.actions):
+            raise ValueError("environment capability actions cannot be negative")
+        for kind in self.action_kinds:
+            _check_text(kind, "environment capability action_kind")
+        if int(self.tick) < 0:
+            raise ValueError("environment capability tick cannot be negative")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "actions": list(self.actions),
+            "action_kinds": list(self.action_kinds),
+            "tick": self.tick,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> EnvironmentCapability:
+        return cls(
+            version=int(payload["version"]),
+            actions=tuple(int(item) for item in payload["actions"]),
+            action_kinds=tuple(str(item) for item in payload["action_kinds"]),
+            tick=int(payload["tick"]),
+        )
+
+
+@dataclass(frozen=True)
 class WorldTransition:
     """A single causal step joining an action, outcome and next world state."""
 
@@ -2524,6 +2566,7 @@ class CognitiveState:
     learning: LearningState
     action_intent: ActionIntent | None = None
     outcome: Outcome | None = None
+    environment_capability: EnvironmentCapability | None = None
     world_transition: WorldTransition | None = None
     world_prediction: WorldPredictionRecord | None = None
     world_calibration_trace: tuple[WorldCalibrationTrace, ...] = ()
@@ -2560,6 +2603,11 @@ class CognitiveState:
                 None if self.action_intent is None else self.action_intent.to_payload()
             ),
             "outcome": None if self.outcome is None else self.outcome.to_payload(),
+            "environment_capability": (
+                None
+                if self.environment_capability is None
+                else self.environment_capability.to_payload()
+            ),
             "world_transition": (
                 None if self.world_transition is None else self.world_transition.to_payload()
             ),
@@ -2586,6 +2634,7 @@ class CognitiveState:
         percept = payload.get("percept")
         intent = payload.get("action_intent")
         outcome = payload.get("outcome")
+        environment_capability = payload.get("environment_capability")
         world_transition = payload.get("world_transition")
         world_prediction = payload.get("world_prediction")
         return cls(
@@ -2613,6 +2662,11 @@ class CognitiveState:
                 None if intent is None else ActionIntent.from_payload(intent, device=device)
             ),
             outcome=None if outcome is None else Outcome.from_payload(outcome, device=device),
+            environment_capability=(
+                None
+                if environment_capability is None
+                else EnvironmentCapability.from_payload(environment_capability)
+            ),
             world_transition=(
                 None
                 if world_transition is None

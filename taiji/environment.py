@@ -18,6 +18,8 @@ class EnvironmentOutcome:
     terminal: bool = False
     success: bool | None = None
     world_state: WorldState | None = None
+    available_actions: tuple[int, ...] = ()
+    action_kinds: tuple[str, ...] = ()
 
 
 @runtime_checkable
