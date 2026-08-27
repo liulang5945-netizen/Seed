@@ -36,6 +36,7 @@ from .contracts import (
     PlanCandidate,
     PlanningRecoveryState,
     PlanState,
+    RecoveryBranchState,
     SelfState,
     StructuralGrowthRequest,
     StructuralTopologyProposal,
@@ -4199,6 +4200,7 @@ class TSKV8Adapter(Taiji):
             world_transition=None,
             world_prediction=None,
             planning_recovery=None,
+            recovery_branch=None,
             learning=replace(previous.learning, tick=self.tick),
         )
         self._last_executive_decision = None
@@ -5196,6 +5198,99 @@ class TSKV8Adapter(Taiji):
             confidence=confidence,
         )
 
+    def synthesize_recovery_rollouts(
+        self,
+        *,
+        available_actions: Sequence[int],
+        action_kinds: Sequence[str],
+        horizon: int = 1,
+        goal_id: str | None = None,
+        resource_budget: float = 1.0,
+    ) -> tuple[ImaginedRollout, ...]:
+        """Generate executable recovery branches from current world affordances."""
+
+        if self._world_dynamics is None:
+            raise RuntimeError("recovery rollout synthesis requires world dynamics")
+        if not self._cognitive_state.world.affordances:
+            raise RuntimeError("recovery rollout synthesis requires current world affordances")
+        actions = tuple(int(action) for action in available_actions)
+        kinds = tuple(str(kind) for kind in action_kinds)
+        if not actions or len(actions) != len(kinds) or len(set(actions)) != len(actions):
+            raise ValueError("recovery actions and action_kinds must be aligned and unique")
+        if int(horizon) <= 0:
+            raise ValueError("recovery rollout horizon must be positive")
+        if not 0.0 <= float(resource_budget) <= 1.0:
+            raise ValueError("recovery resource_budget must be in [0, 1]")
+        active_goal = max(
+            self._cognitive_state.goals.goals,
+            key=lambda item: (item.priority, -item.progress, item.goal_id),
+            default=None,
+        )
+        selected_goal_id = goal_id
+        if selected_goal_id is None and self._cognitive_state.recovery_branch is not None:
+            selected_goal_id = self._cognitive_state.recovery_branch.goal_id
+        if selected_goal_id is None and active_goal is not None:
+            selected_goal_id = active_goal.goal_id
+        if selected_goal_id is None:
+            raise RuntimeError("recovery rollout synthesis requires a goal")
+        recovery_branch = self._cognitive_state.recovery_branch
+        rejected_key = None
+        if recovery_branch is not None:
+            rejected_key = self._world_dynamics.schema_registry.action_semantic_key(
+                recovery_branch.rejected_action
+            )
+        rollouts = []
+        start_tick = self._cognitive_state.world.tick
+        for affordance in self._cognitive_state.world.affordances:
+            try:
+                action_index = kinds.index(affordance.action_kind)
+            except ValueError:
+                continue
+            parameters = dict(affordance.parameters)
+            parameters["action_symbol"] = actions[action_index]
+            resource_cost = float(parameters.get("resource_cost", 0.0))
+            if not 0.0 <= resource_cost <= float(resource_budget):
+                continue
+            first_action = WorldAction(
+                action_id=f"recovery:{self._state.episode_id}:{affordance.affordance_id}",
+                kind=affordance.action_kind,
+                tick=start_tick,
+                actor_id=affordance.actor_id,
+                target_id=affordance.target_id,
+                parameters=tuple(sorted(parameters.items())),
+                provenance="recovery-synthesis",
+            )
+            if rejected_key is not None and (
+                self._world_dynamics.schema_registry.action_semantic_key(first_action)
+                == rejected_key
+            ):
+                continue
+            templates = tuple(
+                PlanningCandidate(
+                    candidate_id=(
+                        f"recovery:{self._state.episode_id}:{affordance.affordance_id}:step:{index}"
+                    ),
+                    action=replace(first_action, tick=start_tick + index),
+                    predicted_reward=0.0,
+                    success_probability=0.0,
+                    expected_progress=affordance.confidence,
+                    resource_cost=resource_cost,
+                    prediction_provenance="recovery-synthesis",
+                )
+                for index in range(int(horizon))
+            )
+            rollouts.append(
+                self.imagine_world_rollout(
+                    f"recovery:{self._state.episode_id}:{affordance.affordance_id}",
+                    selected_goal_id,
+                    templates,
+                    confidence=affordance.confidence,
+                )
+            )
+        if not rollouts:
+            raise RuntimeError("recovery rollout synthesis found no executable alternative")
+        return tuple(rollouts)
+
     def plan_rollouts(
         self,
         rollouts: Sequence[ImaginedRollout],
@@ -5212,6 +5307,22 @@ class TSKV8Adapter(Taiji):
             )
             for rollout in rollouts
         )
+        recovery_branch = self._cognitive_state.recovery_branch
+        if recovery_branch is not None and self._world_dynamics is not None:
+            rejected_key = self._world_dynamics.schema_registry.action_semantic_key(
+                recovery_branch.rejected_action
+            )
+            enriched_rollouts = tuple(
+                rollout
+                for rollout in enriched_rollouts
+                if not rollout.steps
+                or self._world_dynamics.schema_registry.action_semantic_key(rollout.steps[0].action)
+                != rejected_key
+            )
+            if not enriched_rollouts:
+                raise RuntimeError(
+                    "outcome recovery requires a rollout with a different first action"
+                )
         decision = self._goal_planner.plan_rollouts(
             self._cognitive_state.goals,
             enriched_rollouts,
@@ -5227,6 +5338,14 @@ class TSKV8Adapter(Taiji):
             self._cognitive_state,
             plan=decision.plan,
             goals=replace(self._cognitive_state.goals, tick=self.tick),
+            recovery_branch=(
+                None
+                if recovery_branch is None
+                else replace(
+                    recovery_branch,
+                    replacement_rollout_id=decision.selected.rollout_id,
+                )
+            ),
         )
         return decision
 
@@ -5286,6 +5405,8 @@ class TSKV8Adapter(Taiji):
             world=replace(experienced_world, tick=self.tick),
         )
         self._refresh_concept_memory()
+        if not result.terminal and (result.success is False or result.reward < 0.0):
+            self._replan_required = True
         if self.replan_required or result.terminal or len(rollout.steps) == 1:
             self._planned_rollout = None
         else:
@@ -5298,6 +5419,8 @@ class TSKV8Adapter(Taiji):
             self._planned_rollout = self._apply_concept_sequence_affinity(suffix)
         if result.terminal and self._cognitive_state.planning_recovery is not None:
             self._cognitive_state = replace(self._cognitive_state, planning_recovery=None)
+        if result.terminal and self._cognitive_state.recovery_branch is not None:
+            self._cognitive_state = replace(self._cognitive_state, recovery_branch=None)
         return experienced
 
     @property
@@ -5317,6 +5440,12 @@ class TSKV8Adapter(Taiji):
         """Return the explicit runtime recovery mode, if one is active."""
 
         return self._cognitive_state.planning_recovery
+
+    @property
+    def recovery_branch(self) -> RecoveryBranchState | None:
+        """Return the auditable outcome-driven recovery branch, if active."""
+
+        return self._cognitive_state.recovery_branch
 
     def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         super().reset_dynamics(episode_id=episode_id)
@@ -6017,7 +6146,9 @@ class TSKV8Adapter(Taiji):
         prediction_record = self._cognitive_state.world_prediction
         calibration_trace = self._cognitive_state.world_calibration_trace
         recovery_state = self._cognitive_state.planning_recovery
+        recovery_branch = self._cognitive_state.recovery_branch
         world_model_replan = False
+        world_outcome_replan = False
         if world_state is not None:
             if world_action is None:
                 if intent is None:
@@ -6117,13 +6248,69 @@ class TSKV8Adapter(Taiji):
                 if learn_world is None:
                     learn_world = bool(kwargs.get("learn", True))
                 update_losses: list[float] = []
+                adjudication = "not-applied"
+                ledger_uncertainty = 1.0
+                ledger_uncertainty_mode = "unseen"
+                ledger_evidence_count = 0
                 if learn_world:
+                    transition_rejections_before = self._world_dynamics.transition_rejections
                     update_losses = self._world_dynamics.online_update(
                         transition,
                         learning_rate=world_learning_rate,
                         repeats=world_learning_repeats,
                         register_parameters=False,
                     )
+                    adjudication = (
+                        "rejected"
+                        if self._world_dynamics.transition_rejections > transition_rejections_before
+                        else "accepted"
+                    )
+                    ledger_key = self._world_dynamics.schema_registry.transition_evidence_key(
+                        transition
+                    )
+                    ledger_uncertainty, ledger_uncertainty_mode = (
+                        self._world_dynamics.schema_registry.transition_uncertainty(ledger_key)
+                    )
+                    ledger_evidence_count = sum(
+                        int(item["evidence_count"])
+                        for item in self._world_dynamics.schema_registry.transition_hypotheses.get(
+                            ledger_key, ()
+                        )
+                    )
+                    world_outcome_replan = bool(
+                        not terminal
+                        and (
+                            adjudication == "rejected"
+                            or outcome.success is False
+                            or outcome.reward < 0.0
+                        )
+                    )
+                    if world_outcome_replan:
+                        recovery_branch = RecoveryBranchState(
+                            source_rollout_id=(
+                                None
+                                if self._planned_rollout is None
+                                else self._planned_rollout.rollout_id
+                            ),
+                            goal_id=(
+                                None
+                                if self._planned_rollout is None
+                                else self._planned_rollout.goal_id
+                            ),
+                            rejected_action=transition.action,
+                            evidence_key=ledger_key,
+                            uncertainty_mode=ledger_uncertainty_mode,
+                            remaining_rollout_steps=(
+                                0
+                                if self._planned_rollout is None
+                                else max(0, len(self._planned_rollout.steps) - 1)
+                            ),
+                            reason=(
+                                "outcome-adjudication"
+                                if adjudication == "rejected"
+                                else "environment-failure"
+                            ),
+                        )
                     prediction_record = replace(
                         prediction_record,
                         online_update_count=self._world_dynamics.online_updates,
@@ -6136,6 +6323,10 @@ class TSKV8Adapter(Taiji):
                         calibration_applied=bool(learn_world and update_losses),
                         online_update_count_before=online_update_count_before,
                         online_update_count_after=self._world_dynamics.online_updates,
+                        adjudication=adjudication,
+                        ledger_uncertainty=ledger_uncertainty,
+                        ledger_uncertainty_mode=ledger_uncertainty_mode,
+                        ledger_evidence_count=ledger_evidence_count,
                     ),
                 )[-self.config.world_calibration_history_limit :]
         prediction_error = (
@@ -6175,7 +6366,9 @@ class TSKV8Adapter(Taiji):
                 rollout, outcome
             )
             self._planned_rollout = None
-        self._replan_required = bool(self._replan_required or world_model_replan)
+        self._replan_required = bool(
+            self._replan_required or world_model_replan or world_outcome_replan
+        )
         goals = self._cognitive_state.goals
         if self._goal_planner is not None:
             goals = self._goal_planner.apply_outcome(goals, outcome)
@@ -6255,6 +6448,7 @@ class TSKV8Adapter(Taiji):
             world_prediction=prediction_record,
             world_calibration_trace=calibration_trace,
             planning_recovery=recovery_state,
+            recovery_branch=recovery_branch,
             learning=replace(
                 self._cognitive_state.learning,
                 tick=self.tick,
@@ -6262,6 +6456,8 @@ class TSKV8Adapter(Taiji):
                 + int(kwargs.get("learn", True)),
             ),
         )
+        if terminal and self._cognitive_state.recovery_branch is not None:
+            self._cognitive_state = replace(self._cognitive_state, recovery_branch=None)
         return result
 
     def parameter_tensors(self) -> tuple[torch.Tensor, ...]:

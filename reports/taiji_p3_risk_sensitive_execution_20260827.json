@@ -1,0 +1,139 @@
+{
+  "format": "taiji-p3-risk-sensitive-execution-v1",
+  "manifest_format": "taiji-p3-risk-sensitive-execution-manifest-v1",
+  "metrics": {
+    "cross_seed_gate_rate": 1.0,
+    "runs": [
+      {
+        "seed": 11,
+        "risk_mode_before": "stochastic",
+        "risk_uncertainty_before": 0.4,
+        "first_success": true,
+        "first_adjudication": "rejected",
+        "first_ledger_mode": "stochastic",
+        "first_ledger_uncertainty": 0.5,
+        "first_evidence_count": 6,
+        "ambiguity_replan": true,
+        "checkpoint_no_replay": true,
+        "checkpoint_branch_preserved": true,
+        "recovery_branch_filters_rejected_action": true,
+        "recovery_branch_selects_low_risk_counterfactual": true,
+        "recovery_candidates_generated_from_affordances": true,
+        "ledger_before": [
+          2,
+          3
+        ],
+        "ledger_after_checkpoint": [
+          3,
+          3
+        ],
+        "recovery_success": true,
+        "recovery_terminal": true,
+        "recovery_complete": true,
+        "trace_complete": true,
+        "checkpoint_trace_complete": true,
+        "outcome_count": 2,
+        "online_updates": 5,
+        "transition_acceptances": 5,
+        "transition_rejections": 3,
+        "failure_success": false,
+        "failure_adjudication": "accepted",
+        "failure_replan": true,
+        "conflicted_mode_before": "conflicted",
+        "conflicted_uncertainty_before": 1.0,
+        "conflicted_adjudication": "rejected",
+        "conflicted_ledger_mode_after": "conflicted",
+        "conflicted_replan": true,
+        "gate_passed": true
+      },
+      {
+        "seed": 23,
+        "risk_mode_before": "stochastic",
+        "risk_uncertainty_before": 0.4,
+        "first_success": true,
+        "first_adjudication": "rejected",
+        "first_ledger_mode": "stochastic",
+        "first_ledger_uncertainty": 0.5,
+        "first_evidence_count": 6,
+        "ambiguity_replan": true,
+        "checkpoint_no_replay": true,
+        "checkpoint_branch_preserved": true,
+        "recovery_branch_filters_rejected_action": true,
+        "recovery_branch_selects_low_risk_counterfactual": true,
+        "recovery_candidates_generated_from_affordances": true,
+        "ledger_before": [
+          2,
+          3
+        ],
+        "ledger_after_checkpoint": [
+          3,
+          3
+        ],
+        "recovery_success": true,
+        "recovery_terminal": true,
+        "recovery_complete": true,
+        "trace_complete": true,
+        "checkpoint_trace_complete": true,
+        "outcome_count": 2,
+        "online_updates": 5,
+        "transition_acceptances": 5,
+        "transition_rejections": 3,
+        "failure_success": false,
+        "failure_adjudication": "accepted",
+        "failure_replan": true,
+        "conflicted_mode_before": "conflicted",
+        "conflicted_uncertainty_before": 1.0,
+        "conflicted_adjudication": "rejected",
+        "conflicted_ledger_mode_after": "conflicted",
+        "conflicted_replan": true,
+        "gate_passed": true
+      },
+      {
+        "seed": 37,
+        "risk_mode_before": "stochastic",
+        "risk_uncertainty_before": 0.4,
+        "first_success": true,
+        "first_adjudication": "rejected",
+        "first_ledger_mode": "stochastic",
+        "first_ledger_uncertainty": 0.5,
+        "first_evidence_count": 6,
+        "ambiguity_replan": true,
+        "checkpoint_no_replay": true,
+        "checkpoint_branch_preserved": true,
+        "recovery_branch_filters_rejected_action": true,
+        "recovery_branch_selects_low_risk_counterfactual": true,
+        "recovery_candidates_generated_from_affordances": true,
+        "ledger_before": [
+          2,
+          3
+        ],
+        "ledger_after_checkpoint": [
+          3,
+          3
+        ],
+        "recovery_success": true,
+        "recovery_terminal": true,
+        "recovery_complete": true,
+        "trace_complete": true,
+        "checkpoint_trace_complete": true,
+        "outcome_count": 2,
+        "online_updates": 5,
+        "transition_acceptances": 5,
+        "transition_rejections": 3,
+        "failure_success": false,
+        "failure_adjudication": "accepted",
+        "failure_replan": true,
+        "conflicted_mode_before": "conflicted",
+        "conflicted_uncertainty_before": 1.0,
+        "conflicted_adjudication": "rejected",
+        "conflicted_ledger_mode_after": "conflicted",
+        "conflicted_replan": true,
+        "gate_passed": true
+      }
+    ]
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, preserve one real evidence write through checkpoint restore, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout"
+  }
+}

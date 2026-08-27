@@ -1602,6 +1602,10 @@ class WorldCalibrationTrace:
     calibration_applied: bool
     online_update_count_before: int
     online_update_count_after: int
+    adjudication: str = "not-applied"
+    ledger_uncertainty: float = 1.0
+    ledger_uncertainty_mode: str = "unseen"
+    ledger_evidence_count: int = 0
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -1624,6 +1628,16 @@ class WorldCalibrationTrace:
             self.online_update_count_before
         ):
             raise ValueError("disabled calibration cannot advance the online update count")
+        if self.adjudication not in {"not-applied", "accepted", "rejected"}:
+            raise ValueError("unsupported world outcome adjudication")
+        _check_unit(self.ledger_uncertainty, "ledger uncertainty")
+        _check_text(self.ledger_uncertainty_mode, "ledger uncertainty mode")
+        if int(self.ledger_evidence_count) < 0:
+            raise ValueError("ledger evidence count cannot be negative")
+        if self.adjudication == "accepted" and not self.calibration_applied:
+            raise ValueError("accepted world outcome must apply calibration")
+        if self.adjudication == "rejected" and self.calibration_applied:
+            raise ValueError("rejected world outcome cannot apply calibration")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -1633,6 +1647,10 @@ class WorldCalibrationTrace:
             "calibration_applied": self.calibration_applied,
             "online_update_count_before": self.online_update_count_before,
             "online_update_count_after": self.online_update_count_after,
+            "adjudication": self.adjudication,
+            "ledger_uncertainty": self.ledger_uncertainty,
+            "ledger_uncertainty_mode": self.ledger_uncertainty_mode,
+            "ledger_evidence_count": self.ledger_evidence_count,
         }
 
     @classmethod
@@ -1646,6 +1664,79 @@ class WorldCalibrationTrace:
             calibration_applied=bool(payload["calibration_applied"]),
             online_update_count_before=int(payload["online_update_count_before"]),
             online_update_count_after=int(payload["online_update_count_after"]),
+            adjudication=str(payload.get("adjudication", "not-applied")),
+            ledger_uncertainty=float(payload.get("ledger_uncertainty", 1.0)),
+            ledger_uncertainty_mode=str(payload.get("ledger_uncertainty_mode", "unseen")),
+            ledger_evidence_count=int(payload.get("ledger_evidence_count", 0)),
+        )
+
+
+@dataclass(frozen=True)
+class RecoveryBranchState:
+    """Auditable branch context for an outcome-driven replan."""
+
+    source_rollout_id: str | None
+    goal_id: str | None
+    rejected_action: WorldAction
+    evidence_key: tuple[str, ...]
+    uncertainty_mode: str
+    remaining_rollout_steps: int
+    replacement_rollout_id: str | None = None
+    reason: str = "outcome-adjudication"
+    version: int = CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        _check_version(self.version)
+        if self.source_rollout_id is not None and not str(self.source_rollout_id):
+            raise ValueError("recovery source_rollout_id cannot be empty")
+        if self.goal_id is not None and not str(self.goal_id):
+            raise ValueError("recovery goal_id cannot be empty")
+        if not isinstance(self.rejected_action, WorldAction):
+            raise TypeError("recovery rejected_action must be a WorldAction")
+        if not self.evidence_key:
+            raise ValueError("recovery evidence_key cannot be empty")
+        _check_text(self.uncertainty_mode, "recovery uncertainty_mode")
+        if int(self.remaining_rollout_steps) < 0:
+            raise ValueError("recovery remaining_rollout_steps cannot be negative")
+        if self.replacement_rollout_id is not None and not str(self.replacement_rollout_id):
+            raise ValueError("recovery replacement_rollout_id cannot be empty")
+        _check_text(self.reason, "recovery reason")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "source_rollout_id": self.source_rollout_id,
+            "goal_id": self.goal_id,
+            "rejected_action": self.rejected_action.to_payload(),
+            "evidence_key": list(self.evidence_key),
+            "uncertainty_mode": self.uncertainty_mode,
+            "remaining_rollout_steps": self.remaining_rollout_steps,
+            "replacement_rollout_id": self.replacement_rollout_id,
+            "reason": self.reason,
+        }
+
+    @classmethod
+    def from_payload(
+        cls, payload: Mapping[str, Any], *, device: torch.device | str = "cpu"
+    ) -> RecoveryBranchState:
+        return cls(
+            version=int(payload["version"]),
+            source_rollout_id=(
+                None
+                if payload.get("source_rollout_id") is None
+                else str(payload["source_rollout_id"])
+            ),
+            goal_id=None if payload.get("goal_id") is None else str(payload["goal_id"]),
+            rejected_action=WorldAction.from_payload(payload["rejected_action"], device=device),
+            evidence_key=tuple(str(item) for item in payload.get("evidence_key", ())),
+            uncertainty_mode=str(payload.get("uncertainty_mode", "unknown")),
+            remaining_rollout_steps=int(payload.get("remaining_rollout_steps", 0)),
+            replacement_rollout_id=(
+                None
+                if payload.get("replacement_rollout_id") is None
+                else str(payload["replacement_rollout_id"])
+            ),
+            reason=str(payload.get("reason", "outcome-adjudication")),
         )
 
 
@@ -2437,6 +2528,7 @@ class CognitiveState:
     world_prediction: WorldPredictionRecord | None = None
     world_calibration_trace: tuple[WorldCalibrationTrace, ...] = ()
     planning_recovery: PlanningRecoveryState | None = None
+    recovery_branch: RecoveryBranchState | None = None
     assemblies: tuple[Assembly, ...] = ()
     events: tuple[Event, ...] = ()
     concepts: tuple[Concept, ...] = ()
@@ -2477,6 +2569,9 @@ class CognitiveState:
             "world_calibration_trace": [item.to_payload() for item in self.world_calibration_trace],
             "planning_recovery": (
                 None if self.planning_recovery is None else self.planning_recovery.to_payload()
+            ),
+            "recovery_branch": (
+                None if self.recovery_branch is None else self.recovery_branch.to_payload()
             ),
             "assemblies": [item.to_payload() for item in self.assemblies],
             "events": [item.to_payload() for item in self.events],
@@ -2536,6 +2631,11 @@ class CognitiveState:
                 None
                 if payload.get("planning_recovery") is None
                 else PlanningRecoveryState.from_payload(payload["planning_recovery"])
+            ),
+            recovery_branch=(
+                None
+                if payload.get("recovery_branch") is None
+                else RecoveryBranchState.from_payload(payload["recovery_branch"], device=device)
             ),
             assemblies=tuple(
                 Assembly.from_payload(item, device=device) for item in payload.get("assemblies", ())

@@ -757,6 +757,11 @@ class WorldSchemaRegistry:
             )
         )
 
+    def action_semantic_key(self, action: Any) -> tuple[str, ...]:
+        """Return the tick-independent identity used to compare action branches."""
+
+        return ("action", self._stable_action_signature(self.normalize_action(action)))
+
     def transition_context_key(self, state: WorldState, action: Any) -> tuple[str, ...]:
         """Return a stable key for semantic state/action context."""
 
