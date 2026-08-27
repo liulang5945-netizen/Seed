@@ -52,6 +52,10 @@ class A1EvaluationConfig:
     # one-step composition signal on small and large holdouts alike.
     multi_step_prediction_weight: float = 0.05
     multi_step_prediction_horizon: int = 4
+    # Give actual closed-boundary transitions their own multi-step credit and
+    # make different post-boundary assemblies compete as explicit negatives.
+    cross_assembly_prediction_weight: float = 0.0
+    cross_assembly_negative_weight: float = 0.01
     assembly_prediction_weight: float = 0.5
     contrastive_weight: float = 0.1
     contrastive_temperature: float = 0.2
@@ -80,6 +84,10 @@ class A1EvaluationConfig:
             raise ValueError("A1 multi_step_prediction_weight cannot be negative")
         if self.multi_step_prediction_horizon <= 0:
             raise ValueError("A1 multi_step_prediction_horizon must be positive")
+        if self.cross_assembly_prediction_weight < 0.0:
+            raise ValueError("A1 cross_assembly_prediction_weight cannot be negative")
+        if self.cross_assembly_negative_weight < 0.0:
+            raise ValueError("A1 cross_assembly_negative_weight cannot be negative")
         if self.assembly_prediction_weight < 0.0:
             raise ValueError("A1 assembly_prediction_weight cannot be negative")
         if self.contrastive_weight < 0.0:
@@ -173,6 +181,10 @@ class PerceptionEvaluator:
                 "predictive_temperature": self.evaluation.predictive_temperature,
                 "multi_step_prediction_weight": self.evaluation.multi_step_prediction_weight,
                 "multi_step_prediction_horizon": self.evaluation.multi_step_prediction_horizon,
+                "cross_assembly_prediction_weight": (
+                    self.evaluation.cross_assembly_prediction_weight
+                ),
+                "cross_assembly_negative_weight": self.evaluation.cross_assembly_negative_weight,
                 "assembly_prediction_weight": self.evaluation.assembly_prediction_weight,
                 "contrastive_weight": self.evaluation.contrastive_weight,
                 "contrastive_temperature": self.evaluation.contrastive_temperature,
@@ -209,6 +221,8 @@ class PerceptionEvaluator:
             temperature=self.evaluation.predictive_temperature,
             multi_step_prediction_weight=self.evaluation.multi_step_prediction_weight,
             multi_step_prediction_horizon=self.evaluation.multi_step_prediction_horizon,
+            cross_assembly_prediction_weight=self.evaluation.cross_assembly_prediction_weight,
+            cross_assembly_negative_weight=self.evaluation.cross_assembly_negative_weight,
             assembly_prediction_weight=self.evaluation.assembly_prediction_weight,
             contrastive_weight=self.evaluation.contrastive_weight,
             contrastive_temperature=self.evaluation.contrastive_temperature,

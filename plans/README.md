@@ -185,10 +185,13 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P2 感知训练已改为复用运行时的动态边界时钟：训练按同一 adaptive assembly 起点监督每个活动前缀，
   不再使用与运行时不一致的固定滑窗；CUDA 实际 profile 暂缓到具备 CUDA 主机后再做，不阻塞当前 CPU 开发。
 - A1 评测已使用 marker-specific boundary evidence，并要求所有 seed 的最差指标共同满足 Gate；最新
-  `reports/taiji_a1_perception_20260827.json` 的 smoke Gate 在 32/16 manifest 上通过；独立的
-  `reports/taiji_a1_perception_shared128_20260827.json` 在 128/64 manifest 上如实为 `false`，因此当前仍未宣称 P2 完成。
-- P2 当前默认训练包含低权重多步 predictive credit（weight=`0.05`, horizon=`4`）；smoke Gate 通过，
-  `shared128` Gate 仍失败，说明已接通多步信用但规模化组合迁移仍是开放问题。
+  `reports/taiji_a1_perception_20260827.json` 的 smoke Gate 在 32/16 manifest 上通过，独立的
+  `reports/taiji_a1_perception_shared128_20260827.json` 也在 128/64 manifest 上通过，P2 感知纵切片的
+  组合迁移、边界响应、random-chunk lesion 和变量时长合同已满足当前门槛。
+- P2 默认训练包含低权重多步 predictive credit（weight=`0.05`, horizon=`4`），并新增只针对真实闭合
+  boundary 后续 assembly 的跨段负样本对比目标（`cross_assembly_negative_weight=0.01`）；边界后逐符号
+  CE 保留为显式可选实验项，默认关闭以避免重复监督。shared128 最差泛化=`0.0`、最差 random-chunk
+  drop=`+0.00527`、marker score/rate 最小=`+0.2161/+0.4483`、cross-seed std=`0.00834`，Gate 为 true。
 - 2026-08-26 门禁与 checkpoint 收口：CI 因 pin 了不存在的 `black==24.12.0` 连续 8 天红灯且期间所有门禁被静默跳过，已改钉
   `ruff==0.16.4` / `black==26.5.1`；`TSKV8Adapter.checkpoint()`/`restore()` 补齐 `cognitive_state` 往返后，全量测试为
   `437 passed, 5 skipped`。门禁可信度、mypy 类型债、checkpoint 往返不变量和本目录编制纪律见总路线第 14.1–14.4 节。

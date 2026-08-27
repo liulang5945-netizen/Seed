@@ -63,12 +63,26 @@ def test_perception_predictive_fit_updates_local_representation() -> None:
         learning_rate=0.01,
         multi_step_prediction_weight=0.05,
         multi_step_prediction_horizon=3,
+        cross_assembly_prediction_weight=0.1,
+        cross_assembly_negative_weight=0.025,
     )
 
     assert len(losses) == 2
     assert all(torch.isfinite(torch.tensor(loss)) for loss in losses)
     assert not torch.equal(before_projection, perception.local_projection.weight)
     assert not torch.equal(before_recency, perception.assembly_recency_logit)
+
+
+def test_boundary_after_segments_stop_at_the_next_runtime_boundary() -> None:
+    perception = LearnedPerception(_config())
+
+    segments = perception._boundary_after_segments(
+        ((0, 2), (2, 5)),
+        sequence_length=7,
+        target_rows={2: 1, 5: 4},
+    )
+
+    assert segments == ((1, 2, 5), (4, 5, 7))
 
 
 def test_training_assembly_rollout_matches_runtime_boundary_clock() -> None:
