@@ -91,8 +91,8 @@ from .planning import (
     ImaginedRollout,
     PlanningCandidate,
     PlanningDecision,
-    RecoveryPortfolioArchive,
     RecoveryPortfolio,
+    RecoveryPortfolioArchive,
     RecoveryReaderContribution,
     RecoveryReaderDependency,
     RecoveryReaderDependencyGraph,
@@ -5632,11 +5632,13 @@ class TSKV8Adapter(Taiji):
             goal_id=goal_id,
         )
         self._planned_rollout = decision.selected
-        if self._recovery_portfolio is not None:
-            if self._recovery_portfolio.status_for(decision.selected.rollout_id) is not None:
-                self._recovery_portfolio = self._recovery_portfolio.mark_selected(
-                    decision.selected.rollout_id
-                )
+        if (
+            self._recovery_portfolio is not None
+            and self._recovery_portfolio.status_for(decision.selected.rollout_id) is not None
+        ):
+            self._recovery_portfolio = self._recovery_portfolio.mark_selected(
+                decision.selected.rollout_id
+            )
         self._replan_required = False
         self._language_fallback_requires_replan = False
         self._last_rollout_prediction_error = None

@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import argparse
-from copy import deepcopy
-from functools import lru_cache
 import json
 import math
 import sys
+from copy import deepcopy
 from dataclasses import replace
+from functools import cache
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -172,7 +172,7 @@ def _run_ledger_transition(
     return model
 
 
-@lru_cache(maxsize=None)
+@cache
 def _fitted_world_learner(seed: int) -> WorldDynamicsLearner:
     """Fit one baseline per seed that independent scenarios can clone."""
 
@@ -1162,9 +1162,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
             bool(
                 ambiguity[name]
                 if name in ambiguity
-                else failure[name]
-                if name in failure
-                else conflicted[name]
+                else failure[name] if name in failure else conflicted[name]
             )
             for name in booleans
         ),

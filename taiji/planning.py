@@ -321,9 +321,7 @@ class RecoveryPortfolio:
                 (
                     "selected"
                     if candidate_id == rollout_id
-                    else "active"
-                    if status == "selected"
-                    else status
+                    else "active" if status == "selected" else status
                 ),
             )
             for candidate_id, status in self.statuses
