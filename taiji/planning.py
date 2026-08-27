@@ -7,6 +7,10 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field, replace
 from typing import Any
 
+from .config import (
+    DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE,
+    DEFAULT_RECOVERY_INTERACTION_RESIDUAL_TOLERANCE,
+)
 from .contracts import Goal, GoalState, Outcome, PlanCandidate, PlanState, WorldAction
 
 PLANNING_CHECKPOINT_FORMAT = "taiji-planning-v1"
@@ -15,7 +19,7 @@ RECOVERY_STRATEGY_LEDGER_CHECKPOINT_FORMAT = "taiji-recovery-strategy-ledger-v1"
 RECOVERY_READER_DEPENDENCY_CHECKPOINT_FORMAT = "taiji-recovery-reader-dependency-v1"
 RECOVERY_READER_ATTRIBUTION_CHECKPOINT_FORMAT = "taiji-recovery-reader-attribution-v1"
 RECOVERY_READER_INTERACTION_CHECKPOINT_FORMAT = "taiji-recovery-reader-interaction-v1"
-RECOVERY_READER_ORDER_INVARIANCE_TOLERANCE = 1e-7
+RECOVERY_READER_ORDER_INVARIANCE_TOLERANCE = DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE
 
 
 def _unit(value: float, name: str) -> float:
@@ -698,6 +702,15 @@ class RecoveryStrategyApproval:
 
 
 @dataclass(frozen=True)
+class _RecoverySelectionUnit:
+    approvals: tuple[RecoveryStrategyApproval, ...]
+    score: float
+    evidence_count: int
+    resource_cost: float
+    rollout_ids: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class RecoveryStrategyLedger:
     """Admission and revocation ledger for recovery-derived long-term memory."""
 
@@ -709,6 +722,10 @@ class RecoveryStrategyLedger:
     approvals: tuple[RecoveryStrategyApproval, ...] = ()
     revoked_rollout_ids: tuple[str, ...] = ()
     revision: int = 0
+    interaction_residual_tolerance: float = DEFAULT_RECOVERY_INTERACTION_RESIDUAL_TOLERANCE
+    interaction_order_tolerance: float = DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE
+    interaction_audit_available: bool = False
+    interactions: tuple[RecoveryReaderInteraction, ...] = ()
 
     def __post_init__(self) -> None:
         if int(self.evidence_threshold) <= 0:
@@ -732,6 +749,16 @@ class RecoveryStrategyLedger:
             raise ValueError("recovery strategy revoked rollout ids must be unique")
         if int(self.revision) < 0:
             raise ValueError("recovery strategy ledger revision cannot be negative")
+        _nonnegative_finite(
+            self.interaction_residual_tolerance, "recovery strategy interaction residual tolerance"
+        )
+        _nonnegative_finite(
+            self.interaction_order_tolerance, "recovery strategy interaction order tolerance"
+        )
+        if not isinstance(self.interaction_audit_available, bool):
+            raise ValueError("recovery strategy interaction audit flag must be boolean")
+        if any(not isinstance(item, RecoveryReaderInteraction) for item in self.interactions):
+            raise ValueError("recovery strategy interactions must be typed records")
 
     def admit(
         self,
@@ -822,10 +849,7 @@ class RecoveryStrategyLedger:
             )
         )
 
-    @property
-    def selected_approvals(self) -> tuple[RecoveryStrategyApproval, ...]:
-        """Greedily select ranked strategies without exceeding memory budget."""
-
+    def _select_ranked_approvals(self) -> tuple[RecoveryStrategyApproval, ...]:
         selected: list[RecoveryStrategyApproval] = []
         selected_memory_ids: set[str] = set()
         consumed = 0.0
@@ -839,6 +863,150 @@ class RecoveryStrategyLedger:
             selected_memory_ids.add(approval.memory_id)
             consumed += cost
         return tuple(selected)
+
+    @property
+    def selected_approvals(self) -> tuple[RecoveryStrategyApproval, ...]:
+        """Greedily select ranked strategies without exceeding memory budget."""
+
+        return self.select_with_interaction_audit(
+            self.interactions,
+            audit_available=self.interaction_audit_available,
+            residual_tolerance=self.interaction_residual_tolerance,
+            order_tolerance=self.interaction_order_tolerance,
+        )
+
+    def select_with_interaction_audit(
+        self,
+        interactions: Sequence[RecoveryReaderInteraction] = (),
+        *,
+        audit_available: bool = False,
+        residual_tolerance: float,
+        order_tolerance: float,
+    ) -> tuple[RecoveryStrategyApproval, ...]:
+        """Select strategies while treating unproven interactions as atomic.
+
+        Before a reader has an interaction audit, the normal deterministic
+        competition policy is used to bootstrap the first consolidation. Once
+        an audit exists, a pair is independently selectable only when its
+        residual and order delta are within the configured tolerances. Missing
+        pair evidence is fail-closed: the pair is joined into an atomic unit
+        instead of being assumed additive. Connected atomic pairs are selected
+        together, or rejected together when their combined cost exceeds the
+        memory budget.
+        """
+
+        residual_limit = _nonnegative_finite(
+            residual_tolerance, "recovery interaction residual_tolerance"
+        )
+        order_limit = _nonnegative_finite(order_tolerance, "recovery interaction order_tolerance")
+        active = self.active_approvals()
+        if len(active) < 2 or (not interactions and not audit_available):
+            return self._select_ranked_approvals()
+
+        active_ids = {approval.rollout_id for approval in active}
+        audited_pairs: set[frozenset[str]] = set()
+        atomic_pairs: set[frozenset[str]] = set()
+        for interaction in interactions:
+            pair = frozenset(interaction.strategy_rollout_ids)
+            if len(pair) != 2 or not pair <= active_ids:
+                continue
+            audited_pairs.add(pair)
+            if (
+                interaction.interaction_residual_l2 > residual_limit
+                or interaction.order_delta_l2 > order_limit
+                or not interaction.order_invariant
+            ):
+                atomic_pairs.add(pair)
+
+        for index, first in enumerate(active):
+            for second in active[index + 1 :]:
+                pair = frozenset((first.rollout_id, second.rollout_id))
+                if pair not in audited_pairs:
+                    atomic_pairs.add(pair)
+
+        parent = {approval.rollout_id: approval.rollout_id for approval in active}
+
+        def find(rollout_id: str) -> str:
+            root = rollout_id
+            while parent[root] != root:
+                root = parent[root]
+            while parent[rollout_id] != rollout_id:
+                previous = rollout_id
+                rollout_id = parent[rollout_id]
+                parent[previous] = root
+            return root
+
+        for pair in atomic_pairs:
+            first_id, second_id = tuple(pair)
+            first_root = find(first_id)
+            second_root = find(second_id)
+            if first_root != second_root:
+                parent[second_root] = first_root
+
+        rank = {approval.rollout_id: index for index, approval in enumerate(self.ranked_approvals)}
+        grouped: dict[str, list[RecoveryStrategyApproval]] = {}
+        for approval in active:
+            grouped.setdefault(find(approval.rollout_id), []).append(approval)
+
+        units: list[_RecoverySelectionUnit] = []
+        for grouped_approvals in grouped.values():
+            ordered = tuple(
+                sorted(grouped_approvals, key=lambda approval: rank[approval.rollout_id])
+            )
+            memory_ids = tuple(approval.memory_id for approval in ordered)
+            if len(set(memory_ids)) != len(memory_ids):
+                continue
+            units.append(
+                _RecoverySelectionUnit(
+                    approvals=ordered,
+                    score=min(self.competition_score(approval) for approval in ordered),
+                    evidence_count=min(int(approval.evidence_count) for approval in ordered),
+                    resource_cost=sum(float(approval.resource_cost) for approval in ordered),
+                    rollout_ids=tuple(approval.rollout_id for approval in ordered),
+                )
+            )
+
+        selected: list[RecoveryStrategyApproval] = []
+        selected_memory_ids: set[str] = set()
+        consumed = 0.0
+        for unit in sorted(
+            units,
+            key=lambda item: (
+                -item.score,
+                -item.evidence_count,
+                item.resource_cost,
+                item.rollout_ids,
+            ),
+        ):
+            if any(approval.memory_id in selected_memory_ids for approval in unit.approvals):
+                continue
+            if consumed + unit.resource_cost > float(self.memory_budget) + 1e-8:
+                continue
+            selected.extend(unit.approvals)
+            selected_memory_ids.update(approval.memory_id for approval in unit.approvals)
+            consumed += unit.resource_cost
+        return tuple(selected)
+
+    def record_interaction_audit(
+        self,
+        interactions: Sequence[RecoveryReaderInteraction],
+        *,
+        audit_available: bool | None = None,
+    ) -> RecoveryStrategyLedger:
+        """Persist the latest reader audit used by the canonical selector."""
+
+        items = tuple(interactions)
+        if any(not isinstance(item, RecoveryReaderInteraction) for item in items):
+            raise ValueError("recovery strategy interactions must be typed records")
+        if audit_available is None:
+            audit = bool(items) or self.interaction_audit_available
+        else:
+            if not isinstance(audit_available, bool):
+                raise ValueError("recovery strategy interaction audit flag must be boolean")
+            audit = audit_available
+        return replace(
+            self, interaction_audit_available=audit, interactions=items, revision=self.revision + 1
+        )
 
     @property
     def selected_rollout_ids(self) -> tuple[str, ...]:
@@ -876,6 +1044,10 @@ class RecoveryStrategyLedger:
             "approvals": [approval.to_payload() for approval in self.approvals],
             "revoked_rollout_ids": list(self.revoked_rollout_ids),
             "revision": self.revision,
+            "interaction_residual_tolerance": self.interaction_residual_tolerance,
+            "interaction_order_tolerance": self.interaction_order_tolerance,
+            "interaction_audit_available": self.interaction_audit_available,
+            "interactions": [item.to_payload() for item in self.interactions],
         }
 
     @classmethod
@@ -896,6 +1068,24 @@ class RecoveryStrategyLedger:
             ),
             revoked_rollout_ids=tuple(str(item) for item in payload.get("revoked_rollout_ids", ())),
             revision=int(payload.get("revision", 0)),
+            interaction_residual_tolerance=float(
+                payload.get(
+                    "interaction_residual_tolerance",
+                    DEFAULT_RECOVERY_INTERACTION_RESIDUAL_TOLERANCE,
+                )
+            ),
+            interaction_order_tolerance=float(
+                payload.get(
+                    "interaction_order_tolerance", DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE
+                )
+            ),
+            interaction_audit_available=bool(
+                payload.get("interaction_audit_available", bool(payload.get("interactions", ())))
+            ),
+            interactions=tuple(
+                RecoveryReaderInteraction.from_payload(dict(item))
+                for item in payload.get("interactions", ())
+            ),
         )
 
 
@@ -1087,6 +1277,7 @@ class RecoveryReaderDependency:
     revision: int = 0
     contributions: tuple[RecoveryReaderContribution, ...] = ()
     interactions: tuple[RecoveryReaderInteraction, ...] = ()
+    interaction_audit_complete: bool = False
     base_checkpoint: dict[str, Any] | None = field(default=None, compare=False, repr=False)
     base_checkpoint_digest: str = ""
 
@@ -1125,6 +1316,8 @@ class RecoveryReaderDependency:
             for interaction in self.interactions
         ):
             raise ValueError("recovery reader interactions must belong to their reader")
+        if not isinstance(self.interaction_audit_complete, bool):
+            raise ValueError("recovery reader interaction audit flag must be boolean")
         interaction_keys = {
             frozenset(interaction.strategy_rollout_ids) for interaction in self.interactions
         }
@@ -1135,9 +1328,7 @@ class RecoveryReaderDependency:
             any(
                 memory_by_rollout.get(rollout_id) != memory_id
                 for rollout_id, memory_id in zip(
-                    interaction.strategy_rollout_ids,
-                    interaction.memory_ids,
-                    strict=True,
+                    interaction.strategy_rollout_ids, interaction.memory_ids, strict=True
                 )
             )
             for interaction in self.interactions
@@ -1156,6 +1347,7 @@ class RecoveryReaderDependency:
             "revision": self.revision,
             "contributions": [item.to_payload() for item in self.contributions],
             "interactions": [item.to_payload() for item in self.interactions],
+            "interaction_audit_complete": self.interaction_audit_complete,
             "base_checkpoint": self.base_checkpoint,
             "base_checkpoint_digest": self.base_checkpoint_digest,
         }
@@ -1177,6 +1369,7 @@ class RecoveryReaderDependency:
                 RecoveryReaderInteraction.from_payload(dict(item))
                 for item in payload.get("interactions", ())
             ),
+            interaction_audit_complete=bool(payload.get("interaction_audit_complete", False)),
             base_checkpoint=(
                 None if payload.get("base_checkpoint") is None else dict(payload["base_checkpoint"])
             ),
@@ -1205,6 +1398,7 @@ class RecoveryReaderDependencyGraph:
         *,
         contributions: Sequence[RecoveryReaderContribution] = (),
         interactions: Sequence[RecoveryReaderInteraction] = (),
+        interaction_audit_complete: bool | None = None,
         base_checkpoint: dict[str, Any] | None = None,
         base_checkpoint_digest: str = "",
     ) -> RecoveryReaderDependencyGraph:
@@ -1215,6 +1409,13 @@ class RecoveryReaderDependencyGraph:
         rollout_ids = tuple(dict.fromkeys(approval.rollout_id for approval in selected))
         contribution_items = tuple(contributions)
         interaction_items = tuple(interactions)
+        audit_complete = (
+            bool(interaction_items)
+            if interaction_audit_complete is None
+            else interaction_audit_complete
+        )
+        if not isinstance(audit_complete, bool):
+            raise ValueError("recovery reader interaction audit flag must be boolean")
         approval_by_rollout = {approval.rollout_id: approval for approval in selected}
         if any(
             contribution.reader_kind != reader_kind
@@ -1230,9 +1431,7 @@ class RecoveryReaderDependencyGraph:
                 rollout_id not in approval_by_rollout
                 or approval_by_rollout[rollout_id].memory_id != memory_id
                 for rollout_id, memory_id in zip(
-                    interaction.strategy_rollout_ids,
-                    interaction.memory_ids,
-                    strict=True,
+                    interaction.strategy_rollout_ids, interaction.memory_ids, strict=True
                 )
             )
             for interaction in interaction_items
@@ -1245,15 +1444,12 @@ class RecoveryReaderDependencyGraph:
             revision=self.revision + 1,
             contributions=contribution_items,
             interactions=interaction_items,
+            interaction_audit_complete=audit_complete,
             base_checkpoint=base_checkpoint,
             base_checkpoint_digest=str(base_checkpoint_digest),
         )
         dependencies = tuple(item for item in self.dependencies if item.reader_kind != reader_kind)
-        return replace(
-            self,
-            dependencies=(*dependencies, dependency),
-            revision=self.revision + 1,
-        )
+        return replace(self, dependencies=(*dependencies, dependency), revision=self.revision + 1)
 
     def dependency_for(self, reader_kind: str) -> RecoveryReaderDependency | None:
         return next(
@@ -1273,8 +1469,7 @@ class RecoveryReaderDependencyGraph:
         )
 
     def retain_selected(
-        self,
-        approvals: Sequence[RecoveryStrategyApproval],
+        self, approvals: Sequence[RecoveryStrategyApproval]
     ) -> RecoveryReaderDependencyGraph:
         """Propagate competition/revocation to every already-bound reader."""
 
@@ -1306,12 +1501,19 @@ class RecoveryReaderDependencyGraph:
                         for rollout_id in interaction.strategy_rollout_ids
                     )
                 ),
+                interaction_audit_complete=dependency.interaction_audit_complete,
                 base_checkpoint=dependency.base_checkpoint,
                 base_checkpoint_digest=dependency.base_checkpoint_digest,
             )
             for dependency in self.dependencies
         )
         return replace(self, dependencies=dependencies, revision=self.revision + 1)
+
+    @property
+    def interaction_audit_available(self) -> bool:
+        """Return whether any bound reader has completed interaction auditing."""
+
+        return any(dependency.interaction_audit_complete for dependency in self.dependencies)
 
     def to_payload(self) -> dict[str, Any]:
         return {

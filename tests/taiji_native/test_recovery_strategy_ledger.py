@@ -32,6 +32,78 @@ def _entry(
     )
 
 
+def _interaction(
+    first: str,
+    second: str,
+    *,
+    residual: float = 0.0,
+    order_delta: float = 0.0,
+    order_invariant: bool = True,
+) -> RecoveryReaderInteraction:
+    return RecoveryReaderInteraction(
+        reader_kind="semantic",
+        strategy_rollout_ids=(first, second),
+        memory_ids=(f"memory-{first}", f"memory-{second}"),
+        pair_effect_l2=1.0 + residual,
+        additive_effect_l2=1.0,
+        interaction_delta_l2=residual,
+        interaction_residual_l2=residual,
+        order_delta_l2=order_delta,
+        order_invariant=order_invariant,
+        replay_epochs=1,
+        replay_learning_rate=0.1,
+    )
+
+
+def test_recovery_strategy_interaction_policy_keeps_atomic_pair_together() -> None:
+    ledger = RecoveryStrategyLedger(memory_budget=0.7)
+    ledger = ledger.admit(
+        _entry("primary", resource_cost=0.2, evidence_count=2, outcome_consistency=1.0),
+        memory_id="memory-primary",
+    )
+    ledger = ledger.admit(
+        _entry("survivor", resource_cost=0.4, evidence_count=2, outcome_consistency=0.9),
+        memory_id="memory-survivor",
+    )
+    ledger = ledger.admit(
+        _entry("independent", resource_cost=0.2, evidence_count=2, outcome_consistency=0.4),
+        memory_id="memory-independent",
+    )
+
+    selected = ledger.select_with_interaction_audit(
+        (
+            _interaction(
+                "primary", "survivor", residual=0.5, order_delta=0.2, order_invariant=False
+            ),
+            _interaction("primary", "independent"),
+            _interaction("survivor", "independent"),
+        ),
+        audit_available=True,
+        residual_tolerance=1e-7,
+        order_tolerance=1e-7,
+    )
+
+    assert tuple(approval.rollout_id for approval in selected) == ("primary", "survivor")
+
+
+def test_recovery_strategy_interaction_policy_is_fail_closed_for_unknown_pairs() -> None:
+    ledger = RecoveryStrategyLedger(memory_budget=0.5)
+    for rollout_id in ("primary", "survivor", "unknown"):
+        ledger = ledger.admit(
+            _entry(rollout_id, resource_cost=0.2, evidence_count=2, outcome_consistency=1.0),
+            memory_id=f"memory-{rollout_id}",
+        )
+
+    selected = ledger.select_with_interaction_audit(
+        (_interaction("primary", "survivor"),),
+        audit_available=True,
+        residual_tolerance=1e-7,
+        order_tolerance=1e-7,
+    )
+
+    assert selected == ()
+
+
 def test_recovery_strategy_competition_respects_budget_and_survivor() -> None:
     ledger = RecoveryStrategyLedger(evidence_threshold=2, memory_budget=0.7)
     primary = _entry(
@@ -189,21 +261,11 @@ def test_recovery_reader_contribution_roundtrip_and_revocation() -> None:
 def test_recovery_reader_interaction_roundtrip_and_revocation() -> None:
     ledger = RecoveryStrategyLedger(memory_budget=1.0)
     admitted = ledger.admit(
-        _entry(
-            "primary",
-            resource_cost=0.2,
-            evidence_count=2,
-            outcome_consistency=1.0,
-        ),
+        _entry("primary", resource_cost=0.2, evidence_count=2, outcome_consistency=1.0),
         memory_id="memory-primary",
     )
     admitted = admitted.admit(
-        _entry(
-            "survivor",
-            resource_cost=0.2,
-            evidence_count=2,
-            outcome_consistency=1.0,
-        ),
+        _entry("survivor", resource_cost=0.2, evidence_count=2, outcome_consistency=1.0),
         memory_id="memory-survivor",
     )
     selected = admitted.selected_approvals
@@ -220,6 +282,9 @@ def test_recovery_reader_interaction_roundtrip_and_revocation() -> None:
         replay_epochs=3,
         replay_learning_rate=0.05,
     )
+    policy_ledger = admitted.record_interaction_audit((interaction,), audit_available=True)
+    assert policy_ledger.selected_rollout_ids == ("primary", "survivor")
+    assert RecoveryStrategyLedger.from_payload(policy_ledger.to_payload()) == policy_ledger
     graph = RecoveryReaderDependencyGraph().bind(
         "semantic",
         selected,
@@ -232,9 +297,11 @@ def test_recovery_reader_interaction_roundtrip_and_revocation() -> None:
     dependency = restored.dependency_for("semantic")
     assert dependency is not None
     assert dependency.interactions == (interaction,)
+    assert dependency.interaction_audit_complete is True
 
     revoked = admitted.revoke("primary")
     updated = restored.retain_selected(revoked.selected_approvals)
     dependency = updated.dependency_for("semantic")
     assert dependency is not None
     assert dependency.interactions == ()
+    assert dependency.interaction_audit_complete is True

@@ -42,6 +42,8 @@
     "recovery-reader-contribution-attribution",
     "recovery-reader-pairwise-interaction-attribution",
     "recovery-reader-order-invariance",
+    "recovery-strategy-interaction-aware-selection",
+    "recovery-strategy-fail-closed-atomic-groups",
     "recovery-reader-selective-revocation",
     "recovery-strategy-rebuild-after-revocation",
     "recovery-strategy-rebuild-checkpoint",
