@@ -702,7 +702,7 @@ P4 的最小真实经历边界已落地：
 
 `scripts/release.py --skip-nsis` 以 exit 1 结束，但**构建完整成功**（输出 "Seed v1.6.0 构建完成"、总大小 1273.7 MB、前端一致性两次通过）。失败来自沙箱拦截 PyInstaller 分析阶段对 `Python312/Lib/**/__pycache__/*.pyc.<pid>` 临时文件的写入，与构建结果无关 —— 这是本机第二类已知的「假红」（第一类见 §13.3.6 的 NSIS 缺失）。**判定打包成功必须看产物本身，不能看 release.py 的退出码。**
 
-改动文件（3 个）：`frontend/src/composables/useMarkdown.js`、`frontend/src/composables/hljsAliases.js`（新增，构建期生成）、`frontend/src/__tests__/useMarkdown.test.js`。
+改动文件（3 个）：`frontend/src/composables/useMarkdown.js`、`frontend/src/composables/hljsAliases.js`（新增，构建期生成）、`frontend/src/__tests__/useMarkdown.test.js`。提交 `e564029`（含本节 plans，4 文件 +445/−92）。构建产物 `frontend/dist/`、`dist/` 均在 `.gitignore` 内，不入库。
 
 **方法论沉淀**：本轮最大教训不是体积，而是**「测试复制被测逻辑」等于零覆盖且伪装成满覆盖**——`[object Object]` 这种毁灭级 bug 与 160 全绿共存了很久。凡是 `__tests__` 里出现被测函数的本地副本（尤其带 "Simplified"/"for testing" 字样），一律视为门禁缺口。其次，本轮我两次把推断写进代码注释（shim 是否展开、`${name + '.js'}` 是否改变模式），两次都靠实测产物计数才被纠正：**注释里不能出现未实测的构建行为断言**。
 
