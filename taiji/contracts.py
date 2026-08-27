@@ -1740,6 +1740,10 @@ class RecoveryBranchState:
     remaining_rollout_steps: int
     replacement_rollout_id: str | None = None
     reason: str = "outcome-adjudication"
+    resource_budget: float | None = None
+    consumed_resource: float = 0.0
+    failure_count: int = 0
+    rejection_count: int = 0
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -1758,6 +1762,19 @@ class RecoveryBranchState:
         if self.replacement_rollout_id is not None and not str(self.replacement_rollout_id):
             raise ValueError("recovery replacement_rollout_id cannot be empty")
         _check_text(self.reason, "recovery reason")
+        if self.resource_budget is not None:
+            _check_unit(self.resource_budget, "recovery resource_budget")
+        if not math.isfinite(float(self.consumed_resource)) or self.consumed_resource < 0.0:
+            raise ValueError("recovery consumed_resource must be finite and non-negative")
+        if int(self.failure_count) < 0 or int(self.rejection_count) < 0:
+            raise ValueError("recovery outcome counters cannot be negative")
+
+    @property
+    def remaining_resource(self) -> float:
+        """Return the non-negative budget still available to recovery synthesis."""
+
+        budget = 1.0 if self.resource_budget is None else float(self.resource_budget)
+        return max(0.0, budget - float(self.consumed_resource))
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -1770,6 +1787,10 @@ class RecoveryBranchState:
             "remaining_rollout_steps": self.remaining_rollout_steps,
             "replacement_rollout_id": self.replacement_rollout_id,
             "reason": self.reason,
+            "resource_budget": self.resource_budget,
+            "consumed_resource": self.consumed_resource,
+            "failure_count": self.failure_count,
+            "rejection_count": self.rejection_count,
         }
 
     @classmethod
@@ -1794,6 +1815,14 @@ class RecoveryBranchState:
                 else str(payload["replacement_rollout_id"])
             ),
             reason=str(payload.get("reason", "outcome-adjudication")),
+            resource_budget=(
+                None
+                if payload.get("resource_budget") is None
+                else float(payload["resource_budget"])
+            ),
+            consumed_resource=float(payload.get("consumed_resource", 0.0)),
+            failure_count=int(payload.get("failure_count", 0)),
+            rejection_count=int(payload.get("rejection_count", 0)),
         )
 
 

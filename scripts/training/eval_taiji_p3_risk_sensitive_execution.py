@@ -52,6 +52,7 @@ class _ScriptedEnvironment:
         terminals: tuple[bool, ...],
         available_actions: tuple[int, ...] = (10, 11),
         action_kinds: tuple[str, ...] = ("assemble", "idle"),
+        capability_sequence: tuple[tuple[tuple[int, ...], tuple[str, ...]], ...] | None = None,
     ) -> None:
         if not (len(states) == len(rewards) == len(successes) == len(terminals)):
             raise ValueError("scripted environment sequences must have equal lengths")
@@ -61,13 +62,18 @@ class _ScriptedEnvironment:
         self.terminals = terminals
         self.available_actions = available_actions
         self.action_kinds = action_kinds
+        self.capability_sequence = capability_sequence or tuple(
+            (available_actions, action_kinds) for _ in states
+        )
+        if len(self.capability_sequence) != len(states):
+            raise ValueError("scripted capability sequence must match the state sequence")
         self.index = 0
         self.actions: list[int] = []
 
     def reset(self) -> tuple[int, tuple[int, ...]]:
         self.index = 0
         self.actions.clear()
-        return 97, self.available_actions
+        return 97, self.capability_sequence[0][0]
 
     def step(self, action_symbol: int) -> EnvironmentOutcome:
         if self.index >= len(self.states):
@@ -75,14 +81,15 @@ class _ScriptedEnvironment:
         index = self.index
         self.index += 1
         self.actions.append(int(action_symbol))
+        available_actions, action_kinds = self.capability_sequence[index]
         return EnvironmentOutcome(
             sensation=97 + self.index,
             reward=float(self.rewards[index]),
             success=self.successes[index],
             terminal=self.terminals[index],
             world_state=self.states[index],
-            available_actions=self.available_actions,
-            action_kinds=self.action_kinds,
+            available_actions=available_actions,
+            action_kinds=action_kinds,
         )
 
 
@@ -257,7 +264,7 @@ def _recovery_affordances() -> tuple[WorldAffordance, ...]:
             "secure",
             actor_id="agent",
             target_id="target",
-            parameters={"workspace_count": 2.0, "resource_cost": 0.8},
+            parameters={"workspace_count": 2.0, "resource_cost": 0.9},
             confidence=0.7,
         ),
         WorldAffordance(
@@ -465,6 +472,11 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         and checkpointed_recovery._planned_rollout.recovery_lineage
         == restored._planned_rollout.recovery_lineage
     )
+    checkpoint_budget_preserved = bool(
+        checkpointed_recovery.recovery_branch is not None
+        and checkpointed_recovery.recovery_branch.resource_budget == 1.0
+        and checkpointed_recovery.recovery_branch.consumed_resource == 0.0
+    )
     restored = checkpointed_recovery
     recovery_environment = _ScriptedEnvironment(
         (
@@ -498,8 +510,12 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         rewards=(1.0, 1.0),
         successes=(True, True),
         terminals=(False, True),
-        available_actions=(11,),
-        action_kinds=("idle",),
+        available_actions=(10, 11, 12, 13),
+        action_kinds=("assemble", "idle", "secure", "archive"),
+        capability_sequence=(
+            ((10, 11, 12, 13), ("assemble", "idle", "secure", "archive")),
+            ((11,), ("idle",)),
+        ),
     )
     restored._cognitive_state = replace(
         restored._cognitive_state,
@@ -545,6 +561,21 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         action_kinds=("idle",),
         learn=False,
         learn_world=True,
+    )
+    after_first_branch = restored.recovery_branch
+    post_first_recovery = restored.synthesize_recovery_rollouts(
+        goal_id="reach-world",
+        horizon=1,
+        resource_budget=1.0,
+    )
+    recovery_budget_not_bypassed = bool(
+        after_first_branch is not None
+        and after_first_branch.resource_budget == 1.0
+        and abs(after_first_branch.consumed_resource - 0.2) < 1e-6
+        and after_first_branch.failure_count == 0
+        and after_first_branch.rejection_count == 1
+        and len(post_first_recovery) == 1
+        and post_first_recovery[0].steps[0].action.kind == "idle"
     )
     rebound_rollout = restored._planned_rollout
     recovery_suffix_rebound = bool(
@@ -622,7 +653,23 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         "stale_action_rejected": stale_action_rejected,
         "stale_execution_rejected": stale_execution_rejected,
         "checkpoint_lineage_preserved": checkpoint_lineage_preserved,
+        "checkpoint_budget_preserved": checkpoint_budget_preserved,
         "recovery_suffix_rebound": recovery_suffix_rebound,
+        "recovery_budget_not_bypassed": recovery_budget_not_bypassed,
+        "recovery_budget_debug": (
+            None
+            if after_first_branch is None
+            else {
+                "resource_budget": after_first_branch.resource_budget,
+                "consumed_resource": after_first_branch.consumed_resource,
+                "failure_count": after_first_branch.failure_count,
+                "rejection_count": after_first_branch.rejection_count,
+                "remaining_resource": after_first_branch.remaining_resource,
+            }
+        ),
+        "post_first_recovery_kinds": [
+            rollout.steps[0].action.kind for rollout in post_first_recovery
+        ],
         "recovery_synthesized_candidates": [
             {
                 "kind": rollout.steps[0].action.kind,
@@ -705,6 +752,7 @@ def _run_failure_case(seed: int) -> dict[str, object]:
         learn_world=True,
     )
     trace = adapter.cognitive_snapshot().world_calibration_trace[-1]
+    branch = adapter.recovery_branch
     return {
         "failure_success": outcome.success,
         "failure_adjudication": trace.adjudication,
@@ -713,6 +761,12 @@ def _run_failure_case(seed: int) -> dict[str, object]:
             and trace.adjudication == "accepted"
             and adapter.replan_required
             and adapter._planned_rollout is None
+        ),
+        "failure_branch_accounting": bool(
+            branch is not None
+            and branch.failure_count == 1
+            and branch.rejection_count == 0
+            and branch.consumed_resource == 0.0
         ),
     }
 
@@ -780,13 +834,16 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "stale_action_rejected",
         "stale_execution_rejected",
         "checkpoint_lineage_preserved",
+        "checkpoint_budget_preserved",
         "recovery_suffix_rebound",
+        "recovery_budget_not_bypassed",
         "recovery_complete",
         "trace_complete",
         "checkpoint_trace_complete",
         "checkpoint_capability_preserved",
         "capability_refresh_filters_next_candidates",
         "failure_replan",
+        "failure_branch_accounting",
         "conflicted_replan",
     )
     return {
