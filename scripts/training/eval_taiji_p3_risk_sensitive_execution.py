@@ -797,6 +797,35 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
             for dependency in final_checkpoint.recovery_reader_dependencies.dependencies
         )
     )
+    recovery_reader_interactions_recorded = bool(
+        all(
+            len(dependency.interactions) == 1
+            and dependency.interactions[0].strategy_rollout_ids == tuple(selected_before_revoke)
+            and set(dependency.interactions[0].memory_ids)
+            == {
+                approval.memory_id
+                for approval in restored.recovery_strategy_ledger.selected_approvals
+            }
+            and dependency.interactions[0].order_invariant
+            and dependency.interactions[0].order_delta_l2 >= 0.0
+            and math.isclose(
+                dependency.interactions[0].interaction_residual_l2,
+                abs(dependency.interactions[0].interaction_delta_l2),
+                rel_tol=1e-6,
+                abs_tol=1e-9,
+            )
+            and dependency.interactions[0].replay_epochs == 1
+            and dependency.interactions[0].replay_learning_rate == 0.1
+            for dependency in restored.recovery_reader_dependencies.dependencies
+        )
+    )
+    recovery_reader_interactions_checkpoint_preserved = bool(
+        final_checkpoint.recovery_reader_dependencies == restored.recovery_reader_dependencies
+        and all(
+            len(dependency.interactions) == 1
+            for dependency in final_checkpoint.recovery_reader_dependencies.dependencies
+        )
+    )
     strategy_consolidation_checkpoint_preserved = bool(
         final_checkpoint._semantic_memory is not None
         and final_checkpoint._semantic_memory.consolidation_count == 1
@@ -839,6 +868,10 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
             ).base_checkpoint_digest
             for dependency in restored.recovery_reader_dependencies.dependencies
         )
+    )
+    recovery_reader_interaction_revoke_is_exact = all(
+        not dependency.interactions
+        for dependency in restored.recovery_reader_dependencies.dependencies
     )
     recovery_memory_rebuilt_on_revoke = bool(
         restored.recovery_memory_rebuild_count == 1
@@ -925,12 +958,22 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         "recovery_reader_dependencies_recorded": recovery_reader_dependencies_recorded,
         "recovery_reader_contributions_recorded": recovery_reader_contributions_recorded,
         "recovery_reader_checkpoint_preserved": recovery_reader_checkpoint_preserved,
+        "recovery_reader_interactions_recorded": recovery_reader_interactions_recorded,
+        "recovery_reader_interactions_checkpoint_preserved": (
+            recovery_reader_interactions_checkpoint_preserved
+        ),
+        "recovery_reader_interaction_summary": [
+            item.to_payload()
+            for dependency in restored.recovery_reader_dependencies.dependencies
+            for item in dependency.interactions
+        ],
         "recovery_memory_consolidated": recovery_memory_consolidated,
         "strategy_consolidation_checkpoint_preserved": strategy_consolidation_checkpoint_preserved,
         "strategy_revocation_blocks_replay": strategy_revocation_blocks_replay,
         "strategy_revocation_preserves_survivor": strategy_revocation_preserves_survivor,
         "recovery_reader_revocation_propagates": recovery_reader_revocation_propagates,
         "recovery_reader_contribution_revoke_is_exact": recovery_reader_contribution_revoke_is_exact,
+        "recovery_reader_interaction_revoke_is_exact": recovery_reader_interaction_revoke_is_exact,
         "recovery_memory_rebuilt_on_revoke": recovery_memory_rebuilt_on_revoke,
         "revoked_rebuild_checkpoint_preserved": revoked_rebuild_checkpoint_preserved,
         "archived_branch_not_reintroduced": archived_branch_not_reintroduced,
@@ -1131,12 +1174,15 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "recovery_reader_dependencies_recorded",
         "recovery_reader_contributions_recorded",
         "recovery_reader_checkpoint_preserved",
+        "recovery_reader_interactions_recorded",
+        "recovery_reader_interactions_checkpoint_preserved",
         "recovery_memory_consolidated",
         "strategy_consolidation_checkpoint_preserved",
         "strategy_revocation_blocks_replay",
         "strategy_revocation_preserves_survivor",
         "recovery_reader_revocation_propagates",
         "recovery_reader_contribution_revoke_is_exact",
+        "recovery_reader_interaction_revoke_is_exact",
         "recovery_memory_rebuilt_on_revoke",
         "revoked_rebuild_checkpoint_preserved",
         "archived_branch_not_reintroduced",
@@ -1208,6 +1254,8 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "recovery-strategy-survivor-preservation",
             "recovery-reader-provenance",
             "recovery-reader-contribution-attribution",
+            "recovery-reader-pairwise-interaction-attribution",
+            "recovery-reader-order-invariance",
             "recovery-reader-selective-revocation",
             "recovery-strategy-rebuild-after-revocation",
             "recovery-strategy-rebuild-checkpoint",
@@ -1231,7 +1279,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         },
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, rank multiple admitted strategies by evidence, outcome consistency, and resource cost under a memory budget, preserve that competition through checkpoint, consolidate selected records through semantic/procedural/sequence/concept readers, persist their reader dependency provenance and leave-one-out contribution credit, revoke one strategy from future replay, rebuild only readers that depended on it from the saved baseline plus surviving records, preserve the survivor's contribution attribution, propagate the revocation to reader dependencies and episodic readout, checkpoint and restore that rebuild, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
+            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, rank multiple admitted strategies by evidence, outcome consistency, and resource cost under a memory budget, preserve that competition through checkpoint, consolidate selected records through semantic/procedural/sequence/concept readers, persist their reader dependency provenance, leave-one-out contribution credit, pairwise interaction residual, and order-invariance result, revoke one strategy from future replay, rebuild only readers that depended on it from the saved baseline plus surviving records, preserve the survivor's contribution attribution, propagate the revocation to reader dependencies and episodic readout, checkpoint and restore that rebuild, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
         },
     }
 

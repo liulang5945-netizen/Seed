@@ -4,6 +4,7 @@ from taiji import (
     RecoveryArchiveEntry,
     RecoveryReaderContribution,
     RecoveryReaderDependencyGraph,
+    RecoveryReaderInteraction,
     RecoveryStrategyLedger,
 )
 
@@ -183,3 +184,57 @@ def test_recovery_reader_contribution_roundtrip_and_revocation() -> None:
     assert dependency.strategy_rollout_ids == ("survivor",)
     assert dependency.contributions[0].strategy_rollout_id == "survivor"
     assert dependency.base_checkpoint_digest == "baseline-digest"
+
+
+def test_recovery_reader_interaction_roundtrip_and_revocation() -> None:
+    ledger = RecoveryStrategyLedger(memory_budget=1.0)
+    admitted = ledger.admit(
+        _entry(
+            "primary",
+            resource_cost=0.2,
+            evidence_count=2,
+            outcome_consistency=1.0,
+        ),
+        memory_id="memory-primary",
+    )
+    admitted = admitted.admit(
+        _entry(
+            "survivor",
+            resource_cost=0.2,
+            evidence_count=2,
+            outcome_consistency=1.0,
+        ),
+        memory_id="memory-survivor",
+    )
+    selected = admitted.selected_approvals
+    interaction = RecoveryReaderInteraction(
+        reader_kind="semantic",
+        strategy_rollout_ids=("primary", "survivor"),
+        memory_ids=("memory-primary", "memory-survivor"),
+        pair_effect_l2=1.5,
+        additive_effect_l2=1.0,
+        interaction_delta_l2=0.5,
+        interaction_residual_l2=0.5,
+        order_delta_l2=0.0,
+        order_invariant=True,
+        replay_epochs=3,
+        replay_learning_rate=0.05,
+    )
+    graph = RecoveryReaderDependencyGraph().bind(
+        "semantic",
+        selected,
+        interactions=(interaction,),
+        base_checkpoint={"value": 1},
+        base_checkpoint_digest="baseline-digest",
+    )
+    restored = RecoveryReaderDependencyGraph.from_payload(graph.to_payload())
+    assert restored == graph
+    dependency = restored.dependency_for("semantic")
+    assert dependency is not None
+    assert dependency.interactions == (interaction,)
+
+    revoked = admitted.revoke("primary")
+    updated = restored.retain_selected(revoked.selected_approvals)
+    dependency = updated.dependency_for("semantic")
+    assert dependency is not None
+    assert dependency.interactions == ()

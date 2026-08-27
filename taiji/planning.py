@@ -14,6 +14,8 @@ RECOVERY_ARCHIVE_CHECKPOINT_FORMAT = "taiji-recovery-archive-v1"
 RECOVERY_STRATEGY_LEDGER_CHECKPOINT_FORMAT = "taiji-recovery-strategy-ledger-v1"
 RECOVERY_READER_DEPENDENCY_CHECKPOINT_FORMAT = "taiji-recovery-reader-dependency-v1"
 RECOVERY_READER_ATTRIBUTION_CHECKPOINT_FORMAT = "taiji-recovery-reader-attribution-v1"
+RECOVERY_READER_INTERACTION_CHECKPOINT_FORMAT = "taiji-recovery-reader-interaction-v1"
+RECOVERY_READER_ORDER_INVARIANCE_TOLERANCE = 1e-7
 
 
 def _unit(value: float, name: str) -> float:
@@ -964,6 +966,118 @@ class RecoveryReaderContribution:
 
 
 @dataclass(frozen=True)
+class RecoveryReaderInteraction:
+    """Replayable pairwise effect between two strategies on one reader.
+
+    The effect values are deterministic L2-like distances from the same
+    baseline reader checkpoint. ``interaction_delta_l2`` is signed: positive
+    means the pair has more effect than the two isolated effects added
+    together, while negative means interference. ``order_delta_l2`` records
+    whether replaying the pair in the opposite order changes the reader.
+    """
+
+    reader_kind: str
+    strategy_rollout_ids: tuple[str, str]
+    memory_ids: tuple[str, str]
+    pair_effect_l2: float
+    additive_effect_l2: float
+    interaction_delta_l2: float
+    interaction_residual_l2: float
+    order_delta_l2: float
+    order_invariant: bool
+    replay_epochs: int
+    replay_learning_rate: float
+    method: str = "pairwise-replay"
+
+    def __post_init__(self) -> None:
+        if not self.reader_kind:
+            raise ValueError("recovery reader interaction reader_kind cannot be empty")
+        if len(self.strategy_rollout_ids) != 2 or any(
+            not rollout_id for rollout_id in self.strategy_rollout_ids
+        ):
+            raise ValueError("recovery reader interaction needs two rollout ids")
+        if len(set(self.strategy_rollout_ids)) != 2:
+            raise ValueError("recovery reader interaction rollout ids must be distinct")
+        if len(self.memory_ids) != 2 or any(not memory_id for memory_id in self.memory_ids):
+            raise ValueError("recovery reader interaction needs two memory ids")
+        if len(set(self.memory_ids)) != 2:
+            raise ValueError("recovery reader interaction memory ids must be distinct")
+        for value, name in (
+            (self.pair_effect_l2, "pair effect"),
+            (self.additive_effect_l2, "additive effect"),
+            (self.interaction_residual_l2, "interaction residual"),
+            (self.order_delta_l2, "order delta"),
+        ):
+            _nonnegative_finite(value, f"recovery reader interaction {name}")
+        if not math.isfinite(float(self.interaction_delta_l2)):
+            raise ValueError("recovery reader interaction delta must be finite")
+        if not math.isclose(
+            float(self.interaction_residual_l2),
+            abs(float(self.interaction_delta_l2)),
+            rel_tol=1e-6,
+            abs_tol=1e-9,
+        ):
+            raise ValueError("recovery reader interaction residual must match delta")
+        if bool(self.order_invariant) != (
+            float(self.order_delta_l2) <= RECOVERY_READER_ORDER_INVARIANCE_TOLERANCE
+        ):
+            raise ValueError("recovery reader interaction order invariance does not match delta")
+        if int(self.replay_epochs) <= 0:
+            raise ValueError("recovery reader interaction replay_epochs must be positive")
+        if (
+            not math.isfinite(float(self.replay_learning_rate))
+            or float(self.replay_learning_rate) <= 0.0
+        ):
+            raise ValueError(
+                "recovery reader interaction replay_learning_rate must be positive and finite"
+            )
+        if not self.method:
+            raise ValueError("recovery reader interaction method cannot be empty")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": RECOVERY_READER_INTERACTION_CHECKPOINT_FORMAT,
+            "reader_kind": self.reader_kind,
+            "strategy_rollout_ids": list(self.strategy_rollout_ids),
+            "memory_ids": list(self.memory_ids),
+            "pair_effect_l2": self.pair_effect_l2,
+            "additive_effect_l2": self.additive_effect_l2,
+            "interaction_delta_l2": self.interaction_delta_l2,
+            "interaction_residual_l2": self.interaction_residual_l2,
+            "order_delta_l2": self.order_delta_l2,
+            "order_invariant": self.order_invariant,
+            "replay_epochs": self.replay_epochs,
+            "replay_learning_rate": self.replay_learning_rate,
+            "method": self.method,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> RecoveryReaderInteraction:
+        if payload.get("format", RECOVERY_READER_INTERACTION_CHECKPOINT_FORMAT) != (
+            RECOVERY_READER_INTERACTION_CHECKPOINT_FORMAT
+        ):
+            raise ValueError("unsupported recovery reader interaction checkpoint format")
+        strategy_rollout_ids = tuple(str(item) for item in payload.get("strategy_rollout_ids", ()))
+        memory_ids = tuple(str(item) for item in payload.get("memory_ids", ()))
+        if len(strategy_rollout_ids) != 2 or len(memory_ids) != 2:
+            raise ValueError("recovery reader interaction payload must contain two ids per kind")
+        return cls(
+            reader_kind=str(payload["reader_kind"]),
+            strategy_rollout_ids=(strategy_rollout_ids[0], strategy_rollout_ids[1]),
+            memory_ids=(memory_ids[0], memory_ids[1]),
+            pair_effect_l2=float(payload.get("pair_effect_l2", 0.0)),
+            additive_effect_l2=float(payload.get("additive_effect_l2", 0.0)),
+            interaction_delta_l2=float(payload.get("interaction_delta_l2", 0.0)),
+            interaction_residual_l2=float(payload.get("interaction_residual_l2", 0.0)),
+            order_delta_l2=float(payload.get("order_delta_l2", 0.0)),
+            order_invariant=bool(payload.get("order_invariant", True)),
+            replay_epochs=int(payload.get("replay_epochs", 1)),
+            replay_learning_rate=float(payload.get("replay_learning_rate", 0.1)),
+            method=str(payload.get("method", "pairwise-replay")),
+        )
+
+
+@dataclass(frozen=True)
 class RecoveryReaderDependency:
     """Provenance slice showing which strategies feed one downstream reader."""
 
@@ -972,6 +1086,7 @@ class RecoveryReaderDependency:
     strategy_rollout_ids: tuple[str, ...] = ()
     revision: int = 0
     contributions: tuple[RecoveryReaderContribution, ...] = ()
+    interactions: tuple[RecoveryReaderInteraction, ...] = ()
     base_checkpoint: dict[str, Any] | None = field(default=None, compare=False, repr=False)
     base_checkpoint_digest: str = ""
 
@@ -982,6 +1097,8 @@ class RecoveryReaderDependency:
             raise ValueError("recovery reader dependency memory ids cannot be empty")
         if len(set(self.memory_ids)) != len(self.memory_ids):
             raise ValueError("recovery reader dependency memory ids must be unique")
+        if len(self.memory_ids) != len(self.strategy_rollout_ids):
+            raise ValueError("recovery reader dependency ids must have equal lengths")
         if any(not rollout_id for rollout_id in self.strategy_rollout_ids):
             raise ValueError("recovery reader dependency rollout ids cannot be empty")
         if len(set(self.strategy_rollout_ids)) != len(self.strategy_rollout_ids):
@@ -1002,6 +1119,30 @@ class RecoveryReaderDependency:
             for contribution in self.contributions
         ):
             raise ValueError("recovery reader contribution provenance must match dependency ids")
+        if any(
+            not isinstance(interaction, RecoveryReaderInteraction)
+            or interaction.reader_kind != self.reader_kind
+            for interaction in self.interactions
+        ):
+            raise ValueError("recovery reader interactions must belong to their reader")
+        interaction_keys = {
+            frozenset(interaction.strategy_rollout_ids) for interaction in self.interactions
+        }
+        if len(interaction_keys) != len(self.interactions):
+            raise ValueError("recovery reader interactions must be unique per rollout pair")
+        memory_by_rollout = dict(zip(self.strategy_rollout_ids, self.memory_ids, strict=True))
+        if any(
+            any(
+                memory_by_rollout.get(rollout_id) != memory_id
+                for rollout_id, memory_id in zip(
+                    interaction.strategy_rollout_ids,
+                    interaction.memory_ids,
+                    strict=True,
+                )
+            )
+            for interaction in self.interactions
+        ):
+            raise ValueError("recovery reader interaction provenance must match dependency ids")
         if self.base_checkpoint is not None and not self.base_checkpoint_digest:
             raise ValueError("recovery reader base checkpoint requires a content digest")
         if int(self.revision) < 0:
@@ -1014,6 +1155,7 @@ class RecoveryReaderDependency:
             "strategy_rollout_ids": list(self.strategy_rollout_ids),
             "revision": self.revision,
             "contributions": [item.to_payload() for item in self.contributions],
+            "interactions": [item.to_payload() for item in self.interactions],
             "base_checkpoint": self.base_checkpoint,
             "base_checkpoint_digest": self.base_checkpoint_digest,
         }
@@ -1030,6 +1172,10 @@ class RecoveryReaderDependency:
             contributions=tuple(
                 RecoveryReaderContribution.from_payload(dict(item))
                 for item in payload.get("contributions", ())
+            ),
+            interactions=tuple(
+                RecoveryReaderInteraction.from_payload(dict(item))
+                for item in payload.get("interactions", ())
             ),
             base_checkpoint=(
                 None if payload.get("base_checkpoint") is None else dict(payload["base_checkpoint"])
@@ -1058,6 +1204,7 @@ class RecoveryReaderDependencyGraph:
         approvals: Sequence[RecoveryStrategyApproval],
         *,
         contributions: Sequence[RecoveryReaderContribution] = (),
+        interactions: Sequence[RecoveryReaderInteraction] = (),
         base_checkpoint: dict[str, Any] | None = None,
         base_checkpoint_digest: str = "",
     ) -> RecoveryReaderDependencyGraph:
@@ -1067,6 +1214,7 @@ class RecoveryReaderDependencyGraph:
         memory_ids = tuple(dict.fromkeys(approval.memory_id for approval in selected))
         rollout_ids = tuple(dict.fromkeys(approval.rollout_id for approval in selected))
         contribution_items = tuple(contributions)
+        interaction_items = tuple(interactions)
         approval_by_rollout = {approval.rollout_id: approval for approval in selected}
         if any(
             contribution.reader_kind != reader_kind
@@ -1076,12 +1224,27 @@ class RecoveryReaderDependencyGraph:
             for contribution in contribution_items
         ):
             raise ValueError("recovery reader contributions must match selected approvals")
+        if any(
+            interaction.reader_kind != reader_kind
+            or any(
+                rollout_id not in approval_by_rollout
+                or approval_by_rollout[rollout_id].memory_id != memory_id
+                for rollout_id, memory_id in zip(
+                    interaction.strategy_rollout_ids,
+                    interaction.memory_ids,
+                    strict=True,
+                )
+            )
+            for interaction in interaction_items
+        ):
+            raise ValueError("recovery reader interactions must match selected approvals")
         dependency = RecoveryReaderDependency(
             reader_kind=reader_kind,
             memory_ids=memory_ids,
             strategy_rollout_ids=rollout_ids,
             revision=self.revision + 1,
             contributions=contribution_items,
+            interactions=interaction_items,
             base_checkpoint=base_checkpoint,
             base_checkpoint_digest=str(base_checkpoint_digest),
         )
@@ -1134,6 +1297,14 @@ class RecoveryReaderDependencyGraph:
                     contribution
                     for contribution in dependency.contributions
                     if contribution.strategy_rollout_id in selected_by_rollout
+                ),
+                interactions=tuple(
+                    interaction
+                    for interaction in dependency.interactions
+                    if all(
+                        rollout_id in selected_by_rollout
+                        for rollout_id in interaction.strategy_rollout_ids
+                    )
                 ),
                 base_checkpoint=dependency.base_checkpoint,
                 base_checkpoint_digest=dependency.base_checkpoint_digest,
