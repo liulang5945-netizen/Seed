@@ -88,10 +88,12 @@ from .planning import (
     RecoveryReaderDependency,
     RecoveryReaderDependencyGraph,
     RecoveryReaderInteraction,
+    RecoveryReaderInteractionGroup,
     RecoveryRolloutLineage,
     RecoveryStrategyApproval,
     RecoveryStrategyLedger,
     RolloutDecision,
+    _connected_components,
 )
 from .procedural_memory import ProceduralMemoryLearner, ProceduralSequenceLearner
 from .semantic_memory import SemanticMemoryLearner
@@ -5970,12 +5972,19 @@ class TSKV8Adapter(Taiji):
             for dependency in self._recovery_reader_dependencies.dependencies
             for interaction in dependency.interactions
         )
+        interaction_groups = tuple(
+            group
+            for dependency in self._recovery_reader_dependencies.dependencies
+            for group in dependency.interaction_groups
+        )
         audit_available = (
             self._recovery_reader_dependencies.interaction_audit_available
             or self._recovery_strategy_ledger.interaction_audit_available
         )
         self._recovery_strategy_ledger = self._recovery_strategy_ledger.record_interaction_audit(
-            interactions, audit_available=audit_available
+            interactions,
+            groups=interaction_groups,
+            audit_available=audit_available,
         )
 
     def _recovery_interaction_audit_complete(self, reader_kind: str, selected_count: int) -> bool:
@@ -6155,6 +6164,128 @@ class TSKV8Adapter(Taiji):
             )
         return tuple(interactions)
 
+    def _recovery_reader_interaction_groups(
+        self,
+        reader_kind: str,
+        baseline_payload: dict[str, Any],
+        final_payload: dict[str, Any],
+        records: tuple[EpisodicMemoryRecord, ...],
+        approvals: Sequence[RecoveryStrategyApproval],
+        pairwise_interactions: Sequence[RecoveryReaderInteraction],
+        *,
+        epochs: int,
+        learning_rate: float,
+    ) -> tuple[RecoveryReaderInteractionGroup, ...]:
+        """Replay each connected audited strategy component as one full group."""
+
+        if len(approvals) < 3 or not pairwise_interactions:
+            return ()
+        approval_by_rollout = {approval.rollout_id: approval for approval in approvals}
+        active_ids = set(approval_by_rollout)
+        components = _connected_components(
+            active_ids,
+            tuple(item.strategy_rollout_ids for item in pairwise_interactions),
+        )
+        pairwise_by_ids = {
+            frozenset(item.strategy_rollout_ids): item for item in pairwise_interactions
+        }
+        rank = {approval.rollout_id: index for index, approval in enumerate(approvals)}
+        action_kinds = tuple(str(kind) for kind in final_payload.get("action_kinds", ()))
+
+        def state_payload(payload: dict[str, Any]) -> Any:
+            return (
+                payload.get("concepts", ())
+                if reader_kind == "concept"
+                else payload.get("state_dict")
+            )
+
+        def ordered_records(
+            ordered_approvals: Sequence[RecoveryStrategyApproval],
+        ) -> tuple[EpisodicMemoryRecord, ...]:
+            return tuple(
+                record
+                for approval in ordered_approvals
+                for record in records
+                if record.memory_id == approval.memory_id
+            )
+
+        baseline_state = state_payload(baseline_payload)
+        groups: list[RecoveryReaderInteractionGroup] = []
+        for component in components:
+            if len(component) < 3:
+                continue
+            ordered = tuple(
+                sorted(
+                    (approval_by_rollout[rollout_id] for rollout_id in component),
+                    key=lambda approval: rank[approval.rollout_id],
+                )
+            )
+            pair_items: list[RecoveryReaderInteraction] = []
+            missing_pair = False
+            for first, second in combinations(ordered, 2):
+                pair = pairwise_by_ids.get(frozenset((first.rollout_id, second.rollout_id)))
+                if pair is None:
+                    missing_pair = True
+                    break
+                pair_items.append(pair)
+            if missing_pair:
+                continue
+            group_payload = self._replay_recovery_reader(
+                reader_kind,
+                baseline_payload,
+                ordered_records(ordered),
+                epochs=epochs,
+                learning_rate=learning_rate,
+                action_kinds=action_kinds,
+            )
+            reverse_payload = self._replay_recovery_reader(
+                reader_kind,
+                baseline_payload,
+                ordered_records(tuple(reversed(ordered))),
+                epochs=epochs,
+                learning_rate=learning_rate,
+                action_kinds=action_kinds,
+            )
+            singleton_effects = []
+            for approval in ordered:
+                singleton_payload = self._replay_recovery_reader(
+                    reader_kind,
+                    baseline_payload,
+                    ordered_records((approval,)),
+                    epochs=epochs,
+                    learning_rate=learning_rate,
+                    action_kinds=action_kinds,
+                )
+                singleton_effects.append(
+                    _payload_distance(state_payload(singleton_payload), baseline_state)
+                )
+            group_effect = _payload_distance(state_payload(group_payload), baseline_state)
+            additive_effect = sum(singleton_effects)
+            pairwise_delta = sum(item.interaction_delta_l2 for item in pair_items)
+            pairwise_predicted = additive_effect + pairwise_delta
+            higher_order_delta = group_effect - pairwise_predicted
+            order_delta = _payload_distance(
+                state_payload(group_payload), state_payload(reverse_payload)
+            )
+            groups.append(
+                RecoveryReaderInteractionGroup(
+                    reader_kind=reader_kind,
+                    strategy_rollout_ids=tuple(approval.rollout_id for approval in ordered),
+                    memory_ids=tuple(approval.memory_id for approval in ordered),
+                    group_effect_l2=group_effect,
+                    additive_effect_l2=additive_effect,
+                    pairwise_interaction_delta_l2=pairwise_delta,
+                    pairwise_predicted_effect_l2=pairwise_predicted,
+                    higher_order_delta_l2=higher_order_delta,
+                    higher_order_residual_l2=abs(higher_order_delta),
+                    order_delta_l2=order_delta,
+                    order_invariant=(order_delta <= RECOVERY_READER_ORDER_INVARIANCE_TOLERANCE),
+                    replay_epochs=int(epochs),
+                    replay_learning_rate=float(learning_rate),
+                )
+            )
+        return tuple(groups)
+
     def _recovery_reader_contributions(
         self,
         reader_kind: str,
@@ -6314,11 +6445,22 @@ class TSKV8Adapter(Taiji):
                 epochs=epochs,
                 learning_rate=semantic_learning_rate,
             )
+            semantic_interaction_groups = self._recovery_reader_interaction_groups(
+                "semantic",
+                semantic_baseline or {},
+                semantic_final,
+                records,
+                selected_approvals,
+                semantic_interactions,
+                epochs=epochs,
+                learning_rate=semantic_learning_rate,
+            )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
                 "semantic",
                 selected_approvals,
                 contributions=semantic_contributions,
                 interactions=semantic_interactions,
+                interaction_groups=semantic_interaction_groups,
                 interaction_audit_complete=self._recovery_interaction_audit_complete(
                     "semantic", len(selected_approvals)
                 ),
@@ -6348,11 +6490,22 @@ class TSKV8Adapter(Taiji):
                 epochs=epochs,
                 learning_rate=procedural_learning_rate,
             )
+            procedural_interaction_groups = self._recovery_reader_interaction_groups(
+                "procedural",
+                procedural_baseline or {},
+                procedural_final,
+                records,
+                selected_approvals,
+                procedural_interactions,
+                epochs=epochs,
+                learning_rate=procedural_learning_rate,
+            )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
                 "procedural",
                 selected_approvals,
                 contributions=procedural_contributions,
                 interactions=procedural_interactions,
+                interaction_groups=procedural_interaction_groups,
                 interaction_audit_complete=self._recovery_interaction_audit_complete(
                     "procedural", len(selected_approvals)
                 ),
@@ -6382,11 +6535,22 @@ class TSKV8Adapter(Taiji):
                 epochs=epochs,
                 learning_rate=procedural_learning_rate,
             )
+            sequence_interaction_groups = self._recovery_reader_interaction_groups(
+                "sequence",
+                sequence_baseline or {},
+                sequence_final,
+                records,
+                selected_approvals,
+                sequence_interactions,
+                epochs=epochs,
+                learning_rate=procedural_learning_rate,
+            )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
                 "sequence",
                 selected_approvals,
                 contributions=sequence_contributions,
                 interactions=sequence_interactions,
+                interaction_groups=sequence_interaction_groups,
                 interaction_audit_complete=self._recovery_interaction_audit_complete(
                     "sequence", len(selected_approvals)
                 ),
@@ -6414,11 +6578,22 @@ class TSKV8Adapter(Taiji):
             epochs=epochs,
             learning_rate=procedural_learning_rate,
         )
+        concept_interaction_groups = self._recovery_reader_interaction_groups(
+            "concept",
+            concept_baseline,
+            concept_final,
+            records,
+            selected_approvals,
+            concept_interactions,
+            epochs=epochs,
+            learning_rate=procedural_learning_rate,
+        )
         self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
             "concept",
             selected_approvals,
             contributions=concept_contributions,
             interactions=concept_interactions,
+            interaction_groups=concept_interaction_groups,
             interaction_audit_complete=self._recovery_interaction_audit_complete(
                 "concept", len(selected_approvals)
             ),
@@ -6624,11 +6799,22 @@ class TSKV8Adapter(Taiji):
                 epochs=self._recovery_memory_epochs,
                 learning_rate=learning_rate,
             )
+            interaction_groups = self._recovery_reader_interaction_groups(
+                reader_kind,
+                dict(dependency.base_checkpoint),
+                final_payload,
+                recovery_records,
+                selected_approvals,
+                interactions,
+                epochs=self._recovery_memory_epochs,
+                learning_rate=learning_rate,
+            )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
                 reader_kind,
                 selected_approvals,
                 contributions=contributions,
                 interactions=interactions,
+                interaction_groups=interaction_groups,
                 interaction_audit_complete=dependency.interaction_audit_complete,
                 base_checkpoint=dependency.base_checkpoint,
                 base_checkpoint_digest=dependency.base_checkpoint_digest,
