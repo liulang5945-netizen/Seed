@@ -19,4 +19,7 @@ def test_risk_sensitive_execution_gate() -> None:
     assert run["trace_complete"] is True
     assert run["checkpoint_trace_complete"] is True
     assert run["recovery_reader_contributions_recorded"] is True
+    assert run["recovery_reader_interactions_recorded"] is True
+    assert run["recovery_reader_interactions_checkpoint_preserved"] is True
     assert run["recovery_reader_contribution_revoke_is_exact"] is True
+    assert run["recovery_reader_interaction_revoke_is_exact"] is True

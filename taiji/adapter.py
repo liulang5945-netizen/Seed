@@ -5,7 +5,8 @@ from __future__ import annotations
 import hashlib
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
-from typing import Any
+from itertools import combinations
+from typing import Any, cast
 
 import torch
 
@@ -87,6 +88,7 @@ from .neuron_network import AdaptiveNeuronNetwork
 from .neuron_region import AdaptiveNeuronRegion
 from .perception import LearnedPerception
 from .planning import (
+    RECOVERY_READER_ORDER_INVARIANCE_TOLERANCE,
     GoalPlanner,
     ImaginedRollout,
     PlanningCandidate,
@@ -96,6 +98,7 @@ from .planning import (
     RecoveryReaderContribution,
     RecoveryReaderDependency,
     RecoveryReaderDependencyGraph,
+    RecoveryReaderInteraction,
     RecoveryRolloutLineage,
     RecoveryStrategyApproval,
     RecoveryStrategyLedger,
@@ -5977,6 +5980,159 @@ class TSKV8Adapter(Taiji):
         if self._recovery_strategy_ledger != previous:
             self._rebuild_recovery_memory(revoked_rollout_id=rollout_id)
 
+    def _replay_recovery_reader(
+        self,
+        reader_kind: str,
+        baseline_payload: dict[str, Any],
+        records: tuple[EpisodicMemoryRecord, ...],
+        *,
+        epochs: int,
+        learning_rate: float,
+        action_kinds: Sequence[str] = (),
+    ) -> dict[str, Any]:
+        """Replay one ordered record slice from a reader baseline checkpoint."""
+
+        reader: Any
+        if reader_kind == "semantic":
+            reader = SemanticMemoryLearner.from_checkpoint(
+                dict(baseline_payload), device=self.device
+            )
+            if records:
+                reader.consolidate(records, epochs=epochs, learning_rate=learning_rate)
+            return cast(dict[str, Any], reader.checkpoint())
+        if reader_kind == "procedural":
+            reader = ProceduralMemoryLearner.from_checkpoint(
+                dict(baseline_payload), device=self.device
+            )
+            if records:
+                reader.consolidate(
+                    records,
+                    epochs=epochs,
+                    learning_rate=learning_rate,
+                    action_kinds=action_kinds or None,
+                )
+            return cast(dict[str, Any], reader.checkpoint())
+        if reader_kind == "sequence":
+            reader = ProceduralSequenceLearner.from_checkpoint(
+                dict(baseline_payload), device=self.device
+            )
+            if records:
+                reader.consolidate(
+                    records,
+                    epochs=epochs,
+                    learning_rate=learning_rate,
+                    action_kinds=action_kinds or None,
+                )
+            return cast(dict[str, Any], reader.checkpoint())
+        if reader_kind == "concept":
+            reader = ConceptFormationOrgan.from_checkpoint(
+                dict(baseline_payload), device=self.device
+            )
+            if records:
+                reader.consolidate(records, tick=self.tick)
+            return cast(dict[str, Any], reader.checkpoint())
+        raise ValueError(f"unsupported recovery reader kind: {reader_kind}")
+
+    def _recovery_reader_interactions(
+        self,
+        reader_kind: str,
+        baseline_payload: dict[str, Any],
+        final_payload: dict[str, Any],
+        records: tuple[EpisodicMemoryRecord, ...],
+        approvals: Sequence[RecoveryStrategyApproval],
+        *,
+        epochs: int,
+        learning_rate: float,
+    ) -> tuple[RecoveryReaderInteraction, ...]:
+        """Measure pairwise replay residuals and order sensitivity per reader."""
+
+        if len(approvals) < 2:
+            return ()
+        action_kinds = tuple(str(kind) for kind in final_payload.get("action_kinds", ()))
+
+        def state_payload(payload: dict[str, Any]) -> Any:
+            return (
+                payload.get("concepts", ())
+                if reader_kind == "concept"
+                else payload.get("state_dict")
+            )
+
+        def ordered_records(
+            first: RecoveryStrategyApproval, second: RecoveryStrategyApproval
+        ) -> tuple[EpisodicMemoryRecord, ...]:
+            return tuple(
+                record
+                for approval in (first, second)
+                for record in records
+                if record.memory_id == approval.memory_id
+            )
+
+        interactions: list[RecoveryReaderInteraction] = []
+        for first, second in combinations(tuple(approvals), 2):
+            first_records = tuple(
+                record for record in records if record.memory_id == first.memory_id
+            )
+            second_records = tuple(
+                record for record in records if record.memory_id == second.memory_id
+            )
+            first_payload = self._replay_recovery_reader(
+                reader_kind,
+                baseline_payload,
+                first_records,
+                epochs=epochs,
+                learning_rate=learning_rate,
+                action_kinds=action_kinds,
+            )
+            second_payload = self._replay_recovery_reader(
+                reader_kind,
+                baseline_payload,
+                second_records,
+                epochs=epochs,
+                learning_rate=learning_rate,
+                action_kinds=action_kinds,
+            )
+            first_then_second = self._replay_recovery_reader(
+                reader_kind,
+                baseline_payload,
+                ordered_records(first, second),
+                epochs=epochs,
+                learning_rate=learning_rate,
+                action_kinds=action_kinds,
+            )
+            second_then_first = self._replay_recovery_reader(
+                reader_kind,
+                baseline_payload,
+                ordered_records(second, first),
+                epochs=epochs,
+                learning_rate=learning_rate,
+                action_kinds=action_kinds,
+            )
+            baseline_state = state_payload(baseline_payload)
+            first_effect = _payload_distance(state_payload(first_payload), baseline_state)
+            second_effect = _payload_distance(state_payload(second_payload), baseline_state)
+            pair_effect = _payload_distance(state_payload(first_then_second), baseline_state)
+            additive_effect = first_effect + second_effect
+            interaction_delta = pair_effect - additive_effect
+            order_delta = _payload_distance(
+                state_payload(first_then_second), state_payload(second_then_first)
+            )
+            interactions.append(
+                RecoveryReaderInteraction(
+                    reader_kind=reader_kind,
+                    strategy_rollout_ids=(first.rollout_id, second.rollout_id),
+                    memory_ids=(first.memory_id, second.memory_id),
+                    pair_effect_l2=pair_effect,
+                    additive_effect_l2=additive_effect,
+                    interaction_delta_l2=interaction_delta,
+                    interaction_residual_l2=abs(interaction_delta),
+                    order_delta_l2=order_delta,
+                    order_invariant=(order_delta <= RECOVERY_READER_ORDER_INVARIANCE_TOLERANCE),
+                    replay_epochs=int(epochs),
+                    replay_learning_rate=float(learning_rate),
+                )
+            )
+        return tuple(interactions)
+
     def _recovery_reader_contributions(
         self,
         reader_kind: str,
@@ -6129,10 +6285,20 @@ class TSKV8Adapter(Taiji):
                 epochs=epochs,
                 learning_rate=semantic_learning_rate,
             )
+            semantic_interactions = self._recovery_reader_interactions(
+                "semantic",
+                semantic_baseline or {},
+                semantic_final,
+                records,
+                selected_approvals,
+                epochs=epochs,
+                learning_rate=semantic_learning_rate,
+            )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
                 "semantic",
                 selected_approvals,
                 contributions=semantic_contributions,
+                interactions=semantic_interactions,
                 base_checkpoint=semantic_baseline,
                 base_checkpoint_digest=_checkpoint_digest(semantic_baseline or {}),
             )
@@ -6152,10 +6318,20 @@ class TSKV8Adapter(Taiji):
                 epochs=epochs,
                 learning_rate=procedural_learning_rate,
             )
+            procedural_interactions = self._recovery_reader_interactions(
+                "procedural",
+                procedural_baseline or {},
+                procedural_final,
+                records,
+                selected_approvals,
+                epochs=epochs,
+                learning_rate=procedural_learning_rate,
+            )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
                 "procedural",
                 selected_approvals,
                 contributions=procedural_contributions,
+                interactions=procedural_interactions,
                 base_checkpoint=procedural_baseline,
                 base_checkpoint_digest=_checkpoint_digest(procedural_baseline or {}),
             )
@@ -6175,10 +6351,20 @@ class TSKV8Adapter(Taiji):
                 epochs=epochs,
                 learning_rate=procedural_learning_rate,
             )
+            sequence_interactions = self._recovery_reader_interactions(
+                "sequence",
+                sequence_baseline or {},
+                sequence_final,
+                records,
+                selected_approvals,
+                epochs=epochs,
+                learning_rate=procedural_learning_rate,
+            )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
                 "sequence",
                 selected_approvals,
                 contributions=sequence_contributions,
+                interactions=sequence_interactions,
                 base_checkpoint=sequence_baseline,
                 base_checkpoint_digest=_checkpoint_digest(sequence_baseline or {}),
             )
@@ -6194,10 +6380,20 @@ class TSKV8Adapter(Taiji):
             epochs=epochs,
             learning_rate=procedural_learning_rate,
         )
+        concept_interactions = self._recovery_reader_interactions(
+            "concept",
+            concept_baseline,
+            concept_final,
+            records,
+            selected_approvals,
+            epochs=epochs,
+            learning_rate=procedural_learning_rate,
+        )
         self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
             "concept",
             selected_approvals,
             contributions=concept_contributions,
+            interactions=concept_interactions,
             base_checkpoint=concept_baseline,
             base_checkpoint_digest=_checkpoint_digest(concept_baseline),
         )
@@ -6374,10 +6570,20 @@ class TSKV8Adapter(Taiji):
                 epochs=self._recovery_memory_epochs,
                 learning_rate=learning_rate,
             )
+            interactions = self._recovery_reader_interactions(
+                reader_kind,
+                dict(dependency.base_checkpoint),
+                final_payload,
+                recovery_records,
+                selected_approvals,
+                epochs=self._recovery_memory_epochs,
+                learning_rate=learning_rate,
+            )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
                 reader_kind,
                 selected_approvals,
                 contributions=contributions,
+                interactions=interactions,
                 base_checkpoint=dependency.base_checkpoint,
                 base_checkpoint_digest=dependency.base_checkpoint_digest,
             )
