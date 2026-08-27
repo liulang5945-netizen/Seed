@@ -908,4 +908,6 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 
 **已完成：P3 高阶 interaction-group replay Gate 已通过。** 对 pairwise audit graph 中的每个 connected 三策略以上组件，adapter 在同一 baseline 上真实重放完整 group、每个 singleton，并以 canonical/reverse 两种顺序复演；ledger 同时保存 group effect、additive effect、signed pairwise interaction sum、pairwise-predicted effect、高阶 delta/residual 和 order-invariance。高阶 residual、顺序敏感或缺少完整 pair evidence 的 group 会作为 atomic selection unit，整组共享 competition score/resource cost 并在 budget 下原子准入；普通/native checkpoint 恢复 group audit，撤销时整组删除并保留幸存者贡献 attribution。三 seed `11/23/37` 的 higher-order group replay、checkpoint preservation、atomic revocation 全部为真，cross-seed gate rate=`1.0`；定向回归 `10 passed`，native 回归（排除两个已确认的 Windows pytest 临时目录权限错误）`223 passed, 1 skipped`，核心 mypy=`0`、Ruff/Black、compileall 全部通过。该 Gate 证明三阶以上 group 的非线性审计和选择边界，不宣称已完成可组合 group 的增量 replay 或 Shapley 分解；CUDA 继续暂缓。
 
+**已复核：高阶 interaction-group replay 已通过远端 CI。** 提交 `ed1aae1` 的 GitHub Actions run `33089028142` 共 7 个 job 全部成功：Python 3.10/3.12、Windows、双 startup smoke、frontend、Docker 均实际执行并通过；Node.js 20 弃用与既有 frontend lint 提示仍为非阻断注释，不影响本次 Taiji 门禁结论。
+
 **当前唯一下一步：建立可组合 interaction-group 的增量 replay Gate。** 在两个已审计 group 合并、拆分或新增策略时，只重放受影响的 group 与 pairwise 边，验证高阶 residual、顺序不变性、预算原子性、checkpoint continuation 和局部撤销与全量重放一致；未受影响 group 必须保持 digest/attribution 不变，CUDA 继续暂缓。
