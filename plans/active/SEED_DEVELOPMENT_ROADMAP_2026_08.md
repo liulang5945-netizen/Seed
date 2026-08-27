@@ -499,6 +499,29 @@ P4 的最小真实经历边界已落地：
 - 默认发行不安装 Legacy 重依赖；Legacy 只保留离线对照和显式兼容构建。
 - 发布物包含模型卡、数据卡、能力 Gate、失败边界和恢复方式。
 
+### 13.1 桌面客户端 UX 修复轮（2026-08-27）
+
+实测澄清的运行形态：桌面端（`desktop/main.py`，PyQt6 无边框窗）= 子进程 uvicorn `api.app:app`(8000，同时服务 REST 与 `frontend/dist` 静态前端) + 子进程 WS 服务器(8765)；聊天走 Seed 原生运行时（`checkpoints/seed_corpus.pt`，43.7 万参数，语言器官 structured-stub）。本轮十项修复：
+
+| # | 问题 | 根因 | 修复 |
+|---|---|---|---|
+| 1 | 外框边框不跟主题 | 标题栏 QSS 只在加载后同步一次 | `desktop/main.py` 1s 轮询 `data-theme`，变化才重设 QSS |
+| 2 | 进入页面弹「已刷新」 | `AgentConfigView.onActivated` 调带 toast 的刷新 | 自动刷新静默化，仅手动点击提示 |
+| 3 | 页面切换生硬 | router-view 无过渡 | `App.vue` 增加 `route` 过渡（out-in，220ms，reduced-motion 降级） |
+| 4 | IDE 无法唤起系统文件管理器 | Web 沙箱无原生对话框 | 后端 `POST /api/workspace/pick_folder`（PowerShell STA BrowseForFolder）+ 前端「浏览系统目录」 |
+| 5 | IDE 简陋 / 终端不可用 | 终端 WS 在 auth 关闭时默认拒绝 | 终端默认放行（与全局 JWT 中间件一致，可配置收紧）；新增 Ctrl+\`、Ctrl+P 快速打开、新建文件夹、刷新树、「在资源管理器中显示」(`/api/workspace/reveal`)、`/api/workspace/mkdir` |
+| 6 | 侧边栏搜索右侧不明符号 | macOS 专用 `⌘K` 硬编码 | 平台感知提示（Win/Linux: `Ctrl K`），并真正绑定 Ctrl+K 聚焦 |
+| 7 | 「你好」回复乱码 | **模型真实输出**：43.7 万参数 byte 级基底 + structured-stub 语言器官，输出不可读并被存进会话历史 | 后端 final 事件标注 `readable`（U+FFFD/控制符占比启发式），前端以「RAW 原始字节输出」卡片呈现而非伪装成正常回复；历史消息同启发式。**根治在 P6 语言器官**，不在 UI |
+| 8 | 输入栏按钮「没用」 | 按钮实际可用（Chromium 实测全通过）；体感来自发送按钮 disabled 且无反馈 | 发送门控保留但移除 disabled，点击未就绪时 toast 明确原因（连接中/模型未装载/生成中） |
+| 9 | 生命状态数据来源存疑 | needs 数据源是 Cortex legacy `life_scheduler`；Seed 运行时下后端返回空（无假数据） | `LifeStatusView` 增显式 DATA SOURCE 说明卡；`is_seed` 透传至前端；Seed 下生命活动按钮给真实提示 |
+| 10 | 对话页面无法上下滑动 | `.chat-stage` 为 `flex:1; min-height:0`，在 flex 列滚动容器中被压缩到小于内容高度；内容以 `overflow:visible` 溢出绘制，但父级 `scrollHeight` 仍按 stage 盒子计算 ⇒ 滚动条永不出现，内容被 sticky 输入栏遮挡 | `.chat-stage` 改为 `flex:1 0 auto`（可涨不可缩，去掉 `min-height:0`）；`.composer-wrap` 加 `flex:none; z-index:2`；`.msg` 的 `contain-intrinsic-size` 由 80px 提到 140px 以减少 `scrollHeight` 失真 |
+
+滚动修复的实测证据（Chromium，注入内容后量测）：修复前 h=610 时 `stageScroll 433 > stageBox 397` 而 `saScroll === saClient(558)`、滚轮无效；修复后 `stageBox === stageScroll(449)`、`saScroll 610 > saClient 558`、滚轮生效；12 条真实消息场景 `saScroll 1565`、可滚到底且末条消息 bottom(522) < 输入栏 top(538) 不被遮挡。
+
+配套：OpenAPI 基线快照已更新（新增 3 个 workspace 端点）；vitest 160/160、e2e 冒烟 22/22 通过；`frontend/dist` 已重建。
+
+遗留（下一轮候选）：语言器官接入真实后端（P6）才能真正消除乱码；终端默认 shell 仍是 cmd.exe；侧边栏搜索框尚未接线为会话过滤。
+
 ## 14. 持续门禁
 
 - Taiji/Seed/Legacy 所有权 AST 测试；
@@ -873,3 +896,4 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 **已完成：P3 recovery provenance contribution attribution Gate 已通过。** 新增 `RecoveryReaderContribution`，以 deterministic leave-one-out replay 记录每个 selected strategy 对 semantic/procedural/sequence/concept reader 的 `effect_delta_l2`、归一化 `credit`、replay epochs/learning rate；每类 reader 同时保存 consolidation 前的 baseline checkpoint 及内容 digest。procedural/sequence reader 支持固定 action vocabulary 的 ablation replay，撤销时从保存的 baseline 只重放幸存策略，并重新计算 survivor attribution，不再重训普通历史记录。普通/native checkpoint 均恢复 baseline、贡献账本和 digest。三 seed `11/23/37` 的 contribution recording、checkpoint、selective revocation 全部为真，cross-seed gate rate=`1.0`；定向回归 `5 passed`，核心 mypy=`0`，py_compile、Ruff format 与 diff 检查通过，报告/manifest 已更新。该 Gate 的 credit 是 leave-one-out 边际影响，不宣称多个策略之间的交互影响已经被分解为可加和的 Shapley/线性权重；概念 reader 的 `effect_delta_l2` 是符号状态位移而非神经参数权重，CUDA 继续暂缓。
 
 **当前唯一下一步：建立 interaction-aware recovery attribution Gate。** 针对多个 selected strategy 的非线性交互，增加可重放的 pairwise interaction residual 与顺序无关性校验，明确哪些影响可以安全相加、哪些必须保留为组合贡献；继续覆盖撤销、普通/native checkpoint，CUDA 继续暂缓。
+**已完成：CI Python 门禁修复。** GitHub 失败运行 `33037813507`、`33037154061`、`33036706021` 的共同失败点均为 Black，而非测试、Ruff、启动冒烟或 Windows 任务；远端日志明确指出 `scripts/make_social_preview.py` 未格式化。本轮按 CI 固定版本 Black `26.5.1` 的 API 对全仓 463 个 Python 文件复核并修复，同时清除 Ruff 暴露的导入排序、`cache` 规则和嵌套条件问题；不降低 CI 规则、不触碰 CUDA。Ubuntu 等价门禁已通过：Ruff 两道检查、Black 0 个未格式化、mypy `44` 个源文件无错误、版本一致性通过；native `221 passed, 1 skipped`、Seed `72 passed`、全量 `465 passed, 5 skipped`，覆盖率 `40.83%`。本地 Black CLI 在 Windows 会挂起，因此采用同版本格式化 API 完成确定性校验；这属于本机工具异常，不改变仓库 CI。提交后唯一下一步仍是 interaction-aware recovery attribution Gate，CUDA 继续暂缓。

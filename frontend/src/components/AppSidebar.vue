@@ -21,8 +21,8 @@ class="sidebar-resize-handle"
       <!-- 搜索框 -->
       <div class="search-field">
         <Search :size="16" aria-hidden="true" />
-        <input v-model="searchQuery" :placeholder="t('search') || '搜索...'" aria-label="搜索">
-        <span class="kbd">⌘K</span>
+        <input ref="searchInput" v-model="searchQuery" :placeholder="t('search') || '搜索...'" aria-label="搜索">
+        <span class="kbd">{{ searchShortcutLabel }}</span>
       </div>
     </div>
 
@@ -86,7 +86,7 @@ v-for="item in group.items" :key="item.path"
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
 import { Plus, MessageSquare, X, Search, BookOpen, Zap, Cpu, Layout, Settings, Heart } from 'lucide-vue-next'
 import { useChatStore } from '@/stores/chatStore.js'
@@ -108,6 +108,24 @@ const router = useRouter()
 const route = useRoute()
 const t = (key) => appStore.t(key)
 const searchQuery = ref('')
+const searchInput = ref(null)
+
+// 快捷键提示按平台显示：Windows/Linux 用 Ctrl K，macOS 用 ⌘K
+const isMac = typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent)
+const searchShortcutLabel = isMac ? '⌘K' : 'Ctrl K'
+
+function onGlobalKeydown(e) {
+  // Ctrl+K / Cmd+K 聚焦侧边栏搜索
+  if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === 'k') {
+    const active = document.activeElement
+    if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') && active !== searchInput.value) return
+    e.preventDefault()
+    searchInput.value?.focus()
+    searchInput.value?.select()
+  }
+}
+onMounted(() => document.addEventListener('keydown', onGlobalKeydown))
+onUnmounted(() => document.removeEventListener('keydown', onGlobalKeydown))
 
 function isActiveRoute(path) { return route.path === path }
 function handleNewChat() { chatStore.createNewSession(); router.push('/').catch(() => {}) }

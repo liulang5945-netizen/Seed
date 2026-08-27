@@ -78,11 +78,12 @@ def _verify_ws_token(ws) -> bool:
                 return False
             return True
         else:
-            # 认证未启用时，检查配置是否允许未认证访问终端
-            # 默认不允许，需要显式启用
-            allow_unauthenticated = get_setting("terminal_allow_unauthenticated", False)
+            # 认证未启用时：与全局 JWT 中间件策略一致——本地单用户模式
+            # （默认 127.0.0.1）直接放行；仅当显式配置
+            # terminal_allow_unauthenticated=false 时才收紧（如局域网共享）。
+            allow_unauthenticated = get_setting("terminal_allow_unauthenticated", True)
             if not allow_unauthenticated:
-                logger.warning("WebSocket 终端连接被拒绝: 认证未启用且未配置允许未认证访问")
+                logger.warning("WebSocket 终端连接被拒绝: 认证未启用且已禁用未认证访问")
                 return False
             return True
     except ImportError:

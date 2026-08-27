@@ -408,6 +408,106 @@ def get_quick_paths():
     return {"paths": paths}
 
 
+@router.post("/api/workspace/mkdir")
+def make_workspace_dir(req: dict):
+    """在工作区内创建目录（支持多级）。"""
+    name = str(req.get("name") or "").strip()
+    if not name:
+        raise HTTPException(status_code=400, detail="目录名不能为空")
+    ws_dir, target = _resolve_workspace_path(name)
+    if not target.startswith(ws_dir + os.sep):
+        raise HTTPException(status_code=403, detail="路径不安全")
+    try:
+        os.makedirs(target, exist_ok=True)
+    except OSError as exc:
+        raise HTTPException(status_code=400, detail=f"创建目录失败: {exc}") from exc
+    return {"status": "ok", "path": os.path.relpath(target, ws_dir)}
+
+
+@router.post("/api/workspace/pick_folder")
+def pick_folder():
+    """打开系统级目录选择对话框，返回用户选择的目录。
+
+    Web 前端无法唤起原生文件管理器（QWebEngine/浏览器沙箱），由本地后端
+    代为弹窗：Windows 上经 PowerShell 调 Shell.Application 的
+    BrowseForFolder（Vista 风格可折叠树对话框，STA 线程保证 COM 安全）。
+    用户取消时返回 {"status": "cancel"}；平台不支持时返回 501。
+    """
+    import platform
+    import subprocess
+
+    if platform.system() != "Windows":
+        raise HTTPException(status_code=501, detail="当前平台不支持系统目录选择对话框")
+
+    ps_script = (
+        "$ErrorActionPreference='Stop';"
+        "Add-Type -AssemblyName System.Windows.Forms;"
+        "$shell = New-Object -ComObject Shell.Application;"
+        "$folder = $shell.BrowseForFolder(0, '选择 Seed 工作区文件夹', 0x41, '');"
+        "if ($folder) {"
+        "  [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;"
+        "  Write-Output $folder.Self.Path"
+        "}"
+    )
+    try:
+        # -STA：COM 对话框需单线程套间；NoProfile 加速启动并隔离用户配置
+        result = subprocess.run(
+            ["powershell.exe", "-NoProfile", "-STA", "-NonInteractive", "-Command", ps_script],
+            capture_output=True,
+            timeout=600,  # 对话框最长等待 10 分钟
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+        )
+    except FileNotFoundError as exc:
+        raise HTTPException(
+            status_code=500, detail="未找到 powershell.exe，无法打开目录选择框"
+        ) from exc
+    except subprocess.TimeoutExpired as exc:
+        raise HTTPException(status_code=408, detail="目录选择超时") from exc
+
+    if result.returncode != 0:
+        detail = result.stderr.decode("utf-8", errors="replace").strip()[:200]
+        raise HTTPException(status_code=500, detail=f"目录选择失败: {detail or result.returncode}")
+
+    picked = result.stdout.decode("utf-8", errors="replace").strip()
+    if not picked:
+        return {"status": "cancel", "path": ""}
+    # BrowseForFolder 可返回虚拟文件夹（如"此电脑"），仅接受真实文件系统路径
+    if not os.path.isdir(picked):
+        return {"status": "cancel", "path": picked, "reason": "非文件系统目录"}
+    return {"status": "ok", "path": os.path.abspath(picked)}
+
+
+@router.post("/api/workspace/reveal")
+def reveal_in_explorer(req: dict):
+    """在系统资源管理器中显示工作区内的文件/目录。"""
+    name = str(req.get("path") or "").strip()
+    if not name:
+        raise HTTPException(status_code=400, detail="路径不能为空")
+    ws_dir, target = _resolve_workspace_path(name)
+    if not target.startswith(ws_dir + os.sep) and target != ws_dir:
+        raise HTTPException(status_code=403, detail="路径不安全")
+    if not os.path.exists(target):
+        raise HTTPException(status_code=404, detail=f"目标不存在: {name}")
+
+    import platform
+    import subprocess
+
+    try:
+        if platform.system() == "Windows":
+            # explorer /select 定位到文件；目录则直接打开
+            if os.path.isfile(target):
+                subprocess.Popen(["explorer.exe", f"/select,{target}"])
+            else:
+                os.startfile(target)  # noqa: S606 - 本地可信路径
+        elif platform.system() == "Darwin":
+            subprocess.Popen(["open", "-R", target])
+        else:
+            subprocess.Popen(["xdg-open", os.path.dirname(target)])
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"打开资源管理器失败: {exc}") from exc
+    return {"status": "ok", "path": target}
+
+
 @router.get("/api/network/diagnose")
 def network_diagnose():
     """Network diagnostics (native Taiji — no remote model downloads needed)."""

@@ -301,10 +301,11 @@ function saveAgentPrefs() {
   localStorage.setItem('taiji_agent_temperature', String(temperature.value))
 }
 
-async function refreshAgentRuntime() {
+async function refreshAgentRuntime({ silent = false } = {}) {
   await runtimeStore.refreshTools()
   await loadInstalled()
-  toast('已刷新', 'success')
+  // 自动刷新（进入页面）不打扰；仅手动点击「刷新」时提示
+  if (!silent) toast('已刷新', 'success')
 }
 
 async function loadInstalled() {
@@ -360,8 +361,8 @@ onMounted(() => {
   maxIterations.value = Number(localStorage.getItem('taiji_agent_max_iterations')) || 10
   temperature.value = Number(localStorage.getItem('taiji_agent_temperature')) || 0.7
 })
-// keep-alive 缓存后重新进入页面时也刷新运行时状态（首次挂载同样触发）
-onActivated(() => refreshAgentRuntime())
+// keep-alive 缓存后重新进入页面时也刷新运行时状态（首次挂载同样触发，静默）
+onActivated(() => refreshAgentRuntime({ silent: true }))
 </script>
 
 <style scoped>

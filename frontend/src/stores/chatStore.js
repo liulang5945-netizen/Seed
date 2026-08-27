@@ -293,6 +293,9 @@ export const useChatStore = defineStore('chat', () => {
               break
             case 'final':
               aiMsg.content = evt.data?.answer || aiMsg.content
+              // Seed 原生运行时：语言器官为 structured-stub 时输出可能是
+              // 不可读的原始字节解码，标记后由视图以「原始输出」卡片呈现
+              if (evt.data?.readable === false) aiMsg.unreadable = true
               break
             case 'error':
               aiMsg.content += `\n\n❌ ${evt.data?.error || '未知错误'}`
