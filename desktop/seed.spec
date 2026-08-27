@@ -1,5 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-"""Seed 桌面端双入口打包规格（由 desktop/build.py 生成并调用）。
+"""Seed 桌面端双入口打包规格（由 scripts/release.py 调用）。
 
 - Seed.exe        : GUI 主入口（windowed，desktop/main.py）
 - SeedBackend.exe : 后端工作进程（console，desktop/backend_worker.py）

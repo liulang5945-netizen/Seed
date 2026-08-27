@@ -365,10 +365,9 @@ jobs:
             report-win.xml
             coverage-win.xml
 
-      # F05: 桌面构建配置轻量验证——编译检查 seed.spec / build.py / release.py，
+      # F05: 桌面构建配置轻量验证——编译检查 seed.spec / release.py（唯一发布入口），
       # 及时发现语法或导入破坏，避免本地打包时才暴露（完整 PyInstaller 构建较重，不入 PR 门禁）
       - name: Validate desktop build configuration
         run: |
-          python -c "import py_compile; py_compile.compile('desktop/build.py', doraise=True)"
           python -c "import py_compile; py_compile.compile('scripts/release.py', doraise=True)"
           python -c "import ast; ast.parse(open('desktop/seed.spec', encoding='utf-8').read()); print('seed.spec: syntax OK')"
