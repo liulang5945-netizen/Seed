@@ -1230,6 +1230,7 @@ class RecoveryReaderInteraction:
     replay_epochs: int
     replay_learning_rate: float
     method: str = "pairwise-replay"
+    replay_action_kinds: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.reader_kind:
@@ -1275,6 +1276,8 @@ class RecoveryReaderInteraction:
             )
         if not self.method:
             raise ValueError("recovery reader interaction method cannot be empty")
+        if any(not action_kind for action_kind in self.replay_action_kinds):
+            raise ValueError("recovery reader interaction action kinds cannot be empty")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -1291,6 +1294,7 @@ class RecoveryReaderInteraction:
             "replay_epochs": self.replay_epochs,
             "replay_learning_rate": self.replay_learning_rate,
             "method": self.method,
+            "replay_action_kinds": list(self.replay_action_kinds),
         }
 
     @classmethod
@@ -1316,6 +1320,7 @@ class RecoveryReaderInteraction:
             replay_epochs=int(payload.get("replay_epochs", 1)),
             replay_learning_rate=float(payload.get("replay_learning_rate", 0.1)),
             method=str(payload.get("method", "pairwise-replay")),
+            replay_action_kinds=tuple(str(item) for item in payload.get("replay_action_kinds", ())),
         )
 
 
@@ -1337,6 +1342,10 @@ class RecoveryReaderInteractionGroup:
     replay_epochs: int
     replay_learning_rate: float
     method: str = "higher-order-group-replay"
+    singleton_effect_l2: tuple[float, ...] = ()
+    replay_digest: str = ""
+    attribution_digest: str = ""
+    replay_action_kinds: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.reader_kind:
@@ -1391,6 +1400,15 @@ class RecoveryReaderInteractionGroup:
             )
         if not self.method:
             raise ValueError("recovery reader interaction group method cannot be empty")
+        if self.singleton_effect_l2:
+            if len(self.singleton_effect_l2) != len(self.strategy_rollout_ids):
+                raise ValueError(
+                    "recovery reader interaction group singleton effects must match rollouts"
+                )
+            for effect in self.singleton_effect_l2:
+                _nonnegative_finite(effect, "recovery reader interaction group singleton effect")
+        if any(not action_kind for action_kind in self.replay_action_kinds):
+            raise ValueError("recovery reader interaction group action kinds cannot be empty")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -1409,6 +1427,10 @@ class RecoveryReaderInteractionGroup:
             "replay_epochs": self.replay_epochs,
             "replay_learning_rate": self.replay_learning_rate,
             "method": self.method,
+            "singleton_effect_l2": list(self.singleton_effect_l2),
+            "replay_digest": self.replay_digest,
+            "attribution_digest": self.attribution_digest,
+            "replay_action_kinds": list(self.replay_action_kinds),
         }
 
     @classmethod
@@ -1434,6 +1456,12 @@ class RecoveryReaderInteractionGroup:
             replay_epochs=int(payload.get("replay_epochs", 1)),
             replay_learning_rate=float(payload.get("replay_learning_rate", 0.1)),
             method=str(payload.get("method", "higher-order-group-replay")),
+            singleton_effect_l2=tuple(
+                float(item) for item in payload.get("singleton_effect_l2", ())
+            ),
+            replay_digest=str(payload.get("replay_digest", "")),
+            attribution_digest=str(payload.get("attribution_digest", "")),
+            replay_action_kinds=tuple(str(item) for item in payload.get("replay_action_kinds", ())),
         )
 
 
