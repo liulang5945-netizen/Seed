@@ -25,7 +25,19 @@
         "stale_action_rejected": true,
         "stale_execution_rejected": true,
         "checkpoint_lineage_preserved": true,
+        "checkpoint_budget_preserved": true,
         "recovery_suffix_rebound": true,
+        "recovery_budget_not_bypassed": true,
+        "recovery_budget_debug": {
+          "resource_budget": 1.0,
+          "consumed_resource": 0.2,
+          "failure_count": 0,
+          "rejection_count": 1,
+          "remaining_resource": 0.8
+        },
+        "post_first_recovery_kinds": [
+          "idle"
+        ],
         "recovery_synthesized_candidates": [
           {
             "kind": "idle",
@@ -34,7 +46,7 @@
           },
           {
             "kind": "secure",
-            "resource_cost": 0.8,
+            "resource_cost": 0.9,
             "uncertainty_mode": "unseen"
           }
         ],
@@ -60,6 +72,7 @@
         "failure_success": false,
         "failure_adjudication": "accepted",
         "failure_replan": true,
+        "failure_branch_accounting": true,
         "conflicted_mode_before": "conflicted",
         "conflicted_uncertainty_before": 1.0,
         "conflicted_adjudication": "rejected",
@@ -88,7 +101,19 @@
         "stale_action_rejected": true,
         "stale_execution_rejected": true,
         "checkpoint_lineage_preserved": true,
+        "checkpoint_budget_preserved": true,
         "recovery_suffix_rebound": true,
+        "recovery_budget_not_bypassed": true,
+        "recovery_budget_debug": {
+          "resource_budget": 1.0,
+          "consumed_resource": 0.2,
+          "failure_count": 0,
+          "rejection_count": 1,
+          "remaining_resource": 0.8
+        },
+        "post_first_recovery_kinds": [
+          "idle"
+        ],
         "recovery_synthesized_candidates": [
           {
             "kind": "idle",
@@ -97,7 +122,7 @@
           },
           {
             "kind": "secure",
-            "resource_cost": 0.8,
+            "resource_cost": 0.9,
             "uncertainty_mode": "unseen"
           }
         ],
@@ -123,6 +148,7 @@
         "failure_success": false,
         "failure_adjudication": "accepted",
         "failure_replan": true,
+        "failure_branch_accounting": true,
         "conflicted_mode_before": "conflicted",
         "conflicted_uncertainty_before": 1.0,
         "conflicted_adjudication": "rejected",
@@ -151,7 +177,19 @@
         "stale_action_rejected": true,
         "stale_execution_rejected": true,
         "checkpoint_lineage_preserved": true,
+        "checkpoint_budget_preserved": true,
         "recovery_suffix_rebound": true,
+        "recovery_budget_not_bypassed": true,
+        "recovery_budget_debug": {
+          "resource_budget": 1.0,
+          "consumed_resource": 0.2,
+          "failure_count": 0,
+          "rejection_count": 1,
+          "remaining_resource": 0.8
+        },
+        "post_first_recovery_kinds": [
+          "idle"
+        ],
         "recovery_synthesized_candidates": [
           {
             "kind": "idle",
@@ -160,7 +198,7 @@
           },
           {
             "kind": "secure",
-            "resource_cost": 0.8,
+            "resource_cost": 0.9,
             "uncertainty_mode": "unseen"
           }
         ],
@@ -186,6 +224,7 @@
         "failure_success": false,
         "failure_adjudication": "accepted",
         "failure_replan": true,
+        "failure_branch_accounting": true,
         "conflicted_mode_before": "conflicted",
         "conflicted_uncertainty_before": 1.0,
         "conflicted_adjudication": "rejected",
