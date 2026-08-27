@@ -1,0 +1,33 @@
+{
+  "format": "taiji-p3-probability-calibration-manifest-v1",
+  "task": "ledger-driven probability calibration on an independent holdout",
+  "seeds": [
+    11,
+    29,
+    47
+  ],
+  "holdout_success": [
+    true,
+    false,
+    true,
+    false,
+    false
+  ],
+  "holdout_rewards": [
+    1.0,
+    -1.0,
+    1.0,
+    -1.0,
+    -1.0
+  ],
+  "controls": [
+    "Brier and binary NLL are computed only after ledger training",
+    "group confidence coverage compares predicted probability with holdout rate",
+    "reward estimate is checked against an independent holdout mean",
+    "new relation/target context remains unseen and maximally uncertain",
+    "holdout prediction cannot increase transition evidence count",
+    "native checkpoint restores ledger-driven probability and uncertainty",
+    "world-model lesion fails closed for planner projection"
+  ],
+  "boundary": "probability calibration contract; not general stochastic world prediction"
+}
