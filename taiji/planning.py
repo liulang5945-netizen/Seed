@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 from .contracts import Goal, GoalState, Outcome, PlanCandidate, PlanState, WorldAction
@@ -255,6 +255,146 @@ class ImaginedRollout:
                 )
                 for item in payload.get("steps", ())
             ),
+        )
+
+
+@dataclass(frozen=True)
+class RecoveryPortfolio:
+    """Checkpointable portfolio of parallel recovery rollout branches."""
+
+    portfolio_id: str
+    goal_id: str
+    candidates: tuple[ImaginedRollout, ...]
+    statuses: tuple[tuple[str, str], ...] = ()
+    retired_rollout_ids: tuple[str, ...] = ()
+    selected_rollout_id: str | None = None
+    revision: int = 0
+
+    def __post_init__(self) -> None:
+        if not self.portfolio_id or not self.goal_id:
+            raise ValueError("recovery portfolio ids cannot be empty")
+        if not self.candidates:
+            raise ValueError("recovery portfolio requires candidates")
+        candidate_ids = tuple(candidate.rollout_id for candidate in self.candidates)
+        if len(set(candidate_ids)) != len(candidate_ids):
+            raise ValueError("recovery portfolio candidate rollout ids must be unique")
+        if not self.statuses:
+            object.__setattr__(
+                self,
+                "statuses",
+                tuple((rollout_id, "active") for rollout_id in candidate_ids),
+            )
+        status_ids = tuple(rollout_id for rollout_id, _ in self.statuses)
+        if status_ids != candidate_ids:
+            raise ValueError("recovery portfolio statuses must align with candidates")
+        allowed = {"active", "selected", "pruned", "expired"}
+        if any(status not in allowed for _, status in self.statuses):
+            raise ValueError("unsupported recovery portfolio branch status")
+        if self.selected_rollout_id is not None and self.selected_rollout_id not in candidate_ids:
+            raise ValueError("recovery portfolio selected rollout is missing")
+        if any(not rollout_id for rollout_id in self.retired_rollout_ids):
+            raise ValueError("recovery portfolio retired rollout ids cannot be empty")
+        if len(set(self.retired_rollout_ids)) != len(self.retired_rollout_ids):
+            raise ValueError("recovery portfolio retired rollout ids must be unique")
+        if int(self.revision) < 0:
+            raise ValueError("recovery portfolio revision cannot be negative")
+
+    def status_for(self, rollout_id: str) -> str | None:
+        return dict(self.statuses).get(rollout_id)
+
+    def active_candidates(self) -> tuple[ImaginedRollout, ...]:
+        active = {
+            rollout_id for rollout_id, status in self.statuses if status in {"active", "selected"}
+        }
+        return tuple(candidate for candidate in self.candidates if candidate.rollout_id in active)
+
+    def mark_selected(self, rollout_id: str) -> RecoveryPortfolio:
+        if self.status_for(rollout_id) not in {"active", "selected"}:
+            raise ValueError("recovery portfolio cannot select an unknown rollout")
+        statuses = tuple(
+            (
+                candidate_id,
+                (
+                    "selected"
+                    if candidate_id == rollout_id
+                    else "active" if status == "selected" else status
+                ),
+            )
+            for candidate_id, status in self.statuses
+        )
+        return replace(
+            self,
+            statuses=statuses,
+            selected_rollout_id=rollout_id,
+            revision=self.revision + 1,
+        )
+
+    def mark_expired(self, *rollout_ids: str) -> RecoveryPortfolio:
+        expired = set(rollout_ids)
+        statuses = tuple(
+            (candidate_id, "expired" if candidate_id in expired else status)
+            for candidate_id, status in self.statuses
+        )
+        return replace(
+            self,
+            statuses=statuses,
+            selected_rollout_id=(
+                None if self.selected_rollout_id in expired else self.selected_rollout_id
+            ),
+            revision=self.revision + 1,
+        )
+
+    def mark_pruned(self, *rollout_ids: str) -> RecoveryPortfolio:
+        pruned = set(rollout_ids)
+        statuses = tuple(
+            (candidate_id, "pruned" if candidate_id in pruned else status)
+            for candidate_id, status in self.statuses
+        )
+        return replace(
+            self,
+            statuses=statuses,
+            selected_rollout_id=(
+                None if self.selected_rollout_id in pruned else self.selected_rollout_id
+            ),
+            revision=self.revision + 1,
+        )
+
+    def replace_candidate(self, rollout: ImaginedRollout) -> RecoveryPortfolio:
+        if self.status_for(rollout.rollout_id) is None:
+            return self
+        candidates = tuple(
+            rollout if candidate.rollout_id == rollout.rollout_id else candidate
+            for candidate in self.candidates
+        )
+        return replace(self, candidates=candidates, revision=self.revision + 1)
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "portfolio_id": self.portfolio_id,
+            "goal_id": self.goal_id,
+            "candidates": [candidate.to_payload() for candidate in self.candidates],
+            "statuses": [[rollout_id, status] for rollout_id, status in self.statuses],
+            "retired_rollout_ids": list(self.retired_rollout_ids),
+            "selected_rollout_id": self.selected_rollout_id,
+            "revision": self.revision,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> RecoveryPortfolio:
+        return cls(
+            portfolio_id=str(payload["portfolio_id"]),
+            goal_id=str(payload["goal_id"]),
+            candidates=tuple(
+                ImaginedRollout.from_payload(dict(item)) for item in payload.get("candidates", ())
+            ),
+            statuses=tuple((str(item[0]), str(item[1])) for item in payload.get("statuses", ())),
+            retired_rollout_ids=tuple(str(item) for item in payload.get("retired_rollout_ids", ())),
+            selected_rollout_id=(
+                None
+                if payload.get("selected_rollout_id") is None
+                else str(payload["selected_rollout_id"])
+            ),
+            revision=int(payload.get("revision", 0)),
         )
 
 

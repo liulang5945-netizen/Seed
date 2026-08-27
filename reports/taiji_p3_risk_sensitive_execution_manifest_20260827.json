@@ -25,6 +25,10 @@
     "stepwise-recovery-rebinding",
     "global-budget-ledger",
     "idempotent-resource-consumption",
+    "persistent-recovery-portfolio",
+    "fair-active-branch-arbitration",
+    "portfolio-prune-non-reintroduction",
+    "portfolio-checkpoint-preservation",
     "checkpoint-no-replay",
     "recovery-rollout-continuation"
   ],
