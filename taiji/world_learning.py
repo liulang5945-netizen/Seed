@@ -470,6 +470,9 @@ class WorldSchemaRegistry:
         *,
         max_feature_count: int = 4096,
         history_limit: int = 64,
+        outcome_min_lead: int = 1,
+        outcome_min_leader_share: float = 0.6,
+        stochastic_min_support: int = 2,
     ) -> None:
         if not isinstance(schema, WorldSchema):
             raise TypeError("world schema registry requires a WorldSchema")
@@ -477,9 +480,18 @@ class WorldSchemaRegistry:
             raise ValueError("world schema registry max_feature_count must be positive")
         if int(history_limit) <= 0:
             raise ValueError("world schema registry history_limit must be positive")
+        if int(outcome_min_lead) <= 0:
+            raise ValueError("world schema registry outcome_min_lead must be positive")
+        if not 0.5 < float(outcome_min_leader_share) <= 1.0:
+            raise ValueError("world schema registry outcome_min_leader_share must be in (0.5, 1.0]")
+        if int(stochastic_min_support) <= 0:
+            raise ValueError("world schema registry stochastic_min_support must be positive")
         self._schema = schema
         self._max_feature_count = int(max_feature_count)
         self._history_limit = int(history_limit)
+        self._outcome_min_lead = int(outcome_min_lead)
+        self._outcome_min_leader_share = float(outcome_min_leader_share)
+        self._stochastic_min_support = int(stochastic_min_support)
         self._revisions: dict[int, WorldSchema] = {0: schema}
         self._active_version = 0
         self._next_version = 1
@@ -491,7 +503,7 @@ class WorldSchemaRegistry:
         self._tombstones: set[tuple[str, ...]] = set()
         self._conflicts: list[dict[str, Any]] = []
         self._lineage: list[dict[str, Any]] = []
-        self._transition_outcomes: dict[tuple[str, ...], str] = {}
+        self._transition_outcomes: dict[tuple[str, ...], dict[str, int]] = {}
         self._transition_confidence: dict[tuple[str, ...], float] = {}
 
     @staticmethod
@@ -549,6 +561,29 @@ class WorldSchemaRegistry:
     @property
     def transition_confidence(self) -> dict[tuple[str, ...], float]:
         return dict(self._transition_confidence)
+
+    @property
+    def transition_hypotheses(self) -> dict[tuple[str, ...], tuple[dict[str, Any], ...]]:
+        result: dict[tuple[str, ...], tuple[dict[str, Any], ...]] = {}
+        for key, hypotheses in self._transition_outcomes.items():
+            total = sum(hypotheses.values())
+            result[key] = tuple(
+                {
+                    "signature": signature,
+                    "evidence_count": count,
+                    "probability": count / float(total),
+                }
+                for signature, count in sorted(hypotheses.items())
+            )
+        return result
+
+    def transition_outcome_mode(self, key: tuple[str, ...]) -> str:
+        hypotheses = self._transition_outcomes.get(tuple(str(item) for item in key), {})
+        if len(hypotheses) <= 1:
+            return "deterministic"
+        if all(count >= self._stochastic_min_support for count in hypotheses.values()):
+            return "stochastic"
+        return "conflicted"
 
     def schema_at(self, version: int) -> WorldSchema:
         try:
@@ -714,13 +749,24 @@ class WorldSchemaRegistry:
             raise TypeError("world schema registry requires a WorldTransition")
         key = self.transition_evidence_key(transition)
         signature = self._transition_outcome_signature(transition)
-        previous = self._transition_outcomes.get(key)
-        if previous is not None and previous != signature:
-            self._record_conflict(key, previous, signature)
-            return False
-        self._transition_outcomes[key] = signature
-        self._transition_confidence[key] = min(1.0, self._transition_confidence.get(key, 0.0) + 0.1)
-        return True
+        hypotheses = self._transition_outcomes.setdefault(key, {})
+        if hypotheses and signature not in hypotheses:
+            ranked_before = sorted(hypotheses.items(), key=lambda item: (-item[1], item[0]))
+            self._record_conflict(key, ranked_before[0][0], signature)
+        hypotheses[signature] = hypotheses.get(signature, 0) + 1
+        ranked = sorted(hypotheses.items(), key=lambda item: (-item[1], item[0]))
+        leader_signature, leader_count = ranked[0]
+        total = sum(hypotheses.values())
+        self._transition_confidence[key] = leader_count / float(total)
+        runner_count = 0 if len(ranked) == 1 else ranked[1][1]
+        clear_leader = bool(
+            len(ranked) == 1
+            or (
+                leader_count - runner_count >= self._outcome_min_lead
+                and leader_count / float(total) >= self._outcome_min_leader_share
+            )
+        )
+        return bool(signature == leader_signature and clear_leader)
 
     def record_feedback(
         self,
@@ -865,6 +911,9 @@ class WorldSchemaRegistry:
             "next_version": self._next_version,
             "max_feature_count": self._max_feature_count,
             "history_limit": self._history_limit,
+            "outcome_min_lead": self._outcome_min_lead,
+            "outcome_min_leader_share": self._outcome_min_leader_share,
+            "stochastic_min_support": self._stochastic_min_support,
             "revisions": [
                 {"version": version, "schema": schema.payload()}
                 for version, schema in sorted(self._revisions.items())
@@ -881,8 +930,14 @@ class WorldSchemaRegistry:
             "conflicts": [dict(item) for item in self._conflicts],
             "lineage": [dict(item) for item in self._lineage],
             "transition_outcomes": [
-                {"key": list(key), "signature": signature}
-                for key, signature in sorted(self._transition_outcomes.items())
+                {
+                    "key": list(key),
+                    "hypotheses": [
+                        {"signature": signature, "evidence_count": count}
+                        for signature, count in sorted(hypotheses.items())
+                    ],
+                }
+                for key, hypotheses in sorted(self._transition_outcomes.items())
             ],
             "transition_confidence": [
                 {"key": list(key), "value": value}
@@ -898,6 +953,9 @@ class WorldSchemaRegistry:
             WorldSchema.from_payload(dict(payload["schema"])),
             max_feature_count=int(payload.get("max_feature_count", 4096)),
             history_limit=int(payload.get("history_limit", 64)),
+            outcome_min_lead=int(payload.get("outcome_min_lead", 1)),
+            outcome_min_leader_share=float(payload.get("outcome_min_leader_share", 0.6)),
+            stochastic_min_support=int(payload.get("stochastic_min_support", 2)),
         )
         revisions = payload.get("revisions", ())
         if not isinstance(revisions, (list, tuple)):
@@ -933,10 +991,18 @@ class WorldSchemaRegistry:
         }
         registry._conflicts = [dict(item) for item in payload.get("conflicts", ())]
         registry._lineage = [dict(item) for item in payload.get("lineage", ())]
-        registry._transition_outcomes = {
-            tuple(str(value) for value in item["key"]): str(item["signature"])
-            for item in payload.get("transition_outcomes", ())
-        }
+        registry._transition_outcomes = {}
+        for item in payload.get("transition_outcomes", ()):
+            key = tuple(str(value) for value in item["key"])
+            hypotheses = item.get("hypotheses")
+            if hypotheses is None:
+                signature = str(item["signature"])
+                registry._transition_outcomes[key] = {signature: 1}
+            else:
+                registry._transition_outcomes[key] = {
+                    str(hypothesis["signature"]): int(hypothesis["evidence_count"])
+                    for hypothesis in hypotheses
+                }
         registry._transition_confidence = {
             tuple(str(value) for value in item["key"]): float(item["value"])
             for item in payload.get("transition_confidence", ())

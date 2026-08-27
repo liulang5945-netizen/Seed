@@ -8,9 +8,12 @@
   ],
   "controls": [
     "stable semantic before/action evidence key excludes tick and event ids",
-    "consistent repeated outcome increases transition confidence",
-    "contradictory after-state is recorded as a conflict",
-    "contradictory outcome fails closed before local SGD update",
+    "outcome ledger stores multiple after-state hypotheses with evidence counts",
+    "consistent repeated outcome increases the leading hypothesis share",
+    "one-off contradictory after-state remains conflicted and is recorded",
+    "only a clear leader can pass local SGD adjudication",
+    "repeatable stochastic outcomes become an explicit stochastic ledger mode",
+    "ambiguous stochastic tie fails closed before local SGD update",
     "prediction calibration trace reflects accepted versus rejected feedback",
     "registry and network state survive native checkpoint continuation",
     "relation-specific after-state differences remain distinguishable"
