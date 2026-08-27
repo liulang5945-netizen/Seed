@@ -28,6 +28,7 @@
         "checkpoint_budget_preserved": true,
         "recovery_suffix_rebound": true,
         "recovery_budget_not_bypassed": true,
+        "duplicate_budget_consumption_blocked": true,
         "recovery_budget_debug": {
           "resource_budget": 1.0,
           "consumed_resource": 0.2,
@@ -104,6 +105,7 @@
         "checkpoint_budget_preserved": true,
         "recovery_suffix_rebound": true,
         "recovery_budget_not_bypassed": true,
+        "duplicate_budget_consumption_blocked": true,
         "recovery_budget_debug": {
           "resource_budget": 1.0,
           "consumed_resource": 0.2,
@@ -180,6 +182,7 @@
         "checkpoint_budget_preserved": true,
         "recovery_suffix_rebound": true,
         "recovery_budget_not_bypassed": true,
+        "duplicate_budget_consumption_blocked": true,
         "recovery_budget_debug": {
           "resource_budget": 1.0,
           "consumed_resource": 0.2,
@@ -236,6 +239,6 @@
   },
   "gate": {
     "passed": true,
-    "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce motor capability and resource budget, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve and restore that lineage through checkpoint, rebind the remaining suffix after a successful non-terminal step, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout"
+    "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage and budget through checkpoint, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout"
   }
 }

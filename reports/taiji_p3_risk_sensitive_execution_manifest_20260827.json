@@ -23,6 +23,8 @@
     "stale-execution-rejection",
     "recovery-lineage-checkpoint",
     "stepwise-recovery-rebinding",
+    "global-budget-ledger",
+    "idempotent-resource-consumption",
     "checkpoint-no-replay",
     "recovery-rollout-continuation"
   ],

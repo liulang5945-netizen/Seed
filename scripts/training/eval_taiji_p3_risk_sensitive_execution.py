@@ -476,6 +476,9 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         checkpointed_recovery.recovery_branch is not None
         and checkpointed_recovery.recovery_branch.resource_budget == 1.0
         and checkpointed_recovery.recovery_branch.consumed_resource == 0.0
+        and checkpointed_recovery.recovery_budget is not None
+        and checkpointed_recovery.recovery_budget.total_budget == 1.0
+        and checkpointed_recovery.recovery_budget.consumed_resource == 0.0
     )
     restored = checkpointed_recovery
     recovery_environment = _ScriptedEnvironment(
@@ -577,6 +580,13 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         and len(post_first_recovery) == 1
         and post_first_recovery[0].steps[0].action.kind == "idle"
     )
+    global_budget = restored.cognitive_snapshot().recovery_budget
+    duplicate_budget_consumption_blocked = bool(
+        global_budget is not None
+        and global_budget.consumed_resource == 0.2
+        and len(global_budget.consumed_action_ids) == 1
+        and global_budget.consume(recovery_rollout.steps[0].action.action_id, 0.2) == global_budget
+    )
     rebound_rollout = restored._planned_rollout
     recovery_suffix_rebound = bool(
         recovery_first.success is True
@@ -656,6 +666,7 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         "checkpoint_budget_preserved": checkpoint_budget_preserved,
         "recovery_suffix_rebound": recovery_suffix_rebound,
         "recovery_budget_not_bypassed": recovery_budget_not_bypassed,
+        "duplicate_budget_consumption_blocked": duplicate_budget_consumption_blocked,
         "recovery_budget_debug": (
             None
             if after_first_branch is None
@@ -837,6 +848,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "checkpoint_budget_preserved",
         "recovery_suffix_rebound",
         "recovery_budget_not_bypassed",
+        "duplicate_budget_consumption_blocked",
         "recovery_complete",
         "trace_complete",
         "checkpoint_trace_complete",
@@ -884,6 +896,8 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "stale-execution-rejection",
             "recovery-lineage-checkpoint",
             "stepwise-recovery-rebinding",
+            "global-budget-ledger",
+            "idempotent-resource-consumption",
             "checkpoint-no-replay",
             "recovery-rollout-continuation",
         ],
@@ -903,7 +917,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         },
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce motor capability and resource budget, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve and restore that lineage through checkpoint, rebind the remaining suffix after a successful non-terminal step, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
+            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage and budget through checkpoint, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
         },
     }
 
