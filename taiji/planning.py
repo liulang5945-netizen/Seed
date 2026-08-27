@@ -12,6 +12,7 @@ from .contracts import Goal, GoalState, Outcome, PlanCandidate, PlanState, World
 PLANNING_CHECKPOINT_FORMAT = "taiji-planning-v1"
 RECOVERY_ARCHIVE_CHECKPOINT_FORMAT = "taiji-recovery-archive-v1"
 RECOVERY_STRATEGY_LEDGER_CHECKPOINT_FORMAT = "taiji-recovery-strategy-ledger-v1"
+RECOVERY_READER_DEPENDENCY_CHECKPOINT_FORMAT = "taiji-recovery-reader-dependency-v1"
 
 
 def _unit(value: float, name: str) -> float:
@@ -319,7 +320,9 @@ class RecoveryPortfolio:
                 (
                     "selected"
                     if candidate_id == rollout_id
-                    else "active" if status == "selected" else status
+                    else "active"
+                    if status == "selected"
+                    else status
                 ),
             )
             for candidate_id, status in self.statuses
@@ -891,6 +894,151 @@ class RecoveryStrategyLedger:
                 for item in payload.get("approvals", ())
             ),
             revoked_rollout_ids=tuple(str(item) for item in payload.get("revoked_rollout_ids", ())),
+            revision=int(payload.get("revision", 0)),
+        )
+
+
+@dataclass(frozen=True)
+class RecoveryReaderDependency:
+    """Provenance slice showing which strategies feed one downstream reader."""
+
+    reader_kind: str
+    memory_ids: tuple[str, ...] = ()
+    strategy_rollout_ids: tuple[str, ...] = ()
+    revision: int = 0
+
+    def __post_init__(self) -> None:
+        if not self.reader_kind:
+            raise ValueError("recovery reader dependency reader_kind cannot be empty")
+        if any(not memory_id for memory_id in self.memory_ids):
+            raise ValueError("recovery reader dependency memory ids cannot be empty")
+        if len(set(self.memory_ids)) != len(self.memory_ids):
+            raise ValueError("recovery reader dependency memory ids must be unique")
+        if any(not rollout_id for rollout_id in self.strategy_rollout_ids):
+            raise ValueError("recovery reader dependency rollout ids cannot be empty")
+        if len(set(self.strategy_rollout_ids)) != len(self.strategy_rollout_ids):
+            raise ValueError("recovery reader dependency rollout ids must be unique")
+        if int(self.revision) < 0:
+            raise ValueError("recovery reader dependency revision cannot be negative")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "reader_kind": self.reader_kind,
+            "memory_ids": list(self.memory_ids),
+            "strategy_rollout_ids": list(self.strategy_rollout_ids),
+            "revision": self.revision,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> RecoveryReaderDependency:
+        return cls(
+            reader_kind=str(payload["reader_kind"]),
+            memory_ids=tuple(str(item) for item in payload.get("memory_ids", ())),
+            strategy_rollout_ids=tuple(
+                str(item) for item in payload.get("strategy_rollout_ids", ())
+            ),
+            revision=int(payload.get("revision", 0)),
+        )
+
+
+@dataclass(frozen=True)
+class RecoveryReaderDependencyGraph:
+    """Checkpointable dependency graph for selective reader rebuilds."""
+
+    dependencies: tuple[RecoveryReaderDependency, ...] = ()
+    revision: int = 0
+
+    def __post_init__(self) -> None:
+        reader_kinds = tuple(dependency.reader_kind for dependency in self.dependencies)
+        if len(set(reader_kinds)) != len(reader_kinds):
+            raise ValueError("recovery reader dependency reader kinds must be unique")
+        if int(self.revision) < 0:
+            raise ValueError("recovery reader dependency graph revision cannot be negative")
+
+    def bind(
+        self,
+        reader_kind: str,
+        approvals: Sequence[RecoveryStrategyApproval],
+    ) -> RecoveryReaderDependencyGraph:
+        if not reader_kind:
+            raise ValueError("recovery reader dependency reader_kind cannot be empty")
+        selected = tuple(approvals)
+        memory_ids = tuple(dict.fromkeys(approval.memory_id for approval in selected))
+        rollout_ids = tuple(dict.fromkeys(approval.rollout_id for approval in selected))
+        dependency = RecoveryReaderDependency(
+            reader_kind=reader_kind,
+            memory_ids=memory_ids,
+            strategy_rollout_ids=rollout_ids,
+            revision=self.revision + 1,
+        )
+        dependencies = tuple(item for item in self.dependencies if item.reader_kind != reader_kind)
+        return replace(
+            self,
+            dependencies=(*dependencies, dependency),
+            revision=self.revision + 1,
+        )
+
+    def dependency_for(self, reader_kind: str) -> RecoveryReaderDependency | None:
+        return next(
+            (
+                dependency
+                for dependency in self.dependencies
+                if dependency.reader_kind == reader_kind
+            ),
+            None,
+        )
+
+    def reader_kinds_for_rollout(self, rollout_id: str) -> tuple[str, ...]:
+        return tuple(
+            dependency.reader_kind
+            for dependency in self.dependencies
+            if rollout_id in dependency.strategy_rollout_ids
+        )
+
+    def retain_selected(
+        self,
+        approvals: Sequence[RecoveryStrategyApproval],
+    ) -> RecoveryReaderDependencyGraph:
+        """Propagate competition/revocation to every already-bound reader."""
+
+        selected_by_rollout = {approval.rollout_id: approval for approval in approvals}
+        dependencies = tuple(
+            RecoveryReaderDependency(
+                reader_kind=dependency.reader_kind,
+                memory_ids=tuple(
+                    selected_by_rollout[rollout_id].memory_id
+                    for rollout_id in dependency.strategy_rollout_ids
+                    if rollout_id in selected_by_rollout
+                ),
+                strategy_rollout_ids=tuple(
+                    rollout_id
+                    for rollout_id in dependency.strategy_rollout_ids
+                    if rollout_id in selected_by_rollout
+                ),
+                revision=self.revision + 1,
+            )
+            for dependency in self.dependencies
+        )
+        return replace(self, dependencies=dependencies, revision=self.revision + 1)
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": RECOVERY_READER_DEPENDENCY_CHECKPOINT_FORMAT,
+            "dependencies": [dependency.to_payload() for dependency in self.dependencies],
+            "revision": self.revision,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> RecoveryReaderDependencyGraph:
+        if payload.get("format", RECOVERY_READER_DEPENDENCY_CHECKPOINT_FORMAT) != (
+            RECOVERY_READER_DEPENDENCY_CHECKPOINT_FORMAT
+        ):
+            raise ValueError("unsupported recovery reader dependency checkpoint format")
+        return cls(
+            dependencies=tuple(
+                RecoveryReaderDependency.from_payload(dict(item))
+                for item in payload.get("dependencies", ())
+            ),
             revision=int(payload.get("revision", 0)),
         )
 

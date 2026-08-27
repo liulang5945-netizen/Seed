@@ -1,6 +1,10 @@
 from dataclasses import replace
 
-from taiji import RecoveryArchiveEntry, RecoveryStrategyLedger
+from taiji import (
+    RecoveryArchiveEntry,
+    RecoveryReaderDependencyGraph,
+    RecoveryStrategyLedger,
+)
 
 
 def _entry(
@@ -91,3 +95,36 @@ def test_recovery_strategy_competition_checkpoint_preserves_policy() -> None:
     assert restored.evidence_weight == 0.4
     assert restored.consistency_weight == 0.4
     assert restored.resource_weight == 0.2
+
+
+def test_recovery_reader_dependencies_retain_unaffected_reader() -> None:
+    ledger = RecoveryStrategyLedger(memory_budget=1.0)
+    primary = ledger.admit(
+        _entry(
+            "primary",
+            resource_cost=0.2,
+            evidence_count=2,
+            outcome_consistency=1.0,
+        ),
+        memory_id="memory-primary",
+    )
+    survivor = primary.admit(
+        _entry(
+            "survivor",
+            resource_cost=0.2,
+            evidence_count=2,
+            outcome_consistency=1.0,
+        ),
+        memory_id="memory-survivor",
+    )
+    graph = RecoveryReaderDependencyGraph().bind("semantic", survivor.selected_approvals)
+    graph = graph.bind("audit", (survivor.active_approvals()[1],))
+
+    revoked = survivor.revoke("primary")
+    updated = graph.retain_selected(revoked.selected_approvals)
+
+    assert updated.dependency_for("semantic") is not None
+    assert updated.dependency_for("semantic").strategy_rollout_ids == ("survivor",)
+    assert updated.dependency_for("audit") is not None
+    assert updated.dependency_for("audit").strategy_rollout_ids == ("survivor",)
+    assert "audit" not in graph.reader_kinds_for_rollout("primary")
