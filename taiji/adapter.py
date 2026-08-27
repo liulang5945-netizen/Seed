@@ -4163,6 +4163,55 @@ class TSKV8Adapter(Taiji):
             raise TypeError("learner must be a WorldDynamicsLearner or None")
         self._world_dynamics = learner
 
+    def begin_episode(self, episode_id: str) -> None:
+        """Start a new episode while carrying persistent world cognition forward.
+
+        Learned organs, world state, event lineage, concepts, and world
+        calibration remain available.  Action and perceptual transient state
+        is cleared, while the kernel tick stays monotonic so a carried world
+        snapshot remains causally valid.
+        """
+
+        if not episode_id:
+            raise ValueError("episode_id cannot be empty")
+        if self._state.pending_action is not None:
+            raise RuntimeError("pending action must be settled before beginning an episode")
+        if self._state.pending_experience is not None:
+            raise RuntimeError(
+                "pending experience must observe its outcome before beginning an episode"
+            )
+        previous = self._cognitive_state
+        if previous.world.tick != self.tick:
+            raise RuntimeError("world state must be observed at the current kernel tick")
+        self.perception.reset_dynamics()
+        self._state = replace(self._state, episode_id=str(episode_id))
+        empty = self._empty_cognitive_state(str(episode_id))
+        self._cognitive_state = replace(
+            previous,
+            episode_id=str(episode_id),
+            tick=self.tick,
+            observation=None,
+            percept=None,
+            workspace=replace(empty.workspace, tick=self.tick),
+            plan=replace(empty.plan, tick=self.tick),
+            action_intent=None,
+            outcome=None,
+            world_transition=None,
+            world_prediction=None,
+            planning_recovery=None,
+            learning=replace(previous.learning, tick=self.tick),
+        )
+        self._last_executive_decision = None
+        self._last_executive_prediction_error = None
+        self._last_affordance_prediction_error = None
+        self._last_executive_world_action = None
+        self._last_generation_trace = None
+        self._last_language_emission = None
+        self._language_fallback_requires_replan = False
+        self._last_content_selection = None
+        self._last_content_prediction_error = None
+        self._content_feedback_applied = False
+
     def attach_workspace_router(self, router: WorkspaceRouter | None) -> None:
         """Attach the capacity-limited candidate router used by runtime cognition."""
 
@@ -4562,6 +4611,7 @@ class TSKV8Adapter(Taiji):
             prediction = self._world_dynamics.predict(
                 self._cognitive_state.world,
                 world_action,
+                register_parameters=False,
             )
             self._cognitive_state = replace(
                 self._cognitive_state,
@@ -5060,6 +5110,7 @@ class TSKV8Adapter(Taiji):
             prediction = self._world_dynamics.predict(
                 self._cognitive_state.world,
                 candidate.action,
+                register_parameters=False,
             )
             projected.append(
                 replace(
@@ -5110,7 +5161,11 @@ class TSKV8Adapter(Taiji):
                 raise TypeError("world rollout steps must contain PlanningCandidate values")
             if template.action.tick != imagined_state.tick:
                 raise ValueError("world rollout actions must follow predicted world ticks")
-            prediction = self._world_dynamics.predict(imagined_state, template.action)
+            prediction = self._world_dynamics.predict(
+                imagined_state,
+                template.action,
+                register_parameters=False,
+            )
             imagined_steps.append(
                 replace(
                     template,
@@ -5885,7 +5940,11 @@ class TSKV8Adapter(Taiji):
             )
         world_prediction = None
         if self._world_dynamics is not None and world_action is not None:
-            prediction = self._world_dynamics.predict(self._cognitive_state.world, world_action)
+            prediction = self._world_dynamics.predict(
+                self._cognitive_state.world,
+                world_action,
+                register_parameters=False,
+            )
             world_prediction = WorldPredictionRecord(
                 action=world_action,
                 predicted_state=prediction.state,
@@ -5960,8 +6019,19 @@ class TSKV8Adapter(Taiji):
                         provenance=str(kwargs.get("provenance", "experienced")),
                     )
                 )
+            if self._world_dynamics is not None:
+                self._world_dynamics.register_open_set(
+                    before,
+                    world_state,
+                    action=world_action,
+                    register_parameters=False,
+                )
             if prediction_record is None and self._world_dynamics is not None:
-                prediction = self._world_dynamics.predict(before, world_action)
+                prediction = self._world_dynamics.predict(
+                    before,
+                    world_action,
+                    register_parameters=False,
+                )
                 prediction_record = WorldPredictionRecord(
                     action=world_action,
                     predicted_state=prediction.state,
@@ -6035,6 +6105,7 @@ class TSKV8Adapter(Taiji):
                         transition,
                         learning_rate=world_learning_rate,
                         repeats=world_learning_repeats,
+                        register_parameters=False,
                     )
                     prediction_record = replace(
                         prediction_record,
@@ -6363,6 +6434,7 @@ class TSKV8Adapter(Taiji):
             "schema": self._world_dynamics.schema.payload(),
             "hidden_dim": self._world_dynamics.hidden_dim,
             "online_updates": self._world_dynamics.online_updates,
+            "schema_evolution_count": self._world_dynamics.schema_evolution_count,
             "state_dict": {
                 name: tensor.detach().cpu().clone()
                 for name, tensor in self._world_dynamics.state_dict().items()
@@ -6381,6 +6453,7 @@ class TSKV8Adapter(Taiji):
         )
         learner.load_state_dict(payload["state_dict"])
         learner.online_updates = int(payload.get("online_updates", 0))
+        learner.schema_evolution_count = int(payload.get("schema_evolution_count", 0))
         self._world_dynamics = learner
 
     def _restore_workspace_router(self, payload: Any) -> None:

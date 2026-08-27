@@ -168,6 +168,23 @@ def test_taiji_world_state_synchronizes_same_tick_observation_without_transition
         world.synchronize_observation(_world(2, 2))
 
 
+def test_taiji_world_state_advances_passive_observation_and_preserves_history() -> None:
+    initial = _world(0, 0)
+    expected = _world(1, 1)
+    transition = _transition(initial, expected, "move-0")
+    world = TaijiWorldState(initial)
+    world.apply(transition)
+    observed = _world(3, 2)
+
+    advanced = world.advance_observation(observed)
+    assert advanced.tick == 3
+    assert len(world.history) == 1
+    assert world.history[0].after.tick == 1
+    restored = TaijiWorldState.from_checkpoint(world.checkpoint())
+    assert restored.state.tick == 3
+    assert len(restored.history) == 1
+
+
 def test_world_intervention_splits_must_not_share_case_ids() -> None:
     initial = _world(0, 0)
     expected = _world(1, 1)
