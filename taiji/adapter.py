@@ -6100,8 +6100,9 @@ class TSKV8Adapter(Taiji):
                     )
                 if learn_world is None:
                     learn_world = bool(kwargs.get("learn", True))
+                update_losses: list[float] = []
                 if learn_world:
-                    self._world_dynamics.online_update(
+                    update_losses = self._world_dynamics.online_update(
                         transition,
                         learning_rate=world_learning_rate,
                         repeats=world_learning_repeats,
@@ -6116,7 +6117,7 @@ class TSKV8Adapter(Taiji):
                     WorldCalibrationTrace(
                         transition=transition,
                         prediction=prediction_record,
-                        calibration_applied=bool(learn_world),
+                        calibration_applied=bool(learn_world and update_losses),
                         online_update_count_before=online_update_count_before,
                         online_update_count_after=self._world_dynamics.online_updates,
                     ),
@@ -6435,6 +6436,8 @@ class TSKV8Adapter(Taiji):
             "schema_registry": self._world_dynamics.schema_registry.checkpoint(),
             "hidden_dim": self._world_dynamics.hidden_dim,
             "online_updates": self._world_dynamics.online_updates,
+            "transition_acceptances": self._world_dynamics.transition_acceptances,
+            "transition_rejections": self._world_dynamics.transition_rejections,
             "schema_evolution_count": self._world_dynamics.schema_evolution_count,
             "state_dict": {
                 name: tensor.detach().cpu().clone()
@@ -6469,6 +6472,8 @@ class TSKV8Adapter(Taiji):
         )
         learner.load_state_dict(payload["state_dict"])
         learner.online_updates = int(payload.get("online_updates", 0))
+        learner.transition_acceptances = int(payload.get("transition_acceptances", 0))
+        learner.transition_rejections = int(payload.get("transition_rejections", 0))
         learner.schema_evolution_count = int(payload.get("schema_evolution_count", 0))
         snapshots = payload.get("schema_snapshots")
         if isinstance(snapshots, dict):

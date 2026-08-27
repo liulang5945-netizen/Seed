@@ -1,0 +1,19 @@
+{
+  "format": "taiji-p3-transition-adjudication-manifest-v1",
+  "task": "real TSKV8Adapter transition outcome adjudication across episodes",
+  "seeds": [
+    11,
+    29,
+    47
+  ],
+  "controls": [
+    "stable semantic before/action evidence key excludes tick and event ids",
+    "consistent repeated outcome increases transition confidence",
+    "contradictory after-state is recorded as a conflict",
+    "contradictory outcome fails closed before local SGD update",
+    "prediction calibration trace reflects accepted versus rejected feedback",
+    "registry and network state survive native checkpoint continuation",
+    "relation-specific after-state differences remain distinguishable"
+  ],
+  "boundary": "transition adjudication safety; not open-domain semantics or general intelligence"
+}
