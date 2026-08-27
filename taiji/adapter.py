@@ -92,11 +92,12 @@ from .planning import (
     PlanningDecision,
     RecoveryPortfolioArchive,
     RecoveryPortfolio,
+    RecoveryReaderDependencyGraph,
     RecoveryRolloutLineage,
     RecoveryStrategyLedger,
     RolloutDecision,
 )
-from .procedural_memory import ProceduralMemoryLearner
+from .procedural_memory import ProceduralMemoryLearner, ProceduralSequenceLearner
 from .semantic_memory import SemanticMemoryLearner
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
 from .structural_growth import (
@@ -145,6 +146,7 @@ class TSKV8Adapter(Taiji):
         self._workspace_router: WorkspaceRouter | None = None
         self._episodic_memory: EpisodicMemoryStore | None = None
         self._semantic_memory: SemanticMemoryLearner | None = None
+        self._procedural_sequence_memory: ProceduralSequenceLearner | None = None
         self._concept_formation = ConceptFormationOrgan(
             similarity_threshold=self.config.concept_similarity_threshold,
             signal_weights=self.config.concept_signal_weights,
@@ -192,6 +194,7 @@ class TSKV8Adapter(Taiji):
             consistency_weight=self.config.recovery_strategy_consistency_weight,
             resource_weight=self.config.recovery_strategy_resource_weight,
         )
+        self._recovery_reader_dependencies = RecoveryReaderDependencyGraph()
         self._recovery_generation = 0
         self._recovery_memory_epochs = 300
         self._recovery_semantic_learning_rate = 0.1
@@ -4309,6 +4312,23 @@ class TSKV8Adapter(Taiji):
             )
         self._procedural_memory = learner
 
+    def attach_procedural_sequence_memory(self, learner: ProceduralSequenceLearner | None) -> None:
+        """Attach the recurrent procedural reader for ordered action traces."""
+
+        if learner is not None and not isinstance(learner, ProceduralSequenceLearner):
+            raise TypeError("learner must be a ProceduralSequenceLearner or None")
+        if learner is not None and learner.cue_dim != self.perception.feature_dim:
+            raise ValueError(
+                "procedural sequence learner cue_dim must match the perception feature dimension"
+            )
+        self._procedural_sequence_memory = learner
+
+    @property
+    def procedural_sequence_memory(self) -> ProceduralSequenceLearner | None:
+        """Return the optional recurrent procedural reader."""
+
+        return self._procedural_sequence_memory
+
     def consolidate_procedural_memory(
         self, *, epochs: int = 300, learning_rate: float = 0.1
     ) -> float:
@@ -5321,8 +5341,7 @@ class TSKV8Adapter(Taiji):
         self._recovery_generation += 1
         portfolio_generation = self._recovery_generation
         recovery_prefix = (
-            f"recovery:{self._state.episode_id}:"
-            f"tick-{start_tick}:generation-{portfolio_generation}"
+            f"recovery:{self._state.episode_id}:tick-{start_tick}:generation-{portfolio_generation}"
         )
         rejected_key = None
         if recovery_branch is not None:
@@ -5882,13 +5901,19 @@ class TSKV8Adapter(Taiji):
 
         return self._recovery_strategy_ledger
 
+    @property
+    def recovery_reader_dependencies(self) -> RecoveryReaderDependencyGraph:
+        """Return the reader-level provenance graph for recovery memory."""
+
+        return self._recovery_reader_dependencies
+
     def revoke_recovery_strategy(self, rollout_id: str) -> None:
         """Revoke a recovery strategy from future replay and consolidation."""
 
         previous = self._recovery_strategy_ledger
         self._recovery_strategy_ledger = previous.revoke(rollout_id)
         if self._recovery_strategy_ledger != previous:
-            self._rebuild_recovery_memory()
+            self._rebuild_recovery_memory(revoked_rollout_id=rollout_id)
 
     def consolidate_recovery_memory(
         self,
@@ -5911,11 +5936,15 @@ class TSKV8Adapter(Taiji):
         self._recovery_semantic_learning_rate = float(semantic_learning_rate)
         self._recovery_procedural_learning_rate = float(procedural_learning_rate)
         losses: dict[str, float] = {}
+        selected_approvals = self._recovery_strategy_ledger.selected_approvals
         if self._semantic_memory is not None:
             losses["semantic"] = self._semantic_memory.consolidate(
                 records,
                 epochs=epochs,
                 learning_rate=semantic_learning_rate,
+            )
+            self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
+                "semantic", selected_approvals
             )
         if self._procedural_memory is not None:
             losses["procedural"] = self._procedural_memory.consolidate(
@@ -5923,15 +5952,45 @@ class TSKV8Adapter(Taiji):
                 epochs=epochs,
                 learning_rate=procedural_learning_rate,
             )
+            self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
+                "procedural", selected_approvals
+            )
+        if self._procedural_sequence_memory is not None:
+            losses["sequence"] = self._procedural_sequence_memory.consolidate(
+                records,
+                epochs=epochs,
+                learning_rate=procedural_learning_rate,
+            )
+            self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
+                "sequence", selected_approvals
+            )
+        concepts = self._concept_formation.consolidate(records, tick=self.tick)
+        self._cognitive_state = replace(self._cognitive_state, concepts=concepts)
+        self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
+            "concept", selected_approvals
+        )
         if not losses:
-            raise RuntimeError("recovery consolidation requires semantic or procedural memory")
+            raise RuntimeError(
+                "recovery consolidation requires semantic, procedural, sequence, or concept memory"
+            )
         return losses
 
-    def _rebuild_recovery_memory(self) -> None:
-        """Rebuild long-term readers without revoked recovery records."""
+    def _rebuild_recovery_memory(self, *, revoked_rollout_id: str | None = None) -> None:
+        """Rebuild only readers that depended on the revoked recovery strategy."""
 
         if self._episodic_memory is None:
             return
+        if self._recovery_reader_dependencies.dependencies:
+            affected_readers = set(
+                self._recovery_reader_dependencies.reader_kinds_for_rollout(
+                    "" if revoked_rollout_id is None else revoked_rollout_id
+                )
+            )
+        else:
+            affected_readers = {"semantic", "procedural", "sequence", "concept"}
+        self._recovery_reader_dependencies = self._recovery_reader_dependencies.retain_selected(
+            self._recovery_strategy_ledger.selected_approvals
+        )
         approved_memory_ids = set(self._recovery_strategy_ledger.approved_memory_ids)
         selected_memory_ids = set(self._recovery_strategy_ledger.selected_memory_ids)
         records = tuple(
@@ -5940,7 +5999,7 @@ class TSKV8Adapter(Taiji):
             if record.memory_id not in approved_memory_ids
             or record.memory_id in selected_memory_ids
         )
-        if self._semantic_memory is not None:
+        if self._semantic_memory is not None and "semantic" in affected_readers:
             semantic = SemanticMemoryLearner(self._semantic_memory.cue_dim).to(self.device)
             semantic_records = tuple(record for record in records if record.outcome is not None)
             if semantic_records:
@@ -5950,7 +6009,7 @@ class TSKV8Adapter(Taiji):
                     learning_rate=self._recovery_semantic_learning_rate,
                 )
             self._semantic_memory = semantic
-        if self._procedural_memory is not None:
+        if self._procedural_memory is not None and "procedural" in affected_readers:
             procedural = ProceduralMemoryLearner(self._procedural_memory.cue_dim).to(self.device)
             procedural_records = tuple(
                 record for record in records if record.action_intent is not None
@@ -5962,6 +6021,48 @@ class TSKV8Adapter(Taiji):
                     learning_rate=self._recovery_procedural_learning_rate,
                 )
             self._procedural_memory = procedural
+        if self._procedural_sequence_memory is not None and "sequence" in affected_readers:
+            previous_sequence = self._procedural_sequence_memory
+            sequence = ProceduralSequenceLearner(
+                previous_sequence.cue_dim,
+                hidden_dim=previous_sequence.hidden_dim,
+                seed=previous_sequence.seed,
+            ).to(self.device)
+            sequence_records = tuple(
+                record for record in records if record.action_intent is not None
+            )
+            if sequence_records:
+                sequence.consolidate(
+                    sequence_records,
+                    epochs=self._recovery_memory_epochs,
+                    learning_rate=self._recovery_procedural_learning_rate,
+                )
+            self._procedural_sequence_memory = sequence
+        if "concept" in affected_readers:
+            previous_concepts = self._concept_formation
+            concepts = ConceptFormationOrgan(
+                similarity_threshold=previous_concepts.similarity_threshold,
+                signal_weights=(
+                    float(previous_concepts.signal_weights[0]),
+                    float(previous_concepts.signal_weights[1]),
+                    float(previous_concepts.signal_weights[2]),
+                ),
+                capacity=previous_concepts.capacity,
+                plasticity_rate=previous_concepts.plasticity_rate,
+                prune_threshold=previous_concepts.prune_threshold,
+                credit_discount=previous_concepts.credit_discount,
+                trace_capacity=previous_concepts.trace_capacity,
+            )
+            concept_records = tuple(
+                record for record in records if record.outcome is not None and record.event_ids
+            )
+            if concept_records:
+                concepts.consolidate(concept_records, tick=self.tick)
+            self._concept_formation = concepts
+            self._cognitive_state = replace(
+                self._cognitive_state,
+                concepts=concepts.concepts,
+            )
         self._recovery_memory_rebuild_count += 1
 
     @property
@@ -6003,6 +6104,7 @@ class TSKV8Adapter(Taiji):
             consistency_weight=self.config.recovery_strategy_consistency_weight,
             resource_weight=self.config.recovery_strategy_resource_weight,
         )
+        self._recovery_reader_dependencies = RecoveryReaderDependencyGraph()
         self._recovery_generation = 0
         self._replan_required = False
         self._last_rollout_prediction_error = None
@@ -6232,6 +6334,17 @@ class TSKV8Adapter(Taiji):
             ),
         )
 
+    def _recovery_memory_is_readable(self, memory_id: str) -> bool:
+        """Hide revoked or budget-unselected recovery records from recall."""
+
+        approved = set(self._recovery_strategy_ledger.approved_memory_ids)
+        if (
+            memory_id not in approved
+            and memory_id not in self._recovery_strategy_ledger.revoked_memory_ids
+        ):
+            return True
+        return memory_id in self._recovery_strategy_ledger.selected_memory_ids
+
     def observe(self, symbol: int, *args: Any, **kwargs: Any) -> TaijiStep:
         workspace_candidates: Sequence[WorkspaceCandidate] | None = kwargs.pop(
             "workspace_candidates", None
@@ -6338,6 +6451,7 @@ class TSKV8Adapter(Taiji):
                 else tuple(
                     hit.record.memory_id
                     for hit in self._episodic_memory.retrieve(features, limit=3)
+                    if self._recovery_memory_is_readable(hit.record.memory_id)
                 )
             ),
             concept_ids=tuple(match.concept.concept_id for match in concept_matches),
@@ -7159,6 +7273,8 @@ class TSKV8Adapter(Taiji):
         payload["online_concept_branches"] = self._online_concept_branches_checkpoint()
         if self._procedural_memory is not None:
             payload["procedural_memory"] = self._procedural_memory.checkpoint()
+        if self._procedural_sequence_memory is not None:
+            payload["procedural_sequence_memory"] = self._procedural_sequence_memory.checkpoint()
         if self._homeostatic_controller is not None:
             payload["homeostasis"] = self._homeostatic_controller.checkpoint()
         if self._goal_planner is not None:
@@ -7187,6 +7303,7 @@ class TSKV8Adapter(Taiji):
         )
         payload["recovery_archive"] = self._recovery_archive.to_payload()
         payload["recovery_strategy_ledger"] = self._recovery_strategy_ledger.to_payload()
+        payload["recovery_reader_dependencies"] = self._recovery_reader_dependencies.to_payload()
         payload["recovery_generation"] = self._recovery_generation
         payload["recovery_memory_epochs"] = self._recovery_memory_epochs
         payload["recovery_semantic_learning_rate"] = self._recovery_semantic_learning_rate
@@ -7251,6 +7368,7 @@ class TSKV8Adapter(Taiji):
         self._restore_structural_pruning(checkpoint.get("structural_pruning"))
         self._restore_online_concept_branches(checkpoint.get("online_concept_branches"))
         self._restore_procedural_memory(checkpoint.get("procedural_memory"))
+        self._restore_procedural_sequence_memory(checkpoint.get("procedural_sequence_memory"))
         self._restore_homeostatic_controller(checkpoint.get("homeostasis"))
         self._restore_goal_planner(checkpoint.get("planning"))
         self._restore_affordance_features(checkpoint.get("affordance_features"))
@@ -7264,6 +7382,7 @@ class TSKV8Adapter(Taiji):
         self._restore_recovery_portfolio(checkpoint)
         self._restore_recovery_archive(checkpoint)
         self._restore_recovery_strategy_ledger(checkpoint)
+        self._restore_recovery_reader_dependencies(checkpoint)
         self._restore_recovery_generation(checkpoint)
         self._restore_recovery_memory_state(checkpoint)
         self._restore_generation_trace(checkpoint)
@@ -7373,6 +7492,13 @@ class TSKV8Adapter(Taiji):
             None
             if payload is None
             else ProceduralMemoryLearner.from_checkpoint(dict(payload), device=self.device)
+        )
+
+    def _restore_procedural_sequence_memory(self, payload: Any) -> None:
+        self._procedural_sequence_memory = (
+            None
+            if payload is None
+            else ProceduralSequenceLearner.from_checkpoint(dict(payload), device=self.device)
         )
 
     def _restore_homeostatic_controller(self, payload: Any) -> None:
@@ -7624,6 +7750,16 @@ class TSKV8Adapter(Taiji):
             else RecoveryStrategyLedger.from_payload(dict(ledger))
         )
 
+    def _restore_recovery_reader_dependencies(self, payload: Any) -> None:
+        dependencies = (
+            payload.get("recovery_reader_dependencies") if isinstance(payload, dict) else None
+        )
+        self._recovery_reader_dependencies = (
+            RecoveryReaderDependencyGraph()
+            if dependencies is None
+            else RecoveryReaderDependencyGraph.from_payload(dict(dependencies))
+        )
+
     def _restore_recovery_memory_state(self, payload: Any) -> None:
         if not isinstance(payload, dict):
             return
@@ -7659,6 +7795,8 @@ class TSKV8Adapter(Taiji):
         components["online_concept_branches"] = self._online_concept_branches_checkpoint()
         if self._procedural_memory is not None:
             components["procedural_memory"] = self._procedural_memory.checkpoint()
+        if self._procedural_sequence_memory is not None:
+            components["procedural_sequence_memory"] = self._procedural_sequence_memory.checkpoint()
         if self._homeostatic_controller is not None:
             components["homeostasis"] = self._homeostatic_controller.checkpoint()
         if self._goal_planner is not None:
@@ -7687,6 +7825,7 @@ class TSKV8Adapter(Taiji):
         )
         components["recovery_archive"] = self._recovery_archive.to_payload()
         components["recovery_strategy_ledger"] = self._recovery_strategy_ledger.to_payload()
+        components["recovery_reader_dependencies"] = self._recovery_reader_dependencies.to_payload()
         components["recovery_generation"] = self._recovery_generation
         components["recovery_memory_epochs"] = self._recovery_memory_epochs
         components["recovery_semantic_learning_rate"] = self._recovery_semantic_learning_rate
@@ -7763,6 +7902,9 @@ class TSKV8Adapter(Taiji):
         self._restore_structural_runtime(envelope.components.get("structural_runtime"))
         self._restore_online_concept_branches(envelope.components.get("online_concept_branches"))
         self._restore_procedural_memory(envelope.components.get("procedural_memory"))
+        self._restore_procedural_sequence_memory(
+            envelope.components.get("procedural_sequence_memory")
+        )
         self._restore_homeostatic_controller(envelope.components.get("homeostasis"))
         self._restore_goal_planner(envelope.components.get("planning"))
         self._restore_affordance_features(envelope.components.get("affordance_features"))
@@ -7778,6 +7920,7 @@ class TSKV8Adapter(Taiji):
         self._restore_recovery_portfolio(envelope.components)
         self._restore_recovery_archive(envelope.components)
         self._restore_recovery_strategy_ledger(envelope.components)
+        self._restore_recovery_reader_dependencies(envelope.components)
         self._restore_recovery_generation(envelope.components)
         self._restore_recovery_memory_state(envelope.components)
         self._restore_generation_trace(envelope.components)

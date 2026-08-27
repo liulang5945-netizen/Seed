@@ -31,6 +31,7 @@ from taiji import (  # noqa: E402
     PlanningCandidate,
     PlanningConfig,
     ProceduralMemoryLearner,
+    ProceduralSequenceLearner,
     RecoveryPortfolioArchive,
     RecoveryStrategyLedger,
     SemanticMemoryLearner,
@@ -339,6 +340,9 @@ def _attach_runtime(adapter: TSKV8Adapter, learner: WorldDynamicsLearner, seed: 
     )
     adapter.attach_semantic_memory(SemanticMemoryLearner(adapter.perception.feature_dim))
     adapter.attach_procedural_memory(ProceduralMemoryLearner(adapter.perception.feature_dim))
+    adapter.attach_procedural_sequence_memory(
+        ProceduralSequenceLearner(adapter.perception.feature_dim, hidden_dim=8, seed=seed)
+    )
     adapter.attach_goal_planner(GoalPlanner(PlanningConfig(replan_error_threshold=100.0)))
     adapter.set_goals((Goal("reach-world", "reach the world target", priority=1.0),))
     adapter.observe_event(
@@ -727,11 +731,13 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     )
     recovery_memory_losses = restored.consolidate_recovery_memory(epochs=1)
     recovery_memory_consolidated = bool(
-        set(recovery_memory_losses) == {"semantic", "procedural"}
+        set(recovery_memory_losses) == {"semantic", "procedural", "sequence"}
         and restored._semantic_memory is not None
         and restored._semantic_memory.consolidation_count == 1
         and restored._procedural_memory is not None
         and restored._procedural_memory.consolidation_count == 1
+        and restored.procedural_sequence_memory is not None
+        and restored.procedural_sequence_memory.consolidation_count == 1
     )
     post_recovery_rollouts = restored.synthesize_recovery_rollouts(
         goal_id="reach-world",
@@ -752,11 +758,27 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         set(final_checkpoint.recovery_strategy_ledger.selected_rollout_ids)
         == set(selected_before_revoke)
     )
+    recovery_reader_dependencies_recorded = bool(
+        {
+            dependency.reader_kind
+            for dependency in restored.recovery_reader_dependencies.dependencies
+        }
+        == {"semantic", "procedural", "sequence", "concept"}
+        and all(
+            set(dependency.strategy_rollout_ids) == set(selected_before_revoke)
+            for dependency in restored.recovery_reader_dependencies.dependencies
+        )
+    )
+    recovery_reader_checkpoint_preserved = (
+        final_checkpoint.recovery_reader_dependencies == restored.recovery_reader_dependencies
+    )
     strategy_consolidation_checkpoint_preserved = bool(
         final_checkpoint._semantic_memory is not None
         and final_checkpoint._semantic_memory.consolidation_count == 1
         and final_checkpoint._procedural_memory is not None
         and final_checkpoint._procedural_memory.consolidation_count == 1
+        and final_checkpoint.procedural_sequence_memory is not None
+        and final_checkpoint.procedural_sequence_memory.consolidation_count == 1
     )
     restored.revoke_recovery_strategy(recovery_rollout.rollout_id)
     strategy_revocation_blocks_replay = not restored.recovery_strategy_ledger.is_active(
@@ -766,6 +788,15 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         restored.recovery_strategy_ledger.is_active(secondary_entry.rollout_id)
         and secondary_entry.rollout_id in restored.recovery_strategy_ledger.selected_rollout_ids
         and secondary_record.memory_id in restored.recovery_strategy_ledger.selected_memory_ids
+    )
+    recovery_reader_revocation_propagates = bool(
+        all(
+            dependency.strategy_rollout_ids == (secondary_entry.rollout_id,)
+            and dependency.memory_ids == (secondary_record.memory_id,)
+            for dependency in restored.recovery_reader_dependencies.dependencies
+        )
+        and not restored._recovery_memory_is_readable(primary_approval.memory_id)
+        and restored._recovery_memory_is_readable(secondary_record.memory_id)
     )
     recovery_memory_rebuilt_on_revoke = bool(
         restored.recovery_memory_rebuild_count == 1
@@ -849,10 +880,13 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         "strategy_checkpoint_preserved": strategy_checkpoint_preserved,
         "strategy_competition_selected": strategy_competition_selected,
         "strategy_competition_checkpoint_preserved": strategy_competition_checkpoint_preserved,
+        "recovery_reader_dependencies_recorded": recovery_reader_dependencies_recorded,
+        "recovery_reader_checkpoint_preserved": recovery_reader_checkpoint_preserved,
         "recovery_memory_consolidated": recovery_memory_consolidated,
         "strategy_consolidation_checkpoint_preserved": strategy_consolidation_checkpoint_preserved,
         "strategy_revocation_blocks_replay": strategy_revocation_blocks_replay,
         "strategy_revocation_preserves_survivor": strategy_revocation_preserves_survivor,
+        "recovery_reader_revocation_propagates": recovery_reader_revocation_propagates,
         "recovery_memory_rebuilt_on_revoke": recovery_memory_rebuilt_on_revoke,
         "revoked_rebuild_checkpoint_preserved": revoked_rebuild_checkpoint_preserved,
         "archived_branch_not_reintroduced": archived_branch_not_reintroduced,
@@ -1050,10 +1084,13 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "strategy_checkpoint_preserved",
         "strategy_competition_selected",
         "strategy_competition_checkpoint_preserved",
+        "recovery_reader_dependencies_recorded",
+        "recovery_reader_checkpoint_preserved",
         "recovery_memory_consolidated",
         "strategy_consolidation_checkpoint_preserved",
         "strategy_revocation_blocks_replay",
         "strategy_revocation_preserves_survivor",
+        "recovery_reader_revocation_propagates",
         "recovery_memory_rebuilt_on_revoke",
         "revoked_rebuild_checkpoint_preserved",
         "archived_branch_not_reintroduced",
@@ -1079,7 +1116,9 @@ def evaluate_seed(seed: int) -> dict[str, object]:
             bool(
                 ambiguity[name]
                 if name in ambiguity
-                else failure[name] if name in failure else conflicted[name]
+                else failure[name]
+                if name in failure
+                else conflicted[name]
             )
             for name in booleans
         ),
@@ -1123,6 +1162,8 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "recovery-strategy-checkpoint",
             "recovery-strategy-revocation",
             "recovery-strategy-survivor-preservation",
+            "recovery-reader-provenance",
+            "recovery-reader-selective-revocation",
             "recovery-strategy-rebuild-after-revocation",
             "recovery-strategy-rebuild-checkpoint",
             "archived-branch-liveness",
@@ -1145,7 +1186,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         },
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, rank multiple admitted strategies by evidence, outcome consistency, and resource cost under a memory budget, preserve that competition through checkpoint, consolidate only selected records, revoke one strategy from future replay, rebuild long-term readers without revoked or unselected records while preserving a selected survivor, checkpoint and restore that rebuild, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
+            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, rank multiple admitted strategies by evidence, outcome consistency, and resource cost under a memory budget, preserve that competition through checkpoint, consolidate selected records through semantic/procedural/sequence/concept readers, persist their reader dependency provenance, revoke one strategy from future replay, rebuild only readers that depended on it without revoked or unselected records while preserving a selected survivor, propagate the revocation to reader dependencies and episodic readout, checkpoint and restore that rebuild, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
         },
     }
 

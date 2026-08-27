@@ -38,6 +38,8 @@
     "recovery-strategy-checkpoint",
     "recovery-strategy-revocation",
     "recovery-strategy-survivor-preservation",
+    "recovery-reader-provenance",
+    "recovery-reader-selective-revocation",
     "recovery-strategy-rebuild-after-revocation",
     "recovery-strategy-rebuild-checkpoint",
     "archived-branch-liveness",
