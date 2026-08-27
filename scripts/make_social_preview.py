@@ -88,8 +88,12 @@ def main() -> None:
     # top rule + eyebrow
     d.line([s(MARGIN), s(96), s(W - MARGIN), s(96)], fill=INK_RULE, width=max(1, SS))
     f_brow = font(SEMI, 21)
-    d.text((s(MARGIN), s(58)), "SEED  \u00b7  TAIJI NATIVE COGNITIVE ARCHITECTURE",
-           font=f_brow, fill=INK_SOFT)
+    d.text(
+        (s(MARGIN), s(58)),
+        "SEED  \u00b7  TAIJI NATIVE COGNITIVE ARCHITECTURE",
+        font=f_brow,
+        fill=INK_SOFT,
+    )
 
     # headline: the measured jump
     y_hero = s(150)
@@ -108,12 +112,18 @@ def main() -> None:
 
     # supporting facts
     f_fact = font(REG, 25)
-    d.text((s(MARGIN), s(464)),
-           "learns online from local prediction errors  \u00b7  sparse fixed-fan-in synapses",
-           font=f_fact, fill=INK_SOFT)
-    d.text((s(MARGIN), s(500)),
-           "slot-free episodic memory  \u00b7  surprise 5.4041 \u2192 0.1069  (98.02% reduction)",
-           font=f_fact, fill=INK_SOFT)
+    d.text(
+        (s(MARGIN), s(464)),
+        "learns online from local prediction errors  \u00b7  sparse fixed-fan-in synapses",
+        font=f_fact,
+        fill=INK_SOFT,
+    )
+    d.text(
+        (s(MARGIN), s(500)),
+        "slot-free episodic memory  \u00b7  surprise 5.4041 \u2192 0.1069  (98.02% reduction)",
+        font=f_fact,
+        fill=INK_SOFT,
+    )
 
     # footer
     d.line([s(MARGIN), s(548), s(W - MARGIN), s(548)], fill=INK_RULE, width=max(1, SS))
@@ -121,8 +131,12 @@ def main() -> None:
     d.text((s(MARGIN), s(566)), "github.com/liulang5945-netizen/Seed", font=f_foot, fill=INK)
     f_foot_r = font(REG, 23)
     tail = "every claim backed by a lesion-controlled script"
-    d.text((s(W - MARGIN) - d.textlength(tail, font=f_foot_r), s(566)),
-           tail, font=f_foot_r, fill=INK_SOFT)
+    d.text(
+        (s(W - MARGIN) - d.textlength(tail, font=f_foot_r), s(566)),
+        tail,
+        font=f_foot_r,
+        fill=INK_SOFT,
+    )
 
     # Assert every drawn glyph stays inside the safe margins, because Twitter,
     # Slack and WeChat each crop the card at a different aspect ratio.
