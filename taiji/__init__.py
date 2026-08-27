@@ -208,6 +208,7 @@ from .workspace import (
 )
 from .world import WORLD_STATE_CHECKPOINT_FORMAT, TaijiWorldState
 from .world_learning import (
+    WORLD_SCHEMA_REGISTRY_CHECKPOINT_FORMAT,
     WorldDynamicsLearner,
     WorldEpisodeEvaluationConfig,
     WorldEpisodeEvaluator,
@@ -216,6 +217,11 @@ from .world_learning import (
     WorldInterventionEvaluator,
     WorldPrediction,
     WorldSchema,
+    WorldSchemaBudgetError,
+    WorldSchemaConflictError,
+    WorldSchemaProposal,
+    WorldSchemaRegistry,
+    WorldSchemaRegistryError,
 )
 
 __all__ = [
@@ -406,4 +412,10 @@ __all__ = [
     "WorldInterventionEvaluator",
     "WorldPrediction",
     "WorldSchema",
+    "WorldSchemaBudgetError",
+    "WorldSchemaConflictError",
+    "WorldSchemaProposal",
+    "WorldSchemaRegistry",
+    "WorldSchemaRegistryError",
+    "WORLD_SCHEMA_REGISTRY_CHECKPOINT_FORMAT",
 ]

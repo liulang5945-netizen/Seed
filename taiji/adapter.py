@@ -102,7 +102,7 @@ from .structural_growth import (
     StructuralRuntimeObservation,
 )
 from .workspace import WorkspaceRouter
-from .world_learning import WorldDynamicsLearner, WorldSchema
+from .world_learning import WorldDynamicsLearner, WorldSchema, WorldSchemaRegistry
 
 
 @dataclass(frozen=True)
@@ -6432,12 +6432,19 @@ class TSKV8Adapter(Taiji):
             raise RuntimeError("world dynamics is not attached")
         return {
             "schema": self._world_dynamics.schema.payload(),
+            "schema_registry": self._world_dynamics.schema_registry.checkpoint(),
             "hidden_dim": self._world_dynamics.hidden_dim,
             "online_updates": self._world_dynamics.online_updates,
             "schema_evolution_count": self._world_dynamics.schema_evolution_count,
             "state_dict": {
                 name: tensor.detach().cpu().clone()
                 for name, tensor in self._world_dynamics.state_dict().items()
+            },
+            "schema_snapshots": {
+                str(version): {
+                    name: tensor.detach().cpu().clone() for name, tensor in snapshot.items()
+                }
+                for version, snapshot in self._world_dynamics._schema_snapshots.items()
             },
         }
 
@@ -6446,14 +6453,36 @@ class TSKV8Adapter(Taiji):
             self._world_dynamics = None
             return
         schema = WorldSchema.from_payload(dict(payload["schema"]))
+        registry_payload = payload.get("schema_registry")
+        registry = (
+            None
+            if registry_payload is None
+            else WorldSchemaRegistry.from_checkpoint(dict(registry_payload))
+        )
+        if registry is not None and registry.schema != schema:
+            raise ValueError("world dynamics schema registry does not match learner schema")
         learner = WorldDynamicsLearner(
             schema,
             hidden_dim=int(payload["hidden_dim"]),
             seed=0,
+            schema_registry=registry,
         )
         learner.load_state_dict(payload["state_dict"])
         learner.online_updates = int(payload.get("online_updates", 0))
         learner.schema_evolution_count = int(payload.get("schema_evolution_count", 0))
+        snapshots = payload.get("schema_snapshots")
+        if isinstance(snapshots, dict):
+            learner._schema_snapshots = {
+                int(version): {
+                    str(name): tensor.detach().cpu().clone() for name, tensor in snapshot.items()
+                }
+                for version, snapshot in snapshots.items()
+                if isinstance(snapshot, dict)
+            }
+            learner._schema_snapshots.setdefault(
+                learner.schema_registry.active_version,
+                learner._snapshot_state_dict(),
+            )
         self._world_dynamics = learner
 
     def _restore_workspace_router(self, payload: Any) -> None:

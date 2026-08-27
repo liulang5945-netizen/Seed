@@ -1,0 +1,71 @@
+{
+  "format": "taiji-p3-schema-registry-v1",
+  "seeds": [
+    {
+      "seed": 11,
+      "alias_stable": true,
+      "alias_conflict": true,
+      "old_weights_preserved": true,
+      "mixed_schema": true,
+      "conflict_stable": true,
+      "prune_tombstone": true,
+      "readd_blocked": true,
+      "rollback_restored": true,
+      "budget_blocked": true,
+      "checkpoint": true,
+      "checkpoint_rollback": true,
+      "active_version": 1,
+      "lineage_events": 4
+    },
+    {
+      "seed": 29,
+      "alias_stable": true,
+      "alias_conflict": true,
+      "old_weights_preserved": true,
+      "mixed_schema": true,
+      "conflict_stable": true,
+      "prune_tombstone": true,
+      "readd_blocked": true,
+      "rollback_restored": true,
+      "budget_blocked": true,
+      "checkpoint": true,
+      "checkpoint_rollback": true,
+      "active_version": 1,
+      "lineage_events": 4
+    },
+    {
+      "seed": 47,
+      "alias_stable": true,
+      "alias_conflict": true,
+      "old_weights_preserved": true,
+      "mixed_schema": true,
+      "conflict_stable": true,
+      "prune_tombstone": true,
+      "readd_blocked": true,
+      "rollback_restored": true,
+      "budget_blocked": true,
+      "checkpoint": true,
+      "checkpoint_rollback": true,
+      "active_version": 1,
+      "lineage_events": 4
+    }
+  ],
+  "aggregate": {
+    "alias_stable_min": 1.0,
+    "alias_conflict_min": 1.0,
+    "old_weights_preserved_min": 1.0,
+    "mixed_schema_min": 1.0,
+    "conflict_stable_min": 1.0,
+    "prune_tombstone_min": 1.0,
+    "readd_blocked_min": 1.0,
+    "rollback_restored_min": 1.0,
+    "budget_blocked_min": 1.0,
+    "checkpoint_min": 1.0,
+    "checkpoint_rollback_min": 1.0,
+    "passed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "all registry identity, conflict, budget, lifecycle and checkpoint controls must pass for every seed"
+  }
+}
