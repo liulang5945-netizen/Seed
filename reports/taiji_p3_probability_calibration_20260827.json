@@ -1,0 +1,60 @@
+{
+  "format": "taiji-p3-probability-calibration-v1",
+  "seeds": [
+    {
+      "seed": 11,
+      "brier": 0.24000000000000005,
+      "nll": 0.6730116670092564,
+      "empirical_success_rate": 0.4,
+      "coverage": 1.0,
+      "reward_mae": 0.0,
+      "known_stochastic_prediction": true,
+      "unseen_relation_prediction": true,
+      "holdout_feedback_isolated": true,
+      "checkpoint_continuation": true,
+      "world_model_lesion": true
+    },
+    {
+      "seed": 29,
+      "brier": 0.24000000000000005,
+      "nll": 0.6730116670092564,
+      "empirical_success_rate": 0.4,
+      "coverage": 1.0,
+      "reward_mae": 0.0,
+      "known_stochastic_prediction": true,
+      "unseen_relation_prediction": true,
+      "holdout_feedback_isolated": true,
+      "checkpoint_continuation": true,
+      "world_model_lesion": true
+    },
+    {
+      "seed": 47,
+      "brier": 0.24000000000000005,
+      "nll": 0.6730116670092564,
+      "empirical_success_rate": 0.4,
+      "coverage": 1.0,
+      "reward_mae": 0.0,
+      "known_stochastic_prediction": true,
+      "unseen_relation_prediction": true,
+      "holdout_feedback_isolated": true,
+      "checkpoint_continuation": true,
+      "world_model_lesion": true
+    }
+  ],
+  "aggregate": {
+    "coverage_min": 1.0,
+    "known_stochastic_prediction_min": 1.0,
+    "unseen_relation_prediction_min": 1.0,
+    "holdout_feedback_isolated_min": 1.0,
+    "checkpoint_continuation_min": 1.0,
+    "world_model_lesion_min": 1.0,
+    "brier_max": 0.24000000000000005,
+    "nll_max": 0.6730116670092564,
+    "reward_mae_max": 0.0,
+    "passed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "independent holdout Brier/NLL, reward error, coverage, leakage isolation, uncertainty modes, checkpoint continuation and lesion must pass"
+  }
+}
