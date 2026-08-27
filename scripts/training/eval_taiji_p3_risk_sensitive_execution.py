@@ -21,13 +21,17 @@ from scripts.training.eval_taiji_p3_open_set import (  # noqa: E402
 from taiji import (  # noqa: E402
     EnvironmentCapability,
     EnvironmentOutcome,
+    EpisodicMemoryStore,
     Goal,
     GoalPlanner,
     Observation,
     Outcome,
     PlanningCandidate,
     PlanningConfig,
+    ProceduralMemoryLearner,
     RecoveryPortfolioArchive,
+    RecoveryStrategyLedger,
+    SemanticMemoryLearner,
     TSKV8Adapter,
     WorldAction,
     WorldAffordance,
@@ -321,6 +325,11 @@ def _ledger_snapshot(
 
 def _attach_runtime(adapter: TSKV8Adapter, learner: WorldDynamicsLearner, seed: int) -> None:
     adapter.attach_world_dynamics(learner)
+    adapter.attach_episodic_memory(
+        EpisodicMemoryStore(capacity=128, cue_dim=adapter.perception.feature_dim)
+    )
+    adapter.attach_semantic_memory(SemanticMemoryLearner(adapter.perception.feature_dim))
+    adapter.attach_procedural_memory(ProceduralMemoryLearner(adapter.perception.feature_dim))
     adapter.attach_goal_planner(GoalPlanner(PlanningConfig(replan_error_threshold=100.0)))
     adapter.set_goals((Goal("reach-world", "reach the world target", priority=1.0),))
     adapter.observe_event(
@@ -641,6 +650,14 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     recovery_learner = restored._world_dynamics
     if recovery_learner is None:
         raise RuntimeError("risk execution recovery lost world dynamics")
+    recovery_memory_losses = restored.consolidate_recovery_memory(epochs=1)
+    recovery_memory_consolidated = bool(
+        set(recovery_memory_losses) == {"semantic", "procedural"}
+        and restored._semantic_memory is not None
+        and restored._semantic_memory.consolidation_count == 1
+        and restored._procedural_memory is not None
+        and restored._procedural_memory.consolidation_count == 1
+    )
     post_recovery_rollouts = restored.synthesize_recovery_rollouts(
         goal_id="reach-world",
         resource_budget=1.0,
@@ -657,6 +674,15 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         and completed_entries[-1].outcome_success is True
         and completed_entries[-1].terminal
     )
+    low_evidence_blocked = bool(
+        completed_entries
+        and not RecoveryStrategyLedger(evidence_threshold=2)
+        .admit(
+            replace(completed_entries[-1], evidence_count=1),
+            memory_id="low-evidence-memory",
+        )
+        .approvals
+    )
     archive_checkpoint_preserved = bool(
         final_checkpoint.recovery_archive.archived_rollout_ids == archive.archived_rollout_ids
         and final_checkpoint.recovery_archive.lifecycle_for(recovery_rollout.rollout_id)
@@ -668,6 +694,20 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         and len(bounded_archive.entries) == 1
         and bounded_archive.entries[0].rollout_id == archive.entries[-1].rollout_id
         and archive.entries[0].rollout_id not in bounded_archive.archived_rollout_ids
+    )
+    strategy_admitted = restored.recovery_strategy_ledger.is_active(recovery_rollout.rollout_id)
+    strategy_checkpoint_preserved = final_checkpoint.recovery_strategy_ledger.is_active(
+        recovery_rollout.rollout_id
+    )
+    strategy_consolidation_checkpoint_preserved = bool(
+        final_checkpoint._semantic_memory is not None
+        and final_checkpoint._semantic_memory.consolidation_count == 1
+        and final_checkpoint._procedural_memory is not None
+        and final_checkpoint._procedural_memory.consolidation_count == 1
+    )
+    restored.revoke_recovery_strategy(recovery_rollout.rollout_id)
+    strategy_revocation_blocks_replay = not restored.recovery_strategy_ledger.is_active(
+        recovery_rollout.rollout_id
     )
     restored.begin_episode(f"risk-next:{seed}")
     archived_branch_not_reintroduced = False
@@ -732,8 +772,14 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         "portfolio_pruned_not_reintroduced": portfolio_pruned_not_reintroduced,
         "checkpoint_portfolio_preserved": checkpoint_portfolio_preserved,
         "archive_lifecycle_completed": archive_lifecycle_completed,
+        "low_evidence_blocked": low_evidence_blocked,
         "archive_checkpoint_preserved": archive_checkpoint_preserved,
         "archive_capacity_evicts_oldest": archive_capacity_evicts_oldest,
+        "strategy_admitted": strategy_admitted,
+        "strategy_checkpoint_preserved": strategy_checkpoint_preserved,
+        "recovery_memory_consolidated": recovery_memory_consolidated,
+        "strategy_consolidation_checkpoint_preserved": strategy_consolidation_checkpoint_preserved,
+        "strategy_revocation_blocks_replay": strategy_revocation_blocks_replay,
         "archived_branch_not_reintroduced": archived_branch_not_reintroduced,
         "next_episode_transient_cleared": next_episode_transient_cleared,
         "recovery_suffix_rebound": recovery_suffix_rebound,
@@ -922,8 +968,14 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "portfolio_pruned_not_reintroduced",
         "checkpoint_portfolio_preserved",
         "archive_lifecycle_completed",
+        "low_evidence_blocked",
         "archive_checkpoint_preserved",
         "archive_capacity_evicts_oldest",
+        "strategy_admitted",
+        "strategy_checkpoint_preserved",
+        "recovery_memory_consolidated",
+        "strategy_consolidation_checkpoint_preserved",
+        "strategy_revocation_blocks_replay",
         "archived_branch_not_reintroduced",
         "next_episode_transient_cleared",
         "recovery_suffix_rebound",
@@ -984,6 +1036,10 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "portfolio-checkpoint-preservation",
             "cross-episode-recovery-archive",
             "archive-capacity-eviction",
+            "recovery-strategy-evidence-gate",
+            "recovery-strategy-memory-consolidation",
+            "recovery-strategy-checkpoint",
+            "recovery-strategy-revocation",
             "archived-branch-liveness",
             "checkpoint-no-replay",
             "recovery-rollout-continuation",
@@ -1004,7 +1060,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         },
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
+            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, preserve that admission through checkpoint, revoke it from future replay, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
         },
     }
 

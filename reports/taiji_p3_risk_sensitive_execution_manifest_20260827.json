@@ -31,6 +31,10 @@
     "portfolio-checkpoint-preservation",
     "cross-episode-recovery-archive",
     "archive-capacity-eviction",
+    "recovery-strategy-evidence-gate",
+    "recovery-strategy-memory-consolidation",
+    "recovery-strategy-checkpoint",
+    "recovery-strategy-revocation",
     "archived-branch-liveness",
     "checkpoint-no-replay",
     "recovery-rollout-continuation"
