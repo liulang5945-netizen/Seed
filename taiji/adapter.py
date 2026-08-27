@@ -5557,6 +5557,19 @@ class TSKV8Adapter(Taiji):
             uncertainty=max(0.0, min(1.0, 1.0 - recall.confidence)),
         )
         assemblies, events = self._record_percept_lineage(percept, world)
+        lineage_event = events[-1]
+        workspace = replace(
+            workspace,
+            percept_event_id=lineage_event.event_id,
+            percept_assembly_id=percept.assembly_id,
+            percept_boundary_closed=percept.boundary,
+        )
+        world = replace(
+            world,
+            percept_event_id=lineage_event.event_id,
+            percept_assembly_id=percept.assembly_id,
+            percept_boundary_closed=percept.boundary,
+        )
         memory = NativeMemoryState(
             tick=self.tick,
             episodic_confidence=max(0.0, min(1.0, recall.confidence)),
@@ -5642,9 +5655,17 @@ class TSKV8Adapter(Taiji):
                 raise TypeError("world_state must be a Taiji WorldState")
             if world_state.tick != self.tick:
                 raise ValueError("observed world_state must match the adapter tick")
+            current_world = self._cognitive_state.world
             self._cognitive_state = replace(
                 self._cognitive_state,
-                world=self._ground_world_state(world_state),
+                world=self._ground_world_state(
+                    replace(
+                        world_state,
+                        percept_event_id=current_world.percept_event_id,
+                        percept_assembly_id=current_world.percept_assembly_id,
+                        percept_boundary_closed=current_world.percept_boundary_closed,
+                    )
+                ),
             )
             self._refresh_last_event_world_lineage(self._cognitive_state.world)
             self._refresh_concept_memory()
@@ -5898,6 +5919,12 @@ class TSKV8Adapter(Taiji):
             if world_state.tick != before.tick + 1:
                 raise ValueError("world_state must advance the cognitive world tick by one")
             world_state = self._ground_world_state(world_state)
+            world_state = replace(
+                world_state,
+                percept_event_id=before.percept_event_id,
+                percept_assembly_id=before.percept_assembly_id,
+                percept_boundary_closed=before.percept_boundary_closed,
+            )
             if world_action is not None:
                 if not isinstance(world_action, WorldAction):
                     raise TypeError("world_action must be a Taiji WorldAction")

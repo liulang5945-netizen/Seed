@@ -645,6 +645,17 @@ P4 的最小真实经历边界已落地：
 - **通用纪律**：判定 CI 结论前先确认**job 真的执行过**（有 `started_at`、有耗时、`conclusion` 非 null）。这与 14.1「依赖安装失败会让后续门禁静默跳过」是同一条原则的两面——红与绿都不可只看颜色，要看执行事实。
 - **停机尚未结束，`98e36db` 的棘轮门禁线上验证仍未完成（待办）**：`98e36db`（钉版本 + mypy 棘轮）推送成功（`3e6e5b0..98e36db`）后 5 分钟内 `gh run list` 未出现对应 run，`githubstatus` 的 Actions 组件仍为 `major_outage`。故**新棘轮门禁在 CI 中的首次实跑尚无证据**，不得记为已验证。停机期间改做本机等价校验：四个钉版本经 PyPI 逐个确认真实存在（`mypy==2.3.1` 2026-08-15、`pip-audit==2.10.1` 2026-06-10、`ruff==0.16.4` 2026-08-20、`black==26.5.1` 2026-05-18），排除了「幻觉版本号导致安装步骤失败、其后门禁全部静默跳过」这一已发生过的复发路径（见 14.1 与 ci.yml 的 `black==24.12.0` 注释）；棘轮的解析与比较逻辑亦已在本机用真实 mypy 输出复现（`parsed=63`、`baseline=63`、`PASS(equal)`）。平台恢复后须补验：核心步骤在 3.10/3.12 两腿都打印 `mypy core errors: 63 (baseline 63)` 且不失败。
 
+### 14.12 项目改名的环境变量残留：`E:\taiji-neuron` 反复自动重建（2026-08-27 收口）
+
+现象：删掉 `E:\taiji-neuron` 后它总会再出现。这不是本仓代码所为，而是改名（`taiji-neuron` → `Seed`）时只搬了目录、没清用户级环境变量。
+
+- **先排除本仓嫌疑**：全仓 grep `taiji-neuron` 只命中历史痕迹——`neuroplex/loader.py:23` 的注释（说明历史 ckpt 用 `taiji.*` 命名空间序列化）与 `plans/archive/**` 里的旧绝对路径链接。无任何活代码创建该目录。
+- **真实成因**：三个 **用户级（注册表）** 变量仍指向旧路径：`XDG_CONFIG_HOME=E:\taiji-neuron\.local\config`、`XDG_STATE_HOME=E:\taiji-neuron\.local\state`，以及 `Path` 中的 `E:\taiji-neuron\.npm-global`（机器级作用域干净）。遵循 XDG 规范的工具（`opencode`、`gh`）启动时若发现目标路径不存在会**整条重建目录链**，所以删除永远不生效。证据：目录 `CreationTime` 为 2026-08-25，而 `.local\config\opencode` 的 `LastWriteTime` 是 08-27 11:04（当天），且内容清一色是工具配置/状态（3672 文件、278 目录，绝大多数是 `opencode\node_modules`），零项目代码。
+- **动手前先证明无损**：`opencode.jsonc` 只有一行 `$schema`（无个人配置）；`gh auth status` 显示登录来自 `GH_TOKEN` 环境变量而非该目录（`.local\state\gh\device-id` 只是 36 字节匿名遥测 ID）；`npm config get prefix` 本就是 `C:\Users\23747\AppData\Roaming\npm`，而 `E:\taiji-neuron\.npm-global` **根本不存在**（死 Path 项）。因此「改回系统默认位置」无需迁移任何数据。
+- **已执行**：备份用户 `Path` 至 `C:\Users\23747\user_path_backup_20260827.txt` → 用户级删除 `XDG_CONFIG_HOME`/`XDG_STATE_HOME` → 从用户 `Path` 过滤掉含 `taiji-neuron` 的段。复核：用户级与机器级全变量扫描已无任何 `taiji` 命中，`npm prefix` 为默认值。
+- **验证纪律（易踩）**：注册表改动**不回灌已运行的进程**，而子进程继承父进程的环境副本，所以必须用 `[Environment]::GetEnvironmentVariable(..., "User")` 直读注册表来判定，不能看 `$env:`。实测新开子进程里 `$env:XDG_CONFIG_HOME` 仍是旧值——说明当前 IDE 进程仍持有旧变量，**由它拉起的工具还会重建该目录**，须重启 IDE/终端后再删。
+- **未完成的一步**：`Remove-Item E:\taiji-neuron -Recurse -Force` 被沙箱拒绝（仅允许写 `E:\Seed`），目录仍存在，需用户手动删除。环境变量已清，故删除一次即永久生效。
+
 ## 15. 停止项
 
 在 P2 通过前：
@@ -752,4 +763,6 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 
 **已完成：A1 感知 Gate 已在两级规模正式通过。smoke `32/16` 报告 `reports/taiji_a1_perception_20260827.json` 的最差泛化=`+0.00310`、最差 random-chunk drop=`+0.00578`、marker score/rate 最小=`+0.1734/+0.3567`、cross-seed std=`0.00608`；`shared_core` `128/64` 报告 `reports/taiji_a1_perception_shared128_20260827.json` 的最差泛化=`0.0`、最差 random-chunk drop=`+0.00527`、marker score/rate 最小=`+0.2161/+0.4483`、cross-seed std=`0.00834`。两份报告均为 `gate_passed=true`；完整 `tests/taiji_native` 为 `193 passed, 1 skipped, 2 errors`，两个 error 仍是 Windows pytest 临时目录锁 setup 权限问题，未进入测试体。**
 
-**当前唯一下一步：建立 P2→P3 的首个真实闭环 Gate：让 boundary-closed `PerceptEvent` 以可追溯 lineage 进入 `WorkspaceState`/`TaijiWorldState`，在未见对象—关系组合与跨 episode holdout 上同时验收 learned route、workspace lesion、checkpoint continuation 和 relation subgate；不得用现有独立 numeric world/workspace 报告替代这条 perception-to-world 闭环，CUDA 保持暂缓。**
+**已完成：P2→P3 lineage contract 已接入 runtime。`WorkspaceState` 与 `WorldState` 新增可选的 `percept_event_id`、`percept_assembly_id`、`percept_boundary_closed`；`TSKV8Adapter.observe()` 在生成 lineage 后同步写入两者，`observe_event(world_state=...)` 与 `settle_action(world_state=...)` 的外部状态替换都会保留当前来源，native checkpoint/restore 可恢复。closed boundary 若缺 event/assembly ID 会 fail closed；定向 world/concept/v1 回归 `21 passed`，Ruff、核心 mypy 0 通过。该改动只建立 provenance contract，不把 lineage 存在冒充为跨 episode 能力。**
+
+**当前唯一下一步：在已具备 lineage 的 runtime 上建立 P2→P3 的首个真实闭环 Gate：让多条 boundary-closed `PerceptEvent` 进入带候选选择的 `WorkspaceState`，再绑定到 `TaijiWorldState` 的对象—关系 transition，在未见对象—关系组合与跨 episode holdout 上同时验收 learned route、workspace lesion、checkpoint continuation 和 relation subgate；不得用现有独立 numeric world/workspace 报告替代这条 perception-to-world 闭环，CUDA 保持暂缓。**
