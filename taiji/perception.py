@@ -310,6 +310,37 @@ class LearnedPerception(nn.Module):
             previous_feature = feature
         return spans
 
+    @staticmethod
+    def _boundary_after_segments(
+        completed_spans: Sequence[tuple[int, int]],
+        *,
+        sequence_length: int,
+        target_rows: Mapping[int, int],
+    ) -> tuple[tuple[int, int, int], ...]:
+        """Map closed assemblies to the next observed assembly segment.
+
+        Each returned tuple is ``(prediction_row, start, stop)``.  ``start``
+        is the symbol immediately after a closed assembly and ``stop`` is the
+        next closed boundary when one exists, otherwise the sequence end.  A
+        segment therefore never crosses a second learned boundary, which
+        keeps the cross-assembly objective focused on the transition being
+        evaluated rather than on an arbitrary fixed window.
+        """
+
+        next_stop_by_start = {start: stop for start, stop in completed_spans if start > 0}
+        segments: list[tuple[int, int, int]] = []
+        for _, boundary in completed_spans:
+            if boundary >= int(sequence_length):
+                continue
+            row = target_rows.get(boundary)
+            if row is None:
+                continue
+            segment_stop = next_stop_by_start.get(boundary, int(sequence_length))
+            if segment_stop <= boundary:
+                continue
+            segments.append((int(row), int(boundary), int(segment_stop)))
+        return tuple(segments)
+
     def _local_sequence_pass(
         self,
         sequence: Sequence[int],
@@ -317,19 +348,22 @@ class LearnedPerception(nn.Module):
         temperature: float,
         multi_step_prediction_weight: float,
         multi_step_prediction_horizon: int,
+        cross_assembly_prediction_weight: float,
+        cross_assembly_negative_weight: float,
         assembly_prediction_weight: float,
         contrastive_weight: float,
         contrastive_temperature: float,
     ) -> tuple[float, tuple[torch.Tensor, ...]]:
         """Return the composite loss and its native gradients for one sequence.
 
-        The objective sums three terms over the same pooled features, so the
-        pooled error is the sum of three independently derived deltas.  The
-        embedding matrix receives credit along three separate routes -- as the
-        local window input, as the next-symbol logit basis and as the assembly
-        target -- and those contributions are accumulated into one gradient.
-        Finally the pooled error is scattered back over the feature chain and
-        swept in reverse time through ``context_projection``.
+        The objective combines next-symbol, assembly, contrastive and optional
+        cross-assembly terms over the same pooled features.  The pooled error
+        is the sum of independently derived deltas.  The embedding matrix
+        receives credit along the local window, next-symbol logit, assembly
+        target and post-boundary context routes; those contributions are
+        accumulated into one gradient.  Finally the pooled error is scattered
+        back over the feature chain and swept in reverse time through
+        ``context_projection``.
         """
 
         features, pre_activations, norms, windows = self._sequence_features(sequence)
@@ -366,6 +400,12 @@ class LearnedPerception(nn.Module):
             positive_pool, _ = self._pool_assembly_spans(stacked, short_spans)
             predicted = pooled @ self.transition.weight.transpose(0, 1)
             target_indices = [stop for _, stop in long_spans]
+            target_rows = {stop: row for row, stop in enumerate(target_indices)}
+            boundary_segments = self._boundary_after_segments(
+                completed_spans,
+                sequence_length=len(sequence),
+                target_rows=target_rows,
+            )
             target = torch.tensor(
                 [sequence[index] for index in target_indices],
                 dtype=torch.long,
@@ -419,8 +459,15 @@ class LearnedPerception(nn.Module):
 
             multi_step_weight = float(multi_step_prediction_weight)
             multi_step_horizon = int(multi_step_prediction_horizon)
+            cross_prediction_weight = float(cross_assembly_prediction_weight)
+            cross_negative_weight = float(cross_assembly_negative_weight)
             multi_step_states = [predicted]
-            if multi_step_weight > 0.0 and multi_step_horizon > 1:
+            needs_multi_step_states = (
+                multi_step_weight > 0.0
+                or cross_prediction_weight > 0.0
+                or cross_negative_weight > 0.0
+            )
+            if needs_multi_step_states and multi_step_horizon > 1:
                 for _ in range(2, multi_step_horizon + 1):
                     multi_step_states.append(
                         multi_step_states[-1] @ self.transition.weight.transpose(0, 1)
@@ -464,6 +511,106 @@ class LearnedPerception(nn.Module):
                     multi_step_state_errors[horizon - 1][row_indices] += (
                         horizon_error @ self.embedding.weight
                     )
+            if boundary_segments and cross_prediction_weight > 0.0:
+                valid_horizons = [
+                    horizon
+                    for horizon in range(1, multi_step_horizon + 1)
+                    if any(start + horizon - 1 < stop for _, start, stop in boundary_segments)
+                ]
+                horizon_count = float(max(1, len(valid_horizons)))
+                for horizon in valid_horizons:
+                    state = multi_step_states[horizon - 1]
+                    valid_segments = [
+                        (row, start)
+                        for row, start, stop in boundary_segments
+                        if start + horizon - 1 < stop
+                    ]
+                    row_indices = torch.tensor(
+                        [row for row, _ in valid_segments],
+                        dtype=torch.long,
+                        device=self.device,
+                    )
+                    horizon_targets = torch.tensor(
+                        [sequence[start + horizon - 1] for _, start in valid_segments],
+                        dtype=torch.long,
+                        device=self.device,
+                    )
+                    scaled_logits = (
+                        state[row_indices] @ self.embedding.weight.transpose(0, 1)
+                    ) / float(temperature)
+                    weight = cross_prediction_weight / horizon_count
+                    loss += weight * float(
+                        torch.nn.functional.cross_entropy(scaled_logits, horizon_targets)
+                    )
+                    horizon_error = (
+                        weight
+                        * softmax_error_delta(scaled_logits, horizon_targets)
+                        / float(temperature)
+                    )
+                    embedding_gradient += horizon_error.transpose(0, 1) @ state[row_indices]
+                    multi_step_state_errors[horizon - 1][row_indices] += (
+                        horizon_error @ self.embedding.weight
+                    )
+            if boundary_segments and cross_negative_weight > 0.0:
+                segment_rows = [row for row, _, _ in boundary_segments]
+                segment_targets = torch.stack(
+                    [
+                        self.embedding.weight[list(sequence[start:stop])].mean(dim=0)
+                        for _, start, stop in boundary_segments
+                    ]
+                )
+                target_norms = torch.linalg.vector_norm(
+                    segment_targets, dim=1, keepdim=True
+                ).clamp_min(1e-12)
+                normalized_targets = segment_targets / target_norms
+                segment_count = len(boundary_segments)
+                if segment_count > 1:
+                    negative_horizon_count = float(len(multi_step_states))
+                    labels = torch.arange(segment_count, dtype=torch.long, device=self.device)
+                    for state_index, state in enumerate(multi_step_states):
+                        queries = state[
+                            torch.tensor(segment_rows, dtype=torch.long, device=self.device)
+                        ]
+                        query_norms = torch.linalg.vector_norm(
+                            queries, dim=1, keepdim=True
+                        ).clamp_min(1e-12)
+                        normalized_queries = queries / query_norms
+                        boundary_logits = (
+                            normalized_queries @ normalized_targets.transpose(0, 1)
+                        ) / float(contrastive_temperature)
+                        weight = cross_negative_weight / negative_horizon_count
+                        loss += weight * float(
+                            torch.nn.functional.cross_entropy(boundary_logits, labels)
+                        )
+                        boundary_error = (
+                            weight
+                            * softmax_error_delta(boundary_logits, labels)
+                            / float(contrastive_temperature)
+                        )
+                        query_error = boundary_error @ normalized_targets
+                        target_error = boundary_error.transpose(0, 1) @ normalized_queries
+                        query_error = normalize_delta(
+                            query_error,
+                            normalized_queries,
+                            query_norms,
+                            dim=1,
+                        )
+                        target_error = normalize_delta(
+                            target_error,
+                            normalized_targets,
+                            target_norms,
+                            dim=1,
+                        )
+                        state_error = torch.zeros_like(state)
+                        state_error[
+                            torch.tensor(segment_rows, dtype=torch.long, device=self.device)
+                        ] += query_error
+                        multi_step_state_errors[state_index] += state_error
+                        for index, (_, start, stop) in enumerate(boundary_segments):
+                            share = target_error[index] / float(stop - start)
+                            for symbol in sequence[start:stop]:
+                                embedding_gradient[symbol] += share
+            if needs_multi_step_states:
                 for state_index in range(len(multi_step_states) - 1, 0, -1):
                     state_error = multi_step_state_errors[state_index]
                     transition_gradient += (
@@ -584,6 +731,8 @@ class LearnedPerception(nn.Module):
         temperature: float = 0.15,
         multi_step_prediction_weight: float = 0.0,
         multi_step_prediction_horizon: int = 4,
+        cross_assembly_prediction_weight: float = 0.0,
+        cross_assembly_negative_weight: float = 0.0,
         assembly_prediction_weight: float = 0.5,
         contrastive_weight: float = 0.1,
         contrastive_temperature: float = 0.2,
@@ -594,6 +743,9 @@ class LearnedPerception(nn.Module):
         hand-authored vocabulary or a fixed assembly table.  Cosine-style
         logits through ``transition`` make local context and recurrent state
         useful only when they improve prediction of the next observation.
+        Optional cross-assembly terms use only segments after boundaries
+        produced by the same adaptive runtime clock; they never inject pair
+        labels or a precomputed segmentation table.
         """
 
         if int(epochs) <= 0:
@@ -607,6 +759,10 @@ class LearnedPerception(nn.Module):
             raise ValueError("multi_step_prediction_weight cannot be negative")
         if int(multi_step_prediction_horizon) <= 0:
             raise ValueError("multi_step_prediction_horizon must be positive")
+        if float(cross_assembly_prediction_weight) < 0.0:
+            raise ValueError("cross_assembly_prediction_weight cannot be negative")
+        if float(cross_assembly_negative_weight) < 0.0:
+            raise ValueError("cross_assembly_negative_weight cannot be negative")
         if float(assembly_prediction_weight) < 0.0:
             raise ValueError("assembly_prediction_weight cannot be negative")
         if float(contrastive_weight) < 0.0:
@@ -647,6 +803,8 @@ class LearnedPerception(nn.Module):
                     temperature=float(temperature),
                     multi_step_prediction_weight=float(multi_step_prediction_weight),
                     multi_step_prediction_horizon=int(multi_step_prediction_horizon),
+                    cross_assembly_prediction_weight=float(cross_assembly_prediction_weight),
+                    cross_assembly_negative_weight=float(cross_assembly_negative_weight),
                     assembly_prediction_weight=float(assembly_prediction_weight),
                     contrastive_weight=float(contrastive_weight),
                     contrastive_temperature=float(contrastive_temperature),

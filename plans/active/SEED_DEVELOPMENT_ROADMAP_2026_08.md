@@ -68,7 +68,7 @@ A1 评测合同已建立在 `taiji/evaluation.py`：训练集、未见组合、�
 对照分开输入；同一个 ridge probe 同时报告 learned assembly 与 byte-only；多个 seed
 输出均值、方差和明确的 `gate_passed`，评测器不内置词表或答案映射。
 
-P2 尚未退出。首份无预测训练的 smoke 基线保存在
+历史阶段记录（当时 P2 尚未退出）：首份无预测训练的 smoke 基线保存在
 `reports/taiji_a1_perception_smoke_20260825.json`；tick-level next-byte 训练记录在
 `reports/taiji_a1_perception_predictive_20260825.json`，completed-assembly 与边界
 校准记录在 `reports/taiji_a1_perception_boundary_20260825.json`。加入 future-window
@@ -94,13 +94,18 @@ next-byte A1 报告保留为历史对照，不再作为组合关系的唯一合�
 subgate 在三个 seed 上通过：slot generalization gain 最小 `+0.75`，boundary
 consistency 最小 `0.9825`，random binding drop 最小 `+0.1875`，slot cross-seed
 std `0.1062`。这只证明当前结构性组合合同在小规模 manifest 上成立；旧 next-byte
-A1 仍未通过，完整 P2 不能因此退出。
+A1 仍未通过，完整 P2 不能因此退出（均为历史结论）。
 
 扩展验证已完成：`dialogue16` 独立 manifest 的 slot gain / boundary consistency /
 random binding drop 最小值为 `+0.9375 / 0.9841 / +0.6875`；`shared16` 独立
 manifest 为 `+0.9219 / 0.9811 / +0.6406`。因此 relation subgate 已在两个语料
 分区、16 atoms、240 个 ordered-pair 组合规模上稳定通过；旧 next-byte A1 仍保留为
 失败历史对照，不阻塞结构性 P2 relation subgate 的收口。
+
+截至 2026-08-27，旧 next-byte 评测已升级为动态 assembly、marker-specific boundary
+evidence、multi-step credit 和跨 assembly 后段负样本合同；smoke `32/16` 与独立
+`shared_core 128/64` 两级正式报告均已通过 A1 Gate。上面的旧报告和失败数字只作为
+演进轨迹保留，不再代表当前 P2 状态。
 
 ## 3. 执行原则
 
@@ -743,4 +748,8 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 
 **已完成：顺序敏感 assembly 已加入可 checkpoint 的多步预测信用分配；`multi_step_prediction_weight=0.05`、`horizon=4` 纳入 A1 默认，误差沿连续 transition 展开并回写 assembly/transition/embedding 的原生局部梯度。smoke 32/16 在三 seed 下 Gate 通过；128/64 独立 manifest 仍为 false（最差 gain=`-0.0010`、最差 random drop=`-0.0001`），故没有用多步模块掩盖规模化失败。**
 
-**当前唯一下一步：针对 `shared128` 的最差 seed，继续提升 assembly 的组合迁移与 random-chunk 抗性，优先引入跨 assembly 的边界后多步目标/负样本结构，而不是继续增加训练轮数；每次改动仍需最差 seed、marker、lesion、checkpoint continuation 和 relation subgate 同时验收，CUDA 保持暂缓。**
+**已完成：跨 assembly 边界结构已落地。训练先按与 runtime 相同的闭合 boundary 映射出“边界后的下一段”，该段不跨越下一条 runtime boundary；可选的 boundary-after 多步 CE 已实现但默认权重为 `0.0`，默认使用跨后续 assembly 的多步对比负样本（`cross_assembly_negative_weight=0.01`），对不同 boundary 后段的上下文进行显式正/负匹配。该目标通过 native local-credit 路径回写 embedding/transition，未引入 token 表、固定段表或 Transformer。checkpoint 往返、定向回归 `10 passed`、核心 mypy 0、Ruff 和 Black API 检查均通过；relation subgate 复核为 true。**
+
+**已完成：A1 感知 Gate 已在两级规模正式通过。smoke `32/16` 报告 `reports/taiji_a1_perception_20260827.json` 的最差泛化=`+0.00310`、最差 random-chunk drop=`+0.00578`、marker score/rate 最小=`+0.1734/+0.3567`、cross-seed std=`0.00608`；`shared_core` `128/64` 报告 `reports/taiji_a1_perception_shared128_20260827.json` 的最差泛化=`0.0`、最差 random-chunk drop=`+0.00527`、marker score/rate 最小=`+0.2161/+0.4483`、cross-seed std=`0.00834`。两份报告均为 `gate_passed=true`；完整 `tests/taiji_native` 为 `193 passed, 1 skipped, 2 errors`，两个 error 仍是 Windows pytest 临时目录锁 setup 权限问题，未进入测试体。**
+
+**当前唯一下一步：建立 P2→P3 的首个真实闭环 Gate：让 boundary-closed `PerceptEvent` 以可追溯 lineage 进入 `WorkspaceState`/`TaijiWorldState`，在未见对象—关系组合与跨 episode holdout 上同时验收 learned route、workspace lesion、checkpoint continuation 和 relation subgate；不得用现有独立 numeric world/workspace 报告替代这条 perception-to-world 闭环，CUDA 保持暂缓。**
