@@ -1,0 +1,16 @@
+{
+  "format": "taiji-p2-p3-closure-manifest-v1",
+  "task": "route unseen two-source workspace composition into a Taiji world transition",
+  "world_contract": "TaijiWorldState owns one object, one relation, and one workspace transition",
+  "perception_contract": "two raw observations must produce two boundary-closed percept events",
+  "train_count": 64,
+  "holdout_count": 32,
+  "holdout": "new sampled object identity and candidate composition",
+  "lesion": "workspace mode none",
+  "checkpoint": "native adapter checkpoint after two closed assemblies",
+  "lineage": [
+    "percept_event_id",
+    "percept_assembly_id",
+    "percept_boundary_closed"
+  ]
+}

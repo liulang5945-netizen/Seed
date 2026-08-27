@@ -1,0 +1,78 @@
+{
+  "format": "taiji-p2-p3-closure-v1",
+  "capacity": 2,
+  "train_samples": 64,
+  "holdout_samples": 32,
+  "seeds": [
+    {
+      "seed": 11,
+      "router_fit_updates": 1,
+      "lineage_rate": 1.0,
+      "closed_assembly_count": 64,
+      "checkpoint_continuation": true,
+      "conditions": {
+        "learned": {
+          "route_success_rate": 1.0,
+          "world_transition_success_rate": 1.0,
+          "one_transition_history_rate": 1.0
+        },
+        "none": {
+          "route_success_rate": 0.0,
+          "world_transition_success_rate": 0.0,
+          "one_transition_history_rate": 1.0
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "router_fit_updates": 1,
+      "lineage_rate": 1.0,
+      "closed_assembly_count": 64,
+      "checkpoint_continuation": true,
+      "conditions": {
+        "learned": {
+          "route_success_rate": 1.0,
+          "world_transition_success_rate": 1.0,
+          "one_transition_history_rate": 1.0
+        },
+        "none": {
+          "route_success_rate": 0.0,
+          "world_transition_success_rate": 0.0,
+          "one_transition_history_rate": 1.0
+        }
+      }
+    },
+    {
+      "seed": 47,
+      "router_fit_updates": 1,
+      "lineage_rate": 1.0,
+      "closed_assembly_count": 64,
+      "checkpoint_continuation": true,
+      "conditions": {
+        "learned": {
+          "route_success_rate": 1.0,
+          "world_transition_success_rate": 1.0,
+          "one_transition_history_rate": 1.0
+        },
+        "none": {
+          "route_success_rate": 0.0,
+          "world_transition_success_rate": 0.0,
+          "one_transition_history_rate": 1.0
+        }
+      }
+    }
+  ],
+  "aggregate": {
+    "learned_route_success_rate_min": 1.0,
+    "learned_world_transition_success_rate_min": 1.0,
+    "none_route_success_rate_max": 0.0,
+    "lineage_rate_min": 1.0,
+    "checkpoint_continuation": true,
+    "closed_assembly_count": 192,
+    "passed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "learned route/world success >= 0.90, none lesion <= 0.10, lineage and checkpoint continuation complete, and every holdout closes two assemblies"
+  }
+}

@@ -40,11 +40,7 @@ def test_percept_lineage_reaches_workspace_and_world_and_survives_checkpoint() -
 
     closed_state = None
     for tick, symbol in enumerate((97, 98, 99)):
-        world_state = (
-            None
-            if tick != 2
-            else WorldState(tick=model.tick + 1, latent=torch.zeros(2))
-        )
+        world_state = None if tick != 2 else WorldState(tick=model.tick + 1, latent=torch.zeros(2))
         model.observe_event(
             Observation(
                 modality="text-byte",

@@ -196,6 +196,11 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
   同时进入 `WorkspaceState` 和 `WorldState`；外部环境替换 world state 时不丢失当前感知 lineage，
   native checkpoint 往返保持一致，相关定向回归 `21 passed`。这只收口来源可审计性，不等于 perception-to-world
   的 holdout 能力已经通过。
+- P2→P3 perception-to-world closure Gate 已通过：`reports/taiji_p2_p3_closure_20260827.json`
+  在 64 train / 32 新对象与新候选组合 holdout、3 seeds 上，learned route/world transition 最差均为
+  `1.0`，none workspace lesion 最高为 `0.0`，lineage 最差为 `1.0`，192 次 boundary-closed assembly
+  与 3/3 checkpoint continuation 全部成立；`shared16` relation subgate 复核仍为 true。该 Gate 证明
+  runtime provenance 与窄 world transition 已闭环，不等于长程世界建模或开放域语义理解。
 - 2026-08-26 门禁与 checkpoint 收口：CI 因 pin 了不存在的 `black==24.12.0` 连续 8 天红灯且期间所有门禁被静默跳过，已改钉
   `ruff==0.16.4` / `black==26.5.1`；`TSKV8Adapter.checkpoint()`/`restore()` 补齐 `cognitive_state` 往返后，全量测试为
   `437 passed, 5 skipped`。门禁可信度、mypy 类型债、checkpoint 往返不变量和本目录编制纪律见总路线第 14.1–14.4 节。

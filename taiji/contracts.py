@@ -758,9 +758,7 @@ class WorkspaceState:
         if self.percept_boundary_closed and (
             not self.percept_event_id or not self.percept_assembly_id
         ):
-            raise ValueError(
-                "closed workspace percept lineage requires event and assembly ids"
-            )
+            raise ValueError("closed workspace percept lineage requires event and assembly ids")
         if self.selection is not None:
             if self.selection.tick != self.tick:
                 raise ValueError("workspace selection tick must match workspace tick")
