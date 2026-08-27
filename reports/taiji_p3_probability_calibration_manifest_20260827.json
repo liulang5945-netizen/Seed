@@ -27,7 +27,9 @@
     "new relation/target context remains unseen and maximally uncertain",
     "holdout prediction cannot increase transition evidence count",
     "native checkpoint restores ledger-driven probability and uncertainty",
-    "world-model lesion fails closed for planner projection"
+    "world-model lesion fails closed for planner projection",
+    "risk-sensitive planner penalizes conflicted mode more than stochastic mode",
+    "multi-step rollout scoring preserves the same mode-specific risk penalty"
   ],
   "boundary": "probability calibration contract; not general stochastic world prediction"
 }

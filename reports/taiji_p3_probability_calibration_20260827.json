@@ -12,7 +12,9 @@
       "unseen_relation_prediction": true,
       "holdout_feedback_isolated": true,
       "checkpoint_continuation": true,
-      "world_model_lesion": true
+      "world_model_lesion": true,
+      "risk_sensitive_planning": true,
+      "risk_sensitive_rollout": true
     },
     {
       "seed": 29,
@@ -25,7 +27,9 @@
       "unseen_relation_prediction": true,
       "holdout_feedback_isolated": true,
       "checkpoint_continuation": true,
-      "world_model_lesion": true
+      "world_model_lesion": true,
+      "risk_sensitive_planning": true,
+      "risk_sensitive_rollout": true
     },
     {
       "seed": 47,
@@ -38,7 +42,9 @@
       "unseen_relation_prediction": true,
       "holdout_feedback_isolated": true,
       "checkpoint_continuation": true,
-      "world_model_lesion": true
+      "world_model_lesion": true,
+      "risk_sensitive_planning": true,
+      "risk_sensitive_rollout": true
     }
   ],
   "aggregate": {
@@ -48,6 +54,8 @@
     "holdout_feedback_isolated_min": 1.0,
     "checkpoint_continuation_min": 1.0,
     "world_model_lesion_min": 1.0,
+    "risk_sensitive_planning_min": 1.0,
+    "risk_sensitive_rollout_min": 1.0,
     "brier_max": 0.24000000000000005,
     "nll_max": 0.6730116670092564,
     "reward_mae_max": 0.0,
