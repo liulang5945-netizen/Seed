@@ -104,6 +104,56 @@ class PlanningCandidate:
 
 
 @dataclass(frozen=True)
+class RecoveryRolloutLineage:
+    """The runtime boundary under which a recovery rollout was synthesized."""
+
+    capability_tick: int
+    capability_actions: tuple[int, ...]
+    capability_action_kinds: tuple[str, ...]
+    affordance_id: str
+    schema_revision: int
+
+    def __post_init__(self) -> None:
+        if int(self.capability_tick) < 0:
+            raise ValueError("recovery capability_tick cannot be negative")
+        if not self.capability_actions or len(self.capability_actions) != len(
+            self.capability_action_kinds
+        ):
+            raise ValueError("recovery capability actions and kinds must be aligned")
+        if len(set(self.capability_actions)) != len(self.capability_actions):
+            raise ValueError("recovery capability actions must be unique")
+        if len(set(self.capability_action_kinds)) != len(self.capability_action_kinds):
+            raise ValueError("recovery capability action_kinds must be unique")
+        if any(int(action) < 0 for action in self.capability_actions):
+            raise ValueError("recovery capability actions cannot be negative")
+        if any(not kind for kind in self.capability_action_kinds):
+            raise ValueError("recovery capability action_kinds cannot be empty")
+        if not self.affordance_id:
+            raise ValueError("recovery affordance_id cannot be empty")
+        if int(self.schema_revision) < 0:
+            raise ValueError("recovery schema_revision cannot be negative")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "capability_tick": self.capability_tick,
+            "capability_actions": list(self.capability_actions),
+            "capability_action_kinds": list(self.capability_action_kinds),
+            "affordance_id": self.affordance_id,
+            "schema_revision": self.schema_revision,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> RecoveryRolloutLineage:
+        return cls(
+            capability_tick=int(payload["capability_tick"]),
+            capability_actions=tuple(int(item) for item in payload["capability_actions"]),
+            capability_action_kinds=tuple(str(item) for item in payload["capability_action_kinds"]),
+            affordance_id=str(payload["affordance_id"]),
+            schema_revision=int(payload["schema_revision"]),
+        )
+
+
+@dataclass(frozen=True)
 class PlanningDecision:
     """The scored executable plans and the currently selected action."""
 
@@ -122,6 +172,7 @@ class ImaginedRollout:
     confidence: float
     provenance: str = "imagined"
     concept_sequence_affinity: float = 0.0
+    recovery_lineage: RecoveryRolloutLineage | None = None
 
     def __post_init__(self) -> None:
         if not self.rollout_id or not self.goal_id:
@@ -132,6 +183,10 @@ class ImaginedRollout:
         _unit(self.concept_sequence_affinity, "concept_sequence_affinity")
         if self.provenance != "imagined":
             raise ValueError("rollout provenance must be imagined")
+        if self.recovery_lineage is not None and not isinstance(
+            self.recovery_lineage, RecoveryRolloutLineage
+        ):
+            raise TypeError("recovery_lineage must be a RecoveryRolloutLineage or None")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -140,6 +195,9 @@ class ImaginedRollout:
             "confidence": self.confidence,
             "provenance": self.provenance,
             "concept_sequence_affinity": self.concept_sequence_affinity,
+            "recovery_lineage": (
+                None if self.recovery_lineage is None else self.recovery_lineage.to_payload()
+            ),
             "steps": [
                 {
                     "candidate_id": step.candidate_id,
@@ -166,6 +224,11 @@ class ImaginedRollout:
             confidence=float(payload["confidence"]),
             provenance=str(payload.get("provenance", "imagined")),
             concept_sequence_affinity=float(payload.get("concept_sequence_affinity", 0.0)),
+            recovery_lineage=(
+                None
+                if payload.get("recovery_lineage") is None
+                else RecoveryRolloutLineage.from_payload(payload["recovery_lineage"])
+            ),
             steps=tuple(
                 PlanningCandidate(
                     candidate_id=str(item["candidate_id"]),

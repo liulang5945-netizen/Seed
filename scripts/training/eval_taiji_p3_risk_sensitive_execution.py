@@ -19,6 +19,7 @@ from scripts.training.eval_taiji_p3_open_set import (  # noqa: E402
     _world,
 )
 from taiji import (  # noqa: E402
+    EnvironmentCapability,
     EnvironmentOutcome,
     Goal,
     GoalPlanner,
@@ -380,6 +381,37 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         goal_id="reach-world",
         resource_budget=1.0,
     )
+    capability = restored.environment_capability
+    if capability is None:
+        raise RuntimeError("risk execution recovery lost environment capability")
+    lineage_recorded = bool(
+        synthesized_recovery
+        and all(
+            rollout.recovery_lineage is not None
+            and rollout.recovery_lineage.capability_tick == capability.tick
+            and rollout.recovery_lineage.capability_actions == capability.actions
+            and rollout.recovery_lineage.capability_action_kinds == capability.action_kinds
+            and rollout.recovery_lineage.schema_revision
+            == restored_learner.schema_registry.active_version
+            for rollout in synthesized_recovery
+        )
+    )
+    lineage = synthesized_recovery[0].recovery_lineage
+    if lineage is None:
+        raise RuntimeError("recovery synthesis did not record rollout lineage")
+    stale_planning_rejected = False
+    stale_rollout = replace(
+        synthesized_recovery[0],
+        recovery_lineage=replace(
+            lineage,
+            capability_actions=(11,),
+            capability_action_kinds=("idle",),
+        ),
+    )
+    try:
+        restored.plan_rollouts((stale_rollout,))
+    except RuntimeError as error:
+        stale_planning_rejected = "stale" in str(error)
     recovery_rollout = next(
         rollout for rollout in synthesized_recovery if rollout.steps[0].action.kind == "idle"
     )
@@ -388,6 +420,14 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     )
     restored.plan_rollouts(synthesized_recovery)
     planned_recovery_branch = restored.recovery_branch
+    recovery_checkpoint = restored.native_checkpoint()
+    checkpointed_recovery = TSKV8Adapter.from_native_checkpoint(recovery_checkpoint)
+    checkpoint_lineage_preserved = bool(
+        checkpointed_recovery._planned_rollout is not None
+        and checkpointed_recovery._planned_rollout.recovery_lineage
+        == restored._planned_rollout.recovery_lineage
+    )
+    restored = checkpointed_recovery
     recovery_environment = _ScriptedEnvironment(
         (
             replace(
@@ -407,6 +447,43 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         available_actions=(11,),
         action_kinds=("idle",),
     )
+    restored._cognitive_state = replace(
+        restored._cognitive_state,
+        environment_capability=EnvironmentCapability(
+            actions=(11,),
+            action_kinds=("idle",),
+            tick=restored.cognitive_snapshot().world.tick,
+        ),
+    )
+    stale_execution_rejected = False
+    try:
+        restored.execute_imagined_rollout_step(
+            recovery_environment,
+            available_actions=(11,),
+            action_kinds=("idle",),
+            learn=False,
+            learn_world=True,
+        )
+    except RuntimeError as error:
+        stale_execution_rejected = "stale" in str(error)
+    if not stale_execution_rejected or recovery_environment.actions:
+        raise RuntimeError("stale recovery execution was not rejected before the environment step")
+    restored._cognitive_state = replace(
+        restored._cognitive_state,
+        environment_capability=capability,
+    )
+    synthesized_recovery = restored.synthesize_recovery_rollouts(
+        goal_id="reach-world",
+        resource_budget=1.0,
+    )
+    recovery_rollout = next(
+        rollout for rollout in synthesized_recovery if rollout.steps[0].action.kind == "idle"
+    )
+    risky_recovery = next(
+        rollout for rollout in synthesized_recovery if rollout.steps[0].action.kind == "secure"
+    )
+    restored.plan_rollouts(synthesized_recovery)
+    planned_recovery_branch = restored.recovery_branch
     recovery = restored.execute_imagined_rollout_step(
         recovery_environment,
         available_actions=(11,),
@@ -467,6 +544,10 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
                 for rollout in synthesized_recovery
             )
         ),
+        "recovery_lineage_recorded": lineage_recorded,
+        "stale_planning_rejected": stale_planning_rejected,
+        "stale_execution_rejected": stale_execution_rejected,
+        "checkpoint_lineage_preserved": checkpoint_lineage_preserved,
         "recovery_synthesized_candidates": [
             {
                 "kind": rollout.steps[0].action.kind,
@@ -617,6 +698,10 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "recovery_branch_filters_rejected_action",
         "recovery_branch_selects_low_risk_counterfactual",
         "recovery_candidates_generated_from_affordances",
+        "recovery_lineage_recorded",
+        "stale_planning_rejected",
+        "stale_execution_rejected",
+        "checkpoint_lineage_preserved",
         "recovery_complete",
         "trace_complete",
         "checkpoint_trace_complete",
@@ -656,6 +741,10 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "resource-budget-filter",
             "environment-capability-discovery",
             "capability-refresh-after-step",
+            "recovery-lineage-freshness",
+            "stale-plan-rejection",
+            "stale-execution-rejection",
+            "recovery-lineage-checkpoint",
             "checkpoint-no-replay",
             "recovery-rollout-continuation",
         ],
@@ -675,7 +764,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         },
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce motor capability and resource budget, consume the current environment-reported capability, preserve and restore that capability through checkpoint, refresh it after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
+            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce motor capability and resource budget, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve and restore that lineage through checkpoint, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
         },
     }
 

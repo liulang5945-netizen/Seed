@@ -159,6 +159,7 @@ from .planning import (
     PlanningCandidate,
     PlanningConfig,
     PlanningDecision,
+    RecoveryRolloutLineage,
     RolloutDecision,
 )
 from .procedural_memory import (
@@ -327,6 +328,7 @@ __all__ = [
     "PlanningCandidate",
     "PlanningConfig",
     "PlanningDecision",
+    "RecoveryRolloutLineage",
     "RolloutDecision",
     "PLANNING_CHECKPOINT_FORMAT",
     "ProceduralMemoryLearner",
