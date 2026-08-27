@@ -226,6 +226,7 @@ class TaijiConfig:
     structural_error_threshold: float = 0.35
     world_calibration_history_limit: int = 128
     cognitive_lineage_history_limit: int = 256
+    recovery_archive_capacity: int = 256
     concept_similarity_threshold: float = 0.85
     concept_signal_weights: tuple[float, float, float] = (0.45, 0.35, 0.20)
     concept_capacity: int = 256
@@ -370,6 +371,8 @@ class TaijiConfig:
             raise ValueError("world_calibration_history_limit must be positive")
         if self.cognitive_lineage_history_limit <= 0:
             raise ValueError("cognitive_lineage_history_limit must be positive")
+        if self.recovery_archive_capacity <= 0:
+            raise ValueError("recovery_archive_capacity must be positive")
         if not 0.0 < self.concept_similarity_threshold <= 1.0:
             raise ValueError("concept_similarity_threshold must be in (0, 1]")
         if (

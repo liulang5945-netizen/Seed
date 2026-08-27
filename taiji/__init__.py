@@ -154,12 +154,15 @@ from .neuron_region import (
 from .organs import ByteMotor, ByteSensor, SparseReceptorBank
 from .perception import LearnedPerception
 from .planning import (
+    RECOVERY_ARCHIVE_CHECKPOINT_FORMAT,
     PLANNING_CHECKPOINT_FORMAT,
     GoalPlanner,
     ImaginedRollout,
     PlanningCandidate,
     PlanningConfig,
     PlanningDecision,
+    RecoveryArchiveEntry,
+    RecoveryPortfolioArchive,
     RecoveryPortfolio,
     RecoveryRolloutLineage,
     RolloutDecision,
@@ -332,6 +335,9 @@ __all__ = [
     "PlanningDecision",
     "RecoveryRolloutLineage",
     "RecoveryPortfolio",
+    "RecoveryArchiveEntry",
+    "RecoveryPortfolioArchive",
+    "RECOVERY_ARCHIVE_CHECKPOINT_FORMAT",
     "RolloutDecision",
     "PLANNING_CHECKPOINT_FORMAT",
     "ProceduralMemoryLearner",
