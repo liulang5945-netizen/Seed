@@ -128,7 +128,7 @@ def _checkpoint_digest(payload: Mapping[str, Any]) -> str:
             digest.update(b"tensor:")
             digest.update(str(tensor.dtype).encode("utf-8"))
             digest.update(repr(tuple(tensor.shape)).encode("utf-8"))
-            digest.update(tensor.numpy().tobytes())
+            digest.update(bytes(tensor.view(torch.uint8).reshape(-1).tolist()))
             return
         if isinstance(value, Mapping):
             digest.update(b"mapping:")
