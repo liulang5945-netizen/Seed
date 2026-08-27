@@ -155,6 +155,7 @@ from .organs import ByteMotor, ByteSensor, SparseReceptorBank
 from .perception import LearnedPerception
 from .planning import (
     RECOVERY_ARCHIVE_CHECKPOINT_FORMAT,
+    RECOVERY_READER_ATTRIBUTION_CHECKPOINT_FORMAT,
     RECOVERY_READER_DEPENDENCY_CHECKPOINT_FORMAT,
     RECOVERY_STRATEGY_LEDGER_CHECKPOINT_FORMAT,
     PLANNING_CHECKPOINT_FORMAT,
@@ -166,6 +167,7 @@ from .planning import (
     RecoveryArchiveEntry,
     RecoveryPortfolioArchive,
     RecoveryPortfolio,
+    RecoveryReaderContribution,
     RecoveryReaderDependency,
     RecoveryReaderDependencyGraph,
     RecoveryRolloutLineage,
@@ -344,8 +346,10 @@ __all__ = [
     "RecoveryArchiveEntry",
     "RecoveryPortfolioArchive",
     "RECOVERY_ARCHIVE_CHECKPOINT_FORMAT",
+    "RecoveryReaderContribution",
     "RecoveryReaderDependency",
     "RecoveryReaderDependencyGraph",
+    "RECOVERY_READER_ATTRIBUTION_CHECKPOINT_FORMAT",
     "RECOVERY_READER_DEPENDENCY_CHECKPOINT_FORMAT",
     "RecoveryStrategyApproval",
     "RecoveryStrategyLedger",

@@ -2,6 +2,7 @@ from dataclasses import replace
 
 from taiji import (
     RecoveryArchiveEntry,
+    RecoveryReaderContribution,
     RecoveryReaderDependencyGraph,
     RecoveryStrategyLedger,
 )
@@ -128,3 +129,57 @@ def test_recovery_reader_dependencies_retain_unaffected_reader() -> None:
     assert updated.dependency_for("audit") is not None
     assert updated.dependency_for("audit").strategy_rollout_ids == ("survivor",)
     assert "audit" not in graph.reader_kinds_for_rollout("primary")
+
+
+def test_recovery_reader_contribution_roundtrip_and_revocation() -> None:
+    ledger = RecoveryStrategyLedger(memory_budget=1.0)
+    admitted = ledger.admit(
+        _entry(
+            "primary",
+            resource_cost=0.2,
+            evidence_count=2,
+            outcome_consistency=1.0,
+        ),
+        memory_id="memory-primary",
+    )
+    admitted = admitted.admit(
+        _entry(
+            "survivor",
+            resource_cost=0.2,
+            evidence_count=2,
+            outcome_consistency=1.0,
+        ),
+        memory_id="memory-survivor",
+    )
+    selected = admitted.selected_approvals
+    contributions = tuple(
+        RecoveryReaderContribution(
+            reader_kind="semantic",
+            strategy_rollout_id=approval.rollout_id,
+            memory_id=approval.memory_id,
+            effect_delta_l2=float(index + 1),
+            credit=float(index + 1) / sum(range(1, len(selected) + 1)),
+            replay_epochs=3,
+            replay_learning_rate=0.05,
+        )
+        for index, approval in enumerate(selected)
+    )
+    graph = RecoveryReaderDependencyGraph().bind(
+        "semantic",
+        selected,
+        contributions=contributions,
+        base_checkpoint={"value": 1},
+        base_checkpoint_digest="baseline-digest",
+    )
+    restored = RecoveryReaderDependencyGraph.from_payload(graph.to_payload())
+    assert restored == graph
+    assert restored.dependency_for("semantic") is not None
+    assert len(restored.dependency_for("semantic").contributions) == len(selected)
+
+    revoked = admitted.revoke("primary")
+    updated = restored.retain_selected(revoked.selected_approvals)
+    dependency = updated.dependency_for("semantic")
+    assert dependency is not None
+    assert dependency.strategy_rollout_ids == ("survivor",)
+    assert dependency.contributions[0].strategy_rollout_id == "survivor"
+    assert dependency.base_checkpoint_digest == "baseline-digest"

@@ -44,24 +44,33 @@ class ProceduralMemoryLearner(nn.Module):
         self.consolidation_count = 0
 
     def _batch(
-        self, records: Iterable[EpisodicMemoryRecord]
+        self,
+        records: Iterable[EpisodicMemoryRecord],
+        *,
+        action_kinds: Sequence[str] | None = None,
     ) -> tuple[torch.Tensor, torch.Tensor, tuple[str, ...]]:
         records = tuple(records)
         if not records:
             raise ValueError("procedural consolidation needs episodic records")
-        action_kinds_set: set[str] = set()
+        discovered_action_kinds: set[str] = set()
         for record in records:
             action_intent = record.action_intent
             if action_intent is None:
                 raise ValueError("procedural consolidation needs records with action intents")
-            action_kinds_set.add(action_intent.kind)
-        action_kinds = tuple(sorted(action_kinds_set))
-        if not action_kinds:
+            discovered_action_kinds.add(action_intent.kind)
+        resolved_action_kinds = (
+            tuple(sorted(discovered_action_kinds))
+            if action_kinds is None
+            else tuple(dict.fromkeys(str(kind) for kind in action_kinds))
+        )
+        if not resolved_action_kinds:
             raise ValueError("procedural consolidation needs at least one action kind")
+        if not discovered_action_kinds.issubset(resolved_action_kinds):
+            raise ValueError("procedural records contain an action kind outside the readout")
         cues = torch.stack([record.cue.detach().to(dtype=torch.float32) for record in records])
         if cues.ndim != 2 or cues.shape[1] != self.cue_dim:
             raise ValueError("procedural record cue dimensions do not match the learner")
-        kind_to_index = {kind: index for index, kind in enumerate(action_kinds)}
+        kind_to_index = {kind: index for index, kind in enumerate(resolved_action_kinds)}
         target_indices: list[int] = []
         for record in records:
             action_intent = record.action_intent
@@ -69,7 +78,7 @@ class ProceduralMemoryLearner(nn.Module):
                 raise ValueError("procedural consolidation needs records with action intents")
             target_indices.append(kind_to_index[action_intent.kind])
         targets = torch.tensor(target_indices, dtype=torch.long, device=cues.device)
-        return cues, targets, action_kinds
+        return cues, targets, resolved_action_kinds
 
     def _ensure_readout(self, action_kinds: tuple[str, ...]) -> None:
         if self.readout is None:
@@ -89,14 +98,18 @@ class ProceduralMemoryLearner(nn.Module):
         *,
         epochs: int = 300,
         learning_rate: float = 0.1,
+        action_kinds: Sequence[str] | None = None,
     ) -> float:
         """Replay experienced action intents into the slow procedural readout."""
 
         if int(epochs) <= 0 or float(learning_rate) <= 0.0:
             raise ValueError("procedural consolidation epochs and learning_rate must be positive")
         records = source.records if isinstance(source, EpisodicMemoryStore) else tuple(source)
-        cues, targets, action_kinds = self._batch(records)
-        self._ensure_readout(action_kinds)
+        cues, targets, resolved_action_kinds = self._batch(
+            records,
+            action_kinds=action_kinds,
+        )
+        self._ensure_readout(resolved_action_kinds)
         assert self.readout is not None
         cues = cues.to(self.readout.weight.device)
         targets = targets.to(self.readout.weight.device)
@@ -217,6 +230,7 @@ class ProceduralSequenceLearner(nn.Module):
         *,
         epochs: int = 300,
         learning_rate: float = 0.05,
+        action_kinds: Sequence[str] | None = None,
     ) -> float:
         """Replay ordered episodes into the recurrent procedural state."""
 
@@ -226,7 +240,7 @@ class ProceduralSequenceLearner(nn.Module):
             )
         records = source.records if isinstance(source, EpisodicMemoryStore) else tuple(source)
         episodes = self._episodes(records)
-        action_kinds = tuple(
+        discovered_action_kinds = tuple(
             sorted(
                 {
                     record.action_intent.kind
@@ -236,9 +250,16 @@ class ProceduralSequenceLearner(nn.Module):
                 }
             )
         )
-        if not action_kinds:
+        resolved_action_kinds = (
+            discovered_action_kinds
+            if action_kinds is None
+            else tuple(dict.fromkeys(str(kind) for kind in action_kinds))
+        )
+        if not resolved_action_kinds:
             raise ValueError("sequential consolidation needs action kinds")
-        self._ensure_readout(action_kinds)
+        if not set(discovered_action_kinds).issubset(resolved_action_kinds):
+            raise ValueError("sequential records contain an action kind outside the readout")
+        self._ensure_readout(resolved_action_kinds)
         assert self.readout is not None
         batches = []
         for episode in episodes:
