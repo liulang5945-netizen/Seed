@@ -418,6 +418,7 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     stale_planning_rejected = False
     stale_rollout = replace(
         synthesized_recovery[0],
+        rollout_id=f"{synthesized_recovery[0].rollout_id}:stale-capability",
         recovery_lineage=replace(
             lineage,
             capability_actions=(11,),
@@ -431,6 +432,7 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     stale_content_rejected = False
     stale_content_rollout = replace(
         synthesized_recovery[0],
+        rollout_id=f"{synthesized_recovery[0].rollout_id}:stale-content",
         recovery_lineage=replace(lineage, affordance_content_identity="replaced-content"),
     )
     try:
@@ -451,6 +453,7 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     )
     stale_action_rollout = replace(
         synthesized_recovery[0],
+        rollout_id=f"{synthesized_recovery[0].rollout_id}:stale-action",
         steps=(replace(synthesized_recovery[0].steps[0], action=stale_action),),
     )
     try:
@@ -462,6 +465,26 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     )
     risky_recovery = next(
         rollout for rollout in synthesized_recovery if rollout.steps[0].action.kind == "secure"
+    )
+    restored.plan_rollouts(synthesized_recovery)
+    selected_portfolio = restored.recovery_portfolio
+    portfolio_selection_audited = bool(
+        selected_portfolio is not None
+        and selected_portfolio.selected_rollout_id == recovery_rollout.rollout_id
+        and selected_portfolio.status_for(recovery_rollout.rollout_id) == "selected"
+        and set(candidate.rollout_id for candidate in selected_portfolio.active_candidates())
+        == {recovery_rollout.rollout_id, risky_recovery.rollout_id}
+    )
+    if selected_portfolio is None:
+        raise RuntimeError("recovery synthesis did not create a portfolio")
+    restored._recovery_portfolio = selected_portfolio.mark_pruned(risky_recovery.rollout_id)
+    portfolio_pruned_not_reintroduced = bool(
+        restored.recovery_portfolio is not None
+        and restored.recovery_portfolio.status_for(risky_recovery.rollout_id) == "pruned"
+        and risky_recovery.rollout_id
+        not in {
+            candidate.rollout_id for candidate in restored.recovery_portfolio.active_candidates()
+        }
     )
     restored.plan_rollouts(synthesized_recovery)
     planned_recovery_branch = restored.recovery_branch
@@ -479,6 +502,15 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         and checkpointed_recovery.recovery_budget is not None
         and checkpointed_recovery.recovery_budget.total_budget == 1.0
         and checkpointed_recovery.recovery_budget.consumed_resource == 0.0
+    )
+    checkpoint_portfolio_preserved = bool(
+        checkpointed_recovery.recovery_portfolio is not None
+        and checkpointed_recovery.recovery_portfolio.selected_rollout_id
+        == recovery_rollout.rollout_id
+        and checkpointed_recovery.recovery_portfolio.status_for(recovery_rollout.rollout_id)
+        == "selected"
+        and checkpointed_recovery.recovery_portfolio.status_for(risky_recovery.rollout_id)
+        == "pruned"
     )
     restored = checkpointed_recovery
     recovery_environment = _ScriptedEnvironment(
@@ -664,6 +696,9 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         "stale_execution_rejected": stale_execution_rejected,
         "checkpoint_lineage_preserved": checkpoint_lineage_preserved,
         "checkpoint_budget_preserved": checkpoint_budget_preserved,
+        "portfolio_selection_audited": portfolio_selection_audited,
+        "portfolio_pruned_not_reintroduced": portfolio_pruned_not_reintroduced,
+        "checkpoint_portfolio_preserved": checkpoint_portfolio_preserved,
         "recovery_suffix_rebound": recovery_suffix_rebound,
         "recovery_budget_not_bypassed": recovery_budget_not_bypassed,
         "duplicate_budget_consumption_blocked": duplicate_budget_consumption_blocked,
@@ -846,6 +881,9 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "stale_execution_rejected",
         "checkpoint_lineage_preserved",
         "checkpoint_budget_preserved",
+        "portfolio_selection_audited",
+        "portfolio_pruned_not_reintroduced",
+        "checkpoint_portfolio_preserved",
         "recovery_suffix_rebound",
         "recovery_budget_not_bypassed",
         "duplicate_budget_consumption_blocked",
@@ -898,6 +936,10 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "stepwise-recovery-rebinding",
             "global-budget-ledger",
             "idempotent-resource-consumption",
+            "persistent-recovery-portfolio",
+            "fair-active-branch-arbitration",
+            "portfolio-prune-non-reintroduction",
+            "portfolio-checkpoint-preservation",
             "checkpoint-no-replay",
             "recovery-rollout-continuation",
         ],
@@ -917,7 +959,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         },
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage and budget through checkpoint, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
+            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
         },
     }
 

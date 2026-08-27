@@ -160,6 +160,7 @@ from .planning import (
     PlanningCandidate,
     PlanningConfig,
     PlanningDecision,
+    RecoveryPortfolio,
     RecoveryRolloutLineage,
     RolloutDecision,
 )
@@ -330,6 +331,7 @@ __all__ = [
     "PlanningConfig",
     "PlanningDecision",
     "RecoveryRolloutLineage",
+    "RecoveryPortfolio",
     "RolloutDecision",
     "PLANNING_CHECKPOINT_FORMAT",
     "ProceduralMemoryLearner",
