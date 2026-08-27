@@ -630,6 +630,10 @@ P4 的最小真实经历边界已落地：
 - **「换新会话即可写入」这一推断已被实测否定（2026-08-26 新会话验证）**：在全新会话中按原 §16 逐条重跑，三条 API 路线全部失败：`gh repo edit --description` → `HTTP 403 Resource not accessible by integration`；`PUT /repos/{o}/{r}/topics` → 403，响应头 `X-Accepted-Github-Permissions: administration=write`；GraphQL `updateTopics` → `{"type":"FORBIDDEN","path":["updateTopics"]}`。同会话内二次 `RequestAuthorization` 仍返回 success，但进程内 `GH_TOKEN` 前缀与长度不变（`ghu_`/40），写入依旧 403。
 - **判据与根因**：`ghu_` 前缀说明这是 GitHub App 的 user-to-server 令牌，其能力上限由 **App installation 声明的 permission set** 决定，而非由本地 `RequestAuthorization` 的回执决定。`gh api repos/... --jq .permissions` 返回 `admin:true`（那是**账号对仓库的角色**）而 `X-Oauth-Scopes` 为空、`X-Accepted-Github-Permissions: administration=write`（那是**接口要求的 App 权限档**）——两者是不同维度，前者为 true 完全不蕴含后者放行。REST 与 GraphQL 走同一权限档，故 GraphQL 不是绕过 403 的后门。
 - **通用纪律**：授权类回执（"authorization granted"、"start a new conversation"）属于**未验证的能力承诺**，必须以一次真实写入调用作为唯一验收判据；不能把它写成计划里的"已解决"。同理，凡出现 `by integration` 措辞，不要再在同一令牌上换 REST/GraphQL/参数写法反复尝试——那是同一面墙的不同侧面，正确动作是换执行主体（本人网页操作或换用具备 `administration:write` 的 PAT）。
+- **闭环结果（2026-08-27，换执行主体后一次成功）**：用户在 GitHub 网页端完成三项写入，agent 侧用只需 `metadata=read` 的 `gh repo view --json description,repositoryTopics,homepageUrl,usesCustomOpenGraphImage,openGraphImageUrl` 复核并通过。这印证了上条纪律：受阻的是**执行主体的权限档**，不是方案本身，换主体后零重试即成功。
+- **复核纪律（易踩）**：不要肉眼比对 `gh repo view` 输出。description 须做**逐字符相等**判定（250+ 字符里一个折行或全角标点差异肉眼不可见），topics 须做**集合相等**判定（同时报 missing 与 unexpected，因为 GitHub 返回时按字母重排，顺序不同不等于内容不同，而漏一个/多一个才是真错）。social preview 的唯一可信判据是 `usesCustomOpenGraphImage: true` 加 `openGraphImageUrl` 非空——打开仓库页面看图会被浏览器缓存与 CDN 边缘缓存欺骗，看到旧图或看到新图都不足以定论。实测踩坑：PowerShell `>` 重定向会给 JSON 写入 UTF-8 BOM，Python `json.load` 直接抛 `Unexpected UTF-8 BOM`，须用 `encoding='utf-8-sig'` 读取。
+- **social preview 图的设计判据（改数字时复用）**：卡片在时间线里通常只被扫视约 1 秒，能留下的只有一个数字加一句机制主张，故只印 `0% → 94.12%`（全仓最强实测数字，来自双区 `[64, 48]` benchmark、seed 7 的 byte-cycle accuracy，见 README L203-L210）与 `no backprop / no attention`（区分于任何 Transformer 仓库的最短差异化陈述），并附 `two-region [64, 48] benchmark · seed 7` 使数字可追溯；不印 logo 或抽象插画。用 PIL 程序化渲染而非文生图，因为文生图会把数字糊掉，而这张图的全部价值就在数字的可读性上。配色取自现有品牌资产 `frontend/public/logo-taiji-ink.jpg` 的宣纸白 `#FAFBF6` 与焦墨黑 `#060604`，2× 超采样 + LANCZOS 缩放保证字缘锐利。
+- **首版两个缺陷及修正（记录以免重犯）**：（1）surprise 衰减曲线横穿底部文字，视觉上把 `surprise 5.4041 → 0.1069` 划成删除线——把自家指标划掉，语义完全反了；结论是**造成语义反转的装饰应删除而非挪位**，已移除该曲线。（2）太极水印用了 `INK_FAINT` 且坐标写死，压住 `94.12%`；改为浅色背景层，位置由实测文字宽度算出，空间不足时**自动不画**——宁可留白也不撞字。另外脚本自检本身也抓到过一次真实问题（`bbox=(100,66,1180,614)`，页脚距下边缘仅 26px，有被各平台按不同比例裁切的风险），压缩纵向节奏后收敛到 `(100,66) → (1180,596)`。
 - README 首屏顺序是唯一不依赖令牌权限的杠杆，且转化价值高于 topics（topics 带人进来，首屏决定是否留下）。原首屏被"命名分工 + 免责声明"占据，而最有传播力的两个资产（Transformer 责任对照表、`0%→94.12%` / `98.02%` 数字）分别埋在 L52 与 L184。已重排为：一句话机制主张 → badge → 对照表 → 实测数字 → 明示 status。**诚实声明一条未删**，只是移出首屏主位，并新增 `## Project scope` 承接原命名段。
 - 改 README 首屏必须回原文核对每个被前移的数字有出处（实测首屏 `94.12/5.4041/0.1069/98.02/83,841` 全部对应 L203-L210 原表），并确认锚点标题真实存在（`#reproducible-tsk-v8-kernel-results` → L197）以及旧免责声明残留计数为 0——Markdown 锚点失效与声明重复都不会报错，只会静默劣化。
 
@@ -669,11 +673,14 @@ P4 的最小真实经历边界已落地：
 
 ## 16. 当前唯一下一步
 
-**并行的用户侧动作（不占用「当前唯一下一步」名额，因为它不是 agent 可执行项）：由你在 GitHub 网页 Settings 页一次性填入 description + 13 个 topics + social preview 图。** 这三项已实测确认无法由 agent 写入（`ghu_` App 令牌缺 `administration:write`，REST 与 GraphQL 三条路线全部 403，且换新会话后复测仍全部 403，详见 14.10），继续在令牌上换写法是无效动作。写完后我用 `gh repo view --json description,repositoryTopics,usesCustomOpenGraphImage` 复核（读取只需 `metadata=read`，当前令牌可用）。
+**已完成（2026-08-27）：仓库可发现性元数据三项全部落地并通过程序化复核。** 由用户在 GitHub 网页端写入（agent 令牌缺 `administration:write`，详见 14.10），agent 侧用 `gh repo view --json description,repositoryTopics,homepageUrl,usesCustomOpenGraphImage,openGraphImageUrl` 复核：
 
-入口：`https://github.com/liulang5945-netizen/Seed` 顶部 **⚙ Settings**（description/topics 也可在仓库首页右侧 About 的齿轮里改）。
+- description：与定稿文本**逐字符相等**，252 字符（350 上限内）。
+- topics：**集合相等**，13/13，missing 0、unexpected 0。GitHub 返回时按字母重排，故只判集合不判顺序。清单为 `predictive-coding` `cognitive-architecture` `episodic-memory` `hebbian-learning` `local-learning` `online-learning` `computational-neuroscience` `neuromorphic-computing` `sparse-neural-networks` `world-models` `pytorch` `deep-learning` `artificial-intelligence`（选取依据与实测仓库计数见 14.10）。
+- social preview：`usesCustomOpenGraphImage: true`，`openGraphImageUrl` 指向 `repository-images.githubusercontent.com/1301491809/69a87c39-…`，即 GitHub 已完成 CDN 转存。图源为 `frontend/public/social-preview.png`（1280×640，139.9 KB），由 `scripts/make_social_preview.py` 生成，改文案后重跑即可重出图；脚本内置两道非零退出自检（墨迹 bbox 须落在四边 100px 安全边距内、产物须 <1 MB），首版两个已修正的缺陷记录见 14.10 上游条目。图不走仓库文件系统，仓库内保留 PNG 与脚本仅为可复现。
+- homepageUrl：**刻意留空**。项目暂无独立站点，填 README 锚点等于制造一个自指链接，对访客无增量信息。
 
-若希望后续这类元数据仍能由 agent 自动写入，唯一有效的换主体做法是：生成一个带 `Administration: Read and write` 的 fine-grained PAT（或给该 App installation 补上 Administration 权限），再把它作为 `GH_TOKEN` 提供给会话；届时下面两条命令即可放行。
+后续若要让 agent 自行改这类元数据，唯一有效做法是换执行主体：提供带 `Administration: Read and write` 的 fine-grained PAT 作为 `GH_TOKEN`（或给该 App installation 补 Administration 权限），届时下面两条命令即可放行。
 
 ```bash
 gh repo edit liulang5945-netizen/Seed --description "Byte-level predictive-coding kernel that learns online from local prediction errors: no backpropagation, no attention matrix, no optimizer. Sparse fixed-fan-in synapses, slot-free distributed episodic memory, lesion-controlled reproducible experiments."
@@ -688,16 +695,7 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
   -f "names[]=artificial-intelligence"
 ```
 
-定稿内容（网页填写时直接复制粘贴；上面命令块仅在换成有 `administration:write` 的令牌后才可用）：
-
-- description（252 字符，350 上限内，前 100 字符已承载核心主张）：
-  `Byte-level predictive-coding kernel that learns online from local prediction errors: no backpropagation, no attention matrix, no optimizer. Sparse fixed-fan-in synapses, slot-free distributed episodic memory, lesion-controlled reproducible experiments.`
-- topics（13 个，精准优先、覆盖面兜底；网页 About 面板里逐个粘贴回车）：`predictive-coding` `cognitive-architecture` `episodic-memory` `hebbian-learning` `local-learning` `online-learning` `computational-neuroscience` `neuromorphic-computing` `sparse-neural-networks` `world-models` `pytorch` `deep-learning` `artificial-intelligence`
-- homepage：留空或指向 README 的 reproducible results 锚点，不要指向尚未上线的站点。
-- social preview（= OpenGraph 卡片图，仓库链接被贴进微信/Slack/X/知乎时对方看到的那张图）：GitHub 从未提供 REST 接口，**这一项是唯一任何令牌都写不了、只能人工在 Settings → Social preview 上传的字段**。规格：1280×640 px（≥1.91:1）、<1 MB、PNG/JPG。图上只印两行——`0% → 94.12%`（全仓最强**实测**数字，来自已提交的双区 `[64, 48]` benchmark、seed 7 的 byte-cycle accuracy，见 README L203-L210）与 `no backprop / no attention`（一眼区分于任何 Transformer 仓库的最短差异化陈述）。不要印 logo 或抽象插画：卡片在时间线里通常只被扫视 1 秒，能留下的只有一个数字加一句机制主张。
-  - **图已生成，你无需再做图**：成品在 `frontend/public/social-preview.png`（1280×640，139.9 KB），直接上传即可。由 `scripts/make_social_preview.py` 以 PIL 渲染（2× 超采样 + LANCZOS 缩放保证字缘锐利），改文案后重跑脚本即可重出图；配色取自现有品牌资产 `frontend/public/logo-taiji-ink.jpg` 的宣纸白 `#FAFBF6` 与焦墨黑 `#060604`，并标注 `two-region [64, 48] benchmark · seed 7` 使数字可被追溯。脚本内置两道自检并在不满足时非零退出：墨迹 bbox 必须落在四边 100px 安全边距内（各平台按不同比例裁切），产物必须 <1 MB。
-  - 首版曾犯两个错并已修正，记录以免重犯：surprise 衰减曲线横穿底部文字，视觉上把 `surprise 5.4041 → 0.1069` 划成删除线（把自家指标划掉，语义反了），已删除该装饰；太极水印用了 `INK_FAINT` 且坐标写死，压住 `94.12%`，现改为浅色背景层且位置由实测文字宽度算出，空间不足时**自动不画**——宁可留白也不撞字。
-  - 注意：这张图**不走仓库文件系统**，上传后由 GitHub 存于自有 CDN（`opengraph.githubassets.com`）；仓库内保留 PNG 与脚本仅为可复现与后续改数字，放着不上传不会生效。
+注意 social preview 例外：GitHub 从未提供该字段的 REST/GraphQL 接口，**任何令牌都写不了**，只能人工在 Settings → Social preview 上传，换 PAT 也不能自动化这一项。
 
 **已完成：`TSKV8Adapter.step_cross_region_network()` 已把 growth/pruning/split/merge 所需的 activity、route evidence、prediction error、learning gain、holdout transfer 和资源压力接入可 checkpoint 的 runtime observation；Gate 为 `reports/taiji_runtime_structure_20260826.json`。无 expected activity 时不伪造 growth supervision，route credit 来自实际 target activity，runtime tick 不直接改变 topology。**
 
