@@ -1,71 +1,15 @@
 import { describe, it, expect } from 'vitest'
+import { useMarkdown } from '@/composables/useMarkdown.js'
 
 /**
- * parseMessageContent tests
+ * useMarkdown 真实模块测试
  *
- * Tests the message parsing logic that separates thinking from final answer.
+ * 历史教训：本文件曾复制一份「简化版」parseMessageContent 自测自答，
+ * 于是 renderMarkdown 把所有代码块渲染成 [object Object] 期间测试全绿。
+ * 现在只允许测真实导出。
  */
 
-// Simplified parseMessageContent for testing core logic
-function parseMessageContent(text) {
-  if (!text) return { reasoning: '', content: '' }
-
-  let reasoning = ''
-  let content = text
-
-  // 1. think tags
-  const thinkOpenMatch = text.match(/<think>/i)
-  if (thinkOpenMatch) {
-    const openIdx = thinkOpenMatch.index
-    const afterOpen = text.slice(openIdx + 7) // '<think>'.length = 7
-    const thinkCloseMatch = afterOpen.match(/<\/think>/i)
-    if (thinkCloseMatch) {
-      reasoning = afterOpen.slice(0, thinkCloseMatch.index).trim()
-      const beforeThink = text.slice(0, openIdx)
-      const afterThink = afterOpen.slice(thinkCloseMatch.index + 8) // '</think>'.length = 8
-      content = (beforeThink + afterThink).trim()
-      if (reasoning) return { reasoning, content }
-    } else {
-      reasoning = afterOpen.trim()
-      content = text.slice(0, openIdx).trim()
-      return { reasoning, content: content || '' }
-    }
-  }
-
-  // 2. English patterns using RegExp constructor to avoid multiline regex literal issues
-  const NL = '\\n'
-  const engPatterns = [
-    new RegExp('^\\s*[Tt]hought:\\s*([\\s\\S]*?)(?=' + NL + '\\s*(?:[Aa]nswer|[Ff]inal):|' + NL + '---|' + NL + NL + NL + '|$)', 'm'),
-    new RegExp('^\\s*[Rr]easoning:\\s*([\\s\\S]*?)(?=' + NL + '\\s*(?:[Aa]nswer|[Ff]inal):|' + NL + '---|' + NL + NL + NL + '|$)', 'm'),
-  ]
-  for (const pattern of engPatterns) {
-    const match = text.match(pattern)
-    if (match && match[1] && match[1].trim().length > 5) {
-      reasoning = match[1].trim()
-      const after = text.slice(match.index + match[0].length)
-      content = after.replace(/^\n?(?:Answer|Final):\s*/, '').replace(/^---\s*\n?/, '').trim()
-      if (reasoning) return { reasoning, content }
-    }
-  }
-
-  // 3. Reasoning: ... Answer: (simple single-line)
-  const engMatch = text.match(new RegExp('^Reasoning:\\s*([\\s\\S]*?)\\nAnswer:\\s*([\\s\\S]*)$', 'im'))
-  if (engMatch) {
-    return { reasoning: engMatch[1].trim(), content: engMatch[2].trim() }
-  }
-
-  // 4. --- separator
-  const sepMatch = text.match(new RegExp('^([\\s\\S]*?)\\n---\\n([\\s\\S]*)$'))
-  if (sepMatch) {
-    const first = sepMatch[1].trim()
-    const second = sepMatch[2].trim()
-    if (first.length < second.length * 1.5 && first.length > 20) {
-      return { reasoning: first, content: second }
-    }
-  }
-
-  return { reasoning: '', content: text }
-}
+const { renderMarkdown, parseMessageContent, formatDuration } = useMarkdown()
 
 describe('parseMessageContent', () => {
   describe('empty input', () => {
@@ -81,60 +25,70 @@ describe('parseMessageContent', () => {
 
   describe('think tags', () => {
     it('parses closed think tag', () => {
-      const text = '<think>analysis steps</think>\nfinal answer'
-      const result = parseMessageContent(text)
+      const result = parseMessageContent('<think>analysis steps</think>\nfinal answer')
       expect(result.reasoning).toBe('analysis steps')
       expect(result.content).toBe('final answer')
     })
 
     it('parses unclosed (streaming) think tag', () => {
-      const text = '<think>still reasoning...'
-      const result = parseMessageContent(text)
+      const result = parseMessageContent('<think>still reasoning...')
       expect(result.reasoning).toBe('still reasoning...')
       expect(result.content).toBe('')
     })
 
     it('preserves text before think tag', () => {
-      const text = 'prefix text<think>reasoning</think>\nsuffix answer'
-      const result = parseMessageContent(text)
+      const result = parseMessageContent('prefix text<think>reasoning</think>\nsuffix answer')
       expect(result.reasoning).toBe('reasoning')
       expect(result.content).toBe('prefix text\nsuffix answer')
     })
 
     it('handles empty think content', () => {
-      const text = '<think></think>\nanswer only'
-      const result = parseMessageContent(text)
-      expect(result.content).toContain('answer only')
+      expect(parseMessageContent('<think></think>\nanswer only').content).toContain('answer only')
     })
 
     it('is case insensitive for THINK', () => {
-      const text = '<THINK>uppercase reasoning</THINK>\nanswer'
-      const result = parseMessageContent(text)
+      const result = parseMessageContent('<THINK>uppercase reasoning</THINK>\nanswer')
       expect(result.reasoning).toBe('uppercase reasoning')
       expect(result.content).toBe('answer')
     })
+
+    it('supports the Chinese 推理 tag', () => {
+      const result = parseMessageContent('<推理>中文推理内容</推理>\n中文回答')
+      expect(result.reasoning).toBe('中文推理内容')
+      expect(result.content).toBe('中文回答')
+    })
   })
 
-  describe('English Thought/Answer pattern', () => {
-    it('parses Thought/Answer format', () => {
-      const text = 'Thought: Let me think about this carefully\nAnswer: The result is 42'
-      const result = parseMessageContent(text)
+  describe('label patterns', () => {
+    it('parses Thought/Answer format without leaking the Answer prefix', () => {
+      const result = parseMessageContent('Thought: Let me think about this carefully\nAnswer: The result is 42')
       expect(result.reasoning).toBe('Let me think about this carefully')
       expect(result.content).toBe('The result is 42')
     })
 
     it('parses Reasoning/Answer format', () => {
-      const text = 'Reasoning: Step by step analysis here\nAnswer: Conclusion'
-      const result = parseMessageContent(text)
+      const result = parseMessageContent('Reasoning: Step by step analysis here\nAnswer: Conclusion')
       expect(result.reasoning).toBe('Step by step analysis here')
       expect(result.content).toBe('Conclusion')
+    })
+
+    it('parses Chinese 思考过程/最终答案 without leaking the label', () => {
+      const result = parseMessageContent('思考过程：先拆解题目再计算\n最终答案：结果是 42')
+      expect(result.reasoning).toBe('先拆解题目再计算')
+      expect(result.content).toBe('结果是 42')
+    })
+
+    it('parses markdown header separated reasoning', () => {
+      const text = '## 思考\n逐步推导的中间过程\n## 回答\n最终结论'
+      const result = parseMessageContent(text)
+      expect(result.reasoning).toBe('逐步推导的中间过程')
+      expect(result.content).toBe('最终结论')
     })
   })
 
   describe('no separator', () => {
     it('plain text is not split', () => {
-      const text = 'This is a simple answer'
-      const result = parseMessageContent(text)
+      const result = parseMessageContent('This is a simple answer')
       expect(result.reasoning).toBe('')
       expect(result.content).toBe('This is a simple answer')
     })
@@ -152,5 +106,83 @@ describe('parseMessageContent', () => {
       expect(result.reasoning).toBe('Some reasoning that is long enough')
       expect(result.content).toBe('This is the much longer answer section with more text')
     })
+  })
+})
+
+describe('renderMarkdown', () => {
+  it('returns empty string for falsy input', () => {
+    expect(renderMarkdown('')).toBe('')
+    expect(renderMarkdown(null)).toBe('')
+  })
+
+  it('renders inline markdown', () => {
+    const html = renderMarkdown('普通文本 `inline` **粗体**')
+    expect(html).toContain('<code>inline</code>')
+    expect(html).toContain('<strong>粗体</strong>')
+  })
+
+  describe('code fence (regression: marked v13+ passes a token object)', () => {
+    it('emits the real code body, never [object Object]', () => {
+      const html = renderMarkdown('```python\nx = 1\n```')
+      expect(html).not.toContain('[object Object]')
+      expect(html).toContain('x = 1')
+    })
+
+    it('labels the fence language instead of always "text"', () => {
+      const html = renderMarkdown('```python\nx = 1\n```')
+      expect(html).toContain('<span class="code-lang">python</span>')
+    })
+
+    it('falls back to "text" for a fence with no language', () => {
+      const html = renderMarkdown('```\nplain block\n```')
+      expect(html).toContain('<span class="code-lang">text</span>')
+      expect(html).toContain('plain block')
+    })
+
+    it('keeps the copy button reachable by the delegation selector after sanitizing', () => {
+      const html = renderMarkdown('```js\nconst a = 1\n```')
+      const host = document.createElement('div')
+      host.innerHTML = html
+      const btn = host.querySelector('.code-copy-btn')
+      expect(btn).not.toBeNull()
+      // 委托处理器依赖 .code-block-wrapper > pre 这条链路取代码文本
+      expect(btn.closest('.code-block-wrapper')?.querySelector('pre')).not.toBeNull()
+    })
+
+    it('does not rely on data-* hooks, which DOMPurify strips', () => {
+      expect(renderMarkdown('```js\nconst a = 1\n```')).not.toContain('data-action')
+    })
+  })
+
+  describe('escaping (regression: unloaded grammar must not emit live HTML)', () => {
+    it('escapes angle brackets inside a code fence', () => {
+      const html = renderMarkdown('```js\nif (a<b) return "<div>";\n```')
+      expect(html).toContain('&lt;div&gt;')
+      expect(html).not.toContain('return "<div>"')
+    })
+
+    it('escapes code for an unknown fence language', () => {
+      const html = renderMarkdown('```definitely-not-a-language\n<img src=x>\n```')
+      expect(html).not.toContain('<img src=x>')
+      expect(html).toContain('&lt;img')
+    })
+
+    it('strips script tags from prose via DOMPurify', () => {
+      const html = renderMarkdown('文本 <script>alert(1)</script> 结束')
+      expect(html).not.toContain('<script')
+    })
+  })
+})
+
+describe('formatDuration', () => {
+  it('returns - for non-positive input', () => {
+    expect(formatDuration(0)).toBe('-')
+    expect(formatDuration(null)).toBe('-')
+  })
+
+  it('formats seconds, minutes and hours', () => {
+    expect(formatDuration(45)).toBe('45s')
+    expect(formatDuration(125)).toBe('2m 5s')
+    expect(formatDuration(3720)).toBe('1h 2m')
   })
 })

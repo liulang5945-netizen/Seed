@@ -645,7 +645,68 @@ P4 的最小真实经历边界已落地：
 
 **方法论沉淀**：本轮三个问题全部是「上一轮修复引入的新缺陷」，且两个的初诊都是错的（白屏一度归因 CSS 重复、对话框一度归因未创建）。有效手段是**实证否定**而非推理：CSS 用导入序+级联语义排除、对话框用子进程阻塞时长与文件系统副作用反证「已创建」、鉴权用穷举边界地址验证。凡涉及「看不见」的失败（透明元素、隐藏窗口），必须找到能观测的侧信道。
 
-遗留：`ChatView` chunk 已达 1 MB 需拆分；终端默认 shell 仍是 cmd.exe；侧边栏搜索框尚未接线为会话过滤；P6 真实语言器官接入仍是消除乱码的唯一根治路径。
+遗留：终端默认 shell 仍是 cmd.exe；侧边栏搜索框尚未接线为会话过滤；P6 真实语言器官接入仍是消除乱码的唯一根治路径。
+
+### 13.4 `ChatView` chunk 拆分与「假测试」收敛（2026-08-28）
+
+起因是 §13.3 的遗留项「`ChatView` chunk 已达 1 MB 需拆分」。拆分本身顺利，但过程中**顺带查出三个一直存在、且被测试全绿掩盖的生产 bug**。这一轮的真实价值在后者。
+
+#### 13.4.1 体积构成：唯一大头是 highlight.js 全量语法
+
+`frontend/src/` 中只有 `composables/useMarkdown.js` 一处 `import hljs from 'highlight.js'`，该默认入口静态注册全部语法。实测 `highlight.js` 目录构成（此前笔记里的「384 种语言」是勘误）：
+
+| 事实 | 数值 |
+|---|---|
+| 真实语法数 | **192** |
+| 名称总数（含别名） | 371（其中纯别名 179） |
+| `es/languages/` 文件数 | 384 = 192 真实语法 + 192 个 `<name>.js.js` 兼容 shim |
+| 单个语法极端体积 | `mathematica` 109,852 B（约 107 KB，此前白吃） |
+
+`highlight.js` 的 `exports` 条件映射在 `import` 条件下会把 `./lib/core` 解析到 `es/core.js`、`./lib/languages/*` 解析到 `es/languages/*.js`，所以 bare specifier 可直接用于 ESM 按需加载。
+
+#### 13.4.2 方案：core + 192 语法按需加载，而非静态挑选子集
+
+选择上限更高的方案：只静态引入 `highlight.js/lib/core`，**192 种语法一个不减**，全部改为按需动态加载。被否决的方案是「静态注册十几种常用语法」——那是能力降级。
+
+三个必须解决的技术前提，均以探针实测确认（探针用完即删）：
+
+1. **别名要在加载前就能解析。** hljs 的别名（`py`→`python`）只在语法注册后才生效，而 fence 标记恰恰在注册前到达；未注册语言调 `hljs.highlight` 会**抛异常**。因此在构建期生成 `frontend/src/composables/hljsAliases.js`（179 条纯别名，3,318 B）做前置映射。
+2. **`renderMarkdown` 不能变成 async。** 模板里是 `v-html="renderMarkdown(msg.content)"` 同步调用。解法：模块级 `grammarVersion = ref(0)`，`renderMarkdown` 内 `void grammarVersion.value` 读一次让 Vue 记为渲染依赖，语法到位后自增即触发重渲染 —— `ChatView.vue` **零改动**。
+3. **shim 不能进产物。** 曾断言「用精确路径 `import(\`…/${name}.js\`)` 就不会展开 shim」，**实测被证伪**：Rollup 把 `${name}` 当 `[^/]*` 匹配，`python-repl.js` 同样命中，产出 192 个永不加载的死 chunk（54,201 B）。改用 `import.meta.glob` 的否定模式 `'!…/*.js.js'` 后归零；该 record 同时充当白名单，未知语言名可同步拒绝而不发起失败请求。
+
+#### 13.4.3 三个被「假测试」掩盖的生产 bug
+
+`src/__tests__/useMarkdown.test.js` 原本**复制了一份自己的 `parseMessageContent`**（注释写明 "Simplified … for testing core logic"），从不 import 真模块。11 个断言长期全绿，而真实模块同时坏着三处：
+
+| bug | 现象 | 根因 |
+|---|---|---|
+| 代码块内容全丢 | 每个 fence 渲染成 `[object Object]`，语言标签恒为 `text` | marked v13+ 把 `renderer.code` 改为接收 **token 对象**，代码仍用 v12 的位置参数 `code(code, lang)`，模板插值把对象字符串化 |
+| 答案标签残留 | 「思考过程：…\n最终答案：…」的正文开头留着「最终答案：」 | 清理正则 `/^(?:最终)?(?:回答\|答案)[：:]/` 缺少前导 `\s*`，而 lookahead 未消费的 `\n` 就在开头；且只认中文前缀，`Answer:`/`Final:` 完全没清 |
+| 复制按钮点不动 | 代码块「📋 复制」按钮全程无响应 | 钩子用 `data-action="copy-code"`，但 `purifyConfig` 里 `ALLOW_DATA_ATTR: false`，DOMPurify 每次都把它剥掉，而事件委托正以该属性为选择器 |
+
+三处均已修复。第三处按收敛原则**不放宽 `ALLOW_DATA_ATTR`**（那是有意的安全姿态），而是删掉多余标记、统一以已存活的 `.code-copy-btn` 类为锚点，取文本改走 `.code-block-wrapper > pre`。
+
+测试文件重写为 import 真模块，用例 11 → 27，新增覆盖：token 对象渲染器（正文非 `[object Object]`、语言标签正确、无语言回落 `text`）、未加载语法路径的 HTML 转义、未知 fence 标记的安全降级、`<推理>` 中文标签、中文标签不残留、markdown 标题分隔、`formatDuration`。**复制按钮的断言不测字符串而测契约**：把 HTML 塞进真实 DOM，验证委托选择器 `.code-copy-btn` 能选中、且 `.code-block-wrapper > pre` 可达。
+
+#### 13.4.4 验证与产物
+
+| 项目 | 结果 |
+|---|---|
+| `ChatView` chunk | **1,001.84 kB → 132.55 kB（−86.8%）**，gzip 44.03 kB；500 kB 警告消失 |
+| chunk 总数 / 死 shim | 207 个 / **0 个**（修正前为 399 / 192） |
+| 语法体外置校验 | ChatView 内 `LiveScript`/`Mathematica`/`PostgreSQL` 命中 **0** 次；对应语法各自成独立 chunk（`python` 3,258 B、`typescript` 7,590 B、`rust` 2,667 B、`x86asm` 19,007 B、`mathematica` 109,852 B）|
+| vitest | **19 文件 / 175 用例全通过**（原 160，useMarkdown 由 11 假断言 → 27 真断言）|
+| 重新打包 | `Seed.exe` 69.14 MB、`SeedBackend.exe` 69.07 MB（位于 `dist/Seed/`，**不在** `_internal/`），均为 2026-08-28 02:25:01 |
+| 内置前端一致性 | `frontend/dist/index.html` 与 `dist/Seed/_internal/frontend/dist/index.html` SHA256 同为 `5BE51F49FE10…`，**MATCH**（release.py 内部亦自校两次）|
+| 打包内产物断言 | 包内 `ChatView-C5zeGOa0.js` 129.45 KB、207 个 js chunk、`data-action` **0** 次 |
+
+`scripts/release.py --skip-nsis` 以 exit 1 结束，但**构建完整成功**（输出 "Seed v1.6.0 构建完成"、总大小 1273.7 MB、前端一致性两次通过）。失败来自沙箱拦截 PyInstaller 分析阶段对 `Python312/Lib/**/__pycache__/*.pyc.<pid>` 临时文件的写入，与构建结果无关 —— 这是本机第二类已知的「假红」（第一类见 §13.3.6 的 NSIS 缺失）。**判定打包成功必须看产物本身，不能看 release.py 的退出码。**
+
+改动文件（3 个）：`frontend/src/composables/useMarkdown.js`、`frontend/src/composables/hljsAliases.js`（新增，构建期生成）、`frontend/src/__tests__/useMarkdown.test.js`。
+
+**方法论沉淀**：本轮最大教训不是体积，而是**「测试复制被测逻辑」等于零覆盖且伪装成满覆盖**——`[object Object]` 这种毁灭级 bug 与 160 全绿共存了很久。凡是 `__tests__` 里出现被测函数的本地副本（尤其带 "Simplified"/"for testing" 字样），一律视为门禁缺口。其次，本轮我两次把推断写进代码注释（shim 是否展开、`${name + '.js'}` 是否改变模式），两次都靠实测产物计数才被纠正：**注释里不能出现未实测的构建行为断言**。
+
+遗留：终端默认 shell 仍是 cmd.exe；侧边栏搜索框尚未接线为会话过滤；`hljsAliases.js` 由一次性探针生成，highlight.js 升级后需重新生成（当前无自动化门禁）；P6 真实语言器官接入仍是消除乱码的唯一根治路径。
 
 ## 14. 持续门禁
 

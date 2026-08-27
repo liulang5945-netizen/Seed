@@ -1,11 +1,13 @@
 /**
  * Markdown 渲染 composable
  */
+import { ref } from 'vue';
 import { Marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
-import hljs from 'highlight.js';
+import hljs from 'highlight.js/lib/core';
 import 'highlight.js/styles/atom-one-dark.css';
 import DOMPurify from 'dompurify';
+import { HLJS_ALIASES } from './hljsAliases.js';
 
 // 仅允许安全字符，防止模型输出 lang 注入到 class 属性（XSS）
 function sanitizeLang(lang) {
@@ -14,26 +16,92 @@ function sanitizeLang(lang) {
   return cleaned || 'text'
 }
 
+// highlight.js 只装 core（74 KB），192 种语法按需动态加载。
+// grammarVersion 让「语法到位」成为响应式信号：调用方 watch 它即可重渲染。
+export const grammarVersion = ref(0);
+const loading = new Set();
+const failed = new Set();
+
+// hljs 内部语言名只含 [a-z0-9_+#.-]，别名表已在构建期生成
+function resolveGrammar(lang) {
+  const key = String(lang || '').toLowerCase();
+  if (!key) return '';
+  if (!/^[a-z0-9_+#.-]+$/.test(key)) return '';
+  return HLJS_ALIASES[key] || key;
+}
+
+// es/languages 下有 384 个文件：192 个真实语法 + 192 个 `<name>.js.js` 兼容 shim。
+// 动态 import 的模板字符串会被 Rollup 当 `*.js` 展开，连 shim 一起产出 192 个死 chunk
+// （实测 54 KB 永不加载的垃圾）。用 glob 的否定模式精确排除。
+const GRAMMAR_MODULES = import.meta.glob([
+  '../../node_modules/highlight.js/es/languages/*.js',
+  '!../../node_modules/highlight.js/es/languages/*.js.js',
+]);
+const GRAMMAR_PREFIX = '../../node_modules/highlight.js/es/languages/';
+
+function ensureGrammar(name) {
+  if (!name || hljs.getLanguage(name) || loading.has(name) || failed.has(name)) return;
+  const loader = GRAMMAR_MODULES[`${GRAMMAR_PREFIX}${name}.js`];
+  if (!loader) {
+    failed.add(name);
+    return;
+  }
+  loading.add(name);
+  loader()
+    .then((mod) => {
+      const def = mod.default || mod;
+      if (typeof def !== 'function') throw new Error('bad grammar module');
+      hljs.registerLanguage(name, def);
+      grammarVersion.value += 1;
+    })
+    .catch(() => {
+      // 未知语言（模型可能输出任意 fence 标记）：记下来，不再重试
+      failed.add(name);
+    })
+    .finally(() => {
+      loading.delete(name);
+    });
+}
+
 const marked = new Marked(
   markedHighlight({
     langPrefix: 'hljs language-',
     highlight(code, lang) {
-      const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-      return hljs.highlight(code, { language }).value;
+      const name = resolveGrammar(lang);
+      if (!name) return escapeHtml(code);
+      if (hljs.getLanguage(name)) {
+        return hljs.highlight(code, { language: name, ignoreIllegals: true }).value;
+      }
+      // 语法未到位：先返回已转义的原文，加载完成后由 grammarVersion 驱动重渲染
+      ensureGrammar(name);
+      return escapeHtml(code);
     }
   })
 );
 
+// markedHighlight 会把 highlight() 的返回值标记为 escaped=true 并跳过自身转义，
+// 所以未高亮分支必须自己转义，否则代码块里的 <div> 会变成真节点。
+const ESCAPE_MAP = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+function escapeHtml(text) {
+  return String(text).replace(/[&<>"']/g, (ch) => ESCAPE_MAP[ch]);
+}
+
 marked.use({
   renderer: {
-    code(code, lang) {
-      const language = sanitizeLang(lang);
+    // marked v13+ 传入 token 对象；旧的位置参数写法会渲染成 [object Object]
+    code(token) {
+      const raw = typeof token === 'object' && token !== null ? token.lang : token;
+      const language = sanitizeLang(raw);
+      const text = typeof token === 'object' && token !== null ? token.text : '';
+      const body = (typeof token === 'object' && token !== null && token.escaped)
+        ? text
+        : escapeHtml(text);
       return `<div class="code-block-wrapper">
   <div class="code-header">
     <span class="code-lang">${language}</span>
-    <button class="code-copy-btn" data-action="copy-code">📋 复制</button>
+    <button class="code-copy-btn">📋 复制</button>
   </div>
-  <pre><code class="hljs language-${language}">${code}</code></pre>
+  <pre><code class="hljs language-${language}">${body}</code></pre>
   </div>`;
     }
   }
@@ -59,13 +127,16 @@ const safeCopyText = async (text) => {
 };
 
 // 事件委托：处理代码块复制按钮点击
+// 注意：不能用 data-* 做钩子——purifyConfig 里 ALLOW_DATA_ATTR: false 会把它清掉，
+// 曾导致复制按钮在生产环境完全点不动。这里统一以 .code-copy-btn 类为锚点。
 if (typeof document !== 'undefined' && !window.__taijiMarkdownCopyHandler) {
   window.__taijiMarkdownCopyHandler = true;
   document.addEventListener('click', async (e) => {
-    const btn = e.target.closest('[data-action="copy-code"]');
+    const btn = e.target?.closest?.('.code-copy-btn');
     if (!btn) return;
+    const pre = btn.closest('.code-block-wrapper')?.querySelector('pre');
+    if (!pre) return;
     try {
-      const pre = btn.parentElement.nextElementSibling;
       await safeCopyText(pre.innerText);
       const oldText = btn.innerText;
       btn.innerText = '✅ 成功';
@@ -131,7 +202,12 @@ function parseMessageContent(text) {
     if (match && match[1] && match[1].trim().length > 5) {
       reasoning = match[1].trim();
       const after = text.slice(match.index + match[0].length);
-      content = after.replace(/^(?:最终)?(?:回答|答案)[：:]\s*/, '').replace(/^---\s*\n?/, '').trim();
+      // after 以 `\n` 开头（lookahead 未消费分隔符），所以必须允许前导空白，
+      // 否则「最终答案：」/「Answer:」这类前缀会残留在正文里。
+      content = after
+        .replace(/^\s*(?:(?:最终)?(?:回答|答案)|[Aa]nswer|[Ff]inal)[：:]\s*/, '')
+        .replace(/^\s*---\s*\n?/, '')
+        .trim();
       if (reasoning) return { reasoning, content };
     }
   }
@@ -175,6 +251,9 @@ export function useMarkdown() {
 
   const renderMarkdown = (text) => {
     if (!text) return '';
+    // 读一次 grammarVersion：模板中同步调用时 Vue 会把它记为渲染依赖，
+    // 语法模块异步到位后自增即触发重渲染，调用方无需改动。
+    void grammarVersion.value;
     const raw = marked.parse(text);
     return typeof raw === 'string' ? DOMPurify.sanitize(raw, purifyConfig) : raw;
   };
