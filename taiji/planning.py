@@ -19,6 +19,7 @@ RECOVERY_STRATEGY_LEDGER_CHECKPOINT_FORMAT = "taiji-recovery-strategy-ledger-v1"
 RECOVERY_READER_DEPENDENCY_CHECKPOINT_FORMAT = "taiji-recovery-reader-dependency-v1"
 RECOVERY_READER_ATTRIBUTION_CHECKPOINT_FORMAT = "taiji-recovery-reader-attribution-v1"
 RECOVERY_READER_INTERACTION_CHECKPOINT_FORMAT = "taiji-recovery-reader-interaction-v1"
+RECOVERY_READER_INTERACTION_GROUP_CHECKPOINT_FORMAT = "taiji-recovery-reader-interaction-group-v1"
 RECOVERY_READER_ORDER_INVARIANCE_TOLERANCE = DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE
 
 
@@ -34,6 +35,38 @@ def _nonnegative_finite(value: float, name: str) -> float:
     if not math.isfinite(value) or value < 0.0:
         raise ValueError(f"{name} must be finite and non-negative")
     return value
+
+
+def _connected_components(
+    active_ids: set[str], connections: Sequence[Sequence[str]]
+) -> tuple[tuple[str, ...], ...]:
+    """Return deterministic connected components for audited strategy relations."""
+
+    parent = {rollout_id: rollout_id for rollout_id in active_ids}
+
+    def find(rollout_id: str) -> str:
+        root = rollout_id
+        while parent[root] != root:
+            root = parent[root]
+        while parent[rollout_id] != rollout_id:
+            previous = rollout_id
+            rollout_id = parent[rollout_id]
+            parent[previous] = root
+        return root
+
+    for connection in connections:
+        members = tuple(dict.fromkeys(str(item) for item in connection))
+        if len(members) < 2 or not set(members) <= active_ids:
+            continue
+        first_root = find(members[0])
+        for member in members[1:]:
+            member_root = find(member)
+            if first_root != member_root:
+                parent[member_root] = first_root
+    grouped: dict[str, list[str]] = {}
+    for rollout_id in sorted(active_ids):
+        grouped.setdefault(find(rollout_id), []).append(rollout_id)
+    return tuple(sorted((tuple(group) for group in grouped.values()), key=lambda item: item))
 
 
 @dataclass(frozen=True)
@@ -726,6 +759,7 @@ class RecoveryStrategyLedger:
     interaction_order_tolerance: float = DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE
     interaction_audit_available: bool = False
     interactions: tuple[RecoveryReaderInteraction, ...] = ()
+    interaction_groups: tuple[RecoveryReaderInteractionGroup, ...] = ()
 
     def __post_init__(self) -> None:
         if int(self.evidence_threshold) <= 0:
@@ -759,6 +793,10 @@ class RecoveryStrategyLedger:
             raise ValueError("recovery strategy interaction audit flag must be boolean")
         if any(not isinstance(item, RecoveryReaderInteraction) for item in self.interactions):
             raise ValueError("recovery strategy interactions must be typed records")
+        if any(
+            not isinstance(item, RecoveryReaderInteractionGroup) for item in self.interaction_groups
+        ):
+            raise ValueError("recovery strategy interaction groups must be typed records")
 
     def admit(
         self,
@@ -870,6 +908,7 @@ class RecoveryStrategyLedger:
 
         return self.select_with_interaction_audit(
             self.interactions,
+            self.interaction_groups,
             audit_available=self.interaction_audit_available,
             residual_tolerance=self.interaction_residual_tolerance,
             order_tolerance=self.interaction_order_tolerance,
@@ -878,6 +917,7 @@ class RecoveryStrategyLedger:
     def select_with_interaction_audit(
         self,
         interactions: Sequence[RecoveryReaderInteraction] = (),
+        groups: Sequence[RecoveryReaderInteractionGroup] = (),
         *,
         audit_available: bool = False,
         residual_tolerance: float,
@@ -900,12 +940,15 @@ class RecoveryStrategyLedger:
         )
         order_limit = _nonnegative_finite(order_tolerance, "recovery interaction order_tolerance")
         active = self.active_approvals()
-        if len(active) < 2 or (not interactions and not audit_available):
+        group_items = tuple(groups)
+        if any(not isinstance(item, RecoveryReaderInteractionGroup) for item in group_items):
+            raise ValueError("recovery strategy interaction groups must be typed records")
+        if len(active) < 2 or (not interactions and not group_items and not audit_available):
             return self._select_ranked_approvals()
 
         active_ids = {approval.rollout_id for approval in active}
         audited_pairs: set[frozenset[str]] = set()
-        atomic_pairs: set[frozenset[str]] = set()
+        atomic_connections: list[tuple[str, ...]] = []
         for interaction in interactions:
             pair = frozenset(interaction.strategy_rollout_ids)
             if len(pair) != 2 or not pair <= active_ids:
@@ -916,37 +959,33 @@ class RecoveryStrategyLedger:
                 or interaction.order_delta_l2 > order_limit
                 or not interaction.order_invariant
             ):
-                atomic_pairs.add(pair)
+                atomic_connections.append(tuple(pair))
+
+        for group in group_items:
+            group_ids = frozenset(group.strategy_rollout_ids)
+            if len(group_ids) < 3 or not group_ids <= active_ids:
+                continue
+            if (
+                group.higher_order_residual_l2 > residual_limit
+                or group.order_delta_l2 > order_limit
+                or not group.order_invariant
+            ):
+                atomic_connections.append(tuple(group_ids))
 
         for index, first in enumerate(active):
             for second in active[index + 1 :]:
                 pair = frozenset((first.rollout_id, second.rollout_id))
                 if pair not in audited_pairs:
-                    atomic_pairs.add(pair)
-
-        parent = {approval.rollout_id: approval.rollout_id for approval in active}
-
-        def find(rollout_id: str) -> str:
-            root = rollout_id
-            while parent[root] != root:
-                root = parent[root]
-            while parent[rollout_id] != rollout_id:
-                previous = rollout_id
-                rollout_id = parent[rollout_id]
-                parent[previous] = root
-            return root
-
-        for pair in atomic_pairs:
-            first_id, second_id = tuple(pair)
-            first_root = find(first_id)
-            second_root = find(second_id)
-            if first_root != second_root:
-                parent[second_root] = first_root
+                    atomic_connections.append(tuple(pair))
 
         rank = {approval.rollout_id: index for index, approval in enumerate(self.ranked_approvals)}
         grouped: dict[str, list[RecoveryStrategyApproval]] = {}
         for approval in active:
-            grouped.setdefault(find(approval.rollout_id), []).append(approval)
+            grouped.setdefault(approval.rollout_id, []).append(approval)
+        for component in _connected_components(active_ids, atomic_connections):
+            root = component[0]
+            for rollout_id in component[1:]:
+                grouped.setdefault(root, []).extend(grouped.pop(rollout_id, ()))
 
         units: list[_RecoverySelectionUnit] = []
         for grouped_approvals in grouped.values():
@@ -991,6 +1030,7 @@ class RecoveryStrategyLedger:
         self,
         interactions: Sequence[RecoveryReaderInteraction],
         *,
+        groups: Sequence[RecoveryReaderInteractionGroup] = (),
         audit_available: bool | None = None,
     ) -> RecoveryStrategyLedger:
         """Persist the latest reader audit used by the canonical selector."""
@@ -998,14 +1038,21 @@ class RecoveryStrategyLedger:
         items = tuple(interactions)
         if any(not isinstance(item, RecoveryReaderInteraction) for item in items):
             raise ValueError("recovery strategy interactions must be typed records")
+        group_items = tuple(groups)
+        if any(not isinstance(item, RecoveryReaderInteractionGroup) for item in group_items):
+            raise ValueError("recovery strategy interaction groups must be typed records")
         if audit_available is None:
-            audit = bool(items) or self.interaction_audit_available
+            audit = bool(items or group_items) or self.interaction_audit_available
         else:
             if not isinstance(audit_available, bool):
                 raise ValueError("recovery strategy interaction audit flag must be boolean")
             audit = audit_available
         return replace(
-            self, interaction_audit_available=audit, interactions=items, revision=self.revision + 1
+            self,
+            interaction_audit_available=audit,
+            interactions=items,
+            interaction_groups=group_items,
+            revision=self.revision + 1,
         )
 
     @property
@@ -1048,6 +1095,7 @@ class RecoveryStrategyLedger:
             "interaction_order_tolerance": self.interaction_order_tolerance,
             "interaction_audit_available": self.interaction_audit_available,
             "interactions": [item.to_payload() for item in self.interactions],
+            "interaction_groups": [item.to_payload() for item in self.interaction_groups],
         }
 
     @classmethod
@@ -1085,6 +1133,10 @@ class RecoveryStrategyLedger:
             interactions=tuple(
                 RecoveryReaderInteraction.from_payload(dict(item))
                 for item in payload.get("interactions", ())
+            ),
+            interaction_groups=tuple(
+                RecoveryReaderInteractionGroup.from_payload(dict(item))
+                for item in payload.get("interaction_groups", ())
             ),
         )
 
@@ -1268,6 +1320,124 @@ class RecoveryReaderInteraction:
 
 
 @dataclass(frozen=True)
+class RecoveryReaderInteractionGroup:
+    """Replayable higher-order effect for one connected strategy group."""
+
+    reader_kind: str
+    strategy_rollout_ids: tuple[str, ...]
+    memory_ids: tuple[str, ...]
+    group_effect_l2: float
+    additive_effect_l2: float
+    pairwise_interaction_delta_l2: float
+    pairwise_predicted_effect_l2: float
+    higher_order_delta_l2: float
+    higher_order_residual_l2: float
+    order_delta_l2: float
+    order_invariant: bool
+    replay_epochs: int
+    replay_learning_rate: float
+    method: str = "higher-order-group-replay"
+
+    def __post_init__(self) -> None:
+        if not self.reader_kind:
+            raise ValueError("recovery reader interaction group reader_kind cannot be empty")
+        if len(self.strategy_rollout_ids) < 3 or any(
+            not rollout_id for rollout_id in self.strategy_rollout_ids
+        ):
+            raise ValueError("recovery reader interaction group needs at least three rollout ids")
+        if len(set(self.strategy_rollout_ids)) != len(self.strategy_rollout_ids):
+            raise ValueError("recovery reader interaction group rollout ids must be distinct")
+        if len(self.memory_ids) != len(self.strategy_rollout_ids) or any(
+            not memory_id for memory_id in self.memory_ids
+        ):
+            raise ValueError("recovery reader interaction group memory ids must match rollouts")
+        if len(set(self.memory_ids)) != len(self.memory_ids):
+            raise ValueError("recovery reader interaction group memory ids must be distinct")
+        for value, name in (
+            (self.group_effect_l2, "group effect"),
+            (self.additive_effect_l2, "additive effect"),
+            (self.higher_order_residual_l2, "higher-order residual"),
+            (self.order_delta_l2, "order delta"),
+        ):
+            _nonnegative_finite(value, f"recovery reader interaction group {name}")
+        for value, name in (
+            (self.pairwise_interaction_delta_l2, "pairwise interaction delta"),
+            (self.pairwise_predicted_effect_l2, "pairwise predicted effect"),
+            (self.higher_order_delta_l2, "higher-order delta"),
+        ):
+            if not math.isfinite(float(value)):
+                raise ValueError(f"recovery reader interaction group {name} must be finite")
+        if not math.isclose(
+            float(self.higher_order_residual_l2),
+            abs(float(self.higher_order_delta_l2)),
+            rel_tol=1e-6,
+            abs_tol=1e-9,
+        ):
+            raise ValueError("recovery reader interaction group residual must match delta")
+        if bool(self.order_invariant) != (
+            float(self.order_delta_l2) <= RECOVERY_READER_ORDER_INVARIANCE_TOLERANCE
+        ):
+            raise ValueError(
+                "recovery reader interaction group order invariance does not match delta"
+            )
+        if int(self.replay_epochs) <= 0:
+            raise ValueError("recovery reader interaction group replay_epochs must be positive")
+        if (
+            not math.isfinite(float(self.replay_learning_rate))
+            or float(self.replay_learning_rate) <= 0.0
+        ):
+            raise ValueError(
+                "recovery reader interaction group replay_learning_rate must be positive and finite"
+            )
+        if not self.method:
+            raise ValueError("recovery reader interaction group method cannot be empty")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": RECOVERY_READER_INTERACTION_GROUP_CHECKPOINT_FORMAT,
+            "reader_kind": self.reader_kind,
+            "strategy_rollout_ids": list(self.strategy_rollout_ids),
+            "memory_ids": list(self.memory_ids),
+            "group_effect_l2": self.group_effect_l2,
+            "additive_effect_l2": self.additive_effect_l2,
+            "pairwise_interaction_delta_l2": self.pairwise_interaction_delta_l2,
+            "pairwise_predicted_effect_l2": self.pairwise_predicted_effect_l2,
+            "higher_order_delta_l2": self.higher_order_delta_l2,
+            "higher_order_residual_l2": self.higher_order_residual_l2,
+            "order_delta_l2": self.order_delta_l2,
+            "order_invariant": self.order_invariant,
+            "replay_epochs": self.replay_epochs,
+            "replay_learning_rate": self.replay_learning_rate,
+            "method": self.method,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> RecoveryReaderInteractionGroup:
+        if payload.get("format", RECOVERY_READER_INTERACTION_GROUP_CHECKPOINT_FORMAT) != (
+            RECOVERY_READER_INTERACTION_GROUP_CHECKPOINT_FORMAT
+        ):
+            raise ValueError("unsupported recovery reader interaction group checkpoint format")
+        strategy_rollout_ids = tuple(str(item) for item in payload.get("strategy_rollout_ids", ()))
+        memory_ids = tuple(str(item) for item in payload.get("memory_ids", ()))
+        return cls(
+            reader_kind=str(payload["reader_kind"]),
+            strategy_rollout_ids=strategy_rollout_ids,
+            memory_ids=memory_ids,
+            group_effect_l2=float(payload.get("group_effect_l2", 0.0)),
+            additive_effect_l2=float(payload.get("additive_effect_l2", 0.0)),
+            pairwise_interaction_delta_l2=float(payload.get("pairwise_interaction_delta_l2", 0.0)),
+            pairwise_predicted_effect_l2=float(payload.get("pairwise_predicted_effect_l2", 0.0)),
+            higher_order_delta_l2=float(payload.get("higher_order_delta_l2", 0.0)),
+            higher_order_residual_l2=float(payload.get("higher_order_residual_l2", 0.0)),
+            order_delta_l2=float(payload.get("order_delta_l2", 0.0)),
+            order_invariant=bool(payload.get("order_invariant", True)),
+            replay_epochs=int(payload.get("replay_epochs", 1)),
+            replay_learning_rate=float(payload.get("replay_learning_rate", 0.1)),
+            method=str(payload.get("method", "higher-order-group-replay")),
+        )
+
+
+@dataclass(frozen=True)
 class RecoveryReaderDependency:
     """Provenance slice showing which strategies feed one downstream reader."""
 
@@ -1277,6 +1447,7 @@ class RecoveryReaderDependency:
     revision: int = 0
     contributions: tuple[RecoveryReaderContribution, ...] = ()
     interactions: tuple[RecoveryReaderInteraction, ...] = ()
+    interaction_groups: tuple[RecoveryReaderInteractionGroup, ...] = ()
     interaction_audit_complete: bool = False
     base_checkpoint: dict[str, Any] | None = field(default=None, compare=False, repr=False)
     base_checkpoint_digest: str = ""
@@ -1316,6 +1487,12 @@ class RecoveryReaderDependency:
             for interaction in self.interactions
         ):
             raise ValueError("recovery reader interactions must belong to their reader")
+        if any(
+            not isinstance(group, RecoveryReaderInteractionGroup)
+            or group.reader_kind != self.reader_kind
+            for group in self.interaction_groups
+        ):
+            raise ValueError("recovery reader interaction groups must belong to their reader")
         if not isinstance(self.interaction_audit_complete, bool):
             raise ValueError("recovery reader interaction audit flag must be boolean")
         interaction_keys = {
@@ -1323,6 +1500,9 @@ class RecoveryReaderDependency:
         }
         if len(interaction_keys) != len(self.interactions):
             raise ValueError("recovery reader interactions must be unique per rollout pair")
+        group_keys = {frozenset(group.strategy_rollout_ids) for group in self.interaction_groups}
+        if len(group_keys) != len(self.interaction_groups):
+            raise ValueError("recovery reader interaction groups must be unique per rollout group")
         memory_by_rollout = dict(zip(self.strategy_rollout_ids, self.memory_ids, strict=True))
         if any(
             any(
@@ -1334,6 +1514,18 @@ class RecoveryReaderDependency:
             for interaction in self.interactions
         ):
             raise ValueError("recovery reader interaction provenance must match dependency ids")
+        if any(
+            any(
+                memory_by_rollout.get(rollout_id) != memory_id
+                for rollout_id, memory_id in zip(
+                    group.strategy_rollout_ids, group.memory_ids, strict=True
+                )
+            )
+            for group in self.interaction_groups
+        ):
+            raise ValueError(
+                "recovery reader interaction group provenance must match dependency ids"
+            )
         if self.base_checkpoint is not None and not self.base_checkpoint_digest:
             raise ValueError("recovery reader base checkpoint requires a content digest")
         if int(self.revision) < 0:
@@ -1347,6 +1539,7 @@ class RecoveryReaderDependency:
             "revision": self.revision,
             "contributions": [item.to_payload() for item in self.contributions],
             "interactions": [item.to_payload() for item in self.interactions],
+            "interaction_groups": [item.to_payload() for item in self.interaction_groups],
             "interaction_audit_complete": self.interaction_audit_complete,
             "base_checkpoint": self.base_checkpoint,
             "base_checkpoint_digest": self.base_checkpoint_digest,
@@ -1368,6 +1561,10 @@ class RecoveryReaderDependency:
             interactions=tuple(
                 RecoveryReaderInteraction.from_payload(dict(item))
                 for item in payload.get("interactions", ())
+            ),
+            interaction_groups=tuple(
+                RecoveryReaderInteractionGroup.from_payload(dict(item))
+                for item in payload.get("interaction_groups", ())
             ),
             interaction_audit_complete=bool(payload.get("interaction_audit_complete", False)),
             base_checkpoint=(
@@ -1398,6 +1595,7 @@ class RecoveryReaderDependencyGraph:
         *,
         contributions: Sequence[RecoveryReaderContribution] = (),
         interactions: Sequence[RecoveryReaderInteraction] = (),
+        interaction_groups: Sequence[RecoveryReaderInteractionGroup] = (),
         interaction_audit_complete: bool | None = None,
         base_checkpoint: dict[str, Any] | None = None,
         base_checkpoint_digest: str = "",
@@ -1409,8 +1607,9 @@ class RecoveryReaderDependencyGraph:
         rollout_ids = tuple(dict.fromkeys(approval.rollout_id for approval in selected))
         contribution_items = tuple(contributions)
         interaction_items = tuple(interactions)
+        interaction_group_items = tuple(interaction_groups)
         audit_complete = (
-            bool(interaction_items)
+            bool(interaction_items or interaction_group_items)
             if interaction_audit_complete is None
             else interaction_audit_complete
         )
@@ -1437,6 +1636,18 @@ class RecoveryReaderDependencyGraph:
             for interaction in interaction_items
         ):
             raise ValueError("recovery reader interactions must match selected approvals")
+        if any(
+            group.reader_kind != reader_kind
+            or any(
+                rollout_id not in approval_by_rollout
+                or approval_by_rollout[rollout_id].memory_id != memory_id
+                for rollout_id, memory_id in zip(
+                    group.strategy_rollout_ids, group.memory_ids, strict=True
+                )
+            )
+            for group in interaction_group_items
+        ):
+            raise ValueError("recovery reader interaction groups must match selected approvals")
         dependency = RecoveryReaderDependency(
             reader_kind=reader_kind,
             memory_ids=memory_ids,
@@ -1444,6 +1655,7 @@ class RecoveryReaderDependencyGraph:
             revision=self.revision + 1,
             contributions=contribution_items,
             interactions=interaction_items,
+            interaction_groups=interaction_group_items,
             interaction_audit_complete=audit_complete,
             base_checkpoint=base_checkpoint,
             base_checkpoint_digest=str(base_checkpoint_digest),
@@ -1501,6 +1713,14 @@ class RecoveryReaderDependencyGraph:
                         for rollout_id in interaction.strategy_rollout_ids
                     )
                 ),
+                interaction_groups=tuple(
+                    group
+                    for group in dependency.interaction_groups
+                    if all(
+                        rollout_id in selected_by_rollout
+                        for rollout_id in group.strategy_rollout_ids
+                    )
+                ),
                 interaction_audit_complete=dependency.interaction_audit_complete,
                 base_checkpoint=dependency.base_checkpoint,
                 base_checkpoint_digest=dependency.base_checkpoint_digest,
@@ -1513,7 +1733,10 @@ class RecoveryReaderDependencyGraph:
     def interaction_audit_available(self) -> bool:
         """Return whether any bound reader has completed interaction auditing."""
 
-        return any(dependency.interaction_audit_complete for dependency in self.dependencies)
+        return any(
+            dependency.interaction_audit_complete or bool(dependency.interaction_groups)
+            for dependency in self.dependencies
+        )
 
     def to_payload(self) -> dict[str, Any]:
         return {

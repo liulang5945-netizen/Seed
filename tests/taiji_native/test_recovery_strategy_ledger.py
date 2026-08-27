@@ -5,6 +5,7 @@ from taiji import (
     RecoveryReaderContribution,
     RecoveryReaderDependencyGraph,
     RecoveryReaderInteraction,
+    RecoveryReaderInteractionGroup,
     RecoveryStrategyLedger,
 )
 
@@ -53,6 +54,89 @@ def _interaction(
         replay_epochs=1,
         replay_learning_rate=0.1,
     )
+
+
+def _interaction_group(
+    *rollout_ids: str,
+    higher_order_residual: float = 0.5,
+    order_delta: float = 0.0,
+) -> RecoveryReaderInteractionGroup:
+    return RecoveryReaderInteractionGroup(
+        reader_kind="semantic",
+        strategy_rollout_ids=tuple(rollout_ids),
+        memory_ids=tuple(f"memory-{rollout_id}" for rollout_id in rollout_ids),
+        group_effect_l2=3.0 + higher_order_residual,
+        additive_effect_l2=3.0,
+        pairwise_interaction_delta_l2=0.0,
+        pairwise_predicted_effect_l2=3.0,
+        higher_order_delta_l2=higher_order_residual,
+        higher_order_residual_l2=higher_order_residual,
+        order_delta_l2=order_delta,
+        order_invariant=order_delta <= 1e-7,
+        replay_epochs=1,
+        replay_learning_rate=0.1,
+    )
+
+
+def test_recovery_strategy_higher_order_group_is_atomic_under_budget() -> None:
+    ledger = RecoveryStrategyLedger(memory_budget=0.5)
+    for rollout_id in ("first", "second", "third"):
+        ledger = ledger.admit(
+            _entry(rollout_id, resource_cost=0.2, evidence_count=2, outcome_consistency=1.0),
+            memory_id=f"memory-{rollout_id}",
+        )
+
+    pairs = (
+        _interaction("first", "second"),
+        _interaction("first", "third"),
+        _interaction("second", "third"),
+    )
+    selected = ledger.select_with_interaction_audit(
+        pairs,
+        groups=(_interaction_group("first", "second", "third"),),
+        audit_available=True,
+        residual_tolerance=1e-7,
+        order_tolerance=1e-7,
+    )
+
+    assert selected == ()
+
+
+def test_recovery_reader_higher_order_group_roundtrip_and_revocation() -> None:
+    ledger = RecoveryStrategyLedger(memory_budget=1.0)
+    for rollout_id in ("first", "second", "third"):
+        ledger = ledger.admit(
+            _entry(rollout_id, resource_cost=0.2, evidence_count=2, outcome_consistency=1.0),
+            memory_id=f"memory-{rollout_id}",
+        )
+    pairs = (
+        _interaction("first", "second"),
+        _interaction("first", "third"),
+        _interaction("second", "third"),
+    )
+    group = _interaction_group("first", "second", "third")
+    policy_ledger = ledger.record_interaction_audit(pairs, groups=(group,), audit_available=True)
+    assert policy_ledger.selected_rollout_ids == ("first", "second", "third")
+    assert RecoveryStrategyLedger.from_payload(policy_ledger.to_payload()) == policy_ledger
+    graph = RecoveryReaderDependencyGraph().bind(
+        "semantic",
+        policy_ledger.selected_approvals,
+        interactions=pairs,
+        interaction_groups=(group,),
+        base_checkpoint={"value": 1},
+        base_checkpoint_digest="baseline-digest",
+    )
+    restored = RecoveryReaderDependencyGraph.from_payload(graph.to_payload())
+    assert restored == graph
+    dependency = restored.dependency_for("semantic")
+    assert dependency is not None
+    assert dependency.interaction_groups == (group,)
+
+    revoked = policy_ledger.revoke("first")
+    updated = restored.retain_selected(revoked.selected_approvals)
+    dependency = updated.dependency_for("semantic")
+    assert dependency is not None
+    assert dependency.interaction_groups == ()
 
 
 def test_recovery_strategy_interaction_policy_keeps_atomic_pair_together() -> None:
