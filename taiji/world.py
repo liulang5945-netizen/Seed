@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+from dataclasses import replace
 from typing import Any
 
 import torch
@@ -72,6 +73,25 @@ class TaijiWorldState:
                 del self._history[: -self._history_limit]
             else:
                 self._history.clear()
+        return self.state
+
+    def synchronize_observation(self, state: WorldState) -> WorldState:
+        """Replace a same-tick snapshot without fabricating an action.
+
+        Perceptual observation can enrich the current tick with a new latent
+        value, event, or lineage record between two actions.  That is not a
+        world transition, but the owned state must still accept it before the
+        next action.  When history exists, update only the latest transition's
+        ``after`` snapshot so the checkpoint remains contiguous.
+        """
+
+        if not isinstance(state, WorldState):
+            raise TypeError("observed world state must be a Taiji WorldState")
+        if state.tick != self._state.tick:
+            raise ValueError("observed world state must remain at the owned current tick")
+        self._state = state
+        if self._history:
+            self._history[-1] = replace(self._history[-1], after=state)
         return self.state
 
     def checkpoint(self) -> dict[str, Any]:

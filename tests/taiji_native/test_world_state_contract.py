@@ -140,6 +140,34 @@ def test_taiji_world_state_owns_transition_and_checkpoint() -> None:
         restored.apply(_transition(_world(0, 0), _world(1, 1), "replayed-0"))
 
 
+def test_taiji_world_state_synchronizes_same_tick_observation_without_transition() -> None:
+    initial = _world(0, 0)
+    expected = _world(1, 1)
+    transition = _transition(initial, expected, "move-0")
+    world = TaijiWorldState(initial)
+    world.apply(transition)
+    observed = WorldState(
+        tick=expected.tick,
+        latent=torch.tensor([9.0, 1.0]),
+        objects=expected.objects,
+        relations=expected.relations,
+        events=expected.events + (WorldEvent("percept-1", "percept", expected.tick),),
+        percept_event_id="percept-1",
+        percept_assembly_id="assembly-1",
+        percept_boundary_closed=True,
+    )
+
+    synchronized = world.synchronize_observation(observed)
+    assert synchronized.percept_event_id == "percept-1"
+    assert len(world.history) == 1
+    assert world.history[0].after.percept_assembly_id == "assembly-1"
+    restored = TaijiWorldState.from_checkpoint(world.checkpoint())
+    assert restored.state.percept_boundary_closed is True
+
+    with pytest.raises(ValueError, match="owned current tick"):
+        world.synchronize_observation(_world(2, 2))
+
+
 def test_world_intervention_splits_must_not_share_case_ids() -> None:
     initial = _world(0, 0)
     expected = _world(1, 1)

@@ -278,6 +278,9 @@ def _replace_numeric_state(
         events=state.events,
         affordances=state.affordances,
         uncertainty=state.uncertainty,
+        percept_event_id=state.percept_event_id,
+        percept_assembly_id=state.percept_assembly_id,
+        percept_boundary_closed=state.percept_boundary_closed,
     )
 
 
