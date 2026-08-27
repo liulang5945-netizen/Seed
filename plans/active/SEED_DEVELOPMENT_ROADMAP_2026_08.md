@@ -900,6 +900,8 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 
 **已复核：CI 修复已在远端全绿。** `f8d54cc` 将 checkpoint digest 改为只依赖 PyTorch 的 byte view，消除 CI 未安装 NumPy 时 Python 3.10 的失败；GitHub Actions run `33067181142` 的 Python 3.10/3.12、Windows、启动冒烟、前端、Docker 全部通过，未放宽任何门禁。
 
+**已复核：interaction-aware recovery attribution 提交已通过完整远端 CI。** 提交 `313d4cf` 的 GitHub Actions run `33069906564` 共 7 个 job 全部成功：启动冒烟（legacy/no-legacy）、Python 3.10、Python 3.12、Windows、前端构建和 Docker 构建均实际执行并通过；没有因上游失败而静默跳过下游门禁。
+
 **已完成：P3 interaction-aware recovery attribution Gate 已通过。** 新增 `RecoveryReaderInteraction` 与 checkpoint 格式，为 semantic/procedural/sequence/concept reader 对每一对 selected strategy 记录同一 baseline 下的单体效果、pair effect、可加和基线、带符号交互 delta、非负 residual，以及 A→B/B→A 的 order delta 和 order-invariant 结果；交互账本随 reader dependency 进入普通/native checkpoint，撤销时仅保留幸存策略仍然成立的 pair。adapter 使用真实 reader checkpoint 重放，不引入 Transformer 或 CUDA 依赖；报告/manifest 新增 pairwise interaction 与 order-invariance controls。三 seed 风险执行 Gate 的 interaction recording、checkpoint continuation、撤销裁剪全部为真；定向回归 `6 passed`，完整 `tests/taiji_native` 为 `222 passed, 1 skipped`，核心 mypy `0`、Ruff/Black 全绿。这里的 residual 是 reader 状态的确定性 L2-like 组合效应审计，不冒充 Shapley，也不把交互测量自动当作新的权重；CUDA 继续暂缓。
 
 **当前唯一下一步：建立 interaction-aware recovery selection Gate。** 将已测得的 pairwise residual/order sensitivity 接入 recovery memory 的竞争与 replay policy：对可加和策略允许独立记账，对明显非加和或顺序敏感的策略保留组合身份并在撤销/预算选择时成组审计；先定义 fail-closed 的策略边界，再修改选择逻辑，CUDA 继续暂缓。
