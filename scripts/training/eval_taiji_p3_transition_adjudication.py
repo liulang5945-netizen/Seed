@@ -213,6 +213,11 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         and restored._world_dynamics.online_updates == 3
     )
     stochastic_hypotheses = stochastic_learner.schema_registry.transition_hypotheses[evidence_key]
+    known_prediction = deterministic_repeat_trace.prediction
+    conflicted_prediction = stochastic_a2.cognitive_snapshot().world_prediction
+    stochastic_prediction = stochastic_b3.cognitive_snapshot().world_prediction
+    if conflicted_prediction is None or stochastic_prediction is None:
+        raise RuntimeError("prediction uncertainty trace was not retained")
     no_update_on_reject = bool(
         stochastic_a2.cognitive_snapshot().world_calibration_trace[-1].calibration_applied is False
         and stochastic_a2.cognitive_snapshot()
@@ -228,6 +233,18 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "first_calibration": bool(deterministic_first_trace.calibration_applied),
         "cross_episode_calibration": bool(deterministic_repeat_trace.calibration_applied),
         "cross_episode_confidence": float(deterministic_repeat_confidence),
+        "known_prediction_uncertainty": bool(
+            known_prediction.uncertainty_mode == "deterministic"
+            and known_prediction.uncertainty == 0.0
+        ),
+        "conflicted_prediction_uncertainty": bool(
+            conflicted_prediction.uncertainty_mode == "conflicted"
+            and conflicted_prediction.uncertainty == 1.0
+        ),
+        "stochastic_prediction_uncertainty": bool(
+            stochastic_prediction.uncertainty_mode == "stochastic"
+            and stochastic_prediction.uncertainty == 0.5
+        ),
         "relation_specific_holdout": bool(
             not deterministic_trace.calibration_applied
             and deterministic_learner.schema_registry.contradiction_count == 1
@@ -265,9 +282,12 @@ def build_manifest() -> dict[str, object]:
             "stable semantic before/action evidence key excludes tick and event ids",
             "outcome ledger stores multiple after-state hypotheses with evidence counts",
             "consistent repeated outcome increases the leading hypothesis share",
+            "known deterministic context reports zero ledger outcome uncertainty",
             "one-off contradictory after-state remains conflicted and is recorded",
+            "conflicted context reports maximal uncertainty to planning consumers",
             "only a clear leader can pass local SGD adjudication",
             "repeatable stochastic outcomes become an explicit stochastic ledger mode",
+            "stochastic uncertainty equals one minus the leading outcome probability",
             "ambiguous stochastic tie fails closed before local SGD update",
             "prediction calibration trace reflects accepted versus rejected feedback",
             "registry and network state survive native checkpoint continuation",
@@ -282,6 +302,9 @@ def evaluate(*, seeds: tuple[int, ...] = (11, 29, 47)) -> dict[str, object]:
     metrics = (
         "first_calibration",
         "cross_episode_calibration",
+        "known_prediction_uncertainty",
+        "conflicted_prediction_uncertainty",
+        "stochastic_prediction_uncertainty",
         "relation_specific_holdout",
         "contradiction_rejected",
         "stochastic_tie_rejected",

@@ -206,9 +206,13 @@ def test_transition_adjudication_is_cross_episode_and_fail_closed() -> None:
     assert registry.transition_confidence[key] == pytest.approx(1.0)
     assert registry.record_transition_outcome(repeat) is True
     assert registry.transition_confidence[key] == pytest.approx(1.0)
+    assert registry.transition_outcome_estimate(key) == pytest.approx((1.0, 1.0))
+    assert registry.transition_uncertainty(key) == (0.0, "deterministic")
     assert registry.record_transition_outcome(contradiction) is False
     assert registry.transition_outcome_count == 1
     assert registry.transition_confidence[key] == pytest.approx(2.0 / 3.0)
+    assert registry.transition_outcome_estimate(key) == pytest.approx((1.0 / 3.0, 2.0 / 3.0))
+    assert registry.transition_uncertainty(key) == (1.0, "conflicted")
     assert registry.transition_outcome_mode(key) == "conflicted"
     assert sorted(item["evidence_count"] for item in registry.transition_hypotheses[key]) == [1, 2]
     assert registry.contradiction_count == 1
@@ -246,6 +250,33 @@ def test_transition_ledger_identifies_repeatable_stochastic_outcomes() -> None:
     assert sorted(item["evidence_count"] for item in hypotheses) == [2, 3]
     assert registry.transition_confidence[key] == pytest.approx(0.6)
     assert registry.transition_outcome_mode(key) == "stochastic"
+    uncertainty, uncertainty_mode = registry.transition_uncertainty(key)
+    assert uncertainty == pytest.approx(0.4)
+    assert uncertainty_mode == "stochastic"
+    assert registry.transition_outcome_estimate(key) == pytest.approx((-0.2, 0.4))
+
+
+def test_world_prediction_exposes_ledger_uncertainty_and_observed_outcome() -> None:
+    learner = _learner()
+    state = _state(0)
+    action = WorldAction(
+        "prediction",
+        "assemble",
+        0,
+        actor_id="agent",
+        target_id="red",
+        parameters={"step": 1.0},
+    )
+    unseen = learner.predict(state, action)
+    assert unseen.uncertainty == pytest.approx(1.0)
+    assert unseen.uncertainty_mode == "unseen"
+
+    learner.online_update(_transition("observed", after_position=1.0, reward=1.0, success=True))
+    observed = learner.predict(state, action)
+    assert observed.reward == pytest.approx(1.0)
+    assert observed.success_probability == pytest.approx(1.0)
+    assert observed.uncertainty == pytest.approx(0.0)
+    assert observed.uncertainty_mode == "deterministic"
 
 
 def _runtime_state(tick: int, *, position: float) -> WorldState:
@@ -331,8 +362,15 @@ def test_adapter_outcome_loop_calibrates_and_rejects_contradictory_episode() -> 
     assert learner.schema_registry.contradiction_count == 1
     assert first.cognitive_snapshot().world_calibration_trace[-1].calibration_applied is True
     assert second.cognitive_snapshot().world_calibration_trace[-1].calibration_applied is True
+    assert (
+        second.cognitive_snapshot().world_calibration_trace[-1].prediction.uncertainty_mode
+        == "deterministic"
+    )
+    assert second.cognitive_snapshot().world_calibration_trace[-1].prediction.uncertainty == 0.0
     rejected_trace = rejected.cognitive_snapshot().world_calibration_trace[-1]
     assert rejected_trace.calibration_applied is False
+    assert rejected_trace.prediction.uncertainty_mode == "deterministic"
+    assert rejected_trace.prediction.uncertainty == 0.0
     assert rejected_trace.online_update_count_before == 2
     assert rejected_trace.online_update_count_after == 2
 

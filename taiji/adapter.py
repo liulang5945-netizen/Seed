@@ -4620,6 +4620,8 @@ class TSKV8Adapter(Taiji):
                     predicted_state=prediction.state,
                     predicted_reward=prediction.reward,
                     predicted_success_probability=prediction.success_probability,
+                    uncertainty=prediction.uncertainty,
+                    uncertainty_mode=prediction.uncertainty_mode,
                     online_update_count=self._world_dynamics.online_updates,
                 ),
             )
@@ -5117,7 +5119,11 @@ class TSKV8Adapter(Taiji):
                     candidate,
                     predicted_reward=prediction.reward,
                     success_probability=prediction.success_probability,
-                    uncertainty=max(candidate.uncertainty, model_uncertainty),
+                    uncertainty=max(
+                        candidate.uncertainty,
+                        model_uncertainty,
+                        prediction.uncertainty,
+                    ),
                 )
             )
         if not projected:
@@ -5172,7 +5178,11 @@ class TSKV8Adapter(Taiji):
                     action=replace(template.action, provenance="world-dynamics"),
                     predicted_reward=prediction.reward,
                     success_probability=prediction.success_probability,
-                    uncertainty=max(template.uncertainty, model_uncertainty),
+                    uncertainty=max(
+                        template.uncertainty,
+                        model_uncertainty,
+                        prediction.uncertainty,
+                    ),
                     prediction_provenance="world-dynamics",
                 )
             )
@@ -5950,6 +5960,8 @@ class TSKV8Adapter(Taiji):
                 predicted_state=prediction.state,
                 predicted_reward=prediction.reward,
                 predicted_success_probability=prediction.success_probability,
+                uncertainty=prediction.uncertainty,
+                uncertainty_mode=prediction.uncertainty_mode,
                 online_update_count=self._world_dynamics.online_updates,
             )
         self._cognitive_state = replace(
@@ -6037,6 +6049,8 @@ class TSKV8Adapter(Taiji):
                     predicted_state=prediction.state,
                     predicted_reward=prediction.reward,
                     predicted_success_probability=prediction.success_probability,
+                    uncertainty=prediction.uncertainty,
+                    uncertainty_mode=prediction.uncertainty_mode,
                     online_update_count=self._world_dynamics.online_updates,
                 )
             transition = WorldTransition(

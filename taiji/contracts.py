@@ -1527,6 +1527,8 @@ class WorldPredictionRecord:
     raw_state_error: float | None = None
     reward_error: float | None = None
     online_update_count: int = 0
+    uncertainty: float = 1.0
+    uncertainty_mode: str = "unseen"
     version: int = CONTRACT_VERSION
 
     def __post_init__(self) -> None:
@@ -1546,6 +1548,8 @@ class WorldPredictionRecord:
             raise ValueError("reward_error must be finite")
         if int(self.online_update_count) < 0:
             raise ValueError("online_update_count cannot be negative")
+        _check_unit(self.uncertainty, "world prediction uncertainty")
+        _check_text(self.uncertainty_mode, "world prediction uncertainty_mode")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -1558,6 +1562,8 @@ class WorldPredictionRecord:
             "raw_state_error": self.raw_state_error,
             "reward_error": self.reward_error,
             "online_update_count": self.online_update_count,
+            "uncertainty": self.uncertainty,
+            "uncertainty_mode": self.uncertainty_mode,
         }
 
     @classmethod
@@ -1582,6 +1588,8 @@ class WorldPredictionRecord:
                 None if payload.get("reward_error") is None else float(payload["reward_error"])
             ),
             online_update_count=int(payload.get("online_update_count", 0)),
+            uncertainty=float(payload.get("uncertainty", 1.0)),
+            uncertainty_mode=str(payload.get("uncertainty_mode", "unseen")),
         )
 
 
