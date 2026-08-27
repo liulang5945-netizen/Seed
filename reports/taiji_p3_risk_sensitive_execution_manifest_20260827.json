@@ -35,6 +35,8 @@
     "recovery-strategy-memory-consolidation",
     "recovery-strategy-checkpoint",
     "recovery-strategy-revocation",
+    "recovery-strategy-rebuild-after-revocation",
+    "recovery-strategy-rebuild-checkpoint",
     "archived-branch-liveness",
     "checkpoint-no-replay",
     "recovery-rollout-continuation"

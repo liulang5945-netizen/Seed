@@ -38,6 +38,8 @@
         "recovery_memory_consolidated": true,
         "strategy_consolidation_checkpoint_preserved": true,
         "strategy_revocation_blocks_replay": true,
+        "recovery_memory_rebuilt_on_revoke": true,
+        "revoked_rebuild_checkpoint_preserved": true,
         "archived_branch_not_reintroduced": true,
         "next_episode_transient_cleared": true,
         "recovery_suffix_rebound": true,
@@ -129,6 +131,8 @@
         "recovery_memory_consolidated": true,
         "strategy_consolidation_checkpoint_preserved": true,
         "strategy_revocation_blocks_replay": true,
+        "recovery_memory_rebuilt_on_revoke": true,
+        "revoked_rebuild_checkpoint_preserved": true,
         "archived_branch_not_reintroduced": true,
         "next_episode_transient_cleared": true,
         "recovery_suffix_rebound": true,
@@ -220,6 +224,8 @@
         "recovery_memory_consolidated": true,
         "strategy_consolidation_checkpoint_preserved": true,
         "strategy_revocation_blocks_replay": true,
+        "recovery_memory_rebuilt_on_revoke": true,
+        "revoked_rebuild_checkpoint_preserved": true,
         "archived_branch_not_reintroduced": true,
         "next_episode_transient_cleared": true,
         "recovery_suffix_rebound": true,
@@ -281,6 +287,6 @@
   },
   "gate": {
     "passed": true,
-    "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, preserve that admission through checkpoint, revoke it from future replay, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout"
+    "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, preserve that admission through checkpoint, consolidate only approved records, revoke it from future replay, rebuild long-term readers without revoked records, checkpoint and restore that rebuild, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout"
   }
 }

@@ -755,6 +755,13 @@ class RecoveryStrategyLedger:
     def active_memory_ids(self) -> tuple[str, ...]:
         return tuple(approval.memory_id for approval in self.active_approvals())
 
+    @property
+    def revoked_memory_ids(self) -> tuple[str, ...]:
+        revoked = set(self.revoked_rollout_ids)
+        return tuple(
+            approval.memory_id for approval in self.approvals if approval.rollout_id in revoked
+        )
+
     def to_payload(self) -> dict[str, Any]:
         return {
             "format": RECOVERY_STRATEGY_LEDGER_CHECKPOINT_FORMAT,

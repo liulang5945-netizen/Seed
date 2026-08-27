@@ -189,6 +189,10 @@ class TSKV8Adapter(Taiji):
             evidence_threshold=self.config.recovery_strategy_evidence_threshold
         )
         self._recovery_generation = 0
+        self._recovery_memory_epochs = 300
+        self._recovery_semantic_learning_rate = 0.1
+        self._recovery_procedural_learning_rate = 0.1
+        self._recovery_memory_rebuild_count = 0
         self._replan_required = False
         self._last_rollout_prediction_error: float | None = None
         self._last_rollout_calibrated_confidence: float | None = None
@@ -5869,7 +5873,10 @@ class TSKV8Adapter(Taiji):
     def revoke_recovery_strategy(self, rollout_id: str) -> None:
         """Revoke a recovery strategy from future replay and consolidation."""
 
-        self._recovery_strategy_ledger = self._recovery_strategy_ledger.revoke(rollout_id)
+        previous = self._recovery_strategy_ledger
+        self._recovery_strategy_ledger = previous.revoke(rollout_id)
+        if self._recovery_strategy_ledger != previous:
+            self._rebuild_recovery_memory()
 
     def consolidate_recovery_memory(
         self,
@@ -5888,6 +5895,9 @@ class TSKV8Adapter(Taiji):
         )
         if not records:
             raise RuntimeError("recovery consolidation has no evidence-approved records")
+        self._recovery_memory_epochs = int(epochs)
+        self._recovery_semantic_learning_rate = float(semantic_learning_rate)
+        self._recovery_procedural_learning_rate = float(procedural_learning_rate)
         losses: dict[str, float] = {}
         if self._semantic_memory is not None:
             losses["semantic"] = self._semantic_memory.consolidate(
@@ -5904,6 +5914,47 @@ class TSKV8Adapter(Taiji):
         if not losses:
             raise RuntimeError("recovery consolidation requires semantic or procedural memory")
         return losses
+
+    def _rebuild_recovery_memory(self) -> None:
+        """Rebuild long-term readers without revoked recovery records."""
+
+        if self._episodic_memory is None:
+            return
+        revoked_memory_ids = set(self._recovery_strategy_ledger.revoked_memory_ids)
+        records = tuple(
+            record
+            for record in self._episodic_memory.records
+            if record.memory_id not in revoked_memory_ids
+        )
+        if self._semantic_memory is not None:
+            semantic = SemanticMemoryLearner(self._semantic_memory.cue_dim).to(self.device)
+            semantic_records = tuple(record for record in records if record.outcome is not None)
+            if semantic_records:
+                semantic.consolidate(
+                    semantic_records,
+                    epochs=self._recovery_memory_epochs,
+                    learning_rate=self._recovery_semantic_learning_rate,
+                )
+            self._semantic_memory = semantic
+        if self._procedural_memory is not None:
+            procedural = ProceduralMemoryLearner(self._procedural_memory.cue_dim).to(self.device)
+            procedural_records = tuple(
+                record for record in records if record.action_intent is not None
+            )
+            if procedural_records:
+                procedural.consolidate(
+                    procedural_records,
+                    epochs=self._recovery_memory_epochs,
+                    learning_rate=self._recovery_procedural_learning_rate,
+                )
+            self._procedural_memory = procedural
+        self._recovery_memory_rebuild_count += 1
+
+    @property
+    def recovery_memory_rebuild_count(self) -> int:
+        """Return the number of provenance-based memory rebuilds after revocation."""
+
+        return self._recovery_memory_rebuild_count
 
     def _record_environment_capability(self, result: EnvironmentOutcome) -> None:
         actions = tuple(int(action) for action in result.available_actions)
@@ -7119,6 +7170,10 @@ class TSKV8Adapter(Taiji):
         payload["recovery_archive"] = self._recovery_archive.to_payload()
         payload["recovery_strategy_ledger"] = self._recovery_strategy_ledger.to_payload()
         payload["recovery_generation"] = self._recovery_generation
+        payload["recovery_memory_epochs"] = self._recovery_memory_epochs
+        payload["recovery_semantic_learning_rate"] = self._recovery_semantic_learning_rate
+        payload["recovery_procedural_learning_rate"] = self._recovery_procedural_learning_rate
+        payload["recovery_memory_rebuild_count"] = self._recovery_memory_rebuild_count
         payload["replan_required"] = self._replan_required
         payload["planning_recovery"] = (
             None
@@ -7192,6 +7247,7 @@ class TSKV8Adapter(Taiji):
         self._restore_recovery_archive(checkpoint)
         self._restore_recovery_strategy_ledger(checkpoint)
         self._restore_recovery_generation(checkpoint)
+        self._restore_recovery_memory_state(checkpoint)
         self._restore_generation_trace(checkpoint)
         self._restore_content_selection(checkpoint)
         self._restore_executive_state(checkpoint)
@@ -7546,6 +7602,18 @@ class TSKV8Adapter(Taiji):
             else RecoveryStrategyLedger.from_payload(dict(ledger))
         )
 
+    def _restore_recovery_memory_state(self, payload: Any) -> None:
+        if not isinstance(payload, dict):
+            return
+        self._recovery_memory_epochs = int(payload.get("recovery_memory_epochs", 300))
+        self._recovery_semantic_learning_rate = float(
+            payload.get("recovery_semantic_learning_rate", 0.1)
+        )
+        self._recovery_procedural_learning_rate = float(
+            payload.get("recovery_procedural_learning_rate", 0.1)
+        )
+        self._recovery_memory_rebuild_count = int(payload.get("recovery_memory_rebuild_count", 0))
+
     def native_checkpoint(self) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
 
@@ -7598,6 +7666,10 @@ class TSKV8Adapter(Taiji):
         components["recovery_archive"] = self._recovery_archive.to_payload()
         components["recovery_strategy_ledger"] = self._recovery_strategy_ledger.to_payload()
         components["recovery_generation"] = self._recovery_generation
+        components["recovery_memory_epochs"] = self._recovery_memory_epochs
+        components["recovery_semantic_learning_rate"] = self._recovery_semantic_learning_rate
+        components["recovery_procedural_learning_rate"] = self._recovery_procedural_learning_rate
+        components["recovery_memory_rebuild_count"] = self._recovery_memory_rebuild_count
         components["replan_required"] = self._replan_required
         components["planning_recovery"] = (
             None
@@ -7685,6 +7757,7 @@ class TSKV8Adapter(Taiji):
         self._restore_recovery_archive(envelope.components)
         self._restore_recovery_strategy_ledger(envelope.components)
         self._restore_recovery_generation(envelope.components)
+        self._restore_recovery_memory_state(envelope.components)
         self._restore_generation_trace(envelope.components)
         self._restore_content_selection(envelope.components)
         self._restore_executive_state(envelope.components)

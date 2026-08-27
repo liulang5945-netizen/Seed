@@ -709,6 +709,17 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     strategy_revocation_blocks_replay = not restored.recovery_strategy_ledger.is_active(
         recovery_rollout.rollout_id
     )
+    recovery_memory_rebuilt_on_revoke = bool(
+        restored.recovery_memory_rebuild_count == 1
+        and recovery_rollout.rollout_id in restored.recovery_strategy_ledger.revoked_rollout_ids
+    )
+    revoked_rebuild_checkpoint = TSKV8Adapter.from_native_checkpoint(restored.native_checkpoint())
+    revoked_rebuild_checkpoint_preserved = bool(
+        revoked_rebuild_checkpoint.recovery_memory_rebuild_count == 1
+        and not revoked_rebuild_checkpoint.recovery_strategy_ledger.is_active(
+            recovery_rollout.rollout_id
+        )
+    )
     restored.begin_episode(f"risk-next:{seed}")
     archived_branch_not_reintroduced = False
     try:
@@ -780,6 +791,8 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         "recovery_memory_consolidated": recovery_memory_consolidated,
         "strategy_consolidation_checkpoint_preserved": strategy_consolidation_checkpoint_preserved,
         "strategy_revocation_blocks_replay": strategy_revocation_blocks_replay,
+        "recovery_memory_rebuilt_on_revoke": recovery_memory_rebuilt_on_revoke,
+        "revoked_rebuild_checkpoint_preserved": revoked_rebuild_checkpoint_preserved,
         "archived_branch_not_reintroduced": archived_branch_not_reintroduced,
         "next_episode_transient_cleared": next_episode_transient_cleared,
         "recovery_suffix_rebound": recovery_suffix_rebound,
@@ -976,6 +989,8 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "recovery_memory_consolidated",
         "strategy_consolidation_checkpoint_preserved",
         "strategy_revocation_blocks_replay",
+        "recovery_memory_rebuilt_on_revoke",
+        "revoked_rebuild_checkpoint_preserved",
         "archived_branch_not_reintroduced",
         "next_episode_transient_cleared",
         "recovery_suffix_rebound",
@@ -1040,6 +1055,8 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "recovery-strategy-memory-consolidation",
             "recovery-strategy-checkpoint",
             "recovery-strategy-revocation",
+            "recovery-strategy-rebuild-after-revocation",
+            "recovery-strategy-rebuild-checkpoint",
             "archived-branch-liveness",
             "checkpoint-no-replay",
             "recovery-rollout-continuation",
@@ -1060,7 +1077,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         },
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, preserve that admission through checkpoint, revoke it from future replay, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
+            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, preserve that admission through checkpoint, consolidate only approved records, revoke it from future replay, rebuild long-term readers without revoked records, checkpoint and restore that rebuild, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
         },
     }
 
