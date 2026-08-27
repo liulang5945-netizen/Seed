@@ -911,3 +911,7 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 **已复核：高阶 interaction-group replay 已通过远端 CI。** 提交 `ed1aae1` 的 GitHub Actions run `33089028142` 共 7 个 job 全部成功：Python 3.10/3.12、Windows、双 startup smoke、frontend、Docker 均实际执行并通过；Node.js 20 弃用与既有 frontend lint 提示仍为非阻断注释，不影响本次 Taiji 门禁结论。
 
 **当前唯一下一步：建立可组合 interaction-group 的增量 replay Gate。** 在两个已审计 group 合并、拆分或新增策略时，只重放受影响的 group 与 pairwise 边，验证高阶 residual、顺序不变性、预算原子性、checkpoint continuation 和局部撤销与全量重放一致；未受影响 group 必须保持 digest/attribution 不变，CUDA 继续暂缓。
+
+**已完成：P3 可组合 interaction-group 增量 replay Gate 已通过。** recovery consolidation 现在优先从 reader dependency 保存的稳定 baseline 重建，新增策略不会再次叠加已训练记录；pairwise audit 保存 replay action-kind fingerprint，group audit 保存 singleton effect、replay digest 和 attribution digest。增量路径只复用 baseline、成员、动作集合、参数和内部 pair audit 全部一致的 pair/group；新增策略、group 合并、group 拆分、局部撤销或审计变化只重放受影响边/组件，未受影响 group 的 digest 与 attribution 保持原值。三 seed 风险执行 Gate 的增量 replay 统计均为 pairwise `8 replay / 4 reuse`、group `4 replay / 0 reuse`，重复 consolidation 不发生 double replay；组合回归同时证明未受影响 group 稳定、变化 group 与全量重放相等，以及 merge/split replay 数量正确。相关回归 `10 passed`，native 回归（排除两个已确认的 Windows pytest 临时目录锁权限错误）`223 passed, 1 skipped`，核心 mypy `0`、Ruff/Black 全绿，CUDA 继续暂缓。该 Gate 证明 group 组合变化下的局部重放与 provenance 稳定性，不宣称 group 内成员 credit 已完成守恒分解。**
+
+**当前唯一下一步：建立 interaction-group 的可验证 credit decomposition Gate。** 在不把高阶 residual 粗略平均给成员的前提下，为 group 建立基于可重放子集的成员增量 credit、交互 credit 和 residual 归属，验证 credit 守恒、顺序敏感时 fail-closed、局部撤销只移除相关归属，以及普通/native checkpoint continuation 与全量重算一致；CUDA 继续暂缓。

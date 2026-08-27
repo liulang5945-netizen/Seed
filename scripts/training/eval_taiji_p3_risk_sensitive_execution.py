@@ -24,6 +24,7 @@ from scripts.training.eval_taiji_p3_open_set import (  # noqa: E402
 from taiji import (  # noqa: E402
     EnvironmentCapability,
     EnvironmentOutcome,
+    EpisodicMemoryRecord,
     EpisodicMemoryStore,
     Goal,
     GoalPlanner,
@@ -34,6 +35,8 @@ from taiji import (  # noqa: E402
     ProceduralMemoryLearner,
     ProceduralSequenceLearner,
     RecoveryPortfolioArchive,
+    RecoveryReaderDependency,
+    RecoveryStrategyApproval,
     RecoveryStrategyLedger,
     SemanticMemoryLearner,
     TSKV8Adapter,
@@ -177,6 +180,246 @@ def _fitted_world_learner(seed: int) -> WorldDynamicsLearner:
     """Fit one baseline per seed that independent scenarios can clone."""
 
     return _fit_world_learner(seed)
+
+
+def _run_incremental_group_composition_case(adapter: TSKV8Adapter) -> dict[str, object]:
+    """Exercise unchanged, changed, merged, and split audited groups."""
+
+    if adapter._episodic_memory is None or adapter._semantic_memory is None:
+        raise RuntimeError("incremental group case needs semantic and episodic readers")
+    semantic_dependency = adapter.recovery_reader_dependencies.dependency_for("semantic")
+    if semantic_dependency is None or semantic_dependency.base_checkpoint is None:
+        raise RuntimeError("incremental group case needs a saved semantic baseline")
+    base_approvals = tuple(adapter._selected_recovery_approvals())
+    if len(base_approvals) != 3:
+        raise RuntimeError("incremental group case needs three base approvals")
+    base_records = tuple(adapter._episodic_memory.records)
+    baseline = dict(semantic_dependency.base_checkpoint)
+    action_kinds = tuple(
+        str(kind) for kind in adapter._semantic_memory.checkpoint().get("action_kinds", ())
+    )
+
+    def duplicate_approval(
+        approval: RecoveryStrategyApproval, suffix: str
+    ) -> RecoveryStrategyApproval:
+        return replace(
+            approval,
+            approval_id=f"{approval.approval_id}:{suffix}",
+            rollout_id=f"{approval.rollout_id}:{suffix}",
+            source_episode_id=f"{approval.source_episode_id}:{suffix}",
+            memory_id=f"{approval.memory_id}:{suffix}",
+        )
+
+    def duplicate_record(record: EpisodicMemoryRecord, suffix: str) -> EpisodicMemoryRecord:
+        return replace(
+            record,
+            memory_id=f"{record.memory_id}:{suffix}",
+            episode_id=f"{record.episode_id}:{suffix}",
+        )
+
+    group_b_approvals = tuple(
+        duplicate_approval(approval, "group-b") for approval in base_approvals
+    )
+    group_b_records = tuple(duplicate_record(record, "group-b") for record in base_records)
+    six_approvals = base_approvals + group_b_approvals
+    six_records = base_records + group_b_records
+    six_final = adapter._replay_recovery_reader(
+        "semantic",
+        baseline,
+        six_records,
+        epochs=1,
+        learning_rate=0.1,
+        action_kinds=action_kinds,
+    )
+    six_all_pairs = adapter._recovery_reader_interactions(
+        "semantic",
+        baseline,
+        six_final,
+        six_records,
+        six_approvals,
+        epochs=1,
+        learning_rate=0.1,
+    )
+    group_a_ids = frozenset(approval.rollout_id for approval in base_approvals)
+    group_b_ids = frozenset(approval.rollout_id for approval in group_b_approvals)
+    partitioned_pairs = tuple(
+        item
+        for item in six_all_pairs
+        if frozenset(item.strategy_rollout_ids) <= group_a_ids
+        or frozenset(item.strategy_rollout_ids) <= group_b_ids
+    )
+    old_groups, old_replayed, old_reused = adapter._recovery_reader_interaction_groups_incremental(
+        "semantic",
+        baseline,
+        six_final,
+        six_records,
+        six_approvals,
+        partitioned_pairs,
+        previous_dependency=None,
+        changed_rollout_ids=set(approval.rollout_id for approval in six_approvals),
+        epochs=1,
+        learning_rate=0.1,
+    )
+    old_dependency = RecoveryReaderDependency(
+        reader_kind="semantic",
+        memory_ids=tuple(approval.memory_id for approval in six_approvals),
+        strategy_rollout_ids=tuple(approval.rollout_id for approval in six_approvals),
+        interactions=partitioned_pairs,
+        interaction_groups=old_groups,
+        interaction_audit_complete=True,
+        base_checkpoint=baseline,
+        base_checkpoint_digest=semantic_dependency.base_checkpoint_digest,
+    )
+    new_approval = duplicate_approval(base_approvals[0], "group-b-new")
+    new_record = duplicate_record(base_records[0], "group-b-new")
+    seven_approvals = six_approvals + (new_approval,)
+    seven_records = six_records + (new_record,)
+    seven_final = adapter._replay_recovery_reader(
+        "semantic",
+        baseline,
+        seven_records,
+        epochs=1,
+        learning_rate=0.1,
+        action_kinds=action_kinds,
+    )
+    seven_all_pairs = adapter._recovery_reader_interactions(
+        "semantic",
+        baseline,
+        seven_final,
+        seven_records,
+        seven_approvals,
+        epochs=1,
+        learning_rate=0.1,
+    )
+    group_b_plus_ids = group_b_ids | {new_approval.rollout_id}
+    seven_partitioned_pairs = tuple(
+        item
+        for item in seven_all_pairs
+        if frozenset(item.strategy_rollout_ids) <= group_a_ids
+        or frozenset(item.strategy_rollout_ids) <= group_b_plus_ids
+    )
+    seven_pairs, pairwise_replayed, pairwise_reused = (
+        adapter._recovery_reader_interactions_incremental(
+            "semantic",
+            baseline,
+            seven_final,
+            seven_records,
+            seven_approvals,
+            previous_dependency=old_dependency,
+            changed_rollout_ids={new_approval.rollout_id},
+            pairwise_scope=tuple(item.strategy_rollout_ids for item in seven_partitioned_pairs),
+            epochs=1,
+            learning_rate=0.1,
+        )
+    )
+    seven_partitioned_pairs = tuple(
+        item
+        for item in seven_pairs
+        if frozenset(item.strategy_rollout_ids) <= group_a_ids
+        or frozenset(item.strategy_rollout_ids) <= group_b_plus_ids
+    )
+    seven_groups, group_replayed, group_reused = (
+        adapter._recovery_reader_interaction_groups_incremental(
+            "semantic",
+            baseline,
+            seven_final,
+            seven_records,
+            seven_approvals,
+            seven_partitioned_pairs,
+            previous_dependency=old_dependency,
+            changed_rollout_ids={new_approval.rollout_id},
+            epochs=1,
+            learning_rate=0.1,
+        )
+    )
+    untouched_group = next(
+        group for group in old_groups if frozenset(group.strategy_rollout_ids) == group_a_ids
+    )
+    current_untouched_group = next(
+        group for group in seven_groups if frozenset(group.strategy_rollout_ids) == group_a_ids
+    )
+    changed_group = next(
+        group for group in seven_groups if frozenset(group.strategy_rollout_ids) == group_b_plus_ids
+    )
+    changed_group_pairs = tuple(
+        item for item in seven_pairs if frozenset(item.strategy_rollout_ids) <= group_b_plus_ids
+    )
+    full_changed_group = adapter._recovery_reader_interaction_groups(
+        "semantic",
+        baseline,
+        seven_final,
+        seven_records,
+        tuple(approval for approval in seven_approvals if approval.rollout_id in group_b_plus_ids),
+        changed_group_pairs,
+        epochs=1,
+        learning_rate=0.1,
+    )
+    merged_groups, merge_replayed, merge_reused = (
+        adapter._recovery_reader_interaction_groups_incremental(
+            "semantic",
+            baseline,
+            six_final,
+            six_records,
+            six_approvals,
+            six_all_pairs,
+            previous_dependency=old_dependency,
+            changed_rollout_ids=set(),
+            epochs=1,
+            learning_rate=0.1,
+        )
+    )
+    merged_dependency = RecoveryReaderDependency(
+        reader_kind="semantic",
+        memory_ids=tuple(approval.memory_id for approval in six_approvals),
+        strategy_rollout_ids=tuple(approval.rollout_id for approval in six_approvals),
+        interactions=six_all_pairs,
+        interaction_groups=merged_groups,
+        interaction_audit_complete=True,
+        base_checkpoint=baseline,
+        base_checkpoint_digest=semantic_dependency.base_checkpoint_digest,
+    )
+    split_groups, split_replayed, split_reused = (
+        adapter._recovery_reader_interaction_groups_incremental(
+            "semantic",
+            baseline,
+            six_final,
+            six_records,
+            six_approvals,
+            partitioned_pairs,
+            previous_dependency=merged_dependency,
+            changed_rollout_ids=set(),
+            epochs=1,
+            learning_rate=0.1,
+        )
+    )
+    return {
+        "incremental_pairwise_reuse": bool(pairwise_reused == 6 and pairwise_replayed == 3),
+        "incremental_group_reuse": bool(group_reused == 1 and group_replayed == 1),
+        "incremental_untouched_group_digest_stable": bool(
+            untouched_group.replay_digest == current_untouched_group.replay_digest
+            and untouched_group.attribution_digest == current_untouched_group.attribution_digest
+            and untouched_group.singleton_effect_l2 == current_untouched_group.singleton_effect_l2
+        ),
+        "incremental_changed_group_matches_full": bool(
+            len(full_changed_group) == 1 and changed_group == full_changed_group[0]
+        ),
+        "incremental_merge_replays_one_group": bool(
+            len(merged_groups) == 1 and merge_replayed == 1 and merge_reused == 0
+        ),
+        "incremental_split_replays_two_groups": bool(
+            len(split_groups) == 2 and split_replayed == 2 and split_reused == 0
+        ),
+        "incremental_composition_debug": {
+            "old_replayed": old_replayed,
+            "old_reused": old_reused,
+            "pairwise_replayed": pairwise_replayed,
+            "pairwise_reused": pairwise_reused,
+            "group_replayed": group_replayed,
+            "group_reused": group_reused,
+            "merge_replayed": merge_replayed,
+            "split_replayed": split_replayed,
+        },
+    }
 
 
 def _seed_ledger(seed: int) -> WorldDynamicsLearner:
@@ -857,6 +1100,16 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         memory_id=tertiary_record.memory_id,
     )
     group_adapter.consolidate_recovery_memory(epochs=1)
+    group_incremental_replay_stats = group_adapter.recovery_reader_interaction_replay_stats
+    group_incremental_consolidation_no_double_replay = bool(
+        group_adapter._semantic_memory is not None
+        and group_adapter._semantic_memory.consolidation_count == 1
+        and group_adapter._procedural_memory is not None
+        and group_adapter._procedural_memory.consolidation_count == 1
+        and group_adapter.procedural_sequence_memory is not None
+        and group_adapter.procedural_sequence_memory.consolidation_count == 1
+    )
+    incremental_composition = _run_incremental_group_composition_case(group_adapter)
     group_checkpoint = TSKV8Adapter.from_native_checkpoint(group_adapter.native_checkpoint())
     group_selected_ids = group_adapter.recovery_strategy_ledger.selected_rollout_ids
     group_dependencies = group_adapter.recovery_reader_dependencies.dependencies
@@ -1028,6 +1281,17 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
             recovery_strategy_interaction_policy_checkpoint_preserved
         ),
         "recovery_reader_interaction_group_replay": recovery_reader_interaction_group_replay,
+        "recovery_reader_incremental_replay_gate": bool(
+            group_incremental_replay_stats["pairwise_reused"] >= 4
+            and group_incremental_replay_stats["pairwise_replayed"] >= 8
+            and group_incremental_replay_stats["group_replayed"] >= 4
+            and group_incremental_replay_stats["group_reused"] == 0
+        ),
+        "recovery_reader_incremental_replay_stats": group_incremental_replay_stats,
+        "recovery_reader_incremental_consolidation_no_double_replay": (
+            group_incremental_consolidation_no_double_replay
+        ),
+        **incremental_composition,
         "recovery_reader_interaction_group_checkpoint_preserved": (
             recovery_reader_interaction_group_checkpoint_preserved
         ),
@@ -1256,6 +1520,14 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "recovery_reader_interaction_selection_gate",
         "recovery_strategy_interaction_policy_checkpoint_preserved",
         "recovery_reader_interaction_group_replay",
+        "recovery_reader_incremental_replay_gate",
+        "recovery_reader_incremental_consolidation_no_double_replay",
+        "incremental_pairwise_reuse",
+        "incremental_group_reuse",
+        "incremental_untouched_group_digest_stable",
+        "incremental_changed_group_matches_full",
+        "incremental_merge_replays_one_group",
+        "incremental_split_replays_two_groups",
         "recovery_reader_interaction_group_checkpoint_preserved",
         "recovery_reader_dependencies_recorded",
         "recovery_reader_contributions_recorded",
@@ -1349,6 +1621,11 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "recovery-reader-higher-order-interaction-group-replay",
             "recovery-reader-higher-order-group-checkpoint",
             "recovery-reader-higher-order-group-revocation",
+            "recovery-reader-incremental-pair-replay",
+            "recovery-reader-incremental-group-replay",
+            "recovery-reader-incremental-stable-baseline",
+            "recovery-reader-incremental-group-digest-stability",
+            "recovery-reader-incremental-group-merge-split",
             "recovery-reader-selective-revocation",
             "recovery-strategy-rebuild-after-revocation",
             "recovery-strategy-rebuild-checkpoint",
@@ -1372,7 +1649,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         },
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, rank multiple admitted strategies by evidence, outcome consistency, and resource cost under a memory budget, preserve that competition through checkpoint, consolidate selected records through semantic/procedural/sequence/concept readers, persist their reader dependency provenance, leave-one-out contribution credit, pairwise interaction residual, and order-invariance result, keep additive interactions independently selectable, group non-additive or unaudited interactions into fail-closed atomic selection units, preserve that selection through checkpoint and revocation, replay connected groups of three or more strategies as a full higher-order unit, compare full-group effect against the pairwise prediction, preserve the group audit through checkpoint, and remove the group atomically on revocation while retaining survivor attribution, revoke one strategy from future replay, rebuild only readers that depended on it from the saved baseline plus surviving records, preserve the survivor's contribution attribution, propagate the revocation to reader dependencies and episodic readout, checkpoint and restore that rebuild, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
+            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, rank multiple admitted strategies by evidence, outcome consistency, and resource cost under a memory budget, preserve that competition through checkpoint, consolidate selected records through semantic/procedural/sequence/concept readers, persist their reader dependency provenance, leave-one-out contribution credit, pairwise interaction residual, and order-invariance result, keep additive interactions independently selectable, group non-additive or unaudited interactions into fail-closed atomic selection units, preserve that selection through checkpoint and revocation, replay connected groups of three or more strategies as a full higher-order unit, compare full-group effect against the pairwise prediction, preserve the group audit through checkpoint, and remove the group atomically on revocation while retaining survivor attribution, incrementally replay only changed pairs and connected groups from a stable baseline without double-applying prior records, preserve unchanged group replay and attribution digests, prove incremental output equals full replay for changed groups, and handle group additions, merges, and splits, revoke one strategy from future replay, rebuild only readers that depended on it from the saved baseline plus surviving records, preserve the survivor's contribution attribution, propagate the revocation to reader dependencies and episodic readout, checkpoint and restore that rebuild, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
         },
     }
 
