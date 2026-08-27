@@ -373,6 +373,11 @@ def test_adapter_outcome_loop_calibrates_and_rejects_contradictory_episode() -> 
     assert rejected_trace.prediction.uncertainty == 0.0
     assert rejected_trace.online_update_count_before == 2
     assert rejected_trace.online_update_count_after == 2
+    assert rejected.replan_required is True
+    assert rejected_trace.adjudication == "rejected"
+    assert rejected_trace.ledger_uncertainty_mode == "conflicted"
+    assert rejected_trace.ledger_uncertainty == pytest.approx(1.0)
+    assert rejected_trace.ledger_evidence_count == 3
 
 
 def test_adapter_checkpoint_restores_registry_and_network_schema_snapshots() -> None:

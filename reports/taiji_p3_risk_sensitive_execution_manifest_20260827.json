@@ -1,0 +1,18 @@
+{
+  "format": "taiji-p3-risk-sensitive-execution-manifest-v1",
+  "task": "execute ledger-aware imagined actions through a real environment step by step",
+  "seeds": [
+    11,
+    23,
+    37
+  ],
+  "controls": [
+    "stochastic-ledger-ambiguity",
+    "conflicted-ledger-ambiguity",
+    "real-environment-after-state-feedback",
+    "failed-action-replan",
+    "checkpoint-no-replay",
+    "recovery-rollout-continuation"
+  ],
+  "boundary": "risk-sensitive execution and evidence accounting; not open-world intelligence"
+}
