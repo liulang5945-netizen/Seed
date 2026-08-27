@@ -695,6 +695,9 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 - topics（13 个，精准优先、覆盖面兜底；网页 About 面板里逐个粘贴回车）：`predictive-coding` `cognitive-architecture` `episodic-memory` `hebbian-learning` `local-learning` `online-learning` `computational-neuroscience` `neuromorphic-computing` `sparse-neural-networks` `world-models` `pytorch` `deep-learning` `artificial-intelligence`
 - homepage：留空或指向 README 的 reproducible results 锚点，不要指向尚未上线的站点。
 - social preview（= OpenGraph 卡片图，仓库链接被贴进微信/Slack/X/知乎时对方看到的那张图）：GitHub 从未提供 REST 接口，**这一项是唯一任何令牌都写不了、只能人工在 Settings → Social preview 上传的字段**。规格：1280×640 px（≥1.91:1）、<1 MB、PNG/JPG。图上只印两行——`0% → 94.12%`（全仓最强**实测**数字，来自已提交的双区 `[64, 48]` benchmark、seed 7 的 byte-cycle accuracy，见 README L203-L210）与 `no backprop / no attention`（一眼区分于任何 Transformer 仓库的最短差异化陈述）。不要印 logo 或抽象插画：卡片在时间线里通常只被扫视 1 秒，能留下的只有一个数字加一句机制主张。
+  - **图已生成，你无需再做图**：成品在 `frontend/public/social-preview.png`（1280×640，139.9 KB），直接上传即可。由 `scripts/make_social_preview.py` 以 PIL 渲染（2× 超采样 + LANCZOS 缩放保证字缘锐利），改文案后重跑脚本即可重出图；配色取自现有品牌资产 `frontend/public/logo-taiji-ink.jpg` 的宣纸白 `#FAFBF6` 与焦墨黑 `#060604`，并标注 `two-region [64, 48] benchmark · seed 7` 使数字可被追溯。脚本内置两道自检并在不满足时非零退出：墨迹 bbox 必须落在四边 100px 安全边距内（各平台按不同比例裁切），产物必须 <1 MB。
+  - 首版曾犯两个错并已修正，记录以免重犯：surprise 衰减曲线横穿底部文字，视觉上把 `surprise 5.4041 → 0.1069` 划成删除线（把自家指标划掉，语义反了），已删除该装饰；太极水印用了 `INK_FAINT` 且坐标写死，压住 `94.12%`，现改为浅色背景层且位置由实测文字宽度算出，空间不足时**自动不画**——宁可留白也不撞字。
+  - 注意：这张图**不走仓库文件系统**，上传后由 GitHub 存于自有 CDN（`opengraph.githubassets.com`）；仓库内保留 PNG 与脚本仅为可复现与后续改数字，放着不上传不会生效。
 
 **已完成：`TSKV8Adapter.step_cross_region_network()` 已把 growth/pruning/split/merge 所需的 activity、route evidence、prediction error、learning gain、holdout transfer 和资源压力接入可 checkpoint 的 runtime observation；Gate 为 `reports/taiji_runtime_structure_20260826.json`。无 expected activity 时不伪造 growth supervision，route credit 来自实际 target activity，runtime tick 不直接改变 topology。**
 
