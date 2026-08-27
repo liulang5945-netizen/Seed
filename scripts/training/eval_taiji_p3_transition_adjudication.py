@@ -88,40 +88,114 @@ def _run_real_transition(
 
 
 def evaluate_seed(seed: int) -> dict[str, object]:
-    learner = _fit_world_learner(seed)
-    first = _run_real_transition(
-        learner,
+    deterministic_learner = _fit_world_learner(seed)
+    deterministic_first = _run_real_transition(
+        deterministic_learner,
         seed=seed,
-        episode_id=f"adjudication:{seed}:a",
+        episode_id=f"adjudication:{seed}:deterministic-a",
         phase=1,
         reward=1.0,
         success=True,
     )
-    first_state = first.cognitive_snapshot()
-    first_trace = first_state.world_calibration_trace[-1]
-    second = _run_real_transition(
-        learner,
+    deterministic_first_trace = deterministic_first.cognitive_snapshot().world_calibration_trace[-1]
+    deterministic_repeat = _run_real_transition(
+        deterministic_learner,
         seed=seed,
-        episode_id=f"adjudication:{seed}:b",
+        episode_id=f"adjudication:{seed}:deterministic-b",
         phase=1,
         reward=1.0,
         success=True,
     )
-    second_state = second.cognitive_snapshot()
-    second_trace = second_state.world_calibration_trace[-1]
-    if second_state.world_transition is None:
-        raise RuntimeError("transition adjudication lost the real adapter transition")
-    evidence_key = learner.schema_registry.transition_evidence_key(second_state.world_transition)
-    checkpoint = second.native_checkpoint()
+    deterministic_repeat_trace = deterministic_repeat.cognitive_snapshot().world_calibration_trace[
+        -1
+    ]
+    deterministic_repeat_state = deterministic_repeat.cognitive_snapshot()
+    if deterministic_repeat_state.world_transition is None:
+        raise RuntimeError("deterministic repeat lost the real adapter transition")
+    deterministic_key = deterministic_learner.schema_registry.transition_evidence_key(
+        deterministic_repeat_state.world_transition
+    )
+    deterministic_repeat_confidence = deterministic_learner.schema_registry.transition_confidence[
+        deterministic_key
+    ]
+    deterministic_rejected = _run_real_transition(
+        deterministic_learner,
+        seed=seed,
+        episode_id=f"adjudication:{seed}:deterministic-c",
+        phase=0,
+        reward=-1.0,
+        success=False,
+    )
+    deterministic_state = deterministic_rejected.cognitive_snapshot()
+    deterministic_trace = deterministic_state.world_calibration_trace[-1]
+    if deterministic_state.world_transition is None:
+        raise RuntimeError("deterministic adjudication lost the real adapter transition")
+    deterministic_key = deterministic_learner.schema_registry.transition_evidence_key(
+        deterministic_state.world_transition
+    )
+    deterministic_hypotheses = deterministic_learner.schema_registry.transition_hypotheses[
+        deterministic_key
+    ]
+
+    stochastic_learner = _fit_world_learner(seed + 1000)
+    _run_real_transition(
+        stochastic_learner,
+        seed=seed,
+        episode_id=f"adjudication:{seed}:stochastic-a1",
+        phase=1,
+        reward=1.0,
+        success=True,
+    )
+    _run_real_transition(
+        stochastic_learner,
+        seed=seed,
+        episode_id=f"adjudication:{seed}:stochastic-b1",
+        phase=0,
+        reward=-1.0,
+        success=False,
+    )
+    _run_real_transition(
+        stochastic_learner,
+        seed=seed,
+        episode_id=f"adjudication:{seed}:stochastic-b2",
+        phase=0,
+        reward=-1.0,
+        success=False,
+    )
+    stochastic_a2 = _run_real_transition(
+        stochastic_learner,
+        seed=seed,
+        episode_id=f"adjudication:{seed}:stochastic-a2",
+        phase=1,
+        reward=1.0,
+        success=True,
+    )
+    stochastic_b3 = _run_real_transition(
+        stochastic_learner,
+        seed=seed,
+        episode_id=f"adjudication:{seed}:stochastic-b3",
+        phase=0,
+        reward=-1.0,
+        success=False,
+    )
+    stochastic_state = stochastic_b3.cognitive_snapshot()
+    if stochastic_state.world_transition is None:
+        raise RuntimeError("stochastic adjudication lost the real adapter transition")
+    evidence_key = stochastic_learner.schema_registry.transition_evidence_key(
+        stochastic_state.world_transition
+    )
+    checkpoint = stochastic_b3.native_checkpoint()
     restored = TSKV8Adapter.from_native_checkpoint(checkpoint)
     restored_learner = restored._world_dynamics
     checkpoint_registry = bool(
         restored_learner is not None
         and restored_learner.schema_registry.transition_outcome_count == 1
-        and restored_learner.schema_registry.transition_confidence[evidence_key] >= 0.2
-        and restored_learner.transition_acceptances == 2
-        and restored_learner.transition_rejections == 0
-        and restored_learner.online_updates == 2
+        and restored_learner.schema_registry.transition_outcome_mode(evidence_key) == "stochastic"
+        and restored_learner.schema_registry.transition_confidence[evidence_key]
+        == stochastic_learner.schema_registry.transition_confidence[evidence_key]
+        and restored_learner.transition_acceptances == 3
+        and restored_learner.transition_rejections == 2
+        and restored_learner.online_updates == 3
     )
     checkpoint_network = bool(
         restored_learner is not None
@@ -134,36 +208,47 @@ def evaluate_seed(seed: int) -> dict[str, object]:
     checkpoint_continuation = bool(
         restored._world_dynamics is not None
         and restored._world_dynamics.schema_registry.transition_outcome_count == 1
-        and restored._world_dynamics.online_updates == 2
+        and restored._world_dynamics.schema_registry.transition_outcome_mode(evidence_key)
+        == "stochastic"
+        and restored._world_dynamics.online_updates == 3
     )
-
-    rejected = _run_real_transition(
-        learner,
-        seed=seed,
-        episode_id=f"adjudication:{seed}:c",
-        phase=0,
-        reward=-1.0,
-        success=False,
-    )
-    rejected_state = rejected.cognitive_snapshot()
-    rejected_trace = rejected_state.world_calibration_trace[-1]
+    stochastic_hypotheses = stochastic_learner.schema_registry.transition_hypotheses[evidence_key]
     no_update_on_reject = bool(
-        learner.online_updates == 2
-        and learner.transition_acceptances == 2
-        and learner.transition_rejections == 1
+        stochastic_a2.cognitive_snapshot().world_calibration_trace[-1].calibration_applied is False
+        and stochastic_a2.cognitive_snapshot()
+        .world_calibration_trace[-1]
+        .online_update_count_before
+        == stochastic_a2.cognitive_snapshot().world_calibration_trace[-1].online_update_count_after
+        and stochastic_learner.online_updates == 3
+        and stochastic_learner.transition_acceptances == 3
+        and stochastic_learner.transition_rejections == 2
     )
     return {
         "seed": int(seed),
-        "first_calibration": bool(first_trace.calibration_applied),
-        "cross_episode_calibration": bool(second_trace.calibration_applied),
-        "cross_episode_confidence": float(
-            learner.schema_registry.transition_confidence[evidence_key]
-        ),
+        "first_calibration": bool(deterministic_first_trace.calibration_applied),
+        "cross_episode_calibration": bool(deterministic_repeat_trace.calibration_applied),
+        "cross_episode_confidence": float(deterministic_repeat_confidence),
         "relation_specific_holdout": bool(
-            not rejected_trace.calibration_applied
-            and learner.schema_registry.contradiction_count == 1
+            not deterministic_trace.calibration_applied
+            and deterministic_learner.schema_registry.contradiction_count == 1
+            and deterministic_learner.schema_registry.transition_outcome_mode(deterministic_key)
+            == "conflicted"
+            and sorted(item["evidence_count"] for item in deterministic_hypotheses) == [1, 2]
         ),
-        "contradiction_rejected": bool(not rejected_trace.calibration_applied),
+        "contradiction_rejected": bool(not deterministic_trace.calibration_applied),
+        "stochastic_tie_rejected": bool(
+            not stochastic_a2.cognitive_snapshot().world_calibration_trace[-1].calibration_applied
+        ),
+        "stochastic_mode": bool(
+            stochastic_learner.schema_registry.transition_outcome_mode(evidence_key) == "stochastic"
+        ),
+        "stochastic_clear_leader": bool(
+            stochastic_b3.cognitive_snapshot().world_calibration_trace[-1].calibration_applied
+            and sorted(item["evidence_count"] for item in stochastic_hypotheses) == [2, 3]
+        ),
+        "stochastic_confidence": float(
+            stochastic_learner.schema_registry.transition_confidence[evidence_key]
+        ),
         "no_update_on_reject": no_update_on_reject,
         "checkpoint_registry": checkpoint_registry,
         "checkpoint_network": checkpoint_network,
@@ -178,9 +263,12 @@ def build_manifest() -> dict[str, object]:
         "seeds": [11, 29, 47],
         "controls": [
             "stable semantic before/action evidence key excludes tick and event ids",
-            "consistent repeated outcome increases transition confidence",
-            "contradictory after-state is recorded as a conflict",
-            "contradictory outcome fails closed before local SGD update",
+            "outcome ledger stores multiple after-state hypotheses with evidence counts",
+            "consistent repeated outcome increases the leading hypothesis share",
+            "one-off contradictory after-state remains conflicted and is recorded",
+            "only a clear leader can pass local SGD adjudication",
+            "repeatable stochastic outcomes become an explicit stochastic ledger mode",
+            "ambiguous stochastic tie fails closed before local SGD update",
             "prediction calibration trace reflects accepted versus rejected feedback",
             "registry and network state survive native checkpoint continuation",
             "relation-specific after-state differences remain distinguishable",
@@ -196,6 +284,9 @@ def evaluate(*, seeds: tuple[int, ...] = (11, 29, 47)) -> dict[str, object]:
         "cross_episode_calibration",
         "relation_specific_holdout",
         "contradiction_rejected",
+        "stochastic_tie_rejected",
+        "stochastic_mode",
+        "stochastic_clear_leader",
         "no_update_on_reject",
         "checkpoint_registry",
         "checkpoint_network",
@@ -205,9 +296,13 @@ def evaluate(*, seeds: tuple[int, ...] = (11, 29, 47)) -> dict[str, object]:
     aggregate["cross_episode_confidence_min"] = min(
         float(run["cross_episode_confidence"]) for run in runs
     )
+    aggregate["stochastic_confidence_min"] = min(
+        float(run["stochastic_confidence"]) for run in runs
+    )
     passed = bool(
         all(aggregate[f"{name}_min"] >= 1.0 for name in metrics)
-        and aggregate["cross_episode_confidence_min"] >= 0.2
+        and aggregate["cross_episode_confidence_min"] >= 1.0
+        and aggregate["stochastic_confidence_min"] >= 0.6
     )
     aggregate["passed"] = passed
     return {
@@ -217,8 +312,9 @@ def evaluate(*, seeds: tuple[int, ...] = (11, 29, 47)) -> dict[str, object]:
         "gate": {
             "passed": passed,
             "criterion": (
-                "real adapter repeated outcomes must calibrate, contradictory relation outcomes "
-                "must fail closed, and registry/network checkpoint continuation must pass"
+                "real adapter deterministic conflicts must fail closed, repeatable stochastic "
+                "outcomes must form a clear-ledger mode, and registry/network checkpoint "
+                "continuation must pass"
             ),
         },
     }

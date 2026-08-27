@@ -203,12 +203,14 @@ def test_transition_adjudication_is_cross_episode_and_fail_closed() -> None:
     assert registry.record_transition_outcome(first) is True
     key = registry.transition_evidence_key(first)
     assert registry.transition_outcome_count == 1
-    assert registry.transition_confidence[key] == pytest.approx(0.1)
+    assert registry.transition_confidence[key] == pytest.approx(1.0)
     assert registry.record_transition_outcome(repeat) is True
-    assert registry.transition_confidence[key] == pytest.approx(0.2)
+    assert registry.transition_confidence[key] == pytest.approx(1.0)
     assert registry.record_transition_outcome(contradiction) is False
     assert registry.transition_outcome_count == 1
-    assert registry.transition_confidence[key] == pytest.approx(0.2)
+    assert registry.transition_confidence[key] == pytest.approx(2.0 / 3.0)
+    assert registry.transition_outcome_mode(key) == "conflicted"
+    assert sorted(item["evidence_count"] for item in registry.transition_hypotheses[key]) == [1, 2]
     assert registry.contradiction_count == 1
 
     learner = _learner()
@@ -224,6 +226,26 @@ def test_transition_adjudication_is_cross_episode_and_fail_closed() -> None:
     assert restored.transition_outcome_count == 1
     assert restored.transition_confidence == registry.transition_confidence
     assert restored.record_transition_outcome(contradiction) is False
+
+
+def test_transition_ledger_identifies_repeatable_stochastic_outcomes() -> None:
+    registry = _learner().schema_registry
+    first = _transition("stochastic-a1", after_position=1.0, reward=1.0, success=True)
+    alternate = _transition("stochastic-b1", after_position=2.0, reward=-1.0, success=False)
+    key = registry.transition_evidence_key(first)
+
+    assert registry.record_transition_outcome(first) is True
+    assert registry.transition_outcome_mode(key) == "deterministic"
+    assert registry.record_transition_outcome(alternate) is False
+    assert registry.transition_outcome_mode(key) == "conflicted"
+    assert registry.record_transition_outcome(alternate) is True
+    assert registry.record_transition_outcome(first) is False
+    assert registry.transition_outcome_mode(key) == "stochastic"
+    assert registry.record_transition_outcome(alternate) is True
+    hypotheses = registry.transition_hypotheses[key]
+    assert sorted(item["evidence_count"] for item in hypotheses) == [2, 3]
+    assert registry.transition_confidence[key] == pytest.approx(0.6)
+    assert registry.transition_outcome_mode(key) == "stochastic"
 
 
 def _runtime_state(tick: int, *, position: float) -> WorldState:
