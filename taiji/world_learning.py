@@ -51,6 +51,7 @@ class WorldSchema:
     target_ids: tuple[str, ...]
     parameter_names: tuple[str, ...]
     state_scales: tuple[float, ...] = ()
+    open_set: bool = False
 
     def __post_init__(self) -> None:
         scales = self.state_scales or (1.0,) * self.state_dim
@@ -142,13 +143,132 @@ class WorldSchema:
     def input_dim(self) -> int:
         return self.state_dim + self.action_dim
 
+    @property
+    def state_feature_keys(self) -> tuple[tuple[str, ...], ...]:
+        return tuple(("state", object_id, name) for object_id, name in self.state_slots) + tuple(
+            ("relation", subject, predicate, object_id)
+            for subject, predicate, object_id in self.relation_slots
+        )
+
+    @property
+    def input_feature_keys(self) -> tuple[tuple[str, ...], ...]:
+        return (
+            self.state_feature_keys
+            + tuple(("action-kind", kind) for kind in self.action_kinds)
+            + tuple(("actor", actor_id) for actor_id in self.actor_ids)
+            + tuple(("target", target_id) for target_id in self.target_ids)
+            + tuple(("parameter", name) for name in self.parameter_names)
+            + tuple(
+                ("interaction", target_id, name)
+                for target_id in self.target_ids
+                for name in self.parameter_names
+            )
+        )
+
+    def evolve_open_set(
+        self,
+        *,
+        states: tuple[WorldState, ...] = (),
+        actions: tuple[Any, ...] = (),
+        include_action_parameters: bool = True,
+    ) -> WorldSchema:
+        """Register observed world identities while retaining the old schema.
+
+        The returned schema is data-derived from the observed state/action
+        boundary.  Existing feature order remains addressable by semantic
+        keys, while new object attributes, relations, action kinds, actors,
+        targets, and numeric parameters receive new slots.
+        """
+
+        if not states and not actions:
+            raise ValueError("open-set schema evolution needs an observed state or action")
+        object_ids = set(self.object_ids)
+        state_slots = set(self.state_slots)
+        relation_slots = set(self.relation_slots)
+        action_kinds = set(self.action_kinds)
+        actor_ids = set(self.actor_ids)
+        target_ids = set(self.target_ids)
+        parameter_names = set(self.parameter_names)
+        for state in states:
+            for obj in state.objects:
+                object_ids.add(obj.object_id)
+                for name, value in obj.attributes:
+                    try:
+                        _numeric(value, f"{obj.object_id}.{name}")
+                    except ValueError:
+                        continue
+                    state_slots.add((obj.object_id, name))
+            relation_slots.update(state.relations)
+        for action in actions:
+            action_kinds.add(str(action.kind))
+            actor_ids.add(str(action.actor_id))
+            target_ids.add(str(action.target_id))
+            if include_action_parameters:
+                for name, value in action.parameters:
+                    try:
+                        _numeric(value, f"action parameter {name}")
+                    except ValueError:
+                        continue
+                    parameter_names.add(str(name))
+        changed = bool(
+            object_ids != set(self.object_ids)
+            or state_slots != set(self.state_slots)
+            or relation_slots != set(self.relation_slots)
+            or action_kinds != set(self.action_kinds)
+            or actor_ids != set(self.actor_ids)
+            or target_ids != set(self.target_ids)
+            or parameter_names != set(self.parameter_names)
+        )
+        if not changed and not self.open_set:
+            return self
+        sorted_state_slots = tuple(sorted(state_slots))
+        old_scales = {
+            key: float(self.state_scales[index]) for index, key in enumerate(self.state_slots)
+        }
+        state_scales = []
+        for object_id, name in sorted_state_slots:
+            if (object_id, name) in old_scales:
+                state_scales.append(old_scales[(object_id, name)])
+                continue
+            values = []
+            for state in states:
+                candidate_object = next(
+                    (item for item in state.objects if item.object_id == object_id), None
+                )
+                if candidate_object is not None:
+                    values.append(
+                        abs(
+                            _numeric(
+                                candidate_object.attribute(name, 0.0),
+                                f"{object_id}.{name}",
+                            )
+                        )
+                    )
+            state_scales.append(max(1.0, *values))
+        return WorldSchema(
+            object_ids=tuple(sorted(object_ids)),
+            state_slots=sorted_state_slots,
+            relation_slots=tuple(sorted(relation_slots)),
+            action_kinds=tuple(sorted(action_kinds)),
+            actor_ids=tuple(sorted(actor_ids)),
+            target_ids=tuple(sorted(target_ids)),
+            parameter_names=tuple(sorted(parameter_names)),
+            state_scales=tuple(state_scales) + (1.0,) * len(relation_slots),
+            open_set=self.open_set or changed,
+        )
+
     def state_values(self, state: WorldState) -> torch.Tensor:
         objects = {item.object_id: item for item in state.objects}
         values = []
         for object_id, name in self.state_slots:
             if object_id not in objects:
-                raise ValueError(f"world state is missing object: {object_id}")
-            values.append(_numeric(objects[object_id].attribute(name, 0.0), f"{object_id}.{name}"))
+                if not self.open_set:
+                    raise ValueError(f"world state is missing object: {object_id}")
+                values.append(0.0)
+            else:
+                values.append(
+                    _numeric(objects[object_id].attribute(name, 0.0), f"{object_id}.{name}")
+                )
         relation_set = set(state.relations)
         values.extend(float(relation in relation_set) for relation in self.relation_slots)
         return torch.tensor(values, dtype=torch.float32)
@@ -213,6 +333,7 @@ class WorldSchema:
             "action_dim": self.action_dim,
             "input_dim": self.input_dim,
             "state_scales": list(self.state_scales),
+            "open_set": self.open_set,
         }
 
     @classmethod
@@ -229,6 +350,7 @@ class WorldSchema:
             target_ids=tuple(str(item) for item in payload["target_ids"]),
             parameter_names=tuple(str(item) for item in payload["parameter_names"]),
             state_scales=tuple(float(item) for item in payload.get("state_scales", ())),
+            open_set=bool(payload.get("open_set", False)),
         )
 
 
@@ -295,12 +417,83 @@ class WorldDynamicsLearner(nn.Module):
         self.schema = schema
         self.hidden_dim = int(hidden_dim)
         self.online_updates = 0
+        self.schema_evolution_count = 0
         self.network = nn.Sequential(
             nn.Linear(schema.input_dim, self.hidden_dim),
             nn.Tanh(),
             nn.Linear(self.hidden_dim, schema.state_dim + 2),
         )
         freeze_parameters(self)
+
+    def _resize_for_schema(self, schema: WorldSchema) -> None:
+        old_schema = self.schema
+        old_input = self._input_layer
+        old_output = self._output_layer
+        new_input = nn.Linear(
+            schema.input_dim,
+            self.hidden_dim,
+            device=old_input.weight.device,
+            dtype=old_input.weight.dtype,
+        )
+        new_output = nn.Linear(
+            self.hidden_dim,
+            schema.state_dim + 2,
+            device=old_output.weight.device,
+            dtype=old_output.weight.dtype,
+        )
+        with torch.no_grad():
+            new_input.bias.copy_(old_input.bias)
+            old_input_indices = {
+                key: index for index, key in enumerate(old_schema.input_feature_keys)
+            }
+            new_input_indices = {key: index for index, key in enumerate(schema.input_feature_keys)}
+            for key, old_index in old_input_indices.items():
+                new_index = new_input_indices.get(key)
+                if new_index is not None:
+                    new_input.weight[:, new_index].copy_(old_input.weight[:, old_index])
+
+            new_output.bias.zero_()
+            old_output_indices = {
+                key: index for index, key in enumerate(old_schema.state_feature_keys)
+            }
+            new_output_indices = {key: index for index, key in enumerate(schema.state_feature_keys)}
+            for key, old_index in old_output_indices.items():
+                new_index = new_output_indices.get(key)
+                if new_index is not None:
+                    new_output.weight[new_index].copy_(old_output.weight[old_index])
+                    new_output.bias[new_index].copy_(old_output.bias[old_index])
+            new_output.weight[schema.state_dim].copy_(old_output.weight[old_schema.state_dim])
+            new_output.bias[schema.state_dim].copy_(old_output.bias[old_schema.state_dim])
+            new_output.weight[schema.state_dim + 1].copy_(
+                old_output.weight[old_schema.state_dim + 1]
+            )
+            new_output.bias[schema.state_dim + 1].copy_(old_output.bias[old_schema.state_dim + 1])
+        self.network = nn.Sequential(new_input, nn.Tanh(), new_output)
+        freeze_parameters(self)
+
+    def register_open_set(
+        self,
+        *states: WorldState,
+        action: Any | None = None,
+        register_parameters: bool = True,
+    ) -> bool:
+        """Grow the schema and network in place from observed identities."""
+
+        if not states and action is None:
+            raise ValueError("open-set registration needs an observed state or action")
+        observed_states = tuple(states)
+        observed_actions = () if action is None else (action,)
+        evolved = self.schema.evolve_open_set(
+            states=observed_states,
+            actions=observed_actions,
+            include_action_parameters=register_parameters,
+        )
+        if evolved == self.schema:
+            return False
+        self._resize_for_schema(evolved)
+        self.schema = evolved
+        self.schema_evolution_count += 1
+        return True
 
     @property
     def _input_layer(self) -> nn.Linear:
@@ -359,8 +552,18 @@ class WorldDynamicsLearner(nn.Module):
         return loss, (*input_gradients, *output_gradients)
 
     def predict(
-        self, state: WorldState, action: Any, *, bind_target: bool = True
+        self,
+        state: WorldState,
+        action: Any,
+        *,
+        bind_target: bool = True,
+        register_parameters: bool = True,
     ) -> WorldPrediction:
+        self.register_open_set(
+            state,
+            action=action,
+            register_parameters=register_parameters,
+        )
         self.eval()
         with torch.no_grad():
             output = self.network(self.schema.encode(state, action, bind_target=bind_target))
@@ -423,11 +626,18 @@ class WorldDynamicsLearner(nn.Module):
         *,
         learning_rate: float = 0.005,
         repeats: int = 1,
+        register_parameters: bool = True,
     ) -> list[float]:
         """Apply local error-driven correction from one experienced transition."""
 
         if float(learning_rate) <= 0.0 or int(repeats) <= 0:
             raise ValueError("learning_rate and repeats must be positive")
+        self.register_open_set(
+            transition.before,
+            transition.after,
+            action=transition.action,
+            register_parameters=register_parameters,
+        )
         features = self.schema.encode(transition.before, transition.action).unsqueeze(0)
         target = torch.cat(
             (

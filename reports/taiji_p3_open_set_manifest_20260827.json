@@ -1,0 +1,54 @@
+{
+  "format": "taiji-p3-open-set-manifest-v1",
+  "task": "open-set world schema evolution across two carried episode segments",
+  "train_count": 64,
+  "holdout_count": 32,
+  "seeds": [
+    11,
+    29,
+    47
+  ],
+  "assemblies_per_segment": 3,
+  "world_transitions": [
+    "assemble",
+    "secure",
+    "archive",
+    "archive"
+  ],
+  "training_schema": {
+    "object_ids": [
+      "agent",
+      "target"
+    ],
+    "relation_predicates": [
+      "relates-to",
+      "assembled"
+    ],
+    "action_kinds": [
+      "assemble"
+    ]
+  },
+  "open_set_holdout": {
+    "object_pattern": "target:holdout:<sample_tick>",
+    "relation_predicates": [
+      "secured",
+      "archived"
+    ],
+    "action_kinds": [
+      "secure",
+      "archive"
+    ]
+  },
+  "lesion": "workspace mode none",
+  "controls": [
+    "semantic-key network expansion without old-weight reset",
+    "open object registration",
+    "open relation registration",
+    "open action-kind registration",
+    "native checkpoint schema continuation",
+    "cross-episode world and event carryover",
+    "TaijiWorldState four-transition ownership and roundtrip",
+    "runtime outcome-feedback calibration trace"
+  ],
+  "boundary": "open-set schema/runtime capability; not open-domain semantics or general intelligence"
+}

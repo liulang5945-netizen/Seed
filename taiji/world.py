@@ -94,6 +94,25 @@ class TaijiWorldState:
             self._history[-1] = replace(self._history[-1], after=state)
         return self.state
 
+    def advance_observation(self, state: WorldState) -> WorldState:
+        """Advance the owned snapshot across passive observation ticks.
+
+        Perception can advance the world clock without an action/outcome
+        transition.  Keep that snapshot separate from the action history so
+        the next real transition still has an exact owned ``before`` state.
+        Same-tick enrichment continues to use ``synchronize_observation`` and
+        keeps the latest transition snapshot contiguous.
+        """
+
+        if not isinstance(state, WorldState):
+            raise TypeError("observed world state must be a Taiji WorldState")
+        if state.tick <= self._state.tick:
+            if state.tick == self._state.tick:
+                return self.synchronize_observation(state)
+            raise ValueError("observed world state cannot move behind the owned current tick")
+        self._state = state
+        return self.state
+
     def checkpoint(self) -> dict[str, Any]:
         return {
             "format": WORLD_STATE_CHECKPOINT_FORMAT,
@@ -118,11 +137,15 @@ class TaijiWorldState:
             for item in checkpoint.get("history", ())
         ]
         if world._history:
-            if not _world_state_equal(world._history[-1].after, world._state):
-                raise ValueError("world-state checkpoint history does not end at current state")
-            if any(
-                not _world_state_equal(left.after, right.before)
-                for left, right in zip(world._history, world._history[1:], strict=False)
+            last_after = world._history[-1].after
+            if (
+                not _world_state_equal(last_after, world._state)
+                and world._state.tick <= last_after.tick
             ):
-                raise ValueError("world-state checkpoint history is not contiguous")
+                raise ValueError("world-state checkpoint history does not end at current state")
+            for left, right in zip(world._history, world._history[1:], strict=False):
+                if _world_state_equal(left.after, right.before):
+                    continue
+                if right.before.tick <= left.after.tick:
+                    raise ValueError("world-state checkpoint history is not contiguous")
         return world

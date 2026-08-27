@@ -1,0 +1,6008 @@
+{
+  "format": "taiji-p3-open-set-v1",
+  "manifest_format": "taiji-p3-open-set-manifest-v1",
+  "train_samples": 64,
+  "holdout_samples": 32,
+  "seeds": [
+    {
+      "seed": 11,
+      "router_fit_updates": 1,
+      "world_training_updates": 0,
+      "conditions": {
+        "learned": {
+          "route_success": 1.0,
+          "world_success": 1.0,
+          "lineage": 1.0,
+          "relation_progression": 1.0,
+          "schema_object": 1.0,
+          "schema_relations": 1.0,
+          "schema_actions": 1.0,
+          "schema_checkpoint": 1.0,
+          "cross_episode": 1.0,
+          "history": 1.0,
+          "roundtrip": 1.0,
+          "calibration": 1.0,
+          "episodes": 32,
+          "closed_assemblies": 192
+        },
+        "none": {
+          "route_success": 0.0,
+          "world_success": 0.0,
+          "lineage": 1.0,
+          "relation_progression": 0.0,
+          "schema_object": 1.0,
+          "schema_relations": 0.0,
+          "schema_actions": 1.0,
+          "schema_checkpoint": 1.0,
+          "cross_episode": 1.0,
+          "history": 1.0,
+          "roundtrip": 1.0,
+          "calibration": 1.0,
+          "episodes": 32,
+          "closed_assemblies": 192
+        }
+      },
+      "episodes": [
+        {
+          "index": 0,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:64"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:64"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:64"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:64"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:64"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 0,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:64"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:64"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 1,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:65"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:65"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:65"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:65"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:65"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 1,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:65"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:65"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 2,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:66"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:66"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:66"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:66"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:66"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 2,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:66"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:66"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 3,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:67"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:67"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:67"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:67"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:67"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 3,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:67"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:67"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 4,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:68"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:68"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:68"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:68"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:68"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 4,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:68"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:68"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 5,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:69"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:69"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:69"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:69"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:69"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 5,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:69"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:69"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 6,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:70"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:70"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:70"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:70"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:70"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 6,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:70"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:70"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 7,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:71"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:71"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:71"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:71"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:71"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 7,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:71"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:71"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 8,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:72"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:72"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:72"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:72"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:72"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 8,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:72"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:72"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 9,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:73"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:73"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:73"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:73"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:73"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 9,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:73"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:73"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 10,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:74"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:74"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:74"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:74"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:74"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 10,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:74"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:74"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 11,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:75"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:75"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:75"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:75"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:75"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 11,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:75"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:75"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 12,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:76"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:76"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:76"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:76"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:76"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 12,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:76"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:76"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 13,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:77"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:77"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:77"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:77"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:77"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 13,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:77"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:77"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 14,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:78"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:78"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:78"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:78"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:78"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 14,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:78"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:78"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 15,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:79"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:79"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:79"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:79"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:79"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 15,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:79"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:79"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 16,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:80"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:80"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:80"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:80"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:80"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 16,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:80"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:80"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 17,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:81"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:81"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:81"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:81"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:81"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 17,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:81"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:81"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 18,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:82"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:82"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:82"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:82"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:82"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 18,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:82"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:82"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 19,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:83"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:83"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:83"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:83"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:83"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 19,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:83"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:83"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 20,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:84"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:84"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:84"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:84"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:84"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 20,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:84"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:84"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 21,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:85"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:85"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:85"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:85"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:85"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 21,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:85"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:85"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 22,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:86"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:86"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:86"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:86"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:86"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 22,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:86"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:86"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 23,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:87"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:87"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:87"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:87"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:87"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 23,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:87"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:87"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 24,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:88"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:88"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:88"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:88"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:88"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 24,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:88"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:88"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 25,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:89"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:89"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:89"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:89"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:89"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 25,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:89"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:89"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 26,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:90"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:90"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:90"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:90"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:90"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 26,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:90"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:90"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 27,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:91"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:91"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:91"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:91"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:91"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 27,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:91"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:91"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 28,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:92"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:92"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:92"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:92"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:92"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 28,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:92"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:92"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 29,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:93"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:93"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:93"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:93"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:93"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 29,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:93"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:93"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 30,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:94"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:94"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:94"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:94"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:94"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 30,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:94"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:94"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 31,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:95"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:95"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:95"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:95"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:95"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 31,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:95"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:95"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        }
+      ]
+    },
+    {
+      "seed": 29,
+      "router_fit_updates": 1,
+      "world_training_updates": 0,
+      "conditions": {
+        "learned": {
+          "route_success": 1.0,
+          "world_success": 1.0,
+          "lineage": 1.0,
+          "relation_progression": 1.0,
+          "schema_object": 1.0,
+          "schema_relations": 1.0,
+          "schema_actions": 1.0,
+          "schema_checkpoint": 1.0,
+          "cross_episode": 1.0,
+          "history": 1.0,
+          "roundtrip": 1.0,
+          "calibration": 1.0,
+          "episodes": 32,
+          "closed_assemblies": 192
+        },
+        "none": {
+          "route_success": 0.0,
+          "world_success": 0.0,
+          "lineage": 1.0,
+          "relation_progression": 0.0,
+          "schema_object": 1.0,
+          "schema_relations": 0.0,
+          "schema_actions": 1.0,
+          "schema_checkpoint": 1.0,
+          "cross_episode": 1.0,
+          "history": 1.0,
+          "roundtrip": 1.0,
+          "calibration": 1.0,
+          "episodes": 32,
+          "closed_assemblies": 192
+        }
+      },
+      "episodes": [
+        {
+          "index": 0,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:64"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:64"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:64"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:64"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:64"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 0,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:64"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:64"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 1,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:65"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:65"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:65"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:65"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:65"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 1,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:65"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:65"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 2,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:66"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:66"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:66"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:66"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:66"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 2,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:66"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:66"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 3,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:67"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:67"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:67"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:67"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:67"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 3,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:67"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:67"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 4,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:68"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:68"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:68"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:68"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:68"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 4,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:68"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:68"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 5,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:69"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:69"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:69"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:69"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:69"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 5,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:69"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:69"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 6,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:70"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:70"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:70"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:70"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:70"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 6,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:70"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:70"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 7,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:71"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:71"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:71"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:71"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:71"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 7,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:71"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:71"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 8,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:72"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:72"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:72"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:72"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:72"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 8,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:72"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:72"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 9,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:73"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:73"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:73"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:73"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:73"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 9,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:73"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:73"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 10,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:74"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:74"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:74"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:74"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:74"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 10,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:74"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:74"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 11,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:75"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:75"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:75"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:75"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:75"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 11,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:75"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:75"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 12,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:76"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:76"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:76"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:76"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:76"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 12,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:76"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:76"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 13,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:77"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:77"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:77"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:77"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:77"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 13,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:77"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:77"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 14,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:78"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:78"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:78"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:78"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:78"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 14,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:78"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:78"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 15,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:79"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:79"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:79"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:79"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:79"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 15,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:79"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:79"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 16,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:80"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:80"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:80"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:80"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:80"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 16,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:80"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:80"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 17,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:81"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:81"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:81"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:81"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:81"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 17,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:81"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:81"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 18,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:82"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:82"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:82"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:82"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:82"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 18,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:82"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:82"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 19,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:83"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:83"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:83"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:83"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:83"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 19,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:83"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:83"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 20,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:84"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:84"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:84"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:84"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:84"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 20,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:84"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:84"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 21,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:85"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:85"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:85"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:85"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:85"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 21,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:85"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:85"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 22,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:86"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:86"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:86"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:86"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:86"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 22,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:86"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:86"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 23,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:87"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:87"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:87"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:87"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:87"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 23,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:87"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:87"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 24,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:88"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:88"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:88"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:88"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:88"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 24,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:88"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:88"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 25,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:89"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:89"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:89"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:89"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:89"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 25,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:89"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:89"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 26,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:90"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:90"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:90"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:90"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:90"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 26,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:90"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:90"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 27,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:91"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:91"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:91"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:91"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:91"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 27,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:91"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:91"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 28,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:92"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:92"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:92"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:92"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:92"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 28,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:92"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:92"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 29,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:93"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:93"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:93"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:93"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:93"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 29,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:93"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:93"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 30,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:94"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:94"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:94"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:94"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:94"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 30,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:94"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:94"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 31,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:95"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:95"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:95"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:95"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:95"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 31,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:95"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:95"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        }
+      ]
+    },
+    {
+      "seed": 47,
+      "router_fit_updates": 1,
+      "world_training_updates": 0,
+      "conditions": {
+        "learned": {
+          "route_success": 1.0,
+          "world_success": 1.0,
+          "lineage": 1.0,
+          "relation_progression": 1.0,
+          "schema_object": 1.0,
+          "schema_relations": 1.0,
+          "schema_actions": 1.0,
+          "schema_checkpoint": 1.0,
+          "cross_episode": 1.0,
+          "history": 1.0,
+          "roundtrip": 1.0,
+          "calibration": 1.0,
+          "episodes": 32,
+          "closed_assemblies": 192
+        },
+        "none": {
+          "route_success": 0.0,
+          "world_success": 0.0,
+          "lineage": 1.0,
+          "relation_progression": 0.0,
+          "schema_object": 1.0,
+          "schema_relations": 0.0,
+          "schema_actions": 1.0,
+          "schema_checkpoint": 1.0,
+          "cross_episode": 1.0,
+          "history": 1.0,
+          "roundtrip": 1.0,
+          "calibration": 1.0,
+          "episodes": 32,
+          "closed_assemblies": 192
+        }
+      },
+      "episodes": [
+        {
+          "index": 0,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:64"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:64"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:64"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:64"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:64"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 0,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:64"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:64"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 1,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:65"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:65"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:65"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:65"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:65"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 1,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:65"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:65"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 2,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:66"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:66"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:66"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:66"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:66"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 2,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:66"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:66"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 3,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:67"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:67"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:67"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:67"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:67"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 3,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:67"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:67"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 4,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:68"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:68"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:68"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:68"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:68"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 4,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:68"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:68"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 5,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:69"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:69"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:69"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:69"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:69"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 5,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:69"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:69"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 6,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:70"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:70"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:70"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:70"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:70"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 6,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:70"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:70"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 7,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:71"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:71"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:71"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:71"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:71"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 7,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:71"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:71"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 8,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:72"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:72"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:72"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:72"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:72"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 8,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:72"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:72"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 9,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:73"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:73"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:73"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:73"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:73"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 9,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:73"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:73"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 10,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:74"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:74"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:74"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:74"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:74"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 10,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:74"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:74"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 11,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:75"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:75"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:75"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:75"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:75"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 11,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:75"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:75"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 12,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:76"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:76"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:76"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:76"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:76"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 12,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:76"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:76"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 13,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:77"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:77"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:77"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:77"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:77"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 13,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:77"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:77"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 14,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:78"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:78"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:78"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:78"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:78"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 14,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:78"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:78"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 15,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:79"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:79"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:79"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:79"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:79"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 15,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:79"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:79"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 16,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:80"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:80"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:80"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:80"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:80"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 16,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:80"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:80"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 17,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:81"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:81"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:81"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:81"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:81"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 17,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:81"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:81"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 18,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:82"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:82"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:82"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:82"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:82"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 18,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:82"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:82"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 19,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:83"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:83"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:83"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:83"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:83"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 19,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:83"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:83"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 20,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:84"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:84"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:84"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:84"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:84"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 20,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:84"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:84"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 21,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:85"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:85"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:85"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:85"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:85"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 21,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:85"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:85"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 22,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:86"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:86"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:86"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:86"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:86"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 22,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:86"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:86"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 23,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:87"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:87"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:87"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:87"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:87"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 23,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:87"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:87"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 24,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:88"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:88"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:88"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:88"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:88"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 24,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:88"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:88"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 25,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:89"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:89"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:89"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:89"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:89"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 25,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:89"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:89"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 26,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:90"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:90"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:90"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:90"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:90"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 26,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:90"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:90"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 27,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:91"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:91"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:91"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:91"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:91"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 27,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:91"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:91"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 28,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:92"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:92"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:92"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:92"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:92"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 28,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:92"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:92"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 29,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:93"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:93"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:93"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:93"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:93"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 29,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:93"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:93"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 30,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:94"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:94"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:94"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:94"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:94"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 30,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:94"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:94"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        },
+        {
+          "index": 31,
+          "condition": "learned",
+          "route_a": true,
+          "route_b": true,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:95"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "archived",
+              "target:holdout:95"
+            ],
+            [
+              "agent",
+              "assembled",
+              "target:holdout:95"
+            ],
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:95"
+            ],
+            [
+              "agent",
+              "secured",
+              "target:holdout:95"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": true,
+          "schema_evolution_count": 6
+        },
+        {
+          "index": 31,
+          "condition": "none",
+          "route_a": false,
+          "route_b": false,
+          "closed_assemblies": 6,
+          "new_objects": [
+            "target:holdout:95"
+          ],
+          "new_relations": [
+            [
+              "agent",
+              "relates-to",
+              "target:holdout:95"
+            ]
+          ],
+          "new_actions": [
+            "archive",
+            "secure"
+          ],
+          "relation_progression": false,
+          "schema_evolution_count": 3
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "learned_route_success_min": 1.0,
+    "learned_world_success_min": 1.0,
+    "learned_lineage_min": 1.0,
+    "learned_relation_progression_min": 1.0,
+    "learned_schema_object_min": 1.0,
+    "learned_schema_relations_min": 1.0,
+    "learned_schema_actions_min": 1.0,
+    "learned_schema_checkpoint_min": 1.0,
+    "learned_cross_episode_min": 1.0,
+    "learned_history_min": 1.0,
+    "learned_roundtrip_min": 1.0,
+    "learned_calibration_min": 1.0,
+    "none_route_success_max": 0.0,
+    "learned_closed_assemblies_min": 3.0,
+    "passed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "learned route/world, open object/relation/action registration, lineage, cross-episode carryover, checkpoint, four-transition ownership, roundtrip and outcome-feedback calibration must all be 1.0; workspace lesion route 0.0"
+  }
+}
