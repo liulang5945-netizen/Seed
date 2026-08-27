@@ -288,16 +288,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ===== 主区域 ===== */
-.router-wrapper {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  background: var(--bg);
-  min-height: 0;
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
-}
+/* .router-wrapper 的布局定义统一收敛到 styles/shell.css，此处不再重复声明 */
 
 .topbar {
   height: 52px;

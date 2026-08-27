@@ -501,17 +501,17 @@ P4 的最小真实经历边界已落地：
 
 ### 13.1 桌面客户端 UX 修复轮（2026-08-27）
 
-实测澄清的运行形态：桌面端（`desktop/main.py`，PyQt6 无边框窗）= 子进程 uvicorn `api.app:app`(8000，同时服务 REST 与 `frontend/dist` 静态前端) + 子进程 WS 服务器(8765)；聊天走 Seed 原生运行时（`checkpoints/seed_corpus.pt`，43.7 万参数，语言器官 structured-stub）。本轮十项修复：
+实测澄清的运行形态：桌面端（`desktop/main.py`，PyQt6 无边框窗）= 子进程 uvicorn `api.app:app`(8000，同时服务 REST 与 `frontend/dist` 静态前端) + 子进程 WS 服务器(8765)；聊天走 Seed 原生运行时（`checkpoints/seed_corpus.pt`，**0.51 M 可学习权重 / 960 神经元式单元**，详见 §13.3 规模勘误，语言器官 structured-stub）。本轮十项修复：
 
 | # | 问题 | 根因 | 修复 |
 |---|---|---|---|
 | 1 | 外框边框不跟主题 | 标题栏 QSS 只在加载后同步一次 | `desktop/main.py` 1s 轮询 `data-theme`，变化才重设 QSS |
 | 2 | 进入页面弹「已刷新」 | `AgentConfigView.onActivated` 调带 toast 的刷新 | 自动刷新静默化，仅手动点击提示 |
-| 3 | 页面切换生硬 | router-view 无过渡 | `App.vue` 增加 `route` 过渡（out-in，220ms，reduced-motion 降级） |
-| 4 | IDE 无法唤起系统文件管理器 | Web 沙箱无原生对话框 | 后端 `POST /api/workspace/pick_folder`（PowerShell STA BrowseForFolder）+ 前端「浏览系统目录」 |
-| 5 | IDE 简陋 / 终端不可用 | 终端 WS 在 auth 关闭时默认拒绝 | 终端默认放行（与全局 JWT 中间件一致，可配置收紧）；新增 Ctrl+\`、Ctrl+P 快速打开、新建文件夹、刷新树、「在资源管理器中显示」(`/api/workspace/reveal`)、`/api/workspace/mkdir` |
+| 3 | 页面切换生硬 | router-view 无过渡 | `App.vue` 增加 `route` 过渡（out-in，220ms，reduced-motion 降级）。**⚠ 本项引入白屏回归，已在 §13.3 推翻重做** |
+| 4 | IDE 无法唤起系统文件管理器 | Web 沙箱无原生对话框 | 后端 `POST /api/workspace/pick_folder`（PowerShell STA BrowseForFolder）+ 前端「浏览系统目录」。**⚠ 仅解决"选得到"，对话框仍弹在主窗后面，见 §13.3** |
+| 5 | IDE 简陋 / 终端不可用 | 终端 WS 在 auth 关闭时默认拒绝 | 终端默认放行（与全局 JWT 中间件一致，可配置收紧）；新增 Ctrl+\`、Ctrl+P 快速打开、新建文件夹、刷新树、「在资源管理器中显示」(`/api/workspace/reveal`)、`/api/workspace/mkdir`。**⚠ "默认放行"是局域网免鉴权 shell 漏洞，已在 §13.3 收紧为对端地址感知** |
 | 6 | 侧边栏搜索右侧不明符号 | macOS 专用 `⌘K` 硬编码 | 平台感知提示（Win/Linux: `Ctrl K`），并真正绑定 Ctrl+K 聚焦 |
-| 7 | 「你好」回复乱码 | **模型真实输出**：43.7 万参数 byte 级基底 + structured-stub 语言器官，输出不可读并被存进会话历史 | 后端 final 事件标注 `readable`（U+FFFD/控制符占比启发式），前端以「RAW 原始字节输出」卡片呈现而非伪装成正常回复；历史消息同启发式。**根治在 P6 语言器官**，不在 UI |
+| 7 | 「你好」回复乱码 | **模型真实输出**：0.51 M 权重的 byte 级基底 + structured-stub 语言器官，输出不可读并被存进会话历史 | 后端 final 事件标注 `readable`（U+FFFD/控制符占比启发式），前端以「RAW 原始字节输出」卡片呈现而非伪装成正常回复；历史消息同启发式。**根治在 P6 语言器官**，不在 UI |
 | 8 | 输入栏按钮「没用」 | 按钮实际可用（Chromium 实测全通过）；体感来自发送按钮 disabled 且无反馈 | 发送门控保留但移除 disabled，点击未就绪时 toast 明确原因（连接中/模型未装载/生成中） |
 | 9 | 生命状态数据来源存疑 | needs 数据源是 Cortex legacy `life_scheduler`；Seed 运行时下后端返回空（无假数据） | `LifeStatusView` 增显式 DATA SOURCE 说明卡；`is_seed` 透传至前端；Seed 下生命活动按钮给真实提示 |
 | 10 | 对话页面无法上下滑动 | `.chat-stage` 为 `flex:1; min-height:0`，在 flex 列滚动容器中被压缩到小于内容高度；内容以 `overflow:visible` 溢出绘制，但父级 `scrollHeight` 仍按 stage 盒子计算 ⇒ 滚动条永不出现，内容被 sticky 输入栏遮挡 | `.chat-stage` 改为 `flex:1 0 auto`（可涨不可缩，去掉 `min-height:0`）；`.composer-wrap` 加 `flex:none; z-index:2`；`.msg` 的 `contain-intrinsic-size` 由 80px 提到 140px 以减少 `scrollHeight` 失真 |
@@ -562,6 +562,90 @@ P4 的最小真实经历边界已落地：
 冒烟返回的 `language_provider.backend_id = "structured-stub"` 再次确认 §13.1 第 7 项（乱码）的根因仍在语言器官，**下一步应做 P6 真实语言器官接入**，而非继续在 UI 侧修补。
 
 附注：`seed.spec` 的 `_datas` 用 `if src.exists()` 软条件，`version.json` / `app_settings.json` 在仓库中本就不存在且无任何代码读取，被静默跳过属预期，不是本次打包缺陷。
+
+### 13.3 白屏回归根治、原生对话框前台化、终端鉴权收紧与规模勘误（2026-08-28）
+
+用户实测反馈四件事：① 各页面点着突然全变空白（最严重）；② IDE 能选文件了但仍拉不起系统文件管理器；③ 终端和文件各有两个重复按钮；④ 追问模型真实规模。前三项均是 §13.1 修复本身的回归或未彻底，按「机制演化时收敛、清理旧的」逐项推翻重做。
+
+#### 13.3.1 模型规模勘误（口径统一）
+
+`checkpoints/seed_corpus.pt` 是自研 `seed-native-v1` 格式，**不是** PyTorch `state_dict`；稀疏突触以 `pre_index`（拓扑，整型索引）+ `edge_weight`（权重）成对存储，直接 `sum(numel())` 会把拓扑当参数一并计入。
+
+| 口径 | 数值 |
+|---|---|
+| **可学习权重** | **509,521 元素（≈0.51 M），40 个张量** |
+| 拓扑索引 `pre_index` | 506,768（不是参数） |
+| 其他状态量 | 13,539 |
+| 张量元素合计 | 1,029,828 |
+| 文件体积 | 3.95 MB |
+| **神经元式单元** | **960** = 皮层 `[256,192,128]`=576 + `memory_units` 384 |
+| 字符表 / 训练 tick | 257 / 4,800,000 |
+| 语料 / 训练器 | `simple_zh_texts.jsonl`（1,394,775,610 B）/ `train_seed_corpus`，存档 2026-08-23T09:28:23Z |
+
+**结论**：此前记载的「43.7 万参数」是把 `pre_index` 与 `edge_weight` 混算所致，准确数字是 **0.51 M 可学习权重**。这是微型类脑基质，不是 Transformer 量级 LLM——§13.1 第 7 项乱码属该规模下的预期行为。§13.1 相关表述已同步勘误。
+
+#### 13.3.2 全页白屏：`out-in` + `keep-alive` + `:key` 三者互斥
+
+根因在 §13.1 第 3 项引入的 `App.vue` 过渡结构 `<transition mode="out-in"> → <keep-alive> → <component :is :key="$route.path">`，三个因素叠加致命：
+
+1. `:key="$route.path"` 强制每次导航销毁重建，**使基于组件 name 的 keep-alive 缓存永不命中**，且同一次更新里 `KeepAlive` 返回全新 vnode；
+2. `mode="out-in"` 把 enter 阶段推迟到 leave 完成后，经由绑定**旧 vnode** 的 `delayedLeave` 回调触发；
+3. 用户行为恰是快速连点切页 ⇒ 下一次导航在上一次过渡未结束时抵达。
+
+结果：`delayedLeave` 持有旧 vnode，而 `:key` 已变的新元素拿不到 enter 钩子，**停留在 `.route-enter-from` 的 `opacity: 0`**——DOM 完整存在、只是全透明。这解释了为何白屏无任何报错、也不触发 `RouteErrorView`（后者渲染可见 UI）。时间线亦吻合：`b656ff5` 只改了 `App.vue`，两个 CSS 文件未动。
+
+修法（不是加补丁，而是拆掉互斥前提）：
+
+- 删除 `:key="$route.path"`——它与 keep-alive 语义冲突，是纯冗余；
+- **彻底删除离场过渡 CSS**（`.route-leave-active` / `.route-leave-to`），只保留淡入。`out-in` 下 leave 因检测不到 CSS 过渡而同步结束，`delayedLeave` 竞态窗口归零；enter 即使被打断，元素也只是丢掉 class 回落到自然的 `opacity: 1`，**物理上不可能卡在透明态**。
+
+排除过程（逐一实证否定）：`.router-wrapper` 重复声明（`index.css` 导入序 shell→app，且级联按属性生效，后者不含 `flex` 无法取消前者）、`views/ChatView.vue` 缺失（自查误报，实际在 `components/`，路由引用正确）、多根模板、chunk 加载失败（`npm run build` exit 0，7 个 chunk 齐全）、`animations.css`/`overrides.css` 冲突关键帧（零匹配）、`appStore.applyBgImage()`（只改背景图）、`product.css`（只改背景色）——全部排除后嫌疑完全收敛到过渡组合。
+
+顺带收敛：`.router-wrapper` 从 `app.css` + `styles/shell.css` 两处重复声明合并到 `shell.css` 单一定义（合并前先把 `app.css` 独有的 `background: var(--bg)`、`min-height: 0` 迁入，避免静默丢样式），`app.css` 处留指向注释。
+
+#### 13.3.3 原生目录对话框：不是没创建，是没有宿主窗口
+
+§13.1 第 4 项的 `Shell.Application.BrowseForFolder(0, ...)` 传 **hwnd = 0（无归属窗口）**。实证探针显示子进程阻塞 6.1 秒并生成 Explorer iconcache 临时文件 ⇒ **对话框确实被创建了**，只是拿不到前台激活，弹在无边框 Qt 主窗**后面**，用户完全看不见。诊断由此从「未创建」反转为「创建了但没前台化」。
+
+修法：改用 WinForms `FolderBrowserDialog`（BIF_NEWDIALOGSTYLE 可缩放树），并先创建一个 `TopMost=$true`、`Opacity=0`、1×1、`ShowInTaskbar=$false` 的宿主窗体，`Show()` + `Activate()` 后以它为 owner 调 `ShowDialog($owner)`，用完 `Close()`/`Dispose()`。同时移除 `-NonInteractive`（本调用的全部目的就是展示交互式 UI），保留 `-STA`（COM 对话框需单线程套间）。
+
+可行性交叉验证：`desktop/main.py:601` 仅设 `Qt.WindowType.Window | FramelessWindowHint`，**无 `WindowStaysOnTopHint`** ⇒ TopMost 宿主窗必然压在主窗之上。新脚本探针复测：脚本长度 693、8 秒超时未返回（对话框正常等待输入）+ iconcache 副作用，语法与行为均成立。
+
+#### 13.3.4 重复按钮收敛（各留视觉层级最高的那个）
+
+| 功能 | 保留 | 移除 | 理由 |
+|---|---|---|---|
+| 终端 | 顶栏 `终端` 按钮 | 右栏「快捷操作」分组内的 `quick-btn` | 顶栏项有 `active` 状态、与 运行/保存 同组、图标+文字，视觉层级最高；右栏那个是分组里唯一的孤立填充 |
+| 目录 | 顶栏 `打开文件夹` | 空树状态里的 `切换目录` 按钮 | 顶栏常驻可见；空态按钮只在空态出现，改为指向顶栏的文案，避免死路 |
+
+配套清理：右栏「快捷操作」分组整体删除（其唯一子项已移除）、`.quick-btn` 相关死 CSS 删除并留注释；`Terminal` 图标 import 保留（顶栏与文件图标映射 `sh: Terminal` 仍在用）。
+
+#### 13.3.5 终端免鉴权漏洞：判定依据从配置项改为对端地址
+
+§13.1 第 5 项把 `terminal_allow_unauthenticated` 默认为 `True`，前提写的是「默认 127.0.0.1」；但 README 推荐用 `SEED_HOST=0.0.0.0` 让手机连电脑（`901a8c5`），两者叠加**在局域网上暴露一个免鉴权 shell**。且 `_verify_ws_token` 的 docstring 写「默认不允许」，与代码相反。
+
+修法上取上限更高的方案：**不读 `SEED_HOST` 之类的服务端声明，而是判定这条连接的真实对端地址**——绑定 `0.0.0.0` 时回环与局域网请求走同一个监听套接字，只看绑定值根本无法区分风险来源。新增 `_is_loopback_peer(ws)`，兼容 IPv6 回环 `::1` 与 IPv4-mapped `::ffff:127.0.0.1`，地址缺失（反向代理剥离）按不可信处理。策略变为：认证启用→必须有效 token；认证未启用→仅放行回环对端，非回环一律拒绝并给出「请先启用 JWT 认证」的日志。`terminal_allow_unauthenticated` 语义收窄为**只能收紧不能放宽**（置 false 时连本机也要求鉴权），无法再用来给局域网开后门。模块 docstring 与函数 docstring 同步勘误。
+
+边界实测（9/9 正确）：`127.0.0.1`/`::1`/`::ffff:127.0.0.1`/`localhost` → 放行；`192.168.1.7`/`10.0.0.5`/`0.0.0.0`/`None`/`""` → 拒绝。
+
+#### 13.3.6 验证与产物
+
+| 项目 | 结果 |
+|---|---|
+| vitest | **19 文件 / 160 用例全通过** |
+| `npm run build` | exit 0，7 个 view chunk 齐全（ChatView 1,001.84 kB），945 ms |
+| 构建产物断言 | `route-leave` **0 次**（竞态窗口消失）、`route-enter` 3 次、`quick-btn` **0 次**（死码清除）、`.router-wrapper` **1 次**（两处收敛为一处）|
+| 重新打包 | `Seed.exe` 69.14 MB、`SeedBackend.exe` 69.07 MB，均为 2026-08-28 01:06:11 |
+| 内置前端一致性 | `frontend/dist/index.html` 与 `dist/Seed/_internal/frontend/dist/index.html` SHA256 同为 `DF4069E4…790D`，**MATCH** |
+| 打包内 CSS 断言 | `route-leave=0`、`quick-btn=0`、`.router-wrapper=1`，与源码构建一致 |
+
+`python scripts/release.py` 在本机以 exit 1 结束，但**打包主体成功**：前端一致性字节门禁通过两次、PyInstaller 报告 `Build complete!`、后处理已复制 `user_data/` 与 `security/`。失败只在最后 `_verify_artifacts()` 检查 `dist/SeedSetup.exe`——本机没有 `makensis`，NSIS 步骤被跳过而验证仍要求安装包。**本机执行必须加 `--skip-nsis`**（§13.2 那一轮即如此），否则会得到误报失败。
+
+改动文件（6 个）：`frontend/src/App.vue`、`frontend/src/assets/app.css`、`frontend/src/assets/styles/shell.css`、`frontend/src/views/WorkspaceView.vue`、`api/routes_agent_workspace.py`、`api/routes_terminal.py`。
+
+**方法论沉淀**：本轮三个问题全部是「上一轮修复引入的新缺陷」，且两个的初诊都是错的（白屏一度归因 CSS 重复、对话框一度归因未创建）。有效手段是**实证否定**而非推理：CSS 用导入序+级联语义排除、对话框用子进程阻塞时长与文件系统副作用反证「已创建」、鉴权用穷举边界地址验证。凡涉及「看不见」的失败（透明元素、隐藏窗口），必须找到能观测的侧信道。
+
+遗留：`ChatView` chunk 已达 1 MB 需拆分；终端默认 shell 仍是 cmd.exe；侧边栏搜索框尚未接线为会话过滤；P6 真实语言器官接入仍是消除乱码的唯一根治路径。
 
 ## 14. 持续门禁
 

@@ -25,7 +25,7 @@
                       :include="['ChatView', 'TrainingView', 'WorkspaceView', 'KBView', 'AgentConfigView', 'LifeStatusView']"
                       :max="6"
                     >
-                      <component :is="Component" :key="$route.path" />
+                      <component :is="Component" />
                     </keep-alive>
                   </transition>
                 </router-view>
@@ -286,26 +286,20 @@ function onGlobalKeyup(event) {
 <style>
 @import './assets/styles/index.css';
 
-/* ===== 路由切换过渡：淡入 + 轻微上移（mode=out-in，先出后进） ===== */
+/* ===== 路由切换过渡：仅淡入，无离场动画 =====
+   刻意不给 .route-leave-active 任何 transition：mode="out-in" 下 leave 会同步
+   结束，delayedLeave 竞态窗口为零。快速连点切页时 enter 即使被打断，元素也只是
+   丢掉 class 回落到 opacity:1，不可能卡在透明态导致白屏。 */
 .route-enter-active {
   transition: opacity 0.22s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
-  will-change: opacity, transform;
-}
-.route-leave-active {
-  transition: opacity 0.14s ease, transform 0.14s ease;
   will-change: opacity, transform;
 }
 .route-enter-from {
   opacity: 0;
   transform: translateY(8px);
 }
-.route-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
-}
 @media (prefers-reduced-motion: reduce) {
-  .route-enter-active,
-  .route-leave-active {
+  .route-enter-active {
     transition: opacity 0.1s linear;
     transform: none;
   }

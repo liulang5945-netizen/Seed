@@ -6,12 +6,14 @@ Web 终端 WebSocket 路由
 
 安全措施：
 - JWT 认证（通过 query 参数传递 token）
+- 认证未启用时仅放行本机回环对端，非回环来源一律拒绝
 - 并发终端数量限制（默认 3）
 - 空闲超时自动断开（默认 300 秒）
 """
 
 import asyncio
 import codecs
+import ipaddress
 import json
 import locale
 import logging
@@ -53,13 +55,42 @@ def _release_terminal_slot():
         _active_terminals = max(0, _active_terminals - 1)
 
 
+def _is_loopback_peer(ws) -> bool:
+    """判断 WebSocket 对端是否来自本机回环地址。
+
+    只信任真实对端地址，不信任 SEED_HOST 之类的服务端声明：绑定 0.0.0.0 时
+    回环与局域网请求会走同一个监听套接字，仅看绑定值无法区分风险来源。
+    兼容 IPv6 回环（::1）与 IPv4-mapped 形式（::ffff:127.0.0.1）。
+    地址缺失（如反向代理剥离）时按不可信处理。
+    """
+    client = getattr(ws, "client", None)
+    host = getattr(client, "host", None) if client else None
+    if not host:
+        return False
+    try:
+        addr = ipaddress.ip_address(host)
+    except ValueError:
+        return host == "localhost"
+    mapped = getattr(addr, "ipv4_mapped", None)
+    if mapped is not None:
+        addr = mapped
+    return addr.is_loopback
+
+
 def _verify_ws_token(ws) -> bool:
     """
     验证 WebSocket 连接的 JWT token（通过 query 参数）
 
     安全策略：
     - 认证启用时：必须提供有效 token
-    - 认证未启用时：检查终端是否允许未认证访问（默认不允许）
+    - 认证未启用时：仅放行本机回环对端（单用户桌面场景）；任何非回环来源
+      一律要求有效 token。terminal_allow_unauthenticated 只能收紧、不能放宽，
+      即把回环也纳入鉴权，无法用来给局域网开后门。
+
+    背景：终端 WebSocket 等价于一个远程 shell。旧实现把
+    terminal_allow_unauthenticated 默认为 True，前提写的是"默认 127.0.0.1"，
+    但 README 推荐用 SEED_HOST=0.0.0.0 让手机连电脑，两者叠加会在局域网上
+    暴露一个免鉴权 shell。因此判定依据改为对端地址，而非配置项。
     """
     try:
         from seed_platform.auth import AuthManager
@@ -77,15 +108,22 @@ def _verify_ws_token(ws) -> bool:
                 logger.warning("WebSocket 终端连接被拒绝: token 无效或已过期")
                 return False
             return True
-        else:
-            # 认证未启用时：与全局 JWT 中间件策略一致——本地单用户模式
-            # （默认 127.0.0.1）直接放行；仅当显式配置
-            # terminal_allow_unauthenticated=false 时才收紧（如局域网共享）。
-            allow_unauthenticated = get_setting("terminal_allow_unauthenticated", True)
-            if not allow_unauthenticated:
-                logger.warning("WebSocket 终端连接被拒绝: 认证未启用且已禁用未认证访问")
-                return False
-            return True
+
+        # 认证未启用：非回环来源没有任何可校验凭据，只能拒绝。
+        peer = getattr(getattr(ws, "client", None), "host", "unknown")
+        if not _is_loopback_peer(ws):
+            logger.warning(
+                "WebSocket 终端连接被拒绝: 来自非本机地址 %s 且认证未启用。"
+                "如需远程使用终端，请先启用 JWT 认证。",
+                peer,
+            )
+            return False
+
+        # 回环来源默认放行；显式配置 false 时连本机也要求鉴权。
+        if not get_setting("terminal_allow_unauthenticated", True):
+            logger.warning("WebSocket 终端连接被拒绝: 已禁用未认证访问")
+            return False
+        return True
     except ImportError:
         logger.warning("安全模块不可用，拒绝终端连接")
         return False

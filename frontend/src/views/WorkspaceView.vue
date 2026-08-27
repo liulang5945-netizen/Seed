@@ -47,8 +47,7 @@
           </div>
           <div class="panel-body">
             <div v-if="!fileTree.length" class="tree-empty">
-              <p class="tree-empty-text">当前工作区还没有文件。<br>切换到已有目录，或新建第一个文件开始工作。</p>
-              <button class="btn btn-outline btn-sm" @click="openPathDialog">切换目录</button>
+              <p class="tree-empty-text">当前工作区还没有文件。<br>用顶栏「打开文件夹」切换目录，或新建第一个文件开始工作。</p>
             </div>
             <template v-for="node in flatList" :key="node.path">
               <div
@@ -101,10 +100,6 @@
               <div class="prop-group-title">工作区统计</div>
               <div class="prop-row"><span class="prop-label">文件数</span><span class="prop-value">{{ workspaceStats.files }}</span></div>
               <div class="prop-row"><span class="prop-label">目录数</span><span class="prop-value">{{ workspaceStats.dirs }}</span></div>
-            </div>
-            <div class="prop-group">
-              <div class="prop-group-title">快捷操作</div>
-              <button class="quick-btn" @click="showTerminal = !showTerminal"><Terminal :size="15" class="icon-sm" />{{ showTerminal ? '收起终端' : '打开终端' }}</button>
             </div>
           </div>
         </div>
@@ -882,28 +877,7 @@ onUnmounted(() => {
 }
 
 /* ── 快捷按钮 ── */
-.quick-btn {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  width: 100%;
-  padding: 7px 10px;
-  border-radius: 6px;
-  border: 0;
-  background: transparent;
-  color: var(--foreground);
-  font-size: 0.82rem;
-  cursor: pointer;
-  text-align: left;
-  transition: background 120ms ease;
-  font-family: inherit;
-}
-.quick-btn:hover { background: var(--muted); }
-.quick-btn .icon-sm {
-  width: 15px;
-  height: 15px;
-  color: var(--muted-foreground);
-}
+/* .quick-btn 随右栏「快捷操作」分组一并移除：终端开关统一由顶栏按钮承担 */
 
 /* ── 对话框 ── */
 .dlg-overlay {

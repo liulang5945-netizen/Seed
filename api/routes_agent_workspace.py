@@ -429,8 +429,15 @@ def pick_folder():
     """打开系统级目录选择对话框，返回用户选择的目录。
 
     Web 前端无法唤起原生文件管理器（QWebEngine/浏览器沙箱），由本地后端
-    代为弹窗：Windows 上经 PowerShell 调 Shell.Application 的
-    BrowseForFolder（Vista 风格可折叠树对话框，STA 线程保证 COM 安全）。
+    代为弹窗：Windows 上经 PowerShell 调 WinForms 的 FolderBrowserDialog
+    （BIF_NEWDIALOGSTYLE 可缩放树对话框，-STA 保证 COM 安全）。
+
+    关键点：必须给对话框一个宿主窗口。此前直接用 Shell.Application 的
+    BrowseForFolder(0, ...) 传 hwnd=0，对话框虽被创建但没有归属窗口、拿不到
+    前台激活，会弹在无边框 Qt 主窗后面，用户看不到（实测进程阻塞但界面无反应）。
+    这里先建一个 TopMost、零透明度的 1x1 宿主窗体并 Activate()，再以它为 owner
+    弹出对话框，从而保证对话框出现在最前。
+
     用户取消时返回 {"status": "cancel"}；平台不支持时返回 501。
     """
     import platform
@@ -441,18 +448,31 @@ def pick_folder():
 
     ps_script = (
         "$ErrorActionPreference='Stop';"
+        "[Console]::OutputEncoding = [System.Text.Encoding]::UTF8;"
         "Add-Type -AssemblyName System.Windows.Forms;"
-        "$shell = New-Object -ComObject Shell.Application;"
-        "$folder = $shell.BrowseForFolder(0, '选择 Seed 工作区文件夹', 0x41, '');"
-        "if ($folder) {"
-        "  [Console]::OutputEncoding = [System.Text.Encoding]::UTF8;"
-        "  Write-Output $folder.Self.Path"
+        "[System.Windows.Forms.Application]::EnableVisualStyles();"
+        # 宿主窗体：不可见但拥有真实 HWND，TopMost 确保对话框压在 Qt 主窗之上
+        "$owner = New-Object System.Windows.Forms.Form;"
+        "$owner.TopMost = $true;"
+        "$owner.ShowInTaskbar = $false;"
+        "$owner.Opacity = 0;"
+        "$owner.Width = 1; $owner.Height = 1;"
+        "$owner.StartPosition = 'CenterScreen';"
+        "$owner.Show(); $owner.Activate();"
+        "$dlg = New-Object System.Windows.Forms.FolderBrowserDialog;"
+        "$dlg.Description = '选择 Seed 工作区文件夹';"
+        "$dlg.ShowNewFolderButton = $true;"
+        "$res = $dlg.ShowDialog($owner);"
+        "$owner.Close(); $owner.Dispose();"
+        "if ($res -eq [System.Windows.Forms.DialogResult]::OK) {"
+        "  Write-Output $dlg.SelectedPath"
         "}"
     )
     try:
-        # -STA：COM 对话框需单线程套间；NoProfile 加速启动并隔离用户配置
+        # -STA：COM 对话框需单线程套间；NoProfile 加速启动并隔离用户配置。
+        # 不能加 -NonInteractive：本调用的全部目的就是展示交互式 UI。
         result = subprocess.run(
-            ["powershell.exe", "-NoProfile", "-STA", "-NonInteractive", "-Command", ps_script],
+            ["powershell.exe", "-NoProfile", "-STA", "-Command", ps_script],
             capture_output=True,
             timeout=600,  # 对话框最长等待 10 分钟
             creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
