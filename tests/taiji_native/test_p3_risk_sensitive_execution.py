@@ -21,5 +21,8 @@ def test_risk_sensitive_execution_gate() -> None:
     assert run["recovery_reader_contributions_recorded"] is True
     assert run["recovery_reader_interactions_recorded"] is True
     assert run["recovery_reader_interactions_checkpoint_preserved"] is True
+    assert run["recovery_reader_interaction_selection_gate"] is True
+    assert run["recovery_strategy_interaction_policy_checkpoint_preserved"] is True
     assert run["recovery_reader_contribution_revoke_is_exact"] is True
     assert run["recovery_reader_interaction_revoke_is_exact"] is True
+    assert run["recovery_reader_interaction_selection_revoke_is_exact"] is True

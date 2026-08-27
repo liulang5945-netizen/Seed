@@ -59,20 +59,9 @@ from .contracts import MemoryState as NativeMemoryState
 from .cross_region_learning import CrossRegionCooperationLearner
 from .environment import EnvironmentOutcome, TaijiEnvironment, TaijiToolEnvironment
 from .episodic_memory import EpisodicMemoryStore
-from .executive import (
-    ExecutiveCandidate,
-    ExecutiveContext,
-    ExecutiveController,
-    ExecutiveDecision,
-)
+from .executive import ExecutiveCandidate, ExecutiveContext, ExecutiveController, ExecutiveDecision
 from .fabric import TaijiFabric
-from .generation import (
-    ContentPlan,
-    ExpressionPlan,
-    GenerationController,
-    GenerationTrace,
-    ToolCall,
-)
+from .generation import ContentPlan, ExpressionPlan, GenerationController, GenerationTrace, ToolCall
 from .homeostasis import HomeostaticController, HomeostaticDrive
 from .input_boundary import InputFrame, InputTrace
 from .language_organ import (
@@ -256,6 +245,10 @@ class TSKV8Adapter(Taiji):
             evidence_weight=self.config.recovery_strategy_evidence_weight,
             consistency_weight=self.config.recovery_strategy_consistency_weight,
             resource_weight=self.config.recovery_strategy_resource_weight,
+            interaction_residual_tolerance=(
+                self.config.recovery_strategy_interaction_residual_tolerance
+            ),
+            interaction_order_tolerance=self.config.recovery_strategy_interaction_order_tolerance,
         )
         self._recovery_reader_dependencies = RecoveryReaderDependencyGraph()
         self._recovery_generation = 0
@@ -5966,6 +5959,32 @@ class TSKV8Adapter(Taiji):
 
         return self._recovery_strategy_ledger
 
+    def _selected_recovery_approvals(self) -> tuple[RecoveryStrategyApproval, ...]:
+        """Select recovery strategies under the current reader interaction audit."""
+
+        return self._recovery_strategy_ledger.selected_approvals
+
+    def _persist_recovery_interaction_audit(self) -> None:
+        interactions = tuple(
+            interaction
+            for dependency in self._recovery_reader_dependencies.dependencies
+            for interaction in dependency.interactions
+        )
+        audit_available = (
+            self._recovery_reader_dependencies.interaction_audit_available
+            or self._recovery_strategy_ledger.interaction_audit_available
+        )
+        self._recovery_strategy_ledger = self._recovery_strategy_ledger.record_interaction_audit(
+            interactions, audit_available=audit_available
+        )
+
+    def _recovery_interaction_audit_complete(self, reader_kind: str, selected_count: int) -> bool:
+        dependency = self._recovery_reader_dependencies.dependency_for(reader_kind)
+        return bool(
+            selected_count >= 2
+            or (dependency is not None and dependency.interaction_audit_complete)
+        )
+
     @property
     def recovery_reader_dependencies(self) -> RecoveryReaderDependencyGraph:
         """Return the reader-level provenance graph for recovery memory."""
@@ -5975,10 +5994,13 @@ class TSKV8Adapter(Taiji):
     def revoke_recovery_strategy(self, rollout_id: str) -> None:
         """Revoke a recovery strategy from future replay and consolidation."""
 
+        previous_selected = self._selected_recovery_approvals()
         previous = self._recovery_strategy_ledger
         self._recovery_strategy_ledger = previous.revoke(rollout_id)
         if self._recovery_strategy_ledger != previous:
-            self._rebuild_recovery_memory(revoked_rollout_id=rollout_id)
+            self._rebuild_recovery_memory(
+                revoked_rollout_id=rollout_id, previous_selected=previous_selected
+            )
 
     def _replay_recovery_reader(
         self,
@@ -6246,7 +6268,8 @@ class TSKV8Adapter(Taiji):
 
         if self._episodic_memory is None:
             raise RuntimeError("recovery consolidation requires episodic records")
-        approved_ids = set(self._recovery_strategy_ledger.selected_memory_ids)
+        selected_approvals = self._selected_recovery_approvals()
+        approved_ids = {approval.memory_id for approval in selected_approvals}
         records = tuple(
             record for record in self._episodic_memory.records if record.memory_id in approved_ids
         )
@@ -6256,7 +6279,6 @@ class TSKV8Adapter(Taiji):
         self._recovery_semantic_learning_rate = float(semantic_learning_rate)
         self._recovery_procedural_learning_rate = float(procedural_learning_rate)
         losses: dict[str, float] = {}
-        selected_approvals = self._recovery_strategy_ledger.selected_approvals
         semantic_baseline = (
             None if self._semantic_memory is None else self._semantic_memory.checkpoint()
         )
@@ -6271,9 +6293,7 @@ class TSKV8Adapter(Taiji):
         concept_baseline = self._concept_formation.checkpoint()
         if self._semantic_memory is not None:
             losses["semantic"] = self._semantic_memory.consolidate(
-                records,
-                epochs=epochs,
-                learning_rate=semantic_learning_rate,
+                records, epochs=epochs, learning_rate=semantic_learning_rate
             )
             semantic_final = self._semantic_memory.checkpoint()
             semantic_contributions = self._recovery_reader_contributions(
@@ -6299,14 +6319,15 @@ class TSKV8Adapter(Taiji):
                 selected_approvals,
                 contributions=semantic_contributions,
                 interactions=semantic_interactions,
+                interaction_audit_complete=self._recovery_interaction_audit_complete(
+                    "semantic", len(selected_approvals)
+                ),
                 base_checkpoint=semantic_baseline,
                 base_checkpoint_digest=_checkpoint_digest(semantic_baseline or {}),
             )
         if self._procedural_memory is not None:
             losses["procedural"] = self._procedural_memory.consolidate(
-                records,
-                epochs=epochs,
-                learning_rate=procedural_learning_rate,
+                records, epochs=epochs, learning_rate=procedural_learning_rate
             )
             procedural_final = self._procedural_memory.checkpoint()
             procedural_contributions = self._recovery_reader_contributions(
@@ -6332,14 +6353,15 @@ class TSKV8Adapter(Taiji):
                 selected_approvals,
                 contributions=procedural_contributions,
                 interactions=procedural_interactions,
+                interaction_audit_complete=self._recovery_interaction_audit_complete(
+                    "procedural", len(selected_approvals)
+                ),
                 base_checkpoint=procedural_baseline,
                 base_checkpoint_digest=_checkpoint_digest(procedural_baseline or {}),
             )
         if self._procedural_sequence_memory is not None:
             losses["sequence"] = self._procedural_sequence_memory.consolidate(
-                records,
-                epochs=epochs,
-                learning_rate=procedural_learning_rate,
+                records, epochs=epochs, learning_rate=procedural_learning_rate
             )
             sequence_final = self._procedural_sequence_memory.checkpoint()
             sequence_contributions = self._recovery_reader_contributions(
@@ -6365,6 +6387,9 @@ class TSKV8Adapter(Taiji):
                 selected_approvals,
                 contributions=sequence_contributions,
                 interactions=sequence_interactions,
+                interaction_audit_complete=self._recovery_interaction_audit_complete(
+                    "sequence", len(selected_approvals)
+                ),
                 base_checkpoint=sequence_baseline,
                 base_checkpoint_digest=_checkpoint_digest(sequence_baseline or {}),
             )
@@ -6394,33 +6419,56 @@ class TSKV8Adapter(Taiji):
             selected_approvals,
             contributions=concept_contributions,
             interactions=concept_interactions,
+            interaction_audit_complete=self._recovery_interaction_audit_complete(
+                "concept", len(selected_approvals)
+            ),
             base_checkpoint=concept_baseline,
             base_checkpoint_digest=_checkpoint_digest(concept_baseline),
         )
+        self._persist_recovery_interaction_audit()
         if not losses:
             raise RuntimeError(
                 "recovery consolidation requires semantic, procedural, sequence, or concept memory"
             )
         return losses
 
-    def _rebuild_recovery_memory(self, *, revoked_rollout_id: str | None = None) -> None:
+    def _rebuild_recovery_memory(
+        self,
+        *,
+        revoked_rollout_id: str | None = None,
+        previous_selected: Sequence[RecoveryStrategyApproval] | None = None,
+    ) -> None:
         """Rebuild only readers that depended on the revoked recovery strategy."""
 
         if self._episodic_memory is None:
             return
+        previous_selected = (
+            self._selected_recovery_approvals()
+            if previous_selected is None
+            else tuple(previous_selected)
+        )
+        next_selected = self._selected_recovery_approvals()
+        selection_changed = {approval.rollout_id for approval in previous_selected} != {
+            approval.rollout_id for approval in next_selected
+        }
         if self._recovery_reader_dependencies.dependencies:
-            affected_readers = set(
-                self._recovery_reader_dependencies.reader_kinds_for_rollout(
-                    "" if revoked_rollout_id is None else revoked_rollout_id
+            affected_readers: set[str] = set()
+            if revoked_rollout_id is not None:
+                affected_readers.update(
+                    self._recovery_reader_dependencies.reader_kinds_for_rollout(revoked_rollout_id)
                 )
-            )
+            if selection_changed:
+                affected_readers.update(
+                    dependency.reader_kind
+                    for dependency in self._recovery_reader_dependencies.dependencies
+                )
         else:
             affected_readers = {"semantic", "procedural", "sequence", "concept"}
         self._recovery_reader_dependencies = self._recovery_reader_dependencies.retain_selected(
-            self._recovery_strategy_ledger.selected_approvals
+            next_selected
         )
         approved_memory_ids = set(self._recovery_strategy_ledger.approved_memory_ids)
-        selected_memory_ids = set(self._recovery_strategy_ledger.selected_memory_ids)
+        selected_memory_ids = {approval.memory_id for approval in next_selected}
         records = tuple(
             record
             for record in self._episodic_memory.records
@@ -6432,7 +6480,7 @@ class TSKV8Adapter(Taiji):
             for record in self._episodic_memory.records
             if record.memory_id in selected_memory_ids
         )
-        selected_approvals = self._recovery_strategy_ledger.selected_approvals
+        selected_approvals = next_selected
 
         def dependency_for(reader_kind: str) -> RecoveryReaderDependency | None:
             return self._recovery_reader_dependencies.dependency_for(reader_kind)
@@ -6539,10 +6587,7 @@ class TSKV8Adapter(Taiji):
             if concept_records:
                 concepts.consolidate(concept_records, tick=self.tick)
             self._concept_formation = concepts
-            self._cognitive_state = replace(
-                self._cognitive_state,
-                concepts=concepts.concepts,
-            )
+            self._cognitive_state = replace(self._cognitive_state, concepts=concepts.concepts)
         for reader_kind in affected_readers:
             dependency = dependency_for(reader_kind)
             if dependency is None or dependency.base_checkpoint is None:
@@ -6584,9 +6629,11 @@ class TSKV8Adapter(Taiji):
                 selected_approvals,
                 contributions=contributions,
                 interactions=interactions,
+                interaction_audit_complete=dependency.interaction_audit_complete,
                 base_checkpoint=dependency.base_checkpoint,
                 base_checkpoint_digest=dependency.base_checkpoint_digest,
             )
+        self._persist_recovery_interaction_audit()
         self._recovery_memory_rebuild_count += 1
 
     @property
@@ -6627,6 +6674,10 @@ class TSKV8Adapter(Taiji):
             evidence_weight=self.config.recovery_strategy_evidence_weight,
             consistency_weight=self.config.recovery_strategy_consistency_weight,
             resource_weight=self.config.recovery_strategy_resource_weight,
+            interaction_residual_tolerance=(
+                self.config.recovery_strategy_interaction_residual_tolerance
+            ),
+            interaction_order_tolerance=self.config.recovery_strategy_interaction_order_tolerance,
         )
         self._recovery_reader_dependencies = RecoveryReaderDependencyGraph()
         self._recovery_generation = 0
@@ -6867,7 +6918,8 @@ class TSKV8Adapter(Taiji):
             and memory_id not in self._recovery_strategy_ledger.revoked_memory_ids
         ):
             return True
-        return memory_id in self._recovery_strategy_ledger.selected_memory_ids
+        selected = {approval.memory_id for approval in self._selected_recovery_approvals()}
+        return memory_id in selected
 
     def observe(self, symbol: int, *args: Any, **kwargs: Any) -> TaijiStep:
         workspace_candidates: Sequence[WorkspaceCandidate] | None = kwargs.pop(
@@ -8269,6 +8321,12 @@ class TSKV8Adapter(Taiji):
                 evidence_weight=self.config.recovery_strategy_evidence_weight,
                 consistency_weight=self.config.recovery_strategy_consistency_weight,
                 resource_weight=self.config.recovery_strategy_resource_weight,
+                interaction_residual_tolerance=(
+                    self.config.recovery_strategy_interaction_residual_tolerance
+                ),
+                interaction_order_tolerance=(
+                    self.config.recovery_strategy_interaction_order_tolerance
+                ),
             )
             if ledger is None
             else RecoveryStrategyLedger.from_payload(dict(ledger))
@@ -8283,6 +8341,11 @@ class TSKV8Adapter(Taiji):
             if dependencies is None
             else RecoveryReaderDependencyGraph.from_payload(dict(dependencies))
         )
+        if (
+            not self._recovery_strategy_ledger.interaction_audit_available
+            and self._recovery_reader_dependencies.interaction_audit_available
+        ):
+            self._persist_recovery_interaction_audit()
 
     def _restore_recovery_memory_state(self, payload: Any) -> None:
         if not isinstance(payload, dict):

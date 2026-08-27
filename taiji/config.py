@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import asdict, dataclass, field
 from typing import Any
+
+DEFAULT_RECOVERY_INTERACTION_RESIDUAL_TOLERANCE = 1e-7
+DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE = 1e-7
 
 
 @dataclass(frozen=True)
@@ -232,6 +236,12 @@ class TaijiConfig:
     recovery_strategy_evidence_weight: float = 0.50
     recovery_strategy_consistency_weight: float = 0.30
     recovery_strategy_resource_weight: float = 0.20
+    recovery_strategy_interaction_residual_tolerance: float = (
+        DEFAULT_RECOVERY_INTERACTION_RESIDUAL_TOLERANCE
+    )
+    recovery_strategy_interaction_order_tolerance: float = (
+        DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE
+    )
     concept_similarity_threshold: float = 0.85
     concept_signal_weights: tuple[float, float, float] = (0.45, 0.35, 0.20)
     concept_capacity: int = 256
@@ -382,6 +392,13 @@ class TaijiConfig:
             raise ValueError("recovery_strategy_evidence_threshold must be positive")
         if self.recovery_strategy_memory_budget <= 0.0:
             raise ValueError("recovery_strategy_memory_budget must be positive")
+        for name in (
+            "recovery_strategy_interaction_residual_tolerance",
+            "recovery_strategy_interaction_order_tolerance",
+        ):
+            value = float(getattr(self, name))
+            if not math.isfinite(value) or value < 0.0:
+                raise ValueError(f"{name} must be finite and non-negative")
         strategy_weights = (
             self.recovery_strategy_evidence_weight,
             self.recovery_strategy_consistency_weight,
