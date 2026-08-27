@@ -28,13 +28,33 @@ router = APIRouter()
 
 # ======================== 流式聊天 ========================
 
+# 替换字符/控制字符占比超过该阈值时，判定回复为不可读的原始字节输出
+# （Seed 原生运行时语言器官未配置可用后端时，decode(errors='replace')
+# 产生大量 U+FFFD；此时前端应以「原始输出」卡片呈现而非普通对话气泡）
+_UNREADABLE_BAD_CHAR_RATIO = 0.02
+
+
+def _answer_readable(text: str) -> bool:
+    """启发式判定 Seed 原生输出是否为人类可读文本。"""
+    if not text or not text.strip():
+        return False
+    bad = 0
+    for ch in text:
+        code = ord(ch)
+        if ch == "\ufffd" or (code < 32 and ch not in "\n\r\t"):
+            bad += 1
+    return bad / len(text) < _UNREADABLE_BAD_CHAR_RATIO
+
 
 def _seed_event_generator(request, seed_runtime):
     """Seed 原生分支：用户消息转为 byte 流喂入基底，generate 产出回复。
 
     多轮上下文由 taiji 持久状态天然承担（无需 KV cache 拼装）；回复同时
     作为清醒持续学习写回基底。事件格式与前端统一解析协议一致。
+    readable=False 时前端渲染为「原始字节输出」卡片（语言器官为
+    structured-stub，输出尚未成形为可读语言）。
     """
+
     import asyncio
 
     async def event_generator():
@@ -44,7 +64,15 @@ def _seed_event_generator(request, seed_runtime):
                 request.prompt,
                 history=request.history or None,
             )
-            event = {"type": "final", "data": {"answer": answer, "step": 1}}
+            event = {
+                "type": "final",
+                "data": {
+                    "answer": answer,
+                    "step": 1,
+                    "readable": _answer_readable(answer),
+                    "runtime": "seed",
+                },
+            }
             yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
         except Exception as e:
             logger.error(f"Seed 推理出错: {e}")

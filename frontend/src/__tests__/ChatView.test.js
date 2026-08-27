@@ -81,17 +81,18 @@ describe('ChatView', () => {
     const chatStore = useChatStore()
     const runtimeStore = useRuntimeStore()
     const sendBtn = wrapper.find('button.send')
-    expect(sendBtn.attributes('disabled')).toBeDefined()
+    // disabled 已移除：未就绪时以 unavailable 类门控（点击后 toast 解释原因）
+    expect(sendBtn.classes()).toContain('unavailable')
 
     // 仅输入还不够——还需运行时已连接且模型已加载（canSend 的完整语义）
     chatStore.chatInput = '你好，Seed'
     await wrapper.vm.$nextTick()
-    expect(sendBtn.attributes('disabled')).toBeDefined()
+    expect(sendBtn.classes()).toContain('unavailable')
 
     runtimeStore.health.state = 'connected'
     runtimeStore.health.modelLoaded = true
     await wrapper.vm.$nextTick()
-    expect(sendBtn.attributes('disabled')).toBeUndefined()
+    expect(sendBtn.classes()).not.toContain('unavailable')
   })
 
   it('存在消息时渲染对话列表并隐藏欢迎区', async () => {

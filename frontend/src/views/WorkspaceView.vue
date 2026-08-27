@@ -7,7 +7,14 @@
         <div class="topbar-sub topbar-path" :title="workspacePath">{{ workspacePath || 'Seed脚本与配置编辑' }}</div>
       </div>
       <div class="topbar-spacer"></div>
-      <button class="btn btn-outline" @click="openPathDialog">切换目录</button>
+      <button class="btn btn-outline" @click="openPathDialog">
+        <FolderOpen :size="15" />
+        打开文件夹
+      </button>
+      <button class="btn btn-outline" title="快速打开文件 (Ctrl+P)" @click="openQuickOpen">
+        <Search :size="15" />
+        搜索文件
+      </button>
       <button class="btn btn-outline" :class="{ active: showTerminal }" @click="showTerminal = !showTerminal">
         <Terminal :size="15" />
         {{ showTerminal ? '收起终端' : '终端' }}
@@ -30,6 +37,12 @@
             <span class="panel-header-spacer"></span>
             <button class="icon-btn" title="新建文件" @click="handleNewFile">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+            <button class="icon-btn" title="新建文件夹" @click="handleNewFolder">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="9.5" y1="13.5" x2="14.5" y2="13.5"/></svg>
+            </button>
+            <button class="icon-btn" title="刷新文件树" @click="loadTree">
+              <RefreshCw :size="13" />
             </button>
           </div>
           <div class="panel-body">
@@ -122,13 +135,17 @@
     </div>
     <div v-if="showPathDialog" class="dlg-overlay" @click.self="showPathDialog = false">
       <div class="dlg-box">
-        <h3>切换项目路径</h3>
+        <h3>打开项目文件夹</h3>
+        <button class="btn btn-primary browse-btn" :disabled="picking" @click="browseFolder">
+          <FolderOpen :size="15" class="icon-sm" />
+          {{ picking ? '正在等待选择…' : '浏览系统目录…' }}
+        </button>
         <div v-if="quickPaths.length" class="quick-paths">
           <button v-for="qp in quickPaths" :key="qp.path" class="qp-btn" @click="newPathInput = qp.path">
             <FolderOpen :size="11" /> {{ qp.label }}
           </button>
         </div>
-        <input v-model="newPathInput" class="dlg-input" placeholder="输入完整路径" @keydown.enter="applyNewPath" />
+        <input v-model="newPathInput" class="dlg-input" placeholder="或输入完整路径" @keydown.enter="applyNewPath" />
         <div class="dlg-actions">
           <button class="dlg-btn primary" @click="applyNewPath">切换</button>
           <button class="dlg-btn" @click="showPathDialog = false">取消</button>
@@ -137,9 +154,37 @@
       </div>
     </div>
 
+    <!-- 快速打开（Ctrl+P） -->
+    <div v-if="quickOpen.visible" class="dlg-overlay" @click.self="quickOpen.visible = false">
+      <div class="quickopen-box">
+        <div class="quickopen-input-row">
+          <Search :size="15" class="icon-sm" />
+          <input
+ref="quickOpenInput" v-model="quickOpen.query" class="quickopen-input"
+            placeholder="输入文件名，回车打开（Esc 关闭）"
+            @keydown.enter.prevent="openQuickOpenSelection"
+            @keydown.escape.prevent="quickOpen.visible = false"
+            @keydown.arrow-down.prevent="quickOpenIndex = Math.min(quickOpenMatches.length - 1, quickOpenIndex + 1)"
+            @keydown.arrow-up.prevent="quickOpenIndex = Math.max(0, quickOpenIndex - 1)" />
+        </div>
+        <div class="quickopen-list">
+          <div
+v-for="(node, i) in quickOpenMatches" :key="node.path"
+            class="quickopen-item" :class="{ active: i === quickOpenIndex }"
+            @mouseenter="quickOpenIndex = i" @click="openQuickOpenFile(node)">
+            <component :is="node.type === 'directory' ? Folder : getFileIcon(node.name)" :size="14" class="tree-icon" />
+            <span class="quickopen-name">{{ node.name }}</span>
+            <span class="quickopen-path">{{ node.path }}</span>
+          </div>
+          <p v-if="!quickOpenMatches.length" class="quickopen-empty">没有匹配的文件</p>
+        </div>
+      </div>
+    </div>
+
     <!-- 右键菜单 -->
     <div v-if="contextMenu.visible" class="ctx-menu" :style="{ left: contextMenu.x + 'px', top: contextMenu.y + 'px' }" @click="contextMenu.visible = false">
       <div class="ctx-item" @click="openInEditor"><Edit3 :size="13" /> 打开</div>
+      <div class="ctx-item" @click="revealItem"><FolderOpen :size="13" /> 在资源管理器中显示</div>
       <div class="ctx-sep"></div>
       <div class="ctx-item" @click="renameItem"><Edit2 :size="13" /> 重命名</div>
       <div class="ctx-sep"></div>
@@ -149,9 +194,9 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted, onActivated, onDeactivated, inject } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted, onActivated, onDeactivated, inject, nextTick } from 'vue';
 import { API_BASE, authFetch } from '../composables/apiClient.js';
-import { Terminal, FolderOpen, Folder, FileCode, FileText, Image as ImageIcon, Database, Edit3, Edit2, Trash2, Crosshair, Activity } from 'lucide-vue-next';
+import { Terminal, FolderOpen, Folder, FileCode, FileText, Image as ImageIcon, Database, Edit3, Edit2, Trash2, Crosshair, Activity, Search, RefreshCw } from 'lucide-vue-next';
 import MonacoEditor from '../components/MonacoEditor.vue';
 import WebTerminal from '../components/WebTerminal.vue';
 
@@ -175,6 +220,49 @@ const showPathDialog = ref(false);
 const newPathInput = ref('');
 const pathDialogError = ref('');
 const quickPaths = ref([]);
+const picking = ref(false);
+// 快速打开面板（Ctrl+P）
+const quickOpen = reactive({ visible: false, query: '' });
+const quickOpenInput = ref(null);
+const quickOpenIndex = ref(0);
+const quickOpenMatches = computed(() => {
+  const q = quickOpen.query.trim().toLowerCase();
+  const all = allFiles.value;
+  if (!q) return all.slice(0, 50);
+  // 简易模糊匹配：子序列或路径包含，按命中位置排序
+  const scored = [];
+  for (const node of all) {
+    const name = node.name.toLowerCase();
+    const path = node.path.toLowerCase();
+    let score = -1;
+    const idx = name.indexOf(q);
+    if (idx >= 0) score = idx === 0 ? 0 : 10;
+    else if (path.includes(q)) score = 50;
+    else {
+      // 子序列匹配（如 "apj" 匹配 "app.json"）
+      let pi = 0;
+      for (let ci = 0; ci < name.length && pi < q.length; ci++) {
+        if (name[ci] === q[pi]) pi++;
+      }
+      if (pi === q.length) score = 100;
+    }
+    if (score >= 0) scored.push({ node, score });
+  }
+  scored.sort((a, b) => a.score - b.score || a.node.path.localeCompare(b.node.path));
+  return scored.slice(0, 50).map(s => s.node);
+});
+// 工作区全量文件清单（不受目录展开状态影响）
+const allFiles = computed(() => {
+  const out = [];
+  const walk = (nodes) => {
+    for (const n of nodes) {
+      if (n.type === 'file') out.push(n);
+      else if (n.children) walk(n.children);
+    }
+  };
+  walk(fileTree.value);
+  return out;
+});
 
 // 当前激活文件（从 MonacoEditor 读取）
 const currentFile = computed(() => {
@@ -224,6 +312,81 @@ async function openPathDialog() {
     const r = await authFetch(`${API_BASE}/api/workspace/quick_paths`);
     if (r.ok) { const d = await r.json(); quickPaths.value = d.paths || []; }
   } catch (e) { /* 快速路径仅为便捷入口，加载失败不打断对话框 */ }
+}
+
+// 系统级目录选择：后端弹原生对话框（PowerShell BrowseForFolder）
+async function browseFolder() {
+  if (picking.value) return;
+  picking.value = true;
+  pathDialogError.value = '';
+  try {
+    const r = await authFetch(`${API_BASE}/api/workspace/pick_folder`, { method: 'POST' });
+    const data = await r.json().catch(() => ({}));
+    if (r.ok && data.status === 'ok' && data.path) {
+      newPathInput.value = data.path;
+      applyNewPath(); // 选中即切换，少一次点击
+    } else if (data.status === 'cancel') {
+      // 用户取消，静默
+    } else {
+      pathDialogError.value = data.detail || '目录选择失败';
+    }
+  } catch (e) {
+    pathDialogError.value = '无法打开系统目录选择框: ' + e.message;
+  } finally {
+    picking.value = false;
+  }
+}
+
+async function handleNewFolder() {
+  const name = await showInputDialog('新建文件夹', '输入文件夹名，如 utils', '');
+  if (!name) return;
+  try {
+    const r = await authFetch(`${API_BASE}/api/workspace/mkdir`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (r.ok && data.status === 'ok') { toast(`已创建文件夹 ${name}`, 'success'); loadTree(); }
+    else toast(data.detail || '创建文件夹失败', 'error');
+  } catch (e) { toast('创建文件夹失败: ' + e.message, 'error'); }
+}
+
+async function revealItem() {
+  const node = contextMenu.value.node;
+  if (!node) return;
+  try {
+    const r = await authFetch(`${API_BASE}/api/workspace/reveal`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path: node.path }),
+    });
+    if (!r.ok) { const d = await r.json().catch(() => ({})); toast(d.detail || '打开资源管理器失败', 'error'); }
+  } catch (e) { toast('打开资源管理器失败: ' + e.message, 'error'); }
+}
+
+// ===== 快速打开（Ctrl+P）=====
+function openQuickOpen() {
+  quickOpen.visible = true;
+  quickOpen.query = '';
+  quickOpenIndex.value = 0;
+  nextTick(() => quickOpenInput.value?.focus());
+}
+function openQuickOpenFile(node) {
+  if (node.type !== 'file') return;
+  quickOpen.visible = false;
+  if (monacoEditor.value) monacoEditor.value.openFile(node.path);
+}
+function openQuickOpenSelection() {
+  const node = quickOpenMatches.value[quickOpenIndex.value];
+  if (node) openQuickOpenFile(node);
+}
+
+// ===== IDE 快捷键：Ctrl+P 快速打开 / Ctrl+` 终端 =====
+function onGlobalKeydown(e) {
+  if (e.ctrlKey && !e.altKey && !e.shiftKey) {
+    if (e.key.toLowerCase() === 'p') { e.preventDefault(); openQuickOpen(); }
+    else if (e.key === '`' || e.code === 'Backquote') { e.preventDefault(); showTerminal.value = !showTerminal.value; }
+  }
+  if (e.key === 'Escape' && quickOpen.visible) quickOpen.visible = false;
 }
 
 function showInputDialog(title, placeholder, initialValue = '') {
@@ -416,11 +579,22 @@ onMounted(() => {
 });
 // keep-alive 组件首次挂载与重新激活都会触发 onActivated，
 // loadTree 统一由它负责，避免首次挂载双发请求。
-onActivated(() => { loadTree(); });
-// 离开页面（被 keep-alive 缓存）时收起终端，
+// IDE 快捷键（Ctrl+P / Ctrl+`）仅在 IDE 激活期间生效。
+onActivated(() => {
+  loadTree();
+  document.addEventListener('keydown', onGlobalKeydown);
+});
+// 离开页面（被 keep-alive 缓存）时收起终端并卸载快捷键，
 // v-if 卸载会触发 WebTerminal 的 onBeforeUnmount 清理（WS / xterm / ResizeObserver）。
-onDeactivated(() => { showTerminal.value = false; });
-onUnmounted(() => { document.removeEventListener('click', closeCtx); });
+onDeactivated(() => {
+  showTerminal.value = false;
+  quickOpen.visible = false;
+  document.removeEventListener('keydown', onGlobalKeydown);
+});
+onUnmounted(() => {
+  document.removeEventListener('click', closeCtx);
+  document.removeEventListener('keydown', onGlobalKeydown);
+});
 </script>
 
 <style scoped>
@@ -823,6 +997,78 @@ onUnmounted(() => { document.removeEventListener('click', closeCtx); });
   background: color-mix(in srgb, var(--primary) 12%, var(--background));
   color: var(--primary);
   border-color: color-mix(in srgb, var(--primary) 30%, var(--border));
+}
+
+/* ── 浏览系统目录按钮 ── */
+.browse-btn {
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+/* ── 快速打开（Ctrl+P） ── */
+.quickopen-box {
+  width: min(560px, 90vw);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  align-self: flex-start;
+  margin-top: 12vh;
+}
+.quickopen-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.quickopen-input {
+  flex: 1;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 14px;
+}
+.quickopen-input::placeholder { color: var(--muted-foreground); }
+.quickopen-list {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 6px;
+}
+.quickopen-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.84rem;
+  color: var(--foreground);
+}
+.quickopen-item.active { background: var(--muted); }
+.quickopen-item.active .quickopen-name { color: var(--primary); }
+.quickopen-name { flex-shrink: 0; font-weight: 500; }
+.quickopen-path {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+  font-size: 0.72rem;
+  color: var(--muted-foreground);
+  font-family: var(--font-mono, monospace);
+}
+.quickopen-empty {
+  margin: 0;
+  padding: 18px;
+  text-align: center;
+  color: var(--muted-foreground);
+  font-size: 0.82rem;
 }
 
 /* ── 右键菜单 ── */

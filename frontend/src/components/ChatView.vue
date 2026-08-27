@@ -111,7 +111,7 @@
 
             <article
 v-for="msg in displayedMessages" :key="msg.id"
-              v-memo="[msg.id, msg.content, msg.role]"
+              v-memo="[msg.id, msg.content, msg.role, msg.unreadable]"
               :class="['msg', msg.role === 'user' ? 'msg-user' : 'msg-ai']">
               <TaijiLogo v-if="msg.role === 'assistant'" class="av av-ai" :size="32" :thinking="false" aria-label="Seed" />
               <span v-else class="av av-user" aria-label="用户">
@@ -119,10 +119,17 @@ v-for="msg in displayedMessages" :key="msg.id"
               </span>
               <div class="msg-body">
                 <span class="msg-name">{{ msg.role === 'user' ? '你' : 'Seed' }}</span>
-                <div class="bubble">
-                  <div v-if="msg.role === 'user'" class="text-content">{{ msg.content }}</div>
-                  <div v-else class="markdown-body" v-html="renderMarkdown(msg.content)" />
+                <!-- 不可读的原始字节输出：以「原始输出」卡片呈现，不伪装成正常回复 -->
+                <div v-if="msg.role === 'assistant' && isRawOutput(msg)" class="bubble raw-output">
+                  <div class="raw-head">
+                    <span class="raw-badge">RAW</span>
+                    <span class="raw-title">模型原始字节输出</span>
+                  </div>
+                  <p class="raw-desc">当前语言器官为 structured-stub（未接入可用语言后端），输出尚未成形为可读语言。以下为逐字节解码的原始内容：</p>
+                  <pre class="raw-pre">{{ msg.content }}</pre>
                 </div>
+                <div v-else-if="msg.role === 'user'" class="bubble"><div class="text-content">{{ msg.content }}</div></div>
+                <div v-else class="bubble markdown-body" v-html="renderMarkdown(msg.content)" />
                 <div v-if="msg.role === 'assistant' && msg.content" class="msg-actions">
                   <button class="msg-action-btn" title="复制" @click="copyMsg(msg.content)"><Copy :size="14" /></button>
                   <button class="msg-action-btn" title="赞" @click="likeMsg(msg.id)"><ThumbsUp :size="14" /></button>
@@ -185,7 +192,8 @@ ref="inputRef" v-model="chatStore.chatInput"
               <span class="chip-label">翻译</span>
             </button>
             <span class="spacer"></span>
-            <button class="send" type="button" :class="{ unavailable: !canSend }" :disabled="!canSend" title="发送" @click="handleSend">
+            <!-- 不用 disabled：保持可点击，点击后由 handleSend 解释未就绪原因 -->
+            <button class="send" type="button" :class="{ unavailable: !canSend }" :title="canSend ? '发送' : '运行时就绪后可发送'" @click="handleSend">
               <Send :size="16" />
             </button>
           </div>
@@ -250,6 +258,20 @@ const canSend = computed(() =>
   !!chatStore.chatInput.trim() && !chatStore.isLoading && runtimeStore.health.state === 'connected' && runtimeStore.health.modelLoaded
 )
 
+// 历史消息（后端无 readable 标注）用同一启发式判定：替换字符/控制字符占比 >= 2%
+function looksUnreadable(text) {
+  if (!text) return false
+  let bad = 0
+  for (const ch of text) {
+    const code = ch.charCodeAt(0)
+    if (ch === '�' || (code < 32 && !'\n\r\t'.includes(ch))) bad++
+  }
+  return bad / text.length >= 0.02
+}
+function isRawOutput(msg) {
+  return msg.unreadable === true || looksUnreadable(msg.content || '')
+}
+
 function scrollToBottom() { nextTick(() => { if (messagesArea.value) messagesArea.value.scrollTop = messagesArea.value.scrollHeight }) }
 watch(() => chatStore.messages.length, scrollToBottom)
 watch(() => chatStore.isReceiving, scrollToBottom)
@@ -269,7 +291,19 @@ const inputPlaceholder = computed(() => {
 })
 
 function handleSend() {
-  if (!canSend.value) return
+  if (!canSend.value) {
+    // 明确告知为什么不能发送，而不是静默无响应
+    if (chatStore.isLoading) {
+      toast('正在生成回复，请稍候或点击「中断执行」', 'info')
+    } else if (runtimeStore.health.state !== 'connected') {
+      toast(`运行时未就绪（${runtimeStore.connectionStatus}），请等待连接恢复`, 'warning')
+    } else if (!runtimeStore.health.modelLoaded) {
+      toast('模型尚未装载完成，暂时无法发送', 'warning')
+    } else if (!chatStore.chatInput.trim()) {
+      inputRef.value?.focus()
+    }
+    return
+  }
   chatStore.sendMessage(engineModel.value)
   scrollToBottom()
 }
@@ -406,10 +440,12 @@ onMounted(scrollToBottom)
   position: relative;
 }
 
-/* 对话主舞台 */
+/* 对话主舞台
+   flex-shrink 必须为 0：滚动容器是 flex 列，若允许 stage 收缩到小于内容高度，
+   内容会以 overflow:visible 溢出绘制，但父级 scrollHeight 仍按 stage 盒子计算，
+   导致滚动条永不出现（内容被 sticky 输入栏遮住且无法滚动）。 */
 .chat-stage {
-  flex: 1;
-  min-height: 0;
+  flex: 1 0 auto;
   max-width: 780px;
   width: 100%;
   margin: 0 auto;
@@ -549,7 +585,8 @@ onMounted(scrollToBottom)
   max-width: 100%;
   align-items: flex-start;
   content-visibility: auto;
-  contain-intrinsic-size: auto 80px;
+  /* 屏外消息的高度估值：过小会让 scrollHeight 失真、滚动条跳动 */
+  contain-intrinsic-size: auto 140px;
 }
 .msg-user { flex-direction: row-reverse; }
 
@@ -701,6 +738,8 @@ onMounted(scrollToBottom)
 .composer-wrap {
   position: sticky;
   bottom: 0;
+  flex: none;
+  z-index: 2;
   max-width: 780px;
   width: 100%;
   margin: 0 auto;
@@ -826,7 +865,39 @@ onMounted(scrollToBottom)
 }
 .send:hover:not(:disabled) { background: var(--primary-hover); }
 .send:disabled { opacity: 0.4; cursor: not-allowed; }
-.send.unavailable { opacity: 0.4; }
+.send.unavailable { opacity: 0.45; cursor: not-allowed; }
+.send.unavailable:hover { background: var(--primary); }
+
+/* ===== 原始字节输出卡片（Seed 语言器官为 structured-stub 时） ===== */
+.bubble.raw-output {
+  background: var(--muted);
+  border: 1px dashed color-mix(in srgb, var(--warning, #f59e0b) 45%, var(--border));
+  max-width: 100%;
+}
+.raw-head {
+  display: flex; align-items: center; gap: 7px; margin-bottom: 6px;
+}
+.raw-badge {
+  font-size: 0.64rem; font-weight: 700; letter-spacing: 0.08em;
+  padding: 2px 7px; border-radius: 6px;
+  background: color-mix(in srgb, var(--warning, #f59e0b) 16%, transparent);
+  color: var(--warning, #b45309);
+  font-family: var(--font-mono);
+}
+.raw-title {
+  font-size: 0.78rem; font-weight: 600; color: var(--foreground);
+}
+.raw-desc {
+  margin: 0 0 8px; font-size: 0.76rem; line-height: 1.5; color: var(--muted-foreground);
+}
+.raw-pre {
+  margin: 0; padding: 10px 12px; border-radius: 10px;
+  background: color-mix(in srgb, var(--foreground) 6%, transparent);
+  font-family: var(--font-mono); font-size: 0.74rem; line-height: 1.55;
+  color: var(--muted-foreground);
+  white-space: pre-wrap; word-break: break-all;
+  max-height: 220px; overflow-y: auto;
+}
 
 /* 输入区底部提示 */
 .composer-foot {

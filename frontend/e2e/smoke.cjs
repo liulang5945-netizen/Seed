@@ -84,18 +84,19 @@ async function shot(page, tag) {
   // ---- 2. 输入 → 发送按钮遵守运行时门控 ----
   console.log('\n[E2E] 输入交互');
   const sendBtn = page.locator('.composer button.send');
-  const disabledBefore = await sendBtn.isDisabled().catch(() => null);
-  check('空输入时发送按钮禁用', disabledBefore === true);
+  // 发送按钮保持可点击（disabled 移除），但未就绪时带 unavailable 类；点击后由 toast 解释原因
+  const unavailableBefore = await sendBtn.evaluate((el) => el.classList.contains('unavailable')).catch(() => null);
+  check('空输入时发送按钮门控（unavailable）', unavailableBefore === true);
   await page.locator('.composer textarea').fill('你好');
   await page.waitForTimeout(300);
   check('输入文本后内容保留', (await page.locator('.composer textarea').inputValue().catch(() => '')) === '你好');
   const runtimeLabel = await page.locator('.welcome-sub').innerText().catch(() => '');
   const runtimeReady = runtimeLabel.includes('已连接') && !runtimeLabel.includes('未加载模型');
-  const enabledAfter = await sendBtn.isEnabled().catch(() => false);
+  const unavailableAfter = await sendBtn.evaluate((el) => el.classList.contains('unavailable')).catch(() => true);
   if (runtimeReady) {
-    check('运行时就绪后发送按钮可用', enabledAfter);
+    check('运行时就绪后发送按钮可用', !unavailableAfter);
   } else {
-    check('运行时未就绪时发送按钮保持门控', !enabledAfter);
+    check('运行时未就绪时发送按钮保持门控', unavailableAfter);
   }
 
   // ---- 2.5 关键路径交互（R4 新增）----

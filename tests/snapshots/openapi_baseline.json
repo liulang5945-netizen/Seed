@@ -526,6 +526,12 @@
             "title": "Is Taiji",
             "type": "boolean"
           },
+          "language_provider": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Language Provider",
+            "type": "object"
+          },
           "message": {
             "default": "",
             "title": "Message",
@@ -874,6 +880,7 @@
             "default": {
               "is_seed": false,
               "is_taiji": false,
+              "language_provider": {},
               "message": "",
               "model_loaded": false,
               "model_name": "",
@@ -6583,6 +6590,45 @@
         "summary": "List Workspace Files"
       }
     },
+    "/api/workspace/mkdir": {
+      "post": {
+        "description": "在工作区内创建目录（支持多级）。",
+        "operationId": "make_workspace_dir_api_workspace_mkdir_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Req",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Make Workspace Dir"
+      }
+    },
     "/api/workspace/path": {
       "get": {
         "description": "Get the active workspace path.",
@@ -6635,6 +6681,23 @@
           }
         },
         "summary": "Set Workspace Path"
+      }
+    },
+    "/api/workspace/pick_folder": {
+      "post": {
+        "description": "打开系统级目录选择对话框，返回用户选择的目录。\n\nWeb 前端无法唤起原生文件管理器（QWebEngine/浏览器沙箱），由本地后端\n代为弹窗：Windows 上经 PowerShell 调 Shell.Application 的\nBrowseForFolder（Vista 风格可折叠树对话框，STA 线程保证 COM 安全）。\n用户取消时返回 {\"status\": \"cancel\"}；平台不支持时返回 501。",
+        "operationId": "pick_folder_api_workspace_pick_folder_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Pick Folder"
       }
     },
     "/api/workspace/quick_paths": {
@@ -6691,6 +6754,45 @@
           }
         },
         "summary": "Rename Workspace Item"
+      }
+    },
+    "/api/workspace/reveal": {
+      "post": {
+        "description": "在系统资源管理器中显示工作区内的文件/目录。",
+        "operationId": "reveal_in_explorer_api_workspace_reveal_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Req",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reveal In Explorer"
       }
     },
     "/api/workspace/run": {

@@ -117,16 +117,16 @@ describe('WorkspaceView', () => {
     expect(toastFn).toHaveBeenCalledWith('无权限写入', 'error')
   })
 
-  it('顶栏显示当前工作区路径，点击切换目录打开对话框并惰性加载快捷路径', async () => {
+  it('顶栏显示当前工作区路径，点击打开文件夹打开对话框并惰性加载快捷路径', async () => {
     const wrapper = mountView()
     await flushPromises()
     expect(wrapper.find('.topbar-path').text()).toBe('E:/Seed/agent_workspace')
     expect(wrapper.find('.dlg-overlay').exists()).toBe(false)
 
-    const btn = wrapper.findAll('button').find((b) => b.text() === '切换目录')
+    const btn = wrapper.findAll('button').find((b) => b.text().includes('打开文件夹'))
     expect(btn).toBeTruthy()
     await btn.trigger('click')
-    expect(wrapper.find('.dlg-box h3').text()).toBe('切换项目路径')
+    expect(wrapper.find('.dlg-box h3').text()).toBe('打开项目文件夹')
     await flushPromises()
     expect(
       authFetch.mock.calls.some(([u]) => u.endsWith('/api/workspace/quick_paths'))
@@ -140,7 +140,7 @@ describe('WorkspaceView', () => {
     const before = treeCalls()
     expect(before).toBeGreaterThan(0)
 
-    const btn = wrapper.findAll('button').find((b) => b.text() === '切换目录')
+    const btn = wrapper.findAll('button').find((b) => b.text().includes('打开文件夹'))
     await btn.trigger('click')
     await wrapper.find('.dlg-box .dlg-input').setValue('E:/Seed/data')
     await wrapper.find('.dlg-btn.primary').trigger('click')

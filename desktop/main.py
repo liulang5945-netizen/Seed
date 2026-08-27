@@ -786,14 +786,34 @@ def main():
                 self._window_frame.setStyleSheet(self._window_frame_qss(dark))
 
         def _sync_titlebar_theme(self):
-            """前端就绪后读取其主题，同步标题栏配色。"""
-            try:
-                self.web_view.page().runJavaScript(
-                    "document.documentElement.getAttribute('data-theme') || ''",
-                    self._apply_titlebar_theme,
-                )
-            except Exception as e:
-                logger.debug("【_sync_titlebar_theme】处理失败（非致命）: %s", e)
+            """前端就绪后读取其主题，同步标题栏配色，并持续跟踪主题切换。
+
+            单次同步无法覆盖用户在设置页切换主题的场景（外框 QSS 不会
+            跟随 DOM 变化）。这里用 1s 轮询 data-theme：runJavaScript 只
+            读一个属性，开销可忽略；值变化时才重设 QSS。
+            """
+            self._last_synced_theme = None
+
+            def _on_theme(theme):
+                theme = str(theme or "").strip()
+                if theme and theme != self._last_synced_theme:
+                    self._last_synced_theme = theme
+                    self._apply_titlebar_theme(theme)
+
+            def _poll_theme():
+                if self._frontend_loaded:
+                    try:
+                        self.web_view.page().runJavaScript(
+                            "document.documentElement.getAttribute('data-theme') || ''",
+                            _on_theme,
+                        )
+                    except Exception as e:
+                        logger.debug("【_poll_theme】处理失败（非致命）: %s", e)
+
+            self._theme_timer = QTimer()
+            self._theme_timer.timeout.connect(_poll_theme)
+            self._theme_timer.start(1000)
+            _poll_theme()
 
         def _build_titlebar(self):
             """自绘极简标题栏：标题 + 最小化/最大化/关闭，可拖拽、双击切换最大化。"""

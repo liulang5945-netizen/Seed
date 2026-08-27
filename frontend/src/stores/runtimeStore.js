@@ -316,6 +316,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
         languageProvider: data.health.language_provider || health.value.languageProvider,
         modelName: data.health.model_name || '',
         isTaiji: !!data.health.is_taiji,
+        isSeed: !!data.health.is_seed,
         switch: data.health.switch || {},
         download: data.health.download || {},
         checkedAt: data.health.checked_at || data.timestamp || Date.now(),

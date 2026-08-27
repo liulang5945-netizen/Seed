@@ -102,6 +102,15 @@
 
       <template v-else>
 
+      <!-- ═══ Seed 原生运行时数据来源说明（诚实呈现：needs 未接入，无假数据） ═══ -->
+      <div v-if="runtimeStore.health.isSeed" class="seed-datasource-note">
+        <span class="dsn-badge">DATA SOURCE</span>
+        <div>
+          <strong>当前运行时：Seed 原生（{{ runtimeStore.health.modelName || 'seed' }}）</strong>
+          <p>下方「需求五维 / 生命表达 / 需求明细」的数据源是 Cortex 对照运行时的 life_scheduler。Seed 原生运行时尚未接入 needs 上报通道，因此这些面板显示「暂无数据」——不是模型输出，也不是估算值。内存与连接状态为系统实测。</p>
+        </div>
+      </div>
+
       <!-- ═══ KPI 卡片行（全部来自 /api/life/status 与运行时实测，无估算值） ═══ -->
       <div class="kpi-grid">
         <!-- 卡1：累计交互 -->
@@ -316,7 +325,7 @@ function addLog(type, emoji, message) {
 // Seed 原生运行时给出既有提示而非静默；Cortex 对照运行时调用 /api/life/*。
 const NATIVE_RUNTIME_TIP = 'Seed 原生运行时不启用 Legacy 生命活动接口'
 async function callLifeAction(action) {
-  if (runtimeStore.health.isTaiji || isTaijiModel.value) {
+  if (runtimeStore.health.isTaiji || runtimeStore.health.isSeed || isTaijiModel.value) {
     currentActivity.value = ''
     toast(NATIVE_RUNTIME_TIP, 'info')
     addLog(action, 'ℹ️', '原生运行时：未调用 Legacy 生命活动接口')
@@ -688,6 +697,41 @@ onUnmounted(() => stopPolling())
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+/* ═══ Seed 数据来源说明卡 ═══ */
+.seed-datasource-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px dashed var(--border);
+  background: var(--card);
+}
+.dsn-badge {
+  flex: none;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-top: 2px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  font-family: var(--font-mono, monospace);
+}
+.seed-datasource-note strong {
+  display: block;
+  font-size: 0.86rem;
+  color: var(--foreground);
+  margin-bottom: 4px;
+}
+.seed-datasource-note p {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--muted-foreground);
 }
 
 /* ═══ KPI 卡片行 ═══ */

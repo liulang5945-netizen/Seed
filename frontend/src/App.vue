@@ -20,12 +20,14 @@
               <div class="router-wrapper">
                 <RouteErrorView v-if="routeError" :message="routeError" />
                 <router-view v-else v-slot="{ Component }">
-                  <keep-alive
-                    :include="['ChatView', 'TrainingView', 'WorkspaceView', 'KBView', 'AgentConfigView', 'LifeStatusView']"
-                    :max="6"
-                  >
-                    <component :is="Component" />
-                  </keep-alive>
+                  <transition name="route" mode="out-in">
+                    <keep-alive
+                      :include="['ChatView', 'TrainingView', 'WorkspaceView', 'KBView', 'AgentConfigView', 'LifeStatusView']"
+                      :max="6"
+                    >
+                      <component :is="Component" :key="$route.path" />
+                    </keep-alive>
+                  </transition>
                 </router-view>
               </div>
 
@@ -283,6 +285,31 @@ function onGlobalKeyup(event) {
 
 <style>
 @import './assets/styles/index.css';
+
+/* ===== 路由切换过渡：淡入 + 轻微上移（mode=out-in，先出后进） ===== */
+.route-enter-active {
+  transition: opacity 0.22s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: opacity, transform;
+}
+.route-leave-active {
+  transition: opacity 0.14s ease, transform 0.14s ease;
+  will-change: opacity, transform;
+}
+.route-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+.route-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .route-enter-active,
+  .route-leave-active {
+    transition: opacity 0.1s linear;
+    transform: none;
+  }
+}
 
 .drag-overlay-panel {
   display: flex;
