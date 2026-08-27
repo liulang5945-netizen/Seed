@@ -21,6 +21,7 @@ RECOVERY_READER_ATTRIBUTION_CHECKPOINT_FORMAT = "taiji-recovery-reader-attributi
 RECOVERY_READER_INTERACTION_CHECKPOINT_FORMAT = "taiji-recovery-reader-interaction-v1"
 RECOVERY_READER_INTERACTION_GROUP_CHECKPOINT_FORMAT = "taiji-recovery-reader-interaction-group-v1"
 RECOVERY_READER_ORDER_INVARIANCE_TOLERANCE = DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE
+RECOVERY_READER_CREDIT_CONSERVATION_TOLERANCE = 1e-7
 
 
 def _unit(value: float, name: str) -> float:
@@ -969,6 +970,7 @@ class RecoveryStrategyLedger:
                 group.higher_order_residual_l2 > residual_limit
                 or group.order_delta_l2 > order_limit
                 or not group.order_invariant
+                or not group.credit_decomposition_safe
             ):
                 atomic_connections.append(tuple(group_ids))
 
@@ -1346,6 +1348,11 @@ class RecoveryReaderInteractionGroup:
     replay_digest: str = ""
     attribution_digest: str = ""
     replay_action_kinds: tuple[str, ...] = ()
+    member_increment_l2: tuple[float, ...] = ()
+    interaction_credit_l2: tuple[float, ...] = ()
+    residual_credit_l2: float = 0.0
+    credit_conservation_error_l2: float = 0.0
+    credit_decomposition_complete: bool = False
 
     def __post_init__(self) -> None:
         if not self.reader_kind:
@@ -1409,6 +1416,67 @@ class RecoveryReaderInteractionGroup:
                 _nonnegative_finite(effect, "recovery reader interaction group singleton effect")
         if any(not action_kind for action_kind in self.replay_action_kinds):
             raise ValueError("recovery reader interaction group action kinds cannot be empty")
+        if self.member_increment_l2:
+            if len(self.member_increment_l2) != len(self.strategy_rollout_ids):
+                raise ValueError(
+                    "recovery reader interaction group member increments must match rollouts"
+                )
+            for effect in self.member_increment_l2:
+                _nonnegative_finite(effect, "recovery reader interaction group member increment")
+        if self.interaction_credit_l2:
+            expected_count = (
+                len(self.strategy_rollout_ids) * (len(self.strategy_rollout_ids) - 1) // 2
+            )
+            if len(self.interaction_credit_l2) != expected_count:
+                raise ValueError(
+                    "recovery reader interaction group interaction credits must match pairs"
+                )
+            if any(not math.isfinite(float(effect)) for effect in self.interaction_credit_l2):
+                raise ValueError(
+                    "recovery reader interaction group interaction credits must be finite"
+                )
+        if not math.isfinite(float(self.residual_credit_l2)):
+            raise ValueError("recovery reader interaction group residual credit must be finite")
+        _nonnegative_finite(
+            self.credit_conservation_error_l2,
+            "recovery reader interaction group credit conservation error",
+        )
+        if not isinstance(self.credit_decomposition_complete, bool):
+            raise ValueError("recovery reader interaction group credit flag must be boolean")
+        if self.credit_decomposition_complete:
+            if not self.member_increment_l2 or not self.interaction_credit_l2:
+                raise ValueError(
+                    "complete recovery reader interaction group credit needs subset effects"
+                )
+            if self.singleton_effect_l2 != self.member_increment_l2:
+                raise ValueError(
+                    "recovery reader interaction group member increments must match singleton effects"
+                )
+            decomposed_effect = (
+                sum(self.member_increment_l2)
+                + sum(self.interaction_credit_l2)
+                + float(self.residual_credit_l2)
+            )
+            computed_error = abs(float(self.group_effect_l2) - decomposed_effect)
+            if not math.isclose(
+                float(self.credit_conservation_error_l2),
+                computed_error,
+                rel_tol=1e-6,
+                abs_tol=1e-9,
+            ):
+                raise ValueError(
+                    "recovery reader interaction group credit conservation error is stale"
+                )
+
+    @property
+    def credit_decomposition_safe(self) -> bool:
+        """Return whether this group can be treated as separable evidence."""
+
+        return bool(
+            self.credit_decomposition_complete
+            and self.order_invariant
+            and self.credit_conservation_error_l2 <= RECOVERY_READER_CREDIT_CONSERVATION_TOLERANCE
+        )
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -1431,6 +1499,11 @@ class RecoveryReaderInteractionGroup:
             "replay_digest": self.replay_digest,
             "attribution_digest": self.attribution_digest,
             "replay_action_kinds": list(self.replay_action_kinds),
+            "member_increment_l2": list(self.member_increment_l2),
+            "interaction_credit_l2": list(self.interaction_credit_l2),
+            "residual_credit_l2": self.residual_credit_l2,
+            "credit_conservation_error_l2": self.credit_conservation_error_l2,
+            "credit_decomposition_complete": self.credit_decomposition_complete,
         }
 
     @classmethod
@@ -1462,6 +1535,17 @@ class RecoveryReaderInteractionGroup:
             replay_digest=str(payload.get("replay_digest", "")),
             attribution_digest=str(payload.get("attribution_digest", "")),
             replay_action_kinds=tuple(str(item) for item in payload.get("replay_action_kinds", ())),
+            member_increment_l2=tuple(
+                float(item) for item in payload.get("member_increment_l2", ())
+            ),
+            interaction_credit_l2=tuple(
+                float(item) for item in payload.get("interaction_credit_l2", ())
+            ),
+            residual_credit_l2=float(
+                payload.get("residual_credit_l2", payload.get("higher_order_delta_l2", 0.0))
+            ),
+            credit_conservation_error_l2=float(payload.get("credit_conservation_error_l2", 0.0)),
+            credit_decomposition_complete=bool(payload.get("credit_decomposition_complete", False)),
         )
 
 

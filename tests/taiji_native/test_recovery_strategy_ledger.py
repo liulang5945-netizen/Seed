@@ -139,6 +139,86 @@ def test_recovery_reader_higher_order_group_roundtrip_and_revocation() -> None:
     assert dependency.interaction_groups == ()
 
 
+def test_recovery_reader_group_credit_decomposition_conserves_and_roundtrips() -> None:
+    group = RecoveryReaderInteractionGroup(
+        reader_kind="semantic",
+        strategy_rollout_ids=("first", "second", "third"),
+        memory_ids=("memory-first", "memory-second", "memory-third"),
+        group_effect_l2=4.5,
+        additive_effect_l2=3.0,
+        pairwise_interaction_delta_l2=0.5,
+        pairwise_predicted_effect_l2=3.5,
+        higher_order_delta_l2=1.0,
+        higher_order_residual_l2=1.0,
+        order_delta_l2=0.0,
+        order_invariant=True,
+        replay_epochs=1,
+        replay_learning_rate=0.1,
+        singleton_effect_l2=(1.0, 1.0, 1.0),
+        member_increment_l2=(1.0, 1.0, 1.0),
+        interaction_credit_l2=(0.2, 0.2, 0.1),
+        residual_credit_l2=1.0,
+        credit_conservation_error_l2=0.0,
+        credit_decomposition_complete=True,
+    )
+
+    assert group.credit_decomposition_safe is True
+    assert RecoveryReaderInteractionGroup.from_payload(group.to_payload()) == group
+
+
+def test_recovery_reader_group_incomplete_credit_is_not_safe() -> None:
+    group = _interaction_group("first", "second", "third", higher_order_residual=0.0)
+
+    assert group.credit_decomposition_safe is False
+
+
+def test_recovery_reader_group_order_sensitive_credit_is_fail_closed() -> None:
+    ledger = RecoveryStrategyLedger(memory_budget=0.5)
+    for rollout_id in ("first", "second", "third"):
+        ledger = ledger.admit(
+            _entry(rollout_id, resource_cost=0.2, evidence_count=2, outcome_consistency=1.0),
+            memory_id=f"memory-{rollout_id}",
+        )
+    pairs = (
+        _interaction("first", "second"),
+        _interaction("first", "third"),
+        _interaction("second", "third"),
+    )
+    group = RecoveryReaderInteractionGroup(
+        reader_kind="semantic",
+        strategy_rollout_ids=("first", "second", "third"),
+        memory_ids=("memory-first", "memory-second", "memory-third"),
+        group_effect_l2=3.0,
+        additive_effect_l2=3.0,
+        pairwise_interaction_delta_l2=0.0,
+        pairwise_predicted_effect_l2=3.0,
+        higher_order_delta_l2=0.0,
+        higher_order_residual_l2=0.0,
+        order_delta_l2=0.2,
+        order_invariant=False,
+        replay_epochs=1,
+        replay_learning_rate=0.1,
+        singleton_effect_l2=(1.0, 1.0, 1.0),
+        member_increment_l2=(1.0, 1.0, 1.0),
+        interaction_credit_l2=(0.0, 0.0, 0.0),
+        residual_credit_l2=0.0,
+        credit_conservation_error_l2=0.0,
+        credit_decomposition_complete=True,
+    )
+
+    assert group.credit_decomposition_safe is False
+    assert (
+        ledger.select_with_interaction_audit(
+            pairs,
+            groups=(group,),
+            audit_available=True,
+            residual_tolerance=1e-7,
+            order_tolerance=1e-7,
+        )
+        == ()
+    )
+
+
 def test_recovery_strategy_interaction_policy_keeps_atomic_pair_together() -> None:
     ledger = RecoveryStrategyLedger(memory_budget=0.7)
     ledger = ledger.admit(

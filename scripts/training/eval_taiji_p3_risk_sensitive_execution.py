@@ -36,6 +36,7 @@ from taiji import (  # noqa: E402
     ProceduralSequenceLearner,
     RecoveryPortfolioArchive,
     RecoveryReaderDependency,
+    RecoveryReaderInteractionGroup,
     RecoveryStrategyApproval,
     RecoveryStrategyLedger,
     SemanticMemoryLearner,
@@ -180,6 +181,36 @@ def _fitted_world_learner(seed: int) -> WorldDynamicsLearner:
     """Fit one baseline per seed that independent scenarios can clone."""
 
     return _fit_world_learner(seed)
+
+
+def _credit_decomposition_is_valid(group: RecoveryReaderInteractionGroup) -> bool:
+    """Validate the signed subset-effect ledger without assigning residual to members."""
+
+    expected_pair_count = (
+        len(group.strategy_rollout_ids) * (len(group.strategy_rollout_ids) - 1) // 2
+    )
+    decomposed_effect = (
+        sum(group.member_increment_l2) + sum(group.interaction_credit_l2) + group.residual_credit_l2
+    )
+    return bool(
+        group.credit_decomposition_complete
+        and len(group.member_increment_l2) == len(group.strategy_rollout_ids)
+        and len(group.interaction_credit_l2) == expected_pair_count
+        and group.singleton_effect_l2 == group.member_increment_l2
+        and group.residual_credit_l2 == group.higher_order_delta_l2
+        and math.isclose(
+            group.group_effect_l2,
+            decomposed_effect,
+            rel_tol=1e-6,
+            abs_tol=1e-9,
+        )
+        and math.isclose(
+            group.credit_conservation_error_l2,
+            abs(group.group_effect_l2 - decomposed_effect),
+            rel_tol=1e-6,
+            abs_tol=1e-9,
+        )
+    )
 
 
 def _run_incremental_group_composition_case(adapter: TSKV8Adapter) -> dict[str, object]:
@@ -354,6 +385,9 @@ def _run_incremental_group_composition_case(adapter: TSKV8Adapter) -> dict[str, 
         epochs=1,
         learning_rate=0.1,
     )
+    old_credit_group = next(
+        group for group in old_groups if frozenset(group.strategy_rollout_ids) == group_a_ids
+    )
     merged_groups, merge_replayed, merge_reused = (
         adapter._recovery_reader_interaction_groups_incremental(
             "semantic",
@@ -400,8 +434,35 @@ def _run_incremental_group_composition_case(adapter: TSKV8Adapter) -> dict[str, 
             and untouched_group.attribution_digest == current_untouched_group.attribution_digest
             and untouched_group.singleton_effect_l2 == current_untouched_group.singleton_effect_l2
         ),
+        "incremental_untouched_group_credit_stable": bool(
+            old_credit_group.member_increment_l2 == current_untouched_group.member_increment_l2
+            and old_credit_group.interaction_credit_l2
+            == current_untouched_group.interaction_credit_l2
+            and old_credit_group.residual_credit_l2 == current_untouched_group.residual_credit_l2
+            and old_credit_group.credit_conservation_error_l2
+            == current_untouched_group.credit_conservation_error_l2
+        ),
         "incremental_changed_group_matches_full": bool(
             len(full_changed_group) == 1 and changed_group == full_changed_group[0]
+        ),
+        "incremental_changed_group_credit_matches_full": bool(
+            len(full_changed_group) == 1
+            and changed_group.member_increment_l2 == full_changed_group[0].member_increment_l2
+            and changed_group.interaction_credit_l2 == full_changed_group[0].interaction_credit_l2
+            and changed_group.residual_credit_l2 == full_changed_group[0].residual_credit_l2
+            and changed_group.credit_conservation_error_l2
+            == full_changed_group[0].credit_conservation_error_l2
+        ),
+        "incremental_group_credit_conserves": bool(
+            _credit_decomposition_is_valid(old_credit_group)
+            and _credit_decomposition_is_valid(current_untouched_group)
+            and _credit_decomposition_is_valid(changed_group)
+            and all(_credit_decomposition_is_valid(group) for group in full_changed_group)
+        ),
+        "incremental_group_residual_is_not_member_average": bool(
+            _credit_decomposition_is_valid(changed_group)
+            and changed_group.residual_credit_l2 == changed_group.higher_order_delta_l2
+            and changed_group.residual_credit_l2 not in changed_group.member_increment_l2
         ),
         "incremental_merge_replays_one_group": bool(
             len(merged_groups) == 1 and merge_replayed == 1 and merge_reused == 0
@@ -1113,6 +1174,17 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     group_checkpoint = TSKV8Adapter.from_native_checkpoint(group_adapter.native_checkpoint())
     group_selected_ids = group_adapter.recovery_strategy_ledger.selected_rollout_ids
     group_dependencies = group_adapter.recovery_reader_dependencies.dependencies
+    ordinary_group_checkpoint = group_adapter.checkpoint()
+    group_interaction_groups = tuple(
+        dependency.interaction_groups for dependency in group_dependencies
+    )
+    group_credit_decomposition = bool(
+        len(group_selected_ids) == 3
+        and all(
+            len(groups) == 1 and _credit_decomposition_is_valid(groups[0])
+            for groups in group_interaction_groups
+        )
+    )
     recovery_reader_interaction_group_replay = bool(
         len(group_selected_ids) == 3
         and all(
@@ -1129,6 +1201,7 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
             and math.isfinite(dependency.interaction_groups[0].pairwise_predicted_effect_l2)
             and dependency.interaction_groups[0].replay_epochs == 1
             and dependency.interaction_groups[0].replay_learning_rate == 0.1
+            and _credit_decomposition_is_valid(dependency.interaction_groups[0])
             for dependency in group_dependencies
         )
     )
@@ -1140,6 +1213,15 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
             len(dependency.interaction_groups) == 1
             for dependency in group_checkpoint.recovery_reader_dependencies.dependencies
         )
+        and ordinary_group_checkpoint["recovery_reader_dependencies"]
+        == group_adapter.recovery_reader_dependencies.to_payload()
+        and ordinary_group_checkpoint["recovery_strategy_ledger"]
+        == group_adapter.recovery_strategy_ledger.to_payload()
+    )
+    recovery_reader_interaction_group_credit_checkpoint_preserved = bool(
+        group_credit_decomposition
+        and group_checkpoint.recovery_reader_dependencies
+        == group_adapter.recovery_reader_dependencies
     )
     group_adapter.revoke_recovery_strategy(recovery_rollout.rollout_id)
     group_survivors = {secondary_entry.rollout_id, tertiary_entry.rollout_id}
@@ -1294,6 +1376,10 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         **incremental_composition,
         "recovery_reader_interaction_group_checkpoint_preserved": (
             recovery_reader_interaction_group_checkpoint_preserved
+        ),
+        "recovery_reader_interaction_group_credit_decomposition": (group_credit_decomposition),
+        "recovery_reader_interaction_group_credit_checkpoint_preserved": (
+            recovery_reader_interaction_group_credit_checkpoint_preserved
         ),
         "recovery_reader_dependencies_recorded": recovery_reader_dependencies_recorded,
         "recovery_reader_contributions_recorded": recovery_reader_contributions_recorded,
@@ -1525,10 +1611,16 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "incremental_pairwise_reuse",
         "incremental_group_reuse",
         "incremental_untouched_group_digest_stable",
+        "incremental_untouched_group_credit_stable",
         "incremental_changed_group_matches_full",
+        "incremental_changed_group_credit_matches_full",
+        "incremental_group_credit_conserves",
+        "incremental_group_residual_is_not_member_average",
         "incremental_merge_replays_one_group",
         "incremental_split_replays_two_groups",
         "recovery_reader_interaction_group_checkpoint_preserved",
+        "recovery_reader_interaction_group_credit_decomposition",
+        "recovery_reader_interaction_group_credit_checkpoint_preserved",
         "recovery_reader_dependencies_recorded",
         "recovery_reader_contributions_recorded",
         "recovery_reader_checkpoint_preserved",
@@ -1626,6 +1718,9 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "recovery-reader-incremental-stable-baseline",
             "recovery-reader-incremental-group-digest-stability",
             "recovery-reader-incremental-group-merge-split",
+            "recovery-reader-group-credit-decomposition",
+            "recovery-reader-group-credit-conservation",
+            "recovery-reader-group-credit-fail-closed",
             "recovery-reader-selective-revocation",
             "recovery-strategy-rebuild-after-revocation",
             "recovery-strategy-rebuild-checkpoint",
@@ -1649,7 +1744,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         },
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, rank multiple admitted strategies by evidence, outcome consistency, and resource cost under a memory budget, preserve that competition through checkpoint, consolidate selected records through semantic/procedural/sequence/concept readers, persist their reader dependency provenance, leave-one-out contribution credit, pairwise interaction residual, and order-invariance result, keep additive interactions independently selectable, group non-additive or unaudited interactions into fail-closed atomic selection units, preserve that selection through checkpoint and revocation, replay connected groups of three or more strategies as a full higher-order unit, compare full-group effect against the pairwise prediction, preserve the group audit through checkpoint, and remove the group atomically on revocation while retaining survivor attribution, incrementally replay only changed pairs and connected groups from a stable baseline without double-applying prior records, preserve unchanged group replay and attribution digests, prove incremental output equals full replay for changed groups, and handle group additions, merges, and splits, revoke one strategy from future replay, rebuild only readers that depended on it from the saved baseline plus surviving records, preserve the survivor's contribution attribution, propagate the revocation to reader dependencies and episodic readout, checkpoint and restore that rebuild, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
+            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, rank multiple admitted strategies by evidence, outcome consistency, and resource cost under a memory budget, preserve that competition through checkpoint, consolidate selected records through semantic/procedural/sequence/concept readers, persist their reader dependency provenance, leave-one-out contribution credit, pairwise interaction residual, order-invariance result, and group credit decomposition, keep additive interactions independently selectable, group non-additive or unaudited interactions into fail-closed atomic selection units, preserve that selection through checkpoint and revocation, replay connected groups of three or more strategies as a full higher-order unit, compare full-group effect against the pairwise prediction, conserve the group effect as member subset increments plus signed pair interaction credits plus an explicitly owned higher-order residual without averaging residual across members, fail closed on order-sensitive or incomplete decomposition, preserve the group audit through ordinary and native checkpoint, and remove the group attribution atomically on revocation while retaining survivor attribution, incrementally replay only changed pairs and connected groups from a stable baseline without double-applying prior records, preserve unchanged group replay and attribution digests, prove incremental output and credit decomposition equal full replay for changed groups, and handle group additions, merges, and splits, revoke one strategy from future replay, rebuild only readers that depended on it from the saved baseline plus surviving records, preserve the survivor's contribution attribution, propagate the revocation to reader dependencies and episodic readout, checkpoint and restore that rebuild, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
         },
     }
 
