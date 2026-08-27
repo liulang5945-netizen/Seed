@@ -90,6 +90,7 @@ from .planning import (
     ImaginedRollout,
     PlanningCandidate,
     PlanningDecision,
+    RecoveryPortfolioArchive,
     RecoveryPortfolio,
     RecoveryRolloutLineage,
     RolloutDecision,
@@ -180,6 +181,10 @@ class TSKV8Adapter(Taiji):
         self._pending_executive_credit: _PendingExecutiveCredit | None = None
         self._planned_rollout: ImaginedRollout | None = None
         self._recovery_portfolio: RecoveryPortfolio | None = None
+        self._recovery_archive = RecoveryPortfolioArchive(
+            capacity=self.config.recovery_archive_capacity
+        )
+        self._recovery_generation = 0
         self._replan_required = False
         self._last_rollout_prediction_error: float | None = None
         self._last_rollout_calibrated_confidence: float | None = None
@@ -4189,6 +4194,7 @@ class TSKV8Adapter(Taiji):
         previous = self._cognitive_state
         if previous.world.tick != self.tick:
             raise RuntimeError("world state must be observed at the current kernel tick")
+        self._archive_current_recovery_portfolio()
         self.perception.reset_dynamics()
         self._state = replace(self._state, episode_id=str(episode_id))
         empty = self._empty_cognitive_state(str(episode_id))
@@ -5300,9 +5306,8 @@ class TSKV8Adapter(Taiji):
             recovery_budget.remaining_resource,
         )
         start_tick = self._cognitive_state.world.tick
-        portfolio_generation = (
-            1 if self._recovery_portfolio is None else self._recovery_portfolio.revision + 1
-        )
+        self._recovery_generation += 1
+        portfolio_generation = self._recovery_generation
         recovery_prefix = (
             f"recovery:{self._state.episode_id}:"
             f"tick-{start_tick}:generation-{portfolio_generation}"
@@ -5388,27 +5393,68 @@ class TSKV8Adapter(Taiji):
                     ),
                 )
             )
-        synthesized = tuple(rollouts)
+        generated = tuple(rollouts)
+        portfolio_candidates = generated
+        previous_portfolio = self._recovery_portfolio
+        preserved_rollout: ImaginedRollout | None = None
+        if (
+            self._planned_rollout is not None
+            and self._planned_rollout.recovery_lineage is not None
+            and previous_portfolio is not None
+            and previous_portfolio.status_for(self._planned_rollout.rollout_id)
+            in {"active", "selected"}
+            and self._recovery_rollout_is_fresh(self._planned_rollout)
+        ):
+            preserved_rollout = self._planned_rollout
+        if preserved_rollout is not None:
+            portfolio_candidates = (*generated, preserved_rollout)
+        preserved_status = "active"
+        if preserved_rollout is not None and previous_portfolio is not None:
+            previous_status = previous_portfolio.status_for(preserved_rollout.rollout_id)
+            if previous_status is not None:
+                preserved_status = previous_status
         retired_rollout_ids: tuple[str, ...] = ()
-        if self._recovery_portfolio is not None:
+        if previous_portfolio is not None:
             retired_rollout_ids = tuple(
                 dict.fromkeys(
                     (
-                        *self._recovery_portfolio.retired_rollout_ids,
+                        *previous_portfolio.retired_rollout_ids,
                         *(
                             candidate.rollout_id
-                            for candidate in self._recovery_portfolio.candidates
+                            for candidate in previous_portfolio.candidates
+                            if preserved_rollout is None
+                            or candidate.rollout_id != preserved_rollout.rollout_id
                         ),
                     )
                 )
             )
+        statuses = tuple(
+            (
+                candidate.rollout_id,
+                (
+                    preserved_status
+                    if preserved_rollout is not None
+                    and candidate.rollout_id == preserved_rollout.rollout_id
+                    else "active"
+                ),
+            )
+            for candidate in portfolio_candidates
+        )
         self._recovery_portfolio = RecoveryPortfolio(
             portfolio_id=f"{recovery_prefix}:portfolio",
             goal_id=selected_goal_id,
-            candidates=synthesized,
+            candidates=portfolio_candidates,
+            statuses=statuses,
             retired_rollout_ids=retired_rollout_ids,
+            selected_rollout_id=(
+                None
+                if preserved_rollout is None
+                or previous_portfolio is None
+                or previous_portfolio.status_for(preserved_rollout.rollout_id) != "selected"
+                else preserved_rollout.rollout_id
+            ),
         )
-        return synthesized
+        return generated
 
     def plan_rollouts(
         self,
@@ -5422,10 +5468,12 @@ class TSKV8Adapter(Taiji):
             raise RuntimeError("goal planner is not attached")
         candidate_rollouts = tuple(rollouts)
         portfolio = self._recovery_portfolio
+        archived_rollout_ids = set(self._recovery_archive.archived_rollout_ids)
         if portfolio is not None:
             candidate_rollouts = tuple(
                 rollout
                 for rollout in candidate_rollouts
+                if rollout.rollout_id not in archived_rollout_ids
                 if (
                     portfolio.status_for(rollout.rollout_id) in {"active", "selected"}
                     or (
@@ -5434,7 +5482,17 @@ class TSKV8Adapter(Taiji):
                     )
                 )
             )
+        elif archived_rollout_ids:
+            candidate_rollouts = tuple(
+                rollout
+                for rollout in candidate_rollouts
+                if rollout.rollout_id not in archived_rollout_ids
+            )
         if not candidate_rollouts:
+            if candidate_rollouts != tuple(rollouts) and all(
+                rollout.rollout_id in archived_rollout_ids for rollout in rollouts
+            ):
+                raise RuntimeError("archived recovery rollout cannot be reintroduced")
             raise RuntimeError("recovery portfolio has no active candidates")
         fresh_rollouts = tuple(
             rollout for rollout in candidate_rollouts if self._recovery_rollout_is_fresh(rollout)
@@ -5590,6 +5648,14 @@ class TSKV8Adapter(Taiji):
                 self._planned_rollout = self._apply_concept_sequence_affinity(refreshed_suffix)
         if result.terminal and self._cognitive_state.planning_recovery is not None:
             self._cognitive_state = replace(self._cognitive_state, planning_recovery=None)
+        if result.terminal and self._recovery_portfolio is not None:
+            self._archive_current_recovery_portfolio(
+                completed_rollout_id=rollout.rollout_id,
+                outcome_reward=result.reward,
+                outcome_success=result.success,
+                terminal=True,
+            )
+            self._recovery_portfolio = None
         if result.terminal and self._cognitive_state.recovery_branch is not None:
             self._cognitive_state = replace(self._cognitive_state, recovery_branch=None)
         return experienced
@@ -5747,6 +5813,32 @@ class TSKV8Adapter(Taiji):
 
         return self._recovery_portfolio
 
+    @property
+    def recovery_archive(self) -> RecoveryPortfolioArchive:
+        """Return non-executable recovery summaries retained across episodes."""
+
+        return self._recovery_archive
+
+    def _archive_current_recovery_portfolio(
+        self,
+        *,
+        completed_rollout_id: str | None = None,
+        outcome_reward: float | None = None,
+        outcome_success: bool | None = None,
+        terminal: bool = False,
+    ) -> None:
+        portfolio = self._recovery_portfolio
+        if portfolio is None:
+            return
+        entries = portfolio.archive_entries(
+            self._state.episode_id,
+            completed_rollout_id=completed_rollout_id,
+            outcome_reward=outcome_reward,
+            outcome_success=outcome_success,
+            terminal=terminal,
+        )
+        self._recovery_archive = self._recovery_archive.append(entries)
+
     def _record_environment_capability(self, result: EnvironmentOutcome) -> None:
         actions = tuple(int(action) for action in result.available_actions)
         kinds = tuple(str(kind) for kind in result.action_kinds)
@@ -5770,6 +5862,10 @@ class TSKV8Adapter(Taiji):
         self.perception.reset_dynamics()
         self._cognitive_state = self._empty_cognitive_state(self._state.episode_id)
         self._planned_rollout = None
+        self._recovery_archive = RecoveryPortfolioArchive(
+            capacity=self.config.recovery_archive_capacity
+        )
+        self._recovery_generation = 0
         self._replan_required = False
         self._last_rollout_prediction_error = None
         self._last_rollout_calibrated_confidence = None
@@ -6951,6 +7047,8 @@ class TSKV8Adapter(Taiji):
         payload["recovery_portfolio"] = (
             None if self._recovery_portfolio is None else self._recovery_portfolio.to_payload()
         )
+        payload["recovery_archive"] = self._recovery_archive.to_payload()
+        payload["recovery_generation"] = self._recovery_generation
         payload["replan_required"] = self._replan_required
         payload["planning_recovery"] = (
             None
@@ -7021,6 +7119,8 @@ class TSKV8Adapter(Taiji):
         self._restore_language_organ(checkpoint.get("language_organ"))
         self._restore_rollout_state(checkpoint)
         self._restore_recovery_portfolio(checkpoint)
+        self._restore_recovery_archive(checkpoint)
+        self._restore_recovery_generation(checkpoint)
         self._restore_generation_trace(checkpoint)
         self._restore_content_selection(checkpoint)
         self._restore_executive_state(checkpoint)
@@ -7352,6 +7452,19 @@ class TSKV8Adapter(Taiji):
             None if portfolio is None else RecoveryPortfolio.from_payload(dict(portfolio))
         )
 
+    def _restore_recovery_archive(self, payload: Any) -> None:
+        archive = payload.get("recovery_archive") if isinstance(payload, dict) else None
+        self._recovery_archive = (
+            RecoveryPortfolioArchive(capacity=self.config.recovery_archive_capacity)
+            if archive is None
+            else RecoveryPortfolioArchive.from_payload(dict(archive))
+        )
+
+    def _restore_recovery_generation(self, payload: Any) -> None:
+        self._recovery_generation = int(
+            payload.get("recovery_generation", 0) if isinstance(payload, dict) else 0
+        )
+
     def native_checkpoint(self) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
 
@@ -7401,6 +7514,8 @@ class TSKV8Adapter(Taiji):
         components["recovery_portfolio"] = (
             None if self._recovery_portfolio is None else self._recovery_portfolio.to_payload()
         )
+        components["recovery_archive"] = self._recovery_archive.to_payload()
+        components["recovery_generation"] = self._recovery_generation
         components["replan_required"] = self._replan_required
         components["planning_recovery"] = (
             None
@@ -7485,6 +7600,8 @@ class TSKV8Adapter(Taiji):
         self._restore_language_organ(envelope.components.get("language_organ"))
         self._restore_rollout_state(envelope.components)
         self._restore_recovery_portfolio(envelope.components)
+        self._restore_recovery_archive(envelope.components)
+        self._restore_recovery_generation(envelope.components)
         self._restore_generation_trace(envelope.components)
         self._restore_content_selection(envelope.components)
         self._restore_executive_state(envelope.components)

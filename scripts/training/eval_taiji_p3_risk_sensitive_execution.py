@@ -27,6 +27,7 @@ from taiji import (  # noqa: E402
     Outcome,
     PlanningCandidate,
     PlanningConfig,
+    RecoveryPortfolioArchive,
     TSKV8Adapter,
     WorldAction,
     WorldAffordance,
@@ -646,6 +647,37 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     )
     final_checkpoint = TSKV8Adapter.from_native_checkpoint(restored.native_checkpoint())
     final_checkpoint_state = final_checkpoint.cognitive_snapshot()
+    archive = restored.recovery_archive
+    completed_entries = tuple(
+        entry for entry in archive.entries if entry.rollout_id == recovery_rollout.rollout_id
+    )
+    archive_lifecycle_completed = bool(
+        completed_entries
+        and completed_entries[-1].lifecycle == "completed"
+        and completed_entries[-1].outcome_success is True
+        and completed_entries[-1].terminal
+    )
+    archive_checkpoint_preserved = bool(
+        final_checkpoint.recovery_archive.archived_rollout_ids == archive.archived_rollout_ids
+        and final_checkpoint.recovery_archive.lifecycle_for(recovery_rollout.rollout_id)
+        == "completed"
+    )
+    bounded_archive = RecoveryPortfolioArchive(capacity=1).append(archive.entries)
+    archive_capacity_evicts_oldest = bool(
+        len(archive.entries) >= 2
+        and len(bounded_archive.entries) == 1
+        and bounded_archive.entries[0].rollout_id == archive.entries[-1].rollout_id
+        and archive.entries[0].rollout_id not in bounded_archive.archived_rollout_ids
+    )
+    restored.begin_episode(f"risk-next:{seed}")
+    archived_branch_not_reintroduced = False
+    try:
+        restored.plan_rollouts((recovery_rollout,))
+    except RuntimeError as error:
+        archived_branch_not_reintroduced = "archived" in str(error)
+    next_episode_transient_cleared = bool(
+        restored.recovery_portfolio is None and restored.environment_capability is None
+    )
     return {
         "risk_mode_before": rollout.steps[0].uncertainty_mode,
         "risk_uncertainty_before": rollout.steps[0].uncertainty,
@@ -699,6 +731,11 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         "portfolio_selection_audited": portfolio_selection_audited,
         "portfolio_pruned_not_reintroduced": portfolio_pruned_not_reintroduced,
         "checkpoint_portfolio_preserved": checkpoint_portfolio_preserved,
+        "archive_lifecycle_completed": archive_lifecycle_completed,
+        "archive_checkpoint_preserved": archive_checkpoint_preserved,
+        "archive_capacity_evicts_oldest": archive_capacity_evicts_oldest,
+        "archived_branch_not_reintroduced": archived_branch_not_reintroduced,
+        "next_episode_transient_cleared": next_episode_transient_cleared,
         "recovery_suffix_rebound": recovery_suffix_rebound,
         "recovery_budget_not_bypassed": recovery_budget_not_bypassed,
         "duplicate_budget_consumption_blocked": duplicate_budget_consumption_blocked,
@@ -884,6 +921,11 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "portfolio_selection_audited",
         "portfolio_pruned_not_reintroduced",
         "checkpoint_portfolio_preserved",
+        "archive_lifecycle_completed",
+        "archive_checkpoint_preserved",
+        "archive_capacity_evicts_oldest",
+        "archived_branch_not_reintroduced",
+        "next_episode_transient_cleared",
         "recovery_suffix_rebound",
         "recovery_budget_not_bypassed",
         "duplicate_budget_consumption_blocked",
@@ -940,6 +982,9 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "fair-active-branch-arbitration",
             "portfolio-prune-non-reintroduction",
             "portfolio-checkpoint-preservation",
+            "cross-episode-recovery-archive",
+            "archive-capacity-eviction",
+            "archived-branch-liveness",
             "checkpoint-no-replay",
             "recovery-rollout-continuation",
         ],
@@ -959,7 +1004,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         },
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
+            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
         },
     }
 

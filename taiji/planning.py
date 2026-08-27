@@ -10,6 +10,7 @@ from typing import Any
 from .contracts import Goal, GoalState, Outcome, PlanCandidate, PlanState, WorldAction
 
 PLANNING_CHECKPOINT_FORMAT = "taiji-planning-v1"
+RECOVERY_ARCHIVE_CHECKPOINT_FORMAT = "taiji-recovery-archive-v1"
 
 
 def _unit(value: float, name: str) -> float:
@@ -394,6 +395,210 @@ class RecoveryPortfolio:
                 if payload.get("selected_rollout_id") is None
                 else str(payload["selected_rollout_id"])
             ),
+            revision=int(payload.get("revision", 0)),
+        )
+
+    def archive_entries(
+        self,
+        source_episode_id: str,
+        *,
+        completed_rollout_id: str | None = None,
+        outcome_reward: float | None = None,
+        outcome_success: bool | None = None,
+        terminal: bool = False,
+    ) -> tuple[RecoveryArchiveEntry, ...]:
+        """Summarize branches without retaining executable candidates."""
+
+        if not source_episode_id:
+            raise ValueError("recovery archive source episode cannot be empty")
+        entries: list[RecoveryArchiveEntry] = []
+        for candidate in self.candidates:
+            status = self.status_for(candidate.rollout_id)
+            if status in {"pruned", "expired"}:
+                lifecycle = "expired"
+            elif (
+                status == "selected"
+                and candidate.rollout_id == completed_rollout_id
+                and terminal
+                and outcome_success is True
+            ):
+                lifecycle = "completed"
+            else:
+                lifecycle = "abandoned"
+            lineage = candidate.recovery_lineage
+            entries.append(
+                RecoveryArchiveEntry(
+                    portfolio_id=self.portfolio_id,
+                    rollout_id=candidate.rollout_id,
+                    source_episode_id=source_episode_id,
+                    goal_id=self.goal_id,
+                    lifecycle=lifecycle,
+                    action_kinds=tuple(step.action.kind for step in candidate.steps),
+                    capability_tick=(None if lineage is None else lineage.capability_tick),
+                    affordance_id="" if lineage is None else lineage.affordance_id,
+                    affordance_content_identity=(
+                        "" if lineage is None else lineage.affordance_content_identity
+                    ),
+                    resource_cost=sum(step.resource_cost for step in candidate.steps),
+                    outcome_reward=(
+                        outcome_reward if candidate.rollout_id == completed_rollout_id else None
+                    ),
+                    outcome_success=(
+                        outcome_success if candidate.rollout_id == completed_rollout_id else None
+                    ),
+                    terminal=bool(terminal and candidate.rollout_id == completed_rollout_id),
+                    portfolio_revision=self.revision,
+                )
+            )
+        return tuple(entries)
+
+
+@dataclass(frozen=True)
+class RecoveryArchiveEntry:
+    """Non-executable cross-episode summary of one recovery branch."""
+
+    portfolio_id: str
+    rollout_id: str
+    source_episode_id: str
+    goal_id: str
+    lifecycle: str
+    action_kinds: tuple[str, ...]
+    capability_tick: int | None = None
+    affordance_id: str = ""
+    affordance_content_identity: str = ""
+    resource_cost: float = 0.0
+    outcome_reward: float | None = None
+    outcome_success: bool | None = None
+    terminal: bool = False
+    portfolio_revision: int = 0
+
+    def __post_init__(self) -> None:
+        if not self.portfolio_id or not self.rollout_id:
+            raise ValueError("recovery archive ids cannot be empty")
+        if not self.source_episode_id or not self.goal_id:
+            raise ValueError("recovery archive lineage ids cannot be empty")
+        if self.lifecycle not in {"completed", "abandoned", "expired"}:
+            raise ValueError("unsupported recovery archive lifecycle")
+        if not self.action_kinds or any(not kind for kind in self.action_kinds):
+            raise ValueError("recovery archive action_kinds cannot be empty")
+        if self.capability_tick is not None and int(self.capability_tick) < 0:
+            raise ValueError("recovery archive capability_tick cannot be negative")
+        _unit(self.resource_cost, "recovery archive resource_cost")
+        if self.outcome_reward is not None and not math.isfinite(float(self.outcome_reward)):
+            raise ValueError("recovery archive outcome_reward must be finite")
+        if int(self.portfolio_revision) < 0:
+            raise ValueError("recovery archive portfolio_revision cannot be negative")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "portfolio_id": self.portfolio_id,
+            "rollout_id": self.rollout_id,
+            "source_episode_id": self.source_episode_id,
+            "goal_id": self.goal_id,
+            "lifecycle": self.lifecycle,
+            "action_kinds": list(self.action_kinds),
+            "capability_tick": self.capability_tick,
+            "affordance_id": self.affordance_id,
+            "affordance_content_identity": self.affordance_content_identity,
+            "resource_cost": self.resource_cost,
+            "outcome_reward": self.outcome_reward,
+            "outcome_success": self.outcome_success,
+            "terminal": self.terminal,
+            "portfolio_revision": self.portfolio_revision,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> RecoveryArchiveEntry:
+        return cls(
+            portfolio_id=str(payload["portfolio_id"]),
+            rollout_id=str(payload["rollout_id"]),
+            source_episode_id=str(payload["source_episode_id"]),
+            goal_id=str(payload["goal_id"]),
+            lifecycle=str(payload["lifecycle"]),
+            action_kinds=tuple(str(item) for item in payload["action_kinds"]),
+            capability_tick=(
+                None if payload.get("capability_tick") is None else int(payload["capability_tick"])
+            ),
+            affordance_id=str(payload.get("affordance_id", "")),
+            affordance_content_identity=str(payload.get("affordance_content_identity", "")),
+            resource_cost=float(payload.get("resource_cost", 0.0)),
+            outcome_reward=(
+                None if payload.get("outcome_reward") is None else float(payload["outcome_reward"])
+            ),
+            outcome_success=(
+                None if payload.get("outcome_success") is None else bool(payload["outcome_success"])
+            ),
+            terminal=bool(payload.get("terminal", False)),
+            portfolio_revision=int(payload.get("portfolio_revision", 0)),
+        )
+
+
+@dataclass(frozen=True)
+class RecoveryPortfolioArchive:
+    """Bounded cross-episode recovery memory; entries are never executable."""
+
+    entries: tuple[RecoveryArchiveEntry, ...] = ()
+    capacity: int = 256
+    revision: int = 0
+
+    def __post_init__(self) -> None:
+        if int(self.capacity) <= 0:
+            raise ValueError("recovery archive capacity must be positive")
+        if int(self.revision) < 0:
+            raise ValueError("recovery archive revision cannot be negative")
+        keys = tuple((entry.source_episode_id, entry.rollout_id) for entry in self.entries)
+        if len(set(keys)) != len(keys):
+            raise ValueError("recovery archive entries must be unique")
+        if len(self.entries) > int(self.capacity):
+            raise ValueError("recovery archive entries exceed capacity")
+
+    def append(self, new_entries: Sequence[RecoveryArchiveEntry]) -> RecoveryPortfolioArchive:
+        additions = tuple(new_entries)
+        if not additions:
+            return self
+        merged = list(self.entries)
+        positions = {
+            (entry.source_episode_id, entry.rollout_id): index for index, entry in enumerate(merged)
+        }
+        for entry in additions:
+            key = (entry.source_episode_id, entry.rollout_id)
+            if key in positions:
+                merged[positions[key]] = entry
+            else:
+                positions[key] = len(merged)
+                merged.append(entry)
+        retained = tuple(merged[-int(self.capacity) :])
+        return replace(self, entries=retained, revision=self.revision + 1)
+
+    @property
+    def archived_rollout_ids(self) -> tuple[str, ...]:
+        return tuple(entry.rollout_id for entry in self.entries)
+
+    def lifecycle_for(self, rollout_id: str) -> str | None:
+        for entry in reversed(self.entries):
+            if entry.rollout_id == rollout_id:
+                return entry.lifecycle
+        return None
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": RECOVERY_ARCHIVE_CHECKPOINT_FORMAT,
+            "entries": [entry.to_payload() for entry in self.entries],
+            "capacity": self.capacity,
+            "revision": self.revision,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> RecoveryPortfolioArchive:
+        if payload.get("format", RECOVERY_ARCHIVE_CHECKPOINT_FORMAT) != (
+            RECOVERY_ARCHIVE_CHECKPOINT_FORMAT
+        ):
+            raise ValueError("unsupported recovery archive checkpoint format")
+        return cls(
+            entries=tuple(
+                RecoveryArchiveEntry.from_payload(dict(item)) for item in payload.get("entries", ())
+            ),
+            capacity=int(payload.get("capacity", 256)),
             revision=int(payload.get("revision", 0)),
         )
 

@@ -29,6 +29,9 @@
     "fair-active-branch-arbitration",
     "portfolio-prune-non-reintroduction",
     "portfolio-checkpoint-preservation",
+    "cross-episode-recovery-archive",
+    "archive-capacity-eviction",
+    "archived-branch-liveness",
     "checkpoint-no-replay",
     "recovery-rollout-continuation"
   ],
