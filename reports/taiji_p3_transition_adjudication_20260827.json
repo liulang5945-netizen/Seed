@@ -1,0 +1,57 @@
+{
+  "format": "taiji-p3-transition-adjudication-v1",
+  "seeds": [
+    {
+      "seed": 11,
+      "first_calibration": true,
+      "cross_episode_calibration": true,
+      "cross_episode_confidence": 0.2,
+      "relation_specific_holdout": true,
+      "contradiction_rejected": true,
+      "no_update_on_reject": true,
+      "checkpoint_registry": true,
+      "checkpoint_network": true,
+      "checkpoint_continuation": true
+    },
+    {
+      "seed": 29,
+      "first_calibration": true,
+      "cross_episode_calibration": true,
+      "cross_episode_confidence": 0.2,
+      "relation_specific_holdout": true,
+      "contradiction_rejected": true,
+      "no_update_on_reject": true,
+      "checkpoint_registry": true,
+      "checkpoint_network": true,
+      "checkpoint_continuation": true
+    },
+    {
+      "seed": 47,
+      "first_calibration": true,
+      "cross_episode_calibration": true,
+      "cross_episode_confidence": 0.2,
+      "relation_specific_holdout": true,
+      "contradiction_rejected": true,
+      "no_update_on_reject": true,
+      "checkpoint_registry": true,
+      "checkpoint_network": true,
+      "checkpoint_continuation": true
+    }
+  ],
+  "aggregate": {
+    "first_calibration_min": 1.0,
+    "cross_episode_calibration_min": 1.0,
+    "relation_specific_holdout_min": 1.0,
+    "contradiction_rejected_min": 1.0,
+    "no_update_on_reject_min": 1.0,
+    "checkpoint_registry_min": 1.0,
+    "checkpoint_network_min": 1.0,
+    "checkpoint_continuation_min": 1.0,
+    "cross_episode_confidence_min": 0.2,
+    "passed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "real adapter repeated outcomes must calibrate, contradictory relation outcomes must fail closed, and registry/network checkpoint continuation must pass"
+  }
+}

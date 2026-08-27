@@ -491,6 +491,8 @@ class WorldSchemaRegistry:
         self._tombstones: set[tuple[str, ...]] = set()
         self._conflicts: list[dict[str, Any]] = []
         self._lineage: list[dict[str, Any]] = []
+        self._transition_outcomes: dict[tuple[str, ...], str] = {}
+        self._transition_confidence: dict[tuple[str, ...], float] = {}
 
     @staticmethod
     def _known_feature_keys(schema: WorldSchema) -> tuple[tuple[str, ...], ...]:
@@ -539,6 +541,14 @@ class WorldSchemaRegistry:
     @property
     def contradiction_count(self) -> int:
         return len(self._conflicts)
+
+    @property
+    def transition_outcome_count(self) -> int:
+        return len(self._transition_outcomes)
+
+    @property
+    def transition_confidence(self) -> dict[tuple[str, ...], float]:
+        return dict(self._transition_confidence)
 
     def schema_at(self, version: int) -> WorldSchema:
         try:
@@ -628,15 +638,89 @@ class WorldSchemaRegistry:
             target_id=self.canonical_object_id(action.target_id),
         )
 
-    def _record_conflict(self, key: tuple[str, ...], expected: float, observed: float) -> None:
+    def _record_conflict(self, key: tuple[str, ...], expected: Any, observed: Any) -> None:
         self._conflicts.append(
             {
                 "key": list(key),
-                "expected": float(expected),
-                "observed": float(observed),
+                "expected": expected,
+                "observed": observed,
                 "version": self._active_version,
             }
         )
+
+    @staticmethod
+    def _stable_state_signature(state: WorldState) -> str:
+        """Serialize semantic state only, excluding tick/event noise."""
+
+        objects = tuple(
+            (
+                str(obj.object_id),
+                tuple(sorted((str(name), repr(value)) for name, value in obj.attributes)),
+            )
+            for obj in sorted(state.objects, key=lambda item: item.object_id)
+        )
+        relations = tuple(
+            sorted(
+                (
+                    str(subject),
+                    str(predicate),
+                    str(object_id),
+                )
+                for subject, predicate, object_id in state.relations
+            )
+        )
+        entities = tuple(sorted(str(entity) for entity in state.entities))
+        return repr((objects, relations, entities))
+
+    @staticmethod
+    def _stable_action_signature(action: Any) -> str:
+        parameters = tuple(sorted((str(name), repr(value)) for name, value in action.parameters))
+        return repr(
+            (
+                str(action.kind),
+                str(action.actor_id),
+                str(action.target_id),
+                parameters,
+            )
+        )
+
+    def transition_evidence_key(self, transition: WorldTransition) -> tuple[str, ...]:
+        """Return a cross-episode key for the same semantic intervention context."""
+
+        if not isinstance(transition, WorldTransition):
+            raise TypeError("world schema registry requires a WorldTransition")
+        before = self.normalize_state(transition.before)
+        action = self.normalize_action(transition.action)
+        return (
+            "transition",
+            self._stable_state_signature(before),
+            self._stable_action_signature(action),
+        )
+
+    def _transition_outcome_signature(self, transition: WorldTransition) -> str:
+        after = self.normalize_state(transition.after)
+        reward = float(transition.outcome.reward)
+        success = (
+            bool(transition.outcome.success)
+            if transition.outcome.success is not None
+            else reward > 0.0
+        )
+        return repr((self._stable_state_signature(after), round(reward, 6), success))
+
+    def record_transition_outcome(self, transition: WorldTransition) -> bool:
+        """Adjudicate repeated real outcomes before allowing local learning."""
+
+        if not isinstance(transition, WorldTransition):
+            raise TypeError("world schema registry requires a WorldTransition")
+        key = self.transition_evidence_key(transition)
+        signature = self._transition_outcome_signature(transition)
+        previous = self._transition_outcomes.get(key)
+        if previous is not None and previous != signature:
+            self._record_conflict(key, previous, signature)
+            return False
+        self._transition_outcomes[key] = signature
+        self._transition_confidence[key] = min(1.0, self._transition_confidence.get(key, 0.0) + 0.1)
+        return True
 
     def record_feedback(
         self,
@@ -796,6 +880,14 @@ class WorldSchemaRegistry:
             "tombstones": [list(key) for key in self.tombstones],
             "conflicts": [dict(item) for item in self._conflicts],
             "lineage": [dict(item) for item in self._lineage],
+            "transition_outcomes": [
+                {"key": list(key), "signature": signature}
+                for key, signature in sorted(self._transition_outcomes.items())
+            ],
+            "transition_confidence": [
+                {"key": list(key), "value": value}
+                for key, value in sorted(self._transition_confidence.items())
+            ],
         }
 
     @classmethod
@@ -841,6 +933,14 @@ class WorldSchemaRegistry:
         }
         registry._conflicts = [dict(item) for item in payload.get("conflicts", ())]
         registry._lineage = [dict(item) for item in payload.get("lineage", ())]
+        registry._transition_outcomes = {
+            tuple(str(value) for value in item["key"]): str(item["signature"])
+            for item in payload.get("transition_outcomes", ())
+        }
+        registry._transition_confidence = {
+            tuple(str(value) for value in item["key"]): float(item["value"])
+            for item in payload.get("transition_confidence", ())
+        }
         return registry
 
 
@@ -919,6 +1019,8 @@ class WorldDynamicsLearner(nn.Module):
         )
         self.hidden_dim = int(hidden_dim)
         self.online_updates = 0
+        self.transition_acceptances = 0
+        self.transition_rejections = 0
         self.schema_evolution_count = 0
         self.network = nn.Sequential(
             nn.Linear(schema.input_dim, self.hidden_dim),
@@ -1208,6 +1310,10 @@ class WorldDynamicsLearner(nn.Module):
             action=normalized_transition.action,
             register_parameters=register_parameters,
         )
+        if not self.schema_registry.record_transition_outcome(normalized_transition):
+            self.transition_rejections += 1
+            return []
+        self.transition_acceptances += 1
         features = self.schema.encode(
             normalized_transition.before, normalized_transition.action
         ).unsqueeze(0)
