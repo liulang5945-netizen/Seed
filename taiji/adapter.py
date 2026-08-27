@@ -186,7 +186,11 @@ class TSKV8Adapter(Taiji):
             capacity=self.config.recovery_archive_capacity
         )
         self._recovery_strategy_ledger = RecoveryStrategyLedger(
-            evidence_threshold=self.config.recovery_strategy_evidence_threshold
+            evidence_threshold=self.config.recovery_strategy_evidence_threshold,
+            memory_budget=self.config.recovery_strategy_memory_budget,
+            evidence_weight=self.config.recovery_strategy_evidence_weight,
+            consistency_weight=self.config.recovery_strategy_consistency_weight,
+            resource_weight=self.config.recovery_strategy_resource_weight,
         )
         self._recovery_generation = 0
         self._recovery_memory_epochs = 300
@@ -5667,6 +5671,12 @@ class TSKV8Adapter(Taiji):
                     if not self._cognitive_state.world_calibration_trace
                     else self._cognitive_state.world_calibration_trace[-1].ledger_evidence_count
                 ),
+                outcome_consistency=(
+                    0.0
+                    if not self._cognitive_state.world_calibration_trace
+                    or self._cognitive_state.world_calibration_trace[-1].adjudication != "accepted"
+                    else 1.0 - self._cognitive_state.world_calibration_trace[-1].ledger_uncertainty
+                ),
             )
             self._recovery_portfolio = None
         if result.terminal and self._cognitive_state.recovery_branch is not None:
@@ -5840,6 +5850,7 @@ class TSKV8Adapter(Taiji):
         outcome_success: bool | None = None,
         terminal: bool = False,
         evidence_count: int = 0,
+        outcome_consistency: float = 1.0,
     ) -> None:
         portfolio = self._recovery_portfolio
         if portfolio is None:
@@ -5851,6 +5862,7 @@ class TSKV8Adapter(Taiji):
             outcome_success=outcome_success,
             terminal=terminal,
             evidence_count=evidence_count,
+            outcome_consistency=outcome_consistency,
         )
         self._recovery_archive = self._recovery_archive.append(entries)
         memory_ids = self._cognitive_state.memory.episodic_ids
@@ -5889,7 +5901,7 @@ class TSKV8Adapter(Taiji):
 
         if self._episodic_memory is None:
             raise RuntimeError("recovery consolidation requires episodic records")
-        approved_ids = set(self._recovery_strategy_ledger.active_memory_ids)
+        approved_ids = set(self._recovery_strategy_ledger.selected_memory_ids)
         records = tuple(
             record for record in self._episodic_memory.records if record.memory_id in approved_ids
         )
@@ -5920,11 +5932,13 @@ class TSKV8Adapter(Taiji):
 
         if self._episodic_memory is None:
             return
-        revoked_memory_ids = set(self._recovery_strategy_ledger.revoked_memory_ids)
+        approved_memory_ids = set(self._recovery_strategy_ledger.approved_memory_ids)
+        selected_memory_ids = set(self._recovery_strategy_ledger.selected_memory_ids)
         records = tuple(
             record
             for record in self._episodic_memory.records
-            if record.memory_id not in revoked_memory_ids
+            if record.memory_id not in approved_memory_ids
+            or record.memory_id in selected_memory_ids
         )
         if self._semantic_memory is not None:
             semantic = SemanticMemoryLearner(self._semantic_memory.cue_dim).to(self.device)
@@ -5983,7 +5997,11 @@ class TSKV8Adapter(Taiji):
             capacity=self.config.recovery_archive_capacity
         )
         self._recovery_strategy_ledger = RecoveryStrategyLedger(
-            evidence_threshold=self.config.recovery_strategy_evidence_threshold
+            evidence_threshold=self.config.recovery_strategy_evidence_threshold,
+            memory_budget=self.config.recovery_strategy_memory_budget,
+            evidence_weight=self.config.recovery_strategy_evidence_weight,
+            consistency_weight=self.config.recovery_strategy_consistency_weight,
+            resource_weight=self.config.recovery_strategy_resource_weight,
         )
         self._recovery_generation = 0
         self._replan_required = False
@@ -7596,7 +7614,11 @@ class TSKV8Adapter(Taiji):
         ledger = payload.get("recovery_strategy_ledger") if isinstance(payload, dict) else None
         self._recovery_strategy_ledger = (
             RecoveryStrategyLedger(
-                evidence_threshold=self.config.recovery_strategy_evidence_threshold
+                evidence_threshold=self.config.recovery_strategy_evidence_threshold,
+                memory_budget=self.config.recovery_strategy_memory_budget,
+                evidence_weight=self.config.recovery_strategy_evidence_weight,
+                consistency_weight=self.config.recovery_strategy_consistency_weight,
+                resource_weight=self.config.recovery_strategy_resource_weight,
             )
             if ledger is None
             else RecoveryStrategyLedger.from_payload(dict(ledger))

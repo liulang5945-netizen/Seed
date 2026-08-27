@@ -408,6 +408,7 @@ class RecoveryPortfolio:
         outcome_success: bool | None = None,
         terminal: bool = False,
         evidence_count: int = 0,
+        outcome_consistency: float = 1.0,
     ) -> tuple[RecoveryArchiveEntry, ...]:
         """Summarize branches without retaining executable candidates."""
 
@@ -452,6 +453,11 @@ class RecoveryPortfolio:
                     evidence_count=(
                         int(evidence_count) if candidate.rollout_id == completed_rollout_id else 0
                     ),
+                    outcome_consistency=(
+                        float(outcome_consistency)
+                        if candidate.rollout_id == completed_rollout_id
+                        else 0.0
+                    ),
                     portfolio_revision=self.revision,
                 )
             )
@@ -476,6 +482,7 @@ class RecoveryArchiveEntry:
     outcome_success: bool | None = None
     terminal: bool = False
     evidence_count: int = 0
+    outcome_consistency: float = 0.0
     portfolio_revision: int = 0
 
     def __post_init__(self) -> None:
@@ -489,11 +496,12 @@ class RecoveryArchiveEntry:
             raise ValueError("recovery archive action_kinds cannot be empty")
         if self.capability_tick is not None and int(self.capability_tick) < 0:
             raise ValueError("recovery archive capability_tick cannot be negative")
-        _unit(self.resource_cost, "recovery archive resource_cost")
+        _nonnegative_finite(self.resource_cost, "recovery archive resource_cost")
         if self.outcome_reward is not None and not math.isfinite(float(self.outcome_reward)):
             raise ValueError("recovery archive outcome_reward must be finite")
         if int(self.evidence_count) < 0:
             raise ValueError("recovery archive evidence_count cannot be negative")
+        _unit(self.outcome_consistency, "recovery archive outcome_consistency")
         if int(self.portfolio_revision) < 0:
             raise ValueError("recovery archive portfolio_revision cannot be negative")
 
@@ -513,6 +521,7 @@ class RecoveryArchiveEntry:
             "outcome_success": self.outcome_success,
             "terminal": self.terminal,
             "evidence_count": self.evidence_count,
+            "outcome_consistency": self.outcome_consistency,
             "portfolio_revision": self.portfolio_revision,
         }
 
@@ -539,6 +548,7 @@ class RecoveryArchiveEntry:
             ),
             terminal=bool(payload.get("terminal", False)),
             evidence_count=int(payload.get("evidence_count", 0)),
+            outcome_consistency=float(payload.get("outcome_consistency", 0.0)),
             portfolio_revision=int(payload.get("portfolio_revision", 0)),
         )
 
@@ -625,6 +635,8 @@ class RecoveryStrategyApproval:
     action_kinds: tuple[str, ...]
     evidence_count: int
     outcome_reward: float
+    resource_cost: float = 0.0
+    outcome_consistency: float = 1.0
     revision: int = 0
 
     def __post_init__(self) -> None:
@@ -644,6 +656,8 @@ class RecoveryStrategyApproval:
             raise ValueError("recovery strategy approval evidence_count must be positive")
         if not math.isfinite(float(self.outcome_reward)):
             raise ValueError("recovery strategy approval outcome_reward must be finite")
+        _nonnegative_finite(self.resource_cost, "recovery strategy approval resource_cost")
+        _unit(self.outcome_consistency, "recovery strategy approval outcome_consistency")
         if int(self.revision) < 0:
             raise ValueError("recovery strategy approval revision cannot be negative")
 
@@ -657,6 +671,8 @@ class RecoveryStrategyApproval:
             "action_kinds": list(self.action_kinds),
             "evidence_count": self.evidence_count,
             "outcome_reward": self.outcome_reward,
+            "resource_cost": self.resource_cost,
+            "outcome_consistency": self.outcome_consistency,
             "revision": self.revision,
         }
 
@@ -671,6 +687,8 @@ class RecoveryStrategyApproval:
             action_kinds=tuple(str(item) for item in payload["action_kinds"]),
             evidence_count=int(payload["evidence_count"]),
             outcome_reward=float(payload["outcome_reward"]),
+            resource_cost=float(payload.get("resource_cost", 0.0)),
+            outcome_consistency=float(payload.get("outcome_consistency", 1.0)),
             revision=int(payload.get("revision", 0)),
         )
 
@@ -680,6 +698,10 @@ class RecoveryStrategyLedger:
     """Admission and revocation ledger for recovery-derived long-term memory."""
 
     evidence_threshold: int = 2
+    memory_budget: float = 1.0
+    evidence_weight: float = 0.5
+    consistency_weight: float = 0.3
+    resource_weight: float = 0.2
     approvals: tuple[RecoveryStrategyApproval, ...] = ()
     revoked_rollout_ids: tuple[str, ...] = ()
     revision: int = 0
@@ -687,6 +709,16 @@ class RecoveryStrategyLedger:
     def __post_init__(self) -> None:
         if int(self.evidence_threshold) <= 0:
             raise ValueError("recovery strategy evidence_threshold must be positive")
+        _nonnegative_finite(self.memory_budget, "recovery strategy memory_budget")
+        if float(self.memory_budget) <= 0.0:
+            raise ValueError("recovery strategy memory_budget must be positive")
+        weights = (
+            float(self.evidence_weight),
+            float(self.consistency_weight),
+            float(self.resource_weight),
+        )
+        if any(weight <= 0.0 for weight in weights) or abs(sum(weights) - 1.0) > 1e-6:
+            raise ValueError("recovery strategy competition weights must be positive and sum to 1")
         approval_ids = tuple(approval.approval_id for approval in self.approvals)
         if len(set(approval_ids)) != len(approval_ids):
             raise ValueError("recovery strategy approvals must be unique")
@@ -722,6 +754,8 @@ class RecoveryStrategyLedger:
             action_kinds=entry.action_kinds,
             evidence_count=entry.evidence_count,
             outcome_reward=0.0 if entry.outcome_reward is None else entry.outcome_reward,
+            resource_cost=entry.resource_cost,
+            outcome_consistency=entry.outcome_consistency,
             revision=self.revision + 1,
         )
         approvals = tuple(
@@ -751,9 +785,74 @@ class RecoveryStrategyLedger:
     def is_active(self, rollout_id: str) -> bool:
         return any(approval.rollout_id == rollout_id for approval in self.active_approvals())
 
+    def competition_score(self, approval: RecoveryStrategyApproval) -> float:
+        """Score one active strategy using configured evidence and resource signals."""
+
+        evidence_signal = min(
+            1.0,
+            float(approval.evidence_count) / float(self.evidence_threshold),
+        )
+        resource_signal = 1.0 - min(
+            1.0,
+            float(approval.resource_cost) / float(self.memory_budget),
+        )
+        return (
+            float(self.evidence_weight) * evidence_signal
+            + float(self.consistency_weight) * float(approval.outcome_consistency)
+            + float(self.resource_weight) * resource_signal
+        )
+
+    @property
+    def ranked_approvals(self) -> tuple[RecoveryStrategyApproval, ...]:
+        """Return active strategies in deterministic competition order."""
+
+        return tuple(
+            sorted(
+                self.active_approvals(),
+                key=lambda approval: (
+                    -self.competition_score(approval),
+                    -int(approval.evidence_count),
+                    float(approval.resource_cost),
+                    approval.approval_id,
+                ),
+            )
+        )
+
+    @property
+    def selected_approvals(self) -> tuple[RecoveryStrategyApproval, ...]:
+        """Greedily select ranked strategies without exceeding memory budget."""
+
+        selected: list[RecoveryStrategyApproval] = []
+        selected_memory_ids: set[str] = set()
+        consumed = 0.0
+        for approval in self.ranked_approvals:
+            cost = float(approval.resource_cost)
+            if approval.memory_id in selected_memory_ids:
+                continue
+            if consumed + cost > float(self.memory_budget) + 1e-8:
+                continue
+            selected.append(approval)
+            selected_memory_ids.add(approval.memory_id)
+            consumed += cost
+        return tuple(selected)
+
+    @property
+    def selected_rollout_ids(self) -> tuple[str, ...]:
+        return tuple(approval.rollout_id for approval in self.selected_approvals)
+
+    @property
+    def approved_memory_ids(self) -> tuple[str, ...]:
+        return tuple(approval.memory_id for approval in self.active_approvals())
+
     @property
     def active_memory_ids(self) -> tuple[str, ...]:
-        return tuple(approval.memory_id for approval in self.active_approvals())
+        """Return memory IDs selected for downstream consolidation/readout."""
+
+        return tuple(approval.memory_id for approval in self.selected_approvals)
+
+    @property
+    def selected_memory_ids(self) -> tuple[str, ...]:
+        return self.active_memory_ids
 
     @property
     def revoked_memory_ids(self) -> tuple[str, ...]:
@@ -766,6 +865,10 @@ class RecoveryStrategyLedger:
         return {
             "format": RECOVERY_STRATEGY_LEDGER_CHECKPOINT_FORMAT,
             "evidence_threshold": self.evidence_threshold,
+            "memory_budget": self.memory_budget,
+            "evidence_weight": self.evidence_weight,
+            "consistency_weight": self.consistency_weight,
+            "resource_weight": self.resource_weight,
             "approvals": [approval.to_payload() for approval in self.approvals],
             "revoked_rollout_ids": list(self.revoked_rollout_ids),
             "revision": self.revision,
@@ -779,6 +882,10 @@ class RecoveryStrategyLedger:
             raise ValueError("unsupported recovery strategy ledger checkpoint format")
         return cls(
             evidence_threshold=int(payload.get("evidence_threshold", 2)),
+            memory_budget=float(payload.get("memory_budget", 1.0)),
+            evidence_weight=float(payload.get("evidence_weight", 0.5)),
+            consistency_weight=float(payload.get("consistency_weight", 0.3)),
+            resource_weight=float(payload.get("resource_weight", 0.2)),
             approvals=tuple(
                 RecoveryStrategyApproval.from_payload(dict(item))
                 for item in payload.get("approvals", ())

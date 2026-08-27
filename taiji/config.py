@@ -228,6 +228,10 @@ class TaijiConfig:
     cognitive_lineage_history_limit: int = 256
     recovery_archive_capacity: int = 256
     recovery_strategy_evidence_threshold: int = 2
+    recovery_strategy_memory_budget: float = 1.0
+    recovery_strategy_evidence_weight: float = 0.50
+    recovery_strategy_consistency_weight: float = 0.30
+    recovery_strategy_resource_weight: float = 0.20
     concept_similarity_threshold: float = 0.85
     concept_signal_weights: tuple[float, float, float] = (0.45, 0.35, 0.20)
     concept_capacity: int = 256
@@ -376,6 +380,18 @@ class TaijiConfig:
             raise ValueError("recovery_archive_capacity must be positive")
         if self.recovery_strategy_evidence_threshold <= 0:
             raise ValueError("recovery_strategy_evidence_threshold must be positive")
+        if self.recovery_strategy_memory_budget <= 0.0:
+            raise ValueError("recovery_strategy_memory_budget must be positive")
+        strategy_weights = (
+            self.recovery_strategy_evidence_weight,
+            self.recovery_strategy_consistency_weight,
+            self.recovery_strategy_resource_weight,
+        )
+        if (
+            any(float(weight) <= 0.0 for weight in strategy_weights)
+            or abs(sum(float(weight) for weight in strategy_weights) - 1.0) > 1e-6
+        ):
+            raise ValueError("recovery strategy weights must be positive and sum to 1")
         if not 0.0 < self.concept_similarity_threshold <= 1.0:
             raise ValueError("concept_similarity_threshold must be in (0, 1]")
         if (
