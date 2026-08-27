@@ -6384,9 +6384,27 @@ class TSKV8Adapter(Taiji):
                             "singleton_effect_l2": tuple(
                                 float(effect) for effect in singleton_effects
                             ),
+                            "interaction_credit_l2": tuple(
+                                float(item.interaction_delta_l2) for item in pair_items
+                            ),
+                            "residual_credit_l2": float(higher_order_delta),
                         }
                     ),
                     replay_action_kinds=action_kinds,
+                    member_increment_l2=tuple(float(effect) for effect in singleton_effects),
+                    interaction_credit_l2=tuple(
+                        float(item.interaction_delta_l2) for item in pair_items
+                    ),
+                    residual_credit_l2=float(higher_order_delta),
+                    credit_conservation_error_l2=abs(
+                        group_effect
+                        - (
+                            sum(singleton_effects)
+                            + sum(item.interaction_delta_l2 for item in pair_items)
+                            + higher_order_delta
+                        )
+                    ),
+                    credit_decomposition_complete=True,
                 )
             )
         return tuple(groups)
@@ -6485,6 +6503,7 @@ class TSKV8Adapter(Taiji):
                 and bool(previous_group.singleton_effect_l2)
                 and bool(previous_group.replay_digest)
                 and bool(previous_group.attribution_digest)
+                and previous_group.credit_decomposition_complete
             )
             if reusable:
                 assert previous_group is not None
