@@ -93,6 +93,7 @@ from .planning import (
     RecoveryPortfolioArchive,
     RecoveryPortfolio,
     RecoveryRolloutLineage,
+    RecoveryStrategyLedger,
     RolloutDecision,
 )
 from .procedural_memory import ProceduralMemoryLearner
@@ -183,6 +184,9 @@ class TSKV8Adapter(Taiji):
         self._recovery_portfolio: RecoveryPortfolio | None = None
         self._recovery_archive = RecoveryPortfolioArchive(
             capacity=self.config.recovery_archive_capacity
+        )
+        self._recovery_strategy_ledger = RecoveryStrategyLedger(
+            evidence_threshold=self.config.recovery_strategy_evidence_threshold
         )
         self._recovery_generation = 0
         self._replan_required = False
@@ -5654,6 +5658,11 @@ class TSKV8Adapter(Taiji):
                 outcome_reward=result.reward,
                 outcome_success=result.success,
                 terminal=True,
+                evidence_count=(
+                    0
+                    if not self._cognitive_state.world_calibration_trace
+                    else self._cognitive_state.world_calibration_trace[-1].ledger_evidence_count
+                ),
             )
             self._recovery_portfolio = None
         if result.terminal and self._cognitive_state.recovery_branch is not None:
@@ -5826,6 +5835,7 @@ class TSKV8Adapter(Taiji):
         outcome_reward: float | None = None,
         outcome_success: bool | None = None,
         terminal: bool = False,
+        evidence_count: int = 0,
     ) -> None:
         portfolio = self._recovery_portfolio
         if portfolio is None:
@@ -5836,8 +5846,64 @@ class TSKV8Adapter(Taiji):
             outcome_reward=outcome_reward,
             outcome_success=outcome_success,
             terminal=terminal,
+            evidence_count=evidence_count,
         )
         self._recovery_archive = self._recovery_archive.append(entries)
+        memory_ids = self._cognitive_state.memory.episodic_ids
+        if memory_ids:
+            memory_id = memory_ids[-1]
+            for entry in entries:
+                if entry.lifecycle != "completed":
+                    continue
+                self._recovery_strategy_ledger = self._recovery_strategy_ledger.admit(
+                    entry,
+                    memory_id=memory_id,
+                )
+
+    @property
+    def recovery_strategy_ledger(self) -> RecoveryStrategyLedger:
+        """Return the evidence gate for recovery-derived long-term memory."""
+
+        return self._recovery_strategy_ledger
+
+    def revoke_recovery_strategy(self, rollout_id: str) -> None:
+        """Revoke a recovery strategy from future replay and consolidation."""
+
+        self._recovery_strategy_ledger = self._recovery_strategy_ledger.revoke(rollout_id)
+
+    def consolidate_recovery_memory(
+        self,
+        *,
+        epochs: int = 300,
+        semantic_learning_rate: float = 0.1,
+        procedural_learning_rate: float = 0.1,
+    ) -> dict[str, float]:
+        """Consolidate only evidence-approved recovery records into long-term memory."""
+
+        if self._episodic_memory is None:
+            raise RuntimeError("recovery consolidation requires episodic records")
+        approved_ids = set(self._recovery_strategy_ledger.active_memory_ids)
+        records = tuple(
+            record for record in self._episodic_memory.records if record.memory_id in approved_ids
+        )
+        if not records:
+            raise RuntimeError("recovery consolidation has no evidence-approved records")
+        losses: dict[str, float] = {}
+        if self._semantic_memory is not None:
+            losses["semantic"] = self._semantic_memory.consolidate(
+                records,
+                epochs=epochs,
+                learning_rate=semantic_learning_rate,
+            )
+        if self._procedural_memory is not None:
+            losses["procedural"] = self._procedural_memory.consolidate(
+                records,
+                epochs=epochs,
+                learning_rate=procedural_learning_rate,
+            )
+        if not losses:
+            raise RuntimeError("recovery consolidation requires semantic or procedural memory")
+        return losses
 
     def _record_environment_capability(self, result: EnvironmentOutcome) -> None:
         actions = tuple(int(action) for action in result.available_actions)
@@ -5864,6 +5930,9 @@ class TSKV8Adapter(Taiji):
         self._planned_rollout = None
         self._recovery_archive = RecoveryPortfolioArchive(
             capacity=self.config.recovery_archive_capacity
+        )
+        self._recovery_strategy_ledger = RecoveryStrategyLedger(
+            evidence_threshold=self.config.recovery_strategy_evidence_threshold
         )
         self._recovery_generation = 0
         self._replan_required = False
@@ -7048,6 +7117,7 @@ class TSKV8Adapter(Taiji):
             None if self._recovery_portfolio is None else self._recovery_portfolio.to_payload()
         )
         payload["recovery_archive"] = self._recovery_archive.to_payload()
+        payload["recovery_strategy_ledger"] = self._recovery_strategy_ledger.to_payload()
         payload["recovery_generation"] = self._recovery_generation
         payload["replan_required"] = self._replan_required
         payload["planning_recovery"] = (
@@ -7120,6 +7190,7 @@ class TSKV8Adapter(Taiji):
         self._restore_rollout_state(checkpoint)
         self._restore_recovery_portfolio(checkpoint)
         self._restore_recovery_archive(checkpoint)
+        self._restore_recovery_strategy_ledger(checkpoint)
         self._restore_recovery_generation(checkpoint)
         self._restore_generation_trace(checkpoint)
         self._restore_content_selection(checkpoint)
@@ -7465,6 +7536,16 @@ class TSKV8Adapter(Taiji):
             payload.get("recovery_generation", 0) if isinstance(payload, dict) else 0
         )
 
+    def _restore_recovery_strategy_ledger(self, payload: Any) -> None:
+        ledger = payload.get("recovery_strategy_ledger") if isinstance(payload, dict) else None
+        self._recovery_strategy_ledger = (
+            RecoveryStrategyLedger(
+                evidence_threshold=self.config.recovery_strategy_evidence_threshold
+            )
+            if ledger is None
+            else RecoveryStrategyLedger.from_payload(dict(ledger))
+        )
+
     def native_checkpoint(self) -> dict[str, Any]:
         """Serialize the v1 cognitive state and its TSK-v8 compatibility kernel."""
 
@@ -7515,6 +7596,7 @@ class TSKV8Adapter(Taiji):
             None if self._recovery_portfolio is None else self._recovery_portfolio.to_payload()
         )
         components["recovery_archive"] = self._recovery_archive.to_payload()
+        components["recovery_strategy_ledger"] = self._recovery_strategy_ledger.to_payload()
         components["recovery_generation"] = self._recovery_generation
         components["replan_required"] = self._replan_required
         components["planning_recovery"] = (
@@ -7601,6 +7683,7 @@ class TSKV8Adapter(Taiji):
         self._restore_rollout_state(envelope.components)
         self._restore_recovery_portfolio(envelope.components)
         self._restore_recovery_archive(envelope.components)
+        self._restore_recovery_strategy_ledger(envelope.components)
         self._restore_recovery_generation(envelope.components)
         self._restore_generation_trace(envelope.components)
         self._restore_content_selection(envelope.components)

@@ -11,6 +11,7 @@ from .contracts import Goal, GoalState, Outcome, PlanCandidate, PlanState, World
 
 PLANNING_CHECKPOINT_FORMAT = "taiji-planning-v1"
 RECOVERY_ARCHIVE_CHECKPOINT_FORMAT = "taiji-recovery-archive-v1"
+RECOVERY_STRATEGY_LEDGER_CHECKPOINT_FORMAT = "taiji-recovery-strategy-ledger-v1"
 
 
 def _unit(value: float, name: str) -> float:
@@ -406,6 +407,7 @@ class RecoveryPortfolio:
         outcome_reward: float | None = None,
         outcome_success: bool | None = None,
         terminal: bool = False,
+        evidence_count: int = 0,
     ) -> tuple[RecoveryArchiveEntry, ...]:
         """Summarize branches without retaining executable candidates."""
 
@@ -447,6 +449,9 @@ class RecoveryPortfolio:
                         outcome_success if candidate.rollout_id == completed_rollout_id else None
                     ),
                     terminal=bool(terminal and candidate.rollout_id == completed_rollout_id),
+                    evidence_count=(
+                        int(evidence_count) if candidate.rollout_id == completed_rollout_id else 0
+                    ),
                     portfolio_revision=self.revision,
                 )
             )
@@ -470,6 +475,7 @@ class RecoveryArchiveEntry:
     outcome_reward: float | None = None
     outcome_success: bool | None = None
     terminal: bool = False
+    evidence_count: int = 0
     portfolio_revision: int = 0
 
     def __post_init__(self) -> None:
@@ -486,6 +492,8 @@ class RecoveryArchiveEntry:
         _unit(self.resource_cost, "recovery archive resource_cost")
         if self.outcome_reward is not None and not math.isfinite(float(self.outcome_reward)):
             raise ValueError("recovery archive outcome_reward must be finite")
+        if int(self.evidence_count) < 0:
+            raise ValueError("recovery archive evidence_count cannot be negative")
         if int(self.portfolio_revision) < 0:
             raise ValueError("recovery archive portfolio_revision cannot be negative")
 
@@ -504,6 +512,7 @@ class RecoveryArchiveEntry:
             "outcome_reward": self.outcome_reward,
             "outcome_success": self.outcome_success,
             "terminal": self.terminal,
+            "evidence_count": self.evidence_count,
             "portfolio_revision": self.portfolio_revision,
         }
 
@@ -529,6 +538,7 @@ class RecoveryArchiveEntry:
                 None if payload.get("outcome_success") is None else bool(payload["outcome_success"])
             ),
             terminal=bool(payload.get("terminal", False)),
+            evidence_count=int(payload.get("evidence_count", 0)),
             portfolio_revision=int(payload.get("portfolio_revision", 0)),
         )
 
@@ -599,6 +609,174 @@ class RecoveryPortfolioArchive:
                 RecoveryArchiveEntry.from_payload(dict(item)) for item in payload.get("entries", ())
             ),
             capacity=int(payload.get("capacity", 256)),
+            revision=int(payload.get("revision", 0)),
+        )
+
+
+@dataclass(frozen=True)
+class RecoveryStrategyApproval:
+    """Evidence-gated admission of one completed branch into long-term memory."""
+
+    approval_id: str
+    rollout_id: str
+    source_episode_id: str
+    goal_id: str
+    memory_id: str
+    action_kinds: tuple[str, ...]
+    evidence_count: int
+    outcome_reward: float
+    revision: int = 0
+
+    def __post_init__(self) -> None:
+        if not all(
+            (
+                self.approval_id,
+                self.rollout_id,
+                self.source_episode_id,
+                self.goal_id,
+                self.memory_id,
+            )
+        ):
+            raise ValueError("recovery strategy approval ids cannot be empty")
+        if not self.action_kinds or any(not kind for kind in self.action_kinds):
+            raise ValueError("recovery strategy approval action_kinds cannot be empty")
+        if int(self.evidence_count) <= 0:
+            raise ValueError("recovery strategy approval evidence_count must be positive")
+        if not math.isfinite(float(self.outcome_reward)):
+            raise ValueError("recovery strategy approval outcome_reward must be finite")
+        if int(self.revision) < 0:
+            raise ValueError("recovery strategy approval revision cannot be negative")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "approval_id": self.approval_id,
+            "rollout_id": self.rollout_id,
+            "source_episode_id": self.source_episode_id,
+            "goal_id": self.goal_id,
+            "memory_id": self.memory_id,
+            "action_kinds": list(self.action_kinds),
+            "evidence_count": self.evidence_count,
+            "outcome_reward": self.outcome_reward,
+            "revision": self.revision,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> RecoveryStrategyApproval:
+        return cls(
+            approval_id=str(payload["approval_id"]),
+            rollout_id=str(payload["rollout_id"]),
+            source_episode_id=str(payload["source_episode_id"]),
+            goal_id=str(payload["goal_id"]),
+            memory_id=str(payload["memory_id"]),
+            action_kinds=tuple(str(item) for item in payload["action_kinds"]),
+            evidence_count=int(payload["evidence_count"]),
+            outcome_reward=float(payload["outcome_reward"]),
+            revision=int(payload.get("revision", 0)),
+        )
+
+
+@dataclass(frozen=True)
+class RecoveryStrategyLedger:
+    """Admission and revocation ledger for recovery-derived long-term memory."""
+
+    evidence_threshold: int = 2
+    approvals: tuple[RecoveryStrategyApproval, ...] = ()
+    revoked_rollout_ids: tuple[str, ...] = ()
+    revision: int = 0
+
+    def __post_init__(self) -> None:
+        if int(self.evidence_threshold) <= 0:
+            raise ValueError("recovery strategy evidence_threshold must be positive")
+        approval_ids = tuple(approval.approval_id for approval in self.approvals)
+        if len(set(approval_ids)) != len(approval_ids):
+            raise ValueError("recovery strategy approvals must be unique")
+        if any(not rollout_id for rollout_id in self.revoked_rollout_ids):
+            raise ValueError("recovery strategy revoked rollout ids cannot be empty")
+        if len(set(self.revoked_rollout_ids)) != len(self.revoked_rollout_ids):
+            raise ValueError("recovery strategy revoked rollout ids must be unique")
+        if int(self.revision) < 0:
+            raise ValueError("recovery strategy ledger revision cannot be negative")
+
+    def admit(
+        self,
+        entry: RecoveryArchiveEntry,
+        *,
+        memory_id: str,
+    ) -> RecoveryStrategyLedger:
+        """Admit only a completed, terminal, evidence-backed archive entry."""
+
+        if entry.lifecycle != "completed" or not entry.terminal:
+            raise ValueError("only completed terminal recovery can enter strategy memory")
+        if int(entry.evidence_count) < int(self.evidence_threshold):
+            return self
+        if not memory_id:
+            raise ValueError("recovery strategy approval memory_id cannot be empty")
+        if entry.rollout_id in self.revoked_rollout_ids:
+            return self
+        approval = RecoveryStrategyApproval(
+            approval_id=f"{entry.source_episode_id}:{entry.rollout_id}",
+            rollout_id=entry.rollout_id,
+            source_episode_id=entry.source_episode_id,
+            goal_id=entry.goal_id,
+            memory_id=memory_id,
+            action_kinds=entry.action_kinds,
+            evidence_count=entry.evidence_count,
+            outcome_reward=0.0 if entry.outcome_reward is None else entry.outcome_reward,
+            revision=self.revision + 1,
+        )
+        approvals = tuple(
+            existing for existing in self.approvals if existing.approval_id != approval.approval_id
+        )
+        return replace(
+            self,
+            approvals=(*approvals, approval),
+            revision=self.revision + 1,
+        )
+
+    def revoke(self, rollout_id: str) -> RecoveryStrategyLedger:
+        if not rollout_id:
+            raise ValueError("recovery strategy rollout_id cannot be empty")
+        if rollout_id in self.revoked_rollout_ids:
+            return self
+        return replace(
+            self,
+            revoked_rollout_ids=(*self.revoked_rollout_ids, rollout_id),
+            revision=self.revision + 1,
+        )
+
+    def active_approvals(self) -> tuple[RecoveryStrategyApproval, ...]:
+        revoked = set(self.revoked_rollout_ids)
+        return tuple(approval for approval in self.approvals if approval.rollout_id not in revoked)
+
+    def is_active(self, rollout_id: str) -> bool:
+        return any(approval.rollout_id == rollout_id for approval in self.active_approvals())
+
+    @property
+    def active_memory_ids(self) -> tuple[str, ...]:
+        return tuple(approval.memory_id for approval in self.active_approvals())
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": RECOVERY_STRATEGY_LEDGER_CHECKPOINT_FORMAT,
+            "evidence_threshold": self.evidence_threshold,
+            "approvals": [approval.to_payload() for approval in self.approvals],
+            "revoked_rollout_ids": list(self.revoked_rollout_ids),
+            "revision": self.revision,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> RecoveryStrategyLedger:
+        if payload.get("format", RECOVERY_STRATEGY_LEDGER_CHECKPOINT_FORMAT) != (
+            RECOVERY_STRATEGY_LEDGER_CHECKPOINT_FORMAT
+        ):
+            raise ValueError("unsupported recovery strategy ledger checkpoint format")
+        return cls(
+            evidence_threshold=int(payload.get("evidence_threshold", 2)),
+            approvals=tuple(
+                RecoveryStrategyApproval.from_payload(dict(item))
+                for item in payload.get("approvals", ())
+            ),
+            revoked_rollout_ids=tuple(str(item) for item in payload.get("revoked_rollout_ids", ())),
             revision=int(payload.get("revision", 0)),
         )
 
