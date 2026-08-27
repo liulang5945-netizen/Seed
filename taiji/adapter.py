@@ -5124,6 +5124,7 @@ class TSKV8Adapter(Taiji):
                         model_uncertainty,
                         prediction.uncertainty,
                     ),
+                    uncertainty_mode=prediction.uncertainty_mode,
                 )
             )
         if not projected:
@@ -5183,6 +5184,7 @@ class TSKV8Adapter(Taiji):
                         model_uncertainty,
                         prediction.uncertainty,
                     ),
+                    uncertainty_mode=prediction.uncertainty_mode,
                     prediction_provenance="world-dynamics",
                 )
             )
