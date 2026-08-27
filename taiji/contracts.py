@@ -947,6 +947,21 @@ class WorldAffordance:
         )
         object.__setattr__(self, "features", self.features.detach().clone())
 
+    @property
+    def content_identity(self) -> str:
+        """Return a stable identity for executable affordance content."""
+
+        signature = repr(
+            (
+                self.action_kind,
+                self.actor_id,
+                self.target_id,
+                tuple((str(name), repr(value)) for name, value in self.parameters),
+                self.grounding_lineage,
+            )
+        )
+        return hashlib.sha256(signature.encode("utf-8")).hexdigest()[:16]
+
     def to_payload(self) -> dict[str, Any]:
         return {
             "version": self.version,

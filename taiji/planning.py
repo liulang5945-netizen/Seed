@@ -111,6 +111,8 @@ class RecoveryRolloutLineage:
     capability_actions: tuple[int, ...]
     capability_action_kinds: tuple[str, ...]
     affordance_id: str
+    affordance_content_identity: str
+    action_semantic_key: tuple[str, ...]
     schema_revision: int
 
     def __post_init__(self) -> None:
@@ -130,6 +132,10 @@ class RecoveryRolloutLineage:
             raise ValueError("recovery capability action_kinds cannot be empty")
         if not self.affordance_id:
             raise ValueError("recovery affordance_id cannot be empty")
+        if not self.affordance_content_identity:
+            raise ValueError("recovery affordance_content_identity cannot be empty")
+        if not self.action_semantic_key:
+            raise ValueError("recovery action_semantic_key cannot be empty")
         if int(self.schema_revision) < 0:
             raise ValueError("recovery schema_revision cannot be negative")
 
@@ -139,6 +145,8 @@ class RecoveryRolloutLineage:
             "capability_actions": list(self.capability_actions),
             "capability_action_kinds": list(self.capability_action_kinds),
             "affordance_id": self.affordance_id,
+            "affordance_content_identity": self.affordance_content_identity,
+            "action_semantic_key": list(self.action_semantic_key),
             "schema_revision": self.schema_revision,
         }
 
@@ -149,6 +157,8 @@ class RecoveryRolloutLineage:
             capability_actions=tuple(int(item) for item in payload["capability_actions"]),
             capability_action_kinds=tuple(str(item) for item in payload["capability_action_kinds"]),
             affordance_id=str(payload["affordance_id"]),
+            affordance_content_identity=str(payload["affordance_content_identity"]),
+            action_semantic_key=tuple(str(item) for item in payload["action_semantic_key"]),
             schema_revision=int(payload["schema_revision"]),
         )
 
