@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Sequence
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 from .contracts import Goal, GoalState, Outcome, PlanCandidate, PlanState, WorldAction
@@ -13,6 +13,7 @@ PLANNING_CHECKPOINT_FORMAT = "taiji-planning-v1"
 RECOVERY_ARCHIVE_CHECKPOINT_FORMAT = "taiji-recovery-archive-v1"
 RECOVERY_STRATEGY_LEDGER_CHECKPOINT_FORMAT = "taiji-recovery-strategy-ledger-v1"
 RECOVERY_READER_DEPENDENCY_CHECKPOINT_FORMAT = "taiji-recovery-reader-dependency-v1"
+RECOVERY_READER_ATTRIBUTION_CHECKPOINT_FORMAT = "taiji-recovery-reader-attribution-v1"
 
 
 def _unit(value: float, name: str) -> float:
@@ -899,6 +900,72 @@ class RecoveryStrategyLedger:
 
 
 @dataclass(frozen=True)
+class RecoveryReaderContribution:
+    """Leave-one-out effect of one strategy on one downstream reader."""
+
+    reader_kind: str
+    strategy_rollout_id: str
+    memory_id: str
+    effect_delta_l2: float
+    credit: float
+    replay_epochs: int
+    replay_learning_rate: float
+    method: str = "leave-one-out"
+
+    def __post_init__(self) -> None:
+        if not self.reader_kind:
+            raise ValueError("recovery reader contribution reader_kind cannot be empty")
+        if not self.strategy_rollout_id:
+            raise ValueError("recovery reader contribution rollout id cannot be empty")
+        if not self.memory_id:
+            raise ValueError("recovery reader contribution memory id cannot be empty")
+        if not math.isfinite(float(self.effect_delta_l2)) or float(self.effect_delta_l2) < 0.0:
+            raise ValueError("recovery reader contribution effect must be finite and non-negative")
+        _unit(self.credit, "recovery reader contribution credit")
+        if int(self.replay_epochs) <= 0:
+            raise ValueError("recovery reader contribution replay_epochs must be positive")
+        if (
+            not math.isfinite(float(self.replay_learning_rate))
+            or float(self.replay_learning_rate) <= 0.0
+        ):
+            raise ValueError(
+                "recovery reader contribution replay_learning_rate must be positive and finite"
+            )
+        if not self.method:
+            raise ValueError("recovery reader contribution method cannot be empty")
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": RECOVERY_READER_ATTRIBUTION_CHECKPOINT_FORMAT,
+            "reader_kind": self.reader_kind,
+            "strategy_rollout_id": self.strategy_rollout_id,
+            "memory_id": self.memory_id,
+            "effect_delta_l2": self.effect_delta_l2,
+            "credit": self.credit,
+            "replay_epochs": self.replay_epochs,
+            "replay_learning_rate": self.replay_learning_rate,
+            "method": self.method,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> RecoveryReaderContribution:
+        if payload.get("format", RECOVERY_READER_ATTRIBUTION_CHECKPOINT_FORMAT) != (
+            RECOVERY_READER_ATTRIBUTION_CHECKPOINT_FORMAT
+        ):
+            raise ValueError("unsupported recovery reader attribution checkpoint format")
+        return cls(
+            reader_kind=str(payload["reader_kind"]),
+            strategy_rollout_id=str(payload["strategy_rollout_id"]),
+            memory_id=str(payload["memory_id"]),
+            effect_delta_l2=float(payload.get("effect_delta_l2", 0.0)),
+            credit=float(payload.get("credit", 0.0)),
+            replay_epochs=int(payload.get("replay_epochs", 1)),
+            replay_learning_rate=float(payload.get("replay_learning_rate", 0.1)),
+            method=str(payload.get("method", "leave-one-out")),
+        )
+
+
+@dataclass(frozen=True)
 class RecoveryReaderDependency:
     """Provenance slice showing which strategies feed one downstream reader."""
 
@@ -906,6 +973,9 @@ class RecoveryReaderDependency:
     memory_ids: tuple[str, ...] = ()
     strategy_rollout_ids: tuple[str, ...] = ()
     revision: int = 0
+    contributions: tuple[RecoveryReaderContribution, ...] = ()
+    base_checkpoint: dict[str, Any] | None = field(default=None, compare=False, repr=False)
+    base_checkpoint_digest: str = ""
 
     def __post_init__(self) -> None:
         if not self.reader_kind:
@@ -918,6 +988,24 @@ class RecoveryReaderDependency:
             raise ValueError("recovery reader dependency rollout ids cannot be empty")
         if len(set(self.strategy_rollout_ids)) != len(self.strategy_rollout_ids):
             raise ValueError("recovery reader dependency rollout ids must be unique")
+        if any(
+            not isinstance(contribution, RecoveryReaderContribution)
+            or contribution.reader_kind != self.reader_kind
+            for contribution in self.contributions
+        ):
+            raise ValueError("recovery reader contributions must belong to their reader")
+        if len({contribution.strategy_rollout_id for contribution in self.contributions}) != len(
+            self.contributions
+        ):
+            raise ValueError("recovery reader contributions must be unique per rollout")
+        if any(
+            contribution.strategy_rollout_id not in self.strategy_rollout_ids
+            or contribution.memory_id not in self.memory_ids
+            for contribution in self.contributions
+        ):
+            raise ValueError("recovery reader contribution provenance must match dependency ids")
+        if self.base_checkpoint is not None and not self.base_checkpoint_digest:
+            raise ValueError("recovery reader base checkpoint requires a content digest")
         if int(self.revision) < 0:
             raise ValueError("recovery reader dependency revision cannot be negative")
 
@@ -927,6 +1015,9 @@ class RecoveryReaderDependency:
             "memory_ids": list(self.memory_ids),
             "strategy_rollout_ids": list(self.strategy_rollout_ids),
             "revision": self.revision,
+            "contributions": [item.to_payload() for item in self.contributions],
+            "base_checkpoint": self.base_checkpoint,
+            "base_checkpoint_digest": self.base_checkpoint_digest,
         }
 
     @classmethod
@@ -938,6 +1029,14 @@ class RecoveryReaderDependency:
                 str(item) for item in payload.get("strategy_rollout_ids", ())
             ),
             revision=int(payload.get("revision", 0)),
+            contributions=tuple(
+                RecoveryReaderContribution.from_payload(dict(item))
+                for item in payload.get("contributions", ())
+            ),
+            base_checkpoint=(
+                None if payload.get("base_checkpoint") is None else dict(payload["base_checkpoint"])
+            ),
+            base_checkpoint_digest=str(payload.get("base_checkpoint_digest", "")),
         )
 
 
@@ -959,17 +1058,34 @@ class RecoveryReaderDependencyGraph:
         self,
         reader_kind: str,
         approvals: Sequence[RecoveryStrategyApproval],
+        *,
+        contributions: Sequence[RecoveryReaderContribution] = (),
+        base_checkpoint: dict[str, Any] | None = None,
+        base_checkpoint_digest: str = "",
     ) -> RecoveryReaderDependencyGraph:
         if not reader_kind:
             raise ValueError("recovery reader dependency reader_kind cannot be empty")
         selected = tuple(approvals)
         memory_ids = tuple(dict.fromkeys(approval.memory_id for approval in selected))
         rollout_ids = tuple(dict.fromkeys(approval.rollout_id for approval in selected))
+        contribution_items = tuple(contributions)
+        approval_by_rollout = {approval.rollout_id: approval for approval in selected}
+        if any(
+            contribution.reader_kind != reader_kind
+            or contribution.strategy_rollout_id not in approval_by_rollout
+            or contribution.memory_id
+            != approval_by_rollout[contribution.strategy_rollout_id].memory_id
+            for contribution in contribution_items
+        ):
+            raise ValueError("recovery reader contributions must match selected approvals")
         dependency = RecoveryReaderDependency(
             reader_kind=reader_kind,
             memory_ids=memory_ids,
             strategy_rollout_ids=rollout_ids,
             revision=self.revision + 1,
+            contributions=contribution_items,
+            base_checkpoint=base_checkpoint,
+            base_checkpoint_digest=str(base_checkpoint_digest),
         )
         dependencies = tuple(item for item in self.dependencies if item.reader_kind != reader_kind)
         return replace(
@@ -1016,6 +1132,13 @@ class RecoveryReaderDependencyGraph:
                     if rollout_id in selected_by_rollout
                 ),
                 revision=self.revision + 1,
+                contributions=tuple(
+                    contribution
+                    for contribution in dependency.contributions
+                    if contribution.strategy_rollout_id in selected_by_rollout
+                ),
+                base_checkpoint=dependency.base_checkpoint,
+                base_checkpoint_digest=dependency.base_checkpoint_digest,
             )
             for dependency in self.dependencies
         )

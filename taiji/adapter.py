@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 from typing import Any
@@ -92,8 +93,11 @@ from .planning import (
     PlanningDecision,
     RecoveryPortfolioArchive,
     RecoveryPortfolio,
+    RecoveryReaderContribution,
+    RecoveryReaderDependency,
     RecoveryReaderDependencyGraph,
     RecoveryRolloutLineage,
+    RecoveryStrategyApproval,
     RecoveryStrategyLedger,
     RolloutDecision,
 )
@@ -111,6 +115,62 @@ from .structural_growth import (
 )
 from .workspace import WorkspaceRouter
 from .world_learning import WorldDynamicsLearner, WorldSchema, WorldSchemaRegistry
+
+
+def _checkpoint_digest(payload: Mapping[str, Any]) -> str:
+    """Hash a reader checkpoint without depending on pickle ordering."""
+
+    digest = hashlib.sha256()
+
+    def update(value: Any) -> None:
+        if isinstance(value, torch.Tensor):
+            tensor = value.detach().cpu().contiguous()
+            digest.update(b"tensor:")
+            digest.update(str(tensor.dtype).encode("utf-8"))
+            digest.update(repr(tuple(tensor.shape)).encode("utf-8"))
+            digest.update(tensor.numpy().tobytes())
+            return
+        if isinstance(value, Mapping):
+            digest.update(b"mapping:")
+            for key in sorted(value, key=str):
+                update(str(key))
+                update(value[key])
+            return
+        if isinstance(value, (tuple, list)):
+            digest.update(b"sequence:")
+            for item in value:
+                update(item)
+            return
+        digest.update(repr(value).encode("utf-8"))
+
+    update(payload)
+    return digest.hexdigest()
+
+
+def _payload_distance(left: Any, right: Any) -> float:
+    """Return a deterministic L2-like distance for reader state payloads."""
+
+    if isinstance(left, torch.Tensor) and isinstance(right, torch.Tensor):
+        if left.shape != right.shape:
+            return 1.0 + float(abs(left.numel() - right.numel()))
+        left_tensor = left.detach().cpu().to(dtype=torch.float32)
+        right_tensor = right.detach().cpu().to(dtype=torch.float32)
+        return float(torch.linalg.vector_norm(left_tensor - right_tensor))
+    if isinstance(left, Mapping) and isinstance(right, Mapping):
+        keys = set(left) | set(right)
+        return float(
+            sum(_payload_distance(left.get(key), right.get(key)) ** 2 for key in keys) ** 0.5
+        )
+    if isinstance(left, (tuple, list)) and isinstance(right, (tuple, list)):
+        distance = sum(
+            _payload_distance(left_item, right_item) ** 2
+            for left_item, right_item in zip(left, right, strict=False)
+        )
+        distance += float(abs(len(left) - len(right)))
+        return float(distance**0.5)
+    if isinstance(left, (int, float)) and isinstance(right, (int, float)):
+        return abs(float(left) - float(right))
+    return 0.0 if left == right else 1.0
 
 
 @dataclass(frozen=True)
@@ -5915,6 +5975,108 @@ class TSKV8Adapter(Taiji):
         if self._recovery_strategy_ledger != previous:
             self._rebuild_recovery_memory(revoked_rollout_id=rollout_id)
 
+    def _recovery_reader_contributions(
+        self,
+        reader_kind: str,
+        baseline_payload: dict[str, Any],
+        final_payload: dict[str, Any],
+        records: tuple[EpisodicMemoryRecord, ...],
+        approvals: Sequence[RecoveryStrategyApproval],
+        *,
+        epochs: int,
+        learning_rate: float,
+    ) -> tuple[RecoveryReaderContribution, ...]:
+        """Attribute final reader state with deterministic leave-one-out replay."""
+
+        if not approvals:
+            return ()
+        effects: list[float] = []
+        for approval in approvals:
+            ablated_records = tuple(
+                record for record in records if record.memory_id != approval.memory_id
+            )
+            if reader_kind == "semantic":
+                ablated_semantic = SemanticMemoryLearner.from_checkpoint(
+                    dict(baseline_payload), device=self.device
+                )
+                if ablated_records:
+                    ablated_semantic.consolidate(
+                        ablated_records,
+                        epochs=epochs,
+                        learning_rate=learning_rate,
+                    )
+                ablated_payload = ablated_semantic.checkpoint()
+                effect = _payload_distance(
+                    final_payload.get("state_dict"), ablated_payload.get("state_dict")
+                )
+            elif reader_kind == "procedural":
+                ablated_procedural = ProceduralMemoryLearner.from_checkpoint(
+                    dict(baseline_payload), device=self.device
+                )
+                if ablated_records:
+                    action_kinds = tuple(
+                        str(kind) for kind in final_payload.get("action_kinds", ())
+                    )
+                    ablated_procedural.consolidate(
+                        ablated_records,
+                        epochs=epochs,
+                        learning_rate=learning_rate,
+                        action_kinds=action_kinds or None,
+                    )
+                ablated_payload = ablated_procedural.checkpoint()
+                effect = _payload_distance(
+                    final_payload.get("state_dict"), ablated_payload.get("state_dict")
+                )
+            elif reader_kind == "sequence":
+                ablated_sequence = ProceduralSequenceLearner.from_checkpoint(
+                    dict(baseline_payload), device=self.device
+                )
+                if ablated_records:
+                    action_kinds = tuple(
+                        str(kind) for kind in final_payload.get("action_kinds", ())
+                    )
+                    ablated_sequence.consolidate(
+                        ablated_records,
+                        epochs=epochs,
+                        learning_rate=learning_rate,
+                        action_kinds=action_kinds or None,
+                    )
+                ablated_payload = ablated_sequence.checkpoint()
+                effect = _payload_distance(
+                    final_payload.get("state_dict"), ablated_payload.get("state_dict")
+                )
+            elif reader_kind == "concept":
+                ablated_concept = ConceptFormationOrgan.from_checkpoint(
+                    dict(baseline_payload), device=self.device
+                )
+                if ablated_records:
+                    ablated_concept.consolidate(ablated_records, tick=self.tick)
+                ablated_payload = ablated_concept.checkpoint()
+                effect = _payload_distance(
+                    final_payload.get("concepts", ()), ablated_payload.get("concepts", ())
+                )
+            else:
+                raise ValueError(f"unsupported recovery reader kind: {reader_kind}")
+            effects.append(max(0.0, float(effect)))
+        total_effect = sum(effects)
+        if total_effect > 1e-12:
+            credits = tuple(effect / total_effect for effect in effects)
+        else:
+            equal_credit = 1.0 / len(effects)
+            credits = (equal_credit,) * len(effects)
+        return tuple(
+            RecoveryReaderContribution(
+                reader_kind=reader_kind,
+                strategy_rollout_id=approval.rollout_id,
+                memory_id=approval.memory_id,
+                effect_delta_l2=effect,
+                credit=credit,
+                replay_epochs=int(epochs),
+                replay_learning_rate=float(learning_rate),
+            )
+            for approval, effect, credit in zip(approvals, effects, credits, strict=True)
+        )
+
     def consolidate_recovery_memory(
         self,
         *,
@@ -5937,14 +6099,40 @@ class TSKV8Adapter(Taiji):
         self._recovery_procedural_learning_rate = float(procedural_learning_rate)
         losses: dict[str, float] = {}
         selected_approvals = self._recovery_strategy_ledger.selected_approvals
+        semantic_baseline = (
+            None if self._semantic_memory is None else self._semantic_memory.checkpoint()
+        )
+        procedural_baseline = (
+            None if self._procedural_memory is None else self._procedural_memory.checkpoint()
+        )
+        sequence_baseline = (
+            None
+            if self._procedural_sequence_memory is None
+            else self._procedural_sequence_memory.checkpoint()
+        )
+        concept_baseline = self._concept_formation.checkpoint()
         if self._semantic_memory is not None:
             losses["semantic"] = self._semantic_memory.consolidate(
                 records,
                 epochs=epochs,
                 learning_rate=semantic_learning_rate,
             )
+            semantic_final = self._semantic_memory.checkpoint()
+            semantic_contributions = self._recovery_reader_contributions(
+                "semantic",
+                semantic_baseline or {},
+                semantic_final,
+                records,
+                selected_approvals,
+                epochs=epochs,
+                learning_rate=semantic_learning_rate,
+            )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
-                "semantic", selected_approvals
+                "semantic",
+                selected_approvals,
+                contributions=semantic_contributions,
+                base_checkpoint=semantic_baseline,
+                base_checkpoint_digest=_checkpoint_digest(semantic_baseline or {}),
             )
         if self._procedural_memory is not None:
             losses["procedural"] = self._procedural_memory.consolidate(
@@ -5952,8 +6140,22 @@ class TSKV8Adapter(Taiji):
                 epochs=epochs,
                 learning_rate=procedural_learning_rate,
             )
+            procedural_final = self._procedural_memory.checkpoint()
+            procedural_contributions = self._recovery_reader_contributions(
+                "procedural",
+                procedural_baseline or {},
+                procedural_final,
+                records,
+                selected_approvals,
+                epochs=epochs,
+                learning_rate=procedural_learning_rate,
+            )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
-                "procedural", selected_approvals
+                "procedural",
+                selected_approvals,
+                contributions=procedural_contributions,
+                base_checkpoint=procedural_baseline,
+                base_checkpoint_digest=_checkpoint_digest(procedural_baseline or {}),
             )
         if self._procedural_sequence_memory is not None:
             losses["sequence"] = self._procedural_sequence_memory.consolidate(
@@ -5961,13 +6163,41 @@ class TSKV8Adapter(Taiji):
                 epochs=epochs,
                 learning_rate=procedural_learning_rate,
             )
+            sequence_final = self._procedural_sequence_memory.checkpoint()
+            sequence_contributions = self._recovery_reader_contributions(
+                "sequence",
+                sequence_baseline or {},
+                sequence_final,
+                records,
+                selected_approvals,
+                epochs=epochs,
+                learning_rate=procedural_learning_rate,
+            )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
-                "sequence", selected_approvals
+                "sequence",
+                selected_approvals,
+                contributions=sequence_contributions,
+                base_checkpoint=sequence_baseline,
+                base_checkpoint_digest=_checkpoint_digest(sequence_baseline or {}),
             )
         concepts = self._concept_formation.consolidate(records, tick=self.tick)
         self._cognitive_state = replace(self._cognitive_state, concepts=concepts)
+        concept_final = self._concept_formation.checkpoint()
+        concept_contributions = self._recovery_reader_contributions(
+            "concept",
+            concept_baseline,
+            concept_final,
+            records,
+            selected_approvals,
+            epochs=epochs,
+            learning_rate=procedural_learning_rate,
+        )
         self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
-            "concept", selected_approvals
+            "concept",
+            selected_approvals,
+            contributions=concept_contributions,
+            base_checkpoint=concept_baseline,
+            base_checkpoint_digest=_checkpoint_digest(concept_baseline),
         )
         if not losses:
             raise RuntimeError(
@@ -5999,9 +6229,28 @@ class TSKV8Adapter(Taiji):
             if record.memory_id not in approved_memory_ids
             or record.memory_id in selected_memory_ids
         )
+        recovery_records = tuple(
+            record
+            for record in self._episodic_memory.records
+            if record.memory_id in selected_memory_ids
+        )
+        selected_approvals = self._recovery_strategy_ledger.selected_approvals
+
+        def dependency_for(reader_kind: str) -> RecoveryReaderDependency | None:
+            return self._recovery_reader_dependencies.dependency_for(reader_kind)
+
         if self._semantic_memory is not None and "semantic" in affected_readers:
-            semantic = SemanticMemoryLearner(self._semantic_memory.cue_dim).to(self.device)
-            semantic_records = tuple(record for record in records if record.outcome is not None)
+            dependency = dependency_for("semantic")
+            if dependency is not None and dependency.base_checkpoint is not None:
+                semantic = SemanticMemoryLearner.from_checkpoint(
+                    dict(dependency.base_checkpoint), device=self.device
+                )
+                semantic_records = tuple(
+                    record for record in recovery_records if record.outcome is not None
+                )
+            else:
+                semantic = SemanticMemoryLearner(self._semantic_memory.cue_dim).to(self.device)
+                semantic_records = tuple(record for record in records if record.outcome is not None)
             if semantic_records:
                 semantic.consolidate(
                     semantic_records,
@@ -6010,58 +6259,125 @@ class TSKV8Adapter(Taiji):
                 )
             self._semantic_memory = semantic
         if self._procedural_memory is not None and "procedural" in affected_readers:
-            procedural = ProceduralMemoryLearner(self._procedural_memory.cue_dim).to(self.device)
-            procedural_records = tuple(
-                record for record in records if record.action_intent is not None
-            )
+            dependency = dependency_for("procedural")
+            if dependency is not None and dependency.base_checkpoint is not None:
+                procedural = ProceduralMemoryLearner.from_checkpoint(
+                    dict(dependency.base_checkpoint), device=self.device
+                )
+                procedural_records = tuple(
+                    record for record in recovery_records if record.action_intent is not None
+                )
+            else:
+                procedural = ProceduralMemoryLearner(self._procedural_memory.cue_dim).to(
+                    self.device
+                )
+                procedural_records = tuple(
+                    record for record in records if record.action_intent is not None
+                )
             if procedural_records:
                 procedural.consolidate(
                     procedural_records,
                     epochs=self._recovery_memory_epochs,
                     learning_rate=self._recovery_procedural_learning_rate,
+                    action_kinds=procedural.action_kinds or None,
                 )
             self._procedural_memory = procedural
         if self._procedural_sequence_memory is not None and "sequence" in affected_readers:
-            previous_sequence = self._procedural_sequence_memory
-            sequence = ProceduralSequenceLearner(
-                previous_sequence.cue_dim,
-                hidden_dim=previous_sequence.hidden_dim,
-                seed=previous_sequence.seed,
-            ).to(self.device)
-            sequence_records = tuple(
-                record for record in records if record.action_intent is not None
-            )
+            dependency = dependency_for("sequence")
+            if dependency is not None and dependency.base_checkpoint is not None:
+                sequence = ProceduralSequenceLearner.from_checkpoint(
+                    dict(dependency.base_checkpoint), device=self.device
+                )
+                sequence_records = tuple(
+                    record for record in recovery_records if record.action_intent is not None
+                )
+            else:
+                previous_sequence = self._procedural_sequence_memory
+                sequence = ProceduralSequenceLearner(
+                    previous_sequence.cue_dim,
+                    hidden_dim=previous_sequence.hidden_dim,
+                    seed=previous_sequence.seed,
+                ).to(self.device)
+                sequence_records = tuple(
+                    record for record in records if record.action_intent is not None
+                )
             if sequence_records:
                 sequence.consolidate(
                     sequence_records,
                     epochs=self._recovery_memory_epochs,
                     learning_rate=self._recovery_procedural_learning_rate,
+                    action_kinds=sequence.action_kinds or None,
                 )
             self._procedural_sequence_memory = sequence
         if "concept" in affected_readers:
-            previous_concepts = self._concept_formation
-            concepts = ConceptFormationOrgan(
-                similarity_threshold=previous_concepts.similarity_threshold,
-                signal_weights=(
-                    float(previous_concepts.signal_weights[0]),
-                    float(previous_concepts.signal_weights[1]),
-                    float(previous_concepts.signal_weights[2]),
-                ),
-                capacity=previous_concepts.capacity,
-                plasticity_rate=previous_concepts.plasticity_rate,
-                prune_threshold=previous_concepts.prune_threshold,
-                credit_discount=previous_concepts.credit_discount,
-                trace_capacity=previous_concepts.trace_capacity,
-            )
-            concept_records = tuple(
-                record for record in records if record.outcome is not None and record.event_ids
-            )
+            dependency = dependency_for("concept")
+            if dependency is not None and dependency.base_checkpoint is not None:
+                concepts = ConceptFormationOrgan.from_checkpoint(
+                    dict(dependency.base_checkpoint), device=self.device
+                )
+                concept_records = tuple(
+                    record
+                    for record in recovery_records
+                    if record.outcome is not None and record.event_ids
+                )
+            else:
+                previous_concepts = self._concept_formation
+                concepts = ConceptFormationOrgan(
+                    similarity_threshold=previous_concepts.similarity_threshold,
+                    signal_weights=(
+                        float(previous_concepts.signal_weights[0]),
+                        float(previous_concepts.signal_weights[1]),
+                        float(previous_concepts.signal_weights[2]),
+                    ),
+                    capacity=previous_concepts.capacity,
+                    plasticity_rate=previous_concepts.plasticity_rate,
+                    prune_threshold=previous_concepts.prune_threshold,
+                    credit_discount=previous_concepts.credit_discount,
+                    trace_capacity=previous_concepts.trace_capacity,
+                )
+                concept_records = tuple(
+                    record for record in records if record.outcome is not None and record.event_ids
+                )
             if concept_records:
                 concepts.consolidate(concept_records, tick=self.tick)
             self._concept_formation = concepts
             self._cognitive_state = replace(
                 self._cognitive_state,
                 concepts=concepts.concepts,
+            )
+        for reader_kind in affected_readers:
+            dependency = dependency_for(reader_kind)
+            if dependency is None or dependency.base_checkpoint is None:
+                continue
+            if reader_kind == "semantic" and self._semantic_memory is not None:
+                final_payload = self._semantic_memory.checkpoint()
+                learning_rate = self._recovery_semantic_learning_rate
+            elif reader_kind == "procedural" and self._procedural_memory is not None:
+                final_payload = self._procedural_memory.checkpoint()
+                learning_rate = self._recovery_procedural_learning_rate
+            elif reader_kind == "sequence" and self._procedural_sequence_memory is not None:
+                final_payload = self._procedural_sequence_memory.checkpoint()
+                learning_rate = self._recovery_procedural_learning_rate
+            elif reader_kind == "concept":
+                final_payload = self._concept_formation.checkpoint()
+                learning_rate = self._recovery_procedural_learning_rate
+            else:
+                continue
+            contributions = self._recovery_reader_contributions(
+                reader_kind,
+                dict(dependency.base_checkpoint),
+                final_payload,
+                recovery_records,
+                selected_approvals,
+                epochs=self._recovery_memory_epochs,
+                learning_rate=learning_rate,
+            )
+            self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
+                reader_kind,
+                selected_approvals,
+                contributions=contributions,
+                base_checkpoint=dependency.base_checkpoint,
+                base_checkpoint_digest=dependency.base_checkpoint_digest,
             )
         self._recovery_memory_rebuild_count += 1
 
