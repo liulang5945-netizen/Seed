@@ -23,6 +23,7 @@ from .contracts import (
     CognitiveState,
     Concept,
     DevelopmentState,
+    EnvironmentCapability,
     EpisodicMemoryRecord,
     Event,
     Goal,
@@ -4201,6 +4202,7 @@ class TSKV8Adapter(Taiji):
             world_prediction=None,
             planning_recovery=None,
             recovery_branch=None,
+            environment_capability=None,
             learning=replace(previous.learning, tick=self.tick),
         )
         self._last_executive_decision = None
@@ -4691,6 +4693,7 @@ class TSKV8Adapter(Taiji):
                 world_transition=transition,
                 world_prediction=prediction_record,
             )
+        self._record_environment_capability(result)
         return experienced
 
     def replan_executive_after_failure(
@@ -5201,8 +5204,8 @@ class TSKV8Adapter(Taiji):
     def synthesize_recovery_rollouts(
         self,
         *,
-        available_actions: Sequence[int],
-        action_kinds: Sequence[str],
+        available_actions: Sequence[int] | None = None,
+        action_kinds: Sequence[str] | None = None,
         horizon: int = 1,
         goal_id: str | None = None,
         resource_budget: float = 1.0,
@@ -5213,10 +5216,32 @@ class TSKV8Adapter(Taiji):
             raise RuntimeError("recovery rollout synthesis requires world dynamics")
         if not self._cognitive_state.world.affordances:
             raise RuntimeError("recovery rollout synthesis requires current world affordances")
-        actions = tuple(int(action) for action in available_actions)
-        kinds = tuple(str(kind) for kind in action_kinds)
+        capability = self._cognitive_state.environment_capability
+        if (available_actions is None) != (action_kinds is None):
+            raise ValueError("recovery actions and action_kinds must be provided together")
+        if available_actions is None or action_kinds is None:
+            if capability is None:
+                raise RuntimeError("recovery synthesis requires a current environment capability")
+            actions = capability.actions
+            kinds = capability.action_kinds
+        else:
+            actions = tuple(int(action) for action in available_actions)
+            kinds = tuple(str(kind) for kind in action_kinds)
+            if capability is not None and (actions, kinds) != (
+                capability.actions,
+                capability.action_kinds,
+            ):
+                raise ValueError("recovery synthesis received a stale environment capability")
+        if capability is not None and capability.tick != self._cognitive_state.world.tick:
+            raise RuntimeError(
+                "recovery synthesis requires a capability from the current world tick"
+            )
         if not actions or len(actions) != len(kinds) or len(set(actions)) != len(actions):
             raise ValueError("recovery actions and action_kinds must be aligned and unique")
+        if len(set(kinds)) != len(kinds):
+            raise ValueError("recovery action_kinds must be unique")
+        if any(action < 0 or action >= self.config.alphabet_size for action in actions):
+            raise ValueError("recovery action is outside the motor alphabet")
         if int(horizon) <= 0:
             raise ValueError("recovery rollout horizon must be positive")
         if not 0.0 <= float(resource_budget) <= 1.0:
@@ -5404,6 +5429,7 @@ class TSKV8Adapter(Taiji):
             self._cognitive_state,
             world=replace(experienced_world, tick=self.tick),
         )
+        self._record_environment_capability(result)
         self._refresh_concept_memory()
         if not result.terminal and (result.success is False or result.reward < 0.0):
             self._replan_required = True
@@ -5446,6 +5472,30 @@ class TSKV8Adapter(Taiji):
         """Return the auditable outcome-driven recovery branch, if active."""
 
         return self._cognitive_state.recovery_branch
+
+    @property
+    def environment_capability(self) -> EnvironmentCapability | None:
+        """Return the latest capability boundary reported by the environment."""
+
+        return self._cognitive_state.environment_capability
+
+    def _record_environment_capability(self, result: EnvironmentOutcome) -> None:
+        actions = tuple(int(action) for action in result.available_actions)
+        kinds = tuple(str(kind) for kind in result.action_kinds)
+        if bool(actions) != bool(kinds):
+            raise ValueError("environment capabilities must provide actions and kinds together")
+        if not actions:
+            return
+        if any(action >= self.config.alphabet_size for action in actions):
+            raise ValueError("environment capability action is outside the motor alphabet")
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            environment_capability=EnvironmentCapability(
+                actions=actions,
+                action_kinds=kinds,
+                tick=self._cognitive_state.world.tick,
+            ),
+        )
 
     def reset_dynamics(self, *, episode_id: str | None = None) -> None:
         super().reset_dynamics(episode_id=episode_id)

@@ -11,6 +11,11 @@
     "conflicted-ledger-ambiguity",
     "real-environment-after-state-feedback",
     "failed-action-replan",
+    "taiji-owned-affordance-synthesis",
+    "motor-capability-filter",
+    "resource-budget-filter",
+    "environment-capability-discovery",
+    "capability-refresh-after-step",
     "checkpoint-no-replay",
     "recovery-rollout-continuation"
   ],

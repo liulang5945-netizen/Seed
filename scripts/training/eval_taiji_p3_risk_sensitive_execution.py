@@ -49,6 +49,8 @@ class _ScriptedEnvironment:
         rewards: tuple[float, ...],
         successes: tuple[bool, ...],
         terminals: tuple[bool, ...],
+        available_actions: tuple[int, ...] = (10, 11),
+        action_kinds: tuple[str, ...] = ("assemble", "idle"),
     ) -> None:
         if not (len(states) == len(rewards) == len(successes) == len(terminals)):
             raise ValueError("scripted environment sequences must have equal lengths")
@@ -56,13 +58,15 @@ class _ScriptedEnvironment:
         self.rewards = rewards
         self.successes = successes
         self.terminals = terminals
+        self.available_actions = available_actions
+        self.action_kinds = action_kinds
         self.index = 0
         self.actions: list[int] = []
 
     def reset(self) -> tuple[int, tuple[int, ...]]:
         self.index = 0
         self.actions.clear()
-        return 97, (10, 11)
+        return 97, self.available_actions
 
     def step(self, action_symbol: int) -> EnvironmentOutcome:
         if self.index >= len(self.states):
@@ -76,6 +80,8 @@ class _ScriptedEnvironment:
             success=self.successes[index],
             terminal=self.terminals[index],
             world_state=self.states[index],
+            available_actions=self.available_actions,
+            action_kinds=self.action_kinds,
         )
 
 
@@ -85,14 +91,18 @@ def _action(
     *,
     action_symbol: int,
     kind: str = "assemble",
+    resource_cost: float | None = None,
 ) -> WorldAction:
+    parameters = {"workspace_count": 2.0, "action_symbol": action_symbol}
+    if resource_cost is not None:
+        parameters["resource_cost"] = resource_cost
     return WorldAction(
         f"{episode_id}:assemble",
         kind,
         tick,
         actor_id="agent",
         target_id="target",
-        parameters={"workspace_count": 2.0, "action_symbol": action_symbol},
+        parameters=parameters,
         provenance="risk-sensitive-execution",
     )
 
@@ -175,6 +185,7 @@ def _seed_recovery_alternative(learner: WorldDynamicsLearner, *, seed: int) -> W
         before.tick,
         action_symbol=11,
         kind="idle",
+        resource_cost=0.2,
     )
     after = _transition_state(
         before,
@@ -237,7 +248,7 @@ def _recovery_affordances() -> tuple[WorldAffordance, ...]:
             "idle",
             actor_id="agent",
             target_id="target",
-            parameters={"workspace_count": 2.0},
+            parameters={"workspace_count": 2.0, "resource_cost": 0.2},
             confidence=0.8,
         ),
         WorldAffordance(
@@ -245,8 +256,16 @@ def _recovery_affordances() -> tuple[WorldAffordance, ...]:
             "secure",
             actor_id="agent",
             target_id="target",
-            parameters={"workspace_count": 2.0},
+            parameters={"workspace_count": 2.0, "resource_cost": 0.8},
             confidence=0.7,
+        ),
+        WorldAffordance(
+            "archive-over-budget",
+            "archive",
+            actor_id="agent",
+            target_id="target",
+            parameters={"workspace_count": 2.0, "resource_cost": 1.2},
+            confidence=0.6,
         ),
     )
 
@@ -334,11 +353,13 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         rewards=(1.0,),
         successes=(True,),
         terminals=(False,),
+        available_actions=(10, 11, 12, 13),
+        action_kinds=("assemble", "idle", "secure", "archive"),
     )
     first = adapter.execute_imagined_rollout_step(
         environment,
-        available_actions=(10, 11),
-        action_kinds=("assemble", "idle"),
+        available_actions=(10, 11, 12, 13),
+        action_kinds=("assemble", "idle", "secure", "archive"),
         learn=False,
         learn_world=True,
     )
@@ -352,12 +373,12 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     after_checkpoint = _ledger_snapshot(restored_learner, evidence_key)
     checkpoint_no_replay = after_checkpoint == _ledger_snapshot(learner, evidence_key)
     checkpoint_branch = restored.recovery_branch
+    checkpoint_capability = restored.environment_capability
 
     recovery_before = restored.cognitive_snapshot().world
     synthesized_recovery = restored.synthesize_recovery_rollouts(
-        available_actions=(10, 11, 12),
-        action_kinds=("assemble", "idle", "secure"),
         goal_id="reach-world",
+        resource_budget=1.0,
     )
     recovery_rollout = next(
         rollout for rollout in synthesized_recovery if rollout.steps[0].action.kind == "idle"
@@ -383,11 +404,13 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         rewards=(1.0,),
         successes=(True,),
         terminals=(True,),
+        available_actions=(11,),
+        action_kinds=("idle",),
     )
     recovery = restored.execute_imagined_rollout_step(
         recovery_environment,
-        available_actions=(10, 11, 12),
-        action_kinds=("assemble", "idle", "secure"),
+        available_actions=(11,),
+        action_kinds=("idle",),
         learn=False,
         learn_world=True,
     )
@@ -395,6 +418,10 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     recovery_learner = restored._world_dynamics
     if recovery_learner is None:
         raise RuntimeError("risk execution recovery lost world dynamics")
+    post_recovery_rollouts = restored.synthesize_recovery_rollouts(
+        goal_id="reach-world",
+        resource_budget=1.0,
+    )
     final_checkpoint = TSKV8Adapter.from_native_checkpoint(restored.native_checkpoint())
     final_checkpoint_state = final_checkpoint.cognitive_snapshot()
     return {
@@ -435,7 +462,19 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
                 rollout.steps[0].action.kind in {"idle", "secure"}
                 for rollout in synthesized_recovery
             )
+            and all(
+                float(dict(rollout.steps[0].action.parameters)["resource_cost"]) <= 1.0
+                for rollout in synthesized_recovery
+            )
         ),
+        "recovery_synthesized_candidates": [
+            {
+                "kind": rollout.steps[0].action.kind,
+                "resource_cost": dict(rollout.steps[0].action.parameters).get("resource_cost"),
+                "uncertainty_mode": rollout.steps[0].uncertainty_mode,
+            }
+            for rollout in synthesized_recovery
+        ],
         "ledger_before": before[0],
         "ledger_after_checkpoint": after_checkpoint[0],
         "recovery_success": recovery.success,
@@ -453,6 +492,19 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
             and final.world_calibration_trace[1].adjudication == "accepted"
         ),
         "checkpoint_trace_complete": len(final_checkpoint_state.world_calibration_trace) == 2,
+        "checkpoint_capability_preserved": bool(
+            checkpoint_capability is not None
+            and checkpoint_capability.actions == (10, 11, 12, 13)
+            and checkpoint_capability.action_kinds == ("assemble", "idle", "secure", "archive")
+            and final_checkpoint_state.environment_capability == final.environment_capability
+        ),
+        "capability_refresh_filters_next_candidates": bool(
+            final.environment_capability is not None
+            and final.environment_capability.actions == (11,)
+            and final.environment_capability.action_kinds == ("idle",)
+            and len(post_recovery_rollouts) == 1
+            and post_recovery_rollouts[0].steps[0].action.kind == "idle"
+        ),
         "outcome_count": recovery_learner.schema_registry.transition_outcome_count,
         "online_updates": recovery_learner.online_updates,
         "transition_acceptances": recovery_learner.transition_acceptances,
@@ -568,6 +620,8 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "recovery_complete",
         "trace_complete",
         "checkpoint_trace_complete",
+        "checkpoint_capability_preserved",
+        "capability_refresh_filters_next_candidates",
         "failure_replan",
         "conflicted_replan",
     )
@@ -597,6 +651,11 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "conflicted-ledger-ambiguity",
             "real-environment-after-state-feedback",
             "failed-action-replan",
+            "taiji-owned-affordance-synthesis",
+            "motor-capability-filter",
+            "resource-budget-filter",
+            "environment-capability-discovery",
+            "capability-refresh-after-step",
             "checkpoint-no-replay",
             "recovery-rollout-continuation",
         ],
@@ -616,7 +675,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         },
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, preserve one real evidence write through checkpoint restore, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
+            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce motor capability and resource budget, consume the current environment-reported capability, preserve and restore that capability through checkpoint, refresh it after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
         },
     }
 
