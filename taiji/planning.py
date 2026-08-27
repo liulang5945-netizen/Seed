@@ -34,6 +34,9 @@ class PlanningConfig:
     uncertainty_weight: float = 1.20
     resource_weight: float = 0.40
     conflict_weight: float = 0.80
+    unseen_uncertainty_multiplier: float = 1.50
+    stochastic_uncertainty_multiplier: float = 1.00
+    conflicted_uncertainty_multiplier: float = 2.00
     concept_weight: float = 0.40
     concept_sequence_weight: float = 0.60
     outcome_progress_gain: float = 0.40
@@ -77,6 +80,7 @@ class PlanningCandidate:
     success_probability: float
     expected_progress: float
     uncertainty: float = 0.0
+    uncertainty_mode: str = "unknown"
     resource_cost: float = 0.0
     conflict: float = 0.0
     concept_affinity: float = 0.0
@@ -93,6 +97,8 @@ class PlanningCandidate:
         _unit(self.resource_cost, "resource_cost")
         _unit(self.conflict, "conflict")
         _unit(self.concept_affinity, "concept_affinity")
+        if not self.uncertainty_mode:
+            raise ValueError("planning uncertainty_mode cannot be empty")
         if not self.prediction_provenance:
             raise ValueError("prediction provenance cannot be empty")
 
@@ -142,6 +148,7 @@ class ImaginedRollout:
                     "success_probability": step.success_probability,
                     "expected_progress": step.expected_progress,
                     "uncertainty": step.uncertainty,
+                    "uncertainty_mode": step.uncertainty_mode,
                     "resource_cost": step.resource_cost,
                     "conflict": step.conflict,
                     "concept_affinity": step.concept_affinity,
@@ -167,6 +174,7 @@ class ImaginedRollout:
                     success_probability=float(item["success_probability"]),
                     expected_progress=float(item["expected_progress"]),
                     uncertainty=float(item.get("uncertainty", 0.0)),
+                    uncertainty_mode=str(item.get("uncertainty_mode", "unknown")),
                     resource_cost=float(item.get("resource_cost", 0.0)),
                     conflict=float(item.get("conflict", 0.0)),
                     concept_affinity=float(item.get("concept_affinity", 0.0)),
@@ -241,6 +249,14 @@ class GoalPlanner:
     def world_error_calibration_sample_count(self) -> int:
         return len(self._world_error_calibration)
 
+    def _uncertainty_penalty(self, candidate: PlanningCandidate) -> float:
+        multiplier = {
+            "unseen": self.config.unseen_uncertainty_multiplier,
+            "stochastic": self.config.stochastic_uncertainty_multiplier,
+            "conflicted": self.config.conflicted_uncertainty_multiplier,
+        }.get(candidate.uncertainty_mode, 1.0)
+        return self.config.uncertainty_weight * multiplier * candidate.uncertainty
+
     def plan(
         self,
         goals: GoalState,
@@ -261,7 +277,7 @@ class GoalPlanner:
                 self.config.reward_weight * candidate.predicted_reward
                 + self.config.progress_weight * residual * candidate.expected_progress
                 + self.config.success_weight * candidate.success_probability
-                - self.config.uncertainty_weight * candidate.uncertainty
+                - self._uncertainty_penalty(candidate)
                 - self.config.resource_weight * candidate.resource_cost
                 - self.config.conflict_weight * candidate.conflict
                 + self.config.concept_weight * candidate.concept_affinity
@@ -328,7 +344,7 @@ class GoalPlanner:
                 expected_value += discount * (
                     self.config.reward_weight * step.predicted_reward
                     + self.config.success_weight * step.success_probability
-                    - self.config.uncertainty_weight * step.uncertainty
+                    - self._uncertainty_penalty(step)
                     - self.config.resource_weight * step.resource_cost
                     - self.config.conflict_weight * step.conflict
                     + self.config.concept_weight * step.concept_affinity

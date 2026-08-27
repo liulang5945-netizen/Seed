@@ -22,6 +22,11 @@ from scripts.training.eval_taiji_p3_transition_adjudication import (  # noqa: E4
     _run_real_transition,
 )
 from taiji import (  # noqa: E402
+    Goal,
+    GoalPlanner,
+    GoalState,
+    ImaginedRollout,
+    PlanningCandidate,
     TSKV8Adapter,
     WorldAction,
     WorldDynamicsLearner,
@@ -78,6 +83,62 @@ def _binary_metrics(probability: float, outcomes: tuple[bool, ...]) -> dict[str,
     }
 
 
+def _risk_sensitive_planning() -> tuple[bool, bool]:
+    planner = GoalPlanner()
+    goals = GoalState(tick=0, goals=(Goal("risk", "choose a safe action", priority=1.0),))
+    stable = PlanningCandidate(
+        candidate_id="stable",
+        action=WorldAction("stable", "assemble", 0),
+        predicted_reward=0.5,
+        success_probability=0.7,
+        expected_progress=0.0,
+        uncertainty=0.4,
+        uncertainty_mode="stochastic",
+    )
+    conflicted = PlanningCandidate(
+        candidate_id="conflicted",
+        action=WorldAction("conflicted", "assemble", 0),
+        predicted_reward=0.8,
+        success_probability=0.9,
+        expected_progress=0.0,
+        uncertainty=0.4,
+        uncertainty_mode="conflicted",
+    )
+    decision = planner.plan(goals, (stable, conflicted), tick=0)
+    stable_step_2 = replace(
+        stable,
+        candidate_id="stable-step-2",
+        action=WorldAction("stable-step-2", "assemble", 1),
+    )
+    conflicted_step_2 = replace(
+        conflicted,
+        candidate_id="conflicted-step-2",
+        action=WorldAction("conflicted-step-2", "assemble", 1),
+    )
+    rollout_decision = planner.plan_rollouts(
+        goals,
+        (
+            ImaginedRollout(
+                "stable-rollout",
+                "risk",
+                (stable, stable_step_2),
+                confidence=1.0,
+            ),
+            ImaginedRollout(
+                "conflicted-rollout",
+                "risk",
+                (conflicted, conflicted_step_2),
+                confidence=1.0,
+            ),
+        ),
+        tick=0,
+    )
+    return (
+        decision.selected.candidate_id == "stable",
+        rollout_decision.selected.rollout_id == "stable-rollout",
+    )
+
+
 def evaluate_seed(seed: int) -> dict[str, object]:
     learner = _fit_ledger(seed)
     known_state, known_action = _known_context()
@@ -113,6 +174,7 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         lesion.predict_world_candidates(())
     except RuntimeError:
         world_model_lesion = True
+    risk_sensitive_planning, risk_sensitive_rollout = _risk_sensitive_planning()
     return {
         "seed": int(seed),
         "brier": metrics["brier"],
@@ -135,6 +197,8 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         ),
         "checkpoint_continuation": checkpoint_continuation,
         "world_model_lesion": world_model_lesion,
+        "risk_sensitive_planning": risk_sensitive_planning,
+        "risk_sensitive_rollout": risk_sensitive_rollout,
     }
 
 
@@ -198,6 +262,8 @@ def build_manifest() -> dict[str, object]:
             "holdout prediction cannot increase transition evidence count",
             "native checkpoint restores ledger-driven probability and uncertainty",
             "world-model lesion fails closed for planner projection",
+            "risk-sensitive planner penalizes conflicted mode more than stochastic mode",
+            "multi-step rollout scoring preserves the same mode-specific risk penalty",
         ],
         "boundary": "probability calibration contract; not general stochastic world prediction",
     }
@@ -212,6 +278,8 @@ def evaluate(*, seeds: tuple[int, ...] = (11, 29, 47)) -> dict[str, object]:
         "holdout_feedback_isolated",
         "checkpoint_continuation",
         "world_model_lesion",
+        "risk_sensitive_planning",
+        "risk_sensitive_rollout",
     )
     aggregate = {
         f"{name}_min": min(float(bool(run[name])) for run in runs) for name in boolean_metrics
