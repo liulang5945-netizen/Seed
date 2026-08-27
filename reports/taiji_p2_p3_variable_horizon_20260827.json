@@ -1,0 +1,226 @@
+{
+  "format": "taiji-p2-p3-variable-horizon-v1",
+  "capacity": 2,
+  "train_samples": 64,
+  "holdout_samples": 32,
+  "seeds": [
+    {
+      "seed": 11,
+      "router_fit_updates": 1,
+      "world_training_updates": 0,
+      "conditions": {
+        "learned": {
+          "route_success": 1.0,
+          "world_transition_success": 1.0,
+          "lineage_complete": 1.0,
+          "checkpoint_continuation": 1.0,
+          "world_roundtrip": 1.0,
+          "runtime_calibration_trace_complete": 1.0,
+          "relation_progression_complete": 1.0,
+          "two_transition_history": 1.0,
+          "closed_assemblies_min": 3,
+          "episodes": 96,
+          "closed_assembly_count": 384
+        },
+        "none": {
+          "route_success": 0.0,
+          "world_transition_success": 0.0,
+          "lineage_complete": 1.0,
+          "checkpoint_continuation": 1.0,
+          "world_roundtrip": 1.0,
+          "runtime_calibration_trace_complete": 1.0,
+          "relation_progression_complete": 0.0,
+          "two_transition_history": 1.0,
+          "closed_assemblies_min": 3,
+          "episodes": 96,
+          "closed_assembly_count": 384
+        }
+      },
+      "horizons": [
+        {
+          "horizon": 3,
+          "condition": "learned",
+          "closed_assemblies_per_episode": 3
+        },
+        {
+          "horizon": 3,
+          "condition": "none",
+          "closed_assemblies_per_episode": 3
+        },
+        {
+          "horizon": 4,
+          "condition": "learned",
+          "closed_assemblies_per_episode": 4
+        },
+        {
+          "horizon": 4,
+          "condition": "none",
+          "closed_assemblies_per_episode": 4
+        },
+        {
+          "horizon": 5,
+          "condition": "learned",
+          "closed_assemblies_per_episode": 5
+        },
+        {
+          "horizon": 5,
+          "condition": "none",
+          "closed_assemblies_per_episode": 5
+        }
+      ]
+    },
+    {
+      "seed": 29,
+      "router_fit_updates": 1,
+      "world_training_updates": 0,
+      "conditions": {
+        "learned": {
+          "route_success": 1.0,
+          "world_transition_success": 1.0,
+          "lineage_complete": 1.0,
+          "checkpoint_continuation": 1.0,
+          "world_roundtrip": 1.0,
+          "runtime_calibration_trace_complete": 1.0,
+          "relation_progression_complete": 1.0,
+          "two_transition_history": 1.0,
+          "closed_assemblies_min": 3,
+          "episodes": 96,
+          "closed_assembly_count": 384
+        },
+        "none": {
+          "route_success": 0.0,
+          "world_transition_success": 0.0,
+          "lineage_complete": 1.0,
+          "checkpoint_continuation": 1.0,
+          "world_roundtrip": 1.0,
+          "runtime_calibration_trace_complete": 1.0,
+          "relation_progression_complete": 0.0,
+          "two_transition_history": 1.0,
+          "closed_assemblies_min": 3,
+          "episodes": 96,
+          "closed_assembly_count": 384
+        }
+      },
+      "horizons": [
+        {
+          "horizon": 3,
+          "condition": "learned",
+          "closed_assemblies_per_episode": 3
+        },
+        {
+          "horizon": 3,
+          "condition": "none",
+          "closed_assemblies_per_episode": 3
+        },
+        {
+          "horizon": 4,
+          "condition": "learned",
+          "closed_assemblies_per_episode": 4
+        },
+        {
+          "horizon": 4,
+          "condition": "none",
+          "closed_assemblies_per_episode": 4
+        },
+        {
+          "horizon": 5,
+          "condition": "learned",
+          "closed_assemblies_per_episode": 5
+        },
+        {
+          "horizon": 5,
+          "condition": "none",
+          "closed_assemblies_per_episode": 5
+        }
+      ]
+    },
+    {
+      "seed": 47,
+      "router_fit_updates": 1,
+      "world_training_updates": 0,
+      "conditions": {
+        "learned": {
+          "route_success": 1.0,
+          "world_transition_success": 1.0,
+          "lineage_complete": 1.0,
+          "checkpoint_continuation": 1.0,
+          "world_roundtrip": 1.0,
+          "runtime_calibration_trace_complete": 1.0,
+          "relation_progression_complete": 1.0,
+          "two_transition_history": 1.0,
+          "closed_assemblies_min": 3,
+          "episodes": 96,
+          "closed_assembly_count": 384
+        },
+        "none": {
+          "route_success": 0.0,
+          "world_transition_success": 0.0,
+          "lineage_complete": 1.0,
+          "checkpoint_continuation": 1.0,
+          "world_roundtrip": 1.0,
+          "runtime_calibration_trace_complete": 1.0,
+          "relation_progression_complete": 0.0,
+          "two_transition_history": 1.0,
+          "closed_assemblies_min": 3,
+          "episodes": 96,
+          "closed_assembly_count": 384
+        }
+      },
+      "horizons": [
+        {
+          "horizon": 3,
+          "condition": "learned",
+          "closed_assemblies_per_episode": 3
+        },
+        {
+          "horizon": 3,
+          "condition": "none",
+          "closed_assemblies_per_episode": 3
+        },
+        {
+          "horizon": 4,
+          "condition": "learned",
+          "closed_assemblies_per_episode": 4
+        },
+        {
+          "horizon": 4,
+          "condition": "none",
+          "closed_assemblies_per_episode": 4
+        },
+        {
+          "horizon": 5,
+          "condition": "learned",
+          "closed_assemblies_per_episode": 5
+        },
+        {
+          "horizon": 5,
+          "condition": "none",
+          "closed_assemblies_per_episode": 5
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "learned_route_success_rate_min": 1.0,
+    "learned_world_transition_success_rate_min": 1.0,
+    "none_route_success_rate_max": 0.0,
+    "lineage_complete_rate_min": 1.0,
+    "checkpoint_continuation_rate_min": 1.0,
+    "world_roundtrip_rate_min": 1.0,
+    "runtime_calibration_trace_rate_min": 1.0,
+    "relation_progression_rate_min": 1.0,
+    "two_transition_history_rate_min": 1.0,
+    "closed_assemblies_min_per_episode": 3.0,
+    "closed_assembly_count_total_min": 384,
+    "horizons": [
+      3,
+      4,
+      5
+    ],
+    "passed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "learned route/world success >= 0.90, none lesion <= 0.10, all horizons close at least three assemblies, two world transitions survive checkpoint continuation, relation changes and runtime world calibration remain complete"
+  }
+}

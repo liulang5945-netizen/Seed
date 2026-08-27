@@ -1,0 +1,40 @@
+{
+  "format": "taiji-p2-p3-variable-horizon-manifest-v1",
+  "task": "variable-horizon perception-to-world continuation across two transitions",
+  "train_count": 64,
+  "holdout_count": 32,
+  "seeds": [
+    11,
+    29,
+    47
+  ],
+  "assembly_horizons": [
+    3,
+    4,
+    5
+  ],
+  "holdout": "new workspace object identity and candidate composition",
+  "world_relation_training": [
+    "relates-to",
+    "assembled",
+    "committed"
+  ],
+  "world_relation_holdout": [
+    "secured"
+  ],
+  "world_state_roles": [
+    "agent",
+    "target"
+  ],
+  "lesion": "workspace mode none",
+  "controls": [
+    "workspace lesion",
+    "native checkpoint continuation after first transition",
+    "TaijiWorldState two-transition ownership and roundtrip",
+    "percept event and assembly lineage",
+    "runtime world learner online calibration trace",
+    "relation progression across assemble and commit"
+  ],
+  "checkpoint": "adapter and owned world state are checkpointed after transition one and after transition two",
+  "boundary": "runtime contract and causal continuation; not open-domain semantics or general intelligence"
+}
