@@ -5333,6 +5333,10 @@ class TSKV8Adapter(Taiji):
                             capability_actions=capability.actions,
                             capability_action_kinds=capability.action_kinds,
                             affordance_id=affordance.affordance_id,
+                            affordance_content_identity=affordance.content_identity,
+                            action_semantic_key=self._world_dynamics.schema_registry.action_semantic_key(
+                                first_action
+                            ),
                             schema_revision=schema_revision,
                         )
                     ),
@@ -5500,9 +5504,32 @@ class TSKV8Adapter(Taiji):
             return False
         if lineage.schema_revision != self._world_dynamics.schema_registry.active_version:
             return False
-        return any(
-            affordance.affordance_id == lineage.affordance_id
-            for affordance in self._cognitive_state.world.affordances
+        current_affordance = next(
+            (
+                affordance
+                for affordance in self._cognitive_state.world.affordances
+                if affordance.affordance_id == lineage.affordance_id
+            ),
+            None,
+        )
+        if current_affordance is None:
+            return False
+        if current_affordance.content_identity != lineage.affordance_content_identity:
+            return False
+        if not rollout.steps:
+            return False
+        if (
+            self._world_dynamics.schema_registry.action_semantic_key(rollout.steps[0].action)
+            != lineage.action_semantic_key
+        ):
+            return False
+        try:
+            capability_index = capability.action_kinds.index(rollout.steps[0].action.kind)
+        except ValueError:
+            return False
+        return (
+            dict(rollout.steps[0].action.parameters).get("action_symbol")
+            == capability.actions[capability_index]
         )
 
     @property

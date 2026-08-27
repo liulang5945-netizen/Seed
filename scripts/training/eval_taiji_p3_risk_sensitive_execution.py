@@ -391,6 +391,14 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
             and rollout.recovery_lineage.capability_tick == capability.tick
             and rollout.recovery_lineage.capability_actions == capability.actions
             and rollout.recovery_lineage.capability_action_kinds == capability.action_kinds
+            and rollout.recovery_lineage.affordance_content_identity
+            == next(
+                affordance
+                for affordance in restored.cognitive_snapshot().world.affordances
+                if affordance.affordance_id == rollout.recovery_lineage.affordance_id
+            ).content_identity
+            and rollout.recovery_lineage.action_semantic_key
+            == restored_learner.schema_registry.action_semantic_key(rollout.steps[0].action)
             and rollout.recovery_lineage.schema_revision
             == restored_learner.schema_registry.active_version
             for rollout in synthesized_recovery
@@ -412,6 +420,35 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         restored.plan_rollouts((stale_rollout,))
     except RuntimeError as error:
         stale_planning_rejected = "stale" in str(error)
+    stale_content_rejected = False
+    stale_content_rollout = replace(
+        synthesized_recovery[0],
+        recovery_lineage=replace(lineage, affordance_content_identity="replaced-content"),
+    )
+    try:
+        restored.plan_rollouts((stale_content_rollout,))
+    except RuntimeError as error:
+        stale_content_rejected = "stale" in str(error)
+    stale_action_rejected = False
+    stale_action = replace(
+        synthesized_recovery[0].steps[0].action,
+        parameters=tuple(
+            sorted(
+                {
+                    **dict(synthesized_recovery[0].steps[0].action.parameters),
+                    "action_symbol": 12,
+                }.items()
+            )
+        ),
+    )
+    stale_action_rollout = replace(
+        synthesized_recovery[0],
+        steps=(replace(synthesized_recovery[0].steps[0], action=stale_action),),
+    )
+    try:
+        restored.plan_rollouts((stale_action_rollout,))
+    except RuntimeError as error:
+        stale_action_rejected = "stale" in str(error)
     recovery_rollout = next(
         rollout for rollout in synthesized_recovery if rollout.steps[0].action.kind == "idle"
     )
@@ -546,6 +583,8 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
         ),
         "recovery_lineage_recorded": lineage_recorded,
         "stale_planning_rejected": stale_planning_rejected,
+        "stale_content_rejected": stale_content_rejected,
+        "stale_action_rejected": stale_action_rejected,
         "stale_execution_rejected": stale_execution_rejected,
         "checkpoint_lineage_preserved": checkpoint_lineage_preserved,
         "recovery_synthesized_candidates": [
@@ -700,6 +739,8 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "recovery_candidates_generated_from_affordances",
         "recovery_lineage_recorded",
         "stale_planning_rejected",
+        "stale_content_rejected",
+        "stale_action_rejected",
         "stale_execution_rejected",
         "checkpoint_lineage_preserved",
         "recovery_complete",
@@ -743,6 +784,8 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "capability-refresh-after-step",
             "recovery-lineage-freshness",
             "stale-plan-rejection",
+            "stale-affordance-content-rejection",
+            "stale-action-semantic-rejection",
             "stale-execution-rejection",
             "recovery-lineage-checkpoint",
             "checkpoint-no-replay",

@@ -21,6 +21,8 @@
         "recovery_candidates_generated_from_affordances": true,
         "recovery_lineage_recorded": true,
         "stale_planning_rejected": true,
+        "stale_content_rejected": true,
+        "stale_action_rejected": true,
         "stale_execution_rejected": true,
         "checkpoint_lineage_preserved": true,
         "recovery_synthesized_candidates": [
@@ -81,6 +83,8 @@
         "recovery_candidates_generated_from_affordances": true,
         "recovery_lineage_recorded": true,
         "stale_planning_rejected": true,
+        "stale_content_rejected": true,
+        "stale_action_rejected": true,
         "stale_execution_rejected": true,
         "checkpoint_lineage_preserved": true,
         "recovery_synthesized_candidates": [
@@ -141,6 +145,8 @@
         "recovery_candidates_generated_from_affordances": true,
         "recovery_lineage_recorded": true,
         "stale_planning_rejected": true,
+        "stale_content_rejected": true,
+        "stale_action_rejected": true,
         "stale_execution_rejected": true,
         "checkpoint_lineage_preserved": true,
         "recovery_synthesized_candidates": [
