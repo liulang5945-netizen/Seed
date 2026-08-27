@@ -505,6 +505,7 @@ class WorldSchemaRegistry:
         self._lineage: list[dict[str, Any]] = []
         self._transition_outcomes: dict[tuple[str, ...], dict[str, int]] = {}
         self._transition_confidence: dict[tuple[str, ...], float] = {}
+        self._transition_statistics: dict[tuple[str, ...], dict[str, dict[str, float]]] = {}
 
     @staticmethod
     def _known_feature_keys(schema: WorldSchema) -> tuple[tuple[str, ...], ...]:
@@ -572,6 +573,18 @@ class WorldSchemaRegistry:
                     "signature": signature,
                     "evidence_count": count,
                     "probability": count / float(total),
+                    "reward_mean": (
+                        None
+                        if signature not in self._transition_statistics.get(key, {})
+                        else self._transition_statistics[key][signature]["reward_sum"]
+                        / float(count)
+                    ),
+                    "success_probability": (
+                        None
+                        if signature not in self._transition_statistics.get(key, {})
+                        else self._transition_statistics[key][signature]["success_sum"]
+                        / float(count)
+                    ),
                 }
                 for signature, count in sorted(hypotheses.items())
             )
@@ -584,6 +597,31 @@ class WorldSchemaRegistry:
         if all(count >= self._stochastic_min_support for count in hypotheses.values()):
             return "stochastic"
         return "conflicted"
+
+    def transition_uncertainty(self, key: tuple[str, ...]) -> tuple[float, str]:
+        hypotheses = self._transition_outcomes.get(tuple(str(item) for item in key), {})
+        if not hypotheses:
+            return 1.0, "unseen"
+        mode = self.transition_outcome_mode(key)
+        if mode == "deterministic":
+            return 0.0, mode
+        if mode == "stochastic":
+            total = sum(hypotheses.values())
+            return 1.0 - max(hypotheses.values()) / float(total), mode
+        return 1.0, mode
+
+    def transition_outcome_estimate(self, key: tuple[str, ...]) -> tuple[float, float] | None:
+        normalized_key = tuple(str(item) for item in key)
+        hypotheses = self._transition_outcomes.get(normalized_key, {})
+        statistics = self._transition_statistics.get(normalized_key, {})
+        if not hypotheses or set(hypotheses) != set(statistics):
+            return None
+        total = sum(hypotheses.values())
+        reward = sum(statistics[signature]["reward_sum"] for signature in hypotheses) / float(total)
+        success = sum(statistics[signature]["success_sum"] for signature in hypotheses) / float(
+            total
+        )
+        return reward, success
 
     def schema_at(self, version: int) -> WorldSchema:
         try:
@@ -719,28 +757,38 @@ class WorldSchemaRegistry:
             )
         )
 
+    def transition_context_key(self, state: WorldState, action: Any) -> tuple[str, ...]:
+        """Return a stable key for semantic state/action context."""
+
+        before = self.normalize_state(state)
+        normalized_action = self.normalize_action(action)
+        return (
+            "transition",
+            self._stable_state_signature(before),
+            self._stable_action_signature(normalized_action),
+        )
+
     def transition_evidence_key(self, transition: WorldTransition) -> tuple[str, ...]:
         """Return a cross-episode key for the same semantic intervention context."""
 
         if not isinstance(transition, WorldTransition):
             raise TypeError("world schema registry requires a WorldTransition")
-        before = self.normalize_state(transition.before)
-        action = self.normalize_action(transition.action)
-        return (
-            "transition",
-            self._stable_state_signature(before),
-            self._stable_action_signature(action),
-        )
+        return self.transition_context_key(transition.before, transition.action)
 
     def _transition_outcome_signature(self, transition: WorldTransition) -> str:
         after = self.normalize_state(transition.after)
+        reward, success = self._transition_outcome_values(transition)
+        return repr((self._stable_state_signature(after), round(reward, 6), success))
+
+    @staticmethod
+    def _transition_outcome_values(transition: WorldTransition) -> tuple[float, bool]:
         reward = float(transition.outcome.reward)
         success = (
             bool(transition.outcome.success)
             if transition.outcome.success is not None
             else reward > 0.0
         )
-        return repr((self._stable_state_signature(after), round(reward, 6), success))
+        return reward, success
 
     def record_transition_outcome(self, transition: WorldTransition) -> bool:
         """Adjudicate repeated real outcomes before allowing local learning."""
@@ -754,6 +802,14 @@ class WorldSchemaRegistry:
             ranked_before = sorted(hypotheses.items(), key=lambda item: (-item[1], item[0]))
             self._record_conflict(key, ranked_before[0][0], signature)
         hypotheses[signature] = hypotheses.get(signature, 0) + 1
+        reward, success = self._transition_outcome_values(transition)
+        statistics = self._transition_statistics.setdefault(key, {})
+        evidence = statistics.setdefault(
+            signature,
+            {"reward_sum": 0.0, "success_sum": 0.0},
+        )
+        evidence["reward_sum"] += reward
+        evidence["success_sum"] += float(success)
         ranked = sorted(hypotheses.items(), key=lambda item: (-item[1], item[0]))
         leader_signature, leader_count = ranked[0]
         total = sum(hypotheses.values())
@@ -943,6 +999,15 @@ class WorldSchemaRegistry:
                 {"key": list(key), "value": value}
                 for key, value in sorted(self._transition_confidence.items())
             ],
+            "transition_statistics": [
+                {
+                    "key": list(key),
+                    "hypotheses": {
+                        signature: dict(values) for signature, values in sorted(statistics.items())
+                    },
+                }
+                for key, statistics in sorted(self._transition_statistics.items())
+            ],
         }
 
     @classmethod
@@ -1007,6 +1072,16 @@ class WorldSchemaRegistry:
             tuple(str(value) for value in item["key"]): float(item["value"])
             for item in payload.get("transition_confidence", ())
         }
+        registry._transition_statistics = {
+            tuple(str(value) for value in item["key"]): {
+                str(signature): {
+                    "reward_sum": float(values["reward_sum"]),
+                    "success_sum": float(values["success_sum"]),
+                }
+                for signature, values in dict(item.get("hypotheses", {})).items()
+            }
+            for item in payload.get("transition_statistics", ())
+        }
         return registry
 
 
@@ -1015,6 +1090,8 @@ class WorldPrediction:
     state: WorldState
     reward: float
     success_probability: float
+    uncertainty: float = 1.0
+    uncertainty_mode: str = "unseen"
 
 
 @dataclass(frozen=True)
@@ -1301,10 +1378,25 @@ class WorldDynamicsLearner(nn.Module):
             )
         delta = output[: self.schema.state_dim]
         values = self.schema.state_values(normalized_state) + delta
+        context_key = self.schema_registry.transition_context_key(
+            normalized_state, normalized_action
+        )
+        uncertainty, uncertainty_mode = self.schema_registry.transition_uncertainty(context_key)
+        outcome_estimate = self.schema_registry.transition_outcome_estimate(context_key)
+        reward = float(output[-2])
+        success_probability = float(torch.sigmoid(output[-1]))
+        if outcome_estimate is not None:
+            reward, success_probability = outcome_estimate
+        predicted_state = replace(
+            _replace_numeric_state(normalized_state, self.schema, values),
+            uncertainty=uncertainty,
+        )
         return WorldPrediction(
-            state=_replace_numeric_state(normalized_state, self.schema, values),
-            reward=float(output[-2]),
-            success_probability=float(torch.sigmoid(output[-1])),
+            state=predicted_state,
+            reward=reward,
+            success_probability=success_probability,
+            uncertainty=uncertainty,
+            uncertainty_mode=uncertainty_mode,
         )
 
     def fit(

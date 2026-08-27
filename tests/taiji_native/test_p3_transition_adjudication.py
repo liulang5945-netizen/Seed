@@ -9,6 +9,9 @@ def test_p3_transition_adjudication_gate_passes() -> None:
     assert report["aggregate"]["passed"] is True
     assert report["aggregate"]["first_calibration_min"] == 1.0
     assert report["aggregate"]["cross_episode_calibration_min"] == 1.0
+    assert report["aggregate"]["known_prediction_uncertainty_min"] == 1.0
+    assert report["aggregate"]["conflicted_prediction_uncertainty_min"] == 1.0
+    assert report["aggregate"]["stochastic_prediction_uncertainty_min"] == 1.0
     assert report["aggregate"]["contradiction_rejected_min"] == 1.0
     assert report["aggregate"]["stochastic_tie_rejected_min"] == 1.0
     assert report["aggregate"]["stochastic_mode_min"] == 1.0
