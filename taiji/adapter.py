@@ -89,6 +89,7 @@ from .planning import (
     ImaginedRollout,
     PlanningCandidate,
     PlanningDecision,
+    RecoveryRolloutLineage,
     RolloutDecision,
 )
 from .procedural_memory import ProceduralMemoryLearner
@@ -5153,6 +5154,7 @@ class TSKV8Adapter(Taiji):
         steps: Sequence[PlanningCandidate],
         *,
         confidence: float = 1.0,
+        recovery_lineage: RecoveryRolloutLineage | None = None,
     ) -> ImaginedRollout:
         """Roll the attached world learner forward over structured actions."""
 
@@ -5199,6 +5201,7 @@ class TSKV8Adapter(Taiji):
             goal_id=goal_id,
             steps=tuple(imagined_steps),
             confidence=confidence,
+            recovery_lineage=recovery_lineage,
         )
 
     def synthesize_recovery_rollouts(
@@ -5264,7 +5267,7 @@ class TSKV8Adapter(Taiji):
             rejected_key = self._world_dynamics.schema_registry.action_semantic_key(
                 recovery_branch.rejected_action
             )
-        rollouts = []
+        prepared: list[tuple[WorldAffordance, WorldAction, float]] = []
         start_tick = self._cognitive_state.world.tick
         for affordance in self._cognitive_state.world.affordances:
             try:
@@ -5290,6 +5293,18 @@ class TSKV8Adapter(Taiji):
                 == rejected_key
             ):
                 continue
+            prepared.append((affordance, first_action, resource_cost))
+        if not prepared:
+            raise RuntimeError("recovery rollout synthesis found no executable alternative")
+        for _, first_action, _ in prepared:
+            self._world_dynamics.register_open_set(
+                self._cognitive_state.world,
+                action=first_action,
+                register_parameters=False,
+            )
+        schema_revision = self._world_dynamics.schema_registry.active_version
+        rollouts = []
+        for affordance, first_action, resource_cost in prepared:
             templates = tuple(
                 PlanningCandidate(
                     candidate_id=(
@@ -5310,10 +5325,19 @@ class TSKV8Adapter(Taiji):
                     selected_goal_id,
                     templates,
                     confidence=affordance.confidence,
+                    recovery_lineage=(
+                        None
+                        if capability is None
+                        else RecoveryRolloutLineage(
+                            capability_tick=capability.tick,
+                            capability_actions=capability.actions,
+                            capability_action_kinds=capability.action_kinds,
+                            affordance_id=affordance.affordance_id,
+                            schema_revision=schema_revision,
+                        )
+                    ),
                 )
             )
-        if not rollouts:
-            raise RuntimeError("recovery rollout synthesis found no executable alternative")
         return tuple(rollouts)
 
     def plan_rollouts(
@@ -5326,11 +5350,16 @@ class TSKV8Adapter(Taiji):
 
         if self._goal_planner is None:
             raise RuntimeError("goal planner is not attached")
+        fresh_rollouts = tuple(
+            rollout for rollout in rollouts if self._recovery_rollout_is_fresh(rollout)
+        )
+        if rollouts and not fresh_rollouts:
+            raise RuntimeError("recovery rollouts are stale; synthesize new candidates")
         enriched_rollouts = tuple(
             self._apply_concept_sequence_affinity(
                 replace(rollout, steps=self._apply_concept_affinity(rollout.steps))
             )
-            for rollout in rollouts
+            for rollout in fresh_rollouts
         )
         recovery_branch = self._cognitive_state.recovery_branch
         if recovery_branch is not None and self._world_dynamics is not None:
@@ -5390,6 +5419,10 @@ class TSKV8Adapter(Taiji):
         rollout = self._planned_rollout
         if rollout is None:
             raise RuntimeError("imagined rollout execution requires a planned rollout")
+        if not self._recovery_rollout_is_fresh(rollout):
+            self._planned_rollout = None
+            self._replan_required = True
+            raise RuntimeError("planned recovery rollout is stale; synthesize new candidates")
         step = rollout.steps[0]
         parameters = dict(step.action.parameters)
         action_symbol = parameters.get("action_symbol")
@@ -5441,6 +5474,7 @@ class TSKV8Adapter(Taiji):
                 goal_id=rollout.goal_id,
                 steps=rollout.steps[1:],
                 confidence=rollout.confidence,
+                recovery_lineage=rollout.recovery_lineage,
             )
             self._planned_rollout = self._apply_concept_sequence_affinity(suffix)
         if result.terminal and self._cognitive_state.planning_recovery is not None:
@@ -5448,6 +5482,28 @@ class TSKV8Adapter(Taiji):
         if result.terminal and self._cognitive_state.recovery_branch is not None:
             self._cognitive_state = replace(self._cognitive_state, recovery_branch=None)
         return experienced
+
+    def _recovery_rollout_is_fresh(self, rollout: ImaginedRollout) -> bool:
+        lineage = rollout.recovery_lineage
+        if lineage is None:
+            return True
+        capability = self._cognitive_state.environment_capability
+        if capability is None or capability.tick != self._cognitive_state.world.tick:
+            return False
+        if lineage.capability_tick != capability.tick:
+            return False
+        if lineage.capability_actions != capability.actions:
+            return False
+        if lineage.capability_action_kinds != capability.action_kinds:
+            return False
+        if self._world_dynamics is None:
+            return False
+        if lineage.schema_revision != self._world_dynamics.schema_registry.active_version:
+            return False
+        return any(
+            affordance.affordance_id == lineage.affordance_id
+            for affordance in self._cognitive_state.world.affordances
+        )
 
     @property
     def replan_required(self) -> bool:

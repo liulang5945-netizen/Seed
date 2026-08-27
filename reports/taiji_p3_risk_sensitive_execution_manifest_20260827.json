@@ -16,6 +16,10 @@
     "resource-budget-filter",
     "environment-capability-discovery",
     "capability-refresh-after-step",
+    "recovery-lineage-freshness",
+    "stale-plan-rejection",
+    "stale-execution-rejection",
+    "recovery-lineage-checkpoint",
     "checkpoint-no-replay",
     "recovery-rollout-continuation"
   ],
