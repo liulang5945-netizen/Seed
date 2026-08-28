@@ -1465,6 +1465,263 @@ manifest，按 artifact ID 去重，显式维护版本 allowlist、active/previo
 失败时旧 provider、旧 runtime 和 active/previous 关系保持不变。定向语言/provider 回归 `25 passed`，Ruff、Black、核心 Mypy=`0`；提交后 CI
 已复核全绿（Python 3.10/3.12、Windows、前端、Docker、启动冒烟），CUDA 继续暂缓。
 
-**当前唯一下一步：建立 provider runtime health watchdog 与自动回退 Gate。** 在 active artifact 已通过首轮 canary 后，增加请求级健康探针、
-连续失败阈值、有限冷却窗口和 previous-version 自动回退；健康状态必须可写入 checkpoint、在重启后续接，且任何探针误报或回退目标漂移都只能
-保持当前版本或回到 `native-readable`，不能静默加载未 allowlist 的 artifact，CUDA 继续暂缓。
+**已暂停：provider runtime health watchdog 不再占用主线。** 2026-08-28 全盘审计确认，语言 provider 已有首轮准入、内容寻址与原子轮换，
+但 Taiji 原生聊天仍未连接产品工作台和真实工具环境。继续加深 provider 可靠性会优化一个已经可回退的末端器官，却绕过更基础的
+“认知能否改变真实产品环境”缺口。该 Gate 保留到下述 W7，不删除既有成果；CUDA 继续暂缓。
+
+### 16.1 全盘审计后的路线校准：从研究 Gate 转向产品执行闭环（2026-08-28）
+
+#### 16.1.1 审计结论
+
+本轮按用户要求暂停功能开发，只核对 `main@6e2204b` 的真实代码、计划、API、前端和客户端链路。结论不是 Taiji 缺少一个 IDE
+按钮，而是项目存在一条系统级断层：**Taiji 内已经构造出世界、计划、`ActionIntent`、`ToolCall` 和 `Outcome` 等认知/效应器合同，
+Seed 产品却没有一个 Taiji-native 的执行平面把这些合同接到 IDE、文件、终端、LSP、诊断和 MCP。**
+
+这解释了为什么研究 Gate 数量持续增加，客户端仍像若干互不相连的面板：当前 Taiji 能在模拟环境中证明工具闭环，语言 provider 能形成
+可读文本，IDE 也能被人手操作，但三者没有共享同一 capability、权限、执行、结果和状态合同。继续沿 interaction-group attribution、provider
+watchdog 或更多小型数值 Gate 纵深推进，会扩大内部证明数量，却不会关闭产品最关键的因果闭环，属于路径偏移。
+
+因此主线立即重排为 **Workbench Closure W0–W7**。P1–P7 的既有成果保留为认知基础，不回滚；抽象 recovery attribution、provider
+watchdog、CUDA/fused kernel 和新视觉打磨全部冻结，直到真实工作台纵切片通过。
+
+#### 16.1.2 当前进度的分层事实
+
+| 层 | 已完成事实 | 尚未完成/不能宣称 |
+|---|---|---|
+| Taiji cognition | P1–P7 已覆盖版本化状态、感知/世界/工作空间、记忆、规划、结构生长、生成、工具合同与大量 checkpoint/lesion Gate | 未证明开放域智能；大量 Gate 仍是小型数值/模拟环境 |
+| 语言器官 | `native-readable`、外部 Qwen provider、训练/安全准入、内容寻址、registry 和原子轮换已落地 | provider 只负责表达，不拥有 IDE/工具权限；watchdog 尚未做且不再是当前瓶颈 |
+| 产品运行时 | `SeedRuntime.chat()` 可走 Taiji 输入边界并返回可读文本；桌面壳、标题栏、托盘、构建和 CI 已收束 | 原生聊天没有 tool event、执行循环或 IDE after-state；不能自主完成代码任务 |
+| 工作台 | Monaco、文件树、人工保存、Python run 和交互式终端 UI 已存在 | API 被归为 Legacy 可选路由；没有 Taiji-native capability registry、事务、审批、outcome 或自主语言选择 |
+| 工具/MCP | NeuroPlex 路线有 ReAct、工具表、MCP 和插件历史实现；Taiji 有通用 `TaijiToolEnvironment` 协议 | 原生模式上报空工具列表；现有 MCP/Agent 路由没有接入 Taiji，部分前后端路径/参数还不一致 |
+| 训练/发布 | Taiji native checkpoint、训练恢复、provider artifact 已存在 | 产品页仍把 GGUF、LoRA 合并和 Legacy 模型发布当作 Taiji 正式能力 |
+| 前端产品口径 | provider 回退、运行时和错误中心已有一定可观测性 | 多处界面仍展示 TSK-v8 旧叙事、Cortex 热切换、Legacy life/Agent 配置和未实现能力 |
+| 工程门禁 | 主分支与远端同步，最近 CI 已全绿；前端 185 tests，跨平台/容器/启动门禁已建立 | API/前端 capability 契约没有生成或一致性门禁；“界面有入口但后端不存在/原生模式不注册”仍可全绿 |
+
+规模事实也支持“先收执行平面”的判断：当前仓库约 202 个 API route decorators，17 个 Seed/API/desktop 文件仍直接导入 NeuroPlex；
+`taiji/adapter.py` 已达约 9300 行，Taiji native 有 85 个测试文件、68 个 eval 脚本和 253 个跟踪报告。项目不缺继续增加局部 Gate 的能力，
+缺的是把这些能力变成一个真实、可观测、可撤销的产品纵切片。
+
+#### 16.1.3 已确认的问题清单与根因
+
+| 编号 | 代码证据 | 实际问题 | 根因分类 |
+|---|---|---|---|
+| G1 | `api/routes_chat.py::_seed_event_generator()` 只调用 `seed_runtime.chat()` 并返回 `final` 文本 | Seed 原生聊天不会生成/执行工作台工具事件 | 产品执行链缺失 |
+| G2 | `taiji/adapter.py::generate_tool_call/execute_tool_call` 只被 Taiji 测试消费，`api/`/`seed/` 无调用者 | P6 工具合同停留在模拟环境，没有产品适配器 | research→product 断层 |
+| G3 | `api/app.py::_register_routers()` 通过 `_load_optional_router()` 挂载 `routes_agent_workspace` | 关闭 Legacy 时，内置 IDE 的文件 API 一起消失 | 所有权分类错误 |
+| G4 | `frontend/src/composables/useWorkspaceBridge.js` 全仓无调用者 | 文件打开、命令、错误回流只是注释承诺 | 死桥/假接线 |
+| G5 | `MonacoEditor.vue` 用硬编码列表、扩展名表和组件内 `ref` 切换语言 | Taiji、后端和 checkpoint 不知道当前编程语言，也无法自主选择 | 状态只在 UI |
+| G6 | 原生模式的 `runtime_service._tools_section()` 返回空列表，`runtimeStore.modelLifecycle` 却宣称可工具调用/自主探索 | 产品状态与真实 capability 相互矛盾 | 双重真相源 |
+| G7 | `routes_agent_workspace.py` 的 run/create/analyze 仍导入 `neuroplex.agent_ext` | 即使界面可用，也不是 Taiji-native 工作台执行器 | Legacy 反向占位 |
+| G8 | `AgentConfigView.vue` 使用 `/api/mcp/start/{id}`、`install/{id}` 等路径，后端要求 `/api/mcp/start` + JSON body；搜索参数也不一致 | MCP 面板存在可稳定复现的前后端合同漂移 | 无契约 Gate |
+| G9 | TrainingView/useTraining/locales 展示 GGUF 导出和“合并 LoRA 权重”，后端只返回“Seed 不支持” | 旧 HF/GGUF 模型格式仍被呈现为正式产品操作 | 迁移残留 |
+| G10 | `routes_settings.py`、`routes_models.py`、`seed_platform.config` 仍保存 GGUF/HF/model_type API 与字段 | 前端残留背后还有设置、OpenAPI、测试快照和兼容数据残留 | 只隐藏 UI 不够 |
+| G11 | Settings 仍允许 Seed↔Cortex 热切换，Agent/ReAct/MCP/RAG 只在 Legacy router 下出现 | “Legacy 仅离线对照”没有落实到产品边界 | 架构决策未产品化 |
+| G12 | Chat/Life/Settings 仍出现“不经过学习式 embedding”“ByteSensor→ByteMotor 即 Taiji”等旧文案 | 产品继续传播已被 2026-08-25 架构纠正否定的方向 | 文案/心智模型漂移 |
+| G13 | `ChatRequest`、Agent 设置仍暴露 `engine/temperature/max_iterations`，Seed 原生分支实际忽略这些字段 | 用户配置看似有效，实际不进入原生运行时 | 幽灵配置 |
+| G14 | `taiji/adapter.py`、主要 Vue view 和路线图持续膨胀 | 新能力容易继续堆进巨型文件并产生隐藏耦合 | 模块边界债 |
+
+#### 16.1.4 术语和所有权重新钉定
+
+后续接口禁止继续使用含义模糊的 `language` 或 `model_type`：
+
+| 概念 | 规范名 | 决策权 | 状态/证据 |
+|---|---|---|---|
+| 人类自然语言表达器 | `natural_language_backend` | Taiji 生成合同 + Seed provider loader | provider artifact、Gate、health |
+| IDE 编程语言 | `programming_language_id` | Taiji 可提出/选择；Seed capability 执行 | 文件内容、扩展名、manifest、LSP、confidence、provenance |
+| 文件语法高亮 | `editor_language_id` | Workbench projection | 可与 programming language 相同，但不是认知主体 |
+| 运行器/工具链 | `runner_id` / `toolchain_id` | Seed capability registry + policy | 可用性、版本、平台、资源、权限 |
+| Taiji 保存格式 | `taiji_checkpoint_format` | Taiji/Seed checkpoint contract | `seed-native-v1` 兼容信封与 native payload |
+| 外部嘴巴资产 | `language_provider_artifact` | Seed 集成边界 | 可使用 HF/Transformers/LoRA，但仅是末端器官 |
+| 导入/导出适配格式 | `artifact_adapter_format` | Seed 发布工具 | 不得成为认知架构或全局 runtime 开关 |
+
+HF 本身不是禁词：Hugging Face 数据集、缓存、Qwen/Transformers provider 和 adapter 可以继续存在于数据/语言器官集成边界。
+必须清除的是把 HF/GGUF/LoRA 当作 Taiji 核心 checkpoint、全局模型类型或正式产品认知切换的 UI/API。合法的外部 provider
+能力移动到“语言器官资产”语境，不再出现在“Taiji 模型格式”语境。
+
+#### 16.1.5 目标架构
+
+```text
+User / environment observation
+        |
+        v
+Taiji perception -> world/self/memory/goal -> plan -> ActionIntent
+                                                    |
+                                                    v
+                                           structured ToolCall
+                                                    |
+                                                    v
+Seed Workbench Capability Plane
+  registry -> snapshot/freshness -> policy/approval -> transaction/executor -> audit
+       |             |                    |                    |
+       |             |                    |                    +-> file/terminal/LSP/MCP result
+       |             |                    +-> deny / ask / allow / budget
+       |             +-> current files, languages, tools, permissions, versions
+       +-> typed schemas, risk, reversibility, resource cost
+                                                    |
+                                                    v
+typed WorkbenchOutcome + after-state + diagnostics + provenance
+                                                    |
+                                                    v
+Taiji Outcome / Observation / episodic+procedural memory / online credit / replan
+
+Frontend IDE: observes the same snapshot, transaction and audit stream; it never becomes the hidden executor.
+Language provider: realizes ExpressionPlan only; it never receives workbench authority.
+```
+
+工作台 capability 至少分为：
+
+- `workspace.list/read/stat/search`：只读、可默认自动执行；
+- `editor.open/reveal/set_language/diagnostics`：可撤销 UI/分析状态；
+- `workspace.apply_patch/create/rename/delete`：文件事务，必须有 before digest、patch、after digest 和撤销记录；
+- `terminal.run/test/build/debug`：命令 schema、cwd、timeout、环境变量白名单、资源预算和完整结果；
+- `toolchain.detect/select`：识别项目语言、LSP、解释器/编译器，不静默安装依赖；
+- `mcp.list/invoke`：通过统一 schema 注册，不能继续直接复用 NeuroPlex registry；
+- `dependency.install/network/destructive`：高风险能力，除非用户预先建立窄 allowlist，否则必须显式审批。
+
+#### 16.1.6 不可破坏的不变量
+
+1. Taiji 决定做什么；Seed 决定能力是否存在、是否获准以及如何安全执行；前端只观察和承载人机控制。
+2. 不允许语言 provider、ReAct、RAG、工作流或 UI 先决定动作，再让 Taiji 只做文案/打分。
+3. 每个 action 必须绑定 `intent_id/call_id/capability_revision/world_tick`，每个 outcome 必须绑定真实执行和 after-state。
+4. capability snapshot、审批、预算、执行和 outcome 必须可 checkpoint/重启续接；过期 snapshot fail-closed。
+5. 文件修改使用事务/patch，不把任意自然语言直接写盘；执行前后可 diff、可撤销、可审计。
+6. IDE 编程语言允许 Taiji 自主切换，但自动执行只限高置信、可逆的 `editor.set_language`；若会改变 runner、安装依赖、
+   执行命令或覆盖未保存状态，必须进入对应风险 Gate。
+7. UI 不得展示后端/原生模式未注册的能力；API 不得保留永远返回“不支持”的正式操作来制造假能力。
+8. Legacy 只保留离线 benchmark/兼容启动，不再作为正式客户端的隐藏能力供应商。
+9. 每个阶段先证明门禁能变红，再验收绿；CI 必须同时跑 native、legacy-off、frontend contract、Windows 和 packaged smoke。
+10. CUDA 继续暂缓；工作台闭环不依赖本机硬件升级，不能以 CUDA 为阻塞理由。
+
+#### 16.1.7 唯一顺序：Workbench Closure W0–W7
+
+以下是严格顺序，不是可并行菜单。前一阶段退出 Gate 未通过，不进入后一阶段。
+
+##### W0：Workbench Capability Contract + 只读真实纵切片
+
+目标是先打通最小但真实的 `Taiji → Seed → IDE/workspace → Taiji` 回路，而不是先做万能 Agent。
+
+工作项：
+
+1. 在 Seed 产品边界定义版本化 `CapabilityDescriptor`、`CapabilitySnapshot`、`WorkbenchActionRequest`、
+   `ExecutionPolicyDecision`、`WorkbenchTransaction` 和 `WorkbenchOutcome`；Taiji 继续只使用自身 `ToolCall/Outcome`。
+2. 新建 Taiji-native `WorkbenchEnvironment(TaijiToolEnvironment)`，首批只注册 `workspace.list/read/stat/search`、
+   `editor.open` 和 `editor.diagnostics.read`；不得导入 NeuroPlex。
+3. 把工作区基础 API 从 Legacy optional router 中拆出为 core router；Legacy create-project/analyze/install 单独隔离或返回明确
+   `legacy_only`，不再让 IDE 是否存在取决于 `SEED_ENABLE_LEGACY`。
+4. SeedRuntime 新增 action event stream：`planned → policy → executing → outcome`；前端聊天与 IDE 订阅同一事件，
+   `editor.open` 由状态投影驱动，不再通过无人消费的 window event bridge。
+5. `/api/runtime/status` 只从 capability registry 上报工具；删除“空工具列表但宣称可自主探索”的推断文案。
+6. 建立第一个真实 canary：在临时工作区放入未见文件，Taiji 形成读取意图，Seed 执行读取，文件 digest/内容摘要作为
+   `WorkbenchOutcome` 回写，checkpoint 后可继续，关闭 environment 时 fail-closed。
+
+退出 Gate：
+
+- legacy-off 启动仍能打开 IDE、列目录和读取文件；
+- 一条真实 read-only action 从 `ActionIntent` 到 UI 可见 outcome 全链路保留同一 lineage；
+- 断开 WorkbenchEnvironment、篡改 capability revision、路径越界和过期 snapshot 均确定性失败；
+- 任何前端显示的 capability 均存在于 OpenAPI/runtime snapshot，契约测试可通过故意删端点变红；
+- 未实现 write/terminal/MCP 时 UI 明确显示“未授权/未接入”，不得伪装可用。
+
+##### W1：编程语言识别、选择与 IDE 自主切换
+
+1. 用 `ProgrammingLanguageEvidence` 统一扩展名、shebang、文件内容、项目 manifest、邻近文件、LSP 与 toolchain 可用性；
+   现有 `extToLang` 只降为一个低权重证据源。
+2. `programming_language_id`、`editor_language_id`、confidence、provenance、capability revision 和用户 override 进入
+   Workbench state；Monaco 不再维护第二份隐藏真相。
+3. 注册可逆 `editor.set_language` action。高置信且不改变运行器/文件内容时可由 Taiji 自动执行；低置信、语言冲突或会改变
+   toolchain 时产生 `ask_user` policy outcome。
+4. 语言列表由 backend capability 动态提供；未知语言保持 `plaintext`，不得因不在硬编码数组而丢失状态。
+5. 用 `.h`、无扩展 shebang、多语言 monorepo、Vue/TS、notebook/markdown code block 和错误扩展名建立 holdout；
+   filename-only lesion 必须显著退化，证明不是扩展名查表。
+
+退出 Gate：Taiji 能解释“为何选择该语言”、自主切换后 Monaco/LSP/runner snapshot 一致，用户 override 可保持并撤销，
+checkpoint/重启不会把旧语言状态错误应用到新文件。
+
+##### W2：受控写入、终端与测试执行
+
+1. 文件修改只接受结构化 patch/transaction，包含 before digest、目标路径、预期 after digest、冲突处理和 undo token；
+   create/rename/delete 使用同一事务模型。
+2. 终端从交互式 WebSocket UI 中抽出非交互 `terminal.run` executor，参数包含 argv、cwd、timeout、env allowlist、
+   output limit 和 expected artifacts；不把 shell 字符串直接拼接执行。
+3. capability 风险分级采用渐进自治：只读默认自动；可逆编辑按用户 autonomy policy；写入需预览/撤销；安装、网络、删除和
+   破坏性命令默认显式审批。
+4. 真实 diagnostics/test/build 结果回写 Taiji；成功不以 exit code 单独判断，还要记录 diagnostics、产物和 after-state。
+5. 故意覆盖未保存文件、cwd 漂移、超时、输出洪泛、部分 patch 冲突和进程中断，验证原子失败与恢复。
+
+退出 Gate：Taiji 可在临时项目中读文件、选择语言、生成 patch、运行测试、观察失败、重规划并修复；全过程可审计、可撤销、
+checkpoint 续跑不重复执行已提交事务。
+
+##### W3：原生工具/MCP registry 与自主循环
+
+1. 将 workspace/terminal/LSP 与 MCP 都适配到同一 Seed capability registry；复用协议思想，不复用 NeuroPlex 认知/工具选择器。
+2. MCP 管理 API 与前端按 OpenAPI 生成/校验，修复 path/body/query 漂移；安装/启动服务与调用工具分开授权。
+3. Taiji `SelfState` 保存可用工具、权限、成功率、延迟、资源成本和最近失败，不把 UI localStorage 当自我模型。
+4. 以真实 outcome 更新 affordance、procedural memory、world model 和 replan；语言 provider 只解释结果，不做隐藏 tool selection。
+5. 建立有限 horizon autonomous task loop，并有 step/time/resource budget、取消、暂停、人工接管和恢复。
+
+退出 Gate：在全新临时项目完成一个跨文件、诊断、测试的代码任务；去掉 Taiji planner 或 WorkbenchEnvironment 任一侧均失败，
+证明不是 Legacy ReAct/外部 decoder 偷做；多次 checkpoint 不重复工具副作用。
+
+##### W4：HF/GGUF/Transformer/Legacy 产品残留迁移
+
+1. 前端删除 GGUF 导出按钮、LoRA 合并发布文案、无效的 `engine/temperature/max_iterations` 和正式产品 Cortex 热切换；
+   外部 Qwen/LoRA 只在“语言器官资产”页面/高级配置中出现。
+2. 后端将 artifact 分类收敛为 `taiji_checkpoint`、`language_provider_artifact`、`legacy_benchmark_artifact`；删除全局
+   `model_type=gguf/self/cortex` 语义。
+3. 对已保存 `gguf_path/model_type/model_name` 做一次显式设置迁移：能识别则转到 legacy/provider 配置，不能识别则隔离并提示，
+   不静默猜测；旧端点先返回版本化 deprecation/410，再在一个兼容窗口后删除。
+4. OpenAPI snapshot、Pydantic model、settings schema、frontend locales/composables/tests 一次清完；`download_hf` 等永远“不支持”
+   的正式路由不能继续留在产品 API。
+5. NeuroPlex 保留离线 benchmark CLI、固定数据/报告和 opt-in compatibility profile；默认客户端、主导航和 runtime status 不再暴露。
+
+退出 Gate：frontend/source/OpenAPI/core settings 中不再存在 GGUF 或认知主体热切换；`taiji/` 仍零 Transformer import；
+Qwen provider canary 仍通过，证明清理的是错误产品语义而不是合法语言器官。
+
+##### W5：客户端全部内容与 Taiji 实际能力对齐
+
+1. Chat 首屏、Life、Agent、Training、Settings、KB 的每一项状态标注真实 source、owner、freshness 和可用性；删除
+   “ByteSensor→ByteMotor 即完整 Taiji”“不经过学习式 embedding”等已失效文案。
+2. Life 面板改读 Taiji homeostasis/self-state；尚无原生数据的卡片隐藏或标为 roadmap，不再用 Legacy scheduler 代填。
+3. Agent 配置改为 autonomy policy、capability scope、预算和审批偏好；不再展示 Seed 原生不消费的 ReAct 温度/迭代配置。
+4. KB/RAG 只有在检索结果能作为带 provenance 的 Observation 进入 Taiji 时才称“知识能力”；否则仅称资料库管理。
+5. 建立 route-level packaged smoke 和 capability screenshot/state contract，防止“页面可见但功能未接”再次全绿。
+
+退出 Gate：默认客户端只展示 Taiji-native 实际能力；断开任一后端 capability 时 UI 自动降级且不保留假按钮/假状态；
+文案、health、runtime snapshot 和可执行行为一致。
+
+##### W6：模块化、契约生成与发布可靠性
+
+1. 按 perception/world/memory/planning/execution/language/checkpoint facade 拆分 9300 行 adapter；保持公开 facade 和 checkpoint
+   兼容，不做无验证的大重写。
+2. 大型 Vue view 拆为 view model + typed API client + 可复用 panels；所有 mutation 经统一 client，不散落 URL 字符串。
+3. 从 OpenAPI/capability schema 生成或校验前端 client，CI 检查每个前端调用有端点、method/body/query 对齐，native/legacy-off
+   注册表与界面 capability 一致。
+4. 增加真实任务 trace、action latency、policy deny、rollback、checkpoint resume 和 outcome learning 指标；研究 report 与产品 SLO 分离。
+5. 发版门禁覆盖源码、dist、打包客户端、legacy-off、首次工作区、升级设置迁移和进程回收。
+
+退出 Gate：模块拆分前后 checkpoint digest/行为等价；故意制造一个 URL、schema、能力状态或 checkpoint 漂移时 CI 必红；
+打包客户端完成 W2/W3 canary。
+
+##### W7：恢复长期研究主线
+
+只有 W0–W6 全部通过后，才按真实产品 trace 决定下一项研究：
+
+- provider runtime watchdog 与 previous-version 自动回退；
+- interaction-group/recovery attribution 的必要深度与规模；
+- 开放域 world/semantic/skill 学习；
+- 自进化对真实任务失败与资源瓶颈的结构增长；
+- CUDA 跨设备一致性、真实热点和 fused/sparse kernel。
+
+选择顺序必须由产品任务中的失败分布、资源数据和 lesion 证据决定，不再仅凭哪个内部 Gate 最容易继续扩展。
+
+#### 16.1.8 立即冻结和归档边界
+
+- 不删除 P1–P7 核心架构讨论、requirements、native architecture 和本路线；它们仍是后续开发的实时依据。
+- 测试过程日志、一次性调试探针、已被后续 Gate 覆盖的执行记录可继续进入 archive；核心决策和未关闭缺口不归档。
+- 在 W0 之前不继续增加 interaction-group、provider watchdog、CUDA、视觉美化、Legacy Agent 或新格式支持。
+- 本轮只提交计划和架构文档，不修改功能代码；后续执行从下述唯一入口开始。
+
+**当前唯一下一步：执行 W0「Workbench Capability Contract + 只读真实纵切片」。** 第一提交必须先建立
+`CapabilityDescriptor/Snapshot/WorkbenchActionRequest/WorkbenchOutcome` 合同与 legacy-off 的只读 workspace core router，
+再用一个真实临时文件完成 `Taiji ActionIntent → ToolCall → WorkbenchEnvironment → Outcome → UI/audit` canary；在这条链闭合前，
+不实现写文件、终端自治、MCP、provider watchdog 或新的研究 Gate。

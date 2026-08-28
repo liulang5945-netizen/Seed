@@ -1,6 +1,6 @@
 # Seed 产品与运行时架构
 
-> 修订日期：2026-08-25
+> 修订日期：2026-08-28
 >
 > 纠正：Seed 是项目、产品和运行时，不再被定义为 Taiji 之上的认知模型主体。Taiji 是完整原生认知架构。
 
@@ -33,10 +33,10 @@ Seed 可以决定“在哪台设备运行、加载哪个 checkpoint、使用什�
 | 维度 | 当前代码 | Taiji v1 目标 |
 |---|---|---|
 | 顶层入口 | `seed.model.Seed` 通过 `TSKV8Adapter` 承载 Taiji v1 合同 | Seed runtime 启动一个完整 Taiji architecture |
-| Taiji 能力 | TSK-v8 byte/fabric/episodic/motor kernel | 感知→世界模型→记忆→执行认知→生成完整闭环 |
+| Taiji 能力 | P1–P7 已建立感知、世界状态、工作空间、记忆、规划、结构生长、`ActionIntent/ToolCall/Outcome` 等研究合同与窄 Gate；产品执行平面尚未闭合 | 感知→世界模型→记忆→执行认知→生成→真实工具/身体 outcome 的完整闭环 |
 | checkpoint | `seed-native-v1` 保留旧 `substrate` 载荷，并增加 Taiji v1 原子信封 | Seed 保存产品元数据，认知状态由 Taiji checkpoint 完整拥有 |
 | 输入 | UTF-8/raw byte 训练路径 | 多模态 Observation，经 Taiji 学习型感知形成内部表征 |
-| 输出 | byte motor/generation | ActionIntent 经语言、工具或身体效应器执行 |
+| 输出 | 产品聊天已接语言器官；结构化工具执行只在 Taiji 测试环境中闭环，未接 Seed 工作台 | ActionIntent 经语言、工具或身体效应器执行，并把真实结果回写 Taiji |
 
 现有 API 和 checkpoint 不立刻破坏。P1 通过 compatibility adapter 保留行为，同时把新认知合同放到 Taiji 所有权下。
 
@@ -101,12 +101,67 @@ neuroplex ─X─> seed / taiji
 
 完整目标见 [TAIJI_NATIVE_ARCHITECTURE_V1.md](TAIJI_NATIVE_ARCHITECTURE_V1.md)，执行顺序见 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)。
 
-## 8. Legacy 边界
+## 8. 产品执行平面与工作台边界
+
+2026-08-28 的产品链路审计确认：Taiji 内部已经有
+`ActionIntent → ContentPlan → ToolCall → TaijiToolEnvironment → Outcome` 合同，但 Seed 产品并没有把这条合同接到自带
+IDE、文件系统、终端、诊断器和 MCP。
+因此“内核会形成结构化工具动作”和“客户端里的模型能自主使用工作台”是两个不同事实，当前只完成前者。
+
+### 8.1 三种“语言”必须分开
+
+| 规范字段 | 含义 | 所有者 | 禁止混用为 |
+|---|---|---|---|
+| `natural_language_backend` | 将 Taiji-owned `ExpressionPlan` 表达为人类语言的末端器官 | Taiji 器官合同；Seed 装载 provider | Python/JavaScript 等编程语言 |
+| `programming_language_id` | 当前文件的 Monaco/LSP/运行器语言，例如 `python`、`rust` | Seed 工作台 capability；Taiji 可选择动作 | 语言 provider、模型类型 |
+| `artifact_format` | `taiji-native` checkpoint、外部 provider artifact 或导入/导出适配格式 | Seed 训练/发布层 | Taiji/Transformer 认知架构切换 |
+
+外部语言 provider 只负责“嘴巴”，不能因此获得文件、终端或 IDE 权限。编程语言选择是可执行、可撤销的工作台动作，
+必须从文件内容、扩展名、项目 manifest、LSP 可用性和用户约束形成证据；不能靠前端硬编码下拉框冒充 Taiji 的自主判断。
+
+### 8.2 目标执行链
+
+```text
+Taiji goal/world/self state
+  -> ActionIntent / ToolCall
+  -> Seed Workbench Capability Registry
+  -> policy + approval + budget + freshness Gate
+  -> WorkbenchEnvironment
+       -> workspace read/write/patch
+       -> editor open/set-language/diagnostics
+       -> terminal run/test/build/debug
+       -> MCP/plugin adapters
+  -> typed execution result + after-state + audit
+  -> Taiji Outcome / Observation / memory / online credit
+
+Frontend IDE <- subscribes to the same execution/audit state; it is not the execution authority
+```
+
+Taiji 不直接点击 Vue/Monaco DOM，也不把任意自然语言翻译成未审计 shell。Seed 提供版本化 capability、参数 schema、
+权限、预算、超时、事务、撤销和真实执行；Taiji 根据自己的目标和世界状态选择能力，并从真实 outcome 学习。
+
+### 8.3 当前已确认的产品断点
+
+- `api/seed_runtime.py::SeedRuntime.chat()` 只生成文本，没有消费 Taiji 的 `ToolCall`；
+- `api/app.py` 把工作台、Agent、MCP、RAG 和插件路由全部挂在 `legacy_available()` 后，原生 Seed 启动时反而没有工作台 API；
+- `frontend/src/composables/useWorkspaceBridge.js` 声称打通聊天、IDE 和终端，但当前无任何组件调用；
+- `frontend/src/components/MonacoEditor.vue` 的语言列表、扩展名推断和切换全是页面内状态，后端、checkpoint、
+  capability snapshot 和 Taiji `SelfState` 均不可见；
+- `seed_platform/runtime_service.py` 在原生模式明确上报空工具列表，而前端仍宣称已能工具调用和自主探索；
+- 工作台运行/工程脚手架、Agent/ReAct、MCP、插件、记忆和 RAG 的现行实现仍直接导入 NeuroPlex，不能作为 Taiji 原生执行平面；
+- 设置页仍允许把正式产品热切换到 Cortex，训练页仍展示 GGUF/LoRA 发布动作，均与“Legacy 仅离线对照、
+  Taiji native artifact 为正式产品格式”的方向冲突。
+
+这些断点统一按总路线第 16 节的 Workbench Closure 路线处理；在真实纵切片通过前，客户端不得再把“工具存在”“可自主执行”
+或“支持某格式”当作产品已完成能力。
+
+## 9. Legacy 边界
 
 Legacy NeuroPlex 继续作为冻结的 Transformer 离线对照和显式兼容扩展。现阶段不删除：产品壳仍有部分懒加载依赖，同预算比较也需要稳定对照。
 
 冻结意味着不再向 Legacy 增加认知功能，只允许安全、兼容和行为保持修复。默认产品最终达到 Legacy-off；是否从仓库移除必须等 Taiji v1 通过语言/工具 Gate、产品迁移和对照归档后再决定。
 
-## 9. 当前唯一边界动作
+## 10. 当前唯一边界动作
 
-P1 必须把上述所有权变成可执行测试：Seed 只调度，Taiji 拥有认知状态与 ActionIntent，TSK-v8 通过 compatibility adapter 保持当前行为。
+当前唯一下一步只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md) 第 16 节。
+本文件只固定所有权和执行平面边界，不另设实现顺序。
