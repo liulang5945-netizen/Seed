@@ -170,9 +170,7 @@ class LanguageProviderConfig:
                 continue
             if field_name == "max_tokens":
                 current[field_name] = int(value)
-            elif field_name == "temperature":
-                current[field_name] = float(value)
-            elif field_name == "expires_at":
+            elif field_name == "temperature" or field_name == "expires_at":
                 current[field_name] = float(value)
             else:
                 current[field_name] = value
