@@ -1637,6 +1637,7 @@ class RecoveryReaderCreditConsistency:
     structure_consistent: bool
     within_tolerance: bool
     checkpoint_complete: bool
+    audit_revision: int = 1
     reader_attribution_safe: tuple[bool, ...] = ()
     changed_reader_kinds: tuple[str, ...] = ()
     method: str = "cross-reader-normalized-credit-v1"
@@ -1672,6 +1673,8 @@ class RecoveryReaderCreditConsistency:
             self.credit_drift_tolerance,
             "recovery reader credit consistency tolerance",
         )
+        if int(self.audit_revision) < 1:
+            raise ValueError("recovery reader credit consistency revision must be positive")
         for value, name in (
             (self.coverage_complete, "coverage_complete"),
             (self.structure_consistent, "structure_consistent"),
@@ -1725,6 +1728,7 @@ class RecoveryReaderCreditConsistency:
             "structure_consistent": self.structure_consistent,
             "within_tolerance": self.within_tolerance,
             "checkpoint_complete": self.checkpoint_complete,
+            "audit_revision": self.audit_revision,
             "reader_attribution_safe": list(self.reader_attribution_safe),
             "changed_reader_kinds": list(self.changed_reader_kinds),
             "method": self.method,
@@ -1758,6 +1762,7 @@ class RecoveryReaderCreditConsistency:
             structure_consistent=bool(payload.get("structure_consistent", False)),
             within_tolerance=bool(payload.get("within_tolerance", False)),
             checkpoint_complete=bool(payload.get("checkpoint_complete", False)),
+            audit_revision=int(payload.get("audit_revision", 1)),
             reader_attribution_safe=tuple(
                 bool(value) for value in payload.get("reader_attribution_safe", ())
             ),
@@ -2198,16 +2203,18 @@ def build_recovery_reader_credit_consistency(
         )
         previous_audit = previous_by_key.get(group_key)
         changed_reader_kinds: list[str] = []
-        if previous_audit is None:
-            changed_reader_kinds.extend(reader_kinds)
-        else:
+        audit_changed = previous_audit is None
+        if previous_audit is not None:
             previous_by_reader = {
                 reader_kind: index for index, reader_kind in enumerate(previous_audit.reader_kinds)
             }
+            if previous_audit.reader_kinds != reader_kinds:
+                audit_changed = True
             for index, reader_kind in enumerate(reader_kinds):
                 previous_index = previous_by_reader.get(reader_kind)
                 if previous_index is None:
                     changed_reader_kinds.append(reader_kind)
+                    audit_changed = True
                     continue
                 profile_changed = len(profiles[index]) != len(
                     previous_audit.credit_profiles[previous_index]
@@ -2228,6 +2235,7 @@ def build_recovery_reader_credit_consistency(
                     or state_digests[index] != previous_audit.state_digests[previous_index]
                 ):
                     changed_reader_kinds.append(reader_kind)
+                    audit_changed = True
         audit_valid = bool(
             coverage_complete
             and group_complete
@@ -2241,8 +2249,15 @@ def build_recovery_reader_credit_consistency(
             reader_attribution_safe = tuple(
                 reader_kind not in changed_reader_kinds for reader_kind in reader_kinds
             )
+        elif previous_audit is not None and not audit_changed:
+            reader_attribution_safe = previous_audit.reader_attribution_safe
         else:
             reader_attribution_safe = (False,) * len(reader_kinds)
+        audit_revision = (
+            1
+            if previous_audit is None
+            else previous_audit.audit_revision + (1 if audit_changed else 0)
+        )
         audits.append(
             RecoveryReaderCreditConsistency(
                 strategy_rollout_ids=ordered_ids,
@@ -2257,6 +2272,7 @@ def build_recovery_reader_credit_consistency(
                 structure_consistent=structure_consistent,
                 within_tolerance=within_tolerance,
                 checkpoint_complete=checkpoint_complete,
+                audit_revision=audit_revision,
                 reader_attribution_safe=reader_attribution_safe,
                 changed_reader_kinds=tuple(changed_reader_kinds),
             )
