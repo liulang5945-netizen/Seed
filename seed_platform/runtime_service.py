@@ -174,17 +174,27 @@ def _life_section() -> dict:
 
 
 def _tools_section() -> dict:
-    from seed_platform.dependencies import legacy_requested
+    """Expose the Seed capability registry, independent of Legacy tools."""
 
-    if not legacy_requested():
-        return {"status": "seed", "tools": [], "count": 0, "error": ""}
     try:
-        from neuroplex.services.tool_service import list_tools
+        from seed_platform.workbench import CapabilitySnapshot
 
-        tools = list_tools()
+        snapshot = CapabilitySnapshot.default()
+        tools = [
+            {
+                "name": capability.capability_id,
+                "description": capability.description,
+                "parameters": dict(capability.parameters),
+                "source": capability.source,
+                "source_id": snapshot.snapshot_id,
+                "category": capability.category,
+                "enabled": capability.enabled,
+            }
+            for capability in snapshot.capabilities
+        ]
         return {"status": "ok", "tools": tools, "count": len(tools), "error": ""}
-    except Exception as exc:
-        logger.warning(f"runtime_service: tools status failed: {exc}")
+    except Exception as exc:  # pragma: no cover - defensive status boundary
+        logger.warning(f"runtime_service: Seed capability status failed: {exc}")
         return {"status": "error", "tools": [], "count": 0, "error": str(exc)}
 
 

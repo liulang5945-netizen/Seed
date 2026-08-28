@@ -14,7 +14,7 @@ from __future__ import annotations
 import logging
 import pickle
 import threading
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -68,6 +68,10 @@ class SeedRuntime:
                     self._chat_organ = candidate
         self._provider_runtime = provider_runtime
         self._provider_config = provider_config
+        from seed_platform.workbench import WorkbenchAuditLog, WorkbenchEnvironment
+
+        self._workbench_environment = WorkbenchEnvironment()
+        self._workbench_audit = WorkbenchAuditLog()
         self._lock = threading.Lock()
 
     @staticmethod
@@ -160,7 +164,11 @@ class SeedRuntime:
             selected_config,
         )
         logger.info("Seed runtime loaded from %s", path)
-        return cls(model, path, provider_status.to_dict(), provider_runtime, selected_config)
+        runtime = cls(model, path, provider_status.to_dict(), provider_runtime, selected_config)
+        metadata = checkpoint.get("metadata")
+        if isinstance(metadata, Mapping):
+            runtime._restore_workbench_metadata(metadata.get("workbench"))
+        return runtime
 
     @staticmethod
     def _serialize(prompt: str, history: Sequence[tuple[str, str]] | None) -> str:
@@ -330,7 +338,13 @@ class SeedRuntime:
             envelope = attach_metadata(
                 self.model.checkpoint(),
                 tick=self.model.tick,
-                extra={"trainer": "api_seed_runtime"},
+                extra={
+                    "trainer": "api_seed_runtime",
+                    "workbench": {
+                        "snapshot": self._workbench_environment.capability_snapshot.to_payload(),
+                        "audit": self._workbench_audit.to_payload(),
+                    },
+                },
             )
             atomic_save(envelope, target)
         logger.info("Seed runtime saved to %s", target)
@@ -343,6 +357,175 @@ class SeedRuntime:
             "tick": int(self.model.tick),
             "parameters": int(self.model.parameter_count()),
             "language_provider": dict(self._provider_status),
+            "workbench": self._workbench_environment.status(),
+        }
+
+    @property
+    def workbench_environment(self) -> Any:
+        """Return the Seed-owned workbench execution environment."""
+
+        return self._workbench_environment
+
+    @property
+    def workbench_audit(self) -> Any:
+        """Return the shared workbench event stream for UI/audit observers."""
+
+        return self._workbench_audit
+
+    def _restore_workbench_metadata(self, payload: Any) -> None:
+        if not isinstance(payload, Mapping):
+            return
+        from seed_platform.workbench import (
+            CapabilitySnapshot,
+            WorkbenchAuditLog,
+            WorkbenchEnvironment,
+        )
+
+        snapshot_payload = payload.get("snapshot")
+        if isinstance(snapshot_payload, Mapping):
+            snapshot = CapabilitySnapshot.from_payload(snapshot_payload)
+            if snapshot.snapshot_id != self._workbench_environment.capability_snapshot.snapshot_id:
+                raise ValueError("workbench capability snapshot drifted during restore")
+            self._workbench_environment = WorkbenchEnvironment(
+                self._workbench_environment.root,
+                snapshot=snapshot,
+            )
+        audit_payload = payload.get("audit")
+        if isinstance(audit_payload, Mapping):
+            self._workbench_audit = WorkbenchAuditLog.from_payload(audit_payload)
+
+    def execute_workbench_intent(
+        self,
+        intent: Any,
+        *,
+        snapshot_id: str,
+        learn: bool = False,
+    ) -> dict[str, Any]:
+        """Execute one Taiji-owned read-only intent through Seed's workbench."""
+
+        from seed_platform.workbench import (
+            WorkbenchActionRequest,
+            WorkbenchOutcome,
+            WorkbenchTransaction,
+        )
+        from taiji import ActionIntent
+
+        if not isinstance(intent, ActionIntent):
+            raise TypeError("workbench execution requires an ActionIntent")
+        request = WorkbenchActionRequest.from_action_intent(
+            intent,
+            snapshot_id=snapshot_id,
+        )
+        tick = int(self.model.tick)
+        self._workbench_audit.append(
+            "planned",
+            request.request_id,
+            tick=tick,
+            payload={"request": request.to_payload()},
+        )
+        policy = self._workbench_environment.policy_for(request)
+        self._workbench_audit.append(
+            "policy",
+            request.request_id,
+            tick=tick,
+            payload={"policy": policy.to_payload()},
+        )
+        if policy.decision != "allow":
+            workbench_outcome = WorkbenchOutcome(
+                request_id=request.request_id,
+                intent_id=request.intent_id,
+                call_id="",
+                capability_id=request.capability_id,
+                snapshot_id=self._workbench_environment.capability_snapshot.snapshot_id,
+                status="rejected",
+                success=False,
+                error_code=policy.reason_code,
+                error="workbench action was not admitted",
+                tick=tick,
+            )
+            self._workbench_audit.append(
+                "outcome",
+                request.request_id,
+                tick=tick,
+                payload={"outcome": workbench_outcome.to_payload()},
+            )
+            return {
+                "request": request.to_payload(),
+                "policy": policy.to_payload(),
+                "outcome": workbench_outcome.to_payload(),
+                "taiji_outcome": None,
+                "events": [event.to_payload() for event in self._workbench_audit.events],
+            }
+
+        self._workbench_audit.append(
+            "executing",
+            request.request_id,
+            tick=tick,
+            payload={"capability_id": request.capability_id},
+        )
+        with self._workbench_environment.request_context(request.request_id):
+            try:
+                call, taiji_outcome = self.model.architecture.execute_tool_intent(
+                    intent,
+                    self._workbench_environment,
+                    learn=learn,
+                )
+            except (TypeError, ValueError, RuntimeError) as exc:
+                workbench_outcome = WorkbenchOutcome(
+                    request_id=request.request_id,
+                    intent_id=request.intent_id,
+                    call_id="",
+                    capability_id=request.capability_id,
+                    snapshot_id=self._workbench_environment.capability_snapshot.snapshot_id,
+                    status="error",
+                    success=False,
+                    error_code="taiji_execution_error",
+                    error=str(exc),
+                    tick=int(self.model.tick),
+                )
+                self._workbench_audit.append(
+                    "outcome",
+                    request.request_id,
+                    tick=int(self.model.tick),
+                    payload={"outcome": workbench_outcome.to_payload()},
+                )
+                raise
+
+        result = self._workbench_environment.last_result
+        transaction = WorkbenchTransaction(
+            operation=request.capability_id,
+            path=str(result.get("path", request.parameters.get("path", "."))),
+            before_digest=str(result.get("digest", "")),
+            after_digest=str(result.get("digest", "")),
+            reversible=True,
+        )
+        workbench_outcome = WorkbenchOutcome(
+            request_id=request.request_id,
+            intent_id=request.intent_id,
+            call_id=call.call_id,
+            capability_id=request.capability_id,
+            snapshot_id=self._workbench_environment.capability_snapshot.snapshot_id,
+            status="success" if taiji_outcome.success is not False else "error",
+            success=taiji_outcome.success is not False,
+            result=result,
+            error_code=str(result.get("error_code", "")),
+            error=str(result.get("error", "")),
+            transaction=transaction,
+            tick=int(taiji_outcome.tick),
+        )
+        self._workbench_audit.append(
+            "outcome",
+            request.request_id,
+            tick=int(taiji_outcome.tick),
+            payload={"outcome": workbench_outcome.to_payload()},
+        )
+        return {
+            "request": request.to_payload(),
+            "policy": policy.to_payload(),
+            "outcome": workbench_outcome.to_payload(),
+            "taiji_outcome": taiji_outcome.to_payload(),
+            "tool_call": call.to_payload(),
+            "events": [event.to_payload() for event in self._workbench_audit.events],
         }
 
     @property
