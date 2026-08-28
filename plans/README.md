@@ -324,8 +324,12 @@ ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
 native API 副作用，组件仅通过显式 props/events 连接。前端 Vitest `35 files / 213 passed`、API contract/native boundary、ESLint、
 生产构建全部通过（ESLint `0 errors / 13 warnings`）。
 
-**当前唯一下一步：开始 W6 第十四片的 LifeStatusView 运行时证据与状态展示拆分。** 先隔离运行时证据卡、神经状态/needs 展示和状态图表的纯展示与事件转发，
-父视图继续唯一持有 runtime snapshot、刷新/订阅和 native API 副作用；每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，
+**已完成（2026-08-29）：W6 第十四片的 LifeStatusView 原生状态证据展示拆分。** Taiji 原生运行态卡片、语言器官/工作台/needs
+状态和推进链路已抽为 `LifeNativeStatusPanel`；父视图继续唯一持有 runtime snapshot、轮询、生命活动边界和报告导出，组件通过显式
+props 连接。前端 Vitest `36 files / 215 passed`、API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
+
+**当前唯一下一步：开始 W6 第十五片的 LifeStatusView 需求与表达展示拆分。** 先隔离 needs 五维图、生命表达和需求明细的纯展示与事件转发，
+父视图继续唯一持有 runtime snapshot、轮询、生命活动边界和报告导出；每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，
 不得先做视觉包装或 CUDA kernel。
 
 ## 当前唯一下一步
