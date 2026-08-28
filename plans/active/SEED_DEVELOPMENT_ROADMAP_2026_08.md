@@ -959,7 +959,36 @@ P4 的最小真实经历边界已落地：
 
 门禁与一处判断边界：`tests/seed/test_platform_boundary.py` 9 passed（该测试只断言 `run_app.py` 的 import 边界与 `CORE_DEPENDENCIES`/`transformers` 两个字面量不出现，文件头改写安全）、`ruff check` All passed、`py_compile` 0，并用 AST `get_docstring()` 反读确认两个 docstring 仍是模块首语句、内容正确。`black --check` 报这两个文件 `would reformat`——`git stash` 后复跑**基线同样 exit 1、同样这两个文件**，且 git 提示 `LF will be replaced by CRLF`，属既有换行符交互，非本轮引入，不扩大范围。
 
-**遗留观察（本轮不动，记录以免丢失）**：(1) `test_desktop_entrypoint_keeps_transformer_dependencies_opt_in` 函数名断言的却是 `api/run_app.py`，是同一错误共识的命名残留；(2) 上述 black/CRLF 基线；(3) 本地与 `origin/main` 已分叉（本地 2 / 远端 4）。
+**遗留观察（本轮不动，记录以免丢失）**：(1) `test_desktop_entrypoint_keeps_transformer_dependencies_opt_in` 函数名断言的却是 `api/run_app.py`，是同一错误共识的命名残留；(2) 上述 black/CRLF 基线。（原第 (3) 条「本地与 `origin/main` 分叉」已由 §13.10.3 解决，故删除。）
+
+### 13.10.3 分叉归零：桌面壳层三提交 rebase 到 P6 provider 四提交之上（2026-08-28）
+
+`git stash` 时暴露出本地与 `origin/main` 分叉（本地 3 / 远端 4）。这是当时唯一的阻塞项，理由不是"分叉本身难看"，而是**远端那 4 个提交内容未知，一旦触碰 `desktop/` 或 `frontend/`，§13.10.1 的冻结产物验证就不再代表合并后的代码**——而那份验证是前两轮的全部结论依据。
+
+**先按文件求交集再决定策略，不靠提交信息猜。** 提交标题（`provider registry rotation` 等）看起来与桌面无关，但"看起来无关"不是判据。用 `merge-base` 分别取两侧 `diff --name-only` 后做 `Compare-Object -IncludeEqual -ExcludeDifferent`：
+
+| | 文件 |
+| --- | --- |
+| 本地 11 个 | `desktop/main.py`、`desktop/seed.spec`、`api/run_app.py`、`frontend/` 6 个、路线图 |
+| 远端 11 个 | `seed/config.py`、`seed/language_provider.py`、`taiji/{__init__,adapter,language_organ}.py`、`api/seed_runtime.py`、2 个测试、`plans/README.md`、`scripts/training/…`、路线图 |
+| **交集** | **只有路线图 1 个** |
+
+且两侧在路线图内的 hunk 也不重叠：本地 `@@ -889,0 +890,74 @@`（§13.10 区），远端 `@@ -1346,3 +1346,22 @@`（§16 P6 区）。**远端 4 个提交完全不触碰 `desktop/` 与 `frontend/`**，因此冻结验证结论无需重新打包复验——这是本轮最重要的判定，它把"必须重跑 69 MB 打包"降为"跑静态门禁即可"。
+
+**选 rebase 而非 merge**：本地 3 个提交是尚未共享的线性叙事（标题栏移交 → 冻结复验 → 入口收敛），三者有明确因果顺序；merge 会插入一个无信息量的 merge commit 并把这条因果链打散在图里。rebase 前先建 `backup/pre-rebase-20260828` 分支作为可回退锚点。结果：`Rebasing (1/3)(2/3)(3/3)` **零冲突**，`9fc7ecf/e7680c2/ccf0167` → `f82b169/0b59da2/ad47075`。
+
+**合并后复验（不是"应该没问题"）**：
+
+| 项 | 结果 |
+| --- | --- |
+| 路线图两侧内容并存 | §13.10.1/§13.10.2 在 922/943 行，远端 P6 provider 段在 1431-1439 行，共 1441 行，无一方被吞 |
+| 远端文件完整落地 | `git diff --name-only origin/main HEAD` 在 push 前为 11（即本地三提交的改动），无远端文件丢失 |
+| 联合测试 | `test_platform_boundary` + `test_language_provider_runtime` + `test_p6_language_organ_boundary` = **34 passed**（我方 9 + 远端 25，与远端提交声明的"25 passed"吻合） |
+| 静态 | `ruff check desktop/ api/ seed/ taiji/` All passed；`py_compile` 0 |
+| 跨层风险点 | 远端改了 `api/seed_runtime.py`（后端运行时，桌面壳层唯一可能被跨越隔离影响的地方），`importlib` 实导 `api.seed_runtime`/`seed.language_provider`/`taiji.language_organ` 三模块 → `backend_import_ok` |
+| 产物一致性 | `python scripts/release.py --check-only` → 0，含"前端一致性校验通过（源码 dist = 客户端内置 dist）"，证明既有打包产物在合并态仍有效 |
+
+`git push origin main` → `634c15a..ad47075`，`git status -sb` 回到无 ahead/behind 的 `## main...origin/main`。另：`git rebase` 与 `git push` 都再次触发 PowerShell 的 `NativeCommandError`（git 把进度写 stderr），真实 `$LASTEXITCODE` 均为 0——与 §13.10.1 记录的 PyInstaller 陷阱同一根因，**凡在 PowerShell 里判断原生命令成败，都必须看退出码而不是有无 stderr 输出**。
 
 ## 14. 持续门禁
 
