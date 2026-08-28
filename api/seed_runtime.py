@@ -33,6 +33,7 @@ _TURN_MARKERS = ("\n问：", "问：")
 # 2048 字符（约 6KB ≈ 14s 前缀成本）是病态输入的封顶，典型对话消息远低于此，
 # 不影响首字节延迟门槛。超长输入截断处理而非拒绝，保持对话可用。
 MAX_PROMPT_CHARS = 2048
+MAX_WORKBENCH_LOOP_COMMITTED_REQUESTS = 128
 
 
 class SeedRuntime:
@@ -592,35 +593,16 @@ class SeedRuntime:
             ):
                 raise ValueError("loop intent and workbench request binding drifted")
 
-        preflight = environment.preflight_loop(
-            typed_requests,
-            loop_id=loop_id,
-            max_steps=max_steps,
-            max_budget_units=max_budget_units,
-            on_failure=on_failure,
-            checkpoint_boundary=checkpoint_boundary,
-        )
         result: dict[str, Any] = {
             "format": "seed-workbench-loop-v1",
             "version": 1,
             "loop_id": str(loop_id),
             "preflight_id": str(preflight_id),
-            "preflight": preflight,
+            "preflight": None,
             "steps": [],
             "completed_prefix": 0,
             "status": "rejected",
         }
-        if not preflight.get("accepted"):
-            result["error_code"] = str(
-                preflight.get("error_code", "preflight_rejected")
-            )
-            result["error"] = str(preflight.get("error", "loop preflight was rejected"))
-            return result
-        if preflight.get("preflight_id") != preflight_id:
-            result["error_code"] = "preflight_identity_mismatch"
-            result["error"] = "provided preflight_id does not match current requests"
-            return result
-
         committed = {
             str(item)
             for item in self._workbench_loop_state.get("committed_request_ids", ())
@@ -636,12 +618,36 @@ class SeedRuntime:
             result["replayed_request_ids"] = replayed
             return result
 
+        preflight = environment.preflight_loop(
+            typed_requests,
+            loop_id=loop_id,
+            max_steps=max_steps,
+            max_budget_units=max_budget_units,
+            on_failure=on_failure,
+            checkpoint_boundary=checkpoint_boundary,
+        )
+        result["preflight"] = preflight
+        if not preflight.get("accepted"):
+            result["error_code"] = str(
+                preflight.get("error_code", "preflight_rejected")
+            )
+            result["error"] = str(preflight.get("error", "loop preflight was rejected"))
+            return result
+        if preflight.get("preflight_id") != preflight_id:
+            result["error_code"] = "preflight_identity_mismatch"
+            result["error"] = "provided preflight_id does not match current requests"
+            return result
+
         self._workbench_loop_state = {
+            **self._workbench_loop_state,
             "format": "seed-workbench-loop-v1",
             "version": 1,
             "loop_id": str(loop_id),
             "preflight_id": str(preflight_id),
-            "committed_request_ids": [],
+            "committed_request_ids": [
+                str(item)
+                for item in self._workbench_loop_state.get("committed_request_ids", ())
+            ][-MAX_WORKBENCH_LOOP_COMMITTED_REQUESTS:],
             "status": "running",
         }
         checkpoint_path: Path | None = None
@@ -686,7 +692,9 @@ class SeedRuntime:
             ]
             self._workbench_loop_state = {
                 **self._workbench_loop_state,
-                "committed_request_ids": committed_ids,
+                "committed_request_ids": committed_ids[
+                    -MAX_WORKBENCH_LOOP_COMMITTED_REQUESTS:
+                ],
                 "status": "running" if step.get("success") else "failed",
             }
             try:
