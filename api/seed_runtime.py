@@ -52,7 +52,9 @@ class SeedRuntime:
 
         # Chat stays local by default.  An external organ can reach product
         # chat only through explicit config plus the realization/safety Gate.
-        self._chat_organ = NativeReadableTextLanguageOrgan()
+        # Annotated as the LanguageOrgan protocol because the slot may hold
+        # either the native realizer or an allowlisted external decoder organ.
+        self._chat_organ: LanguageOrgan = NativeReadableTextLanguageOrgan()
         if provider_status is None:
             from seed.language_provider import attach_native_language_provider
 
@@ -70,19 +72,27 @@ class SeedRuntime:
 
     @staticmethod
     def _native_status() -> dict[str, str]:
-        """Mirror ``LanguageProviderStatus.to_dict`` for the built-in organ."""
+        """Mirror ``LanguageProviderStatus.to_dict`` for the built-in organ.
 
-        return {
-            "mode": "native",
-            "state": "active",
-            "provider": "native",
-            "backend_id": "native-readable",
-            "artifact_id": "native-readable",
-            "reason_code": "",
-            "reason": "",
-            "rollback": "native-readable",
-            "chat_enabled": "false",
-        }
+        Returning the status object's own projection (not a hand-written dict)
+        guarantees the native mode emits the same 14-key shape as every guarded
+        mode, so consumers of ``language_provider_status`` never see a narrower
+        native payload.
+        """
+
+        from seed.language_provider import (
+            LanguageProviderStatus,
+            NativeReadableTextLanguageOrgan,
+        )
+
+        return LanguageProviderStatus(
+            mode="native",
+            state="active",
+            provider="native",
+            backend_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
+            artifact_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
+            chat_enabled=False,
+        ).to_dict()
 
     @property
     def name(self) -> str:
@@ -250,7 +260,8 @@ class SeedRuntime:
 
         探针绝不允许让对话失败：任何异常都被吞掉并保留当前表层，
         因为一次探针误报的代价不该是一次用户可见的失败。
-        回退提交后就地按 ``chat_enabled`` 重挂表层并刷新 provider 状态。
+        未触发的名义探针也会把健康计数实时叠加进状态，让 status API
+        反映真实健康负载；只有回退提交后才重挂表层并刷新 provider 状态。
         """
         if self._provider_config is None or self._provider_status.get("mode") in {
             "native",
@@ -271,11 +282,15 @@ class SeedRuntime:
             logger.exception("language provider health probe failed; keeping current surface")
             return
         if not result.committed:
+            # 名义探针：健康计数随真实发射增长，必须立刻可观测，但表层与队列不变。
+            if result.health is not None:
+                self._provider_status = _overlay_health(self._provider_status, result.health)
             return
         from taiji import LanguageOrgan, NativeReadableTextLanguageOrgan
 
         self._provider_status = result.status.to_dict()
         self._provider_runtime = result.runtime
+        self._sync_provider_config()
         candidate = self.model.architecture.language_organ
         self._chat_organ = (
             candidate
@@ -287,6 +302,24 @@ class SeedRuntime:
             result.status.artifact_id,
             result.status.reason_code,
         )
+
+    def _sync_provider_config(self) -> None:
+        """把选择配置重锚到当前已挂载的 provider artifact。
+
+        回退提交后，原先被降级的版本配置已经失联：单一事实来源是运行中
+        adapter 上挂载的 artifact。原生/结构化回退没有外部 artifact，因此把
+        配置清空，防止残留的降级配置被下一次观察或状态上报误用。
+        """
+
+        from seed.language_provider import project_language_provider_config
+
+        artifact = self.model.architecture.language_provider_artifact
+        if artifact is None:
+            self._provider_config = None
+        elif self._provider_config is not None:
+            self._provider_config = project_language_provider_config(
+                self._provider_config, artifact
+            )
 
     def save(self, path: Path | str | None = None) -> Path:
         """落盘当前状态（默认写回来源检查点；原子写，崩溃不产生半写文件）。"""
@@ -327,6 +360,27 @@ class SeedRuntime:
 
 _runtime: SeedRuntime | None = None
 _runtime_lock = threading.Lock()
+
+
+def _overlay_health(status: dict[str, str], health: Any) -> dict[str, str]:
+    """叠加健康记录的观测位到一份 provider 状态，不改变模式/状态语义。
+
+    名义探针返回的 result.status 携带 state="unchanged" 与最新健康位；
+    这里只取健康字段，保留调用方当前的 mode/state/provider 不变，从而
+    让 status API 实时反映健康负载而不翻转 provider 的角色语义。
+    """
+
+    payload = dict(status)
+    payload.update(
+        {
+            "health_probes": str(int(health.probe_count)),
+            "health_accepted_rate": f"{float(health.accepted_rate):.6f}",
+            "health_degraded": "true" if health.degraded else "false",
+            "health_rollback_count": str(int(health.rollback_count)),
+            "health_cooldown_until": f"{float(health.cooldown_until):.3f}",
+        }
+    )
+    return payload
 
 
 def is_seed_active() -> bool:
