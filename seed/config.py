@@ -8,7 +8,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import Any
 
-from taiji import LANGUAGE_PROVIDER_CANARY_FORMAT, TaijiConfig
+from taiji import (
+    LANGUAGE_PROVIDER_CANARY_FORMAT,
+    LanguageProviderHealthPolicy,
+    TaijiConfig,
+)
 
 LANGUAGE_PROVIDER_CONFIG_VERSION = 2
 
@@ -46,6 +50,10 @@ class LanguageProviderConfig:
     chat_enabled: bool = False
     max_tokens: int = 24
     temperature: float = 0.0
+    health_failure_threshold: int = 3
+    health_cooldown_seconds: float = 300.0
+    health_minimum_accepted_rate: float = 0.5
+    health_minimum_rate_probes: int = 8
 
     def __post_init__(self) -> None:
         if int(self.config_version) != LANGUAGE_PROVIDER_CONFIG_VERSION:
@@ -74,6 +82,19 @@ class LanguageProviderConfig:
             raise ValueError("language provider expires_at must be finite")
         if not str(self.canary_id):
             raise ValueError("language provider canary_id cannot be empty")
+        # Construct the watchdog policy once so its own invariants reject bad
+        # thresholds here instead of at the first runtime probe.
+        self.health_policy()
+
+    def health_policy(self) -> LanguageProviderHealthPolicy:
+        """Return the runtime health watchdog policy declared by this selection."""
+
+        return LanguageProviderHealthPolicy(
+            failure_threshold=int(self.health_failure_threshold),
+            cooldown_seconds=float(self.health_cooldown_seconds),
+            minimum_accepted_rate=float(self.health_minimum_accepted_rate),
+            minimum_rate_probes=int(self.health_minimum_rate_probes),
+        )
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -95,6 +116,10 @@ class LanguageProviderConfig:
             "chat_enabled": self.chat_enabled,
             "max_tokens": self.max_tokens,
             "temperature": self.temperature,
+            "health_failure_threshold": self.health_failure_threshold,
+            "health_cooldown_seconds": self.health_cooldown_seconds,
+            "health_minimum_accepted_rate": self.health_minimum_accepted_rate,
+            "health_minimum_rate_probes": self.health_minimum_rate_probes,
         }
 
     @classmethod
@@ -139,6 +164,10 @@ class LanguageProviderConfig:
             chat_enabled=_as_bool(values.get("chat_enabled", False)),
             max_tokens=int(values.get("max_tokens", 24)),
             temperature=float(values.get("temperature", 0.0)),
+            health_failure_threshold=int(values.get("health_failure_threshold", 3)),
+            health_cooldown_seconds=float(values.get("health_cooldown_seconds", 300.0)),
+            health_minimum_accepted_rate=float(values.get("health_minimum_accepted_rate", 0.5)),
+            health_minimum_rate_probes=int(values.get("health_minimum_rate_probes", 8)),
         )
 
     @classmethod
@@ -163,14 +192,27 @@ class LanguageProviderConfig:
             "CHAT_ENABLED": "chat_enabled",
             "MAX_TOKENS": "max_tokens",
             "TEMPERATURE": "temperature",
+            "HEALTH_FAILURE_THRESHOLD": "health_failure_threshold",
+            "HEALTH_COOLDOWN_SECONDS": "health_cooldown_seconds",
+            "HEALTH_MINIMUM_ACCEPTED_RATE": "health_minimum_accepted_rate",
+            "HEALTH_MINIMUM_RATE_PROBES": "health_minimum_rate_probes",
         }
         for suffix, field_name in names.items():
             value = os.environ.get(f"SEED_LANGUAGE_{suffix}")
             if value is None:
                 continue
-            if field_name == "max_tokens":
+            if field_name in {
+                "max_tokens",
+                "health_failure_threshold",
+                "health_minimum_rate_probes",
+            }:
                 current[field_name] = int(value)
-            elif field_name == "temperature" or field_name == "expires_at":
+            elif field_name in {
+                "temperature",
+                "expires_at",
+                "health_cooldown_seconds",
+                "health_minimum_accepted_rate",
+            }:
                 current[field_name] = float(value)
             else:
                 current[field_name] = value

@@ -1465,9 +1465,18 @@ manifest，按 artifact ID 去重，显式维护版本 allowlist、active/previo
 失败时旧 provider、旧 runtime 和 active/previous 关系保持不变。定向语言/provider 回归 `25 passed`，Ruff、Black、核心 Mypy=`0`；提交后 CI
 已复核全绿（Python 3.10/3.12、Windows、前端、Docker、启动冒烟），CUDA 继续暂缓。
 
-**已暂停：provider runtime health watchdog 不再占用主线。** 2026-08-28 全盘审计确认，语言 provider 已有首轮准入、内容寻址与原子轮换，
-但 Taiji 原生聊天仍未连接产品工作台和真实工具环境。继续加深 provider 可靠性会优化一个已经可回退的末端器官，却绕过更基础的
-“认知能否改变真实产品环境”缺口。该 Gate 保留到下述 W7，不删除既有成果；CUDA 继续暂缓。
+**已完成：P6 provider runtime health watchdog 与自动回退 Gate。** 在 active artifact 已通过首轮 canary 的发布后运行时，增加请求级健康探针
+`LanguageProviderHealthProbe`、连续失败阈值、有限冷却窗口和 previous-version 自动回退：`observe_language_provider` 把每次真实发射折叠进
+`LanguageProviderHealthState`（可读表层、结构化泄漏、validated fallback 三项判据，异常/不可解码记失败），达阈值后 `auto_rollback_language_provider`
+随 `now` 判定 nominal/冷却/回退；有 distinct previous 时回退到 previous 版本（`provider_health_rollback_previous`），隔离劣化版本并移出 allowlist，
+冷却期内保持现状，无 previous 则落到 `native-readable` 且 `chat_enabled=False`（`provider_health_rollback_native`）。健康状态随 native
+checkpoint 保存与恢复，重启后续接；探针与回退共用原子轮换路径（收敛而非叠加），且任何误报只能保持现状或回到 `native-readable`，不静默加载未
+allowlist 的 artifact。Taiji/adapter/config/seed 四层实现，seed 层活体验证 9 项全绿，api 层 `SeedRuntime.chat` 请求级回退实测通过；定向回归
+`18+96 passed`，Ruff 全绿、核心 Mypy=`0`；CUDA 继续暂缓。该 Gate 证明发布后劣化可被请求级吊销，不宣称开放域语言智能。
+
+**当前唯一下一步（已收敛回主线）：** 回到 §16.1 的 Workbench Closure W0–W7。Taiji 已构造世界/计划/`ActionIntent`/`ToolCall`/`Outcome` 认知与
+效应器合同，Seed 产品却仍缺一个 Taiji-native 的执行平面把这些合同接到 IDE、文件、终端、诊断和 MCP；watchdog、CUDA/fused kernel、新视觉打磨
+等末端优化一律冻结，直到真实工作台纵切片（W0 起步：选定最小真实工具并打通认知→效应器→结果闭环）通过。
 
 ### 16.1 全盘审计后的路线校准：从研究 Gate 转向产品执行闭环（2026-08-28）
 

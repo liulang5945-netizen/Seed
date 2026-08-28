@@ -13,7 +13,7 @@ import logging
 import math
 import time
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any, cast
 
@@ -29,6 +29,9 @@ from taiji import (
     LanguageProviderArtifact,
     LanguageProviderArtifactRegistry,
     LanguageProviderCanaryGate,
+    LanguageProviderHealthPolicy,
+    LanguageProviderHealthProbe,
+    LanguageProviderHealthState,
     LanguageRealizationValidator,
     NativeReadableTextLanguageOrgan,
     StructuredTextLanguageOrgan,
@@ -56,6 +59,25 @@ class LanguageProviderStatus:
     reason: str = ""
     rollback: str = NativeReadableTextLanguageOrgan.BACKEND_ID
     chat_enabled: bool = False
+    health_probes: int = 0
+    health_accepted_rate: float = 1.0
+    health_degraded: bool = False
+    health_rollback_count: int = 0
+    health_cooldown_until: float = 0.0
+
+    def with_health(self, health: LanguageProviderHealthState) -> LanguageProviderStatus:
+        """Return this status carrying the observable bits of a health record."""
+
+        if not isinstance(health, LanguageProviderHealthState):
+            raise TypeError("provider status requires a LanguageProviderHealthState")
+        return replace(
+            self,
+            health_probes=int(health.probe_count),
+            health_accepted_rate=float(health.accepted_rate),
+            health_degraded=bool(health.degraded),
+            health_rollback_count=int(health.rollback_count),
+            health_cooldown_until=float(health.cooldown_until),
+        )
 
     def to_dict(self) -> dict[str, str]:
         return {
@@ -68,6 +90,11 @@ class LanguageProviderStatus:
             "reason": self.reason,
             "rollback": self.rollback,
             "chat_enabled": "true" if self.chat_enabled else "false",
+            "health_probes": str(int(self.health_probes)),
+            "health_accepted_rate": f"{float(self.health_accepted_rate):.6f}",
+            "health_degraded": "true" if self.health_degraded else "false",
+            "health_rollback_count": str(int(self.health_rollback_count)),
+            "health_cooldown_until": f"{float(self.health_cooldown_until):.3f}",
         }
 
 
@@ -433,12 +460,13 @@ def attach_native_language_provider(adapter: TSKV8Adapter) -> None:
 
 @dataclass(frozen=True)
 class LanguageProviderRotationResult:
-    """Outcome of an isolated provider rotation attempt."""
+    """Outcome of an isolated provider rotation or watchdog rollback attempt."""
 
     status: LanguageProviderStatus
     runtime: Any | None
     registry: LanguageProviderArtifactRegistry
     committed: bool
+    health: LanguageProviderHealthState | None = None
 
 
 def _unchanged_provider_status(
@@ -585,6 +613,275 @@ def rotate_language_provider(
         runtime=current_runtime,
         registry=registry,
         committed=False,
+    )
+
+
+def _rollback_target_config(
+    config: LanguageProviderConfig,
+    target: LanguageProviderArtifact,
+) -> LanguageProviderConfig:
+    """Project a registered manifest back onto a selection config.
+
+    The rollback reuses the rotation publish path, and rotation derives its
+    candidate from a config.  Projecting the retained manifest back into a
+    config keeps a single source of truth: if the projection cannot rebuild the
+    exact registered manifest, ``require_allowed`` rejects the rollback instead
+    of loading a version the registry never approved.
+    """
+
+    return replace(
+        config,
+        mode=target.mode,
+        backend_id=target.backend_id,
+        artifact_id=target.artifact_id,
+        model_dir=target.base_model,
+        adapter_dir=str(target.adapter_path or ""),
+        training_corpus=target.training_corpus or "",
+        training_report=target.training_report or "",
+        safety_report=target.safety_report or "",
+        content_digests=target.content_digests,
+        artifact_digest=target.artifact_digest,
+        expires_at=target.expires_at,
+        canary_id=target.canary_id,
+    )
+
+
+def _quarantine_degraded_version(
+    registry: LanguageProviderArtifactRegistry,
+    artifact_id: str | None,
+) -> LanguageProviderArtifactRegistry:
+    """Drop a degraded version from the activation allowlist.
+
+    A health rollback must not leave the degraded version reachable as the next
+    rollback target, or a second degradation would silently republish it.  The
+    manifest is kept in the catalog for provenance, but coming back requires an
+    explicit re-allow.
+    """
+
+    if artifact_id is None:
+        return registry
+    remaining = tuple(item for item in registry.allowed_artifact_ids if item != str(artifact_id))
+    if len(remaining) == len(registry.allowed_artifact_ids):
+        return registry
+    active = registry.active_artifact_id
+    previous = registry.previous_artifact_id
+    return replace(
+        registry,
+        allowed_artifact_ids=remaining,
+        active_artifact_id=None if active == str(artifact_id) else active,
+        previous_artifact_id=None if previous == str(artifact_id) else previous,
+        revision=registry.revision + 1,
+    )
+
+
+def _native_health_rollback(
+    adapter: TSKV8Adapter,
+    registry: LanguageProviderArtifactRegistry,
+    *,
+    quarantine_id: str | None,
+    policy: LanguageProviderHealthPolicy,
+    now: float,
+    reason: str,
+) -> LanguageProviderRotationResult:
+    """Fall back to readable native text while retaining the version catalog."""
+
+    attach_native_language_provider(adapter)
+    quarantined = _quarantine_degraded_version(registry, quarantine_id)
+    retained_registry = replace(
+        quarantined,
+        active_artifact_id=None,
+        previous_artifact_id=None,
+        revision=quarantined.revision + 1,
+    )
+    adapter.attach_language_provider_artifact_registry(retained_registry)
+    health = adapter.commit_language_provider_health_rollback(
+        artifact_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
+        now=now,
+        policy=policy,
+        reason_code="provider_health_rollback_native",
+    )
+    logger.warning("provider health watchdog rolled back to readable native text: %s", reason)
+    status = LanguageProviderStatus(
+        mode="native",
+        state="rollback",
+        provider="native",
+        backend_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
+        artifact_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
+        reason_code="provider_health_rollback_native",
+        reason=reason,
+        rollback=NativeReadableTextLanguageOrgan.BACKEND_ID,
+        chat_enabled=False,
+    ).with_health(health)
+    return LanguageProviderRotationResult(
+        status=status,
+        runtime=None,
+        registry=retained_registry,
+        committed=True,
+        health=health,
+    )
+
+
+def auto_rollback_language_provider(
+    adapter: TSKV8Adapter,
+    registry: LanguageProviderArtifactRegistry,
+    config: LanguageProviderConfig,
+    *,
+    now: float,
+    current_runtime: Any | None = None,
+) -> LanguageProviderRotationResult:
+    """Roll a degraded active provider back to its previous allowlisted version.
+
+    The watchdog only acts on a health record anchored to the currently
+    attached artifact, and only outside the cooldown window, so a probe burst
+    cannot roll back twice.  The rollback itself drives the same atomic publish
+    path as a forward rotation; if no previous version is retained, or the
+    retained version fails its own manifest and canary checks, the provider
+    lands on readable native text rather than on an unverified artifact.
+    """
+
+    if not isinstance(adapter, TSKV8Adapter):
+        raise TypeError("language provider rollback requires a TSKV8Adapter")
+    if not isinstance(registry, LanguageProviderArtifactRegistry):
+        raise TypeError("language provider rollback requires a provider artifact registry")
+    if not isinstance(config, LanguageProviderConfig):
+        raise TypeError("language provider rollback requires a LanguageProviderConfig")
+    rollback_time = float(now)
+    if not math.isfinite(rollback_time):
+        raise ValueError("language provider rollback requires a finite timestamp")
+
+    policy = config.health_policy()
+    artifact = adapter.language_provider_artifact
+    anchor_id = None if artifact is None else artifact.artifact_id
+    health = adapter.language_provider_health.for_artifact(anchor_id)
+    if not health.rollback_pending:
+        status = _unchanged_provider_status(
+            adapter,
+            reason_code="provider_health_nominal",
+            reason="provider health record does not request a rollback",
+        ).with_health(health)
+        return LanguageProviderRotationResult(
+            status=status,
+            runtime=current_runtime,
+            registry=registry,
+            committed=False,
+            health=health,
+        )
+    if health.in_cooldown(rollback_time):
+        status = _unchanged_provider_status(
+            adapter,
+            reason_code="provider_health_cooldown_active",
+            reason="provider health rollback is suppressed by the cooldown window",
+        ).with_health(health)
+        return LanguageProviderRotationResult(
+            status=status,
+            runtime=current_runtime,
+            registry=registry,
+            committed=False,
+            health=health,
+        )
+
+    trigger = health.last_reason_code or "provider_health_degraded"
+    target_id = registry.previous_artifact_id
+    target = registry.get(target_id)
+    if target is None or target_id == anchor_id:
+        return _native_health_rollback(
+            adapter,
+            registry,
+            quarantine_id=anchor_id,
+            policy=policy,
+            now=rollback_time,
+            reason=(
+                "provider health watchdog has no distinct previous version to roll back to "
+                f"after {trigger}"
+            ),
+        )
+
+    rotation = rotate_language_provider(
+        adapter,
+        registry,
+        _rollback_target_config(config, target),
+        current_runtime=current_runtime,
+    )
+    if not rotation.committed:
+        return _native_health_rollback(
+            adapter,
+            registry,
+            quarantine_id=anchor_id,
+            policy=policy,
+            now=rollback_time,
+            reason=(
+                f"provider health rollback target {target.artifact_id} was rejected "
+                f"({rotation.status.reason_code}): {rotation.status.reason}"
+            ),
+        )
+    quarantined_registry = _quarantine_degraded_version(rotation.registry, anchor_id)
+    adapter.attach_language_provider_artifact_registry(quarantined_registry)
+    health = adapter.commit_language_provider_health_rollback(
+        artifact_id=target.artifact_id,
+        now=rollback_time,
+        policy=policy,
+        reason_code="provider_health_rollback_previous",
+    )
+    logger.warning(
+        "provider health watchdog rolled back to previous version %s after %s",
+        target.artifact_id,
+        trigger,
+    )
+    status = replace(
+        rotation.status,
+        state="rollback",
+        reason_code="provider_health_rollback_previous",
+        reason=f"provider health watchdog rolled back after {trigger}",
+        rollback=NativeReadableTextLanguageOrgan.BACKEND_ID,
+    ).with_health(health)
+    return LanguageProviderRotationResult(
+        status=status,
+        runtime=rotation.runtime,
+        registry=quarantined_registry,
+        committed=True,
+        health=health,
+    )
+
+
+def observe_language_provider(
+    adapter: TSKV8Adapter,
+    config: LanguageProviderConfig,
+    *,
+    expression: Any,
+    emission: Any,
+    now: float | None = None,
+    current_runtime: Any | None = None,
+) -> LanguageProviderRotationResult:
+    """Fold one live emission into the health record and roll back if it trips.
+
+    This is the only runtime observation entrypoint: the request path judges an
+    emission it already produced (never a second synthetic emission), and any
+    rollback reuses ``auto_rollback_language_provider`` so no second publish or
+    fallback mechanism exists.  A nominal probe returns an uncommitted result,
+    so callers can treat the return value uniformly.
+    """
+
+    if not isinstance(adapter, TSKV8Adapter):
+        raise TypeError("language provider observation requires a TSKV8Adapter")
+    if not isinstance(config, LanguageProviderConfig):
+        raise TypeError("language provider observation requires a LanguageProviderConfig")
+    observed_at = time.time() if now is None else float(now)
+    if not math.isfinite(observed_at):
+        raise ValueError("language provider observation requires a finite timestamp")
+    policy = config.health_policy()
+    row = LanguageProviderHealthProbe().evaluate(expression, emission)
+    adapter.observe_language_provider_health(
+        accepted=bool(row["accepted"]),
+        reason_code=str(row["reason_code"]),
+        now=observed_at,
+        policy=policy,
+    )
+    return auto_rollback_language_provider(
+        adapter,
+        adapter.language_provider_artifact_registry,
+        config,
+        now=observed_at,
+        current_runtime=current_runtime,
     )
 
 
