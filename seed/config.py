@@ -9,12 +9,15 @@ from typing import Any
 
 from taiji import TaijiConfig
 
+LANGUAGE_PROVIDER_CONFIG_VERSION = 2
+
 
 @dataclass(frozen=True)
 class LanguageProviderConfig:
     """Product-side selection for Taiji's replaceable terminal language organ."""
 
-    mode: str = "structured"
+    config_version: int = LANGUAGE_PROVIDER_CONFIG_VERSION
+    mode: str = "native"
     provider: str = "qwen"
     backend_id: str = "qwen2.5-0.5b-instruct"
     model_dir: str = ""
@@ -28,8 +31,14 @@ class LanguageProviderConfig:
     temperature: float = 0.0
 
     def __post_init__(self) -> None:
-        if self.mode not in {"structured", "raw", "lora", "guarded"}:
-            raise ValueError("language provider mode must be structured, raw, lora, or guarded")
+        if int(self.config_version) != LANGUAGE_PROVIDER_CONFIG_VERSION:
+            raise ValueError(
+                f"language provider config_version must be {LANGUAGE_PROVIDER_CONFIG_VERSION}"
+            )
+        if self.mode not in {"native", "structured", "raw", "lora", "guarded"}:
+            raise ValueError(
+                "language provider mode must be native, structured, raw, lora, or guarded"
+            )
         if not str(self.provider):
             raise ValueError("language provider provider cannot be empty")
         if not str(self.backend_id):
@@ -43,6 +52,7 @@ class LanguageProviderConfig:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "config_version": self.config_version,
             "mode": self.mode,
             "provider": self.provider,
             "backend_id": self.backend_id,
@@ -60,8 +70,16 @@ class LanguageProviderConfig:
     @classmethod
     def from_dict(cls, payload: Mapping[str, Any] | None) -> LanguageProviderConfig:
         values = dict(payload or {})
+        version = int(values.get("config_version", 1))
+        mode = str(values.get("mode", "native"))
+        # Version 1 used structured-stub as the product default.  Keep an
+        # explicitly versioned structured selection intact, but migrate old
+        # unversioned defaults to the readable native surface.
+        if version == 1 and mode == "structured":
+            mode = "native"
         return cls(
-            mode=str(values.get("mode", "structured")),
+            config_version=LANGUAGE_PROVIDER_CONFIG_VERSION,
+            mode=mode,
             provider=str(values.get("provider", "qwen")),
             backend_id=str(values.get("backend_id", "qwen2.5-0.5b-instruct")),
             model_dir=str(values.get("model_dir", "")),

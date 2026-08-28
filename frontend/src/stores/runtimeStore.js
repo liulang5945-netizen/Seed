@@ -30,7 +30,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
       artifact_id: '',
       reason_code: '',
       reason: '',
-      rollback: 'structured-stub',
+      rollback: 'native-readable',
     },
     checkedAt: 0,
   })
@@ -148,8 +148,8 @@ export const useRuntimeStore = defineStore('runtime', () => {
       state: 'warning',
       title: '语言器官已回退',
       message: provider.reason
-        ? `${provider.reason} 当前使用 structured-stub。`
-        : '外部语言器官不可用，当前使用 structured-stub。',
+        ? `${provider.reason} 当前使用 ${provider.rollback || 'native-readable'}。`
+        : `外部语言器官不可用，当前使用 ${provider.rollback || 'native-readable'}。`,
     }
   })
 

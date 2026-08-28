@@ -320,8 +320,9 @@ P4 的最小真实经历边界已落地：
   UTF-8 codec 后 semantic slots、confidence、`source_goal_id` 无损恢复；报告和 manifest 为
   `reports/taiji_p6_text_organ_codec_*_20260825.json`。该结果不等于自然语言流畅性、句法或语言智能。
 - `scripts/training/eval_taiji_p6_language_organ_boundary.py` 已通过 terminal language-organ boundary 窄 Gate：可替换的
-  `LanguageOrgan` 只接收 Taiji-owned `ExpressionPlan`，默认 `structured-stub` 输出可回解码文本；detached-organ lesion、native
-  checkpoint 和参数/认知不变性均通过。该结果只证明末端器官所有权与替换边界，不等于自然语言流畅性、句法或 decoder 智能。
+  `LanguageOrgan` 只接收 Taiji-owned `ExpressionPlan`，产品默认的 `native-readable` 表层保留有效候选或生成诚实的可读状态文本；
+  `structured-stub` 降为显式无损调试 codec。detached-organ lesion、native checkpoint 和参数/认知不变性均通过。该结果修复产品
+  乱码/RAW 冒充语言的边界，但只证明可读表层，不等于自然语言流畅性、开放域语义回答或 decoder 智能。
 - `LanguageBackendRegistry` 与 `LanguageTrainingExample` 窄 Gate 已通过：registry 可登记未来成熟 decoder，但强制 text modality 与
   `owns_cognition=False`；训练样本固定为 `ExpressionPlan → target_text`，可独立 checkpoint/holdout，不把目标、记忆或
   `ActionIntent` 注入 decoder。该结果只证明接入/训练数据边界，不等于 decoder 能力。
@@ -359,8 +360,8 @@ P4 的最小真实经历边界已落地：
 - P6 client input-boundary Gate 已通过：`InputFrame` 版本化承载客户端原始 bytes 与来源元数据；`TSKV8Adapter.ingest_input()` 将
   当前支持的 text/text-utf8/text-byte 输入逐字节转换为 Taiji-owned `Observation/PerceptEvent`，`InputTrace` 提供可检查的
   感知轨迹并支持合同 round-trip。`ActionIntent` 在该边界保持为空，禁止固定 intent 映射；`SeedRuntime.chat` 已通过
-  `generate_input()` 走同一输入合同，仍保留 raw-byte 兼容输出。该 Gate 只证明输入所有权与感知可观测性，不证明 executive、
-  语义对话或语言智能。
+  `generate_input()` 走同一输入合同，并在产品出口经本地 `native-readable` 表层形成可读文本；raw-byte 只保留为底层兼容/调试信息。
+  该 Gate 证明输入所有权与可读输出边界，不证明 executive、开放域语义对话或语言智能。
 - P7 executive contract Gate 已通过：`ExecutiveController` 使用 percept/world/memory/goal/homeostasis 派生 context 学习候选
   utility，输出保持同一候选携带的结构化 `ActionIntent + ContentPlan`；`TSKV8Adapter` 已接入选择、Outcome 反馈、native checkpoint
   和 parameter surface。该 Gate 只证明学习型候选选择与所有权，不证明真实环境 action/outcome 闭环或语言智能。
@@ -501,7 +502,7 @@ P4 的最小真实经历边界已落地：
 
 ### 13.1 桌面客户端 UX 修复轮（2026-08-27）
 
-实测澄清的运行形态：桌面端（`desktop/main.py`，PyQt6 无边框窗）= 子进程 uvicorn `api.app:app`(8000，同时服务 REST 与 `frontend/dist` 静态前端) + 子进程 WS 服务器(8765)；聊天走 Seed 原生运行时（`checkpoints/seed_corpus.pt`，**0.51 M 可学习权重 / 960 神经元式单元**，详见 §13.3 规模勘误，语言器官 structured-stub）。本轮十项修复：
+实测澄清的运行形态：桌面端（`desktop/main.py`，PyQt6 无边框窗）= 子进程 uvicorn `api.app:app`(8000，同时服务 REST 与 `frontend/dist` 静态前端) + 子进程 WS 服务器(8765)；聊天走 Seed 原生运行时（`checkpoints/seed_corpus.pt`，**0.51 M 可学习权重 / 960 神经元式单元**，详见 §13.3.1 规模勘误；底层仍为 byte predictor，本轮当时的语言器官是 `structured-stub`，产品表层已在后续 P6 Gate 改为 `native-readable`）。本轮十项修复：
 
 | # | 问题 | 根因 | 修复 |
 |---|---|---|---|
@@ -511,7 +512,7 @@ P4 的最小真实经历边界已落地：
 | 4 | IDE 无法唤起系统文件管理器 | Web 沙箱无原生对话框 | 后端 `POST /api/workspace/pick_folder`（PowerShell STA BrowseForFolder）+ 前端「浏览系统目录」。**⚠ 仅解决"选得到"，对话框仍弹在主窗后面，见 §13.3** |
 | 5 | IDE 简陋 / 终端不可用 | 终端 WS 在 auth 关闭时默认拒绝 | 终端默认放行（与全局 JWT 中间件一致，可配置收紧）；新增 Ctrl+\`、Ctrl+P 快速打开、新建文件夹、刷新树、「在资源管理器中显示」(`/api/workspace/reveal`)、`/api/workspace/mkdir`。**⚠ "默认放行"是局域网免鉴权 shell 漏洞，已在 §13.3 收紧为对端地址感知** |
 | 6 | 侧边栏搜索右侧不明符号 | macOS 专用 `⌘K` 硬编码 | 平台感知提示（Win/Linux: `Ctrl K`），并真正绑定 Ctrl+K 聚焦 |
-| 7 | 「你好」回复乱码 | **模型真实输出**：0.51 M 权重的 byte 级基底 + structured-stub 语言器官，输出不可读并被存进会话历史 | 后端 final 事件标注 `readable`（U+FFFD/控制符占比启发式），前端以「RAW 原始字节输出」卡片呈现而非伪装成正常回复；历史消息同启发式。**根治在 P6 语言器官**，不在 UI |
+| 7 | 「你好」回复乱码 | **模型真实输出**：0.51 M 权重的 byte 级基底 + raw prediction 未经过语言器官；旧 `structured-stub` 只会做无损结构序列化，不会形成可读语言 | 本轮先做诚实呈现：后端 final 事件标注 `readable`（U+FFFD/控制符占比启发式），前端以「RAW 原始字节输出」卡片呈现而非伪装成正常回复，历史消息同启发式。**根治已在 P6 语言表层 Gate 落地**（见 §16）：聊天路径构造 Taiji-owned `ExpressionPlan`，先经本地 `native-readable` 表层，有效候选保留、不可读 prediction 转为诚实可读状态文本，final event 暴露 `language_backend`，前端只在真正不可读时显示 RAW 调试卡片 |
 | 8 | 输入栏按钮「没用」 | 按钮实际可用（Chromium 实测全通过）；体感来自发送按钮 disabled 且无反馈 | 发送门控保留但移除 disabled，点击未就绪时 toast 明确原因（连接中/模型未装载/生成中） |
 | 9 | 生命状态数据来源存疑 | needs 数据源是 Cortex legacy `life_scheduler`；Seed 运行时下后端返回空（无假数据） | `LifeStatusView` 增显式 DATA SOURCE 说明卡；`is_seed` 透传至前端；Seed 下生命活动按钮给真实提示 |
 | 10 | 对话页面无法上下滑动 | `.chat-stage` 为 `flex:1; min-height:0`，在 flex 列滚动容器中被压缩到小于内容高度；内容以 `overflow:visible` 溢出绘制，但父级 `scrollHeight` 仍按 stage 盒子计算 ⇒ 滚动条永不出现，内容被 sticky 输入栏遮挡 | `.chat-stage` 改为 `flex:1 0 auto`（可涨不可缩，去掉 `min-height:0`）；`.composer-wrap` 加 `flex:none; z-index:2`；`.msg` 的 `contain-intrinsic-size` 由 80px 提到 140px 以减少 `scrollHeight` 失真 |
@@ -520,7 +521,7 @@ P4 的最小真实经历边界已落地：
 
 配套：OpenAPI 基线快照已更新（新增 3 个 workspace 端点）；vitest 160/160、e2e 冒烟 22/22 通过；`frontend/dist` 已重建。
 
-遗留（下一轮候选）：语言器官接入真实后端（P6）才能真正消除乱码；终端默认 shell 仍是 cmd.exe；侧边栏搜索框尚未接线为会话过滤。
+遗留（下一轮候选）：native-readable 已解决产品乱码与 structured-stub 误用，但它不是开放域语言模型；下一轮需为 Taiji-owned `ExpressionPlan` 建立真实语言表达训练/holdout Gate。终端默认 shell 仍是 cmd.exe；侧边栏搜索框尚未接线为会话过滤。
 
 ### 13.2 打包链收敛与客户端重打包（2026-08-27）
 
@@ -1270,4 +1271,26 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 
 **已完成：客户端白屏真因已根治，并补上了让它逃过门禁的那层盲区（详见 13.8）。** 上面 13.3.2 记的"白屏已修"是推理结论、修的是另一层缺陷；用户二次上报同一现象后改用真实观测（`QTWEBENGINE_REMOTE_DEBUGGING=9222` + 裸 CDP），实测真因是 `FileUploadQueue.vue` 把 emoji 字符串喂给 `<component :is>`，Blink 校验标签名时抛 `InvalidCharacterError` 摧毁整棵 `router-view` 子树，故点进知识库后所有路由都白屏。修法为 prop 改 `[Object, Function]` + lucide 默认组件 + `asComponent()` 归一化。181 个用例全绿却放过它是因为 jsdom 不校验标签名，已把 Blink 同级校验补进 `setupFiles`（`blinkDom.js`），回退修复可当场变红，套件 181 → 185。同轮另修三项客户端反馈（去「项目文件」文字、托盘通知改用 `self.tray.icon()`、删除与顶栏重复的图标保存按钮），并根治了两条基础设施缺陷：子进程在主进程被强杀后独活占用 8000/8765，改用内核级 Windows Job Object（`JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE` + 三处 `Popen` 后 `adopt_child()`）而非再加一层 Python `atexit`，**打包模式实测强杀 `Seed.exe` 后 `SeedBackend.exe` 同步消亡、两个端口全部释放**；`scripts/release.py` 的 NSIS 判定自相矛盾（非致命跳过却硬性要求安装包）改为事实回传，`--check-only` 全绿，13.3.6 那条"必须加 `--skip-nsis`"的记忆式绕过随之作废。另清除 `desktop/__init__.py` 的双重导入陷阱（曾使 Job 句柄出现两份副本），并把 `.codex/` 补进 `.gitignore`（含两份活跃 worktree 副本，会污染仓库级统计）。两条持久纪律已登记为 14.15 / 14.16。
 
-**当前唯一下一步：给桌面客户端建立可在 CI 执行的路由级冒烟门禁。** 本轮白屏能连着两轮逃过 185 个用例，是因为"整棵 `router-view` 被销毁"这一失败态没有任何自动化断言——`blinkDom.js` 只堵住了已知的 `createElement` 这一种触发方式，换个渠道（异步组件解析失败、`defineAsyncComponent` 无 `errorComponent`、子组件 setup 抛异常）同样会白屏而门禁全绿。要做的是把本轮那套裸 CDP 脚本从一次性探针固化为受版本管理的门禁：headless 起前端 preview，逐个路由断言"容器内容长度 > 0 且 `window.onerror` / `console.error` 零命中"，任一路由为空即 `exit 1`；先在本机跑通并证明能变红（回退 `FileUploadQueue.vue` 应立即失败），再接入 `build-frontend` job 与 `scripts/release.py` 的必经路径。不新增第二套 E2E 框架，复用现有 vitest/preview 与本轮已验证的 CDP 通道。
+**遗留欠账（前端路由级冒烟门禁，尚未落地）。** 本轮白屏能连着两轮逃过 185 个用例，是因为"整棵 `router-view` 被销毁"这一失败态没有任何自动化断言——`blinkDom.js` 只堵住了已知的 `createElement` 这一种触发方式，换个渠道（异步组件解析失败、`defineAsyncComponent` 无 `errorComponent`、子组件 setup 抛异常）同样会白屏而门禁全绿。待做：把本轮那套裸 CDP 脚本从一次性探针固化为受版本管理的门禁——headless 起前端 preview，逐个路由断言"容器内容长度 > 0 且 `window.onerror` / `console.error` 零命中"，任一路由为空即 `exit 1`；先在本机跑通并证明能变红（回退 `FileUploadQueue.vue` 应立即失败），再接入 `build-frontend` job 与 `scripts/release.py` 的必经路径。不新增第二套 E2E 框架，复用现有 vitest/preview 与已验证的 CDP 通道。此项与下面 Taiji 内核线并行排队，当前唯一下一步以本节末尾为准。
+
+**已完成：P3 可组合 interaction-group 增量 replay Gate 已通过。** recovery consolidation 现在优先从 reader dependency 保存的稳定 baseline 重建，新增策略不会再次叠加已训练记录；pairwise audit 保存 replay action-kind fingerprint，group audit 保存 singleton effect、replay digest 和 attribution digest。增量路径只复用 baseline、成员、动作集合、参数和内部 pair audit 全部一致的 pair/group；新增策略、group 合并、group 拆分、局部撤销或审计变化只重放受影响边/组件，未受影响 group 的 digest 与 attribution 保持原值。三 seed 风险执行 Gate 的增量 replay 统计均为 pairwise `8 replay / 4 reuse`、group `4 replay / 0 reuse`，重复 consolidation 不发生 double replay；组合回归同时证明未受影响 group 稳定、变化 group 与全量重放相等，以及 merge/split replay 数量正确。相关回归 `10 passed`，native 回归（排除两个已确认的 Windows pytest 临时目录锁权限错误）`223 passed, 1 skipped`，核心 mypy `0`、Ruff/Black 全绿，CUDA 继续暂缓。该 Gate 证明 group 组合变化下的局部重放与 provenance 稳定性，不宣称 group 内成员 credit 已完成守恒分解。**
+
+**当前唯一下一步：建立 interaction-group 的可验证 credit decomposition Gate。** 在不把高阶 residual 粗略平均给成员的前提下，为 group 建立基于可重放子集的成员增量 credit、交互 credit 和 residual 归属，验证 credit 守恒、顺序敏感时 fail-closed、局部撤销只移除相关归属，以及普通/native checkpoint continuation 与全量重算一致；CUDA 继续暂缓。
+
+**已完成：P3 interaction-group credit decomposition Gate 已通过。** `RecoveryReaderInteractionGroup` 现在持久化成员单体子集增量、按稳定 pair 顺序排列的带符号交互 credit、独立归属的高阶 residual 和守恒误差；group effect 必须满足 `member increments + pair interaction credits + explicit residual` 的确定性守恒，不再把高阶 residual 平均摊给成员。完整归因随普通/native checkpoint 保存，增量 group 复用要求 credit decomposition 完整，旧格式或缺失子集证据自动重放；顺序敏感、守恒不安全或未完成归因的 group 在 selection 中 fail-closed 为原子单元。三 seed 真实 Gate 的 credit decomposition、非平均 residual、普通/native checkpoint continuation、局部撤销和变化 group 与全量重放一致性全部通过，cross-seed gate rate=`1.0`；相关回归 `12 passed`，核心 mypy=`0`、Ruff/Black 全绿。该 Gate 证明当前 interaction-group 的可审计 credit 守恒和安全边界，不宣称已实现 Shapley 或任意规模 group 的指数级全子集分解；CUDA 继续暂缓。
+
+**当前唯一下一步：建立 interaction-group credit 的跨 reader 一致性与漂移 Gate。** 对 semantic/procedural/sequence/concept 四类 reader 比较同一策略组的 credit 结构、reader 状态漂移和 checkpoint 版本变化；当某一 reader 的 credit 结构变化时只失效该 reader 的 group attribution，保留其他 reader 与未受影响 group，CUDA 继续暂缓。
+
+**已完成：P3 interaction-group credit 跨 reader 一致性与漂移 Gate 已通过。** 新增 `RecoveryReaderCreditConsistency` 与 `RecoveryReaderDependencyGraph.credit_consistency`，对同一策略组在 semantic/procedural/sequence/concept 四类 reader 的成员/交互/residual 分解建立 reader-independent 结构 digest，并将不同 reader 的状态尺度归一为 signed credit profile；原始 reader group replay digest 与 baseline checkpoint digest 作为状态漂移和 checkpoint 版本证据保存，不要求不同 reader 的原始数值相等。adapter 在每次 audit 后比较 coverage、结构、归一化 credit L1 漂移和 checkpoint/state digest 完整性；若单个 reader 的 group 结构或 credit profile 变化，仅将该 reader 的 group attribution fail-closed，未变化 reader 与其他 group 保持原对象和 replay 边界。普通/native checkpoint 均恢复一致性记录；真实三 seed 风险执行 Gate 的跨 reader consistency、checkpoint preservation、semantic-only drift isolation 全部为真，定向回归 `13 passed`，native 全量 `228 passed, 1 skipped`，另有 2 个既有 Windows pytest 临时目录锁权限 setup error 未进入测试体；Ruff、Black、mypy 全绿，CUDA 继续暂缓。该 Gate 证明的是当前四类 reader 的 group attribution 可比性、版本证据与局部失效边界，不宣称 reader 输出已经共享同一语义空间，也不宣称 credit 已达到 Shapley 或跨模态因果真值。
+
+**当前唯一下一步：建立跨 reader credit consistency 的多组、跨 checkpoint 增量回滚 Gate。** 在多个 interaction group 同时存在时，为每个 group 保存独立 audit revision；验证 group 新增/合并/拆分、单 reader 漂移、checkpoint continuation 与局部回滚只更新受影响 audit，未受影响 group 的 structure/profile/state digest 保持稳定，CUDA 继续暂缓。
+
+**已完成：P3 跨 reader credit consistency 多组、跨 checkpoint 增量回滚 Gate 已通过。** `RecoveryReaderCreditConsistency` 为每个 group 增加独立正整数 `audit_revision`；revision 只由该 group 的 reader 集合、结构 digest、normalized signed credit profile、base checkpoint digest 或 replay state digest 变化推进，不跟随 dependency graph 的全局 revision。真实 evaluator 覆盖两组基线、group 新增、A+B 合并、拆分恢复、semantic reader 单独漂移、native payload continuation 和局部回滚：未受影响 group revision/profile/state digest 保持稳定，受影响 group 依次从 `1 -> 2 -> 3`，单 reader 仍只被局部 fail-closed。定向回归 `15 passed`，三 seed cross-seed gate rate=`1.0`；native 回归 `229 passed, 1 skipped`，另有两个既有 Windows pytest 临时目录锁权限 setup error 未进入测试体；Ruff、Black、核心 mypy=`0`，CUDA 继续暂缓。
+
+**当前唯一下一步：建立 cross-reader audit revision 的有限历史、回滚目标校验与容量淘汰 Gate。** 在不让旧 audit 重新成为可执行 attribution 的前提下，为 group 保存可验证的前序 revision 摘要；checkpoint 恢复后只允许回滚到存在且结构兼容的目标 revision，超过容量的历史不可复活，CUDA 继续暂缓。
+
+**已完成：P3 cross-reader audit revision 有限历史、回滚目标校验与容量淘汰 Gate 已通过。** 新增 digest-only 的 `RecoveryReaderCreditAuditRevision`，每个 group 只保存 rollout 集合、reader/structure/profile/base/state digest 与完整性摘要，不保存 raw credit profile 或 `reader_attribution_safe`，因此历史记录不能重新变成可执行 attribution。`RecoveryReaderDependencyGraph` 现在按 group 保存有限 revision history，checkpoint/native payload 可往返恢复；回滚校验要求目标 revision 仍在容量窗口内，且 reader 集合、结构 digest、profile digest 和 base checkpoint digest 与当前 audit 兼容，缺失、篡改或结构漂移目标均 fail-closed。容量由 `recovery_strategy_cross_reader_credit_revision_history_limit` 配置，adapter 初始化、reset、restore 和每次 audit 持久化均使用同一上限；撤销策略时同步裁剪历史，合并/拆分留下的旧摘要仍不可执行。P3 evaluator 新增历史完整性、checkpoint continuation、目标 revision 校验和容量淘汰三项 Gate，三 seed 均为 `true`、cross-seed gate rate=`1.0`；定向回归 `15 passed`，native 回归 `229 passed, 1 skipped`，另有两个既有 Windows pytest 临时目录锁权限 setup error 未进入测试体；Ruff、Black、Taiji Mypy=`0`。本 Gate 只证明“可验证的有限审计历史与回滚 allowlist”，不宣称摘要本身能恢复神经状态或执行真实 rollback；CUDA 继续暂缓。
+
+**已完成：P6 native-readable 产品语言表层 Gate。** 根因已确认：Seed 聊天虽然调用 Taiji 的 byte prediction，但直接把 raw bytes 当作答案，且默认 `structured-stub` 只能做无损结构序列化，不能形成可读语言。现在 `SeedRuntime.chat` 将 prediction 和本地会话上下文封装为 Taiji-owned `ExpressionPlan`，经过无外部依赖的 `native-readable` 语言表层；有效的 `surface_text/answer/native_prediction` 候选会被保留，不可读字节会转成诚实的可读状态文本。`structured-stub` 保留为显式 debug codec；Seed 配置升级为 v2，旧的未版本化 structured 默认会迁移到 native，显式 v2 structured 仍保持可用；native organ 已纳入 registry、checkpoint restore 和 `/api` final event 的 `language_backend` 可观测性。产品聊天默认不把用户历史静默转发给外部 decoder；Qwen/LoRA 仍是显式 provider 的表达器候选，不因此宣称 Taiji 已具备开放域语言智能。定向语言/provider 回归 `17 passed`，产品聊天冒烟 `4 passed`。
+
+**当前唯一下一步：建立 Taiji-owned `ExpressionPlan` 到真实语言表达的训练/holdout Gate。** 在保留本地 native-readable 安全表层和显式外部 provider 边界的前提下，为内容计划、必需语义词、表达候选和最终文本建立可回放的训练数据与 holdout 质量门禁；只有语义覆盖、可读性、回滚和 checkpoint continuation 同时成立，才允许把成熟语言 decoder 接入产品聊天，CUDA 继续暂缓。

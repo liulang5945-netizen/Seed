@@ -15,6 +15,7 @@ from taiji import (
     LanguageRealizationValidator,
     LanguageTrainingCorpus,
     LanguageTrainingExample,
+    NativeReadableTextLanguageOrgan,
     StructuredTextLanguageOrgan,
     TextExpressionCodec,
     TSKV8Adapter,
@@ -52,6 +53,31 @@ def test_structured_language_organ_is_a_terminal_replaceable_stub() -> None:
     assert emission.backend == "structured-stub"
     assert TextExpressionCodec.decode(emission.text_bytes) == expression
     assert organ.checkpoint()["backend"] == "structured-stub"
+
+
+def test_native_readable_language_organ_forms_candidate_or_truthful_fallback() -> None:
+    expression = _expression()
+    organ = NativeReadableTextLanguageOrgan()
+
+    candidate = organ.emit(
+        expression.__class__(
+            **{
+                **expression.to_payload(),
+                "fields": {
+                    **expression.fields,
+                    "surface_text": "当前状态稳定。",
+                },
+            }
+        )
+    )
+    fallback = organ.emit(expression)
+
+    assert candidate.backend == "native-readable"
+    assert candidate.text_bytes == "当前状态稳定。".encode()
+    assert fallback.backend == "native-readable"
+    assert "稳定" in fallback.text_bytes.decode()
+    restored = NativeReadableTextLanguageOrgan.from_checkpoint(organ.checkpoint())
+    assert restored.checkpoint() == organ.checkpoint()
 
 
 def test_language_organ_lesion_and_native_checkpoint_preserve_boundary() -> None:
@@ -230,14 +256,14 @@ def test_realization_validator_falls_back_without_losing_expression_semantics() 
     adapter.attach_language_backend_registry(registry)
     adapter.attach_language_organ(guarded)
     emission = adapter.emit_language(expression)
-    decoded_fallback = TextExpressionCodec.decode(emission.text_bytes)
+    fallback_text = emission.text_bytes.decode("utf-8")
 
     assert emission.fallback_used is True
     assert emission.validation is not None
     assert emission.validation.accepted is False
     assert emission.validation.missing_terms == ("稳定",)
-    assert emission.backend == "structured-stub"
-    assert decoded_fallback == expression
+    assert emission.backend == "native-readable"
+    assert "稳定" in fallback_text
     assert adapter.cognitive_snapshot().action_intent is None
 
 

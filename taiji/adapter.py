@@ -70,6 +70,7 @@ from .language_organ import (
     LanguageOrgan,
     LanguageProviderArtifact,
     LanguageValidation,
+    NativeReadableTextLanguageOrgan,
     StructuredTextLanguageOrgan,
 )
 from .model import Taiji
@@ -85,6 +86,7 @@ from .planning import (
     RecoveryPortfolio,
     RecoveryPortfolioArchive,
     RecoveryReaderContribution,
+    RecoveryReaderCreditConsistency,
     RecoveryReaderDependency,
     RecoveryReaderDependencyGraph,
     RecoveryReaderInteraction,
@@ -94,6 +96,7 @@ from .planning import (
     RecoveryStrategyLedger,
     RolloutDecision,
     _connected_components,
+    build_recovery_reader_credit_consistency,
 )
 from .procedural_memory import ProceduralMemoryLearner, ProceduralSequenceLearner
 from .semantic_memory import SemanticMemoryLearner
@@ -252,12 +255,22 @@ class TSKV8Adapter(Taiji):
             ),
             interaction_order_tolerance=self.config.recovery_strategy_interaction_order_tolerance,
         )
-        self._recovery_reader_dependencies = RecoveryReaderDependencyGraph()
+        self._recovery_reader_dependencies = RecoveryReaderDependencyGraph(
+            credit_consistency_history_capacity=(
+                self.config.recovery_strategy_cross_reader_credit_revision_history_limit
+            )
+        )
         self._recovery_generation = 0
         self._recovery_memory_epochs = 300
         self._recovery_semantic_learning_rate = 0.1
         self._recovery_procedural_learning_rate = 0.1
         self._recovery_memory_rebuild_count = 0
+        self._last_recovery_interaction_replay_stats: dict[str, int] = {
+            "pairwise_replayed": 0,
+            "pairwise_reused": 0,
+            "group_replayed": 0,
+            "group_reused": 0,
+        }
         self._replan_required = False
         self._last_rollout_prediction_error: float | None = None
         self._last_rollout_calibrated_confidence: float | None = None
@@ -5967,6 +5980,40 @@ class TSKV8Adapter(Taiji):
         return self._recovery_strategy_ledger.selected_approvals
 
     def _persist_recovery_interaction_audit(self) -> None:
+        previous_consistency = self._recovery_reader_dependencies.credit_consistency
+        consistency = build_recovery_reader_credit_consistency(
+            self._recovery_reader_dependencies.dependencies,
+            drift_tolerance=self.config.recovery_strategy_cross_reader_credit_drift_tolerance,
+            previous=previous_consistency,
+        )
+        self._recovery_reader_dependencies = (
+            self._recovery_reader_dependencies.record_credit_consistency(
+                consistency,
+                history_capacity=(
+                    self.config.recovery_strategy_cross_reader_credit_revision_history_limit
+                ),
+            )
+        )
+        consistency_by_key = {frozenset(item.strategy_rollout_ids): item for item in consistency}
+        if consistency_by_key:
+            dependencies: list[RecoveryReaderDependency] = []
+            for dependency in self._recovery_reader_dependencies.dependencies:
+                groups: list[RecoveryReaderInteractionGroup] = []
+                for group in dependency.interaction_groups:
+                    audit = consistency_by_key.get(frozenset(group.strategy_rollout_ids))
+                    if audit is None:
+                        groups.append(group)
+                        continue
+                    reader_index = audit.reader_kinds.index(dependency.reader_kind)
+                    if audit.reader_attribution_safe[reader_index]:
+                        groups.append(group)
+                    else:
+                        groups.append(replace(group, credit_decomposition_complete=False))
+                dependencies.append(replace(dependency, interaction_groups=tuple(groups)))
+            self._recovery_reader_dependencies = replace(
+                self._recovery_reader_dependencies,
+                dependencies=tuple(dependencies),
+            )
         interactions = tuple(
             interaction
             for dependency in self._recovery_reader_dependencies.dependencies
@@ -5999,6 +6046,18 @@ class TSKV8Adapter(Taiji):
         """Return the reader-level provenance graph for recovery memory."""
 
         return self._recovery_reader_dependencies
+
+    @property
+    def recovery_reader_credit_consistency(self) -> tuple[RecoveryReaderCreditConsistency, ...]:
+        """Return cross-reader group credit and checkpoint drift audits."""
+
+        return self._recovery_reader_dependencies.credit_consistency
+
+    @property
+    def recovery_reader_interaction_replay_stats(self) -> dict[str, int]:
+        """Return counts for the last incremental interaction audit."""
+
+        return dict(self._last_recovery_interaction_replay_stats)
 
     def revoke_recovery_strategy(self, rollout_id: str) -> None:
         """Revoke a recovery strategy from future replay and consolidation."""
@@ -6160,9 +6219,88 @@ class TSKV8Adapter(Taiji):
                     order_invariant=(order_delta <= RECOVERY_READER_ORDER_INVARIANCE_TOLERANCE),
                     replay_epochs=int(epochs),
                     replay_learning_rate=float(learning_rate),
+                    replay_action_kinds=action_kinds,
                 )
             )
         return tuple(interactions)
+
+    def _recovery_reader_interactions_incremental(
+        self,
+        reader_kind: str,
+        baseline_payload: dict[str, Any],
+        final_payload: dict[str, Any],
+        records: tuple[EpisodicMemoryRecord, ...],
+        approvals: Sequence[RecoveryStrategyApproval],
+        *,
+        previous_dependency: RecoveryReaderDependency | None,
+        changed_rollout_ids: set[str],
+        pairwise_scope: Sequence[Sequence[str]] | None = None,
+        epochs: int,
+        learning_rate: float,
+    ) -> tuple[tuple[RecoveryReaderInteraction, ...], int, int]:
+        """Reuse pair audits whose inputs are unchanged and replay the rest."""
+
+        current_action_kinds = tuple(str(kind) for kind in final_payload.get("action_kinds", ()))
+        previous_interactions = (
+            {}
+            if previous_dependency is None
+            else {
+                frozenset(item.strategy_rollout_ids): item
+                for item in previous_dependency.interactions
+            }
+        )
+        baseline_digest = _checkpoint_digest(baseline_payload)
+        baseline_compatible = bool(
+            previous_dependency is not None
+            and previous_dependency.base_checkpoint is not None
+            and previous_dependency.base_checkpoint_digest == baseline_digest
+        )
+        interactions: list[RecoveryReaderInteraction] = []
+        replayed = 0
+        reused = 0
+        scoped_pair_keys = (
+            None
+            if pairwise_scope is None
+            else {frozenset(str(item) for item in pair) for pair in pairwise_scope}
+        )
+        for first, second in combinations(tuple(approvals), 2):
+            if (
+                scoped_pair_keys is not None
+                and frozenset((first.rollout_id, second.rollout_id)) not in scoped_pair_keys
+            ):
+                continue
+            key = frozenset((first.rollout_id, second.rollout_id))
+            previous = previous_interactions.get(key)
+            reusable = bool(
+                baseline_compatible
+                and previous is not None
+                and previous.reader_kind == reader_kind
+                and previous.strategy_rollout_ids == (first.rollout_id, second.rollout_id)
+                and previous.memory_ids == (first.memory_id, second.memory_id)
+                and not changed_rollout_ids.intersection(key)
+                and previous.replay_epochs == int(epochs)
+                and previous.replay_learning_rate == float(learning_rate)
+                and previous.replay_action_kinds == current_action_kinds
+            )
+            if reusable:
+                assert previous is not None
+                interactions.append(previous)
+                reused += 1
+                continue
+            generated = self._recovery_reader_interactions(
+                reader_kind,
+                baseline_payload,
+                final_payload,
+                records,
+                (first, second),
+                epochs=epochs,
+                learning_rate=learning_rate,
+            )
+            if len(generated) != 1:
+                raise RuntimeError("incremental pair replay did not produce exactly one audit")
+            interactions.extend(generated)
+            replayed += 1
+        return tuple(interactions), replayed, reused
 
     def _recovery_reader_interaction_groups(
         self,
@@ -6282,9 +6420,156 @@ class TSKV8Adapter(Taiji):
                     order_invariant=(order_delta <= RECOVERY_READER_ORDER_INVARIANCE_TOLERANCE),
                     replay_epochs=int(epochs),
                     replay_learning_rate=float(learning_rate),
+                    singleton_effect_l2=tuple(float(effect) for effect in singleton_effects),
+                    replay_digest=_checkpoint_digest(group_payload),
+                    attribution_digest=_checkpoint_digest(
+                        {
+                            "strategy_rollout_ids": tuple(
+                                approval.rollout_id for approval in ordered
+                            ),
+                            "memory_ids": tuple(approval.memory_id for approval in ordered),
+                            "singleton_effect_l2": tuple(
+                                float(effect) for effect in singleton_effects
+                            ),
+                            "interaction_credit_l2": tuple(
+                                float(item.interaction_delta_l2) for item in pair_items
+                            ),
+                            "residual_credit_l2": float(higher_order_delta),
+                        }
+                    ),
+                    replay_action_kinds=action_kinds,
+                    member_increment_l2=tuple(float(effect) for effect in singleton_effects),
+                    interaction_credit_l2=tuple(
+                        float(item.interaction_delta_l2) for item in pair_items
+                    ),
+                    residual_credit_l2=float(higher_order_delta),
+                    credit_conservation_error_l2=abs(
+                        group_effect
+                        - (
+                            sum(singleton_effects)
+                            + sum(item.interaction_delta_l2 for item in pair_items)
+                            + higher_order_delta
+                        )
+                    ),
+                    credit_decomposition_complete=True,
                 )
             )
         return tuple(groups)
+
+    def _recovery_reader_interaction_groups_incremental(
+        self,
+        reader_kind: str,
+        baseline_payload: dict[str, Any],
+        final_payload: dict[str, Any],
+        records: tuple[EpisodicMemoryRecord, ...],
+        approvals: Sequence[RecoveryStrategyApproval],
+        pairwise_interactions: Sequence[RecoveryReaderInteraction],
+        *,
+        previous_dependency: RecoveryReaderDependency | None,
+        changed_rollout_ids: set[str],
+        epochs: int,
+        learning_rate: float,
+    ) -> tuple[tuple[RecoveryReaderInteractionGroup, ...], int, int]:
+        """Reuse unchanged group audits and replay only changed components."""
+
+        if len(approvals) < 3 or not pairwise_interactions:
+            return (), 0, 0
+        approval_by_rollout = {approval.rollout_id: approval for approval in approvals}
+        active_ids = set(approval_by_rollout)
+        components = _connected_components(
+            active_ids,
+            tuple(item.strategy_rollout_ids for item in pairwise_interactions),
+        )
+        pairwise_by_ids = {
+            frozenset(item.strategy_rollout_ids): item for item in pairwise_interactions
+        }
+        previous_pairwise_by_ids = (
+            {}
+            if previous_dependency is None
+            else {
+                frozenset(item.strategy_rollout_ids): item
+                for item in previous_dependency.interactions
+            }
+        )
+        previous_groups = (
+            {}
+            if previous_dependency is None
+            else {
+                frozenset(item.strategy_rollout_ids): item
+                for item in previous_dependency.interaction_groups
+            }
+        )
+        baseline_digest = _checkpoint_digest(baseline_payload)
+        baseline_compatible = bool(
+            previous_dependency is not None
+            and previous_dependency.base_checkpoint is not None
+            and previous_dependency.base_checkpoint_digest == baseline_digest
+        )
+        rank = {approval.rollout_id: index for index, approval in enumerate(approvals)}
+        current_action_kinds = tuple(str(kind) for kind in final_payload.get("action_kinds", ()))
+        groups: list[RecoveryReaderInteractionGroup] = []
+        replayed = 0
+        reused = 0
+        for component in components:
+            if len(component) < 3:
+                continue
+            ordered = tuple(
+                sorted(
+                    (approval_by_rollout[rollout_id] for rollout_id in component),
+                    key=lambda approval: rank[approval.rollout_id],
+                )
+            )
+            pair_items: list[RecoveryReaderInteraction] = []
+            missing_pair = False
+            for first, second in combinations(ordered, 2):
+                pair = pairwise_by_ids.get(frozenset((first.rollout_id, second.rollout_id)))
+                if pair is None:
+                    missing_pair = True
+                    break
+                pair_items.append(pair)
+            if missing_pair:
+                continue
+            group_key = frozenset(component)
+            previous_group = previous_groups.get(group_key)
+            previous_pairs_match = all(
+                previous_pairwise_by_ids.get(frozenset(item.strategy_rollout_ids)) == item
+                for item in pair_items
+            )
+            reusable = bool(
+                baseline_compatible
+                and previous_group is not None
+                and previous_group.reader_kind == reader_kind
+                and previous_group.strategy_rollout_ids
+                == tuple(approval.rollout_id for approval in ordered)
+                and previous_group.memory_ids == tuple(approval.memory_id for approval in ordered)
+                and not changed_rollout_ids.intersection(group_key)
+                and previous_pairs_match
+                and previous_group.replay_epochs == int(epochs)
+                and previous_group.replay_learning_rate == float(learning_rate)
+                and previous_group.replay_action_kinds == current_action_kinds
+                and bool(previous_group.singleton_effect_l2)
+                and bool(previous_group.replay_digest)
+                and bool(previous_group.attribution_digest)
+                and previous_group.credit_decomposition_complete
+            )
+            if reusable:
+                assert previous_group is not None
+                groups.append(previous_group)
+                reused += 1
+                continue
+            generated = self._recovery_reader_interaction_groups(
+                reader_kind,
+                baseline_payload,
+                final_payload,
+                records,
+                ordered,
+                pair_items,
+                epochs=epochs,
+                learning_rate=learning_rate,
+            )
+            groups.extend(generated)
+            replayed += len(generated)
+        return tuple(groups), replayed, reused
 
     def _recovery_reader_contributions(
         self,
@@ -6409,6 +6694,45 @@ class TSKV8Adapter(Taiji):
         self._recovery_memory_epochs = int(epochs)
         self._recovery_semantic_learning_rate = float(semantic_learning_rate)
         self._recovery_procedural_learning_rate = float(procedural_learning_rate)
+        previous_dependencies = {
+            dependency.reader_kind: dependency
+            for dependency in self._recovery_reader_dependencies.dependencies
+        }
+        self._last_recovery_interaction_replay_stats = {
+            "pairwise_replayed": 0,
+            "pairwise_reused": 0,
+            "group_replayed": 0,
+            "group_reused": 0,
+        }
+
+        def previous_dependency_for(reader_kind: str) -> RecoveryReaderDependency | None:
+            return previous_dependencies.get(reader_kind)
+
+        def stable_baseline(
+            reader_kind: str, current: dict[str, Any] | None
+        ) -> dict[str, Any] | None:
+            previous = previous_dependency_for(reader_kind)
+            if previous is not None and previous.base_checkpoint is not None:
+                return dict(previous.base_checkpoint)
+            return current
+
+        def changed_rollout_ids(reader_kind: str) -> set[str]:
+            previous = previous_dependency_for(reader_kind)
+            previous_ids = () if previous is None else previous.strategy_rollout_ids
+            return set(previous_ids).symmetric_difference(
+                approval.rollout_id for approval in selected_approvals
+            )
+
+        def record_replay_stats(
+            *, pairwise_replayed: int, pairwise_reused: int, group_replayed: int, group_reused: int
+        ) -> None:
+            self._last_recovery_interaction_replay_stats["pairwise_replayed"] += int(
+                pairwise_replayed
+            )
+            self._last_recovery_interaction_replay_stats["pairwise_reused"] += int(pairwise_reused)
+            self._last_recovery_interaction_replay_stats["group_replayed"] += int(group_replayed)
+            self._last_recovery_interaction_replay_stats["group_reused"] += int(group_reused)
+
         losses: dict[str, float] = {}
         semantic_baseline = (
             None if self._semantic_memory is None else self._semantic_memory.checkpoint()
@@ -6422,7 +6746,16 @@ class TSKV8Adapter(Taiji):
             else self._procedural_sequence_memory.checkpoint()
         )
         concept_baseline = self._concept_formation.checkpoint()
+        semantic_baseline = stable_baseline("semantic", semantic_baseline)
+        procedural_baseline = stable_baseline("procedural", procedural_baseline)
+        sequence_baseline = stable_baseline("sequence", sequence_baseline)
+        concept_baseline = stable_baseline("concept", concept_baseline) or {}
         if self._semantic_memory is not None:
+            previous_semantic = previous_dependency_for("semantic")
+            if previous_semantic is not None and previous_semantic.base_checkpoint is not None:
+                self._semantic_memory = SemanticMemoryLearner.from_checkpoint(
+                    dict(semantic_baseline or {}), device=self.device
+                )
             losses["semantic"] = self._semantic_memory.consolidate(
                 records, epochs=epochs, learning_rate=semantic_learning_rate
             )
@@ -6436,24 +6769,40 @@ class TSKV8Adapter(Taiji):
                 epochs=epochs,
                 learning_rate=semantic_learning_rate,
             )
-            semantic_interactions = self._recovery_reader_interactions(
-                "semantic",
-                semantic_baseline or {},
-                semantic_final,
-                records,
-                selected_approvals,
-                epochs=epochs,
-                learning_rate=semantic_learning_rate,
+            semantic_interactions, semantic_pairwise_replayed, semantic_pairwise_reused = (
+                self._recovery_reader_interactions_incremental(
+                    "semantic",
+                    semantic_baseline or {},
+                    semantic_final,
+                    records,
+                    selected_approvals,
+                    previous_dependency=previous_semantic,
+                    changed_rollout_ids=changed_rollout_ids("semantic"),
+                    epochs=epochs,
+                    learning_rate=semantic_learning_rate,
+                )
             )
-            semantic_interaction_groups = self._recovery_reader_interaction_groups(
+            (
+                semantic_interaction_groups,
+                semantic_group_replayed,
+                semantic_group_reused,
+            ) = self._recovery_reader_interaction_groups_incremental(
                 "semantic",
                 semantic_baseline or {},
                 semantic_final,
                 records,
                 selected_approvals,
                 semantic_interactions,
+                previous_dependency=previous_semantic,
+                changed_rollout_ids=changed_rollout_ids("semantic"),
                 epochs=epochs,
                 learning_rate=semantic_learning_rate,
+            )
+            record_replay_stats(
+                pairwise_replayed=semantic_pairwise_replayed,
+                pairwise_reused=semantic_pairwise_reused,
+                group_replayed=semantic_group_replayed,
+                group_reused=semantic_group_reused,
             )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
                 "semantic",
@@ -6468,6 +6817,11 @@ class TSKV8Adapter(Taiji):
                 base_checkpoint_digest=_checkpoint_digest(semantic_baseline or {}),
             )
         if self._procedural_memory is not None:
+            previous_procedural = previous_dependency_for("procedural")
+            if previous_procedural is not None and previous_procedural.base_checkpoint is not None:
+                self._procedural_memory = ProceduralMemoryLearner.from_checkpoint(
+                    dict(procedural_baseline or {}), device=self.device
+                )
             losses["procedural"] = self._procedural_memory.consolidate(
                 records, epochs=epochs, learning_rate=procedural_learning_rate
             )
@@ -6481,24 +6835,42 @@ class TSKV8Adapter(Taiji):
                 epochs=epochs,
                 learning_rate=procedural_learning_rate,
             )
-            procedural_interactions = self._recovery_reader_interactions(
+            (
+                procedural_interactions,
+                procedural_pairwise_replayed,
+                procedural_pairwise_reused,
+            ) = self._recovery_reader_interactions_incremental(
                 "procedural",
                 procedural_baseline or {},
                 procedural_final,
                 records,
                 selected_approvals,
+                previous_dependency=previous_procedural,
+                changed_rollout_ids=changed_rollout_ids("procedural"),
                 epochs=epochs,
                 learning_rate=procedural_learning_rate,
             )
-            procedural_interaction_groups = self._recovery_reader_interaction_groups(
+            (
+                procedural_interaction_groups,
+                procedural_group_replayed,
+                procedural_group_reused,
+            ) = self._recovery_reader_interaction_groups_incremental(
                 "procedural",
                 procedural_baseline or {},
                 procedural_final,
                 records,
                 selected_approvals,
                 procedural_interactions,
+                previous_dependency=previous_procedural,
+                changed_rollout_ids=changed_rollout_ids("procedural"),
                 epochs=epochs,
                 learning_rate=procedural_learning_rate,
+            )
+            record_replay_stats(
+                pairwise_replayed=procedural_pairwise_replayed,
+                pairwise_reused=procedural_pairwise_reused,
+                group_replayed=procedural_group_replayed,
+                group_reused=procedural_group_reused,
             )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
                 "procedural",
@@ -6513,6 +6885,11 @@ class TSKV8Adapter(Taiji):
                 base_checkpoint_digest=_checkpoint_digest(procedural_baseline or {}),
             )
         if self._procedural_sequence_memory is not None:
+            previous_sequence = previous_dependency_for("sequence")
+            if previous_sequence is not None and previous_sequence.base_checkpoint is not None:
+                self._procedural_sequence_memory = ProceduralSequenceLearner.from_checkpoint(
+                    dict(sequence_baseline or {}), device=self.device
+                )
             losses["sequence"] = self._procedural_sequence_memory.consolidate(
                 records, epochs=epochs, learning_rate=procedural_learning_rate
             )
@@ -6526,24 +6903,42 @@ class TSKV8Adapter(Taiji):
                 epochs=epochs,
                 learning_rate=procedural_learning_rate,
             )
-            sequence_interactions = self._recovery_reader_interactions(
+            (
+                sequence_interactions,
+                sequence_pairwise_replayed,
+                sequence_pairwise_reused,
+            ) = self._recovery_reader_interactions_incremental(
                 "sequence",
                 sequence_baseline or {},
                 sequence_final,
                 records,
                 selected_approvals,
+                previous_dependency=previous_sequence,
+                changed_rollout_ids=changed_rollout_ids("sequence"),
                 epochs=epochs,
                 learning_rate=procedural_learning_rate,
             )
-            sequence_interaction_groups = self._recovery_reader_interaction_groups(
+            (
+                sequence_interaction_groups,
+                sequence_group_replayed,
+                sequence_group_reused,
+            ) = self._recovery_reader_interaction_groups_incremental(
                 "sequence",
                 sequence_baseline or {},
                 sequence_final,
                 records,
                 selected_approvals,
                 sequence_interactions,
+                previous_dependency=previous_sequence,
+                changed_rollout_ids=changed_rollout_ids("sequence"),
                 epochs=epochs,
                 learning_rate=procedural_learning_rate,
+            )
+            record_replay_stats(
+                pairwise_replayed=sequence_pairwise_replayed,
+                pairwise_reused=sequence_pairwise_reused,
+                group_replayed=sequence_group_replayed,
+                group_reused=sequence_group_reused,
             )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
                 "sequence",
@@ -6557,6 +6952,11 @@ class TSKV8Adapter(Taiji):
                 base_checkpoint=sequence_baseline,
                 base_checkpoint_digest=_checkpoint_digest(sequence_baseline or {}),
             )
+        previous_concept = previous_dependency_for("concept")
+        if previous_concept is not None and previous_concept.base_checkpoint is not None:
+            self._concept_formation = ConceptFormationOrgan.from_checkpoint(
+                dict(concept_baseline), device=self.device
+            )
         concepts = self._concept_formation.consolidate(records, tick=self.tick)
         self._cognitive_state = replace(self._cognitive_state, concepts=concepts)
         concept_final = self._concept_formation.checkpoint()
@@ -6569,24 +6969,42 @@ class TSKV8Adapter(Taiji):
             epochs=epochs,
             learning_rate=procedural_learning_rate,
         )
-        concept_interactions = self._recovery_reader_interactions(
+        (
+            concept_interactions,
+            concept_pairwise_replayed,
+            concept_pairwise_reused,
+        ) = self._recovery_reader_interactions_incremental(
             "concept",
             concept_baseline,
             concept_final,
             records,
             selected_approvals,
+            previous_dependency=previous_concept,
+            changed_rollout_ids=changed_rollout_ids("concept"),
             epochs=epochs,
             learning_rate=procedural_learning_rate,
         )
-        concept_interaction_groups = self._recovery_reader_interaction_groups(
+        (
+            concept_interaction_groups,
+            concept_group_replayed,
+            concept_group_reused,
+        ) = self._recovery_reader_interaction_groups_incremental(
             "concept",
             concept_baseline,
             concept_final,
             records,
             selected_approvals,
             concept_interactions,
+            previous_dependency=previous_concept,
+            changed_rollout_ids=changed_rollout_ids("concept"),
             epochs=epochs,
             learning_rate=procedural_learning_rate,
+        )
+        record_replay_stats(
+            pairwise_replayed=concept_pairwise_replayed,
+            pairwise_reused=concept_pairwise_reused,
+            group_replayed=concept_group_replayed,
+            group_reused=concept_group_reused,
         )
         self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
             "concept",
@@ -6626,6 +7044,16 @@ class TSKV8Adapter(Taiji):
         selection_changed = {approval.rollout_id for approval in previous_selected} != {
             approval.rollout_id for approval in next_selected
         }
+        previous_dependencies = {
+            dependency.reader_kind: dependency
+            for dependency in self._recovery_reader_dependencies.dependencies
+        }
+        self._last_recovery_interaction_replay_stats = {
+            "pairwise_replayed": 0,
+            "pairwise_reused": 0,
+            "group_replayed": 0,
+            "group_reused": 0,
+        }
         if self._recovery_reader_dependencies.dependencies:
             affected_readers: set[str] = set()
             if revoked_rollout_id is not None:
@@ -6659,6 +7087,16 @@ class TSKV8Adapter(Taiji):
 
         def dependency_for(reader_kind: str) -> RecoveryReaderDependency | None:
             return self._recovery_reader_dependencies.dependency_for(reader_kind)
+
+        def record_replay_stats(
+            *, pairwise_replayed: int, pairwise_reused: int, group_replayed: int, group_reused: int
+        ) -> None:
+            self._last_recovery_interaction_replay_stats["pairwise_replayed"] += int(
+                pairwise_replayed
+            )
+            self._last_recovery_interaction_replay_stats["pairwise_reused"] += int(pairwise_reused)
+            self._last_recovery_interaction_replay_stats["group_replayed"] += int(group_replayed)
+            self._last_recovery_interaction_replay_stats["group_reused"] += int(group_reused)
 
         if self._semantic_memory is not None and "semantic" in affected_readers:
             dependency = dependency_for("semantic")
@@ -6790,24 +7228,46 @@ class TSKV8Adapter(Taiji):
                 epochs=self._recovery_memory_epochs,
                 learning_rate=learning_rate,
             )
-            interactions = self._recovery_reader_interactions(
+            previous_dependency = previous_dependencies.get(reader_kind)
+            changed_rollout_ids = set(
+                previous_dependency.strategy_rollout_ids if previous_dependency is not None else ()
+            ).symmetric_difference(approval.rollout_id for approval in selected_approvals)
+            (
+                interactions,
+                pairwise_replayed,
+                pairwise_reused,
+            ) = self._recovery_reader_interactions_incremental(
                 reader_kind,
                 dict(dependency.base_checkpoint),
                 final_payload,
                 recovery_records,
                 selected_approvals,
+                previous_dependency=previous_dependency,
+                changed_rollout_ids=changed_rollout_ids,
                 epochs=self._recovery_memory_epochs,
                 learning_rate=learning_rate,
             )
-            interaction_groups = self._recovery_reader_interaction_groups(
+            (
+                interaction_groups,
+                group_replayed,
+                group_reused,
+            ) = self._recovery_reader_interaction_groups_incremental(
                 reader_kind,
                 dict(dependency.base_checkpoint),
                 final_payload,
                 recovery_records,
                 selected_approvals,
                 interactions,
+                previous_dependency=previous_dependency,
+                changed_rollout_ids=changed_rollout_ids,
                 epochs=self._recovery_memory_epochs,
                 learning_rate=learning_rate,
+            )
+            record_replay_stats(
+                pairwise_replayed=pairwise_replayed,
+                pairwise_reused=pairwise_reused,
+                group_replayed=group_replayed,
+                group_reused=group_reused,
             )
             self._recovery_reader_dependencies = self._recovery_reader_dependencies.bind(
                 reader_kind,
@@ -6865,7 +7325,17 @@ class TSKV8Adapter(Taiji):
             ),
             interaction_order_tolerance=self.config.recovery_strategy_interaction_order_tolerance,
         )
-        self._recovery_reader_dependencies = RecoveryReaderDependencyGraph()
+        self._recovery_reader_dependencies = RecoveryReaderDependencyGraph(
+            credit_consistency_history_capacity=(
+                self.config.recovery_strategy_cross_reader_credit_revision_history_limit
+            )
+        )
+        self._last_recovery_interaction_replay_stats = {
+            "pairwise_replayed": 0,
+            "pairwise_reused": 0,
+            "group_replayed": 0,
+            "group_reused": 0,
+        }
         self._recovery_generation = 0
         self._replan_required = False
         self._last_rollout_prediction_error = None
@@ -8415,11 +8885,16 @@ class TSKV8Adapter(Taiji):
             return
         if not isinstance(payload, dict):
             raise ValueError("language organ checkpoint must be a mapping")
-        if payload.get("backend") != StructuredTextLanguageOrgan.BACKEND_ID:
+        backend = payload.get("backend")
+        restored: LanguageOrgan
+        if backend == NativeReadableTextLanguageOrgan.BACKEND_ID:
+            restored = NativeReadableTextLanguageOrgan.from_checkpoint(payload)
+        elif backend == StructuredTextLanguageOrgan.BACKEND_ID:
+            restored = StructuredTextLanguageOrgan.from_checkpoint(payload)
+        else:
             raise ValueError(
-                "only the structured language-organ stub can be restored without a backend registry"
+                "only native-readable and structured language organs can be restored without a runtime"
             )
-        restored = StructuredTextLanguageOrgan.from_checkpoint(payload)
         self._language_backend_registry.validate(restored)
         if (
             self._language_provider_artifact is not None
@@ -8523,7 +8998,11 @@ class TSKV8Adapter(Taiji):
             payload.get("recovery_reader_dependencies") if isinstance(payload, dict) else None
         )
         self._recovery_reader_dependencies = (
-            RecoveryReaderDependencyGraph()
+            RecoveryReaderDependencyGraph(
+                credit_consistency_history_capacity=(
+                    self.config.recovery_strategy_cross_reader_credit_revision_history_limit
+                )
+            )
             if dependencies is None
             else RecoveryReaderDependencyGraph.from_payload(dict(dependencies))
         )

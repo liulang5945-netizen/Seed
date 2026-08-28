@@ -26,16 +26,36 @@ def test_seed_config_round_trips_provider_selection_and_environment_override(mon
     assert selected.model_dir == configured.language_provider.model_dir
 
 
-def test_structured_provider_is_the_default_and_clears_external_metadata() -> None:
+def test_unversioned_structured_default_migrates_to_native_readable() -> None:
+    restored = LanguageProviderConfig.from_dict(
+        {
+            "mode": "structured",
+            "provider": "qwen",
+            "backend_id": "qwen2.5-0.5b-instruct",
+        }
+    )
+    explicit = LanguageProviderConfig.from_dict(
+        {
+            "config_version": 2,
+            "mode": "structured",
+        }
+    )
+
+    assert restored.config_version == 2
+    assert restored.mode == "native"
+    assert explicit.mode == "structured"
+
+
+def test_native_readable_provider_is_the_default_and_clears_external_metadata() -> None:
     adapter = TSKV8Adapter()
     status, provider_runtime = activate_language_provider(adapter, LanguageProviderConfig())
 
     assert provider_runtime is None
     assert status.state == "active"
-    assert status.backend_id == "structured-stub"
+    assert status.backend_id == "native-readable"
     assert adapter.language_provider_artifact is None
     assert adapter.native_checkpoint()["components"]["language_organ"]["backend"] == (
-        "structured-stub"
+        "native-readable"
     )
 
 
@@ -54,10 +74,10 @@ def test_missing_explicit_provider_rolls_back_and_is_observable() -> None:
     assert provider_runtime is None
     assert status.state == "fallback"
     assert status.reason_code == "provider_missing"
-    assert status.rollback == "structured-stub"
+    assert status.rollback == "native-readable"
     assert adapter.language_provider_artifact is None
     assert adapter.native_checkpoint()["components"]["language_organ"]["backend"] == (
-        "structured-stub"
+        "native-readable"
     )
 
 

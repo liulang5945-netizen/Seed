@@ -47,16 +47,28 @@ class SeedRuntime:
     ) -> None:
         self.model = model
         self.checkpoint_path = checkpoint_path
-        self._provider_status = provider_status or {
-            "mode": "structured",
-            "state": "unconfigured",
-            "provider": "structured",
-            "backend_id": "structured-stub",
-            "artifact_id": "structured-stub",
-            "reason_code": "",
-            "reason": "",
-            "rollback": "structured-stub",
-        }
+        from taiji import NativeReadableTextLanguageOrgan
+
+        # Chat stays local by default.  An explicitly configured external
+        # organ remains available for Taiji expression calls, but chat must
+        # not silently forward user history to that provider.
+        self._chat_organ = NativeReadableTextLanguageOrgan()
+        if provider_status is None:
+            from seed.language_provider import attach_native_language_provider
+
+            attach_native_language_provider(self.model.architecture)
+            self._provider_status = {
+                "mode": "native",
+                "state": "active",
+                "provider": "native",
+                "backend_id": "native-readable",
+                "artifact_id": "native-readable",
+                "reason_code": "",
+                "reason": "",
+                "rollback": "native-readable",
+            }
+        else:
+            self._provider_status = dict(provider_status)
         self._provider_runtime = provider_runtime
         self._lock = threading.Lock()
 
@@ -131,7 +143,9 @@ class SeedRuntime:
         max_length: int = 256,
         learn: bool = True,
     ) -> str:
-        """生成回复；可选把整段对话作为清醒持续学习写回基底。"""
+        """生成回复并经 Taiji 语言器官形成可读表层。"""
+        from taiji import ExpressionPlan
+
         prompt = (prompt or "")[:MAX_PROMPT_CHARS]
         text = self._serialize(prompt, history)
         with self._lock:
@@ -150,7 +164,35 @@ class SeedRuntime:
                 stop_at_boundary=True,
                 sample=False,
             )
-            answer: str = raw.decode("utf-8", errors="replace")
+            native_prediction = raw.decode("utf-8", errors="replace")
+            for marker in _TURN_MARKERS:
+                index = native_prediction.find(marker)
+                if index >= 0:
+                    native_prediction = native_prediction[:index]
+            history_payload = [
+                {"user": user, "assistant": assistant}
+                for user, assistant in (history or [])
+                if user and assistant
+            ]
+            expression = ExpressionPlan(
+                expression_id=f"chat:{self.model.tick}:expression",
+                content_id=f"chat:{self.model.tick}:content",
+                modality="text",
+                channel="message",
+                fields={
+                    "intent_kind": "chat_answer",
+                    "semantic_slots": {
+                        "prompt": prompt,
+                        "history": history_payload,
+                    },
+                    "native_prediction": native_prediction,
+                    "expected_outcome": "answer user in readable language",
+                },
+                provenance="seed.client.chat",
+                tick=self.model.tick,
+            )
+            emission = self._chat_organ.emit(expression)
+            answer = emission.text_bytes.decode("utf-8", errors="strict")
             if learn:
                 # 多轮上下文由基底持久状态天然承担：整段会话文本一次写回，
                 # 与 learn_bytes 的训练语义完全一致。
@@ -191,6 +233,12 @@ class SeedRuntime:
     @property
     def language_provider_status(self) -> dict[str, str]:
         return dict(self._provider_status)
+
+    @property
+    def chat_language_backend(self) -> str:
+        """Return the local surface used for product chat output."""
+
+        return self._chat_organ.backend_id
 
 
 # ---------------- 进程级单例与热切换 ----------------
