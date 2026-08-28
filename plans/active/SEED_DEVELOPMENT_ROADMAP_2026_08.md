@@ -1937,6 +1937,12 @@ Seed/native 全量回归 `320 passed, 1 skipped`，前端 `187 passed`、构建�
 `21 passed`，Seed/native 全量回归 `320 passed, 1 skipped`，前端 `187 passed`、构建通过、ESLint `0 errors/17 warnings`。该 slice 尚未
 扩展到跨文件 patch/test/diagnostics 任务，也未接入外部 MCP 生命周期。
 
-**当前唯一下一步：完成 W3 退出 Gate 的真实跨文件代码任务 loop。** 在现有 preflight/execute/checkpoint 约束内串接一个真实临时
-项目的语言识别、跨文件 patch、审批、test/build、diagnostics 与失败后重规划；验证中断后只从未提交步骤恢复，去掉 Taiji planner 或
-WorkbenchEnvironment 任一侧均 fail-closed，仍不接外部安装、网络服务或开放式自治。
+**已完成（2026-08-29）：W3 退出 Gate 的真实跨文件代码任务 loop。** 在现有 preflight/execute/checkpoint 约束内，真实临时项目已完成
+语言识别→跨文件 patch→test/build 产物→diagnostics 失败→checkpoint 恢复→创建修复标记→diagnostics 重试；失败后只从未提交步骤继续，
+已提交 request 的旧审批令牌即使失效也会先被 checkpoint 提交历史拒绝，避免误报为普通审批失败或重复副作用。去掉 Taiji planner 或
+WorkbenchEnvironment 任一侧均 fail-closed，仍不接外部安装、网络服务或开放式自治。Workbench 定向回归 `22 passed`，Seed/native 全量
+回归 `320 passed, 1 skipped`，前端 `187 passed`、生产构建通过、ESLint `0 errors/17 warnings`。
+
+**当前唯一下一步：开始 W4 第一 slice 的产品语义残留清理。** 先对前端、API/OpenAPI、settings schema 和发布入口建立 GGUF/LoRA/
+Transformer/Cortex/Legacy Agent/HF 认知主体残留清单，删除或迁移第一批仍暴露为正式 Taiji 能力的入口；保留 Qwen 等语言 provider
+作为语言器官资产边界，并为每个迁移项补 native/legacy-off 回归，暂不触碰合法 provider artifact 和离线 benchmark。

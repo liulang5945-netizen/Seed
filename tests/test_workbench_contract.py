@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import sys
+from dataclasses import replace
 
 from fastapi.testclient import TestClient
 
@@ -488,6 +489,211 @@ def test_preflighted_loop_stops_after_first_failed_step(tmp_path, monkeypatch) -
     assert len(result["steps"]) == 2
     assert result["steps"][1]["success"] is False
     assert checkpoint.exists()
+
+
+def test_w3_cross_file_task_gate_replans_after_diagnostics_failure(
+    tmp_path, monkeypatch
+) -> None:
+    (tmp_path / "src").mkdir()
+    (tmp_path / "build").mkdir()
+    source = tmp_path / "src" / "main.py"
+    original = b'def answer():\n    return "seed"\n'
+    updated = b'def answer():\n    return "taiji"\n'
+    source.write_bytes(original)
+    (tmp_path / "src" / "test_main.py").write_text(
+        "from main import answer\n\n"
+        "def test_answer():\n"
+        "    assert answer() == 'taiji'\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    checkpoint = tmp_path / "w3-loop.pt"
+    runtime = SeedRuntime(
+        Seed(episode_id="workbench-w3-cross-file"), checkpoint_path=checkpoint
+    )
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    environment = runtime.workbench_environment
+    snapshot_id = environment.capability_snapshot.snapshot_id
+
+    before_digest = hashlib.sha256(original).hexdigest()
+    after_digest = hashlib.sha256(updated).hexdigest()
+    diagnostic_code = (
+        "from pathlib import Path; "
+        "print('src/main.py:1:1: error: missing diagnostics marker') "
+        "if not Path('build/diagnostic.ok').exists() else "
+        "print('src/main.py:1:1: info: diagnostics clear')"
+    )
+    intents = (
+        ActionIntent(
+            intent_id="w3-language",
+            kind="workspace.programming_language.resolve",
+            parameters={"path": "src/main.py"},
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        ActionIntent(
+            intent_id="w3-patch",
+            kind="workspace.apply_patch",
+            parameters={
+                "path": "src/main.py",
+                "before_digest": before_digest,
+                "patch": {
+                    "kind": "text_replace",
+                    "operations": [
+                        {
+                            "start": original.decode().index("seed"),
+                            "end": original.decode().index("seed") + len("seed"),
+                            "text": "taiji",
+                        }
+                    ],
+                },
+                "expected_after_digest": after_digest,
+            },
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        ActionIntent(
+            intent_id="w3-test",
+            kind="terminal.run",
+            parameters={
+                "argv": [
+                    sys.executable,
+                    "-c",
+                    "from pathlib import Path; "
+                    "assert 'taiji' in Path('src/main.py').read_text(); "
+                    "Path('build/result.txt').write_text('ok')",
+                ],
+                "execution_kind": "test",
+                "expected_artifacts": ["build/result.txt"],
+            },
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        ActionIntent(
+            intent_id="w3-diagnostics-fail",
+            kind="terminal.run",
+            parameters={
+                "argv": [sys.executable, "-c", diagnostic_code],
+                "execution_kind": "diagnostics",
+            },
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+    )
+
+    def approved_request(intent: ActionIntent) -> WorkbenchActionRequest:
+        request = WorkbenchActionRequest.from_action_intent(
+            intent,
+            snapshot_id=snapshot_id,
+        )
+        if (
+            environment.policy_for(request).reason_code
+            == "capability_requires_approval"
+        ):
+            approval = environment.issue_approval(request)
+            request = replace(request, approval_token=approval["approval_token"])
+        return request
+
+    requests = tuple(approved_request(intent) for intent in intents)
+    preflight = runtime.preflight_workbench_loop(
+        requests, loop_id="w3-cross-file", max_steps=4
+    )
+    assert preflight["accepted"] is True
+    first_run = runtime.execute_preflighted_workbench_loop(
+        intents,
+        requests,
+        loop_id="w3-cross-file",
+        preflight_id=preflight["preflight_id"],
+        max_steps=4,
+        learn=False,
+    )
+
+    assert first_run["status"] == "failed"
+    assert first_run["stopped_at"] == 3
+    assert first_run["completed_prefix"] == 3
+    assert len(first_run["steps"]) == 4
+    assert (
+        first_run["steps"][0]["outcome"]["result"]["programming_language_id"]
+        == "python"
+    )
+    assert first_run["steps"][1]["success"] is True
+    assert first_run["steps"][2]["success"] is True
+    assert first_run["steps"][3]["success"] is False
+    assert (
+        first_run["steps"][3]["outcome"]["result"]["diagnostics"][0]["severity"]
+        == "error"
+    )
+    assert (tmp_path / "build" / "result.txt").read_text(encoding="utf-8") == "ok"
+    assert checkpoint.exists()
+
+    restored = SeedRuntime.load(checkpoint)
+    recovery_create = ActionIntent(
+        intent_id="w3-recovery-marker",
+        kind="workspace.create",
+        parameters={"path": "build/diagnostic.ok", "content": "ok\n"},
+        confidence=1.0,
+        tick=restored.model.tick,
+    )
+    recovery_diagnostics = ActionIntent(
+        intent_id="w3-recovery-diagnostics",
+        kind="terminal.run",
+        parameters={
+            "argv": [sys.executable, "-c", diagnostic_code],
+            "execution_kind": "diagnostics",
+        },
+        confidence=1.0,
+        tick=restored.model.tick,
+    )
+    recovery_intents = (recovery_create, recovery_diagnostics)
+    recovery_environment = restored.workbench_environment
+    recovery_snapshot_id = recovery_environment.capability_snapshot.snapshot_id
+    recovery_requests = []
+    for intent in recovery_intents:
+        request = WorkbenchActionRequest.from_action_intent(
+            intent, snapshot_id=recovery_snapshot_id
+        )
+        if (
+            recovery_environment.policy_for(request).reason_code
+            == "capability_requires_approval"
+        ):
+            approval = recovery_environment.issue_approval(request)
+            request = replace(request, approval_token=approval["approval_token"])
+        recovery_requests.append(request)
+    recovery_requests = tuple(recovery_requests)
+    recovery_preflight = restored.preflight_workbench_loop(
+        recovery_requests, loop_id="w3-recovery", max_steps=2
+    )
+    recovery = restored.execute_preflighted_workbench_loop(
+        recovery_intents,
+        recovery_requests,
+        loop_id="w3-recovery",
+        preflight_id=recovery_preflight["preflight_id"],
+        max_steps=2,
+        learn=False,
+    )
+
+    assert recovery["status"] == "completed"
+    assert recovery["completed_prefix"] == 2
+    assert (tmp_path / "build" / "diagnostic.ok").exists()
+    assert recovery["steps"][1]["success"] is True
+    assert (
+        recovery["steps"][1]["outcome"]["result"]["diagnostics"][0]["severity"]
+        == "info"
+    )
+
+    replay = restored.execute_preflighted_workbench_loop(
+        intents,
+        requests,
+        loop_id="w3-cross-file",
+        preflight_id=preflight["preflight_id"],
+        max_steps=4,
+        learn=False,
+    )
+    assert replay["status"] == "rejected"
+    assert replay["error_code"] == "loop_request_already_committed"
 
 
 def test_programming_language_evidence_uses_content_manifest_and_ambiguity(
