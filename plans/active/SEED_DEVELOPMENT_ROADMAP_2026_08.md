@@ -746,6 +746,30 @@ P4 的最小真实经历边界已落地：
 
 改动文件（3 个）：`frontend/scripts/gen-hljs-aliases.mjs`（新增）、`frontend/src/__tests__/hljsAliases.test.js`（新增）、`frontend/package.json`（两个 script）；`frontend/src/composables/hljsAliases.js` 补头注释 2 行。临时探针 `probe_alias.mjs`/`probe_alias2.mjs` 已删除，不留残留。提交 `a2a4488`（含本节 plans，5 文件 +258/−2）。
 
+### 13.6 把别名门禁接到发版必经路径（2026-08-28）
+
+13.5 建成的门禁只在 `npm test` 时生效，而真正会出事的场景恰好绕过它：升级 highlight.js 后直接打包发版。门禁存在但不在关键路径上，等于不存在。§13.2 已把打包收敛到 `scripts/release.py` 这唯一入口，因此把检查插在它的构建之前。
+
+`scripts/release.py` 新增 `check_generated_sources()`，执行 `npm run check:aliases`，失败即 `sys.exit(1)` 并打印修复命令。三个不显然的设计决策：
+
+| 决策 | 理由 |
+| --- | --- |
+| **不受 `--skip-frontend` 影响** | 跳过的是构建，不是校验。`frontend/dist` 正是由这份可能已过期的源码产出的，跳过构建时打进安装包的 dist 同样过期。 |
+| **置于 Step 0 清理之前** | 脱同步是必然中止的错误。若先清理再报错，会把上一版可用产物白删一遍。 |
+| **`--check-only` 不跑该检查** | `--check-only` 的语义是「验证已有产物」，别名表属于源码而非产物。混进去会模糊两者职责。 |
+
+顺带收敛：Windows 上 `npm` 实为 `npm.cmd`（直接调 `"npm"` 会 WinError 2）这一特例原本要在两处重复，抽成 `_npm()` helper。构建标号随之从 `[1/4]~[4/4]` 统一为 `[1/5]~[5/5]`。
+
+实测（两条路径都验过，不止验绿）：
+
+| 场景 | 结果 |
+| --- | --- |
+| 正常状态 | `[1/5] 生成式源码同步门禁` → `179 条别名一致`，放行进入后续步骤 |
+| 删掉 `yml:` 一行后 `python scripts/release.py --skip-nsis` | `EXIT=1`，`hljsAliases.js 已过期` → `生成式源码已与依赖脱同步，构建中止`；**「清理旧产物」一行从未打印**（本次特意不加 `--no-clean`），证明产物未被删 |
+| 恢复后 | `git status` 仅 `M scripts/release.py`，`check:aliases` 转绿，`--check-only` exit 0 |
+
+改动文件（1 个）：`scripts/release.py`（+41/−11）。
+
 ## 14. 持续门禁
 
 - Taiji/Seed/Legacy 所有权 AST 测试；
@@ -755,7 +779,7 @@ P4 的最小真实经历边界已落地：
 - 数据 manifest、实验注册、代码 commit 和训练 lineage；
 - planned/actual learned state 与资源预算；
 - 后端、前端、桌面、Legacy-off 启动和安全门禁；
-- 构建期静态产物与上游依赖同步：`npm run check:aliases`（`hljsAliases.js` vs 当前 highlight.js，过期 exit 1），同等断言亦由 `src/__tests__/hljsAliases.test.js` 在 `npm test` 中执行。凡引入「由依赖推导、写死进源码」的产物，都必须同时引入这类门禁。
+- 构建期静态产物与上游依赖同步：`npm run check:aliases`（`hljsAliases.js` vs 当前 highlight.js，过期 exit 1）。该断言有两个执行点——`npm test` 中的 `src/__tests__/hljsAliases.test.js`，以及 `scripts/release.py` 的 `[1/5]` 前置步骤（不受 `--skip-frontend` 影响，失败即中止且不清理旧产物）。凡引入「由依赖推导、写死进源码」的产物，都必须同时引入这类门禁，**并且接到发版必经路径上**——只挂在测试里的门禁会被「升级依赖后直接打包」绕过。
 
 辅助训练结果必须标记 `native-assisted`；只有不依赖辅助 teacher 决策且能继续终身学习的路径才能标记 `native-local`。A0–A9 的目的追溯和 Gate 定义以 Taiji v1 架构文档为准。
 
