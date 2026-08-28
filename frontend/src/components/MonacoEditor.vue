@@ -15,6 +15,7 @@
       </div>
       <div class="monaco-actions">
         <select v-model="language" class="lang-select" :title="languageLabel" @change="updateLanguage">
+          <option :value="AUTO_LANGUAGE_ID">自动检测</option>
           <option v-for="lang in languages" :key="lang.id" :value="lang.id">{{ lang.label }}</option>
         </select>
       </div>
@@ -55,7 +56,13 @@ import { useWorkbenchProjection } from '../composables/useWorkbenchProjection.js
 import { useAppStore } from '../stores/appStore.js';
 
 const appStore = useAppStore();
-const { readFile: readWorkbenchFile } = useWorkbenchProjection();
+const {
+  readFile: readWorkbenchFile,
+  resolveProgrammingLanguage,
+  setEditorLanguage,
+  ensureCapabilities,
+  programmingLanguages,
+} = useWorkbenchProjection();
 defineProps({ workspacePath: { type: String, default: '' } });
 const emit = defineEmits(['saved', 'save-error']);
 
@@ -74,37 +81,17 @@ const isDirty = ref(false);
 const cursorLine = ref(1);
 const cursorCol = ref(1);
 const language = ref('plaintext');
+const AUTO_LANGUAGE_ID = '__auto__';
 
-const languages = [
-  { id: 'python', label: 'Python' },
-  { id: 'javascript', label: 'JavaScript' },
-  { id: 'typescript', label: 'TypeScript' },
-  { id: 'html', label: 'HTML' },
-  { id: 'css', label: 'CSS' },
-  { id: 'json', label: 'JSON' },
-  { id: 'java', label: 'Java' },
-  { id: 'go', label: 'Go' },
-  { id: 'rust', label: 'Rust' },
-  { id: 'cpp', label: 'C++' },
-  { id: 'csharp', label: 'C#' },
-  { id: 'sql', label: 'SQL' },
-  { id: 'markdown', label: 'Markdown' },
-  { id: 'yaml', label: 'YAML' },
-  { id: 'xml', label: 'XML' },
-  { id: 'shell', label: 'Shell' },
-  { id: 'plaintext', label: '纯文本' },
-];
+const languages = computed(() => programmingLanguages.value.map(item => ({
+  id: item.editor_language_id,
+  label: item.label,
+  programmingLanguageId: item.language_id,
+})).filter((item, index, items) => (
+  items.findIndex(candidate => candidate.id === item.id) === index
+)));
 
-const languageLabel = computed(() => languages.find(item => item.id === language.value)?.label || language.value);
-
-const extToLang = {
-  '.py': 'python', '.js': 'javascript', '.ts': 'typescript', '.jsx': 'javascript',
-  '.tsx': 'typescript', '.html': 'html', '.htm': 'html', '.css': 'css',
-  '.json': 'json', '.java': 'java', '.go': 'go', '.rs': 'rust',
-  '.c': 'c', '.cpp': 'cpp', '.h': 'c', '.hpp': 'cpp', '.cs': 'csharp',
-  '.sql': 'sql', '.md': 'markdown', '.yml': 'yaml', '.yaml': 'yaml',
-  '.xml': 'xml', '.sh': 'shell', '.bat': 'shell', '.vue': 'html',
-};
+const languageLabel = computed(() => languages.value.find(item => item.id === language.value)?.label || language.value);
 
 const fileIcons = {
   py: '🐍', js: '📜', ts: '📘', json: '📋', html: '🌐', css: '🎨',
@@ -114,11 +101,6 @@ const fileIcons = {
 function getFileIcon(path) {
   const ext = path.split('.').pop()?.toLowerCase();
   return fileIcons[ext] || '📄';
-}
-
-function detectLanguage(filename) {
-  const ext = '.' + filename.split('.').pop()?.toLowerCase();
-  return extToLang[ext] || 'plaintext';
 }
 
 async function initMonaco() {
@@ -208,9 +190,17 @@ async function openFile(filePath) {
   try {
     const data = await readWorkbenchFile(filePath);
     const name = filePath.split('/').pop() || filePath.split('\\').pop();
-    const lang = detectLanguage(name);
+    const assessment = await resolveProgrammingLanguage(filePath);
+    const lang = assessment.editor_language_id || 'plaintext';
 
-    openTabs.value.push({ path: filePath, name, content: data.content || '', language: lang });
+    openTabs.value.push({
+      path: filePath,
+      name,
+      content: data.content || '',
+      language: lang,
+      programmingLanguageId: assessment.programming_language_id || 'plaintext',
+      languageAssessment: assessment,
+    });
 
     // 总是激活打开的标签，避免后续保存作用于旧标签
     switchTab(filePath);
@@ -265,12 +255,33 @@ function closeTab(filePath) {
   }
 }
 
-function updateLanguage() {
-  if (!editor || !monaco) return;
-  const model = editor.getModel();
-  if (model) monaco.editor.setModelLanguage(model, language.value);
+async function updateLanguage() {
   const tab = openTabs.value.find(t => t.path === activeTab.value);
-  if (tab) tab.language = language.value;
+  if (!tab) return;
+  const previous = tab.language;
+  try {
+    const selected = languages.value.find(item => item.id === language.value);
+    const assessment = language.value === AUTO_LANGUAGE_ID
+      ? await setEditorLanguage({ path: tab.path, clearOverride: true, userOverride: false })
+      : selected
+        ? await setEditorLanguage({
+          path: tab.path,
+          programmingLanguageId: selected.programmingLanguageId,
+          editorLanguageId: selected.id,
+          userOverride: true,
+        })
+        : null;
+    if (!assessment) return;
+    tab.language = assessment.editor_language_id || selected.id;
+    tab.programmingLanguageId = assessment.programming_language_id || selected.programmingLanguageId;
+    tab.languageAssessment = assessment;
+    language.value = tab.language;
+    const model = editor?.getModel();
+    if (editor && monaco && model) monaco.editor.setModelLanguage(model, tab.language);
+  } catch (error) {
+    language.value = previous;
+    console.error('设置编辑器语言失败:', error);
+  }
 }
 
 async function saveFile() {
@@ -317,6 +328,10 @@ watch(() => appStore.currentTheme, () => {
 })
 
 onMounted(async () => {
+  // 先加载后端语言注册表，保证选择器不依赖组件内的静态清单。
+  ensureCapabilities().catch((error) => {
+    console.error('加载编程语言注册表失败:', error);
+  });
   // 等待容器有实际尺寸后再初始化 Monaco（防止刷新后布局偏移）
   await nextTick();
   const tryInit = () => {

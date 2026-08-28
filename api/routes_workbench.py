@@ -76,7 +76,26 @@ def workbench_capabilities() -> dict[str, Any]:
     environment = _environment()
     payload = environment.capability_snapshot.to_payload()
     payload["workspace_root"] = str(environment.root)
+    payload["programming_languages"] = (
+        environment.programming_language_registry.public_descriptors()
+    )
+    payload["programming_language_registry_revision"] = (
+        environment.programming_language_registry.revision
+    )
     return payload
+
+
+@router.get("/programming-languages")
+def workbench_programming_languages() -> dict[str, Any]:
+    """Return the backend-owned programming-language registry."""
+
+    environment = _environment()
+    return {
+        "format": "seed-programming-language-v1",
+        "version": 1,
+        "revision": environment.programming_language_registry.revision,
+        "languages": environment.programming_language_registry.public_descriptors(),
+    }
 
 
 @router.get("/files")
@@ -97,6 +116,14 @@ def workbench_stat(path: str = ".") -> dict[str, Any]:
 @router.get("/search")
 def workbench_search(query: str, path: str = ".") -> dict[str, Any]:
     return _read_only_result("workspace.search", {"query": query, "path": path})
+
+
+@router.get("/programming-language")
+def workbench_programming_language(path: str) -> dict[str, Any]:
+    return _read_only_result(
+        "workspace.programming_language.resolve",
+        {"path": path},
+    )
 
 
 @router.get("/events")

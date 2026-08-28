@@ -11,6 +11,7 @@ from __future__ import annotations
 import contextlib
 import hashlib
 import json
+import math
 import os
 import threading
 from collections.abc import Iterator, Mapping
@@ -21,6 +22,11 @@ from typing import Any
 from taiji.environment import EnvironmentOutcome
 
 from .paths import get_external_path
+from .programming_languages import (
+    LANGUAGE_CONFIDENCE_THRESHOLD,
+    ProgrammingLanguageAssessment,
+    ProgrammingLanguageRegistry,
+)
 from .settings import get_setting
 
 WORKBENCH_CONTRACT_FORMAT = "seed-workbench-contract-v1"
@@ -148,16 +154,33 @@ class CapabilitySnapshot:
                 category="editor",
                 enabled=False,
             ),
+            CapabilityDescriptor(
+                "workspace.programming_language.resolve",
+                "Resolve a file's programming language from content and workspace evidence.",
+                category="language",
+                parameters=(("path", "relative file path"),),
+            ),
+            CapabilityDescriptor(
+                "editor.set_language",
+                "Project a reversible programming-language selection into the editor.",
+                risk="reversible_ui",
+                category="editor",
+                parameters=(
+                    ("path", "relative file path"),
+                    ("programming_language_id", "registry language id"),
+                    ("user_override", "whether to persist an explicit user override"),
+                ),
+            ),
         )
         body = {
             "format": WORKBENCH_CONTRACT_FORMAT,
             "version": WORKBENCH_CONTRACT_VERSION,
-            "revision": 1,
+            "revision": 2,
             "capabilities": [item.to_payload() for item in capabilities],
         }
         return cls(
             snapshot_id=_canonical_digest(body),
-            revision=1,
+            revision=2,
             capabilities=capabilities,
         )
 
@@ -222,6 +245,8 @@ class WorkbenchActionRequest:
     capability_id: str
     parameters: Mapping[str, Any]
     snapshot_id: str
+    confidence: float = 0.0
+    tick: int = 0
     source: str = "taiji"
     version: int = WORKBENCH_CONTRACT_VERSION
 
@@ -238,6 +263,10 @@ class WorkbenchActionRequest:
                 raise ValueError(f"{name} cannot be empty")
         if not isinstance(self.parameters, Mapping):
             raise TypeError("workbench action parameters must be a mapping")
+        if not math.isfinite(float(self.confidence)) or not 0.0 <= float(self.confidence) <= 1.0:
+            raise ValueError("workbench action confidence must be in [0, 1]")
+        if int(self.tick) < 0:
+            raise ValueError("workbench action tick cannot be negative")
 
     @classmethod
     def from_action_intent(
@@ -257,6 +286,8 @@ class WorkbenchActionRequest:
             capability_id=str(intent.kind),
             parameters=dict(getattr(intent, "parameters", {}) or {}),
             snapshot_id=str(snapshot_id),
+            confidence=float(getattr(intent, "confidence", 0.0)),
+            tick=int(getattr(intent, "tick", 0)),
         )
 
     def to_payload(self) -> dict[str, Any]:
@@ -267,6 +298,8 @@ class WorkbenchActionRequest:
             "capability_id": self.capability_id,
             "parameters": dict(self.parameters),
             "snapshot_id": self.snapshot_id,
+            "confidence": self.confidence,
+            "tick": self.tick,
             "source": self.source,
         }
 
@@ -465,9 +498,14 @@ class WorkbenchEnvironment:
         root: Path | str | None = None,
         *,
         snapshot: CapabilitySnapshot | None = None,
+        programming_language_registry: ProgrammingLanguageRegistry | None = None,
     ) -> None:
         self.root = Path(root or default_workspace_root()).resolve()
         self.snapshot = snapshot or CapabilitySnapshot.default()
+        self.programming_language_registry = (
+            programming_language_registry or ProgrammingLanguageRegistry.default()
+        )
+        self._language_selections: dict[str, ProgrammingLanguageAssessment] = {}
         self._last_result: dict[str, Any] = {}
         self._request_id = ""
         self._lock = threading.RLock()
@@ -498,7 +536,41 @@ class WorkbenchEnvironment:
             "snapshot_id": self.snapshot.snapshot_id,
             "revision": self.snapshot.revision,
             "capabilities": [item.to_payload() for item in self.snapshot.capabilities],
+            "programming_languages": self.programming_language_registry.public_descriptors(),
+            "programming_language_registry_revision": self.programming_language_registry.revision,
+            "language_selections": [
+                item.to_payload() for item in self._language_selections.values()
+            ],
         }
+
+    def language_state_checkpoint(self) -> dict[str, Any]:
+        """Persist language choices without persisting an executable action."""
+
+        with self._lock:
+            return {
+                "format": "seed-workbench-language-state-v1",
+                "version": 1,
+                "registry_revision": self.programming_language_registry.revision,
+                "selections": [item.to_payload() for item in self._language_selections.values()],
+            }
+
+    def restore_language_state(self, payload: Mapping[str, Any] | None) -> None:
+        if not payload:
+            return
+        if payload.get("format") != "seed-workbench-language-state-v1":
+            raise ValueError("unsupported workbench language state format")
+        if str(payload.get("registry_revision", "")) != self.programming_language_registry.revision:
+            raise ValueError("programming language registry drifted during restore")
+        restored: dict[str, ProgrammingLanguageAssessment] = {}
+        for raw in payload.get("selections", []):
+            if not isinstance(raw, Mapping):
+                continue
+            assessment = ProgrammingLanguageAssessment.from_payload(raw)
+            if assessment.registry_revision != self.programming_language_registry.revision:
+                raise ValueError("programming language assessment registry drifted")
+            restored[assessment.path] = assessment
+        with self._lock:
+            self._language_selections = restored
 
     def policy_for(self, request: WorkbenchActionRequest) -> ExecutionPolicyDecision:
         if request.snapshot_id != self.snapshot.snapshot_id:
@@ -534,6 +606,10 @@ class WorkbenchEnvironment:
                 "capability_requires_approval",
                 self.snapshot.snapshot_id,
             )
+        if request.capability_id == "editor.set_language":
+            language_policy = self._language_policy_for(request)
+            if language_policy is not None:
+                return language_policy
         return ExecutionPolicyDecision(
             request.request_id,
             request.capability_id,
@@ -541,6 +617,77 @@ class WorkbenchEnvironment:
             "read_only_or_reversible",
             self.snapshot.snapshot_id,
         )
+
+    def _language_policy_for(
+        self, request: WorkbenchActionRequest
+    ) -> ExecutionPolicyDecision | None:
+        parameters = request.parameters
+        if bool(parameters.get("user_override", False)):
+            return None
+        if bool(parameters.get("clear_override", False)):
+            if request.confidence < LANGUAGE_CONFIDENCE_THRESHOLD:
+                return ExecutionPolicyDecision(
+                    request.request_id,
+                    request.capability_id,
+                    "ask_user",
+                    "language_action_confidence_low",
+                    self.snapshot.snapshot_id,
+                )
+            return None
+        language_id = str(parameters.get("programming_language_id", "")).strip()
+        if not language_id:
+            editor_language_id = str(parameters.get("editor_language_id", "")).strip()
+            definition = self.programming_language_registry.get_by_editor_language(
+                editor_language_id
+            )
+            language_id = "" if definition is None else definition.language_id
+        if self.programming_language_registry.get(language_id) is None:
+            return ExecutionPolicyDecision(
+                request.request_id,
+                request.capability_id,
+                "deny",
+                "unknown_programming_language",
+                self.snapshot.snapshot_id,
+            )
+        if request.confidence < LANGUAGE_CONFIDENCE_THRESHOLD:
+            return ExecutionPolicyDecision(
+                request.request_id,
+                request.capability_id,
+                "ask_user",
+                "language_action_confidence_low",
+                self.snapshot.snapshot_id,
+            )
+        try:
+            assessment = self._resolve_programming_language(
+                {"path": parameters.get("path")},
+                remember=False,
+                apply_selection=False,
+            )
+        except (WorkbenchPathError, FileNotFoundError, IsADirectoryError, OSError, ValueError):
+            return ExecutionPolicyDecision(
+                request.request_id,
+                request.capability_id,
+                "deny",
+                "language_assessment_unavailable",
+                self.snapshot.snapshot_id,
+            )
+        if assessment["selection_state"] != "resolved":
+            return ExecutionPolicyDecision(
+                request.request_id,
+                request.capability_id,
+                "ask_user",
+                "language_evidence_ambiguous",
+                self.snapshot.snapshot_id,
+            )
+        if assessment["programming_language_id"] != language_id:
+            return ExecutionPolicyDecision(
+                request.request_id,
+                request.capability_id,
+                "ask_user",
+                "language_evidence_conflict",
+                self.snapshot.snapshot_id,
+            )
+        return None
 
     def execute_tool(
         self,
@@ -562,6 +709,10 @@ class WorkbenchEnvironment:
                 result = self._search_workspace(parameters)
             elif tool_name == "editor.open":
                 result = self._open_editor(parameters)
+            elif tool_name == "workspace.programming_language.resolve":
+                result = self._resolve_programming_language(parameters)
+            elif tool_name == "editor.set_language":
+                result = self._set_editor_language(parameters)
             else:
                 return self._failure("unknown_capability", "capability is not registered")
         except WorkbenchPathError as exc:
@@ -714,3 +865,94 @@ class WorkbenchEnvironment:
             "opened": True,
             "editor_state": "projected",
         }
+
+    def _workspace_context_names(self, path: Path) -> tuple[set[str], set[str]]:
+        """Collect names from the file's directory and workspace ancestors."""
+
+        manifest_names: set[str] = set()
+        neighbor_names: set[str] = set()
+        current = path.parent
+        while True:
+            try:
+                names = {item.name for item in current.iterdir()}
+            except OSError:
+                names = set()
+            manifest_names.update(name.lower() for name in names)
+            if current == path.parent:
+                neighbor_names.update(name for name in names if name != path.name)
+            if current == self.root or current.parent == current:
+                break
+            try:
+                current = current.parent
+                current.relative_to(self.root)
+            except ValueError:
+                break
+        return manifest_names, neighbor_names
+
+    def _resolve_programming_language(
+        self,
+        parameters: Mapping[str, Any],
+        *,
+        remember: bool = True,
+        apply_selection: bool = True,
+    ) -> dict[str, Any]:
+        path, relative_name = self._resolve_path(parameters.get("path"), allow_root=False)
+        raw = self._read_workspace({"path": relative_name})
+        manifest_names, neighbor_names = self._workspace_context_names(path)
+        assessment = self.programming_language_registry.resolve(
+            path=relative_name,
+            content=str(raw["content"]),
+            file_digest=str(raw["digest"]),
+            manifest_names=manifest_names,
+            neighbor_names=neighbor_names,
+            available_toolchains=self.programming_language_registry.available_toolchains(),
+            capability_revision=self.snapshot.revision,
+        )
+        if apply_selection:
+            with self._lock:
+                previous = self._language_selections.get(relative_name)
+            if (
+                previous is not None
+                and previous.user_override
+                and previous.file_digest == assessment.file_digest
+            ):
+                assessment = self.programming_language_registry.select(
+                    assessment,
+                    previous.user_override,
+                    source="user_override",
+                )
+        if remember:
+            with self._lock:
+                self._language_selections[relative_name] = assessment
+        return assessment.to_payload()
+
+    def _set_editor_language(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
+        path, relative_name = self._resolve_path(parameters.get("path"), allow_root=False)
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        clear_override = bool(parameters.get("clear_override", False))
+        if clear_override:
+            with self._lock:
+                self._language_selections.pop(relative_name, None)
+        baseline = self._resolve_programming_language({"path": relative_name})
+        assessment = ProgrammingLanguageAssessment.from_payload(baseline)
+        if clear_override:
+            with self._lock:
+                self._language_selections[relative_name] = assessment
+            return assessment.to_payload()
+        language_id = str(parameters.get("programming_language_id", "")).strip()
+        if not language_id:
+            language_id = str(parameters.get("editor_language_id", "")).strip()
+            definition = self.programming_language_registry.get_by_editor_language(language_id)
+            language_id = definition.language_id if definition is not None else ""
+        source = (
+            "user_override" if bool(parameters.get("user_override", False)) else "taiji_selection"
+        )
+        selected = self.programming_language_registry.select(
+            assessment,
+            language_id,
+            source=source,
+        )
+        with self._lock:
+            self._language_selections[relative_name] = selected
+        return selected.to_payload()

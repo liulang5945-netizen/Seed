@@ -1,9 +1,10 @@
 /**
  * Native Workbench capability and audit projection.
  *
- * The projection is intentionally read-only.  It is the client-side view of
- * Seed's capability snapshot and event stream; it is not a second tool
- * registry and it does not execute shell commands or file writes.
+ * The projection is the client-side view of Seed's capability snapshot and
+ * event stream.  It is not a second tool registry and it never executes shell
+ * commands or file writes; the editor language override is the one explicit,
+ * reversible UI command exposed here.
  */
 import { computed, readonly, ref } from 'vue'
 import { API_BASE, authFetch } from './apiClient.js'
@@ -92,6 +93,44 @@ async function readFile(path) {
   return payload
 }
 
+async function resolveProgrammingLanguage(path) {
+  await ensureCapabilities()
+  const query = encodeURIComponent(path)
+  const payload = await readJson(`/api/workbench/programming-language?path=${query}`)
+  error.value = ''
+  return payload
+}
+
+async function setEditorLanguage({
+  path,
+  programmingLanguageId,
+  editorLanguageId,
+  userOverride = true,
+  clearOverride = false,
+}) {
+  await ensureCapabilities()
+  const payload = await readJson('/api/workbench/execute', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      intent_id: `ui:editor.set_language:${Date.now()}`,
+      kind: 'editor.set_language',
+      parameters: {
+        path,
+        programming_language_id: programmingLanguageId,
+        editor_language_id: editorLanguageId,
+        user_override: userOverride,
+        clear_override: clearOverride,
+      },
+      snapshot_id: snapshotId.value,
+      confidence: 1,
+      tick: 0,
+    }),
+  })
+  error.value = ''
+  return payload.outcome?.result || payload
+}
+
 function start() {
   consumerCount += 1
   if (eventTimer) return
@@ -110,6 +149,10 @@ function stop() {
 
 const snapshotId = computed(() => capabilities.value?.snapshot_id || '')
 const workspaceRoot = computed(() => capabilities.value?.workspace_root || '')
+const programmingLanguages = computed(() => capabilities.value?.programming_languages || [])
+const programmingLanguageRegistryRevision = computed(
+  () => capabilities.value?.programming_language_registry_revision || ''
+)
 const latestOutcome = computed(() => {
   const outcomeEvents = events.value.filter(event => event.phase === 'outcome')
   return outcomeEvents.length ? outcomeEvents[outcomeEvents.length - 1].payload?.outcome || null : null
@@ -123,6 +166,8 @@ export function useWorkbenchProjection() {
     loading: readonly(loading),
     snapshotId,
     workspaceRoot,
+    programmingLanguages,
+    programmingLanguageRegistryRevision,
     latestOutcome,
     isEnabled,
     refresh,
@@ -131,6 +176,8 @@ export function useWorkbenchProjection() {
     ensureCapabilities,
     listDirectory,
     readFile,
+    resolveProgrammingLanguage,
+    setEditorLanguage,
     start,
     stop,
   }
