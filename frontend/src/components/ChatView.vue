@@ -230,7 +230,6 @@ const toast = inject('toast', () => {})
 const messagesArea = ref(null)
 const inputRef = ref(null)
 const fileInput = ref(null)
-const engineModel = ref('agent')  // 统一使用 ReAct 引擎
 const showExample = ref(false)  // 示例对话默认收起
 const showQuickPanel = ref(false)  // 快捷提问面板（"快速"chip）
 const uploading = ref(false)  // 附件上传中
@@ -238,9 +237,9 @@ const uploading = ref(false)  // 附件上传中
 const vitalChips = computed(() => {
   const isTaiji = runtimeStore.health.isTaiji
   return [
-    { dot: 'c1', label: '运行时', value: isTaiji ? 'Taiji Native' : 'Cortex' },
+    { dot: 'c1', label: '运行时', value: isTaiji ? 'Taiji Native' : 'Seed runtime' },
     { dot: 'c2', label: '输入', value: isTaiji ? 'raw bytes' : '对照流' },
-    { dot: 'c3', label: '学习', value: isTaiji ? '局部可塑性' : '冻结对照' },
+    { dot: 'c3', label: '学习', value: isTaiji ? '局部可塑性' : '状态不可用' },
   ]
 })
 const runtimeNotice = computed(() => runtimeStore.runtimeNotice)
@@ -304,7 +303,7 @@ function handleSend() {
     }
     return
   }
-  chatStore.sendMessage(engineModel.value)
+  chatStore.sendMessage()
   scrollToBottom()
 }
 function onKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }

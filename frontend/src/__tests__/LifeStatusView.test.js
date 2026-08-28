@@ -93,36 +93,28 @@ describe('LifeStatusView', () => {
     expect(wrapper.findAll('.event-item').length).toBe(0)
   })
 
-  it('四个生命活动按钮存在且点击发起对应 /api/life/* 请求', async () => {
+  it('四个生命活动按钮存在但不会调用历史生命接口', async () => {
     const wrapper = mountView()
     await flushPromises()
-    const actions = [
-      ['喂养', '/api/life/feed'],
-      ['睡眠', '/api/life/sleep'],
-      ['玩耍', '/api/life/play'],
-      ['进化', '/api/life/evolve'],
-    ]
-    for (const [label, url] of actions) {
+    const actions = ['喂养', '睡眠', '玩耍', '进化']
+    for (const label of actions) {
       const btn = wrapper.findAll('button').find((b) => b.text().includes(label))
       expect(btn, `按钮「${label}」应存在`).toBeTruthy()
       await btn.trigger('click')
       await flushPromises()
-      expect(
-        lifePostCalls().some(([u]) => u.endsWith(url)),
-        `点击「${label}」应 POST ${url}`
-      ).toBe(true)
     }
-    expect(lifePostCalls().length).toBe(4)
+    expect(lifePostCalls().length).toBe(0)
+    expect(wrapper.text()).toContain('Taiji 原生动作器尚未接入生命活动能力')
   })
 
-  it('操作成功后事件流记录后端回执', async () => {
+  it('操作未接入时事件流记录诚实的能力边界', async () => {
     const wrapper = mountView()
     await flushPromises()
     const btn = wrapper.findAll('button').find((b) => b.text().includes('喂养'))
     await btn.trigger('click')
     await flushPromises()
     expect(wrapper.text()).not.toContain('暂无生命事件')
-    expect(wrapper.find('.event-item').text()).toContain('模拟完成')
+    expect(wrapper.find('.event-item').text()).toContain('Taiji 原生动作器尚未接入生命活动能力')
   })
 
   it('原生运行时点击操作按钮给出提示且不发起 /api/life 请求', async () => {
@@ -137,7 +129,7 @@ describe('LifeStatusView', () => {
     await flushPromises()
     expect(lifePostCalls().length).toBe(before)
     expect(toastFn).toHaveBeenCalledWith(
-      expect.stringContaining('原生运行时'),
+      expect.stringContaining('原生动作器尚未接入'),
       'info'
     )
   })

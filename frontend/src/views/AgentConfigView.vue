@@ -7,7 +7,7 @@
         <div class="cfg-card-head">
           <div class="cfg-title">
             <h2>基本信息</h2>
-            <span class="sub">定义智能体身份与归属</span>
+            <span class="sub">查看 Taiji 原生能力执行平面</span>
           </div>
           <button class="btn btn-ghost sm" :disabled="runtimeStore.toolsLoading" @click="refreshAgentRuntime">
             <RefreshCw :size="14" :class="{ spin: runtimeStore.toolsLoading }" /> 刷新
@@ -15,11 +15,11 @@
         </div>
         <div class="form-grid">
           <div class="form-field">
-            <label class="form-label" for="agent-name">智能体名称<span class="req">*</span></label>
-            <input id="agent-name" class="input" type="text" value="语言推理专家" readonly>
+            <label class="form-label" for="agent-name">运行时名称<span class="req">*</span></label>
+            <input id="agent-name" class="input" type="text" value="Taiji 原生运行时" readonly>
           </div>
           <div class="form-field">
-            <label class="form-label" for="agent-domain">所属域<span class="req">*</span></label>
+            <label class="form-label" for="agent-domain">能力域<span class="req">*</span></label>
             <select id="agent-domain" class="select" disabled>
               <option value="language">语言</option>
               <option value="reasoning" selected>推理</option>
@@ -30,64 +30,12 @@
           </div>
           <div class="form-field full">
             <label class="form-label" for="agent-desc">描述</label>
-            <textarea id="agent-desc" class="textarea" rows="3" readonly>融合语言域和推理域神经元，处理复杂问答</textarea>
+            <textarea id="agent-desc" class="textarea" rows="3" readonly>能力由原生 registry 声明并按权限执行；语言 provider 作为可替换的语言器官接入。</textarea>
           </div>
         </div>
       </section>
 
-      <!-- 2. 参数配置 -->
-      <section class="cfg-card">
-        <div class="cfg-card-head">
-          <div class="cfg-title">
-            <h2>参数配置</h2>
-            <span class="sub">系统提示策略 · 温度 · 迭代上限</span>
-          </div>
-          <button class="btn btn-primary sm" :disabled="runtimeStore.toolsLoading" @click="saveAgentPrefs">
-            <svg class="ic-svg" viewBox="0 0 24 24"><path d="M5 12l4 4L19 7"/></svg>
-            保存配置
-          </button>
-        </div>
-
-        <div class="params-grid">
-          <div class="form-field">
-            <label class="form-label" for="ag-temp">
-              <span>温度</span><span class="hint">0 - 2</span>
-            </label>
-            <input id="ag-temp" v-model.number="temperature" class="input" type="number" min="0" max="2" step="0.1" @change="saveAgentPrefs" />
-          </div>
-          <div class="form-field">
-            <label class="form-label" for="ag-iter">
-              <span>最大迭代</span><span class="hint">1 - 50</span>
-            </label>
-            <input id="ag-iter" v-model.number="maxIterations" class="input" type="number" min="1" max="50" @change="saveAgentPrefs" />
-          </div>
-        </div>
-
-        <!-- 预设方案 -->
-        <div class="preset-row">
-          <span class="preset-label">预设方案</span>
-          <div class="preset-chips">
-            <button class="preset-chip" @click="temperature = 0.2; maxIterations = 5; saveAgentPrefs()">
-              <span class="chip-name">精准</span>
-              <span class="chip-meta">T 0.2 · 5 轮</span>
-            </button>
-            <button class="preset-chip" @click="temperature = 0.7; maxIterations = 10; saveAgentPrefs()">
-              <span class="chip-name">均衡</span>
-              <span class="chip-meta">T 0.7 · 10 轮</span>
-            </button>
-            <button class="preset-chip" @click="temperature = 1.2; maxIterations = 20; saveAgentPrefs()">
-              <span class="chip-name">创意</span>
-              <span class="chip-meta">T 1.2 · 20 轮</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="action-row">
-          <button class="btn btn-outline" @click="maxIterations = 10; temperature = 0.7; saveAgentPrefs()">重置默认</button>
-        </div>
-      </section>
-
-      <!-- 3. 状态概览 -->
+      <!-- 2. 状态概览 -->
       <section class="overview-grid">
         <div class="ov-card" :class="runtimeStore.connectionClass">
           <span class="ov-ic">
@@ -110,15 +58,6 @@
             <strong class="ov-value">{{ runtimeStore.tools.length }}<span class="ov-unit"> 个可用</span></strong>
           </div>
         </div>
-        <div class="ov-card">
-          <span class="ov-ic">
-            <svg class="ic-svg" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
-          </span>
-          <div class="ov-text">
-            <small class="ov-label">MCP 数量</small>
-            <strong class="ov-value">{{ installedServers.filter(s => s.running).length }}<span class="ov-unit"> 个运行</span></strong>
-          </div>
-        </div>
         <div v-if="runtimeStore.memoryAvailableGb" class="ov-card">
           <span class="ov-ic">
             <svg class="ic-svg" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10v4M11 10v4M15 10v4"/></svg>
@@ -130,16 +69,8 @@
         </div>
       </section>
 
-      <!-- 4. 标签页 -->
-      <div class="tabs" role="tablist" aria-label="Agent 配置" @keydown="onTablistKeydown">
-        <button id="ac-tab-tools" class="tab" :class="{ active: isActive('tools') }" data-tab-id="tools" role="tab" :aria-selected="isActive('tools')" :tabindex="isActive('tools') ? 0 : -1" aria-controls="ac-panel-tools" @click="selectTab('tools')">工具与插件</button>
-        <button id="ac-tab-installed" class="tab" :class="{ active: isActive('installed') }" data-tab-id="installed" role="tab" :aria-selected="isActive('installed')" :tabindex="isActive('installed') ? 0 : -1" aria-controls="ac-panel-installed" @click="selectTab('installed')">MCP 服务</button>
-        <button id="ac-tab-marketplace" class="tab" :class="{ active: isActive('marketplace') }" data-tab-id="marketplace" role="tab" :aria-selected="isActive('marketplace')" :tabindex="isActive('marketplace') ? 0 : -1" aria-controls="ac-panel-marketplace" @click="selectTab('marketplace')">MCP 市场</button>
-      </div>
-
-      <!-- 工具与插件 tab -->
-      <!-- 用 display 切换而非 v-if：DOM 常驻，保留搜索框内容与滚动位置，切换 0ms -->
-      <section id="ac-panel-tools" class="tab-panel" :class="{ active: isActive('tools') }" role="tabpanel" aria-labelledby="ac-tab-tools">
+      <!-- 原生能力 registry -->
+      <section id="ac-panel-tools" class="tab-panel active" aria-label="原生能力">
         <div class="filter-row">
           <div class="search-field">
             <Search :size="15" />
@@ -168,125 +99,21 @@
         <div v-if="!filteredTools.length && !runtimeStore.toolsLoading" class="empty-msg">无匹配工具</div>
       </section>
 
-      <!-- MCP 服务 tab -->
-      <section id="ac-panel-installed" class="tab-panel" :class="{ active: isActive('installed') }" role="tabpanel" aria-labelledby="ac-tab-installed">
-        <div v-if="installedServers.length" class="mcp-table-wrap">
-          <table class="mcp-table">
-            <thead>
-              <tr>
-                <th>服务名称</th>
-                <th>协议</th>
-                <th>状态</th>
-                <th>端点</th>
-                <th style="width:110px">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="server in installedServers" :key="server.id">
-                <td>
-                  <span class="mcp-name">
-                    <span class="mcp-ic"><svg class="ic-svg" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg></span>
-                    {{ server.name || server.id }}
-                  </span>
-                </td>
-                <td><span class="mcp-protocol">{{ server.npm_package ? 'npm' : 'stdio' }}</span></td>
-                <td><span class="status-chip" :class="server.running ? 'status-running' : 'status-stopped'">{{ server.running ? '运行中' : '已停止' }}</span></td>
-                <td><span class="mcp-endpoint">{{ server.npm_package || server.id }}</span></td>
-                <td>
-                  <div class="row-actions">
-                    <button v-if="!server.running" class="act-btn" aria-label="启动" @click="startServer(server.id)"><svg class="ic-svg" viewBox="0 0 24 24"><path d="M7 5l12 7-12 7Z"/></svg></button>
-                    <button v-else class="act-btn" aria-label="停止" @click="stopServer(server.id)"><svg class="ic-svg" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></button>
-                    <button v-if="server.running" class="act-btn" aria-label="重启" @click="restartServer(server.id)"><svg class="ic-svg" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button>
-                    <button class="act-btn" aria-label="卸载" @click="uninstallServer(server.id)"><svg class="ic-svg" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div v-if="installedServers.length" class="panel-foot">
-          <span class="foot-hint">{{ installedServers.filter(s => s.running).length }} 运行中 · {{ installedServers.filter(s => !s.running).length }} 已停止 · 共 {{ installedServers.length }} 个服务</span>
-        </div>
-        <div v-if="!installedServers.length" class="empty-msg">暂无已安装 MCP 服务</div>
-      </section>
-
-      <!-- MCP 市场 tab -->
-      <section id="ac-panel-marketplace" class="tab-panel" :class="{ active: isActive('marketplace') }" role="tabpanel" aria-labelledby="ac-tab-marketplace">
-        <div class="filter-row">
-          <div class="search-field">
-            <Search :size="15" />
-            <input v-model="mcpSearch" placeholder="搜索 MCP 服务..." @input="debounceSearch" />
-          </div>
-          <select v-model="mcpCategory" class="select" @change="loadMarketplace">
-            <option value="">全部分类</option>
-            <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
-          </select>
-          <button class="btn btn-outline sm" :disabled="mcpLoading" @click="loadMarketplace">
-            <RefreshCw :size="13" :class="{ spin: mcpLoading }" /> 同步
-          </button>
-        </div>
-        <div class="tool-grid">
-          <div v-for="server in marketplaceServers" :key="server.id" class="tool-card" :class="{ off: !server.installed && !server.running }">
-            <div class="tool-head">
-              <span class="tool-ic">
-                <svg class="ic-svg" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
-              </span>
-              <span class="status-chip" :class="server.running ? 'status-running' : 'status-stopped'">
-                {{ server.running ? '运行中' : server.installed ? '已安装' : '未安装' }}
-              </span>
-            </div>
-            <div class="tool-name">{{ server.name }}</div>
-            <div class="tool-desc">{{ server.description || '暂无描述' }}</div>
-            <div class="mc-actions">
-              <button v-if="!server.installed" class="mc-btn" @click="installServer(server.id)"><Download :size="12" /> 安装</button>
-              <template v-else>
-                <button v-if="!server.running" class="mc-btn" @click="startServer(server.id)"><Play :size="12" /> 启动</button>
-                <button v-else class="mc-btn" @click="stopServer(server.id)"><Square :size="12" /> 停止</button>
-                <button class="mc-btn" @click="uninstallServer(server.id)"><Trash2 :size="12" /> 卸载</button>
-              </template>
-            </div>
-          </div>
-        </div>
-        <div class="panel-foot">
-          <span class="foot-hint">共 {{ marketplaceServers.length }} 个服务</span>
-        </div>
-        <div v-if="!marketplaceServers.length && !mcpLoading" class="empty-msg">{{ mcpLoading ? '加载中...' : '无匹配结果' }}</div>
-      </section>
-
     </div>
   </div>
 </template>
 
 <script setup>
 defineOptions({ name: 'AgentConfigView' })
-import { computed, inject, onActivated, onMounted, ref, watch } from 'vue'
-import { RefreshCw, Play, Square, Trash2, Download, Search } from 'lucide-vue-next'
+import { computed, inject, onActivated, ref } from 'vue'
+import { RefreshCw, Search } from 'lucide-vue-next'
 import { useRuntimeStore } from '../stores/runtimeStore.js'
-import { API_BASE, authFetch } from '../composables/apiClient.js'
-import { useTabs } from '../composables/useTabs.js'
 
 const runtimeStore = useRuntimeStore()
 const toast = inject('toast', () => {})
 
-// 标签页状态收敛到 useTabs：DOM 常驻、切换 0ms、状态同步到 ?tab=
-// 原先内联在 @click 里的 loadInstalled()/loadMarketplace() 收敛到下方 watch：
-// 选中对应标签（含来自 URL 深链/前进后退的直达）时都会触发数据加载
-const { activeTab, isActive, selectTab, onTablistKeydown } = useTabs(['tools', 'installed', 'marketplace'])
-watch(activeTab, (tab) => {
-  if (tab === 'installed') loadInstalled()
-  if (tab === 'marketplace') loadMarketplace()
-})
 const toolQuery = ref('')
 const toolSource = ref('')
-const maxIterations = ref(10)
-const temperature = ref(0.7)
-
-const installedServers = ref([])
-const marketplaceServers = ref([])
-const categories = ref([])
-const mcpSearch = ref('')
-const mcpCategory = ref('')
-const mcpLoading = ref(false)
 
 const toolSources = computed(() => {
   const sources = new Set(runtimeStore.tools.map(t => t.source).filter(Boolean))
@@ -305,77 +132,18 @@ const filteredTools = computed(() => {
 
 // R5: sourceLabel/categoryLabel/permissionLabel 未被模板引用，已移除（需要时从 git 历史恢复）。
 
-function saveAgentPrefs() {
-  localStorage.setItem('taiji_agent_max_iterations', String(maxIterations.value))
-  localStorage.setItem('taiji_agent_temperature', String(temperature.value))
-}
-
 async function refreshAgentRuntime({ silent = false } = {}) {
   await runtimeStore.refreshTools()
-  await loadInstalled()
   // 自动刷新（进入页面）不打扰；仅手动点击「刷新」时提示
   if (!silent) toast('已刷新', 'success')
 }
 
-async function loadInstalled() {
-  try {
-    const r = await authFetch(`${API_BASE}/api/mcp/installed`)
-    if (r.ok) { const d = await r.json(); installedServers.value = d.servers || [] }
-  } catch (e) { toast('加载已安装服务失败: ' + e.message, 'error') }
-}
-
-async function loadMarketplace() {
-  mcpLoading.value = true
-  try {
-    const r = await authFetch(`${API_BASE}/api/mcp/marketplace?search=${mcpSearch.value}&category=${mcpCategory.value}`)
-    if (r.ok) { const d = await r.json(); marketplaceServers.value = d.servers || []; categories.value = d.categories || [] }
-  } catch (e) { toast('加载市场失败: ' + e.message, 'error') }
-  mcpLoading.value = false
-}
-
-let searchTimer = null
-function debounceSearch() {
-  clearTimeout(searchTimer)
-  searchTimer = setTimeout(loadMarketplace, 400)
-}
-
-async function startServer(id) {
-  const s = installedServers.value.find(x => x.id === id) || marketplaceServers.value.find(x => x.id === id)
-  if (s) s._starting = true
-  try { await authFetch(`${API_BASE}/api/mcp/start/${id}`, { method: 'POST' }); await loadInstalled() } catch (e) { toast('启动服务失败: ' + e.message, 'error') }
-  if (s) s._starting = false
-}
-
-async function stopServer(id) {
-  try { await authFetch(`${API_BASE}/api/mcp/stop/${id}`, { method: 'POST' }); await loadInstalled() } catch (e) { toast('停止服务失败: ' + e.message, 'error') }
-}
-
-async function restartServer(id) {
-  await stopServer(id)
-  await startServer(id)
-}
-
-async function installServer(id) {
-  const s = marketplaceServers.value.find(x => x.id === id)
-  if (s) s._installing = true
-  try { await authFetch(`${API_BASE}/api/mcp/install/${id}`, { method: 'POST' }); toast('已安装', 'success'); await loadInstalled() } catch (e) { toast('安装服务失败: ' + e.message, 'error') }
-  if (s) s._installing = false
-}
-
-async function uninstallServer(id) {
-  try { await authFetch(`${API_BASE}/api/mcp/uninstall/${id}`, { method: 'DELETE' }); toast('已卸载', 'success'); await loadInstalled() } catch (e) { toast('卸载服务失败: ' + e.message, 'error') }
-}
-
-onMounted(() => {
-  maxIterations.value = Number(localStorage.getItem('taiji_agent_max_iterations')) || 10
-  temperature.value = Number(localStorage.getItem('taiji_agent_temperature')) || 0.7
-})
 // keep-alive 缓存后重新进入页面时也刷新运行时状态（首次挂载同样触发，静默）
 onActivated(() => refreshAgentRuntime({ silent: true }))
 </script>
 
 <style scoped>
-/* ═══ 智能体配置页 · 豆包设计 token 体系 ═══ */
+/* ═══ 原生能力页 · 豆包设计 token 体系 ═══ */
 .agent-page {
   height: 100%;
   overflow-y: auto;
@@ -475,39 +243,6 @@ onActivated(() => refreshAgentRuntime({ silent: true }))
   background-position: right 10px center;
   padding-right: 32px;
 }
-
-/* 参数网格 */
-.params-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 14px;
-}
-
-/* 预设方案 */
-.preset-row { display: flex; flex-direction: column; gap: 10px; }
-.preset-label { font-size: 0.8rem; font-weight: 500; color: var(--foreground); }
-.preset-chips { display: flex; flex-wrap: wrap; gap: 10px; }
-.preset-chip {
-  flex: 1;
-  min-width: 140px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  align-items: flex-start;
-  padding: 10px 14px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--card);
-  color: var(--foreground);
-  cursor: pointer;
-  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
-}
-.preset-chip:hover { border-color: var(--primary); background: var(--primary-subtle); transform: translateY(-1px); }
-.chip-name { font-size: 0.84rem; font-weight: 600; }
-.chip-meta { font-size: 0.7rem; color: var(--muted-foreground); font-family: var(--font-mono); }
-
-/* 操作行 */
-.action-row { display: flex; gap: 10px; }
 
 /* 概览网格 */
 .overview-grid {
@@ -658,61 +393,6 @@ onActivated(() => refreshAgentRuntime({ silent: true }))
 .status-chip::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 .status-running { background: color-mix(in srgb, var(--chart-2) 18%, transparent); color: var(--chart-2); }
 .status-stopped { background: color-mix(in srgb, var(--muted-foreground) 16%, transparent); color: var(--muted-foreground); }
-
-/* MCP 表格 */
-.mcp-table-wrap { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--card); }
-.mcp-table { width: 100%; border-collapse: collapse; }
-.mcp-table th {
-  text-align: left;
-  font: 600 0.7rem/1 var(--font-mono);
-  letter-spacing: 0.06em; text-transform: uppercase;
-  color: var(--muted-foreground);
-  padding: 11px 16px;
-  border-bottom: 1px solid var(--border);
-  background: var(--muted);
-}
-.mcp-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
-  font-size: 0.84rem;
-  color: var(--foreground);
-  vertical-align: middle;
-}
-.mcp-table tbody tr:last-child td { border-bottom: 0; }
-.mcp-table tbody tr { transition: background 120ms ease; }
-.mcp-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); }
-.mcp-name { display: flex; align-items: center; gap: 9px; font-weight: 500; }
-.mcp-ic {
-  width: 26px; height: 26px; border-radius: 7px;
-  background: color-mix(in srgb, var(--primary) 14%, transparent);
-  color: var(--primary);
-  display: grid; place-items: center; flex: none;
-}
-.mcp-ic .ic-svg { width: 15px; height: 15px; }
-.mcp-protocol { font-family: var(--font-mono); font-size: 0.76rem; color: var(--muted-foreground); }
-.mcp-endpoint { font-family: var(--font-mono); font-size: 0.76rem; color: var(--muted-foreground); }
-
-/* 行操作（图标） */
-.row-actions { display: flex; align-items: center; gap: 4px; }
-.act-btn {
-  width: 28px; height: 28px; border: 0; border-radius: 8px;
-  background: transparent; color: var(--muted-foreground);
-  display: grid; place-items: center; cursor: pointer;
-  transition: background 140ms ease, color 140ms ease;
-}
-.act-btn:hover { background: var(--muted); color: var(--foreground); }
-.act-btn .ic-svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-
-/* 市场卡片操作按钮 */
-.mc-actions { display: flex; gap: 6px; flex-wrap: wrap; }
-.mc-btn {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 5px 12px; border: 1px solid var(--border); border-radius: 999px;
-  background: var(--card); color: var(--muted-foreground);
-  font-size: 0.74rem; cursor: pointer;
-  transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
-}
-.mc-btn:hover { background: var(--muted); color: var(--foreground); }
 
 /* 底部 */
 .panel-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 4px; }

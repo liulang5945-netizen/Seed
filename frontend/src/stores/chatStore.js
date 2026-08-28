@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { ref, computed, nextTick } from 'vue'
 import { API_BASE, authFetch } from '@/composables/apiClient.js'
 import { setChatReceiving } from '@/composables/useApi.js'
-import { useRuntimeStore } from '@/stores/runtimeStore.js'
 
 let _msgIdCounter = 0
 function _nextMsgId() { return `msg_${Date.now()}_${++_msgIdCounter}` }
@@ -15,7 +14,6 @@ export const useChatStore = defineStore('chat', () => {
   const chatInput = ref('')
   const isLoading = ref(false)
   const isReceiving = ref(false)
-  const lastEngineType = ref('')  // 记录最近一次使用的引擎类型
   const sessionsLoaded = ref(false) // 标记是否已从后端加载过
   const lifeNeeds = ref(null)  // Seed内在需求（来自推理过程中的生命状态事件）
   let abortController = null
@@ -137,7 +135,7 @@ export const useChatStore = defineStore('chat', () => {
     return localStorage.getItem('taiji_system_prompt') || '你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。'
   }
 
-  async function sendMessage(engineType, attachments = []) {
+  async function sendMessage(attachments = []) {
     const readyAttachments = attachments.filter(att => att && !att.uploading)
     const input = chatInput.value.trim() || defaultPromptForAttachments(readyAttachments)
     if ((!input && readyAttachments.length === 0) || isLoading.value) return
@@ -189,8 +187,6 @@ export const useChatStore = defineStore('chat', () => {
     isLoading.value = true
     isReceiving.value = false
 
-    // 记录引擎类型供重新生成使用
-    lastEngineType.value = 'agent'  // 统一使用 ReAct 引擎
     // 更新全局接收状态
     setChatReceiving(true)
 
@@ -217,8 +213,6 @@ export const useChatStore = defineStore('chat', () => {
       }
 
       const sysPrompt = getSystemPrompt()
-      const runtimeStore = useRuntimeStore()
-
       const res = await authFetch(`${API_BASE}/api/chat/stream`, {
         method: 'POST',
         retries: 0, // 非幂等流式推理：禁用重试，避免 5xx 时重复推理
@@ -227,9 +221,6 @@ export const useChatStore = defineStore('chat', () => {
           prompt: promptInput,
           system_prompt: sysPrompt,
           history,
-          engine: 'agent',  // 统一使用 ReAct 引擎
-          agent_max_iterations: Number(runtimeStore.agentPrefs.maxIterations || 10),
-          agent_temperature: Number(runtimeStore.agentPrefs.temperature || 0.7)
         }),
         signal: abortController.signal,
       })
@@ -399,7 +390,7 @@ export const useChatStore = defineStore('chat', () => {
       const attachments = userMsg.attachments || []
       messages.value.splice(idx - 1, 2)
       chatInput.value = m
-      nextTick(() => sendMessage(lastEngineType.value || 'taiji', attachments))
+      nextTick(() => sendMessage(attachments))
     }
   }
 

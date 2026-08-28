@@ -208,26 +208,6 @@
             <section v-else-if="activeSection === 'runtime'" class="settings-section">
               <h2>运行环境</h2>
 
-              <!-- 认知主体 -->
-              <div class="setting-row setting-row--first">
-                <div class="setting-left">
-                  <span class="setting-label">认知主体</span>
-                  <p class="setting-desc">Seed 原生（taiji 预测基底，在线持续学习 + 内生巩固）或 Cortex（neuroplex 冻结对照）</p>
-                </div>
-                <div class="setting-right">
-                  <div class="radio-group" role="radiogroup" aria-label="认知主体">
-                    <label class="radio-chip">
-                      <input type="radio" name="runtime" value="seed" :checked="runtimeType === 'seed'" :disabled="switching" @change="switchRuntime('seed')">
-                      <span class="rc-label">Seed 原生</span>
-                    </label>
-                    <label class="radio-chip">
-                      <input type="radio" name="runtime" value="cortex" :checked="runtimeType === 'cortex'" :disabled="switching" @change="switchRuntime('cortex')">
-                      <span class="rc-label">Cortex</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
               <!-- 终端访问（安全） -->
               <div class="setting-row">
                 <div class="setting-left">
@@ -425,9 +405,6 @@ const chatStore = useChatStore();
 // 左侧设置导航当前激活分区（v-if 切换右侧内容）
 const activeSection = ref('general');
 
-// ── 运行环境：认知主体热切换（Seed 原生 ↔ Cortex）──
-const runtimeType = ref('cortex');
-const switching = ref(false);
 const runtimeStatusText = ref('检测中…');
 
 const refreshRuntime = async () => {
@@ -435,40 +412,15 @@ const refreshRuntime = async () => {
     const r = await authFetch(`${API_BASE}/api/health`);
     if (r.ok) {
       const d = await r.json();
-      runtimeType.value = d.seed_active ? 'seed' : 'cortex';
       runtimeStatusText.value = d.seed_active
         ? 'Seed 原生运行时激活中（检查点：checkpoints/seed_corpus.pt，对话即持续学习）'
-        : 'Cortex 神经元架构激活中（冻结对照基线）';
+        : 'Seed 原生运行时未激活；请检查本地服务状态';
     }
   } catch (e) {
     runtimeStatusText.value = `状态检测失败：${e.message}`;
   }
 };
 
-const switchRuntime = async (target) => {
-  if (switching.value || target === runtimeType.value) return;
-  switching.value = true;
-  runtimeStatusText.value = '切换中…';
-  try {
-    const r = await authFetch(`${API_BASE}/api/system/switch_model`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model_type: target }),
-    });
-    const d = await r.json();
-    if (d.status === 'ok') {
-      runtimeType.value = target;
-      toast(target === 'seed' ? '✅ 已切换到 Seed 原生运行时' : '✅ 已切换到 Cortex 运行时', 'success');
-    } else {
-      toast(`❌ 切换失败：${d.message}`, 'error');
-    }
-  } catch (e) {
-    toast(`❌ 切换失败：${e.message}`, 'error');
-  } finally {
-    switching.value = false;
-    await refreshRuntime();
-  }
-};
 refreshRuntime();
 
 // ── 持久化设置组（经 /api/settings 通道，范式对齐终端开关）──

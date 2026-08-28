@@ -143,7 +143,7 @@ const dominantNeedClass = computed(() => dominantNeedKey.value)
 const navGroups = computed(() => [
   { title: '工作台', items: [{ path: '/workspace', icon: Layout, label: 'IDE' }] },
   { title: '能力', items: [
-    { path: '/agent', icon: Cpu, label: t('agent_config') },
+    { path: '/agent', icon: Cpu, label: t('capability_tools') },
     { path: '/kb', icon: BookOpen, label: t('kb_management') },
     { path: '/train', icon: Zap, label: t('fine_tuning') },
   ]},

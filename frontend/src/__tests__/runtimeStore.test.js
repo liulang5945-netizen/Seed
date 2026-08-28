@@ -215,19 +215,6 @@ describe('runtimeStore', () => {
     })
   })
 
-  describe('setAgentPrefs', () => {
-    it('更新 agent 偏好并持久化', async () => {
-      const { useRuntimeStore } = await import('../stores/runtimeStore.js')
-      const store = useRuntimeStore()
-
-      store.setAgentPrefs({ maxIterations: 20, temperature: 0.5 })
-      expect(store.agentPrefs.maxIterations).toBe(20)
-      expect(store.agentPrefs.temperature).toBe(0.5)
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('taiji_agent_max_iterations', '20')
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('taiji_agent_temperature', '0.5')
-    })
-  })
-
   describe('handleLifeEvent', () => {
     it('feed_complete 降低饥饿值', async () => {
       const { useRuntimeStore } = await import('../stores/runtimeStore.js')
