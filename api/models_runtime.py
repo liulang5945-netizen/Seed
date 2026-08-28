@@ -76,6 +76,11 @@ class ToolsPayload(BaseModel):
     tools: list[ToolInfo] = []
     count: int = 0
     error: str = ""
+    snapshot_id: str = ""
+    revision: int = 0
+    source: str = ""
+    owner: str = ""
+    observed_at: int = 0
 
 
 class TrainingPayload(BaseModel):

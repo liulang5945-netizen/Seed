@@ -263,7 +263,9 @@ replay/sandbox 的 S1 和 packaged-client/real-workbench 的 S2，不能单独�
 **已完成（2026-08-29）：W5 第一 slice 的客户端真实性审计与旧调用清理。** Workspace、KB、Chat、Life、Settings 已完成 native 边界对齐：旧 workspace/RAG/生命状态调用和失效文案已清理，副作用统一通过 Workbench preview→approval→execute，Seed active 时 `is_taiji` 正确上报。
 KB 默认不再调用 `/api/rag/*`，仅依据 runtime snapshot 判断 `knowledge.*` capability；Monaco 文件写入携带 digest/编码/完整性检查，未登记的目录创建和资源管理器入口已移除；`useWorkspaceBridge.js` 已删除。证据为 frontend Vitest `22 files / 185 passed`、ESLint `0 errors / 13 warnings`、生产构建通过，后端原生 Workbench/系统路由回归 `72 passed, 1 skipped`，ruff/compileall/diff check 通过。尚未宣称 knowledge capability 已实现，也尚未进行 packaged route-level smoke。
 
-**当前唯一下一步：开始 W5 第二 slice 的真实状态接入。** 以统一 runtime status、Workbench capability snapshot 和 provider artifact status 为唯一来源，把 Chat、Life、Agent/能力、Training、Settings、KB 的 `source/owner/freshness/availability` 投影补齐，并为 native homeostasis/self-state 定义缺失字段与降级态；随后补 route-level packaged smoke 和 frontend/source capability contract。
+**已完成（2026-08-29）：W5 第二 slice 的真实状态接入。** `/api/runtime/status.tools` 已补齐 Workbench snapshot 的身份、版本、来源、归属和观测时间；前端统一投影 runtime、provider、Workbench、homeostasis/self-state、training、knowledge 的 `source/owner/freshness/availability`，并接入 Chat、Life、Agent/能力、Training、Settings、KB 六个入口。homeostasis/self-state 缺失时明确显示“未上报”。前端 Vitest `23 files / 187 passed`、ESLint `0 errors`、生产构建通过；后端定向回归 `65 passed, 1 skipped`，OpenAPI、ruff、compileall、diff check 通过。
+
+**当前唯一下一步：开始 W5 第三 slice 的 packaged route-level smoke 与 frontend/source capability contract。** 验证可发布运行方式下的 runtime/workbench/provider/受控工作区链路，并增加源代码门禁，禁止新页面直接调用 Legacy RAG/model/HF/GGUF/engine 路径或硬编码能力状态；不得先做视觉包装。
 
 ## 当前唯一下一步
 

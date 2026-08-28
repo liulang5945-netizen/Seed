@@ -13,6 +13,8 @@
         </button>
       </header>
 
+      <RuntimeEvidenceStrip context="knowledge" />
+
       <div class="boundary-card" :class="{ ready: knowledgeCapabilities.length }">
         <div class="boundary-icon">◎</div>
         <div class="boundary-copy">
@@ -68,12 +70,15 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRuntimeStore } from '../stores/runtimeStore.js'
+import RuntimeEvidenceStrip from '../components/RuntimeEvidenceStrip.vue'
 
 defineOptions({ name: 'KBView' })
 
 const runtimeStore = useRuntimeStore()
 const refreshing = ref(false)
-const snapshotId = computed(() => runtimeStore.runtimeSnapshot?.tools?.tools?.[0]?.source_id || '')
+const snapshotId = computed(() => runtimeStore.runtimeSnapshot?.tools?.snapshot_id
+  || runtimeStore.runtimeSnapshot?.tools?.tools?.[0]?.source_id
+  || '')
 const knowledgeCapabilities = computed(() => runtimeStore.tools.filter(tool => (
   String(tool.name || '').startsWith('knowledge.')
 )))

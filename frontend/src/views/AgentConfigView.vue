@@ -2,6 +2,8 @@
   <div class="agent-page">
     <div class="page-container">
 
+      <RuntimeEvidenceStrip context="agent" compact />
+
       <!-- 1. 基本信息卡片 -->
       <section class="cfg-card">
         <div class="cfg-card-head">
@@ -108,6 +110,7 @@ defineOptions({ name: 'AgentConfigView' })
 import { computed, inject, onActivated, ref } from 'vue'
 import { RefreshCw, Search } from 'lucide-vue-next'
 import { useRuntimeStore } from '../stores/runtimeStore.js'
+import RuntimeEvidenceStrip from '../components/RuntimeEvidenceStrip.vue'
 
 const runtimeStore = useRuntimeStore()
 const toast = inject('toast', () => {})

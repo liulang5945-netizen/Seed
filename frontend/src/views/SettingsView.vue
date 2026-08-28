@@ -13,6 +13,7 @@
     <!-- 滚动内容区 -->
     <div class="settings-scroll">
       <div class="settings-wrap">
+        <RuntimeEvidenceStrip context="settings" compact />
         <div class="settings-layout">
 
           <!-- ═══ 左侧：设置导航 ═══ -->
@@ -396,6 +397,7 @@ import { ref, reactive, inject } from 'vue';
 import { useAppStore } from '../stores/appStore.js';
 import { useChatStore } from '../stores/chatStore.js';
 import { API_BASE, authFetch } from '../composables/apiClient.js';
+import RuntimeEvidenceStrip from '../components/RuntimeEvidenceStrip.vue';
 
 const toast = inject('toast');
 const $confirm = inject('$confirm', () => Promise.resolve(false));
