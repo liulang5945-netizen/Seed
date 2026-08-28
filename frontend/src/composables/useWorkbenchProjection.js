@@ -93,10 +93,12 @@ async function readFile(path) {
   return payload
 }
 
-async function resolveProgrammingLanguage(path) {
+async function resolveProgrammingLanguage(path, lspLanguageId = '') {
   await ensureCapabilities()
-  const query = encodeURIComponent(path)
-  const payload = await readJson(`/api/workbench/programming-language?path=${query}`)
+  const query = `path=${encodeURIComponent(path)}${lspLanguageId
+    ? `&lsp_language_id=${encodeURIComponent(lspLanguageId)}`
+    : ''}`
+  const payload = await readJson(`/api/workbench/programming-language?${query}`)
   error.value = ''
   return payload
 }

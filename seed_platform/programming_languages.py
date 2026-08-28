@@ -54,6 +54,8 @@ class ProgrammingLanguageDefinition:
     content_patterns: tuple[str, ...] = ()
     manifest_files: tuple[str, ...] = ()
     toolchain_commands: tuple[str, ...] = ()
+    runner_id: str = ""
+    lsp_id: str = ""
 
     def __post_init__(self) -> None:
         if not self.language_id.strip():
@@ -68,6 +70,8 @@ class ProgrammingLanguageDefinition:
             "language_id": self.language_id,
             "label": self.label,
             "editor_language_id": self.editor_language_id,
+            "runner_id": self.runner_id or None,
+            "lsp_id": self.lsp_id or None,
             "extensions": list(self.extensions),
         }
         if include_rules:
@@ -138,6 +142,10 @@ class ProgrammingLanguageAssessment:
     capability_revision: int
     user_override: str | None = None
     selection_source: str = "evidence"
+    runner_id: str | None = None
+    lsp_id: str | None = None
+    toolchain_commands: tuple[str, ...] = ()
+    available_toolchains: tuple[str, ...] = ()
 
     @property
     def selection_state(self) -> str:
@@ -161,12 +169,37 @@ class ProgrammingLanguageAssessment:
             "selection_state": self.selection_state,
             "selection_source": self.selection_source,
             "user_override": self.user_override,
+            "runner_id": self.runner_id,
+            "lsp_id": self.lsp_id,
+            "toolchain_commands": list(self.toolchain_commands),
+            "available_toolchains": list(self.available_toolchains),
+            "explanation": {
+                "kind": "programming_language_selection",
+                "selected_language": self.programming_language_id,
+                "selection_state": self.selection_state,
+                "confidence": round(float(self.confidence), 6),
+                "evidence": [item.to_payload() for item in self.provenance],
+            },
             "provenance": [item.to_payload() for item in self.provenance],
             "candidate_scores": {
                 language_id: round(float(score), 6) for language_id, score in self.candidate_scores
             },
             "registry_revision": self.registry_revision,
             "capability_revision": self.capability_revision,
+            "execution_snapshot": {
+                "programming_language_id": self.programming_language_id,
+                "editor_language_id": self.editor_language_id,
+                "runner_id": self.runner_id,
+                "lsp_id": self.lsp_id,
+                "toolchain_commands": list(self.toolchain_commands),
+                "available_toolchains": list(self.available_toolchains),
+                "available_for_language": sorted(
+                    set(self.toolchain_commands).intersection(self.available_toolchains)
+                ),
+                "file_digest": self.file_digest,
+                "registry_revision": self.registry_revision,
+                "capability_revision": self.capability_revision,
+            },
         }
 
     @classmethod
@@ -183,6 +216,8 @@ class ProgrammingLanguageAssessment:
             for item in raw_provenance
             if isinstance(item, Mapping)
         )
+        raw_execution = payload.get("execution_snapshot", {})
+        execution = raw_execution if isinstance(raw_execution, Mapping) else {}
         return cls(
             path=str(payload["path"]),
             file_digest=str(payload.get("file_digest", "")),
@@ -199,6 +234,28 @@ class ProgrammingLanguageAssessment:
                 else str(payload["user_override"])
             ),
             selection_source=str(payload.get("selection_source", "evidence")),
+            runner_id=(
+                None
+                if payload.get("runner_id", execution.get("runner_id")) in (None, "")
+                else str(payload.get("runner_id", execution.get("runner_id")))
+            ),
+            lsp_id=(
+                None
+                if payload.get("lsp_id", execution.get("lsp_id")) in (None, "")
+                else str(payload.get("lsp_id", execution.get("lsp_id")))
+            ),
+            toolchain_commands=tuple(
+                str(item)
+                for item in payload.get(
+                    "toolchain_commands", execution.get("toolchain_commands", ())
+                )
+            ),
+            available_toolchains=tuple(
+                str(item)
+                for item in payload.get(
+                    "available_toolchains", execution.get("available_toolchains", ())
+                )
+            ),
         )
 
 
@@ -228,6 +285,8 @@ class ProgrammingLanguageRegistry:
                     "python",
                     "Python",
                     "python",
+                    runner_id="python",
+                    lsp_id="pyright",
                     extensions=(".py", ".pyw"),
                     shebangs=("python", "pypy"),
                     content_patterns=(r"^\s*(from|import)\s+\w+", r"\bdef\s+\w+\s*\("),
@@ -238,6 +297,8 @@ class ProgrammingLanguageRegistry:
                     "javascript",
                     "JavaScript",
                     "javascript",
+                    runner_id="node",
+                    lsp_id="typescript-language-server",
                     extensions=(".js", ".jsx", ".mjs", ".cjs"),
                     shebangs=("node",),
                     content_patterns=(
@@ -252,6 +313,8 @@ class ProgrammingLanguageRegistry:
                     "typescript",
                     "TypeScript",
                     "typescript",
+                    runner_id="node",
+                    lsp_id="typescript-language-server",
                     extensions=(".ts", ".tsx", ".mts", ".cts"),
                     content_patterns=(
                         r"\b(interface|type)\s+\w+",
@@ -264,6 +327,7 @@ class ProgrammingLanguageRegistry:
                     "html",
                     "HTML",
                     "html",
+                    lsp_id="vscode-html-language-server",
                     extensions=(".html", ".htm"),
                     content_patterns=(r"<!doctype\s+html", r"</?(html|body|div|main)\b"),
                 ),
@@ -271,6 +335,8 @@ class ProgrammingLanguageRegistry:
                     "vue",
                     "Vue SFC",
                     "html",
+                    runner_id="npm",
+                    lsp_id="vue-language-server",
                     extensions=(".vue",),
                     content_patterns=(r"<template\b", r"<script(?:\s+lang=\"ts\")?\b"),
                     manifest_files=("package.json",),
@@ -280,6 +346,7 @@ class ProgrammingLanguageRegistry:
                     "css",
                     "CSS",
                     "css",
+                    lsp_id="vscode-css-language-server",
                     extensions=(".css",),
                     content_patterns=(r"[^{}]+\{[^{}]*:[^{};]+;",),
                 ),
@@ -287,6 +354,7 @@ class ProgrammingLanguageRegistry:
                     "scss",
                     "SCSS",
                     "scss",
+                    lsp_id="vscode-css-language-server",
                     extensions=(".scss",),
                     content_patterns=(r"\$[A-Za-z_-][\w-]*\s*:", r"@mixin\b"),
                 ),
@@ -301,6 +369,7 @@ class ProgrammingLanguageRegistry:
                     "yaml",
                     "YAML",
                     "yaml",
+                    lsp_id="yaml-language-server",
                     extensions=(".yml", ".yaml"),
                     content_patterns=(r"^\s*[A-Za-z_][\w.-]*:\s*",),
                 ),
@@ -315,6 +384,8 @@ class ProgrammingLanguageRegistry:
                     "java",
                     "Java",
                     "java",
+                    runner_id="java",
+                    lsp_id="jdtls",
                     extensions=(".java",),
                     content_patterns=(
                         r"\b(package|import)\s+[\w.]+;",
@@ -327,6 +398,8 @@ class ProgrammingLanguageRegistry:
                     "go",
                     "Go",
                     "go",
+                    runner_id="go",
+                    lsp_id="gopls",
                     extensions=(".go",),
                     content_patterns=(r"^\s*package\s+\w+", r"\bfunc\s+\w+\s*\("),
                     manifest_files=("go.mod", "go.sum"),
@@ -336,6 +409,8 @@ class ProgrammingLanguageRegistry:
                     "rust",
                     "Rust",
                     "rust",
+                    runner_id="cargo",
+                    lsp_id="rust-analyzer",
                     extensions=(".rs",),
                     content_patterns=(r"\bfn\s+\w+\s*\(", r"\blet\s+mut\b"),
                     manifest_files=("cargo.toml", "cargo.lock"),
@@ -345,6 +420,8 @@ class ProgrammingLanguageRegistry:
                     "c",
                     "C",
                     "c",
+                    runner_id="cc",
+                    lsp_id="clangd",
                     extensions=(".c", ".h"),
                     content_patterns=(r"#include\s*[<\"]", r"\b(printf|malloc|typedef)\s*\("),
                     manifest_files=("cmakelists.txt", "makefile"),
@@ -354,6 +431,8 @@ class ProgrammingLanguageRegistry:
                     "cpp",
                     "C++",
                     "cpp",
+                    runner_id="c++",
+                    lsp_id="clangd",
                     extensions=(".cc", ".cpp", ".cxx", ".hh", ".hpp", ".hxx", ".h"),
                     content_patterns=(
                         r"#include\s*[<\"]",
@@ -368,6 +447,8 @@ class ProgrammingLanguageRegistry:
                     "csharp",
                     "C#",
                     "csharp",
+                    runner_id="dotnet",
+                    lsp_id="omnisharp",
                     extensions=(".cs",),
                     content_patterns=(
                         r"\b(using\s+System|namespace\s+\w+)",
@@ -390,6 +471,7 @@ class ProgrammingLanguageRegistry:
                     "markdown",
                     "Markdown",
                     "markdown",
+                    lsp_id="marksman",
                     extensions=(".md", ".markdown"),
                     content_patterns=(r"^\s{0,3}#{1,6}\s+\S", r"^```[\w+-]*\s*$"),
                 ),
@@ -397,10 +479,19 @@ class ProgrammingLanguageRegistry:
                     "shell",
                     "Shell",
                     "shell",
+                    runner_id="bash",
+                    lsp_id="bash-language-server",
                     extensions=(".sh", ".bash", ".zsh"),
                     shebangs=("bash", "sh", "zsh", "shell"),
                     content_patterns=(r"^\s*#!/", r"\b(echo|printf|export)\s+\S"),
                     toolchain_commands=("bash", "sh"),
+                ),
+                ProgrammingLanguageDefinition(
+                    "notebook",
+                    "Jupyter Notebook",
+                    "json",
+                    extensions=(".ipynb",),
+                    content_patterns=(r'"cells"\s*:\s*\[', r'"nbformat"\s*:'),
                 ),
                 ProgrammingLanguageDefinition("plaintext", "Plain text", "plaintext"),
             )
@@ -568,6 +659,10 @@ class ProgrammingLanguageRegistry:
             candidate_scores=tuple((key, value) for key, value in ordered),
             registry_revision=self.revision,
             capability_revision=capability_revision,
+            runner_id=selected.runner_id or None,
+            lsp_id=selected.lsp_id or None,
+            toolchain_commands=selected.toolchain_commands,
+            available_toolchains=tuple(sorted(toolchain_set)),
         )
 
     def select(
@@ -598,4 +693,7 @@ class ProgrammingLanguageRegistry:
             provenance=evidence,
             user_override=language_id if source == "user_override" else None,
             selection_source=source,
+            runner_id=definition.runner_id or None,
+            lsp_id=definition.lsp_id or None,
+            toolchain_commands=definition.toolchain_commands,
         )

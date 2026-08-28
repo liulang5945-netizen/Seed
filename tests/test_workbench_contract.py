@@ -137,6 +137,10 @@ def test_programming_language_evidence_uses_content_manifest_and_ambiguity(tmp_p
         "content",
         "manifest",
     }
+    assert environment.last_result["execution_snapshot"]["runner_id"] == "python"
+    assert environment.last_result["execution_snapshot"]["lsp_id"] == "pyright"
+    assert environment.last_result["explanation"]["selected_language"] == "python"
+    assert environment.last_result["explanation"]["evidence"]
 
     header = tmp_path / "shared.h"
     header.write_text("#include <stdio.h>\n", encoding="utf-8")
@@ -185,6 +189,34 @@ def test_programming_language_evidence_uses_content_manifest_and_ambiguity(tmp_p
     )
     assert lsp.programming_language_id == "rust"
     assert any(item.source == "lsp" for item in lsp.provenance)
+
+    monorepo_typescript = registry.resolve(
+        path="packages/ui/index.ts",
+        content="interface Props { title: string }\n",
+        file_digest="monorepo-typescript",
+        manifest_names={"package.json", "pyproject.toml", "tsconfig.json"},
+    )
+    assert monorepo_typescript.programming_language_id == "typescript"
+    assert all(
+        item.language_id != "python"
+        for item in monorepo_typescript.provenance
+        if item.source == "manifest"
+    )
+
+    markdown = registry.resolve(
+        path="guide.md",
+        content="# Guide\n\n```python\nprint('seed')\n```\n",
+        file_digest="markdown-code-block",
+    )
+    assert markdown.programming_language_id == "markdown"
+
+    notebook = registry.resolve(
+        path="analysis.ipynb",
+        content='{"cells": [], "nbformat": 4, "nbformat_minor": 5}',
+        file_digest="notebook",
+    )
+    assert notebook.programming_language_id == "notebook"
+    assert notebook.editor_language_id == "json"
 
 
 def test_programming_language_override_is_content_bound_and_checkpointable(tmp_path) -> None:
@@ -279,6 +311,7 @@ def test_taiji_language_selection_requires_evidence_or_explicit_override(
     )
     assert autonomous["policy"]["decision"] == "allow"
     assert autonomous["outcome"]["result"]["programming_language_id"] == "python"
+    assert autonomous["outcome"]["result"]["execution_snapshot"]["runner_id"] == "python"
 
     explicit = runtime.execute_workbench_intent(
         ActionIntent(

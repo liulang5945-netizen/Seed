@@ -119,10 +119,10 @@ def workbench_search(query: str, path: str = ".") -> dict[str, Any]:
 
 
 @router.get("/programming-language")
-def workbench_programming_language(path: str) -> dict[str, Any]:
+def workbench_programming_language(path: str, lsp_language_id: str | None = None) -> dict[str, Any]:
     return _read_only_result(
         "workspace.programming_language.resolve",
-        {"path": path},
+        {"path": path, "lsp_language_id": lsp_language_id},
     )
 
 
