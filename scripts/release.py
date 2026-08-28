@@ -245,7 +245,10 @@ def main() -> None:
         if errors:
             print("\n产物验证失败:")
             for e in errors:
-                print(f"  ✗ {e}")
+                # Keep the failure marker ASCII: Windows may still expose a
+                # legacy GBK stdout even when the source file is UTF-8.  A
+                # reporting failure must never hide the real artifact error.
+                print(f"  [FAIL] {e}")
             sys.exit(1)
         print("\n所有产物验证通过")
         return
@@ -310,7 +313,7 @@ def main() -> None:
     if errors:
         print("产物验证失败:")
         for e in errors:
-            print(f"  ✗ {e}")
+            print(f"  [FAIL] {e}")
         sys.exit(1)
 
     # Summary
