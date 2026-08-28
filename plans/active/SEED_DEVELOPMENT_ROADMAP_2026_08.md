@@ -1904,6 +1904,13 @@ transaction：before/after SHA-256、原子写入、冲突 fail-closed、唯一�
 contract/executor，不把直接 executor 调用等同于产品自治：写入和终端仍由 policy 默认返回 `ask_user`，未完成 IDE 预览/审批、
 真实 diagnostics/test/build outcome 回写以及 checkpoint 续跑 Gate。
 
-**当前唯一下一步：完成 W2 第二 slice 的审批、预览与真实 outcome 闭环。** 将事务和 `terminal.run` 接入 runtime 的显式审批/预览/
-撤销路径，并补齐未保存内容、cwd 漂移、输出洪泛、部分冲突、进程中断的可故意打红 Gate；随后把 diagnostics/test/build 的真实
-结果、产物和 after-state 回写 Taiji，验证 checkpoint 续跑不会重复已提交事务。W2 未通过前不进入 W3 MCP/自主循环。
+**已完成（2026-08-29）：W2 第二 slice 的审批、预览与真实 outcome 闭环。** `/api/workbench/preview` 对精确 action request
+做不落盘验证并生成短期一次性 approval token；`/api/workbench/execute` 只有携带同一请求绑定的 token 才能执行高风险写入/终端，
+重放、过期、参数或 snapshot 漂移均 fail-closed，审计请求只记录 approval presence。`terminal.run` 已增加 command/diagnostics/test/build
+execution kind、结构化 diagnostics、expected artifacts、after-state，并按 timeout、exit code、诊断错误和缺失产物综合计算 success；
+runtime 和通用前端 projection 已接入 preview/execute client。后端 Workbench 合同 `12 passed`、前端完整回归 `187 passed`、构建通过，
+ruff/Black/py_compile/diff check 通过。该 slice 完成的是审批/结果合同，不等于 checkpoint 后 undo/approval 状态和真实临时项目续跑已通过。
+
+**当前唯一下一步：完成 W2 退出 Gate 的 checkpoint 续跑与真实临时项目闭环。** 将已提交 transaction、可撤销状态、审批失效语义和
+审计 lineage 明确写入/恢复策略；在临时多文件项目中验证预览不副作用、审批后一次执行、诊断失败重规划、patch 冲突恢复、测试/构建产物
+after-state，以及 checkpoint 后不会重复已提交事务。W2 未通过前不进入 W3 MCP/自主循环。

@@ -119,7 +119,9 @@ def workbench_search(query: str, path: str = ".") -> dict[str, Any]:
 
 
 @router.get("/programming-language")
-def workbench_programming_language(path: str, lsp_language_id: str | None = None) -> dict[str, Any]:
+def workbench_programming_language(
+    path: str, lsp_language_id: str | None = None
+) -> dict[str, Any]:
     return _read_only_result(
         "workspace.programming_language.resolve",
         {"path": path, "lsp_language_id": lsp_language_id},
@@ -154,6 +156,34 @@ def execute_workbench_intent(request: WorkbenchIntentRequest) -> dict[str, Any]:
             tick=request.tick,
         )
         return runtime.execute_workbench_intent(
+            intent,
+            snapshot_id=request.snapshot_id,
+            approval_token=request.approval_token,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/preview")
+def preview_workbench_intent(request: WorkbenchIntentRequest) -> dict[str, Any]:
+    """Validate a mutating action and return a short-lived approval token."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    from taiji import ActionIntent
+
+    try:
+        intent = ActionIntent(
+            intent_id=request.intent_id,
+            kind=request.kind,
+            parameters=request.parameters,
+            source_goal_id=request.source_goal_id,
+            expected_outcome=request.expected_outcome,
+            confidence=request.confidence,
+            tick=request.tick,
+        )
+        return runtime.preview_workbench_intent(
             intent,
             snapshot_id=request.snapshot_id,
         )

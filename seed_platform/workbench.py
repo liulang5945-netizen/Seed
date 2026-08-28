@@ -13,6 +13,7 @@ import hashlib
 import json
 import math
 import os
+import re
 import secrets
 import subprocess
 import tempfile
@@ -40,6 +41,7 @@ WORKBENCH_MAX_SEARCH_RESULTS = 100
 WORKBENCH_MAX_WRITE_BYTES = 1_048_576
 WORKBENCH_MAX_TERMINAL_OUTPUT_BYTES = 1_048_576
 WORKBENCH_MAX_TERMINAL_TIMEOUT_SECONDS = 120.0
+WORKBENCH_APPROVAL_TTL_SECONDS = 300.0
 # Workbench sensations cross into Taiji's native byte sensor. Keep the
 # digest-derived marker inside the raw-byte domain; Taiji's boundary symbol
 # is reserved for stream framing and is not emitted here.
@@ -331,6 +333,7 @@ class WorkbenchActionRequest:
     tick: int = 0
     source: str = "taiji"
     version: int = WORKBENCH_CONTRACT_VERSION
+    approval_token: str = ""
 
     def __post_init__(self) -> None:
         if self.version != WORKBENCH_CONTRACT_VERSION:
@@ -360,6 +363,7 @@ class WorkbenchActionRequest:
         *,
         snapshot_id: str,
         request_id: str | None = None,
+        approval_token: str = "",
     ) -> WorkbenchActionRequest:
         """Bind a Taiji-owned intent to the current Seed capability snapshot."""
 
@@ -373,6 +377,7 @@ class WorkbenchActionRequest:
             snapshot_id=str(snapshot_id),
             confidence=float(getattr(intent, "confidence", 0.0)),
             tick=int(getattr(intent, "tick", 0)),
+            approval_token=str(approval_token or ""),
         )
 
     def to_payload(self) -> dict[str, Any]:
@@ -386,6 +391,7 @@ class WorkbenchActionRequest:
             "confidence": self.confidence,
             "tick": self.tick,
             "source": self.source,
+            "approval_granted": bool(self.approval_token),
         }
 
 
@@ -612,6 +618,7 @@ class WorkbenchEnvironment:
         )
         self._language_selections: dict[str, ProgrammingLanguageAssessment] = {}
         self._undo_records: dict[str, dict[str, Any]] = {}
+        self._approval_records: dict[str, dict[str, Any]] = {}
         self._last_result: dict[str, Any] = {}
         self._request_id = ""
         self._lock = threading.RLock()
@@ -713,6 +720,22 @@ class WorkbenchEnvironment:
                 self.snapshot.snapshot_id,
             )
         if descriptor.risk not in {"read_only", "reversible_ui"}:
+            if request.approval_token:
+                if self._approval_is_valid(request):
+                    return ExecutionPolicyDecision(
+                        request.request_id,
+                        request.capability_id,
+                        "allow",
+                        "explicit_approval",
+                        self.snapshot.snapshot_id,
+                    )
+                return ExecutionPolicyDecision(
+                    request.request_id,
+                    request.capability_id,
+                    "ask_user",
+                    "approval_invalid",
+                    self.snapshot.snapshot_id,
+                )
             return ExecutionPolicyDecision(
                 request.request_id,
                 request.capability_id,
@@ -731,6 +754,99 @@ class WorkbenchEnvironment:
             "read_only_or_reversible",
             self.snapshot.snapshot_id,
         )
+
+    @staticmethod
+    def _approval_request_digest(request: WorkbenchActionRequest) -> str:
+        return _canonical_digest(
+            {
+                "request_id": request.request_id,
+                "intent_id": request.intent_id,
+                "capability_id": request.capability_id,
+                "parameters": dict(request.parameters),
+                "snapshot_id": request.snapshot_id,
+                "confidence": request.confidence,
+                "tick": request.tick,
+                "source": request.source,
+            }
+        )
+
+    def _approval_is_valid(self, request: WorkbenchActionRequest) -> bool:
+        with self._lock:
+            record = self._approval_records.get(request.approval_token)
+        if record is None:
+            return False
+        if float(record.get("expires_at", 0.0)) < time.time():
+            with self._lock:
+                self._approval_records.pop(request.approval_token, None)
+            return False
+        return (
+            record.get("request_digest") == self._approval_request_digest(request)
+            and record.get("snapshot_id") == self.snapshot.snapshot_id
+        )
+
+    def issue_approval(self, request: WorkbenchActionRequest) -> dict[str, Any]:
+        """Create a short-lived, single-use approval for one exact action."""
+
+        policy = self.policy_for(request)
+        if policy.reason_code != "capability_requires_approval":
+            raise ValueError("only approval-required capabilities can be previewed")
+        preview = self.preview_tool(request.capability_id, request.parameters)
+        token = secrets.token_urlsafe(32)
+        now = time.time()
+        with self._lock:
+            self._approval_records[token] = {
+                "request_digest": self._approval_request_digest(request),
+                "snapshot_id": self.snapshot.snapshot_id,
+                "expires_at": now + WORKBENCH_APPROVAL_TTL_SECONDS,
+            }
+        return {
+            "format": "seed-workbench-approval-v1",
+            "version": 1,
+            "approval_token": token,
+            "expires_in_seconds": WORKBENCH_APPROVAL_TTL_SECONDS,
+            "preview": preview,
+        }
+
+    def consume_approval(self, request: WorkbenchActionRequest) -> None:
+        """Consume an approval immediately before the side effect starts."""
+
+        descriptor = self.snapshot.get(request.capability_id)
+        if descriptor is None or descriptor.risk in {"read_only", "reversible_ui"}:
+            return
+        if not self._approval_is_valid(request):
+            raise WorkbenchConflictError(
+                "approval expired, changed, or was already consumed"
+            )
+        with self._lock:
+            self._approval_records.pop(request.approval_token, None)
+
+    def preview_tool(
+        self, tool_name: str, parameters: Mapping[str, Any]
+    ) -> dict[str, Any]:
+        """Validate a side effect without mutating the workspace or running a process."""
+
+        descriptor = self.snapshot.get(tool_name)
+        if descriptor is None or not descriptor.enabled:
+            raise ValueError("capability is not available for preview")
+        if tool_name in {
+            "workspace.apply_patch",
+            "workspace.create",
+            "workspace.rename",
+            "workspace.delete",
+        }:
+            preview = self._preview_file_transaction(tool_name, parameters)
+        elif tool_name == "terminal.run":
+            preview = self._preview_terminal(parameters)
+        else:
+            raise ValueError("capability does not have a side-effect preview")
+        return {
+            "capability_id": tool_name,
+            "risk": descriptor.risk,
+            "reversible": descriptor.reversible,
+            "parameters": self._preview_parameters(parameters),
+            "validated": True,
+            "mutation": preview,
+        }
 
     def _language_policy_for(
         self, request: WorkbenchActionRequest
@@ -1115,6 +1231,156 @@ class WorkbenchEnvironment:
             self._language_selections[relative_name] = selected
         return selected.to_payload()
 
+    @staticmethod
+    def _preview_parameters(parameters: Mapping[str, Any]) -> dict[str, Any]:
+        preview = dict(parameters)
+        raw_env = preview.get("env")
+        if isinstance(raw_env, Mapping):
+            preview["env"] = {str(key): "<redacted>" for key in raw_env}
+        if isinstance(preview.get("content"), str):
+            content = str(preview["content"]).encode("utf-8")
+            preview["content"] = {
+                "byte_length": len(content),
+                "digest": hashlib.sha256(content).hexdigest(),
+            }
+        return preview
+
+    def _preview_file_transaction(
+        self, tool_name: str, parameters: Mapping[str, Any]
+    ) -> dict[str, Any]:
+        if tool_name == "workspace.create":
+            path, relative_name = self._resolve_path(
+                parameters.get("path"), allow_root=False
+            )
+            if path.exists() or path.is_symlink():
+                raise WorkbenchConflictError("create target already exists")
+            if not path.parent.is_dir() or path.parent.is_symlink():
+                raise WorkbenchPathError("create parent directory is unavailable")
+            content = parameters.get("content", "")
+            if not isinstance(content, str):
+                raise ValueError("create content must be text")
+            raw = content.encode("utf-8")
+            if len(raw) > WORKBENCH_MAX_WRITE_BYTES:
+                raise ValueError("created file exceeds the writable size limit")
+            return {
+                "operation": tool_name,
+                "path": relative_name,
+                "before_digest": "",
+                "after_digest": self._bytes_digest(raw),
+                "byte_length": len(raw),
+            }
+        path, relative_name = self._regular_file(parameters.get("path"))
+        raw, before_digest = self._checked_file_bytes(
+            path, parameters.get("before_digest")
+        )
+        if tool_name == "workspace.delete":
+            return {
+                "operation": tool_name,
+                "path": relative_name,
+                "before_digest": before_digest,
+                "after_digest": "",
+                "byte_length": len(raw),
+            }
+        if tool_name == "workspace.rename":
+            new_path, new_relative_name = self._resolve_path(
+                parameters.get("new_path"), allow_root=False
+            )
+            if new_path.exists() or new_path.is_symlink():
+                raise WorkbenchConflictError("rename target already exists")
+            if not new_path.parent.is_dir() or new_path.parent.is_symlink():
+                raise WorkbenchPathError("rename parent directory is unavailable")
+            return {
+                "operation": tool_name,
+                "path": relative_name,
+                "new_path": new_relative_name,
+                "before_digest": before_digest,
+                "after_digest": before_digest,
+                "byte_length": len(raw),
+            }
+        if tool_name != "workspace.apply_patch":
+            raise ValueError("unsupported file transaction preview")
+        patch = parameters.get("patch")
+        if not isinstance(patch, Mapping) or patch.get("kind") != "text_replace":
+            raise ValueError("patch.kind must be text_replace")
+        raw_operations = patch.get("operations")
+        if not isinstance(raw_operations, (list, tuple)) or not raw_operations:
+            raise ValueError("patch.operations must be a non-empty list")
+        try:
+            content = raw.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise ValueError("workspace.apply_patch only accepts UTF-8 text") from exc
+        operations: list[tuple[int, int, str]] = []
+        for raw_operation in raw_operations:
+            if not isinstance(raw_operation, Mapping):
+                raise ValueError("patch operation must be an object")
+            start = raw_operation.get("start")
+            end = raw_operation.get("end")
+            replacement = raw_operation.get("text", "")
+            if (
+                isinstance(start, bool)
+                or isinstance(end, bool)
+                or not isinstance(start, int)
+                or not isinstance(end, int)
+                or not isinstance(replacement, str)
+            ):
+                raise ValueError("patch operation requires integer range and text")
+            operations.append((start, end, replacement))
+        operations.sort(key=lambda item: (item[0], item[1]))
+        previous_end = 0
+        for start, end, _replacement in operations:
+            if start < 0 or end < start or end > len(content) or start < previous_end:
+                raise ValueError("patch operations overlap or exceed the file")
+            previous_end = end
+        updated = content
+        for start, end, replacement in reversed(operations):
+            updated = updated[:start] + replacement + updated[end:]
+        updated_raw = updated.encode("utf-8")
+        if len(updated_raw) > WORKBENCH_MAX_WRITE_BYTES:
+            raise ValueError("patched file exceeds the writable size limit")
+        expected_after = (
+            str(
+                parameters.get(
+                    "expected_after_digest", parameters.get("after_digest", "")
+                )
+            )
+            .strip()
+            .lower()
+        )
+        if len(expected_after) != 64:
+            raise ValueError("expected_after_digest must be a SHA-256 digest")
+        after_digest = self._bytes_digest(updated_raw)
+        if after_digest != expected_after:
+            raise WorkbenchConflictError(
+                f"patch result digest mismatch: expected {expected_after}, got {after_digest}"
+            )
+        return {
+            "operation": tool_name,
+            "path": relative_name,
+            "before_digest": before_digest,
+            "after_digest": after_digest,
+            "before_byte_length": len(raw),
+            "after_byte_length": len(updated_raw),
+            "operations": len(operations),
+        }
+
+    def _preview_terminal(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
+        argv, cwd, relative_cwd, timeout_seconds, output_limit, allowlist, raw_env = (
+            self._normalize_terminal_parameters(parameters)
+        )
+        return {
+            "operation": "terminal.run",
+            "argv": argv,
+            "cwd": relative_cwd,
+            "timeout_seconds": timeout_seconds,
+            "output_limit": output_limit,
+            "env_allowlist": sorted(allowlist),
+            "env_keys": sorted(str(key) for key in raw_env),
+            "expected_artifacts_before": self._artifact_state(
+                parameters.get("expected_artifacts", [])
+            ),
+            "will_execute": True,
+        }
+
     def _regular_file(self, raw_path: Any) -> tuple[Path, str]:
         path, relative_name = self._resolve_path(raw_path, allow_root=False)
         if path.is_symlink():
@@ -1463,7 +1729,9 @@ class WorkbenchEnvironment:
             artifacts.append(item)
         return artifacts
 
-    def _run_terminal(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
+    def _normalize_terminal_parameters(
+        self, parameters: Mapping[str, Any]
+    ) -> tuple[list[str], Path, str, float, int, set[str], Mapping[str, Any]]:
         raw_argv = parameters.get("argv")
         if not isinstance(raw_argv, (list, tuple)) or not raw_argv:
             raise ValueError("terminal.run requires a non-empty argv list")
@@ -1493,6 +1761,58 @@ class WorkbenchEnvironment:
             raise ValueError("terminal env must be an object")
         if any(str(key) not in allowlist for key in raw_env):
             raise ValueError("terminal env contains a variable outside env_allowlist")
+        return (
+            argv,
+            cwd,
+            relative_cwd,
+            timeout_seconds,
+            output_limit,
+            allowlist,
+            raw_env,
+        )
+
+    @staticmethod
+    def _parse_diagnostics(*streams: tuple[str, str]) -> list[dict[str, Any]]:
+        pattern = re.compile(
+            r"^(?P<path>[^:\r\n]+):(?P<line>\d+)"
+            r"(?::(?P<column>\d+))?:\s*"
+            r"(?P<severity>error|warning|info)\b[:\s-]*(?P<message>.*)$",
+            re.IGNORECASE,
+        )
+        diagnostics: list[dict[str, Any]] = []
+        for source, text in streams:
+            for raw_line in text.splitlines():
+                match = pattern.match(raw_line.strip())
+                if match is None:
+                    continue
+                diagnostics.append(
+                    {
+                        "source": source,
+                        "path": match.group("path").strip(),
+                        "line": int(match.group("line")),
+                        "column": (
+                            None
+                            if match.group("column") is None
+                            else int(match.group("column"))
+                        ),
+                        "severity": match.group("severity").lower(),
+                        "message": match.group("message").strip(),
+                    }
+                )
+                if len(diagnostics) >= 100:
+                    return diagnostics
+        return diagnostics
+
+    def _run_terminal(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
+        (
+            argv,
+            cwd,
+            relative_cwd,
+            timeout_seconds,
+            output_limit,
+            _allowlist,
+            raw_env,
+        ) = self._normalize_terminal_parameters(parameters)
         process_env = os.environ.copy()
         process_env.update({str(key): str(value) for key, value in raw_env.items()})
         started = time.perf_counter()
@@ -1519,6 +1839,18 @@ class WorkbenchEnvironment:
         duration_ms = round((time.perf_counter() - started) * 1000.0, 3)
         stdout, stdout_truncated = self._bounded_text(stdout_raw, output_limit)
         stderr, stderr_truncated = self._bounded_text(stderr_raw, output_limit)
+        diagnostics = self._parse_diagnostics(("stdout", stdout), ("stderr", stderr))
+        expected_artifacts = self._artifact_state(
+            parameters.get("expected_artifacts", [])
+        )
+        artifact_failures = [
+            item["path"] for item in expected_artifacts if not item["exists"]
+        ]
+        execution_kind = str(parameters.get("execution_kind", "command"))
+        if execution_kind not in {"command", "diagnostics", "test", "build"}:
+            raise ValueError(
+                "execution_kind must be command, diagnostics, test, or build"
+            )
         return {
             "argv": argv,
             "cwd": relative_cwd,
@@ -1531,8 +1863,18 @@ class WorkbenchEnvironment:
             "stdout_truncated": stdout_truncated,
             "stderr_truncated": stderr_truncated,
             "output_limit": output_limit,
-            "expected_artifacts": self._artifact_state(
-                parameters.get("expected_artifacts", [])
+            "execution_kind": execution_kind,
+            "diagnostics": diagnostics,
+            "expected_artifacts": expected_artifacts,
+            "after_state": {
+                "cwd": relative_cwd,
+                "artifacts": expected_artifacts,
+            },
+            "artifact_failures": artifact_failures,
+            "success": (
+                not timed_out
+                and exit_code == 0
+                and not artifact_failures
+                and not any(item["severity"] == "error" for item in diagnostics)
             ),
-            "success": not timed_out and exit_code == 0,
         }
