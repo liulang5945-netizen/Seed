@@ -1,1006 +1,130 @@
 <template>
-  <section class="dedicated-view">
+  <section class="dedicated-view kb-view">
     <div class="kb-page">
-      <!-- 页面标题 -->
-      <div class="page-header">
-        <h1>知识库管理</h1>
-        <p class="subtitle">管理 Seed 的领域知识源，为 Taiji 原生输入与情景记忆提供语料支撑。</p>
-      </div>
-
-      <!-- 标签页 -->
-      <div class="tabs" role="tablist" aria-label="知识库管理" @keydown="onTablistKeydown">
-        <button id="kb-tab-files" class="tab" :class="{ active: isActive('files') }" data-tab-id="files" role="tab" :aria-selected="isActive('files')" :tabindex="isActive('files') ? 0 : -1" aria-controls="kb-panel-files" @click="selectTab('files')">
-          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>
-          文件管理
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">TAIJI NATIVE SURFACE</p>
+          <h1>知识库</h1>
+          <p class="subtitle">知识输入将在原生观察与记忆能力接入后，通过同一条 Taiji capability 边界进入运行时。</p>
+        </div>
+        <button class="btn btn-outline" :disabled="refreshing" @click="refreshRuntime">
+          <span class="refresh-icon" :class="{ spin: refreshing }">↻</span>
+          {{ refreshing ? '刷新中…' : '刷新状态' }}
         </button>
-        <button id="kb-tab-config" class="tab" :class="{ active: isActive('config') }" data-tab-id="config" role="tab" :aria-selected="isActive('config')" :tabindex="isActive('config') ? 0 : -1" aria-controls="kb-panel-config" @click="selectTab('config')">
-          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          检索配置
-        </button>
-        <button id="kb-tab-test" class="tab" :class="{ active: isActive('test') }" data-tab-id="test" role="tab" :aria-selected="isActive('test')" :tabindex="isActive('test') ? 0 : -1" aria-controls="kb-panel-test" @click="selectTab('test')">
-          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-          检索测试
-        </button>
-      </div>
+      </header>
 
-      <!-- ══ Tab 1：文件管理 ══ -->
-      <!-- 用 display 切换而非 v-if：DOM 常驻，保留滚动位置与输入内容，切换 0ms -->
-      <div id="kb-panel-files" class="tab-panel" :class="{ active: isActive('files') }" role="tabpanel" aria-labelledby="kb-tab-files">
-        <!-- 工具栏 -->
-        <div class="toolbar">
-          <div class="kb-search-wrap">
-            <div class="search" style="height: 38px;">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-              <input v-model="fileFilter" placeholder="搜索文件名或路径..." aria-label="搜索文件">
-            </div>
-          </div>
-          <button class="btn btn-primary" @click="kbUploadRef?.triggerBrowse?.()">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-            上传文件
-          </button>
-          <button class="btn btn-outline btn-danger" :disabled="!kbFiles.length" @click="clearKB">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-            清空知识库
-          </button>
-          <span class="toolbar-meta">共 {{ kbFiles.length }} 个文件 · 已索引 {{ kbStats?.doc_count ?? kbFiles.length }}</span>
-        </div>
-
-        <!-- 上传组件（拖拽/选择文件，上传至 /api/rag/upload） -->
-        <div class="kb-upload">
-          <FileUploadQueue
-            ref="kbUploadRef"
-            upload-endpoint="/api/rag/upload"
-            accept=".txt,.md,.markdown,.pdf,.json,.jsonl,.csv,.html,.htm,.docx,.doc"
-            title="知识库上传队列"
-            drop-text="拖拽文件到此处加入知识库，或点击选择文件"
-            accept-hint="支持 TXT / Markdown / PDF / JSON / CSV / Word"
-            success-text="上传成功，后台索引中"
-            @all-uploaded="refreshKB"
-          />
-        </div>
-
-        <!-- 文件表格 -->
-        <div class="panel kb-panel">
-          <div class="head">
-            <h2>知识库文件</h2>
-            <span class="sub">· 默认知识库</span>
-            <span class="spacer"></span>
-            <span v-if="ragStatus && ragStatus.status === 'ok'" class="head-status">
-              <span class="status-chip" :class="ragStatus.has_embeddings ? 'ok' : 'run'">{{ ragStatus.has_embeddings ? '索引就绪' : '索引中' }}</span>
-              {{ ragStatus.doc_count }} 文档 · {{ ragStatus.chunk_count }} 片段
-            </span>
-          </div>
-          <table v-if="filteredFiles(kbFiles).length">
-            <thead>
-              <tr>
-                <th>文件名</th>
-                <th>类型</th>
-                <th>大小</th>
-                <th>状态</th>
-                <th>更新时间</th>
-                <th style="width:96px"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="f in filteredFiles(kbFiles)" :key="fileName(f)">
-                <td>
-                  <span class="fname">
-                    <span class="file-ic" :class="fileBadge(fileName(f))">{{ (fileExt(fileName(f)) || 'file').slice(0, 4).toUpperCase() }}</span>
-                    <span class="meta-stack">
-                      <span class="name">{{ fileName(f) }}</span>
-                    </span>
-                  </span>
-                </td>
-                <td><span class="type-tag">{{ fileTypeName(fileName(f)) }}</span></td>
-                <td class="size-cell">{{ formatSize(f?.size) }}</td>
-                <td>
-                  <span v-if="f?.status === 'indexed'" class="status-chip ok">已索引</span>
-                  <span v-else-if="f?.status === 'pending'" class="status-chip run">索引中</span>
-                  <span v-else class="status-unknown">—</span>
-                </td>
-                <td class="time-cell">{{ formatTime(f?.mtime) }}</td>
-                <td>
-                  <span class="row-actions">
-                    <button class="act" aria-label="预览" title="预览" @click="openPreview(f)">
-                      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </button>
-                    <button class="act" aria-label="删除" title="删除文件" @click="deleteKBFile(fileName(f))">
-                      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-                    </button>
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div v-else class="empty-hint">知识库为空，上传文件开始构建知识库</div>
+      <div class="boundary-card" :class="{ ready: knowledgeCapabilities.length }">
+        <div class="boundary-icon">◎</div>
+        <div class="boundary-copy">
+          <span class="status-chip" :class="knowledgeCapabilities.length ? 'ok' : 'run'">
+            {{ knowledgeCapabilities.length ? '原生能力已接入' : '原生能力待接入' }}
+          </span>
+          <h2>{{ knowledgeCapabilities.length ? '知识输入可以进入 Taiji 工作流' : '当前阶段暂不启用知识库操作' }}</h2>
+          <p v-if="knowledgeCapabilities.length">客户端会依据运行时返回的 capability 显示可用操作。</p>
+          <p v-else>旧 RAG 接口已从默认客户端路径移除，当前不会执行 Legacy 写入、修改索引或伪造检索结果。</p>
         </div>
       </div>
 
-      <!-- ══ Tab 2：检索配置 ══ -->
-      <div
-        id="kb-panel-config"
-        class="tab-panel"
-        :class="{ active: isActive('config') }"
-        role="tabpanel"
-        aria-labelledby="kb-tab-config"
-      >
-        <div class="panel kb-panel config-panel">
-          <div class="head">
-            <h2>检索参数</h2>
-            <span class="sub">· 影响召回与排序质量</span>
-          </div>
-          <div class="config-body">
-            <div class="config-form">
-              <!-- Top-K 召回数量 -->
-              <div class="form-row">
-                <div class="row-head">
-                  <label>Top-K 召回数量</label>
-                  <span class="val">{{ ragConfig.candidate_k }}</span>
-                </div>
-                <input v-model.number="ragConfig.candidate_k" type="range" class="slider" min="1" max="20" step="1" @change="saveRagConfig">
-                <div class="slider-marks"><span>1</span><span>10</span><span>20</span></div>
-                <span class="hint">每次检索返回的相关片段数量，值越大召回越广但耗时增加。</span>
-              </div>
-
-              <!-- 重排序开关 -->
-              <div class="switch-row">
-                <div class="switch-label">
-                  <label>启用重排序</label>
-                  <span class="hint">对召回结果进行二次精排，提升前列结果准确率。</span>
-                </div>
-                <input v-model="ragConfig.enable_reranker" type="checkbox" class="toggle" @change="saveRagConfig">
-              </div>
-
-              <div class="form-actions">
-                <button class="btn btn-primary" @click="saveRagConfig">保存配置</button>
-                <button class="btn btn-outline" @click="Object.assign(ragConfig, { enable_hybrid: true, enable_reranker: true, enable_query_rewrite: false, candidate_k: 20 }); saveRagConfig()">恢复默认</button>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="evidence-grid">
+        <article class="evidence-card">
+          <span class="evidence-label">来源</span>
+          <strong>Runtime capability snapshot</strong>
+          <small>{{ snapshotId || '尚未读取' }}</small>
+        </article>
+        <article class="evidence-card">
+          <span class="evidence-label">知识能力</span>
+          <strong>{{ knowledgeCapabilities.length ? `${knowledgeCapabilities.length} 项已发现` : '0 项已发现' }}</strong>
+          <small>仅显示运行时真实上报的能力</small>
+        </article>
+        <article class="evidence-card">
+          <span class="evidence-label">当前边界</span>
+          <strong>Taiji Native</strong>
+          <small>Legacy RAG 仅保留为显式离线对照</small>
+        </article>
       </div>
 
-      <!-- ══ Tab 3：检索测试 ══ -->
-      <div
-        id="kb-panel-test"
-        class="tab-panel"
-        :class="{ active: isActive('test') }"
-        role="tabpanel"
-        aria-labelledby="kb-tab-test"
-      >
-        <div class="test-bar">
-          <div class="kb-search-wrap">
-            <div class="search" style="height: 40px;">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-              <input v-model="kbSearchQuery" placeholder="输入查询内容进行检索测试..." aria-label="检索查询" @keydown.enter="searchKB">
-            </div>
+      <div v-if="knowledgeCapabilities.length" class="capability-list">
+        <div class="section-heading">
+          <h2>已发现的知识能力</h2>
+          <span>{{ runtimeStore.toolError || '来自当前 runtime snapshot' }}</span>
+        </div>
+        <article v-for="capability in knowledgeCapabilities" :key="capability.name" class="capability-row">
+          <div>
+            <strong>{{ capability.name }}</strong>
+            <p>{{ capability.description || '运行时未提供描述' }}</p>
           </div>
-          <button class="btn btn-primary" :disabled="kbSearching" @click="searchKB">
-            <svg class="icon" :class="{ spin: kbSearching }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            检索
-          </button>
-        </div>
-
-        <div v-if="kbSearched" class="test-meta">
-          <span>Top-K = {{ ragConfig.candidate_k }}</span>
-          <span class="dot"></span>
-          <span>命中 {{ kbResults.length }} 条</span>
-        </div>
-
-        <div v-if="kbResults.length" class="result-list">
-          <div v-for="(r, i) in kbResults" :key="i" class="result-item">
-            <div class="result-head">
-              <span v-if="r.score != null" class="result-score">{{ Number(r.score).toFixed(2) }}</span>
-              <span class="result-name">{{ r.source || r.filename || r.title || ('片段 #' + (i + 1)) }}</span>
-              <span v-if="r.path" class="result-source">{{ r.path }}</span>
-            </div>
-            <p class="result-snippet">{{ r.content || r.text || r }}</p>
-          </div>
-        </div>
-        <div v-else-if="kbSearched" class="empty-hint">未找到相关结果，尝试更换关键词</div>
+          <span class="status-chip" :class="capability.enabled ? 'ok' : 'run'">{{ capability.enabled ? '可用' : '未启用' }}</span>
+        </article>
       </div>
 
-      <!-- 预览弹窗 -->
-      <div v-if="previewDlg.visible" class="dlg-overlay" @click.self="closePreview">
-        <div class="dlg-box preview-box">
-          <h3>{{ previewDlg.title }}</h3>
-          <pre v-if="previewDlg.loading" class="preview-content preview-loading">加载中…</pre>
-          <pre v-else class="preview-content">{{ previewDlg.content }}</pre>
-          <div class="dlg-actions">
-            <button class="dlg-btn primary" @click="closePreview">关闭</button>
-          </div>
-        </div>
+      <div v-else class="next-boundary">
+        <span class="next-marker">NEXT NATIVE BOUNDARY</span>
+        <p>下一阶段应先定义 knowledge ingest / retrieval 的输入、来源证明、索引状态与删除语义，再恢复客户端操作面。</p>
       </div>
     </div>
   </section>
 </template>
 
 <script setup>
+import { computed, ref } from 'vue'
+import { useRuntimeStore } from '../stores/runtimeStore.js'
+
 defineOptions({ name: 'KBView' })
 
-import { inject, ref } from 'vue';
-import FileUploadQueue from '../components/FileUploadQueue.vue';
-import { API_BASE, authFetch } from '../composables/apiClient.js';
-import { useTabs } from '../composables/useTabs.js';
+const runtimeStore = useRuntimeStore()
+const refreshing = ref(false)
+const snapshotId = computed(() => runtimeStore.runtimeSnapshot?.tools?.tools?.[0]?.source_id || '')
+const knowledgeCapabilities = computed(() => runtimeStore.tools.filter(tool => (
+  String(tool.name || '').startsWith('knowledge.')
+)))
 
-const toast = inject('toast', () => {});
-const $confirm = inject('$confirm', () => Promise.resolve(true));
-
-const kbUploadRef = ref(null);
-const kbStats = ref(null);
-const kbSearchQuery = ref('');
-const kbResults = ref([]);
-const kbSearched = ref(false);
-const kbSearching = ref(false);
-const kbFiles = ref([]);
-const ragConfig = ref({ enable_hybrid: true, enable_reranker: true, enable_query_rewrite: false, candidate_k: 20 });
-const ragStatus = ref(null);
-const previewDlg = ref({ visible: false, title: '', content: '', loading: false });
-const loadRagConfig = async () => { try { const r = await authFetch(`${API_BASE}/api/rag/config`); if (r.ok) { const d = await r.json(); if (d.config) ragConfig.value = { ...ragConfig.value, ...d.config }; } } catch (e) {} };
-const loadRagStatus = async () => { try { const r = await authFetch(`${API_BASE}/api/rag/status`); if (r.ok) { const d = await r.json(); if (d.status === 'ok') ragStatus.value = d; } } catch (e) {} };
-const saveRagConfig = async () => { try { await authFetch(`${API_BASE}/api/rag/config`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ragConfig.value) }); } catch (e) {} };
-loadRagConfig(); loadRagStatus();
-const loadKBStats = async () => { try { const r = await authFetch(`${API_BASE}/api/rag/stats`); if (r.ok) kbStats.value = await r.json(); } catch (e) {} };
-const loadKBFiles = async () => { try { const r = await authFetch(`${API_BASE}/api/rag/files`); if (r.ok) { const d = await r.json(); kbFiles.value = d.files || []; } } catch (e) {} };
-// 上传完成 / 清空 / 删除后统一刷新列表、统计与索引状态
-const refreshKB = () => { loadKBFiles(); loadKBStats(); loadRagStatus(); };
-const searchKB = async () => { if (!kbSearchQuery.value.trim()) return; kbSearched.value = true; kbSearching.value = true; try { const r = await authFetch(`${API_BASE}/api/rag/search`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query: kbSearchQuery.value, top_k: 5 }) }); const d = await r.json(); kbResults.value = d.results || []; } catch (e) { kbResults.value = []; } finally { kbSearching.value = false; } };
-const clearKB = async () => {
-  const ok = await $confirm({ title: '清空知识库', message: `将删除全部 ${kbFiles.value.length} 个知识库文件与索引，且不可恢复。确定清空？`, type: 'danger' });
-  if (!ok) return;
+async function refreshRuntime() {
+  refreshing.value = true
   try {
-    const r = await authFetch(`${API_BASE}/api/rag/clear`, { method: 'POST' });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    toast('知识库已清空', 'success');
-    refreshKB();
-  } catch (e) {
-    toast('清空失败: ' + (e?.message || e), 'error');
+    await runtimeStore.refreshRuntime()
+  } finally {
+    refreshing.value = false
   }
-};
-const openPreview = async (f) => {
-  const name = fileName(f);
-  if (!name) return;
-  previewDlg.value = { visible: true, title: name, content: '', loading: true };
-  try {
-    const r = await authFetch(`${API_BASE}/api/rag/preview/${encodeURIComponent(name)}`);
-    const d = await r.json();
-    previewDlg.value = { visible: true, title: name, content: d.content || '(无内容)', loading: false };
-  } catch (e) {
-    previewDlg.value = { visible: true, title: name, content: '预览加载失败: ' + (e?.message || e), loading: false };
-  }
-};
-const closePreview = () => { previewDlg.value = { ...previewDlg.value, visible: false }; };
-const deleteKBFile = async (filename) => { try { await authFetch(`${API_BASE}/api/rag/file/${encodeURIComponent(filename)}`, { method: 'DELETE' }); refreshKB(); } catch (e) {} };
-loadKBStats(); loadKBFiles();
-
-// ── 标签页与文件过滤（纯 UI 状态，不影响业务逻辑） ──
-// 标签页状态收敛到 useTabs：DOM 常驻、切换 0ms、状态同步到 ?tab= 可深链与前进后退
-const { isActive, selectTab, onTablistKeydown } = useTabs(['files', 'config', 'test'])
-const fileFilter = ref('');
-// 兼容后端新旧两种列表形状：字符串 或 {name, size, mtime, status}
-const fileName = (f) => (typeof f === 'string' ? f : (f?.name ?? ''));
-const fileExt = (name) => { const m = String(name).match(/\.(\w+)$/); return m ? m[1].toLowerCase() : ''; };
-const fileBadge = (name) => { const e = fileExt(name); if (e === 'pdf') return 'pdf'; if (['md', 'markdown'].includes(e)) return 'md'; if (['json', 'jsonl'].includes(e)) return 'json'; if (e === 'txt') return 'txt'; return 'doc'; };
-const fileTypeName = (name) => { const e = fileExt(name); const m = { pdf: 'PDF', md: 'Markdown', markdown: 'Markdown', json: 'JSON', jsonl: 'JSON', txt: 'TXT', csv: 'CSV', html: 'HTML', htm: 'HTML', docx: 'Word', doc: 'Word', pptx: 'PPT', xlsx: 'Excel', xls: 'Excel', py: 'Python', js: 'JavaScript', ts: 'TypeScript', yaml: 'YAML', yml: 'YAML' }; return m[e] || (e ? e.toUpperCase() : 'FILE'); };
-const formatSize = (bytes) => {
-  if (bytes == null || Number.isNaN(Number(bytes))) return '—';
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
-};
-const formatTime = (ts) => {
-  if (ts == null || Number.isNaN(Number(ts))) return '—';
-  const d = new Date(Number(ts) * 1000);
-  const pad = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-};
-const filteredFiles = (files) => { if (!fileFilter.value) return files; const q = fileFilter.value.toLowerCase(); return files.filter(f => fileName(f).toLowerCase().includes(q)); };
+}
 </script>
 
 <style scoped>
-/* ===== 内容区 ===== */
-.dedicated-view { padding: 0; }
-
-.kb-page {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+.kb-view { min-height: 100%; }
+.kb-page { max-width: 940px; margin: 0 auto; padding: 34px; }
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+.eyebrow, .next-marker, .evidence-label { color: var(--muted-foreground); font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.eyebrow { margin: 0 0 8px; color: var(--primary); }
+h1, h2, p { margin-top: 0; }
+h1 { margin-bottom: 7px; color: var(--foreground); font-size: 1.65rem; letter-spacing: -.03em; }
+.subtitle { max-width: 660px; margin-bottom: 0; color: var(--muted-foreground); line-height: 1.6; }
+.refresh-icon { display: inline-block; margin-right: 5px; font-size: 1rem; }
+.spin { animation: kb-spin .8s linear infinite; }
+.boundary-card { display: flex; gap: 18px; align-items: center; padding: 25px; border: 1px solid color-mix(in srgb, var(--primary) 24%, var(--border)); border-radius: 18px; background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 10%, var(--card)), var(--card)); }
+.boundary-card.ready { border-color: color-mix(in srgb, var(--chart-2) 42%, var(--border)); }
+.boundary-icon { display: grid; width: 48px; height: 48px; flex: 0 0 48px; place-items: center; border-radius: 50%; color: var(--primary); background: color-mix(in srgb, var(--primary) 14%, transparent); font-size: 1.8rem; }
+.boundary-copy h2 { margin: 10px 0 6px; color: var(--foreground); font-size: 1.06rem; }
+.boundary-copy p { margin-bottom: 0; color: var(--muted-foreground); line-height: 1.55; }
+.status-chip { display: inline-flex; align-items: center; padding: 4px 8px; border-radius: 999px; color: var(--muted-foreground); background: color-mix(in srgb, var(--muted) 36%, transparent); font-size: .72rem; }
+.status-chip.ok { color: var(--chart-2); background: color-mix(in srgb, var(--chart-2) 12%, transparent); }
+.status-chip.run { color: var(--primary); background: color-mix(in srgb, var(--primary) 11%, transparent); }
+.evidence-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+.evidence-card, .next-boundary, .capability-list { border: 1px solid var(--border); border-radius: 14px; background: var(--card); }
+.evidence-card { display: flex; min-height: 98px; flex-direction: column; gap: 7px; padding: 17px; }
+.evidence-card strong { overflow: hidden; color: var(--foreground); font-size: .91rem; text-overflow: ellipsis; white-space: nowrap; }
+.evidence-card small { overflow: hidden; color: var(--muted-foreground); text-overflow: ellipsis; white-space: nowrap; }
+.next-boundary { margin-top: 14px; padding: 19px; }
+.next-boundary p { margin: 8px 0 0; color: var(--muted-foreground); line-height: 1.6; }
+.capability-list { margin-top: 14px; padding: 20px; }
+.section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.section-heading h2 { margin-bottom: 0; color: var(--foreground); font-size: 1rem; }
+.section-heading span { color: var(--muted-foreground); font-size: .78rem; }
+.capability-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 13px 0; border-top: 1px solid var(--border); }
+.capability-row strong { color: var(--foreground); font-size: .9rem; }
+.capability-row p { margin: 4px 0 0; color: var(--muted-foreground); font-size: .8rem; }
+@keyframes kb-spin { to { transform: rotate(360deg); } }
+@media (max-width: 680px) {
+  .kb-page { padding: 22px 16px; }
+  .page-header { flex-direction: column; }
+  .evidence-grid { grid-template-columns: 1fr; }
 }
-
-/* ===== 页头 ===== */
-.page-header { margin-bottom: 22px; }
-.page-header h1 {
-  margin: 0 0 6px;
-  font-size: 1.5rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--foreground);
-}
-.page-header .subtitle {
-  margin: 0;
-  color: var(--muted-foreground);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-/* ===== 标签页 ===== */
-/* 不画 border-bottom：全应用唯一外围边框归 .router-wrapper（见 styles/shell.css），
-   标签条自带轨道线会与卡片边框形成「两段错位」的观感 */
-.tabs {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 22px;
-}
-.tab {
-  border: 0;
-  background: transparent;
-  color: var(--muted-foreground);
-  padding: 10px 18px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: color .15s ease, border-color .15s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-}
-.tab:hover { color: var(--foreground); }
-.tab:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm, 6px);
-}
-.tab.active {
-  color: var(--primary);
-  border-bottom-color: var(--primary);
-  font-weight: 600;
-}
-.tab .tab-icon {
-  width: 15px;
-  height: 15px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  flex: none;
-}
-
-/* 面板常驻 DOM，仅用 display 显隐：切换 0ms，且保留滚动位置与输入内容 */
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-
-/* ===== 工具栏 ===== */
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-.kb-search-wrap { flex: 1; min-width: 220px; }
-.toolbar-meta {
-  font-size: 0.78rem;
-  color: var(--muted-foreground);
-}
-.btn-danger {
-  color: var(--destructive);
-  border-color: color-mix(in srgb, var(--destructive) 35%, var(--border));
-}
-.btn-danger:hover {
-  background: color-mix(in srgb, var(--destructive) 10%, var(--background));
-}
-
-/* ===== 上传组件包裹 ===== */
-.kb-upload { margin-bottom: 16px; }
-
-/* ===== 搜索框 ===== */
-.search {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  height: 40px;
-  padding: 0 12px;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  background: var(--muted);
-  color: var(--foreground);
-  transition: background .16s ease, border-color .16s ease, box-shadow .16s ease;
-}
-.search:focus-within {
-  background: var(--card);
-  border-color: var(--ring);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 18%, transparent);
-}
-.search input {
-  flex: 1;
-  min-width: 0;
-  border: 0;
-  outline: none;
-  background: transparent;
-  font-size: 0.86rem;
-  color: inherit;
-}
-.search input::placeholder { color: var(--muted-foreground); }
-.search .icon {
-  width: 17px;
-  height: 17px;
-  flex: none;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  color: var(--muted-foreground);
-}
-
-/* ===== 按钮 ===== */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 36px;
-  padding: 0 15px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  font-size: 0.86rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 150ms ease, border-color 150ms ease, transform 120ms ease, color 150ms ease;
-}
-.btn:active { transform: translateY(1px); }
-.btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
-.btn-primary {
-  background: var(--primary);
-  color: var(--primary-foreground);
-}
-.btn-primary:hover {
-  background: color-mix(in srgb, var(--primary) 90%, var(--foreground));
-}
-.btn-outline {
-  background: var(--background);
-  color: var(--foreground);
-  border-color: var(--border);
-}
-.btn-outline:hover { background: var(--muted); }
-.btn-ghost {
-  background: var(--muted);
-  color: var(--foreground);
-}
-.btn-ghost:hover {
-  background: color-mix(in srgb, var(--muted) 80%, var(--foreground) 12%);
-}
-.btn-sm {
-  height: 32px;
-  padding: 0 13px;
-  font-size: 0.8rem;
-}
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-.btn .icon {
-  width: 15px;
-  height: 15px;
-  flex: none;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* ===== 面板 / 表格 ===== */
-.panel {
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  background: var(--card);
-  overflow: hidden;
-}
-.panel.kb-panel { max-width: none; }
-.panel .head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--border);
-}
-.panel .head h2 {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--foreground);
-}
-.panel .head .sub {
-  margin-left: 2px;
-  font-size: 12px;
-  color: var(--muted-foreground);
-}
-.spacer { flex: 1; }
-.head-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.75rem;
-  color: var(--muted-foreground);
-  font-variant-numeric: tabular-nums;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-th {
-  text-align: left;
-  font: 600 11px/1 var(--font-mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-  padding: 11px 16px;
-  border-bottom: 1px solid var(--border);
-}
-td {
-  padding: 13px 16px;
-  border-bottom: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
-  font-size: 13px;
-  color: var(--foreground);
-}
-tr:last-child td { border-bottom: 0; }
-tbody tr { transition: background .12s ease; }
-tbody tr:hover { background: color-mix(in srgb, var(--accent) 16%, transparent); }
-
-/* 文件类型徽标 */
-.file-ic {
-  width: 30px;
-  height: 30px;
-  flex: none;
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-  font: 600 0.64rem var(--font-mono);
-  letter-spacing: 0.04em;
-  color: var(--primary-foreground);
-}
-.file-ic.pdf { background: color-mix(in srgb, var(--destructive) 78%, var(--foreground)); }
-.file-ic.md { background: var(--chart-1); }
-.file-ic.txt { background: color-mix(in srgb, var(--muted-foreground) 88%, var(--foreground)); }
-.file-ic.json { background: var(--chart-3); }
-.file-ic.doc { background: var(--muted-foreground); }
-
-.fname { display: flex; align-items: center; gap: 11px; }
-.fname .meta-stack { display: flex; flex-direction: column; min-width: 0; }
-.fname .name {
-  font-size: 0.86rem;
-  font-weight: 500;
-  line-height: 1.3;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 260px;
-}
-.type-tag {
-  display: inline-block;
-  padding: 2px 9px;
-  border-radius: 6px;
-  background: var(--muted);
-  color: var(--muted-foreground);
-  font: 600 0.68rem var(--font-mono);
-  letter-spacing: 0.03em;
-}
-.size-cell { font-variant-numeric: tabular-nums; }
-.time-cell {
-  color: var(--muted-foreground);
-  font-size: 0.8rem;
-}
-
-/* 状态 chip */
-.status-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font: 500 12px var(--font-sans);
-}
-.status-chip::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-}
-.status-chip.ok {
-  background: color-mix(in srgb, var(--chart-2) 18%, transparent);
-  color: var(--chart-2);
-}
-.status-chip.run {
-  background: color-mix(in srgb, var(--chart-1) 16%, transparent);
-  color: var(--chart-1);
-}
-.status-chip.run::before {
-  animation: pulse-dot 1.4s ease-in-out infinite;
-}
-.status-chip.fail {
-  background: color-mix(in srgb, var(--destructive) 16%, transparent);
-  color: var(--destructive);
-}
-.status-unknown {
-  color: var(--muted-foreground);
-  font-size: 0.8rem;
-}
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.35; transform: scale(0.6); }
-}
-
-/* 行操作按钮 */
-.row-actions { display: inline-flex; gap: 2px; }
-.act {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--muted-foreground);
-  cursor: pointer;
-  transition: background .14s ease, color .14s ease;
-}
-.act:hover {
-  background: var(--muted);
-  color: var(--foreground);
-}
-.act .icon {
-  width: 15px;
-  height: 15px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* ===== 检索配置 ===== */
-.config-panel { max-width: 640px; }
-.config-body {
-  padding: 22px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.config-form {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  max-width: 580px;
-}
-.form-row {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-}
-.row-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-}
-.row-head label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--foreground);
-}
-.row-head .val {
-  font: 600 0.85rem var(--font-mono);
-  color: var(--primary);
-}
-.hint {
-  font-size: 0.76rem;
-  color: var(--muted-foreground);
-  line-height: 1.5;
-}
-
-/* 滑块 */
-.slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--muted);
-  outline: none;
-  cursor: pointer;
-}
-.slider:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--primary);
-  border: 3px solid var(--background);
-  box-shadow: 0 0 0 1px var(--border);
-  cursor: pointer;
-  transition: box-shadow .15s ease;
-}
-.slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 0 0 1px var(--primary), 0 0 0 5px color-mix(in srgb, var(--ring) 22%, transparent);
-}
-.slider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--primary);
-  border: 3px solid var(--background);
-  cursor: pointer;
-}
-.slider-marks {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.7rem;
-  color: var(--muted-foreground);
-  margin-top: 2px;
-}
-
-/* 下拉选择 */
-.select {
-  height: 38px;
-  padding: 0 32px 0 12px;
-  border-radius: calc(var(--radius) * 0.5);
-  border: 1px solid var(--border);
-  background: var(--background);
-  color: var(--foreground);
-  font-size: 0.86rem;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237f8d9f' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-}
-.select:focus {
-  outline: none;
-  border-color: var(--ring);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 18%, transparent);
-}
-.select:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* 开关 */
-.switch-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-.switch-label {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-.switch-label label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--foreground);
-}
-.toggle {
-  appearance: none;
-  -webkit-appearance: none;
-  position: relative;
-  width: 40px;
-  height: 22px;
-  border-radius: 999px;
-  background: var(--muted);
-  border: 1px solid var(--border);
-  cursor: pointer;
-  flex: none;
-  margin: 0;
-  transition: background .18s ease, border-color .18s ease;
-}
-.toggle::after {
-  content: "";
-  position: absolute;
-  top: 1px;
-  left: 1px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--background);
-  border: 1px solid var(--border);
-  transition: transform .18s ease, background .18s ease, border-color .18s ease;
-}
-.toggle:checked {
-  background: var(--primary);
-  border-color: var(--primary);
-}
-.toggle:checked::after {
-  transform: translateX(18px);
-  background: var(--primary-foreground);
-  border-color: var(--primary);
-}
-
-.form-actions {
-  display: flex;
-  gap: 10px;
-  padding-top: 6px;
-}
-
-/* ===== 检索测试 ===== */
-.test-bar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 18px;
-  align-items: center;
-}
-.test-bar .kb-search-wrap { flex: 1; }
-.test-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
-  font-size: 0.78rem;
-  color: var(--muted-foreground);
-}
-.test-meta .dot {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.6;
-}
-
-.result-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.result-item {
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) * 0.6);
-  padding: 14px 16px;
-  background: var(--card);
-  transition: border-color .15s ease, background .15s ease;
-}
-.result-item:hover {
-  border-color: color-mix(in srgb, var(--primary) 38%, var(--border));
-  background: color-mix(in srgb, var(--accent) 16%, var(--card));
-}
-.result-head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 9px;
-  flex-wrap: wrap;
-}
-.result-score {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 2px 9px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--chart-2) 16%, transparent);
-  color: var(--chart-2);
-  font: 600 0.74rem var(--font-mono);
-}
-.result-score::before {
-  content: "";
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-}
-.result-name {
-  font-weight: 600;
-  font-size: 0.88rem;
-  color: var(--foreground);
-}
-.result-source {
-  font-size: 0.72rem;
-  color: var(--muted-foreground);
-}
-.result-snippet {
-  margin: 0;
-  color: var(--muted-foreground);
-  font-size: 0.84rem;
-  line-height: 1.65;
-  border-left: 2px solid var(--border);
-  padding: 2px 0 2px 11px;
-}
-
-/* ===== 空状态 ===== */
-.empty-hint {
-  text-align: center;
-  padding: 40px 16px;
-  color: var(--muted-foreground);
-  font-size: 0.86rem;
-}
-
-/* ===== 加载旋转 ===== */
-.spin {
-  animation: kb-spin 0.8s linear infinite;
-}
-@keyframes kb-spin {
-  to { transform: rotate(360deg); }
-}
-
-/* ===== 响应式 ===== */
-@media (max-width: 880px) {
-  .kb-page { max-width: 100%; padding: 16px; }
-  .tab { padding: 10px 12px; }
-  .toolbar { gap: 8px; }
-}
-
-/* ===== 预览弹窗（复用 WorkspaceView dlg 范式） ===== */
-.dlg-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000;
-  backdrop-filter: blur(4px);
-}
-.dlg-box {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 24px;
-  min-width: 380px;
-  max-width: 90vw;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
-}
-.dlg-box h3 {
-  margin: 0 0 12px;
-  font-size: 15px;
-  color: var(--foreground);
-  overflow-wrap: anywhere;
-}
-.dlg-actions { display: flex; gap: 8px; justify-content: flex-end; }
-.dlg-btn {
-  padding: 7px 16px;
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) * 0.6);
-  background: transparent;
-  color: var(--muted-foreground);
-  font-size: 13px;
-  cursor: pointer;
-  font-family: inherit;
-}
-.dlg-btn:hover { background: var(--muted); color: var(--foreground); }
-.dlg-btn.primary {
-  border: 0;
-  background: var(--primary);
-  color: var(--primary-foreground);
-}
-.dlg-btn.primary:hover {
-  background: color-mix(in srgb, var(--primary) 90%, var(--foreground));
-}
-.preview-box { width: min(720px, 90vw); }
-.preview-content {
-  max-height: 55vh;
-  overflow: auto;
-  margin: 0 0 16px;
-  padding: 14px 16px;
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) * 0.6);
-  background: var(--muted);
-  color: var(--foreground);
-  font: 12px/1.7 var(--font-mono);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-.preview-loading { color: var(--muted-foreground); }
 </style>

@@ -248,14 +248,14 @@ export const useChatStore = defineStore('chat', () => {
           return true
         }
 
-        // 尝试解析结构化事件（ReAct 引擎）
+        // 尝试解析结构化运行时事件
         let parsed = null
         try {
           parsed = JSON.parse(data)
         } catch (e) { console.debug('[chatStore] JSON parse failed:', e.message) }
 
         if (parsed && parsed.type) {
-          // 结构化 ReAct 事件
+          // 结构化 native/Legacy 兼容事件
           if (!isReceiving.value) isReceiving.value = true
           const evt = parsed
           switch (evt.type) {

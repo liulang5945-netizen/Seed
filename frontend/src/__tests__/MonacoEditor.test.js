@@ -32,7 +32,10 @@ const { fakeMonaco, loaderInit, authFetchMock } = vi.hoisted(() => {
         ok: true,
         json: async () => ({
           snapshot_id: 'workbench-test-snapshot',
-          capabilities: [{ capability_id: 'workspace.read', enabled: true }],
+          capabilities: [
+            { capability_id: 'workspace.read', enabled: true },
+            { capability_id: 'workspace.apply_patch', enabled: true },
+          ],
           programming_languages: [
             { language_id: 'python', label: 'Python', editor_language_id: 'python' },
             { language_id: 'javascript', label: 'JavaScript', editor_language_id: 'javascript' },
@@ -79,13 +82,22 @@ describe('MonacoEditor', () => {
           ok: true,
           json: async () => ({
             snapshot_id: 'workbench-test-snapshot',
-            capabilities: [{ capability_id: 'workspace.read', enabled: true }],
+            capabilities: [
+              { capability_id: 'workspace.read', enabled: true },
+              { capability_id: 'workspace.apply_patch', enabled: true },
+            ],
             programming_languages: [
               { language_id: 'python', label: 'Python', editor_language_id: 'python' },
               { language_id: 'javascript', label: 'JavaScript', editor_language_id: 'javascript' },
               { language_id: 'plaintext', label: 'Plain text', editor_language_id: 'plaintext' },
             ],
           }),
+        })
+      }
+      if (String(url).includes('/api/workbench/file?path=')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ content: 'print(1)', encoding: 'utf-8', digest: 'a'.repeat(64), truncated: false }),
         })
       }
       if (String(url).includes('/api/workbench/programming-language?path=')) {
@@ -103,6 +115,14 @@ describe('MonacoEditor', () => {
       }
       if (String(url).includes('/api/workbench/execute')) {
         const request = JSON.parse(options?.body || '{}')
+        if (request.kind === 'workspace.apply_patch') {
+          return Promise.resolve({
+            ok: true,
+            json: async () => ({
+              outcome: { success: true, result: { digest: 'b'.repeat(64) } },
+            }),
+          })
+        }
         const cleared = request.parameters?.clear_override === true
         return Promise.resolve({
           ok: true,
@@ -115,6 +135,15 @@ describe('MonacoEditor', () => {
                 selection_state: cleared ? 'resolved' : 'user_override',
               },
             },
+          }),
+        })
+      }
+      if (String(url).includes('/api/workbench/preview')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            preview: { capability_id: 'workspace.apply_patch', mutation: { operation: 'workspace.apply_patch' } },
+            approval: { approval_token: 'test-approval-token' },
           }),
         })
       }
@@ -132,6 +161,7 @@ describe('MonacoEditor', () => {
 
   const mountEditor = async () => {
     const wrapper = mount(MonacoEditor, {
+      props: { approvalHandler: () => true },
       global: { stubs: { Save: true } },
     })
     await vi.advanceTimersByTimeAsync(50)

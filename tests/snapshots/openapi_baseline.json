@@ -1777,6 +1777,23 @@
         "summary": "List Patches"
       }
     },
+    "/api/system/quick_paths": {
+      "get": {
+        "description": "Return existing, host-derived folders useful for workspace selection.",
+        "operationId": "quick_paths_api_system_quick_paths_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Quick Paths"
+      }
+    },
     "/api/system/reload_modules": {
       "post": {
         "description": "热重载 Python 模块 - 需要管理员认证",
@@ -2987,6 +3004,74 @@
           }
         },
         "summary": "Workbench Stat",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/workspace": {
+      "get": {
+        "description": "Return the active workspace root from the native environment.",
+        "operationId": "workbench_workspace_api_workbench_workspace_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Workbench Workspace Api Workbench Workspace Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Workbench Workspace",
+        "tags": [
+          "workbench"
+        ]
+      },
+      "post": {
+        "description": "Persist a validated workspace root for the native Workbench.",
+        "operationId": "set_workbench_workspace_api_workbench_workspace_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Request",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Set Workbench Workspace Api Workbench Workspace Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Workbench Workspace",
         "tags": [
           "workbench"
         ]

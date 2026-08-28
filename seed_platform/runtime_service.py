@@ -45,7 +45,10 @@ def _health_section() -> dict:
     health["model_loaded"] = model is not None or seed_active
     health["is_seed"] = seed_active
     try:
-        health["is_taiji"] = bool(app_state.is_taiji())
+        # Seed is the product's Taiji-native runtime.  The old app_state flag
+        # only describes the optional Legacy/Cortex object and therefore cannot
+        # be the sole source for the public native identity.
+        health["is_taiji"] = seed_active or bool(app_state.is_taiji())
     except Exception as e:
         logger.debug("【_health_section】处理失败（非致命）: %s", e)
     if not health["model_name"]:

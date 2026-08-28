@@ -45,9 +45,6 @@
             <button class="icon-btn" title="新建文件" @click="handleNewFile">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             </button>
-            <button class="icon-btn" title="新建文件夹" @click="handleNewFolder">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="9.5" y1="13.5" x2="14.5" y2="13.5"/></svg>
-            </button>
             <button class="icon-btn" title="刷新文件树" @click="loadTree">
               <RefreshCw :size="13" />
             </button>
@@ -75,7 +72,13 @@
         <!-- 中栏：编辑器 + 终端 -->
         <div class="panel panel-center">
           <div class="editor-area">
-            <MonacoEditor ref="monacoEditor" class="monaco-container" @saved="onFileSaved" @save-error="onSaveError" />
+            <MonacoEditor
+              ref="monacoEditor"
+              class="monaco-container"
+              :approval-handler="approveWorkbenchMutation"
+              @saved="onFileSaved"
+              @save-error="onSaveError"
+            />
             <!-- 终端 -->
             <Transition name="term-slide">
               <div v-if="showTerminal" class="ide-terminal" :style="{ height: terminalHeight + 'px' }">
@@ -196,11 +199,12 @@ v-for="(node, i) in quickOpenMatches" :key="node.path"
     <!-- 右键菜单 -->
     <div v-if="contextMenu.visible" class="ctx-menu" :style="{ left: contextMenu.x + 'px', top: contextMenu.y + 'px' }" @click="contextMenu.visible = false">
       <div class="ctx-item" @click="openInEditor"><Edit3 :size="13" /> 打开</div>
-      <div class="ctx-item" @click="revealItem"><FolderOpen :size="13" /> 在资源管理器中显示</div>
-      <div class="ctx-sep"></div>
-      <div class="ctx-item" @click="renameItem"><Edit2 :size="13" /> 重命名</div>
-      <div class="ctx-sep"></div>
-      <div class="ctx-item danger" @click="deleteItem"><Trash2 :size="13" /> 删除</div>
+      <template v-if="contextMenu.node?.type === 'file'">
+        <div class="ctx-sep"></div>
+        <div class="ctx-item" @click="renameItem"><Edit2 :size="13" /> 重命名</div>
+        <div class="ctx-sep"></div>
+        <div class="ctx-item danger" @click="deleteItem"><Trash2 :size="13" /> 删除</div>
+      </template>
     </div>
   </div>
 </template>
@@ -332,7 +336,7 @@ async function openPathDialog() {
   pathDialogError.value = '';
   if (quickPaths.value.length) return;
   try {
-    const r = await authFetch(`${API_BASE}/api/workspace/quick_paths`);
+    const r = await authFetch(`${API_BASE}/api/system/quick_paths`);
     if (r.ok) { const d = await r.json(); quickPaths.value = d.paths || []; }
   } catch (e) { /* 快速路径仅为便捷入口，加载失败不打断对话框 */ }
 }
@@ -343,7 +347,7 @@ async function browseFolder() {
   picking.value = true;
   pathDialogError.value = '';
   try {
-    const r = await authFetch(`${API_BASE}/api/workspace/pick_folder`, { method: 'POST' });
+    const r = await authFetch(`${API_BASE}/api/system/select_folder`);
     const data = await r.json().catch(() => ({}));
     if (r.ok && data.status === 'ok' && data.path) {
       newPathInput.value = data.path;
@@ -358,32 +362,6 @@ async function browseFolder() {
   } finally {
     picking.value = false;
   }
-}
-
-async function handleNewFolder() {
-  const name = await showInputDialog('新建文件夹', '输入文件夹名，如 utils', '');
-  if (!name) return;
-  try {
-    const r = await authFetch(`${API_BASE}/api/workspace/mkdir`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name }),
-    });
-    const data = await r.json().catch(() => ({}));
-    if (r.ok && data.status === 'ok') { toast(`已创建文件夹 ${name}`, 'success'); loadTree(); }
-    else toast(data.detail || '创建文件夹失败', 'error');
-  } catch (e) { toast('创建文件夹失败: ' + e.message, 'error'); }
-}
-
-async function revealItem() {
-  const node = contextMenu.value.node;
-  if (!node) return;
-  try {
-    const r = await authFetch(`${API_BASE}/api/workspace/reveal`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ path: node.path }),
-    });
-    if (!r.ok) { const d = await r.json().catch(() => ({})); toast(d.detail || '打开资源管理器失败', 'error'); }
-  } catch (e) { toast('打开资源管理器失败: ' + e.message, 'error'); }
 }
 
 // ===== 快速打开（Ctrl+P）=====
@@ -422,13 +400,15 @@ async function handleNewFile() {
   const name = await showInputDialog('新建文件', '输入文件名，如 main.py');
   if (!name) return;
   try {
-    const r = await authFetch(`${API_BASE}/api/workspace/file`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, content: '' }),
+    const result = await executeNativeMutation({
+      kind: 'workspace.create',
+      parameters: { path: name, content: '' },
+      expectedOutcome: `create ${name}`,
     });
-    const data = await r.json().catch(() => ({}));
-    if (r.ok && data.status === 'ok') { toast(`已创建 ${name}`, 'success'); loadTree(); }
-    else toast(data.detail || data.message || '创建文件失败', 'error');
+    if (!result) return;
+    toast(`已创建 ${name}`, 'success');
+    await loadTree();
+    await monacoEditor.value?.openFile(result.path || name);
   } catch (e) { toast('创建文件失败: ' + e.message, 'error'); }
 }
 
@@ -444,16 +424,40 @@ function onSaveError(detail) { toast(detail || '保存失败', 'error'); }
 async function handleRun() {
   const tab = currentFile.value;
   if (!tab) { toast('没有可运行的活动文件', 'info'); return; }
+  const assessment = tab.languageAssessment || {};
+  const candidates = [
+    assessment.runner_id,
+    ...(assessment.toolchain_commands || []),
+  ].filter(Boolean);
+  const available = new Set(assessment.available_toolchains || []);
+  const runner = candidates.find(command => available.has(command));
+  if (!runner) {
+    toast('当前语言没有可用的原生 runner', 'info');
+    return;
+  }
   running.value = true;
   try {
-    const r = await authFetch(`${API_BASE}/api/workspace/run`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: tab.content || '' }),
+    const result = await executeNativeMutation({
+      kind: 'terminal.run',
+      parameters: {
+        argv: [runner, tab.path],
+        cwd: '.',
+        timeout_seconds: 30,
+        env: {},
+        env_allowlist: [],
+        output_limit: 65536,
+        expected_artifacts: [],
+        execution_kind: 'command',
+      },
+      expectedOutcome: `run ${tab.path} with ${runner}`,
     });
-    const data = await r.json().catch(() => ({}));
-    if (!r.ok) { toast(data.detail || `运行失败（HTTP ${r.status}）`, 'error'); return; }
-    if (data.success) toast(data.output ? `运行成功：${data.output}`.slice(0, 200) : '运行成功', 'success');
-    else toast(data.error || '运行失败', 'error');
+    if (!result) return;
+    if (result.success) {
+      const output = [result.stdout, result.stderr].filter(Boolean).join('\n').trim();
+      toast(output ? `运行成功：${output}`.slice(0, 200) : '运行成功', 'success');
+    } else {
+      toast(result.stderr || '运行失败', 'error');
+    }
   } catch (e) { toast('运行失败: ' + e.message, 'error'); }
   finally { running.value = false; }
 }
@@ -463,12 +467,8 @@ async function applyNewPath() {
   if (!path) { pathDialogError.value = '请输入路径'; return; }
   pathDialogError.value = '';
   try {
-    const r = await authFetch(`${API_BASE}/api/workspace/path`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ path }),
-    });
-    const data = await r.json();
-    if (r.ok && data.status === 'ok') {
+    const data = await workbench.setWorkspaceRoot(path);
+    if (data.status === 'ok') {
       workspacePath.value = data.path;
       showPathDialog.value = false;
       newPathInput.value = '';
@@ -568,7 +568,7 @@ function syncTabsAfterRename(oldPath, newPath) {
 
 async function renameItem() {
   const node = contextMenu.value.node;
-  if (!node) return;
+  if (!node || node.type !== 'file') return;
   const newName = await showInputDialog('重命名', '输入新名称', node.name);
   if (!newName || newName === node.name) return;
   // 新名称沿用原目录：取父路径前缀（兼容 / 与 \ 分隔符）
@@ -576,24 +576,67 @@ async function renameItem() {
   const parentPrefix = sepIdx >= 0 ? node.path.slice(0, sepIdx + 1) : '';
   const newPath = parentPrefix + newName;
   try {
-    const r = await authFetch(`${API_BASE}/api/workspace/rename`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ old_name: node.path, new_name: newPath }),
+    const file = await workbench.readFile(node.path);
+    const result = await executeNativeMutation({
+      kind: 'workspace.rename',
+      parameters: { path: node.path, new_path: newPath, before_digest: file.digest },
+      expectedOutcome: `rename ${node.path} to ${newPath}`,
     });
-    const data = await r.json().catch(() => ({}));
-    if (r.ok && data.status === 'ok') {
-      syncTabsAfterRename(node.path, data.path || newPath);
+    if (result) {
+      syncTabsAfterRename(node.path, result.new_path || newPath);
       toast(`已重命名为 ${newName}`, 'success');
-      loadTree();
-    } else toast(data.detail || data.message || '重命名失败', 'error');
+      await loadTree();
+    }
   } catch (e) { toast('重命名失败: ' + e.message, 'error'); }
 }
 async function deleteItem() {
   const node = contextMenu.value.node;
-  if (!node) return;
-  const ok = await $confirm({ title: '删除确认', message: `确定删除 ${node.name}？`, type: 'danger' });
-  if (!ok) return;
-  try { const r = await authFetch(`${API_BASE}/api/workspace/delete/${node.path}`, { method: 'DELETE' }); if (r.ok) loadTree(); } catch (e) { toast('删除失败: ' + e.message, 'error') }
+  if (!node || node.type !== 'file') return;
+  try {
+    const file = await workbench.readFile(node.path);
+    const result = await executeNativeMutation({
+      kind: 'workspace.delete',
+      parameters: { path: node.path, before_digest: file.digest },
+      expectedOutcome: `delete ${node.path}`,
+    });
+    if (result) {
+      toast(`已删除 ${node.name}`, 'success');
+      await loadTree();
+    }
+  } catch (e) { toast('删除失败: ' + e.message, 'error') }
+}
+
+async function approveWorkbenchMutation({ kind, parameters, preview }) {
+  const mutation = preview?.preview?.mutation || {};
+  const target = parameters.path || mutation.path || parameters.argv?.join(' ') || kind;
+  const operation = { 'workspace.apply_patch': '保存文件', 'workspace.create': '新建文件', 'workspace.rename': '重命名文件', 'workspace.delete': '删除文件', 'terminal.run': '运行命令' }[kind] || kind;
+  if (typeof $confirm === 'function') {
+    return $confirm({
+      title: `确认${operation}`,
+      message: `${target}\n该操作将通过 Taiji 原生工作台执行。`,
+      type: kind === 'workspace.delete' ? 'danger' : 'warning',
+    });
+  }
+  return window.confirm(`${operation}: ${target}`);
+}
+
+async function executeNativeMutation({ kind, parameters, expectedOutcome }) {
+  if (!workbench.isEnabled(kind)) throw new Error(`原生工作台未提供 ${kind}`);
+  const intentId = `ui:${kind}:${Date.now()}`;
+  const preview = await workbench.previewIntent({ intentId, kind, parameters, expectedOutcome });
+  if (!preview.approval?.approval_token || !preview.preview) {
+    throw new Error(preview.policy?.reason_code || '原生工作台未发出审批预览');
+  }
+  if (!await approveWorkbenchMutation({ kind, parameters, preview })) return null;
+  const result = await workbench.executeIntent({
+    intentId,
+    kind,
+    parameters,
+    expectedOutcome,
+    approvalToken: preview.approval.approval_token,
+  });
+  if (!result.outcome?.success) throw new Error(result.outcome?.error || '原生工作台执行失败');
+  return result.outcome.result || {};
 }
 
 let resizing = false; // eslint-disable-line no-unused-vars -- 仅供未来拖拽阈值判断读取

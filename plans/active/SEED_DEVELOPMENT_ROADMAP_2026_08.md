@@ -1961,7 +1961,23 @@ WorkbenchEnvironment 任一侧均 fail-closed，仍不接外部安装、网络�
 导入、Legacy-off 启动与 native API 边界回归共 `34 passed`；合法 Qwen provider 仍只位于语言器官集成边界，NeuroPlex 仍仅为显式离线
 benchmark/兼容 profile，不进入默认客户端和 Taiji cognition。
 
-**当前唯一下一步：开始 W5 第一 slice 的客户端真实性审计。** 先逐页建立 Chat、Life、Agent/能力、Training、Settings、KB 的
-`source/owner/freshness/availability` 清单，核对每个可见状态和按钮是否有 native endpoint、真实 runtime owner 与降级行为；优先
-清理剩余旧 workspace/RAG/生命状态前端调用和失效文案，再把真实 Taiji homeostasis/self-state、Workbench capability 与 provider
-状态接入对应页面。不得先做视觉包装；完成后补 route-level packaged smoke 和 frontend/source capability contract。
+**已完成（2026-08-29）：W5 第一 slice 的客户端真实性审计与旧调用清理。** 本轮按
+`source/owner/freshness/availability` 逐页核对 Chat、Life、Agent/能力、Training、Settings、KB：
+
+1. Workspace 的目录切换、系统选目录和快捷路径已分别收口到 native `/api/workbench/workspace`、`/api/system/select_folder`、
+   `/api/system/quick_paths`；原生 Workbench 统一承担文件创建、UTF-8 digest-checked patch、重命名、删除和 argv-only terminal，所有副作用
+   都经 preview→approval→execute，目录创建和资源管理器唤起这类未登记能力从界面移除。Monaco 保存现在携带原始 digest、编码和完整性，
+   冲突/非 UTF-8/截断快照 fail-closed。
+2. KB 页不再在默认客户端路径调用 `/api/rag/*` 或挂载 Legacy `FileUploadQueue`；它只读取统一 runtime snapshot 中是否真实出现
+   `knowledge.*` capability，没有能力时明确显示待接入边界。这样“资料库管理”不会被误报为 Taiji 已具备 provenance Observation 检索。
+3. Chat/Life/Settings 的旧 ByteSensor/ByteMotor、固定 257 单元和 tokenizer/embedding 断言文案已移除；Life 只显示 runtime、语言器官、
+   Workbench 和 needs 是否上报的真实字段。Seed active 时 runtime status 正确报告 `is_taiji=true`，不再依赖 Legacy `app_state` 标志。
+4. 删除未被引用且仍携带旧 engine/workspace 写入路径的 `useWorkspaceBridge.js`，移除未使用的模型市场 locale key；frontend 现存 RAG 字符串
+   仅限通用组件测试夹具，不属于产品调用路径。
+
+本轮证据：前端 Vitest `22 files / 185 passed`，ESLint `0 errors / 13 warnings`，生产构建通过；后端原生 Workbench/系统路由与平台边界回归
+`72 passed, 1 skipped`，ruff、compileall、diff check 通过。尚未宣称 knowledge capability 已实现，也尚未进行 packaged route-level smoke。
+
+**当前唯一下一步：开始 W5 第二 slice 的真实状态接入。** 以统一 runtime status、Workbench capability snapshot 和 provider artifact status 为
+唯一来源，给 Chat、Life、Agent/能力、Training、Settings、KB 建立可见的 `source/owner/freshness/availability` 投影，并为 native
+homeostasis/self-state 明确定义缺失字段与降级态；随后再补 route-level packaged smoke 和 frontend/source capability contract。不得先做视觉包装。

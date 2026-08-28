@@ -14,7 +14,7 @@ class="sidebar-resize-handle"
         </div>
         <div class="brand-copy">
           <h2>{{ t('title') }}</h2>
-          <span>{{ runtimeStore.health.modelLoaded ? '在线' : '等待模型' }}</span>
+          <span>{{ runtimeStore.health.modelLoaded ? '运行时在线' : '等待运行时' }}</span>
         </div>
       </div>
 

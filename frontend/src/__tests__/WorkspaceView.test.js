@@ -25,6 +25,11 @@ const defaultCapabilities = () => ({
   capabilities: [
     { capability_id: 'workspace.list', enabled: true },
     { capability_id: 'workspace.read', enabled: true },
+    { capability_id: 'workspace.create', enabled: true },
+    { capability_id: 'workspace.rename', enabled: true },
+    { capability_id: 'workspace.delete', enabled: true },
+    { capability_id: 'workspace.apply_patch', enabled: true },
+    { capability_id: 'terminal.run', enabled: true },
   ],
 })
 
@@ -35,8 +40,8 @@ const defaultEntries = (path = '.') => path === 'src'
       { name: 'README.md', path: 'README.md', type: 'file', size: 4 },
     ]
 
-// 重命名端点的 mock 响应，可按用例覆写（默认成功）
-let renameResponse = () => jsonResponse({ status: 'ok', path: 'GUIDE.md' })
+// 原生重命名预览的 mock 响应，可按用例覆写（默认成功）
+let renameResponse = () => jsonResponse({ status: 'ok' })
 const mountedWrappers = []
 
 beforeEach(() => {
@@ -54,23 +59,44 @@ beforeEach(() => {
       const path = new URL(url, 'http://localhost').searchParams.get('path') || '.'
       return Promise.resolve(jsonResponse({ entries: defaultEntries(path) }))
     }
-    if (url.endsWith('/api/workspace/quick_paths')) {
+    if (url.endsWith('/api/system/quick_paths')) {
       return Promise.resolve(
         jsonResponse({ paths: [{ label: '桌面', path: 'C:/Users/x/Desktop' }] })
       )
     }
-    if (url.endsWith('/api/workspace/path') && method === 'GET') {
-      return Promise.resolve(jsonResponse({ status: 'ok', path: 'E:/Seed/agent_workspace' }))
+    if (url.endsWith('/api/system/select_folder')) {
+      return Promise.resolve(jsonResponse({ status: 'cancel' }))
     }
-    if (url.endsWith('/api/workspace/path') && method === 'POST') {
+    if (url.endsWith('/api/workbench/workspace') && method === 'POST') {
       const body = JSON.parse(options.body || '{}')
       return Promise.resolve(jsonResponse({ status: 'ok', path: body.path }))
     }
-    if (url.endsWith('/api/workspace/file') && method === 'POST') {
-      return Promise.resolve(jsonResponse({ status: 'ok', path: 'new.py' }))
+    if (url.includes('/api/workbench/file?path=')) {
+      return Promise.resolve(jsonResponse({ content: 'hello\n', encoding: 'utf-8', digest: 'a'.repeat(64), truncated: false }))
     }
-    if (url.endsWith('/api/workspace/rename') && method === 'POST') {
-      return Promise.resolve(renameResponse())
+    if (url.endsWith('/api/workbench/preview') && method === 'POST') {
+      const body = JSON.parse(options.body || '{}')
+      if (body.kind === 'workspace.rename') {
+        const rename = renameResponse()
+        if (!rename.ok) return Promise.resolve(rename)
+        return Promise.resolve(jsonResponse({
+          policy: { decision: 'ask_user', reason_code: 'capability_requires_approval' },
+          preview: { capability_id: body.kind, mutation: { operation: body.kind, path: body.parameters?.path || '' } },
+          approval: { approval_token: 'test-approval-token' },
+        }))
+      }
+      return Promise.resolve(jsonResponse({
+        policy: { decision: 'ask_user', reason_code: 'capability_requires_approval' },
+        preview: { capability_id: body.kind, mutation: { operation: body.kind, path: body.parameters?.path || '' } },
+        approval: { approval_token: 'test-approval-token' },
+      }))
+    }
+    if (url.endsWith('/api/workbench/execute') && method === 'POST') {
+      const body = JSON.parse(options.body || '{}')
+      const result = body.kind === 'workspace.rename'
+        ? { path: 'README.md', new_path: 'GUIDE.md', digest: 'a'.repeat(64) }
+        : { path: body.parameters?.path || 'new.py', digest: 'a'.repeat(64), success: true }
+      return Promise.resolve(jsonResponse({ outcome: { success: true, result } }))
     }
     return Promise.resolve(jsonResponse({}))
   })
@@ -123,7 +149,7 @@ const runRenameFlow = async (wrapper, newName) => {
 
 const renameCalls = () =>
   authFetch.mock.calls.filter(
-    ([u, o]) => u.endsWith('/api/workspace/rename') && (o?.method || '') === 'POST'
+    ([u, o]) => u.endsWith('/api/workbench/preview') && (o?.method || '') === 'POST'
   )
 
 describe('WorkspaceView', () => {
@@ -153,7 +179,7 @@ describe('WorkspaceView', () => {
     expect(wrapper.find('.dlg-box h3').text()).toBe('打开项目文件夹')
     await flushPromises()
     expect(
-      authFetch.mock.calls.some(([u]) => u.endsWith('/api/workspace/quick_paths'))
+      authFetch.mock.calls.some(([u]) => u.endsWith('/api/system/quick_paths'))
     ).toBe(true)
     expect(wrapper.find('.qp-btn').exists()).toBe(true)
   })
@@ -238,9 +264,9 @@ describe('WorkspaceView', () => {
 
     const calls = renameCalls()
     expect(calls.length).toBe(1)
-    expect(JSON.parse(calls[0][1].body)).toEqual({
-      old_name: 'README.md',
-      new_name: 'GUIDE.md',
+    expect(JSON.parse(calls[0][1].body)).toMatchObject({
+      kind: 'workspace.rename',
+      parameters: { path: 'README.md', new_path: 'GUIDE.md', before_digest: 'a'.repeat(64) },
     })
     expect(treeCalls()).toBeGreaterThan(before)
     expect(toastFn).toHaveBeenCalledWith('已重命名为 GUIDE.md', 'success')
@@ -256,7 +282,7 @@ describe('WorkspaceView', () => {
     await runRenameFlow(wrapper, 'GUIDE.md')
 
     expect(renameCalls().length).toBe(1)
-    expect(toastFn).toHaveBeenCalledWith('目标已存在: GUIDE.md', 'error')
+    expect(toastFn).toHaveBeenCalledWith('重命名失败: 目标已存在: GUIDE.md', 'error')
   })
 
   it('右键重命名未改名（新名与原名相同）时不发请求', async () => {

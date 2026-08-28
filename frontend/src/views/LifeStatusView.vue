@@ -61,41 +61,41 @@
 
           <div class="native-contract-grid">
             <article class="native-contract-card">
-              <span class="native-contract-label">感觉器</span>
-              <strong>ByteSensor</strong>
-              <span>257 个固定输入单元</span>
+              <span class="native-contract-label">运行时</span>
+              <strong>{{ runtimeStore.health.modelName || 'Seed native' }}</strong>
+              <span>当前 Taiji 原生运行时身份</span>
             </article>
             <article class="native-contract-card">
-              <span class="native-contract-label">输入格式</span>
-              <strong>raw bytes</strong>
-              <span>不经过 tokenizer / embedding</span>
+              <span class="native-contract-label">语言器官</span>
+              <strong>{{ runtimeStore.health.languageProvider?.state || 'unknown' }}</strong>
+              <span>{{ runtimeStore.health.languageProvider?.backend_id || '未提供 provider artifact' }}</span>
             </article>
             <article class="native-contract-card">
-              <span class="native-contract-label">学习方式</span>
-              <strong>local plasticity</strong>
-              <span>按预测与结果误差更新已有突触</span>
+              <span class="native-contract-label">工作台</span>
+              <strong>{{ runtimeStore.tools.length }} 项能力</strong>
+              <span>来自当前 capability snapshot</span>
             </article>
             <article class="native-contract-card">
-              <span class="native-contract-label">动作器</span>
-              <strong>ByteMotor</strong>
-              <span>输出字节，接收 action → outcome 反馈</span>
+              <span class="native-contract-label">生命状态</span>
+              <strong>{{ hasNeedsData ? '已上报' : '未上报' }}</strong>
+              <span>needs 是否由当前运行时提供</span>
             </article>
           </div>
 
           <div class="native-pipeline" aria-label="Taiji 原生状态推进链路">
-            <div class="native-pipeline-step"><span>01</span><strong>observe()</strong><small>因果 tick</small></div>
+            <div class="native-pipeline-step"><span>01</span><strong>runtime</strong><small>连接与身份</small></div>
             <span class="native-pipeline-arrow">→</span>
-            <div class="native-pipeline-step"><span>02</span><strong>predictive fabric</strong><small>递归预测</small></div>
+            <div class="native-pipeline-step"><span>02</span><strong>input frame</strong><small>带来源输入</small></div>
             <span class="native-pipeline-arrow">→</span>
-            <div class="native-pipeline-step"><span>03</span><strong>EpisodicField</strong><small>情景关联</small></div>
+            <div class="native-pipeline-step"><span>03</span><strong>state update</strong><small>持续状态</small></div>
             <span class="native-pipeline-arrow">→</span>
-            <div class="native-pipeline-step"><span>04</span><strong>ByteMotor</strong><small>动作与反馈</small></div>
+            <div class="native-pipeline-step"><span>04</span><strong>language organ</strong><small>可读表达</small></div>
           </div>
 
           <div class="native-status-note">
             <strong>当前运行说明</strong>
-            <p>{{ runtimeStore.health.message || 'Taiji 状态已连接；每次 observe() 都会推进同一份持续状态。' }}</p>
-            <p>训练发生在真实相邻边的局部突触更新上，checkpoint 保存状态与突触，而不是 token logits。</p>
+            <p>{{ runtimeStore.health.message || 'Taiji 原生运行时已连接；当前页面只显示已由状态接口上报的事实。' }}</p>
+            <p>需求、学习细节与结构规模尚未通过公开状态合同上报，因此这里不推测突触、神经元数量或内部器官名称。</p>
           </div>
         </section>
       </template>

@@ -1,8 +1,8 @@
-"""Taiji-native read-only workbench routes.
+"""Taiji-native workbench routes.
 
 This router is always available. It is deliberately separate from the
-Legacy-dependent agent/workspace router, so opening and reading the IDE does
-not depend on ``SEED_ENABLE_LEGACY``.
+Legacy-dependent agent/workspace router, so native IDE reads and controlled
+workspace mutations do not depend on ``SEED_ENABLE_LEGACY``.
 """
 
 from __future__ import annotations
@@ -18,10 +18,12 @@ from api.models import (
     WorkbenchLoopPreflightRequest,
 )
 from api.seed_runtime import get_seed_runtime
+from seed_platform.settings import update_settings
 from seed_platform.workbench import (
     WorkbenchActionRequest,
     WorkbenchEnvironment,
     default_workspace_root,
+    validate_workspace_root,
 )
 
 router = APIRouter(prefix="/api/workbench", tags=["workbench"])
@@ -93,6 +95,25 @@ def workbench_capabilities() -> dict[str, Any]:
     )
     payload["mcp_registry"] = environment.mcp_registry.to_payload()
     return payload
+
+
+@router.get("/workspace")
+def workbench_workspace() -> dict[str, Any]:
+    """Return the active workspace root from the native environment."""
+
+    return {"status": "ok", "path": str(_environment().root)}
+
+
+@router.post("/workspace")
+def set_workbench_workspace(request: dict[str, Any]) -> dict[str, Any]:
+    """Persist a validated workspace root for the native Workbench."""
+
+    try:
+        path = validate_workspace_root(request.get("path"))
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    update_settings({"workspace_path": str(path)})
+    return {"status": "ok", "path": str(path)}
 
 
 @router.get("/programming-languages")

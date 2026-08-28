@@ -318,7 +318,7 @@
                   </div>
                   <div class="meta-line meta-line--muted">
                     状态通路
-                    <span class="meta-tag">ByteSensor → ByteMotor</span>
+                    <span class="meta-tag">Taiji runtime → native capabilities</span>
                   </div>
                 </div>
               </div>

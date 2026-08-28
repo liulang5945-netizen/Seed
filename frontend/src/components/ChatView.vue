@@ -71,13 +71,13 @@
                 <div class="msg-body">
                   <span class="msg-name">Seed</span>
                   <div class="bubble">
-                    <p><span class="lead">Taiji 的一次状态推进</span>从原始字节开始，不经过 tokenizer 或学习式 embedding。输入先进入 <code>ByteSensor</code>，再经过预测织体与 <code>EpisodicField</code>，最后由 <code>ByteMotor</code> 产生字节或动作。</p>
+                    <p><span class="lead">Taiji 的一次状态推进</span>输入先进入原生运行时，形成一帧带来源的输入证据；运行时推进持续状态与已接入的关联机制，最后交给语言器官形成可读表达。</p>
                     <ol class="msg-steps">
-                      <li><strong>感觉</strong>：固定的 257 个感受器接收当前 byte 和 episode 边界。</li>
-                      <li><strong>预测与记忆</strong>：递归预测织体推进状态，情景场保存 episode 关联。</li>
-                      <li><strong>动作</strong>：稀疏 motor group 选择下一字节或动作，结果回到下一次感觉。</li>
+                      <li><strong>输入</strong>：把用户消息包装为带来源、时间和置信度的原生输入帧。</li>
+                      <li><strong>状态</strong>：由当前 Taiji runtime 推进状态，并保留可审计的运行结果。</li>
+                      <li><strong>表达</strong>：语言器官把表达计划形成可读文本；如果未形成，则明确显示原始输出。</li>
                     </ol>
-                    <p>这里的智能来自持续状态、预测误差和环境反馈的闭环，而不是一次性计算 token logits。</p>
+                    <p>这里的智能不是某个固定器官名称或固定规模的宣传，而是来自状态、学习、环境反馈和表达边界协同后的可验证闭环。</p>
                   </div>
                 </div>
               </div>
@@ -123,7 +123,7 @@ v-for="msg in displayedMessages" :key="msg.id"
                 <div v-if="msg.role === 'assistant' && isRawOutput(msg)" class="bubble raw-output">
                   <div class="raw-head">
                     <span class="raw-badge">RAW</span>
-                    <span class="raw-title">模型原始字节输出</span>
+                    <span class="raw-title">语言器官原始输出</span>
                   </div>
                   <p class="raw-desc">当前语言表层未能形成可读文本，以下为调试输出：</p>
                   <pre class="raw-pre">{{ msg.content }}</pre>
@@ -297,7 +297,7 @@ function handleSend() {
     } else if (runtimeStore.health.state !== 'connected') {
       toast(`运行时未就绪（${runtimeStore.connectionStatus}），请等待连接恢复`, 'warning')
     } else if (!runtimeStore.health.modelLoaded) {
-      toast('模型尚未装载完成，暂时无法发送', 'warning')
+      toast('Taiji 原生运行时尚未就绪，暂时无法发送', 'warning')
     } else if (!chatStore.chatInput.trim()) {
       inputRef.value?.focus()
     }
@@ -316,8 +316,7 @@ function likeMsg() { toast('已点赞', 'success') }
 
 // ===== composer chip 真实行为 =====
 // 提示词模板：代码问答 / 总结 / 翻译（纯前端可用能力）。
-// 知识库（/api/rag 对话挂载）与图像生成（/api/multimodal）后端未就绪，入口已下线，
-// 不保留无行为按钮；"更多"占位入口一并移除。
+// 知识库与多模态能力尚未进入当前 native capability snapshot，入口不在聊天页伪造。
 const promptTemplates = {
   code: '请帮我解释以下代码：\n```\n\n```',
   summarize: '请帮我总结以下内容：\n',

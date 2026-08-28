@@ -114,12 +114,12 @@ export function useApi() {
         return true;
       } else if (health.state === 'downloading') {
         downloadProgress.value = health.download || health;
-        syncAppState('downloading', health.message || '模型正在下载...');
+        syncAppState('downloading', health.message || '运行时资源准备中...');
         return false;
       } else if (health.state === 'loading') {
         consecutiveFailures = 0;
         if (state !== 'connected') {
-          syncAppState('loading', health.message || '模型正在加载中...');
+        syncAppState('loading', health.message || 'Taiji 原生运行时正在加载中...');
         }
         return false;
       } else {

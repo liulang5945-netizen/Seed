@@ -12,6 +12,7 @@ import logging
 import os
 import sys
 import threading
+from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
 
@@ -254,7 +255,7 @@ def select_folder():
         bi.hwndOwner = None
         bi.pidlRoot = None
         bi.pszDisplayName = ctypes.cast(display_name, wintypes.LPWSTR)
-        bi.lpszTitle = "请选择模型文件夹（需包含 config.json，支持 HuggingFace 缓存目录）"
+        bi.lpszTitle = "请选择项目工作区文件夹"
         bi.ulFlags = 0x00000040 | 0x00000010
 
         pidl = shell32.SHBrowseForFolderW(ctypes.byref(bi))
@@ -277,6 +278,38 @@ def select_folder():
         logger.error(f"选择文件夹失败: {e}")
         logger.error(f"Request failed: {e}")
         return {"status": "error", "message": "内部错误，请查看日志"}
+
+
+@router.get("/api/system/quick_paths")
+def quick_paths():
+    """Return existing, host-derived folders useful for workspace selection."""
+
+    from seed_platform.workbench import default_workspace_root
+
+    candidates = [("当前工作区", default_workspace_root())]
+    home = Path.home()
+    candidates.extend(
+        [
+            ("桌面", home / "Desktop"),
+            ("文档", home / "Documents"),
+            ("下载", home / "Downloads"),
+        ]
+    )
+    paths: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for label, candidate in candidates:
+        try:
+            resolved = candidate.resolve(strict=True)
+        except OSError:
+            continue
+        if not resolved.is_dir():
+            continue
+        key = str(resolved).casefold()
+        if key in seen:
+            continue
+        seen.add(key)
+        paths.append({"label": label, "path": str(resolved)})
+    return {"status": "ok", "paths": paths}
 
 
 @router.get("/api/system/select_file")

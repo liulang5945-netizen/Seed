@@ -30,9 +30,9 @@ onMounted(() => {
       setTimeout(() => { visible.value = false }, 300)
       clearInterval(checkInterval)
     } else if (state === 'loading') {
-      statusText.value = '模型加载中...'
+      statusText.value = 'Taiji 原生运行时加载中...'
     } else if (state === 'downloading') {
-      statusText.value = '模型下载中...'
+      statusText.value = '原生运行时资源准备中...'
     } else {
       statusText.value = '正在连接...'
     }
