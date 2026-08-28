@@ -42,6 +42,34 @@ ROOT_DIR = Path(sys.executable).resolve().parent if FROZEN else Path(__file__).p
 SETTINGS_FILE = ROOT_DIR / "desktop" / "settings.json"
 LOG_DIR = ROOT_DIR / "logs"
 
+# PyInstaller's PyQt6 runtime hook configures Qt plugins, but on some Windows
+# builds it does not expose the wheel's nested ``Qt6/bin`` directory to the
+# DLL loader before the first ``PyQt6.QtCore`` import.  Keep the handle alive
+# for the process lifetime so QtCore.pyd can resolve Qt6Core.dll reliably.
+_QT_DLL_DIRECTORY_HANDLE = None
+
+
+def _prepare_frozen_qt_dll_path() -> None:
+    """Make the bundled Qt6 DLL directory visible before importing PyQt6."""
+
+    global _QT_DLL_DIRECTORY_HANDLE
+    if not FROZEN or sys.platform != "win32":
+        return
+    internal_root = Path(getattr(sys, "_MEIPASS", ROOT_DIR / "_internal"))
+    qt_bin = internal_root / "PyQt6" / "Qt6" / "bin"
+    if not qt_bin.is_dir():
+        return
+    qt_bin_text = str(qt_bin)
+    current_path = os.environ.get("PATH", "")
+    if qt_bin_text not in current_path.split(os.pathsep):
+        os.environ["PATH"] = qt_bin_text + os.pathsep + current_path
+    add_dll_directory = getattr(os, "add_dll_directory", None)
+    if callable(add_dll_directory):
+        _QT_DLL_DIRECTORY_HANDLE = add_dll_directory(qt_bin_text)
+
+
+_prepare_frozen_qt_dll_path()
+
 # 端口 / API 路径契约（后端与 WebSocket 服务器共用，改动只此一处）
 BACKEND_PORT = 8000
 WS_PORT = 8765
