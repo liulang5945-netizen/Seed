@@ -21,16 +21,19 @@
         <span v-if="item.detail" class="evidence-detail">{{ item.detail }}</span>
       </article>
     </div>
+    <RuntimeApiMetricsPanel v-if="showApiMetrics" :compact="compact" />
   </section>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { useRuntimeStore } from '../stores/runtimeStore.js'
+import RuntimeApiMetricsPanel from './RuntimeApiMetricsPanel.vue'
 
 const props = defineProps({
   context: { type: String, default: 'all' },
   compact: { type: Boolean, default: false },
+  showApiMetrics: { type: Boolean, default: false },
 })
 
 const store = useRuntimeStore()

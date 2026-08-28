@@ -13,7 +13,7 @@
     <!-- 滚动内容区 -->
     <div class="settings-scroll">
       <div class="settings-wrap">
-        <RuntimeEvidenceStrip context="settings" compact />
+        <RuntimeEvidenceStrip context="settings" compact show-api-metrics />
         <div class="settings-layout">
 
           <!-- ═══ 左侧：设置导航 ═══ -->

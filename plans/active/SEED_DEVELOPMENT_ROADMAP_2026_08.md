@@ -2027,5 +2027,13 @@ Vitest `25 files / 196 passed`、API/native boundary、ESLint、生产构建全�
 保存事件转发已抽为 `WorkspaceEditorPane`；父视图通过显式 expose 引用继续读取当前文件、保存状态和编辑器动作，仍保留 native approval
 handler、文件状态与 mutation 流程。新增组件级回归；前端 Vitest `27 files / 198 passed`、API/native boundary、ESLint、生产构建全部通过。
 
-**当前唯一下一步：开始 W6 第八 slice 的 SettingsView 状态/设置区拆分。** 将设置控件的持久化协调、运行时证据和系统操作拆成明确子模块，
-保持 `nativeApi` 单一入口与失败回滚语义；拆分后再把 facade metrics 接入统一 trace/SLO 面板。不得先做视觉包装或 CUDA kernel。
+**已完成（2026-08-29）：W6 第八 slice 的 SettingsView 运行环境区拆分。** 运行环境状态与未认证终端开关已抽为
+`SettingsRuntimePanel`；父视图继续唯一持有 `nativeApi` 设置持久化、GET/POST 竞态防护、失败回滚和运行时健康探测。新增组件级开关事件回归，
+前端 Vitest `28 files / 199 passed`、API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
+
+**已完成（2026-08-29）：W6 第九 slice 的 nativeApi trace/SLO 观测面板。** 新增 `RuntimeApiMetricsPanel`，由 facade snapshot 只展示请求路径、
+请求/成功/失败计数、平均延迟和最后状态码，不采集或展示请求正文；`RuntimeEvidenceStrip` 仅在 Settings 显式开启该面板，并在组件卸载时清理刷新计时器。
+前端 Vitest `29 files / 201 passed`、API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
+
+**当前唯一下一步：继续 W6 后续高复杂度视图的边界拆分与观测收口。** 优先选择仍同时持有 UI、native 状态和副作用协调的页面，
+每片必须保持 `nativeApi` 单一入口、补齐组件/边界回归并在提交前跑完整 CI；不得先做视觉包装或 CUDA kernel。
