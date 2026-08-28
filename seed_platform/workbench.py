@@ -26,6 +26,7 @@ from typing import Any
 
 from taiji.environment import EnvironmentOutcome
 
+from .mcp_registry import McpToolRegistry
 from .paths import get_external_path
 from .programming_languages import (
     LANGUAGE_CONFIDENCE_THRESHOLD,
@@ -254,16 +255,32 @@ class CapabilitySnapshot:
                     ("expected_artifacts", "relative paths expected after execution"),
                 ),
             ),
+            CapabilityDescriptor(
+                "mcp.list",
+                "List native MCP-shaped tools from the Seed-owned registry.",
+                category="mcp",
+            ),
+            CapabilityDescriptor(
+                "mcp.invoke",
+                "Invoke one registry-validated MCP-shaped tool through Workbench policy.",
+                risk="mcp_dispatch",
+                category="mcp",
+                parameters=(
+                    ("tool_id", "registered MCP tool id"),
+                    ("arguments", "validated tool arguments"),
+                    ("registry_revision", "optional expected registry revision"),
+                ),
+            ),
         )
         body = {
             "format": WORKBENCH_CONTRACT_FORMAT,
             "version": WORKBENCH_CONTRACT_VERSION,
-            "revision": 3,
+            "revision": 4,
             "capabilities": [item.to_payload() for item in capabilities],
         }
         return cls(
             snapshot_id=_canonical_digest(body),
-            revision=3,
+            revision=4,
             capabilities=capabilities,
         )
 
@@ -602,6 +619,10 @@ class WorkbenchConflictError(ValueError):
     """A transaction observed a different state than its precondition."""
 
 
+class WorkbenchResourceLimitError(ValueError):
+    """A connected capability exceeded its declared resource budget."""
+
+
 class WorkbenchEnvironment:
     """Read-only Seed workbench implementing Taiji's tool-environment protocol."""
 
@@ -611,12 +632,14 @@ class WorkbenchEnvironment:
         *,
         snapshot: CapabilitySnapshot | None = None,
         programming_language_registry: ProgrammingLanguageRegistry | None = None,
+        mcp_registry: McpToolRegistry | None = None,
     ) -> None:
         self.root = Path(root or default_workspace_root()).resolve()
         self.snapshot = snapshot or CapabilitySnapshot.default()
         self.programming_language_registry = (
             programming_language_registry or ProgrammingLanguageRegistry.default()
         )
+        self.mcp_registry = mcp_registry or McpToolRegistry.default()
         self._language_selections: dict[str, ProgrammingLanguageAssessment] = {}
         self._undo_records: dict[str, dict[str, Any]] = {}
         self._approval_records: dict[str, dict[str, Any]] = {}
@@ -657,6 +680,7 @@ class WorkbenchEnvironment:
             ],
             "undoable_transactions": len(self._undo_records),
             "pending_approvals": len(self._approval_records),
+            "mcp_registry": self.mcp_registry.to_payload(),
         }
 
     def language_state_checkpoint(self) -> dict[str, Any]:
@@ -774,6 +798,8 @@ class WorkbenchEnvironment:
                 "capability_not_connected",
                 self.snapshot.snapshot_id,
             )
+        if request.capability_id == "mcp.invoke":
+            return self._mcp_policy_for(request)
         if descriptor.risk not in {"read_only", "reversible_ui"}:
             if request.approval_token:
                 if self._approval_is_valid(request):
@@ -807,6 +833,59 @@ class WorkbenchEnvironment:
             request.capability_id,
             "allow",
             "read_only_or_reversible",
+            self.snapshot.snapshot_id,
+        )
+
+    def _mcp_policy_for(
+        self, request: WorkbenchActionRequest
+    ) -> ExecutionPolicyDecision:
+        tool_id = str(request.parameters.get("tool_id", "")).strip()
+        descriptor = self.mcp_registry.get(tool_id)
+        if descriptor is None:
+            return ExecutionPolicyDecision(
+                request.request_id,
+                request.capability_id,
+                "deny",
+                "unknown_mcp_tool",
+                self.snapshot.snapshot_id,
+            )
+        if not descriptor.enabled:
+            return ExecutionPolicyDecision(
+                request.request_id,
+                request.capability_id,
+                "deny",
+                "mcp_tool_not_connected",
+                self.snapshot.snapshot_id,
+            )
+        if descriptor.risk not in {"read_only", "reversible_ui"}:
+            if request.approval_token:
+                if self._approval_is_valid(request):
+                    return ExecutionPolicyDecision(
+                        request.request_id,
+                        request.capability_id,
+                        "allow",
+                        "explicit_approval",
+                        self.snapshot.snapshot_id,
+                    )
+                return ExecutionPolicyDecision(
+                    request.request_id,
+                    request.capability_id,
+                    "ask_user",
+                    "approval_invalid",
+                    self.snapshot.snapshot_id,
+                )
+            return ExecutionPolicyDecision(
+                request.request_id,
+                request.capability_id,
+                "ask_user",
+                "capability_requires_approval",
+                self.snapshot.snapshot_id,
+            )
+        return ExecutionPolicyDecision(
+            request.request_id,
+            request.capability_id,
+            "allow",
+            "mcp_tool_read_only",
             self.snapshot.snapshot_id,
         )
 
@@ -866,6 +945,15 @@ class WorkbenchEnvironment:
         """Consume an approval immediately before the side effect starts."""
 
         descriptor = self.snapshot.get(request.capability_id)
+        if request.capability_id == "mcp.invoke":
+            mcp_descriptor = self.mcp_registry.get(
+                str(request.parameters.get("tool_id", ""))
+            )
+            if mcp_descriptor is None or mcp_descriptor.risk in {
+                "read_only",
+                "reversible_ui",
+            }:
+                return
         if descriptor is None or descriptor.risk in {"read_only", "reversible_ui"}:
             return
         if not self._approval_is_valid(request):
@@ -893,6 +981,8 @@ class WorkbenchEnvironment:
             preview = self._preview_file_transaction(tool_name, parameters)
         elif tool_name == "terminal.run":
             preview = self._preview_terminal(parameters)
+        elif tool_name == "mcp.invoke":
+            preview = self._preview_mcp_invoke(parameters)
         else:
             raise ValueError("capability does not have a side-effect preview")
         return {
@@ -1017,6 +1107,10 @@ class WorkbenchEnvironment:
                 result = self._undo_transaction(parameters)
             elif tool_name == "terminal.run":
                 result = self._run_terminal(parameters)
+            elif tool_name == "mcp.list":
+                result = self._mcp_list(parameters)
+            elif tool_name == "mcp.invoke":
+                result = self._mcp_invoke(parameters)
             else:
                 return self._failure(
                     "unknown_capability", "capability is not registered"
@@ -1025,6 +1119,12 @@ class WorkbenchEnvironment:
             return self._failure("unsafe_path", str(exc))
         except WorkbenchConflictError as exc:
             return self._failure("transaction_conflict", str(exc))
+        except KeyError as exc:
+            return self._failure("unknown_mcp_tool", str(exc))
+        except PermissionError as exc:
+            return self._failure("mcp_tool_not_connected", str(exc))
+        except WorkbenchResourceLimitError as exc:
+            return self._failure("mcp_output_limit", str(exc))
         except FileNotFoundError:
             return self._failure("not_found", "workspace entry does not exist")
         except IsADirectoryError:
@@ -1478,6 +1578,27 @@ class WorkbenchEnvironment:
             "will_execute": True,
         }
 
+    def _preview_mcp_invoke(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
+        tool_id = str(parameters.get("tool_id", "")).strip()
+        arguments = parameters.get("arguments", {})
+        descriptor = self.mcp_registry.validate_call(
+            tool_id,
+            arguments,
+            registry_revision=parameters.get("registry_revision"),
+        )
+        return {
+            "operation": "mcp.invoke",
+            "tool_id": descriptor.tool_id,
+            "source": descriptor.source,
+            "executor_id": descriptor.executor_id,
+            "risk": descriptor.risk,
+            "registry_revision": self.mcp_registry.revision,
+            "timeout_seconds": descriptor.timeout_seconds,
+            "output_limit": descriptor.output_limit,
+            "arguments": dict(arguments),
+            "will_execute": True,
+        }
+
     def _regular_file(self, raw_path: Any) -> tuple[Path, str]:
         path, relative_name = self._resolve_path(raw_path, allow_root=False)
         if path.is_symlink():
@@ -1827,6 +1948,49 @@ class WorkbenchEnvironment:
                     item["digest"] = self._bytes_digest(path.read_bytes())
             artifacts.append(item)
         return artifacts
+
+    def _mcp_list(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
+        if parameters:
+            raise ValueError("mcp.list does not accept parameters")
+        return {
+            "registry": self.mcp_registry.to_payload(),
+            "tools": [item.to_payload() for item in self.mcp_registry.list_tools()],
+        }
+
+    def _mcp_invoke(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
+        tool_id = str(parameters.get("tool_id", "")).strip()
+        arguments = parameters.get("arguments", {})
+        descriptor = self.mcp_registry.validate_call(
+            tool_id,
+            arguments,
+            registry_revision=parameters.get("registry_revision"),
+        )
+        if descriptor.executor_id == "workspace.list":
+            result = self._list_workspace(arguments)
+        else:  # pragma: no cover - registry prevents unbound executor ids
+            raise ValueError("MCP executor is not connected")
+        result_bytes = json.dumps(
+            result,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+        if len(result_bytes) > descriptor.output_limit:
+            raise WorkbenchResourceLimitError(
+                f"MCP output exceeds {descriptor.output_limit} bytes"
+            )
+        return {
+            "tool_id": descriptor.tool_id,
+            "source": descriptor.source,
+            "registry_revision": self.mcp_registry.revision,
+            "result": result,
+            "provenance": {
+                "kind": "mcp",
+                "source": descriptor.source,
+                "executor_id": descriptor.executor_id,
+            },
+            "success": True,
+        }
 
     def _normalize_terminal_parameters(
         self, parameters: Mapping[str, Any]

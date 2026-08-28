@@ -1917,6 +1917,13 @@ ruff/Black/py_compile/diff check 通过。该 slice 完成的是审批/结果合
 fail-closed 证据；旧 `runtime_service` 边界测试同步到 native capability 事实。Seed/native 回归 `320 passed, 1 skipped`，W2
 退出 Gate 通过，具备进入 W3 的证据。
 
-**当前唯一下一步：开始 W3 原生 capability/MCP registry 与有限自主循环的第一纵切片。** 先盘点现有 MCP/terminal/LSP 路由的
-真实 ownership，把可执行能力统一投影到 Seed registry，并为 `mcp.list/invoke` 定义版本化 schema、来源、权限、预算和 outcome；
-仅接入一个不带安装/网络副作用的本地工具 canary，验证 Taiji planner 与 Workbench 任一侧移除都会 fail-closed，再扩展到多步循环。
+**已完成（2026-08-29）：W3 第一纵切片的 native MCP registry 与 canary Gate。** 新增 Seed-owned `McpToolRegistry`，以内容寻址
+registry snapshot、版本化 input schema、source/risk/timeout/output budget 和 registry revision 统一 MCP-shaped 工具合同；native
+Workbench 新增 `mcp.list/invoke`，仅接入无安装、无网络副作用的本地 `workspace-summary` canary。参数 schema、registry revision、
+未知/禁用工具、动态风险审批和输出超限均经过 Workbench policy/executor，失败时 fail-closed 并保留 outcome；API 的 capabilities 与
+`/api/workbench/mcp`、前端 `mcpRegistry` projection 已接通。该 slice 没有接回 Legacy `mcp_manager`，不等于外部 MCP 生命周期管理、
+真实远端服务连接或多步有限自治循环已完成。Workbench 定向回归 `18 passed`，前端 `187 passed`、构建通过、ESLint `0 errors/17 warnings`。
+
+**当前唯一下一步：完成 W3 第二 slice 的 MCP schema/API 对齐与有限多步循环前置。** 先把 `mcp.list/invoke` 的 registry identity、
+capability snapshot、ToolCall/Outcome 和 runtime checkpoint 绑定成同一版本化请求合同，再实现只允许 native Workbench capability 的
+有限多步 loop preflight（步数、总预算、重复调用、失败终止和 checkpoint 边界）；外部安装、网络服务管理和开放式自治仍保持在边界外。

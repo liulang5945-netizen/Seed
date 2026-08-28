@@ -206,6 +206,7 @@ function stop() {
 const snapshotId = computed(() => capabilities.value?.snapshot_id || '')
 const workspaceRoot = computed(() => capabilities.value?.workspace_root || '')
 const programmingLanguages = computed(() => capabilities.value?.programming_languages || [])
+const mcpRegistry = computed(() => capabilities.value?.mcp_registry || null)
 const programmingLanguageRegistryRevision = computed(
   () => capabilities.value?.programming_language_registry_revision || ''
 )
@@ -223,6 +224,7 @@ export function useWorkbenchProjection() {
     snapshotId,
     workspaceRoot,
     programmingLanguages,
+    mcpRegistry,
     programmingLanguageRegistryRevision,
     latestOutcome,
     isEnabled,

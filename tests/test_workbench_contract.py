@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 from api.app import create_app
 from api.seed_runtime import SeedRuntime
 from seed import Seed
+from seed_platform.mcp_registry import McpToolDescriptor, McpToolRegistry
 from seed_platform.programming_languages import ProgrammingLanguageRegistry
 from seed_platform.workbench import (
     CapabilitySnapshot,
@@ -28,6 +29,8 @@ def test_workbench_snapshot_is_content_addressed() -> None:
     assert snapshot.get("editor.set_language") is not None
     assert snapshot.get("workspace.apply_patch") is not None
     assert snapshot.get("terminal.run") is not None
+    assert snapshot.get("mcp.list") is not None
+    assert snapshot.get("mcp.invoke") is not None
 
     tampered = snapshot.to_payload()
     tampered["capabilities"][0]["description"] = "tampered"
@@ -74,6 +77,10 @@ def test_runtime_status_exposes_seed_capabilities_without_legacy() -> None:
         capabilities = client.get("/api/workbench/capabilities")
         assert capabilities.status_code == 200
         assert capabilities.json()["snapshot_id"]
+        assert capabilities.json()["mcp_registry"]["format"] == "seed-mcp-registry-v1"
+        mcp = client.get("/api/workbench/mcp")
+        assert mcp.status_code == 200
+        assert mcp.json()["tools"][0]["tool_id"] == "mcp.local.workspace_summary"
         languages = client.get("/api/workbench/programming-languages")
         assert languages.status_code == 200
         assert languages.json()["languages"]
@@ -129,6 +136,118 @@ def test_taiji_tool_intent_bridge_does_not_select_the_intent(tmp_path) -> None:
     assert call.intent_id == intent.intent_id
     assert call.tool_name == intent.kind
     assert outcome.intent_id == intent.intent_id
+
+
+def test_native_mcp_registry_lists_and_invokes_local_read_only_canary(tmp_path) -> None:
+    (tmp_path / "src").mkdir()
+    (tmp_path / "src" / "main.py").write_text("print('seed')\n", encoding="utf-8")
+    environment = WorkbenchEnvironment(tmp_path)
+
+    listed = environment.execute_tool("mcp.list", {})
+
+    assert listed.success is True
+    assert environment.last_result["registry"]["format"] == "seed-mcp-registry-v1"
+    assert (
+        environment.last_result["tools"][0]["tool_id"] == "mcp.local.workspace_summary"
+    )
+    tool_id = environment.last_result["tools"][0]["tool_id"]
+
+    request = WorkbenchActionRequest(
+        request_id="request-mcp-local",
+        intent_id="intent-mcp-local",
+        capability_id="mcp.invoke",
+        parameters={"tool_id": tool_id, "arguments": {"path": "src"}},
+        snapshot_id=environment.capability_snapshot.snapshot_id,
+        confidence=1.0,
+    )
+    assert environment.policy_for(request).reason_code == "mcp_tool_read_only"
+    invoked = environment.execute_tool("mcp.invoke", request.parameters)
+
+    assert invoked.success is True
+    assert environment.last_result["provenance"]["kind"] == "mcp"
+    assert environment.last_result["result"]["entries"][0]["path"] == "src/main.py"
+
+    drifted = environment.execute_tool(
+        "mcp.invoke",
+        {
+            "tool_id": tool_id,
+            "arguments": {"path": "src"},
+            "registry_revision": 999,
+        },
+    )
+    assert drifted.success is False
+    assert environment.last_result["error_code"] == "invalid_parameters"
+
+    unknown = environment.execute_tool(
+        "mcp.invoke", {"tool_id": "mcp.unknown", "arguments": {}}
+    )
+    assert unknown.success is False
+    assert environment.last_result["error_code"] == "unknown_mcp_tool"
+
+
+def test_mcp_risk_is_dynamic_and_empty_registry_fails_closed(tmp_path) -> None:
+    descriptor = McpToolDescriptor(
+        tool_id="mcp.local.high-risk",
+        name="High-risk canary",
+        description="Synthetic high-risk contract for policy testing.",
+        input_schema={"type": "object", "additionalProperties": False},
+        executor_id="workspace.list",
+        risk="file_write",
+    )
+    environment = WorkbenchEnvironment(
+        tmp_path, mcp_registry=McpToolRegistry((descriptor,))
+    )
+    request = WorkbenchActionRequest(
+        request_id="request-mcp-risk",
+        intent_id="intent-mcp-risk",
+        capability_id="mcp.invoke",
+        parameters={"tool_id": descriptor.tool_id, "arguments": {}},
+        snapshot_id=environment.capability_snapshot.snapshot_id,
+        confidence=1.0,
+    )
+    assert environment.policy_for(request).reason_code == "capability_requires_approval"
+    approval = environment.issue_approval(request)
+    assert approval["preview"]["mutation"]["risk"] == "file_write"
+
+    empty = WorkbenchEnvironment(tmp_path, mcp_registry=McpToolRegistry())
+    rejected = empty.execute_tool(
+        "mcp.invoke", {"tool_id": descriptor.tool_id, "arguments": {}}
+    )
+    assert rejected.success is False
+    assert empty.last_result["error_code"] == "unknown_mcp_tool"
+
+
+def test_mcp_schema_and_output_budget_fail_closed(tmp_path) -> None:
+    descriptor = McpToolDescriptor(
+        tool_id="mcp.local.bounded",
+        name="Bounded canary",
+        description="Synthetic bounded canary for schema and output checks.",
+        input_schema={
+            "type": "object",
+            "properties": {"path": {"type": "string"}},
+            "required": ["path"],
+            "additionalProperties": False,
+        },
+        executor_id="workspace.list",
+        output_limit=1,
+    )
+    (tmp_path / "main.py").write_text("print('seed')\n", encoding="utf-8")
+    environment = WorkbenchEnvironment(
+        tmp_path, mcp_registry=McpToolRegistry((descriptor,))
+    )
+
+    invalid = environment.execute_tool(
+        "mcp.invoke", {"tool_id": descriptor.tool_id, "arguments": {}}
+    )
+    assert invalid.success is False
+    assert environment.last_result["error_code"] == "invalid_parameters"
+
+    oversized = environment.execute_tool(
+        "mcp.invoke",
+        {"tool_id": descriptor.tool_id, "arguments": {"path": "."}},
+    )
+    assert oversized.success is False
+    assert environment.last_result["error_code"] == "mcp_output_limit"
 
 
 def test_programming_language_evidence_uses_content_manifest_and_ambiguity(
