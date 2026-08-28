@@ -26,9 +26,18 @@ const { fakeMonaco, loaderInit, authFetchMock } = vi.hoisted(() => {
     KeyCode: { KeyS: 49 },
   }
   const loaderInit = vi.fn(() => Promise.resolve(fakeMonaco))
-  const authFetchMock = vi.fn(() =>
-    Promise.resolve({ ok: true, json: async () => ({ content: 'print(1)' }) })
-  )
+  const authFetchMock = vi.fn((url) => {
+    if (String(url).includes('/api/workbench/capabilities')) {
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({
+          snapshot_id: 'workbench-test-snapshot',
+          capabilities: [{ capability_id: 'workspace.read', enabled: true }],
+        }),
+      })
+    }
+    return Promise.resolve({ ok: true, json: async () => ({ content: 'print(1)' }) })
+  })
   return { fakeMonaco, fakeEditor, loaderInit, authFetchMock }
 })
 
@@ -59,9 +68,18 @@ describe('MonacoEditor', () => {
     vi.useFakeTimers()
     vi.clearAllMocks()
     loaderInit.mockImplementation(() => Promise.resolve(fakeMonaco))
-    authFetchMock.mockImplementation(() =>
-      Promise.resolve({ ok: true, json: async () => ({ content: 'print(1)' }) })
-    )
+    authFetchMock.mockImplementation((url) => {
+      if (String(url).includes('/api/workbench/capabilities')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            snapshot_id: 'workbench-test-snapshot',
+            capabilities: [{ capability_id: 'workspace.read', enabled: true }],
+          }),
+        })
+      }
+      return Promise.resolve({ ok: true, json: async () => ({ content: 'print(1)' }) })
+    })
     global.ResizeObserver = ResizeObserverStub
     window.matchMedia =
       window.matchMedia ||
@@ -111,7 +129,7 @@ describe('MonacoEditor', () => {
     await wrapper.vm.openFile('demo/main.py')
     await flushPromises()
     expect(authFetchMock).toHaveBeenCalledWith(
-      expect.stringContaining('/api/workspace/file?name=demo%2Fmain.py')
+      expect.stringContaining('/api/workbench/file?path=demo%2Fmain.py')
     )
     expect(wrapper.vm.openTabs.length).toBe(1)
     expect(wrapper.vm.openTabs[0].language).toBe('python')

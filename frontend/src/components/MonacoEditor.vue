@@ -51,9 +51,11 @@
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import { API_BASE, authFetch } from '../composables/apiClient.js';
+import { useWorkbenchProjection } from '../composables/useWorkbenchProjection.js';
 import { useAppStore } from '../stores/appStore.js';
 
 const appStore = useAppStore();
+const { readFile: readWorkbenchFile } = useWorkbenchProjection();
 defineProps({ workspacePath: { type: String, default: '' } });
 const emit = defineEmits(['saved', 'save-error']);
 
@@ -204,17 +206,14 @@ async function openFile(filePath) {
   }
 
   try {
-    const r = await authFetch(`${API_BASE}/api/workspace/file?name=${encodeURIComponent(filePath)}`);
-    if (r.ok) {
-      const data = await r.json();
-      const name = filePath.split('/').pop() || filePath.split('\\').pop();
-      const lang = detectLanguage(name);
+    const data = await readWorkbenchFile(filePath);
+    const name = filePath.split('/').pop() || filePath.split('\\').pop();
+    const lang = detectLanguage(name);
 
-      openTabs.value.push({ path: filePath, name, content: data.content || '', language: lang });
+    openTabs.value.push({ path: filePath, name, content: data.content || '', language: lang });
 
-      // 总是激活打开的标签，避免后续保存作用于旧标签
-      switchTab(filePath);
-    }
+    // 总是激活打开的标签，避免后续保存作用于旧标签
+    switchTab(filePath);
   } catch (e) {
     console.error('打开文件失败:', e);
   }

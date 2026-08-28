@@ -7,6 +7,14 @@
         <div class="topbar-sub topbar-path" :title="workspacePath">{{ workspacePath || 'Seed脚本与配置编辑' }}</div>
       </div>
       <div class="topbar-spacer"></div>
+      <span
+        class="workbench-projection"
+        :class="{ ready: workbenchReady }"
+        :title="workbenchStatusText"
+      >
+        <span class="workbench-projection-dot"></span>
+        Taiji 工作台 · {{ workbenchReady ? '已接入' : '未接入' }}
+      </span>
       <button class="btn btn-outline" @click="openPathDialog">
         <FolderOpen :size="15" />
         打开文件夹
@@ -100,6 +108,16 @@
               <div class="prop-row"><span class="prop-label">文件数</span><span class="prop-value">{{ workspaceStats.files }}</span></div>
               <div class="prop-row"><span class="prop-label">目录数</span><span class="prop-value">{{ workspaceStats.dirs }}</span></div>
             </div>
+            <div class="prop-group workbench-contract">
+              <div class="prop-group-title">Taiji 工作台</div>
+              <div class="prop-row"><span class="prop-label">能力快照</span><span class="prop-value">{{ workbench.snapshotId.value ? '已验证' : '未读取' }}</span></div>
+              <div v-if="workbench.latestOutcome.value" class="prop-row">
+                <span class="prop-label">最近结果</span>
+                <span class="prop-value">{{ workbench.latestOutcome.value.status }}</span>
+              </div>
+              <div v-if="workbench.error.value" class="prop-error">{{ workbench.error.value }}</div>
+              <div v-else class="prop-hint">只读文件与目录由 native capability 提供</div>
+            </div>
           </div>
         </div>
       </div>
@@ -188,8 +206,9 @@ v-for="(node, i) in quickOpenMatches" :key="node.path"
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted, onActivated, onDeactivated, inject, nextTick } from 'vue';
+import { ref, reactive, computed, watch, onMounted, onUnmounted, onActivated, onDeactivated, inject, nextTick } from 'vue';
 import { API_BASE, authFetch } from '../composables/apiClient.js';
+import { useWorkbenchProjection } from '../composables/useWorkbenchProjection.js';
 import { Terminal, FolderOpen, Folder, FileCode, FileText, Image as ImageIcon, Database, Edit3, Edit2, Trash2, Crosshair, Activity, Search, RefreshCw } from 'lucide-vue-next';
 import MonacoEditor from '../components/MonacoEditor.vue';
 import WebTerminal from '../components/WebTerminal.vue';
@@ -198,6 +217,7 @@ defineOptions({ name: 'WorkspaceView' });
 
 const toast = inject('toast');
 const $confirm = inject('$confirm');
+const workbench = useWorkbenchProjection();
 
 const workspacePath = ref('');
 const fileTree = ref([]);
@@ -219,6 +239,15 @@ const picking = ref(false);
 const quickOpen = reactive({ visible: false, query: '' });
 const quickOpenInput = ref(null);
 const quickOpenIndex = ref(0);
+const projectedEventSequence = ref(0);
+const workbenchReady = computed(() => (
+  workbench.isEnabled('workspace.list') && workbench.isEnabled('workspace.read')
+));
+const workbenchStatusText = computed(() => {
+  if (workbench.error.value) return workbench.error.value;
+  if (!workbench.snapshotId.value) return '正在读取 Taiji native workbench capability snapshot';
+  return `native capability snapshot ${workbench.snapshotId.value.slice(0, 12)}`;
+});
 const quickOpenMatches = computed(() => {
   const q = quickOpen.query.trim().toLowerCase();
   const all = allFiles.value;
@@ -454,16 +483,25 @@ async function applyNewPath() {
 
 async function loadWorkspacePath() {
   try {
-    const r = await authFetch(`${API_BASE}/api/workspace/path`);
-    if (r.ok) { const d = await r.json(); workspacePath.value = d.path || ''; }
+    await workbench.ensureCapabilities();
+    workspacePath.value = workbench.workspaceRoot.value || '';
   } catch (e) { toast('加载工作路径失败: ' + e.message, 'error') }
 }
 
 async function loadTree() {
   try {
-    const r = await authFetch(`${API_BASE}/api/workspace/tree`);
-    if (r.ok) { const d = await r.json(); fileTree.value = d.tree || []; recomputeFlatList(); }
+    await workbench.ensureCapabilities();
+    fileTree.value = mapWorkbenchEntries(await workbench.listDirectory('.'));
+    expandedDirs.clear();
+    recomputeFlatList();
   } catch (e) { toast('加载文件树失败: ' + e.message, 'error') }
+}
+
+function mapWorkbenchEntries(entries) {
+  return entries.map(entry => ({
+    ...entry,
+    children: entry.type === 'directory' ? null : undefined,
+  }));
 }
 
 function recomputeFlatList() {
@@ -482,10 +520,20 @@ function flattenTree(nodes, depth) {
   return result;
 }
 
-function handleTreeClick(node) {
+async function handleTreeClick(node) {
   if (node.type === 'directory') {
     if (expandedDirs.has(node.path)) expandedDirs.delete(node.path);
-    else expandedDirs.add(node.path);
+    else {
+      try {
+        if (!Array.isArray(node.children)) {
+          node.children = mapWorkbenchEntries(await workbench.listDirectory(node.path));
+        }
+        expandedDirs.add(node.path);
+      } catch (e) {
+        toast('加载目录失败: ' + e.message, 'error');
+        return;
+      }
+    }
     recomputeFlatList();
   } else {
     if (monacoEditor.value) monacoEditor.value.openFile(node.path);
@@ -575,17 +623,34 @@ onMounted(() => {
 // loadTree 统一由它负责，避免首次挂载双发请求。
 // IDE 快捷键（Ctrl+P / Ctrl+`）仅在 IDE 激活期间生效。
 onActivated(() => {
+  workbench.start();
   loadTree();
   document.addEventListener('keydown', onGlobalKeydown);
 });
+
+watch(workbench.events, (nextEvents) => {
+  for (const event of nextEvents) {
+    if (event.sequence <= projectedEventSequence.value) continue;
+    projectedEventSequence.value = event.sequence;
+    const outcome = event.phase === 'outcome' ? event.payload?.outcome : null;
+    const path = outcome?.capability_id === 'editor.open' && outcome.success
+      ? outcome.result?.path
+      : '';
+    if (path && typeof monacoEditor.value?.openFile === 'function') {
+      monacoEditor.value.openFile(path);
+    }
+  }
+}, { deep: true });
 // 离开页面（被 keep-alive 缓存）时收起终端并卸载快捷键，
 // v-if 卸载会触发 WebTerminal 的 onBeforeUnmount 清理（WS / xterm / ResizeObserver）。
 onDeactivated(() => {
+  workbench.stop();
   showTerminal.value = false;
   quickOpen.visible = false;
   document.removeEventListener('keydown', onGlobalKeydown);
 });
 onUnmounted(() => {
+  workbench.stop();
   document.removeEventListener('click', closeCtx);
   document.removeEventListener('keydown', onGlobalKeydown);
 });
@@ -621,6 +686,21 @@ onUnmounted(() => {
   white-space: nowrap;
 }
 .topbar-spacer { flex: 1; }
+.workbench-projection {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted-foreground);
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+.workbench-projection.ready { color: var(--chart-2); }
+.workbench-projection-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
 
 /* ── 按钮 ── */
 .btn {
@@ -861,6 +941,20 @@ onUnmounted(() => {
 .prop-row:hover { background: var(--muted); }
 .prop-label { color: var(--muted-foreground); }
 .prop-value { font-weight: 500; font-variant-numeric: tabular-nums; }
+.prop-error {
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: var(--chart-4);
+  background: color-mix(in srgb, var(--chart-4) 10%, transparent);
+  font-size: 0.76rem;
+  line-height: 1.4;
+}
+.prop-hint {
+  padding: 4px 8px;
+  color: var(--muted-foreground);
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
 .prop-truncate {
   max-width: 120px;
   overflow: hidden;

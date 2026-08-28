@@ -335,13 +335,14 @@ class SeedRuntime:
 
         target = Path(path or self.checkpoint_path or DEFAULT_CHECKPOINT)
         with self._lock:
+            workbench = self._sync_workbench_root()
             envelope = attach_metadata(
                 self.model.checkpoint(),
                 tick=self.model.tick,
                 extra={
                     "trainer": "api_seed_runtime",
                     "workbench": {
-                        "snapshot": self._workbench_environment.capability_snapshot.to_payload(),
+                        "snapshot": workbench.capability_snapshot.to_payload(),
                         "audit": self._workbench_audit.to_payload(),
                     },
                 },
@@ -351,20 +352,36 @@ class SeedRuntime:
         return target
 
     def status(self) -> dict[str, Any]:
+        workbench = self._sync_workbench_root()
         return {
             "runtime_type": self.RUNTIME_TYPE,
             "name": self.name,
             "tick": int(self.model.tick),
             "parameters": int(self.model.parameter_count()),
             "language_provider": dict(self._provider_status),
-            "workbench": self._workbench_environment.status(),
+            "workbench": workbench.status(),
         }
+
+    def _sync_workbench_root(self) -> Any:
+        """Keep the native environment aligned with the active workspace setting."""
+
+        from seed_platform.workbench import default_workspace_root
+
+        current_root = default_workspace_root()
+        if current_root != self._workbench_environment.root:
+            from seed_platform.workbench import WorkbenchEnvironment
+
+            self._workbench_environment = WorkbenchEnvironment(
+                current_root,
+                snapshot=self._workbench_environment.capability_snapshot,
+            )
+        return self._workbench_environment
 
     @property
     def workbench_environment(self) -> Any:
         """Return the Seed-owned workbench execution environment."""
 
-        return self._workbench_environment
+        return self._sync_workbench_root()
 
     @property
     def workbench_audit(self) -> Any:
@@ -412,6 +429,7 @@ class SeedRuntime:
 
         if not isinstance(intent, ActionIntent):
             raise TypeError("workbench execution requires an ActionIntent")
+        environment = self._sync_workbench_root()
         request = WorkbenchActionRequest.from_action_intent(
             intent,
             snapshot_id=snapshot_id,
@@ -423,7 +441,7 @@ class SeedRuntime:
             tick=tick,
             payload={"request": request.to_payload()},
         )
-        policy = self._workbench_environment.policy_for(request)
+        policy = environment.policy_for(request)
         self._workbench_audit.append(
             "policy",
             request.request_id,
@@ -436,7 +454,7 @@ class SeedRuntime:
                 intent_id=request.intent_id,
                 call_id="",
                 capability_id=request.capability_id,
-                snapshot_id=self._workbench_environment.capability_snapshot.snapshot_id,
+                snapshot_id=environment.capability_snapshot.snapshot_id,
                 status="rejected",
                 success=False,
                 error_code=policy.reason_code,
@@ -463,11 +481,11 @@ class SeedRuntime:
             tick=tick,
             payload={"capability_id": request.capability_id},
         )
-        with self._workbench_environment.request_context(request.request_id):
+        with environment.request_context(request.request_id):
             try:
                 call, taiji_outcome = self.model.architecture.execute_tool_intent(
                     intent,
-                    self._workbench_environment,
+                    environment,
                     learn=learn,
                 )
             except (TypeError, ValueError, RuntimeError) as exc:
@@ -476,7 +494,7 @@ class SeedRuntime:
                     intent_id=request.intent_id,
                     call_id="",
                     capability_id=request.capability_id,
-                    snapshot_id=self._workbench_environment.capability_snapshot.snapshot_id,
+                    snapshot_id=environment.capability_snapshot.snapshot_id,
                     status="error",
                     success=False,
                     error_code="taiji_execution_error",
@@ -491,7 +509,7 @@ class SeedRuntime:
                 )
                 raise
 
-        result = self._workbench_environment.last_result
+        result = environment.last_result
         transaction = WorkbenchTransaction(
             operation=request.capability_id,
             path=str(result.get("path", request.parameters.get("path", "."))),
@@ -504,7 +522,7 @@ class SeedRuntime:
             intent_id=request.intent_id,
             call_id=call.call_id,
             capability_id=request.capability_id,
-            snapshot_id=self._workbench_environment.capability_snapshot.snapshot_id,
+            snapshot_id=environment.capability_snapshot.snapshot_id,
             status="success" if taiji_outcome.success is not False else "error",
             success=taiji_outcome.success is not False,
             result=result,

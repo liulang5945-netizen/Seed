@@ -1874,10 +1874,11 @@ W7 的实际实施顺序固定为 **G0 贯穿全程，R1 → R2 → R3 → R4 �
 - W0 首批实现已落地（2026-08-29，尚未达到退出 Gate）：Seed 已拥有版本化 workbench 合同、内容寻址 capability snapshot、只读
   `WorkbenchEnvironment`、core router、runtime capability projection、`planned → policy → executing → outcome` 审计链，且
   `ActionIntent → ToolCall` 的结构化工具路径已与 motor-symbol `settle_action` 解耦，工作台摘要感知值遵守 Taiji byte sensor 值域。
-  当前仍缺前端对 native capability/event projection 的消费、checkpoint continuation 的验收和 packaged-client/real-workbench canary，
-  因此不得把本轮称为 W0 完成。
+- W0 前端投影已接线（2026-08-29）：`WorkspaceView` 按 native capability 懒加载目录、`MonacoEditor` 通过 native read 打开文件，
+  页面显示 snapshot/最近 outcome，`editor.open` outcome 可由统一 audit projection 驱动 IDE 打开；旧 Legacy 写入、终端、重命名仍未被
+  冒充为 native。当前仍缺 checkpoint continuation 的验收和 packaged-client/real-workbench canary，因此不得把本轮称为 W0 完成。
 
-**当前唯一下一步：完成 W0 的 native 前端投影接线。** 让 `WorkspaceView/MonacoEditor` 读取 `/api/workbench/capabilities` 与只读文件结果，
-并订阅 `/api/workbench/events` 的同一条审计投影；先保留 Legacy 写入/终端为明确未接入状态，再用 legacy-off 的真实文件 canary 验证
-`ActionIntent → ToolCall → WorkbenchEnvironment → Outcome → UI/audit` lineage。该接线与 checkpoint continuation 一并通过前，不实现
-写文件自治、终端自治、MCP、provider watchdog 或新的研究 Gate。
+**当前唯一下一步：完成 W0 checkpoint continuation 与 packaged-client/real-workbench canary。** 使用已接线的 native
+`WorkspaceView/MonacoEditor` 与 `/api/workbench/events` projection，在 legacy-off 的打包客户端中执行真实文件读取/打开任务，验证
+`ActionIntent → ToolCall → WorkbenchEnvironment → Outcome → UI/audit` lineage、重启后的 snapshot/audit 恢复和失效环境 fail-closed。
+在该 Gate 通过前，不实现写文件自治、终端自治、MCP、provider watchdog 或新的研究 Gate。
