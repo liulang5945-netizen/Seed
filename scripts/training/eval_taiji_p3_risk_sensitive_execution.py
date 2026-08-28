@@ -1703,10 +1703,21 @@ def _run_cross_reader_credit_revision_case(adapter: TSKV8Adapter) -> dict[str, o
         split_graph.dependencies, drift_tolerance=0.0, previous=drifted_audits
     )
     rollback_by_group = audit_by_group(rollback_audits)
+    history_graph = split_graph.record_credit_consistency(split_audits, history_capacity=3)
+    history_graph = history_graph.record_credit_consistency(drifted_audits, history_capacity=3)
+    history_checkpoint = RecoveryReaderDependencyGraph.from_payload(
+        history_graph.record_credit_consistency(rollback_audits, history_capacity=3).to_payload()
+    )
+    limited_history = history_checkpoint.record_credit_consistency(
+        rollback_audits, history_capacity=2
+    )
     group_a = frozenset(group_ids["a"])
     group_b = frozenset(group_ids["b"])
     group_c = frozenset(group_ids["c"])
     merged_group = frozenset(merged_ids)
+    group_b_history = history_checkpoint.credit_consistency_history_for(group_ids["b"])
+    limited_group_b_history = limited_history.credit_consistency_history_for(group_ids["b"])
+    history_payload = history_checkpoint.to_payload()
     return {
         "recovery_reader_credit_revision_gate": bool(
             len(base_audits) == 2
@@ -1735,6 +1746,26 @@ def _run_cross_reader_credit_revision_case(adapter: TSKV8Adapter) -> dict[str, o
             == rollback_by_group[group_a].credit_profiles
             and drifted_by_group[group_a].state_digests == rollback_by_group[group_a].state_digests
         ),
+        "recovery_reader_credit_revision_history_gate": bool(
+            [item.audit_revision for item in group_b_history] == [1, 2, 3]
+            and all(item.integrity_valid for item in group_b_history)
+            and all(
+                "credit_profiles" not in item and "reader_attribution_safe" not in item
+                for item in history_payload["credit_consistency_history"]
+            )
+        ),
+        "recovery_reader_credit_revision_rollback_target_gate": bool(
+            history_checkpoint.validate_credit_consistency_rollback(group_ids["b"], 1)
+            and not history_checkpoint.validate_credit_consistency_rollback(group_ids["b"], 2)
+            and not history_checkpoint.validate_credit_consistency_rollback(group_ids["b"], 99)
+            and history_checkpoint
+            == history_graph.record_credit_consistency(rollback_audits, history_capacity=3)
+        ),
+        "recovery_reader_credit_revision_history_capacity_gate": bool(
+            [item.audit_revision for item in limited_group_b_history] == [2, 3]
+            and not limited_history.validate_credit_consistency_rollback(group_ids["b"], 1)
+            and limited_history.validate_credit_consistency_rollback(group_ids["b"], 3)
+        ),
         "recovery_reader_credit_revision_debug": {
             "base": {
                 "groups": len(base_audits),
@@ -1759,6 +1790,13 @@ def _run_cross_reader_credit_revision_case(adapter: TSKV8Adapter) -> dict[str, o
             "rollback": {
                 "groups": len(rollback_audits),
                 "revisions": [item.audit_revision for item in rollback_audits],
+            },
+            "history": {
+                "group_b_revisions": [item.audit_revision for item in group_b_history],
+                "limited_group_b_revisions": [
+                    item.audit_revision for item in limited_group_b_history
+                ],
+                "capacity": limited_history.credit_consistency_history_capacity,
             },
         },
     }
@@ -1918,6 +1956,9 @@ def evaluate_seed(seed: int) -> dict[str, object]:
         "recovery_reader_credit_revision_gate",
         "recovery_reader_credit_revision_checkpoint_preserved",
         "recovery_reader_credit_revision_local_rollback",
+        "recovery_reader_credit_revision_history_gate",
+        "recovery_reader_credit_revision_rollback_target_gate",
+        "recovery_reader_credit_revision_history_capacity_gate",
         "recovery_reader_dependencies_recorded",
         "recovery_reader_contributions_recorded",
         "recovery_reader_checkpoint_preserved",
@@ -2025,6 +2066,9 @@ def build_manifest(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
             "recovery-reader-credit-multi-group-composition",
             "recovery-reader-credit-cross-checkpoint-continuation",
             "recovery-reader-credit-local-rollback",
+            "recovery-reader-credit-revision-history",
+            "recovery-reader-credit-revision-rollback-target",
+            "recovery-reader-credit-revision-capacity-eviction",
             "recovery-reader-selective-revocation",
             "recovery-strategy-rebuild-after-revocation",
             "recovery-strategy-rebuild-checkpoint",
@@ -2048,7 +2092,7 @@ def evaluate(seeds: tuple[int, ...] = SEEDS) -> dict[str, object]:
         },
         "gate": {
             "passed": passed,
-            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, rank multiple admitted strategies by evidence, outcome consistency, and resource cost under a memory budget, preserve that competition through checkpoint, consolidate selected records through semantic/procedural/sequence/concept readers, persist their reader dependency provenance, leave-one-out contribution credit, pairwise interaction residual, order-invariance result, and group credit decomposition, keep additive interactions independently selectable, group non-additive or unaudited interactions into fail-closed atomic selection units, preserve that selection through checkpoint and revocation, replay connected groups of three or more strategies as a full higher-order unit, compare full-group effect against the pairwise prediction, conserve the group effect as member subset increments plus signed pair interaction credits plus an explicitly owned higher-order residual without averaging residual across members, fail closed on order-sensitive or incomplete decomposition, preserve the group audit through ordinary and native checkpoint, and remove the group attribution atomically on revocation while retaining survivor attribution, incrementally replay only changed pairs and connected groups from a stable baseline without double-applying prior records, preserve unchanged group replay and attribution digests, prove incremental output and credit decomposition equal full replay for changed groups, and handle group additions, merges, and splits, compare normalized credit structure across all four readers, record reader state and baseline checkpoint digests, isolate a changed reader attribution while preserving unaffected readers, assign independent audit revisions per group across additions, merges, and splits, preserve revisions through checkpoint continuation, and on local rollback update only the affected group's revision while retaining unaffected group evidence, revoke one strategy from future replay, rebuild only readers that depended on it from the saved baseline plus surviving records, preserve the survivor's contribution attribution, propagate the revocation to reader dependencies and episodic readout, checkpoint and restore that rebuild, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
+            "criterion": "all seeds must replan on stochastic and conflicted ledger ambiguity plus failed non-terminal action, synthesize alternatives from affordances, enforce branch and episode-global resource budgets, consume the current environment-reported capability, record capability and schema lineage on each recovery rollout, reject stale plans before planning and execution, preserve lineage, budget, and the recovery portfolio through checkpoint, fairly arbitrate all active branches, prevent pruned branches from re-entering, archive completed recovery lineage across an episode boundary, evict old archive entries at capacity, admit only evidence-backed completed strategies to the recovery memory gate, rank multiple admitted strategies by evidence, outcome consistency, and resource cost under a memory budget, preserve that competition through checkpoint, consolidate selected records through semantic/procedural/sequence/concept readers, persist their reader dependency provenance, leave-one-out contribution credit, pairwise interaction residual, order-invariance result, and group credit decomposition, keep additive interactions independently selectable, group non-additive or unaudited interactions into fail-closed atomic selection units, preserve that selection through checkpoint and revocation, replay connected groups of three or more strategies as a full higher-order unit, compare full-group effect against the pairwise prediction, conserve the group effect as member subset increments plus signed pair interaction credits plus an explicitly owned higher-order residual without averaging residual across members, fail closed on order-sensitive or incomplete decomposition, preserve the group audit through ordinary and native checkpoint, and remove the group attribution atomically on revocation while retaining survivor attribution, incrementally replay only changed pairs and connected groups from a stable baseline without double-applying prior records, preserve unchanged group replay and attribution digests, prove incremental output and credit decomposition equal full replay for changed groups, and handle group additions, merges, and splits, compare normalized credit structure across all four readers, record reader state and baseline checkpoint digests, isolate a changed reader attribution while preserving unaffected readers, assign independent audit revisions per group across additions, merges, and splits, preserve revisions through checkpoint continuation, and on local rollback update only the affected group's revision while retaining unaffected group evidence, retain only bounded digest-only audit history, validate rollback targets against current reader and structure evidence, evict old audit revisions from the allowlist, revoke one strategy from future replay, rebuild only readers that depended on it from the saved baseline plus surviving records, preserve the survivor's contribution attribution, propagate the revocation to reader dependencies and episodic readout, checkpoint and restore that rebuild, prevent archived branches from re-entering, clear episode transient state without clearing archive memory, rebind the remaining suffix after a successful non-terminal step, make resource consumption idempotent by action identity, refresh capability after a step so next candidates cannot exceed the new boundary, filter the rejected branch, choose the lower-risk deterministic alternative over an unseen counterfactual, record both adjudications in the trace, and complete an explicit recovery rollout",
         },
     }
 

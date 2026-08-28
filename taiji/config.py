@@ -243,6 +243,7 @@ class TaijiConfig:
         DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE
     )
     recovery_strategy_cross_reader_credit_drift_tolerance: float = 1.0
+    recovery_strategy_cross_reader_credit_revision_history_limit: int = 4
     concept_similarity_threshold: float = 0.85
     concept_signal_weights: tuple[float, float, float] = (0.45, 0.35, 0.20)
     concept_capacity: int = 256
@@ -393,6 +394,10 @@ class TaijiConfig:
             raise ValueError("recovery_strategy_evidence_threshold must be positive")
         if self.recovery_strategy_memory_budget <= 0.0:
             raise ValueError("recovery_strategy_memory_budget must be positive")
+        if self.recovery_strategy_cross_reader_credit_revision_history_limit <= 0:
+            raise ValueError(
+                "recovery_strategy_cross_reader_credit_revision_history_limit must be positive"
+            )
         for name in (
             "recovery_strategy_interaction_residual_tolerance",
             "recovery_strategy_interaction_order_tolerance",

@@ -462,6 +462,42 @@ def test_recovery_reader_credit_revisions_are_group_local_across_checkpoint_and_
         frozenset(f"b-{index}" for index in range(3))
     ].changed_reader_kinds == ("semantic",)
 
+    history_graph = split.record_credit_consistency(split_audits, history_capacity=3)
+    history_graph = history_graph.record_credit_consistency(drifted_audits, history_capacity=3)
+    history_graph = history_graph.record_credit_consistency(rollback_audits, history_capacity=3)
+    group_b_history = history_graph.credit_consistency_history_for(
+        tuple(f"b-{index}" for index in range(3))
+    )
+    assert [item.audit_revision for item in group_b_history] == [1, 2, 3]
+    assert history_graph.validate_credit_consistency_rollback(
+        tuple(f"b-{index}" for index in range(3)), 1
+    )
+    assert not history_graph.validate_credit_consistency_rollback(
+        tuple(f"b-{index}" for index in range(3)), 2
+    )
+    assert not history_graph.validate_credit_consistency_rollback(
+        tuple(f"b-{index}" for index in range(3)), 99
+    )
+    restored_history = RecoveryReaderDependencyGraph.from_payload(history_graph.to_payload())
+    assert restored_history == history_graph
+    assert all(
+        "credit_profiles" not in item and "reader_attribution_safe" not in item
+        for item in history_graph.to_payload()["credit_consistency_history"]
+    )
+    limited_history = history_graph.record_credit_consistency(rollback_audits, history_capacity=2)
+    assert [
+        item.audit_revision
+        for item in limited_history.credit_consistency_history_for(
+            tuple(f"b-{index}" for index in range(3))
+        )
+    ] == [2, 3]
+    assert not limited_history.validate_credit_consistency_rollback(
+        tuple(f"b-{index}" for index in range(3)), 1
+    )
+    assert limited_history.validate_credit_consistency_rollback(
+        tuple(f"b-{index}" for index in range(3)), 3
+    )
+
 
 def test_recovery_strategy_interaction_policy_keeps_atomic_pair_together() -> None:
     ledger = RecoveryStrategyLedger(memory_budget=0.7)
