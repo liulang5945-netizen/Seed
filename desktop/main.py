@@ -766,7 +766,11 @@ def main():
             QSplashScreen,  # noqa: F401
             QSystemTrayIcon,
         )
-    except ImportError:
+    except ImportError as exc:
+        # Keep the original exception in the frozen-client log.  The grouped
+        # imports include QtWebEngine, and a generic "PyQt6 not installed"
+        # message otherwise hides DLL/resource packaging failures.
+        logger.exception("PyQt6 desktop imports failed: %r", exc)
         logger.error("PyQt6 not installed. Run: pip install PyQt6 PyQt6-WebEngine")
         sys.exit(1)
 
