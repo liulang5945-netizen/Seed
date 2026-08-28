@@ -1,115 +1,104 @@
-"""
-Seed — 模型路由（精简版）
-Cortex 神经元架构是唯一认知主体，不依赖外部模型市场/下载/GGUF。
-"""
+"""Compatibility tombstones for the removed model-market API.
 
-import logging
+Taiji does not expose a global model catalog, model type switch, HF download,
+or GGUF lifecycle. The router remains only long enough to give existing
+clients a typed migration response; every route is hidden from OpenAPI.
+"""
 
 from fastapi import APIRouter
 
-from seed_platform.app_state import app_state
+from api.deprecation import gone_response
 
-logger = logging.getLogger("ApiServer.Models")
 router = APIRouter()
 
 
-# ======================== Cortex 模型信息 ========================
+def _gone():
+    return gone_response(
+        replacement="/api/artifacts",
+        message="旧模型市场/下载 API 已退出，请使用 Taiji artifact inventory。",
+    )
 
 
-@router.get("/api/models/installed")
+@router.get("/api/models/installed", include_in_schema=False)
 def list_installed_models():
-    """列出已安装的 Cortex 神经元架构。"""
-    loaded = getattr(app_state, "_loaded_model_name", "") or ""
-    models = [{"name": loaded, "type": "cortex", "status": "loaded"}] if loaded else []
-    return {"models": models}
+    return _gone()
 
 
-@router.get("/api/models/list")
+@router.get("/api/models/list", include_in_schema=False)
 def list_available_models():
-    """Seed使用 Cortex 神经元架构，不依赖外部模型市场。"""
-    return {"models": [], "message": "Seed使用 Cortex 神经元架构，无需模型市场"}
+    return _gone()
 
 
-@router.get("/api/models/downloaded")
+@router.get("/api/models/downloaded", include_in_schema=False)
 def list_downloaded_models():
-    """列出本地模型文件。"""
-    loaded = getattr(app_state, "_loaded_model_name", "") or ""
-    return {"models": [{"name": loaded, "type": "cortex"}] if loaded else []}
+    return _gone()
 
 
-@router.get("/api/model/gguf_quants")
+@router.get("/api/model/gguf_quants", include_in_schema=False)
 def get_gguf_quants():
-    """GGUF 量化选项（Seed不支持 GGUF）。"""
-    return {"options": [], "message": "Seed使用 Cortex 神经元架构，不支持 GGUF 量化"}
+    return _gone()
 
 
-@router.get("/api/models/recommend")
+@router.get("/api/models/recommend", include_in_schema=False)
 def recommend_models():
-    """推荐模型（Seed使用 Cortex）。"""
-    return {
-        "models": [],
-        "recommended": "Cortex（神经元架构）",
-        "message": "Seed使用 Cortex 神经元架构",
-    }
+    return _gone()
 
 
-@router.get("/api/models/tags")
+@router.get("/api/models/tags", include_in_schema=False)
 def list_model_tags():
-    return {"tags": []}
+    return _gone()
 
 
-@router.get("/api/models/families")
+@router.get("/api/models/families", include_in_schema=False)
 def list_model_families():
-    return {"families": []}
+    return _gone()
 
 
-@router.get("/api/models/info")
+@router.get("/api/models/info", include_in_schema=False)
 def get_model_info():
-    return {"info": {"type": "cortex", "message": "Seed Cortex 神经元架构"}}
+    return _gone()
 
 
-# 外部模型下载/管理端点 — 返回不支持
-@router.post("/api/models/download_hf")
+@router.post("/api/models/download_hf", include_in_schema=False)
 def download_hf_model():
-    return {"status": "error", "message": "Seed不支持 HuggingFace 模型下载"}
+    return _gone()
 
 
-@router.post("/api/models/download")
+@router.post("/api/models/download", include_in_schema=False)
 def download_model():
-    return {"status": "error", "message": "Seed不支持外部模型下载"}
+    return _gone()
 
 
-@router.post("/api/models/download_cancel")
+@router.post("/api/models/download_cancel", include_in_schema=False)
 def cancel_download():
-    return {"status": "ok"}
+    return _gone()
 
 
-@router.post("/api/models/download_pause")
+@router.post("/api/models/download_pause", include_in_schema=False)
 def pause_download():
-    return {"status": "ok"}
+    return _gone()
 
 
-@router.post("/api/models/download_resume")
+@router.post("/api/models/download_resume", include_in_schema=False)
 def resume_download():
-    return {"status": "error", "message": "Seed不支持外部模型下载"}
+    return _gone()
 
 
-@router.get("/api/models/download_progress")
+@router.get("/api/models/download_progress", include_in_schema=False)
 def get_download_progress():
-    return {"active": False}
+    return _gone()
 
 
-@router.delete("/api/models/installed")
+@router.delete("/api/models/installed", include_in_schema=False)
 def delete_installed_model():
-    return {"status": "error", "message": "Seed暂不支持通过 API 删除模型"}
+    return _gone()
 
 
-@router.post("/api/models/delete")
+@router.post("/api/models/delete", include_in_schema=False)
 def delete_model():
-    return {"status": "error", "message": "Seed暂不支持通过 API 删除模型"}
+    return _gone()
 
 
-@router.post("/api/models/select")
+@router.post("/api/models/select", include_in_schema=False)
 def select_model():
-    """选择模型（Seed自动使用 Cortex 神经元架构）。"""
-    return {"status": "ok", "model_type": "cortex", "message": "Seed使用 Cortex 神经元架构"}
+    return _gone()

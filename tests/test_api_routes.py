@@ -148,19 +148,31 @@ def test_settings_get(client):
     assert isinstance(response.json(), dict)
 
 
-def test_settings_model_rejects_empty_name(client):
+def test_settings_model_is_retired(client):
     response = client.post("/api/settings/model", json={"model_name": "  "})
-    assert response.status_code == 400
+    assert response.status_code == 410
+    assert response.json()["code"] == "legacy_endpoint_deprecated"
 
 
-def test_current_model_shape(client):
-    response = client.get("/api/system/current_model")
+def test_runtime_settings_shape(client):
+    response = client.get("/api/settings/runtime")
     assert response.status_code == 200
     payload = response.json()
     assert "status" in payload
-    if payload["status"] == "ok":
-        assert payload["model_type"] == "self"
-        assert "pending_settings" in payload
+    assert payload["runtime_kind"] == "taiji"
+
+
+def test_current_runtime_shape(client):
+    response = client.get("/api/system/current_runtime")
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["runtime_kind"] == "taiji"
+    assert "model_type" not in payload
+
+
+def test_current_model_is_retired(client):
+    response = client.get("/api/system/current_model")
+    assert response.status_code == 410
 
 
 def test_memory_status(client):
@@ -189,42 +201,63 @@ def test_memory_refresh(client):
         ("/api/models/families", "families"),
     ],
 )
-def test_models_catalog_endpoints(client, path, key):
+def test_models_catalog_endpoints_are_retired(client, path, key):
     response = client.get(path)
-    assert response.status_code == 200
-    assert key in response.json()
+    assert response.status_code == 410
+    assert response.json()["code"] == "legacy_endpoint_deprecated"
 
 
-def test_models_info_cortex(client):
+def test_models_info_is_retired(client):
     response = client.get("/api/models/info")
-    assert response.status_code == 200
-    assert response.json()["info"]["type"] == "cortex"
+    assert response.status_code == 410
 
 
-def test_gguf_quants_unsupported(client):
+def test_gguf_quants_are_retired(client):
     response = client.get("/api/model/gguf_quants")
-    assert response.status_code == 200
-    assert response.json()["options"] == []
+    assert response.status_code == 410
 
 
-def test_download_progress_idle(client):
+def test_download_progress_is_retired(client):
     response = client.get("/api/models/download_progress")
-    assert response.status_code == 200
-    assert response.json()["active"] is False
+    assert response.status_code == 410
 
 
-def test_external_download_rejected(client):
+def test_external_download_routes_are_retired(client):
     for path in ("/api/models/download_hf", "/api/models/download", "/api/models/download_resume"):
         response = client.post(path, json={})
-        assert response.status_code == 200
-        assert response.json()["status"] == "error"
+        assert response.status_code == 410
 
 
-def test_download_cancel_and_pause_noop(client):
+def test_download_cancel_and_pause_are_retired(client):
     for path in ("/api/models/download_cancel", "/api/models/download_pause"):
         response = client.post(path, json={})
-        assert response.status_code == 200
-        assert response.json()["status"] == "ok"
+        assert response.status_code == 410
+
+
+def test_artifact_inventory_is_native(client):
+    response = client.get("/api/artifacts")
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["artifact_types"] == [
+        "taiji_checkpoint",
+        "language_provider_artifact",
+        "legacy_benchmark_artifact",
+    ]
+    assert payload["runtime"]["kind"] == "taiji"
+
+
+def test_native_openapi_hides_retired_product_contracts(client):
+    paths = client.get("/openapi.json").json()["paths"]
+    assert "/api/artifacts" in paths
+    assert "/api/runtime/activate" in paths
+    assert "/api/settings/runtime" in paths
+    for retired in (
+        "/api/models/download_hf",
+        "/api/settings/gguf",
+        "/api/system/current_model",
+        "/api/system/switch_model",
+    ):
+        assert retired not in paths
 
 
 # ======================== chat（只读） ========================
@@ -250,12 +283,10 @@ def test_chat_history_rejects_path_traversal(client):
 # ======================== model switch（只读） ========================
 
 
-def test_switch_status(client):
+def test_switch_status_is_retired(client):
     response = client.get("/api/system/switch_status")
-    assert response.status_code == 200
-    payload = response.json()
-    assert isinstance(payload, dict)
-    assert "switching" in payload or "status" in payload
+    assert response.status_code == 410
+    assert response.json()["replacement"] == "/api/runtime/status"
 
 
 # ======================== auth（只读） ========================

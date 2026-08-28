@@ -16,7 +16,9 @@ from typing import Any
 
 from fastapi import APIRouter
 
+from api.deprecation import gone_response
 from seed_platform.app_state import app_state
+from seed_platform.dependencies import legacy_requested
 
 logger = logging.getLogger("ApiServer.ModelSwitch")
 router = APIRouter()
@@ -50,13 +52,18 @@ def load_runtime_pref() -> dict:
         return {}
 
 
-@router.post("/api/system/reload_model")
+@router.post("/api/system/reload_model", include_in_schema=False)
 def reload_model() -> dict[str, Any]:
     """重载 Cortex 神经元架构（从磁盘重新装配）。"""
+    if not legacy_requested():
+        return gone_response(
+            replacement="/api/runtime/activate",
+            message="Cortex 热切换已退出默认 Taiji 产品运行时。",
+        )
     return _do_switch_model(async_mode=False)
 
 
-@router.post("/api/system/switch_model")
+@router.post("/api/system/switch_model", include_in_schema=False)
 def switch_model(req: dict[str, Any]) -> dict[str, Any]:
     """切换/重载模型。
 
@@ -65,6 +72,12 @@ def switch_model(req: dict[str, Any]) -> dict[str, Any]:
     - "seed"：加载并激活 taiji 原生 Seed 检查点（可选参数 "checkpoint"）。
     旧 model_type="self" 已废弃，会被自动路由到 Cortex 重载。
     """
+    if not legacy_requested():
+        return gone_response(
+            replacement="/api/runtime/activate",
+            message="全局 model_type 热切换已退出，请使用 Taiji runtime activation。",
+        )
+
     global _switch_thread
 
     model_type = str(req.get("model_type", "") or "").lower()
@@ -124,8 +137,13 @@ def switch_model(req: dict[str, Any]) -> dict[str, Any]:
         return {"status": "error", "message": "Failed to start Cortex reload"}
 
 
-@router.get("/api/system/switch_status")
+@router.get("/api/system/switch_status", include_in_schema=False)
 def get_switch_status() -> dict[str, Any]:
+    if not legacy_requested():
+        return gone_response(
+            replacement="/api/runtime/status",
+            message="Legacy 模型切换状态已退出默认产品 API。",
+        )
     state = app_state.get_switch_status()
     return {
         "status": state["status"],
@@ -157,8 +175,13 @@ def _switch_to_seed(req: dict[str, Any]) -> dict[str, Any]:
         return {"status": "error", "message": f"Seed 激活失败: {exc}"}
 
 
-@router.post("/api/system/pub_reset")
+@router.post("/api/system/pub_reset", include_in_schema=False)
 def force_reset_publishing() -> dict[str, Any]:
+    if not legacy_requested():
+        return gone_response(
+            replacement="/api/runtime/status",
+            message="旧发布状态重置接口已退出默认产品 API。",
+        )
     result = app_state.force_reset_publishing()
     return {"status": "ok", **result}
 

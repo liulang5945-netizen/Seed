@@ -4,8 +4,9 @@ import logging
 
 from fastapi import APIRouter, HTTPException
 
+from api.deprecation import gone_response
+from api.seed_runtime import get_seed_runtime
 from seed_platform.app_state import app_state
-from seed_platform.config import get_config
 from seed_platform.memory import force_memory_refresh, get_memory_status_dict
 from seed_platform.settings import load_settings, update_settings
 
@@ -34,134 +35,127 @@ async def save_all_settings(req: dict):
         raise HTTPException(status_code=500, detail=f"Failed to save settings: {exc}") from exc
 
 
-@router.post("/api/settings/model")
+@router.post("/api/settings/model", include_in_schema=False)
 async def set_model(req: dict):
-    """Update the configured model path or name."""
-    model_name = req.get("model_name", "")
-    if not model_name.strip():
-        raise HTTPException(status_code=400, detail="Model name cannot be empty")
-    update_settings({"model_name": model_name.strip()})
-    return {"status": "ok", "message": f"Model set to {model_name}; restart required"}
-
-
-@router.post("/api/settings/device")
-async def set_device(req: dict):
-    """Update the configured inference device."""
-    device = req.get("device", "auto")
-    update_settings({"device": device})
-    return {"status": "ok", "message": f"Device set to {device}; restart required"}
-
-
-@router.post("/api/settings/quant")
-async def set_quant(req: dict):
-    """Update quantization settings."""
-    load_in_4bit = req.get("load_in_4bit", False)
-    load_in_8bit = req.get("load_in_8bit", False)
-    update_settings(
-        {
-            "load_in_4bit": load_in_4bit,
-            "load_in_8bit": load_in_8bit,
-        }
+    """Retired model-name setting; use the canonical runtime setting."""
+    del req
+    return gone_response(
+        replacement="/api/settings/runtime",
+        message="model_name/model_type 已退出产品设置，请使用 Taiji runtime 配置。",
     )
-    quant_mode = "4-bit" if load_in_4bit else "8-bit" if load_in_8bit else "disabled"
-    return {"status": "ok", "message": f"Quantization mode set to {quant_mode}; restart required"}
 
 
-@router.post("/api/settings/gguf")
+@router.post("/api/settings/device", include_in_schema=False)
+async def set_device(req: dict):
+    """Device settings now go through the unified settings object."""
+    del req
+    return gone_response(
+        replacement="/api/settings",
+        message="device 设置已并入统一 settings 接口。",
+    )
+
+
+@router.post("/api/settings/quant", include_in_schema=False)
+async def set_quant(req: dict):
+    """Retired Transformer quantization setting."""
+    del req
+    return gone_response(
+        replacement="/api/settings",
+        message="Transformer/GGUF quantization设置已退出 Taiji 产品运行时。",
+    )
+
+
+@router.post("/api/settings/gguf", include_in_schema=False)
 async def set_gguf_settings(req: dict):
-    """Update GGUF-related settings."""
-    updates = {
-        key: req[key] for key in ("model_type", "gguf_path", "n_gpu_layers", "n_ctx") if key in req
-    }
-    if req.get("gguf_path"):
-        updates["model_type"] = "gguf"
-    update_settings(updates)
-    return {"status": "ok", "message": "GGUF settings saved; restart required"}
+    """Retired GGUF setting."""
+    del req
+    return gone_response(
+        replacement="/api/artifacts",
+        message="GGUF 不属于 Taiji artifact；请使用原生 checkpoint 或语言 provider artifact。",
+    )
 
 
-@router.get("/api/settings/gguf_models")
+@router.get("/api/settings/gguf_models", include_in_schema=False)
 async def list_gguf_models():
-    """GGUF models not supported in native Taiji stack."""
-    return {"models": [], "error": "原生Seed不支持 GGUF 模型"}
+    """Retired GGUF inventory."""
+    return gone_response(
+        replacement="/api/artifacts",
+        message="GGUF 模型清单已退出产品 API。",
+    )
 
 
-@router.post("/api/settings/download_gguf")
+@router.post("/api/settings/download_gguf", include_in_schema=False)
 async def download_gguf(req: dict):
-    """GGUF download not supported in native Taiji stack."""
-    raise HTTPException(status_code=400, detail="原生Seed不支持 GGUF 模型下载")
+    """Retired GGUF download."""
+    del req
+    return gone_response(
+        replacement="/api/artifacts",
+        message="GGUF 下载已退出产品 API。",
+    )
 
 
-@router.get("/api/system/current_model")
-def get_current_model():
-    """Return effective and pending model configuration."""
+@router.get("/api/settings/runtime")
+def get_runtime_settings():
+    """Return the persisted Taiji runtime selection."""
+    settings = load_settings()
+    runtime = settings.get("runtime", {})
+    return {
+        "status": "ok",
+        "runtime_kind": "taiji",
+        "checkpoint_id": runtime.get("checkpoint_id", ""),
+        "schema_version": settings.get("schema_version", 2),
+    }
+
+
+@router.post("/api/settings/runtime")
+async def set_runtime_settings(req: dict):
+    """Persist a Taiji checkpoint selection without activating it."""
+    checkpoint_id = str(req.get("checkpoint_id", "") or "").strip()
+    if checkpoint_id and (
+        checkpoint_id.startswith(("/", "\\")) or ".." in checkpoint_id.replace("\\", "/").split("/")
+    ):
+        raise HTTPException(status_code=400, detail="checkpoint_id 必须是相对路径")
+    update_settings({"runtime": {"kind": "taiji", "checkpoint_id": checkpoint_id}})
+    return {"status": "ok", "runtime_kind": "taiji", "checkpoint_id": checkpoint_id}
+
+
+@router.get("/api/system/current_runtime")
+def get_current_runtime():
+    """Return the effective Taiji runtime and language-provider status."""
     try:
-        config = get_config()
-        model_type = getattr(config, "model_type", None)
-        gguf_path = getattr(config, "gguf_path", "")
-        model_name = getattr(config, "model_name", "")
-        n_gpu_layers = getattr(config, "n_gpu_layers", 0)
-        device = getattr(config, "device", "auto")
-        load_in_4bit = getattr(config, "load_in_4bit", False)
-        load_in_8bit = getattr(config, "load_in_8bit", False)
-
-        actual_loaded_name = getattr(app_state, "_loaded_model_name", "") or ""
-        if actual_loaded_name:
-            effective_path = actual_loaded_name
-            effective_type = "self"  # 原生Seed — 单一模型类型
-        else:
-            effective_path = model_name
-            effective_type = "self"
-
         saved = load_settings()
-        pending_model_type = saved.get("model_type", "")
-        pending_gguf_path = saved.get("gguf_path", "")
-        pending_model_name = saved.get("model_name", "")
-        pending_path = pending_gguf_path or pending_model_name
-
-        is_pending = False
-        if (
-            pending_model_type
-            and pending_model_type != (model_type or "")
-            and not (pending_model_type == "gguf" and effective_type == "gguf")
-            and not (pending_model_type == "self" and effective_type == "self")
-        ):
-            is_pending = True
-        if pending_path and pending_path != effective_path:
-            is_pending = True
-        if (
-            is_pending
-            and app_state.startup_complete
-            and effective_path
-            and pending_path == effective_path
-        ):
-            is_pending = False
-
-        pending_settings = {
-            "has_pending": is_pending,
-            "pending_model_type": pending_model_type or effective_type,
-            "pending_model_path": pending_path or effective_path,
-            "pending_n_gpu_layers": saved.get("n_gpu_layers", n_gpu_layers),
-            "pending_n_ctx": saved.get("n_ctx", getattr(config, "n_ctx", 2048)),
-            "needs_restart": is_pending,
-        }
-
+        configured = saved.get("runtime", {})
+        runtime = get_seed_runtime()
+        active_id = (
+            runtime.checkpoint_path.name
+            if runtime is not None and runtime.checkpoint_path is not None
+            else ""
+        )
+        configured_id = configured.get("checkpoint_id", "")
+        provider = runtime.status().get("language_provider") if runtime else None
         return {
             "status": "ok",
-            "model_type": effective_type,
-            "model_path": effective_path,
-            "model_name": model_name,
-            "gguf_path": gguf_path,
-            "device": device,
-            "n_gpu_layers": n_gpu_layers,
-            "load_in_4bit": load_in_4bit,
-            "load_in_8bit": load_in_8bit,
-            "loaded": bool(effective_path and app_state.startup_complete),
-            "pending_settings": pending_settings,
+            "runtime_kind": "taiji",
+            "active": runtime is not None,
+            "loaded": runtime is not None and app_state.startup_complete,
+            "checkpoint_id": active_id or configured_id,
+            "configured_checkpoint_id": configured_id,
+            "pending": bool(configured_id and configured_id != active_id),
+            "language_provider": provider,
         }
     except Exception as exc:
-        logger.warning(f"Failed to get current model info: {exc}")
+        logger.warning(f"Failed to get current runtime info: {exc}")
         logger.error(f"Memory status failed: {exc}")
         return {"status": "error", "message": "内部错误，请查看日志", "loaded": False}
+
+
+@router.get("/api/system/current_model", include_in_schema=False)
+def get_current_model():
+    """Compatibility tombstone for the removed global model contract."""
+    return gone_response(
+        replacement="/api/system/current_runtime",
+        message="全局 model_type/model_name 合同已退出，请使用 Taiji runtime。",
+    )
 
 
 @router.get("/api/system/memory")

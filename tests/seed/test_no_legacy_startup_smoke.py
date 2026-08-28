@@ -32,9 +32,13 @@ app = create_app(startup_tasks=False)
 paths = app.openapi()["paths"]
 assert "/api/health" in paths
 assert "/api/runtime/bootstrap" in paths
+assert "/api/runtime/activate" in paths
+assert "/api/artifacts" in paths
 assert "/api/mcp/marketplace" not in paths
 assert "/api/agent/memory/status" not in paths
 assert "/api/workspace/path" not in paths
+assert "/api/models/download_hf" not in paths
+assert "/api/system/switch_model" not in paths
 assert DEFAULT_CHECKPOINT.name == "seed_corpus.pt"
 assert is_seed_active() is False
 print(f"no-legacy startup smoke passed: {len(paths)} API paths")

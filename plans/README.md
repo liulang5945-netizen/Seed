@@ -254,8 +254,15 @@ replay/sandbox 的 S1 和 packaged-client/real-workbench 的 S2，不能单独�
 合法的 native MCP projection、语言 provider artifact 和离线 benchmark 未被误删。前端完整 Vitest 为 `22 files / 188 passed`，ESLint 为
 `0 errors / 15 warnings`，生产构建通过。
 
-**当前唯一下一步：开始 W4 第二 slice 的后端 artifact/settings/OpenAPI 边界迁移。** 盘点旧模型字段与下载/发布路由，收敛 artifact 分类、
-版本化迁移和 deprecation/410 兼容窗口；Qwen provider artifact canary 与 NeuroPlex 离线 benchmark 保持隔离，不进入默认产品运行时。
+**已完成（2026-08-29）：W4 第二 slice 与退出 Gate。** 后端已建立统一 artifact 词表和 `/api/artifacts`，以 `/api/runtime/activate`、
+`/api/settings/runtime` 替代全局 model switch；settings schema v2 会安全迁移明确的 native checkpoint，旧 model/GGUF/HF/LoRA/量化
+语义进入可审计 quarantine，旧路由返回版本化 410 并从默认 OpenAPI 隐藏，Legacy 依赖仅在 `SEED_ENABLE_LEGACY=1` opt-in。`ChatRequest`
+已删除 `engine/agent_*`；完整 Python CI `526 passed, 6 skipped`，provider artifact/canary、Taiji Transformer 隔离和 Legacy-off
+冒烟 Gate `34 passed`。
+
+**当前唯一下一步：开始 W5 第一 slice 的客户端真实性审计。** 建立 Chat、Life、Agent/能力、Training、Settings、KB 的
+`source/owner/freshness/availability` 清单，清理剩余旧 workspace/RAG/生命状态调用和失效文案，再接入真实 Taiji homeostasis、
+self-state、Workbench capability 与 provider 状态；随后补 route-level packaged smoke 和 frontend/source capability contract。
 
 ## 当前唯一下一步
 

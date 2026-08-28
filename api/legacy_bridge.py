@@ -15,6 +15,8 @@ from typing import Any
 
 from fastapi import FastAPI
 
+from seed_platform.dependencies import legacy_requested
+
 logger = logging.getLogger("ApiServer.LegacyBridge")
 _life_scheduler: Any | None = None
 _LEGACY_ENABLE_ENV = "SEED_ENABLE_LEGACY"
@@ -36,8 +38,7 @@ def _missing_legacy_dependency() -> str | None:
 def legacy_available() -> bool:
     """Return whether the optional Neuroplex/Cortex plugin may be used."""
 
-    mode = os.environ.get(_LEGACY_ENABLE_ENV, "auto").strip().lower()
-    if mode in {"0", "false", "no", "off", "disabled"}:
+    if not legacy_requested():
         return False
     try:
         if importlib.util.find_spec("neuroplex") is None:
@@ -63,18 +64,18 @@ def get_legacy_auth_manager() -> Any:
 def load_legacy_runtime() -> None:
     """Restore Seed by default, or load Cortex when explicitly selected."""
     try:
-        from api.routes_model_switch import load_runtime_pref
         from seed_platform.app_state import app_state
+        from seed_platform.settings import load_settings
 
-        pref = load_runtime_pref()
-        legacy_enabled = legacy_available()
-        requested_runtime = str(pref.get("runtime") or "seed").lower()
+        pref = load_settings().get("runtime", {})
+        legacy_enabled = legacy_requested() and legacy_available()
+        requested_runtime = str(pref.get("kind") or "taiji").lower()
 
         if requested_runtime != "cortex" or not legacy_enabled:
             try:
                 from api.seed_runtime import activate_seed
 
-                checkpoint = pref.get("checkpoint") or None
+                checkpoint = pref.get("checkpoint_id") or None
                 if checkpoint:
                     checkpoint = (
                         Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

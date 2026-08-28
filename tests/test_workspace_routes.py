@@ -14,9 +14,11 @@ from api.app import create_app
 
 @pytest.fixture(scope="module")
 def client():
-    app = create_app(startup_tasks=False)
-    with TestClient(app) as test_client:
-        yield test_client
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setenv("SEED_ENABLE_LEGACY", "1")
+        app = create_app(startup_tasks=False)
+        with TestClient(app) as test_client:
+            yield test_client
 
 
 @pytest.fixture()
