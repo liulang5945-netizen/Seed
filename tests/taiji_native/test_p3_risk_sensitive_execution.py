@@ -29,3 +29,6 @@ def test_risk_sensitive_execution_gate() -> None:
     assert run["recovery_reader_credit_revision_gate"] is True
     assert run["recovery_reader_credit_revision_checkpoint_preserved"] is True
     assert run["recovery_reader_credit_revision_local_rollback"] is True
+    assert run["recovery_reader_credit_revision_history_gate"] is True
+    assert run["recovery_reader_credit_revision_rollback_target_gate"] is True
+    assert run["recovery_reader_credit_revision_history_capacity_gate"] is True

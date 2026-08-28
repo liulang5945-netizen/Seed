@@ -254,7 +254,11 @@ class TSKV8Adapter(Taiji):
             ),
             interaction_order_tolerance=self.config.recovery_strategy_interaction_order_tolerance,
         )
-        self._recovery_reader_dependencies = RecoveryReaderDependencyGraph()
+        self._recovery_reader_dependencies = RecoveryReaderDependencyGraph(
+            credit_consistency_history_capacity=(
+                self.config.recovery_strategy_cross_reader_credit_revision_history_limit
+            )
+        )
         self._recovery_generation = 0
         self._recovery_memory_epochs = 300
         self._recovery_semantic_learning_rate = 0.1
@@ -5982,7 +5986,12 @@ class TSKV8Adapter(Taiji):
             previous=previous_consistency,
         )
         self._recovery_reader_dependencies = (
-            self._recovery_reader_dependencies.record_credit_consistency(consistency)
+            self._recovery_reader_dependencies.record_credit_consistency(
+                consistency,
+                history_capacity=(
+                    self.config.recovery_strategy_cross_reader_credit_revision_history_limit
+                ),
+            )
         )
         consistency_by_key = {frozenset(item.strategy_rollout_ids): item for item in consistency}
         if consistency_by_key:
@@ -7315,7 +7324,11 @@ class TSKV8Adapter(Taiji):
             ),
             interaction_order_tolerance=self.config.recovery_strategy_interaction_order_tolerance,
         )
-        self._recovery_reader_dependencies = RecoveryReaderDependencyGraph()
+        self._recovery_reader_dependencies = RecoveryReaderDependencyGraph(
+            credit_consistency_history_capacity=(
+                self.config.recovery_strategy_cross_reader_credit_revision_history_limit
+            )
+        )
         self._last_recovery_interaction_replay_stats = {
             "pairwise_replayed": 0,
             "pairwise_reused": 0,
@@ -8979,7 +8992,11 @@ class TSKV8Adapter(Taiji):
             payload.get("recovery_reader_dependencies") if isinstance(payload, dict) else None
         )
         self._recovery_reader_dependencies = (
-            RecoveryReaderDependencyGraph()
+            RecoveryReaderDependencyGraph(
+                credit_consistency_history_capacity=(
+                    self.config.recovery_strategy_cross_reader_credit_revision_history_limit
+                )
+            )
             if dependencies is None
             else RecoveryReaderDependencyGraph.from_payload(dict(dependencies))
         )

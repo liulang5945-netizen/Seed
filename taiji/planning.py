@@ -22,6 +22,9 @@ RECOVERY_READER_ATTRIBUTION_CHECKPOINT_FORMAT = "taiji-recovery-reader-attributi
 RECOVERY_READER_INTERACTION_CHECKPOINT_FORMAT = "taiji-recovery-reader-interaction-v1"
 RECOVERY_READER_INTERACTION_GROUP_CHECKPOINT_FORMAT = "taiji-recovery-reader-interaction-group-v1"
 RECOVERY_READER_CREDIT_CONSISTENCY_CHECKPOINT_FORMAT = "taiji-recovery-reader-credit-consistency-v1"
+RECOVERY_READER_CREDIT_AUDIT_REVISION_CHECKPOINT_FORMAT = (
+    "taiji-recovery-reader-credit-audit-revision-v1"
+)
 RECOVERY_READER_ORDER_INVARIANCE_TOLERANCE = DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE
 RECOVERY_READER_CREDIT_CONSERVATION_TOLERANCE = 1e-7
 RECOVERY_READER_CREDIT_CONSISTENCY_READER_KINDS = (
@@ -1773,6 +1776,155 @@ class RecoveryReaderCreditConsistency:
         )
 
 
+def _credit_audit_digest(signature: Any) -> str:
+    """Return a deterministic digest for non-executable audit evidence."""
+
+    return hashlib.sha256(repr(signature).encode("utf-8")).hexdigest()
+
+
+@dataclass(frozen=True)
+class RecoveryReaderCreditAuditRevision:
+    """Digest-only history for one cross-reader group audit revision.
+
+    This record deliberately omits raw credit profiles and reader safety flags.
+    It can validate a rollback target but can never become executable
+    attribution on its own.
+    """
+
+    strategy_rollout_ids: tuple[str, ...]
+    audit_revision: int
+    reader_kinds: tuple[str, ...]
+    credit_structure_digests: tuple[str, ...]
+    credit_profile_digests: tuple[str, ...]
+    base_checkpoint_digests: tuple[str, ...]
+    state_digests: tuple[str, ...]
+    summary_digest: str
+    method: str = "cross-reader-credit-audit-summary-v1"
+
+    def __post_init__(self) -> None:
+        if len(self.strategy_rollout_ids) < 3 or any(
+            not rollout_id for rollout_id in self.strategy_rollout_ids
+        ):
+            raise ValueError("recovery reader credit audit history needs a strategy group")
+        if len(set(self.strategy_rollout_ids)) != len(self.strategy_rollout_ids):
+            raise ValueError("recovery reader credit audit history rollout ids must be unique")
+        if int(self.audit_revision) < 1:
+            raise ValueError("recovery reader credit audit history revision must be positive")
+        if not self.reader_kinds or any(not reader_kind for reader_kind in self.reader_kinds):
+            raise ValueError("recovery reader credit audit history needs reader kinds")
+        if len(set(self.reader_kinds)) != len(self.reader_kinds):
+            raise ValueError("recovery reader credit audit history reader kinds must be unique")
+        field_lengths = (
+            len(self.credit_structure_digests),
+            len(self.credit_profile_digests),
+            len(self.base_checkpoint_digests),
+            len(self.state_digests),
+        )
+        if any(length != len(self.reader_kinds) for length in field_lengths):
+            raise ValueError("recovery reader credit audit history fields must align by reader")
+        if any(
+            not isinstance(value, str)
+            for values in (
+                self.credit_structure_digests,
+                self.credit_profile_digests,
+                self.base_checkpoint_digests,
+                self.state_digests,
+            )
+            for value in values
+        ):
+            raise ValueError("recovery reader credit audit history digests must be strings")
+        if not self.summary_digest or not self.method:
+            raise ValueError("recovery reader credit audit history digest and method are required")
+        if not self.integrity_valid:
+            raise ValueError("recovery reader credit audit history digest is invalid")
+
+    def _signature(self) -> tuple[Any, ...]:
+        return (
+            self.strategy_rollout_ids,
+            self.audit_revision,
+            self.reader_kinds,
+            self.credit_structure_digests,
+            self.credit_profile_digests,
+            self.base_checkpoint_digests,
+            self.state_digests,
+            self.method,
+        )
+
+    @property
+    def integrity_valid(self) -> bool:
+        return self.summary_digest == _credit_audit_digest(self._signature())
+
+    @classmethod
+    def from_consistency(
+        cls, audit: RecoveryReaderCreditConsistency
+    ) -> RecoveryReaderCreditAuditRevision:
+        if not isinstance(audit, RecoveryReaderCreditConsistency):
+            raise ValueError("recovery reader credit audit history source must be typed")
+        profile_digests = tuple(_credit_audit_digest(profile) for profile in audit.credit_profiles)
+        method = "cross-reader-credit-audit-summary-v1"
+        signature = (
+            audit.strategy_rollout_ids,
+            audit.audit_revision,
+            audit.reader_kinds,
+            audit.credit_structure_digests,
+            profile_digests,
+            audit.base_checkpoint_digests,
+            audit.state_digests,
+            method,
+        )
+        return cls(
+            strategy_rollout_ids=audit.strategy_rollout_ids,
+            audit_revision=audit.audit_revision,
+            reader_kinds=audit.reader_kinds,
+            credit_structure_digests=audit.credit_structure_digests,
+            credit_profile_digests=profile_digests,
+            base_checkpoint_digests=audit.base_checkpoint_digests,
+            state_digests=audit.state_digests,
+            summary_digest=_credit_audit_digest(signature),
+            method=method,
+        )
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": RECOVERY_READER_CREDIT_AUDIT_REVISION_CHECKPOINT_FORMAT,
+            "strategy_rollout_ids": list(self.strategy_rollout_ids),
+            "audit_revision": self.audit_revision,
+            "reader_kinds": list(self.reader_kinds),
+            "credit_structure_digests": list(self.credit_structure_digests),
+            "credit_profile_digests": list(self.credit_profile_digests),
+            "base_checkpoint_digests": list(self.base_checkpoint_digests),
+            "state_digests": list(self.state_digests),
+            "summary_digest": self.summary_digest,
+            "method": self.method,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> RecoveryReaderCreditAuditRevision:
+        if payload.get("format", RECOVERY_READER_CREDIT_AUDIT_REVISION_CHECKPOINT_FORMAT) != (
+            RECOVERY_READER_CREDIT_AUDIT_REVISION_CHECKPOINT_FORMAT
+        ):
+            raise ValueError("unsupported recovery reader credit audit history checkpoint format")
+        return cls(
+            strategy_rollout_ids=tuple(
+                str(item) for item in payload.get("strategy_rollout_ids", ())
+            ),
+            audit_revision=int(payload.get("audit_revision", 0)),
+            reader_kinds=tuple(str(item) for item in payload.get("reader_kinds", ())),
+            credit_structure_digests=tuple(
+                str(item) for item in payload.get("credit_structure_digests", ())
+            ),
+            credit_profile_digests=tuple(
+                str(item) for item in payload.get("credit_profile_digests", ())
+            ),
+            base_checkpoint_digests=tuple(
+                str(item) for item in payload.get("base_checkpoint_digests", ())
+            ),
+            state_digests=tuple(str(item) for item in payload.get("state_digests", ())),
+            summary_digest=str(payload.get("summary_digest", "")),
+            method=str(payload.get("method", "cross-reader-credit-audit-summary-v1")),
+        )
+
+
 @dataclass(frozen=True)
 class RecoveryReaderDependency:
     """Provenance slice showing which strategies feed one downstream reader."""
@@ -1917,6 +2069,8 @@ class RecoveryReaderDependencyGraph:
     dependencies: tuple[RecoveryReaderDependency, ...] = ()
     revision: int = 0
     credit_consistency: tuple[RecoveryReaderCreditConsistency, ...] = ()
+    credit_consistency_history: tuple[RecoveryReaderCreditAuditRevision, ...] = ()
+    credit_consistency_history_capacity: int = 4
 
     def __post_init__(self) -> None:
         reader_kinds = tuple(dependency.reader_kind for dependency in self.dependencies)
@@ -1924,16 +2078,29 @@ class RecoveryReaderDependencyGraph:
             raise ValueError("recovery reader dependency reader kinds must be unique")
         if int(self.revision) < 0:
             raise ValueError("recovery reader dependency graph revision cannot be negative")
+        if int(self.credit_consistency_history_capacity) < 1:
+            raise ValueError("recovery reader credit audit history capacity must be positive")
+        if any(
+            not isinstance(item, RecoveryReaderCreditConsistency)
+            for item in self.credit_consistency
+        ):
+            raise ValueError("recovery reader credit consistency records must be typed")
         consistency_keys = {
             frozenset(item.strategy_rollout_ids) for item in self.credit_consistency
         }
         if len(consistency_keys) != len(self.credit_consistency):
             raise ValueError("recovery reader credit consistency groups must be unique")
         if any(
-            not isinstance(item, RecoveryReaderCreditConsistency)
-            for item in self.credit_consistency
+            not isinstance(item, RecoveryReaderCreditAuditRevision) or not item.integrity_valid
+            for item in self.credit_consistency_history
         ):
-            raise ValueError("recovery reader credit consistency records must be typed")
+            raise ValueError("recovery reader credit audit history records must be valid")
+        history_keys = {
+            (frozenset(item.strategy_rollout_ids), item.audit_revision)
+            for item in self.credit_consistency_history
+        }
+        if len(history_keys) != len(self.credit_consistency_history):
+            raise ValueError("recovery reader credit audit history revisions must be unique")
 
     def bind(
         self,
@@ -2079,22 +2246,117 @@ class RecoveryReaderDependencyGraph:
             for item in self.credit_consistency
             if all(rollout_id in selected_by_rollout for rollout_id in item.strategy_rollout_ids)
         )
+        history = tuple(
+            item
+            for item in self.credit_consistency_history
+            if all(rollout_id in selected_by_rollout for rollout_id in item.strategy_rollout_ids)
+        )
         return replace(
             self,
             dependencies=dependencies,
             credit_consistency=consistency,
+            credit_consistency_history=history,
             revision=self.revision + 1,
         )
 
     def record_credit_consistency(
-        self, audits: Sequence[RecoveryReaderCreditConsistency]
+        self,
+        audits: Sequence[RecoveryReaderCreditConsistency],
+        *,
+        history_capacity: int | None = None,
     ) -> RecoveryReaderDependencyGraph:
-        """Persist the latest cross-reader group audits."""
+        """Persist current audits and bounded, non-executable revision summaries."""
 
         items = tuple(audits)
         if any(not isinstance(item, RecoveryReaderCreditConsistency) for item in items):
             raise ValueError("recovery reader credit consistency records must be typed")
-        return replace(self, credit_consistency=items, revision=self.revision + 1)
+        capacity = (
+            self.credit_consistency_history_capacity
+            if history_capacity is None
+            else int(history_capacity)
+        )
+        if capacity < 1:
+            raise ValueError("recovery reader credit audit history capacity must be positive")
+        history_by_group: dict[frozenset[str], list[RecoveryReaderCreditAuditRevision]] = {}
+        for item in self.credit_consistency_history:
+            history_by_group.setdefault(frozenset(item.strategy_rollout_ids), []).append(item)
+        for audit in items:
+            summary = RecoveryReaderCreditAuditRevision.from_consistency(audit)
+            group_history = history_by_group.setdefault(frozenset(summary.strategy_rollout_ids), [])
+            existing = next(
+                (item for item in group_history if item.audit_revision == summary.audit_revision),
+                None,
+            )
+            if existing is not None and existing.summary_digest != summary.summary_digest:
+                raise ValueError(
+                    "recovery reader credit audit revision changed its evidence digest"
+                )
+            if existing is None:
+                group_history.append(summary)
+            group_history.sort(key=lambda item: (item.audit_revision, item.summary_digest))
+        history = tuple(
+            item
+            for group_key in sorted(history_by_group, key=lambda value: tuple(sorted(value)))
+            for item in history_by_group[group_key][-capacity:]
+        )
+        return replace(
+            self,
+            credit_consistency=items,
+            credit_consistency_history=history,
+            credit_consistency_history_capacity=capacity,
+            revision=self.revision + 1,
+        )
+
+    def credit_consistency_history_for(
+        self, strategy_rollout_ids: Sequence[str]
+    ) -> tuple[RecoveryReaderCreditAuditRevision, ...]:
+        """Return bounded digest summaries for exactly one strategy group."""
+
+        group_key = frozenset(str(item) for item in strategy_rollout_ids)
+        return tuple(
+            item
+            for item in self.credit_consistency_history
+            if frozenset(item.strategy_rollout_ids) == group_key
+        )
+
+    def validate_credit_consistency_rollback(
+        self, strategy_rollout_ids: Sequence[str], target_revision: int
+    ) -> bool:
+        """Validate a present, structurally compatible audit target.
+
+        The result is an allowlist check only.  Digest-only history is never
+        promoted into executable reader attribution or state restoration.
+        """
+
+        group_key = frozenset(str(item) for item in strategy_rollout_ids)
+        current = next(
+            (
+                item
+                for item in self.credit_consistency
+                if frozenset(item.strategy_rollout_ids) == group_key
+            ),
+            None,
+        )
+        target = next(
+            (
+                item
+                for item in self.credit_consistency_history
+                if frozenset(item.strategy_rollout_ids) == group_key
+                and item.audit_revision == int(target_revision)
+            ),
+            None,
+        )
+        if current is None or target is None or not target.integrity_valid:
+            return False
+        current_profile_digests = tuple(
+            _credit_audit_digest(profile) for profile in current.credit_profiles
+        )
+        return bool(
+            current.reader_kinds == target.reader_kinds
+            and current.credit_structure_digests == target.credit_structure_digests
+            and current_profile_digests == target.credit_profile_digests
+            and current.base_checkpoint_digests == target.base_checkpoint_digests
+        )
 
     @property
     def interaction_audit_available(self) -> bool:
@@ -2110,6 +2372,10 @@ class RecoveryReaderDependencyGraph:
             "format": RECOVERY_READER_DEPENDENCY_CHECKPOINT_FORMAT,
             "dependencies": [dependency.to_payload() for dependency in self.dependencies],
             "credit_consistency": [item.to_payload() for item in self.credit_consistency],
+            "credit_consistency_history": [
+                item.to_payload() for item in self.credit_consistency_history
+            ],
+            "credit_consistency_history_capacity": self.credit_consistency_history_capacity,
             "revision": self.revision,
         }
 
@@ -2127,6 +2393,13 @@ class RecoveryReaderDependencyGraph:
             credit_consistency=tuple(
                 RecoveryReaderCreditConsistency.from_payload(dict(item))
                 for item in payload.get("credit_consistency", ())
+            ),
+            credit_consistency_history=tuple(
+                RecoveryReaderCreditAuditRevision.from_payload(dict(item))
+                for item in payload.get("credit_consistency_history", ())
+            ),
+            credit_consistency_history_capacity=int(
+                payload.get("credit_consistency_history_capacity", 4)
             ),
             revision=int(payload.get("revision", 0)),
         )
