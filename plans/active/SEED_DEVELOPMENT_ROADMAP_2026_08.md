@@ -1062,14 +1062,19 @@ P4 的最小真实经历边界已落地：
 - **checkpoint 序列化耦合：低**。全包 `torch.save` / `torch.load` **0 处调用**；`checkpoint()` 统一返回 `{name: tensor.detach().cpu().clone()}` 的纯 dict（见 `perception.py:910`、`workspace.py:342`、`affordance.py:529` 等），`CHECKPOINT_FORMAT = "taiji-native-v8"` 为自定义格式。导出为 JSON / safetensors / 裸 Float32Array 不需改动内核逻辑，只需在边界写 dump 脚本。
 - **尚未核查、不得先行决定的一项**：上述 6623 行是 Python，WASM 化有两条路且各有代价——(a) Pyodide 装载 Python + 一层纯 JS/WASM mini-tensor 替换 torch：快，但需下载约 6MB 运行时并写 torch shim；(b) 用 Rust/C++ 重写内核再编译：产物干净，但等于重写数值代码，且必须与 Python 版保持逐位一致，风险最高——`plans/manifests/taiji_native_runtime_profile_v1.json` 的 controls 里本就有 `cross_device_numerical_consistency_when_available`，说明项目自身对数值一致性有硬要求。此二选一需要独立尽调后再定，**不能因为依赖面结论乐观就顺势拍板**。
 
-### 14.14 CI 未设 `concurrency` 与 `timeout-minutes`（2026-08-28 记账，本轮刻意未做）
+### 14.14 CI 未设 `concurrency` 与 `timeout-minutes`（2026-08-28 记账，随后独立一轮已收敛）
 
-`.github/workflows/ci.yml` 全文既无 `concurrency` 也无 `timeout-minutes`（grep 三个关键词零命中）。§13.7 删掉两处 `needs: test` 后 5 个 job 立即全并发，峰值 7 个（`test`×2 + `build-frontend` + `docker-build` + `startup-smoke`×2 + `test-windows`），低于公开仓库 20 的并发上限，故本轮不构成问题。两项欠账的真实风险各自独立：
+**.github/workflows/ci.yml** 全文既无 `concurrency` 也无 `timeout-minutes`（grep 三个关键词零命中）。§13.7 删掉两处 `needs: test` 后 5 个 job 立即全并发，峰值 7 个（`test`×2 + `build-frontend` + `docker-build` + `startup-smoke`×2 + `test-windows`），低于公开仓库 20 的并发上限，故不构成资源争用。两项欠账引入后各自独立：
 
-- 无 `concurrency` + `cancel-in-progress`：同一 PR 连续推送时旧 run 不取消，白烧额度；PR 迭代频繁时尤甚。
+- 无 `concurrency` + `cancel-in-progress`：同一分支连续推送时旧 run 不取消，白烧额度；PR 迭代频繁时尤甚。
 - 无 `timeout-minutes`：任一步骤挂死（`vite preview` 端口未就绪、compose 健康检查轮询、pip 解析）会跑满 runner 默认 6 小时上限才被杀。
 
-未在本轮一并处理是刻意的：本轮的可审计意图是"解除门禁挟持"，把并发治理混进同一次提交会让改动动机不再单一，日后回溯无法判断某行是为哪个目标而改。此项待独立一轮处理。
+**处理（commit `b11cb7f`，2026-08-28）**：
+- 顶层加 `concurrency: group: ${{ github.ref }} + cancel-in-progress: true`——同一 ref 只保留最新 run，旧 run 被取消；不同分支按 ref 隔离不串扰。
+- 按 run 33158773941 实测时长留 2–2.5 倍余量设逐 job timeout：`test`（两腿 495–697s）30m、`test-windows`（694s）30m、`docker-build`（139s）20m、`build-frontend`（108s）15m、`startup-smoke`（41–92s）15m。
+- 行为验证：PyYAML 解析通过；合并远端 `2b81c0d` 后 run 33164390727 全部 7 job success。concurrency 是消除旧 run 浪费而非解决资源争用（峰值 7 < 上限 20），`cancel-in-progress` 对 main 连续推送语义正确。
+
+未在记账轮一并处理是刻意的：记账轮的可审计意图是"解除门禁挟持"，把并发治理混进同一次提交会让改动动机不再单一，日后回溯无法判断某行是为哪个目标而改。此项已按此原则以独立提交收敛。
 
 ### 14.15 测试环境与生产环境的能力差异是门禁盲区（2026-08-28 收口后新增）
 
