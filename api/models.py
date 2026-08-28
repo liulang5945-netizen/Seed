@@ -33,6 +33,19 @@ class CodeRunRequest(BaseModel):
     code: str
 
 
+class WorkbenchIntentRequest(BaseModel):
+    """A Taiji-owned action intent submitted to the read-only workbench bridge."""
+
+    intent_id: str
+    kind: str
+    parameters: dict = {}
+    snapshot_id: str
+    source_goal_id: str | None = None
+    expected_outcome: str = ""
+    confidence: float = 0.0
+    tick: int = 0
+
+
 class RAGSearchRequest(BaseModel):
     query: str
     top_k: int = 5

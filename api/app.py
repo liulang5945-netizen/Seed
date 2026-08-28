@@ -222,6 +222,7 @@ def _register_routers(app: FastAPI):
     from .routes_chat import router as chat_router
     from .routes_model_switch import router as model_switch_router
     from .routes_models import router as models_router
+    from .routes_workbench import router as workbench_router
 
     plugins_router = _load_optional_router("routes_plugins")
     rag_router = _load_optional_router("routes_rag")
@@ -236,6 +237,7 @@ def _register_routers(app: FastAPI):
 
     app.include_router(auth_router)
     app.include_router(runtime_router)
+    app.include_router(workbench_router)
     for optional_router in (
         workflows_router,
         plugins_router,

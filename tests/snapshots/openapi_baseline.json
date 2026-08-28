@@ -1197,6 +1197,62 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "WorkbenchIntentRequest": {
+        "description": "A Taiji-owned action intent submitted to the read-only workbench bridge.",
+        "properties": {
+          "confidence": {
+            "default": 0.0,
+            "title": "Confidence",
+            "type": "number"
+          },
+          "expected_outcome": {
+            "default": "",
+            "title": "Expected Outcome",
+            "type": "string"
+          },
+          "intent_id": {
+            "title": "Intent Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Parameters",
+            "type": "object"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "source_goal_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Goal Id"
+          },
+          "tick": {
+            "default": 0,
+            "title": "Tick",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "intent_id",
+          "kind",
+          "snapshot_id"
+        ],
+        "title": "WorkbenchIntentRequest",
+        "type": "object"
       }
     }
   },
@@ -6259,6 +6315,283 @@
         "summary": "Get Training Recommendation"
       }
     },
+    "/api/workbench/capabilities": {
+      "get": {
+        "operationId": "workbench_capabilities_api_workbench_capabilities_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Workbench Capabilities Api Workbench Capabilities Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Workbench Capabilities",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/events": {
+      "get": {
+        "operationId": "workbench_events_api_workbench_events_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Workbench Events Api Workbench Events Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Workbench Events",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/execute": {
+      "post": {
+        "operationId": "execute_workbench_intent_api_workbench_execute_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkbenchIntentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Execute Workbench Intent Api Workbench Execute Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Execute Workbench Intent",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/file": {
+      "get": {
+        "operationId": "workbench_file_api_workbench_file_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "path",
+            "required": true,
+            "schema": {
+              "title": "Path",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Workbench File Api Workbench File Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Workbench File",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/files": {
+      "get": {
+        "operationId": "workbench_files_api_workbench_files_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "path",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Path",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Workbench Files Api Workbench Files Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Workbench Files",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/search": {
+      "get": {
+        "operationId": "workbench_search_api_workbench_search_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "required": true,
+            "schema": {
+              "title": "Query",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "path",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Path",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Workbench Search Api Workbench Search Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Workbench Search",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/stat": {
+      "get": {
+        "operationId": "workbench_stat_api_workbench_stat_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "path",
+            "required": false,
+            "schema": {
+              "default": ".",
+              "title": "Path",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Workbench Stat Api Workbench Stat Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Workbench Stat",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
     "/api/workflows": {
       "get": {
         "description": "列出所有工作流",
@@ -6685,7 +7018,7 @@
     },
     "/api/workspace/pick_folder": {
       "post": {
-        "description": "打开系统级目录选择对话框，返回用户选择的目录。\n\nWeb 前端无法唤起原生文件管理器（QWebEngine/浏览器沙箱），由本地后端\n代为弹窗：Windows 上经 PowerShell 调 Shell.Application 的\nBrowseForFolder（Vista 风格可折叠树对话框，STA 线程保证 COM 安全）。\n用户取消时返回 {\"status\": \"cancel\"}；平台不支持时返回 501。",
+        "description": "打开系统级目录选择对话框，返回用户选择的目录。\n\nWeb 前端无法唤起原生文件管理器（QWebEngine/浏览器沙箱），由本地后端\n代为弹窗：Windows 上经 PowerShell 调 WinForms 的 FolderBrowserDialog\n（BIF_NEWDIALOGSTYLE 可缩放树对话框，-STA 保证 COM 安全）。\n\n关键点：必须给对话框一个宿主窗口。此前直接用 Shell.Application 的\nBrowseForFolder(0, ...) 传 hwnd=0，对话框虽被创建但没有归属窗口、拿不到\n前台激活，会弹在无边框 Qt 主窗后面，用户看不到（实测进程阻塞但界面无反应）。\n这里先建一个 TopMost、零透明度的 1x1 宿主窗体并 Activate()，再以它为 owner\n弹出对话框，从而保证对话框出现在最前。\n\n用户取消时返回 {\"status\": \"cancel\"}；平台不支持时返回 501。",
         "operationId": "pick_folder_api_workspace_pick_folder_post",
         "responses": {
           "200": {

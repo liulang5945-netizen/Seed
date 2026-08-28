@@ -1870,10 +1870,14 @@ W7 的实际实施顺序固定为 **G0 贯穿全程，R1 → R2 → R3 → R4 �
 
 - 不删除 P1–P7 核心架构讨论、requirements、native architecture 和本路线；它们仍是后续开发的实时依据。
 - 测试过程日志、一次性调试探针、已被后续 Gate 覆盖的执行记录可继续进入 archive；核心决策和未关闭缺口不归档。
-- 在 W0 之前不继续增加 interaction-group、provider watchdog、CUDA、视觉美化、Legacy Agent 或新格式支持。
-- 本轮只提交计划和架构文档，不修改功能代码；后续执行从下述唯一入口开始。
+- W0 闭合前不继续增加 interaction-group、provider watchdog、CUDA、视觉美化、Legacy Agent 或新格式支持；小型模拟 Gate 只作为当前纵切片的证据工具。
+- W0 首批实现已落地（2026-08-29，尚未达到退出 Gate）：Seed 已拥有版本化 workbench 合同、内容寻址 capability snapshot、只读
+  `WorkbenchEnvironment`、core router、runtime capability projection、`planned → policy → executing → outcome` 审计链，且
+  `ActionIntent → ToolCall` 的结构化工具路径已与 motor-symbol `settle_action` 解耦，工作台摘要感知值遵守 Taiji byte sensor 值域。
+  当前仍缺前端对 native capability/event projection 的消费、checkpoint continuation 的验收和 packaged-client/real-workbench canary，
+  因此不得把本轮称为 W0 完成。
 
-**当前唯一下一步：执行 W0「Workbench Capability Contract + 只读真实纵切片」。** 第一提交必须先建立
-`CapabilityDescriptor/Snapshot/WorkbenchActionRequest/WorkbenchOutcome` 合同与 legacy-off 的只读 workspace core router，
-再用一个真实临时文件完成 `Taiji ActionIntent → ToolCall → WorkbenchEnvironment → Outcome → UI/audit` canary；在这条链闭合前，
-不实现写文件、终端自治、MCP、provider watchdog 或新的研究 Gate。
+**当前唯一下一步：完成 W0 的 native 前端投影接线。** 让 `WorkspaceView/MonacoEditor` 读取 `/api/workbench/capabilities` 与只读文件结果，
+并订阅 `/api/workbench/events` 的同一条审计投影；先保留 Legacy 写入/终端为明确未接入状态，再用 legacy-off 的真实文件 canary 验证
+`ActionIntent → ToolCall → WorkbenchEnvironment → Outcome → UI/audit` lineage。该接线与 checkpoint continuation 一并通过前，不实现
+写文件自治、终端自治、MCP、provider watchdog 或新的研究 Gate。

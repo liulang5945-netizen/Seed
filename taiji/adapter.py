@@ -5236,6 +5236,55 @@ class TSKV8Adapter(Taiji):
             )
         )
 
+    def execute_tool_intent(
+        self,
+        intent: ActionIntent,
+        environment: TaijiToolEnvironment,
+        *,
+        learn: bool = True,
+    ) -> tuple[ToolCall, Outcome]:
+        """Bridge one Taiji-owned intent into a structured tool execution.
+
+        This is the narrow integration point for Seed environments. It does
+        not select an intent and it does not inspect filesystem or API state;
+        it only renders the supplied Taiji contract and executes the
+        structured tool path. Structured tools are not motor-symbol actions,
+        so they must not be routed through ``settle_action`` without a pending
+        motor action.
+        """
+
+        if not isinstance(intent, ActionIntent):
+            raise TypeError("intent must be an ActionIntent")
+        if self._state.pending_action is not None:
+            raise RuntimeError("structured tool intent cannot run with a pending motor action")
+        if self._state.pending_experience is not None:
+            raise RuntimeError("structured tool intent requires no pending motor experience")
+        controller = self._generation_controller or GenerationController()
+        trace = controller.generate_tool_call(intent)
+        self._last_generation_trace = trace
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            action_intent=intent,
+        )
+        result = environment.execute_tool(
+            trace.tool_call.tool_name,
+            dict(trace.tool_call.parameters),
+        )
+        if not isinstance(result, EnvironmentOutcome):
+            raise TypeError("tool environment must return an EnvironmentOutcome")
+        outcome = Outcome(
+            intent_id=intent.intent_id,
+            reward=float(result.reward),
+            success=(
+                float(result.reward) > 0.0 if result.success is None else bool(result.success)
+            ),
+            terminal=bool(result.terminal),
+            provenance="experienced",
+            tick=self.tick,
+        )
+        self.observe(result.sensation, learn=learn, learn_motor=False)
+        return trace.tool_call, outcome
+
     def attach_goal_planner(self, planner: GoalPlanner | None) -> None:
         """Attach the Taiji-owned planner for executable goal candidates."""
 
