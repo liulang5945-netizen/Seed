@@ -11,6 +11,7 @@
     "format": "prettier --write src",
     "gen:aliases": "node scripts/gen-hljs-aliases.mjs",
     "check:aliases": "node scripts/gen-hljs-aliases.mjs --check",
+    "check:native-boundary": "node scripts/check-native-boundary.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "node e2e/smoke.cjs"

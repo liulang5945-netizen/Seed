@@ -34,6 +34,10 @@ assert "/api/health" in paths
 assert "/api/runtime/bootstrap" in paths
 assert "/api/runtime/activate" in paths
 assert "/api/artifacts" in paths
+assert "/api/runtime/status" in paths
+assert "/api/workbench/capabilities" in paths
+assert "/api/workbench/workspace" in paths
+assert "/api/system/quick_paths" in paths
 assert "/api/mcp/marketplace" not in paths
 assert "/api/agent/memory/status" not in paths
 assert "/api/workspace/path" not in paths

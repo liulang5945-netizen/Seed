@@ -23,13 +23,13 @@ const SHOT_DIR = process.env.SEED_E2E_SHOT_DIR || ''; // 设置后失败时落�
 
 // 路由 → 主容器选择器（与 router/index.js 保持一致）
 const ROUTES = [
-  { path: '/', selector: '.chat-workbench', name: 'chat' },
-  { path: '/#/kb', selector: 'main, .kb-view, #app', name: 'kb' },
-  { path: '/#/train', selector: 'main, .training-view, #app', name: 'train' },
-  { path: '/#/agent', selector: 'main, .agent-view, #app', name: 'agent' },
-  { path: '/#/workspace', selector: 'main, .workspace-view, #app', name: 'workspace' },
-  { path: '/#/life', selector: 'main, .life-view, #app', name: 'life' },
-  { path: '/#/settings', selector: 'main, .settings-view, #app', name: 'settings' },
+  { path: '/', selector: '.chat-workbench', name: 'chat', evidence: true },
+  { path: '/#/kb', selector: '.kb-view', name: 'kb', evidence: true },
+  { path: '/#/train', selector: '.training-view', name: 'train', evidence: true },
+  { path: '/#/agent', selector: '.agent-page', name: 'agent', evidence: true },
+  { path: '/#/workspace', selector: '.workspace-view', name: 'workspace', evidence: false },
+  { path: '/#/life', selector: '.life-status-view', name: 'life', evidence: true },
+  { path: '/#/settings', selector: '.settings-view', name: 'settings', evidence: true },
 ];
 
 // 简易断言工具：收集失败但不中断，最后统一汇报
@@ -56,6 +56,12 @@ async function shot(page, tag) {
   console.log(`[E2E] target = ${BASE_URL}`);
   const browser = await chromium.launch({ headless: true });
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  // Smoke 必须从空会话开始，否则开发机残留的 localStorage 会让欢迎区、建议词
+  // 和新建对话路径变成非确定性状态。
+  await ctx.addInitScript(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
   const page = await ctx.newPage();
 
   const pageErrors = [];
@@ -91,7 +97,7 @@ async function shot(page, tag) {
   await page.waitForTimeout(300);
   check('输入文本后内容保留', (await page.locator('.composer textarea').inputValue().catch(() => '')) === '你好');
   const runtimeLabel = await page.locator('.welcome-sub').innerText().catch(() => '');
-  const runtimeReady = runtimeLabel.includes('已连接') && !runtimeLabel.includes('未加载模型');
+  const runtimeReady = runtimeLabel.includes('运行时已连接');
   const unavailableAfter = await sendBtn.evaluate((el) => el.classList.contains('unavailable')).catch(() => true);
   if (runtimeReady) {
     check('运行时就绪后发送按钮可用', !unavailableAfter);
@@ -165,6 +171,10 @@ async function shot(page, tag) {
     await page.waitForTimeout(1200);
     const visible = await page.locator(r.selector).first().isVisible().catch(() => false);
     check(`路由 ${r.path} 主容器可见`, visible);
+    check(`路由 ${r.path} 没有错误页面`, await page.locator('.route-error-view').count() === 0);
+    if (r.evidence) {
+      check(`路由 ${r.path} 展示状态证据`, await page.locator('.runtime-evidence').count() > 0);
+    }
     if (!visible) await shot(page, r.name);
   }
 
@@ -172,6 +182,10 @@ async function shot(page, tag) {
   console.log('\n[E2E] 移动端视口');
   await ctx.close();
   const mctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true });
+  await mctx.addInitScript(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
   const mpage = await mctx.newPage();
   mpage.on('pageerror', (err) => pageErrors.push(String(err)));
   await mpage.goto(BASE_URL + '/', { waitUntil: 'domcontentloaded', timeout: 10000 });

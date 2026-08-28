@@ -215,6 +215,10 @@ jobs:
         working-directory: frontend
         run: npx eslint src --ext .js,.vue
 
+      - name: Check native frontend boundary
+        working-directory: frontend
+        run: npm run check:native-boundary
+
       - name: Run frontend tests
         working-directory: frontend
         run: npx vitest run
