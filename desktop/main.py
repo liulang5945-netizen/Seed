@@ -47,12 +47,13 @@ LOG_DIR = ROOT_DIR / "logs"
 # DLL loader before the first ``PyQt6.QtCore`` import.  Keep the handle alive
 # for the process lifetime so QtCore.pyd can resolve Qt6Core.dll reliably.
 _QT_DLL_DIRECTORY_HANDLES: list[object] = []
+_QT_PRELOADED_LIBRARIES: list[object] = []
 
 
 def _prepare_frozen_qt_dll_path() -> None:
     """Make the bundled Qt6 DLL directory visible before importing PyQt6."""
 
-    global _QT_DLL_DIRECTORY_HANDLES
+    global _QT_DLL_DIRECTORY_HANDLES, _QT_PRELOADED_LIBRARIES
     if not FROZEN or sys.platform != "win32":
         return
     internal_root = Path(getattr(sys, "_MEIPASS", ROOT_DIR / "_internal"))
@@ -72,6 +73,17 @@ def _prepare_frozen_qt_dll_path() -> None:
         _QT_DLL_DIRECTORY_HANDLES = [
             add_dll_directory(str(directory)) for directory in search_directories
         ]
+    # Resolve the two libraries that are commonly missed by frozen Qt loads
+    # by absolute path.  Keeping the WinDLL objects alive prevents the loader
+    # from unloading them before QtCore.pyd imports.
+    try:
+        from ctypes import WinDLL
+
+        for library in (internal_root / "icuuc.dll", qt_bin / "Qt6Core.dll"):
+            if library.is_file():
+                _QT_PRELOADED_LIBRARIES.append(WinDLL(str(library)))
+    except OSError as exc:
+        logger.warning("bundled Qt dependency preload failed: %s", exc)
 
 
 _prepare_frozen_qt_dll_path()
