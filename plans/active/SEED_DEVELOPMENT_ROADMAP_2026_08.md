@@ -903,7 +903,7 @@ P4 的最小真实经历边界已落地：
 - **外框所有权也一并下移**：`.app-wrapper` 接管 `border: 1px solid var(--border)` + `border-radius: 18px`，Qt 只保留 `QRegion` 圆角裁切（`WINDOW_RADIUS = 18`，与 CSS 同值）防白直角露出。
 - **前端**：新增 `components/AppTitlebar.vue`（无 `<style>` 块，样式全部落在 `shell.css` 单一真源），`App.vue` 增 `.app-body` 与 `sidebarCollapsed`（持久化到 `taiji_sidebar_collapsed`）。标题栏刻意**不放搜索框**——`AppSidebar.vue` 已持有 `.search-field` 与全局 Ctrl/⌘K，再加一个就是第二套入口。
 
-**旧机制清理（收敛而非叠加）**：`desktop/main.py` 与 `api/run_app.py` 两处各删除 `_titlebar_qss`、`_window_frame_qss`、`_apply_titlebar_theme`、`_sync_titlebar_theme`、`_build_titlebar`、`_titlebar_mouse_press`、`_titlebar_double_click` 共 7 个方法（约 120 行/处）、§13.1 的主题轮询定时器、以及随之失效的 `QVBoxLayout/QHBoxLayout/QLabel/QPushButton/QWidget` 导入。净机制数下降。另确认 `desktop/seed.spec` 打包的是 `desktop/main.py`（`run_app.py` 文件头"打包环境"注释已过时），但后者仍是可运行入口，按"清理旧的以免残留干扰"原则同步收敛，否则就留下第二套标题栏；`seed.spec` 的 `hiddenimports` 补 `PyQt6.QtWebChannel`。
+**旧机制清理（收敛而非叠加）**：`desktop/main.py` 与 `api/run_app.py` 两处各删除 `_titlebar_qss`、`_window_frame_qss`、`_apply_titlebar_theme`、`_sync_titlebar_theme`、`_build_titlebar`、`_titlebar_mouse_press`、`_titlebar_double_click` 共 7 个方法（约 120 行/处）、§13.1 的主题轮询定时器、以及随之失效的 `QVBoxLayout/QHBoxLayout/QLabel/QPushButton/QWidget` 导入。净机制数下降。另确认 `desktop/seed.spec` 打包的是 `desktop/main.py`（`run_app.py` 当时的文件头"打包环境"注释是错的，已在 §13.10.2 改掉），但后者仍是可运行入口，按"清理旧的以免残留干扰"原则同步收敛，否则就留下第二套标题栏；`seed.spec` 的 `hiddenimports` 补 `PyQt6.QtWebChannel`。
 
 **实机观测（QtWebEngine 裸 CDP @9222，先调试后打包）**：
 
@@ -939,6 +939,27 @@ P4 的最小真实经历边界已落地：
 **AUMID 的验证边界（记录方法论，避免下次误判）**：Win32 **没有**读取其他进程 explicit AUMID 的 API。`SHGetPropertyStoreForWindow` + `PKEY_AppUserModel_ID` 读的是**窗口级**属性存储，而 `SetCurrentProcessExplicitAppUserModelID` 设的是**进程级**值——实测目标窗口（`hwnd=2950018`，标题 `Seed - AI 生命体`）返回 `VT_EMPTY`，这是**预期结果**，不代表修复失效，通知系统会回退到进程级值。因此改用三条合证：(1) 同段代码在进程内 set/read-back，`E_FAIL` → `S_OK` → `'Seed.Desktop.Shell'`，机制有效；(2) 调用点在 `QApplication(sys.argv)` 构造**之前**（`desktop/main.py` L773 紧邻 L774），满足"任何窗口创建前"的时序要求；(3) 冻结日志无失败 warning。另：`HKCU:\...\Notifications\Settings` 下**不存在** `*Seed*` 项，这恰好侧面印证"直接不给弹窗提示"那一半生效了——`showMessage` 已删，进程从未发通知，系统自然不会建项。
 
 **一个会反复踩的构建陷阱**：`python scripts/release.py 2>&1 | Tee-Object -FilePath build_release.log` 返回 exit 1，但日志尾部是 `Seed v1.6.0 构建完成`。原因是 PyInstaller 把全部 INFO 写 stderr，PowerShell 在管道中遇到原生命令写 stderr 会抛 `NativeCommandError`，**掩盖 python 的真实退出码**；日志里的 `ModuleNotFoundError: No module named 'tensorboard'` 也只是 PyInstaller 的可选导入探测，无害。构建是否成功的权威判据是脚本自己的 `python scripts/release.py --check-only`（本轮返回 0，含"前端一致性校验通过（源码 dist = 客户端内置 dist）"），而不是 shell 的 `$LASTEXITCODE`。
+
+### 13.10.2 入口所有权收敛：消除"`run_app.py` 是打包入口"的错误共识（2026-08-28）
+
+§13.10.1 里记了一句「`api/run_app.py` 文件头『打包环境』注释已过时」，本轮把它真正改掉。这不是措辞问题：两个文件头**互相印证**了一个反的事实——`api/run_app.py` 自称 `[打包入口] PyInstaller 桌面客户端`，`desktop/main.py` 自称 `[产品入口] … 开发环境版本` 并写着「api/run_app.py：打包环境」「未来计划：合并为一个入口，**以 api/run_app.py 为基础**」。任何人（包括我自己）照此改桌面行为，都会把改动落在一个**既不被打包、也不被版本同步覆盖**的文件上，然后打出旧行为的包。
+
+判定入口身份用的是证据而不是注释：
+
+| 证据 | 结论 |
+| --- | --- |
+| `desktop/seed.spec` L60 `a_main = Analysis([str(ROOT / "desktop" / "main.py")], …)` | 打包入口是 `desktop/main.py`，产物 `dist/Seed/Seed.exe`（spec 自己的文件头 L4 早就写对了） |
+| `scripts/sync_version.py` 的同步清单 | 只覆盖 `frontend/package.json` / `desktop/installer.nsi` / `desktop/main.py` / `desktop/loading.html`，**没有 `api/run_app.py`** |
+| grep `setApplicationVersion|SeedDesktop/|1\.\d+\.\d+` on `api/run_app.py` | 零命中。它连版本号都报不出来——真产品入口不可能如此 |
+| glob `docs/ENTRYPOINTS.md` | **文件不存在**。两处文件头都在把读者指向一份不存在的文档 |
+
+最后一条把问题性质升级了：这与上一轮删掉的 `logo.svg` 是同一类**悬空引用**，只是指向文档而非资源。已一并清除，仓库内（plans 外）`ENTRYPOINTS` 命中归零。
+
+改法上没有写"以后再合并"这种会再次腐烂的承诺，而是各自写死当前事实：`desktop/main.py` 改为 `[唯一产品入口] … 开发与打包共用`，直接点名 `seed.spec` 的 `a_main` 与产物路径，顺手把功能描述校正到现状（标题栏由前端 DOM 承载、不发气泡通知、进程内 WebSocket、job object）；`api/run_app.py` 改为 `[历史入口·非打包]`，开头即**否定式断言**「**本文件不是打包入口。**」，并说明**保留理由**（依赖自检自动安装、`HotUpdateImporter` 热更新——这两项 main.py 没有），避免下次有人把"过时"误读为"可删"。
+
+门禁与一处判断边界：`tests/seed/test_platform_boundary.py` 9 passed（该测试只断言 `run_app.py` 的 import 边界与 `CORE_DEPENDENCIES`/`transformers` 两个字面量不出现，文件头改写安全）、`ruff check` All passed、`py_compile` 0，并用 AST `get_docstring()` 反读确认两个 docstring 仍是模块首语句、内容正确。`black --check` 报这两个文件 `would reformat`——`git stash` 后复跑**基线同样 exit 1、同样这两个文件**，且 git 提示 `LF will be replaced by CRLF`，属既有换行符交互，非本轮引入，不扩大范围。
+
+**遗留观察（本轮不动，记录以免丢失）**：(1) `test_desktop_entrypoint_keeps_transformer_dependencies_opt_in` 函数名断言的却是 `api/run_app.py`，是同一错误共识的命名残留；(2) 上述 black/CRLF 基线；(3) 本地与 `origin/main` 已分叉（本地 2 / 远端 4）。
 
 ## 14. 持续门禁
 

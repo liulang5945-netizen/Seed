@@ -1,14 +1,18 @@
 """
-[打包入口] PyInstaller 桌面客户端 — 进程内嵌入 FastAPI
-======================================================
+[历史入口·非打包] 独立桌面运行器 — 进程内嵌入 FastAPI
+=====================================================
 
-面向 PyInstaller 打包后的生产场景。功能：
+**本文件不是打包入口。** `desktop/seed.spec` 打包的是 `desktop/main.py`，产物为
+`dist/Seed/Seed.exe`；本文件也不在 `scripts/sync_version.py` 的版本同步清单内，
+因此不含版本声明。桌面行为的唯一真源是 `desktop/main.py`。
+
+保留原因：它仍是一个可独立运行的桌面运行器，且持有 main.py 没有的两项能力——
 - 依赖自检与自动安装（约 30 个核心包）
 - 热更新系统（HotUpdateImporter，从 update_code/ 加载补丁）
-- PyQt6 桌面 GUI（QWebEngineView + 系统托盘）
-- 进程内 QThread 启动 uvicorn（不走子进程）
 
-开发环境请用 desktop/main.py。详见 docs/ENTRYPOINTS.md
+其余能力与 main.py 重叠但实现不同：PyQt6 桌面 GUI（QWebEngineView + 系统托盘）、
+进程内 QThread 启动 uvicorn（不走子进程）。改动桌面行为时以 main.py 为准，此处仅
+在「不留下第二套实现」的前提下同步收敛。
 
 安全与架构改进：
 1. 镜像源配置移至 config.py 集中管理，支持环境变量覆盖
