@@ -10,6 +10,8 @@ from __future__ import annotations
 import importlib
 import json
 import logging
+import math
+import time
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -18,17 +20,21 @@ from typing import Any, cast
 import torch
 
 from taiji import (
+    LANGUAGE_PROVIDER_CONTENT_ADDRESS_FORMAT,
     LANGUAGE_REALIZATION_GATE_FORMAT,
     ExternalTextDecoderLanguageOrgan,
     LanguageBackendRegistry,
     LanguageBackendSpec,
     LanguageOrgan,
     LanguageProviderArtifact,
+    LanguageProviderCanaryGate,
     LanguageRealizationValidator,
     NativeReadableTextLanguageOrgan,
     StructuredTextLanguageOrgan,
     TSKV8Adapter,
     ValidatedLanguageOrgan,
+    language_provider_artifact_digest,
+    language_provider_content_digest,
 )
 
 from .config import LanguageProviderConfig
@@ -66,6 +72,10 @@ class LanguageProviderStatus:
 
 class _ProductChatGateError(ValueError):
     """Raised when an external provider is not admitted to product chat."""
+
+    def __init__(self, message: str, *, reason_code: str = "chat_gate_failed") -> None:
+        super().__init__(message)
+        self.reason_code = reason_code
 
 
 class _QwenTextDecoder:
@@ -194,6 +204,7 @@ def _validate_product_chat_gate(
 ) -> None:
     if artifact.mode != "guarded":
         raise _ProductChatGateError("product chat requires guarded provider mode")
+    _verify_product_chat_artifact(artifact, artifact_root=artifact_root)
     if artifact.training_report is None:
         raise _ProductChatGateError("product chat requires a passing realization gate report")
     training_report = _load_product_chat_report(
@@ -231,6 +242,91 @@ def _validate_product_chat_gate(
         raise _ProductChatGateError("product chat safety report has not passed")
 
 
+def _verify_product_chat_artifact(
+    artifact: LanguageProviderArtifact,
+    *,
+    artifact_root: Path | None,
+    now: float | None = None,
+) -> dict[str, Any]:
+    """Verify immutable provider content before any external model is loaded."""
+
+    if artifact.content_address_format != LANGUAGE_PROVIDER_CONTENT_ADDRESS_FORMAT:
+        raise _ProductChatGateError(
+            "product chat requires a content-addressed provider artifact",
+            reason_code="chat_artifact_invalid",
+        )
+    if artifact.canary_id != LanguageProviderCanaryGate.CANARY_ID:
+        raise _ProductChatGateError(
+            "product chat artifact canary contract is not supported",
+            reason_code="chat_artifact_invalid",
+        )
+    if not artifact.content_digests or not artifact.artifact_digest:
+        raise _ProductChatGateError(
+            "product chat requires provider content digests and an artifact digest",
+            reason_code="chat_artifact_missing",
+        )
+    if artifact.expires_at is None:
+        raise _ProductChatGateError(
+            "product chat requires an artifact expiry time",
+            reason_code="chat_artifact_missing",
+        )
+    current_time = time.time() if now is None else float(now)
+    if not math.isfinite(current_time) or current_time >= artifact.expires_at:
+        raise _ProductChatGateError(
+            "product chat provider artifact has expired",
+            reason_code="chat_artifact_expired",
+        )
+
+    expected = dict(artifact.content_digests)
+    paths = {
+        "base_model": artifact.base_model,
+        "adapter": artifact.adapter_path,
+        "training_corpus": artifact.training_corpus,
+        "training_report": artifact.training_report,
+        "safety_report": artifact.safety_report,
+    }
+    required_roles = (
+        "base_model",
+        "adapter",
+        "training_corpus",
+        "training_report",
+        "safety_report",
+    )
+    actual: dict[str, str] = {}
+    for role in required_roles:
+        path_value = paths[role]
+        if not path_value:
+            raise _ProductChatGateError(
+                f"product chat artifact is missing the {role} path",
+                reason_code="chat_artifact_invalid",
+            )
+        path = _resolve(path_value, artifact_root)
+        try:
+            actual[role] = language_provider_content_digest(path)
+        except (OSError, ValueError) as exc:
+            raise _ProductChatGateError(
+                f"product chat artifact {role} content cannot be addressed: {path}",
+                reason_code="chat_artifact_missing",
+            ) from exc
+        if expected.get(role) != actual[role]:
+            raise _ProductChatGateError(
+                f"product chat artifact {role} content digest drifted: {path}",
+                reason_code="chat_artifact_drift",
+            )
+
+    if language_provider_artifact_digest(artifact) != artifact.artifact_digest:
+        raise _ProductChatGateError(
+            "product chat artifact manifest digest does not match its content manifest",
+            reason_code="chat_artifact_drift",
+        )
+    return {
+        "artifact_id": artifact.artifact_id,
+        "expires_at": artifact.expires_at,
+        "content_digests": actual,
+        "artifact_digest": artifact.artifact_digest,
+    }
+
+
 def build_provider_artifact(config: LanguageProviderConfig) -> LanguageProviderArtifact:
     if config.mode == "structured":
         raise ValueError("structured mode does not have an external provider artifact")
@@ -245,6 +341,10 @@ def build_provider_artifact(config: LanguageProviderConfig) -> LanguageProviderA
         training_report=config.training_report or None,
         safety_report=config.safety_report or None,
         default_enabled=False,
+        content_digests=config.content_digests,
+        artifact_digest=config.artifact_digest,
+        expires_at=config.expires_at,
+        canary_id=config.canary_id,
     )
 
 
@@ -381,6 +481,19 @@ def activate_language_provider(
             max_tokens=config.max_tokens,
             temperature=config.temperature,
         )
+        if config.chat_enabled:
+            organ = adapter.language_organ
+            if organ is None:
+                raise _ProductChatGateError(
+                    "product chat provider did not attach a language organ",
+                    reason_code="chat_canary_failed",
+                )
+            canary_report = LanguageProviderCanaryGate().evaluate(organ)
+            if not canary_report["gate"]["passed"]:
+                raise _ProductChatGateError(
+                    "product chat first-chat canary did not pass semantic coverage",
+                    reason_code="chat_canary_failed",
+                )
         return (
             LanguageProviderStatus(
                 mode=config.mode,
@@ -393,7 +506,7 @@ def activate_language_provider(
             decoder,
         )
     except _ProductChatGateError as exc:
-        reason_code = "chat_gate_failed"
+        reason_code = exc.reason_code
         reason = str(exc)
     except FileNotFoundError as exc:
         reason_code = "provider_missing"

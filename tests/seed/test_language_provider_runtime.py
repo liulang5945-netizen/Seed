@@ -3,12 +3,13 @@ from __future__ import annotations
 from pathlib import Path
 
 from seed import LanguageProviderConfig, SeedConfig
-from seed.language_provider import activate_language_provider
+from seed.language_provider import _verify_product_chat_artifact, activate_language_provider
 from taiji import (
     ExternalTextDecoderLanguageOrgan,
     LanguageBackendRegistry,
     LanguageBackendSpec,
     TSKV8Adapter,
+    language_provider_content_digest,
 )
 
 
@@ -137,19 +138,32 @@ def test_product_chat_requires_a_passing_realization_and_safety_gate(monkeypatch
         "seed.language_provider._load_product_chat_report",
         lambda path, label: reports[label],
     )
+    anchor = Path(__file__).resolve()
+    anchor_digest = language_provider_content_digest(anchor)
     config = LanguageProviderConfig(
         mode="guarded",
-        model_dir="model",
-        adapter_dir="adapter",
-        training_report="training.json",
-        safety_report="safety.json",
+        model_dir=str(anchor),
+        adapter_dir=str(anchor),
+        training_corpus=str(anchor),
+        training_report=str(anchor),
+        safety_report=str(anchor),
+        content_digests=(
+            ("base_model", anchor_digest),
+            ("adapter", anchor_digest),
+            ("training_corpus", anchor_digest),
+            ("training_report", anchor_digest),
+            ("safety_report", anchor_digest),
+        ),
+        expires_at=4_000_000_000.0,
         chat_enabled=True,
     )
 
     class _Decoder:
         def generate(self, prompt: str, *, max_tokens: int, temperature: float) -> str:
-            del prompt, max_tokens, temperature
-            return "已完成。"
+            del max_tokens, temperature
+            if "database-status" in prompt:
+                return "数据库运行正常。"
+            return "接口已经恢复。"
 
     def fake_loader(adapter, artifact, **kwargs):
         del kwargs
@@ -197,12 +211,23 @@ def test_product_chat_rejects_legacy_provider_report(monkeypatch) -> None:
             }
         ),
     )
+    anchor = Path(__file__).resolve()
+    anchor_digest = language_provider_content_digest(anchor)
     config = LanguageProviderConfig(
         mode="guarded",
-        model_dir="model",
-        adapter_dir="adapter",
-        training_report="training.json",
-        safety_report="safety.json",
+        model_dir=str(anchor),
+        adapter_dir=str(anchor),
+        training_corpus=str(anchor),
+        training_report=str(anchor),
+        safety_report=str(anchor),
+        content_digests=(
+            ("base_model", anchor_digest),
+            ("adapter", anchor_digest),
+            ("training_corpus", anchor_digest),
+            ("training_report", anchor_digest),
+            ("safety_report", anchor_digest),
+        ),
+        expires_at=4_000_000_000.0,
         chat_enabled=True,
     )
 
@@ -212,3 +237,120 @@ def test_product_chat_rejects_legacy_provider_report(monkeypatch) -> None:
     assert status.state == "fallback"
     assert status.reason_code == "chat_gate_failed"
     assert status.chat_enabled is False
+
+
+def test_product_chat_artifact_rejects_content_drift_and_expiry() -> None:
+    anchor = Path(__file__).resolve()
+    digest = language_provider_content_digest(anchor)
+    artifact = LanguageProviderConfig(
+        mode="guarded",
+        model_dir=str(anchor),
+        adapter_dir=str(anchor),
+        training_corpus=str(anchor),
+        training_report=str(anchor),
+        safety_report=str(anchor),
+        content_digests=(
+            ("base_model", digest),
+            ("adapter", digest),
+            ("training_corpus", digest),
+            ("training_report", digest),
+            ("safety_report", digest),
+        ),
+        expires_at=4_000_000_000.0,
+        chat_enabled=True,
+    )
+    from seed.language_provider import build_provider_artifact
+
+    manifest = build_provider_artifact(artifact)
+    _verify_product_chat_artifact(manifest, artifact_root=None, now=0.0)
+
+    drifted = manifest.__class__(
+        **{
+            **manifest.__dict__,
+            "content_digests": tuple(
+                ("base_model", "0" * 64) if role == "base_model" else (role, value)
+                for role, value in manifest.content_digests
+            ),
+            "artifact_digest": "",
+        }
+    )
+    try:
+        _verify_product_chat_artifact(drifted, artifact_root=None, now=0.0)
+    except ValueError as exc:
+        assert "digest drifted" in str(exc)
+    else:
+        raise AssertionError("content drift must fail closed")
+
+    expired = manifest.__class__(**{**manifest.__dict__, "expires_at": 0.0, "artifact_digest": ""})
+    try:
+        _verify_product_chat_artifact(expired, artifact_root=None, now=0.0)
+    except ValueError as exc:
+        assert "expired" in str(exc)
+    else:
+        raise AssertionError("expired artifact must fail closed")
+
+
+def test_product_chat_first_chat_canary_failure_rolls_back(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "seed.language_provider._verify_product_chat_artifact", lambda *args, **kwargs: {}
+    )
+    reports = {
+        "training": {
+            "training": {"training_applied": True},
+            "expression_to_text_gate": _passing_realization_gate_report(),
+        },
+        "safety": {
+            "adapted": {"safe_realization_rate": 1.0},
+            "rollback": {"outputs_match_raw": True},
+            "gate": {"passed": True},
+        },
+    }
+    monkeypatch.setattr(
+        "seed.language_provider._load_product_chat_report",
+        lambda path, label: reports[label],
+    )
+
+    class _Decoder:
+        def generate(self, prompt: str, *, max_tokens: int, temperature: float) -> str:
+            del prompt, max_tokens, temperature
+            return "已完成。"
+
+    def fake_loader(adapter, artifact, **kwargs):
+        del kwargs
+        registry = LanguageBackendRegistry.default()
+        registry.register(
+            LanguageBackendSpec(
+                backend_id=artifact.backend_id,
+                family="external-causal-decoder-guarded",
+                training_contract="expression-to-text-v1",
+            )
+        )
+        adapter.attach_language_backend_registry(registry)
+        adapter.attach_language_provider_artifact(artifact)
+        adapter.attach_language_organ(
+            ExternalTextDecoderLanguageOrgan(
+                _Decoder(),
+                prompt_builder=lambda expression: expression.content_id,
+                backend_id=artifact.backend_id,
+            )
+        )
+        return _Decoder()
+
+    monkeypatch.setattr("seed.language_provider.load_qwen_language_provider", fake_loader)
+    config = LanguageProviderConfig(
+        mode="guarded",
+        model_dir="model",
+        adapter_dir="adapter",
+        training_report="training.json",
+        safety_report="safety.json",
+        chat_enabled=True,
+    )
+
+    adapter = TSKV8Adapter()
+    status, runtime = activate_language_provider(adapter, config)
+
+    assert runtime is None
+    assert status.reason_code == "chat_canary_failed"
+    assert status.chat_enabled is False
+    assert adapter.language_organ is not None
+    assert adapter.language_organ.backend_id == "native-readable"

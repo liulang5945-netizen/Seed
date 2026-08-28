@@ -187,6 +187,12 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
   adapter checkpoint continuation；真实 4 epochs/16 steps 的 270336 个 LoRA 参数在保存后重新加载，全部条件通过。
   产品聊天只有在 `mode=guarded`、`chat_enabled=true` 且训练/安全报告均通过时才接入外部 decoder；旧报告缺少新 Gate
   证据会 fail-closed，默认仍使用 `native-readable`。该结果证明准入边界，不宣称开放域语言智能。
+- P6 provider artifact 内容寻址与首轮 chat canary Gate 已通过：artifact 为 base model、LoRA、训练语料、训练报告和安全报告记录路径无关的
+  SHA-256 内容摘要与稳定 manifest digest，guarded product chat 加载前拒绝内容漂移、缺失、manifest 不一致和过期 artifact；加载后固定两条
+  canary 要求 `数据库/正常`、`接口/恢复` 完整语义覆盖、可读、无结构化泄漏且无 validated fallback。任一条件失败均回退到
+  `native-readable`，并暴露区分的 artifact/canary failure code；旧 artifact/checkpoint 仍可读取，但缺少内容寻址证据时不能进入 product chat。
+  训练侧 artifact loader smoke 同步输出摘要和 canary 结果，定向回归 `23 passed`，Ruff、Black、核心 Mypy=`0`。本机全量 Seed/Taiji 测试的
+  测试体未见本次回归，但仍受既有 Windows worktree/pytest 临时目录 ACL setup/cleanup error 影响，未计为全量 Gate 通过；CUDA 继续暂缓。
 - 原生 `tests/taiji_native` 最近一次完整执行为 `192 passed, 1 skipped, 2 errors`；两个 error 均发生在
   Windows pytest 临时目录锁创建阶段，未进入测试体，不作为代码断言失败或能力结论。
 - P2 感知训练已改为复用运行时的动态边界时钟：训练按同一 adaptive assembly 起点监督每个活动前缀，

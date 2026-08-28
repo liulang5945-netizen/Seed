@@ -9,9 +9,12 @@ core.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import math
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, replace
+from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
 
 from .generation import ExpressionPlan, TextExpressionCodec
@@ -23,7 +26,94 @@ LANGUAGE_BACKEND_SPEC_FORMAT = "taiji-language-backend-spec-v1"
 LANGUAGE_BACKEND_REGISTRY_FORMAT = "taiji-language-backend-registry-v1"
 LANGUAGE_VALIDATION_FORMAT = "taiji-language-validation-v1"
 LANGUAGE_PROVIDER_ARTIFACT_FORMAT = "taiji-language-provider-artifact-v1"
+LANGUAGE_PROVIDER_CONTENT_ADDRESS_FORMAT = "taiji-language-provider-content-address-v1"
+LANGUAGE_PROVIDER_CANARY_FORMAT = "taiji-language-provider-canary-v1"
 LANGUAGE_REALIZATION_GATE_FORMAT = "taiji-language-realization-gate-v1"
+
+_LANGUAGE_PROVIDER_CONTENT_ROLES = frozenset(
+    {"base_model", "adapter", "training_corpus", "training_report", "safety_report"}
+)
+
+
+def _hash_part(hasher: Any, value: bytes) -> None:
+    hasher.update(len(value).to_bytes(8, "big", signed=False))
+    hasher.update(value)
+
+
+def _hash_file_content(hasher: Any, path: Path) -> None:
+    hasher.update(path.stat().st_size.to_bytes(8, "big", signed=False))
+    with path.open("rb") as stream:
+        while chunk := stream.read(1024 * 1024):
+            hasher.update(chunk)
+
+
+def language_provider_content_digest(path: str | Path) -> str:
+    """Return a path-independent SHA-256 digest for a provider asset.
+
+    Files are addressed by their bytes.  Directories are addressed by the
+    sorted relative POSIX names, sizes, and bytes of every regular file.  No
+    absolute path, mtime, or filesystem ordering enters the digest, so an
+    artifact can be relocated without becoming a different artifact.
+    """
+
+    asset = Path(path)
+    if asset.is_symlink():
+        raise ValueError(f"provider content address does not accept symlinks: {asset}")
+    if not asset.exists():
+        raise FileNotFoundError(f"provider content address target not found: {asset}")
+
+    hasher = hashlib.sha256()
+    _hash_part(hasher, LANGUAGE_PROVIDER_CONTENT_ADDRESS_FORMAT.encode("utf-8"))
+    if asset.is_file():
+        _hash_part(hasher, b"file")
+        _hash_file_content(hasher, asset)
+    elif asset.is_dir():
+        _hash_part(hasher, b"directory")
+        entries = sorted(asset.rglob("*"), key=lambda item: item.relative_to(asset).as_posix())
+        for entry in entries:
+            if entry.is_symlink():
+                raise ValueError(f"provider content address does not accept symlinks: {entry}")
+            if not entry.is_file():
+                continue
+            _hash_part(hasher, entry.relative_to(asset).as_posix().encode("utf-8"))
+            _hash_file_content(hasher, entry)
+    else:
+        raise ValueError(f"provider content address target must be a file or directory: {asset}")
+    return hasher.hexdigest()
+
+
+def _provider_artifact_digest(
+    *,
+    artifact_id: str,
+    backend_id: str,
+    mode: str,
+    content_address_format: str,
+    canary_id: str,
+    rollback_strategy: str,
+    default_enabled: bool,
+    provenance: str,
+    content_digests: tuple[tuple[str, str], ...],
+    expires_at: float | None,
+) -> str:
+    payload = {
+        "format": content_address_format,
+        "artifact_id": artifact_id,
+        "backend_id": backend_id,
+        "mode": mode,
+        "canary_id": canary_id,
+        "rollback_strategy": rollback_strategy,
+        "default_enabled": bool(default_enabled),
+        "provenance": provenance,
+        "content_digests": {role: digest for role, digest in content_digests},
+        "expires_at": None if expires_at is None else float(expires_at),
+    }
+    encoded = json.dumps(
+        payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 @dataclass(frozen=True)
@@ -258,6 +348,11 @@ class LanguageProviderArtifact:
     rollback_strategy: str = "disable-adapter"
     default_enabled: bool = False
     provenance: str = "external-provider"
+    content_digests: tuple[tuple[str, str], ...] = ()
+    artifact_digest: str = ""
+    expires_at: float | None = None
+    canary_id: str = LANGUAGE_PROVIDER_CANARY_FORMAT
+    content_address_format: str = LANGUAGE_PROVIDER_CONTENT_ADDRESS_FORMAT
 
     def __post_init__(self) -> None:
         for value, name in (
@@ -285,6 +380,88 @@ class LanguageProviderArtifact:
         ):
             if optional_value is not None and not str(optional_value):
                 raise ValueError(f"provider artifact {name} cannot be empty when provided")
+        if self.content_address_format != LANGUAGE_PROVIDER_CONTENT_ADDRESS_FORMAT:
+            raise ValueError("unsupported provider artifact content address format")
+        if not str(self.canary_id):
+            raise ValueError("provider artifact canary_id cannot be empty")
+        if self.expires_at is not None:
+            if isinstance(self.expires_at, bool) or not math.isfinite(float(self.expires_at)):
+                raise ValueError("provider artifact expires_at must be finite")
+            object.__setattr__(self, "expires_at", float(self.expires_at))
+
+        if isinstance(self.content_digests, (str, bytes, bytearray)):
+            raise TypeError("provider artifact content_digests must be role/digest pairs")
+        normalized_digests: list[tuple[str, str]] = []
+        for item in self.content_digests:
+            if not isinstance(item, (tuple, list)) or len(item) != 2:
+                raise ValueError("provider artifact content_digests must contain role/digest pairs")
+            role, digest = str(item[0]), str(item[1]).lower()
+            if role not in _LANGUAGE_PROVIDER_CONTENT_ROLES:
+                raise ValueError(f"unsupported provider artifact content role: {role}")
+            if len(digest) != 64 or any(char not in "0123456789abcdef" for char in digest):
+                raise ValueError(f"provider artifact digest for {role} must be SHA-256 hex")
+            normalized_digests.append((role, digest))
+        if len({role for role, _ in normalized_digests}) != len(normalized_digests):
+            raise ValueError("provider artifact content roles must be unique")
+        normalized_digests.sort()
+        normalized = tuple(normalized_digests)
+        object.__setattr__(self, "content_digests", normalized)
+
+        if self.artifact_digest:
+            artifact_digest = str(self.artifact_digest).lower()
+            if len(artifact_digest) != 64 or any(
+                char not in "0123456789abcdef" for char in artifact_digest
+            ):
+                raise ValueError("provider artifact artifact_digest must be SHA-256 hex")
+            if not normalized:
+                raise ValueError("provider artifact artifact_digest requires content_digests")
+            expected = _provider_artifact_digest(
+                artifact_id=self.artifact_id,
+                backend_id=self.backend_id,
+                mode=self.mode,
+                content_address_format=self.content_address_format,
+                canary_id=self.canary_id,
+                rollback_strategy=self.rollback_strategy,
+                default_enabled=self.default_enabled,
+                provenance=self.provenance,
+                content_digests=normalized,
+                expires_at=self.expires_at,
+            )
+            if artifact_digest != expected:
+                raise ValueError("provider artifact artifact_digest does not match its manifest")
+            object.__setattr__(self, "artifact_digest", artifact_digest)
+        elif normalized:
+            object.__setattr__(
+                self,
+                "artifact_digest",
+                _provider_artifact_digest(
+                    artifact_id=self.artifact_id,
+                    backend_id=self.backend_id,
+                    mode=self.mode,
+                    content_address_format=self.content_address_format,
+                    canary_id=self.canary_id,
+                    rollback_strategy=self.rollback_strategy,
+                    default_enabled=self.default_enabled,
+                    provenance=self.provenance,
+                    content_digests=normalized,
+                    expires_at=self.expires_at,
+                ),
+            )
+
+        if normalized:
+            required_roles = {"base_model"}
+            if self.mode in {"lora", "guarded"}:
+                required_roles.add("adapter")
+            if self.mode in {"lora", "guarded"}:
+                required_roles.update({"training_corpus", "training_report"})
+            if self.mode == "guarded":
+                required_roles.add("safety_report")
+            missing_roles = required_roles.difference(dict(normalized))
+            if missing_roles:
+                raise ValueError(
+                    "provider artifact content_digests missing roles: "
+                    + ", ".join(sorted(missing_roles))
+                )
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -300,6 +477,11 @@ class LanguageProviderArtifact:
             "rollback_strategy": self.rollback_strategy,
             "default_enabled": self.default_enabled,
             "provenance": self.provenance,
+            "content_address_format": self.content_address_format,
+            "content_digests": {role: digest for role, digest in self.content_digests},
+            "artifact_digest": self.artifact_digest,
+            "expires_at": self.expires_at,
+            "canary_id": self.canary_id,
         }
 
     @classmethod
@@ -326,7 +508,48 @@ class LanguageProviderArtifact:
             rollback_strategy=str(payload.get("rollback_strategy", "disable-adapter")),
             default_enabled=bool(payload.get("default_enabled", False)),
             provenance=str(payload.get("provenance", "external-provider")),
+            content_digests=_provider_digest_pairs(payload.get("content_digests", {})),
+            artifact_digest=str(payload.get("artifact_digest", "")),
+            expires_at=(
+                None if payload.get("expires_at") is None else float(payload["expires_at"])
+            ),
+            canary_id=str(payload.get("canary_id", LANGUAGE_PROVIDER_CANARY_FORMAT)),
+            content_address_format=str(
+                payload.get("content_address_format", LANGUAGE_PROVIDER_CONTENT_ADDRESS_FORMAT)
+            ),
         )
+
+
+def _provider_digest_pairs(value: Any) -> tuple[tuple[str, str], ...]:
+    if isinstance(value, Mapping):
+        return tuple((str(role), str(digest)) for role, digest in value.items())
+    if isinstance(value, (list, tuple)):
+        pairs: list[tuple[str, str]] = []
+        for item in value:
+            if not isinstance(item, (list, tuple)) or len(item) != 2:
+                raise ValueError("provider artifact content_digests must contain role/digest pairs")
+            pairs.append((str(item[0]), str(item[1])))
+        return tuple(pairs)
+    raise ValueError("provider artifact content_digests must be a mapping or sequence")
+
+
+def language_provider_artifact_digest(artifact: LanguageProviderArtifact) -> str:
+    """Recompute the path-independent digest of an artifact manifest."""
+
+    if not isinstance(artifact, LanguageProviderArtifact):
+        raise TypeError("language provider artifact digest requires a LanguageProviderArtifact")
+    return _provider_artifact_digest(
+        artifact_id=artifact.artifact_id,
+        backend_id=artifact.backend_id,
+        mode=artifact.mode,
+        content_address_format=artifact.content_address_format,
+        canary_id=artifact.canary_id,
+        rollback_strategy=artifact.rollback_strategy,
+        default_enabled=artifact.default_enabled,
+        provenance=artifact.provenance,
+        content_digests=artifact.content_digests,
+        expires_at=artifact.expires_at,
+    )
 
 
 @dataclass(frozen=True)
@@ -1075,5 +1298,142 @@ class LanguageRealizationGate:
             "gate": {
                 "passed": passed,
                 "criterion": "train and holdout ExpressionPlan values produce readable, semantically complete, non-structured text without fallback, while rollback and checkpoint continuation reproduce their references",
+            },
+        }
+
+
+class LanguageProviderCanaryGate:
+    """Run deterministic first-chat expressions against a loaded provider.
+
+    This is intentionally smaller than the train/holdout realization gate:
+    it checks the exact post-load organ that will serve the first product chat
+    request.  The cases reuse the reviewed semantic vocabulary used by the
+    provider's holdout set, so a provider can pass only by producing readable
+    text that preserves Taiji-owned meaning without validated fallback.
+    """
+
+    CANARY_ID = LANGUAGE_PROVIDER_CANARY_FORMAT
+
+    @classmethod
+    def cases(cls) -> tuple[ExpressionPlan, ...]:
+        return (
+            ExpressionPlan(
+                expression_id=f"{cls.CANARY_ID}:database-status",
+                content_id=f"{cls.CANARY_ID}:database-status:content",
+                modality="text",
+                channel="message",
+                fields={
+                    "intent_kind": "render_database_notice",
+                    "semantic_slots": {"系统": "数据库", "状态": "正常", "受众": "操作员"},
+                    "expected_outcome": "operator receives a concise message",
+                },
+                required_terms=("数据库", "正常"),
+                confidence=1.0,
+                provenance="language-provider-canary",
+                tick=0,
+            ),
+            ExpressionPlan(
+                expression_id=f"{cls.CANARY_ID}:interface-recovery",
+                content_id=f"{cls.CANARY_ID}:interface-recovery:content",
+                modality="text",
+                channel="message",
+                fields={
+                    "intent_kind": "render_recovery_notice",
+                    "semantic_slots": {"状态": "恢复", "服务": "接口", "受众": "操作员"},
+                    "expected_outcome": "operator receives a concise message",
+                },
+                required_terms=("接口", "恢复"),
+                confidence=1.0,
+                provenance="language-provider-canary",
+                tick=0,
+            ),
+        )
+
+    def __init__(self) -> None:
+        self._validator = LanguageRealizationValidator(minimum_coverage=1.0)
+
+    def evaluate(self, organ: LanguageOrgan) -> dict[str, Any]:
+        if not isinstance(organ, LanguageOrgan):
+            raise TypeError("language provider canary organ must implement LanguageOrgan")
+        rows: list[dict[str, Any]] = []
+        for expression in self.cases():
+            row: dict[str, Any] = {
+                "case_id": expression.expression_id,
+                "output_text": "",
+                "output_nonempty": False,
+                "readable": False,
+                "required_terms": list(expression.required_terms),
+                "matched_terms": [],
+                "required_term_coverage": 0.0,
+                "structured_leakage": False,
+                "fallback_used": False,
+                "accepted": False,
+                "error": None,
+            }
+            try:
+                emission = organ.emit(expression)
+                text = emission.text_bytes.decode("utf-8", errors="strict")
+                matched = tuple(term for term in expression.required_terms if term in text)
+                validation = self._validator.validate(
+                    expression,
+                    emission.text_bytes,
+                    required_terms=expression.required_terms,
+                )
+                leakage = any(
+                    marker in text
+                    for marker in ("semantic_slots", "intent_kind", "expected_outcome", "{", "}")
+                )
+                row.update(
+                    {
+                        "output_text": text,
+                        "output_nonempty": bool(text.strip()),
+                        "readable": _readable_surface(text) is not None,
+                        "matched_terms": list(matched),
+                        "required_term_coverage": len(matched)
+                        / max(1, len(expression.required_terms)),
+                        "structured_leakage": leakage,
+                        "fallback_used": bool(emission.fallback_used),
+                        "accepted": bool(
+                            _readable_surface(text) is not None
+                            and validation.accepted
+                            and not leakage
+                            and not emission.fallback_used
+                        ),
+                    }
+                )
+            except Exception as exc:  # noqa: BLE001 - canary records failed cases
+                row["error"] = f"{type(exc).__name__}: {exc}"
+            rows.append(row)
+
+        count = max(1, len(rows))
+        metrics = {
+            "case_count": len(rows),
+            "output_nonempty_rate": sum(bool(row["output_nonempty"]) for row in rows) / count,
+            "readable_rate": sum(bool(row["readable"]) for row in rows) / count,
+            "required_term_coverage": sum(float(row["required_term_coverage"]) for row in rows)
+            / count,
+            "structured_leakage_free_rate": sum(not bool(row["structured_leakage"]) for row in rows)
+            / count,
+            "fallback_rate": sum(bool(row["fallback_used"]) for row in rows) / count,
+            "accepted_rate": sum(bool(row["accepted"]) for row in rows) / count,
+        }
+        passed = bool(
+            metrics["case_count"] == len(self.cases())
+            and metrics["output_nonempty_rate"] == 1.0
+            and metrics["readable_rate"] == 1.0
+            and metrics["required_term_coverage"] == 1.0
+            and metrics["structured_leakage_free_rate"] == 1.0
+            and metrics["fallback_rate"] == 0.0
+            and metrics["accepted_rate"] == 1.0
+            and all(row["error"] is None for row in rows)
+        )
+        return {
+            "format": LANGUAGE_PROVIDER_CANARY_FORMAT,
+            "canary_id": self.CANARY_ID,
+            "cases": rows,
+            "metrics": metrics,
+            "gate": {
+                "passed": passed,
+                "criterion": "the loaded provider emits readable, semantically complete canary messages without structured leakage or validated fallback",
             },
         }
