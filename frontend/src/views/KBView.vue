@@ -8,23 +8,24 @@
       </div>
 
       <!-- 标签页 -->
-      <div class="tabs" role="tablist">
-        <button class="tab" :class="{ active: activeTab === 'files' }" role="tab" :aria-selected="activeTab === 'files'" @click="activeTab = 'files'">
+      <div class="tabs" role="tablist" aria-label="知识库管理" @keydown="onTablistKeydown">
+        <button id="kb-tab-files" class="tab" :class="{ active: isActive('files') }" data-tab-id="files" role="tab" :aria-selected="isActive('files')" :tabindex="isActive('files') ? 0 : -1" aria-controls="kb-panel-files" @click="selectTab('files')">
           <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg>
           文件管理
         </button>
-        <button class="tab" :class="{ active: activeTab === 'config' }" role="tab" :aria-selected="activeTab === 'config'" @click="activeTab = 'config'">
+        <button id="kb-tab-config" class="tab" :class="{ active: isActive('config') }" data-tab-id="config" role="tab" :aria-selected="isActive('config')" :tabindex="isActive('config') ? 0 : -1" aria-controls="kb-panel-config" @click="selectTab('config')">
           <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           检索配置
         </button>
-        <button class="tab" :class="{ active: activeTab === 'test' }" role="tab" :aria-selected="activeTab === 'test'" @click="activeTab = 'test'">
+        <button id="kb-tab-test" class="tab" :class="{ active: isActive('test') }" data-tab-id="test" role="tab" :aria-selected="isActive('test')" :tabindex="isActive('test') ? 0 : -1" aria-controls="kb-panel-test" @click="selectTab('test')">
           <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
           检索测试
         </button>
       </div>
 
       <!-- ══ Tab 1：文件管理 ══ -->
-      <div v-if="activeTab === 'files'" class="tab-panel">
+      <!-- 用 display 切换而非 v-if：DOM 常驻，保留滚动位置与输入内容，切换 0ms -->
+      <div id="kb-panel-files" class="tab-panel" :class="{ active: isActive('files') }" role="tabpanel" aria-labelledby="kb-tab-files">
         <!-- 工具栏 -->
         <div class="toolbar">
           <div class="kb-search-wrap">
@@ -116,7 +117,13 @@
       </div>
 
       <!-- ══ Tab 2：检索配置 ══ -->
-      <div v-if="activeTab === 'config'" class="tab-panel">
+      <div
+        id="kb-panel-config"
+        class="tab-panel"
+        :class="{ active: isActive('config') }"
+        role="tabpanel"
+        aria-labelledby="kb-tab-config"
+      >
         <div class="panel kb-panel config-panel">
           <div class="head">
             <h2>检索参数</h2>
@@ -154,7 +161,13 @@
       </div>
 
       <!-- ══ Tab 3：检索测试 ══ -->
-      <div v-if="activeTab === 'test'" class="tab-panel">
+      <div
+        id="kb-panel-test"
+        class="tab-panel"
+        :class="{ active: isActive('test') }"
+        role="tabpanel"
+        aria-labelledby="kb-tab-test"
+      >
         <div class="test-bar">
           <div class="kb-search-wrap">
             <div class="search" style="height: 40px;">
@@ -208,6 +221,7 @@ defineOptions({ name: 'KBView' })
 import { inject, ref } from 'vue';
 import FileUploadQueue from '../components/FileUploadQueue.vue';
 import { API_BASE, authFetch } from '../composables/apiClient.js';
+import { useTabs } from '../composables/useTabs.js';
 
 const toast = inject('toast', () => {});
 const $confirm = inject('$confirm', () => Promise.resolve(true));
@@ -260,7 +274,8 @@ const deleteKBFile = async (filename) => { try { await authFetch(`${API_BASE}/ap
 loadKBStats(); loadKBFiles();
 
 // ── 标签页与文件过滤（纯 UI 状态，不影响业务逻辑） ──
-const activeTab = ref('files');
+// 标签页状态收敛到 useTabs：DOM 常驻、切换 0ms、状态同步到 ?tab= 可深链与前进后退
+const { isActive, selectTab, onTablistKeydown } = useTabs(['files', 'config', 'test'])
 const fileFilter = ref('');
 // 兼容后端新旧两种列表形状：字符串 或 {name, size, mtime, status}
 const fileName = (f) => (typeof f === 'string' ? f : (f?.name ?? ''));
@@ -312,10 +327,11 @@ const filteredFiles = (files) => { if (!fileFilter.value) return files; const q 
 }
 
 /* ===== 标签页 ===== */
+/* 不画 border-bottom：全应用唯一外围边框归 .router-wrapper（见 styles/shell.css），
+   标签条自带轨道线会与卡片边框形成「两段错位」的观感 */
 .tabs {
   display: flex;
   gap: 4px;
-  border-bottom: 1px solid var(--border);
   margin-bottom: 22px;
 }
 .tab {
@@ -327,13 +343,17 @@ const filteredFiles = (files) => { if (!fileFilter.value) return files; const q 
   font-weight: 500;
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
   transition: color .15s ease, border-color .15s ease;
   display: inline-flex;
   align-items: center;
   gap: 7px;
 }
 .tab:hover { color: var(--foreground); }
+.tab:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm, 6px);
+}
 .tab.active {
   color: var(--primary);
   border-bottom-color: var(--primary);
@@ -350,11 +370,9 @@ const filteredFiles = (files) => { if (!fileFilter.value) return files; const q 
   flex: none;
 }
 
-.tab-panel { animation: kb-fade-in .22s ease; }
-@keyframes kb-fade-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+/* 面板常驻 DOM，仅用 display 显隐：切换 0ms，且保留滚动位置与输入内容 */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
 
 /* ===== 工具栏 ===== */
 .toolbar {

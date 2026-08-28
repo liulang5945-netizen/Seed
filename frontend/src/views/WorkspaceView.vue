@@ -603,6 +603,7 @@ onUnmounted(() => {
 }
 
 /* ── 顶栏 ── */
+/* 不画 border-bottom：外围边框由 .router-wrapper 独占（见 styles/shell.css） */
 .topbar {
   height: 52px;
   flex: none;
@@ -610,7 +611,6 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid var(--border);
 }
 .topbar-title { font-size: 0.92rem; font-weight: 600; }
 .topbar-sub { font-size: 0.72rem; color: var(--muted-foreground); margin-top: 1px; }

@@ -770,6 +770,7 @@ const appVersion = ref('1.0.0');
 }
 
 /* --- 顶栏 --- */
+/* 不画 border-bottom：外围边框由 .router-wrapper 独占（见 styles/shell.css） */
 .settings-topbar {
   flex: none;
   height: 52px;
@@ -777,8 +778,7 @@ const appVersion = ref('1.0.0');
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid var(--border);
-  background: var(--background);
+  background: transparent;
 }
 .topbar-title-wrap {
   display: flex;

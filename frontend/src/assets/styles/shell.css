@@ -1,6 +1,13 @@
 /**
- * Shell 布局 — 墨系列 v7
- * 水墨美学，克制的布局层
+ * Shell 布局 — 墨系列 v8「整体圆角卡片内嵌」
+ *
+ * 唯一真源约定（勿在视图/组件内重复声明这些选择器）：
+ *   .app-wrapper    窗口层。只负责背景（含 appStore.applyBgImage 注入的自定义背景图）与外边距，自身不画边框。
+ *   .sidebar        无边框、透明面板，直接坐在窗口背景上。宽度由 AppSidebar 的内联 style 驱动（可拖拽）。
+ *   .router-wrapper 内容卡片。全应用唯一一条外围边框 + 圆角在此，所有视图内容一律嵌入其中。
+ *
+ * 推论：视图内部的 .topbar / .tabs / .view-header 不得再画 border，
+ *       否则会出现「顶部边框与下方边框分割、两段对不齐」的观感（因各视图 max-width 不同，永远无法对齐）。
  */
 
 html, body {
@@ -11,13 +18,14 @@ html, body {
   overflow: hidden;
 }
 
+/* ===== 窗口层：背景宿主，不画边框 ===== */
 .app-wrapper {
   display: flex;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
   position: relative;
-  background: var(--bg);
+  background: var(--bg-base, var(--bg));
 }
 
 /* 微妙的环境光 */
@@ -30,21 +38,22 @@ html, body {
   z-index: 0;
 }
 
+/* ===== 侧边栏：无边框透明面板 ===== */
 .sidebar {
   width: var(--sidebar-width, 248px);
   min-width: 200px;
   max-width: 400px;
-  background: var(--sidebar-bg);
+  background: transparent;
   color: var(--text);
-  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  min-height: 0;
   position: relative;
   z-index: 10;
   overflow: hidden;
-  /* 允许过渡动画 */
-  transition: width 0.3s var(--ease);
+  /* 拖拽改宽需即时跟随，不加 width 过渡，避免"滑动拖尾"的迟滞感 */
+  transition: background 0.3s ease;
 }
 
 /* 侧边栏宽度调整手柄 */
@@ -67,6 +76,7 @@ html, body {
   background: var(--primary);
 }
 
+/* ===== 内容卡片：全应用唯一外围边框 ===== */
 .router-wrapper {
   flex: 1;
   min-width: 0;
@@ -75,6 +85,21 @@ html, body {
   z-index: 1;
   display: flex;
   flex-direction: column;
+  margin: 8px 8px 8px 0;
   background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 1.2rem);
+  box-shadow: var(--shadow-sm);
+  /* 圆角裁切：内部视图滚动条与 topbar 均被卡片边界收口 */
   overflow: hidden;
+}
+
+/* ===== 窄窗：侧边栏压缩为图标轨道（宽度在 AppSidebar.vue 内以 !important 覆盖内联 style），卡片贴边 ===== */
+@media (max-width: 880px) {
+  .router-wrapper {
+    margin: 0;
+    border-width: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
 }

@@ -583,6 +583,7 @@ onUnmounted(() => stopPolling())
 }
 
 /* ═══ 顶栏 ═══ */
+/* 不画 border-bottom：外围边框由 .router-wrapper 独占（见 styles/shell.css） */
 .topbar {
   height: 52px;
   flex: none;
@@ -590,7 +591,6 @@ onUnmounted(() => stopPolling())
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid var(--border);
 }
 .topbar-left {
   display: flex;

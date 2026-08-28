@@ -17,30 +17,9 @@ a { color: inherit; text-decoration: none; }
 ::-webkit-scrollbar-track { background: transparent; }
 
 /* ===== 应用外壳 ===== */
-.app-wrapper {
-  display: grid;
-  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  background: var(--bg);
-  position: relative;
-}
+/* .app-wrapper / .sidebar / .router-wrapper 的布局与边框统一收敛到 styles/shell.css，此处不再重复声明 */
 
 /* ===== 侧边栏 ===== */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  background: var(--sidebar-bg);
-  border-right: 1px solid var(--border);
-  min-height: 0;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 10;
-  /* 去掉 width 过渡：拖拽改宽即时跟随，避免“滑动拖尾”的迟滞感 */
-  transition: background 0.3s ease;
-}
-
 .sidebar-header {
   padding: 14px 14px 8px;
   display: flex;
@@ -290,6 +269,7 @@ a { color: inherit; text-decoration: none; }
 /* ===== 主区域 ===== */
 /* .router-wrapper 的布局定义统一收敛到 styles/shell.css，此处不再重复声明 */
 
+/* topbar 是卡片内的第一行，不画 border-bottom：外围边框由 .router-wrapper 独占 */
 .topbar {
   height: 52px;
   flex: none;
@@ -297,8 +277,7 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg);
+  background: transparent;
 }
 .topbar-title { font-size: 0.92rem; font-weight: 600; color: var(--text); }
 .topbar-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 1px; }
@@ -331,12 +310,13 @@ a { color: inherit; text-decoration: none; }
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: var(--bg);
+  background: transparent;
   overflow-y: auto;
   padding: 28px;
   min-width: 0;
 }
 
+/* 不画 border-bottom：其 max-width 为 800px，画线会与 .router-wrapper 的全宽边框错位 */
 .view-header {
   width: 100%;
   max-width: 800px;
@@ -344,8 +324,7 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
 }
 
 .view-header h2 {
@@ -564,9 +543,8 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ===== 响应式 ===== */
+/* 断点统一为 880px（shell.css 同值负责 .sidebar / .router-wrapper 的收起与去圆角） */
 @media (max-width: 880px) {
-  .app-wrapper { grid-template-columns: 1fr; }
-  .sidebar { display: none; }
   .dedicated-view { padding: 16px; }
   .view-header, .view-body { max-width: 100%; }
 }

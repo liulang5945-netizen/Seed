@@ -23,15 +23,15 @@
 
     <div class="view-body">
       <!-- 标签页 -->
-      <div class="tabs" role="tablist">
-        <button class="tab" :class="{ active: activeTab === 'overview' }" role="tab" @click="activeTab = 'overview'">训练概览</button>
-        <button class="tab" :class="{ active: activeTab === 'hyperparams' }" role="tab" @click="activeTab = 'hyperparams'">超参数</button>
-        <button class="tab" :class="{ active: activeTab === 'dataset' }" role="tab" @click="activeTab = 'dataset'">数据集</button>
-        <button class="tab" :class="{ active: activeTab === 'logs' }" role="tab" @click="activeTab = 'logs'">日志</button>
+      <div class="tabs" role="tablist" aria-label="训练管理" @keydown="onTablistKeydown">
+        <button id="tk-tab-overview" class="tab" :class="{ active: isActive('overview') }" data-tab-id="overview" role="tab" :aria-selected="isActive('overview')" :tabindex="isActive('overview') ? 0 : -1" aria-controls="tk-panel-overview" @click="selectTab('overview')">训练概览</button>
+        <button id="tk-tab-hyperparams" class="tab" :class="{ active: isActive('hyperparams') }" data-tab-id="hyperparams" role="tab" :aria-selected="isActive('hyperparams')" :tabindex="isActive('hyperparams') ? 0 : -1" aria-controls="tk-panel-hyperparams" @click="selectTab('hyperparams')">超参数</button>
+        <button id="tk-tab-dataset" class="tab" :class="{ active: isActive('dataset') }" data-tab-id="dataset" role="tab" :aria-selected="isActive('dataset')" :tabindex="isActive('dataset') ? 0 : -1" aria-controls="tk-panel-dataset" @click="selectTab('dataset')">数据集</button>
+        <button id="tk-tab-logs" class="tab" :class="{ active: isActive('logs') }" data-tab-id="logs" role="tab" :aria-selected="isActive('logs')" :tabindex="isActive('logs') ? 0 : -1" aria-controls="tk-panel-logs" @click="selectTab('logs')">日志</button>
       </div>
 
       <!-- ═══ Tab 1 · 训练概览 ═══ -->
-      <section class="tab-panel" :class="{ active: activeTab === 'overview' }">
+      <section id="tk-panel-overview" class="tab-panel" :class="{ active: isActive('overview') }" role="tabpanel" aria-labelledby="tk-tab-overview">
         <!-- 进度英雄卡 -->
         <div v-if="trainState === 'running' || trainState === 'paused'" class="tk-card">
           <div class="progress-hero">
@@ -148,7 +148,7 @@
       </section>
 
       <!-- ═══ Tab 2 · 超参数 ═══ -->
-      <section class="tab-panel" :class="{ active: activeTab === 'hyperparams' }">
+      <section id="tk-panel-hyperparams" class="tab-panel" :class="{ active: isActive('hyperparams') }" role="tabpanel" aria-labelledby="tk-tab-hyperparams">
         <div class="tk-card">
           <div class="card-head">
             <h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;color:var(--primary)"><circle cx="6" cy="7" r="2.2"/><circle cx="6" cy="17" r="2.2"/><circle cx="18" cy="12" r="2.2"/><path d="M8 7.5 12 5M8 16.5 12 19M8 16l7-4M8 8l7 3"/></svg>训练超参数</h3>
@@ -186,7 +186,7 @@
       </section>
 
       <!-- ═══ Tab 3 · 数据集 ═══ -->
-      <section class="tab-panel" :class="{ active: activeTab === 'dataset' }">
+      <section id="tk-panel-dataset" class="tab-panel" :class="{ active: isActive('dataset') }" role="tabpanel" aria-labelledby="tk-tab-dataset">
         <!-- 数据上传 -->
         <div class="tk-card" style="margin-bottom:18px">
           <div class="card-head">
@@ -267,7 +267,7 @@
       </section>
 
       <!-- ═══ Tab 4 · 日志 ═══ -->
-      <section class="tab-panel" :class="{ active: activeTab === 'logs' }">
+      <section id="tk-panel-logs" class="tab-panel" :class="{ active: isActive('logs') }" role="tabpanel" aria-labelledby="tk-tab-logs">
         <div v-if="trainLog" class="log-panel">
           <div class="log-head">
             <div class="log-dots">
@@ -336,9 +336,10 @@
 <script setup>
 import { Monitor, Zap, Trash2, Package as PackageIcon, RefreshCw, Play, Pause, Square, StopCircle, BarChart2, Download } from 'lucide-vue-next';
 
-import { inject, watch, nextTick, ref, onActivated } from 'vue';
+import { inject, watch, nextTick, onActivated } from 'vue';
 import FileUploadQueue from '../components/FileUploadQueue.vue';
 import { useApi } from '../composables/useApi.js';
+import { useTabs } from '../composables/useTabs.js';
 import {
   trainState, trainLog, trainLoss, trainFiles,
   selectedDatasets, trainPreview,
@@ -362,8 +363,8 @@ const toast = inject('toast');
 const $confirm = inject('$confirm');
 const { t } = useApi();
 
-// 标签页状态
-const activeTab = ref('overview');
+// 标签页状态收敛到 useTabs：DOM 常驻、切换 0ms、状态同步到 ?tab=
+const { isActive, selectTab, onTablistKeydown } = useTabs(['overview', 'hyperparams', 'dataset', 'logs']);
 
 // 训练设备选项（与后端 /api/train/native 的 device 字段对齐）
 const deviceOptions = [
@@ -449,10 +450,10 @@ onActivated(() => {
 }
 
 /* ===== 标签页（匹配画布） ===== */
+/* 不画 border-bottom：全应用唯一外围边框归 .router-wrapper（见 styles/shell.css） */
 .tabs {
   display: flex;
   gap: 2px;
-  border-bottom: 1px solid var(--border);
   margin-bottom: 22px;
 }
 .tab {
@@ -467,28 +468,27 @@ onActivated(() => {
   transition: color 0.15s;
 }
 .tab:hover { color: var(--foreground, var(--text)); }
+.tab:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm, 6px);
+}
 .tab.active { color: var(--primary); }
 .tab.active::after {
   content: "";
   position: absolute;
   left: 14px;
   right: 14px;
-  bottom: -1px;
+  bottom: 0;
   height: 2px;
   background: var(--primary);
   border-radius: 2px;
 }
 
 /* ===== Tab Panel ===== */
+/* 常驻 DOM + 零动画：切换是 0ms 的显隐，不是重建后淡入 */
 .tab-panel { display: none; }
-.tab-panel.active {
-  display: block;
-  animation: tkFade 0.22s ease;
-}
-@keyframes tkFade {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: none; }
-}
+.tab-panel.active { display: block; }
 
 /* ===== 卡片基础（匹配画布 tk-card） ===== */
 .tk-card {
@@ -1178,7 +1178,7 @@ onActivated(() => {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tab-panel.active { animation: none; }
+  /* .tab-panel 已改为零动画，无需在此关闭 */
   .status-chip-run::before { animation: none; }
   .metric-card:hover { transform: none; }
   .ckpt-item:hover { transform: none; }
