@@ -82,6 +82,7 @@ def workbench_capabilities() -> dict[str, Any]:
     payload["programming_language_registry_revision"] = (
         environment.programming_language_registry.revision
     )
+    payload["mcp_registry"] = environment.mcp_registry.to_payload()
     return payload
 
 
@@ -96,6 +97,13 @@ def workbench_programming_languages() -> dict[str, Any]:
         "revision": environment.programming_language_registry.revision,
         "languages": environment.programming_language_registry.public_descriptors(),
     }
+
+
+@router.get("/mcp")
+def workbench_mcp_tools() -> dict[str, Any]:
+    """Return the native MCP-shaped registry through the workbench boundary."""
+
+    return _read_only_result("mcp.list", {})
 
 
 @router.get("/files")
