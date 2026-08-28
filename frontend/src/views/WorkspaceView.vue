@@ -148,26 +148,15 @@
         </div>
       </div>
     </div>
-    <div v-if="showPathDialog" class="dlg-overlay" @click.self="showPathDialog = false">
-      <div class="dlg-box">
-        <h3>打开项目文件夹</h3>
-        <button class="btn btn-primary browse-btn" :disabled="picking" @click="browseFolder">
-          <FolderOpen :size="15" class="icon-sm" />
-          {{ picking ? '正在等待选择…' : '浏览系统目录…' }}
-        </button>
-        <div v-if="quickPaths.length" class="quick-paths">
-          <button v-for="qp in quickPaths" :key="qp.path" class="qp-btn" @click="newPathInput = qp.path">
-            <FolderOpen :size="11" /> {{ qp.label }}
-          </button>
-        </div>
-        <input v-model="newPathInput" class="dlg-input" placeholder="或输入完整路径" @keydown.enter="applyNewPath" />
-        <div class="dlg-actions">
-          <button class="dlg-btn primary" @click="applyNewPath">切换</button>
-          <button class="dlg-btn" @click="showPathDialog = false">取消</button>
-        </div>
-        <p v-if="pathDialogError" class="dlg-error">{{ pathDialogError }}</p>
-      </div>
-    </div>
+    <WorkspacePathDialog
+      v-model:visible="showPathDialog"
+      v-model:path="newPathInput"
+      :quick-paths="quickPaths"
+      :picking="picking"
+      :error="pathDialogError"
+      @browse="browseFolder"
+      @apply="applyNewPath"
+    />
 
     <!-- 快速打开（Ctrl+P） -->
     <div v-if="quickOpen.visible" class="dlg-overlay" @click.self="quickOpen.visible = false">
@@ -216,6 +205,7 @@ import { useWorkbenchProjection } from '../composables/useWorkbenchProjection.js
 import { Terminal, FolderOpen, Folder, FileCode, FileText, Image as ImageIcon, Database, Edit3, Edit2, Trash2, Crosshair, Activity, Search, RefreshCw } from 'lucide-vue-next';
 import MonacoEditor from '../components/MonacoEditor.vue';
 import WebTerminal from '../components/WebTerminal.vue';
+import WorkspacePathDialog from '../components/WorkspacePathDialog.vue';
 
 defineOptions({ name: 'WorkspaceView' });
 
@@ -1081,39 +1071,6 @@ onUnmounted(() => {
   color: var(--destructive, #ef4444);
   font-size: 12px;
   margin: 8px 0 0;
-}
-
-.quick-paths {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-bottom: 12px;
-}
-.qp-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  font-size: 12px;
-  color: var(--muted-foreground);
-  background: var(--muted);
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) * 0.5);
-  cursor: pointer;
-  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
-  font-family: inherit;
-}
-.qp-btn:hover {
-  background: color-mix(in srgb, var(--primary) 12%, var(--background));
-  color: var(--primary);
-  border-color: color-mix(in srgb, var(--primary) 30%, var(--border));
-}
-
-/* ── 浏览系统目录按钮 ── */
-.browse-btn {
-  width: 100%;
-  justify-content: center;
-  margin-bottom: 12px;
 }
 
 /* ── 快速打开（Ctrl+P） ── */

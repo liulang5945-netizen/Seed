@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { nativeApi, nativeApiPaths } from '../composables/nativeApi.js'
+import { nativeApi, nativeApiMetrics, nativeApiPaths } from '../composables/nativeApi.js'
 import { authFetch } from '../composables/apiClient.js'
 
 vi.mock('../composables/apiClient.js', () => ({
@@ -67,6 +67,20 @@ describe('nativeApi facade', () => {
     expect(authFetch).toHaveBeenCalledWith('/api/train/upload_dataset', expect.objectContaining({
       method: 'POST',
       body: formData,
+    }))
+  })
+
+  it('records request count, status and latency for a minimal SLO snapshot', async () => {
+    nativeApiMetrics.reset()
+    authFetch.mockResolvedValueOnce(jsonResponse({ status: 'ok' }))
+
+    await nativeApi.workbenchCapabilities()
+
+    expect(nativeApiMetrics.snapshot()['/api/workbench/capabilities']).toEqual(expect.objectContaining({
+      requests: 1,
+      successes: 1,
+      failures: 0,
+      last_status: 200,
     }))
   })
 

@@ -89,10 +89,54 @@ function resourcePath(template, value, parameter) {
   return template.replace(`{${parameter}}`, encodeURIComponent(String(value)))
 }
 
+const requestMetrics = new Map()
+
+function absoluteUrl(path) {
+  if (/^https?:\/\//i.test(path)) return path
+  return `${API_BASE}${path}`
+}
+
+function metricPath(url) {
+  try {
+    return new URL(url, 'http://seed.local').pathname
+  } catch (e) {
+    return String(url).split('?')[0]
+  }
+}
+
+function recordRequest(url, response, latencyMs) {
+  const key = metricPath(url)
+  const current = requestMetrics.get(key) || {
+    requests: 0,
+    successes: 0,
+    failures: 0,
+    total_latency_ms: 0,
+    last_status: 0,
+    last_observed_at: 0,
+  }
+  current.requests += 1
+  if (response?.ok) current.successes += 1
+  else current.failures += 1
+  current.total_latency_ms += latencyMs
+  current.last_status = response?.status || 0
+  current.last_observed_at = Date.now()
+  requestMetrics.set(key, current)
+}
+
+export const nativeApiMetrics = Object.freeze({
+  snapshot: () => Object.fromEntries(
+    [...requestMetrics.entries()].map(([key, value]) => [key, {
+      ...value,
+      average_latency_ms: value.requests
+        ? Math.round((value.total_latency_ms / value.requests) * 100) / 100
+        : 0,
+    }]),
+  ),
+  reset: () => requestMetrics.clear(),
+})
+
 async function readJson(path, options) {
-  const response = options === undefined
-    ? await authFetch(path)
-    : await authFetch(path, options)
+  const response = await request(path, options)
   const payload = await response.json().catch(() => ({}))
   if (!response.ok) {
     const detail = typeof payload.detail === 'string'
@@ -104,9 +148,24 @@ async function readJson(path, options) {
 }
 
 function request(path, options) {
-  return options === undefined
-    ? authFetch(`${API_BASE}${path}`)
-    : authFetch(`${API_BASE}${path}`, options)
+  const url = absoluteUrl(path)
+  const startedAt = typeof performance !== 'undefined' && performance.now
+    ? performance.now()
+    : Date.now()
+  const call = options === undefined ? authFetch(url) : authFetch(url, options)
+  return call.then((response) => {
+    const now = typeof performance !== 'undefined' && performance.now
+      ? performance.now()
+      : Date.now()
+    recordRequest(url, response, now - startedAt)
+    return response
+  }).catch((cause) => {
+    const now = typeof performance !== 'undefined' && performance.now
+      ? performance.now()
+      : Date.now()
+    recordRequest(url, null, now - startedAt)
+    throw cause
+  })
 }
 
 /**
