@@ -8,7 +8,7 @@ const allowedLegacyArtifacts = new Set([
   path.join('components', 'FileUploadQueue.vue'),
 ])
 const forbidden = [
-  /\/api\/(?:rag|models?|agent|life)(?:\/|['"`])/i,
+  /\/api\/(?:rag|models?|agent|life|taiji)(?:\/|['"`])/i,
   /\/api\/system\/switch_model(?:\/|['"`])/i,
   /download_hf|gguf|huggingface|model_type|agent_max_iterations|agent_temperature/i,
 ]

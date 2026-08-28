@@ -213,7 +213,7 @@ def validate_path(req: dict):
 
 
 @router.get("/api/system/select_folder")
-def select_folder():
+def select_folder(title: str = "请选择项目工作区文件夹"):
     """打开原生文件夹选择框"""
     if sys.platform != "win32":
         return {"status": "error", "message": "目前仅支持 Windows 系统的原生存档对话框"}
@@ -255,7 +255,7 @@ def select_folder():
         bi.hwndOwner = None
         bi.pidlRoot = None
         bi.pszDisplayName = ctypes.cast(display_name, wintypes.LPWSTR)
-        bi.lpszTitle = "请选择项目工作区文件夹"
+        bi.lpszTitle = (title or "请选择项目工作区文件夹")[:128]
         bi.ulFlags = 0x00000040 | 0x00000010
 
         pidl = shell32.SHBrowseForFolderW(ctypes.byref(bi))

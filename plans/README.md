@@ -267,7 +267,14 @@ KB 默认不再调用 `/api/rag/*`，仅依据 runtime snapshot 判断 `knowledg
 
 **已完成（2026-08-29）：W5 第三 slice 的 packaged route-level smoke 与 frontend/source capability contract。** 前端源码门禁已固定六个产品入口的状态证据投影，并禁止 Legacy RAG/model/HF/GGUF/engine 旧路径回流；生产预览逐路由 smoke 精确巡检 7 路由、错误页、6 个证据页面、导航、聊天/训练交互与移动端，共 `35 项 / 0 失败`。后端 Legacy-off 启动合同、frontend `23 files / 187 passed`、ESLint、生产构建、native boundary、ruff、compileall、diff check 均通过。
 
-**当前唯一下一步：开始 W6 第一 slice 的 OpenAPI→frontend endpoint contract。** 从 OpenAPI schema 和 native capability snapshot 校验前端端点的 method、path、请求体/查询参数与 Legacy-off 可见性；CI 必须能被故意的 URL/method/schema 漂移打红，再扩展 view 拆分与 trace/SLO 指标。不得先做视觉包装或 CUDA kernel。
+**已完成（2026-08-29）：W6 第一 slice 的 OpenAPI→frontend endpoint contract。** OpenAPI 快照测试已覆盖 method、query
+parameters 和 request body 漂移；前端 `check-api-contract` 已校验 83 个 API 字面量及直接调用的 method、查询参数和 JSON 顶层字段，
+并接入 CI。未使用的 Legacy 上传 composable 已删除，`select_folder` 标题参数已正式进入后端合同与快照；后端 `67 passed, 1 skipped`、
+前端 `23 files / 187 passed`，native boundary/API contract、ESLint、构建、Ruff、compileall、diff check 全部通过。
+
+**当前唯一下一步：开始 W6 第二 slice 的 typed/native API facade。** 以 OpenAPI 合同为唯一来源，建立前端统一 API facade 和类型化
+端点定义，逐步收拢大型 Vue view 中散落的 URL、method 和响应解包；每迁移一组入口都必须保持 native boundary、API contract、测试和
+生产构建全绿。不得先做视觉包装或 CUDA kernel。
 
 ## 当前唯一下一步
 

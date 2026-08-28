@@ -219,6 +219,10 @@ jobs:
         working-directory: frontend
         run: npm run check:native-boundary
 
+      - name: Check frontend API contract
+        working-directory: frontend
+        run: npm run check:api-contract
+
       - name: Run frontend tests
         working-directory: frontend
         run: npx vitest run

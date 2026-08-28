@@ -75,6 +75,14 @@ def test_openapi_snapshot(openapi_schema, snapshot_update):
         current_methods = set(openapi_schema["paths"][path].keys())
         if baseline_methods != current_methods:
             messages.append(f"{path}: methods changed from {baseline_methods} to {current_methods}")
+            continue
+        for method in baseline_methods & current_methods:
+            baseline_operation = baseline["paths"][path][method]
+            current_operation = openapi_schema["paths"][path][method]
+            if baseline_operation.get("parameters", []) != current_operation.get("parameters", []):
+                messages.append(f"{method.upper()} {path}: parameters changed")
+            if baseline_operation.get("requestBody") != current_operation.get("requestBody"):
+                messages.append(f"{method.upper()} {path}: request body changed")
 
     if messages:
         detail = "\n".join(messages)
