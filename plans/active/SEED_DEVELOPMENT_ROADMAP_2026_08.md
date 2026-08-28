@@ -874,6 +874,19 @@ P4 的最小真实经历边界已落地：
 | `npm run build` | ✓ built，无编译级遗漏 |
 | 上线请求 | 5 个 `.topbar` + 3 个 `.tabs` + `.view-header` 边框全部收敛到 `.router-wrapper` 唯一外围边框 |
 
+**实机观测（QtWebEngine 裸 CDP @9222，source 模式 `python -m desktop.main`）**：
+
+| 测量项 | 结果 |
+| --- | --- |
+| 三个视图 9 次标签切换耗时 | 3–22ms，全部同帧内完成（DNS 语义上的 0ms；旧 v-if+fade 需等整帧动画） |
+| 面板显隐 | 恒为「1 显示 + N 隐藏」，DOM 常驻（切换无白屏帧、无重建） |
+| URL 同步 | 每次切换 `#/kb/train/agent` 后附 `?tab=`，前进后退/刷新可还原 |
+| 深链直达 | `location.hash='#/train?tab=dataset'` → 面板直接是高亮「数据集」 |
+| keep-alive 折返保持 | KB 选「检索配置」→ 切 agent → 折返 KB，标签仍为「检索配置」 |
+| 边框形态 | `.router-wrapper` 恒为 `1px solid` + `19.2px` 圆角；`.topbar/.tabs/.view-header` 边框全为 0 |
+| 异常监控 | 全程 `Runtime.exceptionThrown` 与 console error 零触发 |
+| 截图（card-kb.png） | 外壳灰底 + 大圆角卡片内嵌 + sidebar 独立间隙，内外部无任何分割边框错位 |
+
 ## 14. 持续门禁
 
 - Taiji/Seed/Legacy 所有权 AST 测试；
