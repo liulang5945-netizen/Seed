@@ -2,7 +2,11 @@
  * Shell 布局 — 墨系列 v8「整体圆角卡片内嵌」
  *
  * 唯一真源约定（勿在视图/组件内重复声明这些选择器）：
- *   .app-wrapper    窗口层。只负责背景（含 appStore.applyBgImage 注入的自定义背景图）与外边距，自身不画边框。
+ *   .app-wrapper    窗口层。纵向排布 = 标题栏 + 主体。负责窗口外框（1px 边框 + 圆角，
+ *                   承接原 Qt 侧 _window_frame_qss 的职责）与背景（含 appStore.applyBgImage 注入的自定义背景图）。
+ *   .app-titlebar   自绘标题栏。透明、无 border-bottom，直接坐在窗口背景上 —— 与侧边栏共享同一背景宿主，
+ *                   这是「顶部栏与下方一体」的唯一实现方式；一旦给它背景色或下边框，接缝立刻回来。
+ *   .app-body       主体行。侧边栏 + 内容卡片。
  *   .sidebar        无边框、透明面板，直接坐在窗口背景上。宽度由 AppSidebar 的内联 style 驱动（可拖拽）。
  *   .router-wrapper 内容卡片。全应用唯一一条外围边框 + 圆角在此，所有视图内容一律嵌入其中。
  *
@@ -18,14 +22,25 @@ html, body {
   overflow: hidden;
 }
 
-/* ===== 窗口层：背景宿主，不画边框 ===== */
+/* ===== 窗口层：背景宿主 + 窗口外框 ===== */
 .app-wrapper {
   display: flex;
+  flex-direction: column;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
   position: relative;
   background: var(--bg-base, var(--bg));
+  /* 无边框窗口的外框由此处负责：Qt 侧仅用 QRegion 遮罩裁切形状，不再画 QSS 边框，
+   * 因此边框颜色可随 5 套主题的 --border 变量走，不会像旧方案那样只在明暗两态间二选一。 */
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+/* 最大化时贴满屏幕，去掉圆角与边框（与 Qt 侧 _apply_window_shape 清除遮罩保持一致） */
+:root[data-maximized='true'] .app-wrapper {
+  border-width: 0;
+  border-radius: 0;
 }
 
 /* 微妙的环境光 */
@@ -36,6 +51,103 @@ html, body {
   background: radial-gradient(ellipse at 15% 20%, rgba(26,26,26,0.03) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
+}
+
+/* ===== 主体行：侧边栏 + 内容卡片 ===== */
+.app-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ===== 自绘标题栏：透明、无下边框，与侧边栏同处窗口背景之上 ===== */
+.app-titlebar {
+  flex-shrink: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 0 0 8px;
+  position: relative;
+  z-index: 30;
+  background: transparent;
+  color: var(--text);
+  /* 关键：不画 border-bottom。任何分隔线都会让顶部条与下方重新割裂。 */
+}
+
+/* 中段空白 = 系统拖拽区（单击拖动窗口、双击最大化） */
+.titlebar-drag {
+  flex: 1;
+  align-self: stretch;
+  min-width: 0;
+}
+
+.titlebar-btn {
+  width: 30px;
+  height: 28px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-secondary, var(--text));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.titlebar-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+/* 窗口控制区：贴住窗口右上角，尺寸对齐 Windows 习惯 */
+.titlebar-window-controls {
+  display: flex;
+  align-items: stretch;
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+.titlebar-window-btn {
+  width: 46px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, var(--text));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.titlebar-window-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.titlebar-window-btn.is-close:hover {
+  background: #e81123;
+  color: #fff;
+}
+
+/* 右上角按钮跟随窗口圆角，避免 hover 底色溢出圆角外 */
+.titlebar-window-btn.is-close {
+  border-top-right-radius: 17px;
+}
+
+:root[data-maximized='true'] .titlebar-window-btn.is-close {
+  border-top-right-radius: 0;
+}
+
+/* 侧边栏收起时卡片补齐左侧留白 */
+.app-body.sidebar-collapsed .sidebar {
+  display: none;
+}
+
+.app-body.sidebar-collapsed .router-wrapper {
+  margin-left: 8px;
 }
 
 /* ===== 侧边栏：无边框透明面板 ===== */
@@ -96,10 +208,23 @@ html, body {
 
 /* ===== 窄窗：侧边栏压缩为图标轨道（宽度在 AppSidebar.vue 内以 !important 覆盖内联 style），卡片贴边 ===== */
 @media (max-width: 880px) {
+  .app-wrapper {
+    border-width: 0;
+    border-radius: 0;
+  }
+
+  .titlebar-window-btn.is-close {
+    border-top-right-radius: 0;
+  }
+
   .router-wrapper {
     margin: 0;
     border-width: 0;
     border-radius: 0;
     box-shadow: none;
+  }
+
+  .app-body.sidebar-collapsed .router-wrapper {
+    margin-left: 0;
   }
 }

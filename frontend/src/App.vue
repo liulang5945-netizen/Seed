@@ -9,26 +9,31 @@
               <ConfirmDialog ref="confirmRef" />
               <RuntimeExceptionCenter />
 
-              <!-- === Sidebar === -->
-              <AppSidebar 
-                :width="sidebarWidth" 
-                :is-resizing="isResizing"
-                @resize-start="onSidebarResizeStart" 
-              />
+              <!-- === Titlebar（自绘，与下方共享同一背景宿主） === -->
+              <AppTitlebar :collapsed="sidebarCollapsed" @toggle-sidebar="toggleSidebar" />
 
-              <!-- === Router View === -->
-              <div class="router-wrapper">
-                <RouteErrorView v-if="routeError" :message="routeError" />
-                <router-view v-else v-slot="{ Component }">
-                  <transition name="route" mode="out-in">
-                    <keep-alive
-                      :include="['ChatView', 'TrainingView', 'WorkspaceView', 'KBView', 'AgentConfigView', 'LifeStatusView']"
-                      :max="6"
-                    >
-                      <component :is="Component" />
-                    </keep-alive>
-                  </transition>
-                </router-view>
+              <div class="app-body" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
+                <!-- === Sidebar === -->
+                <AppSidebar 
+                  :width="sidebarWidth" 
+                  :is-resizing="isResizing"
+                  @resize-start="onSidebarResizeStart" 
+                />
+
+                <!-- === Router View === -->
+                <div class="router-wrapper">
+                  <RouteErrorView v-if="routeError" :message="routeError" />
+                  <router-view v-else v-slot="{ Component }">
+                    <transition name="route" mode="out-in">
+                      <keep-alive
+                        :include="['ChatView', 'TrainingView', 'WorkspaceView', 'KBView', 'AgentConfigView', 'LifeStatusView']"
+                        :max="6"
+                      >
+                        <component :is="Component" />
+                      </keep-alive>
+                    </transition>
+                  </router-view>
+                </div>
               </div>
 
               <div
@@ -60,6 +65,7 @@ import ToastManager from './components/ToastManager.vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
 import RuntimeExceptionCenter from './components/RuntimeExceptionCenter.vue'
 import AppSidebar from './components/AppSidebar.vue'
+import AppTitlebar from './components/AppTitlebar.vue'
 import RouteErrorView from './components/RouteErrorView.vue'
 import { UploadCloud } from 'lucide-vue-next'
 import { useAppStore } from './stores/appStore.js'
@@ -140,6 +146,14 @@ const { startHealthCheck, stopHealthCheck } = useApi()
 // 侧边栏宽度调整
 const sidebarWidth = ref(parseInt(localStorage.getItem('taiji_sidebar_width') || '248'))
 const isResizing = ref(false)
+
+// 侧边栏收起：由自绘标题栏的第一个按钮驱动，状态与宽度同样持久化
+const sidebarCollapsed = ref(localStorage.getItem('taiji_sidebar_collapsed') === '1')
+
+function toggleSidebar() {
+  sidebarCollapsed.value = !sidebarCollapsed.value
+  localStorage.setItem('taiji_sidebar_collapsed', sidebarCollapsed.value ? '1' : '0')
+}
 
 function onSidebarResizeStart(event) {
   event.preventDefault()

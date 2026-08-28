@@ -62,7 +62,7 @@ a_main = Analysis(
     binaries=[],
     datas=_datas,
     hiddenimports=_common_hiddenimports + [
-        "PyQt6", "PyQt6.QtWebEngineWidgets",
+        "PyQt6", "PyQt6.QtWebEngineWidgets", "PyQt6.QtWebChannel",
     ],
     hookspath=[],
     hooksconfig={},
