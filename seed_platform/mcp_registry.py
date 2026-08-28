@@ -110,6 +110,38 @@ class McpToolRegistry:
             )
         )
 
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> McpToolRegistry:
+        """Restore a registry only when its content-addressed identity matches."""
+
+        if payload.get("format") != MCP_REGISTRY_FORMAT:
+            raise ValueError("unsupported MCP registry format")
+        if int(payload.get("version", 0)) != MCP_REGISTRY_VERSION:
+            raise ValueError("unsupported MCP registry version")
+        raw_tools = payload.get("tools", ())
+        if isinstance(raw_tools, (str, bytes)) or not isinstance(raw_tools, Sequence):
+            raise ValueError("MCP registry tools must be a list")
+        descriptors = tuple(
+            McpToolDescriptor(
+                tool_id=str(item["tool_id"]),
+                name=str(item["name"]),
+                description=str(item["description"]),
+                input_schema=dict(item.get("input_schema") or {}),
+                executor_id=str(item["executor_id"]),
+                source=str(item.get("source", "seed.mcp.local")),
+                risk=str(item.get("risk", "read_only")),
+                timeout_seconds=float(item.get("timeout_seconds", 5.0)),
+                output_limit=int(item.get("output_limit", 65_536)),
+                enabled=bool(item.get("enabled", True)),
+                version=int(item.get("version", MCP_REGISTRY_VERSION)),
+            )
+            for item in raw_tools
+        )
+        registry = cls(descriptors, revision=int(payload.get("revision", 0)))
+        if str(payload.get("snapshot_id", "")) != registry.snapshot_id:
+            raise ValueError("MCP registry snapshot digest mismatch")
+        return registry
+
     @property
     def snapshot_id(self) -> str:
         return _digest(

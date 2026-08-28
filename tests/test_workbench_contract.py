@@ -159,6 +159,7 @@ def test_native_mcp_registry_lists_and_invokes_local_read_only_canary(tmp_path) 
         parameters={"tool_id": tool_id, "arguments": {"path": "src"}},
         snapshot_id=environment.capability_snapshot.snapshot_id,
         confidence=1.0,
+        mcp_registry_snapshot_id=environment.mcp_registry.snapshot_id,
     )
     assert environment.policy_for(request).reason_code == "mcp_tool_read_only"
     invoked = environment.execute_tool("mcp.invoke", request.parameters)
@@ -204,6 +205,7 @@ def test_mcp_risk_is_dynamic_and_empty_registry_fails_closed(tmp_path) -> None:
         parameters={"tool_id": descriptor.tool_id, "arguments": {}},
         snapshot_id=environment.capability_snapshot.snapshot_id,
         confidence=1.0,
+        mcp_registry_snapshot_id=environment.mcp_registry.snapshot_id,
     )
     assert environment.policy_for(request).reason_code == "capability_requires_approval"
     approval = environment.issue_approval(request)
@@ -248,6 +250,97 @@ def test_mcp_schema_and_output_budget_fail_closed(tmp_path) -> None:
     )
     assert oversized.success is False
     assert environment.last_result["error_code"] == "mcp_output_limit"
+
+
+def test_mcp_binding_loop_preflight_and_runtime_tool_call_are_versioned(
+    tmp_path,
+) -> None:
+    (tmp_path / "README.md").write_text("native workbench\n", encoding="utf-8")
+    environment = WorkbenchEnvironment(tmp_path)
+    request = WorkbenchActionRequest(
+        request_id="request-loop-read",
+        intent_id="intent-loop-read",
+        capability_id="mcp.invoke",
+        parameters={
+            "tool_id": "mcp.local.workspace_summary",
+            "arguments": {"path": "."},
+        },
+        snapshot_id=environment.capability_snapshot.snapshot_id,
+        confidence=1.0,
+        mcp_registry_snapshot_id=environment.mcp_registry.snapshot_id,
+    )
+
+    preflight = environment.preflight_loop(
+        (request,), loop_id="loop-mcp-read", max_steps=2
+    )
+
+    assert preflight["accepted"] is True
+    assert preflight["step_count"] == 1
+    assert preflight["checkpoint"]["boundary"] == "after_each_step"
+    assert preflight["mcp_registry_snapshot_id"] == environment.mcp_registry.snapshot_id
+    assert preflight["preflight_id"]
+
+    repeated = environment.preflight_loop(
+        (request, request), loop_id="loop-repeat", max_steps=2
+    )
+    assert repeated["accepted"] is False
+    assert repeated["error_code"] == "repeated_call"
+
+    stale = replace_request_mcp_registry(request, "stale-registry")
+    assert environment.policy_for(stale).reason_code == "stale_mcp_registry"
+
+    runtime = SeedRuntime(Seed(episode_id="workbench-mcp-binding"))
+    runtime._workbench_environment = environment
+    runtime_preflight = runtime.preflight_workbench_loop(
+        (request,), loop_id="runtime-loop-mcp"
+    )
+    assert runtime_preflight["accepted"] is True
+    assert runtime_preflight["runtime"]["checkpoint_boundary"] == "after_each_step"
+    result = runtime.execute_workbench_intent(
+        ActionIntent(
+            intent_id="intent-runtime-mcp",
+            kind="mcp.invoke",
+            parameters={
+                "tool_id": "mcp.local.workspace_summary",
+                "arguments": {"path": "."},
+            },
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        snapshot_id=environment.capability_snapshot.snapshot_id,
+        learn=False,
+    )
+    assert result["outcome"]["status"] == "success"
+    assert (
+        result["request"]["mcp_registry_snapshot_id"]
+        == environment.mcp_registry.snapshot_id
+    )
+    assert (
+        result["outcome"]["mcp_registry_snapshot_id"]
+        == environment.mcp_registry.snapshot_id
+    )
+    assert (
+        result["tool_call"]["workbench_binding"]["mcp_registry_snapshot_id"]
+        == environment.mcp_registry.snapshot_id
+    )
+
+
+def replace_request_mcp_registry(
+    request: WorkbenchActionRequest, snapshot_id: str
+) -> WorkbenchActionRequest:
+    return WorkbenchActionRequest(
+        request_id=request.request_id,
+        intent_id=request.intent_id,
+        capability_id=request.capability_id,
+        parameters=request.parameters,
+        snapshot_id=request.snapshot_id,
+        confidence=request.confidence,
+        tick=request.tick,
+        source=request.source,
+        version=request.version,
+        approval_token=request.approval_token,
+        mcp_registry_snapshot_id=snapshot_id,
+    )
 
 
 def test_programming_language_evidence_uses_content_manifest_and_ambiguity(
@@ -774,8 +867,18 @@ def test_runtime_checkpoint_restores_transaction_lineage_without_approval_reviva
         "seed_platform.workbench.get_setting",
         lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
     )
+    checkpoint_descriptor = McpToolDescriptor(
+        tool_id="mcp.local.checkpoint",
+        name="Checkpoint canary",
+        description="A custom registry entry used to verify checkpoint identity.",
+        input_schema={"type": "object", "additionalProperties": False},
+        executor_id="workspace.list",
+    )
     runtime = SeedRuntime(Seed(episode_id="workbench-checkpoint-canary"))
-    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    runtime._workbench_environment = WorkbenchEnvironment(
+        tmp_path,
+        mcp_registry=McpToolRegistry((checkpoint_descriptor,)),
+    )
     environment = runtime.workbench_environment
     created = environment.execute_tool(
         "workspace.create", {"path": "runtime.txt", "content": "resume\n"}
@@ -799,6 +902,10 @@ def test_runtime_checkpoint_restores_transaction_lineage_without_approval_reviva
 
     restored = SeedRuntime.load(checkpoint)
     assert restored.workbench_environment.status()["undoable_transactions"] == 1
+    assert (
+        restored.workbench_environment.mcp_registry.get(checkpoint_descriptor.tool_id)
+        == checkpoint_descriptor
+    )
     old_request = WorkbenchActionRequest(
         request_id="workbench:intent-old-undo",
         intent_id=old_undo_intent.intent_id,

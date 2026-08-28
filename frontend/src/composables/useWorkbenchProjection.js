@@ -140,6 +140,7 @@ async function previewIntent({
   expectedOutcome = '',
   confidence = 1,
   tick = 0,
+  mcpRegistrySnapshotId = '',
 }) {
   await ensureCapabilities()
   const payload = await readJson('/api/workbench/preview', {
@@ -152,6 +153,7 @@ async function previewIntent({
       expected_outcome: expectedOutcome,
       confidence,
       tick,
+      mcp_registry_snapshot_id: mcpRegistrySnapshotId,
       snapshot_id: snapshotId.value,
     }),
   })
@@ -167,6 +169,7 @@ async function executeIntent({
   confidence = 1,
   tick = 0,
   approvalToken = '',
+  mcpRegistrySnapshotId = '',
 }) {
   await ensureCapabilities()
   const payload = await readJson('/api/workbench/execute', {
@@ -180,7 +183,37 @@ async function executeIntent({
       confidence,
       tick,
       approval_token: approvalToken,
+      mcp_registry_snapshot_id: mcpRegistrySnapshotId,
       snapshot_id: snapshotId.value,
+    }),
+  })
+  error.value = ''
+  return payload
+}
+
+async function preflightLoop({
+  loopId,
+  intents = [],
+  maxSteps = 8,
+  maxBudgetUnits = 32,
+  onFailure = 'stop',
+  checkpointBoundary = 'after_each_step',
+}) {
+  await ensureCapabilities()
+  const payload = await readJson('/api/workbench/loop/preflight', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      loop_id: loopId,
+      intents: intents.map(item => ({
+        ...item,
+        mcp_registry_snapshot_id: item.mcp_registry_snapshot_id
+          || (item.kind?.startsWith('mcp.') ? mcpRegistry.value?.snapshot_id || '' : ''),
+      })),
+      max_steps: maxSteps,
+      max_budget_units: maxBudgetUnits,
+      on_failure: onFailure,
+      checkpoint_boundary: checkpointBoundary,
     }),
   })
   error.value = ''
@@ -238,6 +271,7 @@ export function useWorkbenchProjection() {
     setEditorLanguage,
     previewIntent,
     executeIntent,
+    preflightLoop,
     start,
     stop,
   }
