@@ -25,7 +25,9 @@ from scripts.training.load_taiji_qwen_provider import (  # noqa: E402
 from taiji import (  # noqa: E402
     GenerationController,
     LanguageProviderArtifact,
+    LanguageProviderCanaryGate,
     TSKV8Adapter,
+    language_provider_content_digest,
 )
 
 MANIFEST_FORMAT = "taiji-p6-provider-artifact-loader-manifest-v1"
@@ -38,26 +40,39 @@ def evaluate(
     mode: str,
     adapter_dir: Path | None,
 ) -> dict[str, object]:
+    training_corpus = (
+        None if mode == "raw" else "reports/taiji_p6_language_train_holdout_baseline_20260825.json"
+    )
+    training_report = (
+        None if mode == "raw" else "reports/taiji_p6_qwen_lora_provider_baseline_20260825.json"
+    )
+    safety_report = (
+        None if mode != "guarded" else "reports/taiji_p6_qwen_lora_safety_baseline_20260825.json"
+    )
+    content_assets = {"base_model": model_dir}
+    if adapter_dir is not None:
+        content_assets["adapter"] = adapter_dir
+    for role, relative_path in (
+        ("training_corpus", training_corpus),
+        ("training_report", training_report),
+        ("safety_report", safety_report),
+    ):
+        if relative_path is not None:
+            content_assets[role] = PROJECT_ROOT / relative_path
+    content_digests = tuple(
+        (role, language_provider_content_digest(path)) for role, path in content_assets.items()
+    )
     artifact = LanguageProviderArtifact(
         artifact_id=f"qwen-{mode}-provider-v1",
         backend_id=BACKEND_ID,
         mode=mode,
         base_model=str(model_dir),
         adapter_path=None if adapter_dir is None else str(adapter_dir),
-        training_corpus=(
-            None
-            if mode == "raw"
-            else "reports/taiji_p6_language_train_holdout_baseline_20260825.json"
-        ),
-        training_report=(
-            None if mode == "raw" else "reports/taiji_p6_qwen_lora_provider_baseline_20260825.json"
-        ),
-        safety_report=(
-            None
-            if mode != "guarded"
-            else "reports/taiji_p6_qwen_lora_safety_baseline_20260825.json"
-        ),
+        training_corpus=training_corpus,
+        training_report=training_report,
+        safety_report=safety_report,
         default_enabled=False,
+        content_digests=content_digests,
     )
     adapter = TSKV8Adapter()
     decoder = attach_qwen_language_provider(
@@ -71,6 +86,11 @@ def evaluate(
     validation = emission.validation
     adapter.attach_language_organ(None)
     restored = TSKV8Adapter.from_native_checkpoint(adapter.native_checkpoint())
+    canary_report = None
+    if mode == "guarded":
+        if adapter.language_organ is None:
+            raise RuntimeError("guarded artifact loader did not attach a language organ")
+        canary_report = LanguageProviderCanaryGate().evaluate(adapter.language_organ)
     safe = (
         validation is not None and (validation.accepted or emission.fallback_used)
         if mode == "guarded"
@@ -78,6 +98,7 @@ def evaluate(
     )
     gate_passed = bool(
         safe
+        and (canary_report is None or canary_report["gate"]["passed"] is True)
         and adapter.language_provider_artifact == artifact
         and restored.language_provider_artifact == artifact
         and restored.cognitive_snapshot().action_intent is None
@@ -87,6 +108,7 @@ def evaluate(
         "format": REPORT_FORMAT,
         "artifact": artifact.to_payload(),
         "mode": mode,
+        "canary": canary_report,
         "emission": {
             "backend": emission.backend,
             "fallback_used": emission.fallback_used,

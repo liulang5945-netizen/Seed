@@ -13,6 +13,7 @@ from taiji import (
     LanguageBackendSpec,
     LanguageEmission,
     LanguageProviderArtifact,
+    LanguageProviderCanaryGate,
     LanguageRealizationGate,
     LanguageRealizationValidator,
     LanguageTrainingCorpus,
@@ -480,6 +481,55 @@ def test_provider_artifact_modes_and_checkpoint_are_explicit() -> None:
             adapter_path="providers/invalid",
             default_enabled=True,
         )
+
+
+def test_provider_artifact_content_address_and_first_chat_canary_are_deterministic() -> None:
+    from pathlib import Path
+
+    from taiji import (
+        language_provider_artifact_digest,
+        language_provider_content_digest,
+    )
+
+    anchor = Path(__file__).resolve()
+    digest = language_provider_content_digest(anchor)
+    artifact = LanguageProviderArtifact(
+        artifact_id="qwen-guarded-addressed-v1",
+        backend_id="mature-decoder-v1",
+        mode="guarded",
+        base_model=str(anchor),
+        adapter_path=str(anchor),
+        training_corpus=str(anchor),
+        training_report=str(anchor),
+        safety_report=str(anchor),
+        content_digests=(
+            ("base_model", digest),
+            ("adapter", digest),
+            ("training_corpus", digest),
+            ("training_report", digest),
+            ("safety_report", digest),
+        ),
+        expires_at=4_000_000_000.0,
+    )
+    assert artifact.artifact_digest == language_provider_artifact_digest(artifact)
+    assert LanguageProviderArtifact.from_payload(artifact.to_payload()) == artifact
+
+    class _CanaryDecoder:
+        def generate(self, prompt: str, *, max_tokens: int, temperature: float) -> str:
+            del max_tokens, temperature
+            if "database-status" in prompt:
+                return "数据库运行正常。"
+            return "接口已经恢复。"
+
+    organ = ExternalTextDecoderLanguageOrgan(
+        _CanaryDecoder(),
+        prompt_builder=lambda expression: expression.content_id,
+        backend_id="mature-decoder-v1",
+    )
+    report = LanguageProviderCanaryGate().evaluate(organ)
+    assert report["format"] == "taiji-language-provider-canary-v1"
+    assert report["metrics"]["required_term_coverage"] == 1.0
+    assert report["gate"]["passed"] is True
 
 
 def test_expression_to_text_gate_requires_quality_rollback_and_checkpoint() -> None:

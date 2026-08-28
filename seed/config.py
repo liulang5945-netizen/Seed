@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+import math
 import os
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import Any
 
-from taiji import TaijiConfig
+from taiji import LANGUAGE_PROVIDER_CANARY_FORMAT, TaijiConfig
 
 LANGUAGE_PROVIDER_CONFIG_VERSION = 2
 
@@ -38,6 +39,10 @@ class LanguageProviderConfig:
     training_corpus: str = ""
     training_report: str = ""
     safety_report: str = ""
+    content_digests: tuple[tuple[str, str], ...] = ()
+    artifact_digest: str = ""
+    expires_at: float | None = None
+    canary_id: str = LANGUAGE_PROVIDER_CANARY_FORMAT
     chat_enabled: bool = False
     max_tokens: int = 24
     temperature: float = 0.0
@@ -63,6 +68,12 @@ class LanguageProviderConfig:
             raise ValueError("language provider max_tokens must be positive")
         if float(self.temperature) < 0.0:
             raise ValueError("language provider temperature cannot be negative")
+        if self.expires_at is not None and (
+            isinstance(self.expires_at, bool) or not math.isfinite(float(self.expires_at))
+        ):
+            raise ValueError("language provider expires_at must be finite")
+        if not str(self.canary_id):
+            raise ValueError("language provider canary_id cannot be empty")
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -77,6 +88,10 @@ class LanguageProviderConfig:
             "training_corpus": self.training_corpus,
             "training_report": self.training_report,
             "safety_report": self.safety_report,
+            "content_digests": {str(role): str(digest) for role, digest in self.content_digests},
+            "artifact_digest": self.artifact_digest,
+            "expires_at": self.expires_at,
+            "canary_id": self.canary_id,
             "chat_enabled": self.chat_enabled,
             "max_tokens": self.max_tokens,
             "temperature": self.temperature,
@@ -92,6 +107,19 @@ class LanguageProviderConfig:
         # unversioned defaults to the readable native surface.
         if version == 1 and mode == "structured":
             mode = "native"
+        content_digests = values.get("content_digests", {})
+        if isinstance(content_digests, Mapping):
+            digest_pairs = tuple(
+                (str(role), str(digest)) for role, digest in content_digests.items()
+            )
+        elif isinstance(content_digests, (list, tuple)):
+            digest_pairs = tuple(
+                (str(item[0]), str(item[1]))
+                for item in content_digests
+                if isinstance(item, (list, tuple)) and len(item) == 2
+            )
+        else:
+            raise ValueError("language provider content_digests must be a mapping or sequence")
         return cls(
             config_version=LANGUAGE_PROVIDER_CONFIG_VERSION,
             mode=mode,
@@ -104,6 +132,10 @@ class LanguageProviderConfig:
             training_corpus=str(values.get("training_corpus", "")),
             training_report=str(values.get("training_report", "")),
             safety_report=str(values.get("safety_report", "")),
+            content_digests=digest_pairs,
+            artifact_digest=str(values.get("artifact_digest", "")),
+            expires_at=(None if values.get("expires_at") is None else float(values["expires_at"])),
+            canary_id=str(values.get("canary_id", LANGUAGE_PROVIDER_CANARY_FORMAT)),
             chat_enabled=_as_bool(values.get("chat_enabled", False)),
             max_tokens=int(values.get("max_tokens", 24)),
             temperature=float(values.get("temperature", 0.0)),
@@ -125,6 +157,9 @@ class LanguageProviderConfig:
             "TRAINING_CORPUS": "training_corpus",
             "TRAINING_REPORT": "training_report",
             "SAFETY_REPORT": "safety_report",
+            "ARTIFACT_DIGEST": "artifact_digest",
+            "EXPIRES_AT": "expires_at",
+            "CANARY_ID": "canary_id",
             "CHAT_ENABLED": "chat_enabled",
             "MAX_TOKENS": "max_tokens",
             "TEMPERATURE": "temperature",
@@ -136,6 +171,8 @@ class LanguageProviderConfig:
             if field_name == "max_tokens":
                 current[field_name] = int(value)
             elif field_name == "temperature":
+                current[field_name] = float(value)
+            elif field_name == "expires_at":
                 current[field_name] = float(value)
             else:
                 current[field_name] = value

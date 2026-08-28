@@ -1343,6 +1343,17 @@ fallback，并要求 rollback reference 与保存后 checkpoint loader 的输出
 Gate 与 safety Gate 都通过才允许外部 decoder 进入产品聊天，旧报告或缺失证据 fail-closed，默认仍为本地 `native-readable`。相关定向回归
 `20 passed`，核心 mypy=`0`、Ruff/Black 全绿；CUDA 继续暂缓。该 Gate 证明可审计的表达准入，不宣称开放域语言智能。
 
-**当前唯一下一步：建立语言 provider artifact 的内容寻址与 chat canary Gate。** 为通过 realization/safety Gate 的外部模型、LoRA、训练语料、
-训练报告和安全报告生成稳定 digest，并在加载与产品聊天首个 canary 请求前逐项校验版本/路径未漂移；任何 artifact 替换、报告过期或
-canary 语义覆盖下降都必须回退到 `native-readable`，同时保持普通/native checkpoint continuation，CUDA 继续暂缓。
+**已完成：P6 语言 provider artifact 内容寻址与首轮 chat canary Gate。** `LanguageProviderArtifact` 现在为文件或目录内容生成路径无关的
+SHA-256 digest，并以 role 列表和稳定 manifest digest 绑定 base model、LoRA、训练语料、训练报告和安全报告；目录摘要只依赖相对 POSIX
+路径、文件大小和字节，不依赖绝对路径、mtime 或遍历顺序。guarded product chat 在加载前严格要求五类内容摘要、manifest digest、固定
+canary 合同和未过期 `expires_at`，逐项重新计算并拒绝缺失、替换、manifest 漂移和过期 artifact；旧 artifact/checkpoint 仍可读取，但没有
+内容寻址证据时不能进入 product chat。provider 挂载后，`LanguageProviderCanaryGate` 对实际 language organ 执行两条固定语义表达，要求 UTF-8
+可读、`数据库/正常` 与 `接口/恢复` 完整覆盖、无结构化泄漏且不触发 validated fallback；失败统一回退到 `native-readable`，并区分
+`chat_artifact_missing`、`chat_artifact_drift`、`chat_artifact_expired`、`chat_canary_failed`。训练侧 artifact loader smoke 也已输出内容摘要和
+canary 结果。相关定向回归 `23 passed`，Ruff、Black、核心 Mypy=`0`；本机 Seed/Taiji 全量测试的测试体未见本次回归，但仍受既有 Windows
+worktree/pytest 临时目录 ACL setup/cleanup error 影响，未计为全量 Gate 通过；CUDA 继续暂缓。该 Gate 证明的是 provider 资产完整性和首次真实
+表达准入，不宣称开放域语言智能或消除外部 decoder。
+
+**当前唯一下一步：建立 provider artifact 多版本 registry 与原子轮换 Gate。** 对已通过内容寻址、训练/安全和首轮 canary 的 artifact 建立
+版本 allowlist，验证新旧版本并存、原子切换、旧版本回退和 native checkpoint continuation；任何半写入、版本冲突或回退目标漂移都必须
+保持 `native-readable`，CUDA 继续暂缓。
