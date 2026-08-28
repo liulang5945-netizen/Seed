@@ -206,36 +206,13 @@
             </section>
 
             <!-- ── 2.5 运行环境（认知主体切换）── -->
-            <section v-else-if="activeSection === 'runtime'" class="settings-section">
-              <h2>运行环境</h2>
-
-              <!-- 终端访问（安全） -->
-              <div class="setting-row">
-                <div class="setting-left">
-                  <span class="setting-label">允许未认证终端访问</span>
-                  <p class="setting-desc">认证未启用时，允许工作台终端直接连接。开启会降低本地安全性，仅建议在受信任的本机环境使用。</p>
-                </div>
-                <div class="setting-right">
-                  <label class="toggle" aria-label="允许未认证终端访问开关">
-                    <input
-                      v-model="terminalAllowUnauth"
-                      type="checkbox"
-                      :disabled="savingTerminalSetting"
-                      @change="onTerminalUnauthChange"
-                    />
-                    <span class="track"><span class="thumb"></span></span>
-                  </label>
-                </div>
-              </div>
-
-              <!-- 切换状态 -->
-              <div class="setting-row setting-row--last">
-                <div class="setting-left">
-                  <span class="setting-label">当前状态</span>
-                  <p class="setting-desc">{{ runtimeStatusText }}</p>
-                </div>
-              </div>
-            </section>
+            <SettingsRuntimePanel
+              v-else-if="activeSection === 'runtime'"
+              v-model="terminalAllowUnauth"
+              :saving="savingTerminalSetting"
+              :runtime-status-text="runtimeStatusText"
+              @change="onTerminalUnauthChange"
+            />
 
             <!-- ── 3. 数据与隐私 ── -->
             <section v-else-if="activeSection === 'privacy'" class="settings-section">
@@ -398,6 +375,7 @@ import { useAppStore } from '../stores/appStore.js';
 import { useChatStore } from '../stores/chatStore.js';
 import { nativeApi } from '../composables/nativeApi.js';
 import RuntimeEvidenceStrip from '../components/RuntimeEvidenceStrip.vue';
+import SettingsRuntimePanel from '../components/SettingsRuntimePanel.vue';
 
 const toast = inject('toast');
 const $confirm = inject('$confirm', () => Promise.resolve(false));
