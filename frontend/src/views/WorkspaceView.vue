@@ -51,24 +51,15 @@
         />
 
         <!-- 中栏：编辑器 + 终端 -->
-        <div class="panel panel-center">
-          <div class="editor-area">
-            <MonacoEditor
-              ref="monacoEditor"
-              class="monaco-container"
-              :approval-handler="approveWorkbenchMutation"
-              @saved="onFileSaved"
-              @save-error="onSaveError"
-            />
-            <!-- 终端 -->
-            <Transition name="term-slide">
-              <div v-if="showTerminal" class="ide-terminal" :style="{ height: terminalHeight + 'px' }">
-                <div class="resize-row" @mousedown="startTerminalResize"></div>
-                <WebTerminal ref="webTerminal" />
-              </div>
-            </Transition>
-          </div>
-        </div>
+        <WorkspaceEditorPane
+          ref="editorPane"
+          :show-terminal="showTerminal"
+          :terminal-height="terminalHeight"
+          :approval-handler="approveWorkbenchMutation"
+          @saved="onFileSaved"
+          @save-error="onSaveError"
+          @resize-terminal="startTerminalResize"
+        />
 
         <!-- 右栏：属性与检查器 -->
         <div class="panel panel-right">
@@ -184,10 +175,9 @@ import { ref, reactive, computed, watch, onMounted, onUnmounted, onActivated, on
 import { nativeApi } from '../composables/nativeApi.js';
 import { useWorkbenchProjection } from '../composables/useWorkbenchProjection.js';
 import { Terminal, FolderOpen, Folder, FileCode, FileText, Image as ImageIcon, Database, Edit3, Edit2, Trash2, Crosshair, Activity, Search } from 'lucide-vue-next';
-import MonacoEditor from '../components/MonacoEditor.vue';
-import WebTerminal from '../components/WebTerminal.vue';
 import WorkspacePathDialog from '../components/WorkspacePathDialog.vue';
 import WorkspaceFileTree from '../components/WorkspaceFileTree.vue';
+import WorkspaceEditorPane from '../components/WorkspaceEditorPane.vue';
 
 defineOptions({ name: 'WorkspaceView' });
 
@@ -203,7 +193,8 @@ const showTerminal = ref(false);
 const running = ref(false);
 const sidebarWidth = ref(220);
 const terminalHeight = ref(280);
-const monacoEditor = ref(null);
+const editorPane = ref(null);
+const monacoEditor = computed(() => editorPane.value?.monacoEditor || null);
 const contextMenu = ref({ visible: false, x: 0, y: 0, node: null });
 const inputDialog = ref({ visible: false, title: '', value: '', placeholder: '', resolve: null });
 const showPathDialog = ref(false);
@@ -763,7 +754,6 @@ onUnmounted(() => {
   min-height: 0;
   position: relative;
 }
-.panel-center { border-right: 1px solid var(--border); }
 .panel-right { border-left: 1px solid var(--border); }
 
 .panel-header {
@@ -799,58 +789,6 @@ onUnmounted(() => {
 }
 .icon-btn:hover { background: var(--muted); color: var(--foreground); }
 .icon-btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
-
-/* ── 编辑器区域 ── */
-.editor-area {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.monaco-container {
-  flex: 1;
-  min-height: 0;
-  width: 100%;
-}
-.editor-area :deep(.monaco-wrapper) {
-  height: 100% !important;
-  min-height: 0 !important;
-}
-.editor-area :deep(.monaco-editor-container) {
-  flex: 1 !important;
-  min-height: 0 !important;
-  height: auto !important;
-}
-
-/* ── 终端 ── */
-.ide-terminal {
-  flex-shrink: 0;
-  border-top: 1px solid var(--border);
-  background: var(--card);
-  position: relative;
-}
-.resize-row {
-  position: absolute;
-  top: -3px;
-  left: 0;
-  right: 0;
-  height: 6px;
-  cursor: row-resize;
-  z-index: 10;
-  transition: background 0.15s;
-}
-.resize-row:hover { background: var(--primary); }
-
-/* 终端过渡动画 */
-.term-slide-enter-active,
-.term-slide-leave-active {
-  transition: transform 0.2s ease;
-}
-.term-slide-enter-from,
-.term-slide-leave-to {
-  transform: translateY(100%);
-}
 
 /* ── 底部状态栏 ── */
 .status-bar {

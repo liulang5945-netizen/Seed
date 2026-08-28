@@ -2023,6 +2023,9 @@ Vitest `25 files / 196 passed`、API/native boundary、ESLint、生产构建全�
 `WorkspaceFileTree`；父视图继续唯一拥有目录加载、文件读写、快捷打开、编辑器联动和 native mutation 状态。移动端隐藏规则和原有树样式
 随组件迁移，新增组件级事件回归；前端 Vitest `26 files / 197 passed`、API/native boundary、ESLint、生产构建全部通过。
 
-**当前唯一下一步：开始 W6 第七 slice 的 WorkspaceView 编辑器/终端协调拆分。** 将编辑器区域与终端显示、尺寸调整、保存/运行事件转发抽为
-`WorkspaceEditorPane`，父视图保留 native approval handler、文件状态和 mutation 流程；完成后再处理其他大型 view 与 trace/SLO 页面化展示。
-不得先做视觉包装或 CUDA kernel。
+**已完成（2026-08-29）：W6 第七 slice 的 WorkspaceView 编辑器/终端协调拆分。** 编辑器区域、终端显示、终端尺寸事件和 Monaco
+保存事件转发已抽为 `WorkspaceEditorPane`；父视图通过显式 expose 引用继续读取当前文件、保存状态和编辑器动作，仍保留 native approval
+handler、文件状态与 mutation 流程。新增组件级回归；前端 Vitest `27 files / 198 passed`、API/native boundary、ESLint、生产构建全部通过。
+
+**当前唯一下一步：开始 W6 第八 slice 的 SettingsView 状态/设置区拆分。** 将设置控件的持久化协调、运行时证据和系统操作拆成明确子模块，
+保持 `nativeApi` 单一入口与失败回滚语义；拆分后再把 facade metrics 接入统一 trace/SLO 面板。不得先做视觉包装或 CUDA kernel。
