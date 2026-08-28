@@ -1359,8 +1359,8 @@ manifest，按 artifact ID 去重，显式维护版本 allowlist、active/previo
 未 allowlist 的版本、manifest 冲突、未知回退目标和 registry 指针漂移均 fail-closed。Seed 新增 `rotate_language_provider` 与
 `SeedRuntime.rotate_language_provider`：候选 provider 在脱离线上 language organ 的 staging adapter 中加载，依次通过内容摘要、训练/安全报告和
 首轮 chat canary 后，才以一个 `commit_language_provider_state` 操作同时发布 organ、backend registry、artifact 和新 registry snapshot；候选
-失败时旧 provider、旧 runtime 和 active/previous 关系保持不变。定向语言/provider 回归 `25 passed`，Ruff、Black、核心 Mypy=`0`；CI 待本次
-提交后复核，CUDA 继续暂缓。
+失败时旧 provider、旧 runtime 和 active/previous 关系保持不变。定向语言/provider 回归 `25 passed`，Ruff、Black、核心 Mypy=`0`；提交后 CI
+已复核全绿（Python 3.10/3.12、Windows、前端、Docker、启动冒烟），CUDA 继续暂缓。
 
 **当前唯一下一步：建立 provider runtime health watchdog 与自动回退 Gate。** 在 active artifact 已通过首轮 canary 后，增加请求级健康探针、
 连续失败阈值、有限冷却窗口和 previous-version 自动回退；健康状态必须可写入 checkpoint、在重启后续接，且任何探针误报或回退目标漂移都只能
