@@ -850,6 +850,30 @@ P4 的最小真实经历边界已落地：
 2. 单元测试环境（jsdom）与生产环境（Blink）的能力差异本身是门禁盲区，发现一例就要把校验补进 setup 层，而不是只补一个用例。
 3. 机制看起来"没生效"时，先怀疑验证手段。本轮"Job Object 失效"与 §13.5 "PowerShell 注入 BOM"是同一类错误的两次发作。
 
+## 13.9 外壳边框收敛为"整体圆角卡片内嵌"、标签页"常驻 + 零动画 + URL 同步"（2026-08-28）
+
+用户对照主流客户端（TRAE/Doubao）截图提出四个互相关联的质疑：(1) 主流客户端是一条外围边框整体包裹、标签页嵌入其中，而本应用是"顶部边框与下方边框分割、两段对不齐"；(2) 标签页切换不如主流客户端丝滑，像"刷新显示"；(3) 这是否也是白屏的原因；(4) 商用前端是不是不用 Vue 这类平台、自己直接写的。四个问题逐一回答并落地实现（用户已确认目标形态：整体圆角卡片内嵌 + 常驻/零动画/URL 同步）。
+
+**(1) 边框分割与 Vue 无关，是"边框所有权"颠倒。** 主流客户端由 shell（外壳）持有唯一边框，内容视图只是填充；本应用反了过来——每个视图自己画 `border-bottom`，且 `view-header` 的 `max-width: 800px` 使"线"的宽度永远取决于各视图内容宽度，全局无法对齐。React/Svelte/原生 DOM 会同样出错，框架无关。**修法**：收敛到 `styles/shell.css` 单一真源——`.app-wrapper` 降级为窗口/背景宿主（保留 `appStore.applyBgImage()` 的挂载点，用 `--bg-base` 暗部营造"卡片内嵌"的亮度差），`.router-wrapper` 成为**全应用唯一外围边框**（`border + border-radius: var(--radius-lg) + box-shadow + margin`），`.sidebar` 变为无边框透明面板；全部 5 处 `.topbar`、3 处 `.tabs`、`.view-header` 的 `border-bottom` 全部移除，并附注释禁止回潮。同时消除三份重复定义的级联债：`.app-wrapper` 原先在 shell.css（flex）/ app.css（grid）/ product.css（background，且最后加载会盖掉亮度差）各一份，`prefers-reduced-motion` 有两份全局块，响应式断点 768/880 冲突——统一为 880 + 560 两级。
+
+**(2) "刷新显示"的根源是动画过多而非少了动画。** 面板用 `v-if` 切换 = 卸载 → 重建 → 重跑 setup → 重取数 → 从 `opacity: 0` 淡入，滚动位置、展开状态、输入内容全丢。主流客户端标签切换是 0ms（VS Code/Chrome 皆如此）——"丝滑"指的就是瞬时，动画只会让它看起来像刷新。
+
+**(3) 白屏的直接成因仍是一行确凿的渲染异常（§13.8 已根治）；但 `v-if` + 淡入确实制造了"白屏易感体质"。** 判别法：量 `container.innerHTML.length`，0 = DOM 被清空（真白屏），非 0 + 透明 = 动画卡住。两者结论完全相反，先量再猜。把面板改为常驻后，任何真实渲染错误都会立即以可见形态暴露，降低再误诊概率。
+
+**(4) 商用客户端没有"不用 Vue"。** TRAE/Doubao、VS Code、Slack、Notion、Linear 全是 Electron + Web 技术栈；VS Code 工作台是手写 TS + 直接 DOM，但它的两个要点（单一自顶向下的布局真源、视图永不销毁）在本项目用 Vue 完整可达——本轮同时落地了这两点。
+
+**实现**：新增 `composables/useTabs.js`（唯一实现，三视图复用）：`activeTab` 写入 `?tab=`（`router.replace` 防污染后退栈），URL → 状态（前进后退/深链/刷新保持），`onActivated` 应对 keep-alive 下 `onMounted` 只触发一次的问题，方向键/Home/End + roving tabindex + `aria-selected/aria-controls/role=tabpanel`（WAI-ARIA tablist 手动激活模式），无 vue-router 环境（单元测试）自动降级为纯状态模式。`KBView`（白屏案发地，三个 `v-if` 面板）`TrainingView`（四个面板）`AgentConfigView`（三个 `v-if` 面板，且原本连 `role="tab"` 都没有）全部改为 `display` 切换；AgentConfig 原先内联在 `@click` 的 `loadInstalled()/loadMarketplace()` 收敛为对 `activeTab` 的 watch，深链直达也能触发加载（比内联点击更高上限）。`AppSidebar.vue` 响应式升级：880px 以下压缩为 56px 图标轨道（`!important` 压内联 `width`，仅此能赢），560px 以下才隐藏。
+
+验证与产物：
+
+| 手段 | 结果 |
+| --- | --- |
+| vitest 全量 | 185/185 全绿 |
+| eslint（改动的 4 个 vue/js 文件） | 0 error 0 warning（`--fix` 属性换行） |
+| ruff check（根目录） | All checks passed |
+| `npm run build` | ✓ built，无编译级遗漏 |
+| 上线请求 | 5 个 `.topbar` + 3 个 `.tabs` + `.view-header` 边框全部收敛到 `.router-wrapper` 唯一外围边框 |
+
 ## 14. 持续门禁
 
 - Taiji/Seed/Legacy 所有权 AST 测试；

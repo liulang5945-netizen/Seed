@@ -1,26 +1,23 @@
 /**
- * ???????????
- * ????????? - ?????????????????
+ * 产品化收口层 — 最后加载
+ * 只做「跨主题统一的产品级微调」，不承载布局。
+ * 布局与外围边框的真源在 styles/shell.css，此处不得声明 .app-wrapper / .sidebar / .router-wrapper 的布局或背景。
  */
 
-/* === ???? === */
-.app-wrapper {
-  background: var(--bg);
-}
-
-/* === ????? === */
+/* === 圆角统一：卡片类 === */
 .n-card, .panel-section, .tool-card, .status-card,
 .train-metric-card, .needs-section, .reasoning-content {
   border-radius: var(--radius-sm) !important;
 }
 
+/* === 圆角统一：控件类 === */
 .n-button, .n-input, .n-select, .n-tag,
 .send-btn, .stop-btn, .mm-btn, .icon-btn, .msg-action-btn,
 .input-container, .engine-pill, .life-chip, .metric-chip {
   border-radius: var(--radius-sm) !important;
 }
 
-/* ?????????????*/
+/* === 标题去渐变填充：保证任意主题下都可读 === */
 .view-header h2,
 .sidebar-logo h2 {
   background: none !important;
@@ -28,17 +25,10 @@
   letter-spacing: 0;
 }
 
-/* === ?????? === */
+/* === 拖拽投放蒙层 === */
 .global-drag-overlay {
   background: var(--glass-bg-thick) !important;
   border: 1px dashed var(--primary) !important;
 }
 
-/* === Reduced Motion === */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
+/* Reduced Motion 的全局兜底在 app.css 中统一声明，此处不再重复 */

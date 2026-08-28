@@ -131,14 +131,15 @@
       </section>
 
       <!-- 4. 标签页 -->
-      <div class="tabs" role="tablist">
-        <button class="tab" :class="{ active: activeTab === 'tools' }" @click="activeTab = 'tools'">工具与插件</button>
-        <button class="tab" :class="{ active: activeTab === 'installed' }" @click="activeTab = 'installed'; loadInstalled()">MCP 服务</button>
-        <button class="tab" :class="{ active: activeTab === 'marketplace' }" @click="activeTab = 'marketplace'; loadMarketplace()">MCP 市场</button>
+      <div class="tabs" role="tablist" aria-label="Agent 配置" @keydown="onTablistKeydown">
+        <button id="ac-tab-tools" class="tab" :class="{ active: isActive('tools') }" data-tab-id="tools" role="tab" :aria-selected="isActive('tools')" :tabindex="isActive('tools') ? 0 : -1" aria-controls="ac-panel-tools" @click="selectTab('tools')">工具与插件</button>
+        <button id="ac-tab-installed" class="tab" :class="{ active: isActive('installed') }" data-tab-id="installed" role="tab" :aria-selected="isActive('installed')" :tabindex="isActive('installed') ? 0 : -1" aria-controls="ac-panel-installed" @click="selectTab('installed')">MCP 服务</button>
+        <button id="ac-tab-marketplace" class="tab" :class="{ active: isActive('marketplace') }" data-tab-id="marketplace" role="tab" :aria-selected="isActive('marketplace')" :tabindex="isActive('marketplace') ? 0 : -1" aria-controls="ac-panel-marketplace" @click="selectTab('marketplace')">MCP 市场</button>
       </div>
 
       <!-- 工具与插件 tab -->
-      <section v-if="activeTab === 'tools'" class="tab-panel">
+      <!-- 用 display 切换而非 v-if：DOM 常驻，保留搜索框内容与滚动位置，切换 0ms -->
+      <section id="ac-panel-tools" class="tab-panel" :class="{ active: isActive('tools') }" role="tabpanel" aria-labelledby="ac-tab-tools">
         <div class="filter-row">
           <div class="search-field">
             <Search :size="15" />
@@ -168,7 +169,7 @@
       </section>
 
       <!-- MCP 服务 tab -->
-      <section v-if="activeTab === 'installed'" class="tab-panel">
+      <section id="ac-panel-installed" class="tab-panel" :class="{ active: isActive('installed') }" role="tabpanel" aria-labelledby="ac-tab-installed">
         <div v-if="installedServers.length" class="mcp-table-wrap">
           <table class="mcp-table">
             <thead>
@@ -210,7 +211,7 @@
       </section>
 
       <!-- MCP 市场 tab -->
-      <section v-if="activeTab === 'marketplace'" class="tab-panel">
+      <section id="ac-panel-marketplace" class="tab-panel" :class="{ active: isActive('marketplace') }" role="tabpanel" aria-labelledby="ac-tab-marketplace">
         <div class="filter-row">
           <div class="search-field">
             <Search :size="15" />
@@ -258,15 +259,23 @@
 
 <script setup>
 defineOptions({ name: 'AgentConfigView' })
-import { computed, inject, onActivated, onMounted, ref } from 'vue'
+import { computed, inject, onActivated, onMounted, ref, watch } from 'vue'
 import { RefreshCw, Play, Square, Trash2, Download, Search } from 'lucide-vue-next'
 import { useRuntimeStore } from '../stores/runtimeStore.js'
 import { API_BASE, authFetch } from '../composables/apiClient.js'
+import { useTabs } from '../composables/useTabs.js'
 
 const runtimeStore = useRuntimeStore()
 const toast = inject('toast', () => {})
 
-const activeTab = ref('tools')
+// 标签页状态收敛到 useTabs：DOM 常驻、切换 0ms、状态同步到 ?tab=
+// 原先内联在 @click 里的 loadInstalled()/loadMarketplace() 收敛到下方 watch：
+// 选中对应标签（含来自 URL 深链/前进后退的直达）时都会触发数据加载
+const { activeTab, isActive, selectTab, onTablistKeydown } = useTabs(['tools', 'installed', 'marketplace'])
+watch(activeTab, (tab) => {
+  if (tab === 'installed') loadInstalled()
+  if (tab === 'marketplace') loadMarketplace()
+})
 const toolQuery = ref('')
 const toolSource = ref('')
 const maxIterations = ref(10)
@@ -534,7 +543,8 @@ onActivated(() => refreshAgentRuntime({ silent: true }))
 .ov-card.connected .ov-dot { background: var(--success); }
 
 /* 标签页 */
-.tabs { display: flex; align-items: center; gap: 4px; border-bottom: 1px solid var(--border); padding: 0 4px; }
+/* 不画 border-bottom：全应用唯一外围边框归 .router-wrapper（见 styles/shell.css） */
+.tabs { display: flex; align-items: center; gap: 4px; padding: 0 4px; }
 .tab {
   appearance: none;
   background: transparent;
@@ -547,14 +557,23 @@ onActivated(() => refreshAgentRuntime({ silent: true }))
   transition: color 150ms ease;
 }
 .tab:hover { color: var(--foreground); }
+.tab:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm, 6px);
+}
 .tab.active { color: var(--foreground); font-weight: 600; }
 .tab.active::after {
   content: '';
   position: absolute;
-  left: 10px; right: 10px; bottom: -1px;
+  left: 10px; right: 10px; bottom: 0;
   height: 2px; border-radius: 2px; background: var(--primary);
 }
-.tab-panel { display: flex; flex-direction: column; gap: 16px; }
+
+/* 面板常驻 DOM + 零动画：切换是 0ms 的显隐，保留滚动位置与输入内容。
+   本视图面板是 flex 布局，显隐需用 display: none / flex（不能用 block） */
+.tab-panel { display: none; flex-direction: column; gap: 16px; }
+.tab-panel.active { display: flex; }
 
 /* 筛选 */
 .filter-row { display: flex; gap: 8px; align-items: center; }

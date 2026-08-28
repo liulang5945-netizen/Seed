@@ -378,6 +378,7 @@ onMounted(scrollToBottom)
 }
 
 /* ===== 顶栏：三栏布局 + 居中标题 ===== */
+/* 不画 border-bottom：外围边框由 .router-wrapper 独占（见 styles/shell.css） */
 .topbar {
   height: 52px;
   flex: none;
@@ -385,8 +386,7 @@ onMounted(scrollToBottom)
   display: flex;
   align-items: center;
   gap: 12px;
-  border-bottom: 1px solid var(--border);
-  background: var(--background);
+  background: transparent;
   position: relative;
   z-index: 5;
 }

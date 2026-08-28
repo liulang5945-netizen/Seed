@@ -181,12 +181,7 @@ const navGroups = computed(() => [
 }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-.sidebar-resize-handle {
-  position: absolute; top: 0; right: -3px; width: 6px; height: 100%;
-  cursor: col-resize; z-index: 20; transition: background-color 0.2s;
-}
-.sidebar-resize-handle:hover { background: var(--primary-light); }
-.sidebar-resize-handle.active { background: var(--primary); }
+/* .sidebar-resize-handle 的样式真源在 styles/shell.css，此处不再重复声明 */
 
 /* 生命状态指示器 */
 .side-life-pulse {
@@ -210,9 +205,11 @@ const navGroups = computed(() => [
 </style>
 
 <style>
-/* 移动端响应式折叠 */
-@media (max-width: 768px) {
+/* 窄窗折叠为 56px 图标轨道（断点与 styles/shell.css、app.css 统一为 880px） */
+/* 用 !important 覆盖 :style="{ width }" 内联宽度——这是唯一能压过内联样式的手段 */
+@media (max-width: 880px) {
   .sidebar { width: 56px !important; min-width: 56px !important; }
+  .sidebar-resize-handle { display: none !important; }
   .sidebar-header { padding: 14px 8px 8px !important; }
   .sidebar-logo { justify-content: center; }
   .brand-copy, .search-field, .nav-section-label,
@@ -223,5 +220,10 @@ const navGroups = computed(() => [
   .session-del-btn { display: none !important; }
   .nav-item { width: 36px; min-height: 32px; justify-content: center !important; padding: 0 !important; }
   .nav-icon-wrap { margin: 0 auto; }
+}
+
+/* 极窄窗：轨道也让位，内容独占 */
+@media (max-width: 560px) {
+  .sidebar { display: none !important; }
 }
 </style>
