@@ -1931,6 +1931,12 @@ checkpoint 保存/恢复；单次 Workbench request、Outcome 和返回 ToolCall
 Seed/native 全量回归 `320 passed, 1 skipped`，前端 `187 passed`、构建通过、ESLint `0 errors/17 warnings`。该 slice 不等于真正的
 多步执行、逐步 checkpoint 提交或外部 MCP 生命周期管理。
 
-**当前唯一下一步：完成 W3 第三 slice 的受预检有限多步执行 Gate。** 只允许执行已通过同一 preflight identity 的 native Workbench
-requests；每步执行后立即记录真实 ToolCall/Outcome 并提交 checkpoint，任一步失败立即停止且保留已完成前缀，恢复时拒绝重放已提交
-request；先覆盖本地无副作用 MCP canary 与一个只读 workspace step，不接外部安装、网络服务或开放式自治。
+**已完成（2026-08-29）：W3 第三 slice 的受预检有限多步执行 Gate。** 新增 `/api/workbench/loop/execute` 与前端 `executeLoop`，
+只接受 preflight identity 未漂移的 native Workbench request；每个已尝试步骤都真实执行、写入 ToolCall/Outcome audit 并保存 checkpoint，
+遇到失败立即停止并保留已完成前缀，恢复后重放已提交 request 会 fail-closed。真实成功两步、失败停机和 checkpoint 恢复重放定向回归
+`21 passed`，Seed/native 全量回归 `320 passed, 1 skipped`，前端 `187 passed`、构建通过、ESLint `0 errors/17 warnings`。该 slice 尚未
+扩展到跨文件 patch/test/diagnostics 任务，也未接入外部 MCP 生命周期。
+
+**当前唯一下一步：完成 W3 退出 Gate 的真实跨文件代码任务 loop。** 在现有 preflight/execute/checkpoint 约束内串接一个真实临时
+项目的语言识别、跨文件 patch、审批、test/build、diagnostics 与失败后重规划；验证中断后只从未提交步骤恢复，去掉 Taiji planner 或
+WorkbenchEnvironment 任一侧均 fail-closed，仍不接外部安装、网络服务或开放式自治。

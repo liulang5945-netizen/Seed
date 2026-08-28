@@ -12,7 +12,11 @@ from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
 
-from api.models import WorkbenchIntentRequest, WorkbenchLoopPreflightRequest
+from api.models import (
+    WorkbenchIntentRequest,
+    WorkbenchLoopExecuteRequest,
+    WorkbenchLoopPreflightRequest,
+)
 from api.seed_runtime import get_seed_runtime
 from seed_platform.workbench import (
     WorkbenchActionRequest,
@@ -248,6 +252,61 @@ def preflight_workbench_loop(
         return runtime.preflight_workbench_loop(
             requests,
             loop_id=request.loop_id,
+            max_steps=request.max_steps,
+            max_budget_units=request.max_budget_units,
+            on_failure=request.on_failure,
+            checkpoint_boundary=request.checkpoint_boundary,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/loop/execute")
+def execute_workbench_loop(
+    request: WorkbenchLoopExecuteRequest,
+) -> dict[str, Any]:
+    """Execute an accepted native loop and checkpoint after every attempted step."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    from taiji import ActionIntent
+
+    try:
+        environment = runtime.workbench_environment
+        intents: list[ActionIntent] = []
+        requests: list[WorkbenchActionRequest] = []
+        for item in request.intents:
+            intent = ActionIntent(
+                intent_id=item.intent_id,
+                kind=item.kind,
+                parameters=item.parameters,
+                source_goal_id=item.source_goal_id,
+                expected_outcome=item.expected_outcome,
+                confidence=item.confidence,
+                tick=item.tick,
+            )
+            intents.append(intent)
+            requests.append(
+                WorkbenchActionRequest.from_action_intent(
+                    intent,
+                    snapshot_id=item.snapshot_id,
+                    approval_token=item.approval_token,
+                    mcp_registry_snapshot_id=(
+                        item.mcp_registry_snapshot_id
+                        or (
+                            environment.mcp_registry.snapshot_id
+                            if item.kind.startswith("mcp.")
+                            else ""
+                        )
+                    ),
+                )
+            )
+        return runtime.execute_preflighted_workbench_loop(
+            intents,
+            requests,
+            loop_id=request.loop_id,
+            preflight_id=request.preflight_id,
             max_steps=request.max_steps,
             max_budget_units=request.max_budget_units,
             on_failure=request.on_failure,

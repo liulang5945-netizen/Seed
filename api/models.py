@@ -61,6 +61,12 @@ class WorkbenchLoopPreflightRequest(BaseModel):
     checkpoint_boundary: str = "after_each_step"
 
 
+class WorkbenchLoopExecuteRequest(WorkbenchLoopPreflightRequest):
+    """Execution request bound to a previously accepted loop preflight."""
+
+    preflight_id: str
+
+
 class RAGSearchRequest(BaseModel):
     query: str
     top_k: int = 5

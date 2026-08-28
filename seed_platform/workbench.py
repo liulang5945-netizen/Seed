@@ -769,6 +769,7 @@ class WorkbenchEnvironment:
 
         steps: list[dict[str, Any]] = []
         seen: set[str] = set()
+        seen_request_ids: set[str] = set()
         budget_units = 0.0
         for index, request in enumerate(requests):
             if not isinstance(request, WorkbenchActionRequest):
@@ -783,6 +784,13 @@ class WorkbenchEnvironment:
                     "loop capability snapshot drifted",
                     index=index,
                 )
+            if request.request_id in seen_request_ids:
+                return rejected(
+                    "duplicate_request_id",
+                    "loop contains a duplicate request_id",
+                    index=index,
+                )
+            seen_request_ids.add(request.request_id)
             if request.capability_id in {"mcp.list", "mcp.invoke"} and (
                 request.mcp_registry_snapshot_id != self.mcp_registry.snapshot_id
             ):
