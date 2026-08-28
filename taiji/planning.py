@@ -2469,7 +2469,11 @@ def build_recovery_reader_credit_consistency(
         structure_consistent = bool(
             group_complete and all(structure_digests) and len(set(structure_digests)) == 1
         )
-        within_tolerance = bool(profiles_valid and max_drift <= tolerance)
+        # 数值健壮性：drift 的数学上界恰为容差时（如跨 reader 归一化 L1 == 1.0），
+        # 不同 Python 版本下的浮点聚合尾差（如 1.0000000000000002）会把"等于容差"
+        # 误判为超限（§14.11 实测：3.12 safe / 3.10 unsafe）。沿用本项目 abs_tol=1e-9
+        # 惯例，把"恰好达到容差"视为通过。
+        within_tolerance = bool(profiles_valid and max_drift <= tolerance + 1e-9)
         checkpoint_complete = bool(all(base_checkpoint_digests) and all(state_digests))
         coverage_complete = set(reader_kinds) == set(
             RECOVERY_READER_CREDIT_CONSISTENCY_READER_KINDS

@@ -24,15 +24,16 @@ def test_distribution_and_readme_are_seed() -> None:
 
 
 def test_desktop_build_artifact_is_seed() -> None:
-    build = (REPO / "desktop" / "build.py").read_text(encoding="utf-8")
+    release = (REPO / "scripts" / "release.py").read_text(encoding="utf-8")
     installer = (REPO / "desktop" / "installer.nsi").read_text(encoding="utf-8")
     spec = REPO / "desktop" / "seed.spec"
 
     assert spec.is_file()
     assert not (REPO / "desktop" / "neuroplex.spec").exists()
-    # 打包产物身份守护：build.py 现走 seed.spec 双入口（Seed.exe + SeedBackend.exe），
+    # 打包产物身份守护：唯一发布入口 release.py（原 build.py 已并入并删除，
+    # 见 commit 52ee10c）现走 seed.spec 双入口（Seed.exe + SeedBackend.exe），
     # 主产物名必须是 Seed。
-    assert "seed.spec" in build
+    assert "seed.spec" in release
     assert 'name="Seed"' in spec.read_text(encoding="utf-8")
     assert '!define APP_EXE "Seed.exe"' in installer
 

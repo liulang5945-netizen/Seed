@@ -116,7 +116,9 @@ def test_python_sources_have_no_utf8_bom() -> None:
     # BOM 是隐形炸弹：black 走 tokenize.open 会静默剥离，CI 因此长绿，
     # 但任何 ast.parse(read_text(encoding="utf-8")) 都会炸 U+FEFF。
     # scripts/archive/ 内的脚本已因历史 mojibake 无法解析，不在守卫范围。
-    skip_parts = {".git", "node_modules", "build", "dist", "_libs", ".venv"}
+    # .codex/ 是本地 CLI 的 git worktree/临时文件（已被 .gitignore 忽略，不进 CI，
+    # 但会在本地 rglob 命中）；.venv* 是本地虚拟环境。两者都不是源码守卫对象。
+    skip_parts = {".git", "node_modules", "build", "dist", "_libs", ".venv", ".venv310", ".codex"}
     scanned = 0
     offenders: list[str] = []
     for path in REPO.rglob("*.py"):
