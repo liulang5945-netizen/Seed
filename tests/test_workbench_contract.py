@@ -589,3 +589,250 @@ def test_preview_issues_single_use_approval_and_runtime_projects_transaction(
     assert replayed["policy"]["decision"] == "ask_user"
     assert replayed["policy"]["reason_code"] == "approval_invalid"
     assert replayed["outcome"]["status"] == "rejected"
+
+
+def test_transaction_checkpoint_restores_undo_but_not_approval(tmp_path) -> None:
+    environment = WorkbenchEnvironment(tmp_path)
+    created = environment.execute_tool(
+        "workspace.create", {"path": "checkpoint.txt", "content": "keep\n"}
+    )
+    assert created.success is True
+    undo_token = environment.last_result["transaction"]["undo_token"]
+    transaction_state = environment.transaction_state_checkpoint()
+
+    restored = WorkbenchEnvironment(tmp_path)
+    restored.restore_transaction_state(transaction_state)
+    assert restored.status()["undoable_transactions"] == 1
+    undo_request = WorkbenchActionRequest(
+        request_id="request-checkpoint-undo",
+        intent_id="intent-checkpoint-undo",
+        capability_id="workspace.undo",
+        parameters={"undo_token": undo_token},
+        snapshot_id=restored.capability_snapshot.snapshot_id,
+        confidence=1.0,
+    )
+    undo_approval = restored.issue_approval(undo_request)
+    assert undo_approval["preview"]["mutation"]["undo_of"] == "workspace.create"
+    approved_undo_request = WorkbenchActionRequest(
+        request_id=undo_request.request_id,
+        intent_id=undo_request.intent_id,
+        capability_id=undo_request.capability_id,
+        parameters=undo_request.parameters,
+        snapshot_id=undo_request.snapshot_id,
+        confidence=undo_request.confidence,
+        approval_token=undo_approval["approval_token"],
+    )
+    assert restored.policy_for(approved_undo_request).reason_code == "explicit_approval"
+    restored.consume_approval(approved_undo_request)
+    assert restored.execute_tool("workspace.undo", {"undo_token": undo_token}).success
+    assert not (tmp_path / "checkpoint.txt").exists()
+
+    request = WorkbenchActionRequest(
+        request_id="request-checkpoint-approval",
+        intent_id="intent-checkpoint-approval",
+        capability_id="terminal.run",
+        parameters={"argv": [sys.executable, "-c", "pass"]},
+        snapshot_id=environment.capability_snapshot.snapshot_id,
+        confidence=1.0,
+    )
+    approval_token = environment.issue_approval(request)["approval_token"]
+    restored_request = WorkbenchActionRequest(
+        request_id=request.request_id,
+        intent_id=request.intent_id,
+        capability_id=request.capability_id,
+        parameters=request.parameters,
+        snapshot_id=request.snapshot_id,
+        confidence=request.confidence,
+        approval_token=approval_token,
+    )
+    assert restored.policy_for(restored_request).reason_code == "approval_invalid"
+
+
+def test_runtime_checkpoint_restores_transaction_lineage_without_approval_revival(
+    tmp_path, monkeypatch
+) -> None:
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(Seed(episode_id="workbench-checkpoint-canary"))
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    environment = runtime.workbench_environment
+    created = environment.execute_tool(
+        "workspace.create", {"path": "runtime.txt", "content": "resume\n"}
+    )
+    assert created.success is True
+    undo_token = environment.last_result["transaction"]["undo_token"]
+    old_undo_intent = ActionIntent(
+        intent_id="intent-old-undo",
+        kind="workspace.undo",
+        parameters={"undo_token": undo_token},
+        confidence=1.0,
+        tick=runtime.model.tick,
+    )
+    old_preview = runtime.preview_workbench_intent(
+        old_undo_intent,
+        snapshot_id=environment.capability_snapshot.snapshot_id,
+    )
+    old_approval = old_preview["approval"]["approval_token"]
+    checkpoint = tmp_path / "runtime.pt"
+    runtime.save(checkpoint)
+
+    restored = SeedRuntime.load(checkpoint)
+    assert restored.workbench_environment.status()["undoable_transactions"] == 1
+    old_request = WorkbenchActionRequest(
+        request_id="workbench:intent-old-undo",
+        intent_id=old_undo_intent.intent_id,
+        capability_id=old_undo_intent.kind,
+        parameters=old_undo_intent.parameters,
+        snapshot_id=restored.workbench_environment.capability_snapshot.snapshot_id,
+        confidence=1.0,
+        tick=restored.model.tick,
+        approval_token=old_approval,
+    )
+    assert (
+        restored.workbench_environment.policy_for(old_request).reason_code
+        == "approval_invalid"
+    )
+
+    new_undo_intent = ActionIntent(
+        intent_id="intent-new-undo",
+        kind="workspace.undo",
+        parameters={"undo_token": undo_token},
+        confidence=1.0,
+        tick=restored.model.tick,
+    )
+    new_preview = restored.preview_workbench_intent(
+        new_undo_intent,
+        snapshot_id=restored.workbench_environment.capability_snapshot.snapshot_id,
+    )
+    resumed = restored.execute_workbench_intent(
+        new_undo_intent,
+        snapshot_id=restored.workbench_environment.capability_snapshot.snapshot_id,
+        approval_token=new_preview["approval"]["approval_token"],
+        learn=False,
+    )
+    assert resumed["outcome"]["success"] is True
+    assert not (tmp_path / "runtime.txt").exists()
+
+
+def test_w2_temporary_project_gate_covers_language_patch_test_and_diagnostics(
+    tmp_path, monkeypatch
+) -> None:
+    (tmp_path / "src").mkdir()
+    (tmp_path / "build").mkdir()
+    source = tmp_path / "src" / "main.py"
+    original = b'def answer():\n    return "seed"\n'
+    updated = b'def answer():\n    return "taiji"\n'
+    source.write_bytes(original)
+    (tmp_path / "src" / "test_main.py").write_text(
+        "from main import answer\n\ndef test_answer():\n    assert answer() == 'taiji'\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(Seed(episode_id="workbench-w2-project-gate"))
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    environment = runtime.workbench_environment
+    snapshot_id = environment.capability_snapshot.snapshot_id
+
+    language = environment.execute_tool(
+        "workspace.programming_language.resolve", {"path": "src/main.py"}
+    )
+    assert language.success is True
+    assert environment.last_result["programming_language_id"] == "python"
+
+    before_digest = hashlib.sha256(original).hexdigest()
+    after_digest = hashlib.sha256(updated).hexdigest()
+    patch_intent = ActionIntent(
+        intent_id="w2-project-patch",
+        kind="workspace.apply_patch",
+        parameters={
+            "path": "src/main.py",
+            "before_digest": before_digest,
+            "patch": {
+                "kind": "text_replace",
+                "operations": [
+                    {
+                        "start": original.decode().index("seed"),
+                        "end": original.decode().index("seed") + len("seed"),
+                        "text": "taiji",
+                    }
+                ],
+            },
+            "expected_after_digest": after_digest,
+        },
+        confidence=1.0,
+        tick=runtime.model.tick,
+    )
+    patch_preview = runtime.preview_workbench_intent(
+        patch_intent, snapshot_id=snapshot_id
+    )
+    assert patch_preview["preview"]["mutation"]["after_digest"] == after_digest
+    assert source.read_bytes() == original
+    patch_result = runtime.execute_workbench_intent(
+        patch_intent,
+        snapshot_id=snapshot_id,
+        approval_token=patch_preview["approval"]["approval_token"],
+        learn=False,
+    )
+    assert patch_result["outcome"]["success"] is True
+    assert source.read_bytes() == updated
+
+    test_intent = ActionIntent(
+        intent_id="w2-project-test",
+        kind="terminal.run",
+        parameters={
+            "argv": [
+                sys.executable,
+                "-c",
+                "from pathlib import Path; Path('build/result.txt').write_text('ok')",
+            ],
+            "execution_kind": "test",
+            "expected_artifacts": ["build/result.txt"],
+        },
+        confidence=1.0,
+        tick=runtime.model.tick,
+    )
+    test_preview = runtime.preview_workbench_intent(
+        test_intent, snapshot_id=snapshot_id
+    )
+    test_result = runtime.execute_workbench_intent(
+        test_intent,
+        snapshot_id=snapshot_id,
+        approval_token=test_preview["approval"]["approval_token"],
+        learn=False,
+    )
+    assert test_result["outcome"]["success"] is True
+    assert test_result["outcome"]["result"]["after_state"]["artifacts"][0]["exists"]
+
+    diagnostic_intent = ActionIntent(
+        intent_id="w2-project-diagnostic",
+        kind="terminal.run",
+        parameters={
+            "argv": [
+                sys.executable,
+                "-c",
+                "print('src/main.py:1:1: error: test regression')",
+            ],
+            "execution_kind": "diagnostics",
+        },
+        confidence=1.0,
+        tick=runtime.model.tick,
+    )
+    diagnostic_preview = runtime.preview_workbench_intent(
+        diagnostic_intent, snapshot_id=snapshot_id
+    )
+    diagnostic_result = runtime.execute_workbench_intent(
+        diagnostic_intent,
+        snapshot_id=snapshot_id,
+        approval_token=diagnostic_preview["approval"]["approval_token"],
+        learn=False,
+    )
+    assert diagnostic_result["outcome"]["success"] is False
+    assert (
+        diagnostic_result["outcome"]["result"]["diagnostics"][0]["severity"] == "error"
+    )
+    assert (tmp_path / "build" / "result.txt").read_text(encoding="utf-8") == "ok"

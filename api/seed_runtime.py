@@ -354,6 +354,7 @@ class SeedRuntime:
                         "snapshot": workbench.capability_snapshot.to_payload(),
                         "audit": self._workbench_audit.to_payload(),
                         "language_state": workbench.language_state_checkpoint(),
+                        "transaction_state": workbench.transaction_state_checkpoint(),
                     },
                 },
             )
@@ -434,6 +435,9 @@ class SeedRuntime:
         language_payload = payload.get("language_state")
         if isinstance(language_payload, Mapping):
             self._workbench_environment.restore_language_state(language_payload)
+        transaction_payload = payload.get("transaction_state")
+        if isinstance(transaction_payload, Mapping):
+            self._workbench_environment.restore_transaction_state(transaction_payload)
 
     def preview_workbench_intent(
         self,

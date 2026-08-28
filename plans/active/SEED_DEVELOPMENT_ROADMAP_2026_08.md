@@ -1911,6 +1911,12 @@ execution kind、结构化 diagnostics、expected artifacts、after-state，并�
 runtime 和通用前端 projection 已接入 preview/execute client。后端 Workbench 合同 `12 passed`、前端完整回归 `187 passed`、构建通过，
 ruff/Black/py_compile/diff check 通过。该 slice 完成的是审批/结果合同，不等于 checkpoint 后 undo/approval 状态和真实临时项目续跑已通过。
 
-**当前唯一下一步：完成 W2 退出 Gate 的 checkpoint 续跑与真实临时项目闭环。** 将已提交 transaction、可撤销状态、审批失效语义和
-审计 lineage 明确写入/恢复策略；在临时多文件项目中验证预览不副作用、审批后一次执行、诊断失败重规划、patch 冲突恢复、测试/构建产物
-after-state，以及 checkpoint 后不会重复已提交事务。W2 未通过前不进入 W3 MCP/自主循环。
+**已完成（2026-08-29）：W2 退出 Gate 的 checkpoint 续跑与真实临时项目闭环。** transaction state 随 SeedRuntime checkpoint
+保存并恢复 undo lineage，approval token 明确为 session-scoped、重启后失效；恢复后重新预览/审批可完成撤销。临时多文件项目已完成
+语言识别→patch 预览/执行→test 产物→diagnostics 失败回写链路，预览无副作用，冲突/输出洪泛/cwd 漂移/超时/进程中断均有
+fail-closed 证据；旧 `runtime_service` 边界测试同步到 native capability 事实。Seed/native 回归 `320 passed, 1 skipped`，W2
+退出 Gate 通过，具备进入 W3 的证据。
+
+**当前唯一下一步：开始 W3 原生 capability/MCP registry 与有限自主循环的第一纵切片。** 先盘点现有 MCP/terminal/LSP 路由的
+真实 ownership，把可执行能力统一投影到 Seed registry，并为 `mcp.list/invoke` 定义版本化 schema、来源、权限、预算和 outcome；
+仅接入一个不带安装/网络副作用的本地工具 canary，验证 Taiji planner 与 Workbench 任一侧移除都会 fail-closed，再扩展到多步循环。
