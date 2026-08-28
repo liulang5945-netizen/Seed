@@ -281,9 +281,12 @@ API contract/native boundary、ESLint、生产构建全部通过。
 已切换到 `nativeApi`，普通 JSON 的 URL、method、请求体序列化和错误解包不再散落在页面/Store；流式聊天、附件上传、训练原生训练和检查点
 恢复保留为显式 raw-response 方法。前端 Vitest `24 files / 191 passed`、API contract/native boundary、ESLint、生产构建全部通过。
 
-**当前唯一下一步：开始 W6 第四 slice 的特殊传输边界收口。** 将训练 `FileUploadQueue` 的 native dataset 上传切换为命名 facade 操作，
-保留其旧兼容 props 仅作为隔离测试边界；为 chat/训练 raw-response 方法补充取消、非 2xx 和 response-body 缺失的最小契约测试，随后再进入
-大型 view 拆分与 trace/SLO。不得先做视觉包装或 CUDA kernel。
+**已完成（2026-08-29）：W6 第四 slice 的特殊传输边界收口。** 训练产品页改用 `nativeDatasetUpload` 语义开关，native dataset 上传通过
+命名 facade 操作，旧 endpoint prop 仅保留在隔离兼容路径；chat/训练 SSE 与 FormData raw-response 契约测试已覆盖取消、非 2xx、空 body
+和 multipart body。前端 Vitest `24 files / 194 passed`、API contract/native boundary、ESLint、生产构建全部通过。
+
+**当前唯一下一步：开始 W6 第五 slice 的 WorkspaceView 结构拆分。** 将路径对话框、文件树和编辑器协调逻辑拆成明确的 native 工作台子组件/组合式
+模块，保持现有 preview→approval→execute 行为不变；拆分后补组件级回归和最小 trace/SLO 观测点。不得先做视觉包装或 CUDA kernel。
 
 ## 当前唯一下一步
 

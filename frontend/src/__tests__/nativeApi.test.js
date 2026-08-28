@@ -42,6 +42,34 @@ describe('nativeApi facade', () => {
     )
   })
 
+  it('preserves stream response and cancellation signal without parsing it', async () => {
+    const response = { ok: false, status: 503, body: null }
+    const signal = { aborted: false }
+    authFetch.mockResolvedValueOnce(response)
+
+    await expect(nativeApi.chatStream({ prompt: 'hello' }, { signal })).resolves.toBe(response)
+
+    expect(authFetch).toHaveBeenCalledWith('/api/chat/stream', expect.objectContaining({
+      method: 'POST',
+      retries: 0,
+      signal,
+      body: JSON.stringify({ prompt: 'hello' }),
+    }))
+  })
+
+  it('keeps FormData upload outside the JSON facade', async () => {
+    const formData = new FormData()
+    formData.append('file', new Blob(['dataset']))
+    authFetch.mockResolvedValueOnce({ ok: true, status: 200 })
+
+    await nativeApi.uploadTrainingDataset(formData)
+
+    expect(authFetch).toHaveBeenCalledWith('/api/train/upload_dataset', expect.objectContaining({
+      method: 'POST',
+      body: formData,
+    }))
+  })
+
   it('turns non-2xx JSON into a native API error', async () => {
     authFetch.mockResolvedValueOnce(jsonResponse({ detail: 'workspace rejected' }, false, 409))
 

@@ -181,7 +181,7 @@
           </div>
           <FileUploadQueue
             ref="trainUploadRef"
-            upload-endpoint="/api/train/upload_dataset"
+            native-dataset-upload
             accept=".jsonl,.json,.txt,.csv,.md,.pdf,.docx,.doc,.xlsx,.xls,.pptx,.html,.htm,.epub,.rtf,.xml,.log,.py,.js,.ts,.css,.java,.c,.cpp,.sh,.sql,.png,.jpg,.jpeg,.bmp,.gif,.webp,.tiff,.tif"
             :icon="BarChart2" title="训练数据上传" :upload-icon="Download"
             :drop-text="t('train_upload')" :accept-hint="t('train_support')"
