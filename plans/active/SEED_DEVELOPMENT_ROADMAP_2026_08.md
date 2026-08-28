@@ -2014,6 +2014,11 @@ Vitest `24 files / 191 passed`、API contract/native boundary、ESLint、生产�
 取消信号、非 2xx、空 body 和 multipart body 不被 JSON 化。证据为前端 Vitest `24 files / 194 passed`、API contract/native boundary、
 ESLint、生产构建全部通过。
 
-**当前唯一下一步：开始 W6 第五 slice 的 WorkspaceView 结构拆分。** 将 WorkspaceView 的路径对话框、文件树和编辑器协调逻辑拆成明确的
-native 工作台子组件/组合式模块，保持现有 `useWorkbenchProjection` 和 preview→approval→execute 行为不变；拆分后补组件级回归和
-最小 trace/SLO 观测点。不得先做视觉包装或 CUDA kernel。
+**已完成（2026-08-29）：W6 第五 slice 的 WorkspaceView 第一阶段结构拆分与最小观测点。** 路径选择对话框已拆为
+`WorkspacePathDialog`，父视图只负责 native 工作台状态、路径切换和 preview→approval→execute 协调；原生 API facade 新增请求数、成功/失败、
+最后状态和延迟 snapshot，为后续 trace/SLO 提供统一观测入口。父视图移除已迁移对话框的专属样式，新增组件与 facade 观测回归；前端
+Vitest `25 files / 196 passed`、API/native boundary、ESLint、生产构建全部通过。
+
+**当前唯一下一步：开始 W6 第六 slice 的 WorkspaceView 文件树展示拆分。** 将文件树渲染、展开/折叠和树节点事件转发抽为
+`WorkspaceFileTree`，父视图继续唯一拥有目录加载、文件读写和 native mutation 状态；保持快捷打开、编辑器联动和现有 CSS 行为不变，补组件级
+回归后再进入其他大型 view 和 trace/SLO 页面化展示。不得先做视觉包装或 CUDA kernel。

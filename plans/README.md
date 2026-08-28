@@ -285,8 +285,13 @@ API contract/native boundary、ESLint、生产构建全部通过。
 命名 facade 操作，旧 endpoint prop 仅保留在隔离兼容路径；chat/训练 SSE 与 FormData raw-response 契约测试已覆盖取消、非 2xx、空 body
 和 multipart body。前端 Vitest `24 files / 194 passed`、API contract/native boundary、ESLint、生产构建全部通过。
 
-**当前唯一下一步：开始 W6 第五 slice 的 WorkspaceView 结构拆分。** 将路径对话框、文件树和编辑器协调逻辑拆成明确的 native 工作台子组件/组合式
-模块，保持现有 preview→approval→execute 行为不变；拆分后补组件级回归和最小 trace/SLO 观测点。不得先做视觉包装或 CUDA kernel。
+**已完成（2026-08-29）：W6 第五 slice 的 WorkspaceView 第一阶段结构拆分与最小观测点。** 路径选择对话框已拆为
+`WorkspacePathDialog`；父视图继续负责 native 工作台状态、路径切换和 preview→approval→execute 协调。native API facade 已新增请求数、
+成功/失败、最后状态和延迟 snapshot；Vitest `25 files / 196 passed`、API/native boundary、ESLint、生产构建全部通过。
+
+**当前唯一下一步：开始 W6 第六 slice 的 WorkspaceView 文件树展示拆分。** 将文件树渲染、展开/折叠和树节点事件转发抽为
+`WorkspaceFileTree`，父视图继续唯一拥有目录加载、文件读写和 native mutation 状态；保持快捷打开、编辑器联动和现有 CSS 行为不变，补组件级
+回归后再进入其他大型 view 和 trace/SLO 页面化展示。不得先做视觉包装或 CUDA kernel。
 
 ## 当前唯一下一步
 
