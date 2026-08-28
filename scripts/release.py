@@ -110,9 +110,8 @@ def _verify_artifacts(expect_installer: bool) -> list[str]:
         errors.append(str(exc))
 
     # NSIS（installer.nsi 的 OutFile 为 ..\dist\SeedSetup.exe）
-    if expect_installer:
-        if not (DIST_DIR / "SeedSetup.exe").exists():
-            errors.append("dist/SeedSetup.exe 不存在")
+    if expect_installer and not (DIST_DIR / "SeedSetup.exe").exists():
+        errors.append("dist/SeedSetup.exe 不存在")
 
     return errors
 
