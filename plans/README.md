@@ -314,8 +314,13 @@ API/native boundary、ESLint、生产构建全部通过。
 `TrainingDatasetPanel`；父视图继续唯一持有数据集加载、删除、预览和 native 上传协调，组件通过显式 props/events 连接。旧数据集专属样式已从父视图移除。
 前端 Vitest `31 files / 205 passed`、API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
 
-**当前唯一下一步：开始 W6 第十二片的 TrainingView 日志与训练控制展示区拆分。** 将日志展示、清空事件和暂停/恢复/停止控制隔离，
-父视图继续唯一持有 SSE、训练状态和 native 操作；每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，
+**已完成（2026-08-29）：W6 第十二片的 TrainingView 日志与训练控制展示区拆分。** 日志展示/清空事件已抽为
+`TrainingLogPanel`，暂停/恢复/停止控制已抽为 `TrainingControlBar`；父视图继续唯一持有 SSE、训练状态和 native 操作，
+组件仅通过显式 props/events 连接。新增组件级回归，前端 Vitest `33 files / 209 passed`、API contract/native boundary、
+ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
+
+**当前唯一下一步：开始 W6 第十三片的 ChatView 消息与输入区展示拆分。** 先隔离消息列表/消息气泡和输入组合区的纯展示与事件转发，
+父视图继续唯一持有流式 reader、会话状态、附件上传和 native API 副作用；每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，
 不得先做视觉包装或 CUDA kernel。
 
 ## 当前唯一下一步
