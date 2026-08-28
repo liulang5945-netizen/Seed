@@ -6,7 +6,7 @@
  * 此处只提供命令动作（login/logout/enable/disable）。
  */
 import { ref, computed } from 'vue';
-import { API_BASE, authFetch } from './apiClient.js';
+import { nativeApi } from './nativeApi.js';
 import { useRuntimeStore } from '@/stores/runtimeStore.js';
 
 const token = ref(localStorage.getItem('jwt_token') || '');
@@ -21,16 +21,7 @@ export function useAuth() {
   const isAuthenticated = computed(() => !authEnabled.value || !!token.value);
 
   async function login(user, password) {
-    const r = await fetch(`${API_BASE}/api/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: user, password })
-    });
-    if (!r.ok) {
-      const d = await r.json().catch(() => ({}));
-      throw new Error(d.detail || '登录失败');
-    }
-    const d = await r.json();
+    const d = await nativeApi.authLogin({ username: user, password });
     token.value = d.token;
     localStorage.setItem('jwt_token', d.token);
     return d;
@@ -50,37 +41,34 @@ export function useAuth() {
   }
 
   async function enableAuth(user, password) {
-    const r = await authFetch(`${API_BASE}/api/auth/enable`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ username: user, password })
-    });
-    if (r.ok) {
-      authEnabled.value = true;
-      username.value = user;
+    try {
+      await nativeApi.authEnable({ username: user, password });
+      runtimeStore.auth.enabled = true;
+      runtimeStore.auth.username = user;
+      return true;
+    } catch (e) {
+      return false;
     }
-    return r.ok;
   }
 
   async function disableAuth() {
-    const r = await authFetch(`${API_BASE}/api/auth/disable`, {
-      method: 'POST',
-      headers: getAuthHeaders()
-    });
-    if (r.ok) {
-      authEnabled.value = false;
+    try {
+      await nativeApi.authDisable();
+      runtimeStore.auth.enabled = false;
       logout();
+      return true;
+    } catch (e) {
+      return false;
     }
-    return r.ok;
   }
 
   async function changePassword(oldPwd, newPwd) {
-    const r = await authFetch(`${API_BASE}/api/auth/change_password`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ old_password: oldPwd, new_password: newPwd })
-    });
-    return r.ok;
+    try {
+      await nativeApi.authChangePassword({ old_password: oldPwd, new_password: newPwd });
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   // 处理 401 响应（全局拦截）

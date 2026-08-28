@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed, nextTick } from 'vue'
-import { API_BASE, authFetch } from '@/composables/apiClient.js'
+import { nativeApi } from '@/composables/nativeApi.js'
 import { setChatReceiving } from '@/composables/useApi.js'
 
 let _msgIdCounter = 0
@@ -32,9 +32,7 @@ export const useChatStore = defineStore('chat', () => {
    */
   async function loadSessions() {
     try {
-      const res = await authFetch(`${API_BASE}/api/chat/sessions`)
-      if (!res.ok) return
-      const list = await res.json()
+      const list = await nativeApi.chatSessions()
       if (!Array.isArray(list) || list.length === 0) {
         sessionsLoaded.value = true
         return
@@ -45,9 +43,7 @@ export const useChatStore = defineStore('chat', () => {
 
       async function _fetchSessionDetail(item) {
         try {
-          const detailRes = await authFetch(`${API_BASE}/api/chat/history/${item.session_id}`)
-          if (!detailRes.ok) return null
-          const detail = await detailRes.json()
+          const detail = await nativeApi.chatHistory(item.session_id)
           return {
             id: Number(item.session_id) || item.session_id,
             name: detail.name || item.name || '',
@@ -101,7 +97,7 @@ export const useChatStore = defineStore('chat', () => {
 
   function deleteSession(id) {
     // 先从后端删除
-    authFetch(`${API_BASE}/api/chat/history/${id}`, { method: 'DELETE' }).catch(() => {})
+    nativeApi.deleteChatHistory(id).catch(() => {})
     sessions.value = sessions.value.filter(s => s.id !== id)
     if (currentSessionId.value === id) {
       if (sessions.value.length) switchSession(sessions.value[0].id)
@@ -178,11 +174,7 @@ export const useChatStore = defineStore('chat', () => {
       const autoTitle = input.length > 20 ? input.slice(0, 20) + '…' : input
       s.name = autoTitle
       // 同步更新到后端（异步，不阻塞）
-      authFetch(`${API_BASE}/api/chat/history/${s.id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: autoTitle, messages: s.messages }),
-      }).catch(() => {})
+      nativeApi.saveChatHistory(s.id, { name: autoTitle, messages: s.messages }).catch(() => {})
     }
     isLoading.value = true
     isReceiving.value = false
@@ -213,17 +205,11 @@ export const useChatStore = defineStore('chat', () => {
       }
 
       const sysPrompt = getSystemPrompt()
-      const res = await authFetch(`${API_BASE}/api/chat/stream`, {
-        method: 'POST',
-        retries: 0, // 非幂等流式推理：禁用重试，避免 5xx 时重复推理
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt: promptInput,
-          system_prompt: sysPrompt,
-          history,
-        }),
-        signal: abortController.signal,
-      })
+      const res = await nativeApi.chatStream({
+        prompt: promptInput,
+        system_prompt: sysPrompt,
+        history,
+      }, { signal: abortController.signal })
 
       if (!res.ok) {
         const e = await res.json().catch(() => ({ detail: res.statusText }))
@@ -357,11 +343,7 @@ export const useChatStore = defineStore('chat', () => {
 
       // 对话完成后自动保存到后端（异步，不阻塞）
       if (s && s.messages && s.messages.length > 0) {
-        authFetch(`${API_BASE}/api/chat/history/${s.id}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: s.name, messages: s.messages }),
-        }).catch(() => {})
+        nativeApi.saveChatHistory(s.id, { name: s.name, messages: s.messages }).catch(() => {})
       }
     }
   }

@@ -2004,6 +2004,11 @@ Workbench 和 system 三组 native 端点、查询参数构造、JSON 序列化�
 门禁，并新增 4 项 facade 单测；一次发现并修复 Workspace 快速路径把 payload 误当 Response 的边界回归。证据为前端 Vitest
 `24 files / 191 passed`、API contract/native boundary、ESLint、生产构建全部通过。
 
-**当前唯一下一步：开始 W6 第三 slice 的 typed/native API facade 第二批迁移。** 继续迁移 settings、auth、chat、training 和 App 健康
-入口，将 raw response、JSON 解包和 URL 路径从页面/Store 收拢到同一 facade；保留流式聊天与文件上传的特殊传输边界，不能用普通 JSON
-封装替代。每迁移一组入口都必须保持 API contract、native boundary、测试和生产构建全绿，不得先做视觉包装或 CUDA kernel。
+**已完成（2026-08-29）：W6 第三 slice 的 typed/native API facade 第二批迁移。** settings、auth、chat、training 和 App 健康/版本入口
+已切换到 `nativeApi` 命名操作；普通 JSON 的 URL、method、请求体序列化和错误解包不再散落在页面/Store。流式聊天、附件上传、训练原生
+训练和检查点恢复保留为显式 raw-response 方法，避免把 SSE/FormData 错当成 JSON；`nativeApiPaths` 覆盖对应 OpenAPI 路径。证据为前端
+Vitest `24 files / 191 passed`、API contract/native boundary、ESLint、生产构建全部通过。
+
+**当前唯一下一步：开始 W6 第四 slice 的特殊传输边界收口。** 将训练 `FileUploadQueue` 的 native dataset 上传切换为命名 facade 操作，
+保留其旧兼容 props 仅作为隔离测试边界；为 chat/训练 raw-response 方法补充取消、非 2xx 和 response-body 缺失的最小契约测试，随后再进入
+大型 view 拆分与 trace/SLO。不得先做视觉包装或 CUDA kernel。

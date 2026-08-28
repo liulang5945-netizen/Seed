@@ -7,7 +7,7 @@
  * 旧训练流后端已不存在，相关死路径已移除。
  */
 import { ref, reactive, nextTick } from 'vue';
-import { API_BASE, authFetch } from './apiClient.js';
+import { nativeApi } from './nativeApi.js';
 
 // ===== 导出状态 =====
 
@@ -88,24 +88,20 @@ export function toggleDataset(filename) {
 
 export async function loadTrainDatasets() {
   try {
-    const res = await authFetch(`${API_BASE}/api/train/files`);
-    if (res.ok) {
-      const data = await res.json();
-      trainFiles.value = data.files || [];
-    }
+    const data = await nativeApi.trainingFiles();
+    trainFiles.value = data.files || [];
   } catch (e) { /* silent */ }
 }
 
 export async function previewDataset(filename) {
   try {
-    const res = await authFetch(`${API_BASE}/api/train/preview/${encodeURIComponent(filename)}`);
-    if (res.ok) trainPreview.value = await res.json();
+    trainPreview.value = await nativeApi.trainingPreview(filename);
   } catch (e) { /* console.warn(e) */ }
 }
 
 export async function deleteTrainFile(filename) {
   try {
-    await authFetch(`${API_BASE}/api/train/file/${encodeURIComponent(filename)}`, { method: 'DELETE' });
+    await nativeApi.deleteTrainingFile(filename);
     const idx = selectedDatasets.value.indexOf(filename);
     if (idx >= 0) selectedDatasets.value.splice(idx, 1);
     loadTrainDatasets();
@@ -118,7 +114,7 @@ export async function deleteSelectedDatasets(_toast) {
   let successCount = 0;
   for (const filename of [...selectedDatasets.value]) {
     try {
-      await authFetch(`${API_BASE}/api/train/file/${encodeURIComponent(filename)}`, { method: 'DELETE' });
+      await nativeApi.deleteTrainingFile(filename);
       const idx = selectedDatasets.value.indexOf(filename);
       if (idx >= 0) selectedDatasets.value.splice(idx, 1);
       successCount++;
@@ -134,7 +130,7 @@ export async function deleteSelectedDatasets(_toast) {
 
 export async function pauseTraining(toast) {
   try {
-    await authFetch(`${API_BASE}/api/train/pause`, { method: 'POST' });
+    await nativeApi.pauseTraining();
     trainState.value = 'paused';
     toast('⏸ 训练已暂停', 'info');
   } catch (e) { toast(`❌ 暂停失败: ${e.message}`, 'error'); }
@@ -142,7 +138,7 @@ export async function pauseTraining(toast) {
 
 export async function resumeTraining(toast) {
   try {
-    await authFetch(`${API_BASE}/api/train/resume`, { method: 'POST' });
+    await nativeApi.resumeTraining();
     trainState.value = 'running';
     toast('▶ 训练已恢复', 'info');
   } catch (e) { toast(`❌ 恢复失败: ${e.message}`, 'error'); }
@@ -157,7 +153,7 @@ export async function stopTraining(toast) {
     try { trainReader.cancel(); } catch (e) { }
     trainReader = null;
   }
-  try { await authFetch(`${API_BASE}/api/train/stop`, { method: 'POST' }); } catch (e) { }
+  try { await nativeApi.stopTraining(); } catch (e) { }
   trainState.value = 'idle';
   trainProgress.value = 0;
   toast('⏹ 训练已停止', 'info');
@@ -167,11 +163,8 @@ export async function stopTraining(toast) {
 
 export async function loadCheckpoints() {
   try {
-    const res = await authFetch(`${API_BASE}/api/train/checkpoints`);
-    if (res.ok) {
-      const data = await res.json();
-      pendingCheckpoints.value = data.checkpoints || [];
-    }
+    const data = await nativeApi.trainingCheckpoints();
+    pendingCheckpoints.value = data.checkpoints || [];
   } catch (e) { /* silent */ }
 }
 
@@ -203,10 +196,7 @@ export async function resumeFromCheckpoint(toast, $confirm) {
   }
 
   try {
-    const res = await authFetch(`${API_BASE}/api/train/resume_checkpoint`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+    const res = await nativeApi.resumeTrainingCheckpoint(body, {
       signal: trainAbortController.signal,
     });
 
@@ -304,7 +294,7 @@ export async function resumeFromCheckpoint(toast, $confirm) {
  */
 export async function detectTaijiModel() {
   try {
-    const res = await authFetch(`${API_BASE}/api/runtime/status`);
+    const res = await nativeApi.runtimeStatus();
     if (res.ok) {
       const data = await res.json();
       if (data.health?.is_seed) {
@@ -347,19 +337,14 @@ export async function startTaijiTraining(toast) {
     trainLog.value += '🧠 启动 Taiji 原生训练（raw bytes + local plasticity）...\n';
     autoScrollTrainLog();
 
-    const res = await authFetch(`${API_BASE}/api/train/native`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        datasets: selectedDatasets.value.length ? [...selectedDatasets.value] : null,
-        parameter_budget: taijiTrainParams.parameter_budget,
-        max_symbols: taijiTrainParams.max_symbols || null,
-        device: taijiTrainParams.device || 'auto',
-        // seed 被清空（null/非整数）时后端会返回 422，发送前兜底默认值
-        seed: Number.isInteger(taijiTrainParams.seed) ? taijiTrainParams.seed : 20260822,
-      }),
-      signal: trainAbortController.signal,
-    });
+    const res = await nativeApi.nativeTraining({
+      datasets: selectedDatasets.value.length ? [...selectedDatasets.value] : null,
+      parameter_budget: taijiTrainParams.parameter_budget,
+      max_symbols: taijiTrainParams.max_symbols || null,
+      device: taijiTrainParams.device || 'auto',
+      // seed 被清空（null/非整数）时后端会返回 422，发送前兜底默认值
+      seed: Number.isInteger(taijiTrainParams.seed) ? taijiTrainParams.seed : 20260822,
+    }, { signal: trainAbortController.signal });
 
     if (!res.ok) {
       const err = await res.json().catch(() => ({ detail: res.statusText }));
