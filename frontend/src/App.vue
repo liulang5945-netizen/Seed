@@ -73,7 +73,7 @@ import { useChatStore } from './stores/chatStore.js'
 import { useRuntimeStore } from './stores/runtimeStore.js'
 import { useApi } from './composables/useApi.js'
 import { useWebSocket } from './composables/useWebSocket.js'
-import { API_BASE, authFetch } from './composables/apiClient.js'
+import { nativeApi } from './composables/nativeApi.js'
 import { loadCheckpoints, trainAbortController } from './composables/useTraining.js'
 import router from './router'
 
@@ -258,18 +258,15 @@ onMounted(async () => {
   window.addEventListener('blur', clearDragState)
   window.addEventListener('keyup', onGlobalKeyup)
   try {
-    const r = await authFetch(`${API_BASE}/api/settings`);
-    if (r.ok) {
-      const saved = await r.json();
-      if (saved && typeof saved === 'object') {
-        for (const [key, value] of Object.entries(saved)) {
-          const storageKey = `taiji_${key}`;
-          if (value !== undefined && value !== null) {
-            localStorage.setItem(storageKey, typeof value === 'string' ? value : JSON.stringify(value));
-          }
+    const saved = await nativeApi.settingsGet();
+    if (saved && typeof saved === 'object') {
+      for (const [key, value] of Object.entries(saved)) {
+        const storageKey = `taiji_${key}`;
+        if (value !== undefined && value !== null) {
+          localStorage.setItem(storageKey, typeof value === 'string' ? value : JSON.stringify(value));
         }
-        appStore.restoreUISettings(saved);
       }
+      appStore.restoreUISettings(saved);
     }
   } catch (e) { /* 静默处理 */ }
 

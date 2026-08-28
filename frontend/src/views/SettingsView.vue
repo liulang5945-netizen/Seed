@@ -396,7 +396,7 @@
 import { ref, reactive, inject } from 'vue';
 import { useAppStore } from '../stores/appStore.js';
 import { useChatStore } from '../stores/chatStore.js';
-import { API_BASE, authFetch } from '../composables/apiClient.js';
+import { nativeApi } from '../composables/nativeApi.js';
 import RuntimeEvidenceStrip from '../components/RuntimeEvidenceStrip.vue';
 
 const toast = inject('toast');
@@ -411,13 +411,10 @@ const runtimeStatusText = ref('检测中…');
 
 const refreshRuntime = async () => {
   try {
-    const r = await authFetch(`${API_BASE}/api/health`);
-    if (r.ok) {
-      const d = await r.json();
-      runtimeStatusText.value = d.seed_active
-        ? 'Seed 原生运行时激活中（检查点：checkpoints/seed_corpus.pt，对话即持续学习）'
-        : 'Seed 原生运行时未激活；请检查本地服务状态';
-    }
+    const d = await nativeApi.systemHealth();
+    runtimeStatusText.value = d.seed_active
+      ? 'Seed 原生运行时激活中（检查点：checkpoints/seed_corpus.pt，对话即持续学习）'
+      : 'Seed 原生运行时未激活；请检查本地服务状态';
   } catch (e) {
     runtimeStatusText.value = `状态检测失败：${e.message}`;
   }
@@ -498,9 +495,7 @@ if (uiLanguage.value === 'en') appStore.currentLang = 'en';
 // 进入页面时拉取服务端设置并校正所有控件（含终端开关）
 const refreshPersistedSettings = async () => {
   try {
-    const r = await authFetch(`${API_BASE}/api/settings`);
-    if (!r.ok) return;
-    const d = await r.json();
+    const d = await nativeApi.settingsGet();
     if (!d || typeof d !== 'object') return;
     for (const [key, target] of Object.entries(settingRefs)) {
       const v = d[key];
@@ -535,12 +530,7 @@ const saveSetting = async (key, next, prev) => {
   savingSettings.value = true;
   userModifiedKeys.add(key);
   try {
-    const r = await authFetch(`${API_BASE}/api/settings`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ [key]: next }),
-    });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    await nativeApi.settingsSave({ [key]: next });
     confirmed[key] = next;
     localStorage.setItem(`taiji_${key}`, typeof next === 'string' ? next : JSON.stringify(next));
     toast('✅ 设置已保存', 'success');
@@ -597,8 +587,7 @@ const onExportData = async () => {
   try {
     let settings = {};
     try {
-      const r = await authFetch(`${API_BASE}/api/settings`);
-      if (r.ok) settings = await r.json();
+      settings = await nativeApi.settingsGet();
     } catch (e) { /* 设置拉取失败不阻断导出，降级为空对象 */ }
     const payload = {
       app: 'Seed',
@@ -639,13 +628,8 @@ const onResetSeed = async () => {
   if (!ok) return;
   resetting.value = true;
   try {
-    const r = await authFetch(`${API_BASE}/api/system/reset`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scope: 'chat_sessions' }),
-    });
-    const d = await r.json().catch(() => ({}));
-    if (!r.ok || d.status !== 'ok') throw new Error(d.detail || d.message || `HTTP ${r.status}`);
+    const d = await nativeApi.systemReset({ scope: 'chat_sessions' });
+    if (d.status !== 'ok') throw new Error(d.detail || d.message || '重置失败');
     toast(`✅ 重置完成：${d.message || '已清空对话会话'}`, 'success');
     // 重置后刷新前端会话列表并重建新会话，避免引用已删除的会话
     await chatStore.loadSessions();
@@ -676,12 +660,7 @@ const onTerminalUnauthChange = async () => {
   if (savingTerminalSetting.value) return;
   savingTerminalSetting.value = true;
   try {
-    const r = await authFetch(`${API_BASE}/api/settings`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ terminal_allow_unauthenticated: next }),
-    });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    await nativeApi.settingsSave({ terminal_allow_unauthenticated: next });
     localStorage.setItem('taiji_terminal_allow_unauthenticated', JSON.stringify(next));
     toast(next ? '✅ 已允许未认证终端访问' : '✅ 已关闭未认证终端访问', 'success');
   } catch (e) {
@@ -703,11 +682,8 @@ const appVersion = ref('1.0.0');
 // Load app version
 (async () => {
   try {
-    const r = await authFetch(`${API_BASE}/api/system/version`);
-    if (r.ok) {
-      const d = await r.json();
-      if (d.version) appVersion.value = d.version;
-    }
+    const d = await nativeApi.systemVersion();
+    if (d.version) appVersion.value = d.version;
   } catch (e) {}
 })();
 </script>

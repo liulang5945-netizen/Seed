@@ -223,7 +223,7 @@ import RuntimeEvidenceStrip from './RuntimeEvidenceStrip.vue'
 import { useChatStore } from '@/stores/chatStore.js'
 import { useRuntimeStore } from '@/stores/runtimeStore.js'
 import { useMarkdown } from '@/composables/useMarkdown.js'
-import { API_BASE, authFetch } from '@/composables/apiClient.js'
+import { nativeApi } from '@/composables/nativeApi.js'
 
 const chatStore = useChatStore()
 const runtimeStore = useRuntimeStore()
@@ -350,7 +350,7 @@ async function onFilePicked(e) {
     for (const file of files) {
       const formData = new FormData()
       formData.append('file', file)
-      const res = await authFetch(`${API_BASE}/api/chat/upload`, { method: 'POST', body: formData })
+      const res = await nativeApi.chatUpload(formData)
       const data = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data.detail || `上传失败 (${res.status})`)
       const block = `【附件：${file.name}】\n${data.parsed_text || ''}`.trimEnd()
