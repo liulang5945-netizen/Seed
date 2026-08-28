@@ -218,6 +218,7 @@ def _register_routers(app: FastAPI):
     agent_mcp_router = _load_optional_router("routes_agent_mcp")
     agent_memory_router = _load_optional_router("routes_agent_memory")
     agent_workspace_router = _load_optional_router("routes_agent_workspace")
+    from .routes_artifacts import router as artifacts_router
     from .routes_auth import router as auth_router
     from .routes_chat import router as chat_router
     from .routes_model_switch import router as model_switch_router
@@ -237,6 +238,7 @@ def _register_routers(app: FastAPI):
 
     app.include_router(auth_router)
     app.include_router(runtime_router)
+    app.include_router(artifacts_router)
     app.include_router(workbench_router)
     for optional_router in (
         workflows_router,

@@ -7,23 +7,8 @@ from pydantic import BaseModel
 
 class ChatRequest(BaseModel):
     prompt: str
-    system_prompt: str = (
-        "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"
-    )
+    system_prompt: str = "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"
     history: list[list[str]] = []
-    engine: str = "taiji"  # "taiji"（思维）| "agent"（行动）
-    agent_max_iterations: int | None = 10
-    agent_temperature: float | None = 0.7
-
-
-class TrainRequest(BaseModel):
-    dataset: str = ""
-    datasets: list[str] = []
-    lora_r: int = 8
-    lora_alpha: int = 32
-    epochs: int = 3
-    learning_rate: float = 0.0002
-    batch_size: int = 4
 
 
 class FileSaveRequest(BaseModel):
@@ -74,24 +59,3 @@ class RAGSearchRequest(BaseModel):
 
 class CreateProjectRequest(BaseModel):
     type: str = "empty"
-
-
-class GGUFExportRequest(BaseModel):
-    """GGUF 导出请求"""
-
-    model_dir: str
-    quant: str = "Q4_K_M"
-
-
-class TaijiTrainRequest(BaseModel):
-    """Seed原生模型微调请求"""
-
-    num_epochs: int = 5
-    batch_size: int = 4
-    learning_rate: float = 1e-4
-    max_length: int = 512
-    save_steps: int = 50
-    log_steps: int = 5
-    extra_react_data: list[dict] | None = None
-    extra_conv_data: list[dict] | None = None
-    keep_checkpoints: int = 3  # 保留最近 N 个中间 checkpoint + best

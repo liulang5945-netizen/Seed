@@ -32,20 +32,6 @@
         "title": "AuthPayload",
         "type": "object"
       },
-      "Body_taiji_upload_api_taiji_upload_post": {
-        "properties": {
-          "file": {
-            "contentMediaType": "application/octet-stream",
-            "title": "File",
-            "type": "string"
-          }
-        },
-        "required": [
-          "file"
-        ],
-        "title": "Body_taiji_upload_api_taiji_upload_post",
-        "type": "object"
-      },
       "Body_upload_chat_file_api_chat_upload_post": {
         "properties": {
           "file": {
@@ -91,34 +77,6 @@
           "file"
         ],
         "title": "Body_upload_patch_api_system_upload_patch_post",
-        "type": "object"
-      },
-      "Body_upload_plugin_api_plugins_upload_post": {
-        "properties": {
-          "file": {
-            "contentMediaType": "application/octet-stream",
-            "title": "File",
-            "type": "string"
-          }
-        },
-        "required": [
-          "file"
-        ],
-        "title": "Body_upload_plugin_api_plugins_upload_post",
-        "type": "object"
-      },
-      "Body_upload_rag_document_api_rag_upload_post": {
-        "properties": {
-          "file": {
-            "contentMediaType": "application/octet-stream",
-            "title": "File",
-            "type": "string"
-          }
-        },
-        "required": [
-          "file"
-        ],
-        "title": "Body_upload_rag_document_api_rag_upload_post",
         "type": "object"
       },
       "Body_upload_ui_zip_api_system_upload_ui_post": {
@@ -201,35 +159,6 @@
       },
       "ChatRequest": {
         "properties": {
-          "agent_max_iterations": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": 10,
-            "title": "Agent Max Iterations"
-          },
-          "agent_temperature": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": 0.7,
-            "title": "Agent Temperature"
-          },
-          "engine": {
-            "default": "taiji",
-            "title": "Engine",
-            "type": "string"
-          },
           "history": {
             "default": [],
             "items": {
@@ -255,203 +184,6 @@
           "prompt"
         ],
         "title": "ChatRequest",
-        "type": "object"
-      },
-      "CodeRunRequest": {
-        "properties": {
-          "code": {
-            "title": "Code",
-            "type": "string"
-          }
-        },
-        "required": [
-          "code"
-        ],
-        "title": "CodeRunRequest",
-        "type": "object"
-      },
-      "CortexChatRequest": {
-        "description": "Cortex 文本对话请求。",
-        "properties": {
-          "domain": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Domain"
-          },
-          "max_tokens": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": 60,
-            "title": "Max Tokens"
-          },
-          "prompt": {
-            "title": "Prompt",
-            "type": "string"
-          },
-          "temperature": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": 0.55,
-            "title": "Temperature"
-          },
-          "top_k": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": 15,
-            "title": "Top K"
-          }
-        },
-        "required": [
-          "prompt"
-        ],
-        "title": "CortexChatRequest",
-        "type": "object"
-      },
-      "CortexGenRequest": {
-        "description": "Cortex 原生多模态生成请求。",
-        "properties": {
-          "input_path": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Input Path"
-          },
-          "max_tokens": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": 0,
-            "title": "Max Tokens"
-          },
-          "modality": {
-            "title": "Modality",
-            "type": "string"
-          },
-          "output_path": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Output Path"
-          },
-          "seed": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Seed"
-          },
-          "temperature": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": 1.0,
-            "title": "Temperature"
-          },
-          "top_k": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": 0,
-            "title": "Top K"
-          }
-        },
-        "required": [
-          "modality"
-        ],
-        "title": "CortexGenRequest",
-        "type": "object"
-      },
-      "CortexTaskChainRequest": {
-        "description": "C26 增量八：多阶段任务模式链 v2 请求体。",
-        "properties": {
-          "max_tokens_per_stage": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": 32,
-            "title": "Max Tokens Per Stage"
-          },
-          "stages": {
-            "items": {
-              "$ref": "#/components/schemas/TaskChainStageRequest"
-            },
-            "title": "Stages",
-            "type": "array"
-          }
-        },
-        "required": [
-          "stages"
-        ],
-        "title": "CortexTaskChainRequest",
-        "type": "object"
-      },
-      "CreateProjectRequest": {
-        "properties": {
-          "type": {
-            "default": "empty",
-            "title": "Type",
-            "type": "string"
-          }
-        },
-        "title": "CreateProjectRequest",
         "type": "object"
       },
       "DatasetCheckRequest": {
@@ -481,24 +213,6 @@
           "password"
         ],
         "title": "EnableAuthRequest",
-        "type": "object"
-      },
-      "FileSaveRequest": {
-        "properties": {
-          "content": {
-            "title": "Content",
-            "type": "string"
-          },
-          "name": {
-            "title": "Name",
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "content"
-        ],
-        "title": "FileSaveRequest",
         "type": "object"
       },
       "HTTPValidationError": {
@@ -564,63 +278,6 @@
           }
         },
         "title": "HealthPayload",
-        "type": "object"
-      },
-      "ImageDescribeRequest": {
-        "properties": {
-          "image_path": {
-            "title": "Image Path",
-            "type": "string"
-          }
-        },
-        "required": [
-          "image_path"
-        ],
-        "title": "ImageDescribeRequest",
-        "type": "object"
-      },
-      "ImageGenRequest": {
-        "properties": {
-          "guidance_scale": {
-            "default": 7.5,
-            "title": "Guidance Scale",
-            "type": "number"
-          },
-          "height": {
-            "default": 512,
-            "title": "Height",
-            "type": "integer"
-          },
-          "negative_prompt": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Negative Prompt"
-          },
-          "prompt": {
-            "title": "Prompt",
-            "type": "string"
-          },
-          "steps": {
-            "default": 30,
-            "title": "Steps",
-            "type": "integer"
-          },
-          "width": {
-            "default": 512,
-            "title": "Width",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "prompt"
-        ],
-        "title": "ImageGenRequest",
         "type": "object"
       },
       "LifeNeedsPayload": {
@@ -774,24 +431,6 @@
         "title": "NativeTrainRequest",
         "type": "object"
       },
-      "RAGSearchRequest": {
-        "properties": {
-          "query": {
-            "title": "Query",
-            "type": "string"
-          },
-          "top_k": {
-            "default": 5,
-            "title": "Top K",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "query"
-        ],
-        "title": "RAGSearchRequest",
-        "type": "object"
-      },
       "RecommendRequest": {
         "properties": {
           "dataset_size": {
@@ -860,6 +499,24 @@
           "checkpoint"
         ],
         "title": "ResumeRequest",
+        "type": "object"
+      },
+      "RuntimeActivationRequest": {
+        "description": "Taiji runtime activation request.\n\n``checkpoint_id`` is relative to the application checkpoint directory;\narbitrary filesystem paths and Legacy model identifiers are not accepted.",
+        "properties": {
+          "checkpoint_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checkpoint Id"
+          }
+        },
+        "title": "RuntimeActivationRequest",
         "type": "object"
       },
       "RuntimeStatusPayload": {
@@ -943,120 +600,6 @@
           }
         },
         "title": "RuntimeStatusPayload",
-        "type": "object"
-      },
-      "TTSRequest": {
-        "properties": {
-          "text": {
-            "title": "Text",
-            "type": "string"
-          },
-          "voice": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Voice"
-          }
-        },
-        "required": [
-          "text"
-        ],
-        "title": "TTSRequest",
-        "type": "object"
-      },
-      "TaskChainStageRequest": {
-        "description": "C26 增量八：任务链阶段（task-set）请求体。",
-        "properties": {
-          "active_nids": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Active Nids"
-          },
-          "domain": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Domain"
-          },
-          "max_tokens": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Max Tokens"
-          },
-          "memory_label": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Memory Label"
-          },
-          "mode": {
-            "default": "continuous",
-            "title": "Mode",
-            "type": "string"
-          },
-          "prompt": {
-            "title": "Prompt",
-            "type": "string"
-          },
-          "quality_gate": {
-            "default": true,
-            "title": "Quality Gate",
-            "type": "boolean"
-          },
-          "record_memory": {
-            "default": false,
-            "title": "Record Memory",
-            "type": "boolean"
-          },
-          "temperature": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Temperature"
-          }
-        },
-        "required": [
-          "prompt"
-        ],
-        "title": "TaskChainStageRequest",
         "type": "object"
       },
       "ToolInfo": {
@@ -1199,8 +742,13 @@
         "type": "object"
       },
       "WorkbenchIntentRequest": {
-        "description": "A Taiji-owned action intent submitted to the read-only workbench bridge.",
+        "description": "A Taiji-owned action intent submitted to the native workbench bridge.",
         "properties": {
+          "approval_token": {
+            "default": "",
+            "title": "Approval Token",
+            "type": "string"
+          },
           "confidence": {
             "default": 0.0,
             "title": "Confidence",
@@ -1217,6 +765,11 @@
           },
           "kind": {
             "title": "Kind",
+            "type": "string"
+          },
+          "mcp_registry_snapshot_id": {
+            "default": "",
+            "title": "Mcp Registry Snapshot Id",
             "type": "string"
           },
           "parameters": {
@@ -1253,6 +806,95 @@
         ],
         "title": "WorkbenchIntentRequest",
         "type": "object"
+      },
+      "WorkbenchLoopExecuteRequest": {
+        "description": "Execution request bound to a previously accepted loop preflight.",
+        "properties": {
+          "checkpoint_boundary": {
+            "default": "after_each_step",
+            "title": "Checkpoint Boundary",
+            "type": "string"
+          },
+          "intents": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/WorkbenchIntentRequest"
+            },
+            "title": "Intents",
+            "type": "array"
+          },
+          "loop_id": {
+            "title": "Loop Id",
+            "type": "string"
+          },
+          "max_budget_units": {
+            "default": 32.0,
+            "title": "Max Budget Units",
+            "type": "number"
+          },
+          "max_steps": {
+            "default": 8,
+            "title": "Max Steps",
+            "type": "integer"
+          },
+          "on_failure": {
+            "default": "stop",
+            "title": "On Failure",
+            "type": "string"
+          },
+          "preflight_id": {
+            "title": "Preflight Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loop_id",
+          "preflight_id"
+        ],
+        "title": "WorkbenchLoopExecuteRequest",
+        "type": "object"
+      },
+      "WorkbenchLoopPreflightRequest": {
+        "description": "Bounded, non-executing admission request for a native workbench loop.",
+        "properties": {
+          "checkpoint_boundary": {
+            "default": "after_each_step",
+            "title": "Checkpoint Boundary",
+            "type": "string"
+          },
+          "intents": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/WorkbenchIntentRequest"
+            },
+            "title": "Intents",
+            "type": "array"
+          },
+          "loop_id": {
+            "title": "Loop Id",
+            "type": "string"
+          },
+          "max_budget_units": {
+            "default": 32.0,
+            "title": "Max Budget Units",
+            "type": "number"
+          },
+          "max_steps": {
+            "default": 8,
+            "title": "Max Steps",
+            "type": "integer"
+          },
+          "on_failure": {
+            "default": "stop",
+            "title": "On Failure",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loop_id"
+        ],
+        "title": "WorkbenchLoopPreflightRequest",
+        "type": "object"
       }
     }
   },
@@ -1262,152 +904,10 @@
   },
   "openapi": "3.1.0",
   "paths": {
-    "/api/agent/analyze_code": {
-      "post": {
-        "description": "Analyze code through the agent helper.",
-        "operationId": "analyze_code_api_api_agent_analyze_code_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CodeRunRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Analyze Code Api"
-      }
-    },
-    "/api/agent/cancel": {
-      "post": {
-        "description": "取消当前正在执行的 ReAct 任务",
-        "operationId": "cancel_agent_api_agent_cancel_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Cancel Agent"
-      }
-    },
-    "/api/agent/collaborate": {
-      "post": {
-        "description": "多 Agent 协作执行任务",
-        "operationId": "collaborate_api_agent_collaborate_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Collaborate"
-      }
-    },
-    "/api/agent/collaborate/messages": {
+    "/api/artifacts": {
       "get": {
-        "description": "获取 Agent 间通信消息",
-        "operationId": "collab_messages_api_agent_collaborate_messages_get",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "topic",
-            "required": false,
-            "schema": {
-              "default": "",
-              "title": "Topic",
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "default": 50,
-              "title": "Limit",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Collab Messages"
-      }
-    },
-    "/api/agent/collaborate/tasks": {
-      "get": {
-        "description": "列出所有协作任务",
-        "operationId": "list_collab_tasks_api_agent_collaborate_tasks_get",
+        "description": "List platform-owned artifacts without exposing model-market semantics.",
+        "operationId": "list_artifacts_api_artifacts_get",
         "responses": {
           "200": {
             "content": {
@@ -1418,583 +918,10 @@
             "description": "Successful Response"
           }
         },
-        "summary": "List Collab Tasks"
-      }
-    },
-    "/api/agent/context": {
-      "get": {
-        "description": "Load saved agent context.",
-        "operationId": "load_context_api_api_agent_context_get",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "key",
-            "required": false,
-            "schema": {
-              "default": "",
-              "title": "Key",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Load Context Api"
-      }
-    },
-    "/api/agent/install_dependency": {
-      "post": {
-        "description": "Install a dependency through the agent helper (admin only).",
-        "operationId": "install_dependency_api_api_agent_install_dependency_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CodeRunRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Install Dependency Api"
-      }
-    },
-    "/api/agent/memory/clear": {
-      "post": {
-        "description": "清除记忆",
-        "operationId": "memory_clear_api_agent_memory_clear_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "default": {},
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Memory Clear"
-      }
-    },
-    "/api/agent/memory/context": {
-      "get": {
-        "description": "获取短期记忆中的对话上下文",
-        "operationId": "memory_context_api_agent_memory_context_get",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "last_n",
-            "required": false,
-            "schema": {
-              "default": 20,
-              "title": "Last N",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Memory Context"
-      }
-    },
-    "/api/agent/memory/longterm": {
-      "get": {
-        "description": "列出长期记忆条目",
-        "operationId": "memory_longterm_list_api_agent_memory_longterm_get",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "category",
-            "required": false,
-            "schema": {
-              "default": "",
-              "title": "Category",
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "limit",
-            "required": false,
-            "schema": {
-              "default": 50,
-              "title": "Limit",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Memory Longterm List"
-      }
-    },
-    "/api/agent/memory/recall": {
-      "post": {
-        "description": "从长期记忆中语义检索",
-        "operationId": "memory_recall_api_agent_memory_recall_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Memory Recall"
-      }
-    },
-    "/api/agent/memory/remember": {
-      "post": {
-        "description": "存储信息到长期记忆",
-        "operationId": "memory_remember_api_agent_memory_remember_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Memory Remember"
-      }
-    },
-    "/api/agent/memory/status": {
-      "get": {
-        "description": "获取记忆系统状态",
-        "operationId": "memory_status_api_agent_memory_status_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Memory Status"
-      }
-    },
-    "/api/agent/memory/working": {
-      "get": {
-        "description": "获取工作记忆中的所有键值对",
-        "operationId": "memory_working_api_agent_memory_working_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Memory Working"
-      }
-    },
-    "/api/agent/memory/working/set": {
-      "post": {
-        "description": "设置工作记忆",
-        "operationId": "memory_working_set_api_agent_memory_working_set_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Memory Working Set"
-      }
-    },
-    "/api/agent/plans": {
-      "get": {
-        "description": "List saved agent plans.",
-        "operationId": "list_plans_api_api_agent_plans_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Plans Api"
-      }
-    },
-    "/api/agent/react": {
-      "post": {
-        "description": "使用 ReAct 引擎执行自主推理任务",
-        "operationId": "react_task_api_agent_react_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "React Task"
-      }
-    },
-    "/api/agent/react/stream": {
-      "post": {
-        "description": "ReAct 流式推理（SSE）",
-        "operationId": "react_task_stream_api_agent_react_stream_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "React Task Stream"
-      }
-    },
-    "/api/agent/roles": {
-      "get": {
-        "description": "列出所有可用的 Agent 角色",
-        "operationId": "list_roles_api_agent_roles_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Roles"
-      }
-    },
-    "/api/agent/save_context": {
-      "post": {
-        "description": "Save agent context.",
-        "operationId": "save_context_api_api_agent_save_context_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CodeRunRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Save Context Api"
-      }
-    },
-    "/api/agent/tools": {
-      "get": {
-        "description": "列出已加载的 Agent 工具。",
-        "operationId": "list_agent_tools_api_agent_tools_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Agent Tools"
-      }
-    },
-    "/api/agent/tools/execute": {
-      "post": {
-        "description": "直接执行一个注册的工具",
-        "operationId": "run_tool_api_agent_tools_execute_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Run Tool"
-      }
-    },
-    "/api/agent/tools/registry": {
-      "get": {
-        "description": "列出工具注册表中所有已注册的工具（JSON Schema 格式）",
-        "operationId": "list_tool_registry_api_agent_tools_registry_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Tool Registry"
+        "summary": "List Artifacts",
+        "tags": [
+          "artifacts"
+        ]
       }
     },
     "/api/auth/audit": {
@@ -2456,10 +1383,20 @@
         "summary": "Health Check"
       }
     },
-    "/api/life/evolve": {
+    "/api/runtime/activate": {
       "post": {
-        "description": "手动触发进化",
-        "operationId": "evolve_taiji_api_life_evolve_post",
+        "description": "Activate the Taiji runtime from a platform-owned checkpoint.",
+        "operationId": "runtime_activate_api_runtime_activate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RuntimeActivationRequest"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "content": {
@@ -2468,1650 +1405,22 @@
               }
             },
             "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
           }
         },
-        "summary": "Evolve Taiji",
+        "summary": "Runtime Activate",
         "tags": [
-          "life"
+          "runtime"
         ]
-      }
-    },
-    "/api/life/feed": {
-      "post": {
-        "description": "手动触发喂养（数据摄取）",
-        "operationId": "feed_taiji_api_life_feed_post",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "reason",
-            "required": false,
-            "schema": {
-              "default": "manual",
-              "title": "Reason",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Feed Taiji",
-        "tags": [
-          "life"
-        ]
-      }
-    },
-    "/api/life/interaction": {
-      "post": {
-        "description": "记录一次用户交互（影响需求状态）",
-        "operationId": "record_interaction_api_life_interaction_post",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "success",
-            "required": false,
-            "schema": {
-              "default": true,
-              "title": "Success",
-              "type": "boolean"
-            }
-          },
-          {
-            "in": "query",
-            "name": "topic",
-            "required": false,
-            "schema": {
-              "default": "",
-              "title": "Topic",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Record Interaction",
-        "tags": [
-          "life"
-        ]
-      }
-    },
-    "/api/life/play": {
-      "post": {
-        "description": "手动触发玩耍（探索/创造）",
-        "operationId": "play_taiji_api_life_play_post",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "reason",
-            "required": false,
-            "schema": {
-              "default": "manual",
-              "title": "Reason",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Play Taiji",
-        "tags": [
-          "life"
-        ]
-      }
-    },
-    "/api/life/sleep": {
-      "post": {
-        "description": "手动触发睡眠（训练/整合）",
-        "operationId": "sleep_taiji_api_life_sleep_post",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "reason",
-            "required": false,
-            "schema": {
-              "default": "manual",
-              "title": "Reason",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Sleep Taiji",
-        "tags": [
-          "life"
-        ]
-      }
-    },
-    "/api/life/status": {
-      "get": {
-        "description": "获取Seed完整生命状态",
-        "operationId": "get_life_status_api_life_status_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Get Life Status",
-        "tags": [
-          "life"
-        ]
-      }
-    },
-    "/api/mcp/add_custom": {
-      "post": {
-        "description": "添加自定义 MCP 服务器",
-        "operationId": "mcp_add_custom_api_mcp_add_custom_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Mcp Add Custom"
-      }
-    },
-    "/api/mcp/install": {
-      "post": {
-        "description": "安装 MCP 服务器",
-        "operationId": "mcp_install_api_mcp_install_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Mcp Install"
-      }
-    },
-    "/api/mcp/installed": {
-      "get": {
-        "description": "获取已安装的 MCP 服务器列表",
-        "operationId": "mcp_installed_api_mcp_installed_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Mcp Installed"
-      }
-    },
-    "/api/mcp/marketplace": {
-      "get": {
-        "description": "浏览 MCP 服务器市场",
-        "operationId": "mcp_marketplace_api_mcp_marketplace_get",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "category",
-            "required": false,
-            "schema": {
-              "default": "",
-              "title": "Category",
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "keyword",
-            "required": false,
-            "schema": {
-              "default": "",
-              "title": "Keyword",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Mcp Marketplace"
-      }
-    },
-    "/api/mcp/marketplace/refresh": {
-      "post": {
-        "description": "从远程源刷新 MCP 市场数据",
-        "operationId": "mcp_marketplace_refresh_api_mcp_marketplace_refresh_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Mcp Marketplace Refresh"
-      }
-    },
-    "/api/mcp/marketplace/{server_id}": {
-      "get": {
-        "description": "获取 MCP 服务器详情",
-        "operationId": "mcp_server_detail_api_mcp_marketplace__server_id__get",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "server_id",
-            "required": true,
-            "schema": {
-              "title": "Server Id",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Mcp Server Detail"
-      }
-    },
-    "/api/mcp/restart": {
-      "post": {
-        "description": "重启 MCP 服务器",
-        "operationId": "mcp_restart_api_mcp_restart_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Mcp Restart"
-      }
-    },
-    "/api/mcp/start": {
-      "post": {
-        "description": "启动 MCP 服务器",
-        "operationId": "mcp_start_api_mcp_start_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Mcp Start"
-      }
-    },
-    "/api/mcp/status": {
-      "get": {
-        "description": "获取 MCP 管理器状态",
-        "operationId": "mcp_status_api_mcp_status_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Mcp Status"
-      }
-    },
-    "/api/mcp/stop": {
-      "post": {
-        "description": "停止 MCP 服务器",
-        "operationId": "mcp_stop_api_mcp_stop_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Mcp Stop"
-      }
-    },
-    "/api/mcp/tools": {
-      "get": {
-        "description": "获取所有 MCP 工具",
-        "operationId": "mcp_tools_api_mcp_tools_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Mcp Tools"
-      }
-    },
-    "/api/mcp/uninstall": {
-      "post": {
-        "description": "卸载 MCP 服务器",
-        "operationId": "mcp_uninstall_api_mcp_uninstall_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Mcp Uninstall"
-      }
-    },
-    "/api/model/export_gguf": {
-      "post": {
-        "description": "GGUF 导出（Seed不支持）",
-        "operationId": "export_gguf_api_model_export_gguf_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Export Gguf"
-      }
-    },
-    "/api/model/export_gguf/options": {
-      "get": {
-        "description": "GGUF 量化选项（Seed不支持）",
-        "operationId": "get_gguf_export_options_api_model_export_gguf_options_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Get Gguf Export Options"
-      }
-    },
-    "/api/model/gguf_quants": {
-      "get": {
-        "description": "GGUF 量化选项（Seed不支持 GGUF）。",
-        "operationId": "get_gguf_quants_api_model_gguf_quants_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Get Gguf Quants"
-      }
-    },
-    "/api/model/publish": {
-      "post": {
-        "description": "保存当前模型（Taiji 使用原生 checkpoint 落盘）",
-        "operationId": "publish_model_api_model_publish_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Publish Model"
-      }
-    },
-    "/api/model/published": {
-      "get": {
-        "description": "列出已发布（保存）的模型",
-        "operationId": "list_published_models_api_model_published_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Published Models"
-      }
-    },
-    "/api/models/delete": {
-      "post": {
-        "operationId": "delete_model_api_models_delete_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Delete Model"
-      }
-    },
-    "/api/models/download": {
-      "post": {
-        "operationId": "download_model_api_models_download_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Download Model"
-      }
-    },
-    "/api/models/download_cancel": {
-      "post": {
-        "operationId": "cancel_download_api_models_download_cancel_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Cancel Download"
-      }
-    },
-    "/api/models/download_hf": {
-      "post": {
-        "operationId": "download_hf_model_api_models_download_hf_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Download Hf Model"
-      }
-    },
-    "/api/models/download_pause": {
-      "post": {
-        "operationId": "pause_download_api_models_download_pause_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Pause Download"
-      }
-    },
-    "/api/models/download_progress": {
-      "get": {
-        "operationId": "get_download_progress_api_models_download_progress_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Get Download Progress"
-      }
-    },
-    "/api/models/download_resume": {
-      "post": {
-        "operationId": "resume_download_api_models_download_resume_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Resume Download"
-      }
-    },
-    "/api/models/downloaded": {
-      "get": {
-        "description": "列出本地模型文件。",
-        "operationId": "list_downloaded_models_api_models_downloaded_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Downloaded Models"
-      }
-    },
-    "/api/models/families": {
-      "get": {
-        "operationId": "list_model_families_api_models_families_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Model Families"
-      }
-    },
-    "/api/models/info": {
-      "get": {
-        "operationId": "get_model_info_api_models_info_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Get Model Info"
-      }
-    },
-    "/api/models/installed": {
-      "delete": {
-        "operationId": "delete_installed_model_api_models_installed_delete",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Delete Installed Model"
-      },
-      "get": {
-        "description": "列出已安装的 Cortex 神经元架构。",
-        "operationId": "list_installed_models_api_models_installed_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Installed Models"
-      }
-    },
-    "/api/models/list": {
-      "get": {
-        "description": "Seed使用 Cortex 神经元架构，不依赖外部模型市场。",
-        "operationId": "list_available_models_api_models_list_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Available Models"
-      }
-    },
-    "/api/models/recommend": {
-      "get": {
-        "description": "推荐模型（Seed使用 Cortex）。",
-        "operationId": "recommend_models_api_models_recommend_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Recommend Models"
-      }
-    },
-    "/api/models/select": {
-      "post": {
-        "description": "选择模型（Seed自动使用 Cortex 神经元架构）。",
-        "operationId": "select_model_api_models_select_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Select Model"
-      }
-    },
-    "/api/models/tags": {
-      "get": {
-        "operationId": "list_model_tags_api_models_tags_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Model Tags"
-      }
-    },
-    "/api/multimodal/describe-image": {
-      "post": {
-        "description": "描述图片内容",
-        "operationId": "describe_image_api_multimodal_describe_image_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ImageDescribeRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Describe Image"
-      }
-    },
-    "/api/multimodal/generate-image": {
-      "post": {
-        "description": "文生图",
-        "operationId": "generate_image_api_multimodal_generate_image_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ImageGenRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Generate Image"
-      }
-    },
-    "/api/multimodal/status": {
-      "get": {
-        "description": "获取多模态引擎状态",
-        "operationId": "multimodal_status_api_multimodal_status_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Multimodal Status"
-      }
-    },
-    "/api/multimodal/tts": {
-      "post": {
-        "description": "文字转语音",
-        "operationId": "text_to_speech_api_multimodal_tts_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TTSRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Text To Speech"
-      }
-    },
-    "/api/multimodal/voices": {
-      "get": {
-        "description": "列出可用语音",
-        "operationId": "list_voices_api_multimodal_voices_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Voices"
-      }
-    },
-    "/api/network/diagnose": {
-      "get": {
-        "description": "Network diagnostics (native Taiji — no remote model downloads needed).",
-        "operationId": "network_diagnose_api_network_diagnose_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Network Diagnose"
-      }
-    },
-    "/api/plugins": {
-      "get": {
-        "description": "列出所有插件",
-        "operationId": "list_plugins_api_plugins_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Plugins"
-      }
-    },
-    "/api/plugins/install": {
-      "post": {
-        "description": "安装插件",
-        "operationId": "install_plugin_api_plugins_install_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Data",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Install Plugin"
-      }
-    },
-    "/api/plugins/marketplace": {
-      "get": {
-        "description": "浏览 Agent 插件市场",
-        "operationId": "plugin_marketplace_api_plugins_marketplace_get",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "category",
-            "required": false,
-            "schema": {
-              "default": "",
-              "title": "Category",
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "keyword",
-            "required": false,
-            "schema": {
-              "default": "",
-              "title": "Keyword",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Plugin Marketplace"
-      }
-    },
-    "/api/plugins/marketplace/refresh": {
-      "post": {
-        "description": "从远程源刷新 Agent 插件市场",
-        "operationId": "plugin_marketplace_refresh_api_plugins_marketplace_refresh_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Plugin Marketplace Refresh"
-      }
-    },
-    "/api/plugins/upload": {
-      "post": {
-        "description": "Upload a plugin archive into the plugins directory.",
-        "operationId": "upload_plugin_api_plugins_upload_post",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_upload_plugin_api_plugins_upload_post"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Upload Plugin"
-      }
-    },
-    "/api/plugins/{plugin_id}": {
-      "delete": {
-        "description": "卸载插件",
-        "operationId": "uninstall_plugin_api_plugins__plugin_id__delete",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "plugin_id",
-            "required": true,
-            "schema": {
-              "title": "Plugin Id",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Uninstall Plugin"
-      }
-    },
-    "/api/plugins/{plugin_id}/disable": {
-      "post": {
-        "description": "禁用插件",
-        "operationId": "disable_plugin_api_plugins__plugin_id__disable_post",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "plugin_id",
-            "required": true,
-            "schema": {
-              "title": "Plugin Id",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Disable Plugin"
-      }
-    },
-    "/api/plugins/{plugin_id}/enable": {
-      "post": {
-        "description": "启用插件",
-        "operationId": "enable_plugin_api_plugins__plugin_id__enable_post",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "plugin_id",
-            "required": true,
-            "schema": {
-              "title": "Plugin Id",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Enable Plugin"
-      }
-    },
-    "/api/rag/clear": {
-      "post": {
-        "description": "清空 RAG 知识库索引及本地文档（不可恢复，前端需二次确认）",
-        "operationId": "clear_rag_documents_api_rag_clear_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Clear Rag Documents"
-      }
-    },
-    "/api/rag/config": {
-      "get": {
-        "description": "获取当前 RAG 检索策略配置",
-        "operationId": "get_rag_config_api_rag_config_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Get Rag Config"
-      },
-      "put": {
-        "description": "更新 RAG 检索策略配置\n\n可更新字段:\n- enable_hybrid: bool  是否启用混合检索 (Dense + BM25)\n- enable_reranker: bool  是否启用 Cross-Encoder 重排序\n- enable_query_rewrite: bool  是否启用查询改写\n- candidate_k: int  混合检索候选数\n- reranker_model: str  重排序模型名称",
-        "operationId": "update_rag_config_api_rag_config_put",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Updates",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Update Rag Config"
-      }
-    },
-    "/api/rag/file/{filename}": {
-      "delete": {
-        "description": "删除指定的 RAG 文件",
-        "operationId": "delete_rag_file_api_rag_file__filename__delete",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "filename",
-            "required": true,
-            "schema": {
-              "title": "Filename",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Delete Rag File"
-      }
-    },
-    "/api/rag/files": {
-      "get": {
-        "description": "获取已挂载的 RAG 文件列表（含大小/修改时间/索引状态）\n\n返回 {\"files\": [{\"name\", \"size\"?, \"mtime\"?, \"status\"?}]}：\n- size/mtime 来自本地文档目录的文件系统信息，不可得时省略；\n- status 为 \"indexed\"（已建入索引）或 \"pending\"（仅落盘待索引）。",
-        "operationId": "list_rag_files_api_rag_files_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Rag Files"
-      }
-    },
-    "/api/rag/preview/{filename}": {
-      "get": {
-        "description": "预览 RAG 文档内容",
-        "operationId": "rag_preview_api_rag_preview__filename__get",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "filename",
-            "required": true,
-            "schema": {
-              "title": "Filename",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Rag Preview"
-      }
-    },
-    "/api/rag/search": {
-      "post": {
-        "description": "在知识库中进行语义搜索",
-        "operationId": "rag_search_api_rag_search_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RAGSearchRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Rag Search"
-      }
-    },
-    "/api/rag/stats": {
-      "get": {
-        "description": "知识库统计（前端 KB 页工具栏用，形状与 /api/rag/status 对齐）。",
-        "operationId": "get_rag_stats_api_rag_stats_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Get Rag Stats"
-      }
-    },
-    "/api/rag/status": {
-      "get": {
-        "description": "获取 RAG 知识库状态信息",
-        "operationId": "get_rag_status_api_rag_status_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Get Rag Status"
-      }
-    },
-    "/api/rag/upload": {
-      "post": {
-        "description": "接收前端上传的文档，加入 RAG 知识库",
-        "operationId": "upload_rag_document_api_rag_upload_post",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_upload_rag_document_api_rag_upload_post"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Upload Rag Document"
       }
     },
     "/api/runtime/bootstrap": {
@@ -4212,127 +1521,10 @@
         "summary": "Save All Settings"
       }
     },
-    "/api/settings/device": {
-      "post": {
-        "description": "Update the configured inference device.",
-        "operationId": "set_device_api_settings_device_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Set Device"
-      }
-    },
-    "/api/settings/download_gguf": {
-      "post": {
-        "description": "GGUF download not supported in native Taiji stack.",
-        "operationId": "download_gguf_api_settings_download_gguf_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Download Gguf"
-      }
-    },
-    "/api/settings/gguf": {
-      "post": {
-        "description": "Update GGUF-related settings.",
-        "operationId": "set_gguf_settings_api_settings_gguf_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Set Gguf Settings"
-      }
-    },
-    "/api/settings/gguf_models": {
+    "/api/settings/runtime": {
       "get": {
-        "description": "GGUF models not supported in native Taiji stack.",
-        "operationId": "list_gguf_models_api_settings_gguf_models_get",
+        "description": "Return the persisted Taiji runtime selection.",
+        "operationId": "get_runtime_settings_api_settings_runtime_get",
         "responses": {
           "200": {
             "content": {
@@ -4343,13 +1535,11 @@
             "description": "Successful Response"
           }
         },
-        "summary": "List Gguf Models"
-      }
-    },
-    "/api/settings/model": {
+        "summary": "Get Runtime Settings"
+      },
       "post": {
-        "description": "Update the configured model path or name.",
-        "operationId": "set_model_api_settings_model_post",
+        "description": "Persist a Taiji checkpoint selection without activating it.",
+        "operationId": "set_runtime_settings_api_settings_runtime_post",
         "requestBody": {
           "content": {
             "application/json": {
@@ -4382,46 +1572,7 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Set Model"
-      }
-    },
-    "/api/settings/quant": {
-      "post": {
-        "description": "Update quantization settings.",
-        "operationId": "set_quant_api_settings_quant_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Set Quant"
+        "summary": "Set Runtime Settings"
       }
     },
     "/api/system/apply_update": {
@@ -4502,10 +1653,10 @@
         "summary": "Check Update"
       }
     },
-    "/api/system/current_model": {
+    "/api/system/current_runtime": {
       "get": {
-        "description": "Return effective and pending model configuration.",
-        "operationId": "get_current_model_api_system_current_model_get",
+        "description": "Return the effective Taiji runtime and language-provider status.",
+        "operationId": "get_current_runtime_api_system_current_runtime_get",
         "responses": {
           "200": {
             "content": {
@@ -4516,7 +1667,7 @@
             "description": "Successful Response"
           }
         },
-        "summary": "Get Current Model"
+        "summary": "Get Current Runtime"
       }
     },
     "/api/system/hardware": {
@@ -4624,47 +1775,6 @@
           }
         },
         "summary": "List Patches"
-      }
-    },
-    "/api/system/pub_reset": {
-      "post": {
-        "operationId": "force_reset_publishing_api_system_pub_reset_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Force Reset Publishing Api System Pub Reset Post",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Force Reset Publishing"
-      }
-    },
-    "/api/system/reload_model": {
-      "post": {
-        "description": "重载 Cortex 神经元架构（从磁盘重新装配）。",
-        "operationId": "reload_model_api_system_reload_model_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Reload Model Api System Reload Model Post",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Reload Model"
       }
     },
     "/api/system/reload_modules": {
@@ -4835,69 +1945,6 @@
         "summary": "Set Update Url"
       }
     },
-    "/api/system/switch_model": {
-      "post": {
-        "description": "切换/重载模型。\n\n支持的 model_type：\n- \"cortex\"（默认）：重载 Cortex 神经元架构（同时卸载 Seed 运行时）；\n- \"seed\"：加载并激活 taiji 原生 Seed 检查点（可选参数 \"checkpoint\"）。\n旧 model_type=\"self\" 已废弃，会被自动路由到 Cortex 重载。",
-        "operationId": "switch_model_api_system_switch_model_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Switch Model Api System Switch Model Post",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Switch Model"
-      }
-    },
-    "/api/system/switch_status": {
-      "get": {
-        "operationId": "get_switch_status_api_system_switch_status_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "additionalProperties": true,
-                  "title": "Response Get Switch Status Api System Switch Status Get",
-                  "type": "object"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Get Switch Status"
-      }
-    },
     "/api/system/upload_patch": {
       "post": {
         "description": "上传单个 Python 文件作为热更新补丁 - 需要管理员认证",
@@ -5063,893 +2110,6 @@
           }
         },
         "summary": "Get System Version"
-      }
-    },
-    "/api/taiji/checkpoints/cleanup": {
-      "post": {
-        "description": "清理旧 checkpoint，保留 best 和最新的 N 个",
-        "operationId": "cleanup_checkpoints_api_api_taiji_checkpoints_cleanup_post",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "keep",
-            "required": false,
-            "schema": {
-              "default": 3,
-              "title": "Keep",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Cleanup Checkpoints Api"
-      }
-    },
-    "/api/taiji/cortex/chat": {
-      "post": {
-        "description": "使用 Cortex 神经元架构进行文本对话。\n\n走 P7 路径：域专用 tokenizer encode → shared_embedding → ensemble 共振 → 域 lm_head decode。\ndomain=None 时自动推断域（code/math/zh/en/general）。",
-        "operationId": "cortex_chat_api_taiji_cortex_chat_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CortexChatRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Cortex Chat"
-      }
-    },
-    "/api/taiji/cortex/generate": {
-      "post": {
-        "description": "使用 Cortex 原生 codec pipeline 生成多模态内容。\n\n两种模式：\n1. 模仿生成：提供 input_path（参考文件）→ codec encode → ensemble 共振 → 生成\n2. 随机生成：不提供 input_path → 用随机 latent 作为种子 → 生成",
-        "operationId": "cortex_generate_api_taiji_cortex_generate_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CortexGenRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Cortex Generate"
-      }
-    },
-    "/api/taiji/cortex/task_chain": {
-      "post": {
-        "description": "多阶段任务模式链 v2（TaskSet 序列，人脑任务集切换，C26 增量八）。\n\n每阶段 = task-set（prompt/mode/domain/active_nids + 质量门），阶段间\n三重传递（文本 prev + 场状态 seed_memories + 记忆写入）。生产入口。",
-        "operationId": "cortex_task_chain_api_taiji_cortex_task_chain_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CortexTaskChainRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Cortex Task Chain"
-      }
-    },
-    "/api/taiji/feed": {
-      "post": {
-        "description": "让Seed吃饭 — 自动从各来源收集数据",
-        "operationId": "feed_taiji_api_taiji_feed_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Feed Taiji"
-      }
-    },
-    "/api/taiji/feed/directory": {
-      "post": {
-        "description": "喂Seed吃一个目录下的所有文件（请求体：{dir_path, category?}）",
-        "operationId": "feed_directory_api_taiji_feed_directory_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Request",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Feed Directory"
-      }
-    },
-    "/api/taiji/feed/file": {
-      "post": {
-        "description": "喂Seed吃一个文件（请求体：{file_path, category?}）",
-        "operationId": "feed_file_api_taiji_feed_file_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Request",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Feed File"
-      }
-    },
-    "/api/taiji/feed/multimodal": {
-      "post": {
-        "description": "喂Seed多模态资料并触发小睡消化。\n\n请求体：{file_path, modality, nap?}\n- file_path: 已上传的文件路径（通过 /api/taiji/upload 上传）\n- modality: \"image\" / \"audio\" / \"video\"\n- nap: 是否触发小睡消化（默认 true）\n\n流程：文件 → codec encode → 训练样本入队 → (可选)nap 睡眠训练",
-        "operationId": "feed_multimodal_api_taiji_feed_multimodal_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Request",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Feed Multimodal"
-      }
-    },
-    "/api/taiji/feed/plan": {
-      "get": {
-        "description": "获取进食计划 — 根据能力短板推荐吃什么",
-        "operationId": "feed_plan_api_taiji_feed_plan_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Feed Plan"
-      }
-    },
-    "/api/taiji/feed/status": {
-      "get": {
-        "description": "获取喂养引擎状态",
-        "operationId": "feed_status_api_taiji_feed_status_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Feed Status"
-      }
-    },
-    "/api/taiji/feed/text": {
-      "post": {
-        "description": "直接喂Seed一段文字（请求体：{text, source?, category?}）",
-        "operationId": "feed_text_api_taiji_feed_text_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Request",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Feed Text"
-      }
-    },
-    "/api/taiji/life/action/{action}": {
-      "post": {
-        "description": "强制执行某个生命活动（feed/sleep/play）",
-        "operationId": "life_force_action_api_taiji_life_action__action__post",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "action",
-            "required": true,
-            "schema": {
-              "title": "Action",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Life Force Action"
-      }
-    },
-    "/api/taiji/life/interact": {
-      "post": {
-        "description": "记录一次用户交互（影响需求状态）",
-        "operationId": "life_interact_api_taiji_life_interact_post",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "success",
-            "required": false,
-            "schema": {
-              "default": true,
-              "title": "Success",
-              "type": "boolean"
-            }
-          },
-          {
-            "in": "query",
-            "name": "topic",
-            "required": false,
-            "schema": {
-              "default": "",
-              "title": "Topic",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Life Interact"
-      }
-    },
-    "/api/taiji/life/start": {
-      "post": {
-        "description": "启动生命（启动心跳循环）",
-        "operationId": "life_start_api_taiji_life_start_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Life Start"
-      }
-    },
-    "/api/taiji/life/status": {
-      "get": {
-        "description": "获取生命状态（需求、状态、心跳数）",
-        "operationId": "life_status_api_taiji_life_status_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Life Status"
-      }
-    },
-    "/api/taiji/life/stop": {
-      "post": {
-        "description": "暂停生命",
-        "operationId": "life_stop_api_taiji_life_stop_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Life Stop"
-      }
-    },
-    "/api/taiji/life/timeline": {
-      "get": {
-        "description": "获取生命时间线",
-        "operationId": "life_timeline_api_taiji_life_timeline_get",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "hours",
-            "required": false,
-            "schema": {
-              "default": 24,
-              "title": "Hours",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Life Timeline"
-      }
-    },
-    "/api/taiji/model/info": {
-      "get": {
-        "description": "获取当前 Cortex 神经元架构信息。",
-        "operationId": "taiji_model_info_api_taiji_model_info_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Taiji Model Info"
-      }
-    },
-    "/api/taiji/play": {
-      "post": {
-        "description": "让Seed玩耍 — 自由探索和创意实验",
-        "operationId": "play_taiji_api_taiji_play_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Play Taiji"
-      }
-    },
-    "/api/taiji/play/personality": {
-      "get": {
-        "description": "获取Seed的个性档案",
-        "operationId": "play_personality_api_taiji_play_personality_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Play Personality"
-      }
-    },
-    "/api/taiji/play/status": {
-      "get": {
-        "description": "获取玩耍引擎状态",
-        "operationId": "play_status_api_taiji_play_status_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Play Status"
-      }
-    },
-    "/api/taiji/self_mod/discover": {
-      "post": {
-        "description": "Seed自主搜索可安装的工具",
-        "operationId": "self_mod_discover_api_taiji_self_mod_discover_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Self Mod Discover"
-      }
-    },
-    "/api/taiji/self_mod/status": {
-      "get": {
-        "description": "获取Seed自修改引擎状态（自主发现和安装工具的能力）",
-        "operationId": "self_mod_status_api_taiji_self_mod_status_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Self Mod Status"
-      }
-    },
-    "/api/taiji/self_mod/toggle": {
-      "post": {
-        "description": "启用/禁用Seed自修改引擎",
-        "operationId": "self_mod_toggle_api_taiji_self_mod_toggle_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Self Mod Toggle"
-      }
-    },
-    "/api/taiji/sleep": {
-      "post": {
-        "description": "让Seed睡觉",
-        "operationId": "sleep_taiji_api_taiji_sleep_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Sleep Taiji"
-      }
-    },
-    "/api/taiji/sleep/status": {
-      "get": {
-        "description": "获取睡眠引擎状态",
-        "operationId": "sleep_status_api_taiji_sleep_status_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Sleep Status"
-      }
-    },
-    "/api/taiji/status": {
-      "get": {
-        "description": "获取 Cortex 神经元架构状态。",
-        "operationId": "taiji_status_api_taiji_status_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Taiji Status"
-      }
-    },
-    "/api/taiji/tools": {
-      "get": {
-        "description": "获取可用的多模态工具列表（旧 TaijiMultimodalEngine 已移除）。",
-        "operationId": "taiji_tools_api_taiji_tools_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Taiji Tools"
-      }
-    },
-    "/api/taiji/upload": {
-      "post": {
-        "description": "上传文件供多模态处理（图片/音频/视频）",
-        "operationId": "taiji_upload_api_taiji_upload_post",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$ref": "#/components/schemas/Body_taiji_upload_api_taiji_upload_post"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Taiji Upload"
-      }
-    },
-    "/api/taiji_model/capability": {
-      "get": {
-        "description": "Expose population-level capability facts for legacy clients.",
-        "operationId": "get_capability_api_taiji_model_capability_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Get Capability"
-      }
-    },
-    "/api/taiji_model/status": {
-      "get": {
-        "description": "Return population status under the legacy URL.",
-        "operationId": "get_taiji_model_status_api_taiji_model_status_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Get Taiji Model Status"
-      }
-    },
-    "/api/taiji_model/upgrade": {
-      "post": {
-        "description": "Reject the deprecated upgrade operation explicitly.",
-        "operationId": "start_upgrade_api_taiji_model_upgrade_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Start Upgrade"
-      }
-    },
-    "/api/taiji_model/upgrade_check": {
-      "get": {
-        "description": "Explain that capability grows through the neuron population.",
-        "operationId": "check_upgrade_api_taiji_model_upgrade_check_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Check Upgrade"
-      }
-    },
-    "/api/taiji_model/upgrade_progress": {
-      "get": {
-        "description": "Return a terminal compatibility state for old polling clients.",
-        "operationId": "get_upgrade_progress_api_taiji_model_upgrade_progress_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Get Upgrade Progress"
       }
     },
     "/api/train/checkpoints": {
@@ -6493,6 +2653,246 @@
         ]
       }
     },
+    "/api/workbench/loop/execute": {
+      "post": {
+        "description": "Execute an accepted native loop and checkpoint after every attempted step.",
+        "operationId": "execute_workbench_loop_api_workbench_loop_execute_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkbenchLoopExecuteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Execute Workbench Loop Api Workbench Loop Execute Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Execute Workbench Loop",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/loop/preflight": {
+      "post": {
+        "description": "Validate a bounded native loop without executing any step.",
+        "operationId": "preflight_workbench_loop_api_workbench_loop_preflight_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkbenchLoopPreflightRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Preflight Workbench Loop Api Workbench Loop Preflight Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Preflight Workbench Loop",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/mcp": {
+      "get": {
+        "description": "Return the native MCP-shaped registry through the workbench boundary.",
+        "operationId": "workbench_mcp_tools_api_workbench_mcp_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Workbench Mcp Tools Api Workbench Mcp Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Workbench Mcp Tools",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/preview": {
+      "post": {
+        "description": "Validate a mutating action and return a short-lived approval token.",
+        "operationId": "preview_workbench_intent_api_workbench_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkbenchIntentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Preview Workbench Intent Api Workbench Preview Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Preview Workbench Intent",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/programming-language": {
+      "get": {
+        "operationId": "workbench_programming_language_api_workbench_programming_language_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "path",
+            "required": true,
+            "schema": {
+              "title": "Path",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "lsp_language_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lsp Language Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Workbench Programming Language Api Workbench Programming Language Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Workbench Programming Language",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/programming-languages": {
+      "get": {
+        "description": "Return the backend-owned programming-language registry.",
+        "operationId": "workbench_programming_languages_api_workbench_programming_languages_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Workbench Programming Languages Api Workbench Programming Languages Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Workbench Programming Languages",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
     "/api/workbench/search": {
       "get": {
         "operationId": "workbench_search_api_workbench_search_get",
@@ -6590,596 +2990,6 @@
         "tags": [
           "workbench"
         ]
-      }
-    },
-    "/api/workflows": {
-      "get": {
-        "description": "列出所有工作流",
-        "operationId": "list_workflows_api_workflows_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Workflows"
-      },
-      "post": {
-        "description": "创建工作流",
-        "operationId": "create_workflow_api_workflows_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Data",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Create Workflow"
-      }
-    },
-    "/api/workflows/{workflow_id}": {
-      "delete": {
-        "description": "删除工作流",
-        "operationId": "delete_workflow_api_workflows__workflow_id__delete",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "workflow_id",
-            "required": true,
-            "schema": {
-              "title": "Workflow Id",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Delete Workflow"
-      },
-      "get": {
-        "description": "获取工作流详情",
-        "operationId": "get_workflow_api_workflows__workflow_id__get",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "workflow_id",
-            "required": true,
-            "schema": {
-              "title": "Workflow Id",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Get Workflow"
-      }
-    },
-    "/api/workflows/{workflow_id}/execute": {
-      "post": {
-        "description": "执行工作流",
-        "operationId": "execute_workflow_api_workflows__workflow_id__execute_post",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "workflow_id",
-            "required": true,
-            "schema": {
-              "title": "Workflow Id",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Execute Workflow"
-      }
-    },
-    "/api/workspace/create_project": {
-      "post": {
-        "description": "Create a project scaffold.",
-        "operationId": "create_project_api_workspace_create_project_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateProjectRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Create Project"
-      }
-    },
-    "/api/workspace/delete/{name}": {
-      "delete": {
-        "description": "Delete a file or directory inside the workspace.",
-        "operationId": "delete_workspace_item_api_workspace_delete__name__delete",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "name",
-            "required": true,
-            "schema": {
-              "title": "Name",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Delete Workspace Item"
-      }
-    },
-    "/api/workspace/file": {
-      "get": {
-        "description": "Read a file from the workspace.",
-        "operationId": "get_workspace_file_api_workspace_file_get",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "name",
-            "required": true,
-            "schema": {
-              "title": "Name",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Get Workspace File"
-      },
-      "post": {
-        "description": "Write a file into the workspace.",
-        "operationId": "save_workspace_file_api_workspace_file_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FileSaveRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Save Workspace File"
-      }
-    },
-    "/api/workspace/files": {
-      "get": {
-        "description": "List files in the workspace root.",
-        "operationId": "list_workspace_files_api_workspace_files_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Workspace Files"
-      }
-    },
-    "/api/workspace/mkdir": {
-      "post": {
-        "description": "在工作区内创建目录（支持多级）。",
-        "operationId": "make_workspace_dir_api_workspace_mkdir_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Make Workspace Dir"
-      }
-    },
-    "/api/workspace/path": {
-      "get": {
-        "description": "Get the active workspace path.",
-        "operationId": "get_workspace_path_api_workspace_path_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Get Workspace Path"
-      },
-      "post": {
-        "description": "Update the active workspace path.\n\n安全策略：\n- 路径必须是已存在的目录\n- 路径不能是系统敏感目录（如根目录、/etc、/bin 等）\n- 建议限制在用户主目录或项目目录内",
-        "operationId": "set_workspace_path_api_workspace_path_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Set Workspace Path"
-      }
-    },
-    "/api/workspace/pick_folder": {
-      "post": {
-        "description": "打开系统级目录选择对话框，返回用户选择的目录。\n\nWeb 前端无法唤起原生文件管理器（QWebEngine/浏览器沙箱），由本地后端\n代为弹窗：Windows 上经 PowerShell 调 WinForms 的 FolderBrowserDialog\n（BIF_NEWDIALOGSTYLE 可缩放树对话框，-STA 保证 COM 安全）。\n\n关键点：必须给对话框一个宿主窗口。此前直接用 Shell.Application 的\nBrowseForFolder(0, ...) 传 hwnd=0，对话框虽被创建但没有归属窗口、拿不到\n前台激活，会弹在无边框 Qt 主窗后面，用户看不到（实测进程阻塞但界面无反应）。\n这里先建一个 TopMost、零透明度的 1x1 宿主窗体并 Activate()，再以它为 owner\n弹出对话框，从而保证对话框出现在最前。\n\n用户取消时返回 {\"status\": \"cancel\"}；平台不支持时返回 501。",
-        "operationId": "pick_folder_api_workspace_pick_folder_post",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Pick Folder"
-      }
-    },
-    "/api/workspace/quick_paths": {
-      "get": {
-        "description": "Return common filesystem locations for quick selection.",
-        "operationId": "get_quick_paths_api_workspace_quick_paths_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Get Quick Paths"
-      }
-    },
-    "/api/workspace/rename": {
-      "post": {
-        "description": "Rename a file or directory inside the workspace.",
-        "operationId": "rename_workspace_item_api_workspace_rename_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Rename Workspace Item"
-      }
-    },
-    "/api/workspace/reveal": {
-      "post": {
-        "description": "在系统资源管理器中显示工作区内的文件/目录。",
-        "operationId": "reveal_in_explorer_api_workspace_reveal_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "additionalProperties": true,
-                "title": "Req",
-                "type": "object"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Reveal In Explorer"
-      }
-    },
-    "/api/workspace/run": {
-      "post": {
-        "description": "Run Python code in the workspace sandbox.",
-        "operationId": "run_workspace_code_api_workspace_run_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CodeRunRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          },
-          "422": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            },
-            "description": "Validation Error"
-          }
-        },
-        "summary": "Run Workspace Code"
-      }
-    },
-    "/api/workspace/tree": {
-      "get": {
-        "description": "Return the recursive workspace tree.",
-        "operationId": "list_workspace_tree_api_workspace_tree_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Workspace Tree"
       }
     }
   }

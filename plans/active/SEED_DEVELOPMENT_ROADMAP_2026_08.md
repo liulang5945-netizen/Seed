@@ -1949,7 +1949,19 @@ WorkbenchEnvironment 任一侧均 fail-closed，仍不接外部安装、网络�
 发布和 GGUF 死路径已删除。合法的 native MCP projection、语言 provider artifact 和离线 benchmark 未被误删，仍保留在各自边界内。
 前端新增原生能力与无历史生命接口回归，完整 Vitest 为 `22 files / 188 passed`，ESLint 为 `0 errors / 15 warnings`，生产构建通过。
 
-**当前唯一下一步：开始 W4 第二 slice 的后端 artifact/settings/OpenAPI 边界迁移。** 先盘点 `api/models.py`、settings schema、发布/下载路由和
-OpenAPI snapshot 中的 `gguf_path/model_type/model_name/download_hf` 等旧语义，收敛为 `taiji_checkpoint`、`language_provider_artifact`、
-`legacy_benchmark_artifact`；为已有设置建立可解释、不可猜测的版本化迁移，旧路由先加 deprecation/410 兼容窗口，并补 native/legacy-off
-回归。Qwen provider artifact 内容寻址、canary 和 NeuroPlex 离线 benchmark 保持可用且不进入默认产品运行时。
+**已完成（2026-08-29）：W4 第二 slice 的后端 artifact/settings/OpenAPI 边界迁移。** 新增平台统一 artifact 词表
+`taiji_checkpoint`、`language_provider_artifact`、`legacy_benchmark_artifact` 及 `/api/artifacts` 原生清单；新增
+`/api/runtime/activate` 和 `/api/settings/runtime`，桌面 Seed 激活不再调用全局 model switch。设置 schema 升至 v2：旧
+`model_type/model_name/gguf_path/LoRA/量化` 字段不会被猜测激活，明确的 `self/seed + 安全 checkpoint` 仅迁移为 Taiji runtime，
+其余进入带来源和原因的 quarantine。旧 model/HF/GGUF/publish/Cortex switch 接口保留短期 410 迁移桩并从默认 OpenAPI 隐藏；
+`ChatRequest` 删除 `engine/agent_*`，Legacy 依赖和路由改为显式 `SEED_ENABLE_LEGACY=1` 才启用。完整 Python CI 为
+`526 passed, 6 skipped`，ruff、编译和 diff check 通过。
+
+**已完成（2026-08-29）：W4 退出 Gate。** provider artifact 内容寻址、首轮 chat canary、运行时 watchdog/回退，Taiji 零 Transformer
+导入、Legacy-off 启动与 native API 边界回归共 `34 passed`；合法 Qwen provider 仍只位于语言器官集成边界，NeuroPlex 仍仅为显式离线
+benchmark/兼容 profile，不进入默认客户端和 Taiji cognition。
+
+**当前唯一下一步：开始 W5 第一 slice 的客户端真实性审计。** 先逐页建立 Chat、Life、Agent/能力、Training、Settings、KB 的
+`source/owner/freshness/availability` 清单，核对每个可见状态和按钮是否有 native endpoint、真实 runtime owner 与降级行为；优先
+清理剩余旧 workspace/RAG/生命状态前端调用和失效文案，再把真实 Taiji homeostasis/self-state、Workbench capability 与 provider
+状态接入对应页面。不得先做视觉包装；完成后补 route-level packaged smoke 和 frontend/source capability contract。

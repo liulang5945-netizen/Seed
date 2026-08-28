@@ -66,10 +66,15 @@ def test_switch_model_rejects_unknown_type():
 
     client = TestClient(create_app(startup_tasks=False))
     response = client.post("/api/system/switch_model", json={"model_type": "unknown"})
-    assert response.status_code == 200
+    assert response.status_code == 410
     payload = response.json()
-    assert payload["status"] == "error"
-    assert "cortex" in payload["message"] and "seed" in payload["message"]
+    assert payload["code"] == "legacy_endpoint_deprecated"
+    assert payload["replacement"] == "/api/runtime/activate"
+
+
+def test_runtime_activation_rejects_escape_path(seed_client):
+    response = seed_client.post("/api/runtime/activate", json={"checkpoint_id": "../outside.pt"})
+    assert response.status_code == 400
 
 
 def test_runtime_watchdog_rolls_back_degraded_provider_after_publish(monkeypatch) -> None:
@@ -142,6 +147,7 @@ def test_runtime_watchdog_rolls_back_degraded_provider_after_publish(monkeypatch
             if "interface-recovery" in prompt:
                 return f"{self.artifact_id} 接口已经恢复。"
             return '{"semantic_slots": 1}'
+
     become_previous = _DegradingDecoder("watchdog-old")
     active = _DegradingDecoder("watchdog-new")
 
@@ -216,4 +222,7 @@ def test_runtime_watchdog_rolls_back_degraded_provider_after_publish(monkeypatch
     assert runtime._provider_status["artifact_id"] == "watchdog-old"
     assert runtime._provider_status["reason_code"] == "provider_health_rollback_previous"
     assert runtime._provider_status["chat_enabled"] == "true"
-    assert new.artifact_id not in seed.substrate.language_provider_artifact_registry.allowed_artifact_ids
+    assert (
+        new.artifact_id
+        not in seed.substrate.language_provider_artifact_registry.allowed_artifact_ids
+    )

@@ -56,12 +56,16 @@ def test_platform_paths_are_owned_outside_neuroplex() -> None:
         "api/routes_system.py",
         "api/routes_update.py",
         "api/training/datasets.py",
-        "api/training/publish.py",
     )
     for relative in modules:
         imports = _imports(REPO / relative)
         assert "seed_platform.paths" in imports, relative
         assert "neuroplex.core.utils" not in imports, relative
+
+    # publish.py is now a path-free 410 compatibility tombstone; it no longer
+    # owns or reads a filesystem location.
+    publish_imports = _imports(REPO / "api/training/publish.py")
+    assert "seed_platform.paths" not in publish_imports
 
     pyproject = (REPO / "pyproject.toml").read_text(encoding="utf-8")
     assert '"seed_platform*"' in pyproject

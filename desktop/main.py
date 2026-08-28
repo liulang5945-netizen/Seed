@@ -95,7 +95,7 @@ _prepare_frozen_qt_dll_path()
 BACKEND_PORT = 8000
 WS_PORT = 8765
 HEALTH_PATH = "/api/health"
-SWITCH_MODEL_PATH = "/api/system/switch_model"
+SWITCH_MODEL_PATH = "/api/runtime/activate"
 
 
 def _find_brand_icon() -> Path | None:
@@ -540,7 +540,7 @@ class BackendManager:
         try:
             req = urllib.request.Request(
                 f"http://127.0.0.1:{self.port}{SWITCH_MODEL_PATH}",
-                data=json.dumps({"model_type": "seed"}).encode("utf-8"),
+                data=json.dumps({"checkpoint_id": ""}).encode("utf-8"),
                 headers={"Content-Type": "application/json"},
                 method="POST",
             )

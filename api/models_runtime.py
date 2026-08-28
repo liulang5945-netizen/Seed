@@ -9,6 +9,16 @@ depends on this shape.
 from pydantic import BaseModel
 
 
+class RuntimeActivationRequest(BaseModel):
+    """Taiji runtime activation request.
+
+    ``checkpoint_id`` is relative to the application checkpoint directory;
+    arbitrary filesystem paths and Legacy model identifiers are not accepted.
+    """
+
+    checkpoint_id: str | None = None
+
+
 class HealthPayload(BaseModel):
     state: str = "loading"  # connected | loading | downloading | error
     message: str = ""
