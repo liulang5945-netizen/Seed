@@ -1870,15 +1870,24 @@ W7 的实际实施顺序固定为 **G0 贯穿全程，R1 → R2 → R3 → R4 �
 
 - 不删除 P1–P7 核心架构讨论、requirements、native architecture 和本路线；它们仍是后续开发的实时依据。
 - 测试过程日志、一次性调试探针、已被后续 Gate 覆盖的执行记录可继续进入 archive；核心决策和未关闭缺口不归档。
-- W0 闭合前不继续增加 interaction-group、provider watchdog、CUDA、视觉美化、Legacy Agent 或新格式支持；小型模拟 Gate 只作为当前纵切片的证据工具。
-- W0 首批实现已落地（2026-08-29，尚未达到退出 Gate）：Seed 已拥有版本化 workbench 合同、内容寻址 capability snapshot、只读
+- W0 已闭合（2026-08-29）；在 W1 之前不增加写文件自治、终端自治、MCP 或新的研究 Gate。interaction-group、provider watchdog、
+  CUDA、视觉美化、Legacy Agent 和新格式支持仍完整保留在 W7/后续边界，不是删除；小型模拟 Gate 继续作为各阶段的 S0 验证工具。
+- W0 首批实现已落地（2026-08-29）：Seed 已拥有版本化 workbench 合同、内容寻址 capability snapshot、只读
   `WorkbenchEnvironment`、core router、runtime capability projection、`planned → policy → executing → outcome` 审计链，且
   `ActionIntent → ToolCall` 的结构化工具路径已与 motor-symbol `settle_action` 解耦，工作台摘要感知值遵守 Taiji byte sensor 值域。
 - W0 前端投影已接线（2026-08-29）：`WorkspaceView` 按 native capability 懒加载目录、`MonacoEditor` 通过 native read 打开文件，
   页面显示 snapshot/最近 outcome，`editor.open` outcome 可由统一 audit projection 驱动 IDE 打开；旧 Legacy 写入、终端、重命名仍未被
-  冒充为 native。当前仍缺 checkpoint continuation 的验收和 packaged-client/real-workbench canary，因此不得把本轮称为 W0 完成。
+  冒充为 native。
+- W0 checkpoint continuation 已通过：checkpoint round-trip 恢复 capability snapshot、workbench audit 和 tick，审计阶段保持
+  `planned → policy → executing → outcome`；失效 snapshot、越界路径、错误 sensor 值域和断开环境均 fail-closed。
+- W0 packaged-client/real-workbench S2 canary 已通过：`SEED_ENABLE_LEGACY=0` 下真实 `dist/Seed/Seed.exe` 成功启动后端，
+  `/api/workbench/capabilities` 与 `/api/workbench/files?path=.` 均返回 200，native workspace bytes 与 capability snapshot 可读；
+  打包期间发现的 Qt6/ICU DLL 冲突已在 `desktop/seed.spec` 过滤，并纳入 release 检查。该证据确认打包客户端启动和 native route
+  可用，不等同于 W5 的 GUI 视觉、DPI、托盘或人工点击验收。
 
-**当前唯一下一步：完成 W0 checkpoint continuation 与 packaged-client/real-workbench canary。** 使用已接线的 native
-`WorkspaceView/MonacoEditor` 与 `/api/workbench/events` projection，在 legacy-off 的打包客户端中执行真实文件读取/打开任务，验证
-`ActionIntent → ToolCall → WorkbenchEnvironment → Outcome → UI/audit` lineage、重启后的 snapshot/audit 恢复和失效环境 fail-closed。
-在该 Gate 通过前，不实现写文件自治、终端自治、MCP、provider watchdog 或新的研究 Gate。
+**当前唯一下一步：开始 W1「编程语言识别、选择与 IDE 自主切换」。** 先把 `ProgrammingLanguageEvidence`、
+`programming_language_id/editor_language_id`、confidence、provenance、capability revision 和 user override 纳入同一
+Workbench state；再注册可逆的 `editor.set_language` native action，让 Taiji 在高置信、无 runner/toolchain 副作用时自动切换，
+低置信或有冲突时进入 `ask_user`。第一批实现必须同时覆盖后端 evidence resolver、API/OpenAPI、runtime/checkpoint、
+`WorkspaceView/MonacoEditor` 投影和 holdout（`.h`、shebang、monorepo、Vue/TS、notebook/markdown、错误扩展名），并先建立
+可故意打红的 filename-only lesion Gate；未完成 W1 Gate 前不进入 W2 写入/终端。

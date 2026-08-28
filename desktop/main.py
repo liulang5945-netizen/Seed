@@ -81,7 +81,6 @@ def _prepare_frozen_qt_dll_path() -> None:
 
         for library in (
             internal_root / "python3.dll",
-            internal_root / "icuuc.dll",
             qt_bin / "Qt6Core.dll",
         ):
             if library.is_file():
