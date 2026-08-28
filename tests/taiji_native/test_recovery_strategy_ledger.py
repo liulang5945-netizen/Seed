@@ -3,10 +3,12 @@ from dataclasses import replace
 from taiji import (
     RecoveryArchiveEntry,
     RecoveryReaderContribution,
+    RecoveryReaderCreditConsistency,
     RecoveryReaderDependencyGraph,
     RecoveryReaderInteraction,
     RecoveryReaderInteractionGroup,
     RecoveryStrategyLedger,
+    build_recovery_reader_credit_consistency,
 )
 
 
@@ -217,6 +219,87 @@ def test_recovery_reader_group_order_sensitive_credit_is_fail_closed() -> None:
         )
         == ()
     )
+
+
+def test_recovery_reader_credit_consistency_roundtrip_and_reader_local_drift() -> None:
+    ledger = RecoveryStrategyLedger(memory_budget=1.0)
+    for rollout_id in ("first", "second", "third"):
+        ledger = ledger.admit(
+            _entry(rollout_id, resource_cost=0.2, evidence_count=2, outcome_consistency=1.0),
+            memory_id=f"memory-{rollout_id}",
+        )
+    selected = ledger.selected_approvals
+
+    def group(reader_kind: str, *, order_delta: float = 0.0) -> RecoveryReaderInteractionGroup:
+        return RecoveryReaderInteractionGroup(
+            reader_kind=reader_kind,
+            strategy_rollout_ids=("first", "second", "third"),
+            memory_ids=("memory-first", "memory-second", "memory-third"),
+            group_effect_l2=4.5,
+            additive_effect_l2=3.0,
+            pairwise_interaction_delta_l2=0.5,
+            pairwise_predicted_effect_l2=3.5,
+            higher_order_delta_l2=1.0,
+            higher_order_residual_l2=1.0,
+            order_delta_l2=order_delta,
+            order_invariant=order_delta <= 1e-7,
+            replay_epochs=1,
+            replay_learning_rate=0.1,
+            singleton_effect_l2=(1.0, 1.0, 1.0),
+            replay_digest=f"state-{reader_kind}",
+            attribution_digest=f"attribution-{reader_kind}",
+            member_increment_l2=(1.0, 1.0, 1.0),
+            interaction_credit_l2=(0.2, 0.2, 0.1),
+            residual_credit_l2=1.0,
+            credit_conservation_error_l2=0.0,
+            credit_decomposition_complete=True,
+        )
+
+    graph = RecoveryReaderDependencyGraph()
+    for reader_kind in ("semantic", "procedural", "sequence", "concept"):
+        graph = graph.bind(
+            reader_kind,
+            selected,
+            interaction_groups=(group(reader_kind),),
+            base_checkpoint={"reader": reader_kind},
+            base_checkpoint_digest=f"base-{reader_kind}",
+        )
+    audits = build_recovery_reader_credit_consistency(
+        graph.dependencies,
+        drift_tolerance=0.0,
+    )
+    assert len(audits) == 1
+    assert isinstance(audits[0], RecoveryReaderCreditConsistency)
+    assert audits[0].complete is True
+    assert audits[0].safe is True
+    graph = graph.record_credit_consistency(audits)
+    assert RecoveryReaderDependencyGraph.from_payload(graph.to_payload()) == graph
+
+    drifted_dependencies = tuple(
+        replace(
+            dependency,
+            interaction_groups=(
+                (group("semantic", order_delta=0.2),)
+                if dependency.reader_kind == "semantic"
+                else dependency.interaction_groups
+            ),
+        )
+        for dependency in graph.dependencies
+    )
+    drifted = build_recovery_reader_credit_consistency(
+        drifted_dependencies,
+        drift_tolerance=0.0,
+        previous=audits,
+    )
+    assert drifted[0].complete is False
+    assert drifted[0].changed_reader_kinds == ("semantic",)
+    safe_by_reader = dict(zip(drifted[0].reader_kinds, drifted[0].reader_attribution_safe))
+    assert safe_by_reader == {
+        "concept": True,
+        "procedural": True,
+        "semantic": False,
+        "sequence": True,
+    }
 
 
 def test_recovery_strategy_interaction_policy_keeps_atomic_pair_together() -> None:
