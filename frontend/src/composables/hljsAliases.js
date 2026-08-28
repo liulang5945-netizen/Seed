@@ -1,3 +1,5 @@
+// 由 scripts/gen-hljs-aliases.mjs 生成，请勿手改。
+// 升级 highlight.js 后执行 npm run gen:aliases 重新生成。
 export const HLJS_ALIASES = {
   ado: 'stata',
   adoc: 'asciidoc',

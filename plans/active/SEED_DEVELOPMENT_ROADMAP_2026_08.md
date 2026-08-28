@@ -706,7 +706,45 @@ P4 的最小真实经历边界已落地：
 
 **方法论沉淀**：本轮最大教训不是体积，而是**「测试复制被测逻辑」等于零覆盖且伪装成满覆盖**——`[object Object]` 这种毁灭级 bug 与 160 全绿共存了很久。凡是 `__tests__` 里出现被测函数的本地副本（尤其带 "Simplified"/"for testing" 字样），一律视为门禁缺口。其次，本轮我两次把推断写进代码注释（shim 是否展开、`${name + '.js'}` 是否改变模式），两次都靠实测产物计数才被纠正：**注释里不能出现未实测的构建行为断言**。
 
-遗留：终端默认 shell 仍是 cmd.exe；侧边栏搜索框尚未接线为会话过滤；`hljsAliases.js` 由一次性探针生成，highlight.js 升级后需重新生成（当前无自动化门禁）；P6 真实语言器官接入仍是消除乱码的唯一根治路径。
+遗留：终端默认 shell 仍是 cmd.exe；侧边栏搜索框尚未接线为会话过滤；P6 真实语言器官接入仍是消除乱码的唯一根治路径。
+
+### 13.5 `hljsAliases.js` 再生成门禁（2026-08-28）
+
+清偿 §13.4 的遗留项。别名表是构建期固化的静态产物，其生成器随探针一起删掉了：highlight.js 升级新增语言（如 `zig`）后，用户写 ```` ```zig ```` 会**静默退化成无高亮纯文本，而全部测试依然全绿**——正是 §13.4 刚付过学费的失效模式。
+
+#### 13.5.1 四个必须先实测的前提
+
+动手前用两个一次性探针把设计前提全部测出来，因为 §13.4 证明了「把推断写进代码」会被产物打脸：
+
+| 实测结论 | 数据 | 对设计的约束 |
+| --- | --- | --- |
+| `highlight.js` 与 `highlight.js/lib/core` **是同一个单例** | `before=0 → afterFullImport=192`，`sameObj=true`（`lib/index.js` 对 `require('./core')` 注册 192 个语法；`lib/core.js:2589` 导出单例） | 门禁不能与 `useMarkdown.test.js` 同文件，且生成时必须用 `newInstance()` 隔离，否则会把 192 个语法注册进被测单例，让按需加载测试失去意义 |
+| 别名存在**真实冲突** | `ls`: lasso vs livescript；`ml`: ocaml vs sml。上游 `registerAliases` 直接覆盖（后注册者胜），实测 `lasso@93 < livescript@100` → `ls`=LiveScript，`ocaml@124 < sml@162` → `ml`=SML | 必须解析 `lib/index.js` 复刻注册顺序 |
+| 注册顺序**不是文件名字典序** | `REG_ORDER isSorted=false` | 现有表与字典序恰好吻合是**巧合**；自行排序在未来某次升级会静默产生错误归属 |
+| `spec.name` 是**展示名而非键** | 几乎每个语法都不同（`1c` → `1C:Enterprise`），且 `python-repl` **根本没有 `name` 字段** | 只能以文件名为唯一标识，反查校验不可用展示名 |
+
+行尾另需注意：无 `.gitattributes`、`core.autocrlf=true`、源文件磁盘上 100% CRLF，故生成器写 LF、`--check` 比较前归一化 CRLF→LF，避免制造全文件 diff。
+
+#### 13.5.2 结构：生成逻辑只存在一份
+
+`frontend/scripts/gen-hljs-aliases.mjs` 既是 CLI 也是模块，导出 `buildAliasMap`/`renderModule`/`listGrammarFiles`/`resolveHljsRoot`，由 `src/__tests__/hljsAliases.test.js` 直接 import。**测试不重算任何别名**——若在测试里重写一份「简化版」推导，就是 §13.4「假测试」的原样重犯。CLI 入口用 `import.meta.url === pathToFileURL(process.argv[1]).href` 守卫，保证被 vitest import 时不触发写盘。
+
+新增 `npm run gen:aliases`（重生成）与 `npm run check:aliases`（`--check`，过期即 exit 1）。
+
+#### 13.5.3 验证：门禁必须被证明能变红
+
+| 验证项 | 结果 |
+| --- | --- |
+| 生成结果与既有表一致 | 重新生成后 `git diff` 仅 **2 insertions**（新增的「生成勿改」头注释），179 条别名逐字节复现 |
+| 幂等 | 连续两次生成后 `--check` 均 exit 0 |
+| **注入缺失别名** | 删掉 `yml` → 精确报 `missing: ['yml']`，红 |
+| **注入错误归属** | `py: 'ruby'` → 报 `py: 文件=ruby 实际=python`，红 |
+| 全量回归 | **20 文件 / 181 用例**全绿（原 19/175，新增 1 文件 6 用例）|
+| 脚本未泄漏进前端产物 | `dist/assets/*.js` 中 `gen-hljs-aliases`/`node:fs`/`node:module` 均 **none**；唯一命中的 `registerLanguage(` 是 `useMarkdown.js` 的按需注册。ChatView 仍 132.55 kB |
+
+**方法论沉淀**：一次红色验证比十次绿色更有信息量。首轮篡改时键集断言没红，我一度以为是漏判，实测发现是 PowerShell `Set-Content -NoNewline` 注入了 BOM 且使 CRLF 正则失效、`yml` 实际未被删除——**验证手段本身也会假**，改用 node 精确改写后立刻变红。因此「新增门禁」的完成标准不是它通过，而是它在人为破坏下必定失败。
+
+改动文件（3 个）：`frontend/scripts/gen-hljs-aliases.mjs`（新增）、`frontend/src/__tests__/hljsAliases.test.js`（新增）、`frontend/package.json`（两个 script）；`frontend/src/composables/hljsAliases.js` 补头注释 2 行。临时探针 `probe_alias.mjs`/`probe_alias2.mjs` 已删除，不留残留。
 
 ## 14. 持续门禁
 
@@ -716,7 +754,8 @@ P4 的最小真实经历边界已落地：
 - 当前阶段 A Gate 的 holdout、lesion 和跨 seed 结果；
 - 数据 manifest、实验注册、代码 commit 和训练 lineage；
 - planned/actual learned state 与资源预算；
-- 后端、前端、桌面、Legacy-off 启动和安全门禁。
+- 后端、前端、桌面、Legacy-off 启动和安全门禁；
+- 构建期静态产物与上游依赖同步：`npm run check:aliases`（`hljsAliases.js` vs 当前 highlight.js，过期 exit 1），同等断言亦由 `src/__tests__/hljsAliases.test.js` 在 `npm test` 中执行。凡引入「由依赖推导、写死进源码」的产物，都必须同时引入这类门禁。
 
 辅助训练结果必须标记 `native-assisted`；只有不依赖辅助 teacher 决策且能继续终身学习的路径才能标记 `native-local`。A0–A9 的目的追溯和 Gate 定义以 Taiji v1 架构文档为准。
 
