@@ -1702,17 +1702,151 @@ Qwen provider canary 仍通过，证明清理的是错误产品语义而不是�
 退出 Gate：模块拆分前后 checkpoint digest/行为等价；故意制造一个 URL、schema、能力状态或 checkpoint 漂移时 CI 必红；
 打包客户端完成 W2/W3 canary。
 
-##### W7：恢复长期研究主线
+##### W7：后续可靠性、研究、性能与产品体验工作包
 
-只有 W0–W6 全部通过后，才按真实产品 trace 决定下一项研究：
+W7 不是把 provider watchdog、interaction-group、小型模拟 Gate、CUDA 或视觉体验永久搁置，而是把它们从“现在就继续加功能”
+改为**有前置条件、有升级路径、有真实验收的后续工作包**。其中小型模拟 Gate 是 W0–W7 全程使用的验证层，不需要等到 W7
+才恢复；其余工作包只有在所依赖的产品合同稳定后才进入实施，避免继续用内部模拟替代尚未闭合的工作台能力。
+W7 的实施阶段仍在 W0–W6 全部通过后开始；下表的进入条件是各工作包除总顺序外还必须满足的证据条件，不是允许提前插队。
 
-- provider runtime watchdog 与 previous-version 自动回退；
-- interaction-group/recovery attribution 的必要深度与规模；
-- 开放域 world/semantic/skill 学习；
-- 自进化对真实任务失败与资源瓶颈的结构增长；
-- CUDA 跨设备一致性、真实热点和 fused/sparse kernel。
+排程定位如下：
 
-选择顺序必须由产品任务中的失败分布、资源数据和 lesion 证据决定，不再仅凭哪个内部 Gate 最容易继续扩展。
+| 工作包 | 是否保留 | 进入条件 | 在总路线中的位置 |
+|---|---|---|---|
+| 小型模拟 Gate | 保留且立即作为验证手段使用 | 对应阶段已有可故意打红的因果假设 | W0–W7 横切，不单独宣称产品完成 |
+| provider runtime watchdog | 完整保留 | W0 的事件、审计、checkpoint lineage 与 W3 registry 稳定 | W7-R1 |
+| interaction-group / recovery attribution | 完整保留 | W2/W3 已产生真实多步失败、恢复和工具 outcome trace | W7-R2 |
+| 视觉与桌面体验收口 | 完整保留 | W5 已完成能力、状态、文案与路由真实性对齐 | W7-R3 |
+| CUDA 与性能优化 | 完整保留，当前仅硬件验证受阻 | W6 固定 CPU 基线、checkpoint 合同，并取得可用 CUDA 主机 | W7-R4 |
+| 开放域学习与结构自进化 | 完整保留 | 上述真实任务 trace、资源指标和 causal lesion 可共同支撑增长决策 | W7-R5 |
+
+###### W7-G0：三层 Gate 梯度——小型模拟不取消，但必须向真实环境毕业
+
+小型模拟 Gate 的正确定位是低成本证明机制是否存在，而不是能力终点。此梯度从 W0 开始适用于每一个工作包：
+
+1. **S0 确定性小型模拟**：最小数值世界、固定 seed、边界输入和单一因果变量；必须先通过 lesion、错误输入或断开关键组件证明
+   Gate 会红，再验证实现后变绿。S0 可以阻止错误实现进入下一层，但不得单独形成“已具备通用能力”的产品声明。
+2. **S1 replay / sandbox Gate**：使用脱敏的真实 action/outcome trace、临时仓库、失败重放和 checkpoint 中断续接；验证机制能处理
+   非理想顺序、工具错误、状态漂移和资源限制，而不是只适配手写 toy schema。
+3. **S2 packaged-client / real-workbench canary**：在打包客户端、legacy-off 和真实工作台 capability 下完成用户任务；以真实文件、
+   diagnostics、命令结果、UI 状态和 audit lineage 作为最终证据。
+
+每个新 Gate 必须在 manifest 中声明 `claim`、`owner`、`S0/S1/S2 level`、`red proof`、`graduation target`、输入摘要、
+checkpoint revision 和替代了哪些旧报告。S1/S2 已覆盖的 S0 执行日志进入 archive，只保留可复现脚本、合同和最终报告，避免
+模拟报告无限堆积。任何能力若只有 S0 证据，路线图必须显式写“模拟机制成立，产品能力未验收”。
+
+退出 Gate：每项长期能力都能从当前 claim 追溯到对应 S0/S1/S2 证据；故意移除关键组件会在最低适用层变红；不存在用 S0
+通过结果替代 S2 产品完成声明的情况。
+
+###### W7-R1：provider runtime watchdog、稳定回退与恢复
+
+目标不是让外部 Qwen/provider 变成 Taiji 的认知主体，而是保证作为“语言器官”的 provider 在运行时退化时可检测、可隔离、
+可回退，且失败不会污染 Taiji 的认知状态、checkpoint 或下一次请求。
+
+工作项：
+
+1. 为每次语言 realization 建立版本化健康记录，至少区分 `accepted`、语义校验失败、validated fallback、timeout、加载异常、
+   artifact 漂移和 canary 失败；健康状态按 artifact digest 隔离，禁止跨版本继承计数。
+2. 使用连续失败阈值、滚动接受率、冷却期和恢复迟滞共同决定 `healthy/degraded/quarantined/probing`，避免单次抖动触发回退，
+   也避免 provider 在 active/previous 间频繁振荡。
+3. 自动回退只允许落到 registry 中 allowlisted、内容寻址仍有效且 canary 通过的 previous version；previous 漂移、过期或不存在时，
+   必须 fail closed 到 `native-readable`，不得选择任意本地模型。
+4. watchdog 状态、计数、冷却期限、active/previous revision 和最后失败原因进入 checkpoint；重启后继续原状态，但不得重放已经完成
+   的语言请求或泄漏 prompt/history。
+5. runtime status、聊天 final event 和异常中心显示 active/fallback/quarantine/probe、artifact revision 和可操作原因；前端只观察，
+   不自行决定轮换或清空错误。
+6. canary 覆盖“active 连续退化 → previous 原子回退 → 冷却 → 隔离 probe → 恢复 active”，以及 previous 漂移、进程中断、
+   并发请求和 checkpoint continuation；任何失败不能形成半提交 registry。
+
+退出 Gate：provider 退化可在请求级 trace 中重现；回退目标经过内容寻址和 canary 重新确认；重启前后 watchdog 决策一致；移除
+health source、篡改 previous digest 或关闭语义 validator 时 Gate 确定性变红；Taiji 在 provider 全部不可用时仍通过
+`native-readable` 给出可读、来源清楚的降级输出。
+
+###### W7-R2：interaction-group 与 recovery attribution 的真实任务化
+
+interaction-group 不再为了增加“神经元群”概念而扩展，而是用于解释和改善真实多策略、多工具、多记忆源共同参与时的成功、失败与恢复。
+
+工作项：
+
+1. 从 W2/W3 的真实 task trace 定义 interaction observation：参与的 workspace route、memory source、planner branch、tool call、
+   recovery action、资源成本和最终 outcome；不得按名称或手工角色表直接指定贡献。
+2. 在预算内实现可计算的边际归因：先使用 leave-one-group-out、成对交互和局部反事实；只有证据显示高阶交互必要时才提高阶数，
+   不默认做指数级全子集搜索。
+3. group 的形成、合并、拆分、休眠和剪枝由持续贡献、互补性、冲突率、恢复价值和资源预算驱动；结构变化写入 provenance，
+   可单独回滚，不得破坏无关 group 的 digest 与 checkpoint 状态。
+4. 把 recovery attribution 回写到 workspace routing、procedural/episodic/semantic memory 和 planning policy，但保留各 owner 的更新边界，
+   不建立一个重新包办全部学习的中心控制器。
+5. 使用未见工具组合、跨文件故障、错误诊断、部分 patch 冲突和多步恢复建立 holdout；与 single-strategy、no-group、random-group
+   和 no-attribution 做同预算对照。
+
+退出 Gate：interaction-group 在至少一类真实工作台任务上稳定优于最强单策略和随机分组；lesion 能定位退化来源；错误归因可局部回滚；
+计算与内存开销随 group 数量保持有界；不存在只有 group 数量增加、任务成功率和恢复效率不改善的“规模即进化”声明。
+
+###### W7-R3：视觉、桌面外壳与交互体验收口
+
+视觉工作不取消，但必须建立在 W5 的真实 capability 和状态模型上；否则只会把错误的 Legacy/HF/伪 Agent 内容包装得更漂亮。
+
+工作项：
+
+1. 统一客户端信息架构：侧边栏在目标窗口高度内完整显示核心导航，低频项进入显式二级入口；工作台、Taiji 状态、训练、语言器官、
+   设置和异常中心的层级与真实 owner 对齐，不再使用滚动隐藏关键入口。
+2. 建立设计 token 和可复用组件，统一字体、间距、圆角、阴影、色彩、分隔、focus ring、loading/empty/disabled/error/fallback/
+   approval/executing/rollback 状态，清除各页面独立硬编码样式。
+3. 收口 Windows 桌面品牌资产：窗口/任务栏、系统托盘、托盘通知和打包产物使用同一 Taiji logo 来源与多尺寸资源；应用内允许
+   低成本流转动画，任务栏和系统通知使用平台兼容的静态帧；圆润外壳在缩放、最大化和系统阴影下不裁切内容。
+4. UI 只展示 registry 中真实存在的 capability，并完整呈现 action lineage、审批、执行、回退和 provider 降级；视觉状态不能掩盖
+   capability 不可用、Legacy-only 或实验性边界。
+5. 覆盖键盘导航、焦点顺序、对比度、reduced-motion、100/125/150/200% DPI、多显示器、浅深色和小窗口；禁止为追求动效
+   牺牲可访问性、启动时间或托盘稳定性。
+6. 建立 route screenshot/state contract 与 packaged-client smoke，重点检查侧边栏溢出、窗口圆角、任务栏/托盘/通知图标、真实状态源、
+   首屏任务完成路径和异常降级。
+
+退出 Gate：默认打包客户端在各 DPI 下无关键导航滚动、裁切和空白壳；桌面所有品牌入口一致；关闭 capability/provider 时 UI 能准确降级；
+视觉回归、可访问性和打包 smoke 均可通过故意破坏 token、图标或状态绑定而变红。
+
+###### W7-R4：CUDA、跨设备一致性与测量驱动的性能优化
+
+CUDA 不是取消，而是**当前缺少可验证硬件**。在获得 CUDA 主机前允许整理 device abstraction、benchmark schema 和 CPU 基线，
+但不得提交“已适配 CUDA”或“已加速”的能力结论；CUDA 主机不可用也不阻塞 W0–W7-R3。
+
+工作项：
+
+1. 在 W6 固定代表性 CPU workload、数据 manifest、seed、checkpoint revision、精度指标、峰值内存、吞吐与延迟，先 profile 出真实热点；
+   没有测量证据的模块不进入 CUDA 优化。
+2. 建立显式 device/dtype/capability 合同，禁止模块内部私自选择设备；CPU-only、CUDA unavailable、显存不足和设备切换均有确定性回退。
+3. 验证 CPU → CUDA → CPU checkpoint continuation，覆盖 optimizer/local-learning 状态、随机状态、稀疏结构、provider artifact 引用和
+   长序列中断；旧 CPU checkpoint 必须继续可读。
+4. 先做算子迁移和批处理/向量化，再按 profile 证据评估 mixed precision、稀疏布局与 fused kernel；自定义 kernel 必须保留参考实现、
+   数值对照和硬件 capability fallback。
+5. 跨设备验证 deterministic/tolerance 边界、NaN/Inf、OOM 恢复、吞吐、p50/p95 latency、峰值显存和能耗代理；性能提升不能以
+   破坏 Gate、checkpoint 或学习质量为代价。
+
+退出 Gate：在真实 CUDA 主机上通过 CPU/CUDA 数值与 checkpoint 一致性；目标 workload 达到预先登记的加速和显存阈值；移除 CUDA、
+降低 capability 或触发 OOM 时自动回落且结果可审计；只有实测热点才允许保留 fused/sparse kernel。
+
+###### W7-R5：开放域学习与结构自进化
+
+自进化不等于持续增加神经元数量。它必须由真实任务上的长期误差、容量拥塞、恢复失败和新分布证据触发，并同时允许生长、重组、
+巩固、休眠、剪枝和回退。
+
+工作项：
+
+1. 聚合 W2/W3/W7-R2 的真实失败簇，区分表示容量不足、记忆干扰、路由冲突、世界模型误差、工具缺失和语言 realization 失败，
+   防止所有问题都被误判为“需要扩大神经元规模”。
+2. 为 perception/workspace/memory/world/planning 分别定义可观测的 capacity pressure 与 growth proposal；结构增长由局部 owner 提议，
+   由全局资源治理器按收益、预算和可回滚性批准，不使用固定任务名触发器。
+3. 新增单元/连接/group 先在隔离 shadow 状态学习，通过 holdout、lesion 和资源收益 Gate 后原子并入；未获益或产生漂移时恢复旧 topology，
+   checkpoint 同时保存结构 revision 和参数状态。
+4. 开放域 world/semantic/skill 学习从真实 provenance Observation 与 outcome 中形成，语言 provider 只负责表达；新知识必须能追溯、
+   冲突检测、遗忘控制并被任务成功率验证。
+5. 长期评测同时记录能力收益、遗忘、恢复时间、参数/连接规模、内存、延迟和能耗代理；禁止只报告规模扩大或训练 loss 下降。
+
+退出 Gate：至少一类未见真实任务触发结构增长后，在同预算 holdout 上优于冻结结构，并且无关能力遗忘受控；growth lesion、错误增长和
+rollback Gate 均成立；当容量压力消失时系统不会继续无界扩张。只有满足这些条件，才能把“自然生长式迭代”作为 Taiji 已实现能力。
+
+W7 的实际实施顺序固定为 **G0 贯穿全程，R1 → R2 → R3 → R4 → R5**。若到达 R4 时仍没有 CUDA 主机，R4 标记为
+`hardware-blocked`，可先整理不声称完成的基线和测试资产，但不得绕过真实 CUDA Gate 把它记为完成；R5 的结构增长仍必须等待
+真实资源数据，不能因为 CUDA 暂缺而改用更多 toy Gate 代替。
 
 #### 16.1.8 立即冻结和归档边界
 
