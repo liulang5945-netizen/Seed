@@ -352,6 +352,7 @@ class SeedRuntime:
                     "trainer": "api_seed_runtime",
                     "workbench": {
                         "snapshot": workbench.capability_snapshot.to_payload(),
+                        "mcp_registry": workbench.mcp_registry.to_payload(),
                         "audit": self._workbench_audit.to_payload(),
                         "language_state": workbench.language_state_checkpoint(),
                         "transaction_state": workbench.transaction_state_checkpoint(),
@@ -385,6 +386,7 @@ class SeedRuntime:
             self._workbench_environment = WorkbenchEnvironment(
                 current_root,
                 snapshot=self._workbench_environment.capability_snapshot,
+                mcp_registry=self._workbench_environment.mcp_registry,
             )
         return self._workbench_environment
 
@@ -403,6 +405,7 @@ class SeedRuntime:
     def _restore_workbench_metadata(self, payload: Any) -> None:
         if not isinstance(payload, Mapping):
             return
+        from seed_platform.mcp_registry import McpToolRegistry
         from seed_platform.workbench import (
             CapabilitySnapshot,
             WorkbenchAuditLog,
@@ -410,6 +413,10 @@ class SeedRuntime:
         )
 
         snapshot_payload = payload.get("snapshot")
+        registry_payload = payload.get("mcp_registry")
+        registry = self._workbench_environment.mcp_registry
+        if isinstance(registry_payload, Mapping):
+            registry = McpToolRegistry.from_payload(registry_payload)
         if isinstance(snapshot_payload, Mapping):
             snapshot = CapabilitySnapshot.from_payload(snapshot_payload)
             current = self._workbench_environment.capability_snapshot
@@ -422,6 +429,7 @@ class SeedRuntime:
                 self._workbench_environment = WorkbenchEnvironment(
                     self._workbench_environment.root,
                     snapshot=snapshot,
+                    mcp_registry=registry,
                 )
             else:
                 logger.info(
@@ -444,6 +452,7 @@ class SeedRuntime:
         intent: Any,
         *,
         snapshot_id: str,
+        mcp_registry_snapshot_id: str = "",
     ) -> dict[str, Any]:
         """Validate an action and issue approval without executing its side effect."""
 
@@ -458,6 +467,14 @@ class SeedRuntime:
         request = WorkbenchActionRequest.from_action_intent(
             intent,
             snapshot_id=snapshot_id,
+            mcp_registry_snapshot_id=(
+                mcp_registry_snapshot_id
+                or (
+                    environment.mcp_registry.snapshot_id
+                    if str(intent.kind).startswith("mcp.")
+                    else ""
+                )
+            ),
         )
         tick = int(self.model.tick)
         self._workbench_audit.append(
@@ -488,12 +505,43 @@ class SeedRuntime:
             }
         return result
 
+    def preflight_workbench_loop(
+        self,
+        requests: Sequence[Any],
+        *,
+        loop_id: str,
+        max_steps: int = 8,
+        max_budget_units: float = 32.0,
+        on_failure: str = "stop",
+        checkpoint_boundary: str = "after_each_step",
+    ) -> dict[str, Any]:
+        """Preflight a bounded request sequence without executing side effects."""
+
+        environment = self._sync_workbench_root()
+        result = environment.preflight_loop(
+            requests,
+            loop_id=loop_id,
+            max_steps=max_steps,
+            max_budget_units=max_budget_units,
+            on_failure=on_failure,
+            checkpoint_boundary=checkpoint_boundary,
+        )
+        result["runtime"] = {
+            "tick": int(self.model.tick),
+            "checkpoint_path": (
+                None if self.checkpoint_path is None else str(self.checkpoint_path)
+            ),
+            "checkpoint_boundary": result.get("checkpoint", {}).get("boundary"),
+        }
+        return result
+
     def execute_workbench_intent(
         self,
         intent: Any,
         *,
         snapshot_id: str,
         approval_token: str = "",
+        mcp_registry_snapshot_id: str = "",
         learn: bool = False,
     ) -> dict[str, Any]:
         """Execute one Taiji-owned intent through Seed's workbench."""
@@ -513,6 +561,14 @@ class SeedRuntime:
             intent,
             snapshot_id=snapshot_id,
             approval_token=approval_token,
+            mcp_registry_snapshot_id=(
+                mcp_registry_snapshot_id
+                or (
+                    environment.mcp_registry.snapshot_id
+                    if str(intent.kind).startswith("mcp.")
+                    else ""
+                )
+            ),
         )
         tick = int(self.model.tick)
         self._workbench_audit.append(
@@ -540,6 +596,7 @@ class SeedRuntime:
                 error_code=policy.reason_code,
                 error="workbench action was not admitted",
                 tick=tick,
+                mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
             )
             self._workbench_audit.append(
                 "outcome",
@@ -578,6 +635,7 @@ class SeedRuntime:
                 error_code="approval_invalid",
                 error=str(exc),
                 tick=tick,
+                mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
             )
             self._workbench_audit.append(
                 "outcome",
@@ -623,6 +681,7 @@ class SeedRuntime:
                     error_code="taiji_execution_error",
                     error=str(exc),
                     tick=int(self.model.tick),
+                    mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
                 )
                 self._workbench_audit.append(
                     "outcome",
@@ -659,6 +718,7 @@ class SeedRuntime:
             error=str(result.get("error", "")),
             transaction=transaction,
             tick=int(taiji_outcome.tick),
+            mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
         )
         self._workbench_audit.append(
             "outcome",
@@ -671,7 +731,10 @@ class SeedRuntime:
             "policy": policy.to_payload(),
             "outcome": workbench_outcome.to_payload(),
             "taiji_outcome": taiji_outcome.to_payload(),
-            "tool_call": call.to_payload(),
+            "tool_call": {
+                **call.to_payload(),
+                "workbench_binding": request.binding_payload(),
+            },
             "events": [event.to_payload() for event in self._workbench_audit.events],
         }
 

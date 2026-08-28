@@ -47,6 +47,18 @@ class WorkbenchIntentRequest(BaseModel):
     confidence: float = 0.0
     tick: int = 0
     approval_token: str = ""
+    mcp_registry_snapshot_id: str = ""
+
+
+class WorkbenchLoopPreflightRequest(BaseModel):
+    """Bounded, non-executing admission request for a native workbench loop."""
+
+    loop_id: str
+    intents: list[WorkbenchIntentRequest] = []
+    max_steps: int = 8
+    max_budget_units: float = 32.0
+    on_failure: str = "stop"
+    checkpoint_boundary: str = "after_each_step"
 
 
 class RAGSearchRequest(BaseModel):

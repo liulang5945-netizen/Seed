@@ -19,7 +19,7 @@ import subprocess
 import tempfile
 import threading
 import time
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -44,6 +44,10 @@ WORKBENCH_MAX_TERMINAL_OUTPUT_BYTES = 1_048_576
 WORKBENCH_MAX_TERMINAL_TIMEOUT_SECONDS = 120.0
 WORKBENCH_APPROVAL_TTL_SECONDS = 300.0
 WORKBENCH_MAX_UNDO_RECORDS = 64
+WORKBENCH_LOOP_CONTRACT_FORMAT = "seed-workbench-loop-v1"
+WORKBENCH_LOOP_CONTRACT_VERSION = 1
+WORKBENCH_MAX_LOOP_STEPS = 8
+WORKBENCH_MAX_LOOP_BUDGET_UNITS = 32.0
 # Workbench sensations cross into Taiji's native byte sensor. Keep the
 # digest-derived marker inside the raw-byte domain; Taiji's boundary symbol
 # is reserved for stream framing and is not emitted here.
@@ -352,6 +356,7 @@ class WorkbenchActionRequest:
     source: str = "taiji"
     version: int = WORKBENCH_CONTRACT_VERSION
     approval_token: str = ""
+    mcp_registry_snapshot_id: str = ""
 
     def __post_init__(self) -> None:
         if self.version != WORKBENCH_CONTRACT_VERSION:
@@ -382,6 +387,7 @@ class WorkbenchActionRequest:
         snapshot_id: str,
         request_id: str | None = None,
         approval_token: str = "",
+        mcp_registry_snapshot_id: str = "",
     ) -> WorkbenchActionRequest:
         """Bind a Taiji-owned intent to the current Seed capability snapshot."""
 
@@ -396,7 +402,17 @@ class WorkbenchActionRequest:
             confidence=float(getattr(intent, "confidence", 0.0)),
             tick=int(getattr(intent, "tick", 0)),
             approval_token=str(approval_token or ""),
+            mcp_registry_snapshot_id=str(mcp_registry_snapshot_id or ""),
         )
+
+    def binding_payload(self) -> dict[str, str | int]:
+        """Return the non-secret identity binding carried across the boundary."""
+
+        return {
+            "version": self.version,
+            "capability_snapshot_id": self.snapshot_id,
+            "mcp_registry_snapshot_id": self.mcp_registry_snapshot_id,
+        }
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -410,6 +426,7 @@ class WorkbenchActionRequest:
             "tick": self.tick,
             "source": self.source,
             "approval_granted": bool(self.approval_token),
+            "mcp_registry_snapshot_id": self.mcp_registry_snapshot_id,
         }
 
 
@@ -486,6 +503,7 @@ class WorkbenchOutcome:
     transaction: WorkbenchTransaction | None = None
     tick: int = 0
     version: int = WORKBENCH_CONTRACT_VERSION
+    mcp_registry_snapshot_id: str = ""
 
     def __post_init__(self) -> None:
         if self.status not in {"success", "rejected", "error"}:
@@ -510,6 +528,7 @@ class WorkbenchOutcome:
                 None if self.transaction is None else self.transaction.to_payload()
             ),
             "tick": self.tick,
+            "mcp_registry_snapshot_id": self.mcp_registry_snapshot_id,
         }
 
 
@@ -683,6 +702,164 @@ class WorkbenchEnvironment:
             "mcp_registry": self.mcp_registry.to_payload(),
         }
 
+    def preflight_loop(
+        self,
+        requests: Sequence[WorkbenchActionRequest],
+        *,
+        loop_id: str,
+        max_steps: int = WORKBENCH_MAX_LOOP_STEPS,
+        max_budget_units: float = WORKBENCH_MAX_LOOP_BUDGET_UNITS,
+        on_failure: str = "stop",
+        checkpoint_boundary: str = "after_each_step",
+    ) -> dict[str, Any]:
+        """Admit a bounded sequence without executing or mutating any step."""
+
+        base = {
+            "format": WORKBENCH_LOOP_CONTRACT_FORMAT,
+            "version": WORKBENCH_LOOP_CONTRACT_VERSION,
+            "loop_id": str(loop_id),
+            "snapshot_id": self.snapshot.snapshot_id,
+            "mcp_registry_snapshot_id": self.mcp_registry.snapshot_id,
+        }
+
+        def rejected(
+            code: str, message: str, *, index: int | None = None
+        ) -> dict[str, Any]:
+            payload = {
+                **base,
+                "accepted": False,
+                "error_code": code,
+                "error": message,
+            }
+            if index is not None:
+                payload["step_index"] = index
+            return payload
+
+        if not str(loop_id).strip():
+            return rejected("invalid_loop_id", "loop_id cannot be empty")
+        try:
+            step_limit = int(max_steps)
+            budget_limit = float(max_budget_units)
+        except (TypeError, ValueError):
+            return rejected("invalid_loop_budget", "loop limits must be numeric")
+        if not 1 <= step_limit <= WORKBENCH_MAX_LOOP_STEPS:
+            return rejected("invalid_loop_steps", "max_steps must be between 1 and 8")
+        if (
+            not math.isfinite(budget_limit)
+            or not 0.0 < budget_limit <= WORKBENCH_MAX_LOOP_BUDGET_UNITS
+        ):
+            return rejected(
+                "invalid_loop_budget", "max_budget_units must be in (0, 32]"
+            )
+        if on_failure != "stop":
+            return rejected(
+                "unsupported_failure_mode", "loop failure mode must be stop"
+            )
+        if checkpoint_boundary != "after_each_step":
+            return rejected(
+                "unsupported_checkpoint_boundary",
+                "loop checkpoint boundary must be after_each_step",
+            )
+        if isinstance(requests, (str, bytes)) or not isinstance(requests, Sequence):
+            return rejected("invalid_loop_requests", "loop requests must be a sequence")
+        if not requests:
+            return rejected("empty_loop", "loop must contain at least one request")
+        if len(requests) > step_limit:
+            return rejected("loop_step_limit", "loop contains more than max_steps")
+
+        steps: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        budget_units = 0.0
+        for index, request in enumerate(requests):
+            if not isinstance(request, WorkbenchActionRequest):
+                return rejected(
+                    "invalid_loop_request",
+                    "loop item is not a workbench request",
+                    index=index,
+                )
+            if request.snapshot_id != self.snapshot.snapshot_id:
+                return rejected(
+                    "stale_capability_snapshot",
+                    "loop capability snapshot drifted",
+                    index=index,
+                )
+            if request.capability_id in {"mcp.list", "mcp.invoke"} and (
+                request.mcp_registry_snapshot_id != self.mcp_registry.snapshot_id
+            ):
+                return rejected(
+                    "stale_mcp_registry",
+                    "loop MCP registry snapshot drifted",
+                    index=index,
+                )
+            request_key = _canonical_digest(
+                {
+                    "capability_id": request.capability_id,
+                    "parameters": dict(request.parameters),
+                }
+            )
+            if request_key in seen:
+                return rejected(
+                    "repeated_call",
+                    "loop contains a repeated capability call",
+                    index=index,
+                )
+            seen.add(request_key)
+            policy = self.policy_for(request)
+            if policy.decision != "allow":
+                return rejected(
+                    policy.reason_code,
+                    "loop contains a request that is not admitted",
+                    index=index,
+                )
+            step_budget = 1.0
+            if request.capability_id == "mcp.invoke":
+                try:
+                    descriptor = self.mcp_registry.validate_call(
+                        request.parameters.get("tool_id", ""),
+                        request.parameters.get("arguments", {}),
+                    )
+                except (KeyError, PermissionError, TypeError, ValueError) as exc:
+                    return rejected("invalid_parameters", str(exc), index=index)
+                step_budget = max(
+                    1.0,
+                    float(descriptor.timeout_seconds) / 5.0
+                    + float(descriptor.output_limit) / 65_536.0,
+                )
+            budget_units += step_budget
+            if budget_units > budget_limit:
+                return rejected(
+                    "loop_budget_limit", "loop exceeds max_budget_units", index=index
+                )
+            steps.append(
+                {
+                    "index": index,
+                    "request_id": request.request_id,
+                    "intent_id": request.intent_id,
+                    "capability_id": request.capability_id,
+                    "policy": policy.to_payload(),
+                    "budget_units": step_budget,
+                    "mcp_registry_snapshot_id": request.mcp_registry_snapshot_id,
+                }
+            )
+
+        payload = {
+            **base,
+            "accepted": True,
+            "step_count": len(steps),
+            "max_steps": step_limit,
+            "budget_units": budget_units,
+            "max_budget_units": budget_limit,
+            "on_failure": "stop",
+            "checkpoint": {
+                "boundary": "after_each_step",
+                "required": True,
+                "resume_key": "request_id",
+            },
+            "steps": steps,
+        }
+        payload["preflight_id"] = _canonical_digest(payload)
+        return payload
+
     def language_state_checkpoint(self) -> dict[str, Any]:
         """Persist language choices without persisting an executable action."""
 
@@ -798,7 +975,7 @@ class WorkbenchEnvironment:
                 "capability_not_connected",
                 self.snapshot.snapshot_id,
             )
-        if request.capability_id == "mcp.invoke":
+        if request.capability_id in {"mcp.list", "mcp.invoke"}:
             return self._mcp_policy_for(request)
         if descriptor.risk not in {"read_only", "reversible_ui"}:
             if request.approval_token:
@@ -839,6 +1016,34 @@ class WorkbenchEnvironment:
     def _mcp_policy_for(
         self, request: WorkbenchActionRequest
     ) -> ExecutionPolicyDecision:
+        registry_snapshot_id = str(request.mcp_registry_snapshot_id or "")
+        if (
+            registry_snapshot_id
+            and registry_snapshot_id != self.mcp_registry.snapshot_id
+        ):
+            return ExecutionPolicyDecision(
+                request.request_id,
+                request.capability_id,
+                "deny",
+                "stale_mcp_registry",
+                self.snapshot.snapshot_id,
+            )
+        if request.capability_id == "mcp.list":
+            if request.parameters:
+                return ExecutionPolicyDecision(
+                    request.request_id,
+                    request.capability_id,
+                    "deny",
+                    "invalid_parameters",
+                    self.snapshot.snapshot_id,
+                )
+            return ExecutionPolicyDecision(
+                request.request_id,
+                request.capability_id,
+                "allow",
+                "mcp_registry_read_only",
+                self.snapshot.snapshot_id,
+            )
         tool_id = str(request.parameters.get("tool_id", "")).strip()
         descriptor = self.mcp_registry.get(tool_id)
         if descriptor is None:
@@ -901,6 +1106,7 @@ class WorkbenchEnvironment:
                 "confidence": request.confidence,
                 "tick": request.tick,
                 "source": request.source,
+                "mcp_registry_snapshot_id": request.mcp_registry_snapshot_id,
             }
         )
 

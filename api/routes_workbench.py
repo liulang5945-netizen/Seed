@@ -12,7 +12,7 @@ from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
 
-from api.models import WorkbenchIntentRequest
+from api.models import WorkbenchIntentRequest, WorkbenchLoopPreflightRequest
 from api.seed_runtime import get_seed_runtime
 from seed_platform.workbench import (
     WorkbenchActionRequest,
@@ -60,6 +60,11 @@ def _read_only_result(tool_name: str, parameters: dict[str, Any]) -> dict[str, A
         parameters=parameters,
         snapshot_id=environment.capability_snapshot.snapshot_id,
         source="seed.api.read_only",
+        mcp_registry_snapshot_id=(
+            environment.mcp_registry.snapshot_id
+            if tool_name in {"mcp.list", "mcp.invoke"}
+            else ""
+        ),
     )
     policy = environment.policy_for(request)
     if policy.decision != "allow":
@@ -167,6 +172,7 @@ def execute_workbench_intent(request: WorkbenchIntentRequest) -> dict[str, Any]:
             intent,
             snapshot_id=request.snapshot_id,
             approval_token=request.approval_token,
+            mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -194,6 +200,58 @@ def preview_workbench_intent(request: WorkbenchIntentRequest) -> dict[str, Any]:
         return runtime.preview_workbench_intent(
             intent,
             snapshot_id=request.snapshot_id,
+            mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/loop/preflight")
+def preflight_workbench_loop(
+    request: WorkbenchLoopPreflightRequest,
+) -> dict[str, Any]:
+    """Validate a bounded native loop without executing any step."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    from taiji import ActionIntent
+
+    try:
+        environment = runtime.workbench_environment
+        requests: list[WorkbenchActionRequest] = []
+        for item in request.intents:
+            intent = ActionIntent(
+                intent_id=item.intent_id,
+                kind=item.kind,
+                parameters=item.parameters,
+                source_goal_id=item.source_goal_id,
+                expected_outcome=item.expected_outcome,
+                confidence=item.confidence,
+                tick=item.tick,
+            )
+            requests.append(
+                WorkbenchActionRequest.from_action_intent(
+                    intent,
+                    snapshot_id=item.snapshot_id,
+                    approval_token=item.approval_token,
+                    mcp_registry_snapshot_id=(
+                        item.mcp_registry_snapshot_id
+                        or (
+                            environment.mcp_registry.snapshot_id
+                            if item.kind.startswith("mcp.")
+                            else ""
+                        )
+                    ),
+                )
+            )
+        return runtime.preflight_workbench_loop(
+            requests,
+            loop_id=request.loop_id,
+            max_steps=request.max_steps,
+            max_budget_units=request.max_budget_units,
+            on_failure=request.on_failure,
+            checkpoint_boundary=request.checkpoint_boundary,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

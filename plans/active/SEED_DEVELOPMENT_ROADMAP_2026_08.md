@@ -1924,6 +1924,13 @@ Workbench 新增 `mcp.list/invoke`，仅接入无安装、无网络副作用的�
 `/api/workbench/mcp`、前端 `mcpRegistry` projection 已接通。该 slice 没有接回 Legacy `mcp_manager`，不等于外部 MCP 生命周期管理、
 真实远端服务连接或多步有限自治循环已完成。Workbench 定向回归 `18 passed`，前端 `187 passed`、构建通过、ESLint `0 errors/17 warnings`。
 
-**当前唯一下一步：完成 W3 第二 slice 的 MCP schema/API 对齐与有限多步循环前置。** 先把 `mcp.list/invoke` 的 registry identity、
-capability snapshot、ToolCall/Outcome 和 runtime checkpoint 绑定成同一版本化请求合同，再实现只允许 native Workbench capability 的
-有限多步 loop preflight（步数、总预算、重复调用、失败终止和 checkpoint 边界）；外部安装、网络服务管理和开放式自治仍保持在边界外。
+**已完成（2026-08-29）：W3 第二 slice 的 MCP identity、checkpoint 与 loop preflight Gate。** MCP registry 内容身份已随 runtime
+checkpoint 保存/恢复；单次 Workbench request、Outcome 和返回 ToolCall 共享 capability snapshot/registry snapshot binding，审批
+摘要也纳入 registry identity。`/api/workbench/loop/preflight` 与前端 `preflightLoop` 已接通，loop 只做不执行 admission，强制最多
+8 步、总预算不超过 32 units、拒绝重复调用、首错终止和 `after_each_step` checkpoint 边界。Workbench 定向回归 `19 passed`，
+Seed/native 全量回归 `320 passed, 1 skipped`，前端 `187 passed`、构建通过、ESLint `0 errors/17 warnings`。该 slice 不等于真正的
+多步执行、逐步 checkpoint 提交或外部 MCP 生命周期管理。
+
+**当前唯一下一步：完成 W3 第三 slice 的受预检有限多步执行 Gate。** 只允许执行已通过同一 preflight identity 的 native Workbench
+requests；每步执行后立即记录真实 ToolCall/Outcome 并提交 checkpoint，任一步失败立即停止且保留已完成前缀，恢复时拒绝重放已提交
+request；先覆盖本地无副作用 MCP canary 与一个只读 workspace step，不接外部安装、网络服务或开放式自治。
