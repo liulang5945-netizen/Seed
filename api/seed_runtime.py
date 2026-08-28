@@ -47,11 +47,10 @@ class SeedRuntime:
     ) -> None:
         self.model = model
         self.checkpoint_path = checkpoint_path
-        from taiji import NativeReadableTextLanguageOrgan
+        from taiji import LanguageOrgan, NativeReadableTextLanguageOrgan
 
-        # Chat stays local by default.  An explicitly configured external
-        # organ remains available for Taiji expression calls, but chat must
-        # not silently forward user history to that provider.
+        # Chat stays local by default.  An external organ can reach product
+        # chat only through explicit config plus the realization/safety Gate.
         self._chat_organ = NativeReadableTextLanguageOrgan()
         if provider_status is None:
             from seed.language_provider import attach_native_language_provider
@@ -69,6 +68,10 @@ class SeedRuntime:
             }
         else:
             self._provider_status = dict(provider_status)
+            if self._provider_status.get("chat_enabled") == "true":
+                candidate = self.model.architecture.language_organ
+                if isinstance(candidate, LanguageOrgan):
+                    self._chat_organ = candidate
         self._provider_runtime = provider_runtime
         self._lock = threading.Lock()
 
@@ -236,7 +239,7 @@ class SeedRuntime:
 
     @property
     def chat_language_backend(self) -> str:
-        """Return the local surface used for product chat output."""
+        """Return the language surface used for product chat output."""
 
         return self._chat_organ.backend_id
 
