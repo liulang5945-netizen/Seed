@@ -130,21 +130,6 @@
           </div>
         </div>
 
-        <!-- 发布与导出（概览页展示） -->
-        <div v-if="trainState === 'completed' || publishingState !== 'idle'" class="tk-card" style="margin-top:18px">
-          <div class="card-head">
-            <h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;color:var(--primary)"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>发布与导出</h3>
-          </div>
-          <n-text depth="3" class="publish-desc">{{ t('publish_desc') }}</n-text>
-          <div class="ctrl-row" style="margin-top:12px">
-            <n-button type="primary" round :disabled="publishingState !== 'idle'" @click="publishModel(toast)">
-              {{ publishingState === 'publishing' ? '发布中...' : t('publish_model_btn') }}
-            </n-button>
-            <n-button type="info" round :disabled="publishingState !== 'idle'" @click="exportModelToGGUF(toast, $confirm)">
-              {{ publishingState === 'publishing' ? '导出中...' : t('export_gguf_btn') }}
-            </n-button>
-          </div>
-        </div>
       </section>
 
       <!-- ═══ Tab 2 · 超参数 ═══ -->
@@ -305,23 +290,7 @@
           <n-button type="error" round @click="stopTraining(toast)">
             <template #icon><StopCircle :size="14" /></template>{{ t('stop_training') }}
           </n-button>
-          <n-button v-if="trainState === 'idle' && pendingCheckpoints.length > 0" type="info" round @click="forcePublish(toast, $confirm)">
-            <template #icon><PackageIcon :size="14" /></template>强制发布
-          </n-button>
         </div>
-      </div>
-
-      <!-- 发布进度 -->
-      <div v-if="publishingState === 'publishing'" class="tk-card" style="margin-top:18px">
-        <div class="card-head">
-          <h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;color:var(--primary)"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7M8 14h8"/></svg>发布进度</h3>
-          <n-tag round>{{ trainProgress }}%</n-tag>
-        </div>
-        <n-progress type="line" :percentage="trainProgress" :processing="true" />
-        <n-text depth="3" class="progress-desc">{{ trainProgressDesc }}</n-text>
-        <n-button type="error" round style="margin-top:12px" @click="cancelPublish()">
-          <template #icon><Square :size="14" /></template>取消发布
-        </n-button>
       </div>
 
       <!-- 硬件诊断 -->
@@ -334,7 +303,7 @@
 </template>
 
 <script setup>
-import { Monitor, Zap, Trash2, Package as PackageIcon, RefreshCw, Play, Pause, Square, StopCircle, BarChart2, Download } from 'lucide-vue-next';
+import { Monitor, Zap, Trash2, Package as PackageIcon, RefreshCw, Play, Pause, StopCircle, BarChart2, Download } from 'lucide-vue-next';
 
 import { inject, watch, nextTick, onActivated } from 'vue';
 import FileUploadQueue from '../components/FileUploadQueue.vue';
@@ -343,7 +312,7 @@ import { useTabs } from '../composables/useTabs.js';
 import {
   trainState, trainLog, trainLoss, trainFiles,
   selectedDatasets, trainPreview,
-  publishingState, trainProgress, trainProgressDesc,
+  trainProgress,
   pendingCheckpoints, trainMetrics, trainDevice,
   lossCanvasRef, trainLogRef, fmtTime,
   clearTrainLog,
@@ -351,8 +320,7 @@ import {
   toggleSelectAll, toggleDataset, isAllSelected,
   pauseTraining, resumeTraining, stopTraining,
   loadCheckpoints, resumeFromCheckpoint,
-  publishModel, forcePublish, exportModelToGGUF,
-  cancelPublish, drawLossChart,
+  drawLossChart,
   taijiModelInfo, taijiTrainParams,
   startTaijiTraining, detectTaijiModel,
 } from '../composables/useTraining.js';
@@ -1104,14 +1072,6 @@ onActivated(() => {
   color: var(--foreground, var(--text));
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-}
-
-/* ===== 发布描述 ===== */
-.publish-desc {
-  display: block;
-  font-size: 0.84rem;
-  color: var(--muted-foreground, var(--text-muted));
-  line-height: 1.5;
 }
 
 /* ===== 控制按钮行 ===== */

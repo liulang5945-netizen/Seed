@@ -103,4 +103,14 @@ describe('TrainingView（Seed 原生运行时）', () => {
     expect(text).toContain('剩余时间')
     wrapper.unmount()
   })
+
+  it('训练页面不再呈现旧模型发布或量化入口', async () => {
+    const wrapper = mountView()
+    await flushPromises()
+    const text = wrapper.text()
+    expect(text).not.toContain('GGUF')
+    expect(text).not.toContain('发布模型')
+    expect(text).not.toContain('LoRA')
+    wrapper.unmount()
+  })
 })

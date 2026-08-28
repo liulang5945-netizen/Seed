@@ -1943,6 +1943,13 @@ Seed/native 全量回归 `320 passed, 1 skipped`，前端 `187 passed`、构建�
 WorkbenchEnvironment 任一侧均 fail-closed，仍不接外部安装、网络服务或开放式自治。Workbench 定向回归 `22 passed`，Seed/native 全量
 回归 `320 passed, 1 skipped`，前端 `187 passed`、生产构建通过、ESLint `0 errors/17 warnings`。
 
-**当前唯一下一步：开始 W4 第一 slice 的产品语义残留清理。** 先对前端、API/OpenAPI、settings schema 和发布入口建立 GGUF/LoRA/
-Transformer/Cortex/Legacy Agent/HF 认知主体残留清单，删除或迁移第一批仍暴露为正式 Taiji 能力的入口；保留 Qwen 等语言 provider
-作为语言器官资产边界，并为每个迁移项补 native/legacy-off 回归，暂不触碰合法 provider artifact 和离线 benchmark。
+**已完成（2026-08-29）：W4 第一 slice 的正式产品语义残留清理。** 前端已移除 GGUF 导出、旧模型发布、Agent 参数配置、Cortex
+认知主体切换和旧 Agent 日志筛选；能力页只展示 Seed-owned native capability registry，不再提供 Legacy MCP 安装/市场管理入口；聊天请求
+不再携带 `engine/agent_max_iterations/agent_temperature`，生命状态页不再调用历史 `/api/life/*` 动作接口，训练 composable 的旧生命动作、
+发布和 GGUF 死路径已删除。合法的 native MCP projection、语言 provider artifact 和离线 benchmark 未被误删，仍保留在各自边界内。
+前端新增原生能力与无历史生命接口回归，完整 Vitest 为 `22 files / 188 passed`，ESLint 为 `0 errors / 15 warnings`，生产构建通过。
+
+**当前唯一下一步：开始 W4 第二 slice 的后端 artifact/settings/OpenAPI 边界迁移。** 先盘点 `api/models.py`、settings schema、发布/下载路由和
+OpenAPI snapshot 中的 `gguf_path/model_type/model_name/download_hf` 等旧语义，收敛为 `taiji_checkpoint`、`language_provider_artifact`、
+`legacy_benchmark_artifact`；为已有设置建立可解释、不可猜测的版本化迁移，旧路由先加 deprecation/410 兼容窗口，并补 native/legacy-off
+回归。Qwen provider artifact 内容寻址、canary 和 NeuroPlex 离线 benchmark 保持可用且不进入默认产品运行时。

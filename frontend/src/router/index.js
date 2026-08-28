@@ -23,7 +23,7 @@ const routes = [
     path: '/agent',
     name: 'agent',
     component: () => import('@/views/AgentConfigView.vue'),
-    meta: { title: '智能体配置' }
+    meta: { title: '能力与工具' }
   },
   {
     path: '/workspace',

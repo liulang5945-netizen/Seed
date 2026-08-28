@@ -4,7 +4,7 @@
     <header class="topbar">
       <div class="topbar-left">
         <span class="topbar-title">生命状态</span>
-        <span class="topbar-sub">{{ runtimeStore.health.isTaiji ? '实时查看 Taiji 原生状态通路' : '实时监控 Cortex 对照运行态' }}</span>
+        <span class="topbar-sub">{{ runtimeStore.health.isTaiji ? '实时查看 Taiji 原生状态通路' : '实时查看原生运行时状态' }}</span>
       </div>
       <span class="topbar-spacer"></span>
       <n-tag
@@ -27,7 +27,7 @@
     <!-- ═══ 滚动内容区 ═══ -->
     <div class="scroll-area">
 
-      <!-- ═══ 生命活动操作栏（从 git 历史恢复，接 /api/life/*） ═══ -->
+      <!-- ═══ 生命活动操作栏（兼容状态通路，原生动作器接入后启用） ═══ -->
       <section class="action-bar">
         <span class="action-bar-title">生命活动</span>
         <div class="action-buttons">
@@ -107,11 +107,11 @@
         <span class="dsn-badge">DATA SOURCE</span>
         <div>
           <strong>当前运行时：Seed 原生（{{ runtimeStore.health.modelName || 'seed' }}）</strong>
-          <p>下方「需求五维 / 生命表达 / 需求明细」的数据源是 Cortex 对照运行时的 life_scheduler。Seed 原生运行时尚未接入 needs 上报通道，因此这些面板显示「暂无数据」——不是模型输出，也不是估算值。内存与连接状态为系统实测。</p>
+          <p>下方「需求五维 / 生命表达 / 需求明细」需要运行时的 needs 上报通道。当前原生运行时尚未提供该通道，因此这些面板显示「暂无数据」——不是模型输出，也不是估算值。内存与连接状态为系统实测。</p>
         </div>
       </div>
 
-      <!-- ═══ KPI 卡片行（全部来自 /api/life/status 与运行时实测，无估算值） ═══ -->
+      <!-- ═══ KPI 卡片行（全部来自原生状态快照与运行时实测，无估算值） ═══ -->
       <div class="kpi-grid">
         <!-- 卡1：累计交互 -->
         <div class="kpi-card" style="--kpi-color: var(--chart-1);">
@@ -120,7 +120,7 @@
             累计交互
           </div>
           <div class="kpi-value">{{ life.total_interactions != null ? Number(life.total_interactions).toLocaleString() : '暂无数据' }}</div>
-          <div class="kpi-trend trend-stable"><span class="kpi-src">来自 /api/life/status</span></div>
+          <div class="kpi-trend trend-stable"><span class="kpi-src">来自原生状态快照</span></div>
         </div>
 
         <!-- 卡2：运行时长 -->
@@ -275,8 +275,7 @@
 defineOptions({ name: 'LifeStatusView' })
 import { ref, computed, onActivated, onDeactivated, onUnmounted, inject } from 'vue'
 import { useRuntimeStore } from '@/stores/runtimeStore.js'
-import { API_BASE, authFetch } from '@/composables/apiClient.js'
-import { isTaijiModel, fmtTime } from '@/composables/useTraining.js'
+import { fmtTime } from '@/composables/useTraining.js'
 import NeedsPentagram from '@/components/NeedsPentagram.vue'
 
 const runtimeStore = useRuntimeStore()
@@ -287,7 +286,7 @@ const currentActivity = ref('')
 const actionResult = ref('')
 const actionLoading = ref(false)
 
-// 从 runtimeStore 获取生命数据（来源 /api/runtime/status 聚合的 /api/life/status）
+// 从 runtimeStore 获取生命数据（来源 /api/runtime/status 的原生状态快照）
 const life = computed(() => runtimeStore.life || {})
 const hasNeedsData = computed(() => Object.keys(life.value?.needs || {}).length > 0)
 
@@ -321,42 +320,14 @@ function addLog(type, emoji, message) {
   }
 }
 
-// 与 useTraining.js 的 feedTaiji/sleepTaiji/playTaiji 门控协同：
-// Seed 原生运行时给出既有提示而非静默；Cortex 对照运行时调用 /api/life/*。
-const NATIVE_RUNTIME_TIP = 'Seed 原生运行时不启用 Legacy 生命活动接口'
+// 原生动作器尚未提供 feed/sleep/play/evolve 的正式能力契约；
+// 客户端保留按钮布局，但不伪造状态变化或调用历史接口。
+const NATIVE_RUNTIME_TIP = 'Taiji 原生动作器尚未接入生命活动能力'
 async function callLifeAction(action) {
-  if (runtimeStore.health.isTaiji || runtimeStore.health.isSeed || isTaijiModel.value) {
-    currentActivity.value = ''
-    toast(NATIVE_RUNTIME_TIP, 'info')
-    addLog(action, 'ℹ️', '原生运行时：未调用 Legacy 生命活动接口')
-    return
-  }
-  actionLoading.value = true
-  actionResult.value = ''
-  try {
-    const resp = await authFetch(`${API_BASE}/api/life/${action}`, { method: 'POST' })
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
-    const data = await resp.json()
-    if (data.success) {
-      actionResult.value = data.message
-      const emojiMap = { feed: '🍚', sleep: '💤', play: '🎮', evolve: '🧬' }
-      addLog(action, emojiMap[action] || '✨', data.message)
-      toast(`✅ ${data.message}`, 'success')
-    } else {
-      actionResult.value = `失败: ${data.message}`
-      addLog(action, '⚠️', `失败: ${data.message}`)
-      toast(`❌ ${data.message}`, 'error')
-    }
-  } catch (e) {
-    actionResult.value = `请求失败: ${e.message}`
-    addLog(action, '⚠️', `请求失败: ${e.message}`)
-    toast(`❌ 请求失败: ${e.message}`, 'error')
-  } finally {
-    actionLoading.value = false
-    currentActivity.value = ''
-    // 操作后刷新生命状态（与 R5 前接线一致）
-    runtimeStore.refreshAll().catch(() => {})
-  }
+  currentActivity.value = ''
+  actionResult.value = NATIVE_RUNTIME_TIP
+  toast(NATIVE_RUNTIME_TIP, 'info')
+  addLog(action, 'ℹ️', NATIVE_RUNTIME_TIP)
 }
 
 function feedTaiji() {
@@ -415,7 +386,7 @@ function exportReport() {
 let refreshInterval = null
 
 // App 级健康检查每 15 秒已刷新同一负载（/api/runtime/status），
-// 本页只做低频兼容刷新，避免重复轮询。
+// 本页只做低频刷新，避免重复轮询。
 function startPolling() {
   stopPolling() // 先清后启，避免重复启动
   runtimeStore.refreshAll().catch(() => {})

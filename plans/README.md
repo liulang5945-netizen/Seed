@@ -248,6 +248,15 @@ replay/sandbox 的 S1 和 packaged-client/real-workbench 的 S2，不能单独�
   `ruff==0.16.4` / `black==26.5.1`；`TSKV8Adapter.checkpoint()`/`restore()` 补齐 `cognitive_state` 往返后，全量测试为
   `437 passed, 5 skipped`。门禁可信度、mypy 类型债、checkpoint 往返不变量和本目录编制纪律见总路线第 14.1–14.4 节。
 
+**已完成（2026-08-29）：W4 第一 slice 的正式产品语义残留清理。** 前端已移除 GGUF 导出、旧模型发布、Agent 参数配置、Cortex
+认知主体切换和旧 Agent 日志筛选；能力页只展示 Seed-owned native capability registry，不再提供 Legacy MCP 安装/市场管理入口；聊天请求
+不再携带旧 engine/迭代/温度参数，生命状态页不再调用历史生命动作接口，训练 composable 的旧生命动作、发布和 GGUF 死路径已删除。
+合法的 native MCP projection、语言 provider artifact 和离线 benchmark 未被误删。前端完整 Vitest 为 `22 files / 188 passed`，ESLint 为
+`0 errors / 15 warnings`，生产构建通过。
+
+**当前唯一下一步：开始 W4 第二 slice 的后端 artifact/settings/OpenAPI 边界迁移。** 盘点旧模型字段与下载/发布路由，收敛 artifact 分类、
+版本化迁移和 deprecation/410 兼容窗口；Qwen provider artifact canary 与 NeuroPlex 离线 benchmark 保持隔离，不进入默认产品运行时。
+
 ## 当前唯一下一步
 
 当前唯一下一步只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) 第 16 节，本文件不再复制该结论。

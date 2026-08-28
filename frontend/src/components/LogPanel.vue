@@ -10,7 +10,6 @@
           <option value="all">全部</option>
           <option value="life">生命</option>
           <option value="train">训练</option>
-          <option value="agent">Agent</option>
           <option value="model">模型</option>
           <option value="error">错误</option>
         </select>
@@ -112,7 +111,6 @@ watch(filteredLogs, () => {
 }
 .badge-life { background: var(--success-light); color: var(--success); }
 .badge-train { background: var(--info-light); color: var(--info); }
-.badge-agent { background: var(--primary-light); color: var(--primary); }
 .badge-model { background: var(--purple); color: white; opacity: 0.8; }
 .badge-error, .badge-warn { background: var(--danger-light); color: var(--danger); }
 .log-msg { color: var(--text-secondary); word-break: break-all; }

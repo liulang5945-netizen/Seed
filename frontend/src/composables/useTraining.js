@@ -4,7 +4,7 @@
  * 从 App.vue 拆出，减轻主文件臃肿
  *
  * 仅支持 Seed 原生模式 — raw-byte Taiji 训练，走 /api/train/native。
- * Legacy LoRA /api/train/stream 后端已不存在，相关死路径已移除。
+ * 旧训练流后端已不存在，相关死路径已移除。
  */
 import { ref, reactive, nextTick } from 'vue';
 import { API_BASE, authFetch } from './apiClient.js';
@@ -19,9 +19,7 @@ export const selectedDatasets = ref([]);
 export const trainPreview = ref(null);
 export let trainAbortController = null;
 export let trainReader = null;
-export const publishingState = ref('idle');
 export const trainProgress = ref(0);
-export const trainProgressDesc = ref('');
 export const pendingCheckpoints = ref([]);
 
 export const trainMetrics = reactive({
@@ -44,12 +42,6 @@ export const taijiModelInfo = reactive({           // Seed模型信息
   size: '', parameters: {}, config: {},
   available_sizes: [], checkpoints: {},
 });
-export const taijiLifeStatus = reactive({          // 生命状态
-  is_sleeping: false, last_sleep: null,
-  total_sleeps: 0, auto_sleep_enabled: true,
-});
-export const taijiTimeline = ref([]);              // 生命活动时间线
-export const taijiLifeLoading = ref(false);        // 生命活动操作中
 export const taijiTrainParams = reactive({         // Seed专属训练参数（与 /api/train/native 请求体对齐）
   parameter_budget: 300000, max_symbols: 200000, device: 'auto', seed: 20260822,
 });
@@ -201,7 +193,6 @@ export async function resumeFromCheckpoint(toast, $confirm) {
   trainLog.value = '';
   trainLoss.value = [];
   trainProgress.value = 0;
-  trainProgressDesc.value = '🔄 正在从检查点恢复训练...';
   trainAbortController = new AbortController();
   Object.assign(trainMetrics, { elapsed: 0, eta: null, lr: null, epoch: latestCkpt.epoch, total_epochs: latestCkpt.num_epochs || 1, grad_norm: null, samples_per_sec: 0, total_steps: 0, current_loss: null });
   Object.assign(trainDevice, { device_type: '', device_name: '', gpu_name: null, gpu_memory_gb: null, ram_gb: null, message: '' });
@@ -248,7 +239,6 @@ export async function resumeFromCheckpoint(toast, $confirm) {
             if (evt.type === 'progress') {
               resumeCompleted = true;
               trainProgress.value = Math.round((evt.fraction || 0) * 100);
-              trainProgressDesc.value = evt.desc || '';
               if (evt.memory_status) trainLog.value += `🧠 ${evt.memory_status}\n`;
               else trainLog.value += `${evt.desc}\n`;
               if (evt.loss != null) trainLoss.value.push({ step: evt.step || 0, loss: evt.loss });
@@ -305,193 +295,11 @@ export async function resumeFromCheckpoint(toast, $confirm) {
   }
 }
 
-// ===== 发布（SSE 流式 + 进度条）=====
-
-let publishAbortController = null;
-
-export async function cancelPublish() {
-  if (publishAbortController) {
-    try { publishAbortController.abort(); } catch (e) { }
-    publishAbortController = null;
-  }
-  // 通知后端重置发布状态
-  try { await authFetch(`${API_BASE}/api/system/pub_reset`, { method: 'POST' }); } catch (e) { }
-  publishingState.value = 'idle';
-  trainLog.value += '⏹ 发布已取消\n';
-  autoScrollTrainLog();
-}
-
-async function publishStreamCommon(toast, onStartMsg) {
-  /* SSE 流式发布逻辑（支持结构化进度事件 + AbortController 取消） */
-  publishingState.value = 'publishing';
-  trainProgress.value = 0;
-  trainProgressDesc.value = onStartMsg;
-  trainLog.value += `${onStartMsg}\n`;
-
-  // 创建 AbortController 允许取消发布
-  publishAbortController = new AbortController();
-
-  try {
-    const res = await authFetch(`${API_BASE}/api/model/publish`, {
-      method: 'POST',
-      signal: publishAbortController.signal,
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ detail: res.statusText }));
-      throw new Error(err.detail || `HTTP ${res.status}`);
-    }
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = '';
-    let completed = false;
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop() || '';
-
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const payload = line.slice(6);
-          if (payload === '[DONE]') { completed = true; break; }
-
-          // 尝试解析结构化 JSON 事件
-          try {
-            const evt = JSON.parse(payload);
-            if (evt.type === 'progress') {
-              trainProgress.value = Math.round((evt.fraction || 0) * 100);
-              trainProgressDesc.value = evt.desc || '';
-              trainLog.value += `${evt.desc}\n`;
-              autoScrollTrainLog();
-            } else if (evt.type === 'log') {
-              trainLog.value += `${evt.message}\n`;
-              autoScrollTrainLog();
-            } else if (evt.type === 'completed') {
-              completed = true;
-              trainLog.value += `✅ ${evt.message}\n`;
-              trainProgress.value = 100;
-              autoScrollTrainLog();
-              toast(`✅ ${evt.message}`, 'success');
-            } else if (evt.type === 'error') {
-              trainLog.value += `❌ ${evt.message}\n`;
-              trainProgress.value = 0;
-              autoScrollTrainLog();
-              toast(`❌ ${evt.message}`, 'error');
-            } else if (evt.type === 'warning') {
-              trainLog.value += `⚠️ ${evt.message}\n`;
-              autoScrollTrainLog();
-            }
-          } catch (e) { console.debug('[useTraining] parse error:', e.message) }
-            // 非 JSON 纯文本，直接输出
-            if (payload) trainLog.value += `${payload}\n`;
-            autoScrollTrainLog();
-          }
-        }
-      if (completed) break;
-    }
-
-    if (!completed && !publishAbortController.signal.aborted) {
-      toast('❌ 发布失败：SSE 流提前结束', 'error');
-      trainLog.value += '❌ 发布失败：SSE 流提前结束\n';
-      autoScrollTrainLog();
-    }
-  } catch (e) {
-    if (e.name !== 'AbortError') {
-      toast(`❌ ${e.message}`, 'error');
-      trainLog.value += `❌ 发布出错: ${e.message}\n`;
-      autoScrollTrainLog();
-    }
-  } finally {
-    publishingState.value = 'idle';
-    publishAbortController = null;
-  }
-}
-
-export async function publishModel(toast) {
-  await publishStreamCommon(toast, '📦 开始发布模型...');
-}
-
-export async function forcePublish(toast, $confirm) {
-  if (pendingCheckpoints.value.length === 0) { toast('⚠ 没有找到检查点', 'warning'); return; }
-  const ok = await $confirm({
-    title: '📦 强制发布',
-    message: `将从最新的检查点合并 LoRA 权重并发布为完整模型。\n\n即使训练未完成，也能得到一个可用的微调模型。\n\n点击确认开始发布。`,
-    confirmText: '确认发布',
-  });
-  if (!ok) return;
-  await publishStreamCommon(toast, '📦 强制发布模型...');
-}
-
-// ===== GGUF 导出 =====
-
-export async function exportModelToGGUF(toast, $confirm) {
-  if (publishingState.value !== 'idle') return;
-
-  const ok = await $confirm({
-    title: '📦 导出 GGUF 模型',
-    message: `将从最新发布的模型导出为 GGUF 量化格式。\n\n推荐: Q4_K_M（质量/体积平衡）\n导出需要一定时间，请耐心等待。`,
-    confirmText: '导出 (Q4_K_M)',
-    cancelText: '取消',
-  });
-  if (!ok) return;
-
-  publishingState.value = 'publishing';
-  trainLog.value = '';
-
-  try {
-    const res = await authFetch(`${API_BASE}/api/model/export_gguf`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ quant_type: 'Q4_K_M' }),
-    });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ detail: res.statusText }));
-      throw new Error(err.detail || `HTTP ${res.status}`);
-    }
-
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop() || '';
-
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const payload = line.slice(6);
-          if (payload === '[DONE]') break;
-          try {
-            const evt = JSON.parse(payload);
-            if (evt.type === 'progress') {
-              trainLog.value += `${evt.desc}\n`;
-              trainProgress.value = Math.round((evt.fraction || 0) * 100);
-              trainProgressDesc.value = evt.desc || '';
-            } else if (evt.type === 'completed') {
-              trainLog.value += `✅ ${evt.message}\n`;
-              toast(`✅ GGUF 导出完成！\n路径: ${evt.file_path}\n大小: ${evt.file_size_gb} GB`, 'success');
-            } else if (evt.type === 'error') {
-              trainLog.value += `❌ ${evt.message}\n`;
-              toast(`❌ 导出失败: ${evt.message}`, 'error');
-            }
-          } catch (e) { console.debug('[useTraining] parse error:', e.message) } /* skip */ }
-        }
-      }
-  } catch (e) { toast(`❌ ${e.message}`, 'error'); }
-  finally { publishingState.value = 'idle'; }
-}
-
-// ===== Seed模式：检测 + 生命活动 + Seed微调 =====
+// ===== Taiji 原生运行时检测与微调 =====
 
 /**
  * 检测当前加载的运行时是否为 Seed 原生 Taiji。
- * Legacy Cortex 不再被当作 Seed 训练主体。
+ * 兼容运行时不再被当作 Seed 训练主体。
  * 应在训练页面 onMounted 时调用。
  */
 export async function detectTaijiModel() {
@@ -517,108 +325,6 @@ export async function detectTaijiModel() {
 }
 
 /**
- * 加载Seed生命状态（心跳、空闲时间等）
- */
-export async function loadTaijiLifeStatus() {
-  if (isTaijiModel.value) return;
-  try {
-    const res = await authFetch(`${API_BASE}/api/taiji/life/status`);
-    if (res.ok) {
-      const data = await res.json();
-      if (data.status === 'ok' && data.data) {
-        Object.assign(taijiLifeStatus, data.data);
-      }
-    }
-  } catch (e) { /* silent */ }
-}
-
-/**
- * 加载Seed生命时间线
- */
-export async function loadTaijiTimeline(hours = 24) {
-  if (isTaijiModel.value) return;
-  try {
-    const res = await authFetch(`${API_BASE}/api/taiji/life/timeline?hours=${hours}`);
-    if (res.ok) {
-      const data = await res.json();
-      if (data.status === 'ok') {
-        taijiTimeline.value = data.timeline || [];
-      }
-    }
-  } catch (e) { /* silent */ }
-}
-
-/**
- * 喂养Seed
- */
-export async function feedTaiji(toast) {
-  taijiLifeLoading.value = true;
-  try {
-    if (isTaijiModel.value) {
-      toast('Seed 原生运行时不启用 Legacy 生命活动接口', 'info');
-      return;
-    }
-    const res = await authFetch(`${API_BASE}/api/taiji/feed`, { method: 'POST' });
-    if (res.ok) {
-      const data = await res.json();
-      toast(`🍚 喂养完成！喂食 ${data.items_fed} 条，生成 ${data.samples_generated} 条训练样本`, 'success');
-      await loadTaijiLifeStatus();
-    } else {
-      toast('❌ 喂养失败', 'error');
-    }
-  } catch (e) { toast(`❌ 喂养失败: ${e.message}`, 'error'); }
-  finally { taijiLifeLoading.value = false; }
-}
-
-/**
- * 让Seed睡觉
- */
-export async function sleepTaiji(toast) {
-  taijiLifeLoading.value = true;
-  try {
-    if (isTaijiModel.value) {
-      toast('Seed 原生运行时通过 /api/train/native 持续学习，不启用 Legacy 睡眠引擎', 'info');
-      return;
-    }
-    const res = await authFetch(`${API_BASE}/api/taiji/sleep`, { method: 'POST' });
-    if (res.ok) {
-      const data = await res.json();
-      const phases = data.phases_completed?.length || 0;
-      const loss = data.training_loss ? `，训练 Loss: ${data.training_loss.toFixed(4)}` : '';
-      toast(`💤 睡眠完成！完成 ${phases} 个阶段${loss}`, 'success');
-      await loadTaijiLifeStatus();
-    } else {
-      toast('❌ 睡眠失败', 'error');
-    }
-  } catch (e) { toast(`❌ 睡眠失败: ${e.message}`, 'error'); }
-  finally { taijiLifeLoading.value = false; }
-}
-
-/**
- * 让Seed玩耍
- */
-export async function playTaiji(toast) {
-  taijiLifeLoading.value = true;
-  try {
-    if (isTaijiModel.value) {
-      toast('Seed 原生运行时不启用 Legacy 生命活动接口', 'info');
-      return;
-    }
-    const res = await authFetch(`${API_BASE}/api/taiji/play`, { method: 'POST' });
-    if (res.ok) {
-      const data = await res.json();
-      const count = data.activities?.length || 0;
-      const mood = data.mood || '';
-      toast(`🎮 玩耍完成！${count} 个活动，心情: ${mood}`, 'success');
-      await loadTaijiLifeStatus();
-    } else {
-      toast('❌ 玩耍失败', 'error');
-    }
-  } catch (e) { toast(`❌ 玩耍失败: ${e.message}`, 'error'); }
-  finally { taijiLifeLoading.value = false; }
-}
-
-/**
  * 启动 Seed 原生 Taiji byte-stream 训练。
  */
 export async function startTaijiTraining(toast) {
@@ -626,7 +332,6 @@ export async function startTaijiTraining(toast) {
   trainLog.value = '';
   trainLoss.value = [];
   trainProgress.value = 0;
-  trainProgressDesc.value = '⏳ 正在启动 Taiji 原生训练...';
   trainAbortController = new AbortController();
   Object.assign(trainMetrics, {
     elapsed: 0, eta: null, lr: null, epoch: 1,
@@ -639,7 +344,6 @@ export async function startTaijiTraining(toast) {
   });
 
   try {
-    trainProgressDesc.value = '🧠 Taiji 原生 byte-stream 训练进行中...';
     trainLog.value += '🧠 启动 Taiji 原生训练（raw bytes + local plasticity）...\n';
     autoScrollTrainLog();
 
@@ -690,7 +394,6 @@ export async function startTaijiTraining(toast) {
           });
         } else if (evt.type === 'progress') {
           trainProgress.value = Math.round((evt.fraction || 0) * 100);
-          trainProgressDesc.value = evt.desc || '';
           trainLog.value += `${evt.desc || ''}\n`;
           if (evt.loss != null) {
             trainLoss.value.push({ step: evt.step || 0, loss: evt.loss });
@@ -707,7 +410,6 @@ export async function startTaijiTraining(toast) {
         } else if (evt.type === 'completed') {
           trainState.value = 'completed';
           trainProgress.value = 100;
-          trainProgressDesc.value = `✅ ${evt.message || '原生训练完成'}`;
           trainLog.value += `✅ ${evt.message || '原生训练完成'}\n`;
         } else if (evt.type === 'error') {
           throw new Error(evt.message || '原生训练失败');

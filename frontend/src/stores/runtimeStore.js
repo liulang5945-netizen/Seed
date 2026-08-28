@@ -2,11 +2,6 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { API_BASE, authFetch } from '@/composables/apiClient.js'
 
-function readNumber(key, fallback) {
-  const value = Number(localStorage.getItem(key))
-  return Number.isFinite(value) ? value : fallback
-}
-
 export const useRuntimeStore = defineStore('runtime', () => {
   if (typeof window !== 'undefined' && !window.__taijiRuntimeAuthListener) {
     window.__taijiRuntimeAuthListener = true
@@ -58,10 +53,6 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const exceptions = ref([])
   const logs = ref([])
   const MAX_LOGS = 200
-  const agentPrefs = ref({
-    maxIterations: readNumber('taiji_agent_max_iterations', 10),
-    temperature: readNumber('taiji_agent_temperature', 0.7),
-  })
   const runtimeSnapshot = ref(null)
 
   const connectionClass = computed(() => {
@@ -452,17 +443,6 @@ export const useRuntimeStore = defineStore('runtime', () => {
     return refreshRuntime()
   }
 
-  function setAgentPrefs(prefs) {
-    if (prefs.maxIterations !== undefined) {
-      agentPrefs.value.maxIterations = Number(prefs.maxIterations)
-      localStorage.setItem('taiji_agent_max_iterations', String(agentPrefs.value.maxIterations))
-    }
-    if (prefs.temperature !== undefined) {
-      agentPrefs.value.temperature = Number(prefs.temperature)
-      localStorage.setItem('taiji_agent_temperature', String(agentPrefs.value.temperature))
-    }
-  }
-
   return {
     health,
     memory,
@@ -474,7 +454,6 @@ export const useRuntimeStore = defineStore('runtime', () => {
     toolError,
     exceptions,
     logs,
-    agentPrefs,
     runtimeSnapshot,
     connectionClass,
     connectionStatus,
@@ -504,7 +483,6 @@ export const useRuntimeStore = defineStore('runtime', () => {
     refreshLife,
     refreshTools,
     refreshAll,
-    setAgentPrefs,
     handleLifeEvent,
     startAutoRefresh,
     stopAutoRefresh,
