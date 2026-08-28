@@ -133,6 +133,60 @@ async function setEditorLanguage({
   return payload.outcome?.result || payload
 }
 
+async function previewIntent({
+  intentId,
+  kind,
+  parameters = {},
+  expectedOutcome = '',
+  confidence = 1,
+  tick = 0,
+}) {
+  await ensureCapabilities()
+  const payload = await readJson('/api/workbench/preview', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      intent_id: intentId,
+      kind,
+      parameters,
+      expected_outcome: expectedOutcome,
+      confidence,
+      tick,
+      snapshot_id: snapshotId.value,
+    }),
+  })
+  error.value = ''
+  return payload
+}
+
+async function executeIntent({
+  intentId,
+  kind,
+  parameters = {},
+  expectedOutcome = '',
+  confidence = 1,
+  tick = 0,
+  approvalToken = '',
+}) {
+  await ensureCapabilities()
+  const payload = await readJson('/api/workbench/execute', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      intent_id: intentId,
+      kind,
+      parameters,
+      expected_outcome: expectedOutcome,
+      confidence,
+      tick,
+      approval_token: approvalToken,
+      snapshot_id: snapshotId.value,
+    }),
+  })
+  error.value = ''
+  return payload
+}
+
 function start() {
   consumerCount += 1
   if (eventTimer) return
@@ -180,6 +234,8 @@ export function useWorkbenchProjection() {
     readFile,
     resolveProgrammingLanguage,
     setEditorLanguage,
+    previewIntent,
+    executeIntent,
     start,
     stop,
   }

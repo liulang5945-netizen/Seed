@@ -435,16 +435,67 @@ class SeedRuntime:
         if isinstance(language_payload, Mapping):
             self._workbench_environment.restore_language_state(language_payload)
 
+    def preview_workbench_intent(
+        self,
+        intent: Any,
+        *,
+        snapshot_id: str,
+    ) -> dict[str, Any]:
+        """Validate an action and issue approval without executing its side effect."""
+
+        from seed_platform.workbench import (
+            WorkbenchActionRequest,
+        )
+        from taiji import ActionIntent
+
+        if not isinstance(intent, ActionIntent):
+            raise TypeError("workbench preview requires an ActionIntent")
+        environment = self._sync_workbench_root()
+        request = WorkbenchActionRequest.from_action_intent(
+            intent,
+            snapshot_id=snapshot_id,
+        )
+        tick = int(self.model.tick)
+        self._workbench_audit.append(
+            "planned",
+            request.request_id,
+            tick=tick,
+            payload={"request": request.to_payload(), "preview": True},
+        )
+        policy = environment.policy_for(request)
+        self._workbench_audit.append(
+            "policy",
+            request.request_id,
+            tick=tick,
+            payload={"policy": policy.to_payload(), "preview": True},
+        )
+        result: dict[str, Any] = {
+            "request": request.to_payload(),
+            "policy": policy.to_payload(),
+            "preview": None,
+            "approval": None,
+            "events": [event.to_payload() for event in self._workbench_audit.events],
+        }
+        if policy.reason_code == "capability_requires_approval":
+            approval = environment.issue_approval(request)
+            result["preview"] = approval["preview"]
+            result["approval"] = {
+                key: value for key, value in approval.items() if key != "preview"
+            }
+        return result
+
     def execute_workbench_intent(
         self,
         intent: Any,
         *,
         snapshot_id: str,
+        approval_token: str = "",
         learn: bool = False,
     ) -> dict[str, Any]:
-        """Execute one Taiji-owned read-only intent through Seed's workbench."""
+        """Execute one Taiji-owned intent through Seed's workbench."""
 
         from seed_platform.workbench import (
+            ExecutionPolicyDecision,
             WorkbenchActionRequest,
             WorkbenchOutcome,
             WorkbenchTransaction,
@@ -457,6 +508,7 @@ class SeedRuntime:
         request = WorkbenchActionRequest.from_action_intent(
             intent,
             snapshot_id=snapshot_id,
+            approval_token=approval_token,
         )
         tick = int(self.model.tick)
         self._workbench_audit.append(
@@ -501,11 +553,52 @@ class SeedRuntime:
                 ],
             }
 
+        try:
+            environment.consume_approval(request)
+        except ValueError as exc:
+            policy = ExecutionPolicyDecision(
+                request_id=request.request_id,
+                capability_id=request.capability_id,
+                snapshot_id=request.snapshot_id,
+                decision="ask_user",
+                reason_code="approval_invalid",
+            )
+            workbench_outcome = WorkbenchOutcome(
+                request_id=request.request_id,
+                intent_id=request.intent_id,
+                call_id="",
+                capability_id=request.capability_id,
+                snapshot_id=environment.capability_snapshot.snapshot_id,
+                status="rejected",
+                success=False,
+                error_code="approval_invalid",
+                error=str(exc),
+                tick=tick,
+            )
+            self._workbench_audit.append(
+                "outcome",
+                request.request_id,
+                tick=tick,
+                payload={"outcome": workbench_outcome.to_payload()},
+            )
+            return {
+                "request": request.to_payload(),
+                "policy": policy.to_payload(),
+                "outcome": workbench_outcome.to_payload(),
+                "taiji_outcome": None,
+                "events": [
+                    event.to_payload() for event in self._workbench_audit.events
+                ],
+            }
+
         self._workbench_audit.append(
             "executing",
             request.request_id,
             tick=tick,
-            payload={"capability_id": request.capability_id},
+            payload={
+                "capability_id": request.capability_id,
+                "approval_granted": bool(request.approval_token),
+            },
         )
         with environment.request_context(request.request_id):
             try:

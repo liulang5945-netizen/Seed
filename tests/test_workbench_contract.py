@@ -480,6 +480,49 @@ def test_terminal_run_is_bounded_and_shell_free(tmp_path) -> None:
     assert timed_out.success is False
     assert environment.last_result["timed_out"] is True
 
+    artifact = environment.execute_tool(
+        "terminal.run",
+        {
+            "argv": [
+                sys.executable,
+                "-c",
+                "from pathlib import Path; Path('artifact.txt').write_text('ok')",
+            ],
+            "execution_kind": "build",
+            "expected_artifacts": ["artifact.txt"],
+        },
+    )
+    assert artifact.success is True
+    assert environment.last_result["after_state"]["artifacts"][0]["exists"] is True
+
+    diagnostic = environment.execute_tool(
+        "terminal.run",
+        {
+            "argv": [sys.executable, "-c", "print('main.py:2:3: error: broken')"],
+            "execution_kind": "diagnostics",
+        },
+    )
+    assert diagnostic.success is False
+    assert environment.last_result["exit_code"] == 0
+    assert environment.last_result["diagnostics"][0]["severity"] == "error"
+
+    flooded = environment.execute_tool(
+        "terminal.run",
+        {
+            "argv": [sys.executable, "-c", "print('x' * 5000)"],
+            "output_limit": 100,
+        },
+    )
+    assert flooded.success is True
+    assert environment.last_result["stdout_truncated"] is True
+
+    cwd_drift = environment.execute_tool(
+        "terminal.run",
+        {"argv": [sys.executable, "-c", "pass"], "cwd": ".."},
+    )
+    assert cwd_drift.success is False
+    assert environment.last_result["error_code"] == "unsafe_path"
+
 
 def test_write_and_terminal_capabilities_require_approval(tmp_path) -> None:
     environment = WorkbenchEnvironment(tmp_path)
@@ -496,3 +539,53 @@ def test_write_and_terminal_capabilities_require_approval(tmp_path) -> None:
         decision = environment.policy_for(request)
         assert decision.decision == "ask_user"
         assert decision.reason_code == "capability_requires_approval"
+
+
+def test_preview_issues_single_use_approval_and_runtime_projects_transaction(
+    tmp_path, monkeypatch
+) -> None:
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(Seed(episode_id="workbench-approval-canary"))
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    intent = ActionIntent(
+        intent_id="intent-create-approved",
+        kind="workspace.create",
+        parameters={"path": "approved.txt", "content": "approved\n"},
+        expected_outcome="create one file",
+        confidence=1.0,
+        tick=runtime.model.tick,
+    )
+
+    preview = runtime.preview_workbench_intent(intent, snapshot_id=snapshot_id)
+
+    assert preview["policy"]["decision"] == "ask_user"
+    assert preview["preview"]["validated"] is True
+    assert preview["preview"]["mutation"]["after_digest"]
+    approval_token = preview["approval"]["approval_token"]
+    assert approval_token
+    assert not (tmp_path / "approved.txt").exists()
+
+    executed = runtime.execute_workbench_intent(
+        intent,
+        snapshot_id=snapshot_id,
+        approval_token=approval_token,
+        learn=False,
+    )
+    assert executed["policy"]["reason_code"] == "explicit_approval"
+    assert executed["outcome"]["success"] is True
+    assert executed["outcome"]["transaction"]["undo_token"]
+    assert (tmp_path / "approved.txt").read_text(encoding="utf-8") == "approved\n"
+
+    replayed = runtime.execute_workbench_intent(
+        intent,
+        snapshot_id=snapshot_id,
+        approval_token=approval_token,
+        learn=False,
+    )
+    assert replayed["policy"]["decision"] == "ask_user"
+    assert replayed["policy"]["reason_code"] == "approval_invalid"
+    assert replayed["outcome"]["status"] == "rejected"

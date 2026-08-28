@@ -7,7 +7,9 @@ from pydantic import BaseModel
 
 class ChatRequest(BaseModel):
     prompt: str
-    system_prompt: str = "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"
+    system_prompt: str = (
+        "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"
+    )
     history: list[list[str]] = []
     engine: str = "taiji"  # "taiji"（思维）| "agent"（行动）
     agent_max_iterations: int | None = 10
@@ -34,7 +36,7 @@ class CodeRunRequest(BaseModel):
 
 
 class WorkbenchIntentRequest(BaseModel):
-    """A Taiji-owned action intent submitted to the read-only workbench bridge."""
+    """A Taiji-owned action intent submitted to the native workbench bridge."""
 
     intent_id: str
     kind: str
@@ -44,6 +46,7 @@ class WorkbenchIntentRequest(BaseModel):
     expected_outcome: str = ""
     confidence: float = 0.0
     tick: int = 0
+    approval_token: str = ""
 
 
 class RAGSearchRequest(BaseModel):
