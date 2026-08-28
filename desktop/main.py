@@ -46,26 +46,32 @@ LOG_DIR = ROOT_DIR / "logs"
 # builds it does not expose the wheel's nested ``Qt6/bin`` directory to the
 # DLL loader before the first ``PyQt6.QtCore`` import.  Keep the handle alive
 # for the process lifetime so QtCore.pyd can resolve Qt6Core.dll reliably.
-_QT_DLL_DIRECTORY_HANDLE = None
+_QT_DLL_DIRECTORY_HANDLES: list[object] = []
 
 
 def _prepare_frozen_qt_dll_path() -> None:
     """Make the bundled Qt6 DLL directory visible before importing PyQt6."""
 
-    global _QT_DLL_DIRECTORY_HANDLE
+    global _QT_DLL_DIRECTORY_HANDLES
     if not FROZEN or sys.platform != "win32":
         return
     internal_root = Path(getattr(sys, "_MEIPASS", ROOT_DIR / "_internal"))
     qt_bin = internal_root / "PyQt6" / "Qt6" / "bin"
     if not qt_bin.is_dir():
         return
-    qt_bin_text = str(qt_bin)
+    search_directories = (internal_root, qt_bin)
     current_path = os.environ.get("PATH", "")
-    if qt_bin_text not in current_path.split(os.pathsep):
-        os.environ["PATH"] = qt_bin_text + os.pathsep + current_path
+    path_entries = current_path.split(os.pathsep) if current_path else []
+    for directory in reversed(search_directories):
+        directory_text = str(directory)
+        if directory_text not in path_entries:
+            path_entries.insert(0, directory_text)
+    os.environ["PATH"] = os.pathsep.join(path_entries)
     add_dll_directory = getattr(os, "add_dll_directory", None)
     if callable(add_dll_directory):
-        _QT_DLL_DIRECTORY_HANDLE = add_dll_directory(qt_bin_text)
+        _QT_DLL_DIRECTORY_HANDLES = [
+            add_dll_directory(str(directory)) for directory in search_directories
+        ]
 
 
 _prepare_frozen_qt_dll_path()
