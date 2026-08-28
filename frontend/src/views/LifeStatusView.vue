@@ -24,6 +24,8 @@
       </button>
     </header>
 
+    <RuntimeEvidenceStrip context="life" />
+
     <!-- ═══ 滚动内容区 ═══ -->
     <div class="scroll-area">
 
@@ -73,7 +75,7 @@
             <article class="native-contract-card">
               <span class="native-contract-label">工作台</span>
               <strong>{{ runtimeStore.tools.length }} 项能力</strong>
-              <span>来自当前 capability snapshot</span>
+              <span>{{ runtimeStore.statusEvidence.workbench.detail || '来自当前 capability snapshot' }}</span>
             </article>
             <article class="native-contract-card">
               <span class="native-contract-label">生命状态</span>
@@ -277,6 +279,7 @@ import { ref, computed, onActivated, onDeactivated, onUnmounted, inject } from '
 import { useRuntimeStore } from '@/stores/runtimeStore.js'
 import { fmtTime } from '@/composables/useTraining.js'
 import NeedsPentagram from '@/components/NeedsPentagram.vue'
+import RuntimeEvidenceStrip from '@/components/RuntimeEvidenceStrip.vue'
 
 const runtimeStore = useRuntimeStore()
 const toast = inject('toast', () => {})

@@ -1978,6 +1978,13 @@ benchmark/兼容 profile，不进入默认客户端和 Taiji cognition。
 本轮证据：前端 Vitest `22 files / 185 passed`，ESLint `0 errors / 13 warnings`，生产构建通过；后端原生 Workbench/系统路由与平台边界回归
 `72 passed, 1 skipped`，ruff、compileall、diff check 通过。尚未宣称 knowledge capability 已实现，也尚未进行 packaged route-level smoke。
 
-**当前唯一下一步：开始 W5 第二 slice 的真实状态接入。** 以统一 runtime status、Workbench capability snapshot 和 provider artifact status 为
-唯一来源，给 Chat、Life、Agent/能力、Training、Settings、KB 建立可见的 `source/owner/freshness/availability` 投影，并为 native
-homeostasis/self-state 明确定义缺失字段与降级态；随后再补 route-level packaged smoke 和 frontend/source capability contract。不得先做视觉包装。
+**已完成（2026-08-29）：W5 第二 slice 的真实状态接入。** `/api/runtime/status.tools` 现在携带 Workbench capability snapshot 的
+`snapshot_id/revision/source/owner/observed_at`，并纳入稳定的 `ToolsPayload` 合同；前端 `runtimeStore.statusEvidence` 统一从 runtime
+status、provider artifact 状态、Workbench snapshot、life/training section 生成 `source/owner/freshness/availability` 投影。
+Chat、Life、Agent/能力、Training、Settings、KB 六个入口均展示对应证据；homeostasis/self-state 在 `needs` 未上报时明确为“未上报”，
+不再用默认值或前端表达推断冒充运行时状态。前端 Vitest `23 files / 187 passed`、ESLint `0 errors`、生产构建通过；后端定向回归
+`65 passed, 1 skipped`，OpenAPI、ruff、compileall、diff check 通过。
+
+**当前唯一下一步：开始 W5 第三 slice 的 packaged route-level smoke 与 frontend/source capability contract。** 在可发布运行方式下
+验证 `/api/runtime/status`、`/api/workbench/capabilities`、工作区读写受控事务、语言 provider 状态和六个页面的证据投影；同时增加
+前端源代码门禁，禁止新页面直接调用 Legacy RAG/model/HF/GGUF/engine 路径或硬编码能力状态。不得先做视觉包装。

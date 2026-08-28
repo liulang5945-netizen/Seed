@@ -195,10 +195,30 @@ def _tools_section() -> dict:
             }
             for capability in snapshot.capabilities
         ]
-        return {"status": "ok", "tools": tools, "count": len(tools), "error": ""}
+        return {
+            "status": "ok",
+            "tools": tools,
+            "count": len(tools),
+            "error": "",
+            "snapshot_id": snapshot.snapshot_id,
+            "revision": snapshot.revision,
+            "source": "seed_platform.workbench.CapabilitySnapshot",
+            "owner": "Taiji native Workbench",
+            "observed_at": int(time.time()),
+        }
     except Exception as exc:  # pragma: no cover - defensive status boundary
         logger.warning(f"runtime_service: Seed capability status failed: {exc}")
-        return {"status": "error", "tools": [], "count": 0, "error": str(exc)}
+        return {
+            "status": "error",
+            "tools": [],
+            "count": 0,
+            "error": str(exc),
+            "snapshot_id": "",
+            "revision": 0,
+            "source": "seed_platform.workbench.CapabilitySnapshot",
+            "owner": "Taiji native Workbench",
+            "observed_at": int(time.time()),
+        }
 
 
 def _training_section() -> dict:

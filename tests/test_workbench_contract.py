@@ -79,6 +79,14 @@ def test_runtime_status_exposes_seed_capabilities_without_legacy() -> None:
         assert capabilities.status_code == 200
         assert capabilities.json()["snapshot_id"]
         assert capabilities.json()["mcp_registry"]["format"] == "seed-mcp-registry-v1"
+
+        runtime_status = response.json()
+        tools = runtime_status["tools"]
+        assert tools["snapshot_id"] == capabilities.json()["snapshot_id"]
+        assert tools["revision"] == capabilities.json()["revision"]
+        assert tools["source"] == "seed_platform.workbench.CapabilitySnapshot"
+        assert tools["owner"] == "Taiji native Workbench"
+        assert tools["observed_at"] > 0
         mcp = client.get("/api/workbench/mcp")
         assert mcp.status_code == 200
         assert mcp.json()["tools"][0]["tool_id"] == "mcp.local.workspace_summary"

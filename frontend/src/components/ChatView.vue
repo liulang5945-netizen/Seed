@@ -16,6 +16,8 @@
       </div>
     </header>
 
+    <RuntimeEvidenceStrip context="chat" compact />
+
     <!-- 对话滚动区 -->
     <div ref="messagesArea" class="scroll-area chat-scroll">
       <div class="chat-stage">
@@ -217,6 +219,7 @@ defineOptions({ name: 'ChatView' })
 import { ref, computed, watch, nextTick, onMounted, inject } from 'vue'
 import { User, RotateCcw, Copy, Square, Send, Code, ThumbsUp, Brain, Bug, SlidersHorizontal, LineChart, GitBranch, ScrollText, Plus, Zap, AlignLeft, Languages, ChevronDown } from 'lucide-vue-next'
 import TaijiLogo from './TaijiLogo.vue'
+import RuntimeEvidenceStrip from './RuntimeEvidenceStrip.vue'
 import { useChatStore } from '@/stores/chatStore.js'
 import { useRuntimeStore } from '@/stores/runtimeStore.js'
 import { useMarkdown } from '@/composables/useMarkdown.js'

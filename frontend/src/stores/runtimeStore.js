@@ -55,6 +55,104 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const MAX_LOGS = 200
   const runtimeSnapshot = ref(null)
 
+  function freshnessFor(timestamp) {
+    const observedAt = Number(timestamp || 0)
+    if (!observedAt) return { label: '未知', state: 'unknown', ageSeconds: null }
+    const ageSeconds = Math.max(0, Math.floor(Date.now() / 1000 - observedAt))
+    if (ageSeconds <= 15) return { label: '刚刚', state: 'fresh', ageSeconds }
+    if (ageSeconds <= 60) return { label: `${ageSeconds} 秒前`, state: 'fresh', ageSeconds }
+    if (ageSeconds <= 300) return { label: `${Math.floor(ageSeconds / 60)} 分钟前`, state: 'stale', ageSeconds }
+    return { label: '超过 5 分钟', state: 'stale', ageSeconds }
+  }
+
+  const statusEvidence = computed(() => {
+    const snapshot = runtimeSnapshot.value || {}
+    const timestamp = Number(snapshot.timestamp || 0)
+    const healthSnapshot = snapshot.health || health.value || {}
+    const toolsSnapshot = snapshot.tools || {}
+    const provider = healthSnapshot.language_provider || health.value.languageProvider || {}
+    const needs = snapshot.life?.needs || life.value?.needs || {}
+    const trainingSnapshot = snapshot.training
+    const workbenchTools = tools.value
+    const enabledTools = workbenchTools.filter(tool => tool.enabled !== false).length
+    const providerState = String(provider.state || '').toLowerCase()
+    const providerReady = Boolean(provider.backend_id || provider.artifact_id)
+      && ['active', 'ready'].includes(providerState)
+    const runtimeReady = healthSnapshot.state === 'connected' && Boolean(healthSnapshot.model_loaded)
+    const workbenchStatus = toolsSnapshot.status || (workbenchTools.length ? 'ok' : 'unknown')
+    const baseFreshness = freshnessFor(timestamp)
+    const evidence = (label, source, owner, availability, detail = '', observedAt = timestamp) => ({
+      label,
+      source,
+      owner,
+      availability,
+      detail,
+      observedAt,
+      freshness: freshnessFor(observedAt),
+    })
+
+    return {
+      timestamp,
+      freshness: baseFreshness,
+      runtime: evidence(
+        '运行时',
+        '/api/runtime/status.health',
+        healthSnapshot.is_taiji ? 'Taiji runtime' : 'Seed runtime',
+        runtimeReady ? '可用' : (healthSnapshot.state || '未连接'),
+        healthSnapshot.model_name || '未提供运行时名称',
+      ),
+      provider: evidence(
+        '语言器官',
+        '/api/runtime/status.health.language_provider',
+        'Seed language provider',
+        providerReady
+          ? (String(provider.chat_enabled) === 'true' ? '可用' : '已接入（可读）')
+          : (providerState === 'fallback' ? '已回退' : '未接入'),
+        provider.backend_id || provider.artifact_id || '未提供 provider artifact',
+      ),
+      workbench: evidence(
+        '工作台能力',
+        '/api/runtime/status.tools',
+        toolsSnapshot.owner || 'Taiji native Workbench',
+        workbenchStatus === 'ok'
+          ? (enabledTools ? `${enabledTools} 项可用` : '已加载（0 项）')
+          : '不可用',
+        toolsSnapshot.snapshot_id
+          ? `snapshot ${toolsSnapshot.snapshot_id.slice(0, 12)} · revision ${toolsSnapshot.revision ?? 0}`
+          : '未提供 capability snapshot',
+        Number(toolsSnapshot.observed_at || timestamp),
+      ),
+      homeostasis: evidence(
+        'homeostasis / self-state',
+        '/api/runtime/status.life',
+        'Taiji self-state channel',
+        Object.keys(needs).length ? `${Object.keys(needs).length} 项已上报` : '未上报',
+        Object.keys(needs).length ? 'needs 来自运行时状态快照' : '运行时尚未提供 needs 字段',
+      ),
+      training: evidence(
+        '训练状态',
+        '/api/runtime/status.training',
+        'Seed native training state',
+        trainingSnapshot
+          ? (trainingSnapshot.is_training ? '训练中' : '已上报（空闲）')
+          : '未上报',
+        trainingSnapshot ? '只反映运行时状态，不代表检查点已保存' : '运行时尚未提供训练状态',
+      ),
+      knowledge: evidence(
+        '知识能力',
+        '/api/runtime/status.tools',
+        toolsSnapshot.owner || 'Taiji native capability registry',
+        workbenchTools.filter(tool => /knowledge|memory|document|kb|知识|记忆|文档/.test(
+          `${tool.name || ''} ${tool.category || ''}`.toLowerCase(),
+        )).length
+          ? '已接入'
+          : '未接入',
+        '仅依据当前 capability snapshot，不推断 Legacy RAG 能力',
+        Number(toolsSnapshot.observed_at || timestamp),
+      ),
+    }
+  })
+
   const connectionClass = computed(() => {
     if (health.value.state === 'connected') return 'connected'
     if (health.value.state === 'downloading') return 'downloading'
@@ -277,6 +375,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
 
   function syncHealth(state, message = '', modelLoaded = false) {
     health.value = {
+      ...health.value,
       state,
       message,
       modelLoaded,
@@ -454,6 +553,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
     exceptions,
     logs,
     runtimeSnapshot,
+    statusEvidence,
     connectionClass,
     connectionStatus,
     memoryLevel,

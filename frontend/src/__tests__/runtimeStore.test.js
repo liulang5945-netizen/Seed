@@ -215,6 +215,48 @@ describe('runtimeStore', () => {
     })
   })
 
+  describe('computed: statusEvidence', () => {
+    it('把运行时、provider、工作台和 self-state 投影为可追溯证据', async () => {
+      const { useRuntimeStore } = await import('../stores/runtimeStore.js')
+      const store = useRuntimeStore()
+      const observedAt = Math.floor(Date.now() / 1000)
+
+      store.applyRuntimeStatus({
+        timestamp: observedAt,
+        health: {
+          state: 'connected',
+          model_loaded: true,
+          model_name: 'seed-native',
+          is_taiji: true,
+          language_provider: {
+            state: 'active',
+            backend_id: 'native-readable-v1',
+            artifact_id: 'native-readable-v1',
+            chat_enabled: 'false',
+          },
+        },
+        tools: {
+          status: 'ok',
+          snapshot_id: 'snapshot-1234567890',
+          revision: 3,
+          owner: 'Taiji native Workbench',
+          observed_at: observedAt,
+          tools: [{ name: 'workspace.read', enabled: true }],
+        },
+        life: { needs: {}, is_running: false },
+        training: { is_training: false },
+      })
+
+      expect(store.statusEvidence.runtime.owner).toBe('Taiji runtime')
+      expect(store.statusEvidence.runtime.availability).toBe('可用')
+      expect(store.statusEvidence.provider.availability).toBe('已接入（可读）')
+      expect(store.statusEvidence.workbench.detail).toContain('snapshot snapshot-123')
+      expect(store.statusEvidence.homeostasis.availability).toBe('未上报')
+      expect(store.statusEvidence.training.availability).toBe('已上报（空闲）')
+      expect(store.statusEvidence.runtime.freshness.state).toBe('fresh')
+    })
+  })
+
   describe('handleLifeEvent', () => {
     it('feed_complete 降低饥饿值', async () => {
       const { useRuntimeStore } = await import('../stores/runtimeStore.js')
