@@ -744,7 +744,7 @@ P4 的最小真实经历边界已落地：
 
 **方法论沉淀**：一次红色验证比十次绿色更有信息量。首轮篡改时键集断言没红，我一度以为是漏判，实测发现是 PowerShell `Set-Content -NoNewline` 注入了 BOM 且使 CRLF 正则失效、`yml` 实际未被删除——**验证手段本身也会假**，改用 node 精确改写后立刻变红。因此「新增门禁」的完成标准不是它通过，而是它在人为破坏下必定失败。
 
-改动文件（3 个）：`frontend/scripts/gen-hljs-aliases.mjs`（新增）、`frontend/src/__tests__/hljsAliases.test.js`（新增）、`frontend/package.json`（两个 script）；`frontend/src/composables/hljsAliases.js` 补头注释 2 行。临时探针 `probe_alias.mjs`/`probe_alias2.mjs` 已删除，不留残留。
+改动文件（3 个）：`frontend/scripts/gen-hljs-aliases.mjs`（新增）、`frontend/src/__tests__/hljsAliases.test.js`（新增）、`frontend/package.json`（两个 script）；`frontend/src/composables/hljsAliases.js` 补头注释 2 行。临时探针 `probe_alias.mjs`/`probe_alias2.mjs` 已删除，不留残留。提交 `a2a4488`（含本节 plans，5 文件 +258/−2）。
 
 ## 14. 持续门禁
 
