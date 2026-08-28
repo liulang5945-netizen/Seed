@@ -38,36 +38,17 @@
     <div class="workspace-body">
       <div class="ide-layout" :style="{ gridTemplateColumns: sidebarWidth + 'px minmax(0, 1fr) 260px' }">
         <!-- 左栏：文件树 -->
-        <div class="panel panel-left">
-          <div class="panel-header">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-            <span class="panel-header-spacer"></span>
-            <button class="icon-btn" title="新建文件" @click="handleNewFile">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            </button>
-            <button class="icon-btn" title="刷新文件树" @click="loadTree">
-              <RefreshCw :size="13" />
-            </button>
-          </div>
-          <div class="panel-body">
-            <div v-if="!fileTree.length" class="tree-empty">
-              <p class="tree-empty-text">当前工作区还没有文件。<br>用顶栏「打开文件夹」切换目录，或新建第一个文件开始工作。</p>
-            </div>
-            <template v-for="node in flatList" :key="node.path">
-              <div
-                class="tree-item"
-                :class="{ 'tree-folder': node.type === 'directory' }"
-                :style="{ paddingLeft: (node.depth * 18 + 8) + 'px' }"
-                @click="handleTreeClick(node)"
-                @contextmenu.prevent="showContextMenu($event, node)"
-              >
-                <component :is="node.type === 'directory' ? (expandedDirs.has(node.path) ? FolderOpen : Folder) : getFileIcon(node.name)" :size="14" class="tree-icon" />
-                <span class="tree-label">{{ node.name }}</span>
-              </div>
-            </template>
-          </div>
-          <div class="resize-col" @mousedown="startResize"></div>
-        </div>
+        <WorkspaceFileTree
+          :file-tree="fileTree"
+          :flat-list="flatList"
+          :expanded-dirs="expandedDirs"
+          :get-file-icon="getFileIcon"
+          @new-file="handleNewFile"
+          @refresh="loadTree"
+          @select-node="handleTreeClick"
+          @context-node="showContextMenu"
+          @resize="startResize"
+        />
 
         <!-- 中栏：编辑器 + 终端 -->
         <div class="panel panel-center">
@@ -202,10 +183,11 @@ v-for="(node, i) in quickOpenMatches" :key="node.path"
 import { ref, reactive, computed, watch, onMounted, onUnmounted, onActivated, onDeactivated, inject, nextTick } from 'vue';
 import { nativeApi } from '../composables/nativeApi.js';
 import { useWorkbenchProjection } from '../composables/useWorkbenchProjection.js';
-import { Terminal, FolderOpen, Folder, FileCode, FileText, Image as ImageIcon, Database, Edit3, Edit2, Trash2, Crosshair, Activity, Search, RefreshCw } from 'lucide-vue-next';
+import { Terminal, FolderOpen, Folder, FileCode, FileText, Image as ImageIcon, Database, Edit3, Edit2, Trash2, Crosshair, Activity, Search } from 'lucide-vue-next';
 import MonacoEditor from '../components/MonacoEditor.vue';
 import WebTerminal from '../components/WebTerminal.vue';
 import WorkspacePathDialog from '../components/WorkspacePathDialog.vue';
+import WorkspaceFileTree from '../components/WorkspaceFileTree.vue';
 
 defineOptions({ name: 'WorkspaceView' });
 
@@ -781,7 +763,6 @@ onUnmounted(() => {
   min-height: 0;
   position: relative;
 }
-.panel-left { border-right: 1px solid var(--border); }
 .panel-center { border-right: 1px solid var(--border); }
 .panel-right { border-left: 1px solid var(--border); }
 
@@ -818,55 +799,6 @@ onUnmounted(() => {
 }
 .icon-btn:hover { background: var(--muted); color: var(--foreground); }
 .icon-btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
-
-/* ── 文件树 ── */
-.tree-empty {
-  text-align: center;
-  padding: 24px 12px;
-  color: var(--muted-foreground);
-  font-size: 0.8rem;
-}
-.tree-empty-text {
-  margin: 0 0 4px;
-  line-height: 1.7;
-}
-.tree-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 8px;
-  border-radius: 6px;
-  font-size: 0.84rem;
-  cursor: pointer;
-  transition: background 120ms ease;
-  color: var(--foreground);
-}
-.tree-item:hover { background: var(--muted); }
-.tree-folder { font-weight: 600; }
-.tree-icon {
-  width: 16px;
-  height: 16px;
-  flex: none;
-  color: var(--muted-foreground);
-}
-.tree-label {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.resize-col {
-  position: absolute;
-  top: 0;
-  right: -2px;
-  width: 4px;
-  height: 100%;
-  cursor: col-resize;
-  z-index: 10;
-  transition: background 0.15s;
-}
-.resize-col:hover { background: var(--primary); }
 
 /* ── 编辑器区域 ── */
 .editor-area {
@@ -1174,6 +1106,6 @@ onUnmounted(() => {
 /* 响应式 */
 @media (max-width: 880px) {
   .ide-layout { grid-template-columns: 1fr !important; }
-  .panel-left, .panel-right { display: none; }
+  .panel-right { display: none; }
 }
 </style>
