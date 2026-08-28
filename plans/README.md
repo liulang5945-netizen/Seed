@@ -14,11 +14,15 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 |---|---|
 | [TAIJI_CORE_REQUIREMENTS.md](active/TAIJI_CORE_REQUIREMENTS.md) | 项目长期使命、CR-1–CR-10、旧 Transformer 壳失败教训与不可归档的核心依据 |
 | [TAIJI_NATIVE_ARCHITECTURE_V1.md](active/TAIJI_NATIVE_ARCHITECTURE_V1.md) | Taiji 的完整目标：感知、表征、世界状态、工作空间、记忆、推理、规划、生成、学习和硬编码治理 |
-| [SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) | 唯一执行顺序：P0–P8 既有成果、Workbench Closure W0–W7 和当前下一步 |
+| [SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) | 唯一执行顺序：P0–P8 既有成果、Workbench Closure W0–W7、后续可靠性/研究/性能/体验工作包和当前下一步 |
 | [ARCHITECTURE_DIRECTION_2026_08.md](active/ARCHITECTURE_DIRECTION_2026_08.md) | 规范词表、不可回退边界、成熟技术采纳规则和 Legacy 边界 |
 | [SEED_ARCHITECTURE.md](active/SEED_ARCHITECTURE.md) | Seed 产品/runtime 所有权、允许/禁止职责与 checkpoint/API 迁移边界 |
 
 `plans/active/` 只保留以上五份文档。发生冲突时，项目使命以核心需求为准，目标能力以 Taiji v1 架构为准，执行顺序以总路线为准，身份和依赖以方向决策为准。
+
+总路线 W7 已完整保留 provider watchdog、interaction-group、视觉体验、CUDA、开放域学习和结构自进化；它们不是取消或归档，
+而是按真实工作台 trace、稳定合同和硬件可用性设置进入条件。小型模拟 Gate 从 W0 起继续使用，但只作为 S0 机制证据，必须逐步升级到
+replay/sandbox 的 S1 和 packaged-client/real-workbench 的 S2，不能单独替代产品完成声明。
 
 ## 旧实现与旧路线
 
