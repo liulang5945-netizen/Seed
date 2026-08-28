@@ -919,6 +919,27 @@ P4 的最小真实经历边界已落地：
 
 **顺带收敛的悬空引用**：`frontend/public/` 下 `logo.svg` / `favicon.svg` / `icons.svg` 三个文件在前几轮已被删除，但 `frontend/index.html:5` 仍在 `<link rel="icon" type="image/svg+xml" href="/logo.svg?v=ink-20260624">` 引用 `logo.svg`，构成一个每次加载都 404 的悬空引用。已删除该行——`favicon.ico`（同文件第 6 行，文件实际存在）单独就足以承担 favicon 职责，且 taiji logo 在应用内由 `logo-taiji-ink.jpg` 提供。
 
+### 13.10.1 冻结产物复验（`python scripts/release.py`，2026-08-28）
+
+上面那张表是**源码模式**的观测，不足以结案：本轮新增的 `PyQt6.QtWebChannel` 是运行时依赖，而 `qwebchannel.js` 是**编译进 Qt 的 qrc 资源、不是磁盘文件**，`Get-ChildItem` 永远找不到它；更要紧的是 `_inject_webchannel_client()` 读取失败只打一条 `logger.warning`（"前端标题栏将退化为无窗口控制"），`_set_windows_app_identity()` 同样只 warning——**两条都是静默降级**，应用照样启动、外观几乎正常。所以必须在真实 exe 里把资源读出来才算证明。
+
+打包产物：`dist/Seed/Seed.exe` 69.2 MB + `dist/Seed/SeedBackend.exe` 69.1 MB。经 `QTWEBENGINE_REMOTE_DEBUGGING=9333` 启动后裸 CDP 复验：
+
+| 复验项 | 结果 |
+| --- | --- |
+| 依赖收集 | `_internal/PyQt6/QtWebChannel.pyd`、`Qt6/bin/Qt6WebChannel.dll`、`Qt6WebChannelQuick.dll`、`Qt6/qml/QtWebChannel/webchannelquickplugin.dll` 四件齐备 |
+| qrc 资源实读（充分条件） | 冻结进程内 `typeof window.QWebChannel === 'function'` 为 true，`window.qt.webChannelTransport` 存在，`Object.keys(channel.objects) === ["seedWindow"]` |
+| 一体化度量 | 与源码模式**逐项相同**：标题栏 `rgba(0,0,0,0)` / `border-bottom: 0px none` / 高 40 / `gap_bar_to_body = 0`；wrapper `1px solid rgb(231,234,239)` + `18px` |
+| 接缝取色 | y=30/38/40 命中 `.titlebar-drag`、y=42/50 命中 `.sidebar-header`，五点背景**全为 `rgba(0,0,0,0)`**，统一落在 `.app-wrapper` 的 `rgb(241,243,245)` 上——纵向连续，无缝 |
+| 最大化往返 | `false/18px/1px/1280×800` → `true/0px/0px/2560×1392` → 还原完全一致 |
+| 冻结日志负向证据 | `dist/Seed/logs/desktop_main.log` 无 `qwebchannel.js 资源读取失败`、无 `AppUserModelID 设置失败`，两条降级分支均未走到 |
+| 子进程生命周期 | `Stop-Process Seed` 后 `SeedBackend` 同步消失，job object 的 kill-on-close 在打包产物中同样生效 |
+| 截图（full/topleft/topright） | 整窗一张外框，标题栏与 sidebar 同底、零分隔线，白色对话区圆角内嵌——与参考图 3/4 形态一致 |
+
+**AUMID 的验证边界（记录方法论，避免下次误判）**：Win32 **没有**读取其他进程 explicit AUMID 的 API。`SHGetPropertyStoreForWindow` + `PKEY_AppUserModel_ID` 读的是**窗口级**属性存储，而 `SetCurrentProcessExplicitAppUserModelID` 设的是**进程级**值——实测目标窗口（`hwnd=2950018`，标题 `Seed - AI 生命体`）返回 `VT_EMPTY`，这是**预期结果**，不代表修复失效，通知系统会回退到进程级值。因此改用三条合证：(1) 同段代码在进程内 set/read-back，`E_FAIL` → `S_OK` → `'Seed.Desktop.Shell'`，机制有效；(2) 调用点在 `QApplication(sys.argv)` 构造**之前**（`desktop/main.py` L773 紧邻 L774），满足"任何窗口创建前"的时序要求；(3) 冻结日志无失败 warning。另：`HKCU:\...\Notifications\Settings` 下**不存在** `*Seed*` 项，这恰好侧面印证"直接不给弹窗提示"那一半生效了——`showMessage` 已删，进程从未发通知，系统自然不会建项。
+
+**一个会反复踩的构建陷阱**：`python scripts/release.py 2>&1 | Tee-Object -FilePath build_release.log` 返回 exit 1，但日志尾部是 `Seed v1.6.0 构建完成`。原因是 PyInstaller 把全部 INFO 写 stderr，PowerShell 在管道中遇到原生命令写 stderr 会抛 `NativeCommandError`，**掩盖 python 的真实退出码**；日志里的 `ModuleNotFoundError: No module named 'tensorboard'` 也只是 PyInstaller 的可选导入探测，无害。构建是否成功的权威判据是脚本自己的 `python scripts/release.py --check-only`（本轮返回 0，含"前端一致性校验通过（源码 dist = 客户端内置 dist）"），而不是 shell 的 `$LASTEXITCODE`。
+
 ## 14. 持续门禁
 
 - Taiji/Seed/Legacy 所有权 AST 测试；
