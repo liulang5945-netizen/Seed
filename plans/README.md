@@ -328,8 +328,12 @@ native API 副作用，组件仅通过显式 props/events 连接。前端 Vitest
 状态和推进链路已抽为 `LifeNativeStatusPanel`；父视图继续唯一持有 runtime snapshot、轮询、生命活动边界和报告导出，组件通过显式
 props 连接。前端 Vitest `36 files / 215 passed`、API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
 
-**当前唯一下一步：开始 W6 第十五片的 LifeStatusView 需求与表达展示拆分。** 先隔离 needs 五维图、生命表达和需求明细的纯展示与事件转发，
-父视图继续唯一持有 runtime snapshot、轮询、生命活动边界和报告导出；每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，
+**已完成（2026-08-29）：W6 第十五片的 LifeStatusView needs 与表达展示拆分。** needs 五维图、生命表达、需求明细和生命事件流已抽为
+`LifeNeedsDashboard`；父视图继续唯一持有 runtime snapshot、轮询、生命活动边界、需求值归一化和报告导出，组件只接收显式 props。
+前端 Vitest `37 files / 217 passed`、API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
+
+**当前唯一下一步：开始 W6 第十六片的 SettingsView 设置分区展示拆分。** 先隔离设置表单与只读运行状态展示，父视图继续唯一持有设置加载/保存竞态、
+native API 副作用和失败回滚；每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，
 不得先做视觉包装或 CUDA kernel。
 
 ## 当前唯一下一步
