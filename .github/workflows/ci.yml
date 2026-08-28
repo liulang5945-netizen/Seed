@@ -5,9 +5,18 @@ on:
     branches: [main]
   pull_request:
 
+# R8: 并发治理（见 roadmap §14.14）。
+# 同一分支/PR 连续推送时按 ref 分组并取消旧 run，避免旧 job 白烧 runner 额度；
+# 5 个 job 实测峰值并发 7（< 公开仓库 20 上限，非资源争用问题，纯粹是旧 run 浪费）。
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    # R8: 实测 495–697s（两腿验证脚本 + 全套回归）；30m 留 2.5 倍余量防 CI 负载波动。
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -186,6 +195,8 @@ jobs:
   # hljsAliases 同步门禁、eslint、npm audit 全部静默失效。只改前端的 PR 尤其危险。
   build-frontend:
     runs-on: ubuntu-latest
+    # R8: 实测 108s（依赖安装 + 构建 + 审计 + E2E）；15m 兜死挂场景。
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -242,6 +253,8 @@ jobs:
   # 把它挂在 test 之后，等于让这份独立发现能力在 test 红时一并失效。
   docker-build:
     runs-on: ubuntu-latest
+    # R8: 实测 139s（镜像构建 + compose 校验）；20m 兜满仓时的拉取/构建挂死。
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -296,6 +309,8 @@ jobs:
   startup-smoke:
     name: Startup smoke (${{ matrix.profile }})
     runs-on: ubuntu-latest
+    # R8: 实测 41–92s（legacy 安装较慢）；15m 兜依赖解析挂死。
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -339,6 +354,8 @@ jobs:
 
   test-windows:
     runs-on: windows-latest
+    # R8: 实测 694s（全量回归 + 覆盖率采集）；30m 余量与 Ubuntu 测试腿一致。
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
