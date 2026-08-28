@@ -293,7 +293,9 @@ def test_recovery_reader_credit_consistency_roundtrip_and_reader_local_drift() -
     )
     assert drifted[0].complete is False
     assert drifted[0].changed_reader_kinds == ("semantic",)
-    safe_by_reader = dict(zip(drifted[0].reader_kinds, drifted[0].reader_attribution_safe))
+    safe_by_reader = dict(
+        zip(drifted[0].reader_kinds, drifted[0].reader_attribution_safe, strict=True)
+    )
     assert safe_by_reader == {
         "concept": True,
         "procedural": True,

@@ -1266,7 +1266,7 @@ def _run_ambiguity_case(seed: int) -> dict[str, object]:
     drift_safe_by_reader = (
         {}
         if drift_audit is None
-        else dict(zip(drift_audit.reader_kinds, drift_audit.reader_attribution_safe))
+        else dict(zip(drift_audit.reader_kinds, drift_audit.reader_attribution_safe, strict=True))
     )
     drift_dependency_by_reader = {
         dependency.reader_kind: dependency
