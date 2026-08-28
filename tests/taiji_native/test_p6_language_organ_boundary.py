@@ -6,12 +6,14 @@ from taiji import (
     ContentCandidate,
     ContentPlan,
     ContentSelector,
+    ExpressionPlan,
     ExternalTextDecoderLanguageOrgan,
     GenerationController,
     LanguageBackendRegistry,
     LanguageBackendSpec,
     LanguageEmission,
     LanguageProviderArtifact,
+    LanguageRealizationGate,
     LanguageRealizationValidator,
     LanguageTrainingCorpus,
     LanguageTrainingExample,
@@ -478,3 +480,65 @@ def test_provider_artifact_modes_and_checkpoint_are_explicit() -> None:
             adapter_path="providers/invalid",
             default_enabled=True,
         )
+
+
+def test_expression_to_text_gate_requires_quality_rollback_and_checkpoint() -> None:
+    def with_surface(expression: ExpressionPlan, text: str) -> ExpressionPlan:
+        payload = expression.to_payload()
+        payload["fields"] = {**expression.fields, "surface_text": text}
+        return ExpressionPlan.from_payload(payload)
+
+    train_expression = with_surface(_expression(), "当前状态稳定。")
+    holdout_expression = GenerationController().plan_expression(
+        ContentPlan(
+            content_id="language:gate:holdout",
+            intent_id="language:gate:holdout",
+            intent_kind="render_alert",
+            semantic_slots={"topic": "incident"},
+            required_terms=("警告",),
+        ),
+        modality="text",
+        channel="message",
+    )
+    holdout_expression = with_surface(holdout_expression, "检测到警告。")
+    corpus = LanguageTrainingCorpus(
+        train=(
+            LanguageTrainingExample(
+                example_id="language:gate:train",
+                expression=train_expression,
+                target_text="当前状态稳定。",
+                split="train",
+            ),
+        ),
+        holdout=(
+            LanguageTrainingExample(
+                example_id="language:gate:holdout",
+                expression=holdout_expression,
+                target_text="检测到警告。",
+                split="holdout",
+            ),
+        ),
+    )
+    organ = NativeReadableTextLanguageOrgan()
+    gate = LanguageRealizationGate()
+    report = gate.evaluate(
+        organ,
+        corpus,
+        rollback_organ=NativeReadableTextLanguageOrgan(),
+        rollback_reference_organ=NativeReadableTextLanguageOrgan(),
+        checkpoint_loader=NativeReadableTextLanguageOrgan.from_checkpoint,
+    )
+
+    assert report["gate"]["passed"] is True
+    assert report["holdout"]["required_term_coverage"] == 1.0
+    assert report["rollback"]["outputs_match_reference"] is True
+    assert report["checkpoint"]["outputs_match"] is True
+
+    structured_report = gate.evaluate(
+        StructuredTextLanguageOrgan(),
+        corpus,
+        rollback_organ=StructuredTextLanguageOrgan(),
+        rollback_reference_organ=StructuredTextLanguageOrgan(),
+        checkpoint_loader=StructuredTextLanguageOrgan.from_checkpoint,
+    )
+    assert structured_report["gate"]["passed"] is False

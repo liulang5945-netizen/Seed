@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 import torch
-from peft import LoraConfig, TaskType, get_peft_model
+from peft import LoraConfig, PeftModel, TaskType, get_peft_model
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -35,6 +35,7 @@ from taiji import (  # noqa: E402
     GenerationController,
     LanguageBackendRegistry,
     LanguageBackendSpec,
+    LanguageRealizationGate,
     LanguageTrainingCorpus,
     TSKV8Adapter,
 )
@@ -191,6 +192,45 @@ def evaluate(
     output_dir.mkdir(parents=True, exist_ok=True)
     adapted_model.save_pretrained(output_dir)
     tokenizer.save_pretrained(output_dir)
+    checkpoint_model = PeftModel.from_pretrained(
+        model,
+        output_dir,
+        is_trainable=False,
+    )
+    checkpoint_model.eval()
+    checkpoint_decoder = QwenLoRATextDecoder(tokenizer, checkpoint_model)
+    rollback_decoder = QwenLoRATextDecoder(tokenizer, model)
+    rollback_organ = ExternalTextDecoderLanguageOrgan(
+        rollback_decoder,
+        prompt_builder=_prompt,
+        backend_id=BACKEND_ID,
+        max_tokens=24,
+        temperature=0.0,
+    )
+    rollback_reference_organ = ExternalTextDecoderLanguageOrgan(
+        QwenLoRATextDecoder(tokenizer, model),
+        prompt_builder=_prompt,
+        backend_id=BACKEND_ID,
+        max_tokens=24,
+        temperature=0.0,
+    )
+    realization_gate = LanguageRealizationGate(
+        minimum_required_term_coverage=1.0,
+        minimum_readable_rate=1.0,
+        maximum_fallback_rate=0.0,
+    ).evaluate(
+        organ,
+        corpus,
+        rollback_organ=rollback_organ,
+        rollback_reference_organ=rollback_reference_organ,
+        checkpoint_loader=lambda payload: ExternalTextDecoderLanguageOrgan(
+            checkpoint_decoder,
+            prompt_builder=_prompt,
+            backend_id=str(payload["backend"]),
+            max_tokens=int(payload.get("max_tokens", 24)),
+            temperature=float(payload.get("temperature", 0.0)),
+        ),
+    )
     adapted_outputs = [str(example["output_text"]) for example in adapted_holdout["examples"]]
     adapted_model.disable_adapter_layers()
     rollback_holdout = _measure(adapter, corpus.holdout)
@@ -210,6 +250,7 @@ def evaluate(
         and float(adapted_holdout["prompt_leakage_rate"]) == 1.0
         and float(adapted_holdout["output_nonempty_rate"]) == 1.0
         and rollback_outputs_match_base
+        and bool(realization_gate["gate"]["passed"])
         and restored.cognitive_snapshot().action_intent is None
     )
     return {
@@ -231,6 +272,7 @@ def evaluate(
             "optimizer_steps": training["optimizer_steps"],
             "losses": training["losses"],
             "base_checkpoint_untouched": True,
+            "checkpoint_continuation": bool(realization_gate["checkpoint"]["outputs_match"]),
         },
         "base_metrics": {"train": base_train, "holdout": base_holdout},
         "adapted_metrics": {"train": adapted_train, "holdout": adapted_holdout},
@@ -239,6 +281,7 @@ def evaluate(
             "outputs_match_base": rollback_outputs_match_base,
             "adapted_outputs": adapted_outputs,
         },
+        "expression_to_text_gate": realization_gate,
         "gate": {
             "passed": gate_passed,
             "criterion": "a real LoRA adapter updates only external provider parameters, improves the same holdout required-term recall without leakage, and disabling the adapter reproduces the raw provider output",
