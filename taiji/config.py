@@ -242,6 +242,7 @@ class TaijiConfig:
     recovery_strategy_interaction_order_tolerance: float = (
         DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE
     )
+    recovery_strategy_cross_reader_credit_drift_tolerance: float = 1.0
     concept_similarity_threshold: float = 0.85
     concept_signal_weights: tuple[float, float, float] = (0.45, 0.35, 0.20)
     concept_capacity: int = 256
@@ -395,6 +396,7 @@ class TaijiConfig:
         for name in (
             "recovery_strategy_interaction_residual_tolerance",
             "recovery_strategy_interaction_order_tolerance",
+            "recovery_strategy_cross_reader_credit_drift_tolerance",
         ):
             value = float(getattr(self, name))
             if not math.isfinite(value) or value < 0.0:

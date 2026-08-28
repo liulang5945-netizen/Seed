@@ -85,6 +85,7 @@ from .planning import (
     RecoveryPortfolio,
     RecoveryPortfolioArchive,
     RecoveryReaderContribution,
+    RecoveryReaderCreditConsistency,
     RecoveryReaderDependency,
     RecoveryReaderDependencyGraph,
     RecoveryReaderInteraction,
@@ -94,6 +95,7 @@ from .planning import (
     RecoveryStrategyLedger,
     RolloutDecision,
     _connected_components,
+    build_recovery_reader_credit_consistency,
 )
 from .procedural_memory import ProceduralMemoryLearner, ProceduralSequenceLearner
 from .semantic_memory import SemanticMemoryLearner
@@ -5973,6 +5975,35 @@ class TSKV8Adapter(Taiji):
         return self._recovery_strategy_ledger.selected_approvals
 
     def _persist_recovery_interaction_audit(self) -> None:
+        previous_consistency = self._recovery_reader_dependencies.credit_consistency
+        consistency = build_recovery_reader_credit_consistency(
+            self._recovery_reader_dependencies.dependencies,
+            drift_tolerance=self.config.recovery_strategy_cross_reader_credit_drift_tolerance,
+            previous=previous_consistency,
+        )
+        self._recovery_reader_dependencies = (
+            self._recovery_reader_dependencies.record_credit_consistency(consistency)
+        )
+        consistency_by_key = {frozenset(item.strategy_rollout_ids): item for item in consistency}
+        if consistency_by_key:
+            dependencies: list[RecoveryReaderDependency] = []
+            for dependency in self._recovery_reader_dependencies.dependencies:
+                groups: list[RecoveryReaderInteractionGroup] = []
+                for group in dependency.interaction_groups:
+                    audit = consistency_by_key.get(frozenset(group.strategy_rollout_ids))
+                    if audit is None:
+                        groups.append(group)
+                        continue
+                    reader_index = audit.reader_kinds.index(dependency.reader_kind)
+                    if audit.reader_attribution_safe[reader_index]:
+                        groups.append(group)
+                    else:
+                        groups.append(replace(group, credit_decomposition_complete=False))
+                dependencies.append(replace(dependency, interaction_groups=tuple(groups)))
+            self._recovery_reader_dependencies = replace(
+                self._recovery_reader_dependencies,
+                dependencies=tuple(dependencies),
+            )
         interactions = tuple(
             interaction
             for dependency in self._recovery_reader_dependencies.dependencies
@@ -6005,6 +6036,12 @@ class TSKV8Adapter(Taiji):
         """Return the reader-level provenance graph for recovery memory."""
 
         return self._recovery_reader_dependencies
+
+    @property
+    def recovery_reader_credit_consistency(self) -> tuple[RecoveryReaderCreditConsistency, ...]:
+        """Return cross-reader group credit and checkpoint drift audits."""
+
+        return self._recovery_reader_dependencies.credit_consistency
 
     @property
     def recovery_reader_interaction_replay_stats(self) -> dict[str, int]:
