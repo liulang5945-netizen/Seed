@@ -8,6 +8,7 @@ not depend on ``SEED_ENABLE_LEGACY``.
 from __future__ import annotations
 
 from typing import Any
+from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
 
@@ -31,9 +32,30 @@ def _environment() -> WorkbenchEnvironment:
 
 def _read_only_result(tool_name: str, parameters: dict[str, Any]) -> dict[str, Any]:
     environment = _environment()
+    runtime = get_seed_runtime()
+    if runtime is not None:
+        from taiji import ActionIntent
+
+        request_id = f"api:{tool_name}:{uuid4().hex}"
+        result = runtime.execute_workbench_intent(
+            ActionIntent(
+                intent_id=request_id,
+                kind=tool_name,
+                parameters=parameters,
+                confidence=1.0,
+                tick=runtime.model.tick,
+            ),
+            snapshot_id=environment.capability_snapshot.snapshot_id,
+        )
+        outcome = result["outcome"]
+        if outcome["status"] != "success":
+            raise HTTPException(status_code=400, detail=outcome)
+        return dict(outcome.get("result") or {})
+
+    request_id = f"api:{tool_name}:{uuid4().hex}"
     request = WorkbenchActionRequest(
-        request_id=f"api:{tool_name}",
-        intent_id=f"api:{tool_name}",
+        request_id=request_id,
+        intent_id=request_id,
         capability_id=tool_name,
         parameters=parameters,
         snapshot_id=environment.capability_snapshot.snapshot_id,
@@ -51,7 +73,10 @@ def _read_only_result(tool_name: str, parameters: dict[str, Any]) -> dict[str, A
 
 @router.get("/capabilities")
 def workbench_capabilities() -> dict[str, Any]:
-    return _environment().capability_snapshot.to_payload()
+    environment = _environment()
+    payload = environment.capability_snapshot.to_payload()
+    payload["workspace_root"] = str(environment.root)
+    return payload
 
 
 @router.get("/files")

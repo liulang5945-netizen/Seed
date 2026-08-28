@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
 import { defineComponent, h, KeepAlive } from 'vue'
 import WorkspaceView from '../views/WorkspaceView.vue'
@@ -16,26 +16,43 @@ const jsonResponse = (data, ok = true, status = 200) => ({
   json: async () => data,
 })
 
-const defaultTree = () => [
-  {
-    name: 'src',
-    path: 'src',
-    type: 'directory',
-    children: [{ name: 'main.py', path: 'src/main.py', type: 'file', size: 10 }],
-  },
-  { name: 'README.md', path: 'README.md', type: 'file', size: 4 },
-]
+const defaultCapabilities = () => ({
+  format: 'seed-workbench-contract-v1',
+  version: 1,
+  snapshot_id: 'workbench-test-snapshot',
+  revision: 1,
+  workspace_root: 'E:/Seed/agent_workspace',
+  capabilities: [
+    { capability_id: 'workspace.list', enabled: true },
+    { capability_id: 'workspace.read', enabled: true },
+  ],
+})
+
+const defaultEntries = (path = '.') => path === 'src'
+  ? [{ name: 'main.py', path: 'src/main.py', type: 'file', size: 10 }]
+  : [
+      { name: 'src', path: 'src', type: 'directory', size: 0 },
+      { name: 'README.md', path: 'README.md', type: 'file', size: 4 },
+    ]
 
 // 重命名端点的 mock 响应，可按用例覆写（默认成功）
 let renameResponse = () => jsonResponse({ status: 'ok', path: 'GUIDE.md' })
+const mountedWrappers = []
 
 beforeEach(() => {
   authFetch.mockReset()
   renameResponse = () => jsonResponse({ status: 'ok', path: 'GUIDE.md' })
   authFetch.mockImplementation((url, options = {}) => {
     const method = (options.method || 'GET').toUpperCase()
-    if (url.endsWith('/api/workspace/tree')) {
-      return Promise.resolve(jsonResponse({ tree: defaultTree() }))
+    if (url.endsWith('/api/workbench/capabilities')) {
+      return Promise.resolve(jsonResponse(defaultCapabilities()))
+    }
+    if (url.endsWith('/api/workbench/events')) {
+      return Promise.resolve(jsonResponse({ events: [] }))
+    }
+    if (url.includes('/api/workbench/files?path=')) {
+      const path = new URL(url, 'http://localhost').searchParams.get('path') || '.'
+      return Promise.resolve(jsonResponse({ entries: defaultEntries(path) }))
     }
     if (url.endsWith('/api/workspace/quick_paths')) {
       return Promise.resolve(
@@ -59,10 +76,14 @@ beforeEach(() => {
   })
 })
 
+afterEach(() => {
+  for (const wrapper of mountedWrappers.splice(0)) wrapper.unmount()
+})
+
 // MonacoEditor 依赖真实编辑器运行时，stub 后仅验证视图接线；
 // 用 KeepAlive 包裹以触发 onActivated（loadTree 统一由它负责）
-const mountView = ({ toast = vi.fn() } = {}) =>
-  mount(
+const mountView = ({ toast = vi.fn() } = {}) => {
+  const wrapper = mount(
     defineComponent({
       render: () => h(KeepAlive, null, { default: () => h(WorkspaceView) }),
     }),
@@ -76,9 +97,12 @@ const mountView = ({ toast = vi.fn() } = {}) =>
       },
     }
   )
+  mountedWrappers.push(wrapper)
+  return wrapper
+}
 
 const treeCalls = () =>
-  authFetch.mock.calls.filter(([u]) => u.endsWith('/api/workspace/tree')).length
+  authFetch.mock.calls.filter(([u]) => u.includes('/api/workbench/files?path=')).length
 
 // 右键重命名交互流程：打开右键菜单 → 点击重命名 → 输入新名 → 确认
 const runRenameFlow = async (wrapper, newName) => {
@@ -168,7 +192,7 @@ describe('WorkspaceView', () => {
     expect(btn.text()).toBe('终端')
   })
 
-  it('展开/折叠目录仅本地重算扁平列表，不发起请求', async () => {
+  it('展开目录通过 native Workbench 读取子目录，折叠只本地重算', async () => {
     const wrapper = mountView()
     await flushPromises()
     const before = authFetch.mock.calls.length
@@ -176,10 +200,13 @@ describe('WorkspaceView', () => {
 
     const folder = wrapper.findAll('.tree-item').find((i) => i.text() === 'src')
     await folder.trigger('click')
-    expect(authFetch.mock.calls.length).toBe(before)
+    await flushPromises()
+    expect(authFetch.mock.calls.length).toBeGreaterThan(before)
     expect(wrapper.findAll('.tree-item').some((i) => i.text() === 'main.py')).toBe(true)
 
+    const afterExpand = authFetch.mock.calls.length
     await folder.trigger('click')
+    expect(authFetch.mock.calls.length).toBe(afterExpand)
     expect(wrapper.findAll('.tree-item').some((i) => i.text() === 'main.py')).toBe(false)
   })
 
@@ -191,7 +218,9 @@ describe('WorkspaceView', () => {
       .find((g) => g.text().includes('工作区统计'))
     expect(statsGroup).toBeTruthy()
     expect(statsGroup.text()).toContain('文件数')
-    expect(statsGroup.text()).toContain('2')
+    // Native Workbench loads child directories on demand; the root projection
+    // therefore reports the entries currently known to the client.
+    expect(statsGroup.text()).toContain('1')
     expect(statsGroup.text()).toContain('目录数')
     expect(statsGroup.text()).toContain('1')
     // 硬编码假数据已清除
