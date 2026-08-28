@@ -29,6 +29,8 @@ LANGUAGE_PROVIDER_ARTIFACT_FORMAT = "taiji-language-provider-artifact-v1"
 LANGUAGE_PROVIDER_CONTENT_ADDRESS_FORMAT = "taiji-language-provider-content-address-v1"
 LANGUAGE_PROVIDER_CANARY_FORMAT = "taiji-language-provider-canary-v1"
 LANGUAGE_PROVIDER_REGISTRY_FORMAT = "taiji-language-provider-registry-v1"
+LANGUAGE_PROVIDER_HEALTH_FORMAT = "taiji-language-provider-health-v1"
+LANGUAGE_PROVIDER_HEALTH_GATE_FORMAT = "taiji-language-provider-health-gate-v1"
 LANGUAGE_REALIZATION_GATE_FORMAT = "taiji-language-realization-gate-v1"
 
 _LANGUAGE_PROVIDER_CONTENT_ROLES = frozenset(
@@ -758,6 +760,231 @@ class LanguageProviderArtifactRegistry:
                 else str(payload["previous_artifact_id"])
             ),
             revision=int(payload.get("revision", 0)),
+        )
+
+
+@dataclass(frozen=True)
+class LanguageProviderHealthPolicy:
+    """Deterministic thresholds for the provider runtime health watchdog.
+
+    The policy is data only.  It never loads a decoder and never decides which
+    artifact is allowed; it only bounds how many consecutive rejected probes an
+    active provider may produce before the runtime must fall back, and how long
+    the runtime must stay quiet afterwards so a rollback cannot flap.
+    """
+
+    failure_threshold: int = 3
+    cooldown_seconds: float = 300.0
+    minimum_accepted_rate: float = 0.5
+    minimum_rate_probes: int = 8
+
+    def __post_init__(self) -> None:
+        if isinstance(self.failure_threshold, bool) or int(self.failure_threshold) < 1:
+            raise ValueError("provider health failure_threshold must be a positive integer")
+        cooldown = float(self.cooldown_seconds)
+        if not math.isfinite(cooldown) or cooldown < 0.0:
+            raise ValueError("provider health cooldown_seconds must be finite and non-negative")
+        rate = float(self.minimum_accepted_rate)
+        if not math.isfinite(rate) or not 0.0 <= rate <= 1.0:
+            raise ValueError("provider health minimum_accepted_rate must fall within [0, 1]")
+        if isinstance(self.minimum_rate_probes, bool) or int(self.minimum_rate_probes) < 1:
+            raise ValueError("provider health minimum_rate_probes must be a positive integer")
+        object.__setattr__(self, "failure_threshold", int(self.failure_threshold))
+        object.__setattr__(self, "cooldown_seconds", cooldown)
+        object.__setattr__(self, "minimum_accepted_rate", rate)
+        object.__setattr__(self, "minimum_rate_probes", int(self.minimum_rate_probes))
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "failure_threshold": self.failure_threshold,
+            "cooldown_seconds": self.cooldown_seconds,
+            "minimum_accepted_rate": self.minimum_accepted_rate,
+            "minimum_rate_probes": self.minimum_rate_probes,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> LanguageProviderHealthPolicy:
+        return cls(
+            failure_threshold=int(payload.get("failure_threshold", 3)),
+            cooldown_seconds=float(payload.get("cooldown_seconds", 300.0)),
+            minimum_accepted_rate=float(payload.get("minimum_accepted_rate", 0.5)),
+            minimum_rate_probes=int(payload.get("minimum_rate_probes", 8)),
+        )
+
+
+@dataclass(frozen=True)
+class LanguageProviderHealthState:
+    """Immutable runtime health record for one active provider version.
+
+    The record is anchored on ``artifact_id``: observing a different version
+    starts a fresh record, so counters can never be inherited across a
+    rotation or a rollback.  Every transition returns a new snapshot, and the
+    whole record is checkpointable so a degraded provider stays degraded across
+    a restart instead of silently becoming healthy again.
+    """
+
+    artifact_id: str | None = None
+    probe_count: int = 0
+    accepted_count: int = 0
+    consecutive_failures: int = 0
+    rollback_count: int = 0
+    degraded: bool = False
+    rollback_pending: bool = False
+    cooldown_until: float = 0.0
+    last_reason_code: str = ""
+    last_probe_at: float | None = None
+
+    def __post_init__(self) -> None:
+        for value, label in (
+            (self.probe_count, "probe_count"),
+            (self.accepted_count, "accepted_count"),
+            (self.consecutive_failures, "consecutive_failures"),
+            (self.rollback_count, "rollback_count"),
+        ):
+            if isinstance(value, bool) or int(value) < 0:
+                raise ValueError(f"provider health {label} must be non-negative")
+        if int(self.accepted_count) > int(self.probe_count):
+            raise ValueError("provider health accepted_count cannot exceed probe_count")
+        cooldown_until = float(self.cooldown_until)
+        if not math.isfinite(cooldown_until) or cooldown_until < 0.0:
+            raise ValueError("provider health cooldown_until must be finite and non-negative")
+        if self.last_probe_at is not None and not math.isfinite(float(self.last_probe_at)):
+            raise ValueError("provider health last_probe_at must be finite")
+        if self.rollback_pending and not self.degraded:
+            raise ValueError("provider health rollback_pending requires a degraded record")
+        object.__setattr__(
+            self, "artifact_id", None if self.artifact_id is None else str(self.artifact_id)
+        )
+        object.__setattr__(self, "probe_count", int(self.probe_count))
+        object.__setattr__(self, "accepted_count", int(self.accepted_count))
+        object.__setattr__(self, "consecutive_failures", int(self.consecutive_failures))
+        object.__setattr__(self, "rollback_count", int(self.rollback_count))
+        object.__setattr__(self, "degraded", bool(self.degraded))
+        object.__setattr__(self, "rollback_pending", bool(self.rollback_pending))
+        object.__setattr__(self, "cooldown_until", cooldown_until)
+        object.__setattr__(self, "last_reason_code", str(self.last_reason_code))
+        object.__setattr__(
+            self, "last_probe_at", None if self.last_probe_at is None else float(self.last_probe_at)
+        )
+
+    @property
+    def accepted_rate(self) -> float:
+        """Return the accepted probe rate for this version, 1.0 when unprobed."""
+
+        if self.probe_count == 0:
+            return 1.0
+        return self.accepted_count / self.probe_count
+
+    def in_cooldown(self, now: float) -> bool:
+        """Return whether the watchdog is still inside its quiet window."""
+
+        return float(now) < self.cooldown_until
+
+    def for_artifact(self, artifact_id: str | None) -> LanguageProviderHealthState:
+        """Return this record when the version matches, else a fresh record.
+
+        The cooldown window and rollback tally survive the rebase so a
+        post-rollback quiet window cannot be erased by pointing the watchdog at
+        another version.
+        """
+
+        target = None if artifact_id is None else str(artifact_id)
+        if target == self.artifact_id:
+            return self
+        return LanguageProviderHealthState(
+            artifact_id=target,
+            rollback_count=self.rollback_count,
+            cooldown_until=self.cooldown_until,
+        )
+
+    def observe(
+        self,
+        *,
+        artifact_id: str | None,
+        accepted: bool,
+        reason_code: str,
+        now: float,
+        policy: LanguageProviderHealthPolicy,
+    ) -> LanguageProviderHealthState:
+        """Fold one probe outcome into a new record."""
+
+        if not isinstance(policy, LanguageProviderHealthPolicy):
+            raise TypeError("provider health observation requires a LanguageProviderHealthPolicy")
+        base = self.for_artifact(artifact_id)
+        probe_count = base.probe_count + 1
+        accepted_count = base.accepted_count + (1 if accepted else 0)
+        consecutive_failures = 0 if accepted else base.consecutive_failures + 1
+        threshold_breached = consecutive_failures >= policy.failure_threshold
+        rate_breached = (
+            probe_count >= policy.minimum_rate_probes
+            and (accepted_count / probe_count) < policy.minimum_accepted_rate
+        )
+        degraded = bool(base.degraded or threshold_breached or rate_breached)
+        return replace(
+            base,
+            probe_count=probe_count,
+            accepted_count=accepted_count,
+            consecutive_failures=consecutive_failures,
+            degraded=degraded,
+            rollback_pending=degraded,
+            last_reason_code=str(reason_code),
+            last_probe_at=float(now),
+        )
+
+    def after_rollback(
+        self,
+        *,
+        artifact_id: str | None,
+        now: float,
+        policy: LanguageProviderHealthPolicy,
+        reason_code: str,
+    ) -> LanguageProviderHealthState:
+        """Return a fresh record for the fallback target inside a cooldown window."""
+
+        if not isinstance(policy, LanguageProviderHealthPolicy):
+            raise TypeError("provider health rollback requires a LanguageProviderHealthPolicy")
+        return LanguageProviderHealthState(
+            artifact_id=None if artifact_id is None else str(artifact_id),
+            rollback_count=self.rollback_count + 1,
+            cooldown_until=float(now) + policy.cooldown_seconds,
+            last_reason_code=str(reason_code),
+            last_probe_at=float(now),
+        )
+
+    def checkpoint(self) -> dict[str, Any]:
+        return {
+            "format": LANGUAGE_PROVIDER_HEALTH_FORMAT,
+            "artifact_id": self.artifact_id,
+            "probe_count": self.probe_count,
+            "accepted_count": self.accepted_count,
+            "consecutive_failures": self.consecutive_failures,
+            "rollback_count": self.rollback_count,
+            "degraded": self.degraded,
+            "rollback_pending": self.rollback_pending,
+            "cooldown_until": self.cooldown_until,
+            "last_reason_code": self.last_reason_code,
+            "last_probe_at": self.last_probe_at,
+        }
+
+    @classmethod
+    def from_checkpoint(cls, payload: Mapping[str, Any]) -> LanguageProviderHealthState:
+        if payload.get("format") != LANGUAGE_PROVIDER_HEALTH_FORMAT:
+            raise ValueError("unsupported language provider health state format")
+        return cls(
+            artifact_id=(
+                None if payload.get("artifact_id") is None else str(payload["artifact_id"])
+            ),
+            probe_count=int(payload.get("probe_count", 0)),
+            accepted_count=int(payload.get("accepted_count", 0)),
+            consecutive_failures=int(payload.get("consecutive_failures", 0)),
+            rollback_count=int(payload.get("rollback_count", 0)),
+            degraded=bool(payload.get("degraded", False)),
+            rollback_pending=bool(payload.get("rollback_pending", False)),
+            cooldown_until=float(payload.get("cooldown_until", 0.0)),
+            last_reason_code=str(payload.get("last_reason_code", "")),
+            last_probe_at=(
+                None if payload.get("last_probe_at") is None else float(payload["last_probe_at"])
+            ),
         )
 
 
@@ -1644,5 +1871,221 @@ class LanguageProviderCanaryGate:
             "gate": {
                 "passed": passed,
                 "criterion": "the loaded provider emits readable, semantically complete canary messages without structured leakage or validated fallback",
+            },
+        }
+
+
+class LanguageProviderHealthProbe:
+    """Judge one live emission without requiring Taiji-owned required terms.
+
+    Product chat expressions carry no ``required_terms``, so this probe cannot
+    reuse the canary's coverage metric.  It judges exactly what remains
+    observable per request: the surface must be readable text, it must not leak
+    structured plan keys, and the organ must not have taken its validated
+    fallback.  A raised exception is a rejected probe, never a healthy one.
+    """
+
+    LEAKAGE_MARKERS = ("semantic_slots", "intent_kind", "expected_outcome", "{", "}")
+
+    def evaluate(self, expression: ExpressionPlan, emission: Any) -> dict[str, Any]:
+        """Return a probe row for one emission produced from ``expression``."""
+
+        if not isinstance(expression, ExpressionPlan):
+            raise TypeError("provider health probe requires an ExpressionPlan")
+        row: dict[str, Any] = {
+            "expression_id": expression.expression_id,
+            "readable": False,
+            "structured_leakage": False,
+            "fallback_used": False,
+            "accepted": False,
+            "reason_code": "probe_emission_invalid",
+            "error": None,
+        }
+        if not isinstance(emission, LanguageEmission):
+            return row
+        try:
+            text = emission.text_bytes.decode("utf-8", errors="strict")
+        except Exception as exc:  # noqa: BLE001 - an undecodable emission is a failed probe
+            row["error"] = f"{type(exc).__name__}: {exc}"
+            row["reason_code"] = "probe_undecodable"
+            row["fallback_used"] = bool(emission.fallback_used)
+            return row
+        readable = _readable_surface(text) is not None
+        leakage = any(marker in text for marker in self.LEAKAGE_MARKERS)
+        fallback_used = bool(emission.fallback_used)
+        if fallback_used:
+            reason_code = "probe_fallback_used"
+        elif not readable:
+            reason_code = "probe_unreadable"
+        elif leakage:
+            reason_code = "probe_structured_leakage"
+        else:
+            reason_code = "probe_accepted"
+        row.update(
+            {
+                "readable": readable,
+                "structured_leakage": leakage,
+                "fallback_used": fallback_used,
+                "accepted": bool(readable and not leakage and not fallback_used),
+                "reason_code": reason_code,
+            }
+        )
+        return row
+
+    def probe(self, organ: LanguageOrgan, expression: ExpressionPlan) -> dict[str, Any]:
+        """Emit through ``organ`` and judge the result, recording raises."""
+
+        if not isinstance(organ, LanguageOrgan):
+            raise TypeError("provider health probe organ must implement LanguageOrgan")
+        try:
+            emission = organ.emit(expression)
+        except Exception as exc:  # noqa: BLE001 - a raising organ is a failed probe
+            return {
+                "expression_id": expression.expression_id,
+                "readable": False,
+                "structured_leakage": False,
+                "fallback_used": False,
+                "accepted": False,
+                "reason_code": "probe_emission_failed",
+                "error": f"{type(exc).__name__}: {exc}",
+            }
+        return self.evaluate(expression, emission)
+
+
+class LanguageProviderHealthGate:
+    """Prove the watchdog degrades, rolls back once, and survives a restart.
+
+    The gate does not merely report whether one organ is currently healthy.  It
+    exercises the full decision path the runtime depends on: a healthy provider
+    stays active and undegraded, a failing provider trips the configured
+    consecutive-failure threshold exactly once, the post-rollback cooldown
+    window suppresses a second rollback, and a checkpoint round-trip reproduces
+    the degraded record so a restart cannot silently re-declare health.
+    """
+
+    GATE_ID = LANGUAGE_PROVIDER_HEALTH_GATE_FORMAT
+
+    def __init__(self, policy: LanguageProviderHealthPolicy | None = None) -> None:
+        self._policy = policy if policy is not None else LanguageProviderHealthPolicy()
+        if not isinstance(self._policy, LanguageProviderHealthPolicy):
+            raise TypeError("provider health gate requires a LanguageProviderHealthPolicy")
+        self._probe = LanguageProviderHealthProbe()
+
+    @property
+    def policy(self) -> LanguageProviderHealthPolicy:
+        return self._policy
+
+    @classmethod
+    def cases(cls) -> tuple[ExpressionPlan, ...]:
+        """Reuse the reviewed canary expressions as live health probes."""
+
+        return LanguageProviderCanaryGate.cases()
+
+    def evaluate(
+        self,
+        organ: LanguageOrgan,
+        *,
+        degraded_organ: LanguageOrgan | None = None,
+        artifact_id: str = "health-gate-active",
+        rollback_artifact_id: str = NativeReadableTextLanguageOrgan.BACKEND_ID,
+        now: float = 0.0,
+    ) -> dict[str, Any]:
+        policy = self._policy
+        healthy_rows: list[dict[str, Any]] = []
+        healthy_state = LanguageProviderHealthState()
+        clock = float(now)
+        for expression in self.cases():
+            clock += 1.0
+            row = self._probe.probe(organ, expression)
+            healthy_rows.append(row)
+            healthy_state = healthy_state.observe(
+                artifact_id=artifact_id,
+                accepted=bool(row["accepted"]),
+                reason_code=str(row["reason_code"]),
+                now=clock,
+                policy=policy,
+            )
+
+        degraded_rows: list[dict[str, Any]] = []
+        degraded_state = healthy_state
+        current_artifact_id = artifact_id
+        rollbacks = 0
+        rollback_suppressed = 0
+        probes_before_rollback = 0
+        if degraded_organ is not None:
+            probe_budget = policy.failure_threshold * 2
+            for index in range(probe_budget):
+                clock += 1.0
+                expression = self.cases()[index % len(self.cases())]
+                row = self._probe.probe(degraded_organ, expression)
+                degraded_rows.append(row)
+                degraded_state = degraded_state.observe(
+                    artifact_id=current_artifact_id,
+                    accepted=bool(row["accepted"]),
+                    reason_code=str(row["reason_code"]),
+                    now=clock,
+                    policy=policy,
+                )
+                if not degraded_state.rollback_pending:
+                    continue
+                if degraded_state.in_cooldown(clock):
+                    rollback_suppressed += 1
+                    continue
+                rollbacks += 1
+                if probes_before_rollback == 0:
+                    probes_before_rollback = index + 1
+                degraded_state = degraded_state.after_rollback(
+                    artifact_id=rollback_artifact_id,
+                    now=clock,
+                    policy=policy,
+                    reason_code="provider_health_rolled_back",
+                )
+                current_artifact_id = rollback_artifact_id
+
+        restored = LanguageProviderHealthState.from_checkpoint(degraded_state.checkpoint())
+        metrics = {
+            "healthy_probe_count": len(healthy_rows),
+            "healthy_accepted_rate": sum(bool(row["accepted"]) for row in healthy_rows)
+            / max(1, len(healthy_rows)),
+            "healthy_degraded": bool(healthy_state.degraded),
+            "degraded_probe_count": len(degraded_rows),
+            "degraded_accepted_rate": sum(bool(row["accepted"]) for row in degraded_rows)
+            / max(1, len(degraded_rows)),
+            "probes_before_rollback": probes_before_rollback,
+            "rollback_count": rollbacks,
+            "rollback_suppressed_count": rollback_suppressed,
+            "checkpoint_roundtrip_matches": bool(restored == degraded_state),
+            "cooldown_active_after_rollback": bool(degraded_state.in_cooldown(clock)),
+            "rollback_target": degraded_state.artifact_id,
+        }
+        healthy_passed = bool(
+            metrics["healthy_probe_count"] == len(self.cases())
+            and metrics["healthy_accepted_rate"] == 1.0
+            and not metrics["healthy_degraded"]
+        )
+        if degraded_organ is None:
+            degraded_passed = True
+        else:
+            degraded_passed = bool(
+                metrics["rollback_count"] == 1
+                and metrics["probes_before_rollback"] == policy.failure_threshold
+                and metrics["rollback_suppressed_count"] >= 1
+                and metrics["cooldown_active_after_rollback"]
+                and metrics["rollback_target"] == rollback_artifact_id
+            )
+        passed = bool(
+            healthy_passed and degraded_passed and metrics["checkpoint_roundtrip_matches"]
+        )
+        return {
+            "format": LANGUAGE_PROVIDER_HEALTH_GATE_FORMAT,
+            "gate_id": self.GATE_ID,
+            "policy": policy.to_payload(),
+            "healthy_probes": healthy_rows,
+            "degraded_probes": degraded_rows,
+            "health_state": degraded_state.checkpoint(),
+            "metrics": metrics,
+            "gate": {
+                "passed": passed,
+                "criterion": "a healthy provider stays active while a degrading provider trips the consecutive-failure threshold exactly once, falls back to the declared target, is held by the cooldown window, and reproduces its degraded record from a checkpoint",
             },
         }

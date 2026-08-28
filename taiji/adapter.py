@@ -70,6 +70,8 @@ from .language_organ import (
     LanguageOrgan,
     LanguageProviderArtifact,
     LanguageProviderArtifactRegistry,
+    LanguageProviderHealthPolicy,
+    LanguageProviderHealthState,
     LanguageValidation,
     NativeReadableTextLanguageOrgan,
     StructuredTextLanguageOrgan,
@@ -288,6 +290,7 @@ class TSKV8Adapter(Taiji):
         self._last_language_emission: LanguageEmission | None = None
         self._language_fallback_count = 0
         self._language_fallback_requires_replan = False
+        self._language_provider_health = LanguageProviderHealthState()
 
     def _empty_cognitive_state(self, episode_id: str) -> CognitiveState:
         empty = torch.empty(0, device=self.device)
@@ -5095,6 +5098,49 @@ class TSKV8Adapter(Taiji):
     def language_fallback_count(self) -> int:
         return self._language_fallback_count
 
+    @property
+    def language_provider_health(self) -> LanguageProviderHealthState:
+        return self._language_provider_health
+
+    def observe_language_provider_health(
+        self,
+        *,
+        accepted: bool,
+        reason_code: str,
+        now: float,
+        policy: LanguageProviderHealthPolicy,
+    ) -> LanguageProviderHealthState:
+        """Fold one runtime probe into the health record anchored to the active artifact."""
+
+        artifact = self._language_provider_artifact
+        artifact_id = None if artifact is None else artifact.artifact_id
+        self._language_provider_health = self._language_provider_health.observe(
+            artifact_id=artifact_id,
+            accepted=accepted,
+            reason_code=reason_code,
+            now=now,
+            policy=policy,
+        )
+        return self._language_provider_health
+
+    def commit_language_provider_health_rollback(
+        self,
+        *,
+        artifact_id: str | None,
+        now: float,
+        policy: LanguageProviderHealthPolicy,
+        reason_code: str,
+    ) -> LanguageProviderHealthState:
+        """Re-anchor the health record after a rollback and open the cooldown window."""
+
+        self._language_provider_health = self._language_provider_health.after_rollback(
+            artifact_id=artifact_id,
+            now=now,
+            policy=policy,
+            reason_code=reason_code,
+        )
+        return self._language_provider_health
+
     def _apply_content_feedback(self, reward: float) -> None:
         if (
             self._content_selector is not None
@@ -8643,6 +8689,7 @@ class TSKV8Adapter(Taiji):
         payload["pending_executive_credit"] = self._pending_executive_credit_checkpoint()
         payload["language_fallback_count"] = self._language_fallback_count
         payload["language_fallback_requires_replan"] = self._language_fallback_requires_replan
+        payload["language_provider_health"] = self._language_provider_health.checkpoint()
         payload["last_language_emission"] = (
             None
             if self._last_language_emission is None
@@ -8950,6 +8997,15 @@ class TSKV8Adapter(Taiji):
             if isinstance(payload, dict)
             else False
         )
+        health_payload = (
+            payload.get("language_provider_health") if isinstance(payload, dict) else None
+        )
+        if isinstance(health_payload, Mapping):
+            self._language_provider_health = LanguageProviderHealthState.from_checkpoint(
+                health_payload
+            )
+        else:
+            self._language_provider_health = LanguageProviderHealthState()
 
     def _restore_language_organ(self, payload: Any) -> None:
         if payload is None:
@@ -9210,6 +9266,7 @@ class TSKV8Adapter(Taiji):
         components["pending_executive_credit"] = self._pending_executive_credit_checkpoint()
         components["language_fallback_count"] = self._language_fallback_count
         components["language_fallback_requires_replan"] = self._language_fallback_requires_replan
+        components["language_provider_health"] = self._language_provider_health.checkpoint()
         components["last_language_emission"] = (
             None
             if self._last_language_emission is None

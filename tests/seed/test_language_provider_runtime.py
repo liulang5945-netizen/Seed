@@ -6,13 +6,17 @@ from seed import LanguageProviderConfig, SeedConfig
 from seed.language_provider import (
     _verify_product_chat_artifact,
     activate_language_provider,
+    auto_rollback_language_provider,
     build_provider_artifact,
+    observe_language_provider,
     rotate_language_provider,
 )
 from taiji import (
+    ExpressionPlan,
     ExternalTextDecoderLanguageOrgan,
     LanguageBackendRegistry,
     LanguageBackendSpec,
+    LanguageEmission,
     LanguageProviderArtifactRegistry,
     TSKV8Adapter,
     language_provider_content_digest,
@@ -476,3 +480,223 @@ def test_provider_rotation_stages_canary_and_preserves_live_version_on_failure(m
         ]
         == second.artifact_id
     )
+
+
+def _install_guarded_provider_stubs(monkeypatch) -> None:
+    """Make guarded activation depend only on the decoder, not on real artifacts."""
+
+    monkeypatch.setattr(
+        "seed.language_provider._verify_product_chat_artifact", lambda *args, **kwargs: {}
+    )
+    reports = {
+        "training": {
+            "training": {"training_applied": True},
+            "expression_to_text_gate": _passing_realization_gate_report(),
+        },
+        "safety": {
+            "adapted": {"safe_realization_rate": 1.0},
+            "rollback": {"outputs_match_raw": True},
+            "gate": {"passed": True},
+        },
+    }
+    monkeypatch.setattr(
+        "seed.language_provider._load_product_chat_report",
+        lambda path, label: reports[label],
+    )
+
+    class _Decoder:
+        def __init__(self, artifact_id: str) -> None:
+            self.artifact_id = artifact_id
+
+        def generate(self, prompt: str, *, max_tokens: int, temperature: float) -> str:
+            del max_tokens, temperature
+            if "database-status" in prompt:
+                return f"{self.artifact_id} 数据库运行正常。"
+            return f"{self.artifact_id} 接口已经恢复。"
+
+    def fake_loader(adapter, artifact, **kwargs):
+        del kwargs
+        registry = LanguageBackendRegistry.default()
+        registry.register(
+            LanguageBackendSpec(
+                backend_id=artifact.backend_id,
+                family="external-causal-decoder-guarded",
+                training_contract="expression-to-text-v1",
+            )
+        )
+        adapter.attach_language_backend_registry(registry)
+        adapter.attach_language_provider_artifact(artifact)
+        adapter.attach_language_organ(
+            ExternalTextDecoderLanguageOrgan(
+                _Decoder(artifact.artifact_id),
+                prompt_builder=lambda expression: expression.content_id,
+                backend_id=artifact.backend_id,
+            )
+        )
+        return _Decoder(artifact.artifact_id)
+
+    monkeypatch.setattr("seed.language_provider.load_qwen_language_provider", fake_loader)
+
+
+def _health_config(artifact_id: str) -> LanguageProviderConfig:
+    return LanguageProviderConfig(
+        mode="guarded",
+        model_dir="model",
+        adapter_dir="adapter",
+        artifact_id=artifact_id,
+        training_corpus="corpus.json",
+        training_report="training.json",
+        safety_report="safety.json",
+        chat_enabled=True,
+        health_failure_threshold=3,
+        health_cooldown_seconds=100.0,
+    )
+
+
+def test_provider_health_watchdog_walks_the_full_degradation_ladder(monkeypatch) -> None:
+    _install_guarded_provider_stubs(monkeypatch)
+    old_config = _health_config("health-old")
+    new_config = _health_config("health-new")
+    old = build_provider_artifact(old_config)
+    new = build_provider_artifact(new_config)
+    registry = (
+        LanguageProviderArtifactRegistry()
+        .with_artifact(old, allow=True)
+        .with_artifact(new, allow=True)
+        .activate(old.artifact_id)
+    )
+    adapter = TSKV8Adapter()
+
+    rotated = rotate_language_provider(adapter, registry, new_config)
+    assert rotated.committed is True
+    assert rotated.registry.previous_artifact_id == old.artifact_id
+    policy = new_config.health_policy()
+
+    nominal = auto_rollback_language_provider(adapter, rotated.registry, new_config, now=10.0)
+    assert nominal.committed is False
+    assert nominal.status.reason_code == "provider_health_nominal"
+    assert adapter.language_provider_artifact == new
+
+    for index in range(policy.failure_threshold):
+        adapter.observe_language_provider_health(
+            accepted=False,
+            reason_code="probe_unreadable",
+            now=20.0 + index,
+            policy=policy,
+        )
+    assert adapter.language_provider_health.degraded is True
+
+    first = auto_rollback_language_provider(adapter, rotated.registry, new_config, now=30.0)
+    assert first.committed is True
+    assert first.status.state == "rollback"
+    assert first.status.reason_code == "provider_health_rollback_previous"
+    assert first.status.artifact_id == old.artifact_id
+    assert first.registry.active_artifact_id == old.artifact_id
+    assert new.artifact_id not in first.registry.allowed_artifact_ids
+    assert first.status.health_rollback_count == 1
+
+    for index in range(policy.failure_threshold):
+        adapter.observe_language_provider_health(
+            accepted=False,
+            reason_code="probe_unreadable",
+            now=31.0 + index,
+            policy=policy,
+        )
+    suppressed = auto_rollback_language_provider(adapter, first.registry, new_config, now=40.0)
+    assert suppressed.committed is False
+    assert suppressed.status.reason_code == "provider_health_cooldown_active"
+    assert adapter.language_provider_artifact == old
+
+    native = auto_rollback_language_provider(
+        adapter, suppressed.registry, new_config, now=200.0
+    )
+    assert native.committed is True
+    assert native.status.artifact_id == "native-readable"
+    assert native.status.reason_code == "provider_health_rollback_native"
+    assert native.status.chat_enabled is False
+    assert native.registry.active_artifact_id is None
+    assert native.registry.allowed_artifact_ids == ()
+    assert adapter.language_organ is not None
+    assert adapter.language_organ.backend_id == "native-readable"
+
+    restored = TSKV8Adapter.from_native_checkpoint(adapter.native_checkpoint())
+    assert restored.language_provider_health == adapter.language_provider_health
+
+
+def test_provider_health_probe_folds_live_emissions_and_never_upgrades(monkeypatch) -> None:
+    _install_guarded_provider_stubs(monkeypatch)
+    old_config = _health_config("probe-old")
+    new_config = _health_config("probe-new")
+    old = build_provider_artifact(old_config)
+    new = build_provider_artifact(new_config)
+    registry = (
+        LanguageProviderArtifactRegistry()
+        .with_artifact(old, allow=True)
+        .with_artifact(new, allow=True)
+        .activate(old.artifact_id)
+    )
+    adapter = TSKV8Adapter()
+    rotated = rotate_language_provider(adapter, registry, new_config)
+    assert rotated.committed is True
+
+    expression = ExpressionPlan(
+        expression_id="probe:live",
+        content_id="content:live",
+        modality="text",
+        channel="chat",
+        confidence=1.0,
+    )
+    healthy = LanguageEmission(
+        expression=expression,
+        text_bytes=b"\xe6\x8e\xa5\xe5\x8f\xa3\xe5\xb7\xb2\xe7\xbb\x8f\xe6\x81\xa2\xe5\xa4\x8d\xe3\x80\x82",  # "接口已经恢复。"
+        backend=new_config.backend_id,
+    )
+    accepted = observe_language_provider(
+        adapter, new_config, expression=expression, emission=healthy, now=1.0
+    )
+    assert accepted.committed is False
+    assert accepted.status.reason_code == "provider_health_nominal"
+    assert adapter.language_provider_health.consecutive_failures == 0
+    assert adapter.language_provider_health.probe_count == 1
+
+    leaking = LanguageEmission(
+        expression=expression,
+        text_bytes=b'{"semantic_slots": 1}',
+        backend=new_config.backend_id,
+    )
+    result = accepted
+    for index in range(new_config.health_failure_threshold):
+        result = observe_language_provider(
+            adapter, new_config, expression=expression, emission=leaking, now=2.0 + index
+        )
+    assert result.committed is True
+    assert result.status.reason_code == "provider_health_rollback_previous"
+    assert result.status.artifact_id == old.artifact_id
+    assert adapter.language_provider_artifact == old
+
+    settled = observe_language_provider(
+        adapter, new_config, expression=expression, emission=healthy, now=50.0
+    )
+    assert settled.committed is False
+    assert adapter.language_provider_artifact == old
+    assert new.artifact_id not in adapter.language_provider_artifact_registry.allowed_artifact_ids
+
+
+def test_watchdog_thresholds_round_trip_and_fail_closed() -> None:
+    configured = SeedConfig(
+        language_provider=LanguageProviderConfig(
+            health_failure_threshold=5,
+            health_cooldown_seconds=42.5,
+        )
+    )
+    restored = SeedConfig.from_dict(configured.to_dict())
+    assert restored == configured
+    assert restored.language_provider.health_policy().failure_threshold == 5
+    assert restored.language_provider.health_policy().cooldown_seconds == 42.5
+
+    for invalid in ({"health_failure_threshold": 0}, {"health_cooldown_seconds": -1.0}):
+        try:
+            LanguageProviderConfig(**invalid)
+        except ValueError:
+            continue
+        raise AssertionError(f"invalid watchdog threshold must fail closed: {invalid}")

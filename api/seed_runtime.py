@@ -44,6 +44,7 @@ class SeedRuntime:
         checkpoint_path: Path | None = None,
         provider_status: dict[str, str] | None = None,
         provider_runtime: Any | None = None,
+        provider_config: Any | None = None,
     ) -> None:
         self.model = model
         self.checkpoint_path = checkpoint_path
@@ -56,16 +57,7 @@ class SeedRuntime:
             from seed.language_provider import attach_native_language_provider
 
             attach_native_language_provider(self.model.architecture)
-            self._provider_status = {
-                "mode": "native",
-                "state": "active",
-                "provider": "native",
-                "backend_id": "native-readable",
-                "artifact_id": "native-readable",
-                "reason_code": "",
-                "reason": "",
-                "rollback": "native-readable",
-            }
+            self._provider_status = self._native_status()
         else:
             self._provider_status = dict(provider_status)
             if self._provider_status.get("chat_enabled") == "true":
@@ -73,7 +65,24 @@ class SeedRuntime:
                 if isinstance(candidate, LanguageOrgan):
                     self._chat_organ = candidate
         self._provider_runtime = provider_runtime
+        self._provider_config = provider_config
         self._lock = threading.Lock()
+
+    @staticmethod
+    def _native_status() -> dict[str, str]:
+        """Mirror ``LanguageProviderStatus.to_dict`` for the built-in organ."""
+
+        return {
+            "mode": "native",
+            "state": "active",
+            "provider": "native",
+            "backend_id": "native-readable",
+            "artifact_id": "native-readable",
+            "reason_code": "",
+            "reason": "",
+            "rollback": "native-readable",
+            "chat_enabled": "false",
+        }
 
     @property
     def name(self) -> str:
@@ -96,6 +105,7 @@ class SeedRuntime:
             if result.committed:
                 self._provider_status = result.status.to_dict()
                 self._provider_runtime = result.runtime
+                self._provider_config = config
                 from taiji import LanguageOrgan, NativeReadableTextLanguageOrgan
 
                 candidate = self.model.architecture.language_organ
@@ -140,7 +150,7 @@ class SeedRuntime:
             selected_config,
         )
         logger.info("Seed runtime loaded from %s", path)
-        return cls(model, path, provider_status.to_dict(), provider_runtime)
+        return cls(model, path, provider_status.to_dict(), provider_runtime, selected_config)
 
     @staticmethod
     def _serialize(prompt: str, history: Sequence[tuple[str, str]] | None) -> str:
@@ -221,6 +231,7 @@ class SeedRuntime:
             )
             emission = self._chat_organ.emit(expression)
             answer = emission.text_bytes.decode("utf-8", errors="strict")
+            self._observe_provider_health(expression, emission)
             if learn:
                 # 多轮上下文由基底持久状态天然承担：整段会话文本一次写回，
                 # 与 learn_bytes 的训练语义完全一致。
@@ -233,6 +244,49 @@ class SeedRuntime:
             if index >= 0:
                 answer = answer[:index]
         return answer.strip()
+
+    def _observe_provider_health(self, expression: Any, emission: Any) -> None:
+        """把一次真实发射折叠进健康记录，必要时自动回退（仅外部 provider 生效）。
+
+        探针绝不允许让对话失败：任何异常都被吞掉并保留当前表层，
+        因为一次探针误报的代价不该是一次用户可见的失败。
+        回退提交后就地按 ``chat_enabled`` 重挂表层并刷新 provider 状态。
+        """
+        if self._provider_config is None or self._provider_status.get("mode") in {
+            "native",
+            "structured",
+        }:
+            return
+        try:
+            from seed.language_provider import observe_language_provider
+
+            result = observe_language_provider(
+                self.model.architecture,
+                self._provider_config,
+                expression=expression,
+                emission=emission,
+                current_runtime=self._provider_runtime,
+            )
+        except Exception:  # 探针不可让对话失败
+            logger.exception("language provider health probe failed; keeping current surface")
+            return
+        if not result.committed:
+            return
+        from taiji import LanguageOrgan, NativeReadableTextLanguageOrgan
+
+        self._provider_status = result.status.to_dict()
+        self._provider_runtime = result.runtime
+        candidate = self.model.architecture.language_organ
+        self._chat_organ = (
+            candidate
+            if result.status.chat_enabled and isinstance(candidate, LanguageOrgan)
+            else NativeReadableTextLanguageOrgan()
+        )
+        logger.warning(
+            "language provider health watchdog rolled back to %s (%s)",
+            result.status.artifact_id,
+            result.status.reason_code,
+        )
 
     def save(self, path: Path | str | None = None) -> Path:
         """落盘当前状态（默认写回来源检查点；原子写，崩溃不产生半写文件）。"""
