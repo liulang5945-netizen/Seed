@@ -46,10 +46,13 @@ import { X, Clock, FileText, Upload } from 'lucide-vue-next';
 
 import { computed, ref } from 'vue';
 import { API_BASE, authFetch } from '../composables/apiClient.js';
+import { nativeApi } from '../composables/nativeApi.js';
 
 const props = defineProps({
   /** 上传接口路径，如 '/api/rag/upload' */
-  uploadEndpoint: { type: String, required: true },
+  uploadEndpoint: { type: String, default: '' },
+  /** native 训练数据上传：使用命名 facade，避免产品页暴露 URL */
+  nativeDatasetUpload: { type: Boolean, default: false },
   /** 接受的文件扩展名列表 */
   accept: { type: String, default: '' },
   /** 文件图标组件（须为组件对象，不接受字符串） */
@@ -116,7 +119,9 @@ const handleFiles = async (files) => {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const res = await authFetch(`${API_BASE}${props.uploadEndpoint}`, { method: 'POST', body: formData });
+      const res = props.nativeDatasetUpload
+        ? await nativeApi.uploadTrainingDataset(formData)
+        : await authFetch(`${API_BASE}${props.uploadEndpoint}`, { method: 'POST', body: formData });
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
         throw new Error(errData.detail || '上传失败');

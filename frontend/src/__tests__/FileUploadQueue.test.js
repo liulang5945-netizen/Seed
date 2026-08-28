@@ -1,11 +1,18 @@
 import { describe, it, expect, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import FileUploadQueue from '../components/FileUploadQueue.vue'
+import { authFetch } from '../composables/apiClient.js'
 
 vi.mock('../composables/apiClient.js', () => ({
   API_BASE: '',
   authFetch: vi.fn(),
 }))
+
+const jsonResponse = (data, ok = true, status = 200) => ({
+  ok,
+  status,
+  json: async () => data,
+})
 
 describe('blinkDom 门禁', () => {
   it('createElement 拒绝 emoji 标签名（与 Blink 一致）', () => {
@@ -35,5 +42,18 @@ describe('FileUploadQueue 图标契约', () => {
     // InvalidCharacterError 并炸掉整棵 router-view 子树（知识库白屏根因）。
     const wrapper = mountQueue({ uploadIcon: '📤', icon: '📄' })
     expect(wrapper.find('.dropzone-icon').element.tagName.toLowerCase()).toBe('svg')
+  })
+
+  it('native dataset 模式通过命名 facade 上传，而不是由产品页拼 URL', async () => {
+    authFetch.mockResolvedValueOnce(jsonResponse({ status: 'success', path: 'data/a.jsonl' }))
+    const wrapper = mountQueue({ nativeDatasetUpload: true })
+
+    await wrapper.vm.handleFiles([new File(['{}'], 'a.jsonl', { type: 'application/jsonl' })])
+
+    expect(authFetch).toHaveBeenCalledWith('/api/train/upload_dataset', expect.objectContaining({
+      method: 'POST',
+      body: expect.any(FormData),
+    }))
+    expect(wrapper.find('.status-tag').text()).toContain('上传成功')
   })
 })
