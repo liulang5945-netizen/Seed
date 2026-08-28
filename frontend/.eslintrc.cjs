@@ -18,11 +18,18 @@ module.exports = {
   },
   settings: {
     'import/resolver': {
+      // F14: 一旦显式声明 resolver，import 插件就只用列出的这些。
+      // 必须同时保留 node —— alias resolver 不识别 `node:fs` 这类内置模块协议前缀，
+      // 只配 alias 会让 `import { readFileSync } from 'node:fs'` 被误判 no-unresolved。
+      node: {
+        extensions: ['.js', '.mjs', '.cjs', '.vue', '.json'],
+      },
       alias: {
         map: [['@', './src']],
         extensions: ['.js', '.vue', '.json'],
       },
     },
+    'import/core-modules': ['node:fs', 'node:path', 'node:url', 'node:os'],
   },
   rules: {
     // R5: 只限制 log/info/debug——warn/error 是应用正常运行时诊断通道，允许保留
