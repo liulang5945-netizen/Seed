@@ -33,7 +33,7 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 
 - `taiji/` 不导入 `seed`、`neuroplex` 或 `transformers`；该独立性继续保留。
 - `seed/` 当前包装 `Taiji` kernel；P1 compatibility adapter 已迁移首个 v1 纵切片，不破坏产品 API 和旧 checkpoint。
-- P6 client input-boundary Gate 已通过：`InputFrame` 版本化承载客户端原始 bytes 与来源元数据，`TSKV8Adapter.ingest_input()` 将其逐字节转换为 Taiji-owned `Observation/PerceptEvent`，`InputTrace` 可检查并 round-trip；`ActionIntent` 保持为空，未引入固定意图映射。`SeedRuntime.chat` 已通过 `generate_input()` 走同一合同，仍保留 raw-byte 兼容输出。
+- P6 client input-boundary Gate 已通过：`InputFrame` 版本化承载客户端原始 bytes 与来源元数据，`TSKV8Adapter.ingest_input()` 将其逐字节转换为 Taiji-owned `Observation/PerceptEvent`，`InputTrace` 可检查并 round-trip；`ActionIntent` 保持为空，未引入固定意图映射。`SeedRuntime.chat` 已通过 `generate_input()` 走同一合同，并在产品出口经本地 `native-readable` 语言表层形成可读文本；raw-byte 仍只保留为底层兼容/调试信息。
 - P7 executive contract Gate 已通过：`ExecutiveController` 从 percept/world/memory/goal/homeostasis context 学习候选 utility，选择结果保持结构化 `ActionIntent + ContentPlan` 配对；adapter 提供选择、Outcome 反馈、lesion-safe checkpoint 与 round-trip。该 Gate 证明学习型候选选择，不证明已完成真实环境 action/outcome 闭环。
 - P7 executive environment-loop Gate 已通过：`ExecutiveDecision` 通过显式 `WorldAction` 元数据和 motor `action_symbol` 接入 `TaijiEnvironment.step()`，真实 `EnvironmentOutcome` 回写 utility、感知和失败重规划；selected/alternative、checkpoint continuation、utility update 与 executive lesion 均有测试。环境可显式返回行动后 `WorldState`，但不会由 adapter 伪造。
 - P7 candidate synthesis contract Gate 已通过：adapter 从当前 `PerceptEvent`、`WorldState.affordances` 和 active `GoalState` 自动生成带 provenance 的 `ExecutiveCandidate`，不需要客户端候选表；当前 affordance 特征仍是保守 scaffold，不宣称已学会通用 affordance 表征。
@@ -136,9 +136,10 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
   checkpoint 后保持。该结果关闭候选名/intent kind/slot shape 固定表假设，不证明开放域语义发明。
 - P6 text organ codec 窄 Gate 已通过：holdout `ContentPlan` 经 text expression UTF-8 codec 后，semantic slots、confidence 和
   `source_goal_id` 无损恢复；这只证明结构化文字器官边界，不证明自然语言流畅性、句法或语言智能。
-- P6 terminal language-organ boundary 窄 Gate 已通过：可替换的 `LanguageOrgan` 只接收 Taiji-owned `ExpressionPlan`，默认
-  `structured-stub` 输出可回解码文本；detached-organ lesion、native checkpoint 和参数/认知不变性均通过。该结果只证明末端
-  器官所有权与替换边界，不证明自然语言流畅性、句法或 decoder 智能。
+- P6 terminal language-organ boundary 窄 Gate 已通过：可替换的 `LanguageOrgan` 只接收 Taiji-owned `ExpressionPlan`，产品默认的
+  `native-readable` 表层会保留有效候选或生成诚实的可读状态文本；`structured-stub` 降为显式无损调试 codec。detached-organ
+  lesion、native checkpoint 和参数/认知不变性均通过。该结果修复产品乱码/RAW 冒充语言的边界，但只证明可读表层，不证明自然
+  语言流畅性、开放域语义回答或 decoder 智能。
 - P6 language backend registry/training contract 窄 Gate 已通过：registry 可登记未来成熟 decoder，但强制 text modality 与
   `owns_cognition=False`；训练样本固定为 `ExpressionPlan → target_text`，可独立 checkpoint/holdout，不把目标、记忆或 ActionIntent
   注入 decoder。该结果只证明接入/训练数据边界，不证明 decoder 能力。
@@ -173,13 +174,14 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 provider artifact/loader Gate 已通过：`LanguageProviderArtifact` 统一记录 base model、adapter、train/safety report、rollback strategy
   与 mode；integration-edge loader 成功加载 guarded LoRA，artifact checkpoint round-trip 与 cognition unchanged 通过，且
   `default_enabled=false` 强制保持 opt-in。raw/LoRA/guarded 不再依赖散落路径或隐式分支。
-- P6 Seed client provider startup Gate 已通过：`SeedConfig` 提供 structured/raw/LoRA/guarded 的产品侧选择，默认只装配
-  `structured-stub`；显式 provider 由 Seed runtime 启动链路调用 artifact loader，缺失、可选依赖缺失、manifest mismatch 和其他
-  加载异常都会回退到 structured-stub，并通过 `/api/health` 与 `/api/runtime/status` 暴露 `language_provider` 状态。Seed 静态边界
-  不绑定 Transformer，guarded 仍强制显式 opt-in。
+- P6 Seed client provider startup Gate 已通过：`SeedConfig` 提供 native/structured/raw/LoRA/guarded 的产品侧选择，默认装配
+  `native-readable`；`structured-stub` 仅在显式 debug mode 使用。显式 provider 由 Seed runtime 启动链路调用 artifact loader，缺失、
+  可选依赖缺失、manifest mismatch 和其他加载异常都会回退到 `native-readable`，并通过 `/api/health` 与 `/api/runtime/status`
+  暴露 `language_provider` 状态。无论 provider 状态如何，产品聊天默认使用本地语言表层，不会静默把用户历史转发给外部 decoder；Seed
+  静态边界不绑定 Transformer，guarded 仍强制显式 opt-in。
 - P6 client observability Gate 已通过：frontend runtime store 保存 `language_provider`，聊天页和异常中心可显示 active/fallback、
-  回退原因与 structured-stub 恢复状态；前端只观察 runtime，不参与 provider 选择、认知决策或 decoder 装载。前端构建通过，Vitest
-  `160 passed`。
+  回退原因与 `native-readable` 状态；聊天 final event 额外暴露实际 `language_backend`，前端只观察 runtime，不参与 provider 选择、
+  认知决策或 decoder 装载。前端构建通过，Vitest `160 passed`。
 - 原生 `tests/taiji_native` 最近一次完整执行为 `192 passed, 1 skipped, 2 errors`；两个 error 均发生在
   Windows pytest 临时目录锁创建阶段，未进入测试体，不作为代码断言失败或能力结论。
 - P2 感知训练已改为复用运行时的动态边界时钟：训练按同一 adaptive assembly 起点监督每个活动前缀，

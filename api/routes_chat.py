@@ -28,9 +28,7 @@ router = APIRouter()
 
 # ======================== 流式聊天 ========================
 
-# 替换字符/控制字符占比超过该阈值时，判定回复为不可读的原始字节输出
-# （Seed 原生运行时语言器官未配置可用后端时，decode(errors='replace')
-# 产生大量 U+FFFD；此时前端应以「原始输出」卡片呈现而非普通对话气泡）
+# 替换字符/控制字符占比超过该阈值时，判定回复为不可读的调试输出。
 _UNREADABLE_BAD_CHAR_RATIO = 0.02
 
 
@@ -51,8 +49,8 @@ def _seed_event_generator(request, seed_runtime):
 
     多轮上下文由 taiji 持久状态天然承担（无需 KV cache 拼装）；回复同时
     作为清醒持续学习写回基底。事件格式与前端统一解析协议一致。
-    readable=False 时前端渲染为「原始字节输出」卡片（语言器官为
-    structured-stub，输出尚未成形为可读语言）。
+    readable=False 时前端渲染为调试输出卡片；正常路径由 native-readable
+    表层保证返回可读文本。
     """
 
     import asyncio
@@ -70,6 +68,7 @@ def _seed_event_generator(request, seed_runtime):
                     "answer": answer,
                     "step": 1,
                     "readable": _answer_readable(answer),
+                    "language_backend": seed_runtime.chat_language_backend,
                     "runtime": "seed",
                 },
             }

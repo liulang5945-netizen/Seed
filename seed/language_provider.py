@@ -23,6 +23,7 @@ from taiji import (
     LanguageOrgan,
     LanguageProviderArtifact,
     LanguageRealizationValidator,
+    NativeReadableTextLanguageOrgan,
     StructuredTextLanguageOrgan,
     TSKV8Adapter,
     ValidatedLanguageOrgan,
@@ -44,7 +45,7 @@ class LanguageProviderStatus:
     artifact_id: str
     reason_code: str = ""
     reason: str = ""
-    rollback: str = "structured-stub"
+    rollback: str = NativeReadableTextLanguageOrgan.BACKEND_ID
 
     def to_dict(self) -> dict[str, str]:
         return {
@@ -204,7 +205,7 @@ def load_qwen_language_provider(
 
 
 def attach_structured_language_provider(adapter: TSKV8Adapter) -> None:
-    """Attach the deterministic terminal fallback and clear external metadata."""
+    """Attach the lossless structured codec for explicit debug use."""
 
     adapter.attach_language_organ(None)
     adapter.attach_language_backend_registry(LanguageBackendRegistry.default())
@@ -212,16 +213,37 @@ def attach_structured_language_provider(adapter: TSKV8Adapter) -> None:
     adapter.attach_language_organ(StructuredTextLanguageOrgan())
 
 
+def attach_native_language_provider(adapter: TSKV8Adapter) -> None:
+    """Attach the dependency-free readable product surface."""
+
+    adapter.attach_language_organ(None)
+    adapter.attach_language_backend_registry(LanguageBackendRegistry.default())
+    adapter.attach_language_provider_artifact(None)
+    adapter.attach_language_organ(NativeReadableTextLanguageOrgan())
+
+
 def activate_language_provider(
     adapter: TSKV8Adapter,
     config: LanguageProviderConfig,
 ) -> tuple[LanguageProviderStatus, Any | None]:
-    """Activate an explicit provider, or safely roll back to structured stub."""
+    """Activate an explicit provider, or safely roll back to readable native text."""
 
     if not isinstance(adapter, TSKV8Adapter):
         raise TypeError("language provider activation requires a TSKV8Adapter")
     if not isinstance(config, LanguageProviderConfig):
         raise TypeError("language provider config must be a LanguageProviderConfig")
+    if config.mode == "native":
+        attach_native_language_provider(adapter)
+        return (
+            LanguageProviderStatus(
+                mode="native",
+                state="active",
+                provider="native",
+                backend_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
+                artifact_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
+            ),
+            None,
+        )
     if config.mode == "structured":
         attach_structured_language_provider(adapter)
         return (
@@ -271,17 +293,18 @@ def activate_language_provider(
     except Exception as exc:  # noqa: BLE001 - boundary must preserve fallback
         reason_code = "provider_load_failed"
         reason = str(exc)
-    logger.warning("language provider rolled back to structured stub: %s", reason)
-    attach_structured_language_provider(adapter)
+    logger.warning("language provider rolled back to readable native text: %s", reason)
+    attach_native_language_provider(adapter)
     return (
         LanguageProviderStatus(
             mode=config.mode,
             state="fallback",
             provider=config.provider,
-            backend_id=config.backend_id,
-            artifact_id=config.artifact_id,
+            backend_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
+            artifact_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
             reason_code=reason_code,
             reason=reason,
+            rollback=NativeReadableTextLanguageOrgan.BACKEND_ID,
         ),
         None,
     )
