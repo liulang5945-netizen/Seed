@@ -305,8 +305,14 @@ API/native boundary、ESLint、生产构建全部通过。
 请求/成功/失败计数、平均延迟和最后状态码，不采集或展示请求正文；`RuntimeEvidenceStrip` 仅在 Settings 显式开启该面板，并在组件卸载时清理刷新计时器。
 前端 Vitest `29 files / 201 passed`、API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
 
-**当前唯一下一步：继续 W6 后续高复杂度视图的边界拆分与观测收口。** 优先选择仍同时持有 UI、native 状态和副作用协调的页面，
-每片必须保持 `nativeApi` 单一入口、补齐组件/边界回归并在提交前跑完整 CI；不得先做视觉包装或 CUDA kernel。
+**已完成（2026-08-29）：W6 第十片的 TrainingView 训练概览拆分。** Loss 画布、真实进度、吞吐/ETA 指标和检查点列表已抽为
+`TrainingOverviewPanel`；训练启动、暂停、停止、SSE 状态和检查点恢复仍由父视图与 `useTraining` 负责，组件仅通过 props/events 连接。
+父视图同步移除已迁移的概览样式与绘图 watcher。前端 Vitest `30 files / 203 passed`、API contract/native boundary、ESLint、生产构建全部通过
+（ESLint `0 errors / 13 warnings`）；中途发现并修复了组件 props 与模块状态同名造成的 `vue/no-dupe-keys` CI 错误。
+
+**当前唯一下一步：开始 W6 第十一片的 TrainingView 数据集面板展示区拆分。** 先隔离上传入口、文件表格、预览和选择事件的展示边界，
+父视图继续唯一持有数据集加载、删除、预览和 native 上传协调；每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，
+不得先做视觉包装或 CUDA kernel。
 
 ## 当前唯一下一步
 
