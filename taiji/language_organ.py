@@ -2066,10 +2066,12 @@ class LanguageProviderHealthGate:
         if degraded_organ is None:
             degraded_passed = True
         else:
+            # 直接用局部标量比较，避免对混合值类型 dict 做 >= 排序
+            # （metrics 的 value 是 int|float|bool|str 联合，排序是非法的）。
             degraded_passed = bool(
-                metrics["rollback_count"] == 1
-                and metrics["probes_before_rollback"] == policy.failure_threshold
-                and metrics["rollback_suppressed_count"] >= 1
+                rollbacks == 1
+                and probes_before_rollback == policy.failure_threshold
+                and rollback_suppressed >= 1
                 and metrics["cooldown_active_after_rollback"]
                 and metrics["rollback_target"] == rollback_artifact_id
             )

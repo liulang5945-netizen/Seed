@@ -616,6 +616,21 @@ def rotate_language_provider(
     )
 
 
+def project_language_provider_config(
+    config: LanguageProviderConfig,
+    artifact: LanguageProviderArtifact,
+) -> LanguageProviderConfig:
+    """Project a registered manifest back onto a selection config (public surface).
+
+    The runtime API reuses this projection to keep its provider selection config
+    anchored to the artifact actually attached to the running adapter after a
+    watchdog rollback, so a stale degraded-version config can never outlive the
+    artifact that produced it.
+    """
+
+    return _rollback_target_config(config, artifact)
+
+
 def _rollback_target_config(
     config: LanguageProviderConfig,
     target: LanguageProviderArtifact,
@@ -885,6 +900,37 @@ def observe_language_provider(
     )
 
 
+def _registry_revokes_candidate(
+    adapter: TSKV8Adapter,
+    candidate: LanguageProviderArtifact,
+) -> bool:
+    """Return whether a persisted registry has already revoked ``candidate``.
+
+    A watchdog rollback quarantines the degraded version by removing it from the
+    persisted ``allowed_artifact_ids`` (the manifest stays in the catalog for
+    provenance).  If the restart path re-built that candidate from config, it
+    would silently resurrect the degraded provider and re-enter the degrade
+    loop, defeating the documented "degraded stays degraded across a restart"
+    guarantee.  A brand-new candidate that has never been staged is not revoked
+    (it is absent from the catalog), so a legitimate forward config still loads;
+    only a version the watchdog already dropped, or a checkpoint whose previous
+    session ended pinned to native, is refused.
+    """
+
+    registry = adapter.language_provider_artifact_registry
+    if registry.revision < 1:
+        # 空/未见过的 registry：是全新配置，不构成被回退/隔离过的运行时状态。
+        return False
+    if registry.active_artifact_id is None:
+        # 上一个会话以可读原生作为终点提交（回退到原生），保持该决定。
+        return True
+    # 已知但被显式移出 allowlist 的版本 = 被隔离；目录里查不到的 = 合法新版本。
+    return (
+        registry.get(candidate.artifact_id) is not None
+        and candidate.artifact_id not in registry.allowed_artifact_ids
+    )
+
+
 def activate_language_provider(
     adapter: TSKV8Adapter,
     config: LanguageProviderConfig,
@@ -923,6 +969,32 @@ def activate_language_provider(
         )
 
     artifact = build_provider_artifact(config)
+    if _registry_revokes_candidate(adapter, artifact):
+        logger.warning(
+            "language provider %s was quarantined by the watchdog; "
+            "keeping readable native text on restart",
+            artifact.artifact_id,
+        )
+        # 保留被隔离的 registry（它记录「该版本已被丢弃」的持久事实），仅把
+        # 表层降回原生：否则下次 checkpoint 往返会清空 registry，让 guarantee
+        # 只对一次重启生效，第二次重启又会复活劣化版本。
+        retained_registry = adapter.language_provider_artifact_registry
+        attach_native_language_provider(adapter)
+        adapter.attach_language_provider_artifact_registry(retained_registry)
+        return (
+            LanguageProviderStatus(
+                mode="native",
+                state="fallback",
+                provider=config.provider,
+                backend_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
+                artifact_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
+                reason_code="provider_health_quarantined",
+                reason="provider artifact was revoked by an earlier health rollback",
+                rollback=NativeReadableTextLanguageOrgan.BACKEND_ID,
+                chat_enabled=False,
+            ),
+            None,
+        )
     try:
         root = Path(config.artifact_root) if config.artifact_root else None
         if config.chat_enabled:

@@ -1474,6 +1474,15 @@ checkpoint 保存与恢复，重启后续接；探针与回退共用原子轮换
 allowlist 的 artifact。Taiji/adapter/config/seed 四层实现，seed 层活体验证 9 项全绿，api 层 `SeedRuntime.chat` 请求级回退实测通过；定向回归
 `18+96 passed`，Ruff 全绿、核心 Mypy=`0`；CUDA 继续暂缓。该 Gate 证明发布后劣化可被请求级吊销，不宣称开放域语言智能。
 
+**2026-08-28 watchdog 收尾漏洞回扫（暂停推进期间）：** 按用户指示不向后推进、只回头核对前序 watchdog 推进里的真实漏洞并修复。共修 6 处——
+A. **状态键集不一致**：`SeedRuntime._native_status()` 之前手写 9 键 dict，与 `LanguageProviderStatus.to_dict()` 的 14 键形状不符，原生/受管模式 status API 键集漂移；改为复用状态对象自身投影，单一事实来源。
+B. **回退后配置残留**：回退到 native/structured 后 `_provider_config` 仍指向被降级版本；新增 `_sync_provider_config()` 在回退提交后清空/重锚配置，杜绝残留降级配置被后续观察误用。
+C. **名义探针健康位不实时**：未触发回退的名义探针只更新 adapter 健康记录、不叠加进 status API；新增 `_overlay_health()` 让 status 实时反映健康负载而不翻转角色语义。
+D. **重启复活隔离版本**：watchdog 隔离的版本会随重启被 config 重建而跳过 `require_allowed` 复活，违反复苏→劣化→回退死循环承诺；新增 `_registry_revokes_candidate` + `activate_language_provider` 拒活隔离版本，镜像/保留被隔离的持久 registry，覆盖 `provider_health_quarantined`。
+E. **核心 mypy 漏报**：`taiji/language_organ.py` 对混合值类型 `metrics` dict 做 `>= 1` 排序（对 int|float|bool|str 联合不合法）遗漏 2 错；改为用局部标量比较。
+F. **`_chat_organ` 类型**：`api/seed_runtime.py` 三处把 `LanguageOrgan` 赋给推断为 `NativeReadableTextLanguageOrgan` 的变量；显式标注为 `LanguageOrgan` 协议。
+全量门禁复验：核心 mypy（`seed taiji`，`--follow-imports=silent`）`0`、Ruff 全绿、Black 无改动、全量 `498 passed / 5 skipped`。定位用诊断脚本见 `scripts/archive/diagnostics/diag_provider_health_audit.py`。
+
 **当前唯一下一步（已收敛回主线）：** 回到 §16.1 的 Workbench Closure W0–W7。Taiji 已构造世界/计划/`ActionIntent`/`ToolCall`/`Outcome` 认知与
 效应器合同，Seed 产品却仍缺一个 Taiji-native 的执行平面把这些合同接到 IDE、文件、终端、诊断和 MCP；watchdog、CUDA/fused kernel、新视觉打磨
 等末端优化一律冻结，直到真实工作台纵切片（W0 起步：选定最小真实工具并打通认知→效应器→结果闭环）通过。
