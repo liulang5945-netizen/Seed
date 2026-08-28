@@ -182,6 +182,11 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
 - P6 client observability Gate 已通过：frontend runtime store 保存 `language_provider`，聊天页和异常中心可显示 active/fallback、
   回退原因与 `native-readable` 状态；聊天 final event 额外暴露实际 `language_backend`，前端只观察 runtime，不参与 provider 选择、
   认知决策或 decoder 装载。前端构建通过，Vitest `160 passed`。
+- P6 `ExpressionPlan → target_text` realization admission Gate 已实现并通过真实本机 Qwen CPU 复核：新的
+  `LanguageRealizationGate` 同时检查 train/holdout 隔离、可读性、必需语义词覆盖、结构化泄漏、fallback、精确回滚与
+  adapter checkpoint continuation；真实 4 epochs/16 steps 的 270336 个 LoRA 参数在保存后重新加载，全部条件通过。
+  产品聊天只有在 `mode=guarded`、`chat_enabled=true` 且训练/安全报告均通过时才接入外部 decoder；旧报告缺少新 Gate
+  证据会 fail-closed，默认仍使用 `native-readable`。该结果证明准入边界，不宣称开放域语言智能。
 - 原生 `tests/taiji_native` 最近一次完整执行为 `192 passed, 1 skipped, 2 errors`；两个 error 均发生在
   Windows pytest 临时目录锁创建阶段，未进入测试体，不作为代码断言失败或能力结论。
 - P2 感知训练已改为复用运行时的动态边界时钟：训练按同一 adaptive assembly 起点监督每个活动前缀，

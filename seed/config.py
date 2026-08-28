@@ -12,6 +12,17 @@ from taiji import TaijiConfig
 LANGUAGE_PROVIDER_CONFIG_VERSION = 2
 
 
+def _as_bool(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    normalized = str(value).strip().lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off", ""}:
+        return False
+    raise ValueError(f"cannot parse boolean language provider value: {value}")
+
+
 @dataclass(frozen=True)
 class LanguageProviderConfig:
     """Product-side selection for Taiji's replaceable terminal language organ."""
@@ -27,6 +38,7 @@ class LanguageProviderConfig:
     training_corpus: str = ""
     training_report: str = ""
     safety_report: str = ""
+    chat_enabled: bool = False
     max_tokens: int = 24
     temperature: float = 0.0
 
@@ -39,6 +51,8 @@ class LanguageProviderConfig:
             raise ValueError(
                 "language provider mode must be native, structured, raw, lora, or guarded"
             )
+        if self.chat_enabled and self.mode != "guarded":
+            raise ValueError("product chat requires an explicitly guarded language provider")
         if not str(self.provider):
             raise ValueError("language provider provider cannot be empty")
         if not str(self.backend_id):
@@ -63,6 +77,7 @@ class LanguageProviderConfig:
             "training_corpus": self.training_corpus,
             "training_report": self.training_report,
             "safety_report": self.safety_report,
+            "chat_enabled": self.chat_enabled,
             "max_tokens": self.max_tokens,
             "temperature": self.temperature,
         }
@@ -89,6 +104,7 @@ class LanguageProviderConfig:
             training_corpus=str(values.get("training_corpus", "")),
             training_report=str(values.get("training_report", "")),
             safety_report=str(values.get("safety_report", "")),
+            chat_enabled=_as_bool(values.get("chat_enabled", False)),
             max_tokens=int(values.get("max_tokens", 24)),
             temperature=float(values.get("temperature", 0.0)),
         )
@@ -109,6 +125,7 @@ class LanguageProviderConfig:
             "TRAINING_CORPUS": "training_corpus",
             "TRAINING_REPORT": "training_report",
             "SAFETY_REPORT": "safety_report",
+            "CHAT_ENABLED": "chat_enabled",
             "MAX_TOKENS": "max_tokens",
             "TEMPERATURE": "temperature",
         }

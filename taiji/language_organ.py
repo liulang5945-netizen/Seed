@@ -23,6 +23,7 @@ LANGUAGE_BACKEND_SPEC_FORMAT = "taiji-language-backend-spec-v1"
 LANGUAGE_BACKEND_REGISTRY_FORMAT = "taiji-language-backend-registry-v1"
 LANGUAGE_VALIDATION_FORMAT = "taiji-language-validation-v1"
 LANGUAGE_PROVIDER_ARTIFACT_FORMAT = "taiji-language-provider-artifact-v1"
+LANGUAGE_REALIZATION_GATE_FORMAT = "taiji-language-realization-gate-v1"
 
 
 @dataclass(frozen=True)
@@ -530,6 +531,21 @@ class LanguageRealizationValidator:
         )
 
 
+def _readable_surface(value: Any) -> str | None:
+    """Return a safe surface candidate, or ``None`` when it is not text."""
+
+    if not isinstance(value, str):
+        return None
+    text = value.replace("\x00", "").strip()
+    if not text or "\ufffd" in text:
+        return None
+    if any(ord(char) < 32 and char not in "\n\r\t" for char in text):
+        return None
+    if not any(char.isalnum() for char in text):
+        return None
+    return text
+
+
 @runtime_checkable
 class TextDecoder(Protocol):
     """Minimal external decoder surface accepted by Taiji."""
@@ -562,16 +578,7 @@ class NativeReadableTextLanguageOrgan:
 
     @staticmethod
     def _readable(value: Any) -> str | None:
-        if not isinstance(value, str):
-            return None
-        text = value.replace("\x00", "").strip()
-        if not text or "\ufffd" in text:
-            return None
-        if any(ord(char) < 32 and char not in "\n\r\t" for char in text):
-            return None
-        if not any(char.isalnum() for char in text):
-            return None
-        return text
+        return _readable_surface(value)
 
     @classmethod
     def _fallback_text(cls, expression: ExpressionPlan) -> str:
@@ -839,3 +846,234 @@ class ExternalTextDecoderLanguageOrgan:
             temperature=float(payload.get("temperature", 0.2)),
             prompt_contract=str(payload.get("prompt_contract", "expression-to-text-v1")),
         )
+
+
+class LanguageRealizationGate:
+    """Admission gate for an ``ExpressionPlan`` to real language output.
+
+    The gate is deliberately an evaluator, not a trainer.  It measures a
+    candidate language organ on Taiji-owned train/holdout examples and only
+    passes when readable output, required semantic terms, exact rollback, and
+    checkpoint continuation are all demonstrated.  External model state is
+    supplied through ``checkpoint_loader`` and therefore never enters Taiji
+    cognition or its native checkpoint.
+    """
+
+    def __init__(
+        self,
+        *,
+        minimum_required_term_coverage: float = 1.0,
+        minimum_readable_rate: float = 1.0,
+        maximum_fallback_rate: float = 0.0,
+    ) -> None:
+        for value, name in (
+            (minimum_required_term_coverage, "minimum_required_term_coverage"),
+            (minimum_readable_rate, "minimum_readable_rate"),
+            (maximum_fallback_rate, "maximum_fallback_rate"),
+        ):
+            if not 0.0 <= float(value) <= 1.0:
+                raise ValueError(f"{name} must be in [0, 1]")
+        self.minimum_required_term_coverage = float(minimum_required_term_coverage)
+        self.minimum_readable_rate = float(minimum_readable_rate)
+        self.maximum_fallback_rate = float(maximum_fallback_rate)
+        self._validator = LanguageRealizationValidator(
+            minimum_coverage=self.minimum_required_term_coverage
+        )
+
+    @staticmethod
+    def _structured_leakage(text: str) -> bool:
+        return any(
+            marker in text
+            for marker in ("semantic_slots", "intent_kind", "expected_outcome", "{", "}")
+        )
+
+    def _measure_split(
+        self,
+        organ: LanguageOrgan,
+        examples: tuple[LanguageTrainingExample, ...],
+    ) -> dict[str, Any]:
+        rows: list[dict[str, Any]] = []
+        for example in examples:
+            row: dict[str, Any] = {
+                "example_id": example.example_id,
+                "output_text": "",
+                "output_nonempty": False,
+                "readable": False,
+                "required_terms": list(example.expression.required_terms),
+                "matched_terms": [],
+                "required_term_coverage": 0.0,
+                "structured_leakage": False,
+                "fallback_used": False,
+                "accepted": False,
+                "error": None,
+            }
+            try:
+                emission = organ.emit(example.expression)
+                text = emission.text_bytes.decode("utf-8", errors="strict")
+                readable = _readable_surface(text) is not None
+                terms = tuple(example.expression.required_terms)
+                matched = tuple(term for term in terms if term in text)
+                validation = self._validator.validate(
+                    example.expression,
+                    emission.text_bytes,
+                    required_terms=terms,
+                )
+                leakage = self._structured_leakage(text)
+                row.update(
+                    {
+                        "output_text": text,
+                        "output_nonempty": bool(text.strip()),
+                        "readable": readable,
+                        "matched_terms": list(matched),
+                        "required_term_coverage": len(matched) / max(1, len(terms)),
+                        "structured_leakage": leakage,
+                        "fallback_used": bool(emission.fallback_used),
+                        "accepted": bool(
+                            readable
+                            and validation.accepted
+                            and not leakage
+                            and not emission.fallback_used
+                        ),
+                    }
+                )
+            except Exception as exc:  # noqa: BLE001 - evaluator records failed cases
+                row["error"] = f"{type(exc).__name__}: {exc}"
+            rows.append(row)
+
+        count = max(1, len(rows))
+        output_nonempty_rate = sum(bool(row["output_nonempty"]) for row in rows) / count
+        readable_rate = sum(bool(row["readable"]) for row in rows) / count
+        term_coverage = sum(float(row["required_term_coverage"]) for row in rows) / count
+        leakage_free_rate = sum(not bool(row["structured_leakage"]) for row in rows) / count
+        fallback_rate = sum(bool(row["fallback_used"]) for row in rows) / count
+        accepted_rate = sum(bool(row["accepted"]) for row in rows) / count
+        passed = bool(
+            output_nonempty_rate == 1.0
+            and readable_rate >= self.minimum_readable_rate
+            and term_coverage >= self.minimum_required_term_coverage
+            and leakage_free_rate == 1.0
+            and fallback_rate <= self.maximum_fallback_rate
+            and accepted_rate == 1.0
+            and all(row["error"] is None for row in rows)
+        )
+        return {
+            "examples": rows,
+            "output_nonempty_rate": output_nonempty_rate,
+            "readable_rate": readable_rate,
+            "required_term_coverage": term_coverage,
+            "structured_leakage_free_rate": leakage_free_rate,
+            "fallback_rate": fallback_rate,
+            "accepted_rate": accepted_rate,
+            "passed": passed,
+        }
+
+    @staticmethod
+    def _outputs(
+        organ: LanguageOrgan,
+        examples: tuple[LanguageTrainingExample, ...],
+    ) -> tuple[dict[str, str], tuple[str, ...]]:
+        outputs: dict[str, str] = {}
+        errors: list[str] = []
+        for example in examples:
+            try:
+                outputs[example.example_id] = organ.emit(example.expression).text_bytes.decode(
+                    "utf-8", errors="strict"
+                )
+            except Exception as exc:  # noqa: BLE001 - evaluator records failed cases
+                errors.append(f"{example.example_id}: {type(exc).__name__}: {exc}")
+        return outputs, tuple(errors)
+
+    def evaluate(
+        self,
+        organ: LanguageOrgan,
+        corpus: LanguageTrainingCorpus,
+        *,
+        rollback_organ: LanguageOrgan | None = None,
+        rollback_reference_organ: LanguageOrgan | None = None,
+        checkpoint_loader: Callable[[Mapping[str, Any]], LanguageOrgan] | None = None,
+    ) -> dict[str, Any]:
+        if not isinstance(organ, LanguageOrgan):
+            raise TypeError("language realization gate organ must implement LanguageOrgan")
+        if not isinstance(corpus, LanguageTrainingCorpus):
+            raise TypeError("language realization gate corpus must be LanguageTrainingCorpus")
+
+        restored_corpus = LanguageTrainingCorpus.from_payload(corpus.to_payload())
+        corpus_round_trip = restored_corpus == corpus
+        train_ids = {example.example_id for example in corpus.train}
+        holdout_ids = {example.example_id for example in corpus.holdout}
+        train_expression_ids = {example.expression.expression_id for example in corpus.train}
+        holdout_expression_ids = {example.expression.expression_id for example in corpus.holdout}
+        split_disjoint = train_ids.isdisjoint(holdout_ids) and train_expression_ids.isdisjoint(
+            holdout_expression_ids
+        )
+
+        train = self._measure_split(organ, corpus.train)
+        holdout = self._measure_split(organ, corpus.holdout)
+
+        rollback = {
+            "checked": rollback_organ is not None and rollback_reference_organ is not None,
+            "outputs_match_reference": False,
+            "errors": [],
+        }
+        if rollback["checked"]:
+            actual, actual_errors = self._outputs(rollback_organ, corpus.holdout)  # type: ignore[arg-type]
+            reference, reference_errors = self._outputs(
+                rollback_reference_organ, corpus.holdout  # type: ignore[arg-type]
+            )
+            rollback["outputs_match_reference"] = bool(
+                not actual_errors and not reference_errors and actual == reference
+            )
+            rollback["errors"] = list(actual_errors + reference_errors)
+
+        checkpoint = {
+            "checked": checkpoint_loader is not None,
+            "outputs_match": False,
+            "errors": [],
+        }
+        if checkpoint_loader is not None:
+            try:
+                payload = organ.checkpoint()
+                restored = checkpoint_loader(payload)
+                if not isinstance(restored, LanguageOrgan):
+                    raise TypeError("checkpoint_loader did not return a LanguageOrgan")
+                original, original_errors = self._outputs(organ, corpus.holdout)
+                resumed, resumed_errors = self._outputs(restored, corpus.holdout)
+                checkpoint["outputs_match"] = bool(
+                    not original_errors and not resumed_errors and original == resumed
+                )
+                checkpoint["errors"] = list(original_errors + resumed_errors)
+            except Exception as exc:  # noqa: BLE001 - evaluator records failed gate
+                checkpoint["errors"] = [f"{type(exc).__name__}: {exc}"]
+
+        passed = bool(
+            corpus_round_trip
+            and split_disjoint
+            and bool(train["passed"])
+            and bool(holdout["passed"])
+            and bool(rollback["checked"])
+            and bool(rollback["outputs_match_reference"])
+            and bool(checkpoint["checked"])
+            and bool(checkpoint["outputs_match"])
+        )
+        return {
+            "format": LANGUAGE_REALIZATION_GATE_FORMAT,
+            "corpus": {
+                "train_examples": len(corpus.train),
+                "holdout_examples": len(corpus.holdout),
+                "round_trip": corpus_round_trip,
+                "split_disjoint": split_disjoint,
+            },
+            "train": train,
+            "holdout": holdout,
+            "rollback": rollback,
+            "checkpoint": checkpoint,
+            "thresholds": {
+                "minimum_required_term_coverage": self.minimum_required_term_coverage,
+                "minimum_readable_rate": self.minimum_readable_rate,
+                "maximum_fallback_rate": self.maximum_fallback_rate,
+            },
+            "gate": {
+                "passed": passed,
+                "criterion": "train and holdout ExpressionPlan values produce readable, semantically complete, non-structured text without fallback, while rollback and checkpoint continuation reproduce their references",
+            },
+        }
