@@ -320,8 +320,9 @@ P4 的最小真实经历边界已落地：
   UTF-8 codec 后 semantic slots、confidence、`source_goal_id` 无损恢复；报告和 manifest 为
   `reports/taiji_p6_text_organ_codec_*_20260825.json`。该结果不等于自然语言流畅性、句法或语言智能。
 - `scripts/training/eval_taiji_p6_language_organ_boundary.py` 已通过 terminal language-organ boundary 窄 Gate：可替换的
-  `LanguageOrgan` 只接收 Taiji-owned `ExpressionPlan`，默认 `structured-stub` 输出可回解码文本；detached-organ lesion、native
-  checkpoint 和参数/认知不变性均通过。该结果只证明末端器官所有权与替换边界，不等于自然语言流畅性、句法或 decoder 智能。
+  `LanguageOrgan` 只接收 Taiji-owned `ExpressionPlan`，产品默认的 `native-readable` 表层保留有效候选或生成诚实的可读状态文本；
+  `structured-stub` 降为显式无损调试 codec。detached-organ lesion、native checkpoint 和参数/认知不变性均通过。该结果修复产品
+  乱码/RAW 冒充语言的边界，但只证明可读表层，不等于自然语言流畅性、开放域语义回答或 decoder 智能。
 - `LanguageBackendRegistry` 与 `LanguageTrainingExample` 窄 Gate 已通过：registry 可登记未来成熟 decoder，但强制 text modality 与
   `owns_cognition=False`；训练样本固定为 `ExpressionPlan → target_text`，可独立 checkpoint/holdout，不把目标、记忆或
   `ActionIntent` 注入 decoder。该结果只证明接入/训练数据边界，不等于 decoder 能力。
@@ -359,8 +360,8 @@ P4 的最小真实经历边界已落地：
 - P6 client input-boundary Gate 已通过：`InputFrame` 版本化承载客户端原始 bytes 与来源元数据；`TSKV8Adapter.ingest_input()` 将
   当前支持的 text/text-utf8/text-byte 输入逐字节转换为 Taiji-owned `Observation/PerceptEvent`，`InputTrace` 提供可检查的
   感知轨迹并支持合同 round-trip。`ActionIntent` 在该边界保持为空，禁止固定 intent 映射；`SeedRuntime.chat` 已通过
-  `generate_input()` 走同一输入合同，仍保留 raw-byte 兼容输出。该 Gate 只证明输入所有权与感知可观测性，不证明 executive、
-  语义对话或语言智能。
+  `generate_input()` 走同一输入合同，并在产品出口经本地 `native-readable` 表层形成可读文本；raw-byte 只保留为底层兼容/调试信息。
+  该 Gate 证明输入所有权与可读输出边界，不证明 executive、开放域语义对话或语言智能。
 - P7 executive contract Gate 已通过：`ExecutiveController` 使用 percept/world/memory/goal/homeostasis 派生 context 学习候选
   utility，输出保持同一候选携带的结构化 `ActionIntent + ContentPlan`；`TSKV8Adapter` 已接入选择、Outcome 反馈、native checkpoint
   和 parameter surface。该 Gate 只证明学习型候选选择与所有权，不证明真实环境 action/outcome 闭环或语言智能。
@@ -501,7 +502,7 @@ P4 的最小真实经历边界已落地：
 
 ### 13.1 桌面客户端 UX 修复轮（2026-08-27）
 
-实测澄清的运行形态：桌面端（`desktop/main.py`，PyQt6 无边框窗）= 子进程 uvicorn `api.app:app`(8000，同时服务 REST 与 `frontend/dist` 静态前端) + 子进程 WS 服务器(8765)；聊天走 Seed 原生运行时（`checkpoints/seed_corpus.pt`，43.7 万参数，语言器官 structured-stub）。本轮十项修复：
+实测澄清的运行形态：桌面端（`desktop/main.py`，PyQt6 无边框窗）= 子进程 uvicorn `api.app:app`(8000，同时服务 REST 与 `frontend/dist` 静态前端) + 子进程 WS 服务器(8765)；聊天走 Seed 原生运行时（`checkpoints/seed_corpus.pt`，43.7 万参数，底层仍为 byte predictor，产品表层为 native-readable）。本轮十项修复：
 
 | # | 问题 | 根因 | 修复 |
 |---|---|---|---|
@@ -511,7 +512,7 @@ P4 的最小真实经历边界已落地：
 | 4 | IDE 无法唤起系统文件管理器 | Web 沙箱无原生对话框 | 后端 `POST /api/workspace/pick_folder`（PowerShell STA BrowseForFolder）+ 前端「浏览系统目录」 |
 | 5 | IDE 简陋 / 终端不可用 | 终端 WS 在 auth 关闭时默认拒绝 | 终端默认放行（与全局 JWT 中间件一致，可配置收紧）；新增 Ctrl+\`、Ctrl+P 快速打开、新建文件夹、刷新树、「在资源管理器中显示」(`/api/workspace/reveal`)、`/api/workspace/mkdir` |
 | 6 | 侧边栏搜索右侧不明符号 | macOS 专用 `⌘K` 硬编码 | 平台感知提示（Win/Linux: `Ctrl K`），并真正绑定 Ctrl+K 聚焦 |
-| 7 | 「你好」回复乱码 | **模型真实输出**：43.7 万参数 byte 级基底 + structured-stub 语言器官，输出不可读并被存进会话历史 | 后端 final 事件标注 `readable`（U+FFFD/控制符占比启发式），前端以「RAW 原始字节输出」卡片呈现而非伪装成正常回复；历史消息同启发式。**根治在 P6 语言器官**，不在 UI |
+| 7 | 「你好」回复乱码 | **模型真实输出**：43.7 万参数 byte 级基底 + raw prediction 未经过语言器官；旧 `structured-stub` 只会序列化结构，不会形成可读语言 | 聊天路径现在构造 Taiji-owned `ExpressionPlan`，先经过本地 `native-readable` 表层；有效候选保留，乱码/不可读 prediction 转为诚实可读状态文本。final event 暴露 `language_backend`，前端只在真正不可读时显示 RAW 调试卡片 |
 | 8 | 输入栏按钮「没用」 | 按钮实际可用（Chromium 实测全通过）；体感来自发送按钮 disabled 且无反馈 | 发送门控保留但移除 disabled，点击未就绪时 toast 明确原因（连接中/模型未装载/生成中） |
 | 9 | 生命状态数据来源存疑 | needs 数据源是 Cortex legacy `life_scheduler`；Seed 运行时下后端返回空（无假数据） | `LifeStatusView` 增显式 DATA SOURCE 说明卡；`is_seed` 透传至前端；Seed 下生命活动按钮给真实提示 |
 | 10 | 对话页面无法上下滑动 | `.chat-stage` 为 `flex:1; min-height:0`，在 flex 列滚动容器中被压缩到小于内容高度；内容以 `overflow:visible` 溢出绘制，但父级 `scrollHeight` 仍按 stage 盒子计算 ⇒ 滚动条永不出现，内容被 sticky 输入栏遮挡 | `.chat-stage` 改为 `flex:1 0 auto`（可涨不可缩，去掉 `min-height:0`）；`.composer-wrap` 加 `flex:none; z-index:2`；`.msg` 的 `contain-intrinsic-size` 由 80px 提到 140px 以减少 `scrollHeight` 失真 |
@@ -520,7 +521,7 @@ P4 的最小真实经历边界已落地：
 
 配套：OpenAPI 基线快照已更新（新增 3 个 workspace 端点）；vitest 160/160、e2e 冒烟 22/22 通过；`frontend/dist` 已重建。
 
-遗留（下一轮候选）：语言器官接入真实后端（P6）才能真正消除乱码；终端默认 shell 仍是 cmd.exe；侧边栏搜索框尚未接线为会话过滤。
+遗留（下一轮候选）：native-readable 已解决产品乱码与 structured-stub 误用，但它不是开放域语言模型；下一轮需为 Taiji-owned `ExpressionPlan` 建立真实语言表达训练/holdout Gate。终端默认 shell 仍是 cmd.exe；侧边栏搜索框尚未接线为会话过滤。
 
 ## 14. 持续门禁
 
@@ -930,4 +931,6 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 
 **已完成：P3 cross-reader audit revision 有限历史、回滚目标校验与容量淘汰 Gate 已通过。** 新增 digest-only 的 `RecoveryReaderCreditAuditRevision`，每个 group 只保存 rollout 集合、reader/structure/profile/base/state digest 与完整性摘要，不保存 raw credit profile 或 `reader_attribution_safe`，因此历史记录不能重新变成可执行 attribution。`RecoveryReaderDependencyGraph` 现在按 group 保存有限 revision history，checkpoint/native payload 可往返恢复；回滚校验要求目标 revision 仍在容量窗口内，且 reader 集合、结构 digest、profile digest 和 base checkpoint digest 与当前 audit 兼容，缺失、篡改或结构漂移目标均 fail-closed。容量由 `recovery_strategy_cross_reader_credit_revision_history_limit` 配置，adapter 初始化、reset、restore 和每次 audit 持久化均使用同一上限；撤销策略时同步裁剪历史，合并/拆分留下的旧摘要仍不可执行。P3 evaluator 新增历史完整性、checkpoint continuation、目标 revision 校验和容量淘汰三项 Gate，三 seed 均为 `true`、cross-seed gate rate=`1.0`；定向回归 `15 passed`，native 回归 `229 passed, 1 skipped`，另有两个既有 Windows pytest 临时目录锁权限 setup error 未进入测试体；Ruff、Black、Taiji Mypy=`0`。本 Gate 只证明“可验证的有限审计历史与回滚 allowlist”，不宣称摘要本身能恢复神经状态或执行真实 rollback；CUDA 继续暂缓。
 
-**当前唯一下一步：建立 audit target 与真实 checkpoint lineage 的可执行回滚边界 Gate。** 为通过校验的 group revision 绑定不可伪造的 reader checkpoint lineage 与恢复入口，执行 rollback 时只从匹配目标 checkpoint 重建受影响 reader，禁止仅凭 digest summary 恢复状态，并验证 checkpoint continuation、未受影响 group 保持不变与容量淘汰目标不可执行，CUDA 继续暂缓。
+**已完成：P6 native-readable 产品语言表层 Gate。** 根因已确认：Seed 聊天虽然调用 Taiji 的 byte prediction，但直接把 raw bytes 当作答案，且默认 `structured-stub` 只能做无损结构序列化，不能形成可读语言。现在 `SeedRuntime.chat` 将 prediction 和本地会话上下文封装为 Taiji-owned `ExpressionPlan`，经过无外部依赖的 `native-readable` 语言表层；有效的 `surface_text/answer/native_prediction` 候选会被保留，不可读字节会转成诚实的可读状态文本。`structured-stub` 保留为显式 debug codec；Seed 配置升级为 v2，旧的未版本化 structured 默认会迁移到 native，显式 v2 structured 仍保持可用；native organ 已纳入 registry、checkpoint restore 和 `/api` final event 的 `language_backend` 可观测性。产品聊天默认不把用户历史静默转发给外部 decoder；Qwen/LoRA 仍是显式 provider 的表达器候选，不因此宣称 Taiji 已具备开放域语言智能。定向语言/provider 回归 `17 passed`，产品聊天冒烟 `4 passed`。
+
+**当前唯一下一步：建立 Taiji-owned `ExpressionPlan` 到真实语言表达的训练/holdout Gate。** 在保留本地 native-readable 安全表层和显式外部 provider 边界的前提下，为内容计划、必需语义词、表达候选和最终文本建立可回放的训练数据与 holdout 质量门禁；只有语义覆盖、可读性、回滚和 checkpoint continuation 同时成立，才允许把成熟语言 decoder 接入产品聊天，CUDA 继续暂缓。

@@ -70,6 +70,7 @@ from .language_organ import (
     LanguageOrgan,
     LanguageProviderArtifact,
     LanguageValidation,
+    NativeReadableTextLanguageOrgan,
     StructuredTextLanguageOrgan,
 )
 from .model import Taiji
@@ -8884,11 +8885,16 @@ class TSKV8Adapter(Taiji):
             return
         if not isinstance(payload, dict):
             raise ValueError("language organ checkpoint must be a mapping")
-        if payload.get("backend") != StructuredTextLanguageOrgan.BACKEND_ID:
+        backend = payload.get("backend")
+        restored: LanguageOrgan
+        if backend == NativeReadableTextLanguageOrgan.BACKEND_ID:
+            restored = NativeReadableTextLanguageOrgan.from_checkpoint(payload)
+        elif backend == StructuredTextLanguageOrgan.BACKEND_ID:
+            restored = StructuredTextLanguageOrgan.from_checkpoint(payload)
+        else:
             raise ValueError(
-                "only the structured language-organ stub can be restored without a backend registry"
+                "only native-readable and structured language organs can be restored without a runtime"
             )
-        restored = StructuredTextLanguageOrgan.from_checkpoint(payload)
         self._language_backend_registry.validate(restored)
         if (
             self._language_provider_artifact is not None

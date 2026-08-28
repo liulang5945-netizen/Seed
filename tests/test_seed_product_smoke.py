@@ -47,6 +47,8 @@ def test_chat_stream_uses_seed_branch(seed_client):
     body = response.text
     # SSE 协议：final 事件 + 结束标记
     assert '"type": "final"' in body or '"type":"final"' in body
+    assert '"readable": true' in body or '"readable":true' in body
+    assert "native-readable" in body
     assert "[DONE]" in body
 
 
