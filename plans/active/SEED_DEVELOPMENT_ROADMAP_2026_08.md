@@ -1895,7 +1895,15 @@ markdown code block、错误扩展名和 filename-only lesion；API/OpenAPI、ru
 后端 Workbench 合同 `8 passed`、Monaco 回归 `10 passed`，前端 lint `0 errors`、构建通过。该 Gate 是语言/IDE 合同闭环，
 不代表 W2 runner 已可执行。
 
-**当前唯一下一步：开始 W2「受控写入、终端与测试执行」。** 先把 `workspace.apply_patch/create/rename/delete` 收敛为带
-before/after digest、冲突检测、undo token 和审计记录的文件事务；同时定义非交互 `terminal.run` 的 argv/cwd/timeout/env
-allowlist/output limit/expected artifacts 合同。先建立可故意打红的未保存内容、cwd 漂移、输出洪泛、超时、部分冲突和进程中断
-Gate，再把真实 diagnostics/test/build outcome 回写 Taiji；W2 未通过前不进入 W3 MCP/自主循环。
+**已完成（2026-08-29）：W2 首批受控执行合同与 executor。** native capability snapshot 升至 revision 3，新增
+`workspace.apply_patch/create/rename/delete/undo` 与 `terminal.run`。文件修改已收敛为 UTF-8 结构化 text-replace 和统一
+transaction：before/after SHA-256、原子写入、冲突 fail-closed、唯一单次 undo token；create/rename/delete 共享同一撤销模型。
+终端执行已收敛为 argv-only、明确 `shell=False`、workspace 内 cwd、bounded timeout/output、env allowlist 与 expected artifacts，
+非零退出和超时都会产生失败 outcome；runtime 会保留 executor 返回的真实 transaction payload，旧只读能力保持兼容投影。
+文件事务、终端边界、审批策略与失败结果回归共 `11 passed`，ruff、Black、py_compile 和 diff check 通过。该 slice 只完成
+contract/executor，不把直接 executor 调用等同于产品自治：写入和终端仍由 policy 默认返回 `ask_user`，未完成 IDE 预览/审批、
+真实 diagnostics/test/build outcome 回写以及 checkpoint 续跑 Gate。
+
+**当前唯一下一步：完成 W2 第二 slice 的审批、预览与真实 outcome 闭环。** 将事务和 `terminal.run` 接入 runtime 的显式审批/预览/
+撤销路径，并补齐未保存内容、cwd 漂移、输出洪泛、部分冲突、进程中断的可故意打红 Gate；随后把 diagnostics/test/build 的真实
+结果、产物和 after-state 回写 Taiji，验证 checkpoint 续跑不会重复已提交事务。W2 未通过前不进入 W3 MCP/自主循环。

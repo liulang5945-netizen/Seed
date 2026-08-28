@@ -1,12 +1,19 @@
 from __future__ import annotations
 
+import hashlib
+import sys
+
 from fastapi.testclient import TestClient
 
 from api.app import create_app
 from api.seed_runtime import SeedRuntime
 from seed import Seed
 from seed_platform.programming_languages import ProgrammingLanguageRegistry
-from seed_platform.workbench import CapabilitySnapshot, WorkbenchEnvironment
+from seed_platform.workbench import (
+    CapabilitySnapshot,
+    WorkbenchActionRequest,
+    WorkbenchEnvironment,
+)
 from taiji import ActionIntent, TSKV8Adapter
 
 
@@ -19,6 +26,8 @@ def test_workbench_snapshot_is_content_addressed() -> None:
     assert snapshot.get("editor.diagnostics.read").enabled is False  # type: ignore[union-attr]
     assert snapshot.get("workspace.programming_language.resolve") is not None
     assert snapshot.get("editor.set_language") is not None
+    assert snapshot.get("workspace.apply_patch") is not None
+    assert snapshot.get("terminal.run") is not None
 
     tampered = snapshot.to_payload()
     tampered["capabilities"][0]["description"] = "tampered"
@@ -32,7 +41,9 @@ def test_workbench_snapshot_is_content_addressed() -> None:
 
 def test_read_only_environment_reads_and_rejects_escape(tmp_path) -> None:
     (tmp_path / "src").mkdir()
-    with (tmp_path / "src" / "main.py").open("w", encoding="utf-8", newline="") as handle:
+    with (tmp_path / "src" / "main.py").open(
+        "w", encoding="utf-8", newline=""
+    ) as handle:
         handle.write("print('seed')\n")
     environment = WorkbenchEnvironment(tmp_path)
 
@@ -88,7 +99,9 @@ def test_taiji_intent_reaches_workbench_and_audit(tmp_path, monkeypatch) -> None
         tick=runtime.model.tick,
     )
 
-    result = runtime.execute_workbench_intent(intent, snapshot_id=snapshot_id, learn=False)
+    result = runtime.execute_workbench_intent(
+        intent, snapshot_id=snapshot_id, learn=False
+    )
 
     assert result["outcome"]["status"] == "success"
     assert result["outcome"]["result"]["content"] == "Taiji workbench\n"
@@ -118,8 +131,12 @@ def test_taiji_tool_intent_bridge_does_not_select_the_intent(tmp_path) -> None:
     assert outcome.intent_id == intent.intent_id
 
 
-def test_programming_language_evidence_uses_content_manifest_and_ambiguity(tmp_path) -> None:
-    (tmp_path / "pyproject.toml").write_text("[project]\nname='seed'\n", encoding="utf-8")
+def test_programming_language_evidence_uses_content_manifest_and_ambiguity(
+    tmp_path,
+) -> None:
+    (tmp_path / "pyproject.toml").write_text(
+        "[project]\nname='seed'\n", encoding="utf-8"
+    )
     source = tmp_path / "main.py"
     source.write_text("def answer(value: int):\n    return value\n", encoding="utf-8")
     environment = WorkbenchEnvironment(tmp_path)
@@ -219,7 +236,9 @@ def test_programming_language_evidence_uses_content_manifest_and_ambiguity(tmp_p
     assert notebook.editor_language_id == "json"
 
 
-def test_programming_language_override_is_content_bound_and_checkpointable(tmp_path) -> None:
+def test_programming_language_override_is_content_bound_and_checkpointable(
+    tmp_path,
+) -> None:
     source = tmp_path / "main.py"
     source.write_text("print('seed')\n", encoding="utf-8")
     environment = WorkbenchEnvironment(tmp_path)
@@ -311,7 +330,9 @@ def test_taiji_language_selection_requires_evidence_or_explicit_override(
     )
     assert autonomous["policy"]["decision"] == "allow"
     assert autonomous["outcome"]["result"]["programming_language_id"] == "python"
-    assert autonomous["outcome"]["result"]["execution_snapshot"]["runner_id"] == "python"
+    assert (
+        autonomous["outcome"]["result"]["execution_snapshot"]["runner_id"] == "python"
+    )
 
     explicit = runtime.execute_workbench_intent(
         ActionIntent(
@@ -330,3 +351,148 @@ def test_taiji_language_selection_requires_evidence_or_explicit_override(
     )
     assert explicit["policy"]["decision"] == "allow"
     assert explicit["outcome"]["result"]["selection_state"] == "user_override"
+
+
+def test_file_transactions_are_digest_checked_and_undoable(tmp_path) -> None:
+    source = tmp_path / "main.py"
+    original = b"print('seed')\n"
+    updated = b"print('taiji')\n"
+    source.write_bytes(original)
+    environment = WorkbenchEnvironment(tmp_path)
+
+    start = original.decode("utf-8").index("seed")
+    end = start + len("seed")
+    applied = environment.execute_tool(
+        "workspace.apply_patch",
+        {
+            "path": "main.py",
+            "before_digest": hashlib.sha256(original).hexdigest(),
+            "patch": {
+                "kind": "text_replace",
+                "operations": [{"start": start, "end": end, "text": "taiji"}],
+            },
+            "expected_after_digest": hashlib.sha256(updated).hexdigest(),
+        },
+    )
+    assert applied.success is True
+    patch_transaction = environment.last_result["transaction"]
+    assert patch_transaction["undo_token"]
+    assert source.read_bytes() == updated
+
+    stale = environment.execute_tool(
+        "workspace.apply_patch",
+        {
+            "path": "main.py",
+            "before_digest": hashlib.sha256(original).hexdigest(),
+            "patch": {
+                "kind": "text_replace",
+                "operations": [{"start": start, "end": end, "text": "seed"}],
+            },
+            "expected_after_digest": hashlib.sha256(original).hexdigest(),
+        },
+    )
+    assert stale.success is False
+    assert environment.last_result["error_code"] == "transaction_conflict"
+
+    undone = environment.execute_tool(
+        "workspace.undo", {"undo_token": patch_transaction["undo_token"]}
+    )
+    assert undone.success is True
+    assert source.read_bytes() == original
+
+    created = environment.execute_tool(
+        "workspace.create", {"path": "created.txt", "content": "created\n"}
+    )
+    assert created.success is True
+    create_token = environment.last_result["transaction"]["undo_token"]
+    assert (tmp_path / "created.txt").is_file()
+    assert environment.execute_tool(
+        "workspace.undo", {"undo_token": create_token}
+    ).success
+    assert not (tmp_path / "created.txt").exists()
+
+    renamed = environment.execute_tool(
+        "workspace.rename",
+        {
+            "path": "main.py",
+            "new_path": "renamed.py",
+            "before_digest": hashlib.sha256(original).hexdigest(),
+        },
+    )
+    assert renamed.success is True
+    rename_token = environment.last_result["transaction"]["undo_token"]
+    assert (tmp_path / "renamed.py").is_file()
+    assert environment.execute_tool(
+        "workspace.undo", {"undo_token": rename_token}
+    ).success
+    assert source.is_file()
+
+    deleted = environment.execute_tool(
+        "workspace.delete",
+        {"path": "main.py", "before_digest": hashlib.sha256(original).hexdigest()},
+    )
+    assert deleted.success is True
+    delete_token = environment.last_result["transaction"]["undo_token"]
+    assert not source.exists()
+    assert environment.execute_tool(
+        "workspace.undo", {"undo_token": delete_token}
+    ).success
+    assert source.read_bytes() == original
+
+
+def test_terminal_run_is_bounded_and_shell_free(tmp_path) -> None:
+    environment = WorkbenchEnvironment(tmp_path)
+    completed = environment.execute_tool(
+        "terminal.run",
+        {
+            "argv": [sys.executable, "-c", "print('seed')"],
+            "cwd": ".",
+            "timeout_seconds": 5,
+            "output_limit": 1024,
+            "env": {},
+            "env_allowlist": [],
+            "expected_artifacts": [],
+        },
+    )
+    assert completed.success is True
+    assert environment.last_result["shell"] is False
+    assert environment.last_result["exit_code"] == 0
+    assert "seed" in environment.last_result["stdout"]
+
+    invalid_env = environment.execute_tool(
+        "terminal.run",
+        {
+            "argv": [sys.executable, "-c", "pass"],
+            "env": {"SEED_TEST": "1"},
+            "env_allowlist": [],
+        },
+    )
+    assert invalid_env.success is False
+    assert environment.last_result["error_code"] == "invalid_parameters"
+
+    timed_out = environment.execute_tool(
+        "terminal.run",
+        {
+            "argv": [sys.executable, "-c", "import time; time.sleep(1)"],
+            "timeout_seconds": 0.05,
+        },
+    )
+    assert timed_out.success is False
+    assert environment.last_result["timed_out"] is True
+
+
+def test_write_and_terminal_capabilities_require_approval(tmp_path) -> None:
+    environment = WorkbenchEnvironment(tmp_path)
+    snapshot_id = environment.capability_snapshot.snapshot_id
+    for capability_id in ("workspace.apply_patch", "terminal.run"):
+        request = WorkbenchActionRequest(
+            request_id=f"request-{capability_id}",
+            intent_id=f"intent-{capability_id}",
+            capability_id=capability_id,
+            parameters={},
+            snapshot_id=snapshot_id,
+            confidence=1.0,
+        )
+        decision = environment.policy_for(request)
+        assert decision.decision == "ask_user"
+        assert decision.reason_code == "capability_requires_approval"
