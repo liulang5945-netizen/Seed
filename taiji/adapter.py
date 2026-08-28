@@ -5018,6 +5018,12 @@ class TSKV8Adapter(Taiji):
         return self._last_language_emission
 
     @property
+    def language_organ(self) -> LanguageOrgan | None:
+        """Return the currently attached terminal organ for runtime assembly."""
+
+        return self._language_organ
+
+    @property
     def last_language_validation(self) -> LanguageValidation | None:
         return (
             None

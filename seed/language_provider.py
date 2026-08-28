@@ -10,6 +10,7 @@ from __future__ import annotations
 import importlib
 import json
 import logging
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
@@ -17,6 +18,7 @@ from typing import Any, cast
 import torch
 
 from taiji import (
+    LANGUAGE_REALIZATION_GATE_FORMAT,
     ExternalTextDecoderLanguageOrgan,
     LanguageBackendRegistry,
     LanguageBackendSpec,
@@ -46,6 +48,7 @@ class LanguageProviderStatus:
     reason_code: str = ""
     reason: str = ""
     rollback: str = NativeReadableTextLanguageOrgan.BACKEND_ID
+    chat_enabled: bool = False
 
     def to_dict(self) -> dict[str, str]:
         return {
@@ -57,7 +60,12 @@ class LanguageProviderStatus:
             "reason_code": self.reason_code,
             "reason": self.reason,
             "rollback": self.rollback,
+            "chat_enabled": "true" if self.chat_enabled else "false",
         }
+
+
+class _ProductChatGateError(ValueError):
+    """Raised when an external provider is not admitted to product chat."""
 
 
 class _QwenTextDecoder:
@@ -123,6 +131,104 @@ def _prompt(expression: Any) -> str:
 def _resolve(path_value: str, root: Path | None) -> Path:
     path = Path(path_value)
     return path if path.is_absolute() else (root or Path.cwd()) / path
+
+
+def _load_product_chat_report(path: Path, label: str) -> dict[str, Any]:
+    if not path.is_file():
+        raise _ProductChatGateError(f"product chat {label} report not found: {path}")
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise _ProductChatGateError(f"product chat {label} report is unreadable: {path}") from exc
+    if not isinstance(payload, dict):
+        raise _ProductChatGateError(f"product chat {label} report must be a JSON object")
+    return payload
+
+
+def _realization_gate_passed(report: Mapping[str, Any]) -> bool:
+    if report.get("format") != LANGUAGE_REALIZATION_GATE_FORMAT:
+        return False
+    corpus = report.get("corpus")
+    train = report.get("train")
+    holdout = report.get("holdout")
+    rollback = report.get("rollback")
+    checkpoint = report.get("checkpoint")
+    gate = report.get("gate")
+    if not isinstance(corpus, Mapping):
+        return False
+    if not isinstance(train, Mapping):
+        return False
+    if not isinstance(holdout, Mapping):
+        return False
+    if not isinstance(rollback, Mapping):
+        return False
+    if not isinstance(checkpoint, Mapping):
+        return False
+    if not isinstance(gate, Mapping):
+        return False
+    for split in (train, holdout):
+        if not (
+            split.get("passed") is True
+            and split.get("output_nonempty_rate") == 1.0
+            and split.get("readable_rate") == 1.0
+            and float(split.get("required_term_coverage", 0.0) or 0.0) >= 1.0
+            and split.get("structured_leakage_free_rate") == 1.0
+            and split.get("fallback_rate") == 0.0
+        ):
+            return False
+    return bool(
+        corpus.get("round_trip") is True
+        and corpus.get("split_disjoint") is True
+        and rollback.get("checked") is True
+        and rollback.get("outputs_match_reference") is True
+        and checkpoint.get("checked") is True
+        and checkpoint.get("outputs_match") is True
+        and gate.get("passed") is True
+    )
+
+
+def _validate_product_chat_gate(
+    artifact: LanguageProviderArtifact,
+    *,
+    artifact_root: Path | None,
+) -> None:
+    if artifact.mode != "guarded":
+        raise _ProductChatGateError("product chat requires guarded provider mode")
+    if artifact.training_report is None:
+        raise _ProductChatGateError("product chat requires a passing realization gate report")
+    training_report = _load_product_chat_report(
+        _resolve(artifact.training_report, artifact_root), "training"
+    )
+    training = training_report.get("training")
+    realization_report = training_report.get("expression_to_text_gate")
+    selected_report: Mapping[str, Any]
+    if isinstance(realization_report, Mapping):
+        selected_report = realization_report
+    else:
+        selected_report = training_report
+    if not isinstance(training, Mapping) or training.get("training_applied") is not True:
+        raise _ProductChatGateError("product chat training report does not prove applied training")
+    if not _realization_gate_passed(selected_report):
+        raise _ProductChatGateError(
+            "product chat realization gate must pass semantic, readable, rollback, and checkpoint checks"
+        )
+    if artifact.safety_report is None:
+        raise _ProductChatGateError("guarded product chat requires a safety report")
+    safety_report = _load_product_chat_report(
+        _resolve(artifact.safety_report, artifact_root), "safety"
+    )
+    adapted = safety_report.get("adapted")
+    rollback = safety_report.get("rollback")
+    gate = safety_report.get("gate")
+    if not (
+        isinstance(adapted, Mapping)
+        and isinstance(rollback, Mapping)
+        and isinstance(gate, Mapping)
+        and gate.get("passed") is True
+        and adapted.get("safe_realization_rate") == 1.0
+        and rollback.get("outputs_match_raw") is True
+    ):
+        raise _ProductChatGateError("product chat safety report has not passed")
 
 
 def build_provider_artifact(config: LanguageProviderConfig) -> LanguageProviderArtifact:
@@ -241,6 +347,7 @@ def activate_language_provider(
                 provider="native",
                 backend_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
                 artifact_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
+                chat_enabled=False,
             ),
             None,
         )
@@ -253,15 +360,18 @@ def activate_language_provider(
                 provider="structured",
                 backend_id=StructuredTextLanguageOrgan.BACKEND_ID,
                 artifact_id="structured-stub",
+                chat_enabled=False,
             ),
             None,
         )
 
     artifact = build_provider_artifact(config)
     try:
+        root = Path(config.artifact_root) if config.artifact_root else None
+        if config.chat_enabled:
+            _validate_product_chat_gate(artifact, artifact_root=root)
         if config.provider != "qwen":
             raise ValueError(f"unsupported Seed language provider: {config.provider}")
-        root = Path(config.artifact_root) if config.artifact_root else None
         model_dir = _resolve(config.model_dir, root)
         decoder = load_qwen_language_provider(
             adapter,
@@ -278,9 +388,13 @@ def activate_language_provider(
                 provider=config.provider,
                 backend_id=artifact.backend_id,
                 artifact_id=artifact.artifact_id,
+                chat_enabled=config.chat_enabled,
             ),
             decoder,
         )
+    except _ProductChatGateError as exc:
+        reason_code = "chat_gate_failed"
+        reason = str(exc)
     except FileNotFoundError as exc:
         reason_code = "provider_missing"
         reason = str(exc)
@@ -305,6 +419,7 @@ def activate_language_provider(
             reason_code=reason_code,
             reason=reason,
             rollback=NativeReadableTextLanguageOrgan.BACKEND_ID,
+            chat_enabled=False,
         ),
         None,
     )

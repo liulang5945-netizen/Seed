@@ -1330,4 +1330,14 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 
 **已完成：P6 native-readable 产品语言表层 Gate。** 根因已确认：Seed 聊天虽然调用 Taiji 的 byte prediction，但直接把 raw bytes 当作答案，且默认 `structured-stub` 只能做无损结构序列化，不能形成可读语言。现在 `SeedRuntime.chat` 将 prediction 和本地会话上下文封装为 Taiji-owned `ExpressionPlan`，经过无外部依赖的 `native-readable` 语言表层；有效的 `surface_text/answer/native_prediction` 候选会被保留，不可读字节会转成诚实的可读状态文本。`structured-stub` 保留为显式 debug codec；Seed 配置升级为 v2，旧的未版本化 structured 默认会迁移到 native，显式 v2 structured 仍保持可用；native organ 已纳入 registry、checkpoint restore 和 `/api` final event 的 `language_backend` 可观测性。产品聊天默认不把用户历史静默转发给外部 decoder；Qwen/LoRA 仍是显式 provider 的表达器候选，不因此宣称 Taiji 已具备开放域语言智能。定向语言/provider 回归 `17 passed`，产品聊天冒烟 `4 passed`。
 
-**当前唯一下一步：建立 Taiji-owned `ExpressionPlan` 到真实语言表达的训练/holdout Gate。** 在保留本地 native-readable 安全表层和显式外部 provider 边界的前提下，为内容计划、必需语义词、表达候选和最终文本建立可回放的训练数据与 holdout 质量门禁；只有语义覆盖、可读性、回滚和 checkpoint continuation 同时成立，才允许把成熟语言 decoder 接入产品聊天，CUDA 继续暂缓。
+**已完成：P6 Taiji-owned `ExpressionPlan` 到真实语言表达的训练/holdout admission Gate。** 新增 `LanguageRealizationGate`，以
+`LanguageTrainingCorpus` 为唯一监督边界，逐例验证 train/holdout 不串集、UTF-8/可读文本、必需语义词完整覆盖、无结构化泄漏、无
+fallback，并要求 rollback reference 与保存后 checkpoint loader 的输出逐例一致。Qwen LoRA trainer 在写出 adapter/tokenizer 后重新加载
+保存目录，再把 checkpoint continuation 纳入最终 Gate；真实本机 CPU 复核为 4 epochs/16 steps、270336 个外部参数，train/holdout
+质量均为 `1.0`、rollback 与 continuation 均为 `true`。Seed 新增 `chat_enabled` 显式开关，且强制 `guarded` 模式；只有训练 realization
+Gate 与 safety Gate 都通过才允许外部 decoder 进入产品聊天，旧报告或缺失证据 fail-closed，默认仍为本地 `native-readable`。相关定向回归
+`20 passed`，核心 mypy=`0`、Ruff/Black 全绿；CUDA 继续暂缓。该 Gate 证明可审计的表达准入，不宣称开放域语言智能。
+
+**当前唯一下一步：建立语言 provider artifact 的内容寻址与 chat canary Gate。** 为通过 realization/safety Gate 的外部模型、LoRA、训练语料、
+训练报告和安全报告生成稳定 digest，并在加载与产品聊天首个 canary 请求前逐项校验版本/路径未漂移；任何 artifact 替换、报告过期或
+canary 语义覆盖下降都必须回退到 `native-readable`，同时保持普通/native checkpoint continuation，CUDA 继续暂缓。
