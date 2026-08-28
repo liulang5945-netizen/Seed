@@ -18,7 +18,7 @@
     @drop.prevent="onDrop"
     @click="triggerBrowse"
   >
-    <component :is="uploadIcon" class="dropzone-icon" :size="32" />
+    <component :is="resolvedUploadIcon" class="dropzone-icon" :size="32" />
     <p class="dropzone-text">{{ dropText }}</p>
     <p v-if="acceptHint" class="dropzone-hint">{{ acceptHint }}</p>
   </div>
@@ -31,7 +31,7 @@
     </div>
     <div class="panel-content">
       <div v-for="(file, idx) in queue" :key="file.id" class="file-item">
-        <div class="file-info"><component :is="icon" :size="14" class="file-icon" /> {{ file.name }}</div>
+        <div class="file-info"><component :is="resolvedFileIcon" :size="14" class="file-icon" /> {{ file.name }}</div>
         <div class="file-actions">
           <span :class="['status-tag', file.status]">{{ file.statusText }}</span>
           <button v-if="file.status !== 'uploading'" class="delete-btn" @click="removeFromQueue(idx)"><X :size="14" /></button>
@@ -42,9 +42,9 @@
 </template>
 
 <script setup>
-import { X, Clock } from 'lucide-vue-next';
+import { X, Clock, FileText, Upload } from 'lucide-vue-next';
 
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { API_BASE, authFetch } from '../composables/apiClient.js';
 
 const props = defineProps({
@@ -52,19 +52,27 @@ const props = defineProps({
   uploadEndpoint: { type: String, required: true },
   /** 接受的文件扩展名列表 */
   accept: { type: String, default: '' },
-  /** 文件图标 */
-  icon: { type: String, default: '📄' },
+  /** 文件图标组件（须为组件对象，不接受字符串） */
+  icon: { type: [Object, Function], default: () => FileText },
   /** 队列面板标题 */
   title: { type: String, default: '上传队列' },
   /** 上传成功时显示的文字 */
-  successText: { type: String, default: '✅ 上传成功' },
-  /** 拖拽区图标 */
-  uploadIcon: { type: String, default: '📤' },
+  successText: { type: String, default: '上传成功' },
+  /** 拖拽区图标组件（须为组件对象，不接受字符串） */
+  uploadIcon: { type: [Object, Function], default: () => Upload },
   /** 拖拽区提示文字 */
   dropText: { type: String, default: '拖拽文件到此处上传，或点击选择文件' },
   /** 支持格式提示 */
   acceptHint: { type: String, default: '' },
 });
+
+// 字符串型 is 会被 Vue 当原生标签名交给 document.createElement，
+// emoji 等非法标签名会在渲染期同步抛 InvalidCharacterError 并炸掉整棵子树。
+// 这里统一兜底成合法图标组件，杜绝调用方传错导致整页白屏。
+const asComponent = (value, fallback) =>
+  value && typeof value === 'object' ? value : typeof value === 'function' ? value : fallback;
+const resolvedFileIcon = computed(() => asComponent(props.icon, FileText));
+const resolvedUploadIcon = computed(() => asComponent(props.uploadIcon, Upload));
 
 const emit = defineEmits([
   /** 文件上传成功后触发 { file, response } */

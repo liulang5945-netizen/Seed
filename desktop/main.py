@@ -92,6 +92,228 @@ def open_child_log(name: str):
     return open(LOG_DIR / name, "ab", buffering=0)
 
 
+# ---------------------------------------------------------------------------
+# 子进程生命周期兜底（Windows）
+# ---------------------------------------------------------------------------
+# GUI 进程被强杀或崩溃时 _quit() → backend.stop() 这条清理路径根本不会执行，
+# 后端 worker 会独活并继续监听 8000；而就绪探测只看「端口是否响应 /api/health」，
+# 于是下一次启动静默接管了上一轮的陈旧后端 —— 表现为代码改了但行为像旧的。
+# 不靠 Python 层再加一层 try/finally（强杀时同样不执行），改用内核级 Job Object：
+# JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE 使 Job 句柄随主进程消亡时，内核自动终止
+# Job 内全部子进程，与主进程如何死亡无关。
+
+JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x00002000
+JOB_OBJECT_EXTENDED_LIMIT_INFORMATION_CLASS = 9
+ORPHAN_BACKEND_IMAGE = "SeedBackend.exe"
+
+_CHILD_JOB = None
+_CHILD_JOB_FAILED = False
+
+
+def _child_job_handle():
+    """惰性创建「主进程一消失就杀光子进程」的 Job Object（仅 Windows）。"""
+    global _CHILD_JOB, _CHILD_JOB_FAILED
+    if sys.platform != "win32" or _CHILD_JOB_FAILED:
+        return None
+    if _CHILD_JOB is not None:
+        return _CHILD_JOB
+    try:
+        import ctypes
+        from ctypes import wintypes
+
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+
+        class IO_COUNTERS(ctypes.Structure):
+            _fields_ = [
+                ("ReadOperationCount", ctypes.c_ulonglong),
+                ("WriteOperationCount", ctypes.c_ulonglong),
+                ("OtherOperationCount", ctypes.c_ulonglong),
+                ("ReadTransferCount", ctypes.c_ulonglong),
+                ("WriteTransferCount", ctypes.c_ulonglong),
+                ("OtherTransferCount", ctypes.c_ulonglong),
+            ]
+
+        class JOBOBJECT_BASIC_LIMIT_INFORMATION(ctypes.Structure):
+            _fields_ = [
+                ("PerProcessUserTimeLimit", ctypes.c_int64),
+                ("PerJobUserTimeLimit", ctypes.c_int64),
+                ("LimitFlags", wintypes.DWORD),
+                ("MinimumWorkingSetSize", ctypes.c_size_t),
+                ("MaximumWorkingSetSize", ctypes.c_size_t),
+                ("ActiveProcessLimit", wintypes.DWORD),
+                ("Affinity", ctypes.c_size_t),
+                ("PriorityClass", wintypes.DWORD),
+                ("SchedulingClass", wintypes.DWORD),
+            ]
+
+        class JOBOBJECT_EXTENDED_LIMIT_INFORMATION(ctypes.Structure):
+            _fields_ = [
+                ("BasicLimitInformation", JOBOBJECT_BASIC_LIMIT_INFORMATION),
+                ("IoInfo", IO_COUNTERS),
+                ("ProcessMemoryLimit", ctypes.c_size_t),
+                ("JobMemoryLimit", ctypes.c_size_t),
+                ("PeakProcessMemoryUsed", ctypes.c_size_t),
+                ("PeakJobMemoryUsed", ctypes.c_size_t),
+            ]
+
+        job = kernel32.CreateJobObjectW(None, None)
+        if not job:
+            raise OSError(ctypes.get_last_error(), "CreateJobObjectW failed")
+
+        info = JOBOBJECT_EXTENDED_LIMIT_INFORMATION()
+        info.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+        if not kernel32.SetInformationJobObject(
+            job,
+            JOB_OBJECT_EXTENDED_LIMIT_INFORMATION_CLASS,
+            ctypes.byref(info),
+            ctypes.sizeof(info),
+        ):
+            kernel32.CloseHandle(job)
+            raise OSError(ctypes.get_last_error(), "SetInformationJobObject failed")
+
+        _CHILD_JOB = job
+        logger.info("Child job object armed (kill-on-close)")
+        return _CHILD_JOB
+    except Exception as e:
+        # 老系统或受限 Job 环境下可能失败；退化为仅依赖 stop()，不影响启动。
+        _CHILD_JOB_FAILED = True
+        logger.warning(f"Child job object unavailable, orphan cleanup degraded: {e}")
+        return None
+
+
+def adopt_child(process) -> bool:
+    """把子进程纳入 kill-on-close Job，主进程无论怎么死它都会被回收。"""
+    job = _child_job_handle()
+    if job is None or process is None:
+        return False
+    try:
+        import ctypes
+
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        handle = int(process._handle)
+        if not kernel32.AssignProcessToJobObject(job, handle):
+            raise OSError(ctypes.get_last_error(), "AssignProcessToJobObject failed")
+        return True
+    except Exception as e:
+        logger.warning(f"Failed to adopt child PID {getattr(process, 'pid', '?')} into job: {e}")
+        return False
+
+
+def snapshot_processes() -> dict:
+    """进程快照：pid -> (ppid, image_name)。非 Windows 或失败时返回空字典。"""
+    if sys.platform != "win32":
+        return {}
+    try:
+        import ctypes
+        from ctypes import wintypes
+
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        TH32CS_SNAPPROCESS = 0x00000002
+
+        class PROCESSENTRY32(ctypes.Structure):
+            _fields_ = [
+                ("dwSize", wintypes.DWORD),
+                ("cntUsage", wintypes.DWORD),
+                ("th32ProcessID", wintypes.DWORD),
+                ("th32DefaultHeapID", ctypes.POINTER(ctypes.c_ulong)),
+                ("th32ModuleID", wintypes.DWORD),
+                ("cntThreads", wintypes.DWORD),
+                ("th32ParentProcessID", wintypes.DWORD),
+                ("pcPriClassBase", ctypes.c_long),
+                ("dwFlags", wintypes.DWORD),
+                ("szExeFile", ctypes.c_char * 260),
+            ]
+
+        snap = kernel32.CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
+        if snap == -1:
+            return {}
+        result = {}
+        try:
+            entry = PROCESSENTRY32()
+            entry.dwSize = ctypes.sizeof(PROCESSENTRY32)
+            if not kernel32.Process32First(snap, ctypes.byref(entry)):
+                return {}
+            while True:
+                result[int(entry.th32ProcessID)] = (
+                    int(entry.th32ParentProcessID),
+                    entry.szExeFile.decode("latin-1", "replace"),
+                )
+                if not kernel32.Process32Next(snap, ctypes.byref(entry)):
+                    break
+        finally:
+            kernel32.CloseHandle(snap)
+        return result
+    except Exception as e:
+        logger.debug("【snapshot_processes】处理失败（非致命）: %s", e)
+        return {}
+
+
+def tcp_listener_pid(port: int):
+    """返回 IPv4 下监听 ``port`` 的进程 PID；查不到返回 None。"""
+    if sys.platform != "win32":
+        return None
+    try:
+        import ctypes
+        from ctypes import wintypes
+
+        iphlpapi = ctypes.WinDLL("iphlpapi", use_last_error=True)
+        AF_INET = 2
+        TCP_TABLE_OWNER_PID_LISTENER = 3
+
+        class MIB_TCPROW_OWNER_PID(ctypes.Structure):
+            _fields_ = [
+                ("dwState", wintypes.DWORD),
+                ("dwLocalAddr", wintypes.DWORD),
+                ("dwLocalPort", wintypes.DWORD),
+                ("dwRemoteAddr", wintypes.DWORD),
+                ("dwRemotePort", wintypes.DWORD),
+                ("dwOwningPid", wintypes.DWORD),
+            ]
+
+        size = wintypes.DWORD(0)
+        iphlpapi.GetExtendedTcpTable(
+            None, ctypes.byref(size), False, AF_INET, TCP_TABLE_OWNER_PID_LISTENER, 0
+        )
+        buf = ctypes.create_string_buffer(size.value)
+        if (
+            iphlpapi.GetExtendedTcpTable(
+                buf, ctypes.byref(size), False, AF_INET, TCP_TABLE_OWNER_PID_LISTENER, 0
+            )
+            != 0
+        ):
+            return None
+
+        count = ctypes.cast(buf, ctypes.POINTER(wintypes.DWORD))[0]
+        rows = ctypes.cast(
+            ctypes.byref(buf, ctypes.sizeof(wintypes.DWORD)),
+            ctypes.POINTER(MIB_TCPROW_OWNER_PID * count),
+        ).contents
+        for row in rows:
+            raw = row.dwLocalPort
+            # dwLocalPort 是网络字节序
+            if (((raw & 0xFF) << 8) | ((raw >> 8) & 0xFF)) == port:
+                return int(row.dwOwningPid)
+        return None
+    except Exception as e:
+        logger.debug("【tcp_listener_pid】处理失败（非致命）: %s", e)
+        return None
+
+
+def should_reap_listener(owner_pid, snapshot: dict) -> bool:
+    """判定端口占用者是否为「本产品遗留的孤儿后端」，可安全回收。
+
+    两个条件同时成立才回收，避免误杀用户自己起的服务或第二个客户端实例：
+    1. 映像名恰为打包后端入口（该名字只存在于本产品的包里）；
+    2. 其父进程已不在系统里（真孤儿）—— 父进程还活着说明另有实例在正常持有它。
+    """
+    if not owner_pid or owner_pid not in snapshot:
+        return False
+    ppid, image = snapshot[owner_pid]
+    if image.lower() != ORPHAN_BACKEND_IMAGE.lower():
+        return False
+    return ppid not in snapshot
+
+
 def load_settings() -> dict:
     """加载窗口设置"""
     if SETTINGS_FILE.exists():
@@ -130,6 +352,7 @@ class BackendManager:
         if self.is_running():
             return
         self._running = False  # 复位陈旧标志（进程死亡后看门狗重启路径）
+        self._reap_orphan_listener()
 
         if FROZEN:
             # 打包模式：拉起同目录的 SeedBackend.exe（desktop/backend_worker.py
@@ -163,6 +386,7 @@ class BackendManager:
             )
             self._running = True
             logger.info(f"Backend started on port {self.port} (PID: {self.process.pid})")
+            adopt_child(self.process)
 
             # 等待后端就绪
             self._wait_for_ready()
@@ -174,6 +398,43 @@ class BackendManager:
 
         except Exception as e:
             logger.error(f"Failed to start backend: {e}")
+
+    def _reap_orphan_listener(self):
+        """启动前回收上一轮遗留的孤儿后端。
+
+        Job Object 已覆盖「本次运行期间主进程怎么死都回收」，但客户端在本改动
+        之前留下的孤儿、以及 Job 不可用的降级场景仍需处理。就绪探测只看
+        /api/health 有无响应，孤儿会被静默当成「后端已就绪」接管，导致前端加载
+        的其实是上一轮的陈旧 dist —— 必须在启动前显式清掉。
+        """
+        owner = tcp_listener_pid(self.port)
+        if owner is None or owner == os.getpid():
+            return
+        snapshot = snapshot_processes()
+        if not should_reap_listener(owner, snapshot):
+            return
+        logger.warning(f"Reaping orphaned backend on port {self.port} (PID: {owner})")
+        try:
+            import ctypes
+
+            kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+            PROCESS_TERMINATE = 0x0001
+            handle = kernel32.OpenProcess(PROCESS_TERMINATE, False, owner)
+            if not handle:
+                logger.warning(f"OpenProcess failed for orphan PID {owner}")
+                return
+            try:
+                kernel32.TerminateProcess(handle, 1)
+            finally:
+                kernel32.CloseHandle(handle)
+            # 等端口真正释放，否则新后端 bind 会失败
+            for _ in range(20):
+                if tcp_listener_pid(self.port) != owner:
+                    return
+                time.sleep(0.2)
+            logger.warning(f"Port {self.port} still held after reaping PID {owner}")
+        except Exception as e:
+            logger.warning(f"Failed to reap orphaned backend PID {owner}: {e}")
 
     def _start_frozen(self):
         """打包模式：子进程拉起 SeedBackend.exe（console 版后端入口）。"""
@@ -194,6 +455,7 @@ class BackendManager:
             )
             self._running = True
             logger.info(f"Backend worker started on port {self.port} (PID: {self.process.pid})")
+            adopt_child(self.process)
 
             # 等待后端就绪（打包冷启动较慢，给足预算）
             self._wait_for_ready(timeout=120)
@@ -303,6 +565,7 @@ class WebSocketManager:
             )
             self._running = True
             logger.info(f"WebSocket server started on port {self.port} (PID: {self.process.pid})")
+            adopt_child(self.process)
 
             self._wait_for_ready()
 
@@ -951,10 +1214,12 @@ def main():
             # 最小化到托盘而不是退出
             if hasattr(self, "tray") and self.tray.isVisible():
                 self.hide()
+                # 传 QIcon 重载而非 MessageIcon.Information，否则系统气泡会显示
+                # 蓝色感叹号占位图而不是品牌 logo。
                 self.tray.showMessage(
                     "Seed",
                     "已最小化到系统托盘，双击图标恢复窗口",
-                    QSystemTrayIcon.MessageIcon.Information,
+                    self.tray.icon(),
                     2000,
                 )
                 event.ignore()

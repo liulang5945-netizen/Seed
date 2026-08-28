@@ -189,7 +189,10 @@ router.afterEach(() => {
   routeError.value = ''
 })
 
-onErrorCaptured((error) => {
+// return false 会阻止错误继续冒泡到 window，若不主动打日志就完全静默，
+// 渲染期异常（如非法标签名）将只表现为白屏而无任何可诊断线索。
+onErrorCaptured((error, instance, info) => {
+  console.error('[App] 捕获渲染错误:', info, error)
   onRouteError(error)
   return false
 })

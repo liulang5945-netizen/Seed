@@ -53,7 +53,7 @@
             title="知识库上传队列"
             drop-text="拖拽文件到此处加入知识库，或点击选择文件"
             accept-hint="支持 TXT / Markdown / PDF / JSON / CSV / Word"
-            success-text="✅ 上传成功，后台索引中"
+            success-text="上传成功，后台索引中"
             @all-uploaded="refreshKB"
           />
         </div>

@@ -75,8 +75,14 @@ def _verify_packaged_frontend() -> None:
     print("  前端一致性校验通过（源码 dist = 客户端内置 dist）")
 
 
-def _verify_artifacts(skip_nsis: bool) -> list[str]:
-    """验证构建产物存在且大小合理。"""
+def _verify_artifacts(expect_installer: bool) -> list[str]:
+    """验证构建产物存在且大小合理。
+
+    ``expect_installer`` 表达的是「本次是否真的应该产出安装包」这一事实，
+    而不是命令行标志。二者不等价：makensis 缺失时 NSIS 环节被判为非致命
+    并跳过，此时再要求 ``SeedSetup.exe`` 存在，会让一次完全健康的构建
+    必然以「产物验证失败」收尾——失败信息与实际状况不符，比不检查更糟。
+    """
     errors: list[str] = []
 
     # 前端
@@ -104,7 +110,7 @@ def _verify_artifacts(skip_nsis: bool) -> list[str]:
         errors.append(str(exc))
 
     # NSIS（installer.nsi 的 OutFile 为 ..\dist\SeedSetup.exe）
-    if not skip_nsis:
+    if expect_installer:
         if not (DIST_DIR / "SeedSetup.exe").exists():
             errors.append("dist/SeedSetup.exe 不存在")
 
@@ -184,19 +190,42 @@ def build_pyinstaller() -> bool:
     )
 
 
-def build_nsis() -> bool:
-    """NSIS 安装程序编译。"""
-    makensis = shutil.which("makensis") or shutil.which("makensis.exe")
+def _find_makensis() -> str | None:
+    """定位 makensis。
+
+    NSIS 安装器默认不写 PATH，只查 PATH 会把「已装 NSIS」误判成「未装」，
+    于是明明能产出安装包的机器却静默跳过这一步，故补上默认安装位置。
+    """
+    found = shutil.which("makensis") or shutil.which("makensis.exe")
+    if found:
+        return found
+    for candidate in (
+        Path(r"C:\Program Files (x86)\NSIS\makensis.exe"),
+        Path(r"C:\Program Files\NSIS\makensis.exe"),
+    ):
+        if candidate.is_file():
+            return str(candidate)
+    return None
+
+
+def build_nsis() -> tuple[bool, bool]:
+    """NSIS 安装程序编译。
+
+    返回 ``(是否可继续, 是否应产出安装包)``。第二个值把「这台机器到底有没有
+    编译安装包」这一事实回传给验证环节，避免验证靠 ``--skip-nsis`` 标志去猜。
+    """
+    makensis = _find_makensis()
     if not makensis:
         print("  WARNING: makensis 未找到，跳过 NSIS 编译")
         print("  安装 NSIS: https://nsis.sourceforge.io/")
-        return True  # 非致命
+        return True, False  # 非致命，且不应再要求安装包存在
 
-    return _run(
+    ok = _run(
         [makensis, str(ROOT / "desktop" / "installer.nsi")],
         cwd=ROOT / "desktop",
         label="[5/5] NSIS 安装程序",
     )
+    return ok, ok
 
 
 def main() -> None:
@@ -211,7 +240,9 @@ def main() -> None:
     print(f"Seed v{version} — 构建脚本")
 
     if args.check_only:
-        errors = _verify_artifacts(args.skip_nsis)
+        # 仅验证时无法得知 NSIS 是否可用，按「本机能否编译安装包」这一事实判定，
+        # 与完整构建走同一套逻辑，避免两条路径对同一产物给出不同结论。
+        errors = _verify_artifacts(not args.skip_nsis and _find_makensis() is not None)
         if errors:
             print("\n产物验证失败:")
             for e in errors:
@@ -265,8 +296,10 @@ def main() -> None:
         sys.exit(1)
 
     # Step 5: NSIS
+    installer_expected = False
     if not args.skip_nsis:
-        if not build_nsis():
+        ok, installer_expected = build_nsis()
+        if not ok:
             print("\nNSIS 编译失败")
             sys.exit(1)
     else:
@@ -274,7 +307,7 @@ def main() -> None:
 
     # Verify
     print("\n验证构建产物...")
-    errors = _verify_artifacts(args.skip_nsis)
+    errors = _verify_artifacts(installer_expected)
     if errors:
         print("产物验证失败:")
         for e in errors:
