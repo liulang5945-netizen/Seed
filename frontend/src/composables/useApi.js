@@ -9,6 +9,7 @@ import { ref } from 'vue';
 import { useAppStore } from '../stores/appStore.js';
 import { useRuntimeStore } from '../stores/runtimeStore.js';
 import { API_BASE, authFetch } from './apiClient.js';
+import { nativeApi } from './nativeApi.js';
 
 /**
  * 动态 API 基地址：
@@ -51,7 +52,7 @@ export function useApi() {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
-      const resp = await fetch(`${API_BASE}/api/runtime/bootstrap`, { signal: controller.signal });
+      const resp = await nativeApi.runtimeBootstrap({ signal: controller.signal });
       clearTimeout(timeoutId);
 
       if (!resp.ok) return null;
@@ -83,7 +84,7 @@ export function useApi() {
       const controller = new AbortController();
       const timeout = 5000;
       const timeoutId = setTimeout(() => controller.abort(), timeout);
-      const resp = await authFetch(`${API_BASE}/api/runtime/status`, { signal: controller.signal });
+      const resp = await nativeApi.runtimeStatus({ signal: controller.signal });
       clearTimeout(timeoutId);
 
       if (!resp.ok) {

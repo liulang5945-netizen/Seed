@@ -211,7 +211,7 @@ v-for="(node, i) in quickOpenMatches" :key="node.path"
 
 <script setup>
 import { ref, reactive, computed, watch, onMounted, onUnmounted, onActivated, onDeactivated, inject, nextTick } from 'vue';
-import { API_BASE, authFetch } from '../composables/apiClient.js';
+import { nativeApi } from '../composables/nativeApi.js';
 import { useWorkbenchProjection } from '../composables/useWorkbenchProjection.js';
 import { Terminal, FolderOpen, Folder, FileCode, FileText, Image as ImageIcon, Database, Edit3, Edit2, Trash2, Crosshair, Activity, Search, RefreshCw } from 'lucide-vue-next';
 import MonacoEditor from '../components/MonacoEditor.vue';
@@ -336,8 +336,8 @@ async function openPathDialog() {
   pathDialogError.value = '';
   if (quickPaths.value.length) return;
   try {
-    const r = await authFetch(`${API_BASE}/api/system/quick_paths`);
-    if (r.ok) { const d = await r.json(); quickPaths.value = d.paths || []; }
+    const data = await nativeApi.systemQuickPaths();
+    quickPaths.value = data.paths || [];
   } catch (e) { /* 快速路径仅为便捷入口，加载失败不打断对话框 */ }
 }
 
@@ -347,7 +347,7 @@ async function browseFolder() {
   picking.value = true;
   pathDialogError.value = '';
   try {
-    const r = await authFetch(`${API_BASE}/api/system/select_folder`);
+    const r = await nativeApi.systemSelectFolder();
     const data = await r.json().catch(() => ({}));
     if (r.ok && data.status === 'ok' && data.path) {
       newPathInput.value = data.path;

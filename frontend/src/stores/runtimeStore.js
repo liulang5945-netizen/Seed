@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { API_BASE, authFetch } from '@/composables/apiClient.js'
+import { nativeApi } from '@/composables/nativeApi.js'
 
 export const useRuntimeStore = defineStore('runtime', () => {
   if (typeof window !== 'undefined' && !window.__taijiRuntimeAuthListener) {
@@ -441,7 +441,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
   }
 
   async function refreshRuntime() {
-    const resp = await authFetch(`${API_BASE}/api/runtime/status`)
+    const resp = await nativeApi.runtimeStatus()
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
     return applyRuntimeStatus(await resp.json())
   }

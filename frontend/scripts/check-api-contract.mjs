@@ -15,6 +15,7 @@ const allowedGenericTransport = new Set([
 const ignoredFiles = new Set([
   path.join('components', 'FileUploadQueue.vue'),
 ])
+const facadeFile = path.join('composables', 'nativeApi.js')
 
 function collectFiles(dir, result = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -156,6 +157,14 @@ for (const absolute of collectFiles(srcRoot)) {
   const relative = path.relative(srcRoot, absolute)
   if (relative.split(path.sep).includes('__tests__') || ignoredFiles.has(relative)) continue
   const content = fs.readFileSync(absolute, 'utf8')
+
+  if (relative === facadeFile) {
+    for (const match of content.matchAll(/['"](\/api\/[A-Za-z0-9._~!:@\/-]+)['"]/g)) {
+      const endpoint = match[1]
+      if (!apiPaths[endpoint]) failures.push(`${relative}: ${endpoint} is absent from OpenAPI snapshot`)
+      else seenLiterals.add(`${relative}:${endpoint}`)
+    }
+  }
 
   for (const call of extractCalls(content)) {
     const { candidates } = endpointCandidates(call.firstArg)

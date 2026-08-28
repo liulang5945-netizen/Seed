@@ -7,7 +7,7 @@
  * reversible UI command exposed here.
  */
 import { computed, readonly, ref } from 'vue'
-import { API_BASE, authFetch } from './apiClient.js'
+import { nativeApi } from './nativeApi.js'
 
 const capabilities = ref(null)
 const events = ref([])
@@ -24,30 +24,15 @@ function isEnabled(capabilityId) {
   return capabilityMap().get(capabilityId)?.enabled === true
 }
 
-async function readJson(path, options) {
-  const url = `${API_BASE}${path}`
-  const response = options === undefined
-    ? await authFetch(url)
-    : await authFetch(url, options)
-  const payload = await response.json().catch(() => ({}))
-  if (!response.ok) {
-    const detail = typeof payload.detail === 'string'
-      ? payload.detail
-      : payload.detail?.error || payload.message
-    throw new Error(detail || `Workbench 请求失败（HTTP ${response.status}）`)
-  }
-  return payload
-}
-
 async function refreshCapabilities() {
-  const payload = await readJson('/api/workbench/capabilities')
+  const payload = await nativeApi.workbenchCapabilities()
   capabilities.value = payload
   error.value = ''
   return payload
 }
 
 async function refreshEvents() {
-  const payload = await readJson('/api/workbench/events')
+  const payload = await nativeApi.workbenchEvents()
   events.value = Array.isArray(payload.events) ? payload.events : []
   error.value = ''
   return events.value
@@ -76,19 +61,14 @@ async function listDirectory(path = '.') {
   if (!isEnabled('workspace.list')) {
     throw new Error('workspace.list 未接入')
   }
-  const query = encodeURIComponent(path || '.')
-  const payload = await readJson(`/api/workbench/files?path=${query}`)
+  const payload = await nativeApi.workbenchFiles(path)
   error.value = ''
   return Array.isArray(payload.entries) ? payload.entries : []
 }
 
 async function setWorkspaceRoot(path) {
   await ensureCapabilities()
-  const payload = await readJson('/api/workbench/workspace', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ path }),
-  })
+  const payload = await nativeApi.setWorkbenchWorkspace({ path })
   // A workspace root is part of the capability context. Refresh the snapshot
   // so every subsequent operation is visibly tied to the selected root.
   await refreshCapabilities()
@@ -101,18 +81,14 @@ async function readFile(path) {
   if (!isEnabled('workspace.read')) {
     throw new Error('workspace.read 未接入')
   }
-  const query = encodeURIComponent(path)
-  const payload = await readJson(`/api/workbench/file?path=${query}`)
+  const payload = await nativeApi.workbenchFile(path)
   error.value = ''
   return payload
 }
 
 async function resolveProgrammingLanguage(path, lspLanguageId = '') {
   await ensureCapabilities()
-  const query = `path=${encodeURIComponent(path)}${lspLanguageId
-    ? `&lsp_language_id=${encodeURIComponent(lspLanguageId)}`
-    : ''}`
-  const payload = await readJson(`/api/workbench/programming-language?${query}`)
+  const payload = await nativeApi.programmingLanguage(path, lspLanguageId)
   error.value = ''
   return payload
 }
@@ -125,23 +101,19 @@ async function setEditorLanguage({
   clearOverride = false,
 }) {
   await ensureCapabilities()
-  const payload = await readJson('/api/workbench/execute', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      intent_id: `ui:editor.set_language:${Date.now()}`,
-      kind: 'editor.set_language',
-      parameters: {
-        path,
-        programming_language_id: programmingLanguageId,
-        editor_language_id: editorLanguageId,
-        user_override: userOverride,
-        clear_override: clearOverride,
-      },
-      snapshot_id: snapshotId.value,
-      confidence: 1,
-      tick: 0,
-    }),
+  const payload = await nativeApi.workbenchExecute({
+    intent_id: `ui:editor.set_language:${Date.now()}`,
+    kind: 'editor.set_language',
+    parameters: {
+      path,
+      programming_language_id: programmingLanguageId,
+      editor_language_id: editorLanguageId,
+      user_override: userOverride,
+      clear_override: clearOverride,
+    },
+    snapshot_id: snapshotId.value,
+    confidence: 1,
+    tick: 0,
   })
   error.value = ''
   return payload.outcome?.result || payload
@@ -157,19 +129,15 @@ async function previewIntent({
   mcpRegistrySnapshotId = '',
 }) {
   await ensureCapabilities()
-  const payload = await readJson('/api/workbench/preview', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      intent_id: intentId,
-      kind,
-      parameters,
-      expected_outcome: expectedOutcome,
-      confidence,
-      tick,
-      mcp_registry_snapshot_id: mcpRegistrySnapshotId,
-      snapshot_id: snapshotId.value,
-    }),
+  const payload = await nativeApi.workbenchPreview({
+    intent_id: intentId,
+    kind,
+    parameters,
+    expected_outcome: expectedOutcome,
+    confidence,
+    tick,
+    mcp_registry_snapshot_id: mcpRegistrySnapshotId,
+    snapshot_id: snapshotId.value,
   })
   error.value = ''
   return payload
@@ -186,20 +154,16 @@ async function executeIntent({
   mcpRegistrySnapshotId = '',
 }) {
   await ensureCapabilities()
-  const payload = await readJson('/api/workbench/execute', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      intent_id: intentId,
-      kind,
-      parameters,
-      expected_outcome: expectedOutcome,
-      confidence,
-      tick,
-      approval_token: approvalToken,
-      mcp_registry_snapshot_id: mcpRegistrySnapshotId,
-      snapshot_id: snapshotId.value,
-    }),
+  const payload = await nativeApi.workbenchExecute({
+    intent_id: intentId,
+    kind,
+    parameters,
+    expected_outcome: expectedOutcome,
+    confidence,
+    tick,
+    approval_token: approvalToken,
+    mcp_registry_snapshot_id: mcpRegistrySnapshotId,
+    snapshot_id: snapshotId.value,
   })
   error.value = ''
   return payload
@@ -214,21 +178,17 @@ async function preflightLoop({
   checkpointBoundary = 'after_each_step',
 }) {
   await ensureCapabilities()
-  const payload = await readJson('/api/workbench/loop/preflight', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      loop_id: loopId,
-      intents: intents.map(item => ({
-        ...item,
-        mcp_registry_snapshot_id: item.mcp_registry_snapshot_id
-          || (item.kind?.startsWith('mcp.') ? mcpRegistry.value?.snapshot_id || '' : ''),
-      })),
-      max_steps: maxSteps,
-      max_budget_units: maxBudgetUnits,
-      on_failure: onFailure,
-      checkpoint_boundary: checkpointBoundary,
-    }),
+  const payload = await nativeApi.loopPreflight({
+    loop_id: loopId,
+    intents: intents.map(item => ({
+      ...item,
+      mcp_registry_snapshot_id: item.mcp_registry_snapshot_id
+        || (item.kind?.startsWith('mcp.') ? mcpRegistry.value?.snapshot_id || '' : ''),
+    })),
+    max_steps: maxSteps,
+    max_budget_units: maxBudgetUnits,
+    on_failure: onFailure,
+    checkpoint_boundary: checkpointBoundary,
   })
   error.value = ''
   return payload
@@ -244,22 +204,18 @@ async function executeLoop({
   checkpointBoundary = 'after_each_step',
 }) {
   await ensureCapabilities()
-  const payload = await readJson('/api/workbench/loop/execute', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      loop_id: loopId,
-      preflight_id: preflightId,
-      intents: intents.map(item => ({
-        ...item,
-        mcp_registry_snapshot_id: item.mcp_registry_snapshot_id
-          || (item.kind?.startsWith('mcp.') ? mcpRegistry.value?.snapshot_id || '' : ''),
-      })),
-      max_steps: maxSteps,
-      max_budget_units: maxBudgetUnits,
-      on_failure: onFailure,
-      checkpoint_boundary: checkpointBoundary,
-    }),
+  const payload = await nativeApi.loopExecute({
+    loop_id: loopId,
+    preflight_id: preflightId,
+    intents: intents.map(item => ({
+      ...item,
+      mcp_registry_snapshot_id: item.mcp_registry_snapshot_id
+        || (item.kind?.startsWith('mcp.') ? mcpRegistry.value?.snapshot_id || '' : ''),
+    })),
+    max_steps: maxSteps,
+    max_budget_units: maxBudgetUnits,
+    on_failure: onFailure,
+    checkpoint_boundary: checkpointBoundary,
   })
   error.value = ''
   return payload
