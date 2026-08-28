@@ -770,6 +770,40 @@ P4 的最小真实经历边界已落地：
 
 改动文件（1 个）：`scripts/release.py`（+41/−11）。提交 `878316f`（含本节 plans 与 §14 修订，2 文件 +66/−12）。
 
+### 13.7 解除 CI 下游 job 的 `needs: test` 挟持（2026-08-28）
+
+本轮起点是一个**被推翻的假设**。上一轮收尾时我建议"把 `check:aliases` 与 `npm test` 接进 CI 前端 job"，动手前通读 `ci.yml`（373 行，不做局部读——`needs` 链局部读极易误判）才发现：`build-frontend` 第 204-206 行**早已有 `npx vitest run`**，而 `hljsAliases.test.js` 的断言里就含"磁盘文件与生成器输出逐字节一致（等价于 `--check`）"。即别名门禁自 `a2a4488` 起就已在 CI 生效。实跑 `npx vitest run` 确认收集到该文件（20 文件 / 181 测试全绿，含"别名键集合与当前 highlight.js 完全一致"）。**按收敛原则，不新增任何重复步骤。**
+
+同时排除了第二个疑似风险：`highlight.js` 声明为 `^11.11.1`，但 CI 用 `npm ci` 按 lockfile 装（钉死 11.11.1，与本地 `node_modules` 一致），caret 并非静默漂移口子——真正刷新 lockfile 的时刻（`npm update` / dependabot）会让 vitest 那条断言当场变红，该路径已被封住。
+
+真问题在依赖图上：`build-frontend` 与 `docker-build` 都挂着 `needs: test`，而 §14.8 已实测过其后果——`test` 连红 7 次期间这两个 job 一直是 `skipped` 而非 `failure`，**从未执行**。这与 §13.6 治的是同一个病（门禁不在必经路径上），病灶换到了 CI 的依赖图里：一个只改前端的 PR，若 Python 矩阵因无关原因（含 flaky）变红，eslint / vitest 别名门禁 / npm audit / E2E 全部静默失效一次。
+
+解除依赖前逐条排除了耦合：
+
+| 核查项 | 结论 |
+| --- | --- |
+| `build-frontend` 是否消费 `test` 的产物 | 否。10 个步骤全部自给（`npm ci` 起链） |
+| `e2e/smoke.cjs` 是否需要后端 | 否。只依赖 `vite preview`（`BASE_URL` 默认 5173，CI 传 4173），不访问 `/api/*` |
+| `docker-build` 是否消费 `test` 的产物 | 否。镜像构建自带完整依赖安装 |
+| 其余 job 的写法 | `startup-smoke`、`test-windows` 本就无 `needs`——只有这两个挂着，不一致本身即线索 |
+
+`docker-build` 一并解除的理由更强：§14.8 记载的两个缺陷（Dockerfile 缺 `data/` 目录、`seed_platform` 未随包安装导致启动 `ModuleNotFoundError`）都是它**独家**发现的，Python 测试矩阵抓不到。把一个具备独立发现能力的 job 挂在另一个 job 之后，等于让这份能力随上游一起失效。
+
+验证（本地解析真实依赖图，而非只验 YAML 能否 parse）：
+
+| 手段 | 结果 |
+| --- | --- |
+| `yaml.safe_load` 后枚举 `jobs` 的 `needs` | 5 个 job 全部 `needs = None`，依赖图扁平化，无悬空引用 |
+| 同时输出各 job 步骤数 | 26 / 10 / 5 / 7 / 8，与改前一致——只删了 `needs` 行，未误伤步骤 |
+| 枚举 `build-frontend` 十步的 `run`/`uses` | `npx vitest run` 在位，别名门禁执行点未动 |
+| `npx vitest run` 实跑 | 20 文件 / 181 测试通过，`hljsAliases.test.js` 6 测试全绿 |
+
+并发面变化：原先 `test`（2 矩阵）跑完才轮到 2 个下游，现在 5 个 job 立即并发，峰值 7（2+1+1+2+1），远低于公开仓库 20 的并发上限；副作用是反馈更快。
+
+**本轮刻意未做**：`ci.yml` 既无 `concurrency` 也无 `timeout-minutes`（见 §14.14）。二者是真实欠账，但本轮意图是"解除门禁挟持"，混入并发治理会让这次提交不可审计。
+
+改动文件（1 个）：`.github/workflows/ci.yml`（删 2 行 `needs: test`，加 8 行理由注释）。
+
 ## 14. 持续门禁
 
 - Taiji/Seed/Legacy 所有权 AST 测试；
@@ -779,7 +813,7 @@ P4 的最小真实经历边界已落地：
 - 数据 manifest、实验注册、代码 commit 和训练 lineage；
 - planned/actual learned state 与资源预算；
 - 后端、前端、桌面、Legacy-off 启动和安全门禁；
-- 构建期静态产物与上游依赖同步：`npm run check:aliases`（`hljsAliases.js` vs 当前 highlight.js，过期 exit 1）。该断言有两个执行点——`npm test` 中的 `src/__tests__/hljsAliases.test.js`，以及 `scripts/release.py` 的 `[1/5]` 前置步骤（不受 `--skip-frontend` 影响，失败即中止且不清理旧产物）。凡引入「由依赖推导、写死进源码」的产物，都必须同时引入这类门禁，**并且接到发版必经路径上**——只挂在测试里的门禁会被「升级依赖后直接打包」绕过。
+- 构建期静态产物与上游依赖同步：`npm run check:aliases`（`hljsAliases.js` vs 当前 highlight.js，过期 exit 1）。该断言有两个执行点，且**两条都在必经路径上**——(1) CI `build-frontend` job 的 `npx vitest run`，经由 `src/__tests__/hljsAliases.test.js` 的逐字节一致断言（该 job 已于 §13.7 解除 `needs: test`，不再会被上游红隐藏为 skipped）；(2) `scripts/release.py` 的 `[1/5]` 前置步骤（不受 `--skip-frontend` 影响，失败即中止且不清理旧产物）。凡引入「由依赖推导、写死进源码」的产物，都必须同时引入这类门禁，**并且确认它在每条必经路径上都真的会执行**——只挂在测试里会被「升级依赖后直接打包」绕过；挂在测试里但那个 job 被 `needs:` 挟持，则连测试都不会跑。
 
 辅助训练结果必须标记 `native-assisted`；只有不依赖辅助 teacher 决策且能继续终身学习的路径才能标记 `native-local`。A0–A9 的目的追溯和 Gate 定义以 Taiji v1 架构文档为准。
 
@@ -882,6 +916,7 @@ P4 的最小真实经历边界已落地：
 - **修法要消除重复清单本身，而非补一个包**：除补 `COPY seed_platform/ ./seed_platform/` 外，在 `pip install` 之后加一道**构建期导入断言** `RUN python -c "import api.app"`，把「镜像内缺包」从运行时 smoke 前移到 build 层，此后任何漏拷贝立即在构建时失败。断言位置须在前端产物与 `data/` 之前才安全，这一点经核实：`api/app.py` 的 `StaticFiles`/`dist` 使用全在第 264 行之后的 app 工厂函数体内，模块级只做路径常量计算，`seed_platform/paths.py` 的 `makedirs` 均带 `exist_ok=True`，故 `import api.app` 不依赖 dist 或 `data/`（本机同句实测退出 0，证明断言不会误红）。清单一致性亦已复核：pyproject include 的 5 个包与 Dockerfile `COPY` 完全对齐，`MISSING: none`；`desktop/` 不在 include 内，仅由 `[project.scripts]` 的 PyQt 桌面入口使用，容器不需要。
 - **由此得到的通用纪律**：任何"手工枚举 + 上游有权威清单"的结构都是复发源，收口时要么让枚举可校验、要么加一道断言让偏差立刻失败；而**多步 job 只有全部步骤都绿才叫绿**——`docker-build` 的 `Build image` 打勾极易被误读成该 job 已通过。
 - **闭环已实证（2026-08-26）**：`gh run view 32984530278 --json status,conclusion` 返回 `status=completed` / `conclusion=success`，7 个 job（`test 3.10`/`test 3.12`/`test-windows`/`Startup smoke (legacy)`/`Startup smoke (no-legacy)`/`build-frontend`/`docker-build`）全绿，其中 `docker-build` 的 `Startup smoke and healthcheck` 通过，确认 `seed_platform` 漏拷已修且构建期导入断言不误红。查询时注意：run 未结束时 `status=queued` 且 `conclusion=""`，此刻 `--log-failed` 会拒绝执行，须等 `completed` 再判定，不要把中途快照当结论。
+- **结构性收口：`needs` 已删除，本条从「纪律」降级为「历史成因」（2026-08-28，详见 §13.7）**。上面那条纪律（"核对 job 集合是否都真的执行了"）是**依赖人记得去查**的补偿手段，属于下位对策。经核实 `build-frontend` / `docker-build` 均不消费 `test` 的任何产物（前者 10 步自 `npm ci` 起自给、`e2e/smoke.cjs` 只依赖 `vite preview` 不碰后端；后者镜像构建自带依赖安装），两处 `needs: test` 已删除，5 个 job 全部 `needs = None`。此后该失效模式**不可能再发生**，而非"要记得检查"。`skipped` 现象本身的描述仍然成立，保留作为成因记录。
 
 ### 14.9 npm 侧的沙箱事实与安全升级手法
 
@@ -943,6 +978,15 @@ P4 的最小真实经历边界已落地：
 - **最小推理内核边界：8 / 35 模块、6623 行（占 `taiji/` 25404 行的 26%）**。从 `taiji.model.Taiji` 出发的传递闭包为 `contracts`2583 + `memory`907 + `model`810 + `config`603 + `fabric`591 + `sparse`548 + `state`337 + `organs`244。**闭包外 27 个模块与推理无关**，含最大的 `adapter.py`(6803) 以及 `concept_formation`/`perception`/`workspace`/`world_learning`/`planning`/`executive`。`contracts.py` 虽占闭包 39%，但是纯 dataclass + `_check_version`/`_check_text`/`_check_unit` 校验 + hashlib，且 `fabric`/`sparse` 只从它取一个 `StructuralTopologyProposal`，实际可再砍大半。
 - **checkpoint 序列化耦合：低**。全包 `torch.save` / `torch.load` **0 处调用**；`checkpoint()` 统一返回 `{name: tensor.detach().cpu().clone()}` 的纯 dict（见 `perception.py:910`、`workspace.py:342`、`affordance.py:529` 等），`CHECKPOINT_FORMAT = "taiji-native-v8"` 为自定义格式。导出为 JSON / safetensors / 裸 Float32Array 不需改动内核逻辑，只需在边界写 dump 脚本。
 - **尚未核查、不得先行决定的一项**：上述 6623 行是 Python，WASM 化有两条路且各有代价——(a) Pyodide 装载 Python + 一层纯 JS/WASM mini-tensor 替换 torch：快，但需下载约 6MB 运行时并写 torch shim；(b) 用 Rust/C++ 重写内核再编译：产物干净，但等于重写数值代码，且必须与 Python 版保持逐位一致，风险最高——`plans/manifests/taiji_native_runtime_profile_v1.json` 的 controls 里本就有 `cross_device_numerical_consistency_when_available`，说明项目自身对数值一致性有硬要求。此二选一需要独立尽调后再定，**不能因为依赖面结论乐观就顺势拍板**。
+
+### 14.14 CI 未设 `concurrency` 与 `timeout-minutes`（2026-08-28 记账，本轮刻意未做）
+
+`.github/workflows/ci.yml` 全文既无 `concurrency` 也无 `timeout-minutes`（grep 三个关键词零命中）。§13.7 删掉两处 `needs: test` 后 5 个 job 立即全并发，峰值 7 个（`test`×2 + `build-frontend` + `docker-build` + `startup-smoke`×2 + `test-windows`），低于公开仓库 20 的并发上限，故本轮不构成问题。两项欠账的真实风险各自独立：
+
+- 无 `concurrency` + `cancel-in-progress`：同一 PR 连续推送时旧 run 不取消，白烧额度；PR 迭代频繁时尤甚。
+- 无 `timeout-minutes`：任一步骤挂死（`vite preview` 端口未就绪、compose 健康检查轮询、pip 解析）会跑满 runner 默认 6 小时上限才被杀。
+
+未在本轮一并处理是刻意的：本轮的可审计意图是"解除门禁挟持"，把并发治理混进同一次提交会让改动动机不再单一，日后回溯无法判断某行是为哪个目标而改。此项待独立一轮处理。
 
 ## 15. 停止项
 

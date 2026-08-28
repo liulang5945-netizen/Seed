@@ -180,9 +180,12 @@ jobs:
             report.xml
             coverage.xml
 
+  # F02: 不设 needs——本 job 不消费 test 的任何产物（e2e/smoke.cjs 只依赖 vite
+  # preview，不碰后端）。挂 needs: test 会让 test 红时本 job 变成 skipped 而非
+  # failure（§14.8 实测：test 连红 7 次期间本 job 从未执行），于是 vitest 里的
+  # hljsAliases 同步门禁、eslint、npm audit 全部静默失效。只改前端的 PR 尤其危险。
   build-frontend:
     runs-on: ubuntu-latest
-    needs: test
     steps:
       - uses: actions/checkout@v4
 
@@ -233,9 +236,12 @@ jobs:
           sleep 3
           node e2e/smoke.cjs
 
+  # R4: 同 F02，不设 needs——镜像构建自带完整依赖安装，与 test 无产物耦合。
+  # §14.8 记载的两个缺陷（Dockerfile 缺 data/ 目录、seed_platform 未随包安装导致
+  # 启动 ModuleNotFoundError）都是本 job 独家发现的，Python 测试矩阵抓不到。
+  # 把它挂在 test 之后，等于让这份独立发现能力在 test 红时一并失效。
   docker-build:
     runs-on: ubuntu-latest
-    needs: test
     steps:
       - uses: actions/checkout@v4
 
