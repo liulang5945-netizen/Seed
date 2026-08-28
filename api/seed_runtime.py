@@ -74,6 +74,7 @@ class SeedRuntime:
 
         self._workbench_environment = WorkbenchEnvironment()
         self._workbench_audit = WorkbenchAuditLog()
+        self._workbench_loop_state: dict[str, Any] = {}
         self._lock = threading.Lock()
 
     @staticmethod
@@ -356,6 +357,7 @@ class SeedRuntime:
                         "audit": self._workbench_audit.to_payload(),
                         "language_state": workbench.language_state_checkpoint(),
                         "transaction_state": workbench.transaction_state_checkpoint(),
+                        "loop_state": dict(self._workbench_loop_state),
                     },
                 },
             )
@@ -446,6 +448,21 @@ class SeedRuntime:
         transaction_payload = payload.get("transaction_state")
         if isinstance(transaction_payload, Mapping):
             self._workbench_environment.restore_transaction_state(transaction_payload)
+        loop_payload = payload.get("loop_state")
+        if isinstance(loop_payload, Mapping):
+            committed = loop_payload.get("committed_request_ids", ())
+            if isinstance(committed, (str, bytes)) or not isinstance(
+                committed, Sequence
+            ):
+                raise ValueError("workbench loop checkpoint request ids are invalid")
+            self._workbench_loop_state = {
+                "format": str(loop_payload.get("format", "")),
+                "version": int(loop_payload.get("version", 0)),
+                "loop_id": str(loop_payload.get("loop_id", "")),
+                "preflight_id": str(loop_payload.get("preflight_id", "")),
+                "committed_request_ids": [str(item) for item in committed],
+                "status": str(loop_payload.get("status", "")),
+            }
 
     def preview_workbench_intent(
         self,
@@ -533,6 +550,196 @@ class SeedRuntime:
             ),
             "checkpoint_boundary": result.get("checkpoint", {}).get("boundary"),
         }
+        return result
+
+    def execute_preflighted_workbench_loop(
+        self,
+        intents: Sequence[Any],
+        requests: Sequence[Any],
+        *,
+        loop_id: str,
+        preflight_id: str,
+        max_steps: int = 8,
+        max_budget_units: float = 32.0,
+        on_failure: str = "stop",
+        checkpoint_boundary: str = "after_each_step",
+        learn: bool = False,
+    ) -> dict[str, Any]:
+        """Execute only an unchanged preflight, checkpointing every attempted step."""
+
+        from seed_platform.workbench import WorkbenchActionRequest
+        from taiji import ActionIntent
+
+        environment = self._sync_workbench_root()
+        if isinstance(intents, (str, bytes)) or not isinstance(intents, Sequence):
+            raise TypeError("loop intents must be a sequence")
+        if isinstance(requests, (str, bytes)) or not isinstance(requests, Sequence):
+            raise TypeError("loop requests must be a sequence")
+        if len(intents) != len(requests):
+            raise ValueError("loop intents and requests must have the same length")
+        typed_requests = tuple(requests)
+        for intent, request in zip(intents, typed_requests):
+            if not isinstance(intent, ActionIntent):
+                raise TypeError("loop intents must contain ActionIntent values")
+            if not isinstance(request, WorkbenchActionRequest):
+                raise TypeError(
+                    "loop requests must contain WorkbenchActionRequest values"
+                )
+            if (
+                request.intent_id != intent.intent_id
+                or request.capability_id != intent.kind
+                or dict(request.parameters) != dict(intent.parameters)
+            ):
+                raise ValueError("loop intent and workbench request binding drifted")
+
+        preflight = environment.preflight_loop(
+            typed_requests,
+            loop_id=loop_id,
+            max_steps=max_steps,
+            max_budget_units=max_budget_units,
+            on_failure=on_failure,
+            checkpoint_boundary=checkpoint_boundary,
+        )
+        result: dict[str, Any] = {
+            "format": "seed-workbench-loop-v1",
+            "version": 1,
+            "loop_id": str(loop_id),
+            "preflight_id": str(preflight_id),
+            "preflight": preflight,
+            "steps": [],
+            "completed_prefix": 0,
+            "status": "rejected",
+        }
+        if not preflight.get("accepted"):
+            result["error_code"] = str(
+                preflight.get("error_code", "preflight_rejected")
+            )
+            result["error"] = str(preflight.get("error", "loop preflight was rejected"))
+            return result
+        if preflight.get("preflight_id") != preflight_id:
+            result["error_code"] = "preflight_identity_mismatch"
+            result["error"] = "provided preflight_id does not match current requests"
+            return result
+
+        committed = {
+            str(item)
+            for item in self._workbench_loop_state.get("committed_request_ids", ())
+        }
+        replayed = [
+            request.request_id
+            for request in typed_requests
+            if request.request_id in committed
+        ]
+        if replayed:
+            result["error_code"] = "loop_request_already_committed"
+            result["error"] = "loop request was already committed in a checkpoint"
+            result["replayed_request_ids"] = replayed
+            return result
+
+        self._workbench_loop_state = {
+            "format": "seed-workbench-loop-v1",
+            "version": 1,
+            "loop_id": str(loop_id),
+            "preflight_id": str(preflight_id),
+            "committed_request_ids": [],
+            "status": "running",
+        }
+        checkpoint_path: Path | None = None
+        for index, (intent, request) in enumerate(zip(intents, typed_requests)):
+            step: dict[str, Any] = {
+                "index": index,
+                "request_id": request.request_id,
+                "intent_id": request.intent_id,
+                "capability_id": request.capability_id,
+            }
+            try:
+                execution = self.execute_workbench_intent(
+                    intent,
+                    snapshot_id=request.snapshot_id,
+                    approval_token=request.approval_token,
+                    mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
+                    learn=learn,
+                )
+                outcome = dict(execution.get("outcome") or {})
+                step.update(
+                    {
+                        "status": str(outcome.get("status", "error")),
+                        "success": bool(outcome.get("success", False)),
+                        "policy": execution.get("policy"),
+                        "outcome": outcome,
+                        "tool_call": execution.get("tool_call"),
+                    }
+                )
+            except (TypeError, ValueError, RuntimeError) as exc:
+                step.update(
+                    {
+                        "status": "error",
+                        "success": False,
+                        "error_code": "loop_step_error",
+                        "error": str(exc),
+                    }
+                )
+
+            committed_ids = [
+                *self._workbench_loop_state.get("committed_request_ids", ()),
+                request.request_id,
+            ]
+            self._workbench_loop_state = {
+                **self._workbench_loop_state,
+                "committed_request_ids": committed_ids,
+                "status": "running" if step.get("success") else "failed",
+            }
+            try:
+                checkpoint_path = self.save()
+            except (OSError, RuntimeError, ValueError) as exc:
+                self._workbench_loop_state = {
+                    **self._workbench_loop_state,
+                    "status": "checkpoint_failed",
+                }
+                step["checkpoint"] = {
+                    "committed": False,
+                    "error_code": "checkpoint_failed",
+                    "error": str(exc),
+                }
+                result["steps"].append(step)
+                result["status"] = "checkpoint_failed"
+                result["error_code"] = "checkpoint_failed"
+                result["error"] = str(exc)
+                result["stopped_at"] = index
+                return result
+
+            step["checkpoint"] = {
+                "committed": True,
+                "path": str(checkpoint_path),
+            }
+            result["steps"].append(step)
+            if not step.get("success") or step.get("status") != "success":
+                result["status"] = "failed"
+                result["stopped_at"] = index
+                result["completed_prefix"] = sum(
+                    1 for item in result["steps"] if item.get("success")
+                )
+                return result
+            result["completed_prefix"] = index + 1
+
+        self._workbench_loop_state = {
+            **self._workbench_loop_state,
+            "status": "completed",
+        }
+        # Persist the terminal loop state as a final checkpoint with no new side effect.
+        try:
+            checkpoint_path = self.save()
+        except (OSError, RuntimeError, ValueError) as exc:
+            self._workbench_loop_state = {
+                **self._workbench_loop_state,
+                "status": "checkpoint_failed",
+            }
+            result["status"] = "checkpoint_failed"
+            result["error_code"] = "checkpoint_failed"
+            result["error"] = str(exc)
+            return result
+        result["status"] = "completed"
+        result["checkpoint"] = {"committed": True, "path": str(checkpoint_path)}
         return result
 
     def execute_workbench_intent(

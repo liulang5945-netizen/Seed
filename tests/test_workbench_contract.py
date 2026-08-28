@@ -281,7 +281,16 @@ def test_mcp_binding_loop_preflight_and_runtime_tool_call_are_versioned(
     assert preflight["preflight_id"]
 
     repeated = environment.preflight_loop(
-        (request, request), loop_id="loop-repeat", max_steps=2
+        (
+            request,
+            replace_request_mcp_registry(
+                request,
+                environment.mcp_registry.snapshot_id,
+                request_id="request-loop-read-2",
+            ),
+        ),
+        loop_id="loop-repeat",
+        max_steps=2,
     )
     assert repeated["accepted"] is False
     assert repeated["error_code"] == "repeated_call"
@@ -326,10 +335,12 @@ def test_mcp_binding_loop_preflight_and_runtime_tool_call_are_versioned(
 
 
 def replace_request_mcp_registry(
-    request: WorkbenchActionRequest, snapshot_id: str
+    request: WorkbenchActionRequest,
+    snapshot_id: str,
+    request_id: str | None = None,
 ) -> WorkbenchActionRequest:
     return WorkbenchActionRequest(
-        request_id=request.request_id,
+        request_id=request_id or request.request_id,
         intent_id=request.intent_id,
         capability_id=request.capability_id,
         parameters=request.parameters,
@@ -341,6 +352,142 @@ def replace_request_mcp_registry(
         approval_token=request.approval_token,
         mcp_registry_snapshot_id=snapshot_id,
     )
+
+
+def test_preflighted_loop_checkpoints_each_step_and_rejects_replay(
+    tmp_path, monkeypatch
+) -> None:
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    checkpoint = tmp_path / "loop.pt"
+    runtime = SeedRuntime(
+        Seed(episode_id="workbench-loop-checkpoint"), checkpoint_path=checkpoint
+    )
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    environment = runtime.workbench_environment
+    intents = (
+        ActionIntent(
+            intent_id="intent-loop-mcp",
+            kind="mcp.invoke",
+            parameters={
+                "tool_id": "mcp.local.workspace_summary",
+                "arguments": {"path": "."},
+            },
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        ActionIntent(
+            intent_id="intent-loop-read",
+            kind="workspace.read",
+            parameters={"path": "README.md"},
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+    )
+    (tmp_path / "README.md").write_text("loop\n", encoding="utf-8")
+    requests = tuple(
+        WorkbenchActionRequest.from_action_intent(
+            intent,
+            snapshot_id=environment.capability_snapshot.snapshot_id,
+            mcp_registry_snapshot_id=(
+                environment.mcp_registry.snapshot_id
+                if intent.kind.startswith("mcp.")
+                else ""
+            ),
+        )
+        for intent in intents
+    )
+    preflight = runtime.preflight_workbench_loop(
+        requests, loop_id="loop-checkpoint", max_steps=2
+    )
+    result = runtime.execute_preflighted_workbench_loop(
+        intents,
+        requests,
+        loop_id="loop-checkpoint",
+        preflight_id=preflight["preflight_id"],
+        max_steps=2,
+        learn=False,
+    )
+
+    assert result["status"] == "completed"
+    assert result["completed_prefix"] == 2
+    assert len(result["steps"]) == 2
+    assert all(step["checkpoint"]["committed"] for step in result["steps"])
+    assert checkpoint.exists()
+
+    restored = SeedRuntime.load(checkpoint)
+    replay = restored.execute_preflighted_workbench_loop(
+        intents,
+        requests,
+        loop_id="loop-checkpoint",
+        preflight_id=preflight["preflight_id"],
+        max_steps=2,
+        learn=False,
+    )
+    assert replay["status"] == "rejected"
+    assert replay["error_code"] == "loop_request_already_committed"
+
+
+def test_preflighted_loop_stops_after_first_failed_step(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    checkpoint = tmp_path / "failed-loop.pt"
+    runtime = SeedRuntime(
+        Seed(episode_id="workbench-loop-failure"), checkpoint_path=checkpoint
+    )
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    environment = runtime.workbench_environment
+    intents = (
+        ActionIntent(
+            intent_id="intent-loop-list",
+            kind="workspace.list",
+            parameters={"path": "."},
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        ActionIntent(
+            intent_id="intent-loop-missing",
+            kind="workspace.read",
+            parameters={"path": "missing.txt"},
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        ActionIntent(
+            intent_id="intent-loop-never",
+            kind="workspace.stat",
+            parameters={"path": "."},
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+    )
+    requests = tuple(
+        WorkbenchActionRequest.from_action_intent(
+            intent, snapshot_id=environment.capability_snapshot.snapshot_id
+        )
+        for intent in intents
+    )
+    preflight = runtime.preflight_workbench_loop(
+        requests, loop_id="loop-failure", max_steps=3
+    )
+    result = runtime.execute_preflighted_workbench_loop(
+        intents,
+        requests,
+        loop_id="loop-failure",
+        preflight_id=preflight["preflight_id"],
+        max_steps=3,
+        learn=False,
+    )
+
+    assert result["status"] == "failed"
+    assert result["stopped_at"] == 1
+    assert result["completed_prefix"] == 1
+    assert len(result["steps"]) == 2
+    assert result["steps"][1]["success"] is False
+    assert checkpoint.exists()
 
 
 def test_programming_language_evidence_uses_content_manifest_and_ambiguity(

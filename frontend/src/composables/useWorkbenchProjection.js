@@ -220,6 +220,37 @@ async function preflightLoop({
   return payload
 }
 
+async function executeLoop({
+  loopId,
+  preflightId,
+  intents = [],
+  maxSteps = 8,
+  maxBudgetUnits = 32,
+  onFailure = 'stop',
+  checkpointBoundary = 'after_each_step',
+}) {
+  await ensureCapabilities()
+  const payload = await readJson('/api/workbench/loop/execute', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      loop_id: loopId,
+      preflight_id: preflightId,
+      intents: intents.map(item => ({
+        ...item,
+        mcp_registry_snapshot_id: item.mcp_registry_snapshot_id
+          || (item.kind?.startsWith('mcp.') ? mcpRegistry.value?.snapshot_id || '' : ''),
+      })),
+      max_steps: maxSteps,
+      max_budget_units: maxBudgetUnits,
+      on_failure: onFailure,
+      checkpoint_boundary: checkpointBoundary,
+    }),
+  })
+  error.value = ''
+  return payload
+}
+
 function start() {
   consumerCount += 1
   if (eventTimer) return
@@ -272,6 +303,7 @@ export function useWorkbenchProjection() {
     previewIntent,
     executeIntent,
     preflightLoop,
+    executeLoop,
     start,
     stop,
   }
