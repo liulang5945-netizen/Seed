@@ -64,7 +64,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue', 'browse', 'open', 'validate']);
-import { API_BASE, authFetch } from '../composables/apiClient.js';
+import { nativeApi } from '../composables/nativeApi.js';
 
 const inputRef = ref(null);
 const error = ref('');
@@ -91,12 +91,7 @@ const validateAndEmit = async () => {
   if (!path) return;
   emit('validate', path);
   try {
-    const res = await authFetch(`${API_BASE}/api/system/validate_path`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ path, type: props.type }),
-    });
-    const data = await res.json();
+    const data = await nativeApi.systemValidatePath({ path, type: props.type });
     if (data.status === 'ok') {
       error.value = '';
     } else {
@@ -110,10 +105,10 @@ const validateAndEmit = async () => {
 
 const browse = async () => {
   try {
-    const title = encodeURIComponent(props.dialogTitle || (props.type === 'folder' ? '请选择文件夹' : '请选择文件'));
+    const title = props.dialogTitle || (props.type === 'folder' ? '请选择文件夹' : '请选择文件');
     const res = props.type === 'folder'
-      ? await authFetch(`${API_BASE}/api/system/select_folder?title=${title}`)
-      : await authFetch(`${API_BASE}/api/system/select_file`);
+      ? await nativeApi.systemSelectFolder(title)
+      : await nativeApi.systemSelectFile();
     const data = await res.json();
     if (data.status === 'ok' && data.path) {
       emit('update:modelValue', data.path);
@@ -131,11 +126,7 @@ const openInExplorer = async () => {
   if (!props.modelValue) return;
   emit('open', props.modelValue);
   try {
-    await authFetch(`${API_BASE}/api/system/open_folder`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ path: props.modelValue }),
-    });
+    await nativeApi.systemOpenFolder({ path: props.modelValue });
   } catch (err) {
     console.error('打开文件夹失败:', err);
   }

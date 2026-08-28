@@ -1998,6 +1998,12 @@ Chat、Life、Agent/能力、Training、Settings、KB 六个入口均展示对�
 `useChatUpload.js` 已删除；`select_folder` 的标题参数已正式纳入后端接口与快照。W6 第一片证据为后端 `67 passed, 1 skipped`、
 前端 Vitest `23 files / 187 passed`、native boundary/API contract、ESLint、生产构建、Ruff、compileall、diff check 全部通过。
 
-**当前唯一下一步：开始 W6 第二 slice 的 typed/native API facade。** 以 OpenAPI 合同为唯一来源，建立前端统一 API facade 和类型化
-端点定义，逐步收拢大型 Vue view 中散落的 URL、method 和响应解包；每迁移一组入口都必须保持 native boundary、API contract、测试和
-生产构建全绿。不得先做视觉包装或 CUDA kernel。
+**已完成（2026-08-29）：W6 第二 slice 的 typed/native API facade 第一批迁移。** 新增 `nativeApi` facade，集中维护 runtime、
+Workbench 和 system 三组 native 端点、查询参数构造、JSON 序列化和错误解包；Workbench projection、runtime health/status、Workspace
+快速路径、PathSelector 已切换到命名操作，不再在这些入口自行拼接 URL 或重复序列化请求体。facade 路径本身已纳入 API contract
+门禁，并新增 4 项 facade 单测；一次发现并修复 Workspace 快速路径把 payload 误当 Response 的边界回归。证据为前端 Vitest
+`24 files / 191 passed`、API contract/native boundary、ESLint、生产构建全部通过。
+
+**当前唯一下一步：开始 W6 第三 slice 的 typed/native API facade 第二批迁移。** 继续迁移 settings、auth、chat、training 和 App 健康
+入口，将 raw response、JSON 解包和 URL 路径从页面/Store 收拢到同一 facade；保留流式聊天与文件上传的特殊传输边界，不能用普通 JSON
+封装替代。每迁移一组入口都必须保持 API contract、native boundary、测试和生产构建全绿，不得先做视觉包装或 CUDA kernel。
