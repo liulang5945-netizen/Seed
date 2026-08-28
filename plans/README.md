@@ -265,7 +265,9 @@ KB 默认不再调用 `/api/rag/*`，仅依据 runtime snapshot 判断 `knowledg
 
 **已完成（2026-08-29）：W5 第二 slice 的真实状态接入。** `/api/runtime/status.tools` 已补齐 Workbench snapshot 的身份、版本、来源、归属和观测时间；前端统一投影 runtime、provider、Workbench、homeostasis/self-state、training、knowledge 的 `source/owner/freshness/availability`，并接入 Chat、Life、Agent/能力、Training、Settings、KB 六个入口。homeostasis/self-state 缺失时明确显示“未上报”。前端 Vitest `23 files / 187 passed`、ESLint `0 errors`、生产构建通过；后端定向回归 `65 passed, 1 skipped`，OpenAPI、ruff、compileall、diff check 通过。
 
-**当前唯一下一步：开始 W5 第三 slice 的 packaged route-level smoke 与 frontend/source capability contract。** 验证可发布运行方式下的 runtime/workbench/provider/受控工作区链路，并增加源代码门禁，禁止新页面直接调用 Legacy RAG/model/HF/GGUF/engine 路径或硬编码能力状态；不得先做视觉包装。
+**已完成（2026-08-29）：W5 第三 slice 的 packaged route-level smoke 与 frontend/source capability contract。** 前端源码门禁已固定六个产品入口的状态证据投影，并禁止 Legacy RAG/model/HF/GGUF/engine 旧路径回流；生产预览逐路由 smoke 精确巡检 7 路由、错误页、6 个证据页面、导航、聊天/训练交互与移动端，共 `35 项 / 0 失败`。后端 Legacy-off 启动合同、frontend `23 files / 187 passed`、ESLint、生产构建、native boundary、ruff、compileall、diff check 均通过。
+
+**当前唯一下一步：开始 W6 第一 slice 的 OpenAPI→frontend endpoint contract。** 从 OpenAPI schema 和 native capability snapshot 校验前端端点的 method、path、请求体/查询参数与 Legacy-off 可见性；CI 必须能被故意的 URL/method/schema 漂移打红，再扩展 view 拆分与 trace/SLO 指标。不得先做视觉包装或 CUDA kernel。
 
 ## 当前唯一下一步
 

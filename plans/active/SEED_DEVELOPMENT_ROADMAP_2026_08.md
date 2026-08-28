@@ -1985,6 +1985,13 @@ Chat、Life、Agent/能力、Training、Settings、KB 六个入口均展示对�
 不再用默认值或前端表达推断冒充运行时状态。前端 Vitest `23 files / 187 passed`、ESLint `0 errors`、生产构建通过；后端定向回归
 `65 passed, 1 skipped`，OpenAPI、ruff、compileall、diff check 通过。
 
-**当前唯一下一步：开始 W5 第三 slice 的 packaged route-level smoke 与 frontend/source capability contract。** 在可发布运行方式下
-验证 `/api/runtime/status`、`/api/workbench/capabilities`、工作区读写受控事务、语言 provider 状态和六个页面的证据投影；同时增加
-前端源代码门禁，禁止新页面直接调用 Legacy RAG/model/HF/GGUF/engine 路径或硬编码能力状态。不得先做视觉包装。
+**已完成（2026-08-29）：W5 第三 slice 的 packaged route-level smoke 与 frontend/source capability contract。** 前端源码门禁固定检查
+六个产品入口必须挂载状态证据投影，并禁止 Legacy RAG/model/HF/GGUF/engine 旧路径重新进入产品源码；明确保留的
+`FileUploadQueue` 仅作为未挂载的训练上传兼容组件。CI 已在 frontend lint 后执行该门禁。生产 `vite preview` 逐路由 smoke 使用精确
+主容器选择器，覆盖 7 路由、错误页排除、6 个状态证据页面、导航、聊天/训练交互和移动端，共 `35 项 / 0 失败`；此前误测旧的
+5173 开发进程已查明并改为显式 4173 生产预览地址，避免验证对象漂移。后端 Legacy-off 启动合同增加 runtime/workbench/system 原生路由，
+定向回归 `67 passed, 1 skipped`，frontend `23 files / 187 passed`、ESLint、生产构建、native boundary、ruff、compileall、diff check 全部通过。
+
+**当前唯一下一步：开始 W6 第一 slice 的 OpenAPI→frontend endpoint contract。** 从现有 OpenAPI schema 和 native capability snapshot 生成/校验
+前端端点清单，至少覆盖 method、path、请求体字段、查询参数和 Legacy-off 可见性；CI 必须能因故意制造 URL/method/schema 漂移而变红，
+再扩展到大型 Vue view 拆分与 trace/SLO 指标。不得先做视觉包装或 CUDA kernel。
