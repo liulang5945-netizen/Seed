@@ -79,7 +79,11 @@ def _prepare_frozen_qt_dll_path() -> None:
     try:
         from ctypes import WinDLL
 
-        for library in (internal_root / "icuuc.dll", qt_bin / "Qt6Core.dll"):
+        for library in (
+            internal_root / "python3.dll",
+            internal_root / "icuuc.dll",
+            qt_bin / "Qt6Core.dll",
+        ):
             if library.is_file():
                 _QT_PRELOADED_LIBRARIES.append(WinDLL(str(library)))
     except OSError as exc:
