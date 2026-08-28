@@ -1885,13 +1885,17 @@ W7 的实际实施顺序固定为 **G0 贯穿全程，R1 → R2 → R3 → R4 �
   打包期间发现的 Qt6/ICU DLL 冲突已在 `desktop/seed.spec` 过滤，并纳入 release 检查。该证据确认打包客户端启动和 native route
   可用，不等同于 W5 的 GUI 视觉、DPI、托盘或人工点击验收。
 
-**W1 首批纵切片已落地（2026-08-29）。** `ProgrammingLanguageRegistry` 以内容寻址规则统一扩展名、shebang、内容、
-manifest、邻近文件、可选 LSP 与 toolchain 证据；`programming_language_id/editor_language_id`、confidence、provenance、
-registry revision 和 user override 已进入 Workbench state。`editor.set_language` 已成为 Taiji-native 可逆 action：高置信且
-与证据一致时自动允许，低置信、语言冲突或 `.h` 等歧义场景返回 `ask_user`；显式用户覆盖可撤销并按文件 digest 失效，
-checkpoint 恢复不会把旧覆盖错误应用到新内容，Monaco 已提供“自动检测”撤销入口。API、runtime/checkpoint 与 Monaco 动态
-语言 projection 已接通；后端 Workbench 合同 `8 passed`、Monaco 回归 `10 passed`，前端 lint `0 errors`、构建通过。
+**W1 语言识别、选择与 IDE 自主切换退出 Gate 已通过（2026-08-29）。** `ProgrammingLanguageRegistry` 以内容寻址规则统一
+扩展名、shebang、内容、manifest、邻近文件、可选 LSP 与 toolchain 证据；`programming_language_id/editor_language_id`、
+confidence、provenance、registry revision、explanation 与 user override 已进入 Workbench state。`editor.set_language` 已成为
+Taiji-native 可逆 action：高置信且与证据一致时允许 Taiji 自动切换，低置信、语言冲突或 `.h` 等歧义场景返回 `ask_user`；
+runner/LSP 上下文和可用工具链快照与同一语言选择绑定，显式用户覆盖可撤销并按文件 digest 失效，checkpoint 不会把旧覆盖
+错误应用到新内容，Monaco 已提供“自动检测”入口。holdout 覆盖 `.h`、无扩展 shebang、多语言 monorepo、Vue/TS、notebook、
+markdown code block、错误扩展名和 filename-only lesion；API/OpenAPI、runtime/checkpoint 与 Monaco 动态 projection 已接通，
+后端 Workbench 合同 `8 passed`、Monaco 回归 `10 passed`，前端 lint `0 errors`、构建通过。该 Gate 是语言/IDE 合同闭环，
+不代表 W2 runner 已可执行。
 
-**当前唯一下一步：完成 W1 退出 Gate。** 在首批闭环上补齐 LSP/runner snapshot 的显式一致性投影，并把多语言 monorepo、
-Vue/TS、notebook/markdown code block、错误扩展名和 filename-only lesion 固化为可故意打红的 holdout；同时验证
-API/OpenAPI、Taiji explanation、用户撤销和重启恢复的完整证据链。W1 Gate 未完成前不进入 W2 写入/终端。
+**当前唯一下一步：开始 W2「受控写入、终端与测试执行」。** 先把 `workspace.apply_patch/create/rename/delete` 收敛为带
+before/after digest、冲突检测、undo token 和审计记录的文件事务；同时定义非交互 `terminal.run` 的 argv/cwd/timeout/env
+allowlist/output limit/expected artifacts 合同。先建立可故意打红的未保存内容、cwd 漂移、输出洪泛、超时、部分冲突和进程中断
+Gate，再把真实 diagnostics/test/build outcome 回写 Taiji；W2 未通过前不进入 W3 MCP/自主循环。

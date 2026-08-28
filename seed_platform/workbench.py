@@ -158,7 +158,10 @@ class CapabilitySnapshot:
                 "workspace.programming_language.resolve",
                 "Resolve a file's programming language from content and workspace evidence.",
                 category="language",
-                parameters=(("path", "relative file path"),),
+                parameters=(
+                    ("path", "relative file path"),
+                    ("lsp_language_id", "optional connected language-service selection"),
+                ),
             ),
             CapabilityDescriptor(
                 "editor.set_language",
@@ -906,6 +909,11 @@ class WorkbenchEnvironment:
             manifest_names=manifest_names,
             neighbor_names=neighbor_names,
             available_toolchains=self.programming_language_registry.available_toolchains(),
+            lsp_language_id=(
+                None
+                if parameters.get("lsp_language_id") in (None, "")
+                else str(parameters["lsp_language_id"]).strip()
+            ),
             capability_revision=self.snapshot.revision,
         )
         if apply_selection:
