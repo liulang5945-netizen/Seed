@@ -142,14 +142,36 @@ def postprocess() -> None:
     print("  运行时可写目录已就绪")
 
 
+def _npm() -> str:
+    """Windows 上 npm 实为 npm.cmd，直接调 "npm" 会 WinError 2。"""
+    return shutil.which("npm") or shutil.which("npm.cmd") or "npm"
+
+
+def check_generated_sources() -> bool:
+    """校验「由依赖反推、写死进源码」的构建期产物仍与依赖同步。
+
+    当前唯一一项是 ``frontend/src/composables/hljsAliases.js``：它的 179 条
+    别名是从 highlight.js 反推出来的。升级 highlight.js 后该表不会报错、
+    不会警告，只会让新语言的代码块静默退化成无高亮纯文本——而全部单元测试
+    依然全绿。这类漂移必须在产出安装包之前硬失败，否则门禁虽存在却不在
+    发版的必经路径上。
+
+    该检查不受 ``--skip-frontend`` 影响：跳过的是构建，不是校验，且既有
+    ``frontend/dist`` 正是由这份可能已过期的源码产出的。
+    """
+    return _run(
+        [_npm(), "run", "check:aliases"],
+        cwd=ROOT / "frontend",
+        label="[1/5] 生成式源码同步门禁",
+    )
+
+
 def build_frontend() -> bool:
     """构建前端。"""
-    # Windows 上 npm 实为 npm.cmd，直接调 "npm" 会 WinError 2
-    npm = shutil.which("npm") or shutil.which("npm.cmd") or "npm"
     return _run(
-        [npm, "run", "build"],
+        [_npm(), "run", "build"],
         cwd=ROOT / "frontend",
-        label="[1/4] 构建前端",
+        label="[2/5] 构建前端",
     )
 
 
@@ -158,7 +180,7 @@ def build_pyinstaller() -> bool:
     return _run(
         [sys.executable, "-m", "PyInstaller", "--noconfirm", str(ROOT / "desktop" / "seed.spec")],
         cwd=ROOT,
-        label="[2/4] PyInstaller 打包",
+        label="[3/5] PyInstaller 打包",
     )
 
 
@@ -173,7 +195,7 @@ def build_nsis() -> bool:
     return _run(
         [makensis, str(ROOT / "desktop" / "installer.nsi")],
         cwd=ROOT / "desktop",
-        label="[4/4] NSIS 安装程序",
+        label="[5/5] NSIS 安装程序",
     )
 
 
@@ -198,12 +220,20 @@ def main() -> None:
         print("\n所有产物验证通过")
         return
 
+    # Step 1: 生成式源码同步门禁（不受 --skip-frontend 影响，理由见函数 docstring）
+    # 置于清理之前：脱同步是必然中止的错误，不该先把上一版可用产物删掉再报错。
+    if not check_generated_sources():
+        print("\n生成式源码已与依赖脱同步，构建中止")
+        print("  修复: cd frontend && npm run gen:aliases")
+        sys.exit(1)
+    print("  生成式源码检查通过")
+
     # Step 0: 清理旧产物（默认执行；否则 PyInstaller 的增量复用会掩盖版本漂移）
     if not args.no_clean:
         print("\n清理旧产物...")
         clean_outputs()
 
-    # Step 1: Frontend
+    # Step 2: Frontend
     if not args.skip_frontend:
         if not build_frontend():
             print("\n前端构建失败")
@@ -212,7 +242,7 @@ def main() -> None:
     else:
         print("\n  跳过前端构建")
 
-    # Step 2: PyInstaller
+    # Step 3: PyInstaller
     if not build_pyinstaller():
         print("\nPyInstaller 打包失败")
         sys.exit(1)
@@ -224,9 +254,9 @@ def main() -> None:
         print(f"\n前端一致性校验失败: {exc}")
         sys.exit(1)
 
-    # Step 3: 后处理
+    # Step 4: 后处理
     print(f"\n{'=' * 50}")
-    print("  [3/4] 后处理")
+    print("  [4/5] 后处理")
     print(f"{'=' * 50}")
     try:
         postprocess()
@@ -234,7 +264,7 @@ def main() -> None:
         print(f"\n后处理失败: {exc}")
         sys.exit(1)
 
-    # Step 4: NSIS
+    # Step 5: NSIS
     if not args.skip_nsis:
         if not build_nsis():
             print("\nNSIS 编译失败")
