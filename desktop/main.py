@@ -1,23 +1,24 @@
 """
-[产品入口] Seed桌面客户端 — 开发环境版本
-==========================================
+[唯一产品入口] Seed 桌面客户端 — 开发与打包共用
+==============================================
 
 原生桌面应用，嵌入 Web 前端，通过子进程管理后端生命周期。
 
 功能：
-1. 嵌入 Vue 前端（QWebEngineView）
-2. 系统托盘（最小化到托盘、通知）
+1. 嵌入 Vue 前端（QWebEngineView），标题栏亦由前端 DOM 承载
+2. 系统托盘（最小化到托盘；不发气泡通知）
 3. 窗口管理（记住大小、位置）
-4. subprocess 启动 uvicorn（端口 8000）和 WebSocket 服务器（端口 8765）
-5. 子进程崩溃自动启动
+4. subprocess 启动 uvicorn（端口 8000），进程内启动 WebSocket 服务器（端口 8765）
+5. 子进程崩溃自动重启，并以 job object 保证随主进程退出
 
-启动方式：python desktop/main.py
+启动方式：
+- 开发：python desktop/main.py
+- 打包：desktop/seed.spec 的 a_main 就以本文件为唯一入口，产物 dist/Seed/Seed.exe
 
-注意：此文件与 api/run_app.py 功能重叠。
-- 此文件：开发环境，子进程模式，管理 WebSocket 服务器
-- api/run_app.py：打包环境，进程内 QThread，有依赖自检和热更新
-- 未来计划：合并为一个入口，以 api/run_app.py 为基础，补充 WebSocket 管理
-详见 docs/ENTRYPOINTS.md
+与 api/run_app.py 的关系：本文件是**开发与打包共用的唯一入口**；run_app.py 是仍可
+独立运行的历史入口，既不被 seed.spec 打包，也不在 scripts/sync_version.py 的版本
+同步清单内（因此它没有版本声明）。修改桌面行为时以本文件为准，run_app.py 仅在需要
+避免留下第二套实现时同步收敛。
 """
 
 import json
