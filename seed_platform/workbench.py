@@ -42,6 +42,7 @@ WORKBENCH_MAX_WRITE_BYTES = 1_048_576
 WORKBENCH_MAX_TERMINAL_OUTPUT_BYTES = 1_048_576
 WORKBENCH_MAX_TERMINAL_TIMEOUT_SECONDS = 120.0
 WORKBENCH_APPROVAL_TTL_SECONDS = 300.0
+WORKBENCH_MAX_UNDO_RECORDS = 64
 # Workbench sensations cross into Taiji's native byte sensor. Keep the
 # digest-derived marker inside the raw-byte domain; Taiji's boundary symbol
 # is reserved for stream framing and is not emitted here.
@@ -654,6 +655,8 @@ class WorkbenchEnvironment:
             "language_selections": [
                 item.to_payload() for item in self._language_selections.values()
             ],
+            "undoable_transactions": len(self._undo_records),
+            "pending_approvals": len(self._approval_records),
         }
 
     def language_state_checkpoint(self) -> dict[str, Any]:
@@ -692,6 +695,58 @@ class WorkbenchEnvironment:
             restored[assessment.path] = assessment
         with self._lock:
             self._language_selections = restored
+
+    def transaction_state_checkpoint(self) -> dict[str, Any]:
+        """Persist undo data, but deliberately discard approval grants on restart."""
+
+        with self._lock:
+            records = [
+                {"token": token, "record": dict(record)}
+                for token, record in self._undo_records.items()
+            ]
+        return {
+            "format": "seed-workbench-transaction-state-v1",
+            "version": 1,
+            "max_records": WORKBENCH_MAX_UNDO_RECORDS,
+            "records": records[-WORKBENCH_MAX_UNDO_RECORDS:],
+            "approvals_restored": False,
+        }
+
+    def restore_transaction_state(self, payload: Mapping[str, Any] | None) -> None:
+        if not payload:
+            return
+        if payload.get("format") != "seed-workbench-transaction-state-v1":
+            raise ValueError("unsupported workbench transaction state format")
+        restored: dict[str, dict[str, Any]] = {}
+        raw_records = payload.get("records", [])
+        if not isinstance(raw_records, (list, tuple)):
+            raise ValueError("workbench transaction records must be a list")
+        allowed_operations = {
+            "workspace.apply_patch",
+            "workspace.create",
+            "workspace.rename",
+            "workspace.delete",
+        }
+        for raw_item in raw_records[-WORKBENCH_MAX_UNDO_RECORDS:]:
+            if not isinstance(raw_item, Mapping):
+                continue
+            token = str(raw_item.get("token", "")).strip()
+            record = raw_item.get("record")
+            if not token or not isinstance(record, Mapping):
+                continue
+            normalized = dict(record)
+            if normalized.get("operation") not in allowed_operations:
+                continue
+            if not isinstance(normalized.get("path"), str):
+                continue
+            before_bytes = normalized.get("before_bytes")
+            if before_bytes is not None and not isinstance(before_bytes, bytes):
+                raise ValueError("workbench undo bytes are invalid")
+            restored[token] = normalized
+        with self._lock:
+            self._undo_records = restored
+            # Approval is intentionally session-scoped and never resurrected.
+            self._approval_records = {}
 
     def policy_for(self, request: WorkbenchActionRequest) -> ExecutionPolicyDecision:
         if request.snapshot_id != self.snapshot.snapshot_id:
@@ -833,6 +888,7 @@ class WorkbenchEnvironment:
             "workspace.create",
             "workspace.rename",
             "workspace.delete",
+            "workspace.undo",
         }:
             preview = self._preview_file_transaction(tool_name, parameters)
         elif tool_name == "terminal.run":
@@ -1243,6 +1299,8 @@ class WorkbenchEnvironment:
                 "byte_length": len(content),
                 "digest": hashlib.sha256(content).hexdigest(),
             }
+        if "undo_token" in preview:
+            preview["undo_token"] = "<redacted>"
         return preview
 
     def _preview_file_transaction(
@@ -1268,6 +1326,45 @@ class WorkbenchEnvironment:
                 "before_digest": "",
                 "after_digest": self._bytes_digest(raw),
                 "byte_length": len(raw),
+            }
+        if tool_name == "workspace.undo":
+            token = str(parameters.get("undo_token", "")).strip()
+            if not token:
+                raise ValueError("undo_token is required")
+            with self._lock:
+                record = self._undo_records.get(token)
+            if record is None:
+                raise ValueError("undo token is unknown or already consumed")
+            path, relative_name = self._resolve_path(record["path"], allow_root=False)
+            operation = str(record["operation"])
+            if operation in {"workspace.apply_patch", "workspace.create"}:
+                current = path.read_bytes() if path.is_file() else b""
+                if self._bytes_digest(current) != record["after_digest"]:
+                    raise WorkbenchConflictError("file changed before undo preview")
+            elif operation == "workspace.delete":
+                if path.exists() or path.is_symlink():
+                    raise WorkbenchConflictError(
+                        "delete target reappeared before undo preview"
+                    )
+            elif operation == "workspace.rename":
+                new_path, _ = self._resolve_path(record["new_path"], allow_root=False)
+                if (
+                    path.exists()
+                    or not new_path.is_file()
+                    or self._bytes_digest(new_path.read_bytes())
+                    != record["after_digest"]
+                ):
+                    raise WorkbenchConflictError(
+                        "rename state changed before undo preview"
+                    )
+            else:
+                raise ValueError("unsupported undo operation")
+            return {
+                "operation": "workspace.undo",
+                "undo_of": operation,
+                "path": relative_name,
+                "before_digest": str(record.get("after_digest", "")),
+                "after_digest": str(record.get("before_digest", "")),
             }
         path, relative_name = self._regular_file(parameters.get("path"))
         raw, before_digest = self._checked_file_bytes(
@@ -1434,6 +1531,8 @@ class WorkbenchEnvironment:
     def _new_undo_token(self, record: dict[str, Any]) -> str:
         token = secrets.token_urlsafe(24)
         with self._lock:
+            while len(self._undo_records) >= WORKBENCH_MAX_UNDO_RECORDS:
+                self._undo_records.pop(next(iter(self._undo_records)))
             self._undo_records[token] = record
         return token
 

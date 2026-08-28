@@ -84,7 +84,8 @@ def test_runtime_status_keeps_legacy_sections_opt_in() -> None:
     source = (REPO / "seed_platform" / "runtime_service.py").read_text(encoding="utf-8")
     assert "legacy_requested" in source
     assert "neuroplex.life.life_scheduler" in source
-    assert "neuroplex.services.tool_service" in source
+    assert "from seed_platform.workbench import CapabilitySnapshot" in source
+    assert "neuroplex.services.tool_service" not in source
 
 
 def test_platform_auth_has_no_legacy_imports() -> None:
