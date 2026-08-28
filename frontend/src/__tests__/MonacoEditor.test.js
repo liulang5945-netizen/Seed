@@ -33,6 +33,11 @@ const { fakeMonaco, loaderInit, authFetchMock } = vi.hoisted(() => {
         json: async () => ({
           snapshot_id: 'workbench-test-snapshot',
           capabilities: [{ capability_id: 'workspace.read', enabled: true }],
+          programming_languages: [
+            { language_id: 'python', label: 'Python', editor_language_id: 'python' },
+            { language_id: 'javascript', label: 'JavaScript', editor_language_id: 'javascript' },
+            { language_id: 'plaintext', label: 'Plain text', editor_language_id: 'plaintext' },
+          ],
         }),
       })
     }
@@ -68,13 +73,48 @@ describe('MonacoEditor', () => {
     vi.useFakeTimers()
     vi.clearAllMocks()
     loaderInit.mockImplementation(() => Promise.resolve(fakeMonaco))
-    authFetchMock.mockImplementation((url) => {
+    authFetchMock.mockImplementation((url, options) => {
       if (String(url).includes('/api/workbench/capabilities')) {
         return Promise.resolve({
           ok: true,
           json: async () => ({
             snapshot_id: 'workbench-test-snapshot',
             capabilities: [{ capability_id: 'workspace.read', enabled: true }],
+            programming_languages: [
+              { language_id: 'python', label: 'Python', editor_language_id: 'python' },
+              { language_id: 'javascript', label: 'JavaScript', editor_language_id: 'javascript' },
+              { language_id: 'plaintext', label: 'Plain text', editor_language_id: 'plaintext' },
+            ],
+          }),
+        })
+      }
+      if (String(url).includes('/api/workbench/programming-language?path=')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            path: 'demo/main.py',
+            file_digest: 'digest',
+            programming_language_id: 'python',
+            editor_language_id: 'python',
+            confidence: 0.99,
+            selection_state: 'resolved',
+          }),
+        })
+      }
+      if (String(url).includes('/api/workbench/execute')) {
+        const request = JSON.parse(options?.body || '{}')
+        const cleared = request.parameters?.clear_override === true
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            outcome: {
+              result: {
+                path: 'demo/main.py',
+                programming_language_id: cleared ? 'python' : 'javascript',
+                editor_language_id: cleared ? 'python' : 'javascript',
+                selection_state: cleared ? 'resolved' : 'user_override',
+              },
+            },
           }),
         })
       }
@@ -105,8 +145,8 @@ describe('MonacoEditor', () => {
     expect(wrapper.find('select.lang-select').exists()).toBe(true)
     expect(wrapper.find('.monaco-statusbar').exists()).toBe(true)
     expect(wrapper.find('.monaco-statusbar').text()).toContain('行 1')
-    // 语言选择器包含全部 17 种语言
-    expect(wrapper.findAll('select.lang-select option').length).toBe(17)
+    // 语言选择器来自后端 capability projection，而非组件内静态表
+    expect(wrapper.findAll('select.lang-select option').length).toBe(4)
   })
 
   it('Monaco 加载成功后创建编辑器且无降级', async () => {
@@ -135,6 +175,49 @@ describe('MonacoEditor', () => {
     expect(wrapper.vm.openTabs[0].language).toBe('python')
     expect(wrapper.vm.activeTab).toBe('demo/main.py')
     expect(wrapper.find('.monaco-tab .tab-name').text()).toBe('main.py')
+  })
+
+  it('语言选择提交可逆的 native editor.set_language 覆盖', async () => {
+    const wrapper = await mountEditor()
+    await wrapper.vm.openFile('demo/main.py')
+    await flushPromises()
+
+    await wrapper.find('select.lang-select').setValue('javascript')
+    await flushPromises()
+
+    const executeCall = authFetchMock.mock.calls.find(([url, options]) => (
+      String(url).includes('/api/workbench/execute') && options?.method === 'POST'
+    ))
+    expect(executeCall).toBeTruthy()
+    expect(JSON.parse(executeCall[1].body)).toMatchObject({
+      kind: 'editor.set_language',
+      parameters: {
+        programming_language_id: 'javascript',
+        editor_language_id: 'javascript',
+        user_override: true,
+      },
+    })
+    expect(wrapper.vm.openTabs[0].programmingLanguageId).toBe('javascript')
+  })
+
+  it('自动检测入口会撤销用户语言覆盖', async () => {
+    const wrapper = await mountEditor()
+    await wrapper.vm.openFile('demo/main.py')
+    await flushPromises()
+
+    await wrapper.find('select.lang-select').setValue('javascript')
+    await flushPromises()
+    await wrapper.find('select.lang-select').setValue('__auto__')
+    await flushPromises()
+
+    const executeBodies = authFetchMock.mock.calls
+      .filter(([url, options]) => String(url).includes('/api/workbench/execute') && options?.method === 'POST')
+      .map(([, options]) => JSON.parse(options.body))
+    expect(executeBodies.at(-1)).toMatchObject({
+      kind: 'editor.set_language',
+      parameters: { clear_override: true, user_override: false },
+    })
+    expect(wrapper.vm.openTabs[0].programmingLanguageId).toBe('python')
   })
 
   it('已有活动标签时点击树中新文件也会激活新标签', async () => {

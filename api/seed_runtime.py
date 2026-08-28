@@ -344,6 +344,7 @@ class SeedRuntime:
                     "workbench": {
                         "snapshot": workbench.capability_snapshot.to_payload(),
                         "audit": self._workbench_audit.to_payload(),
+                        "language_state": workbench.language_state_checkpoint(),
                     },
                 },
             )
@@ -401,15 +402,29 @@ class SeedRuntime:
         snapshot_payload = payload.get("snapshot")
         if isinstance(snapshot_payload, Mapping):
             snapshot = CapabilitySnapshot.from_payload(snapshot_payload)
-            if snapshot.snapshot_id != self._workbench_environment.capability_snapshot.snapshot_id:
+            current = self._workbench_environment.capability_snapshot
+            if (
+                snapshot.snapshot_id != current.snapshot_id
+                and snapshot.revision >= current.revision
+            ):
                 raise ValueError("workbench capability snapshot drifted during restore")
-            self._workbench_environment = WorkbenchEnvironment(
-                self._workbench_environment.root,
-                snapshot=snapshot,
-            )
+            if snapshot.snapshot_id == current.snapshot_id:
+                self._workbench_environment = WorkbenchEnvironment(
+                    self._workbench_environment.root,
+                    snapshot=snapshot,
+                )
+            else:
+                logger.info(
+                    "migrating workbench capability snapshot revision %s to %s",
+                    snapshot.revision,
+                    current.revision,
+                )
         audit_payload = payload.get("audit")
         if isinstance(audit_payload, Mapping):
             self._workbench_audit = WorkbenchAuditLog.from_payload(audit_payload)
+        language_payload = payload.get("language_state")
+        if isinstance(language_payload, Mapping):
+            self._workbench_environment.restore_language_state(language_payload)
 
     def execute_workbench_intent(
         self,

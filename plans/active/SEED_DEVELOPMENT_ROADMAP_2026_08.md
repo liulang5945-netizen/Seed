@@ -1885,9 +1885,13 @@ W7 的实际实施顺序固定为 **G0 贯穿全程，R1 → R2 → R3 → R4 �
   打包期间发现的 Qt6/ICU DLL 冲突已在 `desktop/seed.spec` 过滤，并纳入 release 检查。该证据确认打包客户端启动和 native route
   可用，不等同于 W5 的 GUI 视觉、DPI、托盘或人工点击验收。
 
-**当前唯一下一步：开始 W1「编程语言识别、选择与 IDE 自主切换」。** 先把 `ProgrammingLanguageEvidence`、
-`programming_language_id/editor_language_id`、confidence、provenance、capability revision 和 user override 纳入同一
-Workbench state；再注册可逆的 `editor.set_language` native action，让 Taiji 在高置信、无 runner/toolchain 副作用时自动切换，
-低置信或有冲突时进入 `ask_user`。第一批实现必须同时覆盖后端 evidence resolver、API/OpenAPI、runtime/checkpoint、
-`WorkspaceView/MonacoEditor` 投影和 holdout（`.h`、shebang、monorepo、Vue/TS、notebook/markdown、错误扩展名），并先建立
-可故意打红的 filename-only lesion Gate；未完成 W1 Gate 前不进入 W2 写入/终端。
+**W1 首批纵切片已落地（2026-08-29）。** `ProgrammingLanguageRegistry` 以内容寻址规则统一扩展名、shebang、内容、
+manifest、邻近文件、可选 LSP 与 toolchain 证据；`programming_language_id/editor_language_id`、confidence、provenance、
+registry revision 和 user override 已进入 Workbench state。`editor.set_language` 已成为 Taiji-native 可逆 action：高置信且
+与证据一致时自动允许，低置信、语言冲突或 `.h` 等歧义场景返回 `ask_user`；显式用户覆盖可撤销并按文件 digest 失效，
+checkpoint 恢复不会把旧覆盖错误应用到新内容，Monaco 已提供“自动检测”撤销入口。API、runtime/checkpoint 与 Monaco 动态
+语言 projection 已接通；后端 Workbench 合同 `8 passed`、Monaco 回归 `10 passed`，前端 lint `0 errors`、构建通过。
+
+**当前唯一下一步：完成 W1 退出 Gate。** 在首批闭环上补齐 LSP/runner snapshot 的显式一致性投影，并把多语言 monorepo、
+Vue/TS、notebook/markdown code block、错误扩展名和 filename-only lesion 固化为可故意打红的 holdout；同时验证
+API/OpenAPI、Taiji explanation、用户撤销和重启恢复的完整证据链。W1 Gate 未完成前不进入 W2 写入/终端。
