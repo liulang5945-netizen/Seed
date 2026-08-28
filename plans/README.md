@@ -319,8 +319,13 @@ API/native boundary、ESLint、生产构建全部通过。
 组件仅通过显式 props/events 连接。新增组件级回归，前端 Vitest `33 files / 209 passed`、API contract/native boundary、
 ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
 
-**当前唯一下一步：开始 W6 第十三片的 ChatView 消息与输入区展示拆分。** 先隔离消息列表/消息气泡和输入组合区的纯展示与事件转发，
-父视图继续唯一持有流式 reader、会话状态、附件上传和 native API 副作用；每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，
+**已完成（2026-08-29）：W6 第十三片的 ChatView 消息与输入区展示拆分。** 消息欢迎区、示例对话、消息气泡、原始输出和消息动作已抽为
+`ChatMessageList`，输入框、快捷模板、附件选择和停止入口已抽为 `ChatComposer`；父视图继续唯一持有流式 reader、会话状态、附件上传和
+native API 副作用，组件仅通过显式 props/events 连接。前端 Vitest `35 files / 213 passed`、API contract/native boundary、ESLint、
+生产构建全部通过（ESLint `0 errors / 13 warnings`）。
+
+**当前唯一下一步：开始 W6 第十四片的 LifeStatusView 运行时证据与状态展示拆分。** 先隔离运行时证据卡、神经状态/needs 展示和状态图表的纯展示与事件转发，
+父视图继续唯一持有 runtime snapshot、刷新/订阅和 native API 副作用；每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，
 不得先做视觉包装或 CUDA kernel。
 
 ## 当前唯一下一步
