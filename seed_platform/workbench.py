@@ -73,6 +73,46 @@ def default_workspace_root() -> Path:
     return Path(get_external_path("agent_workspace")).resolve()
 
 
+def validate_workspace_root(raw_root: Any) -> Path:
+    """Validate and normalize a user-selected workspace directory.
+
+    Workspace selection is a platform concern, not a Legacy workspace route
+    concern.  Keep the policy derived from the host environment so it works
+    on Windows and POSIX without embedding one machine's absolute paths.
+    """
+
+    value = str(raw_root or "").strip()
+    if not value:
+        raise ValueError("workspace path cannot be empty")
+    candidate = Path(os.path.expandvars(os.path.expanduser(value)))
+    if not candidate.is_absolute():
+        raise ValueError("workspace path must be absolute")
+    try:
+        resolved = candidate.resolve(strict=True)
+    except OSError as exc:
+        raise ValueError("workspace path cannot be resolved") from exc
+    if not resolved.is_dir():
+        raise ValueError("workspace path must be an existing directory")
+
+    filesystem_root = Path(resolved.anchor)
+    if resolved == filesystem_root or resolved.parent == filesystem_root:
+        raise ValueError("workspace path cannot be a filesystem root or direct child")
+
+    protected_roots = {
+        Path(value).resolve()
+        for key in ("WINDIR", "ProgramFiles", "ProgramFiles(x86)", "ProgramData")
+        if (value := os.environ.get(key))
+    }
+    protected_roots.update(
+        Path(path).resolve()
+        for path in ("/etc", "/bin", "/usr", "/var", "/root", "/home")
+        if Path(path).exists()
+    )
+    if any(resolved == root or root in resolved.parents for root in protected_roots):
+        raise ValueError("workspace path is a protected system directory")
+    return resolved
+
+
 @dataclass(frozen=True)
 class CapabilityDescriptor:
     capability_id: str

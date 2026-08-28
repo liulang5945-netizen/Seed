@@ -92,6 +92,38 @@ def test_system_validate_path_type_mismatch(client, tmp_path):
     assert response.json()["status"] == "error"
 
 
+def test_native_workbench_workspace_contract(client, tmp_path, monkeypatch):
+    import api.routes_workbench as routes_workbench
+
+    updates = {}
+    monkeypatch.setattr(
+        routes_workbench,
+        "update_settings",
+        lambda payload: updates.update(payload),
+    )
+    response = client.post("/api/workbench/workspace", json={"path": str(tmp_path)})
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "ok"
+    assert payload["path"] == str(tmp_path.resolve())
+    assert updates["workspace_path"] == str(tmp_path.resolve())
+
+
+def test_native_workbench_workspace_rejects_relative_path(client):
+    response = client.post("/api/workbench/workspace", json={"path": "agent_workspace"})
+    assert response.status_code == 400
+    assert "absolute" in response.json()["detail"]
+
+
+def test_native_system_quick_paths_shape(client):
+    response = client.get("/api/system/quick_paths")
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "ok"
+    assert isinstance(payload["paths"], list)
+    assert all(set(item) == {"label", "path"} for item in payload["paths"])
+
+
 # ======================== system reset（安全子集） ========================
 # 语义边界：仅支持 scope=chat_sessions（清空对话会话文件），
 # 不触及模型权重/检查点/配置。用例通过 monkeypatch 隔离目录，不碰真实 user_data。

@@ -64,9 +64,9 @@ export const useRuntimeStore = defineStore('runtime', () => {
   })
 
   const connectionStatus = computed(() => {
-    if (health.value.state === 'connected') return health.value.modelLoaded ? '已连接' : '已连接（未加载模型）'
-    if (health.value.state === 'downloading') return '模型下载中'
-    if (health.value.state === 'loading') return '模型加载中'
+    if (health.value.state === 'connected') return health.value.modelLoaded ? '运行时已连接' : '已连接（运行时未激活）'
+    if (health.value.state === 'downloading') return '运行时资源准备中'
+    if (health.value.state === 'loading') return '运行时加载中'
     if (health.value.state === 'connecting' || health.value.state === 'unknown') return '正在连接'
     return '未连接'
   })
@@ -79,36 +79,35 @@ export const useRuntimeStore = defineStore('runtime', () => {
     if (health.value.state === 'connected' && health.value.modelLoaded) {
       return {
         state: 'ready',
-        title: '模型已装载',
-        message: 'Seed可以对话、调用工具和执行任务。',
-        canDo: ['对话', '工具调用', '自主探索', '知识学习'],
+        title: 'Taiji 运行时已就绪',
+        message: 'Seed 原生运行时已连接，客户端只展示已上报的能力。',
+        canDo: ['对话', '原生工作台能力', '语言识别'],
       }
     }
     if (health.value.state === 'connected') {
       return {
         state: 'waiting',
-        title: '后端在线，模型待装载',
+        title: '后端在线，原生运行时待激活',
         message: memoryAvailableGb.value !== null
-          ? `当前可用内存 ${memoryAvailableGb.value.toFixed(1)}GB，内存合适后会自动尝试装载。每 60 秒检查一次。`
-          : '后端已在线，正在等待模型装载条件。',
-        canDo: ['浏览知识库', '查看生命状态', '管理文件', '等待自动装载'],
-        autoReload: true,
+          ? `当前可用内存 ${memoryAvailableGb.value.toFixed(1)}GB，正在等待原生运行时激活。`
+          : '后端已在线，正在等待原生运行时激活。',
+        canDo: ['查看运行时状态', '等待激活'],
       }
     }
     if (health.value.state === 'downloading') {
       return {
         state: 'downloading',
-        title: '模型正在下载',
-        message: health.value.message || '下载完成后会自动进入装载流程。',
-        canDo: ['等待下载完成'],
+        title: '运行时资源准备中',
+        message: health.value.message || '资源准备完成后会进入原生运行时激活流程。',
+        canDo: ['等待资源准备完成'],
       }
     }
     if (health.value.state === 'loading') {
       return {
         state: 'loading',
-        title: '模型正在装载',
-        message: health.value.message || '正在加载模型，请稍候。',
-        canDo: ['等待装载完成'],
+        title: '原生运行时正在加载',
+        message: health.value.message || '正在加载 Taiji 原生运行时，请稍候。',
+        canDo: ['等待加载完成'],
       }
     }
     if (health.value.state === 'connecting' || health.value.state === 'unknown') {
@@ -260,7 +259,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
       list.push({
         level: 'danger',
         title: '内存告急',
-        message: memoryAvailableGb.value !== null ? `可用内存 ${memoryAvailableGb.value.toFixed(1)}GB，模型装载可能被延后。` : '系统内存不足。',
+        message: memoryAvailableGb.value !== null ? `可用内存 ${memoryAvailableGb.value.toFixed(1)}GB，运行时加载可能被延后。` : '系统内存不足。',
       })
     }
     if (languageProviderNotice.value) {

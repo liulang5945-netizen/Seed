@@ -82,6 +82,20 @@ async function listDirectory(path = '.') {
   return Array.isArray(payload.entries) ? payload.entries : []
 }
 
+async function setWorkspaceRoot(path) {
+  await ensureCapabilities()
+  const payload = await readJson('/api/workbench/workspace', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path }),
+  })
+  // A workspace root is part of the capability context. Refresh the snapshot
+  // so every subsequent operation is visibly tied to the selected root.
+  await refreshCapabilities()
+  error.value = ''
+  return payload
+}
+
 async function readFile(path) {
   await ensureCapabilities()
   if (!isEnabled('workspace.read')) {
@@ -297,6 +311,7 @@ export function useWorkbenchProjection() {
     refreshEvents,
     ensureCapabilities,
     listDirectory,
+    setWorkspaceRoot,
     readFile,
     resolveProgrammingLanguage,
     setEditorLanguage,

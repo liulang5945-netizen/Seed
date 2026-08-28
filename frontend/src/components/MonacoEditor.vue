@@ -51,9 +51,9 @@
 
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
-import { API_BASE, authFetch } from '../composables/apiClient.js';
 import { useWorkbenchProjection } from '../composables/useWorkbenchProjection.js';
 import { useAppStore } from '../stores/appStore.js';
+import { sha256Text } from '../utils/digest.js';
 
 const appStore = useAppStore();
 const {
@@ -62,8 +62,14 @@ const {
   setEditorLanguage,
   ensureCapabilities,
   programmingLanguages,
+  previewIntent,
+  executeIntent,
+  isEnabled,
 } = useWorkbenchProjection();
-defineProps({ workspacePath: { type: String, default: '' } });
+const props = defineProps({
+  workspacePath: { type: String, default: '' },
+  approvalHandler: { type: Function, default: null },
+});
 const emit = defineEmits(['saved', 'save-error']);
 
 const editorContainer = ref(null);
@@ -196,7 +202,10 @@ async function openFile(filePath) {
     openTabs.value.push({
       path: filePath,
       name,
-      content: data.content || '',
+      content: data.content ?? '',
+      digest: data.digest || '',
+      encoding: data.encoding || 'utf-8',
+      truncated: data.truncated === true,
       language: lang,
       programmingLanguageId: assessment.programming_language_id || 'plaintext',
       languageAssessment: assessment,
@@ -288,23 +297,51 @@ async function saveFile() {
   if (!activeTab.value) return false;
   const content = editor ? editor.getValue() : fallbackContent.value;
   if (!content && content !== '') return false;
+  const tab = openTabs.value.find(item => item.path === activeTab.value);
+  if (!tab) return false;
   try {
-    const r = await authFetch(`${API_BASE}/api/workspace/file`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: activeTab.value, content }),
-    });
-    const data = await r.json().catch(() => ({}));
-    if (r.ok) {
-      isDirty.value = false;
-      const tab = openTabs.value.find(t => t.path === activeTab.value);
-      if (tab) tab.content = content;
-      emit('saved', activeTab.value);
-      return true;
+    if (!isEnabled('workspace.apply_patch')) {
+      throw new Error('原生工作台尚未提供文件写入能力');
     }
-    // 非 2xx：把后端 detail（如「无权限写入」）抛给调用方展示，不再静默
-    emit('save-error', data.detail || data.message || `保存失败（HTTP ${r.status}）`);
-    return false;
+    if (!tab.digest || tab.encoding !== 'utf-8' || tab.truncated) {
+      throw new Error('文件不是完整 UTF-8 快照，已拒绝覆盖写入');
+    }
+    const expectedAfterDigest = await sha256Text(content);
+    const intentId = `ui:workspace.apply_patch:${Date.now()}`;
+    const parameters = {
+      path: tab.path,
+      before_digest: tab.digest,
+      patch: {
+        kind: 'text_replace',
+        operations: [{ start: 0, end: tab.content.length, text: content }],
+      },
+      expected_after_digest: expectedAfterDigest,
+    };
+    const preview = await previewIntent({
+      intentId,
+      kind: 'workspace.apply_patch',
+      parameters,
+      expectedOutcome: `save ${tab.path}`,
+    });
+    const approved = props.approvalHandler
+      ? await props.approvalHandler({ kind: 'workspace.apply_patch', parameters, preview })
+      : window.confirm(`确认保存 ${tab.path}？`);
+    if (!approved) return false;
+    const result = await executeIntent({
+      intentId,
+      kind: 'workspace.apply_patch',
+      parameters,
+      expectedOutcome: `save ${tab.path}`,
+      approvalToken: preview.approval?.approval_token || '',
+    });
+    if (!result.outcome?.success) {
+      throw new Error(result.outcome?.error || '原生工作台拒绝保存');
+    }
+    isDirty.value = false;
+    tab.content = content;
+    tab.digest = result.outcome.result?.digest || expectedAfterDigest;
+    emit('saved', activeTab.value);
+    return true;
   } catch (e) {
     emit('save-error', e.message || '保存失败');
     return false;

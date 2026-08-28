@@ -5,7 +5,7 @@ export const locales = {
   zh: {
     welcome_title: '欢迎使用 Seed', welcome_desc: '我是您的 AI 智能助手，请在下文输入问题开始对话。', quick_code: '写代码', quick_explain: '解释概念', quick_news: '搜索新闻', quick_code_prompt: '帮我写一个Python冒泡排序', quick_explain_prompt: '用通俗的语言解释什么是机器学习', quick_news_prompt: '帮我总结一下近期的AI行业新闻',
     title: 'Seed', new_chat: '新对话', kb_management: '知识库', fine_tuning: '模型微调',
-    agent_config: '能力与工具', sys_settings: '系统设置', model_market: '模型市场', workspace: '工作台',
+    agent_config: '能力与工具', sys_settings: '系统设置', workspace: '工作台',
     back: '返回对话',
     ui_settings: '界面设置', theme: '主题', theme_light: '浅色', theme_dark: '深色', theme_auto: '跟随系统',
     dev_mode_vite: '前端开发模式(Vite HMR)', connect: '连接', refresh_ui: '刷新界面',
@@ -58,7 +58,7 @@ export const locales = {
   en: {
     welcome_title: 'Welcome to Seed', welcome_desc: 'I am your AI smart assistant, type your question below to start chatting.', quick_code: 'Write Code', quick_explain: 'Explain Concept', quick_news: 'Search News', quick_code_prompt: 'Help me write a Python bubble sort', quick_explain_prompt: 'Explain machine learning in simple terms', quick_news_prompt: 'Summarize recent AI industry news',
     title: 'Seed', new_chat: 'New Chat', kb_management: 'Knowledge Base', fine_tuning: 'Fine Tuning',
-    agent_config: 'Agent Config', sys_settings: 'Settings', model_market: 'Model Market', workspace: 'Workspace',
+    agent_config: 'Agent Config', sys_settings: 'Settings', workspace: 'Workspace',
     back: 'Back',
     ui_settings: 'UI Settings', theme: 'Theme', theme_light: 'Light', theme_dark: 'Dark', theme_auto: 'Auto',
     dev_mode_vite: 'Dev Mode (Vite HMR)', connect: 'Connect', refresh_ui: 'Refresh UI',

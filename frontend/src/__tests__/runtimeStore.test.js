@@ -198,20 +198,20 @@ describe('runtimeStore', () => {
   })
 
   describe('computed: connectionStatus', () => {
-    it('connected + modelLoaded 返回 "已连接"', async () => {
+    it('connected + modelLoaded 返回原生运行时已连接', async () => {
       const { useRuntimeStore } = await import('../stores/runtimeStore.js')
       const store = useRuntimeStore()
 
       store.syncHealth('connected', '', true)
-      expect(store.connectionStatus).toBe('已连接')
+      expect(store.connectionStatus).toBe('运行时已连接')
     })
 
-    it('connected 但无模型返回提示', async () => {
+    it('connected 但无原生运行时返回提示', async () => {
       const { useRuntimeStore } = await import('../stores/runtimeStore.js')
       const store = useRuntimeStore()
 
       store.syncHealth('connected', '', false)
-      expect(store.connectionStatus).toContain('未加载模型')
+      expect(store.connectionStatus).toContain('运行时未激活')
     })
   })
 
