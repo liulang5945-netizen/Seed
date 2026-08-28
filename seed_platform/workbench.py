@@ -13,7 +13,11 @@ import hashlib
 import json
 import math
 import os
+import secrets
+import subprocess
+import tempfile
 import threading
+import time
 from collections.abc import Iterator, Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -33,6 +37,9 @@ WORKBENCH_CONTRACT_FORMAT = "seed-workbench-contract-v1"
 WORKBENCH_CONTRACT_VERSION = 1
 WORKBENCH_MAX_READ_BYTES = 1_048_576
 WORKBENCH_MAX_SEARCH_RESULTS = 100
+WORKBENCH_MAX_WRITE_BYTES = 1_048_576
+WORKBENCH_MAX_TERMINAL_OUTPUT_BYTES = 1_048_576
+WORKBENCH_MAX_TERMINAL_TIMEOUT_SECONDS = 120.0
 # Workbench sensations cross into Taiji's native byte sensor. Keep the
 # digest-derived marker inside the raw-byte domain; Taiji's boundary symbol
 # is reserved for stream framing and is not emitted here.
@@ -160,7 +167,10 @@ class CapabilitySnapshot:
                 category="language",
                 parameters=(
                     ("path", "relative file path"),
-                    ("lsp_language_id", "optional connected language-service selection"),
+                    (
+                        "lsp_language_id",
+                        "optional connected language-service selection",
+                    ),
                 ),
             ),
             CapabilityDescriptor(
@@ -175,15 +185,82 @@ class CapabilitySnapshot:
                 ),
             ),
         )
+        capabilities += (
+            CapabilityDescriptor(
+                "workspace.apply_patch",
+                "Apply a structured UTF-8 text patch with digest and undo checks.",
+                risk="file_write",
+                category="workspace",
+                parameters=(
+                    ("path", "relative file path"),
+                    ("before_digest", "required current file SHA-256"),
+                    ("patch", "structured text replacement operations"),
+                    ("expected_after_digest", "required expected resulting SHA-256"),
+                ),
+            ),
+            CapabilityDescriptor(
+                "workspace.create",
+                "Create one new UTF-8 file with an undoable transaction.",
+                risk="file_write",
+                category="workspace",
+                parameters=(
+                    ("path", "relative new file path"),
+                    ("content", "UTF-8 file content"),
+                ),
+            ),
+            CapabilityDescriptor(
+                "workspace.rename",
+                "Rename one workspace file with a digest-checked transaction.",
+                risk="file_write",
+                category="workspace",
+                parameters=(
+                    ("path", "relative current file path"),
+                    ("new_path", "relative destination file path"),
+                    ("before_digest", "required current file SHA-256"),
+                ),
+            ),
+            CapabilityDescriptor(
+                "workspace.delete",
+                "Delete one file with a digest check and undo token.",
+                risk="file_write",
+                category="workspace",
+                parameters=(
+                    ("path", "relative file path"),
+                    ("before_digest", "required current file SHA-256"),
+                ),
+            ),
+            CapabilityDescriptor(
+                "workspace.undo",
+                "Undo one previously committed file transaction if state is unchanged.",
+                risk="file_write",
+                category="workspace",
+                parameters=(("undo_token", "single-use undo token"),),
+            ),
+            CapabilityDescriptor(
+                "terminal.run",
+                "Run one bounded argv command without a shell and return auditable output.",
+                risk="terminal",
+                category="terminal",
+                parameters=(
+                    ("argv", "non-empty argument vector; shell syntax is not accepted"),
+                    ("cwd", "relative workspace directory"),
+                    ("timeout_seconds", "bounded command timeout"),
+                    ("env", "environment additions"),
+                    ("env_allowlist", "allowed environment variable names"),
+                    ("output_limit", "maximum captured bytes per stream"),
+                    ("expected_artifacts", "relative paths expected after execution"),
+                ),
+            ),
+        )
         body = {
             "format": WORKBENCH_CONTRACT_FORMAT,
             "version": WORKBENCH_CONTRACT_VERSION,
-            "revision": 2,
+            "revision": 3,
             "capabilities": [item.to_payload() for item in capabilities],
         }
         return cls(
             snapshot_id=_canonical_digest(body),
-            revision=2,
+            revision=3,
             capabilities=capabilities,
         )
 
@@ -232,7 +309,9 @@ class CapabilitySnapshot:
         snapshot_id = str(payload.get("snapshot_id", ""))
         if snapshot_id != _canonical_digest(body):
             raise ValueError("workbench capability snapshot digest mismatch")
-        return cls(snapshot_id=snapshot_id, revision=revision, capabilities=tuple(capabilities))
+        return cls(
+            snapshot_id=snapshot_id, revision=revision, capabilities=tuple(capabilities)
+        )
 
     def get(self, capability_id: str) -> CapabilityDescriptor | None:
         return next(
@@ -266,7 +345,10 @@ class WorkbenchActionRequest:
                 raise ValueError(f"{name} cannot be empty")
         if not isinstance(self.parameters, Mapping):
             raise TypeError("workbench action parameters must be a mapping")
-        if not math.isfinite(float(self.confidence)) or not 0.0 <= float(self.confidence) <= 1.0:
+        if (
+            not math.isfinite(float(self.confidence))
+            or not 0.0 <= float(self.confidence) <= 1.0
+        ):
             raise ValueError("workbench action confidence must be in [0, 1]")
         if int(self.tick) < 0:
             raise ValueError("workbench action tick cannot be negative")
@@ -337,6 +419,7 @@ class WorkbenchTransaction:
     path: str
     before_digest: str = ""
     after_digest: str = ""
+    undo_token: str = ""
     reversible: bool = True
     version: int = WORKBENCH_CONTRACT_VERSION
 
@@ -347,8 +430,21 @@ class WorkbenchTransaction:
             "path": self.path,
             "before_digest": self.before_digest,
             "after_digest": self.after_digest,
+            "undo_token": self.undo_token,
             "reversible": self.reversible,
         }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> WorkbenchTransaction:
+        return cls(
+            operation=str(payload.get("operation", "")),
+            path=str(payload.get("path", "")),
+            before_digest=str(payload.get("before_digest", "")),
+            after_digest=str(payload.get("after_digest", "")),
+            undo_token=str(payload.get("undo_token", "")),
+            reversible=bool(payload.get("reversible", True)),
+            version=int(payload.get("version", WORKBENCH_CONTRACT_VERSION)),
+        )
 
 
 @dataclass(frozen=True)
@@ -386,7 +482,9 @@ class WorkbenchOutcome:
             "result": dict(self.result),
             "error_code": self.error_code,
             "error": self.error,
-            "transaction": (None if self.transaction is None else self.transaction.to_payload()),
+            "transaction": (
+                None if self.transaction is None else self.transaction.to_payload()
+            ),
             "tick": self.tick,
         }
 
@@ -493,6 +591,10 @@ class WorkbenchPathError(ValueError):
     """A requested path is not safe within the active workspace."""
 
 
+class WorkbenchConflictError(ValueError):
+    """A transaction observed a different state than its precondition."""
+
+
 class WorkbenchEnvironment:
     """Read-only Seed workbench implementing Taiji's tool-environment protocol."""
 
@@ -509,6 +611,7 @@ class WorkbenchEnvironment:
             programming_language_registry or ProgrammingLanguageRegistry.default()
         )
         self._language_selections: dict[str, ProgrammingLanguageAssessment] = {}
+        self._undo_records: dict[str, dict[str, Any]] = {}
         self._last_result: dict[str, Any] = {}
         self._request_id = ""
         self._lock = threading.RLock()
@@ -554,7 +657,9 @@ class WorkbenchEnvironment:
                 "format": "seed-workbench-language-state-v1",
                 "version": 1,
                 "registry_revision": self.programming_language_registry.revision,
-                "selections": [item.to_payload() for item in self._language_selections.values()],
+                "selections": [
+                    item.to_payload() for item in self._language_selections.values()
+                ],
             }
 
     def restore_language_state(self, payload: Mapping[str, Any] | None) -> None:
@@ -562,14 +667,20 @@ class WorkbenchEnvironment:
             return
         if payload.get("format") != "seed-workbench-language-state-v1":
             raise ValueError("unsupported workbench language state format")
-        if str(payload.get("registry_revision", "")) != self.programming_language_registry.revision:
+        if (
+            str(payload.get("registry_revision", ""))
+            != self.programming_language_registry.revision
+        ):
             raise ValueError("programming language registry drifted during restore")
         restored: dict[str, ProgrammingLanguageAssessment] = {}
         for raw in payload.get("selections", []):
             if not isinstance(raw, Mapping):
                 continue
             assessment = ProgrammingLanguageAssessment.from_payload(raw)
-            if assessment.registry_revision != self.programming_language_registry.revision:
+            if (
+                assessment.registry_revision
+                != self.programming_language_registry.revision
+            ):
                 raise ValueError("programming language assessment registry drifted")
             restored[assessment.path] = assessment
         with self._lock:
@@ -666,7 +777,13 @@ class WorkbenchEnvironment:
                 remember=False,
                 apply_selection=False,
             )
-        except (WorkbenchPathError, FileNotFoundError, IsADirectoryError, OSError, ValueError):
+        except (
+            WorkbenchPathError,
+            FileNotFoundError,
+            IsADirectoryError,
+            OSError,
+            ValueError,
+        ):
             return ExecutionPolicyDecision(
                 request.request_id,
                 request.capability_id,
@@ -697,7 +814,7 @@ class WorkbenchEnvironment:
         tool_name: str,
         parameters: Mapping[str, Any],
     ) -> EnvironmentOutcome:
-        """Execute one registered read-only capability."""
+        """Execute one registered capability after the policy boundary admits it."""
 
         with self._lock:
             self._last_result = {}
@@ -716,10 +833,26 @@ class WorkbenchEnvironment:
                 result = self._resolve_programming_language(parameters)
             elif tool_name == "editor.set_language":
                 result = self._set_editor_language(parameters)
+            elif tool_name == "workspace.apply_patch":
+                result = self._apply_patch(parameters)
+            elif tool_name == "workspace.create":
+                result = self._create_file(parameters)
+            elif tool_name == "workspace.rename":
+                result = self._rename_file(parameters)
+            elif tool_name == "workspace.delete":
+                result = self._delete_file(parameters)
+            elif tool_name == "workspace.undo":
+                result = self._undo_transaction(parameters)
+            elif tool_name == "terminal.run":
+                result = self._run_terminal(parameters)
             else:
-                return self._failure("unknown_capability", "capability is not registered")
+                return self._failure(
+                    "unknown_capability", "capability is not registered"
+                )
         except WorkbenchPathError as exc:
             return self._failure("unsafe_path", str(exc))
+        except WorkbenchConflictError as exc:
+            return self._failure("transaction_conflict", str(exc))
         except FileNotFoundError:
             return self._failure("not_found", "workspace entry does not exist")
         except IsADirectoryError:
@@ -731,11 +864,12 @@ class WorkbenchEnvironment:
 
         with self._lock:
             self._last_result = dict(result)
+        success = bool(result.get("success", True))
         return EnvironmentOutcome(
             sensation=self._sensation(tool_name, result),
-            reward=1.0,
+            reward=1.0 if success else -1.0,
             terminal=True,
-            success=True,
+            success=success,
         )
 
     def _failure(self, code: str, message: str) -> EnvironmentOutcome:
@@ -788,7 +922,9 @@ class WorkbenchEnvironment:
         return {"path": relative_name, "entries": entries}
 
     def _read_workspace(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
-        path, relative_name = self._resolve_path(parameters.get("path"), allow_root=False)
+        path, relative_name = self._resolve_path(
+            parameters.get("path"), allow_root=False
+        )
         if not path.exists():
             raise FileNotFoundError(path)
         if not path.is_file():
@@ -854,11 +990,17 @@ class WorkbenchEnvironment:
                             }
                         )
                         if len(results) >= WORKBENCH_MAX_SEARCH_RESULTS:
-                            return {"query": query, "results": results, "truncated": True}
+                            return {
+                                "query": query,
+                                "results": results,
+                                "truncated": True,
+                            }
         return {"query": query, "results": results, "truncated": False}
 
     def _open_editor(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
-        path, relative_name = self._resolve_path(parameters.get("path"), allow_root=False)
+        path, relative_name = self._resolve_path(
+            parameters.get("path"), allow_root=False
+        )
         if not path.exists():
             raise FileNotFoundError(path)
         if not path.is_file():
@@ -899,7 +1041,9 @@ class WorkbenchEnvironment:
         remember: bool = True,
         apply_selection: bool = True,
     ) -> dict[str, Any]:
-        path, relative_name = self._resolve_path(parameters.get("path"), allow_root=False)
+        path, relative_name = self._resolve_path(
+            parameters.get("path"), allow_root=False
+        )
         raw = self._read_workspace({"path": relative_name})
         manifest_names, neighbor_names = self._workspace_context_names(path)
         assessment = self.programming_language_registry.resolve(
@@ -935,7 +1079,9 @@ class WorkbenchEnvironment:
         return assessment.to_payload()
 
     def _set_editor_language(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
-        path, relative_name = self._resolve_path(parameters.get("path"), allow_root=False)
+        path, relative_name = self._resolve_path(
+            parameters.get("path"), allow_root=False
+        )
         if not path.is_file():
             raise FileNotFoundError(path)
         clear_override = bool(parameters.get("clear_override", False))
@@ -951,10 +1097,14 @@ class WorkbenchEnvironment:
         language_id = str(parameters.get("programming_language_id", "")).strip()
         if not language_id:
             language_id = str(parameters.get("editor_language_id", "")).strip()
-            definition = self.programming_language_registry.get_by_editor_language(language_id)
+            definition = self.programming_language_registry.get_by_editor_language(
+                language_id
+            )
             language_id = definition.language_id if definition is not None else ""
         source = (
-            "user_override" if bool(parameters.get("user_override", False)) else "taiji_selection"
+            "user_override"
+            if bool(parameters.get("user_override", False))
+            else "taiji_selection"
         )
         selected = self.programming_language_registry.select(
             assessment,
@@ -964,3 +1114,425 @@ class WorkbenchEnvironment:
         with self._lock:
             self._language_selections[relative_name] = selected
         return selected.to_payload()
+
+    def _regular_file(self, raw_path: Any) -> tuple[Path, str]:
+        path, relative_name = self._resolve_path(raw_path, allow_root=False)
+        if path.is_symlink():
+            raise WorkbenchPathError("symbolic links are not writable")
+        if not path.exists():
+            raise FileNotFoundError(path)
+        if not path.is_file():
+            raise IsADirectoryError(path)
+        return path, relative_name
+
+    @staticmethod
+    def _bytes_digest(raw: bytes) -> str:
+        return hashlib.sha256(raw).hexdigest()
+
+    def _checked_file_bytes(
+        self, path: Path, expected_digest: Any
+    ) -> tuple[bytes, str]:
+        expected = str(expected_digest or "").strip().lower()
+        if len(expected) != 64:
+            raise ValueError("before_digest must be a SHA-256 digest")
+        raw = path.read_bytes()
+        actual = self._bytes_digest(raw)
+        if actual != expected:
+            raise WorkbenchConflictError(
+                f"file digest changed before transaction: expected {expected}, got {actual}"
+            )
+        return raw, actual
+
+    @staticmethod
+    def _atomic_write(path: Path, raw: bytes) -> None:
+        temporary_path: str | None = None
+        try:
+            with tempfile.NamedTemporaryFile(
+                mode="wb",
+                prefix=".seed-transaction-",
+                suffix=".tmp",
+                dir=str(path.parent),
+                delete=False,
+            ) as handle:
+                temporary_path = handle.name
+                handle.write(raw)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(temporary_path, path)
+            temporary_path = None
+        finally:
+            if temporary_path is not None:
+                with contextlib.suppress(FileNotFoundError):
+                    Path(temporary_path).unlink()
+
+    def _new_undo_token(self, record: dict[str, Any]) -> str:
+        token = secrets.token_urlsafe(24)
+        with self._lock:
+            self._undo_records[token] = record
+        return token
+
+    @staticmethod
+    def _transaction_result(
+        transaction: WorkbenchTransaction,
+        *,
+        digest: str,
+        extra: Mapping[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        result: dict[str, Any] = {
+            "path": transaction.path,
+            "digest": digest,
+            "before_digest": transaction.before_digest,
+            "after_digest": transaction.after_digest,
+            "transaction": transaction.to_payload(),
+        }
+        result.update(dict(extra or {}))
+        return result
+
+    def _apply_patch(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
+        path, relative_name = self._regular_file(parameters.get("path"))
+        raw, before_digest = self._checked_file_bytes(
+            path, parameters.get("before_digest")
+        )
+        if len(raw) > WORKBENCH_MAX_WRITE_BYTES:
+            raise ValueError("file exceeds the writable size limit")
+        try:
+            content = raw.decode("utf-8")
+        except UnicodeDecodeError as exc:
+            raise ValueError("workspace.apply_patch only accepts UTF-8 text") from exc
+        patch = parameters.get("patch")
+        if not isinstance(patch, Mapping) or patch.get("kind") != "text_replace":
+            raise ValueError("patch.kind must be text_replace")
+        raw_operations = patch.get("operations")
+        if not isinstance(raw_operations, (list, tuple)) or not raw_operations:
+            raise ValueError("patch.operations must be a non-empty list")
+        operations: list[tuple[int, int, str]] = []
+        for raw_operation in raw_operations:
+            if not isinstance(raw_operation, Mapping):
+                raise ValueError("patch operation must be an object")
+            start = raw_operation.get("start")
+            end = raw_operation.get("end")
+            replacement = raw_operation.get("text", "")
+            if (
+                isinstance(start, bool)
+                or isinstance(end, bool)
+                or not isinstance(start, int)
+                or not isinstance(end, int)
+                or not isinstance(replacement, str)
+            ):
+                raise ValueError("patch operation requires integer range and text")
+            operations.append((start, end, replacement))
+        operations.sort(key=lambda item: (item[0], item[1]))
+        previous_end = 0
+        for start, end, _replacement in operations:
+            if start < 0 or end < start or end > len(content) or start < previous_end:
+                raise ValueError("patch operations overlap or exceed the file")
+            previous_end = end
+        updated = content
+        for start, end, replacement in reversed(operations):
+            updated = updated[:start] + replacement + updated[end:]
+        updated_raw = updated.encode("utf-8")
+        if len(updated_raw) > WORKBENCH_MAX_WRITE_BYTES:
+            raise ValueError("patched file exceeds the writable size limit")
+        expected_after = (
+            str(
+                parameters.get(
+                    "expected_after_digest", parameters.get("after_digest", "")
+                )
+            )
+            .strip()
+            .lower()
+        )
+        if len(expected_after) != 64:
+            raise ValueError("expected_after_digest must be a SHA-256 digest")
+        after_digest = self._bytes_digest(updated_raw)
+        if after_digest != expected_after:
+            raise WorkbenchConflictError(
+                f"patch result digest mismatch: expected {expected_after}, got {after_digest}"
+            )
+        self._atomic_write(path, updated_raw)
+        token = self._new_undo_token(
+            {
+                "operation": "workspace.apply_patch",
+                "path": relative_name,
+                "before_digest": before_digest,
+                "after_digest": after_digest,
+                "before_bytes": raw,
+            }
+        )
+        transaction = WorkbenchTransaction(
+            operation="workspace.apply_patch",
+            path=relative_name,
+            before_digest=before_digest,
+            after_digest=after_digest,
+            undo_token=token,
+        )
+        return self._transaction_result(transaction, digest=after_digest)
+
+    def _create_file(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
+        path, relative_name = self._resolve_path(
+            parameters.get("path"), allow_root=False
+        )
+        if path.exists() or path.is_symlink():
+            raise WorkbenchConflictError("create target already exists")
+        if not path.parent.is_dir() or path.parent.is_symlink():
+            raise WorkbenchPathError("create parent directory is unavailable")
+        content = parameters.get("content", "")
+        if not isinstance(content, str):
+            raise ValueError("create content must be text")
+        raw = content.encode("utf-8")
+        if len(raw) > WORKBENCH_MAX_WRITE_BYTES:
+            raise ValueError("created file exceeds the writable size limit")
+        try:
+            descriptor = os.open(str(path), os.O_WRONLY | os.O_CREAT | os.O_EXCL)
+            with os.fdopen(descriptor, "wb") as handle:
+                handle.write(raw)
+                handle.flush()
+                os.fsync(handle.fileno())
+        except FileExistsError as exc:
+            raise WorkbenchConflictError(
+                "create target appeared during transaction"
+            ) from exc
+        except Exception:
+            with contextlib.suppress(FileNotFoundError):
+                path.unlink()
+            raise
+        after_digest = self._bytes_digest(raw)
+        token = self._new_undo_token(
+            {
+                "operation": "workspace.create",
+                "path": relative_name,
+                "before_digest": "",
+                "after_digest": after_digest,
+            }
+        )
+        transaction = WorkbenchTransaction(
+            operation="workspace.create",
+            path=relative_name,
+            after_digest=after_digest,
+            undo_token=token,
+        )
+        return self._transaction_result(transaction, digest=after_digest)
+
+    def _rename_file(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
+        path, relative_name = self._regular_file(parameters.get("path"))
+        new_path, new_relative_name = self._resolve_path(
+            parameters.get("new_path"), allow_root=False
+        )
+        if new_path.exists() or new_path.is_symlink():
+            raise WorkbenchConflictError("rename target already exists")
+        if not new_path.parent.is_dir() or new_path.parent.is_symlink():
+            raise WorkbenchPathError("rename parent directory is unavailable")
+        raw, before_digest = self._checked_file_bytes(
+            path, parameters.get("before_digest")
+        )
+        path.rename(new_path)
+        token = self._new_undo_token(
+            {
+                "operation": "workspace.rename",
+                "path": relative_name,
+                "new_path": new_relative_name,
+                "before_digest": before_digest,
+                "after_digest": before_digest,
+            }
+        )
+        transaction = WorkbenchTransaction(
+            operation="workspace.rename",
+            path=relative_name,
+            before_digest=before_digest,
+            after_digest=before_digest,
+            undo_token=token,
+        )
+        return self._transaction_result(
+            transaction,
+            digest=before_digest,
+            extra={"new_path": new_relative_name, "byte_length": len(raw)},
+        )
+
+    def _delete_file(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
+        path, relative_name = self._regular_file(parameters.get("path"))
+        raw, before_digest = self._checked_file_bytes(
+            path, parameters.get("before_digest")
+        )
+        path.unlink()
+        token = self._new_undo_token(
+            {
+                "operation": "workspace.delete",
+                "path": relative_name,
+                "before_digest": before_digest,
+                "after_digest": "",
+                "before_bytes": raw,
+            }
+        )
+        transaction = WorkbenchTransaction(
+            operation="workspace.delete",
+            path=relative_name,
+            before_digest=before_digest,
+            after_digest="",
+            undo_token=token,
+        )
+        return self._transaction_result(
+            transaction, digest="", extra={"byte_length": len(raw)}
+        )
+
+    def _undo_transaction(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
+        token = str(parameters.get("undo_token", "")).strip()
+        if not token:
+            raise ValueError("undo_token is required")
+        with self._lock:
+            record = self._undo_records.get(token)
+        if record is None:
+            raise ValueError("undo token is unknown or already consumed")
+        path, relative_name = self._resolve_path(record["path"], allow_root=False)
+        operation = str(record["operation"])
+        if operation == "workspace.apply_patch":
+            current = path.read_bytes() if path.is_file() else b""
+            if self._bytes_digest(current) != record["after_digest"]:
+                raise WorkbenchConflictError("file changed before undo")
+            self._atomic_write(path, record["before_bytes"])
+            after_digest = record["before_digest"]
+        elif operation == "workspace.create":
+            if (
+                not path.is_file()
+                or self._bytes_digest(path.read_bytes()) != record["after_digest"]
+            ):
+                raise WorkbenchConflictError("created file changed before undo")
+            path.unlink()
+            after_digest = ""
+        elif operation == "workspace.delete":
+            if path.exists() or path.is_symlink():
+                raise WorkbenchConflictError("delete target reappeared before undo")
+            raw = record["before_bytes"]
+            descriptor = os.open(str(path), os.O_WRONLY | os.O_CREAT | os.O_EXCL)
+            with os.fdopen(descriptor, "wb") as handle:
+                handle.write(raw)
+                handle.flush()
+                os.fsync(handle.fileno())
+            after_digest = record["before_digest"]
+        elif operation == "workspace.rename":
+            new_path, _ = self._resolve_path(record["new_path"], allow_root=False)
+            if (
+                path.exists()
+                or not new_path.is_file()
+                or self._bytes_digest(new_path.read_bytes()) != record["after_digest"]
+            ):
+                raise WorkbenchConflictError("rename state changed before undo")
+            new_path.rename(path)
+            after_digest = record["before_digest"]
+        else:  # pragma: no cover - only internal records can reach this branch
+            raise ValueError("unsupported undo operation")
+        with self._lock:
+            self._undo_records.pop(token, None)
+        transaction = WorkbenchTransaction(
+            operation="workspace.undo",
+            path=relative_name,
+            before_digest=str(record.get("after_digest", "")),
+            after_digest=after_digest,
+            reversible=False,
+        )
+        return self._transaction_result(transaction, digest=after_digest)
+
+    @staticmethod
+    def _bounded_text(raw: bytes | str | None, limit: int) -> tuple[str, bool]:
+        data = (
+            raw.encode("utf-8", errors="replace")
+            if isinstance(raw, str)
+            else bytes(raw or b"")
+        )
+        return data[:limit].decode("utf-8", errors="replace"), len(data) > limit
+
+    def _artifact_state(self, raw_paths: Any) -> list[dict[str, Any]]:
+        if raw_paths is None:
+            return []
+        if not isinstance(raw_paths, (list, tuple)):
+            raise ValueError("expected_artifacts must be a list")
+        artifacts: list[dict[str, Any]] = []
+        for raw_path in raw_paths:
+            path, relative_name = self._resolve_path(raw_path, allow_root=False)
+            if path.is_symlink():
+                raise WorkbenchPathError("symbolic-link artifacts are not accepted")
+            item: dict[str, Any] = {
+                "path": relative_name,
+                "exists": path.exists(),
+                "type": "missing",
+            }
+            if path.exists():
+                item["type"] = "directory" if path.is_dir() else "file"
+                item["size"] = int(path.stat().st_size) if path.is_file() else 0
+                if path.is_file():
+                    item["digest"] = self._bytes_digest(path.read_bytes())
+            artifacts.append(item)
+        return artifacts
+
+    def _run_terminal(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
+        raw_argv = parameters.get("argv")
+        if not isinstance(raw_argv, (list, tuple)) or not raw_argv:
+            raise ValueError("terminal.run requires a non-empty argv list")
+        if any(not isinstance(item, str) or not item for item in raw_argv):
+            raise ValueError("terminal argv entries must be non-empty strings")
+        argv = list(raw_argv)
+        cwd, relative_cwd = self._resolve_path(parameters.get("cwd", "."))
+        if not cwd.is_dir() or cwd.is_symlink():
+            raise WorkbenchPathError(
+                "terminal cwd must be a regular workspace directory"
+            )
+        timeout_seconds = float(parameters.get("timeout_seconds", 30.0))
+        if (
+            not math.isfinite(timeout_seconds)
+            or not 0.01 <= timeout_seconds <= WORKBENCH_MAX_TERMINAL_TIMEOUT_SECONDS
+        ):
+            raise ValueError("terminal timeout is outside the allowed range")
+        output_limit = int(parameters.get("output_limit", 64 * 1024))
+        if not 1 <= output_limit <= WORKBENCH_MAX_TERMINAL_OUTPUT_BYTES:
+            raise ValueError("terminal output_limit is outside the allowed range")
+        env_allowlist = parameters.get("env_allowlist", ())
+        if not isinstance(env_allowlist, (list, tuple, set)):
+            raise ValueError("env_allowlist must be a list")
+        allowlist = {str(item) for item in env_allowlist}
+        raw_env = parameters.get("env", {})
+        if not isinstance(raw_env, Mapping):
+            raise ValueError("terminal env must be an object")
+        if any(str(key) not in allowlist for key in raw_env):
+            raise ValueError("terminal env contains a variable outside env_allowlist")
+        process_env = os.environ.copy()
+        process_env.update({str(key): str(value) for key, value in raw_env.items()})
+        started = time.perf_counter()
+        timed_out = False
+        try:
+            completed = subprocess.run(
+                argv,
+                cwd=str(cwd),
+                env=process_env,
+                stdin=subprocess.DEVNULL,
+                capture_output=True,
+                shell=False,
+                timeout=timeout_seconds,
+                check=False,
+            )
+            exit_code: int | None = int(completed.returncode)
+            stdout_raw: bytes | str | None = completed.stdout
+            stderr_raw: bytes | str | None = completed.stderr
+        except subprocess.TimeoutExpired as exc:
+            timed_out = True
+            exit_code = None
+            stdout_raw = exc.stdout
+            stderr_raw = exc.stderr
+        duration_ms = round((time.perf_counter() - started) * 1000.0, 3)
+        stdout, stdout_truncated = self._bounded_text(stdout_raw, output_limit)
+        stderr, stderr_truncated = self._bounded_text(stderr_raw, output_limit)
+        return {
+            "argv": argv,
+            "cwd": relative_cwd,
+            "shell": False,
+            "exit_code": exit_code,
+            "timed_out": timed_out,
+            "duration_ms": duration_ms,
+            "stdout": stdout,
+            "stderr": stderr,
+            "stdout_truncated": stdout_truncated,
+            "stderr_truncated": stderr_truncated,
+            "output_limit": output_limit,
+            "expected_artifacts": self._artifact_state(
+                parameters.get("expected_artifacts", [])
+            ),
+            "success": not timed_out and exit_code == 0,
+        }

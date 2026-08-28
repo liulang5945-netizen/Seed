@@ -22,7 +22,9 @@ from taiji import InputFrame
 
 logger = logging.getLogger("ApiServer.SeedRuntime")
 
-DEFAULT_CHECKPOINT = Path(__file__).resolve().parent.parent / "checkpoints" / "seed_corpus.pt"
+DEFAULT_CHECKPOINT = (
+    Path(__file__).resolve().parent.parent / "checkpoints" / "seed_corpus.pt"
+)
 
 _TURN_MARKERS = ("\n问：", "问：")
 
@@ -125,7 +127,8 @@ class SeedRuntime:
                 candidate = self.model.architecture.language_organ
                 self._chat_organ = (
                     candidate
-                    if result.status.chat_enabled and isinstance(candidate, LanguageOrgan)
+                    if result.status.chat_enabled
+                    and isinstance(candidate, LanguageOrgan)
                     else NativeReadableTextLanguageOrgan()
                 )
             return result
@@ -164,7 +167,9 @@ class SeedRuntime:
             selected_config,
         )
         logger.info("Seed runtime loaded from %s", path)
-        runtime = cls(model, path, provider_status.to_dict(), provider_runtime, selected_config)
+        runtime = cls(
+            model, path, provider_status.to_dict(), provider_runtime, selected_config
+        )
         metadata = checkpoint.get("metadata")
         if isinstance(metadata, Mapping):
             runtime._restore_workbench_metadata(metadata.get("workbench"))
@@ -287,12 +292,16 @@ class SeedRuntime:
                 current_runtime=self._provider_runtime,
             )
         except Exception:  # 探针不可让对话失败
-            logger.exception("language provider health probe failed; keeping current surface")
+            logger.exception(
+                "language provider health probe failed; keeping current surface"
+            )
             return
         if not result.committed:
             # 名义探针：健康计数随真实发射增长，必须立刻可观测，但表层与队列不变。
             if result.health is not None:
-                self._provider_status = _overlay_health(self._provider_status, result.health)
+                self._provider_status = _overlay_health(
+                    self._provider_status, result.health
+                )
             return
         from taiji import LanguageOrgan, NativeReadableTextLanguageOrgan
 
@@ -487,7 +496,9 @@ class SeedRuntime:
                 "policy": policy.to_payload(),
                 "outcome": workbench_outcome.to_payload(),
                 "taiji_outcome": None,
-                "events": [event.to_payload() for event in self._workbench_audit.events],
+                "events": [
+                    event.to_payload() for event in self._workbench_audit.events
+                ],
             }
 
         self._workbench_audit.append(
@@ -525,13 +536,19 @@ class SeedRuntime:
                 raise
 
         result = environment.last_result
-        transaction = WorkbenchTransaction(
-            operation=request.capability_id,
-            path=str(result.get("path", request.parameters.get("path", "."))),
-            before_digest=str(result.get("digest", "")),
-            after_digest=str(result.get("digest", "")),
-            reversible=True,
-        )
+        transaction_payload = result.get("transaction")
+        if isinstance(transaction_payload, Mapping):
+            transaction = WorkbenchTransaction.from_payload(transaction_payload)
+        else:
+            # Preserve the legacy read-only outcome shape for capabilities
+            # that do not produce a real file transaction.
+            transaction = WorkbenchTransaction(
+                operation=request.capability_id,
+                path=str(result.get("path", request.parameters.get("path", "."))),
+                before_digest=str(result.get("digest", "")),
+                after_digest=str(result.get("digest", "")),
+                reversible=True,
+            )
         workbench_outcome = WorkbenchOutcome(
             request_id=request.request_id,
             intent_id=request.intent_id,
