@@ -887,6 +887,38 @@ P4 的最小真实经历边界已落地：
 | 异常监控 | 全程 `Runtime.exceptionThrown` 与 console error 零触发 |
 | 截图（card-kb.png） | 外壳灰底 + 大圆角卡片内嵌 + sidebar 独立间隙，内外部无任何分割边框错位 |
 
+## 13.10 标题栏所有权移交前端、系统通知署名收敛为 AppUserModelID（2026-08-28）
+
+用户附四张截图提出两条诉求：(1) 系统通知左上角不是应用 logo，而是紫色占位方块加字面量 `Seed.exe`——"用正确的 logo，或者直接不给这个弹窗提示"；(2) 顶部栏与下方"还不是一体的"，参照图 3（TRAE/Doubao）与图 4（Codex）——顶部一条与主体是同一个连续平面。
+
+**(1) 通知署名不由 QIcon 决定，改 icon 永远无效。** Windows 通知左上角的归属槽取的是**进程的 AppUserModelID**；未声明时系统回退到 exe 身份，于是渲染占位方块 + `Seed.exe`。§13.8 那次"改为 `self.tray.icon()`"只换了通知体内的图标，署名槽根本不在该 API 的作用域内，所以用户看到的问题原封不动。**修法采纳"两条都做"的高上限组合**：一是声明 `APP_USER_MODEL_ID = "Seed.Desktop.Shell"`，经 `ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID` 在**任何窗口创建之前**设置（`desktop/main.py` 与 `api/run_app.py` 两个入口各一处，就在 `QApplication` 构造前）；二是**彻底删除 `closeEvent` 里的 `tray_icon.showMessage(...)` 气泡**——"已最小化到托盘"这类信息价值极低，而托盘图标本身就是可见反馈，改由 tooltip「Seed — 双击图标恢复窗口」承载。两者叠加后，即便未来别处需要弹通知，署名也已经是正确的应用身份。
+
+**(2) "不一体"的物理根因：两个渲染平面各自画自己的背景，永远拼不成一个面。** 旧实现的顶部条是 Qt 控件（`QWidget` + `QHBoxLayout` + `QLabel` + 三个 `QPushButton`，36px，QSS 上色），下方才是 `QWebEngineView`；两者是不同的绘制宿主，无论把颜色调得多接近，接缝处的抗锯齿、DPI 缩放取整和主题时序差都会显形——这也是 §13.1 那条"1s 轮询 `data-theme` 重设 QSS"补丁的存在理由，它本身就是这个错误架构的并发症。**修法是把标题栏所有权整体移交前端**：中央区域改为 `QWebEngineView` 独占，标题栏成为 DOM 的一部分，与 sidebar 共享同一个 `.app-wrapper` 背景宿主，且中间**不存在任何 border**——由于 `.sidebar` 本就透明地坐在 `.app-wrapper` 上，一个同样透明的 `.app-titlebar` 自动就是同一个平面，"一体化"从此是结构保证而非调色结果。
+
+**实现**：
+
+- **窗口控制桥**：新增 `_WindowBridge(QObject)`，以 `pyqtSlot` 暴露 `minimize` / `toggleMaximize` / `close` / `startDrag` / `isMaximized`，经 `QWebChannel` 注册为 `seedWindow`。拖拽走 `windowHandle().startSystemMove()`（系统级移动，比手算 `globalPos` 增量更跟手且不丢焦点）。
+- **客户端库注入**：页面由 http 提供，无法引用 `qrc:`，故把 `:/qtwebchannel/qwebchannel.js` 读出后注册为 `QWebEngineScript`（`DocumentCreation` + `MainWorld`，`seed_qwebchannel` 幂等去重），前端拿到的是原生 `QWebChannel` 全局。
+- **最大化状态通道**：`resizeEvent` / `changeEvent` → `_sync_window_state()` 把 `data-maximized` 写到 `document.documentElement`；CSS 用 `:root[data-maximized='true']` 抹掉圆角与边框，Vue 侧用 `MutationObserver` 切换按钮图标。单向数据流，无轮询。
+- **外框所有权也一并下移**：`.app-wrapper` 接管 `border: 1px solid var(--border)` + `border-radius: 18px`，Qt 只保留 `QRegion` 圆角裁切（`WINDOW_RADIUS = 18`，与 CSS 同值）防白直角露出。
+- **前端**：新增 `components/AppTitlebar.vue`（无 `<style>` 块，样式全部落在 `shell.css` 单一真源），`App.vue` 增 `.app-body` 与 `sidebarCollapsed`（持久化到 `taiji_sidebar_collapsed`）。标题栏刻意**不放搜索框**——`AppSidebar.vue` 已持有 `.search-field` 与全局 Ctrl/⌘K，再加一个就是第二套入口。
+
+**旧机制清理（收敛而非叠加）**：`desktop/main.py` 与 `api/run_app.py` 两处各删除 `_titlebar_qss`、`_window_frame_qss`、`_apply_titlebar_theme`、`_sync_titlebar_theme`、`_build_titlebar`、`_titlebar_mouse_press`、`_titlebar_double_click` 共 7 个方法（约 120 行/处）、§13.1 的主题轮询定时器、以及随之失效的 `QVBoxLayout/QHBoxLayout/QLabel/QPushButton/QWidget` 导入。净机制数下降。另确认 `desktop/seed.spec` 打包的是 `desktop/main.py`（`run_app.py` 文件头"打包环境"注释已过时），但后者仍是可运行入口，按"清理旧的以免残留干扰"原则同步收敛，否则就留下第二套标题栏；`seed.spec` 的 `hiddenimports` 补 `PyQt6.QtWebChannel`。
+
+**实机观测（QtWebEngine 裸 CDP @9222，先调试后打包）**：
+
+| 测量项 | 结果 |
+| --- | --- |
+| 桥与客户端库 | `hasQt/hasTransport/hasQWebChannel` 全 true；`objects: ["seedWindow"]`，五个 slot 全部可达 |
+| 一体化度量 | `.app-titlebar` 背景 `rgba(0,0,0,0)`、`border-bottom: 0px none`、高 40；`gap_bar_to_body = 0` |
+| 接缝取色 | 跨越标题栏下沿的 4 个采样点（y=35/40/42/47）**实际背景全为 `rgb(241,243,245)`**——同一个平面，无缝 |
+| 侧边栏收起 | false→true→false 双向可用，`taiji_sidebar_collapsed` 正确持久化 |
+| 最大化联动 | `data-maximized` true 时圆角 `0px`/边框 `0px`/2560×1392；还原为 false/`18px`/`1px`/1280×800 |
+| 截图（topleft/topright 2× 裁切） | 左上「收起按钮 → 太极 logo → Seed/在线」同一背景连续过渡、零分隔线；右上三个窗口按钮直接坐在窗口背景上，下方才是内容卡片圆角——与参考图 3/4 结构一致 |
+| ruff / vitest 边界 | `ruff check` All passed；`tests/seed/test_platform_boundary.py` 9 passed |
+
+**顺带收敛的悬空引用**：`frontend/public/` 下 `logo.svg` / `favicon.svg` / `icons.svg` 三个文件在前几轮已被删除，但 `frontend/index.html:5` 仍在 `<link rel="icon" type="image/svg+xml" href="/logo.svg?v=ink-20260624">` 引用 `logo.svg`，构成一个每次加载都 404 的悬空引用。已删除该行——`favicon.ico`（同文件第 6 行，文件实际存在）单独就足以承担 favicon 职责，且 taiji logo 在应用内由 `logo-taiji-ink.jpg` 提供。
+
 ## 14. 持续门禁
 
 - Taiji/Seed/Legacy 所有权 AST 测试；

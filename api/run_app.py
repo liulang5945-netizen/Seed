@@ -209,20 +209,15 @@ if missing_modules:
 else:
     print("[DependencyCheck] OK 所有核心依赖已就绪")
 
-from PyQt6.QtCore import QEvent, QObject, Qt, QThread, QTimer, QUrl, pyqtSignal
+from PyQt6.QtCore import QEvent, QObject, Qt, QThread, QTimer, QUrl, pyqtSignal, pyqtSlot
 from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtWebEngineWidgets import QWebEngineView
 from PyQt6.QtWidgets import (
     QApplication,
-    QHBoxLayout,
-    QLabel,
     QMainWindow,
     QMenu,
     QMessageBox,
-    QPushButton,
     QSystemTrayIcon,
-    QVBoxLayout,
-    QWidget,
 )
 
 # 应用配置（通过 config.py 集中管理镜像源等设置）
@@ -283,6 +278,26 @@ import importlib.util
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+APP_USER_MODEL_ID = "Seed.Desktop.Shell"
+
+
+def _set_windows_app_identity() -> None:
+    """声明 Windows AppUserModelID。
+
+    系统通知（含托盘气泡）左上角的归属图标与应用名不取 QIcon，而是取
+    进程的 AppUserModelID；未声明时 Windows 回退到 exe 身份，于是显示
+    占位方块加 "Seed.exe"。必须在任何窗口创建之前调用。
+    """
+    if sys.platform != "win32":
+        return
+    try:
+        import ctypes
+
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_USER_MODEL_ID)
+    except Exception as exc:  # pragma: no cover - 仅 Windows 运行时路径
+        logger.warning(f"AppUserModelID 设置失败: {exc}")
 
 
 class HotUpdateImporter:
@@ -623,6 +638,71 @@ class _EdgeResizeFilter(QObject):
         return edges
 
 
+def _inject_webchannel_client(profile) -> None:
+    """把 qwebchannel.js 注入为文档级用户脚本。
+
+    前端由后端以 http:// 提供，无法用 <script src="qrc:..."> 引用 Qt 资源，
+    因此把 Qt 自带的客户端库在 DocumentCreation 阶段注入主世界，
+    前端即可直接使用 window.QWebChannel。
+    """
+    from PyQt6.QtCore import QFile, QIODevice
+    from PyQt6.QtWebEngineCore import QWebEngineScript
+
+    scripts = profile.scripts()
+    if scripts.find("seed_qwebchannel"):
+        return
+    f = QFile(":/qtwebchannel/qwebchannel.js")
+    if not f.open(QIODevice.OpenModeFlag.ReadOnly):
+        logger.warning("qwebchannel.js 资源读取失败，前端标题栏将退化为无窗口控制")
+        return
+    try:
+        source = bytes(f.readAll()).decode("utf-8")
+    finally:
+        f.close()
+    script = QWebEngineScript()
+    script.setName("seed_qwebchannel")
+    script.setSourceCode(source)
+    script.setInjectionPoint(QWebEngineScript.InjectionPoint.DocumentCreation)
+    script.setWorldId(QWebEngineScript.ScriptWorldId.MainWorld)
+    script.setRunsOnSubFrames(False)
+    scripts.insert(script)
+
+
+class _WindowBridge(QObject):
+    """前端标题栏 → 窗口控制的 QWebChannel 桥。
+
+    标题栏移入 Web 层后，最小化 / 最大化 / 关闭 / 拖拽 / 双击等原本由
+    QPushButton 承担的行为改由前端调用这些槽完成。窗口状态回写到
+    ``document.documentElement`` 的 data-maximized，供 CSS 调整圆角。
+    """
+
+    def __init__(self, window):
+        super().__init__(window)
+        self._window = window
+
+    @pyqtSlot()
+    def minimize(self):
+        self._window.showMinimized()
+
+    @pyqtSlot()
+    def toggleMaximize(self):
+        self._window._toggle_max_restore()
+
+    @pyqtSlot()
+    def close(self):
+        self._window.close()
+
+    @pyqtSlot()
+    def startDrag(self):
+        handle = self._window.windowHandle()
+        if handle is not None:
+            handle.startSystemMove()
+
+    @pyqtSlot(result=bool)
+    def isMaximized(self):
+        return self._window.isMaximized()
+
+
 class MainWindow(QMainWindow):
     """主窗口 - QMainWindow 内含 QWebEngineView，正确支持托盘行为"""
 
@@ -655,25 +735,26 @@ class MainWindow(QMainWindow):
                 QWebEngineSettings.WebAttribute.LocalContentCanAccessRemoteUrls, True
             )
 
-        # 中央区域 = 自绘标题栏 + Web 视图（无边框窗口）
-        central = QWidget()
-        central.setObjectName("seedWindowFrame")
-        central.setStyleSheet(self._window_frame_qss(dark=False))
-        central_layout = QVBoxLayout(central)
-        central_layout.setContentsMargins(1, 1, 1, 1)
-        central_layout.setSpacing(0)
-        self._titlebar = self._build_titlebar()
+        # 中央区域 = Web 视图独占。标题栏由前端 AppTitlebar.vue 绘制，
+        # 窗口外框（1px 边框 + 圆角）由 shell.css 的 .app-wrapper 承担，
+        # 窗口控制经 _WindowBridge 走 QWebChannel 回调。
         self._web_view.setStyleSheet(
-            "QWebEngineView { border: none; background: transparent; "
-            "border-bottom-left-radius: 17px; border-bottom-right-radius: 17px; }"
+            "QWebEngineView { border: none; background: transparent; }"
         )
-        central_layout.addWidget(self._titlebar)
-        central_layout.addWidget(self._web_view, 1)
-        self._window_frame = central
-        self.setCentralWidget(central)
+        self.setCentralWidget(self._web_view)
         self._apply_window_shape()
 
-        # 前端就绪后同步标题栏主题
+        # 窗口控制桥
+        from PyQt6.QtWebChannel import QWebChannel
+
+        _inject_webchannel_client(self._web_view.page().profile())
+        self._bridge = _WindowBridge(self)
+        self._channel = QWebChannel(self._web_view.page())
+        self._channel.registerObject("seedWindow", self._bridge)
+        self._web_view.page().setWebChannel(self._channel)
+
+        # 前端就绪后回写窗口状态
+        self._frontend_loaded = False
         self._web_view.loadFinished.connect(self._on_page_loaded)
 
         # 快捷键：F5 刷新前端页面
@@ -705,35 +786,7 @@ class MainWindow(QMainWindow):
     def get_web_view(self):
         return self._web_view
 
-    @staticmethod
-    def _titlebar_qss(dark: bool) -> str:
-        """标题栏样式（跟随前端主题）。默认亮色，暗色主题切为深色。"""
-        if dark:
-            return """
-                #seedTitlebar { background: #0f141b; border-bottom: 1px solid #1c2530; border-top-left-radius: 17px; border-top-right-radius: 17px; }
-                #seedTitlebar QLabel { color: #cbd5e1; font-size: 12px; font-weight: 600; }
-                QPushButton.titlebarBtn { background: transparent; border: none; color: #94a3b8; font-size: 14px; border-radius: 6px; }
-                QPushButton.titlebarBtn:hover { background: #1f2937; color: #e2e8f0; }
-                QPushButton.titlebarClose:hover { background: #dc2626; color: #ffffff; }
-            """
-        return """
-            #seedTitlebar { background: #f6f7f9; border-bottom: 1px solid #e2e5ea; border-top-left-radius: 17px; border-top-right-radius: 17px; }
-            #seedTitlebar QLabel { color: #334155; font-size: 12px; font-weight: 600; }
-            QPushButton.titlebarBtn { background: transparent; border: none; color: #64748b; font-size: 14px; border-radius: 6px; }
-            QPushButton.titlebarBtn:hover { background: #e6e9ee; color: #0f172a; }
-            QPushButton.titlebarClose:hover { background: #dc2626; color: #ffffff; }
-        """
-
-    @staticmethod
-    def _window_frame_qss(dark: bool) -> str:
-        border = "#283442" if dark else "#d8dde5"
-        return f"""
-            #seedWindowFrame {{
-                background: transparent;
-                border: 1px solid {border};
-                border-radius: 18px;
-            }}
-        """
+    WINDOW_RADIUS = 18
 
     def _apply_window_shape(self):
         """用圆角 mask 裁掉 QWebEngineView 的直角，避免白角露出。"""
@@ -748,91 +801,40 @@ class MainWindow(QMainWindow):
             0.0,
             float(self.width()),
             float(self.height()),
-            18.0,
-            18.0,
+            float(self.WINDOW_RADIUS),
+            float(self.WINDOW_RADIUS),
         )
         self.setMask(QRegion(path.toFillPolygon().toPolygon()))
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
         self._apply_window_shape()
+        self._sync_window_state()
 
-    def _apply_titlebar_theme(self, theme):
-        """根据前端 data-theme 同步标题栏配色（'dark' → 深色，其余 → 亮色）。"""
-        dark = str(theme).strip().lower() == "dark"
-        if getattr(self, "_titlebar", None) is not None:
-            self._titlebar.setStyleSheet(self._titlebar_qss(dark))
-        if getattr(self, "_window_frame", None) is not None:
-            self._window_frame.setStyleSheet(self._window_frame_qss(dark))
+    def changeEvent(self, event):
+        super().changeEvent(event)
+        if event.type() == QEvent.Type.WindowStateChange:
+            self._apply_window_shape()
+            self._sync_window_state()
 
-    def _sync_titlebar_theme(self):
-        """前端就绪后读取其主题，同步标题栏配色。"""
+    def _sync_window_state(self):
+        """把最大化状态写回 DOM，供前端标题栏按钮与窗口圆角联动。"""
+        if not getattr(self, "_frontend_loaded", False):
+            return
+        flag = "true" if self.isMaximized() else "false"
         try:
             page = self._web_view.page()
             if page is not None:
                 page.runJavaScript(
-                    "document.documentElement.getAttribute('data-theme') || ''",
-                    self._apply_titlebar_theme,
+                    f"document.documentElement.setAttribute('data-maximized','{flag}')"
                 )
         except Exception as e:
-            logger.debug("【_sync_titlebar_theme】处理失败（非致命）: %s", e)
+            logger.debug("【_sync_window_state】处理失败（非致命）: %s", e)
 
     def _on_page_loaded(self, ok):
         if ok:
-            # 延迟读取，确保前端已应用主题（data-theme 在挂载/设置加载后设置）
-            QTimer.singleShot(800, self._sync_titlebar_theme)
-
-    def _build_titlebar(self):
-        """自绘极简标题栏：标题 + 最小化/最大化/关闭，可拖拽、双击切换最大化。"""
-        bar = QWidget()
-        bar.setFixedHeight(36)
-        bar.setObjectName("seedTitlebar")
-        bar.setStyleSheet(self._titlebar_qss(dark=False))
-
-        layout = QHBoxLayout(bar)
-        layout.setContentsMargins(12, 0, 8, 0)
-        layout.setSpacing(2)
-
-        title = QLabel("Seed")
-        layout.addWidget(title)
-        layout.addStretch(1)
-
-        min_btn = QPushButton("–")
-        min_btn.setProperty("class", "titlebarBtn")
-        min_btn.setFixedSize(40, 26)
-        min_btn.setToolTip("最小化")
-        min_btn.clicked.connect(self.showMinimized)
-        layout.addWidget(min_btn)
-
-        max_btn = QPushButton("□")
-        max_btn.setProperty("class", "titlebarBtn")
-        max_btn.setFixedSize(40, 26)
-        max_btn.setToolTip("最大化 / 还原")
-        max_btn.clicked.connect(self._toggle_max_restore)
-        layout.addWidget(max_btn)
-
-        close_btn = QPushButton("×")
-        close_btn.setProperty("class", "titlebarBtn titlebarClose")
-        close_btn.setFixedSize(40, 26)
-        close_btn.setToolTip("关闭")
-        close_btn.clicked.connect(self.close)
-        layout.addWidget(close_btn)
-
-        bar.mousePressEvent = self._titlebar_mouse_press  # type: ignore[method-assign]
-        bar.mouseDoubleClickEvent = self._titlebar_double_click  # type: ignore[method-assign]
-        return bar
-
-    def _titlebar_mouse_press(self, event):
-        """拖拽标题栏移动窗口（交给系统处理，等同原生标题栏）。"""
-        if event.button() == Qt.MouseButton.LeftButton:
-            handle = self.windowHandle()
-            if handle is not None:
-                handle.startSystemMove()
-            event.accept()
-
-    def _titlebar_double_click(self, event):
-        if event.button() == Qt.MouseButton.LeftButton:
-            self._toggle_max_restore()
+            self._frontend_loaded = True
+            QTimer.singleShot(0, self._sync_window_state)
 
     def _toggle_max_restore(self):
         if self.isMaximized():
@@ -844,16 +846,14 @@ class MainWindow(QMainWindow):
         self._web_view.load(url)
 
     def closeEvent(self, event):
-        """正确覆盖 QMainWindow.closeEvent：关闭时隐藏到托盘"""
+        """正确覆盖 QMainWindow.closeEvent：关闭时隐藏到托盘。
+
+        不再弹系统气泡：Windows 通知的左上角署名槽由 AppUserModelID 决定，
+        未注册快捷方式时只会显示 "Seed.exe" 和占位图标。该提示信息价值有限，
+        改由托盘图标的 tooltip 承载。
+        """
         event.ignore()
         self.hide()
-        if self.tray_icon and self.tray_icon.isVisible():
-            self.tray_icon.showMessage(
-                "Seed",
-                "应用已最小化到托盘，模型仍在后台运行。",
-                QSystemTrayIcon.MessageIcon.Information,
-                3000,
-            )
 
 
 # R5: 模块级声明——_real_main 内通过 global 赋值，嵌套闭包直接引用；
@@ -863,6 +863,7 @@ app: QApplication
 
 def _real_main():
     global app  # noqa — 使 app 在 _real_main 作用域内可见给嵌套函数使用
+    _set_windows_app_identity()
     app = QApplication(sys.argv)
     app.setApplicationName("Seed")
     app.setOrganizationName("Seed")
@@ -917,7 +918,7 @@ def _real_main():
 
         tray_icon = QSystemTrayIcon(app_icon, app)
         window.tray_icon = tray_icon
-        tray_icon.setToolTip("Seed (后台运行)")
+        tray_icon.setToolTip("Seed — 双击图标恢复窗口")
 
         tray_menu = QMenu()
         show_action = QAction("显示主界面", window)
