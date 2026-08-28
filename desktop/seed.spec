@@ -74,6 +74,19 @@ a_main = Analysis(
     noarchive=False,
 )
 
+# Qt6Core on Windows intentionally resolves ``icuuc.dll`` from the operating
+# system.  A transitive ML dependency can otherwise contribute ICU 78 under
+# the same basename at the bundle root; that DLL is not ABI-compatible with
+# the Windows ICU used by the PyQt6 wheel and makes QtCore.pyd fail with
+# WinError 127 before the desktop window is created.
+_system_icu_basenames = {"icuuc.dll", "icudt78.dll"}
+for _analysis in (a_main, a_backend):
+    _analysis.binaries = TOC(
+        entry
+        for entry in _analysis.binaries
+        if Path(entry[0]).name.lower() not in _system_icu_basenames
+    )
+
 # 合并重复模块，两个 exe 共享 _internal（新版 PyInstaller 需三元组：
 # (analysis, identifier, path_to_exe)）
 MERGE((a_main, "seed-main", "Seed"), (a_backend, "seed-backend", "SeedBackend"))
