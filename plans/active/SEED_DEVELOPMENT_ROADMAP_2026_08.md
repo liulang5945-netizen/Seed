@@ -768,7 +768,7 @@ P4 的最小真实经历边界已落地：
 | 删掉 `yml:` 一行后 `python scripts/release.py --skip-nsis` | `EXIT=1`，`hljsAliases.js 已过期` → `生成式源码已与依赖脱同步，构建中止`；**「清理旧产物」一行从未打印**（本次特意不加 `--no-clean`），证明产物未被删 |
 | 恢复后 | `git status` 仅 `M scripts/release.py`，`check:aliases` 转绿，`--check-only` exit 0 |
 
-改动文件（1 个）：`scripts/release.py`（+41/−11）。
+改动文件（1 个）：`scripts/release.py`（+41/−11）。提交 `878316f`（含本节 plans 与 §14 修订，2 文件 +66/−12）。
 
 ## 14. 持续门禁
 
