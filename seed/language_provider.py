@@ -27,6 +27,7 @@ from taiji import (
     LanguageBackendSpec,
     LanguageOrgan,
     LanguageProviderArtifact,
+    LanguageProviderArtifactRegistry,
     LanguageProviderCanaryGate,
     LanguageRealizationValidator,
     NativeReadableTextLanguageOrgan,
@@ -416,6 +417,7 @@ def attach_structured_language_provider(adapter: TSKV8Adapter) -> None:
     adapter.attach_language_organ(None)
     adapter.attach_language_backend_registry(LanguageBackendRegistry.default())
     adapter.attach_language_provider_artifact(None)
+    adapter.attach_language_provider_artifact_registry(None)
     adapter.attach_language_organ(StructuredTextLanguageOrgan())
 
 
@@ -425,7 +427,165 @@ def attach_native_language_provider(adapter: TSKV8Adapter) -> None:
     adapter.attach_language_organ(None)
     adapter.attach_language_backend_registry(LanguageBackendRegistry.default())
     adapter.attach_language_provider_artifact(None)
+    adapter.attach_language_provider_artifact_registry(None)
     adapter.attach_language_organ(NativeReadableTextLanguageOrgan())
+
+
+@dataclass(frozen=True)
+class LanguageProviderRotationResult:
+    """Outcome of an isolated provider rotation attempt."""
+
+    status: LanguageProviderStatus
+    runtime: Any | None
+    registry: LanguageProviderArtifactRegistry
+    committed: bool
+
+
+def _unchanged_provider_status(
+    adapter: TSKV8Adapter,
+    *,
+    reason_code: str,
+    reason: str,
+) -> LanguageProviderStatus:
+    artifact = adapter.language_provider_artifact
+    if artifact is None:
+        return LanguageProviderStatus(
+            mode="native",
+            state="unchanged",
+            provider="native",
+            backend_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
+            artifact_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
+            reason_code=reason_code,
+            reason=reason,
+            rollback=NativeReadableTextLanguageOrgan.BACKEND_ID,
+            chat_enabled=False,
+        )
+    return LanguageProviderStatus(
+        mode=artifact.mode,
+        state="unchanged",
+        provider="existing",
+        backend_id=artifact.backend_id,
+        artifact_id=artifact.artifact_id,
+        reason_code=reason_code,
+        reason=reason,
+        rollback=artifact.artifact_id,
+        chat_enabled=adapter.language_organ is not None,
+    )
+
+
+def rotate_language_provider(
+    adapter: TSKV8Adapter,
+    registry: LanguageProviderArtifactRegistry,
+    config: LanguageProviderConfig,
+    *,
+    current_runtime: Any | None = None,
+) -> LanguageProviderRotationResult:
+    """Stage, canary-check, and atomically publish one allowlisted version.
+
+    The live adapter is never used to load the candidate.  A checkpoint clone
+    with its terminal organ detached is used as staging; only after the
+    existing artifact checks and first-chat canary pass does the adapter publish
+    the new organ, manifest, and registry snapshot together.
+    """
+
+    if not isinstance(adapter, TSKV8Adapter):
+        raise TypeError("language provider rotation requires a TSKV8Adapter")
+    if not isinstance(registry, LanguageProviderArtifactRegistry):
+        raise TypeError("language provider rotation requires a provider artifact registry")
+    if not isinstance(config, LanguageProviderConfig):
+        raise TypeError("language provider rotation requires a LanguageProviderConfig")
+
+    candidate = build_provider_artifact(config)
+    try:
+        registry.require_allowed(candidate)
+        if config.mode != "guarded" or not config.chat_enabled:
+            raise _ProductChatGateError(
+                "provider rotation requires an explicitly guarded chat-enabled candidate",
+                reason_code="rotation_requires_chat_canary",
+            )
+        if registry.active_artifact_id == candidate.artifact_id:
+            status = _unchanged_provider_status(
+                adapter,
+                reason_code="provider_version_already_active",
+                reason="provider artifact version is already active",
+            )
+            return LanguageProviderRotationResult(
+                status=status,
+                runtime=current_runtime,
+                registry=registry,
+                committed=False,
+            )
+
+        staging_payload = adapter.native_checkpoint()
+        staging_components = dict(staging_payload["components"])
+        staging_components["language_organ"] = None
+        staging_components["language_provider_artifact"] = None
+        staging_components["language_provider_artifact_registry"] = None
+        staging_payload["components"] = staging_components
+        staging_adapter = TSKV8Adapter.from_native_checkpoint(staging_payload)
+        staged_status, staged_runtime = activate_language_provider(staging_adapter, config)
+        if staged_status.state != "active":
+            status = _unchanged_provider_status(
+                adapter,
+                reason_code=staged_status.reason_code or "provider_rotation_rejected",
+                reason=staged_status.reason or "provider rotation candidate failed activation",
+            )
+            return LanguageProviderRotationResult(
+                status=status,
+                runtime=current_runtime,
+                registry=registry,
+                committed=False,
+            )
+        staged_artifact = staging_adapter.language_provider_artifact
+        staged_organ = staging_adapter.language_organ
+        if staged_artifact is None or staged_organ is None:
+            raise _ProductChatGateError(
+                "provider rotation candidate did not produce a complete staged provider",
+                reason_code="provider_rotation_rejected",
+            )
+        committed_registry = registry.activate(candidate.artifact_id)
+        adapter.commit_language_provider_state(
+            backend_registry=staging_adapter.language_backend_registry,
+            artifact_registry=committed_registry,
+            artifact=staged_artifact,
+            organ=staged_organ,
+        )
+        return LanguageProviderRotationResult(
+            status=staged_status,
+            runtime=staged_runtime,
+            registry=committed_registry,
+            committed=True,
+        )
+    except _ProductChatGateError as exc:
+        status = _unchanged_provider_status(
+            adapter,
+            reason_code=exc.reason_code,
+            reason=str(exc),
+        )
+    except PermissionError as exc:
+        status = _unchanged_provider_status(
+            adapter,
+            reason_code="provider_version_not_allowlisted",
+            reason=str(exc),
+        )
+    except (KeyError, ValueError, TypeError) as exc:
+        status = _unchanged_provider_status(
+            adapter,
+            reason_code="provider_rotation_manifest_mismatch",
+            reason=str(exc),
+        )
+    except Exception as exc:  # noqa: BLE001 - rotation must preserve live provider
+        status = _unchanged_provider_status(
+            adapter,
+            reason_code="provider_rotation_failed",
+            reason=str(exc),
+        )
+    return LanguageProviderRotationResult(
+        status=status,
+        runtime=current_runtime,
+        registry=registry,
+        committed=False,
+    )
 
 
 def activate_language_provider(

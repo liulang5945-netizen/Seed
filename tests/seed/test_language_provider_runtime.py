@@ -3,11 +3,17 @@ from __future__ import annotations
 from pathlib import Path
 
 from seed import LanguageProviderConfig, SeedConfig
-from seed.language_provider import _verify_product_chat_artifact, activate_language_provider
+from seed.language_provider import (
+    _verify_product_chat_artifact,
+    activate_language_provider,
+    build_provider_artifact,
+    rotate_language_provider,
+)
 from taiji import (
     ExternalTextDecoderLanguageOrgan,
     LanguageBackendRegistry,
     LanguageBackendSpec,
+    LanguageProviderArtifactRegistry,
     TSKV8Adapter,
     language_provider_content_digest,
 )
@@ -354,3 +360,119 @@ def test_product_chat_first_chat_canary_failure_rolls_back(monkeypatch) -> None:
     assert status.chat_enabled is False
     assert adapter.language_organ is not None
     assert adapter.language_organ.backend_id == "native-readable"
+
+
+def test_provider_rotation_stages_canary_and_preserves_live_version_on_failure(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "seed.language_provider._verify_product_chat_artifact", lambda *args, **kwargs: {}
+    )
+    reports = {
+        "training": {
+            "training": {"training_applied": True},
+            "expression_to_text_gate": _passing_realization_gate_report(),
+        },
+        "safety": {
+            "adapted": {"safe_realization_rate": 1.0},
+            "rollback": {"outputs_match_raw": True},
+            "gate": {"passed": True},
+        },
+    }
+    monkeypatch.setattr(
+        "seed.language_provider._load_product_chat_report",
+        lambda path, label: reports[label],
+    )
+
+    class _Decoder:
+        def __init__(self, artifact_id: str) -> None:
+            self.artifact_id = artifact_id
+
+        def generate(self, prompt: str, *, max_tokens: int, temperature: float) -> str:
+            del max_tokens, temperature
+            if self.artifact_id == "provider-bad":
+                return "已完成。"
+            if "database-status" in prompt:
+                return f"{self.artifact_id} 数据库运行正常。"
+            return f"{self.artifact_id} 接口已经恢复。"
+
+    def fake_loader(adapter, artifact, **kwargs):
+        del kwargs
+        registry = LanguageBackendRegistry.default()
+        registry.register(
+            LanguageBackendSpec(
+                backend_id=artifact.backend_id,
+                family="external-causal-decoder-guarded",
+                training_contract="expression-to-text-v1",
+            )
+        )
+        adapter.attach_language_backend_registry(registry)
+        adapter.attach_language_provider_artifact(artifact)
+        adapter.attach_language_organ(
+            ExternalTextDecoderLanguageOrgan(
+                _Decoder(artifact.artifact_id),
+                prompt_builder=lambda expression: expression.content_id,
+                backend_id=artifact.backend_id,
+            )
+        )
+        return _Decoder(artifact.artifact_id)
+
+    monkeypatch.setattr("seed.language_provider.load_qwen_language_provider", fake_loader)
+
+    def config(artifact_id: str) -> LanguageProviderConfig:
+        return LanguageProviderConfig(
+            mode="guarded",
+            model_dir="model",
+            adapter_dir="adapter",
+            artifact_id=artifact_id,
+            training_corpus="corpus.json",
+            training_report="training.json",
+            safety_report="safety.json",
+            chat_enabled=True,
+        )
+
+    first_config = config("provider-v1")
+    second_config = config("provider-v2")
+    bad_config = config("provider-bad")
+    first = build_provider_artifact(first_config)
+    second = build_provider_artifact(second_config)
+    bad = build_provider_artifact(bad_config)
+    registry = (
+        LanguageProviderArtifactRegistry()
+        .with_artifact(first, allow=True)
+        .with_artifact(second, allow=True)
+        .with_artifact(bad, allow=True)
+        .activate(first.artifact_id)
+    )
+    adapter = TSKV8Adapter()
+    first_status, first_runtime = activate_language_provider(adapter, first_config)
+    assert first_status.state == "active"
+
+    rotated = rotate_language_provider(
+        adapter,
+        registry,
+        second_config,
+        current_runtime=first_runtime,
+    )
+    assert rotated.committed is True
+    assert rotated.registry.active_artifact_id == second.artifact_id
+    assert rotated.registry.previous_artifact_id == first.artifact_id
+    assert adapter.language_provider_artifact == second
+    assert rotated.runtime is not first_runtime
+
+    rejected = rotate_language_provider(
+        adapter,
+        rotated.registry,
+        bad_config,
+        current_runtime=rotated.runtime,
+    )
+    assert rejected.committed is False
+    assert rejected.status.reason_code == "chat_canary_failed"
+    assert rejected.runtime is rotated.runtime
+    assert adapter.language_provider_artifact == second
+    assert adapter.language_provider_artifact_registry.active_artifact_id == second.artifact_id
+    assert adapter.language_provider_artifact_registry.previous_artifact_id == first.artifact_id
+    assert (
+        adapter.native_checkpoint()["components"]["language_provider_artifact_registry"][
+            "active_artifact_id"
+        ]
+        == second.artifact_id
+    )
