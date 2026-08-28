@@ -393,6 +393,14 @@ class LanguageBackendRegistry:
         registry = cls()
         registry.register(
             LanguageBackendSpec(
+                backend_id=NativeReadableTextLanguageOrgan.BACKEND_ID,
+                family="native-readable-surface",
+                training_contract="none",
+                supports_training=False,
+            )
+        )
+        registry.register(
+            LanguageBackendSpec(
                 backend_id=StructuredTextLanguageOrgan.BACKEND_ID,
                 family="structured-codec",
                 training_contract="none",
@@ -530,6 +538,98 @@ class TextDecoder(Protocol):
         """Generate text from a terminal-organ prompt."""
 
 
+class NativeReadableTextLanguageOrgan:
+    """Native, dependency-free surface realizer for text expressions.
+
+    The TSK byte predictor is allowed to remain a low-level compatibility
+    path, but arbitrary predicted bytes must not be presented as language.
+    This organ accepts a candidate surface string when one is available and
+    otherwise returns a truthful, readable status message.  It does not
+    invent goals or answer semantics; a mature decoder can replace it at the
+    same terminal boundary.
+    """
+
+    BACKEND_ID = "native-readable"
+
+    def __init__(self, *, max_bytes: int = 1_000_000) -> None:
+        if int(max_bytes) <= 0:
+            raise ValueError("max_bytes must be positive")
+        self.max_bytes = int(max_bytes)
+
+    @property
+    def backend_id(self) -> str:
+        return self.BACKEND_ID
+
+    @staticmethod
+    def _readable(value: Any) -> str | None:
+        if not isinstance(value, str):
+            return None
+        text = value.replace("\x00", "").strip()
+        if not text or "\ufffd" in text:
+            return None
+        if any(ord(char) < 32 and char not in "\n\r\t" for char in text):
+            return None
+        if not any(char.isalnum() for char in text):
+            return None
+        return text
+
+    @classmethod
+    def _fallback_text(cls, expression: ExpressionPlan) -> str:
+        fields = expression.fields
+        slots = fields.get("semantic_slots", {})
+        if not isinstance(slots, Mapping):
+            slots = {}
+        required_terms = tuple(str(term) for term in expression.required_terms if str(term))
+        if required_terms:
+            return "当前表达包含以下关键信息：" + "、".join(required_terms) + "。"
+        prompt = cls._readable(slots.get("prompt"))
+        if prompt:
+            return f"我已收到你的问题：“{prompt}”。当前原生语言表层正在形成稳定表达。"
+        return "Taiji 已完成内部处理，但当前还没有稳定的可读语言输出。"
+
+    def emit(self, expression: ExpressionPlan) -> LanguageEmission:
+        if not isinstance(expression, ExpressionPlan):
+            raise TypeError("native readable organ requires an ExpressionPlan")
+        if expression.modality != "text":
+            raise ValueError("native readable organ only accepts text ExpressionPlan values")
+        fields = expression.fields
+        candidate = None
+        if isinstance(fields, Mapping):
+            for key in ("surface_text", "answer", "native_prediction"):
+                candidate = self._readable(fields.get(key))
+                if candidate is not None:
+                    break
+        text = candidate or self._fallback_text(expression)
+        encoded = text.encode("utf-8")
+        if len(encoded) > self.max_bytes:
+            encoded = encoded[: self.max_bytes]
+            text = encoded.decode("utf-8", errors="ignore").rstrip()
+            if not text:
+                raise ValueError("native readable expression exceeds max_bytes")
+            encoded = text.encode("utf-8")
+        return LanguageEmission(
+            expression=expression,
+            text_bytes=encoded,
+            backend=self.backend_id,
+            provenance="native-readable-surface",
+        )
+
+    def checkpoint(self) -> dict[str, Any]:
+        return {
+            "format": LANGUAGE_ORGAN_CHECKPOINT_FORMAT,
+            "backend": self.backend_id,
+            "max_bytes": self.max_bytes,
+        }
+
+    @classmethod
+    def from_checkpoint(cls, payload: Mapping[str, Any]) -> NativeReadableTextLanguageOrgan:
+        if payload.get("format") != LANGUAGE_ORGAN_CHECKPOINT_FORMAT:
+            raise ValueError("unsupported language organ checkpoint format")
+        if payload.get("backend") != cls.BACKEND_ID:
+            raise ValueError("unsupported native readable language organ backend")
+        return cls(max_bytes=int(payload.get("max_bytes", 1_000_000)))
+
+
 class StructuredTextLanguageOrgan:
     """Deterministic baseline organ used to prove the boundary.
 
@@ -592,7 +692,7 @@ class ValidatedLanguageOrgan:
     ) -> None:
         if not isinstance(primary, LanguageOrgan):
             raise TypeError("primary must implement the LanguageOrgan protocol")
-        selected_fallback = fallback or StructuredTextLanguageOrgan()
+        selected_fallback = fallback or NativeReadableTextLanguageOrgan()
         if not isinstance(selected_fallback, LanguageOrgan):
             raise TypeError("fallback must implement the LanguageOrgan protocol")
         if validator is not None and not isinstance(validator, LanguageRealizationValidator):

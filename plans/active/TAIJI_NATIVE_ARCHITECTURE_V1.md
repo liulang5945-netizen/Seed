@@ -419,7 +419,7 @@ Outcome ──► 只改 UI/Seed 指标，不回写 Taiji
 - `ActionIntent` 先描述目标、对象、参数、约束和预期结果，再由器官编码为 byte、工具调用或身体动作。
 - 语言生成至少区分内容规划、表达规划和最终 byte 编码。
 - 语义保真约束由 Taiji-owned `ContentPlan.required_terms` 持有并传播到 `ExpressionPlan`；末端语言器官只能接受该约束并返回验证结果，
-  缺失关键项时由 Taiji 触发结构化回退、内容信用更新和重规划，不允许评估脚本或外部 decoder 另存一份隐藏映射。
+  缺失关键项时由 Taiji 触发可读 native/显式 structured 回退、内容信用更新和重规划，不允许评估脚本或外部 decoder 另存一份隐藏映射。
 - 回退后的重规划必须真实消费失败结果：排除失败 content、重新选择 Taiji-owned candidate、重新生成 expression，并在安全表达成功后
   清除 `replan_required`；只设置一个布尔值不算完成闭环。
 - provider 训练数据必须由 Taiji-owned `LanguageTrainingCorpus` 明确分离 train/holdout，跨 split 禁止重复 example/expression ID；
@@ -429,7 +429,7 @@ Outcome ──► 只改 UI/Seed 指标，不回写 Taiji
 - provider artifact 必须显式记录 base model、adapter、训练 corpus、评测报告、回滚方式和 runtime mode；raw、LoRA、guarded 不是
   隐式硬编码分支，产品默认仍由 Seed 配置选择，Taiji 只消费已注册的 terminal organ。
 - 客户端启动只能通过 artifact loader 选择 provider；模型缺失、版本/报告不匹配或加载失败必须可观测，并回退到
-  `structured-stub`，不能静默引入一个未经登记的 decoder。
+  已注册的 `native-readable` 表层；`structured-stub` 只允许显式无损调试使用，不能静默引入一个未经登记的 decoder。
 - byte motor 可保留为最末端 codec/回退器官，不能继续直接承担全部认知输出。
 - 每次执行都生成可追踪的 pending action，真实 outcome 回写世界模型、记忆和 credit assignment。
 

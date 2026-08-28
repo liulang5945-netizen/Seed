@@ -28,7 +28,7 @@
             <h1>有什么我能帮你的吗？</h1>
             <div class="welcome-sub">
               <span class="ok-dot"></span>
-              {{ runtimeStore.connectionStatus }} · {{ runtimeStore.health.isTaiji ? 'Taiji Native 原始字节通路' : 'Seed 运行时' }}
+              {{ runtimeStore.connectionStatus }} · {{ runtimeStore.health.isTaiji ? 'Taiji Native 语言通路' : 'Seed 运行时' }}
             </div>
             <div v-if="runtimeStore.languageProviderNotice" class="provider-notice">
               <span class="runtime-notice-dot warning"></span>
@@ -125,7 +125,7 @@ v-for="msg in displayedMessages" :key="msg.id"
                     <span class="raw-badge">RAW</span>
                     <span class="raw-title">模型原始字节输出</span>
                   </div>
-                  <p class="raw-desc">当前语言器官为 structured-stub（未接入可用语言后端），输出尚未成形为可读语言。以下为逐字节解码的原始内容：</p>
+                  <p class="raw-desc">当前语言表层未能形成可读文本，以下为调试输出：</p>
                   <pre class="raw-pre">{{ msg.content }}</pre>
                 </div>
                 <div v-else-if="msg.role === 'user'" class="bubble"><div class="text-content">{{ msg.content }}</div></div>
@@ -868,7 +868,7 @@ onMounted(scrollToBottom)
 .send.unavailable { opacity: 0.45; cursor: not-allowed; }
 .send.unavailable:hover { background: var(--primary); }
 
-/* ===== 原始字节输出卡片（Seed 语言器官为 structured-stub 时） ===== */
+/* ===== 语言表层异常时的调试输出卡片 ===== */
 .bubble.raw-output {
   background: var(--muted);
   border: 1px dashed color-mix(in srgb, var(--warning, #f59e0b) 45%, var(--border));

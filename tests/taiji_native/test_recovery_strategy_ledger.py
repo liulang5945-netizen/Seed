@@ -3,10 +3,12 @@ from dataclasses import replace
 from taiji import (
     RecoveryArchiveEntry,
     RecoveryReaderContribution,
+    RecoveryReaderCreditConsistency,
     RecoveryReaderDependencyGraph,
     RecoveryReaderInteraction,
     RecoveryReaderInteractionGroup,
     RecoveryStrategyLedger,
+    build_recovery_reader_credit_consistency,
 )
 
 
@@ -137,6 +139,364 @@ def test_recovery_reader_higher_order_group_roundtrip_and_revocation() -> None:
     dependency = updated.dependency_for("semantic")
     assert dependency is not None
     assert dependency.interaction_groups == ()
+
+
+def test_recovery_reader_group_credit_decomposition_conserves_and_roundtrips() -> None:
+    group = RecoveryReaderInteractionGroup(
+        reader_kind="semantic",
+        strategy_rollout_ids=("first", "second", "third"),
+        memory_ids=("memory-first", "memory-second", "memory-third"),
+        group_effect_l2=4.5,
+        additive_effect_l2=3.0,
+        pairwise_interaction_delta_l2=0.5,
+        pairwise_predicted_effect_l2=3.5,
+        higher_order_delta_l2=1.0,
+        higher_order_residual_l2=1.0,
+        order_delta_l2=0.0,
+        order_invariant=True,
+        replay_epochs=1,
+        replay_learning_rate=0.1,
+        singleton_effect_l2=(1.0, 1.0, 1.0),
+        member_increment_l2=(1.0, 1.0, 1.0),
+        interaction_credit_l2=(0.2, 0.2, 0.1),
+        residual_credit_l2=1.0,
+        credit_conservation_error_l2=0.0,
+        credit_decomposition_complete=True,
+    )
+
+    assert group.credit_decomposition_safe is True
+    assert RecoveryReaderInteractionGroup.from_payload(group.to_payload()) == group
+
+
+def test_recovery_reader_group_incomplete_credit_is_not_safe() -> None:
+    group = _interaction_group("first", "second", "third", higher_order_residual=0.0)
+
+    assert group.credit_decomposition_safe is False
+
+
+def test_recovery_reader_group_order_sensitive_credit_is_fail_closed() -> None:
+    ledger = RecoveryStrategyLedger(memory_budget=0.5)
+    for rollout_id in ("first", "second", "third"):
+        ledger = ledger.admit(
+            _entry(rollout_id, resource_cost=0.2, evidence_count=2, outcome_consistency=1.0),
+            memory_id=f"memory-{rollout_id}",
+        )
+    pairs = (
+        _interaction("first", "second"),
+        _interaction("first", "third"),
+        _interaction("second", "third"),
+    )
+    group = RecoveryReaderInteractionGroup(
+        reader_kind="semantic",
+        strategy_rollout_ids=("first", "second", "third"),
+        memory_ids=("memory-first", "memory-second", "memory-third"),
+        group_effect_l2=3.0,
+        additive_effect_l2=3.0,
+        pairwise_interaction_delta_l2=0.0,
+        pairwise_predicted_effect_l2=3.0,
+        higher_order_delta_l2=0.0,
+        higher_order_residual_l2=0.0,
+        order_delta_l2=0.2,
+        order_invariant=False,
+        replay_epochs=1,
+        replay_learning_rate=0.1,
+        singleton_effect_l2=(1.0, 1.0, 1.0),
+        member_increment_l2=(1.0, 1.0, 1.0),
+        interaction_credit_l2=(0.0, 0.0, 0.0),
+        residual_credit_l2=0.0,
+        credit_conservation_error_l2=0.0,
+        credit_decomposition_complete=True,
+    )
+
+    assert group.credit_decomposition_safe is False
+    assert (
+        ledger.select_with_interaction_audit(
+            pairs,
+            groups=(group,),
+            audit_available=True,
+            residual_tolerance=1e-7,
+            order_tolerance=1e-7,
+        )
+        == ()
+    )
+
+
+def test_recovery_reader_credit_consistency_roundtrip_and_reader_local_drift() -> None:
+    ledger = RecoveryStrategyLedger(memory_budget=1.0)
+    for rollout_id in ("first", "second", "third"):
+        ledger = ledger.admit(
+            _entry(rollout_id, resource_cost=0.2, evidence_count=2, outcome_consistency=1.0),
+            memory_id=f"memory-{rollout_id}",
+        )
+    selected = ledger.selected_approvals
+
+    def group(reader_kind: str, *, order_delta: float = 0.0) -> RecoveryReaderInteractionGroup:
+        return RecoveryReaderInteractionGroup(
+            reader_kind=reader_kind,
+            strategy_rollout_ids=("first", "second", "third"),
+            memory_ids=("memory-first", "memory-second", "memory-third"),
+            group_effect_l2=4.5,
+            additive_effect_l2=3.0,
+            pairwise_interaction_delta_l2=0.5,
+            pairwise_predicted_effect_l2=3.5,
+            higher_order_delta_l2=1.0,
+            higher_order_residual_l2=1.0,
+            order_delta_l2=order_delta,
+            order_invariant=order_delta <= 1e-7,
+            replay_epochs=1,
+            replay_learning_rate=0.1,
+            singleton_effect_l2=(1.0, 1.0, 1.0),
+            replay_digest=f"state-{reader_kind}",
+            attribution_digest=f"attribution-{reader_kind}",
+            member_increment_l2=(1.0, 1.0, 1.0),
+            interaction_credit_l2=(0.2, 0.2, 0.1),
+            residual_credit_l2=1.0,
+            credit_conservation_error_l2=0.0,
+            credit_decomposition_complete=True,
+        )
+
+    graph = RecoveryReaderDependencyGraph()
+    for reader_kind in ("semantic", "procedural", "sequence", "concept"):
+        graph = graph.bind(
+            reader_kind,
+            selected,
+            interaction_groups=(group(reader_kind),),
+            base_checkpoint={"reader": reader_kind},
+            base_checkpoint_digest=f"base-{reader_kind}",
+        )
+    audits = build_recovery_reader_credit_consistency(
+        graph.dependencies,
+        drift_tolerance=0.0,
+    )
+    assert len(audits) == 1
+    assert isinstance(audits[0], RecoveryReaderCreditConsistency)
+    assert audits[0].complete is True
+    assert audits[0].safe is True
+    graph = graph.record_credit_consistency(audits)
+    assert RecoveryReaderDependencyGraph.from_payload(graph.to_payload()) == graph
+
+    drifted_dependencies = tuple(
+        replace(
+            dependency,
+            interaction_groups=(
+                (group("semantic", order_delta=0.2),)
+                if dependency.reader_kind == "semantic"
+                else dependency.interaction_groups
+            ),
+        )
+        for dependency in graph.dependencies
+    )
+    drifted = build_recovery_reader_credit_consistency(
+        drifted_dependencies,
+        drift_tolerance=0.0,
+        previous=audits,
+    )
+    assert drifted[0].complete is False
+    assert drifted[0].changed_reader_kinds == ("semantic",)
+    safe_by_reader = dict(
+        zip(drifted[0].reader_kinds, drifted[0].reader_attribution_safe, strict=True)
+    )
+    assert safe_by_reader == {
+        "concept": True,
+        "procedural": True,
+        "semantic": False,
+        "sequence": True,
+    }
+
+
+def test_recovery_reader_credit_revisions_are_group_local_across_checkpoint_and_rollback() -> None:
+    ledger = RecoveryStrategyLedger(memory_budget=2.0)
+    rollout_ids = tuple(f"{group}-{index}" for group in ("a", "b", "c") for index in range(3))
+    for rollout_id in rollout_ids:
+        ledger = ledger.admit(
+            _entry(rollout_id, resource_cost=0.1, evidence_count=2, outcome_consistency=1.0),
+            memory_id=f"memory-{rollout_id}",
+        )
+    selected = ledger.selected_approvals
+    reader_kinds = ("semantic", "procedural", "sequence", "concept")
+
+    def group(
+        reader_kind: str, members: tuple[str, ...], *, order_delta: float = 0.0
+    ) -> RecoveryReaderInteractionGroup:
+        pair_count = len(members) * (len(members) - 1) // 2
+        member_increment = (1.0,) * len(members)
+        pair_credit = (0.1,) * pair_count
+        residual = 0.4
+        return RecoveryReaderInteractionGroup(
+            reader_kind=reader_kind,
+            strategy_rollout_ids=members,
+            memory_ids=tuple(f"memory-{rollout_id}" for rollout_id in members),
+            group_effect_l2=sum(member_increment) + sum(pair_credit) + residual,
+            additive_effect_l2=sum(member_increment),
+            pairwise_interaction_delta_l2=sum(pair_credit),
+            pairwise_predicted_effect_l2=sum(member_increment) + sum(pair_credit),
+            higher_order_delta_l2=residual,
+            higher_order_residual_l2=residual,
+            order_delta_l2=order_delta,
+            order_invariant=order_delta == 0.0,
+            replay_epochs=1,
+            replay_learning_rate=0.1,
+            singleton_effect_l2=member_increment,
+            replay_digest=f"state-{reader_kind}-{'-'.join(members)}",
+            attribution_digest=f"attribution-{reader_kind}-{'-'.join(members)}",
+            member_increment_l2=member_increment,
+            interaction_credit_l2=pair_credit,
+            residual_credit_l2=residual,
+            credit_conservation_error_l2=0.0,
+            credit_decomposition_complete=True,
+        )
+
+    def graph(groups: tuple[tuple[str, ...], ...]) -> RecoveryReaderDependencyGraph:
+        current = RecoveryReaderDependencyGraph()
+        for reader_kind in reader_kinds:
+            current = current.bind(
+                reader_kind,
+                selected,
+                interaction_groups=tuple(group(reader_kind, members) for members in groups),
+                base_checkpoint={"reader": reader_kind, "version": 1},
+                base_checkpoint_digest=f"base-{reader_kind}-v1",
+            )
+        return current
+
+    base = graph(
+        (tuple(f"a-{index}" for index in range(3)), tuple(f"b-{index}" for index in range(3)))
+    )
+    base_audits = build_recovery_reader_credit_consistency(base.dependencies, drift_tolerance=0.0)
+    assert {item.audit_revision for item in base_audits} == {1}
+    checkpoint_graph = base.record_credit_consistency(base_audits)
+    checkpoint = RecoveryReaderDependencyGraph.from_payload(checkpoint_graph.to_payload())
+    assert checkpoint == checkpoint_graph
+    stable_audits = build_recovery_reader_credit_consistency(
+        checkpoint.dependencies,
+        drift_tolerance=0.0,
+        previous=base_audits,
+    )
+    assert stable_audits == base_audits
+
+    added = graph(
+        (
+            tuple(f"a-{index}" for index in range(3)),
+            tuple(f"b-{index}" for index in range(3)),
+            tuple(f"c-{index}" for index in range(3)),
+        )
+    )
+    added_audits = build_recovery_reader_credit_consistency(
+        added.dependencies, drift_tolerance=0.0, previous=base_audits
+    )
+    added_by_group = {frozenset(item.strategy_rollout_ids): item for item in added_audits}
+    assert {
+        added_by_group[frozenset(f"{prefix}-{index}" for index in range(3))].audit_revision
+        for prefix in ("a", "b")
+    } == {1}
+    assert added_by_group[frozenset(f"c-{index}" for index in range(3))].audit_revision == 1
+
+    merged_members = tuple(f"{prefix}-{index}" for prefix in ("a", "b") for index in range(3))
+    merged = graph((merged_members, tuple(f"c-{index}" for index in range(3))))
+    merged_audits = build_recovery_reader_credit_consistency(
+        merged.dependencies, drift_tolerance=0.0, previous=added_audits
+    )
+    merged_by_group = {frozenset(item.strategy_rollout_ids): item for item in merged_audits}
+    assert merged_by_group[frozenset(merged_members)].audit_revision == 1
+    assert merged_by_group[frozenset(f"c-{index}" for index in range(3))].audit_revision == 1
+    split = graph(
+        (
+            tuple(f"a-{index}" for index in range(3)),
+            tuple(f"b-{index}" for index in range(3)),
+            tuple(f"c-{index}" for index in range(3)),
+        )
+    )
+    split_audits = build_recovery_reader_credit_consistency(
+        split.dependencies, drift_tolerance=0.0, previous=merged_audits
+    )
+    split_by_group = {frozenset(item.strategy_rollout_ids): item for item in split_audits}
+    assert {
+        split_by_group[frozenset(f"{prefix}-{index}" for index in range(3))].audit_revision
+        for prefix in ("a", "b", "c")
+    } == {1}
+
+    drifted_groups = tuple(
+        replace(
+            dependency,
+            interaction_groups=tuple(
+                (
+                    replace(item, order_delta_l2=0.2, order_invariant=False)
+                    if dependency.reader_kind == "semantic"
+                    and frozenset(item.strategy_rollout_ids)
+                    == frozenset(f"b-{index}" for index in range(3))
+                    else item
+                )
+                for item in dependency.interaction_groups
+            ),
+        )
+        for dependency in split.dependencies
+    )
+    drifted_audits = build_recovery_reader_credit_consistency(
+        drifted_groups, drift_tolerance=0.0, previous=split_audits
+    )
+    drifted_by_group = {frozenset(item.strategy_rollout_ids): item for item in drifted_audits}
+    assert drifted_by_group[frozenset(f"a-{index}" for index in range(3))].audit_revision == 1
+    assert drifted_by_group[frozenset(f"b-{index}" for index in range(3))].audit_revision == 2
+    assert drifted_by_group[frozenset(f"b-{index}" for index in range(3))].changed_reader_kinds == (
+        "semantic",
+    )
+    assert drifted_by_group[
+        frozenset(f"a-{index}" for index in range(3))
+    ].reader_attribution_safe == (
+        True,
+        True,
+        True,
+        True,
+    )
+    drift_checkpoint = RecoveryReaderDependencyGraph.from_payload(
+        split.record_credit_consistency(drifted_audits).to_payload()
+    )
+    assert drift_checkpoint.credit_consistency == drifted_audits
+
+    rollback_audits = build_recovery_reader_credit_consistency(
+        split.dependencies, drift_tolerance=0.0, previous=drifted_audits
+    )
+    rollback_by_group = {frozenset(item.strategy_rollout_ids): item for item in rollback_audits}
+    assert rollback_by_group[frozenset(f"a-{index}" for index in range(3))].audit_revision == 1
+    assert rollback_by_group[frozenset(f"b-{index}" for index in range(3))].audit_revision == 3
+    assert rollback_by_group[
+        frozenset(f"b-{index}" for index in range(3))
+    ].changed_reader_kinds == ("semantic",)
+
+    history_graph = split.record_credit_consistency(split_audits, history_capacity=3)
+    history_graph = history_graph.record_credit_consistency(drifted_audits, history_capacity=3)
+    history_graph = history_graph.record_credit_consistency(rollback_audits, history_capacity=3)
+    group_b_history = history_graph.credit_consistency_history_for(
+        tuple(f"b-{index}" for index in range(3))
+    )
+    assert [item.audit_revision for item in group_b_history] == [1, 2, 3]
+    assert history_graph.validate_credit_consistency_rollback(
+        tuple(f"b-{index}" for index in range(3)), 1
+    )
+    assert not history_graph.validate_credit_consistency_rollback(
+        tuple(f"b-{index}" for index in range(3)), 2
+    )
+    assert not history_graph.validate_credit_consistency_rollback(
+        tuple(f"b-{index}" for index in range(3)), 99
+    )
+    restored_history = RecoveryReaderDependencyGraph.from_payload(history_graph.to_payload())
+    assert restored_history == history_graph
+    assert all(
+        "credit_profiles" not in item and "reader_attribution_safe" not in item
+        for item in history_graph.to_payload()["credit_consistency_history"]
+    )
+    limited_history = history_graph.record_credit_consistency(rollback_audits, history_capacity=2)
+    assert [
+        item.audit_revision
+        for item in limited_history.credit_consistency_history_for(
+            tuple(f"b-{index}" for index in range(3))
+        )
+    ] == [2, 3]
+    assert not limited_history.validate_credit_consistency_rollback(
+        tuple(f"b-{index}" for index in range(3)), 1
+    )
+    assert limited_history.validate_credit_consistency_rollback(
+        tuple(f"b-{index}" for index in range(3)), 3
+    )
 
 
 def test_recovery_strategy_interaction_policy_keeps_atomic_pair_together() -> None:

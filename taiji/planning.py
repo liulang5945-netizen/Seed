@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import math
 from collections.abc import Sequence
 from dataclasses import dataclass, field, replace
@@ -20,7 +21,18 @@ RECOVERY_READER_DEPENDENCY_CHECKPOINT_FORMAT = "taiji-recovery-reader-dependency
 RECOVERY_READER_ATTRIBUTION_CHECKPOINT_FORMAT = "taiji-recovery-reader-attribution-v1"
 RECOVERY_READER_INTERACTION_CHECKPOINT_FORMAT = "taiji-recovery-reader-interaction-v1"
 RECOVERY_READER_INTERACTION_GROUP_CHECKPOINT_FORMAT = "taiji-recovery-reader-interaction-group-v1"
+RECOVERY_READER_CREDIT_CONSISTENCY_CHECKPOINT_FORMAT = "taiji-recovery-reader-credit-consistency-v1"
+RECOVERY_READER_CREDIT_AUDIT_REVISION_CHECKPOINT_FORMAT = (
+    "taiji-recovery-reader-credit-audit-revision-v1"
+)
 RECOVERY_READER_ORDER_INVARIANCE_TOLERANCE = DEFAULT_RECOVERY_INTERACTION_ORDER_TOLERANCE
+RECOVERY_READER_CREDIT_CONSERVATION_TOLERANCE = 1e-7
+RECOVERY_READER_CREDIT_CONSISTENCY_READER_KINDS = (
+    "semantic",
+    "procedural",
+    "sequence",
+    "concept",
+)
 
 
 def _unit(value: float, name: str) -> float:
@@ -969,6 +981,7 @@ class RecoveryStrategyLedger:
                 group.higher_order_residual_l2 > residual_limit
                 or group.order_delta_l2 > order_limit
                 or not group.order_invariant
+                or not group.credit_decomposition_safe
             ):
                 atomic_connections.append(tuple(group_ids))
 
@@ -1230,6 +1243,7 @@ class RecoveryReaderInteraction:
     replay_epochs: int
     replay_learning_rate: float
     method: str = "pairwise-replay"
+    replay_action_kinds: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.reader_kind:
@@ -1275,6 +1289,8 @@ class RecoveryReaderInteraction:
             )
         if not self.method:
             raise ValueError("recovery reader interaction method cannot be empty")
+        if any(not action_kind for action_kind in self.replay_action_kinds):
+            raise ValueError("recovery reader interaction action kinds cannot be empty")
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -1291,6 +1307,7 @@ class RecoveryReaderInteraction:
             "replay_epochs": self.replay_epochs,
             "replay_learning_rate": self.replay_learning_rate,
             "method": self.method,
+            "replay_action_kinds": list(self.replay_action_kinds),
         }
 
     @classmethod
@@ -1316,6 +1333,7 @@ class RecoveryReaderInteraction:
             replay_epochs=int(payload.get("replay_epochs", 1)),
             replay_learning_rate=float(payload.get("replay_learning_rate", 0.1)),
             method=str(payload.get("method", "pairwise-replay")),
+            replay_action_kinds=tuple(str(item) for item in payload.get("replay_action_kinds", ())),
         )
 
 
@@ -1337,6 +1355,15 @@ class RecoveryReaderInteractionGroup:
     replay_epochs: int
     replay_learning_rate: float
     method: str = "higher-order-group-replay"
+    singleton_effect_l2: tuple[float, ...] = ()
+    replay_digest: str = ""
+    attribution_digest: str = ""
+    replay_action_kinds: tuple[str, ...] = ()
+    member_increment_l2: tuple[float, ...] = ()
+    interaction_credit_l2: tuple[float, ...] = ()
+    residual_credit_l2: float = 0.0
+    credit_conservation_error_l2: float = 0.0
+    credit_decomposition_complete: bool = False
 
     def __post_init__(self) -> None:
         if not self.reader_kind:
@@ -1391,6 +1418,76 @@ class RecoveryReaderInteractionGroup:
             )
         if not self.method:
             raise ValueError("recovery reader interaction group method cannot be empty")
+        if self.singleton_effect_l2:
+            if len(self.singleton_effect_l2) != len(self.strategy_rollout_ids):
+                raise ValueError(
+                    "recovery reader interaction group singleton effects must match rollouts"
+                )
+            for effect in self.singleton_effect_l2:
+                _nonnegative_finite(effect, "recovery reader interaction group singleton effect")
+        if any(not action_kind for action_kind in self.replay_action_kinds):
+            raise ValueError("recovery reader interaction group action kinds cannot be empty")
+        if self.member_increment_l2:
+            if len(self.member_increment_l2) != len(self.strategy_rollout_ids):
+                raise ValueError(
+                    "recovery reader interaction group member increments must match rollouts"
+                )
+            for effect in self.member_increment_l2:
+                _nonnegative_finite(effect, "recovery reader interaction group member increment")
+        if self.interaction_credit_l2:
+            expected_count = (
+                len(self.strategy_rollout_ids) * (len(self.strategy_rollout_ids) - 1) // 2
+            )
+            if len(self.interaction_credit_l2) != expected_count:
+                raise ValueError(
+                    "recovery reader interaction group interaction credits must match pairs"
+                )
+            if any(not math.isfinite(float(effect)) for effect in self.interaction_credit_l2):
+                raise ValueError(
+                    "recovery reader interaction group interaction credits must be finite"
+                )
+        if not math.isfinite(float(self.residual_credit_l2)):
+            raise ValueError("recovery reader interaction group residual credit must be finite")
+        _nonnegative_finite(
+            self.credit_conservation_error_l2,
+            "recovery reader interaction group credit conservation error",
+        )
+        if not isinstance(self.credit_decomposition_complete, bool):
+            raise ValueError("recovery reader interaction group credit flag must be boolean")
+        if self.credit_decomposition_complete:
+            if not self.member_increment_l2 or not self.interaction_credit_l2:
+                raise ValueError(
+                    "complete recovery reader interaction group credit needs subset effects"
+                )
+            if self.singleton_effect_l2 != self.member_increment_l2:
+                raise ValueError(
+                    "recovery reader interaction group member increments must match singleton effects"
+                )
+            decomposed_effect = (
+                sum(self.member_increment_l2)
+                + sum(self.interaction_credit_l2)
+                + float(self.residual_credit_l2)
+            )
+            computed_error = abs(float(self.group_effect_l2) - decomposed_effect)
+            if not math.isclose(
+                float(self.credit_conservation_error_l2),
+                computed_error,
+                rel_tol=1e-6,
+                abs_tol=1e-9,
+            ):
+                raise ValueError(
+                    "recovery reader interaction group credit conservation error is stale"
+                )
+
+    @property
+    def credit_decomposition_safe(self) -> bool:
+        """Return whether this group can be treated as separable evidence."""
+
+        return bool(
+            self.credit_decomposition_complete
+            and self.order_invariant
+            and self.credit_conservation_error_l2 <= RECOVERY_READER_CREDIT_CONSERVATION_TOLERANCE
+        )
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -1409,6 +1506,15 @@ class RecoveryReaderInteractionGroup:
             "replay_epochs": self.replay_epochs,
             "replay_learning_rate": self.replay_learning_rate,
             "method": self.method,
+            "singleton_effect_l2": list(self.singleton_effect_l2),
+            "replay_digest": self.replay_digest,
+            "attribution_digest": self.attribution_digest,
+            "replay_action_kinds": list(self.replay_action_kinds),
+            "member_increment_l2": list(self.member_increment_l2),
+            "interaction_credit_l2": list(self.interaction_credit_l2),
+            "residual_credit_l2": self.residual_credit_l2,
+            "credit_conservation_error_l2": self.credit_conservation_error_l2,
+            "credit_decomposition_complete": self.credit_decomposition_complete,
         }
 
     @classmethod
@@ -1434,6 +1540,388 @@ class RecoveryReaderInteractionGroup:
             replay_epochs=int(payload.get("replay_epochs", 1)),
             replay_learning_rate=float(payload.get("replay_learning_rate", 0.1)),
             method=str(payload.get("method", "higher-order-group-replay")),
+            singleton_effect_l2=tuple(
+                float(item) for item in payload.get("singleton_effect_l2", ())
+            ),
+            replay_digest=str(payload.get("replay_digest", "")),
+            attribution_digest=str(payload.get("attribution_digest", "")),
+            replay_action_kinds=tuple(str(item) for item in payload.get("replay_action_kinds", ())),
+            member_increment_l2=tuple(
+                float(item) for item in payload.get("member_increment_l2", ())
+            ),
+            interaction_credit_l2=tuple(
+                float(item) for item in payload.get("interaction_credit_l2", ())
+            ),
+            residual_credit_l2=float(
+                payload.get("residual_credit_l2", payload.get("higher_order_delta_l2", 0.0))
+            ),
+            credit_conservation_error_l2=float(payload.get("credit_conservation_error_l2", 0.0)),
+            credit_decomposition_complete=bool(payload.get("credit_decomposition_complete", False)),
+        )
+
+
+def recovery_reader_credit_profile(
+    group: RecoveryReaderInteractionGroup,
+) -> tuple[float, ...]:
+    """Return an order-independent normalized signed credit profile.
+
+    Reader magnitudes are not expected to match: a semantic state distance and
+    a concept-organ state distance live on different scales.  The profile only
+    compares the decomposition shape, with member, pair, and explicit residual
+    components normalized by their total absolute mass.
+    """
+
+    if not group.credit_decomposition_complete:
+        return ()
+    member_by_id = dict(zip(group.strategy_rollout_ids, group.member_increment_l2, strict=True))
+    pair_by_ids = {
+        frozenset(pair): float(credit)
+        for pair, credit in zip(
+            (
+                (first, second)
+                for index, first in enumerate(group.strategy_rollout_ids)
+                for second in group.strategy_rollout_ids[index + 1 :]
+            ),
+            group.interaction_credit_l2,
+            strict=True,
+        )
+    }
+    ordered_ids = tuple(sorted(group.strategy_rollout_ids))
+    components = [float(member_by_id[rollout_id]) for rollout_id in ordered_ids]
+    components.extend(
+        pair_by_ids[frozenset((first, second))]
+        for index, first in enumerate(ordered_ids)
+        for second in ordered_ids[index + 1 :]
+    )
+    components.append(float(group.residual_credit_l2))
+    scale = sum(abs(value) for value in components)
+    if scale <= 1e-12:
+        return tuple(0.0 for _ in components)
+    return tuple(value / scale for value in components)
+
+
+def recovery_reader_credit_structure_digest(
+    group: RecoveryReaderInteractionGroup,
+) -> str:
+    """Hash the reader-independent topology of one group's credit split."""
+
+    profile = recovery_reader_credit_profile(group)
+    if not profile:
+        return ""
+    signature = (
+        tuple(sorted(group.strategy_rollout_ids)),
+        len(group.strategy_rollout_ids),
+        len(group.interaction_credit_l2),
+        len(profile),
+        bool(group.order_invariant),
+        bool(group.credit_decomposition_complete),
+    )
+    return hashlib.sha256(repr(signature).encode("utf-8")).hexdigest()
+
+
+@dataclass(frozen=True)
+class RecoveryReaderCreditConsistency:
+    """Cross-reader audit for one strategy group's replay attribution.
+
+    State and checkpoint digests are evidence of version/reader drift, not
+    equality requirements.  The gate compares only the reader-independent
+    decomposition topology and normalized signed credit profile.
+    """
+
+    strategy_rollout_ids: tuple[str, ...]
+    reader_kinds: tuple[str, ...]
+    credit_structure_digests: tuple[str, ...]
+    credit_profiles: tuple[tuple[float, ...], ...]
+    base_checkpoint_digests: tuple[str, ...]
+    state_digests: tuple[str, ...]
+    max_credit_drift_l1: float
+    credit_drift_tolerance: float
+    coverage_complete: bool
+    structure_consistent: bool
+    within_tolerance: bool
+    checkpoint_complete: bool
+    audit_revision: int = 1
+    reader_attribution_safe: tuple[bool, ...] = ()
+    changed_reader_kinds: tuple[str, ...] = ()
+    method: str = "cross-reader-normalized-credit-v1"
+
+    def __post_init__(self) -> None:
+        if len(self.strategy_rollout_ids) < 3 or any(
+            not rollout_id for rollout_id in self.strategy_rollout_ids
+        ):
+            raise ValueError("recovery reader credit consistency needs a strategy group")
+        if len(set(self.strategy_rollout_ids)) != len(self.strategy_rollout_ids):
+            raise ValueError("recovery reader credit consistency rollout ids must be unique")
+        if not self.reader_kinds or any(not reader_kind for reader_kind in self.reader_kinds):
+            raise ValueError("recovery reader credit consistency needs reader kinds")
+        if len(set(self.reader_kinds)) != len(self.reader_kinds):
+            raise ValueError("recovery reader credit consistency reader kinds must be unique")
+        field_lengths = (
+            len(self.credit_structure_digests),
+            len(self.credit_profiles),
+            len(self.base_checkpoint_digests),
+            len(self.state_digests),
+        )
+        if any(length != len(self.reader_kinds) for length in field_lengths):
+            raise ValueError("recovery reader credit consistency fields must align by reader")
+        if any(
+            not math.isfinite(float(value)) for profile in self.credit_profiles for value in profile
+        ):
+            raise ValueError("recovery reader credit consistency profiles must be finite")
+        if not math.isfinite(float(self.max_credit_drift_l1)) or self.max_credit_drift_l1 < 0.0:
+            raise ValueError(
+                "recovery reader credit consistency drift must be finite and non-negative"
+            )
+        _nonnegative_finite(
+            self.credit_drift_tolerance,
+            "recovery reader credit consistency tolerance",
+        )
+        if int(self.audit_revision) < 1:
+            raise ValueError("recovery reader credit consistency revision must be positive")
+        for value, name in (
+            (self.coverage_complete, "coverage_complete"),
+            (self.structure_consistent, "structure_consistent"),
+            (self.within_tolerance, "within_tolerance"),
+            (self.checkpoint_complete, "checkpoint_complete"),
+        ):
+            if not isinstance(value, bool):
+                raise ValueError(f"recovery reader credit consistency {name} must be boolean")
+        safe = self.reader_attribution_safe
+        if not safe:
+            safe = (False,) * len(self.reader_kinds)
+            object.__setattr__(self, "reader_attribution_safe", safe)
+        if len(safe) != len(self.reader_kinds) or any(
+            not isinstance(value, bool) for value in safe
+        ):
+            raise ValueError("recovery reader credit consistency attribution flags must align")
+        if any(reader_kind not in self.reader_kinds for reader_kind in self.changed_reader_kinds):
+            raise ValueError("recovery reader credit consistency changed reader is unknown")
+        if not self.method:
+            raise ValueError("recovery reader credit consistency method cannot be empty")
+
+    @property
+    def complete(self) -> bool:
+        """Return whether all four readers support a comparable safe audit."""
+
+        return bool(
+            self.coverage_complete
+            and self.structure_consistent
+            and self.within_tolerance
+            and self.checkpoint_complete
+        )
+
+    @property
+    def safe(self) -> bool:
+        """Return whether the group may use every reader's attribution."""
+
+        return bool(self.complete and all(self.reader_attribution_safe))
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": RECOVERY_READER_CREDIT_CONSISTENCY_CHECKPOINT_FORMAT,
+            "strategy_rollout_ids": list(self.strategy_rollout_ids),
+            "reader_kinds": list(self.reader_kinds),
+            "credit_structure_digests": list(self.credit_structure_digests),
+            "credit_profiles": [list(profile) for profile in self.credit_profiles],
+            "base_checkpoint_digests": list(self.base_checkpoint_digests),
+            "state_digests": list(self.state_digests),
+            "max_credit_drift_l1": self.max_credit_drift_l1,
+            "credit_drift_tolerance": self.credit_drift_tolerance,
+            "coverage_complete": self.coverage_complete,
+            "structure_consistent": self.structure_consistent,
+            "within_tolerance": self.within_tolerance,
+            "checkpoint_complete": self.checkpoint_complete,
+            "audit_revision": self.audit_revision,
+            "reader_attribution_safe": list(self.reader_attribution_safe),
+            "changed_reader_kinds": list(self.changed_reader_kinds),
+            "method": self.method,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> RecoveryReaderCreditConsistency:
+        if payload.get("format", RECOVERY_READER_CREDIT_CONSISTENCY_CHECKPOINT_FORMAT) != (
+            RECOVERY_READER_CREDIT_CONSISTENCY_CHECKPOINT_FORMAT
+        ):
+            raise ValueError("unsupported recovery reader credit consistency checkpoint format")
+        return cls(
+            strategy_rollout_ids=tuple(
+                str(item) for item in payload.get("strategy_rollout_ids", ())
+            ),
+            reader_kinds=tuple(str(item) for item in payload.get("reader_kinds", ())),
+            credit_structure_digests=tuple(
+                str(item) for item in payload.get("credit_structure_digests", ())
+            ),
+            credit_profiles=tuple(
+                tuple(float(value) for value in profile)
+                for profile in payload.get("credit_profiles", ())
+            ),
+            base_checkpoint_digests=tuple(
+                str(item) for item in payload.get("base_checkpoint_digests", ())
+            ),
+            state_digests=tuple(str(item) for item in payload.get("state_digests", ())),
+            max_credit_drift_l1=float(payload.get("max_credit_drift_l1", 0.0)),
+            credit_drift_tolerance=float(payload.get("credit_drift_tolerance", 0.0)),
+            coverage_complete=bool(payload.get("coverage_complete", False)),
+            structure_consistent=bool(payload.get("structure_consistent", False)),
+            within_tolerance=bool(payload.get("within_tolerance", False)),
+            checkpoint_complete=bool(payload.get("checkpoint_complete", False)),
+            audit_revision=int(payload.get("audit_revision", 1)),
+            reader_attribution_safe=tuple(
+                bool(value) for value in payload.get("reader_attribution_safe", ())
+            ),
+            changed_reader_kinds=tuple(
+                str(item) for item in payload.get("changed_reader_kinds", ())
+            ),
+            method=str(payload.get("method", "cross-reader-normalized-credit-v1")),
+        )
+
+
+def _credit_audit_digest(signature: Any) -> str:
+    """Return a deterministic digest for non-executable audit evidence."""
+
+    return hashlib.sha256(repr(signature).encode("utf-8")).hexdigest()
+
+
+@dataclass(frozen=True)
+class RecoveryReaderCreditAuditRevision:
+    """Digest-only history for one cross-reader group audit revision.
+
+    This record deliberately omits raw credit profiles and reader safety flags.
+    It can validate a rollback target but can never become executable
+    attribution on its own.
+    """
+
+    strategy_rollout_ids: tuple[str, ...]
+    audit_revision: int
+    reader_kinds: tuple[str, ...]
+    credit_structure_digests: tuple[str, ...]
+    credit_profile_digests: tuple[str, ...]
+    base_checkpoint_digests: tuple[str, ...]
+    state_digests: tuple[str, ...]
+    summary_digest: str
+    method: str = "cross-reader-credit-audit-summary-v1"
+
+    def __post_init__(self) -> None:
+        if len(self.strategy_rollout_ids) < 3 or any(
+            not rollout_id for rollout_id in self.strategy_rollout_ids
+        ):
+            raise ValueError("recovery reader credit audit history needs a strategy group")
+        if len(set(self.strategy_rollout_ids)) != len(self.strategy_rollout_ids):
+            raise ValueError("recovery reader credit audit history rollout ids must be unique")
+        if int(self.audit_revision) < 1:
+            raise ValueError("recovery reader credit audit history revision must be positive")
+        if not self.reader_kinds or any(not reader_kind for reader_kind in self.reader_kinds):
+            raise ValueError("recovery reader credit audit history needs reader kinds")
+        if len(set(self.reader_kinds)) != len(self.reader_kinds):
+            raise ValueError("recovery reader credit audit history reader kinds must be unique")
+        field_lengths = (
+            len(self.credit_structure_digests),
+            len(self.credit_profile_digests),
+            len(self.base_checkpoint_digests),
+            len(self.state_digests),
+        )
+        if any(length != len(self.reader_kinds) for length in field_lengths):
+            raise ValueError("recovery reader credit audit history fields must align by reader")
+        if any(
+            not isinstance(value, str)
+            for values in (
+                self.credit_structure_digests,
+                self.credit_profile_digests,
+                self.base_checkpoint_digests,
+                self.state_digests,
+            )
+            for value in values
+        ):
+            raise ValueError("recovery reader credit audit history digests must be strings")
+        if not self.summary_digest or not self.method:
+            raise ValueError("recovery reader credit audit history digest and method are required")
+        if not self.integrity_valid:
+            raise ValueError("recovery reader credit audit history digest is invalid")
+
+    def _signature(self) -> tuple[Any, ...]:
+        return (
+            self.strategy_rollout_ids,
+            self.audit_revision,
+            self.reader_kinds,
+            self.credit_structure_digests,
+            self.credit_profile_digests,
+            self.base_checkpoint_digests,
+            self.state_digests,
+            self.method,
+        )
+
+    @property
+    def integrity_valid(self) -> bool:
+        return self.summary_digest == _credit_audit_digest(self._signature())
+
+    @classmethod
+    def from_consistency(
+        cls, audit: RecoveryReaderCreditConsistency
+    ) -> RecoveryReaderCreditAuditRevision:
+        if not isinstance(audit, RecoveryReaderCreditConsistency):
+            raise ValueError("recovery reader credit audit history source must be typed")
+        profile_digests = tuple(_credit_audit_digest(profile) for profile in audit.credit_profiles)
+        method = "cross-reader-credit-audit-summary-v1"
+        signature = (
+            audit.strategy_rollout_ids,
+            audit.audit_revision,
+            audit.reader_kinds,
+            audit.credit_structure_digests,
+            profile_digests,
+            audit.base_checkpoint_digests,
+            audit.state_digests,
+            method,
+        )
+        return cls(
+            strategy_rollout_ids=audit.strategy_rollout_ids,
+            audit_revision=audit.audit_revision,
+            reader_kinds=audit.reader_kinds,
+            credit_structure_digests=audit.credit_structure_digests,
+            credit_profile_digests=profile_digests,
+            base_checkpoint_digests=audit.base_checkpoint_digests,
+            state_digests=audit.state_digests,
+            summary_digest=_credit_audit_digest(signature),
+            method=method,
+        )
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": RECOVERY_READER_CREDIT_AUDIT_REVISION_CHECKPOINT_FORMAT,
+            "strategy_rollout_ids": list(self.strategy_rollout_ids),
+            "audit_revision": self.audit_revision,
+            "reader_kinds": list(self.reader_kinds),
+            "credit_structure_digests": list(self.credit_structure_digests),
+            "credit_profile_digests": list(self.credit_profile_digests),
+            "base_checkpoint_digests": list(self.base_checkpoint_digests),
+            "state_digests": list(self.state_digests),
+            "summary_digest": self.summary_digest,
+            "method": self.method,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: dict[str, Any]) -> RecoveryReaderCreditAuditRevision:
+        if payload.get("format", RECOVERY_READER_CREDIT_AUDIT_REVISION_CHECKPOINT_FORMAT) != (
+            RECOVERY_READER_CREDIT_AUDIT_REVISION_CHECKPOINT_FORMAT
+        ):
+            raise ValueError("unsupported recovery reader credit audit history checkpoint format")
+        return cls(
+            strategy_rollout_ids=tuple(
+                str(item) for item in payload.get("strategy_rollout_ids", ())
+            ),
+            audit_revision=int(payload.get("audit_revision", 0)),
+            reader_kinds=tuple(str(item) for item in payload.get("reader_kinds", ())),
+            credit_structure_digests=tuple(
+                str(item) for item in payload.get("credit_structure_digests", ())
+            ),
+            credit_profile_digests=tuple(
+                str(item) for item in payload.get("credit_profile_digests", ())
+            ),
+            base_checkpoint_digests=tuple(
+                str(item) for item in payload.get("base_checkpoint_digests", ())
+            ),
+            state_digests=tuple(str(item) for item in payload.get("state_digests", ())),
+            summary_digest=str(payload.get("summary_digest", "")),
+            method=str(payload.get("method", "cross-reader-credit-audit-summary-v1")),
         )
 
 
@@ -1580,6 +2068,9 @@ class RecoveryReaderDependencyGraph:
 
     dependencies: tuple[RecoveryReaderDependency, ...] = ()
     revision: int = 0
+    credit_consistency: tuple[RecoveryReaderCreditConsistency, ...] = ()
+    credit_consistency_history: tuple[RecoveryReaderCreditAuditRevision, ...] = ()
+    credit_consistency_history_capacity: int = 4
 
     def __post_init__(self) -> None:
         reader_kinds = tuple(dependency.reader_kind for dependency in self.dependencies)
@@ -1587,6 +2078,29 @@ class RecoveryReaderDependencyGraph:
             raise ValueError("recovery reader dependency reader kinds must be unique")
         if int(self.revision) < 0:
             raise ValueError("recovery reader dependency graph revision cannot be negative")
+        if int(self.credit_consistency_history_capacity) < 1:
+            raise ValueError("recovery reader credit audit history capacity must be positive")
+        if any(
+            not isinstance(item, RecoveryReaderCreditConsistency)
+            for item in self.credit_consistency
+        ):
+            raise ValueError("recovery reader credit consistency records must be typed")
+        consistency_keys = {
+            frozenset(item.strategy_rollout_ids) for item in self.credit_consistency
+        }
+        if len(consistency_keys) != len(self.credit_consistency):
+            raise ValueError("recovery reader credit consistency groups must be unique")
+        if any(
+            not isinstance(item, RecoveryReaderCreditAuditRevision) or not item.integrity_valid
+            for item in self.credit_consistency_history
+        ):
+            raise ValueError("recovery reader credit audit history records must be valid")
+        history_keys = {
+            (frozenset(item.strategy_rollout_ids), item.audit_revision)
+            for item in self.credit_consistency_history
+        }
+        if len(history_keys) != len(self.credit_consistency_history):
+            raise ValueError("recovery reader credit audit history revisions must be unique")
 
     def bind(
         self,
@@ -1727,7 +2241,122 @@ class RecoveryReaderDependencyGraph:
             )
             for dependency in self.dependencies
         )
-        return replace(self, dependencies=dependencies, revision=self.revision + 1)
+        consistency = tuple(
+            item
+            for item in self.credit_consistency
+            if all(rollout_id in selected_by_rollout for rollout_id in item.strategy_rollout_ids)
+        )
+        history = tuple(
+            item
+            for item in self.credit_consistency_history
+            if all(rollout_id in selected_by_rollout for rollout_id in item.strategy_rollout_ids)
+        )
+        return replace(
+            self,
+            dependencies=dependencies,
+            credit_consistency=consistency,
+            credit_consistency_history=history,
+            revision=self.revision + 1,
+        )
+
+    def record_credit_consistency(
+        self,
+        audits: Sequence[RecoveryReaderCreditConsistency],
+        *,
+        history_capacity: int | None = None,
+    ) -> RecoveryReaderDependencyGraph:
+        """Persist current audits and bounded, non-executable revision summaries."""
+
+        items = tuple(audits)
+        if any(not isinstance(item, RecoveryReaderCreditConsistency) for item in items):
+            raise ValueError("recovery reader credit consistency records must be typed")
+        capacity = (
+            self.credit_consistency_history_capacity
+            if history_capacity is None
+            else int(history_capacity)
+        )
+        if capacity < 1:
+            raise ValueError("recovery reader credit audit history capacity must be positive")
+        history_by_group: dict[frozenset[str], list[RecoveryReaderCreditAuditRevision]] = {}
+        for item in self.credit_consistency_history:
+            history_by_group.setdefault(frozenset(item.strategy_rollout_ids), []).append(item)
+        for audit in items:
+            summary = RecoveryReaderCreditAuditRevision.from_consistency(audit)
+            group_history = history_by_group.setdefault(frozenset(summary.strategy_rollout_ids), [])
+            existing = next(
+                (item for item in group_history if item.audit_revision == summary.audit_revision),
+                None,
+            )
+            if existing is not None and existing.summary_digest != summary.summary_digest:
+                raise ValueError(
+                    "recovery reader credit audit revision changed its evidence digest"
+                )
+            if existing is None:
+                group_history.append(summary)
+            group_history.sort(key=lambda item: (item.audit_revision, item.summary_digest))
+        history = tuple(
+            item
+            for group_key in sorted(history_by_group, key=lambda value: tuple(sorted(value)))
+            for item in history_by_group[group_key][-capacity:]
+        )
+        return replace(
+            self,
+            credit_consistency=items,
+            credit_consistency_history=history,
+            credit_consistency_history_capacity=capacity,
+            revision=self.revision + 1,
+        )
+
+    def credit_consistency_history_for(
+        self, strategy_rollout_ids: Sequence[str]
+    ) -> tuple[RecoveryReaderCreditAuditRevision, ...]:
+        """Return bounded digest summaries for exactly one strategy group."""
+
+        group_key = frozenset(str(item) for item in strategy_rollout_ids)
+        return tuple(
+            item
+            for item in self.credit_consistency_history
+            if frozenset(item.strategy_rollout_ids) == group_key
+        )
+
+    def validate_credit_consistency_rollback(
+        self, strategy_rollout_ids: Sequence[str], target_revision: int
+    ) -> bool:
+        """Validate a present, structurally compatible audit target.
+
+        The result is an allowlist check only.  Digest-only history is never
+        promoted into executable reader attribution or state restoration.
+        """
+
+        group_key = frozenset(str(item) for item in strategy_rollout_ids)
+        current = next(
+            (
+                item
+                for item in self.credit_consistency
+                if frozenset(item.strategy_rollout_ids) == group_key
+            ),
+            None,
+        )
+        target = next(
+            (
+                item
+                for item in self.credit_consistency_history
+                if frozenset(item.strategy_rollout_ids) == group_key
+                and item.audit_revision == int(target_revision)
+            ),
+            None,
+        )
+        if current is None or target is None or not target.integrity_valid:
+            return False
+        current_profile_digests = tuple(
+            _credit_audit_digest(profile) for profile in current.credit_profiles
+        )
+        return bool(
+            current.reader_kinds == target.reader_kinds
+            and current.credit_structure_digests == target.credit_structure_digests
+            and current_profile_digests == target.credit_profile_digests
+            and current.base_checkpoint_digests == target.base_checkpoint_digests
+        )
 
     @property
     def interaction_audit_available(self) -> bool:
@@ -1742,6 +2371,11 @@ class RecoveryReaderDependencyGraph:
         return {
             "format": RECOVERY_READER_DEPENDENCY_CHECKPOINT_FORMAT,
             "dependencies": [dependency.to_payload() for dependency in self.dependencies],
+            "credit_consistency": [item.to_payload() for item in self.credit_consistency],
+            "credit_consistency_history": [
+                item.to_payload() for item in self.credit_consistency_history
+            ],
+            "credit_consistency_history_capacity": self.credit_consistency_history_capacity,
             "revision": self.revision,
         }
 
@@ -1756,8 +2390,167 @@ class RecoveryReaderDependencyGraph:
                 RecoveryReaderDependency.from_payload(dict(item))
                 for item in payload.get("dependencies", ())
             ),
+            credit_consistency=tuple(
+                RecoveryReaderCreditConsistency.from_payload(dict(item))
+                for item in payload.get("credit_consistency", ())
+            ),
+            credit_consistency_history=tuple(
+                RecoveryReaderCreditAuditRevision.from_payload(dict(item))
+                for item in payload.get("credit_consistency_history", ())
+            ),
+            credit_consistency_history_capacity=int(
+                payload.get("credit_consistency_history_capacity", 4)
+            ),
             revision=int(payload.get("revision", 0)),
         )
+
+
+def build_recovery_reader_credit_consistency(
+    dependencies: Sequence[RecoveryReaderDependency],
+    *,
+    drift_tolerance: float,
+    previous: Sequence[RecoveryReaderCreditConsistency] = (),
+) -> tuple[RecoveryReaderCreditConsistency, ...]:
+    """Compare matching group attribution across all currently bound readers."""
+
+    tolerance = _nonnegative_finite(
+        drift_tolerance,
+        "recovery reader cross-reader credit drift tolerance",
+    )
+    dependency_by_kind = {dependency.reader_kind: dependency for dependency in dependencies}
+    reader_kinds = tuple(sorted(dependency_by_kind))
+    if not reader_kinds:
+        return ()
+    groups_by_key: dict[frozenset[str], dict[str, RecoveryReaderInteractionGroup]] = {}
+    for dependency in dependencies:
+        for group in dependency.interaction_groups:
+            groups_by_key.setdefault(frozenset(group.strategy_rollout_ids), {})[
+                dependency.reader_kind
+            ] = group
+    previous_by_key = {frozenset(item.strategy_rollout_ids): item for item in previous}
+    audits: list[RecoveryReaderCreditConsistency] = []
+    for group_key in sorted(groups_by_key, key=lambda item: tuple(sorted(item))):
+        groups = groups_by_key[group_key]
+        ordered_ids = tuple(sorted(group_key))
+        current_groups = tuple(groups.get(reader_kind) for reader_kind in reader_kinds)
+        structure_digests = tuple(
+            "" if group is None else recovery_reader_credit_structure_digest(group)
+            for group in current_groups
+        )
+        profiles = tuple(
+            () if group is None else recovery_reader_credit_profile(group)
+            for group in current_groups
+        )
+        base_checkpoint_digests = tuple(
+            dependency_by_kind[reader_kind].base_checkpoint_digest for reader_kind in reader_kinds
+        )
+        state_digests = tuple(
+            "" if group is None else group.replay_digest for group in current_groups
+        )
+        profiles_valid = bool(profiles) and all(
+            profile and len(profile) == len(profiles[0]) for profile in profiles
+        )
+        max_drift = 0.0
+        if profiles_valid:
+            for index, first in enumerate(profiles):
+                for second in profiles[index + 1 :]:
+                    max_drift = max(
+                        max_drift,
+                        sum(abs(left - right) for left, right in zip(first, second, strict=True)),
+                    )
+        else:
+            max_drift = 2.0
+        group_complete = bool(
+            current_groups
+            and all(
+                group is not None and group.credit_decomposition_safe for group in current_groups
+            )
+        )
+        structure_consistent = bool(
+            group_complete and all(structure_digests) and len(set(structure_digests)) == 1
+        )
+        within_tolerance = bool(profiles_valid and max_drift <= tolerance)
+        checkpoint_complete = bool(all(base_checkpoint_digests) and all(state_digests))
+        coverage_complete = set(reader_kinds) == set(
+            RECOVERY_READER_CREDIT_CONSISTENCY_READER_KINDS
+        )
+        previous_audit = previous_by_key.get(group_key)
+        changed_reader_kinds: list[str] = []
+        audit_changed = previous_audit is None
+        if previous_audit is not None:
+            previous_by_reader = {
+                reader_kind: index for index, reader_kind in enumerate(previous_audit.reader_kinds)
+            }
+            if previous_audit.reader_kinds != reader_kinds:
+                audit_changed = True
+            for index, reader_kind in enumerate(reader_kinds):
+                previous_index = previous_by_reader.get(reader_kind)
+                if previous_index is None:
+                    changed_reader_kinds.append(reader_kind)
+                    audit_changed = True
+                    continue
+                profile_changed = len(profiles[index]) != len(
+                    previous_audit.credit_profiles[previous_index]
+                ) or any(
+                    abs(left - right) > 1e-12
+                    for left, right in zip(
+                        profiles[index],
+                        previous_audit.credit_profiles[previous_index],
+                        strict=True,
+                    )
+                )
+                if (
+                    structure_digests[index]
+                    != previous_audit.credit_structure_digests[previous_index]
+                    or profile_changed
+                    or base_checkpoint_digests[index]
+                    != previous_audit.base_checkpoint_digests[previous_index]
+                    or state_digests[index] != previous_audit.state_digests[previous_index]
+                ):
+                    changed_reader_kinds.append(reader_kind)
+                    audit_changed = True
+        audit_valid = bool(
+            coverage_complete
+            and group_complete
+            and structure_consistent
+            and within_tolerance
+            and checkpoint_complete
+        )
+        if audit_valid:
+            reader_attribution_safe = (True,) * len(reader_kinds)
+        elif previous_audit is not None and changed_reader_kinds:
+            reader_attribution_safe = tuple(
+                reader_kind not in changed_reader_kinds for reader_kind in reader_kinds
+            )
+        elif previous_audit is not None and not audit_changed:
+            reader_attribution_safe = previous_audit.reader_attribution_safe
+        else:
+            reader_attribution_safe = (False,) * len(reader_kinds)
+        audit_revision = (
+            1
+            if previous_audit is None
+            else previous_audit.audit_revision + (1 if audit_changed else 0)
+        )
+        audits.append(
+            RecoveryReaderCreditConsistency(
+                strategy_rollout_ids=ordered_ids,
+                reader_kinds=reader_kinds,
+                credit_structure_digests=structure_digests,
+                credit_profiles=profiles,
+                base_checkpoint_digests=base_checkpoint_digests,
+                state_digests=state_digests,
+                max_credit_drift_l1=max_drift,
+                credit_drift_tolerance=tolerance,
+                coverage_complete=coverage_complete,
+                structure_consistent=structure_consistent,
+                within_tolerance=within_tolerance,
+                checkpoint_complete=checkpoint_complete,
+                audit_revision=audit_revision,
+                reader_attribution_safe=reader_attribution_safe,
+                changed_reader_kinds=tuple(changed_reader_kinds),
+            )
+        )
+    return tuple(audits)
 
 
 @dataclass(frozen=True)
