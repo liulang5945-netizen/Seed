@@ -193,6 +193,11 @@ Legacy NeuroPlex 是冻结的 Transformer 离线对照；它不进入 Taiji cogn
   `native-readable`，并暴露区分的 artifact/canary failure code；旧 artifact/checkpoint 仍可读取，但缺少内容寻址证据时不能进入 product chat。
   训练侧 artifact loader smoke 同步输出摘要和 canary 结果，定向回归 `23 passed`，Ruff、Black、核心 Mypy=`0`。本机全量 Seed/Taiji 测试的
   测试体未见本次回归，但仍受既有 Windows worktree/pytest 临时目录 ACL setup/cleanup error 影响，未计为全量 Gate 通过；CUDA 继续暂缓。
+- P6 provider artifact 多版本 registry 与原子轮换 Gate 已通过：Taiji 新增只保存 manifest 的版本 registry，要求 artifact ID 唯一、显式
+  allowlist、active/previous 版本关系和单调 revision，并纳入 native checkpoint continuation。Seed 轮换在隔离 staging adapter 中加载候选，
+  先执行内容寻址、训练/安全 Gate 和首轮 chat canary，全部通过后才一次性提交 language organ、backend registry、artifact 和 registry snapshot；
+  版本冲突、未授权版本、候选加载失败或 canary 失败均保持线上旧版本不变，不会半写入。新增 `SeedRuntime.rotate_language_provider`，让产品层更新
+  provider runtime 时同步保持锁和旧 runtime；定向语言/provider 回归 `25 passed`，Ruff、Black、核心 Mypy=`0`，CUDA 继续暂缓。
 - 原生 `tests/taiji_native` 最近一次完整执行为 `192 passed, 1 skipped, 2 errors`；两个 error 均发生在
   Windows pytest 临时目录锁创建阶段，未进入测试体，不作为代码断言失败或能力结论。
 - P2 感知训练已改为复用运行时的动态边界时钟：训练按同一 adaptive assembly 起点监督每个活动前缀，

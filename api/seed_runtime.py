@@ -81,6 +81,31 @@ class SeedRuntime:
             return f"seed:{self.checkpoint_path.name}"
         return "seed:scratch"
 
+    def rotate_language_provider(self, config: Any, registry: Any) -> Any:
+        """Atomically rotate to an allowlisted provider after its canary passes."""
+
+        from seed.language_provider import rotate_language_provider
+
+        with self._lock:
+            result = rotate_language_provider(
+                self.model.architecture,
+                registry,
+                config,
+                current_runtime=self._provider_runtime,
+            )
+            if result.committed:
+                self._provider_status = result.status.to_dict()
+                self._provider_runtime = result.runtime
+                from taiji import LanguageOrgan, NativeReadableTextLanguageOrgan
+
+                candidate = self.model.architecture.language_organ
+                self._chat_organ = (
+                    candidate
+                    if result.status.chat_enabled and isinstance(candidate, LanguageOrgan)
+                    else NativeReadableTextLanguageOrgan()
+                )
+            return result
+
     @classmethod
     def load(
         cls,

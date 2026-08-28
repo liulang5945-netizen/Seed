@@ -28,6 +28,7 @@ LANGUAGE_VALIDATION_FORMAT = "taiji-language-validation-v1"
 LANGUAGE_PROVIDER_ARTIFACT_FORMAT = "taiji-language-provider-artifact-v1"
 LANGUAGE_PROVIDER_CONTENT_ADDRESS_FORMAT = "taiji-language-provider-content-address-v1"
 LANGUAGE_PROVIDER_CANARY_FORMAT = "taiji-language-provider-canary-v1"
+LANGUAGE_PROVIDER_REGISTRY_FORMAT = "taiji-language-provider-registry-v1"
 LANGUAGE_REALIZATION_GATE_FORMAT = "taiji-language-realization-gate-v1"
 
 _LANGUAGE_PROVIDER_CONTENT_ROLES = frozenset(
@@ -550,6 +551,214 @@ def language_provider_artifact_digest(artifact: LanguageProviderArtifact) -> str
         content_digests=artifact.content_digests,
         expires_at=artifact.expires_at,
     )
+
+
+@dataclass(frozen=True)
+class LanguageProviderArtifactRegistry:
+    """Versioned provider manifests with an explicit activation allowlist.
+
+    The registry is metadata only: it does not load a decoder or participate in
+    Taiji cognition.  Every state transition returns a new snapshot so a
+    runtime can validate and stage a candidate before publishing the snapshot
+    that marks it active.
+    """
+
+    artifacts: tuple[LanguageProviderArtifact, ...] = ()
+    allowed_artifact_ids: tuple[str, ...] = ()
+    active_artifact_id: str | None = None
+    previous_artifact_id: str | None = None
+    revision: int = 0
+
+    def __post_init__(self) -> None:
+        if isinstance(self.artifacts, (str, bytes, bytearray)):
+            raise TypeError("provider artifact registry artifacts must be a sequence")
+        normalized_artifacts = tuple(sorted(self.artifacts, key=lambda item: item.artifact_id))
+        if any(not isinstance(item, LanguageProviderArtifact) for item in normalized_artifacts):
+            raise TypeError("provider artifact registry accepts LanguageProviderArtifact values")
+        artifact_ids = tuple(item.artifact_id for item in normalized_artifacts)
+        if len(set(artifact_ids)) != len(artifact_ids):
+            raise ValueError("provider artifact registry artifact_ids must be unique")
+        allowed = tuple(sorted(dict.fromkeys(str(item) for item in self.allowed_artifact_ids)))
+        unknown_allowed = set(allowed).difference(artifact_ids)
+        if unknown_allowed:
+            raise ValueError(
+                "provider artifact registry allowlist contains unknown artifacts: "
+                + ", ".join(sorted(unknown_allowed))
+            )
+        for selected, label in (
+            (self.active_artifact_id, "active_artifact_id"),
+            (self.previous_artifact_id, "previous_artifact_id"),
+        ):
+            if selected is not None and selected not in artifact_ids:
+                raise ValueError(f"provider artifact registry {label} is unknown: {selected}")
+            if selected is not None and selected not in allowed:
+                raise ValueError(
+                    f"provider artifact registry {label} is not allowlisted: {selected}"
+                )
+        if isinstance(self.revision, bool) or int(self.revision) < 0:
+            raise ValueError("provider artifact registry revision must be non-negative")
+        object.__setattr__(self, "artifacts", normalized_artifacts)
+        object.__setattr__(self, "allowed_artifact_ids", allowed)
+        object.__setattr__(self, "revision", int(self.revision))
+
+    @property
+    def artifact_ids(self) -> tuple[str, ...]:
+        """Return deterministic version identifiers in this registry."""
+
+        return tuple(artifact.artifact_id for artifact in self.artifacts)
+
+    @property
+    def active_artifact(self) -> LanguageProviderArtifact | None:
+        """Return the active manifest, if the registry has selected one."""
+
+        return self.get(self.active_artifact_id) if self.active_artifact_id else None
+
+    @property
+    def previous_artifact(self) -> LanguageProviderArtifact | None:
+        """Return the previous manifest retained for an explicit rollback."""
+
+        return self.get(self.previous_artifact_id) if self.previous_artifact_id else None
+
+    def get(self, artifact_id: str | None) -> LanguageProviderArtifact | None:
+        if artifact_id is None:
+            return None
+        for artifact in self.artifacts:
+            if artifact.artifact_id == str(artifact_id):
+                return artifact
+        return None
+
+    def require_allowed(self, artifact: LanguageProviderArtifact) -> None:
+        """Require the same path-independent manifest identity before staging."""
+
+        if not isinstance(artifact, LanguageProviderArtifact):
+            raise TypeError("provider artifact registry requires a LanguageProviderArtifact")
+        registered = self.get(artifact.artifact_id)
+        if registered is None:
+            raise KeyError(f"provider artifact is not registered: {artifact.artifact_id}")
+        if language_provider_artifact_digest(registered) != language_provider_artifact_digest(
+            artifact
+        ):
+            raise ValueError(
+                f"provider artifact manifest does not match registered version: {artifact.artifact_id}"
+            )
+        if artifact.artifact_id not in self.allowed_artifact_ids:
+            raise PermissionError(f"provider artifact is not allowlisted: {artifact.artifact_id}")
+
+    def with_artifact(
+        self,
+        artifact: LanguageProviderArtifact,
+        *,
+        allow: bool = False,
+    ) -> LanguageProviderArtifactRegistry:
+        """Return a new registry snapshot containing one immutable manifest."""
+
+        if not isinstance(artifact, LanguageProviderArtifact):
+            raise TypeError("provider artifact registry accepts LanguageProviderArtifact values")
+        existing = self.get(artifact.artifact_id)
+        if existing is not None and language_provider_artifact_digest(
+            existing
+        ) != language_provider_artifact_digest(artifact):
+            raise ValueError(
+                f"provider artifact version already has a different manifest: {artifact.artifact_id}"
+            )
+        artifacts = (
+            tuple(
+                artifact if item.artifact_id == artifact.artifact_id else item
+                for item in self.artifacts
+            )
+            if existing is not None
+            else (*self.artifacts, artifact)
+        )
+        allowed = self.allowed_artifact_ids
+        if allow and artifact.artifact_id not in allowed:
+            allowed = (*allowed, artifact.artifact_id)
+        return replace(
+            self,
+            artifacts=artifacts,
+            allowed_artifact_ids=allowed,
+            revision=self.revision + 1,
+        )
+
+    def allow(self, artifact_id: str) -> LanguageProviderArtifactRegistry:
+        """Return a snapshot that explicitly permits one registered version."""
+
+        artifact = self.get(artifact_id)
+        if artifact is None:
+            raise KeyError(f"provider artifact is not registered: {artifact_id}")
+        if artifact.artifact_id in self.allowed_artifact_ids:
+            return self
+        return replace(
+            self,
+            allowed_artifact_ids=(*self.allowed_artifact_ids, artifact.artifact_id),
+            revision=self.revision + 1,
+        )
+
+    def activate(self, artifact_id: str) -> LanguageProviderArtifactRegistry:
+        """Select an allowlisted version after an external runtime Gate passes."""
+
+        artifact = self.get(artifact_id)
+        if artifact is None:
+            raise KeyError(f"provider artifact is not registered: {artifact_id}")
+        if artifact.artifact_id not in self.allowed_artifact_ids:
+            raise PermissionError(f"provider artifact is not allowlisted: {artifact.artifact_id}")
+        if artifact.artifact_id == self.active_artifact_id:
+            return self
+        return replace(
+            self,
+            active_artifact_id=artifact.artifact_id,
+            previous_artifact_id=self.active_artifact_id,
+            revision=self.revision + 1,
+        )
+
+    def rollback(self) -> LanguageProviderArtifactRegistry:
+        """Swap active and previous versions without deleting either manifest."""
+
+        if self.previous_artifact_id is None:
+            raise ValueError("provider artifact registry has no previous version to roll back to")
+        return replace(
+            self,
+            active_artifact_id=self.previous_artifact_id,
+            previous_artifact_id=self.active_artifact_id,
+            revision=self.revision + 1,
+        )
+
+    def checkpoint(self) -> dict[str, Any]:
+        return {
+            "format": LANGUAGE_PROVIDER_REGISTRY_FORMAT,
+            "artifacts": [artifact.to_payload() for artifact in self.artifacts],
+            "allowed_artifact_ids": list(self.allowed_artifact_ids),
+            "active_artifact_id": self.active_artifact_id,
+            "previous_artifact_id": self.previous_artifact_id,
+            "revision": self.revision,
+        }
+
+    @classmethod
+    def from_checkpoint(cls, payload: Mapping[str, Any]) -> LanguageProviderArtifactRegistry:
+        if payload.get("format") != LANGUAGE_PROVIDER_REGISTRY_FORMAT:
+            raise ValueError("unsupported language provider artifact registry format")
+        artifacts = payload.get("artifacts", ())
+        allowed = payload.get("allowed_artifact_ids", ())
+        if not isinstance(artifacts, (list, tuple)):
+            raise ValueError("provider artifact registry artifacts must be a sequence")
+        if not isinstance(allowed, (list, tuple)):
+            raise ValueError("provider artifact registry allowlist must be a sequence")
+        return cls(
+            artifacts=tuple(
+                LanguageProviderArtifact.from_payload(dict(artifact)) for artifact in artifacts
+            ),
+            allowed_artifact_ids=tuple(str(item) for item in allowed),
+            active_artifact_id=(
+                None
+                if payload.get("active_artifact_id") is None
+                else str(payload["active_artifact_id"])
+            ),
+            previous_artifact_id=(
+                None
+                if payload.get("previous_artifact_id") is None
+                else str(payload["previous_artifact_id"])
+            ),
+            revision=int(payload.get("revision", 0)),
+        )
 
 
 @dataclass(frozen=True)

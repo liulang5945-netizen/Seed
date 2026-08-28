@@ -13,6 +13,7 @@ from taiji import (
     LanguageBackendSpec,
     LanguageEmission,
     LanguageProviderArtifact,
+    LanguageProviderArtifactRegistry,
     LanguageProviderCanaryGate,
     LanguageRealizationGate,
     LanguageRealizationValidator,
@@ -530,6 +531,52 @@ def test_provider_artifact_content_address_and_first_chat_canary_are_determinist
     assert report["format"] == "taiji-language-provider-canary-v1"
     assert report["metrics"]["required_term_coverage"] == 1.0
     assert report["gate"]["passed"] is True
+
+
+def test_provider_artifact_registry_tracks_rotation_and_checkpoint() -> None:
+    def artifact(artifact_id: str) -> LanguageProviderArtifact:
+        return LanguageProviderArtifact(
+            artifact_id=artifact_id,
+            backend_id="mature-decoder-v1",
+            mode="guarded",
+            base_model=f"models/{artifact_id}",
+            adapter_path=f"adapters/{artifact_id}",
+            training_corpus=f"reports/{artifact_id}-corpus.json",
+            training_report=f"reports/{artifact_id}-training.json",
+            safety_report=f"reports/{artifact_id}-safety.json",
+        )
+
+    first = artifact("provider-v1")
+    second = artifact("provider-v2")
+    registry = (
+        LanguageProviderArtifactRegistry()
+        .with_artifact(first, allow=True)
+        .with_artifact(second, allow=True)
+        .activate(first.artifact_id)
+    )
+    relocated = LanguageProviderArtifact(
+        artifact_id=first.artifact_id,
+        backend_id=first.backend_id,
+        mode=first.mode,
+        base_model="relocated/model",
+        adapter_path="relocated/adapter",
+        training_corpus="relocated/corpus.json",
+        training_report="relocated/training.json",
+        safety_report="relocated/safety.json",
+    )
+    registry.require_allowed(relocated)
+    rotated = registry.activate(second.artifact_id)
+
+    assert rotated.active_artifact_id == second.artifact_id
+    assert rotated.previous_artifact_id == first.artifact_id
+    assert rotated.active_artifact == second
+    assert rotated.previous_artifact == first
+    assert LanguageProviderArtifactRegistry.from_checkpoint(rotated.checkpoint()) == rotated
+    assert rotated.rollback().active_artifact_id == first.artifact_id
+
+    not_allowlisted = LanguageProviderArtifactRegistry().with_artifact(first)
+    with pytest.raises(PermissionError, match="not allowlisted"):
+        not_allowlisted.activate(first.artifact_id)
 
 
 def test_expression_to_text_gate_requires_quality_rollback_and_checkpoint() -> None:
