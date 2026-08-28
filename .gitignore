@@ -104,6 +104,12 @@ tmp_manual_parent/
 .seed_test_tmp/
 .tmp_b/
 .codex_tmp/
+# .codex/ 与 .codex_tmp/ 是两条独立规则：gitignore 无前缀通配语义，
+# `.codex/` 只匹配同名目录，覆盖不到 `.codex_tmp/`，两者都要写。
+# .codex/ 不只是临时文件，还含 git worktree 副本（见 git worktree list），
+# 副本里有同名的 plans/ tests/ scripts/ frontend/，会被仓库级
+# Grep / ruff / vitest 一并扫到而使统计基数与门禁结论失真。
+.codex/
 
 # OS
 .DS_Store

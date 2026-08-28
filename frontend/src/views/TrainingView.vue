@@ -196,9 +196,9 @@
             ref="trainUploadRef"
             upload-endpoint="/api/train/upload_dataset"
             accept=".jsonl,.json,.txt,.csv,.md,.pdf,.docx,.doc,.xlsx,.xls,.pptx,.html,.htm,.epub,.rtf,.xml,.log,.py,.js,.ts,.css,.java,.c,.cpp,.sh,.sql,.png,.jpg,.jpeg,.bmp,.gif,.webp,.tiff,.tif"
-            icon="BarChart2" title="训练数据上传" upload-icon="Download"
+            :icon="BarChart2" title="训练数据上传" :upload-icon="Download"
             :drop-text="t('train_upload')" :accept-hint="t('train_support')"
-            success-text="✅ 数据集上传成功"
+            success-text="数据集上传成功"
             @all-uploaded="loadTrainDatasets"
           />
         </div>
@@ -334,7 +334,7 @@
 </template>
 
 <script setup>
-import { Monitor, Zap, Trash2, Package as PackageIcon, RefreshCw, Play, Pause, Square, StopCircle } from 'lucide-vue-next';
+import { Monitor, Zap, Trash2, Package as PackageIcon, RefreshCw, Play, Pause, Square, StopCircle, BarChart2, Download } from 'lucide-vue-next';
 
 import { inject, watch, nextTick, ref, onActivated } from 'vue';
 import FileUploadQueue from '../components/FileUploadQueue.vue';

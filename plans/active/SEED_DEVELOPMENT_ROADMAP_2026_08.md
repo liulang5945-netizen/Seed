@@ -586,6 +586,8 @@ P4 的最小真实经历边界已落地：
 
 #### 13.3.2 全页白屏：`out-in` + `keep-alive` + `:key` 三者互斥
 
+> **诊断范围勘误（2026-08-28，§13.8）**：本节修掉的是**真实存在的过渡竞态**（`:key` 与 keep-alive 语义冲突、`delayedLeave` 持旧 vnode），这部分结论与收敛依然有效。但当时把它当作用户所报白屏的**唯一**根因，是**推理而非观测**——没有打开真实浏览器控制台看有无异常。用户随后二次上报同一现象，§13.8 用远程调试实测到真正的致命项是 `FileUploadQueue.vue` 把 emoji 字符串喂给 `<component :is>`，在 Blink 下抛 `InvalidCharacterError` 并摧毁整个 router-view 子树。两者是**不同层的两个缺陷**，本节不构成对用户所报白屏的完整解释。
+
 根因在 §13.1 第 3 项引入的 `App.vue` 过渡结构 `<transition mode="out-in"> → <keep-alive> → <component :is :key="$route.path">`，三个因素叠加致命：
 
 1. `:key="$route.path"` 强制每次导航销毁重建，**使基于组件 name 的 keep-alive 缓存永不命中**，且同一次更新里 `KeepAlive` 返回全新 vnode；
@@ -639,7 +641,9 @@ P4 的最小真实经历边界已落地：
 | 内置前端一致性 | `frontend/dist/index.html` 与 `dist/Seed/_internal/frontend/dist/index.html` SHA256 同为 `DF4069E4…790D`，**MATCH** |
 | 打包内 CSS 断言 | `route-leave=0`、`quick-btn=0`、`.router-wrapper=1`，与源码构建一致 |
 
-`python scripts/release.py` 在本机以 exit 1 结束，但**打包主体成功**：前端一致性字节门禁通过两次、PyInstaller 报告 `Build complete!`、后处理已复制 `user_data/` 与 `security/`。失败只在最后 `_verify_artifacts()` 检查 `dist/SeedSetup.exe`——本机没有 `makensis`，NSIS 步骤被跳过而验证仍要求安装包。**本机执行必须加 `--skip-nsis`**（§13.2 那一轮即如此），否则会得到误报失败。
+`python scripts/release.py` 在本机以 exit 1 结束，但**打包主体成功**：前端一致性字节门禁通过两次、PyInstaller 报告 `Build complete!`、后处理已复制 `user_data/` 与 `security/`。失败只在最后 `_verify_artifacts()` 检查 `dist/SeedSetup.exe`——本机没有 `makensis`，NSIS 步骤被跳过而验证仍要求安装包。
+
+> **本条已过时（2026-08-28，§13.8）**：当时的处置是「本机执行必须加 `--skip-nsis`」，即用人的记忆绕过脚本缺陷；该缺陷已在 §13.8 修掉——`build_nsis()` 改为回传「本机是否真的编译出安装包」这一事实供验证消费，因此现在**不需要任何标志**，`python scripts/release.py` 在无 makensis 的机器上也会如实以 exit 0 结束。
 
 改动文件（6 个）：`frontend/src/App.vue`、`frontend/src/assets/app.css`、`frontend/src/assets/styles/shell.css`、`frontend/src/views/WorkspaceView.vue`、`api/routes_agent_workspace.py`、`api/routes_terminal.py`。
 
@@ -803,6 +807,47 @@ P4 的最小真实经历边界已落地：
 **本轮刻意未做**：`ci.yml` 既无 `concurrency` 也无 `timeout-minutes`（见 §14.14）。二者是真实欠账，但本轮意图是"解除门禁挟持"，混入并发治理会让这次提交不可审计。
 
 改动文件（1 个）：`.github/workflows/ci.yml`（删 2 行 `needs: test`，加 8 行理由注释）。提交 `9dab2e5`（含本节 plans，2 文件 +53/−3）。
+
+### 13.8 知识库白屏根治、jsdom-Blink 门禁与子进程内核级回收（2026-08-28）
+
+本轮由四条客户端反馈驱动，其中一条是**同一现象的第二次上报**——"点击知识库后标签页内容全白屏，这个问题还是没解决"，并附带一条流程质问："为什么不启动开发者模式调试好了再打包"。后者是本轮最有价值的输入：§13.3.2 那次"白屏已修"是在没有真实浏览器控制台的前提下宣布的，用的是推理而非观测，所以修错了层。
+
+**白屏真因（与 §13.3.2 的过渡动画完全无关）**：`FileUploadQueue.vue` 把 `icon` / `uploadIcon` 两个 prop 声明为 `String` 且默认值是 emoji（`📤`），又交给 `<component :is="uploadIcon">`。Vue 对字符串型 `is` 的处理是"解析不到组件就当原生标签",于是执行 `document.createElement('📤')`。Blink 对标签名做严格校验，emoji 不是合法标签名，**同步抛出 `InvalidCharacterError`**；该异常发生在 `keep-alive` / `router-view` 的渲染过程中，导致整棵子树被销毁——表现为点进知识库后**所有**路由都白屏，且不可恢复。修法是把 prop 类型改为 `[Object, Function]`、默认值换成 lucide 组件（`FileText` / `Upload`），并加 `asComponent()` 归一化 computed 兜住历史调用方。
+
+**为什么 181 个前端测试全绿却放过了它**：`jsdom` 的 `createElement` 不校验标签名，`createElement('📤')` 在 jsdom 里合法，在 Blink 里抛异常。这是**环境差异造成的门禁盲区**，不是用例写少了。故新增 `frontend/src/__tests__/setup/blinkDom.js`，在 vitest `setupFiles` 里给 `Document.prototype.createElement` 打上 Blink 同级的标签名正则校验（`/^[A-Za-z][^\0\t\n\f\r >/]*$/`），不合法即抛 `InvalidCharacterError`。配套 4 个用例。**门禁必须能变红**：临时把修复回退，新用例当场以客户端里那条一模一样的错误失败；恢复后 185/185 全绿（181 → 185）。
+
+**另三条反馈**：`WorkspaceView.vue` 去掉「项目文件」文字；托盘通知图标改为 `self.tray.icon()`（原先传 `MessageIcon.Information`，那是系统蓝色 i 图标，与 taiji logo 无关）；`MonacoEditor.vue` 的纯图标保存按钮确认与顶栏「运行/保存」功能重复，按 §13.3.4 同一原则删除视觉层级低的那个。
+
+**验证方式改为真实观测**：QtWebEngine 不支持 Playwright 的 `connectOverCDP`，故用 `QTWEBENGINE_REMOTE_DEBUGGING=9222` + 裸 CDP over WebSocket 驱动。11 次路由跳转 + 3 个知识库标签页逐一断言 `routeError` 与容器内容长度：修复前 `nav-kb` 的 `len: 0`，修复后 `len: 205`，全程零异常零 console error。**这才是"调试好了再打包"该有的证据形态。**
+
+**顺带暴露并根治的隐患：子进程在主进程被强杀后独活占用端口。** 排查白屏时两次遇到"代码改了但行为像旧的"，实测是上一轮的后端 worker（PID 20488、4944）仍在监听 8000，而就绪探测只看 `/api/health` 是否响应、不校验持有者是不是自己的子进程，于是静默接管了陈旧后端。WebSocket 服务（8765）也有同一现象（PID 11636）。清理路径 `_quit() → backend.stop()` 只在优雅退出时执行，强杀/崩溃时根本不跑。**不在 Python 层再加 `try/finally` 或 `atexit`（强杀时同样不执行）**，改用内核级 Windows Job Object：`JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE` 使 Job 句柄随主进程消亡时内核自动终止 Job 内全部子进程，与主进程如何死亡无关；三处 `Popen` 之后一律 `adopt_child()`。另加 `_reap_orphan_listener()` 处理"上一轮遗留的孤儿"，回收判定要求两个条件同时成立——映像名恰为 `SeedBackend.exe`（该名字只存在于本产品包里）且其父进程已不在系统中——避免误杀用户自己的服务或第二个客户端实例；5 个契约测试锁住这条边界（`tests/test_desktop_orphan_reap.py`，本仓库第一个 desktop 层 python 测试）。
+
+**一次假警报及其教训**：强杀主进程后子进程存活，我一度判定 Job Object 未生效。升级排查（读日志 → `IsProcessInJob` 直查成员归属 → `QueryInformationJobObject` 回读 `LimitFlags` 确认 `0x00002000` 排除 ctypes 结构体错位 → 无 shell 中间层的隔离父子实验），逐项证明机制正确。真因是**我的验证方法有缺陷**：按命令行文本匹配挑进程，选中的是 shell 包装层，真正持有 Job 句柄的父进程（由子进程 `ParentProcessId` 反查得到）还活着。改按子进程反查父进程后复验通过。**记入方法论：进程身份不能靠命令行文本匹配确定，必须由子进程的 `ParentProcessId` 反向确认。**
+
+**排查过程中发现并消除的潜伏缺陷**：`desktop/__init__.py` 里有 `from desktop.main import main`。`python -m desktop.main` 时 runpy 先导入 `desktop` 包 → `__init__` 把 `desktop.main` 载入 `sys.modules` → runpy 再把同一份源码作为 `__main__` 执行一遍。症状不只是日志 handler 装两遍导致每行重复（已观测），更严重的是**模块级全局出现两份副本**（包括 `_CHILD_JOB` 这个 Job 句柄本身，日志显示两次 armed），以及 `BackendManager` 类对象重复使 `isinstance` 失效。这正是它让上面那次假警报更难排查的原因。已删除该导入并在 docstring 里记录此陷阱；grep 确认主线无 `from desktop import main` 依赖，打包 spec 用脚本路径而非包导入；重启验证 runpy warning 消失、日志不再重复、Job 只 armed 一次。
+
+**`scripts/release.py` 的自相矛盾**：`build_nsis()` 在 makensis 缺失时打印警告并 `return True`（判为非致命），而 `_verify_artifacts()` 仍按 `--skip-nsis` 标志硬性要求 `dist/SeedSetup.exe` 存在。后果是无 NSIS 环境下一次完全健康的构建必然以「产物验证失败」收尾——这就是 §13.3.6 记的"第一类假红"，当时的处置是"记住要加 `--skip-nsis`"，属于用人的记忆绕过缺陷。本轮按收敛原则改为**事实回传**：`build_nsis()` 返回 `(是否可继续, 是否应产出安装包)`，验证消费后者而非猜标志；`--check-only` 走同一套判定以免两条路径对同一产物给出不同结论；并补 `_find_makensis()` 兼查 NSIS 默认安装位置（NSIS 安装器不写 PATH，只查 PATH 会把"已装"误判成"未装"）。
+
+**仓库卫生**：`.gitignore` 只有 `.codex_tmp/`，匹配不到 `.codex/`（gitignore 无前缀通配语义），而后者含 29 张 QA 截图、若干 CDP 探针，以及**两份活跃 git worktree 副本**（`git worktree list` 确认），副本里有同名的 `plans/ tests/ scripts/ frontend/`，会被仓库级 Grep / ruff / vitest 一并扫到而使统计基数失真。已补 `.codex/` 为**独立一行**（不删 `.codex_tmp/`——两者无覆盖关系，删了会让它重新被跟踪）。worktree 属活跃工作树，须走 `git worktree remove` 而非直接删目录，本轮不动。
+
+验证与产物：
+
+| 手段 | 结果 |
+| --- | --- |
+| vitest 全量 | 185/185（原 181，新增 4 个 Blink DOM 用例） |
+| 门禁变红验证 | 回退 `FileUploadQueue.vue` 修复 → 新用例以 `InvalidCharacterError` 失败 |
+| 裸 CDP 实测 | 11 次路由跳转 + 3 个知识库标签页，`routeError` 全为 `null`，零 console error；`nav-kb` len 0 → 205 |
+| `tests/test_desktop_orphan_reap.py` | 5 passed |
+| Job Object 机制隔离验证 | `LimitFlags = 0x00002000`、`IsProcessInJob(mine) = True`、隔离父进程强杀后子进程 alive = False |
+| **打包模式端到端强杀** | 强杀 `Seed.exe`(25308) → `SeedBackend.exe`(25044) alive = False，8000/8765 全部释放 |
+| `python scripts/release.py --check-only` | 全绿（修复前必然报 `✗ dist/SeedSetup.exe 不存在`） |
+| 打包产物 | `Seed.exe` 72,507,172 B / `SeedBackend.exe` 72,422,700 B，前端一致性校验通过 |
+
+**本轮方法论沉淀**（三条，均已在本轮内被实测检验过）：
+
+1. 宣布"UI 缺陷已修"之前必须有真实浏览器控制台的观测证据；推理修出的是另一个 bug。
+2. 单元测试环境（jsdom）与生产环境（Blink）的能力差异本身是门禁盲区，发现一例就要把校验补进 setup 层，而不是只补一个用例。
+3. 机制看起来"没生效"时，先怀疑验证手段。本轮"Job Object 失效"与 §13.5 "PowerShell 注入 BOM"是同一类错误的两次发作。
 
 ## 14. 持续门禁
 
@@ -987,6 +1032,22 @@ P4 的最小真实经历边界已落地：
 - 无 `timeout-minutes`：任一步骤挂死（`vite preview` 端口未就绪、compose 健康检查轮询、pip 解析）会跑满 runner 默认 6 小时上限才被杀。
 
 未在本轮一并处理是刻意的：本轮的可审计意图是"解除门禁挟持"，把并发治理混进同一次提交会让改动动机不再单一，日后回溯无法判断某行是为哪个目标而改。此项待独立一轮处理。
+
+### 14.15 测试环境与生产环境的能力差异是门禁盲区（2026-08-28 收口后新增）
+
+`jsdom` 的 `document.createElement` 不校验标签名，Blink 严格校验。同一行代码在 vitest 里通行、在客户端里抛 `InvalidCharacterError` 并摧毁整棵 `router-view` 子树——**181 个用例全绿而线上白屏**，根因不是用例写少了，是运行环境比生产宽松（详见 13.8）。
+
+纪律：**发现一处环境宽松，就把校验补进 vitest `setupFiles` 层，而不是只补一个用例。** 当前 `frontend/src/__tests__/setup/blinkDom.js` 已把 `createElement` 收紧到 Blink 同级（`/^[A-Za-z][^\0\t\n\f\r >/]*$/`），在 `vite.config.js` 的 `test.setupFiles` 注册，对全部用例生效。后续若再遇同类差异（如 `URL` 解析、`ResizeObserver`、CSS 解析宽严不一），一律加到同一个 setup 模块内收敛，不要另起并列机制。
+
+配套的可信度要求沿用 14.1：**新门禁必须被证明能变红**。本例的做法是临时回退业务修复，确认新用例以客户端里那条一模一样的错误失败，再恢复。
+
+### 14.16 进程身份不能靠命令行文本匹配确定（2026-08-28 假警报后新增）
+
+排查子进程回收时，我按命令行文本匹配挑"主进程"，选中的却是 shell 包装层，于是把一个**完全正确**的内核级机制误判为失效，白烧一轮排查（详见 13.8）。
+
+纪律：**需要确认某进程是否为另一进程的父/子时，唯一可信来源是 `ParentProcessId` 反查，不是命令行文本、不是窗口标题、不是启动顺序。** 涉及端口占用时同理——`/api/health` 有响应只证明"有人在监听"，不证明"监听者是我起的"，必须用 `GetExtendedTcpTable` 拿到 owner PID 再比对进程树。
+
+这与 14.7「本地绿 / CI 红」、13.5「PowerShell 注入 BOM」属同一类：**机制看起来没生效时，先怀疑验证手段本身。** 已连续三次发作，故单列成条。
 
 ## 15. 停止项
 
@@ -1206,3 +1267,7 @@ gh api -X PUT repos/liulang5945-netizen/Seed/topics \
 **已完成：CI 下游门禁的 `needs: test` 挟持已结构性解除（详见 13.7）。** 上面记载的"`build-frontend`/`docker-build` 在 `test` 连红 7 次期间一直是 skipped、从未运行"是**遮蔽机制本身**，当时只作为纪律（"核对 job 集合是否都真的执行了"）记账，没动依赖图；本轮删除两处 `needs: test`，`yaml.safe_load` 复核 5 个 job 全部 `needs = None`，步骤数 26/10/5/7/8 与改动前一致，证明未误伤任何步骤，该失效模式此后不可能再发生而非"要记得检查"。同轮否证了上一轮自己提出的建议——CI 并不缺别名门禁：`build-frontend` 的 `npx vitest run` 已收集 `hljsAliases.test.js`（本机实测 20 files / 181 passed），其断言与 `check:aliases` 逐字节等价，按收敛原则不新增重复步骤。`concurrency`/`timeout-minutes` 两项欠账刻意留到独立一轮（见 14.14），当前峰值 7 个并发 job 低于公开仓库 20 上限，不构成阻塞。提交 `9dab2e5`。
 
 **当前唯一下一步：建立可组合 interaction-group 的增量 replay Gate。** 在两个已审计 group 合并、拆分或新增策略时，只重放受影响的 group 与 pairwise 边，验证高阶 residual、顺序不变性、预算原子性、checkpoint continuation 和局部撤销与全量重放一致；未受影响 group 必须保持 digest/attribution 不变，CUDA 继续暂缓。
+
+**已完成：客户端白屏真因已根治，并补上了让它逃过门禁的那层盲区（详见 13.8）。** 上面 13.3.2 记的"白屏已修"是推理结论、修的是另一层缺陷；用户二次上报同一现象后改用真实观测（`QTWEBENGINE_REMOTE_DEBUGGING=9222` + 裸 CDP），实测真因是 `FileUploadQueue.vue` 把 emoji 字符串喂给 `<component :is>`，Blink 校验标签名时抛 `InvalidCharacterError` 摧毁整棵 `router-view` 子树，故点进知识库后所有路由都白屏。修法为 prop 改 `[Object, Function]` + lucide 默认组件 + `asComponent()` 归一化。181 个用例全绿却放过它是因为 jsdom 不校验标签名，已把 Blink 同级校验补进 `setupFiles`（`blinkDom.js`），回退修复可当场变红，套件 181 → 185。同轮另修三项客户端反馈（去「项目文件」文字、托盘通知改用 `self.tray.icon()`、删除与顶栏重复的图标保存按钮），并根治了两条基础设施缺陷：子进程在主进程被强杀后独活占用 8000/8765，改用内核级 Windows Job Object（`JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE` + 三处 `Popen` 后 `adopt_child()`）而非再加一层 Python `atexit`，**打包模式实测强杀 `Seed.exe` 后 `SeedBackend.exe` 同步消亡、两个端口全部释放**；`scripts/release.py` 的 NSIS 判定自相矛盾（非致命跳过却硬性要求安装包）改为事实回传，`--check-only` 全绿，13.3.6 那条"必须加 `--skip-nsis`"的记忆式绕过随之作废。另清除 `desktop/__init__.py` 的双重导入陷阱（曾使 Job 句柄出现两份副本），并把 `.codex/` 补进 `.gitignore`（含两份活跃 worktree 副本，会污染仓库级统计）。两条持久纪律已登记为 14.15 / 14.16。
+
+**当前唯一下一步：给桌面客户端建立可在 CI 执行的路由级冒烟门禁。** 本轮白屏能连着两轮逃过 185 个用例，是因为"整棵 `router-view` 被销毁"这一失败态没有任何自动化断言——`blinkDom.js` 只堵住了已知的 `createElement` 这一种触发方式，换个渠道（异步组件解析失败、`defineAsyncComponent` 无 `errorComponent`、子组件 setup 抛异常）同样会白屏而门禁全绿。要做的是把本轮那套裸 CDP 脚本从一次性探针固化为受版本管理的门禁：headless 起前端 preview，逐个路由断言"容器内容长度 > 0 且 `window.onerror` / `console.error` 零命中"，任一路由为空即 `exit 1`；先在本机跑通并证明能变红（回退 `FileUploadQueue.vue` 应立即失败），再接入 `build-frontend` job 与 `scripts/release.py` 的必经路径。不新增第二套 E2E 框架，复用现有 vitest/preview 与本轮已验证的 CDP 通道。

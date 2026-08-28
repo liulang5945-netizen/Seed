@@ -17,7 +17,6 @@
         <select v-model="language" class="lang-select" :title="languageLabel" @change="updateLanguage">
           <option v-for="lang in languages" :key="lang.id" :value="lang.id">{{ lang.label }}</option>
         </select>
-        <button class="btn-action" title="保存" @click="saveFile"><Save :size="14" /></button>
       </div>
     </div>
     <div v-if="editorLoading" class="monaco-loading">
@@ -51,7 +50,6 @@
 
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
-import { Save } from 'lucide-vue-next';
 import { API_BASE, authFetch } from '../composables/apiClient.js';
 import { useAppStore } from '../stores/appStore.js';
 

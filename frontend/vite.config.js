@@ -13,6 +13,9 @@ export default defineConfig(({ mode }) => ({
     environment: 'jsdom',
     globals: true,
     include: ['src/**/*.{test,spec}.{js,ts}'],
+    // jsdom 不校验标签名，emoji 等非法名在此静默通过、在 Blink 里渲染期抛异常。
+    // 这层 setup 把校验补回来，让白屏级失效在单测阶段就暴露。
+    setupFiles: ['src/__tests__/setup/blinkDom.js'],
   },
   base: '/',
   build: {
