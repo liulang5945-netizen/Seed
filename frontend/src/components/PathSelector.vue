@@ -111,10 +111,9 @@ const validateAndEmit = async () => {
 const browse = async () => {
   try {
     const title = encodeURIComponent(props.dialogTitle || (props.type === 'folder' ? '请选择文件夹' : '请选择文件'));
-    const endpoint = props.type === 'folder'
-      ? `${API_BASE}/api/system/select_folder?title=${title}`
-      : `${API_BASE}/api/system/select_file`;
-    const res = await authFetch(endpoint);
+    const res = props.type === 'folder'
+      ? await authFetch(`${API_BASE}/api/system/select_folder?title=${title}`)
+      : await authFetch(`${API_BASE}/api/system/select_file`);
     const data = await res.json();
     if (data.status === 'ok' && data.path) {
       emit('update:modelValue', data.path);

@@ -1992,6 +1992,12 @@ Chat、Life、Agent/能力、Training、Settings、KB 六个入口均展示对�
 5173 开发进程已查明并改为显式 4173 生产预览地址，避免验证对象漂移。后端 Legacy-off 启动合同增加 runtime/workbench/system 原生路由，
 定向回归 `67 passed, 1 skipped`，frontend `23 files / 187 passed`、ESLint、生产构建、native boundary、ruff、compileall、diff check 全部通过。
 
-**当前唯一下一步：开始 W6 第一 slice 的 OpenAPI→frontend endpoint contract。** 从现有 OpenAPI schema 和 native capability snapshot 生成/校验
-前端端点清单，至少覆盖 method、path、请求体字段、查询参数和 Legacy-off 可见性；CI 必须能因故意制造 URL/method/schema 漂移而变红，
-再扩展到大型 Vue view 拆分与 trace/SLO 指标。不得先做视觉包装或 CUDA kernel。
+**已完成（2026-08-29）：W6 第一 slice 的 OpenAPI→frontend endpoint contract。** 新增版本化 OpenAPI 快照约束，快照测试现在同时
+比较 operation 的 method、query parameters 和 request body；前端 `check-api-contract` 读取该快照，校验产品源码中的 83 个 API
+字面量及直接调用的 method、查询参数和 JSON 顶层字段，并已接入 CI。未使用且仍携带 Legacy `/api/taiji/upload` 的
+`useChatUpload.js` 已删除；`select_folder` 的标题参数已正式纳入后端接口与快照。W6 第一片证据为后端 `67 passed, 1 skipped`、
+前端 Vitest `23 files / 187 passed`、native boundary/API contract、ESLint、生产构建、Ruff、compileall、diff check 全部通过。
+
+**当前唯一下一步：开始 W6 第二 slice 的 typed/native API facade。** 以 OpenAPI 合同为唯一来源，建立前端统一 API facade 和类型化
+端点定义，逐步收拢大型 Vue view 中散落的 URL、method 和响应解包；每迁移一组入口都必须保持 native boundary、API contract、测试和
+生产构建全绿。不得先做视觉包装或 CUDA kernel。

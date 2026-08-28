@@ -12,6 +12,7 @@
     "gen:aliases": "node scripts/gen-hljs-aliases.mjs",
     "check:aliases": "node scripts/gen-hljs-aliases.mjs --check",
     "check:native-boundary": "node scripts/check-native-boundary.mjs",
+    "check:api-contract": "node scripts/check-api-contract.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "node e2e/smoke.cjs"

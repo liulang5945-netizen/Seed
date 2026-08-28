@@ -585,6 +585,11 @@
             "default": {
               "count": 0,
               "error": "",
+              "observed_at": 0,
+              "owner": "",
+              "revision": 0,
+              "snapshot_id": "",
+              "source": "",
               "status": "ok",
               "tools": []
             }
@@ -656,6 +661,31 @@
           "error": {
             "default": "",
             "title": "Error",
+            "type": "string"
+          },
+          "observed_at": {
+            "default": 0,
+            "title": "Observed At",
+            "type": "integer"
+          },
+          "owner": {
+            "default": "",
+            "title": "Owner",
+            "type": "string"
+          },
+          "revision": {
+            "default": 0,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "snapshot_id": {
+            "default": "",
+            "title": "Snapshot Id",
+            "type": "string"
+          },
+          "source": {
+            "default": "",
+            "title": "Source",
             "type": "string"
           },
           "status": {
@@ -1910,6 +1940,18 @@
       "get": {
         "description": "打开原生文件夹选择框",
         "operationId": "select_folder_api_system_select_folder_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "title",
+            "required": false,
+            "schema": {
+              "default": "请选择项目工作区文件夹",
+              "title": "Title",
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1918,6 +1960,16 @@
               }
             },
             "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
           }
         },
         "summary": "Select Folder"
