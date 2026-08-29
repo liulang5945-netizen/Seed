@@ -132,6 +132,9 @@ const emit = defineEmits(['new-file', 'refresh', 'select-node', 'context-node', 
   transition: background 0.15s;
 }
 .resize-col:hover { background: var(--primary); }
+@container workspace-view (max-width: 700px) {
+  .panel-left { display: none; }
+}
 @media (max-width: 880px) {
   .panel-left { display: none; }
 }

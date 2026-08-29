@@ -2,36 +2,37 @@
   <div class="workspace-view">
     <!-- 顶栏 -->
     <header class="topbar">
-      <div>
+      <div class="topbar-heading">
         <div class="topbar-title">IDE 工作区</div>
         <div class="topbar-sub topbar-path" :title="workspacePath">{{ workspacePath || 'Seed脚本与配置编辑' }}</div>
       </div>
-      <div class="topbar-spacer"></div>
-      <span
-        class="workbench-projection"
-        :class="{ ready: workbenchReady }"
-        :title="workbenchStatusText"
-      >
-        <span class="workbench-projection-dot"></span>
-        Taiji 工作台 · {{ workbenchReady ? '已接入' : '未接入' }}
-      </span>
-      <button class="btn btn-outline" @click="openPathDialog">
-        <FolderOpen :size="15" />
-        打开文件夹
-      </button>
-      <button class="btn btn-outline" title="快速打开文件 (Ctrl+P)" @click="openQuickOpen">
-        <Search :size="15" />
-        搜索文件
-      </button>
-      <button class="btn btn-outline" :class="{ active: showTerminal }" @click="showTerminal = !showTerminal">
-        <Terminal :size="15" />
-        {{ showTerminal ? '收起终端' : '终端' }}
-      </button>
-      <button class="btn btn-primary" :disabled="running" @click="handleRun">
-        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        {{ running ? '运行中…' : '运行' }}
-      </button>
-      <button class="btn btn-outline" @click="handleSave">保存</button>
+      <div class="topbar-actions">
+        <span
+          class="workbench-projection"
+          :class="{ ready: workbenchReady }"
+          :title="workbenchStatusText"
+        >
+          <span class="workbench-projection-dot"></span>
+          Taiji 工作台 · {{ workbenchReady ? '已接入' : '未接入' }}
+        </span>
+        <button class="btn btn-outline" @click="openPathDialog">
+          <FolderOpen :size="15" />
+          打开文件夹
+        </button>
+        <button class="btn btn-outline" title="快速打开文件 (Ctrl+P)" @click="openQuickOpen">
+          <Search :size="15" />
+          搜索文件
+        </button>
+        <button class="btn btn-outline" :class="{ active: showTerminal }" @click="showTerminal = !showTerminal">
+          <Terminal :size="15" />
+          {{ showTerminal ? '收起终端' : '终端' }}
+        </button>
+        <button class="btn btn-primary" :disabled="running" @click="handleRun">
+          <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          {{ running ? '运行中…' : '运行' }}
+        </button>
+        <button class="btn btn-outline" @click="handleSave">保存</button>
+      </div>
     </header>
 
     <!-- 主体工作区 -->
@@ -670,6 +671,7 @@ onUnmounted(() => {
   flex-direction: column;
   height: 100%;
   width: 100%;
+  container: workspace-view / inline-size;
   overflow: hidden;
   background: var(--background);
   color: var(--foreground);
@@ -678,13 +680,16 @@ onUnmounted(() => {
 /* ── 顶栏 ── */
 /* 不画 border-bottom：外围边框由 .router-wrapper 独占（见 styles/shell.css） */
 .topbar {
-  height: 52px;
+  height: auto;
+  min-height: 52px;
   flex: none;
   padding: 0 18px;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
 }
+.topbar-heading { min-width: 0; }
 .topbar-title { font-size: 0.92rem; font-weight: 600; }
 .topbar-sub { font-size: 0.72rem; color: var(--muted-foreground); margin-top: 1px; }
 .topbar-path {
@@ -693,7 +698,14 @@ onUnmounted(() => {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.topbar-spacer { flex: 1; }
+.topbar-actions {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
 .workbench-projection {
   display: inline-flex;
   align-items: center;
@@ -724,6 +736,8 @@ onUnmounted(() => {
   transition: background 150ms ease, border-color 150ms ease, transform 120ms ease, color 150ms ease;
   cursor: pointer;
   font-family: inherit;
+  white-space: nowrap;
+  flex: none;
 }
 .btn:active { transform: translateY(1px); }
 .btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
@@ -1043,9 +1057,33 @@ onUnmounted(() => {
   margin: 3px 8px;
 }
 
-/* 响应式 */
+/* 响应式：按工作区实际宽度判断，避免桌面外壳侧栏挤压后仍误用 viewport 断点 */
+@container workspace-view (max-width: 960px) {
+  .topbar {
+    grid-template-columns: 1fr;
+    align-items: start;
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .topbar-actions { justify-content: flex-start; }
+  .topbar-path { max-width: 100%; }
+  .ide-layout { grid-template-columns: minmax(180px, 220px) minmax(0, 1fr) !important; }
+  .panel-right { display: none; }
+}
+
+@container workspace-view (max-width: 700px) {
+  .topbar { padding-left: 12px; padding-right: 12px; }
+  .topbar-actions { gap: 8px; }
+  .workbench-projection { flex-basis: 100%; }
+  .btn { height: 32px; padding-left: 11px; padding-right: 11px; font-size: 0.8rem; }
+  .ide-layout { grid-template-columns: minmax(0, 1fr) !important; }
+  .panel-left { display: none; }
+}
+
+/* 不支持 container query 的旧 WebView 保留 viewport 兜底 */
 @media (max-width: 880px) {
   .ide-layout { grid-template-columns: 1fr !important; }
+  .panel-left { display: none; }
   .panel-right { display: none; }
 }
 </style>
