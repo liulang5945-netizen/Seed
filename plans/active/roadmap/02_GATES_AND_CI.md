@@ -227,6 +227,25 @@ python -c "import sys; sys.path.insert(0,'tests'); from test_openapi_snapshot im
 
 这与 14.15 同源：**门禁绿不等于被覆盖，得先问清它到底比较了什么。** 待办（未做，不许当已完成引用）：把响应 schema 差异也纳入 `messages`，并按 14.1 的要求先证明新门禁能变红——即临时改一个 `response_model` 字段，确认门禁失败，再恢复。
 
+### 14.18 训练进度分母必须是「本次实际工作量」，ETA 不许用 fraction 外推（2026-08-29 实测定案）
+
+用户报「训练剩余时间不够准确」。按 systematic-debugging 纪律先量后改，过程中**两个直觉假设都被实测推翻**，真因是第三个：
+
+- **推翻假设一（分母单位错）**：`resume` 端点用 `p.stat().st_size`（含 JSONL 结构开销），而 `consumed` 只累加纯文本字节。实测偏差只有 1.02~1.03 倍，**量级不足以解释用户可见的错误**。仍作为次要正确性问题一并修掉。
+- **推翻假设二（吞吐非线性）**：`scripts/archive/diagnostics/diag_eta_rate.py` 实测 CPU 速率稳定在 **147±2 字节/s**（窗口/累计比值 1.00~1.05），线性外推本身没问题。顺带发现 `PROGRESS_EVERY` 旁边「≈311 ticks/s」的注释是过期数字，已改为实测值。
+- **真因**：`_train_worker` 在 `ticks >= max_ticks` 处 break（前端 `max_symbols` 默认 200000），但 `fraction`/`eta` 仍以整个数据集的 `total_bytes`（实测 410 MB）作分母。实测收尾 `fraction = 0.000488`，上报 ETA `2,789,445s ≈ 32.3 天`，而真实剩余为 **0**——**误差约 279 万倍**，进度条卡在 0.05% 后直接跳完成。
+
+四条不可回退的纪律：
+
+1. **有效分母** `effective_total = min(total_bytes, max_ticks)`。分母是「本次实际要处理的字节数」，不是数据集大小；任何截断参数都必须进分母。
+2. **ETA 用速率换算剩余量**（`remaining_bytes / rate`），**禁止 `elapsed * (1 - fraction) / fraction`**。后者在 `fraction` 极小时无界放大，前者在分母被高估或训练被截断时仍然有界。
+3. **暂停挂钟时间必须从 `elapsed` 里扣除**（`paused_total`），否则恢复后 ETA 被暂停时长污染。
+4. **收尾语义要诚实**：语料读完或达 `max_ticks` 才 `final=True → fraction=1.0, eta=0.0`；**用户主动停止不许伪造 100%**（`_emit_progress(final=not stopped)`）。
+
+门禁：`tests/seed/test_training_progress_contract.py`（4 例，先红后绿验证过）。此前 `_train_worker`/`_emit_progress` **零测试覆盖**，且 SSE 的 `eta`/`samples_per_sec`/`total_steps` 字段不在 OpenAPI 基线内——正是 14.17 那个响应面盲区的又一次代价。
+
+前端同批修掉三处显示缺陷：step 计数器原按 `epoch * total_steps / total_epochs` 算，后端 epoch 恒为 1/1 导致**永远显示 100%**、与旁边的 ETA 自相矛盾；`fmtTime` 缺「天」档，超过 24 小时的估算会退化；吞吐单位标注 `symbols/s` 与后端「字节/s」口径不符。
+
 ## 15. 停止项
 
 在 P2 通过前：

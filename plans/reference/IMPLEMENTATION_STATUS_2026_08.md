@@ -27,7 +27,7 @@
 
 ## 验证基线
 
-最近一次已记录的完整回归为 Python `556 passed, 6 skipped`、前端 `42 files / 237 passed`（2026-08-29 训练多资料 / loss 曲线 / 原生生命数据三修，提交 `cd39632`）；同轮实测 native/API contract `45 literals PASS`、OpenAPI 快照 `2 passed`、Ruff `All checks passed`、核心 mypy `0 errors / 44 files`、ESLint `0 errors`、`npm run build` 通过。本轮未复测覆盖率，上一次记录值为 `45.13%`（对应 `550/233` 那轮），不得当作当前值引用。`black --check` 本机因缓存目录不可写挂死（见 [02_GATES_AND_CI.md §14.6](../active/roadmap/02_GATES_AND_CI.md)），由 CI 腿覆盖。后续改动不得只更新数字，必须把对应报告、Gate 和失败边界一起保留。
+最近一次已记录的完整回归为 Python `560 passed, 6 skipped`、前端 `42 files / 237 passed`（2026-08-29 训练 ETA/进度分母修复，见 [02_GATES_AND_CI.md §14.18](../active/roadmap/02_GATES_AND_CI.md)；上一轮为三修提交 `cd39632` 的 `556 passed`，本轮新增 4 例训练进度契约）；同轮实测 native boundary `6 entrypoints PASS`、API contract `45 literals PASS`、Ruff `All checks passed`、核心 mypy `0 errors / 44 files`、ESLint `0 errors`、`npm run build` 通过。本轮未复测覆盖率，上一次记录值为 `45.13%`（对应 `550/233` 那轮），不得当作当前值引用。另有一项本轮实测的运行时基线：**CPU 原生训练吞吐 ≈147 字节/s**（`scripts/archive/diagnostics/diag_eta_rate.py`，窗口比值 1.00~1.05 稳定），此前代码注释里的「≈311 ticks/s」是无出处的过期数字，已作废。`black --check` 本机因缓存目录不可写挂死（见 [02_GATES_AND_CI.md §14.6](../active/roadmap/02_GATES_AND_CI.md)），由 CI 腿覆盖。后续改动不得只更新数字，必须把对应报告、Gate 和失败边界一起保留。
 
 ## 关联资料
 

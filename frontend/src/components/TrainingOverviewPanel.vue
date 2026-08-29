@@ -22,7 +22,7 @@
       </div>
       <div class="progress-meta">
         <span class="pm-item"><svg class="pm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>当前 epoch <b>{{ trainMetrics.epoch }} / {{ trainMetrics.total_epochs }}</b></span>
-        <span class="pm-item"><svg class="pm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>step <b>{{ trainMetrics.total_steps > 0 ? Math.round(trainMetrics.epoch * trainMetrics.total_steps / trainMetrics.total_epochs) : '--' }} / {{ trainMetrics.total_steps || '--' }}</b></span>
+        <span class="pm-item"><svg class="pm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>step <b>{{ trainMetrics.total_steps > 0 ? Math.round(trainProgress / 100 * trainMetrics.total_steps).toLocaleString() : '--' }} / {{ trainMetrics.total_steps ? trainMetrics.total_steps.toLocaleString() : '--' }}</b></span>
         <span class="pm-item"><svg class="pm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l1.5-5 3 10 1.5-5h8"/></svg>剩余约 <b>{{ fmtTime(trainMetrics.eta) }}</b></span>
         <span class="pm-item"><svg class="pm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 10h16M8 14h4"/></svg>吞吐 <b>{{ throughput }}</b></span>
       </div>
@@ -65,7 +65,7 @@
       <div class="metric-card">
         <div class="m-label"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="M4 10h16M8 14h4"/></svg>吞吐</div>
         <div class="m-value">{{ throughputValue }}</div>
-        <span class="m-trend flat">symbols/s</span>
+        <span class="m-trend flat">字节/s</span>
       </div>
       <div class="metric-card">
         <div class="m-label"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>剩余时间</div>
