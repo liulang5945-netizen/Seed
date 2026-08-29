@@ -2194,7 +2194,15 @@ parent failure 的 capability/parameters 精确兼容。无关 capability、跨�
 handoff 绕过失败原因；runtime/API 定向回归 `5 passed`，全量 Python 回归 `548 passed, 6 skipped`，覆盖率 `44.77%`，Ruff/B-SIM、
 Black、核心 mypy 与 OpenAPI 均通过。该 Gate 仍不开放写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
 
-**当前唯一下一步：建立 recovery branch portfolio 与多候选 fail-closed selection Gate。** 在同一 parent failure 下保留多个通过
-freshness/context 校验的 recovery evidence 分支，给每条 branch 分配不可复用 identity、预算、状态和 provenance；Taiji 只能从 active、
-兼容且未消费的 branch 中选择，淘汰/过期/失败 branch 不得复活，checkpoint continuation 不得重置全局预算。通过前不进入写入自治、开放域
-自然语言工具选择、CUDA kernel 或视觉包装。
+**已完成（2026-08-29）：recovery branch portfolio 与多候选 fail-closed selection Gate。** 同一 parent failure 现在可以保存多个
+通过 current tick、capability snapshot、failure capability/parameters 和 after-state digest 校验的 recovery evidence 分支；每条 branch
+拥有内容寻址 identity、独立 loop identity、预算/完成前缀、frontier、consumed request/affordance/event provenance 和可恢复状态。Taiji
+只能从 active 且未复活的 branch 中选择，选择时会永久 retire parent/当前 loop、重新校验 source evidence 与 frontier，并把 branch 以继承的
+budget/prefix 继续执行；失败、checkpoint failure、旧 loop 和已选择 branch 不得绕过 portfolio 再次执行，checkpoint 会保留完整 portfolio。
+新增 `/api/workbench/taiji/recovery-branch/register` 与 `/api/workbench/taiji/recovery-branch/select`，定向 recovery/successor 回归 `7 passed`，
+OpenAPI 严格快照 `2 passed`，全量 Python 回归 `549 passed, 6 skipped`，覆盖率 `44.92%`，Ruff、Black、核心 mypy 均通过。该 Gate
+仍只覆盖 bounded read-only recovery，不开放写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
+
+**当前唯一下一步：建立 recovery branch portfolio 的长期 liveness 与容量淘汰 Gate。** 为 active/selected/completed/failed/expired branch
+定义生命周期、容量上限与 checkpoint 恢复规则；过期/淘汰 branch 不得复活，未受影响 branch 的 identity/provenance 保持稳定，且全局预算与
+completed prefix 不因淘汰或重启而重置。通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。

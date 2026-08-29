@@ -693,6 +693,84 @@
         "title": "TaijiWorkbenchProjectionRequest",
         "type": "object"
       },
+      "TaijiWorkbenchRecoveryBranchRequest": {
+        "description": "Register one additional compatible recovery evidence branch.",
+        "properties": {
+          "parent_loop_id": {
+            "title": "Parent Loop Id",
+            "type": "string"
+          },
+          "recovery_loop_id": {
+            "title": "Recovery Loop Id",
+            "type": "string"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "parent_loop_id",
+          "recovery_loop_id",
+          "snapshot_id"
+        ],
+        "title": "TaijiWorkbenchRecoveryBranchRequest",
+        "type": "object"
+      },
+      "TaijiWorkbenchRecoveryBranchSelectRequest": {
+        "description": "Select and execute one active recovery branch.",
+        "properties": {
+          "branch_id": {
+            "title": "Branch Id",
+            "type": "string"
+          },
+          "learn": {
+            "default": false,
+            "title": "Learn",
+            "type": "boolean"
+          },
+          "max_budget_units": {
+            "default": 32.0,
+            "title": "Max Budget Units",
+            "type": "number"
+          },
+          "max_steps": {
+            "default": 8,
+            "title": "Max Steps",
+            "type": "integer"
+          },
+          "novelty": {
+            "default": 0.0,
+            "title": "Novelty",
+            "type": "number"
+          },
+          "parent_loop_id": {
+            "title": "Parent Loop Id",
+            "type": "string"
+          },
+          "recovery_loop_id": {
+            "title": "Recovery Loop Id",
+            "type": "string"
+          },
+          "resource_budget": {
+            "default": 1.0,
+            "title": "Resource Budget",
+            "type": "number"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "parent_loop_id",
+          "branch_id",
+          "recovery_loop_id",
+          "snapshot_id"
+        ],
+        "title": "TaijiWorkbenchRecoveryBranchSelectRequest",
+        "type": "object"
+      },
       "TaijiWorkbenchRecoveryHandoffRequest": {
         "description": "Start a new successor loop from externally refreshed workspace evidence.",
         "properties": {
@@ -3442,6 +3520,94 @@
           }
         },
         "summary": "Project Taiji Workbench Affordances",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/taiji/recovery-branch/register": {
+      "post": {
+        "description": "Register another compatible recovery evidence branch without executing it.",
+        "operationId": "register_taiji_workbench_recovery_branch_api_workbench_taiji_recovery_branch_register_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaijiWorkbenchRecoveryBranchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Register Taiji Workbench Recovery Branch Api Workbench Taiji Recovery Branch Register Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Register Taiji Workbench Recovery Branch",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/taiji/recovery-branch/select": {
+      "post": {
+        "description": "Select and execute one active recovery evidence branch.",
+        "operationId": "select_taiji_workbench_recovery_branch_api_workbench_taiji_recovery_branch_select_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaijiWorkbenchRecoveryBranchSelectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Select Taiji Workbench Recovery Branch Api Workbench Taiji Recovery Branch Select Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Select Taiji Workbench Recovery Branch",
         "tags": [
           "workbench"
         ]

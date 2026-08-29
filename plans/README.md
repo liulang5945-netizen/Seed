@@ -359,9 +359,11 @@ interaction-group attribution 已有主线提交和回归证据；此前“W7 �
 失效、重新投影与 checkpoint continuation；随后又完成 `seed-taiji-successor-graph-v1` 的多 evidence bounded continuation，
 覆盖多 frontier、sibling identity 失效、逐步 checkpoint 和恢复重投影；最新又完成失败前缀 recovery Gate，覆盖真实读取失败、snapshot 漂移、
 checkpoint 写入失败和 in-flight 防重复；又完成显式 recovery handoff 与 fresh-evidence continuation，旧 loop retired、预算/前缀继承；
-又完成 failure-context compatibility，拒绝无关 capability/跨路径 evidence；WorkBench 定向回归 `38 passed`，recovery handoff/compatibility
-定向 `5 passed`，全量 Python `548 passed, 6 skipped`。
-当前唯一下一步仍只以路线文档第 16 节为准。
+又完成 failure-context compatibility，拒绝无关 capability/跨路径 evidence；现在同一 parent failure 下已支持多个 recovery branch 的
+portfolio、内容寻址 identity、继承预算/完成前缀、source evidence/after-state provenance 和多候选 fail-closed selection，旧 loop/失败分支
+不得复活，checkpoint 保留完整 portfolio。WorkBench successor/recovery 定向回归 `7 passed`，OpenAPI 严格快照 `2 passed`，全量 Python
+`549 passed, 6 skipped`，覆盖率 `44.92%`。当前唯一下一步仍只以路线文档第 16 节为准：建立 recovery branch portfolio 的长期 liveness
+与容量淘汰 Gate。
 
 ## 当前唯一下一步
 

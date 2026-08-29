@@ -883,6 +883,88 @@ def test_successor_graph_recovery_handoff_requires_fresh_evidence(tmp_path, monk
         )
 
 
+def test_recovery_portfolio_registers_and_selects_active_branches(tmp_path, monkeypatch) -> None:
+    checkpoint = tmp_path / "recovery-portfolio.pt"
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(
+        Seed(episode_id="recovery-portfolio"),
+        checkpoint_path=checkpoint,
+    )
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    runtime.model.architecture.observe(65, learn=False)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.read": {"path": "missing.txt"}},
+    )
+    runtime.execute_taiji_workbench_successor_loop(
+        snapshot_id=snapshot_id,
+        loop_id="portfolio-parent",
+        max_steps=1,
+    )
+    (tmp_path / "missing.txt").write_bytes(b"portfolio evidence\n")
+    runtime.execute_workbench_intent(
+        ActionIntent(
+            intent_id="portfolio-fresh-read-1",
+            kind="workspace.read",
+            parameters={"path": "missing.txt"},
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        snapshot_id=snapshot_id,
+    )
+    first = runtime.handoff_taiji_workbench_recovery(
+        parent_loop_id="portfolio-parent",
+        recovery_loop_id="portfolio-child-1",
+        snapshot_id=snapshot_id,
+        max_steps=1,
+    )
+    branch_one = first["recovery"]["branch_id"]
+
+    runtime.execute_workbench_intent(
+        ActionIntent(
+            intent_id="portfolio-fresh-read-2",
+            kind="workspace.read",
+            parameters={"path": "missing.txt"},
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        snapshot_id=snapshot_id,
+    )
+    registered = runtime.register_taiji_workbench_recovery_branch(
+        parent_loop_id="portfolio-parent",
+        recovery_loop_id="portfolio-child-2",
+        snapshot_id=snapshot_id,
+    )
+    branch_two = registered["branch"]["branch_id"]
+    assert branch_two != branch_one
+    assert len(registered["portfolio"]["branches"]) == 2
+    assert {item["status"] for item in registered["portfolio"]["branches"]} == {"active"}
+
+    selected = runtime.select_taiji_workbench_recovery_branch(
+        parent_loop_id="portfolio-parent",
+        branch_id=branch_two,
+        recovery_loop_id="portfolio-child-2-selected",
+        snapshot_id=snapshot_id,
+        max_steps=1,
+    )
+    assert selected["recovery"]["branch_id"] == branch_two
+    assert len(selected["recovery_portfolio"]["branches"]) == 2
+    assert checkpoint.exists()
+    with pytest.raises(RuntimeError, match="retired after recovery"):
+        runtime.execute_taiji_workbench_successor_loop(
+            snapshot_id=snapshot_id,
+            loop_id="portfolio-child-1",
+            max_steps=1,
+        )
+
+    restored = SeedRuntime.load(checkpoint)
+    assert len(restored._workbench_loop_state["recovery_portfolio"]["branches"]) == 2
+
+
 def test_successor_graph_snapshot_drift_is_recovery_needed(tmp_path) -> None:
     (tmp_path / "README.md").write_bytes(b"snapshot drift\n")
     checkpoint = tmp_path / "successor-snapshot.pt"

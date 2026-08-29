@@ -72,6 +72,28 @@ class TaijiWorkbenchRecoveryHandoffRequest(BaseModel):
     learn: bool = False
 
 
+class TaijiWorkbenchRecoveryBranchRequest(BaseModel):
+    """Register one additional compatible recovery evidence branch."""
+
+    parent_loop_id: str
+    recovery_loop_id: str
+    snapshot_id: str
+
+
+class TaijiWorkbenchRecoveryBranchSelectRequest(BaseModel):
+    """Select and execute one active recovery branch."""
+
+    parent_loop_id: str
+    branch_id: str
+    recovery_loop_id: str
+    snapshot_id: str
+    max_steps: int = 8
+    max_budget_units: float = 32.0
+    novelty: float = 0.0
+    resource_budget: float = 1.0
+    learn: bool = False
+
+
 class ChatRequest(BaseModel):
     prompt: str
     system_prompt: str = "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"
