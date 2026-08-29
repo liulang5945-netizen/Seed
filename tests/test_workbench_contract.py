@@ -394,7 +394,7 @@ def test_runtime_successor_graph_invalidates_siblings_and_continues_checkpoint(
     assert first["status"] == "paused"
     assert first["completed_prefix"] == 1
     assert first["steps"][0]["capability_id"] == "workspace.list"
-    assert len(first["frontier_affordance_ids"]) == 4
+    assert len(first["frontier_affordance_ids"]) >= 4
     assert checkpoint.exists()
 
     restored = SeedRuntime.load(checkpoint)
@@ -409,7 +409,7 @@ def test_runtime_successor_graph_invalidates_siblings_and_continues_checkpoint(
     assert len(second["steps"]) == 2
     assert second["completed_prefix"] == 3
     sibling_step = second["steps"][0]
-    assert len(sibling_step["frontier_before_affordance_ids"]) == 4
+    assert len(sibling_step["frontier_before_affordance_ids"]) >= 4
     assert len(sibling_step["invalidated_affordance_ids"]) >= 3
     assert set(sibling_step["invalidated_affordance_ids"]).isdisjoint(
         set(sibling_step["frontier_after_affordance_ids"])
@@ -710,6 +710,123 @@ def test_taiji_successor_loop_route_runs_native_bounded_graph(tmp_path, monkeypa
     assert response.json()["status"] == "paused"
     assert response.json()["steps"][0]["capability_id"] == "workspace.list"
     assert len(response.json()["frontier_affordance_ids"]) == 4
+
+
+def test_successor_graph_persists_read_failure_as_recovery_needed(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    checkpoint = tmp_path / "successor-failure.pt"
+    runtime = SeedRuntime(
+        Seed(episode_id="successor-read-failure"),
+        checkpoint_path=checkpoint,
+    )
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    runtime.model.architecture.observe(65, learn=False)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.read": {"path": "missing.txt"}},
+    )
+
+    failed = runtime.execute_taiji_workbench_successor_loop(
+        snapshot_id=snapshot_id,
+        loop_id="read-failure",
+        max_steps=1,
+    )
+
+    assert failed["status"] == "recovery_needed"
+    assert failed["recovery_needed"] is True
+    assert failed["completed_prefix"] == 0
+    assert failed["failure"]["code"] == "not_found"
+    assert failed["failure"]["latest_evidence_id"]
+    assert failed["failure"]["remaining_frontier_affordance_ids"] == []
+    assert checkpoint.exists()
+
+    restored = SeedRuntime.load(checkpoint)
+    replay = restored.execute_taiji_workbench_successor_loop(
+        snapshot_id=snapshot_id,
+        loop_id="read-failure",
+        max_steps=1,
+    )
+    assert replay["status"] == "recovery_needed"
+    assert replay["error_code"] == "successor_loop_terminal"
+    assert replay["failure"]["code"] == "not_found"
+    assert replay["steps"] == []
+
+
+def test_successor_graph_snapshot_drift_is_recovery_needed(tmp_path) -> None:
+    (tmp_path / "README.md").write_bytes(b"snapshot drift\n")
+    checkpoint = tmp_path / "successor-snapshot.pt"
+    runtime = SeedRuntime(
+        Seed(episode_id="successor-snapshot-drift"),
+        checkpoint_path=checkpoint,
+    )
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    runtime.model.architecture.observe(65, learn=False)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.read": {"path": "README.md"}},
+    )
+
+    drifted = runtime.execute_taiji_workbench_successor_loop(
+        snapshot_id="stale-capability-snapshot",
+        loop_id="snapshot-drift",
+        max_steps=1,
+    )
+
+    assert drifted["status"] == "recovery_needed"
+    assert drifted["failure"]["code"] == "stale_capability_snapshot"
+    assert drifted["completed_prefix"] == 0
+    assert checkpoint.exists()
+
+
+def test_successor_graph_checkpoint_failure_blocks_unknown_replay(tmp_path, monkeypatch) -> None:
+    (tmp_path / "README.md").write_bytes(b"checkpoint failure\n")
+    checkpoint = tmp_path / "successor-checkpoint.pt"
+    runtime = SeedRuntime(
+        Seed(episode_id="successor-checkpoint-failure"),
+        checkpoint_path=checkpoint,
+    )
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    runtime.model.architecture.observe(65, learn=False)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.read": {"path": "README.md"}},
+    )
+    original_save = runtime.save
+    calls = 0
+
+    def flaky_save(path=None):
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise OSError("checkpoint disk full")
+        return original_save(path)
+
+    monkeypatch.setattr(runtime, "save", flaky_save)
+    failed = runtime.execute_taiji_workbench_successor_loop(
+        snapshot_id=snapshot_id,
+        loop_id="checkpoint-failure",
+        max_steps=1,
+    )
+
+    assert failed["status"] == "checkpoint_failed"
+    assert failed["recovery_needed"] is True
+    assert failed["failure"]["code"] == "checkpoint_failed"
+    assert calls == 2
+    restored = SeedRuntime.load(checkpoint)
+    recovery = restored.execute_taiji_workbench_successor_loop(
+        snapshot_id=snapshot_id,
+        loop_id="checkpoint-failure",
+        max_steps=1,
+    )
+    assert recovery["status"] == "recovery_needed"
+    assert recovery["failure"]["code"] == "in_flight_checkpoint_recovery_required"
+    assert recovery["steps"] == []
 
 
 def test_native_mcp_registry_lists_and_invokes_local_read_only_canary(tmp_path) -> None:

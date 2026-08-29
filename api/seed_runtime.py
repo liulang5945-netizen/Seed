@@ -785,6 +785,7 @@ class SeedRuntime:
             snapshot_id=snapshot_id,
             current_tick=world.tick,
             current_affordance_ids=tuple(item.affordance_id for item in world.affordances),
+            current_affordances=world.affordances,
         )
         return {
             "admission": admission.to_payload(),
@@ -894,6 +895,7 @@ class SeedRuntime:
             snapshot_id=snapshot_id,
             current_tick=world.tick,
             current_affordance_ids=tuple(item.affordance_id for item in world.affordances),
+            current_affordances=world.affordances,
         )
         payload = {
             "admission": admission.to_payload(),
@@ -936,6 +938,7 @@ class SeedRuntime:
         from seed_platform.workbench import (
             WORKBENCH_MAX_LOOP_BUDGET_UNITS,
             WORKBENCH_MAX_LOOP_STEPS,
+            WORKBENCH_TAIJI_EVIDENCE_KIND,
             WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT,
             WORKBENCH_TAIJI_SUCCESSOR_GRAPH_VERSION,
             WORKBENCH_TAIJI_SUCCESSOR_STEP_BUDGET_UNITS,
@@ -978,6 +981,10 @@ class SeedRuntime:
             ):
                 raise ValueError("Taiji successor graph budget changed during continuation")
         else:
+            if isinstance(existing, Mapping) and isinstance(existing.get("in_flight"), Mapping):
+                raise RuntimeError(
+                    "Taiji successor graph has an unresolved in-flight step; recovery is required"
+                )
             successor_state = {
                 "format": WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT,
                 "version": WORKBENCH_TAIJI_SUCCESSOR_GRAPH_VERSION,
@@ -990,12 +997,80 @@ class SeedRuntime:
                 "consumed_affordance_ids": [],
                 "event_ids": [],
                 "frontier_affordance_ids": [item.affordance_id for item in world.affordances],
+                "remaining_frontier_affordance_ids": [
+                    item.affordance_id for item in world.affordances
+                ],
+                "latest_evidence_id": "",
+                "failure": None,
                 "status": "running",
             }
 
-        terminal_statuses = {"completed", "failed", "budget_exhausted", "checkpoint_failed"}
-        if same_loop and str(successor_state.get("status", "")) in terminal_statuses:
+        if same_loop and isinstance(successor_state.get("in_flight"), Mapping):
+            pending = dict(successor_state["in_flight"])
+            current_world = self.model.architecture.cognitive_snapshot().world
+            latest_evidence = next(
+                (
+                    item
+                    for item in reversed(current_world.events)
+                    if item.kind == WORKBENCH_TAIJI_EVIDENCE_KIND
+                ),
+                None,
+            )
+            failure = {
+                "code": "in_flight_checkpoint_recovery_required",
+                "reason": "a step was reserved before checkpoint completion; execution state is unknown",
+                "step_index": int(pending.get("index", successor_state.get("completed_steps", 0))),
+                "candidate_id": str(pending.get("candidate_id", "")),
+                "source_affordance_id": str(pending.get("source_affordance_id", "")),
+                "latest_evidence_id": (
+                    "" if latest_evidence is None else str(latest_evidence.event_id)
+                ),
+                "completed_prefix": int(successor_state.get("completed_steps", 0)),
+                "remaining_frontier_affordance_ids": [
+                    item.affordance_id for item in current_world.affordances
+                ],
+            }
+            successor_state["status"] = "recovery_needed"
+            successor_state["failure"] = failure
+            successor_state["latest_evidence_id"] = failure["latest_evidence_id"]
+            successor_state["remaining_frontier_affordance_ids"] = failure[
+                "remaining_frontier_affordance_ids"
+            ]
+            self._workbench_loop_state = {
+                **self._workbench_loop_state,
+                "successor_graph": successor_state,
+            }
+            checkpoint: dict[str, Any] = {"committed": False, "error_code": "checkpoint_failed"}
+            try:
+                checkpoint = {"committed": True, "path": str(self.save())}
+            except (OSError, RuntimeError, ValueError) as exc:
+                checkpoint["error"] = str(exc)
             return {
+                "format": WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT,
+                "version": WORKBENCH_TAIJI_SUCCESSOR_GRAPH_VERSION,
+                "loop_id": str(loop_id),
+                "snapshot_id": str(snapshot_id),
+                "status": "recovery_needed",
+                "recovery_needed": True,
+                "steps": [],
+                "completed_prefix": int(successor_state.get("completed_steps", 0)),
+                "budget_units": float(successor_state.get("budget_units", 0.0)),
+                "frontier_affordance_ids": [
+                    item.affordance_id for item in current_world.affordances
+                ],
+                "failure": failure,
+                "checkpoint": checkpoint,
+            }
+
+        terminal_statuses = {
+            "completed",
+            "failed",
+            "recovery_needed",
+            "budget_exhausted",
+            "checkpoint_failed",
+        }
+        if same_loop and str(successor_state.get("status", "")) in terminal_statuses:
+            payload = {
                 "format": WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT,
                 "version": WORKBENCH_TAIJI_SUCCESSOR_GRAPH_VERSION,
                 "loop_id": str(loop_id),
@@ -1007,6 +1082,12 @@ class SeedRuntime:
                 "frontier_affordance_ids": list(successor_state.get("frontier_affordance_ids", ())),
                 "error_code": "successor_loop_terminal",
             }
+            if str(successor_state["status"]) in {"recovery_needed", "checkpoint_failed"}:
+                payload["recovery_needed"] = True
+            failure = successor_state.get("failure")
+            if isinstance(failure, Mapping):
+                payload["failure"] = dict(failure)
+            return payload
 
         current_frontier = tuple(item.affordance_id for item in world.affordances)
         expected_frontier = tuple(
@@ -1059,13 +1140,99 @@ class SeedRuntime:
             "frontier_affordance_ids": list(current_frontier),
         }
 
-        def commit_checkpoint(step: dict[str, Any] | None = None) -> bool:
+        def current_evidence_id() -> str:
+            current_world = self.model.architecture.cognitive_snapshot().world
+            event = next(
+                (
+                    item
+                    for item in reversed(current_world.events)
+                    if item.kind == WORKBENCH_TAIJI_EVIDENCE_KIND
+                ),
+                None,
+            )
+            return "" if event is None else str(event.event_id)
+
+        def mark_recovery_needed(
+            step: dict[str, Any],
+            code: str,
+            reason: str,
+            *,
+            evidence_id: str = "",
+        ) -> dict[str, Any]:
+            current_world = self.model.architecture.cognitive_snapshot().world
+            remaining = [item.affordance_id for item in current_world.affordances]
+            latest_evidence_id = evidence_id or current_evidence_id()
+            failure = {
+                "code": str(code),
+                "reason": str(reason),
+                "step_index": int(step.get("index", successor_state.get("completed_steps", 0))),
+                "candidate_id": str(step.get("candidate_id", "")),
+                "source_affordance_id": str(step.get("source_affordance_id", "")),
+                "latest_evidence_id": latest_evidence_id,
+                "completed_prefix": int(successor_state.get("completed_steps", 0)),
+                "remaining_frontier_affordance_ids": remaining,
+            }
+            successor_state["status"] = "recovery_needed"
+            successor_state["latest_evidence_id"] = latest_evidence_id
+            successor_state["frontier_affordance_ids"] = remaining
+            successor_state["remaining_frontier_affordance_ids"] = remaining
+            successor_state["failure"] = failure
+            step.update(
+                {
+                    "status": "recovery_needed",
+                    "success": False,
+                    "error_code": str(code),
+                    "error": str(reason),
+                    "failure": failure,
+                }
+            )
+            result.update(
+                {
+                    "status": "recovery_needed",
+                    "error_code": str(code),
+                    "error": str(reason),
+                    "recovery_needed": True,
+                    "failure": failure,
+                }
+            )
+            return failure
+
+        def commit_checkpoint(
+            step: dict[str, Any] | None = None,
+            *,
+            phase: str = "after_step",
+        ) -> bool:
             try:
                 path = self.save()
             except (OSError, RuntimeError, ValueError) as exc:
                 successor_state["status"] = "checkpoint_failed"
+                failure = {
+                    "code": "checkpoint_failed",
+                    "reason": str(exc),
+                    "step_index": int(
+                        successor_state.get("completed_steps", 0)
+                        if step is None
+                        else step.get("index", successor_state.get("completed_steps", 0))
+                    ),
+                    "candidate_id": "" if step is None else str(step.get("candidate_id", "")),
+                    "source_affordance_id": (
+                        "" if step is None else str(step.get("source_affordance_id", ""))
+                    ),
+                    "latest_evidence_id": current_evidence_id(),
+                    "completed_prefix": int(successor_state.get("completed_steps", 0)),
+                    "remaining_frontier_affordance_ids": [
+                        item.affordance_id
+                        for item in self.model.architecture.cognitive_snapshot().world.affordances
+                    ],
+                }
+                successor_state["failure"] = failure
+                successor_state["latest_evidence_id"] = failure["latest_evidence_id"]
+                successor_state["remaining_frontier_affordance_ids"] = failure[
+                    "remaining_frontier_affordance_ids"
+                ]
                 if step is not None:
                     step["checkpoint"] = {
+                        "phase": phase,
                         "committed": False,
                         "error_code": "checkpoint_failed",
                         "error": str(exc),
@@ -1075,11 +1242,13 @@ class SeedRuntime:
                         "status": "checkpoint_failed",
                         "error_code": "checkpoint_failed",
                         "error": str(exc),
+                        "recovery_needed": True,
+                        "failure": failure,
                     }
                 )
                 return False
             if step is not None:
-                step["checkpoint"] = {"committed": True, "path": str(path)}
+                step["checkpoint"] = {"phase": phase, "committed": True, "path": str(path)}
             result["checkpoint"] = {"committed": True, "path": str(path)}
             return True
 
@@ -1121,13 +1290,14 @@ class SeedRuntime:
                         "error": "Taiji attempted to reuse a consumed successor affordance",
                     }
                 )
-                successor_state["status"] = "failed"
+                mark_recovery_needed(
+                    step,
+                    "reused_successor_affordance",
+                    "Taiji attempted to reuse a consumed successor affordance",
+                )
                 result["steps"].append(step)
                 if not commit_checkpoint(step):
-                    result["steps"][-1] = step
                     return result
-                result["status"] = "failed"
-                result["error_code"] = str(step["error_code"])
                 return result
 
             admission = environment.admit_taiji_candidate(
@@ -1135,6 +1305,7 @@ class SeedRuntime:
                 snapshot_id=snapshot_id,
                 current_tick=world.tick,
                 current_affordance_ids=frontier_before,
+                current_affordances=world.affordances,
             )
             step["admission"] = admission.to_payload()
             if not admission.accepted or admission.request is None:
@@ -1146,12 +1317,21 @@ class SeedRuntime:
                         "error": admission.reason,
                     }
                 )
-                successor_state["status"] = "failed"
+                mark_recovery_needed(step, admission.reason_code, admission.reason)
                 result["steps"].append(step)
                 if not commit_checkpoint(step):
                     return result
-                result["status"] = "failed"
-                result["error_code"] = str(step["error_code"])
+                return result
+
+            successor_state["in_flight"] = {
+                "index": int(step["index"]),
+                "candidate_id": str(step["candidate_id"]),
+                "source_affordance_id": source_affordance_id,
+                "request_id": str(admission.request.request_id),
+                "frontier_before_affordance_ids": list(frontier_before),
+            }
+            if not commit_checkpoint(step, phase="before_execution"):
+                result["steps"].append(step)
                 return result
 
             try:
@@ -1178,41 +1358,66 @@ class SeedRuntime:
                         "error": str(exc),
                     }
                 )
+            successor_state.pop("in_flight", None)
 
             if not step.get("success") or step.get("status") != "success":
-                successor_state["status"] = "failed"
+                outcome_payload = step.get("outcome")
+                outcome_error_code = (
+                    str(outcome_payload.get("error_code", ""))
+                    if isinstance(outcome_payload, Mapping)
+                    else ""
+                )
+                outcome_error = (
+                    str(outcome_payload.get("error", ""))
+                    if isinstance(outcome_payload, Mapping)
+                    else ""
+                )
+                mark_recovery_needed(
+                    step,
+                    str(step.get("error_code") or outcome_error_code or "successor_step_failed"),
+                    str(step.get("error") or outcome_error or "successor step failed"),
+                )
                 result["steps"].append(step)
                 if not commit_checkpoint(step):
                     return result
-                result["status"] = "failed"
-                result["error_code"] = str(step.get("error_code", "successor_step_failed"))
                 return result
 
             event_payload = execution.get("taiji_world_event")
             if not isinstance(event_payload, Mapping):
-                step.update(
-                    {
-                        "status": "error",
-                        "success": False,
-                        "error_code": "missing_taiji_world_event",
-                        "error": "successful successor step produced no Taiji world event",
-                    }
+                mark_recovery_needed(
+                    step,
+                    "missing_taiji_world_event",
+                    "successful successor step produced no Taiji world event",
                 )
-                successor_state["status"] = "failed"
                 result["steps"].append(step)
                 if not commit_checkpoint(step):
                     return result
-                result["status"] = "failed"
-                result["error_code"] = str(step["error_code"])
                 return result
 
             event_id = str(event_payload.get("event_id", ""))
             if not event_id:
-                raise ValueError("Taiji successor step world event has no event_id")
-            projection = self.reproject_workbench_from_latest_evidence(
-                snapshot_id=snapshot_id,
-                allow_empty=True,
-            )
+                mark_recovery_needed(
+                    step,
+                    "missing_taiji_world_event_id",
+                    "successful successor step world event has no event_id",
+                )
+                result["steps"].append(step)
+                if not commit_checkpoint(step):
+                    return result
+                return result
+            try:
+                projection = self.reproject_workbench_from_latest_evidence(
+                    snapshot_id=snapshot_id,
+                    allow_empty=True,
+                )
+            except (TypeError, ValueError, RuntimeError) as exc:
+                mark_recovery_needed(
+                    step, "successor_reprojection_error", str(exc), evidence_id=event_id
+                )
+                result["steps"].append(step)
+                if not commit_checkpoint(step):
+                    return result
+                return result
             frontier_after = tuple(
                 str(item.get("affordance_id", ""))
                 for item in projection.get("affordances", ())
@@ -1244,6 +1449,8 @@ class SeedRuntime:
                 event_id,
             ][-MAX_WORKBENCH_LOOP_COMMITTED_REQUESTS:]
             successor_state["frontier_affordance_ids"] = list(frontier_after)
+            successor_state["remaining_frontier_affordance_ids"] = list(frontier_after)
+            successor_state["latest_evidence_id"] = event_id
             successor_state["status"] = "completed" if not frontier_after else "running"
             result["steps"].append(step)
             result["completed_prefix"] = int(successor_state["completed_steps"])

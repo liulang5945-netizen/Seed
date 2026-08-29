@@ -1408,6 +1408,7 @@ class WorkbenchEnvironment:
         snapshot_id: str,
         current_tick: int | None = None,
         current_affordance_ids: Sequence[str] | None = None,
+        current_affordances: Sequence[Any] | None = None,
     ) -> TaijiTaskAdmission:
         """Bind a live Taiji executive candidate to a read-only capability.
 
@@ -1458,6 +1459,28 @@ class WorkbenchEnvironment:
                 "stale_taiji_affordance",
                 "Taiji task candidate no longer refers to a current world affordance",
             )
+        if current_affordances is not None:
+            source_affordance = next(
+                (
+                    item
+                    for item in current_affordances
+                    if getattr(item, "affordance_id", "") == candidate.source_affordance_id
+                ),
+                None,
+            )
+            if source_affordance is None:
+                return reject(
+                    "stale_taiji_affordance",
+                    "Taiji task candidate no longer refers to a live world affordance",
+                )
+            expected_lineage = f"workbench-snapshot:{self.snapshot.snapshot_id}"
+            if expected_lineage not in tuple(
+                str(item) for item in getattr(source_affordance, "grounding_lineage", ())
+            ):
+                return reject(
+                    "stale_capability_snapshot",
+                    "Taiji task candidate was projected from a different capability snapshot",
+                )
 
         descriptor = self.snapshot.get(candidate.action_intent.kind)
         if descriptor is None:
