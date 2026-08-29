@@ -42,6 +42,16 @@ ROOT_DIR = Path(sys.executable).resolve().parent if FROZEN else Path(__file__).p
 SETTINGS_FILE = ROOT_DIR / "desktop" / "settings.json"
 LOG_DIR = ROOT_DIR / "logs"
 
+# QWebEngine 在没有可用 GPU 驱动、远程桌面或虚拟机环境中可能直接崩溃。
+# 这两个默认值必须位于任何 PyQt6 导入之前；显式环境变量仍可覆盖，便于
+# 在具备稳定 GPU 的机器上做性能实验。
+def _configure_qt_runtime() -> None:
+    os.environ.setdefault("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu")
+    os.environ.setdefault("QT_OPENGL", "software")
+
+
+_configure_qt_runtime()
+
 # PyInstaller's PyQt6 runtime hook configures Qt plugins, but on some Windows
 # builds it does not expose the wheel's nested ``Qt6/bin`` directory to the
 # DLL loader before the first ``PyQt6.QtCore`` import.  Keep the handle alive
@@ -96,6 +106,12 @@ BACKEND_PORT = 8000
 WS_PORT = 8765
 HEALTH_PATH = "/api/health"
 SWITCH_MODEL_PATH = "/api/runtime/activate"
+
+
+def build_frontend_url(port: int) -> str:
+    """Build a desktop URL that keeps the backend port and client mode."""
+
+    return f"http://127.0.0.1:{int(port)}/#/?taiji_client=desktop"
 
 
 def _find_brand_icon() -> Path | None:
@@ -1073,7 +1089,7 @@ def main():
                 QTimer.singleShot(1000, self._load_frontend)
                 return
 
-            frontend_url = f"http://127.0.0.1:{backend.port}"
+            frontend_url = build_frontend_url(backend.port)
             logger.info(f"Loading frontend: {frontend_url}")
             self.web_view.load(QUrl(frontend_url))
 

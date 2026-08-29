@@ -1,0 +1,50 @@
+{
+  "format": "seed-packaged-client-s2-evidence-v1",
+  "captured_at": "2026-08-29",
+  "artifact": {
+    "entrypoint": "dist/Seed/Seed.exe",
+    "legacy": "disabled",
+    "runtime_flags": {
+      "SEED_ENABLE_LEGACY": "0",
+      "SEED_RUNTIME": "1",
+      "SEED_PORT": "8138"
+    },
+    "release_gate": "passed",
+    "frontend_byte_equality": "passed"
+  },
+  "startup": {
+    "client_process": "responsive",
+    "backend_health": 200,
+    "storage_root": "dist/Seed/user_data",
+    "storage_policy": "LocalAppData preferred; package-local user_data selected when the preferred root is unavailable",
+    "qt_override_required": false
+  },
+  "runtime": {
+    "model_name": "seed:seed_corpus.pt",
+    "is_taiji": true,
+    "is_seed": true,
+    "language_provider": "native",
+    "capability_snapshot_id": "5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f",
+    "capability_revision": 4,
+    "capability_count": 16,
+    "capability_owner": "Taiji native Workbench"
+  },
+  "workspace": {
+    "route": "http://127.0.0.1:8138/#/workspace?taiji_client=desktop",
+    "title": "Seed · IDE 工作区",
+    "workspace_visible": true,
+    "inspector_visible": true,
+    "recovery_audit_panel_count": 1,
+    "recovery_audit_state": "portfolio_empty",
+    "recovery_audit_text": "无 recovery portfolio（等待 Taiji 恢复链路）",
+    "screenshot": "output/playwright/seed-s2-packaged-workspace-final.png"
+  },
+  "network": {
+    "all_observed_api_requests_used_port": "8138",
+    "required_statuses": "all 200",
+    "recovery_context": "GET /api/workbench/taiji/recovery-branch/context -> 200",
+    "page_errors": [],
+    "legacy_markers": []
+  },
+  "scope_note": "S2 proves the real packaged empty-state canary and traces the client to the native checkpoint/capability revision. Populated branch and tombstone ordering remain covered by S0/S1 replay evidence; this startup had no persisted recovery portfolio to display."
+}

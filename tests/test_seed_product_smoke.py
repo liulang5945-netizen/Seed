@@ -35,6 +35,7 @@ def test_health_reports_seed_active(seed_client):
     assert response.status_code == 200
     payload = response.json()
     assert payload["seed_active"] is True
+    assert payload["taiji_available"] is True
     assert payload["model_loaded"] is True
 
 
