@@ -116,6 +116,7 @@ def project_native_adapter_episode(
     *,
     context_id: str,
     owner_id_by_event_id: Mapping[str, str | None],
+    outcome: Any | None = None,
     recovery_effect: float = 0.0,
     resource_cost_by_event_id: Mapping[str, float] | None = None,
     checkpoint: Mapping[str, Any] | None = None,
@@ -144,12 +145,13 @@ def project_native_adapter_episode(
     checkpoint_revision = int(native_checkpoint.get("version", -1))
     if checkpoint_revision < 0:
         raise ValueError("native checkpoint version must be non-negative")
-    if state.outcome is None:
+    projected_outcome = outcome if outcome is not None else state.outcome
+    if projected_outcome is None:
         raise RuntimeError("native adapter trace projection requires a settled Outcome")
 
     episode_id = _text(str(state.episode_id), "native projected episode_id")
     outcome_id = (
-        f"{episode_id}:outcome:{int(state.outcome.tick)}:{str(state.outcome.intent_id)}"
+        f"{episode_id}:outcome:{int(projected_outcome.tick)}:{str(projected_outcome.intent_id)}"
     )
     native_events = {str(event.event_id): event for event in state.events}
     unknown_event_ids = set(owner_id_by_event_id) - set(native_events)
@@ -188,7 +190,7 @@ def project_native_adapter_episode(
         checkpoint_revision=checkpoint_revision,
         outcome_id=outcome_id,
         events=tuple(events),
-        outcome=float(state.outcome.reward),
+        outcome=float(projected_outcome.reward),
         recovery_effect=float(recovery_effect),
         context_id=_text(str(context_id), "native projected context_id"),
     )

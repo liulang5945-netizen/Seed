@@ -316,6 +316,12 @@ R2-S1 已通过。新增 `project_native_adapter_episode()` 作为原生状态�
 
 该层仍是 replay/sandbox：奖励来自确定性 factorial fixture，尚不能替代真实 Workbench 的 workspace/memory/planner/recovery workflow，也不写回 executive、memory、tool 或 provider。下一步必须进入 R2-S2 真实 Workbench workflow，并继续保留这条回放 Gate。
 
+### 14.27 W7-R2 S2：真实 Workbench workflow（2026-08-29）
+
+R2-S2 已通过。评测脚本 `scripts/training/eval_taiji_interaction_groups.py --stage s2` 使用真实 `SeedRuntime + WorkbenchEnvironment`，从当前 capability snapshot 投影 workspace list/search/read/stat affordance，经 native executive 选择后执行真实只读 Workbench route；每个 workflow 同时记录 Taiji native `Event`、Workbench world evidence、Outcome、失败后的 recovery retry 和 `taiji-native-v1` checkpoint replay。`workspace.stat` 仅用于建立真实 baseline，并以 `owner_id=None` 排除候选归因，避免把观测基线误当作学习到的交互组。
+
+S2 使用 complementary/conflicting 两组四格任务组合，共 8 个 train、8 个 holdout。所有 record 的 checkpoint replay、world evidence、executive selection 和 recovery trace 均通过；holdout 只读且不可向 learner 添加证据，角色名输入数为 0，最终仍得到 2 个 admitted group 与 4 个拒绝候选。测试为 `tests/taiji_native/test_interaction_group_workbench.py` 与 S1 replay 合计 `3 passed`，Ruff、compileall、JSON/diff 检查通过。该层证明交互组评估已接入真实 Workbench trace，不证明开放域工具自治、写入自治或高阶无限搜索；仍不得直接写回 executive、memory、tool 或 provider。证据见 [taiji_w7_r2_interaction_groups_s2_20260829.json](../../../reports/taiji_w7_r2_interaction_groups_s2_20260829.json)。R2 三层闭合，下一入口为 W7-R3-S0 visual/desktop evidence。
+
 ## 15. 停止项
 
 在 P2 通过前：
