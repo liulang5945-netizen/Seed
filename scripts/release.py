@@ -82,15 +82,11 @@ def _verify_packaged_frontend() -> None:
         missing = sorted(source_files.keys() - packaged_files.keys())
         unexpected = sorted(packaged_files.keys() - source_files.keys())
         raise RuntimeError(
-            "打包客户端内置前端文件集合不一致；"
-            f"缺失={missing[:5]}，多余={unexpected[:5]}"
+            "打包客户端内置前端文件集合不一致；" f"缺失={missing[:5]}，多余={unexpected[:5]}"
         )
     for relative, source_path in source_files.items():
         if source_path.read_bytes() != packaged_files[relative].read_bytes():
-            raise RuntimeError(
-                "打包客户端内置前端与本次构建产物不一致："
-                f"{relative}"
-            )
+            raise RuntimeError("打包客户端内置前端与本次构建产物不一致：" f"{relative}")
     print(f"  前端一致性校验通过（源码 dist = 客户端内置 dist，共 {len(source_files)} 个文件）")
 
 

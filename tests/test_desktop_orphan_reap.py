@@ -48,9 +48,7 @@ def test_frozen_qt_process_path_is_configured_before_webengine_import():
 
 def test_desktop_frontend_url_keeps_backend_port():
     """前端必须显式进入 desktop 模式，并复用实际后端端口。"""
-    assert build_frontend_url(8137) == (
-        "http://127.0.0.1:8137/#/?taiji_client=desktop"
-    )
+    assert build_frontend_url(8137) == ("http://127.0.0.1:8137/#/?taiji_client=desktop")
 
 
 def test_life_status_tray_action_restores_hidden_window_before_navigation():

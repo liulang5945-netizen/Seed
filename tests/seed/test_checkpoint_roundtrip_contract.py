@@ -161,16 +161,16 @@ def test_native_checkpoint_roundtrip_preserves_all_admission_dimensions(
     assert before["topology_count"] == 1, "前置条件：必须存在一条真实结构提案"
     assert before["unit_ids"] == (("u0", "u1", "u2"),), "前置条件：结构生长必须已落账"
     for key, expected in before.items():
-        assert after[key] == expected, (
-            f"往返后 {key} 不等价：期望 {expected!r}，实测 {after[key]!r}"
-        )
+        assert (
+            after[key] == expected
+        ), f"往返后 {key} 不等价：期望 {expected!r}，实测 {after[key]!r}"
 
     left = model.observe(97, learn=True)
     right = restored.observe(97, learn=True)
     assert left.predicted_symbol == right.predicted_symbol, "恢复后继续一步的预测必须与原运行时一致"
-    assert torch.equal(left.probabilities, right.probabilities), (
-        "恢复后继续一步的概率分布必须逐元素一致"
-    )
+    assert torch.equal(
+        left.probabilities, right.probabilities
+    ), "恢复后继续一步的概率分布必须逐元素一致"
     assert model.tick == restored.tick, "继续一步后 lineage tick 必须仍然对齐"
 
 
@@ -189,9 +189,9 @@ def test_guarded_provider_checkpoint_can_be_restored(tmp_path: Path) -> None:
     _commit_real_history(model)
 
     envelope = model.checkpoint()
-    assert envelope["taiji"]["components"]["language_organ"] is not None, (
-        "前置条件：checkpoint 确实写出了外部器官载荷"
-    )
+    assert (
+        envelope["taiji"]["components"]["language_organ"] is not None
+    ), "前置条件：checkpoint 确实写出了外部器官载荷"
 
     restored = Seed.from_checkpoint(envelope)
 
@@ -199,15 +199,17 @@ def test_guarded_provider_checkpoint_can_be_restored(tmp_path: Path) -> None:
     assert restored_artifact is not None, "provider artifact 必须随 checkpoint 保留"
     assert restored_artifact.artifact_id == "qwen-lora-v1"
     assert restored_artifact.mode == "guarded"
-    assert restored.architecture.neuron_regions[0].unit_ids == ("u0", "u1", "u2"), (
-        "guarded 运行时的结构生长同样必须往返保真"
-    )
-    assert restored.architecture.detached_language_organ_backend == "mature-decoder-v1", (
-        "外接器官脱挂必须可观测，否则运行时无法区分「降级」与「本来就是原生」"
-    )
-    assert restored.architecture.language_organ is None, (
-        "外接解码器权重不在存档内，恢复后不得伪造一个终端器官"
-    )
+    assert restored.architecture.neuron_regions[0].unit_ids == (
+        "u0",
+        "u1",
+        "u2",
+    ), "guarded 运行时的结构生长同样必须往返保真"
+    assert (
+        restored.architecture.detached_language_organ_backend == "mature-decoder-v1"
+    ), "外接器官脱挂必须可观测，否则运行时无法区分「降级」与「本来就是原生」"
+    assert (
+        restored.architecture.language_organ is None
+    ), "外接解码器权重不在存档内，恢复后不得伪造一个终端器官"
 
 
 def test_rebinding_runtime_organ_clears_detached_marker() -> None:
@@ -227,7 +229,7 @@ def test_rebinding_runtime_organ_clears_detached_marker() -> None:
             backend_id="mature-decoder-v1",
         )
     )
-    assert restored.architecture.detached_language_organ_backend is None, (
-        "重新绑定运行时后不得继续报告脱挂"
-    )
+    assert (
+        restored.architecture.detached_language_organ_backend is None
+    ), "重新绑定运行时后不得继续报告脱挂"
     assert restored.architecture.language_organ is not None

@@ -42,6 +42,7 @@ ROOT_DIR = Path(sys.executable).resolve().parent if FROZEN else Path(__file__).p
 SETTINGS_FILE = ROOT_DIR / "desktop" / "settings.json"
 LOG_DIR = ROOT_DIR / "logs"
 
+
 # QWebEngine 在没有可用 GPU 驱动、远程桌面或受限桌面权限环境中，普通的
 # 多进程 renderer 可能卡在根 HTML，既不触发 loadFinished，也不继续请求
 # 前端模块。当前桌面客户端以 CPU-only 为基线，单进程是稳定的 shell 降级；
