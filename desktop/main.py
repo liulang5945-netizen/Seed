@@ -1207,7 +1207,7 @@ def main():
             tray_menu.addSeparator()
 
             life_action = tray_menu.addAction("生命状态")
-            life_action.triggered.connect(lambda: self._run_js("location.hash='/life'"))
+            life_action.triggered.connect(self._show_life_status)
 
             tray_menu.addSeparator()
 
@@ -1228,6 +1228,13 @@ def main():
             self.show()
             self.raise_()
             self.activateWindow()
+
+        def _show_life_status(self):
+            """从托盘恢复窗口并切换到唯一的生命状态页面。"""
+            self._show_window()
+            # 先让隐藏窗口完成恢复，再让 WebView 执行 hash 路由切换；否则只改 hash
+            # 时页面仍处于隐藏态，用户会误以为托盘菜单无效。
+            QTimer.singleShot(0, lambda: self._run_js("location.hash='/life'"))
 
         def _check_backend(self):
             """检查后端和 WebSocket 服务状态（主线程只做 poll 判断，

@@ -127,6 +127,8 @@ R3 只把已经存在的能力变得可辨识、可访问、可信，不用 mock
 
 视觉任务只有在 R1/R2 的状态模型稳定后接入；如先前端发现后端没有真实字段，应退回相应 owner 补充投影，不能由前端猜测。
 
+**R3-S0/S1 已通过（2026-08-29）**：生命状态页恢复原有五维雷达作为 Taiji 状态主视觉；原生运行时摘要压缩为辅助卡片，需求条不再与雷达重复占据首屏；侧边栏删除重复的底部生命状态脉冲块，只保留“系统 → 生命状态”导航。`RuntimeEvidenceStrip` 从聊天、能力、知识库、训练和设置页移除，在生命页底部保留为默认折叠审计详情，展开后仍读取同一 runtime projection。桌面托盘“生命状态”动作改为先恢复窗口再执行 `#/life`，不再只改变隐藏 WebView 的 hash。S0 前端 `43 files / 245 passed`、Vite build、ESLint（0 errors）和桌面契约 `12 passed`；S1 通过 `scripts/release.py --skip-nsis` 重建 `dist/Seed/Seed.exe`，内置前端 index 与源码构建产物字节一致，Legacy-off/native runtime 在 8138 端口健康 canary 为 ok/taiji_available/seed_active/model_loaded 全真。证据见 [R3-S1](../../../reports/taiji_w7_r3_visual_desktop_s1_20260829.json)。由于本机未安装 Chrome，浏览器截图与真实 Windows 任务栏/托盘现场取证尚未完成，不能把 R3-S2 宣称为通过。
+
 ## 8. W7-R4：CUDA（当前 `hardware-blocked`）
 
 当前没有可用 CUDA 主机，因此本工作包保留完整设计与 CPU 基线，不实现或伪称 GPU 性能。硬件到位后的顺序固定为：

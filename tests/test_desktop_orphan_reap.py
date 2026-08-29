@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 
 from desktop.main import (
     ORPHAN_BACKEND_IMAGE,
@@ -40,6 +41,17 @@ def test_desktop_frontend_url_keeps_backend_port():
     assert build_frontend_url(8137) == (
         "http://127.0.0.1:8137/#/?taiji_client=desktop"
     )
+
+
+def test_life_status_tray_action_restores_hidden_window_before_navigation():
+    """托盘中的生命状态不能只改 hash；隐藏窗口必须先恢复。"""
+    source = (Path(__file__).resolve().parents[1] / "desktop" / "main.py").read_text(
+        encoding="utf-8"
+    )
+    assert "life_action.triggered.connect(self._show_life_status)" in source
+    assert "def _show_life_status(self):" in source
+    assert "self._show_window()" in source
+    assert "location.hash='/life'" in source
 
 
 def test_reaps_backend_whose_parent_is_gone():

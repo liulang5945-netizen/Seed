@@ -322,6 +322,12 @@ R2-S2 已通过。评测脚本 `scripts/training/eval_taiji_interaction_groups.p
 
 S2 使用 complementary/conflicting 两组四格任务组合，共 8 个 train、8 个 holdout。所有 record 的 checkpoint replay、world evidence、executive selection 和 recovery trace 均通过；holdout 只读且不可向 learner 添加证据，角色名输入数为 0，最终仍得到 2 个 admitted group 与 4 个拒绝候选。测试为 `tests/taiji_native/test_interaction_group_workbench.py` 与 S1 replay 合计 `3 passed`，Ruff、compileall、JSON/diff 检查通过。该层证明交互组评估已接入真实 Workbench trace，不证明开放域工具自治、写入自治或高阶无限搜索；仍不得直接写回 executive、memory、tool 或 provider。证据见 [taiji_w7_r2_interaction_groups_s2_20260829.json](../../../reports/taiji_w7_r2_interaction_groups_s2_20260829.json)。R2 三层闭合，下一入口为 W7-R3-S0 visual/desktop evidence。
 
+### 14.28 W7-R3 S0/S1：生命状态表达与打包客户端收口（2026-08-29）
+
+R3-S0/S1 已通过。前端把原有五维雷达恢复为生命状态页的主视觉；Taiji 原生状态面板仅保留紧凑的 runtime/provider/workbench/homeostasis 摘要，避免与需求雷达重复。侧边栏只保留一个“生命状态”导航入口，移除底部实时脉冲块；“状态依据”从聊天、能力、知识库、训练和设置页移除，在生命页底部作为默认折叠的只读审计详情保留。托盘生命状态动作先调用 `_show_window()`，再切换 `location.hash='/life'`，修复隐藏窗口中只改 hash 导致的无效果。
+
+S0 的 `frontend` 回归为 `43 files / 245 passed`，Vite build 通过，ESLint 0 errors，桌面契约 `tests/test_desktop_orphan_reap.py` 与项目身份测试共 `12 passed`。S1 经 `scripts/release.py --skip-nsis` 重建，`dist/Seed/Seed.exe` 的 SHA-256 为 `502c832d9c04e1e826e398adfa9de9d7f375e5624eb510aac097b9330366f126`；源码 `frontend/dist/index.html` 与打包内置前端字节一致；Legacy-off/native runtime 在 8138 端口的 `/api/health` 为 `ok`，`taiji_available=true`、`seed_active=true`、`model_loaded=true`，runtime model 为 `seed:seed_corpus.pt`。证据见 [taiji_w7_r3_visual_desktop_s1_20260829.json](../../../reports/taiji_w7_r3_visual_desktop_s1_20260829.json)。本机未安装 Chrome，浏览器截图、真实任务栏/托盘现场与高 DPI/窄窗口仍属于 R3-S2 未完成证据。
+
 ## 15. 停止项
 
 在 P2 通过前：

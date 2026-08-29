@@ -24,8 +24,6 @@
       </button>
     </header>
 
-    <RuntimeEvidenceStrip context="life" />
-
     <!-- ═══ 滚动内容区 ═══ -->
     <div class="scroll-area">
 
@@ -50,22 +48,8 @@
         <span v-if="actionResult" class="action-result">{{ actionResult }}</span>
       </section>
 
-      <LifeNativeStatusPanel
-        v-if="runtimeStore.health.isTaiji"
-        :connection-status="runtimeStore.connectionStatus"
-        :model-name="runtimeStore.health.modelName"
-        :language-provider-state="runtimeStore.health.languageProvider?.state"
-        :language-provider-backend="runtimeStore.health.languageProvider?.backend_id"
-        :tool-count="runtimeStore.tools.length"
-        :workbench-detail="runtimeStore.statusEvidence.workbench.detail"
-        :need-rows="needRows"
-        :health-message="runtimeStore.health.message"
-      />
-
-      <template v-else>
-
       <!-- ═══ KPI 卡片行（全部来自原生状态快照与运行时实测，无估算值） ═══ -->
-      <div class="kpi-grid">
+      <div v-if="!runtimeStore.health.isTaiji" class="kpi-grid">
         <!-- 卡1：累计交互 -->
         <div class="kpi-card" style="--kpi-color: var(--chart-1);">
           <div class="kpi-label">
@@ -115,7 +99,25 @@
         :need-rows="needRows"
         :activity-log="activityLog"
       />
-      </template>
+
+      <!-- Taiji 原生身份是辅助信息，置于雷达/表达/明细之后，不抢占生命状态主视觉。 -->
+      <LifeNativeStatusPanel
+        v-if="runtimeStore.health.isTaiji"
+        :connection-status="runtimeStore.connectionStatus"
+        :model-name="runtimeStore.health.modelName"
+        :language-provider-state="runtimeStore.health.languageProvider?.state"
+        :language-provider-backend="runtimeStore.health.languageProvider?.backend_id"
+        :tool-count="runtimeStore.tools.length"
+        :workbench-detail="runtimeStore.statusEvidence.workbench.detail"
+        :need-rows="needRows"
+        :health-message="runtimeStore.health.message"
+        compact
+      />
+
+      <!-- 审计依据保留在生命页底部，默认折叠，不干扰其他页面首屏。 -->
+      <div class="life-evidence-details">
+        <RuntimeEvidenceStrip context="life" collapsible />
+      </div>
     </div>
   </div>
 </template>

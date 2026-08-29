@@ -65,7 +65,8 @@
     "existing_hooks": ["desktop/main.py frontend URL binding", "native facade capability projections", "packaged-client S2 report"],
     "new_test_entry": "tests/test_seed_product_smoke.py and frontend/src/__tests__/desktop_shell_gate.test.js",
     "new_eval_entry": "scripts/release.py --skip-nsis plus packaged Playwright evidence",
-    "status": "not_started"
+    "status": "s1_passed",
+    "s1_report": "reports/taiji_w7_r3_visual_desktop_s1_20260829.json"
   },
   "boundary": [
     "No visual state may be a second source of truth for Taiji or provider state.",
