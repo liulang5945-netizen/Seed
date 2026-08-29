@@ -332,8 +332,12 @@ props 连接。前端 Vitest `36 files / 215 passed`、API contract/native bound
 `LifeNeedsDashboard`；父视图继续唯一持有 runtime snapshot、轮询、生命活动边界、需求值归一化和报告导出，组件只接收显式 props。
 前端 Vitest `37 files / 217 passed`、API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
 
-**当前唯一下一步：开始 W6 第十六片的 SettingsView 设置分区展示拆分。** 先隔离设置表单与只读运行状态展示，父视图继续唯一持有设置加载/保存竞态、
-native API 副作用和失败回滚；每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，
+**已完成（2026-08-29）：W6 第十六片的 SettingsView 通用设置展示拆分。** 主题、语言、时区、界面密度表单已抽为
+`SettingsGeneralPanel`；组件不读写 store/API，父视图继续唯一持有设置加载、保存竞态、native API 副作用和失败回滚。前端 Vitest `38 files / 219 passed`、
+API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
+
+**当前唯一下一步：开始 W6 第十七片的 SettingsView Taiji 参数展示拆分。** 先隔离局部激活阈值、响应超时、自动巩固和睡眠模式表单，
+父视图继续唯一持有设置加载/保存竞态、native API 副作用和失败回滚；每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，
 不得先做视觉包装或 CUDA kernel。
 
 ## 当前唯一下一步
