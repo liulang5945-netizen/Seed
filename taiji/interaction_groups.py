@@ -920,7 +920,7 @@ class InteractionGroupEvaluator:
         interaction_values = [float(item["interaction"]) for item in estimates]
         uncertainty = self._sample_uncertainty(interaction_values)
         used_episodes = tuple(episode for estimate in estimates for episode in estimate["episodes"])
-        cells = {
+        cell_counts = {
             str(key): sum(len(context[key]) for context in usable_contexts)
             for key in ((False, False), (True, False), (False, True), (True, True))
         }
@@ -929,7 +929,7 @@ class InteractionGroupEvaluator:
         )
         outcome_ids = tuple(sorted(episode.outcome_id for episode in used_episodes))
         return {
-            "cells": cells,
+            "cells": cell_counts,
             "pair_contribution": self._mean(item["pair_contribution"] for item in estimates),
             "first_contribution": self._mean(item["first_contribution"] for item in estimates),
             "second_contribution": self._mean(item["second_contribution"] for item in estimates),
