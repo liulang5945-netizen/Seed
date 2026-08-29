@@ -11,8 +11,8 @@ Taiji 的目标不是重造 Transformer，也不是把生物名词硬编码进�
 | 已完成 | Recovery portfolio 客户端审计回放 Gate | 只读、可审计产品证据 | S0/S1/S2 通过 |
 | 已完成 | W7-G0：全部 R 工作包合同冻结 | 可证伪 Gate 合同 | 5 份 v1 manifest + manifest contract test |
 | 已完成 | W7-R1 | 受限语言外设的安全降级 | G0 对 provider 合同通过 |
-| 当前 | W7-R2 | interaction-group 与恢复归因 | R1 的 provider 失败语义可观察 |
-| W7-R3 | 视觉与桌面体验 | 对真实能力的表达层 | R1/R2 的真实状态可投影 |
+| 已完成 | W7-R2 | interaction-group 与恢复归因 | R1 的 provider 失败语义可观察 |
+| 当前 | W7-R3 | 视觉与桌面体验 | R1/R2 的真实状态可投影 |
 | W7-R4 | CUDA 运行时 | 硬件专用的可恢复加速路径 | 有真实 CUDA 主机；此前保持 `hardware-blocked` |
 | W7-R5 | 开放域结构成长与自进化 | 有资源治理、可回滚的增长 | R1–R4 证据与长期评估基线齐备 |
 
@@ -114,7 +114,7 @@ R2 研究的是实际工作流中哪些交互区域共同提升/损害结果，�
 
 退出条件是见到真实 holdout 上的优势、lesion 后有可解释变化、checkpoint 往返不改变 group 溯源，且无硬编码角色名单。
 
-**S0/S1 已通过（2026-08-29）**：新增 `taiji/interaction_groups.py` 与 `tests/taiji_native/test_interaction_group_gate.py`，用版本化 `InteractionTraceEvent`/`InteractionTraceEpisode`/`InteractionTraceCorpus` 接收不透明 owner、task context、Outcome 数值、资源消耗和 checkpoint revision。估计器按 context 内四格观测计算 pair contribution、signed interaction、recovery interaction、uncertainty 和 lesion effect；只在 train/holdout 方向一致、资源和置信度预算满足时 admitted，否则留下 reason-coded tombstone。S0 报告 [taiji_w7_r2_interaction_groups_20260829.json](../../../reports/taiji_w7_r2_interaction_groups_20260829.json) 显示 2 个 admitted group（互补与冲突）、4 个拒绝候选，holdout 方向保持、checkpoint/owner lineage roundtrip 均通过。S1 新增 `project_native_adapter_episode()` 与真实 `TSKV8Adapter` replay/sandbox 脚本/测试，16 个原生 episode 的 `Event/Outcome` 投影均通过 `taiji-native-v1` checkpoint 精确回放，再进入同一 interaction-group evaluator；报告见 [taiji_w7_r2_interaction_groups_s1_20260829.json](../../../reports/taiji_w7_r2_interaction_groups_s1_20260829.json)。反例覆盖跨 checkpoint 混合、holdout 方向污染、资源压力和篡改 source digest；S2 才能进入真实 Workbench workflow。
+**S0/S1/S2 已通过（2026-08-29）**：新增 `taiji/interaction_groups.py` 与真实 Workbench 评测入口，S0 用版本化 trace 做 factorial counterfactual，S1 用真实 `TSKV8Adapter` 做 `Event/Outcome` 投影和 `taiji-native-v1` 精确回放，S2 通过 `SeedRuntime + WorkbenchEnvironment` 实际执行 workspace list/search/read，验证 capability snapshot、native executive selection、world evidence、recovery retry、holdout/lesion 和 checkpoint 归属。报告 [S2](../../../reports/taiji_w7_r2_interaction_groups_s2_20260829.json) 中 8 个 train、8 个 holdout record 全部 replay 一致，2 个 group admitted、4 个候选拒绝，`role_label_input_count=0`，未写回 executive/provider。反例覆盖跨 revision、holdout 污染、资源压力、source digest 篡改以及缺 Workbench 证据；R2 完成，下一步进入 W7-R3-S0 visual/desktop evidence。
 
 ## 7. W7-R3：视觉与桌面体验（依赖真实状态）
 
