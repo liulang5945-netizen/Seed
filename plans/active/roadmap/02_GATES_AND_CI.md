@@ -280,6 +280,12 @@ W7-G0 已完成，且没有把合同存在误写成能力完成。五份版本�
 
 `tests/test_w7_gate_manifests.py` 的 3 个结构测试通过；它还强制 R4 保持 `hardware-blocked`、所有未来 manifest 不得写 `implementation.status=passed`。当前唯一下一步切换为 W7-R1；G0 不产生新自治能力，也不替代后续各自的 S0/S1/S2 实证。
 
+### 14.22 W7-R1 S0：provider health 按内容寻址隔离（2026-08-29）
+
+R1 的 S0 已通过。原健康记录只以 `artifact_id` 为锚点，存在同 ID 换内容后继承旧失败计数的漏洞；现已把 `artifact_digest` 纳入 `LanguageProviderHealthState`、adapter 观察/回退和可见 provider status。空 digest 只作为旧测试 stub 的“未知”值兼容，真实 product-chat artifact 仍由 artifact Gate 强制 SHA-256 内容寻址。健康状态 checkpoint 向后读取无 digest 的 v1 记录，但不会把未知 digest 当作已验证内容。
+
+证据链：`tests/seed/test_provider_watchdog_gate.py` 的 3 例验证 S0 报告、同 ID 内容替换清零计数、旧 checkpoint 可读；`scripts/training/eval_taiji_provider_watchdog.py` 可从仓库根目录直接执行，报告 [taiji_w7_r1_provider_watchdog_20260829.json](../../../reports/taiji_w7_r1_provider_watchdog_20260829.json) 为 `gate.passed=true`，指标包含 healthy rate `1.0`、连续失败阈值 `2`、单次回退、冷却抑制 `2` 次和 checkpoint roundtrip `true`；旧 provider 定向回归 `20 passed`，Ruff check/format 对新增脚本和测试通过。S1 尚未完成，不把 S0 报告当成真实重启 replay 或 packaged-client 证据。
+
 ## 15. 停止项
 
 在 P2 通过前：

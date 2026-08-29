@@ -816,14 +816,15 @@ class LanguageProviderHealthPolicy:
 class LanguageProviderHealthState:
     """Immutable runtime health record for one active provider version.
 
-    The record is anchored on ``artifact_id``: observing a different version
-    starts a fresh record, so counters can never be inherited across a
-    rotation or a rollback.  Every transition returns a new snapshot, and the
-    whole record is checkpointable so a degraded provider stays degraded across
-    a restart instead of silently becoming healthy again.
+    The record is anchored on ``artifact_id`` and ``artifact_digest``:
+    observing different content starts a fresh record, so counters can never
+    be inherited by an in-place replacement.  Every transition returns a new
+    snapshot, and the whole record is checkpointable so a degraded provider
+    stays degraded across a restart instead of silently becoming healthy again.
     """
 
     artifact_id: str | None = None
+    artifact_digest: str | None = None
     probe_count: int = 0
     accepted_count: int = 0
     consecutive_failures: int = 0
@@ -855,6 +856,11 @@ class LanguageProviderHealthState:
         object.__setattr__(
             self, "artifact_id", None if self.artifact_id is None else str(self.artifact_id)
         )
+        object.__setattr__(
+            self,
+            "artifact_digest",
+            None if self.artifact_digest in (None, "") else str(self.artifact_digest),
+        )
         object.__setattr__(self, "probe_count", int(self.probe_count))
         object.__setattr__(self, "accepted_count", int(self.accepted_count))
         object.__setattr__(self, "consecutive_failures", int(self.consecutive_failures))
@@ -880,7 +886,11 @@ class LanguageProviderHealthState:
 
         return float(now) < self.cooldown_until
 
-    def for_artifact(self, artifact_id: str | None) -> LanguageProviderHealthState:
+    def for_artifact(
+        self,
+        artifact_id: str | None,
+        artifact_digest: str | None = None,
+    ) -> LanguageProviderHealthState:
         """Return this record when the version matches, else a fresh record.
 
         The cooldown window and rollback tally survive the rebase so a
@@ -889,10 +899,12 @@ class LanguageProviderHealthState:
         """
 
         target = None if artifact_id is None else str(artifact_id)
-        if target == self.artifact_id:
+        target_digest = None if artifact_digest in (None, "") else str(artifact_digest)
+        if target == self.artifact_id and target_digest == self.artifact_digest:
             return self
         return LanguageProviderHealthState(
             artifact_id=target,
+            artifact_digest=target_digest,
             rollback_count=self.rollback_count,
             cooldown_until=self.cooldown_until,
         )
@@ -901,6 +913,7 @@ class LanguageProviderHealthState:
         self,
         *,
         artifact_id: str | None,
+        artifact_digest: str | None = None,
         accepted: bool,
         reason_code: str,
         now: float,
@@ -910,7 +923,7 @@ class LanguageProviderHealthState:
 
         if not isinstance(policy, LanguageProviderHealthPolicy):
             raise TypeError("provider health observation requires a LanguageProviderHealthPolicy")
-        base = self.for_artifact(artifact_id)
+        base = self.for_artifact(artifact_id, artifact_digest)
         probe_count = base.probe_count + 1
         accepted_count = base.accepted_count + (1 if accepted else 0)
         consecutive_failures = 0 if accepted else base.consecutive_failures + 1
@@ -935,6 +948,7 @@ class LanguageProviderHealthState:
         self,
         *,
         artifact_id: str | None,
+        artifact_digest: str | None = None,
         now: float,
         policy: LanguageProviderHealthPolicy,
         reason_code: str,
@@ -945,6 +959,7 @@ class LanguageProviderHealthState:
             raise TypeError("provider health rollback requires a LanguageProviderHealthPolicy")
         return LanguageProviderHealthState(
             artifact_id=None if artifact_id is None else str(artifact_id),
+            artifact_digest=None if artifact_digest in (None, "") else str(artifact_digest),
             rollback_count=self.rollback_count + 1,
             cooldown_until=float(now) + policy.cooldown_seconds,
             last_reason_code=str(reason_code),
@@ -955,6 +970,7 @@ class LanguageProviderHealthState:
         return {
             "format": LANGUAGE_PROVIDER_HEALTH_FORMAT,
             "artifact_id": self.artifact_id,
+            "artifact_digest": self.artifact_digest,
             "probe_count": self.probe_count,
             "accepted_count": self.accepted_count,
             "consecutive_failures": self.consecutive_failures,
@@ -973,6 +989,11 @@ class LanguageProviderHealthState:
         return cls(
             artifact_id=(
                 None if payload.get("artifact_id") is None else str(payload["artifact_id"])
+            ),
+            artifact_digest=(
+                None
+                if payload.get("artifact_digest") in (None, "")
+                else str(payload["artifact_digest"])
             ),
             probe_count=int(payload.get("probe_count", 0)),
             accepted_count=int(payload.get("accepted_count", 0)),
@@ -1987,7 +2008,9 @@ class LanguageProviderHealthGate:
         *,
         degraded_organ: LanguageOrgan | None = None,
         artifact_id: str = "health-gate-active",
+        artifact_digest: str | None = None,
         rollback_artifact_id: str = NativeReadableTextLanguageOrgan.BACKEND_ID,
+        rollback_artifact_digest: str | None = None,
         now: float = 0.0,
     ) -> dict[str, Any]:
         policy = self._policy
@@ -2000,6 +2023,7 @@ class LanguageProviderHealthGate:
             healthy_rows.append(row)
             healthy_state = healthy_state.observe(
                 artifact_id=artifact_id,
+                artifact_digest=artifact_digest,
                 accepted=bool(row["accepted"]),
                 reason_code=str(row["reason_code"]),
                 now=clock,
@@ -2016,11 +2040,24 @@ class LanguageProviderHealthGate:
             probe_budget = policy.failure_threshold * 2
             for index in range(probe_budget):
                 clock += 1.0
+                if rollbacks:
+                    # Once rollback commits, the old organ is no longer the
+                    # active provider.  Model the remaining calls as blocked
+                    # rollback attempts instead of attributing their failures
+                    # to the new fallback artifact.
+                    if degraded_state.in_cooldown(clock):
+                        rollback_suppressed += 1
+                    continue
                 expression = self.cases()[index % len(self.cases())]
                 row = self._probe.probe(degraded_organ, expression)
                 degraded_rows.append(row)
                 degraded_state = degraded_state.observe(
                     artifact_id=current_artifact_id,
+                    artifact_digest=(
+                        artifact_digest
+                        if current_artifact_id == artifact_id
+                        else rollback_artifact_digest
+                    ),
                     accepted=bool(row["accepted"]),
                     reason_code=str(row["reason_code"]),
                     now=clock,
@@ -2036,6 +2073,7 @@ class LanguageProviderHealthGate:
                     probes_before_rollback = index + 1
                 degraded_state = degraded_state.after_rollback(
                     artifact_id=rollback_artifact_id,
+                    artifact_digest=rollback_artifact_digest,
                     now=clock,
                     policy=policy,
                     reason_code="provider_health_rolled_back",

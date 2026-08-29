@@ -1,0 +1,49 @@
+{
+  "manifest": "plans/manifests/taiji_w7_r1_provider_watchdog_v1.json",
+  "format": "taiji-language-provider-health-gate-v1",
+  "gate_id": "taiji-language-provider-health-gate-v1",
+  "policy": {
+    "failure_threshold": 2,
+    "cooldown_seconds": 30.0,
+    "minimum_accepted_rate": 0.5,
+    "minimum_rate_probes": 8
+  },
+  "metrics": {
+    "healthy_probe_count": 2,
+    "healthy_accepted_rate": 1.0,
+    "healthy_degraded": false,
+    "degraded_probe_count": 2,
+    "degraded_accepted_rate": 0.0,
+    "probes_before_rollback": 2,
+    "rollback_count": 1,
+    "rollback_suppressed_count": 2,
+    "checkpoint_roundtrip_matches": true,
+    "cooldown_active_after_rollback": true,
+    "rollback_target": "native-readable"
+  },
+  "health_state": {
+    "format": "taiji-language-provider-health-v1",
+    "artifact_id": "native-readable",
+    "artifact_digest": null,
+    "probe_count": 0,
+    "accepted_count": 0,
+    "consecutive_failures": 0,
+    "rollback_count": 1,
+    "degraded": false,
+    "rollback_pending": false,
+    "cooldown_until": 134.0,
+    "last_reason_code": "provider_health_rolled_back",
+    "last_probe_at": 104.0
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "a healthy provider stays active while a degrading provider trips the consecutive-failure threshold exactly once, falls back to the declared target, is held by the cooldown window, and reproduces its degraded record from a checkpoint"
+  },
+  "controls": [
+    "healthy provider stays active",
+    "structured leakage trips the consecutive-failure threshold",
+    "cooldown suppresses a second rollback",
+    "health state round-trips through checkpoint",
+    "content digest changes reset the health record"
+  ]
+}
