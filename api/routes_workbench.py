@@ -18,6 +18,7 @@ from api.models import (
     TaijiWorkbenchRecoveryBranchRequest,
     TaijiWorkbenchRecoveryBranchSelectRequest,
     TaijiWorkbenchRecoveryHandoffRequest,
+    TaijiWorkbenchRecoveryPortfolioMaintainRequest,
     TaijiWorkbenchReprojectionRequest,
     TaijiWorkbenchSuccessorLoopRequest,
     TaijiWorkbenchTaskRequest,
@@ -363,6 +364,24 @@ def select_taiji_workbench_recovery_branch(
             novelty=request.novelty,
             resource_budget=request.resource_budget,
             learn=request.learn,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/taiji/recovery-branch/maintain")
+def maintain_taiji_workbench_recovery_portfolio(
+    request: TaijiWorkbenchRecoveryPortfolioMaintainRequest,
+) -> dict[str, Any]:
+    """Expire stale branches and enforce the recovery portfolio capacity."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return runtime.maintain_taiji_workbench_recovery_portfolio(
+            parent_loop_id=request.parent_loop_id,
+            snapshot_id=request.snapshot_id,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

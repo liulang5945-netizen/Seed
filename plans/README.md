@@ -361,9 +361,9 @@ interaction-group attribution 已有主线提交和回归证据；此前“W7 �
 checkpoint 写入失败和 in-flight 防重复；又完成显式 recovery handoff 与 fresh-evidence continuation，旧 loop retired、预算/前缀继承；
 又完成 failure-context compatibility，拒绝无关 capability/跨路径 evidence；现在同一 parent failure 下已支持多个 recovery branch 的
 portfolio、内容寻址 identity、继承预算/完成前缀、source evidence/after-state provenance 和多候选 fail-closed selection，旧 loop/失败分支
-不得复活，checkpoint 保留完整 portfolio。WorkBench successor/recovery 定向回归 `7 passed`，OpenAPI 严格快照 `2 passed`，全量 Python
-`549 passed, 6 skipped`，覆盖率 `44.92%`。当前唯一下一步仍只以路线文档第 16 节为准：建立 recovery branch portfolio 的长期 liveness
-与容量淘汰 Gate。
+不得复活，checkpoint 保留完整 portfolio；随后完成 portfolio 的 tick TTL、终态容量淘汰、永久墓碑与只维护不执行的原生接口，过期/淘汰
+branch 不能重新注册或选择。WorkBench portfolio 定向回归 `2 passed`，OpenAPI 严格快照 `2 passed`，全量 Python `550 passed, 6 skipped`，
+覆盖率 `45.00%`。当前唯一下一步仍只以路线文档第 16 节为准：建立 recovery portfolio 的跨 checkpoint 一致性与并发互斥 Gate。
 
 ## 当前唯一下一步
 
