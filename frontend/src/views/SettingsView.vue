@@ -64,88 +64,19 @@
           <div class="settings-content">
 
             <!-- ── 1. 通用设置 ── -->
-            <section v-if="activeSection === 'general'" class="settings-section">
-              <h2>通用设置</h2>
-
-              <!-- 外观主题 -->
-              <div class="setting-row setting-row--col setting-row--first">
-                <span class="setting-label">外观主题</span>
-                <div class="theme-previews">
-                  <div
-                    v-for="th in appStore.themes"
-                    :key="th.id"
-                    class="theme-preview-card"
-                    :class="{ active: appStore.currentTheme === th.id }"
-                    :title="th.desc"
-                    @click="appStore.setTheme(th.id)"
-                  >
-                    <span class="theme-swatch" :style="{ background: th.gradient }"></span>
-                    <span class="theme-name">{{ th.name }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 默认语言 -->
-              <div class="setting-row">
-                <div class="setting-left">
-                  <span class="setting-label">默认语言</span>
-                  <p class="setting-desc">界面与交互的显示语言</p>
-                </div>
-                <div class="setting-right">
-                  <select v-model="uiLanguage" aria-label="默认语言" :disabled="savingSettings" @change="onUiLanguageChange">
-                    <option value="zh-CN">简体中文</option>
-                    <option value="zh-TW">繁體中文</option>
-                    <option value="en">English</option>
-                    <option value="ja">日本語</option>
-                    <option value="ko">한국어</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- 时区 -->
-              <div class="setting-row">
-                <div class="setting-left">
-                  <span class="setting-label">时区</span>
-                  <p class="setting-desc">用于定时任务、日志时间戳等</p>
-                </div>
-                <div class="setting-right">
-                  <select v-model="timezone" aria-label="时区" :disabled="savingSettings" @change="onTimezoneChange">
-                    <option value="Asia/Shanghai">Asia/Shanghai (UTC+8)</option>
-                    <option value="Asia/Tokyo">Asia/Tokyo (UTC+9)</option>
-                    <option value="Asia/Seoul">Asia/Seoul (UTC+9)</option>
-                    <option value="Asia/Singapore">Asia/Singapore (UTC+8)</option>
-                    <option value="America/Los_Angeles">America/Los_Angeles (UTC-8)</option>
-                    <option value="America/New_York">America/New_York (UTC-5)</option>
-                    <option value="Europe/London">Europe/London (UTC+0)</option>
-                    <option value="Europe/Berlin">Europe/Berlin (UTC+1)</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- 界面密度 -->
-              <div class="setting-row setting-row--last">
-                <div class="setting-left">
-                  <span class="setting-label">界面密度</span>
-                  <p class="setting-desc">调整元素间距与信息密度</p>
-                </div>
-                <div class="setting-right">
-                  <div class="radio-group" role="radiogroup" aria-label="界面密度">
-                    <label class="radio-chip">
-                      <input v-model="uiDensity" type="radio" name="density" value="compact" :disabled="savingSettings" @change="onDensityChange">
-                      <span class="rc-label">紧凑</span>
-                    </label>
-                    <label class="radio-chip">
-                      <input v-model="uiDensity" type="radio" name="density" value="default" :disabled="savingSettings" @change="onDensityChange">
-                      <span class="rc-label">默认</span>
-                    </label>
-                    <label class="radio-chip">
-                      <input v-model="uiDensity" type="radio" name="density" value="comfortable" :disabled="savingSettings" @change="onDensityChange">
-                      <span class="rc-label">宽松</span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </section>
+            <SettingsGeneralPanel
+              v-if="activeSection === 'general'"
+              :themes="appStore.themes"
+              :current-theme="appStore.currentTheme"
+              :ui-language="uiLanguage"
+              :timezone="timezone"
+              :ui-density="uiDensity"
+              :saving="savingSettings"
+              @theme-change="appStore.setTheme"
+              @ui-language-change="onUiLanguagePanelChange"
+              @timezone-change="onTimezonePanelChange"
+              @ui-density-change="onDensityPanelChange"
+            />
 
             <!-- ── 2. Taiji 运行设置 ── -->
             <section v-else-if="activeSection === 'neuron'" class="settings-section">
@@ -376,6 +307,7 @@ import { useChatStore } from '../stores/chatStore.js';
 import { nativeApi } from '../composables/nativeApi.js';
 import RuntimeEvidenceStrip from '../components/RuntimeEvidenceStrip.vue';
 import SettingsRuntimePanel from '../components/SettingsRuntimePanel.vue';
+import SettingsGeneralPanel from '../components/SettingsGeneralPanel.vue';
 
 const toast = inject('toast');
 const $confirm = inject('$confirm', () => Promise.resolve(false));
@@ -528,6 +460,18 @@ const onUiLanguageChange = () => {
 };
 const onTimezoneChange = () => saveSetting('timezone', timezone.value, confirmed.timezone);
 const onDensityChange = () => saveSetting('ui_density', uiDensity.value, confirmed.ui_density);
+const onUiLanguagePanelChange = (value) => {
+  uiLanguage.value = value;
+  onUiLanguageChange();
+};
+const onTimezonePanelChange = (value) => {
+  timezone.value = value;
+  onTimezoneChange();
+};
+const onDensityPanelChange = (value) => {
+  uiDensity.value = value;
+  onDensityChange();
+};
 const onThresholdChange = () => {
   let v = Number(activationThreshold.value);
   if (!Number.isFinite(v)) v = SETTINGS_DEFAULTS.taiji_activation_threshold;
