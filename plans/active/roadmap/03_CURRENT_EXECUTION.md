@@ -22,6 +22,8 @@
 
 建立 recovery portfolio 的客户端审计回放视图 Gate：在已有 native projection 消费层上增加只读审计模型/视图，按 revision 展示 branch 生命周期、容量压力、source evidence/after-state lineage 和 eviction tombstone；视图不得触发 maintain/select/execute，也不得显示可直接复用的 parameters。通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
 
+实现分解、各 Gate 的退出条件、并行训练/数据集改动的独立收口和后续 R1–R5 的详细合同见 [04_EXECUTION_PLAN.md](04_EXECUTION_PLAN.md)；该文件不替代本节的唯一下一步。
+
 ## 后续唯一顺序
 
 1. 完成上述 recovery portfolio 只读审计视图，并用故意破坏 revision、lineage、eviction 和参数脱敏的测试证明它会变红。
