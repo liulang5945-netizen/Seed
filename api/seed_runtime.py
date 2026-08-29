@@ -2318,9 +2318,11 @@ class SeedRuntime:
             )
         successor_graph = self._workbench_loop_state.get("successor_graph")
         selected_branch_id = ""
-        if isinstance(successor_graph, Mapping):
-            if str(successor_graph.get("parent_loop_id", "")) == str(parent_loop_id):
-                selected_branch_id = str(successor_graph.get("recovery_branch_id", ""))
+        if (
+            isinstance(successor_graph, Mapping)
+            and str(successor_graph.get("parent_loop_id", "")) == str(parent_loop_id)
+        ):
+            selected_branch_id = str(successor_graph.get("recovery_branch_id", ""))
         return {
             "format": WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT,
             "version": WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_VERSION,
