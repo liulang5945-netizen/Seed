@@ -92,6 +92,7 @@
               </div>
               <div v-if="workbench.error.value" class="prop-error">{{ workbench.error.value }}</div>
               <div v-else class="prop-hint">只读文件与目录由 native capability 提供</div>
+              <RecoveryPortfolioAuditPanel />
             </div>
           </div>
         </div>
@@ -178,6 +179,7 @@ import { Terminal, FolderOpen, Folder, FileCode, FileText, Image as ImageIcon, D
 import WorkspacePathDialog from '../components/WorkspacePathDialog.vue';
 import WorkspaceFileTree from '../components/WorkspaceFileTree.vue';
 import WorkspaceEditorPane from '../components/WorkspaceEditorPane.vue';
+import RecoveryPortfolioAuditPanel from '../components/RecoveryPortfolioAuditPanel.vue';
 
 defineOptions({ name: 'WorkspaceView' });
 

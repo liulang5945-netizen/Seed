@@ -10,23 +10,23 @@
 - W4 的 HF/GGUF/Transformer/Legacy 产品语义清理已完成；合法的 provider 只负责语言 realization，不选择工具、不拥有 Taiji cognition。
 - W5 的客户端真实性接入已完成；前端以 native capability、runtime/provider/homeostasis/training/knowledge evidence 为状态来源，旧 Legacy 调用不能回流。其中 homeostasis 一路直到 2026-08-29（提交 `cd39632`）才真正接通：此前 `taiji/adapter.py` 没有 homeostatic 读访问器，`api/models_runtime.py` 的 `LifeNeedsPayload` 又给四个需求字段各设了 `default: 50.0`，于是空 `needs: {}` 在传输层被补成四个编造值、原生 `stress` 被静默丢弃——**客户端显示「已接入原生」而数据全是假的，且门禁全绿**。现已改为 `dict[str, float] = {}`（缺测就不出现，不再编造），并由 `tests/seed/test_native_life_status.py` 的反编造断言看守。
 - W6 的 typed native facade 和产品页拆分已完成至 Settings 共享面板收口；组件不越权持有 native API 副作用，前端回归保持可见。
+- current Gate（recovery portfolio 客户端审计回放）的 S0/S1 已在代码层闭合：只读绑定键 `GET /taiji/recovery-branch/context`、结构化错误码、`RecoveryPortfolioAuditPanel`（右栏属性检查器，事件投影驱动，stale-keep-last / 切 loop 清空 / 只读）。详见 [02_GATES_AND_CI.md §14.20](02_GATES_AND_CI.md)。
 - P6 provider artifact、provider startup、客户端观测和训练/回滚合同已接通；P7 executive、grounding、world evidence、bounded successor graph 和 recovery portfolio 已形成可恢复只读闭环。
 
 ### 必须保持的边界
 
 - 当前默认自主执行只覆盖 Taiji-owned、freshness-valid、受能力快照约束的只读 Workbench 路径；写入自治、开放域自然语言工具选择和外部 MCP 生命周期仍未宣称完成。
+- recovery portfolio 审计 Gate 的 **S2 packaged-client 现场取证未完成**：需在 Legacy-off 打包客户端打开真实 Workspace 路径、查看该审计面板并记录 capability / network / UI 证据、追溯到同一 checkpoint revision；补齐前该 Gate 不得宣称三层全过（见 [04_EXECUTION_PLAN.md §2.4](04_EXECUTION_PLAN.md)）。
 - provider watchdog、interaction-group、视觉/桌面体验、CUDA、开放域学习和结构自进化没有取消，只能按 W7 顺序推进；CUDA 在当前 CPU-only 主机上保持 `hardware-blocked`。
-- 训练前必须先验证 checkpoint 能保存、恢复并继续产生等价的 lineage、预算、结构和 provider artifact 状态；任何只在内存中成立的训练结果不算 Gate 证据。
+- 训练前必须先验证 checkpoint 能保存、恢复并继续产生等价的 lineage、预算、结构和 provider artifact 状态；任何只在内存中成立的训练结果不算 Gate 证据。该往返等价性准入已由 [04_EXECUTION_PLAN.md §3](04_EXECUTION_PLAN.md) 的 `test_checkpoint_roundtrip_contract.py`（3 例）满足。
 
 ## 当前唯一下一步
 
-建立 recovery portfolio 的客户端审计回放视图 Gate：在已有 native projection 消费层上增加只读审计模型/视图，按 revision 展示 branch 生命周期、容量压力、source evidence/after-state lineage 和 eviction tombstone；视图不得触发 maintain/select/execute，也不得显示可直接复用的 parameters。通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
-
-实现分解、各 Gate 的退出条件和后续 R1–R5 的详细合同见 [04_EXECUTION_PLAN.md](04_EXECUTION_PLAN.md)；该文件不替代本节的唯一下一步。原「并行训练/数据集改动」已于 2026-08-29 以独立提交 `cd39632` 收口（见该文件 §3），随后同日追加训练 ETA / 进度分母修复（见该文件 §3.1 与 [02_GATES_AND_CI.md §14.18](02_GATES_AND_CI.md)）；但其中训练类改动的 checkpoint 往返等价性准入始终未满足，故不得据此启动长训。
+完成 recovery portfolio 审计 Gate 的 **S2 packaged-client 现场取证**：以真实 Workspace 路径在 Legacy-off 打包客户端打开「属性与检查器」里的恢复组合审计面板，记录 capability / network / UI 证据，并从客户端实际追溯到同一 checkpoint revision。完成后该 Gate 三层全过，进入 W7-G0 合同冻结。
 
 ## 后续唯一顺序
 
-1. 完成上述 recovery portfolio 只读审计视图，并用故意破坏 revision、lineage、eviction 和参数脱敏的测试证明它会变红。
+1. 完成上述 recovery portfolio 审计 Gate 的 S2 取证，兑现 §2 退出条件。
 2. 进入 W7-G0，先把 provider、interaction-group、视觉、CUDA 和开放域 R5 的输入/输出合同冻结到真实 capability、trace、资源预算和 checkpoint 版本上。
 3. 按 R1 → R2 → R3 → R4 → R5 推进；每个方向先做可证伪 Gate，再接入真实运行时，最后才更新产品展示。
 

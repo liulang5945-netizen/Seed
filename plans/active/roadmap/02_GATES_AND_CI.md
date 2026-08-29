@@ -254,6 +254,18 @@ python -c "import sys; sys.path.insert(0,'tests'); from test_openapi_snapshot im
 
 证据链：RED——guarded 用例自然抛出该 `ValueError`；变异探针（monkeypatch 掉 `_restore_topology_proposals` 使其丢弃结构）证明等价性断言会以 `topology_count 期望 1 实测 0` 干净地抓住结构丢失。GREEN——3 例通过后再跑全量：后端 `563 passed, 6 skipped`、Ruff check/format 通过、核心 mypy `Success: no issues found in 44 source files`、前端 `42 files / 237 passed`、`check:api-contract`/`check:native-boundary`/`check:aliases` 全过。据此 §3 的往返等价性准入从「未满足」翻转为「已满足」，长训准入的前提补齐。
 
+### 14.20 recovery portfolio 客户端审计回放 Gate：只读绑定键 + 结构化错误码 + 审计面板（2026-08-29）
+
+§2 当前 Gate 的 S0/S1 落地。三条不可回退的纪律：
+
+1. **客户端不得自行猜测绑定键**。审计视图的 parent loop / snapshot / revision 只能来自服务端只读投影：新增 `GET /api/workbench/taiji/recovery-branch/context`（`SeedRuntime.taiji_workbench_recovery_portfolio_context`），返回 `{has_portfolio, parent_loop_id, snapshot_id, revision, selected_branch_id}`；无 portfolio 时返回 `has_portfolio:false` 结构化空态而非错误。禁止输入框、固定 loop id 或「最近一次」猜测。
+2. **错误必须结构化、可分支**。portfolio 快照路由把稳定错误消息映射为 `detail.error`：`portfolio_not_persisted`、`portfolio_snapshot_not_current`、`portfolio_parent_mismatch`、`portfolio_revision_stale`（附 `observed_revision`）、`portfolio_invalid`。客户端 `readJson` 已支持 `detail.error`，前端按码分支渲染结构化状态，而不是解析人类可读文本。
+3. **stale 时保留最后一个已验证快照**。面板 (`RecoveryPortfolioAuditPanel`，组合进 WorkspaceView 右栏「属性与检查器」) 在 `portfolio_revision_stale` 时保留 `lastValid` 并标记过期，不覆盖；切换 parent loop 时先清空再重绑，卸载时清空；事件投影驱动重取（不新增独立轮询）。只读合同：仅调用 context/portfolio 两个 GET，vitest 静态断言组件源码不含 `preflightLoop`/`executeLoop`/`previewIntent`/`executeIntent`。
+
+证据链：RED——context 端点不存在（404）与 `detail` 为字符串均实测变红；变异探针之一（monkeypatch `_portfolio_error_code` 恒返回 `portfolio_unavailable`）触发 `assert 'portfolio_unavailable' == 'portfolio_not_persisted'`，之二（monkeypatch 快照投影注入 `parameters`）触发 `assert 'parameters' not in {...}`。GREEN——前端 `43 files / 242 passed`（+面板 5 例覆盖五状态矩阵、stale-keep-last、parent 切换清空、只读静态断言）、后端 `568 passed, 6 skipped`（+`tests/test_recovery_portfolio_audit_gate.py` 5 例覆盖 S0 状态矩阵/脱敏/容量与空态、struct 错误码、S1 checkpoint 回放）、核心 mypy 0、Ruff 全过、API contract `46 literals PASS`（context 路径入 OpenAPI 基线，已 `--snapshot-update`）、ESLint 0、`npm run build` 通过。
+
+**仍然开放的退出项**：S2 packaged-client 现场取证（真实 Workspace 路径查看面板并追溯 checkpoint revision）尚未执行，见 [04_EXECUTION_PLAN.md §2.4](04_EXECUTION_PLAN.md)；在该项补齐前，本节 Gate 不得宣称三层全过，W7-G0 入口以 S2 完成为准。
+
 ## 15. 停止项
 
 在 P2 通过前：

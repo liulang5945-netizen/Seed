@@ -2337,6 +2337,31 @@ class SeedRuntime:
             "evicted_branches": evicted,
         }
 
+    def taiji_workbench_recovery_portfolio_context(self) -> dict[str, Any]:
+        """Return the read-only lineage binding key for the client audit view.
+
+        plans/active/roadmap/04_EXECUTION_PLAN.md §2.1：客户端不得用输入框、
+        固定 loop id 或「最近一次」猜测去绑定 recovery ledger；这里把持久化的
+        parent loop / snapshot / revision 以只读投影形式作为唯一绑定来源。
+        无 portfolio 时返回结构化空态，而不是错误。
+        """
+
+        portfolio = self._workbench_loop_state.get("recovery_portfolio")
+        if not isinstance(portfolio, Mapping):
+            return {"status": "portfolio_context", "has_portfolio": False}
+        successor_graph = self._workbench_loop_state.get("successor_graph")
+        selected_branch_id = ""
+        if isinstance(successor_graph, Mapping):
+            selected_branch_id = str(successor_graph.get("recovery_branch_id", ""))
+        return {
+            "status": "portfolio_context",
+            "has_portfolio": True,
+            "parent_loop_id": str(portfolio.get("parent_loop_id", "")),
+            "snapshot_id": str(portfolio.get("snapshot_id", "")),
+            "revision": int(portfolio.get("revision", 0)),
+            "selected_branch_id": selected_branch_id,
+        }
+
     @_workbench_synchronized
     def register_taiji_workbench_recovery_branch(
         self,

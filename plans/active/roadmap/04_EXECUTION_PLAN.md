@@ -48,6 +48,16 @@ Taiji 的目标不是重造 Transformer，也不是把生物名词硬编码进�
 
 退出条件是：三层均通过；审计组件仅有 capability/event/portfolio GET 访问；前后端测试证明不输出敏感 parameters；正确处理 stale state；从客户端实际可追溯到同一 checkpoint revision。完成后，才可进入 W7-G0。
 
+### 2.4 落地进展（2026-08-29）
+
+S0（组件/投影）与 S1（checkpoint 回放）已在代码层闭合，证据与红/绿链见 [02_GATES_AND_CI.md §14.20](02_GATES_AND_CI.md)：
+
+- **只读绑定键**：新增 `GET /api/workbench/taiji/recovery-branch/context`，把持久化的 parent loop / snapshot / revision 以只读投影形式作为客户端唯一绑定来源（§2.1 禁止输入框/固定 id/「最近一次」猜测）；无 portfolio 时返回 `has_portfolio:false` 结构化空态。
+- **结构化错误码**：portfolio 快照路由把稳定错误映射为可分支的 `detail.error`（`portfolio_not_persisted` / `portfolio_snapshot_not_current` / `portfolio_parent_mismatch` / `portfolio_revision_stale` + `observed_revision` / `portfolio_invalid`）。
+- **前端审计面板**：`RecoveryPortfolioAuditPanel` 组合进 WorkspaceView 右栏「属性与检查器」，事件投影驱动重取（不新增独立轮询）；渲染 §2.2 全部四类信息（快照元数据/生命周期与 lineage/墓碑/结构化空态与错误态）；stale 时保留最后一个已验证快照并标记过期、切换 parent loop 或卸载时清空关联状态；只读（仅 context/portfolio 两个 GET，vitest 静态断言源码不含任何 mutation 投影方法）。不展示 parameters / evidence / 可复用执行输入。
+
+**仍待取证的退出项（不得当作已闭合引用）**：S2 packaged-client 现场取证——在 Legacy-off 打包客户端里打开真实 Workspace 路径、查看该审计面板，记录 capability / network / UI 证据并追溯同一 checkpoint revision。当前只提供 S0/S1 的自动化证据与可供现场取证的组件落点。据此，W7-G0 的入口以 S2 取证完成为准。
+
 ## 3. 并行 training / dataset / life-status 改动：已独立收口（2026-08-29）
 
 原先滞留在工作树中的那组 training / dataset / life-status 改动及诊断脚本，已按本节要求以独立提交 `cd39632` 收口，不与只读审计 Gate 混提。实际修掉三个用户报告的产品缺陷：
