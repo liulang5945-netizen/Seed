@@ -391,6 +391,27 @@ def maintain_taiji_workbench_recovery_portfolio(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
+@router.get("/taiji/recovery-branch/portfolio")
+def taiji_workbench_recovery_portfolio_snapshot(
+    parent_loop_id: str,
+    snapshot_id: str,
+    expected_revision: int | None = None,
+) -> dict[str, Any]:
+    """Return recovery state for observation without exposing executable payloads."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return runtime.taiji_workbench_recovery_portfolio_snapshot(
+            parent_loop_id=parent_loop_id,
+            snapshot_id=snapshot_id,
+            expected_revision=expected_revision,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
 @router.post("/preview")
 def preview_workbench_intent(request: WorkbenchIntentRequest) -> dict[str, Any]:
     """Validate a mutating action and return a short-lived approval token."""

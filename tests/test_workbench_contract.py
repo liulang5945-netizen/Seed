@@ -962,6 +962,17 @@ def test_recovery_portfolio_registers_and_selects_active_branches(tmp_path, monk
     assert selected["recovery"]["branch_id"] == branch_two
     assert len(selected["recovery_portfolio"]["branches"]) == 2
     assert checkpoint.exists()
+    observed = runtime.taiji_workbench_recovery_portfolio_snapshot(
+        parent_loop_id="portfolio-parent",
+        snapshot_id=snapshot_id,
+        expected_revision=selected["recovery_portfolio"]["revision"],
+    )
+    assert observed["counts"]["active"] == 2
+    assert observed["counts"]["evicted"] == 0
+    assert observed["selected_branch_id"] == branch_two
+    assert all(
+        "parameters" not in branch and "evidence" not in branch for branch in observed["branches"]
+    )
     with pytest.raises(RuntimeError, match="revision is stale"):
         runtime.execute_taiji_workbench_successor_loop(
             snapshot_id=snapshot_id,
@@ -978,6 +989,16 @@ def test_recovery_portfolio_registers_and_selects_active_branches(tmp_path, monk
 
     restored = SeedRuntime.load(checkpoint)
     assert len(restored._workbench_loop_state["recovery_portfolio"]["branches"]) == 2
+    restored_observed = restored.taiji_workbench_recovery_portfolio_snapshot(
+        parent_loop_id="portfolio-parent",
+        snapshot_id=snapshot_id,
+        expected_revision=observed["revision"],
+    )
+    assert restored_observed["revision"] == observed["revision"]
+    assert restored_observed["counts"] == observed["counts"]
+    assert [item["branch_id"] for item in restored_observed["branches"]] == [
+        item["branch_id"] for item in observed["branches"]
+    ]
 
 
 def test_recovery_portfolio_liveness_expires_and_evicts_terminal_branch(
