@@ -58,6 +58,7 @@ export const nativeApiPaths = Object.freeze({
     taijiExecute: '/api/workbench/taiji/execute',
     taijiProject: '/api/workbench/taiji/project',
     taijiReproject: '/api/workbench/taiji/reproject',
+    taijiRecoveryPortfolio: '/api/workbench/taiji/recovery-branch/portfolio',
     loopPreflight: '/api/workbench/loop/preflight',
     loopExecute: '/api/workbench/loop/execute',
   }),
@@ -330,6 +331,16 @@ export const nativeApi = Object.freeze({
   taijiWorkbenchReproject: (payload) => readJson(
     `${API_BASE}${nativeApiPaths.workbench.taijiReproject}`,
     jsonOptions(payload),
+  ),
+  taijiWorkbenchRecoveryPortfolio: (parentLoopId, snapshotId, expectedRevision = null) => readJson(
+    urlFor(
+      nativeApiPaths.workbench.taijiRecoveryPortfolio,
+      {
+        parent_loop_id: parentLoopId,
+        snapshot_id: snapshotId,
+        expected_revision: expectedRevision,
+      },
+    ),
   ),
   loopPreflight: (payload) => readJson(
     `${API_BASE}${nativeApiPaths.workbench.loopPreflight}`,

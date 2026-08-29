@@ -26,6 +26,7 @@ describe('nativeApi facade', () => {
     expect(nativeApiPaths.workbench.taijiExecute).toBe('/api/workbench/taiji/execute')
     expect(nativeApiPaths.workbench.taijiProject).toBe('/api/workbench/taiji/project')
     expect(nativeApiPaths.workbench.taijiReproject).toBe('/api/workbench/taiji/reproject')
+    expect(nativeApiPaths.workbench.taijiRecoveryPortfolio).toBe('/api/workbench/taiji/recovery-branch/portfolio')
     expect(nativeApiPaths.chat.workbenchStream).toBe('/api/chat/workbench/stream')
     expect(nativeApiPaths.system.selectFolder).toBe('/api/system/select_folder')
   })
@@ -48,11 +49,13 @@ describe('nativeApi facade', () => {
       .mockResolvedValueOnce(jsonResponse({ execution: { outcome: { status: 'success' } } }))
       .mockResolvedValueOnce(jsonResponse({ affordances: [] }))
       .mockResolvedValueOnce(jsonResponse({ affordances: [] }))
+      .mockResolvedValueOnce(jsonResponse({ revision: 3, counts: {} }))
 
     await nativeApi.taijiWorkbenchAdmit({ snapshot_id: 'snapshot-1' })
     await nativeApi.taijiWorkbenchExecute({ snapshot_id: 'snapshot-1' })
     await nativeApi.taijiWorkbenchProject({ snapshot_id: 'snapshot-1', parameter_bindings: {} })
     await nativeApi.taijiWorkbenchReproject({ snapshot_id: 'snapshot-1' })
+    await nativeApi.taijiWorkbenchRecoveryPortfolio('loop-1', 'snapshot-1', 3)
 
     expect(authFetch).toHaveBeenNthCalledWith(1, '/api/workbench/taiji/admit', expect.objectContaining({
       method: 'POST',
@@ -70,6 +73,10 @@ describe('nativeApi facade', () => {
       method: 'POST',
       body: JSON.stringify({ snapshot_id: 'snapshot-1' }),
     }))
+    expect(authFetch).toHaveBeenNthCalledWith(
+      5,
+      '/api/workbench/taiji/recovery-branch/portfolio?parent_loop_id=loop-1&snapshot_id=snapshot-1&expected_revision=3',
+    )
   })
 
   it('encodes system dialog query through the facade', async () => {

@@ -11,6 +11,7 @@ import { nativeApi } from './nativeApi.js'
 
 const capabilities = ref(null)
 const events = ref([])
+const recoveryPortfolio = ref(null)
 const error = ref('')
 const loading = ref(false)
 let consumerCount = 0
@@ -89,6 +90,19 @@ async function readFile(path) {
 async function resolveProgrammingLanguage(path, lspLanguageId = '') {
   await ensureCapabilities()
   const payload = await nativeApi.programmingLanguage(path, lspLanguageId)
+  error.value = ''
+  return payload
+}
+
+async function refreshRecoveryPortfolio(parentLoopId, expectedRevision = null) {
+  await ensureCapabilities()
+  if (!parentLoopId) throw new Error('recovery portfolio parent loop id 不能为空')
+  const payload = await nativeApi.taijiWorkbenchRecoveryPortfolio(
+    parentLoopId,
+    snapshotId.value,
+    expectedRevision,
+  )
+  recoveryPortfolio.value = payload
   error.value = ''
   return payload
 }
@@ -253,6 +267,7 @@ export function useWorkbenchProjection() {
   return {
     capabilities: readonly(capabilities),
     events: readonly(events),
+    recoveryPortfolio: readonly(recoveryPortfolio),
     error: readonly(error),
     loading: readonly(loading),
     snapshotId,
@@ -270,6 +285,7 @@ export function useWorkbenchProjection() {
     setWorkspaceRoot,
     readFile,
     resolveProgrammingLanguage,
+    refreshRecoveryPortfolio,
     setEditorLanguage,
     previewIntent,
     executeIntent,

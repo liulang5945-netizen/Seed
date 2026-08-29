@@ -2226,6 +2226,13 @@ revision、branch identity 和顺序一致，过期状态可被观察但不会�
 WorkBench portfolio 定向回归 `2 passed`，OpenAPI 严格快照 `2 passed`，全量 Python 回归 `550 passed, 6 skipped`，覆盖率 `45.13%`，Ruff、
 Black、核心 mypy 均通过。该 Gate 仍只覆盖 bounded read-only recovery，不开放写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
 
-**当前唯一下一步：建立 recovery portfolio snapshot 的客户端消费与只读审计回放 Gate。** 将该状态投影接入 native facade/客户端观测层，
-只允许展示 revision、生命周期、容量和血缘摘要；对 checkpoint restore、revision stale、expired/evicted tombstone 做回放验证，禁止前端或
-语言 provider 把 snapshot 摘要反向拼装为执行请求。通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
+**已完成（2026-08-29）：recovery portfolio snapshot 的客户端消费与只读审计回放 Gate。** frontend native facade 增加
+`taijiRecoveryPortfolio` 明确查询路径与可选 expected revision，`useWorkbenchProjection` 提供只读 `recoveryPortfolio` 状态和
+`refreshRecoveryPortfolio(parentLoopId, expectedRevision)`，不新增执行/写入方法；facade 回归验证 query/body 边界，后端回归验证
+checkpoint restore、revision stale、expired/evicted tombstone 和 branch 顺序，前端不会把 snapshot 摘要拼装为 candidate。前端 Vitest
+`42 files / 233 passed`、native-boundary、API contract、ESLint `0 errors / 13 warnings`、生产构建均通过。该 Gate 仍只覆盖 bounded
+read-only recovery，不开放写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
+
+**当前唯一下一步：建立 recovery portfolio 的客户端审计回放视图 Gate。** 在已有 native projection 消费层上增加只读审计模型/视图，按
+revision 展示 branch 生命周期、容量压力、source evidence/after-state lineage 和 eviction tombstone；视图不得触发 maintain/select/execute，
+也不得显示可直接复用的 parameters。通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
