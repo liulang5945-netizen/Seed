@@ -756,6 +756,115 @@ def test_successor_graph_persists_read_failure_as_recovery_needed(tmp_path, monk
     assert replay["steps"] == []
 
 
+def test_taiji_recovery_handoff_route_uses_fresh_workspace_evidence(tmp_path, monkeypatch) -> None:
+    checkpoint = tmp_path / "route-recovery.pt"
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(
+        Seed(episode_id="route-recovery-handoff"),
+        checkpoint_path=checkpoint,
+    )
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    runtime.model.architecture.observe(65, learn=False)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.read": {"path": "missing.txt"}},
+    )
+
+    import api.seed_runtime as seed_runtime_module
+
+    monkeypatch.setattr(seed_runtime_module, "_runtime", runtime)
+    with TestClient(create_app(startup_tasks=False)) as client:
+        failed = client.post(
+            "/api/workbench/taiji/successor-loop",
+            json={
+                "snapshot_id": snapshot_id,
+                "loop_id": "route-parent",
+                "max_steps": 1,
+            },
+        )
+        (tmp_path / "fresh.txt").write_bytes(b"route fresh evidence\n")
+        refreshed = client.get("/api/workbench/files", params={"path": "."})
+        handed_off = client.post(
+            "/api/workbench/taiji/recovery-handoff",
+            json={
+                "parent_loop_id": "route-parent",
+                "recovery_loop_id": "route-child",
+                "snapshot_id": snapshot_id,
+                "max_steps": 1,
+            },
+        )
+
+    assert failed.status_code == 200
+    assert failed.json()["status"] == "recovery_needed"
+    assert refreshed.status_code == 200
+    assert handed_off.status_code == 200
+    assert handed_off.json()["recovery"]["parent_loop_id"] == "route-parent"
+
+
+def test_successor_graph_recovery_handoff_requires_fresh_evidence(tmp_path, monkeypatch) -> None:
+    checkpoint = tmp_path / "successor-handoff.pt"
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(
+        Seed(episode_id="successor-recovery-handoff"),
+        checkpoint_path=checkpoint,
+    )
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    runtime.model.architecture.observe(65, learn=False)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.read": {"path": "missing.txt"}},
+    )
+    failed = runtime.execute_taiji_workbench_successor_loop(
+        snapshot_id=snapshot_id,
+        loop_id="handoff-parent",
+        max_steps=1,
+    )
+    with pytest.raises(RuntimeError, match="newer workspace evidence"):
+        runtime.handoff_taiji_workbench_recovery(
+            parent_loop_id="handoff-parent",
+            recovery_loop_id="handoff-child",
+            snapshot_id=snapshot_id,
+            max_steps=1,
+        )
+
+    (tmp_path / "fresh.txt").write_bytes(b"fresh evidence\n")
+    runtime.execute_workbench_intent(
+        ActionIntent(
+            intent_id="fresh-evidence-list",
+            kind="workspace.list",
+            parameters={"path": "."},
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        snapshot_id=snapshot_id,
+    )
+    handed_off = runtime.handoff_taiji_workbench_recovery(
+        parent_loop_id="handoff-parent",
+        recovery_loop_id="handoff-child",
+        snapshot_id=snapshot_id,
+        max_steps=1,
+    )
+
+    assert handed_off["recovery"]["parent_loop_id"] == "handoff-parent"
+    assert handed_off["recovery"]["parent_failure"]["code"] == "not_found"
+    assert handed_off["recovery"]["source_evidence_id"] != failed["failure"]["latest_evidence_id"]
+    assert handed_off["completed_prefix"] == 1
+    with pytest.raises(RuntimeError, match="retired after recovery"):
+        runtime.execute_taiji_workbench_successor_loop(
+            snapshot_id=snapshot_id,
+            loop_id="handoff-parent",
+            max_steps=1,
+        )
+
+
 def test_successor_graph_snapshot_drift_is_recovery_needed(tmp_path) -> None:
     (tmp_path / "README.md").write_bytes(b"snapshot drift\n")
     checkpoint = tmp_path / "successor-snapshot.pt"

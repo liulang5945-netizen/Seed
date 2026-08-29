@@ -981,6 +981,13 @@ class SeedRuntime:
             ):
                 raise ValueError("Taiji successor graph budget changed during continuation")
         else:
+            retired_loop_ids = (
+                {str(item) for item in existing.get("retired_loop_ids", ())}
+                if isinstance(existing, Mapping)
+                else set()
+            )
+            if str(loop_id) in retired_loop_ids:
+                raise RuntimeError("Taiji successor graph loop identity was retired after recovery")
             if isinstance(existing, Mapping) and isinstance(existing.get("in_flight"), Mapping):
                 raise RuntimeError(
                     "Taiji successor graph has an unresolved in-flight step; recovery is required"
@@ -1002,6 +1009,7 @@ class SeedRuntime:
                 ],
                 "latest_evidence_id": "",
                 "failure": None,
+                "retired_loop_ids": [],
                 "status": "running",
             }
 
@@ -1469,6 +1477,136 @@ class SeedRuntime:
         result["completed_prefix"] = int(successor_state.get("completed_steps", 0))
         result["budget_units"] = float(successor_state.get("budget_units", 0.0))
         result["frontier_affordance_ids"] = list(successor_state.get("frontier_affordance_ids", ()))
+        return result
+
+    def handoff_taiji_workbench_recovery(
+        self,
+        *,
+        parent_loop_id: str,
+        recovery_loop_id: str,
+        snapshot_id: str,
+        max_steps: int = 8,
+        max_budget_units: float = 32.0,
+        novelty: float = 0.0,
+        resource_budget: float = 1.0,
+        learn: bool = False,
+    ) -> dict[str, Any]:
+        """Start a new bounded loop only from fresh external workspace evidence."""
+
+        import math
+
+        from seed_platform.workbench import (
+            WORKBENCH_TAIJI_EVIDENCE_KIND,
+            WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT,
+            WORKBENCH_TAIJI_SUCCESSOR_GRAPH_VERSION,
+        )
+
+        if not str(parent_loop_id).strip() or not str(recovery_loop_id).strip():
+            raise ValueError("recovery parent and loop ids cannot be empty")
+        if str(parent_loop_id) == str(recovery_loop_id):
+            raise ValueError("recovery loop must have a new identity")
+        environment = self._sync_workbench_root()
+        if str(snapshot_id) != environment.capability_snapshot.snapshot_id:
+            raise ValueError("recovery capability snapshot is not current")
+        existing = self._workbench_loop_state.get("successor_graph")
+        if not isinstance(existing, Mapping):
+            raise RuntimeError("recovery requires a persisted successor graph failure")
+        if str(existing.get("loop_id", "")) != str(parent_loop_id):
+            raise ValueError("recovery parent loop does not match the persisted graph")
+        if str(existing.get("status", "")) not in {"recovery_needed", "checkpoint_failed"}:
+            raise RuntimeError("recovery requires a successor graph in recovery-needed state")
+        failure = existing.get("failure")
+        if not isinstance(failure, Mapping):
+            raise RuntimeError("recovery state has no auditable failure record")
+        try:
+            budget_limit = float(existing.get("budget_limit", 0.0))
+            budget_used = float(existing.get("budget_units", 0.0))
+        except (TypeError, ValueError) as exc:
+            raise ValueError("recovery budget state is invalid") from exc
+        if not math.isfinite(budget_limit) or not math.isfinite(budget_used):
+            raise ValueError("recovery budget state must be finite")
+        if not math.isclose(
+            budget_limit,
+            float(max_budget_units),
+            rel_tol=0.0,
+            abs_tol=1e-9,
+        ):
+            raise ValueError("recovery cannot reset or change the parent budget")
+        if budget_used >= budget_limit:
+            raise RuntimeError("recovery has no remaining budget")
+
+        world = self.model.architecture.cognitive_snapshot().world
+        latest_event = next(
+            (item for item in reversed(world.events) if item.kind == WORKBENCH_TAIJI_EVIDENCE_KIND),
+            None,
+        )
+        failure_event_id = str(failure.get("latest_evidence_id", ""))
+        if latest_event is None or latest_event.event_id == failure_event_id:
+            raise RuntimeError("recovery requires a newer workspace evidence event")
+        if latest_event.tick != world.tick:
+            raise RuntimeError("recovery evidence is stale")
+
+        from seed_platform.workbench import WorkbenchTaijiEvidence
+
+        evidence = WorkbenchTaijiEvidence.from_taiji_event(latest_event)
+        if not evidence.success:
+            raise RuntimeError("recovery evidence must be successful")
+        if evidence.snapshot_id != environment.capability_snapshot.snapshot_id:
+            raise RuntimeError("recovery evidence capability snapshot drifted")
+        affordances = evidence.to_taiji_affordances(environment.capability_snapshot)
+        if not affordances:
+            raise RuntimeError("recovery evidence produced no successor affordance")
+        consumed = {str(item) for item in existing.get("consumed_affordance_ids", ())}
+        if any(item.affordance_id in consumed for item in affordances):
+            raise RuntimeError("recovery evidence reintroduced a consumed affordance")
+        world = self.model.architecture.set_world_affordances(affordances)
+        retired_loop_ids = [
+            *existing.get("retired_loop_ids", ()),
+            str(parent_loop_id),
+        ]
+        recovery_state = {
+            "format": WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT,
+            "version": WORKBENCH_TAIJI_SUCCESSOR_GRAPH_VERSION,
+            "loop_id": str(recovery_loop_id),
+            "parent_loop_id": str(parent_loop_id),
+            "snapshot_id": str(snapshot_id),
+            "budget_limit": budget_limit,
+            "budget_units": budget_used,
+            "completed_steps": int(existing.get("completed_steps", 0)),
+            "committed_request_ids": [
+                str(item) for item in existing.get("committed_request_ids", ())
+            ],
+            "consumed_affordance_ids": [
+                str(item) for item in existing.get("consumed_affordance_ids", ())
+            ],
+            "event_ids": [str(item) for item in existing.get("event_ids", ())],
+            "frontier_affordance_ids": [item.affordance_id for item in affordances],
+            "remaining_frontier_affordance_ids": [item.affordance_id for item in affordances],
+            "latest_evidence_id": evidence.evidence_id,
+            "failure": None,
+            "retired_loop_ids": retired_loop_ids,
+            "recovery": {
+                "parent_loop_id": str(parent_loop_id),
+                "parent_failure": dict(failure),
+                "source_evidence_id": evidence.evidence_id,
+                "source_after_state_digest": evidence.after_state_digest,
+            },
+            "status": "running",
+        }
+        self._workbench_loop_state = {
+            **self._workbench_loop_state,
+            "successor_graph": recovery_state,
+        }
+        result = self.execute_taiji_workbench_successor_loop(
+            snapshot_id=snapshot_id,
+            loop_id=recovery_loop_id,
+            max_steps=max_steps,
+            max_budget_units=max_budget_units,
+            novelty=novelty,
+            resource_budget=resource_budget,
+            learn=learn,
+        )
+        result["recovery"] = dict(recovery_state["recovery"])
         return result
 
     def execute_workbench_intent(

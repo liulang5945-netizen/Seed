@@ -693,6 +693,55 @@
         "title": "TaijiWorkbenchProjectionRequest",
         "type": "object"
       },
+      "TaijiWorkbenchRecoveryHandoffRequest": {
+        "description": "Start a new successor loop from externally refreshed workspace evidence.",
+        "properties": {
+          "learn": {
+            "default": false,
+            "title": "Learn",
+            "type": "boolean"
+          },
+          "max_budget_units": {
+            "default": 32.0,
+            "title": "Max Budget Units",
+            "type": "number"
+          },
+          "max_steps": {
+            "default": 8,
+            "title": "Max Steps",
+            "type": "integer"
+          },
+          "novelty": {
+            "default": 0.0,
+            "title": "Novelty",
+            "type": "number"
+          },
+          "parent_loop_id": {
+            "title": "Parent Loop Id",
+            "type": "string"
+          },
+          "recovery_loop_id": {
+            "title": "Recovery Loop Id",
+            "type": "string"
+          },
+          "resource_budget": {
+            "default": 1.0,
+            "title": "Resource Budget",
+            "type": "number"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "parent_loop_id",
+          "recovery_loop_id",
+          "snapshot_id"
+        ],
+        "title": "TaijiWorkbenchRecoveryHandoffRequest",
+        "type": "object"
+      },
       "TaijiWorkbenchReprojectionRequest": {
         "description": "Re-project the latest current-tick Workbench evidence into Taiji.",
         "properties": {
@@ -3393,6 +3442,50 @@
           }
         },
         "summary": "Project Taiji Workbench Affordances",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/taiji/recovery-handoff": {
+      "post": {
+        "description": "Continue only after fresh external evidence creates a new loop identity.",
+        "operationId": "handoff_taiji_workbench_recovery_api_workbench_taiji_recovery_handoff_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaijiWorkbenchRecoveryHandoffRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Handoff Taiji Workbench Recovery Api Workbench Taiji Recovery Handoff Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Handoff Taiji Workbench Recovery",
         "tags": [
           "workbench"
         ]

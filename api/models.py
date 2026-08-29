@@ -59,6 +59,19 @@ class TaijiWorkbenchSuccessorLoopRequest(BaseModel):
     learn: bool = False
 
 
+class TaijiWorkbenchRecoveryHandoffRequest(BaseModel):
+    """Start a new successor loop from externally refreshed workspace evidence."""
+
+    parent_loop_id: str
+    recovery_loop_id: str
+    snapshot_id: str
+    max_steps: int = 8
+    max_budget_units: float = 32.0
+    novelty: float = 0.0
+    resource_budget: float = 1.0
+    learn: bool = False
+
+
 class ChatRequest(BaseModel):
     prompt: str
     system_prompt: str = "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"
