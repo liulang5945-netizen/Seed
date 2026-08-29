@@ -2181,7 +2181,14 @@ checkpoint 写入失败均进入明确的 recovery 状态；checkpoint 持久化
 写入自治。WorkBench 定向回归 `38 passed`，全量 Python 回归 `546 passed, 6 skipped`，覆盖率 `44.70%`，Ruff 主门禁/B-SIM、Black、
 核心 mypy 均通过。该 Gate 仍不开放开放域自然语言工具选择、CUDA kernel 或视觉包装。
 
-**当前唯一下一步：建立显式 recovery handoff 与 fresh-evidence continuation Gate。** 将 `recovery_needed` 从只读诊断结果提升为
-可审计的受控恢复协议：外部补充新的 workspace evidence 后，校验 parent loop、failure event、snapshot、schema 和 frontier lineage，
-生成新的 recovery loop identity；只把未消费且 freshness-valid 的 successor 交给 Taiji Executive，保留失败前缀与 recovery provenance，
-并验证 checkpoint 恢复、旧 loop 禁止重入、预算不重置。该 Gate 通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
+**已完成（2026-08-29）：显式 recovery handoff 与 fresh-evidence continuation Gate。** `recovery_needed` 已从诊断结果提升为
+可审计的受控恢复协议：WorkBench 必须先产生新的当前 tick/当前 capability snapshot 成功 evidence；handoff 校验 parent loop、failure
+event、snapshot、schema 与 frontier lineage，生成新的 recovery loop identity，只把未消费且 freshness-valid 的 successor 交给 Taiji
+Executive。旧 loop identity 会永久 retired，失败前缀、parent failure、source evidence 和 after-state provenance 均保留，budget 与
+completed prefix 不重置；runtime/API 定向回归 `6 passed`，全量 Python 回归 `548 passed, 6 skipped`，覆盖率 `44.77%`，Ruff/B-SIM、
+Black、核心 mypy 和 OpenAPI 均通过。该 Gate 仍不开放写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
+
+**当前唯一下一步：建立 recovery source evidence 的 failure-context compatibility Gate。** 对新 evidence 不只校验时间、snapshot 和
+schema，还要校验它与 parent failure 的 capability/参数/路径上下文兼容；无关 evidence、跨路径 evidence、after-state 不满足恢复预期时
+必须 fail-closed，不能借 recovery handoff 绕过失败原因。通过后再扩大到多分支 recovery，不进入写入自治、开放域自然语言工具选择、CUDA
+kernel 或视觉包装。

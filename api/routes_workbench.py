@@ -15,6 +15,7 @@ from fastapi import APIRouter, HTTPException
 from api.models import (
     TaijiWorkbenchExecuteTaskRequest,
     TaijiWorkbenchProjectionRequest,
+    TaijiWorkbenchRecoveryHandoffRequest,
     TaijiWorkbenchReprojectionRequest,
     TaijiWorkbenchSuccessorLoopRequest,
     TaijiWorkbenchTaskRequest,
@@ -287,6 +288,30 @@ def execute_taiji_workbench_successor_loop(
         return runtime.execute_taiji_workbench_successor_loop(
             snapshot_id=request.snapshot_id,
             loop_id=request.loop_id,
+            max_steps=request.max_steps,
+            max_budget_units=request.max_budget_units,
+            novelty=request.novelty,
+            resource_budget=request.resource_budget,
+            learn=request.learn,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/taiji/recovery-handoff")
+def handoff_taiji_workbench_recovery(
+    request: TaijiWorkbenchRecoveryHandoffRequest,
+) -> dict[str, Any]:
+    """Continue only after fresh external evidence creates a new loop identity."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return runtime.handoff_taiji_workbench_recovery(
+            parent_loop_id=request.parent_loop_id,
+            recovery_loop_id=request.recovery_loop_id,
+            snapshot_id=request.snapshot_id,
             max_steps=request.max_steps,
             max_budget_units=request.max_budget_units,
             novelty=request.novelty,
