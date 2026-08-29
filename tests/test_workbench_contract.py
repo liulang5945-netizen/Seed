@@ -4,6 +4,7 @@ import hashlib
 import sys
 from dataclasses import replace
 
+import pytest
 from fastapi.testclient import TestClient
 
 from api.app import create_app
@@ -76,6 +77,72 @@ def test_workbench_snapshot_is_content_addressed() -> None:
         assert "digest" in str(exc)
     else:  # pragma: no cover - protects the red-path contract
         raise AssertionError("tampered workbench snapshot was accepted")
+
+
+def test_workbench_snapshot_projects_explicit_read_only_affordances() -> None:
+    snapshot = CapabilitySnapshot.default()
+    bindings = {
+        "workspace.list": {"path": "."},
+        "workspace.read": {"path": "README.md"},
+    }
+
+    affordances = snapshot.to_taiji_affordances(bindings)
+
+    assert [item.action_kind for item in affordances] == [
+        "workspace.list",
+        "workspace.read",
+    ]
+    assert affordances[0].parameters == (("path", "."),)
+    assert f"workbench-snapshot:{snapshot.snapshot_id}" in affordances[1].grounding_lineage
+    assert f"workbench-capability-revision:{snapshot.revision}" in affordances[1].grounding_lineage
+    assert snapshot.to_taiji_affordances(bindings)[1].affordance_id == affordances[1].affordance_id
+
+    with pytest.raises(ValueError, match="read-only"):
+        snapshot.to_taiji_affordances({"workspace.apply_patch": {"path": "README.md"}})
+    with pytest.raises(ValueError, match="undeclared parameters"):
+        snapshot.to_taiji_affordances(
+            {"workspace.read": {"path": "README.md", "tool": "workspace.read"}}
+        )
+
+
+def test_adapter_accepts_workbench_projection_without_owning_capabilities() -> None:
+    adapter = TSKV8Adapter()
+    affordances = CapabilitySnapshot.default().to_taiji_affordances(
+        {"workspace.list": {"path": "."}}
+    )
+
+    world = adapter.set_world_affordances(affordances)
+
+    assert world.affordances[0].action_kind == "workspace.list"
+    assert world.affordances[0].parameters == (("path", "."),)
+    assert any(
+        item.startswith("workbench-snapshot:") for item in world.affordances[0].grounding_lineage
+    )
+
+
+def test_runtime_projects_workbench_evidence_into_current_taiji_world(
+    tmp_path, monkeypatch
+) -> None:
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(Seed(episode_id="taiji-projection"))
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+
+    result = runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.list": {"path": "."}},
+    )
+
+    assert result["snapshot_id"] == snapshot_id
+    assert result["revision"] == runtime.workbench_environment.capability_snapshot.revision
+    assert result["affordances"][0]["action_kind"] == "workspace.list"
+    assert (
+        runtime.model.architecture.cognitive_snapshot().world.affordances[0].action_kind
+        == "workspace.list"
+    )
 
 
 def test_read_only_environment_reads_and_rejects_escape(tmp_path) -> None:
@@ -292,6 +359,13 @@ def test_taiji_task_routes_expose_the_same_read_only_gate(tmp_path, monkeypatch)
     monkeypatch.setattr(seed_runtime_module, "_runtime", runtime)
     with TestClient(create_app(startup_tasks=False)) as client:
         snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+        projected = client.post(
+            "/api/workbench/taiji/project",
+            json={
+                "snapshot_id": snapshot_id,
+                "parameter_bindings": {"workspace.list": {"path": "."}},
+            },
+        )
         admitted = client.post(
             "/api/workbench/taiji/admit",
             json={"snapshot_id": snapshot_id},
@@ -301,6 +375,8 @@ def test_taiji_task_routes_expose_the_same_read_only_gate(tmp_path, monkeypatch)
             json={"snapshot_id": snapshot_id},
         )
 
+    assert projected.status_code == 200
+    assert projected.json()["affordances"][0]["action_kind"] == "workspace.list"
     assert admitted.status_code == 200
     assert admitted.json()["admission"]["accepted"] is True
     assert executed.status_code == 200

@@ -2127,3 +2127,16 @@ after-state→Outcome”的第一条自主只读任务 Gate；无 Taiji 产生�
 带 capability snapshot/revision lineage 的世界 affordance 进入 Taiji，而不是在 adapter 或 API 中维护第二份工具表；只生成已连接且
 参数契约可验证的候选，能力快照变化时让旧 affordance/candidate 失效，并用 `list/read/stat/search` 的真实 workspace evidence 验证
 “能力发现→Taiji 候选→准入→after-state”闭环。该 Gate 通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
+
+**已完成（2026-08-29）：Workbench capability snapshot→Taiji WorldAffordance 投影 Gate。** `CapabilitySnapshot` 新增受控投影：
+只有显式提供的结构化 `parameter_bindings` 才会生成 `WorldAffordance`，其 `affordance_id` 由 capability/参数内容寻址，且保留
+`workbench-snapshot`、capability revision 和 capability id lineage；未知/禁用/非 `read_only` capability、未声明参数和非 mapping
+绑定均 fail-closed。`TSKV8Adapter.set_world_affordances()` 只接收通用世界 affordance，不导入 Workbench 或复制工具表；grounding 会保留
+外部世界 lineage。SeedRuntime 与 `/api/workbench/taiji/project`、frontend native facade 已接通，API 使用 JSON-safe projection，
+并可继续进入现有 Taiji ExecutiveController→Workbench admission→after-state/Outcome 链。该 Gate 证明能力合同能进入 Taiji 世界模型，
+不宣称 `list/read/stat/search` 结果已经自动变成 WorldEvent，也不开放写入/终端自治。
+
+**当前唯一下一步：建立真实 workspace evidence→Taiji WorldEvent/WorldState freshness Gate。** 将 Workbench `list/read/stat/search` 的真实
+after-state 结果以带 request/call/snapshot/tick lineage 的结构化世界事件写回 Taiji，并让已投影 affordance 在 workspace 内容、能力快照或
+world tick 变化后自动失效；用真实临时项目验证“evidence→world state→candidate freshness→read-only admission→Outcome”以及 checkpoint
+续跑不会复用过期 affordance。该 Gate 通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。

@@ -14,6 +14,7 @@ from fastapi import APIRouter, HTTPException
 
 from api.models import (
     TaijiWorkbenchExecuteTaskRequest,
+    TaijiWorkbenchProjectionRequest,
     TaijiWorkbenchTaskRequest,
     WorkbenchIntentRequest,
     WorkbenchLoopExecuteRequest,
@@ -213,6 +214,24 @@ def admit_taiji_workbench_task(request: TaijiWorkbenchTaskRequest) -> dict[str, 
             snapshot_id=request.snapshot_id,
             novelty=request.novelty,
             resource_budget=request.resource_budget,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/taiji/project")
+def project_taiji_workbench_affordances(
+    request: TaijiWorkbenchProjectionRequest,
+) -> dict[str, Any]:
+    """Project structured Workbench evidence into Taiji world affordances."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return runtime.project_workbench_affordances(
+            snapshot_id=request.snapshot_id,
+            parameter_bindings=request.parameter_bindings,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

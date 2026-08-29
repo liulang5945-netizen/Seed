@@ -4482,6 +4482,25 @@ class TSKV8Adapter(Taiji):
             world=self._ground_world_state(self._cognitive_state.world),
         )
 
+    def set_world_affordances(
+        self,
+        affordances: Sequence[WorldAffordance],
+    ) -> WorldState:
+        """Replace current world affordances from a structured world-organ projection."""
+
+        projected = tuple(affordances)
+        if any(not isinstance(item, WorldAffordance) for item in projected):
+            raise TypeError("world affordances must contain WorldAffordance values")
+        affordance_ids = tuple(item.affordance_id for item in projected)
+        if len(set(affordance_ids)) != len(affordance_ids):
+            raise ValueError("world affordances must have unique affordance ids")
+        world = self._ground_world_state(
+            replace(self._cognitive_state.world, affordances=projected)
+        )
+        self._cognitive_state = replace(self._cognitive_state, world=world)
+        self._refresh_concept_memory()
+        return world
+
     def _ground_world_state(self, world: WorldState) -> WorldState:
         if self._affordance_grounding is None or not world.affordances:
             return world

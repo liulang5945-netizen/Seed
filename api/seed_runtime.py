@@ -784,6 +784,36 @@ class SeedRuntime:
             "execution": None,
         }
 
+    def project_workbench_affordances(
+        self,
+        *,
+        snapshot_id: str,
+        parameter_bindings: Mapping[str, Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        """Project explicit Workbench evidence into Taiji's current world state."""
+
+        environment = self._sync_workbench_root()
+        if str(snapshot_id) != environment.capability_snapshot.snapshot_id:
+            raise ValueError("Taiji capability projection snapshot drifted")
+        affordances = environment.capability_snapshot.to_taiji_affordances(parameter_bindings)
+        world = self.model.architecture.set_world_affordances(affordances)
+        return {
+            "snapshot_id": environment.capability_snapshot.snapshot_id,
+            "revision": environment.capability_snapshot.revision,
+            "tick": int(world.tick),
+            "affordances": [self._taiji_workbench_affordance_payload(item) for item in affordances],
+        }
+
+    @staticmethod
+    def _taiji_workbench_affordance_payload(affordance: Any) -> dict[str, Any]:
+        """Project a WorldAffordance checkpoint payload to JSON-safe values."""
+
+        payload = dict(affordance.to_payload())
+        features = payload.get("features")
+        if hasattr(features, "detach"):
+            payload["features"] = [float(value) for value in features.detach().flatten().tolist()]
+        return payload
+
     def execute_taiji_workbench_task(
         self,
         *,
