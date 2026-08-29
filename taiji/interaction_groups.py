@@ -111,6 +111,89 @@ class InteractionTraceEvent:
         )
 
 
+def project_native_adapter_episode(
+    adapter: Any,
+    *,
+    context_id: str,
+    owner_id_by_event_id: Mapping[str, str | None],
+    recovery_effect: float = 0.0,
+    resource_cost_by_event_id: Mapping[str, float] | None = None,
+    checkpoint: Mapping[str, Any] | None = None,
+) -> InteractionTraceEpisode:
+    """Project one settled native adapter state into the trace contract.
+
+    The adapter remains the source of truth for event and outcome identity.
+    ``owner_id_by_event_id`` is a projection boundary: callers may omit
+    non-candidate native events by mapping them to ``None``, but every emitted
+    trace event keeps its actual native ``event_id``.  Owner IDs are therefore
+    opaque evidence handles, not a semantic neuron taxonomy.
+
+    ``checkpoint`` is optional for callers that already captured the atomic
+    native checkpoint.  The envelope version is used as the trace revision so
+    stale or mixed checkpoint formats cannot silently enter an evaluation.
+    """
+
+    if not hasattr(adapter, "cognitive_snapshot") or not hasattr(adapter, "native_checkpoint"):
+        raise TypeError("adapter must expose cognitive_snapshot() and native_checkpoint()")
+    state = adapter.cognitive_snapshot()
+    native_checkpoint = checkpoint if checkpoint is not None else adapter.native_checkpoint()
+    if not isinstance(native_checkpoint, Mapping):
+        raise TypeError("native checkpoint must be a mapping")
+    if native_checkpoint.get("format") != "taiji-native-v1":
+        raise ValueError("native adapter trace requires taiji-native-v1 checkpoint format")
+    checkpoint_revision = int(native_checkpoint.get("version", -1))
+    if checkpoint_revision < 0:
+        raise ValueError("native checkpoint version must be non-negative")
+    if state.outcome is None:
+        raise RuntimeError("native adapter trace projection requires a settled Outcome")
+
+    episode_id = _text(str(state.episode_id), "native projected episode_id")
+    outcome_id = (
+        f"{episode_id}:outcome:{int(state.outcome.tick)}:{str(state.outcome.intent_id)}"
+    )
+    native_events = {str(event.event_id): event for event in state.events}
+    unknown_event_ids = set(owner_id_by_event_id) - set(native_events)
+    if unknown_event_ids:
+        raise ValueError(
+            "native trace owner mapping references unknown event IDs: "
+            + ", ".join(sorted(unknown_event_ids))
+        )
+    costs = resource_cost_by_event_id or {}
+    unknown_cost_ids = set(costs) - set(native_events)
+    if unknown_cost_ids:
+        raise ValueError(
+            "native trace resource mapping references unknown event IDs: "
+            + ", ".join(sorted(unknown_cost_ids))
+        )
+
+    events: list[InteractionTraceEvent] = []
+    for event_id in sorted(owner_id_by_event_id):
+        owner_id = owner_id_by_event_id[event_id]
+        if owner_id is None:
+            continue
+        event = native_events[event_id]
+        resource_cost = float(costs.get(event_id, max(1, int(event.end_tick - event.start_tick + 1))))
+        events.append(
+            InteractionTraceEvent(
+                event_id=event.event_id,
+                owner_id=_text(str(owner_id), "native projected owner_id"),
+                episode_id=episode_id,
+                checkpoint_revision=checkpoint_revision,
+                outcome_id=outcome_id,
+                resource_cost=resource_cost,
+            )
+        )
+    return InteractionTraceEpisode(
+        episode_id=episode_id,
+        checkpoint_revision=checkpoint_revision,
+        outcome_id=outcome_id,
+        events=tuple(events),
+        outcome=float(state.outcome.reward),
+        recovery_effect=float(recovery_effect),
+        context_id=_text(str(context_id), "native projected context_id"),
+    )
+
+
 @dataclass(frozen=True)
 class InteractionTraceEpisode:
     """A factorially observed native episode and its experienced outcome."""
@@ -920,4 +1003,5 @@ __all__ = [
     "InteractionTraceCorpus",
     "InteractionTraceEpisode",
     "InteractionTraceEvent",
+    "project_native_adapter_episode",
 ]

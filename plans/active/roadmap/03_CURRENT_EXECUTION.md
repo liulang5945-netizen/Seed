@@ -12,7 +12,7 @@
 - W6 的 typed native facade 和产品页拆分已完成至 Settings 共享面板收口；组件不越权持有 native API 副作用，前端回归保持可见。
 - current Gate（recovery portfolio 客户端审计回放）的 S0/S1 已在代码层闭合，S2 packaged-client 现场取证也已完成：只读绑定键 `GET /taiji/recovery-branch/context`、结构化错误码、`RecoveryPortfolioAuditPanel`（右栏属性检查器，事件投影驱动，stale-keep-last / 切 loop 清空 / 只读）在最终 Legacy-off 客户端真实 Workspace 路径可见。客户端实际观察到 native checkpoint `seed:seed_corpus.pt` 和 capability snapshot revision `4`；所有关键 API 请求 8138/200，无页面错误或 Legacy 标记。详见 [02_GATES_AND_CI.md §14.20](02_GATES_AND_CI.md) 与 [S2 证据](../../../reports/packaged_client_s2_20260829.json)。
 - W7-R1 provider watchdog 的 S0/S1/S2 已闭合：健康状态按 `artifact_id + artifact_digest` 隔离，native adapter checkpoint 可恢复健康 lineage；Legacy-off 的默认打包客户端能以只读方式投影 provider 状态、artifact digest 字段和结构化健康计数。S2 当前运行的是 `native-readable`（artifact digest 为空表示原生内置器官，不冒充外部内容寻址 artifact），外部 provider 轮换未在客户端 canary 中宣称完成。详见 [02_GATES_AND_CI.md §14.24](02_GATES_AND_CI.md) 与 [S2 证据](../../../reports/taiji_w7_r1_provider_watchdog_s2_20260829.json)。
-- W7-R2 interaction-group 的 S0 已通过：以不透明 `owner_id` 和真实 task context 的四格 trace 作为输入，按上下文执行 factorial counterfactual，得到正交互/互补与负交互/冲突两个候选；holdout 只读、lesion 事件可追溯、trace digest 与 checkpoint revision/owner policy lineage 可恢复，跨上下文混淆、holdout 反向污染、资源超限和 checkpoint digest 篡改均 fail-closed。没有预设神经元角色，也没有写回 executive 或 provider。详见 [02_GATES_AND_CI.md §14.25](02_GATES_AND_CI.md) 与 [S0 证据](../../../reports/taiji_w7_r2_interaction_groups_20260829.json)。
+- W7-R2 interaction-group 的 S0/S1 已通过：S0 以不透明 `owner_id` 和真实 task context 的四格 trace 作为输入，按上下文执行 factorial counterfactual，得到正交互/互补与负交互/冲突两个候选；S1 又把真实 `TSKV8Adapter` 产生的 `Event/Outcome` 投影到同一合同，并要求每个 episode 经 `taiji-native-v1` checkpoint 恢复后 trace 完全一致。holdout 只读、lesion 事件可追溯、trace digest 与 checkpoint revision/owner policy lineage 可恢复，跨上下文混淆、holdout 反向污染、资源超限和 checkpoint digest 篡改均 fail-closed。没有预设神经元角色，也没有写回 executive 或 provider。详见 [02_GATES_AND_CI.md §14.25–14.26](02_GATES_AND_CI.md)、[S0 证据](../../../reports/taiji_w7_r2_interaction_groups_20260829.json) 与 [S1 证据](../../../reports/taiji_w7_r2_interaction_groups_s1_20260829.json)。
 - P6 provider artifact、provider startup、客户端观测和训练/回滚合同已接通；P7 executive、grounding、world evidence、bounded successor graph 和 recovery portfolio 已形成可恢复只读闭环。
 
 ### 必须保持的边界
@@ -24,12 +24,12 @@
 
 ## 当前唯一下一步
 
-进入 **W7-R2-S1 interaction-group replay/sandbox**：R2-S0 已通过，沿已冻结的 [R2 manifest](../../manifests/taiji_w7_r2_interaction_group_v1.json) 将真实 native trace 投影到可恢复 replay，验证 group ID、source digest、checkpoint revision、owner policy lineage、拒绝 tombstone 和继续评估的一致性；本步仍不得把交互分析直接写回运行时结构。
+进入 **W7-R2-S2 interaction-group real Workbench workflow**：R2-S0/S1 已通过，沿已冻结的 [R2 manifest](../../manifests/taiji_w7_r2_interaction_group_v1.json) 把交互组评估接入真实 Workbench 输入、workspace route、memory/planner/recovery trace 和 Outcome，验证真实任务组合的 holdout、lesion、资源边界与 checkpoint 归属；本步仍不得把交互分析直接写回运行时结构。
 
 ## 后续唯一顺序
 
 1. 完成 W7-R1：provider watchdog 的 S0/S1/S2（已完成）。
-2. W7-R2-S0（已完成），执行 R2-S1；通过后再进入 R2-S2，之后按 R3 → R4 → R5 推进；每个方向先做可证伪 Gate，再接入真实运行时，最后才更新产品展示。
+2. W7-R2-S0/S1（已完成），执行 R2-S2；通过后再按 R3 → R4 → R5 推进；每个方向先做可证伪 Gate，再接入真实运行时，最后才更新产品展示。
 
 ## 更新规则
 
