@@ -2084,3 +2084,10 @@ API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 err
 
 **当前唯一下一步：开始 W6 第十九片的 SettingsView 关于与许可展示拆分。** 先隔离版本元信息和开源许可入口，父视图继续唯一持有版本加载、许可弹窗状态和 native API 副作用；
 每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，不得先做视觉包装或 CUDA kernel。
+
+**已完成（2026-08-29）：W6 第十九片的 SettingsView 关于与许可展示拆分。** 版本元信息和开源许可入口已抽为
+`SettingsAboutPanel`；组件不持有许可弹窗状态，父视图继续唯一持有版本加载、弹窗状态和 native API 副作用。前端 Vitest `41 files / 225 passed`、
+API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
+
+**当前唯一下一步：开始 W6 第二十片的 SettingsView 共享表单样式与设置契约收口。** 在不改变父层状态拥有权的前提下，提取重复的设置展示契约和可复用样式边界，
+补齐跨面板结构回归与组件注册检查；每片提交前跑完整 CI，不得先做视觉包装或 CUDA kernel。
