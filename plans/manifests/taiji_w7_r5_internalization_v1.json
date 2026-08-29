@@ -1,0 +1,188 @@
+{
+  "format": "taiji-w7-r5-internalization-manifest-v1",
+  "version": 1,
+  "work_package": "W7-R5A",
+  "title": "grounded knowledge internalization and removable replay",
+  "status": "contract_frozen",
+  "claim": {
+    "to_prove": "Taiji can convert repeated, grounded Workbench outcomes into replayable native features or traces, preserve old abilities, and remove an external description only after causal evidence and checkpoint recovery pass.",
+    "must_not_claim": [
+      "Internalized knowledge is not an execution channel, an executor, or an MCP capability.",
+      "Internalization is not automatic general intelligence or full retraining from scratch.",
+      "A provider response, prompt, or capability name alone is not a grounded learning example."
+    ]
+  },
+  "owner": {
+    "converter": "taiji/internalization.py",
+    "learner": "taiji/adapter.py and Taiji-owned feature/trace organs",
+    "source_projection": "api/seed_runtime.py Workbench Outcome projection",
+    "cognitive_owners": ["taiji/concept_formation.py", "taiji/memory.py", "taiji/adapter.py"],
+    "forbidden_owners": [
+      "frontend",
+      "language provider",
+      "prompt or global role list",
+      "seed_platform executor",
+      "MCP registry",
+      "Legacy/Transformer teacher"
+    ]
+  },
+  "input": {
+    "sources": [
+      "real Workbench Outcome",
+      "grounded WorldAffordance",
+      "percept/world context",
+      "capability snapshot",
+      "recovery result",
+      "parent checkpoint"
+    ],
+    "required_binding": [
+      "evidence_id",
+      "outcome_id",
+      "affordance_id",
+      "capability_snapshot_digest",
+      "parent_checkpoint_id",
+      "owner_id",
+      "manifest_revision"
+    ],
+    "forbidden_input": [
+      "provider text without grounding",
+      "a capability_id used to fabricate an affordance",
+      "holdout labels copied into training",
+      "a single demonstration as proof of internalization",
+      "unbounded raw transcript replay"
+    ]
+  },
+  "output": {
+    "type": "versioned grounded feature example and internalization lifecycle record",
+    "required_fields": [
+      "example_id",
+      "evidence_id",
+      "affordance_id",
+      "capability_snapshot_digest",
+      "parent_checkpoint_id",
+      "feature_payload_digest",
+      "reward_terms",
+      "provenance",
+      "status",
+      "tombstone_reason"
+    ],
+    "allowed_statuses": [
+      "external",
+      "shadow",
+      "internalized",
+      "rejected",
+      "rolled_back",
+      "tombstoned"
+    ],
+    "update_rule": "Only the Taiji-owned converter and learner may create or update feature content; runtime and provider layers may supply evidence but cannot assign internalized status."
+  },
+  "trace": {
+    "required_events": [
+      "outcome_bound",
+      "grounding_verified",
+      "example_created",
+      "replay_deduplicated",
+      "shadow_learned",
+      "holdout_checked",
+      "affordance_lesion_checked",
+      "internalization_admitted",
+      "external_description_tombstoned",
+      "rolled_back"
+    ],
+    "provenance": "Link every feature or trace to its real outcome, affordance, capability snapshot, parent/child checkpoint lineage, manifest revision, and lifecycle decision.",
+    "determinism": "The same parent checkpoint, manifest, evidence digest, seed, and replay budget produce the same example IDs, feature digest, and lifecycle decisions."
+  },
+  "resources": {
+    "budget_owner": "Taiji learning budget and bounded replay policy",
+    "limits": [
+      "replay examples",
+      "feature dimension",
+      "update count",
+      "memory",
+      "latency",
+      "checkpoint size",
+      "per-evidence contribution"
+    ],
+    "measure": [
+      "holdout gain",
+      "old-task retention",
+      "grounding sensitivity",
+      "feature/replay size",
+      "memory",
+      "latency",
+      "cross-seed stability"
+    ]
+  },
+  "checkpoint": {
+    "required": true,
+    "must_roundtrip": [
+      "replay digest and partition",
+      "feature/trace revision",
+      "internalization lifecycle",
+      "tombstones",
+      "fit and online counters",
+      "capability snapshot binding",
+      "parent/child lineage",
+      "manifest revision"
+    ],
+    "trial_rule": "Save a parent and trial checkpoint before learner mutation; an in-memory feature does not qualify as internalized.",
+    "continuation": "After restore, the next update preserves replay partitions, lineage, counters, and tombstones and cannot resurrect rejected content."
+  },
+  "evidence": {
+    "layers": [
+      {"id": "S0", "kind": "pure DTO conversion and deterministic replay", "entry": "tests/taiji_native/test_internalization_contract.py"},
+      {"id": "S1", "kind": "native learner with checkpoint, holdout, and lesions", "entry": "scripts/training/eval_taiji_internalization.py"},
+      {"id": "S2", "kind": "real Workbench longitudinal evidence", "entry": "tests/test_workbench_contract.py"}
+    ],
+    "red_proof": [
+      "missing grounding creates no learnable example",
+      "holdout labels or provider text cannot enter replay",
+      "duplicate evidence cannot inflate the update budget",
+      "affordance or feature lesion removes the claimed benefit",
+      "knowledge cannot be marked internalized before causal evidence",
+      "external description cannot be deleted before the five-lesion recovery Gate",
+      "checkpoint restore cannot resurrect rejected or tombstoned content"
+    ],
+    "holdout": "Holdout tasks and future outcomes remain read-only and are not used to create, select, or tune replay examples.",
+    "lesion": "Disable the learned feature/trace, grounding source, or external description separately; the corresponding benefit and dependency must change as predicted.",
+    "cross_seed": "Admit internalized content only when gain, retention, grounding sensitivity, and resource trade-offs replicate across independent seeds and task slices."
+  },
+  "failure_isolation": {
+    "conversion_failure": "Reject the example and keep the parent learner state unchanged; retain the reason and evidence digest.",
+    "learner_failure": "Restore the parent checkpoint, return unused budget, and leave the external description active.",
+    "deletion_failure": "Abort physical deletion; tombstone only the attempted lifecycle transition and retain the source artifact."
+  },
+  "rollback": {
+    "path": "restore parent checkpoint, reverse replay/feature budget, mark the child lifecycle rolled_back, and retain tombstone evidence",
+    "atomicity": "Feature state, replay partition, lifecycle status, budget, and checkpoint lineage commit atomically.",
+    "recovery": "A rolled-back example requires fresh grounded evidence and a new example ID before reconsideration."
+  },
+  "implementation": {
+    "existing_hooks": [
+      "record_executive_outcome",
+      "WorldAffordanceGroundingProducer",
+      "LearnedAffordanceFeatures",
+      "checkpoint fit/online counters"
+    ],
+    "new_test_entry": "tests/taiji_native/test_internalization_contract.py",
+    "new_eval_entry": "scripts/training/eval_taiji_internalization.py",
+    "status": "not_started"
+  },
+  "boundary": [
+    "Knowledge descriptions, feature traces, and replay examples may become removable only through an explicit, recoverable lifecycle.",
+    "Real Workbench executors, MCP channels, capability registration, policy, and side-effect permissions are never internalized into a deletable cognition artifact.",
+    "R5A supplies evidence to R5C structural growth but does not itself add neurons, regions, or execution capabilities."
+  ],
+  "dependencies": [
+    "W7-R5-S0 learning channel",
+    "W7-R1 provider artifact binding",
+    "W7-R5B effector registry for capability snapshot freshness",
+    "W7-R5C structural growth only after R5A evidence passes"
+  ],
+  "replaces": [
+    "provider-text-only learning",
+    "unbounded transcript replay",
+    "unrecoverable online deletion",
+    "knowledge and execution capability in one lifecycle"
+  ]
+}
