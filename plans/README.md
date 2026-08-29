@@ -367,7 +367,7 @@ branch 不能重新注册或选择。WorkBench portfolio 定向回归 `2 passed`
 branch/portfolio 同步 checkpoint，定向 portfolio/recovery `4 passed`，全量 Python `550 passed, 6 skipped`，覆盖率 `45.10%`；最新又完成只读
 portfolio snapshot，暴露生命周期/容量/血缘摘要而不暴露可执行 parameters/evidence，并验证 checkpoint restore 后 revision、branch identity
 和顺序一致，定向 portfolio `2 passed`，全量 Python `550 passed, 6 skipped`，覆盖率 `45.13%`。当前唯一下一步仍只以路线文档第 16 节为准：
-建立 recovery portfolio snapshot 的客户端消费与只读审计回放 Gate。
+建立 recovery portfolio 的客户端审计回放视图 Gate；当前 facade/composable 消费层已完成，后续只增加只读展示，不增加执行入口。
 
 ## 当前唯一下一步
 
