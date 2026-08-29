@@ -22,15 +22,16 @@
 
 ## 当前唯一下一步
 
-进入 **W7-G0 合同冻结**：为 provider、interaction-group、视觉、CUDA 和开放域 R5 分别建立可执行 Gate manifest，冻结真实输入、结构化输出、trace、资源预算、checkpoint revision、red proof、holdout/lesion、rollback 与“不得越界”的边界；本步不实现新自治。
+进入 **W7-R1 provider watchdog 实现**：沿已冻结的 [R1 manifest](../../manifests/taiji_w7_r1_provider_watchdog_v1.json)，把现有 provider artifact/canary/rollback 能力收敛成可恢复的健康状态机；先补 S0 红绿 Gate，再做 checkpoint replay 和 packaged-client 观测。本步不让 provider 进入 Taiji 决策，也不实现客户端自行切换。
 
 ## 后续唯一顺序
 
-1. 完成 W7-G0，把 R1–R5 的输入/输出、资源、checkpoint、失败隔离和回滚合同冻结为版本化 manifest。
-2. 按 R1 → R2 → R3 → R4 → R5 推进；每个方向先做可证伪 Gate，再接入真实运行时，最后才更新产品展示。
+1. 完成 W7-R1：provider watchdog 的 S0 → S1 → S2。
+2. 按 R2 → R3 → R4 → R5 推进；每个方向先做可证伪 Gate，再接入真实运行时，最后才更新产品展示。
 
 ## 更新规则
 
 - 当前快照只保留已验证的能力和明确的未完成边界；历史数字、实验过程和一次性失败原因移入 archive。
 - 新能力必须在这里留下“owner、真实输入、结构化输出、checkpoint 归属、失败模式和 Gate”；否则只能算实验记录。
 - 若实现与本文件、架构文档或 CI 事实冲突，先暂停下一步，修正唯一事实源并提交，再恢复执行。
+- W7-G0 的五份 manifest 与结构门禁已提交；R4 当前硬件状态仍为 `hardware-blocked`，不可用 CPU 结果替代 CUDA 证据。

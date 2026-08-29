@@ -9,8 +9,8 @@ Taiji 的目标不是重造 Transformer，也不是把生物名词硬编码进�
 | 顺位 | 工作包 | 产出性质 | 解锁条件 |
 |---|---|---|---|
 | 已完成 | Recovery portfolio 客户端审计回放 Gate | 只读、可审计产品证据 | S0/S1/S2 通过 |
-| 当前 | W7-G0：全部 R 工作包合同冻结 | 可证伪 Gate 合同 | 当前 Gate 通过 |
-| W7-R1 | 语言 provider watchdog | 受限语言外设的安全降级 | G0 对 provider 合同通过 |
+| 已完成 | W7-G0：全部 R 工作包合同冻结 | 可证伪 Gate 合同 | 5 份 v1 manifest + manifest contract test |
+| 当前 | W7-R1 | 受限语言外设的安全降级 | G0 对 provider 合同通过 |
 | W7-R2 | interaction-group 与恢复归因 | 基于真实 trace 的可检验学习 | R1 的 provider 失败语义可观察 |
 | W7-R3 | 视觉与桌面体验 | 对真实能力的表达层 | R1/R2 的真实状态可投影 |
 | W7-R4 | CUDA 运行时 | 硬件专用的可恢复加速路径 | 有真实 CUDA 主机；此前保持 `hardware-blocked` |
@@ -87,6 +87,8 @@ S0（组件/投影）与 S1（checkpoint 回放）已在代码层闭合，证据
 - manifest、实验、代码提交三者的关联，以及“替代了哪项旧假设”。
 
 G0 不实现新自治。它的退出条件是所有 R 工作包都有可执行的合同、测试入口和不可越界声明；未填入真实输入或 checkpoint 的项目保持 blocked，而不是以空示例宣布就绪。
+
+**G0 已完成（2026-08-29）**：五份合同分别为 [R1 provider watchdog](../../manifests/taiji_w7_r1_provider_watchdog_v1.json)、[R2 interaction-group](../../manifests/taiji_w7_r2_interaction_group_v1.json)、[R3 visual/desktop](../../manifests/taiji_w7_r3_visual_desktop_v1.json)、[R4 CUDA](../../manifests/taiji_w7_r4_cuda_v1.json)、[R5 open-domain growth](../../manifests/taiji_w7_r5_open_domain_growth_v1.json)。`tests/test_w7_gate_manifests.py` 校验五份 manifest 都具备 claim/owner/input/output/trace/resource/checkpoint、S0/S1/S2、red proof、holdout、lesion、失败隔离、rollback 和越界声明；R4 明确保持 `hardware-blocked`，其他工作包为 `contract_frozen`，没有任何未来 Gate 被伪标记为 `passed`。因此下一执行入口切换为 W7-R1 实现，不提前实现 R2–R5 自治。
 
 ## 5. W7-R1：provider watchdog（语言外设健康治理）
 

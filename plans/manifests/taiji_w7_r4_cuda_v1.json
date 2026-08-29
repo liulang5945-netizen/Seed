@@ -1,0 +1,76 @@
+{
+  "format": "taiji-w7-r4-cuda-manifest-v1",
+  "version": 1,
+  "work_package": "W7-R4",
+  "title": "native runtime CUDA profile and cross-device recovery",
+  "status": "hardware-blocked",
+  "claim": {
+    "to_prove": "On a real CUDA-capable host, the native sparse runtime can gain measured performance while preserving checkpoint, structure, lineage, budget, provider artifact, and numerical-tolerance contracts.",
+    "must_not_claim": "CPU measurements are not CUDA support or GPU speedup; no fused/custom kernel is justified before a real profile identifies its bottleneck."
+  },
+  "owner": {
+    "runtime": "taiji/fabric.py, taiji/sparse.py, taiji/neuron_network.py",
+    "profile_entry": "scripts/training/eval_taiji_native_runtime_profile.py",
+    "baseline_manifest": "plans/manifests/taiji_native_runtime_profile_v1.json",
+    "forbidden_owners": ["fixed fan-in kernel", "CPU-only extrapolation", "frontend performance label"]
+  },
+  "input": {
+    "sources": ["fixed native sparse workload", "CPU profile baseline", "CUDA device properties", "dtype/device policy", "native checkpoint revision"],
+    "required_binding": ["workload manifest", "seed", "device", "dtype", "checkpoint revision", "tolerance revision"],
+    "current_host": {"device": "cpu", "cuda_available": false, "state": "hardware-blocked"}
+  },
+  "output": {
+    "type": "profile and cross-device equivalence report",
+    "required_fields": ["device", "dtype", "runtime_version", "throughput", "latency", "memory", "hotspots", "checkpoint_equivalence", "numerical_tolerance", "gate_status"],
+    "gate_status_values": ["passed", "failed", "hardware-blocked"]
+  },
+  "trace": {
+    "required_events": ["workload_started", "profile_finished", "checkpoint_saved", "checkpoint_restored", "continuation_checked", "device_comparison_finished"],
+    "determinism": "Record seed, device, dtype, runtime, workload digest, and tolerance; do not compare unbound timing numbers across hosts.",
+    "current_evidence": "CPU profile and checkpoint continuation are valid baseline evidence only."
+  },
+  "resources": {
+    "budget_owner": "runtime performance experiment",
+    "limits": ["fixed input dimensions before comparison", "bounded warmup and measurement windows", "explicit OOM handling", "no production kernel before profile"],
+    "measure": ["region/network throughput", "p50/p95 latency", "peak memory", "host/device transfer time", "kernel hotspots", "energy when available"]
+  },
+  "checkpoint": {
+    "required": true,
+    "must_roundtrip": ["structure and topology", "lineage/tick", "structural budget", "provider artifact state", "native capability revision", "prediction continuation"],
+    "cross_device": "CPU -> CUDA -> CPU must restore and continue within the declared numerical tolerance; exact identity is required for non-numerical state.",
+    "failure": "An unavailable or failed device must return hardware-blocked/failed without mutating the CPU baseline."
+  },
+  "evidence": {
+    "layers": [
+      {"id": "S0", "kind": "CPU deterministic baseline", "entry": "scripts/training/eval_taiji_native_runtime_profile.py"},
+      {"id": "S1", "kind": "real CUDA replay", "entry": "scripts/training/eval_taiji_native_runtime_profile.py --device cuda"},
+      {"id": "S2", "kind": "packaged/runtime observation", "entry": "tests/test_seed_product_smoke.py"}
+    ],
+    "red_proof": ["CUDA absent but gate says passed", "device transfer changes structure", "checkpoint continuation diverges beyond tolerance", "custom kernel hides a profiled hotspot", "OOM is silently retried as success"],
+    "holdout": "Use a fixed workload revision plus a second seed and a shape/dtype combination not used for kernel selection.",
+    "lesion": "Disable the proposed optimization or one transfer/cache path; report the measured delta and preserve correctness.",
+    "cross_seed": "Performance acceptance requires multiple seeds or repeated runs with confidence intervals; correctness requires independent checkpoint continuations."
+  },
+  "failure_isolation": {
+    "hardware_missing": "Remain hardware-blocked; do not install a fake CUDA fixture as performance proof.",
+    "numerical_drift": "Reject optimized path and keep the profiled baseline.",
+    "oom_or_timeout": "Abort the experiment, preserve parent checkpoint, and record structured failure."
+  },
+  "rollback": {
+    "path": "disable optimized dispatch and restore the last CPU/native runtime checkpoint",
+    "atomicity": "Kernel selection, runtime manifest, and checkpoint revision publish together or not at all",
+    "recovery": "Re-run the unchanged baseline workload before proposing another optimization."
+  },
+  "implementation": {
+    "existing_hooks": ["native runtime profile manifest", "CPU scratch reuse regression", "cross-device controls when available"],
+    "new_test_entry": "tests/taiji_native/test_cuda_gate.py",
+    "new_eval_entry": "scripts/training/eval_taiji_native_runtime_profile.py",
+    "status": "blocked_until_cuda_host"
+  },
+  "boundary": [
+    "No CUDA claim or speedup number may be derived from this CPU-only host.",
+    "No custom kernel may encode fixed fan-in or fixed topology as Taiji identity.",
+    "CUDA is an execution backend; it does not own Taiji cognition or learning semantics."
+  ],
+  "replaces": ["CPU-as-CUDA assumption", "premature fused kernel work", "unversioned device comparison"]
+}

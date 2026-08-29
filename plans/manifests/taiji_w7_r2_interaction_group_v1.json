@@ -1,0 +1,77 @@
+{
+  "format": "taiji-w7-r2-interaction-group-manifest-v1",
+  "version": 1,
+  "work_package": "W7-R2",
+  "title": "trace-grounded interaction groups and recovery attribution",
+  "status": "contract_frozen",
+  "claim": {
+    "to_prove": "Groups of observed Taiji interactions can explain contribution, complementarity, conflict, and recovery benefit on unseen workflows without predefined neuron-role labels.",
+    "must_not_claim": "A statistical group is not a hard-coded planning/ memory/ language neuron class and does not become a global controller."
+  },
+  "owner": {
+    "runtime": "taiji/interaction_groups.py",
+    "trace_projection": "taiji/adapter.py and taiji/contracts.py",
+    "evidence_sources": ["workspace route", "memory retrieval", "planner projection", "tool trace", "recovery trace", "resource trace", "Outcome"],
+    "forbidden_owners": ["role-name registry", "frontend-only telemetry", "provider decoder"]
+  },
+  "input": {
+    "sources": ["versioned native trace events", "checkpoint revision", "task/episode identity", "Outcome", "resource measurements"],
+    "required_binding": ["event_id", "owner_id", "episode_id", "checkpoint_revision", "outcome_id", "trace_digest"],
+    "group_candidates": "Derived from contribution, complementarity, conflict, recovery effect, and resource cost; no semantic role string is an input feature.",
+    "forbidden_input": ["hand-authored neuron-role names", "future holdout outcomes", "randomized group labels without provenance"]
+  },
+  "output": {
+    "type": "versioned interaction-group attribution record",
+    "required_fields": ["group_id", "member_ids", "source_trace_digest", "checkpoint_revision", "contribution", "interaction", "uncertainty", "resource_cost", "owner_policy"],
+    "update_rule": "Write only to the owning policy or memory surface after validation; never replace the whole executive with a group table."
+  },
+  "trace": {
+    "required_events": ["group_candidate_created", "counterfactual_evaluated", "lesion_evaluated", "group_admitted", "group_rejected", "group_rolled_back"],
+    "provenance": "Every attribution must point to the exact trace digest, checkpoint revision, split, and evaluation seed.",
+    "determinism": "Fixed trace corpus, split, seed, and estimator revision produce stable group IDs and attribution ordering."
+  },
+  "resources": {
+    "budget_owner": "interaction-group evaluator",
+    "limits": ["bounded group cardinality", "bounded pairwise counterfactuals", "bounded trace retention", "no unbounded high-order search"],
+    "measure": ["task gain", "forgetting", "recovery latency", "parameter/connection delta", "memory", "inference latency", "energy approximation"]
+  },
+  "checkpoint": {
+    "required": true,
+    "must_roundtrip": ["group IDs", "member attribution", "source trace digest", "estimator revision", "confidence/uncertainty", "owner policy lineage", "rejected/tombstoned candidates"],
+    "continuation": "After restore, replay must not reassign a group to a different owner without new evidence and a new revision.",
+    "approval": "No group admission is an approval to execute a write action."
+  },
+  "evidence": {
+    "layers": [
+      {"id": "S0", "kind": "deterministic trace simulation", "entry": "tests/taiji_native/test_interaction_group_gate.py"},
+      {"id": "S1", "kind": "replay/sandbox", "entry": "scripts/training/eval_taiji_interaction_groups.py"},
+      {"id": "S2", "kind": "real workbench workflow", "entry": "tests/test_workbench_contract.py"}
+    ],
+    "red_proof": ["hard-coded role list creates a passing group", "random groups match learned groups", "leave-one-group-out has no causal effect", "group can cross checkpoint revisions", "holdout outcome leaks into attribution"],
+    "holdout": "Use unseen task compositions and an independent outcome split; holdout evaluation is read-only and cannot add evidence to the learner.",
+    "lesion": "Leave one group out, remove one member, and disable attribution; each lesion must produce an interpretable change or fail closed.",
+    "cross_seed": "Require consistent direction and uncertainty intervals across independent seeds before admitting a high-order group."
+  },
+  "failure_isolation": {
+    "trace_drift": "Reject attribution when trace digest or checkpoint revision is stale.",
+    "low_confidence": "Keep candidate unadmitted; do not guess an owner.",
+    "resource_pressure": "Stop evaluation and preserve parent group registry; never trade away checkpoint identity."
+  },
+  "rollback": {
+    "path": "restore parent group/policy checkpoint, append rejected or rolled-back candidate tombstone, and return evaluation budget",
+    "atomicity": "Group registry and owner-policy update commit atomically with the admitting checkpoint revision",
+    "recovery": "Re-evaluate only from a fresh trace revision; old positive results cannot silently revive a rolled-back candidate."
+  },
+  "implementation": {
+    "existing_hooks": ["Taiji native trace/event contracts", "recovery interaction replay statistics"],
+    "new_test_entry": "tests/taiji_native/test_interaction_group_gate.py",
+    "new_eval_entry": "scripts/training/eval_taiji_interaction_groups.py",
+    "status": "not_started"
+  },
+  "boundary": [
+    "Do not name groups by imagined biological roles.",
+    "Do not let a group table select tools, external MCP actions, or provider artifacts.",
+    "Do not call correlation a causal result without lesion or counterfactual evidence."
+  ],
+  "replaces": ["fixed neuron-role taxonomy", "single global interaction controller", "correlation-only attribution"]
+}
