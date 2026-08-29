@@ -176,10 +176,7 @@ class McpToolRegistry:
             raise KeyError("unknown MCP tool")
         if not descriptor.enabled:
             raise PermissionError("MCP tool is disabled")
-        if (
-            registry_revision not in (None, "")
-            and int(registry_revision) != self.revision
-        ):
+        if registry_revision not in (None, "") and int(registry_revision) != self.revision:
             raise ValueError("MCP registry revision drifted")
         if not isinstance(arguments, Mapping):
             raise TypeError("MCP tool arguments must be an object")
@@ -205,8 +202,7 @@ class McpToolRegistry:
                 "object": isinstance(value, Mapping),
                 "array": isinstance(value, (list, tuple)),
                 "string": isinstance(value, str),
-                "number": isinstance(value, (int, float))
-                and not isinstance(value, bool),
+                "number": isinstance(value, (int, float)) and not isinstance(value, bool),
                 "integer": isinstance(value, int) and not isinstance(value, bool),
                 "boolean": isinstance(value, bool),
                 "null": value is None,

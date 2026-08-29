@@ -366,8 +366,10 @@ API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 err
 `SettingsPanelSection` 渲染标题/面板骨架，共享控件样式集中到 `assets/styles/settings-panels.css`，新增跨面板结构回归；父层状态拥有权和 native API 边界不变。
 前端 Vitest `42 files / 230 passed`、API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
 
-**当前唯一下一步：开始 W7 第一片 Workbench Closure 的真实工具选择与执行合同落地。** 选定最小真实工具（优先工作台文件读取/写入）并打通
-Taiji `ActionIntent → ToolCall → Outcome` 到 IDE/文件效应器的单条可审计闭环；冻结 watchdog、CUDA/fused kernel 和进一步视觉打磨，直到该真实纵切片通过。
+**路线已按 2026-08-29 live audit 校准：** Workbench W0–W3、W4 产品语义清理、W5 客户端真实性、P6 provider watchdog 与 P3
+interaction-group attribution 已有主线提交和回归证据；此前“W7 第一片还要接入真实 Workbench 工具”的文字已过时，不再作为执行入口。
+最新已完成片是聊天→Workbench 的显式原生任务事件桥接：`ActionIntent` 由 Taiji 侧先形成，聊天和 IDE 读取同一审计链；它不宣称已经
+完成自然语言自主工具选择。唯一下一步以路线文档第 16 节为准。
 
 ## 当前唯一下一步
 

@@ -45,9 +45,7 @@ def test_workbench_snapshot_is_content_addressed() -> None:
 
 def test_read_only_environment_reads_and_rejects_escape(tmp_path) -> None:
     (tmp_path / "src").mkdir()
-    with (tmp_path / "src" / "main.py").open(
-        "w", encoding="utf-8", newline=""
-    ) as handle:
+    with (tmp_path / "src" / "main.py").open("w", encoding="utf-8", newline="") as handle:
         handle.write("print('seed')\n")
     environment = WorkbenchEnvironment(tmp_path)
 
@@ -115,9 +113,7 @@ def test_taiji_intent_reaches_workbench_and_audit(tmp_path, monkeypatch) -> None
         tick=runtime.model.tick,
     )
 
-    result = runtime.execute_workbench_intent(
-        intent, snapshot_id=snapshot_id, learn=False
-    )
+    result = runtime.execute_workbench_intent(intent, snapshot_id=snapshot_id, learn=False)
 
     assert result["outcome"]["status"] == "success"
     assert result["outcome"]["result"]["content"] == "Taiji workbench\n"
@@ -156,9 +152,7 @@ def test_native_mcp_registry_lists_and_invokes_local_read_only_canary(tmp_path) 
 
     assert listed.success is True
     assert environment.last_result["registry"]["format"] == "seed-mcp-registry-v1"
-    assert (
-        environment.last_result["tools"][0]["tool_id"] == "mcp.local.workspace_summary"
-    )
+    assert environment.last_result["tools"][0]["tool_id"] == "mcp.local.workspace_summary"
     tool_id = environment.last_result["tools"][0]["tool_id"]
 
     request = WorkbenchActionRequest(
@@ -188,9 +182,7 @@ def test_native_mcp_registry_lists_and_invokes_local_read_only_canary(tmp_path) 
     assert drifted.success is False
     assert environment.last_result["error_code"] == "invalid_parameters"
 
-    unknown = environment.execute_tool(
-        "mcp.invoke", {"tool_id": "mcp.unknown", "arguments": {}}
-    )
+    unknown = environment.execute_tool("mcp.invoke", {"tool_id": "mcp.unknown", "arguments": {}})
     assert unknown.success is False
     assert environment.last_result["error_code"] == "unknown_mcp_tool"
 
@@ -204,9 +196,7 @@ def test_mcp_risk_is_dynamic_and_empty_registry_fails_closed(tmp_path) -> None:
         executor_id="workspace.list",
         risk="file_write",
     )
-    environment = WorkbenchEnvironment(
-        tmp_path, mcp_registry=McpToolRegistry((descriptor,))
-    )
+    environment = WorkbenchEnvironment(tmp_path, mcp_registry=McpToolRegistry((descriptor,)))
     request = WorkbenchActionRequest(
         request_id="request-mcp-risk",
         intent_id="intent-mcp-risk",
@@ -221,9 +211,7 @@ def test_mcp_risk_is_dynamic_and_empty_registry_fails_closed(tmp_path) -> None:
     assert approval["preview"]["mutation"]["risk"] == "file_write"
 
     empty = WorkbenchEnvironment(tmp_path, mcp_registry=McpToolRegistry())
-    rejected = empty.execute_tool(
-        "mcp.invoke", {"tool_id": descriptor.tool_id, "arguments": {}}
-    )
+    rejected = empty.execute_tool("mcp.invoke", {"tool_id": descriptor.tool_id, "arguments": {}})
     assert rejected.success is False
     assert empty.last_result["error_code"] == "unknown_mcp_tool"
 
@@ -243,9 +231,7 @@ def test_mcp_schema_and_output_budget_fail_closed(tmp_path) -> None:
         output_limit=1,
     )
     (tmp_path / "main.py").write_text("print('seed')\n", encoding="utf-8")
-    environment = WorkbenchEnvironment(
-        tmp_path, mcp_registry=McpToolRegistry((descriptor,))
-    )
+    environment = WorkbenchEnvironment(tmp_path, mcp_registry=McpToolRegistry((descriptor,)))
 
     invalid = environment.execute_tool(
         "mcp.invoke", {"tool_id": descriptor.tool_id, "arguments": {}}
@@ -279,9 +265,7 @@ def test_mcp_binding_loop_preflight_and_runtime_tool_call_are_versioned(
         mcp_registry_snapshot_id=environment.mcp_registry.snapshot_id,
     )
 
-    preflight = environment.preflight_loop(
-        (request,), loop_id="loop-mcp-read", max_steps=2
-    )
+    preflight = environment.preflight_loop((request,), loop_id="loop-mcp-read", max_steps=2)
 
     assert preflight["accepted"] is True
     assert preflight["step_count"] == 1
@@ -309,9 +293,7 @@ def test_mcp_binding_loop_preflight_and_runtime_tool_call_are_versioned(
 
     runtime = SeedRuntime(Seed(episode_id="workbench-mcp-binding"))
     runtime._workbench_environment = environment
-    runtime_preflight = runtime.preflight_workbench_loop(
-        (request,), loop_id="runtime-loop-mcp"
-    )
+    runtime_preflight = runtime.preflight_workbench_loop((request,), loop_id="runtime-loop-mcp")
     assert runtime_preflight["accepted"] is True
     assert runtime_preflight["runtime"]["checkpoint_boundary"] == "after_each_step"
     result = runtime.execute_workbench_intent(
@@ -329,14 +311,8 @@ def test_mcp_binding_loop_preflight_and_runtime_tool_call_are_versioned(
         learn=False,
     )
     assert result["outcome"]["status"] == "success"
-    assert (
-        result["request"]["mcp_registry_snapshot_id"]
-        == environment.mcp_registry.snapshot_id
-    )
-    assert (
-        result["outcome"]["mcp_registry_snapshot_id"]
-        == environment.mcp_registry.snapshot_id
-    )
+    assert result["request"]["mcp_registry_snapshot_id"] == environment.mcp_registry.snapshot_id
+    assert result["outcome"]["mcp_registry_snapshot_id"] == environment.mcp_registry.snapshot_id
     assert (
         result["tool_call"]["workbench_binding"]["mcp_registry_snapshot_id"]
         == environment.mcp_registry.snapshot_id
@@ -363,17 +339,13 @@ def replace_request_mcp_registry(
     )
 
 
-def test_preflighted_loop_checkpoints_each_step_and_rejects_replay(
-    tmp_path, monkeypatch
-) -> None:
+def test_preflighted_loop_checkpoints_each_step_and_rejects_replay(tmp_path, monkeypatch) -> None:
     monkeypatch.setattr(
         "seed_platform.workbench.get_setting",
         lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
     )
     checkpoint = tmp_path / "loop.pt"
-    runtime = SeedRuntime(
-        Seed(episode_id="workbench-loop-checkpoint"), checkpoint_path=checkpoint
-    )
+    runtime = SeedRuntime(Seed(episode_id="workbench-loop-checkpoint"), checkpoint_path=checkpoint)
     runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
     environment = runtime.workbench_environment
     intents = (
@@ -401,16 +373,12 @@ def test_preflighted_loop_checkpoints_each_step_and_rejects_replay(
             intent,
             snapshot_id=environment.capability_snapshot.snapshot_id,
             mcp_registry_snapshot_id=(
-                environment.mcp_registry.snapshot_id
-                if intent.kind.startswith("mcp.")
-                else ""
+                environment.mcp_registry.snapshot_id if intent.kind.startswith("mcp.") else ""
             ),
         )
         for intent in intents
     )
-    preflight = runtime.preflight_workbench_loop(
-        requests, loop_id="loop-checkpoint", max_steps=2
-    )
+    preflight = runtime.preflight_workbench_loop(requests, loop_id="loop-checkpoint", max_steps=2)
     result = runtime.execute_preflighted_workbench_loop(
         intents,
         requests,
@@ -445,9 +413,7 @@ def test_preflighted_loop_stops_after_first_failed_step(tmp_path, monkeypatch) -
         lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
     )
     checkpoint = tmp_path / "failed-loop.pt"
-    runtime = SeedRuntime(
-        Seed(episode_id="workbench-loop-failure"), checkpoint_path=checkpoint
-    )
+    runtime = SeedRuntime(Seed(episode_id="workbench-loop-failure"), checkpoint_path=checkpoint)
     runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
     environment = runtime.workbench_environment
     intents = (
@@ -479,9 +445,7 @@ def test_preflighted_loop_stops_after_first_failed_step(tmp_path, monkeypatch) -
         )
         for intent in intents
     )
-    preflight = runtime.preflight_workbench_loop(
-        requests, loop_id="loop-failure", max_steps=3
-    )
+    preflight = runtime.preflight_workbench_loop(requests, loop_id="loop-failure", max_steps=3)
     result = runtime.execute_preflighted_workbench_loop(
         intents,
         requests,
@@ -499,9 +463,7 @@ def test_preflighted_loop_stops_after_first_failed_step(tmp_path, monkeypatch) -
     assert checkpoint.exists()
 
 
-def test_w3_cross_file_task_gate_replans_after_diagnostics_failure(
-    tmp_path, monkeypatch
-) -> None:
+def test_w3_cross_file_task_gate_replans_after_diagnostics_failure(tmp_path, monkeypatch) -> None:
     (tmp_path / "src").mkdir()
     (tmp_path / "build").mkdir()
     source = tmp_path / "src" / "main.py"
@@ -509,9 +471,7 @@ def test_w3_cross_file_task_gate_replans_after_diagnostics_failure(
     updated = b'def answer():\n    return "taiji"\n'
     source.write_bytes(original)
     (tmp_path / "src" / "test_main.py").write_text(
-        "from main import answer\n\n"
-        "def test_answer():\n"
-        "    assert answer() == 'taiji'\n",
+        "from main import answer\n\n" "def test_answer():\n" "    assert answer() == 'taiji'\n",
         encoding="utf-8",
     )
     monkeypatch.setattr(
@@ -519,9 +479,7 @@ def test_w3_cross_file_task_gate_replans_after_diagnostics_failure(
         lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
     )
     checkpoint = tmp_path / "w3-loop.pt"
-    runtime = SeedRuntime(
-        Seed(episode_id="workbench-w3-cross-file"), checkpoint_path=checkpoint
-    )
+    runtime = SeedRuntime(Seed(episode_id="workbench-w3-cross-file"), checkpoint_path=checkpoint)
     runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
     environment = runtime.workbench_environment
     snapshot_id = environment.capability_snapshot.snapshot_id
@@ -597,18 +555,13 @@ def test_w3_cross_file_task_gate_replans_after_diagnostics_failure(
             intent,
             snapshot_id=snapshot_id,
         )
-        if (
-            environment.policy_for(request).reason_code
-            == "capability_requires_approval"
-        ):
+        if environment.policy_for(request).reason_code == "capability_requires_approval":
             approval = environment.issue_approval(request)
             request = replace(request, approval_token=approval["approval_token"])
         return request
 
     requests = tuple(approved_request(intent) for intent in intents)
-    preflight = runtime.preflight_workbench_loop(
-        requests, loop_id="w3-cross-file", max_steps=4
-    )
+    preflight = runtime.preflight_workbench_loop(requests, loop_id="w3-cross-file", max_steps=4)
     assert preflight["accepted"] is True
     first_run = runtime.execute_preflighted_workbench_loop(
         intents,
@@ -623,17 +576,11 @@ def test_w3_cross_file_task_gate_replans_after_diagnostics_failure(
     assert first_run["stopped_at"] == 3
     assert first_run["completed_prefix"] == 3
     assert len(first_run["steps"]) == 4
-    assert (
-        first_run["steps"][0]["outcome"]["result"]["programming_language_id"]
-        == "python"
-    )
+    assert first_run["steps"][0]["outcome"]["result"]["programming_language_id"] == "python"
     assert first_run["steps"][1]["success"] is True
     assert first_run["steps"][2]["success"] is True
     assert first_run["steps"][3]["success"] is False
-    assert (
-        first_run["steps"][3]["outcome"]["result"]["diagnostics"][0]["severity"]
-        == "error"
-    )
+    assert first_run["steps"][3]["outcome"]["result"]["diagnostics"][0]["severity"] == "error"
     assert (tmp_path / "build" / "result.txt").read_text(encoding="utf-8") == "ok"
     assert checkpoint.exists()
 
@@ -663,10 +610,7 @@ def test_w3_cross_file_task_gate_replans_after_diagnostics_failure(
         request = WorkbenchActionRequest.from_action_intent(
             intent, snapshot_id=recovery_snapshot_id
         )
-        if (
-            recovery_environment.policy_for(request).reason_code
-            == "capability_requires_approval"
-        ):
+        if recovery_environment.policy_for(request).reason_code == "capability_requires_approval":
             approval = recovery_environment.issue_approval(request)
             request = replace(request, approval_token=approval["approval_token"])
         recovery_requests.append(request)
@@ -687,10 +631,7 @@ def test_w3_cross_file_task_gate_replans_after_diagnostics_failure(
     assert recovery["completed_prefix"] == 2
     assert (tmp_path / "build" / "diagnostic.ok").exists()
     assert recovery["steps"][1]["success"] is True
-    assert (
-        recovery["steps"][1]["outcome"]["result"]["diagnostics"][0]["severity"]
-        == "info"
-    )
+    assert recovery["steps"][1]["outcome"]["result"]["diagnostics"][0]["severity"] == "info"
 
     replay = restored.execute_preflighted_workbench_loop(
         intents,
@@ -707,9 +648,7 @@ def test_w3_cross_file_task_gate_replans_after_diagnostics_failure(
 def test_programming_language_evidence_uses_content_manifest_and_ambiguity(
     tmp_path,
 ) -> None:
-    (tmp_path / "pyproject.toml").write_text(
-        "[project]\nname='seed'\n", encoding="utf-8"
-    )
+    (tmp_path / "pyproject.toml").write_text("[project]\nname='seed'\n", encoding="utf-8")
     source = tmp_path / "main.py"
     source.write_text("def answer(value: int):\n    return value\n", encoding="utf-8")
     environment = WorkbenchEnvironment(tmp_path)
@@ -903,9 +842,7 @@ def test_taiji_language_selection_requires_evidence_or_explicit_override(
     )
     assert autonomous["policy"]["decision"] == "allow"
     assert autonomous["outcome"]["result"]["programming_language_id"] == "python"
-    assert (
-        autonomous["outcome"]["result"]["execution_snapshot"]["runner_id"] == "python"
-    )
+    assert autonomous["outcome"]["result"]["execution_snapshot"]["runner_id"] == "python"
 
     explicit = runtime.execute_workbench_intent(
         ActionIntent(
@@ -979,9 +916,7 @@ def test_file_transactions_are_digest_checked_and_undoable(tmp_path) -> None:
     assert created.success is True
     create_token = environment.last_result["transaction"]["undo_token"]
     assert (tmp_path / "created.txt").is_file()
-    assert environment.execute_tool(
-        "workspace.undo", {"undo_token": create_token}
-    ).success
+    assert environment.execute_tool("workspace.undo", {"undo_token": create_token}).success
     assert not (tmp_path / "created.txt").exists()
 
     renamed = environment.execute_tool(
@@ -995,9 +930,7 @@ def test_file_transactions_are_digest_checked_and_undoable(tmp_path) -> None:
     assert renamed.success is True
     rename_token = environment.last_result["transaction"]["undo_token"]
     assert (tmp_path / "renamed.py").is_file()
-    assert environment.execute_tool(
-        "workspace.undo", {"undo_token": rename_token}
-    ).success
+    assert environment.execute_tool("workspace.undo", {"undo_token": rename_token}).success
     assert source.is_file()
 
     deleted = environment.execute_tool(
@@ -1007,9 +940,7 @@ def test_file_transactions_are_digest_checked_and_undoable(tmp_path) -> None:
     assert deleted.success is True
     delete_token = environment.last_result["transaction"]["undo_token"]
     assert not source.exists()
-    assert environment.execute_tool(
-        "workspace.undo", {"undo_token": delete_token}
-    ).success
+    assert environment.execute_tool("workspace.undo", {"undo_token": delete_token}).success
     assert source.read_bytes() == original
 
 
@@ -1277,10 +1208,7 @@ def test_runtime_checkpoint_restores_transaction_lineage_without_approval_reviva
         tick=restored.model.tick,
         approval_token=old_approval,
     )
-    assert (
-        restored.workbench_environment.policy_for(old_request).reason_code
-        == "approval_invalid"
-    )
+    assert restored.workbench_environment.policy_for(old_request).reason_code == "approval_invalid"
 
     new_undo_intent = ActionIntent(
         intent_id="intent-new-undo",
@@ -1354,9 +1282,7 @@ def test_w2_temporary_project_gate_covers_language_patch_test_and_diagnostics(
         confidence=1.0,
         tick=runtime.model.tick,
     )
-    patch_preview = runtime.preview_workbench_intent(
-        patch_intent, snapshot_id=snapshot_id
-    )
+    patch_preview = runtime.preview_workbench_intent(patch_intent, snapshot_id=snapshot_id)
     assert patch_preview["preview"]["mutation"]["after_digest"] == after_digest
     assert source.read_bytes() == original
     patch_result = runtime.execute_workbench_intent(
@@ -1383,9 +1309,7 @@ def test_w2_temporary_project_gate_covers_language_patch_test_and_diagnostics(
         confidence=1.0,
         tick=runtime.model.tick,
     )
-    test_preview = runtime.preview_workbench_intent(
-        test_intent, snapshot_id=snapshot_id
-    )
+    test_preview = runtime.preview_workbench_intent(test_intent, snapshot_id=snapshot_id)
     test_result = runtime.execute_workbench_intent(
         test_intent,
         snapshot_id=snapshot_id,
@@ -1419,7 +1343,5 @@ def test_w2_temporary_project_gate_covers_language_patch_test_and_diagnostics(
         learn=False,
     )
     assert diagnostic_result["outcome"]["success"] is False
-    assert (
-        diagnostic_result["outcome"]["result"]["diagnostics"][0]["severity"] == "error"
-    )
+    assert diagnostic_result["outcome"]["result"]["diagnostics"][0]["severity"] == "error"
     assert (tmp_path / "build" / "result.txt").read_text(encoding="utf-8") == "ok"

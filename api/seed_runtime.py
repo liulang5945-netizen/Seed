@@ -14,7 +14,7 @@ from __future__ import annotations
 import logging
 import pickle
 import threading
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -22,9 +22,7 @@ from taiji import InputFrame
 
 logger = logging.getLogger("ApiServer.SeedRuntime")
 
-DEFAULT_CHECKPOINT = (
-    Path(__file__).resolve().parent.parent / "checkpoints" / "seed_corpus.pt"
-)
+DEFAULT_CHECKPOINT = Path(__file__).resolve().parent.parent / "checkpoints" / "seed_corpus.pt"
 
 _TURN_MARKERS = ("\n问：", "问：")
 
@@ -129,8 +127,7 @@ class SeedRuntime:
                 candidate = self.model.architecture.language_organ
                 self._chat_organ = (
                     candidate
-                    if result.status.chat_enabled
-                    and isinstance(candidate, LanguageOrgan)
+                    if result.status.chat_enabled and isinstance(candidate, LanguageOrgan)
                     else NativeReadableTextLanguageOrgan()
                 )
             return result
@@ -169,9 +166,7 @@ class SeedRuntime:
             selected_config,
         )
         logger.info("Seed runtime loaded from %s", path)
-        runtime = cls(
-            model, path, provider_status.to_dict(), provider_runtime, selected_config
-        )
+        runtime = cls(model, path, provider_status.to_dict(), provider_runtime, selected_config)
         metadata = checkpoint.get("metadata")
         if isinstance(metadata, Mapping):
             runtime._restore_workbench_metadata(metadata.get("workbench"))
@@ -294,16 +289,12 @@ class SeedRuntime:
                 current_runtime=self._provider_runtime,
             )
         except Exception:  # 探针不可让对话失败
-            logger.exception(
-                "language provider health probe failed; keeping current surface"
-            )
+            logger.exception("language provider health probe failed; keeping current surface")
             return
         if not result.committed:
             # 名义探针：健康计数随真实发射增长，必须立刻可观测，但表层与队列不变。
             if result.health is not None:
-                self._provider_status = _overlay_health(
-                    self._provider_status, result.health
-                )
+                self._provider_status = _overlay_health(self._provider_status, result.health)
             return
         from taiji import LanguageOrgan, NativeReadableTextLanguageOrgan
 
@@ -452,9 +443,7 @@ class SeedRuntime:
         loop_payload = payload.get("loop_state")
         if isinstance(loop_payload, Mapping):
             committed = loop_payload.get("committed_request_ids", ())
-            if isinstance(committed, (str, bytes)) or not isinstance(
-                committed, Sequence
-            ):
+            if isinstance(committed, (str, bytes)) or not isinstance(committed, Sequence):
                 raise ValueError("workbench loop checkpoint request ids are invalid")
             self._workbench_loop_state = {
                 "format": str(loop_payload.get("format", "")),
@@ -518,9 +507,7 @@ class SeedRuntime:
         if policy.reason_code == "capability_requires_approval":
             approval = environment.issue_approval(request)
             result["preview"] = approval["preview"]
-            result["approval"] = {
-                key: value for key, value in approval.items() if key != "preview"
-            }
+            result["approval"] = {key: value for key, value in approval.items() if key != "preview"}
         return result
 
     def preflight_workbench_loop(
@@ -579,13 +566,11 @@ class SeedRuntime:
         if len(intents) != len(requests):
             raise ValueError("loop intents and requests must have the same length")
         typed_requests = tuple(requests)
-        for intent, request in zip(intents, typed_requests):
+        for intent, request in zip(intents, typed_requests, strict=True):
             if not isinstance(intent, ActionIntent):
                 raise TypeError("loop intents must contain ActionIntent values")
             if not isinstance(request, WorkbenchActionRequest):
-                raise TypeError(
-                    "loop requests must contain WorkbenchActionRequest values"
-                )
+                raise TypeError("loop requests must contain WorkbenchActionRequest values")
             if (
                 request.intent_id != intent.intent_id
                 or request.capability_id != intent.kind
@@ -604,13 +589,10 @@ class SeedRuntime:
             "status": "rejected",
         }
         committed = {
-            str(item)
-            for item in self._workbench_loop_state.get("committed_request_ids", ())
+            str(item) for item in self._workbench_loop_state.get("committed_request_ids", ())
         }
         replayed = [
-            request.request_id
-            for request in typed_requests
-            if request.request_id in committed
+            request.request_id for request in typed_requests if request.request_id in committed
         ]
         if replayed:
             result["error_code"] = "loop_request_already_committed"
@@ -628,9 +610,7 @@ class SeedRuntime:
         )
         result["preflight"] = preflight
         if not preflight.get("accepted"):
-            result["error_code"] = str(
-                preflight.get("error_code", "preflight_rejected")
-            )
+            result["error_code"] = str(preflight.get("error_code", "preflight_rejected"))
             result["error"] = str(preflight.get("error", "loop preflight was rejected"))
             return result
         if preflight.get("preflight_id") != preflight_id:
@@ -645,13 +625,12 @@ class SeedRuntime:
             "loop_id": str(loop_id),
             "preflight_id": str(preflight_id),
             "committed_request_ids": [
-                str(item)
-                for item in self._workbench_loop_state.get("committed_request_ids", ())
+                str(item) for item in self._workbench_loop_state.get("committed_request_ids", ())
             ][-MAX_WORKBENCH_LOOP_COMMITTED_REQUESTS:],
             "status": "running",
         }
         checkpoint_path: Path | None = None
-        for index, (intent, request) in enumerate(zip(intents, typed_requests)):
+        for index, (intent, request) in enumerate(zip(intents, typed_requests, strict=True)):
             step: dict[str, Any] = {
                 "index": index,
                 "request_id": request.request_id,
@@ -692,9 +671,7 @@ class SeedRuntime:
             ]
             self._workbench_loop_state = {
                 **self._workbench_loop_state,
-                "committed_request_ids": committed_ids[
-                    -MAX_WORKBENCH_LOOP_COMMITTED_REQUESTS:
-                ],
+                "committed_request_ids": committed_ids[-MAX_WORKBENCH_LOOP_COMMITTED_REQUESTS:],
                 "status": "running" if step.get("success") else "failed",
             }
             try:
@@ -758,6 +735,7 @@ class SeedRuntime:
         approval_token: str = "",
         mcp_registry_snapshot_id: str = "",
         learn: bool = False,
+        event_sink: Callable[[Any], None] | None = None,
     ) -> dict[str, Any]:
         """Execute one Taiji-owned intent through Seed's workbench."""
 
@@ -772,6 +750,26 @@ class SeedRuntime:
         if not isinstance(intent, ActionIntent):
             raise TypeError("workbench execution requires an ActionIntent")
         environment = self._sync_workbench_root()
+
+        def append_event(
+            phase: str,
+            request_id: str,
+            *,
+            tick: int,
+            payload: Mapping[str, Any],
+        ) -> None:
+            event = self._workbench_audit.append(
+                phase,
+                request_id,
+                tick=tick,
+                payload=payload,
+            )
+            if event_sink is not None:
+                try:
+                    event_sink(event)
+                except Exception:  # pragma: no cover - observer must not break execution
+                    logger.exception("workbench event sink failed; execution continues")
+
         request = WorkbenchActionRequest.from_action_intent(
             intent,
             snapshot_id=snapshot_id,
@@ -786,14 +784,14 @@ class SeedRuntime:
             ),
         )
         tick = int(self.model.tick)
-        self._workbench_audit.append(
+        append_event(
             "planned",
             request.request_id,
             tick=tick,
             payload={"request": request.to_payload()},
         )
         policy = environment.policy_for(request)
-        self._workbench_audit.append(
+        append_event(
             "policy",
             request.request_id,
             tick=tick,
@@ -813,7 +811,7 @@ class SeedRuntime:
                 tick=tick,
                 mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
             )
-            self._workbench_audit.append(
+            append_event(
                 "outcome",
                 request.request_id,
                 tick=tick,
@@ -824,9 +822,7 @@ class SeedRuntime:
                 "policy": policy.to_payload(),
                 "outcome": workbench_outcome.to_payload(),
                 "taiji_outcome": None,
-                "events": [
-                    event.to_payload() for event in self._workbench_audit.events
-                ],
+                "events": [event.to_payload() for event in self._workbench_audit.events],
             }
 
         try:
@@ -852,7 +848,7 @@ class SeedRuntime:
                 tick=tick,
                 mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
             )
-            self._workbench_audit.append(
+            append_event(
                 "outcome",
                 request.request_id,
                 tick=tick,
@@ -863,12 +859,10 @@ class SeedRuntime:
                 "policy": policy.to_payload(),
                 "outcome": workbench_outcome.to_payload(),
                 "taiji_outcome": None,
-                "events": [
-                    event.to_payload() for event in self._workbench_audit.events
-                ],
+                "events": [event.to_payload() for event in self._workbench_audit.events],
             }
 
-        self._workbench_audit.append(
+        append_event(
             "executing",
             request.request_id,
             tick=tick,
@@ -898,7 +892,7 @@ class SeedRuntime:
                     tick=int(self.model.tick),
                     mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
                 )
-                self._workbench_audit.append(
+                append_event(
                     "outcome",
                     request.request_id,
                     tick=int(self.model.tick),
@@ -935,7 +929,7 @@ class SeedRuntime:
             tick=int(taiji_outcome.tick),
             mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
         )
-        self._workbench_audit.append(
+        append_event(
             "outcome",
             request.request_id,
             tick=int(taiji_outcome.tick),

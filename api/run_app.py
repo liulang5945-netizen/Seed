@@ -742,9 +742,7 @@ class MainWindow(QMainWindow):
         # 中央区域 = Web 视图独占。标题栏由前端 AppTitlebar.vue 绘制，
         # 窗口外框（1px 边框 + 圆角）由 shell.css 的 .app-wrapper 承担，
         # 窗口控制经 _WindowBridge 走 QWebChannel 回调。
-        self._web_view.setStyleSheet(
-            "QWebEngineView { border: none; background: transparent; }"
-        )
+        self._web_view.setStyleSheet("QWebEngineView { border: none; background: transparent; }")
         self.setCentralWidget(self._web_view)
         self._apply_window_shape()
 

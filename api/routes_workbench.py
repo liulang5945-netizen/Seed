@@ -67,9 +67,7 @@ def _read_only_result(tool_name: str, parameters: dict[str, Any]) -> dict[str, A
         snapshot_id=environment.capability_snapshot.snapshot_id,
         source="seed.api.read_only",
         mcp_registry_snapshot_id=(
-            environment.mcp_registry.snapshot_id
-            if tool_name in {"mcp.list", "mcp.invoke"}
-            else ""
+            environment.mcp_registry.snapshot_id if tool_name in {"mcp.list", "mcp.invoke"} else ""
         ),
     )
     policy = environment.policy_for(request)
@@ -157,9 +155,7 @@ def workbench_search(query: str, path: str = ".") -> dict[str, Any]:
 
 
 @router.get("/programming-language")
-def workbench_programming_language(
-    path: str, lsp_language_id: str | None = None
-) -> dict[str, Any]:
+def workbench_programming_language(path: str, lsp_language_id: str | None = None) -> dict[str, Any]:
     return _read_only_result(
         "workspace.programming_language.resolve",
         {"path": path, "lsp_language_id": lsp_language_id},

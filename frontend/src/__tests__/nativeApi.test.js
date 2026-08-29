@@ -17,6 +17,7 @@ describe('nativeApi facade', () => {
   it('keeps native endpoint paths explicit and OpenAPI-shaped', () => {
     expect(nativeApiPaths.runtime.status).toBe('/api/runtime/status')
     expect(nativeApiPaths.workbench.loopExecute).toBe('/api/workbench/loop/execute')
+    expect(nativeApiPaths.chat.workbenchStream).toBe('/api/chat/workbench/stream')
     expect(nativeApiPaths.system.selectFolder).toBe('/api/system/select_folder')
   })
 
@@ -54,6 +55,25 @@ describe('nativeApi facade', () => {
       retries: 0,
       signal,
       body: JSON.stringify({ prompt: 'hello' }),
+    }))
+  })
+
+  it('keeps the structured chat-workbench stream on the raw response boundary', async () => {
+    const response = { ok: true, status: 200, body: null }
+    const signal = { aborted: false }
+    authFetch.mockResolvedValueOnce(response)
+    const payload = {
+      prompt: '打开 README',
+      intent: { intent_id: 'read-1', kind: 'workspace.read', snapshot_id: 'snapshot-1' },
+    }
+
+    await expect(nativeApi.chatWorkbenchStream(payload, { signal })).resolves.toBe(response)
+
+    expect(authFetch).toHaveBeenCalledWith('/api/chat/workbench/stream', expect.objectContaining({
+      method: 'POST',
+      retries: 0,
+      signal,
+      body: JSON.stringify(payload),
     }))
   })
 

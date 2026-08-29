@@ -186,6 +186,40 @@
         "title": "ChatRequest",
         "type": "object"
       },
+      "ChatWorkbenchRequest": {
+        "description": "Chat prompt plus one already-formed Taiji workbench intent.\n\nThe request deliberately carries a structured intent instead of asking the\nlanguage surface to infer a tool from prose. Natural-language task\nplanning remains a separate Taiji-owned capability and cannot be silently\nimplemented by this transport boundary.",
+        "properties": {
+          "history": {
+            "default": [],
+            "items": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "title": "History",
+            "type": "array"
+          },
+          "intent": {
+            "$ref": "#/components/schemas/WorkbenchIntentRequest"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          },
+          "system_prompt": {
+            "default": "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。",
+            "title": "System Prompt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt",
+          "intent"
+        ],
+        "title": "ChatWorkbenchRequest",
+        "type": "object"
+      },
       "DatasetCheckRequest": {
         "properties": {
           "file_path": {
@@ -1394,6 +1428,43 @@
           }
         },
         "summary": "Upload Chat File"
+      }
+    },
+    "/api/chat/workbench/stream": {
+      "post": {
+        "description": "Run one structured Taiji intent and stream the shared workbench audit.\n\nThis endpoint is an execution transport, not a prose-to-tool selector:\nthe caller must provide a Taiji-owned ``ActionIntent`` binding. The same\nSeedRuntime audit events are emitted to this chat stream and remain\navailable to the IDE through ``/api/workbench/events``.",
+        "operationId": "chat_workbench_stream_api_chat_workbench_stream_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatWorkbenchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Chat Workbench Stream"
       }
     },
     "/api/health": {

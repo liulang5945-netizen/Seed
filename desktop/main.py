@@ -1051,9 +1051,7 @@ def main():
             # 中央区域 = 纯 Web 视图。标题栏已移入前端，Qt 侧不再叠加控件层，
             # 否则两套渲染引擎各自绘制背景，必然出现接缝。窗口圆角由
             # _apply_window_shape 的 QRegion 遮罩统一负责。
-            self.web_view.setStyleSheet(
-                "QWebEngineView { border: none; background: transparent; }"
-            )
+            self.web_view.setStyleSheet("QWebEngineView { border: none; background: transparent; }")
             self.setCentralWidget(self.web_view)
             self._apply_window_shape()
             QTimer.singleShot(0, self._load_frontend)
