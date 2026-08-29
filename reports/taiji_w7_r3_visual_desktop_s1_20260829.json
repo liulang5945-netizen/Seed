@@ -1,0 +1,45 @@
+{
+  "format": "taiji-w7-r3-visual-desktop-evidence-v1",
+  "stage": "S1",
+  "date": "2026-08-29",
+  "package": {
+    "path": "dist/Seed/Seed.exe",
+    "sha256": "502c832d9c04e1e826e398adfa9de9d7f375e5624eb510aac097b9330366f126",
+    "size_bytes": 72751751
+  },
+  "frontend": {
+    "source_index_sha256": "e797b83e59b26ba99ae42d7349d3b3a884ba22b0018a6c451853199ea98e00d1",
+    "packaged_index_sha256": "e797b83e59b26ba99ae42d7349d3b3a884ba22b0018a6c451853199ea98e00d1",
+    "byte_identical": true
+  },
+  "runtime": {
+    "legacy_enabled": false,
+    "native_runtime_enabled": true,
+    "backend_port": 8138,
+    "health_status": "ok",
+    "taiji_available": true,
+    "seed_active": true,
+    "model_loaded": true,
+    "runtime_model": "seed:seed_corpus.pt",
+    "is_taiji": true,
+    "is_seed": true
+  },
+  "ui_contract": {
+    "life_radar_is_primary_surface": true,
+    "duplicate_sidebar_life_indicator_removed": true,
+    "status_evidence_removed_from_non_life_pages": true,
+    "status_evidence_collapsed_on_life_page": true,
+    "tray_life_action_restores_window_before_navigation": true
+  },
+  "checks": {
+    "frontend_vitest": "43 files / 245 passed",
+    "frontend_build": true,
+    "eslint_errors": 0,
+    "desktop_contract": "12 passed",
+    "packaged_health_canary": true
+  },
+  "limitations": {
+    "browser_field_capture": "not_run: local Chrome distribution is not installed",
+    "s2_windows_field_evidence": "not_completed"
+  }
+}

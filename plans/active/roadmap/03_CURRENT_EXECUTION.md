@@ -24,12 +24,12 @@
 
 ## 当前唯一下一步
 
-进入 **W7-R3-S0 visual/desktop evidence**：R2-S0/S1/S2 已通过，沿已冻结的 [R3 manifest](../../manifests/taiji_w7_r3_visual_desktop_v1.json) 收敛生命状态页面、全局状态依据、侧边导航、桌面图标和托盘跳转；本步只修复真实状态的表达与可达性，不由前端新增认知状态或伪造运行时能力。
+进入 **W7-R3-S2 Windows field evidence**：R3-S0 DOM/可访问性契约与 R3-S1 packaged-client smoke 已通过，沿已冻结的 [R3 manifest](../../manifests/taiji_w7_r3_visual_desktop_v1.json) 在真实窗口、任务栏、托盘和高 DPI/窄窗口条件下做现场取证；本步只验证已完成的表达与可达性，不由前端新增认知状态或伪造运行时能力。
 
 ## 后续唯一顺序
 
 1. 完成 W7-R1：provider watchdog 的 S0/S1/S2（已完成）。
-2. W7-R2-S0/S1/S2（已完成），进入 W7-R3-S0；通过后再按 R3 → R4 → R5 推进；每个方向先做可证伪 Gate，再接入真实运行时，最后才更新产品展示。
+2. W7-R2-S0/S1/S2（已完成），进入 W7-R3-S2；通过后再按 R3 → R4 → R5 推进；每个方向先做可证伪 Gate，再接入真实运行时，最后才更新产品展示。
 
 ## 更新规则
 

@@ -4,6 +4,7 @@ import { setActivePinia, createPinia } from 'pinia'
 import { createRouter, createMemoryHistory } from 'vue-router'
 import AppSidebar from '../components/AppSidebar.vue'
 import { useChatStore } from '../stores/chatStore.js'
+import { useRuntimeStore } from '../stores/runtimeStore.js'
 
 // F04: AppSidebar 组件测试——导航完整性、会话区与新建对话
 describe('AppSidebar', () => {
@@ -52,6 +53,15 @@ describe('AppSidebar', () => {
     for (const path of ['/workspace', '/agent', '/kb', '/train', '/life', '/settings']) {
       expect(hrefs).toContain(path)
     }
+  })
+
+  it('生命状态只保留主导航入口，不渲染重复的底部状态块', async () => {
+    const runtimeStore = useRuntimeStore()
+    runtimeStore.life = { is_running: true, dominant_need: 'curiosity', needs: { curiosity: 80 } }
+    const wrapper = await mountSidebar()
+
+    expect(wrapper.findAll('nav a.nav-item').filter((link) => link.text().includes('生命状态'))).toHaveLength(1)
+    expect(wrapper.find('.side-life-pulse').exists()).toBe(false)
   })
 
   it('当前路由的导航项带 active 类', async () => {

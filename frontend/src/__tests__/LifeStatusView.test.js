@@ -149,9 +149,10 @@ describe('LifeStatusView', () => {
     await flushPromises()
 
     expect(wrapper.text()).toContain('3 维已上报')
-    const rows = wrapper.findAll('.native-needs-list li')
-    expect(rows).toHaveLength(3)
-    expect(wrapper.find('.native-needs-foot').text()).toContain('饥饿')
+    expect(wrapper.find('.needs-pentagram').exists()).toBe(true)
+    expect(wrapper.find('.native-needs').exists()).toBe(false)
+    expect(wrapper.find('.native-needs-list').exists()).toBe(false)
+    expect(wrapper.find('.life-evidence-details').exists()).toBe(true)
     expect(wrapper.text()).not.toContain('50.0')
   })
 
@@ -163,6 +164,7 @@ describe('LifeStatusView', () => {
     await flushPromises()
 
     expect(wrapper.text()).toContain('未上报')
+    expect(wrapper.find('.needs-pentagram').exists()).toBe(true)
     expect(wrapper.find('.native-needs').exists()).toBe(false)
   })
 

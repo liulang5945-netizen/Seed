@@ -1,6 +1,23 @@
 <template>
-  <section class="runtime-evidence" :class="{ compact }" aria-label="运行时状态证据">
-    <div class="evidence-head">
+  <section class="runtime-evidence" :class="{ compact, 'is-collapsible': collapsible }" aria-label="运行时状态证据">
+    <button
+      v-if="collapsible"
+      type="button"
+      class="evidence-toggle"
+      :aria-expanded="expanded"
+      aria-controls="runtime-evidence-details"
+      @click="expanded = !expanded"
+    >
+      <span class="evidence-toggle-copy">
+        <span class="evidence-eyebrow">STATUS EVIDENCE</span>
+        <strong>状态依据</strong>
+      </span>
+      <span class="evidence-toggle-meta">
+        <span class="evidence-refresh">{{ store.statusEvidence.freshness.label }}</span>
+        <span class="evidence-chevron" :class="{ expanded }" aria-hidden="true">⌄</span>
+      </span>
+    </button>
+    <div v-else class="evidence-head">
       <div>
         <span class="evidence-eyebrow">STATUS EVIDENCE</span>
         <strong>状态依据</strong>
@@ -8,35 +25,42 @@
       <span class="evidence-refresh">{{ store.statusEvidence.freshness.label }}</span>
     </div>
 
-    <div class="evidence-grid">
-      <article v-for="item in rows" :key="item.label" class="evidence-item">
-        <div class="evidence-item-head">
-          <span class="evidence-label">{{ item.label }}</span>
-          <span class="evidence-availability" :class="availabilityClass(item.availability)">
-            {{ item.availability }}
-          </span>
-        </div>
-        <strong class="evidence-owner">{{ item.owner }}</strong>
-        <span class="evidence-meta">{{ item.freshness.label }} · {{ item.source }}</span>
-        <span v-if="item.detail" class="evidence-detail">{{ item.detail }}</span>
-      </article>
+    <div v-if="!collapsible || expanded" id="runtime-evidence-details" class="evidence-details">
+      <div v-if="collapsible" class="evidence-head evidence-head-inner">
+        <span class="evidence-refresh">仅在生命状态页查看实时运行依据</span>
+      </div>
+      <div class="evidence-grid">
+        <article v-for="item in rows" :key="item.label" class="evidence-item">
+          <div class="evidence-item-head">
+            <span class="evidence-label">{{ item.label }}</span>
+            <span class="evidence-availability" :class="availabilityClass(item.availability)">
+              {{ item.availability }}
+            </span>
+          </div>
+          <strong class="evidence-owner">{{ item.owner }}</strong>
+          <span class="evidence-meta">{{ item.freshness.label }} · {{ item.source }}</span>
+          <span v-if="item.detail" class="evidence-detail">{{ item.detail }}</span>
+        </article>
+      </div>
+      <RuntimeApiMetricsPanel v-if="showApiMetrics" :compact="compact" />
     </div>
-    <RuntimeApiMetricsPanel v-if="showApiMetrics" :compact="compact" />
   </section>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRuntimeStore } from '../stores/runtimeStore.js'
 import RuntimeApiMetricsPanel from './RuntimeApiMetricsPanel.vue'
 
 const props = defineProps({
   context: { type: String, default: 'all' },
   compact: { type: Boolean, default: false },
+  collapsible: { type: Boolean, default: false },
   showApiMetrics: { type: Boolean, default: false },
 })
 
 const store = useRuntimeStore()
+const expanded = ref(false)
 const contextRows = {
   chat: ['runtime', 'provider'],
   life: ['runtime', 'homeostasis'],
@@ -68,6 +92,16 @@ function availabilityClass(value) {
   background: color-mix(in srgb, var(--card) 92%, var(--primary) 8%);
 }
 .runtime-evidence.compact { padding: 11px 13px; }
+.runtime-evidence.is-collapsible { padding: 0; overflow: hidden; background: color-mix(in srgb, var(--card) 96%, var(--primary) 4%); }
+.evidence-toggle { width: 100%; min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 15px; border: 0; color: inherit; background: transparent; text-align: left; cursor: pointer; }
+.evidence-toggle:hover { background: color-mix(in srgb, var(--primary) 5%, transparent); }
+.evidence-toggle:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+.evidence-toggle-copy { display: flex; align-items: baseline; gap: 8px; }
+.evidence-toggle-meta { display: inline-flex; align-items: center; gap: 9px; }
+.evidence-chevron { color: var(--muted-foreground); font-size: 1.05rem; line-height: 1; transform: translateY(-2px); transition: transform 160ms ease; }
+.evidence-chevron.expanded { transform: rotate(180deg) translateY(2px); }
+.evidence-details { padding: 0 15px 14px; }
+.evidence-head-inner { margin: 0 0 9px; }
 .evidence-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 11px; }
 .evidence-head > div { display: flex; align-items: baseline; gap: 8px; }
 .evidence-eyebrow { color: var(--muted-foreground); font-size: 10px; letter-spacing: .12em; }
@@ -86,4 +120,5 @@ function availabilityClass(value) {
 .evidence-meta, .evidence-detail { margin-top: 4px; color: var(--muted-foreground); font-size: .68rem; }
 @media (max-width: 720px) { .evidence-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 460px) { .evidence-grid { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .evidence-chevron { transition: none; } }
 </style>

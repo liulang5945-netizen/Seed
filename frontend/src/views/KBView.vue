@@ -13,8 +13,6 @@
         </button>
       </header>
 
-      <RuntimeEvidenceStrip context="knowledge" />
-
       <div class="boundary-card" :class="{ ready: knowledgeCapabilities.length }">
         <div class="boundary-icon">◎</div>
         <div class="boundary-copy">
@@ -70,7 +68,6 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRuntimeStore } from '../stores/runtimeStore.js'
-import RuntimeEvidenceStrip from '../components/RuntimeEvidenceStrip.vue'
 
 defineOptions({ name: 'KBView' })
 

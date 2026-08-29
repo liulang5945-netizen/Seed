@@ -21,8 +21,6 @@
       </div>
     </div>
 
-    <RuntimeEvidenceStrip context="training" />
-
     <div class="view-body">
       <!-- 标签页 -->
       <div class="tabs" role="tablist" aria-label="训练管理" @keydown="onTablistKeydown">
@@ -135,7 +133,6 @@ import TrainingLogPanel from '../components/TrainingLogPanel.vue';
 import TrainingControlBar from '../components/TrainingControlBar.vue';
 import { useApi } from '../composables/useApi.js';
 import { useTabs } from '../composables/useTabs.js';
-import RuntimeEvidenceStrip from '../components/RuntimeEvidenceStrip.vue';
 import {
   trainState, trainLog, trainLoss, trainFiles, trainFileSizes,
   selectedDatasets, trainPreview,

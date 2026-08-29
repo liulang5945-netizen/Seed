@@ -13,7 +13,6 @@
     <!-- 滚动内容区 -->
     <div class="settings-scroll">
       <div class="settings-wrap">
-        <RuntimeEvidenceStrip context="settings" compact show-api-metrics />
         <div class="settings-layout">
 
           <!-- ═══ 左侧：设置导航 ═══ -->
@@ -180,7 +179,6 @@ import { ref, reactive, inject } from 'vue';
 import { useAppStore } from '../stores/appStore.js';
 import { useChatStore } from '../stores/chatStore.js';
 import { nativeApi } from '../composables/nativeApi.js';
-import RuntimeEvidenceStrip from '../components/RuntimeEvidenceStrip.vue';
 import SettingsRuntimePanel from '../components/SettingsRuntimePanel.vue';
 import SettingsGeneralPanel from '../components/SettingsGeneralPanel.vue';
 import SettingsTaijiPanel from '../components/SettingsTaijiPanel.vue';

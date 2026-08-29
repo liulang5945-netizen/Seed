@@ -16,8 +16,6 @@
       </div>
     </header>
 
-    <RuntimeEvidenceStrip context="chat" compact />
-
     <div ref="messagesArea" class="scroll-area chat-scroll">
       <div class="chat-stage">
         <ChatMessageList
@@ -68,7 +66,6 @@ import { computed, inject, nextTick, onMounted, ref, watch } from 'vue'
 import { Brain, Bug, GitBranch, LineChart, ScrollText, SlidersHorizontal } from 'lucide-vue-next'
 import ChatComposer from './ChatComposer.vue'
 import ChatMessageList from './ChatMessageList.vue'
-import RuntimeEvidenceStrip from './RuntimeEvidenceStrip.vue'
 import { nativeApi } from '@/composables/nativeApi.js'
 import { useChatStore } from '@/stores/chatStore.js'
 import { useRuntimeStore } from '@/stores/runtimeStore.js'
