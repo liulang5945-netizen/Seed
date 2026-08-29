@@ -1,6 +1,13 @@
 # Seed / Taiji 计划与架构入口
 
-> 这是计划资料的总导航。当前执行只能从 [active/SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) 进入；历史文档中的“下一步”一律不再生效。
+> 这是计划资料的总导航。路线只从 [active/SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) 进入，即时动作只从 [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) 读取；历史文档中的“下一步”一律不再生效。
+
+## 当前收敛结论（2026-08-30）
+
+- W0–W6、W7-R1/R2 和 R5-S0 已形成当前基线；R3 页面层通过但 Windows shell 为 `tool-blocked`，R4 为 `hardware-blocked`。
+- R3/R4 保持独立补证线，不再把工具或硬件缺失当作整个项目停工条件；它们未通过时仍不得发布对应声明。
+- 当前唯一开发动作是 R5-G1：分别冻结知识内化与效应器成长 manifest；之后才进入 R5A 转换器实现。
+- 核心架构讨论继续留在 active/reference；2026-08-29 及以前的 Gate 过程和旧 W7 蓝图已归档。
 
 ## 目录职责
 
@@ -28,9 +35,9 @@
 |---|---|
 | [SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) | 唯一路线入口和 W0–W7 / R1–R5 顺序 |
 | [01_SCOPE_AND_PHASES.md](active/roadmap/01_SCOPE_AND_PHASES.md) | 目标、原则、P0–P7 阶段和退出门槛 |
-| [02_GATES_AND_CI.md](active/roadmap/02_GATES_AND_CI.md) | 持续门禁、CI 可信度、停止项和 CUDA 硬件边界 |
+| [02_GATES_AND_CI.md](active/roadmap/02_GATES_AND_CI.md) | 当前仍有效的门禁、CI 纪律、停止项和阻塞边界；不再承载事故日志 |
 | [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) | 当前实现快照和当前唯一下一步 |
-| [04_EXECUTION_PLAN.md](active/roadmap/04_EXECUTION_PLAN.md) | 当前路线的详细工作包、验收 Gate、并行变更收口与工程纪律；不替代唯一下一步 |
+| [04_EXECUTION_PLAN.md](active/roadmap/04_EXECUTION_PLAN.md) | C0–C8 后续工作包、依赖、产物和验收；不替代唯一下一步 |
 
 ## 归档原则
 
@@ -42,4 +49,4 @@
 
 ## 归档索引
 
-完整清单和归档使用规则见 [archive/README.md](archive/README.md)。其中路线执行的大型原文已拆分为产品发布、前期校准、Workbench 规划和 Workbench 进展四组历史记录；旧架构妥协审计也已按来源、缺口和候选方向拆分。
+完整清单和归档使用规则见 [archive/README.md](archive/README.md)。路线执行的大型原文已按产品发布、前期校准、Workbench 规划/进展、Gate/CI 历史和 W7 蓝图快照拆分；旧架构妥协审计按来源、缺口和候选方向拆分。

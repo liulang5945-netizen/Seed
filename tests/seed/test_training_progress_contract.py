@@ -114,4 +114,4 @@ def test_every_progress_event_carries_eta_and_elapsed(tmp_path, monkeypatch) -> 
 def test_paused_time_is_excluded_from_eta(tmp_path, monkeypatch) -> None:
     """暂停时长不得计入 elapsed，否则恢复后 ETA 被整体拉长。"""
     source = (REPO / "api/training/resume.py").read_text(encoding="utf-8")
-    assert "paused_total" in source, "暂停时长必须被单独扣减，见 plans 02_GATES_AND_CI §14.18"
+    assert "paused_total" in source, "暂停时长必须被单独扣减，见归档 Gate/CI 历史 §14.18"

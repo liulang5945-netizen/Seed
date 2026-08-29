@@ -66,7 +66,12 @@
     "new_test_entry": "tests/test_seed_product_smoke.py and frontend/src/__tests__/desktop_shell_gate.test.js",
     "new_eval_entry": "scripts/release.py --skip-nsis plus packaged Playwright evidence",
     "status": "s1_passed",
-    "s1_report": "reports/taiji_w7_r3_visual_desktop_s1_20260829.json"
+    "s1_report": "reports/taiji_w7_r3_visual_desktop_s1_20260829.json",
+    "s2_status": "tool-blocked",
+    "s2_report": "reports/taiji_w7_r3_visual_desktop_s2_20260829.json",
+    "s2_passed_scope": ["Chrome life route", "900px IDE layout", "760px IDE layout", "responsive top bar", "no horizontal overflow"],
+    "s2_missing_scope": ["Windows taskbar", "tray notification", "high DPI", "keyboard-only shell navigation", "reduced-motion shell evidence"],
+    "blocker": "Windows Computer Use enumerates Seed but cannot activate the captured window; desktop-background screenshots are not accepted as shell evidence."
   },
   "boundary": [
     "No visual state may be a second source of truth for Taiji or provider state.",

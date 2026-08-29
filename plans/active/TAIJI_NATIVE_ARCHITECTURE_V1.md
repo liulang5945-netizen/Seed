@@ -610,9 +610,11 @@ taiji/
 
 目录不是一次性重命名任务。先建立合同和最小纵切片，再逐项迁移，避免只有空模块和漂亮分层。
 
-## 13. 当前唯一实现入口
+## 13. 历史实现记录与当前边界
 
-> 实时覆写（2026-08-26）：下方滚动记录中的旧“下一入口”由本段最新 Gate 状态覆盖；
+> 下方保留 2026-08-26 的滚动 Gate 记录，用于追溯现有结构成长与 profiler 的来源；其中所有“下一入口/下一步”均已失效，不得作为当前执行顺序。当前唯一动作只看 [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md)。
+>
+> 历史覆写（2026-08-26）：下方滚动记录中的旧“下一入口”曾由本段 Gate 状态覆盖；
 > synapse topology proposal、runtime topology ledger、neuron growth、cross-region wiring、
 > learning-driven route selection、online credit、region growth、post-growth holdout validation
 > 与 region retention/pruning 已完成。`AdaptiveNeuronNetwork`
@@ -623,7 +625,7 @@ taiji/
 > 配置化最小相对增益才允许建立跨区连接；checkpoint continuation 与 holdout 失败阻断均已
 > 覆盖。region retention/pruning 已通过 `reports/taiji_region_pruning_20260826.json`：低使用、
 > 高资源压力、长期 learning stagnation 且移除后 holdout 不退化的区域才可申请 pruning proposal，
-> 并经统一 budget、checkpoint、所属连接移除和 reverse rollback。当前唯一入口转为独立跨区域
+> 并经统一 budget、checkpoint、所属连接移除和 reverse rollback。当时入口转为独立跨区域
 > connection retention/pruning，且该 Gate 已由 `reports/taiji_connection_pruning_20260826.json`
 > 证明既有 route learner 证据可驱动单连接移除、checkpoint continuation 与 reverse rollback；
 > isolated-region split Gate 已通过 `reports/taiji_region_split_20260826.json`：稳定单位分区、父

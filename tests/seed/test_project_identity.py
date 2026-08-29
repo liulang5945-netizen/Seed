@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -74,3 +75,35 @@ def test_taiji_is_the_cognitive_architecture_and_seed_is_the_runtime() -> None:
     assert "Seed 是项目、产品和运行时" in direction
     assert "Seed 可以决定" in seed_architecture
     assert "不能决定" in seed_architecture
+
+
+def test_active_plans_have_one_execution_owner_and_resolvable_links() -> None:
+    active = REPO / "plans" / "active"
+    roadmap = active / "roadmap"
+    current = roadmap / "03_CURRENT_EXECUTION.md"
+
+    assert {path.name for path in roadmap.glob("*.md")} == {
+        "01_SCOPE_AND_PHASES.md",
+        "02_GATES_AND_CI.md",
+        "03_CURRENT_EXECUTION.md",
+        "04_EXECUTION_PLAN.md",
+    }
+
+    execution_headings: list[tuple[Path, str]] = []
+    for path in active.rglob("*.md"):
+        text = path.read_text(encoding="utf-8")
+        execution_headings.extend(
+            (path, line)
+            for line in text.splitlines()
+            if line.startswith("## ") and "当前唯一下一步" in line
+        )
+
+        for match in re.finditer(r"\[[^\]]+\]\(([^)]+)\)", text):
+            target = match.group(1).split("#", 1)[0]
+            if not target or target.startswith(("http://", "https://", "mailto:")):
+                continue
+            assert (path.parent / target).resolve().exists(), (
+                f"active plan link is missing: {path.relative_to(REPO)} -> {target}"
+            )
+
+    assert execution_headings == [(current, "## 4. 当前唯一下一步")]

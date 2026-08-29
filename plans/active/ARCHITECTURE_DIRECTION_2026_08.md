@@ -210,13 +210,15 @@ Taiji 的规模扩张应至少有四个层级：
 
 后续所有“神经元架构”和“自进化”实现，必须同时回答：新增了什么状态、由什么反馈驱动、如何证明它被使用、如何在 lesion 中失效、如何 checkpoint/rollback，以及它是否真的提高了未见任务迁移，而不是只增加了参数量。
 
-## 9. 当前唯一入口
+## 9. 历史结构推进记录与当前边界
+
+> 本节保留 2026-08-26 的结构成长推进脉络，用于解释现有 ledger、growth/pruning/split/merge 和 profiler 为什么存在。下文所有“入口/下一入口”均是当时的历史顺序，不再决定当前开发；当前唯一动作只看 [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md)。
 
 > 实时覆写（2026-08-26）：neuron growth、cross-region wiring、learning-driven route
 > selection、在线 credit、neuron-growth、region-growth、post-growth holdout 和 region
 > retention/pruning Gate 已完成；region pruning 已由 `reports/taiji_region_pruning_20260826.json`
 > 证明低使用、高资源压力、长期学习停滞且移除后 holdout 不退化时才可进入统一 proposal/ledger，
-> 并通过 budget、checkpoint continuation、所属连接移除和 reverse rollback。当前唯一入口是把
+> 并通过 budget、checkpoint continuation、所属连接移除和 reverse rollback。当时入口是把
 > 同一资源感知治理已扩展到独立跨区域连接，并由
 > `reports/taiji_connection_pruning_20260826.json` 证明 route learner 的既有证据可驱动连接
 > pruning，且通过 holdout、budget、checkpoint continuation 和 reverse rollback；增长与剪枝
@@ -227,7 +229,7 @@ Taiji 的规模扩张应至少有四个层级：
 > `reports/taiji_region_split_20260826.json` 通过 Gate；merge Gate 现已通过
 > `reports/taiji_region_merge_20260826.json`：兼容区域的单位/state、外部稀疏连接和 route
 > learner evidence 可聚合，内部连接、holdout 失败和预算不足均 fail-closed，并可逆回滚；
-> 当前唯一入口是把 growth/pruning/split/merge proposal 接入真实 runtime tick 的活动、预测
+> 当时入口是把 growth/pruning/split/merge proposal 接入真实 runtime tick 的活动、预测
 > 误差和资源观测，形成不依赖手工指标的自动维护闭环。下方长段保留为滚动历史记录。
 
 > 实时覆写（2026-08-26）：`TSKV8Adapter.step_cross_region_network()` 已成为结构维护的真实
@@ -264,12 +266,12 @@ Taiji 的规模扩张应至少有四个层级：
 
 > 最新同步：dependency/conflict 已完成；反向输入仍按依赖拓扑顺序执行，依赖失败阻断下游，
 > 同一 substrate 的竞争变更全部 `failed_closed`，不同 neuron identity 的 `add` 可并存并按依赖
-> 连续出生，队列只对同一目标 unit 去重。当前唯一入口是建立三层以上自适应区域的规模化结构
+> 连续出生，队列只对同一目标 unit 去重。当时入口是建立三层以上自适应区域的规模化结构
 > 维护 Gate，覆盖跨区域 route、混合 add/split/prune、资源竞争、checkpoint continuation 和
 > 拓扑不变量。
 > 最新同步：三层规模化 Gate 已通过；`source→relay→target` route 在 connected split 后保留并
 > 展开受影响边，standalone neuron `add` 与 network split 可混合提交，checkpoint、预算和双向
-> rollback 均通过。当前唯一入口是对 native sparse neuron/network runtime 做 CPU/CUDA 实际热点
+> rollback 均通过。当时入口是对 native sparse neuron/network runtime 做 CPU/CUDA 实际热点
 > 剖析，建立跨设备 checkpoint 恢复与数值一致性基线，再决定是否需要 fused/sparse kernel。
 
 > 最新同步（2026-08-26）：native runtime profile 已落地为
@@ -277,7 +279,7 @@ Taiji 的规模扩张应至少有四个层级：
 > `reports/taiji_native_runtime_profile_20260826.json`。本机 `torch 2.13.0+cpu` 无 CUDA，
 > 因此只记录 CPU 实测，不宣称 CUDA 已验证；CPU region/network profile、CPU checkpoint
 > roundtrip 与 continuation 均通过，热点为 `aten::_to_copy`、`aten::to` 和 `aten::index`。
-> 当前唯一入口是收紧每 tick 的设备/标量转换与临时分配，再复跑同一 profile，之后才决定
+> 当时入口是收紧每 tick 的设备/标量转换与临时分配，再复跑同一 profile，之后才决定
 > 是否需要 fused/sparse kernel。
 
 > 最新同步：该 runtime hardening 已完成并通过 35 项 native growth/structure 回归和 runtime
@@ -285,13 +287,13 @@ Taiji 的规模扩张应至少有四个层级：
 > 缓存，三层网络的 zero scratch vector 按区域复用且不进入 checkpoint；重跑 profile 仍明确为
 > CPU-only，region/network profile 与 checkpoint continuation 均通过。热点已收敛到显式稀疏 gather
 > (`aten::index`)、reduction (`aten::sum`) 及少量 copy；没有 CUDA 实测前不引入自定义 kernel。
-> 当前唯一入口是把这项 profile 转成稳定的性能回归基线，并在 CUDA-capable 主机上复跑同一 workload。
+> 当时入口是把这项 profile 转成稳定的性能回归基线，并在 CUDA-capable 主机上复跑同一 workload。
 
 > 最新同步：固定 workload、manifest、CPU profile 报告、checkpoint continuation 和 runtime
-> scratch 复用回归测试已经提交；性能数字作为本机观测，不作为跨机器硬阈值。当前唯一待决
+> scratch 复用回归测试已经提交；性能数字作为本机观测，不作为跨机器硬阈值。当时待决
 > 入口是获得 CUDA-capable 主机后复跑同一 workload，比较跨设备输出与 checkpoint continuation，
 > 再根据真实热点决定是否需要 fused/sparse kernel。
 
-状态已滚动更新：四步连续重规划、3/4/5 步变量 episode、不同失败位置、after-state relation 变化、executive-to-world prediction train/holdout 与 no-online-update calibration control、runtime calibration trace 的多步连续性/恢复、world-model planner projection/replan lesion、跨 seed 的 3/4/5 步 world-dynamics imagined rollout、imagined-to-real execution、runtime recovery state、recovery transfer、world-error calibration policy、normalized world-error contract 及 schema-scale transfer contract Gate 均已通过；核心对象术语表、状态转移图以及 `Assembly`、`Event`、`Concept`、`SelfState`/`DevelopmentState` 最小版本化合同已落地，且已接入真实 runtime lineage：观测生成 assembly/event，Outcome 写回 episodic 血缘并更新 self/development，跨 episode 语义巩固生成 concept，native checkpoint 可在巩固前保存并恢复，source/semantic lesion 已有回归覆盖；多信号 Concept Gate 也已通过：latent、world object/relation 和 Outcome 共同参与，跨 schema/未见对象支持集增长及三类信号 lesion 均有回归覆盖；`ConceptFormationOrgan` 已从 `TSKV8Adapter` 提取为 Taiji 自有语义器官，拥有独立 concept registry、容量/塑性/剪枝控制与 checkpoint，adapter 已把 `ConceptMatch` 接入 MemoryState 与 planner concept prior；concept transfer Gate 已通过 schema 1/2/4/8 的未见任务规划迁移、容量干扰、三类证据 lesion、器官 checkpoint 与 native runtime checkpoint recovery；concept sequence Gate 已通过时间顺序 action sequence、反转序列对照、变量 schema scale、concept lesion、adapter checkpoint 和失败 replan；状态条件 suffix Gate 已通过真实 WorldTransition 的 after-state/prediction-error/outcome trace、部分执行后的剩余 suffix 检索、错误状态与完全错位动作 fail-closed、环境 after-state 保留，以及 organ/native checkpoint recovery；变量 horizon / 分支塑性 Gate 也已通过同一 Concept 内共享前缀分支竞争、分支特有真实反馈只更新对应 trace、trace lesion 与 checkpoint recovery；trace capacity / selective branch Gate 也已通过 trace_capacity=1/2/4 的容量曲线、分支增量加入、单一 trace lesion 及剩余 identity checkpoint recovery；online branch birth Gate 也已通过连续真实 transition 链、新 trace_id、重复抑制、失败 feedback、adapter 发布、settle_action episode buffer 与 native checkpoint continuation；branch attribution Gate 也已通过多个同时激活 Concept 的唯一 owner 归属、低置信度/近似平分/owner lesion fail-closed、真实 settle_action buffer 和 native checkpoint continuation；structural growth budget/rollback Gate 也已通过：版本化 `StructuralGrowthRequest`、`DevelopmentState.structural_budget`、trial checkpoint roundtrip、trace lesion、replayability、native checkpoint continuation、预算不足拒绝与父结构 rollback 均有回归覆盖；synapse topology proposal Gate 与 runtime topology ledger Gate 也已通过：`StructuralTopologyProposal` 以稳定 substrate/单元坐标描述 rewire，adapter 统一接管 proposal、资源成本、`DevelopmentState.structural_budget`、native checkpoint continuation、最新顺序 rollback 和零预算拒绝；当前唯一下一步是把同一 ledger 扩展到可迁移的 neuron/region proposal。
+状态已滚动更新：四步连续重规划、3/4/5 步变量 episode、不同失败位置、after-state relation 变化、executive-to-world prediction train/holdout 与 no-online-update calibration control、runtime calibration trace 的多步连续性/恢复、world-model planner projection/replan lesion、跨 seed 的 3/4/5 步 world-dynamics imagined rollout、imagined-to-real execution、runtime recovery state、recovery transfer、world-error calibration policy、normalized world-error contract 及 schema-scale transfer contract Gate 均已通过；核心对象术语表、状态转移图以及 `Assembly`、`Event`、`Concept`、`SelfState`/`DevelopmentState` 最小版本化合同已落地，且已接入真实 runtime lineage：观测生成 assembly/event，Outcome 写回 episodic 血缘并更新 self/development，跨 episode 语义巩固生成 concept，native checkpoint 可在巩固前保存并恢复，source/semantic lesion 已有回归覆盖；多信号 Concept Gate 也已通过：latent、world object/relation 和 Outcome 共同参与，跨 schema/未见对象支持集增长及三类信号 lesion 均有回归覆盖；`ConceptFormationOrgan` 已从 `TSKV8Adapter` 提取为 Taiji 自有语义器官，拥有独立 concept registry、容量/塑性/剪枝控制与 checkpoint，adapter 已把 `ConceptMatch` 接入 MemoryState 与 planner concept prior；concept transfer Gate 已通过 schema 1/2/4/8 的未见任务规划迁移、容量干扰、三类证据 lesion、器官 checkpoint 与 native runtime checkpoint recovery；concept sequence Gate 已通过时间顺序 action sequence、反转序列对照、变量 schema scale、concept lesion、adapter checkpoint 和失败 replan；状态条件 suffix Gate 已通过真实 WorldTransition 的 after-state/prediction-error/outcome trace、部分执行后的剩余 suffix 检索、错误状态与完全错位动作 fail-closed、环境 after-state 保留，以及 organ/native checkpoint recovery；变量 horizon / 分支塑性 Gate 也已通过同一 Concept 内共享前缀分支竞争、分支特有真实反馈只更新对应 trace、trace lesion 与 checkpoint recovery；trace capacity / selective branch Gate 也已通过 trace_capacity=1/2/4 的容量曲线、分支增量加入、单一 trace lesion 及剩余 identity checkpoint recovery；online branch birth Gate 也已通过连续真实 transition 链、新 trace_id、重复抑制、失败 feedback、adapter 发布、settle_action episode buffer 与 native checkpoint continuation；branch attribution Gate 也已通过多个同时激活 Concept 的唯一 owner 归属、低置信度、近似平分或 owner lesion 时 fail-closed，实际 settle_action episode buffer 与 native checkpoint continuation 不发生跨 concept 复制；structural growth budget/rollback、synapse topology proposal、runtime topology ledger 与 neuron/region proposal 后续均已有历史 Gate。该段只保留为能力来源追溯，不再发布后继动作。
 
 执行顺序只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)，当前唯一下一步只看其 [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md)。P1 已完成首个兼容纵切片，P2 relation subgate 已在两个独立语料分区通过，P3 world-state/action-outcome 合同、可恢复 state store、结构化对象/关系/时间打乱、多步 episode 窄 Gate、adapter transition lineage、runtime prediction record、error-driven online correction、最小 workspace 路由/lesion 以及 A3 静态/world-outcome 窄 Gate 已落地；P4 working/episodic memory、cue-conditioned one-shot recall、additive semantic consolidation、multi-factor/noisy semantic Gate、semantic runtime/checkpoint ownership、容量/干扰曲线、standalone procedural skill、多步 procedural robustness、procedural runtime ownership 和 homeostatic/sleep-play Gate 已通过，P5 单步 goal-planning、imagined rollout/replan trigger、实际 replan/calibration 与 delayed reward/intervention Gate 已通过，P6 structured content/expression/tool-call codec、tool execution/outcome、tool failure/replan、unseen-tool/parameter transfer、cross-organ expression consistency、learned content selection、runtime content-selection ownership、online content credit assignment、holdout content transfer、text organ codec、terminal language-organ boundary、backend registry/training contract、external decoder realization/lesion、Qwen provider smoke、Taiji-owned realization validator/fallback、runtime semantic constraint/feedback、language fallback/replan、train/holdout provider baseline、rollbackable provider trainer、trained-provider safety integration、provider artifact/loader、Seed client provider startup、frontend client observability、client input-boundary、P7 executive contract、executive environment-loop、candidate synthesis、affordance feature transfer、affordance online-credit、contextual grounding、world-grounding lineage、end-to-end grounding transfer、grounded multi-step environment 和 grounded multi-step train/holdout 窄 Gate 已通过；structural growth budget/rollback Gate、substrate synapse topology proposal Gate、runtime topology ledger Gate 与 neuron growth Gate 均已通过；继续禁止固定 action/intent 表。
