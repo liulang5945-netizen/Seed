@@ -48,11 +48,17 @@ Taiji 的目标不是重造 Transformer，也不是把生物名词硬编码进�
 
 退出条件是：三层均通过；审计组件仅有 capability/event/portfolio GET 访问；前后端测试证明不输出敏感 parameters；正确处理 stale state；从客户端实际可追溯到同一 checkpoint revision。完成后，才可进入 W7-G0。
 
-## 3. 并行未提交工作：先隔离、审计、独立收口
+## 3. 并行 training / dataset / life-status 改动：已独立收口（2026-08-29）
 
-当前工作树中存在一组并行的 training / dataset / life-status 改动及诊断脚本。它们不属于本次计划提交，也不能在没有审计前被写成“Gate 已完成”。后续应以独立提交收口，并保持不阻塞当前只读审计 Gate。
+原先滞留在工作树中的那组 training / dataset / life-status 改动及诊断脚本，已按本节要求以独立提交 `cd39632` 收口，不与只读审计 Gate 混提。实际修掉三个用户报告的产品缺陷：
 
-该提交需要先产出一个变更事实表：每个 API 字段的 owner、动态 `needs` / homeostasis 的状态迁移、dataset 截断与 `max_records` 的语义、训练恢复的 checkpoint 读写路径、前端渲染与翻译键、诊断脚本是否仍可执行。训练相关修改的最小准入是：创建 checkpoint → 关闭运行时 → 恢复 → 继续一步 → 对 lineage、预算、结构、provider artifact 和可见指标进行等价性断言；否则只允许作为诊断，不得宣称训练能力。
+- **不能连续训练多个资料**：`/api/train/files` 只平铺扫描 `data/` 顶层，子目录里的数据集不可见；改为递归扫描 + 原生格式过滤并返回相对路径，resume / native 侧同步按相对路径解析。
+- **loss 曲线不显示**：面板隐藏时画布尺寸为 0×0，恢复可见后未重绘；改为 active 监听 + 尺寸兜底。
+- **生命系统「已接入原生」但无数据**：链路四层同时断裂——adapter 无读访问器、`SeedRuntime` 未暴露 homeostasis、`LifeNeedsPayload` 的 `default: 50.0` 把空 `needs` 编造成四个假值并丢弃原生 `stress`、前端无对应渲染契约。详见 [03_CURRENT_EXECUTION.md](03_CURRENT_EXECUTION.md) W5 条目与 [02_GATES_AND_CI.md §14.17](02_GATES_AND_CI.md)。
+
+回归证据：后端 `556 passed, 6 skipped`、前端 `42 files / 237 passed`、核心 mypy 0 错误、Ruff / ESLint / build / API contract 全通过（数字权威源见 [IMPLEMENTATION_STATUS_2026_08.md](../../reference/IMPLEMENTATION_STATUS_2026_08.md)）。
+
+**仍未满足的准入（不得当作已完成引用）**：本节原定的训练类改动最小准入——创建 checkpoint → 关闭运行时 → 恢复 → 继续一步 → 对 lineage、预算、结构、provider artifact 和可见指标做等价性断言——这轮**没有执行**。因此上述 dataset / resume 改动目前只算「数据集可发现性与 API 契约修复」，**不构成训练能力宣称**；在补上该往返等价性 Gate 之前不得据此启动长训。诊断脚本 `diag_train_multi_dataset.py` / `diag_train_select_all.py` 已按既有惯例归入 `scripts/archive/diagnostics/` 作为实测证据。
 
 ## 4. W7-G0：先冻结每个后续 Gate 的合同
 

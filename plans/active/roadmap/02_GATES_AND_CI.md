@@ -16,6 +16,8 @@
 
 辅助训练结果必须标记 `native-assisted`；只有不依赖辅助 teacher 决策且能继续终身学习的路径才能标记 `native-local`。A0–A9 的目的追溯和 Gate 定义以 Taiji v1 架构文档为准。
 
+最近一次全量回归的实测数字（pytest / vitest / 覆盖率）**只记在** [IMPLEMENTATION_STATUS_2026_08.md 的「验证基线」节](../../reference/IMPLEMENTATION_STATUS_2026_08.md)，本文件不复制这些数字——按 14.1 与 14.4，同一事实只允许一个权威源，抄一份就等于制造一个会过期的第二权威。
+
 ### 14.1 门禁自身的可信度纪律（2026-08-26 事故后新增）
 
 一次 CI 事故暴露出「门禁写下来」不等于「门禁跑过」：提交 `470f2af` 同时引入了 `black==24.12.0` 这个 **PyPI 上不存在的版本**（`24.10.0` 之后直接是 `25.1.0`）和多道新 blocking 门禁及「存量已清零」注释。依赖安装步骤因此在 30 秒内失败，其后 **全部门禁被跳过**，CI 连续 8 天红灯，期间累积的 84 个提交没有被任何门禁检验过。
@@ -207,6 +209,23 @@
 纪律：**需要确认某进程是否为另一进程的父/子时，唯一可信来源是 `ParentProcessId` 反查，不是命令行文本、不是窗口标题、不是启动顺序。** 涉及端口占用时同理——`/api/health` 有响应只证明"有人在监听"，不证明"监听者是我起的"，必须用 `GetExtendedTcpTable` 拿到 owner PID 再比对进程树。
 
 这与 14.7「本地绿 / CI 红」、13.5「PowerShell 注入 BOM」属同一类：**机制看起来没生效时，先怀疑验证手段本身。** 已连续三次发作，故单列成条。
+
+### 14.17 OpenAPI 快照门禁只盖请求面，响应 schema 漂移不可见（2026-08-29 三修收口后新增）
+
+`tests/test_openapi_snapshot.py` 只把 paths、methods、`parameters`、`requestBody` 的差异写进 `messages`，而 `_save_snapshot` 只在 `if messages:` 分支内可达。由此产生两个后果，而且是同一个缺陷的两面：
+
+- **响应 schema 变了不会让门禁变红**——契约的返回面完全在检测范围外；
+- **`--snapshot-update` 对响应面是空操作**——因为进不了 `if messages:`，基线永远不刷新，删掉的 schema 会无限期烂在快照里。
+
+实测证据：修 #3 时已从产品代码删除 `LifeNeedsPayload`（四个 `default: 50.0` 的编造字段，见 13.x 生命数据链路），但 `tests/snapshots/openapi_baseline.json` 里它仍在。跑 `pytest tests/test_openapi_snapshot.py --snapshot-update` 报 `2 passed` 且 `git diff --stat` 无变化，只能直接调 `_save_snapshot(_generate_schema())` 手工重生成，得到 `10 insertions(+), 42 deletions(-)`。**门禁报绿的同时，公开契约记录里挂着四个产品早已不再返回的编造默认值。**
+
+纪律：**改动任何 `response_model` 后，不要依赖快照门禁给结论，必须手工重生成基线并逐行读 diff。** 重生成命令：
+
+```powershell
+python -c "import sys; sys.path.insert(0,'tests'); from test_openapi_snapshot import _generate_schema, _save_snapshot; _save_snapshot(_generate_schema())"
+```
+
+这与 14.15 同源：**门禁绿不等于被覆盖，得先问清它到底比较了什么。** 待办（未做，不许当已完成引用）：把响应 schema 差异也纳入 `messages`，并按 14.1 的要求先证明新门禁能变红——即临时改一个 `response_model` 字段，确认门禁失败，再恢复。
 
 ## 15. 停止项
 
