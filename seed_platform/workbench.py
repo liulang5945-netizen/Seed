@@ -394,7 +394,7 @@ class CapabilitySnapshot:
 
     def to_taiji_affordances(
         self,
-        parameter_bindings: Mapping[str, Mapping[str, Any]],
+        parameter_bindings: Mapping[str, Any],
         *,
         evidence_id: str = "",
         after_state_digest: str = "",
@@ -414,10 +414,20 @@ class CapabilitySnapshot:
         if bool(evidence_id) != bool(after_state_digest):
             raise ValueError("Taiji evidence identity requires both event and after-state digest")
         affordances: list[Any] = []
+        affordance_ids: set[str] = set()
         for capability_id in sorted(parameter_bindings, key=str):
-            raw_parameters = parameter_bindings[capability_id]
-            if not isinstance(raw_parameters, Mapping):
-                raise TypeError(f"Taiji capability binding {capability_id!r} must be a mapping")
+            raw_binding_group = parameter_bindings[capability_id]
+            if isinstance(raw_binding_group, Mapping):
+                raw_bindings = (raw_binding_group,)
+            elif isinstance(raw_binding_group, Sequence) and not isinstance(
+                raw_binding_group, (str, bytes)
+            ):
+                raw_bindings = tuple(raw_binding_group)
+            else:
+                raise TypeError(
+                    f"Taiji capability binding {capability_id!r} must be a mapping "
+                    "or a sequence of mappings"
+                )
             descriptor = self.get(str(capability_id))
             if descriptor is None:
                 raise ValueError(
@@ -429,43 +439,55 @@ class CapabilitySnapshot:
                 raise ValueError(
                     f"Taiji capability projection only admits read-only capabilities: {capability_id}"
                 )
-            parameters = {str(name): value for name, value in raw_parameters.items()}
-            unknown = sorted(set(parameters) - descriptor.parameter_names)
-            if unknown:
-                raise ValueError(
-                    f"Taiji capability binding contains undeclared parameters for "
-                    f"{capability_id}: {unknown}"
-                )
-            identity = _canonical_digest(
-                {
-                    "capability_id": str(capability_id),
-                    "parameters": parameters,
-                    "evidence_id": str(evidence_id),
-                    "after_state_digest": str(after_state_digest),
-                }
-            )[:16]
-            lineage = [
-                f"workbench-snapshot:{self.snapshot_id}",
-                f"workbench-capability-revision:{self.revision}",
-                f"workbench-capability:{capability_id}",
-            ]
-            if evidence_id:
-                lineage.extend(
-                    (
-                        f"workbench-evidence:{evidence_id}",
-                        f"workbench-after-state:{after_state_digest}",
+            for raw_parameters in raw_bindings:
+                if not isinstance(raw_parameters, Mapping):
+                    raise TypeError(
+                        f"Taiji capability binding {capability_id!r} must contain mappings"
+                    )
+                parameters = {str(name): value for name, value in raw_parameters.items()}
+                unknown = sorted(set(parameters) - descriptor.parameter_names)
+                if unknown:
+                    raise ValueError(
+                        f"Taiji capability binding contains undeclared parameters for "
+                        f"{capability_id}: {unknown}"
+                    )
+                identity = _canonical_digest(
+                    {
+                        "capability_id": str(capability_id),
+                        "parameters": parameters,
+                        "evidence_id": str(evidence_id),
+                        "after_state_digest": str(after_state_digest),
+                    }
+                )[:16]
+                affordance_id = f"workbench:{capability_id}:{identity}"
+                if affordance_id in affordance_ids:
+                    raise ValueError(
+                        f"Taiji capability bindings contain duplicate affordance content: "
+                        f"{capability_id}"
+                    )
+                affordance_ids.add(affordance_id)
+                lineage = [
+                    f"workbench-snapshot:{self.snapshot_id}",
+                    f"workbench-capability-revision:{self.revision}",
+                    f"workbench-capability:{capability_id}",
+                ]
+                if evidence_id:
+                    lineage.extend(
+                        (
+                            f"workbench-evidence:{evidence_id}",
+                            f"workbench-after-state:{after_state_digest}",
+                        )
+                    )
+                affordances.append(
+                    WorldAffordance(
+                        affordance_id=affordance_id,
+                        action_kind=str(capability_id),
+                        parameters=parameters,
+                        confidence=1.0,
+                        feature_provenance="workbench-capability-snapshot",
+                        grounding_lineage=tuple(lineage),
                     )
                 )
-            affordances.append(
-                WorldAffordance(
-                    affordance_id=f"workbench:{capability_id}:{identity}",
-                    action_kind=str(capability_id),
-                    parameters=parameters,
-                    confidence=1.0,
-                    feature_provenance="workbench-capability-snapshot",
-                    grounding_lineage=tuple(lineage),
-                )
-            )
         return tuple(affordances)
 
 
@@ -841,12 +863,51 @@ class WorkbenchTaijiEvidence:
         return evidence
 
     @property
-    def projection_bindings(self) -> Mapping[str, Mapping[str, Any]]:
-        """Return only the exact structured binding observed by this evidence."""
+    def projection_bindings(self) -> Mapping[str, Any]:
+        """Derive deterministic next-step bindings from observed workspace state."""
 
         if not self.success:
             return {}
-        return {self.capability_id: dict(self.parameters)}
+        bindings: dict[str, list[Mapping[str, Any]]] = {}
+        seen: set[tuple[str, str]] = set()
+
+        def add(capability_id: str, parameters: Mapping[str, Any]) -> None:
+            identity = (capability_id, _canonical_digest(dict(parameters)))
+            if identity in seen:
+                return
+            seen.add(identity)
+            bindings.setdefault(capability_id, []).append(dict(parameters))
+
+        if self.capability_id == "workspace.list":
+            entries = self.result.get("entries", ())
+            if isinstance(entries, Sequence) and not isinstance(entries, (str, bytes)):
+                for entry in entries:
+                    if not isinstance(entry, Mapping):
+                        continue
+                    path = str(entry.get("path", "")).strip()
+                    if not path:
+                        continue
+                    add("workspace.stat", {"path": path})
+                    if str(entry.get("type", "")) == "file":
+                        add("workspace.read", {"path": path})
+        elif self.capability_id == "workspace.search":
+            results = self.result.get("results", ())
+            if isinstance(results, Sequence) and not isinstance(results, (str, bytes)):
+                for match in results:
+                    if isinstance(match, Mapping):
+                        path = str(match.get("path", "")).strip()
+                        if path:
+                            add("workspace.read", {"path": path})
+        elif self.capability_id == "workspace.read":
+            path = str(self.result.get("path", "")).strip()
+            if path:
+                add("workspace.stat", {"path": path})
+        elif self.capability_id == "workspace.stat":
+            if bool(self.result.get("exists")) and self.result.get("type") == "file":
+                path = str(self.result.get("path", "")).strip()
+                if path:
+                    add("workspace.read", {"path": path})
+        return {capability_id: tuple(items) for capability_id, items in bindings.items()}
 
     def to_taiji_affordances(self, snapshot: CapabilitySnapshot) -> tuple[Any, ...]:
         """Re-project this evidence through the current capability snapshot."""

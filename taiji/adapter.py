@@ -60,7 +60,13 @@ from .contracts import MemoryState as NativeMemoryState
 from .cross_region_learning import CrossRegionCooperationLearner
 from .environment import EnvironmentOutcome, TaijiEnvironment, TaijiToolEnvironment
 from .episodic_memory import EpisodicMemoryStore
-from .executive import ExecutiveCandidate, ExecutiveContext, ExecutiveController, ExecutiveDecision
+from .executive import (
+    EXECUTIVE_CANDIDATE_FEATURE_NAMES,
+    ExecutiveCandidate,
+    ExecutiveContext,
+    ExecutiveController,
+    ExecutiveDecision,
+)
 from .fabric import TaijiFabric
 from .generation import ContentPlan, ExpressionPlan, GenerationController, GenerationTrace, ToolCall
 from .homeostasis import HomeostaticController, HomeostaticDrive
@@ -4464,6 +4470,31 @@ class TSKV8Adapter(Taiji):
         if controller is not None and not isinstance(controller, ExecutiveController):
             raise TypeError("controller must be an ExecutiveController or None")
         self._executive = None if controller is None else controller.to(self.device)
+
+    def ensure_native_executive(self) -> None:
+        """Attach the default continuous executive organs when none are present.
+
+        The default is intentionally a Taiji-native numeric projection and a
+        local executive controller.  It does not encode capability names,
+        parse language, or select tools; those remain world-affordance and
+        Workbench policy responsibilities.
+        """
+
+        if self._affordance_features is not None and self._executive is not None:
+            return
+        if self._affordance_features is not None or self._executive is not None:
+            raise RuntimeError("native executive organs must be attached as a complete pair")
+        self.attach_affordance_features(
+            LearnedAffordanceFeatures(
+                input_dim=WorldAffordanceGroundingProducer.BASE_FEATURE_DIM,
+                feature_dim=len(EXECUTIVE_CANDIDATE_FEATURE_NAMES),
+                context_dim=self.perception.feature_dim,
+                seed=self.config.seed + self.config.perception.seed_offset,
+            )
+        )
+        self.attach_executive(
+            ExecutiveController(candidate_feature_dim=len(EXECUTIVE_CANDIDATE_FEATURE_NAMES))
+        )
 
     def attach_affordance_features(self, source: LearnedAffordanceFeatures | None) -> None:
         """Attach the learned numeric feature source for world affordances."""

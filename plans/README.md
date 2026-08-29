@@ -336,31 +336,17 @@ props 连接。前端 Vitest `36 files / 215 passed`、API contract/native bound
 `SettingsGeneralPanel`；组件不读写 store/API，父视图继续唯一持有设置加载、保存竞态、native API 副作用和失败回滚。前端 Vitest `38 files / 219 passed`、
 API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
 
-**当前唯一下一步：开始 W6 第十七片的 SettingsView Taiji 参数展示拆分。** 先隔离局部激活阈值、响应超时、自动巩固和睡眠模式表单，
-父视图继续唯一持有设置加载/保存竞态、native API 副作用和失败回滚；每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，
-不得先做视觉包装或 CUDA kernel。
-
 **已完成（2026-08-29）：W6 第十七片的 SettingsView Taiji 参数展示拆分。** 局部激活阈值、响应超时、自动巩固和睡眠模式表单已抽为
 `SettingsTaijiPanel`；组件不读写 store/API，父视图继续唯一持有参数校验、设置加载、保存竞态、native API 副作用和失败回滚。前端 Vitest `39 files / 221 passed`、
 API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
-
-**当前唯一下一步：开始 W6 第十八片的 SettingsView 数据与隐私展示拆分。** 先隔离对话保留、自动清理和数据导出表单，父视图继续唯一持有设置加载/保存竞态、
-导出聚合、重置确认、native API 副作用和失败回滚；每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，
-不得先做视觉包装或 CUDA kernel。
 
 **已完成（2026-08-29）：W6 第十八片的 SettingsView 数据与隐私展示拆分。** 对话保留、自动清理、数据导出和危险操作展示已抽为
 `SettingsPrivacyPanel`；组件不读写 store/API，父视图继续唯一持有设置保存竞态、导出聚合、重置确认、native API 副作用和失败回滚。前端 Vitest `40 files / 223 passed`、
 API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
 
-**当前唯一下一步：开始 W6 第十九片的 SettingsView 关于与许可展示拆分。** 先隔离版本元信息和开源许可入口，父视图继续唯一持有版本加载、许可弹窗状态和 native API 副作用；
-每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，不得先做视觉包装或 CUDA kernel。
-
 **已完成（2026-08-29）：W6 第十九片的 SettingsView 关于与许可展示拆分。** 版本元信息和开源许可入口已抽为
 `SettingsAboutPanel`；组件不持有许可弹窗状态，父视图继续唯一持有版本加载、弹窗状态和 native API 副作用。前端 Vitest `41 files / 225 passed`、
 API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
-
-**当前唯一下一步：开始 W6 第二十片的 SettingsView 共享表单样式与设置契约收口。** 在不改变父层状态拥有权的前提下，提取重复的设置展示契约和可复用样式边界，
-补齐跨面板结构回归与组件注册检查；每片提交前跑完整 CI，不得先做视觉包装或 CUDA kernel。
 
 **已完成（2026-08-29）：W6 第二十片的 SettingsView 共享面板结构、样式与契约收口。** 五个设置分区统一经由
 `SettingsPanelSection` 渲染标题/面板骨架，共享控件样式集中到 `assets/styles/settings-panels.css`，新增跨面板结构回归；父层状态拥有权和 native API 边界不变。
@@ -368,12 +354,10 @@ API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 err
 
 **路线已按 2026-08-29 live audit 校准：** Workbench W0–W3、W4 产品语义清理、W5 客户端真实性、P6 provider watchdog 与 P3
 interaction-group attribution 已有主线提交和回归证据；此前“W7 第一片还要接入真实 Workbench 工具”的文字已过时，不再作为执行入口。
-最新已完成片是聊天→Workbench 的显式原生任务事件桥接：`ActionIntent` 由 Taiji 侧先形成，聊天和 IDE 读取同一审计链；它不宣称已经
-完成自然语言自主工具选择。随后已补上 Taiji-owned 只读任务准入：ExecutiveController 选择当前候选，Workbench 以 capability snapshot
-做风险与参数 fail-closed，`/api/workbench/taiji/admit` 与 `/api/workbench/taiji/execute` 复用同一边界；最新又补上 capability snapshot
-到 Taiji WorldAffordance 的显式结构化投影与 `/api/workbench/taiji/project`；本轮已把真实 workspace after-state 写回 Taiji
-`WorldEvent`，在 evidence 到达后清除旧 Workbench affordance、纳入 checkpoint，并新增只允许最新同 tick evidence 的
-`/api/workbench/taiji/reproject` 重新投影闭环。唯一下一步以路线文档第 16 节为准。
+最新已完成片是 Taiji-owned 的真实只读自主 canary：默认 Taiji 原生 candidate synthesis 已脱离手工
+`ExecutiveCandidate`、语言 provider 和前端，真实 `workspace.list → workspace.read` 已完成选择、准入、执行、WorldEvent 回写、
+失效、重新投影与 checkpoint continuation；WorkBench 定向回归 `33 passed`，全量 Python `541 passed, 6 skipped`。当前唯一下一步仍只以
+路线文档第 16 节为准。
 
 ## 当前唯一下一步
 

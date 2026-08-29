@@ -317,6 +317,51 @@ def test_workspace_evidence_event_order_survives_checkpoint_continuation(
     ]
 
 
+def test_runtime_native_executive_canary_needs_no_manual_candidate(tmp_path, monkeypatch) -> None:
+    (tmp_path / "README.md").write_bytes(b"native executive canary\n")
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(Seed(episode_id="workbench-native-canary"))
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    runtime.model.architecture.observe(65, learn=False)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.list": {"path": "."}},
+    )
+
+    admission = runtime.admit_taiji_workbench_task(snapshot_id=snapshot_id)
+    execution = runtime.execute_taiji_workbench_task(snapshot_id=snapshot_id, learn=False)
+
+    assert admission["admission"]["accepted"] is True
+    assert execution["admission"]["accepted"] is True
+    assert execution["execution"]["outcome"]["result"]["entries"][0]["path"] == "README.md"
+    assert runtime.model.architecture.cognitive_snapshot().world.affordances == ()
+
+    checkpoint = tmp_path / "native-canary.pt"
+    runtime.save(checkpoint)
+    runtime = SeedRuntime.load(checkpoint)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    assert runtime.model.architecture.cognitive_snapshot().world.affordances == ()
+
+    reprojected = runtime.reproject_workbench_from_latest_evidence(snapshot_id=snapshot_id)
+    assert {item["action_kind"] for item in reprojected["affordances"]} == {
+        "workspace.read",
+        "workspace.stat",
+    }
+    resumed = runtime.execute_taiji_workbench_task(snapshot_id=snapshot_id, learn=False)
+    assert resumed["admission"]["accepted"] is True
+    assert resumed["execution"]["outcome"]["status"] == "success"
+    evidence_capabilities = [
+        dict(item.attributes)["capability_id"]
+        for item in runtime.model.architecture.cognitive_snapshot().world.events
+        if item.kind == "workbench.evidence"
+    ]
+    assert evidence_capabilities == ["workspace.list", "workspace.read"]
+
+
 def test_read_only_environment_reads_and_rejects_escape(tmp_path) -> None:
     (tmp_path / "src").mkdir()
     with (tmp_path / "src" / "main.py").open("w", encoding="utf-8", newline="") as handle:
@@ -573,7 +618,7 @@ def test_taiji_task_routes_expose_the_same_read_only_gate(tmp_path, monkeypatch)
     assert executed.json()["admission"]["accepted"] is True
     assert executed.json()["execution"]["outcome"]["status"] == "success"
     assert reprojected.status_code == 200
-    assert reprojected.json()["affordances"][0]["action_kind"] == "workspace.read"
+    assert reprojected.json()["affordances"][0]["action_kind"] == "workspace.stat"
 
 
 def test_native_mcp_registry_lists_and_invokes_local_read_only_canary(tmp_path) -> None:
