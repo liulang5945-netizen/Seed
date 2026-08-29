@@ -294,6 +294,7 @@ class TSKV8Adapter(Taiji):
         self._language_provider_artifact_registry = LanguageProviderArtifactRegistry()
         self._language_provider_artifact: LanguageProviderArtifact | None = None
         self._language_organ: LanguageOrgan | None = None
+        self._detached_language_organ_backend: str | None = None
         self._last_language_emission: LanguageEmission | None = None
         self._language_fallback_count = 0
         self._language_fallback_requires_replan = False
@@ -5103,6 +5104,8 @@ class TSKV8Adapter(Taiji):
                 raise ValueError("language organ backend does not match provider artifact")
             self._language_backend_registry.validate(organ)
         self._language_organ = organ
+        if organ is not None:
+            self._detached_language_organ_backend = None
 
     def attach_language_provider_artifact(self, artifact: LanguageProviderArtifact | None) -> None:
         """Record an externally loaded provider without importing its runtime."""
@@ -5199,6 +5202,17 @@ class TSKV8Adapter(Taiji):
         """Return the currently attached terminal organ for runtime assembly."""
 
         return self._language_organ
+
+    @property
+    def detached_language_organ_backend(self) -> str | None:
+        """Return the backend id whose terminal organ awaits a runtime rebind.
+
+        非 None 表示上一份 checkpoint 记录了一个外接解码器器官，其权重不随存档
+        保存，需由 `activate_language_provider` 重新挂载。留出这个可观测事实，
+        运行时才能在「本该有外接器官却没挂上」时报告降级而非静默沉默。
+        """
+
+        return self._detached_language_organ_backend
 
     @property
     def last_language_validation(self) -> LanguageValidation | None:
@@ -9173,6 +9187,7 @@ class TSKV8Adapter(Taiji):
     def _restore_language_organ(self, payload: Any) -> None:
         if payload is None:
             self._language_organ = None
+            self._detached_language_organ_backend = None
             return
         if not isinstance(payload, dict):
             raise ValueError("language organ checkpoint must be a mapping")
@@ -9183,9 +9198,17 @@ class TSKV8Adapter(Taiji):
         elif backend == StructuredTextLanguageOrgan.BACKEND_ID:
             restored = StructuredTextLanguageOrgan.from_checkpoint(payload)
         else:
-            raise ValueError(
-                "only native-readable and structured language organs can be restored without a runtime"
-            )
+            # 外接成熟解码器的权重不在 checkpoint 里（`model_state == "external"`），
+            # 它是运行时绑定资源，必须由 `activate_language_provider` 在启动时重新
+            # 挂载。这里把终端器官显式「脱挂」并留痕，而不是拒绝整份存档：否则
+            # 任何接入 guarded provider 的运行时都无法从自己的存档启动。
+            # 见 plans/active/roadmap/02_GATES_AND_CI.md §14.3。
+            if not isinstance(backend, str) or not backend:
+                raise ValueError("language organ checkpoint must declare a backend id")
+            self._language_backend_registry.get(backend)
+            self._language_organ = None
+            self._detached_language_organ_backend = backend
+            return
         self._language_backend_registry.validate(restored)
         if (
             self._language_provider_artifact is not None
@@ -9193,6 +9216,7 @@ class TSKV8Adapter(Taiji):
         ):
             raise ValueError("restored language organ backend does not match provider artifact")
         self._language_organ = restored
+        self._detached_language_organ_backend = None
 
     def _restore_language_backend_registry(self, payload: Any) -> None:
         self._language_backend_registry = (

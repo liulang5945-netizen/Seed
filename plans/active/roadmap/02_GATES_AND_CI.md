@@ -246,6 +246,14 @@ python -c "import sys; sys.path.insert(0,'tests'); from test_openapi_snapshot im
 
 前端同批修掉三处显示缺陷：step 计数器原按 `epoch * total_steps / total_epochs` 算，后端 epoch 恒为 1/1 导致**永远显示 100%**、与旁边的 ETA 自相矛盾；`fmtTime` 缺「天」档，超过 24 小时的估算会退化；吞吐单位标注 `symbols/s` 与后端「字节/s」口径不符。
 
+### 14.19 checkpoint 往返等价性门禁落地，实测暴露并修复第三方器官「存入不能读出」缺陷（2026-08-29）
+
+补上了 §3 准入始终缺的那道门禁：`tests/seed/test_checkpoint_roundtrip_contract.py`（3 例）。不再空转——裸 `Seed` + `learn_bytes` 会让约 25 个组件保持 `None`，等价性断言会退化为「都是空的所以相等」，因此 `_wire_runtime` 真实挂载原生 provider、episodic/semantic 记忆、自适应神经元区域，`_commit_real_history` 写入一条真实情节记忆与一次真实结构生长，再走 `resume._train_worker` 真实落盘 → `torch.load` → `Seed.from_checkpoint` 的完整路径，对 lineage（tick/继续一步的预测与概率分布）、预算（structural_budget）、结构（unit_ids/topology 状态与条数）、provider artifact（artifact_id/mode）、可见指标（homeostasis/episodic_count）逐项断言。
+
+**实测发现一处产品级往返不对称，并非人为打洞**：`TSKV8Adapter.checkpoint()`（:8797）与 `native_checkpoint()`（:9369）无条件序列化任意已挂载的语言器官，而 `_restore_language_organ`（:9173）只接受 `native-readable`/`structured-stub`，对外接成熟解码器直接 `ValueError`。又因 `SeedRuntime.load()` 先 `Seed.from_checkpoint()` 再 `activate_language_provider()`，导致**任何接入 guarded provider 的运行时都无法从自己的存档启动**——正是本文件 §14.3 所述「长训在最后一步失败并丢弃 checkpoint」的缺陷类。修复为显式可观测的「脱挂留痕」而非拒绝整份存档：`_restore_language_organ` 对外接 backend 记录 `_detached_language_organ_backend` 并置器官为 `None`（外接解码器权重是运行时绑定资源，本就该由启动时的 `activate_language_provider` 重新挂载），新增 `detached_language_organ_backend` 只读属性供运行时区分「脱挂待重绑」与「本来就是原生」，`attach_language_organ` 重绑成功时清除该标记；与 `rotate_language_provider`（`seed/language_provider.py:547-553`）「staging 前先置空三组件」的既有惯例一致。
+
+证据链：RED——guarded 用例自然抛出该 `ValueError`；变异探针（monkeypatch 掉 `_restore_topology_proposals` 使其丢弃结构）证明等价性断言会以 `topology_count 期望 1 实测 0` 干净地抓住结构丢失。GREEN——3 例通过后再跑全量：后端 `563 passed, 6 skipped`、Ruff check/format 通过、核心 mypy `Success: no issues found in 44 source files`、前端 `42 files / 237 passed`、`check:api-contract`/`check:native-boundary`/`check:aliases` 全过。据此 §3 的往返等价性准入从「未满足」翻转为「已满足」，长训准入的前提补齐。
+
 ## 15. 停止项
 
 在 P2 通过前：
