@@ -1,6 +1,5 @@
 <template>
-  <section class="settings-section">
-    <h2>Taiji 运行设置</h2>
+  <SettingsPanelSection title="Taiji 运行设置">
 
     <div class="setting-row setting-row--first">
       <div class="setting-left">
@@ -77,10 +76,12 @@
         </label>
       </div>
     </div>
-  </section>
+  </SettingsPanelSection>
 </template>
 
 <script setup>
+import SettingsPanelSection from './SettingsPanelSection.vue'
+
 defineOptions({ name: 'SettingsTaijiPanel' })
 
 defineProps({

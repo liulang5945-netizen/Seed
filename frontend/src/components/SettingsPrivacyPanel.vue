@@ -1,6 +1,5 @@
 <template>
-  <section class="settings-section">
-    <h2>数据与隐私</h2>
+  <SettingsPanelSection title="数据与隐私">
 
     <div class="setting-row setting-row--first">
       <div class="setting-left">
@@ -62,10 +61,12 @@
         </button>
       </div>
     </div>
-  </section>
+  </SettingsPanelSection>
 </template>
 
 <script setup>
+import SettingsPanelSection from './SettingsPanelSection.vue'
+
 defineOptions({ name: 'SettingsPrivacyPanel' })
 
 defineProps({

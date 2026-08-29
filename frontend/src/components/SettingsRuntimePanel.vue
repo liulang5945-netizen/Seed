@@ -1,6 +1,5 @@
 <template>
-  <section class="settings-section settings-runtime-panel">
-    <h2>运行环境</h2>
+  <SettingsPanelSection title="运行环境" class="settings-runtime-panel">
 
     <div class="setting-row">
       <div class="setting-left">
@@ -26,10 +25,12 @@
         <p class="setting-desc">{{ runtimeStatusText }}</p>
       </div>
     </div>
-  </section>
+  </SettingsPanelSection>
 </template>
 
 <script setup>
+import SettingsPanelSection from './SettingsPanelSection.vue'
+
 defineProps({
   modelValue: { type: Boolean, default: false },
   saving: { type: Boolean, default: false },

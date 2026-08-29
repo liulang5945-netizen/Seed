@@ -2091,3 +2091,10 @@ API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 err
 
 **当前唯一下一步：开始 W6 第二十片的 SettingsView 共享表单样式与设置契约收口。** 在不改变父层状态拥有权的前提下，提取重复的设置展示契约和可复用样式边界，
 补齐跨面板结构回归与组件注册检查；每片提交前跑完整 CI，不得先做视觉包装或 CUDA kernel。
+
+**已完成（2026-08-29）：W6 第二十片的 SettingsView 共享面板结构、样式与契约收口。** 五个设置分区统一经由
+`SettingsPanelSection` 渲染标题/面板骨架，共享控件样式集中到 `assets/styles/settings-panels.css`，新增跨面板结构回归；父层状态拥有权和 native API 边界不变。
+前端 Vitest `42 files / 230 passed`、API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
+
+**当前唯一下一步：开始 W7 第一片 Workbench Closure 的真实工具选择与执行合同落地。** 选定最小真实工具（优先工作台文件读取/写入）并打通
+Taiji `ActionIntent → ToolCall → Outcome` 到 IDE/文件效应器的单条可审计闭环；冻结 watchdog、CUDA/fused kernel 和进一步视觉打磨，直到该真实纵切片通过。
