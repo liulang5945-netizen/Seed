@@ -5242,8 +5242,10 @@ class TSKV8Adapter(Taiji):
 
         artifact = self._language_provider_artifact
         artifact_id = None if artifact is None else artifact.artifact_id
+        artifact_digest = None if artifact is None else artifact.artifact_digest
         self._language_provider_health = self._language_provider_health.observe(
             artifact_id=artifact_id,
+            artifact_digest=artifact_digest,
             accepted=accepted,
             reason_code=reason_code,
             now=now,
@@ -5255,6 +5257,7 @@ class TSKV8Adapter(Taiji):
         self,
         *,
         artifact_id: str | None,
+        artifact_digest: str | None = None,
         now: float,
         policy: LanguageProviderHealthPolicy,
         reason_code: str,
@@ -5263,6 +5266,7 @@ class TSKV8Adapter(Taiji):
 
         self._language_provider_health = self._language_provider_health.after_rollback(
             artifact_id=artifact_id,
+            artifact_digest=artifact_digest,
             now=now,
             policy=policy,
             reason_code=reason_code,

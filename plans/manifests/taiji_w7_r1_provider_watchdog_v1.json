@@ -73,7 +73,8 @@
     "existing_hooks": ["observe_language_provider", "auto_rollback_language_provider", "LanguageProviderHealthState"],
     "new_test_entry": "tests/seed/test_provider_watchdog_gate.py",
     "new_eval_entry": "scripts/training/eval_taiji_provider_watchdog.py",
-    "status": "not_started"
+    "status": "s0_passed",
+    "s0_report": "reports/taiji_w7_r1_provider_watchdog_20260829.json"
   },
   "boundary": [
     "No provider API may select a tool, goal, plan, memory, or recovery branch.",

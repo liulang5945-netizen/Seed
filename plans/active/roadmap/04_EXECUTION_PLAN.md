@@ -101,6 +101,8 @@ G0 不实现新自治。它的退出条件是所有 R 工作包都有可执行�
 
 验收包含 artifact 漂移、连续失败、超时、冷却、探测恢复、错误 fallback、checkpoint 中断恢复和多 provider 隔离的红绿测试；真实 canary 必须对同一 artifact digest 记录结果。
 
+**S0 已通过（2026-08-29）**：健康状态已从仅绑定 `artifact_id` 收紧为绑定 `artifact_id + artifact_digest`；同 ID 内容替换会建立新记录，不继承旧失败计数。`tests/seed/test_provider_watchdog_gate.py` 与 [S0 评测脚本](../../../scripts/training/eval_taiji_provider_watchdog.py) 覆盖 healthy/连续失败/单次回退/cooldown/legacy checkpoint 兼容，评测报告为 [taiji_w7_r1_provider_watchdog_20260829.json](../../../reports/taiji_w7_r1_provider_watchdog_20260829.json)，定向 provider 回归 `20 passed`。R1-S1 的唯一剩余入口是把同一记录接入真实 provider checkpoint replay 并验证恢复后的下一次探针行为。
+
 ## 6. W7-R2：interaction-group 与恢复归因
 
 R2 研究的是实际工作流中哪些交互区域共同提升/损害结果，不预设“规划神经元”“记忆神经元”等角色标签。观测来源只能是 W2/W3 的真实 trace：workspace route、memory、planner、tool、recovery、资源消耗和 outcome。

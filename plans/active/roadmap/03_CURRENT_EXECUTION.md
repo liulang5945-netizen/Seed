@@ -22,11 +22,11 @@
 
 ## 当前唯一下一步
 
-进入 **W7-R1 provider watchdog 实现**：沿已冻结的 [R1 manifest](../../manifests/taiji_w7_r1_provider_watchdog_v1.json)，把现有 provider artifact/canary/rollback 能力收敛成可恢复的健康状态机；先补 S0 红绿 Gate，再做 checkpoint replay 和 packaged-client 观测。本步不让 provider 进入 Taiji 决策，也不实现客户端自行切换。
+进入 **W7-R1-S1 provider watchdog checkpoint replay**：S0 已通过，沿已冻结的 [R1 manifest](../../manifests/taiji_w7_r1_provider_watchdog_v1.json) 对健康状态、artifact digest、冷却、隔离和回退做真实 checkpoint 保存→恢复→继续探针回放；本步不让 provider 进入 Taiji 决策，也不实现客户端自行切换。
 
 ## 后续唯一顺序
 
-1. 完成 W7-R1：provider watchdog 的 S0 → S1 → S2。
+1. 完成 W7-R1：provider watchdog 的 S1 → S2（S0 已通过）。
 2. 按 R2 → R3 → R4 → R5 推进；每个方向先做可证伪 Gate，再接入真实运行时，最后才更新产品展示。
 
 ## 更新规则

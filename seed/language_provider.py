@@ -55,6 +55,7 @@ class LanguageProviderStatus:
     provider: str
     backend_id: str
     artifact_id: str
+    artifact_digest: str = ""
     reason_code: str = ""
     reason: str = ""
     rollback: str = NativeReadableTextLanguageOrgan.BACKEND_ID
@@ -86,6 +87,7 @@ class LanguageProviderStatus:
             "provider": self.provider,
             "backend_id": self.backend_id,
             "artifact_id": self.artifact_id,
+            "artifact_digest": self.artifact_digest,
             "reason_code": self.reason_code,
             "reason": self.reason,
             "rollback": self.rollback,
@@ -494,6 +496,7 @@ def _unchanged_provider_status(
         provider="existing",
         backend_id=artifact.backend_id,
         artifact_id=artifact.artifact_id,
+        artifact_digest=artifact.artifact_digest,
         reason_code=reason_code,
         reason=reason,
         rollback=artifact.artifact_id,
@@ -767,7 +770,8 @@ def auto_rollback_language_provider(
     policy = config.health_policy()
     artifact = adapter.language_provider_artifact
     anchor_id = None if artifact is None else artifact.artifact_id
-    health = adapter.language_provider_health.for_artifact(anchor_id)
+    anchor_digest = None if artifact is None else artifact.artifact_digest
+    health = adapter.language_provider_health.for_artifact(anchor_id, anchor_digest)
     if not health.rollback_pending:
         status = _unchanged_provider_status(
             adapter,
@@ -833,6 +837,7 @@ def auto_rollback_language_provider(
     adapter.attach_language_provider_artifact_registry(quarantined_registry)
     health = adapter.commit_language_provider_health_rollback(
         artifact_id=target.artifact_id,
+        artifact_digest=target.artifact_digest,
         now=rollback_time,
         policy=policy,
         reason_code="provider_health_rollback_previous",
@@ -1030,6 +1035,7 @@ def activate_language_provider(
                 provider=config.provider,
                 backend_id=artifact.backend_id,
                 artifact_id=artifact.artifact_id,
+                artifact_digest=artifact.artifact_digest,
                 chat_enabled=config.chat_enabled,
             ),
             decoder,
