@@ -696,6 +696,17 @@
       "TaijiWorkbenchRecoveryBranchRequest": {
         "description": "Register one additional compatible recovery evidence branch.",
         "properties": {
+          "expected_revision": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Revision"
+          },
           "parent_loop_id": {
             "title": "Parent Loop Id",
             "type": "string"
@@ -723,6 +734,17 @@
           "branch_id": {
             "title": "Branch Id",
             "type": "string"
+          },
+          "expected_revision": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Revision"
           },
           "learn": {
             "default": false,
@@ -823,6 +845,17 @@
       "TaijiWorkbenchRecoveryPortfolioMaintainRequest": {
         "description": "Run lifecycle and capacity maintenance for a recovery portfolio.",
         "properties": {
+          "expected_revision": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Revision"
+          },
           "parent_loop_id": {
             "title": "Parent Loop Id",
             "type": "string"
@@ -856,6 +889,17 @@
       "TaijiWorkbenchSuccessorLoopRequest": {
         "description": "Run a bounded Taiji-owned successor graph through the read-only Gate.",
         "properties": {
+          "expected_portfolio_revision": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expected Portfolio Revision"
+          },
           "learn": {
             "default": false,
             "title": "Learn",
@@ -3583,6 +3627,76 @@
           }
         },
         "summary": "Maintain Taiji Workbench Recovery Portfolio",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/taiji/recovery-branch/portfolio": {
+      "get": {
+        "description": "Return recovery state for observation without exposing executable payloads.",
+        "operationId": "taiji_workbench_recovery_portfolio_snapshot_api_workbench_taiji_recovery_branch_portfolio_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "parent_loop_id",
+            "required": true,
+            "schema": {
+              "title": "Parent Loop Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "snapshot_id",
+            "required": true,
+            "schema": {
+              "title": "Snapshot Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "expected_revision",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Expected Revision"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Taiji Workbench Recovery Portfolio Snapshot Api Workbench Taiji Recovery Branch Portfolio Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Taiji Workbench Recovery Portfolio Snapshot",
         "tags": [
           "workbench"
         ]

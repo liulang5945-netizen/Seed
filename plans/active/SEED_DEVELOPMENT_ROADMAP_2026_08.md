@@ -2218,7 +2218,14 @@ branch register/select/maintain 统一进入可重入互斥锁，避免两个执
 全量 Python 回归 `550 passed, 6 skipped`，覆盖率 `45.10%`，Ruff、Black、核心 mypy 和 OpenAPI 严格快照均通过。该 Gate 仍只覆盖 bounded
 read-only recovery，不开放写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
 
-**当前唯一下一步：建立 recovery portfolio 的只读状态投影与审计可观测 Gate。** 为客户端和后续 Taiji 决策提供不执行的 portfolio snapshot：统一
-暴露 revision、live/expired/evicted branch 计数、可选 branch 摘要、retired loop 与最近维护结果；该投影只能读取 checkpoint/当前 WorldState，
-不得把 archive/tombstone 重新暴露成可执行 candidate，并验证 snapshot 与 checkpoint 恢复后的内容一致。通过前不进入写入自治、开放域自然语言
-工具选择、CUDA kernel 或视觉包装。
+**已完成（2026-08-29）：recovery portfolio 的只读状态投影与审计可观测 Gate。** 新增不执行的
+`GET /api/workbench/taiji/recovery-branch/portfolio`：以当前 snapshot/WorldState 读取 portfolio revision、tick、容量、TTL、
+active/selected/completed/failed/expired/evicted 计数、branch 的最小身份/血缘/预算/frontier 摘要和 liveness due 列表；不返回
+parameters、完整 evidence 或任何可直接执行的 candidate payload，evicted/tombstone 只作为审计信息。投影在 checkpoint restore 后保持
+revision、branch identity 和顺序一致，过期状态可被观察但不会在只读查询中偷偷改变持久化状态；维护仍由显式 maintain Gate 完成。
+WorkBench portfolio 定向回归 `2 passed`，OpenAPI 严格快照 `2 passed`，全量 Python 回归 `550 passed, 6 skipped`，覆盖率 `45.13%`，Ruff、
+Black、核心 mypy 均通过。该 Gate 仍只覆盖 bounded read-only recovery，不开放写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
+
+**当前唯一下一步：建立 recovery portfolio snapshot 的客户端消费与只读审计回放 Gate。** 将该状态投影接入 native facade/客户端观测层，
+只允许展示 revision、生命周期、容量和血缘摘要；对 checkpoint restore、revision stale、expired/evicted tombstone 做回放验证，禁止前端或
+语言 provider 把 snapshot 摘要反向拼装为执行请求。通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
