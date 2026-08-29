@@ -7,7 +7,12 @@ function resolveApiBase() {
     : new URLSearchParams()
 
   if (params.get('taiji_client') === 'desktop' || hashQuery.get('taiji_client') === 'desktop') {
-    return `${window.location.protocol}//${window.location.hostname}:8000`
+    // Desktop loads the Web UI from the same backend process. Keep the actual
+    // origin port so SEED_PORT works for parallel/dev/diagnostic instances.
+    const port = window.location.port
+    return port
+      ? `${window.location.protocol}//${window.location.hostname}:${port}`
+      : `${window.location.protocol}//${window.location.hostname}`
   }
 
   if (import.meta.env.DEV) return ''

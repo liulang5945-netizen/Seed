@@ -8,8 +8,8 @@ Taiji 的目标不是重造 Transformer，也不是把生物名词硬编码进�
 
 | 顺位 | 工作包 | 产出性质 | 解锁条件 |
 |---|---|---|---|
-| 当前 | Recovery portfolio 客户端审计回放 Gate | 只读、可审计产品证据 | 本表第 2 节通过 |
-| W7-G0 | 全部 R 工作包合同冻结 | 可证伪 Gate 合同 | 当前 Gate 通过 |
+| 已完成 | Recovery portfolio 客户端审计回放 Gate | 只读、可审计产品证据 | S0/S1/S2 通过 |
+| 当前 | W7-G0：全部 R 工作包合同冻结 | 可证伪 Gate 合同 | 当前 Gate 通过 |
 | W7-R1 | 语言 provider watchdog | 受限语言外设的安全降级 | G0 对 provider 合同通过 |
 | W7-R2 | interaction-group 与恢复归因 | 基于真实 trace 的可检验学习 | R1 的 provider 失败语义可观察 |
 | W7-R3 | 视觉与桌面体验 | 对真实能力的表达层 | R1/R2 的真实状态可投影 |
@@ -56,7 +56,7 @@ S0（组件/投影）与 S1（checkpoint 回放）已在代码层闭合，证据
 - **结构化错误码**：portfolio 快照路由把稳定错误映射为可分支的 `detail.error`（`portfolio_not_persisted` / `portfolio_snapshot_not_current` / `portfolio_parent_mismatch` / `portfolio_revision_stale` + `observed_revision` / `portfolio_invalid`）。
 - **前端审计面板**：`RecoveryPortfolioAuditPanel` 组合进 WorkspaceView 右栏「属性与检查器」，事件投影驱动重取（不新增独立轮询）；渲染 §2.2 全部四类信息（快照元数据/生命周期与 lineage/墓碑/结构化空态与错误态）；stale 时保留最后一个已验证快照并标记过期、切换 parent loop 或卸载时清空关联状态；只读（仅 context/portfolio 两个 GET，vitest 静态断言源码不含任何 mutation 投影方法）。不展示 parameters / evidence / 可复用执行输入。
 
-**仍待取证的退出项（不得当作已闭合引用）**：S2 packaged-client 现场取证——在 Legacy-off 打包客户端里打开真实 Workspace 路径、查看该审计面板，记录 capability / network / UI 证据并追溯同一 checkpoint revision。当前只提供 S0/S1 的自动化证据与可供现场取证的组件落点。据此，W7-G0 的入口以 S2 取证完成为准。
+**S2 packaged-client 已完成（2026-08-29）**：最终 `dist/Seed/Seed.exe` 在 Legacy-off、native runtime、8138 自定义端口、真实 `LOCALAPPDATA` 环境下启动；当首选数据根不可用时选择包内 `user_data`，不需要手工 Qt 环境覆盖。真实 `#/workspace?taiji_client=desktop` 路径显示 Workspace、右侧检查器和 `RecoveryPortfolioAuditPanel`；所有观测 API 均为 8138/200，无页面错误或 Legacy/Transformer/HF/GGUF 标记。客户端可追溯到 `seed:seed_corpus.pt` 与 native capability snapshot `5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f` revision `4`。本次启动的 portfolio 是结构化空态，非空分支排序/墓碑继续由 S0/S1 replay 覆盖；证据文件为 [packaged_client_s2_20260829.json](../../../reports/packaged_client_s2_20260829.json)。据此，S2 退出项完成，W7-G0 入口解锁。
 
 ## 3. 并行 training / dataset / life-status 改动：已独立收口（2026-08-29）
 

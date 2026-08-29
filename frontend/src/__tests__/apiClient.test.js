@@ -40,6 +40,18 @@ describe('resolveApiBase', () => {
     const { API_BASE } = await import('../composables/apiClient.js')
     expect(API_BASE).toBe('')
   })
+
+  it('桌面模式复用实际前端端口，不强制回落到 8000', async () => {
+    Object.defineProperty(window, 'location', {
+      value: new URL('http://127.0.0.1:8137/#/?taiji_client=desktop'),
+      writable: true,
+      configurable: true,
+    })
+
+    const { API_BASE } = await import('../composables/apiClient.js')
+
+    expect(API_BASE).toBe('http://127.0.0.1:8137')
+  })
 })
 
 describe('authFetch', () => {

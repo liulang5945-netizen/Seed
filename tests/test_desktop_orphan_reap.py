@@ -14,7 +14,32 @@
 
 from __future__ import annotations
 
-from desktop.main import ORPHAN_BACKEND_IMAGE, should_reap_listener
+import os
+
+from desktop.main import (
+    ORPHAN_BACKEND_IMAGE,
+    _configure_qt_runtime,
+    build_frontend_url,
+    should_reap_listener,
+)
+
+
+def test_desktop_qt_runtime_has_safe_software_defaults(monkeypatch):
+    """打包客户端在导入 Qt 前应提供无 GPU 驱动时的稳定退化路径。"""
+    monkeypatch.delenv("QTWEBENGINE_CHROMIUM_FLAGS", raising=False)
+    monkeypatch.delenv("QT_OPENGL", raising=False)
+
+    _configure_qt_runtime()
+
+    assert "--disable-gpu" in os.environ["QTWEBENGINE_CHROMIUM_FLAGS"]
+    assert os.environ["QT_OPENGL"] == "software"
+
+
+def test_desktop_frontend_url_keeps_backend_port():
+    """前端必须显式进入 desktop 模式，并复用实际后端端口。"""
+    assert build_frontend_url(8137) == (
+        "http://127.0.0.1:8137/#/?taiji_client=desktop"
+    )
 
 
 def test_reaps_backend_whose_parent_is_gone():

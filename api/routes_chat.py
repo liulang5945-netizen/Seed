@@ -569,7 +569,10 @@ async def health_check():
         "service": "Taiji API",
         "timestamp": time.time(),
         "model_loaded": app_state.model is not None or is_seed_active(),
-        "taiji_available": app_state.is_taiji(),
+        # Seed is the product's Taiji-native runtime.  The app_state flag
+        # only describes the optional Legacy/Cortex object and must not make
+        # the public health contract contradict runtime/status.
+        "taiji_available": is_seed_active() or app_state.is_taiji(),
         "seed_active": is_seed_active(),
     }
     if seed_runtime is not None:

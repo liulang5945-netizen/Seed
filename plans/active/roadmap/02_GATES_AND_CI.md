@@ -264,7 +264,9 @@ python -c "import sys; sys.path.insert(0,'tests'); from test_openapi_snapshot im
 
 证据链：RED——context 端点不存在（404）与 `detail` 为字符串均实测变红；变异探针之一（monkeypatch `_portfolio_error_code` 恒返回 `portfolio_unavailable`）触发 `assert 'portfolio_unavailable' == 'portfolio_not_persisted'`，之二（monkeypatch 快照投影注入 `parameters`）触发 `assert 'parameters' not in {...}`。GREEN——前端 `43 files / 242 passed`（+面板 5 例覆盖五状态矩阵、stale-keep-last、parent 切换清空、只读静态断言）、后端 `568 passed, 6 skipped`（+`tests/test_recovery_portfolio_audit_gate.py` 5 例覆盖 S0 状态矩阵/脱敏/容量与空态、struct 错误码、S1 checkpoint 回放）、核心 mypy 0、Ruff 全过、API contract `46 literals PASS`（context 路径入 OpenAPI 基线，已 `--snapshot-update`）、ESLint 0、`npm run build` 通过。
 
-**仍然开放的退出项**：S2 packaged-client 现场取证（真实 Workspace 路径查看面板并追溯 checkpoint revision）尚未执行，见 [04_EXECUTION_PLAN.md §2.4](04_EXECUTION_PLAN.md)；在该项补齐前，本节 Gate 不得宣称三层全过，W7-G0 入口以 S2 完成为准。
+**S2 packaged-client 现场取证已完成（2026-08-29）**：最终 `dist/Seed/Seed.exe` 在 `SEED_ENABLE_LEGACY=0`、`SEED_RUNTIME=1`、`SEED_PORT=8138` 且不额外设置 Qt 环境的条件下启动；真实 `LOCALAPPDATA` 受限时自动选择包内 `user_data`，后端健康 200，`runtime/status` 报 `model_name=seed:seed_corpus.pt`、`is_taiji=true`、`is_seed=true`、native provider。真实 Workspace 路由 `#/workspace?taiji_client=desktop` 的 UI 证据为 Workspace/右侧检查器/恢复组合审计面板均可见，空态为结构化 `portfolio_empty`；Playwright 记录无页面错误、无 Legacy/Transformer/HF/GGUF 标记，全部 API 请求均落在 8138 且为 200。客户端实际观察到的 native Workbench capability snapshot 为 `5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f`、revision `4`，与运行时同次启动的 `seed:seed_corpus.pt` 对齐。完整证据见 [packaged_client_s2_20260829.json](../../../reports/packaged_client_s2_20260829.json) 和截图 `output/playwright/seed-s2-packaged-workspace-final.png`。本次启动没有持久化 recovery portfolio，因此分支/墓碑的非空排序仍以 S0/S1 replay 证据为准；不把空态 canary 夸大为非空恢复演示。
+
+据此，本节 recovery portfolio 审计 Gate 的 S0/S1/S2 三层全部闭合，允许进入 W7-G0；后续仍必须保持“能力由服务端真实投影、客户端只读观测、非空分支由 replay 证据覆盖”的边界。
 
 ## 15. 停止项
 

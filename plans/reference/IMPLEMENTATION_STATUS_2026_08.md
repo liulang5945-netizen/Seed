@@ -33,6 +33,7 @@
 
 - **checkpoint 往返 Gate（`58976d6`，见 [02_GATES_AND_CI.md §14.19](../active/roadmap/02_GATES_AND_CI.md)）**：Python `563 passed, 6 skipped`（新增 5 例：等价性往返 3 例），核心 mypy `0 errors / 44 files`，前端 `42 files / 237 passed`，API contract `45 literals PASS`。
 - **recovery portfolio 审计 Gate（工作树，见 [02_GATES_AND_CI.md §14.20](../active/roadmap/02_GATES_AND_CI.md)）**：Python `568 passed, 6 skipped`（新增审计门禁 5 例），核心 mypy `0 errors / 44 files`，前端 `43 files / 242 passed`（+`RecoveryPortfolioAuditPanel` 5 例），API contract `46 literals PASS`（新增 `/api/workbench/taiji/recovery-branch/context`），native boundary `6 entrypoints PASS`，ESLint `0 errors`，`npm run build` 通过。OpenAPI 基线已按 `--snapshot-update` 重生成。
+- **recovery portfolio S2 packaged-client 现场证据（2026-08-29）**：最终 `dist/Seed/Seed.exe` 在 Legacy-off、native runtime、8138 自定义端口和真实 `LOCALAPPDATA` 下启动成功；受限数据根自动降级到 `dist/Seed/user_data`，不需手工 Qt 环境。Workspace、右侧检查器和恢复组合审计面板真实可见，所有关键 API 请求 8138/200，Playwright 无页面错误、无 Legacy/Transformer/HF/GGUF 标记；`runtime/status` 为 `seed:seed_corpus.pt` / `is_taiji=true` / `is_seed=true`，native capability snapshot revision `4`。本次为结构化 `portfolio_empty` 空态，非空 branch/tombstone 仍以 S0/S1 replay 为证据。完整记录见 [packaged_client_s2_20260829.json](../../reports/packaged_client_s2_20260829.json)。
 
 ## 关联资料
 

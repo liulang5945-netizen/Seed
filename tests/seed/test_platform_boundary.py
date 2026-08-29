@@ -71,6 +71,37 @@ def test_platform_paths_are_owned_outside_neuroplex() -> None:
     assert '"seed_platform*"' in pyproject
 
 
+def test_frozen_paths_honor_explicit_data_root(monkeypatch) -> None:
+    """打包运行可通过显式根目录隔离用户数据，避免写入只读安装位置。"""
+    from seed_platform import paths
+
+    explicit_root = REPO / ".seed_test_tmp" / "explicit-data"
+    monkeypatch.setattr(paths.sys, "frozen", True, raising=False)
+    monkeypatch.setenv("SEED_DATA_ROOT", str(explicit_root))
+    monkeypatch.setattr(paths, "_probe_writable_directory", lambda candidate: True)
+
+    assert paths.get_writable_base_dir() == str(explicit_root)
+
+
+def test_frozen_paths_fall_back_when_localappdata_is_not_writable(monkeypatch) -> None:
+    """LocalAppData 受 ACL 限制时应自动落到包目录的 user_data。"""
+    from seed_platform import paths
+
+    test_root = REPO / ".seed_test_tmp" / "paths-fallback"
+    local_root = test_root / "localappdata" / "Taiji"
+    package_root = test_root / "package"
+    monkeypatch.setattr(paths.sys, "frozen", True, raising=False)
+    monkeypatch.setattr(paths.sys, "executable", str(package_root / "Seed.exe"))
+    monkeypatch.setenv("LOCALAPPDATA", str(local_root.parent))
+    monkeypatch.delenv("SEED_DATA_ROOT", raising=False)
+    monkeypatch.setattr(
+        paths,
+        "_probe_writable_directory",
+        lambda candidate: str(candidate) != str(local_root),
+    )
+
+    assert paths.get_writable_base_dir() == str(package_root / "user_data")
+
 def test_platform_state_has_no_legacy_imports() -> None:
     app_state = REPO / "seed_platform" / "app_state.py"
     imports = _imports(app_state)
