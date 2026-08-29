@@ -22,11 +22,11 @@
 
 ## 当前唯一下一步
 
-进入 **W7-R1-S1 provider watchdog checkpoint replay**：S0 已通过，沿已冻结的 [R1 manifest](../../manifests/taiji_w7_r1_provider_watchdog_v1.json) 对健康状态、artifact digest、冷却、隔离和回退做真实 checkpoint 保存→恢复→继续探针回放；本步不让 provider 进入 Taiji 决策，也不实现客户端自行切换。
+进入 **W7-R1-S2 provider watchdog packaged-client 观测**：S0/S1 已通过，沿已冻结的 [R1 manifest](../../manifests/taiji_w7_r1_provider_watchdog_v1.json) 在 Legacy-off 的真实打包客户端记录 provider artifact digest、健康状态、结构化降级和 backend/network 绑定；本步只观测服务端真实投影，不让客户端自行切换 provider。
 
 ## 后续唯一顺序
 
-1. 完成 W7-R1：provider watchdog 的 S1 → S2（S0 已通过）。
+1. 完成 W7-R1：provider watchdog 的 S2（S0/S1 已通过）。
 2. 按 R2 → R3 → R4 → R5 推进；每个方向先做可证伪 Gate，再接入真实运行时，最后才更新产品展示。
 
 ## 更新规则
