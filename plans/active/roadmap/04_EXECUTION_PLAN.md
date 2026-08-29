@@ -12,7 +12,7 @@ Taiji 的目标不是重造 Transformer，也不是把生物名词硬编码进�
 | 已完成 | W7-G0：全部 R 工作包合同冻结 | 可证伪 Gate 合同 | 5 份 v1 manifest + manifest contract test |
 | 已完成 | W7-R1 | 受限语言外设的安全降级 | G0 对 provider 合同通过 |
 | 已完成 | W7-R2 | interaction-group 与恢复归因 | R1 的 provider 失败语义可观察 |
-| 当前 | W7-R3 | 视觉与桌面体验 | R1/R2 的真实状态可投影；**S2 为 `env-blocked`（本机缺 Chrome）** |
+| 当前 | W7-R3 | 视觉与桌面体验 | R1/R2 的真实状态可投影；**S2 已解除 `env-blocked`，待现场取证** |
 | W7-R4 | CUDA 运行时 | 硬件专用的可恢复加速路径 | 有真实 CUDA 主机；此前保持 `hardware-blocked` |
 | W7-R5 | 开放域结构成长与自进化 | 有资源治理、可回滚的增长 | R1–R4 证据与长期评估基线齐备；R3-S2 阻塞期允许先做 S0 前置切片 |
 
@@ -129,7 +129,7 @@ R3 只把已经存在的能力变得可辨识、可访问、可信，不用 mock
 
 **R3-S0/S1 已通过（2026-08-29）**：生命状态页恢复原有五维雷达作为 Taiji 状态主视觉；原生运行时摘要压缩为辅助卡片，需求条不再与雷达重复占据首屏；侧边栏删除重复的底部生命状态脉冲块，只保留“系统 → 生命状态”导航。`RuntimeEvidenceStrip` 从聊天、能力、知识库、训练和设置页移除，在生命页底部保留为默认折叠审计详情，展开后仍读取同一 runtime projection。桌面托盘“生命状态”动作改为先恢复窗口再执行 `#/life`，不再只改变隐藏 WebView 的 hash。S0 前端 `43 files / 245 passed`、Vite build、ESLint（0 errors）和桌面契约 `12 passed`；S1 通过 `scripts/release.py --skip-nsis` 重建 `dist/Seed/Seed.exe`，内置前端 index 与源码构建产物字节一致，Legacy-off/native runtime 在 8138 端口健康 canary 为 ok/taiji_available/seed_active/model_loaded 全真。证据见 [R3-S1](../../../reports/taiji_w7_r3_visual_desktop_s1_20260829.json)。
 
-**R3-S2 状态：`env-blocked`（不是通过，也不是取消）**。阻塞原因是本机未安装 Chrome，浏览器截图与真实 Windows 任务栏/托盘/高 DPI/窄窗口现场取证无法执行。解除条件与恢复动作固定为：
+**R3-S2 状态：阻塞已解除，现场取证待执行**。Chrome 已安装，浏览器截图与真实 Windows 任务栏/托盘/高 DPI/窄窗口现场取证可以恢复。解除后的固定恢复动作是：
 
 1. Chrome 安装完成后，先复跑 `scripts/release.py --skip-nsis` 确认包仍与源码前端字节一致，避免用旧包取证。
 2. 沿已冻结的 [R3 manifest](../../manifests/taiji_w7_r3_visual_desktop_v1.json) 在真实窗口、任务栏、托盘、通知、高 DPI 与窄窗口条件下取证，只验证已完成的表达与可达性，不新增前端认知状态、不伪造运行时能力。
@@ -163,7 +163,7 @@ R5 的 checkpoint 必须包含结构 revision、parent/child lineage、资源账
 
 在做任何内化或效应器成长之前，必须先修掉一个已核实的生产缺口：`api/seed_runtime.py` 调用了 `synthesize_executive_candidates()`（L810）和 `select_executive(...)`（L813），但 `api/` 下**没有任何 `record_executive_outcome` 调用点**；而 `taiji/adapter.py` L4715 的 `record_executive_outcome` 是驱动 `LearnedAffordanceFeatures.online_update` 的唯一入口。因此当前打包客户端**选择 affordance 却从不学习**，`outcome_head` 一直停留在初始化状态。
 
-本切片：先写红测证明执行一次只读 capability 后 `fit_updates + online_updates` 不增长，再在已有 evidence 提交点（构造 `WorkbenchTaijiEvidence` 并 `record_world_event` 之后，L2921–2936 区间）接上 `record_executive_outcome`，intent_id 与 `source_affordance_id` 必须与选择结果一致、不一致即 fail-closed；checkpoint 往返须保留两个计数并复现同一决策。此切片不写转换器、不动 read-only 限制、不引入注册表。
+本切片已完成：红测锁定了真实执行路径在修复前不会增加学习计数；现已在 evidence 提交点（构造 `WorkbenchTaijiEvidence` 并 `record_world_event` 之后）接上 `record_executive_outcome`。执行前保存 source affordance 与 affordance context，严格校验当前 executive decision、intent_id 和 `source_affordance_id`；任一不一致即 fail-closed，`learn=False` 不产生学习副作用，`learn=True` 才执行 online update。checkpoint 往返保留 `fit_updates` / `online_updates` 并恢复同一最后决策。此切片不写转换器、不动 read-only 限制、不引入注册表。证据见 [R5-S0](../../../reports/taiji_w7_r5_s0_learning_channel_20260829.json)。
 
 ### 9.1 R5-A：知识内化转换器与可删性判据（skill/mcp 学进权重后可删）
 

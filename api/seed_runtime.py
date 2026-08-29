@@ -975,6 +975,7 @@ class SeedRuntime:
             decision.action_intent,
             snapshot_id=admission.request.snapshot_id,
             learn=learn,
+            executive_decision=decision,
         )
         payload["execution"] = execution
         return payload
@@ -1546,6 +1547,7 @@ class SeedRuntime:
                     decision.action_intent,
                     snapshot_id=admission.request.snapshot_id,
                     learn=learn,
+                    executive_decision=decision,
                 )
                 outcome = dict(execution.get("outcome") or {})
                 step.update(
@@ -2718,6 +2720,7 @@ class SeedRuntime:
         mcp_registry_snapshot_id: str = "",
         learn: bool = False,
         event_sink: Callable[[Any], None] | None = None,
+        executive_decision: Any | None = None,
     ) -> dict[str, Any]:
         """Execute one Taiji-owned intent through Seed's workbench."""
 
@@ -2732,6 +2735,31 @@ class SeedRuntime:
         if not isinstance(intent, ActionIntent):
             raise TypeError("workbench execution requires an ActionIntent")
         environment = self._sync_workbench_root()
+        architecture = self.model.architecture
+        source_affordance = None
+        affordance_context = None
+        if executive_decision is not None:
+            if architecture.last_executive_decision is not executive_decision:
+                raise ValueError("workbench learning requires the current executive decision")
+            if executive_decision.action_intent.intent_id != intent.intent_id:
+                raise ValueError("workbench learning intent does not match the selected decision")
+            source_affordance_id = str(executive_decision.selected.source_affordance_id or "")
+            if not source_affordance_id:
+                raise ValueError("workbench learning requires a selected source affordance")
+            world_before_execution = architecture.cognitive_snapshot().world
+            source_affordance = next(
+                (
+                    item
+                    for item in world_before_execution.affordances
+                    if item.affordance_id == source_affordance_id
+                ),
+                None,
+            )
+            if source_affordance is None:
+                raise ValueError(
+                    "workbench learning source affordance does not match the selected decision"
+                )
+            affordance_context = architecture._affordance_context()
 
         def append_event(
             phase: str,
@@ -2943,6 +2971,16 @@ class SeedRuntime:
                 taiji_world_event,
                 invalidate_affordance_ids=invalidated_affordances,
             )
+            if executive_decision is not None:
+                if taiji_outcome.intent_id != executive_decision.action_intent.intent_id:
+                    raise ValueError("workbench outcome does not match the selected decision")
+                if learn:
+                    architecture.record_executive_outcome(
+                        taiji_outcome,
+                        learn=True,
+                        source_affordance=source_affordance,
+                        affordance_context=affordance_context,
+                    )
         append_event(
             "outcome",
             request.request_id,

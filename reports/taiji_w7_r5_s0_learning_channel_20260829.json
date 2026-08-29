@@ -1,0 +1,51 @@
+{
+  "format": "taiji-w7-r5-s0-learning-channel-evidence-v1",
+  "stage": "S0",
+  "date": "2026-08-29",
+  "status": "passed",
+  "scope": {
+    "entrypoint": "SeedRuntime.execute_taiji_workbench_task",
+    "learning_owner": "TSKV8Adapter.record_executive_outcome",
+    "excluded": [
+      "R5-A internalization converter",
+      "R5-B effector registry",
+      "read-only Workbench policy changes"
+    ]
+  },
+  "behavior": {
+    "real_workbench_outcome": true,
+    "world_event_committed_before_learning": true,
+    "source_affordance_captured_before_invalidation": true,
+    "intent_and_source_affordance_binding_fail_closed": true,
+    "learn_false_is_frozen": true,
+    "learn_true_online_update": true,
+    "fit_updates_unchanged": true
+  },
+  "learning_counts": {
+    "before": {
+      "fit_updates": 0,
+      "online_updates": 0
+    },
+    "after_learn_true": {
+      "fit_updates": 0,
+      "online_updates": 1
+    }
+  },
+  "checkpoint": {
+    "roundtrip": true,
+    "preserves_fit_updates": true,
+    "preserves_online_updates": true,
+    "restores_last_executive_decision": true
+  },
+  "checks": {
+    "targeted_native_executive_desktop_project_identity": "24 passed",
+    "manual_learning_channel_roundtrip": "passed",
+    "ruff": "passed",
+    "compileall": "passed",
+    "git_diff_check": "passed"
+  },
+  "limitations": {
+    "pytest_tmp_path": "local Temp/ACL teardown remains environment-blocked; the test remains in the normal pytest suite for CI",
+    "r3_s2_windows_field_evidence": "pending"
+  }
+}

@@ -362,6 +362,52 @@ def test_runtime_native_executive_canary_needs_no_manual_candidate(tmp_path, mon
     assert evidence_capabilities == ["workspace.list", "workspace.read"]
 
 
+def test_native_workbench_execution_records_learning_and_roundtrips(
+    tmp_path, monkeypatch
+) -> None:
+    (tmp_path / "README.md").write_bytes(b"learning channel canary\n")
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    checkpoint = tmp_path / "learning-channel.pt"
+    runtime = SeedRuntime(
+        Seed(episode_id="workbench-learning-channel"),
+        checkpoint_path=checkpoint,
+    )
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    runtime.model.architecture.observe(65, learn=False)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.list": {"path": "."}},
+    )
+
+    source = runtime.model.architecture._affordance_features
+    assert source is not None
+    before = (source.fit_updates, source.online_updates)
+    execution = runtime.execute_taiji_workbench_task(snapshot_id=snapshot_id, learn=True)
+
+    assert execution["admission"]["accepted"] is True
+    assert execution["execution"]["outcome"]["status"] == "success"
+    assert (source.fit_updates, source.online_updates) == (before[0], before[1] + 1)
+
+    selected_candidate_id = execution["decision"]["selected_candidate_id"]
+    runtime.save(checkpoint)
+    restored = SeedRuntime.load(checkpoint)
+    restored_source = restored.model.architecture._affordance_features
+    assert restored_source is not None
+    assert (restored_source.fit_updates, restored_source.online_updates) == (
+        source.fit_updates,
+        source.online_updates,
+    )
+    assert restored.model.architecture.last_executive_decision is not None
+    assert (
+        restored.model.architecture.last_executive_decision.selected.candidate_id
+        == selected_candidate_id
+    )
+
+
 def test_runtime_successor_graph_invalidates_siblings_and_continues_checkpoint(
     tmp_path, monkeypatch
 ) -> None:
