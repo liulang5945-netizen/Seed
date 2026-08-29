@@ -102,8 +102,8 @@ def test_active_plans_have_one_execution_owner_and_resolvable_links() -> None:
             target = match.group(1).split("#", 1)[0]
             if not target or target.startswith(("http://", "https://", "mailto:")):
                 continue
-            assert (path.parent / target).resolve().exists(), (
-                f"active plan link is missing: {path.relative_to(REPO)} -> {target}"
-            )
+            assert (
+                (path.parent / target).resolve().exists()
+            ), f"active plan link is missing: {path.relative_to(REPO)} -> {target}"
 
     assert execution_headings == [(current, "## 4. 当前唯一下一步")]

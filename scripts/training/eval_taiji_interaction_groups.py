@@ -300,14 +300,22 @@ def build_native_corpus() -> tuple[InteractionTraceCorpus, list[dict[str, object
         (
             "ab",
             (97, 98),
-            (("none", (), 0.0, 0.0), ("first", (97,), 0.2, 0.1),
-             ("second", (98,), 0.3, 0.1), ("pair", (97, 98), 1.0, 0.7)),
+            (
+                ("none", (), 0.0, 0.0),
+                ("first", (97,), 0.2, 0.1),
+                ("second", (98,), 0.3, 0.1),
+                ("pair", (97, 98), 1.0, 0.7),
+            ),
         ),
         (
             "cd",
             (99, 100),
-            (("none", (), 0.0, 0.0), ("first", (99,), 0.6, 0.2),
-             ("second", (100,), 0.2, 0.1), ("pair", (99, 100), -0.2, 0.05)),
+            (
+                ("none", (), 0.0, 0.0),
+                ("first", (99,), 0.6, 0.2),
+                ("second", (100,), 0.2, 0.1),
+                ("pair", (99, 100), -0.2, 0.05),
+            ),
         ),
     )
     episodes: dict[str, list[InteractionTraceEpisode]] = {"train": [], "holdout": []}
@@ -326,10 +334,13 @@ def build_native_corpus() -> tuple[InteractionTraceCorpus, list[dict[str, object
                 )
                 episodes[split].append(episode)
                 replay_records.append(replay_record)
-    return InteractionTraceCorpus(
-        train=tuple(episodes["train"]),
-        holdout=tuple(episodes["holdout"]),
-    ), replay_records
+    return (
+        InteractionTraceCorpus(
+            train=tuple(episodes["train"]),
+            holdout=tuple(episodes["holdout"]),
+        ),
+        replay_records,
+    )
 
 
 def _workbench_owner(capability_id: str, parameters: dict[str, object]) -> str:
@@ -359,9 +370,7 @@ def _project_action_bindings(
             parameter_bindings={capability_id: parameters},
         )
         return
-    affordances = environment.capability_snapshot.to_taiji_affordances(
-        {capability_id: parameters}
-    )
+    affordances = environment.capability_snapshot.to_taiji_affordances({capability_id: parameters})
     runtime.model.architecture.set_world_affordances(affordances)
 
 
@@ -395,19 +404,17 @@ def _execute_workbench_action(
         "success": bool(outcome.get("success", False)),
         "error_code": outcome.get("error_code", ""),
         "native_event_id": event.event_id,
-        "workbench_event_id": None
-        if not isinstance(world_event, dict)
-        else world_event.get("event_id"),
-        "selected_candidate_id": None
-        if not isinstance(decision, dict)
-        else decision.get("selected_candidate_id"),
+        "workbench_event_id": (
+            None if not isinstance(world_event, dict) else world_event.get("event_id")
+        ),
+        "selected_candidate_id": (
+            None if not isinstance(decision, dict) else decision.get("selected_candidate_id")
+        ),
     }
     return event.event_id, record
 
 
-def _workbench_outcome(
-    *, episode_id: str, runtime: SeedRuntime, reward: float
-) -> Outcome:
+def _workbench_outcome(*, episode_id: str, runtime: SeedRuntime, reward: float) -> Outcome:
     state = runtime.model.architecture.cognitive_snapshot()
     return Outcome(
         intent_id=f"{episode_id}:workflow-outcome",
@@ -582,10 +589,13 @@ def build_workbench_corpus() -> tuple[InteractionTraceCorpus, list[dict[str, obj
                     )
                     episodes[split].append(episode)
                     records.append(record)
-    return InteractionTraceCorpus(
-        train=tuple(episodes["train"]),
-        holdout=tuple(episodes["holdout"]),
-    ), records
+    return (
+        InteractionTraceCorpus(
+            train=tuple(episodes["train"]),
+            holdout=tuple(episodes["holdout"]),
+        ),
+        records,
+    )
 
 
 def evaluate() -> dict[str, object]:
@@ -662,8 +672,7 @@ def evaluate_native() -> dict[str, object]:
         bool(item["replay_equal"]) for item in replay_records
     )
     report["metrics"]["native_event_ids_preserved"] = all(
-        bool(item["event_ids"]) == (item["projected_event_count"] > 0)
-        for item in replay_records
+        bool(item["event_ids"]) == (item["projected_event_count"] > 0) for item in replay_records
     )
     report["metrics"]["gate_passed"] = bool(
         report["metrics"].get("gate_passed", False)
@@ -700,7 +709,9 @@ def evaluate_workbench() -> dict[str, object]:
         "workbench_records": workbench_records,
     }
     replay_ok = all(bool(record["replay_equal"]) for record in workbench_records)
-    world_events_ok = all(int(record["native_world_event_count"]) > 0 for record in workbench_records)
+    world_events_ok = all(
+        int(record["native_world_event_count"]) > 0 for record in workbench_records
+    )
     planner_ok = all(
         all(
             bool(action.get("selected_candidate_id"))
@@ -754,13 +765,21 @@ def main() -> None:
     args = parser.parse_args()
     if args.stage == "s2":
         report = evaluate_workbench()
-        output = args.output or PROJECT_ROOT / "reports" / "taiji_w7_r2_interaction_groups_s2_20260829.json"
+        output = (
+            args.output
+            or PROJECT_ROOT / "reports" / "taiji_w7_r2_interaction_groups_s2_20260829.json"
+        )
     elif args.stage == "s1":
         report = evaluate_native()
-        output = args.output or PROJECT_ROOT / "reports" / "taiji_w7_r2_interaction_groups_s1_20260829.json"
+        output = (
+            args.output
+            or PROJECT_ROOT / "reports" / "taiji_w7_r2_interaction_groups_s1_20260829.json"
+        )
     else:
         report = evaluate()
-        output = args.output or PROJECT_ROOT / "reports" / "taiji_w7_r2_interaction_groups_20260829.json"
+        output = (
+            args.output or PROJECT_ROOT / "reports" / "taiji_w7_r2_interaction_groups_20260829.json"
+        )
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"output": str(output), "gate": report["gate"]}, ensure_ascii=False))

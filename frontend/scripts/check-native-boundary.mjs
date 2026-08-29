@@ -13,13 +13,15 @@ const forbidden = [
   /download_hf|gguf|huggingface|model_type|agent_max_iterations|agent_temperature/i,
 ]
 const evidenceEntrypoints = {
-  [path.join('components', 'ChatView.vue')]: 'context="chat"',
   [path.join('views', 'LifeStatusView.vue')]: 'context="life"',
-  [path.join('views', 'AgentConfigView.vue')]: 'context="agent"',
-  [path.join('views', 'TrainingView.vue')]: 'context="training"',
-  [path.join('views', 'SettingsView.vue')]: 'context="settings"',
-  [path.join('views', 'KBView.vue')]: 'context="knowledge"',
 }
+const evidenceExcludedEntrypoints = [
+  path.join('components', 'ChatView.vue'),
+  path.join('views', 'AgentConfigView.vue'),
+  path.join('views', 'TrainingView.vue'),
+  path.join('views', 'SettingsView.vue'),
+  path.join('views', 'KBView.vue'),
+]
 
 function collectFiles(dir, result = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -52,10 +54,18 @@ for (const [relative, marker] of Object.entries(evidenceEntrypoints)) {
   }
 }
 
+for (const relative of evidenceExcludedEntrypoints) {
+  const absolute = path.join(srcRoot, relative)
+  const content = fs.readFileSync(absolute, 'utf8')
+  if (content.includes('RuntimeEvidenceStrip')) {
+    failures.push(`${relative}: RuntimeEvidenceStrip belongs only to LifeStatusView`)
+  }
+}
+
 if (failures.length) {
   console.error('[native-boundary] FAIL')
   for (const failure of failures) console.error(`- ${failure}`)
   process.exit(1)
 }
 
-console.log(`[native-boundary] PASS: ${Object.keys(evidenceEntrypoints).length} entrypoints and Legacy boundary clean`)
+console.log(`[native-boundary] PASS: ${Object.keys(evidenceEntrypoints).length} authoritative evidence entrypoint and Legacy boundary clean`)

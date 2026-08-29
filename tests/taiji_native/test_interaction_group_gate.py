@@ -52,20 +52,40 @@ def _corpus() -> InteractionTraceCorpus:
         _episode("none", 7, (), 0.0, 0.0, split="train", context_id="task-ab"),
         _episode("a", 7, ("surface-a",), 0.2, 0.1, split="train", context_id="task-ab"),
         _episode("b", 7, ("surface-b",), 0.3, 0.1, split="train", context_id="task-ab"),
-        _episode("ab", 7, ("surface-a", "surface-b"), 1.0, 0.7, split="train", context_id="task-ab"),
+        _episode(
+            "ab", 7, ("surface-a", "surface-b"), 1.0, 0.7, split="train", context_id="task-ab"
+        ),
         _episode("c", 7, ("surface-c",), 0.6, 0.2, split="train", context_id="task-cd"),
         _episode("d", 7, ("surface-d",), 0.2, 0.1, split="train", context_id="task-cd"),
-        _episode("cd", 7, ("surface-c", "surface-d"), -0.2, 0.05, split="train", context_id="task-cd"),
+        _episode(
+            "cd", 7, ("surface-c", "surface-d"), -0.2, 0.05, split="train", context_id="task-cd"
+        ),
         _episode("none-cd", 7, (), 0.0, 0.0, split="train", context_id="task-cd"),
     )
     holdout = (
         _episode("none", 7, (), 0.05, 0.0, split="holdout", context_id="task-ab-holdout"),
         _episode("a", 7, ("surface-a",), 0.25, 0.1, split="holdout", context_id="task-ab-holdout"),
         _episode("b", 7, ("surface-b",), 0.35, 0.1, split="holdout", context_id="task-ab-holdout"),
-        _episode("ab", 7, ("surface-a", "surface-b"), 1.1, 0.8, split="holdout", context_id="task-ab-holdout"),
+        _episode(
+            "ab",
+            7,
+            ("surface-a", "surface-b"),
+            1.1,
+            0.8,
+            split="holdout",
+            context_id="task-ab-holdout",
+        ),
         _episode("c", 7, ("surface-c",), 0.55, 0.2, split="holdout", context_id="task-cd-holdout"),
         _episode("d", 7, ("surface-d",), 0.15, 0.1, split="holdout", context_id="task-cd-holdout"),
-        _episode("cd", 7, ("surface-c", "surface-d"), -0.3, 0.05, split="holdout", context_id="task-cd-holdout"),
+        _episode(
+            "cd",
+            7,
+            ("surface-c", "surface-d"),
+            -0.3,
+            0.05,
+            split="holdout",
+            context_id="task-cd-holdout",
+        ),
         _episode("none-cd", 7, (), 0.05, 0.0, split="holdout", context_id="task-cd-holdout"),
     )
     return InteractionTraceCorpus(train=train, holdout=holdout)
@@ -104,9 +124,10 @@ def test_holdout_outcome_change_cannot_become_positive_attribution() -> None:
     assert result.passed is False
     assert result.metrics["holdout_direction_preserved"] is False
     assert result.state.groups == ()
-    assert result.source_trace_digest == InteractionGroupEvaluator().evaluate(
-        corpus
-    ).source_trace_digest
+    assert (
+        result.source_trace_digest
+        == InteractionGroupEvaluator().evaluate(corpus).source_trace_digest
+    )
 
 
 def test_mixed_checkpoint_revision_fails_closed_without_cross_revision_group() -> None:
@@ -117,7 +138,9 @@ def test_mixed_checkpoint_revision_fails_closed_without_cross_revision_group() -
     )
     drifted = replace(corpus.train[3], checkpoint_revision=8, events=drifted_events)
     result = InteractionGroupEvaluator().evaluate(
-        InteractionTraceCorpus(train=(*corpus.train[:3], drifted, *corpus.train[4:]), holdout=corpus.holdout)
+        InteractionTraceCorpus(
+            train=(*corpus.train[:3], drifted, *corpus.train[4:]), holdout=corpus.holdout
+        )
     )
 
     assert result.passed is False

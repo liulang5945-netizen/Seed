@@ -362,9 +362,7 @@ def test_runtime_native_executive_canary_needs_no_manual_candidate(tmp_path, mon
     assert evidence_capabilities == ["workspace.list", "workspace.read"]
 
 
-def test_native_workbench_execution_records_learning_and_roundtrips(
-    tmp_path, monkeypatch
-) -> None:
+def test_native_workbench_execution_records_learning_and_roundtrips(tmp_path, monkeypatch) -> None:
     (tmp_path / "README.md").write_bytes(b"learning channel canary\n")
     monkeypatch.setattr(
         "seed_platform.workbench.get_setting",

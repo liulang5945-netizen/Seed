@@ -174,7 +174,9 @@ def project_native_adapter_episode(
         if owner_id is None:
             continue
         event = native_events[event_id]
-        resource_cost = float(costs.get(event_id, max(1, int(event.end_tick - event.start_tick + 1))))
+        resource_cost = float(
+            costs.get(event_id, max(1, int(event.end_tick - event.start_tick + 1)))
+        )
         events.append(
             InteractionTraceEvent(
                 event_id=event.event_id,
@@ -560,10 +562,9 @@ class InteractionGroupState:
         for group in self.groups:
             if not isinstance(group, InteractionGroupRecord):
                 raise TypeError("interaction state groups must be InteractionGroupRecord values")
-            if (
-                group.source_trace_digest != self.source_trace_digest
-                or int(group.checkpoint_revision) != int(self.checkpoint_revision)
-            ):
+            if group.source_trace_digest != self.source_trace_digest or int(
+                group.checkpoint_revision
+            ) != int(self.checkpoint_revision):
                 raise ValueError("interaction group is bound to a different trace revision")
         tombstone_ids = tuple(item.candidate_id for item in self.rejected_candidates)
         if len(set(tombstone_ids)) != len(tombstone_ids):
@@ -573,10 +574,9 @@ class InteractionGroupState:
                 raise TypeError(
                     "interaction state rejected candidates must be InteractionGroupTombstone values"
                 )
-            if (
-                tombstone.source_trace_digest != self.source_trace_digest
-                or int(tombstone.checkpoint_revision) != int(self.checkpoint_revision)
-            ):
+            if tombstone.source_trace_digest != self.source_trace_digest or int(
+                tombstone.checkpoint_revision
+            ) != int(self.checkpoint_revision):
                 raise ValueError("interaction tombstone is bound to a different trace revision")
         if any(not str(item) for item in self.owner_policy_lineage):
             raise ValueError("interaction state owner_policy_lineage cannot contain empty ids")
@@ -593,9 +593,7 @@ class InteractionGroupState:
             "source_trace_digest": self.source_trace_digest,
             "estimator_revision": self.estimator_revision,
             "groups": [item.to_payload() for item in self.groups],
-            "rejected_candidates": [
-                item.to_payload() for item in self.rejected_candidates
-            ],
+            "rejected_candidates": [item.to_payload() for item in self.rejected_candidates],
             "owner_policy_lineage": list(self.owner_policy_lineage),
         }
 
@@ -702,7 +700,13 @@ class InteractionGroupEvaluator:
                         group_id, members, corpus.train_trace_digest, revision, "insufficient_trace"
                     )
                 )
-                events.append({"event": "group_rejected", "group_id": group_id, "reason": "insufficient_trace"})
+                events.append(
+                    {
+                        "event": "group_rejected",
+                        "group_id": group_id,
+                        "reason": "insufficient_trace",
+                    }
+                )
                 continue
             events.append(
                 {
@@ -724,7 +728,11 @@ class InteractionGroupEvaluator:
                     )
                 )
                 events.append(
-                    {"event": "group_rejected", "group_id": group_id, "reason": "holdout_insufficient_trace"}
+                    {
+                        "event": "group_rejected",
+                        "group_id": group_id,
+                        "reason": "holdout_insufficient_trace",
+                    }
                 )
                 continue
             events.append(
@@ -801,9 +809,7 @@ class InteractionGroupEvaluator:
             "checkpoint_roundtrip": checkpoint_roundtrip,
             "checkpoint_owner_lineage_preserved": restored.owner_policy_lineage
             == state.owner_policy_lineage,
-            "lesion_effects_observed": all(
-                abs(float(item.contribution)) > 0.0 for item in groups
-            ),
+            "lesion_effects_observed": all(abs(float(item.contribution)) > 0.0 for item in groups),
             "source_digest_excludes_holdout_outcome": (
                 corpus.train_trace_digest != corpus.holdout_trace_digest
             ),
@@ -869,7 +875,9 @@ class InteractionGroupEvaluator:
         usable_contexts = [
             cells
             for cells in contexts.values()
-            if all(cells[key] for key in ((False, False), (True, False), (False, True), (True, True)))
+            if all(
+                cells[key] for key in ((False, False), (True, False), (False, True), (True, True))
+            )
         ]
         if not usable_contexts:
             return None
@@ -911,14 +919,14 @@ class InteractionGroupEvaluator:
             )
         interaction_values = [float(item["interaction"]) for item in estimates]
         uncertainty = self._sample_uncertainty(interaction_values)
-        used_episodes = tuple(
-            episode for estimate in estimates for episode in estimate["episodes"]
-        )
+        used_episodes = tuple(episode for estimate in estimates for episode in estimate["episodes"])
         cells = {
             str(key): sum(len(context[key]) for context in usable_contexts)
             for key in ((False, False), (True, False), (False, True), (True, True))
         }
-        event_ids = tuple(sorted(event.event_id for episode in used_episodes for event in episode.events))
+        event_ids = tuple(
+            sorted(event.event_id for episode in used_episodes for event in episode.events)
+        )
         outcome_ids = tuple(sorted(episode.outcome_id for episode in used_episodes))
         return {
             "cells": cells,
@@ -926,9 +934,7 @@ class InteractionGroupEvaluator:
             "first_contribution": self._mean(item["first_contribution"] for item in estimates),
             "second_contribution": self._mean(item["second_contribution"] for item in estimates),
             "interaction": self._mean(interaction_values),
-            "recovery_interaction": self._mean(
-                item["recovery_interaction"] for item in estimates
-            ),
+            "recovery_interaction": self._mean(item["recovery_interaction"] for item in estimates),
             "uncertainty": uncertainty,
             "pair_resource_cost": self._mean(item["pair_resource_cost"] for item in estimates),
             "event_ids": event_ids,
@@ -966,14 +972,17 @@ class InteractionGroupEvaluator:
     def _group_id(
         members: tuple[str, ...], trace_digest: str, revision: int, estimator_revision: int
     ) -> str:
-        return "group:" + _digest(
-            {
-                "members": list(members),
-                "trace_digest": trace_digest,
-                "checkpoint_revision": int(revision),
-                "estimator_revision": int(estimator_revision),
-            }
-        )[:24]
+        return (
+            "group:"
+            + _digest(
+                {
+                    "members": list(members),
+                    "trace_digest": trace_digest,
+                    "checkpoint_revision": int(revision),
+                    "estimator_revision": int(estimator_revision),
+                }
+            )[:24]
+        )
 
     @staticmethod
     def _tombstone(

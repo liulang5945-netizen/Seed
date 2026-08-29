@@ -111,10 +111,7 @@ def get_writable_base_dir() -> str:
             _FROZEN_BASE_CACHE_VALUE = candidate
             return candidate
 
-    raise OSError(
-        "No writable Seed data root available; checked: "
-        + ", ".join(candidates)
-    )
+    raise OSError("No writable Seed data root available; checked: " + ", ".join(candidates))
 
 
 def get_external_path(relative_path: str) -> str:

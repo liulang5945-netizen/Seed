@@ -102,6 +102,7 @@ def test_frozen_paths_fall_back_when_localappdata_is_not_writable(monkeypatch) -
 
     assert paths.get_writable_base_dir() == str(package_root / "user_data")
 
+
 def test_platform_state_has_no_legacy_imports() -> None:
     app_state = REPO / "seed_platform" / "app_state.py"
     imports = _imports(app_state)

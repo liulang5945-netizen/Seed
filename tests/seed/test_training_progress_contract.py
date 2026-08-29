@@ -94,9 +94,9 @@ def test_progress_denominator_never_exceeds_effective_workload(tmp_path, monkeyp
 
     assert progress
     final = progress[-1]
-    assert final["fraction"] >= 0.99, (
-        f"语料读完即为 100%，不应受 total_bytes 高估影响，实测 {final['fraction']}"
-    )
+    assert (
+        final["fraction"] >= 0.99
+    ), f"语料读完即为 100%，不应受 total_bytes 高估影响，实测 {final['fraction']}"
 
 
 def test_every_progress_event_carries_eta_and_elapsed(tmp_path, monkeypatch) -> None:
