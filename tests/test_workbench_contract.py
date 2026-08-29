@@ -16,7 +16,42 @@ from seed_platform.workbench import (
     WorkbenchActionRequest,
     WorkbenchEnvironment,
 )
-from taiji import ActionIntent, TSKV8Adapter
+from taiji import (
+    ActionIntent,
+    ContentPlan,
+    ExecutiveCandidate,
+    ExecutiveContext,
+    ExecutiveDecision,
+    TSKV8Adapter,
+)
+
+
+def _grounded_read_candidate(*, tick: int = 0, kind: str = "workspace.read", parameters=None):
+    intent = ActionIntent(
+        intent_id="candidate-read:intent",
+        kind=kind,
+        parameters={"path": "README.md"} if parameters is None else parameters,
+        confidence=1.0,
+        tick=tick,
+    )
+    content = ContentPlan(
+        content_id="candidate-read:content",
+        intent_id=intent.intent_id,
+        intent_kind=intent.kind,
+        semantic_slots={"parameters": dict(intent.parameters)},
+        confidence=1.0,
+        provenance="affordance-derived",
+        tick=tick,
+    )
+    return ExecutiveCandidate(
+        candidate_id="candidate-read",
+        action_intent=intent,
+        content_plan=content,
+        features=(1.0, 0.0, 0.0, 1.0, 0.0, 0.0),
+        provenance="affordance-derived/learned",
+        source_percept_id="percept-read",
+        source_affordance_id="affordance-read",
+    )
 
 
 def test_workbench_snapshot_is_content_addressed() -> None:
@@ -141,6 +176,136 @@ def test_taiji_tool_intent_bridge_does_not_select_the_intent(tmp_path) -> None:
     assert call.intent_id == intent.intent_id
     assert call.tool_name == intent.kind
     assert outcome.intent_id == intent.intent_id
+
+
+def test_taiji_candidate_admission_is_read_only_and_snapshot_bound(tmp_path) -> None:
+    environment = WorkbenchEnvironment(tmp_path)
+    candidate = _grounded_read_candidate()
+
+    admitted = environment.admit_taiji_candidate(
+        candidate,
+        snapshot_id=environment.capability_snapshot.snapshot_id,
+        current_tick=0,
+    )
+
+    assert admitted.accepted is True
+    assert admitted.reason_code == "taiji_read_only_admitted"
+    assert admitted.request is not None
+    assert admitted.request.capability_id == "workspace.read"
+    assert admitted.policy is not None
+    assert admitted.policy.decision == "allow"
+    assert admitted.to_payload()["candidate"]["source_affordance_id"] == "affordance-read"
+
+    stale = environment.admit_taiji_candidate(
+        candidate,
+        snapshot_id="stale-snapshot",
+        current_tick=0,
+    )
+    assert stale.accepted is False
+    assert stale.reason_code == "stale_capability_snapshot"
+
+
+def test_taiji_candidate_admission_rejects_untrusted_risk_and_parameter_drift(tmp_path) -> None:
+    environment = WorkbenchEnvironment(tmp_path)
+
+    mutating = environment.admit_taiji_candidate(
+        _grounded_read_candidate(kind="workspace.apply_patch"),
+        snapshot_id=environment.capability_snapshot.snapshot_id,
+        current_tick=0,
+    )
+    assert mutating.accepted is False
+    assert mutating.reason_code == "taiji_read_only_gate_rejects_risk"
+
+    drifted = environment.admit_taiji_candidate(
+        _grounded_read_candidate(parameters={"path": "README.md", "tool": "workspace.read"}),
+        snapshot_id=environment.capability_snapshot.snapshot_id,
+        current_tick=0,
+    )
+    assert drifted.accepted is False
+    assert drifted.reason_code == "capability_parameter_drift"
+
+    ungrounded = replace(
+        _grounded_read_candidate(),
+        provenance="external",
+        source_affordance_id=None,
+    )
+    rejected = environment.admit_taiji_candidate(
+        ungrounded,
+        snapshot_id=environment.capability_snapshot.snapshot_id,
+        current_tick=0,
+    )
+    assert rejected.accepted is False
+    assert rejected.reason_code == "taiji_candidate_not_grounded"
+
+
+def test_runtime_taiji_task_selects_then_executes_the_admitted_candidate(
+    tmp_path, monkeypatch
+) -> None:
+    with (tmp_path / "README.md").open("w", encoding="utf-8", newline="") as handle:
+        handle.write("Taiji admission\n")
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(Seed(episode_id="taiji-admission"))
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    candidate = _grounded_read_candidate(tick=runtime.model.architecture.cognitive_snapshot().tick)
+    context = ExecutiveContext.from_state(runtime.model.architecture.cognitive_snapshot())
+    decision = ExecutiveDecision(
+        selected=candidate,
+        scores={candidate.candidate_id: 1.0},
+        context=context,
+    )
+    monkeypatch.setattr(runtime, "_select_taiji_workbench_candidate", lambda **_: decision)
+
+    result = runtime.execute_taiji_workbench_task(
+        snapshot_id=runtime.workbench_environment.capability_snapshot.snapshot_id,
+        learn=False,
+    )
+
+    assert result["admission"]["accepted"] is True
+    assert result["admission"]["reason_code"] == "taiji_read_only_admitted"
+    assert result["execution"]["outcome"]["status"] == "success"
+    assert result["execution"]["outcome"]["result"]["content"] == "Taiji admission\n"
+
+
+def test_taiji_task_routes_expose_the_same_read_only_gate(tmp_path, monkeypatch) -> None:
+    with (tmp_path / "README.md").open("w", encoding="utf-8", newline="") as handle:
+        handle.write("Taiji route admission\n")
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(Seed(episode_id="taiji-route-admission"))
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    candidate = _grounded_read_candidate(tick=runtime.model.architecture.cognitive_snapshot().tick)
+    context = ExecutiveContext.from_state(runtime.model.architecture.cognitive_snapshot())
+    decision = ExecutiveDecision(
+        selected=candidate,
+        scores={candidate.candidate_id: 1.0},
+        context=context,
+    )
+    monkeypatch.setattr(runtime, "_select_taiji_workbench_candidate", lambda **_: decision)
+
+    import api.seed_runtime as seed_runtime_module
+
+    monkeypatch.setattr(seed_runtime_module, "_runtime", runtime)
+    with TestClient(create_app(startup_tasks=False)) as client:
+        snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+        admitted = client.post(
+            "/api/workbench/taiji/admit",
+            json={"snapshot_id": snapshot_id},
+        )
+        executed = client.post(
+            "/api/workbench/taiji/execute",
+            json={"snapshot_id": snapshot_id},
+        )
+
+    assert admitted.status_code == 200
+    assert admitted.json()["admission"]["accepted"] is True
+    assert executed.status_code == 200
+    assert executed.json()["admission"]["accepted"] is True
+    assert executed.json()["execution"]["outcome"]["status"] == "success"
 
 
 def test_native_mcp_registry_lists_and_invokes_local_read_only_canary(tmp_path) -> None:

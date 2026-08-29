@@ -13,6 +13,8 @@ from uuid import uuid4
 from fastapi import APIRouter, HTTPException
 
 from api.models import (
+    TaijiWorkbenchExecuteTaskRequest,
+    TaijiWorkbenchTaskRequest,
     WorkbenchIntentRequest,
     WorkbenchLoopExecuteRequest,
     WorkbenchLoopPreflightRequest,
@@ -194,6 +196,41 @@ def execute_workbench_intent(request: WorkbenchIntentRequest) -> dict[str, Any]:
             snapshot_id=request.snapshot_id,
             approval_token=request.approval_token,
             mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/taiji/admit")
+def admit_taiji_workbench_task(request: TaijiWorkbenchTaskRequest) -> dict[str, Any]:
+    """Select and validate Taiji's current candidate without executing it."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return runtime.admit_taiji_workbench_task(
+            snapshot_id=request.snapshot_id,
+            novelty=request.novelty,
+            resource_budget=request.resource_budget,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/taiji/execute")
+def execute_taiji_workbench_task(request: TaijiWorkbenchExecuteTaskRequest) -> dict[str, Any]:
+    """Select, admit, and execute one Taiji-owned read-only task."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return runtime.execute_taiji_workbench_task(
+            snapshot_id=request.snapshot_id,
+            novelty=request.novelty,
+            resource_budget=request.resource_budget,
+            learn=request.learn,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

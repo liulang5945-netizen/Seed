@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { nativeApi, nativeApiMetrics, nativeApiPaths } from '../composables/nativeApi.js'
 import { authFetch } from '../composables/apiClient.js'
 
@@ -13,10 +13,17 @@ const jsonResponse = (data, ok = true, status = 200) => ({
   json: async () => data,
 })
 
+beforeEach(() => {
+  authFetch.mockReset()
+  nativeApiMetrics.reset()
+})
+
 describe('nativeApi facade', () => {
   it('keeps native endpoint paths explicit and OpenAPI-shaped', () => {
     expect(nativeApiPaths.runtime.status).toBe('/api/runtime/status')
     expect(nativeApiPaths.workbench.loopExecute).toBe('/api/workbench/loop/execute')
+    expect(nativeApiPaths.workbench.taijiAdmit).toBe('/api/workbench/taiji/admit')
+    expect(nativeApiPaths.workbench.taijiExecute).toBe('/api/workbench/taiji/execute')
     expect(nativeApiPaths.chat.workbenchStream).toBe('/api/chat/workbench/stream')
     expect(nativeApiPaths.system.selectFolder).toBe('/api/system/select_folder')
   })
@@ -30,6 +37,24 @@ describe('nativeApi facade', () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ kind: 'workspace.rename', parameters: { path: 'README.md' } }),
+    }))
+  })
+
+  it('keeps Taiji task admission and execution on named native operations', async () => {
+    authFetch
+      .mockResolvedValueOnce(jsonResponse({ admission: { accepted: true } }))
+      .mockResolvedValueOnce(jsonResponse({ execution: { outcome: { status: 'success' } } }))
+
+    await nativeApi.taijiWorkbenchAdmit({ snapshot_id: 'snapshot-1' })
+    await nativeApi.taijiWorkbenchExecute({ snapshot_id: 'snapshot-1' })
+
+    expect(authFetch).toHaveBeenNthCalledWith(1, '/api/workbench/taiji/admit', expect.objectContaining({
+      method: 'POST',
+      body: JSON.stringify({ snapshot_id: 'snapshot-1' }),
+    }))
+    expect(authFetch).toHaveBeenNthCalledWith(2, '/api/workbench/taiji/execute', expect.objectContaining({
+      method: 'POST',
+      body: JSON.stringify({ snapshot_id: 'snapshot-1' }),
     }))
   })
 

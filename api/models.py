@@ -20,6 +20,20 @@ class WorkbenchIntentRequest(BaseModel):
     mcp_registry_snapshot_id: str = ""
 
 
+class TaijiWorkbenchTaskRequest(BaseModel):
+    """Request Taiji to select one current candidate for the read-only Gate."""
+
+    snapshot_id: str
+    novelty: float = 0.0
+    resource_budget: float = 1.0
+
+
+class TaijiWorkbenchExecuteTaskRequest(TaijiWorkbenchTaskRequest):
+    """Request execution after Taiji-owned read-only admission."""
+
+    learn: bool = False
+
+
 class ChatRequest(BaseModel):
     prompt: str
     system_prompt: str = "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"
