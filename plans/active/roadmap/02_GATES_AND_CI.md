@@ -278,7 +278,7 @@ W7-G0 已完成，且没有把合同存在误写成能力完成。五份版本�
 - [W7-R4 CUDA](../../manifests/taiji_w7_r4_cuda_v1.json)：本机显式为 `hardware-blocked`；必须在真实 CUDA 主机上复跑固定 workload、跨设备 checkpoint 和容差合同。
 - [W7-R5 open-domain growth](../../manifests/taiji_w7_r5_open_domain_growth_v1.json)：成长只能由真实失败/容量/恢复压力触发，并经过 shadow → holdout → lesion → rollback → 原子合并。
 
-`tests/test_w7_gate_manifests.py` 的 3 个结构测试通过；它还强制 R4 保持 `hardware-blocked`、所有未来 manifest 不得写 `implementation.status=passed`。当前唯一下一步切换为 W7-R1；G0 不产生新自治能力，也不替代后续各自的 S0/S1/S2 实证。
+`tests/test_w7_gate_manifests.py` 的 3 个结构测试通过；它还强制 R4 保持 `hardware-blocked`、所有未来 manifest 不得写 `implementation.status=passed`。G0 完成后执行入口曾切换为 W7-R1；G0 不产生新自治能力，也不替代后续各自的 S0/S1/S2 实证。
 
 ### 14.22 W7-R1 S0：provider health 按内容寻址隔离（2026-08-29）
 
@@ -298,7 +298,15 @@ R1 的 S2 已通过。使用重新生成的 `dist/Seed/Seed.exe`，明确设置 
 
 Playwright 真实页面 `http://127.0.0.1:8000/#/?taiji_client=desktop` 标题为 `Seed · 聊天`；Workspace、`STATUS EVIDENCE`、`Taiji Native`、语言器官状态均可见；8 个 API 请求全部为 8000，无页面错误、请求失败或 Legacy/Transformer/HuggingFace 标记。此次只验证服务端状态的只读观测和 backend/network 绑定，明确没有把客户端 provider 轮换或外部 artifact decoder 当作已验证能力。完整记录见 [taiji_w7_r1_provider_watchdog_s2_20260829.json](../../../reports/taiji_w7_r1_provider_watchdog_s2_20260829.json) 与截图 `output/playwright/seed-s2-packaged-legacy-off.png`。
 
-据此，R1 的 S0/S1/S2 三层闭合，下一步进入 W7-R2-S0；R2 仍必须从真实 trace 做可证伪 interaction-group 归因，不得将 provider 健康或 UI 显示当作认知能力。
+据此，R1 的 S0/S1/S2 三层闭合，随后进入 W7-R2-S0；R2 仍必须从真实 trace 做可证伪 interaction-group 归因，不得将 provider 健康或 UI 显示当作认知能力。
+
+### 14.25 W7-R2 S0：trace-grounded interaction-group 确定性模拟（2026-08-29）
+
+R2 的 S0 已通过。新增 `taiji/interaction_groups.py`，将 interaction group 定义为 trace 上的可检验归因记录，而不是“规划神经元/记忆神经元”等硬编码角色。输入为版本化 `InteractionTraceEvent`、`InteractionTraceEpisode` 和 `InteractionTraceCorpus`：每个事件绑定 `event_id`、不透明 `owner_id`、`episode_id`、`outcome_id`、`checkpoint_revision`；每个 episode 绑定不透明 `context_id`、Outcome 数值、恢复效果和资源消耗。训练 digest 只哈希训练 trace 结构，不吸收 holdout Outcome。
+
+估计器先在同一 context 内要求 `(none, first, second, pair)` 四格真实观测，再跨 context 聚合，计算 group contribution、signed interaction（正为互补，负为冲突）、recovery interaction、uncertainty、资源代价和 member/group lesion effect。只有训练/holdout 方向一致且满足资源与置信度预算时才产生 admitted record；缺格、低置信、资源超限、holdout 方向改变和 checkpoint revision 混合均 fail-closed，并保留 reason-coded tombstone。`owner_policy` 只是后续可投影的 lineage ID，S0 不修改 executive、memory、tool 或 provider。
+
+证据为 [taiji_w7_r2_interaction_groups_20260829.json](../../../reports/taiji_w7_r2_interaction_groups_20260829.json)，其中 2 个候选分别保持互补/冲突方向，4 个不足证据候选被拒绝，holdout 方向、lesion、checkpoint 和 owner policy lineage 均可恢复，role label 输入数为 0。`tests/taiji_native/test_interaction_group_gate.py` 的 5 例与命名边界/跨区域回归共 `12 passed`，Ruff、compileall 和 JSON/diff 检查通过。红测覆盖 holdout 污染、跨 revision、资源压力和 checkpoint source digest 篡改；下一步必须进入 R2-S1 replay/sandbox，不能把 S0 合成统计结果当作真实 Workbench 学习或因果智能。
 
 ## 15. 停止项
 

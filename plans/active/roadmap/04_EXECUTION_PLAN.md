@@ -88,7 +88,7 @@ S0（组件/投影）与 S1（checkpoint 回放）已在代码层闭合，证据
 
 G0 不实现新自治。它的退出条件是所有 R 工作包都有可执行的合同、测试入口和不可越界声明；未填入真实输入或 checkpoint 的项目保持 blocked，而不是以空示例宣布就绪。
 
-**G0 已完成（2026-08-29）**：五份合同分别为 [R1 provider watchdog](../../manifests/taiji_w7_r1_provider_watchdog_v1.json)、[R2 interaction-group](../../manifests/taiji_w7_r2_interaction_group_v1.json)、[R3 visual/desktop](../../manifests/taiji_w7_r3_visual_desktop_v1.json)、[R4 CUDA](../../manifests/taiji_w7_r4_cuda_v1.json)、[R5 open-domain growth](../../manifests/taiji_w7_r5_open_domain_growth_v1.json)。`tests/test_w7_gate_manifests.py` 校验五份 manifest 都具备 claim/owner/input/output/trace/resource/checkpoint、S0/S1/S2、red proof、holdout、lesion、失败隔离、rollback 和越界声明；R4 明确保持 `hardware-blocked`，其他工作包为 `contract_frozen`，没有任何未来 Gate 被伪标记为 `passed`。因此下一执行入口切换为 W7-R1 实现，不提前实现 R2–R5 自治。
+**G0 已完成（2026-08-29）**：五份合同分别为 [R1 provider watchdog](../../manifests/taiji_w7_r1_provider_watchdog_v1.json)、[R2 interaction-group](../../manifests/taiji_w7_r2_interaction_group_v1.json)、[R3 visual/desktop](../../manifests/taiji_w7_r3_visual_desktop_v1.json)、[R4 CUDA](../../manifests/taiji_w7_r4_cuda_v1.json)、[R5 open-domain growth](../../manifests/taiji_w7_r5_open_domain_growth_v1.json)。`tests/test_w7_gate_manifests.py` 校验五份 manifest 都具备 claim/owner/input/output/trace/resource/checkpoint、S0/S1/S2、red proof、holdout、lesion、失败隔离、rollback 和越界声明；R4 明确保持 `hardware-blocked`，其他工作包为 `contract_frozen`，没有任何未来 Gate 被伪标记为 `passed`。因此当时的下一执行入口切换为 W7-R1 实现，不提前实现 R2–R5 自治；当前执行入口以 [03_CURRENT_EXECUTION.md](03_CURRENT_EXECUTION.md) 为准。
 
 ## 5. W7-R1：provider watchdog（语言外设健康治理）
 
@@ -101,7 +101,7 @@ G0 不实现新自治。它的退出条件是所有 R 工作包都有可执行�
 
 验收包含 artifact 漂移、连续失败、超时、冷却、探测恢复、错误 fallback、checkpoint 中断恢复和多 provider 隔离的红绿测试；真实 canary 必须对同一 artifact digest 记录结果。
 
-**S0/S1/S2 已通过（2026-08-29）**：健康状态已从仅绑定 `artifact_id` 收紧为绑定 `artifact_id + artifact_digest`；同 ID 内容替换会建立新记录，不继承旧失败计数。`tests/seed/test_provider_watchdog_gate.py` 与 [评测脚本](../../../scripts/training/eval_taiji_provider_watchdog.py) 的 S0 覆盖 healthy/连续失败/单次回退/cooldown/legacy checkpoint 兼容；S1 使用真实 `TSKV8Adapter.native_checkpoint()` 保存→恢复→继续失败探针，校验 artifact、digest、registry、计数和阈值后的 lineage。S2 使用明确 Legacy-off 的 `dist/Seed/Seed.exe` 在默认 8000 端口启动，健康和 runtime/status 均为 200，native provider 状态及 digest 字段可读，Workspace/状态证据/UI provider 投影可见，8 个 API 请求全部绑定 8000，无页面错误、请求失败或 Legacy/Transformer/HF 标记。S2 运行的是 `native-readable` 内置器官，外部 provider artifact 轮换没有被虚报为客户端证据。报告为 [S0](../../../reports/taiji_w7_r1_provider_watchdog_20260829.json)、[S1](../../../reports/taiji_w7_r1_provider_watchdog_s1_20260829.json) 和 [S2](../../../reports/taiji_w7_r1_provider_watchdog_s2_20260829.json)，定向 provider 回归 `21 passed`；R1 完成，下一步进入 W7-R2-S0。
+**S0/S1/S2 已通过（2026-08-29）**：健康状态已从仅绑定 `artifact_id` 收紧为绑定 `artifact_id + artifact_digest`；同 ID 内容替换会建立新记录，不继承旧失败计数。`tests/seed/test_provider_watchdog_gate.py` 与 [评测脚本](../../../scripts/training/eval_taiji_provider_watchdog.py) 的 S0 覆盖 healthy/连续失败/单次回退/cooldown/legacy checkpoint 兼容；S1 使用真实 `TSKV8Adapter.native_checkpoint()` 保存→恢复→继续失败探针，校验 artifact、digest、registry、计数和阈值后的 lineage。S2 使用明确 Legacy-off 的 `dist/Seed/Seed.exe` 在默认 8000 端口启动，健康和 runtime/status 均为 200，native provider 状态及 digest 字段可读，Workspace/状态证据/UI provider 投影可见，8 个 API 请求全部绑定 8000，无页面错误、请求失败或 Legacy/Transformer/HF 标记。S2 运行的是 `native-readable` 内置器官，外部 provider artifact 轮换没有被虚报为客户端证据。报告为 [S0](../../../reports/taiji_w7_r1_provider_watchdog_20260829.json)、[S1](../../../reports/taiji_w7_r1_provider_watchdog_s1_20260829.json) 和 [S2](../../../reports/taiji_w7_r1_provider_watchdog_s2_20260829.json)，定向 provider 回归 `21 passed`；R1 完成，随后进入 W7-R2-S0。
 
 ## 6. W7-R2：interaction-group 与恢复归因
 
@@ -113,6 +113,8 @@ R2 研究的是实际工作流中哪些交互区域共同提升/损害结果，�
 - 基线必须包括单策略、无 group、随机 group 与无归因；指标必须同时报告收益、遗忘、恢复时间、参数/连接、内存、延迟与能耗近似。
 
 退出条件是见到真实 holdout 上的优势、lesion 后有可解释变化、checkpoint 往返不改变 group 溯源，且无硬编码角色名单。
+
+**S0 已通过（2026-08-29）**：新增 `taiji/interaction_groups.py` 与 `tests/taiji_native/test_interaction_group_gate.py`，用版本化 `InteractionTraceEvent`/`InteractionTraceEpisode`/`InteractionTraceCorpus` 接收不透明 owner、task context、Outcome 数值、资源消耗和 checkpoint revision。估计器按 context 内四格观测计算 pair contribution、signed interaction、recovery interaction、uncertainty 和 lesion effect；只在 train/holdout 方向一致、资源和置信度预算满足时 admitted，否则留下 reason-coded tombstone。S0 报告 [taiji_w7_r2_interaction_groups_20260829.json](../../../reports/taiji_w7_r2_interaction_groups_20260829.json) 显示 2 个 admitted group（互补与冲突）、4 个拒绝候选，holdout 方向保持、checkpoint/owner lineage roundtrip 均通过。反例覆盖跨 checkpoint 混合、holdout 方向污染、资源压力和篡改 source digest；S1 仍需接入真实 native trace replay，S2 才能进入真实 Workbench workflow。
 
 ## 7. W7-R3：视觉与桌面体验（依赖真实状态）
 

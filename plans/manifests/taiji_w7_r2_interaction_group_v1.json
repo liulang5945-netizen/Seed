@@ -66,7 +66,8 @@
     "existing_hooks": ["Taiji native trace/event contracts", "recovery interaction replay statistics"],
     "new_test_entry": "tests/taiji_native/test_interaction_group_gate.py",
     "new_eval_entry": "scripts/training/eval_taiji_interaction_groups.py",
-    "status": "not_started"
+    "status": "s0_passed",
+    "s0_report": "reports/taiji_w7_r2_interaction_groups_20260829.json"
   },
   "boundary": [
     "Do not name groups by imagined biological roles.",

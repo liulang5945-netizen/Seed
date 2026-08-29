@@ -1,0 +1,303 @@
+{
+  "format": "taiji-interaction-group-evaluation-v1",
+  "estimator_revision": 1,
+  "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+  "holdout_trace_digest": "20ddc96781821176bfeb15b7a0ac1020d4c4233df95652518e1cef040dce9c4a",
+  "checkpoint": {
+    "format": "taiji-interaction-group-v1",
+    "version": 1,
+    "checkpoint_revision": 7,
+    "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+    "estimator_revision": 1,
+    "groups": [
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "group_id": "group:7cbfe2b7527879f8420c5c66",
+        "member_ids": [
+          "surface-a",
+          "surface-b"
+        ],
+        "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+        "checkpoint_revision": 7,
+        "contribution": 1.0,
+        "interaction": 0.5,
+        "uncertainty": 0.0,
+        "resource_cost": 0.9,
+        "owner_policy": "policy:group:7cbfe2b7527879f8420c5c66",
+        "recovery_effect": 0.5,
+        "holdout_interaction": 0.55,
+        "holdout_recovery_effect": 0.6000000000000001,
+        "status": "admitted",
+        "method": "factorial-counterfactual+lesion",
+        "event_ids": [
+          "train-ab-a:event:0",
+          "train-ab-b:event:0",
+          "train-ab-both:event:0",
+          "train-ab-both:event:1"
+        ],
+        "outcome_ids": [
+          "train-ab-a:outcome",
+          "train-ab-b:outcome",
+          "train-ab-both:outcome",
+          "train-ab-none:outcome"
+        ]
+      },
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "group_id": "group:d33838a816374a0b4d9c6e92",
+        "member_ids": [
+          "surface-c",
+          "surface-d"
+        ],
+        "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+        "checkpoint_revision": 7,
+        "contribution": -0.2,
+        "interaction": -1.0,
+        "uncertainty": 0.0,
+        "resource_cost": 0.9,
+        "owner_policy": "policy:group:d33838a816374a0b4d9c6e92",
+        "recovery_effect": -0.25,
+        "holdout_interaction": -0.95,
+        "holdout_recovery_effect": -0.25,
+        "status": "admitted",
+        "method": "factorial-counterfactual+lesion",
+        "event_ids": [
+          "train-cd-both:event:0",
+          "train-cd-both:event:1",
+          "train-cd-c:event:0",
+          "train-cd-d:event:0"
+        ],
+        "outcome_ids": [
+          "train-cd-both:outcome",
+          "train-cd-c:outcome",
+          "train-cd-d:outcome",
+          "train-cd-none:outcome"
+        ]
+      }
+    ],
+    "rejected_candidates": [
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "candidate_id": "group:0212964972fba0d5529dcc97",
+        "member_ids": [
+          "surface-a",
+          "surface-c"
+        ],
+        "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+        "checkpoint_revision": 7,
+        "reason": "insufficient_trace"
+      },
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "candidate_id": "group:b7fd6eeecfeceb7443cf5cbb",
+        "member_ids": [
+          "surface-a",
+          "surface-d"
+        ],
+        "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+        "checkpoint_revision": 7,
+        "reason": "insufficient_trace"
+      },
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "candidate_id": "group:64cf3f4604c5c955237fab45",
+        "member_ids": [
+          "surface-b",
+          "surface-c"
+        ],
+        "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+        "checkpoint_revision": 7,
+        "reason": "insufficient_trace"
+      },
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "candidate_id": "group:c238dcba3556251d52490903",
+        "member_ids": [
+          "surface-b",
+          "surface-d"
+        ],
+        "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+        "checkpoint_revision": 7,
+        "reason": "insufficient_trace"
+      }
+    ],
+    "owner_policy_lineage": [
+      "policy:group:7cbfe2b7527879f8420c5c66",
+      "policy:group:d33838a816374a0b4d9c6e92"
+    ]
+  },
+  "events": [
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:7cbfe2b7527879f8420c5c66",
+      "member_ids": [
+        "surface-a",
+        "surface-b"
+      ],
+      "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+      "checkpoint_revision": 7
+    },
+    {
+      "event": "counterfactual_evaluated",
+      "group_id": "group:7cbfe2b7527879f8420c5c66",
+      "cells": {
+        "(False, False)": 1,
+        "(True, False)": 1,
+        "(False, True)": 1,
+        "(True, True)": 1
+      },
+      "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f"
+    },
+    {
+      "event": "lesion_evaluated",
+      "group_id": "group:7cbfe2b7527879f8420c5c66",
+      "group_effect": 1.0,
+      "remove_first_member_effect": 0.8,
+      "remove_second_member_effect": 0.7
+    },
+    {
+      "event": "group_admitted",
+      "group_id": "group:7cbfe2b7527879f8420c5c66",
+      "interaction": 0.5,
+      "holdout_interaction": 0.55,
+      "owner_policy": "policy:group:7cbfe2b7527879f8420c5c66"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:0212964972fba0d5529dcc97",
+      "member_ids": [
+        "surface-a",
+        "surface-c"
+      ],
+      "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+      "checkpoint_revision": 7
+    },
+    {
+      "event": "group_rejected",
+      "group_id": "group:0212964972fba0d5529dcc97",
+      "reason": "insufficient_trace"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:b7fd6eeecfeceb7443cf5cbb",
+      "member_ids": [
+        "surface-a",
+        "surface-d"
+      ],
+      "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+      "checkpoint_revision": 7
+    },
+    {
+      "event": "group_rejected",
+      "group_id": "group:b7fd6eeecfeceb7443cf5cbb",
+      "reason": "insufficient_trace"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:64cf3f4604c5c955237fab45",
+      "member_ids": [
+        "surface-b",
+        "surface-c"
+      ],
+      "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+      "checkpoint_revision": 7
+    },
+    {
+      "event": "group_rejected",
+      "group_id": "group:64cf3f4604c5c955237fab45",
+      "reason": "insufficient_trace"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:c238dcba3556251d52490903",
+      "member_ids": [
+        "surface-b",
+        "surface-d"
+      ],
+      "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+      "checkpoint_revision": 7
+    },
+    {
+      "event": "group_rejected",
+      "group_id": "group:c238dcba3556251d52490903",
+      "reason": "insufficient_trace"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:d33838a816374a0b4d9c6e92",
+      "member_ids": [
+        "surface-c",
+        "surface-d"
+      ],
+      "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+      "checkpoint_revision": 7
+    },
+    {
+      "event": "counterfactual_evaluated",
+      "group_id": "group:d33838a816374a0b4d9c6e92",
+      "cells": {
+        "(False, False)": 1,
+        "(True, False)": 1,
+        "(False, True)": 1,
+        "(True, True)": 1
+      },
+      "source_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f"
+    },
+    {
+      "event": "lesion_evaluated",
+      "group_id": "group:d33838a816374a0b4d9c6e92",
+      "group_effect": -0.2,
+      "remove_first_member_effect": -0.8,
+      "remove_second_member_effect": -0.4
+    },
+    {
+      "event": "group_admitted",
+      "group_id": "group:d33838a816374a0b4d9c6e92",
+      "interaction": -1.0,
+      "holdout_interaction": -0.95,
+      "owner_policy": "policy:group:d33838a816374a0b4d9c6e92"
+    }
+  ],
+  "metrics": {
+    "train_group_count": 2,
+    "rejected_candidate_count": 4,
+    "complementary_group": "group:7cbfe2b7527879f8420c5c66",
+    "conflicting_group": "group:d33838a816374a0b4d9c6e92",
+    "holdout_direction_preserved": true,
+    "checkpoint_roundtrip": true,
+    "checkpoint_owner_lineage_preserved": true,
+    "lesion_effects_observed": true,
+    "source_digest_excludes_holdout_outcome": true,
+    "role_label_input_count": 0,
+    "gate_passed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "trace-bound factorial counterfactuals must recover a complementary pair and a conflicting pair on holdout, show member/group lesion effects, preserve ownership and evidence through checkpoint, and reject role-label or holdout-leakage shortcuts"
+  },
+  "task": "deterministic trace-grounded pair interaction attribution",
+  "input": {
+    "train_episode_count": 8,
+    "holdout_episode_count": 8,
+    "train_checkpoint_revisions": [
+      7
+    ],
+    "train_trace_digest": "b01d297f77b5935f3884716edd77b74f418ab080c39639dd85819e892850190f",
+    "holdout_trace_digest": "20ddc96781821176bfeb15b7a0ac1020d4c4233df95652518e1cef040dce9c4a",
+    "owner_ids_are_opaque": true,
+    "semantic_role_labels": 0
+  },
+  "boundary": {
+    "policy_mutation": false,
+    "tool_selection": false,
+    "provider_selection": false,
+    "high_order_search": false,
+    "holdout_can_add_evidence": false
+  }
+}
