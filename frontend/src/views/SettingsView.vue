@@ -116,41 +116,11 @@
             />
 
             <!-- ── 4. 关于 ── -->
-            <section v-else-if="activeSection === 'about'" class="settings-section">
-              <h2>关于</h2>
-
-              <!-- 版本元信息 -->
-              <div class="setting-row setting-row--first">
-                <div class="about-meta">
-                  <div class="meta-line">
-                    <span style="font-weight:600;">Seed神经元系统</span>
-                    <span class="meta-tag">v{{ appVersion }}</span>
-                  </div>
-                  <div class="meta-line meta-line--muted">
-                    原生基底
-                    <span class="meta-tag">seed-native-v1</span>
-                  </div>
-                  <div class="meta-line meta-line--muted">
-                    状态通路
-                    <span class="meta-tag">Taiji runtime → native capabilities</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 开源许可 -->
-              <div class="setting-row setting-row--last">
-                <div class="setting-left">
-                  <span class="setting-label">开源许可</span>
-                  <p class="setting-desc">查看本系统使用的第三方组件许可协议</p>
-                </div>
-                <div class="setting-right">
-                  <button class="btn-sm btn-ghost" @click="showLicense = true">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="M9 15h6"/></svg>
-                    查看许可
-                  </button>
-                </div>
-              </div>
-            </section>
+            <SettingsAboutPanel
+              v-else-if="activeSection === 'about'"
+              :app-version="appVersion"
+              @show-license="showLicense = true"
+            />
 
           </div><!-- /.settings-content -->
         </div><!-- /.settings-layout -->
@@ -215,6 +185,7 @@ import SettingsRuntimePanel from '../components/SettingsRuntimePanel.vue';
 import SettingsGeneralPanel from '../components/SettingsGeneralPanel.vue';
 import SettingsTaijiPanel from '../components/SettingsTaijiPanel.vue';
 import SettingsPrivacyPanel from '../components/SettingsPrivacyPanel.vue';
+import SettingsAboutPanel from '../components/SettingsAboutPanel.vue';
 
 const toast = inject('toast');
 const $confirm = inject('$confirm', () => Promise.resolve(false));
