@@ -1,0 +1,89 @@
+{
+  "format": "taiji-w7-r3-visual-desktop-evidence-v1",
+  "stage": "S2",
+  "revalidation": true,
+  "date": "2026-08-29",
+  "status": "tool-blocked",
+  "package": {
+    "path": "dist/Seed/Seed.exe",
+    "sha256": "76b432b43922d5d70c64fca36b8e7045f2f5d03d4492f09b68b47eb31756368b",
+    "size_bytes": 72752598,
+    "backend_port": 8151,
+    "legacy_enabled": false
+  },
+  "runtime": {
+    "health_status": "ok",
+    "taiji_available": true,
+    "seed_active": true,
+    "model_loaded": true,
+    "provider": "native",
+    "frontend_loaded": true,
+    "page_loaded_log": "ok=True"
+  },
+  "browser_page_evidence": {
+    "browser": "Google Chrome",
+    "executable": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "instrumentation": "Playwright 1.60.0",
+    "life_route": {
+      "url": "http://127.0.0.1:8151/#/life",
+      "radar_present": true,
+      "life_activity_present": true,
+      "screenshot": {
+        "path": "output/playwright/r3-s2-final-life-1440.png",
+        "sha256": "19c548d1857419f14922cda05307e58643a82c5a0f4e5234e646116e229315b2"
+      }
+    },
+    "workspace_responsive": {
+      "viewport_900": {
+        "workspace_width": 640,
+        "topbar_height": 130,
+        "topbar_contains_actions": true,
+        "body_starts_after_topbar": true,
+        "horizontal_overflow": false,
+        "right_panel_visible": false,
+        "left_panel_visible": false,
+        "screenshot": {
+          "path": "output/playwright/r3-s2-final-ide-900.png",
+          "sha256": "ec578de184bfc637d8f47969325d07cf3dadcb580de04d1f633b9743e49472c6"
+        }
+      },
+      "viewport_760": {
+        "workspace_width": 704,
+        "topbar_height": 107,
+        "topbar_contains_actions": true,
+        "body_starts_after_topbar": true,
+        "horizontal_overflow": false,
+        "right_panel_visible": false,
+        "left_panel_visible": false,
+        "screenshot": {
+          "path": "output/playwright/r3-s2-final-ide-760.png",
+          "sha256": "45370d56ae17ef9bae33dc29b52e0904c701615e1549c001d6cfb5697e47e64e"
+        }
+      }
+    }
+  },
+  "windows_field_evidence": {
+    "target_app_enumerated": true,
+    "unique_window_title": "Seed - AI 生命体",
+    "window_state_read": true,
+    "activation": "failed: failed to activate captured window",
+    "computer_use_screenshot": "desktop background, not valid Seed window evidence",
+    "taskbar": "not_evidenced",
+    "tray": "not_evidenced",
+    "notification": "not_evidenced",
+    "high_dpi": "not_evidenced",
+    "status": "blocked_by_windows_window_activation"
+  },
+  "checks": {
+    "frontend_vitest": "43 files / 245 passed",
+    "frontend_build": true,
+    "release_check_only": true,
+    "package_frontend_files": 211,
+    "responsive_source_fix": "workspace container breakpoints, wrapping topbar, auto-height topbar"
+  },
+  "limitations": {
+    "page_evidence": "passed for life route and 900px/760px responsive layout",
+    "windows_shell_evidence": "not passed because Computer Use could enumerate but could not activate the final package window; no taskbar/tray/notification/DPI claim is made",
+    "next_action": "rerun the same fresh-package S2 manifest in a Windows session where the Computer Use window activation/capture path works"
+  }
+}

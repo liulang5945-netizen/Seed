@@ -24,7 +24,7 @@
 - W7-R3 视觉层的两处渲染缺陷已修复并收敛（不改变任何运行时语义，不新增前端认知状态）：训练页 `.tk-card h3` 内联 `<svg class="ic">` 此前在组件与全局样式中都无尺寸规则，按 SVG 默认 300×150 渲染并在 flex 标题内把「检查点列表」挤成换行，现由 `TrainingOverviewPanel.vue` / `TrainingView.vue` 统一的 `.tk-card h3 .ic` 规则约束，同时删除 `TrainingView.vue` 里同目的的内联 `style` 硬补丁；生命状态页 `NeedsPentagram.vue` 的数据面此前用 6% 透明度的 `--primary-subtle` 填充加灰色 `--ink-muted` 描边，与同页 `--chart-*` 渐变面板不一致，现改为 `--chart-1 → --chart-3` 径向渐变加 `--chart-2` 描边与描边式顶点，仍全部走主题 token 以兼容五套 `data-theme`。顺带修掉两个既存失效项：数据面由 `<polygon>` 改 `<path>` 使 `transition: d` 真正生效，`critical` 半径由 CSS 几何覆写改为模板绑定以兼容旧 WebView；`polygon.pentagram-guide`×5 / `circle.pentagram-dot`×5 / `text.pentagram-label`×5 / `.ckpt-item button` 等被测试锁定的选择器保持不变，前端 43 文件 245 例回归、ESLint 与 build 全绿。
 - W7-R5-S0 已通过：生产 Taiji Workbench 选择路径在真实只读执行后，将执行前保存的 source affordance 与感知/世界上下文绑定到真实 `Outcome`，再调用 `record_executive_outcome()`；intent、当前 executive decision 和 source affordance 任一不一致都会 fail-closed。`learn=False` 保持评测冻结，`learn=True` 时 `online_updates` 增长；checkpoint 往返保留 `fit_updates`/`online_updates` 并恢复同一最后选择。证据见 [R5-S0](../../../reports/taiji_w7_r5_s0_learning_channel_20260829.json)。
 - 训练前必须先验证 checkpoint 能保存、恢复并继续产生等价的 lineage、预算、结构和 provider artifact 状态；任何只在内存中成立的训练结果不算 Gate 证据。该往返等价性准入已由 [04_EXECUTION_PLAN.md §3](04_EXECUTION_PLAN.md) 的 `test_checkpoint_roundtrip_contract.py`（3 例）满足。
-- **W7-R3-S2 已解除 `env-blocked`**：用户已安装 Chrome，浏览器与真实 Windows 任务栏/托盘/高 DPI 现场取证恢复为待执行状态；此前已完成的 packaged-client 空白窗口修复仍是现场取证的包基线。R3-S2 尚未通过，不能用 R5 证据替代窗口、托盘、通知、DPI 和窄布局证据。
+- **W7-R3-S2 页面级取证已完成，Windows shell 取证仍 `tool-blocked`**：用户已安装 Chrome，最终包在生命页与 900px/760px 窄布局下完成真实页面证据；响应式修复解决了顶栏裁切和主体挤压。Windows Computer Use 能枚举唯一 Seed 窗口，但无法激活窗口，返回 `failed to activate captured window`，截图落到桌面背景，因此任务栏、托盘、通知和高 DPI 不作通过声明。证据见 [R3-S2](../../../reports/taiji_w7_r3_visual_desktop_s2_20260829.json)。
 - 内化（把 skill/mcp 这类外挂知识学进权重后再删除）与效应器身体成长属于 W7-R5 范围。已冻结的 [taiji_w7_r5_open_domain_growth_v1.json](../../manifests/taiji_w7_r5_open_domain_growth_v1.json) 只覆盖开放域结构成长（`status: contract_frozen`，`implementation.status: not_started`），**不覆盖内化转换器与可注册效应器**；后两者需要一份新的、尚未创建的 R5 manifest。在该新 manifest 冻结前不得宣称任何内化或自注册能力已具备。
 
 ## 当前唯一下一步
@@ -36,7 +36,7 @@ W7-R5-S0 已完成。事实依据：`api/seed_runtime.py` 在选择并准入 Tai
 ## 后续唯一顺序
 
 1. W7-R1 / W7-R2 的 S0/S1/S2（已完成）。
-2. **W7-R3-S2（当前唯一下一步）**：Chrome 已安装，优先完成真实 Windows 窗口、任务栏、托盘通知、DPI 和窄窗口现场证据。
+2. **W7-R3-S2（当前唯一下一步）**：在能够激活并捕获 Seed 窗口的 Windows Computer Use 会话中，沿同一新包补齐真实窗口、任务栏、托盘通知和高 DPI 证据；页面级窄布局证据已完成。
 3. W7-R5-S0 前置切片（已完成）：`record_executive_outcome` 已接通并通过 checkpoint 往返。
 4. 冻结 R5 内化与效应器成长 manifest，再按 [04_EXECUTION_PLAN.md §9](04_EXECUTION_PLAN.md) 的 R5-A（知识内化转换器 + 可删性判据）与 R5-B（效应器注册表 L0→L4）推进。
 5. W7-R4 CUDA 在获得真实 CUDA 主机前保持 `hardware-blocked`，不用 CPU 结果替代。
