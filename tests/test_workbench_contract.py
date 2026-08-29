@@ -145,6 +145,50 @@ def test_runtime_projects_workbench_evidence_into_current_taiji_world(
     )
 
 
+def test_workspace_evidence_becomes_taiji_world_event_and_invalidates_affordances(
+    tmp_path, monkeypatch
+) -> None:
+    (tmp_path / "README.md").write_bytes(b"fresh workspace evidence\n")
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(Seed(episode_id="workbench-world-evidence"))
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    environment = runtime.workbench_environment
+    snapshot_id = environment.capability_snapshot.snapshot_id
+    runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.read": {"path": "README.md"}},
+    )
+    intent = ActionIntent(
+        intent_id="intent-evidence-read",
+        kind="workspace.read",
+        parameters={"path": "README.md"},
+        confidence=1.0,
+        tick=runtime.model.tick,
+    )
+
+    result = runtime.execute_workbench_intent(intent, snapshot_id=snapshot_id, learn=False)
+
+    event = result["taiji_world_event"]
+    assert event["kind"] == "workbench.evidence"
+    assert event["tick"] == runtime.model.architecture.cognitive_snapshot().world.tick
+    world = runtime.model.architecture.cognitive_snapshot().world
+    assert world.events[-1].event_id == event["event_id"]
+    assert world.events[-1].kind == "workbench.evidence"
+    attributes = dict(world.events[-1].attributes)
+    assert attributes["result"]["content"] == "fresh workspace evidence\n"
+    assert attributes["after_state_digest"]
+    assert world.affordances == ()
+
+    restored = TSKV8Adapter.from_native_checkpoint(runtime.model.architecture.native_checkpoint())
+    restored_world = restored.cognitive_snapshot().world
+    assert restored_world.events[-1].event_id == event["event_id"]
+    assert restored_world.events[-1].to_payload() == world.events[-1].to_payload()
+    assert restored_world.affordances == ()
+
+
 def test_read_only_environment_reads_and_rejects_escape(tmp_path) -> None:
     (tmp_path / "src").mkdir()
     with (tmp_path / "src" / "main.py").open("w", encoding="utf-8", newline="") as handle:

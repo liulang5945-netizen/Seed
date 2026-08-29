@@ -51,6 +51,7 @@ from .contracts import (
     WorldAction,
     WorldAffordance,
     WorldCalibrationTrace,
+    WorldEvent,
     WorldPredictionRecord,
     WorldState,
     WorldTransition,
@@ -4497,6 +4498,36 @@ class TSKV8Adapter(Taiji):
         world = self._ground_world_state(
             replace(self._cognitive_state.world, affordances=projected)
         )
+        self._cognitive_state = replace(self._cognitive_state, world=world)
+        self._refresh_concept_memory()
+        return world
+
+    def record_world_event(
+        self,
+        event: WorldEvent,
+        *,
+        invalidate_affordance_ids: Sequence[str] = (),
+    ) -> WorldState:
+        """Commit one current-tick external observation and invalidate stale actions.
+
+        The adapter owns world-state freshness.  Callers provide a typed event
+        from an external organ, while only explicit affordance ids are removed;
+        Taiji never interprets tool names or request prose here.
+        """
+
+        if not isinstance(event, WorldEvent):
+            raise TypeError("event must be a WorldEvent")
+        previous = self._cognitive_state.world
+        if event.tick != previous.tick:
+            raise ValueError("world event must be recorded at the current world tick")
+        if event.event_id in {item.event_id for item in previous.events}:
+            raise ValueError(f"world event already exists: {event.event_id}")
+        invalidated = {str(item) for item in invalidate_affordance_ids}
+        affordances = tuple(
+            item for item in previous.affordances if item.affordance_id not in invalidated
+        )
+        events = (*previous.events, event)[-self._lineage_limit() :]
+        world = replace(previous, events=events, affordances=affordances)
         self._cognitive_state = replace(self._cognitive_state, world=world)
         self._refresh_concept_memory()
         return world

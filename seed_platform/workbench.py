@@ -48,6 +48,7 @@ WORKBENCH_LOOP_CONTRACT_FORMAT = "seed-workbench-loop-v1"
 WORKBENCH_LOOP_CONTRACT_VERSION = 1
 WORKBENCH_MAX_LOOP_STEPS = 8
 WORKBENCH_MAX_LOOP_BUDGET_UNITS = 32.0
+WORKBENCH_TAIJI_EVIDENCE_KIND = "workbench.evidence"
 # Workbench sensations cross into Taiji's native byte sensor. Keep the
 # digest-derived marker inside the raw-byte domain; Taiji's boundary symbol
 # is reserved for stream framing and is not emitted here.
@@ -181,21 +182,25 @@ class CapabilitySnapshot:
             CapabilityDescriptor(
                 "workspace.list",
                 "List entries in the active workspace.",
+                category="workspace",
                 parameters=(("path", "relative directory path, default ."),),
             ),
             CapabilityDescriptor(
                 "workspace.read",
                 "Read one UTF-8 or binary-safe file snapshot.",
+                category="workspace",
                 parameters=(("path", "relative file path"),),
             ),
             CapabilityDescriptor(
                 "workspace.stat",
                 "Read metadata for one workspace entry.",
+                category="workspace",
                 parameters=(("path", "relative path"),),
             ),
             CapabilityDescriptor(
                 "workspace.search",
                 "Search text within the active workspace.",
+                category="workspace",
                 parameters=(
                     ("query", "non-empty text"),
                     ("path", "optional relative directory path"),
@@ -658,6 +663,118 @@ class WorkbenchOutcome:
             "tick": self.tick,
             "mcp_registry_snapshot_id": self.mcp_registry_snapshot_id,
         }
+
+
+@dataclass(frozen=True)
+class WorkbenchTaijiEvidence:
+    """Bounded after-state evidence that can be committed to Taiji's world."""
+
+    request_id: str
+    intent_id: str
+    call_id: str
+    capability_id: str
+    snapshot_id: str
+    tick: int
+    status: str
+    success: bool
+    parameters: Mapping[str, Any] = field(default_factory=dict)
+    result: Mapping[str, Any] = field(default_factory=dict)
+    version: int = WORKBENCH_CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        if self.version != WORKBENCH_CONTRACT_VERSION:
+            raise ValueError("unsupported workbench Taiji evidence version")
+        for value, name in (
+            (self.request_id, "request_id"),
+            (self.intent_id, "intent_id"),
+            (self.call_id, "call_id"),
+            (self.capability_id, "capability_id"),
+            (self.snapshot_id, "snapshot_id"),
+        ):
+            if not str(value).strip():
+                raise ValueError(f"workbench Taiji evidence {name} cannot be empty")
+        if self.status not in {"success", "error"}:
+            raise ValueError("unsupported workbench Taiji evidence status")
+        if int(self.tick) < 0:
+            raise ValueError("workbench Taiji evidence tick cannot be negative")
+        if not isinstance(self.parameters, Mapping):
+            raise TypeError("workbench Taiji evidence parameters must be a mapping")
+        if not isinstance(self.result, Mapping):
+            raise TypeError("workbench Taiji evidence result must be a mapping")
+
+    @property
+    def after_state_digest(self) -> str:
+        """Return the content identity of the observed Workbench result."""
+
+        return _canonical_digest(
+            {
+                "capability_id": self.capability_id,
+                "parameters": dict(self.parameters),
+                "result": dict(self.result),
+            }
+        )
+
+    @property
+    def evidence_id(self) -> str:
+        """Return a stable event id bound to one tool call and after-state."""
+
+        return (
+            "workbench-evidence:"
+            + _canonical_digest(
+                {
+                    "request_id": self.request_id,
+                    "intent_id": self.intent_id,
+                    "call_id": self.call_id,
+                    "capability_id": self.capability_id,
+                    "snapshot_id": self.snapshot_id,
+                    "tick": int(self.tick),
+                    "after_state_digest": self.after_state_digest,
+                }
+            )[:32]
+        )
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "version": self.version,
+            "event_id": self.evidence_id,
+            "kind": WORKBENCH_TAIJI_EVIDENCE_KIND,
+            "request_id": self.request_id,
+            "intent_id": self.intent_id,
+            "call_id": self.call_id,
+            "capability_id": self.capability_id,
+            "snapshot_id": self.snapshot_id,
+            "tick": int(self.tick),
+            "status": self.status,
+            "success": self.success,
+            "parameters": dict(self.parameters),
+            "result": dict(self.result),
+            "after_state_digest": self.after_state_digest,
+        }
+
+    def to_taiji_event(self) -> Any:
+        """Convert the evidence to the Taiji world-event contract lazily."""
+
+        from taiji import WorldEvent
+
+        return WorldEvent(
+            event_id=self.evidence_id,
+            kind=WORKBENCH_TAIJI_EVIDENCE_KIND,
+            tick=int(self.tick),
+            subject_id=self.capability_id,
+            attributes=(
+                ("request_id", self.request_id),
+                ("intent_id", self.intent_id),
+                ("call_id", self.call_id),
+                ("capability_id", self.capability_id),
+                ("snapshot_id", self.snapshot_id),
+                ("status", self.status),
+                ("success", bool(self.success)),
+                ("parameters", dict(self.parameters)),
+                ("result", dict(self.result)),
+                ("after_state_digest", self.after_state_digest),
+            ),
+            provenance="workbench-observed",
+        )
 
 
 @dataclass(frozen=True)

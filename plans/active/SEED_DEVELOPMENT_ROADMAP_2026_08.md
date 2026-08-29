@@ -2136,7 +2136,15 @@ after-state→Outcome”的第一条自主只读任务 Gate；无 Taiji 产生�
 并可继续进入现有 Taiji ExecutiveController→Workbench admission→after-state/Outcome 链。该 Gate 证明能力合同能进入 Taiji 世界模型，
 不宣称 `list/read/stat/search` 结果已经自动变成 WorldEvent，也不开放写入/终端自治。
 
-**当前唯一下一步：建立真实 workspace evidence→Taiji WorldEvent/WorldState freshness Gate。** 将 Workbench `list/read/stat/search` 的真实
-after-state 结果以带 request/call/snapshot/tick lineage 的结构化世界事件写回 Taiji，并让已投影 affordance 在 workspace 内容、能力快照或
-world tick 变化后自动失效；用真实临时项目验证“evidence→world state→candidate freshness→read-only admission→Outcome”以及 checkpoint
-续跑不会复用过期 affordance。该 Gate 通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
+**已完成（2026-08-29）：真实 workspace evidence→Taiji WorldEvent/WorldState freshness Gate。** WorkBench 的真实
+`workspace.list/read/stat/search` after-state 结果现在由带 request/intent/call/capability snapshot/tick lineage 的
+`WorkbenchTaijiEvidence` 封装，写入 Taiji `WorldEvent`，并保留 after-state digest 与受限结果内容；`TSKV8Adapter.record_world_event()`
+只接受当前 world tick 的 typed event，事件和 affordance 失效状态进入 native checkpoint。每次真实 workspace 证据到达后，当前投影的
+WorkBench affordance 会被精确清除，旧 candidate 不会继续沿用；下一轮必须重新投影并重新准入。真实临时项目覆盖 evidence、世界事件、
+失效和 checkpoint continuation，WorkBench 定向回归 `30 passed`。该 Gate 仍不开放写入/终端自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
+
+**当前唯一下一步：建立 capability/world freshness 的重新投影闭环。** 在事件清除旧 affordance 后，使用同一真实 workspace evidence
+自动生成新的结构化 parameter binding，并在 capability snapshot、workspace after-state 或 world tick 变化后只允许基于最新事件重新
+投影；验证“旧 candidate 被拒绝→新 evidence→新 affordance→新 candidate→read-only admission→Outcome”的连续链路，以及多次
+`list/read/stat/search` 之间的事件顺序和 checkpoint continuation。该 Gate 通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel
+或视觉包装。

@@ -1053,6 +1053,38 @@ class SeedRuntime:
             tick=int(taiji_outcome.tick),
             mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
         )
+        taiji_world_event = None
+        descriptor = environment.capability_snapshot.get(request.capability_id)
+        if (
+            descriptor is not None
+            and descriptor.category == "workspace"
+            and descriptor.risk == "read_only"
+        ):
+            from seed_platform.workbench import WorkbenchTaijiEvidence
+
+            world = self.model.architecture.cognitive_snapshot().world
+            evidence = WorkbenchTaijiEvidence(
+                request_id=request.request_id,
+                intent_id=request.intent_id,
+                call_id=call.call_id,
+                capability_id=request.capability_id,
+                snapshot_id=environment.capability_snapshot.snapshot_id,
+                tick=int(world.tick),
+                status=workbench_outcome.status,
+                success=workbench_outcome.success,
+                parameters=request.parameters,
+                result=result,
+            )
+            taiji_world_event = evidence.to_taiji_event()
+            invalidated_affordances = tuple(
+                item.affordance_id
+                for item in world.affordances
+                if item.affordance_id.startswith("workbench:")
+            )
+            self.model.architecture.record_world_event(
+                taiji_world_event,
+                invalidate_affordance_ids=invalidated_affordances,
+            )
         append_event(
             "outcome",
             request.request_id,
@@ -1064,6 +1096,9 @@ class SeedRuntime:
             "policy": policy.to_payload(),
             "outcome": workbench_outcome.to_payload(),
             "taiji_outcome": taiji_outcome.to_payload(),
+            "taiji_world_event": (
+                None if taiji_world_event is None else taiji_world_event.to_payload()
+            ),
             "tool_call": {
                 **call.to_payload(),
                 "workbench_binding": request.binding_payload(),
