@@ -140,20 +140,15 @@ Frontend IDE <- subscribes to the same execution/audit state; it is not the exec
 Taiji 不直接点击 Vue/Monaco DOM，也不把任意自然语言翻译成未审计 shell。Seed 提供版本化 capability、参数 schema、
 权限、预算、超时、事务、撤销和真实执行；Taiji 根据自己的目标和世界状态选择能力，并从真实 outcome 学习。
 
-### 8.3 当前已确认的产品断点
+### 8.3 当前产品边界与未关闭缺口
 
-- `api/seed_runtime.py::SeedRuntime.chat()` 只生成文本，没有消费 Taiji 的 `ToolCall`；
-- `api/app.py` 把工作台、Agent、MCP、RAG 和插件路由全部挂在 `legacy_available()` 后，原生 Seed 启动时反而没有工作台 API；
-- `frontend/src/composables/useWorkspaceBridge.js` 声称打通聊天、IDE 和终端，但当前无任何组件调用；
-- `frontend/src/components/MonacoEditor.vue` 的语言列表、扩展名推断和切换全是页面内状态，后端、checkpoint、
-  capability snapshot 和 Taiji `SelfState` 均不可见；
-- `seed_platform/runtime_service.py` 在原生模式明确上报空工具列表，而前端仍宣称已能工具调用和自主探索；
-- 工作台运行/工程脚手架、Agent/ReAct、MCP、插件、记忆和 RAG 的现行实现仍直接导入 NeuroPlex，不能作为 Taiji 原生执行平面；
-- 设置页仍允许把正式产品热切换到 Cortex，训练页仍展示 GGUF/LoRA 发布动作，均与“Legacy 仅离线对照、
-  Taiji native artifact 为正式产品格式”的方向冲突。
+- 原生 Seed 已拥有 Workbench API、capability snapshot、语言/IDE 识别与切换、policy、真实只读执行、Outcome、recovery 和 checkpoint continuation；这些路径不再依赖 Legacy router。
+- 客户端已删除 HF/GGUF/Transformer 作为正式产品格式切换的主语义；provider 只能作为语言效应器装配。
+- 当前默认自治仍限制为 freshness-valid、Taiji-owned 的只读 Workbench 路径。写入自治、开放域自然语言工具选择和外部 MCP 生命周期尚未完成。
+- `seed_platform/workbench.py` 仍存在硬编码 capability 分派；知识内化转换器与可注册效应器生命周期尚未实现。
+- 外部 provider artifact 的真实 packaged-client 轮换/重启重绑、Windows shell 现场证据和 CUDA 实测仍未关闭。
 
-这些断点统一按总路线第 16 节的 Workbench Closure 路线处理；在真实纵切片通过前，客户端不得再把“工具存在”“可自主执行”
-或“支持某格式”当作产品已完成能力。
+以上缺口按 [后续详细计划](roadmap/04_EXECUTION_PLAN.md) 的 R5A/R5B、语言/provider、R3 和 R4 分线处理；即时动作只看 [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md)。
 
 ## 9. Legacy 边界
 
@@ -161,7 +156,7 @@ Legacy NeuroPlex 继续作为冻结的 Transformer 离线对照和显式兼容�
 
 冻结意味着不再向 Legacy 增加认知功能，只允许安全、兼容和行为保持修复。默认产品最终达到 Legacy-off；是否从仓库移除必须等 Taiji v1 通过语言/工具 Gate、产品迁移和对照归档后再决定。
 
-## 10. 当前唯一边界动作
+## 10. 执行入口边界
 
 当前路线入口只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)，当前唯一下一步只看其指向的 [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md)。
 本文件只固定所有权和执行平面边界，不另设实现顺序。

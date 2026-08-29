@@ -25,6 +25,9 @@
 | [ARCHITECTURE_COMPROMISE_ORIGINS.md](audits/ARCHITECTURE_COMPROMISE_ORIGINS.md) | 原架构妥协审计的早期机制与历史状态 |
 | [ARCHITECTURE_COMPROMISE_FINDINGS.md](audits/ARCHITECTURE_COMPROMISE_FINDINGS.md) | 原架构妥协审计的系统性缺口与组件 findings |
 | [ARCHITECTURE_COMPROMISE_DIRECTIONS.md](audits/ARCHITECTURE_COMPROMISE_DIRECTIONS.md) | 原架构妥协审计的改进方向与候选路线 |
+| [SEED_GATE_CI_HISTORY_2026_08.md](history/SEED_GATE_CI_HISTORY_2026_08.md) | 2026-08-29 以前累计的 Gate、CI 事故、修复和逐轮证据；活动文件只保留仍生效规则 |
+| [SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md](history/SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md) | R1–R5 原详细蓝图与已完成过程；后续阶段已重写为 C0–C8 活动计划 |
+| [SEED_NATIVE_PHASE_HISTORY_20260829.md](history/SEED_NATIVE_PHASE_HISTORY_20260829.md) | P0–P7 原滚动实现记录；活动版只保留长期范围、阶段状态和退出门槛 |
 
 其他归档文档的用途见各自文件头部说明。原路线、旧 NeuroPlex/Transformer 设计和测试调试记录都不应被重新解释为当前 Taiji 事实。
 

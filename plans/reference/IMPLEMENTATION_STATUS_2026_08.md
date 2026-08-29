@@ -1,49 +1,73 @@
 # Seed / Taiji 实现事实参考
 
-> 这是当前代码事实的短摘要，不承担执行顺序。执行顺序只看 [当前路线入口](../active/SEED_DEVELOPMENT_ROADMAP_2026_08.md)，架构合同看 `plans/active/` 根目录的四份文档。
+> 事实快照：2026-08-30。本文件只描述当前代码和最近可追溯证据，不决定执行顺序；当前下一步见 [03_CURRENT_EXECUTION.md](../active/roadmap/03_CURRENT_EXECUTION.md)。历史测试轮次和事故链已归档。
 
-## 所有权
+## 1. 所有权与依赖
 
-- `taiji/` 不导入 `seed`、`neuroplex` 或 `transformers`；native core 保持独立。
-- `seed/` 负责产品、运行时、Workbench 和外部 provider 边界；`neuroplex/` 是冻结的 Legacy Transformer 对照。
-- Taiji 产生结构化 `ActionIntent`、`ContentPlan`、`WorldAffordance` 和状态/证据 lineage；语言 provider 只负责把已形成的内容实现为可读表达。
-- 工作台工具必须来自当前 content-addressed capability snapshot；前端、prompt 或 provider 不得维护第二份工具表。
+- `taiji/` 是 Taiji-owned substrate 与认知纵切片，不导入 `seed`、`seed_platform`、`neuroplex` 或 Transformers。
+- `seed/`、`api/` 和 `seed_platform/` 负责产品/runtime、Workbench、policy、provider 装配和外部副作用边界。
+- `neuroplex/` 是冻结 Legacy Transformer 对照；Legacy-off 时不得注册其 router 或认知路径。
+- Taiji 形成 `ActionIntent`、`ContentPlan`、`WorldAffordance`、选择和状态 lineage；语言 provider 只实现可读表达。
+- capability 必须来自内容寻址 snapshot；前端、prompt、provider 不得维护第二份工具或能力真相。
 
-## 当前可声明的闭环
+## 2. 当前已经闭合的主链
 
-- `InputFrame → Observation/PerceptEvent → WorldState/WorldEvent` 的输入边界、来源和 checkpoint lineage 已存在。
-- Executive 从认知状态和真实 affordance grounding 选择候选；候选经 Workbench admission、policy、executor 和真实 after-state/Outcome 回写。
-- IDE 语言识别综合扩展名、shebang、内容、manifest、邻近文件、LSP/toolchain 证据；高置信时可逆地自动切换，歧义时 `ask_user`。
-- 文件 patch/create/rename/delete/undo 和 terminal/diagnostics/test/build 已有结构化预览、审批、原子执行、冲突检测、输出预算和 checkpoint 续跑边界。
-- MCP-shaped 本地 registry、有限多步 loop、WorldEvent freshness、successor graph、recovery handoff、branch portfolio 和只读客户端 snapshot 已有合同。
-- provider artifact 具备 registry、内容寻址、loader、startup、回滚和客户端观测边界；provider 不能绕过 Taiji 选择工具或伪造认知状态。
+### 输入、世界与认知状态
 
-## 明确不能宣称
+- `InputFrame → Observation/PerceptEvent → WorldState/WorldEvent` 的来源、时间和 checkpoint lineage 已存在。
+- 感知、世界预测、workspace、working/episodic/semantic/procedural memory、homeostasis、goal/planning、generation 和结构治理均有 native owner 与窄 Gate。
+- interaction-group 由真实 trace 的 contribution/interaction/recovery/lesion 推导，不依赖预设“规划神经元/记忆神经元”角色表。
 
-- 当前不是开放域通用智能，不是完整的人脑仿真，也不是“规模扩大就自动进化”。结构成长必须由真实任务误差/容量压力触发，并经过 holdout、lesion、资源预算和 rollback。
-- 当前没有 CUDA 实测结论；CPU profile 只能作为参考基线。没有 CUDA-capable 主机前不提交 fused/sparse kernel，也不把 CPU 结果宣传成 CUDA 加速。
-- 只读 Workbench canary 不等于写入自治、开放域自然语言工具选择、外部 MCP 生命周期或长程规划完成。
-- 小型模拟 Gate 只属于 S0 机制证据，必须逐级升级到 replay/sandbox 和真实 packaged client/workbench。
+### Workbench 与 IDE
 
-## 验证基线
+- Executive 从认知状态和真实 grounding 选择候选，经 capability freshness、policy、executor 和真实 after-state/Outcome 回写。
+- IDE 语言识别综合扩展名、shebang、内容、manifest、邻近文件和 toolchain/LSP 证据；高置信可逆自动切换，歧义返回 `ask_user`。
+- 文件 patch/create/rename/delete/undo、terminal/diagnostics/test/build 具备结构化预览、审批、原子执行、冲突检测、输出预算和 checkpoint continuation 合同。
+- MCP-shaped 本地 registry、有限多步 loop、successor graph、recovery handoff/portfolio 与客户端只读审计投影已接通。
 
-最近一次已记录的完整回归为 Python `560 passed, 6 skipped`、前端 `42 files / 237 passed`（2026-08-29 训练 ETA/进度分母修复，见 [02_GATES_AND_CI.md §14.18](../active/roadmap/02_GATES_AND_CI.md)；上一轮为三修提交 `cd39632` 的 `556 passed`，本轮新增 4 例训练进度契约）；同轮实测 native boundary `6 entrypoints PASS`、API contract `45 literals PASS`、Ruff `All checks passed`、核心 mypy `0 errors / 44 files`、ESLint `0 errors`、`npm run build` 通过。本轮未复测覆盖率，上一次记录值为 `45.13%`（对应 `550/233` 那轮），不得当作当前值引用。另有一项本轮实测的运行时基线：**CPU 原生训练吞吐 ≈147 字节/s**（`scripts/archive/diagnostics/diag_eta_rate.py`，窗口比值 1.00~1.05 稳定），此前代码注释里的「≈311 ticks/s」是无出处的过期数字，已作废。`black --check` 本机因缓存目录不可写挂死（见 [02_GATES_AND_CI.md §14.6](../active/roadmap/02_GATES_AND_CI.md)），由 CI 腿覆盖。后续改动不得只更新数字，必须把对应报告、Gate 和失败边界一起保留。
+### 学习、provider 与客户端
 
-随后两轮实测基线（同日，checkpoint 往返等价性 Gate 与 recovery portfolio 审计 Gate）：
+- 生产 Workbench 路径在真实执行后绑定 source affordance、感知/世界上下文和 Outcome，并在 `learn=True` 时调用 `record_executive_outcome()`；`learn=False` 不产生在线更新。
+- checkpoint 往返保留 `fit_updates`、`online_updates` 和最后选择，并能恢复后继续。
+- provider artifact 具备内容寻址、registry、loader、startup、watchdog、回滚和客户端观测；当前产品默认 `native-readable`，`structured-stub` 仅保留为显式调试 codec。
+- 客户端从 native facade 读取 runtime/provider/homeostasis/training/knowledge/Workbench 状态；生命雷达、窄布局和打包前端字节一致已验证。
 
-- **checkpoint 往返 Gate（`58976d6`，见 [02_GATES_AND_CI.md §14.19](../active/roadmap/02_GATES_AND_CI.md)）**：Python `563 passed, 6 skipped`（新增 5 例：等价性往返 3 例），核心 mypy `0 errors / 44 files`，前端 `42 files / 237 passed`，API contract `45 literals PASS`。
-- **recovery portfolio 审计 Gate（工作树，见 [02_GATES_AND_CI.md §14.20](../active/roadmap/02_GATES_AND_CI.md)）**：Python `568 passed, 6 skipped`（新增审计门禁 5 例），核心 mypy `0 errors / 44 files`，前端 `43 files / 242 passed`（+`RecoveryPortfolioAuditPanel` 5 例），API contract `46 literals PASS`（新增 `/api/workbench/taiji/recovery-branch/context`），native boundary `6 entrypoints PASS`，ESLint `0 errors`，`npm run build` 通过。OpenAPI 基线已按 `--snapshot-update` 重生成。
-- **recovery portfolio S2 packaged-client 现场证据（2026-08-29）**：最终 `dist/Seed/Seed.exe` 在 Legacy-off、native runtime、8138 自定义端口和真实 `LOCALAPPDATA` 下启动成功；受限数据根自动降级到 `dist/Seed/user_data`，不需手工 Qt 环境。Workspace、右侧检查器和恢复组合审计面板真实可见，所有关键 API 请求 8138/200，Playwright 无页面错误、无 Legacy/Transformer/HF/GGUF 标记；`runtime/status` 为 `seed:seed_corpus.pt` / `is_taiji=true` / `is_seed=true`，native capability snapshot revision `4`。本次为结构化 `portfolio_empty` 空态，非空 branch/tombstone 仍以 S0/S1 replay 为证据。完整记录见 [packaged_client_s2_20260829.json](../../reports/packaged_client_s2_20260829.json)。
-- **W7-G0 合同冻结（2026-08-29）**：五份 R1–R5 manifest 已进入 `plans/manifests/`，由 `tests/test_w7_gate_manifests.py` 的 3 个结构测试看守；它们冻结后续实现的真实输入/输出、trace、资源预算、checkpoint、red proof、holdout/lesion、失败隔离、rollback 和越界边界。R1/R2/R3/R5 为 `contract_frozen`，R4 明确为 `hardware-blocked`；这不是任何后续能力已完成的声明。冻结后的执行入口曾是 W7-R1 provider watchdog，当前入口以实时路线文件为准。
-- **本轮回归边界（2026-08-29）**：S2 相关定向后端测试 `26 passed`，frontend `apiClient` 定向测试 `9 passed`，W7-G0 manifest 测试 `3 passed`，release/package 与最终 packaged-client canary 通过。全量 Python 回归在本机受 Temp/工作区目录 ACL 拒绝阻断（首轮 `481 passed, 6 skipped, 91 errors`，隔离 basetemp 仍出现同类权限错误并在 pytest 收尾失败），因此不把本机全量结果写成 CI 绿灯；当前能力声明仍以此前已记录的 CI/定向 Gate 为准。
-- **W7-R1 S0/S1/S2 provider watchdog（2026-08-29）**：健康记录改为以 `artifact_id + artifact_digest` 内容寻址，防止同 ID 内容替换继承旧失败计数；S0 的健康/失败阈值/单次回退/cooldown/native fallback 通过，S1 又用真实 `TSKV8Adapter.native_checkpoint()` 验证 artifact、digest、registry、健康计数和阈值后的下一次探针 lineage 可恢复。S2 在明确 Legacy-off 的 `dist/Seed/Seed.exe` 默认 8000 端口 canary 中验证 backend/runtime/UI 启动、provider 健康字段只读投影、网络端口绑定以及无 Legacy/Transformer/HF 标记；8 个 API 请求均 8000/200，无页面错误或请求失败。S2 仅运行 native-readable 内置器官，外部 provider artifact 轮换未被虚报为已验证。报告见 [S0](../../reports/taiji_w7_r1_provider_watchdog_20260829.json)、[S1](../../reports/taiji_w7_r1_provider_watchdog_s1_20260829.json) 与 [S2](../../reports/taiji_w7_r1_provider_watchdog_s2_20260829.json)，定向 provider 回归 `21 passed`。R1 已完成，随后进入 W7-R2-S0。
-- **W7-R2 S0/S1/S2 interaction-group（2026-08-29）**：新增通用 trace-grounded pair evaluator，输入不透明 owner/context、Outcome、恢复效果、资源和 checkpoint revision；按 context 内四格 counterfactual 估计 contribution、正/负 interaction、recovery effect、uncertainty、资源成本和 lesion，训练 digest 不吸收 holdout Outcome。S1 使用真实 `TSKV8Adapter` 生成 `Event/Outcome` 并经 `taiji-native-v1` checkpoint 精确回放；S2 再以真实 `SeedRuntime + WorkbenchEnvironment` 执行 workspace list/search/read，观察 capability snapshot、native executive selection、world evidence 和 recovery retry。16 个 S2 replay record 全部一致，2 个 admitted group、4 个拒绝候选，role label 输入数为 0；跨 revision、holdout 污染、资源压力、source digest 篡改和缺 Workbench 证据均 fail-closed。报告见 [S1](../../reports/taiji_w7_r2_interaction_groups_s1_20260829.json) 与 [S2](../../reports/taiji_w7_r2_interaction_groups_s2_20260829.json)；R2 完成，下一步为 W7-R3-S0 visual/desktop evidence。
-- **W7-R3 S0/S1/S2 页面级 visual/desktop（2026-08-29）**：恢复生命页五维雷达作为主视觉，Taiji 原生摘要改为紧凑辅助卡片；删除侧边栏重复生命状态脉冲块；“状态依据”从非生命页移除，仅在生命页底部默认折叠；修复托盘“生命状态”先恢复窗口再切换 `#/life`。本轮又修复了 packaged client 的真实空白窗口：PyInstaller 前端改为逐文件打包并校验源码/包内 211 个文件的集合与字节，启用 `--clean`，冻结 Qt 显式绑定 `QtWebEngineProcess.exe`；当前 CPU-only/受限主机默认使用 `--disable-gpu --single-process`，不使用 `--no-sandbox`。最终 Legacy-off/native `dist/Seed/Seed.exe` 在 8151 端口出现 `loadFinished(ok=True)`，health canary 为 ok；前端 `43 files / 245 passed`、Vite build、ESLint 0 errors，Chrome 页面级生命雷达和 900px/760px IDE 窄布局通过，响应式顶栏无裁切和横向溢出。证据见 [R3-S1](../../reports/taiji_w7_r3_visual_desktop_s1_20260829.json) 与 [R3-S2](../../reports/taiji_w7_r3_visual_desktop_s2_20260829.json)；Windows 任务栏、托盘、通知和高 DPI 仍因 Computer Use 无法激活 Seed 窗口而未取证。
+## 3. 最近可追溯证据
 
-## 关联资料
+| 范围 | 最近证据 | 结论边界 |
+|---|---|---|
+| checkpoint 等价性 | `tests/seed/test_checkpoint_roundtrip_contract.py` 3 例 | provider 脱挂/重绑、状态与 continuation 受门禁保护 |
+| R1 provider watchdog | [S0](../../reports/taiji_w7_r1_provider_watchdog_20260829.json)、[S1](../../reports/taiji_w7_r1_provider_watchdog_s1_20260829.json)、[S2](../../reports/taiji_w7_r1_provider_watchdog_s2_20260829.json) | native-readable packaged 观测通过；外部 artifact 轮换未宣称 |
+| R2 interaction-group | [S0](../../reports/taiji_w7_r2_interaction_groups_20260829.json)、[S1](../../reports/taiji_w7_r2_interaction_groups_s1_20260829.json)、[S2](../../reports/taiji_w7_r2_interaction_groups_s2_20260829.json) | native replay 与真实只读 Workbench 通过；不写回结构/provider |
+| R3 visual/desktop | [S1](../../reports/taiji_w7_r3_visual_desktop_s1_20260829.json)、[S2 部分证据](../../reports/taiji_w7_r3_visual_desktop_s2_20260829.json) | 页面/窄布局通过；Windows shell 仍 `tool-blocked` |
+| R5-S0 学习通道 | [报告](../../reports/taiji_w7_r5_s0_learning_channel_20260829.json) | 真实 Outcome 在线更新和 checkpoint continuation 通过 |
 
-- [Taiji 核心目标](../active/TAIJI_CORE_REQUIREMENTS.md)
+R3 最终包为 `dist/Seed/Seed.exe`，已记录 SHA-256 `76b432b43922d5d70c64fca36b8e7045f2f5d03d4492f09b68b47eb31756368b`、大小 72,752,598 字节；源码与包内前端 211 个文件集合/字节一致，前端回归 `43 files / 245 passed`，Vite build 与 ESLint 通过。Chrome 已验证生命页和 900px/760px IDE 布局；Windows Computer Use 无法激活窗口，因此任务栏、托盘、通知和高 DPI 未通过。
+
+R5-S0 定向 native/executive/desktop/project identity 回归记录为 `24 passed`，Ruff、compileall、checkpoint 往返和 diff 检查通过。本次 2026-08-30 收敛只修改计划/参考文档，没有重跑或冒充新的全量代码基线。
+
+## 4. 明确未完成
+
+- `taiji/internalization.py` 尚不存在；没有知识内化转换器、replay 生命周期或通过五类 lesion 的可删性判据。
+- `seed_platform/workbench.py` 的能力执行仍依赖硬编码分派；没有统一 capability bundle 注册、disposer、候选/影子/激活生命周期。
+- `taiji_w7_r5_open_domain_growth_v1.json` 只冻结结构成长合同，不能覆盖知识内化或效应器成长；R5A/R5B 的独立 manifest 尚未创建。
+- 默认自治仍是 freshness-valid、Taiji-owned 的只读 Workbench 路径；写入自治、外部 MCP 生命周期、长程开放域任务未完成。
+- 外部语言 provider artifact 的真实 packaged-client 轮换/重启重绑尚未形成 S2；native-readable 可用不等于语言质量已经成熟。
+- 当前无 CUDA 实测；CPU profile 不构成 CUDA 支持。
+- Windows shell 的任务栏、托盘、通知和高 DPI 缺真实现场证据。
+
+## 5. 参数、训练与资源边界
+
+- Taiji 当前是多 owner 的 native 参数/状态系统，不存在一个可诚实汇总为“完整 Taiji 大模型参数量”的单一发布数字；发布参数规模前必须按器官、稳定参数、可增长容量、非参数状态和 provider artifact 分账。
+- 训练优势不能由架构口号推断。当前已证明的是局部/在线更新、结构预算和 checkpoint continuation；吞吐、显存、能耗和质量必须在固定 workload 上实测。
+- 任何训练前先运行 checkpoint 保存→关闭→恢复→继续 Gate；检查失败时禁止启动长训。
+- CUDA 到位前只允许维护设备抽象、CPU profiler 基线和禁止路径测试，不提交 GPU 性能结论。
+
+## 6. 当前合同入口
+
+- [Taiji 核心需求](../active/TAIJI_CORE_REQUIREMENTS.md)
 - [Taiji Native Architecture v1](../active/TAIJI_NATIVE_ARCHITECTURE_V1.md)
-- [架构方向决策](../active/ARCHITECTURE_DIRECTION_2026_08.md)
+- [架构方向与 Transformer 边界](../active/ARCHITECTURE_DIRECTION_2026_08.md)
 - [Seed 产品与运行时架构](../active/SEED_ARCHITECTURE.md)
-- [持续门禁与 CI](../active/roadmap/02_GATES_AND_CI.md)
+- [当前门禁与 CI](../active/roadmap/02_GATES_AND_CI.md)
+- [后续详细计划](../active/roadmap/04_EXECUTION_PLAN.md)

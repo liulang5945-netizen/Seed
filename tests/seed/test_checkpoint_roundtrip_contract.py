@@ -1,10 +1,10 @@
-"""checkpoint 往返等价性门禁（plans/active/roadmap/04_EXECUTION_PLAN.md §3 line 61）。
+"""checkpoint 往返等价性门禁（plans/active/roadmap/02_GATES_AND_CI.md G2）。
 
 准入原文：「创建 checkpoint → 关闭运行时 → 恢复 → 继续一步 → 对 lineage、预算、
 结构、provider artifact 和可见指标做等价性断言」。在本门禁转绿之前，数据集与续训
 工作只算「数据集可发现性与 API 契约修复」，不构成训练能力宣称。
 
-同时钉住 02_GATES_AND_CI.md §14.3「checkpoint 往返对称不变量」：
+同时钉住 G2「checkpoint 往返与继续执行」：
 `checkpoint()` 写出的每一个键都必须能被 `restore()` 消费，否则长训练会在最后一步
 失败并丢弃整个 checkpoint。
 """
@@ -179,7 +179,7 @@ def test_guarded_provider_checkpoint_can_be_restored(tmp_path: Path) -> None:
 
     `checkpoint()` 无条件序列化任意已挂载的语言器官，若 `restore()` 只认
     native-readable/structured-stub，则接入 guarded provider 的产品运行时
-    永远无法从自己的存档启动——这正是 §14.3 要拦截的往返不对称。
+    永远无法从自己的存档启动——这正是 G2 要拦截的往返不对称。
     """
     model = _wire_runtime("ckpt-gate-guarded")
     architecture = model.architecture

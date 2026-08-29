@@ -14,9 +14,9 @@
 | 文件 | 责任 | 状态 |
 |---|---|---|
 | [01_SCOPE_AND_PHASES.md](roadmap/01_SCOPE_AND_PHASES.md) | 目标、原则、P0–P7 阶段和阶段退出门槛 | 当前参考 |
-| [02_GATES_AND_CI.md](roadmap/02_GATES_AND_CI.md) | 持续门禁、CI 可信度纪律、停止项和硬件边界 | 当前参考 |
+| [02_GATES_AND_CI.md](roadmap/02_GATES_AND_CI.md) | 当前仍有效的门禁、CI 纪律、停止项和阻塞边界 | 当前参考 |
 | [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md) | 当前实现快照、唯一下一步、W0–W7 顺序 | 当前执行 |
-| [04_EXECUTION_PLAN.md](roadmap/04_EXECUTION_PLAN.md) | 详细工作包、各 Gate 验收、并行变更收口与工程纪律；不创建独立执行顺序 | 当前参考 |
+| [04_EXECUTION_PLAN.md](roadmap/04_EXECUTION_PLAN.md) | C0–C8 后续工作包、依赖、产物、Gate 和工程纪律 | 当前参考 |
 | [IMPLEMENTATION_STATUS_2026_08.md](../reference/IMPLEMENTATION_STATUS_2026_08.md) | 代码事实、owner 和能力声明 | 当前参考 |
 
 ## 固定执行规则
@@ -26,16 +26,18 @@
 3. 研究 Gate、产品能力和演示包装必须分开标注；小型模拟只证明 S0 机制，不替代 replay、真实工作台或 packaged-client 证据。
 4. CUDA、视觉体验、provider watchdog、interaction-group、开放域学习和结构自进化均保留在路线中；硬件不可用时只能标记 `hardware-blocked`，不得伪造完成。
 
-## 路线顺序
+## 收敛后的路线顺序
 
-当前产品闭环按 **W0 → W1 → W2 → W3 → W4 → W5 → W6 → W7** 推进；W7 内固定为 **G0 → R1 → R2 → R3 → R4 → R5**。
+W0–W6 与 W7-R1/R2 已形成基线。W7 不再把彼此无实现依赖的验证线伪装成严格串行：
 
 - W0–W3：原生 Workbench 合同、语言/IDE、受控执行、MCP-shaped 工具和有限循环。
 - W4–W6：产品语义/Legacy 边界、客户端真实性、provider 与前端 native facade 收口。
-- W7-R1/R2：provider watchdog 与跨区域 interaction-group 归因。
-- W7-R3：真实 capability 之上的视觉、桌面外壳、DPI、托盘和可访问性。
-- W7-R4：真实 CUDA 主机上的 profile、跨设备 checkpoint 和数值一致性。
-- W7-R5：由长期误差、容量压力和真实任务证据触发的可回滚结构成长与开放域学习。
+- W7-R1/R2：provider watchdog 与 interaction-group 已完成 S0/S1/S2 基线。
+- W7-R3：页面层已通过，Windows shell 现场证据保持 `tool-blocked` 独立补证。
+- W7-R4：真实 CUDA 主机上的 profile、跨设备 checkpoint 和数值一致性保持 `hardware-blocked`。
+- W7-R5：当前活跃主线，按 **G1 合同分离 → R5A 知识内化 → R5B 效应器成长 → R5C 结构自进化** 推进。
+
+R3/R4 未关闭时不得宣称对应能力完成；但工具/硬件阻塞不再冻结与它们无依赖的 R5 CPU/native 工作。R5 也不得反向替代 R3/R4 证据。
 
 ## 历史记录入口
 
@@ -44,6 +46,8 @@
 - [Workbench Closure 规划记录](../archive/history/SEED_ROADMAP_WORKBENCH_PLAN_2026_08.md)
 - [Workbench Closure 进展记录](../archive/history/SEED_ROADMAP_WORKBENCH_PROGRESS_2026_08.md)
 - [旧入口与状态快照](../archive/history/PLANS_INDEX_STATUS_SNAPSHOT_20260829.md)
+- [Gate 与 CI 历史](../archive/history/SEED_GATE_CI_HISTORY_2026_08.md)
+- [W7 执行蓝图快照](../archive/history/SEED_W7_EXECUTION_PLAN_SNAPSHOT_20260829.md)
 
 ## 维护边界
 
