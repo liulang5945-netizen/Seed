@@ -51,6 +51,8 @@ class SeedRuntime:
         self.checkpoint_path = checkpoint_path
         from taiji import LanguageOrgan, NativeReadableTextLanguageOrgan
 
+        self.model.architecture.ensure_native_executive()
+
         # Chat stays local by default.  An external organ can reach product
         # chat only through explicit config plus the realization/safety Gate.
         # Annotated as the LanguageOrgan protocol because the slot may hold

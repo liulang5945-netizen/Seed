@@ -2152,7 +2152,15 @@ snapshot 漂移及失败 evidence。真实回归覆盖“旧 candidate 被拒绝
 API/native boundary、Ruff、B/SIM、Black、核心 mypy、OpenAPI 与生产构建均通过。该闭环仍不开放写入/终端自治、开放域自然语言工具选择、
 CUDA kernel 或视觉包装。
 
-**当前唯一下一步：建立不依赖手工 candidate 的真实只读自主 canary。** 让当前 Taiji 的连续 affordance feature source 与
-`ExecutiveController` 从“最新 evidence reprojected affordance”直接合成 candidate，完成 `list/read/stat/search` 中至少两步的选择、准入、
-执行、WorldEvent 回写、失效与重新投影；验证去掉手工 candidate、语言 provider 和前端后仍能闭环，并覆盖中断 checkpoint 后不会重复执行或
-复用旧 identity。该 Gate 通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
+**已完成（2026-08-29）：不依赖手工 candidate 的真实只读自主 canary。** `SeedRuntime` 默认挂载 Taiji 原生
+`LearnedAffordanceFeatures` 与 `ExecutiveController`，从当前 evidence reprojected affordance 直接合成候选；真实临时 workspace 已验证
+在不注入 `ExecutiveCandidate`、不读取 prompt、不调用语言 provider、也不经过前端的情况下，连续完成 `workspace.list → workspace.read` 的
+选择、准入、执行、WorldEvent 回写、当前 affordance 精确失效和最新 evidence 重新投影。checkpoint 保存/恢复后不会重复执行已消费事件，
+也不会复用旧 affordance identity；WorkBench 定向回归 `33 passed`，全量 Python 回归 `541 passed, 6 skipped`，覆盖率 `44.53%`，
+Ruff 主门禁/B-SIM、Black、核心 mypy 均通过。该 canary 证明 Taiji-owned 只读闭环已脱离手工 candidate，仍不开放写入自治、开放域
+自然语言工具选择、CUDA kernel 或视觉包装。
+
+**当前唯一下一步：建立多证据 successor graph 的有限多步 checkpoint continuation Gate。** 将 `list/search` 产生的多个
+`read/stat` successor 纳入 Taiji-owned 的统一候选排序与 bounded loop，逐步提交每个已消费前缀的 checkpoint；验证中途失败只保留已完成
+前缀，最新 WorldEvent 到达后旧 sibling candidate 全部失效，恢复后只从最新 evidence 重新投影，不重复消费或绕过累计预算。该 Gate
+通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
