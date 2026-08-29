@@ -965,6 +965,105 @@ def test_recovery_portfolio_registers_and_selects_active_branches(tmp_path, monk
     assert len(restored._workbench_loop_state["recovery_portfolio"]["branches"]) == 2
 
 
+def test_recovery_portfolio_liveness_expires_and_evicts_terminal_branch(
+    tmp_path, monkeypatch
+) -> None:
+    checkpoint = tmp_path / "recovery-liveness.pt"
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    monkeypatch.setattr(
+        "seed_platform.workbench.WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_MAX_BRANCHES", 1
+    )
+    monkeypatch.setattr("seed_platform.workbench.WORKBENCH_TAIJI_RECOVERY_BRANCH_TTL_TICKS", 1)
+    runtime = SeedRuntime(
+        Seed(episode_id="recovery-liveness"),
+        checkpoint_path=checkpoint,
+    )
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    runtime.model.architecture.observe(65, learn=False)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.read": {"path": "missing.txt"}},
+    )
+    runtime.execute_taiji_workbench_successor_loop(
+        snapshot_id=snapshot_id,
+        loop_id="liveness-parent",
+        max_steps=1,
+    )
+    (tmp_path / "missing.txt").write_bytes(b"liveness evidence\n")
+    runtime.execute_workbench_intent(
+        ActionIntent(
+            intent_id="liveness-fresh-read-1",
+            kind="workspace.read",
+            parameters={"path": "missing.txt"},
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        snapshot_id=snapshot_id,
+    )
+    first = runtime.handoff_taiji_workbench_recovery(
+        parent_loop_id="liveness-parent",
+        recovery_loop_id="liveness-child-1",
+        snapshot_id=snapshot_id,
+        max_steps=1,
+    )
+    branch_one = first["recovery"]["branch_id"]
+
+    runtime.model.architecture.observe(66, learn=False)
+    runtime.model.architecture.observe(67, learn=False)
+    maintained = runtime.maintain_taiji_workbench_recovery_portfolio(
+        parent_loop_id="liveness-parent",
+        snapshot_id=snapshot_id,
+    )
+    expired = next(
+        item for item in maintained["portfolio"]["branches"] if item["branch_id"] == branch_one
+    )
+    assert expired["status"] == "expired"
+    assert maintained["maintenance"]["expired_branch_ids"] == [branch_one]
+    with pytest.raises(RuntimeError, match="not active"):
+        runtime.select_taiji_workbench_recovery_branch(
+            parent_loop_id="liveness-parent",
+            branch_id=branch_one,
+            recovery_loop_id="liveness-child-expired",
+            snapshot_id=snapshot_id,
+            max_steps=1,
+        )
+
+    runtime.execute_workbench_intent(
+        ActionIntent(
+            intent_id="liveness-fresh-read-2",
+            kind="workspace.read",
+            parameters={"path": "missing.txt"},
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        snapshot_id=snapshot_id,
+    )
+    registered = runtime.register_taiji_workbench_recovery_branch(
+        parent_loop_id="liveness-parent",
+        recovery_loop_id="liveness-child-2",
+        snapshot_id=snapshot_id,
+    )
+    assert registered["maintenance"]["evicted_branch_ids"] == [branch_one]
+    assert "liveness-child-1" in registered["portfolio"]["retired_loop_ids"]
+    assert len(registered["portfolio"]["branches"]) == 1
+    assert registered["portfolio"]["branches"][0]["status"] == "active"
+    assert branch_one in {item["branch_id"] for item in registered["portfolio"]["evicted_branches"]}
+    with pytest.raises(ValueError, match="not in the portfolio"):
+        runtime.select_taiji_workbench_recovery_branch(
+            parent_loop_id="liveness-parent",
+            branch_id=branch_one,
+            recovery_loop_id="liveness-child-revived",
+            snapshot_id=snapshot_id,
+            max_steps=1,
+        )
+    restored = SeedRuntime.load(checkpoint)
+    assert restored._workbench_loop_state["recovery_portfolio"]["evicted_branches"]
+
+
 def test_successor_graph_snapshot_drift_is_recovery_needed(tmp_path) -> None:
     (tmp_path / "README.md").write_bytes(b"snapshot drift\n")
     checkpoint = tmp_path / "successor-snapshot.pt"

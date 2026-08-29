@@ -94,6 +94,13 @@ class TaijiWorkbenchRecoveryBranchSelectRequest(BaseModel):
     learn: bool = False
 
 
+class TaijiWorkbenchRecoveryPortfolioMaintainRequest(BaseModel):
+    """Run lifecycle and capacity maintenance for a recovery portfolio."""
+
+    parent_loop_id: str
+    snapshot_id: str
+
+
 class ChatRequest(BaseModel):
     prompt: str
     system_prompt: str = "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"

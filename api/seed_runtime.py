@@ -1533,7 +1533,9 @@ class SeedRuntime:
 
         from seed_platform.workbench import (
             WORKBENCH_TAIJI_EVIDENCE_KIND,
+            WORKBENCH_TAIJI_RECOVERY_BRANCH_TTL_TICKS,
             WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT,
+            WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_MAX_BRANCHES,
             WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_VERSION,
             WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT,
             WORKBENCH_TAIJI_SUCCESSOR_GRAPH_VERSION,
@@ -1637,6 +1639,9 @@ class SeedRuntime:
             "event_ids": [str(item) for item in existing.get("event_ids", ())],
             "evidence": evidence.to_payload(),
             "frontier_affordance_ids": [item.affordance_id for item in affordances],
+            "created_tick": int(world.tick),
+            "last_touched_tick": int(world.tick),
+            "expires_at_tick": int(world.tick) + WORKBENCH_TAIJI_RECOVERY_BRANCH_TTL_TICKS,
         }
         portfolio = {
             "format": WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT,
@@ -1656,6 +1661,10 @@ class SeedRuntime:
             "parent_event_ids": [str(item) for item in existing.get("event_ids", ())],
             "branches": [branch],
             "retired_loop_ids": retired_loop_ids,
+            "max_branches": WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_MAX_BRANCHES,
+            "branch_ttl_ticks": WORKBENCH_TAIJI_RECOVERY_BRANCH_TTL_TICKS,
+            "last_maintenance_tick": int(world.tick),
+            "evicted_branches": [],
         }
         recovery_state = {
             "format": WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT,
@@ -1736,6 +1745,13 @@ class SeedRuntime:
                     "event_ids": [str(item) for item in active_state.get("event_ids", ())],
                 }
             )
+            branch_tick = int(self.model.architecture.cognitive_snapshot().world.tick)
+            branch["last_touched_tick"] = branch_tick
+            branch["expires_at_tick"] = (
+                branch_tick + int(portfolio["branch_ttl_ticks"])
+                if branch["status"] == "active"
+                else branch_tick
+            )
         portfolio["branches"] = [branch]
         self._workbench_loop_state["recovery_portfolio"] = portfolio
         try:
@@ -1786,6 +1802,212 @@ class SeedRuntime:
             raise RuntimeError("recovery evidence produced no successor affordance")
         return evidence, affordances
 
+    def _maintain_taiji_workbench_recovery_portfolio(
+        self,
+        portfolio: Mapping[str, Any],
+        *,
+        current_tick: int,
+        reserve_slots: int = 0,
+    ) -> tuple[dict[str, Any], dict[str, Any]]:
+        """Apply deterministic branch liveness and capacity rules."""
+
+        from seed_platform.workbench import (
+            WORKBENCH_TAIJI_RECOVERY_BRANCH_TTL_TICKS,
+            WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_MAX_BRANCHES,
+        )
+
+        if int(current_tick) < 0:
+            raise ValueError("recovery portfolio tick cannot be negative")
+        if not 0 <= int(reserve_slots) <= 1:
+            raise ValueError("recovery portfolio reserve_slots must be 0 or 1")
+        try:
+            max_branches = int(
+                portfolio.get("max_branches", WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_MAX_BRANCHES)
+            )
+            ttl_ticks = int(
+                portfolio.get("branch_ttl_ticks", WORKBENCH_TAIJI_RECOVERY_BRANCH_TTL_TICKS)
+            )
+        except (TypeError, ValueError) as exc:
+            raise ValueError("recovery portfolio capacity policy is invalid") from exc
+        if not 1 <= max_branches <= WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_MAX_BRANCHES:
+            raise ValueError("recovery portfolio max_branches is outside the native limit")
+        if ttl_ticks < 1:
+            raise ValueError("recovery portfolio branch_ttl_ticks must be positive")
+
+        raw_branches = portfolio.get("branches", ())
+        if isinstance(raw_branches, (str, bytes)) or not isinstance(raw_branches, Sequence):
+            raise ValueError("recovery portfolio branches are invalid")
+        raw_tombstones = portfolio.get("evicted_branches", ())
+        if isinstance(raw_tombstones, (str, bytes)) or not isinstance(raw_tombstones, Sequence):
+            raise ValueError("recovery portfolio evicted branches are invalid")
+        raw_retired = portfolio.get("retired_loop_ids", ())
+        if isinstance(raw_retired, (str, bytes)) or not isinstance(raw_retired, Sequence):
+            raise ValueError("recovery portfolio retired loop ids are invalid")
+
+        branches: list[dict[str, Any]] = []
+        expired_branch_ids: list[str] = []
+        retired_loop_ids = list(dict.fromkeys(str(item) for item in raw_retired))
+        changed = (
+            int(portfolio.get("max_branches", max_branches)) != max_branches
+            or int(portfolio.get("branch_ttl_ticks", ttl_ticks)) != ttl_ticks
+        )
+        for raw_branch in raw_branches:
+            if not isinstance(raw_branch, Mapping):
+                raise ValueError("recovery portfolio branch is invalid")
+            branch = dict(raw_branch)
+            branch_id = str(branch.get("branch_id", ""))
+            if not branch_id:
+                raise ValueError("recovery portfolio branch id is empty")
+            status = str(branch.get("status", ""))
+            if status not in {"active", "selected", "completed", "failed", "expired"}:
+                raise ValueError("recovery portfolio branch status is invalid")
+            try:
+                created_tick = int(branch.get("created_tick", current_tick))
+                last_touched_tick = int(branch.get("last_touched_tick", created_tick))
+                expires_at_tick = int(branch.get("expires_at_tick", last_touched_tick + ttl_ticks))
+            except (TypeError, ValueError) as exc:
+                raise ValueError("recovery portfolio branch liveness is invalid") from exc
+            if (
+                created_tick < 0
+                or last_touched_tick < created_tick
+                or expires_at_tick < last_touched_tick
+            ):
+                raise ValueError("recovery portfolio branch liveness is inconsistent")
+            if "created_tick" not in branch:
+                changed = True
+            if "last_touched_tick" not in branch:
+                changed = True
+            if "expires_at_tick" not in branch:
+                changed = True
+            branch.update(
+                {
+                    "created_tick": created_tick,
+                    "last_touched_tick": last_touched_tick,
+                    "expires_at_tick": expires_at_tick,
+                }
+            )
+            if status in {"active", "selected"} and int(current_tick) > expires_at_tick:
+                branch.update(
+                    {
+                        "status": "expired",
+                        "expired_tick": int(current_tick),
+                        "terminal_reason": "liveness_ttl",
+                    }
+                )
+                expired_branch_ids.append(branch_id)
+                loop_id = str(branch.get("loop_id", ""))
+                if loop_id:
+                    retired_loop_ids.append(loop_id)
+                changed = True
+            branches.append(branch)
+
+        evicted_branch_ids: list[str] = []
+        evicted_branches = [dict(item) for item in raw_tombstones if isinstance(item, Mapping)]
+        while len(branches) + int(reserve_slots) > max_branches:
+            candidates = [
+                (index, item)
+                for index, item in enumerate(branches)
+                if item.get("status") in {"expired", "completed", "failed"}
+            ]
+            if not candidates:
+                break
+            index, branch = min(
+                candidates,
+                key=lambda item: (
+                    int(item[1].get("last_touched_tick", 0)),
+                    str(item[1].get("branch_id", "")),
+                ),
+            )
+            removed = branches.pop(index)
+            branch_id = str(removed.get("branch_id", ""))
+            evicted_branch_ids.append(branch_id)
+            evicted_branches.append(
+                {
+                    "branch_id": branch_id,
+                    "loop_id": str(removed.get("loop_id", "")),
+                    "source_evidence_id": str(removed.get("source_evidence_id", "")),
+                    "source_after_state_digest": str(removed.get("source_after_state_digest", "")),
+                    "status": "evicted",
+                    "evicted_tick": int(current_tick),
+                    "reason": "portfolio_capacity",
+                }
+            )
+            loop_id = str(removed.get("loop_id", ""))
+            if loop_id:
+                retired_loop_ids.append(loop_id)
+            changed = True
+
+        updated = dict(portfolio)
+        updated.update(
+            {
+                "max_branches": max_branches,
+                "branch_ttl_ticks": ttl_ticks,
+                "last_maintenance_tick": int(current_tick),
+                "branches": branches,
+                "retired_loop_ids": list(dict.fromkeys(retired_loop_ids)),
+                "evicted_branches": evicted_branches,
+            }
+        )
+        if int(portfolio.get("last_maintenance_tick", -1)) != int(current_tick):
+            changed = True
+        return updated, {
+            "changed": changed,
+            "current_tick": int(current_tick),
+            "max_branches": max_branches,
+            "branch_ttl_ticks": ttl_ticks,
+            "expired_branch_ids": expired_branch_ids,
+            "evicted_branch_ids": evicted_branch_ids,
+            "live_branch_count": sum(
+                1 for item in branches if item.get("status") in {"active", "selected"}
+            ),
+        }
+
+    def maintain_taiji_workbench_recovery_portfolio(
+        self,
+        *,
+        parent_loop_id: str,
+        snapshot_id: str,
+    ) -> dict[str, Any]:
+        """Persist lifecycle maintenance without selecting or executing a branch."""
+
+        from seed_platform.workbench import (
+            WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT,
+            WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_VERSION,
+        )
+
+        environment = self._sync_workbench_root()
+        if str(snapshot_id) != environment.capability_snapshot.snapshot_id:
+            raise ValueError("recovery portfolio capability snapshot is not current")
+        portfolio = self._workbench_loop_state.get("recovery_portfolio")
+        if not isinstance(portfolio, Mapping):
+            raise RuntimeError("recovery portfolio is not persisted")
+        if str(portfolio.get("parent_loop_id", "")) != str(parent_loop_id):
+            raise ValueError("recovery portfolio parent does not match")
+        world = self.model.architecture.cognitive_snapshot().world
+        updated, maintenance = self._maintain_taiji_workbench_recovery_portfolio(
+            portfolio,
+            current_tick=world.tick,
+        )
+        previous = self._workbench_loop_state.get("recovery_portfolio")
+        self._workbench_loop_state["recovery_portfolio"] = updated
+        try:
+            checkpoint = {"committed": True, "path": str(self.save())}
+        except (OSError, RuntimeError, ValueError) as exc:
+            if previous is None:
+                self._workbench_loop_state.pop("recovery_portfolio", None)
+            else:
+                self._workbench_loop_state["recovery_portfolio"] = previous
+            raise RuntimeError("recovery portfolio maintenance checkpoint failed") from exc
+        return {
+            "format": WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT,
+            "version": WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_VERSION,
+            "status": "portfolio_maintained",
+            "parent_loop_id": str(parent_loop_id),
+            "maintenance": maintenance,
+            "portfolio": updated,
+            "checkpoint": checkpoint,
+        }
+
     def register_taiji_workbench_recovery_branch(
         self,
         *,
@@ -1813,9 +2035,22 @@ class SeedRuntime:
             raise RuntimeError("recovery branch registration requires a recovery portfolio")
         if str(portfolio.get("parent_loop_id", "")) != str(parent_loop_id):
             raise ValueError("recovery branch parent does not match the portfolio")
+        world = self.model.architecture.cognitive_snapshot().world
+        portfolio, maintenance = self._maintain_taiji_workbench_recovery_portfolio(
+            portfolio,
+            current_tick=world.tick,
+            reserve_slots=1,
+        )
+        self._workbench_loop_state["recovery_portfolio"] = portfolio
+        if maintenance["changed"]:
+            try:
+                self.save()
+            except (OSError, RuntimeError, ValueError) as exc:
+                raise RuntimeError("recovery portfolio capacity checkpoint failed") from exc
+        max_branches = int(portfolio["max_branches"])
         branches = portfolio.get("branches", ())
-        if isinstance(branches, (str, bytes)) or not isinstance(branches, Sequence):
-            raise ValueError("recovery portfolio branches are invalid")
+        if len(branches) >= max_branches:
+            raise RuntimeError("recovery portfolio capacity exhausted")
         known_loop_ids = {str(item) for item in portfolio.get("retired_loop_ids", ())}
         known_event_ids: set[str] = set()
         for item in branches:
@@ -1831,7 +2066,6 @@ class SeedRuntime:
         failure = portfolio.get("parent_failure")
         if not isinstance(failure, Mapping):
             raise RuntimeError("recovery portfolio has no parent failure context")
-        world = self.model.architecture.cognitive_snapshot().world
         event = next(
             (
                 item
@@ -1879,11 +2113,15 @@ class SeedRuntime:
             "event_ids": [str(item) for item in portfolio.get("parent_event_ids", ())],
             "evidence": evidence.to_payload(),
             "frontier_affordance_ids": [item.affordance_id for item in affordances],
+            "created_tick": int(world.tick),
+            "last_touched_tick": int(world.tick),
+            "expires_at_tick": int(world.tick) + int(portfolio["branch_ttl_ticks"]),
         }
         updated_portfolio = dict(portfolio)
         updated_portfolio["format"] = WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT
         updated_portfolio["version"] = WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_VERSION
         updated_portfolio["branches"] = [*branches, branch]
+        updated_portfolio["last_maintenance_tick"] = int(world.tick)
         self._workbench_loop_state["recovery_portfolio"] = updated_portfolio
         checkpoint = {"committed": True, "path": str(self.save())}
         return {
@@ -1893,6 +2131,7 @@ class SeedRuntime:
             "parent_loop_id": str(parent_loop_id),
             "branch": branch,
             "portfolio": updated_portfolio,
+            "maintenance": maintenance,
             "checkpoint": checkpoint,
         }
 
@@ -1928,6 +2167,17 @@ class SeedRuntime:
             raise RuntimeError("recovery branch selection requires a recovery portfolio")
         if str(portfolio.get("parent_loop_id", "")) != str(parent_loop_id):
             raise ValueError("recovery branch parent does not match the portfolio")
+        world = self.model.architecture.cognitive_snapshot().world
+        portfolio, maintenance = self._maintain_taiji_workbench_recovery_portfolio(
+            portfolio,
+            current_tick=world.tick,
+        )
+        self._workbench_loop_state["recovery_portfolio"] = portfolio
+        if maintenance["changed"]:
+            try:
+                self.save()
+            except (OSError, RuntimeError, ValueError) as exc:
+                raise RuntimeError("recovery portfolio liveness checkpoint failed") from exc
         branches = portfolio.get("branches", ())
         if isinstance(branches, (str, bytes)) or not isinstance(branches, Sequence):
             raise ValueError("recovery portfolio branches are invalid")
@@ -1952,7 +2202,6 @@ class SeedRuntime:
         failure = portfolio.get("parent_failure")
         if not isinstance(failure, Mapping):
             raise RuntimeError("recovery portfolio has no parent failure context")
-        world = self.model.architecture.cognitive_snapshot().world
         event = next(
             (
                 item
@@ -2026,6 +2275,10 @@ class SeedRuntime:
                 updated = dict(branch)
                 updated["loop_id"] = str(recovery_loop_id)
                 updated["status"] = "selected"
+                updated["last_touched_tick"] = int(world.tick)
+                updated["expires_at_tick"] = int(world.tick) + int(
+                    updated_portfolio["branch_ttl_ticks"]
+                )
                 updated_branches.append(updated)
             else:
                 updated_branches.append(dict(item))
@@ -2071,6 +2324,13 @@ class SeedRuntime:
                         str(value) for value in active_state.get("consumed_affordance_ids", ())
                     ]
                     item["event_ids"] = [str(value) for value in active_state.get("event_ids", ())]
+                    branch_tick = int(self.model.architecture.cognitive_snapshot().world.tick)
+                    item["last_touched_tick"] = branch_tick
+                    item["expires_at_tick"] = (
+                        branch_tick + int(updated_portfolio["branch_ttl_ticks"])
+                        if item["status"] == "active"
+                        else branch_tick
+                    )
         updated_portfolio["branches"] = updated_branches
         self._workbench_loop_state["recovery_portfolio"] = updated_portfolio
         try:

@@ -820,6 +820,25 @@
         "title": "TaijiWorkbenchRecoveryHandoffRequest",
         "type": "object"
       },
+      "TaijiWorkbenchRecoveryPortfolioMaintainRequest": {
+        "description": "Run lifecycle and capacity maintenance for a recovery portfolio.",
+        "properties": {
+          "parent_loop_id": {
+            "title": "Parent Loop Id",
+            "type": "string"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "parent_loop_id",
+          "snapshot_id"
+        ],
+        "title": "TaijiWorkbenchRecoveryPortfolioMaintainRequest",
+        "type": "object"
+      },
       "TaijiWorkbenchReprojectionRequest": {
         "description": "Re-project the latest current-tick Workbench evidence into Taiji.",
         "properties": {
@@ -3520,6 +3539,50 @@
           }
         },
         "summary": "Project Taiji Workbench Affordances",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/taiji/recovery-branch/maintain": {
+      "post": {
+        "description": "Expire stale branches and enforce the recovery portfolio capacity.",
+        "operationId": "maintain_taiji_workbench_recovery_portfolio_api_workbench_taiji_recovery_branch_maintain_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaijiWorkbenchRecoveryPortfolioMaintainRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Maintain Taiji Workbench Recovery Portfolio Api Workbench Taiji Recovery Branch Maintain Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Maintain Taiji Workbench Recovery Portfolio",
         "tags": [
           "workbench"
         ]
