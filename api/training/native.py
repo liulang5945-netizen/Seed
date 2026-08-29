@@ -71,6 +71,9 @@ def _resolve_native_datasets(names: list[str] | None) -> tuple[list[Path], int]:
         report = inspect_native_dataset(path, max_records=PREVIEW_SCAN_RECORDS)
         if not report.native_trainable:
             invalid.append(report.to_dict())
+        # 分母口径必须与 resume.estimated_text_bytes 一致（纯文本字节），
+        # 否则 _train_worker 里的 consumed/total 会错位。这里不复用那个函数，
+        # 因为校验已经需要完整 report，再调一次会重复扫描数据集。
         total_bytes += report.estimated_total_text_bytes()
     if invalid:
         raise HTTPException(

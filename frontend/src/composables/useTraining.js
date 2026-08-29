@@ -54,7 +54,8 @@ export const fmtTime = (s) => {
   if (s < 0) s = 0;
   if (s < 60) return `${Math.round(s)}秒`;
   if (s < 3600) return `${Math.floor(s / 60)}分${Math.round(s % 60)}秒`;
-  return `${Math.floor(s / 3600)}时${Math.floor((s % 3600) / 60)}分`;
+  if (s < 86400) return `${Math.floor(s / 3600)}时${Math.floor((s % 3600) / 60)}分`;
+  return `${Math.floor(s / 86400)}天${Math.floor((s % 86400) / 3600)}时`;
 };
 
 export const autoScrollTrainLog = () => {

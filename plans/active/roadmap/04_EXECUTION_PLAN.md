@@ -60,6 +60,12 @@ Taiji 的目标不是重造 Transformer，也不是把生物名词硬编码进�
 
 **仍未满足的准入（不得当作已完成引用）**：本节原定的训练类改动最小准入——创建 checkpoint → 关闭运行时 → 恢复 → 继续一步 → 对 lineage、预算、结构、provider artifact 和可见指标做等价性断言——这轮**没有执行**。因此上述 dataset / resume 改动目前只算「数据集可发现性与 API 契约修复」，**不构成训练能力宣称**；在补上该往返等价性 Gate 之前不得据此启动长训。诊断脚本 `diag_train_multi_dataset.py` / `diag_train_select_all.py` 已按既有惯例归入 `scripts/archive/diagnostics/` 作为实测证据。
 
+### 3.1 训练 ETA / 进度分母修复（2026-08-29 追加收口）
+
+用户续报「训练剩余时间也不够准确」。实测定案：`max_ticks` 截断了训练循环，但 `fraction`/`eta` 仍以整份数据集作分母，导致 ETA 误差约 **279 万倍**（上报 32.3 天 vs 真实剩余 0），进度条卡在 0.05%。已修：有效分母 `min(total_bytes, max_ticks)`、ETA 改为 `remaining/rate` 有界换算、暂停时长从 `elapsed` 扣除、收尾语义区分「完成」与「用户停止」；前端同批修掉恒显 100% 的 step 计数器、缺「天」档的 `fmtTime` 和错误的吞吐单位标注。完整根因链与四条纪律见 [02_GATES_AND_CI.md §14.18](02_GATES_AND_CI.md)，门禁为 `tests/seed/test_training_progress_contract.py`（4 例，先红后绿）。
+
+回归证据：后端 `560 passed, 6 skipped`、前端 `42 files / 237 passed`、Ruff / 核心 mypy / ESLint / build / API contract / native boundary 全通过。**本节 §3 的 checkpoint 往返等价性准入仍未满足**——ETA 修复只让进度显示可信，不构成训练能力宣称，长训准入不变。
+
 ## 4. W7-G0：先冻结每个后续 Gate 的合同
 
 为 R1–R5 各建立版本化 Gate manifest（存于 `plans/manifests/`，并由代码/测试引用），每份至少包含：

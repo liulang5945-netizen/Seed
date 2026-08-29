@@ -26,11 +26,12 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from seed import Seed, iter_native_documents
+from seed.datasets import inspect_native_dataset
 from seed.persistence import atomic_save, attach_metadata, corpus_fingerprint
 from seed_platform.app_state import app_state
 
 from .common import collect_hardware_diag, safe_put
-from .datasets import resolve_dataset_path
+from .datasets import PREVIEW_SCAN_RECORDS, resolve_dataset_path
 
 logger = logging.getLogger("ApiServer.Training.Resume")
 router = APIRouter()
@@ -40,7 +41,7 @@ _CHECKPOINT_DIR = _ROOT / "checkpoints"
 # 未选数据集时的回退语料（与 train_seed_corpus.DEFAULT_CORPUS 一致）。
 _DEFAULT_CORPUS = _ROOT / "data" / "simple_zh" / "dialogue_extended_clean.jsonl"
 
-PROGRESS_EVERY = 2_000  # ≈311 ticks/s 下约 6.4s 一条进度
+PROGRESS_EVERY = 2_000  # 实测 CPU ≈147 字节/s，约 13.6s 一条进度（2026-08-29 实测）
 CHECKPOINT_EVERY = 250_000  # 周期落盘间隔（ticks）
 
 
@@ -64,6 +65,27 @@ def _resolve_datasets(names: list[str]):
         if path not in resolved:
             resolved.append(path)
     return resolved, missing
+
+
+def estimated_text_bytes(path: Path) -> int:
+    """估算单个数据集的纯文本字节数（进度分母的唯一口径）。
+
+    进度计数器 ``consumed`` 只累加真实文本字节（``_iter_symbols`` 对边界符
+    产出 0），因此分母必须同为纯文本字节。用文件物理大小会把 JSONL 结构
+    开销算进去，实测偏大 2~3%。
+
+    原生路径 ``native._resolve_native_datasets`` 因为还要做 native_trainable
+    校验，直接复用它自己拿到的 ``report``，不走这里以免重复扫描；两处口径
+    必须同为 ``estimated_total_text_bytes()``，改一处要同步改另一处。
+    """
+    try:
+        report = inspect_native_dataset(path, max_records=PREVIEW_SCAN_RECORDS)
+        return report.estimated_total_text_bytes()
+    except Exception:  # 探测失败时回退到物理大小，宁可略偏大也不让分母为 0
+        try:
+            return path.stat().st_size
+        except OSError:
+            return 0
 
 
 def _iter_symbols(paths: list[Path], boundary: int):
@@ -93,7 +115,18 @@ def _train_worker(
     window_ticks = 0
     window_surprise = 0.0
     started = time.perf_counter()
+    paused_total = 0.0
     stopped = False
+
+    # 进度分母必须是「本次实际要处理的字节数」，而不是整个数据集大小。
+    # max_ticks 会在 N 个 tick 后 break，此时只有 N 字节会被 consumed；
+    # 若仍以整份数据集作分母，fraction 永远停在极小值，ETA 会被放大到数万倍。
+    effective_total = total_bytes if max_ticks is None else min(total_bytes, max_ticks)
+    effective_total = max(1, effective_total)
+
+    def _elapsed() -> float:
+        """真实训练耗时：扣除暂停期间的挂钟时间。"""
+        return max(1e-6, time.perf_counter() - started - paused_total)
 
     safe_put(event_q, {"type": "hardware_diag", **collect_hardware_diag("cpu")})
     safe_put(
@@ -105,7 +138,10 @@ def _train_worker(
             "step": start_tick,
             "epoch": 1,
             "total_epochs": 1,
-            "total_steps": total_bytes,
+            "total_steps": effective_total,
+            "elapsed": 0.0,
+            "eta": None,
+            "samples_per_sec": 0.0,
         },
     )
 
@@ -118,11 +154,17 @@ def _train_worker(
         )
         atomic_save(envelope, save_path)
 
-    def _emit_progress() -> None:
-        elapsed = time.perf_counter() - started
-        fraction = min(consumed / max(1, total_bytes), 0.999)
+    def _emit_progress(final: bool = False) -> None:
+        elapsed = _elapsed()
+        # 收尾时进度即为 100%：语料读完或达到 max_ticks 都意味着本次工作量已完成，
+        # 不能因为分母估算偏大而卡在 99% 以下。
+        fraction = 1.0 if final else min(consumed / effective_total, 0.999)
         mean_surprise = window_surprise / max(1, window_ticks)
-        rate = ticks / max(1e-6, elapsed)
+        rate = ticks / elapsed
+        remaining = max(0, effective_total - consumed)
+        # ETA 用实测速率直接换算剩余字节，而不是对 fraction 做除法外推：
+        # 前者在分母被高估或训练被截断时仍然有界，后者会被极小的 fraction 放大。
+        eta = 0.0 if final else round(remaining / max(rate, 1e-6), 1)
         safe_put(
             event_q,
             {
@@ -135,11 +177,11 @@ def _train_worker(
                 "step": model.tick,
                 "loss": mean_surprise,
                 "elapsed": round(elapsed, 1),
-                "eta": round(elapsed * (1 - fraction) / max(fraction, 1e-6), 1),
+                "eta": eta,
                 "epoch": 1,
                 "total_epochs": 1,
                 "samples_per_sec": round(rate, 1),
-                "total_steps": total_bytes,
+                "total_steps": effective_total,
             },
         )
 
@@ -149,9 +191,12 @@ def _train_worker(
                 stopped = True
                 break
             while app_state.pause_training_requested:
+                pause_started = time.perf_counter()
                 if app_state.stop_training_requested:
+                    paused_total += time.perf_counter() - pause_started
                     break
                 time.sleep(0.5)
+                paused_total += time.perf_counter() - pause_started
             if app_state.stop_training_requested:
                 stopped = True
                 break
@@ -170,7 +215,8 @@ def _train_worker(
             if max_ticks is not None and ticks >= max_ticks:
                 break
         if window_ticks > 0:  # 收尾进度只在有观测窗口时发，避免 loss=0 假象
-            _emit_progress()
+            # 用户主动停止不算完成，不能伪造 100%；正常读完或达 max_ticks 才收敛到 100%/0s。
+            _emit_progress(final=not stopped)
         _persist()
         desc = (
             "⏹ 已按请求停止，进度已落盘"
@@ -271,7 +317,7 @@ def resume_checkpoint(req: ResumeRequest):
     if not app_state.try_start_training():
         raise HTTPException(status_code=409, detail="已有训练任务在运行，请先停止")
 
-    total_bytes = sum(p.stat().st_size for p in corpus_paths)
+    total_bytes = sum(estimated_text_bytes(p) for p in corpus_paths)
     save_path = _CHECKPOINT_DIR / f"resumed_{name}"
     event_q: queue.Queue = queue.Queue(maxsize=256)
     thread = threading.Thread(
