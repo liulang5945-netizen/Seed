@@ -943,6 +943,13 @@ def test_recovery_portfolio_registers_and_selects_active_branches(tmp_path, monk
     assert branch_two != branch_one
     assert len(registered["portfolio"]["branches"]) == 2
     assert {item["status"] for item in registered["portfolio"]["branches"]} == {"active"}
+    revision = registered["portfolio"]["revision"]
+    with pytest.raises(RuntimeError, match="revision is stale"):
+        runtime.maintain_taiji_workbench_recovery_portfolio(
+            parent_loop_id="portfolio-parent",
+            snapshot_id=snapshot_id,
+            expected_revision=revision - 1,
+        )
 
     selected = runtime.select_taiji_workbench_recovery_branch(
         parent_loop_id="portfolio-parent",
@@ -950,10 +957,18 @@ def test_recovery_portfolio_registers_and_selects_active_branches(tmp_path, monk
         recovery_loop_id="portfolio-child-2-selected",
         snapshot_id=snapshot_id,
         max_steps=1,
+        expected_revision=revision,
     )
     assert selected["recovery"]["branch_id"] == branch_two
     assert len(selected["recovery_portfolio"]["branches"]) == 2
     assert checkpoint.exists()
+    with pytest.raises(RuntimeError, match="revision is stale"):
+        runtime.execute_taiji_workbench_successor_loop(
+            snapshot_id=snapshot_id,
+            loop_id="portfolio-child-2-selected",
+            max_steps=1,
+            expected_portfolio_revision=revision,
+        )
     with pytest.raises(RuntimeError, match="retired after recovery"):
         runtime.execute_taiji_workbench_successor_loop(
             snapshot_id=snapshot_id,

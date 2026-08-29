@@ -363,7 +363,9 @@ checkpoint 写入失败和 in-flight 防重复；又完成显式 recovery handof
 portfolio、内容寻址 identity、继承预算/完成前缀、source evidence/after-state provenance 和多候选 fail-closed selection，旧 loop/失败分支
 不得复活，checkpoint 保留完整 portfolio；随后完成 portfolio 的 tick TTL、终态容量淘汰、永久墓碑与只维护不执行的原生接口，过期/淘汰
 branch 不能重新注册或选择。WorkBench portfolio 定向回归 `2 passed`，OpenAPI 严格快照 `2 passed`，全量 Python `550 passed, 6 skipped`，
-覆盖率 `45.00%`。当前唯一下一步仍只以路线文档第 16 节为准：建立 recovery portfolio 的跨 checkpoint 一致性与并发互斥 Gate。
+覆盖率 `45.00%`；随后完成 recovery portfolio 的单调 revision、expected-revision stale 拒绝、同进程可重入互斥，以及 successor continuation 后
+branch/portfolio 同步 checkpoint，定向 portfolio/recovery `4 passed`，全量 Python `550 passed, 6 skipped`，覆盖率 `45.10%`。当前唯一下一步
+仍只以路线文档第 16 节为准：建立 recovery portfolio 的只读状态投影与审计可观测 Gate。
 
 ## 当前唯一下一步
 

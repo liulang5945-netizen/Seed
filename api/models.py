@@ -57,6 +57,7 @@ class TaijiWorkbenchSuccessorLoopRequest(BaseModel):
     novelty: float = 0.0
     resource_budget: float = 1.0
     learn: bool = False
+    expected_portfolio_revision: int | None = None
 
 
 class TaijiWorkbenchRecoveryHandoffRequest(BaseModel):
@@ -78,6 +79,7 @@ class TaijiWorkbenchRecoveryBranchRequest(BaseModel):
     parent_loop_id: str
     recovery_loop_id: str
     snapshot_id: str
+    expected_revision: int | None = None
 
 
 class TaijiWorkbenchRecoveryBranchSelectRequest(BaseModel):
@@ -92,6 +94,7 @@ class TaijiWorkbenchRecoveryBranchSelectRequest(BaseModel):
     novelty: float = 0.0
     resource_budget: float = 1.0
     learn: bool = False
+    expected_revision: int | None = None
 
 
 class TaijiWorkbenchRecoveryPortfolioMaintainRequest(BaseModel):
@@ -99,6 +102,7 @@ class TaijiWorkbenchRecoveryPortfolioMaintainRequest(BaseModel):
 
     parent_loop_id: str
     snapshot_id: str
+    expected_revision: int | None = None
 
 
 class ChatRequest(BaseModel):

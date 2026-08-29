@@ -2211,6 +2211,14 @@ retired loop 集合，旧 branch 即使从工作集移除也不能重新注册�
 portfolio 回归 `2 passed`，OpenAPI 严格快照 `2 passed`，全量 Python 回归 `550 passed, 6 skipped`，覆盖率 `45.00%`，Ruff、Black、核心
 mypy 均通过。该 Gate 仍只覆盖 bounded read-only recovery，不开放写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
 
-**当前唯一下一步：建立 recovery portfolio 的跨 checkpoint 一致性与并发互斥 Gate。** 约束维护、注册、选择和 successor continuation
-在同一 portfolio revision 上提交；检测 stale revision、重复 branch mutation 与恢复后旧 revision 重放，确保同一 branch 不会被两个执行者同时
-选择，且 checkpoint 失败时 portfolio/graph 一起回滚到可审计状态。通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
+**已完成（2026-08-29）：recovery portfolio 的跨 checkpoint 一致性与并发互斥 Gate。** portfolio 增加单调 `revision`，维护、注册、选择和
+successor continuation 可携带 expected revision；checkpoint 恢复后旧 revision 重放会 fail-closed。同一 SeedRuntime 的 successor、handoff、
+branch register/select/maintain 统一进入可重入互斥锁，避免两个执行者同时选择或更新同一 branch；successor 执行完成后会把 branch 的 loop、
+预算、完成前缀、frontier、event lineage 和 liveness 一并提升到新 revision 再落盘。新增 revision stale 回归，定向 portfolio/recovery `4 passed`，
+全量 Python 回归 `550 passed, 6 skipped`，覆盖率 `45.10%`，Ruff、Black、核心 mypy 和 OpenAPI 严格快照均通过。该 Gate 仍只覆盖 bounded
+read-only recovery，不开放写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
+
+**当前唯一下一步：建立 recovery portfolio 的只读状态投影与审计可观测 Gate。** 为客户端和后续 Taiji 决策提供不执行的 portfolio snapshot：统一
+暴露 revision、live/expired/evicted branch 计数、可选 branch 摘要、retired loop 与最近维护结果；该投影只能读取 checkpoint/当前 WorldState，
+不得把 archive/tombstone 重新暴露成可执行 candidate，并验证 snapshot 与 checkpoint 恢复后的内容一致。通过前不进入写入自治、开放域自然语言
+工具选择、CUDA kernel 或视觉包装。

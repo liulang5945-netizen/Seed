@@ -296,6 +296,7 @@ def execute_taiji_workbench_successor_loop(
             novelty=request.novelty,
             resource_budget=request.resource_budget,
             learn=request.learn,
+            expected_portfolio_revision=request.expected_portfolio_revision,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -339,6 +340,7 @@ def register_taiji_workbench_recovery_branch(
             parent_loop_id=request.parent_loop_id,
             recovery_loop_id=request.recovery_loop_id,
             snapshot_id=request.snapshot_id,
+            expected_revision=request.expected_revision,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -364,6 +366,7 @@ def select_taiji_workbench_recovery_branch(
             novelty=request.novelty,
             resource_budget=request.resource_budget,
             learn=request.learn,
+            expected_revision=request.expected_revision,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -382,6 +385,7 @@ def maintain_taiji_workbench_recovery_portfolio(
         return runtime.maintain_taiji_workbench_recovery_portfolio(
             parent_loop_id=request.parent_loop_id,
             snapshot_id=request.snapshot_id,
+            expected_revision=request.expected_revision,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
