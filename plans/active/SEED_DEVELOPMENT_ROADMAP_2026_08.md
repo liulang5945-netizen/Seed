@@ -2188,7 +2188,13 @@ Executive。旧 loop identity 会永久 retired，失败前缀、parent failure�
 completed prefix 不重置；runtime/API 定向回归 `6 passed`，全量 Python 回归 `548 passed, 6 skipped`，覆盖率 `44.77%`，Ruff/B-SIM、
 Black、核心 mypy 和 OpenAPI 均通过。该 Gate 仍不开放写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
 
-**当前唯一下一步：建立 recovery source evidence 的 failure-context compatibility Gate。** 对新 evidence 不只校验时间、snapshot 和
-schema，还要校验它与 parent failure 的 capability/参数/路径上下文兼容；无关 evidence、跨路径 evidence、after-state 不满足恢复预期时
-必须 fail-closed，不能借 recovery handoff 绕过失败原因。通过后再扩大到多分支 recovery，不进入写入自治、开放域自然语言工具选择、CUDA
-kernel 或视觉包装。
+**已完成（2026-08-29）：recovery source evidence 的 failure-context compatibility Gate。** recovery failure 现在持久化
+失败 capability、完整结构化参数和路径上下文；handoff 除 current tick、snapshot、schema、frontier freshness 外，要求新 evidence 与
+parent failure 的 capability/parameters 精确兼容。无关 capability、跨路径 evidence 和缺少失败上下文均 fail-closed，不能借 recovery
+handoff 绕过失败原因；runtime/API 定向回归 `5 passed`，全量 Python 回归 `548 passed, 6 skipped`，覆盖率 `44.77%`，Ruff/B-SIM、
+Black、核心 mypy 与 OpenAPI 均通过。该 Gate 仍不开放写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
+
+**当前唯一下一步：建立 recovery branch portfolio 与多候选 fail-closed selection Gate。** 在同一 parent failure 下保留多个通过
+freshness/context 校验的 recovery evidence 分支，给每条 branch 分配不可复用 identity、预算、状态和 provenance；Taiji 只能从 active、
+兼容且未消费的 branch 中选择，淘汰/过期/失败 branch 不得复活，checkpoint continuation 不得重置全局预算。通过前不进入写入自治、开放域
+自然语言工具选择、CUDA kernel 或视觉包装。
