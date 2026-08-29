@@ -43,8 +43,27 @@ a_backend = Analysis(
 #   缺失会让 /api/health 直接 500；
 # - checkpoints/seed_corpus.pt：Seed 原生运行时激活用。
 _datas = []
+
+
+def _append_data_tree(source: Path, destination: str) -> None:
+    """把目录展开为显式文件项，避免 PyInstaller 复用旧 Tree 条目。"""
+
+    if not source.is_dir():
+        return
+    destination_root = Path(destination)
+    for path in sorted(source.rglob("*")):
+        if path.is_file():
+            relative_parent = path.relative_to(source).parent
+            _datas.append((str(path), str(destination_root / relative_parent)))
+
+
+# 前端必须逐文件枚举。直接把 frontend/dist 作为一个目录交给 PyInstaller
+# 时，增量分析可能保留上一轮带 hash 文件名的 TOC；Vite 已换 hash 后，
+# COLLECT 会静默跳过新的入口 JS/CSS，最终只剩 index.html 字节校验能通过，
+# 客户端却在真实窗口中空白。
+_append_data_tree(ROOT / "frontend" / "dist", "frontend/dist")
+
 for src, dst in [
-    (ROOT / "frontend" / "dist", "frontend/dist"),
     (ROOT / "neuroplex" / "tokenizer_contract.json", "neuroplex"),
     (ROOT / "neuroplex" / "domains", "neuroplex/domains"),
     (ROOT / "checkpoints" / "seed_corpus.pt", "checkpoints"),

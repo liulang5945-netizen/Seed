@@ -33,7 +33,17 @@ def test_desktop_qt_runtime_has_safe_software_defaults(monkeypatch):
     _configure_qt_runtime()
 
     assert "--disable-gpu" in os.environ["QTWEBENGINE_CHROMIUM_FLAGS"]
+    assert "--single-process" in os.environ["QTWEBENGINE_CHROMIUM_FLAGS"]
     assert os.environ["QT_OPENGL"] == "software"
+
+
+def test_frozen_qt_process_path_is_configured_before_webengine_import():
+    """冻结客户端应为 QtWebEngine renderer 提供显式子进程路径。"""
+    source = (Path(__file__).resolve().parents[1] / "desktop" / "main.py").read_text(
+        encoding="utf-8"
+    )
+    assert "QTWEBENGINEPROCESS_PATH" in source
+    assert "QtWebEngineProcess.exe" in source
 
 
 def test_desktop_frontend_url_keeps_backend_port():
