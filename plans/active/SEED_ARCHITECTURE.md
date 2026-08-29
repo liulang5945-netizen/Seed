@@ -163,5 +163,5 @@ Legacy NeuroPlex 继续作为冻结的 Transformer 离线对照和显式兼容�
 
 ## 10. 当前唯一边界动作
 
-当前唯一下一步只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md) 第 16 节。
+当前路线入口只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](SEED_DEVELOPMENT_ROADMAP_2026_08.md)，当前唯一下一步只看其指向的 [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md)。
 本文件只固定所有权和执行平面边界，不另设实现顺序。

@@ -49,7 +49,7 @@ Taiji 是唯一认知主体。Seed 是产品/runtime，器官是感官与效应�
 
 不同输入、目标和不确定性应激活不同群体、不同计算深度和不同记忆。确定任务可以早停，困难任务扩大协作。路由必须学习、校准、受资源约束并有最强单体/稠密平均/随机路由对照。
 
-来源：[架构妥协审计](../archive/audits/ARCHITECTURE_COMPROMISE_AUDIT.md) 对自适应激活、稀疏路由、协作训练和置信度门控的长期讨论。
+来源：[架构妥协审计](../archive/audits/ARCHITECTURE_COMPROMISE_FINDINGS.md) 对自适应激活、稀疏路由、协作训练和置信度门控的长期讨论。
 
 ### CR-4：结构可塑性与开放式成长
 
@@ -89,7 +89,7 @@ Observation、affordance、ActionIntent、执行和 outcome 必须形成原子�
 
 Taiji 要预测自身成功率、发现能力缺口、选择探索/训练/休息/结构变化，并用真实 outcome 校准。递归改进不是外部脚本自动生成更多训练数据；必须形成“自评→选择干预→真实执行→能力变化→再评估”的闭环。
 
-来源：[架构妥协审计](../archive/audits/ARCHITECTURE_COMPROMISE_AUDIT.md) 对活回路/死回路的审计和旧 `seed/judge.py` 的最小自评证据。
+来源：[架构妥协审计](../archive/audits/ARCHITECTURE_COMPROMISE_FINDINGS.md) 对活回路/死回路的审计和旧 `seed/judge.py` 的最小自评证据。
 
 ### CR-10：共享世界中的跨域与多模态组合
 
