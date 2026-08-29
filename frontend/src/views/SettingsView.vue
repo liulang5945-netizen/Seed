@@ -79,62 +79,18 @@
             />
 
             <!-- ── 2. Taiji 运行设置 ── -->
-            <section v-else-if="activeSection === 'neuron'" class="settings-section">
-              <h2>Taiji 运行设置</h2>
-
-              <!-- 局部激活阈值 -->
-              <div class="setting-row setting-row--first">
-                <div class="setting-left">
-                  <span class="setting-label">局部激活阈值</span>
-                  <p class="setting-desc">控制单步局部状态更新的激活门槛，不代表全局同步或相位共振</p>
-                </div>
-                <div class="setting-right">
-                  <div class="range-wrap">
-                    <input v-model.number="activationThreshold" type="range" min="0" max="1" step="0.01" aria-label="局部激活阈值" :disabled="savingSettings" @change="onThresholdChange" />
-                    <span class="range-value">{{ Number(activationThreshold).toFixed(2) }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 响应超时 -->
-              <div class="setting-row">
-                <div class="setting-left">
-                  <span class="setting-label">响应超时</span>
-                  <p class="setting-desc">一次状态推进等待后端返回的最长时间（毫秒）</p>
-                </div>
-                <div class="setting-right">
-                  <input v-model.number="responseTimeoutMs" type="number" min="10" max="10000" aria-label="响应超时" :disabled="savingSettings" @change="onResponseTimeoutChange" />
-                </div>
-              </div>
-
-              <!-- 自动巩固 -->
-              <div class="setting-row">
-                <div class="setting-left">
-                  <span class="setting-label">自动巩固</span>
-                  <p class="setting-desc">高频突触自动强化并写入持久记忆</p>
-                </div>
-                <div class="setting-right">
-                  <label class="toggle" aria-label="自动巩固开关">
-                    <input v-model="autoConsolidation" type="checkbox" :disabled="savingSettings" @change="onAutoConsolidationChange" />
-                    <span class="track"><span class="thumb"></span></span>
-                  </label>
-                </div>
-              </div>
-
-              <!-- 睡眠模式 -->
-              <div class="setting-row setting-row--last">
-                <div class="setting-left">
-                  <span class="setting-label">睡眠模式</span>
-                  <p class="setting-desc">非活跃时段暂停后台状态推进以节省算力，唤醒后恢复 Taiji 持续状态</p>
-                </div>
-                <div class="setting-right">
-                  <label class="toggle" aria-label="睡眠模式开关">
-                    <input v-model="sleepMode" type="checkbox" :disabled="savingSettings" @change="onSleepModeChange" />
-                    <span class="track"><span class="thumb"></span></span>
-                  </label>
-                </div>
-              </div>
-            </section>
+            <SettingsTaijiPanel
+              v-else-if="activeSection === 'neuron'"
+              :activation-threshold="activationThreshold"
+              :response-timeout-ms="responseTimeoutMs"
+              :auto-consolidation="autoConsolidation"
+              :sleep-mode="sleepMode"
+              :saving="savingSettings"
+              @activation-threshold-change="onThresholdPanelChange"
+              @response-timeout-change="onResponseTimeoutPanelChange"
+              @auto-consolidation-change="onAutoConsolidationPanelChange"
+              @sleep-mode-change="onSleepModePanelChange"
+            />
 
             <!-- ── 2.5 运行环境（认知主体切换）── -->
             <SettingsRuntimePanel
@@ -308,6 +264,7 @@ import { nativeApi } from '../composables/nativeApi.js';
 import RuntimeEvidenceStrip from '../components/RuntimeEvidenceStrip.vue';
 import SettingsRuntimePanel from '../components/SettingsRuntimePanel.vue';
 import SettingsGeneralPanel from '../components/SettingsGeneralPanel.vue';
+import SettingsTaijiPanel from '../components/SettingsTaijiPanel.vue';
 
 const toast = inject('toast');
 const $confirm = inject('$confirm', () => Promise.resolve(false));
@@ -471,6 +428,22 @@ const onTimezonePanelChange = (value) => {
 const onDensityPanelChange = (value) => {
   uiDensity.value = value;
   onDensityChange();
+};
+const onThresholdPanelChange = (value) => {
+  activationThreshold.value = value;
+  onThresholdChange();
+};
+const onResponseTimeoutPanelChange = (value) => {
+  responseTimeoutMs.value = value;
+  onResponseTimeoutChange();
+};
+const onAutoConsolidationPanelChange = (value) => {
+  autoConsolidation.value = value;
+  onAutoConsolidationChange();
+};
+const onSleepModePanelChange = (value) => {
+  sleepMode.value = value;
+  onSleepModeChange();
 };
 const onThresholdChange = () => {
   let v = Number(activationThreshold.value);
