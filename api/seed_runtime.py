@@ -727,6 +727,100 @@ class SeedRuntime:
         result["checkpoint"] = {"committed": True, "path": str(checkpoint_path)}
         return result
 
+    def _select_taiji_workbench_candidate(
+        self,
+        *,
+        novelty: float = 0.0,
+        resource_budget: float = 1.0,
+    ) -> Any:
+        """Select one candidate from Taiji's current executive state."""
+
+        architecture = self.model.architecture
+        candidates = architecture.synthesize_executive_candidates()
+        if not candidates:
+            raise RuntimeError("Taiji task admission requires a current executive candidate")
+        decision = architecture.select_executive(
+            candidates,
+            novelty=novelty,
+            resource_budget=resource_budget,
+        )
+        return decision
+
+    @staticmethod
+    def _taiji_workbench_decision_payload(decision: Any) -> dict[str, Any]:
+        """Project an executive decision to JSON without leaking checkpoint tensors."""
+
+        return {
+            "selected_candidate_id": decision.selected.candidate_id,
+            "scores": {
+                str(candidate_id): float(score) for candidate_id, score in decision.scores.items()
+            },
+            "tick": int(decision.context.tick),
+            "goal_id": decision.context.goal_id,
+        }
+
+    def admit_taiji_workbench_task(
+        self,
+        *,
+        snapshot_id: str,
+        novelty: float = 0.0,
+        resource_budget: float = 1.0,
+    ) -> dict[str, Any]:
+        """Run the Taiji-owned read-only task admission Gate without execution."""
+
+        decision = self._select_taiji_workbench_candidate(
+            novelty=novelty,
+            resource_budget=resource_budget,
+        )
+        environment = self._sync_workbench_root()
+        admission = environment.admit_taiji_candidate(
+            decision.selected,
+            snapshot_id=snapshot_id,
+            current_tick=self.model.architecture.cognitive_snapshot().tick,
+        )
+        return {
+            "admission": admission.to_payload(),
+            "decision": self._taiji_workbench_decision_payload(decision),
+            "execution": None,
+        }
+
+    def execute_taiji_workbench_task(
+        self,
+        *,
+        snapshot_id: str,
+        novelty: float = 0.0,
+        resource_budget: float = 1.0,
+        learn: bool = False,
+    ) -> dict[str, Any]:
+        """Select, admit, and execute one Taiji-owned read-only task."""
+
+        decision = self._select_taiji_workbench_candidate(
+            novelty=novelty,
+            resource_budget=resource_budget,
+        )
+        environment = self._sync_workbench_root()
+        admission = environment.admit_taiji_candidate(
+            decision.selected,
+            snapshot_id=snapshot_id,
+            current_tick=self.model.architecture.cognitive_snapshot().tick,
+        )
+        payload = {
+            "admission": admission.to_payload(),
+            "decision": self._taiji_workbench_decision_payload(decision),
+            "execution": None,
+        }
+        if not admission.accepted:
+            return payload
+        if admission.request is None:
+            raise RuntimeError("accepted Taiji task admission lost its Workbench request")
+        execution = self.execute_workbench_intent(
+            decision.action_intent,
+            snapshot_id=admission.request.snapshot_id,
+            learn=learn,
+        )
+        payload["execution"] = execution
+        return payload
+
     def execute_workbench_intent(
         self,
         intent: Any,

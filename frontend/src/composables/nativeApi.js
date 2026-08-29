@@ -54,6 +54,8 @@ export const nativeApiPaths = Object.freeze({
     programmingLanguage: '/api/workbench/programming-language',
     preview: '/api/workbench/preview',
     execute: '/api/workbench/execute',
+    taijiAdmit: '/api/workbench/taiji/admit',
+    taijiExecute: '/api/workbench/taiji/execute',
     loopPreflight: '/api/workbench/loop/preflight',
     loopExecute: '/api/workbench/loop/execute',
   }),
@@ -198,6 +200,8 @@ function request(path, options) {
  * @property {(path: string, lspLanguageId?: string) => Promise<Object>} programmingLanguage
  * @property {(payload: Object) => Promise<Object>} workbenchPreview
  * @property {(payload: Object) => Promise<Object>} workbenchExecute
+ * @property {(payload: Object) => Promise<Object>} taijiWorkbenchAdmit
+ * @property {(payload: Object) => Promise<Object>} taijiWorkbenchExecute
  * @property {(payload: Object) => Promise<Object>} loopPreflight
  * @property {(payload: Object) => Promise<Object>} loopExecute
  * @property {() => Promise<Object>} trainingFiles
@@ -305,6 +309,14 @@ export const nativeApi = Object.freeze({
   ),
   workbenchExecute: (payload) => readJson(
     `${API_BASE}${nativeApiPaths.workbench.execute}`,
+    jsonOptions(payload),
+  ),
+  taijiWorkbenchAdmit: (payload) => readJson(
+    `${API_BASE}${nativeApiPaths.workbench.taijiAdmit}`,
+    jsonOptions(payload),
+  ),
+  taijiWorkbenchExecute: (payload) => readJson(
+    `${API_BASE}${nativeApiPaths.workbench.taijiExecute}`,
     jsonOptions(payload),
   ),
   loopPreflight: (payload) => readJson(

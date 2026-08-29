@@ -148,6 +148,12 @@ class CapabilityDescriptor:
             "enabled": self.enabled,
         }
 
+    @property
+    def parameter_names(self) -> frozenset[str]:
+        """Return the parameter names declared by this capability contract."""
+
+        return frozenset(name for name, _ in self.parameters)
+
 
 @dataclass(frozen=True)
 class CapabilitySnapshot:
@@ -486,6 +492,37 @@ class ExecutionPolicyDecision:
             "decision": self.decision,
             "reason_code": self.reason_code,
             "snapshot_id": self.snapshot_id,
+        }
+
+
+@dataclass(frozen=True)
+class TaijiTaskAdmission:
+    """The read-only Gate binding one live Taiji candidate to Workbench."""
+
+    accepted: bool
+    candidate_id: str
+    snapshot_id: str
+    capability_revision: int
+    reason_code: str
+    reason: str
+    candidate: Any | None = None
+    request: WorkbenchActionRequest | None = None
+    policy: ExecutionPolicyDecision | None = None
+
+    def to_payload(self) -> dict[str, Any]:
+        candidate_payload = None
+        if self.candidate is not None:
+            candidate_payload = self.candidate.to_payload()
+        return {
+            "accepted": self.accepted,
+            "candidate_id": self.candidate_id,
+            "snapshot_id": self.snapshot_id,
+            "capability_revision": self.capability_revision,
+            "reason_code": self.reason_code,
+            "reason": self.reason,
+            "candidate": candidate_payload,
+            "request": None if self.request is None else self.request.to_payload(),
+            "policy": None if self.policy is None else self.policy.to_payload(),
         }
 
 
@@ -1036,6 +1073,104 @@ class WorkbenchEnvironment:
             "allow",
             "read_only_or_reversible",
             self.snapshot.snapshot_id,
+        )
+
+    def admit_taiji_candidate(
+        self,
+        candidate: Any,
+        *,
+        snapshot_id: str,
+        current_tick: int | None = None,
+    ) -> TaijiTaskAdmission:
+        """Bind a live Taiji executive candidate to a read-only capability.
+
+        This is deliberately narrower than :meth:`policy_for`: an ordinary
+        Workbench request may be user-authored and may enter the approval flow,
+        while this Gate only admits candidates that Taiji's executive already
+        selected and that resolve to a ``read_only`` capability.  The language
+        provider, frontend, and request prose never participate in selection.
+        """
+
+        from taiji import ExecutiveCandidate
+
+        candidate_id = str(getattr(candidate, "candidate_id", ""))
+
+        def reject(code: str, reason: str) -> TaijiTaskAdmission:
+            return TaijiTaskAdmission(
+                accepted=False,
+                candidate_id=candidate_id,
+                snapshot_id=self.snapshot.snapshot_id,
+                capability_revision=self.snapshot.revision,
+                reason_code=code,
+                reason=reason,
+                candidate=candidate if isinstance(candidate, ExecutiveCandidate) else None,
+            )
+
+        if str(snapshot_id) != self.snapshot.snapshot_id:
+            return reject("stale_capability_snapshot", "Taiji task capability snapshot drifted")
+        if not isinstance(candidate, ExecutiveCandidate):
+            return reject("invalid_taiji_candidate", "Taiji task requires an ExecutiveCandidate")
+        if not candidate.source_affordance_id:
+            return reject(
+                "taiji_candidate_not_grounded",
+                "Taiji task candidate must retain its world affordance lineage",
+            )
+        if not candidate.provenance.startswith("affordance-derived/"):
+            return reject(
+                "taiji_candidate_not_grounded",
+                "Taiji task candidate provenance is not Taiji affordance-derived",
+            )
+        if current_tick is not None and candidate.action_intent.tick != int(current_tick):
+            return reject(
+                "stale_taiji_candidate", "Taiji task candidate is not at the current tick"
+            )
+
+        descriptor = self.snapshot.get(candidate.action_intent.kind)
+        if descriptor is None:
+            return reject("unknown_capability", "Taiji candidate capability is not in the snapshot")
+        if not descriptor.enabled:
+            return reject("capability_not_connected", "Taiji candidate capability is disabled")
+        if descriptor.risk != "read_only":
+            return reject(
+                "taiji_read_only_gate_rejects_risk",
+                "the first Taiji task Gate only admits read-only capabilities",
+            )
+
+        parameters = dict(candidate.action_intent.parameters)
+        unknown = sorted(set(parameters) - descriptor.parameter_names)
+        if unknown:
+            return reject(
+                "capability_parameter_drift",
+                f"Taiji candidate contains undeclared capability parameters: {unknown}",
+            )
+
+        request = WorkbenchActionRequest.from_action_intent(
+            candidate.action_intent,
+            snapshot_id=self.snapshot.snapshot_id,
+        )
+        policy = self.policy_for(request)
+        if policy.decision != "allow":
+            return TaijiTaskAdmission(
+                accepted=False,
+                candidate_id=candidate.candidate_id,
+                snapshot_id=self.snapshot.snapshot_id,
+                capability_revision=self.snapshot.revision,
+                reason_code=policy.reason_code,
+                reason="Taiji candidate policy was not admitted",
+                candidate=candidate,
+                request=request,
+                policy=policy,
+            )
+        return TaijiTaskAdmission(
+            accepted=True,
+            candidate_id=candidate.candidate_id,
+            snapshot_id=self.snapshot.snapshot_id,
+            capability_revision=self.snapshot.revision,
+            reason_code="taiji_read_only_admitted",
+            reason="Taiji candidate is bound to the current read-only capability snapshot",
+            candidate=candidate,
+            request=request,
+            policy=policy,
         )
 
     def _mcp_policy_for(self, request: WorkbenchActionRequest) -> ExecutionPolicyDecision:

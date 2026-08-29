@@ -2114,3 +2114,16 @@ Workbench loop 的显式 `zip(strict=True)` 门禁问题。
 `CognitiveState/GoalPlanner/WorldAffordance` 产生的候选绑定到 Workbench capability snapshot，形成“候选→ActionIntent→聊天/IDE 共享执行→真实
 after-state→Outcome”的第一条自主只读任务 Gate；无 Taiji 产生的 intent、能力快照漂移或候选与 capability 不一致时必须 fail-closed。
 该 Gate 通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或新的视觉包装。
+
+**已完成（2026-08-29）：Taiji-owned 只读任务准入 Gate。** Workbench 新增 `TaijiTaskAdmission`，只接受带
+`WorldAffordance` lineage 的 `ExecutiveCandidate`，由 `TSKV8Adapter` 的 `ExecutiveController` 在当前认知状态中选择候选，再绑定
+当前 content-addressed capability snapshot；snapshot 漂移、candidate tick 过期、未接地候选、未知/禁用 capability、未声明参数和非
+`read_only` 风险均在执行前 fail-closed。SeedRuntime 新增不执行的 `/api/workbench/taiji/admit` 与原子选择-准入-执行的
+`/api/workbench/taiji/execute`，两者均不读取 prompt、不由语言 provider 选工具，并通过 JSON-safe decision projection、native API facade
+和 OpenAPI baseline 暴露；真实只读文件 after-state/Outcome、路由、Workbench 回归与前端 facade 回归均通过。该 Gate 关闭的是
+“Taiji 候选到 Workbench 的责任边界”，不宣称当前默认 Seed 已经自动生成 workspace affordance，也不开放写入/终端自治。
+
+**当前唯一下一步：建立 Workbench capability snapshot 到 Taiji WorldAffordance 的受控投影 Gate。** 让当前快照中的可用只读能力以
+带 capability snapshot/revision lineage 的世界 affordance 进入 Taiji，而不是在 adapter 或 API 中维护第二份工具表；只生成已连接且
+参数契约可验证的候选，能力快照变化时让旧 affordance/candidate 失效，并用 `list/read/stat/search` 的真实 workspace evidence 验证
+“能力发现→Taiji 候选→准入→after-state”闭环。该 Gate 通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。

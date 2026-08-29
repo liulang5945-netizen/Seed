@@ -641,6 +641,59 @@
         "title": "RuntimeStatusPayload",
         "type": "object"
       },
+      "TaijiWorkbenchExecuteTaskRequest": {
+        "description": "Request execution after Taiji-owned read-only admission.",
+        "properties": {
+          "learn": {
+            "default": false,
+            "title": "Learn",
+            "type": "boolean"
+          },
+          "novelty": {
+            "default": 0.0,
+            "title": "Novelty",
+            "type": "number"
+          },
+          "resource_budget": {
+            "default": 1.0,
+            "title": "Resource Budget",
+            "type": "number"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "snapshot_id"
+        ],
+        "title": "TaijiWorkbenchExecuteTaskRequest",
+        "type": "object"
+      },
+      "TaijiWorkbenchTaskRequest": {
+        "description": "Request Taiji to select one current candidate for the read-only Gate.",
+        "properties": {
+          "novelty": {
+            "default": 0.0,
+            "title": "Novelty",
+            "type": "number"
+          },
+          "resource_budget": {
+            "default": 1.0,
+            "title": "Resource Budget",
+            "type": "number"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "snapshot_id"
+        ],
+        "title": "TaijiWorkbenchTaskRequest",
+        "type": "object"
+      },
       "ToolInfo": {
         "properties": {
           "category": {
@@ -3127,6 +3180,94 @@
           }
         },
         "summary": "Workbench Stat",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/taiji/admit": {
+      "post": {
+        "description": "Select and validate Taiji's current candidate without executing it.",
+        "operationId": "admit_taiji_workbench_task_api_workbench_taiji_admit_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaijiWorkbenchTaskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Admit Taiji Workbench Task Api Workbench Taiji Admit Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Admit Taiji Workbench Task",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/taiji/execute": {
+      "post": {
+        "description": "Select, admit, and execute one Taiji-owned read-only task.",
+        "operationId": "execute_taiji_workbench_task_api_workbench_taiji_execute_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaijiWorkbenchExecuteTaskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Execute Taiji Workbench Task Api Workbench Taiji Execute Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Execute Taiji Workbench Task",
         "tags": [
           "workbench"
         ]
