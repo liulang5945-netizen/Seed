@@ -2143,8 +2143,16 @@ after-state→Outcome”的第一条自主只读任务 Gate；无 Taiji 产生�
 WorkBench affordance 会被精确清除，旧 candidate 不会继续沿用；下一轮必须重新投影并重新准入。真实临时项目覆盖 evidence、世界事件、
 失效和 checkpoint continuation，WorkBench 定向回归 `30 passed`。该 Gate 仍不开放写入/终端自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
 
-**当前唯一下一步：建立 capability/world freshness 的重新投影闭环。** 在事件清除旧 affordance 后，使用同一真实 workspace evidence
-自动生成新的结构化 parameter binding，并在 capability snapshot、workspace after-state 或 world tick 变化后只允许基于最新事件重新
-投影；验证“旧 candidate 被拒绝→新 evidence→新 affordance→新 candidate→read-only admission→Outcome”的连续链路，以及多次
-`list/read/stat/search` 之间的事件顺序和 checkpoint continuation。该 Gate 通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel
-或视觉包装。
+**已完成（2026-08-29）：capability/world freshness 的重新投影闭环。** `WorkbenchTaijiEvidence` 可以从已持久化的最新
+`WorldEvent` 恢复并校验 event id、snapshot、参数、结果和 after-state digest；同一当前 tick 且同一 capability snapshot 下，才允许由
+最新真实 evidence 自动生成结构化 projection binding。重新投影后的 affordance identity 同时绑定 evidence/after-state lineage，旧
+candidate 因当前 world affordance id 不存在而 fail-closed；新增 `/api/workbench/taiji/reproject` 和 native facade，明确拒绝旧 evidence、
+snapshot 漂移及失败 evidence。真实回归覆盖“旧 candidate 被拒绝→新 evidence→新 affordance→新 candidate→read-only admission→Outcome”、
+`list/read/stat/search` 事件顺序和 runtime checkpoint continuation；全量 Python 回归 `540 passed, 6 skipped`，前端 `42 files / 233 passed`，
+API/native boundary、Ruff、B/SIM、Black、核心 mypy、OpenAPI 与生产构建均通过。该闭环仍不开放写入/终端自治、开放域自然语言工具选择、
+CUDA kernel 或视觉包装。
+
+**当前唯一下一步：建立不依赖手工 candidate 的真实只读自主 canary。** 让当前 Taiji 的连续 affordance feature source 与
+`ExecutiveController` 从“最新 evidence reprojected affordance”直接合成 candidate，完成 `list/read/stat/search` 中至少两步的选择、准入、
+执行、WorldEvent 回写、失效与重新投影；验证去掉手工 candidate、语言 provider 和前端后仍能闭环，并覆盖中断 checkpoint 后不会重复执行或
+复用旧 identity。该 Gate 通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。

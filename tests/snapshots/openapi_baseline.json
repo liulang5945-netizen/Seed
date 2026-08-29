@@ -693,6 +693,20 @@
         "title": "TaijiWorkbenchProjectionRequest",
         "type": "object"
       },
+      "TaijiWorkbenchReprojectionRequest": {
+        "description": "Re-project the latest current-tick Workbench evidence into Taiji.",
+        "properties": {
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "snapshot_id"
+        ],
+        "title": "TaijiWorkbenchReprojectionRequest",
+        "type": "object"
+      },
       "TaijiWorkbenchTaskRequest": {
         "description": "Request Taiji to select one current candidate for the read-only Gate.",
         "properties": {
@@ -3335,6 +3349,50 @@
           }
         },
         "summary": "Project Taiji Workbench Affordances",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/taiji/reproject": {
+      "post": {
+        "description": "Re-project only the latest current-tick Workbench evidence.",
+        "operationId": "reproject_taiji_workbench_evidence_api_workbench_taiji_reproject_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaijiWorkbenchReprojectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Reproject Taiji Workbench Evidence Api Workbench Taiji Reproject Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reproject Taiji Workbench Evidence",
         "tags": [
           "workbench"
         ]

@@ -773,10 +773,12 @@ class SeedRuntime:
             resource_budget=resource_budget,
         )
         environment = self._sync_workbench_root()
+        world = self.model.architecture.cognitive_snapshot().world
         admission = environment.admit_taiji_candidate(
             decision.selected,
             snapshot_id=snapshot_id,
-            current_tick=self.model.architecture.cognitive_snapshot().tick,
+            current_tick=world.tick,
+            current_affordance_ids=tuple(item.affordance_id for item in world.affordances),
         )
         return {
             "admission": admission.to_payload(),
@@ -795,12 +797,62 @@ class SeedRuntime:
         environment = self._sync_workbench_root()
         if str(snapshot_id) != environment.capability_snapshot.snapshot_id:
             raise ValueError("Taiji capability projection snapshot drifted")
+        world = self.model.architecture.cognitive_snapshot().world
+        from seed_platform.workbench import WORKBENCH_TAIJI_EVIDENCE_KIND
+
+        latest_evidence = next(
+            (item for item in reversed(world.events) if item.kind == WORKBENCH_TAIJI_EVIDENCE_KIND),
+            None,
+        )
+        if latest_evidence is not None:
+            if latest_evidence.tick != world.tick:
+                raise ValueError(
+                    "latest WorkBench evidence is stale; acquire fresh workspace evidence"
+                )
+            raise ValueError("latest WorkBench evidence requires /api/workbench/taiji/reproject")
         affordances = environment.capability_snapshot.to_taiji_affordances(parameter_bindings)
         world = self.model.architecture.set_world_affordances(affordances)
         return {
             "snapshot_id": environment.capability_snapshot.snapshot_id,
             "revision": environment.capability_snapshot.revision,
             "tick": int(world.tick),
+            "affordances": [self._taiji_workbench_affordance_payload(item) for item in affordances],
+        }
+
+    def reproject_workbench_from_latest_evidence(
+        self,
+        *,
+        snapshot_id: str,
+    ) -> dict[str, Any]:
+        """Re-project the latest current-tick workspace evidence only."""
+
+        from seed_platform.workbench import (
+            WORKBENCH_TAIJI_EVIDENCE_KIND,
+            WorkbenchTaijiEvidence,
+        )
+
+        environment = self._sync_workbench_root()
+        if str(snapshot_id) != environment.capability_snapshot.snapshot_id:
+            raise ValueError("Taiji capability re-projection snapshot drifted")
+        world = self.model.architecture.cognitive_snapshot().world
+        event = next(
+            (item for item in reversed(world.events) if item.kind == WORKBENCH_TAIJI_EVIDENCE_KIND),
+            None,
+        )
+        if event is None:
+            raise ValueError("Taiji re-projection requires current WorkBench evidence")
+        if event.tick != world.tick:
+            raise ValueError("latest WorkBench evidence is stale; acquire fresh workspace evidence")
+        evidence = WorkbenchTaijiEvidence.from_taiji_event(event)
+        affordances = evidence.to_taiji_affordances(environment.capability_snapshot)
+        if not affordances:
+            raise ValueError("failed WorkBench evidence cannot produce a Taiji affordance")
+        world = self.model.architecture.set_world_affordances(affordances)
+        return {
+            "snapshot_id": environment.capability_snapshot.snapshot_id,
+            "revision": environment.capability_snapshot.revision,
+            "tick": int(world.tick),
+            "evidence": evidence.to_payload(),
             "affordances": [self._taiji_workbench_affordance_payload(item) for item in affordances],
         }
 
@@ -829,10 +881,12 @@ class SeedRuntime:
             resource_budget=resource_budget,
         )
         environment = self._sync_workbench_root()
+        world = self.model.architecture.cognitive_snapshot().world
         admission = environment.admit_taiji_candidate(
             decision.selected,
             snapshot_id=snapshot_id,
-            current_tick=self.model.architecture.cognitive_snapshot().tick,
+            current_tick=world.tick,
+            current_affordance_ids=tuple(item.affordance_id for item in world.affordances),
         )
         payload = {
             "admission": admission.to_payload(),

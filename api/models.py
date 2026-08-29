@@ -41,6 +41,12 @@ class TaijiWorkbenchProjectionRequest(BaseModel):
     parameter_bindings: dict[str, dict] = {}
 
 
+class TaijiWorkbenchReprojectionRequest(BaseModel):
+    """Re-project the latest current-tick Workbench evidence into Taiji."""
+
+    snapshot_id: str
+
+
 class ChatRequest(BaseModel):
     prompt: str
     system_prompt: str = "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"

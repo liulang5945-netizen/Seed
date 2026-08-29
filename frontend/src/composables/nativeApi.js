@@ -57,6 +57,7 @@ export const nativeApiPaths = Object.freeze({
     taijiAdmit: '/api/workbench/taiji/admit',
     taijiExecute: '/api/workbench/taiji/execute',
     taijiProject: '/api/workbench/taiji/project',
+    taijiReproject: '/api/workbench/taiji/reproject',
     loopPreflight: '/api/workbench/loop/preflight',
     loopExecute: '/api/workbench/loop/execute',
   }),
@@ -204,6 +205,7 @@ function request(path, options) {
  * @property {(payload: Object) => Promise<Object>} taijiWorkbenchAdmit
  * @property {(payload: Object) => Promise<Object>} taijiWorkbenchExecute
  * @property {(payload: Object) => Promise<Object>} taijiWorkbenchProject
+ * @property {(payload: Object) => Promise<Object>} taijiWorkbenchReproject
  * @property {(payload: Object) => Promise<Object>} loopPreflight
  * @property {(payload: Object) => Promise<Object>} loopExecute
  * @property {() => Promise<Object>} trainingFiles
@@ -323,6 +325,10 @@ export const nativeApi = Object.freeze({
   ),
   taijiWorkbenchProject: (payload) => readJson(
     `${API_BASE}${nativeApiPaths.workbench.taijiProject}`,
+    jsonOptions(payload),
+  ),
+  taijiWorkbenchReproject: (payload) => readJson(
+    `${API_BASE}${nativeApiPaths.workbench.taijiReproject}`,
     jsonOptions(payload),
   ),
   loopPreflight: (payload) => readJson(
