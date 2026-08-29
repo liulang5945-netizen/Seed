@@ -2096,5 +2096,21 @@ API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 err
 `SettingsPanelSection` 渲染标题/面板骨架，共享控件样式集中到 `assets/styles/settings-panels.css`，新增跨面板结构回归；父层状态拥有权和 native API 边界不变。
 前端 Vitest `42 files / 230 passed`、API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
 
-**当前唯一下一步：开始 W7 第一片 Workbench Closure 的真实工具选择与执行合同落地。** 选定最小真实工具（优先工作台文件读取/写入）并打通
-Taiji `ActionIntent → ToolCall → Outcome` 到 IDE/文件效应器的单条可审计闭环；冻结 watchdog、CUDA/fused kernel 和进一步视觉打磨，直到该真实纵切片通过。
+**路线校准（2026-08-29 live audit）：** 旧的“W7 第一片还要接入真实 Workbench 工具”表述已过时。现有主线提交与回归已经证明
+W0–W3 的 native Workbench 版本合同、只读/受控写入、语言证据与 IDE 切换、终端、审批、MCP registry、有限循环、checkpoint continuation
+和真实跨文件任务闭环；W4 的 HF/GGUF/Transformer/Legacy 产品语义清理、W5 的客户端真实性接入、P6 provider watchdog 与 P3
+interaction-group attribution 也已有对应证据。继续重复建设 Workbench 基础执行器属于路径偏移。
+
+**已完成（2026-08-29）：聊天→Workbench 原生任务事件桥接。** 新增显式 `/api/chat/workbench/stream` transport，要求调用方提交已经由
+Taiji 形成的结构化 `ActionIntent`，通过同一个 `SeedRuntime` 执行并把 `planned → policy → executing → outcome` 审计事件实时投影到聊天
+SSE；IDE 仍从 `/api/workbench/events` 读取同一审计记录。前端 native facade、ChatStore、消息轨迹展示和 OpenAPI/产品 smoke 已接通。
+该片只完成“执行与观测桥”，不把语言 provider 或自然语言启发式解析冒充 Taiji 的工具选择器。
+
+**CI 收口（2026-08-29）：** 新增桥接后的全量 Python 回归 `530 passed, 6 skipped`，前端 `42 files / 232 passed`，native/API
+contract、Ruff 主门禁与 B/SIM blocking、Black `26.5.1`、核心 mypy 和生产构建均通过；同时清理了 CI 发现的 8 个存量 Black 格式文件与
+Workbench loop 的显式 `zip(strict=True)` 门禁问题。
+
+**当前唯一下一步：建立 Taiji-owned 的只读任务准入层。** 在不由语言 provider、前端或自然语言硬编码选择工具的前提下，把 Taiji 当前
+`CognitiveState/GoalPlanner/WorldAffordance` 产生的候选绑定到 Workbench capability snapshot，形成“候选→ActionIntent→聊天/IDE 共享执行→真实
+after-state→Outcome”的第一条自主只读任务 Gate；无 Taiji 产生的 intent、能力快照漂移或候选与 capability 不一致时必须 fail-closed。
+该 Gate 通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或新的视觉包装。

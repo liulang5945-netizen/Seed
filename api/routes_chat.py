@@ -17,7 +17,7 @@ from fastapi.responses import StreamingResponse
 
 from api.chat_strategies import create_event_generator
 from api.legacy_bridge import legacy_available
-from api.models import ChatRequest
+from api.models import ChatRequest, ChatWorkbenchRequest
 from api.seed_runtime import get_seed_runtime, is_seed_active
 from seed_platform.app_state import app_state
 from seed_platform.paths import get_external_path
@@ -44,7 +44,31 @@ def _answer_readable(text: str) -> bool:
     return bad / len(text) < _UNREADABLE_BAD_CHAR_RATIO
 
 
-def _seed_event_generator(request, seed_runtime):
+def _intent_from_chat_request(request, seed_runtime):
+    """Convert a structured chat task request into a Taiji-owned intent."""
+
+    from taiji import ActionIntent
+
+    item = request.intent
+    return ActionIntent(
+        intent_id=item.intent_id,
+        kind=item.kind,
+        parameters=item.parameters,
+        source_goal_id=item.source_goal_id,
+        expected_outcome=item.expected_outcome,
+        confidence=item.confidence,
+        tick=item.tick,
+    )
+
+
+def _workbench_event(event):
+    return {
+        "type": "workbench",
+        "data": event.to_payload(),
+    }
+
+
+def _seed_event_generator(request, seed_runtime, *, workbench=False):
     """Seed 原生分支：用户消息转为 byte 流喂入基底，generate 产出回复。
 
     多轮上下文由 taiji 持久状态天然承担（无需 KV cache 拼装）；回复同时
@@ -56,7 +80,34 @@ def _seed_event_generator(request, seed_runtime):
     import asyncio
 
     async def event_generator():
+        workbench_result = None
         try:
+            if workbench:
+                event_queue = asyncio.Queue()
+                loop = asyncio.get_running_loop()
+
+                def push_event(event):
+                    loop.call_soon_threadsafe(event_queue.put_nowait, event)
+
+                def execute_intent():
+                    intent = _intent_from_chat_request(request, seed_runtime)
+                    return seed_runtime.execute_workbench_intent(
+                        intent,
+                        snapshot_id=request.intent.snapshot_id,
+                        approval_token=request.intent.approval_token,
+                        mcp_registry_snapshot_id=request.intent.mcp_registry_snapshot_id,
+                        event_sink=push_event,
+                    )
+
+                task = asyncio.create_task(asyncio.to_thread(execute_intent))
+                while not task.done() or not event_queue.empty():
+                    try:
+                        event = await asyncio.wait_for(event_queue.get(), timeout=0.05)
+                    except asyncio.TimeoutError:
+                        continue
+                    yield f"data: {json.dumps(_workbench_event(event), ensure_ascii=False)}\n\n"
+                workbench_result = await task
+
             answer = await asyncio.to_thread(
                 seed_runtime.chat,
                 request.prompt,
@@ -70,6 +121,14 @@ def _seed_event_generator(request, seed_runtime):
                     "readable": _answer_readable(answer),
                     "language_backend": seed_runtime.chat_language_backend,
                     "runtime": "seed",
+                    "workbench": (
+                        None
+                        if workbench_result is None
+                        else {
+                            "outcome": workbench_result.get("outcome"),
+                            "tool_call": workbench_result.get("tool_call"),
+                        }
+                    ),
                 },
             }
             yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
@@ -79,6 +138,34 @@ def _seed_event_generator(request, seed_runtime):
         yield "data: [DONE]\n\n"
 
     return event_generator
+
+
+@router.post("/api/chat/workbench/stream")
+async def chat_workbench_stream(request: ChatWorkbenchRequest):
+    """Run one structured Taiji intent and stream the shared workbench audit.
+
+    This endpoint is an execution transport, not a prose-to-tool selector:
+    the caller must provide a Taiji-owned ``ActionIntent`` binding. The same
+    SeedRuntime audit events are emitted to this chat stream and remain
+    available to the IDE through ``/api/workbench/events``.
+    """
+
+    seed_runtime = get_seed_runtime()
+    if seed_runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        _intent_from_chat_request(request, seed_runtime)
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return StreamingResponse(
+        _seed_event_generator(request, seed_runtime, workbench=True)(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
+        },
+    )
 
 
 @router.post("/api/chat/stream")

@@ -607,9 +607,7 @@ def test_provider_health_watchdog_walks_the_full_degradation_ladder(monkeypatch)
     assert suppressed.status.reason_code == "provider_health_cooldown_active"
     assert adapter.language_provider_artifact == old
 
-    native = auto_rollback_language_provider(
-        adapter, suppressed.registry, new_config, now=200.0
-    )
+    native = auto_rollback_language_provider(adapter, suppressed.registry, new_config, now=200.0)
     assert native.committed is True
     assert native.status.artifact_id == "native-readable"
     assert native.status.reason_code == "provider_health_rollback_native"

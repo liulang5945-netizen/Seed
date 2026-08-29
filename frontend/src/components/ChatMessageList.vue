@@ -92,7 +92,7 @@
       <article
         v-for="msg in displayedMessages"
         :key="msg.id"
-        v-memo="[msg.id, msg.content, msg.role, msg.unreadable]"
+        v-memo="[msg.id, msg.content, msg.role, msg.unreadable, msg.workbenchEvents?.length]"
         :class="['msg', msg.role === 'user' ? 'msg-user' : 'msg-ai']"
       >
         <TaijiLogo v-if="msg.role === 'assistant'" class="av av-ai" :size="32" :thinking="false" aria-label="Seed" />
@@ -111,6 +111,18 @@
           </div>
           <div v-else-if="msg.role === 'user'" class="bubble"><div class="text-content">{{ msg.content }}</div></div>
           <div v-else class="bubble markdown-body" v-html="renderMarkdown(msg.content)" />
+          <div v-if="msg.role === 'assistant' && msg.workbenchEvents?.length" class="workbench-trace" aria-label="Taiji 工作台执行轨迹">
+            <div class="workbench-trace-head">
+              <span class="workbench-trace-dot"></span>
+              <span>Taiji 工作台</span>
+              <span class="workbench-trace-count">{{ msg.workbenchEvents.length }} 个阶段</span>
+            </div>
+            <div v-for="event in msg.workbenchEvents" :key="event.sequence" class="workbench-trace-row">
+              <span class="workbench-phase">{{ phaseLabel(event.phase) }}</span>
+              <code>{{ eventCapability(event) }}</code>
+              <span v-if="eventStatus(event)" class="workbench-status">{{ eventStatus(event) }}</span>
+            </div>
+          </div>
           <div v-if="msg.role === 'assistant' && msg.content" class="msg-actions">
             <button class="msg-action-btn" title="复制" @click="emit('copy', msg.content)"><Copy :size="14" /></button>
             <button class="msg-action-btn" title="赞" @click="emit('like', msg.id)"><ThumbsUp :size="14" /></button>
@@ -173,6 +185,35 @@ function isRawOutput(msg) {
   return msg.unreadable === true || looksUnreadable(msg.content || '')
 }
 
+function phaseLabel(phase) {
+  return {
+    planned: '计划',
+    policy: '策略',
+    executing: '执行',
+    outcome: '结果',
+  }[phase] || phase || '事件'
+}
+
+function eventCapability(event) {
+  return event?.payload?.request?.capability_id
+    || event?.payload?.policy?.capability_id
+    || event?.payload?.capability_id
+    || event?.payload?.outcome?.capability_id
+    || 'native workbench'
+}
+
+function eventStatus(event) {
+  const status = event?.payload?.policy?.decision || event?.payload?.outcome?.status || ''
+  return {
+    allow: '允许',
+    ask_user: '需审批',
+    deny: '拒绝',
+    success: '成功',
+    error: '失败',
+    rejected: '已拒绝',
+  }[status] || status
+}
+
 </script>
 
 <style scoped>
@@ -217,6 +258,14 @@ function isRawOutput(msg) {
 .msg-steps li::before { content: counter(step); position: absolute; left: 0; top: 1px; width: 18px; height: 18px; border-radius: 50%; background: color-mix(in srgb, var(--primary) 14%, transparent); color: var(--primary); font-size: 0.7rem; font-weight: 700; display: grid; place-items: center; }
 .msg-steps code, .bubble code { font-family: var(--font-mono); font-size: 0.82em; background: color-mix(in srgb, var(--primary) 12%, transparent); color: var(--primary); padding: 1px 6px; border-radius: 6px; }
 .msg-actions { display: flex; gap: 4px; margin-top: 4px; }
+.workbench-trace { margin-top: 8px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: color-mix(in srgb, var(--muted) 72%, transparent); }
+.workbench-trace-head { display: flex; align-items: center; gap: 7px; color: var(--foreground); font-size: 0.74rem; font-weight: 650; }
+.workbench-trace-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--chart-2); flex: none; }
+.workbench-trace-count { margin-left: auto; color: var(--muted-foreground); font-size: 0.68rem; font-weight: 500; }
+.workbench-trace-row { display: flex; align-items: center; gap: 8px; margin-top: 7px; color: var(--muted-foreground); font-size: 0.7rem; }
+.workbench-phase { min-width: 28px; color: var(--foreground); }
+.workbench-trace-row code { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-mono); font-size: 0.68rem; color: var(--primary); }
+.workbench-status { margin-left: auto; color: var(--muted-foreground); }
 .msg-action-btn { width: 28px; height: 28px; display: grid; place-items: center; border: 0; border-radius: 8px; color: var(--muted-foreground); background: transparent; cursor: pointer; transition: background .14s ease, color .14s ease; }
 .msg-action-btn:hover { background: var(--muted); color: var(--foreground); }
 .thinking-row .bubble { width: fit-content; }

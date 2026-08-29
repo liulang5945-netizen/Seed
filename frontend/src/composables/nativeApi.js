@@ -30,6 +30,7 @@ export const nativeApiPaths = Object.freeze({
     sessions: '/api/chat/sessions',
     history: '/api/chat/history/{session_id}',
     stream: '/api/chat/stream',
+    workbenchStream: '/api/chat/workbench/stream',
     upload: '/api/chat/upload',
   }),
   training: Object.freeze({
@@ -187,6 +188,7 @@ function request(path, options) {
  * @property {(sessionId: string, payload: Object) => Promise<Object>} saveChatHistory
  * @property {(sessionId: string) => Promise<Object>} deleteChatHistory
  * @property {(payload: Object, options?: RequestInit) => Promise<Response>} chatStream
+ * @property {(payload: Object, options?: RequestInit) => Promise<Response>} chatWorkbenchStream
  * @property {(formData: FormData, options?: RequestInit) => Promise<Response>} chatUpload
  * @property {() => Promise<Object>} workbenchCapabilities
  * @property {() => Promise<Object>} workbenchEvents
@@ -269,6 +271,12 @@ export const nativeApi = Object.freeze({
     { method: 'DELETE' },
   ),
   chatStream: (payload, options = {}) => request(nativeApiPaths.chat.stream, {
+    ...jsonOptions(payload),
+    ...options,
+    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+    retries: 0,
+  }),
+  chatWorkbenchStream: (payload, options = {}) => request(nativeApiPaths.chat.workbenchStream, {
     ...jsonOptions(payload),
     ...options,
     headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },

@@ -131,7 +131,8 @@ export const useChatStore = defineStore('chat', () => {
     return localStorage.getItem('taiji_system_prompt') || '你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。'
   }
 
-  async function sendMessage(attachments = []) {
+  async function sendMessage(attachments = [], options = {}) {
+    const workbenchIntent = options?.workbenchIntent || null
     const readyAttachments = attachments.filter(att => att && !att.uploading)
     const input = chatInput.value.trim() || defaultPromptForAttachments(readyAttachments)
     if ((!input && readyAttachments.length === 0) || isLoading.value) return
@@ -205,11 +206,16 @@ export const useChatStore = defineStore('chat', () => {
       }
 
       const sysPrompt = getSystemPrompt()
-      const res = await nativeApi.chatStream({
+      const streamPayload = {
         prompt: promptInput,
         system_prompt: sysPrompt,
         history,
-      }, { signal: abortController.signal })
+      }
+      const stream = workbenchIntent
+        ? nativeApi.chatWorkbenchStream
+        : nativeApi.chatStream
+      if (workbenchIntent) streamPayload.intent = workbenchIntent
+      const res = await stream(streamPayload, { signal: abortController.signal })
 
       if (!res.ok) {
         const e = await res.json().catch(() => ({ detail: res.statusText }))
@@ -267,6 +273,12 @@ export const useChatStore = defineStore('chat', () => {
                 lastTool.result = evt.data?.result
                 lastTool.status = 'done'
               }
+              break
+            case 'workbench':
+              aiMsg.workbenchEvents = [
+                ...(aiMsg.workbenchEvents || []),
+                evt.data,
+              ]
               break
             case 'final':
               aiMsg.content = evt.data?.answer || aiMsg.content
@@ -364,6 +376,10 @@ export const useChatStore = defineStore('chat', () => {
     setChatReceiving(false)
   }
 
+  function sendWorkbenchMessage(intent, attachments = []) {
+    return sendMessage(attachments, { workbenchIntent: intent })
+  }
+
   function regenerateMessage(msgId) {
     const idx = messages.value.findIndex(m => m.id === msgId)
     if (idx > 0 && messages.value[idx - 1]?.role === 'user') {
@@ -397,6 +413,7 @@ export const useChatStore = defineStore('chat', () => {
     setChatInput,
     appendRuntimeMessage,
     sendMessage,
+    sendWorkbenchMessage,
     stopGeneration,
     regenerateMessage,
   }

@@ -61,6 +61,40 @@ def test_chat_stream_with_history(seed_client):
     assert "[DONE]" in response.text
 
 
+def test_chat_workbench_stream_emits_shared_native_audit(seed_client):
+    capabilities = seed_client.get("/api/workbench/capabilities")
+    assert capabilities.status_code == 200
+    snapshot_id = capabilities.json()["snapshot_id"]
+
+    response = seed_client.post(
+        "/api/chat/workbench/stream",
+        json={
+            "prompt": "读取项目说明",
+            "history": [],
+            "intent": {
+                "intent_id": "chat-read-readme",
+                "kind": "workspace.read",
+                "parameters": {"path": "README.md"},
+                "snapshot_id": snapshot_id,
+                "confidence": 1.0,
+            },
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.text
+    assert '"type": "workbench"' in body or '"type":"workbench"' in body
+    assert '"phase": "planned"' in body or '"phase":"planned"' in body
+    assert '"phase": "outcome"' in body or '"phase":"outcome"' in body
+    assert '"type": "final"' in body or '"type":"final"' in body
+    assert "[DONE]" in body
+
+    audit = seed_client.get("/api/workbench/events")
+    assert audit.status_code == 200
+    phases = [event["phase"] for event in audit.json()["events"]]
+    assert phases[-4:] == ["planned", "policy", "executing", "outcome"]
+
+
 def test_switch_model_rejects_unknown_type():
     from api.app import create_app
 

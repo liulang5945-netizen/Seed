@@ -48,4 +48,26 @@ describe('ChatMessageList', () => {
     expect(wrapper.emitted('like')).toEqual([[2]])
     expect(wrapper.emitted('regenerate')).toEqual([[2]])
   })
+
+  it('renders the shared native workbench audit phases in an assistant message', () => {
+    const message = {
+      id: 3,
+      role: 'assistant',
+      content: '已读取 README',
+      workbenchEvents: [
+        { sequence: 1, phase: 'planned', payload: { request: { capability_id: 'workspace.read' } } },
+        { sequence: 2, phase: 'policy', payload: { policy: { capability_id: 'workspace.read', decision: 'allow' } } },
+        { sequence: 3, phase: 'executing', payload: { capability_id: 'workspace.read' } },
+        { sequence: 4, phase: 'outcome', payload: { outcome: { capability_id: 'workspace.read', status: 'success' } } },
+      ],
+    }
+    const wrapper = mount(ChatMessageList, {
+      props: { ...baseProps, messages: [message], displayedMessages: [message] },
+    })
+
+    expect(wrapper.find('[aria-label="Taiji 工作台执行轨迹"]').exists()).toBe(true)
+    expect(wrapper.findAll('.workbench-trace-row')).toHaveLength(4)
+    expect(wrapper.text()).toContain('workspace.read')
+    expect(wrapper.text()).toContain('成功')
+  })
 })

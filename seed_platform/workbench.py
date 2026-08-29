@@ -373,9 +373,7 @@ class CapabilitySnapshot:
         snapshot_id = str(payload.get("snapshot_id", ""))
         if snapshot_id != _canonical_digest(body):
             raise ValueError("workbench capability snapshot digest mismatch")
-        return cls(
-            snapshot_id=snapshot_id, revision=revision, capabilities=tuple(capabilities)
-        )
+        return cls(snapshot_id=snapshot_id, revision=revision, capabilities=tuple(capabilities))
 
     def get(self, capability_id: str) -> CapabilityDescriptor | None:
         return next(
@@ -411,10 +409,7 @@ class WorkbenchActionRequest:
                 raise ValueError(f"{name} cannot be empty")
         if not isinstance(self.parameters, Mapping):
             raise TypeError("workbench action parameters must be a mapping")
-        if (
-            not math.isfinite(float(self.confidence))
-            or not 0.0 <= float(self.confidence) <= 1.0
-        ):
+        if not math.isfinite(float(self.confidence)) or not 0.0 <= float(self.confidence) <= 1.0:
             raise ValueError("workbench action confidence must be in [0, 1]")
         if int(self.tick) < 0:
             raise ValueError("workbench action tick cannot be negative")
@@ -564,9 +559,7 @@ class WorkbenchOutcome:
             "result": dict(self.result),
             "error_code": self.error_code,
             "error": self.error,
-            "transaction": (
-                None if self.transaction is None else self.transaction.to_payload()
-            ),
+            "transaction": (None if self.transaction is None else self.transaction.to_payload()),
             "tick": self.tick,
             "mcp_registry_snapshot_id": self.mcp_registry_snapshot_id,
         }
@@ -762,9 +755,7 @@ class WorkbenchEnvironment:
             "mcp_registry_snapshot_id": self.mcp_registry.snapshot_id,
         }
 
-        def rejected(
-            code: str, message: str, *, index: int | None = None
-        ) -> dict[str, Any]:
+        def rejected(code: str, message: str, *, index: int | None = None) -> dict[str, Any]:
             payload = {
                 **base,
                 "accepted": False,
@@ -788,13 +779,9 @@ class WorkbenchEnvironment:
             not math.isfinite(budget_limit)
             or not 0.0 < budget_limit <= WORKBENCH_MAX_LOOP_BUDGET_UNITS
         ):
-            return rejected(
-                "invalid_loop_budget", "max_budget_units must be in (0, 32]"
-            )
+            return rejected("invalid_loop_budget", "max_budget_units must be in (0, 32]")
         if on_failure != "stop":
-            return rejected(
-                "unsupported_failure_mode", "loop failure mode must be stop"
-            )
+            return rejected("unsupported_failure_mode", "loop failure mode must be stop")
         if checkpoint_boundary != "after_each_step":
             return rejected(
                 "unsupported_checkpoint_boundary",
@@ -875,9 +862,7 @@ class WorkbenchEnvironment:
                 )
             budget_units += step_budget
             if budget_units > budget_limit:
-                return rejected(
-                    "loop_budget_limit", "loop exceeds max_budget_units", index=index
-                )
+                return rejected("loop_budget_limit", "loop exceeds max_budget_units", index=index)
             steps.append(
                 {
                     "index": index,
@@ -916,9 +901,7 @@ class WorkbenchEnvironment:
                 "format": "seed-workbench-language-state-v1",
                 "version": 1,
                 "registry_revision": self.programming_language_registry.revision,
-                "selections": [
-                    item.to_payload() for item in self._language_selections.values()
-                ],
+                "selections": [item.to_payload() for item in self._language_selections.values()],
             }
 
     def restore_language_state(self, payload: Mapping[str, Any] | None) -> None:
@@ -926,20 +909,14 @@ class WorkbenchEnvironment:
             return
         if payload.get("format") != "seed-workbench-language-state-v1":
             raise ValueError("unsupported workbench language state format")
-        if (
-            str(payload.get("registry_revision", ""))
-            != self.programming_language_registry.revision
-        ):
+        if str(payload.get("registry_revision", "")) != self.programming_language_registry.revision:
             raise ValueError("programming language registry drifted during restore")
         restored: dict[str, ProgrammingLanguageAssessment] = {}
         for raw in payload.get("selections", []):
             if not isinstance(raw, Mapping):
                 continue
             assessment = ProgrammingLanguageAssessment.from_payload(raw)
-            if (
-                assessment.registry_revision
-                != self.programming_language_registry.revision
-            ):
+            if assessment.registry_revision != self.programming_language_registry.revision:
                 raise ValueError("programming language assessment registry drifted")
             restored[assessment.path] = assessment
         with self._lock:
@@ -1061,14 +1038,9 @@ class WorkbenchEnvironment:
             self.snapshot.snapshot_id,
         )
 
-    def _mcp_policy_for(
-        self, request: WorkbenchActionRequest
-    ) -> ExecutionPolicyDecision:
+    def _mcp_policy_for(self, request: WorkbenchActionRequest) -> ExecutionPolicyDecision:
         registry_snapshot_id = str(request.mcp_registry_snapshot_id or "")
-        if (
-            registry_snapshot_id
-            and registry_snapshot_id != self.mcp_registry.snapshot_id
-        ):
+        if registry_snapshot_id and registry_snapshot_id != self.mcp_registry.snapshot_id:
             return ExecutionPolicyDecision(
                 request.request_id,
                 request.capability_id,
@@ -1200,9 +1172,7 @@ class WorkbenchEnvironment:
 
         descriptor = self.snapshot.get(request.capability_id)
         if request.capability_id == "mcp.invoke":
-            mcp_descriptor = self.mcp_registry.get(
-                str(request.parameters.get("tool_id", ""))
-            )
+            mcp_descriptor = self.mcp_registry.get(str(request.parameters.get("tool_id", "")))
             if mcp_descriptor is None or mcp_descriptor.risk in {
                 "read_only",
                 "reversible_ui",
@@ -1211,15 +1181,11 @@ class WorkbenchEnvironment:
         if descriptor is None or descriptor.risk in {"read_only", "reversible_ui"}:
             return
         if not self._approval_is_valid(request):
-            raise WorkbenchConflictError(
-                "approval expired, changed, or was already consumed"
-            )
+            raise WorkbenchConflictError("approval expired, changed, or was already consumed")
         with self._lock:
             self._approval_records.pop(request.approval_token, None)
 
-    def preview_tool(
-        self, tool_name: str, parameters: Mapping[str, Any]
-    ) -> dict[str, Any]:
+    def preview_tool(self, tool_name: str, parameters: Mapping[str, Any]) -> dict[str, Any]:
         """Validate a side effect without mutating the workspace or running a process."""
 
         descriptor = self.snapshot.get(tool_name)
@@ -1366,9 +1332,7 @@ class WorkbenchEnvironment:
             elif tool_name == "mcp.invoke":
                 result = self._mcp_invoke(parameters)
             else:
-                return self._failure(
-                    "unknown_capability", "capability is not registered"
-                )
+                return self._failure("unknown_capability", "capability is not registered")
         except WorkbenchPathError as exc:
             return self._failure("unsafe_path", str(exc))
         except WorkbenchConflictError as exc:
@@ -1448,9 +1412,7 @@ class WorkbenchEnvironment:
         return {"path": relative_name, "entries": entries}
 
     def _read_workspace(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
-        path, relative_name = self._resolve_path(
-            parameters.get("path"), allow_root=False
-        )
+        path, relative_name = self._resolve_path(parameters.get("path"), allow_root=False)
         if not path.exists():
             raise FileNotFoundError(path)
         if not path.is_file():
@@ -1524,9 +1486,7 @@ class WorkbenchEnvironment:
         return {"query": query, "results": results, "truncated": False}
 
     def _open_editor(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
-        path, relative_name = self._resolve_path(
-            parameters.get("path"), allow_root=False
-        )
+        path, relative_name = self._resolve_path(parameters.get("path"), allow_root=False)
         if not path.exists():
             raise FileNotFoundError(path)
         if not path.is_file():
@@ -1567,9 +1527,7 @@ class WorkbenchEnvironment:
         remember: bool = True,
         apply_selection: bool = True,
     ) -> dict[str, Any]:
-        path, relative_name = self._resolve_path(
-            parameters.get("path"), allow_root=False
-        )
+        path, relative_name = self._resolve_path(parameters.get("path"), allow_root=False)
         raw = self._read_workspace({"path": relative_name})
         manifest_names, neighbor_names = self._workspace_context_names(path)
         assessment = self.programming_language_registry.resolve(
@@ -1605,9 +1563,7 @@ class WorkbenchEnvironment:
         return assessment.to_payload()
 
     def _set_editor_language(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
-        path, relative_name = self._resolve_path(
-            parameters.get("path"), allow_root=False
-        )
+        path, relative_name = self._resolve_path(parameters.get("path"), allow_root=False)
         if not path.is_file():
             raise FileNotFoundError(path)
         clear_override = bool(parameters.get("clear_override", False))
@@ -1623,14 +1579,10 @@ class WorkbenchEnvironment:
         language_id = str(parameters.get("programming_language_id", "")).strip()
         if not language_id:
             language_id = str(parameters.get("editor_language_id", "")).strip()
-            definition = self.programming_language_registry.get_by_editor_language(
-                language_id
-            )
+            definition = self.programming_language_registry.get_by_editor_language(language_id)
             language_id = definition.language_id if definition is not None else ""
         source = (
-            "user_override"
-            if bool(parameters.get("user_override", False))
-            else "taiji_selection"
+            "user_override" if bool(parameters.get("user_override", False)) else "taiji_selection"
         )
         selected = self.programming_language_registry.select(
             assessment,
@@ -1661,9 +1613,7 @@ class WorkbenchEnvironment:
         self, tool_name: str, parameters: Mapping[str, Any]
     ) -> dict[str, Any]:
         if tool_name == "workspace.create":
-            path, relative_name = self._resolve_path(
-                parameters.get("path"), allow_root=False
-            )
+            path, relative_name = self._resolve_path(parameters.get("path"), allow_root=False)
             if path.exists() or path.is_symlink():
                 raise WorkbenchConflictError("create target already exists")
             if not path.parent.is_dir() or path.parent.is_symlink():
@@ -1697,20 +1647,15 @@ class WorkbenchEnvironment:
                     raise WorkbenchConflictError("file changed before undo preview")
             elif operation == "workspace.delete":
                 if path.exists() or path.is_symlink():
-                    raise WorkbenchConflictError(
-                        "delete target reappeared before undo preview"
-                    )
+                    raise WorkbenchConflictError("delete target reappeared before undo preview")
             elif operation == "workspace.rename":
                 new_path, _ = self._resolve_path(record["new_path"], allow_root=False)
                 if (
                     path.exists()
                     or not new_path.is_file()
-                    or self._bytes_digest(new_path.read_bytes())
-                    != record["after_digest"]
+                    or self._bytes_digest(new_path.read_bytes()) != record["after_digest"]
                 ):
-                    raise WorkbenchConflictError(
-                        "rename state changed before undo preview"
-                    )
+                    raise WorkbenchConflictError("rename state changed before undo preview")
             else:
                 raise ValueError("unsupported undo operation")
             return {
@@ -1721,9 +1666,7 @@ class WorkbenchEnvironment:
                 "after_digest": str(record.get("before_digest", "")),
             }
         path, relative_name = self._regular_file(parameters.get("path"))
-        raw, before_digest = self._checked_file_bytes(
-            path, parameters.get("before_digest")
-        )
+        raw, before_digest = self._checked_file_bytes(path, parameters.get("before_digest"))
         if tool_name == "workspace.delete":
             return {
                 "operation": tool_name,
@@ -1789,11 +1732,7 @@ class WorkbenchEnvironment:
         if len(updated_raw) > WORKBENCH_MAX_WRITE_BYTES:
             raise ValueError("patched file exceeds the writable size limit")
         expected_after = (
-            str(
-                parameters.get(
-                    "expected_after_digest", parameters.get("after_digest", "")
-                )
-            )
+            str(parameters.get("expected_after_digest", parameters.get("after_digest", "")))
             .strip()
             .lower()
         )
@@ -1867,9 +1806,7 @@ class WorkbenchEnvironment:
     def _bytes_digest(raw: bytes) -> str:
         return hashlib.sha256(raw).hexdigest()
 
-    def _checked_file_bytes(
-        self, path: Path, expected_digest: Any
-    ) -> tuple[bytes, str]:
+    def _checked_file_bytes(self, path: Path, expected_digest: Any) -> tuple[bytes, str]:
         expected = str(expected_digest or "").strip().lower()
         if len(expected) != 64:
             raise ValueError("before_digest must be a SHA-256 digest")
@@ -1930,9 +1867,7 @@ class WorkbenchEnvironment:
 
     def _apply_patch(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
         path, relative_name = self._regular_file(parameters.get("path"))
-        raw, before_digest = self._checked_file_bytes(
-            path, parameters.get("before_digest")
-        )
+        raw, before_digest = self._checked_file_bytes(path, parameters.get("before_digest"))
         if len(raw) > WORKBENCH_MAX_WRITE_BYTES:
             raise ValueError("file exceeds the writable size limit")
         try:
@@ -1974,11 +1909,7 @@ class WorkbenchEnvironment:
         if len(updated_raw) > WORKBENCH_MAX_WRITE_BYTES:
             raise ValueError("patched file exceeds the writable size limit")
         expected_after = (
-            str(
-                parameters.get(
-                    "expected_after_digest", parameters.get("after_digest", "")
-                )
-            )
+            str(parameters.get("expected_after_digest", parameters.get("after_digest", "")))
             .strip()
             .lower()
         )
@@ -2009,9 +1940,7 @@ class WorkbenchEnvironment:
         return self._transaction_result(transaction, digest=after_digest)
 
     def _create_file(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
-        path, relative_name = self._resolve_path(
-            parameters.get("path"), allow_root=False
-        )
+        path, relative_name = self._resolve_path(parameters.get("path"), allow_root=False)
         if path.exists() or path.is_symlink():
             raise WorkbenchConflictError("create target already exists")
         if not path.parent.is_dir() or path.parent.is_symlink():
@@ -2029,9 +1958,7 @@ class WorkbenchEnvironment:
                 handle.flush()
                 os.fsync(handle.fileno())
         except FileExistsError as exc:
-            raise WorkbenchConflictError(
-                "create target appeared during transaction"
-            ) from exc
+            raise WorkbenchConflictError("create target appeared during transaction") from exc
         except Exception:
             with contextlib.suppress(FileNotFoundError):
                 path.unlink()
@@ -2062,9 +1989,7 @@ class WorkbenchEnvironment:
             raise WorkbenchConflictError("rename target already exists")
         if not new_path.parent.is_dir() or new_path.parent.is_symlink():
             raise WorkbenchPathError("rename parent directory is unavailable")
-        raw, before_digest = self._checked_file_bytes(
-            path, parameters.get("before_digest")
-        )
+        raw, before_digest = self._checked_file_bytes(path, parameters.get("before_digest"))
         path.rename(new_path)
         token = self._new_undo_token(
             {
@@ -2090,9 +2015,7 @@ class WorkbenchEnvironment:
 
     def _delete_file(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
         path, relative_name = self._regular_file(parameters.get("path"))
-        raw, before_digest = self._checked_file_bytes(
-            path, parameters.get("before_digest")
-        )
+        raw, before_digest = self._checked_file_bytes(path, parameters.get("before_digest"))
         path.unlink()
         token = self._new_undo_token(
             {
@@ -2110,9 +2033,7 @@ class WorkbenchEnvironment:
             after_digest="",
             undo_token=token,
         )
-        return self._transaction_result(
-            transaction, digest="", extra={"byte_length": len(raw)}
-        )
+        return self._transaction_result(transaction, digest="", extra={"byte_length": len(raw)})
 
     def _undo_transaction(self, parameters: Mapping[str, Any]) -> dict[str, Any]:
         token = str(parameters.get("undo_token", "")).strip()
@@ -2173,11 +2094,7 @@ class WorkbenchEnvironment:
 
     @staticmethod
     def _bounded_text(raw: bytes | str | None, limit: int) -> tuple[str, bool]:
-        data = (
-            raw.encode("utf-8", errors="replace")
-            if isinstance(raw, str)
-            else bytes(raw or b"")
-        )
+        data = raw.encode("utf-8", errors="replace") if isinstance(raw, str) else bytes(raw or b"")
         return data[:limit].decode("utf-8", errors="replace"), len(data) > limit
 
     def _artifact_state(self, raw_paths: Any) -> list[dict[str, Any]]:
@@ -2230,9 +2147,7 @@ class WorkbenchEnvironment:
             separators=(",", ":"),
         ).encode("utf-8")
         if len(result_bytes) > descriptor.output_limit:
-            raise WorkbenchResourceLimitError(
-                f"MCP output exceeds {descriptor.output_limit} bytes"
-            )
+            raise WorkbenchResourceLimitError(f"MCP output exceeds {descriptor.output_limit} bytes")
         return {
             "tool_id": descriptor.tool_id,
             "source": descriptor.source,
@@ -2257,9 +2172,7 @@ class WorkbenchEnvironment:
         argv = list(raw_argv)
         cwd, relative_cwd = self._resolve_path(parameters.get("cwd", "."))
         if not cwd.is_dir() or cwd.is_symlink():
-            raise WorkbenchPathError(
-                "terminal cwd must be a regular workspace directory"
-            )
+            raise WorkbenchPathError("terminal cwd must be a regular workspace directory")
         timeout_seconds = float(parameters.get("timeout_seconds", 30.0))
         if (
             not math.isfinite(timeout_seconds)
@@ -2308,9 +2221,7 @@ class WorkbenchEnvironment:
                         "path": match.group("path").strip(),
                         "line": int(match.group("line")),
                         "column": (
-                            None
-                            if match.group("column") is None
-                            else int(match.group("column"))
+                            None if match.group("column") is None else int(match.group("column"))
                         ),
                         "severity": match.group("severity").lower(),
                         "message": match.group("message").strip(),
@@ -2357,17 +2268,11 @@ class WorkbenchEnvironment:
         stdout, stdout_truncated = self._bounded_text(stdout_raw, output_limit)
         stderr, stderr_truncated = self._bounded_text(stderr_raw, output_limit)
         diagnostics = self._parse_diagnostics(("stdout", stdout), ("stderr", stderr))
-        expected_artifacts = self._artifact_state(
-            parameters.get("expected_artifacts", [])
-        )
-        artifact_failures = [
-            item["path"] for item in expected_artifacts if not item["exists"]
-        ]
+        expected_artifacts = self._artifact_state(parameters.get("expected_artifacts", []))
+        artifact_failures = [item["path"] for item in expected_artifacts if not item["exists"]]
         execution_kind = str(parameters.get("execution_kind", "command"))
         if execution_kind not in {"command", "diagnostics", "test", "build"}:
-            raise ValueError(
-                "execution_kind must be command, diagnostics, test, or build"
-            )
+            raise ValueError("execution_kind must be command, diagnostics, test, or build")
         return {
             "argv": argv,
             "cwd": relative_cwd,
