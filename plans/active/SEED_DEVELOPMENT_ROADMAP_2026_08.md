@@ -2174,7 +2174,14 @@ candidate 因 frontier identity 变化全部失效。累计预算、已消费 re
 Ruff 主门禁/B-SIM、Black、核心 mypy 均通过。该 Gate 仍只覆盖 bounded read-only graph，不开放写入自治、开放域自然语言工具选择、
 CUDA kernel 或视觉包装。
 
-**当前唯一下一步：建立 successor graph 的失败前缀与可审计 recovery Gate。** 在不重试旧 request/affordance 的前提下，注入真实
-`workspace` 读取失败、snapshot 漂移和 checkpoint 写入失败，持久化 `completed_prefix`、失败原因、latest evidence 与剩余 frontier；
-恢复后只允许从未消费且仍 freshness-valid 的 successor 继续，失效时生成显式 recovery-needed 状态，不自动扩大能力或进入写入自治。
-该 Gate 通过前不进入开放域自然语言工具选择、CUDA kernel 或视觉包装。
+**已完成（2026-08-29）：successor graph 的失败前缀与可审计 recovery Gate。** 真实 `workspace` 读取失败、snapshot 漂移和
+checkpoint 写入失败均进入明确的 recovery 状态；checkpoint 持久化 `completed_prefix`、失败码/原因、latest evidence、剩余 frontier、
+已消费 request/affordance/event identity。每个副作用前先保存 in-flight reservation，post-checkpoint 失败时恢复不会重试未知 step；
+恢复入口对旧 loop 返回零步 `recovery_needed`，只允许外部取得 freshness-valid successor 后以新的受控 graph 继续，且不会自动扩大能力或进入
+写入自治。WorkBench 定向回归 `38 passed`，全量 Python 回归 `546 passed, 6 skipped`，覆盖率 `44.70%`，Ruff 主门禁/B-SIM、Black、
+核心 mypy 均通过。该 Gate 仍不开放开放域自然语言工具选择、CUDA kernel 或视觉包装。
+
+**当前唯一下一步：建立显式 recovery handoff 与 fresh-evidence continuation Gate。** 将 `recovery_needed` 从只读诊断结果提升为
+可审计的受控恢复协议：外部补充新的 workspace evidence 后，校验 parent loop、failure event、snapshot、schema 和 frontier lineage，
+生成新的 recovery loop identity；只把未消费且 freshness-valid 的 successor 交给 Taiji Executive，保留失败前缀与 recovery provenance，
+并验证 checkpoint 恢复、旧 loop 禁止重入、预算不重置。该 Gate 通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。

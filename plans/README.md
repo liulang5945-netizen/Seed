@@ -357,7 +357,8 @@ interaction-group attribution 已有主线提交和回归证据；此前“W7 �
 最新已完成片是 Taiji-owned 的真实只读自主 canary：默认 Taiji 原生 candidate synthesis 已脱离手工
 `ExecutiveCandidate`、语言 provider 和前端，真实 `workspace.list → workspace.read` 已完成选择、准入、执行、WorldEvent 回写、
 失效、重新投影与 checkpoint continuation；随后又完成 `seed-taiji-successor-graph-v1` 的多 evidence bounded continuation，
-覆盖多 frontier、sibling identity 失效、逐步 checkpoint 和恢复重投影；WorkBench 定向回归 `35 passed`，全量 Python `543 passed, 6 skipped`。
+覆盖多 frontier、sibling identity 失效、逐步 checkpoint 和恢复重投影；最新又完成失败前缀 recovery Gate，覆盖真实读取失败、snapshot 漂移、
+checkpoint 写入失败和 in-flight 防重复；WorkBench 定向回归 `38 passed`，全量 Python `546 passed, 6 skipped`。
 当前唯一下一步仍只以路线文档第 16 节为准。
 
 ## 当前唯一下一步
