@@ -15,6 +15,8 @@ from fastapi import APIRouter, HTTPException
 from api.models import (
     TaijiWorkbenchExecuteTaskRequest,
     TaijiWorkbenchProjectionRequest,
+    TaijiWorkbenchRecoveryBranchRequest,
+    TaijiWorkbenchRecoveryBranchSelectRequest,
     TaijiWorkbenchRecoveryHandoffRequest,
     TaijiWorkbenchReprojectionRequest,
     TaijiWorkbenchSuccessorLoopRequest,
@@ -310,6 +312,50 @@ def handoff_taiji_workbench_recovery(
     try:
         return runtime.handoff_taiji_workbench_recovery(
             parent_loop_id=request.parent_loop_id,
+            recovery_loop_id=request.recovery_loop_id,
+            snapshot_id=request.snapshot_id,
+            max_steps=request.max_steps,
+            max_budget_units=request.max_budget_units,
+            novelty=request.novelty,
+            resource_budget=request.resource_budget,
+            learn=request.learn,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/taiji/recovery-branch/register")
+def register_taiji_workbench_recovery_branch(
+    request: TaijiWorkbenchRecoveryBranchRequest,
+) -> dict[str, Any]:
+    """Register another compatible recovery evidence branch without executing it."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return runtime.register_taiji_workbench_recovery_branch(
+            parent_loop_id=request.parent_loop_id,
+            recovery_loop_id=request.recovery_loop_id,
+            snapshot_id=request.snapshot_id,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/taiji/recovery-branch/select")
+def select_taiji_workbench_recovery_branch(
+    request: TaijiWorkbenchRecoveryBranchSelectRequest,
+) -> dict[str, Any]:
+    """Select and execute one active recovery evidence branch."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return runtime.select_taiji_workbench_recovery_branch(
+            parent_loop_id=request.parent_loop_id,
+            branch_id=request.branch_id,
             recovery_loop_id=request.recovery_loop_id,
             snapshot_id=request.snapshot_id,
             max_steps=request.max_steps,

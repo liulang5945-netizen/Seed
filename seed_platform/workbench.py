@@ -52,6 +52,8 @@ WORKBENCH_TAIJI_EVIDENCE_KIND = "workbench.evidence"
 WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT = "seed-taiji-successor-graph-v1"
 WORKBENCH_TAIJI_SUCCESSOR_GRAPH_VERSION = 1
 WORKBENCH_TAIJI_SUCCESSOR_STEP_BUDGET_UNITS = 1.0
+WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT = "seed-taiji-recovery-portfolio-v1"
+WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_VERSION = 1
 # Workbench sensations cross into Taiji's native byte sensor. Keep the
 # digest-derived marker inside the raw-byte domain; Taiji's boundary symbol
 # is reserved for stream framing and is not emitted here.

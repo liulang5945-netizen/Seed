@@ -11,6 +11,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import logging
 import pickle
 import threading
@@ -458,6 +459,9 @@ class SeedRuntime:
             successor_graph = loop_payload.get("successor_graph")
             if isinstance(successor_graph, Mapping):
                 restored_loop_state["successor_graph"] = dict(successor_graph)
+            recovery_portfolio = loop_payload.get("recovery_portfolio")
+            if isinstance(recovery_portfolio, Mapping):
+                restored_loop_state["recovery_portfolio"] = dict(recovery_portfolio)
             self._workbench_loop_state = restored_loop_state
 
     def preview_workbench_intent(
@@ -1107,7 +1111,11 @@ class SeedRuntime:
         expected_frontier = tuple(
             str(item) for item in successor_state.get("frontier_affordance_ids", ())
         )
-        if same_loop and int(successor_state.get("completed_steps", 0)) > 0:
+        if (
+            same_loop
+            and int(successor_state.get("completed_steps", 0)) > 0
+            and not successor_state.get("recovery_branch_id")
+        ):
             # Do not trust an arbitrary restored frontier: reconstruct it from
             # the latest typed evidence, then compare content identity.
             self.reproject_workbench_from_latest_evidence(
@@ -1118,6 +1126,13 @@ class SeedRuntime:
             current_frontier = tuple(item.affordance_id for item in world.affordances)
         if current_frontier != expected_frontier:
             raise ValueError("Taiji successor graph frontier drifted during continuation")
+        if same_loop and successor_state.get("recovery_branch_id"):
+            branch_source_id = str(successor_state.get("recovery_branch_source_evidence_id", ""))
+            if not branch_source_id or not any(
+                item.event_id == branch_source_id and item.tick == world.tick
+                for item in world.events
+            ):
+                raise ValueError("selected recovery branch evidence expired")
         if not current_frontier:
             if same_loop:
                 successor_state["status"] = "completed"
@@ -1518,6 +1533,8 @@ class SeedRuntime:
 
         from seed_platform.workbench import (
             WORKBENCH_TAIJI_EVIDENCE_KIND,
+            WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT,
+            WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_VERSION,
             WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT,
             WORKBENCH_TAIJI_SUCCESSOR_GRAPH_VERSION,
         )
@@ -1589,15 +1606,64 @@ class SeedRuntime:
         if any(item.affordance_id in consumed for item in affordances):
             raise RuntimeError("recovery evidence reintroduced a consumed affordance")
         world = self.model.architecture.set_world_affordances(affordances)
+        branch_id = (
+            "recovery-branch:"
+            + hashlib.sha256(
+                f"{parent_loop_id}:{evidence.evidence_id}:{evidence.after_state_digest}".encode()
+            ).hexdigest()[:32]
+        )
         retired_loop_ids = [
             *existing.get("retired_loop_ids", ()),
             str(parent_loop_id),
         ]
+        branch = {
+            "branch_id": branch_id,
+            "loop_id": str(recovery_loop_id),
+            "parent_loop_id": str(parent_loop_id),
+            "source_evidence_id": evidence.evidence_id,
+            "source_after_state_digest": evidence.after_state_digest,
+            "capability_id": evidence.capability_id,
+            "parameters": dict(evidence.parameters),
+            "status": "selected",
+            "budget_limit": budget_limit,
+            "budget_units": budget_used,
+            "completed_steps": int(existing.get("completed_steps", 0)),
+            "committed_request_ids": [
+                str(item) for item in existing.get("committed_request_ids", ())
+            ],
+            "consumed_affordance_ids": [
+                str(item) for item in existing.get("consumed_affordance_ids", ())
+            ],
+            "event_ids": [str(item) for item in existing.get("event_ids", ())],
+            "evidence": evidence.to_payload(),
+            "frontier_affordance_ids": [item.affordance_id for item in affordances],
+        }
+        portfolio = {
+            "format": WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT,
+            "version": WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_VERSION,
+            "parent_loop_id": str(parent_loop_id),
+            "snapshot_id": str(snapshot_id),
+            "parent_failure": dict(failure),
+            "parent_budget_limit": budget_limit,
+            "parent_budget_units": budget_used,
+            "parent_completed_steps": int(existing.get("completed_steps", 0)),
+            "parent_committed_request_ids": [
+                str(item) for item in existing.get("committed_request_ids", ())
+            ],
+            "parent_consumed_affordance_ids": [
+                str(item) for item in existing.get("consumed_affordance_ids", ())
+            ],
+            "parent_event_ids": [str(item) for item in existing.get("event_ids", ())],
+            "branches": [branch],
+            "retired_loop_ids": retired_loop_ids,
+        }
         recovery_state = {
             "format": WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT,
             "version": WORKBENCH_TAIJI_SUCCESSOR_GRAPH_VERSION,
             "loop_id": str(recovery_loop_id),
             "parent_loop_id": str(parent_loop_id),
+            "recovery_branch_id": branch_id,
+            "recovery_branch_source_evidence_id": evidence.evidence_id,
             "snapshot_id": str(snapshot_id),
             "budget_limit": budget_limit,
             "budget_units": budget_used,
@@ -1617,6 +1683,7 @@ class SeedRuntime:
             "recovery": {
                 "parent_loop_id": str(parent_loop_id),
                 "parent_failure": dict(failure),
+                "branch_id": branch_id,
                 "source_evidence_id": evidence.evidence_id,
                 "source_after_state_digest": evidence.after_state_digest,
             },
@@ -1625,6 +1692,7 @@ class SeedRuntime:
         self._workbench_loop_state = {
             **self._workbench_loop_state,
             "successor_graph": recovery_state,
+            "recovery_portfolio": portfolio,
         }
         result = self.execute_taiji_workbench_successor_loop(
             snapshot_id=snapshot_id,
@@ -1635,6 +1703,387 @@ class SeedRuntime:
             resource_budget=resource_budget,
             learn=learn,
         )
+        result["recovery"] = dict(recovery_state["recovery"])
+        active_state = self._workbench_loop_state.get("successor_graph")
+        if isinstance(active_state, Mapping):
+            branch.update(
+                {
+                    "status": (
+                        "completed"
+                        if active_state.get("status") == "completed"
+                        else (
+                            "failed"
+                            if active_state.get("status")
+                            in {"recovery_needed", "checkpoint_failed"}
+                            else "active"
+                        )
+                    ),
+                    "budget_units": float(active_state.get("budget_units", budget_used)),
+                    "completed_steps": int(
+                        active_state.get("completed_steps", branch["completed_steps"])
+                    ),
+                    "frontier_affordance_ids": list(
+                        active_state.get(
+                            "frontier_affordance_ids", branch["frontier_affordance_ids"]
+                        )
+                    ),
+                    "committed_request_ids": [
+                        str(item) for item in active_state.get("committed_request_ids", ())
+                    ],
+                    "consumed_affordance_ids": [
+                        str(item) for item in active_state.get("consumed_affordance_ids", ())
+                    ],
+                    "event_ids": [str(item) for item in active_state.get("event_ids", ())],
+                }
+            )
+        portfolio["branches"] = [branch]
+        self._workbench_loop_state["recovery_portfolio"] = portfolio
+        try:
+            self.save()
+        except (OSError, RuntimeError, ValueError) as exc:
+            result["recovery"]["portfolio_checkpoint"] = {
+                "committed": False,
+                "error_code": "checkpoint_failed",
+                "error": str(exc),
+            }
+        else:
+            result["recovery"]["portfolio_checkpoint"] = {"committed": True}
+        result["recovery"]["branch_id"] = branch_id
+        result["recovery"]["portfolio"] = dict(portfolio)
+        return result
+
+    @staticmethod
+    def _validate_recovery_source_evidence(
+        event: Any,
+        *,
+        failure: Mapping[str, Any],
+        environment: Any,
+        current_tick: int,
+    ) -> tuple[Any, tuple[Any, ...]]:
+        """Validate one fresh evidence event against its parent failure context."""
+
+        from seed_platform.workbench import WorkbenchTaijiEvidence
+
+        if event is None:
+            raise RuntimeError("recovery requires a newer workspace evidence event")
+        if event.tick != int(current_tick):
+            raise RuntimeError("recovery evidence is stale")
+        evidence = WorkbenchTaijiEvidence.from_taiji_event(event)
+        if not evidence.success:
+            raise RuntimeError("recovery evidence must be successful")
+        if evidence.snapshot_id != environment.capability_snapshot.snapshot_id:
+            raise RuntimeError("recovery evidence capability snapshot drifted")
+        failed_capability_id = str(failure.get("capability_id", ""))
+        failed_parameters = failure.get("parameters")
+        if not failed_capability_id or not isinstance(failed_parameters, Mapping):
+            raise RuntimeError("recovery failure has no capability context")
+        if evidence.capability_id != failed_capability_id:
+            raise RuntimeError("recovery evidence is incompatible with the failed capability")
+        if dict(evidence.parameters) != dict(failed_parameters):
+            raise RuntimeError("recovery evidence parameters do not match the failed context")
+        affordances = evidence.to_taiji_affordances(environment.capability_snapshot)
+        if not affordances:
+            raise RuntimeError("recovery evidence produced no successor affordance")
+        return evidence, affordances
+
+    def register_taiji_workbench_recovery_branch(
+        self,
+        *,
+        parent_loop_id: str,
+        recovery_loop_id: str,
+        snapshot_id: str,
+    ) -> dict[str, Any]:
+        """Persist another compatible recovery evidence branch without executing it."""
+
+        import hashlib
+
+        from seed_platform.workbench import (
+            WORKBENCH_TAIJI_EVIDENCE_KIND,
+            WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT,
+            WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_VERSION,
+        )
+
+        if not str(parent_loop_id).strip() or not str(recovery_loop_id).strip():
+            raise ValueError("recovery branch parent and loop ids cannot be empty")
+        environment = self._sync_workbench_root()
+        if str(snapshot_id) != environment.capability_snapshot.snapshot_id:
+            raise ValueError("recovery branch capability snapshot is not current")
+        portfolio = self._workbench_loop_state.get("recovery_portfolio")
+        if not isinstance(portfolio, Mapping):
+            raise RuntimeError("recovery branch registration requires a recovery portfolio")
+        if str(portfolio.get("parent_loop_id", "")) != str(parent_loop_id):
+            raise ValueError("recovery branch parent does not match the portfolio")
+        branches = portfolio.get("branches", ())
+        if isinstance(branches, (str, bytes)) or not isinstance(branches, Sequence):
+            raise ValueError("recovery portfolio branches are invalid")
+        known_loop_ids = {str(item) for item in portfolio.get("retired_loop_ids", ())}
+        known_event_ids: set[str] = set()
+        for item in branches:
+            if not isinstance(item, Mapping):
+                raise ValueError("recovery portfolio branch is invalid")
+            known_loop_ids.add(str(item.get("loop_id", "")))
+            known_loop_ids.update(str(loop) for loop in item.get("retired_loop_ids", ()))
+            known_event_ids.add(str(item.get("source_evidence_id", "")))
+            known_event_ids.update(str(event) for event in item.get("event_ids", ()))
+        if str(recovery_loop_id) in known_loop_ids:
+            raise ValueError("recovery branch loop identity already exists")
+
+        failure = portfolio.get("parent_failure")
+        if not isinstance(failure, Mapping):
+            raise RuntimeError("recovery portfolio has no parent failure context")
+        world = self.model.architecture.cognitive_snapshot().world
+        event = next(
+            (
+                item
+                for item in reversed(world.events)
+                if item.kind == WORKBENCH_TAIJI_EVIDENCE_KIND
+                and item.event_id not in known_event_ids
+            ),
+            None,
+        )
+        evidence, affordances = self._validate_recovery_source_evidence(
+            event,
+            failure=failure,
+            environment=environment,
+            current_tick=world.tick,
+        )
+        branch_id = (
+            "recovery-branch:"
+            + hashlib.sha256(
+                f"{parent_loop_id}:{evidence.evidence_id}:{evidence.after_state_digest}".encode()
+            ).hexdigest()[:32]
+        )
+        if any(
+            isinstance(item, Mapping) and str(item.get("branch_id", "")) == branch_id
+            for item in branches
+        ):
+            raise ValueError("recovery branch evidence already exists in the portfolio")
+        branch = {
+            "branch_id": branch_id,
+            "loop_id": str(recovery_loop_id),
+            "parent_loop_id": str(parent_loop_id),
+            "source_evidence_id": evidence.evidence_id,
+            "source_after_state_digest": evidence.after_state_digest,
+            "capability_id": evidence.capability_id,
+            "parameters": dict(evidence.parameters),
+            "status": "active",
+            "budget_limit": float(portfolio.get("parent_budget_limit", 0.0)),
+            "budget_units": float(portfolio.get("parent_budget_units", 0.0)),
+            "completed_steps": int(portfolio.get("parent_completed_steps", 0)),
+            "committed_request_ids": [
+                str(item) for item in portfolio.get("parent_committed_request_ids", ())
+            ],
+            "consumed_affordance_ids": [
+                str(item) for item in portfolio.get("parent_consumed_affordance_ids", ())
+            ],
+            "event_ids": [str(item) for item in portfolio.get("parent_event_ids", ())],
+            "evidence": evidence.to_payload(),
+            "frontier_affordance_ids": [item.affordance_id for item in affordances],
+        }
+        updated_portfolio = dict(portfolio)
+        updated_portfolio["format"] = WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT
+        updated_portfolio["version"] = WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_VERSION
+        updated_portfolio["branches"] = [*branches, branch]
+        self._workbench_loop_state["recovery_portfolio"] = updated_portfolio
+        checkpoint = {"committed": True, "path": str(self.save())}
+        return {
+            "format": WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT,
+            "version": WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_VERSION,
+            "status": "branch_registered",
+            "parent_loop_id": str(parent_loop_id),
+            "branch": branch,
+            "portfolio": updated_portfolio,
+            "checkpoint": checkpoint,
+        }
+
+    def select_taiji_workbench_recovery_branch(
+        self,
+        *,
+        parent_loop_id: str,
+        branch_id: str,
+        recovery_loop_id: str,
+        snapshot_id: str,
+        max_steps: int = 8,
+        max_budget_units: float = 32.0,
+        novelty: float = 0.0,
+        resource_budget: float = 1.0,
+        learn: bool = False,
+    ) -> dict[str, Any]:
+        """Select one active recovery branch and execute it as a new loop."""
+
+        from seed_platform.workbench import (
+            WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT,
+            WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_VERSION,
+            WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT,
+            WORKBENCH_TAIJI_SUCCESSOR_GRAPH_VERSION,
+        )
+
+        if not str(branch_id).strip() or not str(recovery_loop_id).strip():
+            raise ValueError("recovery branch and loop ids cannot be empty")
+        environment = self._sync_workbench_root()
+        if str(snapshot_id) != environment.capability_snapshot.snapshot_id:
+            raise ValueError("recovery branch capability snapshot is not current")
+        portfolio = self._workbench_loop_state.get("recovery_portfolio")
+        if not isinstance(portfolio, Mapping):
+            raise RuntimeError("recovery branch selection requires a recovery portfolio")
+        if str(portfolio.get("parent_loop_id", "")) != str(parent_loop_id):
+            raise ValueError("recovery branch parent does not match the portfolio")
+        branches = portfolio.get("branches", ())
+        if isinstance(branches, (str, bytes)) or not isinstance(branches, Sequence):
+            raise ValueError("recovery portfolio branches are invalid")
+        branch = next(
+            (
+                dict(item)
+                for item in branches
+                if isinstance(item, Mapping) and str(item.get("branch_id", "")) == str(branch_id)
+            ),
+            None,
+        )
+        if branch is None:
+            raise ValueError("recovery branch is not in the portfolio")
+        if branch.get("status") != "active":
+            raise RuntimeError("recovery branch is not active")
+        if any(
+            str(item.get("loop_id", "")) == str(recovery_loop_id)
+            for item in branches
+            if isinstance(item, Mapping)
+        ) or str(recovery_loop_id) in {str(item) for item in portfolio.get("retired_loop_ids", ())}:
+            raise ValueError("recovery branch selection loop identity already exists")
+        failure = portfolio.get("parent_failure")
+        if not isinstance(failure, Mapping):
+            raise RuntimeError("recovery portfolio has no parent failure context")
+        world = self.model.architecture.cognitive_snapshot().world
+        event = next(
+            (
+                item
+                for item in world.events
+                if item.event_id == str(branch.get("source_evidence_id", ""))
+            ),
+            None,
+        )
+        evidence, affordances = self._validate_recovery_source_evidence(
+            event,
+            failure=failure,
+            environment=environment,
+            current_tick=world.tick,
+        )
+        if evidence.after_state_digest != str(branch.get("source_after_state_digest", "")):
+            raise ValueError("recovery branch evidence content drifted")
+        consumed = {str(item) for item in portfolio.get("parent_consumed_affordance_ids", ())}
+        if any(item.affordance_id in consumed for item in affordances):
+            raise RuntimeError("recovery branch reintroduced a consumed affordance")
+        current_state = self._workbench_loop_state.get("successor_graph")
+        if isinstance(current_state, Mapping) and isinstance(
+            current_state.get("in_flight"), Mapping
+        ):
+            raise RuntimeError("cannot select a recovery branch while another step is in flight")
+        retired_loop_ids = [str(item) for item in portfolio.get("retired_loop_ids", ())]
+        if isinstance(current_state, Mapping):
+            current_loop_id = str(current_state.get("loop_id", ""))
+            if current_loop_id and current_loop_id != str(parent_loop_id):
+                retired_loop_ids.append(current_loop_id)
+        retired_loop_ids = list(dict.fromkeys([*retired_loop_ids, str(parent_loop_id)]))
+        recovery_state = {
+            "format": WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT,
+            "version": WORKBENCH_TAIJI_SUCCESSOR_GRAPH_VERSION,
+            "loop_id": str(recovery_loop_id),
+            "parent_loop_id": str(parent_loop_id),
+            "recovery_branch_id": str(branch_id),
+            "recovery_branch_source_evidence_id": evidence.evidence_id,
+            "snapshot_id": str(snapshot_id),
+            "budget_limit": float(branch.get("budget_limit", 0.0)),
+            "budget_units": float(branch.get("budget_units", 0.0)),
+            "completed_steps": int(branch.get("completed_steps", 0)),
+            "committed_request_ids": [
+                str(item) for item in branch.get("committed_request_ids", ())
+            ],
+            "consumed_affordance_ids": [
+                str(item) for item in branch.get("consumed_affordance_ids", ())
+            ],
+            "event_ids": [str(item) for item in branch.get("event_ids", ())],
+            "frontier_affordance_ids": [item.affordance_id for item in affordances],
+            "remaining_frontier_affordance_ids": [item.affordance_id for item in affordances],
+            "latest_evidence_id": evidence.evidence_id,
+            "failure": None,
+            "retired_loop_ids": retired_loop_ids,
+            "recovery": {
+                "parent_loop_id": str(parent_loop_id),
+                "parent_failure": dict(failure),
+                "branch_id": str(branch_id),
+                "source_evidence_id": evidence.evidence_id,
+                "source_after_state_digest": evidence.after_state_digest,
+            },
+            "status": "running",
+        }
+        world = self.model.architecture.set_world_affordances(affordances)
+        updated_portfolio = dict(portfolio)
+        updated_portfolio["format"] = WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_FORMAT
+        updated_portfolio["version"] = WORKBENCH_TAIJI_RECOVERY_PORTFOLIO_VERSION
+        updated_portfolio["retired_loop_ids"] = retired_loop_ids
+        updated_branches = []
+        for item in branches:
+            if isinstance(item, Mapping) and str(item.get("branch_id", "")) == str(branch_id):
+                updated = dict(branch)
+                updated["loop_id"] = str(recovery_loop_id)
+                updated["status"] = "selected"
+                updated_branches.append(updated)
+            else:
+                updated_branches.append(dict(item))
+        updated_portfolio["branches"] = updated_branches
+        self._workbench_loop_state = {
+            **self._workbench_loop_state,
+            "successor_graph": recovery_state,
+            "recovery_portfolio": updated_portfolio,
+        }
+        result = self.execute_taiji_workbench_successor_loop(
+            snapshot_id=snapshot_id,
+            loop_id=recovery_loop_id,
+            max_steps=max_steps,
+            max_budget_units=max_budget_units,
+            novelty=novelty,
+            resource_budget=resource_budget,
+            learn=learn,
+        )
+        active_state = self._workbench_loop_state.get("successor_graph")
+        for item in updated_branches:
+            if str(item.get("branch_id", "")) == str(branch_id):
+                item["status"] = (
+                    "completed"
+                    if isinstance(active_state, Mapping)
+                    and active_state.get("status") == "completed"
+                    else (
+                        "failed"
+                        if isinstance(active_state, Mapping)
+                        and active_state.get("status") in {"recovery_needed", "checkpoint_failed"}
+                        else "active"
+                    )
+                )
+                if isinstance(active_state, Mapping):
+                    item["budget_units"] = float(active_state.get("budget_units", 0.0))
+                    item["completed_steps"] = int(active_state.get("completed_steps", 0))
+                    item["frontier_affordance_ids"] = list(
+                        active_state.get("frontier_affordance_ids", ())
+                    )
+                    item["committed_request_ids"] = [
+                        str(value) for value in active_state.get("committed_request_ids", ())
+                    ]
+                    item["consumed_affordance_ids"] = [
+                        str(value) for value in active_state.get("consumed_affordance_ids", ())
+                    ]
+                    item["event_ids"] = [str(value) for value in active_state.get("event_ids", ())]
+        updated_portfolio["branches"] = updated_branches
+        self._workbench_loop_state["recovery_portfolio"] = updated_portfolio
+        try:
+            self.save()
+        except (OSError, RuntimeError, ValueError) as exc:
+            result["recovery_portfolio_checkpoint"] = {
+                "committed": False,
+                "error_code": "checkpoint_failed",
+                "error": str(exc),
+            }
+        else:
+            result["recovery_portfolio_checkpoint"] = {"committed": True}
+        result["recovery_portfolio"] = updated_portfolio
         result["recovery"] = dict(recovery_state["recovery"])
         return result
 
