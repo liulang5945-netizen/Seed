@@ -3556,6 +3556,30 @@
         ]
       }
     },
+    "/api/workbench/taiji/recovery-branch/context": {
+      "get": {
+        "description": "Return the read-only portfolio binding key (parent loop / snapshot / revision).\n\n客户端审计视图的唯一绑定来源：详见 plans 04_EXECUTION_PLAN.md §2.1。\n无 portfolio 时返回结构化空态（has_portfolio=False），不视为错误。",
+        "operationId": "taiji_workbench_recovery_portfolio_context_api_workbench_taiji_recovery_branch_context_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Taiji Workbench Recovery Portfolio Context Api Workbench Taiji Recovery Branch Context Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Taiji Workbench Recovery Portfolio Context",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
     "/api/workbench/taiji/recovery-branch/maintain": {
       "post": {
         "description": "Expire stale branches and enforce the recovery portfolio capacity.",

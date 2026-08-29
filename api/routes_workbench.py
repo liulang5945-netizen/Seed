@@ -391,6 +391,37 @@ def maintain_taiji_workbench_recovery_portfolio(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
+@router.get("/taiji/recovery-branch/context")
+def taiji_workbench_recovery_portfolio_context() -> dict[str, Any]:
+    """Return the read-only portfolio binding key (parent loop / snapshot / revision).
+
+    客户端审计视图的唯一绑定来源：详见 plans 04_EXECUTION_PLAN.md §2.1。
+    无 portfolio 时返回结构化空态（has_portfolio=False），不视为错误。
+    """
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail={"error": "runtime_not_active"})
+    return runtime.taiji_workbench_recovery_portfolio_context()
+
+
+def _portfolio_error_code(message: str) -> str:
+    """把稳定的运行时错误消息映射为客户端可分支的结构化状态码。"""
+    return {
+        "recovery portfolio is not persisted": "portfolio_not_persisted",
+        "recovery portfolio capability snapshot is not current": "portfolio_snapshot_not_current",
+        "recovery portfolio parent does not match": "portfolio_parent_mismatch",
+        "recovery portfolio revision is stale": "portfolio_revision_stale",
+        "recovery portfolio snapshot metadata is invalid": "portfolio_invalid",
+        "recovery portfolio branches are invalid": "portfolio_invalid",
+        "recovery portfolio evicted branches are invalid": "portfolio_invalid",
+        "recovery portfolio branch is invalid": "portfolio_invalid",
+        "recovery portfolio branch status is invalid": "portfolio_invalid",
+        "recovery portfolio branch liveness is invalid": "portfolio_invalid",
+        "recovery portfolio evicted branch is invalid": "portfolio_invalid",
+    }.get(message, "portfolio_unavailable")
+
+
 @router.get("/taiji/recovery-branch/portfolio")
 def taiji_workbench_recovery_portfolio_snapshot(
     parent_loop_id: str,
@@ -401,15 +432,24 @@ def taiji_workbench_recovery_portfolio_snapshot(
 
     runtime = get_seed_runtime()
     if runtime is None:
-        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+        raise HTTPException(status_code=409, detail={"error": "runtime_not_active"})
     try:
         return runtime.taiji_workbench_recovery_portfolio_snapshot(
             parent_loop_id=parent_loop_id,
             snapshot_id=snapshot_id,
             expected_revision=expected_revision,
         )
-    except (TypeError, ValueError, RuntimeError) as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        code = _portfolio_error_code(str(exc))
+        detail: dict[str, Any] = {"error": code, "message": str(exc)}
+        if code == "portfolio_revision_stale":
+            portfolio = runtime._workbench_loop_state.get("recovery_portfolio") or {}
+            if isinstance(portfolio, dict):
+                detail["observed_revision"] = int(portfolio.get("revision", 0))
+        raise HTTPException(status_code=400, detail=detail) from exc
+    except (TypeError, ValueError) as exc:
+        code = _portfolio_error_code(str(exc))
+        raise HTTPException(status_code=400, detail={"error": code, "message": str(exc)}) from exc
 
 
 @router.post("/preview")

@@ -12,6 +12,7 @@ import { nativeApi } from './nativeApi.js'
 const capabilities = ref(null)
 const events = ref([])
 const recoveryPortfolio = ref(null)
+const recoveryContext = ref(null)
 const error = ref('')
 const loading = ref(false)
 let consumerCount = 0
@@ -103,6 +104,14 @@ async function refreshRecoveryPortfolio(parentLoopId, expectedRevision = null) {
     expectedRevision,
   )
   recoveryPortfolio.value = payload
+  error.value = ''
+  return payload
+}
+
+async function refreshRecoveryPortfolioContext() {
+  await ensureCapabilities()
+  const payload = await nativeApi.taijiWorkbenchRecoveryPortfolioContext()
+  recoveryContext.value = payload
   error.value = ''
   return payload
 }
@@ -268,6 +277,7 @@ export function useWorkbenchProjection() {
     capabilities: readonly(capabilities),
     events: readonly(events),
     recoveryPortfolio: readonly(recoveryPortfolio),
+    recoveryContext: readonly(recoveryContext),
     error: readonly(error),
     loading: readonly(loading),
     snapshotId,
@@ -286,6 +296,7 @@ export function useWorkbenchProjection() {
     readFile,
     resolveProgrammingLanguage,
     refreshRecoveryPortfolio,
+    refreshRecoveryPortfolioContext,
     setEditorLanguage,
     previewIntent,
     executeIntent,
