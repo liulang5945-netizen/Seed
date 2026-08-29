@@ -189,6 +189,134 @@ def test_workspace_evidence_becomes_taiji_world_event_and_invalidates_affordance
     assert restored_world.affordances == ()
 
 
+def test_latest_workspace_evidence_reprojects_and_rejects_old_candidate(
+    tmp_path, monkeypatch
+) -> None:
+    (tmp_path / "README.md").write_bytes(b"reproject me\n")
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(Seed(episode_id="workbench-reproject"))
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    environment = runtime.workbench_environment
+    snapshot_id = environment.capability_snapshot.snapshot_id
+    initial = runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.read": {"path": "README.md"}},
+    )
+    old_affordance_id = initial["affordances"][0]["affordance_id"]
+    old_candidate = replace(
+        _grounded_read_candidate(tick=runtime.model.tick),
+        source_affordance_id=old_affordance_id,
+    )
+    intent = ActionIntent(
+        intent_id="intent-reproject-read",
+        kind="workspace.read",
+        parameters={"path": "README.md"},
+        confidence=1.0,
+        tick=runtime.model.tick,
+    )
+
+    runtime.execute_workbench_intent(intent, snapshot_id=snapshot_id, learn=False)
+    world_after_evidence = runtime.model.architecture.cognitive_snapshot().world
+    stale_candidate = replace(
+        old_candidate,
+        action_intent=replace(old_candidate.action_intent, tick=world_after_evidence.tick),
+    )
+    stale = environment.admit_taiji_candidate(
+        stale_candidate,
+        snapshot_id=snapshot_id,
+        current_tick=world_after_evidence.tick,
+        current_affordance_ids=tuple(
+            item.affordance_id for item in world_after_evidence.affordances
+        ),
+    )
+    assert stale.accepted is False
+    assert stale.reason_code == "stale_taiji_affordance"
+
+    reprojected = runtime.reproject_workbench_from_latest_evidence(snapshot_id=snapshot_id)
+    new_affordance_id = reprojected["affordances"][0]["affordance_id"]
+    assert new_affordance_id != old_affordance_id
+    assert reprojected["evidence"]["event_id"] == world_after_evidence.events[-1].event_id
+    reprojected_world = runtime.model.architecture.cognitive_snapshot().world
+    assert any(
+        item == "workbench-evidence:" + reprojected["evidence"]["event_id"]
+        for item in reprojected_world.affordances[0].grounding_lineage
+    )
+    fresh_candidate = replace(
+        _grounded_read_candidate(
+            tick=runtime.model.architecture.cognitive_snapshot().tick,
+        ),
+        source_affordance_id=new_affordance_id,
+    )
+    fresh_world = runtime.model.architecture.cognitive_snapshot().world
+    admitted = environment.admit_taiji_candidate(
+        fresh_candidate,
+        snapshot_id=snapshot_id,
+        current_tick=fresh_world.tick,
+        current_affordance_ids=tuple(item.affordance_id for item in fresh_world.affordances),
+    )
+    assert admitted.accepted is True
+    assert "workbench-evidence:" + reprojected["evidence"]["event_id"] in {
+        item for item in fresh_world.affordances[0].grounding_lineage
+    }
+
+
+def test_workspace_evidence_event_order_survives_checkpoint_continuation(
+    tmp_path, monkeypatch
+) -> None:
+    (tmp_path / "README.md").write_bytes(b"searchable workspace evidence\n")
+    (tmp_path / "notes.txt").write_bytes(b"another searchable entry\n")
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(Seed(episode_id="workbench-evidence-order"))
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    calls = (
+        ("workspace.list", {"path": "."}),
+        ("workspace.read", {"path": "README.md"}),
+        ("workspace.stat", {"path": "README.md"}),
+        ("workspace.search", {"query": "searchable", "path": "."}),
+    )
+
+    for index, (kind, parameters) in enumerate(calls):
+        runtime.execute_workbench_intent(
+            ActionIntent(
+                intent_id=f"intent-evidence-order-{index}",
+                kind=kind,
+                parameters=parameters,
+                confidence=1.0,
+                tick=runtime.model.tick,
+            ),
+            snapshot_id=snapshot_id,
+            learn=False,
+        )
+
+    world = runtime.model.architecture.cognitive_snapshot().world
+    evidence_events = [item for item in world.events if item.kind == "workbench.evidence"]
+    assert [dict(item.attributes)["capability_id"] for item in evidence_events] == [
+        item[0] for item in calls
+    ]
+    assert [item.tick for item in evidence_events] == sorted(item.tick for item in evidence_events)
+    checkpoint = tmp_path / "evidence-order.pt"
+    runtime.save(checkpoint)
+    restored = SeedRuntime.load(checkpoint)
+    restored_events = [
+        item
+        for item in restored.model.architecture.cognitive_snapshot().world.events
+        if item.kind == "workbench.evidence"
+    ]
+    assert [item.event_id for item in restored_events] == [
+        item.event_id for item in evidence_events
+    ]
+    assert [dict(item.attributes)["after_state_digest"] for item in restored_events] == [
+        dict(item.attributes)["after_state_digest"] for item in evidence_events
+    ]
+
+
 def test_read_only_environment_reads_and_rejects_escape(tmp_path) -> None:
     (tmp_path / "src").mkdir()
     with (tmp_path / "src" / "main.py").open("w", encoding="utf-8", newline="") as handle:
@@ -360,7 +488,14 @@ def test_runtime_taiji_task_selects_then_executes_the_admitted_candidate(
     )
     runtime = SeedRuntime(Seed(episode_id="taiji-admission"))
     runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
-    candidate = _grounded_read_candidate(tick=runtime.model.architecture.cognitive_snapshot().tick)
+    projected = runtime.project_workbench_affordances(
+        snapshot_id=runtime.workbench_environment.capability_snapshot.snapshot_id,
+        parameter_bindings={"workspace.read": {"path": "README.md"}},
+    )
+    candidate = replace(
+        _grounded_read_candidate(tick=runtime.model.architecture.cognitive_snapshot().tick),
+        source_affordance_id=projected["affordances"][0]["affordance_id"],
+    )
     context = ExecutiveContext.from_state(runtime.model.architecture.cognitive_snapshot())
     decision = ExecutiveDecision(
         selected=candidate,
@@ -389,7 +524,14 @@ def test_taiji_task_routes_expose_the_same_read_only_gate(tmp_path, monkeypatch)
     )
     runtime = SeedRuntime(Seed(episode_id="taiji-route-admission"))
     runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
-    candidate = _grounded_read_candidate(tick=runtime.model.architecture.cognitive_snapshot().tick)
+    projected_payload = runtime.project_workbench_affordances(
+        snapshot_id=runtime.workbench_environment.capability_snapshot.snapshot_id,
+        parameter_bindings={"workspace.read": {"path": "README.md"}},
+    )
+    candidate = replace(
+        _grounded_read_candidate(tick=runtime.model.architecture.cognitive_snapshot().tick),
+        source_affordance_id=projected_payload["affordances"][0]["affordance_id"],
+    )
     context = ExecutiveContext.from_state(runtime.model.architecture.cognitive_snapshot())
     decision = ExecutiveDecision(
         selected=candidate,
@@ -407,7 +549,7 @@ def test_taiji_task_routes_expose_the_same_read_only_gate(tmp_path, monkeypatch)
             "/api/workbench/taiji/project",
             json={
                 "snapshot_id": snapshot_id,
-                "parameter_bindings": {"workspace.list": {"path": "."}},
+                "parameter_bindings": {"workspace.read": {"path": "README.md"}},
             },
         )
         admitted = client.post(
@@ -418,14 +560,20 @@ def test_taiji_task_routes_expose_the_same_read_only_gate(tmp_path, monkeypatch)
             "/api/workbench/taiji/execute",
             json={"snapshot_id": snapshot_id},
         )
+        reprojected = client.post(
+            "/api/workbench/taiji/reproject",
+            json={"snapshot_id": snapshot_id},
+        )
 
     assert projected.status_code == 200
-    assert projected.json()["affordances"][0]["action_kind"] == "workspace.list"
+    assert projected.json()["affordances"][0]["action_kind"] == "workspace.read"
     assert admitted.status_code == 200
     assert admitted.json()["admission"]["accepted"] is True
     assert executed.status_code == 200
     assert executed.json()["admission"]["accepted"] is True
     assert executed.json()["execution"]["outcome"]["status"] == "success"
+    assert reprojected.status_code == 200
+    assert reprojected.json()["affordances"][0]["action_kind"] == "workspace.read"
 
 
 def test_native_mcp_registry_lists_and_invokes_local_read_only_canary(tmp_path) -> None:

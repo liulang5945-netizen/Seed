@@ -372,7 +372,8 @@ interaction-group attribution 已有主线提交和回归证据；此前“W7 �
 完成自然语言自主工具选择。随后已补上 Taiji-owned 只读任务准入：ExecutiveController 选择当前候选，Workbench 以 capability snapshot
 做风险与参数 fail-closed，`/api/workbench/taiji/admit` 与 `/api/workbench/taiji/execute` 复用同一边界；最新又补上 capability snapshot
 到 Taiji WorldAffordance 的显式结构化投影与 `/api/workbench/taiji/project`；本轮已把真实 workspace after-state 写回 Taiji
-`WorldEvent`，并在 evidence 到达后清除旧 Workbench affordance、纳入 checkpoint。唯一下一步以路线文档第 16 节为准。
+`WorldEvent`，在 evidence 到达后清除旧 Workbench affordance、纳入 checkpoint，并新增只允许最新同 tick evidence 的
+`/api/workbench/taiji/reproject` 重新投影闭环。唯一下一步以路线文档第 16 节为准。
 
 ## 当前唯一下一步
 

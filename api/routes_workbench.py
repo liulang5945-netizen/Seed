@@ -15,6 +15,7 @@ from fastapi import APIRouter, HTTPException
 from api.models import (
     TaijiWorkbenchExecuteTaskRequest,
     TaijiWorkbenchProjectionRequest,
+    TaijiWorkbenchReprojectionRequest,
     TaijiWorkbenchTaskRequest,
     WorkbenchIntentRequest,
     WorkbenchLoopExecuteRequest,
@@ -250,6 +251,23 @@ def execute_taiji_workbench_task(request: TaijiWorkbenchExecuteTaskRequest) -> d
             novelty=request.novelty,
             resource_budget=request.resource_budget,
             learn=request.learn,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/taiji/reproject")
+def reproject_taiji_workbench_evidence(
+    request: TaijiWorkbenchReprojectionRequest,
+) -> dict[str, Any]:
+    """Re-project only the latest current-tick Workbench evidence."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return runtime.reproject_workbench_from_latest_evidence(
+            snapshot_id=request.snapshot_id,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

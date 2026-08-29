@@ -395,6 +395,9 @@ class CapabilitySnapshot:
     def to_taiji_affordances(
         self,
         parameter_bindings: Mapping[str, Mapping[str, Any]],
+        *,
+        evidence_id: str = "",
+        after_state_digest: str = "",
     ) -> tuple[Any, ...]:
         """Project explicit read-only capability bindings into Taiji affordances.
 
@@ -408,6 +411,8 @@ class CapabilitySnapshot:
 
         if not isinstance(parameter_bindings, Mapping):
             raise TypeError("Taiji capability bindings must be a mapping")
+        if bool(evidence_id) != bool(after_state_digest):
+            raise ValueError("Taiji evidence identity requires both event and after-state digest")
         affordances: list[Any] = []
         for capability_id in sorted(parameter_bindings, key=str):
             raw_parameters = parameter_bindings[capability_id]
@@ -432,8 +437,25 @@ class CapabilitySnapshot:
                     f"{capability_id}: {unknown}"
                 )
             identity = _canonical_digest(
-                {"capability_id": str(capability_id), "parameters": parameters}
+                {
+                    "capability_id": str(capability_id),
+                    "parameters": parameters,
+                    "evidence_id": str(evidence_id),
+                    "after_state_digest": str(after_state_digest),
+                }
             )[:16]
+            lineage = [
+                f"workbench-snapshot:{self.snapshot_id}",
+                f"workbench-capability-revision:{self.revision}",
+                f"workbench-capability:{capability_id}",
+            ]
+            if evidence_id:
+                lineage.extend(
+                    (
+                        f"workbench-evidence:{evidence_id}",
+                        f"workbench-after-state:{after_state_digest}",
+                    )
+                )
             affordances.append(
                 WorldAffordance(
                     affordance_id=f"workbench:{capability_id}:{identity}",
@@ -441,11 +463,7 @@ class CapabilitySnapshot:
                     parameters=parameters,
                     confidence=1.0,
                     feature_provenance="workbench-capability-snapshot",
-                    grounding_lineage=(
-                        f"workbench-snapshot:{self.snapshot_id}",
-                        f"workbench-capability-revision:{self.revision}",
-                        f"workbench-capability:{capability_id}",
-                    ),
+                    grounding_lineage=tuple(lineage),
                 )
             )
         return tuple(affordances)
@@ -774,6 +792,75 @@ class WorkbenchTaijiEvidence:
                 ("after_state_digest", self.after_state_digest),
             ),
             provenance="workbench-observed",
+        )
+
+    @classmethod
+    def from_taiji_event(cls, event: Any) -> WorkbenchTaijiEvidence:
+        """Recover and verify Workbench evidence from a persisted world event."""
+
+        from taiji import WorldEvent
+
+        if not isinstance(event, WorldEvent) or event.kind != WORKBENCH_TAIJI_EVIDENCE_KIND:
+            raise ValueError("event is not a Workbench Taiji evidence event")
+        attributes = dict(event.attributes)
+        required = (
+            "request_id",
+            "intent_id",
+            "call_id",
+            "capability_id",
+            "snapshot_id",
+            "status",
+            "success",
+            "parameters",
+            "result",
+            "after_state_digest",
+        )
+        missing = [name for name in required if name not in attributes]
+        if missing:
+            raise ValueError(f"WorkBench evidence event is missing attributes: {missing}")
+        parameters = attributes["parameters"]
+        result = attributes["result"]
+        if not isinstance(parameters, Mapping) or not isinstance(result, Mapping):
+            raise ValueError("WorkBench evidence event parameters and result must be mappings")
+        evidence = cls(
+            request_id=str(attributes["request_id"]),
+            intent_id=str(attributes["intent_id"]),
+            call_id=str(attributes["call_id"]),
+            capability_id=str(attributes["capability_id"]),
+            snapshot_id=str(attributes["snapshot_id"]),
+            tick=int(event.tick),
+            status=str(attributes["status"]),
+            success=bool(attributes["success"]),
+            parameters=dict(parameters),
+            result=dict(result),
+        )
+        if evidence.evidence_id != event.event_id:
+            raise ValueError("WorkBench evidence event identity does not match its attributes")
+        if evidence.after_state_digest != str(attributes["after_state_digest"]):
+            raise ValueError("WorkBench evidence after-state digest does not match its result")
+        return evidence
+
+    @property
+    def projection_bindings(self) -> Mapping[str, Mapping[str, Any]]:
+        """Return only the exact structured binding observed by this evidence."""
+
+        if not self.success:
+            return {}
+        return {self.capability_id: dict(self.parameters)}
+
+    def to_taiji_affordances(self, snapshot: CapabilitySnapshot) -> tuple[Any, ...]:
+        """Re-project this evidence through the current capability snapshot."""
+
+        if not isinstance(snapshot, CapabilitySnapshot):
+            raise TypeError("snapshot must be a CapabilitySnapshot")
+        if self.snapshot_id != snapshot.snapshot_id:
+            raise ValueError("WorkBench evidence capability snapshot is stale")
+        if not self.success:
+            return ()
+        return snapshot.to_taiji_affordances(
+            self.projection_bindings,
+            evidence_id=self.evidence_id,
+            after_state_digest=self.after_state_digest,
         )
 
 
@@ -1256,6 +1343,7 @@ class WorkbenchEnvironment:
         *,
         snapshot_id: str,
         current_tick: int | None = None,
+        current_affordance_ids: Sequence[str] | None = None,
     ) -> TaijiTaskAdmission:
         """Bind a live Taiji executive candidate to a read-only capability.
 
@@ -1298,6 +1386,13 @@ class WorkbenchEnvironment:
         if current_tick is not None and candidate.action_intent.tick != int(current_tick):
             return reject(
                 "stale_taiji_candidate", "Taiji task candidate is not at the current tick"
+            )
+        if current_affordance_ids is not None and candidate.source_affordance_id not in {
+            str(item) for item in current_affordance_ids
+        }:
+            return reject(
+                "stale_taiji_affordance",
+                "Taiji task candidate no longer refers to a current world affordance",
             )
 
         descriptor = self.snapshot.get(candidate.action_intent.kind)
