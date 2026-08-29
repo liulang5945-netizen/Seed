@@ -707,6 +707,50 @@
         "title": "TaijiWorkbenchReprojectionRequest",
         "type": "object"
       },
+      "TaijiWorkbenchSuccessorLoopRequest": {
+        "description": "Run a bounded Taiji-owned successor graph through the read-only Gate.",
+        "properties": {
+          "learn": {
+            "default": false,
+            "title": "Learn",
+            "type": "boolean"
+          },
+          "loop_id": {
+            "title": "Loop Id",
+            "type": "string"
+          },
+          "max_budget_units": {
+            "default": 32.0,
+            "title": "Max Budget Units",
+            "type": "number"
+          },
+          "max_steps": {
+            "default": 8,
+            "title": "Max Steps",
+            "type": "integer"
+          },
+          "novelty": {
+            "default": 0.0,
+            "title": "Novelty",
+            "type": "number"
+          },
+          "resource_budget": {
+            "default": 1.0,
+            "title": "Resource Budget",
+            "type": "number"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "snapshot_id",
+          "loop_id"
+        ],
+        "title": "TaijiWorkbenchSuccessorLoopRequest",
+        "type": "object"
+      },
       "TaijiWorkbenchTaskRequest": {
         "description": "Request Taiji to select one current candidate for the read-only Gate.",
         "properties": {
@@ -3393,6 +3437,50 @@
           }
         },
         "summary": "Reproject Taiji Workbench Evidence",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/taiji/successor-loop": {
+      "post": {
+        "description": "Run a bounded multi-step Taiji successor graph through the read-only Gate.",
+        "operationId": "execute_taiji_workbench_successor_loop_api_workbench_taiji_successor_loop_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaijiWorkbenchSuccessorLoopRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Execute Taiji Workbench Successor Loop Api Workbench Taiji Successor Loop Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Execute Taiji Workbench Successor Loop",
         "tags": [
           "workbench"
         ]
