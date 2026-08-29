@@ -12,9 +12,9 @@ Taiji 的目标不是重造 Transformer，也不是把生物名词硬编码进�
 | 已完成 | W7-G0：全部 R 工作包合同冻结 | 可证伪 Gate 合同 | 5 份 v1 manifest + manifest contract test |
 | 已完成 | W7-R1 | 受限语言外设的安全降级 | G0 对 provider 合同通过 |
 | 已完成 | W7-R2 | interaction-group 与恢复归因 | R1 的 provider 失败语义可观察 |
-| 当前 | W7-R3 | 视觉与桌面体验 | R1/R2 的真实状态可投影 |
+| 当前 | W7-R3 | 视觉与桌面体验 | R1/R2 的真实状态可投影；**S2 为 `env-blocked`（本机缺 Chrome）** |
 | W7-R4 | CUDA 运行时 | 硬件专用的可恢复加速路径 | 有真实 CUDA 主机；此前保持 `hardware-blocked` |
-| W7-R5 | 开放域结构成长与自进化 | 有资源治理、可回滚的增长 | R1–R4 证据与长期评估基线齐备 |
+| W7-R5 | 开放域结构成长与自进化 | 有资源治理、可回滚的增长 | R1–R4 证据与长期评估基线齐备；R3-S2 阻塞期允许先做 S0 前置切片 |
 
 禁止跳过这一顺序：视觉不能包装未被证明的能力；provider 不能进入认知决策；CUDA 不能用 CPU 推测代替；增长不能由“神经元数量”或演示需求触发。
 
@@ -127,7 +127,13 @@ R3 只把已经存在的能力变得可辨识、可访问、可信，不用 mock
 
 视觉任务只有在 R1/R2 的状态模型稳定后接入；如先前端发现后端没有真实字段，应退回相应 owner 补充投影，不能由前端猜测。
 
-**R3-S0/S1 已通过（2026-08-29）**：生命状态页恢复原有五维雷达作为 Taiji 状态主视觉；原生运行时摘要压缩为辅助卡片，需求条不再与雷达重复占据首屏；侧边栏删除重复的底部生命状态脉冲块，只保留“系统 → 生命状态”导航。`RuntimeEvidenceStrip` 从聊天、能力、知识库、训练和设置页移除，在生命页底部保留为默认折叠审计详情，展开后仍读取同一 runtime projection。桌面托盘“生命状态”动作改为先恢复窗口再执行 `#/life`，不再只改变隐藏 WebView 的 hash。S0 前端 `43 files / 245 passed`、Vite build、ESLint（0 errors）和桌面契约 `12 passed`；S1 通过 `scripts/release.py --skip-nsis` 重建 `dist/Seed/Seed.exe`，内置前端 index 与源码构建产物字节一致，Legacy-off/native runtime 在 8138 端口健康 canary 为 ok/taiji_available/seed_active/model_loaded 全真。证据见 [R3-S1](../../../reports/taiji_w7_r3_visual_desktop_s1_20260829.json)。由于本机未安装 Chrome，浏览器截图与真实 Windows 任务栏/托盘现场取证尚未完成，不能把 R3-S2 宣称为通过。
+**R3-S0/S1 已通过（2026-08-29）**：生命状态页恢复原有五维雷达作为 Taiji 状态主视觉；原生运行时摘要压缩为辅助卡片，需求条不再与雷达重复占据首屏；侧边栏删除重复的底部生命状态脉冲块，只保留“系统 → 生命状态”导航。`RuntimeEvidenceStrip` 从聊天、能力、知识库、训练和设置页移除，在生命页底部保留为默认折叠审计详情，展开后仍读取同一 runtime projection。桌面托盘“生命状态”动作改为先恢复窗口再执行 `#/life`，不再只改变隐藏 WebView 的 hash。S0 前端 `43 files / 245 passed`、Vite build、ESLint（0 errors）和桌面契约 `12 passed`；S1 通过 `scripts/release.py --skip-nsis` 重建 `dist/Seed/Seed.exe`，内置前端 index 与源码构建产物字节一致，Legacy-off/native runtime 在 8138 端口健康 canary 为 ok/taiji_available/seed_active/model_loaded 全真。证据见 [R3-S1](../../../reports/taiji_w7_r3_visual_desktop_s1_20260829.json)。
+
+**R3-S2 状态：`env-blocked`（不是通过，也不是取消）**。阻塞原因是本机未安装 Chrome，浏览器截图与真实 Windows 任务栏/托盘/高 DPI/窄窗口现场取证无法执行。解除条件与恢复动作固定为：
+
+1. Chrome 安装完成后，先复跑 `scripts/release.py --skip-nsis` 确认包仍与源码前端字节一致，避免用旧包取证。
+2. 沿已冻结的 [R3 manifest](../../manifests/taiji_w7_r3_visual_desktop_v1.json) 在真实窗口、任务栏、托盘、通知、高 DPI 与窄窗口条件下取证，只验证已完成的表达与可达性，不新增前端认知状态、不伪造运行时能力。
+3. R3-S2 一旦解除阻塞即恢复为唯一下一步，优先级高于 R5；R5 的任何进度都不能替代 R3-S2 证据，manifest 的 `implementation.status` 也不得因此从 `s1_passed` 前移。
 
 ## 8. W7-R4：CUDA（当前 `hardware-blocked`）
 
@@ -150,6 +156,85 @@ R3 只把已经存在的能力变得可辨识、可访问、可信，不用 mock
 - **长期评估：** 同时报收益、遗忘、恢复时间、结构规模、内存、延迟、能耗和跨 seed 稳定性；通过后才增加稳定容量。
 
 R5 的 checkpoint 必须包含结构 revision、parent/child lineage、资源账本、提案状态、淘汰 tombstone 和复现实验 manifest。任何不能恢复这些状态的“成长”都不进入正式模型。
+
+**manifest 归属（避免误读）：** 已冻结的 [taiji_w7_r5_open_domain_growth_v1.json](../../manifests/taiji_w7_r5_open_domain_growth_v1.json)（`status: contract_frozen`，`implementation.status: not_started`）只覆盖上述开放域结构成长，其 owner 是 `taiji/structural_growth.py`。下面 §9.1 的知识内化转换器与 §9.2 的可注册效应器**不在该 manifest 范围内**，需要另立一份新的 R5 manifest（尚未创建），并同样满足 [tests/test_w7_gate_manifests.py](../../../tests/test_w7_gate_manifests.py) 的结构约束（`status ∈ {contract_frozen, hardware-blocked}`、S0/S1/S2 三层、`checkpoint.required` 为真、`implementation.status != "passed"`）。§9.0 是不需要新 manifest 的缺口修复，不得被当作 §9.1/§9.2 的实现。
+
+### 9.0 R5-S0 前置切片：接通生产里断开的执行学习通道
+
+在做任何内化或效应器成长之前，必须先修掉一个已核实的生产缺口：`api/seed_runtime.py` 调用了 `synthesize_executive_candidates()`（L810）和 `select_executive(...)`（L813），但 `api/` 下**没有任何 `record_executive_outcome` 调用点**；而 `taiji/adapter.py` L4715 的 `record_executive_outcome` 是驱动 `LearnedAffordanceFeatures.online_update` 的唯一入口。因此当前打包客户端**选择 affordance 却从不学习**，`outcome_head` 一直停留在初始化状态。
+
+本切片：先写红测证明执行一次只读 capability 后 `fit_updates + online_updates` 不增长，再在已有 evidence 提交点（构造 `WorkbenchTaijiEvidence` 并 `record_world_event` 之后，L2921–2936 区间）接上 `record_executive_outcome`，intent_id 与 `source_affordance_id` 必须与选择结果一致、不一致即 fail-closed；checkpoint 往返须保留两个计数并复现同一决策。此切片不写转换器、不动 read-only 限制、不引入注册表。
+
+### 9.1 R5-A：知识内化转换器与可删性判据（skill/mcp 学进权重后可删）
+
+**目标不是把工具接进训练系统，而是让外挂的描述性知识被学进权重后可以物理删除。** 这条线的边界由已核实的学习目标决定：`LearnedAffordanceFeatures.fit` 的回归目标是 `item.reward`、损失为 MSE，因此这个通道内化的是「在当前世界状态与感知上下文下，这个 affordance 值多少」，**不是**工具的执行语义。由此得到明确的可删/不可删划分：
+
+- **可删：** skill 的散文规范、工具选择提示词、路由规则——它们原本在替模型做选择，模型学会打分后即为冗余。
+- **不可删：** MCP 的真实执行通道。那是身体不是知识，删掉它不是内化而是截肢。
+- **例外（属 R5-B 的 L4 层，不在本线）：** 纯计算类能力，其执行体本身也可被替代。
+
+**转换器落点与依赖方向。** 既有依赖方向是 `seed_platform → taiji`（`seed_platform/workbench.py` 内部惰性 `from taiji import WorldEvent`），因此转换器不能住在 `taiji/` 里反向 import workbench 类型。新增 `taiji/internalization.py`，只接受纯结构化 DTO：
+
+```python
+@dataclass(frozen=True)
+class AffordanceOutcomeRecord:
+    evidence_id: str
+    capability_id: str
+    after_state_digest: str
+    snapshot_id: str
+    snapshot_revision: int
+    tick: int
+    success: bool
+    status: str
+    error_code: str = ""
+    reward_terms: Mapping[str, float] = field(default_factory=dict)
+```
+
+`reward_terms` 遵循「缺测就不出现」，不给默认值——这是 W5 homeostasis 编造事故（`default: 50.0` 把空 `needs` 补成四个假值且门禁全绿，见 [03_CURRENT_EXECUTION.md](03_CURRENT_EXECUTION.md)）的直接教训。
+
+转换器主体 `AffordanceInternalizationConverter.convert(record, *, state, affordances, percept_features, world_latent, world_uncertainty)` 返回 `tuple[AffordanceFeatureTrainingExample, ...]`，七步全部 fail-closed：
+
+1. **快照新鲜度**：复用既有 stale 语义，`record.snapshot_id` 与当前快照不一致直接抛错。
+2. **失败调用不造 affordance**：evidence 级 `to_taiji_affordances` 在 `success=False` 时返回 `()`，因此转换器对失败记录返回空元组并在账本记 `no_affordance`，绝不从 `capability_id` 凭空构造 affordance；负奖励只在真实 affordance 存在且 status 为 error 时产生。
+3. **grounding 只能来自 `ground()`**：调用后断言 `feature_provenance == "world-state-grounding"` 且 `features.numel() == source.input_dim`（当前 `BASE_FEATURE_DIM = 17`），禁止用 workbench result 字段手工拼向量。
+4. **上下文向量必填**：生产 `context_dim = perception.feature_dim ≠ 0`，缺失会触发 `fit` 的 `RuntimeError`；取值规则与 `adapter._affordance_context` 完全一致（`world.latent` 为空则回落到 percept features），不复制第二份规则。
+5. **`world_uncertainty` 越界直接抛错**，不做 clamp——clamp 会把 bug 变成看起来合法的数据。
+6. **奖励合成显式加权**：`reward = sum(reward_terms[k] * WEIGHTS[k])`。首版只允许 `{"success": ±1.0}`，因为 workbench 当前只发出 `reward=1.0 if success else -1.0`；risk / reversible / latency / result-size 项必须等真实证据出现后再加。
+7. **确定性 id**：`example_id = f"internalize:{record.evidence_id}:{grounded.affordance_id}"`，两段均为内容寻址，保证重放与去重成立。
+
+**两条学习通道。** 在线通道即 `record_executive_outcome → online_update`（代码已具备，缺生产调用点，见 §9.0）；离线巩固通道用有界 replay buffer 在空闲/睡眠期批量 `fit`。**必须批量**：`fit` 每次调用都在方法内新建 `LocalAdam`，逐条 `fit` 会反复清零动量。buffer 以 `(evidence_id, affordance_id)` 去重，否则 `fit_updates` 虚高、可删性判据的输入被污染。
+
+**可删性判据：五道 lesion 全过才允许删除。** 复用 `scripts/training/eval_taiji_p7_grounded_multistep.py` 已实现的三种 lesion 技术：
+
+1. **外挂充分性**：删掉 skill 散文后 holdout 选择质量仍在声明容差内。
+2. **内化必要性**：`attach_affordance_features(None)` 必须抛出含 `learned affordance feature source` 的错误，且性能塌陷。
+3. **grounding 必要性**：零 grounding lesion 必须造成退化，否则学到的只是常数偏置。
+4. **可恢复性**：checkpoint 往返保留 `fit_updates` / `online_updates` 并复现决策（§10 硬约束）。
+5. **遗忘上界**：旧任务保持率在声明界内。
+
+三态账本 `external → shadow → internalized`，失败分支写 `tombstone` 与原因，映射到 §9 的 `shadow learn → holdout → lesion → rollback → 原子合并`。**只有到达 `internalized` 才物理删除外挂条目并写墓碑。**
+
+### 9.2 R5-B：可注册效应器与身体成长（L0→L4）
+
+**现状约束（已核实）：** `seed_platform/workbench.py` 的 `execute_tool`（L1790）是 15 个硬编码 `elif tool_name == ...` 加 `else: unknown_capability`；能力清单来自硬编码的 `CapabilitySnapshot.default()`；**全文件没有任何 `def register`**。新增一个能力必须改源码，这就是身体无法成长的根因。
+
+**已有的三个可复用抓手：** `CapabilityDescriptor.source` ≈ bundle 来源可追溯；`CapabilityDescriptor.enabled` ≈ 已声明未启用，天然表达 `proposed` / `shadow`；`CapabilitySnapshot.snapshot_id + revision` ≈ 内容寻址的装配身份。并且 Seed 有一个社区插件平台没有的安全网：evidence 携带 `snapshot_id`，任何注册表变更都会顶掉 `snapshot_id` 并让旧 evidence 立即判定为 stale——**身体一变，旧经验自动失效**。
+
+**可迁移的插件平台原理（借机制、不借语言选择）：** 插件是接收 `ctx` 的函数而非接口实现，依赖注入决定加载顺序；一切注册都是可撤销副作用（卸载即调用 disposer，不手工维护全局表）；产品装配是运行时一等公民（profile → bundle → patch → loader，patch 按 `id` **整体替换** config 而非深合并，装配结果可 dump 审计）；自修补分两步——校验元数据、预编译、生成不可变包 ID 并**只保存候选而不激活**，激活是独立动作。
+
+**唯一必须偏离的一点：** 社区平台要求工具描述写清「何时调用/前置条件/失败语义/副作用」，因为那是给 LLM 读来选工具的。本项目**不得照搬**——[03_CURRENT_EXECUTION.md](03_CURRENT_EXECUTION.md) 的边界是语言 provider 不参与 cognition。选择必须继续由结构化特征驱动，描述文本只服务于人和审计。
+
+**红线：** `tests/seed/test_legacy_plugin_gate.py` 断言 `SEED_ENABLE_LEGACY=0` 时 router 数为 0 且 `load_legacy_cortex` 抛错。新注册表不得以任何形式复活该路径，否则机制收敛被破坏。
+
+分级方案，每级带可证伪 Gate：
+
+- **L0 注册表重构，零新增能力。** `execute_tool` 改为经注册表分派，15 个能力全部变成内置插件注册，`unknown_capability` 语义不变。**Gate：`CapabilitySnapshot.default()` 的 `snapshot_id` 与 `revision`（当前为 4）完全不变**——若变了就不是纯重构。
+- **L1 可撤销挂载/卸载 + 声明式启用。** 注册返回 disposer，卸载即撤销并顶 revision；`enabled` 由外部 profile/patch 驱动。Taiji 可在预算内启用/停用已有能力行——这已是真实的身体改变。**Gate：** 卸载后 `snapshot_id` 变化、旧 evidence 判 stale、重新注册恢复可用；patch 按 `id` 整体替换而非深合并。
+- **L2 解锁写入。** 用显式风险策略替换 `workbench.py` L447 的硬拒绝，只允许 `reversible=True` 的写入，并要求 before-state 捕获与事务回滚。这才是越过只读的真实解锁。**Gate：** 写失败必回滚、before/after 双 digest 可追溯、不可逆能力仍被拒。
+- **L3 Taiji 提出的组合效应器。** 新能力 = 已有效应器的组合，参数 schema 由真实证据导出，不做自由源码生成；走 `proposal → shadow → holdout → lesion → 原子合并`，失败留墓碑。**Gate：** 提案带父 lineage 与预算；失败候选不污染已验证清单。
+- **L4 沙箱内的源码生成效应器。** 对齐 `cordis_define` 语义：校验元数据、预编译、不可变包 ID、**只保存候选不激活**，激活为独立步骤。仅在 L0–L3 全绿且资源账本就位后开启。
+
+L0–L2 属工程收敛；**L3–L4 才是 §9 意义上的结构自进化**，必须携带结构 revision、parent/child lineage、资源账本、提案状态、tombstone 和复现 manifest（见本节开头的 checkpoint 要求）。
 
 ## 10. 共同工程纪律、提交与 CI
 
