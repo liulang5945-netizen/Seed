@@ -8,7 +8,7 @@
 
 - W0–W3 的 native Workbench 版本合同、真实 workspace 只读/受控写入、语言证据与 IDE 自主切换、终端、审批、MCP registry、有限循环、checkpoint continuation 和真实跨文件任务闭环已具备证据。
 - W4 的 HF/GGUF/Transformer/Legacy 产品语义清理已完成；合法的 provider 只负责语言 realization，不选择工具、不拥有 Taiji cognition。
-- W5 的客户端真实性接入已完成；前端以 native capability、runtime/provider/homeostasis/training/knowledge evidence 为状态来源，旧 Legacy 调用不能回流。
+- W5 的客户端真实性接入已完成；前端以 native capability、runtime/provider/homeostasis/training/knowledge evidence 为状态来源，旧 Legacy 调用不能回流。其中 homeostasis 一路直到 2026-08-29（提交 `cd39632`）才真正接通：此前 `taiji/adapter.py` 没有 homeostatic 读访问器，`api/models_runtime.py` 的 `LifeNeedsPayload` 又给四个需求字段各设了 `default: 50.0`，于是空 `needs: {}` 在传输层被补成四个编造值、原生 `stress` 被静默丢弃——**客户端显示「已接入原生」而数据全是假的，且门禁全绿**。现已改为 `dict[str, float] = {}`（缺测就不出现，不再编造），并由 `tests/seed/test_native_life_status.py` 的反编造断言看守。
 - W6 的 typed native facade 和产品页拆分已完成至 Settings 共享面板收口；组件不越权持有 native API 副作用，前端回归保持可见。
 - P6 provider artifact、provider startup、客户端观测和训练/回滚合同已接通；P7 executive、grounding、world evidence、bounded successor graph 和 recovery portfolio 已形成可恢复只读闭环。
 
@@ -22,7 +22,7 @@
 
 建立 recovery portfolio 的客户端审计回放视图 Gate：在已有 native projection 消费层上增加只读审计模型/视图，按 revision 展示 branch 生命周期、容量压力、source evidence/after-state lineage 和 eviction tombstone；视图不得触发 maintain/select/execute，也不得显示可直接复用的 parameters。通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
 
-实现分解、各 Gate 的退出条件、并行训练/数据集改动的独立收口和后续 R1–R5 的详细合同见 [04_EXECUTION_PLAN.md](04_EXECUTION_PLAN.md)；该文件不替代本节的唯一下一步。
+实现分解、各 Gate 的退出条件和后续 R1–R5 的详细合同见 [04_EXECUTION_PLAN.md](04_EXECUTION_PLAN.md)；该文件不替代本节的唯一下一步。原「并行训练/数据集改动」已于 2026-08-29 以独立提交 `cd39632` 收口（见该文件 §3），但其中训练类改动的 checkpoint 往返等价性准入仍未满足，故不得据此启动长训。
 
 ## 后续唯一顺序
 
