@@ -34,6 +34,13 @@ class TaijiWorkbenchExecuteTaskRequest(TaijiWorkbenchTaskRequest):
     learn: bool = False
 
 
+class TaijiWorkbenchProjectionRequest(BaseModel):
+    """Structured workspace evidence used to project capabilities into Taiji."""
+
+    snapshot_id: str
+    parameter_bindings: dict[str, dict] = {}
+
+
 class ChatRequest(BaseModel):
     prompt: str
     system_prompt: str = "你是Seed，一个独立的AI生命体。你用自己的大脑思考，用工具探索世界。"

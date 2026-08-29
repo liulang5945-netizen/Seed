@@ -370,7 +370,8 @@ API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 err
 interaction-group attribution 已有主线提交和回归证据；此前“W7 第一片还要接入真实 Workbench 工具”的文字已过时，不再作为执行入口。
 最新已完成片是聊天→Workbench 的显式原生任务事件桥接：`ActionIntent` 由 Taiji 侧先形成，聊天和 IDE 读取同一审计链；它不宣称已经
 完成自然语言自主工具选择。随后已补上 Taiji-owned 只读任务准入：ExecutiveController 选择当前候选，Workbench 以 capability snapshot
-做风险与参数 fail-closed，`/api/workbench/taiji/admit` 与 `/api/workbench/taiji/execute` 复用同一边界。唯一下一步以路线文档第 16 节为准。
+做风险与参数 fail-closed，`/api/workbench/taiji/admit` 与 `/api/workbench/taiji/execute` 复用同一边界；最新又补上 capability snapshot
+到 Taiji WorldAffordance 的显式结构化投影与 `/api/workbench/taiji/project`。唯一下一步以路线文档第 16 节为准。
 
 ## 当前唯一下一步
 

@@ -387,6 +387,64 @@ class CapabilitySnapshot:
             None,
         )
 
+    def to_taiji_affordances(
+        self,
+        parameter_bindings: Mapping[str, Mapping[str, Any]],
+    ) -> tuple[Any, ...]:
+        """Project explicit read-only capability bindings into Taiji affordances.
+
+        The snapshot supplies availability and contract identity; callers must
+        supply structured parameters from workspace/IDE evidence.  This method
+        never extracts an action from prose and never fabricates parameters for
+        a capability whose evidence is absent.
+        """
+
+        from taiji import WorldAffordance
+
+        if not isinstance(parameter_bindings, Mapping):
+            raise TypeError("Taiji capability bindings must be a mapping")
+        affordances: list[Any] = []
+        for capability_id in sorted(parameter_bindings, key=str):
+            raw_parameters = parameter_bindings[capability_id]
+            if not isinstance(raw_parameters, Mapping):
+                raise TypeError(f"Taiji capability binding {capability_id!r} must be a mapping")
+            descriptor = self.get(str(capability_id))
+            if descriptor is None:
+                raise ValueError(
+                    f"Taiji capability binding is not in the snapshot: {capability_id}"
+                )
+            if not descriptor.enabled:
+                raise ValueError(f"Taiji capability binding is disabled: {capability_id}")
+            if descriptor.risk != "read_only":
+                raise ValueError(
+                    f"Taiji capability projection only admits read-only capabilities: {capability_id}"
+                )
+            parameters = {str(name): value for name, value in raw_parameters.items()}
+            unknown = sorted(set(parameters) - descriptor.parameter_names)
+            if unknown:
+                raise ValueError(
+                    f"Taiji capability binding contains undeclared parameters for "
+                    f"{capability_id}: {unknown}"
+                )
+            identity = _canonical_digest(
+                {"capability_id": str(capability_id), "parameters": parameters}
+            )[:16]
+            affordances.append(
+                WorldAffordance(
+                    affordance_id=f"workbench:{capability_id}:{identity}",
+                    action_kind=str(capability_id),
+                    parameters=parameters,
+                    confidence=1.0,
+                    feature_provenance="workbench-capability-snapshot",
+                    grounding_lineage=(
+                        f"workbench-snapshot:{self.snapshot_id}",
+                        f"workbench-capability-revision:{self.revision}",
+                        f"workbench-capability:{capability_id}",
+                    ),
+                )
+            )
+        return tuple(affordances)
+
 
 @dataclass(frozen=True)
 class WorkbenchActionRequest:

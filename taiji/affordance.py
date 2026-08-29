@@ -78,7 +78,7 @@ class WorldAffordanceGroundingProducer:
         affordance: WorldAffordance,
     ) -> tuple[torch.Tensor, tuple[str, ...]]:
         objects = {item.object_id: item for item in state.objects}
-        lineage = {f"world-state:{state.tick}"}
+        lineage = {*affordance.grounding_lineage, f"world-state:{state.tick}"}
 
         def object_summary(object_id: str) -> torch.Tensor:
             if not object_id:

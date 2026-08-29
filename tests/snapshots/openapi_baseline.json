@@ -670,6 +670,29 @@
         "title": "TaijiWorkbenchExecuteTaskRequest",
         "type": "object"
       },
+      "TaijiWorkbenchProjectionRequest": {
+        "description": "Structured workspace evidence used to project capabilities into Taiji.",
+        "properties": {
+          "parameter_bindings": {
+            "additionalProperties": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "default": {},
+            "title": "Parameter Bindings",
+            "type": "object"
+          },
+          "snapshot_id": {
+            "title": "Snapshot Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "snapshot_id"
+        ],
+        "title": "TaijiWorkbenchProjectionRequest",
+        "type": "object"
+      },
       "TaijiWorkbenchTaskRequest": {
         "description": "Request Taiji to select one current candidate for the read-only Gate.",
         "properties": {
@@ -3268,6 +3291,50 @@
           }
         },
         "summary": "Execute Taiji Workbench Task",
+        "tags": [
+          "workbench"
+        ]
+      }
+    },
+    "/api/workbench/taiji/project": {
+      "post": {
+        "description": "Project structured Workbench evidence into Taiji world affordances.",
+        "operationId": "project_taiji_workbench_affordances_api_workbench_taiji_project_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaijiWorkbenchProjectionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Project Taiji Workbench Affordances Api Workbench Taiji Project Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Project Taiji Workbench Affordances",
         "tags": [
           "workbench"
         ]
