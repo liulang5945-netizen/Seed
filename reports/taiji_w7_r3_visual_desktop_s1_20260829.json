@@ -1,21 +1,25 @@
 {
   "format": "taiji-w7-r3-visual-desktop-evidence-v1",
   "stage": "S1",
+  "revalidation": true,
   "date": "2026-08-29",
   "package": {
     "path": "dist/Seed/Seed.exe",
-    "sha256": "502c832d9c04e1e826e398adfa9de9d7f375e5624eb510aac097b9330366f126",
-    "size_bytes": 72751751
+    "sha256": "bda9e84fffe7f96fd214af5ac191506128d50f8c8dc0c5d04f86339254d980f3",
+    "size_bytes": 72751885
   },
   "frontend": {
     "source_index_sha256": "e797b83e59b26ba99ae42d7349d3b3a884ba22b0018a6c451853199ea98e00d1",
     "packaged_index_sha256": "e797b83e59b26ba99ae42d7349d3b3a884ba22b0018a6c451853199ea98e00d1",
-    "byte_identical": true
+    "source_file_count": 211,
+    "packaged_file_count": 211,
+    "byte_identical": true,
+    "all_files_byte_identical": true
   },
   "runtime": {
     "legacy_enabled": false,
     "native_runtime_enabled": true,
-    "backend_port": 8138,
+    "backend_port": 8148,
     "health_status": "ok",
     "taiji_available": true,
     "seed_active": true,
@@ -35,8 +39,20 @@
     "frontend_vitest": "43 files / 245 passed",
     "frontend_build": true,
     "eslint_errors": 0,
-    "desktop_contract": "12 passed",
-    "packaged_health_canary": true
+    "desktop_contract": "13 passed",
+    "packaged_health_canary": true,
+    "packaged_page_loaded": true,
+    "packaged_frontend_requests": [
+      "/assets/index-BGGpgeDQ.js",
+      "/assets/style-VqRKuugG.css",
+      "/assets/runtimeStore-YRnxZmuo.js",
+      "/api/runtime/bootstrap",
+      "/api/runtime/status",
+      "/api/chat/sessions",
+      "/api/train/checkpoints"
+    ],
+    "qt_webengine_baseline": "--disable-gpu --single-process",
+    "qt_webengine_no_sandbox": false
   },
   "limitations": {
     "browser_field_capture": "not_run: local Chrome distribution is not installed",

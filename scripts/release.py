@@ -67,12 +67,31 @@ def _verify_packaged_frontend() -> None:
         raise RuntimeError(f"前端构建产物不存在: {source_index}")
     if not packaged_index.is_file():
         raise RuntimeError(f"打包产物未包含前端: {packaged_index}")
-    if source_index.read_bytes() != packaged_index.read_bytes():
+    source_files = {
+        path.relative_to(FRONTEND_DIST).as_posix(): path
+        for path in FRONTEND_DIST.rglob("*")
+        if path.is_file()
+    }
+    packaged_root = packaged_index.parent
+    packaged_files = {
+        path.relative_to(packaged_root).as_posix(): path
+        for path in packaged_root.rglob("*")
+        if path.is_file()
+    }
+    if source_files.keys() != packaged_files.keys():
+        missing = sorted(source_files.keys() - packaged_files.keys())
+        unexpected = sorted(packaged_files.keys() - source_files.keys())
         raise RuntimeError(
-            "打包客户端内置前端与本次构建产物不一致；"
-            "请检查 PyInstaller datas 是否仍指向 frontend/dist"
+            "打包客户端内置前端文件集合不一致；"
+            f"缺失={missing[:5]}，多余={unexpected[:5]}"
         )
-    print("  前端一致性校验通过（源码 dist = 客户端内置 dist）")
+    for relative, source_path in source_files.items():
+        if source_path.read_bytes() != packaged_files[relative].read_bytes():
+            raise RuntimeError(
+                "打包客户端内置前端与本次构建产物不一致："
+                f"{relative}"
+            )
+    print(f"  前端一致性校验通过（源码 dist = 客户端内置 dist，共 {len(source_files)} 个文件）")
 
 
 def _verify_artifacts(expect_installer: bool) -> list[str]:
@@ -183,7 +202,14 @@ def build_frontend() -> bool:
 def build_pyinstaller() -> bool:
     """PyInstaller 打包（双入口 Seed.exe + SeedBackend.exe，见 desktop/seed.spec）。"""
     return _run(
-        [sys.executable, "-m", "PyInstaller", "--noconfirm", str(ROOT / "desktop" / "seed.spec")],
+        [
+            sys.executable,
+            "-m",
+            "PyInstaller",
+            "--clean",
+            "--noconfirm",
+            str(ROOT / "desktop" / "seed.spec"),
+        ],
         cwd=ROOT,
         label="[3/5] PyInstaller 打包",
     )

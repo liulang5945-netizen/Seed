@@ -34,7 +34,9 @@ def test_desktop_build_artifact_is_seed() -> None:
     # 见 commit 52ee10c）现走 seed.spec 双入口（Seed.exe + SeedBackend.exe），
     # 主产物名必须是 Seed。
     assert "seed.spec" in release
+    assert '"--clean"' in release
     assert 'name="Seed"' in spec.read_text(encoding="utf-8")
+    assert "_append_data_tree" in spec.read_text(encoding="utf-8")
     assert '!define APP_EXE "Seed.exe"' in installer
 
 

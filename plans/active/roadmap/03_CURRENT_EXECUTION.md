@@ -14,6 +14,7 @@
 - W7-R1 provider watchdog 的 S0/S1/S2 已闭合：健康状态按 `artifact_id + artifact_digest` 隔离，native adapter checkpoint 可恢复健康 lineage；Legacy-off 的默认打包客户端能以只读方式投影 provider 状态、artifact digest 字段和结构化健康计数。S2 当前运行的是 `native-readable`（artifact digest 为空表示原生内置器官，不冒充外部内容寻址 artifact），外部 provider 轮换未在客户端 canary 中宣称完成。详见 [02_GATES_AND_CI.md §14.24](02_GATES_AND_CI.md) 与 [S2 证据](../../../reports/taiji_w7_r1_provider_watchdog_s2_20260829.json)。
 - W7-R2 interaction-group 的 S0/S1/S2 已通过：S0 以不透明 `owner_id` 和真实 task context 的四格 trace 作为输入，S1 把真实 `TSKV8Adapter` 的 `Event/Outcome` 投影并逐 episode 精确回放，S2 再通过真实 `SeedRuntime + WorkbenchEnvironment` 执行 workspace list/search/read、native executive selection、world evidence 和 recovery retry。三层均保持 holdout 只读、lesion/失败事件可追溯、trace digest 与 checkpoint revision/owner-policy lineage 可恢复；跨上下文混淆、holdout 反向污染、资源超限、checkpoint digest 篡改和无 Workbench 证据均 fail-closed。没有预设神经元角色，也没有写回 executive 或 provider。详见 [02_GATES_AND_CI.md §14.25–14.27](02_GATES_AND_CI.md)、[S0 证据](../../../reports/taiji_w7_r2_interaction_groups_20260829.json)、[S1 证据](../../../reports/taiji_w7_r2_interaction_groups_s1_20260829.json) 与 [S2 证据](../../../reports/taiji_w7_r2_interaction_groups_s2_20260829.json)。
 - P6 provider artifact、provider startup、客户端观测和训练/回滚合同已接通；P7 executive、grounding、world evidence、bounded successor graph 和 recovery portfolio 已形成可恢复只读闭环。
+- W7-R3-S1 已完成重新验证：前端打包由只比较 `index.html` 收紧为 211 个文件的集合与字节一致性，PyInstaller 使用 `--clean`，冻结 Qt 显式绑定 `QtWebEngineProcess.exe`。当前受限 CPU-only 主机的 QWebEngine 多进程路径会卡在根 HTML，因此默认桌面 shell 使用 `--disable-gpu --single-process`，未使用 `--no-sandbox`。新包在 8148 端口真实启动并记录 `loadFinished(ok=True)`，实际加载当前 hash 版 JS/CSS、runtime bootstrap/status、聊天和训练接口；这证明客户端不再出现 health 绿但界面空白的启动假绿，不等于 R3-S2 的真实 Windows 任务栏/托盘/DPI 现场证据已完成。
 
 ### 必须保持的边界
 
@@ -25,7 +26,7 @@
 
 ## 当前唯一下一步
 
-进入 **W7-R3-S2 Windows field evidence**：R3-S0 DOM/可访问性契约与 R3-S1 packaged-client smoke 已通过，沿已冻结的 [R3 manifest](../../manifests/taiji_w7_r3_visual_desktop_v1.json) 在真实窗口、任务栏、托盘和高 DPI/窄窗口条件下做现场取证；本步只验证已完成的表达与可达性，不由前端新增认知状态或伪造运行时能力。
+进入 **W7-R3-S2 Windows field evidence**：R3-S0 DOM/可访问性契约与 R3-S1 packaged-client smoke（含本轮空白窗口修复后的重新验证）已通过，沿已冻结的 [R3 manifest](../../manifests/taiji_w7_r3_visual_desktop_v1.json) 在真实窗口、任务栏、托盘和高 DPI/窄窗口条件下做现场取证；本步只验证已完成的表达与可达性，不由前端新增认知状态或伪造运行时能力。
 
 ## 后续唯一顺序
 

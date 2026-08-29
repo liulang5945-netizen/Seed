@@ -42,11 +42,13 @@ ROOT_DIR = Path(sys.executable).resolve().parent if FROZEN else Path(__file__).p
 SETTINGS_FILE = ROOT_DIR / "desktop" / "settings.json"
 LOG_DIR = ROOT_DIR / "logs"
 
-# QWebEngine 在没有可用 GPU 驱动、远程桌面或虚拟机环境中可能直接崩溃。
-# 这两个默认值必须位于任何 PyQt6 导入之前；显式环境变量仍可覆盖，便于
-# 在具备稳定 GPU 的机器上做性能实验。
+# QWebEngine 在没有可用 GPU 驱动、远程桌面或受限桌面权限环境中，普通的
+# 多进程 renderer 可能卡在根 HTML，既不触发 loadFinished，也不继续请求
+# 前端模块。当前桌面客户端以 CPU-only 为基线，单进程是稳定的 shell 降级；
+# 这些默认值必须位于任何 PyQt6 导入之前，显式环境变量仍可覆盖，便于在
+# 具备稳定 GPU 的机器上恢复多进程性能路径。
 def _configure_qt_runtime() -> None:
-    os.environ.setdefault("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu")
+    os.environ.setdefault("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu --single-process")
     os.environ.setdefault("QT_OPENGL", "software")
 
 
@@ -70,6 +72,14 @@ def _prepare_frozen_qt_dll_path() -> None:
     qt_bin = internal_root / "PyQt6" / "Qt6" / "bin"
     if not qt_bin.is_dir():
         return
+    # PyInstaller keeps QtWebEngineProcess.exe inside the nested Qt bin
+    # directory. Without an explicit path, the frozen browser can create its
+    # top-level window and request the document HTML, but the renderer never
+    # continues with module/CSS loading; the packaged client then appears as a
+    # blank window while the backend health check remains green.
+    qt_webengine_process = qt_bin / "QtWebEngineProcess.exe"
+    if qt_webengine_process.is_file():
+        os.environ.setdefault("QTWEBENGINEPROCESS_PATH", str(qt_webengine_process))
     search_directories = (internal_root, qt_bin)
     current_path = os.environ.get("PATH", "")
     path_entries = current_path.split(os.pathsep) if current_path else []
