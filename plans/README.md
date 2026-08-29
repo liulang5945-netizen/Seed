@@ -30,6 +30,7 @@
 | [01_SCOPE_AND_PHASES.md](active/roadmap/01_SCOPE_AND_PHASES.md) | 目标、原则、P0–P7 阶段和退出门槛 |
 | [02_GATES_AND_CI.md](active/roadmap/02_GATES_AND_CI.md) | 持续门禁、CI 可信度、停止项和 CUDA 硬件边界 |
 | [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) | 当前实现快照和当前唯一下一步 |
+| [04_EXECUTION_PLAN.md](active/roadmap/04_EXECUTION_PLAN.md) | 当前路线的详细工作包、验收 Gate、并行变更收口与工程纪律；不替代唯一下一步 |
 
 ## 归档原则
 

@@ -16,6 +16,7 @@
 | [01_SCOPE_AND_PHASES.md](roadmap/01_SCOPE_AND_PHASES.md) | 目标、原则、P0–P7 阶段和阶段退出门槛 | 当前参考 |
 | [02_GATES_AND_CI.md](roadmap/02_GATES_AND_CI.md) | 持续门禁、CI 可信度纪律、停止项和硬件边界 | 当前参考 |
 | [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md) | 当前实现快照、唯一下一步、W0–W7 顺序 | 当前执行 |
+| [04_EXECUTION_PLAN.md](roadmap/04_EXECUTION_PLAN.md) | 详细工作包、各 Gate 验收、并行变更收口与工程纪律；不创建独立执行顺序 | 当前参考 |
 | [IMPLEMENTATION_STATUS_2026_08.md](../reference/IMPLEMENTATION_STATUS_2026_08.md) | 代码事实、owner 和能力声明 | 当前参考 |
 
 ## 固定执行规则
