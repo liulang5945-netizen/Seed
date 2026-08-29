@@ -1,6 +1,5 @@
 <template>
-  <section class="settings-section">
-    <h2>通用设置</h2>
+  <SettingsPanelSection title="通用设置">
 
     <div class="setting-row setting-row--col setting-row--first">
       <span class="setting-label">外观主题</span>
@@ -68,10 +67,12 @@
         </div>
       </div>
     </div>
-  </section>
+  </SettingsPanelSection>
 </template>
 
 <script setup>
+import SettingsPanelSection from './SettingsPanelSection.vue'
+
 defineOptions({ name: 'SettingsGeneralPanel' })
 
 defineProps({

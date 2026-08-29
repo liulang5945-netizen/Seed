@@ -1,6 +1,5 @@
 <template>
-  <section class="settings-section">
-    <h2>关于</h2>
+  <SettingsPanelSection title="关于">
 
     <div class="setting-row setting-row--first">
       <div class="about-meta">
@@ -31,10 +30,12 @@
         </button>
       </div>
     </div>
-  </section>
+  </SettingsPanelSection>
 </template>
 
 <script setup>
+import SettingsPanelSection from './SettingsPanelSection.vue'
+
 defineOptions({ name: 'SettingsAboutPanel' })
 
 defineProps({
