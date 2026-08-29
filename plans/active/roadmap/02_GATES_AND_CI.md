@@ -290,7 +290,15 @@ R1 的 S0 已通过。原健康记录只以 `artifact_id` 为锚点，存在同 
 
 R1 的 S1 已通过。评测脚本新增 `--stage s1`，使用真实 `TSKV8Adapter.native_checkpoint()` 而不是只还原健康 dataclass：原生 adapter 挂载内容寻址 artifact 和 allowlisted registry，先写入两次失败，再保存；恢复后校验 artifact manifest、digest、registry revision/active id 和健康计数均保持一致，继续一次失败后 `probe_count=3`、`consecutive_failures=3`、`degraded=true`、`rollback_pending=true`，再次 checkpoint 恢复仍保持一致。
 
-证据为 [taiji_w7_r1_provider_watchdog_s1_20260829.json](../../../reports/taiji_w7_r1_provider_watchdog_s1_20260829.json)，`gate.passed=true`；R1 S0/S1 定向测试 `20 passed`。本证据证明 provider 健康 lineage 可恢复，不证明真实外部 decoder 在客户端已经完成切换或恢复；下一步必须在 packaged client 做 S2 观测，并校验 UI 只读投影和错误/降级状态。
+证据为 [taiji_w7_r1_provider_watchdog_s1_20260829.json](../../../reports/taiji_w7_r1_provider_watchdog_s1_20260829.json)，`gate.passed=true`；R1 S0/S1 定向测试 `21 passed`。本证据证明 provider 健康 lineage 可恢复，不证明真实外部 decoder 在客户端已经完成切换或恢复；S2 仍需独立验证 packaged client 的只读投影。
+
+### 14.24 W7-R1 S2：Legacy-off packaged client provider 观测（2026-08-29）
+
+R1 的 S2 已通过。使用重新生成的 `dist/Seed/Seed.exe`，明确设置 `SEED_ENABLE_LEGACY=0`、`SEED_RUNTIME=1`，不额外注入 Qt 环境，按用户默认端口 8000 启动。启动日志显示 backend ready、native runtime activated、WebSocket ready、frontend `loadFinished(ok=True)`；health 与 runtime/status 均为 HTTP 200，`seed_active=true`、`taiji_available=true`、provider 为 `native-readable/active`，`artifact_digest` 字段可读（原生内置器官为空字符串，不冒充外部内容寻址 artifact），health probes 为 0、degraded 为 false。
+
+Playwright 真实页面 `http://127.0.0.1:8000/#/?taiji_client=desktop` 标题为 `Seed · 聊天`；Workspace、`STATUS EVIDENCE`、`Taiji Native`、语言器官状态均可见；8 个 API 请求全部为 8000，无页面错误、请求失败或 Legacy/Transformer/HuggingFace 标记。此次只验证服务端状态的只读观测和 backend/network 绑定，明确没有把客户端 provider 轮换或外部 artifact decoder 当作已验证能力。完整记录见 [taiji_w7_r1_provider_watchdog_s2_20260829.json](../../../reports/taiji_w7_r1_provider_watchdog_s2_20260829.json) 与截图 `output/playwright/seed-s2-packaged-legacy-off.png`。
+
+据此，R1 的 S0/S1/S2 三层闭合，下一步进入 W7-R2-S0；R2 仍必须从真实 trace 做可证伪 interaction-group 归因，不得将 provider 健康或 UI 显示当作认知能力。
 
 ## 15. 停止项
 

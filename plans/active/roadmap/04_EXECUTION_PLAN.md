@@ -10,8 +10,8 @@ Taiji 的目标不是重造 Transformer，也不是把生物名词硬编码进�
 |---|---|---|---|
 | 已完成 | Recovery portfolio 客户端审计回放 Gate | 只读、可审计产品证据 | S0/S1/S2 通过 |
 | 已完成 | W7-G0：全部 R 工作包合同冻结 | 可证伪 Gate 合同 | 5 份 v1 manifest + manifest contract test |
-| 当前 | W7-R1 | 受限语言外设的安全降级 | G0 对 provider 合同通过 |
-| W7-R2 | interaction-group 与恢复归因 | 基于真实 trace 的可检验学习 | R1 的 provider 失败语义可观察 |
+| 已完成 | W7-R1 | 受限语言外设的安全降级 | G0 对 provider 合同通过 |
+| 当前 | W7-R2 | interaction-group 与恢复归因 | R1 的 provider 失败语义可观察 |
 | W7-R3 | 视觉与桌面体验 | 对真实能力的表达层 | R1/R2 的真实状态可投影 |
 | W7-R4 | CUDA 运行时 | 硬件专用的可恢复加速路径 | 有真实 CUDA 主机；此前保持 `hardware-blocked` |
 | W7-R5 | 开放域结构成长与自进化 | 有资源治理、可回滚的增长 | R1–R4 证据与长期评估基线齐备 |
@@ -101,7 +101,7 @@ G0 不实现新自治。它的退出条件是所有 R 工作包都有可执行�
 
 验收包含 artifact 漂移、连续失败、超时、冷却、探测恢复、错误 fallback、checkpoint 中断恢复和多 provider 隔离的红绿测试；真实 canary 必须对同一 artifact digest 记录结果。
 
-**S0/S1 已通过（2026-08-29）**：健康状态已从仅绑定 `artifact_id` 收紧为绑定 `artifact_id + artifact_digest`；同 ID 内容替换会建立新记录，不继承旧失败计数。`tests/seed/test_provider_watchdog_gate.py` 与 [评测脚本](../../../scripts/training/eval_taiji_provider_watchdog.py) 的 S0 覆盖 healthy/连续失败/单次回退/cooldown/legacy checkpoint 兼容；S1 使用真实 `TSKV8Adapter.native_checkpoint()` 保存→恢复→继续失败探针，校验 artifact、digest、registry、计数和阈值后的 lineage。S0 报告为 [taiji_w7_r1_provider_watchdog_20260829.json](../../../reports/taiji_w7_r1_provider_watchdog_20260829.json)，S1 报告为 [taiji_w7_r1_provider_watchdog_s1_20260829.json](../../../reports/taiji_w7_r1_provider_watchdog_s1_20260829.json)，定向 provider 回归 `20 passed`。R1-S2 的唯一剩余入口是 Legacy-off packaged-client 的 provider 状态与降级观测。
+**S0/S1/S2 已通过（2026-08-29）**：健康状态已从仅绑定 `artifact_id` 收紧为绑定 `artifact_id + artifact_digest`；同 ID 内容替换会建立新记录，不继承旧失败计数。`tests/seed/test_provider_watchdog_gate.py` 与 [评测脚本](../../../scripts/training/eval_taiji_provider_watchdog.py) 的 S0 覆盖 healthy/连续失败/单次回退/cooldown/legacy checkpoint 兼容；S1 使用真实 `TSKV8Adapter.native_checkpoint()` 保存→恢复→继续失败探针，校验 artifact、digest、registry、计数和阈值后的 lineage。S2 使用明确 Legacy-off 的 `dist/Seed/Seed.exe` 在默认 8000 端口启动，健康和 runtime/status 均为 200，native provider 状态及 digest 字段可读，Workspace/状态证据/UI provider 投影可见，8 个 API 请求全部绑定 8000，无页面错误、请求失败或 Legacy/Transformer/HF 标记。S2 运行的是 `native-readable` 内置器官，外部 provider artifact 轮换没有被虚报为客户端证据。报告为 [S0](../../../reports/taiji_w7_r1_provider_watchdog_20260829.json)、[S1](../../../reports/taiji_w7_r1_provider_watchdog_s1_20260829.json) 和 [S2](../../../reports/taiji_w7_r1_provider_watchdog_s2_20260829.json)，定向 provider 回归 `21 passed`；R1 完成，下一步进入 W7-R2-S0。
 
 ## 6. W7-R2：interaction-group 与恢复归因
 

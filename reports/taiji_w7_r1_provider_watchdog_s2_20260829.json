@@ -1,0 +1,62 @@
+{
+  "manifest": "plans/manifests/taiji_w7_r1_provider_watchdog_v1.json",
+  "stage": "S2",
+  "environment": {
+    "package": "dist/Seed/Seed.exe",
+    "legacy_enabled": false,
+    "runtime": "native",
+    "endpoint": "http://127.0.0.1:8000",
+    "screenshot": "output/playwright/seed-s2-packaged-legacy-off.png"
+  },
+  "health": {
+    "http_status": 200,
+    "status": "ok",
+    "seed_active": true,
+    "taiji_available": true,
+    "provider_mode": "native",
+    "provider_state": "active",
+    "provider": "native",
+    "backend_id": "native-readable",
+    "artifact_id": "native-readable",
+    "artifact_digest": "",
+    "health_probes": "0",
+    "health_degraded": "false",
+    "health_rollback_count": "0"
+  },
+  "runtime": {
+    "http_status": 200,
+    "state": "connected",
+    "model_name": "seed:seed_corpus.pt",
+    "is_taiji": true,
+    "capability_revision": 4
+  },
+  "ui": {
+    "title": "Seed · 聊天",
+    "workspace_visible": true,
+    "status_evidence_visible": true,
+    "native_runtime_visible": true,
+    "provider_status_visible": true,
+    "legacy_marker_absent": true,
+    "page_errors": [],
+    "request_failures": [],
+    "api_request_count": 8,
+    "api_ports": ["8000"]
+  },
+  "scope": {
+    "observed": [
+      "packaged client starts on default port",
+      "native runtime activation and health projection",
+      "provider status and artifact digest fields are readable",
+      "frontend API requests remain bound to the backend port",
+      "no legacy marker or page/request error"
+    ],
+    "not_exercised": [
+      "external content-addressed provider artifact in the packaged client",
+      "provider rotation or mutation from the client"
+    ]
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "Legacy-off packaged client exposes native provider health/artifact fields through read-only API/UI projection; all observed API requests stay on the backend port and no client provider mutation is exercised"
+  }
+}
