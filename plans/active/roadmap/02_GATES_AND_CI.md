@@ -77,8 +77,8 @@
 |---|---|---|
 | W7-R3 Windows shell | `tool-blocked` | 能激活 Seed 窗口后，补齐任务栏、托盘、通知和高 DPI 真实证据 |
 | W7-R4 CUDA | `hardware-blocked` | 在真实 CUDA 主机完成 profiler、CPU↔CUDA checkpoint 和数值一致性 |
-| W7-R5A 内化 | `contract-not-frozen` | 独立 manifest + red contract + checkpoint/可删性 Gate |
-| W7-R5B 效应器成长 | `contract-not-frozen` | 独立 manifest + 注册生命周期/快照/回滚 Gate |
+| W7-R5A 内化 | `contract_frozen / implementation-not-started` | `taiji_w7_r5_internalization_v1.json` + red contract + checkpoint/可删性 Gate |
+| W7-R5B 效应器成长 | `contract_frozen / implementation-not-started` | `taiji_w7_r5_effector_registry_v1.json` + 注册生命周期/快照/回滚 Gate |
 | W7-R5C 开放域结构成长 | `contract_frozen / implementation-not-started` | R5A/R5B 真实 evidence 可供触发，且 S0→S1→S2 全通过 |
 
 R3、R4 是独立验证线：它们未通过就不能发布对应声明，但工具或硬件受阻不再冻结与其无依赖的 R5 合同和 CPU/native 实现。任何 R5 结果也不能反向冒充 R3/R4 已完成。

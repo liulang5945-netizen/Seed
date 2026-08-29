@@ -46,11 +46,13 @@ R3 最终包为 `dist/Seed/Seed.exe`，已记录 SHA-256 `76b432b43922d5d70c64fc
 
 R5-S0 定向 native/executive/desktop/project identity 回归记录为 `24 passed`，Ruff、compileall、checkpoint 往返和 diff 检查通过。本次 2026-08-30 收敛只修改计划/参考文档，没有重跑或冒充新的全量代码基线。
 
+R5-G1 合同 Gate 已新增两份独立 manifest，并覆盖合法合同与缺 owner、混合 owner、缺 checkpoint、认知越权、错误删除边界的 red contract；R5A/R5B 生产实现仍未开始。
+
 ## 4. 明确未完成
 
-- `taiji/internalization.py` 尚不存在；没有知识内化转换器、replay 生命周期或通过五类 lesion 的可删性判据。
+- `taiji/internalization.py` 尚不存在；没有知识内化转换器、replay 生命周期或通过五类 lesion 的可删性判据。R5A manifest 已冻结其合同。
 - `seed_platform/workbench.py` 的能力执行仍依赖硬编码分派；没有统一 capability bundle 注册、disposer、候选/影子/激活生命周期。
-- `taiji_w7_r5_open_domain_growth_v1.json` 只冻结结构成长合同，不能覆盖知识内化或效应器成长；R5A/R5B 的独立 manifest 尚未创建。
+- `taiji_w7_r5_open_domain_growth_v1.json` 只冻结结构成长合同，不能覆盖知识内化或效应器成长；R5A/R5B 的独立 manifest 已创建，但生产转换器/注册表尚未实现。
 - 默认自治仍是 freshness-valid、Taiji-owned 的只读 Workbench 路径；写入自治、外部 MCP 生命周期、长程开放域任务未完成。
 - 外部语言 provider artifact 的真实 packaged-client 轮换/重启重绑尚未形成 S2；native-readable 可用不等于语言质量已经成熟。
 - 当前无 CUDA 实测；CPU profile 不构成 CUDA 支持。
