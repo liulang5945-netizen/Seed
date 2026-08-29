@@ -348,6 +348,13 @@ API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 err
 导出聚合、重置确认、native API 副作用和失败回滚；每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，
 不得先做视觉包装或 CUDA kernel。
 
+**已完成（2026-08-29）：W6 第十八片的 SettingsView 数据与隐私展示拆分。** 对话保留、自动清理、数据导出和危险操作展示已抽为
+`SettingsPrivacyPanel`；组件不读写 store/API，父视图继续唯一持有设置保存竞态、导出聚合、重置确认、native API 副作用和失败回滚。前端 Vitest `40 files / 223 passed`、
+API contract/native boundary、ESLint、生产构建全部通过（ESLint `0 errors / 13 warnings`）。
+
+**当前唯一下一步：开始 W6 第十九片的 SettingsView 关于与许可展示拆分。** 先隔离版本元信息和开源许可入口，父视图继续唯一持有版本加载、许可弹窗状态和 native API 副作用；
+每片保持 `nativeApi` 单一入口、补齐组件回归并在提交前跑完整 CI，不得先做视觉包装或 CUDA kernel。
+
 ## 当前唯一下一步
 
 当前唯一下一步只看 [SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) 第 16 节，本文件不再复制该结论。
