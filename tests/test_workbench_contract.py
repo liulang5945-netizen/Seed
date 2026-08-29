@@ -362,6 +362,61 @@ def test_runtime_native_executive_canary_needs_no_manual_candidate(tmp_path, mon
     assert evidence_capabilities == ["workspace.list", "workspace.read"]
 
 
+def test_runtime_successor_graph_invalidates_siblings_and_continues_checkpoint(
+    tmp_path, monkeypatch
+) -> None:
+    (tmp_path / "a.txt").write_bytes(b"a\n")
+    (tmp_path / "b.txt").write_bytes(b"b\n")
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    checkpoint = tmp_path / "successor-loop.pt"
+    runtime = SeedRuntime(
+        Seed(episode_id="workbench-successor-graph"),
+        checkpoint_path=checkpoint,
+    )
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    runtime.model.architecture.observe(65, learn=False)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.list": {"path": "."}},
+    )
+
+    first = runtime.execute_taiji_workbench_successor_loop(
+        snapshot_id=snapshot_id,
+        loop_id="successor-graph",
+        max_steps=1,
+        max_budget_units=4.0,
+    )
+
+    assert first["status"] == "paused"
+    assert first["completed_prefix"] == 1
+    assert first["steps"][0]["capability_id"] == "workspace.list"
+    assert len(first["frontier_affordance_ids"]) == 4
+    assert checkpoint.exists()
+
+    restored = SeedRuntime.load(checkpoint)
+    second = restored.execute_taiji_workbench_successor_loop(
+        snapshot_id=snapshot_id,
+        loop_id="successor-graph",
+        max_steps=2,
+        max_budget_units=4.0,
+    )
+
+    assert second["status"] == "paused"
+    assert len(second["steps"]) == 2
+    assert second["completed_prefix"] == 3
+    sibling_step = second["steps"][0]
+    assert len(sibling_step["frontier_before_affordance_ids"]) == 4
+    assert len(sibling_step["invalidated_affordance_ids"]) >= 3
+    assert set(sibling_step["invalidated_affordance_ids"]).isdisjoint(
+        set(sibling_step["frontier_after_affordance_ids"])
+    )
+    assert len(set(restored._workbench_loop_state["successor_graph"]["event_ids"])) == 3
+
+
 def test_read_only_environment_reads_and_rejects_escape(tmp_path) -> None:
     (tmp_path / "src").mkdir()
     with (tmp_path / "src" / "main.py").open("w", encoding="utf-8", newline="") as handle:
@@ -619,6 +674,42 @@ def test_taiji_task_routes_expose_the_same_read_only_gate(tmp_path, monkeypatch)
     assert executed.json()["execution"]["outcome"]["status"] == "success"
     assert reprojected.status_code == 200
     assert reprojected.json()["affordances"][0]["action_kind"] == "workspace.stat"
+
+
+def test_taiji_successor_loop_route_runs_native_bounded_graph(tmp_path, monkeypatch) -> None:
+    (tmp_path / "a.txt").write_bytes(b"a\n")
+    (tmp_path / "b.txt").write_bytes(b"b\n")
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(Seed(episode_id="taiji-successor-route"))
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    runtime.model.architecture.observe(65, learn=False)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.list": {"path": "."}},
+    )
+
+    import api.seed_runtime as seed_runtime_module
+
+    monkeypatch.setattr(seed_runtime_module, "_runtime", runtime)
+    with TestClient(create_app(startup_tasks=False)) as client:
+        response = client.post(
+            "/api/workbench/taiji/successor-loop",
+            json={
+                "snapshot_id": snapshot_id,
+                "loop_id": "route-successor-graph",
+                "max_steps": 1,
+                "max_budget_units": 4.0,
+            },
+        )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "paused"
+    assert response.json()["steps"][0]["capability_id"] == "workspace.list"
+    assert len(response.json()["frontier_affordance_ids"]) == 4
 
 
 def test_native_mcp_registry_lists_and_invokes_local_read_only_canary(tmp_path) -> None:

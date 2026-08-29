@@ -2164,3 +2164,17 @@ Ruff 主门禁/B-SIM、Black、核心 mypy 均通过。该 canary 证明 Taiji-o
 `read/stat` successor 纳入 Taiji-owned 的统一候选排序与 bounded loop，逐步提交每个已消费前缀的 checkpoint；验证中途失败只保留已完成
 前缀，最新 WorldEvent 到达后旧 sibling candidate 全部失效，恢复后只从最新 evidence 重新投影，不重复消费或绕过累计预算。该 Gate
 通过前不进入写入自治、开放域自然语言工具选择、CUDA kernel 或视觉包装。
+
+**已完成（2026-08-29）：多证据 successor graph 的有限多步 checkpoint continuation Gate。** 新增
+`seed-taiji-successor-graph-v1` runtime/API contract：Taiji 从当前多个 `WorldAffordance` 统一合成候选，逐步执行真实只读
+`workspace.list/read/stat/search`，每个成功 evidence 到达后清空旧 frontier 并只从最新 WorldEvent 重新投影 successor；旧 sibling
+candidate 因 frontier identity 变化全部失效。累计预算、已消费 request/affordance/event identity 和 frontier 进入 checkpoint，恢复时
+重新投影并校验 frontier，禁止重复消费、旧 identity 复用、snapshot/budget/frontier 漂移；每次已尝试 step 都在副作用后提交 checkpoint。
+定向 Workbench 回归 `35 passed`，OpenAPI 严格快照 `2 passed`，全量 Python 回归 `543 passed, 6 skipped`，覆盖率 `44.60%`，
+Ruff 主门禁/B-SIM、Black、核心 mypy 均通过。该 Gate 仍只覆盖 bounded read-only graph，不开放写入自治、开放域自然语言工具选择、
+CUDA kernel 或视觉包装。
+
+**当前唯一下一步：建立 successor graph 的失败前缀与可审计 recovery Gate。** 在不重试旧 request/affordance 的前提下，注入真实
+`workspace` 读取失败、snapshot 漂移和 checkpoint 写入失败，持久化 `completed_prefix`、失败原因、latest evidence 与剩余 frontier；
+恢复后只允许从未消费且仍 freshness-valid 的 successor 继续，失效时生成显式 recovery-needed 状态，不自动扩大能力或进入写入自治。
+该 Gate 通过前不进入开放域自然语言工具选择、CUDA kernel 或视觉包装。

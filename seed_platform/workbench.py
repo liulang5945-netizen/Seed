@@ -49,6 +49,9 @@ WORKBENCH_LOOP_CONTRACT_VERSION = 1
 WORKBENCH_MAX_LOOP_STEPS = 8
 WORKBENCH_MAX_LOOP_BUDGET_UNITS = 32.0
 WORKBENCH_TAIJI_EVIDENCE_KIND = "workbench.evidence"
+WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT = "seed-taiji-successor-graph-v1"
+WORKBENCH_TAIJI_SUCCESSOR_GRAPH_VERSION = 1
+WORKBENCH_TAIJI_SUCCESSOR_STEP_BUDGET_UNITS = 1.0
 # Workbench sensations cross into Taiji's native byte sensor. Keep the
 # digest-derived marker inside the raw-byte domain; Taiji's boundary symbol
 # is reserved for stream framing and is not emitted here.

@@ -16,6 +16,7 @@ from api.models import (
     TaijiWorkbenchExecuteTaskRequest,
     TaijiWorkbenchProjectionRequest,
     TaijiWorkbenchReprojectionRequest,
+    TaijiWorkbenchSuccessorLoopRequest,
     TaijiWorkbenchTaskRequest,
     WorkbenchIntentRequest,
     WorkbenchLoopExecuteRequest,
@@ -268,6 +269,29 @@ def reproject_taiji_workbench_evidence(
     try:
         return runtime.reproject_workbench_from_latest_evidence(
             snapshot_id=request.snapshot_id,
+        )
+    except (TypeError, ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@router.post("/taiji/successor-loop")
+def execute_taiji_workbench_successor_loop(
+    request: TaijiWorkbenchSuccessorLoopRequest,
+) -> dict[str, Any]:
+    """Run a bounded multi-step Taiji successor graph through the read-only Gate."""
+
+    runtime = get_seed_runtime()
+    if runtime is None:
+        raise HTTPException(status_code=409, detail="Seed runtime is not active")
+    try:
+        return runtime.execute_taiji_workbench_successor_loop(
+            snapshot_id=request.snapshot_id,
+            loop_id=request.loop_id,
+            max_steps=request.max_steps,
+            max_budget_units=request.max_budget_units,
+            novelty=request.novelty,
+            resource_budget=request.resource_budget,
+            learn=request.learn,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
