@@ -77,6 +77,10 @@ class SeedRuntime:
         from taiji import LanguageOrgan, NativeReadableTextLanguageOrgan
 
         self.model.architecture.ensure_native_executive()
+        # Internal drives (curiosity/fatigue/stress) are integrated by Taiji on
+        # every observe/settle.  Attach idempotently so a controller restored
+        # from the checkpoint keeps its accumulated state.
+        self.model.architecture.ensure_homeostatic_controller()
 
         # Chat stays local by default.  An external organ can reach product
         # chat only through explicit config plus the realization/safety Gate.
@@ -393,6 +397,39 @@ class SeedRuntime:
             "parameters": int(self.model.parameter_count()),
             "language_provider": dict(self._provider_status),
             "workbench": workbench.status(),
+            "homeostasis": self.homeostasis_status(),
+        }
+
+    def homeostasis_status(self) -> dict[str, Any]:
+        """Report the live internal drive state measured by Taiji.
+
+        Only facts the architecture actually produced are emitted; when no
+        controller is attached the payload stays empty rather than guessing.
+        """
+
+        architecture = self.model.architecture
+        if not architecture.homeostatic_controller_attached:
+            return {"attached": False, "needs": {}, "drives": {}, "mode": "", "tick": 0}
+        with self._lock:
+            state = architecture.homeostatic_state()
+            drive = architecture.homeostatic_drive()
+            mode = architecture.homeostatic_mode()
+        return {
+            "attached": True,
+            "tick": int(state.tick),
+            "mode": mode,
+            # Native units are 0..1; clients scale for display.
+            "needs": {
+                "curiosity": float(state.curiosity),
+                "fatigue": float(state.fatigue),
+                "stress": float(state.stress),
+            },
+            "drives": {
+                "exploration": float(drive.exploration),
+                "replay": float(drive.replay),
+                "rest": float(drive.rest),
+                "play": float(drive.play),
+            },
         }
 
     def _sync_workbench_root(self) -> Any:

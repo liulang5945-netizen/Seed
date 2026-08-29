@@ -55,7 +55,7 @@
                 {{ filename }}
               </span>
             </td>
-            <td><span class="ds-num">--</span></td>
+            <td><span class="ds-num">{{ formatSize(fileSizes[filename]) }}</span></td>
             <td><span class="sc sc-ok">已就绪</span></td>
             <td>
               <div class="ds-act">
@@ -69,12 +69,14 @@
       <n-empty v-else :description="t('train_no_data')" style="padding:40px 0" />
 
       <div v-if="trainPreview" class="ds-preview">
-        <div class="ds-preview-head">{{ t('dataset_preview') }} ({{ trainPreview.count || 0 }} {{ t('samples') }})</div>
+        <div class="ds-preview-head">
+          {{ t('dataset_preview') }} ({{ trainPreview.count || 0 }} {{ t('samples') }})
+          <span v-if="trainPreview.report && trainPreview.report.truncated" class="preview-note">· 已采样前 {{ trainPreview.count }} 条</span>
+          <span v-if="trainPreview.native_trainable === false" class="preview-warn">· 不符合原生 text 合同</span>
+        </div>
         <div v-for="(sample, index) in (trainPreview.samples || [])" :key="index" class="preview-sample">
-          <div class="preview-label">{{ t('instruction') }}</div>
-          <div class="preview-text">{{ sample.instruction }}</div>
-          <div class="preview-label">{{ t('output') }}</div>
-          <div class="preview-text">{{ sample.output }}</div>
+          <div class="preview-label">{{ t('document') }} #{{ index + 1 }}</div>
+          <div class="preview-text">{{ sample.text }}</div>
         </div>
       </div>
     </div>
@@ -88,6 +90,7 @@ import FileUploadQueue from './FileUploadQueue.vue'
 defineProps({
   active: { type: Boolean, default: false },
   trainFiles: { type: Array, default: () => [] },
+  fileSizes: { type: Object, default: () => ({}) },
   selectedDatasets: { type: Array, default: () => [] },
   trainPreview: { type: Object, default: null },
   allSelected: { type: Boolean, default: false },
@@ -106,6 +109,18 @@ const emit = defineEmits([
   'preview',
   'delete',
 ])
+
+function formatSize(bytes) {
+  if (bytes == null || !Number.isFinite(bytes)) return '--'
+  const units = ['B', 'KB', 'MB', 'GB', 'TB']
+  let value = bytes
+  let unit = 0
+  while (value >= 1024 && unit < units.length - 1) {
+    value /= 1024
+    unit += 1
+  }
+  return `${unit === 0 ? value : value.toFixed(1)} ${units[unit]}`
+}
 </script>
 
 <style scoped>
@@ -147,6 +162,8 @@ const emit = defineEmits([
 .ds-act button.danger:hover { color: var(--destructive, var(--danger)); }
 .ds-preview { padding: 18px; border-top: 1px solid var(--border); background: color-mix(in srgb, var(--muted) 25%, transparent); }
 .ds-preview-head { font-size: 0.84rem; font-weight: 600; color: var(--foreground, var(--text)); margin-bottom: 10px; }
+.preview-note { font-weight: 500; color: var(--muted-foreground, var(--text-secondary)); }
+.preview-warn { font-weight: 600; color: var(--destructive, var(--danger)); }
 .preview-sample { padding: 12px 14px; background: var(--card, var(--bg-card)); border: 1px solid var(--border); border-radius: calc(var(--radius) * 0.5); margin-bottom: 8px; }
 .preview-label { font-size: 0.74rem; color: var(--primary); font-weight: 600; margin-bottom: 4px; }
 .preview-text { font-size: 0.84rem; color: var(--muted-foreground, var(--text-secondary)); word-break: break-all; line-height: 1.6; margin-bottom: 8px; }

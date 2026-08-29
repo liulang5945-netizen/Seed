@@ -30,7 +30,7 @@ from seed.persistence import atomic_save, attach_metadata, corpus_fingerprint
 from seed_platform.app_state import app_state
 
 from .common import collect_hardware_diag, safe_put
-from .datasets import _get_all_data_dirs
+from .datasets import resolve_dataset_path
 
 logger = logging.getLogger("ApiServer.Training.Resume")
 router = APIRouter()
@@ -52,17 +52,17 @@ class ResumeRequest(BaseModel):
 
 
 def _resolve_datasets(names: list[str]):
-    """在全部数据目录中解析数据集文件名（防目录穿越，仅取 basename）。"""
-    dirs = [Path(d) for d in _get_all_data_dirs()]
+    """解析前端给出的数据集相对路径（防目录穿越，保序去重）。"""
     resolved: list[Path] = []
     missing: list[str] = []
     for name in names:
-        safe_name = Path(name).name
-        hit = next((d / safe_name for d in dirs if (d / safe_name).is_file()), None)
+        hit = resolve_dataset_path(name)
         if hit is None:
-            missing.append(safe_name)
-        elif hit not in resolved:
-            resolved.append(hit)
+            missing.append(name)
+            continue
+        path = Path(hit)
+        if path not in resolved:
+            resolved.append(path)
     return resolved, missing
 
 

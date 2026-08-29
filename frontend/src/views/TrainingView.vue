@@ -86,6 +86,7 @@
       <TrainingDatasetPanel
         :active="isActive('dataset')"
         :train-files="trainFiles"
+        :file-sizes="trainFileSizes"
         :selected-datasets="selectedDatasets"
         :train-preview="trainPreview"
         :all-selected="isAllSelected()"
@@ -136,7 +137,7 @@ import { useApi } from '../composables/useApi.js';
 import { useTabs } from '../composables/useTabs.js';
 import RuntimeEvidenceStrip from '../components/RuntimeEvidenceStrip.vue';
 import {
-  trainState, trainLog, trainLoss, trainFiles,
+  trainState, trainLog, trainLoss, trainFiles, trainFileSizes,
   selectedDatasets, trainPreview,
   trainProgress,
   pendingCheckpoints, trainMetrics, trainDevice,

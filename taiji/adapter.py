@@ -4434,10 +4434,43 @@ class TSKV8Adapter(Taiji):
             raise TypeError("controller must be a HomeostaticController or None")
         self._homeostatic_controller = controller
 
+    def ensure_homeostatic_controller(self) -> None:
+        """Attach the default drive controller when none is present.
+
+        Idempotent, so a controller restored from a checkpoint is never
+        clobbered.  Mirrors :meth:`ensure_native_executive`.
+        """
+
+        if self._homeostatic_controller is not None:
+            return
+        self._homeostatic_controller = HomeostaticController()
+
+    @property
+    def homeostatic_controller_attached(self) -> bool:
+        """Whether internal drives are currently being integrated."""
+
+        return self._homeostatic_controller is not None
+
+    def homeostatic_state(self) -> HomeostaticState:
+        """Return the live internal drive state.
+
+        ``HomeostaticState`` is a frozen contract value, so this read needs
+        no defensive copy and is cheap enough for status polling.
+        """
+
+        return self._cognitive_state.homeostasis
+
     def homeostatic_drive(self) -> HomeostaticDrive:
         if self._homeostatic_controller is None:
             raise RuntimeError("homeostatic controller is not attached")
         return self._homeostatic_controller.drive(self._cognitive_state.homeostasis)
+
+    def homeostatic_mode(self) -> str:
+        """Return the mode the attached controller would select right now."""
+
+        if self._homeostatic_controller is None:
+            raise RuntimeError("homeostatic controller is not attached")
+        return self._homeostatic_controller.select_mode(self._cognitive_state.homeostasis)
 
     def homeostatic_transition(
         self,

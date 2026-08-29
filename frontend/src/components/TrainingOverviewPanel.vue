@@ -129,6 +129,12 @@ watch(() => props.trainLoss.length, () => {
   nextTick(() => drawLossChart())
 })
 
+// 面板常驻但用 display 切换，隐藏期间 canvas 测量为 0×0；重新激活后必须重绘，
+// 否则曲线永远停留在空白状态。
+watch(() => props.active, (isActive) => {
+  if (isActive) nextTick(() => drawLossChart())
+})
+
 onMounted(() => nextTick(() => drawLossChart()))
 </script>
 

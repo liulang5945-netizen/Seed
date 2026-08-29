@@ -58,20 +58,11 @@
         :language-provider-backend="runtimeStore.health.languageProvider?.backend_id"
         :tool-count="runtimeStore.tools.length"
         :workbench-detail="runtimeStore.statusEvidence.workbench.detail"
-        :has-needs-data="hasNeedsData"
+        :need-rows="needRows"
         :health-message="runtimeStore.health.message"
       />
 
       <template v-else>
-
-      <!-- ═══ Seed 原生运行时数据来源说明（诚实呈现：needs 未接入，无假数据） ═══ -->
-      <div v-if="runtimeStore.health.isSeed" class="seed-datasource-note">
-        <span class="dsn-badge">DATA SOURCE</span>
-        <div>
-          <strong>当前运行时：Seed 原生（{{ runtimeStore.health.modelName || 'seed' }}）</strong>
-          <p>下方「需求五维 / 生命表达 / 需求明细」需要运行时的 needs 上报通道。当前原生运行时尚未提供该通道，因此这些面板显示「暂无数据」——不是模型输出，也不是估算值。内存与连接状态为系统实测。</p>
-        </div>
-      </div>
 
       <!-- ═══ KPI 卡片行（全部来自原生状态快照与运行时实测，无估算值） ═══ -->
       <div class="kpi-grid">
@@ -401,41 +392,6 @@ onUnmounted(() => stopPolling())
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-/* ═══ Seed 数据来源说明卡 ═══ */
-.seed-datasource-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px dashed var(--border);
-  background: var(--card);
-}
-.dsn-badge {
-  flex: none;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 3px 8px;
-  border-radius: 6px;
-  margin-top: 2px;
-  background: var(--muted);
-  color: var(--muted-foreground);
-  font-family: var(--font-mono, monospace);
-}
-.seed-datasource-note strong {
-  display: block;
-  font-size: 0.86rem;
-  color: var(--foreground);
-  margin-bottom: 4px;
-}
-.seed-datasource-note p {
-  margin: 0;
-  font-size: 0.78rem;
-  line-height: 1.6;
-  color: var(--muted-foreground);
 }
 
 /* ═══ KPI 卡片行 ═══ */

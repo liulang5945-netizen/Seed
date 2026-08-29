@@ -8,15 +8,20 @@ const t = (key) => ({
   train_no_data: '暂无数据',
   dataset_preview: '数据集预览',
   samples: '样本',
-  instruction: '指令',
-  output: '输出',
+  document: '文档',
 }[key] || key)
 
 const baseProps = {
   active: true,
-  trainFiles: ['first.jsonl'],
+  trainFiles: ['simple_zh/first.jsonl'],
+  fileSizes: { 'simple_zh/first.jsonl': 2048 },
   selectedDatasets: [],
-  trainPreview: { count: 1, samples: [{ instruction: 'hello', output: 'world' }] },
+  trainPreview: {
+    count: 1,
+    native_trainable: true,
+    report: { truncated: false },
+    samples: [{ text: 'hello world' }],
+  },
   allSelected: false,
   t,
 }
@@ -36,16 +41,18 @@ describe('TrainingDatasetPanel', () => {
     })
 
     expect(wrapper.find('section.tab-panel').classes()).toContain('active')
-    expect(wrapper.text()).toContain('first.jsonl')
+    expect(wrapper.text()).toContain('simple_zh/first.jsonl')
     expect(wrapper.text()).toContain('数据集预览')
+    expect(wrapper.text()).toContain('hello world')
+    expect(wrapper.text()).toContain('2.0 KB')
 
     await wrapper.find('.dataset-toolbar button').trigger('click')
     await wrapper.find('.ds-act button').trigger('click')
     await wrapper.find('.ds-act button.danger').trigger('click')
 
     expect(wrapper.emitted('refresh')).toHaveLength(1)
-    expect(wrapper.emitted('preview')).toEqual([['first.jsonl']])
-    expect(wrapper.emitted('delete')).toEqual([['first.jsonl']])
+    expect(wrapper.emitted('preview')).toEqual([['simple_zh/first.jsonl']])
+    expect(wrapper.emitted('delete')).toEqual([['simple_zh/first.jsonl']])
   })
 
   it('keeps upload UI isolated from the parent data mutation owner', () => {

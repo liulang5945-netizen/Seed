@@ -134,6 +134,38 @@ describe('LifeStatusView', () => {
     )
   })
 
+  it('原生运行时把实测 needs 渲染成驱动条，未测维度不编造数值', async () => {
+    const store = useRuntimeStore()
+    store.health = { ...store.health, isTaiji: true }
+    // 后端 _native_life_section 只上报 Taiji 实测的三维（0-100 换算后）
+    store.life = {
+      status: 'seed',
+      is_running: true,
+      needs: { curiosity: 42.5, fatigue: 84.75, stress: 3.25 },
+      total_interactions: 0,
+      uptime_seconds: 0,
+    }
+    const wrapper = mountView()
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('3 维已上报')
+    const rows = wrapper.findAll('.native-needs-list li')
+    expect(rows).toHaveLength(3)
+    expect(wrapper.find('.native-needs-foot').text()).toContain('饥饿')
+    expect(wrapper.text()).not.toContain('50.0')
+  })
+
+  it('原生运行时未上报 needs 时不渲染驱动条', async () => {
+    const store = useRuntimeStore()
+    store.health = { ...store.health, isTaiji: true }
+    store.life = { status: 'seed', is_running: false, needs: {} }
+    const wrapper = mountView()
+    await flushPromises()
+
+    expect(wrapper.text()).toContain('未上报')
+    expect(wrapper.find('.native-needs').exists()).toBe(false)
+  })
+
   it('导出报告生成真实数据快照并触发下载', async () => {
     const store = useRuntimeStore()
     store.life = { is_running: true, total_interactions: 7, uptime_seconds: 60, needs: { hunger: 10 } }

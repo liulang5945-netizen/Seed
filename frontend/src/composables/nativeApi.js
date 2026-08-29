@@ -92,7 +92,10 @@ function jsonOptions(payload, method = 'POST') {
 }
 
 function resourcePath(template, value, parameter) {
-  return template.replace(`{${parameter}}`, encodeURIComponent(String(value)))
+  // 后端这些参数都是 {name:path} 转换器，保留字面 `/` 而只编码各段，
+  // 避免 %2F 在代理/ASGI 层被拒或二次解码。不含 `/` 的值行为不变。
+  const encoded = String(value).split('/').map(encodeURIComponent).join('/')
+  return template.replace(`{${parameter}}`, encoded)
 }
 
 const requestMetrics = new Map()

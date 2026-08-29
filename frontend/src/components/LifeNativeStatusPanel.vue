@@ -27,9 +27,26 @@
       </article>
       <article class="native-contract-card">
         <span class="native-contract-label">生命状态</span>
-        <strong>{{ hasNeedsData ? '已上报' : '未上报' }}</strong>
+        <strong>{{ reportedNeeds.length ? `${reportedNeeds.length} 维已上报` : '未上报' }}</strong>
         <span>needs 是否由当前运行时提供</span>
       </article>
+    </div>
+
+    <div v-if="reportedNeeds.length" class="native-needs" aria-label="Taiji 原生内驱状态">
+      <div class="native-needs-head">
+        <strong>内驱状态（homeostasis）</strong>
+        <span>由 Taiji 稳态器官在每次 observe / settle 时实测；显示值为原生 0-1 单位换算后的 0-100</span>
+      </div>
+      <ul class="native-needs-list">
+        <li v-for="row in reportedNeeds" :key="row.key" :class="`state-${row.state}`">
+          <span class="nn-label">{{ row.label }}</span>
+          <span class="nn-track"><span class="nn-fill" :style="{ width: `${row.value}%` }"></span></span>
+          <span class="nn-value">{{ row.value.toFixed(1) }}</span>
+        </li>
+      </ul>
+      <p v-if="unreportedNeeds.length" class="native-needs-foot">
+        未上报维度：{{ unreportedNeeds.join(' / ') }}——当前运行时没有测量这些维度，因此不填充占位值。
+      </p>
     </div>
 
     <div class="native-pipeline" aria-label="Taiji 原生状态推进链路">
@@ -45,24 +62,38 @@
     <div class="native-status-note">
       <strong>当前运行说明</strong>
       <p>{{ healthMessage || 'Taiji 原生运行时已连接；当前页面只显示已由状态接口上报的事实。' }}</p>
-      <p>需求、学习细节与结构规模尚未通过公开状态合同上报，因此这里不推测突触、神经元数量或内部器官名称。</p>
+      <p>学习细节与结构规模尚未通过公开状态合同上报，因此这里不推测突触、神经元数量或内部器官名称。</p>
     </div>
   </section>
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 defineOptions({ name: 'LifeNativeStatusPanel' })
 
-defineProps({
+const props = defineProps({
   connectionStatus: { type: String, default: '' },
   modelName: { type: String, default: '' },
   languageProviderState: { type: String, default: '' },
   languageProviderBackend: { type: String, default: '' },
   toolCount: { type: Number, default: 0 },
   workbenchDetail: { type: String, default: '' },
-  hasNeedsData: { type: Boolean, default: false },
+  // [{ key, label, value: number | null, state }]，value 为 null 表示该维度未被运行时测量
+  needRows: { type: Array, default: () => [] },
   healthMessage: { type: String, default: '' },
 })
+
+const reportedNeeds = computed(() =>
+  props.needRows.filter((row) => typeof row?.value === 'number' && Number.isFinite(row.value)),
+)
+
+const unreportedNeeds = computed(() =>
+  props.needRows
+    .filter((row) => !(typeof row?.value === 'number' && Number.isFinite(row.value)))
+    .map((row) => String(row?.label || row?.key || '').split(' · ')[0])
+    .filter(Boolean),
+)
 </script>
 
 <style scoped>
@@ -78,6 +109,19 @@ defineProps({
 .native-contract-label { color: var(--muted-foreground); font-size: 0.74rem; }
 .native-contract-card strong { color: var(--foreground); font-size: 1rem; }
 .native-contract-card > span:last-child { color: var(--muted-foreground); font-size: 0.78rem; line-height: 1.5; }
+.native-needs { margin-top: 12px; padding: 18px; border: 1px solid var(--border); border-radius: 14px; background: var(--card); }
+.native-needs-head { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+.native-needs-head strong { color: var(--foreground); font-size: 0.88rem; }
+.native-needs-head span { color: var(--muted-foreground); font-size: 0.76rem; line-height: 1.5; }
+.native-needs-list { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.native-needs-list li { display: grid; align-items: center; gap: 12px; grid-template-columns: 150px minmax(0, 1fr) 56px; --nn-color: var(--chart-2); }
+.native-needs-list li.state-watch { --nn-color: var(--chart-4); }
+.native-needs-list li.state-alert { --nn-color: var(--destructive, var(--chart-5)); }
+.nn-label { overflow-wrap: anywhere; color: var(--muted-foreground); font-size: 0.78rem; }
+.nn-track { overflow: hidden; height: 8px; border-radius: 999px; background: color-mix(in srgb, var(--border) 70%, var(--card)); }
+.nn-fill { display: block; height: 100%; border-radius: 999px; background: var(--nn-color); transition: width 0.35s ease; }
+.nn-value { color: var(--nn-color); font-size: 0.8rem; font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
+.native-needs-foot { margin: 14px 0 0; color: var(--muted-foreground); font-size: 0.74rem; line-height: 1.6; }
 .native-pipeline { display: flex; align-items: stretch; gap: 10px; margin: 18px 0; padding: 18px; border: 1px solid var(--border); border-radius: 14px; background: color-mix(in srgb, var(--accent) 35%, var(--card)); }
 .native-pipeline-step { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 5px; }
 .native-pipeline-step > span { color: var(--primary); font-size: 0.68rem; font-weight: 700; }
@@ -91,6 +135,10 @@ defineProps({
   .native-taiji-status { padding: 20px 16px 30px; }
   .native-status-head { flex-direction: column; }
   .native-contract-grid { grid-template-columns: 1fr; }
+  .native-needs-list li { grid-template-columns: minmax(0, 1fr) 52px; grid-template-areas: 'label value' 'track track'; row-gap: 6px; }
+  .nn-label { grid-area: label; }
+  .nn-value { grid-area: value; }
+  .nn-track { grid-area: track; }
   .native-pipeline { flex-direction: column; }
   .native-pipeline-arrow { transform: rotate(90deg); align-self: flex-start; }
 }

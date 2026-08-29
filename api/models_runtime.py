@@ -46,17 +46,13 @@ class AuthPayload(BaseModel):
     has_password: bool = False
 
 
-class LifeNeedsPayload(BaseModel):
-    hunger: float = 50.0
-    fatigue: float = 50.0
-    curiosity: float = 50.0
-    social: float = 50.0
-
-
 class LifePayload(BaseModel):
     status: str = "ok"
     is_running: bool = False
-    needs: LifeNeedsPayload = LifeNeedsPayload()
+    # Open dimension map (0..100).  A fixed schema here would invent values for
+    # dimensions the runtime never measured and silently drop the ones it did,
+    # so the runtime owns the vocabulary and this stays a passthrough.
+    needs: dict[str, float] = {}
     total_interactions: int = 0
     uptime_seconds: int = 0
 
