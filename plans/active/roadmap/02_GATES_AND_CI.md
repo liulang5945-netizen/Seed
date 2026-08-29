@@ -286,6 +286,12 @@ R1 的 S0 已通过。原健康记录只以 `artifact_id` 为锚点，存在同 
 
 证据链：`tests/seed/test_provider_watchdog_gate.py` 的 3 例验证 S0 报告、同 ID 内容替换清零计数、旧 checkpoint 可读；`scripts/training/eval_taiji_provider_watchdog.py` 可从仓库根目录直接执行，报告 [taiji_w7_r1_provider_watchdog_20260829.json](../../../reports/taiji_w7_r1_provider_watchdog_20260829.json) 为 `gate.passed=true`，指标包含 healthy rate `1.0`、连续失败阈值 `2`、单次回退、冷却抑制 `2` 次和 checkpoint roundtrip `true`；旧 provider 定向回归 `20 passed`，Ruff check/format 对新增脚本和测试通过。S1 尚未完成，不把 S0 报告当成真实重启 replay 或 packaged-client 证据。
 
+### 14.23 W7-R1 S1：provider watchdog checkpoint replay（2026-08-29）
+
+R1 的 S1 已通过。评测脚本新增 `--stage s1`，使用真实 `TSKV8Adapter.native_checkpoint()` 而不是只还原健康 dataclass：原生 adapter 挂载内容寻址 artifact 和 allowlisted registry，先写入两次失败，再保存；恢复后校验 artifact manifest、digest、registry revision/active id 和健康计数均保持一致，继续一次失败后 `probe_count=3`、`consecutive_failures=3`、`degraded=true`、`rollback_pending=true`，再次 checkpoint 恢复仍保持一致。
+
+证据为 [taiji_w7_r1_provider_watchdog_s1_20260829.json](../../../reports/taiji_w7_r1_provider_watchdog_s1_20260829.json)，`gate.passed=true`；R1 S0/S1 定向测试 `20 passed`。本证据证明 provider 健康 lineage 可恢复，不证明真实外部 decoder 在客户端已经完成切换或恢复；下一步必须在 packaged client 做 S2 观测，并校验 UI 只读投影和错误/降级状态。
+
 ## 15. 停止项
 
 在 P2 通过前：

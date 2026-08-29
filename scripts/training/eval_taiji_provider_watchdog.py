@@ -13,14 +13,19 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from taiji import (
     ExpressionPlan,
+    LanguageBackendSpec,
     LanguageEmission,
+    LanguageProviderArtifact,
+    LanguageProviderArtifactRegistry,
     LanguageProviderHealthGate,
     LanguageProviderHealthPolicy,
     NativeReadableTextLanguageOrgan,
+    TSKV8Adapter,
 )
 
 MANIFEST = "plans/manifests/taiji_w7_r1_provider_watchdog_v1.json"
 DEFAULT_REPORT = PROJECT_ROOT / "reports" / "taiji_w7_r1_provider_watchdog_20260829.json"
+DEFAULT_REPLAY_REPORT = PROJECT_ROOT / "reports" / "taiji_w7_r1_provider_watchdog_s1_20260829.json"
 
 
 class _DegradedLanguageOrgan:
@@ -73,13 +78,107 @@ def build_report() -> dict[str, object]:
     }
 
 
+def build_replay_report() -> dict[str, object]:
+    """Replay provider health through the real native adapter checkpoint."""
+
+    artifact = LanguageProviderArtifact(
+        artifact_id="s1-replay-artifact",
+        backend_id="s1-replay-provider",
+        mode="raw",
+        base_model="models/s1-replay",
+        content_digests=(("base_model", "b" * 64),),
+    )
+    registry = (
+        LanguageProviderArtifactRegistry()
+        .with_artifact(artifact, allow=True)
+        .activate(artifact.artifact_id)
+    )
+    policy = LanguageProviderHealthPolicy(failure_threshold=3, cooldown_seconds=60.0)
+    adapter = TSKV8Adapter()
+    adapter.language_backend_registry.register(
+        LanguageBackendSpec(
+            backend_id=artifact.backend_id,
+            family="external-causal-decoder-raw",
+            training_contract="expression-to-text-v1",
+        )
+    )
+    adapter.attach_language_provider_artifact(artifact)
+    adapter.attach_language_provider_artifact_registry(registry)
+    for index in range(2):
+        adapter.observe_language_provider_health(
+            accepted=False,
+            reason_code="probe_unreadable",
+            now=float(index),
+            policy=policy,
+        )
+
+    parent_health = adapter.language_provider_health
+    parent_checkpoint = adapter.native_checkpoint()
+    restored = TSKV8Adapter.from_native_checkpoint(parent_checkpoint)
+    restored_health = restored.language_provider_health
+    restored.observe_language_provider_health(
+        accepted=False,
+        reason_code="probe_unreadable",
+        now=2.0,
+        policy=policy,
+    )
+    continued_health = restored.language_provider_health
+    restored_again = TSKV8Adapter.from_native_checkpoint(restored.native_checkpoint())
+    replay_passed = bool(
+        restored.language_provider_artifact == artifact
+        and restored.language_provider_artifact_registry == registry
+        and restored_health == parent_health
+        and restored_health.artifact_digest == artifact.artifact_digest
+        and restored_health.probe_count == 2
+        and continued_health.probe_count == 3
+        and continued_health.consecutive_failures == 3
+        and continued_health.degraded
+        and continued_health.rollback_pending
+        and restored_again.language_provider_health == continued_health
+    )
+    return {
+        "manifest": MANIFEST,
+        "stage": "S1",
+        "checkpoint": {
+            "format": parent_checkpoint["format"],
+            "artifact_id": artifact.artifact_id,
+            "artifact_digest": artifact.artifact_digest,
+            "registry_revision": registry.revision,
+            "active_artifact_id": registry.active_artifact_id,
+        },
+        "health": {
+            "parent": parent_health.checkpoint(),
+            "restored": restored_health.checkpoint(),
+            "continued": continued_health.checkpoint(),
+            "restored_again": restored_again.language_provider_health.checkpoint(),
+        },
+        "controls": [
+            "artifact digest survives native adapter checkpoint",
+            "registry selection survives native adapter checkpoint",
+            "health counters survive restore without reset",
+            "the next probe continues the same failure lineage",
+            "threshold crossing remains observable after restore",
+        ],
+        "gate": {
+            "passed": replay_passed,
+            "criterion": "provider artifact identity, registry selection, health counters, digest binding, and threshold continuation survive a native adapter checkpoint round-trip",
+        },
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
+    parser.add_argument("--stage", choices=("s0", "s1"), default="s0")
+    parser.add_argument("--report", type=Path)
     args = parser.parse_args()
-    report = build_report()
-    args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(
+    if args.stage == "s1":
+        report = build_replay_report()
+        report_path = args.report or DEFAULT_REPLAY_REPORT
+    else:
+        report = build_report()
+        report_path = args.report or DEFAULT_REPORT
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     print(json.dumps(report, ensure_ascii=False, indent=2))

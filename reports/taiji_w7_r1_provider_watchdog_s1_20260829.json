@@ -1,0 +1,80 @@
+{
+  "manifest": "plans/manifests/taiji_w7_r1_provider_watchdog_v1.json",
+  "stage": "S1",
+  "checkpoint": {
+    "format": "taiji-native-v1",
+    "artifact_id": "s1-replay-artifact",
+    "artifact_digest": "b56801df1f20c683610da04428ef70e6bf0970c7d1bf23399fafe29a50074269",
+    "registry_revision": 2,
+    "active_artifact_id": "s1-replay-artifact"
+  },
+  "health": {
+    "parent": {
+      "format": "taiji-language-provider-health-v1",
+      "artifact_id": "s1-replay-artifact",
+      "artifact_digest": "b56801df1f20c683610da04428ef70e6bf0970c7d1bf23399fafe29a50074269",
+      "probe_count": 2,
+      "accepted_count": 0,
+      "consecutive_failures": 2,
+      "rollback_count": 0,
+      "degraded": false,
+      "rollback_pending": false,
+      "cooldown_until": 0.0,
+      "last_reason_code": "probe_unreadable",
+      "last_probe_at": 1.0
+    },
+    "restored": {
+      "format": "taiji-language-provider-health-v1",
+      "artifact_id": "s1-replay-artifact",
+      "artifact_digest": "b56801df1f20c683610da04428ef70e6bf0970c7d1bf23399fafe29a50074269",
+      "probe_count": 2,
+      "accepted_count": 0,
+      "consecutive_failures": 2,
+      "rollback_count": 0,
+      "degraded": false,
+      "rollback_pending": false,
+      "cooldown_until": 0.0,
+      "last_reason_code": "probe_unreadable",
+      "last_probe_at": 1.0
+    },
+    "continued": {
+      "format": "taiji-language-provider-health-v1",
+      "artifact_id": "s1-replay-artifact",
+      "artifact_digest": "b56801df1f20c683610da04428ef70e6bf0970c7d1bf23399fafe29a50074269",
+      "probe_count": 3,
+      "accepted_count": 0,
+      "consecutive_failures": 3,
+      "rollback_count": 0,
+      "degraded": true,
+      "rollback_pending": true,
+      "cooldown_until": 0.0,
+      "last_reason_code": "probe_unreadable",
+      "last_probe_at": 2.0
+    },
+    "restored_again": {
+      "format": "taiji-language-provider-health-v1",
+      "artifact_id": "s1-replay-artifact",
+      "artifact_digest": "b56801df1f20c683610da04428ef70e6bf0970c7d1bf23399fafe29a50074269",
+      "probe_count": 3,
+      "accepted_count": 0,
+      "consecutive_failures": 3,
+      "rollback_count": 0,
+      "degraded": true,
+      "rollback_pending": true,
+      "cooldown_until": 0.0,
+      "last_reason_code": "probe_unreadable",
+      "last_probe_at": 2.0
+    }
+  },
+  "controls": [
+    "artifact digest survives native adapter checkpoint",
+    "registry selection survives native adapter checkpoint",
+    "health counters survive restore without reset",
+    "the next probe continues the same failure lineage",
+    "threshold crossing remains observable after restore"
+  ],
+  "gate": {
+    "passed": true,
+    "criterion": "provider artifact identity, registry selection, health counters, digest binding, and threshold continuation survive a native adapter checkpoint round-trip"
+  }
+}

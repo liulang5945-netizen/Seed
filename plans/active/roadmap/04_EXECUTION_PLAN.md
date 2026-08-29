@@ -101,7 +101,7 @@ G0 不实现新自治。它的退出条件是所有 R 工作包都有可执行�
 
 验收包含 artifact 漂移、连续失败、超时、冷却、探测恢复、错误 fallback、checkpoint 中断恢复和多 provider 隔离的红绿测试；真实 canary 必须对同一 artifact digest 记录结果。
 
-**S0 已通过（2026-08-29）**：健康状态已从仅绑定 `artifact_id` 收紧为绑定 `artifact_id + artifact_digest`；同 ID 内容替换会建立新记录，不继承旧失败计数。`tests/seed/test_provider_watchdog_gate.py` 与 [S0 评测脚本](../../../scripts/training/eval_taiji_provider_watchdog.py) 覆盖 healthy/连续失败/单次回退/cooldown/legacy checkpoint 兼容，评测报告为 [taiji_w7_r1_provider_watchdog_20260829.json](../../../reports/taiji_w7_r1_provider_watchdog_20260829.json)，定向 provider 回归 `20 passed`。R1-S1 的唯一剩余入口是把同一记录接入真实 provider checkpoint replay 并验证恢复后的下一次探针行为。
+**S0/S1 已通过（2026-08-29）**：健康状态已从仅绑定 `artifact_id` 收紧为绑定 `artifact_id + artifact_digest`；同 ID 内容替换会建立新记录，不继承旧失败计数。`tests/seed/test_provider_watchdog_gate.py` 与 [评测脚本](../../../scripts/training/eval_taiji_provider_watchdog.py) 的 S0 覆盖 healthy/连续失败/单次回退/cooldown/legacy checkpoint 兼容；S1 使用真实 `TSKV8Adapter.native_checkpoint()` 保存→恢复→继续失败探针，校验 artifact、digest、registry、计数和阈值后的 lineage。S0 报告为 [taiji_w7_r1_provider_watchdog_20260829.json](../../../reports/taiji_w7_r1_provider_watchdog_20260829.json)，S1 报告为 [taiji_w7_r1_provider_watchdog_s1_20260829.json](../../../reports/taiji_w7_r1_provider_watchdog_s1_20260829.json)，定向 provider 回归 `20 passed`。R1-S2 的唯一剩余入口是 Legacy-off packaged-client 的 provider 状态与降级观测。
 
 ## 6. W7-R2：interaction-group 与恢复归因
 

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from scripts.training.eval_taiji_provider_watchdog import build_report
+from scripts.training.eval_taiji_provider_watchdog import build_replay_report, build_report
 from taiji import LanguageProviderHealthPolicy, LanguageProviderHealthState
 
 
@@ -64,3 +64,16 @@ def test_legacy_health_checkpoint_without_digest_remains_loadable() -> None:
     assert restored.artifact_id == "legacy-artifact"
     assert restored.artifact_digest is None
     assert restored.probe_count == 2
+
+
+def test_provider_watchdog_s1_checkpoint_replay_continues_the_same_failure_lineage() -> None:
+    report = build_replay_report()
+    assert report["gate"]["passed"] is True
+    assert len(report["checkpoint"]["artifact_digest"]) == 64
+    assert report["checkpoint"]["artifact_digest"] == report["health"]["parent"]["artifact_digest"]
+    assert report["health"]["parent"]["probe_count"] == 2
+    assert report["health"]["restored"]["probe_count"] == 2
+    assert report["health"]["continued"]["probe_count"] == 3
+    assert report["health"]["continued"]["consecutive_failures"] == 3
+    assert report["health"]["continued"]["degraded"] is True
+    assert report["health"]["restored_again"] == report["health"]["continued"]
