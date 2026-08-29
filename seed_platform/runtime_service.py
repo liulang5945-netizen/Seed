@@ -141,9 +141,52 @@ def _auth_section(auth_header: str) -> dict:
     return section
 
 
+def _native_life_section() -> dict | None:
+    """Life data measured by the Taiji homeostasis organ, or ``None``.
+
+    Returns ``None`` when no native runtime is active so the caller can fall
+    back to Legacy.  Native drive units are 0..1; the client contract for
+    ``life.needs`` is 0..100, so the only transform here is that scaling — no
+    dimension is invented and none is dropped.
+    """
+
+    try:
+        from api.seed_runtime import get_seed_runtime
+
+        runtime = get_seed_runtime()
+        if runtime is None:
+            return None
+        homeostasis = runtime.homeostasis_status()
+    except Exception as exc:  # pragma: no cover - defensive status boundary
+        logger.warning(f"runtime_service: native life status unavailable: {exc}")
+        return None
+    if not homeostasis.get("attached"):
+        return {
+            "status": "seed",
+            "is_running": False,
+            "needs": {},
+            "total_interactions": 0,
+            "uptime_seconds": 0,
+        }
+    needs = {
+        str(name): round(float(value) * 100.0, 2)
+        for name, value in (homeostasis.get("needs") or {}).items()
+    }
+    return {
+        "status": "seed",
+        "is_running": True,
+        "needs": needs,
+        "total_interactions": 0,
+        "uptime_seconds": 0,
+    }
+
+
 def _life_section() -> dict:
     from seed_platform.dependencies import legacy_requested
 
+    native = _native_life_section()
+    if native is not None:
+        return native
     if not legacy_requested():
         return {
             "status": "seed",

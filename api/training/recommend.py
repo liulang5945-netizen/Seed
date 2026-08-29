@@ -14,6 +14,8 @@ from pydantic import BaseModel
 from seed.datasets import inspect_native_dataset
 from taiji import TaijiConfig
 
+from .datasets import PREVIEW_SCAN_RECORDS, resolve_dataset_path
+
 logger = logging.getLogger("ApiServer.Training.Recommend")
 router = APIRouter()
 
@@ -151,7 +153,8 @@ async def check_dataset_quality(req: DatasetCheckRequest):
     if not req.file_path.strip():
         raise HTTPException(status_code=400, detail="file_path 不能为空")
     try:
-        result = inspect_native_dataset(req.file_path)
+        target = resolve_dataset_path(req.file_path) or req.file_path
+        result = inspect_native_dataset(target, max_records=PREVIEW_SCAN_RECORDS)
         return {"status": "success", **result.to_dict()}
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail=f"数据集不存在: {req.file_path}") from None

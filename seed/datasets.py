@@ -35,6 +35,21 @@ class NativeDatasetReport:
     blank_lines: int
     total_text_bytes: int
     errors: tuple[str, ...]
+    truncated: bool = False
+    scanned_bytes: int = 0
+
+    def estimated_total_text_bytes(self) -> int:
+        """外推整个文件的文本字节数（未截断时即精确值）。"""
+        if not self.truncated or self.scanned_bytes <= 0:
+            return self.total_text_bytes
+        try:
+            file_size = Path(self.path).stat().st_size
+        except OSError:
+            return self.total_text_bytes
+        if file_size <= self.scanned_bytes:
+            return self.total_text_bytes
+        ratio = file_size / self.scanned_bytes
+        return int(self.total_text_bytes * ratio)
 
     def to_dict(self) -> dict[str, Any]:
         average = self.total_text_bytes / self.documents if self.documents else 0.0
@@ -48,6 +63,9 @@ class NativeDatasetReport:
             "blank_lines": self.blank_lines,
             "total_text_bytes": self.total_text_bytes,
             "average_text_bytes": round(average, 2),
+            "truncated": self.truncated,
+            "scanned_bytes": self.scanned_bytes,
+            "estimated_total_text_bytes": self.estimated_total_text_bytes(),
             "errors": list(self.errors),
             "contract": {
                 "encoding": "utf-8",
@@ -129,8 +147,18 @@ def iter_native_documents(paths: Sequence[Path | str]) -> Iterator[str]:
                 yield text
 
 
-def inspect_native_dataset(path_value: Path | str) -> NativeDatasetReport:
-    """Inspect a dataset without importing any optional model runtime."""
+def inspect_native_dataset(
+    path_value: Path | str, *, max_records: int | None = None
+) -> NativeDatasetReport:
+    """Inspect a dataset without importing any optional model runtime.
+
+    ``max_records`` bounds how many JSONL lines are examined so that
+    multi-gigabyte corpora can be validated in constant time.  When the scan
+    stops early the report is flagged ``truncated``, ``scanned_bytes`` records
+    the inspected prefix size, and ``estimated_total_text_bytes()`` extrapolates
+    the full corpus size.  JSON and plain-text datasets are always read whole
+    because their parsers materialise the entire file anyway.
+    """
 
     path = Path(path_value)
     if not path.is_file():
@@ -149,6 +177,8 @@ def inspect_native_dataset(path_value: Path | str) -> NativeDatasetReport:
     invalid_records = 0
     blank_lines = 0
     total_text_bytes = 0
+    truncated = False
+    scanned_bytes = 0
     errors: list[str] = []
 
     def record_text(text: str) -> None:
@@ -163,6 +193,10 @@ def inspect_native_dataset(path_value: Path | str) -> NativeDatasetReport:
         try:
             with path.open("r", encoding="utf-8") as handle:
                 for line_number, line in enumerate(handle, start=1):
+                    if max_records is not None and line_number > max_records:
+                        truncated = True
+                        break
+                    scanned_bytes += len(line.encode("utf-8"))
                     if not line.strip():
                         blank_lines += 1
                         continue
@@ -212,4 +246,6 @@ def inspect_native_dataset(path_value: Path | str) -> NativeDatasetReport:
         blank_lines=blank_lines,
         total_text_bytes=total_text_bytes,
         errors=tuple(errors),
+        truncated=truncated,
+        scanned_bytes=scanned_bytes,
     )

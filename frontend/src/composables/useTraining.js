@@ -15,6 +15,7 @@ export const trainState = ref('idle');            // idle | running | paused | c
 export const trainLog = ref('');
 export const trainLoss = ref([]);
 export const trainFiles = ref([]);
+export const trainFileSizes = ref({});
 export const selectedDatasets = ref([]);
 export const trainPreview = ref(null);
 export let trainAbortController = null;
@@ -90,6 +91,13 @@ export async function loadTrainDatasets() {
   try {
     const data = await nativeApi.trainingFiles();
     trainFiles.value = data.files || [];
+    const sizes = {};
+    for (const entry of data.entries || []) {
+      if (entry && entry.path) sizes[entry.path] = entry.size_bytes ?? null;
+    }
+    trainFileSizes.value = sizes;
+    // 列表刷新后剔除已消失的选中项，避免提交不存在的数据集。
+    selectedDatasets.value = selectedDatasets.value.filter((name) => trainFiles.value.includes(name));
   } catch (e) { /* silent */ }
 }
 
@@ -419,16 +427,24 @@ export async function startTaijiTraining(toast) {
 
 // ===== Loss 曲线绘图 =====
 
+// 面板以 display:none 常驻时元素测量为 0×0，需要一组与模板 canvas 属性一致的兜底尺寸。
+const LOSS_CHART_FALLBACK_WIDTH = 600;
+const LOSS_CHART_FALLBACK_HEIGHT = 170;
+
 export function drawLossChart() {
   const canvas = lossCanvasRef.value;
   if (!canvas || trainLoss.value.length < 2) return;
   const ctx = canvas.getContext('2d');
+  if (!ctx) return;
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * dpr;
-  canvas.height = rect.height * dpr;
+  // 隐藏面板里 getBoundingClientRect() 恒为 0×0，若直接采用会把画布尺寸清零、
+  // 所有绘制被静默丢弃，面板切回来时也不会自愈。这里逐级回退到有效尺寸。
+  const w = Math.round(rect.width) || canvas.clientWidth || LOSS_CHART_FALLBACK_WIDTH;
+  const h = Math.round(rect.height) || canvas.clientHeight || LOSS_CHART_FALLBACK_HEIGHT;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const w = rect.width, h = rect.height;
   const pad = { top: 12, right: 16, bottom: 28, left: 48 };
   const pw = w - pad.left - pad.right;
   const ph = h - pad.top - pad.bottom;

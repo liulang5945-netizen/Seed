@@ -314,32 +314,6 @@
         "title": "HealthPayload",
         "type": "object"
       },
-      "LifeNeedsPayload": {
-        "properties": {
-          "curiosity": {
-            "default": 50.0,
-            "title": "Curiosity",
-            "type": "number"
-          },
-          "fatigue": {
-            "default": 50.0,
-            "title": "Fatigue",
-            "type": "number"
-          },
-          "hunger": {
-            "default": 50.0,
-            "title": "Hunger",
-            "type": "number"
-          },
-          "social": {
-            "default": 50.0,
-            "title": "Social",
-            "type": "number"
-          }
-        },
-        "title": "LifeNeedsPayload",
-        "type": "object"
-      },
       "LifePayload": {
         "properties": {
           "is_running": {
@@ -348,13 +322,12 @@
             "type": "boolean"
           },
           "needs": {
-            "$ref": "#/components/schemas/LifeNeedsPayload",
-            "default": {
-              "curiosity": 50.0,
-              "fatigue": 50.0,
-              "hunger": 50.0,
-              "social": 50.0
-            }
+            "additionalProperties": {
+              "type": "number"
+            },
+            "default": {},
+            "title": "Needs",
+            "type": "object"
           },
           "status": {
             "default": "ok",
@@ -584,12 +557,7 @@
             "$ref": "#/components/schemas/LifePayload",
             "default": {
               "is_running": false,
-              "needs": {
-                "curiosity": 50.0,
-                "fatigue": 50.0,
-                "hunger": 50.0,
-                "social": 50.0
-              },
+              "needs": {},
               "status": "ok",
               "total_interactions": 0,
               "uptime_seconds": 0
@@ -2595,7 +2563,7 @@
     },
     "/api/train/file/{filename}": {
       "delete": {
-        "description": "删除指定的数据集文件",
+        "description": "删除指定的数据集文件（支持 data/ 下的相对路径）",
         "operationId": "delete_train_file_api_train_file__filename__delete",
         "parameters": [
           {
@@ -2633,7 +2601,7 @@
     },
     "/api/train/files": {
       "get": {
-        "description": "获取 data 目录下的数据集文件列表",
+        "description": "递归列出 data 目录下的原生可训练数据集（相对路径，已排除平台配置文件）。",
         "operationId": "list_train_files_api_train_files_get",
         "responses": {
           "200": {
@@ -2704,7 +2672,7 @@
     },
     "/api/train/preview/{filename}": {
       "get": {
-        "description": "预览数据集内容",
+        "description": "按 Seed 原生合同预览数据集（UTF-8 文本文档，JSON 家族取 text 字段）。",
         "operationId": "train_preview_api_train_preview__filename__get",
         "parameters": [
           {

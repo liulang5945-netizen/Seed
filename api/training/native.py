@@ -16,6 +16,7 @@ from seed.datasets import inspect_native_dataset
 from seed_platform.app_state import app_state
 from taiji import TaijiConfig
 
+from .datasets import PREVIEW_SCAN_RECORDS
 from .resume import (
     _CHECKPOINT_DIR,
     _DEFAULT_CORPUS,
@@ -52,7 +53,8 @@ def _resolve_device(value: str) -> torch.device:
     return device
 
 
-def _resolve_native_datasets(names: list[str] | None) -> list[Path]:
+def _resolve_native_datasets(names: list[str] | None) -> tuple[list[Path], int]:
+    """解析并校验数据集，返回 (路径列表, 预估总文本字节数)。"""
     if names:
         resolved, missing = _resolve_datasets(names)
         if missing:
@@ -64,16 +66,18 @@ def _resolve_native_datasets(names: list[str] | None) -> list[Path]:
         paths = [_DEFAULT_CORPUS]
 
     invalid = []
+    total_bytes = 0
     for path in paths:
-        report = inspect_native_dataset(path)
+        report = inspect_native_dataset(path, max_records=PREVIEW_SCAN_RECORDS)
         if not report.native_trainable:
             invalid.append(report.to_dict())
+        total_bytes += report.estimated_total_text_bytes()
     if invalid:
         raise HTTPException(
             status_code=400,
             detail={"message": "数据集不符合 Seed 原生 text/raw-byte 合同", "datasets": invalid},
         )
-    return paths
+    return paths, total_bytes
 
 
 @router.post("/api/train/native")
@@ -86,9 +90,7 @@ def train_native(req: NativeTrainRequest):
         raise HTTPException(status_code=400, detail="max_symbols 必须为正数")
 
     device = _resolve_device(req.device)
-    corpus_paths = _resolve_native_datasets(req.datasets)
-    reports = [inspect_native_dataset(path) for path in corpus_paths]
-    total_bytes = sum(report.total_text_bytes for report in reports)
+    corpus_paths, total_bytes = _resolve_native_datasets(req.datasets)
 
     try:
         config = SeedConfig(taiji=TaijiConfig.capacity_profile(req.parameter_budget, seed=req.seed))
