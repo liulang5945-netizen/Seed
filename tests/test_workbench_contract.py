@@ -786,8 +786,8 @@ def test_taiji_recovery_handoff_route_uses_fresh_workspace_evidence(tmp_path, mo
                 "max_steps": 1,
             },
         )
-        (tmp_path / "fresh.txt").write_bytes(b"route fresh evidence\n")
-        refreshed = client.get("/api/workbench/files", params={"path": "."})
+        (tmp_path / "missing.txt").write_bytes(b"route fresh evidence\n")
+        refreshed = client.get("/api/workbench/file", params={"path": "missing.txt"})
         handed_off = client.post(
             "/api/workbench/taiji/recovery-handoff",
             json={
@@ -835,12 +835,30 @@ def test_successor_graph_recovery_handoff_requires_fresh_evidence(tmp_path, monk
             max_steps=1,
         )
 
-    (tmp_path / "fresh.txt").write_bytes(b"fresh evidence\n")
     runtime.execute_workbench_intent(
         ActionIntent(
-            intent_id="fresh-evidence-list",
+            intent_id="unrelated-fresh-evidence",
             kind="workspace.list",
             parameters={"path": "."},
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        snapshot_id=snapshot_id,
+    )
+    with pytest.raises(RuntimeError, match="incompatible with the failed capability"):
+        runtime.handoff_taiji_workbench_recovery(
+            parent_loop_id="handoff-parent",
+            recovery_loop_id="handoff-child",
+            snapshot_id=snapshot_id,
+            max_steps=1,
+        )
+
+    (tmp_path / "missing.txt").write_bytes(b"fresh evidence\n")
+    runtime.execute_workbench_intent(
+        ActionIntent(
+            intent_id="fresh-evidence-read",
+            kind="workspace.read",
+            parameters={"path": "missing.txt"},
             confidence=1.0,
             tick=runtime.model.tick,
         ),

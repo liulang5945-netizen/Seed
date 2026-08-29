@@ -1029,6 +1029,12 @@ class SeedRuntime:
                 "reason": "a step was reserved before checkpoint completion; execution state is unknown",
                 "step_index": int(pending.get("index", successor_state.get("completed_steps", 0))),
                 "candidate_id": str(pending.get("candidate_id", "")),
+                "capability_id": str(pending.get("capability_id", "")),
+                "parameters": (
+                    dict(pending.get("parameters", {}))
+                    if isinstance(pending.get("parameters", {}), Mapping)
+                    else {}
+                ),
                 "source_affordance_id": str(pending.get("source_affordance_id", "")),
                 "latest_evidence_id": (
                     "" if latest_evidence is None else str(latest_evidence.event_id)
@@ -1175,6 +1181,12 @@ class SeedRuntime:
                 "reason": str(reason),
                 "step_index": int(step.get("index", successor_state.get("completed_steps", 0))),
                 "candidate_id": str(step.get("candidate_id", "")),
+                "capability_id": str(step.get("capability_id", "")),
+                "parameters": (
+                    dict(step.get("parameters", {}))
+                    if isinstance(step.get("parameters", {}), Mapping)
+                    else {}
+                ),
                 "source_affordance_id": str(step.get("source_affordance_id", "")),
                 "latest_evidence_id": latest_evidence_id,
                 "completed_prefix": int(successor_state.get("completed_steps", 0)),
@@ -1223,6 +1235,12 @@ class SeedRuntime:
                         else step.get("index", successor_state.get("completed_steps", 0))
                     ),
                     "candidate_id": "" if step is None else str(step.get("candidate_id", "")),
+                    "capability_id": "" if step is None else str(step.get("capability_id", "")),
+                    "parameters": (
+                        dict(step.get("parameters", {}))
+                        if step is not None and isinstance(step.get("parameters", {}), Mapping)
+                        else {}
+                    ),
                     "source_affordance_id": (
                         "" if step is None else str(step.get("source_affordance_id", ""))
                     ),
@@ -1283,6 +1301,7 @@ class SeedRuntime:
                 "index": int(successor_state.get("completed_steps", 0)),
                 "candidate_id": decision.selected.candidate_id,
                 "capability_id": decision.selected.action_intent.kind,
+                "parameters": dict(decision.selected.action_intent.parameters),
                 "source_affordance_id": source_affordance_id,
                 "frontier_before_affordance_ids": list(frontier_before),
                 "decision": self._taiji_workbench_decision_payload(decision),
@@ -1336,6 +1355,8 @@ class SeedRuntime:
                 "candidate_id": str(step["candidate_id"]),
                 "source_affordance_id": source_affordance_id,
                 "request_id": str(admission.request.request_id),
+                "capability_id": str(step["capability_id"]),
+                "parameters": dict(step["parameters"]),
                 "frontier_before_affordance_ids": list(frontier_before),
             }
             if not commit_checkpoint(step, phase="before_execution"):
@@ -1553,6 +1574,14 @@ class SeedRuntime:
             raise RuntimeError("recovery evidence must be successful")
         if evidence.snapshot_id != environment.capability_snapshot.snapshot_id:
             raise RuntimeError("recovery evidence capability snapshot drifted")
+        failed_capability_id = str(failure.get("capability_id", ""))
+        failed_parameters = failure.get("parameters")
+        if not failed_capability_id or not isinstance(failed_parameters, Mapping):
+            raise RuntimeError("recovery failure has no capability context")
+        if evidence.capability_id != failed_capability_id:
+            raise RuntimeError("recovery evidence is incompatible with the failed capability")
+        if dict(evidence.parameters) != dict(failed_parameters):
+            raise RuntimeError("recovery evidence parameters do not match the failed context")
         affordances = evidence.to_taiji_affordances(environment.capability_snapshot)
         if not affordances:
             raise RuntimeError("recovery evidence produced no successor affordance")
