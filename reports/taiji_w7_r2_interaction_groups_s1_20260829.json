@@ -1,0 +1,499 @@
+{
+  "format": "taiji-interaction-group-evaluation-v1",
+  "estimator_revision": 1,
+  "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+  "holdout_trace_digest": "3256ef0cd384071c301d6c7cbe3ff7ac4fb70c9378640b6a6e3168562e6a8406",
+  "checkpoint": {
+    "format": "taiji-interaction-group-v1",
+    "version": 1,
+    "checkpoint_revision": 1,
+    "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+    "estimator_revision": 1,
+    "groups": [
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "group_id": "group:3da1e4fc2892d53711aed565",
+        "member_ids": [
+          "native-owner:500d30d262eb7e34993456b0",
+          "native-owner:b9d34e40e1527d2e2c422a8b"
+        ],
+        "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+        "checkpoint_revision": 1,
+        "contribution": -0.2,
+        "interaction": -1.0,
+        "uncertainty": 0.0,
+        "resource_cost": 3.0,
+        "owner_policy": "policy:group:3da1e4fc2892d53711aed565",
+        "recovery_effect": -0.25,
+        "holdout_interaction": -1.0,
+        "holdout_recovery_effect": -0.25,
+        "status": "admitted",
+        "method": "factorial-counterfactual+lesion",
+        "event_ids": [
+          "r2-s1-train-cd-first:event:2",
+          "r2-s1-train-cd-pair:event:2",
+          "r2-s1-train-cd-pair:event:3",
+          "r2-s1-train-cd-second:event:2"
+        ],
+        "outcome_ids": [
+          "r2-s1-train-cd-first:outcome:2:r2-s1-train-cd-first:intent:2",
+          "r2-s1-train-cd-none:outcome:1:r2-s1-train-cd-none:intent:1",
+          "r2-s1-train-cd-pair:outcome:3:r2-s1-train-cd-pair:intent:3",
+          "r2-s1-train-cd-second:outcome:2:r2-s1-train-cd-second:intent:2"
+        ]
+      },
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "group_id": "group:85f04af848f25fea115bc7a0",
+        "member_ids": [
+          "native-owner:a878852bd45f589da68e2d39",
+          "native-owner:e4654a97922bcc001f10a204"
+        ],
+        "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+        "checkpoint_revision": 1,
+        "contribution": 1.0,
+        "interaction": 0.5,
+        "uncertainty": 0.0,
+        "resource_cost": 3.0,
+        "owner_policy": "policy:group:85f04af848f25fea115bc7a0",
+        "recovery_effect": 0.5,
+        "holdout_interaction": 0.5,
+        "holdout_recovery_effect": 0.49999999999999994,
+        "status": "admitted",
+        "method": "factorial-counterfactual+lesion",
+        "event_ids": [
+          "r2-s1-train-ab-first:event:2",
+          "r2-s1-train-ab-pair:event:2",
+          "r2-s1-train-ab-pair:event:3",
+          "r2-s1-train-ab-second:event:2"
+        ],
+        "outcome_ids": [
+          "r2-s1-train-ab-first:outcome:2:r2-s1-train-ab-first:intent:2",
+          "r2-s1-train-ab-none:outcome:1:r2-s1-train-ab-none:intent:1",
+          "r2-s1-train-ab-pair:outcome:3:r2-s1-train-ab-pair:intent:3",
+          "r2-s1-train-ab-second:outcome:2:r2-s1-train-ab-second:intent:2"
+        ]
+      }
+    ],
+    "rejected_candidates": [
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "candidate_id": "group:f48850377ad52e1d83b9dcd0",
+        "member_ids": [
+          "native-owner:500d30d262eb7e34993456b0",
+          "native-owner:a878852bd45f589da68e2d39"
+        ],
+        "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+        "checkpoint_revision": 1,
+        "reason": "insufficient_trace"
+      },
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "candidate_id": "group:fea2882b543bd0204b93cfae",
+        "member_ids": [
+          "native-owner:500d30d262eb7e34993456b0",
+          "native-owner:e4654a97922bcc001f10a204"
+        ],
+        "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+        "checkpoint_revision": 1,
+        "reason": "insufficient_trace"
+      },
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "candidate_id": "group:7168bbe608b37ad508ebd595",
+        "member_ids": [
+          "native-owner:a878852bd45f589da68e2d39",
+          "native-owner:b9d34e40e1527d2e2c422a8b"
+        ],
+        "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+        "checkpoint_revision": 1,
+        "reason": "insufficient_trace"
+      },
+      {
+        "format": "taiji-interaction-group-v1",
+        "version": 1,
+        "candidate_id": "group:e21c49fa524655aa762d48f7",
+        "member_ids": [
+          "native-owner:b9d34e40e1527d2e2c422a8b",
+          "native-owner:e4654a97922bcc001f10a204"
+        ],
+        "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+        "checkpoint_revision": 1,
+        "reason": "insufficient_trace"
+      }
+    ],
+    "owner_policy_lineage": [
+      "policy:group:3da1e4fc2892d53711aed565",
+      "policy:group:85f04af848f25fea115bc7a0"
+    ]
+  },
+  "events": [
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:f48850377ad52e1d83b9dcd0",
+      "member_ids": [
+        "native-owner:500d30d262eb7e34993456b0",
+        "native-owner:a878852bd45f589da68e2d39"
+      ],
+      "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+      "checkpoint_revision": 1
+    },
+    {
+      "event": "group_rejected",
+      "group_id": "group:f48850377ad52e1d83b9dcd0",
+      "reason": "insufficient_trace"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:3da1e4fc2892d53711aed565",
+      "member_ids": [
+        "native-owner:500d30d262eb7e34993456b0",
+        "native-owner:b9d34e40e1527d2e2c422a8b"
+      ],
+      "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+      "checkpoint_revision": 1
+    },
+    {
+      "event": "counterfactual_evaluated",
+      "group_id": "group:3da1e4fc2892d53711aed565",
+      "cells": {
+        "(False, False)": 1,
+        "(True, False)": 1,
+        "(False, True)": 1,
+        "(True, True)": 1
+      },
+      "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953"
+    },
+    {
+      "event": "lesion_evaluated",
+      "group_id": "group:3da1e4fc2892d53711aed565",
+      "group_effect": -0.2,
+      "remove_first_member_effect": -0.4,
+      "remove_second_member_effect": -0.8
+    },
+    {
+      "event": "group_admitted",
+      "group_id": "group:3da1e4fc2892d53711aed565",
+      "interaction": -1.0,
+      "holdout_interaction": -1.0,
+      "owner_policy": "policy:group:3da1e4fc2892d53711aed565"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:fea2882b543bd0204b93cfae",
+      "member_ids": [
+        "native-owner:500d30d262eb7e34993456b0",
+        "native-owner:e4654a97922bcc001f10a204"
+      ],
+      "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+      "checkpoint_revision": 1
+    },
+    {
+      "event": "group_rejected",
+      "group_id": "group:fea2882b543bd0204b93cfae",
+      "reason": "insufficient_trace"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:7168bbe608b37ad508ebd595",
+      "member_ids": [
+        "native-owner:a878852bd45f589da68e2d39",
+        "native-owner:b9d34e40e1527d2e2c422a8b"
+      ],
+      "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+      "checkpoint_revision": 1
+    },
+    {
+      "event": "group_rejected",
+      "group_id": "group:7168bbe608b37ad508ebd595",
+      "reason": "insufficient_trace"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:85f04af848f25fea115bc7a0",
+      "member_ids": [
+        "native-owner:a878852bd45f589da68e2d39",
+        "native-owner:e4654a97922bcc001f10a204"
+      ],
+      "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+      "checkpoint_revision": 1
+    },
+    {
+      "event": "counterfactual_evaluated",
+      "group_id": "group:85f04af848f25fea115bc7a0",
+      "cells": {
+        "(False, False)": 1,
+        "(True, False)": 1,
+        "(False, True)": 1,
+        "(True, True)": 1
+      },
+      "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953"
+    },
+    {
+      "event": "lesion_evaluated",
+      "group_id": "group:85f04af848f25fea115bc7a0",
+      "group_effect": 1.0,
+      "remove_first_member_effect": 0.8,
+      "remove_second_member_effect": 0.7
+    },
+    {
+      "event": "group_admitted",
+      "group_id": "group:85f04af848f25fea115bc7a0",
+      "interaction": 0.5,
+      "holdout_interaction": 0.5,
+      "owner_policy": "policy:group:85f04af848f25fea115bc7a0"
+    },
+    {
+      "event": "group_candidate_created",
+      "group_id": "group:e21c49fa524655aa762d48f7",
+      "member_ids": [
+        "native-owner:b9d34e40e1527d2e2c422a8b",
+        "native-owner:e4654a97922bcc001f10a204"
+      ],
+      "source_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+      "checkpoint_revision": 1
+    },
+    {
+      "event": "group_rejected",
+      "group_id": "group:e21c49fa524655aa762d48f7",
+      "reason": "insufficient_trace"
+    }
+  ],
+  "metrics": {
+    "train_group_count": 2,
+    "rejected_candidate_count": 4,
+    "complementary_group": "group:85f04af848f25fea115bc7a0",
+    "conflicting_group": "group:3da1e4fc2892d53711aed565",
+    "holdout_direction_preserved": true,
+    "checkpoint_roundtrip": true,
+    "checkpoint_owner_lineage_preserved": true,
+    "lesion_effects_observed": true,
+    "source_digest_excludes_holdout_outcome": true,
+    "role_label_input_count": 0,
+    "gate_passed": true,
+    "native_checkpoint_replay": true,
+    "native_event_ids_preserved": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "native adapter Event/Outcome projections must replay exactly through a taiji-native-v1 checkpoint before trace-grounded attribution is evaluated"
+  },
+  "stage": "S1",
+  "task": "native adapter trace projection and checkpoint replay",
+  "input": {
+    "train_episode_count": 8,
+    "holdout_episode_count": 8,
+    "train_checkpoint_revisions": [
+      1
+    ],
+    "train_trace_digest": "18adba982dd6a6b0f1a9053139a90961e583932963b58cda6c53ff192c97c953",
+    "holdout_trace_digest": "3256ef0cd384071c301d6c7cbe3ff7ac4fb70c9378640b6a6e3168562e6a8406",
+    "native_adapter": "tsk-v8",
+    "native_checkpoint_format": "taiji-native-v1",
+    "owner_ids_are_opaque": true,
+    "semantic_role_labels": 0,
+    "replay_records": [
+      {
+        "episode_id": "r2-s1-train-ab-none",
+        "native_event_count": 1,
+        "projected_event_count": 0,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [],
+        "outcome_id": "r2-s1-train-ab-none:outcome:1:r2-s1-train-ab-none:intent:1"
+      },
+      {
+        "episode_id": "r2-s1-train-ab-first",
+        "native_event_count": 2,
+        "projected_event_count": 1,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [
+          "r2-s1-train-ab-first:event:2"
+        ],
+        "outcome_id": "r2-s1-train-ab-first:outcome:2:r2-s1-train-ab-first:intent:2"
+      },
+      {
+        "episode_id": "r2-s1-train-ab-second",
+        "native_event_count": 2,
+        "projected_event_count": 1,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [
+          "r2-s1-train-ab-second:event:2"
+        ],
+        "outcome_id": "r2-s1-train-ab-second:outcome:2:r2-s1-train-ab-second:intent:2"
+      },
+      {
+        "episode_id": "r2-s1-train-ab-pair",
+        "native_event_count": 3,
+        "projected_event_count": 2,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [
+          "r2-s1-train-ab-pair:event:2",
+          "r2-s1-train-ab-pair:event:3"
+        ],
+        "outcome_id": "r2-s1-train-ab-pair:outcome:3:r2-s1-train-ab-pair:intent:3"
+      },
+      {
+        "episode_id": "r2-s1-train-cd-none",
+        "native_event_count": 1,
+        "projected_event_count": 0,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [],
+        "outcome_id": "r2-s1-train-cd-none:outcome:1:r2-s1-train-cd-none:intent:1"
+      },
+      {
+        "episode_id": "r2-s1-train-cd-first",
+        "native_event_count": 2,
+        "projected_event_count": 1,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [
+          "r2-s1-train-cd-first:event:2"
+        ],
+        "outcome_id": "r2-s1-train-cd-first:outcome:2:r2-s1-train-cd-first:intent:2"
+      },
+      {
+        "episode_id": "r2-s1-train-cd-second",
+        "native_event_count": 2,
+        "projected_event_count": 1,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [
+          "r2-s1-train-cd-second:event:2"
+        ],
+        "outcome_id": "r2-s1-train-cd-second:outcome:2:r2-s1-train-cd-second:intent:2"
+      },
+      {
+        "episode_id": "r2-s1-train-cd-pair",
+        "native_event_count": 3,
+        "projected_event_count": 2,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [
+          "r2-s1-train-cd-pair:event:2",
+          "r2-s1-train-cd-pair:event:3"
+        ],
+        "outcome_id": "r2-s1-train-cd-pair:outcome:3:r2-s1-train-cd-pair:intent:3"
+      },
+      {
+        "episode_id": "r2-s1-holdout-ab-none",
+        "native_event_count": 1,
+        "projected_event_count": 0,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [],
+        "outcome_id": "r2-s1-holdout-ab-none:outcome:1:r2-s1-holdout-ab-none:intent:1"
+      },
+      {
+        "episode_id": "r2-s1-holdout-ab-first",
+        "native_event_count": 2,
+        "projected_event_count": 1,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [
+          "r2-s1-holdout-ab-first:event:2"
+        ],
+        "outcome_id": "r2-s1-holdout-ab-first:outcome:2:r2-s1-holdout-ab-first:intent:2"
+      },
+      {
+        "episode_id": "r2-s1-holdout-ab-second",
+        "native_event_count": 2,
+        "projected_event_count": 1,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [
+          "r2-s1-holdout-ab-second:event:2"
+        ],
+        "outcome_id": "r2-s1-holdout-ab-second:outcome:2:r2-s1-holdout-ab-second:intent:2"
+      },
+      {
+        "episode_id": "r2-s1-holdout-ab-pair",
+        "native_event_count": 3,
+        "projected_event_count": 2,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [
+          "r2-s1-holdout-ab-pair:event:2",
+          "r2-s1-holdout-ab-pair:event:3"
+        ],
+        "outcome_id": "r2-s1-holdout-ab-pair:outcome:3:r2-s1-holdout-ab-pair:intent:3"
+      },
+      {
+        "episode_id": "r2-s1-holdout-cd-none",
+        "native_event_count": 1,
+        "projected_event_count": 0,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [],
+        "outcome_id": "r2-s1-holdout-cd-none:outcome:1:r2-s1-holdout-cd-none:intent:1"
+      },
+      {
+        "episode_id": "r2-s1-holdout-cd-first",
+        "native_event_count": 2,
+        "projected_event_count": 1,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [
+          "r2-s1-holdout-cd-first:event:2"
+        ],
+        "outcome_id": "r2-s1-holdout-cd-first:outcome:2:r2-s1-holdout-cd-first:intent:2"
+      },
+      {
+        "episode_id": "r2-s1-holdout-cd-second",
+        "native_event_count": 2,
+        "projected_event_count": 1,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [
+          "r2-s1-holdout-cd-second:event:2"
+        ],
+        "outcome_id": "r2-s1-holdout-cd-second:outcome:2:r2-s1-holdout-cd-second:intent:2"
+      },
+      {
+        "episode_id": "r2-s1-holdout-cd-pair",
+        "native_event_count": 3,
+        "projected_event_count": 2,
+        "checkpoint_format": "taiji-native-v1",
+        "checkpoint_revision": 1,
+        "replay_equal": true,
+        "event_ids": [
+          "r2-s1-holdout-cd-pair:event:2",
+          "r2-s1-holdout-cd-pair:event:3"
+        ],
+        "outcome_id": "r2-s1-holdout-cd-pair:outcome:3:r2-s1-holdout-cd-pair:intent:3"
+      }
+    ]
+  },
+  "boundary": {
+    "policy_mutation": false,
+    "tool_selection": false,
+    "provider_selection": false,
+    "high_order_search": false,
+    "holdout_can_add_evidence": false,
+    "native_adapter_is_source_of_event_and_outcome_identity": true
+  }
+}

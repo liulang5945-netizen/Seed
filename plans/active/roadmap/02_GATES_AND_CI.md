@@ -306,7 +306,15 @@ R2 的 S0 已通过。新增 `taiji/interaction_groups.py`，将 interaction gro
 
 估计器先在同一 context 内要求 `(none, first, second, pair)` 四格真实观测，再跨 context 聚合，计算 group contribution、signed interaction（正为互补，负为冲突）、recovery interaction、uncertainty、资源代价和 member/group lesion effect。只有训练/holdout 方向一致且满足资源与置信度预算时才产生 admitted record；缺格、低置信、资源超限、holdout 方向改变和 checkpoint revision 混合均 fail-closed，并保留 reason-coded tombstone。`owner_policy` 只是后续可投影的 lineage ID，S0 不修改 executive、memory、tool 或 provider。
 
-证据为 [taiji_w7_r2_interaction_groups_20260829.json](../../../reports/taiji_w7_r2_interaction_groups_20260829.json)，其中 2 个候选分别保持互补/冲突方向，4 个不足证据候选被拒绝，holdout 方向、lesion、checkpoint 和 owner policy lineage 均可恢复，role label 输入数为 0。`tests/taiji_native/test_interaction_group_gate.py` 的 5 例与命名边界/跨区域回归共 `12 passed`，Ruff、compileall 和 JSON/diff 检查通过。红测覆盖 holdout 污染、跨 revision、资源压力和 checkpoint source digest 篡改；下一步必须进入 R2-S1 replay/sandbox，不能把 S0 合成统计结果当作真实 Workbench 学习或因果智能。
+证据为 [taiji_w7_r2_interaction_groups_20260829.json](../../../reports/taiji_w7_r2_interaction_groups_20260829.json)，其中 2 个候选分别保持互补/冲突方向，4 个不足证据候选被拒绝，holdout 方向、lesion、checkpoint 和 owner policy lineage 均可恢复，role label 输入数为 0。`tests/taiji_native/test_interaction_group_gate.py` 的 5 例与命名边界/跨区域回归共 `12 passed`，Ruff、compileall 和 JSON/diff 检查通过。红测覆盖 holdout 污染、跨 revision、资源压力和 checkpoint source digest 篡改；S0 不被当作真实 Workbench 学习或因果智能，已转入下节 S1。
+
+### 14.26 W7-R2 S1：原生适配器 trace replay/sandbox（2026-08-29）
+
+R2-S1 已通过。新增 `project_native_adapter_episode()` 作为原生状态到 interaction trace 合同的唯一投影边界：`TSKV8Adapter.cognitive_snapshot()` 提供真实 `Event` 与已结算 `Outcome`，`native_checkpoint()` 提供 `taiji-native-v1` 的 checkpoint revision；投影保留实际 native `event_id`/Outcome 绑定，只允许调用方用 `None` 排除非候选事件，owner 仍是不透明证据句柄，不生成语义角色名。
+
+评测脚本 `scripts/training/eval_taiji_interaction_groups.py --stage s1` 在 8 个 train、8 个 holdout 原生 episode 上运行真实适配器，逐 episode 保存并恢复 checkpoint 后重新投影；16 个 replay record 全部精确一致，再执行同一 factorial evaluator，仍得到 1 个正交互和 1 个负交互，4 个候选被拒绝，holdout 方向、lesion、trace digest、owner lineage 和 `role_label_input_count=0` 均通过。证据见 [taiji_w7_r2_interaction_groups_s1_20260829.json](../../../reports/taiji_w7_r2_interaction_groups_s1_20260829.json)，测试为 `tests/taiji_native/test_interaction_group_replay.py` 与 S0 Gate 合计 `6 passed`，Ruff、compileall、JSON/diff 检查通过。
+
+该层仍是 replay/sandbox：奖励来自确定性 factorial fixture，尚不能替代真实 Workbench 的 workspace/memory/planner/recovery workflow，也不写回 executive、memory、tool 或 provider。下一步必须进入 R2-S2 真实 Workbench workflow，并继续保留这条回放 Gate。
 
 ## 15. 停止项
 

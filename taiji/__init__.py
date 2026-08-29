@@ -132,6 +132,7 @@ from .interaction_groups import (
     InteractionTraceCorpus,
     InteractionTraceEpisode,
     InteractionTraceEvent,
+    project_native_adapter_episode,
 )
 from .language_organ import (
     LANGUAGE_BACKEND_REGISTRY_FORMAT,
@@ -488,6 +489,7 @@ __all__ = [
     "InteractionTraceCorpus",
     "InteractionTraceEpisode",
     "InteractionTraceEvent",
+    "project_native_adapter_episode",
     "HOMEOSTASIS_CHECKPOINT_FORMAT",
     "LearningState",
     "LearnedAffordanceFeatures",
