@@ -150,7 +150,8 @@ onMounted(() => nextTick(() => drawLossChart()))
 }
 .tk-card:hover { border-color: color-mix(in srgb, var(--primary) 20%, var(--border)); }
 .tk-card .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-.tk-card h3 { margin: 0; font-size: 1rem; font-weight: 600; color: var(--foreground, var(--text)); display: flex; align-items: center; gap: 8px; }
+.tk-card h3 { margin: 0; font-size: 1rem; font-weight: 600; color: var(--foreground, var(--text)); display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.tk-card h3 .ic { width: 17px; height: 17px; flex: none; color: var(--primary); }
 .tk-card .card-sub { color: var(--muted-foreground, var(--text-muted)); font-size: 0.78rem; }
 .progress-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
 .progress-title { margin-bottom: 6px; }

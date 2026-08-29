@@ -20,6 +20,7 @@
 - 当前默认自主执行只覆盖 Taiji-owned、freshness-valid、受能力快照约束的只读 Workbench 路径；写入自治、开放域自然语言工具选择和外部 MCP 生命周期仍未宣称完成。
 - recovery portfolio 审计 Gate 的 S2 packaged-client 现场取证已完成；本次启动展示的是无持久化 portfolio 的结构化空态，非空 branch/tombstone 排序仍由 S0/S1 replay 证据覆盖，不把空态 canary 宣称为非空恢复演示。最终客户端同时修复了 Qt 无 GPU 启动降级、真实后端端口透传、受限数据目录的非阻塞降级和 `/api/health.taiji_available` 状态不一致。
 - interaction-group、视觉/桌面体验、CUDA、开放域学习和结构自进化没有取消，只能按 W7 顺序推进；CUDA 在当前 CPU-only 主机上保持 `hardware-blocked`。
+- W7-R3 视觉层的两处渲染缺陷已修复并收敛（不改变任何运行时语义，不新增前端认知状态）：训练页 `.tk-card h3` 内联 `<svg class="ic">` 此前在组件与全局样式中都无尺寸规则，按 SVG 默认 300×150 渲染并在 flex 标题内把「检查点列表」挤成换行，现由 `TrainingOverviewPanel.vue` / `TrainingView.vue` 统一的 `.tk-card h3 .ic` 规则约束，同时删除 `TrainingView.vue` 里同目的的内联 `style` 硬补丁；生命状态页 `NeedsPentagram.vue` 的数据面此前用 6% 透明度的 `--primary-subtle` 填充加灰色 `--ink-muted` 描边，与同页 `--chart-*` 渐变面板不一致，现改为 `--chart-1 → --chart-3` 径向渐变加 `--chart-2` 描边与描边式顶点，仍全部走主题 token 以兼容五套 `data-theme`。顺带修掉两个既存失效项：数据面由 `<polygon>` 改 `<path>` 使 `transition: d` 真正生效，`critical` 半径由 CSS 几何覆写改为模板绑定以兼容旧 WebView；`polygon.pentagram-guide`×5 / `circle.pentagram-dot`×5 / `text.pentagram-label`×5 / `.ckpt-item button` 等被测试锁定的选择器保持不变，前端 43 文件 245 例回归、ESLint 与 build 全绿。
 - 训练前必须先验证 checkpoint 能保存、恢复并继续产生等价的 lineage、预算、结构和 provider artifact 状态；任何只在内存中成立的训练结果不算 Gate 证据。该往返等价性准入已由 [04_EXECUTION_PLAN.md §3](04_EXECUTION_PLAN.md) 的 `test_checkpoint_roundtrip_contract.py`（3 例）满足。
 
 ## 当前唯一下一步

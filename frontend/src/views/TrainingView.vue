@@ -46,7 +46,7 @@
       <section id="tk-panel-hyperparams" class="tab-panel" :class="{ active: isActive('hyperparams') }" role="tabpanel" aria-labelledby="tk-tab-hyperparams">
         <div class="tk-card">
           <div class="card-head">
-            <h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="width:17px;height:17px;color:var(--primary)"><circle cx="6" cy="7" r="2.2"/><circle cx="6" cy="17" r="2.2"/><circle cx="18" cy="12" r="2.2"/><path d="M8 7.5 12 5M8 16.5 12 19M8 16l7-4M8 8l7 3"/></svg>训练超参数</h3>
+            <h3><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="7" r="2.2"/><circle cx="6" cy="17" r="2.2"/><circle cx="18" cy="12" r="2.2"/><path d="M8 7.5 12 5M8 16.5 12 19M8 16l7-4M8 8l7 3"/></svg>训练超参数</h3>
             <span class="card-sub">Seed 原生 · 参数预算驱动</span>
           </div>
           <div class="hp-grid">
@@ -300,6 +300,13 @@ onActivated(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
+}
+.tk-card h3 .ic {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  color: var(--primary);
 }
 .tk-card .card-sub {
   color: var(--muted-foreground, var(--text-muted));
