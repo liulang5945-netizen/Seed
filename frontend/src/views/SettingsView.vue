@@ -102,69 +102,18 @@
             />
 
             <!-- ── 3. 数据与隐私 ── -->
-            <section v-else-if="activeSection === 'privacy'" class="settings-section">
-              <h2>数据与隐私</h2>
-
-              <!-- 对话保留 -->
-              <div class="setting-row setting-row--first">
-                <div class="setting-left">
-                  <span class="setting-label">对话保留</span>
-                  <p class="setting-desc">历史对话的自动保留时长</p>
-                </div>
-                <div class="setting-right">
-                  <select v-model="chatRetentionDays" aria-label="对话保留" :disabled="savingSettings" @change="onRetentionChange">
-                    <option value="30">30 天</option>
-                    <option value="90">90 天</option>
-                    <option value="180">180 天</option>
-                    <option value="365">365 天</option>
-                    <option value="forever">永久保留</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- 自动清理 -->
-              <div class="setting-row">
-                <div class="setting-left">
-                  <span class="setting-label">自动清理</span>
-                  <p class="setting-desc">过期对话与缓存文件到达保留期限后自动移除</p>
-                </div>
-                <div class="setting-right">
-                  <label class="toggle" aria-label="自动清理开关">
-                    <input v-model="chatAutoCleanup" type="checkbox" :disabled="savingSettings" @change="onAutoCleanupChange" />
-                    <span class="track"><span class="thumb"></span></span>
-                  </label>
-                </div>
-              </div>
-
-              <!-- 导出数据 -->
-              <div class="setting-row">
-                <div class="setting-left">
-                  <span class="setting-label">导出数据</span>
-                  <p class="setting-desc">导出所有对话记录、配置快照与 Taiji 状态</p>
-                </div>
-                <div class="setting-right">
-                  <button class="btn-sm btn-outline" :disabled="exporting" @click="onExportData">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
-                    {{ exporting ? '导出中…' : '导出' }}
-                  </button>
-                </div>
-              </div>
-
-              <!-- 危险区 -->
-              <div class="setting-row setting-row--last">
-                <div class="danger-zone">
-                  <h3>
-                    <svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
-                    危险操作
-                  </h3>
-                  <p>重置将清空所有本地对话会话记录；不会删除模型权重、检查点、Taiji 状态与配置项。此操作不可撤销，建议先导出数据再进行重置。</p>
-                  <button class="btn-destructive" :disabled="resetting" @click="onResetSeed">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5h5v6h-5z"/><path d="M14.5 9.5 13 7h-2l-1.5 2.5"/></svg>
-                    {{ resetting ? '重置中…' : '重置Seed' }}
-                  </button>
-                </div>
-              </div>
-            </section>
+            <SettingsPrivacyPanel
+              v-else-if="activeSection === 'privacy'"
+              :chat-retention-days="chatRetentionDays"
+              :chat-auto-cleanup="chatAutoCleanup"
+              :saving="savingSettings"
+              :exporting="exporting"
+              :resetting="resetting"
+              @retention-change="onRetentionPanelChange"
+              @auto-cleanup-change="onAutoCleanupPanelChange"
+              @export-data="onExportData"
+              @reset-seed="onResetSeed"
+            />
 
             <!-- ── 4. 关于 ── -->
             <section v-else-if="activeSection === 'about'" class="settings-section">
@@ -265,6 +214,7 @@ import RuntimeEvidenceStrip from '../components/RuntimeEvidenceStrip.vue';
 import SettingsRuntimePanel from '../components/SettingsRuntimePanel.vue';
 import SettingsGeneralPanel from '../components/SettingsGeneralPanel.vue';
 import SettingsTaijiPanel from '../components/SettingsTaijiPanel.vue';
+import SettingsPrivacyPanel from '../components/SettingsPrivacyPanel.vue';
 
 const toast = inject('toast');
 const $confirm = inject('$confirm', () => Promise.resolve(false));
@@ -444,6 +394,14 @@ const onAutoConsolidationPanelChange = (value) => {
 const onSleepModePanelChange = (value) => {
   sleepMode.value = value;
   onSleepModeChange();
+};
+const onRetentionPanelChange = (value) => {
+  chatRetentionDays.value = value;
+  onRetentionChange();
+};
+const onAutoCleanupPanelChange = (value) => {
+  chatAutoCleanup.value = value;
+  onAutoCleanupChange();
 };
 const onThresholdChange = () => {
   let v = Number(activationThreshold.value);
