@@ -1,0 +1,76 @@
+{
+  "format": "taiji-w7-r3-visual-desktop-manifest-v1",
+  "version": 1,
+  "work_package": "W7-R3",
+  "title": "native capability visual and Windows desktop shell",
+  "status": "contract_frozen",
+  "claim": {
+    "to_prove": "The packaged client can make already verified Taiji capabilities observable, accessible, and trustworthy across the window, taskbar, tray, notifications, DPI, and narrow layouts.",
+    "must_not_claim": "Visual polish, animation, or a logo is not evidence of cognition, provider quality, autonomy, or model scale."
+  },
+  "owner": {
+    "desktop_shell": "desktop/main.py",
+    "frontend": "frontend/src",
+    "truth_source": "native facade capability, health, provider, lineage, workbench, and error projections",
+    "forbidden_owners": ["mock capability fixtures in packaged smoke", "client-side inferred health", "legacy route"]
+  },
+  "input": {
+    "sources": ["packaged Seed.exe", "real backend port", "native capability snapshot", "runtime/provider/health projection", "Windows DPI and window-state fixtures"],
+    "required_binding": ["package digest", "client mode", "backend port", "capability snapshot", "checkpoint revision"],
+    "layouts": ["narrow window", "high DPI", "tray minimized", "notification visible", "keyboard-only navigation", "reduced motion"]
+  },
+  "output": {
+    "type": "visual/a11y evidence record",
+    "required_fields": ["package_digest", "route", "observed_capabilities", "snapshot_revision", "window_state", "screenshot_digest", "network_requests", "page_errors", "accessibility_findings"],
+    "truth_rule": "Every displayed status must be traceable to a server projection or an explicitly static shell property."
+  },
+  "trace": {
+    "required_events": ["client_started", "backend_bound", "route_rendered", "tray_minimized", "notification_emitted", "capability_observed", "client_closed"],
+    "privacy": "Screenshots and logs must redact tokens, local secrets, prompt content, and full file contents.",
+    "determinism": "Same package, route, backend revision, and viewport should produce the same capability labels and error states; animation timing is not a capability metric."
+  },
+  "resources": {
+    "budget_owner": "desktop client QA",
+    "limits": ["bounded startup wait", "bounded screenshot set", "no background polling added solely for visual refresh", "reduced-motion path"],
+    "measure": ["startup latency", "backend bind latency", "layout overflow", "DPI scaling", "keyboard reachability", "memory while minimized"]
+  },
+  "checkpoint": {
+    "required": true,
+    "must_observe": ["server checkpoint revision", "native capability snapshot", "provider artifact status when visible"],
+    "must_not_duplicate": ["cognitive state in frontend storage", "client-owned recovery portfolio", "client-owned provider rotation"],
+    "continuation": "Restarted packaged client must rebind to the same server truth source or render a structured unavailable state."
+  },
+  "evidence": {
+    "layers": [
+      {"id": "S0", "kind": "DOM/accessibility contract", "entry": "frontend/src/__tests__ and tests/test_desktop_orphan_reap.py"},
+      {"id": "S1", "kind": "packaged client smoke", "entry": "scripts/release.py --skip-nsis"},
+      {"id": "S2", "kind": "Windows shell field evidence", "entry": "tests/test_seed_product_smoke.py"}
+    ],
+    "red_proof": ["hidden sidebar item", "wrong backend port", "legacy marker visible", "taskbar/tray uses placeholder icon", "stale capability displayed as current", "keyboard focus trap", "reduced-motion ignored"],
+    "holdout": "Use at least one viewport/DPI combination not used while implementing the layout; use a fresh packaged artifact for final evidence.",
+    "lesion": "Remove one native projection or break the backend binding; the UI must show an explicit unavailable/degraded state rather than a mock success.",
+    "cross_seed": "Not applicable to static shell pixels; capability labels and revisions must be checked against independent runtime launches."
+  },
+  "failure_isolation": {
+    "backend_unavailable": "Render a structured connection/error state and preserve static navigation; never invent capability data.",
+    "shell_failure": "Client process may exit or degrade without mutating Taiji checkpoint state.",
+    "notification_failure": "Keep in-app state truthful; notification is best-effort presentation only."
+  },
+  "rollback": {
+    "path": "revert shell/frontend artifact to the previous package; preserve backend and Taiji checkpoint data",
+    "atomicity": "A package is accepted only when frontend bytes and packaged executable evidence refer to the same build digest",
+    "recovery": "Restart from the previous verified package and record the visual regression without changing runtime cognition."
+  },
+  "implementation": {
+    "existing_hooks": ["desktop/main.py frontend URL binding", "native facade capability projections", "packaged-client S2 report"],
+    "new_test_entry": "tests/test_seed_product_smoke.py and frontend/src/__tests__/desktop_shell_gate.test.js",
+    "new_eval_entry": "scripts/release.py --skip-nsis plus packaged Playwright evidence",
+    "status": "not_started"
+  },
+  "boundary": [
+    "No visual state may be a second source of truth for Taiji or provider state.",
+    "No animation may hide an error, alter an action, or imply learning.",
+    "Taskbar, tray, and notification identity must use the same static Taiji logo asset and remain recognizable with reduced motion."
+  ],
+  "replaces": ["placeholder taskbar/tray identity", "frontend-only status inference", "development-server-only visual acceptance"]
+}

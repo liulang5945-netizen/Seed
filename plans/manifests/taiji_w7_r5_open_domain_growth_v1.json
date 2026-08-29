@@ -1,0 +1,78 @@
+{
+  "format": "taiji-w7-r5-open-domain-growth-manifest-v1",
+  "version": 1,
+  "work_package": "W7-R5",
+  "title": "open-domain structural growth and self-evolution",
+  "status": "contract_frozen",
+  "claim": {
+    "to_prove": "Taiji can grow local structure or memory in response to persistent real-task error, capacity pressure, or recovery deficiency, while retaining old abilities and remaining checkpointable and reversible.",
+    "must_not_claim": "Growth is not automatic intelligence, unlimited weight addition, neuron-count scaling, or a return to full retraining from scratch."
+  },
+  "owner": {
+    "growth_policy": "taiji/structural_growth.py",
+    "substrate": "taiji/neuron_network.py and taiji/fabric.py",
+    "cognitive_owners": "taiji/concept_formation.py, taiji/memory.py, taiji/adapter.py",
+    "forbidden_owners": ["global role list", "demo-triggered growth", "frontend button as sole trigger", "Transformer/Legacy teacher"]
+  },
+  "input": {
+    "sources": ["persistent real-task failure cluster", "independent holdout", "capacity/resource pressure", "longitudinal forgetting signal", "recovery outcome", "parent checkpoint"],
+    "required_binding": ["evidence_ids", "parent_checkpoint_id", "owner_id", "structural_budget", "expected_gain", "manifest_revision"],
+    "proposal_kinds": ["synapse topology", "local neuron capacity", "region capacity", "concept/trace capacity", "pruning or merge"],
+    "forbidden_input": ["requested scale alone", "single demonstration", "manually named neuron type", "holdout labels copied into training"]
+  },
+  "output": {
+    "type": "versioned structural proposal and lifecycle record",
+    "required_fields": ["proposal_id", "owner_id", "parent_checkpoint_id", "candidate_structure", "resource_cost", "expected_gain", "status", "validation_revision", "tombstone_reason"],
+    "allowed_statuses": ["proposed", "shadow", "validated", "admitted", "rejected", "rolled_back", "tombstoned"],
+    "update_rule": "Only the owning organ proposes content; global governance arbitrates budget, conflict, evidence freshness, and rollback."
+  },
+  "trace": {
+    "required_events": ["pressure_detected", "proposal_created", "trial_checkpoint_saved", "shadow_learned", "holdout_checked", "lesion_checked", "admitted", "rolled_back", "tombstoned"],
+    "provenance": "Link every structural change to real task evidence, parent/child lineage, resource ledger, manifest, and checkpoint revision.",
+    "determinism": "Fixed parent checkpoint, proposal manifest, evidence digest, seed, and budget produce replayable proposal outcomes."
+  },
+  "resources": {
+    "budget_owner": "DevelopmentState.structural_budget and per-organ capacity policy",
+    "limits": ["trial budget", "parameter/connection count", "memory", "latency", "checkpoint size", "growth rate", "candidate concurrency"],
+    "measure": ["holdout gain", "old-task retention", "recovery time", "structure size", "memory", "latency", "energy approximation", "cross-seed stability"]
+  },
+  "checkpoint": {
+    "required": true,
+    "must_roundtrip": ["structure revision", "parent/child lineage", "resource ledger", "proposal lifecycle", "tombstones", "organ state", "experiment manifest", "provider artifact binding"],
+    "trial_rule": "Save a parent/trial checkpoint before structural mutation; no in-memory-only growth qualifies.",
+    "continuation": "After restore, the next proposal must preserve lineage and budget accounting and must not resurrect a rejected candidate."
+  },
+  "evidence": {
+    "layers": [
+      {"id": "S0", "kind": "small deterministic mechanism simulation", "entry": "tests/taiji_native/test_auto_growth_gate.py and tests/taiji_native/test_adaptive_neuron_network.py"},
+      {"id": "S1", "kind": "replay/sandbox with holdout and lesions", "entry": "scripts/training/eval_taiji_auto_growth.py"},
+      {"id": "S2", "kind": "real workbench longitudinal evidence", "entry": "tests/test_workbench_contract.py"}
+    ],
+    "red_proof": ["zero budget mutates structure", "holdout is used for learning", "lesion has no causal effect", "rollback loses parent lineage", "rejected candidate returns after restart", "growth is triggered by scale target only"],
+    "holdout": "Holdout tasks must use new combinations or future outcomes and must remain read-only; no schema/label leakage into proposal creation.",
+    "lesion": "Disable the grown structure, its trace, or the proposal owner; the corresponding transfer/recovery benefit must disappear or the proposal is not causal.",
+    "cross_seed": "Admit stable capacity only when gain, retention, and resource trade-offs replicate across seeds and independent task slices."
+  },
+  "failure_isolation": {
+    "candidate_failure": "Keep the parent structure active; mark candidate rejected/tombstoned with reason and return unused budget.",
+    "capacity_pressure": "Prefer explicit pruning/merge proposal; never silently overwrite a verified structure.",
+    "checkpoint_failure": "Abort mutation and reject the candidate; an unpersisted growth is not a model state."
+  },
+  "rollback": {
+    "path": "restore parent checkpoint, reverse the resource ledger, mark the child proposal rolled_back, and retain tombstone evidence",
+    "atomicity": "Structure, memory/organ state, budget, and lifecycle status commit atomically",
+    "recovery": "A rolled-back proposal may be reconsidered only with fresh evidence and a new proposal ID."
+  },
+  "implementation": {
+    "existing_hooks": ["StructuralGrowthRequest", "AdaptiveStructuralGrowthController", "runtime topology ledger", "adaptive neuron/region growth", "concept trace capacity"],
+    "new_test_entry": "tests/taiji_native/test_open_domain_growth_gate.py",
+    "new_eval_entry": "scripts/training/eval_taiji_open_domain_growth.py",
+    "status": "not_started"
+  },
+  "boundary": [
+    "Self-evolution must be evidence-triggered, resource-bounded, and reversible.",
+    "The governance layer cannot invent concepts or hard-code biological neuron roles.",
+    "Open-domain means broader task evidence and transfer, not an unbounded claim of general intelligence."
+  ],
+  "replaces": ["scale-only growth", "unrecoverable online mutation", "global hard-coded neuron taxonomy", "full retraining as the only update path"]
+}

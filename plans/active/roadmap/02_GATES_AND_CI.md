@@ -268,6 +268,18 @@ python -c "import sys; sys.path.insert(0,'tests'); from test_openapi_snapshot im
 
 据此，本节 recovery portfolio 审计 Gate 的 S0/S1/S2 三层全部闭合，允许进入 W7-G0；后续仍必须保持“能力由服务端真实投影、客户端只读观测、非空分支由 replay 证据覆盖”的边界。
 
+### 14.21 W7-G0 五份后续 Gate 合同冻结（2026-08-29）
+
+W7-G0 已完成，且没有把合同存在误写成能力完成。五份版本化 manifest 统一冻结了 claim、owner、真实输入、结构化输出、trace、资源预算、checkpoint 往返、S0/S1/S2 证据、red proof、holdout、lesion、失败隔离、rollback 和不可越界边界：
+
+- [W7-R1 provider watchdog](../../manifests/taiji_w7_r1_provider_watchdog_v1.json)：以 artifact digest 隔离健康状态、冷却、探测和回退；provider 不能拥有认知决策。
+- [W7-R2 interaction-group](../../manifests/taiji_w7_r2_interaction_group_v1.json)：只从真实 trace 推导贡献/互补/冲突/恢复归因，不预设神经元角色名单。
+- [W7-R3 visual/desktop](../../manifests/taiji_w7_r3_visual_desktop_v1.json)：只投影已验证 native capability，覆盖窗口、任务栏、托盘、通知、DPI、可访问性和 reduced motion；视觉不构成智能证据。
+- [W7-R4 CUDA](../../manifests/taiji_w7_r4_cuda_v1.json)：本机显式为 `hardware-blocked`；必须在真实 CUDA 主机上复跑固定 workload、跨设备 checkpoint 和容差合同。
+- [W7-R5 open-domain growth](../../manifests/taiji_w7_r5_open_domain_growth_v1.json)：成长只能由真实失败/容量/恢复压力触发，并经过 shadow → holdout → lesion → rollback → 原子合并。
+
+`tests/test_w7_gate_manifests.py` 的 3 个结构测试通过；它还强制 R4 保持 `hardware-blocked`、所有未来 manifest 不得写 `implementation.status=passed`。当前唯一下一步切换为 W7-R1；G0 不产生新自治能力，也不替代后续各自的 S0/S1/S2 实证。
+
 ## 15. 停止项
 
 在 P2 通过前：

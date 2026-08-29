@@ -1,0 +1,84 @@
+{
+  "format": "taiji-w7-r1-provider-watchdog-manifest-v1",
+  "version": 1,
+  "work_package": "W7-R1",
+  "title": "content-addressed language provider watchdog",
+  "status": "contract_frozen",
+  "claim": {
+    "to_prove": "A language provider can be observed, quarantined, rolled back, and probed by artifact digest without entering Taiji cognition or inventing a readable answer.",
+    "must_not_claim": "Provider health is not language intelligence, planning, tool choice, or a replacement for Taiji state."
+  },
+  "owner": {
+    "runtime": "seed/language_provider.py",
+    "state_owner": "Taiji native language-provider health state and artifact registry",
+    "product_observer": "api/routes_chat.py and frontend native facade",
+    "forbidden_owners": ["frontend", "chat prompt parser", "Transformer/Legacy runtime"]
+  },
+  "input": {
+    "sources": [
+      "LanguageProviderArtifactRegistry",
+      "LanguageProviderArtifact",
+      "LanguageProviderHealthPolicy",
+      "LanguageProviderHealthProbe",
+      "provider expression/emission result",
+      "timeout, load, validation, digest-drift, and canary outcomes"
+    ],
+    "required_binding": ["artifact_id", "artifact_digest", "provider_mode", "observation_time", "checkpoint_revision"],
+    "forbidden_input": ["unbounded conversation history", "client-selected fallback", "uncertified artifact path"]
+  },
+  "output": {
+    "type": "versioned provider health transition and LanguageProviderStatus projection",
+    "required_fields": ["state", "artifact_id", "artifact_digest", "reason_code", "failure_count", "cooldown_until", "fallback_kind"],
+    "allowed_states": ["healthy", "degraded", "quarantined", "probing"],
+    "fallback_kinds": ["previous_canary_artifact", "native_readable_structured", "no_output"]
+  },
+  "trace": {
+    "required_events": ["probe_started", "probe_finished", "health_transition", "artifact_quarantined", "rollback_committed"],
+    "privacy": "Persist identifiers, reason codes, counters, and revisions; do not persist prompt or response content unless an explicit diagnostic artifact owns it.",
+    "determinism": "Same artifact digest, policy revision, event sequence, and clock fixture must produce the same transition trace."
+  },
+  "resources": {
+    "budget_owner": "provider health policy",
+    "limits": ["bounded probe count per cooldown window", "bounded failure summary", "one active transition at a time"],
+    "measure": ["probe latency", "fallback latency", "memory delta", "artifact load failures", "false quarantine rate"]
+  },
+  "checkpoint": {
+    "required": true,
+    "must_roundtrip": ["health state per artifact digest", "active artifact", "previous artifact", "failure counters", "cooldown", "policy revision", "last transition reason"],
+    "must_not_restore": ["unexpired approval", "client intent", "uncertified provider weights"],
+    "continuation": "After restore, the next probe/rollback decision must preserve the same state lineage and artifact binding."
+  },
+  "evidence": {
+    "layers": [
+      {"id": "S0", "kind": "deterministic simulation", "entry": "tests/seed/test_provider_watchdog_gate.py"},
+      {"id": "S1", "kind": "checkpoint replay/sandbox", "entry": "scripts/training/eval_taiji_provider_watchdog.py"},
+      {"id": "S2", "kind": "packaged client canary", "entry": "tests/test_seed_product_smoke.py"}
+    ],
+    "red_proof": ["artifact digest drift is accepted", "one failure immediately flips to healthy", "cooldown is ignored", "rollback revives a revoked artifact", "client chooses provider"],
+    "holdout": "Use an artifact digest and failure sequence not present in the controller fixtures; holdout must not mutate provider registry evidence.",
+    "lesion": "Remove health observation, previous-artifact binding, or native fallback one at a time; the corresponding safety property must fail closed.",
+    "cross_seed": "Run deterministic controller traces across at least three seeds or equivalent independent event schedules before declaring the transition policy stable."
+  },
+  "failure_isolation": {
+    "provider_failure": "Quarantine only the affected artifact digest; keep Taiji cognition and other registered artifacts intact.",
+    "checkpoint_failure": "Do not publish a rotation or rollback whose complete health state cannot be persisted.",
+    "unknown_state": "Return structured degraded/no-output status; never fabricate a natural-language answer."
+  },
+  "rollback": {
+    "path": "restore parent native checkpoint, revoke the failed artifact from active selection, and append a reason-coded transition",
+    "atomicity": "health state, registry selection, and provider status projection commit together or not at all",
+    "recovery": "Only a fresh content-addressed canary may move quarantined -> probing -> healthy."
+  },
+  "implementation": {
+    "existing_hooks": ["observe_language_provider", "auto_rollback_language_provider", "LanguageProviderHealthState"],
+    "new_test_entry": "tests/seed/test_provider_watchdog_gate.py",
+    "new_eval_entry": "scripts/training/eval_taiji_provider_watchdog.py",
+    "status": "not_started"
+  },
+  "boundary": [
+    "No provider API may select a tool, goal, plan, memory, or recovery branch.",
+    "No UI code may rotate a provider or infer health from human-readable text.",
+    "A native structured fallback is an explicit degraded output, not a successful provider response."
+  ],
+  "replaces": ["implicit provider fallback", "uncorrelated provider error counters", "client-side provider switching"]
+}
