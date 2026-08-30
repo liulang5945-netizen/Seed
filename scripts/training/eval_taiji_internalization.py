@@ -135,6 +135,8 @@ def main() -> None:
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
+    if not report["gate"]["passed"]:
+        raise SystemExit("R5A-S1 internalization canary failed")
 
 
 if __name__ == "__main__":

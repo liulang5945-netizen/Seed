@@ -146,6 +146,9 @@ jobs:
       - name: Verify endogenous replay consolidation
         run: python -X utf8 -u scripts/training/verify_taiji_m6_endogenous_replay.py --output reports/ci_verify/taiji_m6_endogenous_replay.json
 
+      - name: Verify grounded internalization S1 canary
+        run: python -X utf8 -u scripts/training/eval_taiji_internalization.py --report reports/ci_verify/taiji_w7_r5a_s1_internalization.json
+
       - name: Upload verify reports
         if: always()
         uses: actions/upload-artifact@v4
