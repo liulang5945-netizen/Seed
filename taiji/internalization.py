@@ -50,7 +50,10 @@ def _canonical(value: Any) -> Any:
         return {
             "dtype": str(tensor.dtype),
             "shape": list(tensor.shape),
-            "bytes": tensor.numpy().tobytes().hex(),
+            # Keep the core content-addressing path independent of NumPy.  CI
+            # and minimal Taiji deployments install torch without the optional
+            # NumPy bridge; a flattened byte view also handles scalar tensors.
+            "bytes": bytes(tensor.reshape(-1).view(torch.uint8).tolist()).hex(),
         }
     if isinstance(value, Mapping):
         return {

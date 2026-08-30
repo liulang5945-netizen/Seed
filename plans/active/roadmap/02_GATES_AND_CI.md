@@ -57,6 +57,7 @@
 - 每个阈值型门禁必须固定工具版本，解析失败时直接失败，不能静默放行。
 - 本地 Windows 通过不替代 Linux/Python 矩阵；CI 红时先核对提交、job 是否执行和平台分支，再判断环境差异。
 - 新增代码不得提高核心 mypy、Ruff、API/OpenAPI、native boundary 或安全门禁的债务基线。
+- Taiji 核心的内容寻址必须只依赖声明的核心运行时；例如 tensor digest 不得隐式要求可选 NumPy，S1 canary 必须在 3.10、3.12 和 Windows 矩阵真实执行。
 
 ## 3. 按改动范围执行的验证矩阵
 
@@ -78,7 +79,7 @@
 |---|---|---|
 | W7-R3 Windows shell | `tool-blocked` | 能激活 Seed 窗口后，补齐任务栏、托盘、通知和高 DPI 真实证据 |
 | W7-R4 CUDA | `hardware-blocked` | 在真实 CUDA 主机完成 profiler、CPU↔CUDA checkpoint 和数值一致性 |
-| W7-R5A 内化 | `contract_frozen / S1-implemented` | S0 DTO/replay 与 S1 原生学习器、holdout、lesion、checkpoint continuation canary 已通过；仍需真实 Workbench 纵向与可删性 Gate |
+| W7-R5A 内化 | `contract_frozen / S1-implemented / CI-repair` | S0 DTO/replay 与 S1 原生学习器、holdout、lesion、checkpoint continuation canary 已通过；当前先收口本轮跨平台 CI 依赖问题，之后仍需真实 Workbench 纵向与可删性 Gate |
 | W7-R5B 效应器成长 | `contract_frozen / implementation-not-started` | `taiji_w7_r5_effector_registry_v1.json` + 注册生命周期/快照/回滚 Gate |
 | W7-R5C 开放域结构成长 | `contract_frozen / implementation-not-started` | R5A/R5B 真实 evidence 可供触发，且 S0→S1→S2 全通过 |
 
