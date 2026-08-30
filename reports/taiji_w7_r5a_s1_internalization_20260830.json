@@ -1,0 +1,58 @@
+{
+  "format": "taiji-w7-r5a-s1-internalization-v1",
+  "train_examples": 2,
+  "holdout_examples": 1,
+  "replay_digest": "6090799c6b12fb19987ff55f7d7b6fb68316dc4cb97a8226d15797083a5e8df8",
+  "metrics": {
+    "format": "taiji-internalization-learner-v1",
+    "parent_checkpoint_digest": "0d40041ab345a5baef9374fb31fe51fb4500fa981bb251b0e12af3224a74234f",
+    "child_checkpoint_digest": "ad7395b40f401d4fd151685f4de18c9e868bc51e970397f11f7002e6d6c5de93",
+    "replay_digest": "6090799c6b12fb19987ff55f7d7b6fb68316dc4cb97a8226d15797083a5e8df8",
+    "train_examples": 2,
+    "holdout_examples": 1,
+    "train_loss_before": 0.4000000000000001,
+    "train_loss_after": 0.00010563132715022445,
+    "holdout_loss_before": 0.36,
+    "holdout_loss_after": 7.097879424691082e-06,
+    "holdout_internalized_lesion_loss": 0.36,
+    "holdout_grounding_lesion_loss": 0.04071360383182763,
+    "retention_loss_before": 0.4000000000000001,
+    "retention_loss_after": 0.00010563132715022445,
+    "holdout_gain": 0.3599929021205753,
+    "fit_updates": 16,
+    "online_updates": 0,
+    "lineage_depth": 1,
+    "passed": true
+  },
+  "checkpoint": {
+    "roundtrip": true,
+    "fit_updates": 16,
+    "online_updates_after_continuation": 1,
+    "lineage_depth": 1
+  },
+  "lifecycle": {
+    "example_id": "02038ea0ca9c3250196109dcc2d9277c2396d61a222b39a1429a2f5880bc8966",
+    "status": "internalized",
+    "events": [
+      "outcome_bound",
+      "grounding_verified",
+      "example_created",
+      "shadow_learned",
+      "holdout_checked",
+      "affordance_lesion_checked",
+      "internalization_admitted"
+    ],
+    "causal_gate": {
+      "external_sufficiency": true,
+      "internalization_necessity": true,
+      "grounding_necessity": true,
+      "checkpoint_recoverable": true,
+      "old_task_retention": true
+    }
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "native consolidation improves unseen grounded holdout while feature, grounding, retention, and checkpoint controls remain causal"
+  },
+  "boundary": "S1 synthetic native canary only; no external description deletion, provider execution, structural growth, or AGI claim"
+}

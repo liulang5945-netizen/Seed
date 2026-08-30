@@ -137,6 +137,11 @@ from .internalization import (
     ReplayBuffer,
     content_digest,
 )
+from .internalization_learner import (
+    INTERNALIZATION_LEARNER_CHECKPOINT_FORMAT,
+    InternalizationLearningReport,
+    InternalizedFeatureLearner,
+)
 from .interaction_groups import (
     INTERACTION_GROUP_CHECKPOINT_FORMAT,
     INTERACTION_GROUP_ESTIMATOR_REVISION,
@@ -401,6 +406,9 @@ __all__ = [
     "ValidatedLanguageOrgan",
     "language_provider_artifact_digest",
     "language_provider_content_digest",
+    "INTERNALIZATION_LEARNER_CHECKPOINT_FORMAT",
+    "InternalizationLearningReport",
+    "InternalizedFeatureLearner",
     "MemoryRecall",
     "MemoryState",
     "NativeCheckpoint",
