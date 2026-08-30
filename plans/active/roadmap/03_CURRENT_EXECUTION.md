@@ -29,7 +29,7 @@
 
 - 当前 checkout 为 `main`；`output/` 是未跟踪的现场证据目录，本轮不暂存、不删除。
 - `backup-local-20260828` 与干净的 `codex/interaction-group-credit` 已收束并删除；`codex/interaction-group-incremental` 仍附着含 5 个未提交文件的 worktree，未强行删除或混入主线。
-- CI 修复链已推进到 `b6d1bf2`：依次修复阻塞 Ruff、Black、native boundary、mypy、只读 Workbench 决策绑定和过时的全路由状态证据断言；该提交待推送后由远端矩阵最终验收，未验收前不声明 CI 已绿。
+- CI 修复链已推进到 `b6d1bf2`，并由远端运行 `33295880356` 完成最终验收：Docker、前端含 E2E、Legacy/no-Legacy smoke、Python 3.10/3.12 与 Windows 全量回归 7 个 job 全部成功。
 - `plans/` 没有空目录或 0 字节文件。核心架构讨论留在 active/reference；已完成 Gate 过程和旧执行蓝图已移到 archive。
 
 ## 4. 当前唯一下一步
