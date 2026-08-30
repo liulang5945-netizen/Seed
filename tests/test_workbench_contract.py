@@ -23,6 +23,8 @@ from taiji import (
     ExecutiveCandidate,
     ExecutiveContext,
     ExecutiveDecision,
+    GroundedOutcomeEvidence,
+    InternalizationLedger,
     TSKV8Adapter,
 )
 
@@ -261,6 +263,74 @@ def test_latest_workspace_evidence_reprojects_and_rejects_old_candidate(
     assert "workbench-evidence:" + reprojected["evidence"]["event_id"] in {
         item for item in fresh_world.affordances[0].grounding_lineage
     }
+
+
+def test_runtime_projects_current_workbench_evidence_to_grounded_internalization_input(
+    tmp_path, monkeypatch
+) -> None:
+    (tmp_path / "README.md").write_bytes(b"real outcome for internalization\n")
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+    runtime = SeedRuntime(Seed(episode_id="workbench-internalization-projection"))
+    runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+    snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+    runtime.project_workbench_affordances(
+        snapshot_id=snapshot_id,
+        parameter_bindings={"workspace.list": {"path": "."}},
+    )
+    runtime.execute_workbench_intent(
+        ActionIntent(
+            intent_id="intent-internalization-list",
+            kind="workspace.list",
+            parameters={"path": "."},
+            confidence=1.0,
+            tick=runtime.model.tick,
+        ),
+        snapshot_id=snapshot_id,
+        learn=False,
+    )
+    reprojected = runtime.reproject_workbench_from_latest_evidence(snapshot_id=snapshot_id)
+    read_affordance = next(
+        item for item in reprojected["affordances"] if item["action_kind"] == "workspace.read"
+    )
+
+    source = runtime.project_workbench_outcome_for_internalization(
+        snapshot_id=snapshot_id,
+        affordance_id=read_affordance["affordance_id"],
+        reward=0.75,
+        reward_terms={"task_score": 0.75},
+        parent_checkpoint_id="checkpoint:workbench-parent",
+    )
+
+    assert isinstance(source, GroundedOutcomeEvidence)
+    assert source.evidence_id == reprojected["evidence"]["event_id"]
+    assert source.outcome.success is True
+    assert source.affordance.affordance_id == read_affordance["affordance_id"]
+    assert source.affordance.feature_provenance == "world-state-grounding"
+    assert "capability_id" not in source.binding_payload()
+    assert "provider_text" not in source.binding_payload()
+    result = InternalizationLedger().ingest(source)
+    assert result.accepted is True
+    assert result.status == "external"
+
+    with pytest.raises(ValueError, match="snapshot drifted"):
+        runtime.project_workbench_outcome_for_internalization(
+            snapshot_id="stale-snapshot",
+            affordance_id=read_affordance["affordance_id"],
+            reward=0.75,
+            reward_terms={"task_score": 0.75},
+            parent_checkpoint_id="checkpoint:workbench-parent",
+        )
+    with pytest.raises(ValueError, match="not current"):
+        runtime.project_workbench_outcome_for_internalization(
+            snapshot_id=snapshot_id,
+            affordance_id="missing-affordance",
+            reward=0.75,
+            reward_terms={"task_score": 0.75},
+            parent_checkpoint_id="checkpoint:workbench-parent",
+        )
 
 
 def test_workspace_evidence_event_order_survives_checkpoint_continuation(

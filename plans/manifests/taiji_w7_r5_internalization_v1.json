@@ -166,7 +166,7 @@
     ],
     "new_test_entry": "tests/taiji_native/test_internalization_contract.py",
     "new_eval_entry": "scripts/training/eval_taiji_internalization.py",
-    "status": "s1_implemented",
+    "status": "s2_projection_implemented",
     "s0_artifact": "taiji/internalization.py",
     "s0_test": "tests/taiji_native/test_internalization_contract.py",
     "s0_scope": "pure DTO conversion, content addressing, train-only deduplicated replay, lifecycle and checkpoint roundtrip",
@@ -174,7 +174,9 @@
     "s1_test": "tests/taiji_native/test_internalization_s1.py",
     "s1_eval": "scripts/training/eval_taiji_internalization.py",
     "s1_scope": "atomic native consolidation trial, parent/child checkpoint lineage, read-only holdout/retention evaluation, and internalized/grounding lesions",
-    "next_stage": "S2 real Workbench longitudinal evidence and deletion boundary"
+    "s2_projection": "api/seed_runtime.py projects only current, verified read-only Workbench evidence plus its re-projected grounded successor affordance into GroundedOutcomeEvidence; runtime cannot write replay, train, or advance lifecycle status.",
+    "s2_test": "tests/test_workbench_contract.py::test_runtime_projects_current_workbench_evidence_to_grounded_internalization_input",
+    "next_stage": "S2-B real Workbench longitudinal holdout, lesions, checkpoint recovery, and deletion-candidate Gate"
   },
   "boundary": [
     "Knowledge descriptions, feature traces, and replay examples may become removable only through an explicit, recoverable lifecycle.",
