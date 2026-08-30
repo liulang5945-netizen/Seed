@@ -56,7 +56,7 @@ R3/R4 未通过时不得声明相应能力，但它们不再作为 R5 的伪串�
 
 ### Gate
 
-已扩展 `tests/test_w7_gate_manifests.py`：缺失/混合 owner、缺 checkpoint、认知越权和错误删除边界会红，合法合同通过；两份 manifest 已提交且实现状态保持 `not_started`。此阶段不新增生产转换器或注册表，避免合同和实现同时漂移。
+已扩展 `tests/test_w7_gate_manifests.py`：缺失/混合 owner、缺 checkpoint、认知越权和错误删除边界会红，合法合同通过；R5B manifest 仍为 `not_started`，R5A 的实现状态由其 S0/S1/S2 分阶段记录。此阶段不新增效应器注册表，避免 R5A 与 R5B 的 owner 边界漂移。
 
 ## 4. C2：W7-R5A 知识内化（下一阶段）
 

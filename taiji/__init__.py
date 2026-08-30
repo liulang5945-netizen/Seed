@@ -119,6 +119,24 @@ from .homeostasis import (
     HomeostaticDrive,
 )
 from .input_boundary import INPUT_BOUNDARY_FORMAT, InputFrame, InputTrace
+from .internalization import (
+    INTERNALIZATION_ALLOWED_STATUSES,
+    INTERNALIZATION_CHECKPOINT_FORMAT,
+    INTERNALIZATION_MANIFEST_REVISION,
+    INTERNALIZATION_TRAIN_PARTITION,
+    BoundedReplayBuffer,
+    GroundedFeatureExample,
+    GroundedOutcomeEvidence,
+    InternalizationCausalGate,
+    InternalizationConversionResult,
+    InternalizationConverter,
+    InternalizationExample,
+    InternalizationInput,
+    InternalizationLedger,
+    InternalizationLifecycleRecord,
+    ReplayBuffer,
+    content_digest,
+)
 from .interaction_groups import (
     INTERACTION_GROUP_CHECKPOINT_FORMAT,
     INTERACTION_GROUP_ESTIMATOR_REVISION,
