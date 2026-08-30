@@ -44,7 +44,7 @@
 
 R3 最终包为 `dist/Seed/Seed.exe`，已记录 SHA-256 `76b432b43922d5d70c64fca36b8e7045f2f5d03d4492f09b68b47eb31756368b`、大小 72,752,598 字节；源码与包内前端 211 个文件集合/字节一致，前端回归 `43 files / 245 passed`，Vite build 与 ESLint 通过。Chrome 已验证生命页和 900px/760px IDE 布局；Windows Computer Use 无法激活窗口，因此任务栏、托盘、通知和高 DPI 未通过。
 
-R5-S0 定向 native/executive/desktop/project identity 回归记录为 `24 passed`，Ruff、compileall、checkpoint 往返和 diff 检查通过。2026-08-30 CI 修复链新增 `b6d1bf2`：只读 Workbench 在 admission 后不再要求可变的当前 executive decision，前端 E2E 仅要求生命状态页展示 `RuntimeEvidenceStrip`，其余页面显式验证不展示；本地对应 Workbench 回归为 `2 passed`，mypy 为 `45 source files` 无问题。该提交的 Windows/Linux 全量矩阵仍以远端运行结果为准，不能用本地结果替代。
+R5-S0 定向 native/executive/desktop/project identity 回归记录为 `24 passed`，Ruff、compileall、checkpoint 往返和 diff 检查通过。2026-08-30 CI 修复链新增 `b6d1bf2`：只读 Workbench 在 admission 后不再要求可变的当前 executive decision，前端 E2E 仅要求生命状态页展示 `RuntimeEvidenceStrip`，其余页面显式验证不展示；本地对应 Workbench 回归为 `2 passed`，mypy 为 `45 source files` 无问题。远端运行 `33295880356` 已完成最终验收，Docker、前端含 E2E、Legacy/no-Legacy smoke、Python 3.10/3.12 与 Windows 全量回归 7 个 job 全部成功。
 
 R5-G1 合同 Gate 已新增两份独立 manifest，并覆盖合法合同与缺 owner、混合 owner、缺 checkpoint、认知越权、错误删除边界的 red contract；R5A/R5B 生产实现仍未开始。
 
