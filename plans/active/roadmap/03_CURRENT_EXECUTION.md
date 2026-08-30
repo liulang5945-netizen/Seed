@@ -13,7 +13,7 @@
 | W7-R3 visual/desktop | S0/S1 + 页面证据完成 | 生命雷达、窄布局、前端/包字节一致、客户端真实状态投影 | Windows 任务栏、托盘、通知、高 DPI 已现场通过 |
 | W7-R4 CUDA | `hardware-blocked` | CPU 基线与设备/checkpoint 合同仍有效 | CUDA 性能、数值一致性或自定义 kernel 已验证 |
 | W7-R5-S0 学习通道 | 已完成 | 真实 Workbench Outcome 可进入 `record_executive_outcome()`；`learn=False` 冻结，`learn=True` 在线更新；checkpoint 保留计数与选择 | 知识已内化、外挂可删、效应器可注册、开放域自进化 |
-| W7-R5A/R5B | R5A-S2-A 已完成；R5B 仍为 G1 合同基线 | R5A 已具备 DTO、内容寻址 replay、原生学习器、holdout/lesion、生命周期和 checkpoint；真实 Workbench Outcome 只能经当前 evidence 与重投影 affordance 进入 Taiji-owned 候选；R5B 仅有独立合同 | 真实 Workbench 纵向可删性、效应器注册表、开放域成长 |
+| W7-R5A/R5B | R5A-S2-B 完成；S2-C Gate 已实现，现场执行待验证；R5B 仍为 G1 合同基线 | R5A 已具备 DTO、内容寻址 replay、原生学习器、真实 Workbench 纵向 holdout/lesion/recovery、跨 seed/task slice 聚合与独立可删评审；R5B 仅有独立合同 | 在正常 CI/主机临时目录上执行双 seed/task slice，效应器注册表、开放域成长 |
 | W7-R5C 开放域成长 | 合同已冻结、实现未开始 | 结构成长的输入/证据/回滚边界已版本化 | 长期真实任务会自行扩容或进化 |
 
 最新证据数字与报告只在 [IMPLEMENTATION_STATUS_2026_08.md](../../reference/IMPLEMENTATION_STATUS_2026_08.md) 维护。
@@ -21,6 +21,7 @@
 ## 2. 当前阻塞与非阻塞边界
 
 - **R3 Windows shell 为 `tool-blocked`。** Chrome 页面和窄布局证据已通过，但 Computer Use 无法激活 Seed 窗口，不能把桌面背景截图当任务栏/托盘/通知/DPI 证据。工具恢复后补证，不返工已通过页面层。
+- **R3 页面层的两处渲染缺陷已由用户点名修复并收敛，不改变任何运行时语义，也不构成 R3 Gate 证据。** 训练页 `.tk-card h3` 内联 `<svg class="ic">` 此前在组件与全局样式里都无尺寸规则，按 SVG 默认 300×150 渲染并在 flex 标题内把「检查点列表」挤成逐字换行，现由 `TrainingOverviewPanel.vue` / `TrainingView.vue` 统一的 `.tk-card h3 .ic` 规则约束，并删除 `TrainingView.vue` 内同目的的 `style` 硬补丁（`97a3dac`）。生命状态页 `NeedsPentagram.vue` 的配色经六轮取舍定为「全中性主体」：轮廓、填充、引导环、轴线全部由 `--muted-foreground` 经 `color-mix` 派生（描边 52%/1.8px、填充 8%、引导环 12% 与最外环 26%、轴线 10%），整图唯一的非中性语义色是 `--danger`，且只出现在告警轴向（46%/1.6px）与告警数值上；顶点圆点整体移除，需求等级改由「轴线染色 + 数值三档字重/色」双通道编码（`> 70` alert / `40–70` watch / `< 40` calm），满足不依赖单一颜色传达语义，并规避了 warm 主题下 `--chart-1` 与琥珀色系撞色、以及三色相超出无图例配色预算的既有问题。同轮清除的失效或冲突写法：`<defs>` / `radialGradient` / `useId()` / `areaGradientId` / `.area-core` / `.area-edge` 渐变残留、CSS `r:` 几何覆写、`@keyframes critical-pulse`；数据面早前已由 `<polygon>` 改 `<path>` 使 `transition: d` 真正生效。视觉契约变更同步落到测试：`circle.pentagram-dot`×5 断言退役，替换为 `line.pentagram-axis`×5、`circle` 数为 0、告警轴 `critical` 类、以及 `tspan.pentagram-value` 的三档分级（含 70 与 40 两个阈值边界），`polygon.pentagram-guide`×5 与 `text.pentagram-label`×5 保持不变；`LifeStatusView.test.js` 与 `LifeNeedsDashboard.test.js` 经检索确认不依赖顶点选择器。前端回归 43 文件 247 例全绿（基线 245 例，新增 2 例为上述分级与轴向断言），ESLint 无告警，`npm run build` 成功。
 - **R4 CUDA 为 `hardware-blocked`。** 当前主机没有可用 CUDA；不写自定义 fused/sparse kernel，不用 CPU 结果代替 GPU 结论。
 - 两条阻塞线仍影响对应发布声明，但不再冻结无依赖的 R5 CPU/native 合同与实现。R5 的任何进展也不能反向把 R3/R4 标为通过。
 - 训练或结构试验开始前必须先通过 checkpoint 保存→关闭→恢复→继续的阻塞 Gate；只在内存中成立的结果不进入路线。
@@ -34,7 +35,7 @@
 
 ## 4. 当前唯一下一步
 
-执行 **W7-R5A-S2-B：真实 Workbench 纵向 holdout、lesion、checkpoint recovery 与可删候选 Gate**。
+执行 **W7-R5A-S2-C：在正常 CI/主机临时目录上运行真实双 seed/task slice 稳定性与独立删除评审 Gate**。
 
 R5-G1 与 R5A-S0 已完成并交付：
 
@@ -46,18 +47,22 @@ R5-G1 与 R5A-S0 已完成并交付：
 
 R5A-S2-A 已完成：`api/seed_runtime.py` 只会在当前、校验过的 `workbench.evidence`、同一 capability snapshot 和由该 evidence 重投影出的 grounded successor affordance 同时成立时，创建 `GroundedOutcomeEvidence`。运行时不拥有 replay、learner 或 lifecycle 的写权；缺失/陈旧 snapshot 或非当前 affordance 全部 fail-closed。定向用例在真实只读 workspace 上通过，并已回归完整 Workbench 合同 `44 passed`。
 
-为什么下一项是 R5A-S2-B：S1 已在父 checkpoint 的原生 trial 上证明 grounded feature 能改善独立 holdout，并且 feature、grounding、retention、checkpoint 控制成立；S2-A 现在把输入接到真实 Outcome。下一步必须用不参与训练的真实 Workbench 任务组合完成纵向 Gate，才讨论外挂的可删候选；不提前改效应器注册表或结构成长。
+R5A-S2-B 已完成：`taiji/internalization_longitudinal.py` 将真实 Workbench Outcome 转换成 train/holdout task slice，使用 train-only pairwise preference 更新，验证外部规则移除、内化特征/grounding lesion、旧任务 retention、checkpoint restore，并且只生成 `candidate_only_no_physical_deletion` 候选；真实 external artifact 未被删除，holdout 未进入 replay。
+
+R5A-S2-C 的聚合 Gate 已完成实现：`InternalizationStabilityTrial` 按 seed 和 task slice 封装 S2-B 报告，`InternalizationStabilityGate` 检查跨试验收益、lesion、retention、指标离散度和 bounded resource counters，`IndependentDeletionReview` 单独检查 artifact/checkpoint/lifecycle/manifest 绑定，并拒绝任何 path、disposer、executor 或删除字段。真实 Workbench 集成用例已扩展为 seed 11 与 seed 29 两个实际运行，当前本地执行被 pytest 临时目录权限阻塞，不能把收集成功当作 Gate 通过。
+
+为什么下一项仍是 R5A-S2-C：S2-B 证明了单个真实 Workbench slice 的纵向因果链，S2-C 已把稳定性和独立评审代码接通，但必须在正常 CI/主机临时目录上完成真实双 seed/task slice 执行，才有资格形成可审计证据。未执行通过前不进入效应器注册表或结构成长，也不把单个 canary 误报成开放域可删性。
 
 ## 5. 本 slice 明确不做
 
-- 不执行物理删除或外部 artifact tombstone 提交；S2-B 只产生可恢复的候选与 Gate 证据；
+- 不执行物理删除或外部 artifact tombstone 提交；S2-B 只产生可恢复的候选，S2-C 只增加稳定性与独立评审证据；
 - 不重构 `seed_platform/workbench.py` 的硬编码分派；
 - 不删除 skill/MCP、Legacy、`codex/interaction-group-incremental` 或 `output/`；
 - 不启动训练、不改模型权重、不做 CUDA；
-- 不继续视觉美化或用模拟截图关闭 R3；
+- 不把用户点名的渲染缺陷修复扩大成主动视觉美化，不用页面层改动或模拟截图关闭 R3 的任务栏/托盘/通知/DPI 取证；
 - 不实现 `seed_platform/capability_registry.py`，不在同一提交推进 R5B/R5C 的生产代码。
 
-完成 S1 后唯一后继为 [04_EXECUTION_PLAN.md §4](04_EXECUTION_PLAN.md) 的 **R5A-S2：真实 Workbench 纵向证据与可删性边界**。
+完成 S1 后唯一后继为 [04_EXECUTION_PLAN.md §4](04_EXECUTION_PLAN.md) 的 **R5A-S2：真实 Workbench 纵向证据与可删性边界**；S2-B 已完成，当前进入 S2-C。
 
 ## 6. 更新规则
 

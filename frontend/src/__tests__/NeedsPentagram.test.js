@@ -43,18 +43,35 @@ describe('NeedsPentagram', () => {
     expect(wrapper.find('.pentagram-body').classes()).not.toContain('breathing')
   })
 
-  it('渲染 5 个数据顶点圆点', () => {
+  it('渲染 5 条维度轴线', () => {
     const wrapper = mount(NeedsPentagram, { props: { needs: defaultNeeds } })
-    const dots = wrapper.findAll('circle.pentagram-dot')
-    expect(dots.length).toBe(5)
+    const axes = wrapper.findAll('line.pentagram-axis')
+    expect(axes.length).toBe(5)
   })
 
-  it('需求值 >70 的顶点带 critical class', () => {
+  it('不渲染数据顶点圆点', () => {
+    const wrapper = mount(NeedsPentagram, { props: { needs: defaultNeeds } })
+    expect(wrapper.findAll('circle').length).toBe(0)
+  })
+
+  it('需求值 >70 时对应轴线带 critical class', () => {
     const needs = { hunger: 80, fatigue: 0, boredom: 0, stress: 0, curiosity: 0 }
     const wrapper = mount(NeedsPentagram, { props: { needs } })
-    const dots = wrapper.findAll('circle.pentagram-dot')
-    expect(dots[0].classes()).toContain('critical')
-    expect(dots[1].classes()).not.toContain('critical')
+    const axes = wrapper.findAll('line.pentagram-axis')
+    expect(axes[0].classes()).toContain('critical')
+    expect(axes[1].classes()).not.toContain('critical')
+  })
+
+  it('数值按 alert/watch/calm 三档分级着色', () => {
+    const needs = { hunger: 80, fatigue: 55, boredom: 20, stress: 40, curiosity: 70 }
+    const wrapper = mount(NeedsPentagram, { props: { needs } })
+    const values = wrapper.findAll('tspan.pentagram-value')
+    expect(values.length).toBe(5)
+    expect(values[0].classes()).toContain('alert')
+    expect(values[1].classes()).toContain('watch')
+    expect(values[2].classes()).toContain('calm')
+    expect(values[3].classes()).toContain('watch')
+    expect(values[4].classes()).toContain('watch')
   })
 
   it('渲染 5 个维度标签文本', () => {
