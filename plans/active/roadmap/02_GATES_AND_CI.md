@@ -22,6 +22,7 @@
 - 代码事实与验证数字只允许在 `plans/reference/IMPLEMENTATION_STATUS_2026_08.md` 维护一份。
 - 架构使命和所有权分别由 active 根目录的四份架构合同负责；历史“下一步”不得从 archive 恢复。
 - 前端不得推断或补造 Taiji/runtime/provider 状态；缺测字段必须缺失或显式 unavailable。
+- `RuntimeEvidenceStrip` 的产品权威入口只有生命状态页；聊天、知识库、训练、Agent、工作台和设置页不得复制该证据条。E2E 路由巡检必须同时验证生命状态页展示、其他页面不展示。
 
 ### G2：checkpoint 往返与继续执行
 
