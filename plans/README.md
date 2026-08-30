@@ -6,7 +6,7 @@
 
 - W0–W6、W7-R1/R2 和 R5-S0 已形成当前基线；R3 页面层通过但 Windows shell 为 `tool-blocked`，R4 为 `hardware-blocked`。
 - R3/R4 保持独立补证线，不再把工具或硬件缺失当作整个项目停工条件；它们未通过时仍不得发布对应声明。
-- R5-G1 已分别冻结知识内化与效应器成长 manifest；R5A-S0 转换器 DTO 与确定性 replay Gate 已通过，R5A-S1 原生学习器/检查点/留出集/消融 canary 已完成；当前先完成本轮跨平台 CI 依赖修复验收，之后唯一开发动作是 R5A-S2 真实 Workbench 纵向证据。
+- R5-G1 已分别冻结知识内化与效应器成长 manifest；R5A-S0 转换器 DTO 与确定性 replay Gate 已通过，R5A-S1 原生学习器/检查点/留出集/消融 canary 已完成，跨平台 CI 已全绿，当前唯一开发动作是 R5A-S2 真实 Workbench 纵向证据。
 - 核心架构讨论继续留在 active/reference；2026-08-29 及以前的 Gate 过程和旧 W7 蓝图已归档。
 
 ## 目录职责
