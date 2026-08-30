@@ -23,13 +23,13 @@ const SHOT_DIR = process.env.SEED_E2E_SHOT_DIR || ''; // 设置后失败时落�
 
 // 路由 → 主容器选择器（与 router/index.js 保持一致）
 const ROUTES = [
-  { path: '/', selector: '.chat-workbench', name: 'chat', evidence: true },
-  { path: '/#/kb', selector: '.kb-view', name: 'kb', evidence: true },
-  { path: '/#/train', selector: '.training-view', name: 'train', evidence: true },
-  { path: '/#/agent', selector: '.agent-page', name: 'agent', evidence: true },
+  { path: '/', selector: '.chat-workbench', name: 'chat', evidence: false },
+  { path: '/#/kb', selector: '.kb-view', name: 'kb', evidence: false },
+  { path: '/#/train', selector: '.training-view', name: 'train', evidence: false },
+  { path: '/#/agent', selector: '.agent-page', name: 'agent', evidence: false },
   { path: '/#/workspace', selector: '.workspace-view', name: 'workspace', evidence: false },
   { path: '/#/life', selector: '.life-status-view', name: 'life', evidence: true },
-  { path: '/#/settings', selector: '.settings-view', name: 'settings', evidence: true },
+  { path: '/#/settings', selector: '.settings-view', name: 'settings', evidence: false },
 ];
 
 // 简易断言工具：收集失败但不中断，最后统一汇报
@@ -174,6 +174,8 @@ async function shot(page, tag) {
     check(`路由 ${r.path} 没有错误页面`, await page.locator('.route-error-view').count() === 0);
     if (r.evidence) {
       check(`路由 ${r.path} 展示状态证据`, await page.locator('.runtime-evidence').count() > 0);
+    } else {
+      check(`路由 ${r.path} 不展示状态证据`, await page.locator('.runtime-evidence').count() === 0);
     }
     if (!visible) await shot(page, r.name);
   }

@@ -975,7 +975,9 @@ class SeedRuntime:
             decision.action_intent,
             snapshot_id=admission.request.snapshot_id,
             learn=learn,
-            executive_decision=decision,
+            # Only online learning needs the identity-bound decision context;
+            # read-only execution must remain valid after admission alone.
+            executive_decision=decision if learn else None,
         )
         payload["execution"] = execution
         return payload
@@ -1547,7 +1549,9 @@ class SeedRuntime:
                     decision.action_intent,
                     snapshot_id=admission.request.snapshot_id,
                     learn=learn,
-                    executive_decision=decision,
+                    # Keep non-learning successor steps independent of the
+                    # architecture's mutable learning cursor.
+                    executive_decision=decision if learn else None,
                 )
                 outcome = dict(execution.get("outcome") or {})
                 step.update(
