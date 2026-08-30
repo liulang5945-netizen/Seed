@@ -2,8 +2,8 @@
 
 R5A-S0 is deliberately limited to pure conversion and deterministic replay
 bookkeeping.  It does not execute an affordance, choose a capability, call a
-provider, or mutate a learner.  A later learner may consume the examples and
-the lifecycle ledger after its own checkpoint and causal gates are in place.
+provider, or mutate a learner.  The R5A-S1 learner consumes its examples only
+through the separate checkpointed native learner module.
 """
 
 from __future__ import annotations
@@ -226,6 +226,7 @@ class GroundedFeatureExample:
     feature_payload_digest: str
     reward_terms: tuple[tuple[str, float], ...]
     provenance: tuple[tuple[str, str], ...]
+    target_reward: float = 0.0
     manifest_revision: str = INTERNALIZATION_MANIFEST_REVISION
     status: str = "external"
     tombstone_reason: str = ""
@@ -252,6 +253,9 @@ class GroundedFeatureExample:
         if not bool(torch.isfinite(self.grounding).all()):
             raise ValueError("internalization grounding must be finite")
         object.__setattr__(self, "grounding", self.grounding.detach().clone().to(torch.float32))
+        if not math.isfinite(float(self.target_reward)):
+            raise ValueError("internalization target_reward must be finite")
+        object.__setattr__(self, "target_reward", float(self.target_reward))
         reward_pairs = tuple((str(name), float(value)) for name, value in tuple(self.reward_terms))
         if not reward_pairs or tuple(sorted(reward_pairs)) != reward_pairs:
             raise ValueError("internalization reward_terms must be sorted and non-empty")
@@ -283,6 +287,7 @@ class GroundedFeatureExample:
             "feature_payload_digest": self.feature_payload_digest,
             "reward_terms": list(self.reward_terms),
             "provenance": list(self.provenance),
+            "target_reward": self.target_reward,
             "manifest_revision": self.manifest_revision,
         }
 
@@ -316,6 +321,7 @@ class GroundedFeatureExample:
                 (str(name), float(value)) for name, value in payload["reward_terms"]
             ),
             provenance=tuple((str(name), str(value)) for name, value in payload["provenance"]),
+            target_reward=float(payload.get("target_reward", 0.0)),
             manifest_revision=str(
                 payload.get("manifest_revision", INTERNALIZATION_MANIFEST_REVISION)
             ),
@@ -524,10 +530,11 @@ class InternalizationConverter:
             grounding=affordance.features,
             capability_snapshot_digest=source.capability_snapshot_digest,
             parent_checkpoint_id=source.parent_checkpoint_id,
-            feature_payload_digest=feature_digest,
-            reward_terms=reward_terms,
-            provenance=provenance,
-            manifest_revision=source.manifest_revision,
+                feature_payload_digest=feature_digest,
+                reward_terms=reward_terms,
+                provenance=provenance,
+                target_reward=source.outcome.reward,
+                manifest_revision=source.manifest_revision,
         )
         lifecycle = InternalizationLifecycleRecord(
             example_id=example.example_id,

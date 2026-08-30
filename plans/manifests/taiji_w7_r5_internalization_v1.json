@@ -14,7 +14,7 @@
   },
   "owner": {
     "converter": "taiji/internalization.py",
-    "learner": "taiji/adapter.py and Taiji-owned feature/trace organs",
+    "learner": "taiji/internalization_learner.py and Taiji-owned feature/trace organs",
     "source_projection": "api/seed_runtime.py Workbench Outcome projection",
     "cognitive_owners": ["taiji/concept_formation.py", "taiji/memory.py", "taiji/adapter.py"],
     "forbidden_owners": [
@@ -166,11 +166,15 @@
     ],
     "new_test_entry": "tests/taiji_native/test_internalization_contract.py",
     "new_eval_entry": "scripts/training/eval_taiji_internalization.py",
-    "status": "s0_implemented",
+    "status": "s1_implemented",
     "s0_artifact": "taiji/internalization.py",
     "s0_test": "tests/taiji_native/test_internalization_contract.py",
     "s0_scope": "pure DTO conversion, content addressing, train-only deduplicated replay, lifecycle and checkpoint roundtrip",
-    "next_stage": "S1 native learner with checkpoint, holdout, and lesions"
+    "s1_artifact": "taiji/internalization_learner.py",
+    "s1_test": "tests/taiji_native/test_internalization_s1.py",
+    "s1_eval": "scripts/training/eval_taiji_internalization.py",
+    "s1_scope": "atomic native consolidation trial, parent/child checkpoint lineage, read-only holdout/retention evaluation, and internalized/grounding lesions",
+    "next_stage": "S2 real Workbench longitudinal evidence and deletion boundary"
   },
   "boundary": [
     "Knowledge descriptions, feature traces, and replay examples may become removable only through an explicit, recoverable lifecycle.",

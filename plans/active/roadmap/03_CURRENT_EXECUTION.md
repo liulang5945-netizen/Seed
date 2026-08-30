@@ -13,7 +13,7 @@
 | W7-R3 visual/desktop | S0/S1 + 页面证据完成 | 生命雷达、窄布局、前端/包字节一致、客户端真实状态投影 | Windows 任务栏、托盘、通知、高 DPI 已现场通过 |
 | W7-R4 CUDA | `hardware-blocked` | CPU 基线与设备/checkpoint 合同仍有效 | CUDA 性能、数值一致性或自定义 kernel 已验证 |
 | W7-R5-S0 学习通道 | 已完成 | 真实 Workbench Outcome 可进入 `record_executive_outcome()`；`learn=False` 冻结，`learn=True` 在线更新；checkpoint 保留计数与选择 | 知识已内化、外挂可删、效应器可注册、开放域自进化 |
-| W7-R5A/R5B | R5A-S0 已完成；R5B 仍为 G1 合同基线 | R5A 已具备纯 DTO、内容寻址 replay、生命周期和 checkpoint；R5B 仅有独立合同 | native learner、holdout/lesion、效应器注册表、开放域成长 |
+| W7-R5A/R5B | R5A-S1 已完成；R5B 仍为 G1 合同基线 | R5A 已具备 DTO、内容寻址 replay、原生学习器、holdout/lesion、生命周期和 checkpoint；R5B 仅有独立合同 | 真实 Workbench 纵向可删性、效应器注册表、开放域成长 |
 | W7-R5C 开放域成长 | 合同已冻结、实现未开始 | 结构成长的输入/证据/回滚边界已版本化 | 长期真实任务会自行扩容或进化 |
 
 最新证据数字与报告只在 [IMPLEMENTATION_STATUS_2026_08.md](../../reference/IMPLEMENTATION_STATUS_2026_08.md) 维护。
@@ -34,7 +34,7 @@
 
 ## 4. 当前唯一下一步
 
-执行 **W7-R5A-S1：native learner、checkpoint、holdout 与 lesion Gate**。
+执行 **W7-R5A-S2：真实 Workbench 纵向证据与可删性边界 Gate**。
 
 R5-G1 与 R5A-S0 已完成并交付：
 
@@ -42,20 +42,20 @@ R5-G1 与 R5A-S0 已完成并交付：
 2. `taiji/internalization.py`：不依赖 `seed_platform` 的 Outcome/evidence DTO、内容 digest、train-only replay、生命周期和五项因果门控；
 3. `tests/taiji_native/test_internalization_contract.py`：未 grounding、缺 reward、越界、provider/capability 文本、holdout 写穿、重复 evidence、未通过 causal gate、checkpoint resurrection 的 red proof；
 4. `tests/test_w7_gate_manifests.py`：合同边界与 R5A/R5B 分离关系；
-5. R5A S0 证据为定向测试 `14 passed`、mypy、Ruff、Black、compileall 和 diff 检查通过；R5B 与 R5C 仍未实现。
+5. R5A S0/S1 证据为 S0 定向测试 `14 passed`、S1 定向测试 `5 passed`、原生 canary `gate.passed=true`，以及本地 checkpoint/holdout/lesion 检查；R5B 与 R5C 仍未实现。
 
-为什么下一项是 R5A-S1：S0 已把真实证据转换成可恢复、不可写穿的 replay 内容，但尚未改变任何 Taiji learner 状态；下一步必须在父 checkpoint 与独立 holdout/lesion 下证明内化收益，再谈外挂可删性，不提前改效应器注册表或结构成长。
+为什么下一项是 R5A-S2：S1 已在父 checkpoint 的原生 trial 上证明 grounded feature 能改善独立 holdout，并且 feature、grounding、retention、checkpoint 控制成立；下一步必须把同一 Gate 接到真实 Workbench 的纵向 Outcome，再谈外挂可删性，不提前改效应器注册表或结构成长。
 
 ## 5. 本 slice 明确不做
 
-- 不实现 R5A-S1 的 native learner、离线巩固或真实 Workbench 纵向 Gate；
+- 不实现 R5A-S2 的真实 Workbench 纵向证据、物理删除或外部 artifact tombstone 提交；
 - 不重构 `seed_platform/workbench.py` 的硬编码分派；
 - 不删除 skill/MCP、Legacy、`codex/interaction-group-incremental` 或 `output/`；
 - 不启动训练、不改模型权重、不做 CUDA；
 - 不继续视觉美化或用模拟截图关闭 R3；
 - 不实现 `seed_platform/capability_registry.py`，不在同一提交推进 R5B/R5C 的生产代码。
 
-完成 S0 后唯一后继为 [04_EXECUTION_PLAN.md §4](04_EXECUTION_PLAN.md) 的 **R5A-S1：native checkpoint 与离线巩固**。
+完成 S1 后唯一后继为 [04_EXECUTION_PLAN.md §4](04_EXECUTION_PLAN.md) 的 **R5A-S2：真实 Workbench 纵向证据与可删性边界**。
 
 ## 6. 更新规则
 

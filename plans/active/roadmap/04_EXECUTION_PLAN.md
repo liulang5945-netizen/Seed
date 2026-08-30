@@ -69,13 +69,13 @@ R3/R4 未通过时不得声明相应能力，但它们不再作为 R5 的伪串�
 
 退出：相同 checkpoint、manifest、evidence digest 和 seed 产生相同样本/账本；污染 holdout、伪造 grounding、重复 evidence 或越界奖励均红。
 
-### S1：native checkpoint 与离线巩固
+### S1：native checkpoint 与离线巩固（已完成 synthetic canary）
 
 - Seed runtime 只负责把真实 Workbench Outcome 投影为 DTO；Taiji owner 批量巩固，不逐条重置优化器状态。
 - checkpoint 保存 replay digest、训练计数、外部 artifact 绑定、`external → shadow → internalized/tombstone` 生命周期。
 - 恢复后继续一步，选择结果、计数、lineage 与预算一致。
 
-退出：外挂存在/移除、affordance feature lesion、grounding lesion、旧任务保持和 rollback 五条证据齐全。
+当前实现：`taiji/internalization_learner.py` 使用无优化器重置的归一化局部更新；父 checkpoint 在 trial mutation 前保存，holdout/retention 只读，feature/grounding lesion 可观测，恢复后 online counter 可继续。退出：synthetic native canary 已通过；外挂存在/移除、真实 affordance feature lesion、grounding lesion、旧任务保持和 rollback 的真实 Workbench 纵向证据仍由 S2 完成。
 
 ### S2：真实 Workbench 纵向证据
 
