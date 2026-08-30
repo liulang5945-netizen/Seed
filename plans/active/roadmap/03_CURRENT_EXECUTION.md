@@ -13,8 +13,8 @@
 | W7-R3 visual/desktop | S0/S1 + 页面证据完成 | 生命雷达、窄布局、前端/包字节一致、客户端真实状态投影 | Windows 任务栏、托盘、通知、高 DPI 已现场通过 |
 | W7-R4 CUDA | `hardware-blocked` | CPU 基线与设备/checkpoint 合同仍有效 | CUDA 性能、数值一致性或自定义 kernel 已验证 |
 | W7-R5-S0 学习通道 | 已完成 | 真实 Workbench Outcome 可进入 `record_executive_outcome()`；`learn=False` 冻结，`learn=True` 在线更新；checkpoint 保留计数与选择 | 知识已内化、外挂可删、效应器可注册、开放域自进化 |
-| W7-R5A/R5B | R5A-S2-B 完成；S2-C Gate 已实现，现场执行待验证；R5B 仍为 G1 合同基线 | R5A 已具备 DTO、内容寻址 replay、原生学习器、真实 Workbench 纵向 holdout/lesion/recovery、跨 seed/task slice 聚合与独立可删评审；R5B 仅有独立合同 | 在正常 CI/主机临时目录上执行双 seed/task slice，效应器注册表、开放域成长 |
-| W7-R5C 开放域成长 | 合同已冻结、实现未开始 | 结构成长的输入/证据/回滚边界已版本化 | 长期真实任务会自行扩容或进化 |
+| W7-R5A/R5B | R5A-S2-C 已通过真实双 seed/task slice；R5B-L0/S1 registry-backed Workbench dispatch、L1 candidate package、L2 shadow Gate、L3 resource/rollback Gate 已实现；L4 纯计算能力架构评审已完成并判定当前无候选可实施 | R5A 已具备 DTO、内容寻址 replay、原生学习器、真实 Workbench 纵向 holdout/lesion/recovery、跨 seed/task slice 聚合与独立可删评审；R5B 已具备 bundle/candidate 内容寻址、snapshot、审批前 shadow、disposer 约束、stale fail-closed、lifecycle checkpoint、request/approval registry snapshot 绑定、全量 enabled capability 覆盖、原子 replacement/rollback、candidate proposed→validated/rejected 分离、digest-only shadow observation、after-state/resource/policy/approval Gate、原子资源 reservation 与父账本恢复；三个 L0–L3 evaluator 均报告 `gate.passed=true`，L4 已形成独立审查边界 | 正常 CI 主机上尚未跑完整 Workbench 文件回归；没有任何纯计算执行体获准进入 registry；R5C 开放域成长尚未开始 |
+| W7-R5C 开放域成长 | 合同已冻结；进入 R5C-S0 真实长期证据接入 | 结构成长的输入/证据/回滚边界已版本化，既有 structural growth/topology ledger 可复用 | 尚未把长期真实 Workbench evidence 聚合成可审计的成长触发输入 |
 
 最新证据数字与报告只在 [IMPLEMENTATION_STATUS_2026_08.md](../../reference/IMPLEMENTATION_STATUS_2026_08.md) 维护。
 
@@ -35,7 +35,7 @@
 
 ## 4. 当前唯一下一步
 
-执行 **W7-R5A-S2-C：在正常 CI/主机临时目录上运行真实双 seed/task slice 稳定性与独立删除评审 Gate**。
+执行 **W7-R5C-S0：把真实长期 Workbench evidence 接入结构成长的可审计观察窗口**。
 
 R5-G1 与 R5A-S0 已完成并交付：
 
@@ -49,20 +49,29 @@ R5A-S2-A 已完成：`api/seed_runtime.py` 只会在当前、校验过的 `workb
 
 R5A-S2-B 已完成：`taiji/internalization_longitudinal.py` 将真实 Workbench Outcome 转换成 train/holdout task slice，使用 train-only pairwise preference 更新，验证外部规则移除、内化特征/grounding lesion、旧任务 retention、checkpoint restore，并且只生成 `candidate_only_no_physical_deletion` 候选；真实 external artifact 未被删除，holdout 未进入 replay。
 
-R5A-S2-C 的聚合 Gate 已完成实现：`InternalizationStabilityTrial` 按 seed 和 task slice 封装 S2-B 报告，`InternalizationStabilityGate` 检查跨试验收益、lesion、retention、指标离散度和 bounded resource counters，`IndependentDeletionReview` 单独检查 artifact/checkpoint/lifecycle/manifest 绑定，并拒绝任何 path、disposer、executor 或删除字段。真实 Workbench 集成用例已扩展为 seed 11 与 seed 29 两个实际运行，当前本地执行被 pytest 临时目录权限阻塞，不能把收集成功当作 Gate 通过。
+R5A-S2-C 已完成并通过真实集成：`InternalizationStabilityTrial` 按 seed 和 task slice 封装 S2-B 报告，`InternalizationStabilityGate` 检查跨试验收益、lesion、retention、指标离散度和 bounded resource counters，`IndependentDeletionReview` 单独检查 artifact/checkpoint/lifecycle/manifest 绑定，并拒绝任何 path、disposer、executor 或删除字段。真实 Workbench 集成用例以 seed 11 与 seed 29 执行通过；由于当前 pytest 临时目录受限，使用预创建的主机系统临时工作区运行了同一测试函数，结果为 `direct S2-C Workbench integration passed`。
 
-为什么下一项仍是 R5A-S2-C：S2-B 证明了单个真实 Workbench slice 的纵向因果链，S2-C 已把稳定性和独立评审代码接通，但必须在正常 CI/主机临时目录上完成真实双 seed/task slice 执行，才有资格形成可审计证据。未执行通过前不进入效应器注册表或结构成长，也不把单个 canary 误报成开放域可删性。
+R5B-L0/S1 已推进：`seed_platform/capability_registry.py` 将 capability bundle、executor/disposer 版本、policy revision、snapshot revision、生命周期和 checkpoint 绑定成独立内容寻址合同；Workbench `execute_tool()` 已先解析 active bundle，再按 registry 的 executor identity 进入原生执行表，旧的 `elif tool_name` 分派已移除。请求、approval digest、policy、runtime 和 API 均绑定 registry snapshot；side-effecting bundle 缺 disposer、旧 snapshot、源文件路径/自动激活字段和 tombstoned resurrection 均 fail-closed。全量 enabled capability 覆盖、registry dispatch、stale replacement、checkpoint roundtrip 和 rollback 已通过 `scripts/training/eval_capability_registry.py`（报告 `gate.passed=true`）及定向/直接集成 Gate；完整 Workbench pytest 回归仍受本机 pytest 临时目录权限影响，不能把直接 harness 结果伪装成 CI 全量结果。
+
+R5B-L1 已推进：`CapabilityCandidate` 将候选包、证据 digest、有限资源预算、评估门和审计元数据独立于可执行 registry；`propose()` 只记录 `proposed`，`validate_candidate()` 才进入 bundle `validated`，之后仍必须 `shadow()` + approval 才可激活；拒绝、checkpoint 恢复和嵌套 executable-source 字段均有 fail-closed 证据。`scripts/training/eval_capability_candidate.py` 报告 `gate.passed=true`。
+
+R5B-L2 已推进：`seed_platform/capability_shadow.py` 只保存输入/输出/after-state/resource 的 digest 与差异，不导入或执行 executor source；read-only 候选要求输出等价且 after-state 不变，side-effecting 候选必须满足 policy/approval，真实副作用、旧 registry snapshot 和 policy deny 均 fail-closed。`scripts/training/eval_capability_shadow.py` 报告 `gate.passed=true`。
+
+R5B-L3 已推进：registry 在激活/替换前计算完整资源 reservation，超限时不改变 active set、snapshot 或 ledger；checkpoint 保存 resource limits、candidate budgets、active/prior reservations，恢复后可继续 rollback；带 disposer 的回滚记录 `disposer_release_recorded`，但不在 registry 内调用任意 disposer source。`scripts/training/eval_capability_resource.py` 报告 `gate.passed=true`。
+
+R5B-L4 已完成架构评审：`plans/active/roadmap/05_R5B_L4_PURE_COMPUTATION_REVIEW_20260830.md` 对当前 workspace、IDE、terminal、MCP 与编辑能力逐项检查，结论为 `architecture_review_required` 且 **No-Go for implementation now**。当前能力都涉及可变工作区、UI/进程状态或外部副作用，尚无同时满足显式值输入、确定性无副作用、独立 oracle 的候选；因此没有把“伪纯计算”塞入 registry。下一步转入 R5C-S0，先建立真实长期 evidence 的内容寻址观察窗口，再由既有 structural growth controller 提案。
 
 ## 5. 本 slice 明确不做
 
 - 不执行物理删除或外部 artifact tombstone 提交；S2-B 只产生可恢复的候选，S2-C 只增加稳定性与独立评审证据；
-- 不重构 `seed_platform/workbench.py` 的硬编码分派；
+- 不把直接 harness 或 evaluator 证据扩大成正常 CI 全量通过；R5B-S1 的核心接线/替换/回滚/checkpoint 合同已通过，剩余是完整 Workbench 文件回归和 CI 环境验收；
 - 不删除 skill/MCP、Legacy、`codex/interaction-group-incremental` 或 `output/`；
 - 不启动训练、不改模型权重、不做 CUDA；
 - 不把用户点名的渲染缺陷修复扩大成主动视觉美化，不用页面层改动或模拟截图关闭 R3 的任务栏/托盘/通知/DPI 取证；
-- 不实现 `seed_platform/capability_registry.py`，不在同一提交推进 R5B/R5C 的生产代码。
+- 不把 capability registry、candidate package 或 shadow observation 当成认知主体，不让 Taiji/provider/frontend 拥有注册、激活、替换或删除 executor 的权限；
+- 不把单个 tick、scale target、单次演示或 holdout 标签直接当作结构成长依据；R5C-S0 只接收可追溯、去重、可 checkpoint 的长期 evidence 聚合。
 
-完成 S1 后唯一后继为 [04_EXECUTION_PLAN.md §4](04_EXECUTION_PLAN.md) 的 **R5A-S2：真实 Workbench 纵向证据与可删性边界**；S2-B 已完成，当前进入 S2-C。
+按用户决定，CI 全量验收暂缓；当前唯一后继为 [04_EXECUTION_PLAN.md §6](04_EXECUTION_PLAN.md) 的 **R5C-S0 真实长期 evidence 观察窗口**。L4 已明确暂不实施纯计算执行体；完整 Workbench CI 回归仍作为后置统一门禁，确认结果/策略/错误等价、stale snapshot、replacement/rollback 和 checkpoint continuation 没有新增失败。
 
 ## 6. 更新规则
 

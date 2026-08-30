@@ -120,6 +120,7 @@ from .structural_growth import (
     StructuralPruningDecision,
     StructuralRuntimeObservation,
 )
+from .structural_evidence import StructuralEvidenceLedger
 from .workspace import WorkspaceRouter
 from .world_learning import WorldDynamicsLearner, WorldSchema, WorldSchemaRegistry
 
@@ -233,6 +234,7 @@ class TSKV8Adapter(Taiji):
         self._structural_pruning_controller: AdaptiveStructuralPruningController | None = None
         self._structural_runtime_tick = 0
         self._structural_runtime_observations: list[StructuralRuntimeObservation] = []
+        self._structural_evidence_ledger = StructuralEvidenceLedger()
         self._structural_runtime_previous_errors: dict[str, float] = {}
         self._structural_proposal_candidates: dict[str, StructuralProposalCandidate] = {}
         self._structural_candidate_proposals: dict[str, str] = {}
@@ -381,6 +383,18 @@ class TSKV8Adapter(Taiji):
         """Return recent structural evidence emitted by native network ticks."""
 
         return tuple(self._structural_runtime_observations)
+
+    @property
+    def structural_evidence_ledger(self) -> StructuralEvidenceLedger:
+        """Return the bounded long-horizon evidence ledger."""
+
+        return self._structural_evidence_ledger
+
+    @property
+    def structural_evidence_summaries(self):
+        """Return sealed evidence windows for later growth adjudication."""
+
+        return self._structural_evidence_ledger.sealed_summaries
 
     @property
     def structural_proposal_candidates(self) -> tuple[StructuralProposalCandidate, ...]:
@@ -1539,6 +1553,7 @@ class TSKV8Adapter(Taiji):
         self._structural_runtime_observations = self._structural_runtime_observations[
             -self._lineage_limit() :
         ]
+        self._structural_evidence_ledger.append(observation)
         previous = self._cognitive_state.development
         self._cognitive_state = replace(
             self._cognitive_state,
@@ -4167,6 +4182,8 @@ class TSKV8Adapter(Taiji):
             -self._lineage_limit() :
         ]
         if observations:
+            for observation in observations:
+                self._structural_evidence_ledger.append(observation)
             previous = self._cognitive_state.development
             self._cognitive_state = replace(
                 self._cognitive_state,
@@ -4191,6 +4208,7 @@ class TSKV8Adapter(Taiji):
             "observations": [
                 observation.to_payload() for observation in self._structural_runtime_observations
             ],
+            "evidence_ledger": self._structural_evidence_ledger.to_payload(),
             "previous_errors": dict(self._structural_runtime_previous_errors),
             "proposal_candidates": [
                 candidate.to_payload()
@@ -4205,6 +4223,7 @@ class TSKV8Adapter(Taiji):
     def _restore_structural_runtime(self, payload: Any) -> None:
         self._structural_runtime_tick = 0
         self._structural_runtime_observations = []
+        self._structural_evidence_ledger = StructuralEvidenceLedger()
         self._structural_runtime_previous_errors = {}
         self._structural_proposal_candidates = {}
         self._structural_candidate_proposals = {}
@@ -4240,6 +4259,16 @@ class TSKV8Adapter(Taiji):
             raise ValueError("structural runtime observation is ahead of runtime tick")
         self._structural_runtime_tick = runtime_tick
         self._structural_runtime_observations = list(observations[-self._lineage_limit() :])
+        evidence_ledger_payload = payload.get("evidence_ledger")
+        if evidence_ledger_payload is None:
+            for observation in self._structural_runtime_observations:
+                self._structural_evidence_ledger.append(observation)
+        else:
+            if not isinstance(evidence_ledger_payload, Mapping):
+                raise ValueError("structural evidence ledger checkpoint must be a mapping")
+            self._structural_evidence_ledger = StructuralEvidenceLedger.from_payload(
+                evidence_ledger_payload
+            )
         self._structural_runtime_previous_errors = {
             str(key): float(value) for key, value in previous_errors.items()
         }

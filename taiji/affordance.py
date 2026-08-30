@@ -10,7 +10,7 @@ development-time objective for learning the projection.
 from __future__ import annotations
 
 import math
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from typing import Any
 
@@ -57,12 +57,33 @@ def _summary(values: Sequence[float]) -> torch.Tensor:
     )
 
 
+def _numeric_leaves(value: Any) -> tuple[float, ...]:
+    """Extract numeric evidence without turning identifiers or prose into features."""
+
+    number = _attribute_number(value)
+    if number is not None:
+        return (number,)
+    if isinstance(value, Mapping):
+        return tuple(number for item in value.values() for number in _numeric_leaves(item))
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+        return tuple(number for item in value for number in _numeric_leaves(item))
+    return ()
+
+
+def _event_scale(value: float) -> float:
+    """Compress unbounded observed magnitudes before they enter a local learner."""
+
+    return math.copysign(math.log1p(abs(float(value))), float(value))
+
+
 class WorldAffordanceGroundingProducer:
     """Create raw affordance grounding from object/relation world lineage.
 
     This is a world-organ boundary, not a symbolic action encoder.  It uses
-    only numeric state summaries and binding structure; ``action_kind`` and
-    ``affordance_id`` never become feature-table indices.
+    only numeric state and current-event summaries; ``action_kind``,
+    ``affordance_id``, identifiers, and prose never become feature-table
+    indices.  This allows an observed environment consequence to affect the
+    next grounded action without leaking a provider or capability vocabulary.
     """
 
     BASE_FEATURE_DIM = 17
@@ -131,6 +152,17 @@ class WorldAffordanceGroundingProducer:
                 if (number := _attribute_number(value)) is not None
             ]
         )
+        current_events = tuple(event for event in state.events if event.tick == state.tick)
+        event_values = []
+        for event in current_events:
+            lineage.add(f"world-event:{event.event_id}")
+            for _, value in event.attributes:
+                event_values.extend(_event_scale(item) for item in _numeric_leaves(value))
+        # The event summary is additive context for the latent predictive
+        # state.  Keeping the 17-dimensional external grounding contract
+        # unchanged preserves existing checkpoints; with no current numeric
+        # event it is exactly a zero contribution.
+        latent = latent + _summary(event_values)
         base = torch.cat(
             (
                 actor,

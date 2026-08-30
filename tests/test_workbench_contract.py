@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 from api.app import create_app
 from api.seed_runtime import SeedRuntime
 from seed import Seed
+from seed.config import SeedConfig
 from seed_platform.mcp_registry import McpToolDescriptor, McpToolRegistry
 from seed_platform.programming_languages import ProgrammingLanguageRegistry
 from seed_platform.workbench import (
@@ -23,8 +24,14 @@ from taiji import (
     ExecutiveCandidate,
     ExecutiveContext,
     ExecutiveDecision,
+    ExternalDescriptionArtifact,
     GroundedOutcomeEvidence,
+    GroundedSelectionTask,
     InternalizationLedger,
+    InternalizationLongitudinalGate,
+    InternalizationStabilityGate,
+    InternalizationStabilityTrial,
+    TaijiConfig,
     TSKV8Adapter,
 )
 
@@ -331,6 +338,226 @@ def test_runtime_projects_current_workbench_evidence_to_grounded_internalization
             reward_terms={"task_score": 0.75},
             parent_checkpoint_id="checkpoint:workbench-parent",
         )
+
+
+def test_real_workbench_outcomes_pass_longitudinal_internalization_deletion_candidate_gate(
+    tmp_path, monkeypatch
+) -> None:
+    """S2: only real read-only Outcome DTOs can support a deletion candidate."""
+
+    for folder, filename, contents in (
+        ("train-left", "left.txt", b"lo"),
+        ("train-right", "right.txt", b"h" * 80),
+        ("holdout-left", "left.txt", b"m" * 60),
+        ("holdout-right", "right.txt", b"r" * 20),
+        ("train2-left", "left.txt", b"lo"),
+        ("train2-right", "right.txt", b"h" * 80),
+        ("holdout2-left", "left.txt", b"m" * 60),
+        ("holdout2-right", "right.txt", b"r" * 20),
+    ):
+        directory = tmp_path / folder
+        directory.mkdir()
+        (directory / filename).write_bytes(contents)
+    artifact_path = tmp_path / "external-description.artifact"
+    artifact_path.write_bytes(b"opaque external description control")
+    artifact_digest = hashlib.sha256(artifact_path.read_bytes()).hexdigest()
+    monkeypatch.setattr(
+        "seed_platform.workbench.get_setting",
+        lambda key, default=None: str(tmp_path) if key == "workspace_path" else default,
+    )
+
+    def observed_source(
+        *,
+        symbol: int,
+        reward: float,
+        folder: str,
+        run_id: str,
+        seed: int,
+    ) -> GroundedOutcomeEvidence:
+        parent_path = tmp_path / f"{run_id}-parent.pt"
+        runtime = SeedRuntime(
+            Seed(
+                SeedConfig(taiji=TaijiConfig(seed=seed)),
+                episode_id=f"workbench-internalization-{run_id}",
+            ),
+            checkpoint_path=parent_path,
+        )
+        runtime._workbench_environment = WorkbenchEnvironment(tmp_path)
+        runtime.save()
+        parent_checkpoint_id = (
+            "checkpoint-sha256:" + hashlib.sha256(parent_path.read_bytes()).hexdigest()
+        )
+        runtime.model.architecture.observe(symbol, learn=False)
+        snapshot_id = runtime.workbench_environment.capability_snapshot.snapshot_id
+        runtime.project_workbench_affordances(
+            snapshot_id=snapshot_id,
+            parameter_bindings={"workspace.list": {"path": folder}},
+        )
+        runtime.execute_workbench_intent(
+            ActionIntent(
+                intent_id=f"{run_id}:list",
+                kind="workspace.list",
+                parameters={"path": folder},
+                confidence=1.0,
+                tick=runtime.model.tick,
+            ),
+            snapshot_id=snapshot_id,
+            learn=False,
+        )
+        reprojected = runtime.reproject_workbench_from_latest_evidence(snapshot_id=snapshot_id)
+        read_affordance = next(
+            item for item in reprojected["affordances"] if item["action_kind"] == "workspace.read"
+        )
+        return runtime.project_workbench_outcome_for_internalization(
+            snapshot_id=snapshot_id,
+            affordance_id=read_affordance["affordance_id"],
+            reward=reward,
+            reward_terms={"task_score": reward},
+            parent_checkpoint_id=parent_checkpoint_id,
+        )
+
+    train_sources = (
+        observed_source(symbol=65, reward=0.2, folder="train-left", run_id="train-left", seed=11),
+        observed_source(symbol=65, reward=0.8, folder="train-right", run_id="train-right", seed=11),
+    )
+    holdout_sources = (
+        observed_source(
+            symbol=65, reward=0.6, folder="holdout-left", run_id="holdout-left", seed=11
+        ),
+        observed_source(
+            symbol=65, reward=0.4, folder="holdout-right", run_id="holdout-right", seed=11
+        ),
+    )
+    gate = InternalizationLongitudinalGate(
+        ExternalDescriptionArtifact(
+            artifact_id="external-description:workbench-read-choice",
+            content_digest=artifact_digest,
+        )
+    )
+    train = gate.ingest_train(train_sources)
+    holdout = tuple(gate.ledger.converter.convert(source).example for source in holdout_sources)
+    assert all(item is not None for item in holdout)
+    holdout_left, holdout_right = holdout
+    assert holdout_left is not None and holdout_right is not None
+    train_low, train_high = sorted(train, key=lambda item: item.target_reward)
+
+    report = gate.evaluate(
+        train,
+        holdout_tasks=(
+            GroundedSelectionTask(
+                task_id="unseen-workbench-combination",
+                candidates=(holdout_right, holdout_left),
+                external_choice_example_id=holdout_left.example_id,
+                expected_choice_example_id=holdout_left.example_id,
+            ),
+        ),
+        retention_tasks=(
+            GroundedSelectionTask(
+                task_id="prior-workbench-combination",
+                candidates=(train_low, train_high),
+                external_choice_example_id=train_high.example_id,
+                expected_choice_example_id=train_high.example_id,
+            ),
+        ),
+    )
+
+    assert report.passed is True
+    assert report.external_description_quality == 1.0
+    assert report.external_removed_selection_quality == 1.0
+    assert report.internalized_lesion_selection_quality == 0.0
+    assert report.grounding_lesion_selection_quality == 0.0
+    assert report.retention_selection_quality == 1.0
+    assert report.checkpoint_recoverable is True
+    assert set(dict(report.lifecycle_statuses).values()) == {"internalized"}
+    assert report.tombstone_candidate is not None
+    candidate = report.tombstone_candidate.to_payload()
+    assert candidate["artifact_content_digest"] == artifact_digest
+    assert candidate["disposition"] == "candidate_only_no_physical_deletion"
+    assert "path" not in candidate
+    assert artifact_path.exists()  # Candidate creation never deletes the external artifact.
+    assert len(gate.ledger.replay_buffer.examples) == len(train)
+    assert all(
+        item.example_id not in {example.example_id for example in train}
+        for item in (holdout_left, holdout_right)
+    )
+
+    second_train_sources = (
+        observed_source(symbol=65, reward=0.2, folder="train2-left", run_id="train2-left", seed=29),
+        observed_source(
+            symbol=65, reward=0.8, folder="train2-right", run_id="train2-right", seed=29
+        ),
+    )
+    second_holdout_sources = (
+        observed_source(
+            symbol=65, reward=0.6, folder="holdout2-left", run_id="holdout2-left", seed=29
+        ),
+        observed_source(
+            symbol=65, reward=0.4, folder="holdout2-right", run_id="holdout2-right", seed=29
+        ),
+    )
+    second_gate = InternalizationLongitudinalGate(
+        ExternalDescriptionArtifact(
+            artifact_id="external-description:workbench-read-choice",
+            content_digest=artifact_digest,
+        )
+    )
+    second_train = second_gate.ingest_train(second_train_sources)
+    second_holdout = tuple(
+        second_gate.ledger.converter.convert(source).example for source in second_holdout_sources
+    )
+    assert all(item is not None for item in second_holdout)
+    second_holdout_left, second_holdout_right = second_holdout
+    assert second_holdout_left is not None and second_holdout_right is not None
+    second_train_low, second_train_high = sorted(second_train, key=lambda item: item.target_reward)
+    second_report = second_gate.evaluate(
+        second_train,
+        holdout_tasks=(
+            GroundedSelectionTask(
+                task_id="unseen-workbench-combination-seed-29",
+                candidates=(second_holdout_right, second_holdout_left),
+                external_choice_example_id=second_holdout_left.example_id,
+                expected_choice_example_id=second_holdout_left.example_id,
+            ),
+        ),
+        retention_tasks=(
+            GroundedSelectionTask(
+                task_id="prior-workbench-combination-seed-29",
+                candidates=(second_train_low, second_train_high),
+                external_choice_example_id=second_train_high.example_id,
+                expected_choice_example_id=second_train_high.example_id,
+            ),
+        ),
+    )
+    assert second_report.passed is True
+    stability = InternalizationStabilityGate(
+        ExternalDescriptionArtifact(
+            artifact_id="external-description:workbench-read-choice",
+            content_digest=artifact_digest,
+        )
+    ).evaluate(
+        (
+            InternalizationStabilityTrial(
+                trial_id="workbench-seed-11",
+                seed=11,
+                task_slice="workspace-read-seed-11",
+                report=report,
+            ),
+            InternalizationStabilityTrial(
+                trial_id="workbench-seed-29",
+                seed=29,
+                task_slice="workspace-read-seed-29",
+                report=second_report,
+            ),
+        )
+    )
+    assert stability.passed is True
+    assert stability.independent_deletion_review.passed is True
+    assert stability.unique_seeds == (11, 29)
+    assert stability.unique_task_slices == (
+        "workspace-read-seed-11",
+        "workspace-read-seed-29",
+    )
+    assert stability.to_payload()["passed"] is True
 
 
 def test_workspace_evidence_event_order_survives_checkpoint_continuation(

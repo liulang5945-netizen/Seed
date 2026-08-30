@@ -56,7 +56,7 @@ R3/R4 未通过时不得声明相应能力，但它们不再作为 R5 的伪串�
 
 ### Gate
 
-已扩展 `tests/test_w7_gate_manifests.py`：缺失/混合 owner、缺 checkpoint、认知越权和错误删除边界会红，合法合同通过；R5B manifest 仍为 `not_started`，R5A 的实现状态由其 S0/S1/S2 分阶段记录。此阶段不新增效应器注册表，避免 R5A 与 R5B 的 owner 边界漂移。
+已扩展 `tests/test_w7_gate_manifests.py`：缺失/混合 owner、缺 checkpoint、认知越权和错误删除边界会红，合法合同通过；R5B manifest 已推进到 `s1_dispatch_integrated`，R5A 的实现状态由其 S0/S1/S2 分阶段记录。效应器注册表仍由 R5B 独立拥有，避免 R5A 与 R5B 的 owner 边界漂移。
 
 ## 4. C2：W7-R5A 知识内化（下一阶段）
 
@@ -75,25 +75,25 @@ R3/R4 未通过时不得声明相应能力，但它们不再作为 R5 的伪串�
 - checkpoint 保存 replay digest、训练计数、外部 artifact 绑定、`external → shadow → internalized/tombstone` 生命周期。
 - 恢复后继续一步，选择结果、计数、lineage 与预算一致。
 
-当前实现：`taiji/internalization_learner.py` 使用无优化器重置的归一化局部更新；父 checkpoint 在 trial mutation 前保存，holdout/retention 只读，feature/grounding lesion 可观测，恢复后 online counter 可继续。退出：synthetic native canary 已通过；外挂存在/移除、真实 affordance feature lesion、grounding lesion、旧任务保持和 rollback 的真实 Workbench 纵向证据仍由 S2 完成。
+当前实现：`taiji/internalization_learner.py` 使用无优化器重置的归一化局部更新；父 checkpoint 在 trial mutation 前保存，holdout/retention 只读，feature/grounding lesion 可观测，恢复后 online counter 可继续。S1 synthetic native canary 已通过；S2-B 已在真实只读 Workbench 任务上补齐纵向 selection、train-only preference、外挂移除、feature/grounding lesion、旧任务保持、checkpoint recovery 与 candidate-only deletion boundary；S2-C 已用独立 seed 11/29 与 task slice 通过稳定性、资源和独立删除评审。
 
 ### S2：真实 Workbench 纵向证据
 
 - S2-A 已完成：`SeedRuntime` 只把当前、签名验证过的只读 `workbench.evidence` 与其同 snapshot 的重投影 grounded successor affordance 投影成 `GroundedOutcomeEvidence`。运行时不可写 replay、训练 learner 或推进 lifecycle；陈旧 snapshot、旧 affordance 和失败 evidence 全部 fail-closed。
-- S2-B：使用未参与训练的新任务组合，执行真实只读 Workbench；比较外部规则存在与移除后的选择质量。
-- 只有外部充分性、内化必要性、grounding 必要性、checkpoint 可恢复性、遗忘上界全部通过，生命周期才可进入 `internalized`。
-- 物理删除必须是独立、可恢复的提交动作；默认只写候选和 tombstone，不自动删除文件或 MCP 执行通道。
+- S2-B 已完成：使用未参与训练的新任务组合执行真实只读 Workbench；比较外部规则存在与移除后的选择质量，并完成外部/内化/grounding/retention/checkpoint 五类 Gate。通过后只推进 Taiji replay 生命周期并生成可恢复的 deletion candidate，不删除外部 artifact。
+- S2-C 已完成：`InternalizationStabilityTrial`/`InternalizationStabilityGate` 在独立 seed 与任务切片上汇总收益、保持、lesion、指标离散度、bounded resource counters 和 checkpoint digest；`IndependentDeletionReview` 独立检查 artifact 内容寻址、候选理由、lifecycle/manifest/checkpoint 绑定和物理删除边界。真实 Workbench 用例以两个实际 seed/task slice 在主机系统临时工作区执行通过；未通过稳定性或评审时，artifact 保持 active，不能进入 R5B/R5C。
+- 只有 S2-C 稳定性与独立删除评审也通过，才允许讨论外部描述的物理删除提交；真实执行器、MCP 通道和 capability bundle 永远不在此删除范围内。R5B-L0 已先建立 capability bundle 的独立生命周期合同，物理删除仍不在范围内。
 
 ## 5. C3：W7-R5B 效应器成长
 
 ### L0：注册表重构，能力集合不变
 
-- 新建 `seed_platform/capability_registry.py`，将现有 Workbench 分派迁为内置 bundle 注册。
+- 已新建 `seed_platform/capability_registry.py`，完成 bundle 内容寻址、snapshot/revision、生命周期记录、disposer 约束、stale fail-closed 和 checkpoint roundtrip 合同；`WorkbenchEnvironment.execute_tool()` 已改为 registry resolve → executor identity → 原生执行表，旧 `elif tool_name` 分派已移除。全量 enabled capability 覆盖、request/approval snapshot binding、原子 replacement/rollback 和 checkpoint continuation 已有定向/直接集成证据，`scripts/training/eval_capability_registry.py` 的 R5B-S1 evaluator 也已报告 `gate.passed=true`。
 - 注册返回 disposer；卸载、替换和失败回滚不直接修改全局散列表。
 - `CapabilitySnapshot` 由已装配 bundle 内容生成 digest + revision；装配变化后旧 evidence 自动 stale。
 - 15 个既有能力、错误码、policy 和 Legacy-off 行为逐项等价。
 
-退出：默认 snapshot 与迁移前语义一致，硬编码 `elif tool_name` 分派清零，未知/禁用/陈旧能力全部 fail-closed。
+当前退出：registry 自身与 Workbench request/approval 的未知/禁用/陈旧能力全部 fail-closed，注册不自动激活，side-effecting bundle 缺 disposer 不能注册；核心 replacement/rollback Gate 已通过，最终退出还要在正常 CI 环境跑完整 Workbench 文件回归。
 
 ### L1：候选能力包
 
@@ -101,23 +101,31 @@ R3/R4 未通过时不得声明相应能力，但它们不再作为 R5 的伪串�
 - 校验、预编译和保存候选与激活分离；候选默认 `proposed`，不因落盘自动可执行。
 - 文本描述只供审计，不供 provider/LLM 选择工具。
 
+当前实现：`CapabilityCandidate` 将 bundle 与 rationale、evidence digests、有限数值 resource budget、evaluation gates 和 metadata 组成独立内容寻址 artifact；`CapabilityRegistry.propose()` 不注册 bundle，`validate_candidate()` 只进入 `validated`，`reject_candidate()` 保留拒绝审计；candidate 与 lifecycle 均进入 checkpoint，嵌套 executable-source 字段 fail-closed。L1 evaluator 已通过，下一步进入 L2 shadow 差异 Gate。
+
 ### L2：shadow 与审批
 
 - 在相同输入上做影子执行或无副作用模拟；记录结果、after-state、资源和风险差异。
 - 需要真实副作用的能力必须经过产品 policy/用户审批；Taiji 不可绕过。
+
+当前实现：`CapabilityShadowObservation` 以 digest 绑定输入、baseline/candidate 输出、after-state 和资源指标；`evaluate_shadow()` 只解析 registry 中的 shadow bundle，不调用 executor，read-only 等价、policy deny、stale snapshot、side-effect detection 和 side-effect approval 均有独立结果。L2 evaluator 已通过，下一步进入 L3 原子激活和资源回滚。
 
 ### L3：可撤销激活
 
 - 原子更新 snapshot、registry、资源账本和 checkpoint；失败恢复上一装配。
 - 真实 Outcome 回写 R5A/R5C，但注册表本身不学习认知内容。
 
+当前实现：registry 激活与 replacement 先计算 active bundle 的完整 resource reservation，超限会在任何状态提交前 fail-closed；`resource_ledger` 与 prior reservation 进入 checkpoint，rollback 恢复父 active set 与资源使用，并对 disposer 释放留下审计事件而不执行未知 source。L3 evaluator 已通过，L4 仅允许进入独立架构评审。
+
 ### L4：纯计算执行体替代
 
 只有无外部副作用、可用独立 oracle 完全验证的纯计算能力可进入 L4。它需要单独架构评审，不随 L0–L3 自动推进。
 
+2026-08-30 评审结论见 [05_R5B_L4_PURE_COMPUTATION_REVIEW_20260830.md](05_R5B_L4_PURE_COMPUTATION_REVIEW_20260830.md)：当前 workspace、IDE、terminal、MCP 和编辑能力都不能证明同时满足显式值输入、确定性无副作用、独立 oracle 三项条件，因此暂不实施任何 L4 executor。后续只有新候选满足该准入合同，才重新打开评审。
+
 ## 6. C4：W7-R5C 结构成长与自进化
 
-复用已有 structural growth、topology ledger、neuron/region growth 与 rollback 基础，不另起“原始神经元”架构。触发输入来自 R5A/R5B 的长期真实 evidence：持续错误簇、恢复不足、容量饱和、遗忘和资源压力。
+复用已有 structural growth、topology ledger、neuron/region growth 与 rollback 基础，不另起“原始神经元”架构。R5C-S0 先把 R5A/R5B 的长期真实 evidence 做成内容寻址、去重、可 checkpoint 的观察窗口；触发输入来自窗口聚合后的持续错误簇、恢复不足、容量饱和、遗忘和资源压力，而不是单个 tick、规模目标或人工标签。
 
 固定生命周期：
 

@@ -1,0 +1,37 @@
+{
+  "format": "taiji-w7-r5b-l3-capability-resource-v1",
+  "resource_limits": {
+    "active_bundle_count": 2,
+    "max_cpu_ms": 5,
+    "max_output_bytes": 500
+  },
+  "exhaustion": {
+    "error": "capability resource budget exhausted: max_cpu_ms",
+    "atomic": true,
+    "unchanged_snapshot": true
+  },
+  "replacement": {
+    "candidate_bundle_digest": "9109ada9718dbd6ef6d2631ee55bd74b8c8fafe004a855609ceb482bcf4aab6e",
+    "usage_after_replace": {
+      "active_bundle_count": 1.0,
+      "max_cpu_ms": 7.0,
+      "max_output_bytes": 100.0
+    },
+    "status_after_rollback": "rolled_back",
+    "disposer_release_recorded": true,
+    "usage_after_rollback": {
+      "active_bundle_count": 1.0,
+      "max_cpu_ms": 2.0,
+      "max_output_bytes": 100.0
+    }
+  },
+  "checkpoint": {
+    "resource_ledger_roundtrip": true,
+    "checkpoint_digest": "fce943fc3ce3a821181ecb4ece993e0e97e70feff246a8edc9a61b2bf7e65c7e"
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "activation and replacement reserve resources atomically, persist reservations through checkpoint, and restore the parent ledger with disposer rollback evidence"
+  },
+  "boundary": "R5B-L3 resource and lifecycle rollback only; no executor source evaluation, cognition ownership, training, CUDA, or physical deletion"
+}

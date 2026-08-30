@@ -1,0 +1,62 @@
+{
+  "format": "taiji-w7-r5b-s1-capability-registry-v1",
+  "registry": {
+    "snapshot_id": "8f5d8ef6d63fdaf0ac6264563d37fea25a38b4a0aae2d7366bec97686ab4ce4e",
+    "snapshot_revision": 17,
+    "enabled_capabilities": [
+      "editor.open",
+      "editor.set_language",
+      "mcp.invoke",
+      "mcp.list",
+      "terminal.run",
+      "workspace.apply_patch",
+      "workspace.create",
+      "workspace.delete",
+      "workspace.list",
+      "workspace.programming_language.resolve",
+      "workspace.read",
+      "workspace.rename",
+      "workspace.search",
+      "workspace.stat",
+      "workspace.undo"
+    ],
+    "registered_capabilities": [
+      "editor.open",
+      "editor.set_language",
+      "mcp.invoke",
+      "mcp.list",
+      "terminal.run",
+      "workspace.apply_patch",
+      "workspace.create",
+      "workspace.delete",
+      "workspace.list",
+      "workspace.programming_language.resolve",
+      "workspace.read",
+      "workspace.rename",
+      "workspace.search",
+      "workspace.stat",
+      "workspace.undo"
+    ]
+  },
+  "dispatch": {
+    "executor_id": "workspace.read",
+    "success": true,
+    "result_digest": "c1fd990e72fff56de2503d9ae2865df5d86093b7e896725a4d89e337646edb97",
+    "stale_error_code": "stale_capability_registry"
+  },
+  "replacement": {
+    "candidate_bundle_digest": "754986dbf6cde0c10da62829da28fde7b377962c33baa9fc3845163838ee84b6",
+    "status_after_replace": "active",
+    "status_after_rollback": "rolled_back",
+    "restored_executor_id": "workspace.read"
+  },
+  "checkpoint": {
+    "roundtrip": true,
+    "checkpoint_digest": "7949f4c61115c7ff00279df463a14d90ea8b2e6de469cfdcaf540f242ef004ae"
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "registry-backed dispatch covers every enabled Workbench capability, rejects stale bindings, and restores the parent executor after replacement rollback"
+  },
+  "boundary": "R5B-S1 registry canary only; no cognition ownership, provider selection, training, CUDA, or physical deletion"
+}

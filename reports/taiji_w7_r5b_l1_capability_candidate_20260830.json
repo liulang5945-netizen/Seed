@@ -1,0 +1,38 @@
+{
+  "format": "taiji-w7-r5b-l1-capability-candidate-v1",
+  "candidate": {
+    "candidate_digest": "55a791babdded9e04b7304136664254b26df83fd54c8ee944a54c4f28b0e7af2",
+    "bundle_digest": "a3aed398f4db16022b2acbb60aea05f4ad7b67ac6d9ff0aa088a1ccc50ea14cf",
+    "resource_budget": {
+      "max_cpu_ms": 25,
+      "max_output_bytes": 2048
+    },
+    "evidence_digests": [
+      "evidence:rollback-canary",
+      "evidence:workbench-read"
+    ],
+    "evaluation_gates": [
+      "rollback",
+      "shadow_equivalence"
+    ]
+  },
+  "lifecycle": {
+    "proposed": "proposed",
+    "validated": "validated",
+    "shadowed": "shadow",
+    "activated": "active",
+    "rejected": "rejected"
+  },
+  "safety": {
+    "bundle_registered_before_validation": false,
+    "snapshot_unchanged_before_validation": true,
+    "remains_non_active_after_validation": true,
+    "checkpoint_roundtrip": true,
+    "tamper_error": "capability artifact contains forbidden executable-source fields"
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "candidate packages are content-addressed, evidence/resource bounded, non-executable while proposed, and require validation, shadow, and approval before activation"
+  },
+  "boundary": "R5B-L1 candidate package only; no cognition ownership, provider selection, training, CUDA, or physical deletion"
+}

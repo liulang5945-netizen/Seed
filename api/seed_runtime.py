@@ -2815,6 +2815,7 @@ class SeedRuntime:
         snapshot_id: str,
         approval_token: str = "",
         mcp_registry_snapshot_id: str = "",
+        capability_registry_snapshot_id: str = "",
         learn: bool = False,
         event_sink: Callable[[Any], None] | None = None,
         executive_decision: Any | None = None,
@@ -2888,6 +2889,9 @@ class SeedRuntime:
                     if str(intent.kind).startswith("mcp.")
                     else ""
                 )
+            ),
+            capability_registry_snapshot_id=(
+                capability_registry_snapshot_id or environment.capability_registry.snapshot_id
             ),
         )
         tick = int(self.model.tick)

@@ -60,6 +60,7 @@ class InternalizationLearningReport:
     retention_loss_before: float
     retention_loss_after: float
     fit_updates: int
+    ranking_updates: int
     online_updates: int
     lineage_depth: int
 
@@ -95,6 +96,7 @@ class InternalizationLearningReport:
             "retention_loss_after": self.retention_loss_after,
             "holdout_gain": self.holdout_gain,
             "fit_updates": self.fit_updates,
+            "ranking_updates": self.ranking_updates,
             "online_updates": self.online_updates,
             "lineage_depth": self.lineage_depth,
             "passed": self.passed,
@@ -115,6 +117,7 @@ class InternalizedFeatureLearner:
         *,
         learning_rate: float = 0.5,
         reward_bounds: tuple[float, float] = (-1.0, 1.0),
+        pairwise_margin: float = 0.0,
         manifest_revision: str = "taiji-w7-r5-internalization-v1",
         device: torch.device | str = "cpu",
     ) -> None:
@@ -127,12 +130,16 @@ class InternalizedFeatureLearner:
         if not all(math.isfinite(float(item)) for item in reward_bounds):
             raise ValueError("internalization learner reward_bounds must be finite")
         self.reward_bounds = (float(reward_bounds[0]), float(reward_bounds[1]))
+        self.pairwise_margin = float(pairwise_margin)
+        if not math.isfinite(self.pairwise_margin) or not 0.0 <= self.pairwise_margin <= 1.0:
+            raise ValueError("internalization learner pairwise_margin must be within [0, 1]")
         self.manifest_revision = str(manifest_revision).strip()
         if not self.manifest_revision:
             raise ValueError("internalization learner manifest_revision cannot be empty")
         self.weights = torch.zeros(self.feature_dim, dtype=torch.float32, device=device)
         self.bias = torch.zeros((), dtype=torch.float32, device=device)
         self.fit_updates = 0
+        self.ranking_updates = 0
         self.online_updates = 0
         self.revision = 0
         self.replay_digest = ""
@@ -209,6 +216,35 @@ class InternalizedFeatureLearner:
             self.weights.add_(features, alpha=-step * error)
             self.bias.add_(-step * error)
 
+    def _apply_pairwise_update(
+        self,
+        preferred: GroundedFeatureExample,
+        other: GroundedFeatureExample,
+    ) -> bool:
+        """Apply a local margin update using only two observed train rewards.
+
+        The caller establishes ``preferred`` from its observed reward, never
+        from an external description or a holdout answer.  Bias cancels from a
+        pairwise comparison, so the update changes only the grounded feature
+        direction needed to separate the two experienced outcomes.
+        """
+
+        if self.pairwise_margin <= 0.0:
+            return False
+        if not self._target(preferred) > self._target(other):
+            raise ValueError("pairwise preference must follow strictly higher train reward")
+        difference = self._features(preferred) - self._features(other)
+        squared_norm = float(torch.dot(difference, difference))
+        if squared_norm <= 1e-12:
+            raise ValueError("pairwise preference requires distinguishable grounded features")
+        observed_margin = self.score(preferred) - self.score(other)
+        deficit = self.pairwise_margin - observed_margin
+        if deficit <= 0.0:
+            return False
+        with torch.no_grad():
+            self.weights.add_(difference, alpha=self.learning_rate * deficit / squared_norm)
+        return True
+
     def online_update(self, example: GroundedFeatureExample) -> None:
         """Apply one post-checkpoint online update and retain its counter."""
 
@@ -218,6 +254,37 @@ class InternalizedFeatureLearner:
         self.online_updates += 1
         self.revision += 1
 
+    def _ranking_pairs(
+        self,
+        value: Iterable[tuple[GroundedFeatureExample, GroundedFeatureExample]],
+        train_ids: set[str],
+    ) -> tuple[tuple[GroundedFeatureExample, GroundedFeatureExample], ...]:
+        """Validate deterministic train-only preference pairs for one trial."""
+
+        pairs = tuple(value)
+        seen: set[tuple[str, str]] = set()
+        validated: list[tuple[GroundedFeatureExample, GroundedFeatureExample]] = []
+        for pair in pairs:
+            if not isinstance(pair, tuple) or len(pair) != 2:
+                raise TypeError("ranking_pairs must contain (preferred, other) tuples")
+            preferred, other = pair
+            if not isinstance(preferred, GroundedFeatureExample) or not isinstance(
+                other, GroundedFeatureExample
+            ):
+                raise TypeError("ranking_pairs must contain GroundedFeatureExample values")
+            if preferred.example_id not in train_ids or other.example_id not in train_ids:
+                raise ValueError("ranking pairs cannot use holdout or retention-only examples")
+            if preferred.example_id == other.example_id:
+                raise ValueError("ranking pair examples must be distinct")
+            if not self._target(preferred) > self._target(other):
+                raise ValueError("ranking pairs must follow strictly higher train reward")
+            identity = (preferred.example_id, other.example_id)
+            if identity in seen:
+                raise ValueError("ranking_pairs cannot contain duplicates")
+            seen.add(identity)
+            validated.append((preferred, other))
+        return tuple(sorted(validated, key=lambda pair: (pair[0].example_id, pair[1].example_id)))
+
     def consolidate(
         self,
         train_examples: Iterable[GroundedFeatureExample],
@@ -226,6 +293,7 @@ class InternalizedFeatureLearner:
         retention_examples: Iterable[GroundedFeatureExample],
         replay_digest: str = "",
         passes: int = 4,
+        ranking_pairs: Iterable[tuple[GroundedFeatureExample, GroundedFeatureExample]] = (),
     ) -> InternalizationLearningReport:
         """Run an atomic parent-to-child native consolidation trial.
 
@@ -243,6 +311,7 @@ class InternalizedFeatureLearner:
             raise ValueError("train and holdout partitions must be disjoint")
         if int(passes) <= 0:
             raise ValueError("consolidation passes must be positive")
+        pairs = self._ranking_pairs(ranking_pairs, train_ids)
         digest = str(replay_digest).strip() or content_digest(
             {"partition": "train", "examples": [item.to_payload() for item in train]}
         )
@@ -258,6 +327,9 @@ class InternalizedFeatureLearner:
             for item in train:
                 trial._apply_update(item)
                 trial.fit_updates += 1
+            for preferred, other in pairs:
+                if trial._apply_pairwise_update(preferred, other):
+                    trial.ranking_updates += 1
         trial.replay_digest = digest
         trial.revision += 1
         train_after = trial.mean_squared_error(train)
@@ -282,6 +354,7 @@ class InternalizedFeatureLearner:
             retention_loss_before=retention_before,
             retention_loss_after=retention_after,
             fit_updates=self.fit_updates,
+            ranking_updates=self.ranking_updates,
             online_updates=self.online_updates,
             lineage_depth=len(self.lineage),
         )
@@ -290,6 +363,7 @@ class InternalizedFeatureLearner:
         self.weights = trial.weights.detach().clone()
         self.bias = trial.bias.detach().clone()
         self.fit_updates = trial.fit_updates
+        self.ranking_updates = trial.ranking_updates
         self.online_updates = trial.online_updates
         self.revision = trial.revision
         self.replay_digest = trial.replay_digest
@@ -304,10 +378,12 @@ class InternalizedFeatureLearner:
             "feature_dim": self.feature_dim,
             "learning_rate": self.learning_rate,
             "reward_bounds": list(self.reward_bounds),
+            "pairwise_margin": self.pairwise_margin,
             "manifest_revision": self.manifest_revision,
             "weights": self.weights.detach().cpu().clone(),
             "bias": self.bias.detach().cpu().clone(),
             "fit_updates": self.fit_updates,
+            "ranking_updates": self.ranking_updates,
             "online_updates": self.online_updates,
             "revision": self.revision,
             "replay_digest": self.replay_digest,
@@ -329,12 +405,14 @@ class InternalizedFeatureLearner:
             int(payload["feature_dim"]),
             learning_rate=float(payload["learning_rate"]),
             reward_bounds=bounds,  # type: ignore[arg-type]
+            pairwise_margin=float(payload.get("pairwise_margin", 0.0)),
             manifest_revision=str(payload["manifest_revision"]),
             device=device,
         )
         learner.weights.copy_(payload["weights"].detach().to(device=device, dtype=torch.float32))
         learner.bias.copy_(payload["bias"].detach().to(device=device, dtype=torch.float32))
         learner.fit_updates = int(payload.get("fit_updates", 0))
+        learner.ranking_updates = int(payload.get("ranking_updates", 0))
         learner.online_updates = int(payload.get("online_updates", 0))
         learner.revision = int(payload.get("revision", 0))
         learner.replay_digest = str(payload.get("replay_digest", ""))
