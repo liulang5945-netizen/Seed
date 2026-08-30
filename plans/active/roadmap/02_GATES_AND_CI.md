@@ -78,7 +78,7 @@
 |---|---|---|
 | W7-R3 Windows shell | `tool-blocked` | 能激活 Seed 窗口后，补齐任务栏、托盘、通知和高 DPI 真实证据 |
 | W7-R4 CUDA | `hardware-blocked` | 在真实 CUDA 主机完成 profiler、CPU↔CUDA checkpoint 和数值一致性 |
-| W7-R5A 内化 | `contract_frozen / implementation-not-started` | `taiji_w7_r5_internalization_v1.json` + red contract + checkpoint/可删性 Gate |
+| W7-R5A 内化 | `contract_frozen / S0-implemented` | S0 DTO/replay Gate 已通过；仍需 native learner、holdout、lesion、checkpoint continuation 与可删性 Gate |
 | W7-R5B 效应器成长 | `contract_frozen / implementation-not-started` | `taiji_w7_r5_effector_registry_v1.json` + 注册生命周期/快照/回滚 Gate |
 | W7-R5C 开放域结构成长 | `contract_frozen / implementation-not-started` | R5A/R5B 真实 evidence 可供触发，且 S0→S1→S2 全通过 |
 

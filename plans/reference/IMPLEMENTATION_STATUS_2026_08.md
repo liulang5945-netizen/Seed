@@ -41,16 +41,17 @@
 | R2 interaction-group | [S0](../../reports/taiji_w7_r2_interaction_groups_20260829.json)、[S1](../../reports/taiji_w7_r2_interaction_groups_s1_20260829.json)、[S2](../../reports/taiji_w7_r2_interaction_groups_s2_20260829.json) | native replay 与真实只读 Workbench 通过；不写回结构/provider |
 | R3 visual/desktop | [S1](../../reports/taiji_w7_r3_visual_desktop_s1_20260829.json)、[S2 部分证据](../../reports/taiji_w7_r3_visual_desktop_s2_20260829.json) | 页面/窄布局通过；Windows shell 仍 `tool-blocked` |
 | R5-S0 学习通道 | [报告](../../reports/taiji_w7_r5_s0_learning_channel_20260829.json) | 真实 Outcome 在线更新和 checkpoint continuation 通过 |
+| R5A-S0 内化 DTO/replay | [报告](../../reports/taiji_w7_r5a_s0_internalization_20260830.json) | 纯转换、内容寻址、train-only 去重、生命周期和 checkpoint roundtrip 通过；S1/S2 未开始 |
 
 R3 最终包为 `dist/Seed/Seed.exe`，已记录 SHA-256 `76b432b43922d5d70c64fca36b8e7045f2f5d03d4492f09b68b47eb31756368b`、大小 72,752,598 字节；源码与包内前端 211 个文件集合/字节一致，前端回归 `43 files / 245 passed`，Vite build 与 ESLint 通过。Chrome 已验证生命页和 900px/760px IDE 布局；Windows Computer Use 无法激活窗口，因此任务栏、托盘、通知和高 DPI 未通过。
 
 R5-S0 定向 native/executive/desktop/project identity 回归记录为 `24 passed`，Ruff、compileall、checkpoint 往返和 diff 检查通过。2026-08-30 CI 修复链新增 `b6d1bf2`：只读 Workbench 在 admission 后不再要求可变的当前 executive decision，前端 E2E 仅要求生命状态页展示 `RuntimeEvidenceStrip`，其余页面显式验证不展示；本地对应 Workbench 回归为 `2 passed`，mypy 为 `45 source files` 无问题。远端运行 `33295880356` 已完成最终验收，Docker、前端含 E2E、Legacy/no-Legacy smoke、Python 3.10/3.12 与 Windows 全量回归 7 个 job 全部成功。
 
-R5-G1 合同 Gate 已新增两份独立 manifest，并覆盖合法合同与缺 owner、混合 owner、缺 checkpoint、认知越权、错误删除边界的 red contract；R5A/R5B 生产实现仍未开始。
+R5-G1 合同 Gate 已新增两份独立 manifest，并覆盖合法合同与缺 owner、混合 owner、缺 checkpoint、认知越权、错误删除边界的 red contract。R5A-S0 已实现 `taiji/internalization.py`：纯 grounded Outcome DTO、内容寻址、train-only replay 去重、生命周期/五项因果门控和 checkpoint roundtrip；定向测试与 manifest 合计 `14 passed`。R5B 生产实现仍未开始。
 
 ## 4. 明确未完成
 
-- `taiji/internalization.py` 尚不存在；没有知识内化转换器、replay 生命周期或通过五类 lesion 的可删性判据。R5A manifest 已冻结其合同。
+- R5A-S0 已有知识内化转换器和 replay 生命周期，但没有 native learner、holdout/lesion 收益证据或通过五类 Gate 的可删性判据；R5A manifest 的 S1/S2 仍未完成。
 - `seed_platform/workbench.py` 的能力执行仍依赖硬编码分派；没有统一 capability bundle 注册、disposer、候选/影子/激活生命周期。
 - `taiji_w7_r5_open_domain_growth_v1.json` 只冻结结构成长合同，不能覆盖知识内化或效应器成长；R5A/R5B 的独立 manifest 已创建，但生产转换器/注册表尚未实现。
 - 默认自治仍是 freshness-valid、Taiji-owned 的只读 Workbench 路径；写入自治、外部 MCP 生命周期、长程开放域任务未完成。

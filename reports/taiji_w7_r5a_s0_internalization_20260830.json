@@ -1,0 +1,49 @@
+{
+  "format": "taiji-w7-r5a-s0-report-v1",
+  "date": "2026-08-30",
+  "work_package": "W7-R5A",
+  "stage": "S0",
+  "status": "passed",
+  "gate": {
+    "passed": true,
+    "scope": "pure DTO conversion, content addressing, train-only replay, lifecycle transitions, and checkpoint roundtrip",
+    "not_claimed": [
+      "native learner update",
+      "holdout gain or lesion evidence",
+      "external description deletion",
+      "real Workbench longitudinal internalization",
+      "automatic general intelligence"
+    ]
+  },
+  "artifacts": [
+    {
+      "path": "taiji/internalization.py",
+      "sha256": "E6526FC233BD3BF9DD6BA494FFE41FE87DADA1B917E680D40054497443B3420D"
+    },
+    {
+      "path": "tests/taiji_native/test_internalization_contract.py",
+      "sha256": "E64272A77F840DD79C53C2A0BF2473A40F1B2AF6BE8B9FCF76FDB7E65392BB2D"
+    },
+    {
+      "path": "plans/manifests/taiji_w7_r5_internalization_v1.json",
+      "sha256": "0F26643E86201B4979572805BFD1F93305628D7EC31F55277F1373C768A0E7E8"
+    }
+  ],
+  "metrics": {
+    "new_contract_tests_passed": 9,
+    "combined_contract_tests_passed": 14,
+    "mypy_source_files": 37,
+    "black_checked_files": 2,
+    "ruff": "passed",
+    "compileall": "passed",
+    "git_diff_check": "passed",
+    "checkpoint_roundtrip": true,
+    "replay_deduplication": true,
+    "holdout_write_through": false,
+    "terminal_content_resurrection": false
+  },
+  "ci": {
+    "last_green_baseline_run": 33295880356,
+    "baseline_commit": "c029c64"
+  }
+}

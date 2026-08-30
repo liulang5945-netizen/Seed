@@ -13,7 +13,7 @@
 | W7-R3 visual/desktop | S0/S1 + 页面证据完成 | 生命雷达、窄布局、前端/包字节一致、客户端真实状态投影 | Windows 任务栏、托盘、通知、高 DPI 已现场通过 |
 | W7-R4 CUDA | `hardware-blocked` | CPU 基线与设备/checkpoint 合同仍有效 | CUDA 性能、数值一致性或自定义 kernel 已验证 |
 | W7-R5-S0 学习通道 | 已完成 | 真实 Workbench Outcome 可进入 `record_executive_outcome()`；`learn=False` 冻结，`learn=True` 在线更新；checkpoint 保留计数与选择 | 知识已内化、外挂可删、效应器可注册、开放域自进化 |
-| W7-R5A/R5B | G1 合同已冻结、实现未开始 | 两份独立 manifest 已定义 owner、边界、checkpoint、证据、可删性/注册生命周期与回滚 | 任何生产转换器、注册表或效应器能力已开始或完成 |
+| W7-R5A/R5B | R5A-S0 已完成；R5B 仍为 G1 合同基线 | R5A 已具备纯 DTO、内容寻址 replay、生命周期和 checkpoint；R5B 仅有独立合同 | native learner、holdout/lesion、效应器注册表、开放域成长 |
 | W7-R5C 开放域成长 | 合同已冻结、实现未开始 | 结构成长的输入/证据/回滚边界已版本化 | 长期真实任务会自行扩容或进化 |
 
 最新证据数字与报告只在 [IMPLEMENTATION_STATUS_2026_08.md](../../reference/IMPLEMENTATION_STATUS_2026_08.md) 维护。
@@ -34,28 +34,28 @@
 
 ## 4. 当前唯一下一步
 
-执行 **W7-R5A-S0：纯 DTO 内化转换与确定性 replay 红/绿 Gate**。
+执行 **W7-R5A-S1：native learner、checkpoint、holdout 与 lesion Gate**。
 
-R5-G1 已完成合同分离并交付：
+R5-G1 与 R5A-S0 已完成并交付：
 
-1. `plans/manifests/taiji_w7_r5_internalization_v1.json`；
-2. `plans/manifests/taiji_w7_r5_effector_registry_v1.json`；
-3. 扩展 `tests/test_w7_gate_manifests.py`，先证明缺文件、owner 混合、缺 checkpoint、错误删除执行器或 provider 取得 cognition ownership 时会红，再验证合法合同；
-4. 明确两份合同与现有 `taiji_w7_r5_open_domain_growth_v1.json` 的依赖，三者状态互不代替；
-5. 合同测试包含合法合同与缺 owner、混合 owner、缺 checkpoint、认知越权、错误删除边界的 red contract。
+1. `plans/manifests/taiji_w7_r5_internalization_v1.json` 与 `plans/manifests/taiji_w7_r5_effector_registry_v1.json`；
+2. `taiji/internalization.py`：不依赖 `seed_platform` 的 Outcome/evidence DTO、内容 digest、train-only replay、生命周期和五项因果门控；
+3. `tests/taiji_native/test_internalization_contract.py`：未 grounding、缺 reward、越界、provider/capability 文本、holdout 写穿、重复 evidence、未通过 causal gate、checkpoint resurrection 的 red proof；
+4. `tests/test_w7_gate_manifests.py`：合同边界与 R5A/R5B 分离关系；
+5. R5A S0 证据为定向测试 `14 passed`、mypy、Ruff、Black、compileall 和 diff 检查通过；R5B 与 R5C 仍未实现。
 
-为什么下一项是 R5A-S0：R5-S0 已接通真实学习输入，R5-G1 已冻结“哪些知识可删、哪些执行器不可删、状态归谁、失败如何恢复”；现在可以只实现内化 DTO 和确定性 replay，不提前改效应器注册表或结构成长。
+为什么下一项是 R5A-S1：S0 已把真实证据转换成可恢复、不可写穿的 replay 内容，但尚未改变任何 Taiji learner 状态；下一步必须在父 checkpoint 与独立 holdout/lesion 下证明内化收益，再谈外挂可删性，不提前改效应器注册表或结构成长。
 
 ## 5. 本 slice 明确不做
 
-- 不实现 `taiji/internalization.py`；
+- 不实现 R5A-S1 的 native learner、离线巩固或真实 Workbench 纵向 Gate；
 - 不重构 `seed_platform/workbench.py` 的硬编码分派；
 - 不删除 skill/MCP、Legacy、`codex/interaction-group-incremental` 或 `output/`；
 - 不启动训练、不改模型权重、不做 CUDA；
 - 不继续视觉美化或用模拟截图关闭 R3；
-- 不在同一提交推进 R5A/R5B 的生产代码。
+- 不实现 `seed_platform/capability_registry.py`，不在同一提交推进 R5B/R5C 的生产代码。
 
-完成 G1 后唯一后继为 [04_EXECUTION_PLAN.md §4](04_EXECUTION_PLAN.md) 的 **R5A-S0：纯 DTO 内化转换与确定性 replay 红/绿 Gate**。
+完成 S0 后唯一后继为 [04_EXECUTION_PLAN.md §4](04_EXECUTION_PLAN.md) 的 **R5A-S1：native checkpoint 与离线巩固**。
 
 ## 6. 更新规则
 

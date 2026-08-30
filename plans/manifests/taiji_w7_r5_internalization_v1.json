@@ -166,7 +166,11 @@
     ],
     "new_test_entry": "tests/taiji_native/test_internalization_contract.py",
     "new_eval_entry": "scripts/training/eval_taiji_internalization.py",
-    "status": "not_started"
+    "status": "s0_implemented",
+    "s0_artifact": "taiji/internalization.py",
+    "s0_test": "tests/taiji_native/test_internalization_contract.py",
+    "s0_scope": "pure DTO conversion, content addressing, train-only deduplicated replay, lifecycle and checkpoint roundtrip",
+    "next_stage": "S1 native learner with checkpoint, holdout, and lesions"
   },
   "boundary": [
     "Knowledge descriptions, feature traces, and replay examples may become removable only through an explicit, recoverable lifecycle.",
