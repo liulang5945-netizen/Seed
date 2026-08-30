@@ -79,7 +79,7 @@
 |---|---|---|
 | W7-R3 Windows shell | `tool-blocked` | 能激活 Seed 窗口后，补齐任务栏、托盘、通知和高 DPI 真实证据 |
 | W7-R4 CUDA | `hardware-blocked` | 在真实 CUDA 主机完成 profiler、CPU↔CUDA checkpoint 和数值一致性 |
-| W7-R5A 内化 | `contract_frozen / S1-implemented / CI-repair` | S0 DTO/replay 与 S1 原生学习器、holdout、lesion、checkpoint continuation canary 已通过；当前先收口本轮跨平台 CI 依赖问题，之后仍需真实 Workbench 纵向与可删性 Gate |
+| W7-R5A 内化 | `contract_frozen / S1-implemented` | S0 DTO/replay 与 S1 原生学习器、holdout、lesion、checkpoint continuation canary 已通过；跨平台 CI 已全绿，仍需真实 Workbench 纵向与可删性 Gate |
 | W7-R5B 效应器成长 | `contract_frozen / implementation-not-started` | `taiji_w7_r5_effector_registry_v1.json` + 注册生命周期/快照/回滚 Gate |
 | W7-R5C 开放域结构成长 | `contract_frozen / implementation-not-started` | R5A/R5B 真实 evidence 可供触发，且 S0→S1→S2 全通过 |
 

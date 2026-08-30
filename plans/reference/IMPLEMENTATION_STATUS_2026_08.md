@@ -47,7 +47,7 @@ R3 最终包为 `dist/Seed/Seed.exe`，已记录 SHA-256 `76b432b43922d5d70c64fc
 
 R5-S0 定向 native/executive/desktop/project identity 回归记录为 `24 passed`，Ruff、compileall、checkpoint 往返和 diff 检查通过。2026-08-30 CI 修复链新增 `b6d1bf2`：只读 Workbench 在 admission 后不再要求可变的当前 executive decision，前端 E2E 仅要求生命状态页展示 `RuntimeEvidenceStrip`，其余页面显式验证不展示；本地对应 Workbench 回归为 `2 passed`，mypy 为 `45 source files` 无问题。远端运行 `33295880356` 已完成最终验收，Docker、前端含 E2E、Legacy/no-Legacy smoke、Python 3.10/3.12 与 Windows 全量回归 7 个 job 全部成功。
 
-R5-G1 合同 Gate 已新增两份独立 manifest，并覆盖合法合同与缺 owner、混合 owner、缺 checkpoint、认知越权、错误删除边界的 red contract。R5A-S0 已实现 `taiji/internalization.py`：纯 grounded Outcome DTO、内容寻址、train-only replay 去重、生命周期/五项因果门控和 checkpoint roundtrip；R5A-S1 新增 `taiji/internalization_learner.py`：原生局部更新、父/子 checkpoint lineage、留出/保持集只读评估和 feature/grounding lesion；定向测试 `19 passed`，S1 canary `gate.passed=true`。本轮 CI `33298105636` 发现最小 torch 环境缺 NumPy 时 digest 路径的跨平台失败，已改为纯 PyTorch 字节视图并加入无 NumPy contract，待下一轮全矩阵验收。R5B 生产实现仍未开始。
+R5-G1 合同 Gate 已新增两份独立 manifest，并覆盖合法合同与缺 owner、混合 owner、缺 checkpoint、认知越权、错误删除边界的 red contract。R5A-S0 已实现 `taiji/internalization.py`：纯 grounded Outcome DTO、内容寻址、train-only replay 去重、生命周期/五项因果门控和 checkpoint roundtrip；R5A-S1 新增 `taiji/internalization_learner.py`：原生局部更新、父/子 checkpoint lineage、留出/保持集只读评估和 feature/grounding lesion；定向测试 `19 passed`，S1 canary `gate.passed=true`。本轮 CI `33298105636` 发现最小 torch 环境缺 NumPy 时 digest 路径的跨平台失败，`513cb1f` 已改为纯 PyTorch 字节视图并加入无 NumPy contract；后续全矩阵运行 `33298754868` 的 7 个 job 全部成功。R5B 生产实现仍未开始。
 
 ## 4. 明确未完成
 
