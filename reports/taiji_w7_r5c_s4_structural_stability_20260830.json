@@ -1,0 +1,217 @@
+{
+  "format": "taiji-w7-r5c-s4-structural-stability-v1",
+  "trials": [
+    {
+      "seed": 11,
+      "projection_digest": "4a6e7e965b89189c844d9b98c35dbc1caa312ec58c2a409734f53c9ce4974403",
+      "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:stability:11:1:4a6e7e965b89",
+      "validation": {
+        "format": "taiji-structural-candidate-validation-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:stability:11:1:4a6e7e965b89",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2-seed-11",
+        "status": "validated",
+        "validation_score": 1.0,
+        "parent_checkpoint_digest": "fce081b9f258f6f1adfa9f5ad057ccf9a6890d58a9f1fb3ec53e2805b0a93ee0",
+        "validation_checkpoint_digest": "3e4248e632be0402deeb027cf6c5916a9f2e2d72b86c62b4ea325f9615fbe9da",
+        "topology_before_digest": "00769541d05c5ef6e6a28b7a579c1b5e5dd0845691b63ba79af8bdf9e9927b7d",
+        "topology_after_digest": "00769541d05c5ef6e6a28b7a579c1b5e5dd0845691b63ba79af8bdf9e9927b7d",
+        "structural_budget_before": 1,
+        "structural_budget_after": 1,
+        "evidence_ids": [
+          "stability:11:train:task-a:1",
+          "stability:11:train:task-b:2",
+          "stability:11:holdout:task-a:3"
+        ],
+        "error": null
+      },
+      "decision": {
+        "format": "taiji-structural-validation-gate-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:stability:11:1:4a6e7e965b89",
+        "passed": true,
+        "holdout_gain": 1.0,
+        "retention_regression": 0.0,
+        "lesion_effect": 0.15546731650829315,
+        "resource_state": 0.8,
+        "resource_cost": 1,
+        "structural_budget": 1,
+        "minimum_holdout_gain": 0.05,
+        "maximum_retention_regression": 0.05,
+        "minimum_lesion_effect": 0.05,
+        "minimum_resource_state": 0.4,
+        "evidence_ids": [
+          "stability:11:train:task-a:1",
+          "stability:11:train:task-b:2",
+          "stability:11:holdout:task-a:3",
+          "retention:seed:11",
+          "lesion:seed:11"
+        ],
+        "reasons": [],
+        "decision_digest": "a899b89c86f8ce2d12b588caacc756e71260917806d925667202cc71ef23ddf4"
+      },
+      "admission": {
+        "format": "taiji-structural-admission-result-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:stability:11:1:4a6e7e965b89",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2-seed-11",
+        "status": "admitted",
+        "decision_digest": "a899b89c86f8ce2d12b588caacc756e71260917806d925667202cc71ef23ddf4",
+        "parent_checkpoint_digest": "8b094b90730175f5e8de88174958ba52094d730a8ead5c876dd680fa7340ad64",
+        "child_checkpoint_digest": "53d19f1891235b9e319fa043e2d2d443f556a0d8d510fbf7c5575a24c873bcb2",
+        "topology_before_digest": "00769541d05c5ef6e6a28b7a579c1b5e5dd0845691b63ba79af8bdf9e9927b7d",
+        "topology_after_digest": "e296105625fb61e93903ed349b20d68bdbd404c067fe21a7352e8cfd410951fc",
+        "structural_budget_before": 1,
+        "structural_budget_after": 0,
+        "error": null
+      },
+      "observed_retention_regression": 0.0,
+      "observed_lesion_effect": 0.15546731650829315,
+      "before_units": [
+        "u0",
+        "u1"
+      ],
+      "admitted_units": [
+        "u0",
+        "u1",
+        "u2-seed-11"
+      ],
+      "rollback": {
+        "succeeded": true,
+        "restored_units": [
+          "u0",
+          "u1"
+        ],
+        "restored_budget": 1
+      },
+      "checks": {
+        "policy_passed": true,
+        "admitted_once": true,
+        "retention_within_limit": true,
+        "lesion_effect_is_causal": true,
+        "one_unit_growth": true,
+        "rollback_restores_parent": true,
+        "rollback_restores_budget": true
+      }
+    },
+    {
+      "seed": 29,
+      "projection_digest": "ad3b14f458dc66cbf19e28bef128d316497387869f3b2b79e01d2a6cea6caf73",
+      "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:stability:29:1:ad3b14f458dc",
+      "validation": {
+        "format": "taiji-structural-candidate-validation-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:stability:29:1:ad3b14f458dc",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2-seed-29",
+        "status": "validated",
+        "validation_score": 1.0,
+        "parent_checkpoint_digest": "08e1c2743ecc806914a9e14298cb3dd2e367d687f9c15ef7354a239d43184b20",
+        "validation_checkpoint_digest": "d40d3588a08162f470d33200ece9cae69adef16cddc937c33118aa4cb627ea83",
+        "topology_before_digest": "918362c5584737b3e42036ef9ed84c6d13fd25facdfc264ad98bb1f0edbb44f7",
+        "topology_after_digest": "918362c5584737b3e42036ef9ed84c6d13fd25facdfc264ad98bb1f0edbb44f7",
+        "structural_budget_before": 1,
+        "structural_budget_after": 1,
+        "evidence_ids": [
+          "stability:29:train:task-a:1",
+          "stability:29:train:task-b:2",
+          "stability:29:holdout:task-a:3"
+        ],
+        "error": null
+      },
+      "decision": {
+        "format": "taiji-structural-validation-gate-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:stability:29:1:ad3b14f458dc",
+        "passed": true,
+        "holdout_gain": 1.0,
+        "retention_regression": 0.0,
+        "lesion_effect": 0.15709008276462555,
+        "resource_state": 0.8,
+        "resource_cost": 1,
+        "structural_budget": 1,
+        "minimum_holdout_gain": 0.05,
+        "maximum_retention_regression": 0.05,
+        "minimum_lesion_effect": 0.05,
+        "minimum_resource_state": 0.4,
+        "evidence_ids": [
+          "stability:29:train:task-a:1",
+          "stability:29:train:task-b:2",
+          "stability:29:holdout:task-a:3",
+          "retention:seed:29",
+          "lesion:seed:29"
+        ],
+        "reasons": [],
+        "decision_digest": "05ee508c54782fd7689a3639a612d8c8f92adcf83d114695f52a034741acb7f5"
+      },
+      "admission": {
+        "format": "taiji-structural-admission-result-v1",
+        "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:stability:29:1:ad3b14f458dc",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u2-seed-29",
+        "status": "admitted",
+        "decision_digest": "05ee508c54782fd7689a3639a612d8c8f92adcf83d114695f52a034741acb7f5",
+        "parent_checkpoint_digest": "8d7793cccd7276135a9f147ecac1af9b959a19f81145aadbd66abe3e0ec2f638",
+        "child_checkpoint_digest": "c149cf220189a0b34fd2fd92a1fa6812b104b65f23a667bf92c1a815f1973fb8",
+        "topology_before_digest": "918362c5584737b3e42036ef9ed84c6d13fd25facdfc264ad98bb1f0edbb44f7",
+        "topology_after_digest": "8feb4c07a30a69f32a2e7553ab43ae5a1dd0ab2c9093790270ed751bdf126043",
+        "structural_budget_before": 1,
+        "structural_budget_after": 0,
+        "error": null
+      },
+      "observed_retention_regression": 0.0,
+      "observed_lesion_effect": 0.15709008276462555,
+      "before_units": [
+        "u0",
+        "u1"
+      ],
+      "admitted_units": [
+        "u0",
+        "u1",
+        "u2-seed-29"
+      ],
+      "rollback": {
+        "succeeded": true,
+        "restored_units": [
+          "u0",
+          "u1"
+        ],
+        "restored_budget": 1
+      },
+      "checks": {
+        "policy_passed": true,
+        "admitted_once": true,
+        "retention_within_limit": true,
+        "lesion_effect_is_causal": true,
+        "one_unit_growth": true,
+        "rollback_restores_parent": true,
+        "rollback_restores_budget": true
+      }
+    }
+  ],
+  "metrics": {
+    "independent_seeds": true,
+    "all_trial_checks_passed": true,
+    "cross_seed_retention_stable": true,
+    "cross_seed_lesion_stable": true,
+    "cross_seed_rollback_stable": true
+  },
+  "checks_by_seed": {
+    "seed_11": {
+      "policy_passed": true,
+      "admitted_once": true,
+      "retention_within_limit": true,
+      "lesion_effect_is_causal": true,
+      "one_unit_growth": true,
+      "rollback_restores_parent": true,
+      "rollback_restores_budget": true
+    },
+    "seed_29": {
+      "policy_passed": true,
+      "admitted_once": true,
+      "retention_within_limit": true,
+      "lesion_effect_is_causal": true,
+      "one_unit_growth": true,
+      "rollback_restores_parent": true,
+      "rollback_restores_budget": true
+    }
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "the same bounded structural admission must reproduce holdout validation, old-task retention, lesion causality, and parent rollback across independent seeds"
+  },
+  "boundary": "This is a two-seed canary, not a proof of open-domain intelligence or permission for unbounded structural scaling."
+}

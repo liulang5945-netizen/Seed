@@ -1,0 +1,81 @@
+{
+  "format": "taiji-w7-r5c-s2-structural-bridge-v1",
+  "projection": {
+    "format": "taiji-structural-pressure-projection-v1",
+    "network_id": "standalone:adaptive.cortex",
+    "region_id": "region:pressure-canary",
+    "first_tick": 1,
+    "last_tick": 3,
+    "window_digests": [
+      "8c1225638345a132681fd53dcbc274dbfd6627faa8595eeeb2800b48c29f5d7f",
+      "16d8581413e537c8d2bdcff0aacf12f518063647b2576b6165abfe533dba0e09",
+      "ecdc3982a7ecfa031dc61c34e6fe9ffbe610b504af952125daed154bff019ecb"
+    ],
+    "train_task_slice_ids": [
+      "task-a",
+      "task-b"
+    ],
+    "holdout_task_slice_ids": [
+      "task-a"
+    ],
+    "retention_task_slice_ids": [],
+    "train_window_count": 2,
+    "holdout_window_count": 1,
+    "retention_window_count": 0,
+    "prediction_observation_count": 2,
+    "mean_prediction_error": 0.7,
+    "mean_resource_state": 0.8,
+    "mean_holdout_transfer": 0.8,
+    "evidence_ids": [
+      "bridge-canary:train:task-a:1",
+      "bridge-canary:train:task-b:2",
+      "bridge-canary:holdout:task-a:3"
+    ],
+    "projection_digest": "9db8898728e9a335ba721da612920418a71c45e22865542b1f892932c53cf9e5"
+  },
+  "candidate": {
+    "format": "taiji-structural-proposal-candidate-v1",
+    "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:pressure-canary:1:9db8898728e9",
+    "network_id": "standalone:adaptive.cortex",
+    "target_kind": "neuron",
+    "operation": "add",
+    "substrate_ids": [
+      "adaptive.cortex"
+    ],
+    "evidence_ids": [
+      "bridge-canary:train:task-a:1",
+      "bridge-canary:train:task-b:2",
+      "bridge-canary:holdout:task-a:3"
+    ],
+    "source_tick": 3,
+    "priority": 0.5599999999999999,
+    "specification": {
+      "region_id": "adaptive.cortex",
+      "unit_id": "u2"
+    },
+    "resource_cost": 1,
+    "depends_on_candidate_ids": [],
+    "conflict_keys": [],
+    "parent_checkpoint_id": "pressure-parent:9db8898728e9a335ba721da612920418a71c45e22865542b1f892932c53cf9e5:df5cf1442c6cf52de2f21f86519f3da12b81e0ae2d4da3ee83f1641375b36703"
+  },
+  "metrics": {
+    "candidate_created": true,
+    "duplicate_projection_rejected": true,
+    "topology_unchanged": true,
+    "budget_unchanged": true,
+    "parent_checkpoint_bound": true,
+    "runtime_clock_covers_evidence": true,
+    "checkpoint_restores_projection_dedupe": true,
+    "checkpoint_restores_candidate": true,
+    "materialization_stays_pending": true,
+    "materialization_preserves_parent": true,
+    "restore_keeps_topology_unchanged": true,
+    "restore_keeps_budget_unchanged": true,
+    "restored_checkpoint_is_serializable": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "sealed cross-task pressure may create one deduplicated, lineage-bound candidate, but cannot mutate topology or spend structural budget"
+  },
+  "boundary": "This canary does not admit or execute structural growth. It only bridges a validated projection to the existing controller and preserves recovery."
+}

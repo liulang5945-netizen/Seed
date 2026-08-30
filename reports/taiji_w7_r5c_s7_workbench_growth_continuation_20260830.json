@@ -1,0 +1,161 @@
+{
+  "format": "taiji-w7-r5c-s7-workbench-growth-continuation-v1",
+  "schedule": {
+    "format": "taiji-structural-growth-schedule-result-v1",
+    "status": "candidate_created",
+    "trigger_tick": 3,
+    "new_window_digests": [
+      "6fa5eeb926e6aaeb4c0d26f9f0cdfaf968eb141f406ab8556f1f0551b4d6bfc8",
+      "ce0f71596483e7eea06847a62661ecf846535180deba1758a684f95639d6815e",
+      "61849de7a68ace37ac013d96b32b01b1f90c8696febfcdb10daab3cd357efc3d"
+    ],
+    "projection_digest": "7717324b2c1f1ca4afa5552cf0d285fbb796d1632708d468f904934311c8fa05",
+    "candidate_id": "candidate:pressure:workbench:executor:1:7717324b2c1f",
+    "reason": "",
+    "scheduler_revision": 1
+  },
+  "continuation": {
+    "candidate_id": "candidate:pressure:workbench:executor:1:7717324b2c1f",
+    "status": "admitted",
+    "validation": {
+      "format": "taiji-structural-candidate-validation-v1",
+      "candidate_id": "candidate:pressure:workbench:executor:1:7717324b2c1f",
+      "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+      "status": "validated",
+      "validation_score": 1.0,
+      "parent_checkpoint_digest": "1cb75b77ec6006d8ff03c6866d406baaf50ac051dbb6bbd8da83164aee6ed21f",
+      "validation_checkpoint_digest": "56483123b160357f322ee7833f24c113565b5fff97ed3bf42231953f2922eb43",
+      "topology_before_digest": "2d97455cd6e75c2e12dee03a96ddd567bf07bef527c7588c6dd949d439ef6b2c",
+      "topology_after_digest": "2d97455cd6e75c2e12dee03a96ddd567bf07bef527c7588c6dd949d439ef6b2c",
+      "structural_budget_before": 32,
+      "structural_budget_after": 32,
+      "evidence_ids": [
+        "workbench-structural:0d35902d5b8208b7ba25a4b5f8f20f77",
+        "workbench-structural:5d55ec381ca6c7a8adab7f2994c97483",
+        "workbench-structural:d5188a49d758bfa561b5c3dc9c612b1b"
+      ],
+      "error": null
+    },
+    "decision": {
+      "format": "taiji-structural-validation-gate-v1",
+      "candidate_id": "candidate:pressure:workbench:executor:1:7717324b2c1f",
+      "passed": true,
+      "holdout_gain": 1.0,
+      "retention_regression": 0.0,
+      "lesion_effect": 1.0,
+      "resource_state": 0.8,
+      "resource_cost": 1,
+      "structural_budget": 32,
+      "minimum_holdout_gain": 0.05,
+      "maximum_retention_regression": 0.05,
+      "minimum_lesion_effect": 0.05,
+      "minimum_resource_state": 0.4,
+      "evidence_ids": [
+        "workbench-structural:0d35902d5b8208b7ba25a4b5f8f20f77",
+        "workbench-structural:5d55ec381ca6c7a8adab7f2994c97483",
+        "workbench-structural:d5188a49d758bfa561b5c3dc9c612b1b",
+        "s7:retention",
+        "s7:lesion"
+      ],
+      "reasons": [],
+      "decision_digest": "8e778ba8a70fb1f9125d5c0d9c684dfc68b926bb0ce2d38fb2182bf71e162154"
+    },
+    "admission": {
+      "format": "taiji-structural-admission-result-v1",
+      "candidate_id": "candidate:pressure:workbench:executor:1:7717324b2c1f",
+      "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+      "status": "admitted",
+      "decision_digest": "8e778ba8a70fb1f9125d5c0d9c684dfc68b926bb0ce2d38fb2182bf71e162154",
+      "parent_checkpoint_digest": "42274e81e1c9cfa5f6dad42caded500df9ca16e6aef6a2ebdd930fa589e319f4",
+      "child_checkpoint_digest": "c9343513427116b329ab3fa80112cc60c9c0a29f4757dbbf5a4a57df770b18af",
+      "topology_before_digest": "2d97455cd6e75c2e12dee03a96ddd567bf07bef527c7588c6dd949d439ef6b2c",
+      "topology_after_digest": "735b2eca4ffb987a10aac4b2441bb664b50a6dce10a4332b1780e86f89c319b0",
+      "structural_budget_before": 32,
+      "structural_budget_after": 31,
+      "error": null
+    }
+  },
+  "repeated_continuation": {
+    "candidate_id": "candidate:pressure:workbench:executor:1:7717324b2c1f",
+    "status": "admitted",
+    "validation": {
+      "format": "taiji-structural-candidate-validation-v1",
+      "candidate_id": "candidate:pressure:workbench:executor:1:7717324b2c1f",
+      "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+      "status": "validated",
+      "validation_score": 1.0,
+      "parent_checkpoint_digest": "1cb75b77ec6006d8ff03c6866d406baaf50ac051dbb6bbd8da83164aee6ed21f",
+      "validation_checkpoint_digest": "56483123b160357f322ee7833f24c113565b5fff97ed3bf42231953f2922eb43",
+      "topology_before_digest": "2d97455cd6e75c2e12dee03a96ddd567bf07bef527c7588c6dd949d439ef6b2c",
+      "topology_after_digest": "2d97455cd6e75c2e12dee03a96ddd567bf07bef527c7588c6dd949d439ef6b2c",
+      "structural_budget_before": 32,
+      "structural_budget_after": 32,
+      "evidence_ids": [
+        "workbench-structural:0d35902d5b8208b7ba25a4b5f8f20f77",
+        "workbench-structural:5d55ec381ca6c7a8adab7f2994c97483",
+        "workbench-structural:d5188a49d758bfa561b5c3dc9c612b1b"
+      ],
+      "error": null
+    },
+    "decision": {
+      "format": "taiji-structural-validation-gate-v1",
+      "candidate_id": "candidate:pressure:workbench:executor:1:7717324b2c1f",
+      "passed": true,
+      "holdout_gain": 1.0,
+      "retention_regression": 0.0,
+      "lesion_effect": 1.0,
+      "resource_state": 0.8,
+      "resource_cost": 1,
+      "structural_budget": 32,
+      "minimum_holdout_gain": 0.05,
+      "maximum_retention_regression": 0.05,
+      "minimum_lesion_effect": 0.05,
+      "minimum_resource_state": 0.4,
+      "evidence_ids": [
+        "workbench-structural:0d35902d5b8208b7ba25a4b5f8f20f77",
+        "workbench-structural:5d55ec381ca6c7a8adab7f2994c97483",
+        "workbench-structural:d5188a49d758bfa561b5c3dc9c612b1b",
+        "s7:retention",
+        "s7:lesion"
+      ],
+      "reasons": [],
+      "decision_digest": "8e778ba8a70fb1f9125d5c0d9c684dfc68b926bb0ce2d38fb2182bf71e162154"
+    },
+    "admission": {
+      "format": "taiji-structural-admission-result-v1",
+      "candidate_id": "candidate:pressure:workbench:executor:1:7717324b2c1f",
+      "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+      "status": "admitted",
+      "decision_digest": "8e778ba8a70fb1f9125d5c0d9c684dfc68b926bb0ce2d38fb2182bf71e162154",
+      "parent_checkpoint_digest": "42274e81e1c9cfa5f6dad42caded500df9ca16e6aef6a2ebdd930fa589e319f4",
+      "child_checkpoint_digest": "c9343513427116b329ab3fa80112cc60c9c0a29f4757dbbf5a4a57df770b18af",
+      "topology_before_digest": "2d97455cd6e75c2e12dee03a96ddd567bf07bef527c7588c6dd949d439ef6b2c",
+      "topology_after_digest": "735b2eca4ffb987a10aac4b2441bb664b50a6dce10a4332b1780e86f89c319b0",
+      "structural_budget_before": 32,
+      "structural_budget_after": 31,
+      "error": null
+    }
+  },
+  "restored_topology": [
+    "u0",
+    "u1",
+    "u2"
+  ],
+  "restored_budget": 31,
+  "metrics": {
+    "scheduler_candidate_was_created": true,
+    "shadow_validation_passed": true,
+    "policy_gate_passed": true,
+    "admission_completed": true,
+    "topology_changed_only_after_admission": true,
+    "budget_debited_once": true,
+    "admission_checkpointed": true,
+    "repeat_is_idempotent": true,
+    "restored_budget_matches": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "a candidate created from real Workbench evidence must pass the existing shadow, policy, and atomic admission lifecycle; restore and repeat must not duplicate the admission"
+  },
+  "boundary": "The canary uses explicit holdout/retention/lesion metrics and inputs. It does not derive quality from tool success, expand budget, or bypass validation."
+}

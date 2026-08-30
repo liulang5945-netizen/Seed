@@ -276,7 +276,29 @@ from .state import (
     TaijiState,
     TaijiStep,
 )
+from .structural_arbitration import (
+    STRUCTURAL_CANDIDATE_BATCH_CHECKPOINT_FORMAT,
+    StructuralCandidateBatch,
+    structural_candidate_batch_digest,
+)
+from .structural_continuation import (
+    STRUCTURAL_CANDIDATE_ROLLBACK_FORMAT,
+    STRUCTURAL_CAPACITY_PRESSURE_FORMAT,
+    StructuralCandidateRollback,
+    StructuralRegionCapacityPressure,
+    measure_structural_region_capacity_pressure,
+)
+from .structural_evidence import (
+    STRUCTURAL_EVIDENCE_LEDGER_CHECKPOINT_FORMAT,
+    STRUCTURAL_EVIDENCE_WINDOW_CHECKPOINT_FORMAT,
+    StructuralEvidenceAppendResult,
+    StructuralEvidenceLedger,
+    StructuralEvidenceWindow,
+    StructuralEvidenceWindowSummary,
+)
 from .structural_growth import (
+    STRUCTURAL_CANDIDATE_VALIDATION_FORMAT,
+    STRUCTURAL_EVIDENCE_PARTITIONS,
     STRUCTURAL_GROWTH_CHECKPOINT_FORMAT,
     STRUCTURAL_MAINTENANCE_RESULT_FORMAT,
     STRUCTURAL_PROPOSAL_CANDIDATE_FORMAT,
@@ -284,6 +306,7 @@ from .structural_growth import (
     STRUCTURAL_RUNTIME_OBSERVATION_CHECKPOINT_FORMAT,
     AdaptiveStructuralGrowthController,
     AdaptiveStructuralPruningController,
+    StructuralCandidateValidation,
     StructuralGrowthDecision,
     StructuralGrowthDynamics,
     StructuralGrowthRegionState,
@@ -294,13 +317,37 @@ from .structural_growth import (
     StructuralPruningRegionState,
     StructuralRuntimeObservation,
 )
-from .structural_evidence import (
-    STRUCTURAL_EVIDENCE_LEDGER_CHECKPOINT_FORMAT,
-    STRUCTURAL_EVIDENCE_WINDOW_CHECKPOINT_FORMAT,
-    StructuralEvidenceAppendResult,
-    StructuralEvidenceLedger,
-    StructuralEvidenceWindow,
-    StructuralEvidenceWindowSummary,
+from .structural_pressure import (
+    STRUCTURAL_PRESSURE_PROJECTION_FORMAT,
+    StructuralGrowthEvidenceProjection,
+    project_structural_growth_pressure,
+)
+from .structural_scheduler import (
+    STRUCTURAL_GROWTH_SCHEDULE_RESULT_FORMAT,
+    STRUCTURAL_GROWTH_SCHEDULER_CHECKPOINT_FORMAT,
+    STRUCTURAL_WORKBENCH_BATCH_SCHEDULE_FORMAT,
+    StructuralGrowthScheduleResult,
+    StructuralGrowthScheduleState,
+    StructuralWorkbenchBatchScheduleResult,
+)
+from .structural_validation import (
+    STRUCTURAL_ADMISSION_RESULT_FORMAT,
+    STRUCTURAL_VALIDATION_GATE_FORMAT,
+    StructuralAdmissionResult,
+    StructuralValidationGateDecision,
+    evaluate_structural_candidate_validation,
+)
+from .structural_validation_artifact import (
+    STRUCTURAL_VALIDATION_ARTIFACT_FORMAT,
+    WorkbenchStructuralValidationArtifact,
+)
+from .structural_validation_batch import (
+    STRUCTURAL_VALIDATION_ARTIFACT_BATCH_FORMAT,
+    StructuralValidationArtifactBatch,
+)
+from .structural_validation_measurements import (
+    STRUCTURAL_VALIDATION_MEASUREMENT_FORMAT,
+    StructuralValidationMeasurements,
 )
 from .workspace import (
     WorkspaceCollaborationEvaluator,
@@ -525,10 +572,23 @@ __all__ = [
     "TaijiOutcome",
     "TaijiState",
     "TaijiStep",
+    "STRUCTURAL_CANDIDATE_BATCH_CHECKPOINT_FORMAT",
+    "StructuralCandidateBatch",
+    "structural_candidate_batch_digest",
+    "STRUCTURAL_CAPACITY_PRESSURE_FORMAT",
+    "STRUCTURAL_CANDIDATE_ROLLBACK_FORMAT",
+    "StructuralCandidateRollback",
+    "StructuralRegionCapacityPressure",
+    "measure_structural_region_capacity_pressure",
     "STRUCTURAL_GROWTH_CHECKPOINT_FORMAT",
+    "STRUCTURAL_EVIDENCE_PARTITIONS",
+    "STRUCTURAL_CANDIDATE_VALIDATION_FORMAT",
+    "STRUCTURAL_EVIDENCE_LEDGER_CHECKPOINT_FORMAT",
+    "STRUCTURAL_EVIDENCE_WINDOW_CHECKPOINT_FORMAT",
     "STRUCTURAL_MAINTENANCE_RESULT_FORMAT",
     "STRUCTURAL_PROPOSAL_CANDIDATE_FORMAT",
     "AdaptiveStructuralGrowthController",
+    "StructuralCandidateValidation",
     "StructuralGrowthDecision",
     "StructuralGrowthDynamics",
     "StructuralGrowthRegionState",
@@ -541,6 +601,30 @@ __all__ = [
     "StructuralPruningRegionState",
     "StructuralProposalCandidate",
     "StructuralRuntimeObservation",
+    "StructuralEvidenceAppendResult",
+    "StructuralEvidenceLedger",
+    "StructuralEvidenceWindow",
+    "StructuralEvidenceWindowSummary",
+    "STRUCTURAL_GROWTH_SCHEDULE_RESULT_FORMAT",
+    "STRUCTURAL_GROWTH_SCHEDULER_CHECKPOINT_FORMAT",
+    "StructuralGrowthScheduleResult",
+    "StructuralGrowthScheduleState",
+    "StructuralWorkbenchBatchScheduleResult",
+    "STRUCTURAL_WORKBENCH_BATCH_SCHEDULE_FORMAT",
+    "STRUCTURAL_PRESSURE_PROJECTION_FORMAT",
+    "StructuralGrowthEvidenceProjection",
+    "project_structural_growth_pressure",
+    "STRUCTURAL_VALIDATION_GATE_FORMAT",
+    "STRUCTURAL_ADMISSION_RESULT_FORMAT",
+    "STRUCTURAL_VALIDATION_ARTIFACT_FORMAT",
+    "WorkbenchStructuralValidationArtifact",
+    "STRUCTURAL_VALIDATION_ARTIFACT_BATCH_FORMAT",
+    "StructuralValidationArtifactBatch",
+    "STRUCTURAL_VALIDATION_MEASUREMENT_FORMAT",
+    "StructuralValidationMeasurements",
+    "StructuralAdmissionResult",
+    "StructuralValidationGateDecision",
+    "evaluate_structural_candidate_validation",
     "TSKV8Adapter",
     "Goal",
     "GoalState",

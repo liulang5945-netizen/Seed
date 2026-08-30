@@ -1,0 +1,51 @@
+{
+  "format": "taiji-w7-r5c-s1-structural-pressure-v1",
+  "projection": {
+    "format": "taiji-structural-pressure-projection-v1",
+    "network_id": "network:pressure-canary",
+    "region_id": "region:pressure-canary",
+    "first_tick": 1,
+    "last_tick": 3,
+    "window_digests": [
+      "34875a0c9cb80ce874eb08d3765bbb32d992e602a80f792b581bf85642e3182e",
+      "8c7a706c1b06fc4a8dcb32d23a27d972d49dd51904f8319e238350a784c67194",
+      "712431dfd9efbbbed0f76674497853964e5dfc5bb5dc2ddfc2c81d6e4697c7e5"
+    ],
+    "train_task_slice_ids": [
+      "task-a",
+      "task-b"
+    ],
+    "holdout_task_slice_ids": [
+      "task-a"
+    ],
+    "retention_task_slice_ids": [],
+    "train_window_count": 2,
+    "holdout_window_count": 1,
+    "retention_window_count": 0,
+    "prediction_observation_count": 2,
+    "mean_prediction_error": 0.6499999999999999,
+    "mean_resource_state": 0.8,
+    "mean_holdout_transfer": 0.8,
+    "evidence_ids": [
+      "pressure-canary:train:task-a:1",
+      "pressure-canary:train:task-b:2",
+      "pressure-canary:holdout:task-a:3"
+    ],
+    "projection_digest": "9f9fc98f99032babef505995ded136afe343eb0fa32823fdea40a02643658f92"
+  },
+  "metrics": {
+    "cross_task_train_slices": true,
+    "separate_holdout": true,
+    "train_error_isolated": true,
+    "resource_state_is_runtime_derived": true,
+    "projection_roundtrip": true,
+    "single_slice_rejected": true,
+    "ledger_unchanged": true,
+    "no_topology_candidate": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "only sealed windows with independent train task slices may produce a non-mutating pressure projection; holdout/retention remain validation-only"
+  },
+  "boundary": "This canary produces metrics only. It does not invoke the growth controller, create a proposal, admit topology, or claim open-domain autonomy."
+}

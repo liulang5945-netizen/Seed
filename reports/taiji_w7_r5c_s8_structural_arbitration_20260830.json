@@ -1,0 +1,307 @@
+{
+  "format": "taiji-w7-r5c-s8-structural-arbitration-v1",
+  "batch": {
+    "format": "taiji-structural-candidate-batch-v1",
+    "batch_id": "batch:structural:5b17a95db704943e4e80812f58983188",
+    "candidate_ids": [
+      "c1",
+      "c2",
+      "c3",
+      "c4"
+    ],
+    "selected_candidate_ids": [
+      "c1",
+      "c3"
+    ],
+    "deferred_candidate_ids": [
+      "c2",
+      "c4"
+    ],
+    "rejected_candidate_ids": [],
+    "candidate_states": {
+      "c1": "reserved",
+      "c2": "deferred",
+      "c3": "reserved",
+      "c4": "deferred"
+    },
+    "reasons": {
+      "c2": "conflict_with_selected:c1",
+      "c4": "structural_budget_insufficient_for_batch"
+    },
+    "reserved_resource_cost": 2,
+    "reservation_remaining": 2,
+    "structural_budget_before": 2,
+    "available_budget_before": 2,
+    "topology_digest": "4af589be3035dcaa023b6dd833242f9a775e0f2d76c16f89bb57ab7668815901",
+    "arbitration_digest": "5b17a95db704943e4e80812f58983188009219060db8883eb2da8d324b46f85e",
+    "revision": 0,
+    "status": "planned"
+  },
+  "first_continuation": {
+    "batch": {
+      "format": "taiji-structural-candidate-batch-v1",
+      "batch_id": "batch:structural:5b17a95db704943e4e80812f58983188",
+      "candidate_ids": [
+        "c1",
+        "c2",
+        "c3",
+        "c4"
+      ],
+      "selected_candidate_ids": [
+        "c1",
+        "c3"
+      ],
+      "deferred_candidate_ids": [
+        "c2",
+        "c4"
+      ],
+      "rejected_candidate_ids": [],
+      "candidate_states": {
+        "c1": "admitted",
+        "c2": "deferred",
+        "c3": "reserved",
+        "c4": "deferred"
+      },
+      "reasons": {
+        "c2": "conflict_with_selected:c1",
+        "c4": "structural_budget_insufficient_for_batch"
+      },
+      "reserved_resource_cost": 2,
+      "reservation_remaining": 1,
+      "structural_budget_before": 2,
+      "available_budget_before": 2,
+      "topology_digest": "4af589be3035dcaa023b6dd833242f9a775e0f2d76c16f89bb57ab7668815901",
+      "arbitration_digest": "5b17a95db704943e4e80812f58983188009219060db8883eb2da8d324b46f85e",
+      "revision": 1,
+      "status": "running"
+    },
+    "results": {
+      "c1": {
+        "candidate_id": "c1",
+        "status": "admitted",
+        "validation": {
+          "format": "taiji-structural-candidate-validation-v1",
+          "candidate_id": "c1",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "validated",
+          "validation_score": 1.0,
+          "parent_checkpoint_digest": "420fa058903870a74d3ffceb5ac33f2abacf8e957e0138eabf0e577da38be597",
+          "validation_checkpoint_digest": "2b6714e53a380b8005c7ab877ab6e1f12f3a21ae7b05793aa086b21e7ecb6bf1",
+          "topology_before_digest": "4af589be3035dcaa023b6dd833242f9a775e0f2d76c16f89bb57ab7668815901",
+          "topology_after_digest": "4af589be3035dcaa023b6dd833242f9a775e0f2d76c16f89bb57ab7668815901",
+          "structural_budget_before": 2,
+          "structural_budget_after": 2,
+          "evidence_ids": [
+            "evidence:c1"
+          ],
+          "error": null
+        },
+        "decision": {
+          "format": "taiji-structural-validation-gate-v1",
+          "candidate_id": "c1",
+          "passed": true,
+          "holdout_gain": 1.0,
+          "retention_regression": 0.0,
+          "lesion_effect": 1.0,
+          "resource_state": 0.8,
+          "resource_cost": 1,
+          "structural_budget": 2,
+          "minimum_holdout_gain": 0.05,
+          "maximum_retention_regression": 0.05,
+          "minimum_lesion_effect": 0.05,
+          "minimum_resource_state": 0.4,
+          "evidence_ids": [
+            "evidence:c1",
+            "s8:retention:c1",
+            "s8:lesion:c1"
+          ],
+          "reasons": [],
+          "decision_digest": "285a478d980fa12b064da775b8a2f38756c8e06a739e402efc9ccd04457b5ff7"
+        },
+        "admission": {
+          "format": "taiji-structural-admission-result-v1",
+          "candidate_id": "c1",
+          "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+          "status": "admitted",
+          "decision_digest": "285a478d980fa12b064da775b8a2f38756c8e06a739e402efc9ccd04457b5ff7",
+          "parent_checkpoint_digest": "6129bb8edc92e3727ea5056495e25dde571f6a10703d7c030c0a42345ec31841",
+          "child_checkpoint_digest": "be7eb2cd66584628621060190268bf2a30355d7159a0a455296b5c736e48b94a",
+          "topology_before_digest": "4af589be3035dcaa023b6dd833242f9a775e0f2d76c16f89bb57ab7668815901",
+          "topology_after_digest": "b06ad87ff77eba9803075dfa65f2810f665166cda15fb04ff67986f846a9e8bf",
+          "structural_budget_before": 2,
+          "structural_budget_after": 1,
+          "error": null
+        }
+      }
+    }
+  },
+  "second_continuation": {
+    "batch": {
+      "format": "taiji-structural-candidate-batch-v1",
+      "batch_id": "batch:structural:5b17a95db704943e4e80812f58983188",
+      "candidate_ids": [
+        "c1",
+        "c2",
+        "c3",
+        "c4"
+      ],
+      "selected_candidate_ids": [
+        "c1",
+        "c3"
+      ],
+      "deferred_candidate_ids": [
+        "c2",
+        "c4"
+      ],
+      "rejected_candidate_ids": [],
+      "candidate_states": {
+        "c1": "admitted",
+        "c2": "deferred",
+        "c3": "admitted",
+        "c4": "deferred"
+      },
+      "reasons": {
+        "c2": "conflict_with_selected:c1",
+        "c4": "structural_budget_insufficient_for_batch"
+      },
+      "reserved_resource_cost": 2,
+      "reservation_remaining": 0,
+      "structural_budget_before": 2,
+      "available_budget_before": 2,
+      "topology_digest": "4af589be3035dcaa023b6dd833242f9a775e0f2d76c16f89bb57ab7668815901",
+      "arbitration_digest": "5b17a95db704943e4e80812f58983188009219060db8883eb2da8d324b46f85e",
+      "revision": 2,
+      "status": "completed"
+    },
+    "results": {
+      "c1": {
+        "candidate_id": "c1",
+        "status": "admitted"
+      },
+      "c3": {
+        "candidate_id": "c3",
+        "status": "admitted",
+        "validation": {
+          "format": "taiji-structural-candidate-validation-v1",
+          "candidate_id": "c3",
+          "proposal_id": "topology:adaptive.memory:neuron:add:m2",
+          "status": "validated",
+          "validation_score": 1.0,
+          "parent_checkpoint_digest": "16a51c27356bd409b376178e396ddc8a1a628b09838ceac602464f361fd550ba",
+          "validation_checkpoint_digest": "103746bf6cde900b2da8bb73bbfd5e9b1a674a060525bf85023ea0df235576f7",
+          "topology_before_digest": "b06ad87ff77eba9803075dfa65f2810f665166cda15fb04ff67986f846a9e8bf",
+          "topology_after_digest": "b06ad87ff77eba9803075dfa65f2810f665166cda15fb04ff67986f846a9e8bf",
+          "structural_budget_before": 1,
+          "structural_budget_after": 1,
+          "evidence_ids": [
+            "evidence:c3"
+          ],
+          "error": null
+        },
+        "decision": {
+          "format": "taiji-structural-validation-gate-v1",
+          "candidate_id": "c3",
+          "passed": true,
+          "holdout_gain": 1.0,
+          "retention_regression": 0.0,
+          "lesion_effect": 1.0,
+          "resource_state": 0.8,
+          "resource_cost": 1,
+          "structural_budget": 1,
+          "minimum_holdout_gain": 0.05,
+          "maximum_retention_regression": 0.05,
+          "minimum_lesion_effect": 0.05,
+          "minimum_resource_state": 0.4,
+          "evidence_ids": [
+            "evidence:c3",
+            "s8:retention:c3",
+            "s8:lesion:c3"
+          ],
+          "reasons": [],
+          "decision_digest": "cb81b097fe15f04b795482a0b1efce43b7ca317677cb2fb407b759c40770effd"
+        },
+        "admission": {
+          "format": "taiji-structural-admission-result-v1",
+          "candidate_id": "c3",
+          "proposal_id": "topology:adaptive.memory:neuron:add:m2",
+          "status": "admitted",
+          "decision_digest": "cb81b097fe15f04b795482a0b1efce43b7ca317677cb2fb407b759c40770effd",
+          "parent_checkpoint_digest": "bae5ceefdd5e5758264b4fefb366de2adce595e189fc3b24bacb9d3a06f0005a",
+          "child_checkpoint_digest": "80255ff03bd4a4c0850f74e5bee919c5cba310e91bb6a7ab9ade433d6b7632fb",
+          "topology_before_digest": "b06ad87ff77eba9803075dfa65f2810f665166cda15fb04ff67986f846a9e8bf",
+          "topology_after_digest": "c954cb6aa9ee87eb55c1d9c5cb801740664ce5594649912cf5d378f8e0adb52a",
+          "structural_budget_before": 1,
+          "structural_budget_after": 0,
+          "error": null
+        }
+      }
+    }
+  },
+  "repeated_continuation": {
+    "batch": {
+      "format": "taiji-structural-candidate-batch-v1",
+      "batch_id": "batch:structural:5b17a95db704943e4e80812f58983188",
+      "candidate_ids": [
+        "c1",
+        "c2",
+        "c3",
+        "c4"
+      ],
+      "selected_candidate_ids": [
+        "c1",
+        "c3"
+      ],
+      "deferred_candidate_ids": [
+        "c2",
+        "c4"
+      ],
+      "rejected_candidate_ids": [],
+      "candidate_states": {
+        "c1": "admitted",
+        "c2": "deferred",
+        "c3": "admitted",
+        "c4": "deferred"
+      },
+      "reasons": {
+        "c2": "conflict_with_selected:c1",
+        "c4": "structural_budget_insufficient_for_batch"
+      },
+      "reserved_resource_cost": 2,
+      "reservation_remaining": 0,
+      "structural_budget_before": 2,
+      "available_budget_before": 2,
+      "topology_digest": "4af589be3035dcaa023b6dd833242f9a775e0f2d76c16f89bb57ab7668815901",
+      "arbitration_digest": "5b17a95db704943e4e80812f58983188009219060db8883eb2da8d324b46f85e",
+      "revision": 3,
+      "status": "completed"
+    },
+    "results": {
+      "c1": {
+        "candidate_id": "c1",
+        "status": "admitted"
+      },
+      "c3": {
+        "candidate_id": "c3",
+        "status": "admitted"
+      }
+    }
+  },
+  "metrics": {
+    "rank_order_is_explicit": true,
+    "same_region_lower_priority_deferred": true,
+    "budget_overflow_deferred": true,
+    "same_batch_replay_idempotent": true,
+    "arbitration_does_not_mutate_topology_or_budget": true,
+    "first_admission_completed": true,
+    "reservation_kept_for_remaining_candidate": true,
+    "restore_keeps_batch_reservation": true,
+    "remaining_candidate_continued_after_restore": true,
+    "repeated_batch_continuation_is_idempotent": true,
+    "deferred_candidates_remain_recoverable": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "multi-candidate arbitration must be deterministic, reserve budget without mutation, isolate conflicts, and continue selected candidates across checkpoint restore"
+  },
+  "boundary": "This canary does not parallelize admission, expand structural budget, or promote deferred candidates without a new arbitration batch."
+}

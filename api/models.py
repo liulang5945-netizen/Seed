@@ -2,6 +2,8 @@
 API 请求/响应数据模型（Pydantic）
 """
 
+from typing import Any
+
 from pydantic import BaseModel
 
 
@@ -18,6 +20,7 @@ class WorkbenchIntentRequest(BaseModel):
     tick: int = 0
     approval_token: str = ""
     mcp_registry_snapshot_id: str = ""
+    structural_evidence: dict[str, Any] | None = None
 
 
 class TaijiWorkbenchTaskRequest(BaseModel):

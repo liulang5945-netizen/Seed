@@ -1,0 +1,113 @@
+{
+  "format": "taiji-w7-r5c-s3c-structural-metric-integration-v1",
+  "projection_digest": "ccbe54362b16973230e0566bc843727acf40db136c5ce5a07f315fc061367bdb",
+  "validation": {
+    "format": "taiji-structural-candidate-validation-v1",
+    "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:validation-canary:1:ccbe54362b16",
+    "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+    "status": "validated",
+    "validation_score": 1.0,
+    "parent_checkpoint_digest": "fcd844d6ddb973d1e57e93b5c78dd40527c825b6e417415c2f123df9db90c09f",
+    "validation_checkpoint_digest": "7c955c539b170b4e4a8faa72c8cd8241d5c896320ac28bb4ac4c1d190041cc91",
+    "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+    "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+    "structural_budget_before": 1,
+    "structural_budget_after": 1,
+    "evidence_ids": [
+      "validation-canary:train:task-a:1",
+      "validation-canary:train:task-b:2",
+      "validation-canary:holdout:task-a:3"
+    ],
+    "error": null
+  },
+  "decision": {
+    "format": "taiji-structural-validation-gate-v1",
+    "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:validation-canary:1:ccbe54362b16",
+    "passed": true,
+    "holdout_gain": 1.0,
+    "retention_regression": 0.02,
+    "lesion_effect": 0.15,
+    "resource_state": 0.8,
+    "resource_cost": 1,
+    "structural_budget": 1,
+    "minimum_holdout_gain": 0.05,
+    "maximum_retention_regression": 0.05,
+    "minimum_lesion_effect": 0.05,
+    "minimum_resource_state": 0.4,
+    "evidence_ids": [
+      "validation-canary:train:task-a:1",
+      "validation-canary:train:task-b:2",
+      "validation-canary:holdout:task-a:3",
+      "retention:observed",
+      "lesion:observed"
+    ],
+    "reasons": [],
+    "decision_digest": "e2d429ef85f06dd8936d36e39bfb62ebf8b8dd2c159c5ee8ba8b994144f61c3e"
+  },
+  "rejected_validation": {
+    "format": "taiji-structural-candidate-validation-v1",
+    "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:validation-canary:1:ccbe54362b16",
+    "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+    "status": "validated",
+    "validation_score": 1.0,
+    "parent_checkpoint_digest": "ff2f8044c5fcee133d9040ceb4e6bc79dab30fd70a5015eedb1f3e9801e82dc0",
+    "validation_checkpoint_digest": "6d8a953be2d8273b63b35cef7b965bea52bd88760b227cda748142711b04a732",
+    "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+    "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+    "structural_budget_before": 1,
+    "structural_budget_after": 1,
+    "evidence_ids": [
+      "validation-canary:train:task-a:1",
+      "validation-canary:train:task-b:2",
+      "validation-canary:holdout:task-a:3"
+    ],
+    "error": null
+  },
+  "rejected_decision": {
+    "format": "taiji-structural-validation-gate-v1",
+    "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:validation-canary:1:ccbe54362b16",
+    "passed": false,
+    "holdout_gain": 1.0,
+    "retention_regression": 0.2,
+    "lesion_effect": 0.01,
+    "resource_state": 0.1,
+    "resource_cost": 1,
+    "structural_budget": 1,
+    "minimum_holdout_gain": 0.05,
+    "maximum_retention_regression": 0.05,
+    "minimum_lesion_effect": 0.05,
+    "minimum_resource_state": 0.4,
+    "evidence_ids": [
+      "validation-canary:train:task-a:1",
+      "validation-canary:train:task-b:2",
+      "validation-canary:holdout:task-a:3",
+      "retention:regressed",
+      "lesion:weak"
+    ],
+    "reasons": [
+      "retention_regression_above_threshold",
+      "lesion_effect_below_threshold",
+      "resource_state_below_threshold"
+    ],
+    "decision_digest": "2a34c55351317ddb7276b604bafecb354e72eb3bc9d64ecf1accf7c16775751a"
+  },
+  "metrics": {
+    "validation_record_is_required": true,
+    "accepted_policy_decision": true,
+    "accepted_proposal_stays_pending": true,
+    "accepted_topology_unchanged": true,
+    "accepted_budget_unchanged": true,
+    "accepted_decision_roundtrip": true,
+    "failed_policy_decision": true,
+    "failed_policy_rejects_pending_proposal": true,
+    "failed_topology_unchanged": true,
+    "failed_budget_unchanged": true,
+    "failed_rejection_roundtrip": true,
+    "no_physical_admission": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "real candidate shadow metrics must bind to the independent validation policy; pass stays pending and fail rejects atomically without topology admission"
+  },
+  "boundary": "This integration still does not commit topology. Admission requires a later atomic lifecycle step after all gates and checkpoint checks pass."
+}

@@ -127,6 +127,38 @@ R3/R4 未通过时不得声明相应能力，但它们不再作为 R5 的伪串�
 
 复用已有 structural growth、topology ledger、neuron/region growth 与 rollback 基础，不另起“原始神经元”架构。R5C-S0 先把 R5A/R5B 的长期真实 evidence 做成内容寻址、去重、可 checkpoint 的观察窗口；触发输入来自窗口聚合后的持续错误簇、恢复不足、容量饱和、遗忘和资源压力，而不是单个 tick、规模目标或人工标签。
 
+R5C-S0 已实现于 `taiji/structural_evidence.py` 与 `TSKV8Adapter`：standalone/cross-region 的真实 runtime observation 进入统一 ledger；窗口有明确容量、单调 tick、重复证据索引、内容 digest、封存摘要与 checkpoint roundtrip。它只保存事实，不调用 growth controller，不提交 topology。
+
+### R5C-S1：窗口摘要 pressure 架构评审
+
+S1 只评审并实现从多个已封存窗口形成 growth pressure 的最小事实投影。必须同时满足：跨窗口/跨任务片证据来源可追溯；holdout 与 retention 仍保持只读隔离；资源 pressure 来自 ledger/运行时计量而不是目标规模；单个窗口、单个 demo 或人工标签不能直接产生 proposal；窗口摘要 checkpoint 恢复后 digest、lineage 和去重状态一致。S1 通过后，才允许将聚合 pressure 交给既有 `AdaptiveStructuralGrowthController` 生成候选，仍不自动 admit。
+
+S1 已实现：`StructuralRuntimeObservation` 使用显式 task slice/partition，`StructuralEvidenceLedger` 按上下文隔离窗口，`project_structural_growth_pressure()` 生成非突变 projection。S1 canary 已验证跨两个 train task slices、独立 holdout、single-slice rejection、projection roundtrip 和 ledger immutability。
+
+### R5C-S2：candidate-only growth-controller bridge
+
+S2 只允许 projection 经过 digest 去重和 controller 的可配置阈值映射，生成待验证的 structural candidate；必须保存 parent checkpoint，不能消耗长期 budget 或提交 topology。projection 重放、旧 checkpoint、holdout/retention 不足、controller 状态写入失败均 fail-closed；candidate 必须继续走现有 shadow/holdout/lesion/rollback 账本。
+
+S2 已实现：`TSKV8Adapter.propose_structural_candidate_from_pressure()` 已完成 holdout-gated 单向桥接、projection digest 去重、parent checkpoint 绑定和外部 evidence tick 的 checkpoint continuation；`eval_taiji_structural_bridge.py` 的 Gate 已通过。candidate materialization 仍只进入 pending proposal，未改变 neuron/region topology，也未消耗 structural budget。
+
+### R5C-S3：candidate validation Gate（已完成）
+
+S3 只验证 candidate，不执行真实 admission。每个 candidate 必须先保存 trial checkpoint，再在 shadow 中记录结构变化的 after-state/resource digest，随后由独立 holdout、retention 和 lesion 检查收益是否真实、旧能力是否保持、候选是否具有因果贡献。任何失败都必须原子拒绝、归还 reservation、保留 parent active 并写入 tombstone；恢复后不能复活 rejected candidate。
+
+S3 的最小交付是一个候选验证器和独立 Gate，复用现有 topology ledger、resource ledger 和 rollback，不新增第二套结构生命周期。通过前不得把 candidate 变成 admitted topology，也不得宣称“自进化已完成”。
+
+S3A 已完成：`StructuralCandidateValidation` 将 holdout shadow 的 checkpoint、拓扑和预算不变性写入可恢复记录；S3B 已完成：`StructuralValidationGateDecision` 将 holdout/retention/lesion/resource/budget 阈值集中为无副作用 policy；S3C 已完成：adapter 将真实 validation record、pending proposal 和 retention/lesion/resource 指标绑定到 policy，accepted 仍 pending、failed 原子 rejected；S3D 已完成一个受限 atomic admission canary，验证通过的 candidate 单次 commit、预算精确扣减、幂等和 restore。下一步是跨 seed/task slice 稳定性与 rollback。
+
+### R5C-S3D：atomic admission transaction（已完成）
+
+S3D 才允许对通过 S3C 的 decision 尝试一次 topology admission。流程必须在同一可恢复生命周期内保存 parent/trial checkpoint、reservation、commit 后结构摘要和 rollback/tombstone；任一 checkpoint、资源、拓扑 roundtrip、retention 或 lesion 条件失败，都恢复 parent、归还 reservation 并留下拒绝原因。不能把 `commit_*` 直接暴露为成长触发器，也不能只靠内存状态宣称成功。
+
+S3D 已完成一个受限 neuron admission canary：policy-approved candidate 通过既有 commit transaction 单次增长，预算精确扣减，重复调用幂等，admission result 可 checkpoint restore。下一步转向跨 seed/task slice 稳定性与 rollback，不能把单个 canary 外推为长期自进化能力。
+
+### R5C-S4：cross-seed/task-slice stability and rollback（已完成）
+
+S4 要求同一 candidate contract 在独立 seed、独立 task slice 和新 holdout 上重复，比较 admission 前后收益、旧任务 retention、lesion causal effect、资源和恢复时间；至少一个成功 admission 与一个失败/rollback 样本必须同时存在。只有稳定性和 rollback 都通过，才可讨论更大结构预算或多步生长。
+
 固定生命周期：
 
 1. 保存 parent checkpoint；
@@ -136,6 +168,98 @@ R3/R4 未通过时不得声明相应能力，但它们不再作为 R5 的伪串�
 5. 比较收益、遗忘、恢复时间、参数/连接、内存、延迟和能耗近似；
 6. 原子 admit，或恢复 parent 并写 tombstone；
 7. 跨 seed/任务片稳定后才扩大长期容量。
+
+### R5C-S5：multi-step bounded growth and checkpoint continuation（已完成）
+
+S5 证明结构成长不是一次性演示：同一 parent checkpoint 的 structural budget 为 2 时，必须能恢复并连续完成两次受 policy 约束的局部 admission；每次 admission 都要生成新的 child checkpoint、保留前一条 lineage，并精确扣减资源预算。预算归零后，即使候选的 holdout、retention 和 lesion 指标通过，也必须因 resource state/budget 不足 fail-closed，不能扩大预算、不能提交 topology、不能在重启后复活被拒绝候选。
+
+S5 的唯一 canary 为 `scripts/training/eval_taiji_structural_continuation.py`，报告 `gate.passed=true`，覆盖：两步 topology `u0→u1→u2→u3`、两个 admission lineage、checkpoint continuation、预算 2→1→0、第三候选 rejection、rejection restore 和初始模型 bootstrap 边界。该 Gate 仍不代表无限自进化、自动预算扩容、全量重训或真实开放域质量收益。
+
+### R5C-S6：Workbench evidence 驱动的长期增长调度（已完成）
+
+S6 把真实 Workbench 作为外部身体/环境接入结构成长证据，但不把“工具成功”直接等同于神经元增长。每次证据必须绑定真实 `WorkbenchOutcome` 的 request/intent/call/capability snapshot 和内容摘要；结构观测使用独立、可 checkpoint 的单调运行时钟，避免把动作起始 tick（首次合法值为 0）误当作结构时钟。
+
+调度器只消费新的 sealed evidence window，并按 `network_id/region_id/task_slice_id/partition` 隔离 train、holdout、retention；满足最小跨任务训练窗口与独立 holdout 后，才调用已有 pressure projection 和 candidate-only bridge。调度结果、已消费窗口 digest、projection digest、candidate id 和 revision 全部进入 checkpoint；重复调度必须返回 `no_new_sealed_window`，不能重复创建候选。
+
+S6 canary 为 `scripts/training/eval_taiji_workbench_structural_scheduler.py`，报告 `gate.passed=true`：三次真实 Workbench 成功读取产生三份结构证据，跨两个 train task slice 与一个 holdout 窗口形成 candidate，restore 后 scheduler/candidate 保持，拓扑仍为 candidate-only。
+
+### R5C-S7：调度候选的验证闭环与 Workbench 长期 continuation（已完成）
+
+S7 将 S6 生成的 candidate 接到既有 shadow→holdout→retention→lesion→policy→admission 生命周期。Workbench 只能提供可追溯的真实执行结果和显式评估指标；不能通过单次成功、单个窗口或人工标注绕过候选验证。
+
+S7 已交付候选级 orchestrator：从 checkpoint 恢复 scheduler candidate，保存 parent/trial，要求独立验证输入和指标，调用现有 `validate_structural_candidate_shadow()` 与 `evaluate_structural_candidate_gate()`，只有 policy 通过才允许 `admit_structural_candidate()`；失败必须保留 parent、归还预算并记录可恢复拒绝。`eval_taiji_workbench_growth_continuation.py` 已验证真实 Workbench evidence、shadow、policy、atomic admission、预算精确扣减、checkpoint restore 和重复 continuation 幂等。
+
+### R5C-S8：多候选调度、冲突仲裁与长期 continuation（已完成）
+
+S8 解决 S7 仍未覆盖的真实调度问题：同一批 sealed windows 可能产生多个候选，候选可能争用同一 structural budget、作用于同一区域或具有互相冲突的 topology proposal。调度器必须先建立可恢复的 candidate batch，再按内容寻址的优先级、资源成本、证据新鲜度、跨任务收益和区域冲突进行确定性仲裁；不能依赖列表顺序、随机数或“先到先得”隐藏决策。
+
+S8 的边界：仲裁只决定哪些 candidate 进入验证队列，不直接 admission；同一 batch 中未获选候选必须记录 deferred/rejected 原因，不能丢失或自动复活。通过验证的候选仍逐个走 shadow→policy→admission，预算 reservation 必须原子隔离，任一失败不能污染其他候选。checkpoint 必须恢复 batch、排序依据、reservation、候选状态和审计 digest；重复调度必须幂等。
+
+S8 canary 需要至少三类候选：不同区域无冲突、同区域资源冲突、同一 projection 重放；覆盖确定性排序、预算隔离、deferred/rejected 恢复、单候选 admission 后的剩余批次 continuation，以及重复运行输出 digest 一致。`scripts/training/eval_taiji_structural_arbitration.py` 已报告 `gate.passed=true`。S8 只建立 reservation，不并行提交 topology，也不自动增加长期预算。
+
+### R5C-S9：多轮 continuation、跨区域容量压力与可逆回滚（已完成）
+
+S9 把 S8 的单个 batch 放进可恢复的长期闭环：每轮只处理显式提供验证输入的 selected candidate，未处理候选保持 reservation；容量压力必须以只读快照反映区域占用、候选队列、reservation 与 structural budget，不能用“规模目标”替代真实压力。admitted candidate 必须绑定 parent/child checkpoint，回滚必须恢复 parent topology、重开对应预算并留下内容寻址 audit；回滚后新的 Workbench evidence 可以让旧 deferred candidate 重新参与仲裁，但不能静默复活旧状态或覆盖历史。
+
+S9 已实现于 `taiji/structural_continuation.py` 与 `TSKV8Adapter`，并由 `scripts/training/eval_taiji_structural_continuation_recovery.py` 报告 `gate.passed=true`：首轮和恢复后的第二轮 admission、跨区域 capacity pressure、rollback、checkpoint restore、新 evidence 再仲裁和重复 rollback 幂等均通过。该 Gate 仍不代表并行 admission、无限预算或开放域质量收益。
+
+### R5C-S10：真实 Workbench 多区域证据驱动的候选批次调度（已完成）
+
+S10 的目标是清除 S8/S9 canary 中“候选由测试 harness 组装”的最后一处边界：从两个以上真实 Workbench 区域与 task slice 的成功 Outcome 生成各自的 sealed evidence window 和 pressure projection，再由运行时一次性建立 `StructuralCandidateBatch`，进入 S8 的确定性仲裁与 S9 的 continuation/rollback。候选身份必须绑定真实 request/intent/call/capability snapshot、窗口 digest、region/task-slice 和 parent checkpoint，不能由前端或 provider 直接指定结构操作。
+
+S10 必须证明：多区域真实 evidence 可产生多个互不相同且可追溯的 candidate；同区域冲突、跨区域预算不足、重复 Outcome、checkpoint restore 和新一轮 evidence 都保持确定性；Workbench 只提供事实，不绕过 shadow、holdout、retention、lesion、resource policy 或 rollback。S10 不扩展 CUDA、CI、开放域语言质量或无限结构预算。
+
+S10 已实现：`schedule_structural_candidate_batch_from_workbench_evidence()` 对多个真实 Workbench 区域分别运行 sealed-window scheduler，再把新 candidate 一次性交给 `StructuralCandidateBatch`；`StructuralWorkbenchBatchScheduleResult` 保存请求 digest、源窗口、区域、candidate、batch 和 scheduler revision。`scripts/training/eval_taiji_workbench_multi_region_batch.py` 已报告 `gate.passed=true`：6 次真实 `workspace.read` 产生两个区域的 2 train+1 holdout 窗口，两个 candidate 在同一 batch 中被确定性 reserved，checkpoint restore 与重复调度保持相同结果，topology/budget 未被仲裁改变。
+
+### R5C-S11：真实多区域 batch 的 shadow→policy→admission→rollback 全生命周期（已完成）
+
+S11 把 S10 生成的真实多区域 batch 接入完整 continuation，而不是停在 candidate-only。每个 selected candidate 必须使用与其真实 evidence/region 对齐的 holdout 输入、retention、lesion 和 resource 指标，按既有 S7/S8 contract 逐个 shadow→policy→admission；一个区域候选失败时，其他区域候选不能被污染，未处理 reservation 必须可跨 checkpoint 保持。
+
+S11 必须证明：真实多区域 batch 中两个 candidate 可以在独立验证后跨 checkpoint 逐个 admission；同区域冲突或单候选 policy rejection 只影响对应 candidate；admission 后容量压力可观察，任一 admitted candidate 可回滚到自己的 parent checkpoint 并重开预算；重复 continuation/rollback 幂等，Workbench evidence、provider 和前端都不能绕过结构 Gate。S11 不扩展 CUDA、CI、无限预算或开放域语言质量。
+
+S11 已实现：复用 `continue_structural_candidate_batch()` 将 S10 的真实多区域候选逐个走 shadow→policy→atomic admission，并在独立 checkpoint 分支中验证单候选失败隔离；`rollback_structural_candidate_batch()` 恢复对应 parent topology、重开预算并保留 rollback audit。`scripts/training/eval_taiji_workbench_multi_region_lifecycle.py` 已报告 `gate.passed=true`：第一候选先 admission，第二候选失败不污染第一候选；另一恢复路径完成第二候选 admission，随后回滚且 checkpoint restore 后重复回滚幂等。
+
+### R5C-S12：真实 Workbench replay 驱动的 validation artifact（已完成）
+
+S12 解决当前闭环仍保留的最后一个证据边界：Workbench Outcome 已真实接入，但 holdout、retention、lesion、resource 等验证指标仍由 canary 显式传入。`WorkbenchStructuralValidationArtifact` 现已把真实 Workbench replay、候选前后 checkpoint、独立 holdout 输入/输出、retention 对照、lesion 对照与资源计量绑定到同一内容寻址 artifact，再由既有 policy 读取，不让“工具成功”直接变成准入分数。
+
+S12 已证明：同一真实 Outcome replay 在 checkpoint restore 后保持相同 validation artifact digest；缺失、篡改或 holdout replay 不匹配的数据 fail-closed；artifact 只提供事实，policy 仍决定 admission；单候选失败不污染其他候选，且 artifact 与 checkpoint lineage 可审计。`api/seed_runtime.py` 已提供同一公共入口，`scripts/training/eval_taiji_workbench_validation_artifact.py` 报告 `gate.passed=true`。S12 不扩展 CUDA、CI、无限预算或开放域语言质量。
+
+### R5C-S13：多区域 batch 的 replay validation artifact continuation（已完成）
+
+S13 已将 S12 从单候选闭环推进到 S10/S11 的真实多区域 batch：每个 selected candidate 由其所属 region、task slice 和真实 Workbench Outcome 生成独立 validation artifact，再由 batch continuation 消费；调用方不再直接注入 holdout、retention、lesion、resource 指标集合。artifact 之间不能跨 region、跨 candidate 或跨 parent checkpoint 混用，单个 artifact 失败只能释放对应 reservation，不能污染其他候选。
+
+S13 已证明：多区域 batch 的 artifact 集合按 candidate/artifact digest 建立并 checkpoint；第一候选 admission 后第二候选可绑定新的 parent checkpoint；任一 artifact 缺失、篡改或错配都会 fail-closed；合法 artifact 仍逐候选经过既有 shadow→policy→atomic admission，失败分支维持 S11 的隔离，恢复后 batch/artifact digest 与重复消费幂等。`api/seed_runtime.py` 已提供公共入口，`scripts/training/eval_taiji_workbench_validation_artifact_batch.py` 报告 `gate.passed=true`。S13 不扩展 CUDA、CI、无限预算或开放域语言质量。
+
+### R5C-S14：独立 replay measurement owner（已完成）
+
+S14 解决 S12/S13 仍暴露的最后一处硬编码边界：canary 不再把 metrics 直接传入 batch continuation，artifact 构建阶段也不再由 evaluator 手工填写 holdout gain、retention regression、lesion effect 和 resource state。`StructuralValidationMeasurements` 作为 Taiji-owned、可复用的 replay measurement owner，由 baseline/candidate/lesion 的实际观测和原始容量 pressure 计算 metrics，再把计算结果和输入 digest 一起写入 artifact。
+
+S14 已证明：同一 parent checkpoint、候选 trial、目标/旧任务 replay 和资源观测产生确定性 metrics；任何缺失 baseline、错配 candidate、越界测量或跨任务混用都 fail-closed；metric producer 不改变 topology、不拥有 admission 权限，policy 仍只消费其输出；checkpoint restore 后测量和 artifact digest 一致。`scripts/training/eval_taiji_workbench_validation_measurements.py` 报告 `gate.passed=true`。S14 不扩展 CUDA、CI、无限预算或开放域语言质量。
+
+### R5C-S15：实测多区域 artifact batch（已完成）
+
+S15 已把 S14 的 measurement owner 接入 S13 多区域 artifact batch。每个 candidate 都从自己的 baseline/candidate/lesion replay 与容量快照获得 measured metrics，形成独立 artifact；batch continuation 只消费这些 artifact，不恢复任何批次级手工分数。第一候选 admission 后，第二候选从新 parent checkpoint 重新测量并继续，确保顺序性与 lineage 正确。
+
+S15 已证明：两个真实 Workbench region candidate 的 policy 分别消费自己的 measured holdout/retention/lesion/resource 指标，artifact resource digest 对应原始容量测量，增量 batch admission 完成，artifact batch checkpoint restore 与重复消费幂等。`scripts/training/eval_taiji_workbench_measured_artifact_batch.py` 报告 `gate.passed=true`。S15 不扩展 CUDA、CI、无限预算或开放域语言质量。
+
+### R5C-S16：多轮 measured evidence continuation 与 rollback（已完成）
+
+S16 将当前已验证的单轮 measured artifact batch 放入长期循环：新的真实 Workbench evidence 必须形成新的 sealed windows、measurement artifacts 和 candidate batch；后续轮次只能在上一轮 checkpoint/rollback lineage 上继续，不能复用陈旧 artifact、重复扣预算或把一次性收益当作长期稳定。
+
+S16 已证明：两轮真实 evidence→measured artifact→batch admission 可以跨 checkpoint 延续；第二轮使用新 sealed windows、新 candidate 和新 artifact digest，旧 artifact 在 parent 变化后 fail-closed；任一候选 rollback 恢复到该轮第一候选后的 parent topology、budget、artifact batch 和 reservation，其他已验证区域不受污染；多轮后的 retention/lesion/resource 指标仍由 measurement owner 计算。期间发现并修复 `StructuralGrowthScheduleState` 的全局 cooldown 饿死问题，改为按 `network_id:region_id` 保存 stream cursor，同时兼容旧 checkpoint。`scripts/training/eval_taiji_workbench_measured_multi_round.py` 报告 `gate.passed=true`。S16 不扩展 CUDA、CI、无限预算或开放域语言质量。
+
+### R5C-S17：多轮 artifact/measurement integrity 与 provenance closure（已完成）
+
+S17 收敛 S16 暴露的内容寻址边界：validation artifact 已验证 payload digest，但 measurement payload 的 `measurement_digest` 在反序列化时仍只做非空检查；此外，多轮 ledger 需要明确区分“当前轮新 evidence”与“历史 lineage evidence”，避免后续实现把可追溯历史误当成新的触发事实。
+
+S17 已证明：篡改任一 measurement metric、raw probe digest、resource digest 或 measurement format 都 fail-closed；artifact 显式绑定 measurement digest，且 artifact digest、candidate evidence、parent/trial checkpoint 和 source window lineage 可交叉验证；旧格式 artifact（无 measurement digest）仍可读取；checkpoint restore 后 integrity/provenance ledger 与 Gate 结果一致。`scripts/training/eval_taiji_workbench_integrity.py` 报告 `gate.passed=true`。S17 不扩展 CUDA、CI、无限预算或开放域语言质量。
+
+### R5C-S18：多轮 ledger compactness 与跨轮 evidence 消费审计（下一步）
+
+S18 处理多轮运行进入长期阶段后的审计边界：S16 已证明新 stream cursor 和新窗口能持续推进，S17 已证明 artifact/measurement payload 完整，但当前 pressure projection 仍会读取历史 sealed summaries，且多个 lineage ledger 依赖统一有界截断。下一步要明确“历史可追溯”与“本轮可消费”的区别，并验证在多轮压缩后仍不会重复触发、丢失 parent lineage 或让旧 artifact 重新获得准入资格。
+
+S18 必须证明：每个 evidence stream 的已消费窗口、保留窗口和 provenance summary 在容量上界内可恢复；窗口被 compact 后仍保留内容 digest、来源 task slice、partition、parent/child lineage 和消费状态；重复调度不会创建候选，跨轮旧 artifact 仍 fail-closed；compact 前后 candidate/batch/artifact/admission/rollback 的可审计摘要一致。S18 不扩展 CUDA、CI、无限预算或开放域语言质量。
 
 禁止全量从零训练作为默认迭代方式；允许基础模型版本升级时进行受控迁移，但必须保留父 lineage、旧能力回归和可逆转换。
 

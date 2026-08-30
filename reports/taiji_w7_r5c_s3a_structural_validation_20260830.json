@@ -1,0 +1,58 @@
+{
+  "format": "taiji-w7-r5c-s3a-structural-validation-v1",
+  "projection_digest": "ccbe54362b16973230e0566bc843727acf40db136c5ce5a07f315fc061367bdb",
+  "validation": {
+    "format": "taiji-structural-candidate-validation-v1",
+    "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:validation-canary:1:ccbe54362b16",
+    "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+    "status": "validated",
+    "validation_score": 1.0,
+    "parent_checkpoint_digest": "e0eed97069a4715029b2cd4826da7338ac2963ca7052ef3e6c4eefb955c5ce05",
+    "validation_checkpoint_digest": "5e052116d5fa4d4f195664d739f691b2ff864b35fa284860a7330ab206a4306b",
+    "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+    "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+    "structural_budget_before": 1,
+    "structural_budget_after": 1,
+    "evidence_ids": [
+      "validation-canary:train:task-a:1",
+      "validation-canary:train:task-b:2",
+      "validation-canary:holdout:task-a:3"
+    ],
+    "error": null
+  },
+  "failed_validation": {
+    "format": "taiji-structural-candidate-validation-v1",
+    "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:validation-canary:1:ccbe54362b16",
+    "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+    "status": "failed_closed",
+    "validation_score": 0.0,
+    "parent_checkpoint_digest": "b9c92b0569e5016f8c3d749094c53e48bdbdfff15d95e451d1832242c3797a49",
+    "validation_checkpoint_digest": "da671a0d0376cd4f91e2d5cc3dbbf9253de31d504a28fcf2872bdfb1737dad09",
+    "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+    "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+    "structural_budget_before": 1,
+    "structural_budget_after": 1,
+    "evidence_ids": [
+      "validation-canary:train:task-a:1",
+      "validation-canary:train:task-b:2",
+      "validation-canary:holdout:task-a:3"
+    ],
+    "error": "neuron add expected activity shape does not match grown region"
+  },
+  "metrics": {
+    "valid_candidate_shadowed": true,
+    "topology_digest_unchanged": true,
+    "budget_unchanged": true,
+    "parent_structure_unchanged": true,
+    "proposal_remains_pending": true,
+    "validation_roundtrip": true,
+    "rejected_malformed_holdout": true,
+    "rejected_candidate_not_pending_after_restore": true,
+    "rejection_keeps_parent_and_budget": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "candidate shadow validation must be checkpointable and topology-neutral; malformed holdout must fail closed without resurrecting a rejected candidate"
+  },
+  "boundary": "This canary validates a candidate only. It does not admit topology, spend budget, or claim retention/lesion causality before the next validation slice."
+}

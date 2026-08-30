@@ -1,0 +1,276 @@
+{
+  "format": "taiji-w7-r5c-s12-workbench-validation-artifact-v1",
+  "schedule": {
+    "format": "taiji-structural-workbench-batch-schedule-v1",
+    "status": "batch_created",
+    "trigger_tick": 6,
+    "request_digest": "5cca36044b0e3e8c27085e641ff6c127fc3614154704830a29cd80b89812c44c",
+    "region_ids": [
+      "workbench.code",
+      "workbench.docs"
+    ],
+    "candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+      "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+    ],
+    "source_window_digests": [
+      "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+      "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+      "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+      "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+      "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46",
+      "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897"
+    ],
+    "batch_id": "batch:structural:57697b77b74a5d93ad7b98557e146485",
+    "reason": "",
+    "scheduler_revision": 2
+  },
+  "capacity": {
+    "format": "taiji-structural-capacity-pressure-v1",
+    "region_id": "adaptive.memory",
+    "unit_count": 2,
+    "capacity_limit": 4,
+    "pending_candidate_count": 1,
+    "reserved_resource_cost": 1,
+    "structural_budget": 32,
+    "occupancy": 0.5,
+    "queue_pressure": 0.25,
+    "reservation_pressure": 0.25,
+    "pressure": 0.5,
+    "pressure_digest": "45d022b2294fb676945fc23f06fef739fbc6643949e8cc6b3a784f6b41020ed1"
+  },
+  "artifact": {
+    "format": "taiji-workbench-structural-validation-artifact-v1",
+    "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+    "network_id": "workbench",
+    "region_id": "adaptive.memory",
+    "task_slice_id": "workbench-validation",
+    "outcome_digests": [
+      "4014c40f547a1d4eb864e55629a4ac5d16e3dbd58a607eff54613016b6177af1",
+      "605ddd61364530af735eb373a1e4d28eedffca56bb98916c29377710183b85b2",
+      "7b949cfe2452ea6bc8a8b6bdfe7e96d12c8edd17f4478f463801e1731c3a1ae6"
+    ],
+    "parent_checkpoint_digest": "2a67003deeae0dc244f48b60c9a45cb596c2bfe4d17fd4e86239c71de8defc1c",
+    "trial_checkpoint_digest": "ad331a53f896f0b5b1ffaf6f60ddf171eaaad505d519fb724c3ef6a7e1350fd0",
+    "holdout_input_digest": "67ecc2064b01d18b76e42d42490fb616e768934712df3a0f8c1bd42828f0ffbc",
+    "holdout_output_digest": "ddaf90afad062d26fb688d8b36531d19a4bb545f15ca09f1a7c69bde459883ef",
+    "retention_baseline_digest": "50bb0eaf61b69948caef69ba638ce59a901a4208b5deca7398e14927f3c0453b",
+    "retention_candidate_digest": "efcb81db0d653de09651dcc5dc8a65ef7db2e93ebbd6f31bc7ee9223a5ddc868",
+    "lesion_baseline_digest": "c62fe769f7e4c69c1d437abb30f006bb561b1e36a686cb1dd05020aab07de9eb",
+    "lesion_candidate_digest": "fcbd5f008e5d3372359c82c0d09922bc0f8bc7ac620010911c82bc9770ba0c00",
+    "resource_measurement_digest": "e1cbe6a50de79ef3cdb2378651afdc5f9ed1673e1b059bec6b889421caa24ea2",
+    "holdout_gain": 1.0,
+    "retention_regression": 0.0,
+    "lesion_effect": 1.0,
+    "resource_state": 0.8,
+    "resource_cost": 1,
+    "evidence_ids": [
+      "workbench-structural:71e93ca074a17668e4548653e12652fe",
+      "workbench-structural:c725e94919d01af97880a43cab443adc",
+      "workbench-structural:ccc725f9609996b21b66b170cbfa37fc"
+    ],
+    "artifact_digest": "1527a2f432223edd4cfe7c2ae52d47faf0203c61e22131c6e058f33be73a4d83"
+  },
+  "mismatch": {
+    "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+    "status": "failed_closed",
+    "reason": "validation artifact holdout replay digest mismatch",
+    "validation_artifact": {
+      "format": "taiji-workbench-structural-validation-artifact-v1",
+      "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+      "network_id": "workbench",
+      "region_id": "adaptive.memory",
+      "task_slice_id": "workbench-validation",
+      "outcome_digests": [
+        "4014c40f547a1d4eb864e55629a4ac5d16e3dbd58a607eff54613016b6177af1",
+        "605ddd61364530af735eb373a1e4d28eedffca56bb98916c29377710183b85b2",
+        "7b949cfe2452ea6bc8a8b6bdfe7e96d12c8edd17f4478f463801e1731c3a1ae6"
+      ],
+      "parent_checkpoint_digest": "2a67003deeae0dc244f48b60c9a45cb596c2bfe4d17fd4e86239c71de8defc1c",
+      "trial_checkpoint_digest": "ad331a53f896f0b5b1ffaf6f60ddf171eaaad505d519fb724c3ef6a7e1350fd0",
+      "holdout_input_digest": "67ecc2064b01d18b76e42d42490fb616e768934712df3a0f8c1bd42828f0ffbc",
+      "holdout_output_digest": "ddaf90afad062d26fb688d8b36531d19a4bb545f15ca09f1a7c69bde459883ef",
+      "retention_baseline_digest": "50bb0eaf61b69948caef69ba638ce59a901a4208b5deca7398e14927f3c0453b",
+      "retention_candidate_digest": "efcb81db0d653de09651dcc5dc8a65ef7db2e93ebbd6f31bc7ee9223a5ddc868",
+      "lesion_baseline_digest": "c62fe769f7e4c69c1d437abb30f006bb561b1e36a686cb1dd05020aab07de9eb",
+      "lesion_candidate_digest": "fcbd5f008e5d3372359c82c0d09922bc0f8bc7ac620010911c82bc9770ba0c00",
+      "resource_measurement_digest": "e1cbe6a50de79ef3cdb2378651afdc5f9ed1673e1b059bec6b889421caa24ea2",
+      "holdout_gain": 1.0,
+      "retention_regression": 0.0,
+      "lesion_effect": 1.0,
+      "resource_state": 0.8,
+      "resource_cost": 1,
+      "evidence_ids": [
+        "workbench-structural:71e93ca074a17668e4548653e12652fe",
+        "workbench-structural:c725e94919d01af97880a43cab443adc",
+        "workbench-structural:ccc725f9609996b21b66b170cbfa37fc"
+      ],
+      "artifact_digest": "1527a2f432223edd4cfe7c2ae52d47faf0203c61e22131c6e058f33be73a4d83"
+    }
+  },
+  "continuation": {
+    "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+    "status": "admitted",
+    "validation_artifact": {
+      "format": "taiji-workbench-structural-validation-artifact-v1",
+      "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+      "network_id": "workbench",
+      "region_id": "adaptive.memory",
+      "task_slice_id": "workbench-validation",
+      "outcome_digests": [
+        "4014c40f547a1d4eb864e55629a4ac5d16e3dbd58a607eff54613016b6177af1",
+        "605ddd61364530af735eb373a1e4d28eedffca56bb98916c29377710183b85b2",
+        "7b949cfe2452ea6bc8a8b6bdfe7e96d12c8edd17f4478f463801e1731c3a1ae6"
+      ],
+      "parent_checkpoint_digest": "2a67003deeae0dc244f48b60c9a45cb596c2bfe4d17fd4e86239c71de8defc1c",
+      "trial_checkpoint_digest": "ad331a53f896f0b5b1ffaf6f60ddf171eaaad505d519fb724c3ef6a7e1350fd0",
+      "holdout_input_digest": "67ecc2064b01d18b76e42d42490fb616e768934712df3a0f8c1bd42828f0ffbc",
+      "holdout_output_digest": "ddaf90afad062d26fb688d8b36531d19a4bb545f15ca09f1a7c69bde459883ef",
+      "retention_baseline_digest": "50bb0eaf61b69948caef69ba638ce59a901a4208b5deca7398e14927f3c0453b",
+      "retention_candidate_digest": "efcb81db0d653de09651dcc5dc8a65ef7db2e93ebbd6f31bc7ee9223a5ddc868",
+      "lesion_baseline_digest": "c62fe769f7e4c69c1d437abb30f006bb561b1e36a686cb1dd05020aab07de9eb",
+      "lesion_candidate_digest": "fcbd5f008e5d3372359c82c0d09922bc0f8bc7ac620010911c82bc9770ba0c00",
+      "resource_measurement_digest": "e1cbe6a50de79ef3cdb2378651afdc5f9ed1673e1b059bec6b889421caa24ea2",
+      "holdout_gain": 1.0,
+      "retention_regression": 0.0,
+      "lesion_effect": 1.0,
+      "resource_state": 0.8,
+      "resource_cost": 1,
+      "evidence_ids": [
+        "workbench-structural:71e93ca074a17668e4548653e12652fe",
+        "workbench-structural:c725e94919d01af97880a43cab443adc",
+        "workbench-structural:ccc725f9609996b21b66b170cbfa37fc"
+      ],
+      "artifact_digest": "1527a2f432223edd4cfe7c2ae52d47faf0203c61e22131c6e058f33be73a4d83"
+    },
+    "continuation": {
+      "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+      "status": "admitted",
+      "validation": {
+        "format": "taiji-structural-candidate-validation-v1",
+        "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+        "proposal_id": "topology:adaptive.memory:neuron:add:m2",
+        "status": "validated",
+        "validation_score": 1.0,
+        "parent_checkpoint_digest": "2a67003deeae0dc244f48b60c9a45cb596c2bfe4d17fd4e86239c71de8defc1c",
+        "validation_checkpoint_digest": "1048210bfecff1997c1f95e86d5c585258a130dfdff4e2bc1beddb8e07893cb5",
+        "topology_before_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+        "topology_after_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+        "structural_budget_before": 32,
+        "structural_budget_after": 32,
+        "evidence_ids": [
+          "workbench-structural:71e93ca074a17668e4548653e12652fe",
+          "workbench-structural:c725e94919d01af97880a43cab443adc",
+          "workbench-structural:ccc725f9609996b21b66b170cbfa37fc"
+        ],
+        "error": null
+      },
+      "decision": {
+        "format": "taiji-structural-validation-gate-v1",
+        "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+        "passed": true,
+        "holdout_gain": 1.0,
+        "retention_regression": 0.0,
+        "lesion_effect": 1.0,
+        "resource_state": 0.8,
+        "resource_cost": 1,
+        "structural_budget": 32,
+        "minimum_holdout_gain": 0.05,
+        "maximum_retention_regression": 0.05,
+        "minimum_lesion_effect": 0.05,
+        "minimum_resource_state": 0.4,
+        "evidence_ids": [
+          "workbench-structural:71e93ca074a17668e4548653e12652fe",
+          "workbench-structural:c725e94919d01af97880a43cab443adc",
+          "workbench-structural:ccc725f9609996b21b66b170cbfa37fc"
+        ],
+        "reasons": [],
+        "decision_digest": "8d299dc725f0cc4b1c542962e7dfbc1e932f4940497f068fa3fcdc233d3e7333"
+      },
+      "admission": {
+        "format": "taiji-structural-admission-result-v1",
+        "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+        "proposal_id": "topology:adaptive.memory:neuron:add:m2",
+        "status": "admitted",
+        "decision_digest": "8d299dc725f0cc4b1c542962e7dfbc1e932f4940497f068fa3fcdc233d3e7333",
+        "parent_checkpoint_digest": "e4fd1fb1d93c4395c0d199ae76cac8729e9e71dfdad060df441364bca421fca9",
+        "child_checkpoint_digest": "8aee2f3e7118a40a4cb41671bd615569537ba50f8a6ac9b463645aa13e67ce12",
+        "topology_before_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+        "topology_after_digest": "1c9eabf30fc7ebe0ffa69a379971838925743432c13ee1c389d300f99faeecac",
+        "structural_budget_before": 32,
+        "structural_budget_after": 31,
+        "error": null
+      }
+    }
+  },
+  "repeated": {
+    "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+    "status": "already_applied",
+    "validation_artifact": {
+      "format": "taiji-workbench-structural-validation-artifact-v1",
+      "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+      "network_id": "workbench",
+      "region_id": "adaptive.memory",
+      "task_slice_id": "workbench-validation",
+      "outcome_digests": [
+        "4014c40f547a1d4eb864e55629a4ac5d16e3dbd58a607eff54613016b6177af1",
+        "605ddd61364530af735eb373a1e4d28eedffca56bb98916c29377710183b85b2",
+        "7b949cfe2452ea6bc8a8b6bdfe7e96d12c8edd17f4478f463801e1731c3a1ae6"
+      ],
+      "parent_checkpoint_digest": "2a67003deeae0dc244f48b60c9a45cb596c2bfe4d17fd4e86239c71de8defc1c",
+      "trial_checkpoint_digest": "ad331a53f896f0b5b1ffaf6f60ddf171eaaad505d519fb724c3ef6a7e1350fd0",
+      "holdout_input_digest": "67ecc2064b01d18b76e42d42490fb616e768934712df3a0f8c1bd42828f0ffbc",
+      "holdout_output_digest": "ddaf90afad062d26fb688d8b36531d19a4bb545f15ca09f1a7c69bde459883ef",
+      "retention_baseline_digest": "50bb0eaf61b69948caef69ba638ce59a901a4208b5deca7398e14927f3c0453b",
+      "retention_candidate_digest": "efcb81db0d653de09651dcc5dc8a65ef7db2e93ebbd6f31bc7ee9223a5ddc868",
+      "lesion_baseline_digest": "c62fe769f7e4c69c1d437abb30f006bb561b1e36a686cb1dd05020aab07de9eb",
+      "lesion_candidate_digest": "fcbd5f008e5d3372359c82c0d09922bc0f8bc7ac620010911c82bc9770ba0c00",
+      "resource_measurement_digest": "e1cbe6a50de79ef3cdb2378651afdc5f9ed1673e1b059bec6b889421caa24ea2",
+      "holdout_gain": 1.0,
+      "retention_regression": 0.0,
+      "lesion_effect": 1.0,
+      "resource_state": 0.8,
+      "resource_cost": 1,
+      "evidence_ids": [
+        "workbench-structural:71e93ca074a17668e4548653e12652fe",
+        "workbench-structural:c725e94919d01af97880a43cab443adc",
+        "workbench-structural:ccc725f9609996b21b66b170cbfa37fc"
+      ],
+      "artifact_digest": "1527a2f432223edd4cfe7c2ae52d47faf0203c61e22131c6e058f33be73a4d83"
+    },
+    "continuation": {
+      "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+      "status": "admitted",
+      "admission": {
+        "format": "taiji-structural-admission-result-v1",
+        "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+        "proposal_id": "topology:adaptive.memory:neuron:add:m2",
+        "status": "admitted",
+        "decision_digest": "8d299dc725f0cc4b1c542962e7dfbc1e932f4940497f068fa3fcdc233d3e7333",
+        "parent_checkpoint_digest": "e4fd1fb1d93c4395c0d199ae76cac8729e9e71dfdad060df441364bca421fca9",
+        "child_checkpoint_digest": "8aee2f3e7118a40a4cb41671bd615569537ba50f8a6ac9b463645aa13e67ce12",
+        "topology_before_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+        "topology_after_digest": "1c9eabf30fc7ebe0ffa69a379971838925743432c13ee1c389d300f99faeecac",
+        "structural_budget_before": 32,
+        "structural_budget_after": 31,
+        "error": null
+      }
+    }
+  },
+  "metrics": {
+    "real_workbench_outcomes_are_bound": true,
+    "artifact_digest_is_content_addressed": true,
+    "artifact_binds_parent_and_trial_checkpoint": true,
+    "holdout_replay_digest_matches": true,
+    "replay_mismatch_fails_closed_without_admission": true,
+    "artifact_drives_existing_policy_lifecycle": true,
+    "artifact_survives_checkpoint_restore": true,
+    "repeated_artifact_continuation_is_idempotent": true,
+    "tampered_artifact_is_rejected": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "real Workbench replay facts must be content-addressed, checkpoint-bound, replay-verifiable, and consumed by the existing validation policy"
+  },
+  "boundary": "This canary does not infer metrics from provider success, bypass policy, parallelize topology commits, expand budget, or make CUDA/CI claims."
+}

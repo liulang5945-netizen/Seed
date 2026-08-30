@@ -13,7 +13,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import Any
 
-from .structural_growth import StructuralRuntimeObservation
+from .structural_growth import STRUCTURAL_EVIDENCE_PARTITIONS, StructuralRuntimeObservation
 
 STRUCTURAL_EVIDENCE_WINDOW_CHECKPOINT_FORMAT = "taiji-structural-evidence-window-v1"
 STRUCTURAL_EVIDENCE_LEDGER_CHECKPOINT_FORMAT = "taiji-structural-evidence-ledger-v1"
@@ -43,6 +43,8 @@ class StructuralEvidenceWindowSummary:
     window_id: str
     network_id: str
     region_id: str
+    task_slice_ids: tuple[str, ...]
+    partition_counts: tuple[tuple[str, int], ...]
     first_tick: int
     last_tick: int
     observation_count: int
@@ -74,18 +76,35 @@ class StructuralEvidenceWindowSummary:
             value = float(getattr(self, name))
             if not 0.0 <= value <= 1.0:
                 raise ValueError(f"structural evidence {name} must be in [0, 1]")
-        if self.mean_prediction_error is not None and not 0.0 <= float(
-            self.mean_prediction_error
-        ) <= 1.0:
+        if (
+            self.mean_prediction_error is not None
+            and not 0.0 <= float(self.mean_prediction_error) <= 1.0
+        ):
             raise ValueError("structural evidence mean_prediction_error must be in [0, 1]")
         ids = tuple(str(item) for item in self.evidence_ids)
         if len(ids) != int(self.observation_count) or len(set(ids)) != len(ids):
             raise ValueError("structural evidence ids must match unique observation count")
         if any(not item for item in ids):
             raise ValueError("structural evidence ids must not be empty")
+        task_slice_ids = tuple(str(item) for item in self.task_slice_ids)
+        if len(set(task_slice_ids)) != len(task_slice_ids) or any(
+            not item for item in task_slice_ids
+        ):
+            raise ValueError("structural evidence task_slice_ids must be unique and non-empty")
+        partition_counts = tuple((str(partition), int(count)) for partition, count in self.partition_counts)
+        if any(partition not in STRUCTURAL_EVIDENCE_PARTITIONS for partition, _ in partition_counts):
+            raise ValueError("structural evidence partition is not supported")
+        if any(count <= 0 for _, count in partition_counts):
+            raise ValueError("structural evidence partition counts must be positive")
+        if sum(count for _, count in partition_counts) != int(self.observation_count):
+            raise ValueError("structural evidence partition counts must match observations")
+        if len({partition for partition, _ in partition_counts}) != len(partition_counts):
+            raise ValueError("structural evidence partitions must be unique")
         object.__setattr__(self, "window_id", str(self.window_id))
         object.__setattr__(self, "network_id", str(self.network_id))
         object.__setattr__(self, "region_id", str(self.region_id))
+        object.__setattr__(self, "task_slice_ids", task_slice_ids)
+        object.__setattr__(self, "partition_counts", partition_counts)
         object.__setattr__(self, "first_tick", int(self.first_tick))
         object.__setattr__(self, "last_tick", int(self.last_tick))
         object.__setattr__(self, "observation_count", int(self.observation_count))
@@ -115,6 +134,10 @@ class StructuralEvidenceWindowSummary:
             "window_id": self.window_id,
             "network_id": self.network_id,
             "region_id": self.region_id,
+            "task_slice_ids": list(self.task_slice_ids),
+            "partition_counts": {
+                partition: count for partition, count in self.partition_counts
+            },
             "first_tick": self.first_tick,
             "last_tick": self.last_tick,
             "observation_count": self.observation_count,
@@ -143,6 +166,11 @@ class StructuralEvidenceWindowSummary:
             window_id=str(payload["window_id"]),
             network_id=str(payload["network_id"]),
             region_id=str(payload["region_id"]),
+            task_slice_ids=tuple(str(item) for item in payload.get("task_slice_ids", ())),
+            partition_counts=tuple(
+                (str(partition), int(count))
+                for partition, count in dict(payload.get("partition_counts", {})).items()
+            ),
             first_tick=int(payload["first_tick"]),
             last_tick=int(payload["last_tick"]),
             observation_count=int(payload["observation_count"]),
@@ -169,6 +197,8 @@ class StructuralEvidenceWindow:
     network_id: str
     region_id: str
     capacity: int
+    task_slice_id: str = ""
+    partition: str = "runtime"
     sealed: bool = False
     _observations: list[StructuralRuntimeObservation] = field(
         default_factory=list,
@@ -185,6 +215,10 @@ class StructuralEvidenceWindow:
         self.network_id = str(self.network_id)
         self.region_id = str(self.region_id)
         self.capacity = int(self.capacity)
+        self.task_slice_id = str(self.task_slice_id)
+        self.partition = str(self.partition)
+        if self.partition not in STRUCTURAL_EVIDENCE_PARTITIONS:
+            raise ValueError("unsupported structural evidence window partition")
         self.sealed = bool(self.sealed)
         self._validate_observations()
         if self.sealed and not self._observations:
@@ -206,6 +240,11 @@ class StructuralEvidenceWindow:
                 raise TypeError("structural evidence window accepts runtime observations")
             if observation.network_id != self.network_id or observation.region_id != self.region_id:
                 raise ValueError("structural evidence observation substrate mismatch")
+            if (
+                observation.task_slice_id != self.task_slice_id
+                or observation.partition != self.partition
+            ):
+                raise ValueError("structural evidence observation context mismatch")
             if observation.tick <= previous_tick:
                 raise ValueError("structural evidence observation ticks must increase")
             if observation.evidence_id in seen_ids:
@@ -222,6 +261,11 @@ class StructuralEvidenceWindow:
             raise TypeError("structural evidence window accepts runtime observations")
         if observation.network_id != self.network_id or observation.region_id != self.region_id:
             raise ValueError("structural evidence observation substrate mismatch")
+        if (
+            observation.task_slice_id != self.task_slice_id
+            or observation.partition != self.partition
+        ):
+            raise ValueError("structural evidence observation context mismatch")
         for existing in self._observations:
             if existing.evidence_id == observation.evidence_id:
                 if existing.to_payload() == observation.to_payload():
@@ -254,19 +298,28 @@ class StructuralEvidenceWindow:
             for item in observations
             if item.prediction_error is not None
         ]
+        task_slice_ids = tuple(
+            dict.fromkeys(item.task_slice_id for item in observations if item.task_slice_id)
+        )
+        partition_counts = tuple(
+            (partition, sum(item.partition == partition for item in observations))
+            for partition in sorted({item.partition for item in observations})
+        )
         payload = {
             "format": STRUCTURAL_EVIDENCE_WINDOW_CHECKPOINT_FORMAT,
             "window_id": self.window_id,
             "network_id": self.network_id,
             "region_id": self.region_id,
+            "task_slice_ids": list(task_slice_ids),
+            "partition_counts": {
+                partition: count for partition, count in partition_counts
+            },
             "first_tick": observations[0].tick,
             "last_tick": observations[-1].tick,
             "observation_count": len(observations),
             "prediction_observation_count": len(prediction_errors),
             "mean_usage": _mean([item.usage for item in observations]),
-            "mean_resource_pressure": _mean(
-                [item.resource_pressure for item in observations]
-            ),
+            "mean_resource_pressure": _mean([item.resource_pressure for item in observations]),
             "mean_prediction_error": _mean(prediction_errors),
             "mean_learning_gain": _mean([item.learning_gain for item in observations]),
             "mean_holdout_transfer": _mean([item.holdout_transfer for item in observations]),
@@ -277,6 +330,8 @@ class StructuralEvidenceWindow:
             window_id=self.window_id,
             network_id=self.network_id,
             region_id=self.region_id,
+            task_slice_ids=task_slice_ids,
+            partition_counts=partition_counts,
             first_tick=observations[0].tick,
             last_tick=observations[-1].tick,
             observation_count=len(observations),
@@ -300,6 +355,8 @@ class StructuralEvidenceWindow:
             "window_id": self.window_id,
             "network_id": self.network_id,
             "region_id": self.region_id,
+            "task_slice_id": self.task_slice_id,
+            "partition": self.partition,
             "capacity": self.capacity,
             "sealed": self.sealed,
             "observations": [item.to_payload() for item in self._observations],
@@ -324,6 +381,8 @@ class StructuralEvidenceWindow:
             network_id=str(payload["network_id"]),
             region_id=str(payload["region_id"]),
             capacity=int(payload["capacity"]),
+            task_slice_id=str(payload.get("task_slice_id", "")),
+            partition=str(payload.get("partition", "runtime")),
             sealed=bool(payload.get("sealed", False)),
             _observations=observations,
         )
@@ -376,23 +435,33 @@ class StructuralEvidenceLedger:
         self._validate_state()
 
     @staticmethod
-    def _substrate_key(network_id: str, region_id: str) -> str:
-        return f"{network_id}\x00{region_id}"
+    def _substrate_key(
+        network_id: str,
+        region_id: str,
+        task_slice_id: str = "",
+        partition: str = "runtime",
+    ) -> str:
+        return f"{network_id}\x00{region_id}\x00{task_slice_id}\x00{partition}"
 
     def _window_for(self, observation: StructuralRuntimeObservation) -> StructuralEvidenceWindow:
-        key = self._substrate_key(observation.network_id, observation.region_id)
+        key = self._substrate_key(
+            observation.network_id,
+            observation.region_id,
+            observation.task_slice_id,
+            observation.partition,
+        )
         window = self._open_windows.get(key)
         if window is not None:
             return window
         ordinal = int(self._next_ordinals.get(key, 0)) + 1
         self._next_ordinals[key] = ordinal
         window = StructuralEvidenceWindow(
-            window_id=(
-                f"window:{observation.network_id}:{observation.region_id}:{ordinal}"
-            ),
+            window_id=(f"window:{observation.network_id}:{observation.region_id}:{ordinal}"),
             network_id=observation.network_id,
             region_id=observation.region_id,
             capacity=self.window_capacity,
+            task_slice_id=observation.task_slice_id,
+            partition=observation.partition,
         )
         self._open_windows[key] = window
         return window
@@ -404,7 +473,12 @@ class StructuralEvidenceLedger:
         existing_digest = self._evidence_index.get(observation.evidence_id)
         if existing_digest is not None:
             if existing_digest == observation_digest:
-                key = self._substrate_key(observation.network_id, observation.region_id)
+                key = self._substrate_key(
+                    observation.network_id,
+                    observation.region_id,
+                    observation.task_slice_id,
+                    observation.partition,
+                )
                 window = self._open_windows.get(key)
                 window_id = window.window_id if window is not None else "sealed-history"
                 return StructuralEvidenceAppendResult(
@@ -427,7 +501,12 @@ class StructuralEvidenceLedger:
                 window_id=window.window_id,
             )
         summary = window.seal()
-        key = self._substrate_key(observation.network_id, observation.region_id)
+        key = self._substrate_key(
+            observation.network_id,
+            observation.region_id,
+            observation.task_slice_id,
+            observation.partition,
+        )
         self._sealed_windows.append(summary)
         del self._open_windows[key]
         return StructuralEvidenceAppendResult(
@@ -437,8 +516,20 @@ class StructuralEvidenceLedger:
             sealed_window_digest=summary.window_digest,
         )
 
-    def seal(self, network_id: str, region_id: str) -> StructuralEvidenceWindowSummary | None:
-        key = self._substrate_key(str(network_id), str(region_id))
+    def seal(
+        self,
+        network_id: str,
+        region_id: str,
+        *,
+        task_slice_id: str = "",
+        partition: str = "runtime",
+    ) -> StructuralEvidenceWindowSummary | None:
+        key = self._substrate_key(
+            str(network_id),
+            str(region_id),
+            str(task_slice_id),
+            str(partition),
+        )
         window = self._open_windows.get(key)
         if window is None:
             return None
@@ -543,7 +634,12 @@ class StructuralEvidenceLedger:
             raise ValueError("structural evidence open window entry must be a mapping")
         open_windows: dict[str, StructuralEvidenceWindow] = {}
         for window in windows:
-            key = cls._substrate_key(window.network_id, window.region_id)
+            key = cls._substrate_key(
+                window.network_id,
+                window.region_id,
+                window.task_slice_id,
+                window.partition,
+            )
             if key in open_windows:
                 raise ValueError("multiple open structural evidence windows share a substrate")
             open_windows[key] = window
