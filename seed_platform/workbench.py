@@ -26,6 +26,7 @@ from typing import Any
 
 from taiji.environment import EnvironmentOutcome
 
+from .capability_registry import CapabilityRegistry
 from .mcp_registry import McpToolRegistry
 from .paths import get_external_path
 from .programming_languages import (
@@ -511,6 +512,7 @@ class WorkbenchActionRequest:
     version: int = WORKBENCH_CONTRACT_VERSION
     approval_token: str = ""
     mcp_registry_snapshot_id: str = ""
+    capability_registry_snapshot_id: str = ""
 
     def __post_init__(self) -> None:
         if self.version != WORKBENCH_CONTRACT_VERSION:
@@ -539,6 +541,7 @@ class WorkbenchActionRequest:
         request_id: str | None = None,
         approval_token: str = "",
         mcp_registry_snapshot_id: str = "",
+        capability_registry_snapshot_id: str = "",
     ) -> WorkbenchActionRequest:
         """Bind a Taiji-owned intent to the current Seed capability snapshot."""
 
@@ -554,6 +557,7 @@ class WorkbenchActionRequest:
             tick=int(getattr(intent, "tick", 0)),
             approval_token=str(approval_token or ""),
             mcp_registry_snapshot_id=str(mcp_registry_snapshot_id or ""),
+            capability_registry_snapshot_id=str(capability_registry_snapshot_id or ""),
         )
 
     def binding_payload(self) -> dict[str, str | int]:
@@ -563,6 +567,7 @@ class WorkbenchActionRequest:
             "version": self.version,
             "capability_snapshot_id": self.snapshot_id,
             "mcp_registry_snapshot_id": self.mcp_registry_snapshot_id,
+            "capability_registry_snapshot_id": self.capability_registry_snapshot_id,
         }
 
     def to_payload(self) -> dict[str, Any]:
@@ -578,6 +583,7 @@ class WorkbenchActionRequest:
             "source": self.source,
             "approval_granted": bool(self.approval_token),
             "mcp_registry_snapshot_id": self.mcp_registry_snapshot_id,
+            "capability_registry_snapshot_id": self.capability_registry_snapshot_id,
         }
 
 
@@ -1052,6 +1058,7 @@ class WorkbenchEnvironment:
         snapshot: CapabilitySnapshot | None = None,
         programming_language_registry: ProgrammingLanguageRegistry | None = None,
         mcp_registry: McpToolRegistry | None = None,
+        capability_registry: CapabilityRegistry | None = None,
     ) -> None:
         self.root = Path(root or default_workspace_root()).resolve()
         self.snapshot = snapshot or CapabilitySnapshot.default()
@@ -1059,6 +1066,30 @@ class WorkbenchEnvironment:
             programming_language_registry or ProgrammingLanguageRegistry.default()
         )
         self.mcp_registry = mcp_registry or McpToolRegistry.default()
+        self.capability_registry = (
+            capability_registry
+            or CapabilityRegistry.from_workbench_descriptors(
+                self.snapshot.capabilities,
+                parent_checkpoint_id=f"checkpoint:workbench:{self.snapshot.snapshot_id}",
+            )
+        )
+        self._capability_executors = {
+            "workspace.list": self._list_workspace,
+            "workspace.read": self._read_workspace,
+            "workspace.stat": self._stat_workspace,
+            "workspace.search": self._search_workspace,
+            "editor.open": self._open_editor,
+            "workspace.programming_language.resolve": self._resolve_programming_language,
+            "editor.set_language": self._set_editor_language,
+            "workspace.apply_patch": self._apply_patch,
+            "workspace.create": self._create_file,
+            "workspace.rename": self._rename_file,
+            "workspace.delete": self._delete_file,
+            "workspace.undo": self._undo_transaction,
+            "terminal.run": self._run_terminal,
+            "mcp.list": self._mcp_list,
+            "mcp.invoke": self._mcp_invoke,
+        }
         self._language_selections: dict[str, ProgrammingLanguageAssessment] = {}
         self._undo_records: dict[str, dict[str, Any]] = {}
         self._approval_records: dict[str, dict[str, Any]] = {}
@@ -1100,6 +1131,8 @@ class WorkbenchEnvironment:
             "undoable_transactions": len(self._undo_records),
             "pending_approvals": len(self._approval_records),
             "mcp_registry": self.mcp_registry.to_payload(),
+            "capability_registry_snapshot_id": self.capability_registry.snapshot_id,
+            "capability_registry_revision": self.capability_registry.snapshot.revision,
         }
 
     def preflight_loop(
@@ -1350,6 +1383,17 @@ class WorkbenchEnvironment:
                 "stale_capability_snapshot",
                 self.snapshot.snapshot_id,
             )
+        if request.capability_registry_snapshot_id not in (
+            "",
+            self.capability_registry.snapshot_id,
+        ):
+            return ExecutionPolicyDecision(
+                request.request_id,
+                request.capability_id,
+                "deny",
+                "stale_capability_registry",
+                self.snapshot.snapshot_id,
+            )
         descriptor = self.snapshot.get(request.capability_id)
         if descriptor is None:
             return ExecutionPolicyDecision(
@@ -1367,9 +1411,19 @@ class WorkbenchEnvironment:
                 "capability_not_connected",
                 self.snapshot.snapshot_id,
             )
+        try:
+            registered = self.capability_registry.resolve(request.capability_id)
+        except PermissionError:
+            return ExecutionPolicyDecision(
+                request.request_id,
+                request.capability_id,
+                "deny",
+                "capability_not_connected",
+                self.snapshot.snapshot_id,
+            )
         if request.capability_id in {"mcp.list", "mcp.invoke"}:
             return self._mcp_policy_for(request)
-        if descriptor.risk not in {"read_only", "reversible_ui"}:
+        if registered.risk not in {"read_only", "reversible_ui"}:
             if request.approval_token:
                 if self._approval_is_valid(request):
                     return ExecutionPolicyDecision(
@@ -1610,8 +1664,7 @@ class WorkbenchEnvironment:
             self.snapshot.snapshot_id,
         )
 
-    @staticmethod
-    def _approval_request_digest(request: WorkbenchActionRequest) -> str:
+    def _approval_request_digest(self, request: WorkbenchActionRequest) -> str:
         return _canonical_digest(
             {
                 "request_id": request.request_id,
@@ -1623,6 +1676,9 @@ class WorkbenchEnvironment:
                 "tick": request.tick,
                 "source": request.source,
                 "mcp_registry_snapshot_id": request.mcp_registry_snapshot_id,
+                "capability_registry_snapshot_id": (
+                    request.capability_registry_snapshot_id or self.capability_registry.snapshot_id
+                ),
             }
         )
 
@@ -1791,44 +1847,32 @@ class WorkbenchEnvironment:
         self,
         tool_name: str,
         parameters: Mapping[str, Any],
+        *,
+        capability_registry_snapshot_id: str = "",
     ) -> EnvironmentOutcome:
         """Execute one registered capability after the policy boundary admits it."""
 
         with self._lock:
             self._last_result = {}
         try:
-            if tool_name == "workspace.list":
-                result = self._list_workspace(parameters)
-            elif tool_name == "workspace.read":
-                result = self._read_workspace(parameters)
-            elif tool_name == "workspace.stat":
-                result = self._stat_workspace(parameters)
-            elif tool_name == "workspace.search":
-                result = self._search_workspace(parameters)
-            elif tool_name == "editor.open":
-                result = self._open_editor(parameters)
-            elif tool_name == "workspace.programming_language.resolve":
-                result = self._resolve_programming_language(parameters)
-            elif tool_name == "editor.set_language":
-                result = self._set_editor_language(parameters)
-            elif tool_name == "workspace.apply_patch":
-                result = self._apply_patch(parameters)
-            elif tool_name == "workspace.create":
-                result = self._create_file(parameters)
-            elif tool_name == "workspace.rename":
-                result = self._rename_file(parameters)
-            elif tool_name == "workspace.delete":
-                result = self._delete_file(parameters)
-            elif tool_name == "workspace.undo":
-                result = self._undo_transaction(parameters)
-            elif tool_name == "terminal.run":
-                result = self._run_terminal(parameters)
-            elif tool_name == "mcp.list":
-                result = self._mcp_list(parameters)
-            elif tool_name == "mcp.invoke":
-                result = self._mcp_invoke(parameters)
-            else:
-                return self._failure("unknown_capability", "capability is not registered")
+            registered = self.capability_registry.resolve(
+                tool_name,
+                snapshot_id=capability_registry_snapshot_id or None,
+            )
+        except ValueError as exc:
+            code = (
+                "stale_capability_registry"
+                if capability_registry_snapshot_id
+                else "stale_capability_snapshot"
+            )
+            return self._failure(code, str(exc))
+        except PermissionError:
+            return self._failure("unknown_capability", "capability is not registered")
+        executor = self._capability_executors.get(registered.executor_id)
+        if executor is None:
+            return self._failure("unknown_capability", "capability executor is not connected")
+        try:
+            result = executor(parameters)
         except WorkbenchPathError as exc:
             return self._failure("unsafe_path", str(exc))
         except WorkbenchConflictError as exc:

@@ -67,7 +67,7 @@
     "existing_hooks": ["StructuralGrowthRequest", "AdaptiveStructuralGrowthController", "runtime topology ledger", "adaptive neuron/region growth", "concept trace capacity"],
     "new_test_entry": "tests/taiji_native/test_open_domain_growth_gate.py",
     "new_eval_entry": "scripts/training/eval_taiji_open_domain_growth.py",
-    "status": "not_started"
+    "status": "s0_long_horizon_evidence_window"
   },
   "boundary": [
     "Self-evolution must be evidence-triggered, resource-bounded, and reversible.",

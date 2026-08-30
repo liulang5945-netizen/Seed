@@ -1,0 +1,97 @@
+{
+  "format": "taiji-w7-r5b-l2-capability-shadow-v1",
+  "read_only_shadow": {
+    "passed": true,
+    "decision": "allow",
+    "reason_code": "shadow_equivalent",
+    "observation_digest": "9157593268d2fe29194410bd9cc7b008ef6c8bbb7ee3a3a980e3540afbe7ace1",
+    "capability_id": "workspace.read",
+    "approval_required": false,
+    "output_equal": true,
+    "after_state_equal": true,
+    "resource_delta": {
+      "cpu_ms": 1.0,
+      "output_bytes": 2.0
+    }
+  },
+  "side_effect_shadow": {
+    "without_approval": {
+      "passed": false,
+      "decision": "deny",
+      "reason_code": "approval_required",
+      "observation_digest": "da081dacaf5cf94ff9b2ab28c09615406421364dd99a33ec02653f1039e96de9",
+      "capability_id": "workspace.apply_patch",
+      "approval_required": true,
+      "output_equal": true,
+      "after_state_equal": true,
+      "resource_delta": {
+        "cpu_ms": 1.0,
+        "output_bytes": 2.0
+      }
+    },
+    "with_approval": {
+      "passed": true,
+      "decision": "allow",
+      "reason_code": "shadow_equivalent",
+      "observation_digest": "f172deeb286c89c10366bae8c9c93570866aa2f4a343f56fe1ea233d262519b3",
+      "capability_id": "workspace.apply_patch",
+      "approval_required": true,
+      "output_equal": true,
+      "after_state_equal": true,
+      "resource_delta": {
+        "cpu_ms": 1.0,
+        "output_bytes": 2.0
+      }
+    }
+  },
+  "red_proofs": {
+    "policy_denied": {
+      "passed": false,
+      "decision": "deny",
+      "reason_code": "policy_denied",
+      "observation_digest": "13b5ecb29f911b8866c5b4fbb47203d4fb06b0abf1f9a0ec5a96c7c531de33e5",
+      "capability_id": "workspace.read",
+      "approval_required": false,
+      "output_equal": true,
+      "after_state_equal": true,
+      "resource_delta": {
+        "cpu_ms": 1.0,
+        "output_bytes": 2.0
+      }
+    },
+    "stale_registry": {
+      "passed": false,
+      "decision": "deny",
+      "reason_code": "stale_capability_registry",
+      "observation_digest": "42ee5dc0ca941ed36587a2e5c093dbe01814924b5d936b06d47233fcd805dbe4",
+      "capability_id": "workspace.read",
+      "approval_required": false,
+      "output_equal": true,
+      "after_state_equal": true,
+      "resource_delta": {
+        "cpu_ms": 1.0,
+        "output_bytes": 2.0
+      }
+    },
+    "side_effect_detected": {
+      "passed": false,
+      "decision": "deny",
+      "reason_code": "shadow_side_effect_detected",
+      "observation_digest": "c282fa4446e886b402681b0e888f25069fb921c2a4ad45ceb1272f2927663636",
+      "capability_id": "workspace.read",
+      "approval_required": false,
+      "output_equal": true,
+      "after_state_equal": true,
+      "resource_delta": {
+        "cpu_ms": 1.0,
+        "output_bytes": 2.0
+      }
+    }
+  },
+  "observation_roundtrip": true,
+  "gate": {
+    "passed": true,
+    "criterion": "shadow observations are digest-bound, after-state safe, policy-aware, and approval-aware without executing side effects"
+  },
+  "boundary": "R5B-L2 shadow comparison only; no executor source evaluation, cognition ownership, training, CUDA, or physical deletion"
+}

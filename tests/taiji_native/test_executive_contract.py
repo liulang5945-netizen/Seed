@@ -20,6 +20,7 @@ from taiji import (
     TSKV8Adapter,
     WorldAffordance,
     WorldAffordanceGroundingProducer,
+    WorldEvent,
     WorldObject,
     WorldState,
 )
@@ -619,6 +620,31 @@ def test_world_grounding_lineage_tracks_unseen_object_relation_binding() -> None
     assert "relation:agent:supports:token" in perturbed_grounded.grounding_lineage
     assert not torch.equal(grounded.features, perturbed_grounded.features)
     assert torch.equal(grounded.features, alternate_action.features)
+
+
+def test_world_grounding_uses_current_numeric_event_evidence_without_identifier_lookup() -> None:
+    producer = WorldAffordanceGroundingProducer(grounding_dim=17)
+    affordance = WorldAffordance(
+        affordance_id="workbench-successor",
+        action_kind="unseen-action-kind",
+    )
+
+    def state(size: int) -> WorldState:
+        event = WorldEvent(
+            event_id=f"observed-event:{size}",
+            kind="observed-environment",
+            tick=4,
+            attributes=(("result", {"entries": [{"size": size}]}),),
+            provenance="observed",
+        )
+        return WorldState(tick=4, latent=torch.zeros(2), events=(event,))
+
+    small = producer.ground(state(2), affordance)
+    large = producer.ground(state(20), affordance)
+
+    assert "world-event:observed-event:2" in small.grounding_lineage
+    assert "world-event:observed-event:20" in large.grounding_lineage
+    assert not torch.equal(small.features, large.features)
 
 
 def test_end_to_end_grounding_to_executive_transfers_object_relation_binding() -> None:

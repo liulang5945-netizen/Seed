@@ -157,6 +157,19 @@ from .internalization_learner import (
     InternalizationLearningReport,
     InternalizedFeatureLearner,
 )
+from .internalization_longitudinal import (
+    INTERNALIZATION_LONGITUDINAL_CHECKPOINT_FORMAT,
+    INTERNALIZATION_STABILITY_CHECKPOINT_FORMAT,
+    ExternalDescriptionArtifact,
+    ExternalDescriptionTombstoneCandidate,
+    GroundedSelectionTask,
+    IndependentDeletionReview,
+    InternalizationLongitudinalGate,
+    InternalizationLongitudinalReport,
+    InternalizationStabilityGate,
+    InternalizationStabilityReport,
+    InternalizationStabilityTrial,
+)
 from .language_organ import (
     LANGUAGE_BACKEND_REGISTRY_FORMAT,
     LANGUAGE_BACKEND_SPEC_FORMAT,
@@ -280,6 +293,14 @@ from .structural_growth import (
     StructuralPruningDynamics,
     StructuralPruningRegionState,
     StructuralRuntimeObservation,
+)
+from .structural_evidence import (
+    STRUCTURAL_EVIDENCE_LEDGER_CHECKPOINT_FORMAT,
+    STRUCTURAL_EVIDENCE_WINDOW_CHECKPOINT_FORMAT,
+    StructuralEvidenceAppendResult,
+    StructuralEvidenceLedger,
+    StructuralEvidenceWindow,
+    StructuralEvidenceWindowSummary,
 )
 from .workspace import (
     WorkspaceCollaborationEvaluator,
@@ -425,6 +446,17 @@ __all__ = [
     "INTERNALIZATION_LEARNER_CHECKPOINT_FORMAT",
     "InternalizationLearningReport",
     "InternalizedFeatureLearner",
+    "INTERNALIZATION_LONGITUDINAL_CHECKPOINT_FORMAT",
+    "INTERNALIZATION_STABILITY_CHECKPOINT_FORMAT",
+    "ExternalDescriptionArtifact",
+    "ExternalDescriptionTombstoneCandidate",
+    "GroundedSelectionTask",
+    "IndependentDeletionReview",
+    "InternalizationLongitudinalGate",
+    "InternalizationLongitudinalReport",
+    "InternalizationStabilityGate",
+    "InternalizationStabilityReport",
+    "InternalizationStabilityTrial",
     "MemoryRecall",
     "MemoryState",
     "NativeCheckpoint",

@@ -1,0 +1,18 @@
+{
+  "format": "taiji-w7-r5c-s0-long-horizon-evidence-v1",
+  "metrics": {
+    "accepted_first": true,
+    "duplicate_idempotent": true,
+    "conflicting_reuse_rejected": true,
+    "window_sealed_at_capacity": true,
+    "summary_observation_count": 2,
+    "summary_digest_bound": true,
+    "checkpoint_roundtrip": true,
+    "capacity_failure_atomic": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "long-horizon structural evidence must be bounded, content-addressed, deduplicated, monotonic, checkpointable, and atomic on capacity failure; the window must not itself mutate topology"
+  },
+  "boundary": "This canary proves evidence capture and window integrity only. It does not trigger growth, admit a structural candidate, or claim open-domain autonomy."
+}

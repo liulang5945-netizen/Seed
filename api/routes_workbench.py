@@ -78,11 +78,16 @@ def _read_only_result(tool_name: str, parameters: dict[str, Any]) -> dict[str, A
         mcp_registry_snapshot_id=(
             environment.mcp_registry.snapshot_id if tool_name in {"mcp.list", "mcp.invoke"} else ""
         ),
+        capability_registry_snapshot_id=environment.capability_registry.snapshot_id,
     )
     policy = environment.policy_for(request)
     if policy.decision != "allow":
         raise HTTPException(status_code=409, detail=policy.to_payload())
-    result = environment.execute_tool(tool_name, parameters)
+    result = environment.execute_tool(
+        tool_name,
+        parameters,
+        capability_registry_snapshot_id=request.capability_registry_snapshot_id,
+    )
     payload = environment.last_result
     if not result.success:
         raise HTTPException(status_code=400, detail=payload)
@@ -101,6 +106,8 @@ def workbench_capabilities() -> dict[str, Any]:
         environment.programming_language_registry.revision
     )
     payload["mcp_registry"] = environment.mcp_registry.to_payload()
+    payload["capability_registry_snapshot_id"] = environment.capability_registry.snapshot_id
+    payload["capability_registry_revision"] = environment.capability_registry.snapshot.revision
     return payload
 
 

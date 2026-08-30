@@ -166,7 +166,7 @@
     ],
     "new_test_entry": "tests/taiji_native/test_internalization_contract.py",
     "new_eval_entry": "scripts/training/eval_taiji_internalization.py",
-    "status": "s2_projection_implemented",
+    "status": "s2_stability_gate_implemented",
     "s0_artifact": "taiji/internalization.py",
     "s0_test": "tests/taiji_native/test_internalization_contract.py",
     "s0_scope": "pure DTO conversion, content addressing, train-only deduplicated replay, lifecycle and checkpoint roundtrip",
@@ -176,7 +176,11 @@
     "s1_scope": "atomic native consolidation trial, parent/child checkpoint lineage, read-only holdout/retention evaluation, and internalized/grounding lesions",
     "s2_projection": "api/seed_runtime.py projects only current, verified read-only Workbench evidence plus its re-projected grounded successor affordance into GroundedOutcomeEvidence; runtime cannot write replay, train, or advance lifecycle status.",
     "s2_test": "tests/test_workbench_contract.py::test_runtime_projects_current_workbench_evidence_to_grounded_internalization_input",
-    "next_stage": "S2-B real Workbench longitudinal holdout, lesions, checkpoint recovery, and deletion-candidate Gate"
+    "s2_longitudinal_gate": "taiji/internalization_longitudinal.py evaluates real Workbench-grounded train/holdout selection, train-only preference updates, internalized and grounding lesions, retention, checkpoint restore, and deletion-candidate-only boundary.",
+    "s2_longitudinal_test": "tests/test_workbench_contract.py::test_real_workbench_outcomes_pass_longitudinal_internalization_deletion_candidate_gate",
+    "s2_stability_gate": "taiji/internalization_longitudinal.py aggregates independent seeded/task-sliced longitudinal reports, enforces minimum gain/lesion/retention/spread thresholds, records bounded resource counters, and runs an independent read-only deletion review with no filesystem or executor authority.",
+    "s2_stability_test": "tests/test_workbench_contract.py::test_real_workbench_outcomes_pass_longitudinal_internalization_deletion_candidate_gate plus tests/taiji_native/test_internalization_s1.py stability red/green contracts",
+    "next_stage": "S2-C execute the real two-seed/task-slice canary and retain the independent review evidence"
   },
   "boundary": [
     "Knowledge descriptions, feature traces, and replay examples may become removable only through an explicit, recoverable lifecycle.",
