@@ -10,7 +10,6 @@ from taiji import (
     GroundedOutcomeEvidence,
     InternalizationCausalGate,
     InternalizationConverter,
-    InternalizationInput,
     InternalizationLedger,
     Outcome,
     WorldAffordance,

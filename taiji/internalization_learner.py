@@ -22,7 +22,9 @@ from .internalization import GroundedFeatureExample, content_digest
 INTERNALIZATION_LEARNER_CHECKPOINT_FORMAT = "taiji-internalization-learner-v1"
 
 
-def _examples(value: Iterable[GroundedFeatureExample], name: str) -> tuple[GroundedFeatureExample, ...]:
+def _examples(
+    value: Iterable[GroundedFeatureExample], name: str
+) -> tuple[GroundedFeatureExample, ...]:
     items = tuple(value)
     if not items:
         raise ValueError(f"{name} must contain at least one grounded example")
@@ -140,7 +142,9 @@ class InternalizedFeatureLearner:
     def _features(self, example: GroundedFeatureExample) -> torch.Tensor:
         if example.grounding.numel() != self.feature_dim:
             raise ValueError("grounded example feature dimension does not match the learner")
-        features = example.grounding.detach().to(device=self.weights.device, dtype=self.weights.dtype)
+        features = example.grounding.detach().to(
+            device=self.weights.device, dtype=self.weights.dtype
+        )
         if not bool(torch.isfinite(features).all()):
             raise ValueError("grounded example features must be finite")
         return features
@@ -181,11 +185,17 @@ class InternalizedFeatureLearner:
         items = _examples(examples, "evaluation examples")
         errors = []
         for item in items:
-            errors.append((self.score(
-                item,
-                internalized_enabled=internalized_enabled,
-                grounding_enabled=grounding_enabled,
-            ) - self._target(item)) ** 2)
+            errors.append(
+                (
+                    self.score(
+                        item,
+                        internalized_enabled=internalized_enabled,
+                        grounding_enabled=grounding_enabled,
+                    )
+                    - self._target(item)
+                )
+                ** 2
+            )
         return float(sum(errors) / len(errors))
 
     def _apply_update(self, example: GroundedFeatureExample) -> None:

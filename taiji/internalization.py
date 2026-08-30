@@ -530,11 +530,11 @@ class InternalizationConverter:
             grounding=affordance.features,
             capability_snapshot_digest=source.capability_snapshot_digest,
             parent_checkpoint_id=source.parent_checkpoint_id,
-                feature_payload_digest=feature_digest,
-                reward_terms=reward_terms,
-                provenance=provenance,
-                target_reward=source.outcome.reward,
-                manifest_revision=source.manifest_revision,
+            feature_payload_digest=feature_digest,
+            reward_terms=reward_terms,
+            provenance=provenance,
+            target_reward=source.outcome.reward,
+            manifest_revision=source.manifest_revision,
         )
         lifecycle = InternalizationLifecycleRecord(
             example_id=example.example_id,
