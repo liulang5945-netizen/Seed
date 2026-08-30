@@ -121,7 +121,7 @@ def test_r5a_and_r5b_are_separate_non_substituting_contracts() -> None:
     assert "bundle_retired" in r5b["trace"]["required_events"]
     assert "executor" in " ".join(r5b["checkpoint"]["must_roundtrip"])
     assert "rejected" in r5a["checkpoint"]["continuation"]
-    assert r5a["implementation"]["status"] == "s1_implemented"
+    assert r5a["implementation"]["status"] == "s2_projection_implemented"
     assert r5b["implementation"]["status"] == "not_started"
     _assert_internalization_contract(r5a)
     _assert_effector_contract(r5b)

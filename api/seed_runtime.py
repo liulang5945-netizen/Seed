@@ -929,6 +929,98 @@ class SeedRuntime:
             "affordances": [self._taiji_workbench_affordance_payload(item) for item in affordances],
         }
 
+    def project_workbench_outcome_for_internalization(
+        self,
+        *,
+        snapshot_id: str,
+        affordance_id: str,
+        reward: float,
+        reward_terms: Mapping[str, float],
+        parent_checkpoint_id: str,
+        owner_id: str = "taiji:workbench-outcome",
+    ) -> Any:
+        """Project one current Workbench outcome into a Taiji learning DTO.
+
+        This is intentionally an evidence boundary, not an internalization
+        operation.  The runtime verifies that the selected successor
+        affordance was re-projected from the latest, snapshot-bound read-only
+        Workbench evidence, then returns a typed Taiji-owned input.  It cannot
+        write replay, fit a learner, or advance a lifecycle status.
+
+        ``reward`` and ``reward_terms`` are supplied by the task evaluator so
+        the executor never invents a learning objective from a capability
+        name.  The Taiji converter remains responsible for validating their
+        bounds and deciding whether the DTO becomes learnable material.
+        """
+
+        from seed_platform.workbench import (
+            WORKBENCH_TAIJI_EVIDENCE_KIND,
+            WorkbenchTaijiEvidence,
+        )
+        from taiji import GroundedOutcomeEvidence, Outcome, content_digest
+
+        environment = self._sync_workbench_root()
+        if str(snapshot_id) != environment.capability_snapshot.snapshot_id:
+            raise ValueError("Taiji internalization projection snapshot drifted")
+        world = self.model.architecture.cognitive_snapshot().world
+        event = next(
+            (item for item in reversed(world.events) if item.kind == WORKBENCH_TAIJI_EVIDENCE_KIND),
+            None,
+        )
+        if event is None:
+            raise ValueError("Taiji internalization projection requires Workbench evidence")
+        if event.tick != world.tick:
+            raise ValueError("Taiji internalization projection requires current Workbench evidence")
+        evidence = WorkbenchTaijiEvidence.from_taiji_event(event)
+        if evidence.snapshot_id != environment.capability_snapshot.snapshot_id:
+            raise ValueError("Workbench evidence capability snapshot is stale")
+        if not evidence.success:
+            raise ValueError("failed Workbench evidence cannot enter internalization")
+
+        requested_affordance_id = str(affordance_id).strip()
+        if not requested_affordance_id:
+            raise ValueError("Taiji internalization projection requires an affordance_id")
+        affordance = next(
+            (item for item in world.affordances if item.affordance_id == requested_affordance_id),
+            None,
+        )
+        if affordance is None:
+            raise ValueError("Taiji internalization affordance is not current")
+        grounded_affordance_ids = {
+            item.affordance_id
+            for item in evidence.to_taiji_affordances(environment.capability_snapshot)
+        }
+        if affordance.affordance_id not in grounded_affordance_ids:
+            raise ValueError("Taiji internalization affordance is not grounded by latest evidence")
+
+        snapshot = self.model.architecture.cognitive_snapshot()
+        percept_payload = None if snapshot.percept is None else snapshot.percept.to_payload()
+        recovery_payload = self._workbench_loop_state.get("recovery_portfolio", {})
+        return GroundedOutcomeEvidence(
+            evidence_id=evidence.evidence_id,
+            outcome_id="workbench-outcome:" + evidence.evidence_id,
+            outcome=Outcome(
+                intent_id=evidence.intent_id,
+                reward=float(reward),
+                success=evidence.success,
+                provenance="workbench-observed",
+                tick=int(event.tick),
+            ),
+            affordance=affordance,
+            capability_snapshot_digest=environment.capability_snapshot.snapshot_id,
+            parent_checkpoint_id=str(parent_checkpoint_id),
+            owner_id=str(owner_id),
+            reward_terms=dict(reward_terms),
+            percept_digest="" if percept_payload is None else content_digest(percept_payload),
+            world_digest=content_digest(world.to_payload()),
+            recovery_digest=content_digest(recovery_payload),
+            metadata={
+                "after_state_digest": evidence.after_state_digest,
+                "source": "workbench-observed",
+                "workbench_evidence": evidence.evidence_id,
+            },
+        )
+
     @staticmethod
     def _taiji_workbench_affordance_payload(affordance: Any) -> dict[str, Any]:
         """Project a WorldAffordance checkpoint payload to JSON-safe values."""

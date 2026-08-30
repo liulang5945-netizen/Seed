@@ -41,7 +41,7 @@
 | R2 interaction-group | [S0](../../reports/taiji_w7_r2_interaction_groups_20260829.json)、[S1](../../reports/taiji_w7_r2_interaction_groups_s1_20260829.json)、[S2](../../reports/taiji_w7_r2_interaction_groups_s2_20260829.json) | native replay 与真实只读 Workbench 通过；不写回结构/provider |
 | R3 visual/desktop | [S1](../../reports/taiji_w7_r3_visual_desktop_s1_20260829.json)、[S2 部分证据](../../reports/taiji_w7_r3_visual_desktop_s2_20260829.json) | 页面/窄布局通过；Windows shell 仍 `tool-blocked` |
 | R5-S0 学习通道 | [报告](../../reports/taiji_w7_r5_s0_learning_channel_20260829.json) | 真实 Outcome 在线更新和 checkpoint continuation 通过 |
-| R5A-S0/S1 内化 | [S0 报告](../../reports/taiji_w7_r5a_s0_internalization_20260830.json)、[S1 报告](../../reports/taiji_w7_r5a_s1_internalization_20260830.json) | S0 纯转换/内容寻址/train-only 去重/生命周期通过；S1 原生学习器、checkpoint lineage、holdout、retention 与 feature/grounding lesion canary 通过；S2 真实 Workbench 纵向未开始 |
+| R5A-S0/S1/S2-A 内化 | [S0 报告](../../reports/taiji_w7_r5a_s0_internalization_20260830.json)、[S1 报告](../../reports/taiji_w7_r5a_s1_internalization_20260830.json) | S0 纯转换/内容寻址/train-only 去重/生命周期通过；S1 原生学习器、checkpoint lineage、holdout、retention 与 feature/grounding lesion canary 通过；S2-A 已在真实只读 Workbench 上验证 current evidence + snapshot + reprojected affordance 的受限 Outcome 投影，S2-B 纵向 holdout/lesion/recovery 与可删性仍未开始 |
 
 R3 最终包为 `dist/Seed/Seed.exe`，已记录 SHA-256 `76b432b43922d5d70c64fca36b8e7045f2f5d03d4492f09b68b47eb31756368b`、大小 72,752,598 字节；源码与包内前端 211 个文件集合/字节一致，前端回归 `43 files / 245 passed`，Vite build 与 ESLint 通过。Chrome 已验证生命页和 900px/760px IDE 布局；Windows Computer Use 无法激活窗口，因此任务栏、托盘、通知和高 DPI 未通过。
 

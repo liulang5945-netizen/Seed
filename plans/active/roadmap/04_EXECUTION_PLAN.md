@@ -79,7 +79,8 @@ R3/R4 未通过时不得声明相应能力，但它们不再作为 R5 的伪串�
 
 ### S2：真实 Workbench 纵向证据
 
-- 使用未参与训练的新任务组合，执行真实只读 Workbench；比较外部规则存在与移除后的选择质量。
+- S2-A 已完成：`SeedRuntime` 只把当前、签名验证过的只读 `workbench.evidence` 与其同 snapshot 的重投影 grounded successor affordance 投影成 `GroundedOutcomeEvidence`。运行时不可写 replay、训练 learner 或推进 lifecycle；陈旧 snapshot、旧 affordance 和失败 evidence 全部 fail-closed。
+- S2-B：使用未参与训练的新任务组合，执行真实只读 Workbench；比较外部规则存在与移除后的选择质量。
 - 只有外部充分性、内化必要性、grounding 必要性、checkpoint 可恢复性、遗忘上界全部通过，生命周期才可进入 `internalized`。
 - 物理删除必须是独立、可恢复的提交动作；默认只写候选和 tombstone，不自动删除文件或 MCP 执行通道。
 
