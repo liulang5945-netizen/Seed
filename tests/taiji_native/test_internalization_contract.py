@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import sys
+
 import pytest
 import torch
 
@@ -70,6 +72,14 @@ def test_grounded_conversion_is_content_addressed_and_order_independent() -> Non
     assert first.lifecycle.events == ("outcome_bound", "grounding_verified", "example_created")
     assert first.example.provenance
     assert "provider_text" not in first.example.content_digest
+
+
+def test_content_digest_does_not_require_numpy(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setitem(sys.modules, "numpy", None)
+
+    digest = content_digest(torch.tensor(0.75, dtype=torch.float32))
+
+    assert len(digest) == 64
 
 
 @pytest.mark.parametrize(

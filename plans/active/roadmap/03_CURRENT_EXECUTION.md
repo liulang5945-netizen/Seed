@@ -29,12 +29,12 @@
 
 - 当前 checkout 为 `main`；`output/` 是未跟踪的现场证据目录，本轮不暂存、不删除。
 - `backup-local-20260828` 与干净的 `codex/interaction-group-credit` 已收束并删除；`codex/interaction-group-incremental` 仍附着含 5 个未提交文件的 worktree，未强行删除或混入主线。
-- CI 修复链已推进到 `b6d1bf2`，并由远端运行 `33295880356` 完成最终验收：Docker、前端含 E2E、Legacy/no-Legacy smoke、Python 3.10/3.12 与 Windows 全量回归 7 个 job 全部成功。
+- CI 基线由 `b6d1bf2` / 远端运行 `33295880356` 完成过全量验收；本轮 `9f30eb4` 接入 S1 canary 后，运行 `33298105636` 暴露了 Linux/Windows 最小 torch 环境缺 NumPy 时 `tensor.numpy()` 的跨平台失败。修复已改为纯 PyTorch 字节视图并补充无 NumPy contract，必须等下一轮 7-job CI 全绿后才恢复功能推进。
 - `plans/` 没有空目录或 0 字节文件。核心架构讨论留在 active/reference；已完成 Gate 过程和旧执行蓝图已移到 archive。
 
 ## 4. 当前唯一下一步
 
-执行 **W7-R5A-S2：真实 Workbench 纵向证据与可删性边界 Gate**。
+完成本轮 **CI 汇总修复验收**：提交纯 PyTorch digest 修复，等待 Python 3.10/3.12、Windows、Docker、前端和 smoke 全部通过；全绿后唯一后继仍是 **W7-R5A-S2：真实 Workbench 纵向证据与可删性边界 Gate**。
 
 R5-G1 与 R5A-S0 已完成并交付：
 
