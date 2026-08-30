@@ -2808,6 +2808,179 @@ class SeedRuntime:
         result["recovery"] = dict(recovery_state["recovery"])
         return result
 
+    def _ingest_workbench_structural_evidence(
+        self,
+        outcome: Any,
+        payload: Mapping[str, Any] | None,
+    ) -> dict[str, Any] | None:
+        """Bind explicit evaluator metrics to the real executed Workbench outcome."""
+
+        if payload is None:
+            return None
+        if not isinstance(payload, Mapping):
+            raise TypeError("structural_evidence must be a mapping")
+        required = (
+            "network_id",
+            "region_id",
+            "task_slice_id",
+            "partition",
+            "usage",
+            "resource_pressure",
+            "prediction_error",
+            "learning_gain",
+            "holdout_transfer",
+        )
+        missing = [name for name in required if name not in payload]
+        if missing:
+            raise ValueError(f"structural_evidence is missing fields: {missing}")
+        from seed_platform.workbench import WorkbenchOutcome, WorkbenchStructuralEvidence
+
+        if not isinstance(outcome, WorkbenchOutcome):
+            raise TypeError("structural evidence must bind to a WorkbenchOutcome")
+        evidence = WorkbenchStructuralEvidence.from_outcome(
+            outcome,
+            task_slice_id=str(payload["task_slice_id"]),
+            partition=str(payload["partition"]),
+            usage=float(payload["usage"]),
+            resource_pressure=float(payload["resource_pressure"]),
+            prediction_error=(
+                None
+                if payload["prediction_error"] is None
+                else float(payload["prediction_error"])
+            ),
+            learning_gain=float(payload["learning_gain"]),
+            holdout_transfer=float(payload["holdout_transfer"]),
+        )
+        observation = evidence.to_structural_observation(
+            network_id=str(payload["network_id"]),
+            region_id=str(payload["region_id"]),
+            tick=int(self.model.architecture.structural_runtime_tick) + 1,
+        )
+        append = self.model.architecture.record_structural_runtime_observation(observation)
+        return {
+            "evidence": evidence.to_payload(),
+            "observation": observation.to_payload(),
+            "append": {
+                "evidence_id": append.evidence_id,
+                "status": append.status,
+                "window_id": append.window_id,
+                "sealed_window_digest": append.sealed_window_digest,
+            },
+        }
+
+    def schedule_structural_growth_from_workbench_evidence(
+        self,
+        **kwargs: Any,
+    ) -> dict[str, Any]:
+        """Run the bounded scheduler over already sealed Workbench evidence."""
+
+        result = self.model.architecture.schedule_structural_growth_from_evidence(**kwargs)
+        return result.to_payload()
+
+    def schedule_structural_candidate_batch_from_workbench_evidence(
+        self,
+        requests: Sequence[Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        """Create one deterministic structural batch from multiple evidence regions."""
+
+        result = self.model.architecture.schedule_structural_candidate_batch_from_workbench_evidence(
+            requests
+        )
+        return result.to_payload()
+
+    def continue_structural_candidate(
+        self,
+        candidate_id: str,
+        **kwargs: Any,
+    ) -> dict[str, Any]:
+        """Continue one scheduler candidate through the existing Taiji lifecycle."""
+
+        return self.model.architecture.continue_structural_candidate(candidate_id, **kwargs)
+
+    def continue_structural_candidate_from_validation_artifact(
+        self,
+        artifact: Mapping[str, Any] | Any,
+        *,
+        holdout_inputs: Sequence[Any],
+        expected_activities: Sequence[Any],
+    ) -> dict[str, Any]:
+        """Consume a replay-bound validation artifact through Taiji's lifecycle."""
+
+        from taiji import WorkbenchStructuralValidationArtifact
+
+        resolved = (
+            WorkbenchStructuralValidationArtifact.from_payload(artifact)
+            if isinstance(artifact, Mapping)
+            else artifact
+        )
+        return self.model.architecture.continue_structural_candidate_from_validation_artifact(
+            resolved,
+            holdout_inputs=holdout_inputs,
+            expected_activities=expected_activities,
+        )
+
+    def arbitrate_structural_candidate_batch(
+        self,
+        candidate_ids: Sequence[str] | None = None,
+    ) -> dict[str, Any]:
+        """Create a deterministic, checkpointable batch reservation for candidates."""
+
+        batch = self.model.architecture.arbitrate_structural_candidate_batch(candidate_ids)
+        return batch.to_payload()
+
+    def continue_structural_candidate_batch(
+        self,
+        batch_id: str,
+        *,
+        continuations_by_candidate: Mapping[str, Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        """Continue a reserved candidate batch without owning structural policy."""
+
+        return self.model.architecture.continue_structural_candidate_batch(
+            batch_id,
+            continuations_by_candidate=continuations_by_candidate,
+        )
+
+    def continue_structural_candidate_batch_from_validation_artifacts(
+        self,
+        batch_id: str,
+        *,
+        artifacts_by_candidate: Mapping[str, Any],
+        replays_by_candidate: Mapping[str, Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        """Continue a batch using replay-bound artifacts without manual metrics."""
+
+        return self.model.architecture.continue_structural_candidate_batch_from_validation_artifacts(
+            batch_id,
+            artifacts_by_candidate=artifacts_by_candidate,
+            replays_by_candidate=replays_by_candidate,
+        )
+
+    def measure_structural_capacity_pressure(
+        self,
+        region_id: str,
+        *,
+        capacity_limit: int,
+    ) -> dict[str, Any]:
+        """Expose an explicit read-only capacity pressure measurement."""
+
+        return self.model.architecture.measure_structural_capacity_pressure(
+            region_id,
+            capacity_limit=capacity_limit,
+        ).to_payload()
+
+    def rollback_structural_candidate_batch(
+        self,
+        batch_id: str,
+        candidate_id: str,
+    ) -> dict[str, Any]:
+        """Reverse one admitted batch candidate through Taiji's rollback ledger."""
+
+        return self.model.architecture.rollback_structural_candidate_batch(
+            batch_id,
+            candidate_id,
+        )
+
     def execute_workbench_intent(
         self,
         intent: Any,
@@ -2816,6 +2989,7 @@ class SeedRuntime:
         approval_token: str = "",
         mcp_registry_snapshot_id: str = "",
         capability_registry_snapshot_id: str = "",
+        structural_evidence: Mapping[str, Any] | None = None,
         learn: bool = False,
         event_sink: Callable[[Any], None] | None = None,
         executive_decision: Any | None = None,
@@ -3040,6 +3214,10 @@ class SeedRuntime:
             tick=int(taiji_outcome.tick),
             mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
         )
+        structural_evidence_result = self._ingest_workbench_structural_evidence(
+            workbench_outcome,
+            structural_evidence,
+        )
         taiji_world_event = None
         descriptor = environment.capability_snapshot.get(request.capability_id)
         if (
@@ -3093,6 +3271,7 @@ class SeedRuntime:
             "policy": policy.to_payload(),
             "outcome": workbench_outcome.to_payload(),
             "taiji_outcome": taiji_outcome.to_payload(),
+            "structural_evidence": structural_evidence_result,
             "taiji_world_event": (
                 None if taiji_world_event is None else taiji_world_event.to_payload()
             ),

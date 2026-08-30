@@ -111,16 +111,46 @@ from .planning import (
 from .procedural_memory import ProceduralMemoryLearner, ProceduralSequenceLearner
 from .semantic_memory import SemanticMemoryLearner
 from .state import TaijiDecision, TaijiOutcome, TaijiStep
+from .structural_arbitration import (
+    StructuralCandidateBatch,
+    structural_candidate_batch_digest,
+)
+from .structural_continuation import (
+    StructuralCandidateRollback,
+    StructuralRegionCapacityPressure,
+    measure_structural_region_capacity_pressure,
+)
+from .structural_evidence import (
+    StructuralEvidenceAppendResult,
+    StructuralEvidenceLedger,
+    StructuralEvidenceWindowSummary,
+)
 from .structural_growth import (
     AdaptiveStructuralGrowthController,
     AdaptiveStructuralPruningController,
+    StructuralCandidateValidation,
     StructuralGrowthDecision,
     StructuralMaintenanceResult,
     StructuralProposalCandidate,
     StructuralPruningDecision,
     StructuralRuntimeObservation,
 )
-from .structural_evidence import StructuralEvidenceLedger
+from .structural_pressure import (
+    StructuralGrowthEvidenceProjection,
+    project_structural_growth_pressure,
+)
+from .structural_scheduler import (
+    StructuralGrowthScheduleResult,
+    StructuralGrowthScheduleState,
+    StructuralWorkbenchBatchScheduleResult,
+)
+from .structural_validation import (
+    StructuralAdmissionResult,
+    StructuralValidationGateDecision,
+    evaluate_structural_candidate_validation,
+)
+from .structural_validation_artifact import WorkbenchStructuralValidationArtifact
+from .structural_validation_batch import StructuralValidationArtifactBatch
 from .workspace import WorkspaceRouter
 from .world_learning import WorldDynamicsLearner, WorldSchema, WorldSchemaRegistry
 
@@ -235,10 +265,30 @@ class TSKV8Adapter(Taiji):
         self._structural_runtime_tick = 0
         self._structural_runtime_observations: list[StructuralRuntimeObservation] = []
         self._structural_evidence_ledger = StructuralEvidenceLedger()
+        self._structural_growth_scheduler_state = StructuralGrowthScheduleState()
+        self._structural_growth_schedule_results: list[StructuralGrowthScheduleResult] = []
+        self._structural_workbench_batch_schedule_results: list[
+            StructuralWorkbenchBatchScheduleResult
+        ] = []
+        self._structural_pressure_projection_digests: set[str] = set()
+        self._structural_candidate_batches: dict[str, StructuralCandidateBatch] = {}
+        self._structural_candidate_rollbacks: list[StructuralCandidateRollback] = []
+        self._structural_capacity_pressure_snapshots: list[StructuralRegionCapacityPressure] = []
         self._structural_runtime_previous_errors: dict[str, float] = {}
         self._structural_proposal_candidates: dict[str, StructuralProposalCandidate] = {}
         self._structural_candidate_proposals: dict[str, str] = {}
         self._structural_maintenance_results: list[StructuralMaintenanceResult] = []
+        self._structural_candidate_validations: list[StructuralCandidateValidation] = []
+        self._structural_validation_artifacts: list[
+            WorkbenchStructuralValidationArtifact
+        ] = []
+        self._structural_validation_artifact_batches: dict[
+            str, StructuralValidationArtifactBatch
+        ] = {}
+        self._structural_validation_gate_decisions: list[
+            StructuralValidationGateDecision
+        ] = []
+        self._structural_admission_results: list[StructuralAdmissionResult] = []
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
@@ -379,6 +429,12 @@ class TSKV8Adapter(Taiji):
         return self._structural_pruning_controller
 
     @property
+    def structural_runtime_tick(self) -> int:
+        """Return the persisted clock shared by native and external observations."""
+
+        return int(self._structural_runtime_tick)
+
+    @property
     def structural_runtime_observations(self) -> tuple[StructuralRuntimeObservation, ...]:
         """Return recent structural evidence emitted by native network ticks."""
 
@@ -397,6 +453,1586 @@ class TSKV8Adapter(Taiji):
         return self._structural_evidence_ledger.sealed_summaries
 
     @property
+    def structural_growth_scheduler_state(self) -> StructuralGrowthScheduleState:
+        """Return the checkpointed cursor for sealed-window scheduling."""
+
+        return self._structural_growth_scheduler_state
+
+    @property
+    def structural_growth_schedule_results(self) -> tuple[StructuralGrowthScheduleResult, ...]:
+        """Return bounded scheduler decisions for audit and continuation."""
+
+        return tuple(self._structural_growth_schedule_results)
+
+    @property
+    def structural_workbench_batch_schedule_results(
+        self,
+    ) -> tuple[StructuralWorkbenchBatchScheduleResult, ...]:
+        """Return bounded multi-region Workbench batch decisions."""
+
+        return tuple(self._structural_workbench_batch_schedule_results)
+
+    @property
+    def structural_candidate_batches(self) -> tuple[StructuralCandidateBatch, ...]:
+        """Return checkpointed multi-candidate arbitration decisions."""
+
+        return tuple(
+            self._structural_candidate_batches[key]
+            for key in sorted(self._structural_candidate_batches)
+        )
+
+    def _record_structural_candidate_batch(self, batch: StructuralCandidateBatch) -> None:
+        self._structural_candidate_batches[batch.batch_id] = batch
+        limit = self._lineage_limit()
+        if len(self._structural_candidate_batches) > limit:
+            for batch_id in sorted(self._structural_candidate_batches)[:-limit]:
+                self._structural_candidate_batches.pop(batch_id, None)
+
+    def _active_structural_candidate_reservations(
+        self,
+        *,
+        exclude_batch_id: str | None = None,
+    ) -> tuple[int, set[str]]:
+        reserved_cost = 0
+        reserved_candidates: set[str] = set()
+        for batch in self._structural_candidate_batches.values():
+            if exclude_batch_id is not None and batch.batch_id == str(exclude_batch_id):
+                continue
+            if not batch.active_reservation:
+                continue
+            reserved_cost += batch.reservation_remaining
+            reserved_candidates.update(
+                candidate_id
+                for candidate_id, state in batch.candidate_states
+                if state == "reserved"
+            )
+        return reserved_cost, reserved_candidates
+
+    def _structural_candidate_resource_cost(self, candidate_id: str) -> int | None:
+        """Read a candidate's cost from either its queue entry or proposal."""
+
+        key = str(candidate_id)
+        candidate = self._structural_proposal_candidates.get(key)
+        if candidate is not None:
+            return candidate.resource_cost
+        proposal_id = self._structural_candidate_proposals.get(key)
+        proposal = None if proposal_id is None else self._topology_proposals.get(proposal_id)
+        return None if proposal is None else int(proposal.resource_cost)
+
+    @staticmethod
+    def _structural_candidate_rank(
+        candidate: StructuralProposalCandidate,
+    ) -> tuple[float, int, int, str]:
+        """Return the explicit, deterministic arbitration order."""
+
+        return (-candidate.priority, -candidate.source_tick, candidate.resource_cost, candidate.candidate_id)
+
+    def arbitrate_structural_candidate_batch(
+        self,
+        candidate_ids: Sequence[str] | None = None,
+    ) -> StructuralCandidateBatch:
+        """Reserve and deterministically arbitrate a batch without admitting topology."""
+
+        requested_ids = (
+            self._pending_structural_candidate_ids()
+            if candidate_ids is None
+            else tuple(str(item) for item in candidate_ids)
+        )
+        normalized_ids = tuple(sorted(dict.fromkeys(str(item) for item in requested_ids)))
+        if not normalized_ids:
+            raise ValueError("structural candidate batch requires at least one candidate")
+        topology_digest = self._structural_topology_digest(self.native_checkpoint())
+        structural_budget = int(self._cognitive_state.development.structural_budget)
+        existing = next(
+            (
+                batch
+                for batch in self._structural_candidate_batches.values()
+                if batch.candidate_ids == normalized_ids
+                and batch.topology_digest == topology_digest
+                and batch.structural_budget_before == structural_budget
+            ),
+            None,
+        )
+        if existing is not None:
+            return existing
+        reserved_cost, reserved_candidates = self._active_structural_candidate_reservations()
+        available_budget = max(0, structural_budget - reserved_cost)
+        candidate_payloads = tuple(
+            (
+                self._structural_proposal_candidates[candidate_id].to_payload()
+                if candidate_id in self._structural_proposal_candidates
+                else {"candidate_id": candidate_id, "missing": True}
+            )
+            for candidate_id in normalized_ids
+        )
+        arbitration_digest = structural_candidate_batch_digest(
+            candidate_payloads=candidate_payloads,
+            topology_digest=topology_digest,
+            structural_budget=structural_budget,
+            available_budget=available_budget,
+        )
+        batch_id = f"batch:structural:{arbitration_digest[:32]}"
+
+        selected: list[str] = []
+        deferred: list[str] = []
+        rejected: list[str] = []
+        states: dict[str, str] = {}
+        reasons: dict[str, str] = {}
+        remaining_budget = available_budget
+        queued = {
+            candidate_id: self._structural_proposal_candidates[candidate_id]
+            for candidate_id in normalized_ids
+            if candidate_id in self._structural_proposal_candidates
+        }
+        for candidate_id in normalized_ids:
+            if candidate_id not in queued:
+                rejected.append(candidate_id)
+                states[candidate_id] = "rejected"
+                reasons[candidate_id] = "candidate_missing_or_already_materialized"
+
+        for candidate in sorted(queued.values(), key=self._structural_candidate_rank):
+            candidate_id = candidate.candidate_id
+            if candidate_id in reserved_candidates:
+                deferred.append(candidate_id)
+                states[candidate_id] = "deferred"
+                reasons[candidate_id] = "candidate_reserved_by_existing_batch"
+                continue
+            conflict_with = next(
+                (
+                    selected_id
+                    for selected_id in selected
+                    if set(self._candidate_conflict_keys(queued[selected_id]))
+                    & set(self._candidate_conflict_keys(candidate))
+                    or self._candidates_conflict(queued[selected_id], candidate)
+                ),
+                None,
+            )
+            if conflict_with is not None:
+                deferred.append(candidate_id)
+                states[candidate_id] = "deferred"
+                reasons[candidate_id] = f"conflict_with_selected:{conflict_with}"
+                continue
+            if candidate.resource_cost > remaining_budget:
+                deferred.append(candidate_id)
+                states[candidate_id] = "deferred"
+                reasons[candidate_id] = "structural_budget_insufficient_for_batch"
+                continue
+            selected.append(candidate_id)
+            states[candidate_id] = "reserved"
+            remaining_budget -= candidate.resource_cost
+
+        batch = StructuralCandidateBatch(
+            batch_id=batch_id,
+            candidate_ids=normalized_ids,
+            selected_candidate_ids=tuple(selected),
+            deferred_candidate_ids=tuple(deferred),
+            rejected_candidate_ids=tuple(rejected),
+            candidate_states=tuple((candidate_id, states[candidate_id]) for candidate_id in normalized_ids),
+            reasons=tuple(sorted(reasons.items())),
+            reserved_resource_cost=available_budget - remaining_budget,
+            reservation_remaining=available_budget - remaining_budget,
+            structural_budget_before=structural_budget,
+            available_budget_before=available_budget,
+            topology_digest=topology_digest,
+            arbitration_digest=arbitration_digest,
+        )
+        self._record_structural_candidate_batch(batch)
+        return batch
+
+    def continue_structural_candidate_batch(
+        self,
+        batch_id: str,
+        *,
+        continuations_by_candidate: Mapping[str, Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        """Continue selected candidates while preserving batch reservations and order."""
+
+        key = str(batch_id)
+        batch = self._structural_candidate_batches.get(key)
+        if batch is None:
+            raise ValueError(f"unknown structural candidate batch: {batch_id}")
+        if not isinstance(continuations_by_candidate, Mapping):
+            raise TypeError("candidate continuations must be a mapping")
+        results: dict[str, Any] = {}
+        current = batch
+        candidate_states = current.state_by_candidate
+        reasons = current.reason_by_candidate
+        for candidate_id in current.selected_candidate_ids:
+            state = candidate_states[candidate_id]
+            if state in {
+                "admitted",
+                "rolled_back",
+                "failed_closed",
+                "policy_rejected",
+                "deferred",
+            }:
+                results[candidate_id] = {"candidate_id": candidate_id, "status": state}
+                continue
+            if candidate_id not in continuations_by_candidate:
+                continue
+            continuation = continuations_by_candidate.get(candidate_id)
+            resource_cost = self._structural_candidate_resource_cost(candidate_id)
+            if not isinstance(continuation, Mapping):
+                candidate_states[candidate_id] = "failed_closed"
+                reasons[candidate_id] = "continuation_payload_must_be_mapping"
+                results[candidate_id] = {
+                    "candidate_id": candidate_id,
+                    "status": "failed_closed",
+                    "reason": "continuation_payload_must_be_mapping",
+                }
+                if resource_cost is not None:
+                    current = replace(
+                        current,
+                        reservation_remaining=max(
+                            0,
+                            current.reservation_remaining - resource_cost,
+                        ),
+                    )
+                continue
+            try:
+                result = self.continue_structural_candidate(candidate_id, **dict(continuation))
+            except (IndexError, KeyError, RuntimeError, TypeError, ValueError) as exc:
+                result = {
+                    "candidate_id": candidate_id,
+                    "status": "failed_closed",
+                    "error": str(exc),
+                }
+            results[candidate_id] = result
+            result_status = str(result.get("status", "failed_closed"))
+            if result_status == "admitted":
+                candidate_states[candidate_id] = "admitted"
+            elif result_status == "rejected":
+                candidate_states[candidate_id] = "policy_rejected"
+            elif result_status == "failed_closed":
+                candidate_states[candidate_id] = "failed_closed"
+            else:
+                candidate_states[candidate_id] = "failed_closed"
+                result_status = "failed_closed"
+            if result_status != "admitted":
+                reasons[candidate_id] = str(result.get("error", result_status))
+            if resource_cost is not None:
+                current = replace(
+                    current,
+                    reservation_remaining=max(
+                        0,
+                        current.reservation_remaining - resource_cost,
+                    ),
+                )
+
+        status = "completed" if current.reservation_remaining == 0 else "running"
+        current = replace(
+            current,
+            candidate_states=tuple(
+                (candidate_id, candidate_states[candidate_id])
+                for candidate_id in current.candidate_ids
+            ),
+            reasons=tuple(sorted(reasons.items())),
+            revision=current.revision + 1 if results else current.revision,
+            status=status,
+        )
+        self._record_structural_candidate_batch(current)
+        return {"batch": current.to_payload(), "results": results}
+
+    @property
+    def structural_candidate_rollbacks(self) -> tuple[StructuralCandidateRollback, ...]:
+        """Return reversible structural-growth rollback records."""
+
+        return tuple(self._structural_candidate_rollbacks)
+
+    @property
+    def structural_capacity_pressure_snapshots(
+        self,
+    ) -> tuple[StructuralRegionCapacityPressure, ...]:
+        """Return content-addressed cross-region capacity measurements."""
+
+        return tuple(self._structural_capacity_pressure_snapshots)
+
+    def _record_structural_candidate_rollback(
+        self,
+        record: StructuralCandidateRollback,
+    ) -> None:
+        self._structural_candidate_rollbacks.append(record)
+        self._structural_candidate_rollbacks = self._structural_candidate_rollbacks[
+            -self._lineage_limit() :
+        ]
+
+    def _record_structural_capacity_pressure(
+        self,
+        snapshot: StructuralRegionCapacityPressure,
+    ) -> None:
+        if any(
+            item.pressure_digest == snapshot.pressure_digest
+            for item in self._structural_capacity_pressure_snapshots
+        ):
+            return
+        self._structural_capacity_pressure_snapshots.append(snapshot)
+        self._structural_capacity_pressure_snapshots = self._structural_capacity_pressure_snapshots[
+            -self._lineage_limit() :
+        ]
+
+    def _structural_candidate_region_id(self, candidate_id: str) -> str | None:
+        key = str(candidate_id)
+        candidate = self._structural_proposal_candidates.get(key)
+        if candidate is not None:
+            specification = dict(candidate.specification)
+            return str(specification.get("region_id", candidate.substrate_ids[0]))
+        proposal_id = self._structural_candidate_proposals.get(key)
+        proposal = None if proposal_id is None else self._topology_proposals.get(proposal_id)
+        if proposal is None:
+            return None
+        specification = dict(proposal.specification)
+        return str(specification.get("region_id", proposal.substrate_id))
+
+    def measure_structural_capacity_pressure(
+        self,
+        region_id: str,
+        *,
+        capacity_limit: int,
+    ) -> StructuralRegionCapacityPressure:
+        """Measure one region's capacity pressure without changing model state."""
+
+        key = str(region_id)
+        region = self._neuron_regions.get(key)
+        if region is None:
+            raise ValueError(f"unknown adaptive neuron region: {region_id}")
+        pending_candidate_ids = tuple(
+            candidate_id
+            for candidate_id, candidate in self._structural_proposal_candidates.items()
+            if key in candidate.substrate_ids
+            or str(dict(candidate.specification).get("region_id", "")) == key
+        )
+        reserved_cost = 0
+        for batch in self._structural_candidate_batches.values():
+            for candidate_id, state in batch.candidate_states:
+                if state != "reserved" or self._structural_candidate_region_id(candidate_id) != key:
+                    continue
+                reserved_cost += self._structural_candidate_resource_cost(candidate_id) or 0
+        snapshot = measure_structural_region_capacity_pressure(
+            region_id=key,
+            unit_count=len(region.unit_ids),
+            capacity_limit=capacity_limit,
+            pending_candidate_count=len(pending_candidate_ids),
+            reserved_resource_cost=reserved_cost,
+            structural_budget=int(self._cognitive_state.development.structural_budget),
+        )
+        self._record_structural_capacity_pressure(snapshot)
+        return snapshot
+
+    def rollback_structural_candidate_batch(
+        self,
+        batch_id: str,
+        candidate_id: str,
+    ) -> dict[str, Any]:
+        """Reverse one latest admitted batch candidate and reopen its budget."""
+
+        batch = self._structural_candidate_batches.get(str(batch_id))
+        if batch is None:
+            raise ValueError(f"unknown structural candidate batch: {batch_id}")
+        key = str(candidate_id)
+        existing = next(
+            (
+                record
+                for record in reversed(self._structural_candidate_rollbacks)
+                if record.batch_id == batch.batch_id and record.candidate_id == key
+            ),
+            None,
+        )
+        if existing is not None:
+            return existing.to_payload()
+        if key not in batch.selected_candidate_ids:
+            raise ValueError("rollback candidate must belong to the selected batch")
+        admission = next(
+            (
+                result
+                for result in reversed(self._structural_admission_results)
+                if result.candidate_id == key and result.status == "admitted"
+            ),
+            None,
+        )
+        proposal_id = self._structural_candidate_proposals.get(key)
+        proposal = None if proposal_id is None else self._topology_proposals.get(proposal_id)
+        current_checkpoint = self.native_checkpoint()
+        current_digest = _checkpoint_digest(current_checkpoint)
+        topology_before = self._structural_topology_digest(current_checkpoint)
+        budget_before = int(self._cognitive_state.development.structural_budget)
+        if admission is None or proposal is None:
+            record = StructuralCandidateRollback(
+                batch_id=batch.batch_id,
+                candidate_id=key,
+                proposal_id="missing-proposal",
+                status="not_rollbackable",
+                admission_parent_checkpoint_digest=current_digest,
+                admission_child_checkpoint_digest=current_digest,
+                rollback_checkpoint_digest=current_digest,
+                topology_before_digest=topology_before,
+                topology_after_digest=topology_before,
+                structural_budget_before=budget_before,
+                structural_budget_after=budget_before,
+                resource_cost=1,
+                reason="admitted candidate lineage is missing",
+            )
+            self._record_structural_candidate_rollback(record)
+            return record.to_payload()
+        rolled_back = self.rollback_structural_candidate(key)
+        rollback_checkpoint = self.native_checkpoint()
+        rollback_digest = _checkpoint_digest(rollback_checkpoint)
+        topology_after = self._structural_topology_digest(rollback_checkpoint)
+        budget_after = int(self._cognitive_state.development.structural_budget)
+        resource_cost = int(proposal.resource_cost)
+        valid = (
+            rolled_back
+            and topology_after != topology_before
+            and budget_after == budget_before + resource_cost
+        )
+        record = StructuralCandidateRollback(
+            batch_id=batch.batch_id,
+            candidate_id=key,
+            proposal_id=proposal.proposal_id,
+            status="rolled_back" if valid else "failed_closed",
+            admission_parent_checkpoint_digest=admission.parent_checkpoint_digest,
+            admission_child_checkpoint_digest=admission.child_checkpoint_digest,
+            rollback_checkpoint_digest=rollback_digest,
+            topology_before_digest=topology_before,
+            topology_after_digest=topology_after,
+            structural_budget_before=budget_before,
+            structural_budget_after=budget_after,
+            resource_cost=resource_cost,
+            reason="" if valid else "rollback after-state violated topology or budget invariants",
+        )
+        self._record_structural_candidate_rollback(record)
+        if valid:
+            states = batch.state_by_candidate
+            reasons = batch.reason_by_candidate
+            states[key] = "rolled_back"
+            reasons[key] = "rolled_back_and_budget_reopened"
+            self._record_structural_candidate_batch(
+                replace(
+                    batch,
+                    candidate_states=tuple((item, states[item]) for item in batch.candidate_ids),
+                    reasons=tuple(sorted(reasons.items())),
+                    status="completed",
+                    revision=batch.revision + 1,
+                )
+            )
+        return record.to_payload()
+
+    def record_structural_runtime_observation(
+        self,
+        observation: StructuralRuntimeObservation,
+    ) -> StructuralEvidenceAppendResult:
+        """Record external runtime evidence without inventing its metrics."""
+
+        if not isinstance(observation, StructuralRuntimeObservation):
+            raise TypeError("structural runtime observation is required")
+        if observation.tick <= self._structural_runtime_tick:
+            raise ValueError("structural runtime observation tick must advance the runtime clock")
+        result = self._structural_evidence_ledger.append(observation)
+        self._structural_runtime_tick = int(observation.tick)
+        self._structural_runtime_observations.append(observation)
+        self._structural_runtime_observations = self._structural_runtime_observations[
+            -self._lineage_limit() :
+        ]
+        previous = self._cognitive_state.development
+        self._cognitive_state = replace(
+            self._cognitive_state,
+            development=replace(
+                previous,
+                stage="structural-observation",
+                resource_utilization=observation.resource_pressure,
+                last_update_source="external-structural-observation",
+                last_validation_status="pending",
+                validation_evidence_ids=self._bounded_ids(
+                    previous.validation_evidence_ids,
+                    observation.evidence_id,
+                    limit=self._lineage_limit(),
+                ),
+            ),
+        )
+        return result
+
+    def seal_structural_evidence_window(
+        self,
+        network_id: str,
+        region_id: str,
+        *,
+        task_slice_id: str,
+        partition: str,
+    ) -> StructuralEvidenceWindowSummary | None:
+        """Seal one task/partition window at an explicit task boundary."""
+
+        return self._structural_evidence_ledger.seal(
+            str(network_id),
+            str(region_id),
+            task_slice_id=str(task_slice_id),
+            partition=str(partition),
+        )
+
+    def _record_structural_growth_schedule_result(
+        self,
+        result: StructuralGrowthScheduleResult,
+    ) -> None:
+        self._structural_growth_schedule_results.append(result)
+        self._structural_growth_schedule_results = self._structural_growth_schedule_results[
+            -self._lineage_limit() :
+        ]
+
+    def _record_structural_workbench_batch_schedule_result(
+        self,
+        result: StructuralWorkbenchBatchScheduleResult,
+    ) -> None:
+        self._structural_workbench_batch_schedule_results.append(result)
+        self._structural_workbench_batch_schedule_results = (
+            self._structural_workbench_batch_schedule_results[-self._lineage_limit() :]
+        )
+
+    def schedule_structural_growth_from_evidence(
+        self,
+        *,
+        network_id: str,
+        region_id: str,
+        controller_region_id: str,
+        target_kind: str,
+        operation: str,
+        substrate_ids: Sequence[str],
+        specification: Mapping[str, Any],
+        minimum_train_task_slices: int = 2,
+        minimum_train_windows: int = 2,
+        require_holdout: bool = True,
+        require_retention: bool = False,
+    ) -> StructuralGrowthScheduleResult:
+        """Evaluate new sealed windows once and queue at most one candidate."""
+
+        stream_key = f"{network_id}:{region_id}"
+        summaries = tuple(
+            item
+            for item in self._structural_evidence_ledger.sealed_summaries
+            if item.network_id == str(network_id) and item.region_id == str(region_id)
+        )
+        state = self._structural_growth_scheduler_state
+        last_evaluated_tick = state.last_evaluated_tick_for(stream_key)
+        unseen = tuple(
+            item
+            for item in summaries
+            if item.window_digest not in state.evaluated_window_digests
+        )
+        trigger_tick = max((item.last_tick for item in summaries), default=last_evaluated_tick)
+        if not unseen:
+            result = StructuralGrowthScheduleResult(
+                status="waiting",
+                trigger_tick=trigger_tick,
+                reason="no_new_sealed_window",
+                scheduler_revision=state.revision,
+            )
+            self._record_structural_growth_schedule_result(result)
+            return result
+        if trigger_tick - last_evaluated_tick < state.window_interval_ticks:
+            result = StructuralGrowthScheduleResult(
+                status="waiting",
+                trigger_tick=trigger_tick,
+                new_window_digests=tuple(item.window_digest for item in unseen),
+                reason="scheduler_cooldown",
+                scheduler_revision=state.revision,
+            )
+            self._record_structural_growth_schedule_result(result)
+            return result
+
+        self._structural_growth_scheduler_state = state.advance(
+            last_evaluated_tick=trigger_tick,
+            window_digests=tuple(item.window_digest for item in unseen),
+            stream_key=stream_key,
+        )
+        state = self._structural_growth_scheduler_state
+        new_window_digests = tuple(item.window_digest for item in unseen)
+        try:
+            projection = project_structural_growth_pressure(
+                summaries,
+                minimum_train_task_slices=minimum_train_task_slices,
+                minimum_train_windows=minimum_train_windows,
+                require_holdout=require_holdout,
+                require_retention=require_retention,
+            )
+            candidate = self.propose_structural_candidate_from_pressure(
+                projection,
+                controller_region_id=controller_region_id,
+                target_kind=target_kind,
+                operation=operation,
+                substrate_ids=substrate_ids,
+                specification=specification,
+            )
+        except (RuntimeError, TypeError, ValueError) as exc:
+            result = StructuralGrowthScheduleResult(
+                status="failed_closed",
+                trigger_tick=trigger_tick,
+                new_window_digests=new_window_digests,
+                reason=str(exc),
+                scheduler_revision=state.revision,
+            )
+            self._record_structural_growth_schedule_result(result)
+            return result
+        if candidate is None:
+            result = StructuralGrowthScheduleResult(
+                status="no_growth",
+                trigger_tick=trigger_tick,
+                new_window_digests=new_window_digests,
+                projection_digest=projection.projection_digest,
+                reason="growth_controller_did_not_request_growth",
+                scheduler_revision=state.revision,
+            )
+        else:
+            result = StructuralGrowthScheduleResult(
+                status="candidate_created",
+                trigger_tick=trigger_tick,
+                new_window_digests=new_window_digests,
+                projection_digest=projection.projection_digest,
+                candidate_id=candidate.candidate_id,
+                scheduler_revision=state.revision,
+            )
+        self._record_structural_growth_schedule_result(result)
+        return result
+
+    def schedule_structural_candidate_batch_from_workbench_evidence(
+        self,
+        requests: Sequence[Mapping[str, Any]],
+    ) -> StructuralWorkbenchBatchScheduleResult:
+        """Create one candidate batch from multiple real Workbench evidence regions.
+
+        Each request describes a controller-owned structural target.  Workbench
+        only supplies the already-recorded outcomes and sealed evidence; this
+        method aggregates independent region schedules and hands the resulting
+        candidates to the existing deterministic arbitration ledger.
+        """
+
+        if isinstance(requests, (str, bytes)) or not isinstance(requests, Sequence):
+            raise TypeError("Workbench batch scheduling requests must be a sequence")
+        normalized_requests: list[dict[str, Any]] = []
+        for item in requests:
+            if not isinstance(item, Mapping):
+                raise TypeError("Workbench batch scheduling request must be a mapping")
+            required = (
+                "network_id",
+                "region_id",
+                "controller_region_id",
+                "target_kind",
+                "operation",
+                "substrate_ids",
+                "specification",
+            )
+            missing = [name for name in required if name not in item]
+            if missing:
+                raise ValueError(f"Workbench batch scheduling request is missing fields: {missing}")
+            substrate_ids = item["substrate_ids"]
+            specification = item["specification"]
+            if isinstance(substrate_ids, (str, bytes)) or not isinstance(substrate_ids, Sequence):
+                raise TypeError("Workbench batch substrate_ids must be a sequence")
+            if not isinstance(specification, Mapping):
+                raise TypeError("Workbench batch specification must be a mapping")
+            normalized_requests.append(
+                {
+                    "network_id": str(item["network_id"]),
+                    "region_id": str(item["region_id"]),
+                    "controller_region_id": str(item["controller_region_id"]),
+                    "target_kind": str(item["target_kind"]),
+                    "operation": str(item["operation"]),
+                    "substrate_ids": tuple(str(value) for value in substrate_ids),
+                    "specification": {
+                        str(key): value for key, value in specification.items()
+                    },
+                    "minimum_train_task_slices": int(item.get("minimum_train_task_slices", 2)),
+                    "minimum_train_windows": int(item.get("minimum_train_windows", 2)),
+                    "require_holdout": bool(item.get("require_holdout", True)),
+                    "require_retention": bool(item.get("require_retention", False)),
+                }
+            )
+        if not normalized_requests:
+            raise ValueError("Workbench batch scheduling requires at least one request")
+        normalized_requests.sort(key=lambda item: _checkpoint_digest(item))
+        request_digest = _checkpoint_digest({"requests": tuple(normalized_requests)})
+        region_ids = tuple(sorted({item["region_id"] for item in normalized_requests}))
+        schedule_results: list[StructuralGrowthScheduleResult] = []
+        candidate_ids: list[str] = []
+        source_window_digests: list[str] = []
+        for request in normalized_requests:
+            result = self.schedule_structural_growth_from_evidence(
+                network_id=request["network_id"],
+                region_id=request["region_id"],
+                controller_region_id=request["controller_region_id"],
+                target_kind=request["target_kind"],
+                operation=request["operation"],
+                substrate_ids=request["substrate_ids"],
+                specification=request["specification"],
+                minimum_train_task_slices=request["minimum_train_task_slices"],
+                minimum_train_windows=request["minimum_train_windows"],
+                require_holdout=request["require_holdout"],
+                require_retention=request["require_retention"],
+            )
+            schedule_results.append(result)
+            source_window_digests.extend(result.new_window_digests)
+            if result.candidate_id is not None:
+                candidate_ids.append(result.candidate_id)
+        unique_candidates = tuple(dict.fromkeys(candidate_ids))
+        unique_windows = tuple(dict.fromkeys(source_window_digests))
+        trigger_tick = max(
+            (result.trigger_tick for result in schedule_results),
+            default=self._structural_runtime_tick,
+        )
+        scheduler_revision = self._structural_growth_scheduler_state.revision
+        if not unique_candidates:
+            prior = next(
+                (
+                    result
+                    for result in reversed(self._structural_workbench_batch_schedule_results)
+                    if result.request_digest == request_digest
+                    and result.batch_id in self._structural_candidate_batches
+                    and all(item.status == "waiting" for item in schedule_results)
+                ),
+                None,
+            )
+            if prior is not None and not unique_windows:
+                return prior
+            failed = [item.reason for item in schedule_results if item.status == "failed_closed"]
+            statuses = {item.status for item in schedule_results}
+            if failed:
+                status = "failed_closed"
+                reason = "; ".join(dict.fromkeys(failed))
+            elif statuses == {"waiting"}:
+                status = "waiting"
+                reason = "no_new_sealed_window"
+            else:
+                status = "no_candidates"
+                reason = "growth_controller_did_not_request_growth"
+            result = StructuralWorkbenchBatchScheduleResult(
+                status=status,
+                trigger_tick=trigger_tick,
+                request_digest=request_digest,
+                region_ids=region_ids,
+                source_window_digests=unique_windows,
+                reason=reason,
+                scheduler_revision=scheduler_revision,
+            )
+            self._record_structural_workbench_batch_schedule_result(result)
+            return result
+        try:
+            batch = self.arbitrate_structural_candidate_batch(unique_candidates)
+        except (RuntimeError, TypeError, ValueError) as exc:
+            result = StructuralWorkbenchBatchScheduleResult(
+                status="failed_closed",
+                trigger_tick=trigger_tick,
+                request_digest=request_digest,
+                region_ids=region_ids,
+                candidate_ids=unique_candidates,
+                source_window_digests=unique_windows,
+                reason=str(exc),
+                scheduler_revision=scheduler_revision,
+            )
+            self._record_structural_workbench_batch_schedule_result(result)
+            return result
+        result = StructuralWorkbenchBatchScheduleResult(
+            status="batch_created",
+            trigger_tick=trigger_tick,
+            request_digest=request_digest,
+            region_ids=region_ids,
+            candidate_ids=unique_candidates,
+            source_window_digests=unique_windows,
+            batch_id=batch.batch_id,
+            scheduler_revision=scheduler_revision,
+        )
+        self._record_structural_workbench_batch_schedule_result(result)
+        return result
+    @property
+    def structural_pressure_projection_digests(self) -> tuple[str, ...]:
+        """Return pressure projections already consumed by the controller bridge."""
+
+        return tuple(sorted(self._structural_pressure_projection_digests))
+
+    def propose_structural_candidate_from_pressure(
+        self,
+        projection: StructuralGrowthEvidenceProjection,
+        *,
+        controller_region_id: str,
+        target_kind: str,
+        operation: str,
+        substrate_ids: Sequence[str],
+        specification: Mapping[str, Any],
+    ) -> StructuralProposalCandidate | None:
+        """Bridge one pressure projection to a candidate without committing topology."""
+
+        if not isinstance(projection, StructuralGrowthEvidenceProjection):
+            raise TypeError("pressure bridge accepts a structural evidence projection")
+        if self._structural_growth_controller is None:
+            raise RuntimeError("structural growth controller is not attached")
+        if projection.mean_holdout_transfer is None:
+            raise ValueError("pressure projection requires holdout transfer evidence")
+        projection_digest = projection.projection_digest
+        if projection_digest in self._structural_pressure_projection_digests:
+            return None
+        parent_checkpoint = self.native_checkpoint()
+        parent_checkpoint_id = (
+            f"pressure-parent:{projection_digest}:{_checkpoint_digest(parent_checkpoint)}"
+        )
+        # A sealed projection carries the evidence clock of the observations
+        # that produced it.  Advancing the runtime clock here keeps a queued
+        # candidate checkpointable even when the projection was assembled
+        # outside the adapter's live observation loop.  This does not mutate
+        # topology, spend structural budget, or commit the candidate.
+        self._structural_runtime_tick = max(
+            self._structural_runtime_tick,
+            projection.last_tick,
+        )
+        decision = self._structural_growth_controller.observe(
+            str(controller_region_id),
+            prediction_error=projection.mean_prediction_error,
+            resource_state=projection.mean_resource_state,
+            holdout_transfer=projection.mean_holdout_transfer,
+            evidence_ids=projection.evidence_ids,
+        )
+        self._structural_pressure_projection_digests.add(projection_digest)
+        if not decision.should_grow:
+            return None
+        candidate = StructuralProposalCandidate(
+            candidate_id=(
+                f"candidate:pressure:{projection.network_id}:{projection.region_id}:"
+                f"{decision.proposal_ordinal}:{projection_digest[:12]}"
+            ),
+            network_id=projection.network_id,
+            target_kind=str(target_kind),
+            operation=str(operation),
+            substrate_ids=tuple(str(item) for item in substrate_ids),
+            evidence_ids=projection.evidence_ids,
+            source_tick=projection.last_tick,
+            priority=min(
+                1.0,
+                projection.mean_prediction_error
+                * max(projection.mean_holdout_transfer, 0.0),
+            ),
+            specification=tuple((str(key), value) for key, value in specification.items()),
+            resource_cost=self._structural_growth_controller.dynamics.growth_resource_cost,
+            parent_checkpoint_id=parent_checkpoint_id,
+        )
+        self._queue_structural_proposal_candidate(candidate)
+        return candidate
+
+    @staticmethod
+    def _structural_topology_digest(checkpoint: Mapping[str, Any]) -> str:
+        """Digest topology-owned state without mixing in cognitive/runtime metadata."""
+
+        components = checkpoint.get("components", {})
+        kernel = checkpoint.get("kernel", {})
+        if not isinstance(components, Mapping) or not isinstance(kernel, Mapping):
+            raise ValueError("native checkpoint topology payload is not a mapping")
+        return _checkpoint_digest(
+            {
+                "fabric": kernel.get("fabric", {}),
+                "neuron_regions": components.get("neuron_regions", {}),
+                "neuron_networks": components.get("neuron_networks", {}),
+            }
+        )
+
+    def _record_structural_candidate_validation(
+        self,
+        result: StructuralCandidateValidation,
+    ) -> None:
+        self._structural_candidate_validations.append(result)
+        self._structural_candidate_validations = self._structural_candidate_validations[
+            -self._lineage_limit() :
+        ]
+
+    def validate_structural_candidate_shadow(
+        self,
+        candidate_id: str,
+        *,
+        holdout_inputs: Sequence[Any],
+        expected_activities: Sequence[Any],
+    ) -> StructuralCandidateValidation:
+        """Validate one candidate without admitting its topology."""
+
+        key = str(candidate_id)
+        existing_validation = next(
+            (
+                result
+                for result in reversed(self._structural_candidate_validations)
+                if result.candidate_id == key and result.status in {"validated", "rejected"}
+            ),
+            None,
+        )
+        if existing_validation is not None:
+            return existing_validation
+        candidate = self._structural_proposal_candidates.get(key)
+        proposal_id = self._structural_candidate_proposals.get(key)
+        if candidate is None and proposal_id is None:
+            raise ValueError(f"unknown structural proposal candidate: {candidate_id}")
+        parent_checkpoint = self.native_checkpoint()
+        parent_checkpoint_digest = _checkpoint_digest(parent_checkpoint)
+        topology_before_digest = self._structural_topology_digest(parent_checkpoint)
+        budget_before = int(self._cognitive_state.development.structural_budget)
+        evidence_ids = (
+            candidate.evidence_ids
+            if candidate is not None
+            else self._topology_proposals[proposal_id].evidence_ids
+        )
+        if not holdout_inputs or not expected_activities:
+            result = StructuralCandidateValidation(
+                candidate_id=key,
+                proposal_id=proposal_id,
+                status="failed_closed",
+                validation_score=0.0,
+                parent_checkpoint_digest=parent_checkpoint_digest,
+                validation_checkpoint_digest=parent_checkpoint_digest,
+                topology_before_digest=topology_before_digest,
+                topology_after_digest=topology_before_digest,
+                structural_budget_before=budget_before,
+                structural_budget_after=budget_before,
+                evidence_ids=evidence_ids,
+                error="candidate requires non-empty holdout inputs and expected activities",
+            )
+            self._record_structural_candidate_validation(result)
+            return result
+        if len(holdout_inputs) != len(expected_activities):
+            result = StructuralCandidateValidation(
+                candidate_id=key,
+                proposal_id=proposal_id,
+                status="failed_closed",
+                validation_score=0.0,
+                parent_checkpoint_digest=parent_checkpoint_digest,
+                validation_checkpoint_digest=parent_checkpoint_digest,
+                topology_before_digest=topology_before_digest,
+                topology_after_digest=topology_before_digest,
+                structural_budget_before=budget_before,
+                structural_budget_after=budget_before,
+                evidence_ids=evidence_ids,
+                error="candidate holdout inputs and expected activities must have equal size",
+            )
+            self._record_structural_candidate_validation(result)
+            return result
+        try:
+            proposal = self.materialize_structural_candidate(key)
+            if proposal is None:
+                raise ValueError("candidate is not available for materialization")
+            proposal_id = proposal.proposal_id
+            validated = self.validate_structural_candidate_holdout(
+                key,
+                holdout_inputs=holdout_inputs,
+                expected_activities=expected_activities,
+            )
+            current = self._topology_proposals[proposal_id]
+            status = "validated" if validated else "rejected"
+            if not validated:
+                self._topology_proposals[proposal_id] = replace(
+                    current,
+                    status="rejected",
+                )
+            validation_checkpoint = self.native_checkpoint()
+            topology_after_digest = self._structural_topology_digest(validation_checkpoint)
+            budget_after = int(self._cognitive_state.development.structural_budget)
+            if topology_after_digest != topology_before_digest:
+                raise RuntimeError("candidate shadow validation changed topology")
+            if budget_after != budget_before:
+                raise RuntimeError("candidate shadow validation changed structural budget")
+            result = StructuralCandidateValidation(
+                candidate_id=key,
+                proposal_id=proposal_id,
+                status=status,
+                validation_score=current.validation_score,
+                parent_checkpoint_digest=parent_checkpoint_digest,
+                validation_checkpoint_digest=_checkpoint_digest(validation_checkpoint),
+                topology_before_digest=topology_before_digest,
+                topology_after_digest=topology_after_digest,
+                structural_budget_before=budget_before,
+                structural_budget_after=budget_after,
+                evidence_ids=proposal.evidence_ids,
+            )
+        except (IndexError, KeyError, RuntimeError, ValueError) as exc:
+            current_proposal_id = self._structural_candidate_proposals.get(key)
+            current_proposal = (
+                None
+                if current_proposal_id is None
+                else self._topology_proposals.get(current_proposal_id)
+            )
+            if current_proposal is not None and current_proposal.status == "pending":
+                self._topology_proposals[current_proposal_id] = replace(
+                    current_proposal,
+                    status="rejected",
+                )
+            validation_checkpoint = self.native_checkpoint()
+            result = StructuralCandidateValidation(
+                candidate_id=key,
+                proposal_id=current_proposal_id,
+                status="failed_closed",
+                validation_score=0.0
+                if current_proposal is None
+                else current_proposal.validation_score,
+                parent_checkpoint_digest=parent_checkpoint_digest,
+                validation_checkpoint_digest=_checkpoint_digest(validation_checkpoint),
+                topology_before_digest=topology_before_digest,
+                topology_after_digest=self._structural_topology_digest(validation_checkpoint),
+                structural_budget_before=budget_before,
+                structural_budget_after=int(self._cognitive_state.development.structural_budget),
+                evidence_ids=evidence_ids,
+                error=str(exc),
+            )
+        self._record_structural_candidate_validation(result)
+        return result
+
+    def _record_structural_validation_gate_decision(
+        self,
+        decision: StructuralValidationGateDecision,
+    ) -> None:
+        self._structural_validation_gate_decisions.append(decision)
+        self._structural_validation_gate_decisions = self._structural_validation_gate_decisions[
+            -self._lineage_limit() :
+        ]
+
+    def evaluate_structural_candidate_gate(
+        self,
+        validation: StructuralCandidateValidation,
+        *,
+        holdout_gain: float | None = None,
+        retention_regression: float,
+        lesion_effect: float,
+        resource_state: float,
+        evidence_ids: Sequence[str] = (),
+    ) -> StructuralValidationGateDecision:
+        """Bind measured retention/lesion metrics to one pending candidate."""
+
+        if not isinstance(validation, StructuralCandidateValidation):
+            raise TypeError("candidate gate requires a structural candidate validation record")
+        stored_validation = next(
+            (
+                item
+                for item in reversed(self._structural_candidate_validations)
+                if item.candidate_id == validation.candidate_id
+                and item == validation
+            ),
+            None,
+        )
+        if stored_validation is None:
+            raise ValueError("candidate validation record is not attached to this adapter")
+        if validation.status != "validated":
+            raise ValueError("candidate gate requires a validated holdout shadow")
+        existing = next(
+            (
+                item
+                for item in reversed(self._structural_validation_gate_decisions)
+                if item.candidate_id == validation.candidate_id
+            ),
+            None,
+        )
+        if existing is not None:
+            return existing
+        proposal_id = validation.proposal_id
+        if proposal_id is None:
+            raise ValueError("validated candidate is missing its pending proposal")
+        proposal = self._topology_proposals.get(proposal_id)
+        if proposal is None or proposal.status != "pending":
+            raise ValueError("candidate gate requires a pending topology proposal")
+        metric_ids = tuple(dict.fromkeys((*validation.evidence_ids, *(str(item) for item in evidence_ids))))
+        decision = evaluate_structural_candidate_validation(
+            validation.candidate_id,
+            holdout_gain=(
+                validation.validation_score
+                if holdout_gain is None
+                else float(holdout_gain)
+            ),
+            retention_regression=retention_regression,
+            lesion_effect=lesion_effect,
+            resource_state=resource_state,
+            resource_cost=proposal.resource_cost,
+            structural_budget=self._cognitive_state.development.structural_budget,
+            evidence_ids=metric_ids,
+            minimum_holdout_gain=(
+                self._structural_growth_controller.dynamics.minimum_holdout_gain
+                if self._structural_growth_controller is not None
+                else 0.05
+            ),
+            maximum_retention_regression=(
+                self._structural_growth_controller.dynamics.maximum_restructure_holdout_regression
+                if self._structural_growth_controller is not None
+                else 0.05
+            ),
+        )
+        if not decision.passed:
+            self._topology_proposals[proposal_id] = replace(
+                proposal,
+                status="rejected",
+            )
+        self._record_structural_validation_gate_decision(decision)
+        return decision
+
+    def continue_structural_candidate(
+        self,
+        candidate_id: str,
+        *,
+        holdout_inputs: Sequence[Any],
+        expected_activities: Sequence[Any],
+        holdout_gain: float | None = None,
+        retention_regression: float,
+        lesion_effect: float,
+        resource_state: float,
+        evidence_ids: Sequence[str] = (),
+    ) -> dict[str, Any]:
+        """Run one idempotent candidate through shadow, policy and admission."""
+
+        validation = self.validate_structural_candidate_shadow(
+            candidate_id,
+            holdout_inputs=holdout_inputs,
+            expected_activities=expected_activities,
+        )
+        decision = None
+        admission = None
+        if validation.status == "validated":
+            decision = self.evaluate_structural_candidate_gate(
+                validation,
+                holdout_gain=holdout_gain,
+                retention_regression=retention_regression,
+                lesion_effect=lesion_effect,
+                resource_state=resource_state,
+                evidence_ids=evidence_ids,
+            )
+            if decision.passed:
+                admission = self.admit_structural_candidate(validation, decision)
+        if validation.status == "failed_closed":
+            status = "failed_closed"
+        elif validation.status == "rejected":
+            status = "rejected"
+        elif decision is None:
+            status = "validated_pending"
+        elif not decision.passed:
+            status = "rejected"
+        elif admission is None:
+            status = "failed_closed"
+        else:
+            status = admission.status
+        return {
+            "candidate_id": str(candidate_id),
+            "status": status,
+            "validation": validation.to_payload(),
+            "decision": None if decision is None else decision.to_payload(),
+            "admission": None if admission is None else admission.to_payload(),
+        }
+
+    def _record_structural_validation_artifact(
+        self,
+        artifact: WorkbenchStructuralValidationArtifact,
+    ) -> WorkbenchStructuralValidationArtifact:
+        existing = next(
+            (
+                item
+                for item in reversed(self._structural_validation_artifacts)
+                if item.artifact_digest == artifact.artifact_digest
+            ),
+            None,
+        )
+        if existing is not None:
+            return existing
+        self._structural_validation_artifacts.append(artifact)
+        self._structural_validation_artifacts = self._structural_validation_artifacts[
+            -self._lineage_limit() :
+        ]
+        return artifact
+
+    def record_structural_validation_artifact(
+        self,
+        artifact: WorkbenchStructuralValidationArtifact,
+    ) -> WorkbenchStructuralValidationArtifact:
+        """Attach one validated, content-addressed Workbench artifact to the ledger."""
+
+        if not isinstance(artifact, WorkbenchStructuralValidationArtifact):
+            raise TypeError("structural validation artifact has an unsupported type")
+        return self._record_structural_validation_artifact(artifact)
+
+    def continue_structural_candidate_from_validation_artifact(
+        self,
+        artifact: WorkbenchStructuralValidationArtifact,
+        *,
+        holdout_inputs: Sequence[Any],
+        expected_activities: Sequence[Any],
+    ) -> dict[str, Any]:
+        """Consume replay facts only after binding them to the current candidate parent."""
+
+        if not isinstance(artifact, WorkbenchStructuralValidationArtifact):
+            raise TypeError("candidate continuation requires a Workbench validation artifact")
+        existing_artifact = next(
+            (
+                item
+                for item in reversed(self._structural_validation_artifacts)
+                if item.artifact_digest == artifact.artifact_digest
+            ),
+            None,
+        )
+        existing_admission = next(
+            (
+                result
+                for result in reversed(self._structural_admission_results)
+                if result.candidate_id == artifact.candidate_id
+            ),
+            None,
+        )
+        if existing_artifact is not None and existing_admission is not None:
+            return {
+                "candidate_id": artifact.candidate_id,
+                "status": "already_applied",
+                "validation_artifact": artifact.to_payload(),
+                "continuation": {
+                    "candidate_id": artifact.candidate_id,
+                    "status": existing_admission.status,
+                    "admission": existing_admission.to_payload(),
+                },
+            }
+
+        def failed(reason: str) -> dict[str, Any]:
+            return {
+                "candidate_id": artifact.candidate_id,
+                "status": "failed_closed",
+                "reason": reason,
+                "validation_artifact": artifact.to_payload(),
+            }
+
+        candidate = self._structural_proposal_candidates.get(artifact.candidate_id)
+        if candidate is None:
+            return failed("validation artifact candidate is not pending")
+        specification = dict(candidate.specification)
+        candidate_region_id = str(specification.get("region_id", candidate.substrate_ids[0]))
+        if candidate.network_id != artifact.network_id:
+            return failed("validation artifact network does not match candidate")
+        if candidate_region_id != artifact.region_id:
+            return failed("validation artifact region does not match candidate")
+        if candidate.resource_cost != artifact.resource_cost:
+            return failed("validation artifact resource cost does not match candidate")
+        if not set(candidate.evidence_ids).issubset(set(artifact.evidence_ids)):
+            return failed("validation artifact is missing candidate evidence ids")
+        parent_checkpoint = self.native_checkpoint()
+        if _checkpoint_digest(parent_checkpoint) != artifact.parent_checkpoint_digest:
+            return failed("validation artifact parent checkpoint does not match current state")
+        if not artifact.matches_holdout_replay(holdout_inputs, expected_activities):
+            return failed("validation artifact holdout replay digest mismatch")
+        try:
+            trial = TSKV8Adapter.from_native_checkpoint(parent_checkpoint)
+            if trial.materialize_structural_candidate(artifact.candidate_id) is None:
+                return failed("validation artifact candidate could not materialize in trial")
+            trial_digest = _checkpoint_digest(trial.native_checkpoint())
+        except (IndexError, KeyError, RuntimeError, TypeError, ValueError) as exc:
+            return failed(f"validation artifact trial replay failed: {exc}")
+        if trial_digest != artifact.trial_checkpoint_digest:
+            return failed("validation artifact trial checkpoint does not match current candidate")
+        continuation = self.continue_structural_candidate(
+            artifact.candidate_id,
+            holdout_inputs=holdout_inputs,
+            expected_activities=expected_activities,
+            holdout_gain=artifact.holdout_gain,
+            retention_regression=artifact.retention_regression,
+            lesion_effect=artifact.lesion_effect,
+            resource_state=artifact.resource_state,
+            evidence_ids=artifact.evidence_ids,
+        )
+        self._record_structural_validation_artifact(artifact)
+        return {
+            "candidate_id": artifact.candidate_id,
+            "status": continuation["status"],
+            "validation_artifact": artifact.to_payload(),
+            "continuation": continuation,
+        }
+
+    def continue_structural_candidate_batch_from_validation_artifacts(
+        self,
+        batch_id: str,
+        *,
+        artifacts_by_candidate: Mapping[
+            str, WorkbenchStructuralValidationArtifact | Mapping[str, Any]
+        ],
+        replays_by_candidate: Mapping[str, Mapping[str, Any]],
+    ) -> dict[str, Any]:
+        """Continue a candidate batch using replay-bound artifacts only."""
+
+        key = str(batch_id)
+        batch = self._structural_candidate_batches.get(key)
+        if batch is None:
+            raise ValueError(f"unknown structural candidate batch: {batch_id}")
+        if not isinstance(artifacts_by_candidate, Mapping):
+            raise TypeError("validation artifacts must be a mapping")
+        if not isinstance(replays_by_candidate, Mapping):
+            raise TypeError("validation replays must be a mapping")
+
+        artifacts: dict[str, WorkbenchStructuralValidationArtifact] = {}
+        parse_failures: dict[str, str] = {}
+        for candidate_id, raw_artifact in artifacts_by_candidate.items():
+            candidate_key = str(candidate_id)
+            try:
+                artifact = (
+                    WorkbenchStructuralValidationArtifact.from_payload(raw_artifact)
+                    if isinstance(raw_artifact, Mapping)
+                    else raw_artifact
+                )
+                if not isinstance(artifact, WorkbenchStructuralValidationArtifact):
+                    raise TypeError("unsupported validation artifact type")
+                if artifact.candidate_id != candidate_key:
+                    raise ValueError("artifact candidate id does not match mapping key")
+                artifacts[candidate_key] = artifact
+            except (KeyError, TypeError, ValueError) as exc:
+                parse_failures[candidate_key] = f"invalid validation artifact: {exc}"
+
+        results: dict[str, Any] = {}
+        current = batch
+        candidate_states = current.state_by_candidate
+        reasons = current.reason_by_candidate
+        consumed_artifacts: dict[str, WorkbenchStructuralValidationArtifact] = {}
+        for candidate_id in current.selected_candidate_ids:
+            state = candidate_states[candidate_id]
+            if state in {
+                "admitted",
+                "rolled_back",
+                "failed_closed",
+                "policy_rejected",
+                "deferred",
+            }:
+                if candidate_id in artifacts and state == "admitted":
+                    replay = replays_by_candidate.get(candidate_id)
+                    if not isinstance(replay, Mapping):
+                        results[candidate_id] = {
+                            "candidate_id": candidate_id,
+                            "status": "failed_closed",
+                            "reason": "validation replay payload must be a mapping",
+                        }
+                    else:
+                        try:
+                            results[candidate_id] = (
+                                self.continue_structural_candidate_from_validation_artifact(
+                                    artifacts[candidate_id],
+                                    holdout_inputs=replay["holdout_inputs"],
+                                    expected_activities=replay["expected_activities"],
+                                )
+                            )
+                        except (IndexError, KeyError, RuntimeError, TypeError, ValueError) as exc:
+                            results[candidate_id] = {
+                                "candidate_id": candidate_id,
+                                "status": "failed_closed",
+                                "reason": str(exc),
+                            }
+                    if results[candidate_id].get("status") == "already_applied":
+                        consumed_artifacts[candidate_id] = artifacts[candidate_id]
+                else:
+                    results[candidate_id] = {
+                        "candidate_id": candidate_id,
+                        "status": state,
+                    }
+                continue
+            if candidate_id in parse_failures:
+                result = {
+                    "candidate_id": candidate_id,
+                    "status": "failed_closed",
+                    "reason": parse_failures[candidate_id],
+                }
+            elif candidate_id not in artifacts:
+                continue
+            else:
+                replay = replays_by_candidate.get(candidate_id)
+                if not isinstance(replay, Mapping):
+                    result = {
+                        "candidate_id": candidate_id,
+                        "status": "failed_closed",
+                        "reason": "validation replay payload must be a mapping",
+                    }
+                elif "holdout_inputs" not in replay or "expected_activities" not in replay:
+                    result = {
+                        "candidate_id": candidate_id,
+                        "status": "failed_closed",
+                        "reason": "validation replay is missing holdout inputs or expected activities",
+                    }
+                else:
+                    try:
+                        result = self.continue_structural_candidate_from_validation_artifact(
+                            artifacts[candidate_id],
+                            holdout_inputs=replay["holdout_inputs"],
+                            expected_activities=replay["expected_activities"],
+                        )
+                    except (IndexError, KeyError, RuntimeError, TypeError, ValueError) as exc:
+                        result = {
+                            "candidate_id": candidate_id,
+                            "status": "failed_closed",
+                            "reason": str(exc),
+                        }
+            results[candidate_id] = result
+            result_status = str(result.get("status", "failed_closed"))
+            if result_status in {"admitted", "already_applied"}:
+                candidate_states[candidate_id] = "admitted"
+                consumed_artifacts[candidate_id] = artifacts[candidate_id]
+            elif result_status == "rejected":
+                candidate_states[candidate_id] = "policy_rejected"
+                reasons[candidate_id] = str(result.get("error", result_status))
+            else:
+                candidate_states[candidate_id] = "failed_closed"
+                reasons[candidate_id] = str(result.get("reason", result_status))
+            resource_cost = self._structural_candidate_resource_cost(candidate_id)
+            if resource_cost is not None:
+                current = replace(
+                    current,
+                    reservation_remaining=max(
+                        0,
+                        current.reservation_remaining - resource_cost,
+                    ),
+                )
+
+        current = replace(
+            current,
+            candidate_states=tuple(
+                (candidate_id, candidate_states[candidate_id])
+                for candidate_id in current.candidate_ids
+            ),
+            reasons=tuple(sorted(reasons.items())),
+            revision=current.revision + 1 if results else current.revision,
+            status="completed" if current.reservation_remaining == 0 else "running",
+        )
+        self._record_structural_candidate_batch(current)
+
+        artifact_batch = self._structural_validation_artifact_batches.get(key)
+        if consumed_artifacts:
+            submitted_batch = StructuralValidationArtifactBatch.from_artifacts(
+                batch_id=key,
+                expected_candidate_ids=current.selected_candidate_ids,
+                artifacts=consumed_artifacts,
+            )
+            artifact_batch = (
+                submitted_batch
+                if artifact_batch is None
+                else artifact_batch.merge(submitted_batch)
+            )
+            self._structural_validation_artifact_batches[key] = artifact_batch
+        return {
+            "batch": current.to_payload(),
+            "artifact_batch": (
+                None if artifact_batch is None else artifact_batch.to_payload()
+            ),
+            "results": results,
+        }
+
+    def _record_structural_admission_result(
+        self,
+        result: StructuralAdmissionResult,
+    ) -> None:
+        self._structural_admission_results.append(result)
+        self._structural_admission_results = self._structural_admission_results[
+            -self._lineage_limit() :
+        ]
+
+    def admit_structural_candidate(
+        self,
+        validation: StructuralCandidateValidation,
+        decision: StructuralValidationGateDecision,
+    ) -> StructuralAdmissionResult:
+        """Admit one policy-approved candidate through an atomic topology transaction."""
+
+        if not isinstance(validation, StructuralCandidateValidation):
+            raise TypeError("admission requires a structural candidate validation record")
+        if not isinstance(decision, StructuralValidationGateDecision):
+            raise TypeError("admission requires a structural validation gate decision")
+        if validation.candidate_id != decision.candidate_id:
+            raise ValueError("validation and decision candidate ids do not match")
+        if not decision.passed:
+            raise ValueError("only a passed structural validation decision can be admitted")
+        if validation.status != "validated":
+            raise ValueError("admission requires a validated holdout shadow")
+        if validation not in self._structural_candidate_validations:
+            raise ValueError("candidate validation record is not attached to this adapter")
+        if decision not in self._structural_validation_gate_decisions:
+            raise ValueError("validation decision is not attached to this adapter")
+        existing = next(
+            (
+                result
+                for result in reversed(self._structural_admission_results)
+                if result.candidate_id == validation.candidate_id
+            ),
+            None,
+        )
+        if existing is not None:
+            return existing
+        proposal_id = validation.proposal_id
+        if proposal_id is None:
+            raise ValueError("validated candidate is missing its pending proposal")
+        proposal = self._topology_proposals.get(proposal_id)
+        if proposal is None or proposal.status != "pending":
+            raise ValueError("admission requires a pending topology proposal")
+        parent_checkpoint = self.native_checkpoint()
+        parent_checkpoint_digest = _checkpoint_digest(parent_checkpoint)
+        topology_before_digest = self._structural_topology_digest(parent_checkpoint)
+        budget_before = int(self._cognitive_state.development.structural_budget)
+        try:
+            committed = self.commit_structural_candidate(validation.candidate_id)
+            child_checkpoint = self.native_checkpoint()
+            topology_after_digest = self._structural_topology_digest(child_checkpoint)
+            budget_after = int(self._cognitive_state.development.structural_budget)
+            current = self._topology_proposals[proposal_id]
+            if not committed:
+                result = StructuralAdmissionResult(
+                    candidate_id=validation.candidate_id,
+                    proposal_id=proposal_id,
+                    status="rejected",
+                    decision_digest=decision.decision_digest,
+                    parent_checkpoint_digest=parent_checkpoint_digest,
+                    child_checkpoint_digest=_checkpoint_digest(child_checkpoint),
+                    topology_before_digest=topology_before_digest,
+                    topology_after_digest=topology_after_digest,
+                    structural_budget_before=budget_before,
+                    structural_budget_after=budget_after,
+                    error="topology commit rejected the candidate",
+                )
+            elif (
+                current.status != "accepted"
+                or topology_after_digest == topology_before_digest
+                or budget_after != budget_before - proposal.resource_cost
+            ):
+                if current.status == "accepted":
+                    self.rollback_structural_candidate(validation.candidate_id)
+                rolled_back_checkpoint = self.native_checkpoint()
+                result = StructuralAdmissionResult(
+                    candidate_id=validation.candidate_id,
+                    proposal_id=proposal_id,
+                    status="rolled_back",
+                    decision_digest=decision.decision_digest,
+                    parent_checkpoint_digest=parent_checkpoint_digest,
+                    child_checkpoint_digest=_checkpoint_digest(rolled_back_checkpoint),
+                    topology_before_digest=topology_before_digest,
+                    topology_after_digest=self._structural_topology_digest(
+                        rolled_back_checkpoint
+                    ),
+                    structural_budget_before=budget_before,
+                    structural_budget_after=int(
+                        self._cognitive_state.development.structural_budget
+                    ),
+                    error="admission after-state violated topology or budget invariants",
+                )
+            else:
+                result = StructuralAdmissionResult(
+                    candidate_id=validation.candidate_id,
+                    proposal_id=proposal_id,
+                    status="admitted",
+                    decision_digest=decision.decision_digest,
+                    parent_checkpoint_digest=parent_checkpoint_digest,
+                    child_checkpoint_digest=_checkpoint_digest(child_checkpoint),
+                    topology_before_digest=topology_before_digest,
+                    topology_after_digest=topology_after_digest,
+                    structural_budget_before=budget_before,
+                    structural_budget_after=budget_after,
+                )
+        except (IndexError, KeyError, RuntimeError, ValueError) as exc:
+            current = self._topology_proposals.get(proposal_id)
+            if current is not None and current.status == "accepted":
+                self.rollback_structural_candidate(validation.candidate_id)
+            failed_checkpoint = self.native_checkpoint()
+            result = StructuralAdmissionResult(
+                candidate_id=validation.candidate_id,
+                proposal_id=proposal_id,
+                status="failed_closed",
+                decision_digest=decision.decision_digest,
+                parent_checkpoint_digest=parent_checkpoint_digest,
+                child_checkpoint_digest=_checkpoint_digest(failed_checkpoint),
+                topology_before_digest=topology_before_digest,
+                topology_after_digest=self._structural_topology_digest(failed_checkpoint),
+                structural_budget_before=budget_before,
+                structural_budget_after=int(self._cognitive_state.development.structural_budget),
+                error=str(exc),
+            )
+        self._record_structural_admission_result(result)
+        return result
+
+    @property
     def structural_proposal_candidates(self) -> tuple[StructuralProposalCandidate, ...]:
         """Return pending structural candidates awaiting explicit ledger validation."""
 
@@ -407,6 +2043,42 @@ class TSKV8Adapter(Taiji):
         """Return recent per-candidate results from maintenance cycles."""
 
         return tuple(self._structural_maintenance_results)
+
+    @property
+    def structural_candidate_validations(self) -> tuple[StructuralCandidateValidation, ...]:
+        """Return candidate-only validation records before topology admission."""
+
+        return tuple(self._structural_candidate_validations)
+
+    @property
+    def structural_validation_artifacts(
+        self,
+    ) -> tuple[WorkbenchStructuralValidationArtifact, ...]:
+        """Return content-addressed Workbench validation artifacts."""
+
+        return tuple(self._structural_validation_artifacts)
+
+    @property
+    def structural_validation_artifact_batches(
+        self,
+    ) -> tuple[StructuralValidationArtifactBatch, ...]:
+        """Return checkpointable artifact collections keyed by candidate batch."""
+
+        return tuple(self._structural_validation_artifact_batches.values())
+
+    @property
+    def structural_validation_gate_decisions(
+        self,
+    ) -> tuple[StructuralValidationGateDecision, ...]:
+        """Return independent validation policy decisions for structural candidates."""
+
+        return tuple(self._structural_validation_gate_decisions)
+
+    @property
+    def structural_admission_results(self) -> tuple[StructuralAdmissionResult, ...]:
+        """Return atomic topology admission outcomes."""
+
+        return tuple(self._structural_admission_results)
 
     def materialize_structural_candidate(
         self,
@@ -427,7 +2099,10 @@ class TSKV8Adapter(Taiji):
                 region_id=str(specification.get("region_id", candidate.substrate_ids[0])),
                 unit_id=str(specification["unit_id"]),
                 evidence_ids=candidate.evidence_ids,
-                parent_checkpoint_id=f"candidate-parent:{candidate.candidate_id}",
+                parent_checkpoint_id=(
+                    candidate.parent_checkpoint_id
+                    or f"candidate-parent:{candidate.candidate_id}"
+                ),
                 resource_cost=candidate.resource_cost,
             )
             self._topology_proposals[proposal.proposal_id] = proposal
@@ -440,7 +2115,9 @@ class TSKV8Adapter(Taiji):
         except KeyError as exc:
             raise ValueError(f"unknown adaptive neuron network: {candidate.network_id}") from exc
         specification = dict(candidate.specification)
-        parent_checkpoint_id = f"candidate-parent:{candidate.candidate_id}"
+        parent_checkpoint_id = (
+            candidate.parent_checkpoint_id or f"candidate-parent:{candidate.candidate_id}"
+        )
         if candidate.operation == "split":
             proposal = network.propose_region_split(
                 region_id=str(specification.get("region_id", candidate.substrate_ids[0])),
@@ -1548,6 +3225,8 @@ class TSKV8Adapter(Taiji):
             learning_gain=learning_gain,
             holdout_transfer=holdout_transfer,
             evidence_id=evidence_id,
+            task_slice_id=self._state.episode_id,
+            partition="holdout" if holdout else "train",
         )
         self._structural_runtime_observations.append(observation)
         self._structural_runtime_observations = self._structural_runtime_observations[
@@ -3903,6 +5582,8 @@ class TSKV8Adapter(Taiji):
                     candidate_unit_id = dict(candidate.specification).get("unit_id")
                     if existing_unit_id != candidate_unit_id:
                         continue
+                    if existing.evidence_ids != candidate.evidence_ids:
+                        continue
                 return
         self._structural_proposal_candidates[candidate.candidate_id] = candidate
         limit = self._lineage_limit()
@@ -4019,6 +5700,8 @@ class TSKV8Adapter(Taiji):
                     learning_gain=learning_gain,
                     holdout_transfer=holdout_transfer,
                     evidence_id=evidence_id,
+                    task_slice_id=self._state.episode_id,
+                    partition="holdout" if holdout else "train",
                 )
             )
             region_observation_by_id[region_id] = observations[-1]
@@ -4209,6 +5892,27 @@ class TSKV8Adapter(Taiji):
                 observation.to_payload() for observation in self._structural_runtime_observations
             ],
             "evidence_ledger": self._structural_evidence_ledger.to_payload(),
+            "growth_scheduler_state": self._structural_growth_scheduler_state.to_payload(),
+            "growth_schedule_results": [
+                result.to_payload() for result in self._structural_growth_schedule_results
+            ],
+            "workbench_batch_schedule_results": [
+                result.to_payload()
+                for result in self._structural_workbench_batch_schedule_results
+            ],
+            "candidate_batches": [
+                batch.to_payload() for batch in self._structural_candidate_batches.values()
+            ],
+            "candidate_rollbacks": [
+                record.to_payload() for record in self._structural_candidate_rollbacks
+            ],
+            "capacity_pressure_snapshots": [
+                snapshot.to_payload()
+                for snapshot in self._structural_capacity_pressure_snapshots
+            ],
+            "pressure_projection_digests": sorted(
+                self._structural_pressure_projection_digests
+            ),
             "previous_errors": dict(self._structural_runtime_previous_errors),
             "proposal_candidates": [
                 candidate.to_payload()
@@ -4218,16 +5922,45 @@ class TSKV8Adapter(Taiji):
             "maintenance_results": [
                 result.to_payload() for result in self._structural_maintenance_results
             ],
+            "candidate_validations": [
+                result.to_payload() for result in self._structural_candidate_validations
+            ],
+            "validation_artifacts": [
+                artifact.to_payload() for artifact in self._structural_validation_artifacts
+            ],
+            "validation_artifact_batches": [
+                batch.to_payload()
+                for batch in self._structural_validation_artifact_batches.values()
+            ],
+            "validation_gate_decisions": [
+                decision.to_payload()
+                for decision in self._structural_validation_gate_decisions
+            ],
+            "admission_results": [
+                result.to_payload() for result in self._structural_admission_results
+            ],
         }
 
     def _restore_structural_runtime(self, payload: Any) -> None:
         self._structural_runtime_tick = 0
         self._structural_runtime_observations = []
         self._structural_evidence_ledger = StructuralEvidenceLedger()
+        self._structural_growth_scheduler_state = StructuralGrowthScheduleState()
+        self._structural_growth_schedule_results = []
+        self._structural_workbench_batch_schedule_results = []
+        self._structural_candidate_batches = {}
+        self._structural_candidate_rollbacks = []
+        self._structural_capacity_pressure_snapshots = []
+        self._structural_pressure_projection_digests = set()
         self._structural_runtime_previous_errors = {}
         self._structural_proposal_candidates = {}
         self._structural_candidate_proposals = {}
         self._structural_maintenance_results = []
+        self._structural_candidate_validations = []
+        self._structural_validation_artifacts = []
+        self._structural_validation_artifact_batches = {}
+        self._structural_validation_gate_decisions = []
+        self._structural_admission_results = []
         if payload is None:
             return
         if not isinstance(payload, Mapping):
@@ -4244,12 +5977,27 @@ class TSKV8Adapter(Taiji):
         candidates_payload = payload.get("proposal_candidates", ())
         candidate_proposals = payload.get("candidate_proposals", {})
         maintenance_results = payload.get("maintenance_results", ())
+        candidate_validations = payload.get("candidate_validations", ())
+        validation_artifacts = payload.get("validation_artifacts", ())
+        validation_artifact_batches = payload.get("validation_artifact_batches", ())
+        validation_gate_decisions = payload.get("validation_gate_decisions", ())
+        admission_results = payload.get("admission_results", ())
         if not isinstance(candidates_payload, (tuple, list)):
             raise ValueError("structural proposal candidates must be a sequence")
         if not isinstance(candidate_proposals, Mapping):
             raise ValueError("structural candidate_proposals must be a mapping")
         if not isinstance(maintenance_results, (tuple, list)):
             raise ValueError("structural maintenance results must be a sequence")
+        if not isinstance(candidate_validations, (tuple, list)):
+            raise ValueError("structural candidate validations must be a sequence")
+        if not isinstance(validation_artifacts, (tuple, list)):
+            raise ValueError("structural validation artifacts must be a sequence")
+        if not isinstance(validation_artifact_batches, (tuple, list)):
+            raise ValueError("structural validation artifact batches must be a sequence")
+        if not isinstance(validation_gate_decisions, (tuple, list)):
+            raise ValueError("structural validation gate decisions must be a sequence")
+        if not isinstance(admission_results, (tuple, list)):
+            raise ValueError("structural admission results must be a sequence")
         if any(not isinstance(item, Mapping) for item in observations_payload):
             raise ValueError("structural runtime observation entry must be a mapping")
         observations = tuple(
@@ -4259,6 +6007,56 @@ class TSKV8Adapter(Taiji):
             raise ValueError("structural runtime observation is ahead of runtime tick")
         self._structural_runtime_tick = runtime_tick
         self._structural_runtime_observations = list(observations[-self._lineage_limit() :])
+        scheduler_state_payload = payload.get("growth_scheduler_state")
+        if scheduler_state_payload is not None:
+            if not isinstance(scheduler_state_payload, Mapping):
+                raise ValueError("structural growth scheduler checkpoint must be a mapping")
+            self._structural_growth_scheduler_state = StructuralGrowthScheduleState.from_payload(
+                scheduler_state_payload
+            )
+        schedule_results = payload.get("growth_schedule_results", ())
+        if not isinstance(schedule_results, (tuple, list)):
+            raise ValueError("structural growth schedule results must be a sequence")
+        for item in schedule_results:
+            if not isinstance(item, Mapping):
+                raise ValueError("structural growth schedule result entry must be a mapping")
+            self._record_structural_growth_schedule_result(
+                StructuralGrowthScheduleResult.from_payload(item)
+            )
+        workbench_batch_schedule_results = payload.get("workbench_batch_schedule_results", ())
+        if not isinstance(workbench_batch_schedule_results, (tuple, list)):
+            raise ValueError("Workbench batch schedule results must be a sequence")
+        for item in workbench_batch_schedule_results:
+            if not isinstance(item, Mapping):
+                raise ValueError("Workbench batch schedule result entry must be a mapping")
+            self._record_structural_workbench_batch_schedule_result(
+                StructuralWorkbenchBatchScheduleResult.from_payload(item)
+            )
+        candidate_batches = payload.get("candidate_batches", ())
+        if not isinstance(candidate_batches, (tuple, list)):
+            raise ValueError("structural candidate batches must be a sequence")
+        for item in candidate_batches:
+            if not isinstance(item, Mapping):
+                raise ValueError("structural candidate batch entry must be a mapping")
+            self._record_structural_candidate_batch(StructuralCandidateBatch.from_payload(item))
+        candidate_rollbacks = payload.get("candidate_rollbacks", ())
+        if not isinstance(candidate_rollbacks, (tuple, list)):
+            raise ValueError("structural candidate rollback records must be a sequence")
+        for item in candidate_rollbacks:
+            if not isinstance(item, Mapping):
+                raise ValueError("structural candidate rollback entry must be a mapping")
+            self._record_structural_candidate_rollback(
+                StructuralCandidateRollback.from_payload(item)
+            )
+        pressure_snapshots = payload.get("capacity_pressure_snapshots", ())
+        if not isinstance(pressure_snapshots, (tuple, list)):
+            raise ValueError("structural capacity pressure snapshots must be a sequence")
+        for item in pressure_snapshots:
+            if not isinstance(item, Mapping):
+                raise ValueError("structural capacity pressure entry must be a mapping")
+            self._record_structural_capacity_pressure(
+                StructuralRegionCapacityPressure.from_payload(item)
+            )
         evidence_ledger_payload = payload.get("evidence_ledger")
         if evidence_ledger_payload is None:
             for observation in self._structural_runtime_observations:
@@ -4269,6 +6067,12 @@ class TSKV8Adapter(Taiji):
             self._structural_evidence_ledger = StructuralEvidenceLedger.from_payload(
                 evidence_ledger_payload
             )
+        pressure_digests = payload.get("pressure_projection_digests", ())
+        if not isinstance(pressure_digests, (tuple, list)):
+            raise ValueError("structural pressure projection digests must be a sequence")
+        self._structural_pressure_projection_digests = {
+            str(item) for item in pressure_digests if str(item)
+        }
         self._structural_runtime_previous_errors = {
             str(key): float(value) for key, value in previous_errors.items()
         }
@@ -4293,6 +6097,42 @@ class TSKV8Adapter(Taiji):
                 raise ValueError("structural maintenance result entry must be a mapping")
             self._record_structural_maintenance_result(
                 StructuralMaintenanceResult.from_payload(item)
+            )
+        for item in candidate_validations:
+            if not isinstance(item, Mapping):
+                raise ValueError("structural candidate validation entry must be a mapping")
+            self._record_structural_candidate_validation(
+                StructuralCandidateValidation.from_payload(item)
+            )
+        for item in validation_artifacts:
+            if not isinstance(item, Mapping):
+                raise ValueError("structural validation artifact entry must be a mapping")
+            self._record_structural_validation_artifact(
+                WorkbenchStructuralValidationArtifact.from_payload(item)
+            )
+        for item in validation_artifact_batches:
+            if not isinstance(item, Mapping):
+                raise ValueError("structural validation artifact batch entry must be a mapping")
+            artifact_batch = StructuralValidationArtifactBatch.from_payload(item)
+            existing = self._structural_validation_artifact_batches.get(
+                artifact_batch.batch_id
+            )
+            self._structural_validation_artifact_batches[artifact_batch.batch_id] = (
+                artifact_batch
+                if existing is None
+                else existing.merge(artifact_batch)
+            )
+        for item in validation_gate_decisions:
+            if not isinstance(item, Mapping):
+                raise ValueError("structural validation gate decision entry must be a mapping")
+            self._record_structural_validation_gate_decision(
+                StructuralValidationGateDecision.from_payload(item)
+            )
+        for item in admission_results:
+            if not isinstance(item, Mapping):
+                raise ValueError("structural admission result entry must be a mapping")
+            self._record_structural_admission_result(
+                StructuralAdmissionResult.from_payload(item)
             )
 
     def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:

@@ -12,6 +12,8 @@ STRUCTURAL_PRUNING_CHECKPOINT_FORMAT = "taiji-structural-pruning-v1"
 STRUCTURAL_RUNTIME_OBSERVATION_CHECKPOINT_FORMAT = "taiji-structural-runtime-observation-v1"
 STRUCTURAL_PROPOSAL_CANDIDATE_FORMAT = "taiji-structural-proposal-candidate-v1"
 STRUCTURAL_MAINTENANCE_RESULT_FORMAT = "taiji-structural-maintenance-result-v1"
+STRUCTURAL_CANDIDATE_VALIDATION_FORMAT = "taiji-structural-candidate-validation-v1"
+STRUCTURAL_EVIDENCE_PARTITIONS = frozenset({"runtime", "train", "holdout", "retention"})
 
 
 def _unit(value: float, name: str) -> float:
@@ -39,6 +41,8 @@ class StructuralRuntimeObservation:
     learning_gain: float
     holdout_transfer: float
     evidence_id: str
+    task_slice_id: str = ""
+    partition: str = "runtime"
 
     def __post_init__(self) -> None:
         if not str(self.network_id):
@@ -55,6 +59,8 @@ class StructuralRuntimeObservation:
         _unit(self.holdout_transfer, "structural runtime holdout_transfer")
         if not str(self.evidence_id):
             raise ValueError("structural runtime evidence_id must not be empty")
+        if self.partition not in STRUCTURAL_EVIDENCE_PARTITIONS:
+            raise ValueError("unsupported structural runtime evidence partition")
         object.__setattr__(self, "network_id", str(self.network_id))
         object.__setattr__(self, "region_id", str(self.region_id))
         object.__setattr__(self, "tick", int(self.tick))
@@ -68,6 +74,8 @@ class StructuralRuntimeObservation:
         object.__setattr__(self, "learning_gain", float(self.learning_gain))
         object.__setattr__(self, "holdout_transfer", float(self.holdout_transfer))
         object.__setattr__(self, "evidence_id", str(self.evidence_id))
+        object.__setattr__(self, "task_slice_id", str(self.task_slice_id))
+        object.__setattr__(self, "partition", str(self.partition))
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -81,6 +89,8 @@ class StructuralRuntimeObservation:
             "learning_gain": self.learning_gain,
             "holdout_transfer": self.holdout_transfer,
             "evidence_id": self.evidence_id,
+            "task_slice_id": self.task_slice_id,
+            "partition": self.partition,
         }
 
     @classmethod
@@ -98,6 +108,8 @@ class StructuralRuntimeObservation:
             learning_gain=float(payload["learning_gain"]),
             holdout_transfer=float(payload.get("holdout_transfer", 0.0)),
             evidence_id=str(payload["evidence_id"]),
+            task_slice_id=str(payload.get("task_slice_id", "")),
+            partition=str(payload.get("partition", "runtime")),
         )
 
 
@@ -117,6 +129,7 @@ class StructuralProposalCandidate:
     resource_cost: int = 1
     depends_on_candidate_ids: tuple[str, ...] = ()
     conflict_keys: tuple[str, ...] = ()
+    parent_checkpoint_id: str | None = None
 
     def __post_init__(self) -> None:
         if not str(self.candidate_id):
@@ -155,6 +168,8 @@ class StructuralProposalCandidate:
             raise ValueError("structural candidate conflict_keys must not be empty")
         if len(set(conflicts)) != len(conflicts):
             raise ValueError("structural candidate conflict_keys cannot contain duplicates")
+        if self.parent_checkpoint_id is not None and not str(self.parent_checkpoint_id):
+            raise ValueError("structural candidate parent_checkpoint_id must not be empty")
         object.__setattr__(self, "candidate_id", str(self.candidate_id))
         object.__setattr__(self, "network_id", str(self.network_id))
         object.__setattr__(self, "substrate_ids", substrates)
@@ -165,6 +180,11 @@ class StructuralProposalCandidate:
         object.__setattr__(self, "resource_cost", int(self.resource_cost))
         object.__setattr__(self, "depends_on_candidate_ids", dependencies)
         object.__setattr__(self, "conflict_keys", conflicts)
+        object.__setattr__(
+            self,
+            "parent_checkpoint_id",
+            None if self.parent_checkpoint_id is None else str(self.parent_checkpoint_id),
+        )
 
     def to_payload(self) -> dict[str, Any]:
         return {
@@ -181,6 +201,7 @@ class StructuralProposalCandidate:
             "resource_cost": self.resource_cost,
             "depends_on_candidate_ids": list(self.depends_on_candidate_ids),
             "conflict_keys": list(self.conflict_keys),
+            "parent_checkpoint_id": self.parent_checkpoint_id,
         }
 
     @classmethod
@@ -205,6 +226,11 @@ class StructuralProposalCandidate:
                 str(item) for item in payload.get("depends_on_candidate_ids", ())
             ),
             conflict_keys=tuple(str(item) for item in payload.get("conflict_keys", ())),
+            parent_checkpoint_id=(
+                None
+                if payload.get("parent_checkpoint_id") is None
+                else str(payload["parent_checkpoint_id"])
+            ),
         )
 
 
@@ -263,6 +289,104 @@ class StructuralMaintenanceResult:
             proposal_id=None if proposal_id is None else str(proposal_id),
             status=str(payload["status"]),
             validation_score=float(payload.get("validation_score", 0.0)),
+            error=None if payload.get("error") is None else str(payload["error"]),
+        )
+
+
+@dataclass(frozen=True)
+class StructuralCandidateValidation:
+    """Candidate-only validation evidence before topology admission."""
+
+    candidate_id: str
+    proposal_id: str | None
+    status: str
+    validation_score: float
+    parent_checkpoint_digest: str
+    validation_checkpoint_digest: str
+    topology_before_digest: str
+    topology_after_digest: str
+    structural_budget_before: int
+    structural_budget_after: int
+    evidence_ids: tuple[str, ...]
+    error: str | None = None
+
+    def __post_init__(self) -> None:
+        if not str(self.candidate_id):
+            raise ValueError("structural candidate validation candidate_id must not be empty")
+        if self.proposal_id is not None and not str(self.proposal_id):
+            raise ValueError("structural candidate validation proposal_id must not be empty")
+        if self.status not in {"validated", "rejected", "failed_closed"}:
+            raise ValueError("unsupported structural candidate validation status")
+        _unit(self.validation_score, "structural candidate validation_score")
+        for name in (
+            "parent_checkpoint_digest",
+            "validation_checkpoint_digest",
+            "topology_before_digest",
+            "topology_after_digest",
+        ):
+            if not str(getattr(self, name)):
+                raise ValueError(f"structural candidate validation {name} must not be empty")
+        if min(int(self.structural_budget_before), int(self.structural_budget_after)) < 0:
+            raise ValueError("structural candidate validation budget cannot be negative")
+        evidence_ids = tuple(str(item) for item in self.evidence_ids)
+        if not evidence_ids or len(set(evidence_ids)) != len(evidence_ids):
+            raise ValueError("structural candidate validation evidence_ids must be unique")
+        if self.error is not None and not str(self.error):
+            raise ValueError("structural candidate validation error must not be empty")
+        object.__setattr__(self, "candidate_id", str(self.candidate_id))
+        object.__setattr__(
+            self,
+            "proposal_id",
+            None if self.proposal_id is None else str(self.proposal_id),
+        )
+        object.__setattr__(self, "validation_score", float(self.validation_score))
+        object.__setattr__(self, "parent_checkpoint_digest", str(self.parent_checkpoint_digest))
+        object.__setattr__(
+            self,
+            "validation_checkpoint_digest",
+            str(self.validation_checkpoint_digest),
+        )
+        object.__setattr__(self, "topology_before_digest", str(self.topology_before_digest))
+        object.__setattr__(self, "topology_after_digest", str(self.topology_after_digest))
+        object.__setattr__(self, "structural_budget_before", int(self.structural_budget_before))
+        object.__setattr__(self, "structural_budget_after", int(self.structural_budget_after))
+        object.__setattr__(self, "evidence_ids", evidence_ids)
+        object.__setattr__(self, "error", None if self.error is None else str(self.error))
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            "format": STRUCTURAL_CANDIDATE_VALIDATION_FORMAT,
+            "candidate_id": self.candidate_id,
+            "proposal_id": self.proposal_id,
+            "status": self.status,
+            "validation_score": self.validation_score,
+            "parent_checkpoint_digest": self.parent_checkpoint_digest,
+            "validation_checkpoint_digest": self.validation_checkpoint_digest,
+            "topology_before_digest": self.topology_before_digest,
+            "topology_after_digest": self.topology_after_digest,
+            "structural_budget_before": self.structural_budget_before,
+            "structural_budget_after": self.structural_budget_after,
+            "evidence_ids": list(self.evidence_ids),
+            "error": self.error,
+        }
+
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> StructuralCandidateValidation:
+        if payload.get("format") != STRUCTURAL_CANDIDATE_VALIDATION_FORMAT:
+            raise ValueError("unsupported structural candidate validation format")
+        proposal_id = payload.get("proposal_id")
+        return cls(
+            candidate_id=str(payload["candidate_id"]),
+            proposal_id=None if proposal_id is None else str(proposal_id),
+            status=str(payload["status"]),
+            validation_score=float(payload.get("validation_score", 0.0)),
+            parent_checkpoint_digest=str(payload["parent_checkpoint_digest"]),
+            validation_checkpoint_digest=str(payload["validation_checkpoint_digest"]),
+            topology_before_digest=str(payload["topology_before_digest"]),
+            topology_after_digest=str(payload["topology_after_digest"]),
+            structural_budget_before=int(payload["structural_budget_before"]),
+            structural_budget_after=int(payload["structural_budget_after"]),
+            evidence_ids=tuple(str(item) for item in payload.get("evidence_ids", ())),
             error=None if payload.get("error") is None else str(payload["error"]),
         )
 

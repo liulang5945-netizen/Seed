@@ -1,0 +1,686 @@
+{
+  "format": "taiji-w7-r5c-s10-workbench-multi-region-batch-v1",
+  "executions": [
+    {
+      "outcome": {
+        "version": 1,
+        "request_id": "workbench:s10-workbench-read-1",
+        "intent_id": "s10-workbench-read-1",
+        "call_id": "s10-workbench-read-1:tool-call",
+        "capability_id": "workspace.read",
+        "snapshot_id": "5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f",
+        "status": "success",
+        "success": true,
+        "result": {
+          "path": "README.md",
+          "content": "# Seed — runtime for the Taiji Native Cognitive Architecture\n\nA byte-level predictive-coding kernel that learns **online from local prediction errors** — no\nbackpropagation, no attention matrix, no optimizer, no context window, no teacher model. Sparse\nfixed-fan-in synapses carry every update, and episodic memory is a shared distributed field that\nallocates **zero slots per event**. Every claim below is backed by a committed, lesion-controlled\nverification script.\n\n[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)\n[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)\n\n| What a Transformer does | What this kernel does instead |\n|---|---|\n| tokenizer + learned embedding | 256 raw-byte receptors + boundary receptor |\n| self-attention | sparse reciprocal prediction and recurrent transitions |\n| KV cache / external retrieval | one shared engram field, no per-event K/V slots |\n| global backpropagation | local prediction/state/motor/memory deltas |\n| autoregressive decode | motor byte fed back through the same sensor |\n\nMeasured on the committed two-region `[64, 48]` byte-cycle benchmark (seed `7`): byte-cycle accuracy\n**0% → 94.12%**, mean surprise **5.4041 → 0.1069** (**98.02%** reduction), free generation exact for\nall eight steps, 83,841 learned scalars. Ablations are reported, not hidden — see\n[reproducible results](#reproducible-tsk-v8-kernel-results).\n\n> **Status, stated plainly:** the Taiji Native Architecture v1 target is specified, but the executable\n> code is still the lower-level Taiji Substrate Kernel v8 (TSK-v8). This is a substrate-mechanism\n> research kernel — **not** a completed cognitive architecture, not a language model, and **not an AGI\n> claim**. Current checkpoints are early-stage: garbled text replies are expected kernel behavior.\n\n## Project scope\n\n**Taiji** is the native cognitive architecture and model. **Seed** is the project, product and runtime that trains, evaluates, deploys and hosts Taiji. Taiji is being redesigned around learned perception, world state, workspace, memory, goals, reasoning, planning and generation while reusing mature algorithms where they fit the project—not rebuilding intelligence from primitive one-hot mechanisms.\n\n## Naming\r\n\r\n| Name | Meaning |\r\n|---|---|\r\n| **Seed** | project, product, distribution and runtime; package `seed` |\n| **Taiji** | complete native cognitive architecture and model; target package `taiji/` |\n| **TSK-v8** | current executable byte/fabric/memory/motor research kernel and compatibility line |\n| **Legacy NeuroPlex** | the frozen Transformer baseline in `neuroplex/`; the replaced bottom layer is `neuroplex/layers.py::TransformerBlock` |\n| `taiji.*` in `scripts/archive/` | a historical import alias for `neuroplex`, not the current architecture |\n\n## Architecture direction\n\nTaiji is capability-first, not anti-Transformer by ideology. It may reuse learned embeddings, attention-like routing, state-space or graph operators, optimizers, reinforcement learning, retrieval infrastructure and CUDA kernels. The invariant is that Taiji owns the cognitive state and decision path; no Transformer, Legacy runtime or teacher model may remain the runtime cognitive subject.\n\nThe target path is:\n\n```text\nmultimodal observations\n  → learned perception and variable-duration abstractions\n  → predictive world/self state + workspace\n  ↔ working / episodic / semantic / procedural memory\n  → goals / reasoning / imagination / planning\n  → language / tool / body action\n  → real outcome and continued learning\n```\n\nSee the [core project requirements](plans/active/TAIJI_CORE_REQUIREMENTS.md), [Taiji Native Architecture v1](plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md), and the [current roadmap](plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md).\n\n## Current TSK-v8 kernel baseline\n\nThe current executable kernel does not wrap a Transformer. Its narrower path is:\n\r\n```text\r\nraw byte receptors\r\n  → hierarchical reciprocal prediction errors\r\n  → persistent recurrent region states\r\n  ↔ distributed episodic field and cortical readback\r\n  → balanced sparse cortical receptor bank\r\n  → one byte motor organ\r\n  → emitted action returns as the next sensation\r\n```\r\n\r\n| Transformer responsibility | Current TSK-v8 experiment |\n|---|---|\r\n| tokenizer + learned embedding | 256 raw-byte receptors + boundary receptor |\r\n| positional encoding | causal ticks and persistent state |\r\n| self-attention | sparse reciprocal prediction and recurrent transitions |\r\n| residual/FFN state | membrane integration, inhibition, adaptive thresholds, traces |\r\n| KV cache / external retrieval | bounded dynamic state plus distributed associative engrams; no event K/V slots |\r\n| global backpropagation | existing-edge local prediction/state/motor/memory deltas |\r\n| LM head | all-state sparse receptor bank + one motor population |\r\n| autoregressive decode | motor byte fed back through the same sensor |\r\n\r\nThe implementation imports neither `transformers` nor the legacy `neuroplex` runtime. PyTorch is used only as a tensor execution engine.\r\n\r\n## Algorithm\r\n\r\nFor region `r`, the previous local trace predicts both the current lower-level activity and the region's own next activity:\r\n\r\n```math\r\n\\hat y_t^{r-1}=D^r q_{t-1}^r, \\qquad e_t^{r-1}=y_t^{r-1}-\\hat y_t^{r-1}\r\n```\r\n\r\n```math\r\n\\hat a_t^r=T^r q_{t-1}^r\r\n```\r\n\r\nThe region integrates bottom-up error, recurrent prediction, and delayed top-down context:\r\n\r\n```math\r\nu_t^r=Bound(\\lambda_u u_{t-1}^r+\\alpha_g(D^r)^Te_t^{r-1}+\\alpha_T\\hat a_t^r+\\alpha_c c_t^r)\r\n```\r\n\r\nActivity is formed through an adaptive threshold and a local inhibitory pool. Learning is online and local:\r\n\r\n```math\r\n\\Delta D^r=\\eta_D e_t^{r-1}(q_{t-1}^r)^T\r\n```\r\n\r\n```math\r\n\\Delta T^r=\\eta_T(a_t^r-T^rq_{t-1}^r)(q_{t-1}^r)^T\r\n```\r\n\r\n```math\r\n\\Delta M=\\eta_M(onehot(b_t)-p_{t-1})c_{t-1}^T\r\n```\r\n\r\nThe motor does not discard a random cortical subset. It concatenates every region's fast activity and slow trace into `s_t`, then a fixed balanced single-fan-out receptor map `H` folds every coordinate into `K` shared evidence channels:\r\n\r\n```math\r\n\\tilde c_{t,k}=|G_k|^{-1/2}\\sum_{j\\in G_k}\\sigma_j s_{t,j},\r\n\\qquad\r\nc_t=\\gamma_c\\frac{\\tilde c_t}{\\lVert\\tilde c_t\\rVert_2+\\epsilon}\r\n```\r\n\r\nEvery cortical coordinate reaches exactly one receptor, and every action competes on the same `K` channels.\r\n\r\nAn active transition is stored only after the full causal tuple is available. A cortical cue `s`, executed action `a`, reward `r`, resulting sensation `o`, causal tick, episode signature and provenance excite one overlapping engram population `h`. Existing recurrent edges learn cue-to-event completion:\r\n\r\n```math\r\nh^{event}=\\phi(Qs+\\gamma_e(Aa+Oo+r\\rho+Tt+Ee+Pp)),\r\n\\qquad\r\n\\Delta W^{mem}=\\eta_m g(h^{event}-W^{mem}h^{cue})(h^{cue})^T\r\n```\r\n\r\n`g` is a novelty/reward write gate. Recurrent resonance gates all recalled action, outcome, value, time, episode and provenance evidence; recalled cortical state is injected into the next fabric tick. Events share the same fixed population and edge topology—writing an event does not append a row, key or value.\r\n\r\nEvery update is restricted to stored fixed-fan-in edges. There is no dense structural mask, attention matrix, context window, optimizer, `backward()`, teacher model, or distillation path.\r\n\r\nThe kernel tensor shapes, update order, state contract, complexity, and code mapping are preserved in the [archived TSK-v8 implementation specification](plans/archive/implementation/TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md). These equations are candidate substrate mechanisms, not the complete Taiji architecture.\n\r\n## Quick start\r\n\r\n```bash\r\npython -m pip install -e \".[dev]\"\r\npython scripts/training/verify_taiji_native_v7.py\r\npython scripts/training/verify_taiji_n7_context.py\r\npython scripts/training/verify_taiji_n8_delayed_trace.py\r\npython scripts/training/verify_taiji_n9_long_free_run.py\r\npython scripts/training/verify_taiji_n10_sparse_migration.py\r\npython scripts/training/verify_taiji_n11_active_environment.py\r\npython scripts/training/verify_taiji_m5_episodic_field.py\r\npython -m pytest tests/taiji_native -q\r\n```\r\n\r\nSeed runtime compatibility API:\n\r\n```python\r\nfrom seed import Seed\r\n\r\nmodel = Seed()\r\nmodel.learn_bytes(b\"abcdabcdabcdabcd\", epochs=200)\r\n\r\nprint(model.score_bytes(b\"abcdabcdabcdabcd\"))\r\nprint(model.generate(b\"a\", length=8))\r\n\r\ncheckpoint = model.checkpoint()\r\nrestored = Seed.from_checkpoint(checkpoint)\r\n```\r\n\r\nResearchers may still import the current `Taiji` class directly for TSK-v8 kernel falsification experiments. During P1, Seed remains the product-facing runtime while cognitive ownership moves into the Taiji v1 contract.\n\r\n## Public Beta\r\n\r\nSeed ships as a self-contained Windows desktop build (dual-entry `Seed.exe` + `SeedBackend.exe`,\r\nabout 1.1GB): double-click launches the backend, activates the Seed native runtime, and serves the\r\nweb UI on `http://127.0.0.1:8000` within a few seconds. Development mode equivalent:\r\n\r\n```bash\r\npython -m uvicorn api.app:app --host 127.0.0.1 --port 8000   # backend + web UI (serves frontend/dist)\r\npython desktop/main.py                                         # desktop shell (window + backend + WebSocket 8765)\r\ncd frontend && npm run dev                                     # frontend dev server\r\n```\r\n\r\nEnvironment knobs: `SEED_PORT` (default 8000), `SEED_HOST` (default 127.0.0.1),\r\n`SEED_RUNTIME=1` (activate the Seed native runtime on startup).\r\n\r\nHistorical beta verification evidence lives in `reports/` (API stress 1000/1000, checkpoint\ncrash-recovery 10/10, latency/throughput baselines and frontend review) and\n`reports/seed_public_beta_release_20260823.md`. It documents the TSK-v8 product shell rather than\nTaiji v1 capability. Current checkpoints are early-stage: garbled replies are expected kernel\nbehavior, not a completed language architecture.\n\r\n## Reproducible TSK-v8 kernel results\n\r\nThe committed verification uses two regions `[64, 48]`, seed `7`, and raw bytes:\r\n\r\n| Metric | Result |\r\n|---|---:|\r\n| active learned parameters | 83,841 |\r\n| fixed motor receptor edges | 224 (one per cortical coordinate) |\r\n| actual learned scalar storage | 83,841 |\r\n| dense-equivalent learned scalars | 138,161 |\r\n| learned compressed topology | 81,792 int32 pre-indices |\r\n| byte-cycle accuracy | 0% → 94.12% |\r\n| mean surprise | 5.4041 → 0.1069 |\r\n| surprise reduction | 98.02% |\r\n| free generation | `a → bcdabcda` (all eight steps correct) |\r\n| checkpoint exact-next-step | pass |\r\n\r\nOn the N7 ambiguous stream, full Taiji predicts all eight history-dependent `x → b/d` successors correctly. A first-order model and a full dynamic-state lesion both score 50%. N7's trace-only lesion remains at 100%, showing that its immediate history can live in fast state.\r\n\r\nN8 inserts the shared distractors `1234` between cue and probe. Full and trace-only states score 100%; removing trace or all dynamic state scores 50%. This establishes that slow trace is necessary and sufficient for this fixed-delay behavior, but it is not yet evidence of episodic or autobiographical memory.\r\n\r\nN9 trains the same 16-byte cycle under an explicit non-terminal stream contract, then feeds back 128 motor actions with no teacher forcing. All 128 positions are exact, all four actions remain present, and membrane/trace/threshold bounds hold at every tick. A terminal boundary is deliberately excluded from this benchmark because teaching “stop after the fourth cycle” would contradict an infinite-cycle target.\r\n\r\nN10 replaces masked-dense synapses with compressed fixed-fan-in rows. Against a dense reference, forward differs by at most `2.98e-8`; backprojection and local update are exact. N5–N9 behavior regressions all still pass. Including the new field, the small v5 benchmark uses 111.22% of dense learned-weight bytes after int32 indices, while the default projects to 98.59%. This validates real edge execution, not a universal speedup claim; sparse indexing only wins storage at lower edge density.\r\n\r\nN11 separates external sensation from action credit. On a two-cue environment where action changes both reward and the next `+/-` sensation, the last 40 online interactions reach 100% success versus 50% random and 57.5% with action learning disabled. Taiji receives only scalar reward and outcome sensation—never the correct action label. A pending action and its eligibility are atomically checkpointed until outcome settlement.\r\n\r\nM5 stores eight one-shot active episodes in one shared 128-unit field. Writing uses a singleton demonstrated affordance with fabric/motor learning disabled; querying opens two actions, so this isolates associative recall rather than action discovery. Cross-episode action recall is 87.5%, versus 25% for equal-width trace-only execution and 25% after recurrent-association lesion. Outcome and provenance recall are 100%, episode identity is 75%, mean time-code cosine is 0.519, and recalled cortical state measurably changes the next fabric tick. The field allocates zero per-event slots.\r\n\r\nCurrent reports: [Native v7](reports/taiji_native_v7_20260822.json), [M6 v7 seed panel](reports/taiji_m6_seed_panel_v7_20260822.json), [N10 v7 regression](reports/taiji_n10_v7_20260822.json), [N11 v7](reports/taiji_n11_v7_20260822.json), and [M5 v7](reports/taiji_m5_v7_20260822.json). Earlier Native v2–v6 reports remain migration evidence.\r\n\r\nA single seed cannot separate a mechanism change from seed-specific idiosyncrasy, so mechanism-level decisions read the M6 seed panel (`verify_taiji_m6_endogenous_replay.py --panel`, 12 seeds) rather than one run, and a baseline is always re-executed from a clean worktree instead of read out of a committed report.\r\n\r\n## Source layout\r\n\r\n```text\r\nseed/\n├── config.py    Seed runtime compatibility configuration\n└── model.py     product-facing compatibility wrapper around TSK-v8\n\ntaiji/\n├── config.py    current kernel resource and dynamics contract\n├── sparse.py    fixed fan-in synapses and local updates\r\n├── state.py     persistent region and whole-system state\r\n├── memory.py    distributed episodic encoding, completion, and readback\r\n├── organs.py    raw-byte sensor, sparse receptor bank, and reward-aware motor\r\n├── environment.py active environment protocol and outcome\r\n├── fabric.py    predictive recurrent tick\r\n└── model.py     observe, learn, score, generate, checkpoint\r\n\r\ntests/taiji_native/                 kernel regression and ownership contracts\nscripts/training/verify_taiji_native_v7.py\r\nscripts/training/verify_taiji_m5_episodic_field.py\r\nscripts/training/verify_taiji_n10_sparse_migration.py\r\nscripts/training/verify_taiji_n11_active_environment.py\r\nscripts/training/verify_taiji_n7_context.py\r\nscripts/training/verify_taiji_n8_delayed_trace.py\r\nscripts/training/verify_taiji_n9_long_free_run.py\r\nplans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md\nplans/archive/implementation/TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md\n```\r\n\r\n## Legacy NeuroPlex\r\n\r\n`neuroplex/` contains the previous nine-member Transformer population, including all five dialogue members. It is retained only for reproducibility and future same-budget comparisons. It is not imported by Taiji.\r\n\r\nHistorical checkpoints that serialized `taiji.*` names are loaded through the scoped `neuroplex.legacy_checkpoint` compatibility utility; importing NeuroPlex no longer shadows the native `taiji` package.\r\n\r\nInstall legacy application dependencies only when reproducing that baseline:\r\n\r\n```bash\r\npython -m pip install -e \".[legacy]\"\r\n```\r\n\r\n## Current implementation target\n\nM6/M7 and N0–N11 remain reproducible TSK-v8 kernel evidence. They no longer define the research frontier. The current target is roadmap P1: versioned Taiji v1 observation/state/goal/plan/action contracts, cognitive-ownership tests, and a TSK-v8 compatibility adapter that preserves current checkpoints and product APIs. Learned temporal abstraction begins only after that boundary is executable.\n\r\n## License\r\n\r\nApache License 2.0. See [LICENSE](LICENSE).\r\n",
+          "encoding": "utf-8",
+          "byte_length": 16121,
+          "digest": "9c0e7b67e2eff8f332461506b34fdf540c64c9adbe395dba8c060759c7ca1acc",
+          "truncated": false
+        },
+        "error_code": "",
+        "error": "",
+        "transaction": {
+          "version": 1,
+          "operation": "workspace.read",
+          "path": "README.md",
+          "before_digest": "9c0e7b67e2eff8f332461506b34fdf540c64c9adbe395dba8c060759c7ca1acc",
+          "after_digest": "9c0e7b67e2eff8f332461506b34fdf540c64c9adbe395dba8c060759c7ca1acc",
+          "undo_token": "",
+          "reversible": true
+        },
+        "tick": 0,
+        "mcp_registry_snapshot_id": ""
+      },
+      "evidence": {
+        "evidence": {
+          "format": "seed-workbench-structural-evidence-v1",
+          "version": 1,
+          "request_id": "workbench:s10-workbench-read-1",
+          "intent_id": "s10-workbench-read-1",
+          "call_id": "s10-workbench-read-1:tool-call",
+          "capability_id": "workspace.read",
+          "snapshot_id": "5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f",
+          "outcome_digest": "dcf6fa100dcc887edf91b99f066d5d4c839f7514309caa5142b54364100ada93",
+          "task_slice_id": "code-readme",
+          "partition": "train",
+          "usage": 0.8,
+          "resource_pressure": 0.2,
+          "prediction_error": 0.8,
+          "learning_gain": 0.1,
+          "holdout_transfer": 0.0,
+          "evidence_id": "workbench-structural:c17f70792df6f02333d72e31b330e837"
+        },
+        "observation": {
+          "format": "taiji-structural-runtime-observation-v1",
+          "network_id": "workbench",
+          "region_id": "workbench.code",
+          "tick": 1,
+          "usage": 0.8,
+          "resource_pressure": 0.2,
+          "prediction_error": 0.8,
+          "learning_gain": 0.1,
+          "holdout_transfer": 0.0,
+          "evidence_id": "workbench-structural:c17f70792df6f02333d72e31b330e837",
+          "task_slice_id": "code-readme",
+          "partition": "train"
+        },
+        "append": {
+          "evidence_id": "workbench-structural:c17f70792df6f02333d72e31b330e837",
+          "status": "accepted",
+          "window_id": "window:workbench:workbench.code:1",
+          "sealed_window_digest": null
+        }
+      },
+      "sealed_window": {
+        "format": "taiji-structural-evidence-window-v1",
+        "window_id": "window:workbench:workbench.code:1",
+        "network_id": "workbench",
+        "region_id": "workbench.code",
+        "task_slice_ids": [
+          "code-readme"
+        ],
+        "partition_counts": {
+          "train": 1
+        },
+        "first_tick": 1,
+        "last_tick": 1,
+        "observation_count": 1,
+        "prediction_observation_count": 1,
+        "mean_usage": 0.8,
+        "mean_resource_pressure": 0.2,
+        "mean_prediction_error": 0.8,
+        "mean_learning_gain": 0.1,
+        "mean_holdout_transfer": 0.0,
+        "evidence_ids": [
+          "workbench-structural:c17f70792df6f02333d72e31b330e837"
+        ],
+        "window_digest": "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344"
+      }
+    },
+    {
+      "outcome": {
+        "version": 1,
+        "request_id": "workbench:s10-workbench-read-2",
+        "intent_id": "s10-workbench-read-2",
+        "call_id": "s10-workbench-read-2:tool-call",
+        "capability_id": "workspace.read",
+        "snapshot_id": "5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f",
+        "status": "success",
+        "success": true,
+        "result": {
+          "path": "pyproject.toml",
+          "content": "[build-system]\r\nrequires = [\"setuptools>=61.0\"]\r\nbuild-backend = \"setuptools.build_meta\"\r\n\r\n[project]\r\nname = \"seed\"\r\nversion = \"1.6.0\"\r\ndescription = \"Seed product runtime for the Taiji native cognitive architecture\"\nreadme = \"README.md\"\r\nlicense = {text = \"Apache-2.0\"}\r\nrequires-python = \">=3.10\"\r\ndependencies = [\r\n    \"torch>=2.0.0,<3.0.0\",\r\n]\r\n\r\n[project.optional-dependencies]\r\ndev = [\"pytest\", \"pytest-cov\", \"httpx\", \"black\", \"ruff\", \"tomli>=2.0.0; python_version < '3.11'\"]\r\nlegacy = [\n    \"transformers>=4.40.0,<5.0.0\",\n    \"safetensors>=0.4.0,<1.0.0\",\n    \"huggingface_hub>=0.20.0,<1.0.0\",\n    \"sentencepiece>=0.2.0,<1.0.0\",\r\n    \"peft>=0.8.0,<1.0.0\",\r\n    \"accelerate>=0.28.0,<2.0.0\",\r\n    \"psutil>=5.9.0,<7.0.0\",\r\n    \"tiktoken>=0.7.0,<1.0.0\",\r\n    \"fastapi>=0.110.0,<1.0.0\",\r\n    \"uvicorn>=0.27.0,<1.0.0\",\r\n    \"websockets>=12.0,<14.0\",\r\n    \"python-multipart>=0.0.9,<1.0.0\",\r\n    \"pydantic>=2.0.0,<3.0.0\",\r\n    \"starlette>=0.36.0,<1.0.0\",\r\n    \"cryptography>=42.0.0,<47.0.0\",\r\n    \"PyPDF2>=3.0.0,<4.0.0\",\r\n    \"python-docx>=1.0.0,<2.0.0\",\r\n    \"openpyxl>=3.1.0,<4.0.0\",\r\n    \"Pillow>=10.0.0,<12.0.0\",\r\n    \"langchain>=0.1.0,<1.0.0\",\r\n    \"langchain-core>=0.1.0,<1.0.0\",\r\n    \"langchain-community>=0.1.0,<1.0.0\",\r\n    \"langchain-openai>=0.1.0,<1.0.0\",\r\n    \"langchain-experimental>=0.1.0,<1.0.0\",\r\n    \"beautifulsoup4>=4.12.0,<5.0.0\",\r\n    \"requests>=2.31.0,<3.0.0\",\r\n    \"duckduckgo-search>=5.0.0,<7.0.0\",\r\n    \"sentence-transformers>=2.2.0,<4.0.0\",\r\n    \"numpy>=1.24.0,<3.0.0\",\r\n    \"jieba>=0.42.0,<1.0.0\",\r\n    \"tqdm>=4.66.0,<5.0.0\",\r\n    \"datasets>=2.18.0,<4.0.0\",\r\n    \"tensorboard>=2.14.0,<3.0.0\",\r\n    \"pandas>=2.0.0,<3.0.0\",\r\n    \"matplotlib>=3.7.0,<4.0.0\",\r\n]\r\ngpu = [\"bitsandbytes>=0.43.0\", \"scipy>=1.10.0\"]\r\nvoice = [\"edge-tts\", \"pyttsx3\", \"SpeechRecognition\"]\r\ndesktop = [\"PyQt6>=6.5.0\", \"PyQt6-WebEngine>=6.5.0\"]\r\nbuild = [\"pyinstaller>=6.0.0\"]\r\n\r\n[project.scripts]\r\nseed-legacy-desktop = \"desktop.main:main\"\r\n\r\n[tool.setuptools.packages.find]\r\ninclude = [\"seed*\", \"taiji*\", \"seed_platform*\", \"neuroplex*\", \"api*\"]\n\r\n[tool.pytest.ini_options]\r\ntestpaths = [\"tests\"]\r\naddopts = [\r\n    \"-p\",\r\n    \"no:cacheprovider\",\r\n]\r\nmarkers = [\r\n    \"slow: long-running integration tests\",\r\n    \"reset_state: reset app_state singleton before/after each test function\",\r\n    \"benchmark: performance baseline tests (latency/throughput regression guards)\",\r\n]\r\ncache_dir = \".seed_test_tmp/pytest_cache\"\r\nnorecursedirs = [\r\n    \".git\",\r\n    \".pytest*\",\r\n    \".seed_test_tmp*\",\r\n    \"pytest-cache-files-*\",\r\n    \"tmp*\",\r\n    \".tmp*\",\r\n    \"__pycache__\",\r\n]\r\n\r\n[tool.ruff]\r\nline-length = 100\r\ntarget-version = \"py310\"\r\nexclude = [\r\n    \"_libs\",\r\n    \"build\",\r\n    \"dist\",\r\n    \"node_modules\",\r\n    \".git\",\r\n    \"__pycache__\",\r\n    \"scripts/archive\",\r\n]\r\n\r\n[tool.ruff.lint]\r\n# R4: I（isort）与 UP（pyupgrade）已从 advisory 转正为 blocking——\r\n# 存量 1922 处已清零（1761 自动修 + 275 废弃导入移除 + 10 处手工），随主门禁强制执行。\r\n# R6: B（bugbear）/ SIM（simplify）仍在 advisory（CI --select B,SIM 棘轮追踪）；\r\n# B008 为 FastAPI Depends/File 惯用法忽略；存量降至 <50 后评估并入主 select。\r\nselect = [\"E\", \"F\", \"W\", \"I\", \"UP\"]\r\nignore = [\"E501\", \"E402\", \"E741\", \"B008\"]\r\n\r\n[tool.ruff.lint.per-file-ignores]\r\n# R6: neuroplex 冻结模块（0% 覆盖，无回归兜底）——与 [tool.mypy.overrides] 名单一致，\r\n# 解冻时同步移除两处豁免。\r\n\"neuroplex/life/*\" = [\"B\", \"SIM\"]\r\n\"neuroplex/multimodal/*\" = [\"B\", \"SIM\"]\r\n\"neuroplex/safety/*\" = [\"B\", \"SIM\"]\r\n\"neuroplex/loader.py\" = [\"B\", \"SIM\"]\r\n\"neuroplex/tools/browser.py\" = [\"B\", \"SIM\"]\r\n\"neuroplex/tools/browser_crawler.py\" = [\"B\", \"SIM\"]\r\n\"neuroplex/tools/builtin_tools.py\" = [\"B\", \"SIM\"]\r\n\"neuroplex/tools/desktop.py\" = [\"B\", \"SIM\"]\r\n\"neuroplex/tools/mini_search.py\" = [\"B\", \"SIM\"]\r\n\"neuroplex/tools/searxng.py\" = [\"B\", \"SIM\"]\r\n\"neuroplex/tools/web.py\" = [\"B\", \"SIM\"]\r\n\"neuroplex/tools/search/*\" = [\"B\", \"SIM\"]\r\n\r\n[tool.black]\r\nline-length = 100\r\ntarget-version = [\"py310\"]\r\nextend-exclude = \"/(_libs|build|dist|node_modules|scripts/archive)/\"\r\n\r\n[tool.coverage.run]\r\nsource = [\"seed\", \"taiji\", \"seed_platform\", \"neuroplex\", \"api\"]\nomit = [\"tests/*\", \"scripts/*\"]\r\n\r\n[tool.coverage.report]\r\nshow_missing = true\r\n# R5: 覆盖率门禁 21 → 21.5；R6 再提至 21.8（实测 21.91%）：新增 SSRF 防护 +\r\n# chat_strategies 纯函数共 15 用例。分母含大量 0% 的 neuroplex 遗留代码（~1.5万句），\r\n# 每 +0.5% 都需上百条新覆盖语句，后续继续按轮 +0.5-1% 向 40% 基线推进。\r\n# 注意：本阈值按「全量 tests/ + 全量 source」标定。任何只跑测试子集的 job\r\n# 必须用 --cov=<pkg> 显式收窄度量面，否则分母掺入未触及代码会产生假低覆盖率。\r\n# seed/taiji 核心模块已达 84-100%，seed_platform 大幅补齐，api 路由持续补齐中。\r\nfail_under = 21.8\r\n\r\n[tool.mypy]\r\n# R4: 目标设为 3.12——numpy 2.x 存根使用 3.12+ 语法（type 语句），\r\n# 低版本目标下解析即报致命 syntax 错误。代码的 3.10 运行时兼容性由\r\n# CI 的 Python 3.10 矩阵（实际导入+跑测试）与 ruff target-version=py310 把关。\r\n#\r\n# R4 建立基线，R5 消减，R6 冻结边界分治（2026-08-24，总 212 错误）：\r\n#   seed/taiji/seed_platform/api 全部 0；neuroplex 冻结模块已移出度量面（见下），\r\n#   剩余 212 集中在 13 个深层 torch 模块（ensemble 74 / cortex 40 / neuron 34 / stdp 28 等），\r\n#   无测试兜底，按解冻条件逐步处理。CI 棘轮只许下降。\r\npython_version = \"3.12\"\r\nwarn_return_any = true\r\nwarn_unused_configs = true\r\ndisallow_untyped_defs = false\r\ncheck_untyped_defs = true\r\nignore_missing_imports = true\r\nexclude = [\r\n    \"_libs/\",\r\n    \"build/\",\r\n    \"dist/\",\r\n    \"tests/\",\r\n    \"scripts/\",\r\n]\r\n\r\n# R6: neuroplex 冻结模块——覆盖率 0%，无回归兜底，盲改类型风险大于收益。\r\n# 移出 mypy 度量面，冻结时错误数（合计 251）登记如下，解冻须先补测试再清零：\r\n#   life/*: 106（sleep_engine 43 / integrate 18 / scheduler 15 / feed 11 / 其余 19）\r\n#   tools 爬虫族: 79（browser 46 / mini_search 8 / search/* 10 / web 5 / 其余 10）\r\n#   multimodal/*: 54（vqvae 18 / encodec 16 / video 16 / io 4）\r\n#   safety/*: 7；loader: 5\r\n[[tool.mypy.overrides]]\r\nmodule = [\r\n    \"neuroplex.life.*\",\r\n    \"neuroplex.multimodal.*\",\r\n    \"neuroplex.safety.*\",\r\n    \"neuroplex.loader\",\r\n    \"neuroplex.tools.browser\",\r\n    \"neuroplex.tools.browser_crawler\",\r\n    \"neuroplex.tools.builtin_tools\",\r\n    \"neuroplex.tools.desktop\",\r\n    \"neuroplex.tools.mini_search\",\r\n    \"neuroplex.tools.searxng\",\r\n    \"neuroplex.tools.web\",\r\n    \"neuroplex.tools.search.*\",\r\n]\r\nignore_errors = true\r\n",
+          "encoding": "utf-8",
+          "byte_length": 6758,
+          "digest": "72abe3373c95eddb723582566134997bd973fa7856509e23d262381d6fdc9b66",
+          "truncated": false
+        },
+        "error_code": "",
+        "error": "",
+        "transaction": {
+          "version": 1,
+          "operation": "workspace.read",
+          "path": "pyproject.toml",
+          "before_digest": "72abe3373c95eddb723582566134997bd973fa7856509e23d262381d6fdc9b66",
+          "after_digest": "72abe3373c95eddb723582566134997bd973fa7856509e23d262381d6fdc9b66",
+          "undo_token": "",
+          "reversible": true
+        },
+        "tick": 1,
+        "mcp_registry_snapshot_id": ""
+      },
+      "evidence": {
+        "evidence": {
+          "format": "seed-workbench-structural-evidence-v1",
+          "version": 1,
+          "request_id": "workbench:s10-workbench-read-2",
+          "intent_id": "s10-workbench-read-2",
+          "call_id": "s10-workbench-read-2:tool-call",
+          "capability_id": "workspace.read",
+          "snapshot_id": "5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f",
+          "outcome_digest": "26efe8ef5a6ad84a695bcb691f990db42deb9c7a521a9553a5848948fe75e681",
+          "task_slice_id": "code-config",
+          "partition": "train",
+          "usage": 0.8,
+          "resource_pressure": 0.2,
+          "prediction_error": 0.8,
+          "learning_gain": 0.1,
+          "holdout_transfer": 0.0,
+          "evidence_id": "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b"
+        },
+        "observation": {
+          "format": "taiji-structural-runtime-observation-v1",
+          "network_id": "workbench",
+          "region_id": "workbench.code",
+          "tick": 2,
+          "usage": 0.8,
+          "resource_pressure": 0.2,
+          "prediction_error": 0.8,
+          "learning_gain": 0.1,
+          "holdout_transfer": 0.0,
+          "evidence_id": "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+          "task_slice_id": "code-config",
+          "partition": "train"
+        },
+        "append": {
+          "evidence_id": "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+          "status": "accepted",
+          "window_id": "window:workbench:workbench.code:1",
+          "sealed_window_digest": null
+        }
+      },
+      "sealed_window": {
+        "format": "taiji-structural-evidence-window-v1",
+        "window_id": "window:workbench:workbench.code:1",
+        "network_id": "workbench",
+        "region_id": "workbench.code",
+        "task_slice_ids": [
+          "code-config"
+        ],
+        "partition_counts": {
+          "train": 1
+        },
+        "first_tick": 2,
+        "last_tick": 2,
+        "observation_count": 1,
+        "prediction_observation_count": 1,
+        "mean_usage": 0.8,
+        "mean_resource_pressure": 0.2,
+        "mean_prediction_error": 0.8,
+        "mean_learning_gain": 0.1,
+        "mean_holdout_transfer": 0.0,
+        "evidence_ids": [
+          "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b"
+        ],
+        "window_digest": "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224"
+      }
+    },
+    {
+      "outcome": {
+        "version": 1,
+        "request_id": "workbench:s10-workbench-read-3",
+        "intent_id": "s10-workbench-read-3",
+        "call_id": "s10-workbench-read-3:tool-call",
+        "capability_id": "workspace.read",
+        "snapshot_id": "5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f",
+        "status": "success",
+        "success": true,
+        "result": {
+          "path": "plans/README.md",
+          "content": "# Seed / Taiji 计划与架构入口\n\n> 这是计划资料的总导航。路线只从 [active/SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) 进入，即时动作只从 [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) 读取；历史文档中的“下一步”一律不再生效。\n\n## 当前收敛结论（2026-08-30）\n\n- W0–W6、W7-R1/R2 和 R5-S0 已形成当前基线；R3 页面层通过但 Windows shell 为 `tool-blocked`，R4 为 `hardware-blocked`。\n- R3/R4 保持独立补证线，不再把工具或硬件缺失当作整个项目停工条件；它们未通过时仍不得发布对应声明。\n- R5-G1 已分别冻结知识内化与效应器成长 manifest；R5A-S0 转换器 DTO 与确定性 replay Gate 已通过，R5A-S1 原生学习器/检查点/留出集/消融 canary 已完成，跨平台 CI 已全绿，当前唯一开发动作是 R5A-S2 真实 Workbench 纵向证据。\n- 核心架构讨论继续留在 active/reference；2026-08-29 及以前的 Gate 过程和旧 W7 蓝图已归档。\n\n## 目录职责\n\n| 目录 | 只允许放什么 |\n|---|---|\n| `active/` | 当前执行入口与当前路线分片；根目录保留项目身份和架构合同 |\n| `active/roadmap/` | 当前仍有效的阶段、门禁和执行摘要 |\n| `reference/` | 当前代码事实、owner、能力声明和边界参考；不提供独立执行顺序 |\n| `archive/` | 已完成、被替代或仅用于追溯的设计、审计、实现和历史记录 |\n| `manifests/` | 可执行 Gate、runtime 结构和实验合同的版本化 manifest |\n\n## 当前架构合同\n\n| 文档 | 权威范围 |\n|---|---|\n| [TAIJI_CORE_REQUIREMENTS.md](active/TAIJI_CORE_REQUIREMENTS.md) | 长期使命、CR-1–CR-10 和不可归档的核心需求 |\n| [TAIJI_NATIVE_ARCHITECTURE_V1.md](active/TAIJI_NATIVE_ARCHITECTURE_V1.md) | Taiji 感知、世界状态、工作空间、记忆、推理、规划、生成、学习和硬编码治理 |\n| [ARCHITECTURE_DIRECTION_2026_08.md](active/ARCHITECTURE_DIRECTION_2026_08.md) | 词表、身份、成熟技术采纳规则、Transformer/Legacy 边界 |\n| [SEED_ARCHITECTURE.md](active/SEED_ARCHITECTURE.md) | Seed 产品/runtime 所有权、API、Workbench 和 checkpoint 边界 |\n| [IMPLEMENTATION_STATUS_2026_08.md](reference/IMPLEMENTATION_STATUS_2026_08.md) | 当前代码事实和已验证/未验证能力的短摘要 |\n\n## 当前执行路线\n\n| 文档 | 作用 |\n|---|---|\n| [SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) | 唯一路线入口和 W0–W7 / R1–R5 顺序 |\n| [01_SCOPE_AND_PHASES.md](active/roadmap/01_SCOPE_AND_PHASES.md) | 目标、原则、P0–P7 阶段和退出门槛 |\n| [02_GATES_AND_CI.md](active/roadmap/02_GATES_AND_CI.md) | 当前仍有效的门禁、CI 纪律、停止项和阻塞边界；不再承载事故日志 |\n| [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) | 当前实现快照和当前唯一下一步 |\n| [04_EXECUTION_PLAN.md](active/roadmap/04_EXECUTION_PLAN.md) | C0–C8 后续工作包、依赖、产物和验收；不替代唯一下一步 |\n\n## 归档原则\n\n- 核心需求、Taiji 原生架构、身份边界和未关闭缺口必须留在 active/reference，不能只留在 archive。\n- 测试调试过程、一次性探针、已完成执行日志、被替代路线和旧 Transformer 设计进入 archive。\n- 归档不等于删除：所有历史内容都保留可追溯路径，但不得成为新的执行入口。\n- 任何新增计划必须明确 owner、输入/输出合同、checkpoint 归属、Gate、失败模式和回滚路径；能合并到现有文件就不新增文件。\n- 每次路线决策或实现收口后，先更新本目录的事实源，再提交代码；不得并列维护两个“当前唯一下一步”。\n\n## 归档索引\n\n完整清单和归档使用规则见 [archive/README.md](archive/README.md)。路线执行的大型原文已按产品发布、前期校准、Workbench 规划/进展、Gate/CI 历史和 W7 蓝图快照拆分；旧架构妥协审计按来源、缺口和候选方向拆分。\n",
+          "encoding": "utf-8",
+          "byte_length": 4086,
+          "digest": "66b9be1162f649c86fa8a2d9fc3d09bf4201d9831501bcda93469f0d03a55105",
+          "truncated": false
+        },
+        "error_code": "",
+        "error": "",
+        "transaction": {
+          "version": 1,
+          "operation": "workspace.read",
+          "path": "plans/README.md",
+          "before_digest": "66b9be1162f649c86fa8a2d9fc3d09bf4201d9831501bcda93469f0d03a55105",
+          "after_digest": "66b9be1162f649c86fa8a2d9fc3d09bf4201d9831501bcda93469f0d03a55105",
+          "undo_token": "",
+          "reversible": true
+        },
+        "tick": 2,
+        "mcp_registry_snapshot_id": ""
+      },
+      "evidence": {
+        "evidence": {
+          "format": "seed-workbench-structural-evidence-v1",
+          "version": 1,
+          "request_id": "workbench:s10-workbench-read-3",
+          "intent_id": "s10-workbench-read-3",
+          "call_id": "s10-workbench-read-3:tool-call",
+          "capability_id": "workspace.read",
+          "snapshot_id": "5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f",
+          "outcome_digest": "abac8c01151de40982d64b65ff756138835eeec9e8da8e95ba41ce7486b6c7c1",
+          "task_slice_id": "code-holdout",
+          "partition": "holdout",
+          "usage": 0.8,
+          "resource_pressure": 0.2,
+          "prediction_error": 0.1,
+          "learning_gain": 0.1,
+          "holdout_transfer": 0.9,
+          "evidence_id": "workbench-structural:2c739aa785a914b9f05c4b82e160fc05"
+        },
+        "observation": {
+          "format": "taiji-structural-runtime-observation-v1",
+          "network_id": "workbench",
+          "region_id": "workbench.code",
+          "tick": 3,
+          "usage": 0.8,
+          "resource_pressure": 0.2,
+          "prediction_error": 0.1,
+          "learning_gain": 0.1,
+          "holdout_transfer": 0.9,
+          "evidence_id": "workbench-structural:2c739aa785a914b9f05c4b82e160fc05",
+          "task_slice_id": "code-holdout",
+          "partition": "holdout"
+        },
+        "append": {
+          "evidence_id": "workbench-structural:2c739aa785a914b9f05c4b82e160fc05",
+          "status": "accepted",
+          "window_id": "window:workbench:workbench.code:1",
+          "sealed_window_digest": null
+        }
+      },
+      "sealed_window": {
+        "format": "taiji-structural-evidence-window-v1",
+        "window_id": "window:workbench:workbench.code:1",
+        "network_id": "workbench",
+        "region_id": "workbench.code",
+        "task_slice_ids": [
+          "code-holdout"
+        ],
+        "partition_counts": {
+          "holdout": 1
+        },
+        "first_tick": 3,
+        "last_tick": 3,
+        "observation_count": 1,
+        "prediction_observation_count": 1,
+        "mean_usage": 0.8,
+        "mean_resource_pressure": 0.2,
+        "mean_prediction_error": 0.1,
+        "mean_learning_gain": 0.1,
+        "mean_holdout_transfer": 0.9,
+        "evidence_ids": [
+          "workbench-structural:2c739aa785a914b9f05c4b82e160fc05"
+        ],
+        "window_digest": "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a"
+      }
+    },
+    {
+      "outcome": {
+        "version": 1,
+        "request_id": "workbench:s10-workbench-read-4",
+        "intent_id": "s10-workbench-read-4",
+        "call_id": "s10-workbench-read-4:tool-call",
+        "capability_id": "workspace.read",
+        "snapshot_id": "5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f",
+        "status": "success",
+        "success": true,
+        "result": {
+          "path": "plans/README.md",
+          "content": "# Seed / Taiji 计划与架构入口\n\n> 这是计划资料的总导航。路线只从 [active/SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) 进入，即时动作只从 [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) 读取；历史文档中的“下一步”一律不再生效。\n\n## 当前收敛结论（2026-08-30）\n\n- W0–W6、W7-R1/R2 和 R5-S0 已形成当前基线；R3 页面层通过但 Windows shell 为 `tool-blocked`，R4 为 `hardware-blocked`。\n- R3/R4 保持独立补证线，不再把工具或硬件缺失当作整个项目停工条件；它们未通过时仍不得发布对应声明。\n- R5-G1 已分别冻结知识内化与效应器成长 manifest；R5A-S0 转换器 DTO 与确定性 replay Gate 已通过，R5A-S1 原生学习器/检查点/留出集/消融 canary 已完成，跨平台 CI 已全绿，当前唯一开发动作是 R5A-S2 真实 Workbench 纵向证据。\n- 核心架构讨论继续留在 active/reference；2026-08-29 及以前的 Gate 过程和旧 W7 蓝图已归档。\n\n## 目录职责\n\n| 目录 | 只允许放什么 |\n|---|---|\n| `active/` | 当前执行入口与当前路线分片；根目录保留项目身份和架构合同 |\n| `active/roadmap/` | 当前仍有效的阶段、门禁和执行摘要 |\n| `reference/` | 当前代码事实、owner、能力声明和边界参考；不提供独立执行顺序 |\n| `archive/` | 已完成、被替代或仅用于追溯的设计、审计、实现和历史记录 |\n| `manifests/` | 可执行 Gate、runtime 结构和实验合同的版本化 manifest |\n\n## 当前架构合同\n\n| 文档 | 权威范围 |\n|---|---|\n| [TAIJI_CORE_REQUIREMENTS.md](active/TAIJI_CORE_REQUIREMENTS.md) | 长期使命、CR-1–CR-10 和不可归档的核心需求 |\n| [TAIJI_NATIVE_ARCHITECTURE_V1.md](active/TAIJI_NATIVE_ARCHITECTURE_V1.md) | Taiji 感知、世界状态、工作空间、记忆、推理、规划、生成、学习和硬编码治理 |\n| [ARCHITECTURE_DIRECTION_2026_08.md](active/ARCHITECTURE_DIRECTION_2026_08.md) | 词表、身份、成熟技术采纳规则、Transformer/Legacy 边界 |\n| [SEED_ARCHITECTURE.md](active/SEED_ARCHITECTURE.md) | Seed 产品/runtime 所有权、API、Workbench 和 checkpoint 边界 |\n| [IMPLEMENTATION_STATUS_2026_08.md](reference/IMPLEMENTATION_STATUS_2026_08.md) | 当前代码事实和已验证/未验证能力的短摘要 |\n\n## 当前执行路线\n\n| 文档 | 作用 |\n|---|---|\n| [SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) | 唯一路线入口和 W0–W7 / R1–R5 顺序 |\n| [01_SCOPE_AND_PHASES.md](active/roadmap/01_SCOPE_AND_PHASES.md) | 目标、原则、P0–P7 阶段和退出门槛 |\n| [02_GATES_AND_CI.md](active/roadmap/02_GATES_AND_CI.md) | 当前仍有效的门禁、CI 纪律、停止项和阻塞边界；不再承载事故日志 |\n| [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) | 当前实现快照和当前唯一下一步 |\n| [04_EXECUTION_PLAN.md](active/roadmap/04_EXECUTION_PLAN.md) | C0–C8 后续工作包、依赖、产物和验收；不替代唯一下一步 |\n\n## 归档原则\n\n- 核心需求、Taiji 原生架构、身份边界和未关闭缺口必须留在 active/reference，不能只留在 archive。\n- 测试调试过程、一次性探针、已完成执行日志、被替代路线和旧 Transformer 设计进入 archive。\n- 归档不等于删除：所有历史内容都保留可追溯路径，但不得成为新的执行入口。\n- 任何新增计划必须明确 owner、输入/输出合同、checkpoint 归属、Gate、失败模式和回滚路径；能合并到现有文件就不新增文件。\n- 每次路线决策或实现收口后，先更新本目录的事实源，再提交代码；不得并列维护两个“当前唯一下一步”。\n\n## 归档索引\n\n完整清单和归档使用规则见 [archive/README.md](archive/README.md)。路线执行的大型原文已按产品发布、前期校准、Workbench 规划/进展、Gate/CI 历史和 W7 蓝图快照拆分；旧架构妥协审计按来源、缺口和候选方向拆分。\n",
+          "encoding": "utf-8",
+          "byte_length": 4086,
+          "digest": "66b9be1162f649c86fa8a2d9fc3d09bf4201d9831501bcda93469f0d03a55105",
+          "truncated": false
+        },
+        "error_code": "",
+        "error": "",
+        "transaction": {
+          "version": 1,
+          "operation": "workspace.read",
+          "path": "plans/README.md",
+          "before_digest": "66b9be1162f649c86fa8a2d9fc3d09bf4201d9831501bcda93469f0d03a55105",
+          "after_digest": "66b9be1162f649c86fa8a2d9fc3d09bf4201d9831501bcda93469f0d03a55105",
+          "undo_token": "",
+          "reversible": true
+        },
+        "tick": 3,
+        "mcp_registry_snapshot_id": ""
+      },
+      "evidence": {
+        "evidence": {
+          "format": "seed-workbench-structural-evidence-v1",
+          "version": 1,
+          "request_id": "workbench:s10-workbench-read-4",
+          "intent_id": "s10-workbench-read-4",
+          "call_id": "s10-workbench-read-4:tool-call",
+          "capability_id": "workspace.read",
+          "snapshot_id": "5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f",
+          "outcome_digest": "4014c40f547a1d4eb864e55629a4ac5d16e3dbd58a607eff54613016b6177af1",
+          "task_slice_id": "docs-roadmap",
+          "partition": "train",
+          "usage": 0.8,
+          "resource_pressure": 0.2,
+          "prediction_error": 0.8,
+          "learning_gain": 0.1,
+          "holdout_transfer": 0.0,
+          "evidence_id": "workbench-structural:71e93ca074a17668e4548653e12652fe"
+        },
+        "observation": {
+          "format": "taiji-structural-runtime-observation-v1",
+          "network_id": "workbench",
+          "region_id": "workbench.docs",
+          "tick": 4,
+          "usage": 0.8,
+          "resource_pressure": 0.2,
+          "prediction_error": 0.8,
+          "learning_gain": 0.1,
+          "holdout_transfer": 0.0,
+          "evidence_id": "workbench-structural:71e93ca074a17668e4548653e12652fe",
+          "task_slice_id": "docs-roadmap",
+          "partition": "train"
+        },
+        "append": {
+          "evidence_id": "workbench-structural:71e93ca074a17668e4548653e12652fe",
+          "status": "accepted",
+          "window_id": "window:workbench:workbench.docs:1",
+          "sealed_window_digest": null
+        }
+      },
+      "sealed_window": {
+        "format": "taiji-structural-evidence-window-v1",
+        "window_id": "window:workbench:workbench.docs:1",
+        "network_id": "workbench",
+        "region_id": "workbench.docs",
+        "task_slice_ids": [
+          "docs-roadmap"
+        ],
+        "partition_counts": {
+          "train": 1
+        },
+        "first_tick": 4,
+        "last_tick": 4,
+        "observation_count": 1,
+        "prediction_observation_count": 1,
+        "mean_usage": 0.8,
+        "mean_resource_pressure": 0.2,
+        "mean_prediction_error": 0.8,
+        "mean_learning_gain": 0.1,
+        "mean_holdout_transfer": 0.0,
+        "evidence_ids": [
+          "workbench-structural:71e93ca074a17668e4548653e12652fe"
+        ],
+        "window_digest": "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d"
+      }
+    },
+    {
+      "outcome": {
+        "version": 1,
+        "request_id": "workbench:s10-workbench-read-5",
+        "intent_id": "s10-workbench-read-5",
+        "call_id": "s10-workbench-read-5:tool-call",
+        "capability_id": "workspace.read",
+        "snapshot_id": "5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f",
+        "status": "success",
+        "success": true,
+        "result": {
+          "path": "frontend/package.json",
+          "content": "{\r\n  \"name\": \"frontend\",\r\n  \"version\": \"1.6.0\",\r\n  \"private\": true,\r\n  \"type\": \"module\",\r\n  \"scripts\": {\r\n    \"dev\": \"vite\",\r\n    \"build\": \"vite build\",\r\n    \"preview\": \"vite preview\",\r\n    \"lint\": \"eslint src --ext .js,.vue --fix\",\r\n    \"format\": \"prettier --write src\",\r\n    \"gen:aliases\": \"node scripts/gen-hljs-aliases.mjs\",\r\n    \"check:aliases\": \"node scripts/gen-hljs-aliases.mjs --check\",\n    \"check:native-boundary\": \"node scripts/check-native-boundary.mjs\",\n    \"check:api-contract\": \"node scripts/check-api-contract.mjs\",\n    \"test\": \"vitest run\",\n    \"test:watch\": \"vitest\",\r\n    \"test:e2e\": \"node e2e/smoke.cjs\"\r\n  },\r\n  \"dependencies\": {\r\n    \"@monaco-editor/loader\": \"^1.7.0\",\r\n    \"@xterm/addon-fit\": \"^0.11.0\",\r\n    \"@xterm/addon-web-links\": \"^0.12.0\",\r\n    \"@xterm/xterm\": \"^6.0.0\",\r\n    \"dompurify\": \"^3.3.0\",\r\n    \"highlight.js\": \"^11.11.1\",\r\n    \"lucide-vue-next\": \"^1.0.0\",\r\n    \"marked\": \"^18.0.3\",\r\n    \"marked-highlight\": \"^2.2.4\",\r\n    \"monaco-editor\": \"^0.55.1\",\r\n    \"naive-ui\": \"^2.40.0\",\r\n    \"pinia\": \"^3.0.4\",\r\n    \"vue\": \"^3.5.32\",\r\n    \"vue-router\": \"^4.6.4\"\r\n  },\r\n  \"devDependencies\": {\r\n    \"@vitejs/plugin-vue\": \"^6.0.6\",\r\n    \"@vue/test-utils\": \"^2.4.6\",\r\n    \"eslint\": \"^8.57.0\",\r\n    \"eslint-config-prettier\": \"^9.1.0\",\r\n    \"eslint-import-resolver-alias\": \"^1.1.2\",\r\n    \"eslint-plugin-import\": \"^2.31.0\",\r\n    \"eslint-plugin-vue\": \"^9.32.0\",\r\n    \"jsdom\": \"^25.0.0\",\r\n    \"playwright\": \"^1.60.0\",\r\n    \"prettier\": \"^3.4.0\",\r\n    \"unplugin-auto-import\": \"^21.0.0\",\r\n    \"unplugin-vue-components\": \"^32.1.0\",\r\n    \"vite\": \"^8.0.8\",\r\n    \"vite-plugin-vue-devtools\": \"^8.1.1\",\r\n    \"vitest\": \"^2.1.0\"\r\n  },\r\n  \"overrides\": {\r\n    \"nanoid\": \"^3.3.18\",\r\n    \"postcss\": \"^8.5.26\"\r\n  },\r\n  \"engines\": {\r\n    \"node\": \"^20.19.0 || >=22.12.0\"\r\n  }\r\n}\r\n",
+          "encoding": "utf-8",
+          "byte_length": 1783,
+          "digest": "165d0d442fbd5451a521efcc67bd5b31ecdf4667dc0b1e0f36f6a0f49429c284",
+          "truncated": false
+        },
+        "error_code": "",
+        "error": "",
+        "transaction": {
+          "version": 1,
+          "operation": "workspace.read",
+          "path": "frontend/package.json",
+          "before_digest": "165d0d442fbd5451a521efcc67bd5b31ecdf4667dc0b1e0f36f6a0f49429c284",
+          "after_digest": "165d0d442fbd5451a521efcc67bd5b31ecdf4667dc0b1e0f36f6a0f49429c284",
+          "undo_token": "",
+          "reversible": true
+        },
+        "tick": 4,
+        "mcp_registry_snapshot_id": ""
+      },
+      "evidence": {
+        "evidence": {
+          "format": "seed-workbench-structural-evidence-v1",
+          "version": 1,
+          "request_id": "workbench:s10-workbench-read-5",
+          "intent_id": "s10-workbench-read-5",
+          "call_id": "s10-workbench-read-5:tool-call",
+          "capability_id": "workspace.read",
+          "snapshot_id": "5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f",
+          "outcome_digest": "605ddd61364530af735eb373a1e4d28eedffca56bb98916c29377710183b85b2",
+          "task_slice_id": "docs-frontend",
+          "partition": "train",
+          "usage": 0.8,
+          "resource_pressure": 0.2,
+          "prediction_error": 0.8,
+          "learning_gain": 0.1,
+          "holdout_transfer": 0.0,
+          "evidence_id": "workbench-structural:c725e94919d01af97880a43cab443adc"
+        },
+        "observation": {
+          "format": "taiji-structural-runtime-observation-v1",
+          "network_id": "workbench",
+          "region_id": "workbench.docs",
+          "tick": 5,
+          "usage": 0.8,
+          "resource_pressure": 0.2,
+          "prediction_error": 0.8,
+          "learning_gain": 0.1,
+          "holdout_transfer": 0.0,
+          "evidence_id": "workbench-structural:c725e94919d01af97880a43cab443adc",
+          "task_slice_id": "docs-frontend",
+          "partition": "train"
+        },
+        "append": {
+          "evidence_id": "workbench-structural:c725e94919d01af97880a43cab443adc",
+          "status": "accepted",
+          "window_id": "window:workbench:workbench.docs:1",
+          "sealed_window_digest": null
+        }
+      },
+      "sealed_window": {
+        "format": "taiji-structural-evidence-window-v1",
+        "window_id": "window:workbench:workbench.docs:1",
+        "network_id": "workbench",
+        "region_id": "workbench.docs",
+        "task_slice_ids": [
+          "docs-frontend"
+        ],
+        "partition_counts": {
+          "train": 1
+        },
+        "first_tick": 5,
+        "last_tick": 5,
+        "observation_count": 1,
+        "prediction_observation_count": 1,
+        "mean_usage": 0.8,
+        "mean_resource_pressure": 0.2,
+        "mean_prediction_error": 0.8,
+        "mean_learning_gain": 0.1,
+        "mean_holdout_transfer": 0.0,
+        "evidence_ids": [
+          "workbench-structural:c725e94919d01af97880a43cab443adc"
+        ],
+        "window_digest": "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46"
+      }
+    },
+    {
+      "outcome": {
+        "version": 1,
+        "request_id": "workbench:s10-workbench-read-6",
+        "intent_id": "s10-workbench-read-6",
+        "call_id": "s10-workbench-read-6:tool-call",
+        "capability_id": "workspace.read",
+        "snapshot_id": "5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f",
+        "status": "success",
+        "success": true,
+        "result": {
+          "path": "README.md",
+          "content": "# Seed — runtime for the Taiji Native Cognitive Architecture\n\nA byte-level predictive-coding kernel that learns **online from local prediction errors** — no\nbackpropagation, no attention matrix, no optimizer, no context window, no teacher model. Sparse\nfixed-fan-in synapses carry every update, and episodic memory is a shared distributed field that\nallocates **zero slots per event**. Every claim below is backed by a committed, lesion-controlled\nverification script.\n\n[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)\n[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)\n\n| What a Transformer does | What this kernel does instead |\n|---|---|\n| tokenizer + learned embedding | 256 raw-byte receptors + boundary receptor |\n| self-attention | sparse reciprocal prediction and recurrent transitions |\n| KV cache / external retrieval | one shared engram field, no per-event K/V slots |\n| global backpropagation | local prediction/state/motor/memory deltas |\n| autoregressive decode | motor byte fed back through the same sensor |\n\nMeasured on the committed two-region `[64, 48]` byte-cycle benchmark (seed `7`): byte-cycle accuracy\n**0% → 94.12%**, mean surprise **5.4041 → 0.1069** (**98.02%** reduction), free generation exact for\nall eight steps, 83,841 learned scalars. Ablations are reported, not hidden — see\n[reproducible results](#reproducible-tsk-v8-kernel-results).\n\n> **Status, stated plainly:** the Taiji Native Architecture v1 target is specified, but the executable\n> code is still the lower-level Taiji Substrate Kernel v8 (TSK-v8). This is a substrate-mechanism\n> research kernel — **not** a completed cognitive architecture, not a language model, and **not an AGI\n> claim**. Current checkpoints are early-stage: garbled text replies are expected kernel behavior.\n\n## Project scope\n\n**Taiji** is the native cognitive architecture and model. **Seed** is the project, product and runtime that trains, evaluates, deploys and hosts Taiji. Taiji is being redesigned around learned perception, world state, workspace, memory, goals, reasoning, planning and generation while reusing mature algorithms where they fit the project—not rebuilding intelligence from primitive one-hot mechanisms.\n\n## Naming\r\n\r\n| Name | Meaning |\r\n|---|---|\r\n| **Seed** | project, product, distribution and runtime; package `seed` |\n| **Taiji** | complete native cognitive architecture and model; target package `taiji/` |\n| **TSK-v8** | current executable byte/fabric/memory/motor research kernel and compatibility line |\n| **Legacy NeuroPlex** | the frozen Transformer baseline in `neuroplex/`; the replaced bottom layer is `neuroplex/layers.py::TransformerBlock` |\n| `taiji.*` in `scripts/archive/` | a historical import alias for `neuroplex`, not the current architecture |\n\n## Architecture direction\n\nTaiji is capability-first, not anti-Transformer by ideology. It may reuse learned embeddings, attention-like routing, state-space or graph operators, optimizers, reinforcement learning, retrieval infrastructure and CUDA kernels. The invariant is that Taiji owns the cognitive state and decision path; no Transformer, Legacy runtime or teacher model may remain the runtime cognitive subject.\n\nThe target path is:\n\n```text\nmultimodal observations\n  → learned perception and variable-duration abstractions\n  → predictive world/self state + workspace\n  ↔ working / episodic / semantic / procedural memory\n  → goals / reasoning / imagination / planning\n  → language / tool / body action\n  → real outcome and continued learning\n```\n\nSee the [core project requirements](plans/active/TAIJI_CORE_REQUIREMENTS.md), [Taiji Native Architecture v1](plans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md), and the [current roadmap](plans/active/SEED_DEVELOPMENT_ROADMAP_2026_08.md).\n\n## Current TSK-v8 kernel baseline\n\nThe current executable kernel does not wrap a Transformer. Its narrower path is:\n\r\n```text\r\nraw byte receptors\r\n  → hierarchical reciprocal prediction errors\r\n  → persistent recurrent region states\r\n  ↔ distributed episodic field and cortical readback\r\n  → balanced sparse cortical receptor bank\r\n  → one byte motor organ\r\n  → emitted action returns as the next sensation\r\n```\r\n\r\n| Transformer responsibility | Current TSK-v8 experiment |\n|---|---|\r\n| tokenizer + learned embedding | 256 raw-byte receptors + boundary receptor |\r\n| positional encoding | causal ticks and persistent state |\r\n| self-attention | sparse reciprocal prediction and recurrent transitions |\r\n| residual/FFN state | membrane integration, inhibition, adaptive thresholds, traces |\r\n| KV cache / external retrieval | bounded dynamic state plus distributed associative engrams; no event K/V slots |\r\n| global backpropagation | existing-edge local prediction/state/motor/memory deltas |\r\n| LM head | all-state sparse receptor bank + one motor population |\r\n| autoregressive decode | motor byte fed back through the same sensor |\r\n\r\nThe implementation imports neither `transformers` nor the legacy `neuroplex` runtime. PyTorch is used only as a tensor execution engine.\r\n\r\n## Algorithm\r\n\r\nFor region `r`, the previous local trace predicts both the current lower-level activity and the region's own next activity:\r\n\r\n```math\r\n\\hat y_t^{r-1}=D^r q_{t-1}^r, \\qquad e_t^{r-1}=y_t^{r-1}-\\hat y_t^{r-1}\r\n```\r\n\r\n```math\r\n\\hat a_t^r=T^r q_{t-1}^r\r\n```\r\n\r\nThe region integrates bottom-up error, recurrent prediction, and delayed top-down context:\r\n\r\n```math\r\nu_t^r=Bound(\\lambda_u u_{t-1}^r+\\alpha_g(D^r)^Te_t^{r-1}+\\alpha_T\\hat a_t^r+\\alpha_c c_t^r)\r\n```\r\n\r\nActivity is formed through an adaptive threshold and a local inhibitory pool. Learning is online and local:\r\n\r\n```math\r\n\\Delta D^r=\\eta_D e_t^{r-1}(q_{t-1}^r)^T\r\n```\r\n\r\n```math\r\n\\Delta T^r=\\eta_T(a_t^r-T^rq_{t-1}^r)(q_{t-1}^r)^T\r\n```\r\n\r\n```math\r\n\\Delta M=\\eta_M(onehot(b_t)-p_{t-1})c_{t-1}^T\r\n```\r\n\r\nThe motor does not discard a random cortical subset. It concatenates every region's fast activity and slow trace into `s_t`, then a fixed balanced single-fan-out receptor map `H` folds every coordinate into `K` shared evidence channels:\r\n\r\n```math\r\n\\tilde c_{t,k}=|G_k|^{-1/2}\\sum_{j\\in G_k}\\sigma_j s_{t,j},\r\n\\qquad\r\nc_t=\\gamma_c\\frac{\\tilde c_t}{\\lVert\\tilde c_t\\rVert_2+\\epsilon}\r\n```\r\n\r\nEvery cortical coordinate reaches exactly one receptor, and every action competes on the same `K` channels.\r\n\r\nAn active transition is stored only after the full causal tuple is available. A cortical cue `s`, executed action `a`, reward `r`, resulting sensation `o`, causal tick, episode signature and provenance excite one overlapping engram population `h`. Existing recurrent edges learn cue-to-event completion:\r\n\r\n```math\r\nh^{event}=\\phi(Qs+\\gamma_e(Aa+Oo+r\\rho+Tt+Ee+Pp)),\r\n\\qquad\r\n\\Delta W^{mem}=\\eta_m g(h^{event}-W^{mem}h^{cue})(h^{cue})^T\r\n```\r\n\r\n`g` is a novelty/reward write gate. Recurrent resonance gates all recalled action, outcome, value, time, episode and provenance evidence; recalled cortical state is injected into the next fabric tick. Events share the same fixed population and edge topology—writing an event does not append a row, key or value.\r\n\r\nEvery update is restricted to stored fixed-fan-in edges. There is no dense structural mask, attention matrix, context window, optimizer, `backward()`, teacher model, or distillation path.\r\n\r\nThe kernel tensor shapes, update order, state contract, complexity, and code mapping are preserved in the [archived TSK-v8 implementation specification](plans/archive/implementation/TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md). These equations are candidate substrate mechanisms, not the complete Taiji architecture.\n\r\n## Quick start\r\n\r\n```bash\r\npython -m pip install -e \".[dev]\"\r\npython scripts/training/verify_taiji_native_v7.py\r\npython scripts/training/verify_taiji_n7_context.py\r\npython scripts/training/verify_taiji_n8_delayed_trace.py\r\npython scripts/training/verify_taiji_n9_long_free_run.py\r\npython scripts/training/verify_taiji_n10_sparse_migration.py\r\npython scripts/training/verify_taiji_n11_active_environment.py\r\npython scripts/training/verify_taiji_m5_episodic_field.py\r\npython -m pytest tests/taiji_native -q\r\n```\r\n\r\nSeed runtime compatibility API:\n\r\n```python\r\nfrom seed import Seed\r\n\r\nmodel = Seed()\r\nmodel.learn_bytes(b\"abcdabcdabcdabcd\", epochs=200)\r\n\r\nprint(model.score_bytes(b\"abcdabcdabcdabcd\"))\r\nprint(model.generate(b\"a\", length=8))\r\n\r\ncheckpoint = model.checkpoint()\r\nrestored = Seed.from_checkpoint(checkpoint)\r\n```\r\n\r\nResearchers may still import the current `Taiji` class directly for TSK-v8 kernel falsification experiments. During P1, Seed remains the product-facing runtime while cognitive ownership moves into the Taiji v1 contract.\n\r\n## Public Beta\r\n\r\nSeed ships as a self-contained Windows desktop build (dual-entry `Seed.exe` + `SeedBackend.exe`,\r\nabout 1.1GB): double-click launches the backend, activates the Seed native runtime, and serves the\r\nweb UI on `http://127.0.0.1:8000` within a few seconds. Development mode equivalent:\r\n\r\n```bash\r\npython -m uvicorn api.app:app --host 127.0.0.1 --port 8000   # backend + web UI (serves frontend/dist)\r\npython desktop/main.py                                         # desktop shell (window + backend + WebSocket 8765)\r\ncd frontend && npm run dev                                     # frontend dev server\r\n```\r\n\r\nEnvironment knobs: `SEED_PORT` (default 8000), `SEED_HOST` (default 127.0.0.1),\r\n`SEED_RUNTIME=1` (activate the Seed native runtime on startup).\r\n\r\nHistorical beta verification evidence lives in `reports/` (API stress 1000/1000, checkpoint\ncrash-recovery 10/10, latency/throughput baselines and frontend review) and\n`reports/seed_public_beta_release_20260823.md`. It documents the TSK-v8 product shell rather than\nTaiji v1 capability. Current checkpoints are early-stage: garbled replies are expected kernel\nbehavior, not a completed language architecture.\n\r\n## Reproducible TSK-v8 kernel results\n\r\nThe committed verification uses two regions `[64, 48]`, seed `7`, and raw bytes:\r\n\r\n| Metric | Result |\r\n|---|---:|\r\n| active learned parameters | 83,841 |\r\n| fixed motor receptor edges | 224 (one per cortical coordinate) |\r\n| actual learned scalar storage | 83,841 |\r\n| dense-equivalent learned scalars | 138,161 |\r\n| learned compressed topology | 81,792 int32 pre-indices |\r\n| byte-cycle accuracy | 0% → 94.12% |\r\n| mean surprise | 5.4041 → 0.1069 |\r\n| surprise reduction | 98.02% |\r\n| free generation | `a → bcdabcda` (all eight steps correct) |\r\n| checkpoint exact-next-step | pass |\r\n\r\nOn the N7 ambiguous stream, full Taiji predicts all eight history-dependent `x → b/d` successors correctly. A first-order model and a full dynamic-state lesion both score 50%. N7's trace-only lesion remains at 100%, showing that its immediate history can live in fast state.\r\n\r\nN8 inserts the shared distractors `1234` between cue and probe. Full and trace-only states score 100%; removing trace or all dynamic state scores 50%. This establishes that slow trace is necessary and sufficient for this fixed-delay behavior, but it is not yet evidence of episodic or autobiographical memory.\r\n\r\nN9 trains the same 16-byte cycle under an explicit non-terminal stream contract, then feeds back 128 motor actions with no teacher forcing. All 128 positions are exact, all four actions remain present, and membrane/trace/threshold bounds hold at every tick. A terminal boundary is deliberately excluded from this benchmark because teaching “stop after the fourth cycle” would contradict an infinite-cycle target.\r\n\r\nN10 replaces masked-dense synapses with compressed fixed-fan-in rows. Against a dense reference, forward differs by at most `2.98e-8`; backprojection and local update are exact. N5–N9 behavior regressions all still pass. Including the new field, the small v5 benchmark uses 111.22% of dense learned-weight bytes after int32 indices, while the default projects to 98.59%. This validates real edge execution, not a universal speedup claim; sparse indexing only wins storage at lower edge density.\r\n\r\nN11 separates external sensation from action credit. On a two-cue environment where action changes both reward and the next `+/-` sensation, the last 40 online interactions reach 100% success versus 50% random and 57.5% with action learning disabled. Taiji receives only scalar reward and outcome sensation—never the correct action label. A pending action and its eligibility are atomically checkpointed until outcome settlement.\r\n\r\nM5 stores eight one-shot active episodes in one shared 128-unit field. Writing uses a singleton demonstrated affordance with fabric/motor learning disabled; querying opens two actions, so this isolates associative recall rather than action discovery. Cross-episode action recall is 87.5%, versus 25% for equal-width trace-only execution and 25% after recurrent-association lesion. Outcome and provenance recall are 100%, episode identity is 75%, mean time-code cosine is 0.519, and recalled cortical state measurably changes the next fabric tick. The field allocates zero per-event slots.\r\n\r\nCurrent reports: [Native v7](reports/taiji_native_v7_20260822.json), [M6 v7 seed panel](reports/taiji_m6_seed_panel_v7_20260822.json), [N10 v7 regression](reports/taiji_n10_v7_20260822.json), [N11 v7](reports/taiji_n11_v7_20260822.json), and [M5 v7](reports/taiji_m5_v7_20260822.json). Earlier Native v2–v6 reports remain migration evidence.\r\n\r\nA single seed cannot separate a mechanism change from seed-specific idiosyncrasy, so mechanism-level decisions read the M6 seed panel (`verify_taiji_m6_endogenous_replay.py --panel`, 12 seeds) rather than one run, and a baseline is always re-executed from a clean worktree instead of read out of a committed report.\r\n\r\n## Source layout\r\n\r\n```text\r\nseed/\n├── config.py    Seed runtime compatibility configuration\n└── model.py     product-facing compatibility wrapper around TSK-v8\n\ntaiji/\n├── config.py    current kernel resource and dynamics contract\n├── sparse.py    fixed fan-in synapses and local updates\r\n├── state.py     persistent region and whole-system state\r\n├── memory.py    distributed episodic encoding, completion, and readback\r\n├── organs.py    raw-byte sensor, sparse receptor bank, and reward-aware motor\r\n├── environment.py active environment protocol and outcome\r\n├── fabric.py    predictive recurrent tick\r\n└── model.py     observe, learn, score, generate, checkpoint\r\n\r\ntests/taiji_native/                 kernel regression and ownership contracts\nscripts/training/verify_taiji_native_v7.py\r\nscripts/training/verify_taiji_m5_episodic_field.py\r\nscripts/training/verify_taiji_n10_sparse_migration.py\r\nscripts/training/verify_taiji_n11_active_environment.py\r\nscripts/training/verify_taiji_n7_context.py\r\nscripts/training/verify_taiji_n8_delayed_trace.py\r\nscripts/training/verify_taiji_n9_long_free_run.py\r\nplans/active/TAIJI_NATIVE_ARCHITECTURE_V1.md\nplans/archive/implementation/TAIJI_SUBSTRATE_KERNEL_V8_SPEC.md\n```\r\n\r\n## Legacy NeuroPlex\r\n\r\n`neuroplex/` contains the previous nine-member Transformer population, including all five dialogue members. It is retained only for reproducibility and future same-budget comparisons. It is not imported by Taiji.\r\n\r\nHistorical checkpoints that serialized `taiji.*` names are loaded through the scoped `neuroplex.legacy_checkpoint` compatibility utility; importing NeuroPlex no longer shadows the native `taiji` package.\r\n\r\nInstall legacy application dependencies only when reproducing that baseline:\r\n\r\n```bash\r\npython -m pip install -e \".[legacy]\"\r\n```\r\n\r\n## Current implementation target\n\nM6/M7 and N0–N11 remain reproducible TSK-v8 kernel evidence. They no longer define the research frontier. The current target is roadmap P1: versioned Taiji v1 observation/state/goal/plan/action contracts, cognitive-ownership tests, and a TSK-v8 compatibility adapter that preserves current checkpoints and product APIs. Learned temporal abstraction begins only after that boundary is executable.\n\r\n## License\r\n\r\nApache License 2.0. See [LICENSE](LICENSE).\r\n",
+          "encoding": "utf-8",
+          "byte_length": 16121,
+          "digest": "9c0e7b67e2eff8f332461506b34fdf540c64c9adbe395dba8c060759c7ca1acc",
+          "truncated": false
+        },
+        "error_code": "",
+        "error": "",
+        "transaction": {
+          "version": 1,
+          "operation": "workspace.read",
+          "path": "README.md",
+          "before_digest": "9c0e7b67e2eff8f332461506b34fdf540c64c9adbe395dba8c060759c7ca1acc",
+          "after_digest": "9c0e7b67e2eff8f332461506b34fdf540c64c9adbe395dba8c060759c7ca1acc",
+          "undo_token": "",
+          "reversible": true
+        },
+        "tick": 5,
+        "mcp_registry_snapshot_id": ""
+      },
+      "evidence": {
+        "evidence": {
+          "format": "seed-workbench-structural-evidence-v1",
+          "version": 1,
+          "request_id": "workbench:s10-workbench-read-6",
+          "intent_id": "s10-workbench-read-6",
+          "call_id": "s10-workbench-read-6:tool-call",
+          "capability_id": "workspace.read",
+          "snapshot_id": "5572f3ff01de596e380bda518eff357c4191610bab836d54e9c505c9b58f256f",
+          "outcome_digest": "7b949cfe2452ea6bc8a8b6bdfe7e96d12c8edd17f4478f463801e1731c3a1ae6",
+          "task_slice_id": "docs-holdout",
+          "partition": "holdout",
+          "usage": 0.8,
+          "resource_pressure": 0.2,
+          "prediction_error": 0.1,
+          "learning_gain": 0.1,
+          "holdout_transfer": 0.9,
+          "evidence_id": "workbench-structural:ccc725f9609996b21b66b170cbfa37fc"
+        },
+        "observation": {
+          "format": "taiji-structural-runtime-observation-v1",
+          "network_id": "workbench",
+          "region_id": "workbench.docs",
+          "tick": 6,
+          "usage": 0.8,
+          "resource_pressure": 0.2,
+          "prediction_error": 0.1,
+          "learning_gain": 0.1,
+          "holdout_transfer": 0.9,
+          "evidence_id": "workbench-structural:ccc725f9609996b21b66b170cbfa37fc",
+          "task_slice_id": "docs-holdout",
+          "partition": "holdout"
+        },
+        "append": {
+          "evidence_id": "workbench-structural:ccc725f9609996b21b66b170cbfa37fc",
+          "status": "accepted",
+          "window_id": "window:workbench:workbench.docs:1",
+          "sealed_window_digest": null
+        }
+      },
+      "sealed_window": {
+        "format": "taiji-structural-evidence-window-v1",
+        "window_id": "window:workbench:workbench.docs:1",
+        "network_id": "workbench",
+        "region_id": "workbench.docs",
+        "task_slice_ids": [
+          "docs-holdout"
+        ],
+        "partition_counts": {
+          "holdout": 1
+        },
+        "first_tick": 6,
+        "last_tick": 6,
+        "observation_count": 1,
+        "prediction_observation_count": 1,
+        "mean_usage": 0.8,
+        "mean_resource_pressure": 0.2,
+        "mean_prediction_error": 0.1,
+        "mean_learning_gain": 0.1,
+        "mean_holdout_transfer": 0.9,
+        "evidence_ids": [
+          "workbench-structural:ccc725f9609996b21b66b170cbfa37fc"
+        ],
+        "window_digest": "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897"
+      }
+    }
+  ],
+  "schedule": {
+    "format": "taiji-structural-workbench-batch-schedule-v1",
+    "status": "batch_created",
+    "trigger_tick": 6,
+    "request_digest": "5cca36044b0e3e8c27085e641ff6c127fc3614154704830a29cd80b89812c44c",
+    "region_ids": [
+      "workbench.code",
+      "workbench.docs"
+    ],
+    "candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+      "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+    ],
+    "source_window_digests": [
+      "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+      "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+      "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+      "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+      "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46",
+      "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897"
+    ],
+    "batch_id": "batch:structural:37e26e4b1f43894c15b7bd69f58bfb24",
+    "reason": "",
+    "scheduler_revision": 2
+  },
+  "repeated_schedule": {
+    "format": "taiji-structural-workbench-batch-schedule-v1",
+    "status": "batch_created",
+    "trigger_tick": 6,
+    "request_digest": "5cca36044b0e3e8c27085e641ff6c127fc3614154704830a29cd80b89812c44c",
+    "region_ids": [
+      "workbench.code",
+      "workbench.docs"
+    ],
+    "candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+      "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+    ],
+    "source_window_digests": [
+      "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+      "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+      "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+      "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+      "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46",
+      "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897"
+    ],
+    "batch_id": "batch:structural:37e26e4b1f43894c15b7bd69f58bfb24",
+    "reason": "",
+    "scheduler_revision": 2
+  },
+  "batch": {
+    "format": "taiji-structural-candidate-batch-v1",
+    "batch_id": "batch:structural:37e26e4b1f43894c15b7bd69f58bfb24",
+    "candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+      "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+    ],
+    "selected_candidate_ids": [
+      "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+      "candidate:pressure:workbench:workbench.code:1:117159ec8e8b"
+    ],
+    "deferred_candidate_ids": [],
+    "rejected_candidate_ids": [],
+    "candidate_states": {
+      "candidate:pressure:workbench:workbench.code:1:117159ec8e8b": "reserved",
+      "candidate:pressure:workbench:workbench.docs:1:671e0bcde976": "reserved"
+    },
+    "reasons": {},
+    "reserved_resource_cost": 2,
+    "reservation_remaining": 2,
+    "structural_budget_before": 32,
+    "available_budget_before": 32,
+    "topology_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+    "arbitration_digest": "37e26e4b1f43894c15b7bd69f58bfb24710886713f9b3ff16bd5aeb40f01e165",
+    "revision": 0,
+    "status": "planned"
+  },
+  "metrics": {
+    "six_real_workbench_outcomes_succeeded": true,
+    "outcome_digest_bound_to_each_evidence": true,
+    "each_region_has_two_train_and_one_holdout_window": true,
+    "two_distinct_candidates_created_from_real_regions": true,
+    "batch_contains_both_real_region_candidates": true,
+    "arbitration_keeps_topology_and_budget_unchanged": true,
+    "source_windows_are_checkpointed": true,
+    "batch_and_scheduler_restore": true,
+    "repeated_multi_region_schedule_is_idempotent": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "multiple real Workbench outcome streams must form distinct, checkpointable regional candidates in one deterministic batch without topology or budget mutation"
+  },
+  "boundary": "This canary does not admit topology, invent metrics from provider output, expose structural controls to the frontend, expand budget, or make CUDA/CI claims."
+}

@@ -1,0 +1,68 @@
+{
+  "format": "taiji-w7-r5c-s3b-structural-validation-gate-v1",
+  "accepted": {
+    "format": "taiji-structural-validation-gate-v1",
+    "candidate_id": "candidate:validation-gate:accepted",
+    "passed": true,
+    "holdout_gain": 0.2,
+    "retention_regression": 0.02,
+    "lesion_effect": 0.15,
+    "resource_state": 0.8,
+    "resource_cost": 1,
+    "structural_budget": 2,
+    "minimum_holdout_gain": 0.05,
+    "maximum_retention_regression": 0.05,
+    "minimum_lesion_effect": 0.05,
+    "minimum_resource_state": 0.4,
+    "evidence_ids": [
+      "holdout:canary",
+      "retention:canary",
+      "lesion:canary"
+    ],
+    "reasons": [],
+    "decision_digest": "6483a6bdb1601bd0c28c75182bd616590d7c68b6e528d7b84b9dbd916e9a28db"
+  },
+  "rejected": {
+    "format": "taiji-structural-validation-gate-v1",
+    "candidate_id": "candidate:validation-gate:rejected",
+    "passed": false,
+    "holdout_gain": 0.01,
+    "retention_regression": 0.2,
+    "lesion_effect": 0.01,
+    "resource_state": 0.1,
+    "resource_cost": 2,
+    "structural_budget": 1,
+    "minimum_holdout_gain": 0.05,
+    "maximum_retention_regression": 0.05,
+    "minimum_lesion_effect": 0.05,
+    "minimum_resource_state": 0.4,
+    "evidence_ids": [
+      "holdout:canary",
+      "retention:canary",
+      "lesion:canary"
+    ],
+    "reasons": [
+      "holdout_gain_below_threshold",
+      "retention_regression_above_threshold",
+      "lesion_effect_below_threshold",
+      "resource_state_below_threshold",
+      "structural_budget_insufficient"
+    ],
+    "decision_digest": "ab68f021cfb7b47424c7791736ef3c69a68f9172c403b44a6acc69e4a7eccfc7"
+  },
+  "metrics": {
+    "accepted_candidate_passes": true,
+    "accepted_reasons_empty": true,
+    "accepted_roundtrip": true,
+    "rejected_candidate_fails": true,
+    "rejected_lists_all_failed_dimensions": true,
+    "rejected_roundtrip": true,
+    "policy_is_content_addressed": true,
+    "policy_is_non_mutating": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "independent holdout, retention, lesion, and resource metrics must be evaluated by one configurable, content-addressed policy"
+  },
+  "boundary": "This policy emits a decision only. It does not collect metrics, mutate a model, reserve budget, or admit topology."
+}

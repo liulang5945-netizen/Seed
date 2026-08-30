@@ -39,9 +39,7 @@ def evaluate() -> dict[str, object]:
     second = _observation(2)
     accepted = ledger.append(first)
     duplicate = ledger.append(first)
-    duplicate_idempotent = (
-        duplicate.status == "duplicate" and ledger.observed_count == 1
-    )
+    duplicate_idempotent = duplicate.status == "duplicate" and ledger.observed_count == 1
     conflict_rejected = False
     try:
         ledger.append(_observation(1, usage=0.9))

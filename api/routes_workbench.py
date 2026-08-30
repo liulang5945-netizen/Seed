@@ -210,6 +210,7 @@ def execute_workbench_intent(request: WorkbenchIntentRequest) -> dict[str, Any]:
             snapshot_id=request.snapshot_id,
             approval_token=request.approval_token,
             mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
+            structural_evidence=request.structural_evidence,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
@@ -482,6 +483,7 @@ def preview_workbench_intent(request: WorkbenchIntentRequest) -> dict[str, Any]:
             intent,
             snapshot_id=request.snapshot_id,
             mcp_registry_snapshot_id=request.mcp_registry_snapshot_id,
+            structural_evidence=request.structural_evidence,
         )
     except (TypeError, ValueError, RuntimeError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc

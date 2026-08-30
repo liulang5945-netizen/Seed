@@ -50,6 +50,7 @@ WORKBENCH_LOOP_CONTRACT_VERSION = 1
 WORKBENCH_MAX_LOOP_STEPS = 8
 WORKBENCH_MAX_LOOP_BUDGET_UNITS = 32.0
 WORKBENCH_TAIJI_EVIDENCE_KIND = "workbench.evidence"
+WORKBENCH_STRUCTURAL_EVIDENCE_FORMAT = "seed-workbench-structural-evidence-v1"
 WORKBENCH_TAIJI_SUCCESSOR_GRAPH_FORMAT = "seed-taiji-successor-graph-v1"
 WORKBENCH_TAIJI_SUCCESSOR_GRAPH_VERSION = 1
 WORKBENCH_TAIJI_SUCCESSOR_STEP_BUDGET_UNITS = 1.0
@@ -716,6 +717,175 @@ class WorkbenchOutcome:
             "tick": self.tick,
             "mcp_registry_snapshot_id": self.mcp_registry_snapshot_id,
         }
+
+
+@dataclass(frozen=True)
+class WorkbenchStructuralEvidence:
+    """Explicit evaluator metrics bound to one real Workbench outcome."""
+
+    request_id: str
+    intent_id: str
+    call_id: str
+    capability_id: str
+    snapshot_id: str
+    outcome_digest: str
+    task_slice_id: str
+    partition: str
+    usage: float
+    resource_pressure: float
+    prediction_error: float | None
+    learning_gain: float
+    holdout_transfer: float
+    version: int = WORKBENCH_CONTRACT_VERSION
+
+    def __post_init__(self) -> None:
+        if self.version != WORKBENCH_CONTRACT_VERSION:
+            raise ValueError("unsupported Workbench structural evidence version")
+        for value, name in (
+            (self.request_id, "request_id"),
+            (self.intent_id, "intent_id"),
+            (self.call_id, "call_id"),
+            (self.capability_id, "capability_id"),
+            (self.snapshot_id, "snapshot_id"),
+            (self.outcome_digest, "outcome_digest"),
+            (self.task_slice_id, "task_slice_id"),
+        ):
+            if not str(value).strip():
+                raise ValueError(f"Workbench structural evidence {name} cannot be empty")
+        if self.partition not in {"runtime", "train", "holdout", "retention"}:
+            raise ValueError("unsupported Workbench structural evidence partition")
+        for value, name in (
+            (self.usage, "usage"),
+            (self.resource_pressure, "resource_pressure"),
+            (self.learning_gain, "learning_gain"),
+            (self.holdout_transfer, "holdout_transfer"),
+        ):
+            if not math.isfinite(float(value)) or not 0.0 <= float(value) <= 1.0:
+                raise ValueError(f"Workbench structural evidence {name} must be in [0, 1]")
+        if self.prediction_error is not None and (
+            not math.isfinite(float(self.prediction_error))
+            or not 0.0 <= float(self.prediction_error) <= 1.0
+        ):
+            raise ValueError("Workbench structural evidence prediction_error must be in [0, 1]")
+        object.__setattr__(self, "request_id", str(self.request_id))
+        object.__setattr__(self, "intent_id", str(self.intent_id))
+        object.__setattr__(self, "call_id", str(self.call_id))
+        object.__setattr__(self, "capability_id", str(self.capability_id))
+        object.__setattr__(self, "snapshot_id", str(self.snapshot_id))
+        object.__setattr__(self, "outcome_digest", str(self.outcome_digest))
+        object.__setattr__(self, "task_slice_id", str(self.task_slice_id))
+        object.__setattr__(self, "partition", str(self.partition))
+        object.__setattr__(self, "usage", float(self.usage))
+        object.__setattr__(self, "resource_pressure", float(self.resource_pressure))
+        object.__setattr__(
+            self,
+            "prediction_error",
+            None if self.prediction_error is None else float(self.prediction_error),
+        )
+        object.__setattr__(self, "learning_gain", float(self.learning_gain))
+        object.__setattr__(self, "holdout_transfer", float(self.holdout_transfer))
+
+    @classmethod
+    def from_outcome(
+        cls,
+        outcome: WorkbenchOutcome,
+        *,
+        task_slice_id: str,
+        partition: str,
+        usage: float,
+        resource_pressure: float,
+        prediction_error: float | None,
+        learning_gain: float,
+        holdout_transfer: float,
+    ) -> WorkbenchStructuralEvidence:
+        if not isinstance(outcome, WorkbenchOutcome):
+            raise TypeError("Workbench structural evidence requires a WorkbenchOutcome")
+        return cls(
+            request_id=outcome.request_id,
+            intent_id=outcome.intent_id,
+            call_id=outcome.call_id or "policy-rejected",
+            capability_id=outcome.capability_id,
+            snapshot_id=outcome.snapshot_id,
+            outcome_digest=_canonical_digest(outcome.to_payload()),
+            task_slice_id=str(task_slice_id),
+            partition=str(partition),
+            usage=float(usage),
+            resource_pressure=float(resource_pressure),
+            prediction_error=(
+                None if prediction_error is None else float(prediction_error)
+            ),
+            learning_gain=float(learning_gain),
+            holdout_transfer=float(holdout_transfer),
+        )
+
+    def _identity_payload(self) -> dict[str, Any]:
+        """Return the fields that define this evidence identity."""
+
+        return {
+            "format": WORKBENCH_STRUCTURAL_EVIDENCE_FORMAT,
+            "version": self.version,
+            "request_id": self.request_id,
+            "intent_id": self.intent_id,
+            "call_id": self.call_id,
+            "capability_id": self.capability_id,
+            "snapshot_id": self.snapshot_id,
+            "outcome_digest": self.outcome_digest,
+            "task_slice_id": self.task_slice_id,
+            "partition": self.partition,
+            "usage": self.usage,
+            "resource_pressure": self.resource_pressure,
+            "prediction_error": self.prediction_error,
+            "learning_gain": self.learning_gain,
+            "holdout_transfer": self.holdout_transfer,
+        }
+
+    @property
+    def evidence_id(self) -> str:
+        return "workbench-structural:" + _canonical_digest(self._identity_payload())[:32]
+
+    def to_payload(self) -> dict[str, Any]:
+        return {
+            **self._identity_payload(),
+            "evidence_id": self.evidence_id,
+            "request_id": self.request_id,
+            "intent_id": self.intent_id,
+            "call_id": self.call_id,
+            "capability_id": self.capability_id,
+            "snapshot_id": self.snapshot_id,
+            "outcome_digest": self.outcome_digest,
+            "task_slice_id": self.task_slice_id,
+            "partition": self.partition,
+            "usage": self.usage,
+            "resource_pressure": self.resource_pressure,
+            "prediction_error": self.prediction_error,
+            "learning_gain": self.learning_gain,
+            "holdout_transfer": self.holdout_transfer,
+        }
+
+    def to_structural_observation(
+        self,
+        *,
+        network_id: str,
+        region_id: str,
+        tick: int,
+    ) -> Any:
+        """Convert only explicitly supplied evaluator metrics to Taiji evidence."""
+
+        from taiji import StructuralRuntimeObservation
+
+        return StructuralRuntimeObservation(
+            network_id=str(network_id),
+            region_id=str(region_id),
+            tick=int(tick),
+            usage=self.usage,
+            resource_pressure=self.resource_pressure,
+            prediction_error=self.prediction_error,
+            learning_gain=self.learning_gain,
+            holdout_transfer=self.holdout_transfer,
+            evidence_id=self.evidence_id,
+            task_slice_id=self.task_slice_id,
+            partition=self.partition,
+        )
 
 
 @dataclass(frozen=True)

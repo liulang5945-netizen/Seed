@@ -1,0 +1,78 @@
+{
+  "format": "taiji-w7-r5c-s3d-structural-admission-v1",
+  "projection_digest": "ccbe54362b16973230e0566bc843727acf40db136c5ce5a07f315fc061367bdb",
+  "validation": {
+    "format": "taiji-structural-candidate-validation-v1",
+    "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:validation-canary:1:ccbe54362b16",
+    "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+    "status": "validated",
+    "validation_score": 1.0,
+    "parent_checkpoint_digest": "3c788633757e87f802d66321896639bc1aee6a982ac0aec02f7137b2fa9ca831",
+    "validation_checkpoint_digest": "f3f99c07cb0797f2b86249b967f8761099c13c4db5e7c3d16dcdfce369150532",
+    "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+    "topology_after_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+    "structural_budget_before": 1,
+    "structural_budget_after": 1,
+    "evidence_ids": [
+      "validation-canary:train:task-a:1",
+      "validation-canary:train:task-b:2",
+      "validation-canary:holdout:task-a:3"
+    ],
+    "error": null
+  },
+  "decision": {
+    "format": "taiji-structural-validation-gate-v1",
+    "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:validation-canary:1:ccbe54362b16",
+    "passed": true,
+    "holdout_gain": 1.0,
+    "retention_regression": 0.02,
+    "lesion_effect": 0.15,
+    "resource_state": 0.8,
+    "resource_cost": 1,
+    "structural_budget": 1,
+    "minimum_holdout_gain": 0.05,
+    "maximum_retention_regression": 0.05,
+    "minimum_lesion_effect": 0.05,
+    "minimum_resource_state": 0.4,
+    "evidence_ids": [
+      "validation-canary:train:task-a:1",
+      "validation-canary:train:task-b:2",
+      "validation-canary:holdout:task-a:3",
+      "retention:admission",
+      "lesion:admission"
+    ],
+    "reasons": [],
+    "decision_digest": "a0b597e1f1c3bbfb027b7e5e26ff8ef0e175f653e97678053ad526074ece5ace"
+  },
+  "admission": {
+    "format": "taiji-structural-admission-result-v1",
+    "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:validation-canary:1:ccbe54362b16",
+    "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+    "status": "admitted",
+    "decision_digest": "a0b597e1f1c3bbfb027b7e5e26ff8ef0e175f653e97678053ad526074ece5ace",
+    "parent_checkpoint_digest": "49e49657021a5ee24d17ed503a20ea5601d057ddafd704be620b5c6dcf071738",
+    "child_checkpoint_digest": "0ad4db1e03f1a52d14bbcd44bb3c2d7182c028c0752c378a6ed1ea1fbf6ce3cc",
+    "topology_before_digest": "f0092343f0556584209efe5e9ecb76ea45ed9de711c77b8275454804c39f6926",
+    "topology_after_digest": "291d7efe719a89d887691751ac63649199ce36280e8589032fa1c2fa966365dc",
+    "structural_budget_before": 1,
+    "structural_budget_after": 0,
+    "error": null
+  },
+  "metrics": {
+    "policy_passed_before_admission": true,
+    "admission_committed": true,
+    "admission_is_idempotent": true,
+    "topology_grew_once": true,
+    "budget_decreased_once": true,
+    "topology_digest_changed": true,
+    "budget_lineage_recorded": true,
+    "admission_roundtrip": true,
+    "restored_topology_is_admitted": true,
+    "restored_budget_is_admitted": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "only a bound and policy-approved candidate may commit one topology change; the commit and budget lineage must survive checkpoint restore"
+  },
+  "boundary": "This canary admits one bounded neuron candidate. It does not enable unbounded growth, full retraining, or automatic multi-step structural expansion."
+}
