@@ -3,7 +3,7 @@
   "version": 1,
   "work_package": "W7-R5",
   "title": "open-domain structural growth and self-evolution",
-  "status": "e5_2_legacy_surface_tombstone_passed_e5_3_slot_runtime_pending",
+  "status": "e6_0_mcp_client_capability_boundary_passed_e6_1_shadow_projection_pending",
   "claim": {
     "to_prove": "Taiji can grow local structure or memory in response to persistent real-task error, capacity pressure, or recovery deficiency, while retaining old abilities and remaining checkpointable and reversible.",
     "must_not_claim": "Growth is not automatic intelligence, unlimited weight addition, neuron-count scaling, or a return to full retraining from scratch."
@@ -454,7 +454,11 @@
     "e5_3_test": "frontend/src/__tests__/ClientExtensionSlot.test.js and scripts/training/verify_taiji_e5_3_slot_runtime.py",
     "e5_3_scope": "project active Seed-owned manifests into a real Vue route slot by content digest; provide safe descriptor fallback and scoped-slot boundary; unmount removed/replaced versions and expose failed/quarantined states without loading plugin source",
     "e5_3_evidence": "verify_taiji_e5_3_slot_runtime.py reports status=passed with 8 checks; the dedicated Vue canary passes 3 tests, affected frontend lint passes, and production build completes",
-    "next_stage": "E6-0 MCP client capability inheritance candidate boundary"
+    "e6_0_artifact": "seed_platform/mcp_capability_inheritance.py",
+    "e6_0_test": "tests/seed_platform/test_mcp_capability_inheritance.py and scripts/training/verify_taiji_e6_0_mcp_client_capability_boundary.py",
+    "e6_0_scope": "derive an independent Seed-owned MCP client capability candidate from the governed MCP registry; content-address tool schemas; model permissions, network scopes, credential references, resource budgets and side-effect risks; stop at no-side-effect shadow preflight without registry/client activation or Taiji cognition coupling",
+    "e6_0_evidence": "verify_taiji_e6_0_mcp_client_capability_boundary.py reports status=passed with 10 checks; candidate/observation roundtrips, schema preservation, executor/source exclusion, registry drift, policy, external-call and cognitive-owner boundaries hold; 10 targeted tests pass",
+    "next_stage": "E6-1 MCP client capability candidate API/registry shadow projection"
   },
   "boundary": [
     "Self-evolution must be evidence-triggered, resource-bounded, and reversible.",

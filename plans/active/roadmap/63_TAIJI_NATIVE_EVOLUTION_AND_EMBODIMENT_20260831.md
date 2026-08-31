@@ -268,7 +268,7 @@ MCP discover
 
 不能通过复制未知 MCP 源码或模型自动生成 executor 直接进入 L3。L2→L3 是客户端工程迁移，不是模型训练动作。
 
-当前 `api/routes_agent_mcp.py -> neuroplex.agent_ext.mcp_manager` 的 `/api/mcp/*` 仍是 Legacy 兼容能力，不进入 E1 verified corpus/experience ledger；原 `/api/plugins/marketplace`、marketplace refresh 和 workspace upload 已由 E5-2 统一退役为 Seed-owned 410 tombstone。真实第三方 MCP/plugin 仍需等 E5-3 runtime canary 与后续 E6 Gate。
+当前 `api/routes_agent_mcp.py -> neuroplex.agent_ext.mcp_manager` 的 `/api/mcp/*` 仍是 Legacy 兼容能力，不进入 E1 verified corpus/experience ledger；原 `/api/plugins/marketplace`、marketplace refresh 和 workspace upload 已由 E5-2 统一退役为 Seed-owned 410 tombstone。真实第三方 MCP/plugin 仍需等 E6-1 API/registry shadow 接线及后续 E6 Gate。
 
 ## 8. Seed 客户端插件合同与热插拔生命周期
 
@@ -379,9 +379,9 @@ Gate：
 
 目标：把 Skill/MCP artifact 本身转换为知识语料，并把真实 Workbench、Skill/MCP 调用和客户端插件 lifecycle 投影为经验合同。
 
-**当前执行阶段。** E1 ledger 合同已冻结为输入边界；E2-A/B 已完成来源适配器和 Seed-owned registry/lifecycle 的确定性状态流；E3-0 已完成训练 checkpoint 预检；E3-1 已完成 route/interaction credit；E3-2 已完成动态 action kind 的 procedural memory intake；E3-3 已完成真实 `WorldTransition` 进入现有局部世界模型；E3-4 已完成多 seed fixed-capacity 对照和持续失败触发前置 Gate：当前 fixed-capacity holdout/retention 通过，结构候选不得生成；E4 已完成受治理 Skill/MCP artifact 知识向 Taiji-owned semantic/procedural/affordance artifact 的内化，并证明外部描述关闭后仍可读取内部状态。E5-0/E5-1/E5-2 已完成 Seed-owned client extension host 的合同、API/Vue 接线和 Legacy surface 退役；当前进入 E5-3：在真实 slot 中验证本地只读 extension 的挂载、卸载、失败回收与 snapshot 回滚；不把 digest-only 结果转成伪状态，也不把 Legacy MCP manager 接入 verified ledger。
+**当前执行阶段。** E1 ledger 合同已冻结为输入边界；E2-A/B 已完成来源适配器和 Seed-owned registry/lifecycle 的确定性状态流；E3-0 已完成训练 checkpoint 预检；E3-1 已完成 route/interaction credit；E3-2 已完成动态 action kind 的 procedural memory intake；E3-3 已完成真实 `WorldTransition` 进入现有局部世界模型；E3-4 已完成多 seed fixed-capacity 对照和持续失败触发前置 Gate：当前 fixed-capacity holdout/retention 通过，结构候选不得生成；E4 已完成受治理 Skill/MCP artifact 知识向 Taiji-owned semantic/procedural/affordance artifact 的内化，并证明外部描述关闭后仍可读取内部状态。E5-0/E5-1/E5-2/E5-3 已完成 Seed-owned client extension host 的合同、API/Vue 接线、Legacy surface 退役和真实 slot runtime canary；E6-0 已冻结 MCP client capability inheritance candidate 的声明式 schema、policy 和 no-side-effect shadow 边界；当前进入 E6-1：把候选投影到 Seed-owned API/registry 的 shadow 状态，不把 digest-only 结果转成伪状态，也不把 Legacy MCP manager 接入 verified ledger。
 
-历史阶段证据摘要：E2-A 已通过 [source adapter report](../../../reports/taiji_w7_e2_source_adapters_20260901.json)，E2-B 已通过 [source registry report](../../../reports/taiji_w7_e2b_source_registry_20260901.json)，E3-0/E3-1/E3-2/E3-3/E3-4/E4 的对应 Gate 也已通过；当前阶段事实以本文件后面的 E5-0/E5-1/E5-2/E5-3 条目和 `03_CURRENT_EXECUTION.md` 为准。
+历史阶段证据摘要：E2-A 已通过 [source adapter report](../../../reports/taiji_w7_e2_source_adapters_20260901.json)，E2-B 已通过 [source registry report](../../../reports/taiji_w7_e2b_source_registry_20260901.json)，E3-0/E3-1/E3-2/E3-3/E3-4/E4 的对应 Gate 也已通过；当前阶段事实以本文件后面的 E5-0/E5-1/E5-2/E5-3/E6-0 条目和 `03_CURRENT_EXECUTION.md` 为准。
 
 顺序：
 
@@ -438,9 +438,11 @@ Gate：知识问答不是唯一指标；必须同时通过未见任务规划/能
 
 **E5-1 已完成（2026-09-01）**：`api/routes_client_extensions.py` 已把 host 接入原生 API，`frontend/src/composables/nativeApi.js` 与 `useClientExtensions.js` 只转发内容寻址 snapshot、两阶段 prepare/commit、依赖和 rollback；`App.vue` 注入 client-body state 并在启动时读取 snapshot。E5-1 [Gate report](../../../reports/taiji_w7_e5_1_client_snapshot_integration_20260901.json) 的 8/8 检查通过，API 与 Workbench capability snapshot 绑定、stale snapshot 拒绝、声明式 slot projection 和 Taiji/Legacy 边界均保持。
 
-**E5-2 已完成（2026-09-01）**：`api/routes_plugins.py` 已成为显式 410 tombstone，所有旧 `/api/plugins`、enable/disable/delete/install、marketplace、marketplace refresh 和 upload 入口均 fail-closed 指向 `/api/client-extensions`；`routes_agent_mcp.py` 与 `routes_agent_workspace.py` 的重复旧路由已清除，前端无旧 `/api/plugins` 引用。E5-2 [Gate report](../../../reports/taiji_w7_e5_2_legacy_plugin_surface_20260901.json) 的 9/9 检查通过；未删除不属于本阶段的 `/api/mcp/*` Legacy 兼容能力，也未接入真实第三方 MCP/plugin。当前进入 E5-3：Seed-owned 本地只读 extension 的真实 slot runtime canary。
+**E5-2 已完成（2026-09-01）**：`api/routes_plugins.py` 已成为显式 410 tombstone，所有旧 `/api/plugins`、enable/disable/delete/install、marketplace、marketplace refresh 和 upload 入口均 fail-closed 指向 `/api/client-extensions`；`routes_agent_mcp.py` 与 `routes_agent_workspace.py` 的重复旧路由已清除，前端无旧 `/api/plugins` 引用。E5-2 [Gate report](../../../reports/taiji_w7_e5_2_legacy_plugin_surface_20260901.json) 的 9/9 检查通过；未删除不属于本阶段的 `/api/mcp/*` Legacy 兼容能力，也未接入真实第三方 MCP/plugin。
 
-**E5-3 已完成（2026-09-01）**：`frontend/src/components/ClientExtensionSlot.vue` 将当前 client snapshot 的 manifest 按 plugin digest 映射到真实 Vue slot，默认仅渲染安全 descriptor fallback，并支持受控 scoped slot；旧版本被 key 卸载，新版本重新挂载，failed/quarantined/dependency 状态可见，组件不加载 plugin source。E5-3 [Gate report](../../../reports/taiji_w7_e5_3_client_slot_runtime_20260901.json) 的 8/8 检查通过，前端生产构建通过；当前进入 E6-0：建立 MCP client capability inheritance candidate 的 schema、权限与 shadow 边界。
+**E5-3 已完成（2026-09-01）**：`frontend/src/components/ClientExtensionSlot.vue` 将当前 client snapshot 的 manifest 按 plugin digest 映射到真实 Vue slot，默认仅渲染安全 descriptor fallback，并支持受控 scoped slot；旧版本被 key 卸载，新版本重新挂载，failed/quarantined/dependency 状态可见，组件不加载 plugin source。E5-3 [Gate report](../../../reports/taiji_w7_e5_3_client_slot_runtime_20260901.json) 的 8/8 检查通过，前端生产构建通过。
+
+**E6-0 已完成（2026-09-01）**：`seed_platform/mcp_capability_inheritance.py` 建立 `McpCapabilityInheritanceCandidate`、`McpCapabilityInheritancePolicy`、`McpCapabilityShadowObservation` 和独立 decision contract。候选从 Seed-owned `McpToolRegistry` 读取 tool schema，但只保存 server/tool identity、schema digest、风险、权限、网络 scope、credential reference、资源预算、证据和父 checkpoint；executor/source/secret 不可表达。preflight 只返回 shadow-pending/admissible，不注册或激活；shadow 只比较 content digest、输出、after-state 与资源，并拒绝外部调用、凭据访问、registry 漂移和未审批副作用。E6-0 [Gate report](../../../reports/taiji_w7_e6_0_mcp_client_capability_boundary_20260901.json) 的 10/10 检查和 10 个定向回归测试通过；当前进入 E6-1：将候选投影到 Seed-owned API/registry 的 shadow 状态，不连接真实第三方 MCP。
 
 Gate：旧 client/capability snapshot 可恢复，旧路由/组件/监听器/executor 注册无泄漏，在途调用不丢失，资源 reservation 归还，异常插件 quarantine，Taiji cognition checkpoint 不被插件覆盖。
 
@@ -557,6 +559,6 @@ E1–E7 优先按现有 owner 增量接线，避免继续膨胀 `taiji/adapter.p
 
 ## 15. E1 首个执行切片
 
-`03_CURRENT_EXECUTION.md` 当前指向 **E5-3：Seed-owned 本地只读 extension 的真实 slot runtime canary**；E1 已完成并作为全部后续训练与客户端继承的事实源，E5-0/E5-1/E5-2 已分别冻结 host contract、完成 API/Vue 接线并退役 Legacy plugin surface。
+`03_CURRENT_EXECUTION.md` 当前指向 **E6-1：MCP 客户端候选的 API/registry shadow 接线**；E1 已完成并作为全部后续训练与客户端继承的事实源，E5-0/E5-1/E5-2/E5-3 已分别冻结 host contract、完成 API/Vue 接线、退役 Legacy plugin surface 并通过真实 slot runtime canary，E6-0 已冻结 MCP capability inheritance candidate 合同。
 
-它优先于真实第三方 MCP 和插件 HMR，因为必须先在受控本地 slot 中证明 Seed-owned extension 的挂载、卸载、失败回收和 snapshot 回滚；E5-3 不修改 Taiji cognition checkpoint，也不把插件执行权写入模型。
+它优先于真实第三方 MCP 和插件 HMR，因为必须先把候选绑定到 Seed-owned registry 的 shadow 状态，证明 snapshot 一致性、生命周期和 rollback；E6-1 不连接真实第三方 MCP，不激活客户端器官，也不把插件执行权写入 Taiji cognition checkpoint。
