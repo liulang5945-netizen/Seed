@@ -67,6 +67,17 @@ export const nativeApiPaths = Object.freeze({
     loopPreflight: '/api/workbench/loop/preflight',
     loopExecute: '/api/workbench/loop/execute',
   }),
+  clientExtensions: Object.freeze({
+    status: '/api/client-extensions',
+    prepare: '/api/client-extensions/prepare',
+    commit: '/api/client-extensions/commit',
+    dependency: '/api/client-extensions/dependency',
+    rollback: '/api/client-extensions/rollback',
+    beginCall: '/api/client-extensions/{plugin_id}/call/begin',
+    endCall: '/api/client-extensions/{plugin_id}/call/end',
+    retire: '/api/client-extensions/{plugin_id}/retire',
+    quarantine: '/api/client-extensions/{plugin_id}/quarantine',
+  }),
   system: Object.freeze({
     health: '/api/health',
     version: '/api/system/version',
@@ -207,6 +218,9 @@ function request(path, options) {
  * @property {(payload: Object) => Promise<Object>} chatWorkbenchExecuteNaturalLanguage
  * @property {(formData: FormData, options?: RequestInit) => Promise<Response>} chatUpload
  * @property {() => Promise<Object>} workbenchCapabilities
+ * @property {() => Promise<Object>} clientExtensions
+ * @property {(payload: Object) => Promise<Object>} clientExtensionsPrepare
+ * @property {(payload: Object) => Promise<Object>} clientExtensionsCommit
  * @property {() => Promise<Object>} workbenchEvents
  * @property {(path?: string) => Promise<Object>} workbenchFiles
  * @property {(payload: Object) => Promise<Object>} setWorkbenchWorkspace
@@ -379,6 +393,40 @@ export const nativeApi = Object.freeze({
   loopExecute: (payload) => readJson(
     `${API_BASE}${nativeApiPaths.workbench.loopExecute}`,
     jsonOptions(payload),
+  ),
+
+  clientExtensions: () => readJson(`${API_BASE}${nativeApiPaths.clientExtensions.status}`),
+  clientExtensionsPrepare: (payload) => readJson(
+    `${API_BASE}${nativeApiPaths.clientExtensions.prepare}`,
+    jsonOptions(payload),
+  ),
+  clientExtensionsCommit: (payload) => readJson(
+    `${API_BASE}${nativeApiPaths.clientExtensions.commit}`,
+    jsonOptions(payload),
+  ),
+  clientExtensionsDependency: (payload) => readJson(
+    `${API_BASE}${nativeApiPaths.clientExtensions.dependency}`,
+    jsonOptions(payload),
+  ),
+  clientExtensionsRollback: (payload) => readJson(
+    `${API_BASE}${nativeApiPaths.clientExtensions.rollback}`,
+    jsonOptions(payload),
+  ),
+  clientExtensionsBeginCall: (pluginId) => readJson(
+    `${API_BASE}${resourcePath(nativeApiPaths.clientExtensions.beginCall, pluginId, 'plugin_id')}`,
+    jsonOptions({}),
+  ),
+  clientExtensionsEndCall: (pluginId) => readJson(
+    `${API_BASE}${resourcePath(nativeApiPaths.clientExtensions.endCall, pluginId, 'plugin_id')}`,
+    jsonOptions({}),
+  ),
+  clientExtensionsRetire: (pluginId) => readJson(
+    `${API_BASE}${resourcePath(nativeApiPaths.clientExtensions.retire, pluginId, 'plugin_id')}`,
+    jsonOptions({}),
+  ),
+  clientExtensionsQuarantine: (pluginId, reason) => readJson(
+    `${API_BASE}${resourcePath(nativeApiPaths.clientExtensions.quarantine, pluginId, 'plugin_id')}`,
+    jsonOptions({ reason }),
   ),
 
   trainingFiles: () => readJson(`${API_BASE}${nativeApiPaths.training.files}`),

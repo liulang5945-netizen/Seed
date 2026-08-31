@@ -436,6 +436,8 @@ Gate：知识问答不是唯一指标；必须同时通过未见任务规划/能
 
 **E5-0 已完成（2026-09-01）**：`seed_platform/client_extension_host.py` 已建立声明式 `ClientPluginManifest`、内容寻址 `ClientExtensionSnapshot`、可配置 slot/protected-shell policy、两阶段 prepare/commit、blue/green 状态迁移、依赖健康/quarantine、in-flight draining、递归 disposer、rollback、checkpoint/tamper 校验和生命周期审计。E5-0 [Gate report](../../../reports/taiji_w7_e5_client_extension_host_20260901.json) 的 12/12 检查通过；它只证明 client-body contract 和可回滚状态机，不证明 Vue/API/Workbench 已接线，不接 Legacy manager，也不执行插件源码。
 
+**E5-1 已完成（2026-09-01）**：`api/routes_client_extensions.py` 已把 host 接入原生 API，`frontend/src/composables/nativeApi.js` 与 `useClientExtensions.js` 只转发内容寻址 snapshot、两阶段 prepare/commit、依赖和 rollback；`App.vue` 注入 client-body state 并在启动时读取 snapshot。E5-1 [Gate report](../../../reports/taiji_w7_e5_1_client_snapshot_integration_20260901.json) 的 8/8 检查通过，API 与 Workbench capability snapshot 绑定、stale snapshot 拒绝、声明式 slot projection 和 Taiji/Legacy 边界均保持。当前进入 E5-2：收敛旧 `/api/plugins`、marketplace/upload 和 Legacy manager surface。
+
 Gate：旧 client/capability snapshot 可恢复，旧路由/组件/监听器/executor 注册无泄漏，在途调用不丢失，资源 reservation 归还，异常插件 quarantine，Taiji cognition checkpoint 不被插件覆盖。
 
 ### E6：MCP 客户端器官继承

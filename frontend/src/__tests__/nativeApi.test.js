@@ -27,6 +27,8 @@ describe('nativeApi facade', () => {
     expect(nativeApiPaths.workbench.taijiProject).toBe('/api/workbench/taiji/project')
     expect(nativeApiPaths.workbench.taijiReproject).toBe('/api/workbench/taiji/reproject')
     expect(nativeApiPaths.workbench.taijiRecoveryPortfolio).toBe('/api/workbench/taiji/recovery-branch/portfolio')
+    expect(nativeApiPaths.clientExtensions.prepare).toBe('/api/client-extensions/prepare')
+    expect(nativeApiPaths.clientExtensions.commit).toBe('/api/client-extensions/commit')
     expect(nativeApiPaths.chat.workbenchStream).toBe('/api/chat/workbench/stream')
     expect(nativeApiPaths.chat.workbenchInterpret).toBe('/api/chat/workbench/interpret')
     expect(nativeApiPaths.chat.workbenchNaturalLanguagePlan).toBe('/api/chat/workbench/natural-language/plan')
@@ -44,6 +46,24 @@ describe('nativeApi facade', () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ kind: 'workspace.rename', parameters: { path: 'README.md' } }),
+    }))
+  })
+
+  it('keeps client extension lifecycle on the native two-phase API boundary', async () => {
+    authFetch
+      .mockResolvedValueOnce(jsonResponse({ status: 'prepared' }))
+      .mockResolvedValueOnce(jsonResponse({ status: 'committed' }))
+
+    await nativeApi.clientExtensionsPrepare({ manifests: [], states: {} })
+    await nativeApi.clientExtensionsCommit({ prepared_id: 'prepared-1' })
+
+    expect(authFetch).toHaveBeenNthCalledWith(1, '/api/client-extensions/prepare', expect.objectContaining({
+      method: 'POST',
+      body: JSON.stringify({ manifests: [], states: {} }),
+    }))
+    expect(authFetch).toHaveBeenNthCalledWith(2, '/api/client-extensions/commit', expect.objectContaining({
+      method: 'POST',
+      body: JSON.stringify({ prepared_id: 'prepared-1' }),
     }))
   })
 
