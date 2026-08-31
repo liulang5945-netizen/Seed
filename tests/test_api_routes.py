@@ -333,9 +333,22 @@ def test_auth_audit_readable(client):
 # ======================== legacy-gated 路由 ========================
 
 
-@pytest.mark.skipif(not legacy_available(), reason="Legacy plugin disabled")
-def test_workflows_and_plugins_when_legacy_enabled(client):
-    for path in ("/api/workflows", "/api/plugins"):
-        response = client.get(path)
-        assert response.status_code == 200
-        assert isinstance(response.json(), (dict, list))
+@pytest.mark.skipif(not legacy_available(), reason="Legacy workflows disabled")
+def test_workflows_remain_legacy_gated(client):
+    response = client.get("/api/workflows")
+    assert response.status_code == 200
+    assert isinstance(response.json(), (dict, list))
+
+
+def test_legacy_plugin_surface_is_tombstoned(client):
+    for path, method in (
+        ("/api/plugins", "get"),
+        ("/api/plugins/marketplace", "get"),
+        ("/api/plugins/marketplace/refresh", "post"),
+        ("/api/plugins/upload", "post"),
+    ):
+        response = getattr(client, method)(path)
+        assert response.status_code == 410
+        detail = response.json()["detail"]
+        assert detail["code"] == "legacy_plugin_surface_retired"
+        assert detail["replacement"] == "/api/client-extensions"

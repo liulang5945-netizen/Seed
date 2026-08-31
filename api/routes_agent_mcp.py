@@ -171,36 +171,6 @@ def mcp_tools():
         return {"status": "error", "message": "内部错误，请查看日志"}
 
 
-@router.get("/api/plugins/marketplace")
-def plugin_marketplace(category: str = "", keyword: str = ""):
-    """浏览 Agent 插件市场"""
-    try:
-        from neuroplex.agent_ext.mcp_manager import mcp_manager
-
-        return {
-            "status": "ok",
-            **mcp_manager.get_plugin_marketplace(category=category, keyword=keyword),
-        }
-    except Exception as e:
-        logger.error(f"获取插件市场数据失败: {e}")
-        logger.error(f"Request failed: {e}")
-        return {"status": "error", "message": "内部错误，请查看日志"}
-
-
-@router.post("/api/plugins/marketplace/refresh")
-def plugin_marketplace_refresh():
-    """从远程源刷新 Agent 插件市场"""
-    try:
-        from neuroplex.agent_ext.mcp_manager import mcp_manager
-
-        result = mcp_manager.refresh_plugin_marketplace()
-        return {"status": "ok", **result}
-    except Exception as e:
-        logger.error(f"刷新插件市场失败: {e}")
-        logger.error(f"Request failed: {e}")
-        return {"status": "error", "message": "内部错误，请查看日志"}
-
-
 @router.post("/api/mcp/add_custom")
 async def mcp_add_custom(req: dict):
     """添加自定义 MCP 服务器"""

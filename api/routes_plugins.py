@@ -1,56 +1,67 @@
-"""
-插件 API 路由
+"""Retired compatibility surface for the former Legacy plugin manager.
+
+Client extensions are now owned by Seed and must be changed through the
+declarative, content-addressed ``/api/client-extensions`` surface. Keeping
+these routes as explicit tombstones prevents old callers from silently
+reaching the removed ``neuroplex`` plugin manager.
 """
 
-import logging
+from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
 
-from neuroplex.core.plugin_manager import PluginManager
-
-logger = logging.getLogger("ApiServer.Plugins")
 router = APIRouter()
-pm = PluginManager()
+
+
+def _retired() -> None:
+    raise HTTPException(
+        status_code=410,
+        detail={
+            "code": "legacy_plugin_surface_retired",
+            "replacement": "/api/client-extensions",
+            "message": "Legacy 插件入口已退役，请使用 Seed-owned client extension snapshot",
+        },
+    )
 
 
 @router.get("/api/plugins")
-async def list_plugins():
-    """列出所有插件"""
-    return {"status": "success", "plugins": pm.list_plugins()}
+def list_plugins() -> None:
+    _retired()
 
 
 @router.post("/api/plugins/{plugin_id}/enable")
-async def enable_plugin(plugin_id: str):
-    """启用插件"""
-    try:
-        pm.load_plugin(plugin_id)
-        return {"status": "success", "message": f"插件 {plugin_id} 已启用"}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e)) from e
+def enable_plugin(plugin_id: str) -> None:
+    del plugin_id
+    _retired()
 
 
 @router.post("/api/plugins/{plugin_id}/disable")
-async def disable_plugin(plugin_id: str):
-    """禁用插件"""
-    pm.unload_plugin(plugin_id)
-    return {"status": "success", "message": f"插件 {plugin_id} 已禁用"}
+def disable_plugin(plugin_id: str) -> None:
+    del plugin_id
+    _retired()
 
 
 @router.delete("/api/plugins/{plugin_id}")
-async def uninstall_plugin(plugin_id: str):
-    """卸载插件"""
-    pm.uninstall_plugin(plugin_id)
-    return {"status": "success", "message": f"插件 {plugin_id} 已卸载"}
+def uninstall_plugin(plugin_id: str) -> None:
+    del plugin_id
+    _retired()
 
 
 @router.post("/api/plugins/install")
-async def install_plugin(data: dict):
-    """安装插件"""
-    source = data.get("source_path", "")
-    if not source:
-        raise HTTPException(status_code=400, detail="缺少 source_path")
-    try:
-        plugin_id = pm.install_plugin(source)
-        return {"status": "success", "plugin_id": plugin_id}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e)) from e
+def install_plugin() -> None:
+    _retired()
+
+
+@router.get("/api/plugins/marketplace")
+def plugin_marketplace() -> None:
+    _retired()
+
+
+@router.post("/api/plugins/marketplace/refresh")
+def refresh_plugin_marketplace() -> None:
+    _retired()
+
+
+@router.post("/api/plugins/upload")
+def upload_plugin() -> None:
+    _retired()

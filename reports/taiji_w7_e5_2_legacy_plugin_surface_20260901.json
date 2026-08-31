@@ -1,0 +1,22 @@
+{
+  "gate": "taiji-e5-2-legacy-plugin-surface",
+  "status": "passed",
+  "checks": {
+    "legacy_routes_return_410": true,
+    "retirement_detail_is_stable": true,
+    "legacy_manager_is_removed": true,
+    "tombstone_is_seed_owned": true,
+    "client_extension_surface_remains_live": true,
+    "client_extension_openapi_is_present": true,
+    "duplicate_marketplace_routes_removed": true,
+    "duplicate_upload_route_removed": true,
+    "frontend_does_not_call_legacy_surface": true
+  },
+  "scope": {
+    "legacy_plugin_manager_executable": false,
+    "legacy_plugin_routes_publicly_mutate_state": false,
+    "seed_owned_client_extension_surface": true,
+    "mcp_cognition_and_client_body_are_unchanged": true,
+    "real_third_party_mcp_or_plugin_enabled": false
+  }
+}
