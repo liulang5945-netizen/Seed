@@ -23,6 +23,14 @@ from .artifact_consumption import (
     artifact_consumption_audit_digest,
     artifact_consumption_policy_digest,
 )
+from .artifact_internalization import (
+    ARTIFACT_INTERNALIZATION_FORMAT,
+    ARTIFACT_INTERNALIZATION_MANIFEST_REVISION,
+    ARTIFACT_INTERNALIZATION_VERSION,
+    ArtifactInternalizationReport,
+    ArtifactInternalizationTrainer,
+    ArtifactKnowledgeEncoder,
+)
 from .assembly_evaluation import (
     AssemblyRelationEvaluationConfig,
     AssemblyRelationEvaluator,
@@ -543,6 +551,12 @@ __all__ = [
     "AssemblyRelationExample",
     "AssemblyRelationEvaluationConfig",
     "AssemblyRelationEvaluator",
+    "ARTIFACT_INTERNALIZATION_FORMAT",
+    "ARTIFACT_INTERNALIZATION_MANIFEST_REVISION",
+    "ARTIFACT_INTERNALIZATION_VERSION",
+    "ArtifactInternalizationReport",
+    "ArtifactInternalizationTrainer",
+    "ArtifactKnowledgeEncoder",
     "CAPACITY_PREFLIGHT_FORMAT",
     "CAPACITY_PREFLIGHT_MANIFEST_REVISION",
     "CAPACITY_PREFLIGHT_VERSION",

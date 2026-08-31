@@ -3,7 +3,7 @@
   "version": 1,
   "work_package": "W7-R5",
   "title": "open-domain structural growth and self-evolution",
-  "status": "e3_4_capacity_preflight_gate_passed_e4_internalization_pending",
+  "status": "e4_artifact_internalization_gate_passed_e5_client_extension_pending",
   "claim": {
     "to_prove": "Taiji can grow local structure or memory in response to persistent real-task error, capacity pressure, or recovery deficiency, while retaining old abilities and remaining checkpointable and reversible.",
     "must_not_claim": "Growth is not automatic intelligence, unlimited weight addition, neuron-count scaling, or a return to full retraining from scratch."
@@ -434,7 +434,11 @@
     "e3_4_test": "tests/taiji_native/test_capacity_preflight.py and scripts/training/verify_taiji_e3_4_capacity_preflight.py",
     "e3_4_scope": "three-seed fixed-capacity local world learner comparison with holdout/retention/cross-seed stability, measured capacity pressure, persistent residual-error trigger, and checkpointable fail-closed structural proposal preflight",
     "e3_4_evidence": "verify_taiji_e3_4_capacity_preflight.py reports status=passed with 9 checks; 32 hidden units and 775 parameters yield mean native holdout error 0.2785, standard deviation 0.0216, maximum retention regression 0, pressure 1.0, and trigger failure window 0/3, so no structural candidate is emitted",
-    "next_stage": "E4 Skill/MCP knowledge and procedural internalization Gate"
+    "e4_artifact": "taiji/artifact_internalization.py and taiji/__init__.py",
+    "e4_test": "tests/taiji_native/test_artifact_internalization.py and scripts/training/verify_taiji_e4_artifact_internalization.py",
+    "e4_scope": "admitted Skill/MCP artifact knowledge plus corresponding successful Outcome internalized into Taiji-owned semantic, procedural, and affordance learners; train/holdout/retention isolation, cross-scope identity exclusion, external-description-off readout, quarantine rejection, lesion causality, checkpoint roundtrip, and client-execution boundary",
+    "e4_evidence": "verify_taiji_e4_artifact_internalization.py reports status=passed with 10 checks; 14 train/holdout/retention semantic units and 4 experiences yield semantic holdout loss 0.0000399, procedural holdout accuracy 1.0 versus lesion 0.25, affordance holdout MSE 1.15e-12 versus frozen 1.19976, and all mutation/boundary checks pass",
+    "next_stage": "E5 Seed-owned client extension host and capability lifecycle Gate"
   },
   "boundary": [
     "Self-evolution must be evidence-triggered, resource-bounded, and reversible.",
