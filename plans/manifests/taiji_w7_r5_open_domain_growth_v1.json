@@ -3,7 +3,7 @@
   "version": 1,
   "work_package": "W7-R5",
   "title": "open-domain structural growth and self-evolution",
-  "status": "e5_0_client_extension_host_gate_passed_e5_1_runtime_integration_pending",
+  "status": "e5_1_client_snapshot_integration_gate_passed_e5_2_legacy_surface_pending",
   "claim": {
     "to_prove": "Taiji can grow local structure or memory in response to persistent real-task error, capacity pressure, or recovery deficiency, while retaining old abilities and remaining checkpointable and reversible.",
     "must_not_claim": "Growth is not automatic intelligence, unlimited weight addition, neuron-count scaling, or a return to full retraining from scratch."
@@ -442,7 +442,11 @@
     "e5_0_test": "tests/taiji_native/test_client_extension_host.py and scripts/training/verify_taiji_e5_client_extension_host.py",
     "e5_0_scope": "declarative client plugin manifest, configurable slot/protected-shell policy, content-addressed extension snapshot, atomic prepare/commit, blue-green state migration, dependency health/quarantine/recovery, in-flight draining, recursive disposer, rollback, checkpoint/tamper verification, and Taiji cognition boundary",
     "e5_0_evidence": "verify_taiji_e5_client_extension_host.py reports status=passed with 12 checks; client snapshot revision, migration, dependency quarantine, draining, disposer order, rollback and checkpoint integrity hold; plugin source is not executed and Taiji cognition state is not part of the checkpoint",
-    "next_stage": "E5-1 API/Vue/Workbench client snapshot integration Gate"
+    "e5_1_artifact": "api/routes_client_extensions.py, frontend/src/composables/nativeApi.js, frontend/src/composables/useClientExtensions.js, and frontend/src/App.vue",
+    "e5_1_test": "tests/test_client_extension_routes.py, frontend/src/__tests__/nativeApi.test.js, and frontend/src/__tests__/useClientExtensions.test.js",
+    "e5_1_scope": "bind the Seed-owned extension host to the native API and Vue facade; source capability availability from the current Workbench snapshot; publish declarative client snapshots through prepare/commit; map stable slots without loading plugin source; reject stale capability snapshots",
+    "e5_1_evidence": "verify_taiji_e5_1_client_snapshot_integration.py reports status=passed with 8 checks; API route registration, Workbench snapshot binding, non-mutating prepare, one-snapshot commit, stale rejection, Vue facade, declarative slots and App injection hold",
+    "next_stage": "E5-2 Legacy plugin surface tombstone/migration Gate"
   },
   "boundary": [
     "Self-evolution must be evidence-triggered, resource-bounded, and reversible.",

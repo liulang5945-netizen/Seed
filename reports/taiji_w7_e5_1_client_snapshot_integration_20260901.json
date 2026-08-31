@@ -1,0 +1,20 @@
+{
+  "gate": "taiji-e5-1-client-snapshot-integration",
+  "status": "passed",
+  "checks": {
+    "native_api_route_registered": true,
+    "client_snapshot_binds_workbench": true,
+    "prepare_is_non_mutating": true,
+    "commit_publishes_one_snapshot": true,
+    "stale_capability_rejected": true,
+    "frontend_native_api_facade": true,
+    "frontend_slot_projection_is_declarative": true,
+    "app_injects_client_body_state": true
+  },
+  "scope": {
+    "workbench_capability_snapshot_is_source_of_truth": true,
+    "frontend_executes_plugin_source": false,
+    "legacy_plugin_manager_migrated": false,
+    "taiji_cognition_checkpoint_mutated": false
+  }
+}

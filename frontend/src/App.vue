@@ -73,6 +73,7 @@ import { useChatStore } from './stores/chatStore.js'
 import { useRuntimeStore } from './stores/runtimeStore.js'
 import { useApi } from './composables/useApi.js'
 import { useWebSocket } from './composables/useWebSocket.js'
+import { useClientExtensions } from './composables/useClientExtensions.js'
 import { nativeApi } from './composables/nativeApi.js'
 import { loadCheckpoints, trainAbortController } from './composables/useTraining.js'
 import router from './router'
@@ -80,6 +81,7 @@ import router from './router'
 const appStore = useAppStore()
 const chatStore = useChatStore()
 const runtimeStore = useRuntimeStore()
+const clientExtensions = useClientExtensions()
 const routeError = ref('')
 
 // WebSocket 实时通道（8765）：连接由 useWebSocket 在 mount 时自动发起，
@@ -139,6 +141,7 @@ const toast = (msg, type = 'info') => { if (toastRef.value) toastRef.value.showT
 const $confirm = (options) => confirmRef.value ? confirmRef.value.show(options) : Promise.resolve(false)
 provide('toast', toast)
 provide('$confirm', $confirm)
+provide('clientExtensions', clientExtensions)
 
 // API connection
 const { startHealthCheck, stopHealthCheck } = useApi()
@@ -269,6 +272,10 @@ onMounted(async () => {
       appStore.restoreUISettings(saved);
     }
   } catch (e) { /* 静默处理 */ }
+
+  // The client body observes the Seed-owned extension snapshot.  Failure is
+  // non-fatal: an unavailable extension host must not block the core shell.
+  clientExtensions.refresh().catch(() => {})
 
   await chatStore.loadSessions()
   if (chatStore.sessions.length === 0) {
