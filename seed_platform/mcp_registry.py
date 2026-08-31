@@ -14,6 +14,9 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
+from seed_platform.evolution_adapters import McpArtifactAdapter
+from seed_platform.source_registry import DeclarativeSourceRegistry
+
 MCP_REGISTRY_FORMAT = "seed-mcp-registry-v1"
 MCP_REGISTRY_VERSION = 1
 
@@ -219,3 +222,17 @@ class McpToolRegistry:
             "snapshot_id": self.snapshot_id,
             "tools": [item.to_payload() for item in self.list_tools()],
         }
+
+
+class McpArtifactRegistry(DeclarativeSourceRegistry):
+    """Seed-owned MCP server artifact lifecycle, separate from tool execution."""
+
+    def __init__(self, adapter: Any | None = None) -> None:
+        super().__init__(McpArtifactAdapter() if adapter is None else adapter)
+
+    @classmethod
+    def from_checkpoint(cls, payload: dict[str, Any]) -> McpArtifactRegistry:
+        return super().from_checkpoint(payload, adapter=McpArtifactAdapter())
+
+
+__all__ = ["McpArtifactRegistry", "McpToolDescriptor", "McpToolRegistry"]

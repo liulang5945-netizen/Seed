@@ -1,0 +1,58 @@
+{
+  "gate": "taiji-e3-1-native-route-credit",
+  "status": "passed",
+  "checks": {
+    "native_update_admitted": true,
+    "holdout_improves_over_frozen": true,
+    "replay_only_matches_frozen": true,
+    "retention_within_gate": true,
+    "holdout_not_consumed": true,
+    "train_cursor_consumed": true,
+    "checkpoint_roundtrip": true,
+    "restored_score_matches": true
+  },
+  "report": {
+    "format": "taiji-native-evolution-training-v1",
+    "parent_learner_digest": "de5b111db06a5370b70207ce61ad31d3333fc28a64bc6f43f17d478d72edad5c",
+    "child_learner_digest": "c5843c4cc1275ebbcf40c0fcb3af832de5979768482c34f88f374970ba69f8fb",
+    "dataset_digest": "bd9bdc43869366731e63512ddda67c999416a5b58f45620c54b928724612b049",
+    "train_experiences": 2,
+    "holdout_experiences": 1,
+    "retention_experiences": 1,
+    "frozen_holdout_loss": 1.0,
+    "replay_only_holdout_loss": 1.0,
+    "native_holdout_loss": 0.010022607692011576,
+    "native_retention_loss_before": 0.0,
+    "native_retention_loss_after": 0.0,
+    "holdout_gain_vs_frozen": 0.9899773923079884,
+    "admitted": true,
+    "rolled_back": false,
+    "consumed_experience_ids": [
+      "train-editor-1",
+      "train-editor-2"
+    ],
+    "internalization": {
+      "format": "taiji-internalization-learner-v1",
+      "parent_checkpoint_digest": "de5b111db06a5370b70207ce61ad31d3333fc28a64bc6f43f17d478d72edad5c",
+      "child_checkpoint_digest": "c5843c4cc1275ebbcf40c0fcb3af832de5979768482c34f88f374970ba69f8fb",
+      "replay_digest": "bd9bdc43869366731e63512ddda67c999416a5b58f45620c54b928724612b049",
+      "train_examples": 2,
+      "holdout_examples": 1,
+      "train_loss_before": 1.0,
+      "train_loss_after": 0.010022607692011576,
+      "holdout_loss_before": 1.0,
+      "holdout_loss_after": 0.010022607692011576,
+      "holdout_internalized_lesion_loss": 1.0,
+      "holdout_grounding_lesion_loss": 1.0,
+      "retention_loss_before": 0.0,
+      "retention_loss_after": 0.0,
+      "holdout_gain": 0.9899773923079884,
+      "fit_updates": 8,
+      "ranking_updates": 0,
+      "online_updates": 0,
+      "lineage_depth": 1,
+      "passed": true
+    }
+  },
+  "trainer_revision": 1
+}

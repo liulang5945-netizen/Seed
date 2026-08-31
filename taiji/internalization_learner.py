@@ -42,6 +42,13 @@ def _finite_rate(value: float, name: str) -> float:
     return rate
 
 
+def _finite_non_negative_rate(value: float, name: str) -> float:
+    rate = float(value)
+    if not math.isfinite(rate) or rate < 0.0:
+        raise ValueError(f"{name} must be finite and non-negative")
+    return rate
+
+
 @dataclass(frozen=True)
 class InternalizationLearningReport:
     """Immutable measurements for one checkpointed consolidation trial."""
@@ -116,6 +123,7 @@ class InternalizedFeatureLearner:
         feature_dim: int,
         *,
         learning_rate: float = 0.5,
+        bias_learning_rate: float | None = None,
         reward_bounds: tuple[float, float] = (-1.0, 1.0),
         pairwise_margin: float = 0.0,
         manifest_revision: str = "taiji-w7-r5-internalization-v1",
@@ -125,6 +133,10 @@ class InternalizedFeatureLearner:
         if self.feature_dim <= 0:
             raise ValueError("internalization learner feature_dim must be positive")
         self.learning_rate = _finite_rate(learning_rate, "internalization learner learning_rate")
+        self.bias_learning_rate = _finite_non_negative_rate(
+            self.learning_rate if bias_learning_rate is None else bias_learning_rate,
+            "internalization learner bias_learning_rate",
+        )
         if len(reward_bounds) != 2 or not reward_bounds[0] <= reward_bounds[1]:
             raise ValueError("internalization learner reward_bounds must be ordered")
         if not all(math.isfinite(float(item)) for item in reward_bounds):
@@ -214,7 +226,7 @@ class InternalizedFeatureLearner:
         step = self.learning_rate / normalizer
         with torch.no_grad():
             self.weights.add_(features, alpha=-step * error)
-            self.bias.add_(-step * error)
+            self.bias.add_(-self.bias_learning_rate / normalizer * error)
 
     def _apply_pairwise_update(
         self,
@@ -377,6 +389,7 @@ class InternalizedFeatureLearner:
             "format": INTERNALIZATION_LEARNER_CHECKPOINT_FORMAT,
             "feature_dim": self.feature_dim,
             "learning_rate": self.learning_rate,
+            "bias_learning_rate": self.bias_learning_rate,
             "reward_bounds": list(self.reward_bounds),
             "pairwise_margin": self.pairwise_margin,
             "manifest_revision": self.manifest_revision,
@@ -404,6 +417,7 @@ class InternalizedFeatureLearner:
         learner = cls(
             int(payload["feature_dim"]),
             learning_rate=float(payload["learning_rate"]),
+            bias_learning_rate=float(payload.get("bias_learning_rate", payload["learning_rate"])),
             reward_bounds=bounds,  # type: ignore[arg-type]
             pairwise_margin=float(payload.get("pairwise_margin", 0.0)),
             manifest_revision=str(payload["manifest_revision"]),
