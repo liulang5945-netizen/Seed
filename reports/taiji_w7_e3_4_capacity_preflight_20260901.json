@@ -1,0 +1,120 @@
+{
+  "gate": "taiji-e3-4-capacity-preflight",
+  "status": "passed",
+  "checks": {
+    "multiseed_fixed_capacity": true,
+    "native_beats_frozen": true,
+    "replay_only_matches_frozen": true,
+    "retention_preserved": true,
+    "cross_seed_stable": true,
+    "capacity_pressure_measured": true,
+    "growth_trigger_fail_closed": true,
+    "failure_persistence_required": true,
+    "checkpoint_roundtrip": true
+  },
+  "report": {
+    "format": "taiji-native-capacity-preflight-v1",
+    "dataset_digest": "32f94b2c3e4ddffa08bcde9010174cff42122a5da8a0d90a46c14a437af41969",
+    "schema_digest": "68415587ff517c145f094e528742933d69c15f7205a8a1c39fbbf75705cdbee6",
+    "manifest_revision": "taiji-w7-e3-4-fixed-capacity-preflight-v1",
+    "region_id": "world.local",
+    "hidden_dim": 32,
+    "capacity_limit": 32,
+    "parameter_count": 775,
+    "seed_results": [
+      {
+        "seed": 11,
+        "hidden_dim": 32,
+        "parameter_count": 775,
+        "frozen_holdout_error": 3.129763416172665,
+        "replay_only_holdout_error": 3.129763416172665,
+        "native_holdout_error": 0.3079737312808648,
+        "frozen_retention_error": 2.7305732096234108,
+        "native_retention_error": 0.3274231989669708,
+        "native_training_loss": 0.0004599241947289556,
+        "admitted": true,
+        "holdout_gain": 2.8217896848918,
+        "retention_regression": 0.0
+      },
+      {
+        "seed": 29,
+        "hidden_dim": 32,
+        "parameter_count": 775,
+        "frozen_holdout_error": 3.698490506504167,
+        "replay_only_holdout_error": 3.698490506504167,
+        "native_holdout_error": 0.25684831963838034,
+        "frozen_retention_error": 3.0027898601906045,
+        "native_retention_error": 0.35102086045497904,
+        "native_training_loss": 0.0006746466387994587,
+        "admitted": true,
+        "holdout_gain": 3.4416421868657867,
+        "retention_regression": 0.0
+      },
+      {
+        "seed": 47,
+        "hidden_dim": 32,
+        "parameter_count": 775,
+        "frozen_holdout_error": 2.8853450621633687,
+        "replay_only_holdout_error": 2.8853450621633687,
+        "native_holdout_error": 0.27074795923563993,
+        "frozen_retention_error": 3.8318983009400736,
+        "native_retention_error": 0.44737005686170594,
+        "native_training_loss": 0.0005631691310554743,
+        "admitted": true,
+        "holdout_gain": 2.614597102927729,
+        "retention_regression": 0.0
+      }
+    ],
+    "mean_frozen_holdout_error": 3.2378663282800666,
+    "mean_replay_only_holdout_error": 3.2378663282800666,
+    "mean_native_holdout_error": 0.27852333671829504,
+    "native_holdout_gain": 2.9593429915617717,
+    "holdout_error_std": 0.021583856624055958,
+    "mean_frozen_retention_error": 3.1884204569180294,
+    "mean_native_retention_error": 0.3752713720945519,
+    "maximum_retention_regression": 0.0,
+    "capacity_pressure": {
+      "format": "taiji-structural-capacity-pressure-v1",
+      "region_id": "world.local",
+      "unit_count": 32,
+      "capacity_limit": 32,
+      "pending_candidate_count": 0,
+      "reserved_resource_cost": 0,
+      "structural_budget": 1,
+      "occupancy": 1.0,
+      "queue_pressure": 0.0,
+      "reservation_pressure": 0.0,
+      "pressure": 1.0,
+      "pressure_digest": "6e7296c4ebe96e150c858459ba095cbe2cffcd0468ca936a9da110606c8c002e"
+    },
+    "trigger_decision": {
+      "format": "taiji-native-capacity-preflight-v1",
+      "region_id": "world.local",
+      "should_propose": false,
+      "capacity_pressure": 1.0,
+      "residual_error": 0.27852333671829504,
+      "residual_error_ema": 0.13926166835914752,
+      "retention_regression": 0.0,
+      "consecutive_failure_steps": 0,
+      "required_failure_steps": 3,
+      "minimum_capacity_pressure": 0.8,
+      "maximum_holdout_error": 0.75,
+      "maximum_retention_regression": 0.05,
+      "resource_cost": 1,
+      "structural_budget": 1,
+      "evidence_ids": [
+        "capacity-dataset:32f94b2c3e4ddffa08bcde9010174cff42122a5da8a0d90a46c14a437af41969",
+        "capacity-seed:32f94b2c3e4ddffa08bcde9010174cff42122a5da8a0d90a46c14a437af41969:11",
+        "capacity-seed:32f94b2c3e4ddffa08bcde9010174cff42122a5da8a0d90a46c14a437af41969:29",
+        "capacity-seed:32f94b2c3e4ddffa08bcde9010174cff42122a5da8a0d90a46c14a437af41969:47"
+      ],
+      "reasons": [
+        "fixed_capacity_not_persistently_failing",
+        "failure_persistence_below_threshold"
+      ],
+      "decision_digest": "23e42608e1de5018a76d67085941af16073e56fdb5e72371ce0bbbc35ea9f374"
+    },
+    "fixed_capacity_adequate": true
+  },
+  "checkpoint_digest": "c37b802f14aaffd1258663854ed620871313d60d921804513c6fc36dec898a74"
+}

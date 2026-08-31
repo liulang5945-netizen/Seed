@@ -28,6 +28,17 @@ from .assembly_evaluation import (
     AssemblyRelationEvaluator,
 )
 from .assembly_relations import AssemblyRelationCorpus, AssemblyRelationExample
+from .capacity_preflight import (
+    CAPACITY_PREFLIGHT_FORMAT,
+    CAPACITY_PREFLIGHT_MANIFEST_REVISION,
+    CAPACITY_PREFLIGHT_VERSION,
+    CapacityGrowthTrigger,
+    CapacityGrowthTriggerDecision,
+    CapacityGrowthTriggerPolicy,
+    FixedCapacitySeedResult,
+    NativeCapacityPreflightReport,
+    NativeFixedCapacityPreflight,
+)
 from .concept_formation import (
     CONCEPT_FORMATION_CHECKPOINT_FORMAT,
     ConceptFormationOrgan,
@@ -532,6 +543,12 @@ __all__ = [
     "AssemblyRelationExample",
     "AssemblyRelationEvaluationConfig",
     "AssemblyRelationEvaluator",
+    "CAPACITY_PREFLIGHT_FORMAT",
+    "CAPACITY_PREFLIGHT_MANIFEST_REVISION",
+    "CAPACITY_PREFLIGHT_VERSION",
+    "CapacityGrowthTrigger",
+    "CapacityGrowthTriggerDecision",
+    "CapacityGrowthTriggerPolicy",
     "CapacityPolicy",
     "ConceptFormationOrgan",
     "ConceptMatch",
@@ -542,6 +559,7 @@ __all__ = [
     "ContentSelector",
     "ContentTrainingExample",
     "CONTENT_SELECTION_CHECKPOINT_FORMAT",
+    "FixedCapacitySeedResult",
     "CROSS_REGION_LEARNING_CHECKPOINT_FORMAT",
     "CrossRegionCooperationLearner",
     "CrossRegionLearningDynamics",
@@ -942,6 +960,8 @@ __all__ = [
     "WORLD_SCHEMA_REGISTRY_CHECKPOINT_FORMAT",
     "NativeWorldLearningReport",
     "NativeWorldPredictionTrainer",
+    "NativeCapacityPreflightReport",
+    "NativeFixedCapacityPreflight",
     "WORLD_EVOLUTION_FORMAT",
     "WORLD_EVOLUTION_MANIFEST_REVISION",
     "WORLD_EVOLUTION_VERSION",
