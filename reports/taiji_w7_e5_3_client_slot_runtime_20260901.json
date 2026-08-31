@@ -1,0 +1,24 @@
+{
+  "gate": "taiji-e5-3-client-slot-runtime",
+  "status": "passed",
+  "checks": {
+    "slot_component_is_present": true,
+    "snapshot_entry_is_content_keyed": true,
+    "failure_state_is_visible": true,
+    "no_plugin_source_is_loaded": true,
+    "app_mounts_route_slot": true,
+    "facade_remains_declarative": true,
+    "frontend_has_no_legacy_plugin_api": true,
+    "slot_runtime_canary_passed": true
+  },
+  "test_command": "npm.cmd run test -- --run src/__tests__/ClientExtensionSlot.test.js",
+  "test_output_tail": "\n> frontend@1.6.0 test\n> vitest run --run src/__tests__/ClientExtensionSlot.test.js\n\n\n RUN  v2.1.9 E:/Seed/frontend\n\n ✓ src/__tests__/ClientExtensionSlot.test.js (3 tests) 16ms\n\n Test Files  1 passed (1)\n      Tests  3 passed (3)\n   Start at  02:51:03\n   Duration  566ms (transform 54ms, setup 6ms, collect 103ms, tests 16ms, environment 235ms, prepare 63ms)\n\n\n",
+  "scope": {
+    "renderer_source_execution": false,
+    "declarative_snapshot_projection": true,
+    "mount_unmount_version_replacement": true,
+    "failure_and_quarantine_are_visible": true,
+    "taiji_cognition_checkpoint_mutated": false,
+    "real_third_party_mcp_or_plugin_enabled": false
+  }
+}

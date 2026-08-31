@@ -450,7 +450,11 @@
     "e5_2_test": "tests/test_api_routes.py and scripts/training/verify_taiji_e5_2_legacy_plugin_surface.py",
     "e5_2_scope": "replace the former Legacy plugin manager with an explicit 410 tombstone; retire enable/disable/delete/install, marketplace/refresh, and upload routes; remove duplicate agent/workspace definitions and frontend legacy references while preserving unrelated /api/mcp compatibility routes",
     "e5_2_evidence": "verify_taiji_e5_2_legacy_plugin_surface.py reports status=passed with 9 checks; every legacy plugin path fails closed with stable replacement metadata, PluginManager is absent, duplicate routes and frontend references are gone, and /api/client-extensions remains live",
-    "next_stage": "E5-3 Seed-owned local read-only slot runtime canary"
+    "e5_3_artifact": "frontend/src/components/ClientExtensionSlot.vue, frontend/src/App.vue, and frontend/src/composables/useClientExtensions.js",
+    "e5_3_test": "frontend/src/__tests__/ClientExtensionSlot.test.js and scripts/training/verify_taiji_e5_3_slot_runtime.py",
+    "e5_3_scope": "project active Seed-owned manifests into a real Vue route slot by content digest; provide safe descriptor fallback and scoped-slot boundary; unmount removed/replaced versions and expose failed/quarantined states without loading plugin source",
+    "e5_3_evidence": "verify_taiji_e5_3_slot_runtime.py reports status=passed with 8 checks; the dedicated Vue canary passes 3 tests, affected frontend lint passes, and production build completes",
+    "next_stage": "E6-0 MCP client capability inheritance candidate boundary"
   },
   "boundary": [
     "Self-evolution must be evidence-triggered, resource-bounded, and reversible.",

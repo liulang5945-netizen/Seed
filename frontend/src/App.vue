@@ -32,7 +32,8 @@
                         <component :is="Component" />
                       </keep-alive>
                     </transition>
-                  </router-view>
+                </router-view>
+                <ClientExtensionSlot slot-name="route" aria-label="客户端扩展" />
                 </div>
               </div>
 
@@ -67,6 +68,7 @@ import RuntimeExceptionCenter from './components/RuntimeExceptionCenter.vue'
 import AppSidebar from './components/AppSidebar.vue'
 import AppTitlebar from './components/AppTitlebar.vue'
 import RouteErrorView from './components/RouteErrorView.vue'
+import ClientExtensionSlot from './components/ClientExtensionSlot.vue'
 import { UploadCloud } from 'lucide-vue-next'
 import { useAppStore } from './stores/appStore.js'
 import { useChatStore } from './stores/chatStore.js'
