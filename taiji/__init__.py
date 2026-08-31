@@ -491,6 +491,14 @@ from .workspace import (
     WorkspaceRoutingExample,
 )
 from .world import WORLD_STATE_CHECKPOINT_FORMAT, TaijiWorldState
+from .world_evolution import (
+    WORLD_EVOLUTION_FORMAT,
+    WORLD_EVOLUTION_MANIFEST_REVISION,
+    WORLD_EVOLUTION_VERSION,
+    NativeWorldLearningReport,
+    NativeWorldPredictionTrainer,
+    transition_to_case,
+)
 from .world_learning import (
     WORLD_SCHEMA_REGISTRY_CHECKPOINT_FORMAT,
     WorldDynamicsLearner,
@@ -932,4 +940,10 @@ __all__ = [
     "WorldSchemaRegistry",
     "WorldSchemaRegistryError",
     "WORLD_SCHEMA_REGISTRY_CHECKPOINT_FORMAT",
+    "NativeWorldLearningReport",
+    "NativeWorldPredictionTrainer",
+    "WORLD_EVOLUTION_FORMAT",
+    "WORLD_EVOLUTION_MANIFEST_REVISION",
+    "WORLD_EVOLUTION_VERSION",
+    "transition_to_case",
 ]

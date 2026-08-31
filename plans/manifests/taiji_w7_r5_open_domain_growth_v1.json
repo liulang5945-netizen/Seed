@@ -3,7 +3,7 @@
   "version": 1,
   "work_package": "W7-R5",
   "title": "open-domain structural growth and self-evolution",
-  "status": "e3_2_procedural_memory_gate_passed_e3_3_world_prediction_pending",
+  "status": "e3_3_world_prediction_gate_passed_e3_4_capacity_pressure_pending",
   "claim": {
     "to_prove": "Taiji can grow local structure or memory in response to persistent real-task error, capacity pressure, or recovery deficiency, while retaining old abilities and remaining checkpointable and reversible.",
     "must_not_claim": "Growth is not automatic intelligence, unlimited weight addition, neuron-count scaling, or a return to full retraining from scratch."
@@ -426,7 +426,11 @@
     "p4_12_artifact": "scripts/training/eval_taiji_terminal_three_domain_governance.py, tests/taiji_native/test_terminal_three_domain_governance.py, and reports/taiji_w7_p4_12_terminal_three_domain_governance_20260831.json",
     "p4_12_test": "scripts/training/eval_taiji_terminal_three_domain_governance.py",
     "p4_12_evidence": "P4-12 Gate reports gate.passed=true; across three seeds, real terminal.run positive and negative Workbench records train the router, two unseen three-action editor+MCP+terminal compositions complete after structural admission, fixed-capacity controls score 0.0, terminal execution requires explicit approval and bounded argv/timeout/output/artifact resources with shell disabled, failure stops the loop, checkpoint recovery accepts a fresh request, old workspace capability retention, lesion, and topology/budget rollback hold; this is bounded three-domain governance and structural evidence, not open-domain self-evolution",
-    "next_stage": "E3-3 world prediction/local synapse intake and comparison Gate"
+    "e3_3_artifact": "taiji/world_evolution.py and taiji/world_learning.py",
+    "e3_3_test": "tests/taiji_native/test_world_evolution.py and scripts/training/verify_taiji_e3_3_world_prediction.py",
+    "e3_3_scope": "real WorldTransition-only train/holdout/retention local world-model update using WorldDynamicsLearner, data-derived schema/network/counter checkpoint, transition cursor and digest-only input rejection",
+    "e3_3_evidence": "verify_taiji_e3_3_world_prediction.py reports status=passed with 8 checks; native holdout error is 0.3080 versus frozen/replay-only 3.1298, retention stays within the 0.05 gate, transition cursor and checkpoint roundtrip hold",
+    "next_stage": "E3-4 fixed-capacity comparison and structural growth trigger preflight"
   },
   "boundary": [
     "Self-evolution must be evidence-triggered, resource-bounded, and reversible.",

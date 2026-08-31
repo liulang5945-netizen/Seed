@@ -1,0 +1,42 @@
+{
+  "gate": "taiji-e3-3-world-prediction",
+  "status": "passed",
+  "checks": {
+    "native_update_admitted": true,
+    "holdout_improves_over_frozen": true,
+    "replay_only_matches_frozen": true,
+    "retention_preserved": true,
+    "transition_cursor_consumed": true,
+    "checkpoint_roundtrip": true,
+    "schema_is_data_derived": true,
+    "no_digest_only_training_path": true
+  },
+  "report": {
+    "format": "taiji-native-world-evolution-v1",
+    "parent_learner_digest": "f5a9889d154b181e85b7bc43b76d426ed4f7f9f4c6f6a31f2572b627a5f9e7c7",
+    "child_learner_digest": "89e9597d40b9412f58949b318d9f8b8402fcae104bb43ad88918ce5b1a237089",
+    "dataset_digest": "b6d27797d2b0f4d9424400fec4151e61d12c4faf73637cbe64c13bc1adaa4dda",
+    "train_transitions": 8,
+    "holdout_transitions": 4,
+    "retention_transitions": 2,
+    "frozen_holdout_error": 3.129763416172665,
+    "replay_only_holdout_error": 3.129763416172665,
+    "native_holdout_error": 0.3079737312808648,
+    "frozen_retention_error": 2.7305732096234108,
+    "native_retention_error": 0.3274231989669708,
+    "native_training_loss": 0.0004599241947289556,
+    "admitted": true,
+    "rolled_back": false,
+    "consumed_transition_ids": [
+      "link-0-train",
+      "link-1-train",
+      "link-2-train",
+      "link-3-train",
+      "move-2-train",
+      "move-3-train",
+      "move-4-train",
+      "move-5-train"
+    ]
+  },
+  "trainer_revision": 1
+}
