@@ -1,0 +1,22 @@
+{
+  "gate": "taiji-e3-0-training-checkpoint",
+  "status": "passed",
+  "checks": {
+    "parent_written_and_loaded": true,
+    "trial_written_and_lineage_bound": true,
+    "admitted_written_and_lineage_bound": true,
+    "native_model_roundtrip": true,
+    "ledger_cursor_roundtrip": true,
+    "partition_manifest_roundtrip": true,
+    "tamper_rejected": true,
+    "dataset_drift_rejected_before_model_restore": true
+  },
+  "checkpoint_paths": [
+    "E:\\Seed\\output\\taiji-e3-0-checkpoints\\parent.pt",
+    "E:\\Seed\\output\\taiji-e3-0-checkpoints\\trial.pt",
+    "E:\\Seed\\output\\taiji-e3-0-checkpoints\\admitted.pt"
+  ],
+  "parent_digest": "5b9b81cefe857ac0aa57ac8b326cd9294ca18eacfc74bee8450435a7fe6088bb",
+  "trial_digest": "3909a455943dcfa30acc2d563cb97e678721302458f25355629b1a82a6990f85",
+  "admitted_digest": "0dc03d9290b1d257afdc4b72750b9772fd95aae7b2d2a37aabbe6fe29af7abe2"
+}

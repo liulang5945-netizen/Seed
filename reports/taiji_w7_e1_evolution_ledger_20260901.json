@@ -1,0 +1,19 @@
+{
+  "gate": "taiji-e1-evolution-ledger",
+  "status": "passed",
+  "checks": {
+    "corpus_admitted": true,
+    "workbench_result_digest_only": true,
+    "source_and_result_digests": true,
+    "redaction_required": true,
+    "checkpoint_restored": true,
+    "checkpoint_continued": true,
+    "tamper_rejected": true,
+    "training_view_partitioned": true
+  },
+  "ledger_revision": 3,
+  "checkpoint_digest": "97a0a69109aab246ae99b2af2fb653c6e495f97f2266494baae880a90c4c03f9",
+  "corpus_digest": "9f0b76e4f50acf0aacd12eb981cba12e818a3157d80b10af93c2bf3b7b5d5836",
+  "experience_digest": "aa0c892d96422f32eb8f824f3c7bc73ce3947cf48162502ad84c4b43d011df2c",
+  "tail_event_digest": "d12b172bf8e608f6ff1f31362c2db1df08e849f3688d6be7e726804557526a35"
+}

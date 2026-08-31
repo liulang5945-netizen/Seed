@@ -1,0 +1,24 @@
+{
+  "gate": "taiji-e2b-source-registry",
+  "status": "passed",
+  "checks": {
+    "skill_lifecycle_active": true,
+    "mcp_failure_quarantined": true,
+    "plugin_lifecycle_active": true,
+    "source_events_reach_ledger": true,
+    "failure_status_is_preserved": true,
+    "partition_is_preserved": true,
+    "train_view_requires_admission": true,
+    "registry_checkpoint_rebinds": true,
+    "ledger_checkpoint_rebinds": true,
+    "tamper_rejected": true,
+    "legacy_manager_not_used": true
+  },
+  "source_registries": [
+    "skill",
+    "mcp",
+    "client_plugin"
+  ],
+  "ledger_revision": 21,
+  "ledger_tail_digest": "9ce5613d1c3368038657972a62b69af03f06073b34aaa454c11af4c34a0f12ee"
+}

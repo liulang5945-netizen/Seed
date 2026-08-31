@@ -1,6 +1,6 @@
 # Taiji 原生认知训练、经验进化与 Seed 客户端热插拔总路线
 
-> 状态：`E0 complete / E1 pending`。本文件自 2026-08-31 起取代原 P7-1a provider artifact 升级作为当前主线，并于 2026-09-01 按“Skill/MCP 可成为知识语料、MCP 执行侧由客户端继承”完成修订。Qwen/provider 质量问题保留为语言器官支线，不再阻塞 Taiji 本体训练；唯一执行事实源 `03_CURRENT_EXECUTION.md` 当前指向 E1：统一进化语料/经验合同与训练前 checkpoint Gate。
+> 状态：`E0 complete / E1 complete / E2-A complete / E2-B complete / E3-0 complete / E3-1 complete / E3-2 active`。本文件自 2026-08-31 起取代原 P7-1a provider artifact 升级作为当前主线，并于 2026-09-01 按“Skill/MCP 可成为知识语料、MCP 执行侧由客户端继承”完成修订。Qwen/provider 质量问题保留为语言器官支线，不再阻塞 Taiji 本体训练；唯一执行事实源 `03_CURRENT_EXECUTION.md` 当前指向 E3-2：procedural memory intake。
 
 ## 1. 路线决策
 
@@ -373,11 +373,15 @@ Gate：
 - 未脱敏 secret fixture 不能入账；
 - corpus/experience ledger 不改变突触、记忆、拓扑或 capability snapshot。
 
-退出物：E1 report、manifest 更新、定向测试和 checkpoint fixture。**这是当前唯一下一步。**
+退出物：E1 report、manifest 更新、定向测试和 checkpoint fixture。**已完成（2026-09-01）。** report 的 8 项 Gate 全部通过，定向测试 5/5 通过；E1 未触碰 Taiji 权重、拓扑、客户端 UI 或 Legacy MCP。
 
 ### E2：真实 Skill/MCP 语料与经验适配器
 
 目标：把 Skill/MCP artifact 本身转换为知识语料，并把真实 Workbench、Skill/MCP 调用和客户端插件 lifecycle 投影为经验合同。
+
+**当前执行阶段。** E1 ledger 合同已冻结为输入边界；E2-A/B 已完成来源适配器和 Seed-owned registry/lifecycle 的确定性状态流；E3-0 已完成训练 checkpoint 预检；E3-1 已完成 route/interaction credit 的原生局部学习 Gate。本阶段进入 E3-2，把 admitted train experience 转换为动态 action kind 的 procedural memory，不把 Legacy MCP manager 接入 verified ledger，也不提前扩张结构。
+
+E2-A 已通过 [source adapter report](../../../reports/taiji_w7_e2_source_adapters_20260901.json)，E2-B 已通过 [source registry report](../../../reports/taiji_w7_e2b_source_registry_20260901.json)：Skill/MCP/client-plugin 共形成 typed corpus units，生命周期事件进入 E1 ledger，版本冲突、失败隔离、registry/ledger checkpoint 重绑和篡改拒绝通过。E3-0 已通过 [training checkpoint report](../../../reports/taiji_w7_e3_0_training_checkpoint_20260901.json)：三态 checkpoint 可写、恢复、继续追加，且损坏/数据集漂移在 learner mutation 前拒绝。E3-1 已通过 [native route-credit report](../../../reports/taiji_w7_e3_1_native_route_credit_20260901.json)：native holdout loss 从 `1.0` 降至约 `0.0100`，frozen/replay-only 均为 `1.0`，retention 保持 `0.0`，holdout 未进入 consumed cursor，learner checkpoint 可恢复。E3-2 的退出条件是 procedural memory 只消费 train experience，并在独立 holdout/retention 上证明 cue→action consolidation、旧程序保持和 rollback。
 
 顺序：
 

@@ -1,0 +1,19 @@
+{
+  "gate": "taiji-e2-source-adapters",
+  "status": "passed",
+  "checks": {
+    "skill_units_are_typed": true,
+    "mcp_schema_is_content_addressed": true,
+    "client_affordance_is_security_partitioned": true,
+    "unsafe_fields_not_admitted": true,
+    "source_redaction_is_observable": true,
+    "three_runtime_sources_projected": true,
+    "failure_and_cancel_statuses_preserved": true,
+    "train_view_isolated": true,
+    "checkpoint_roundtrip_preserves_chain": true,
+    "no_execution_in_adapter": true
+  },
+  "corpus_units": 11,
+  "experience_events": 3,
+  "ledger_tail_digest": "aacfaee855619bba825de2c5bede5971fda104d6ccd0c429112896ab7da9c70d"
+}
