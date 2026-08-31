@@ -415,6 +415,34 @@ class McpCapabilityInheritancePolicy:
     def policy_digest(self) -> str:
         return _digest(self.to_payload(include_digest=False))
 
+    @classmethod
+    def from_payload(cls, payload: Mapping[str, Any]) -> McpCapabilityInheritancePolicy:
+        if not isinstance(payload, Mapping):
+            raise TypeError("MCP client capability policy must be an object")
+        _assert_no_forbidden_keys(payload)
+        policy = cls(
+            allowed_server_ids=tuple(payload.get("allowed_server_ids", ())),
+            allowed_risks=tuple(payload.get("allowed_risks", ("read_only", "reversible_ui"))),
+            allowed_permissions=tuple(payload.get("allowed_permissions", ())),
+            allowed_network_scopes=tuple(payload.get("allowed_network_scopes", ())),
+            allow_credentials=bool(payload.get("allow_credentials", False)),
+            max_tools=int(payload.get("max_tools", 16)),
+            max_timeout_seconds=float(payload.get("max_timeout_seconds", 30.0)),
+            max_output_bytes=int(payload.get("max_output_bytes", 1_000_000)),
+            max_resource_budget=payload.get("max_resource_budget")
+            or {"max_cpu_ms": 100_000, "max_output_bytes": 1_000_000},
+            require_shadow=bool(payload.get("require_shadow", True)),
+            require_approval_for_side_effects=bool(
+                payload.get("require_approval_for_side_effects", True)
+            ),
+            format=str(payload.get("format", MCP_CLIENT_POLICY_FORMAT)),
+            version=int(payload.get("version", MCP_CLIENT_CANDIDATE_VERSION)),
+        )
+        policy_digest = str(payload.get("policy_digest", ""))
+        if policy_digest and policy_digest != policy.policy_digest:
+            raise ValueError("MCP client capability policy digest mismatch")
+        return policy
+
     def to_payload(self, *, include_digest: bool = True) -> dict[str, Any]:
         payload = {
             "format": self.format,
