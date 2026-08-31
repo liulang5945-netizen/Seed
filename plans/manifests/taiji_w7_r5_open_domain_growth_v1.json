@@ -3,7 +3,7 @@
   "version": 1,
   "work_package": "W7-R5",
   "title": "open-domain structural growth and self-evolution",
-  "status": "p6_1b_provider_evidence_chat_workbench_journey_gate_passed",
+  "status": "e0_native_evolution_route_complete_e1_corpus_experience_contract_pending",
   "claim": {
     "to_prove": "Taiji can grow local structure or memory in response to persistent real-task error, capacity pressure, or recovery deficiency, while retaining old abilities and remaining checkpointable and reversible.",
     "must_not_claim": "Growth is not automatic intelligence, unlimited weight addition, neuron-count scaling, or a return to full retraining from scratch."
@@ -15,10 +15,10 @@
     "forbidden_owners": ["global role list", "demo-triggered growth", "frontend button as sole trigger", "Transformer/Legacy teacher"]
   },
   "input": {
-    "sources": ["persistent real-task failure cluster", "independent holdout", "capacity/resource pressure", "longitudinal forgetting signal", "recovery outcome", "parent checkpoint"],
+    "sources": ["governed Skill artifact knowledge", "governed MCP docs/schema/examples", "persistent real-task failure cluster", "Workbench/Skill/MCP runtime outcome", "user correction", "client plugin lifecycle", "independent holdout", "capacity/resource pressure", "longitudinal forgetting signal", "recovery outcome", "parent checkpoint"],
     "required_binding": ["evidence_ids", "parent_checkpoint_id", "owner_id", "structural_budget", "expected_gain", "manifest_revision"],
     "proposal_kinds": ["synapse topology", "local neuron capacity", "region capacity", "concept/trace capacity", "pruning or merge"],
-    "forbidden_input": ["requested scale alone", "single demonstration", "manually named neuron type", "holdout labels copied into training"]
+    "forbidden_input": ["requested scale alone", "single demonstration", "unverified Skill or MCP content", "MCP executable source as model corpus", "manually named neuron type", "holdout labels copied into training"]
   },
   "output": {
     "type": "versioned structural proposal and lifecycle record",
@@ -38,7 +38,7 @@
   },
   "checkpoint": {
     "required": true,
-    "must_roundtrip": ["structure revision", "parent/child lineage", "resource ledger", "proposal lifecycle", "tombstones", "organ state", "experiment manifest", "provider artifact binding"],
+    "must_roundtrip": ["evolution corpus and experience cursor", "append-only digest chain", "partition and taint policy", "structure revision", "parent/child lineage", "resource ledger", "proposal lifecycle", "tombstones", "organ state", "client and capability snapshots", "experiment manifest", "provider artifact binding"],
     "trial_rule": "Save a parent/trial checkpoint before structural mutation; no in-memory-only growth qualifies.",
     "continuation": "After restore, the next proposal must preserve lineage and budget accounting and must not resurrect a rejected candidate."
   },
@@ -342,6 +342,18 @@
     "p6_1b_artifact": "api/seed_runtime.py, api/routes_chat.py, frontend/src/components/ChatView.vue, frontend/src/components/WorkbenchTaskCard.vue, frontend/src/__tests__/ChatView.test.js, tests/taiji_native/test_p6_1b_chat_workbench_journey.py",
     "p6_1b_test": "python -m pytest tests/taiji_native/test_p6_1b_chat_workbench_journey.py -q; npm.cmd run test -- --run src/__tests__/ChatView.test.js src/__tests__/WorkbenchTaskCard.test.js",
     "p6_1b_evidence": "P6-1b Gate reports the test-injected provider journey passed; semantic evidence travels through interpret to Taiji plan and read-only Workbench execute, the frontend forwards Taiji evidence and snapshot only, and no client-generated binding, patch, digest, or intent is admitted; this does not claim a real packaged provider or browser field canary",
+    "p6_1c_artifact": "seed/semantic_provider.py, seed/__init__.py, tests/seed/test_semantic_provider_qwen.py, tests/taiji_native/test_semantic_provider_interface.py, scripts/training/eval_taiji_p6_1c_qwen_semantic_provider.py, scripts/training/eval_taiji_p6_1c_provider_failure_fallback.py, frontend/e2e/p6_1c_qwen_browser.cjs, and reports/taiji_w7_p6_1c_qwen_semantic_provider_20260831.json",
+    "p6_1c_test": "python -m pytest tests/seed/test_semantic_provider_qwen.py -q; python scripts/training/eval_taiji_p6_1c_qwen_semantic_provider.py --model <allowlisted-local-qwen-snapshot> --expected-model-digest <sha256> --report reports/taiji_w7_p6_1c_qwen_semantic_provider_20260831.json",
+    "p6_1c_evidence": "P6-1c backend and browser field Gates passed with local Qwen2.5-0.5B-Instruct: the explicit model digest allowlist and artifact digest roundtrip succeeded, real model output was admitted only as SemanticEvidenceProposal, Taiji produced resolved interpretation/decomposition and a read-only Workbench plan/execute journey, and the frontend emitted no execution-field injection. The bounded singular constraint alias is normalized; unknown execution fields still fail closed. Provider failure fallback is verified as degraded Goal-only with no Workbench side effect; deterministic packaged lifecycle is recorded under P3-3 and the frozen real packaged backend restart/rebind field is recorded under P6-1d. Semantic quality remains a separate failed P7-1 Gate.",
+    "p6_1d_artifact": "desktop/seed.spec, scripts/release.py, scripts/training/eval_taiji_p6_1d_packaged_qwen.py, and reports/taiji_w7_p6_1d_packaged_qwen_20260831.json",
+    "p6_1d_test": "python scripts/release.py --skip-nsis --no-clean; python scripts/training/eval_taiji_p6_1d_packaged_qwen.py --package dist/Seed/SeedBackend.exe --model <allowlisted-local-qwen-snapshot> --model-digest <sha256> --data-root <writable-test-root> --report reports/taiji_w7_p6_1d_packaged_qwen_20260831.json",
+    "p6_1d_evidence": "P6-1d Gate reports gate.passed=true: the rebuilt frozen SeedBackend explicitly mounts the allowlisted Qwen artifact, completes real semantic admission in two independent process cycles, rebinds the same provider after restart with the same evidence digest, and rejects an invalid digest with HTTP 500 before model admission. This does not claim multi-version real rotation/watchdog, installer UI, model quality, CUDA, or open-domain intelligence.",
+    "p7_1_artifact": "seed/semantic_provider.py, scripts/training/eval_taiji_p7_1_semantic_quality.py, and reports/taiji_w7_p7_1_qwen_semantic_quality_20260831.json",
+    "p7_1_test": "python scripts/training/eval_taiji_p7_1_semantic_quality.py --model <allowlisted-local-qwen-snapshot> --expected-model-digest <sha256> --report reports/taiji_w7_p7_1_qwen_semantic_quality_20260831.json",
+    "p7_1_evidence": "P7-1 quality Gate reports gate.passed=false for Qwen2.5-0.5B-Instruct: provider success, read-only constraint preservation, and no execution fields are all 1.0, but clear-case pass rate is 0.2857 and the underspecified request is not marked high ambiguity. Observed failures include stat/search confusion, dropped search query, non-protocol language operation, language value contaminating path, and fabricated overconfident ambiguous output. Keep this artifact experimental/fallback-only; do not repair the score with hardcoded prompt branches or operation vocabulary.",
+    "e0_plan": "plans/active/roadmap/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md",
+    "e0_evidence": "The route separates governed Skill/MCP artifact corpus from runtime experience, splits MCP internalization into a Taiji cognitive artifact and a Seed client capability inheritance candidate, and applies DeepSeek Harness lifecycle semantics only to the client extension and capability host. E1 remains pending and no hot-swap or direct native training capability is claimed.",
+    "p7_1a_status": "deferred language-organ branch; not the current execution route",
     "p3_1_artifact": "taiji/semantic_provider.py, taiji/task_interpretation.py, taiji/adapter.py, api/seed_runtime.py, api/models.py, api/routes_chat.py, taiji/__init__.py, tests/taiji_native/test_semantic_provider.py, and scripts/training/eval_taiji_semantic_provider_boundary.py",
     "p3_1_test": "scripts/training/eval_taiji_semantic_provider_boundary.py",
     "p3_1_evidence": "P3-1 Gate reports gate.passed=true; provider evidence is content-addressed and bound to live input digest/tick, Taiji derives Goal/decomposition and uncertainty state, rejects execution fields and mismatched input before mutation, preserves evidence in native checkpoint, and produces no Workbench side effect",
@@ -350,7 +362,7 @@
     "p3_2_evidence": "P3-2 Gate reports gate.passed=true; deterministic provider artifact active/previous rotation is auditable, provider identity changes do not alter same-task semantic or Workbench grounding decisions, and no Workbench side effect occurs",
     "p3_3_artifact": "scripts/training/eval_taiji_packaged_provider_lifecycle.py and reports/taiji_w7_p3_3_packaged_provider_lifecycle_20260831.json",
     "p3_3_test": "scripts/training/eval_taiji_packaged_provider_lifecycle.py",
-    "p3_3_evidence": "P3-3 Gate reports gate.passed=true for the deterministic packaged-client rotation/watchdog/fallback/checkpoint/restart rebinding seam; real provider model assets are unavailable locally and remain asset-unverified",
+    "p3_3_evidence": "P3-3 Gate reports gate.passed=true for the deterministic packaged-client rotation/watchdog/fallback/checkpoint/restart rebinding seam; the real Qwen semantic artifact is verified separately by P6-1c backend/browser/fallback reports, while real Qwen packaged-client lifecycle remains unverified",
     "p4_1_artifact": "scripts/training/eval_taiji_interaction_groups.py and reports/taiji_w7_p4_1_interaction_group_workbench_20260831.json",
     "p4_1_test": "scripts/training/eval_taiji_interaction_groups.py --stage s2",
     "p4_1_evidence": "P4-1 Gate reports gate.passed=true; real Workbench execution yields native world evidence, executive selection, recovery trace, exact checkpoint replay, and observed holdout/lesion effects without claiming open-domain 1+1>2",
@@ -390,7 +402,7 @@
     "p4_12_artifact": "scripts/training/eval_taiji_terminal_three_domain_governance.py, tests/taiji_native/test_terminal_three_domain_governance.py, and reports/taiji_w7_p4_12_terminal_three_domain_governance_20260831.json",
     "p4_12_test": "scripts/training/eval_taiji_terminal_three_domain_governance.py",
     "p4_12_evidence": "P4-12 Gate reports gate.passed=true; across three seeds, real terminal.run positive and negative Workbench records train the router, two unseen three-action editor+MCP+terminal compositions complete after structural admission, fixed-capacity controls score 0.0, terminal execution requires explicit approval and bounded argv/timeout/output/artifact resources with shell disabled, failure stops the loop, checkpoint recovery accepts a fresh request, old workspace capability retention, lesion, and topology/budget rollback hold; this is bounded three-domain governance and structural evidence, not open-domain self-evolution",
-    "next_stage": "P6-1c real packaged semantic provider artifact and browser field Gate"
+    "next_stage": "E1 unified EvolutionCorpusArtifact and EvolutionExperience ledger with checkpoint preflight"
   },
   "boundary": [
     "Self-evolution must be evidence-triggered, resource-bounded, and reversible.",

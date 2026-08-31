@@ -1,0 +1,144 @@
+{
+  "format": "taiji-w7-p6-1c-qwen-semantic-provider-v1",
+  "model": {
+    "model_dir": "C:\\Users\\23747\\.cache\\huggingface\\hub\\models--Qwen--Qwen2.5-0.5B-Instruct\\snapshots\\7ae557604adf67be50417f59c2c2f167def9a775",
+    "model_digest": "01c4c7450b4a973a22a94a879492df9561608f3947411d69b20db61238fa79af",
+    "backend_id": "qwen2.5-0.5b-instruct"
+  },
+  "provider_artifact": {
+    "format": "taiji-semantic-provider-artifact-v1",
+    "version": 1,
+    "artifact_id": "qwen-semantic-01c4c7450b4a973a",
+    "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+    "backend_id": "qwen2.5-0.5b-instruct",
+    "model_dir": "C:\\Users\\23747\\.cache\\huggingface\\hub\\models--Qwen--Qwen2.5-0.5B-Instruct\\snapshots\\7ae557604adf67be50417f59c2c2f167def9a775",
+    "model_digest": "01c4c7450b4a973a22a94a879492df9561608f3947411d69b20db61238fa79af",
+    "artifact_digest": "semantic-artifact:2a7a22aefc502214a1afd1b6"
+  },
+  "request": {
+    "prompt": "列出当前工作区目录 . 并确认条目",
+    "constraints": [
+      "只读"
+    ]
+  },
+  "admission": {
+    "format": "taiji-semantic-provider-admission-v1",
+    "provider_evidence": {
+      "format": "taiji-semantic-provider-evidence-v1",
+      "version": 1,
+      "proposal_id": "semantic-evidence:7ee834c7d2b3d31ac5a52309",
+      "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+      "input_id": "task:0:590eb4514b942545",
+      "input_digest": "590eb4514b9425456231dcd83f9ab2944d1ab2a2c8c677eb74efa3a715b1dcde",
+      "modality": "text",
+      "goal_description": "列出当前工作区目录 . 并确认条目",
+      "constraints": [
+        "只读"
+      ],
+      "context_digest": "",
+      "semantic_steps": [
+        {
+          "description": "获取当前工作区目录 .",
+          "semantic_slots": {
+            "operation": "read",
+            "path": "/workspace/.bash_history"
+          },
+          "expected_outcome": "获得当前工作区目录 . 内容",
+          "confidence": 0.8,
+          "ambiguity": 0.2
+        }
+      ],
+      "confidence": 0.8,
+      "ambiguity": 0.2,
+      "provenance": "qwen:qwen-semantic-01c4c7450b4a973a",
+      "tick": 0,
+      "evidence_digest": "281c182203dbdd2215bcd752b925c4aae57d873fca1bb53520da2e622645ee58"
+    },
+    "interpretation": {
+      "format": "taiji-task-interpretation-v1",
+      "version": 1,
+      "interpretation_id": "task-interpretation:ba32f3f2bb1f6b20f02a49fd",
+      "input_id": "task:0:590eb4514b942545",
+      "input_digest": "590eb4514b9425456231dcd83f9ab2944d1ab2a2c8c677eb74efa3a715b1dcde",
+      "modality": "text",
+      "goal_id": "goal:ba32f3f2bb1f6b20f02a49fd",
+      "goal_description": "列出当前工作区目录 . 并确认条目",
+      "constraints": [
+        "只读"
+      ],
+      "context_digest": "",
+      "confidence": 0.8,
+      "ambiguity": 0.2,
+      "status": "resolved",
+      "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+      "tick": 0,
+      "evidence_digest": "2eab082e2c7868f271e3300f6177d85205ca2fea13dae93c7e3e795e83bceb87"
+    },
+    "goal": {
+      "version": 1,
+      "goal_id": "goal:ba32f3f2bb1f6b20f02a49fd",
+      "description": "列出当前工作区目录 . 并确认条目",
+      "priority": 0.0,
+      "progress": 0.0
+    },
+    "decomposition": {
+      "format": "taiji-task-decomposition-v1",
+      "version": 1,
+      "decomposition_id": "task-decomposition:e11ef0c2f5f3491a9da04740",
+      "interpretation_id": "task-interpretation:ba32f3f2bb1f6b20f02a49fd",
+      "goal_id": "goal:ba32f3f2bb1f6b20f02a49fd",
+      "steps": [
+        {
+          "format": "taiji-task-decomposition-v1",
+          "version": 1,
+          "step_id": "task-step:20bb98bdd62423320555a483",
+          "description": "获取当前工作区目录 .",
+          "semantic_slots": {
+            "operation": "read",
+            "path": "/workspace/.bash_history"
+          },
+          "expected_outcome": "获得当前工作区目录 . 内容",
+          "confidence": 0.8,
+          "ambiguity": 0.2,
+          "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+          "tick": 0,
+          "evidence_digest": "94a0cb3cd5427b9c878cb026869c3673fa46fea8c11196af068048ed31051fdb"
+        }
+      ],
+      "confidence": 0.8,
+      "ambiguity": 0.2,
+      "status": "resolved",
+      "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+      "tick": 0,
+      "evidence_digest": "00fc4d654c65c90318fcb557be36af342056ab2bb15dd1320e6db197902e9888"
+    },
+    "semantic_provider": {
+      "interface": "taiji-semantic-provider-interface-v1",
+      "state": "attached",
+      "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+      "evidence_enabled": "true",
+      "reason_code": "semantic_provider_attached"
+    },
+    "status": "resolved",
+    "execution": {
+      "status": "not_planned",
+      "action_intent": null,
+      "tool_call": null,
+      "side_effects": false,
+      "next": "taiji_workbench_grounding"
+    }
+  },
+  "checkpoint": {
+    "format": "taiji-semantic-provider-checkpoint-v1",
+    "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+    "backend_id": "qwen2.5-0.5b-instruct",
+    "artifact_id": "qwen-semantic-01c4c7450b4a973a",
+    "artifact_digest": "semantic-artifact:2a7a22aefc502214a1afd1b6",
+    "model_digest": "01c4c7450b4a973a22a94a879492df9561608f3947411d69b20db61238fa79af",
+    "model_dir": "C:\\Users\\23747\\.cache\\huggingface\\hub\\models--Qwen--Qwen2.5-0.5B-Instruct\\snapshots\\7ae557604adf67be50417f59c2c2f167def9a775"
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "real Qwen output is admitted only as content-addressed semantic evidence; Taiji retains interpretation ownership and no Workbench side effect occurs"
+  }
+}

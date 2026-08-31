@@ -1,0 +1,405 @@
+{
+  "format": "taiji-w7-p7-1-qwen-semantic-quality-v1",
+  "model": {
+    "format": "taiji-semantic-provider-artifact-v1",
+    "version": 1,
+    "artifact_id": "qwen-semantic-01c4c7450b4a973a",
+    "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+    "backend_id": "qwen2.5-0.5b-instruct",
+    "model_dir": "C:\\Users\\23747\\.cache\\huggingface\\hub\\models--Qwen--Qwen2.5-0.5B-Instruct\\snapshots\\7ae557604adf67be50417f59c2c2f167def9a775",
+    "model_digest": "01c4c7450b4a973a22a94a879492df9561608f3947411d69b20db61238fa79af",
+    "artifact_digest": "semantic-artifact:2a7a22aefc502214a1afd1b6"
+  },
+  "metrics": {
+    "case_count": 8,
+    "provider_success_rate": 1.0,
+    "clear_case_pass_rate": 0.2857142857142857,
+    "constraint_preservation_rate": 1.0,
+    "no_execution_field_rate": 1.0,
+    "ambiguous_high_ambiguity": false,
+    "latency_ms_mean": 7160.05,
+    "latency_ms_p95": 7587.38
+  },
+  "cases": [
+    {
+      "case_id": "list_workspace_root",
+      "prompt": "列出当前工作区根目录的文件",
+      "latency_ms": 6816.28,
+      "proposal": {
+        "goal_description": "列出当前目录下的所有文件",
+        "constraints": [
+          "只读"
+        ],
+        "confidence": 0.9,
+        "ambiguity": 0.1,
+        "semantic_steps": [
+          {
+            "description": "获取当前目录下所有文件",
+            "semantic_slots": {
+              "operation": "list",
+              "path": "."
+            },
+            "expected_outcome": "获得当前目录下的所有文件",
+            "confidence": 0.9,
+            "ambiguity": 0.1
+          }
+        ],
+        "evidence_digest": "d072e0cbc1b5bcc5b7c4d7e381b8bf0ca5297e98b91680d322e000d0501fa8b7"
+      },
+      "extracted": {
+        "operation": "list",
+        "path": ".",
+        "query": "",
+        "language": ""
+      },
+      "checks": {
+        "semantic_step_present": true,
+        "operation_match": true,
+        "path_match": true,
+        "query_match": true,
+        "language_match": true,
+        "goal_relevant": true,
+        "confidence_threshold": true,
+        "ambiguity_threshold": true,
+        "constraint_preserved": true,
+        "no_execution_fields": true
+      },
+      "passed": true,
+      "error": ""
+    },
+    {
+      "case_id": "read_readme",
+      "prompt": "读取 README.md 并确认当前内容",
+      "latency_ms": 8322.83,
+      "proposal": {
+        "goal_description": "读取指定文件并确认内容",
+        "constraints": [
+          "只读"
+        ],
+        "confidence": 0.0,
+        "ambiguity": 1.0,
+        "semantic_steps": [
+          {
+            "description": "读取 README.md",
+            "semantic_slots": {
+              "operation": "read",
+              "path": "README.md"
+            },
+            "expected_outcome": "获得 README.md 内容",
+            "confidence": 0.9,
+            "ambiguity": 0.1
+          },
+          {
+            "description": "确认当前内容",
+            "semantic_slots": {},
+            "expected_outcome": "验证当前内容是否正确",
+            "confidence": 0.8,
+            "ambiguity": 0.2
+          }
+        ],
+        "evidence_digest": "704ab7138a0173a4d419c214ad24fb836ea26eba2ecd90cf62505dad0937531e"
+      },
+      "extracted": {
+        "operation": "read",
+        "path": "README.md",
+        "query": "",
+        "language": ""
+      },
+      "checks": {
+        "semantic_step_present": true,
+        "operation_match": true,
+        "path_match": true,
+        "query_match": true,
+        "language_match": true,
+        "goal_relevant": true,
+        "confidence_threshold": false,
+        "ambiguity_threshold": false,
+        "constraint_preserved": true,
+        "no_execution_fields": true
+      },
+      "passed": false,
+      "error": ""
+    },
+    {
+      "case_id": "stat_pyproject",
+      "prompt": "查看 pyproject.toml 的文件信息",
+      "latency_ms": 7101.3,
+      "proposal": {
+        "goal_description": "查找 pyproject.toml 文件的信息",
+        "constraints": [
+          "只读"
+        ],
+        "confidence": 0.8,
+        "ambiguity": 0.2,
+        "semantic_steps": [
+          {
+            "description": "查询 pyproject.toml",
+            "semantic_slots": {
+              "operation": "search",
+              "path": "pyproject.toml"
+            },
+            "expected_outcome": "获取 pyproject.toml 内容",
+            "confidence": 0.8,
+            "ambiguity": 0.2
+          }
+        ],
+        "evidence_digest": "cfbceb2753ac6cce8d5980e9d40ecb6ccbd8a3b6bf4ef67d074fe8ee93d76834"
+      },
+      "extracted": {
+        "operation": "search",
+        "path": "pyproject.toml",
+        "query": "",
+        "language": ""
+      },
+      "checks": {
+        "semantic_step_present": true,
+        "operation_match": false,
+        "path_match": true,
+        "query_match": true,
+        "language_match": true,
+        "goal_relevant": true,
+        "confidence_threshold": true,
+        "ambiguity_threshold": true,
+        "constraint_preserved": true,
+        "no_execution_fields": true
+      },
+      "passed": false,
+      "error": ""
+    },
+    {
+      "case_id": "search_taiji",
+      "prompt": "在 README.md 中搜索 Taiji",
+      "latency_ms": 6945.12,
+      "proposal": {
+        "goal_description": "查找 README.md 中包含Taiji的信息",
+        "constraints": [
+          "只读"
+        ],
+        "confidence": 0.8,
+        "ambiguity": 0.2,
+        "semantic_steps": [
+          {
+            "description": "在README.md中搜索Taiji",
+            "semantic_slots": {
+              "operation": "search",
+              "path": "README.md"
+            },
+            "expected_outcome": "找到Taiji的相关信息",
+            "confidence": 0.8,
+            "ambiguity": 0.2
+          }
+        ],
+        "evidence_digest": "9fba56fd43082a59a052bdaaaf1ee2de6f3af279cf58d93831980c987b2ddb67"
+      },
+      "extracted": {
+        "operation": "search",
+        "path": "README.md",
+        "query": "",
+        "language": ""
+      },
+      "checks": {
+        "semantic_step_present": true,
+        "operation_match": true,
+        "path_match": true,
+        "query_match": false,
+        "language_match": true,
+        "goal_relevant": true,
+        "confidence_threshold": true,
+        "ambiguity_threshold": true,
+        "constraint_preserved": true,
+        "no_execution_fields": true
+      },
+      "passed": false,
+      "error": ""
+    },
+    {
+      "case_id": "open_readme",
+      "prompt": "打开 README.md 作为当前编辑器文件",
+      "latency_ms": 6855.09,
+      "proposal": {
+        "goal_description": "打开指定文件以进行编辑",
+        "constraints": [
+          "只读"
+        ],
+        "confidence": 0.8,
+        "ambiguity": 0.2,
+        "semantic_steps": [
+          {
+            "description": "打开 README.md 作为当前编辑器文件",
+            "semantic_slots": {
+              "operation": "open",
+              "path": "README.md"
+            },
+            "expected_outcome": "获取 README.md 文件",
+            "confidence": 0.8,
+            "ambiguity": 0.2
+          }
+        ],
+        "evidence_digest": "d795fd3565db2f8d0932868fe87ebfd3b2222c8c3e666a9b69d193220d7e3b9a"
+      },
+      "extracted": {
+        "operation": "open",
+        "path": "README.md",
+        "query": "",
+        "language": ""
+      },
+      "checks": {
+        "semantic_step_present": true,
+        "operation_match": true,
+        "path_match": true,
+        "query_match": true,
+        "language_match": true,
+        "goal_relevant": true,
+        "confidence_threshold": true,
+        "ambiguity_threshold": true,
+        "constraint_preserved": true,
+        "no_execution_fields": true
+      },
+      "passed": true,
+      "error": ""
+    },
+    {
+      "case_id": "resolve_readme_language",
+      "prompt": "判断 README.md 的编程语言",
+      "latency_ms": 6947.02,
+      "proposal": {
+        "goal_description": "确定 README.md 中的编程语言",
+        "constraints": [
+          "只读"
+        ],
+        "confidence": 0.8,
+        "ambiguity": 0.2,
+        "semantic_steps": [
+          {
+            "description": "检查 README.md 是否包含编程语言",
+            "semantic_slots": {
+              "operation": "check",
+              "path": "README.md"
+            },
+            "expected_outcome": "验证 README.md 是否包含编程语言",
+            "confidence": 0.8,
+            "ambiguity": 0.2
+          }
+        ],
+        "evidence_digest": "e4d82cb14021983a944ad82e236301fd53d34f3a2a74401146cce9941b3fee8b"
+      },
+      "extracted": {
+        "operation": "check",
+        "path": "README.md",
+        "query": "",
+        "language": ""
+      },
+      "checks": {
+        "semantic_step_present": true,
+        "operation_match": false,
+        "path_match": true,
+        "query_match": true,
+        "language_match": true,
+        "goal_relevant": true,
+        "confidence_threshold": true,
+        "ambiguity_threshold": true,
+        "constraint_preserved": true,
+        "no_execution_fields": true
+      },
+      "passed": false,
+      "error": ""
+    },
+    {
+      "case_id": "set_readme_language",
+      "prompt": "将 README.md 的编辑器语言设置为 Markdown",
+      "latency_ms": 7587.38,
+      "proposal": {
+        "goal_description": "将 README.md 的编辑器语言设置为 Markdown",
+        "constraints": [
+          "只读"
+        ],
+        "confidence": 0.9,
+        "ambiguity": 0.1,
+        "semantic_steps": [
+          {
+            "description": "将 README.md 的编辑器语言设置为 Markdown",
+            "semantic_slots": {
+              "operation": "set-language",
+              "path": "README.md/language=Markdown"
+            },
+            "expected_outcome": "更改 README.md 的编辑器语言",
+            "confidence": 0.9,
+            "ambiguity": 0.1
+          }
+        ],
+        "evidence_digest": "e46a433250972a5dbcd680b223c19da2d6eb7db61972462ecd0752dd8c59697c"
+      },
+      "extracted": {
+        "operation": "set-language",
+        "path": "README.md/language=Markdown",
+        "query": "",
+        "language": ""
+      },
+      "checks": {
+        "semantic_step_present": true,
+        "operation_match": false,
+        "path_match": false,
+        "query_match": true,
+        "language_match": false,
+        "goal_relevant": true,
+        "confidence_threshold": true,
+        "ambiguity_threshold": true,
+        "constraint_preserved": true,
+        "no_execution_fields": true
+      },
+      "passed": false,
+      "error": ""
+    },
+    {
+      "case_id": "ambiguous_project_file",
+      "prompt": "帮我处理这个项目文件",
+      "latency_ms": 6705.38,
+      "proposal": {
+        "goal_description": "处理项目文件",
+        "constraints": [
+          "只读"
+        ],
+        "confidence": 0.8,
+        "ambiguity": 0.2,
+        "semantic_steps": [
+          {
+            "description": "检查项目文件类型",
+            "semantic_slots": {
+              "operation": "check_file_type",
+              "path": "/path/to/project/file"
+            },
+            "expected_outcome": "验证文件类型是否符合要求",
+            "confidence": 0.8,
+            "ambiguity": 0.2
+          }
+        ],
+        "evidence_digest": "10ab299b10deac63a1c7c119d78a8182d528f5df7a16c017c104f0c844f1bcbb"
+      },
+      "extracted": {
+        "operation": "check_file_type",
+        "path": "/path/to/project/file",
+        "query": "",
+        "language": ""
+      },
+      "checks": {
+        "semantic_step_present": true,
+        "operation_match": true,
+        "path_match": true,
+        "query_match": true,
+        "language_match": true,
+        "goal_relevant": true,
+        "confidence_threshold": true,
+        "ambiguity_threshold": false,
+        "constraint_preserved": true,
+        "no_execution_fields": true
+      },
+      "passed": false,
+      "error": ""
+    }
+  ],
+  "gate": {
+    "passed": false,
+    "criterion": "the real provider must parse every fixed case, preserve the read-only constraint, keep execution fields out, pass at least 85% of clear semantic cases, and expose the underspecified case as high ambiguity"
+  },
+  "boundary": "This is a small local quality baseline for one Qwen artifact and fixed prompts. It does not prove broad language quality, tool choice, self-evolution, CUDA, or AGI."
+}

@@ -1,0 +1,144 @@
+{
+  "format": "taiji-w7-p6-1c-qwen-semantic-provider-v1",
+  "model": {
+    "model_dir": "C:\\Users\\23747\\.cache\\huggingface\\hub\\models--Qwen--Qwen2.5-0.5B-Instruct\\snapshots\\7ae557604adf67be50417f59c2c2f167def9a775",
+    "model_digest": "01c4c7450b4a973a22a94a879492df9561608f3947411d69b20db61238fa79af",
+    "backend_id": "qwen2.5-0.5b-instruct"
+  },
+  "provider_artifact": {
+    "format": "taiji-semantic-provider-artifact-v1",
+    "version": 1,
+    "artifact_id": "qwen-semantic-01c4c7450b4a973a",
+    "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+    "backend_id": "qwen2.5-0.5b-instruct",
+    "model_dir": "C:\\Users\\23747\\.cache\\huggingface\\hub\\models--Qwen--Qwen2.5-0.5B-Instruct\\snapshots\\7ae557604adf67be50417f59c2c2f167def9a775",
+    "model_digest": "01c4c7450b4a973a22a94a879492df9561608f3947411d69b20db61238fa79af",
+    "artifact_digest": "semantic-artifact:2a7a22aefc502214a1afd1b6"
+  },
+  "request": {
+    "prompt": "读取 README.md 并确认当前内容",
+    "constraints": [
+      "只读"
+    ]
+  },
+  "admission": {
+    "format": "taiji-semantic-provider-admission-v1",
+    "provider_evidence": {
+      "format": "taiji-semantic-provider-evidence-v1",
+      "version": 1,
+      "proposal_id": "semantic-evidence:b01dc0d7f0d4012ab3bd97e5",
+      "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+      "input_id": "task:0:626a1af5a55efe45",
+      "input_digest": "626a1af5a55efe45041d387d4b29449b9ccc1fee7dbfbcc08ace4a35949daeb1",
+      "modality": "text",
+      "goal_description": "读取指定文件并确认内容",
+      "constraints": [
+        "只读"
+      ],
+      "context_digest": "",
+      "semantic_steps": [
+        {
+          "description": "读取 README.md",
+          "semantic_slots": {
+            "operation": "read",
+            "path": "README.md"
+          },
+          "expected_outcome": "获得 README.md 内容",
+          "confidence": 0.9,
+          "ambiguity": 0.1
+        }
+      ],
+      "confidence": 0.9,
+      "ambiguity": 0.1,
+      "provenance": "qwen:qwen-semantic-01c4c7450b4a973a",
+      "tick": 0,
+      "evidence_digest": "6257de6dbcfd4173834b9c8410f467674a704dac0135c8acdd45c0fa1fab48e3"
+    },
+    "interpretation": {
+      "format": "taiji-task-interpretation-v1",
+      "version": 1,
+      "interpretation_id": "task-interpretation:21d58d5cd58c031ca43e3e13",
+      "input_id": "task:0:626a1af5a55efe45",
+      "input_digest": "626a1af5a55efe45041d387d4b29449b9ccc1fee7dbfbcc08ace4a35949daeb1",
+      "modality": "text",
+      "goal_id": "goal:21d58d5cd58c031ca43e3e13",
+      "goal_description": "读取指定文件并确认内容",
+      "constraints": [
+        "只读"
+      ],
+      "context_digest": "",
+      "confidence": 0.9,
+      "ambiguity": 0.1,
+      "status": "resolved",
+      "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+      "tick": 0,
+      "evidence_digest": "5bda1360f9b1f1f557e4c0163149325a307800c7c1f1e78db2964234d8a1c28c"
+    },
+    "goal": {
+      "version": 1,
+      "goal_id": "goal:21d58d5cd58c031ca43e3e13",
+      "description": "读取指定文件并确认内容",
+      "priority": 0.0,
+      "progress": 0.0
+    },
+    "decomposition": {
+      "format": "taiji-task-decomposition-v1",
+      "version": 1,
+      "decomposition_id": "task-decomposition:7d9988e58dda00c43acf0c96",
+      "interpretation_id": "task-interpretation:21d58d5cd58c031ca43e3e13",
+      "goal_id": "goal:21d58d5cd58c031ca43e3e13",
+      "steps": [
+        {
+          "format": "taiji-task-decomposition-v1",
+          "version": 1,
+          "step_id": "task-step:31e2c6d8af8b0cc34d8be434",
+          "description": "读取 README.md",
+          "semantic_slots": {
+            "operation": "read",
+            "path": "README.md"
+          },
+          "expected_outcome": "获得 README.md 内容",
+          "confidence": 0.9,
+          "ambiguity": 0.1,
+          "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+          "tick": 0,
+          "evidence_digest": "e5ebed462dd5122dc9d3ca2b30211147c6be4b092b7bc5bfddf136b8a712fe93"
+        }
+      ],
+      "confidence": 0.9,
+      "ambiguity": 0.1,
+      "status": "resolved",
+      "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+      "tick": 0,
+      "evidence_digest": "9b9ea56839b59d7ac3752735c7d46029a5a035b4194e9e5d6d4491fc5eebbcff"
+    },
+    "semantic_provider": {
+      "interface": "taiji-semantic-provider-interface-v1",
+      "state": "attached",
+      "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+      "evidence_enabled": "true",
+      "reason_code": "semantic_provider_attached"
+    },
+    "status": "resolved",
+    "execution": {
+      "status": "not_planned",
+      "action_intent": null,
+      "tool_call": null,
+      "side_effects": false,
+      "next": "taiji_workbench_grounding"
+    }
+  },
+  "checkpoint": {
+    "format": "taiji-semantic-provider-checkpoint-v1",
+    "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+    "backend_id": "qwen2.5-0.5b-instruct",
+    "artifact_id": "qwen-semantic-01c4c7450b4a973a",
+    "artifact_digest": "semantic-artifact:2a7a22aefc502214a1afd1b6",
+    "model_digest": "01c4c7450b4a973a22a94a879492df9561608f3947411d69b20db61238fa79af",
+    "model_dir": "C:\\Users\\23747\\.cache\\huggingface\\hub\\models--Qwen--Qwen2.5-0.5B-Instruct\\snapshots\\7ae557604adf67be50417f59c2c2f167def9a775"
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "real Qwen output is admitted only as content-addressed semantic evidence; Taiji retains interpretation ownership and no Workbench side effect occurs"
+  }
+}

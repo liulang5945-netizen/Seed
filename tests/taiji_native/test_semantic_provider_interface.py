@@ -40,6 +40,20 @@ class _EvidenceProvider:
         }
 
 
+class _FailingProvider:
+    provider_id = "test.semantic.failure"
+
+    def propose(self, request: SemanticProviderRequest) -> SemanticEvidenceProposal:
+        del request
+        raise ValueError("synthetic provider failure")
+
+    def checkpoint(self) -> Mapping[str, object]:
+        return {
+            "format": "test-semantic-provider-descriptor-v1",
+            "provider_id": self.provider_id,
+        }
+
+
 def test_provider_request_is_content_addressed_and_does_not_carry_execution_authority() -> None:
     runtime = SeedRuntime(Seed(episode_id="semantic-provider-interface-request"))
     _, frame = runtime._task_frame("读取 README.md 并准备工作台")
@@ -90,4 +104,23 @@ def test_no_provider_remains_an_honest_goal_only_boundary() -> None:
     assert result["semantic_provider"]["reason_code"] == "semantic_provider_not_attached"
     assert result["interpretation"]["status"] == "candidate"
     assert "decomposition" not in result
+    assert runtime.workbench_audit.events == ()
+
+
+def test_provider_failure_falls_back_to_goal_only_without_workbench_side_effect() -> None:
+    runtime = SeedRuntime(
+        Seed(episode_id="semantic-provider-interface-failure"),
+        semantic_provider=_FailingProvider(),
+    )
+
+    result = runtime.interpret_workbench_task("读取 README.md")
+
+    assert result["interpretation"]["status"] == "candidate"
+    assert result["semantic_provider"]["state"] == "degraded"
+    assert result["semantic_provider"]["reason_code"] == "semantic_provider_failed"
+    assert result["semantic_provider_fallback"] == {
+        "mode": "goal_only",
+        "reason_code": "semantic_provider_failed",
+    }
+    assert "provider_evidence" not in result
     assert runtime.workbench_audit.events == ()
