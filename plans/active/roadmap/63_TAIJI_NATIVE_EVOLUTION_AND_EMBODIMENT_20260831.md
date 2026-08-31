@@ -268,7 +268,7 @@ MCP discover
 
 不能通过复制未知 MCP 源码或模型自动生成 executor 直接进入 L3。L2→L3 是客户端工程迁移，不是模型训练动作。
 
-当前 `api/routes_agent_mcp.py -> neuroplex.agent_ext.mcp_manager` 只保留迁移入口。它的市场、安装和执行数据不得进入 E1 verified corpus/experience ledger；在 E5 前必须替换为 Seed-owned plugin runtime 或进入明确 tombstone。
+当前 `api/routes_agent_mcp.py -> neuroplex.agent_ext.mcp_manager` 只保留迁移入口。它的市场、安装和执行数据不得进入 E1 verified corpus/experience ledger；在 E5-1 前必须替换为 Seed-owned plugin runtime 或进入明确 tombstone。
 
 ## 8. Seed 客户端插件合同与热插拔生命周期
 
@@ -434,6 +434,8 @@ Gate：知识问答不是唯一指标；必须同时通过未见任务规划/能
 - 完成 dependency loss/recovery、开发 HMR effect cleanup、生产 blue/green、in-flight draining、状态迁移失败 rollback；
 - 将 `routes_agent_mcp.py` 从 Legacy manager 迁移到 Seed-owned runtime；不能安全迁移的市场/安装接口进入 tombstone。
 
+**E5-0 已完成（2026-09-01）**：`seed_platform/client_extension_host.py` 已建立声明式 `ClientPluginManifest`、内容寻址 `ClientExtensionSnapshot`、可配置 slot/protected-shell policy、两阶段 prepare/commit、blue/green 状态迁移、依赖健康/quarantine、in-flight draining、递归 disposer、rollback、checkpoint/tamper 校验和生命周期审计。E5-0 [Gate report](../../../reports/taiji_w7_e5_client_extension_host_20260901.json) 的 12/12 检查通过；它只证明 client-body contract 和可回滚状态机，不证明 Vue/API/Workbench 已接线，不接 Legacy manager，也不执行插件源码。
+
 Gate：旧 client/capability snapshot 可恢复，旧路由/组件/监听器/executor 注册无泄漏，在途调用不丢失，资源 reservation 归还，异常插件 quarantine，Taiji cognition checkpoint 不被插件覆盖。
 
 ### E6：MCP 客户端器官继承
@@ -545,10 +547,10 @@ E1–E7 优先按现有 owner 增量接线，避免继续膨胀 `taiji/adapter.p
 - E1、E3、E5 是强 checkpoint Gate；任一损坏恢复或 lineage 错误立即停止功能推进。
 - E3 完成后是第一个需要讨论的决策点：若直接原生训练没有超过 frozen/route/memory 对照，应先修学习目标和 credit，不扩大参数规模。
 - E5 完成后是第二个决策点：只有隔离、状态迁移和 rollback 可靠，才允许接真实第三方 MCP/plugin。
-- 本轮提交 E4 实现、定向测试、evaluator、report 和计划同步；不推送、不运行全量 CI。全量 CI 仍按用户决定在阶段收口时统一修复。
+- 本轮提交 E4 与 E5-0 实现、定向测试、evaluator、report 和计划同步；不推送、不运行全量 CI。全量 CI 仍按用户决定在阶段收口时统一修复。
 
 ## 15. E1 首个执行切片
 
-`03_CURRENT_EXECUTION.md` 当前指向 **E5：Seed-owned 客户端插件 runtime**；E1 已完成并作为全部后续训练与客户端继承的事实源。
+`03_CURRENT_EXECUTION.md` 当前指向 **E5-1：Seed-owned 客户端 runtime 实际接线**；E1 已完成并作为全部后续训练与客户端继承的事实源，E5-0 只冻结了 host contract。
 
-它优先于真实第三方 MCP 和插件 HMR，因为必须先建立可回滚的 Seed-owned extension host，才能让客户端 capability 继承拥有独立生命周期、状态迁移和故障隔离；E5 不修改 Taiji cognition checkpoint，也不把插件执行权写入模型。
+它优先于真实第三方 MCP 和插件 HMR，因为必须先把可回滚的 Seed-owned extension host 接入 API/Vue/Workbench 的两阶段 snapshot 发布，才能让客户端 capability 继承拥有可观测的产品生命周期、状态迁移和故障隔离；E5-1 不修改 Taiji cognition checkpoint，也不把插件执行权写入模型。

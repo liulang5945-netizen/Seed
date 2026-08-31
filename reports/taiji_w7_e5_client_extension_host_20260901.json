@@ -1,0 +1,37 @@
+{
+  "gate": "taiji-e5-client-extension-host",
+  "status": "passed",
+  "checks": {
+    "prepare_is_non_mutating": true,
+    "blue_green_state_migration": true,
+    "dependency_loss_quarantine": true,
+    "dependency_recovery_requires_explicit_remount": true,
+    "inflight_draining": true,
+    "recursive_disposer": true,
+    "disposer_failure_audited": true,
+    "rollback_is_exact": true,
+    "checkpoint_roundtrip": true,
+    "checkpoint_tamper_rejected": true,
+    "manifest_executable_boundary": true,
+    "taiji_cognition_checkpoint_is_not_client_state": true
+  },
+  "metrics": {
+    "lifecycle_records": 5,
+    "active_snapshot_revision": 3,
+    "blue_green_snapshot_revision": 3,
+    "dependency_quarantined_plugin_count": 1,
+    "recursive_disposer_order": [
+      "child-b",
+      "nested-child",
+      "child-a",
+      "root"
+    ],
+    "rollback_snapshot_revision": 2
+  },
+  "scope": {
+    "client_snapshot_only": true,
+    "protected_root_shell_slots": true,
+    "plugin_source_execution": false,
+    "taiji_cognition_mutation": false
+  }
+}
