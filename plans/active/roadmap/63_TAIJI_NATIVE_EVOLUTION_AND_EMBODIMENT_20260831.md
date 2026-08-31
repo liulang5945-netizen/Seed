@@ -440,6 +440,8 @@ Gate：知识问答不是唯一指标；必须同时通过未见任务规划/能
 
 **E5-2 已完成（2026-09-01）**：`api/routes_plugins.py` 已成为显式 410 tombstone，所有旧 `/api/plugins`、enable/disable/delete/install、marketplace、marketplace refresh 和 upload 入口均 fail-closed 指向 `/api/client-extensions`；`routes_agent_mcp.py` 与 `routes_agent_workspace.py` 的重复旧路由已清除，前端无旧 `/api/plugins` 引用。E5-2 [Gate report](../../../reports/taiji_w7_e5_2_legacy_plugin_surface_20260901.json) 的 9/9 检查通过；未删除不属于本阶段的 `/api/mcp/*` Legacy 兼容能力，也未接入真实第三方 MCP/plugin。当前进入 E5-3：Seed-owned 本地只读 extension 的真实 slot runtime canary。
 
+**E5-3 已完成（2026-09-01）**：`frontend/src/components/ClientExtensionSlot.vue` 将当前 client snapshot 的 manifest 按 plugin digest 映射到真实 Vue slot，默认仅渲染安全 descriptor fallback，并支持受控 scoped slot；旧版本被 key 卸载，新版本重新挂载，failed/quarantined/dependency 状态可见，组件不加载 plugin source。E5-3 [Gate report](../../../reports/taiji_w7_e5_3_client_slot_runtime_20260901.json) 的 8/8 检查通过，前端生产构建通过；当前进入 E6-0：建立 MCP client capability inheritance candidate 的 schema、权限与 shadow 边界。
+
 Gate：旧 client/capability snapshot 可恢复，旧路由/组件/监听器/executor 注册无泄漏，在途调用不丢失，资源 reservation 归还，异常插件 quarantine，Taiji cognition checkpoint 不被插件覆盖。
 
 ### E6：MCP 客户端器官继承
