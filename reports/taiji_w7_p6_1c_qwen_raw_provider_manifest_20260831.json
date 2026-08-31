@@ -1,0 +1,16 @@
+{
+  "format": "taiji-p6-provider-artifact-loader-manifest-v1",
+  "task": "load raw/LoRA/guarded provider modes from one LanguageProviderArtifact manifest",
+  "lesions": [
+    "artifact_metadata_loss",
+    "wrong_provider_mode",
+    "cognition_dependency"
+  ],
+  "signals": [
+    "artifact_round_trip",
+    "fallback_used",
+    "validation",
+    "cognition_unchanged"
+  ],
+  "boundary": "loader configuration Gate only; provider quality remains governed by separate train/holdout and safety reports"
+}

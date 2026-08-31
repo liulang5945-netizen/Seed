@@ -10,6 +10,7 @@ frozen 模式下主程序以子进程拉起 SeedBackend.exe，等价于开发模
 1. `sys.executable -m uvicorn` 递归启动 GUI 的问题；
 2. 进程内线程/多进程方案与 logging 配置、PyInstaller spawn 的冲突。
 """
+import importlib.util
 import os
 from pathlib import Path
 
@@ -22,12 +23,22 @@ _common_hiddenimports = [
     "torch",
 ]
 
+# Semantic providers are opt-in and may not be installed on a native-only
+# build host.  Always freeze the Seed adapter contract; include the optional
+# Qwen dependency graph only when the build environment actually provides it.
+# This keeps the packaged client safe without silently baking a model path or
+# making Transformers a mandatory product dependency.
+_semantic_provider_hiddenimports = ["seed", "seed.semantic_provider"]
+for _optional_module in ("transformers", "safetensors", "sentencepiece", "accelerate"):
+    if importlib.util.find_spec(_optional_module) is not None:
+        _semantic_provider_hiddenimports.append(_optional_module)
+
 a_backend = Analysis(
     [str(ROOT / "desktop" / "backend_worker.py")],
     pathex=[str(ROOT)],
     binaries=[],
     datas=[],
-    hiddenimports=_common_hiddenimports,
+    hiddenimports=_common_hiddenimports + _semantic_provider_hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -80,7 +91,7 @@ a_main = Analysis(
     pathex=[str(ROOT)],
     binaries=[],
     datas=_datas,
-    hiddenimports=_common_hiddenimports + [
+    hiddenimports=_common_hiddenimports + _semantic_provider_hiddenimports + [
         "PyQt6", "PyQt6.QtWebEngineWidgets", "PyQt6.QtWebChannel",
     ],
     hookspath=[],

@@ -103,6 +103,7 @@ class SeedRuntime:
         self._provider_runtime = provider_runtime
         self._provider_config = provider_config
         self._semantic_provider: Any | None = None
+        self._semantic_provider_error = ""
         self.attach_semantic_provider(semantic_provider)
         from seed_platform.workbench import WorkbenchAuditLog, WorkbenchEnvironment
 
@@ -177,6 +178,7 @@ class SeedRuntime:
         checkpoint_path: Path | str | None = None,
         *,
         provider_config: Any | None = None,
+        semantic_provider: Any | None = None,
     ) -> SeedRuntime:
         """从 seed-native-v1 检查点装配 Seed（与训练管线同一信封）。"""
         import torch
@@ -204,8 +206,19 @@ class SeedRuntime:
             model.architecture,
             selected_config,
         )
+        if semantic_provider is None:
+            from seed.semantic_provider import load_qwen_semantic_provider_from_environment
+
+            semantic_provider = load_qwen_semantic_provider_from_environment()
         logger.info("Seed runtime loaded from %s", path)
-        runtime = cls(model, path, provider_status.to_dict(), provider_runtime, selected_config)
+        runtime = cls(
+            model,
+            path,
+            provider_status.to_dict(),
+            provider_runtime,
+            selected_config,
+            semantic_provider,
+        )
         metadata = checkpoint.get("metadata")
         if isinstance(metadata, Mapping):
             runtime._restore_workbench_metadata(metadata.get("workbench"))
@@ -375,6 +388,7 @@ class SeedRuntime:
                 "semantic provider must implement the SemanticEvidenceProvider protocol"
             )
         self._semantic_provider = provider
+        self._semantic_provider_error = ""
 
     @property
     def semantic_provider(self) -> Any | None:
@@ -395,6 +409,15 @@ class SeedRuntime:
                 "provider_id": "",
                 "evidence_enabled": "false",
                 "reason_code": "semantic_provider_not_attached",
+            }
+        if self._semantic_provider_error:
+            return {
+                "interface": SEMANTIC_PROVIDER_INTERFACE_FORMAT,
+                "state": "degraded",
+                "provider_id": str(provider.provider_id),
+                "evidence_enabled": "false",
+                "reason_code": "semantic_provider_failed",
+                "reason": "provider proposal failed before Taiji admission",
             }
         return {
             "interface": SEMANTIC_PROVIDER_INTERFACE_FORMAT,
@@ -452,12 +475,36 @@ class SeedRuntime:
             proposal = provider.propose(request)
         except Exception as exc:
             logger.exception("semantic provider proposal failed before Taiji admission")
-            raise RuntimeError("semantic provider failed before Taiji admission") from exc
+            with self._lock:
+                self._semantic_provider_error = type(exc).__name__
+            interpretation = self.interpret_task(
+                prompt,
+                history=history,
+                constraints=constraints,
+            )
+            return {
+                "format": interpretation.to_payload()["format"],
+                "interpretation": interpretation.to_payload(),
+                "goal": interpretation.to_goal().to_payload(),
+                "semantic_provider": self.semantic_provider_status(),
+                "semantic_provider_fallback": {
+                    "mode": "goal_only",
+                    "reason_code": "semantic_provider_failed",
+                },
+                "execution": {
+                    "status": "not_planned",
+                    "action_intent": None,
+                    "tool_call": None,
+                    "side_effects": False,
+                    "next": "taiji_planner",
+                },
+            }
         if not isinstance(proposal, SemanticEvidenceProposal):
             raise TypeError(
                 "semantic provider must return a SemanticEvidenceProposal contract"
             )
         with self._lock:
+            self._semantic_provider_error = ""
             interpretation, decomposition = self.model.architecture.admit_semantic_provider_evidence(
                 frame, proposal
             )
@@ -4555,11 +4602,16 @@ def activate_seed(
     checkpoint_path: Path | str | None = None,
     *,
     provider_config: Any | None = None,
+    semantic_provider: Any | None = None,
 ) -> SeedRuntime:
     """加载并激活 Seed 运行时（替换既有实例）。"""
     global _runtime
     with _runtime_lock:
-        runtime = SeedRuntime.load(checkpoint_path, provider_config=provider_config)
+        runtime = SeedRuntime.load(
+            checkpoint_path,
+            provider_config=provider_config,
+            semantic_provider=semantic_provider,
+        )
         _runtime = runtime
         return runtime
 

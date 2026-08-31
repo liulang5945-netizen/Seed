@@ -1,6 +1,19 @@
 # Seed / Taiji 后 S51 项目收敛与开发计划
 
-> 状态：2026-08-31 当前阶段总计划。执行入口仍以 [03_CURRENT_EXECUTION.md](03_CURRENT_EXECUTION.md) 的唯一下一步为准；本文件定义该动作之后的顺序、边界和退出 Gate。
+> 状态：2026-08-31 阶段背景与历史收敛计划。执行入口仍以 [03_CURRENT_EXECUTION.md](03_CURRENT_EXECUTION.md) 的唯一下一步为准；原生认知、Skill/MCP 经验与 Seed 客户端插件热插拔的新总路线见 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)。本文件中 P7/P8 以前的顺序保留为历史依据，不再覆盖 E1–E9。
+
+## 0. 2026-08-31 路线重定向
+
+P7-1 已证明 Qwen2.5-0.5B-Instruct 不能满足生产语义质量，但继续先升级 provider 会再次把开发重心放到 Taiji 外围。现行路线改为：
+
+1. 先建立统一、可 checkpoint 的进化语料与经验事实源；
+2. Skill/MCP artifact 自身的说明、schema、示例、约束和领域资料成为知识语料，真实 Workbench/Skill/MCP 结果成为经验语料，共同驱动 Taiji-owned semantic/procedural knowledge、route、world model、局部突触与受控结构成长；
+3. MCP 内化分成两个独立产物：Taiji 学习知识/程序/affordance，Seed 客户端继承 connector/executor/permission/resource/UI capability；
+4. 使用 DeepSeek Harness 的 lifecycle/effect cleanup/append-only trace 原则建立 Seed 客户端插件热插拔，让 Vue 页面、IDE panel、命令、可视化、Skill、MCP 和后端 capability 可原子升级/回滚；
+5. 客户端插件改进 Seed 客户端，不进入 Taiji 神经网络；语料/Outcome 可成为训练来源，但认知更新与客户端 capability 必须独立走 admission/checkpoint/rollback Gate；
+6. provider artifact 升级保留为语言器官支线，不再阻塞 E1–E3。
+
+当前唯一动作由 `03_CURRENT_EXECUTION.md` 决定，完整阶段 E1–E9 由新总路线定义。
 
 ## 1. 本轮全盘结论
 
@@ -17,7 +30,7 @@
 | Taiji 身份 | Taiji 是唯一认知主体；Seed 是产品/runtime；Legacy NeuroPlex 只做离线对照 | 仍需用端到端行为证明所有权，而不只靠包依赖和合同声明 |
 | 神经元与结构成长 | 向量化区域、稀疏连接、局部学习、interaction-group、growth/prune/split/merge、验证/回滚/checkpoint 已有实现 | 尚未证明开放域未见任务上，结构变化持续优于“只调已有权重/路由”的对照 |
 | Workbench | 文件读取、搜索、语言识别、`editor.set_language`、patch/undo、terminal/MCP、policy/approval、Outcome 和有限 successor loop 已存在 | 自然语言输入不能直接产生 Taiji-owned goal/plan/ActionIntent；IDE 自主操作尚未形成真实用户旅程 |
-| 语言器官 | `native-readable` 为默认表层；`structured-stub` 为调试边界；Qwen/Transformers 只位于 provider 适配层；artifact 轮换和健康 watchdog 有合同测试 | 缺 packaged-client 下真实 provider 轮换、失败回退、重启重绑和质量 Gate；provider 不能被误用为认知规划器 |
+| 语言器官 | `native-readable` 为默认表层；`structured-stub` 为调试边界；Qwen/Transformers 只位于 provider 适配层；真实 Qwen 后端/浏览器字段、provider 失败回退和确定性 artifact 生命周期 Gate 已通过 | 缺真实 Qwen packaged-client 安装包现场的轮换、watchdog、重启重绑和质量 Gate；provider 不能被误用为认知规划器 |
 | 自进化证据 | R5A/R5B/R5C 已覆盖知识候选、效应器候选、结构候选及有界生命周期 | 当前主要证明“机制安全可恢复”，没有充分证明“能力真实增长、旧能力保持、资源收益为正” |
 | 产品边界 | 前端实时页面已不提供 HF/GGUF/Transformer 格式切换；相关 API 多数退化为隐藏 tombstone | 配置层仍保留 `gguf_path`、`download_hf` 等迁移字段；需要明确保留期限并最终删除，而不是永久兼容 |
 | 桌面体验 | 页面层和生命状态已有一轮收敛 | Windows 任务栏、托盘、通知 logo、高 DPI 和真实窗口仍缺现场证据；不得用页面截图替代 |
@@ -96,7 +109,7 @@
 7. 已完成受控的自然语言多步任务分解 canary：Taiji-owned semantic evidence 产生有界、可验证的 Workbench step candidates，逐步执行前保留 clarification、preview/policy、预算和 checkpoint 边界，provider 不能直接注入工具名或 intent。
 8. 已完成独立的语义 evidence provider contract：provider 只提交内容寻址的目标/约束/语义步骤候选，Taiji 校验输入 digest、tick、置信度和禁止字段后，才决定是否形成 TaskInterpretation/TaskDecomposition；provider 不拥有 Goal 定案、工具选择、ActionIntent、policy 或执行权。
 9. 已完成 provider artifact 轮换与同一任务决策不变性 canary：在同一输入/WorldState/affordance 下轮换两个确定性 artifact，provider provenance 可审计但语义、grounding 和工具决策保持一致，且无 Workbench 执行副作用。
-10. 已完成 packaged-client provider lifecycle 的确定性集成 seam：现有 guarded chat canary 与 health policy 验证了 provider 发布后劣化回退、回退状态 checkpoint、重启重绑和隔离版本不复活；本机没有可验收的真实 provider 模型目录，因此该部分保持 `asset-unverified`，不宣称真实模型质量通过。
+10. 已完成 packaged-client provider lifecycle 的确定性集成 seam：现有 guarded chat canary 与 health policy 验证了 provider 发布后劣化回退、回退状态 checkpoint、重启重绑和隔离版本不复活；P6-1c 已验证本机 Qwen2.5-0.5B-Instruct 真实语义 artifact，P6-1d 又验证冻结 `SeedBackend.exe` 双周期重启重绑和错误 digest fail-closed；多版本真实 Qwen rotation/watchdog 现场仍待验收。
 11. 已完成 P4-1 interaction-group Workbench Gate：真实 Workbench capability execution 产生 native world evidence、native executive selection、recovery trace 和 exact checkpoint replay，并观察到 holdout/lesion 效应；该证据不单独扩大为开放域 `1+1>2`。
 12. 已完成 P4-2 小型模拟状态转移、credit、rollback 与 checkpoint continuation Gate：误差驱动状态转移、跨区域/内容 credit 改变选择、资源/预算 fail-closed、神经元与结构 rollback，以及 checkpoint continuation 全部通过；该结果是确定性 CPU 机制证据，不等于真实 provider 质量或开放域收益。
 13. 已完成 P4-3 真实 Workbench 纵向收益与旧能力保持 Gate：互补任务的已准入组合在 train/holdout 上均以 `0.75` reward margin 超过最强单体、稠密平均和随机单体期望，冲突组保持负对照，旧 Workbench capability、资源、lesion、recovery 和 checkpoint replay 保持；该 Gate 尚未证明在线学习器自主选择组合。
@@ -121,9 +134,10 @@
 32. **已完成 P5-3**：将 planning outcome → Workbench request binding → preflight → execution/outcome 边界拆到 [`api/workbench_execution.py`](../../../api/workbench_execution.py)，`SeedRuntime` 只保留调用 facade；当前 capability/MCP snapshot 绑定、approval-plan 准备、执行前置检查和 side-effect 投影均保留，P2-13/P5-1/P5-2 与自然语言 Workbench 回归保持通过。证据：[P5-3 report](../../../reports/taiji_w7_p5_3_natural_language_workbench_execution_modularization_20260831.json)，回归：[P5-3 test](../../../tests/taiji_native/test_natural_language_workbench_execution_modularization.py)。
 33. **已完成 P6-1a**：建立独立 `SemanticEvidenceProvider` / `SemanticProviderRequest` 接口；请求以输入与上下文摘要内容寻址，不携带 capability/tool/parameter/intent，provider 只能提交 `SemanticEvidenceProposal`，Taiji 负责 admission、Goal 状态和语义分解，解释阶段无 ActionIntent、tool call 或 Workbench 副作用。证据：[P6-1a report](../../../reports/taiji_w7_p6_1a_semantic_provider_interface_20260831.json)，回归：[P6-1a test](../../../tests/taiji_native/test_semantic_provider_interface.py)。
 34. **已完成 P6-1b**：用测试注入 provider 走通聊天端 `/interpret → natural-language/plan → natural-language/execute` 只读 Workbench 旅程；后端验证真实 TestClient transport，前端验证 semantic evidence 只进入 Taiji plan，客户端不生成 binding、patch、digest 或 intent。证据：[P6-1b backend journey](../../../tests/taiji_native/test_p6_1b_chat_workbench_journey.py)，[P6-1b frontend journey](../../../frontend/src/__tests__/ChatView.test.js)。该 Gate 不等于真实 provider 模型验收。
-35. **当前唯一动作**：执行 P6-1c 真实 packaged semantic provider artifact / 浏览器现场 Gate；预检已确认当前仓库没有可加载的真实 checkpoint、tokenizer、safetensors 或 adapter 目录，因此只在真实 allowlisted artifact 提供后，验证 watchdog/rotation/restart rebinding、首轮 semantic evidence canary、浏览器聊天卡片和 Workbench plan/approval/execute 现场，确认 provider 失败时回到 Goal-only/clarification 边界。禁止把测试 provider、历史 manifest 或诊断 corpus 冒充产品模型，禁止前端重新生成 patch/digest/intent。
+35. **已完成 P6-1c**：本机 Qwen2.5-0.5B-Instruct 已由 [真实 semantic provider report](../../../reports/taiji_w7_p6_1c_qwen_semantic_provider_20260831.json) 和 [browser field report](../../../reports/taiji_w7_p6_1c_qwen_browser_field_20260831.json) 证明可被显式 digest allowlist、真实加载并接入聊天 UI；Taiji 已完成 `resolved` interpretation/decomposition、只读 plan/execute，浏览器请求无执行字段注入。[provider fallback report](../../../reports/taiji_w7_p6_1c_provider_failure_fallback_20260831.json) 又证明 provider 异常会回到 degraded/Goal-only 且无 Workbench 副作用，[packaged lifecycle report](../../../reports/taiji_w7_p3_3_packaged_provider_lifecycle_20260831.json) 证明确定性 rotation/watchdog/fallback/checkpoint/restart rebinding seam。下一步只处理真实 Qwen packaged-client 安装包现场，不把测试 provider、历史 manifest 或本地缓存路径冒充交付，前端也不得重新生成 patch/digest/intent。
+36. **已完成 P6-1d**：新构建的冻结 [packaged Qwen report](../../../reports/taiji_w7_p6_1d_packaged_qwen_20260831.json) 在两个独立 `SeedBackend.exe` 进程周期中验证显式 digest 挂载、activation、真实 semantic admission、`resolved` interpretation、停止后的重新绑定和相同 evidence digest；错误 digest 返回 500 并 fail-closed。该 Gate 不等于多版本真实 rotation/watchdog、安装器 UI 或模型质量。
 
-退出 Gate：用户只提供自然语言和工作区，Taiji 不依赖外部预制 `ActionIntent` 或最终 `parameter_bindings` 完成 P2-1 至 P2-13 的受控协议链；所有动作可审计、可恢复、可解释，provider 移除后决策链仍属于 Taiji。P2-12 已证明写入参数由 Taiji 基于当前内容派生，P2-13 已证明产品 API/前端 transport 不重新夺回这些 ownership；P6-1b 已证明测试注入 provider 的完整 transport 旅程，P6-1c 仍需真实 packaged provider artifact 和浏览器现场验收。
+退出 Gate：用户只提供自然语言和工作区，Taiji 不依赖外部预制 `ActionIntent` 或最终 `parameter_bindings` 完成 P2-1 至 P2-13 的受控协议链；所有动作可审计、可恢复、可解释，provider 移除后决策链仍属于 Taiji。P2-12 已证明写入参数由 Taiji 基于当前内容派生，P2-13 已证明产品 API/前端 transport 不重新夺回这些 ownership；P6-1b、P6-1c 已分别证明测试注入和真实 Qwen 的完整聊天/浏览器字段边界，失败回退与确定性 lifecycle seam 也已通过，仍需真实 Qwen packaged-client 安装包现场验收。
 
 ### P3：语言器官与 provider 生产化
 
@@ -131,8 +145,9 @@
 
 - `native-readable` 继续作为无外部 provider 时的真实默认；`structured-stub` 仅可显式调试。
 - 用相同 ContentPlan 对 native-readable 与外部 provider 评估可读性、约束保持、事实遗漏、幻觉和延迟，禁止比较两个不同认知结果。
-- 在 packaged client 中验证 provider artifact 内容寻址、版本轮换、watchdog、previous→native 降级、cooldown、重启重绑与失败通知；当前确定性集成 seam 已通过，真实模型资产与质量 Gate 仍未验收。
+- 在 packaged client 中验证真实 Qwen provider artifact 内容寻址、版本轮换、watchdog、previous→native 降级、cooldown、重启重绑与失败通知；确定性集成 seam、后端真实加载和浏览器字段已通过，真实 Qwen 安装包现场与质量 Gate 仍未验收。
 - provider 输出必须经过约束检查；不得写 Taiji memory、改变 intent、调用工具或绕过 policy。
+- P7-1 质量基线已实测但未通过：当前 Qwen2.5-0.5B-Instruct 清晰案例通过率 `0.2857`，模糊请求未达到高歧义；因此当前 artifact 只能作为实验/回退 provider，生产语义入口必须等待更强 artifact 通过同一 Gate。
 
 退出 Gate：真实客户端完成至少一次成功轮换、一次失败回退和一次 checkpoint 重启；语言后端变化不改变同一任务的工具决策与事实约束。
 
@@ -191,12 +206,10 @@
 
 当前保持 `hardware-blocked`，不删除、不伪装完成。真实 CUDA 主机到位后按固定顺序执行：同一 workload CPU profiler → CUDA profiler → CPU→CUDA→CPU checkpoint → 数值/结构/预算一致性 → 热点证据评审。只有 profiler 证明现有算子是瓶颈，才实现 fused/sparse kernel。
 
-## 5. 当前唯一下一步
+## 5. E1 执行交接
 
-> 状态修订：P4-11 与 P4-12 已分别完成 editor+MCP 跨域结构收益、terminal 三域治理与恢复 Gate，P2-8/P2-9/P2-10/P2-11/P2-12/P2-13/P5-1/P5-2/P5-3 已完成 Taiji-owned 自然语言单步、多步闭环、声明式 semantic grounding/recovery、真实 IDE 语言链、digest-checked 受控写入、API/前端 transport、协议编排、grounding engine 和执行边界模块化；P6-1a/P6-1b 已完成独立 provider 接口和测试注入聊天旅程，下方历史总结中的旧当前动作已由本节末的执行入口覆盖，现行唯一动作是 P6-1c 真实 packaged semantic provider artifact / 浏览器现场 Gate。
+执行 **E1：统一进化语料/经验合同与 checkpoint 前置 Gate**，详细合同见 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)。
 
-S52 已实现并通过 **artifact consumption policy**，P2-1 至 P2-9 已分别固定“无 intent 不执行”“自然语言先成为 Taiji Goal evidence”“resolved evidence 才能进入非执行 planner”“语言 evidence 才能形成非执行语言 intent”“真实可逆 IDE 操作可经 approval、checkpoint 和 recovery 完成”“失败可停止、预算可拒绝、重启可续接”“语义分解不能携带执行字段”“Taiji 可从已验证语义 evidence、当前感知和 live affordance 形成并执行一条单步 ActionIntent”“能力声明式 semantic contract 可在无外部 parameter_bindings 时产生唯一 live binding”的边界；P2-10/P2-11/P2-12/P2-13/P5-1/P5-2/P5-3 又分别闭合多步 grounding/recovery、实时 IDE 语言绑定、digest-checked 自然语言受控写入、API/前端 transport、协议编排、grounding engine 和执行边界模块化。P3-1 固定 provider 只能提交内容寻址语义 evidence，P3-2 证明确定性 artifact 轮换不改变同任务决策，P3-3 的确定性 provider lifecycle seam 通过但真实模型资产未验收，P4-1 已证明真实 Workbench interaction-group 闭环与恢复证据，P4-2 已固定小型模拟的状态转移、credit、rollback 和 checkpoint continuation，P4-3 已证明已准入互补组的真实 Workbench 因果收益，P4-4 已证明 train-only interaction-group 学习选择与跨 seed 稳定性，P4-5 已证明同一 capability 对在多 context 上的留一族迁移，P4-6 已证明异质成员/未见组合的有界 train-only 关系 transfer，P4-7 已证明三轮 future Workbench 对照收益，P4-8 已证明三轮真实在线 Outcome 写回/准入/拒绝/重启/rollback，P4-9 已证明在线 interaction evidence 到结构候选的受控桥接，P4-10a 已证明一次结构扩容的未见任务净收益，P4-10b 已证明两个独立周期的连续结构增长，P4-11 已证明 editor+MCP 跨域结构收益与旧 workspace 保留，P4-12 已证明 terminal 三域治理与恢复。P6-1a/P6-1b 已分别完成独立 provider 接口和测试注入聊天旅程；当前后继切换为 **P6-1c 真实 packaged semantic provider artifact / 浏览器现场 Gate**，不继续追加 artifact-store 微分片。
+E1 只建立 `EvolutionCorpusArtifact`、`EvolutionExperience`、append-only ledger、Workbench Outcome 投影、Skill/MCP/client-plugin 确定性 fixture、用途/许可、partition/taint/redaction 和 checkpoint 损坏拒绝。它不训练权重、不安装插件、不接 Legacy MCP manager，也不改客户端 UI。通过后按 E2 真实语料/经验来源 → E3 Taiji 本体训练 → E4 Skill/MCP 知识与程序内化 → E5 Seed 客户端插件 host → E6 MCP 客户端器官继承的顺序推进。
 
-当前明确不做：CI 全量修复、提交、推送、CUDA、Windows shell 现场美化、attached worktree 删除或 output/pytest 证据目录清理；P3-3/P6-1c 的真实模型资产仍未验收，不宣称真实 packaged provider 质量、浏览器现场或开放域持续自进化已完成。
-
-> 执行入口覆盖：上文历史序列中的 P4-9、P4-10a、P4-10b、P4-11、P4-12、P2-8、P2-9、P2-10、P2-11、P2-12、P2-13、P5-1、P5-2、P5-3、P6-1a 与 P6-1b 当前动作已完成；当前唯一执行动作以 `03_CURRENT_EXECUTION.md` 为准，即 P6-1c 真实 packaged semantic provider artifact / 浏览器现场 Gate。
+P7-1 provider artifact 升级保留为语言器官支线；CI 全量修复、提交、推送、CUDA、Windows shell 现场和 attached worktree 清理仍按用户当前决定暂缓，未验证不标记为通过。

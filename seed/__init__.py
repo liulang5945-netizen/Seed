@@ -10,6 +10,11 @@ from .datasets import (
 from .environments import TopicWorld, play
 from .judge import SeedJudge
 from .model import Seed
+from .semantic_provider import (
+    QwenSemanticEvidenceProvider,
+    SemanticProviderArtifact,
+    load_qwen_semantic_provider_from_environment,
+)
 from .sleep import SeedSleepScheduler
 
 __all__ = [
@@ -22,6 +27,9 @@ __all__ = [
     "iter_native_documents",
     "SeedJudge",
     "SeedSleepScheduler",
+    "QwenSemanticEvidenceProvider",
+    "SemanticProviderArtifact",
+    "load_qwen_semantic_provider_from_environment",
     "TopicWorld",
     "play",
 ]

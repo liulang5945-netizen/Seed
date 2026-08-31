@@ -1,13 +1,14 @@
 # Seed / Taiji 计划与架构入口
 
-> 这是计划资料的总导航。路线只从 [active/SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) 进入，即时动作只从 [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) 读取；历史文档中的“下一步”一律不再生效。
+> 这是计划资料的总导航。即时动作只从 [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) 读取；E1–E9 阶段合同见 [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](active/roadmap/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md)，历史文档中的“下一步”一律不再生效。
 
-## 当前收敛结论（2026-08-31）
+## 当前收敛结论（2026-09-01）
 
 - W0–W6、W7-R1/R2 已形成基线；R3 页面层已有证据但 Windows shell 为 `tool-blocked`，R4 CUDA 为 `hardware-blocked`。
 - R5A/R5B 和 R5C-S0–S52 已建立知识、效应器与结构候选的验证、准入、rollback、checkpoint、lineage，以及显式 artifact consumption policy；新运行时默认 `verified-only`，历史 replay 只能显式使用 `legacy-compatible`。
+- 主线已重定向为 Taiji 本体训练与持续进化：Skill/MCP artifact 本身成为受治理的知识语料，Workbench/Skill/MCP 的真实调用结果成为经验语料；MCP 内化分成 Taiji 认知 artifact 与 Seed 客户端 capability 继承候选。DeepSeek Harness 的热插拔原则只用于 Seed 客户端 Vue/IDE/Workbench/Skill/MCP/plugin 层，不进入 Taiji 神经网络。
 - 当前最大能力缺口已经从“结构机制不存在”转为“自然语言任务虽可形成 Goal evidence、resolved evidence、语言 evidence、受限语义分解，provider 边界、确定性 lifecycle seam、真实 Workbench interaction-group 闭环、互补组收益、train-only 选组稳定性、同 capability 对的 context 留出迁移、异质成员/未见组合的受限 transfer、三轮 future Workbench 对照、三轮真实在线 Outcome 写回/准入/回滚、在线反馈到结构候选的受控桥接、首次结构扩容净收益、两个独立周期的连续结构增长、editor+MCP 跨域结构收益与旧 workspace 保留，以及 terminal 三域治理/审批/资源/失败恢复已建立；P2-8 完成单步闭环，P2-9 完成声明式 semantic grounding，P2-10 完成无外部绑定的多步 grounding/recovery，P2-11 完成无外部最终绑定的 IDE 语言链，P2-12 完成 Taiji-owned digest-checked 自然语言受控写入，P2-13 完成 API/OpenAPI/前端两阶段 transport，P5-1 完成协议编排模块化，P5-2 完成 grounding engine 模块化，P5-3 完成执行边界模块化，但真实聊天 UI 用户旅程、真实 provider 质量和更广开放域收益仍未验收”；S52 已收口 artifact 基础设施线，主线转入可验证的学习/自进化收益，不继续无限增加 artifact-store 微分片。
-- P6-1a 已建立独立 `SemanticEvidenceProvider` / `SemanticProviderRequest` seam，并通过内容寻址、无执行字段、Taiji admission 前置和无 Workbench 副作用 Gate；P6-1b 已用测试注入 provider 验证聊天端 `interpret → plan → execute` 只读 Workbench 旅程，真实 provider artifact / 浏览器现场仍进入 P6-1c 单独验收。
+- P6-1a–P6-1d 已建立 provider seam、真实 Qwen 后端/浏览器字段、失败回退和冻结 packaged backend 重启重绑；P7-1 质量 Gate 未通过，因此当前 Qwen 只保留为实验/回退语言器官。provider 升级不再阻塞 E1–E3。
 - provider watchdog、interaction-group、小型模拟 Gate、Windows 客户端、Legacy 残留清理和 CUDA 均保留在阶段总计划中；CI 按用户决定暂缓，不得把未运行写成通过。
 - 核心架构讨论继续留在 active/reference；完成 Gate 的过程文档将按新的收敛计划批量归档。
 
@@ -35,12 +36,13 @@
 
 | 文档 | 作用 |
 |---|---|
-| [SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) | 唯一路线入口和 W0–W7 / R1–R5 顺序 |
+| [SEED_DEVELOPMENT_ROADMAP_2026_08.md](active/SEED_DEVELOPMENT_ROADMAP_2026_08.md) | 路线导航、固定执行规则和 W0–W7 / R1–R5 历史基线 |
 | [01_SCOPE_AND_PHASES.md](active/roadmap/01_SCOPE_AND_PHASES.md) | 目标、原则、P0–P7 阶段和退出门槛 |
 | [02_GATES_AND_CI.md](active/roadmap/02_GATES_AND_CI.md) | 当前仍有效的门禁、CI 纪律、停止项和阻塞边界；不再承载事故日志 |
 | [03_CURRENT_EXECUTION.md](active/roadmap/03_CURRENT_EXECUTION.md) | 当前实现快照和当前唯一下一步 |
 | [04_EXECUTION_PLAN.md](active/roadmap/04_EXECUTION_PLAN.md) | W7-R5 已完成分片、原始 Gate 与历史阶段定义的证据索引 |
-| [62_POST_S51_PROJECT_CONVERGENCE_20260831.md](active/roadmap/62_POST_S51_PROJECT_CONVERGENCE_20260831.md) | S52 后的端到端 Workbench、语言、自进化收益、工程、产品、CI 与 CUDA 顺序 |
+| [62_POST_S51_PROJECT_CONVERGENCE_20260831.md](active/roadmap/62_POST_S51_PROJECT_CONVERGENCE_20260831.md) | S52 后的历史收敛背景；当前 E1–E9 顺序由新总路线覆盖 |
+| [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](active/roadmap/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md) | Skill/MCP 语料与经验、Taiji 本体训练、MCP 双产物内化和 Seed 客户端热插拔的 E1–E9 总路线 |
 
 ## 归档原则
 

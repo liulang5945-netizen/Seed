@@ -1,0 +1,870 @@
+{
+  "format": "taiji-w7-p6-1c-qwen-browser-field-v1",
+  "base_url": "http://127.0.0.1:5173",
+  "prompt": "读取 s1_upload_test.txt 并确认内容",
+  "checks": [
+    {
+      "name": "聊天页可访问",
+      "passed": true,
+      "detail": "HTTP 200"
+    },
+    {
+      "name": "Taiji 运行时已连接",
+      "passed": true,
+      "detail": "connected / model_loaded=true"
+    },
+    {
+      "name": "工作台任务卡片出现",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "卡片显示 Taiji 目标证据",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "卡片显示 provider 语义步骤证据",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "卡片显示真实目标路径",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "卡片显示 Taiji 执行计划",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "计划无需前端生成执行字段",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "只读 Workbench 执行完成",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "前端发送 interpret 请求",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "前端发送 Taiji plan 请求",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "前端发送 Taiji execute 请求",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "interpret 请求无越权字段",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "plan 请求无越权字段",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "execute 请求无越权字段",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "浏览器无 pageerror",
+      "passed": true,
+      "detail": ""
+    }
+  ],
+  "requests": [
+    {
+      "path": "/api/chat/workbench/interpret",
+      "method": "POST",
+      "forbidden_fields": []
+    },
+    {
+      "path": "/api/chat/workbench/natural-language/plan",
+      "method": "POST",
+      "forbidden_fields": []
+    },
+    {
+      "path": "/api/chat/workbench/natural-language/execute",
+      "method": "POST",
+      "forbidden_fields": []
+    }
+  ],
+  "responses": [
+    {
+      "path": "/api/chat/workbench/interpret",
+      "status": 200,
+      "payload": {
+        "format": "taiji-semantic-provider-admission-v1",
+        "provider_evidence": {
+          "format": "taiji-semantic-provider-evidence-v1",
+          "version": 1,
+          "proposal_id": "semantic-evidence:75c130dad398e9b3712c8d6d",
+          "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+          "input_id": "task:173:72f780e079bc3e67",
+          "input_digest": "72f780e079bc3e67148adf0b9dfdc6fe47ab8bb7f5df7b1e84fd640dcf902b67",
+          "modality": "text",
+          "goal_description": "读取文件并确认其内容",
+          "constraints": [
+            "仅读"
+          ],
+          "context_digest": "64a3ff6cab4a6d9cceda57c291b602b6ecff6140cb3db0e80730437a050be159",
+          "semantic_steps": [
+            {
+              "description": "读取 s1_upload_test.txt",
+              "semantic_slots": {
+                "operation": "read",
+                "path": "s1_upload_test.txt"
+              },
+              "expected_outcome": "获得 s1_upload_test.txt 内容",
+              "confidence": 0.9,
+              "ambiguity": 0.1
+            }
+          ],
+          "confidence": 0.9,
+          "ambiguity": 0.1,
+          "provenance": "qwen:qwen-semantic-01c4c7450b4a973a",
+          "tick": 173,
+          "evidence_digest": "07aa2fffb1ee3ef36309e081ada4b6f8df69935bcd9fe5cb5062858ff91a048d"
+        },
+        "interpretation": {
+          "format": "taiji-task-interpretation-v1",
+          "version": 1,
+          "interpretation_id": "task-interpretation:407f3af2723c8690d81cb2ba",
+          "input_id": "task:173:72f780e079bc3e67",
+          "input_digest": "72f780e079bc3e67148adf0b9dfdc6fe47ab8bb7f5df7b1e84fd640dcf902b67",
+          "modality": "text",
+          "goal_id": "goal:407f3af2723c8690d81cb2ba",
+          "goal_description": "读取文件并确认其内容",
+          "constraints": [
+            "仅读"
+          ],
+          "context_digest": "64a3ff6cab4a6d9cceda57c291b602b6ecff6140cb3db0e80730437a050be159",
+          "confidence": 0.9,
+          "ambiguity": 0.1,
+          "status": "resolved",
+          "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+          "tick": 173,
+          "evidence_digest": "08eb51c7cff8d2af5f7f7ae6597c5ebb852a54fb01e4ffc3544c2bee81f1bcae"
+        },
+        "goal": {
+          "version": 1,
+          "goal_id": "goal:407f3af2723c8690d81cb2ba",
+          "description": "读取文件并确认其内容",
+          "priority": 0,
+          "progress": 0
+        },
+        "decomposition": {
+          "format": "taiji-task-decomposition-v1",
+          "version": 1,
+          "decomposition_id": "task-decomposition:281075eee255cfed49b4a014",
+          "interpretation_id": "task-interpretation:407f3af2723c8690d81cb2ba",
+          "goal_id": "goal:407f3af2723c8690d81cb2ba",
+          "steps": [
+            {
+              "format": "taiji-task-decomposition-v1",
+              "version": 1,
+              "step_id": "task-step:2b08cc5afd568a7e93606571",
+              "description": "读取 s1_upload_test.txt",
+              "semantic_slots": {
+                "operation": "read",
+                "path": "s1_upload_test.txt"
+              },
+              "expected_outcome": "获得 s1_upload_test.txt 内容",
+              "confidence": 0.9,
+              "ambiguity": 0.1,
+              "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+              "tick": 173,
+              "evidence_digest": "1a41b02765bc83c0dad5573c83ef042f1205850a9d80324d58627b2ffb50458e"
+            }
+          ],
+          "confidence": 0.9,
+          "ambiguity": 0.1,
+          "status": "resolved",
+          "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+          "tick": 173,
+          "evidence_digest": "5efe012e2d4b5f7a168aabb9e025e90aecc490cd776bccbe24fbad1260086598"
+        },
+        "semantic_provider": {
+          "interface": "taiji-semantic-provider-interface-v1",
+          "state": "attached",
+          "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+          "evidence_enabled": "true",
+          "reason_code": "semantic_provider_attached"
+        },
+        "status": "resolved",
+        "execution": {
+          "status": "not_planned",
+          "action_intent": null,
+          "tool_call": null,
+          "side_effects": false,
+          "next": "taiji_workbench_grounding"
+        }
+      }
+    },
+    {
+      "path": "/api/chat/workbench/natural-language/plan",
+      "status": 200,
+      "payload": {
+        "format": "seed-natural-language-workbench-task-v1",
+        "provider_evidence": {
+          "format": "taiji-semantic-provider-evidence-v1",
+          "version": 1,
+          "proposal_id": "semantic-evidence:71787592c310e733ac474242",
+          "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+          "input_id": "task:214:72f780e079bc3e67",
+          "input_digest": "72f780e079bc3e67148adf0b9dfdc6fe47ab8bb7f5df7b1e84fd640dcf902b67",
+          "modality": "text",
+          "goal_description": "读取文件并确认其内容",
+          "constraints": [
+            "仅读"
+          ],
+          "context_digest": "64a3ff6cab4a6d9cceda57c291b602b6ecff6140cb3db0e80730437a050be159",
+          "semantic_steps": [
+            {
+              "description": "读取 s1_upload_test.txt",
+              "semantic_slots": {
+                "operation": "read",
+                "path": "s1_upload_test.txt"
+              },
+              "expected_outcome": "获得 s1_upload_test.txt 内容",
+              "confidence": 0.9,
+              "ambiguity": 0.1
+            }
+          ],
+          "confidence": 0.9,
+          "ambiguity": 0.1,
+          "provenance": "qwen:qwen-semantic-01c4c7450b4a973a",
+          "tick": 214,
+          "evidence_digest": "7fef5aa5ff243ae8e769a59cf878342af0d0d45a38937ad704dd34d4f89c40a3"
+        },
+        "interpretation": {
+          "format": "taiji-task-interpretation-v1",
+          "version": 1,
+          "interpretation_id": "task-interpretation:d6cdb36e7886fabc94b5b917",
+          "input_id": "task:214:72f780e079bc3e67",
+          "input_digest": "72f780e079bc3e67148adf0b9dfdc6fe47ab8bb7f5df7b1e84fd640dcf902b67",
+          "modality": "text",
+          "goal_id": "goal:d6cdb36e7886fabc94b5b917",
+          "goal_description": "读取文件并确认其内容",
+          "constraints": [
+            "仅读"
+          ],
+          "context_digest": "64a3ff6cab4a6d9cceda57c291b602b6ecff6140cb3db0e80730437a050be159",
+          "confidence": 0.9,
+          "ambiguity": 0.1,
+          "status": "resolved",
+          "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+          "tick": 214,
+          "evidence_digest": "d28ec191f9ef18eb94db272d36d77f6024aaf214e6aa347a770de5a52325d828"
+        },
+        "goal": {
+          "version": 1,
+          "goal_id": "goal:d6cdb36e7886fabc94b5b917",
+          "description": "读取文件并确认其内容",
+          "priority": 0,
+          "progress": 0
+        },
+        "decomposition": {
+          "format": "taiji-task-decomposition-v1",
+          "version": 1,
+          "decomposition_id": "task-decomposition:e0cc35f677da67e5fbabac3d",
+          "interpretation_id": "task-interpretation:d6cdb36e7886fabc94b5b917",
+          "goal_id": "goal:d6cdb36e7886fabc94b5b917",
+          "steps": [
+            {
+              "format": "taiji-task-decomposition-v1",
+              "version": 1,
+              "step_id": "task-step:97f255be9430b58d0ab7ca3e",
+              "description": "读取 s1_upload_test.txt",
+              "semantic_slots": {
+                "operation": "read",
+                "path": "s1_upload_test.txt"
+              },
+              "expected_outcome": "获得 s1_upload_test.txt 内容",
+              "confidence": 0.9,
+              "ambiguity": 0.1,
+              "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+              "tick": 214,
+              "evidence_digest": "ad19c01b5af60f34199b2a70f9516936e881498de209e8c467761f558d33983f"
+            }
+          ],
+          "confidence": 0.9,
+          "ambiguity": 0.1,
+          "status": "resolved",
+          "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+          "tick": 214,
+          "evidence_digest": "0065005aec2282f70599868e8f8f47ebfbbd64e4ed37ec2f15fde88e97d193a0"
+        },
+        "planning": {
+          "status": "planned",
+          "steps": [
+            {
+              "index": 0,
+              "step_id": "task-step:97f255be9430b58d0ab7ca3e",
+              "semantic_evidence_digest": "ad19c01b5af60f34199b2a70f9516936e881498de209e8c467761f558d33983f",
+              "grounding_source": "taiji-semantic-contract",
+              "grounding": [
+                {
+                  "version": 1,
+                  "affordance_id": "workbench:workspace.read:63d0c2d213eae745",
+                  "action_kind": "workspace.read",
+                  "actor_id": "",
+                  "target_id": "",
+                  "parameters": {
+                    "kind": "mapping",
+                    "value": {
+                      "path": "s1_upload_test.txt"
+                    }
+                  },
+                  "confidence": 1,
+                  "features": [],
+                  "feature_provenance": "workbench-capability-snapshot",
+                  "grounding_lineage": [
+                    "workbench-capability-revision:6",
+                    "workbench-capability:workspace.read",
+                    "workbench-snapshot:93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+                  ]
+                }
+              ],
+              "planner": {
+                "status": "planned",
+                "reason_code": "taiji_executive_selected",
+                "decision": {
+                  "format": "taiji-executive-v1",
+                  "selected": {
+                    "format": "taiji-executive-v1",
+                    "candidate_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745",
+                    "action_intent": {
+                      "version": 1,
+                      "intent_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+                      "kind": "workspace.read",
+                      "parameters": {
+                        "kind": "mapping",
+                        "value": {
+                          "path": "s1_upload_test.txt"
+                        }
+                      },
+                      "source_goal_id": "goal:d6cdb36e7886fabc94b5b917",
+                      "expected_outcome": "",
+                      "confidence": 0.9,
+                      "tick": 214
+                    },
+                    "content_plan": {
+                      "content_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent:content",
+                      "intent_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+                      "intent_kind": "workspace.read",
+                      "semantic_slots": {
+                        "actor_id": "",
+                        "target_id": "",
+                        "parameters": {
+                          "path": "s1_upload_test.txt"
+                        }
+                      },
+                      "required_terms": [],
+                      "source_goal_id": "goal:d6cdb36e7886fabc94b5b917",
+                      "expected_outcome": "",
+                      "confidence": 0.9,
+                      "provenance": "affordance-derived",
+                      "tick": 214
+                    },
+                    "features": [
+                      0.13344940543174744,
+                      0.18265266716480255,
+                      -0.22931480407714844,
+                      -0.17731410264968872,
+                      0.011476575396955013,
+                      -0.19516591727733612
+                    ],
+                    "provenance": "affordance-derived/learned",
+                    "source_percept_id": "p6-1b-chat-workbench-journey:assembly:22",
+                    "source_affordance_id": "workbench:workspace.read:63d0c2d213eae745"
+                  },
+                  "scores": {
+                    "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745": 0
+                  },
+                  "context": {
+                    "format": "taiji-executive-v1",
+                    "features": {},
+                    "tick": 214,
+                    "goal_id": "goal:d6cdb36e7886fabc94b5b917"
+                  }
+                }
+              }
+            }
+          ],
+          "action_intents": [
+            {
+              "version": 1,
+              "intent_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+              "kind": "workspace.read",
+              "parameters": {
+                "kind": "mapping",
+                "value": {
+                  "path": "s1_upload_test.txt"
+                }
+              },
+              "source_goal_id": "goal:d6cdb36e7886fabc94b5b917",
+              "expected_outcome": "",
+              "confidence": 0.9,
+              "tick": 214
+            }
+          ]
+        },
+        "preflight": null,
+        "execution": {
+          "status": "not_executed",
+          "action_intent": null,
+          "side_effects": false
+        },
+        "plan_id": "taiji-plan:9e9eb0cc158a968d2547680a",
+        "approval_requirements": [],
+        "status": "planned",
+        "reason_code": "taiji_plan_ready"
+      }
+    },
+    {
+      "path": "/api/chat/workbench/natural-language/execute",
+      "status": 200,
+      "payload": {
+        "format": "seed-natural-language-workbench-task-v1",
+        "provider_evidence": {
+          "format": "taiji-semantic-provider-evidence-v1",
+          "version": 1,
+          "proposal_id": "semantic-evidence:71787592c310e733ac474242",
+          "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+          "input_id": "task:214:72f780e079bc3e67",
+          "input_digest": "72f780e079bc3e67148adf0b9dfdc6fe47ab8bb7f5df7b1e84fd640dcf902b67",
+          "modality": "text",
+          "goal_description": "读取文件并确认其内容",
+          "constraints": [
+            "仅读"
+          ],
+          "context_digest": "64a3ff6cab4a6d9cceda57c291b602b6ecff6140cb3db0e80730437a050be159",
+          "semantic_steps": [
+            {
+              "description": "读取 s1_upload_test.txt",
+              "semantic_slots": {
+                "operation": "read",
+                "path": "s1_upload_test.txt"
+              },
+              "expected_outcome": "获得 s1_upload_test.txt 内容",
+              "confidence": 0.9,
+              "ambiguity": 0.1
+            }
+          ],
+          "confidence": 0.9,
+          "ambiguity": 0.1,
+          "provenance": "qwen:qwen-semantic-01c4c7450b4a973a",
+          "tick": 214,
+          "evidence_digest": "7fef5aa5ff243ae8e769a59cf878342af0d0d45a38937ad704dd34d4f89c40a3"
+        },
+        "interpretation": {
+          "format": "taiji-task-interpretation-v1",
+          "version": 1,
+          "interpretation_id": "task-interpretation:d6cdb36e7886fabc94b5b917",
+          "input_id": "task:214:72f780e079bc3e67",
+          "input_digest": "72f780e079bc3e67148adf0b9dfdc6fe47ab8bb7f5df7b1e84fd640dcf902b67",
+          "modality": "text",
+          "goal_id": "goal:d6cdb36e7886fabc94b5b917",
+          "goal_description": "读取文件并确认其内容",
+          "constraints": [
+            "仅读"
+          ],
+          "context_digest": "64a3ff6cab4a6d9cceda57c291b602b6ecff6140cb3db0e80730437a050be159",
+          "confidence": 0.9,
+          "ambiguity": 0.1,
+          "status": "resolved",
+          "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+          "tick": 214,
+          "evidence_digest": "d28ec191f9ef18eb94db272d36d77f6024aaf214e6aa347a770de5a52325d828"
+        },
+        "goal": {
+          "version": 1,
+          "goal_id": "goal:d6cdb36e7886fabc94b5b917",
+          "description": "读取文件并确认其内容",
+          "priority": 0,
+          "progress": 0
+        },
+        "decomposition": {
+          "format": "taiji-task-decomposition-v1",
+          "version": 1,
+          "decomposition_id": "task-decomposition:e0cc35f677da67e5fbabac3d",
+          "interpretation_id": "task-interpretation:d6cdb36e7886fabc94b5b917",
+          "goal_id": "goal:d6cdb36e7886fabc94b5b917",
+          "steps": [
+            {
+              "format": "taiji-task-decomposition-v1",
+              "version": 1,
+              "step_id": "task-step:97f255be9430b58d0ab7ca3e",
+              "description": "读取 s1_upload_test.txt",
+              "semantic_slots": {
+                "operation": "read",
+                "path": "s1_upload_test.txt"
+              },
+              "expected_outcome": "获得 s1_upload_test.txt 内容",
+              "confidence": 0.9,
+              "ambiguity": 0.1,
+              "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+              "tick": 214,
+              "evidence_digest": "ad19c01b5af60f34199b2a70f9516936e881498de209e8c467761f558d33983f"
+            }
+          ],
+          "confidence": 0.9,
+          "ambiguity": 0.1,
+          "status": "resolved",
+          "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+          "tick": 214,
+          "evidence_digest": "0065005aec2282f70599868e8f8f47ebfbbd64e4ed37ec2f15fde88e97d193a0"
+        },
+        "planning": {
+          "status": "planned",
+          "steps": [
+            {
+              "index": 0,
+              "step_id": "task-step:97f255be9430b58d0ab7ca3e",
+              "semantic_evidence_digest": "ad19c01b5af60f34199b2a70f9516936e881498de209e8c467761f558d33983f",
+              "grounding_source": "taiji-semantic-contract",
+              "grounding": [
+                {
+                  "version": 1,
+                  "affordance_id": "workbench:workspace.read:63d0c2d213eae745",
+                  "action_kind": "workspace.read",
+                  "actor_id": "",
+                  "target_id": "",
+                  "parameters": {
+                    "kind": "mapping",
+                    "value": {
+                      "path": "s1_upload_test.txt"
+                    }
+                  },
+                  "confidence": 1,
+                  "features": [],
+                  "feature_provenance": "workbench-capability-snapshot",
+                  "grounding_lineage": [
+                    "workbench-capability-revision:6",
+                    "workbench-capability:workspace.read",
+                    "workbench-snapshot:93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+                  ]
+                }
+              ],
+              "planner": {
+                "status": "planned",
+                "reason_code": "taiji_executive_selected",
+                "decision": {
+                  "format": "taiji-executive-v1",
+                  "selected": {
+                    "format": "taiji-executive-v1",
+                    "candidate_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745",
+                    "action_intent": {
+                      "version": 1,
+                      "intent_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+                      "kind": "workspace.read",
+                      "parameters": {
+                        "kind": "mapping",
+                        "value": {
+                          "path": "s1_upload_test.txt"
+                        }
+                      },
+                      "source_goal_id": "goal:d6cdb36e7886fabc94b5b917",
+                      "expected_outcome": "",
+                      "confidence": 0.9,
+                      "tick": 214
+                    },
+                    "content_plan": {
+                      "content_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent:content",
+                      "intent_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+                      "intent_kind": "workspace.read",
+                      "semantic_slots": {
+                        "actor_id": "",
+                        "target_id": "",
+                        "parameters": {
+                          "path": "s1_upload_test.txt"
+                        }
+                      },
+                      "required_terms": [],
+                      "source_goal_id": "goal:d6cdb36e7886fabc94b5b917",
+                      "expected_outcome": "",
+                      "confidence": 0.9,
+                      "provenance": "affordance-derived",
+                      "tick": 214
+                    },
+                    "features": [
+                      0.13344940543174744,
+                      0.18265266716480255,
+                      -0.22931480407714844,
+                      -0.17731410264968872,
+                      0.011476575396955013,
+                      -0.19516591727733612
+                    ],
+                    "provenance": "affordance-derived/learned",
+                    "source_percept_id": "p6-1b-chat-workbench-journey:assembly:22",
+                    "source_affordance_id": "workbench:workspace.read:63d0c2d213eae745"
+                  },
+                  "scores": {
+                    "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745": 0
+                  },
+                  "context": {
+                    "format": "taiji-executive-v1",
+                    "features": {},
+                    "tick": 214,
+                    "goal_id": "goal:d6cdb36e7886fabc94b5b917"
+                  }
+                }
+              }
+            }
+          ],
+          "action_intents": [
+            {
+              "version": 1,
+              "intent_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+              "kind": "workspace.read",
+              "parameters": {
+                "kind": "mapping",
+                "value": {
+                  "path": "s1_upload_test.txt"
+                }
+              },
+              "source_goal_id": "goal:d6cdb36e7886fabc94b5b917",
+              "expected_outcome": "",
+              "confidence": 0.9,
+              "tick": 214
+            }
+          ]
+        },
+        "preflight": {
+          "format": "seed-workbench-loop-v1",
+          "version": 1,
+          "loop_id": "chat-workbench:task-interpretation:407f3af2723c8690d81cb2ba",
+          "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+          "mcp_registry_snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+          "accepted": true,
+          "step_count": 1,
+          "max_steps": 1,
+          "budget_units": 1,
+          "max_budget_units": 1,
+          "on_failure": "stop",
+          "checkpoint": {
+            "boundary": "after_each_step",
+            "required": true,
+            "resume_key": "request_id"
+          },
+          "steps": [
+            {
+              "index": 0,
+              "request_id": "workbench:p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+              "intent_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+              "capability_id": "workspace.read",
+              "policy": {
+                "version": 1,
+                "request_id": "workbench:p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+                "capability_id": "workspace.read",
+                "decision": "allow",
+                "reason_code": "read_only_or_reversible",
+                "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+              },
+              "budget_units": 1,
+              "mcp_registry_snapshot_id": ""
+            }
+          ],
+          "preflight_id": "ee7eb37557174e81931eaff74dc9c35ab06bb83640ca49dfa7e7ff21c21f7ce2",
+          "runtime": {
+            "tick": 214,
+            "checkpoint_path": "E:\\Seed\\checkpoints\\seed_corpus.pt",
+            "checkpoint_boundary": "after_each_step"
+          }
+        },
+        "execution": {
+          "format": "seed-workbench-loop-v1",
+          "version": 1,
+          "loop_id": "chat-workbench:task-interpretation:407f3af2723c8690d81cb2ba",
+          "preflight_id": "ee7eb37557174e81931eaff74dc9c35ab06bb83640ca49dfa7e7ff21c21f7ce2",
+          "preflight": {
+            "format": "seed-workbench-loop-v1",
+            "version": 1,
+            "loop_id": "chat-workbench:task-interpretation:407f3af2723c8690d81cb2ba",
+            "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+            "mcp_registry_snapshot_id": "3a9678d2f5083234a7f25254c59ca997e3fdcd64295cb35efa68020f8d52fdb2",
+            "accepted": true,
+            "step_count": 1,
+            "max_steps": 1,
+            "budget_units": 1,
+            "max_budget_units": 1,
+            "on_failure": "stop",
+            "checkpoint": {
+              "boundary": "after_each_step",
+              "required": true,
+              "resume_key": "request_id"
+            },
+            "steps": [
+              {
+                "index": 0,
+                "request_id": "workbench:p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+                "intent_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+                "capability_id": "workspace.read",
+                "policy": {
+                  "version": 1,
+                  "request_id": "workbench:p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+                  "capability_id": "workspace.read",
+                  "decision": "allow",
+                  "reason_code": "read_only_or_reversible",
+                  "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+                },
+                "budget_units": 1,
+                "mcp_registry_snapshot_id": ""
+              }
+            ],
+            "preflight_id": "ee7eb37557174e81931eaff74dc9c35ab06bb83640ca49dfa7e7ff21c21f7ce2"
+          },
+          "steps": [
+            {
+              "index": 0,
+              "request_id": "workbench:p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+              "intent_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+              "capability_id": "workspace.read",
+              "status": "success",
+              "success": true,
+              "policy": {
+                "version": 1,
+                "request_id": "workbench:p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+                "capability_id": "workspace.read",
+                "decision": "allow",
+                "reason_code": "read_only_or_reversible",
+                "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850"
+              },
+              "outcome": {
+                "version": 1,
+                "request_id": "workbench:p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+                "intent_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+                "call_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent:tool-call",
+                "capability_id": "workspace.read",
+                "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+                "status": "success",
+                "success": true,
+                "result": {
+                  "path": "s1_upload_test.txt",
+                  "content": "S1验收测试文件：知识库上传接线验证。\r\n这是用于端到端验收的小型文本文件。\r\n",
+                  "encoding": "utf-8",
+                  "byte_length": 108,
+                  "digest": "97df2408c8a7558c64b7fea2c14469189f14965686892b891e1733f517f55f59",
+                  "truncated": false
+                },
+                "error_code": "",
+                "error": "",
+                "transaction": {
+                  "version": 1,
+                  "operation": "workspace.read",
+                  "path": "s1_upload_test.txt",
+                  "before_digest": "97df2408c8a7558c64b7fea2c14469189f14965686892b891e1733f517f55f59",
+                  "after_digest": "97df2408c8a7558c64b7fea2c14469189f14965686892b891e1733f517f55f59",
+                  "undo_token": "",
+                  "reversible": true
+                },
+                "tick": 214,
+                "mcp_registry_snapshot_id": ""
+              },
+              "tool_call": {
+                "call_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent:tool-call",
+                "intent_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent",
+                "expression_id": "p6-1b-chat-workbench-journey:assembly:22:workbench:workspace.read:63d0c2d213eae745:intent:content:expression:tool",
+                "tool_name": "workspace.read",
+                "parameters": {
+                  "path": "s1_upload_test.txt"
+                },
+                "source_goal_id": "goal:d6cdb36e7886fabc94b5b917",
+                "confidence": 0.9,
+                "provenance": "planned",
+                "tick": 214,
+                "workbench_binding": {
+                  "version": 1,
+                  "capability_snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+                  "mcp_registry_snapshot_id": "",
+                  "capability_registry_snapshot_id": "d3f139e897a68023141df1194fa9868f80a19005dcd4e547258c3cc409b37583"
+                }
+              },
+              "checkpoint": {
+                "committed": true,
+                "path": "E:\\Seed\\checkpoints\\seed_corpus.pt"
+              }
+            }
+          ],
+          "completed_prefix": 1,
+          "status": "completed",
+          "checkpoint": {
+            "committed": true,
+            "path": "E:\\Seed\\checkpoints\\seed_corpus.pt"
+          },
+          "side_effects": false
+        },
+        "plan_id": "taiji-plan:9e9eb0cc158a968d2547680a",
+        "status": "completed",
+        "reason_code": ""
+      }
+    }
+  ],
+  "interpretation": {
+    "provider_id": "已解析\ngoal:407f3af2723c8690d81cb2ba",
+    "card_text": "Taiji 目标证据\n\n读取文件并确认其内容\n\n已解析\ngoal:407f3af2723c8690d81cb2ba",
+    "semantic_text": "语义步骤证据\n1\n读取 s1_upload_test.txt"
+  },
+  "plan": {
+    "prompt": "读取 s1_upload_test.txt 并确认内容",
+    "semantic_evidence": {
+      "format": "taiji-semantic-provider-evidence-v1",
+      "version": 1,
+      "proposal_id": "semantic-evidence:75c130dad398e9b3712c8d6d",
+      "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+      "input_id": "task:173:72f780e079bc3e67",
+      "input_digest": "72f780e079bc3e67148adf0b9dfdc6fe47ab8bb7f5df7b1e84fd640dcf902b67",
+      "modality": "text",
+      "goal_description": "读取文件并确认其内容",
+      "constraints": [
+        "仅读"
+      ],
+      "context_digest": "64a3ff6cab4a6d9cceda57c291b602b6ecff6140cb3db0e80730437a050be159",
+      "semantic_steps": [
+        {
+          "description": "读取 s1_upload_test.txt",
+          "semantic_slots": {
+            "operation": "read",
+            "path": "s1_upload_test.txt"
+          },
+          "expected_outcome": "获得 s1_upload_test.txt 内容",
+          "confidence": 0.9,
+          "ambiguity": 0.1
+        }
+      ],
+      "confidence": 0.9,
+      "ambiguity": 0.1,
+      "provenance": "qwen:qwen-semantic-01c4c7450b4a973a",
+      "tick": 173,
+      "evidence_digest": "07aa2fffb1ee3ef36309e081ada4b6f8df69935bcd9fe5cb5062858ff91a048d"
+    },
+    "snapshot_id": "93bd90dbb765f4cbc7f9d5d15b1533bf13734758c64e32381970880fcac9c850",
+    "loop_id": "chat-workbench:task-interpretation:407f3af2723c8690d81cb2ba",
+    "max_steps": 1,
+    "max_budget_units": 1,
+    "novelty": 0,
+    "resource_budget": 1
+  },
+  "execution": {
+    "plan_id": "taiji-plan:9e9eb0cc158a968d2547680a",
+    "approval_tokens": {}
+  },
+  "page_errors": [],
+  "gate": {
+    "passed": true,
+    "criterion": "real Qwen evidence is visible in the chat Workbench card and Taiji owns plan/execute without client execution-field injection"
+  }
+}

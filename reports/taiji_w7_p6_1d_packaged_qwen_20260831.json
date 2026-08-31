@@ -1,0 +1,110 @@
+{
+  "format": "taiji-w7-p6-1d-packaged-qwen-lifecycle-v1",
+  "package": {
+    "path": "E:\\Seed\\dist\\Seed\\SeedBackend.exe",
+    "backend": "SeedBackend.exe"
+  },
+  "model": {
+    "model_dir": "C:\\Users\\23747\\.cache\\huggingface\\hub\\models--Qwen--Qwen2.5-0.5B-Instruct\\snapshots\\7ae557604adf67be50417f59c2c2f167def9a775",
+    "model_digest": "01c4c7450b4a973a22a94a879492df9561608f3947411d69b20db61238fa79af"
+  },
+  "request": {
+    "prompt": "读取 README.md 并确认当前内容",
+    "constraints": [
+      "只读"
+    ]
+  },
+  "cycles": [
+    {
+      "cycle": 1,
+      "port": 18100,
+      "pid": 16880,
+      "log": "E:\\Seed\\logs\\p6-1d-packaged-cycle-1.log",
+      "health": {
+        "reachable": true,
+        "state": "loading"
+      },
+      "activation": {
+        "status": "ok",
+        "checkpoint_id": "seed_corpus.pt",
+        "semantic_provider": {
+          "interface": "taiji-semantic-provider-interface-v1",
+          "state": "attached",
+          "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+          "evidence_enabled": "true",
+          "reason_code": "semantic_provider_attached"
+        }
+      },
+      "admission": {
+        "format": "taiji-semantic-provider-admission-v1",
+        "interpretation_status": "resolved",
+        "semantic_step_count": 1,
+        "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+        "evidence_digest": "a25e23fc9037dcaa4d4a9975b248a4e3a60c586ed4d41d236d9a6b99a97ce870",
+        "execution": {
+          "status": "not_planned",
+          "action_intent": null,
+          "tool_call": null,
+          "side_effects": false,
+          "next": "taiji_workbench_grounding"
+        }
+      }
+    },
+    {
+      "cycle": 2,
+      "port": 18101,
+      "pid": 4492,
+      "log": "E:\\Seed\\logs\\p6-1d-packaged-cycle-2.log",
+      "health": {
+        "reachable": true,
+        "state": "loading"
+      },
+      "activation": {
+        "status": "ok",
+        "checkpoint_id": "seed_corpus.pt",
+        "semantic_provider": {
+          "interface": "taiji-semantic-provider-interface-v1",
+          "state": "attached",
+          "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+          "evidence_enabled": "true",
+          "reason_code": "semantic_provider_attached"
+        }
+      },
+      "admission": {
+        "format": "taiji-semantic-provider-admission-v1",
+        "interpretation_status": "resolved",
+        "semantic_step_count": 1,
+        "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+        "evidence_digest": "a25e23fc9037dcaa4d4a9975b248a4e3a60c586ed4d41d236d9a6b99a97ce870",
+        "execution": {
+          "status": "not_planned",
+          "action_intent": null,
+          "tool_call": null,
+          "side_effects": false,
+          "next": "taiji_workbench_grounding"
+        }
+      }
+    }
+  ],
+  "invalid_digest_probe": {
+    "status": "rejected",
+    "http_status": 500,
+    "detail": "{\"detail\":\"Taiji runtime 激活失败: semantic provider model digest is not allowlisted: expected 0000000000000000000000000000000000000000000000000000000000000000, got 01c4c7450b4a973a22a94a879492df9561608f3947411d69b20db61238fa79af\"}",
+    "log": "E:\\Seed\\logs\\p6-1d-packaged-invalid-digest.log"
+  },
+  "checks": {
+    "packaged_backend_exists": true,
+    "both_cycles_reached_health": true,
+    "both_activations_succeeded": true,
+    "provider_attached_after_each_restart": true,
+    "same_provider_rebound": true,
+    "real_semantic_admission_each_cycle": true,
+    "no_execution_authority_at_interpret": true,
+    "invalid_digest_fails_closed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "the frozen SeedBackend must explicitly rebind the content-addressed Qwen artifact after restart and admit real semantic evidence without execution authority"
+  },
+  "boundary": "This proves two local packaged backend restart/rebind cycles. It does not prove model quality, CUDA, installer UI, multi-version real rotation, or open-domain intelligence."
+}

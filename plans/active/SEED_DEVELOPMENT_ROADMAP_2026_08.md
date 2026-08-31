@@ -15,9 +15,10 @@
 |---|---|---|
 | [01_SCOPE_AND_PHASES.md](roadmap/01_SCOPE_AND_PHASES.md) | 目标、原则、P0–P7 阶段和阶段退出门槛 | 当前参考 |
 | [02_GATES_AND_CI.md](roadmap/02_GATES_AND_CI.md) | 当前仍有效的门禁、CI 纪律、停止项和阻塞边界 | 当前参考 |
-| [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md) | 当前实现快照、唯一下一步、W0–W7 顺序 | 当前执行 |
+| [03_CURRENT_EXECUTION.md](roadmap/03_CURRENT_EXECUTION.md) | 当前实现快照和唯一下一步 | 当前执行 |
 | [04_EXECUTION_PLAN.md](roadmap/04_EXECUTION_PLAN.md) | W7-R5 已完成分片与原始 Gate 的证据索引 | 当前参考 |
-| [62_POST_S51_PROJECT_CONVERGENCE_20260831.md](roadmap/62_POST_S51_PROJECT_CONVERGENCE_20260831.md) | S52 后的项目收敛顺序和端到端能力 Gate | 当前阶段总计划 |
+| [62_POST_S51_PROJECT_CONVERGENCE_20260831.md](roadmap/62_POST_S51_PROJECT_CONVERGENCE_20260831.md) | S52 后的历史收敛背景和已完成端到端能力 Gate | 当前参考 |
+| [63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md](roadmap/63_TAIJI_NATIVE_EVOLUTION_AND_EMBODIMENT_20260831.md) | Skill/MCP 语料与经验、Taiji 本体训练、MCP 双产物内化和 Seed 客户端热插拔 E1–E9 | 当前阶段总计划 |
 | [IMPLEMENTATION_STATUS_2026_08.md](../reference/IMPLEMENTATION_STATUS_2026_08.md) | 代码事实、owner 和能力声明 | 当前参考 |
 
 ## 固定执行规则
@@ -36,7 +37,7 @@ W0–W6 与 W7-R1/R2 已形成基线。W7 不再把彼此无实现依赖的验�
 - W7-R1/R2：provider watchdog 与 interaction-group 已完成 S0/S1/S2 基线。
 - W7-R3：页面层已通过，Windows shell 现场证据保持 `tool-blocked` 独立补证。
 - W7-R4：真实 CUDA 主机上的 profile、跨设备 checkpoint 和数值一致性保持 `hardware-blocked`。
-- W7-R5：G1、R5A/R5B 基线和 R5C-S0–S52 已落地；S52 已收口 artifact policy，当前按 **自然语言目标 → Taiji 计划 → Workbench/IDE 行动 → Outcome/学习 → 自进化收益** 的端到端主线推进。
+- W7-R5：G1、R5A/R5B 基线和 R5C-S0–S52 已落地；S52 已收口 artifact policy。当前按 **Skill/MCP 知识语料 + Workbench/Skill/MCP 真实经验 → Taiji 本体学习 → MCP 认知内化/客户端 capability 双产物 → Seed 客户端热插拔 → 长期因果收益** 的 E1–E9 主线推进。
 
 R3/R4 未关闭时不得宣称对应能力完成；但工具/硬件阻塞不再冻结与它们无依赖的 R5 CPU/native 工作。R5 也不得反向替代 R3/R4 证据。
 

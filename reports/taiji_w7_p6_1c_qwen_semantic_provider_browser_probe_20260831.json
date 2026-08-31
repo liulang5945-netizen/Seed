@@ -1,0 +1,144 @@
+{
+  "format": "taiji-w7-p6-1c-qwen-semantic-provider-v1",
+  "model": {
+    "model_dir": "C:\\Users\\23747\\.cache\\huggingface\\hub\\models--Qwen--Qwen2.5-0.5B-Instruct\\snapshots\\7ae557604adf67be50417f59c2c2f167def9a775",
+    "model_digest": "01c4c7450b4a973a22a94a879492df9561608f3947411d69b20db61238fa79af",
+    "backend_id": "qwen2.5-0.5b-instruct"
+  },
+  "provider_artifact": {
+    "format": "taiji-semantic-provider-artifact-v1",
+    "version": 1,
+    "artifact_id": "qwen-semantic-01c4c7450b4a973a",
+    "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+    "backend_id": "qwen2.5-0.5b-instruct",
+    "model_dir": "C:\\Users\\23747\\.cache\\huggingface\\hub\\models--Qwen--Qwen2.5-0.5B-Instruct\\snapshots\\7ae557604adf67be50417f59c2c2f167def9a775",
+    "model_digest": "01c4c7450b4a973a22a94a879492df9561608f3947411d69b20db61238fa79af",
+    "artifact_digest": "semantic-artifact:2a7a22aefc502214a1afd1b6"
+  },
+  "request": {
+    "prompt": "读取 p6_1c_browser_canary.md 并确认内容",
+    "constraints": [
+      "只读"
+    ]
+  },
+  "admission": {
+    "format": "taiji-semantic-provider-admission-v1",
+    "provider_evidence": {
+      "format": "taiji-semantic-provider-evidence-v1",
+      "version": 1,
+      "proposal_id": "semantic-evidence:639873c1f33a93f1bbbe2dbd",
+      "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+      "input_id": "task:0:8ba815e1f2521699",
+      "input_digest": "8ba815e1f25216997c7ce64103026e340ecb17e318d1384cc2d5e9e216b6f08f",
+      "modality": "text",
+      "goal_description": "读取指定文件并确认内容",
+      "constraints": [
+        "只读"
+      ],
+      "context_digest": "",
+      "semantic_steps": [
+        {
+          "description": "读取 p6_1c_browser_canary.md",
+          "semantic_slots": {
+            "operation": "read",
+            "path": "p6_1c_browser_canary.md"
+          },
+          "expected_outcome": "获得 p6_1c_browser_canary.md 内容",
+          "confidence": 0.9,
+          "ambiguity": 0.1
+        }
+      ],
+      "confidence": 0.9,
+      "ambiguity": 0.1,
+      "provenance": "qwen:qwen-semantic-01c4c7450b4a973a",
+      "tick": 0,
+      "evidence_digest": "f9fa53301e711620cbd9a981cfc97fa798ddbf715a66cbc4c0f1d0f5ae53df56"
+    },
+    "interpretation": {
+      "format": "taiji-task-interpretation-v1",
+      "version": 1,
+      "interpretation_id": "task-interpretation:847d424c2db94f9120fb471c",
+      "input_id": "task:0:8ba815e1f2521699",
+      "input_digest": "8ba815e1f25216997c7ce64103026e340ecb17e318d1384cc2d5e9e216b6f08f",
+      "modality": "text",
+      "goal_id": "goal:847d424c2db94f9120fb471c",
+      "goal_description": "读取指定文件并确认内容",
+      "constraints": [
+        "只读"
+      ],
+      "context_digest": "",
+      "confidence": 0.9,
+      "ambiguity": 0.1,
+      "status": "resolved",
+      "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+      "tick": 0,
+      "evidence_digest": "5fa38b3d5e688fb8fed03b05b38cec3e8069d33480e05f65c162d9b4bc841b0d"
+    },
+    "goal": {
+      "version": 1,
+      "goal_id": "goal:847d424c2db94f9120fb471c",
+      "description": "读取指定文件并确认内容",
+      "priority": 0.0,
+      "progress": 0.0
+    },
+    "decomposition": {
+      "format": "taiji-task-decomposition-v1",
+      "version": 1,
+      "decomposition_id": "task-decomposition:09cd1f4a58d5233367d6025f",
+      "interpretation_id": "task-interpretation:847d424c2db94f9120fb471c",
+      "goal_id": "goal:847d424c2db94f9120fb471c",
+      "steps": [
+        {
+          "format": "taiji-task-decomposition-v1",
+          "version": 1,
+          "step_id": "task-step:30f808fbec1b39817b4967db",
+          "description": "读取 p6_1c_browser_canary.md",
+          "semantic_slots": {
+            "operation": "read",
+            "path": "p6_1c_browser_canary.md"
+          },
+          "expected_outcome": "获得 p6_1c_browser_canary.md 内容",
+          "confidence": 0.9,
+          "ambiguity": 0.1,
+          "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+          "tick": 0,
+          "evidence_digest": "6ad0466486a5b5de91b44b6adad04879058f7f9c483168b0210d5489426172d5"
+        }
+      ],
+      "confidence": 0.9,
+      "ambiguity": 0.1,
+      "status": "resolved",
+      "provenance": "qwen:qwen-semantic-01c4c7450b4a973a:qwen-semantic-01c4c7450b4a973a:provider",
+      "tick": 0,
+      "evidence_digest": "a65cc20f1c695650e4ba5a1f53e2c3d2f4e8709cc12f6cdf13fb79e2b71ddde2"
+    },
+    "semantic_provider": {
+      "interface": "taiji-semantic-provider-interface-v1",
+      "state": "attached",
+      "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+      "evidence_enabled": "true",
+      "reason_code": "semantic_provider_attached"
+    },
+    "status": "resolved",
+    "execution": {
+      "status": "not_planned",
+      "action_intent": null,
+      "tool_call": null,
+      "side_effects": false,
+      "next": "taiji_workbench_grounding"
+    }
+  },
+  "checkpoint": {
+    "format": "taiji-semantic-provider-checkpoint-v1",
+    "provider_id": "qwen-semantic-01c4c7450b4a973a:provider",
+    "backend_id": "qwen2.5-0.5b-instruct",
+    "artifact_id": "qwen-semantic-01c4c7450b4a973a",
+    "artifact_digest": "semantic-artifact:2a7a22aefc502214a1afd1b6",
+    "model_digest": "01c4c7450b4a973a22a94a879492df9561608f3947411d69b20db61238fa79af",
+    "model_dir": "C:\\Users\\23747\\.cache\\huggingface\\hub\\models--Qwen--Qwen2.5-0.5B-Instruct\\snapshots\\7ae557604adf67be50417f59c2c2f167def9a775"
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "real Qwen output is admitted only as content-addressed semantic evidence; Taiji retains interpretation ownership and no Workbench side effect occurs"
+  }
+}

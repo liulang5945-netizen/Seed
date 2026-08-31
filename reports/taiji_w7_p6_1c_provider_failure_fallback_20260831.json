@@ -1,0 +1,70 @@
+{
+  "format": "taiji-w7-p6-1c-semantic-provider-failure-fallback-v1",
+  "request": {
+    "prompt": "读取 README.md"
+  },
+  "result": {
+    "format": "taiji-task-interpretation-v1",
+    "interpretation": {
+      "format": "taiji-task-interpretation-v1",
+      "version": 1,
+      "interpretation_id": "task-interpretation:e6ff1985ca8d41b369eab004",
+      "input_id": "task:0:12b715312687bdee",
+      "input_digest": "12b715312687bdeeeabb1454d84915317f0bd178701a0a07f35af5f7b9157c2b",
+      "modality": "text",
+      "goal_id": "goal:e6ff1985ca8d41b369eab004",
+      "goal_description": "读取 README.md",
+      "constraints": [],
+      "context_digest": "",
+      "confidence": 0.0,
+      "ambiguity": 1.0,
+      "status": "candidate",
+      "provenance": "seed.client.workbench.task",
+      "tick": 0,
+      "evidence_digest": "0e03416b391c935ec0da99e351a1af34731b0be397350e42521e35194377e13d"
+    },
+    "goal": {
+      "version": 1,
+      "goal_id": "goal:e6ff1985ca8d41b369eab004",
+      "description": "读取 README.md",
+      "priority": 0.0,
+      "progress": 0.0
+    },
+    "semantic_provider": {
+      "interface": "taiji-semantic-provider-interface-v1",
+      "state": "degraded",
+      "provider_id": "eval.semantic-provider.failure",
+      "evidence_enabled": "false",
+      "reason_code": "semantic_provider_failed",
+      "reason": "provider proposal failed before Taiji admission"
+    },
+    "semantic_provider_fallback": {
+      "mode": "goal_only",
+      "reason_code": "semantic_provider_failed"
+    },
+    "execution": {
+      "status": "not_planned",
+      "action_intent": null,
+      "tool_call": null,
+      "side_effects": false,
+      "next": "taiji_planner"
+    }
+  },
+  "provider_checkpoint": {
+    "format": "taiji-semantic-provider-test-descriptor-v1",
+    "provider_id": "eval.semantic-provider.failure"
+  },
+  "checks": {
+    "provider_degraded": true,
+    "failure_reason_is_explicit": true,
+    "goal_only_candidate_returned": true,
+    "fallback_mode_is_goal_only": true,
+    "no_provider_evidence_admitted": true,
+    "no_execution_authority": true,
+    "no_workbench_side_effect": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "a provider failure is observable and recoverable as a Goal-only candidate; no evidence, execution authority, or Workbench side effect crosses the boundary"
+  }
+}
