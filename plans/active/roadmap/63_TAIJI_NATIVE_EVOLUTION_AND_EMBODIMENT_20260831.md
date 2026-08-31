@@ -1,6 +1,6 @@
 # Taiji 原生认知训练、经验进化与 Seed 客户端热插拔总路线
 
-> 状态：`E0 complete / E1 complete / E2-A complete / E2-B complete / E3-0 complete / E3-1 complete / E3-2 complete / E3-3 complete / E3-4 complete / E4 active`。本文件自 2026-08-31 起取代原 P7-1a provider artifact 升级作为当前主线，并于 2026-09-01 按“Skill/MCP 可成为知识语料、MCP 执行侧由客户端继承”完成修订。Qwen/provider 质量问题保留为语言器官支线，不再阻塞 Taiji 本体训练；唯一执行事实源 `03_CURRENT_EXECUTION.md` 当前指向 E4：Skill/MCP 知识与程序内化 Gate。
+> 状态：`E0 complete / E1 complete / E2-A complete / E2-B complete / E3-0 complete / E3-1 complete / E3-2 complete / E3-3 complete / E3-4 complete / E4 complete / E5 active`。本文件自 2026-08-31 起取代原 P7-1a provider artifact 升级作为当前主线，并于 2026-09-01 按“Skill/MCP 可成为知识语料、MCP 执行侧由客户端继承”完成修订。Qwen/provider 质量问题保留为语言器官支线，不再阻塞 Taiji 本体训练；唯一执行事实源 `03_CURRENT_EXECUTION.md` 当前指向 E5：Seed-owned 客户端插件 runtime。
 
 ## 1. 路线决策
 
@@ -379,9 +379,9 @@ Gate：
 
 目标：把 Skill/MCP artifact 本身转换为知识语料，并把真实 Workbench、Skill/MCP 调用和客户端插件 lifecycle 投影为经验合同。
 
-**当前执行阶段。** E1 ledger 合同已冻结为输入边界；E2-A/B 已完成来源适配器和 Seed-owned registry/lifecycle 的确定性状态流；E3-0 已完成训练 checkpoint 预检；E3-1 已完成 route/interaction credit；E3-2 已完成动态 action kind 的 procedural memory intake；E3-3 已完成真实 `WorldTransition` 进入现有局部世界模型；E3-4 已完成多 seed fixed-capacity 对照和持续失败触发前置 Gate：当前 fixed-capacity holdout/retention 通过，结构候选不得生成。本阶段进入 E4，先将受治理 Skill/MCP artifact 知识分别内化为 Taiji-owned semantic/procedural/affordance artifact；不把 digest-only 结果转成伪状态，也不把 Legacy MCP manager 接入 verified ledger。
+**当前执行阶段。** E1 ledger 合同已冻结为输入边界；E2-A/B 已完成来源适配器和 Seed-owned registry/lifecycle 的确定性状态流；E3-0 已完成训练 checkpoint 预检；E3-1 已完成 route/interaction credit；E3-2 已完成动态 action kind 的 procedural memory intake；E3-3 已完成真实 `WorldTransition` 进入现有局部世界模型；E3-4 已完成多 seed fixed-capacity 对照和持续失败触发前置 Gate：当前 fixed-capacity holdout/retention 通过，结构候选不得生成；E4 已完成受治理 Skill/MCP artifact 知识向 Taiji-owned semantic/procedural/affordance artifact 的内化，并证明外部描述关闭后仍可读取内部状态。当前进入 E5：建立 Seed-owned 客户端 extension host，把客户端页面/Workbench/Skill/MCP capability 的热插拔生命周期与 Taiji cognition 保持双向但隔离的状态边界；不把 digest-only 结果转成伪状态，也不把 Legacy MCP manager 接入 verified ledger。
 
-E2-A 已通过 [source adapter report](../../../reports/taiji_w7_e2_source_adapters_20260901.json)，E2-B 已通过 [source registry report](../../../reports/taiji_w7_e2b_source_registry_20260901.json)：Skill/MCP/client-plugin 共形成 typed corpus units，生命周期事件进入 E1 ledger，版本冲突、失败隔离、registry/ledger checkpoint 重绑和篡改拒绝通过。E3-0 已通过 [training checkpoint report](../../../reports/taiji_w7_e3_0_training_checkpoint_20260901.json)：三态 checkpoint 可写、恢复、继续追加，且损坏/数据集漂移在 learner mutation 前拒绝。E3-1 已通过 [native route-credit report](../../../reports/taiji_w7_e3_1_native_route_credit_20260901.json)：native holdout loss 从 `1.0` 降至约 `0.0100`，frozen/replay-only 均为 `1.0`，retention 保持 `0.0`，holdout 未进入 consumed cursor，learner checkpoint 可恢复。E3-2 已通过 [procedural-memory report](../../../reports/taiji_w7_e3_2_procedural_memory_20260901.json)：成功 train experience 动态发现 action kind，holdout accuracy 从 frozen/replay-only 的 `0.0` 提升至 `1.0`，旧程序 retention 为 `1.0`，失败 experience 被排除且 checkpoint 可恢复。E3-3 已通过 [world-prediction report](../../../reports/taiji_w7_e3_3_world_prediction_20260901.json)：真实 `WorldTransition` 经现有 `WorldDynamicsLearner` 局部更新后，holdout error 从 `3.1298` 降至 `0.3080`，replay-only 等于 frozen，retention 在门限内，网络/schema/counters checkpoint 可恢复；digest-only 输入在 mutation 前拒绝。E3-4 已通过 [capacity-preflight report](../../../reports/taiji_w7_e3_4_capacity_preflight_20260901.json)：3 个 seed 的固定容量 learner 均改善 holdout，均值 error 为 `0.2785`、标准差为 `0.0216`、最大 retention regression 为 `0`；容量压力为 `1.0` 但持续失败计数为 `0/3`，结构增长触发保持 false，checkpoint roundtrip 通过。E4 的唯一下一步是将受治理 Skill/MCP artifact 知识内化为 Taiji-owned semantic/procedural/affordance artifact。
+E2-A 已通过 [source adapter report](../../../reports/taiji_w7_e2_source_adapters_20260901.json)，E2-B 已通过 [source registry report](../../../reports/taiji_w7_e2b_source_registry_20260901.json)：Skill/MCP/client-plugin 共形成 typed corpus units，生命周期事件进入 E1 ledger，版本冲突、失败隔离、registry/ledger checkpoint 重绑和篡改拒绝通过。E3-0 已通过 [training checkpoint report](../../../reports/taiji_w7_e3_0_training_checkpoint_20260901.json)：三态 checkpoint 可写、恢复、继续追加，且损坏/数据集漂移在 learner mutation 前拒绝。E3-1 已通过 [native route-credit report](../../../reports/taiji_w7_e3_1_native_route_credit_20260901.json)：native holdout loss 从 `1.0` 降至约 `0.0100`，frozen/replay-only 均为 `1.0`，retention 保持 `0.0`，holdout 未进入 consumed cursor，learner checkpoint 可恢复。E3-2 已通过 [procedural-memory report](../../../reports/taiji_w7_e3_2_procedural_memory_20260901.json)：成功 train experience 动态发现 action kind，holdout accuracy 从 frozen/replay-only 的 `0.0` 提升至 `1.0`，旧程序 retention 为 `1.0`，失败 experience 被排除且 checkpoint 可恢复。E3-3 已通过 [world-prediction report](../../../reports/taiji_w7_e3_3_world_prediction_20260901.json)：真实 `WorldTransition` 经现有 `WorldDynamicsLearner` 局部更新后，holdout error 从 `3.1298` 降至 `0.3080`，replay-only 等于 frozen，retention 在门限内，网络/schema/counters checkpoint 可恢复；digest-only 输入在 mutation 前拒绝。E3-4 已通过 [capacity-preflight report](../../../reports/taiji_w7_e3_4_capacity_preflight_20260901.json)：3 个 seed 的固定容量 learner 均改善 holdout，均值 error 为 `0.2785`、标准差为 `0.0216`、最大 retention regression 为 `0`；容量压力为 `1.0` 但持续失败计数为 `0/3`，结构增长触发保持 false，checkpoint roundtrip 通过。E4 已通过 [artifact internalization report](../../../reports/taiji_w7_e4_artifact_internalization_20260901.json)：Skill/MCP 的 14 个 train/holdout/retention 语义样本与 4 条对应经验被内化到 Taiji-owned semantic/procedural/affordance learner；semantic holdout loss 为 `0.0000399`，procedural holdout accuracy 为 `1.0`、lesion 为 `0.25`，affordance holdout MSE 从 `1.19976` 降至约 `1.15e-12`。跨 scope 身份不泄漏、外部描述关闭、检疫 artifact 拒绝、checkpoint roundtrip 和客户端执行边界均通过。E5 的唯一下一步是建立 Seed-owned 客户端 extension host。
 
 顺序：
 
@@ -420,6 +420,8 @@ Gate：相对 frozen/no-learning、replay-only 和随机更新对照，未见任
 - 对 procedural memory lesion 后收益应消失，旧程序记忆应保持。
 
 Gate：知识问答不是唯一指标；必须同时通过未见任务规划/能力选择、内部化收益、错误 artifact 抗污染、checkpoint continuation、跨 scope 不泄漏和 lesion 因果性。
+
+状态：**已完成（2026-09-01）**。E4 使用 Skill/MCP artifact 与对应成功 Outcome 的 train/holdout/retention 分区，分别更新 Taiji-owned semantic、procedural 和 affordance 器官；provider、外部描述、客户端 executor 均未进入训练输入或模型输出。Gate 结果见 [E4 artifact internalization report](../../../reports/taiji_w7_e4_artifact_internalization_20260901.json) 与 [E4 tests](../../../tests/taiji_native/test_artifact_internalization.py)：10/10 检查通过，semantic holdout loss 为 `0.0000399`，procedural holdout/retention 为 `1.0`，lesion holdout 为 `0.25`，affordance holdout MSE 约为 `1.15e-12`；检疫、身份隔离、外部描述关闭和 checkpoint continuation 均 fail-closed。
 
 ### E5：Seed-owned 客户端插件 runtime
 
@@ -543,10 +545,10 @@ E1–E7 优先按现有 owner 增量接线，避免继续膨胀 `taiji/adapter.p
 - E1、E3、E5 是强 checkpoint Gate；任一损坏恢复或 lineage 错误立即停止功能推进。
 - E3 完成后是第一个需要讨论的决策点：若直接原生训练没有超过 frozen/route/memory 对照，应先修学习目标和 credit，不扩大参数规模。
 - E5 完成后是第二个决策点：只有隔离、状态迁移和 rollback 可靠，才允许接真实第三方 MCP/plugin。
-- 本轮只更新路线，不提交、不推送、不运行全量 CI。
+- 本轮提交 E4 实现、定向测试、evaluator、report 和计划同步；不推送、不运行全量 CI。全量 CI 仍按用户决定在阶段收口时统一修复。
 
 ## 15. E1 首个执行切片
 
-`03_CURRENT_EXECUTION.md` 当前指向 **E1：统一进化语料/经验合同与 checkpoint 前置 Gate**。
+`03_CURRENT_EXECUTION.md` 当前指向 **E5：Seed-owned 客户端插件 runtime**；E1 已完成并作为全部后续训练与客户端继承的事实源。
 
-它优先于 provider 训练、Skill 市场、真实第三方 MCP、插件 HMR、结构扩容和 CUDA，因为没有可信语料/经验事实源时，任何“训练模型”或“客户端进化”都无法证明数据来源、因果收益、恢复能力和污染边界。
+它优先于真实第三方 MCP 和插件 HMR，因为必须先建立可回滚的 Seed-owned extension host，才能让客户端 capability 继承拥有独立生命周期、状态迁移和故障隔离；E5 不修改 Taiji cognition checkpoint，也不把插件执行权写入模型。
