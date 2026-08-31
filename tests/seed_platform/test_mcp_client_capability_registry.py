@@ -143,3 +143,33 @@ def test_registry_rollback_is_terminal_and_does_not_activate_candidate() -> None
     assert all(record.state != "active" for record in registry.records)
     with pytest.raises(PermissionError, match="terminal"):
         registry.rollback(candidate.candidate_digest)
+
+
+def test_activation_proposal_requires_shadow_and_rolls_back_with_candidate() -> None:
+    mcp_registry = McpToolRegistry.default()
+    registry = McpClientCapabilityShadowRegistry.from_mcp_registry(
+        mcp_registry,
+        parent_checkpoint_id="checkpoint:activation-proposal",
+    )
+    candidate = _candidate(mcp_registry)
+    registry.propose(candidate, _policy())
+    with pytest.raises(PermissionError, match="shadow validation"):
+        registry.propose_activation(
+            candidate.candidate_digest,
+            client_capability_snapshot_id="capability-snapshot:1",
+        )
+
+    registry.record_shadow(candidate.candidate_digest, _observation(candidate))
+    proposal = registry.propose_activation(
+        candidate.candidate_digest,
+        client_capability_snapshot_id="capability-snapshot:1",
+    )
+    assert proposal.state == "proposed"
+    assert proposal.to_payload()["activation"] == "proposal_only"
+    assert all(record.state != "active" for record in registry.records)
+
+    rolled_back = registry.rollback(candidate.candidate_digest)
+    assert rolled_back.state == "rolled_back"
+    assert registry.activation_proposals[0].state == "rolled_back"
+    restored = McpClientCapabilityShadowRegistry.from_checkpoint(registry.checkpoint())
+    assert restored.activation_proposals[0].state == "rolled_back"

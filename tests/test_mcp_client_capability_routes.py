@@ -74,14 +74,32 @@ def test_mcp_client_capability_api_projects_shadow_lifecycle_and_rollback(client
     status = client.get("/api/mcp-client-capabilities")
     assert status.status_code == 200
     assert len(status.json()["shadow_validated"]) == 1
-    assert status.json()["client_activation"] == "not_available_in_e6_1"
+    assert status.json()["client_activation"] == "proposal_only_in_e6_2"
+    client_capability_snapshot_id = status.json()["client_capability_snapshot_id"]
+
+    activation_proposal = client.post(
+        f"/api/mcp-client-capabilities/{candidate.candidate_digest}/activation-proposals",
+        json={"client_capability_snapshot_id": client_capability_snapshot_id},
+    )
+    assert activation_proposal.status_code == 200
+    assert activation_proposal.json()["status"] == "proposed"
+    assert activation_proposal.json()["activation"] == "proposal_only"
+    assert activation_proposal.json()["proposal"]["proposal_id"]
 
     rollback = client.post(
         f"/api/mcp-client-capabilities/{candidate.candidate_digest}/rollback",
     )
     assert rollback.status_code == 200
     assert rollback.json()["status"] == "rolled_back"
-    assert client.get("/api/mcp-client-capabilities").json()["shadow_validated"] == []
+    status_after_rollback = client.get("/api/mcp-client-capabilities").json()
+    assert status_after_rollback["shadow_validated"] == []
+    assert status_after_rollback["activation_proposals"][0]["state"] == "rolled_back"
+
+    stale_activation = client.post(
+        f"/api/mcp-client-capabilities/{candidate.candidate_digest}/activation-proposals",
+        json={"client_capability_snapshot_id": "stale-client-snapshot"},
+    )
+    assert stale_activation.status_code == 409
 
 
 def test_mcp_client_capability_api_rejects_stale_or_executable_candidate(client):

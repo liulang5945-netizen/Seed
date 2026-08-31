@@ -25,6 +25,9 @@ from .mcp_capability_inheritance import (
     evaluate_mcp_capability_shadow,
     preflight_inheritance_candidate,
 )
+from .mcp_client_capability_activation import (
+    McpClientCapabilityActivationProposal,
+)
 
 MCP_CLIENT_SHADOW_REGISTRY_FORMAT = "seed-mcp-client-capability-shadow-registry-v1"
 MCP_CLIENT_SHADOW_REGISTRY_VERSION = 1
@@ -214,6 +217,7 @@ class McpClientCapabilityShadowRegistry:
         self.parent_checkpoint_id = _required_text(parent_checkpoint_id, "parent_checkpoint_id")
         self.revision = 0
         self._records: dict[str, McpClientCapabilityShadowRecord] = {}
+        self._activation_proposals: dict[str, McpClientCapabilityActivationProposal] = {}
         self._binding_events: list[Mapping[str, Any]] = []
 
     @classmethod
@@ -240,6 +244,12 @@ class McpClientCapabilityShadowRegistry:
         return tuple(item for item in self.records if item.state == "shadow_validated")
 
     @property
+    def activation_proposals(self) -> tuple[McpClientCapabilityActivationProposal, ...]:
+        return tuple(
+            self._activation_proposals[key] for key in sorted(self._activation_proposals)
+        )
+
+    @property
     def snapshot_id(self) -> str:
         return _digest(
             {
@@ -249,6 +259,9 @@ class McpClientCapabilityShadowRegistry:
                 "revision": self.revision,
                 "mcp_registry_snapshot_id": self.current_mcp_registry_snapshot_id,
                 "records": [item.record_digest for item in self.records],
+                "activation_proposals": [
+                    item.proposal_digest for item in self.activation_proposals
+                ],
                 "binding_events": [dict(event) for event in self._binding_events],
             }
         )
@@ -391,6 +404,45 @@ class McpClientCapabilityShadowRegistry:
         self.revision = next_revision
         return updated
 
+    def propose_activation(
+        self,
+        candidate_digest: str,
+        *,
+        client_capability_snapshot_id: str,
+        expected_current_snapshot_id: str | None = None,
+    ) -> McpClientCapabilityActivationProposal:
+        """Create an explicit activation proposal without activating anything."""
+
+        normalized = _required_text(candidate_digest, "candidate_digest")
+        client_snapshot = _required_text(
+            client_capability_snapshot_id,
+            "client_capability_snapshot_id",
+        )
+        self._require_current_snapshot(expected_current_snapshot_id)
+        record = self._records.get(normalized)
+        if record is None:
+            raise KeyError("unknown MCP client capability candidate")
+        if record.state != "shadow_validated":
+            raise PermissionError("activation proposal requires shadow validation")
+        proposal = McpClientCapabilityActivationProposal(
+            candidate_digest=record.candidate_digest,
+            shadow_record_digest=record.record_digest,
+            mcp_registry_snapshot_id=self.current_mcp_registry_snapshot_id,
+            client_capability_snapshot_id=client_snapshot,
+            parent_checkpoint_id=record.candidate.parent_checkpoint_id,
+            approval_required=record.candidate.requires_approval,
+        )
+        existing = self._activation_proposals.get(proposal.proposal_id)
+        if existing is not None:
+            return existing
+        next_revision = self.revision + 1
+        self._activation_proposals[proposal.proposal_id] = proposal
+        self._binding_events.append(
+            self._proposal_event(proposal, event_kind="activation_proposal_created", revision=next_revision)
+        )
+        self.revision = next_revision
+        return proposal
+
     def rollback(
         self,
         candidate_digest: str,
@@ -424,6 +476,19 @@ class McpClientCapabilityShadowRegistry:
             events=(*record.events, event),
         )
         self._records[normalized] = updated
+        for proposal_id, proposal in tuple(self._activation_proposals.items()):
+            if proposal.candidate_digest != normalized or proposal.state != "proposed":
+                continue
+            next_revision += 1
+            rolled_back_proposal = proposal.rolled_back(shadow_record_digest=updated.record_digest)
+            self._activation_proposals[proposal_id] = rolled_back_proposal
+            self._binding_events.append(
+                self._proposal_event(
+                    rolled_back_proposal,
+                    event_kind="activation_proposal_rolled_back",
+                    revision=next_revision,
+                )
+            )
         self.revision = next_revision
         return updated
 
@@ -436,6 +501,7 @@ class McpClientCapabilityShadowRegistry:
             "mcp_registry_snapshot_id": self.current_mcp_registry_snapshot_id,
             "snapshot_id": self.snapshot_id,
             "records": [item.to_payload() for item in self.records],
+            "activation_proposals": [item.to_payload() for item in self.activation_proposals],
             "binding_events": [dict(event) for event in self._binding_events],
         }
         payload["checkpoint_digest"] = _digest(payload)
@@ -464,6 +530,21 @@ class McpClientCapabilityShadowRegistry:
             if record.candidate_digest in registry._records:
                 raise ValueError("duplicate MCP client shadow candidate")
             registry._records[record.candidate_digest] = record
+        raw_proposals = payload.get("activation_proposals", ())
+        if isinstance(raw_proposals, (str, bytes)) or not isinstance(raw_proposals, Sequence):
+            raise ValueError("MCP activation proposals must be a sequence")
+        for raw_proposal in raw_proposals:
+            proposal = McpClientCapabilityActivationProposal.from_payload(raw_proposal)
+            if proposal.proposal_id in registry._activation_proposals:
+                raise ValueError("duplicate MCP activation proposal")
+            record = registry.get(proposal.candidate_digest)
+            if record is None:
+                raise ValueError("activation proposal references an unknown candidate")
+            if proposal.shadow_record_digest != record.record_digest:
+                raise ValueError("activation proposal shadow record mismatch")
+            if proposal.mcp_registry_snapshot_id != record.registry_snapshot_id:
+                raise ValueError("activation proposal MCP snapshot mismatch")
+            registry._activation_proposals[proposal.proposal_id] = proposal
         raw_events = payload.get("binding_events", ())
         if isinstance(raw_events, (str, bytes)) or not isinstance(raw_events, Sequence):
             raise ValueError("MCP client shadow registry binding events must be a sequence")
@@ -481,6 +562,25 @@ class McpClientCapabilityShadowRegistry:
     def _require_current_snapshot(self, expected_snapshot_id: str | None) -> None:
         if expected_snapshot_id not in (None, "") and str(expected_snapshot_id) != self.current_mcp_registry_snapshot_id:
             raise ValueError("MCP client shadow registry snapshot is stale")
+
+    @staticmethod
+    def _proposal_event(
+        proposal: McpClientCapabilityActivationProposal,
+        *,
+        event_kind: str,
+        revision: int,
+    ) -> dict[str, Any]:
+        return {
+            "event_id": f"{event_kind}:{proposal.proposal_id}:{revision}",
+            "event_kind": event_kind,
+            "proposal_id": proposal.proposal_id,
+            "proposal_digest": proposal.proposal_digest,
+            "candidate_digest": proposal.candidate_digest,
+            "mcp_registry_snapshot_id": proposal.mcp_registry_snapshot_id,
+            "client_capability_snapshot_id": proposal.client_capability_snapshot_id,
+            "state": proposal.state,
+            "revision": revision,
+        }
 
     def _event(
         self,

@@ -69,6 +69,7 @@ def _error(exc: Exception) -> None:
 @router.get("")
 def mcp_client_capability_status() -> dict[str, Any]:
     registry, current_snapshot_id = _shadow_registry()
+    client_capability_snapshot_id = _environment().capability_snapshot.snapshot_id
     return {
         "status": "ok",
         "format": "seed-mcp-client-capability-shadow-registry-v1",
@@ -77,7 +78,9 @@ def mcp_client_capability_status() -> dict[str, Any]:
         "parent_checkpoint_id": registry.parent_checkpoint_id,
         "records": [item.to_payload() for item in registry.records],
         "shadow_validated": [item.to_payload() for item in registry.shadow_validated],
-        "client_activation": "not_available_in_e6_1",
+        "activation_proposals": [item.to_payload() for item in registry.activation_proposals],
+        "client_capability_snapshot_id": client_capability_snapshot_id,
+        "client_activation": "proposal_only_in_e6_2",
     }
 
 
@@ -118,6 +121,34 @@ def record_mcp_client_capability_shadow(
     except Exception as exc:
         _error(exc)
     return {"status": record.state, "registry": registry.snapshot_id, "record": record.to_payload()}
+
+
+@router.post("/{candidate_digest}/activation-proposals")
+def propose_mcp_client_capability_activation(
+    candidate_digest: str,
+    request: dict[str, Any],
+) -> dict[str, Any]:
+    registry, current_snapshot_id = _shadow_registry()
+    client_snapshot_id = _environment().capability_snapshot.snapshot_id
+    requested_client_snapshot_id = str(
+        request.get("client_capability_snapshot_id") or client_snapshot_id
+    )
+    if requested_client_snapshot_id != client_snapshot_id:
+        raise HTTPException(status_code=409, detail="client capability snapshot is stale")
+    try:
+        proposal = registry.propose_activation(
+            candidate_digest,
+            client_capability_snapshot_id=client_snapshot_id,
+            expected_current_snapshot_id=current_snapshot_id,
+        )
+    except Exception as exc:
+        _error(exc)
+    return {
+        "status": proposal.state,
+        "registry": registry.snapshot_id,
+        "activation": "proposal_only",
+        "proposal": proposal.to_payload(),
+    }
 
 
 @router.post("/{candidate_digest}/rollback")
