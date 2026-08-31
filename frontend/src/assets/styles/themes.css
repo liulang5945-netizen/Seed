@@ -89,6 +89,10 @@
   --chart-4: #0043ad;
   --chart-5: #002e7d;
 
+  --needs-tier-calm: #2c82d6;
+  --needs-tier-watch: #ff8a15;
+  --needs-tier-alert: #e5372c;
+
   --sidebar: #eff1f4;
   --sidebar-foreground: #0e1115;
   --sidebar-primary: #0065fd;
@@ -191,6 +195,10 @@
   --chart-4: #1d4ed8;
   --chart-5: #1e40af;
 
+  --needs-tier-calm: #5aa9f0;
+  --needs-tier-watch: #ffa23d;
+  --needs-tier-alert: #f55b50;
+
   --sidebar: #171717;
   --sidebar-foreground: #e5e5e5;
   --sidebar-primary: #0065fd;
@@ -279,6 +287,10 @@
   --chart-3: #0f766e;
   --chart-4: #115e59;
   --chart-5: #134e4a;
+
+  --needs-tier-calm: #2c82d6;
+  --needs-tier-watch: #ff8a15;
+  --needs-tier-alert: #e5372c;
 
   --sidebar: #f0f5f3;
   --sidebar-foreground: #0e1512;
@@ -369,6 +381,10 @@
   --chart-4: #5b21b6;
   --chart-5: #4c1d95;
 
+  --needs-tier-calm: #2c82d6;
+  --needs-tier-watch: #ff8a15;
+  --needs-tier-alert: #e5372c;
+
   --sidebar: #f3f1fb;
   --sidebar-foreground: #140e24;
   --sidebar-primary: #7c3aed;
@@ -457,6 +473,10 @@
   --chart-3: #c2410c;
   --chart-4: #9a3412;
   --chart-5: #7c2d12;
+
+  --needs-tier-calm: #2c82d6;
+  --needs-tier-watch: #ff8a15;
+  --needs-tier-alert: #e5372c;
 
   --sidebar: #fdf5eb;
   --sidebar-foreground: #1f1408;
