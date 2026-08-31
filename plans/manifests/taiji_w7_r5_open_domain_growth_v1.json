@@ -3,7 +3,7 @@
   "version": 1,
   "work_package": "W7-R5",
   "title": "open-domain structural growth and self-evolution",
-  "status": "e3_3_world_prediction_gate_passed_e3_4_capacity_pressure_pending",
+  "status": "e3_4_capacity_preflight_gate_passed_e4_internalization_pending",
   "claim": {
     "to_prove": "Taiji can grow local structure or memory in response to persistent real-task error, capacity pressure, or recovery deficiency, while retaining old abilities and remaining checkpointable and reversible.",
     "must_not_claim": "Growth is not automatic intelligence, unlimited weight addition, neuron-count scaling, or a return to full retraining from scratch."
@@ -430,7 +430,11 @@
     "e3_3_test": "tests/taiji_native/test_world_evolution.py and scripts/training/verify_taiji_e3_3_world_prediction.py",
     "e3_3_scope": "real WorldTransition-only train/holdout/retention local world-model update using WorldDynamicsLearner, data-derived schema/network/counter checkpoint, transition cursor and digest-only input rejection",
     "e3_3_evidence": "verify_taiji_e3_3_world_prediction.py reports status=passed with 8 checks; native holdout error is 0.3080 versus frozen/replay-only 3.1298, retention stays within the 0.05 gate, transition cursor and checkpoint roundtrip hold",
-    "next_stage": "E3-4 fixed-capacity comparison and structural growth trigger preflight"
+    "e3_4_artifact": "taiji/capacity_preflight.py and taiji/structural_continuation.py",
+    "e3_4_test": "tests/taiji_native/test_capacity_preflight.py and scripts/training/verify_taiji_e3_4_capacity_preflight.py",
+    "e3_4_scope": "three-seed fixed-capacity local world learner comparison with holdout/retention/cross-seed stability, measured capacity pressure, persistent residual-error trigger, and checkpointable fail-closed structural proposal preflight",
+    "e3_4_evidence": "verify_taiji_e3_4_capacity_preflight.py reports status=passed with 9 checks; 32 hidden units and 775 parameters yield mean native holdout error 0.2785, standard deviation 0.0216, maximum retention regression 0, pressure 1.0, and trigger failure window 0/3, so no structural candidate is emitted",
+    "next_stage": "E4 Skill/MCP knowledge and procedural internalization Gate"
   },
   "boundary": [
     "Self-evolution must be evidence-triggered, resource-bounded, and reversible.",
