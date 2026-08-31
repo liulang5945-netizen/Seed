@@ -1,0 +1,23 @@
+{
+  "format": "taiji-w7-r5c-s37-runtime-artifact-failure-concurrency-v1",
+  "batch_id": "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1",
+  "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+  "concurrent_statuses": [
+    "admitted",
+    "already_applied"
+  ],
+  "artifact_digest": "1848fa69a0ed92bbc5b9753539c4c4fbf2f8e35d11eea26d25c6f198a46f7e9f",
+  "measurement_digest": "f0a094edd7c7f72e5506d66a26aca098c4fe059efb7cf73c2282ec30ce16fcdc",
+  "metrics": {
+    "cross_batch_input_rejected_atomically": true,
+    "stale_parent_fails_closed_without_structure_change": true,
+    "tampered_artifact_isolated_to_candidate": true,
+    "concurrent_submit_has_one_real_admission": true,
+    "concurrent_artifact_provenance_survives_restart": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "SeedRuntime must fail closed on stale/tampered/cross-batch artifact inputs and serialize concurrent valid submissions so that only one admission occurs while provenance remains checkpointable"
+  },
+  "boundary": "This canary covers SeedRuntime/native CPU artifact failure isolation and concurrency. It does not claim open-domain quality, unlimited growth, CUDA, frontend behavior, or CI."
+}

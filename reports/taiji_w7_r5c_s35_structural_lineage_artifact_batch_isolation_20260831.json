@@ -1,0 +1,23 @@
+{
+  "format": "taiji-w7-r5c-s35-structural-lineage-artifact-batch-isolation-v1",
+  "batch_id": "batch:structural:dfd02d10914dfafbb4b32489c4dee8bd",
+  "candidate_ids": [
+    "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+    "candidate:pressure:workbench:workbench.code:2:a10974098f71"
+  ],
+  "first_artifact_digest": "863347e5572d6b48df49727841dfeb70baf0cee52368324288d2691c76f7658a",
+  "second_artifact_digest": "58a7e8294abc0f42837a82be74745d9ba6bb701a9434aed203b94fc3e61d3c16",
+  "metrics": {
+    "unknown_artifact_and_replay_keys_rejected": true,
+    "unknown_key_rejection_is_atomic": true,
+    "malformed_candidate_failure_isolated": true,
+    "valid_sibling_artifact_continues_after_restart": true,
+    "repeated_valid_artifact_is_idempotent": true,
+    "checkpoint_preserves_partial_batch_state": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "artifact batch inputs must reject unknown candidates atomically, isolate malformed artifacts, preserve a valid sibling continuation across checkpoint, and keep repeated valid consumption topology/budget idempotent"
+  },
+  "boundary": "This canary covers native CPU artifact-batch input isolation and partial failure. It does not claim open-domain quality, unlimited growth, CUDA, frontend behavior, or CI."
+}

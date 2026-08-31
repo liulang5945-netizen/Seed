@@ -1,0 +1,116 @@
+{
+  "format": "taiji-w7-r5c-s24-structural-lineage-maintenance-v1",
+  "retention_limit": 1,
+  "schedule": {
+    "format": "taiji-structural-workbench-batch-schedule-v1",
+    "status": "batch_created",
+    "trigger_tick": 6,
+    "request_digest": "5cca36044b0e3e8c27085e641ff6c127fc3614154704830a29cd80b89812c44c",
+    "region_ids": [
+      "workbench.code",
+      "workbench.docs"
+    ],
+    "candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+      "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+    ],
+    "source_window_digests": [
+      "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+      "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+      "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+      "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+      "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46",
+      "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897"
+    ],
+    "batch_id": "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1",
+    "reason": "",
+    "scheduler_revision": 2
+  },
+  "first_audit": {
+    "format": "taiji-structural-lineage-retention-result-v1",
+    "status": "compacted",
+    "max_batches": 1,
+    "source_checkpoint_digest": "fa577b2eadd1572d4c3effe6407c4b95b0d1466ecef8c66fafc207ed1388dd84",
+    "target_checkpoint_digest": "fe61261781e8f85faae915946c0cdee4fcd310e7258f73eed6136466edac846c",
+    "protected_batch_ids": [
+      "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1"
+    ],
+    "retained_batch_ids": [
+      "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1"
+    ],
+    "removed_batch_ids": [
+      "batch:terminal-lineage"
+    ],
+    "retained_candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+      "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+    ],
+    "removed_candidate_ids": [
+      "candidate:terminal-lineage"
+    ],
+    "removed_record_counts": {
+      "admission_results": 1,
+      "candidate_proposals": 0,
+      "candidate_rollbacks": 1,
+      "candidate_validations": 1,
+      "growth_schedule_results": 0,
+      "maintenance_results": 0,
+      "proposal_candidates": 0,
+      "validation_artifact_batches": 1,
+      "validation_artifacts": 1,
+      "validation_gate_decisions": 1,
+      "workbench_batch_schedule_results": 1
+    },
+    "retention_pressure": false,
+    "result_digest": "6a075163309c2f8c42055c4b3bbb40864ff3cdb2a806be346e2399a0dd4e3364"
+  },
+  "pressure_audit": {
+    "format": "taiji-structural-lineage-retention-result-v1",
+    "status": "nothing_to_compact",
+    "max_batches": 1,
+    "source_checkpoint_digest": "9b13cba4fc1a882cead1ddf4d5ba0b481b2ca2cfe89f596e8793b6fef6cf1c5e",
+    "target_checkpoint_digest": "9b13cba4fc1a882cead1ddf4d5ba0b481b2ca2cfe89f596e8793b6fef6cf1c5e",
+    "protected_batch_ids": [
+      "batch:protected-copy",
+      "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1"
+    ],
+    "retained_batch_ids": [
+      "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1",
+      "batch:protected-copy"
+    ],
+    "removed_batch_ids": [],
+    "retained_candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+      "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+    ],
+    "removed_candidate_ids": [],
+    "removed_record_counts": {
+      "admission_results": 0,
+      "candidate_proposals": 0,
+      "candidate_rollbacks": 0,
+      "candidate_validations": 0,
+      "growth_schedule_results": 0,
+      "maintenance_results": 0,
+      "proposal_candidates": 0,
+      "validation_artifact_batches": 0,
+      "validation_artifacts": 0,
+      "validation_gate_decisions": 0,
+      "workbench_batch_schedule_results": 0
+    },
+    "retention_pressure": true,
+    "result_digest": "c7a18b7a8c3af4a8b1c1acc9e5d661bf84c075b5eaac0a0b06b7eec23559da26"
+  },
+  "metrics": {
+    "default_maintenance_does_not_trigger_compaction": true,
+    "explicit_maintenance_compacts_terminal_lineage": true,
+    "maintenance_does_not_change_topology_or_budget": true,
+    "retention_audit_persists_through_checkpoint": true,
+    "invalid_maintenance_limit_is_atomic": true,
+    "protected_pressure_is_reported_and_idempotent": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "lineage retention is invoked only at an explicit structural maintenance boundary; the audit is checkpointed and idempotent, terminal subgraphs compact atomically, protected pressure is observable, and invalid limits cannot partially mutate state"
+  },
+  "boundary": "This canary covers native CPU maintenance integration using real Workbench evidence. It does not claim open-domain quality, unlimited growth, CUDA, frontend behavior, or CI."
+}

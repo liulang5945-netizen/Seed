@@ -1,0 +1,29 @@
+{
+  "format": "taiji-w7-r5c-s44-runtime-artifact-store-batch-v1",
+  "batch_id": "batch:structural:d1b290df13b9c3f5219aeb813aaf45f2",
+  "candidate_ids": [
+    "candidate:pressure:workbench:workbench.docs:1:0a7a55df11c2",
+    "candidate:pressure:workbench:workbench.code:1:b4834317d31d"
+  ],
+  "artifact_digests": [
+    "659d5e9a46d7f43fc8f4be5476787439097046e0fb1088fd1716d68d83429692",
+    "e8523717f96bd7624eae551c257655f47e5299bcf2eb749d1e6a471b7ad3f35a"
+  ],
+  "parent_digests": [
+    "dbacc8a4bb5038d99e1621b4b39e25185f59b5de597b01cedb98a661cfdb5adc",
+    "b84f3596527a323633984bf3f492dd2092500b82047791c40c52f3372f022610"
+  ],
+  "metrics": {
+    "first_artifact_uses_initial_parent": true,
+    "second_artifact_uses_first_child_parent": true,
+    "ordered_budget_charge_is_exact": true,
+    "batch_completes_and_full_repeat_is_idempotent": true,
+    "provenance_survives_checkpoint_chain": true,
+    "final_checkpoint_preserves_ordered_state": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "two external measured artifacts must be handed off in parent order across checkpoints, complete one batch with exact budget charges, preserve provenance, and return idempotent statuses on full repeat"
+  },
+  "boundary": "This canary covers native CPU ordered multi-artifact external batch handoff. It does not claim unordered parallel admission, unlimited growth, open-domain quality, CUDA, frontend behavior, Windows shell, CI completion, or general intelligence."
+}

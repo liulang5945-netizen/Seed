@@ -1,0 +1,223 @@
+{
+  "format": "taiji-w7-r5c-s18-structural-evidence-compaction-v1",
+  "rounds": {
+    "evaluated_window_digests": [
+      "426958898531e1364368c9bb8abb7625fe5b51094b0d0da43b61b47d00d396dc",
+      "2ca59bbc7691043793e7d5c7c6a4b13cbe8f950f3cc9c2aefdce5e06f0d21f0a"
+    ],
+    "before": {
+      "format": "taiji-structural-evidence-consumption-audit-v1",
+      "ledger_digest": "20526931fa88ad695808ada778f23445621835312fa5e00e1e3bca64c97e88a9",
+      "scheduler_revision": 2,
+      "evaluated_window_digests": [
+        "426958898531e1364368c9bb8abb7625fe5b51094b0d0da43b61b47d00d396dc",
+        "2ca59bbc7691043793e7d5c7c6a4b13cbe8f950f3cc9c2aefdce5e06f0d21f0a"
+      ],
+      "consumed_window_digests": [
+        "426958898531e1364368c9bb8abb7625fe5b51094b0d0da43b61b47d00d396dc",
+        "2ca59bbc7691043793e7d5c7c6a4b13cbe8f950f3cc9c2aefdce5e06f0d21f0a"
+      ],
+      "unconsumed_window_digests": [
+        "08dd78181475eb2aa6d1cb19db24342bf09a30090761f20084d747332cd126df",
+        "ddffc98f42bd5002d613a206768434c877fd1a0072f5db8566858700fc987953"
+      ],
+      "orphaned_evaluated_window_digests": [],
+      "retained_window_digests": [
+        "426958898531e1364368c9bb8abb7625fe5b51094b0d0da43b61b47d00d396dc",
+        "2ca59bbc7691043793e7d5c7c6a4b13cbe8f950f3cc9c2aefdce5e06f0d21f0a",
+        "08dd78181475eb2aa6d1cb19db24342bf09a30090761f20084d747332cd126df",
+        "ddffc98f42bd5002d613a206768434c877fd1a0072f5db8566858700fc987953"
+      ],
+      "compacted_window_digests": [],
+      "stream_status": [
+        {
+          "stream": "network:demo:region:demo",
+          "consumed": [
+            "426958898531e1364368c9bb8abb7625fe5b51094b0d0da43b61b47d00d396dc",
+            "2ca59bbc7691043793e7d5c7c6a4b13cbe8f950f3cc9c2aefdce5e06f0d21f0a"
+          ],
+          "unconsumed": [
+            "08dd78181475eb2aa6d1cb19db24342bf09a30090761f20084d747332cd126df"
+          ]
+        },
+        {
+          "stream": "network:other:region:other",
+          "consumed": [],
+          "unconsumed": [
+            "ddffc98f42bd5002d613a206768434c877fd1a0072f5db8566858700fc987953"
+          ]
+        }
+      ],
+      "audit_digest": "779be6007729c03cef523af8979e3168b56f3abe63040ffcaf7da6dd967b9f74"
+    },
+    "compaction": {
+      "format": "taiji-structural-evidence-compaction-result-v1",
+      "status": "compacted",
+      "source_ledger_digest": "20526931fa88ad695808ada778f23445621835312fa5e00e1e3bca64c97e88a9",
+      "target_ledger_digest": "d92463be516b662a229f5eec3c3c76e4ab70f276f037d030ecd5d55e3e4a13da",
+      "scheduler_revision": 2,
+      "compacted_window_digests": [
+        "426958898531e1364368c9bb8abb7625fe5b51094b0d0da43b61b47d00d396dc"
+      ],
+      "retained_window_digests": [
+        "2ca59bbc7691043793e7d5c7c6a4b13cbe8f950f3cc9c2aefdce5e06f0d21f0a",
+        "08dd78181475eb2aa6d1cb19db24342bf09a30090761f20084d747332cd126df",
+        "ddffc98f42bd5002d613a206768434c877fd1a0072f5db8566858700fc987953"
+      ],
+      "compacted_evidence_count": 2,
+      "result_digest": "0fdf943c490228d26b6b5f4324c964f2782e407c85229ba2a75ae1e1d978772e"
+    },
+    "after": {
+      "format": "taiji-structural-evidence-consumption-audit-v1",
+      "ledger_digest": "874e63fdb5660af015467e2b8ae7d9858643a0569c7707a970ce4142911d670e",
+      "scheduler_revision": 2,
+      "evaluated_window_digests": [
+        "426958898531e1364368c9bb8abb7625fe5b51094b0d0da43b61b47d00d396dc",
+        "2ca59bbc7691043793e7d5c7c6a4b13cbe8f950f3cc9c2aefdce5e06f0d21f0a"
+      ],
+      "consumed_window_digests": [
+        "2ca59bbc7691043793e7d5c7c6a4b13cbe8f950f3cc9c2aefdce5e06f0d21f0a",
+        "426958898531e1364368c9bb8abb7625fe5b51094b0d0da43b61b47d00d396dc"
+      ],
+      "unconsumed_window_digests": [
+        "08dd78181475eb2aa6d1cb19db24342bf09a30090761f20084d747332cd126df",
+        "ddffc98f42bd5002d613a206768434c877fd1a0072f5db8566858700fc987953",
+        "439245246aec356f12b1a8e8c91a83ee066149810dac27697dc3683cbc90621c"
+      ],
+      "orphaned_evaluated_window_digests": [],
+      "retained_window_digests": [
+        "2ca59bbc7691043793e7d5c7c6a4b13cbe8f950f3cc9c2aefdce5e06f0d21f0a",
+        "08dd78181475eb2aa6d1cb19db24342bf09a30090761f20084d747332cd126df",
+        "ddffc98f42bd5002d613a206768434c877fd1a0072f5db8566858700fc987953",
+        "439245246aec356f12b1a8e8c91a83ee066149810dac27697dc3683cbc90621c"
+      ],
+      "compacted_window_digests": [
+        "426958898531e1364368c9bb8abb7625fe5b51094b0d0da43b61b47d00d396dc"
+      ],
+      "stream_status": [
+        {
+          "stream": "network:demo:region:demo",
+          "consumed": [
+            "2ca59bbc7691043793e7d5c7c6a4b13cbe8f950f3cc9c2aefdce5e06f0d21f0a",
+            "426958898531e1364368c9bb8abb7625fe5b51094b0d0da43b61b47d00d396dc"
+          ],
+          "unconsumed": [
+            "08dd78181475eb2aa6d1cb19db24342bf09a30090761f20084d747332cd126df",
+            "439245246aec356f12b1a8e8c91a83ee066149810dac27697dc3683cbc90621c"
+          ]
+        },
+        {
+          "stream": "network:other:region:other",
+          "consumed": [],
+          "unconsumed": [
+            "ddffc98f42bd5002d613a206768434c877fd1a0072f5db8566858700fc987953"
+          ]
+        }
+      ],
+      "audit_digest": "4d02ee7ed5ff1c1fdb29e65d04401212913f6bb3b43f2397a270e82f2474d31c"
+    }
+  },
+  "pressure_projection": {
+    "before": {
+      "format": "taiji-structural-pressure-projection-v1",
+      "network_id": "network:pressure",
+      "region_id": "region:pressure",
+      "first_tick": 1,
+      "last_tick": 3,
+      "window_digests": [
+        "577a6a776f7d7dea46eca932ab902a79ca817ec9374b31a6ec9903f4153644c8",
+        "21be4eec83516132ec57ea65bc0b447f29c6820973c7f8a42588ae37815bd8ee",
+        "13d4ea8c7b6ff14d1a29568050dcb4bccadbae1dfc1dc07b840b94f5991379a3"
+      ],
+      "train_task_slice_ids": [
+        "task:one",
+        "task:two"
+      ],
+      "holdout_task_slice_ids": [
+        "task:holdout"
+      ],
+      "retention_task_slice_ids": [],
+      "train_window_count": 2,
+      "holdout_window_count": 1,
+      "retention_window_count": 0,
+      "prediction_observation_count": 2,
+      "mean_prediction_error": 0.7,
+      "mean_resource_state": 0.8,
+      "mean_holdout_transfer": 0.8,
+      "evidence_ids": [
+        "pressure:train:one",
+        "pressure:train:two",
+        "pressure:holdout"
+      ],
+      "projection_digest": "3f6ac4443fcd6c059153d30285995ca2c21ba31e13fe3d5c605e97e826057bbe"
+    },
+    "after": {
+      "format": "taiji-structural-pressure-projection-v1",
+      "network_id": "network:pressure",
+      "region_id": "region:pressure",
+      "first_tick": 1,
+      "last_tick": 3,
+      "window_digests": [
+        "577a6a776f7d7dea46eca932ab902a79ca817ec9374b31a6ec9903f4153644c8",
+        "21be4eec83516132ec57ea65bc0b447f29c6820973c7f8a42588ae37815bd8ee",
+        "13d4ea8c7b6ff14d1a29568050dcb4bccadbae1dfc1dc07b840b94f5991379a3"
+      ],
+      "train_task_slice_ids": [
+        "task:one",
+        "task:two"
+      ],
+      "holdout_task_slice_ids": [
+        "task:holdout"
+      ],
+      "retention_task_slice_ids": [],
+      "train_window_count": 2,
+      "holdout_window_count": 1,
+      "retention_window_count": 0,
+      "prediction_observation_count": 2,
+      "mean_prediction_error": 0.7,
+      "mean_resource_state": 0.8,
+      "mean_holdout_transfer": 0.8,
+      "evidence_ids": [
+        "pressure:train:one",
+        "pressure:train:two",
+        "pressure:holdout"
+      ],
+      "projection_digest": "3f6ac4443fcd6c059153d30285995ca2c21ba31e13fe3d5c605e97e826057bbe"
+    },
+    "snapshot_digests": [
+      "2686baf1abba0a0edd63c0d9b7eab23f2c16d49e711569f527788cb5e5edbcff"
+    ]
+  },
+  "ledger": {
+    "active_observed_count": 8,
+    "observed_count": 10,
+    "retained_window_digests": [
+      "2ca59bbc7691043793e7d5c7c6a4b13cbe8f950f3cc9c2aefdce5e06f0d21f0a",
+      "08dd78181475eb2aa6d1cb19db24342bf09a30090761f20084d747332cd126df",
+      "ddffc98f42bd5002d613a206768434c877fd1a0072f5db8566858700fc987953",
+      "439245246aec356f12b1a8e8c91a83ee066149810dac27697dc3683cbc90621c"
+    ],
+    "compacted_window_digests": [
+      "426958898531e1364368c9bb8abb7625fe5b51094b0d0da43b61b47d00d396dc"
+    ],
+    "digest": "874e63fdb5660af015467e2b8ae7d9858643a0569c7707a970ce4142911d670e"
+  },
+  "metrics": {
+    "consumption_audit_is_content_addressed": true,
+    "compaction_only_moves_consumed_history": true,
+    "source_lineage_and_consumption_revision_survive": true,
+    "unconsumed_window_remains_active_after_compaction": true,
+    "compaction_frees_active_evidence_capacity": true,
+    "fresh_round_is_not_marked_consumed": true,
+    "pressure_identity_survives_compaction": true,
+    "compacted_digest_is_not_a_new_pressure_trigger": true,
+    "duplicate_compacted_evidence_is_idempotent": true,
+    "checkpoint_roundtrip_preserves_compacted_history": true,
+    "tampered_compacted_provenance_fails_closed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "only scheduler-consumed older windows may be compacted; active projection keeps unconsumed windows, compacted provenance remains content-addressed, fresh evidence cannot be resurrected or double-consumed, and checkpoint restore is equivalent"
+  },
+  "boundary": "This canary verifies bounded evidence history and cross-round consumption accounting; it does not claim open-domain quality, unlimited growth, CUDA, or CI completion."
+}

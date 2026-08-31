@@ -1,0 +1,164 @@
+{
+  "format": "taiji-w7-r5c-s38-runtime-artifact-multi-round-v1",
+  "rounds": {
+    "round_one": {
+      "batch_id": "batch:structural:0a5f72bcbc6c8fa2d6a58a3f5b7e3485",
+      "evidence_count": 6,
+      "source_window_digests": [
+        "dbcd3736166b4e8ff1d35562df8932902409fcb96bdc45e7f051caa12250982f",
+        "6f7479807b6ce97ffeab54b43445dea9006e28f5e0754b0c0a6855e176abeaf7",
+        "3474004f158051670b200c5f95a8c961c94003ba0eef7fae1c285a349275aeb9",
+        "ae69ebd3fb785ce8c98d47125dd2c6f8f57feedd269c45074f9961408e978d51",
+        "5232110926518d9720045db4af8890e1421d4c2cd1eb4b297d9c1d285b39a2ed",
+        "19ac7d9a670a9563974131c7cde1ffff130949937f59218605a394b02657f211"
+      ]
+    },
+    "round_two": {
+      "batch_id": "batch:structural:9c59f58ba39190485f992d4f05782f4e",
+      "candidate_ids": [
+        "candidate:pressure:workbench:workbench.docs:2:11f247192042",
+        "candidate:pressure:workbench:workbench.code:2:9309529ae474"
+      ],
+      "artifact_digests": [
+        "1d7d1870b856cc8f616f29bdcd064791e03c12c2f24b56a640311bbe2cf5b01a",
+        "6711a727a8dd4baeb4def5e788646d76be9a9a64b9d4f1dc6ab85bb29fc40bee"
+      ]
+    },
+    "round_three": {
+      "batch_id": "batch:structural:71501c5838533931e94ce37a85a2f107",
+      "candidate_ids": [
+        "candidate:pressure:workbench:workbench.docs:3:d3163632fcce",
+        "candidate:pressure:workbench:workbench.code:3:26cafb0ccfbb"
+      ],
+      "malformed_candidate_id": "candidate:pressure:workbench:workbench.docs:3:d3163632fcce",
+      "live_sibling_candidate_id": "candidate:pressure:workbench:workbench.code:3:26cafb0ccfbb"
+    }
+  },
+  "retention": {
+    "format": "taiji-structural-lineage-retention-result-v1",
+    "status": "compacted",
+    "max_batches": 2,
+    "source_checkpoint_digest": "0d999acc38400fa5ff39825fa98c367cb83e1b55fd11c98555fa3cad970fbf9e",
+    "target_checkpoint_digest": "afae4a8cab9549698a9fdc55fd2c68d9bd9c63d524639228f3b5eaead0cfc13d",
+    "protected_batch_ids": [
+      "batch:structural:0a5f72bcbc6c8fa2d6a58a3f5b7e3485",
+      "batch:structural:71501c5838533931e94ce37a85a2f107"
+    ],
+    "retained_batch_ids": [
+      "batch:structural:0a5f72bcbc6c8fa2d6a58a3f5b7e3485",
+      "batch:structural:71501c5838533931e94ce37a85a2f107"
+    ],
+    "removed_batch_ids": [
+      "batch:structural:9c59f58ba39190485f992d4f05782f4e"
+    ],
+    "retained_candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:c9ca89866371",
+      "candidate:pressure:workbench:workbench.code:3:26cafb0ccfbb",
+      "candidate:pressure:workbench:workbench.docs:1:503a78d385ff",
+      "candidate:pressure:workbench:workbench.docs:3:d3163632fcce"
+    ],
+    "removed_candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:2:9309529ae474",
+      "candidate:pressure:workbench:workbench.docs:2:11f247192042"
+    ],
+    "removed_record_counts": {
+      "admission_results": 2,
+      "candidate_proposals": 2,
+      "candidate_rollbacks": 2,
+      "candidate_validations": 2,
+      "growth_schedule_results": 2,
+      "maintenance_results": 0,
+      "proposal_candidates": 0,
+      "validation_artifact_batches": 1,
+      "validation_artifacts": 2,
+      "validation_gate_decisions": 2,
+      "workbench_batch_schedule_results": 1
+    },
+    "retention_pressure": false,
+    "result_digest": "11c5db8049afb905ecd3e638f3a4c0bff091cfb9dbfd0fb8066e699219eca563"
+  },
+  "diagnostics": {
+    "round_two_signature_before_restart": {
+      "runtime_tick": 12,
+      "scheduler_revision": 4,
+      "topology": [
+        [
+          "adaptive.cortex",
+          [
+            "u0",
+            "u1"
+          ]
+        ],
+        [
+          "adaptive.memory",
+          [
+            "m0",
+            "m1"
+          ]
+        ]
+      ],
+      "budget": 32,
+      "batch_ids": [
+        "batch:structural:0a5f72bcbc6c8fa2d6a58a3f5b7e3485",
+        "batch:structural:9c59f58ba39190485f992d4f05782f4e"
+      ],
+      "artifact_digests": [
+        "1d7d1870b856cc8f616f29bdcd064791e03c12c2f24b56a640311bbe2cf5b01a",
+        "6711a727a8dd4baeb4def5e788646d76be9a9a64b9d4f1dc6ab85bb29fc40bee"
+      ],
+      "policy_digest": null
+    },
+    "round_two_signature_after_restart": {
+      "runtime_tick": 12,
+      "scheduler_revision": 4,
+      "topology": [
+        [
+          "adaptive.cortex",
+          [
+            "u0",
+            "u1"
+          ]
+        ],
+        [
+          "adaptive.memory",
+          [
+            "m0",
+            "m1"
+          ]
+        ]
+      ],
+      "budget": 32,
+      "batch_ids": [
+        "batch:structural:0a5f72bcbc6c8fa2d6a58a3f5b7e3485",
+        "batch:structural:9c59f58ba39190485f992d4f05782f4e"
+      ],
+      "artifact_digests": [
+        "1d7d1870b856cc8f616f29bdcd064791e03c12c2f24b56a640311bbe2cf5b01a",
+        "6711a727a8dd4baeb4def5e788646d76be9a9a64b9d4f1dc6ab85bb29fc40bee"
+      ],
+      "policy_digest": null
+    },
+    "round_two_owner_checks": {
+      "first_holdout_gain": true,
+      "second_holdout_gain": true,
+      "first_resource_digest": true,
+      "second_resource_digest": true
+    }
+  },
+  "metrics": {
+    "three_rounds_use_fresh_evidence_and_batches": true,
+    "round_one_save_load_preserves_live_lineage": true,
+    "round_two_save_load_and_measured_artifacts_are_owner_derived": true,
+    "stale_artifact_isolated_without_mutating_success_branch": true,
+    "round_two_rollback_and_repeat_are_idempotent": true,
+    "round_three_malformed_candidate_failure_preserves_sibling_reservation": true,
+    "retention_removes_only_terminal_round_two_subgraph": true,
+    "old_terminal_artifact_replay_fails_closed_without_mutation": true,
+    "round_three_checkpoint_preserves_policy_cursor_budget_and_topology": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "three fresh Workbench evidence rounds must remain independently checkpointable; measured artifacts, stale/tampered failure, rollback/repeat, and terminal-only retention must preserve lineage, budget, topology, cursor, and policy boundaries"
+  },
+  "boundary": "This canary covers native CPU multi-round SeedRuntime artifact lifecycle and bounded retention. It does not claim unlimited growth, automatic budget expansion, open-domain quality, CUDA, frontend behavior, Windows shell, CI completion, or general intelligence."
+}

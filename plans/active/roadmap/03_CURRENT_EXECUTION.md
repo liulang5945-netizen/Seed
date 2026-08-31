@@ -1,6 +1,6 @@
 # Seed / Taiji 当前执行状态
 
-> 快照日期：2026-08-30。本文件是“现在做什么”的唯一事实源；历史过程位于 `plans/archive/`，详细阶段定义见 [04_EXECUTION_PLAN.md](04_EXECUTION_PLAN.md)。
+> 快照日期：2026-08-31。本文件是“现在做什么”的唯一事实源；历史过程位于 `plans/archive/`，详细阶段定义见 [04_EXECUTION_PLAN.md](04_EXECUTION_PLAN.md)。
 
 ## 1. 当前能力状态
 
@@ -14,7 +14,9 @@
 | W7-R4 CUDA | `hardware-blocked` | CPU 基线与设备/checkpoint 合同仍有效 | CUDA 性能、数值一致性或自定义 kernel 已验证 |
 | W7-R5-S0 学习通道 | 已完成 | 真实 Workbench Outcome 可进入 `record_executive_outcome()`；`learn=False` 冻结，`learn=True` 在线更新；checkpoint 保留计数与选择 | 知识已内化、外挂可删、效应器可注册、开放域自进化 |
 | W7-R5A/R5B | R5A-S2-C 已通过真实双 seed/task slice；R5B-L0/S1 registry-backed Workbench dispatch、L1 candidate package、L2 shadow Gate、L3 resource/rollback Gate 已实现；L4 纯计算能力架构评审已完成并判定当前无候选可实施 | R5A 已具备 DTO、内容寻址 replay、原生学习器、真实 Workbench 纵向 holdout/lesion/recovery、跨 seed/task slice 聚合与独立可删评审；R5B 已具备 bundle/candidate 内容寻址、snapshot、审批前 shadow、disposer 约束、stale fail-closed、lifecycle checkpoint、request/approval registry snapshot 绑定、全量 enabled capability 覆盖、原子 replacement/rollback、candidate proposed→validated/rejected 分离、digest-only shadow observation、after-state/resource/policy/approval Gate、原子资源 reservation 与父账本恢复；三个 L0–L3 evaluator 均报告 `gate.passed=true`，L4 已形成独立审查边界 | 正常 CI 主机上尚未跑完整 Workbench 文件回归；没有任何纯计算执行体获准进入 registry；R5C 开放域成长尚未开始 |
-| W7-R5C 开放域成长 | R5C-S0–S17 已通过定向 Gate：证据窗口、跨任务 pressure、candidate bridge、shadow validation、准入策略、atomic admission、稳定性/rollback、多步 continuation、真实 Workbench evidence 调度、按 stream 隔离 cooldown、候选延续、多候选仲裁、跨区域容量压力、可逆回滚、多区域真实批次生成与完整 batch 生命周期、单候选与多候选 replay validation artifact、独立 replay measurement owner、多轮 measured evidence continuation、artifact/measurement integrity | 已证明多区域真实 Workbench evidence 能在预算内形成可恢复、可 checkpoint 的多轮 measured candidate batch；区域之间不会因全局 scheduler cooldown 互相饿死，measurement 与 artifact 的内容寻址、篡改拒绝、旧格式兼容和 checkpoint provenance 已闭合；仍不能声明无限扩张、自动增加预算、全面自进化或真实开放域收益 |
+| W7-R5C 开放域成长 | R5C-S0–S33 已通过定向 Gate：证据窗口、跨任务 pressure、candidate bridge、shadow validation、准入策略、atomic admission、稳定性/rollback、多步 continuation、真实 Workbench evidence 调度、按 stream 隔离 cooldown、候选延续、多候选仲裁、跨区域容量压力、可逆回滚、多区域真实批次生成与完整 batch 生命周期、单候选与多候选 replay validation artifact、独立 replay measurement owner、多轮 measured evidence continuation、artifact/measurement integrity、ledger compactness、跨轮消费审计、provenance-aware pressure projection、candidate/artifact/admission/rollback lineage 审计、长序列压缩保留/分支恢复/资源账本压力、受保护 candidate/batch lineage 保留、跨账本协同终结保留、运行时维护边界接入与 retention audit、SeedRuntime 审计可观测契约、runtime 只读状态投影、版本化 retention policy、policy 可迁移生命周期与回滚、真实 SeedRuntime 磁盘 checkpoint 继续与回滚、重启后新 evidence continuation 与旧动作不重放、重启后候选准入/回滚与批次 continuation、重启后 measured replay-bound artifact 消费、artifact provenance 与 rollback/恢复闭环 | 已证明多区域真实 Workbench evidence 能在预算内形成可恢复、可 checkpoint 的多轮 measured candidate batch；历史 evidence 可压缩为有界 provenance 与 pressure snapshot，projection identity 不漂移，未消费窗口不会被压缩，compacted digest 不会触发新 candidate，旧 artifact 会在父 checkpoint 变化后 fail-closed，准入/回滚 lineage 不被压缩改写，三轮长序列和压缩上限溢出均保持原子，活动 reservation/pending/deferred/rollbackable lineage 不会因小保留上限被淘汰，终结 lineage 子图可跨账本原子淘汰且保护压力可观测、checkpoint 后新 evidence 调度确定；显式维护边界可幂等地产生并恢复 retention audit，SeedRuntime 可对当前调用返回稳定审计且不重放历史 audit，状态查询保持纯只读，retention 上限由版本化 policy 统一表达，整数兼容入口与 policy 入口语义一致，v1→v2 显式迁移可 checkpoint、回滚且不改变旧 audit/结构，真实磁盘保存/加载后已删除 lineage 不复活、rollback 可继续并再次恢复，篡改 migration 和缺失配置 fail-closed，重启后只有新 task slice 能推进 cursor/批次且默认维护不重放旧 audit，重启后新 batch 能经过 candidate-only replay、原子准入、rollback 和再次 checkpoint；重启后 measured artifact 可跨 native checkpoint 消费、篡改 fail-closed、重复消费幂等；已回滚 artifact 明确保持 rolled_back，终结 artifact lineage 可原子压缩且重启不复活；仍不能声明无限扩张、自动增加预算、全面自进化或真实开放域收益 | 
+
+> W7-R5C 状态补充：S51 已通过 verified measurement artifact bridge Gate；上方能力表的阶段摘要仍是旧快照，当前唯一后继和最新明细以下方 S34–S52 条目及实现状态文档为准。
 
 最新证据数字与报告只在 [IMPLEMENTATION_STATUS_2026_08.md](../../reference/IMPLEMENTATION_STATUS_2026_08.md) 维护。
 
@@ -35,7 +37,7 @@
 
 ## 4. 当前唯一下一步
 
-执行 **W7-R5C-S16：把 measured artifact batch 推进到多轮真实 evidence continuation 与可逆 rollback**。
+执行 **W7-R5C-S38：多轮 SeedRuntime artifact 生命周期与 retention pressure Gate**。
 
 R5-G1 与 R5A-S0 已完成并交付：
 
@@ -99,6 +101,60 @@ R5C-S14 已完成：新增 `StructuralValidationMeasurements`，从 baseline/can
 
 R5C-S15 已完成：将 S14 measurement owner 接入 S13 的多区域 artifact batch，两个真实 region candidate 分别使用自己的 measured replay metrics、原始 resource digest 和 parent checkpoint；policy 两侧均消费对应实测值，增量 batch admission、restore 与重复消费幂等。`scripts/training/eval_taiji_workbench_measured_artifact_batch.py` 报告 `gate.passed=true`，当前不再保留 batch 级手工 metrics 注入路径。
 
+R5C-S16 已完成：`StructuralGrowthScheduleState` 按 `network_id:region_id` 保存独立 cooldown cursor；两轮真实 Workbench measured artifact batch 可跨 checkpoint continuation，旧 parent artifact 在状态变化后 fail-closed，第二轮 admission、rollback、restore 和重复 rollback 幂等。`scripts/training/eval_taiji_workbench_measured_multi_round.py` 报告 `gate.passed=true`。
+
+R5C-S17 已完成：measurement payload 在构造和反序列化时重算 digest，validation artifact 新增可选 `measurement_digest` provenance 绑定并兼容旧格式；metric/raw/resource/measurement/artifact tamper 全部 fail-closed，checkpoint restore 保持绑定。`scripts/training/eval_taiji_workbench_integrity.py` 报告 `gate.passed=true`。
+
+R5C-S18 已完成：`StructuralEvidenceLedger` 新增跨轮消费审计与 consumed-window compact；只压缩 scheduler 已消费且非最新的窗口，把原始 active evidence index 转为有界 provenance record，保留 window/evidence digest、来源 network/region、task slice、partition、tick 范围和消费 scheduler revision，未消费窗口继续参与 pressure projection；adapter 暴露审计/压缩入口，checkpoint restore、重复消费和篡改 fail-closed。`scripts/training/eval_taiji_structural_evidence_compaction.py` 报告 `gate.passed=true`。
+
+R5C-S19 已完成：压缩窗口新增只读 `StructuralEvidencePressureSnapshot`，保留已消费历史对 train/holdout/retention pressure 聚合所需的最小统计与 source window digest；`project_structural_growth_pressure()` 可在 active summaries + snapshot 上重建相同 projection digest，scheduler 仍只以未评估 active sealed window 触发。重复调度不会创建 candidate，candidate、snapshot、audit 与 ledger 均可 checkpoint 恢复，篡改 snapshot fail-closed。`scripts/training/eval_taiji_structural_provenance_projection.py` 报告 `gate.passed=true`。
+
+R5C-S20 已完成：复用真实 Workbench measured artifact batch，审计 evidence compaction 与 candidate source/evidence、artifact parent/trial、admission、reservation、预算和 rollback 的跨 checkpoint 绑定。压缩仅改变 evidence 存储形态与当前 checkpoint digest，不改写 candidate/batch payload；旧 parent artifact 在压缩后 fail-closed 且不改变 topology/budget；同一未压缩父分支仍可准入并回滚，compacted checkpoint 的 candidate/audit 可恢复，实测 measurement provenance 保持可用。`scripts/training/eval_taiji_structural_lineage_compaction.py` 报告 `gate.passed=true`。
+
+R5C-S21 已完成：在压缩上限为 16 的真实三轮 Workbench measured evidence 序列中，验证每个 stream 始终保留最新 active window，未消费第三轮窗口在调度前压缩时不被移动；第二、三轮 rollback 可恢复预算且不污染同 batch 的另一候选；降低上限导致的 OverflowError 不产生半提交；最终 16 个 compacted windows、2 个 active windows、pressure snapshot、candidate/admission/rollback 和 audit 均可 checkpoint 恢复。`scripts/training/eval_taiji_structural_long_sequence_stress.py` 报告 `gate.passed=true`。
+
+R5C-S22 已完成：收敛 candidate/batch retention 的安全边界。`_record_structural_candidate_batch()` 不再按字典排序盲删，活动 reservation、deferred candidate 和尚未 rollback 的 admitted candidate 均受保护；pending candidate queue 只淘汰未被活动 batch 引用的终结项；validation、gate、artifact、admission、rollback 与 artifact-batch 记录在仍有 live continuation/rollback 依赖时保持。lineage limit=1 的真实 Workbench retention canary 与 R5C 定向回归均通过，`scripts/training/eval_taiji_structural_lineage_retention.py` 报告 `gate.passed=true`。本 slice 允许保护记录暂时超过目标上限，以避免破坏活动 lineage；跨账本协同淘汰与压力可观测性留给 S23。
+
+R5C-S23 已完成：新增 `StructuralLineageRetentionResult` 和 `TSKV8Adapter.compact_structural_lineage_history()`，以 candidate batch 为根对 candidate、artifact/artifact-batch、validation、gate、admission、rollback、proposal 与相关 schedule audit 进行协同终结保留；只有无 active reservation、pending/deferred continuation、pending topology proposal 或 rollback 依赖的终结子图才可按时间顺序一起淘汰，操作失败原子恢复。真实 Workbench canary `scripts/training/eval_taiji_structural_lineage_compaction.py` 报告 `gate.passed=true`，覆盖活动 batch 保留、七类关联记录协同删除、content-addressed result、checkpoint restore、旧 replay/rollback fail-closed、压缩后新 evidence 调度确定性以及 protected pressure 可观测；R5C 定向回归为 `31 passed`（新增 lineage compaction 用例为 `4 passed`）。本 slice 仍不扩大预算、不执行物理删除、不处理 CI/CUDA/前端。
+
+R5C-S24 已完成：`run_structural_maintenance_cycle()` 增加显式 `lineage_retention_max_batches` 维护边界；默认调用完全保持 candidate-only 行为，只有维护 owner 明确传入正上限时才运行 S23 协同压缩。retention result digest、保护 batch、pressure、删除计数随 structural checkpoint 保存，source/target digest 排除 audit 自身以保证重复维护幂等；非法上限原子失败，维护不改变 topology/budget。真实 Workbench CPU canary `scripts/training/eval_taiji_structural_lineage_maintenance.py` 报告 `gate.passed=true`，S18–S24 定向回归为 `24 passed`，本轮 S21–S24 canary 全部通过。本 slice 不引入隐式后台线程、不扩大预算、不执行物理删除、不处理 CI/CUDA/前端。
+
+R5C-S25 已完成：`StructuralMaintenanceAudit` 将每次 SeedRuntime 显式维护调用的 candidate results、当次 retention result 和 structural runtime tick 组成可校验的 content-addressed payload；runtime 只做 projection，Taiji 继续拥有 candidate lifecycle、retention policy、topology 与 budget。默认调用不触发或重放已恢复的旧 audit，显式上限才投影新 retention，Seed checkpoint restore 保留 Taiji audit state，非法上限和篡改 payload fail-closed。真实 Workbench CPU canary `scripts/training/eval_taiji_structural_lineage_runtime.py` 报告 `gate.passed=true`，新增定向用例 `3 passed`，S18–S25 回归为 `27 passed`。本 slice 不启动后台清理、不改变前端/provider/Workbench 副作用边界、不处理 CI/CUDA。
+
+R5C-S26 已完成：`SeedRuntime.structural_maintenance_status()` 与 `status()["structural_maintenance"]` 提供纯只读 structural maintenance 状态，统一返回 format、runtime tick、最近 retention audit 和 pressure；无 audit 时返回明确空态，查询不触发维护、不修改 checkpoint、topology 或 budget，Seed checkpoint restore 后投影一致。真实 Workbench CPU canary `scripts/training/eval_taiji_structural_lineage_status.py` 报告 `gate.passed=true`，新增定向用例 `3 passed`。本 slice 不把 status 当作结构决策输入、不开放后台清理、不处理 CI/CUDA/前端。
+
+R5C-S27 已完成：新增 `StructuralLineageRetentionPolicy`，用 revision、max_batches、固定安全 protection rules 和 policy digest 统一表达 retention 边界；旧整数入口只在调用边界转换为同一 policy，policy 与 retention result 一起 checkpoint，SeedRuntime audit/status 同步投影 policy。未知 revision、非法保护集合、policy/result 不一致、整数与 policy 同时传入以及 digest 篡改均 fail-closed；policy 切换只影响后续显式 maintenance，不改写旧 result。真实 Workbench CPU canary `scripts/training/eval_taiji_structural_lineage_policy.py` 报告 `gate.passed=true`，新增定向用例 `4 passed`，S18–S27 回归为 `34 passed`。本 slice 不开放后台维护、不扩大预算、不处理 CI/CUDA/前端。
+
+R5C-S28 已完成：新增显式相邻 policy migration 与 rollback，v1→v2 只保留相同 max_batches、mode 和安全 protection rules，不改写已有 retention result、topology 或 budget；migration source/target/status/digest 随 structural checkpoint 保存，SeedRuntime 提供显式迁移/回滚入口。无迁移请求不发生隐式升级，非法安全语义、篡改和不一致 checkpoint fail-closed。真实 Workbench CPU canary `scripts/training/eval_taiji_structural_lineage_policy_migration.py` 报告 `gate.passed=true`，新增定向用例 `3 passed`，S18–S28 回归为 `37 passed`。本 slice 不开放后台维护、不扩大预算、不处理 CI/CUDA/前端。
+
+R5C-S29 已完成：真实 `SeedRuntime.save()` / `load()` 磁盘往返保留 retention audit、v1/v2 policy、migration、status、result 与已删除 terminal lineage；恢复后显式 rollback 可再次保存并加载，topology、budget 和旧 result 不变。tampered migration、缺失 config 字段均 fail-closed，原 checkpoint 字节与运行中状态不变。定向用例 `1 passed`，`scripts/training/eval_taiji_structural_lineage_disk_checkpoint.py` 报告 `gate.passed=true`；本轮不处理 CI/CUDA/前端。
+
+R5C-S33 已完成：已回滚候选再次收到旧 artifact 时明确返回 `rolled_back`，artifact provenance 在 rollback checkpoint 后保持可审计；双候选均回滚后显式 retention 原子淘汰完整 artifact lineage，压缩后旧 batch 回放 fail-closed 且无状态变化，再次 checkpoint 不复活 rollback lineage。定向测试 `2 passed`，`scripts/training/eval_taiji_structural_lineage_artifact_rollback.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+R5C-S34 已完成：在两个 batch 并存时，小 retention limit 只淘汰终结 batch 的完整 artifact 子图，活动 batch、reservation、pending lineage、预算、拓扑和 checkpoint continuation 均保持；终结 batch 的旧 artifact 回放无状态变化。定向测试 `1 passed`，`scripts/training/eval_taiji_structural_lineage_multi_batch_artifact.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+R5C-S35 已完成：artifact batch 对未知 candidate/replay mapping key 显式拒绝且原子不变；malformed artifact 只使自身 candidate fail-closed，合法 sibling 在 checkpoint 后仍可 measured admission，重复提交保持 topology/budget 不变。定向测试 `4 passed`，`scripts/training/eval_taiji_structural_lineage_artifact_batch_isolation.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+R5C-S36 已完成：SeedRuntime 在“测量完成后保存 → runtime checkpoint 重启 → 消费外部 artifact”路径上父 digest 稳定匹配，wrapper 不重算指标；未知 key 原子拒绝，artifact provenance 可恢复，重复消费幂等。定向测试 `1 passed`，`scripts/training/eval_taiji_runtime_structural_artifact_batch.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+R5C-S37 已完成：runtime 侧 stale parent、tamper、跨 batch 输入全部 fail-closed；并发提交同一 artifact 只产生一次真实 admission，另一次幂等返回，预算只扣一次，重启后 provenance 保留。定向测试 `2 passed`，`scripts/training/eval_taiji_runtime_structural_artifact_failure_concurrency.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+R5C-S38 已完成：三轮新的真实 Workbench evidence 创建独立 batch；第一轮活动 reservation 经 save/load 保持，第二轮 measured artifact 顺序准入后双 rollback，第三轮 malformed artifact 只使单候选 fail-closed 并保留 sibling reservation；小上限 retention 仅淘汰第二轮终结 artifact 子图，旧 batch replay 无状态变化，最终 checkpoint 保留 policy/cursor/budget/topology。定向测试 `1 passed`，`scripts/training/eval_taiji_runtime_structural_artifact_multi_round.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+R5C-S39 已完成：retention 后从磁盘恢复活动 batch，使用当前 checkpoint 重新生成 measured artifact，完成两个 candidate 的 admission、rollback 和幂等重复；已删除终结 batch 的旧 artifact 仍 fail-closed，二次 checkpoint 保留活动 batch、policy、cursor、budget 与 topology。定向测试 `1 passed`，`scripts/training/eval_taiji_runtime_structural_artifact_post_retention.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+R5C-S40 已完成：在第一轮活动 reservation 持续存在时，后续四轮新的 Workbench task slices 均完成 measured artifact admission、双 rollback 与 `max_batches=1` terminal-only retention；每轮 save/load 通过，终结 batch/artifact 只被当轮淘汰，最终只保留活动 batch，记录与容量快照受 lineage limit 约束，删除 batch 的 artifact replay fail-closed。定向测试 `1 passed`，`scripts/training/eval_taiji_runtime_structural_artifact_repeated_retention.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+R5C-S41 已完成：measured artifact 由自身 digest 命名为不可变 canonical JSON，重复/初次并发写入幂等，Windows replace 竞态不产生半文件，篡改读取和字节碰撞 fail-closed；外部 store 读取的 payload 经 SeedRuntime checkpoint 后仍按既有 batch contract 完成 admission 与重复幂等。定向测试 `1 passed`，Ruff 通过，`scripts/training/eval_taiji_structural_artifact_store.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+R5C-S42 已完成：SeedRuntime 新增显式 artifact store bridge，未知 candidate key 在解析前拒绝，缺失 digest 在 runtime 变更前失败；合法外部 digest 经 checkpoint 重启后完成 admission，重复提交返回 `already_applied` 且预算只扣一次。定向测试 `1 passed`，Ruff 通过，`scripts/training/eval_taiji_runtime_artifact_store_bridge.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+R5C-S43 已完成：多 candidate artifact digest 引用先全量预解析，第二项缺失时第一项不提前 admission，batch/candidate 状态与 checkpoint digest 原子不变；同一 checkpoint 随后合法提交 admission，重复提交幂等。定向测试 `1 passed`，Ruff 通过，`scripts/training/eval_taiji_runtime_artifact_store_preflight.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+R5C-S44 已完成：两个外部 measured artifact 按 parent 顺序跨三次 checkpoint 完成同一 batch，预算精确扣减、provenance 保留，完整 mapping 重复均为 `already_applied`。定向测试 `1 passed`，Ruff 通过，`scripts/training/eval_taiji_runtime_artifact_store_batch.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+当前唯一后继为 **W7-R5C-S52：artifact consumption policy 与 verified 默认边界 Gate**。
+
 ## 5. 本 slice 明确不做
 
 - 不执行物理删除或外部 artifact tombstone 提交；结构成长仍只产生可恢复 candidate，validation artifact 不能绕过 shadow/holdout/retention/lesion 与原子拒绝；S16 之前也不把单轮 canary replay 指标扩大成长期开放域质量结论；
@@ -109,7 +165,14 @@ R5C-S15 已完成：将 S14 measurement owner 接入 S13 的多区域 artifact b
 - 不把 capability registry、candidate package 或 shadow observation 当成认知主体，不让 Taiji/provider/frontend 拥有注册、激活、替换或删除 executor 的权限；
 - 不把单个 tick、scale target、单次演示或 holdout 标签直接当作结构成长依据；R5C-S0 只接收可追溯、去重、可 checkpoint 的长期 evidence 聚合。
 
-按用户决定，CI 全量验收暂缓；当前唯一后继为 [04_EXECUTION_PLAN.md §6](04_EXECUTION_PLAN.md) 的 **R5C-S18 多轮 ledger compactness 与跨轮 evidence 消费审计**。L4 已明确暂不实施纯计算执行体；R5C-S0/S1 完成证据保全与非突变 projection，R5C-S2 完成 candidate-only controller bridge，R5C-S3A/B/C 完成 validation 与 policy 接线，R5C-S3D 完成单次受限 admission，R5C-S4 完成双 seed/task slice 稳定性与 rollback，R5C-S5 完成跨 checkpoint 两步连续成长与预算耗尽拒绝，R5C-S6 完成真实 Workbench evidence 接线与可恢复调度，R5C-S7 完成调度候选的验证闭环与 Workbench continuation，R5C-S8 完成多候选确定性仲裁与 reservation continuation，R5C-S9 完成跨区域容量压力、多轮 continuation、回滚与新证据再仲裁，R5C-S10 完成多个真实 Workbench 区域直接生成同一候选批次，R5C-S11 完成真实多区域 batch 的逐候选生命周期，R5C-S12 完成单候选 replay-bound validation artifact，R5C-S13 完成多区域 artifact batch continuation，R5C-S14 完成独立 replay measurement owner，R5C-S15 完成 measured artifact batch，R5C-S16 完成多轮 measured evidence continuation、跨 stream cooldown 修复与 rollback，R5C-S17 完成 measurement/artifact digest 完整性与 provenance 绑定；完整 Workbench CI 回归仍作为后置统一门禁。
+R5C-S30 已完成：重启恢复后的 runtime 接收新的真实 Workbench task slices，结构 runtime tick 与 scheduler revision 只由新 evidence 推进，新增批次和显式 retention audit 可恢复；已删除 terminal lineage 不复活，第二次恢复后默认 maintenance 不重放旧 audit。定向用例 `1 passed`，`scripts/training/eval_taiji_structural_lineage_restart_continuation.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+R5C-S31 已完成：重启后的新 batch 经过 candidate-only holdout replay、五类 validation gate、atomic admission，并在中间 checkpoint 恢复后完成第二候选；随后 rollback 恢复父结构/预算并再次 checkpoint，policy migration 与 rollback lineage 保持，跨批次 candidate continuation 现在 fail-closed 且无状态变化。定向用例 `1 passed`，`scripts/training/eval_taiji_structural_lineage_restart_admission.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+R5C-S32 已完成：独立 replay measurement owner 生成的 Workbench validation artifact 以 JSON 内容寻址 payload 保存；容量 pressure snapshot 先完成再保存 parent checkpoint，重启后只消费保存的 artifact/replay。篡改 measurement digest 在候选粒度 fail-closed 且预算/拓扑不变，两个 measured artifact 跨 native checkpoint 完成 atomic admission，最终 checkpoint 后重复消费返回 `already_applied` 且 artifact batch complete。定向用例 `1 passed`，R5C-S18–S32 相关回归 `31 passed`，`scripts/training/eval_taiji_structural_lineage_restart_artifact.py` 报告 `gate.passed=true`。本 slice 不处理 CI/CUDA/前端。
+
+按用户决定，CI 全量验收暂缓；当前唯一后继为 [04_EXECUTION_PLAN.md §6](04_EXECUTION_PLAN.md) 的 **R5C-S33 artifact provenance 与 rollback/恢复闭环 Gate**。L4 已明确暂不实施纯计算执行体；R5C-S0/S1 完成证据保全与非突变 projection，R5C-S2 完成 candidate-only controller bridge，R5C-S3A/B/C 完成 validation 与 policy 接线，R5C-S3D 完成单次受限 admission，R5C-S4 完成双 seed/task slice 稳定性与 rollback，R5C-S5 完成跨 checkpoint 两步连续成长与预算耗尽拒绝，R5C-S6 完成真实 Workbench evidence 接线与可恢复调度，R5C-S7 完成调度候选的验证闭环与 Workbench continuation，R5C-S8 完成多候选确定性仲裁与 reservation continuation，R5C-S9 完成跨区域容量压力、多轮 continuation、回滚与新证据再仲裁，R5C-S10 完成多个真实 Workbench 区域直接生成同一候选批次，R5C-S11 完成真实多区域 batch 的逐候选生命周期，R5C-S12 完成单候选 replay-bound validation artifact，R5C-S13 完成多区域 artifact batch continuation，R5C-S14 完成独立 replay measurement owner，R5C-S15 完成 measured artifact batch，R5C-S16 完成多轮 measured evidence continuation、跨 stream cooldown 修复与 rollback，R5C-S17 完成 measurement digest 完整性与 provenance 绑定，R5C-S18 完成已消费旧窗口的有界 provenance 压缩与跨轮消费审计，R5C-S19 完成压缩后 provenance-aware pressure projection 与跨轮 candidate 去重，R5C-S20 完成 candidate/artifact/admission/rollback lineage 审计，R5C-S21 完成长序列压缩保留、分支恢复与资源账本压力，R5C-S22 完成受保护 candidate/batch lineage 保留，R5C-S23 完成跨账本协同终结保留与新 evidence continuation 确定性，R5C-S24 完成显式维护边界接入与 retention audit 持久化，R5C-S25 完成 SeedRuntime 显式可观测审计契约，R5C-S26 完成 runtime 只读 structural maintenance 状态投影，R5C-S27 完成版本化、内容寻址 retention policy，R5C-S28 完成 policy 迁移与回滚生命周期，R5C-S29 完成真实磁盘 checkpoint 继续与回滚，R5C-S30 完成重启恢复后的新 evidence continuation 与 no-replay，R5C-S31 完成重启后候选准入、回滚、跨批次保护与 checkpoint continuation，R5C-S32 完成 measured replay-bound artifact 跨 native checkpoint 消费与幂等；完整 Workbench CI 回归仍作为后置统一门禁。
+按用户决定，CI 全量验收暂缓；当前唯一后继为 [04_EXECUTION_PLAN.md §6](04_EXECUTION_PLAN.md) 的 **R5C-S34 多批次 artifact lineage 隔离与 retention pressure Gate**。L4 已明确暂不实施纯计算执行体；R5C-S0/S1 完成证据保全与非突变 projection，R5C-S2 完成 candidate-only controller bridge，R5C-S3A/B/C 完成 validation 与 policy 接线，R5C-S3D 完成单次受限 admission，R5C-S4 完成双 seed/task slice 稳定性与 rollback，R5C-S5 完成跨 checkpoint 两步连续成长与预算耗尽拒绝，R5C-S6 完成真实 Workbench evidence 接线与可恢复调度，R5C-S7 完成调度候选的验证闭环与 Workbench continuation，R5C-S8 完成多候选确定性仲裁与 reservation continuation，R5C-S9 完成跨区域容量压力、多轮 continuation、回滚与新证据再仲裁，R5C-S10 完成多个真实 Workbench 区域直接生成同一候选批次，R5C-S11 完成真实多区域 batch 的逐候选生命周期，R5C-S12 完成单候选 replay-bound validation artifact，R5C-S13 完成多区域 artifact batch continuation，R5C-S14 完成独立 replay measurement owner，R5C-S15 完成 measured artifact batch，R5C-S16 完成多轮 measured evidence continuation、跨 stream cooldown 修复与 rollback，R5C-S17 完成 measurement digest 完整性与 provenance 绑定，R5C-S18 完成已消费旧窗口的有界 provenance 压缩与跨轮消费审计，R5C-S19 完成压缩后 provenance-aware pressure projection 与跨轮 candidate 去重，R5C-S20 完成 candidate/artifact/admission/rollback lineage 审计，R5C-S21 完成长序列压缩保留、分支恢复与资源账本压力，R5C-S22 完成受保护 candidate/batch lineage 保留，R5C-S23 完成跨账本协同终结保留与新 evidence continuation 确定性，R5C-S24 完成显式维护边界接入与 retention audit 持久化，R5C-S25 完成 SeedRuntime 显式可观测审计契约，R5C-S26 完成 runtime 只读 structural maintenance 状态投影，R5C-S27 完成版本化、内容寻址 retention policy，R5C-S28 完成 policy 迁移与回滚生命周期，R5C-S29 完成真实磁盘 checkpoint 继续与回滚，R5C-S30 完成重启恢复后的新 evidence continuation 与 no-replay，R5C-S31 完成重启后候选准入、回滚、跨批次保护与 checkpoint continuation，R5C-S32 完成 measured replay-bound artifact 跨 native checkpoint 消费与幂等，R5C-S33 完成 artifact provenance 与 rollback/恢复闭环；完整 Workbench CI 回归仍作为后置统一门禁。
 
 ## 6. 更新规则
 

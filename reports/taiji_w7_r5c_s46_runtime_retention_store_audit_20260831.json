@@ -1,0 +1,53 @@
+{
+  "format": "taiji-w7-r5c-s46-runtime-retention-store-audit-v1",
+  "active_batch_id": "batch:structural:4bc2820359215dd144b8715be7be4e64",
+  "terminal_batch_id": "batch:structural:6d138d38d69b67cce5ae2e8c79aaa85b",
+  "artifact_digests": [
+    "9a56e4c40500b17ffbc7e589b287d53bd6719f1fa169a78f4523329d6aed99b2",
+    "965431dfccf181457e4f40dcfbeeb5c1fb86eecf701f23aa9a36f7fcc0710f42"
+  ],
+  "inventory": [
+    {
+      "artifact_digest": "965431dfccf181457e4f40dcfbeeb5c1fb86eecf701f23aa9a36f7fcc0710f42",
+      "measurement_digest": "d04d89080bf075d70b2d4becb71cbf410316fd101a976d636e4b2b792d944c6a",
+      "candidate_id": "candidate:pressure:workbench:workbench.code:2:18f5421766b1",
+      "network_id": "workbench",
+      "region_id": "adaptive.cortex",
+      "task_slice_id": "workbench-measured-batch",
+      "parent_checkpoint_digest": "ef72b17d34b2c60d8c8e67ed60b76874d9c481aef610abc22bfffe0db1d6e024",
+      "trial_checkpoint_digest": "58c4f5a04834d043a3658c292cc4a23b0362a57e4896ef47535d0b8b442cff2d",
+      "holdout_gain": 0.12139131873846054,
+      "retention_regression": 0.0,
+      "lesion_effect": 0.12139131873846054,
+      "resource_state": 0.5,
+      "resource_cost": 1
+    },
+    {
+      "artifact_digest": "9a56e4c40500b17ffbc7e589b287d53bd6719f1fa169a78f4523329d6aed99b2",
+      "measurement_digest": "764a699f753fd2518ff844184414da51b62a4abf5eb2a2604c269d3817ed8e69",
+      "candidate_id": "candidate:pressure:workbench:workbench.docs:2:2328a3b4183c",
+      "network_id": "workbench",
+      "region_id": "adaptive.memory",
+      "task_slice_id": "workbench-measured-batch",
+      "parent_checkpoint_digest": "41c0ad6747b03613d25201a57769d4c4b4e3cb587e25c2c48fd99c39fab35fb1",
+      "trial_checkpoint_digest": "f007f36d7e07471b5395246695e5eadea27290442c4806dc06a8645951a03949",
+      "holdout_gain": 0.12139131873846054,
+      "retention_regression": 0.0,
+      "lesion_effect": 0.12139131873846054,
+      "resource_state": 0.5,
+      "resource_cost": 1
+    }
+  ],
+  "metrics": {
+    "healthy_inventory_is_stable_and_audit_alias_matches": true,
+    "runtime_orphans_remain_auditable_but_not_consumable": true,
+    "tampered_measurement_facts_fail_closed_without_repair": true,
+    "invalid_filename_fails_closed_without_deletion": true,
+    "audit_is_runtime_read_only": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "external artifact inventory must be deterministic and integrity-checked, while remaining read-only and independent from runtime retention or replay"
+  },
+  "boundary": "This canary covers native CPU read-only external artifact-store audit. It does not claim automatic garbage collection, deletion, unlimited storage, open-domain quality, unlimited growth, CUDA, frontend behavior, Windows shell, CI completion, or general intelligence."
+}

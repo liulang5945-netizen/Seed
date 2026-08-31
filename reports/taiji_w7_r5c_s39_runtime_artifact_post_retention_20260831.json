@@ -1,0 +1,70 @@
+{
+  "format": "taiji-w7-r5c-s39-runtime-artifact-post-retention-v1",
+  "rounds": {
+    "round_one_batch_id": "batch:structural:0a5f72bcbc6c8fa2d6a58a3f5b7e3485",
+    "round_two_batch_id": "batch:structural:9c59f58ba39190485f992d4f05782f4e",
+    "round_three_batch_id": "batch:structural:960606b86a3440f98fb930d864432b0d",
+    "retained_candidate_ids": [
+      "candidate:pressure:workbench:workbench.docs:1:503a78d385ff",
+      "candidate:pressure:workbench:workbench.code:1:c9ca89866371"
+    ]
+  },
+  "retention": {
+    "format": "taiji-structural-lineage-retention-result-v1",
+    "status": "compacted",
+    "max_batches": 2,
+    "source_checkpoint_digest": "3eba38a2201e7d35d55cd0aa13df9884a85f8e376f861c71f520884f3ba65c4c",
+    "target_checkpoint_digest": "a02e79b3a00bdaeca74362cbd3d359e812d9c3f65b18ac42b4fa1f9fb114fd33",
+    "protected_batch_ids": [
+      "batch:structural:0a5f72bcbc6c8fa2d6a58a3f5b7e3485",
+      "batch:structural:960606b86a3440f98fb930d864432b0d"
+    ],
+    "retained_batch_ids": [
+      "batch:structural:0a5f72bcbc6c8fa2d6a58a3f5b7e3485",
+      "batch:structural:960606b86a3440f98fb930d864432b0d"
+    ],
+    "removed_batch_ids": [
+      "batch:structural:9c59f58ba39190485f992d4f05782f4e"
+    ],
+    "retained_candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:c9ca89866371",
+      "candidate:pressure:workbench:workbench.code:3:26cafb0ccfbb",
+      "candidate:pressure:workbench:workbench.docs:1:503a78d385ff",
+      "candidate:pressure:workbench:workbench.docs:3:d3163632fcce"
+    ],
+    "removed_candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:2:9309529ae474",
+      "candidate:pressure:workbench:workbench.docs:2:11f247192042"
+    ],
+    "removed_record_counts": {
+      "admission_results": 2,
+      "candidate_proposals": 2,
+      "candidate_rollbacks": 2,
+      "candidate_validations": 2,
+      "growth_schedule_results": 2,
+      "maintenance_results": 0,
+      "proposal_candidates": 0,
+      "validation_artifact_batches": 1,
+      "validation_artifacts": 2,
+      "validation_gate_decisions": 2,
+      "workbench_batch_schedule_results": 1
+    },
+    "retention_pressure": false,
+    "result_digest": "5218b76d8868358e7e68c13f9648a4175965eb4b5384c476045299826df4d2c5"
+  },
+  "metrics": {
+    "retention_protects_live_batches": true,
+    "post_retention_restart_preserves_projection": true,
+    "deleted_terminal_artifact_stays_fail_closed": true,
+    "new_artifact_binds_current_checkpoint_after_restart": true,
+    "retained_lineage_admits_after_retention": true,
+    "post_retention_rollback_is_reversible_and_idempotent": true,
+    "measured_metrics_remain_owner_derived": true,
+    "final_checkpoint_preserves_active_round_and_removes_terminal_round": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "after terminal-only retention and disk restart, protected active lineage must consume newly measured artifacts against the current checkpoint, admit and rollback exactly within budget, and keep deleted terminal artifacts unreplayable"
+  },
+  "boundary": "This canary covers native CPU post-retention SeedRuntime continuation. It does not claim unlimited growth, automatic budget expansion, open-domain quality, CUDA, frontend behavior, Windows shell, CI completion, or general intelligence."
+}

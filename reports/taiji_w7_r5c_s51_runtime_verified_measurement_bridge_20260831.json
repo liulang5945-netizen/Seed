@@ -1,0 +1,17 @@
+{
+  "format": "taiji-w7-r5c-s51-runtime-verified-measurement-bridge-v1",
+  "verified_batch_id": "batch:structural:84f52a7f41c171a27eae010db60b1b3c",
+  "legacy_batch_id": "batch:structural:1132caccd706f22d650620f177cb3f7c",
+  "partial_batch_id": "batch:structural:a5f0d4841f30cfcb062e70eb87fc42b0",
+  "metrics": {
+    "verified_bundle_strictly_consumes": true,
+    "legacy_default_compatibility_is_preserved": true,
+    "legacy_strict_mode_fails_closed_read_only": true,
+    "multi_candidate_strict_resolution_is_atomic": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "strict verified-measurement bridge mode must validate every external artifact before native consumption, while default mode remains legacy-compatible"
+  },
+  "boundary": "This canary covers native CPU opt-in verified artifact consumption. It does not claim default forced migration, automatic registration, deletion, unlimited storage, open-domain quality, CUDA, frontend behavior, Windows shell, CI completion, or general intelligence."
+}

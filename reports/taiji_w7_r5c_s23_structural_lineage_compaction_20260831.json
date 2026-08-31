@@ -1,0 +1,189 @@
+{
+  "format": "taiji-w7-r5c-s23-structural-lineage-compaction-v1",
+  "retention_limit": 1,
+  "schedule": {
+    "format": "taiji-structural-workbench-batch-schedule-v1",
+    "status": "batch_created",
+    "trigger_tick": 6,
+    "request_digest": "5cca36044b0e3e8c27085e641ff6c127fc3614154704830a29cd80b89812c44c",
+    "region_ids": [
+      "workbench.code",
+      "workbench.docs"
+    ],
+    "candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+      "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+    ],
+    "source_window_digests": [
+      "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+      "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+      "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+      "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+      "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46",
+      "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897"
+    ],
+    "batch_id": "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1",
+    "reason": "",
+    "scheduler_revision": 2
+  },
+  "compaction": {
+    "format": "taiji-structural-lineage-retention-result-v1",
+    "status": "compacted",
+    "max_batches": 1,
+    "source_checkpoint_digest": "fa577b2eadd1572d4c3effe6407c4b95b0d1466ecef8c66fafc207ed1388dd84",
+    "target_checkpoint_digest": "fe61261781e8f85faae915946c0cdee4fcd310e7258f73eed6136466edac846c",
+    "protected_batch_ids": [
+      "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1"
+    ],
+    "retained_batch_ids": [
+      "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1"
+    ],
+    "removed_batch_ids": [
+      "batch:terminal-lineage"
+    ],
+    "retained_candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+      "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+    ],
+    "removed_candidate_ids": [
+      "candidate:terminal-lineage"
+    ],
+    "removed_record_counts": {
+      "admission_results": 1,
+      "candidate_proposals": 0,
+      "candidate_rollbacks": 1,
+      "candidate_validations": 1,
+      "growth_schedule_results": 0,
+      "maintenance_results": 0,
+      "proposal_candidates": 0,
+      "validation_artifact_batches": 1,
+      "validation_artifacts": 1,
+      "validation_gate_decisions": 1,
+      "workbench_batch_schedule_results": 1
+    },
+    "retention_pressure": false,
+    "result_digest": "6a075163309c2f8c42055c4b3bbb40864ff3cdb2a806be346e2399a0dd4e3364"
+  },
+  "pressure": {
+    "format": "taiji-structural-lineage-retention-result-v1",
+    "status": "nothing_to_compact",
+    "max_batches": 1,
+    "source_checkpoint_digest": "9b13cba4fc1a882cead1ddf4d5ba0b481b2ca2cfe89f596e8793b6fef6cf1c5e",
+    "target_checkpoint_digest": "9b13cba4fc1a882cead1ddf4d5ba0b481b2ca2cfe89f596e8793b6fef6cf1c5e",
+    "protected_batch_ids": [
+      "batch:protected-copy",
+      "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1"
+    ],
+    "retained_batch_ids": [
+      "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1",
+      "batch:protected-copy"
+    ],
+    "removed_batch_ids": [],
+    "retained_candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+      "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+    ],
+    "removed_candidate_ids": [],
+    "removed_record_counts": {
+      "admission_results": 0,
+      "candidate_proposals": 0,
+      "candidate_rollbacks": 0,
+      "candidate_validations": 0,
+      "growth_schedule_results": 0,
+      "maintenance_results": 0,
+      "proposal_candidates": 0,
+      "validation_artifact_batches": 0,
+      "validation_artifacts": 0,
+      "validation_gate_decisions": 0,
+      "workbench_batch_schedule_results": 0
+    },
+    "retention_pressure": true,
+    "result_digest": "c7a18b7a8c3af4a8b1c1acc9e5d661bf84c075b5eaac0a0b06b7eec23559da26"
+  },
+  "stale_replay": {
+    "candidate_id": "candidate:terminal-lineage",
+    "status": "failed_closed",
+    "reason": "validation artifact candidate is not pending",
+    "validation_artifact": {
+      "format": "taiji-workbench-structural-validation-artifact-v1",
+      "candidate_id": "candidate:terminal-lineage",
+      "network_id": "workbench",
+      "region_id": "workbench.code",
+      "task_slice_id": "terminal-lineage",
+      "outcome_digests": [
+        "terminal:outcome"
+      ],
+      "parent_checkpoint_digest": "terminal:parent",
+      "trial_checkpoint_digest": "terminal:trial",
+      "holdout_input_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "holdout_output_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "retention_baseline_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "retention_candidate_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "lesion_baseline_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "lesion_candidate_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "resource_measurement_digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "holdout_gain": 0.0,
+      "retention_regression": 0.0,
+      "lesion_effect": 0.0,
+      "resource_state": 0.0,
+      "resource_cost": 1,
+      "evidence_ids": [
+        "terminal:evidence"
+      ],
+      "artifact_digest": "c3dc5e6f0568d031c3e2416bd6b296f17a701a4ceacd453ed8e791b38f9d068d"
+    }
+  },
+  "fresh_schedule": {
+    "format": "taiji-structural-workbench-batch-schedule-v1",
+    "status": "batch_created",
+    "trigger_tick": 7,
+    "request_digest": "5cca36044b0e3e8c27085e641ff6c127fc3614154704830a29cd80b89812c44c",
+    "region_ids": [
+      "workbench.code",
+      "workbench.docs"
+    ],
+    "candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:2:786a526f9991"
+    ],
+    "source_window_digests": [
+      "88e3431461dcaf96de0ac1b9593fb09b04b93ebe07c1e35df12319c9149f5a26"
+    ],
+    "batch_id": "batch:structural:1da6ab570f4a9f94351cd278dda32a67",
+    "reason": "",
+    "scheduler_revision": 3
+  },
+  "restored_fresh_schedule": {
+    "format": "taiji-structural-workbench-batch-schedule-v1",
+    "status": "batch_created",
+    "trigger_tick": 7,
+    "request_digest": "5cca36044b0e3e8c27085e641ff6c127fc3614154704830a29cd80b89812c44c",
+    "region_ids": [
+      "workbench.code",
+      "workbench.docs"
+    ],
+    "candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:2:786a526f9991"
+    ],
+    "source_window_digests": [
+      "88e3431461dcaf96de0ac1b9593fb09b04b93ebe07c1e35df12319c9149f5a26"
+    ],
+    "batch_id": "batch:structural:1da6ab570f4a9f94351cd278dda32a67",
+    "reason": "",
+    "scheduler_revision": 3
+  },
+  "metrics": {
+    "real_workbench_batch_is_active": true,
+    "terminal_subgraph_is_removed_as_one_unit": true,
+    "active_lineage_is_retained": true,
+    "checkpoint_restore_is_deterministic": true,
+    "stale_replay_and_rollback_fail_closed": true,
+    "retention_result_is_content_addressed": true,
+    "checkpoint_restore_continues_new_evidence_deterministically": true,
+    "protected_pressure_is_observable_without_deletion": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "only a terminal structural lineage subgraph without active reservation, pending continuation, pending topology, or rollback dependency may be compacted; all dependent ledgers are removed atomically, stale replay fails closed, and protected lineage pressure remains observable"
+  },
+  "boundary": "This canary covers native CPU lineage-graph retention and checkpoint determinism. It does not claim open-domain quality, unlimited growth, CUDA, frontend behavior, or CI."
+}

@@ -1,0 +1,97 @@
+{
+  "format": "taiji-w7-r5c-s30-structural-lineage-restart-continuation-v1",
+  "schedule": {
+    "format": "taiji-structural-workbench-batch-schedule-v1",
+    "status": "batch_created",
+    "trigger_tick": 12,
+    "request_digest": "e7d9d490275f220e9cbc65e425640551596f9c81f9a68bde29bb04af4ed159c9",
+    "region_ids": [
+      "workbench.code",
+      "workbench.docs"
+    ],
+    "candidate_ids": [
+      "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+      "candidate:pressure:workbench:workbench.code:2:a10974098f71"
+    ],
+    "source_window_digests": [
+      "c1a81b76879f696d1418a83097cd698c4e48aec711e8b0bd429bef43c01875b0",
+      "021f9901f2ca322decc6c7a27b32ad3231d16d816f6b1efdf0d4349922d565d1",
+      "f12c7f04d123102bca87baa9d87da3fb2053e70475ea4165f7354bde6f45f4a5",
+      "5b41f1627104e54897c1a11304521dce80345387b87ab4c835b2073fb52d8ddc",
+      "707ae9c618df6c5f0db18727c7464d4c75237bfe627affcf70f625bb9829eded",
+      "4a722f426e53a846c69a6fbae669c4bae3d50b1065ad1073e80003924010c3c9"
+    ],
+    "batch_id": "batch:structural:dfd02d10914dfafbb4b32489c4dee8bd",
+    "reason": "",
+    "scheduler_revision": 4
+  },
+  "continuation_audit": {
+    "format": "taiji-structural-maintenance-audit-v1",
+    "maintenance_results": [],
+    "lineage_retention": {
+      "format": "taiji-structural-lineage-retention-result-v1",
+      "status": "nothing_to_compact",
+      "max_batches": 1,
+      "source_checkpoint_digest": "950f955c6fdc077d0f01b38051af1ec64ed81f1992b2b0266404a82864a6871b",
+      "target_checkpoint_digest": "950f955c6fdc077d0f01b38051af1ec64ed81f1992b2b0266404a82864a6871b",
+      "protected_batch_ids": [
+        "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1",
+        "batch:structural:dfd02d10914dfafbb4b32489c4dee8bd"
+      ],
+      "retained_batch_ids": [
+        "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1",
+        "batch:structural:dfd02d10914dfafbb4b32489c4dee8bd"
+      ],
+      "removed_batch_ids": [],
+      "retained_candidate_ids": [
+        "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+        "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5"
+      ],
+      "removed_candidate_ids": [],
+      "removed_record_counts": {
+        "admission_results": 0,
+        "candidate_proposals": 0,
+        "candidate_rollbacks": 0,
+        "candidate_validations": 0,
+        "growth_schedule_results": 0,
+        "maintenance_results": 0,
+        "proposal_candidates": 0,
+        "validation_artifact_batches": 0,
+        "validation_artifacts": 0,
+        "validation_gate_decisions": 0,
+        "workbench_batch_schedule_results": 0
+      },
+      "retention_pressure": true,
+      "result_digest": "9338d22d988ca56d241e5a2d3e38d6079094a55b73e85365ce31ba2a1ededa3f"
+    },
+    "retention_policy": {
+      "format": "taiji-structural-lineage-retention-policy-v1",
+      "revision": 2,
+      "max_batches": 1,
+      "protection_rules": [
+        "active_reservation",
+        "pending_candidate",
+        "pending_topology_proposal",
+        "rollbackable_admission"
+      ],
+      "mode": "terminal_only",
+      "policy_digest": "2206fee63cbe65857d6971aff7fb0f27b820c369f44ef2102a22a85948cabd98"
+    },
+    "structural_runtime_tick": 12,
+    "audit_digest": "652a5b38413d250bf91d4906d1572696c15f33be573d813e0837cbf108bc0755"
+  },
+  "metrics": {
+    "new_workbench_evidence_advances_cursor": true,
+    "only_new_windows_create_the_next_batch": true,
+    "continuation_creates_a_new_explicit_audit": true,
+    "old_audit_and_deleted_lineage_are_not_replayed": true,
+    "second_restart_preserves_continuation_state": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "after restart, only new Workbench evidence may advance the structural cursor and create a new explicit maintenance audit; old actions and deleted lineage must not replay, and the continuation state must survive a second checkpoint roundtrip"
+  },
+  "boundary": "This canary covers native CPU restart continuation and no-replay semantics. It does not claim open-domain quality, unlimited growth, CUDA, frontend behavior, or CI."
+}

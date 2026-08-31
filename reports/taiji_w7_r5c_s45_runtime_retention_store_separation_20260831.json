@@ -1,0 +1,60 @@
+{
+  "format": "taiji-w7-r5c-s45-runtime-retention-store-separation-v1",
+  "active_batch_id": "batch:structural:4bc2820359215dd144b8715be7be4e64",
+  "terminal_batch_id": "batch:structural:6d138d38d69b67cce5ae2e8c79aaa85b",
+  "artifact_digests": [
+    "9a56e4c40500b17ffbc7e589b287d53bd6719f1fa169a78f4523329d6aed99b2",
+    "965431dfccf181457e4f40dcfbeeb5c1fb86eecf701f23aa9a36f7fcc0710f42"
+  ],
+  "retention": {
+    "format": "taiji-structural-lineage-retention-result-v1",
+    "status": "compacted",
+    "max_batches": 1,
+    "source_checkpoint_digest": "7e091f5389c25144969489db6f63e13b77e7ce4c354d9d1a03243fb2c6753d15",
+    "target_checkpoint_digest": "e99dc66bf5c353a4cd6864562a6d506675753ce217388b14094f991c97a32d39",
+    "protected_batch_ids": [
+      "batch:structural:4bc2820359215dd144b8715be7be4e64"
+    ],
+    "retained_batch_ids": [
+      "batch:structural:4bc2820359215dd144b8715be7be4e64"
+    ],
+    "removed_batch_ids": [
+      "batch:structural:6d138d38d69b67cce5ae2e8c79aaa85b"
+    ],
+    "retained_candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:69b87d57d646",
+      "candidate:pressure:workbench:workbench.docs:1:f9a062525e5b"
+    ],
+    "removed_candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:2:18f5421766b1",
+      "candidate:pressure:workbench:workbench.docs:2:2328a3b4183c"
+    ],
+    "removed_record_counts": {
+      "admission_results": 2,
+      "candidate_proposals": 2,
+      "candidate_rollbacks": 2,
+      "candidate_validations": 2,
+      "growth_schedule_results": 2,
+      "maintenance_results": 0,
+      "proposal_candidates": 0,
+      "validation_artifact_batches": 1,
+      "validation_artifacts": 2,
+      "validation_gate_decisions": 2,
+      "workbench_batch_schedule_results": 1
+    },
+    "retention_pressure": false,
+    "result_digest": "9072882df41454029e1d053eccb7849f33858288b2c84afcfc89d110e9519760"
+  },
+  "metrics": {
+    "terminal_artifacts_are_still_physically_present": true,
+    "retention_removes_runtime_lineage_only": true,
+    "stored_old_artifact_cannot_resurrect_deleted_batch": true,
+    "terminal_admission_and_rollback_were_explicit": true,
+    "checkpoint_restore_preserves_store_and_audit_ownership": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "runtime retention may remove terminal lineage references but must not delete immutable external artifacts or let them resurrect a deleted batch"
+  },
+  "boundary": "This canary covers native CPU runtime/store lifecycle separation. It does not claim automatic garbage collection, unlimited storage, open-domain quality, unlimited growth, CUDA, frontend behavior, Windows shell, CI completion, or general intelligence."
+}

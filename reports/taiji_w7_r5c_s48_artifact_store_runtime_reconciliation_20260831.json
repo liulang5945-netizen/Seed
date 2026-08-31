@@ -1,0 +1,22 @@
+{
+  "format": "taiji-w7-r5c-s48-artifact-store-runtime-reconciliation-v1",
+  "active_batch_id": "batch:structural:4bc2820359215dd144b8715be7be4e64",
+  "terminal_batch_id": "batch:structural:6d138d38d69b67cce5ae2e8c79aaa85b",
+  "missing_runtime_artifact_digest": "965431dfccf181457e4f40dcfbeeb5c1fb86eecf701f23aa9a36f7fcc0710f42",
+  "external_orphan_artifact_digest": "9a56e4c40500b17ffbc7e589b287d53bd6719f1fa169a78f4523329d6aed99b2",
+  "projection_audit_digest": "a7c5ccc794856adf54229d77337c42f44d81abd100dc1b0fa07dd43f7b376a2e",
+  "orphan_projection_audit_digest": "13c623766ec87346ff18d49a2bc68d536d0b64c75542f063eb3059d33b5fa097",
+  "metrics": {
+    "healthy_runtime_store_reconciliation": true,
+    "runtime_missing_is_not_external_orphan": true,
+    "checkpoint_restore_preserves_reconciliation": true,
+    "retention_orphan_is_distinct_from_runtime_missing": true,
+    "projection_and_tamper_paths_are_read_only": true,
+    "lifecycle_actions_remain_explicit": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "runtime/store reconciliation must expose both directions of the reference relationship without repairing, registering, deleting, or consuming artifacts"
+  },
+  "boundary": "This canary covers native CPU read-only artifact-store/runtime reconciliation. It does not claim automatic repair, registration, deletion, unlimited storage, open-domain quality, unlimited growth, CUDA, frontend behavior, Windows shell, CI completion, or general intelligence."
+}

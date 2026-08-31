@@ -1,0 +1,529 @@
+{
+  "format": "taiji-w7-r5c-s32-structural-lineage-restart-artifact-v1",
+  "batch_id": "batch:structural:dfd02d10914dfafbb4b32489c4dee8bd",
+  "candidate_ids": [
+    "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+    "candidate:pressure:workbench:workbench.code:2:a10974098f71"
+  ],
+  "first_artifact_digest": "863347e5572d6b48df49727841dfeb70baf0cee52368324288d2691c76f7658a",
+  "second_artifact_digest": "3fa9d0d87544332b6b44c215b4620664946e213c73d34a48c9f6e8f52285820f",
+  "first_measurement_digest": "764a699f753fd2518ff844184414da51b62a4abf5eb2a2604c269d3817ed8e69",
+  "second_measurement_digest": "d04d89080bf075d70b2d4becb71cbf410316fd101a976d636e4b2b792d944c6a",
+  "tampered_result": {
+    "batch": {
+      "format": "taiji-structural-candidate-batch-v1",
+      "batch_id": "batch:structural:dfd02d10914dfafbb4b32489c4dee8bd",
+      "candidate_ids": [
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5"
+      ],
+      "selected_candidate_ids": [
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71"
+      ],
+      "deferred_candidate_ids": [],
+      "rejected_candidate_ids": [],
+      "candidate_states": {
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71": "reserved",
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5": "failed_closed"
+      },
+      "reasons": {
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5": "invalid validation artifact: Workbench validation artifact digest mismatch"
+      },
+      "reserved_resource_cost": 2,
+      "reservation_remaining": 1,
+      "structural_budget_before": 32,
+      "available_budget_before": 30,
+      "topology_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+      "arbitration_digest": "dfd02d10914dfafbb4b32489c4dee8bda159a5654aded3f59a9ea5e2a6b168c5",
+      "revision": 1,
+      "status": "running"
+    },
+    "artifact_batch": null,
+    "results": {
+      "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5": {
+        "candidate_id": "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+        "status": "failed_closed",
+        "reason": "invalid validation artifact: Workbench validation artifact digest mismatch"
+      }
+    }
+  },
+  "first_result": {
+    "batch": {
+      "format": "taiji-structural-candidate-batch-v1",
+      "batch_id": "batch:structural:dfd02d10914dfafbb4b32489c4dee8bd",
+      "candidate_ids": [
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5"
+      ],
+      "selected_candidate_ids": [
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71"
+      ],
+      "deferred_candidate_ids": [],
+      "rejected_candidate_ids": [],
+      "candidate_states": {
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71": "reserved",
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5": "admitted"
+      },
+      "reasons": {},
+      "reserved_resource_cost": 2,
+      "reservation_remaining": 1,
+      "structural_budget_before": 32,
+      "available_budget_before": 30,
+      "topology_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+      "arbitration_digest": "dfd02d10914dfafbb4b32489c4dee8bda159a5654aded3f59a9ea5e2a6b168c5",
+      "revision": 1,
+      "status": "running"
+    },
+    "artifact_batch": {
+      "format": "taiji-workbench-structural-validation-artifact-batch-v1",
+      "batch_id": "batch:structural:dfd02d10914dfafbb4b32489c4dee8bd",
+      "expected_candidate_ids": [
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5"
+      ],
+      "artifact_digests_by_candidate": {
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5": "863347e5572d6b48df49727841dfeb70baf0cee52368324288d2691c76f7658a"
+      },
+      "complete": false,
+      "batch_digest": "89024ab4956711716eefc97abe8308ed29b0057f4a6bc338559e2ff1c0d10d2f"
+    },
+    "results": {
+      "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5": {
+        "candidate_id": "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+        "status": "admitted",
+        "validation_artifact": {
+          "format": "taiji-workbench-structural-validation-artifact-v1",
+          "candidate_id": "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+          "network_id": "workbench",
+          "region_id": "adaptive.memory",
+          "task_slice_id": "workbench-measured-batch",
+          "outcome_digests": [
+            "bd5afbabb721a7f8888113dd828b6ae8c1718ed5dbb4bb1432f9dcf5b1e5b93d",
+            "fbf98ec12a065f45e908c3d62dcb63ca477a1710156302234ab17228ea3029a1",
+            "90232775108abd5df8b2fdfb623888b9113cfc861d265afe00a6adea963a740c"
+          ],
+          "parent_checkpoint_digest": "b1318cf15782552d98adbcb17fef7e121a157472496ab5841b4635865a910512",
+          "trial_checkpoint_digest": "3b899005fe60806d05ca8c890d9b931f6342b6b3642eb18cd60f9a10ecc3ab6e",
+          "holdout_input_digest": "67ecc2064b01d18b76e42d42490fb616e768934712df3a0f8c1bd42828f0ffbc",
+          "holdout_output_digest": "ddaf90afad062d26fb688d8b36531d19a4bb545f15ca09f1a7c69bde459883ef",
+          "retention_baseline_digest": "b35e4234dcfd839d64c7bd63b3a0183d7a5c5087903ff8c6250e41416fe2017b",
+          "retention_candidate_digest": "b35e4234dcfd839d64c7bd63b3a0183d7a5c5087903ff8c6250e41416fe2017b",
+          "lesion_baseline_digest": "cb7c2bf039575f49a71047875eed600d3e3b80a78af1de94e436caa1682a9e64",
+          "lesion_candidate_digest": "8e08e7cc1998e15b0e2358c1f4fd3e9b53979c22b71f9b6395a7f9f8206dc7f8",
+          "resource_measurement_digest": "0222ef79ace61d459a729a5cb0c97b16f08f2dacbbd18bd626a8b8c8a61568d7",
+          "holdout_gain": 0.12139131873846054,
+          "retention_regression": 0.0,
+          "lesion_effect": 0.12139131873846054,
+          "resource_state": 0.5,
+          "resource_cost": 1,
+          "evidence_ids": [
+            "workbench-structural:71e93ca074a17668e4548653e12652fe",
+            "workbench-structural:c725e94919d01af97880a43cab443adc",
+            "workbench-structural:ccc725f9609996b21b66b170cbfa37fc",
+            "workbench-structural:0ca3e4405e61ec725f35ea6ba0b8b3ee",
+            "workbench-structural:c4c64d7072def164b1b704bfb241be1a",
+            "workbench-structural:eb861886058ad7f863067151913cda2f"
+          ],
+          "measurement_digest": "764a699f753fd2518ff844184414da51b62a4abf5eb2a2604c269d3817ed8e69",
+          "artifact_digest": "863347e5572d6b48df49727841dfeb70baf0cee52368324288d2691c76f7658a"
+        },
+        "continuation": {
+          "candidate_id": "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+          "status": "admitted",
+          "validation": {
+            "format": "taiji-structural-candidate-validation-v1",
+            "candidate_id": "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+            "proposal_id": "topology:adaptive.memory:neuron:add:m3",
+            "status": "validated",
+            "validation_score": 1.0,
+            "parent_checkpoint_digest": "b1318cf15782552d98adbcb17fef7e121a157472496ab5841b4635865a910512",
+            "validation_checkpoint_digest": "8b17340f9a07448da0024c08e07e2d0b9ebc8d421f8850f9d5f8d6694d7a9409",
+            "topology_before_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+            "topology_after_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+            "structural_budget_before": 32,
+            "structural_budget_after": 32,
+            "evidence_ids": [
+              "workbench-structural:71e93ca074a17668e4548653e12652fe",
+              "workbench-structural:c725e94919d01af97880a43cab443adc",
+              "workbench-structural:ccc725f9609996b21b66b170cbfa37fc",
+              "workbench-structural:0ca3e4405e61ec725f35ea6ba0b8b3ee",
+              "workbench-structural:c4c64d7072def164b1b704bfb241be1a",
+              "workbench-structural:eb861886058ad7f863067151913cda2f"
+            ],
+            "error": null
+          },
+          "decision": {
+            "format": "taiji-structural-validation-gate-v1",
+            "candidate_id": "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+            "passed": true,
+            "holdout_gain": 0.12139131873846054,
+            "retention_regression": 0.0,
+            "lesion_effect": 0.12139131873846054,
+            "resource_state": 0.5,
+            "resource_cost": 1,
+            "structural_budget": 32,
+            "minimum_holdout_gain": 0.05,
+            "maximum_retention_regression": 0.05,
+            "minimum_lesion_effect": 0.05,
+            "minimum_resource_state": 0.4,
+            "evidence_ids": [
+              "workbench-structural:71e93ca074a17668e4548653e12652fe",
+              "workbench-structural:c725e94919d01af97880a43cab443adc",
+              "workbench-structural:ccc725f9609996b21b66b170cbfa37fc",
+              "workbench-structural:0ca3e4405e61ec725f35ea6ba0b8b3ee",
+              "workbench-structural:c4c64d7072def164b1b704bfb241be1a",
+              "workbench-structural:eb861886058ad7f863067151913cda2f"
+            ],
+            "reasons": [],
+            "decision_digest": "6c8aca51a9d8829cf2b86a774393d3c294cef99560ba63f15225abcc5011a2b4"
+          },
+          "admission": {
+            "format": "taiji-structural-admission-result-v1",
+            "candidate_id": "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+            "proposal_id": "topology:adaptive.memory:neuron:add:m3",
+            "status": "admitted",
+            "decision_digest": "6c8aca51a9d8829cf2b86a774393d3c294cef99560ba63f15225abcc5011a2b4",
+            "parent_checkpoint_digest": "c01a021393362a9884b571b2af1b5477617cf9e239a3a5fd2162e5ee4ec5ca48",
+            "child_checkpoint_digest": "9fd843beb3d90afdd8a1d82051b81bad4da6557e00fa3cf908bc40973efea7f6",
+            "topology_before_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+            "topology_after_digest": "ff6a965224b5c023a99273b09e6b3beba37c36f02c59d55bf21f130d3725d40a",
+            "structural_budget_before": 32,
+            "structural_budget_after": 31,
+            "error": null
+          }
+        }
+      }
+    }
+  },
+  "second_result": {
+    "batch": {
+      "format": "taiji-structural-candidate-batch-v1",
+      "batch_id": "batch:structural:dfd02d10914dfafbb4b32489c4dee8bd",
+      "candidate_ids": [
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5"
+      ],
+      "selected_candidate_ids": [
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71"
+      ],
+      "deferred_candidate_ids": [],
+      "rejected_candidate_ids": [],
+      "candidate_states": {
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71": "admitted",
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5": "admitted"
+      },
+      "reasons": {},
+      "reserved_resource_cost": 2,
+      "reservation_remaining": 0,
+      "structural_budget_before": 32,
+      "available_budget_before": 30,
+      "topology_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+      "arbitration_digest": "dfd02d10914dfafbb4b32489c4dee8bda159a5654aded3f59a9ea5e2a6b168c5",
+      "revision": 2,
+      "status": "completed"
+    },
+    "artifact_batch": {
+      "format": "taiji-workbench-structural-validation-artifact-batch-v1",
+      "batch_id": "batch:structural:dfd02d10914dfafbb4b32489c4dee8bd",
+      "expected_candidate_ids": [
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5"
+      ],
+      "artifact_digests_by_candidate": {
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71": "3fa9d0d87544332b6b44c215b4620664946e213c73d34a48c9f6e8f52285820f",
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5": "863347e5572d6b48df49727841dfeb70baf0cee52368324288d2691c76f7658a"
+      },
+      "complete": true,
+      "batch_digest": "5c7a10957b04e8066c54dfb9402bd6761a73d227c825e3723adb0b920e4eb922"
+    },
+    "results": {
+      "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5": {
+        "candidate_id": "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+        "status": "admitted"
+      },
+      "candidate:pressure:workbench:workbench.code:2:a10974098f71": {
+        "candidate_id": "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+        "status": "admitted",
+        "validation_artifact": {
+          "format": "taiji-workbench-structural-validation-artifact-v1",
+          "candidate_id": "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+          "network_id": "workbench",
+          "region_id": "adaptive.cortex",
+          "task_slice_id": "workbench-measured-batch",
+          "outcome_digests": [
+            "c13826b44a34da4a868caed149780f9b0839d298ba7aae0c8078695b8abcec66",
+            "9aea8f46ce3a35e65702c2cec26a818393c1cafe4110b560e912fcc7e7318596",
+            "b4037dde64eabb95f2ff0e7b88ec17159f81204cf8dca5f4b360ea4cedc6fd00"
+          ],
+          "parent_checkpoint_digest": "3cb632d72cd3bef251b2cad6ff423859652fa387a1158d29952fc15e700f8e05",
+          "trial_checkpoint_digest": "f6c6df12bf395dfc20ca840678b1902cb2a472567ccb5a3f37cd1c8d6f3a5d57",
+          "holdout_input_digest": "67ecc2064b01d18b76e42d42490fb616e768934712df3a0f8c1bd42828f0ffbc",
+          "holdout_output_digest": "092d25da129d4af0a4dbf5702e2cb0d90dd1d5643aa1cfc73909b512c4775abd",
+          "retention_baseline_digest": "d764502b5da8b3824a70393ff9d57d2b501d6ed7a756c2f7d0ca294025f45107",
+          "retention_candidate_digest": "d764502b5da8b3824a70393ff9d57d2b501d6ed7a756c2f7d0ca294025f45107",
+          "lesion_baseline_digest": "88acd77c127852fdc961489568ce0f17720089fc0002e57fa5876309b7d50296",
+          "lesion_candidate_digest": "c6ee3b4c29a66828ad33fe16ff4d68706fcc47103c3e3e6ef01170c0fe3d2c52",
+          "resource_measurement_digest": "533b833d352ac8535e81656ab61b46a8cbf83ab339eaeafa1266d7a05c6c5139",
+          "holdout_gain": 0.12139131873846054,
+          "retention_regression": 0.0,
+          "lesion_effect": 0.12139131873846054,
+          "resource_state": 0.5,
+          "resource_cost": 1,
+          "evidence_ids": [
+            "workbench-structural:c17f70792df6f02333d72e31b330e837",
+            "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+            "workbench-structural:2c739aa785a914b9f05c4b82e160fc05",
+            "workbench-structural:c272d6ace70326bc69bda3c13c0226d2",
+            "workbench-structural:db271a8ea45cc817cbb61218ff9d00f9",
+            "workbench-structural:9ca662e9ac3a86a7a97438b91a00526a"
+          ],
+          "measurement_digest": "d04d89080bf075d70b2d4becb71cbf410316fd101a976d636e4b2b792d944c6a",
+          "artifact_digest": "3fa9d0d87544332b6b44c215b4620664946e213c73d34a48c9f6e8f52285820f"
+        },
+        "continuation": {
+          "candidate_id": "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+          "status": "admitted",
+          "validation": {
+            "format": "taiji-structural-candidate-validation-v1",
+            "candidate_id": "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+            "proposal_id": "topology:adaptive.cortex:neuron:add:u3",
+            "status": "validated",
+            "validation_score": 1.0,
+            "parent_checkpoint_digest": "3cb632d72cd3bef251b2cad6ff423859652fa387a1158d29952fc15e700f8e05",
+            "validation_checkpoint_digest": "10bcde3c5f36d334e4965b544d773f048ba13741909f05ef876097b8fca74fcb",
+            "topology_before_digest": "ff6a965224b5c023a99273b09e6b3beba37c36f02c59d55bf21f130d3725d40a",
+            "topology_after_digest": "ff6a965224b5c023a99273b09e6b3beba37c36f02c59d55bf21f130d3725d40a",
+            "structural_budget_before": 31,
+            "structural_budget_after": 31,
+            "evidence_ids": [
+              "workbench-structural:c17f70792df6f02333d72e31b330e837",
+              "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+              "workbench-structural:2c739aa785a914b9f05c4b82e160fc05",
+              "workbench-structural:c272d6ace70326bc69bda3c13c0226d2",
+              "workbench-structural:db271a8ea45cc817cbb61218ff9d00f9",
+              "workbench-structural:9ca662e9ac3a86a7a97438b91a00526a"
+            ],
+            "error": null
+          },
+          "decision": {
+            "format": "taiji-structural-validation-gate-v1",
+            "candidate_id": "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+            "passed": true,
+            "holdout_gain": 0.12139131873846054,
+            "retention_regression": 0.0,
+            "lesion_effect": 0.12139131873846054,
+            "resource_state": 0.5,
+            "resource_cost": 1,
+            "structural_budget": 31,
+            "minimum_holdout_gain": 0.05,
+            "maximum_retention_regression": 0.05,
+            "minimum_lesion_effect": 0.05,
+            "minimum_resource_state": 0.4,
+            "evidence_ids": [
+              "workbench-structural:c17f70792df6f02333d72e31b330e837",
+              "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+              "workbench-structural:2c739aa785a914b9f05c4b82e160fc05",
+              "workbench-structural:c272d6ace70326bc69bda3c13c0226d2",
+              "workbench-structural:db271a8ea45cc817cbb61218ff9d00f9",
+              "workbench-structural:9ca662e9ac3a86a7a97438b91a00526a"
+            ],
+            "reasons": [],
+            "decision_digest": "6b948c143037c5e9341f0bc9342aa98fa8be255bd43b8d37b3e03fa731e2b495"
+          },
+          "admission": {
+            "format": "taiji-structural-admission-result-v1",
+            "candidate_id": "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+            "proposal_id": "topology:adaptive.cortex:neuron:add:u3",
+            "status": "admitted",
+            "decision_digest": "6b948c143037c5e9341f0bc9342aa98fa8be255bd43b8d37b3e03fa731e2b495",
+            "parent_checkpoint_digest": "e03b8cde81481c9e06f5ea5696cb963a7327ac334c44e64e355d9f35f3e45f4e",
+            "child_checkpoint_digest": "9b48d116fc75e444ca2060fb72438bd4f0c9eb1c1f7fee160690547b786eb6be",
+            "topology_before_digest": "ff6a965224b5c023a99273b09e6b3beba37c36f02c59d55bf21f130d3725d40a",
+            "topology_after_digest": "5892c47883b01d4a00803c3ed29ed75b4a23462d58be27701363455d0a08fd45",
+            "structural_budget_before": 31,
+            "structural_budget_after": 30,
+            "error": null
+          }
+        }
+      }
+    }
+  },
+  "repeated_result": {
+    "batch": {
+      "format": "taiji-structural-candidate-batch-v1",
+      "batch_id": "batch:structural:dfd02d10914dfafbb4b32489c4dee8bd",
+      "candidate_ids": [
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5"
+      ],
+      "selected_candidate_ids": [
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71"
+      ],
+      "deferred_candidate_ids": [],
+      "rejected_candidate_ids": [],
+      "candidate_states": {
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71": "admitted",
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5": "admitted"
+      },
+      "reasons": {},
+      "reserved_resource_cost": 2,
+      "reservation_remaining": 0,
+      "structural_budget_before": 32,
+      "available_budget_before": 30,
+      "topology_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+      "arbitration_digest": "dfd02d10914dfafbb4b32489c4dee8bda159a5654aded3f59a9ea5e2a6b168c5",
+      "revision": 3,
+      "status": "completed"
+    },
+    "artifact_batch": {
+      "format": "taiji-workbench-structural-validation-artifact-batch-v1",
+      "batch_id": "batch:structural:dfd02d10914dfafbb4b32489c4dee8bd",
+      "expected_candidate_ids": [
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5"
+      ],
+      "artifact_digests_by_candidate": {
+        "candidate:pressure:workbench:workbench.code:2:a10974098f71": "3fa9d0d87544332b6b44c215b4620664946e213c73d34a48c9f6e8f52285820f",
+        "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5": "863347e5572d6b48df49727841dfeb70baf0cee52368324288d2691c76f7658a"
+      },
+      "complete": true,
+      "batch_digest": "5c7a10957b04e8066c54dfb9402bd6761a73d227c825e3723adb0b920e4eb922"
+    },
+    "results": {
+      "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5": {
+        "candidate_id": "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+        "status": "already_applied",
+        "validation_artifact": {
+          "format": "taiji-workbench-structural-validation-artifact-v1",
+          "candidate_id": "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+          "network_id": "workbench",
+          "region_id": "adaptive.memory",
+          "task_slice_id": "workbench-measured-batch",
+          "outcome_digests": [
+            "bd5afbabb721a7f8888113dd828b6ae8c1718ed5dbb4bb1432f9dcf5b1e5b93d",
+            "fbf98ec12a065f45e908c3d62dcb63ca477a1710156302234ab17228ea3029a1",
+            "90232775108abd5df8b2fdfb623888b9113cfc861d265afe00a6adea963a740c"
+          ],
+          "parent_checkpoint_digest": "b1318cf15782552d98adbcb17fef7e121a157472496ab5841b4635865a910512",
+          "trial_checkpoint_digest": "3b899005fe60806d05ca8c890d9b931f6342b6b3642eb18cd60f9a10ecc3ab6e",
+          "holdout_input_digest": "67ecc2064b01d18b76e42d42490fb616e768934712df3a0f8c1bd42828f0ffbc",
+          "holdout_output_digest": "ddaf90afad062d26fb688d8b36531d19a4bb545f15ca09f1a7c69bde459883ef",
+          "retention_baseline_digest": "b35e4234dcfd839d64c7bd63b3a0183d7a5c5087903ff8c6250e41416fe2017b",
+          "retention_candidate_digest": "b35e4234dcfd839d64c7bd63b3a0183d7a5c5087903ff8c6250e41416fe2017b",
+          "lesion_baseline_digest": "cb7c2bf039575f49a71047875eed600d3e3b80a78af1de94e436caa1682a9e64",
+          "lesion_candidate_digest": "8e08e7cc1998e15b0e2358c1f4fd3e9b53979c22b71f9b6395a7f9f8206dc7f8",
+          "resource_measurement_digest": "0222ef79ace61d459a729a5cb0c97b16f08f2dacbbd18bd626a8b8c8a61568d7",
+          "holdout_gain": 0.12139131873846054,
+          "retention_regression": 0.0,
+          "lesion_effect": 0.12139131873846054,
+          "resource_state": 0.5,
+          "resource_cost": 1,
+          "evidence_ids": [
+            "workbench-structural:71e93ca074a17668e4548653e12652fe",
+            "workbench-structural:c725e94919d01af97880a43cab443adc",
+            "workbench-structural:ccc725f9609996b21b66b170cbfa37fc",
+            "workbench-structural:0ca3e4405e61ec725f35ea6ba0b8b3ee",
+            "workbench-structural:c4c64d7072def164b1b704bfb241be1a",
+            "workbench-structural:eb861886058ad7f863067151913cda2f"
+          ],
+          "measurement_digest": "764a699f753fd2518ff844184414da51b62a4abf5eb2a2604c269d3817ed8e69",
+          "artifact_digest": "863347e5572d6b48df49727841dfeb70baf0cee52368324288d2691c76f7658a"
+        },
+        "continuation": {
+          "candidate_id": "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+          "status": "admitted",
+          "admission": {
+            "format": "taiji-structural-admission-result-v1",
+            "candidate_id": "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+            "proposal_id": "topology:adaptive.memory:neuron:add:m3",
+            "status": "admitted",
+            "decision_digest": "6c8aca51a9d8829cf2b86a774393d3c294cef99560ba63f15225abcc5011a2b4",
+            "parent_checkpoint_digest": "c01a021393362a9884b571b2af1b5477617cf9e239a3a5fd2162e5ee4ec5ca48",
+            "child_checkpoint_digest": "9fd843beb3d90afdd8a1d82051b81bad4da6557e00fa3cf908bc40973efea7f6",
+            "topology_before_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+            "topology_after_digest": "ff6a965224b5c023a99273b09e6b3beba37c36f02c59d55bf21f130d3725d40a",
+            "structural_budget_before": 32,
+            "structural_budget_after": 31,
+            "error": null
+          }
+        }
+      },
+      "candidate:pressure:workbench:workbench.code:2:a10974098f71": {
+        "candidate_id": "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+        "status": "already_applied",
+        "validation_artifact": {
+          "format": "taiji-workbench-structural-validation-artifact-v1",
+          "candidate_id": "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+          "network_id": "workbench",
+          "region_id": "adaptive.cortex",
+          "task_slice_id": "workbench-measured-batch",
+          "outcome_digests": [
+            "c13826b44a34da4a868caed149780f9b0839d298ba7aae0c8078695b8abcec66",
+            "9aea8f46ce3a35e65702c2cec26a818393c1cafe4110b560e912fcc7e7318596",
+            "b4037dde64eabb95f2ff0e7b88ec17159f81204cf8dca5f4b360ea4cedc6fd00"
+          ],
+          "parent_checkpoint_digest": "3cb632d72cd3bef251b2cad6ff423859652fa387a1158d29952fc15e700f8e05",
+          "trial_checkpoint_digest": "f6c6df12bf395dfc20ca840678b1902cb2a472567ccb5a3f37cd1c8d6f3a5d57",
+          "holdout_input_digest": "67ecc2064b01d18b76e42d42490fb616e768934712df3a0f8c1bd42828f0ffbc",
+          "holdout_output_digest": "092d25da129d4af0a4dbf5702e2cb0d90dd1d5643aa1cfc73909b512c4775abd",
+          "retention_baseline_digest": "d764502b5da8b3824a70393ff9d57d2b501d6ed7a756c2f7d0ca294025f45107",
+          "retention_candidate_digest": "d764502b5da8b3824a70393ff9d57d2b501d6ed7a756c2f7d0ca294025f45107",
+          "lesion_baseline_digest": "88acd77c127852fdc961489568ce0f17720089fc0002e57fa5876309b7d50296",
+          "lesion_candidate_digest": "c6ee3b4c29a66828ad33fe16ff4d68706fcc47103c3e3e6ef01170c0fe3d2c52",
+          "resource_measurement_digest": "533b833d352ac8535e81656ab61b46a8cbf83ab339eaeafa1266d7a05c6c5139",
+          "holdout_gain": 0.12139131873846054,
+          "retention_regression": 0.0,
+          "lesion_effect": 0.12139131873846054,
+          "resource_state": 0.5,
+          "resource_cost": 1,
+          "evidence_ids": [
+            "workbench-structural:c17f70792df6f02333d72e31b330e837",
+            "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+            "workbench-structural:2c739aa785a914b9f05c4b82e160fc05",
+            "workbench-structural:c272d6ace70326bc69bda3c13c0226d2",
+            "workbench-structural:db271a8ea45cc817cbb61218ff9d00f9",
+            "workbench-structural:9ca662e9ac3a86a7a97438b91a00526a"
+          ],
+          "measurement_digest": "d04d89080bf075d70b2d4becb71cbf410316fd101a976d636e4b2b792d944c6a",
+          "artifact_digest": "3fa9d0d87544332b6b44c215b4620664946e213c73d34a48c9f6e8f52285820f"
+        },
+        "continuation": {
+          "candidate_id": "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+          "status": "admitted",
+          "admission": {
+            "format": "taiji-structural-admission-result-v1",
+            "candidate_id": "candidate:pressure:workbench:workbench.code:2:a10974098f71",
+            "proposal_id": "topology:adaptive.cortex:neuron:add:u3",
+            "status": "admitted",
+            "decision_digest": "6b948c143037c5e9341f0bc9342aa98fa8be255bd43b8d37b3e03fa731e2b495",
+            "parent_checkpoint_digest": "e03b8cde81481c9e06f5ea5696cb963a7327ac334c44e64e355d9f35f3e45f4e",
+            "child_checkpoint_digest": "9b48d116fc75e444ca2060fb72438bd4f0c9eb1c1f7fee160690547b786eb6be",
+            "topology_before_digest": "ff6a965224b5c023a99273b09e6b3beba37c36f02c59d55bf21f130d3725d40a",
+            "topology_after_digest": "5892c47883b01d4a00803c3ed29ed75b4a23462d58be27701363455d0a08fd45",
+            "structural_budget_before": 31,
+            "structural_budget_after": 30,
+            "error": null
+          }
+        }
+      }
+    }
+  },
+  "metrics": {
+    "measured_parent_matches_checkpoint": true,
+    "artifact_payload_roundtrips_by_content": true,
+    "tampered_artifact_fails_closed": true,
+    "tamper_preserves_budget_and_topology": true,
+    "first_artifact_admits_after_restart": true,
+    "second_measured_artifact_admits": true,
+    "repeated_artifact_consumption_is_idempotent": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "a measured, replay-bound validation artifact must survive a native checkpoint restart, reject tampering fail-closed, admit each candidate, and remain idempotent on repeated consumption"
+  },
+  "boundary": "This canary covers native CPU checkpoint and artifact lifecycle semantics. It does not claim open-domain quality, unlimited growth, CUDA, frontend behavior, or CI."
+}

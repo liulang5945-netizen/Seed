@@ -398,6 +398,38 @@ class SeedRuntime:
             "language_provider": dict(self._provider_status),
             "workbench": workbench.status(),
             "homeostasis": self.homeostasis_status(),
+            "structural_maintenance": self.structural_maintenance_status(),
+        }
+
+    def structural_maintenance_status(self) -> dict[str, Any]:
+        """Return a pure read-only projection of Taiji maintenance state.
+
+        This method intentionally exposes the last persisted retention audit,
+        if any; it never schedules maintenance or treats pressure as a growth
+        decision.  The empty state is explicit so clients do not infer an
+        audit from missing keys.
+        """
+
+        from taiji import STRUCTURAL_MAINTENANCE_STATUS_FORMAT
+
+        with self._lock:
+            architecture = self.model.architecture
+            retention = architecture.structural_lineage_retention_result
+            policy = architecture.structural_lineage_retention_policy
+            migration = architecture.structural_lineage_retention_policy_migration
+            tick = int(architecture.structural_runtime_tick)
+            retention_payload = None if retention is None else retention.to_payload()
+            policy_payload = None if policy is None else policy.to_payload()
+            migration_payload = None if migration is None else migration.to_payload()
+        return {
+            "format": STRUCTURAL_MAINTENANCE_STATUS_FORMAT,
+            "status": "audit_available" if retention is not None else "no_audit",
+            "structural_runtime_tick": tick,
+            "has_retention_audit": retention is not None,
+            "last_retention_audit": retention_payload,
+            "last_retention_policy": policy_payload,
+            "last_retention_policy_migration": migration_payload,
+            "retention_pressure": False if retention is None else retention.retention_pressure,
         }
 
     def homeostasis_status(self) -> dict[str, Any]:
@@ -2897,6 +2929,7 @@ class SeedRuntime:
 
         return self.model.architecture.continue_structural_candidate(candidate_id, **kwargs)
 
+    @_workbench_synchronized
     def continue_structural_candidate_from_validation_artifact(
         self,
         artifact: Mapping[str, Any] | Any,
@@ -2941,6 +2974,7 @@ class SeedRuntime:
             continuations_by_candidate=continuations_by_candidate,
         )
 
+    @_workbench_synchronized
     def continue_structural_candidate_batch_from_validation_artifacts(
         self,
         batch_id: str,
@@ -2955,6 +2989,225 @@ class SeedRuntime:
             artifacts_by_candidate=artifacts_by_candidate,
             replays_by_candidate=replays_by_candidate,
         )
+
+    @_workbench_synchronized
+    def continue_structural_candidate_batch_from_artifact_store(
+        self,
+        batch_id: str,
+        *,
+        artifact_store: Any,
+        artifact_digests_by_candidate: Mapping[str, str],
+        replays_by_candidate: Mapping[str, Mapping[str, Any]],
+        require_verified_measurements: bool = False,
+    ) -> dict[str, Any]:
+        """Resolve external artifact digests before entering the native batch contract."""
+
+        from taiji import StructuralValidationArtifactStore
+
+        if not isinstance(artifact_store, StructuralValidationArtifactStore):
+            raise TypeError("artifact_store must be a StructuralValidationArtifactStore")
+        if not isinstance(artifact_digests_by_candidate, Mapping):
+            raise TypeError("artifact digests must be a mapping")
+        if not isinstance(replays_by_candidate, Mapping):
+            raise TypeError("validation replays must be a mapping")
+        if not isinstance(require_verified_measurements, bool):
+            raise TypeError("require_verified_measurements must be a boolean")
+        batch = next(
+            (
+                item
+                for item in self.model.architecture.structural_candidate_batches
+                if item.batch_id == str(batch_id)
+            ),
+            None,
+        )
+        if batch is None:
+            raise ValueError(f"unknown structural candidate batch: {batch_id}")
+        selected_candidate_ids = set(batch.selected_candidate_ids)
+        unknown_keys = tuple(
+            sorted(
+                {
+                    str(candidate_id)
+                    for candidate_id in (
+                        *artifact_digests_by_candidate.keys(),
+                        *replays_by_candidate.keys(),
+                    )
+                    if str(candidate_id) not in selected_candidate_ids
+                }
+            )
+        )
+        if unknown_keys:
+            raise ValueError(
+                "artifact store bridge contains candidates outside the selected batch: "
+                f"{unknown_keys}"
+            )
+        artifacts_by_candidate: dict[str, Any] = {}
+        for candidate_id, artifact_digest in artifact_digests_by_candidate.items():
+            if not isinstance(artifact_digest, str):
+                raise TypeError("artifact digest references must be strings")
+            loader = (
+                artifact_store.load_verified_artifact
+                if require_verified_measurements
+                else artifact_store.load
+            )
+            artifacts_by_candidate[str(candidate_id)] = loader(artifact_digest)
+        return self.model.architecture.continue_structural_candidate_batch_from_validation_artifacts(
+            str(batch_id),
+            artifacts_by_candidate=artifacts_by_candidate,
+            replays_by_candidate=replays_by_candidate,
+        )
+
+    @_workbench_synchronized
+    def project_structural_artifact_store_audit(
+        self,
+        *,
+        artifact_store: Any,
+    ) -> dict[str, Any]:
+        """Project external artifact facts without registering or consuming them."""
+
+        from taiji import (
+            STRUCTURAL_ARTIFACT_STORE_FORMAT,
+            STRUCTURAL_ARTIFACT_STORE_PROJECTION_FORMAT,
+            StructuralValidationArtifactStore,
+            structural_artifact_store_audit_digest,
+        )
+
+        if not isinstance(artifact_store, StructuralValidationArtifactStore):
+            raise TypeError("artifact_store must be a StructuralValidationArtifactStore")
+
+        architecture = self.model.architecture
+        runtime_artifact_digests = {
+            artifact.artifact_digest
+            for artifact in architecture.structural_validation_artifacts
+        }
+        batch_ids_by_digest: dict[str, set[str]] = {}
+        for artifact_batch in architecture.structural_validation_artifact_batches:
+            for _, artifact_digest in artifact_batch.artifact_digests_by_candidate:
+                batch_ids_by_digest.setdefault(str(artifact_digest), set()).add(
+                    artifact_batch.batch_id
+                )
+
+        inventory = tuple(artifact_store.audit())
+        external_digests = {str(item["artifact_digest"]) for item in inventory}
+        runtime_batch_artifact_digests = set(batch_ids_by_digest)
+        entries: list[dict[str, Any]] = []
+        for item in inventory:
+            artifact_digest = str(item["artifact_digest"])
+            batch_ids = tuple(sorted(batch_ids_by_digest.get(artifact_digest, ())))
+            if artifact_digest in runtime_artifact_digests:
+                visibility = "runtime_recorded"
+            elif batch_ids:
+                visibility = "runtime_batch_referenced"
+            else:
+                visibility = "external_orphan"
+            entries.append(
+                {
+                    **item,
+                    "runtime_visibility": visibility,
+                    "runtime_batch_ids": list(batch_ids),
+                }
+            )
+
+        payload = {
+            "format": STRUCTURAL_ARTIFACT_STORE_PROJECTION_FORMAT,
+            "store_format": STRUCTURAL_ARTIFACT_STORE_FORMAT,
+            "entries": entries,
+            "runtime_artifact_digests": sorted(runtime_artifact_digests),
+            "runtime_batch_artifact_digests": sorted(runtime_batch_artifact_digests),
+            "missing_runtime_artifact_digests": sorted(
+                runtime_artifact_digests - external_digests
+            ),
+            "missing_runtime_batch_artifact_digests": sorted(
+                runtime_batch_artifact_digests - external_digests
+            ),
+        }
+        return {
+            **payload,
+            "audit_digest": structural_artifact_store_audit_digest(payload),
+        }
+
+    @_workbench_synchronized
+    def run_structural_maintenance_cycle(
+        self,
+        *,
+        holdout_inputs_by_candidate: Mapping[str, Sequence[Any]],
+        expected_activities_by_candidate: Mapping[str, Sequence[Any]],
+        candidate_ids: Sequence[str] | None = None,
+        lineage_retention_max_batches: int | None = None,
+        lineage_retention_policy: Any | None = None,
+    ) -> dict[str, Any]:
+        """Expose one explicit, content-addressed structural maintenance audit.
+
+        SeedRuntime only projects the result.  Taiji retains ownership of the
+        candidate lifecycle, retention policy, topology, and structural budget.
+        No background maintenance is started by this method.
+        """
+
+        from taiji import (
+            STRUCTURAL_MAINTENANCE_AUDIT_FORMAT,
+            StructuralMaintenanceAudit,
+            structural_maintenance_audit_digest,
+        )
+
+        architecture = self.model.architecture
+        previous_retention = architecture.structural_lineage_retention_result
+        previous_policy = architecture.structural_lineage_retention_policy
+        results = architecture.run_structural_maintenance_cycle(
+            holdout_inputs_by_candidate=holdout_inputs_by_candidate,
+            expected_activities_by_candidate=expected_activities_by_candidate,
+            candidate_ids=candidate_ids,
+            lineage_retention_max_batches=lineage_retention_max_batches,
+            lineage_retention_policy=lineage_retention_policy,
+        )
+        current_retention = architecture.structural_lineage_retention_result
+        current_policy = architecture.structural_lineage_retention_policy
+        # Project only the audit produced by this call.  A default candidate
+        # maintenance call must not masquerade as a fresh retention action by
+        # replaying an older audit already restored from checkpoint.
+        retention = (
+            current_retention
+            if current_retention is not previous_retention
+            else None
+        )
+        policy = current_policy if current_policy is not previous_policy else None
+        payload = {
+            "format": STRUCTURAL_MAINTENANCE_AUDIT_FORMAT,
+            "maintenance_results": [item.to_payload() for item in results],
+            "lineage_retention": None if retention is None else retention.to_payload(),
+            "retention_policy": None if policy is None else policy.to_payload(),
+            "structural_runtime_tick": architecture.structural_runtime_tick,
+        }
+        audit = StructuralMaintenanceAudit(
+            maintenance_results=results,
+            lineage_retention=retention,
+            structural_runtime_tick=architecture.structural_runtime_tick,
+            audit_digest=structural_maintenance_audit_digest(payload),
+            retention_policy=policy,
+        )
+        return audit.to_payload()
+
+    @_workbench_synchronized
+    def migrate_structural_lineage_retention_policy(
+        self,
+        target_policy: Any,
+    ) -> dict[str, Any]:
+        """Commit one explicit adjacent retention-policy migration."""
+
+        migration = self.model.architecture.migrate_structural_lineage_retention_policy(
+            target_policy
+        )
+        return migration.to_payload()
+
+    @_workbench_synchronized
+    def rollback_structural_lineage_retention_policy_migration(
+        self,
+        migration: Any,
+    ) -> dict[str, Any]:
+        """Roll back one explicit committed retention-policy migration."""
+
+        rolled_back = self.model.architecture.rollback_structural_lineage_retention_policy_migration(
+            migration
+        )
+        return rolled_back.to_payload()
 
     def measure_structural_capacity_pressure(
         self,

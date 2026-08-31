@@ -1,0 +1,30 @@
+{
+  "format": "taiji-w7-r5c-s34-structural-lineage-multi-batch-artifact-v1",
+  "active_batch_id": "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1",
+  "terminal_batch_id": "batch:structural:862ea7654cd7cdd4b7723bd9bfe9fed9",
+  "terminal_artifact_digests": [
+    "57192e28212e854c37d9ec0aa20d53b2cede647b207c95620813a3e47ee17f2b",
+    "6edd1f992ec3242f68e31d5e3ceaf928be46b8d830b2d41937d6b9811ac97dfd"
+  ],
+  "retention_status": "compacted",
+  "protected_batch_ids": [
+    "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1"
+  ],
+  "removed_batch_ids": [
+    "batch:structural:862ea7654cd7cdd4b7723bd9bfe9fed9"
+  ],
+  "metrics": {
+    "independent_batches_exist": true,
+    "terminal_batch_artifacts_admitted": true,
+    "terminal_rollback_is_explicit": true,
+    "active_batch_is_protected": true,
+    "terminal_artifacts_compact_as_one_subgraph": true,
+    "terminal_replay_fails_closed_without_mutation": true,
+    "restart_preserves_isolation": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "under a small retention limit, active multi-batch lineage must remain isolated and checkpointable while a terminal artifact batch is compacted as a complete subgraph and cannot be replayed"
+  },
+  "boundary": "This canary covers native CPU multi-batch artifact retention and isolation. It does not claim open-domain quality, unlimited growth, CUDA, frontend behavior, or CI."
+}

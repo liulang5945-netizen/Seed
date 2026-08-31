@@ -1,0 +1,1458 @@
+{
+  "format": "taiji-w7-r5c-s21-structural-long-sequence-stress-v1",
+  "cap": 16,
+  "rounds": {
+    "round_one": {
+      "evidence_count": 6,
+      "schedule": {
+        "format": "taiji-structural-workbench-batch-schedule-v1",
+        "status": "batch_created",
+        "trigger_tick": 6,
+        "request_digest": "5cca36044b0e3e8c27085e641ff6c127fc3614154704830a29cd80b89812c44c",
+        "region_ids": [
+          "workbench.code",
+          "workbench.docs"
+        ],
+        "candidate_ids": [
+          "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+          "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+        ],
+        "source_window_digests": [
+          "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+          "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+          "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+          "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+          "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46",
+          "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897"
+        ],
+        "batch_id": "batch:structural:8b71546ffd935529e808e36d957eb564",
+        "reason": "",
+        "scheduler_revision": 2
+      },
+      "batch": {
+        "format": "taiji-structural-candidate-batch-v1",
+        "batch_id": "batch:structural:8b71546ffd935529e808e36d957eb564",
+        "candidate_ids": [
+          "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+          "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+        ],
+        "selected_candidate_ids": [
+          "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+          "candidate:pressure:workbench:workbench.code:1:117159ec8e8b"
+        ],
+        "deferred_candidate_ids": [],
+        "rejected_candidate_ids": [],
+        "candidate_states": {
+          "candidate:pressure:workbench:workbench.code:1:117159ec8e8b": "reserved",
+          "candidate:pressure:workbench:workbench.docs:1:671e0bcde976": "reserved"
+        },
+        "reasons": {},
+        "reserved_resource_cost": 2,
+        "reservation_remaining": 2,
+        "structural_budget_before": 32,
+        "available_budget_before": 32,
+        "topology_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+        "arbitration_digest": "8b71546ffd935529e808e36d957eb56444b7da4f130754c70e78c2a2cff4891a",
+        "revision": 0,
+        "status": "planned"
+      },
+      "admission": {
+        "candidate:pressure:workbench:workbench.docs:1:671e0bcde976": {
+          "batch": {
+            "format": "taiji-structural-candidate-batch-v1",
+            "batch_id": "batch:structural:8b71546ffd935529e808e36d957eb564",
+            "candidate_ids": [
+              "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+              "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+            ],
+            "selected_candidate_ids": [
+              "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+              "candidate:pressure:workbench:workbench.code:1:117159ec8e8b"
+            ],
+            "deferred_candidate_ids": [],
+            "rejected_candidate_ids": [],
+            "candidate_states": {
+              "candidate:pressure:workbench:workbench.code:1:117159ec8e8b": "reserved",
+              "candidate:pressure:workbench:workbench.docs:1:671e0bcde976": "admitted"
+            },
+            "reasons": {},
+            "reserved_resource_cost": 2,
+            "reservation_remaining": 1,
+            "structural_budget_before": 32,
+            "available_budget_before": 32,
+            "topology_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+            "arbitration_digest": "8b71546ffd935529e808e36d957eb56444b7da4f130754c70e78c2a2cff4891a",
+            "revision": 1,
+            "status": "running"
+          },
+          "artifact_batch": {
+            "format": "taiji-workbench-structural-validation-artifact-batch-v1",
+            "batch_id": "batch:structural:8b71546ffd935529e808e36d957eb564",
+            "expected_candidate_ids": [
+              "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+              "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+            ],
+            "artifact_digests_by_candidate": {
+              "candidate:pressure:workbench:workbench.docs:1:671e0bcde976": "20d9849fe0fccf12985c8c7c8c2bbf50a68df2f818e975b070482606c8e300f8"
+            },
+            "complete": false,
+            "batch_digest": "bc7f0772de4925e94b295aa683a916abcd2335661e81b1b35487c62a4a2110ad"
+          },
+          "results": {
+            "candidate:pressure:workbench:workbench.docs:1:671e0bcde976": {
+              "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+              "status": "admitted",
+              "validation_artifact": {
+                "format": "taiji-workbench-structural-validation-artifact-v1",
+                "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+                "network_id": "workbench",
+                "region_id": "adaptive.memory",
+                "task_slice_id": "workbench-measured-batch",
+                "outcome_digests": [
+                  "4014c40f547a1d4eb864e55629a4ac5d16e3dbd58a607eff54613016b6177af1",
+                  "605ddd61364530af735eb373a1e4d28eedffca56bb98916c29377710183b85b2",
+                  "7b949cfe2452ea6bc8a8b6bdfe7e96d12c8edd17f4478f463801e1731c3a1ae6"
+                ],
+                "parent_checkpoint_digest": "a3dde3330ce8f6f9b914572c27edd321a98e5f193fd3e42bbf7bf6b1f579aabd",
+                "trial_checkpoint_digest": "9de87bb1d92cb09f576c98007cda977e370e2d5160546198449e2efd6b849302",
+                "holdout_input_digest": "67ecc2064b01d18b76e42d42490fb616e768934712df3a0f8c1bd42828f0ffbc",
+                "holdout_output_digest": "ddaf90afad062d26fb688d8b36531d19a4bb545f15ca09f1a7c69bde459883ef",
+                "retention_baseline_digest": "b35e4234dcfd839d64c7bd63b3a0183d7a5c5087903ff8c6250e41416fe2017b",
+                "retention_candidate_digest": "b35e4234dcfd839d64c7bd63b3a0183d7a5c5087903ff8c6250e41416fe2017b",
+                "lesion_baseline_digest": "cb7c2bf039575f49a71047875eed600d3e3b80a78af1de94e436caa1682a9e64",
+                "lesion_candidate_digest": "8e08e7cc1998e15b0e2358c1f4fd3e9b53979c22b71f9b6395a7f9f8206dc7f8",
+                "resource_measurement_digest": "67c8d7c763df5ff2731126fd18a62ca7f747097481f988028c67b19f792b9649",
+                "holdout_gain": 0.12139131873846054,
+                "retention_regression": 0.0,
+                "lesion_effect": 0.12139131873846054,
+                "resource_state": 0.75,
+                "resource_cost": 1,
+                "evidence_ids": [
+                  "workbench-structural:71e93ca074a17668e4548653e12652fe",
+                  "workbench-structural:c725e94919d01af97880a43cab443adc",
+                  "workbench-structural:ccc725f9609996b21b66b170cbfa37fc"
+                ],
+                "measurement_digest": "3b272726b5ca1d2b4c9fedd72b11433aaaffd7910cdbabbc1516a6bda4163257",
+                "artifact_digest": "20d9849fe0fccf12985c8c7c8c2bbf50a68df2f818e975b070482606c8e300f8"
+              },
+              "continuation": {
+                "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+                "status": "admitted",
+                "validation": {
+                  "format": "taiji-structural-candidate-validation-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+                  "proposal_id": "topology:adaptive.memory:neuron:add:m2",
+                  "status": "validated",
+                  "validation_score": 1.0,
+                  "parent_checkpoint_digest": "a3dde3330ce8f6f9b914572c27edd321a98e5f193fd3e42bbf7bf6b1f579aabd",
+                  "validation_checkpoint_digest": "dadd6a0a6b9e30cc3852f0422f0e5be93a18eb530159273e1ee8c8f7efaff659",
+                  "topology_before_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+                  "topology_after_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+                  "structural_budget_before": 32,
+                  "structural_budget_after": 32,
+                  "evidence_ids": [
+                    "workbench-structural:71e93ca074a17668e4548653e12652fe",
+                    "workbench-structural:c725e94919d01af97880a43cab443adc",
+                    "workbench-structural:ccc725f9609996b21b66b170cbfa37fc"
+                  ],
+                  "error": null
+                },
+                "decision": {
+                  "format": "taiji-structural-validation-gate-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+                  "passed": true,
+                  "holdout_gain": 0.12139131873846054,
+                  "retention_regression": 0.0,
+                  "lesion_effect": 0.12139131873846054,
+                  "resource_state": 0.75,
+                  "resource_cost": 1,
+                  "structural_budget": 32,
+                  "minimum_holdout_gain": 0.05,
+                  "maximum_retention_regression": 0.05,
+                  "minimum_lesion_effect": 0.05,
+                  "minimum_resource_state": 0.4,
+                  "evidence_ids": [
+                    "workbench-structural:71e93ca074a17668e4548653e12652fe",
+                    "workbench-structural:c725e94919d01af97880a43cab443adc",
+                    "workbench-structural:ccc725f9609996b21b66b170cbfa37fc"
+                  ],
+                  "reasons": [],
+                  "decision_digest": "8b82e9a5a9e22c4c0ee8b8d8040f6a48c0bd0c12ff7e3b4fbf1298baf54f49cd"
+                },
+                "admission": {
+                  "format": "taiji-structural-admission-result-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+                  "proposal_id": "topology:adaptive.memory:neuron:add:m2",
+                  "status": "admitted",
+                  "decision_digest": "8b82e9a5a9e22c4c0ee8b8d8040f6a48c0bd0c12ff7e3b4fbf1298baf54f49cd",
+                  "parent_checkpoint_digest": "4b7e16364e7ef8ff2fcdd44a7ce067f4825997d4ace6e6f74a792f72e482eba8",
+                  "child_checkpoint_digest": "7837b254d22937f9e9fa6c99d3d054adad5e87180353dbbb2e88008b82ed6a93",
+                  "topology_before_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+                  "topology_after_digest": "1c9eabf30fc7ebe0ffa69a379971838925743432c13ee1c389d300f99faeecac",
+                  "structural_budget_before": 32,
+                  "structural_budget_after": 31,
+                  "error": null
+                }
+              }
+            }
+          }
+        },
+        "candidate:pressure:workbench:workbench.code:1:117159ec8e8b": {
+          "batch": {
+            "format": "taiji-structural-candidate-batch-v1",
+            "batch_id": "batch:structural:8b71546ffd935529e808e36d957eb564",
+            "candidate_ids": [
+              "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+              "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+            ],
+            "selected_candidate_ids": [
+              "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+              "candidate:pressure:workbench:workbench.code:1:117159ec8e8b"
+            ],
+            "deferred_candidate_ids": [],
+            "rejected_candidate_ids": [],
+            "candidate_states": {
+              "candidate:pressure:workbench:workbench.code:1:117159ec8e8b": "admitted",
+              "candidate:pressure:workbench:workbench.docs:1:671e0bcde976": "admitted"
+            },
+            "reasons": {},
+            "reserved_resource_cost": 2,
+            "reservation_remaining": 0,
+            "structural_budget_before": 32,
+            "available_budget_before": 32,
+            "topology_digest": "f1a3b09e1e2c6a1d8330d9bd6a04a6e04f9429b8febe40d326dddcf1632e5856",
+            "arbitration_digest": "8b71546ffd935529e808e36d957eb56444b7da4f130754c70e78c2a2cff4891a",
+            "revision": 2,
+            "status": "completed"
+          },
+          "artifact_batch": {
+            "format": "taiji-workbench-structural-validation-artifact-batch-v1",
+            "batch_id": "batch:structural:8b71546ffd935529e808e36d957eb564",
+            "expected_candidate_ids": [
+              "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+              "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+            ],
+            "artifact_digests_by_candidate": {
+              "candidate:pressure:workbench:workbench.code:1:117159ec8e8b": "4e19566051e9c1396433f2faa755746df1f82b74520dfd426db28f8410d59071",
+              "candidate:pressure:workbench:workbench.docs:1:671e0bcde976": "20d9849fe0fccf12985c8c7c8c2bbf50a68df2f818e975b070482606c8e300f8"
+            },
+            "complete": true,
+            "batch_digest": "4f3de70e7a1050a0faf3917036921c968479b81bed4bb88164139e8807c84dd1"
+          },
+          "results": {
+            "candidate:pressure:workbench:workbench.docs:1:671e0bcde976": {
+              "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+              "status": "admitted"
+            },
+            "candidate:pressure:workbench:workbench.code:1:117159ec8e8b": {
+              "candidate_id": "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+              "status": "admitted",
+              "validation_artifact": {
+                "format": "taiji-workbench-structural-validation-artifact-v1",
+                "candidate_id": "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+                "network_id": "workbench",
+                "region_id": "adaptive.cortex",
+                "task_slice_id": "workbench-measured-batch",
+                "outcome_digests": [
+                  "dcf6fa100dcc887edf91b99f066d5d4c839f7514309caa5142b54364100ada93",
+                  "26efe8ef5a6ad84a695bcb691f990db42deb9c7a521a9553a5848948fe75e681",
+                  "abac8c01151de40982d64b65ff756138835eeec9e8da8e95ba41ce7486b6c7c1"
+                ],
+                "parent_checkpoint_digest": "9d10eb99f5385d5a01bc98b9ffa02a101fac633f53da29e9b5459a27ad4dfa66",
+                "trial_checkpoint_digest": "a353f6cc823c4df5df91b030e9852f3f02a042476c4d24947b601b51d74ddd89",
+                "holdout_input_digest": "67ecc2064b01d18b76e42d42490fb616e768934712df3a0f8c1bd42828f0ffbc",
+                "holdout_output_digest": "092d25da129d4af0a4dbf5702e2cb0d90dd1d5643aa1cfc73909b512c4775abd",
+                "retention_baseline_digest": "d764502b5da8b3824a70393ff9d57d2b501d6ed7a756c2f7d0ca294025f45107",
+                "retention_candidate_digest": "d764502b5da8b3824a70393ff9d57d2b501d6ed7a756c2f7d0ca294025f45107",
+                "lesion_baseline_digest": "88acd77c127852fdc961489568ce0f17720089fc0002e57fa5876309b7d50296",
+                "lesion_candidate_digest": "c6ee3b4c29a66828ad33fe16ff4d68706fcc47103c3e3e6ef01170c0fe3d2c52",
+                "resource_measurement_digest": "372ffebb33f1f4e9a755ad325d17c26434c8c288ea54fb207c216552bcdcc1ee",
+                "holdout_gain": 0.12139131873846054,
+                "retention_regression": 0.0,
+                "lesion_effect": 0.12139131873846054,
+                "resource_state": 0.75,
+                "resource_cost": 1,
+                "evidence_ids": [
+                  "workbench-structural:c17f70792df6f02333d72e31b330e837",
+                  "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+                  "workbench-structural:2c739aa785a914b9f05c4b82e160fc05"
+                ],
+                "measurement_digest": "b29848f60febcb3364f0149671ccbca153b1fbed984552da4a07ada7c4aad858",
+                "artifact_digest": "4e19566051e9c1396433f2faa755746df1f82b74520dfd426db28f8410d59071"
+              },
+              "continuation": {
+                "candidate_id": "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+                "status": "admitted",
+                "validation": {
+                  "format": "taiji-structural-candidate-validation-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+                  "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+                  "status": "validated",
+                  "validation_score": 1.0,
+                  "parent_checkpoint_digest": "9d10eb99f5385d5a01bc98b9ffa02a101fac633f53da29e9b5459a27ad4dfa66",
+                  "validation_checkpoint_digest": "33750ae914f075f21ecba942468165a653a32cf2351729a2dccce9a59a521d21",
+                  "topology_before_digest": "1c9eabf30fc7ebe0ffa69a379971838925743432c13ee1c389d300f99faeecac",
+                  "topology_after_digest": "1c9eabf30fc7ebe0ffa69a379971838925743432c13ee1c389d300f99faeecac",
+                  "structural_budget_before": 31,
+                  "structural_budget_after": 31,
+                  "evidence_ids": [
+                    "workbench-structural:c17f70792df6f02333d72e31b330e837",
+                    "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+                    "workbench-structural:2c739aa785a914b9f05c4b82e160fc05"
+                  ],
+                  "error": null
+                },
+                "decision": {
+                  "format": "taiji-structural-validation-gate-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+                  "passed": true,
+                  "holdout_gain": 0.12139131873846054,
+                  "retention_regression": 0.0,
+                  "lesion_effect": 0.12139131873846054,
+                  "resource_state": 0.75,
+                  "resource_cost": 1,
+                  "structural_budget": 31,
+                  "minimum_holdout_gain": 0.05,
+                  "maximum_retention_regression": 0.05,
+                  "minimum_lesion_effect": 0.05,
+                  "minimum_resource_state": 0.4,
+                  "evidence_ids": [
+                    "workbench-structural:c17f70792df6f02333d72e31b330e837",
+                    "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+                    "workbench-structural:2c739aa785a914b9f05c4b82e160fc05"
+                  ],
+                  "reasons": [],
+                  "decision_digest": "37e8a385f853e66646ea3307f640cd4f67005247493c596d9a0ef589e0552b81"
+                },
+                "admission": {
+                  "format": "taiji-structural-admission-result-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+                  "proposal_id": "topology:adaptive.cortex:neuron:add:u2",
+                  "status": "admitted",
+                  "decision_digest": "37e8a385f853e66646ea3307f640cd4f67005247493c596d9a0ef589e0552b81",
+                  "parent_checkpoint_digest": "e2c449213ba7b4ab83ced4c5d3f36677635a88fb524c42b769bd4e13ec7bfb97",
+                  "child_checkpoint_digest": "fdd94d9fa948604f0c15763689a6e5e1a5daa68ee1df811b831c43aad4ffc631",
+                  "topology_before_digest": "1c9eabf30fc7ebe0ffa69a379971838925743432c13ee1c389d300f99faeecac",
+                  "topology_after_digest": "82c09d218b6c20756a92fd71609d66979c462203fd9d0723fb529cbbd5db91c4",
+                  "structural_budget_before": 31,
+                  "structural_budget_after": 30,
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "compaction": {
+        "format": "taiji-structural-evidence-compaction-result-v1",
+        "status": "compacted",
+        "source_ledger_digest": "b910c639413dda742ab18a4a0ee7459ff6501de13b7e67d3dbfac5def0ae14f4",
+        "target_ledger_digest": "c6d489ff5dd47a5cbb02ba5c515c614e6bd151260d225ce2400ee5f76af25eb2",
+        "scheduler_revision": 2,
+        "compacted_window_digests": [
+          "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+          "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+          "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+          "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46"
+        ],
+        "retained_window_digests": [
+          "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+          "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897"
+        ],
+        "compacted_evidence_count": 4,
+        "result_digest": "9ffa7bcc3feec93996f0cc762056237076933f637c395ebbf982c68d6ff964f9"
+      },
+      "ledger": {
+        "digest": "c6d489ff5dd47a5cbb02ba5c515c614e6bd151260d225ce2400ee5f76af25eb2",
+        "active_window_digests": [
+          "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+          "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897"
+        ],
+        "compacted_window_digests": [
+          "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+          "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+          "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+          "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46"
+        ],
+        "pressure_snapshot_digests": [
+          "de7f3df82e524e73db7247b3e9343858326acbbbfe19a03a68671cd785f5dd92",
+          "e3956969a3eb69ed18072135e16e7ab20011bff8e80cfbfca7aa81b9deafd42e"
+        ],
+        "active_count": 2,
+        "compacted_count": 4,
+        "max_compacted_windows": 16,
+        "audit": "StructuralEvidenceConsumptionAudit(ledger_digest='c6d489ff5dd47a5cbb02ba5c515c614e6bd151260d225ce2400ee5f76af25eb2', scheduler_revision=2, evaluated_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897'), consumed_window_digests=('bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46'), unconsumed_window_digests=(), orphaned_evaluated_window_digests=(), retained_window_digests=('bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897'), compacted_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46'), stream_status=(('workbench:workbench.code', ('bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224'), ()), ('workbench:workbench.docs', ('faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46'), ())), audit_digest='85b2eb5295a03f3e3ff0eaa443ef588cbfe9d33de22d834623e47a20f6c4228e')"
+      }
+    },
+    "round_two": {
+      "evidence_count": 6,
+      "schedule": {
+        "format": "taiji-structural-workbench-batch-schedule-v1",
+        "status": "batch_created",
+        "trigger_tick": 12,
+        "request_digest": "e7d9d490275f220e9cbc65e425640551596f9c81f9a68bde29bb04af4ed159c9",
+        "region_ids": [
+          "workbench.code",
+          "workbench.docs"
+        ],
+        "candidate_ids": [
+          "candidate:pressure:workbench:workbench.docs:2:22f5d506b611",
+          "candidate:pressure:workbench:workbench.code:2:96d22204972d"
+        ],
+        "source_window_digests": [
+          "e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116",
+          "29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8",
+          "6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b",
+          "683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07",
+          "e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec",
+          "92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1"
+        ],
+        "batch_id": "batch:structural:12225e226b919257d039fd0a1d5ae5c9",
+        "reason": "",
+        "scheduler_revision": 4
+      },
+      "batch": {
+        "format": "taiji-structural-candidate-batch-v1",
+        "batch_id": "batch:structural:12225e226b919257d039fd0a1d5ae5c9",
+        "candidate_ids": [
+          "candidate:pressure:workbench:workbench.code:2:96d22204972d",
+          "candidate:pressure:workbench:workbench.docs:2:22f5d506b611"
+        ],
+        "selected_candidate_ids": [
+          "candidate:pressure:workbench:workbench.docs:2:22f5d506b611",
+          "candidate:pressure:workbench:workbench.code:2:96d22204972d"
+        ],
+        "deferred_candidate_ids": [],
+        "rejected_candidate_ids": [],
+        "candidate_states": {
+          "candidate:pressure:workbench:workbench.code:2:96d22204972d": "reserved",
+          "candidate:pressure:workbench:workbench.docs:2:22f5d506b611": "reserved"
+        },
+        "reasons": {},
+        "reserved_resource_cost": 2,
+        "reservation_remaining": 2,
+        "structural_budget_before": 30,
+        "available_budget_before": 30,
+        "topology_digest": "82c09d218b6c20756a92fd71609d66979c462203fd9d0723fb529cbbd5db91c4",
+        "arbitration_digest": "12225e226b919257d039fd0a1d5ae5c969440fcd33f9e6d51c819779110a1c22",
+        "revision": 0,
+        "status": "planned"
+      },
+      "admission": {
+        "candidate:pressure:workbench:workbench.docs:2:22f5d506b611": {
+          "batch": {
+            "format": "taiji-structural-candidate-batch-v1",
+            "batch_id": "batch:structural:12225e226b919257d039fd0a1d5ae5c9",
+            "candidate_ids": [
+              "candidate:pressure:workbench:workbench.code:2:96d22204972d",
+              "candidate:pressure:workbench:workbench.docs:2:22f5d506b611"
+            ],
+            "selected_candidate_ids": [
+              "candidate:pressure:workbench:workbench.docs:2:22f5d506b611",
+              "candidate:pressure:workbench:workbench.code:2:96d22204972d"
+            ],
+            "deferred_candidate_ids": [],
+            "rejected_candidate_ids": [],
+            "candidate_states": {
+              "candidate:pressure:workbench:workbench.code:2:96d22204972d": "reserved",
+              "candidate:pressure:workbench:workbench.docs:2:22f5d506b611": "admitted"
+            },
+            "reasons": {},
+            "reserved_resource_cost": 2,
+            "reservation_remaining": 1,
+            "structural_budget_before": 30,
+            "available_budget_before": 30,
+            "topology_digest": "82c09d218b6c20756a92fd71609d66979c462203fd9d0723fb529cbbd5db91c4",
+            "arbitration_digest": "12225e226b919257d039fd0a1d5ae5c969440fcd33f9e6d51c819779110a1c22",
+            "revision": 1,
+            "status": "running"
+          },
+          "artifact_batch": {
+            "format": "taiji-workbench-structural-validation-artifact-batch-v1",
+            "batch_id": "batch:structural:12225e226b919257d039fd0a1d5ae5c9",
+            "expected_candidate_ids": [
+              "candidate:pressure:workbench:workbench.code:2:96d22204972d",
+              "candidate:pressure:workbench:workbench.docs:2:22f5d506b611"
+            ],
+            "artifact_digests_by_candidate": {
+              "candidate:pressure:workbench:workbench.docs:2:22f5d506b611": "02f8ef1233eff87c1e52adce7d78cedd8a412b314d25dddfc40befd15fdd1d06"
+            },
+            "complete": false,
+            "batch_digest": "cf2cd92704edae4f05cc11d94023f64583caac7bb17858f02e29858f10247aaf"
+          },
+          "results": {
+            "candidate:pressure:workbench:workbench.docs:2:22f5d506b611": {
+              "candidate_id": "candidate:pressure:workbench:workbench.docs:2:22f5d506b611",
+              "status": "admitted",
+              "validation_artifact": {
+                "format": "taiji-workbench-structural-validation-artifact-v1",
+                "candidate_id": "candidate:pressure:workbench:workbench.docs:2:22f5d506b611",
+                "network_id": "workbench",
+                "region_id": "adaptive.memory",
+                "task_slice_id": "workbench-measured-batch",
+                "outcome_digests": [
+                  "aece55f6af031df68620535e12a7ba8d8a5a56b5487ec80305f1accabd37fa40",
+                  "ab845fe418f25fc51a1d8f50afba2bfed9c39d9d0b49dc567d99219ccb5fa008",
+                  "90232775108abd5df8b2fdfb623888b9113cfc861d265afe00a6adea963a740c"
+                ],
+                "parent_checkpoint_digest": "22e3e0b25fa0de052b764667b959af44d4876c410b301b8db6d15b7a300e7324",
+                "trial_checkpoint_digest": "ab843ec42508212f535e697b80997128ebcd20ecdd1829ec3b1213f21515b36c",
+                "holdout_input_digest": "5af3fe210e7f884f99c7262e1098b2c6c9fa03cc2781df935e770456f031eed0",
+                "holdout_output_digest": "3d3a1724f18b4fced1a3bc854b537ceda35698910af2abbe6ec4cbb97ed9fbbc",
+                "retention_baseline_digest": "db3e8d285f856e4dd63de69f55286874e5d15ec8a5ab6aa2aa815854e7c2fc44",
+                "retention_candidate_digest": "db3e8d285f856e4dd63de69f55286874e5d15ec8a5ab6aa2aa815854e7c2fc44",
+                "lesion_baseline_digest": "3f2814718962d269a619cfc84cd2393befdca060e815f9349d21a3c445b1d53b",
+                "lesion_candidate_digest": "1f7cd144f64004d50051e8080115405af1c54044000cdf2f9bf646cfd4efe8b9",
+                "resource_measurement_digest": "352975650de965dfdff5ad3b60255fad91888279dfb8c9b519e5afbed19f5a05",
+                "holdout_gain": 0.07117283344268799,
+                "retention_regression": 0.0,
+                "lesion_effect": 0.07117283344268799,
+                "resource_state": 0.625,
+                "resource_cost": 1,
+                "evidence_ids": [
+                  "workbench-structural:71e93ca074a17668e4548653e12652fe",
+                  "workbench-structural:c725e94919d01af97880a43cab443adc",
+                  "workbench-structural:ccc725f9609996b21b66b170cbfa37fc",
+                  "workbench-structural:e77606226696432d595d687dd9fd52c4",
+                  "workbench-structural:08f0b609990931da025b360c34385671",
+                  "workbench-structural:0f73adfdfe59e8ff8dd181c04a3fc944"
+                ],
+                "measurement_digest": "511aff4c8dd54b918a9a930ba836f4320c49e05599166cdb41fa83e57c3a4d6a",
+                "artifact_digest": "02f8ef1233eff87c1e52adce7d78cedd8a412b314d25dddfc40befd15fdd1d06"
+              },
+              "continuation": {
+                "candidate_id": "candidate:pressure:workbench:workbench.docs:2:22f5d506b611",
+                "status": "admitted",
+                "validation": {
+                  "format": "taiji-structural-candidate-validation-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.docs:2:22f5d506b611",
+                  "proposal_id": "topology:adaptive.memory:neuron:add:m3",
+                  "status": "validated",
+                  "validation_score": 1.0,
+                  "parent_checkpoint_digest": "22e3e0b25fa0de052b764667b959af44d4876c410b301b8db6d15b7a300e7324",
+                  "validation_checkpoint_digest": "e2e80504914f715b40dadb36bceb7879fc65cb6853b327f195efa9909c9b3fbe",
+                  "topology_before_digest": "82c09d218b6c20756a92fd71609d66979c462203fd9d0723fb529cbbd5db91c4",
+                  "topology_after_digest": "82c09d218b6c20756a92fd71609d66979c462203fd9d0723fb529cbbd5db91c4",
+                  "structural_budget_before": 30,
+                  "structural_budget_after": 30,
+                  "evidence_ids": [
+                    "workbench-structural:71e93ca074a17668e4548653e12652fe",
+                    "workbench-structural:c725e94919d01af97880a43cab443adc",
+                    "workbench-structural:ccc725f9609996b21b66b170cbfa37fc",
+                    "workbench-structural:e77606226696432d595d687dd9fd52c4",
+                    "workbench-structural:08f0b609990931da025b360c34385671",
+                    "workbench-structural:0f73adfdfe59e8ff8dd181c04a3fc944"
+                  ],
+                  "error": null
+                },
+                "decision": {
+                  "format": "taiji-structural-validation-gate-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.docs:2:22f5d506b611",
+                  "passed": true,
+                  "holdout_gain": 0.07117283344268799,
+                  "retention_regression": 0.0,
+                  "lesion_effect": 0.07117283344268799,
+                  "resource_state": 0.625,
+                  "resource_cost": 1,
+                  "structural_budget": 30,
+                  "minimum_holdout_gain": 0.05,
+                  "maximum_retention_regression": 0.05,
+                  "minimum_lesion_effect": 0.05,
+                  "minimum_resource_state": 0.4,
+                  "evidence_ids": [
+                    "workbench-structural:71e93ca074a17668e4548653e12652fe",
+                    "workbench-structural:c725e94919d01af97880a43cab443adc",
+                    "workbench-structural:ccc725f9609996b21b66b170cbfa37fc",
+                    "workbench-structural:e77606226696432d595d687dd9fd52c4",
+                    "workbench-structural:08f0b609990931da025b360c34385671",
+                    "workbench-structural:0f73adfdfe59e8ff8dd181c04a3fc944"
+                  ],
+                  "reasons": [],
+                  "decision_digest": "42c39217d8516d0daf5d4dc0078ee2d5bec6f3521104d61ebf1d82e2cf1c48e8"
+                },
+                "admission": {
+                  "format": "taiji-structural-admission-result-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.docs:2:22f5d506b611",
+                  "proposal_id": "topology:adaptive.memory:neuron:add:m3",
+                  "status": "admitted",
+                  "decision_digest": "42c39217d8516d0daf5d4dc0078ee2d5bec6f3521104d61ebf1d82e2cf1c48e8",
+                  "parent_checkpoint_digest": "983156bce5bffdd703e2e28fc0f5b99144e5e5ce3dfc676c9f81eba6b1586357",
+                  "child_checkpoint_digest": "79476a9beb0987120947973fb9dabf3d6c5db81831aa25b351d3996f72fe5129",
+                  "topology_before_digest": "82c09d218b6c20756a92fd71609d66979c462203fd9d0723fb529cbbd5db91c4",
+                  "topology_after_digest": "0d7afeda01a99eadbde2ad50bdde5d0a8a9cb60d7fc2864dbd3057832925ebc6",
+                  "structural_budget_before": 30,
+                  "structural_budget_after": 29,
+                  "error": null
+                }
+              }
+            }
+          }
+        },
+        "candidate:pressure:workbench:workbench.code:2:96d22204972d": {
+          "batch": {
+            "format": "taiji-structural-candidate-batch-v1",
+            "batch_id": "batch:structural:12225e226b919257d039fd0a1d5ae5c9",
+            "candidate_ids": [
+              "candidate:pressure:workbench:workbench.code:2:96d22204972d",
+              "candidate:pressure:workbench:workbench.docs:2:22f5d506b611"
+            ],
+            "selected_candidate_ids": [
+              "candidate:pressure:workbench:workbench.docs:2:22f5d506b611",
+              "candidate:pressure:workbench:workbench.code:2:96d22204972d"
+            ],
+            "deferred_candidate_ids": [],
+            "rejected_candidate_ids": [],
+            "candidate_states": {
+              "candidate:pressure:workbench:workbench.code:2:96d22204972d": "admitted",
+              "candidate:pressure:workbench:workbench.docs:2:22f5d506b611": "admitted"
+            },
+            "reasons": {},
+            "reserved_resource_cost": 2,
+            "reservation_remaining": 0,
+            "structural_budget_before": 30,
+            "available_budget_before": 30,
+            "topology_digest": "82c09d218b6c20756a92fd71609d66979c462203fd9d0723fb529cbbd5db91c4",
+            "arbitration_digest": "12225e226b919257d039fd0a1d5ae5c969440fcd33f9e6d51c819779110a1c22",
+            "revision": 2,
+            "status": "completed"
+          },
+          "artifact_batch": {
+            "format": "taiji-workbench-structural-validation-artifact-batch-v1",
+            "batch_id": "batch:structural:12225e226b919257d039fd0a1d5ae5c9",
+            "expected_candidate_ids": [
+              "candidate:pressure:workbench:workbench.code:2:96d22204972d",
+              "candidate:pressure:workbench:workbench.docs:2:22f5d506b611"
+            ],
+            "artifact_digests_by_candidate": {
+              "candidate:pressure:workbench:workbench.code:2:96d22204972d": "55c2f82296245e08a2dae1bc178af9fb639437cb14e68388930bdb7ebe41a1b2",
+              "candidate:pressure:workbench:workbench.docs:2:22f5d506b611": "02f8ef1233eff87c1e52adce7d78cedd8a412b314d25dddfc40befd15fdd1d06"
+            },
+            "complete": true,
+            "batch_digest": "1e68a3a955136d3d65cd9f23751fff97ea0aeb166eecc16df62e285ffbea7533"
+          },
+          "results": {
+            "candidate:pressure:workbench:workbench.docs:2:22f5d506b611": {
+              "candidate_id": "candidate:pressure:workbench:workbench.docs:2:22f5d506b611",
+              "status": "admitted"
+            },
+            "candidate:pressure:workbench:workbench.code:2:96d22204972d": {
+              "candidate_id": "candidate:pressure:workbench:workbench.code:2:96d22204972d",
+              "status": "admitted",
+              "validation_artifact": {
+                "format": "taiji-workbench-structural-validation-artifact-v1",
+                "candidate_id": "candidate:pressure:workbench:workbench.code:2:96d22204972d",
+                "network_id": "workbench",
+                "region_id": "adaptive.cortex",
+                "task_slice_id": "workbench-measured-batch",
+                "outcome_digests": [
+                  "6a7113254381c5fe4876040234a29cc70ebe1992a0ed72adad4e5c9b5c6c0aee",
+                  "623e85bed03d800cd161aa6d2d1bde196b98f405d48c5dbfc6a2cdd0ed869770",
+                  "1890bf9823f2f75a9175c53a86e3c6f37b87e5ec59402b6f4eaed4f9564f54af"
+                ],
+                "parent_checkpoint_digest": "f33e3e173aed7612f19f28bf5ec85337affb550823ae265617117ffcf032127c",
+                "trial_checkpoint_digest": "74a0d5a041f0ba9922e677b96f20ea1338cc018d3b1e16cb2f088f6cfacdfe53",
+                "holdout_input_digest": "5af3fe210e7f884f99c7262e1098b2c6c9fa03cc2781df935e770456f031eed0",
+                "holdout_output_digest": "ac819fb36fa56ab361df7ee87ba62608bbb578fab08a56d7f4b300d1126dbf48",
+                "retention_baseline_digest": "8e08e7cc1998e15b0e2358c1f4fd3e9b53979c22b71f9b6395a7f9f8206dc7f8",
+                "retention_candidate_digest": "8e08e7cc1998e15b0e2358c1f4fd3e9b53979c22b71f9b6395a7f9f8206dc7f8",
+                "lesion_baseline_digest": "a8684821f4bdfb5c22b6bd5513e61ad06fdf8165d189d6eccd5747abf078df7c",
+                "lesion_candidate_digest": "1f7fd77229912c5e7015cab5236ddb99c930ac6e3ea305863a51f9eb3917dc31",
+                "resource_measurement_digest": "037e50f9d3a83a835a9e9a19af447c72767e7748c9d70b19642a8c9d3a7d891a",
+                "holdout_gain": 0.07117283344268799,
+                "retention_regression": 0.0,
+                "lesion_effect": 0.07117283344268799,
+                "resource_state": 0.625,
+                "resource_cost": 1,
+                "evidence_ids": [
+                  "workbench-structural:c17f70792df6f02333d72e31b330e837",
+                  "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+                  "workbench-structural:2c739aa785a914b9f05c4b82e160fc05",
+                  "workbench-structural:cb062e5422ebedfe748ee8fba9adadc2",
+                  "workbench-structural:30a547834f0654825d240251886ac017",
+                  "workbench-structural:45bf1c109ad2a067c043ad1bbf32db46"
+                ],
+                "measurement_digest": "31fe3046cd10f74110080e2922a0b3f168705fa2378bfd46f505e186af5d6a11",
+                "artifact_digest": "55c2f82296245e08a2dae1bc178af9fb639437cb14e68388930bdb7ebe41a1b2"
+              },
+              "continuation": {
+                "candidate_id": "candidate:pressure:workbench:workbench.code:2:96d22204972d",
+                "status": "admitted",
+                "validation": {
+                  "format": "taiji-structural-candidate-validation-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.code:2:96d22204972d",
+                  "proposal_id": "topology:adaptive.cortex:neuron:add:u3",
+                  "status": "validated",
+                  "validation_score": 1.0,
+                  "parent_checkpoint_digest": "f33e3e173aed7612f19f28bf5ec85337affb550823ae265617117ffcf032127c",
+                  "validation_checkpoint_digest": "f12bdce4f8aedd936ea9b99ae4e243faddb2c7b2ec16d06baac5fccf1314fda0",
+                  "topology_before_digest": "0d7afeda01a99eadbde2ad50bdde5d0a8a9cb60d7fc2864dbd3057832925ebc6",
+                  "topology_after_digest": "0d7afeda01a99eadbde2ad50bdde5d0a8a9cb60d7fc2864dbd3057832925ebc6",
+                  "structural_budget_before": 29,
+                  "structural_budget_after": 29,
+                  "evidence_ids": [
+                    "workbench-structural:c17f70792df6f02333d72e31b330e837",
+                    "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+                    "workbench-structural:2c739aa785a914b9f05c4b82e160fc05",
+                    "workbench-structural:cb062e5422ebedfe748ee8fba9adadc2",
+                    "workbench-structural:30a547834f0654825d240251886ac017",
+                    "workbench-structural:45bf1c109ad2a067c043ad1bbf32db46"
+                  ],
+                  "error": null
+                },
+                "decision": {
+                  "format": "taiji-structural-validation-gate-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.code:2:96d22204972d",
+                  "passed": true,
+                  "holdout_gain": 0.07117283344268799,
+                  "retention_regression": 0.0,
+                  "lesion_effect": 0.07117283344268799,
+                  "resource_state": 0.625,
+                  "resource_cost": 1,
+                  "structural_budget": 29,
+                  "minimum_holdout_gain": 0.05,
+                  "maximum_retention_regression": 0.05,
+                  "minimum_lesion_effect": 0.05,
+                  "minimum_resource_state": 0.4,
+                  "evidence_ids": [
+                    "workbench-structural:c17f70792df6f02333d72e31b330e837",
+                    "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+                    "workbench-structural:2c739aa785a914b9f05c4b82e160fc05",
+                    "workbench-structural:cb062e5422ebedfe748ee8fba9adadc2",
+                    "workbench-structural:30a547834f0654825d240251886ac017",
+                    "workbench-structural:45bf1c109ad2a067c043ad1bbf32db46"
+                  ],
+                  "reasons": [],
+                  "decision_digest": "3f93b8f1925b8709d30e817bcae046365262a7fcdb5f31dfcd7f0ed5c95ad43c"
+                },
+                "admission": {
+                  "format": "taiji-structural-admission-result-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.code:2:96d22204972d",
+                  "proposal_id": "topology:adaptive.cortex:neuron:add:u3",
+                  "status": "admitted",
+                  "decision_digest": "3f93b8f1925b8709d30e817bcae046365262a7fcdb5f31dfcd7f0ed5c95ad43c",
+                  "parent_checkpoint_digest": "04f71587ccfa03b98fa5c5e57dc50bdca48deaf56f17af2cbcdefbf4bbb6665b",
+                  "child_checkpoint_digest": "3403c4f9f89b77159f93681dc3f1e04a2f480ebfaa16daada47784ccd77093e6",
+                  "topology_before_digest": "0d7afeda01a99eadbde2ad50bdde5d0a8a9cb60d7fc2864dbd3057832925ebc6",
+                  "topology_after_digest": "a1d1f22247bb0bf63beb5af0e397fc22f06957364f35adf1c796f58a3fe149c5",
+                  "structural_budget_before": 29,
+                  "structural_budget_after": 28,
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "rollback": {
+        "format": "taiji-structural-candidate-rollback-v1",
+        "batch_id": "batch:structural:12225e226b919257d039fd0a1d5ae5c9",
+        "candidate_id": "candidate:pressure:workbench:workbench.code:2:96d22204972d",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u3",
+        "status": "rolled_back",
+        "admission_parent_checkpoint_digest": "04f71587ccfa03b98fa5c5e57dc50bdca48deaf56f17af2cbcdefbf4bbb6665b",
+        "admission_child_checkpoint_digest": "3403c4f9f89b77159f93681dc3f1e04a2f480ebfaa16daada47784ccd77093e6",
+        "rollback_checkpoint_digest": "a676fa41806147e6276d40a2e24621d6b1152ddbfaa21f6fc4ca95991d4e9838",
+        "topology_before_digest": "a1d1f22247bb0bf63beb5af0e397fc22f06957364f35adf1c796f58a3fe149c5",
+        "topology_after_digest": "0d7afeda01a99eadbde2ad50bdde5d0a8a9cb60d7fc2864dbd3057832925ebc6",
+        "structural_budget_before": 28,
+        "structural_budget_after": 29,
+        "resource_cost": 1,
+        "reason": ""
+      },
+      "ledger_before_compaction": {
+        "digest": "a17233abe6fdc1ef5c9fe727aecc1fa69607c1796751b9d4a41a10263c9f6d65",
+        "active_window_digests": [
+          "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+          "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897",
+          "683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07",
+          "e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec",
+          "92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1",
+          "e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116",
+          "29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8",
+          "6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b"
+        ],
+        "compacted_window_digests": [
+          "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+          "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+          "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+          "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46"
+        ],
+        "pressure_snapshot_digests": [
+          "de7f3df82e524e73db7247b3e9343858326acbbbfe19a03a68671cd785f5dd92",
+          "e3956969a3eb69ed18072135e16e7ab20011bff8e80cfbfca7aa81b9deafd42e"
+        ],
+        "active_count": 8,
+        "compacted_count": 4,
+        "max_compacted_windows": 16,
+        "audit": "StructuralEvidenceConsumptionAudit(ledger_digest='a17233abe6fdc1ef5c9fe727aecc1fa69607c1796751b9d4a41a10263c9f6d65', scheduler_revision=4, evaluated_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1'), consumed_window_digests=('bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46'), unconsumed_window_digests=(), orphaned_evaluated_window_digests=(), retained_window_digests=('bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b'), compacted_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46'), stream_status=(('workbench:workbench.code', ('bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224'), ()), ('workbench:workbench.docs', ('faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46'), ())), audit_digest='5d0bc883d8ceb86f555a8c42eb17bcd065bc873d1de772fa1f1bc0e76b701f73')"
+      },
+      "compaction": {
+        "format": "taiji-structural-evidence-compaction-result-v1",
+        "status": "compacted",
+        "source_ledger_digest": "a17233abe6fdc1ef5c9fe727aecc1fa69607c1796751b9d4a41a10263c9f6d65",
+        "target_ledger_digest": "f60cd242d557cdbc876da7be4f5727a582070579e8c7a4be445718588eeccaeb",
+        "scheduler_revision": 4,
+        "compacted_window_digests": [
+          "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+          "683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07",
+          "e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec",
+          "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897",
+          "e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116",
+          "29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8"
+        ],
+        "retained_window_digests": [
+          "92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1",
+          "6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b"
+        ],
+        "compacted_evidence_count": 6,
+        "result_digest": "18fc3a1c6cf18bb9d057a25111bc62e26dd833edc622da07667550b62fdd4c5e"
+      },
+      "ledger": {
+        "digest": "f60cd242d557cdbc876da7be4f5727a582070579e8c7a4be445718588eeccaeb",
+        "active_window_digests": [
+          "92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1",
+          "6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b"
+        ],
+        "compacted_window_digests": [
+          "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+          "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+          "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+          "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46",
+          "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+          "683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07",
+          "e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec",
+          "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897",
+          "e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116",
+          "29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8"
+        ],
+        "pressure_snapshot_digests": [
+          "8110c983e82830624d43b8ded5af5bc65ee1c7bb8370bfb2f71e34796974aef5",
+          "14d69a8d4e96ff202e3dfcfab09cafe71415175f237113015c8af38530788ef0"
+        ],
+        "active_count": 2,
+        "compacted_count": 10,
+        "max_compacted_windows": 16,
+        "audit": "StructuralEvidenceConsumptionAudit(ledger_digest='f60cd242d557cdbc876da7be4f5727a582070579e8c7a4be445718588eeccaeb', scheduler_revision=4, evaluated_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1'), consumed_window_digests=('92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8'), unconsumed_window_digests=(), orphaned_evaluated_window_digests=(), retained_window_digests=('92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b'), compacted_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8'), stream_status=(('workbench:workbench.code', ('92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec'), ()), ('workbench:workbench.docs', ('6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8'), ())), audit_digest='4e62c7c94200200342380dd156c5d94b9222f7207d10f6071687c77eb56a5e97')"
+      }
+    },
+    "round_three": {
+      "evidence_count": 6,
+      "pre_schedule_ledger": {
+        "digest": "17bfe839c66864c5dde29e1df70e36573f9331fba844e35113c6e69a8e2a6583",
+        "active_window_digests": [
+          "92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1",
+          "6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b",
+          "bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1",
+          "31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73",
+          "4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95",
+          "04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3",
+          "86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87",
+          "82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061"
+        ],
+        "compacted_window_digests": [
+          "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+          "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+          "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+          "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46",
+          "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+          "683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07",
+          "e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec",
+          "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897",
+          "e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116",
+          "29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8"
+        ],
+        "pressure_snapshot_digests": [
+          "8110c983e82830624d43b8ded5af5bc65ee1c7bb8370bfb2f71e34796974aef5",
+          "14d69a8d4e96ff202e3dfcfab09cafe71415175f237113015c8af38530788ef0"
+        ],
+        "active_count": 8,
+        "compacted_count": 10,
+        "max_compacted_windows": 16,
+        "audit": "StructuralEvidenceConsumptionAudit(ledger_digest='17bfe839c66864c5dde29e1df70e36573f9331fba844e35113c6e69a8e2a6583', scheduler_revision=4, evaluated_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1'), consumed_window_digests=('92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8'), unconsumed_window_digests=('bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061'), orphaned_evaluated_window_digests=(), retained_window_digests=('92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061'), compacted_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8'), stream_status=(('workbench:workbench.code', ('92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec'), ('bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95')), ('workbench:workbench.docs', ('6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8'), ('04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061'))), audit_digest='0139eec71ca79e00fcde44d741ba2b019b5d2db97672f8caaa529ac594ea8bd0')"
+      },
+      "pre_schedule_checkpoint_present": true,
+      "pre_schedule_compaction": {
+        "format": "taiji-structural-evidence-compaction-result-v1",
+        "status": "nothing_to_compact",
+        "source_ledger_digest": "17bfe839c66864c5dde29e1df70e36573f9331fba844e35113c6e69a8e2a6583",
+        "target_ledger_digest": "17bfe839c66864c5dde29e1df70e36573f9331fba844e35113c6e69a8e2a6583",
+        "scheduler_revision": 4,
+        "compacted_window_digests": [],
+        "retained_window_digests": [
+          "92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1",
+          "6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b",
+          "bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1",
+          "31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73",
+          "4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95",
+          "04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3",
+          "86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87",
+          "82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061"
+        ],
+        "compacted_evidence_count": 0,
+        "result_digest": "387b1f5ed983435f3a79bcfa76669c967b3c6c98a1b87901749925214f7eace7"
+      },
+      "schedule": {
+        "format": "taiji-structural-workbench-batch-schedule-v1",
+        "status": "batch_created",
+        "trigger_tick": 18,
+        "request_digest": "aa070166e9715de65063cea10f45be1b9c228e822e8b32a2c4b9da2f4686b2cb",
+        "region_ids": [
+          "workbench.code",
+          "workbench.docs"
+        ],
+        "candidate_ids": [
+          "candidate:pressure:workbench:workbench.code:3:62785ee4d754",
+          "candidate:pressure:workbench:workbench.docs:3:071bb3157a88"
+        ],
+        "source_window_digests": [
+          "bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1",
+          "31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73",
+          "4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95",
+          "04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3",
+          "86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87",
+          "82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061"
+        ],
+        "batch_id": "batch:structural:6468e10dd44fba33c83435fd67b69c22",
+        "reason": "",
+        "scheduler_revision": 6
+      },
+      "batch": {
+        "format": "taiji-structural-candidate-batch-v1",
+        "batch_id": "batch:structural:6468e10dd44fba33c83435fd67b69c22",
+        "candidate_ids": [
+          "candidate:pressure:workbench:workbench.code:3:62785ee4d754",
+          "candidate:pressure:workbench:workbench.docs:3:071bb3157a88"
+        ],
+        "selected_candidate_ids": [
+          "candidate:pressure:workbench:workbench.docs:3:071bb3157a88",
+          "candidate:pressure:workbench:workbench.code:3:62785ee4d754"
+        ],
+        "deferred_candidate_ids": [],
+        "rejected_candidate_ids": [],
+        "candidate_states": {
+          "candidate:pressure:workbench:workbench.code:3:62785ee4d754": "reserved",
+          "candidate:pressure:workbench:workbench.docs:3:071bb3157a88": "reserved"
+        },
+        "reasons": {},
+        "reserved_resource_cost": 2,
+        "reservation_remaining": 2,
+        "structural_budget_before": 29,
+        "available_budget_before": 29,
+        "topology_digest": "0d7afeda01a99eadbde2ad50bdde5d0a8a9cb60d7fc2864dbd3057832925ebc6",
+        "arbitration_digest": "6468e10dd44fba33c83435fd67b69c22c0b5e5dd05687f9bcaae4165baa68d85",
+        "revision": 0,
+        "status": "planned"
+      },
+      "admission": {
+        "candidate:pressure:workbench:workbench.docs:3:071bb3157a88": {
+          "batch": {
+            "format": "taiji-structural-candidate-batch-v1",
+            "batch_id": "batch:structural:6468e10dd44fba33c83435fd67b69c22",
+            "candidate_ids": [
+              "candidate:pressure:workbench:workbench.code:3:62785ee4d754",
+              "candidate:pressure:workbench:workbench.docs:3:071bb3157a88"
+            ],
+            "selected_candidate_ids": [
+              "candidate:pressure:workbench:workbench.docs:3:071bb3157a88",
+              "candidate:pressure:workbench:workbench.code:3:62785ee4d754"
+            ],
+            "deferred_candidate_ids": [],
+            "rejected_candidate_ids": [],
+            "candidate_states": {
+              "candidate:pressure:workbench:workbench.code:3:62785ee4d754": "reserved",
+              "candidate:pressure:workbench:workbench.docs:3:071bb3157a88": "admitted"
+            },
+            "reasons": {},
+            "reserved_resource_cost": 2,
+            "reservation_remaining": 1,
+            "structural_budget_before": 29,
+            "available_budget_before": 29,
+            "topology_digest": "0d7afeda01a99eadbde2ad50bdde5d0a8a9cb60d7fc2864dbd3057832925ebc6",
+            "arbitration_digest": "6468e10dd44fba33c83435fd67b69c22c0b5e5dd05687f9bcaae4165baa68d85",
+            "revision": 1,
+            "status": "running"
+          },
+          "artifact_batch": {
+            "format": "taiji-workbench-structural-validation-artifact-batch-v1",
+            "batch_id": "batch:structural:6468e10dd44fba33c83435fd67b69c22",
+            "expected_candidate_ids": [
+              "candidate:pressure:workbench:workbench.code:3:62785ee4d754",
+              "candidate:pressure:workbench:workbench.docs:3:071bb3157a88"
+            ],
+            "artifact_digests_by_candidate": {
+              "candidate:pressure:workbench:workbench.docs:3:071bb3157a88": "d63105d560a9b0514e52bad9b817b65696ca53ebaca8a507aafd67d42391fc0f"
+            },
+            "complete": false,
+            "batch_digest": "71b2120a26efea97176ae0fe91e123c82cdb3ffb2c0c27c37988e12c2ad706e6"
+          },
+          "results": {
+            "candidate:pressure:workbench:workbench.docs:3:071bb3157a88": {
+              "candidate_id": "candidate:pressure:workbench:workbench.docs:3:071bb3157a88",
+              "status": "admitted",
+              "validation_artifact": {
+                "format": "taiji-workbench-structural-validation-artifact-v1",
+                "candidate_id": "candidate:pressure:workbench:workbench.docs:3:071bb3157a88",
+                "network_id": "workbench",
+                "region_id": "adaptive.memory",
+                "task_slice_id": "workbench-measured-batch",
+                "outcome_digests": [
+                  "c9df0090e56d61abce66a19f5bdc47d9cdeb68a97768d6d5906991a9c53fffa4",
+                  "6efc6ff032b23f066ed0b39dc73445c394dd54969a2198570e864a37d77c5b5a",
+                  "7406967a6a38ba62df217697700fb2272fa1eb5e0083feb2b34b321f57929b84"
+                ],
+                "parent_checkpoint_digest": "7ebf26fd9b930907a4ac8fbe8dbf6518ad351d70195ac0de93d2f9eb3105f785",
+                "trial_checkpoint_digest": "96d836c9cb16ef422c2a4c1463165bc85b6dc78611e55a3f7a0d97df9d752ebd",
+                "holdout_input_digest": "ab0c329bb5bb9d198dd2ad12905880c1c121c71a5951b162e4721f0b1a0e678a",
+                "holdout_output_digest": "9531551b2a58b4cd2bdc6b533d9a492aa56ffd7a2ad63195b33e4af55f42dc1d",
+                "retention_baseline_digest": "96a26f4ddbe24847820f09b82670db6d98d73da117cc2e5d725917dd6828d68d",
+                "retention_candidate_digest": "96a26f4ddbe24847820f09b82670db6d98d73da117cc2e5d725917dd6828d68d",
+                "lesion_baseline_digest": "33b2c9a389c3355870588e983afe2c1253908058347720e69e28f67159b85c9a",
+                "lesion_candidate_digest": "51650cfd9c3f9322c0604e712a56c547bd37b8a8a55a37157a9af6ab971c649f",
+                "resource_measurement_digest": "a56fcc85f6f7488fa7a84c3fe9a09b0178f4e8d259d37d2cfe49b12ed595dfdf",
+                "holdout_gain": 0.10199133306741714,
+                "retention_regression": 0.0,
+                "lesion_effect": 0.10199133306741714,
+                "resource_state": 0.5,
+                "resource_cost": 1,
+                "evidence_ids": [
+                  "workbench-structural:71e93ca074a17668e4548653e12652fe",
+                  "workbench-structural:c725e94919d01af97880a43cab443adc",
+                  "workbench-structural:ccc725f9609996b21b66b170cbfa37fc",
+                  "workbench-structural:e77606226696432d595d687dd9fd52c4",
+                  "workbench-structural:08f0b609990931da025b360c34385671",
+                  "workbench-structural:0f73adfdfe59e8ff8dd181c04a3fc944",
+                  "workbench-structural:57811a2b88ac850aad8d9d46330d2d03",
+                  "workbench-structural:ee17f0b1bac44ae31439cfab5f5b3d4b",
+                  "workbench-structural:5adf38fbc3a51c2b56ea5d3c1ec6f0f4"
+                ],
+                "measurement_digest": "d675fc43446a772330c7171b96d6d4b6517a02f0f8d4a1af8c001feba1d0d564",
+                "artifact_digest": "d63105d560a9b0514e52bad9b817b65696ca53ebaca8a507aafd67d42391fc0f"
+              },
+              "continuation": {
+                "candidate_id": "candidate:pressure:workbench:workbench.docs:3:071bb3157a88",
+                "status": "admitted",
+                "validation": {
+                  "format": "taiji-structural-candidate-validation-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.docs:3:071bb3157a88",
+                  "proposal_id": "topology:adaptive.memory:neuron:add:m4",
+                  "status": "validated",
+                  "validation_score": 1.0,
+                  "parent_checkpoint_digest": "7ebf26fd9b930907a4ac8fbe8dbf6518ad351d70195ac0de93d2f9eb3105f785",
+                  "validation_checkpoint_digest": "bbec646fb5fc40f8862ae2db0c70bbda8a1c0f457dc0a3510404a9da772bf0c6",
+                  "topology_before_digest": "0d7afeda01a99eadbde2ad50bdde5d0a8a9cb60d7fc2864dbd3057832925ebc6",
+                  "topology_after_digest": "0d7afeda01a99eadbde2ad50bdde5d0a8a9cb60d7fc2864dbd3057832925ebc6",
+                  "structural_budget_before": 29,
+                  "structural_budget_after": 29,
+                  "evidence_ids": [
+                    "workbench-structural:71e93ca074a17668e4548653e12652fe",
+                    "workbench-structural:c725e94919d01af97880a43cab443adc",
+                    "workbench-structural:ccc725f9609996b21b66b170cbfa37fc",
+                    "workbench-structural:e77606226696432d595d687dd9fd52c4",
+                    "workbench-structural:08f0b609990931da025b360c34385671",
+                    "workbench-structural:0f73adfdfe59e8ff8dd181c04a3fc944",
+                    "workbench-structural:57811a2b88ac850aad8d9d46330d2d03",
+                    "workbench-structural:ee17f0b1bac44ae31439cfab5f5b3d4b",
+                    "workbench-structural:5adf38fbc3a51c2b56ea5d3c1ec6f0f4"
+                  ],
+                  "error": null
+                },
+                "decision": {
+                  "format": "taiji-structural-validation-gate-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.docs:3:071bb3157a88",
+                  "passed": true,
+                  "holdout_gain": 0.10199133306741714,
+                  "retention_regression": 0.0,
+                  "lesion_effect": 0.10199133306741714,
+                  "resource_state": 0.5,
+                  "resource_cost": 1,
+                  "structural_budget": 29,
+                  "minimum_holdout_gain": 0.05,
+                  "maximum_retention_regression": 0.05,
+                  "minimum_lesion_effect": 0.05,
+                  "minimum_resource_state": 0.4,
+                  "evidence_ids": [
+                    "workbench-structural:71e93ca074a17668e4548653e12652fe",
+                    "workbench-structural:c725e94919d01af97880a43cab443adc",
+                    "workbench-structural:ccc725f9609996b21b66b170cbfa37fc",
+                    "workbench-structural:e77606226696432d595d687dd9fd52c4",
+                    "workbench-structural:08f0b609990931da025b360c34385671",
+                    "workbench-structural:0f73adfdfe59e8ff8dd181c04a3fc944",
+                    "workbench-structural:57811a2b88ac850aad8d9d46330d2d03",
+                    "workbench-structural:ee17f0b1bac44ae31439cfab5f5b3d4b",
+                    "workbench-structural:5adf38fbc3a51c2b56ea5d3c1ec6f0f4"
+                  ],
+                  "reasons": [],
+                  "decision_digest": "28860493ac34b1336e0dc17dc8f515719d184c6860f6cbf293dd7a1255c9cf7d"
+                },
+                "admission": {
+                  "format": "taiji-structural-admission-result-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.docs:3:071bb3157a88",
+                  "proposal_id": "topology:adaptive.memory:neuron:add:m4",
+                  "status": "admitted",
+                  "decision_digest": "28860493ac34b1336e0dc17dc8f515719d184c6860f6cbf293dd7a1255c9cf7d",
+                  "parent_checkpoint_digest": "b2e763a177b6aa26e3862c377cc61afaa80c61ccc0533e1f9886b84ff5eebf0a",
+                  "child_checkpoint_digest": "2687e447c6af4144fd416eb201f21f0390cba860a8b614270b7b2dccc3643d32",
+                  "topology_before_digest": "0d7afeda01a99eadbde2ad50bdde5d0a8a9cb60d7fc2864dbd3057832925ebc6",
+                  "topology_after_digest": "341e725f6660d0639b5142bfd9ea8e06a6ce950cb9c82d397fc49eb577f5d43a",
+                  "structural_budget_before": 29,
+                  "structural_budget_after": 28,
+                  "error": null
+                }
+              }
+            }
+          }
+        },
+        "candidate:pressure:workbench:workbench.code:3:62785ee4d754": {
+          "batch": {
+            "format": "taiji-structural-candidate-batch-v1",
+            "batch_id": "batch:structural:6468e10dd44fba33c83435fd67b69c22",
+            "candidate_ids": [
+              "candidate:pressure:workbench:workbench.code:3:62785ee4d754",
+              "candidate:pressure:workbench:workbench.docs:3:071bb3157a88"
+            ],
+            "selected_candidate_ids": [
+              "candidate:pressure:workbench:workbench.docs:3:071bb3157a88",
+              "candidate:pressure:workbench:workbench.code:3:62785ee4d754"
+            ],
+            "deferred_candidate_ids": [],
+            "rejected_candidate_ids": [],
+            "candidate_states": {
+              "candidate:pressure:workbench:workbench.code:3:62785ee4d754": "admitted",
+              "candidate:pressure:workbench:workbench.docs:3:071bb3157a88": "admitted"
+            },
+            "reasons": {},
+            "reserved_resource_cost": 2,
+            "reservation_remaining": 0,
+            "structural_budget_before": 29,
+            "available_budget_before": 29,
+            "topology_digest": "0d7afeda01a99eadbde2ad50bdde5d0a8a9cb60d7fc2864dbd3057832925ebc6",
+            "arbitration_digest": "6468e10dd44fba33c83435fd67b69c22c0b5e5dd05687f9bcaae4165baa68d85",
+            "revision": 2,
+            "status": "completed"
+          },
+          "artifact_batch": {
+            "format": "taiji-workbench-structural-validation-artifact-batch-v1",
+            "batch_id": "batch:structural:6468e10dd44fba33c83435fd67b69c22",
+            "expected_candidate_ids": [
+              "candidate:pressure:workbench:workbench.code:3:62785ee4d754",
+              "candidate:pressure:workbench:workbench.docs:3:071bb3157a88"
+            ],
+            "artifact_digests_by_candidate": {
+              "candidate:pressure:workbench:workbench.code:3:62785ee4d754": "5e9c625091940e7cf744635a3aee8a4c3aad9966959e0ab44d25e232833a0c71",
+              "candidate:pressure:workbench:workbench.docs:3:071bb3157a88": "d63105d560a9b0514e52bad9b817b65696ca53ebaca8a507aafd67d42391fc0f"
+            },
+            "complete": true,
+            "batch_digest": "95acaab105208d5ed87367942476f9921e6782e583d2861626a6c9d118d9ff63"
+          },
+          "results": {
+            "candidate:pressure:workbench:workbench.docs:3:071bb3157a88": {
+              "candidate_id": "candidate:pressure:workbench:workbench.docs:3:071bb3157a88",
+              "status": "admitted"
+            },
+            "candidate:pressure:workbench:workbench.code:3:62785ee4d754": {
+              "candidate_id": "candidate:pressure:workbench:workbench.code:3:62785ee4d754",
+              "status": "admitted",
+              "validation_artifact": {
+                "format": "taiji-workbench-structural-validation-artifact-v1",
+                "candidate_id": "candidate:pressure:workbench:workbench.code:3:62785ee4d754",
+                "network_id": "workbench",
+                "region_id": "adaptive.cortex",
+                "task_slice_id": "workbench-measured-batch",
+                "outcome_digests": [
+                  "a21b30015f5a6190f42c6d98338291170a99e79cd01d177a6c7e356daf6e1f28",
+                  "1d8fd30914fbafe5b22a2702d79ae445baa252f90369dffe55c0f88c425a563b",
+                  "a89a1435b9c8c22c94f7da57687129c321a22c688ff62f03fc72f4f842fc5c74"
+                ],
+                "parent_checkpoint_digest": "76a330bf72d61e720025c600413fd3d9f30e76938bbd46dbae15520b52103e00",
+                "trial_checkpoint_digest": "426f6bbe134845be7f9da4fbfe1e2ccd47553814929997a1ef8ea3b5a627f69e",
+                "holdout_input_digest": "5af3fe210e7f884f99c7262e1098b2c6c9fa03cc2781df935e770456f031eed0",
+                "holdout_output_digest": "ac819fb36fa56ab361df7ee87ba62608bbb578fab08a56d7f4b300d1126dbf48",
+                "retention_baseline_digest": "8e08e7cc1998e15b0e2358c1f4fd3e9b53979c22b71f9b6395a7f9f8206dc7f8",
+                "retention_candidate_digest": "8e08e7cc1998e15b0e2358c1f4fd3e9b53979c22b71f9b6395a7f9f8206dc7f8",
+                "lesion_baseline_digest": "a8684821f4bdfb5c22b6bd5513e61ad06fdf8165d189d6eccd5747abf078df7c",
+                "lesion_candidate_digest": "1f7fd77229912c5e7015cab5236ddb99c930ac6e3ea305863a51f9eb3917dc31",
+                "resource_measurement_digest": "5e0c87be46fce9856c9b584b85c5f629714caa506516a4bc2889484c92ea75fa",
+                "holdout_gain": 0.07117283344268799,
+                "retention_regression": 0.0,
+                "lesion_effect": 0.07117283344268799,
+                "resource_state": 0.625,
+                "resource_cost": 1,
+                "evidence_ids": [
+                  "workbench-structural:c17f70792df6f02333d72e31b330e837",
+                  "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+                  "workbench-structural:2c739aa785a914b9f05c4b82e160fc05",
+                  "workbench-structural:cb062e5422ebedfe748ee8fba9adadc2",
+                  "workbench-structural:30a547834f0654825d240251886ac017",
+                  "workbench-structural:45bf1c109ad2a067c043ad1bbf32db46",
+                  "workbench-structural:5669f8eaf6a6fb899aced3c0532ce5ca",
+                  "workbench-structural:e06f35ef9902c7b22368bc14e874f108",
+                  "workbench-structural:7b76c6be28cb4db9dfc0ba02b2243e09"
+                ],
+                "measurement_digest": "430ec2f32c537a2bdb4db430538952777af6f575d3e49ff2fb6487d0263c8a69",
+                "artifact_digest": "5e9c625091940e7cf744635a3aee8a4c3aad9966959e0ab44d25e232833a0c71"
+              },
+              "continuation": {
+                "candidate_id": "candidate:pressure:workbench:workbench.code:3:62785ee4d754",
+                "status": "admitted",
+                "validation": {
+                  "format": "taiji-structural-candidate-validation-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.code:3:62785ee4d754",
+                  "proposal_id": "topology:adaptive.cortex:neuron:add:u4",
+                  "status": "validated",
+                  "validation_score": 1.0,
+                  "parent_checkpoint_digest": "76a330bf72d61e720025c600413fd3d9f30e76938bbd46dbae15520b52103e00",
+                  "validation_checkpoint_digest": "abc449217b6f4ce324994c453803eafdc37148e5b50711d0f29771f31692aecd",
+                  "topology_before_digest": "341e725f6660d0639b5142bfd9ea8e06a6ce950cb9c82d397fc49eb577f5d43a",
+                  "topology_after_digest": "341e725f6660d0639b5142bfd9ea8e06a6ce950cb9c82d397fc49eb577f5d43a",
+                  "structural_budget_before": 28,
+                  "structural_budget_after": 28,
+                  "evidence_ids": [
+                    "workbench-structural:c17f70792df6f02333d72e31b330e837",
+                    "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+                    "workbench-structural:2c739aa785a914b9f05c4b82e160fc05",
+                    "workbench-structural:cb062e5422ebedfe748ee8fba9adadc2",
+                    "workbench-structural:30a547834f0654825d240251886ac017",
+                    "workbench-structural:45bf1c109ad2a067c043ad1bbf32db46",
+                    "workbench-structural:5669f8eaf6a6fb899aced3c0532ce5ca",
+                    "workbench-structural:e06f35ef9902c7b22368bc14e874f108",
+                    "workbench-structural:7b76c6be28cb4db9dfc0ba02b2243e09"
+                  ],
+                  "error": null
+                },
+                "decision": {
+                  "format": "taiji-structural-validation-gate-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.code:3:62785ee4d754",
+                  "passed": true,
+                  "holdout_gain": 0.07117283344268799,
+                  "retention_regression": 0.0,
+                  "lesion_effect": 0.07117283344268799,
+                  "resource_state": 0.625,
+                  "resource_cost": 1,
+                  "structural_budget": 28,
+                  "minimum_holdout_gain": 0.05,
+                  "maximum_retention_regression": 0.05,
+                  "minimum_lesion_effect": 0.05,
+                  "minimum_resource_state": 0.4,
+                  "evidence_ids": [
+                    "workbench-structural:c17f70792df6f02333d72e31b330e837",
+                    "workbench-structural:84a8bd7801ba09384f842f35ad7fbd9b",
+                    "workbench-structural:2c739aa785a914b9f05c4b82e160fc05",
+                    "workbench-structural:cb062e5422ebedfe748ee8fba9adadc2",
+                    "workbench-structural:30a547834f0654825d240251886ac017",
+                    "workbench-structural:45bf1c109ad2a067c043ad1bbf32db46",
+                    "workbench-structural:5669f8eaf6a6fb899aced3c0532ce5ca",
+                    "workbench-structural:e06f35ef9902c7b22368bc14e874f108",
+                    "workbench-structural:7b76c6be28cb4db9dfc0ba02b2243e09"
+                  ],
+                  "reasons": [],
+                  "decision_digest": "f16f3a1735572a656bef040a3af294362d28c81930e6590dfbe0f2e3d3e4bbdc"
+                },
+                "admission": {
+                  "format": "taiji-structural-admission-result-v1",
+                  "candidate_id": "candidate:pressure:workbench:workbench.code:3:62785ee4d754",
+                  "proposal_id": "topology:adaptive.cortex:neuron:add:u4",
+                  "status": "admitted",
+                  "decision_digest": "f16f3a1735572a656bef040a3af294362d28c81930e6590dfbe0f2e3d3e4bbdc",
+                  "parent_checkpoint_digest": "8886c4812a5b9490ab2cf77449ba75bf4588d3d4830b0ab44dedf08b32683eea",
+                  "child_checkpoint_digest": "0206f4340e8fa64b38a4b4cc44cd50405ebece2215b420dead03e4f077702d6c",
+                  "topology_before_digest": "341e725f6660d0639b5142bfd9ea8e06a6ce950cb9c82d397fc49eb577f5d43a",
+                  "topology_after_digest": "3e8a3bc3646d4908cf1d396d849a629e2c45b0a53ff43f51d3213dbe04f9a798",
+                  "structural_budget_before": 28,
+                  "structural_budget_after": 27,
+                  "error": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "rollback": {
+        "format": "taiji-structural-candidate-rollback-v1",
+        "batch_id": "batch:structural:6468e10dd44fba33c83435fd67b69c22",
+        "candidate_id": "candidate:pressure:workbench:workbench.code:3:62785ee4d754",
+        "proposal_id": "topology:adaptive.cortex:neuron:add:u4",
+        "status": "rolled_back",
+        "admission_parent_checkpoint_digest": "8886c4812a5b9490ab2cf77449ba75bf4588d3d4830b0ab44dedf08b32683eea",
+        "admission_child_checkpoint_digest": "0206f4340e8fa64b38a4b4cc44cd50405ebece2215b420dead03e4f077702d6c",
+        "rollback_checkpoint_digest": "94f4623e8afb81d2011ed825ce5836becc40911e46a422acba7b4f35ffc7a86d",
+        "topology_before_digest": "3e8a3bc3646d4908cf1d396d849a629e2c45b0a53ff43f51d3213dbe04f9a798",
+        "topology_after_digest": "341e725f6660d0639b5142bfd9ea8e06a6ce950cb9c82d397fc49eb577f5d43a",
+        "structural_budget_before": 27,
+        "structural_budget_after": 28,
+        "resource_cost": 1,
+        "reason": ""
+      },
+      "compaction": {
+        "format": "taiji-structural-evidence-compaction-result-v1",
+        "status": "compacted",
+        "source_ledger_digest": "17bfe839c66864c5dde29e1df70e36573f9331fba844e35113c6e69a8e2a6583",
+        "target_ledger_digest": "9679e5385b6d52a29780e74e650ba38f3f113673519584f000121925b3fdeb26",
+        "scheduler_revision": 6,
+        "compacted_window_digests": [
+          "92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1",
+          "bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1",
+          "31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73",
+          "6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b",
+          "04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3",
+          "86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87"
+        ],
+        "retained_window_digests": [
+          "4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95",
+          "82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061"
+        ],
+        "compacted_evidence_count": 6,
+        "result_digest": "b6dd32ab79750b8272757eb264a54d4b41cff47dfd4b23feff6cc9395bb1965e"
+      },
+      "ledger": {
+        "digest": "9679e5385b6d52a29780e74e650ba38f3f113673519584f000121925b3fdeb26",
+        "active_window_digests": [
+          "4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95",
+          "82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061"
+        ],
+        "compacted_window_digests": [
+          "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+          "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+          "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+          "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46",
+          "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+          "683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07",
+          "e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec",
+          "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897",
+          "e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116",
+          "29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8",
+          "92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1",
+          "bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1",
+          "31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73",
+          "6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b",
+          "04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3",
+          "86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87"
+        ],
+        "pressure_snapshot_digests": [
+          "688dae6d00628a1fb1c1de5dfb130e4239eaf9d3cd2f6a2c1c08e9ef82cb88ac",
+          "4406efdd0e6a16da29b01337f627beb2e1d92d4660dc0763b566178b123fe731"
+        ],
+        "active_count": 2,
+        "compacted_count": 16,
+        "max_compacted_windows": 16,
+        "audit": "StructuralEvidenceConsumptionAudit(ledger_digest='9679e5385b6d52a29780e74e650ba38f3f113673519584f000121925b3fdeb26', scheduler_revision=6, evaluated_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061'), consumed_window_digests=('4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87'), unconsumed_window_digests=(), orphaned_evaluated_window_digests=(), retained_window_digests=('4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061'), compacted_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87'), stream_status=(('workbench:workbench.code', ('4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73'), ()), ('workbench:workbench.docs', ('82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87'), ())), audit_digest='f470d04d6321bc5b6da6e38232da5d96519278707cfa01f00183c48482c6eaf4')"
+      }
+    }
+  },
+  "atomic_overflow": {
+    "before": {
+      "digest": "17bfe839c66864c5dde29e1df70e36573f9331fba844e35113c6e69a8e2a6583",
+      "active_window_digests": [
+        "92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1",
+        "6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b",
+        "bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1",
+        "31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73",
+        "4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95",
+        "04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3",
+        "86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87",
+        "82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061"
+      ],
+      "compacted_window_digests": [
+        "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+        "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+        "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+        "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46",
+        "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+        "683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07",
+        "e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec",
+        "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897",
+        "e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116",
+        "29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8"
+      ],
+      "pressure_snapshot_digests": [
+        "8110c983e82830624d43b8ded5af5bc65ee1c7bb8370bfb2f71e34796974aef5",
+        "14d69a8d4e96ff202e3dfcfab09cafe71415175f237113015c8af38530788ef0"
+      ],
+      "active_count": 8,
+      "compacted_count": 10,
+      "max_compacted_windows": 16,
+      "audit": "StructuralEvidenceConsumptionAudit(ledger_digest='17bfe839c66864c5dde29e1df70e36573f9331fba844e35113c6e69a8e2a6583', scheduler_revision=6, evaluated_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061'), consumed_window_digests=('92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8'), unconsumed_window_digests=(), orphaned_evaluated_window_digests=(), retained_window_digests=('92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061'), compacted_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8'), stream_status=(('workbench:workbench.code', ('92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec'), ()), ('workbench:workbench.docs', ('6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8'), ())), audit_digest='ddcdd1310d77bfc4f8875bb31d5694e6be4aeaaa60d78344424ea69f6f3d580f')"
+    },
+    "after": {
+      "digest": "17bfe839c66864c5dde29e1df70e36573f9331fba844e35113c6e69a8e2a6583",
+      "active_window_digests": [
+        "92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1",
+        "6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b",
+        "bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1",
+        "31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73",
+        "4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95",
+        "04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3",
+        "86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87",
+        "82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061"
+      ],
+      "compacted_window_digests": [
+        "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+        "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+        "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+        "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46",
+        "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+        "683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07",
+        "e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec",
+        "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897",
+        "e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116",
+        "29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8"
+      ],
+      "pressure_snapshot_digests": [
+        "8110c983e82830624d43b8ded5af5bc65ee1c7bb8370bfb2f71e34796974aef5",
+        "14d69a8d4e96ff202e3dfcfab09cafe71415175f237113015c8af38530788ef0"
+      ],
+      "active_count": 8,
+      "compacted_count": 10,
+      "max_compacted_windows": 16,
+      "audit": "StructuralEvidenceConsumptionAudit(ledger_digest='17bfe839c66864c5dde29e1df70e36573f9331fba844e35113c6e69a8e2a6583', scheduler_revision=6, evaluated_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061'), consumed_window_digests=('92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8'), unconsumed_window_digests=(), orphaned_evaluated_window_digests=(), retained_window_digests=('92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061'), compacted_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8'), stream_status=(('workbench:workbench.code', ('92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec'), ()), ('workbench:workbench.docs', ('6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8'), ())), audit_digest='ddcdd1310d77bfc4f8875bb31d5694e6be4aeaaa60d78344424ea69f6f3d580f')"
+    },
+    "max_during_attempt": 15
+  },
+  "restored_ledger": {
+    "digest": "9679e5385b6d52a29780e74e650ba38f3f113673519584f000121925b3fdeb26",
+    "active_window_digests": [
+      "4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95",
+      "82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061"
+    ],
+    "compacted_window_digests": [
+      "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+      "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+      "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+      "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46",
+      "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+      "683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07",
+      "e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec",
+      "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897",
+      "e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116",
+      "29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8",
+      "92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1",
+      "bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1",
+      "31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73",
+      "6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b",
+      "04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3",
+      "86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87"
+    ],
+    "pressure_snapshot_digests": [
+      "688dae6d00628a1fb1c1de5dfb130e4239eaf9d3cd2f6a2c1c08e9ef82cb88ac",
+      "4406efdd0e6a16da29b01337f627beb2e1d92d4660dc0763b566178b123fe731"
+    ],
+    "active_count": 2,
+    "compacted_count": 16,
+    "max_compacted_windows": 16,
+    "audit": "StructuralEvidenceConsumptionAudit(ledger_digest='9679e5385b6d52a29780e74e650ba38f3f113673519584f000121925b3fdeb26', scheduler_revision=6, evaluated_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061'), consumed_window_digests=('4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87'), unconsumed_window_digests=(), orphaned_evaluated_window_digests=(), retained_window_digests=('4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061'), compacted_window_digests=('81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87'), stream_status=(('workbench:workbench.code', ('4ad040459319efd5e85fd7326ff7b432d4e05e61cf6d8ecf49e5960a7c52ab95', '81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344', '760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224', 'bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a', '683a883307691c2e54b581308150bf4f4c4c35c6c30b9e5098402192dd9fbb07', 'e1fbb7d7bfcf62836597780e49bb1940b56c4c9faa2acb1581ffea0586f661ec', '92cd3ce1ce4c07d79e8454cc0b2fb5680a98801be9de5413a395ee71a67e0cd1', 'bf2761b7bdc858db717c2743bfe0dbcbf1acd53be3e655c18a117daaf9c6eff1', '31dcf5b788d96b650892f37fdfc58375adb244f6fc7ccf02e718a88a3c927d73'), ()), ('workbench:workbench.docs', ('82a3ff62296e6a7f74c03f64421ac6a13d4a32186046aa324e567e240c445061', '4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d', '0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46', 'faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897', 'e028d9a7f3aa2728696b336f575fe1c6e001ad9daaf8b8575a6fff3df959d116', '29f49ab4f3afd334337b5122c7993484b612ade94366d81cd98bea90780062d8', '6452b6f9da6126828aa10927d7a7c004da8d9f8ff7cce4c328386cc217813c1b', '04f192e67a8f86626ca9ba6461f06730e15a17eeb93fade6697b88cb3ed682c3', '86301260d3df01ba28a511676e152d61a5965449e469664499e1b385d5a15a87'), ())), audit_digest='f470d04d6321bc5b6da6e38232da5d96519278707cfa01f00183c48482c6eaf4')"
+  },
+  "metrics": {
+    "three_real_rounds_create_fresh_windows_and_batches": true,
+    "per_stream_retention_is_bounded_after_each_compaction": true,
+    "unconsumed_round_survives_pre_schedule_compaction": true,
+    "rollback_reopens_budget_and_does_not_contaminate_other_candidate": true,
+    "compaction_overflow_is_atomic": true,
+    "final_long_sequence_stays_within_compacted_cap": true,
+    "checkpoint_restores_long_sequence_audit_and_lineage": true,
+    "round_one_parent_checkpoint_remains_recoverable": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "at least three fresh real Workbench rounds must keep active retention bounded, preserve unconsumed windows, isolate rollback/resource pressure, fail atomically at the compaction cap, and restore the complete lineage ledger"
+  },
+  "boundary": "This canary proves bounded native evidence/lineage durability under a finite CPU cap; it does not claim unlimited growth, open-domain quality, CUDA, CI, or physical deletion."
+}
