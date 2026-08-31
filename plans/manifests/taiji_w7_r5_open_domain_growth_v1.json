@@ -3,7 +3,7 @@
   "version": 1,
   "work_package": "W7-R5",
   "title": "open-domain structural growth and self-evolution",
-  "status": "e5_1_client_snapshot_integration_gate_passed_e5_2_legacy_surface_pending",
+  "status": "e5_2_legacy_surface_tombstone_passed_e5_3_slot_runtime_pending",
   "claim": {
     "to_prove": "Taiji can grow local structure or memory in response to persistent real-task error, capacity pressure, or recovery deficiency, while retaining old abilities and remaining checkpointable and reversible.",
     "must_not_claim": "Growth is not automatic intelligence, unlimited weight addition, neuron-count scaling, or a return to full retraining from scratch."
@@ -446,7 +446,11 @@
     "e5_1_test": "tests/test_client_extension_routes.py, frontend/src/__tests__/nativeApi.test.js, and frontend/src/__tests__/useClientExtensions.test.js",
     "e5_1_scope": "bind the Seed-owned extension host to the native API and Vue facade; source capability availability from the current Workbench snapshot; publish declarative client snapshots through prepare/commit; map stable slots without loading plugin source; reject stale capability snapshots",
     "e5_1_evidence": "verify_taiji_e5_1_client_snapshot_integration.py reports status=passed with 8 checks; API route registration, Workbench snapshot binding, non-mutating prepare, one-snapshot commit, stale rejection, Vue facade, declarative slots and App injection hold",
-    "next_stage": "E5-2 Legacy plugin surface tombstone/migration Gate"
+    "e5_2_artifact": "api/routes_plugins.py, api/routes_agent_mcp.py, api/routes_agent_workspace.py, and api/app.py",
+    "e5_2_test": "tests/test_api_routes.py and scripts/training/verify_taiji_e5_2_legacy_plugin_surface.py",
+    "e5_2_scope": "replace the former Legacy plugin manager with an explicit 410 tombstone; retire enable/disable/delete/install, marketplace/refresh, and upload routes; remove duplicate agent/workspace definitions and frontend legacy references while preserving unrelated /api/mcp compatibility routes",
+    "e5_2_evidence": "verify_taiji_e5_2_legacy_plugin_surface.py reports status=passed with 9 checks; every legacy plugin path fails closed with stable replacement metadata, PluginManager is absent, duplicate routes and frontend references are gone, and /api/client-extensions remains live",
+    "next_stage": "E5-3 Seed-owned local read-only slot runtime canary"
   },
   "boundary": [
     "Self-evolution must be evidence-triggered, resource-bounded, and reversible.",

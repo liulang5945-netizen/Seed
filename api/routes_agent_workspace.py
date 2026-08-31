@@ -4,7 +4,7 @@ import logging
 import os
 import shutil
 
-from fastapi import APIRouter, File, HTTPException, Request, UploadFile
+from fastapi import APIRouter, HTTPException, Request
 
 from seed_platform.paths import get_external_path
 from seed_platform.settings import get_setting, update_settings
@@ -356,27 +356,6 @@ async def save_context_api(req: CodeRunRequest):
     except Exception as exc:
         logger.error(f"Save context failed: {exc}")
         return {"result": "保存失败"}
-
-
-@router.post("/api/plugins/upload")
-async def upload_plugin(request: Request, file: UploadFile = File(...)):
-    """Upload a plugin archive into the plugins directory."""
-    _require_admin_auth(request)
-    try:
-        plugins_dir = get_external_path("plugins")
-        os.makedirs(plugins_dir, exist_ok=True)
-        upload_name = file.filename or "plugin"
-        file_path = os.path.join(plugins_dir, os.path.basename(upload_name))
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
-        return {
-            "status": "success",
-            "message": f"插件 `{file.filename}` 已成功热安装，下一条对话将直接生效。",
-        }
-    except Exception as exc:
-        logger.error(f"插件安装失败: {exc}")
-        logger.error(f"Request failed: {exc}")
-        raise HTTPException(status_code=500, detail="内部错误，请查看日志") from exc
 
 
 @router.get("/api/workspace/quick_paths")
