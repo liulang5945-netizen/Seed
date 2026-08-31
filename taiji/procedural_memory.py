@@ -89,8 +89,30 @@ class ProceduralMemoryLearner(nn.Module):
                 self.readout.bias.zero_()
             freeze_parameters(self.readout)
             return
-        if self.action_kinds != action_kinds:
-            raise ValueError("procedural action kinds changed after consolidation")
+        if self.action_kinds == action_kinds:
+            return
+        if not set(self.action_kinds).issubset(action_kinds):
+            raise ValueError("procedural action kinds cannot remove an existing kind")
+        assert self.readout is not None
+        expanded = nn.Linear(self.cue_dim, len(action_kinds))
+        with torch.no_grad():
+            expanded.weight.zero_()
+            expanded.bias.zero_()
+            for old_index, kind in enumerate(self.action_kinds):
+                new_index = action_kinds.index(kind)
+                expanded.weight[new_index].copy_(self.readout.weight[old_index])
+                expanded.bias[new_index].copy_(self.readout.bias[old_index])
+        freeze_parameters(expanded)
+        self.action_kinds = action_kinds
+        self.readout = expanded
+
+    def prepare(self, action_kinds: Sequence[str]) -> None:
+        """Prepare or expand the discovered action readout without learning."""
+
+        resolved = tuple(dict.fromkeys(str(kind).strip() for kind in action_kinds))
+        if not resolved or any(not kind for kind in resolved):
+            raise ValueError("procedural prepare needs non-empty action kinds")
+        self._ensure_readout(resolved)
 
     def consolidate(
         self,
