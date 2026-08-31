@@ -3,7 +3,7 @@
   "version": 1,
   "work_package": "W7-R5",
   "title": "open-domain structural growth and self-evolution",
-  "status": "e4_artifact_internalization_gate_passed_e5_client_extension_pending",
+  "status": "e5_0_client_extension_host_gate_passed_e5_1_runtime_integration_pending",
   "claim": {
     "to_prove": "Taiji can grow local structure or memory in response to persistent real-task error, capacity pressure, or recovery deficiency, while retaining old abilities and remaining checkpointable and reversible.",
     "must_not_claim": "Growth is not automatic intelligence, unlimited weight addition, neuron-count scaling, or a return to full retraining from scratch."
@@ -438,7 +438,11 @@
     "e4_test": "tests/taiji_native/test_artifact_internalization.py and scripts/training/verify_taiji_e4_artifact_internalization.py",
     "e4_scope": "admitted Skill/MCP artifact knowledge plus corresponding successful Outcome internalized into Taiji-owned semantic, procedural, and affordance learners; train/holdout/retention isolation, cross-scope identity exclusion, external-description-off readout, quarantine rejection, lesion causality, checkpoint roundtrip, and client-execution boundary",
     "e4_evidence": "verify_taiji_e4_artifact_internalization.py reports status=passed with 10 checks; 14 train/holdout/retention semantic units and 4 experiences yield semantic holdout loss 0.0000399, procedural holdout accuracy 1.0 versus lesion 0.25, affordance holdout MSE 1.15e-12 versus frozen 1.19976, and all mutation/boundary checks pass",
-    "next_stage": "E5 Seed-owned client extension host and capability lifecycle Gate"
+    "e5_0_artifact": "seed_platform/client_extension_host.py",
+    "e5_0_test": "tests/taiji_native/test_client_extension_host.py and scripts/training/verify_taiji_e5_client_extension_host.py",
+    "e5_0_scope": "declarative client plugin manifest, configurable slot/protected-shell policy, content-addressed extension snapshot, atomic prepare/commit, blue-green state migration, dependency health/quarantine/recovery, in-flight draining, recursive disposer, rollback, checkpoint/tamper verification, and Taiji cognition boundary",
+    "e5_0_evidence": "verify_taiji_e5_client_extension_host.py reports status=passed with 12 checks; client snapshot revision, migration, dependency quarantine, draining, disposer order, rollback and checkpoint integrity hold; plugin source is not executed and Taiji cognition state is not part of the checkpoint",
+    "next_stage": "E5-1 API/Vue/Workbench client snapshot integration Gate"
   },
   "boundary": [
     "Self-evolution must be evidence-triggered, resource-bounded, and reversible.",
