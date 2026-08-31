@@ -1,0 +1,24 @@
+{
+  "gate": "taiji-e6-3-mcp-client-activation-dry-run",
+  "status": "passed",
+  "checks": {
+    "manifest_is_declarative": true,
+    "prepare_dry_run_is_not_committed": true,
+    "host_active_snapshot_is_unchanged": true,
+    "prepared_target_is_content_addressed": true,
+    "api_exposes_dry_run_only": true,
+    "api_rejects_stale_client_snapshot": true,
+    "proposal_binding_is_preserved": true,
+    "mcp_registry_is_not_mutated": true,
+    "no_active_client_organ_exists": true,
+    "no_external_or_cognitive_execution_boundary": true
+  },
+  "scope": {
+    "client_extension_host_prepare_only": true,
+    "client_extension_host_commit_called": false,
+    "synthetic_local_manifest_only": true,
+    "real_third_party_mcp_connected": false,
+    "client_organ_activated": false,
+    "taiji_cognition_mutated": false
+  }
+}
