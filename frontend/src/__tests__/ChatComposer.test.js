@@ -43,4 +43,11 @@ describe('ChatComposer', () => {
     expect(wrapper.emitted('insert-template')).toEqual([['解释代码']])
     expect(wrapper.emitted('files-picked')).toEqual([[[file]]])
   })
+
+  it('exposes the Workbench mode as an explicit UI boundary', async () => {
+    const wrapper = mount(ChatComposer, { props: { quickHints, promptTemplates } })
+    await wrapper.find('.composer-chip[title="工作台"]').trigger('click')
+
+    expect(wrapper.emitted('toggle-workbench')).toHaveLength(1)
+  })
 })

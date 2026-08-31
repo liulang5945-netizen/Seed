@@ -1,0 +1,17 @@
+{
+  "format": "taiji-w7-p6-1a-semantic-provider-interface-v1",
+  "task": "Independent semantic provider request and admission seam",
+  "metrics": {
+    "provider_implements_versioned_interface": true,
+    "request_is_content_addressed_and_repeatable": true,
+    "request_has_no_execution_authority": true,
+    "taiji_admits_provider_evidence_before_any_plan": true,
+    "no_workbench_side_effect_at_interpretation_boundary": true,
+    "unavailable_mode_is_explicit": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "An explicitly attached semantic provider may return only validated, content-addressed evidence; no provider output may become a capability, ActionIntent, tool call, or Workbench side effect at interpretation time."
+  },
+  "boundary": "This Gate establishes the provider seam and honest unavailable state. It does not claim real model quality, broad language understanding, automatic provider selection, Workbench execution, CUDA, CI, or open-domain autonomy."
+}

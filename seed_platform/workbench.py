@@ -483,6 +483,7 @@ class CapabilitySnapshot:
         semantic_slots: Mapping[str, Any],
         *,
         allow_reversible_ui: bool = False,
+        allow_controlled_write: bool = False,
     ) -> dict[str, tuple[dict[str, Any], ...]]:
         """Ground semantic slots through registered capability contracts.
 
@@ -500,7 +501,8 @@ class CapabilitySnapshot:
             if not descriptor.enabled or not descriptor.semantic_requirements:
                 continue
             if descriptor.risk != "read_only" and not (
-                allow_reversible_ui and descriptor.risk == "reversible_ui"
+                (allow_reversible_ui and descriptor.risk == "reversible_ui")
+                or (allow_controlled_write and descriptor.capability_id == "workspace.apply_patch")
             ):
                 continue
             if any(
@@ -528,6 +530,7 @@ class CapabilitySnapshot:
         evidence_id: str = "",
         after_state_digest: str = "",
         allow_reversible_ui: bool = False,
+        allow_controlled_write: bool = False,
     ) -> tuple[Any, ...]:
         """Project explicit read-only capability bindings into Taiji affordances.
 
@@ -566,7 +569,8 @@ class CapabilitySnapshot:
             if not descriptor.enabled:
                 raise ValueError(f"Taiji capability binding is disabled: {capability_id}")
             if descriptor.risk != "read_only" and not (
-                allow_reversible_ui and descriptor.risk == "reversible_ui"
+                (allow_reversible_ui and descriptor.risk == "reversible_ui")
+                or (allow_controlled_write and descriptor.capability_id == "workspace.apply_patch")
             ):
                 raise ValueError(
                     f"Taiji capability projection only admits read-only capabilities unless "

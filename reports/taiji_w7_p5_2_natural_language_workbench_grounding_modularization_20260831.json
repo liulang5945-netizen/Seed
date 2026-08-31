@@ -1,0 +1,17 @@
+{
+  "format": "taiji-w7-p5-2-natural-language-workbench-grounding-modularization-v1",
+  "task": "Semantic Workbench grounding engine modularization",
+  "metrics": {
+    "dedicated_grounding_module_owns_live_language_and_patch_derivation": true,
+    "runtime_grounding_method_is_a_thin_facade": true,
+    "grounding_module_has_no_runtime_or_provider_dependency": true,
+    "language_binding_still_comes_from_live_workbench_evidence": true,
+    "patch_binding_still_has_digest_checked_declarative_operation": true,
+    "previous_workbench_gates_remain_green": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "The live language and digest-checked patch grounding engine must have a runtime-agnostic owner, while SeedRuntime remains a compatibility facade and the existing Workbench protocol gates stay green."
+  },
+  "boundary": "This Gate proves behavior-preserving ownership modularization only. It does not claim real provider quality, unconstrained semantic interpretation, CUDA, CI, or open-domain autonomy."
+}

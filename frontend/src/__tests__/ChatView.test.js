@@ -178,4 +178,56 @@ describe('ChatView', () => {
     )
     expect(toast).toHaveBeenCalledWith(expect.stringContaining('附件上传失败'), 'error')
   })
+
+  it('provider evidence 进入 Taiji plan transport，客户端不生成执行字段', async () => {
+    const wrapper = mountView()
+    const chatStore = useChatStore()
+    const runtimeStore = useRuntimeStore()
+    runtimeStore.health.state = 'connected'
+    runtimeStore.health.modelLoaded = true
+    chatStore.chatInput = '读取 README.md 并准备工作台'
+
+    const interpretation = {
+      format: 'taiji-semantic-provider-admission-v1',
+      provider_evidence: { format: 'taiji-semantic-provider-evidence-v1', evidence_digest: 'digest' },
+      interpretation: { interpretation_id: 'task-interpretation:test', status: 'resolved', goal_description: '准备工作台' },
+      goal: { goal_id: 'goal:test', description: '准备工作台' },
+      decomposition: { steps: [{ step_id: 'step:test' }] },
+      semantic_provider: { state: 'attached', provider_id: 'test.semantic.interface' },
+    }
+    mockAuthFetch.mockImplementation(async (url) => {
+      if (url === '/api/chat/workbench/interpret') {
+        return { ok: true, status: 200, json: async () => interpretation }
+      }
+      if (url === '/api/workbench/capabilities') {
+        return { ok: true, status: 200, json: async () => ({ snapshot_id: 'snapshot:test' }) }
+      }
+      if (url === '/api/chat/workbench/natural-language/plan') {
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            status: 'planned',
+            plan_id: 'taiji-plan:test',
+            approval_requirements: [],
+            planning: { status: 'planned', steps: [{ step_id: 'step:test', grounding: [] }] },
+          }),
+        }
+      }
+      return { ok: false, status: 503, json: async () => ({}) }
+    })
+
+    await wrapper.find('.composer-chip[title="工作台"]').trigger('click')
+    await wrapper.find('button.send').trigger('click')
+    await flushPromises()
+
+    const planCall = mockAuthFetch.mock.calls.find(([url]) => url === '/api/chat/workbench/natural-language/plan')
+    expect(planCall).toBeTruthy()
+    const planPayload = JSON.parse(planCall[1].body)
+    expect(planPayload.semantic_evidence).toEqual(interpretation.provider_evidence)
+    expect(planPayload).not.toHaveProperty('parameter_bindings')
+    expect(planPayload).not.toHaveProperty('patch')
+    expect(planPayload).not.toHaveProperty('action_intent')
+    expect(wrapper.find('.workbench-task-card').exists()).toBe(true)
+  })
 })

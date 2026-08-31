@@ -72,6 +72,7 @@ class SeedRuntime:
         provider_status: dict[str, str] | None = None,
         provider_runtime: Any | None = None,
         provider_config: Any | None = None,
+        semantic_provider: Any | None = None,
     ) -> None:
         self.model = model
         self.checkpoint_path = checkpoint_path
@@ -101,11 +102,16 @@ class SeedRuntime:
                     self._chat_organ = candidate
         self._provider_runtime = provider_runtime
         self._provider_config = provider_config
+        self._semantic_provider: Any | None = None
+        self.attach_semantic_provider(semantic_provider)
         from seed_platform.workbench import WorkbenchAuditLog, WorkbenchEnvironment
 
         self._workbench_environment = WorkbenchEnvironment()
         self._workbench_audit = WorkbenchAuditLog()
         self._workbench_loop_state: dict[str, Any] = {}
+        # Plans are intentionally session-scoped.  A checkpoint persists the
+        # committed outcome, not an unapproved write plan or approval token.
+        self._pending_workbench_plans: dict[str, dict[str, Any]] = {}
         self._last_artifact_consumption_audit: dict[str, Any] | None = None
         self._lock = threading.RLock()
 
@@ -353,6 +359,124 @@ class SeedRuntime:
         if not isinstance(interpretation, TaskInterpretation):
             raise TypeError("Taiji task interpretation did not return its contract")
         return interpretation
+
+    def attach_semantic_provider(self, provider: Any | None) -> None:
+        """Attach an independent semantic organ at the Seed integration edge.
+
+        The provider is intentionally not persisted inside a Taiji checkpoint:
+        its model/runtime must be rebound explicitly after restore and its
+        ``propose`` method may return only ``SemanticEvidenceProposal``.
+        """
+
+        from taiji import SemanticEvidenceProvider
+
+        if provider is not None and not isinstance(provider, SemanticEvidenceProvider):
+            raise TypeError(
+                "semantic provider must implement the SemanticEvidenceProvider protocol"
+            )
+        self._semantic_provider = provider
+
+    @property
+    def semantic_provider(self) -> Any | None:
+        """Return the explicitly attached semantic organ, if any."""
+
+        return self._semantic_provider
+
+    def semantic_provider_status(self) -> dict[str, str]:
+        """Project provider availability without claiming semantic quality."""
+
+        from taiji import SEMANTIC_PROVIDER_INTERFACE_FORMAT
+
+        provider = self._semantic_provider
+        if provider is None:
+            return {
+                "interface": SEMANTIC_PROVIDER_INTERFACE_FORMAT,
+                "state": "unavailable",
+                "provider_id": "",
+                "evidence_enabled": "false",
+                "reason_code": "semantic_provider_not_attached",
+            }
+        return {
+            "interface": SEMANTIC_PROVIDER_INTERFACE_FORMAT,
+            "state": "attached",
+            "provider_id": str(provider.provider_id),
+            "evidence_enabled": "true",
+            "reason_code": "semantic_provider_attached",
+        }
+
+    def interpret_workbench_task(
+        self,
+        prompt: str,
+        *,
+        history: Sequence[Sequence[str]] | None = None,
+        constraints: Sequence[str] = (),
+    ) -> dict[str, Any]:
+        """Admit a Goal or provider proposal without planning or execution.
+
+        No-provider mode preserves the existing Goal-only candidate.  When a
+        provider is explicitly attached, only its semantic proposal crosses
+        this boundary; Taiji validates it against the exact input frame and
+        returns any resulting decomposition as evidence, never as an intent.
+        """
+
+        from taiji import SemanticEvidenceProposal, SemanticProviderRequest
+
+        provider = self._semantic_provider
+        if provider is None:
+            interpretation = self.interpret_task(
+                prompt,
+                history=history,
+                constraints=constraints,
+            )
+            return {
+                "format": interpretation.to_payload()["format"],
+                "interpretation": interpretation.to_payload(),
+                "goal": interpretation.to_goal().to_payload(),
+                "semantic_provider": self.semantic_provider_status(),
+                "execution": {
+                    "status": "not_planned",
+                    "action_intent": None,
+                    "tool_call": None,
+                    "side_effects": False,
+                    "next": "taiji_planner",
+                },
+            }
+
+        prompt, frame = self._task_frame(prompt)
+        request = SemanticProviderRequest.from_frame(
+            frame,
+            context_digest=self._task_context_digest(history),
+            constraints=constraints,
+        )
+        try:
+            proposal = provider.propose(request)
+        except Exception as exc:
+            logger.exception("semantic provider proposal failed before Taiji admission")
+            raise RuntimeError("semantic provider failed before Taiji admission") from exc
+        if not isinstance(proposal, SemanticEvidenceProposal):
+            raise TypeError(
+                "semantic provider must return a SemanticEvidenceProposal contract"
+            )
+        with self._lock:
+            interpretation, decomposition = self.model.architecture.admit_semantic_provider_evidence(
+                frame, proposal
+            )
+        return {
+            "format": "taiji-semantic-provider-admission-v1",
+            "provider_evidence": proposal.to_payload(),
+            "interpretation": interpretation.to_payload(),
+            "goal": interpretation.to_goal().to_payload(),
+            "decomposition": None if decomposition is None else decomposition.to_payload(),
+            "semantic_provider": self.semantic_provider_status(),
+            "status": interpretation.status,
+            "execution": {
+                "status": "not_planned",
+                "action_intent": None,
+                "tool_call": None,
+                "side_effects": False,
+                "next": "taiji_workbench_grounding" if decomposition else "taiji_planner",
+            },
+        }
 
     def admit_semantic_provider_evidence(
         self,
@@ -608,125 +732,13 @@ class SeedRuntime:
         dict[str, Any] | None,
         str,
     ]:
-        """Ground one semantic step, deriving language IDs from live evidence.
+        """Keep SeedRuntime as a facade for the Taiji grounding engine."""
 
-        Semantic provider evidence may describe the desired operation and file,
-        but it cannot carry the final programming-language binding.  The
-        language resolver is a Workbench sensor owned by Seed; its current
-        assessment is therefore the only source allowed to populate
-        ``programming_language_id`` before an editor action is planned.
-        """
+        from .workbench_grounding import ground_natural_language_workbench_step
 
-        grounded = environment.capability_snapshot.ground_semantic_step(
-            step.semantic_slots,
-            allow_reversible_ui=True,
-        )
-        if not grounded:
-            return {}, "semantic_grounding_unresolved", None, ""
-        if len(grounded) > 1:
-            return {}, "semantic_grounding_ambiguous", None, ""
+        return ground_natural_language_workbench_step(environment, step)
 
-        normalized = {
-            str(capability_id): tuple(dict(parameters) for parameters in bindings)
-            for capability_id, bindings in grounded.items()
-        }
-        language_evidence: dict[str, Any] | None = None
-        language_bindings = normalized.get("editor.set_language")
-        if language_bindings is not None:
-            rebound: list[dict[str, Any]] = []
-            for binding in language_bindings:
-                path = str(binding.get("path", "")).strip()
-                if not path:
-                    return {}, "semantic_grounding_unresolved", None, ""
-                assessment = environment.resolve_programming_language_evidence({"path": path})
-                selection_state = str(assessment.get("selection_state", "unknown"))
-                if selection_state == "user_override" and not bool(
-                    binding.get("user_override", False)
-                ):
-                    return {}, "user_override_has_priority", assessment, "language_evidence"
-                if selection_state in {"ambiguous", "unknown"}:
-                    return {}, "language_evidence_ambiguous", assessment, "language_evidence"
-                language_id = str(assessment.get("programming_language_id", "")).strip()
-                if not language_id:
-                    return {}, "language_evidence_unresolved", assessment, "language_evidence"
-                rebound.append(
-                    {
-                        **binding,
-                        "programming_language_id": language_id,
-                    }
-                )
-                language_evidence = assessment
-            normalized["editor.set_language"] = tuple(rebound)
-            return normalized, "", language_evidence, "language_evidence"
-
-        patch_bindings = normalized.get("workspace.apply_patch")
-        if patch_bindings is None:
-            return normalized, "", None, ""
-        if len(patch_bindings) != 1:
-            return {}, "semantic_grounding_ambiguous", None, ""
-        edit = step.semantic_slots.get("edit")
-        if not isinstance(edit, Mapping):
-            return {}, "edit_evidence_unresolved", None, ""
-        if str(edit.get("kind", "")).strip() != "replace_text":
-            return {}, "edit_kind_unsupported", None, ""
-        find_text = edit.get("find")
-        replacement_text = edit.get("replace", "")
-        if not isinstance(find_text, str) or not find_text:
-            return {}, "edit_target_unresolved", None, ""
-        if not isinstance(replacement_text, str):
-            return {}, "edit_replacement_invalid", None, ""
-        path = str(patch_bindings[0].get("path", "")).strip()
-        if not path:
-            return {}, "semantic_grounding_unresolved", None, ""
-        current = environment.read_workspace_evidence({"path": path})
-        if bool(current.get("truncated", False)):
-            return {}, "edit_source_truncated", current, "patch_evidence"
-        content = current.get("content")
-        if not isinstance(content, str):
-            return {}, "edit_source_not_text", current, "patch_evidence"
-        match_count = content.count(find_text)
-        patch_evidence = {
-            "path": path,
-            "before_digest": str(current["digest"]),
-            "match_count": match_count,
-            "edit_kind": "replace_text",
-        }
-        if match_count == 0:
-            return {}, "edit_target_not_found", patch_evidence, "patch_evidence"
-        if match_count != 1:
-            return {}, "edit_target_ambiguous", patch_evidence, "patch_evidence"
-        start = content.index(find_text)
-        updated = content[:start] + replacement_text + content[start + len(find_text) :]
-        updated_raw = updated.encode("utf-8")
-        expected_after_digest = hashlib.sha256(updated_raw).hexdigest()
-        normalized["workspace.apply_patch"] = (
-            {
-                **patch_bindings[0],
-                "before_digest": str(current["digest"]),
-                "patch": {
-                    "kind": "text_replace",
-                    "operations": [
-                        {
-                            "start": start,
-                            "end": start + len(find_text),
-                            "text": replacement_text,
-                        }
-                    ],
-                },
-                "expected_after_digest": expected_after_digest,
-            },
-        )
-        return (
-            normalized,
-            "",
-            {
-                **patch_evidence,
-                "expected_after_digest": expected_after_digest,
-            },
-            "patch_evidence",
-        )
-
-    def execute_natural_language_workbench_task(
+    def _execute_natural_language_workbench_task_impl(
         self,
         prompt: str,
         semantic_evidence: Any,
@@ -739,6 +751,7 @@ class SeedRuntime:
         novelty: float = 0.0,
         resource_budget: float = 1.0,
         learn: bool = False,
+        prepare_only: bool = False,
     ) -> dict[str, Any]:
         """Run one bounded natural-language task without caller-supplied intent.
 
@@ -750,7 +763,6 @@ class SeedRuntime:
         derive bindings from the decomposition's semantic slots.
         """
 
-        from seed_platform.workbench import WorkbenchActionRequest
         from taiji import SemanticEvidenceProposal, TaskDecomposition
 
         if isinstance(semantic_evidence, Mapping):
@@ -899,6 +911,9 @@ class SeedRuntime:
                 affordances = environment.capability_snapshot.to_taiji_affordances(
                     bindings,
                     allow_reversible_ui=True,
+                    allow_controlled_write=(
+                        "workspace.apply_patch" in bindings
+                    ),
                 )
                 if not affordances:
                     raise ValueError("natural-language Workbench step has no live affordance")
@@ -942,62 +957,94 @@ class SeedRuntime:
                     return base
                 intents.append(decision.action_intent)
 
-            requests = tuple(
-                WorkbenchActionRequest.from_action_intent(
-                    intent,
-                    snapshot_id=environment.capability_snapshot.snapshot_id,
-                    mcp_registry_snapshot_id=(
-                        environment.mcp_registry.snapshot_id
-                        if str(intent.kind).startswith("mcp.")
-                        else ""
-                    ),
-                    capability_registry_snapshot_id=environment.capability_registry.snapshot_id,
-                )
-                for intent in intents
-            )
-            preflight = self.preflight_workbench_loop(
-                requests,
+            from .workbench_execution import WorkbenchExecutionBoundary
+
+            return WorkbenchExecutionBoundary(self).run(
+                base=base,
+                planning_steps=planning_steps,
+                intents=intents,
+                environment=environment,
                 loop_id=loop_id,
-                max_steps=max_steps,
-                max_budget_units=max_budget_units,
-            )
-            base["planning"] = {
-                "status": "planned",
-                "steps": planning_steps,
-                "action_intents": [intent.to_payload() for intent in intents],
-            }
-            base["preflight"] = preflight
-            if not preflight.get("accepted"):
-                base["status"] = "rejected"
-                base["reason_code"] = str(preflight.get("error_code", "preflight_rejected"))
-                return base
-            execution = self.execute_preflighted_workbench_loop(
-                intents,
-                requests,
-                loop_id=loop_id,
-                preflight_id=str(preflight["preflight_id"]),
                 max_steps=max_steps,
                 max_budget_units=max_budget_units,
                 learn=learn,
+                prepare_only=prepare_only,
             )
-            side_effects = any(
-                bool(step.get("success"))
-                and (
-                    (descriptor := environment.capability_snapshot.get(
-                        str(step.get("capability_id", ""))
-                    ))
-                    is not None
-                    and descriptor.risk != "read_only"
-                )
-                for step in execution.get("steps", ())
-            )
-            base["execution"] = {
-                **execution,
-                "side_effects": side_effects,
-            }
-            base["status"] = str(execution.get("status", "rejected"))
-            base["reason_code"] = str(execution.get("error_code", ""))
-            return base
+
+    def execute_natural_language_workbench_task(
+        self,
+        prompt: str,
+        semantic_evidence: Any,
+        *,
+        snapshot_id: str,
+        parameter_bindings: Sequence[Mapping[str, Mapping[str, Any]]] | None = None,
+        loop_id: str,
+        max_steps: int = 1,
+        max_budget_units: float = 1.0,
+        novelty: float = 0.0,
+        resource_budget: float = 1.0,
+        learn: bool = False,
+    ) -> dict[str, Any]:
+        from .natural_language_workbench import NaturalLanguageWorkbenchOrchestrator
+
+        return NaturalLanguageWorkbenchOrchestrator(self).execute(
+            prompt,
+            semantic_evidence,
+            snapshot_id=snapshot_id,
+            parameter_bindings=parameter_bindings,
+            loop_id=loop_id,
+            max_steps=max_steps,
+            max_budget_units=max_budget_units,
+            novelty=novelty,
+            resource_budget=resource_budget,
+            learn=learn,
+        )
+
+    def plan_natural_language_workbench_task(
+        self,
+        prompt: str,
+        semantic_evidence: Any,
+        *,
+        snapshot_id: str,
+        loop_id: str,
+        max_steps: int = 1,
+        max_budget_units: float = 1.0,
+        novelty: float = 0.0,
+        resource_budget: float = 1.0,
+    ) -> dict[str, Any]:
+        from .natural_language_workbench import NaturalLanguageWorkbenchOrchestrator
+
+        return NaturalLanguageWorkbenchOrchestrator(self).plan(
+            prompt,
+            semantic_evidence,
+            snapshot_id=snapshot_id,
+            loop_id=loop_id,
+            max_steps=max_steps,
+            max_budget_units=max_budget_units,
+            novelty=novelty,
+            resource_budget=resource_budget,
+        )
+
+    def approve_planned_natural_language_workbench_task(
+        self,
+        plan_id: str,
+        request_id: str,
+    ) -> dict[str, Any]:
+        from .natural_language_workbench import NaturalLanguageWorkbenchOrchestrator
+
+        return NaturalLanguageWorkbenchOrchestrator(self).approve(plan_id, request_id)
+
+    def execute_planned_natural_language_workbench_task(
+        self,
+        plan_id: str,
+        approval_tokens: Mapping[str, str] | None = None,
+    ) -> dict[str, Any]:
+        from .natural_language_workbench import NaturalLanguageWorkbenchOrchestrator
+
+        return NaturalLanguageWorkbenchOrchestrator(self).execute_planned(
+            plan_id,
+            approval_tokens,
+        )
 
     def plan_language_selection(
         self,
@@ -1207,6 +1254,7 @@ class SeedRuntime:
             "tick": int(self.model.tick),
             "parameters": int(self.model.parameter_count()),
             "language_provider": dict(self._provider_status),
+            "semantic_provider": self.semantic_provider_status(),
             "workbench": workbench.status(),
             "homeostasis": self.homeostasis_status(),
             "structural_maintenance": self.structural_maintenance_status(),

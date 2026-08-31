@@ -8,14 +8,17 @@
 - W0–W6、W7-R1/R2 已形成基线；R3 页面层已有证据，Windows shell 仍为 `tool-blocked`；R4 CUDA 为 `hardware-blocked`。
 - R5A 知识内化、R5B 效应器候选和 R5C 结构成长已建立内容寻址、验证、原子准入、rollback、checkpoint 和 lineage 基础。
 - R5C-S51 已通过 verified measurement bridge 的定向 native/CPU Gate；R5C-S52 已补齐统一、可 checkpoint、可审计的 artifact consumption policy。
-- 当前最大能力缺口不是 artifact 生命周期，而是自然语言任务虽已进入 Taiji Goal evidence、语言 evidence、受限语义分解、独立 provider evidence contract、P2-8 单步闭环、P2-9 声明式 semantic grounding、P2-10 多步 grounding/recovery 和 P2-11 IDE 语言链，仍未证明真实 provider 质量、真实 packaged-client 轮换/重绑、自然语言驱动的受控写入链以及开放域长期能力收益。P2-8 的显式 `parameter_bindings` 只保留为兼容 seam，不能扩大为开放域自主 IDE 结论。
-- P2-4/P2-5/P2-6/P2-7/P2-8/P2-9/P2-10/P2-11/P3-1/P3-2/P3-3/P4-1/P4-2/P4-3/P4-4/P4-5/P4-6/P4-7/P4-8/P4-9/P4-10a/P4-10b/P4-11/P4-12 已把 Workbench 的语言证据、Taiji 派生语言绑定、`editor.set_language`、preview/approval、文件 patch、Outcome、checkpoint、undo、失败停止、预算边界、重启续接、无工具语义分解、provider 权限边界、同任务决策不变性、真实交互组工作台闭环、小型模拟中的状态转移/credit/rollback/continuation、互补组的真实 Workbench 因果收益、train-only interaction-group 学习选择、同一 capability 对在多任务 context 上的留一族迁移、异质 capability 成员/未见组合的 train-only 关系 transfer、三轮 future Workbench 对照收益、三轮真实在线 Outcome 写回/准入/回滚、在线证据到结构候选的受控桥接、首次结构扩容的未见三动作净收益、第二个独立周期的连续结构扩容、editor+MCP 跨域结构收益与旧 workspace 能力保留，以及 terminal 三域的 approval、资源边界、失败停止、checkpoint 恢复和 rollback 接到 Taiji 受控链路；下一步转入自然语言受控写入链，不扩张 artifact 基础设施。
+- 当前最大能力缺口不是 artifact 生命周期，而是自然语言任务虽已进入 Taiji Goal evidence、语言 evidence、受限语义分解、独立 provider evidence contract、P2-8 单步闭环、P2-9 声明式 semantic grounding、P2-10 多步 grounding/recovery、P2-11 IDE 语言链、P2-12 自然语言受控写入链、P2-13 产品 API/前端传输边界、P5-1 协议编排模块化、P5-2 grounding engine 模块化和 P5-3 执行边界模块化，P6-1a/P6-1b 又建立了独立 semantic provider 请求/准入接口与测试注入聊天旅程，仍未证明真实 provider 质量、真实 packaged-client 轮换/重绑、浏览器现场和开放域长期能力收益。P2-8 的显式 `parameter_bindings` 只保留为兼容 seam，不能扩大为开放域自主 IDE 结论。
+- P2-4/P2-5/P2-6/P2-7/P2-8/P2-9/P2-10/P2-11/P2-12/P2-13/P3-1/P3-2/P3-3/P4-1/P4-2/P4-3/P4-4/P4-5/P4-6/P4-7/P4-8/P4-9/P4-10a/P4-10b/P4-11/P4-12/P5-1/P5-2/P5-3/P6-1a/P6-1b 已把 Workbench 的语言证据、Taiji 派生语言绑定、`editor.set_language`、preview/approval、文件 patch、Outcome、checkpoint、undo、失败停止、预算边界、重启续接、无工具语义分解、provider 权限边界、同任务决策不变性、真实交互组工作台闭环、小型模拟中的状态转移/credit/rollback/continuation、互补组的真实 Workbench 因果收益、train-only interaction-group 学习选择、同一 capability 对在多任务 context 上的留一族迁移、异质 capability 成员/未见组合的 train-only 关系 transfer、三轮 future Workbench 对照收益、三轮真实在线 Outcome 写回/准入/回滚、在线证据到结构候选的受控桥接、首次结构扩容的未见三动作净收益、第二个独立周期的连续结构扩容、editor+MCP 跨域结构收益与旧 workspace 能力保留，以及 terminal 三域的 approval、资源边界、失败停止、checkpoint 恢复和 rollback 接到 Taiji 受控链路；下一步进入 P6-1c 真实 packaged semantic provider artifact / 浏览器现场 Gate，不扩张 artifact 基础设施。
 - provider artifact 的确定性轮换/watchdog/restart rebinding 集成 seam 已通过；真实 packaged-client 模型资产缺失，真实 provider 质量与轮换仍保持 `asset-unverified`。
+- P6-1a 已通过 [semantic provider interface report](../../../reports/taiji_w7_p6_1a_semantic_provider_interface_20260831.json)：独立 provider 只能接收内容寻址请求并返回 `SemanticEvidenceProposal`；Taiji 在解释边界决定 resolved 状态、派生 decomposition，且不产生 ActionIntent、tool call 或 Workbench 副作用。没有 provider 时，产品 API 明确返回 `semantic_provider_not_attached`，保持 Goal-only 候选。
+- P6-1b 已通过 [backend journey test](../../../tests/taiji_native/test_p6_1b_chat_workbench_journey.py) 与 [frontend journey test](../../../frontend/src/__tests__/ChatView.test.js)：测试注入 provider 的 evidence 已沿 `/interpret → natural-language/plan → natural-language/execute` 进入只读 Workbench，前端只转发 Taiji 返回的 semantic evidence 和当前 snapshot，不生成 binding、patch、digest 或 intent；真实 packaged provider 仍未验收。
+- P6-1c 预检已确认（2026-08-31）：仓库当前没有可加载的真实 checkpoint、tokenizer、safetensors 或 adapter 目录；历史 Qwen manifest、loader 代码和诊断 corpus 只能证明合同/装配路径，不能作为真实 packaged semantic provider artifact。状态保持 `asset-unverified`。
 - 前端 live UI 已无 HF/GGUF/Transformer 格式切换；配置和隐藏兼容 API 仍有迁移残留，后续按退役清单收口。
 
 ## 2. 仓库与证据边界
 
-- 2026-08-31 核对时，当前 checkout 为 `main`，`main` 与 `origin/main` 同指向 `40d018d`；本轮未执行 fetch/push，因此只声明核对时的本地 remote-tracking 状态。
+- 2026-08-31 核对时，当前 checkout 为 `main`，`main` 与 `origin/main` 同指向 `92f7ac7`；本轮未执行 fetch/push，因此只声明核对时的本地 remote-tracking 状态。
 - 当前 main 包含本轮 S52、P2-2/P2-3/P2-4/P2-5/P2-6/P2-7/P2-8/P2-9/P2-10/P2-11/P3-1/P3-2/P3-3/P4-1/P4-2/P4-3/P4-4/P4-5/P4-6/P4-7/P4-8/P4-9/P4-10a/P4-10b/P4-11/P4-12 的未提交代码、测试、canary/report 和计划更新；`git status` 对多个 pytest/output 临时目录报告访问拒绝，因此不把该结果扩大成“所有未跟踪现场都已检查”。
 - `codex/interaction-group-incremental` 仍附着在独立 worktree，比 `origin/main` 落后 137 个提交，并有 5 个未提交文件。它不进入当前开发，不强删、不自动合并。
 - S18–S52 的大量 evaluator/report 证明机制 Gate，不等于正常 CI 全量通过，也不等于开放域智能或自进化收益已经成立。
@@ -26,12 +29,12 @@
 | 可以声明 | 仍不能声明 |
 |---|---|
 | Taiji-owned 持续状态、局部学习、异质区域/神经元群和多类记忆原型 | 完整人脑等价、AGI 或无限自进化 |
-| Workbench 文件/搜索/语言识别、受控编辑/undo、terminal/MCP、Outcome 和有限 successor loop；P2-8/P2-9/P2-10/P2-11 可在确定性语义证据下由 Taiji 完成单步、多步闭环、声明式能力绑定/恢复和真实 IDE 语言切换 | 用户只说一句自然语言就能在无外部参数绑定下自主完成开放域 IDE 任务并正确切换语言 |
+| Workbench 文件/搜索/语言识别、受控编辑/undo、terminal/MCP、Outcome 和有限 successor loop；P2-8/P2-9/P2-10/P2-11/P2-12 可在确定性语义证据下由 Taiji 完成单步、多步闭环、声明式能力绑定/恢复、真实 IDE 语言切换和 digest-checked 受控写入；P2-13 已将 plan/approve/execute 暴露到原生 API 与前端传输门面；P5-1/P5-2/P5-3 已将协议编排、grounding engine、执行边界移出 runtime facade | 用户只说一句自然语言就能在无外部参数绑定下自主完成开放域 IDE 任务并正确切换语言 |
 | 结构 candidate 的证据聚合、验证、准入、回滚、checkpoint 和有界 lineage；editor+MCP+terminal 三域结构收益与治理 Gate 已通过 | 结构扩大已在更广开放域持续带来净能力收益 |
 | native-readable 默认语言表层与 provider artifact/watchdog 合同 | Qwen/provider 是 Taiji 大脑，或 packaged-client provider 已完成生产验收 |
 | 自然语言可形成内容寻址、带 provenance/约束/不确定性的 Taiji Goal evidence | Taiji 已从自然语言自主解析出正确工具或 ActionIntent |
-| resolved Goal evidence 可经当前 affordance/资源/置信度进入非执行 planner；语言证据可形成并在真实 canary 中执行 `editor.set_language` 与可逆 patch；失败 loop 可 checkpoint/重启续接 | 普通 candidate 自然语言已具备可执行语义，或已完成自然语言多步分解和开放域 IDE 闭环 |
-| provider 可提交受输入 digest/tick 约束、内容寻址且无执行字段的语义 evidence；Taiji 派生 Goal/分解并保留不确定性；P2-8/P2-9/P2-10/P2-11 可由 Taiji 从当前感知/affordance 产生 intent、声明式参数绑定、实时语言绑定和有界恢复；确定性 artifact 轮换后同一任务决策保持不变 | provider 已被证明拥有 Taiji 的认知、工具选择、ActionIntent、policy 或执行权；真实 packaged provider 质量、自然语言写入链和生产化轮换仍未验收 |
+| resolved Goal evidence 可经当前 affordance/资源/置信度进入非执行 planner；语言证据可形成并在真实 canary 中执行 `editor.set_language` 与可逆 patch；P2-12 还可在 Taiji 生成 patch、preview、显式 approval 后执行 `workspace.apply_patch`；P2-13 已提供前端只保存 plan/approval/outcome 的两阶段 transport；P5-1/P5-2/P5-3 已保持兼容 facade 并拆出协议、grounding、执行边界；失败 loop 可 checkpoint/重启续接 | 普通 candidate 自然语言已具备可执行语义，或真实 provider 语义证据已接入完整聊天用户旅程并形成开放域 IDE 闭环 |
+| provider 可提交受输入 digest/tick 约束、内容寻址且无执行字段的语义 evidence；Taiji 派生 Goal/分解并保留不确定性；P2-8/P2-9/P2-10/P2-11/P2-12 可由 Taiji 从当前感知/affordance 产生 intent、声明式参数绑定、实时语言绑定、digest-checked patch 和有界恢复；P2-13 的 API/前端 transport 仍只传 Taiji 计划、审批和结果；确定性 artifact 轮换后同一任务决策保持不变 | provider 已被证明拥有 Taiji 的认知、工具选择、ActionIntent、policy 或执行权；真实 packaged provider 质量、真实聊天 UI 用户旅程和生产化轮换仍未验收 |
 | 前端主语义已退出 HF/GGUF/Transformer 格式切换 | 所有 Legacy 配置/tombstone 已物理删除 |
 
 ## 4. 当前唯一下一步
@@ -54,7 +57,7 @@ P4-11 已完成 editor+MCP 跨能力域结构收益与旧 workspace 能力保留
 
 P2-11 已由 [IDE language chain report](../../../reports/taiji_w7_p2_11_ide_language_chain_20260831.json) 证明：三个独立 seed 在无外部 `parameter_bindings` 下完成 `workspace.read → workspace.programming_language.resolve → editor.set_language`；provider 未提交最终语言 ID，Taiji 从当前文件/Workbench 证据派生绑定，切换结果进入 Outcome/checkpoint/recovery，用户 override 和歧义均在新 ActionIntent 前停止。回归：[P2-11 test](../../../tests/taiji_native/test_ide_language_chain.py)。
 
-**当前唯一动作：执行 P2-12 Taiji-owned 自然语言受控写入 Gate**。在 P2-11 的当前文件证据链上增加“语义编辑意图 → Taiji 读取并计算 digest/patch → preview/policy/approval → `workspace.apply_patch` → Outcome/checkpoint/undo/recovery”；provider 不得提交 `patch`、最终 `parameter_bindings` 或 ActionIntent，文件冲突、歧义和审批缺失必须在写入前停止。
+**当前唯一动作：执行 P6-1c 真实 packaged semantic provider artifact / 浏览器现场 Gate**。P6-1a 的独立接口和 P6-1b 的测试注入旅程已完成；下一步只在真实 allowlisted provider artifact 可用时，验证 provider 生命周期、首轮 semantic evidence canary、浏览器聊天卡片和 Workbench plan/approval/execute 现场，确认真实 provider 失败时仍回到 Goal-only/clarification 边界；禁止把测试 provider 冒充产品模型，禁止顺手改动 CUDA 或 Windows shell。
 
 ## 5. 当前阻塞与暂缓项
 
@@ -62,7 +65,7 @@ P2-11 已由 [IDE language chain report](../../../reports/taiji_w7_p2_11_ide_lan
 - **CUDA：`hardware-blocked`。** 当前主机无可用 CUDA，不用 CPU 结果替代 GPU 结论。
 - **Windows shell：`tool-blocked`。** 真实任务栏、托盘、通知、DPI 与窗口现场证据待工具可用后补齐。
 - **Git 收束：暂缓。** attached worktree 含未提交变化，必须先审计再决定吸收或删除。
-- **提交/推送：本轮不执行。** 当前只推进 P2-11 结果、P2-12 入口和计划同步。
+- **提交/推送：本轮不执行。** 当前只推进 P6-1c 真实 provider artifact / 浏览器现场 Gate 和计划同步。
 
 ## 6. 事实源
 

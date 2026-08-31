@@ -31,6 +31,10 @@ export const nativeApiPaths = Object.freeze({
     history: '/api/chat/history/{session_id}',
     stream: '/api/chat/stream',
     workbenchStream: '/api/chat/workbench/stream',
+    workbenchInterpret: '/api/chat/workbench/interpret',
+    workbenchNaturalLanguagePlan: '/api/chat/workbench/natural-language/plan',
+    workbenchNaturalLanguageApprove: '/api/chat/workbench/natural-language/approve',
+    workbenchNaturalLanguageExecute: '/api/chat/workbench/natural-language/execute',
     upload: '/api/chat/upload',
   }),
   training: Object.freeze({
@@ -198,6 +202,9 @@ function request(path, options) {
  * @property {(sessionId: string) => Promise<Object>} deleteChatHistory
  * @property {(payload: Object, options?: RequestInit) => Promise<Response>} chatStream
  * @property {(payload: Object, options?: RequestInit) => Promise<Response>} chatWorkbenchStream
+ * @property {(payload: Object) => Promise<Object>} chatWorkbenchPlanNaturalLanguage
+ * @property {(payload: Object) => Promise<Object>} chatWorkbenchApproveNaturalLanguage
+ * @property {(payload: Object) => Promise<Object>} chatWorkbenchExecuteNaturalLanguage
  * @property {(formData: FormData, options?: RequestInit) => Promise<Response>} chatUpload
  * @property {() => Promise<Object>} workbenchCapabilities
  * @property {() => Promise<Object>} workbenchEvents
@@ -295,6 +302,22 @@ export const nativeApi = Object.freeze({
     headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
     retries: 0,
   }),
+  chatWorkbenchInterpret: (payload) => readJson(
+    `${API_BASE}${nativeApiPaths.chat.workbenchInterpret}`,
+    jsonOptions(payload),
+  ),
+  chatWorkbenchPlanNaturalLanguage: (payload) => readJson(
+    `${API_BASE}${nativeApiPaths.chat.workbenchNaturalLanguagePlan}`,
+    jsonOptions(payload),
+  ),
+  chatWorkbenchApproveNaturalLanguage: (payload) => readJson(
+    `${API_BASE}${nativeApiPaths.chat.workbenchNaturalLanguageApprove}`,
+    jsonOptions(payload),
+  ),
+  chatWorkbenchExecuteNaturalLanguage: (payload) => readJson(
+    `${API_BASE}${nativeApiPaths.chat.workbenchNaturalLanguageExecute}`,
+    jsonOptions(payload),
+  ),
   chatUpload: (formData, options = {}) => request(nativeApiPaths.chat.upload, {
     method: 'POST',
     ...options,

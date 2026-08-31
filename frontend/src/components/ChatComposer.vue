@@ -41,6 +41,10 @@
           <Languages :size="16" />
           <span class="chip-label">翻译</span>
         </button>
+        <button class="composer-chip" type="button" title="工作台" :class="{ active: workbenchMode }" :aria-pressed="workbenchMode" @click="emit('toggle-workbench')">
+          <PanelsTopLeft :size="16" />
+          <span class="chip-label">工作台</span>
+        </button>
         <span class="spacer"></span>
         <button class="send" type="button" :class="{ unavailable: !canSend }" :title="canSend ? '发送' : '运行时就绪后可发送'" @click="emit('send')">
           <Send :size="16" />
@@ -61,7 +65,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { AlignLeft, Code, Languages, Plus, Send, Square, Zap } from 'lucide-vue-next'
+import { AlignLeft, Code, Languages, PanelsTopLeft, Plus, Send, Square, Zap } from 'lucide-vue-next'
 
 defineOptions({ name: 'ChatComposer' })
 
@@ -73,9 +77,10 @@ defineProps({
   uploading: { type: Boolean, default: false },
   quickHints: { type: Array, default: () => [] },
   promptTemplates: { type: Object, default: () => ({}) },
+  workbenchMode: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['update:modelValue', 'send', 'stop', 'files-picked', 'insert-template', 'apply-quick-hint'])
+const emit = defineEmits(['update:modelValue', 'send', 'stop', 'files-picked', 'insert-template', 'apply-quick-hint', 'toggle-workbench'])
 const inputRef = ref(null)
 const fileInput = ref(null)
 const showQuickPanel = ref(false)
