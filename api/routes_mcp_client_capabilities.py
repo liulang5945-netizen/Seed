@@ -13,11 +13,13 @@ from typing import Any
 from fastapi import APIRouter, HTTPException
 
 from api.seed_runtime import get_seed_runtime
+from seed_platform.client_extension_host import ClientExtensionHost
 from seed_platform.mcp_capability_inheritance import (
     McpCapabilityInheritanceCandidate,
     McpCapabilityInheritancePolicy,
     McpCapabilityShadowObservation,
 )
+from seed_platform.mcp_client_activation_dry_run import run_client_activation_dry_run
 from seed_platform.mcp_client_capability_registry import (
     McpClientCapabilityShadowRegistry,
 )
@@ -148,6 +150,50 @@ def propose_mcp_client_capability_activation(
         "registry": registry.snapshot_id,
         "activation": "proposal_only",
         "proposal": proposal.to_payload(),
+    }
+
+
+@router.post("/{candidate_digest}/activation-dry-run")
+def dry_run_mcp_client_capability_activation(
+    candidate_digest: str,
+    request: dict[str, Any],
+) -> dict[str, Any]:
+    registry, current_snapshot_id = _shadow_registry()
+    client_snapshot_id = _environment().capability_snapshot.snapshot_id
+    requested_client_snapshot_id = str(
+        request.get("client_capability_snapshot_id") or client_snapshot_id
+    )
+    if requested_client_snapshot_id != client_snapshot_id:
+        raise HTTPException(status_code=409, detail="client capability snapshot is stale")
+    record = registry.get(candidate_digest)
+    if record is None:
+        raise HTTPException(status_code=404, detail="unknown MCP client capability candidate")
+    proposals = tuple(
+        item
+        for item in registry.activation_proposals
+        if item.candidate_digest == record.candidate_digest and item.state == "proposed"
+    )
+    if not proposals:
+        raise HTTPException(status_code=409, detail="activation proposal is required")
+    try:
+        dry_run = run_client_activation_dry_run(
+            ClientExtensionHost(
+                capability_snapshot_id=client_snapshot_id,
+                parent_checkpoint_id=f"checkpoint:mcp-client-dry-run:{current_snapshot_id}",
+            ),
+            record.candidate,
+            proposals[-1],
+            client_capability_snapshot_id=client_snapshot_id,
+            available_capabilities=tuple(
+                item.tool_id for item in record.candidate.tool_contracts
+            ),
+        )
+    except Exception as exc:
+        _error(exc)
+    return {
+        "status": "dry_run",
+        "activation": "not_committed",
+        "dry_run": dry_run.to_payload(),
     }
 
 

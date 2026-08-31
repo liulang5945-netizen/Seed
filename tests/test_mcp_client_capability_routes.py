@@ -86,6 +86,15 @@ def test_mcp_client_capability_api_projects_shadow_lifecycle_and_rollback(client
     assert activation_proposal.json()["activation"] == "proposal_only"
     assert activation_proposal.json()["proposal"]["proposal_id"]
 
+    dry_run = client.post(
+        f"/api/mcp-client-capabilities/{candidate.candidate_digest}/activation-dry-run",
+        json={"client_capability_snapshot_id": client_capability_snapshot_id},
+    )
+    assert dry_run.status_code == 200
+    assert dry_run.json()["status"] == "dry_run"
+    assert dry_run.json()["activation"] == "not_committed"
+    assert dry_run.json()["dry_run"]["committed"] is False
+
     rollback = client.post(
         f"/api/mcp-client-capabilities/{candidate.candidate_digest}/rollback",
     )

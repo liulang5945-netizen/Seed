@@ -3,7 +3,7 @@
   "version": 1,
   "work_package": "W7-R5",
   "title": "open-domain structural growth and self-evolution",
-  "status": "e6_2_activation_proposal_passed_e6_3_client_activation_dry_run_pending",
+  "status": "e6_3_client_activation_dry_run_passed_e6_4_authorization_decision_pending",
   "claim": {
     "to_prove": "Taiji can grow local structure or memory in response to persistent real-task error, capacity pressure, or recovery deficiency, while retaining old abilities and remaining checkpointable and reversible.",
     "must_not_claim": "Growth is not automatic intelligence, unlimited weight addition, neuron-count scaling, or a return to full retraining from scratch."
@@ -466,7 +466,11 @@
     "e6_2_test": "tests/seed_platform/test_mcp_client_capability_registry.py, tests/test_mcp_client_capability_routes.py, and scripts/training/verify_taiji_e6_2_mcp_client_activation_proposal.py",
     "e6_2_scope": "require a shadow-validated candidate before producing a content-addressed activation proposal bound to the current MCP and Workbench capability snapshots; persist and rollback proposals without active client state, executor/source/secret fields, MCP connections or Taiji cognition mutation",
     "e6_2_evidence": "verify_taiji_e6_2_mcp_client_activation_proposal.py reports status=passed with 10 checks; 14 targeted tests pass; pre-shadow activation is rejected, proposal checkpoint/rollback holds, API exposes proposal_only, and no active client organ or external connection exists",
-    "next_stage": "E6-3 local synthetic client-organ activation dry-run through the existing extension host"
+    "e6_3_artifact": "seed_platform/mcp_client_activation_dry_run.py and api/routes_mcp_client_capabilities.py",
+    "e6_3_test": "tests/seed_platform/test_mcp_client_activation_dry_run.py, tests/test_mcp_client_capability_routes.py, and scripts/training/verify_taiji_e6_3_mcp_client_activation_dry_run.py",
+    "e6_3_scope": "map a shadow-validated MCP activation proposal to a declarative ClientPluginManifest and call ClientExtensionHost.prepare only; produce a content-addressed target snapshot without commit, MCP connection, executor/source/secret fields, active client state or Taiji cognition mutation",
+    "e6_3_evidence": "verify_taiji_e6_3_mcp_client_activation_dry_run.py reports status=passed with 10 checks; 9 targeted tests pass; host active snapshot and MCP registry remain unchanged, stale client snapshot fails closed, and API returns not_committed",
+    "next_stage": "E6-4 authorization decision before real third-party MCP connection or client activation"
   },
   "boundary": [
     "Self-evolution must be evidence-triggered, resource-bounded, and reversible.",

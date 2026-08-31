@@ -1,6 +1,6 @@
 # Taiji 原生认知训练、经验进化与 Seed 客户端热插拔总路线
 
-> 状态：`E0 complete / E1 complete / E2-A complete / E2-B complete / E3-0 complete / E3-1 complete / E3-2 complete / E3-3 complete / E3-4 complete / E4 complete / E5 active`。本文件自 2026-08-31 起取代原 P7-1a provider artifact 升级作为当前主线，并于 2026-09-01 按“Skill/MCP 可成为知识语料、MCP 执行侧由客户端继承”完成修订。Qwen/provider 质量问题保留为语言器官支线，不再阻塞 Taiji 本体训练；唯一执行事实源 `03_CURRENT_EXECUTION.md` 当前指向 E5：Seed-owned 客户端插件 runtime。
+> 状态：`E0 complete / E1 complete / E2-A complete / E2-B complete / E3-0 complete / E3-1 complete / E3-2 complete / E3-3 complete / E3-4 complete / E4 complete / E5 complete / E6-0 complete / E6-1 complete / E6-2 complete / E6-3 complete / E6-4 decision pending`。本文件自 2026-08-31 起取代原 P7-1a provider artifact 升级作为当前主线，并于 2026-09-01 按“Skill/MCP 可成为知识语料、MCP 执行侧由客户端继承”完成修订。Qwen/provider 质量问题保留为语言器官支线，不再阻塞 Taiji 本体训练；唯一执行事实源 `03_CURRENT_EXECUTION.md` 当前指向 E6-4：真实第三方 MCP 连接/客户端激活前的授权决策。
 
 ## 1. 路线决策
 
@@ -351,7 +351,7 @@ discovered
 
 交付：统一术语、现状缺口、DeepSeek Harness 采纳边界、数据合同、生命周期、阶段 Gate 和唯一下一步。
 
-退出 Gate：只有 `03_CURRENT_EXECUTION.md` 决定当前动作；阶段总计划、implementation status 和 manifest 均一致指向 E1，P7-1a 降为语言支线。
+退出 Gate：只有 `03_CURRENT_EXECUTION.md` 决定当前动作；阶段总计划、implementation status 和 manifest 均必须与当前阶段一致，P7-1a 降为语言支线；当前 E6-4 是真实连接/激活前的授权决策点。
 
 ### E1：统一进化语料/经验合同与 checkpoint 前置 Gate
 
@@ -446,7 +446,9 @@ Gate：知识问答不是唯一指标；必须同时通过未见任务规划/能
 
 **E6-1 已完成（2026-09-01）**：`seed_platform/mcp_client_capability_registry.py` 将 E6-0 candidate 投影为 Seed-owned shadow lifecycle record，状态只允许 `proposed`、`shadow_pending`、`shadow_validated`、`rejected`、`rolled_back`；每条记录保留 candidate/policy/observation digest、MCP registry snapshot、事件和 parent checkpoint，checkpoint 恢复校验 revision/snapshot/digest，rollback 只改变 shadow registry，不改变 MCP registry、Workbench executor 或 Taiji cognition。`api/routes_mcp_client_capabilities.py` 提供 status/proposals/shadow/rollback 四个入口，每次按当前 Workbench MCP snapshot 重绑，旧 candidate 或旧 observation fail-closed，不接受 executor/source/secret，也不连接真实第三方服务。E6-1 [Gate report](../../../reports/taiji_w7_e6_1_mcp_client_capability_shadow_projection_20260901.json) 的 10/10 检查和 13 个定向回归测试通过；client activation 明确保留到后续独立阶段。
 
-**E6-2 已完成（2026-09-01）**：`seed_platform/mcp_client_capability_activation.py` 建立内容寻址的 `McpClientCapabilityActivationProposal`，只有 `shadow_validated` candidate 才能提出；提案同时绑定 MCP registry snapshot、Workbench capability snapshot、shadow record digest 和 parent checkpoint，但不包含 executor/source/secret/connection，也没有 active 状态。`McpClientCapabilityShadowRegistry` 在 candidate rollback 时联动标记提案 `rolled_back`，checkpoint 可恢复提案生命周期；API 只返回 `proposal_only`，旧 Workbench snapshot fail-closed。E6-2 [Gate report](../../../reports/taiji_w7_e6_2_mcp_client_activation_proposal_20260901.json) 的 10/10 检查和 14 个定向回归测试通过；当前进入 E6-3：用本地合成器官做 client extension host 的 activation dry-run，不连接真实第三方 MCP。
+**E6-2 已完成（2026-09-01）**：`seed_platform/mcp_client_capability_activation.py` 建立内容寻址的 `McpClientCapabilityActivationProposal`，只有 `shadow_validated` candidate 才能提出；提案同时绑定 MCP registry snapshot、Workbench capability snapshot、shadow record digest 和 parent checkpoint，但不包含 executor/source/secret/connection，也没有 active 状态。`McpClientCapabilityShadowRegistry` 在 candidate rollback 时联动标记提案 `rolled_back`，checkpoint 可恢复提案生命周期；API 只返回 `proposal_only`，旧 Workbench snapshot fail-closed。E6-2 [Gate report](../../../reports/taiji_w7_e6_2_mcp_client_activation_proposal_20260901.json) 的 10/10 检查和 14 个定向回归测试通过。
+
+**E6-3 已完成（2026-09-01）**：`seed_platform/mcp_client_activation_dry_run.py` 将已通过 shadow 的候选映射为声明式 `ClientPluginManifest`，仅调用现有 `ClientExtensionHost.prepare`，不调用 `commit`；dry-run 绑定 MCP candidate、激活提案和 Workbench capability snapshot，生成内容寻址的目标 client snapshot，但源 host 的 active snapshot、MCP registry 和 Taiji cognition 均不改变。`api/routes_mcp_client_capabilities.py` 增加 `activation-dry-run` 入口，只返回 `dry_run/not_committed`，客户端 manifest 不含 executor/source/secret；旧 client snapshot fail-closed。E6-3 [Gate report](../../../reports/taiji_w7_e6_3_mcp_client_activation_dry_run_20260901.json) 的 10/10 检查和 9 个定向回归测试通过；当前进入 E6-4：在真实第三方 MCP 连接或任何 client activation 前，先进行权限、凭据、连接方式和用户授权决策。
 
 Gate：旧 client/capability snapshot 可恢复，旧路由/组件/监听器/executor 注册无泄漏，在途调用不丢失，资源 reservation 归还，异常插件 quarantine，Taiji cognition checkpoint 不被插件覆盖。
 
@@ -563,6 +565,6 @@ E1–E7 优先按现有 owner 增量接线，避免继续膨胀 `taiji/adapter.p
 
 ## 15. E1 首个执行切片
 
-`03_CURRENT_EXECUTION.md` 当前指向 **E6-2：MCP 客户端能力 shadow canary 与显式激活提案边界**；E1 已完成并作为全部后续训练与客户端继承的事实源，E5-0/E5-1/E5-2/E5-3 已分别冻结 host contract、完成 API/Vue 接线、退役 Legacy plugin surface 并通过真实 slot runtime canary，E6-0 已冻结 MCP capability inheritance candidate 合同，E6-1 已完成 API/registry shadow projection。
+`03_CURRENT_EXECUTION.md` 当前指向 **E6-4：真实第三方 MCP 连接/客户端激活前的授权决策**；E1 已完成并作为全部后续训练与客户端继承的事实源，E5-0/E5-1/E5-2/E5-3 已分别冻结 host contract、完成 API/Vue 接线、退役 Legacy plugin surface 并通过真实 slot runtime canary，E6-0 已冻结 MCP capability inheritance candidate 合同，E6-1 已完成 API/registry shadow projection，E6-2 已完成显式 activation proposal，E6-3 已完成 prepare-only activation dry-run。
 
-它优先于真实第三方 MCP 和插件 HMR，因为必须先对已投影的候选执行独立 shadow canary，并把任何未来激活限制为显式、可审计的 proposal；E6-2 仍不连接真实第三方 MCP，不激活客户端器官，也不把插件执行权写入 Taiji cognition checkpoint。
+它优先于真实第三方 MCP 和插件 HMR，因为必须先对已投影的候选执行独立 shadow canary、显式 proposal 和本地 prepare-only dry-run；E6-4 在获得明确授权前仍不连接真实第三方 MCP、不激活客户端器官，也不把插件执行器写入 Taiji cognition checkpoint。
