@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import hashlib
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, replace
 from itertools import combinations
 from typing import Any, cast
@@ -122,6 +122,8 @@ from .structural_continuation import (
 )
 from .structural_evidence import (
     StructuralEvidenceAppendResult,
+    StructuralEvidenceCompactionResult,
+    StructuralEvidenceConsumptionAudit,
     StructuralEvidenceLedger,
     StructuralEvidenceWindowSummary,
 )
@@ -134,6 +136,13 @@ from .structural_growth import (
     StructuralProposalCandidate,
     StructuralPruningDecision,
     StructuralRuntimeObservation,
+)
+from .structural_lineage import (
+    STRUCTURAL_LINEAGE_RETENTION_RESULT_FORMAT,
+    StructuralLineageRetentionPolicy,
+    StructuralLineageRetentionPolicyMigration,
+    StructuralLineageRetentionResult,
+    structural_lineage_retention_digest,
 )
 from .structural_pressure import (
     StructuralGrowthEvidenceProjection,
@@ -289,6 +298,9 @@ class TSKV8Adapter(Taiji):
             StructuralValidationGateDecision
         ] = []
         self._structural_admission_results: list[StructuralAdmissionResult] = []
+        self._last_structural_lineage_retention_result: StructuralLineageRetentionResult | None = None
+        self._last_structural_lineage_retention_policy: StructuralLineageRetentionPolicy | None = None
+        self._last_structural_lineage_retention_policy_migration: StructuralLineageRetentionPolicyMigration | None = None
         self._procedural_memory: ProceduralMemoryLearner | None = None
         self._homeostatic_controller: HomeostaticController | None = None
         self._goal_planner: GoalPlanner | None = None
@@ -453,6 +465,344 @@ class TSKV8Adapter(Taiji):
         return self._structural_evidence_ledger.sealed_summaries
 
     @property
+    def structural_evidence_consumption_audit(self) -> StructuralEvidenceConsumptionAudit:
+        """Return the current cross-round evidence consumption audit."""
+
+        state = self._structural_growth_scheduler_state
+        return self._structural_evidence_ledger.audit_consumption(
+            evaluated_window_digests=state.evaluated_window_digests,
+            scheduler_revision=state.revision,
+        )
+
+    def compact_structural_evidence_history(
+        self,
+        *,
+        keep_latest_per_stream: int = 1,
+        protected_window_digests: Sequence[str] = (),
+    ) -> StructuralEvidenceCompactionResult:
+        """Compact only scheduler-consumed older windows and retain provenance."""
+
+        state = self._structural_growth_scheduler_state
+        return self._structural_evidence_ledger.compact_consumed_windows(
+            evaluated_window_digests=state.evaluated_window_digests,
+            scheduler_revision=state.revision,
+            keep_latest_per_stream=keep_latest_per_stream,
+            protected_window_digests=protected_window_digests,
+        )
+
+    @staticmethod
+    def _resolve_structural_lineage_retention_policy(
+        *,
+        max_batches: int | None,
+        retention_policy: StructuralLineageRetentionPolicy | Mapping[str, Any] | None,
+    ) -> StructuralLineageRetentionPolicy:
+        if max_batches is not None and retention_policy is not None:
+            raise ValueError(
+                "structural lineage retention accepts max_batches or retention_policy, not both"
+            )
+        if retention_policy is not None:
+            if isinstance(retention_policy, StructuralLineageRetentionPolicy):
+                return retention_policy
+            if isinstance(retention_policy, Mapping):
+                return StructuralLineageRetentionPolicy.from_payload(retention_policy)
+            raise TypeError("structural lineage retention policy is invalid")
+        if max_batches is not None and (
+            isinstance(max_batches, bool) or not isinstance(max_batches, int)
+        ):
+            raise TypeError("structural lineage retention max_batches must be an integer")
+        limit = 1 if max_batches is None else int(max_batches)
+        return StructuralLineageRetentionPolicy.create(limit)
+
+    def compact_structural_lineage_history(
+        self,
+        *,
+        max_batches: int | None = None,
+        retention_policy: StructuralLineageRetentionPolicy | Mapping[str, Any] | None = None,
+    ) -> StructuralLineageRetentionResult:
+        """Atomically compact terminal structural lineage subgraphs.
+
+        Candidate batches are the roots of this retention graph.  A batch is
+        eligible only when it has no active reservation, deferred/reserved
+        candidate, pending topology proposal, or rollbackable admission.  Its
+        dependent validation, artifact, admission, rollback, proposal, and
+        schedule records are removed in the same transaction; protected
+        records are retained even when that exceeds the configured target.
+        """
+
+        if max_batches is None and retention_policy is None:
+            retention_policy = StructuralLineageRetentionPolicy.create(self._lineage_limit())
+        policy = self._resolve_structural_lineage_retention_policy(
+            max_batches=max_batches,
+            retention_policy=retention_policy,
+        )
+        limit = policy.max_batches
+        source_checkpoint_digest = self._structural_lineage_checkpoint_digest()
+        batch_items = list(self._structural_candidate_batches.items())
+        protected_batch_ids = {
+            batch_id
+            for batch_id, batch in batch_items
+            if self._structural_candidate_batch_has_live_lineage(batch)
+        }
+        candidate_live_before = {
+            candidate_id
+            for batch in self._structural_candidate_batches.values()
+            for candidate_id in batch.candidate_ids
+            if self._structural_candidate_has_live_lineage(candidate_id)
+        }
+        removable_batch_ids = [
+            batch_id
+            for batch_id, batch in batch_items
+            if batch_id not in protected_batch_ids
+            and not any(
+                candidate_id in candidate_live_before
+                for candidate_id in batch.candidate_ids
+            )
+        ]
+        remove_count = max(0, len(batch_items) - limit)
+        removed_batch_ids = tuple(removable_batch_ids[:remove_count])
+        removed_batch_id_set = set(removed_batch_ids)
+        retained_batch_ids = tuple(
+            batch_id for batch_id, _ in batch_items if batch_id not in removed_batch_id_set
+        )
+        retained_candidate_ids = {
+            candidate_id
+            for batch_id, batch in batch_items
+            if batch_id not in removed_batch_id_set
+            for candidate_id in batch.candidate_ids
+        }
+        protected_candidate_ids = retained_candidate_ids | candidate_live_before
+        removed_candidate_ids = {
+            candidate_id
+            for batch_id, batch in batch_items
+            if batch_id in removed_batch_id_set
+            for candidate_id in batch.candidate_ids
+            if candidate_id not in protected_candidate_ids
+        }
+
+        artifact_batch_remove_ids = {
+            batch_id
+            for batch_id, artifact_batch in self._structural_validation_artifact_batches.items()
+            if (
+                batch_id in removed_batch_id_set
+                or batch_id not in retained_batch_ids
+            )
+            and not any(
+                candidate_id in protected_candidate_ids
+                for candidate_id in artifact_batch.candidate_ids
+            )
+        }
+
+        before_state = {
+            "candidate_batches": self._structural_candidate_batches,
+            "candidate_rollbacks": self._structural_candidate_rollbacks,
+            "growth_schedule_results": self._structural_growth_schedule_results,
+            "workbench_batch_schedule_results": self._structural_workbench_batch_schedule_results,
+            "proposal_candidates": self._structural_proposal_candidates,
+            "candidate_proposals": self._structural_candidate_proposals,
+            "maintenance_results": self._structural_maintenance_results,
+            "candidate_validations": self._structural_candidate_validations,
+            "validation_artifacts": self._structural_validation_artifacts,
+            "validation_artifact_batches": self._structural_validation_artifact_batches,
+            "validation_gate_decisions": self._structural_validation_gate_decisions,
+            "admission_results": self._structural_admission_results,
+            "last_lineage_retention_result": self._last_structural_lineage_retention_result,
+            "last_lineage_retention_policy": self._last_structural_lineage_retention_policy,
+            "last_lineage_retention_policy_migration": self._last_structural_lineage_retention_policy_migration,
+        }
+
+        def removed_count(name: str, before: int, after: int) -> None:
+            record_counts[name] = before - after
+
+        record_counts: dict[str, int] = {}
+        try:
+            self._structural_candidate_batches = {
+                batch_id: batch
+                for batch_id, batch in batch_items
+                if batch_id not in removed_batch_id_set
+            }
+            before = len(self._structural_candidate_rollbacks)
+            self._structural_candidate_rollbacks = [
+                record
+                for record in self._structural_candidate_rollbacks
+                if record.batch_id not in removed_batch_id_set
+                and record.candidate_id not in removed_candidate_ids
+            ]
+            removed_count("candidate_rollbacks", before, len(self._structural_candidate_rollbacks))
+
+            before = len(self._structural_growth_schedule_results)
+            self._structural_growth_schedule_results = [
+                result
+                for result in self._structural_growth_schedule_results
+                if result.candidate_id not in removed_candidate_ids
+            ]
+            removed_count("growth_schedule_results", before, len(self._structural_growth_schedule_results))
+
+            before = len(self._structural_workbench_batch_schedule_results)
+            self._structural_workbench_batch_schedule_results = [
+                result
+                for result in self._structural_workbench_batch_schedule_results
+                if result.batch_id not in removed_batch_id_set
+                and not (
+                    result.batch_id is None
+                    and result.candidate_ids
+                    and set(result.candidate_ids).issubset(removed_candidate_ids)
+                )
+            ]
+            removed_count(
+                "workbench_batch_schedule_results",
+                before,
+                len(self._structural_workbench_batch_schedule_results),
+            )
+
+            before = len(self._structural_proposal_candidates)
+            self._structural_proposal_candidates = {
+                candidate_id: candidate
+                for candidate_id, candidate in self._structural_proposal_candidates.items()
+                if candidate_id not in removed_candidate_ids
+            }
+            removed_count("proposal_candidates", before, len(self._structural_proposal_candidates))
+
+            before = len(self._structural_candidate_proposals)
+            self._structural_candidate_proposals = {
+                candidate_id: proposal_id
+                for candidate_id, proposal_id in self._structural_candidate_proposals.items()
+                if candidate_id not in removed_candidate_ids
+            }
+            removed_count("candidate_proposals", before, len(self._structural_candidate_proposals))
+
+            before = len(self._structural_maintenance_results)
+            self._structural_maintenance_results = [
+                result
+                for result in self._structural_maintenance_results
+                if result.candidate_id not in removed_candidate_ids
+            ]
+            removed_count("maintenance_results", before, len(self._structural_maintenance_results))
+
+            before = len(self._structural_candidate_validations)
+            self._structural_candidate_validations = [
+                result
+                for result in self._structural_candidate_validations
+                if result.candidate_id not in removed_candidate_ids
+            ]
+            removed_count("candidate_validations", before, len(self._structural_candidate_validations))
+
+            before = len(self._structural_validation_artifacts)
+            self._structural_validation_artifacts = [
+                artifact
+                for artifact in self._structural_validation_artifacts
+                if artifact.candidate_id not in removed_candidate_ids
+            ]
+            removed_count("validation_artifacts", before, len(self._structural_validation_artifacts))
+
+            before = len(self._structural_validation_artifact_batches)
+            self._structural_validation_artifact_batches = {
+                batch_id: artifact_batch
+                for batch_id, artifact_batch in self._structural_validation_artifact_batches.items()
+                if batch_id not in artifact_batch_remove_ids
+            }
+            removed_count(
+                "validation_artifact_batches",
+                before,
+                len(self._structural_validation_artifact_batches),
+            )
+
+            before = len(self._structural_validation_gate_decisions)
+            self._structural_validation_gate_decisions = [
+                decision
+                for decision in self._structural_validation_gate_decisions
+                if decision.candidate_id not in removed_candidate_ids
+            ]
+            removed_count(
+                "validation_gate_decisions",
+                before,
+                len(self._structural_validation_gate_decisions),
+            )
+
+            before = len(self._structural_admission_results)
+            self._structural_admission_results = [
+                result
+                for result in self._structural_admission_results
+                if result.candidate_id not in removed_candidate_ids
+            ]
+            removed_count("admission_results", before, len(self._structural_admission_results))
+            target_checkpoint_digest = self._structural_lineage_checkpoint_digest()
+        except Exception:
+            self._structural_candidate_batches = before_state["candidate_batches"]
+            self._structural_candidate_rollbacks = before_state["candidate_rollbacks"]
+            self._structural_growth_schedule_results = before_state["growth_schedule_results"]
+            self._structural_workbench_batch_schedule_results = before_state[
+                "workbench_batch_schedule_results"
+            ]
+            self._structural_proposal_candidates = before_state["proposal_candidates"]
+            self._structural_candidate_proposals = before_state["candidate_proposals"]
+            self._structural_maintenance_results = before_state["maintenance_results"]
+            self._structural_candidate_validations = before_state["candidate_validations"]
+            self._structural_validation_artifacts = before_state["validation_artifacts"]
+            self._structural_validation_artifact_batches = before_state[
+                "validation_artifact_batches"
+            ]
+            self._structural_validation_gate_decisions = before_state[
+                "validation_gate_decisions"
+            ]
+            self._structural_admission_results = before_state["admission_results"]
+            self._last_structural_lineage_retention_result = before_state[
+                "last_lineage_retention_result"
+            ]
+            self._last_structural_lineage_retention_policy = before_state[
+                "last_lineage_retention_policy"
+            ]
+            self._last_structural_lineage_retention_policy_migration = before_state[
+                "last_lineage_retention_policy_migration"
+            ]
+            raise
+
+        retention_pressure = len(self._structural_candidate_batches) > limit
+        result_payload = {
+            "format": STRUCTURAL_LINEAGE_RETENTION_RESULT_FORMAT,
+            "status": "compacted" if removed_batch_ids else "nothing_to_compact",
+            "max_batches": limit,
+            "source_checkpoint_digest": source_checkpoint_digest,
+            "target_checkpoint_digest": target_checkpoint_digest,
+            "protected_batch_ids": tuple(sorted(protected_batch_ids)),
+            "retained_batch_ids": retained_batch_ids,
+            "removed_batch_ids": removed_batch_ids,
+            "retained_candidate_ids": tuple(sorted(protected_candidate_ids)),
+            "removed_candidate_ids": tuple(sorted(removed_candidate_ids)),
+            "removed_record_counts": dict(sorted(record_counts.items())),
+            "retention_pressure": retention_pressure,
+        }
+        constructor_payload = {
+            **result_payload,
+            "removed_record_counts": tuple(sorted(record_counts.items())),
+        }
+        result = StructuralLineageRetentionResult(
+            **{
+                key: value
+                for key, value in constructor_payload.items()
+                if key != "format"
+            },
+            result_digest=structural_lineage_retention_digest(result_payload),
+        )
+        self._last_structural_lineage_retention_result = result
+        self._last_structural_lineage_retention_policy = policy
+        return result
+
+    def _structural_lineage_checkpoint_digest(self) -> str:
+        """Digest lineage state without recursively including its last audit."""
+
+        checkpoint = self.native_checkpoint()
+        components = dict(checkpoint.get("components", {}))
+        runtime = components.get("structural_runtime")
+        if isinstance(runtime, Mapping):
+            runtime_without_audit = dict(runtime)
+            runtime_without_audit.pop("lineage_retention_result", None)
+            runtime_without_audit.pop("lineage_retention_policy", None)
+            runtime_without_audit.pop("lineage_retention_policy_migration", None)
+            components["structural_runtime"] = runtime_without_audit
+        checkpoint["components"] = components
+        return _checkpoint_digest(checkpoint)
+
+    @property
     def structural_growth_scheduler_state(self) -> StructuralGrowthScheduleState:
         """Return the checkpointed cursor for sealed-window scheduling."""
 
@@ -481,11 +831,88 @@ class TSKV8Adapter(Taiji):
             for key in sorted(self._structural_candidate_batches)
         )
 
+    def _structural_candidate_batch_has_live_lineage(
+        self,
+        batch: StructuralCandidateBatch,
+    ) -> bool:
+        """Keep batches that can still mutate or reverse native topology.
+
+        Retention is allowed to discard terminal audit entries, but it must
+        never discard an active reservation, a deferred candidate that can be
+        re-arbitrated, or an admitted candidate whose latest topology is
+        still rollbackable.
+        """
+
+        if batch.active_reservation:
+            return True
+        rollback_keys = {
+            (record.batch_id, record.candidate_id)
+            for record in self._structural_candidate_rollbacks
+            if record.status == "rolled_back"
+        }
+        return any(
+            state in {"reserved", "deferred"}
+            or (
+                state == "admitted"
+                and (batch.batch_id, candidate_id) not in rollback_keys
+            )
+            for candidate_id, state in batch.candidate_states
+        )
+
+    def _structural_candidate_has_live_lineage(self, candidate_id: str) -> bool:
+        """Return whether a candidate still has a live continuation contract."""
+
+        key = str(candidate_id)
+        for batch in self._structural_candidate_batches.values():
+            state = batch.state_by_candidate.get(key)
+            if state in {"reserved", "deferred"}:
+                return True
+            if state != "admitted":
+                continue
+            if not any(
+                record.batch_id == batch.batch_id
+                and record.candidate_id == key
+                and record.status == "rolled_back"
+                for record in self._structural_candidate_rollbacks
+            ):
+                return True
+        proposal_id = self._structural_candidate_proposals.get(key)
+        proposal = None if proposal_id is None else self._topology_proposals.get(proposal_id)
+        return proposal is not None and proposal.status == "pending"
+
+    def _trim_structural_lineage_records(
+        self,
+        records: list[Any],
+        *,
+        protected: Callable[[Any], bool],
+    ) -> list[Any]:
+        """Drop only oldest terminal records, preserving live lineage.
+
+        The configured limit is a retention target, not permission to delete
+        a record still required for continuation, reservation, or rollback.
+        If protected records alone exceed the target, the list remains above
+        the target and exposes retention pressure rather than corrupting the
+        active contract.
+        """
+
+        limit = self._lineage_limit()
+        if len(records) <= limit:
+            return records
+        removable = [index for index, record in enumerate(records) if not protected(record)]
+        drop_count = min(len(records) - limit, len(removable))
+        drop_indices = set(removable[:drop_count])
+        return [record for index, record in enumerate(records) if index not in drop_indices]
+
     def _record_structural_candidate_batch(self, batch: StructuralCandidateBatch) -> None:
         self._structural_candidate_batches[batch.batch_id] = batch
         limit = self._lineage_limit()
-        if len(self._structural_candidate_batches) > limit:
-            for batch_id in sorted(self._structural_candidate_batches)[:-limit]:
+        if len(self._structural_candidate_batches) <= limit:
+            return
+        for batch_id in tuple(self._structural_candidate_batches):
+            if len(self._structural_candidate_batches) <= limit:
+                break
+            candidate_batch = self._structural_candidate_batches[batch_id]
+            if not self._structural_candidate_batch_has_live_lineage(candidate_batch):
                 self._structural_candidate_batches.pop(batch_id, None)
 
     def _active_structural_candidate_reservations(
@@ -653,6 +1080,19 @@ class TSKV8Adapter(Taiji):
             raise ValueError(f"unknown structural candidate batch: {batch_id}")
         if not isinstance(continuations_by_candidate, Mapping):
             raise TypeError("candidate continuations must be a mapping")
+        selected_candidate_ids = set(batch.selected_candidate_ids)
+        unknown_candidates = tuple(
+            sorted(
+                str(candidate_id)
+                for candidate_id in continuations_by_candidate
+                if str(candidate_id) not in selected_candidate_ids
+            )
+        )
+        if unknown_candidates:
+            raise ValueError(
+                "candidate continuation contains candidates outside the selected batch: "
+                f"{unknown_candidates}"
+            )
         results: dict[str, Any] = {}
         current = batch
         candidate_states = current.state_by_candidate
@@ -752,9 +1192,10 @@ class TSKV8Adapter(Taiji):
         record: StructuralCandidateRollback,
     ) -> None:
         self._structural_candidate_rollbacks.append(record)
-        self._structural_candidate_rollbacks = self._structural_candidate_rollbacks[
-            -self._lineage_limit() :
-        ]
+        self._structural_candidate_rollbacks = self._trim_structural_lineage_records(
+            self._structural_candidate_rollbacks,
+            protected=lambda item: item.batch_id in self._structural_candidate_batches,
+        )
 
     def _record_structural_capacity_pressure(
         self,
@@ -1050,6 +1491,11 @@ class TSKV8Adapter(Taiji):
                 minimum_train_windows=minimum_train_windows,
                 require_holdout=require_holdout,
                 require_retention=require_retention,
+                historical_snapshots=tuple(
+                    item
+                    for item in self._structural_evidence_ledger.pressure_snapshots
+                    if item.network_id == str(network_id) and item.region_id == str(region_id)
+                ),
             )
             candidate = self.propose_structural_candidate_from_pressure(
                 projection,
@@ -1332,9 +1778,10 @@ class TSKV8Adapter(Taiji):
         result: StructuralCandidateValidation,
     ) -> None:
         self._structural_candidate_validations.append(result)
-        self._structural_candidate_validations = self._structural_candidate_validations[
-            -self._lineage_limit() :
-        ]
+        self._structural_candidate_validations = self._trim_structural_lineage_records(
+            self._structural_candidate_validations,
+            protected=lambda item: self._structural_candidate_has_live_lineage(item.candidate_id),
+        )
 
     def validate_structural_candidate_shadow(
         self,
@@ -1477,9 +1924,10 @@ class TSKV8Adapter(Taiji):
         decision: StructuralValidationGateDecision,
     ) -> None:
         self._structural_validation_gate_decisions.append(decision)
-        self._structural_validation_gate_decisions = self._structural_validation_gate_decisions[
-            -self._lineage_limit() :
-        ]
+        self._structural_validation_gate_decisions = self._trim_structural_lineage_records(
+            self._structural_validation_gate_decisions,
+            protected=lambda item: self._structural_candidate_has_live_lineage(item.candidate_id),
+        )
 
     def evaluate_structural_candidate_gate(
         self,
@@ -1624,10 +2072,34 @@ class TSKV8Adapter(Taiji):
         if existing is not None:
             return existing
         self._structural_validation_artifacts.append(artifact)
-        self._structural_validation_artifacts = self._structural_validation_artifacts[
-            -self._lineage_limit() :
-        ]
+        self._structural_validation_artifacts = self._trim_structural_lineage_records(
+            self._structural_validation_artifacts,
+            protected=lambda item: self._structural_candidate_has_live_lineage(item.candidate_id),
+        )
         return artifact
+
+    def _record_structural_validation_artifact_batch(
+        self,
+        artifact_batch: StructuralValidationArtifactBatch,
+    ) -> None:
+        self._structural_validation_artifact_batches[artifact_batch.batch_id] = artifact_batch
+        retained: dict[str, StructuralValidationArtifactBatch] = {}
+        for key, value in self._structural_validation_artifact_batches.items():
+            batch = self._structural_candidate_batches.get(key)
+            if key == artifact_batch.batch_id or (
+                batch is not None and self._structural_candidate_batch_has_live_lineage(batch)
+            ):
+                retained[key] = value
+        self._structural_validation_artifact_batches = retained
+        limit = self._lineage_limit()
+        if len(self._structural_validation_artifact_batches) <= limit:
+            return
+        for key in tuple(self._structural_validation_artifact_batches):
+            if len(self._structural_validation_artifact_batches) <= limit:
+                break
+            batch = self._structural_candidate_batches.get(key)
+            if batch is None or not self._structural_candidate_batch_has_live_lineage(batch):
+                self._structural_validation_artifact_batches.pop(key, None)
 
     def record_structural_validation_artifact(
         self,
@@ -1658,6 +2130,27 @@ class TSKV8Adapter(Taiji):
             ),
             None,
         )
+        existing_rollback = next(
+            (
+                record
+                for record in reversed(self._structural_candidate_rollbacks)
+                if record.batch_id in self._structural_candidate_batches
+                and record.candidate_id == artifact.candidate_id
+                and record.status == "rolled_back"
+            ),
+            None,
+        )
+        if existing_rollback is not None:
+            return {
+                "candidate_id": artifact.candidate_id,
+                "status": "rolled_back",
+                "validation_artifact": artifact.to_payload(),
+                "continuation": {
+                    "candidate_id": artifact.candidate_id,
+                    "status": "rolled_back",
+                    "rollback": existing_rollback.to_payload(),
+                },
+            }
         existing_admission = next(
             (
                 result
@@ -1750,6 +2243,26 @@ class TSKV8Adapter(Taiji):
             raise TypeError("validation artifacts must be a mapping")
         if not isinstance(replays_by_candidate, Mapping):
             raise TypeError("validation replays must be a mapping")
+        selected_candidate_ids = set(batch.selected_candidate_ids)
+        unknown_artifact_ids = tuple(
+            sorted(
+                str(candidate_id)
+                for candidate_id in artifacts_by_candidate
+                if str(candidate_id) not in selected_candidate_ids
+            )
+        )
+        unknown_replay_ids = tuple(
+            sorted(
+                str(candidate_id)
+                for candidate_id in replays_by_candidate
+                if str(candidate_id) not in selected_candidate_ids
+            )
+        )
+        if unknown_artifact_ids or unknown_replay_ids:
+            raise ValueError(
+                "validation artifact batch contains candidates outside the selected batch: "
+                f"artifacts={unknown_artifact_ids}, replays={unknown_replay_ids}"
+            )
 
         artifacts: dict[str, WorkbenchStructuralValidationArtifact] = {}
         parse_failures: dict[str, str] = {}
@@ -1894,7 +2407,7 @@ class TSKV8Adapter(Taiji):
                 if artifact_batch is None
                 else artifact_batch.merge(submitted_batch)
             )
-            self._structural_validation_artifact_batches[key] = artifact_batch
+            self._record_structural_validation_artifact_batch(artifact_batch)
         return {
             "batch": current.to_payload(),
             "artifact_batch": (
@@ -1908,9 +2421,13 @@ class TSKV8Adapter(Taiji):
         result: StructuralAdmissionResult,
     ) -> None:
         self._structural_admission_results.append(result)
-        self._structural_admission_results = self._structural_admission_results[
-            -self._lineage_limit() :
-        ]
+        self._structural_admission_results = self._trim_structural_lineage_records(
+            self._structural_admission_results,
+            protected=lambda item: (
+                item.status == "admitted"
+                and self._structural_candidate_has_live_lineage(item.candidate_id)
+            ),
+        )
 
     def admit_structural_candidate(
         self,
@@ -2065,6 +2582,88 @@ class TSKV8Adapter(Taiji):
         """Return checkpointable artifact collections keyed by candidate batch."""
 
         return tuple(self._structural_validation_artifact_batches.values())
+
+    @property
+    def structural_lineage_retention_result(self) -> StructuralLineageRetentionResult | None:
+        """Return the most recent explicit lineage-maintenance audit."""
+
+        return self._last_structural_lineage_retention_result
+
+    @property
+    def structural_lineage_retention_policy(self) -> StructuralLineageRetentionPolicy | None:
+        """Return the policy snapshot used by the most recent retention audit."""
+
+        return self._last_structural_lineage_retention_policy
+
+    @property
+    def structural_lineage_retention_policy_migration(
+        self,
+    ) -> StructuralLineageRetentionPolicyMigration | None:
+        """Return the most recent explicit policy migration audit."""
+
+        return self._last_structural_lineage_retention_policy_migration
+
+    def migrate_structural_lineage_retention_policy(
+        self,
+        target_policy: StructuralLineageRetentionPolicy | Mapping[str, Any],
+    ) -> StructuralLineageRetentionPolicyMigration:
+        """Commit one explicit adjacent policy migration without rewriting lineage."""
+
+        source = self._last_structural_lineage_retention_policy
+        if source is None:
+            raise ValueError("structural lineage policy migration requires a current policy")
+        target = self._resolve_structural_lineage_retention_policy(
+            max_batches=None,
+            retention_policy=target_policy,
+        )
+        migration = StructuralLineageRetentionPolicyMigration.create(
+            source,
+            target,
+            status="committed",
+        )
+        before_policy = self._last_structural_lineage_retention_policy
+        before_migration = self._last_structural_lineage_retention_policy_migration
+        try:
+            self._last_structural_lineage_retention_policy = target
+            self._last_structural_lineage_retention_policy_migration = migration
+        except Exception:
+            self._last_structural_lineage_retention_policy = before_policy
+            self._last_structural_lineage_retention_policy_migration = before_migration
+            raise
+        return migration
+
+    def rollback_structural_lineage_retention_policy_migration(
+        self,
+        migration: StructuralLineageRetentionPolicyMigration | Mapping[str, Any],
+    ) -> StructuralLineageRetentionPolicyMigration:
+        """Explicitly restore the source policy recorded by a committed migration."""
+
+        resolved = (
+            StructuralLineageRetentionPolicyMigration.from_payload(migration)
+            if isinstance(migration, Mapping)
+            else migration
+        )
+        if not isinstance(resolved, StructuralLineageRetentionPolicyMigration):
+            raise TypeError("structural lineage policy migration is invalid")
+        if resolved.status != "committed":
+            raise ValueError("only a committed structural lineage policy migration can roll back")
+        if self._last_structural_lineage_retention_policy != resolved.target_policy:
+            raise ValueError("structural lineage policy migration target is not current")
+        rolled_back = StructuralLineageRetentionPolicyMigration.create(
+            resolved.source_policy,
+            resolved.target_policy,
+            status="rolled_back",
+        )
+        before_policy = self._last_structural_lineage_retention_policy
+        before_migration = self._last_structural_lineage_retention_policy_migration
+        try:
+            self._last_structural_lineage_retention_policy = resolved.source_policy
+            self._last_structural_lineage_retention_policy_migration = rolled_back
+        except Exception:
+            self._last_structural_lineage_retention_policy = before_policy
+            self._last_structural_lineage_retention_policy_migration = before_migration
+            raise
+        return rolled_back
 
     @property
     def structural_validation_gate_decisions(
@@ -2498,9 +3097,23 @@ class TSKV8Adapter(Taiji):
         holdout_inputs_by_candidate: Mapping[str, Sequence[Any]],
         expected_activities_by_candidate: Mapping[str, Sequence[Any]],
         candidate_ids: Sequence[str] | None = None,
+        lineage_retention_max_batches: int | None = None,
+        lineage_retention_policy: StructuralLineageRetentionPolicy | Mapping[str, Any] | None = None,
     ) -> tuple[StructuralMaintenanceResult, ...]:
-        """Process candidates independently through materialize/validate/commit gates."""
+        """Process candidates and optionally run explicit lineage maintenance.
 
+        ``lineage_retention_max_batches`` and ``lineage_retention_policy`` are
+        intentionally opt-in. Existing callers retain candidate-only behavior;
+        a maintenance owner may provide either the compatibility integer or a
+        validated policy snapshot for one checkpointed, idempotent audit.
+        """
+
+        resolved_retention_policy = None
+        if lineage_retention_max_batches is not None or lineage_retention_policy is not None:
+            resolved_retention_policy = self._resolve_structural_lineage_retention_policy(
+                max_batches=lineage_retention_max_batches,
+                retention_policy=lineage_retention_policy,
+            )
         ids = (
             self._pending_structural_candidate_ids()
             if candidate_ids is None
@@ -2604,6 +3217,10 @@ class TSKV8Adapter(Taiji):
             self._record_structural_maintenance_result(result)
             results.append(result)
             results_by_candidate[candidate_id] = result
+        if resolved_retention_policy is not None:
+            self.compact_structural_lineage_history(
+                retention_policy=resolved_retention_policy,
+            )
         return tuple(results)
 
     @staticmethod
@@ -5587,10 +6204,24 @@ class TSKV8Adapter(Taiji):
                 return
         self._structural_proposal_candidates[candidate.candidate_id] = candidate
         limit = self._lineage_limit()
+        protected_ids = {
+            candidate_id
+            for batch in self._structural_candidate_batches.values()
+            for candidate_id, state in batch.candidate_states
+            if state in {"reserved", "deferred"}
+        }
         while len(self._structural_proposal_candidates) > limit:
-            self._structural_proposal_candidates.pop(
-                next(iter(self._structural_proposal_candidates))
+            evictable = next(
+                (
+                    candidate_id
+                    for candidate_id in self._structural_proposal_candidates
+                    if candidate_id not in protected_ids
+                ),
+                None,
             )
+            if evictable is None:
+                break
+            self._structural_proposal_candidates.pop(evictable)
 
     def _candidate_specification(
         self,
@@ -5939,6 +6570,21 @@ class TSKV8Adapter(Taiji):
             "admission_results": [
                 result.to_payload() for result in self._structural_admission_results
             ],
+            "lineage_retention_result": (
+                None
+                if self._last_structural_lineage_retention_result is None
+                else self._last_structural_lineage_retention_result.to_payload()
+            ),
+            "lineage_retention_policy": (
+                None
+                if self._last_structural_lineage_retention_policy is None
+                else self._last_structural_lineage_retention_policy.to_payload()
+            ),
+            "lineage_retention_policy_migration": (
+                None
+                if self._last_structural_lineage_retention_policy_migration is None
+                else self._last_structural_lineage_retention_policy_migration.to_payload()
+            ),
         }
 
     def _restore_structural_runtime(self, payload: Any) -> None:
@@ -5961,6 +6607,9 @@ class TSKV8Adapter(Taiji):
         self._structural_validation_artifact_batches = {}
         self._structural_validation_gate_decisions = []
         self._structural_admission_results = []
+        self._last_structural_lineage_retention_result = None
+        self._last_structural_lineage_retention_policy = None
+        self._last_structural_lineage_retention_policy_migration = None
         if payload is None:
             return
         if not isinstance(payload, Mapping):
@@ -5982,6 +6631,9 @@ class TSKV8Adapter(Taiji):
         validation_artifact_batches = payload.get("validation_artifact_batches", ())
         validation_gate_decisions = payload.get("validation_gate_decisions", ())
         admission_results = payload.get("admission_results", ())
+        lineage_retention_result = payload.get("lineage_retention_result")
+        lineage_retention_policy = payload.get("lineage_retention_policy")
+        lineage_retention_policy_migration = payload.get("lineage_retention_policy_migration")
         if not isinstance(candidates_payload, (tuple, list)):
             raise ValueError("structural proposal candidates must be a sequence")
         if not isinstance(candidate_proposals, Mapping):
@@ -5998,6 +6650,18 @@ class TSKV8Adapter(Taiji):
             raise ValueError("structural validation gate decisions must be a sequence")
         if not isinstance(admission_results, (tuple, list)):
             raise ValueError("structural admission results must be a sequence")
+        if lineage_retention_result is not None and not isinstance(
+            lineage_retention_result, Mapping
+        ):
+            raise ValueError("structural lineage retention result must be a mapping")
+        if lineage_retention_policy is not None and not isinstance(
+            lineage_retention_policy, Mapping
+        ):
+            raise ValueError("structural lineage retention policy must be a mapping")
+        if lineage_retention_policy_migration is not None and not isinstance(
+            lineage_retention_policy_migration, Mapping
+        ):
+            raise ValueError("structural lineage retention policy migration must be a mapping")
         if any(not isinstance(item, Mapping) for item in observations_payload):
             raise ValueError("structural runtime observation entry must be a mapping")
         observations = tuple(
@@ -6114,13 +6778,9 @@ class TSKV8Adapter(Taiji):
             if not isinstance(item, Mapping):
                 raise ValueError("structural validation artifact batch entry must be a mapping")
             artifact_batch = StructuralValidationArtifactBatch.from_payload(item)
-            existing = self._structural_validation_artifact_batches.get(
-                artifact_batch.batch_id
-            )
-            self._structural_validation_artifact_batches[artifact_batch.batch_id] = (
-                artifact_batch
-                if existing is None
-                else existing.merge(artifact_batch)
+            existing = self._structural_validation_artifact_batches.get(artifact_batch.batch_id)
+            self._record_structural_validation_artifact_batch(
+                artifact_batch if existing is None else existing.merge(artifact_batch)
             )
         for item in validation_gate_decisions:
             if not isinstance(item, Mapping):
@@ -6134,6 +6794,34 @@ class TSKV8Adapter(Taiji):
             self._record_structural_admission_result(
                 StructuralAdmissionResult.from_payload(item)
             )
+        restored_retention = (
+            None
+            if lineage_retention_result is None
+            else StructuralLineageRetentionResult.from_payload(lineage_retention_result)
+        )
+        restored_policy = (
+            None
+            if lineage_retention_policy is None
+            else StructuralLineageRetentionPolicy.from_payload(lineage_retention_policy)
+        )
+        restored_migration = (
+            None
+            if lineage_retention_policy_migration is None
+            else StructuralLineageRetentionPolicyMigration.from_payload(
+                lineage_retention_policy_migration
+            )
+        )
+        if restored_policy is not None and restored_retention is None:
+            raise ValueError("structural lineage retention policy has no matching result")
+        if (
+            restored_policy is not None
+            and restored_retention is not None
+            and restored_policy.max_batches != restored_retention.max_batches
+        ):
+            raise ValueError("structural lineage retention policy does not match result")
+        self._last_structural_lineage_retention_result = restored_retention
+        self._last_structural_lineage_retention_policy = restored_policy
+        self._last_structural_lineage_retention_policy_migration = restored_migration
 
     def attach_world_dynamics(self, learner: WorldDynamicsLearner | None) -> None:
         """Attach a Taiji-owned predictor used for runtime intervention scoring."""

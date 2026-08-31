@@ -1,0 +1,30 @@
+{
+  "format": "taiji-w7-r5c-s27-structural-lineage-policy-v1",
+  "retention_limit": 1,
+  "policy": {
+    "format": "taiji-structural-lineage-retention-policy-v1",
+    "revision": 1,
+    "max_batches": 1,
+    "protection_rules": [
+      "active_reservation",
+      "pending_candidate",
+      "pending_topology_proposal",
+      "rollbackable_admission"
+    ],
+    "policy_digest": "16cc51d6a8258df55bfc1c47daf66288285fb7cf4080fb681bc9862551f5a2fb"
+  },
+  "metrics": {
+    "policy_roundtrip_is_canonical": true,
+    "legacy_and_policy_entries_share_semantics": true,
+    "policy_checkpoint_restore_is_consistent": true,
+    "policy_switch_affects_only_subsequent_maintenance": true,
+    "invalid_policy_combination_is_atomic": true,
+    "tampered_policy_fails_closed": true,
+    "inconsistent_checkpoint_policy_fails_closed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "retention is controlled by one versioned content-addressed safe policy; the legacy integer is only a compatibility conversion, policy state checkpoints with its result, and malformed or inconsistent policy inputs fail closed"
+  },
+  "boundary": "This canary covers native CPU retention policy materialization. It does not claim policy-driven growth, background cleanup, open-domain quality, unlimited growth, CUDA, frontend behavior, or CI."
+}

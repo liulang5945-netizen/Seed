@@ -1,0 +1,29 @@
+{
+  "format": "taiji-w7-r5c-s33-structural-lineage-artifact-rollback-v1",
+  "batch_id": "batch:structural:dfd02d10914dfafbb4b32489c4dee8bd",
+  "candidate_ids": [
+    "candidate:pressure:workbench:workbench.docs:2:241cfcd29ed5",
+    "candidate:pressure:workbench:workbench.code:2:a10974098f71"
+  ],
+  "artifact_digests": [
+    "863347e5572d6b48df49727841dfeb70baf0cee52368324288d2691c76f7658a",
+    "3fa9d0d87544332b6b44c215b4620664946e213c73d34a48c9f6e8f52285820f"
+  ],
+  "first_rollback_status": "rolled_back",
+  "second_rollback_status": "rolled_back",
+  "retention_status": "compacted",
+  "metrics": {
+    "both_candidates_admitted": true,
+    "artifact_survives_rollback_checkpoint": true,
+    "rolled_back_artifact_cannot_reactivate": true,
+    "first_rollback_restores_budget": true,
+    "terminal_artifact_lineage_compacts_atomically": true,
+    "post_compaction_replay_fails_closed_without_mutation": true,
+    "final_restart_does_not_resurrect_rollback_lineage": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "rollback must be an explicit terminal boundary for replay-bound artifacts; artifact provenance survives the rollback checkpoint, terminal lineage is compacted atomically, and old replay cannot reactivate or resurrect it"
+  },
+  "boundary": "This canary covers native CPU artifact rollback, retention, and checkpoint recovery. It does not claim open-domain quality, unlimited growth, CUDA, frontend behavior, or CI."
+}

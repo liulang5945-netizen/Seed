@@ -1,0 +1,24 @@
+{
+  "format": "taiji-w7-r5c-s47-runtime-artifact-store-audit-projection-v1",
+  "active_batch_id": "batch:structural:4bc2820359215dd144b8715be7be4e64",
+  "terminal_batch_id": "batch:structural:6d138d38d69b67cce5ae2e8c79aaa85b",
+  "artifact_digests": [
+    "9a56e4c40500b17ffbc7e589b287d53bd6719f1fa169a78f4523329d6aed99b2",
+    "965431dfccf181457e4f40dcfbeeb5c1fb86eecf701f23aa9a36f7fcc0710f42"
+  ],
+  "projection_audit_digest": "56ac4f5899e5289990b3d918bd33de5d813702d4c8c12849f3f45face0d56bab",
+  "orphan_projection_audit_digest": "d69b5e587d2f8ff2a9266eaefbd4836273ca52bee92a60737ce4ab84f7927210",
+  "metrics": {
+    "same_checkpoint_projection_is_stable": true,
+    "projection_is_read_only": true,
+    "checkpoint_restore_preserves_projection": true,
+    "orphan_projection_is_not_consumption_authority": true,
+    "tamper_fails_closed_without_runtime_mutation": true,
+    "lifecycle_actions_remain_explicit": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "SeedRuntime may project external artifact-store facts and runtime visibility only as a deterministic read-only observation; it must not register, consume, retain, or mutate external artifacts"
+  },
+  "boundary": "This canary covers native CPU read-only SeedRuntime/store observation. It does not claim automatic registration, deletion, unlimited storage, open-domain quality, unlimited growth, CUDA, frontend behavior, Windows shell, CI completion, or general intelligence."
+}

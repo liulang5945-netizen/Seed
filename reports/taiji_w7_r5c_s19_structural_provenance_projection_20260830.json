@@ -1,0 +1,126 @@
+{
+  "format": "taiji-w7-r5c-s19-structural-provenance-projection-v1",
+  "projection_before": {
+    "format": "taiji-structural-pressure-projection-v1",
+    "network_id": "standalone:adaptive.cortex",
+    "region_id": "region:pressure-canary",
+    "first_tick": 1,
+    "last_tick": 3,
+    "window_digests": [
+      "c3189a9bc6c985c14e4c8fd3ca893c0eab57127318a5d16392dc2cbd884f6d18",
+      "02e206ed51091b20bb0f9d1ca67d83b09bf4e81902530166fb96111597aacd67",
+      "c6149dfd5744f614d2e8e355c1aa9b67bdd9226b31f504e00bfb0a20042f7cb4"
+    ],
+    "train_task_slice_ids": [
+      "task:one",
+      "task:two"
+    ],
+    "holdout_task_slice_ids": [
+      "task:holdout"
+    ],
+    "retention_task_slice_ids": [],
+    "train_window_count": 2,
+    "holdout_window_count": 1,
+    "retention_window_count": 0,
+    "prediction_observation_count": 2,
+    "mean_prediction_error": 0.7,
+    "mean_resource_state": 0.8,
+    "mean_holdout_transfer": 0.8,
+    "evidence_ids": [
+      "projection:train:one",
+      "projection:train:two",
+      "projection:holdout"
+    ],
+    "projection_digest": "ada987cf61f081fc9c4843f686487f9630632978cbee33fc206fdc449359d943"
+  },
+  "projection_after": {
+    "format": "taiji-structural-pressure-projection-v1",
+    "network_id": "standalone:adaptive.cortex",
+    "region_id": "region:pressure-canary",
+    "first_tick": 1,
+    "last_tick": 3,
+    "window_digests": [
+      "c3189a9bc6c985c14e4c8fd3ca893c0eab57127318a5d16392dc2cbd884f6d18",
+      "02e206ed51091b20bb0f9d1ca67d83b09bf4e81902530166fb96111597aacd67",
+      "c6149dfd5744f614d2e8e355c1aa9b67bdd9226b31f504e00bfb0a20042f7cb4"
+    ],
+    "train_task_slice_ids": [
+      "task:one",
+      "task:two"
+    ],
+    "holdout_task_slice_ids": [
+      "task:holdout"
+    ],
+    "retention_task_slice_ids": [],
+    "train_window_count": 2,
+    "holdout_window_count": 1,
+    "retention_window_count": 0,
+    "prediction_observation_count": 2,
+    "mean_prediction_error": 0.7,
+    "mean_resource_state": 0.8,
+    "mean_holdout_transfer": 0.8,
+    "evidence_ids": [
+      "projection:train:one",
+      "projection:train:two",
+      "projection:holdout"
+    ],
+    "projection_digest": "ada987cf61f081fc9c4843f686487f9630632978cbee33fc206fdc449359d943"
+  },
+  "schedule": {
+    "format": "taiji-structural-growth-schedule-result-v1",
+    "status": "candidate_created",
+    "trigger_tick": 3,
+    "new_window_digests": [
+      "c3189a9bc6c985c14e4c8fd3ca893c0eab57127318a5d16392dc2cbd884f6d18",
+      "02e206ed51091b20bb0f9d1ca67d83b09bf4e81902530166fb96111597aacd67",
+      "c6149dfd5744f614d2e8e355c1aa9b67bdd9226b31f504e00bfb0a20042f7cb4"
+    ],
+    "projection_digest": "ada987cf61f081fc9c4843f686487f9630632978cbee33fc206fdc449359d943",
+    "candidate_id": "candidate:pressure:standalone:adaptive.cortex:region:pressure-canary:1:ada987cf61f0",
+    "reason": "",
+    "scheduler_revision": 1
+  },
+  "repeated_schedule": {
+    "format": "taiji-structural-growth-schedule-result-v1",
+    "status": "waiting",
+    "trigger_tick": 3,
+    "new_window_digests": [],
+    "projection_digest": null,
+    "candidate_id": null,
+    "reason": "no_new_sealed_window",
+    "scheduler_revision": 1
+  },
+  "compaction": {
+    "format": "taiji-structural-evidence-compaction-result-v1",
+    "status": "compacted",
+    "source_ledger_digest": "1c6387010e20ef2df2795f3c0b6458116558aa69cdceef6c5c6625cadfdcc95f",
+    "target_ledger_digest": "8ff5231ed9de4ae2313c46a58261bd6d456e0078548ffccbf343dcec81660be3",
+    "scheduler_revision": 1,
+    "compacted_window_digests": [
+      "c3189a9bc6c985c14e4c8fd3ca893c0eab57127318a5d16392dc2cbd884f6d18",
+      "02e206ed51091b20bb0f9d1ca67d83b09bf4e81902530166fb96111597aacd67"
+    ],
+    "retained_window_digests": [
+      "c6149dfd5744f614d2e8e355c1aa9b67bdd9226b31f504e00bfb0a20042f7cb4"
+    ],
+    "compacted_evidence_count": 2,
+    "result_digest": "f5219c1ade919e2f8c4732a4b041ae806de7ff262318c81103db2c22392687e5"
+  },
+  "checkpoint": {
+    "candidate_count": 1,
+    "pressure_snapshot_count": 1
+  },
+  "metrics": {
+    "candidate_created_from_active_evidence": true,
+    "projection_identity_survives_compaction": true,
+    "compaction_keeps_consumed_lineage_out_of_active_windows": true,
+    "repeated_schedule_does_not_create_candidate": true,
+    "checkpoint_preserves_candidate_and_pressure_snapshot": true,
+    "tampered_pressure_snapshot_fails_closed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "compacted history may restore the prior pressure identity as read-only provenance, but only unseen active windows can trigger a new schedule or candidate"
+  },
+  "boundary": "This canary verifies provenance-aware projection and candidate deduplication; it does not claim open-domain quality, unlimited growth, CUDA, or CI completion."
+}

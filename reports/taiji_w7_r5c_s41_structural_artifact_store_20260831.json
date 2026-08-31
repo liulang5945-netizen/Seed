@@ -1,0 +1,17 @@
+{
+  "format": "taiji-w7-r5c-s41-structural-artifact-store-v1",
+  "artifact_digest": "ded61618e0f06e3b6af61a31c5fc0d8301864472655276ed030c8326ca38726c",
+  "measurement_digest": "f0a094edd7c7f72e5506d66a26aca098c4fe059efb7cf73c2282ec30ce16fcdc",
+  "batch_id": "batch:structural:d2e0d8a3eec31e42b9a8a4b8ff11b406",
+  "metrics": {
+    "digest_named_canonical_roundtrip": true,
+    "concurrent_initial_write_is_idempotent": true,
+    "external_payload_consumes_through_runtime_contract": true,
+    "tamper_and_content_collision_fail_closed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "measured artifacts must survive immutable digest-addressed external handoff, be consumable only through the existing runtime batch contract, and reject concurrent corruption, tamper, and byte collisions"
+  },
+  "boundary": "This canary covers native CPU measured-artifact persistence and handoff. It does not claim automatic deletion, unbounded storage, open-domain quality, unlimited growth, CUDA, frontend behavior, Windows shell, CI completion, or general intelligence."
+}

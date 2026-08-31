@@ -1,0 +1,102 @@
+{
+  "format": "taiji-w7-r5c-s28-structural-lineage-policy-migration-v1",
+  "source_policy": {
+    "format": "taiji-structural-lineage-retention-policy-v1",
+    "revision": 1,
+    "max_batches": 1,
+    "protection_rules": [
+      "active_reservation",
+      "pending_candidate",
+      "pending_topology_proposal",
+      "rollbackable_admission"
+    ],
+    "policy_digest": "16cc51d6a8258df55bfc1c47daf66288285fb7cf4080fb681bc9862551f5a2fb"
+  },
+  "target_policy": {
+    "format": "taiji-structural-lineage-retention-policy-v1",
+    "revision": 2,
+    "max_batches": 1,
+    "protection_rules": [
+      "active_reservation",
+      "pending_candidate",
+      "pending_topology_proposal",
+      "rollbackable_admission"
+    ],
+    "mode": "terminal_only",
+    "policy_digest": "2206fee63cbe65857d6971aff7fb0f27b820c369f44ef2102a22a85948cabd98"
+  },
+  "migration": {
+    "format": "taiji-structural-lineage-retention-policy-migration-v1",
+    "status": "committed",
+    "source_policy": {
+      "format": "taiji-structural-lineage-retention-policy-v1",
+      "revision": 1,
+      "max_batches": 1,
+      "protection_rules": [
+        "active_reservation",
+        "pending_candidate",
+        "pending_topology_proposal",
+        "rollbackable_admission"
+      ],
+      "policy_digest": "16cc51d6a8258df55bfc1c47daf66288285fb7cf4080fb681bc9862551f5a2fb"
+    },
+    "target_policy": {
+      "format": "taiji-structural-lineage-retention-policy-v1",
+      "revision": 2,
+      "max_batches": 1,
+      "protection_rules": [
+        "active_reservation",
+        "pending_candidate",
+        "pending_topology_proposal",
+        "rollbackable_admission"
+      ],
+      "mode": "terminal_only",
+      "policy_digest": "2206fee63cbe65857d6971aff7fb0f27b820c369f44ef2102a22a85948cabd98"
+    },
+    "migration_digest": "7f513a7506abfd992cd9fcd28ad4ea71439786fbc233249e591b4bb4cddbed37"
+  },
+  "rolled_back": {
+    "format": "taiji-structural-lineage-retention-policy-migration-v1",
+    "status": "rolled_back",
+    "source_policy": {
+      "format": "taiji-structural-lineage-retention-policy-v1",
+      "revision": 1,
+      "max_batches": 1,
+      "protection_rules": [
+        "active_reservation",
+        "pending_candidate",
+        "pending_topology_proposal",
+        "rollbackable_admission"
+      ],
+      "policy_digest": "16cc51d6a8258df55bfc1c47daf66288285fb7cf4080fb681bc9862551f5a2fb"
+    },
+    "target_policy": {
+      "format": "taiji-structural-lineage-retention-policy-v1",
+      "revision": 2,
+      "max_batches": 1,
+      "protection_rules": [
+        "active_reservation",
+        "pending_candidate",
+        "pending_topology_proposal",
+        "rollbackable_admission"
+      ],
+      "mode": "terminal_only",
+      "policy_digest": "2206fee63cbe65857d6971aff7fb0f27b820c369f44ef2102a22a85948cabd98"
+    },
+    "migration_digest": "5827d3144432730cca03417b13ec4edf41fee0d0f5b27a78381bd922851d9f3a"
+  },
+  "metrics": {
+    "v1_to_latest_migration_is_explicit_and_safe": true,
+    "migration_checkpoint_restore_is_consistent": true,
+    "rollback_preserves_old_audit_and_structure": true,
+    "no_request_does_not_implicitly_migrate": true,
+    "invalid_migration_is_atomic": true,
+    "tampered_migration_fails_closed": true,
+    "inconsistent_checkpoint_migration_fails_closed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "retention policy revision migration is explicit, adjacent, safe-semantic preserving, checkpointable and reversible; malformed or inconsistent migrations fail closed"
+  },
+  "boundary": "This canary covers native CPU policy lifecycle. It does not claim implicit migration, background cleanup, policy-driven growth, open-domain quality, unlimited growth, CUDA, frontend behavior, or CI."
+}

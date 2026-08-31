@@ -1,0 +1,18 @@
+{
+  "format": "taiji-w7-r5c-s50-structural-artifact-measurement-bundle-recovery-v1",
+  "batch_id": "batch:structural:e572ae067050ae85a4bf1b5e0ae758f6",
+  "artifact_digest": "3cf5b539094312ca336532085ffe695a6d71d3bd39ac9af2eeb9337e7371b9a0",
+  "measurement_digest": "f0a094edd7c7f72e5506d66a26aca098c4fe059efb7cf73c2282ec30ce16fcdc",
+  "metrics": {
+    "sidecar_only_fails_closed_without_deletion": true,
+    "sidecar_only_recovers_by_explicit_retry": true,
+    "artifact_only_legacy_upgrades_explicitly": true,
+    "conflicting_retry_does_not_overwrite": true,
+    "recovery_is_runtime_read_only": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "partial measured bundles must fail closed without cleanup and recover only through an explicit idempotent complete-bundle retry"
+  },
+  "boundary": "This canary covers native CPU partial measurement-bundle recovery. It does not claim automatic repair, deletion, unlimited storage, open-domain quality, CUDA, frontend behavior, Windows shell, CI completion, or general intelligence."
+}

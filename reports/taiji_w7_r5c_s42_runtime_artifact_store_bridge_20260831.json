@@ -1,0 +1,17 @@
+{
+  "format": "taiji-w7-r5c-s42-runtime-artifact-store-bridge-v1",
+  "batch_id": "batch:structural:8b1c7e54e56a74bac46390a2f70bccc3",
+  "candidate_id": "candidate:pressure:workbench:workbench.docs:1:3b01086eebd8",
+  "artifact_digest": "45c19dd0c83f795975124790c1e8587e66615686bbf8f9bdfdec3be71a3a742b",
+  "metrics": {
+    "unknown_key_rejected_before_store_resolution": true,
+    "missing_store_artifact_rejected_atomically": true,
+    "external_digest_admission_uses_native_contract": true,
+    "bridge_preserves_single_budget_charge": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "SeedRuntime must validate candidate-to-artifact references before mutation, then route valid external artifacts through the existing native batch contract with one budget charge and idempotent repeat"
+  },
+  "boundary": "This canary covers native CPU SeedRuntime artifact-store integration. It does not claim automatic deletion, unlimited growth, open-domain quality, CUDA, frontend behavior, Windows shell, CI completion, or general intelligence."
+}

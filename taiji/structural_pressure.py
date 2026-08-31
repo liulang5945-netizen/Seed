@@ -13,7 +13,10 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
 
-from .structural_evidence import StructuralEvidenceWindowSummary
+from .structural_evidence import (
+    StructuralEvidencePressureSnapshot,
+    StructuralEvidenceWindowSummary,
+)
 
 STRUCTURAL_PRESSURE_PROJECTION_FORMAT = "taiji-structural-pressure-projection-v1"
 
@@ -188,6 +191,7 @@ def project_structural_growth_pressure(
     minimum_train_windows: int = 2,
     require_holdout: bool = True,
     require_retention: bool = False,
+    historical_snapshots: Sequence[StructuralEvidencePressureSnapshot] = (),
 ) -> StructuralGrowthEvidenceProjection:
     """Build a non-mutating pressure projection from sealed windows.
 
@@ -199,13 +203,22 @@ def project_structural_growth_pressure(
     if minimum_train_task_slices <= 0 or minimum_train_windows <= 0:
         raise ValueError("structural pressure minimums must be positive")
     items = tuple(summaries)
-    if not items:
+    snapshots = tuple(historical_snapshots)
+    if not items and not snapshots:
         raise ValueError("structural pressure requires sealed evidence windows")
     if any(not isinstance(item, StructuralEvidenceWindowSummary) for item in items):
         raise TypeError("structural pressure accepts sealed evidence window summaries")
+    if any(not isinstance(item, StructuralEvidencePressureSnapshot) for item in snapshots):
+        raise TypeError("structural pressure accepts evidence pressure snapshots")
     if len({item.window_digest for item in items}) != len(items):
         raise ValueError("structural pressure cannot reuse a window digest")
+    snapshot_window_digests = {
+        digest for snapshot in snapshots for digest in snapshot.window_digests
+    }
+    if snapshot_window_digests & {item.window_digest for item in items}:
+        raise ValueError("structural pressure cannot reuse snapshot window digests")
     substrates = {(item.network_id, item.region_id) for item in items}
+    substrates.update((item.network_id, item.region_id) for item in snapshots)
     if len(substrates) != 1:
         raise ValueError("structural pressure windows must share one substrate")
 
@@ -220,75 +233,126 @@ def project_structural_growth_pressure(
     train = tuple(item for item in items if partition(item) == "train")
     holdout = tuple(item for item in items if partition(item) == "holdout")
     retention = tuple(item for item in items if partition(item) == "retention")
-    if len(train) < minimum_train_windows:
+    train_window_count = len(train) + sum(item.train_window_count for item in snapshots)
+    holdout_window_count = len(holdout) + sum(item.holdout_window_count for item in snapshots)
+    retention_window_count = len(retention) + sum(item.retention_window_count for item in snapshots)
+    if train_window_count < minimum_train_windows:
         raise ValueError("structural pressure lacks enough train windows")
     train_task_slices = tuple(
         dict.fromkeys(
-            task_slice
-            for item in train
-            for task_slice in item.task_slice_ids
-            if task_slice
+            [
+                task_slice
+                for snapshot in snapshots
+                for task_slice in snapshot.train_task_slice_ids
+                if task_slice
+            ]
+            + [
+                task_slice
+                for item in train
+                for task_slice in item.task_slice_ids
+                if task_slice
+            ]
         )
     )
     if len(train_task_slices) < minimum_train_task_slices:
         raise ValueError("structural pressure lacks independent train task slices")
-    if require_holdout and not holdout:
+    if require_holdout and holdout_window_count <= 0:
         raise ValueError("structural pressure requires a separate holdout window")
-    if require_retention and not retention:
+    if require_retention and retention_window_count <= 0:
         raise ValueError("structural pressure requires a separate retention window")
     if any(item.mean_prediction_error is None for item in train):
         raise ValueError("train windows require prediction error evidence")
-    train_errors = [float(item.mean_prediction_error) for item in train]
-    train_resource_states = [1.0 - float(item.mean_resource_pressure) for item in train]
+    train_error_sum = sum(item.train_prediction_error_sum for item in snapshots) + sum(
+        float(item.mean_prediction_error) for item in train
+    )
+    train_resource_state_sum = sum(item.train_resource_state_sum for item in snapshots) + sum(
+        1.0 - float(item.mean_resource_pressure) for item in train
+    )
     holdout_transfer = (
         None
-        if not holdout
-        else sum(float(item.mean_holdout_transfer) for item in holdout) / len(holdout)
+        if holdout_window_count <= 0
+        else (
+            sum(item.holdout_transfer_sum for item in snapshots)
+            + sum(float(item.mean_holdout_transfer) for item in holdout)
+        )
+        / holdout_window_count
     )
     evidence_ids = tuple(
-        dict.fromkeys(evidence_id for item in items for evidence_id in item.evidence_ids)
+        dict.fromkeys(
+            evidence_id
+            for snapshot in snapshots
+            for evidence_id in snapshot.evidence_ids
+        )
+        | dict.fromkeys(evidence_id for item in items for evidence_id in item.evidence_ids)
     )
+    source_items = (*snapshots, *items)
     payload = {
         "format": STRUCTURAL_PRESSURE_PROJECTION_FORMAT,
-        "network_id": items[0].network_id,
-        "region_id": items[0].region_id,
-        "first_tick": min(item.first_tick for item in items),
-        "last_tick": max(item.last_tick for item in items),
-        "window_digests": [item.window_digest for item in items],
+        "network_id": source_items[0].network_id,
+        "region_id": source_items[0].region_id,
+        "first_tick": min(item.first_tick for item in source_items),
+        "last_tick": max(item.last_tick for item in source_items),
+        "window_digests": [
+            digest
+            for snapshot in snapshots
+            for digest in snapshot.window_digests
+        ] + [item.window_digest for item in items],
         "train_task_slice_ids": list(train_task_slices),
         "holdout_task_slice_ids": list(
             dict.fromkeys(
-                task_slice for item in holdout for task_slice in item.task_slice_ids if task_slice
+                [
+                    task_slice
+                    for snapshot in snapshots
+                    for task_slice in snapshot.holdout_task_slice_ids
+                    if task_slice
+                ]
+                + [
+                    task_slice
+                    for item in holdout
+                    for task_slice in item.task_slice_ids
+                    if task_slice
+                ]
             )
         ),
         "retention_task_slice_ids": list(
             dict.fromkeys(
-                task_slice for item in retention for task_slice in item.task_slice_ids if task_slice
+                [
+                    task_slice
+                    for snapshot in snapshots
+                    for task_slice in snapshot.retention_task_slice_ids
+                    if task_slice
+                ]
+                + [
+                    task_slice
+                    for item in retention
+                    for task_slice in item.task_slice_ids
+                    if task_slice
+                ]
             )
         ),
-        "train_window_count": len(train),
-        "holdout_window_count": len(holdout),
-        "retention_window_count": len(retention),
+        "train_window_count": train_window_count,
+        "holdout_window_count": holdout_window_count,
+        "retention_window_count": retention_window_count,
         "prediction_observation_count": sum(
             item.prediction_observation_count for item in train
-        ),
-        "mean_prediction_error": sum(train_errors) / len(train_errors),
-        "mean_resource_state": sum(train_resource_states) / len(train_resource_states),
+        ) + sum(item.prediction_observation_count for item in snapshots),
+        "mean_prediction_error": train_error_sum / train_window_count,
+        "mean_resource_state": train_resource_state_sum / train_window_count,
         "mean_holdout_transfer": holdout_transfer,
         "evidence_ids": list(evidence_ids),
     }
     return StructuralGrowthEvidenceProjection(
-        network_id=items[0].network_id,
-        region_id=items[0].region_id,
+        network_id=source_items[0].network_id,
+        region_id=source_items[0].region_id,
         first_tick=int(payload["first_tick"]),
         last_tick=int(payload["last_tick"]),
         window_digests=tuple(payload["window_digests"]),
         train_task_slice_ids=tuple(payload["train_task_slice_ids"]),
         holdout_task_slice_ids=tuple(payload["holdout_task_slice_ids"]),
         retention_task_slice_ids=tuple(payload["retention_task_slice_ids"]),
-        train_window_count=len(train),
-        holdout_window_count=len(holdout),
-        retention_window_count=len(retention),
+        train_window_count=train_window_count,
+        holdout_window_count=holdout_window_count,
+        retention_window_count=retention_window_count,
         prediction_observation_count=int(payload["prediction_observation_count"]),
         mean_prediction_error=float(payload["mean_prediction_error"]),
         mean_resource_state=float(payload["mean_resource_state"]),

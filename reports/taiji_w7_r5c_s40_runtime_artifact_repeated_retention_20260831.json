@@ -1,0 +1,132 @@
+{
+  "format": "taiji-w7-r5c-s40-runtime-artifact-repeated-retention-v1",
+  "active_batch_id": "batch:structural:0a5f72bcbc6c8fa2d6a58a3f5b7e3485",
+  "removed_terminal_batch_ids": [
+    "batch:structural:9c59f58ba39190485f992d4f05782f4e",
+    "batch:structural:41defe51e8b37f4d5fed924a20aa37f7",
+    "batch:structural:577c902ed71024c277b79df6c53a00d5",
+    "batch:structural:ca97b96d639533e53e1928eb97f13f1f"
+  ],
+  "cycles": [
+    {
+      "round": 2,
+      "batch_id": "batch:structural:9c59f58ba39190485f992d4f05782f4e",
+      "source_window_count": 6,
+      "first_artifact_digest": "1d7d1870b856cc8f616f29bdcd064791e03c12c2f24b56a640311bbe2cf5b01a",
+      "second_artifact_digest": "6711a727a8dd4baeb4def5e788646d76be9a9a64b9d4f1dc6ab85bb29fc40bee",
+      "first_parent_bound": true,
+      "second_parent_bound": true,
+      "first_measurement_digest": "764a699f753fd2518ff844184414da51b62a4abf5eb2a2604c269d3817ed8e69",
+      "second_measurement_digest": "d04d89080bf075d70b2d4becb71cbf410316fd101a976d636e4b2b792d944c6a",
+      "retention_digest": "e333195ed464b59ae4a7dadd7bb5b062060dec0aa467027967ee0202222fd5a5",
+      "maintenance_results": []
+    },
+    {
+      "round": 3,
+      "batch_id": "batch:structural:41defe51e8b37f4d5fed924a20aa37f7",
+      "source_window_count": 6,
+      "first_artifact_digest": "80af85ee39924e1d870853641ee72bda0c2387f41e6adc994b86c72fda098632",
+      "second_artifact_digest": "7f5ea099b9605aa9f8f4c3d5f2db28741e67a2b47c12ec612e3d18e9782cc818",
+      "first_parent_bound": true,
+      "second_parent_bound": true,
+      "first_measurement_digest": "764a699f753fd2518ff844184414da51b62a4abf5eb2a2604c269d3817ed8e69",
+      "second_measurement_digest": "d04d89080bf075d70b2d4becb71cbf410316fd101a976d636e4b2b792d944c6a",
+      "retention_digest": "16fde845067675e8123b52b03a23653c54ae07eb0aa4373c3dfd8a11d6107b71",
+      "maintenance_results": []
+    },
+    {
+      "round": 4,
+      "batch_id": "batch:structural:577c902ed71024c277b79df6c53a00d5",
+      "source_window_count": 6,
+      "first_artifact_digest": "00f17ed3f6ecb5fda47943b5905816d89133daeb85652990b5f1102dbce57122",
+      "second_artifact_digest": "cfc9f330f5328d53a76eb247b885fdaf1c8658f00a77a38ad6d42dbad7260336",
+      "first_parent_bound": true,
+      "second_parent_bound": true,
+      "first_measurement_digest": "764a699f753fd2518ff844184414da51b62a4abf5eb2a2604c269d3817ed8e69",
+      "second_measurement_digest": "d04d89080bf075d70b2d4becb71cbf410316fd101a976d636e4b2b792d944c6a",
+      "retention_digest": "ce3be924c958ef2afa332b87ebb67831da98c2f9385a6eeb38acd3db469e3c21",
+      "maintenance_results": []
+    },
+    {
+      "round": 5,
+      "batch_id": "batch:structural:ca97b96d639533e53e1928eb97f13f1f",
+      "source_window_count": 6,
+      "first_artifact_digest": "a25cf22033b7ddfc5d2c6c625f6cafb1717ade77d6bf9a850604e713f87854c8",
+      "second_artifact_digest": "d48fd877b7458a188a9b9781712b1f1460c17d0746a002800087e45869451063",
+      "first_parent_bound": true,
+      "second_parent_bound": true,
+      "first_measurement_digest": "764a699f753fd2518ff844184414da51b62a4abf5eb2a2604c269d3817ed8e69",
+      "second_measurement_digest": "d04d89080bf075d70b2d4becb71cbf410316fd101a976d636e4b2b792d944c6a",
+      "retention_digest": "933e61ad909c1dba04402bf2d0b09f73623e7bab65dbdeac9a8ce731288cc764",
+      "maintenance_results": []
+    }
+  ],
+  "runtime_ticks": [
+    6,
+    12,
+    18,
+    24,
+    30
+  ],
+  "final_record_counts": {
+    "candidate_batches": 1,
+    "candidate_rollbacks": 0,
+    "validation_artifacts": 0,
+    "artifact_batches": 0,
+    "workbench_schedule_results": 1,
+    "capacity_pressure_snapshots": 2
+  },
+  "retention": {
+    "format": "taiji-structural-lineage-retention-result-v1",
+    "status": "compacted",
+    "max_batches": 1,
+    "source_checkpoint_digest": "2dfcdf799dfb92621099a48f3e17483fa3b68d0c12ec140f270994ba181e1006",
+    "target_checkpoint_digest": "777df3c312d98e9a814576b44f07a9ed0d32773a242817dc2786679065f3b1f1",
+    "protected_batch_ids": [
+      "batch:structural:0a5f72bcbc6c8fa2d6a58a3f5b7e3485"
+    ],
+    "retained_batch_ids": [
+      "batch:structural:0a5f72bcbc6c8fa2d6a58a3f5b7e3485"
+    ],
+    "removed_batch_ids": [
+      "batch:structural:ca97b96d639533e53e1928eb97f13f1f"
+    ],
+    "retained_candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:c9ca89866371",
+      "candidate:pressure:workbench:workbench.docs:1:503a78d385ff"
+    ],
+    "removed_candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:5:52b789c1f0fa",
+      "candidate:pressure:workbench:workbench.docs:5:2345fc05ac7f"
+    ],
+    "removed_record_counts": {
+      "admission_results": 2,
+      "candidate_proposals": 2,
+      "candidate_rollbacks": 2,
+      "candidate_validations": 2,
+      "growth_schedule_results": 2,
+      "maintenance_results": 0,
+      "proposal_candidates": 0,
+      "validation_artifact_batches": 1,
+      "validation_artifacts": 2,
+      "validation_gate_decisions": 2,
+      "workbench_batch_schedule_results": 1
+    },
+    "retention_pressure": false,
+    "result_digest": "933e61ad909c1dba04402bf2d0b09f73623e7bab65dbdeac9a8ce731288cc764"
+  },
+  "metrics": {
+    "four_retention_cycles_remove_only_terminal_batches": true,
+    "protected_active_batch_survives_every_cycle": true,
+    "every_cycle_uses_new_measured_parent_and_checkpoint": true,
+    "admission_and_rollback_return_budget_and_topology": true,
+    "deleted_terminal_replay_fails_closed_without_mutation": true,
+    "record_and_artifact_storage_stays_bounded": true,
+    "final_checkpoint_preserves_policy_and_projection": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "repeated retention pressure must compact four terminal rounds while preserving one active reservation; every admission/rollback remains checkpointable and bounded, and deleted terminal artifact replay remains impossible"
+  },
+  "boundary": "This canary covers native CPU repeated SeedRuntime retention pressure and bounded structural lineage. It does not claim unlimited growth, automatic budget expansion, open-domain quality, CUDA, frontend behavior, Windows shell, CI completion, or general intelligence."
+}

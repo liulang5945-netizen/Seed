@@ -1,0 +1,19 @@
+{
+  "format": "taiji-w7-r5c-s43-runtime-artifact-store-preflight-v1",
+  "batch_id": "batch:structural:791801fd4df0e8e409a72b7d17fb14e2",
+  "candidate_ids": [
+    "candidate:pressure:workbench:workbench.docs:1:a579a84fb0de",
+    "candidate:pressure:workbench:workbench.code:1:0b85cf21361c"
+  ],
+  "artifact_digest": "6f9132e83609ed900af799b52203a0378edb8b9b86ae7a70f5a7f1148ab71b1d",
+  "metrics": {
+    "all_candidate_references_preflight_before_mutation": true,
+    "valid_candidate_survives_failed_preflight": true,
+    "single_budget_charge_after_preflight_failure": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "multi-candidate artifact references must be fully resolved before native mutation; a missing second artifact cannot partially consume the first, while a later valid submission remains admissible and idempotent"
+  },
+  "boundary": "This canary covers native CPU multi-candidate SeedRuntime artifact preflight. It does not claim automatic retries, unlimited growth, open-domain quality, CUDA, frontend behavior, Windows shell, CI completion, or general intelligence."
+}

@@ -1,0 +1,20 @@
+{
+  "format": "taiji-w7-r5c-s36-runtime-structural-artifact-batch-v1",
+  "batch_id": "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1",
+  "candidate_id": "candidate:pressure:workbench:workbench.docs:1:671e0bcde976",
+  "artifact_digest": "1848fa69a0ed92bbc5b9753539c4c4fbf2f8e35d11eea26d25c6f198a46f7e9f",
+  "measurement_digest": "f0a094edd7c7f72e5506d66a26aca098c4fe059efb7cf73c2282ec30ce16fcdc",
+  "metrics": {
+    "runtime_parent_matches_measured_checkpoint": true,
+    "artifact_and_measurement_payload_roundtrip": true,
+    "unknown_key_rejected_atomically": true,
+    "runtime_wrapper_admits_measured_artifact": true,
+    "artifact_provenance_survives_runtime_restart": true,
+    "repeated_runtime_consumption_is_idempotent": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "SeedRuntime must project the native artifact-batch contract without recomputing facts, survive checkpoint restart, reject unknown inputs atomically, and keep repeated consumption idempotent"
+  },
+  "boundary": "This canary covers SeedRuntime/native CPU artifact-batch projection and restart. It does not claim open-domain quality, unlimited growth, CUDA, frontend behavior, or CI."
+}

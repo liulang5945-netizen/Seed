@@ -1,0 +1,18 @@
+{
+  "format": "taiji-w7-r5c-s49-structural-artifact-measurement-sidecar-v1",
+  "batch_id": "batch:structural:5f4bb51b31ec0b0bf11da44ec5db1266",
+  "artifact_digest": "3918c0e886e125085107521201cc50dd2d31b8300df27b035a7dbdf8dd1a931e",
+  "measurement_digest": "f0a094edd7c7f72e5506d66a26aca098c4fe059efb7cf73c2282ec30ce16fcdc",
+  "metrics": {
+    "new_bundle_is_independently_verified": true,
+    "legacy_artifact_is_explicitly_unverified": true,
+    "artifact_measurement_binding_fails_closed": true,
+    "tampered_measurement_sidecar_fails_closed_without_deletion": true,
+    "runtime_consumption_remains_explicit": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "new measured bundles must carry independently verifiable canonical measurement facts while legacy artifact-only files remain explicit and runtime consumption continues through the existing contract"
+  },
+  "boundary": "This canary covers native CPU measurement-fact sidecars. It does not claim automatic repair, deletion, unlimited storage, open-domain quality, unlimited growth, CUDA, frontend behavior, Windows shell, CI completion, or general intelligence."
+}

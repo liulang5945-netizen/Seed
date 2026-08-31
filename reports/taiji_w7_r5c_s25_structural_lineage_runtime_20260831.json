@@ -1,0 +1,82 @@
+{
+  "format": "taiji-w7-r5c-s25-structural-lineage-runtime-v1",
+  "retention_limit": 1,
+  "default_audit": {
+    "format": "taiji-structural-maintenance-audit-v1",
+    "maintenance_results": [],
+    "lineage_retention": null,
+    "retention_policy": null,
+    "structural_runtime_tick": 6,
+    "audit_digest": "00ccfa2557f518c2f438bbd0c98074daf26398268ce0e636ca58a1ebc188f3f4"
+  },
+  "explicit_audit": {
+    "format": "taiji-structural-maintenance-audit-v1",
+    "maintenance_results": [],
+    "lineage_retention": {
+      "format": "taiji-structural-lineage-retention-result-v1",
+      "status": "compacted",
+      "max_batches": 1,
+      "source_checkpoint_digest": "fa577b2eadd1572d4c3effe6407c4b95b0d1466ecef8c66fafc207ed1388dd84",
+      "target_checkpoint_digest": "fe61261781e8f85faae915946c0cdee4fcd310e7258f73eed6136466edac846c",
+      "protected_batch_ids": [
+        "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1"
+      ],
+      "retained_batch_ids": [
+        "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1"
+      ],
+      "removed_batch_ids": [
+        "batch:terminal-lineage"
+      ],
+      "retained_candidate_ids": [
+        "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+        "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+      ],
+      "removed_candidate_ids": [
+        "candidate:terminal-lineage"
+      ],
+      "removed_record_counts": {
+        "admission_results": 1,
+        "candidate_proposals": 0,
+        "candidate_rollbacks": 1,
+        "candidate_validations": 1,
+        "growth_schedule_results": 0,
+        "maintenance_results": 0,
+        "proposal_candidates": 0,
+        "validation_artifact_batches": 1,
+        "validation_artifacts": 1,
+        "validation_gate_decisions": 1,
+        "workbench_batch_schedule_results": 1
+      },
+      "retention_pressure": false,
+      "result_digest": "6a075163309c2f8c42055c4b3bbb40864ff3cdb2a806be346e2399a0dd4e3364"
+    },
+    "retention_policy": {
+      "format": "taiji-structural-lineage-retention-policy-v1",
+      "revision": 1,
+      "max_batches": 1,
+      "protection_rules": [
+        "active_reservation",
+        "pending_candidate",
+        "pending_topology_proposal",
+        "rollbackable_admission"
+      ],
+      "policy_digest": "16cc51d6a8258df55bfc1c47daf66288285fb7cf4080fb681bc9862551f5a2fb"
+    },
+    "structural_runtime_tick": 6,
+    "audit_digest": "4c6b13bb99351642611403855154986e94f787ccdcbd9fb76b292d8aa5cbd2f5"
+  },
+  "metrics": {
+    "default_runtime_audit_is_valid_without_retention": true,
+    "explicit_runtime_audit_projects_retention": true,
+    "checkpoint_restore_keeps_taiji_audit_state": true,
+    "default_runtime_call_does_not_replay_old_audit": true,
+    "runtime_maintenance_preserves_topology_and_budget": true,
+    "invalid_limit_is_atomic_through_runtime": true,
+    "tampered_runtime_audit_fails_closed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "SeedRuntime exposes a stable content-addressed maintenance audit; default calls do not trigger or replay retention, explicit calls preserve Taiji ownership and checkpoint state, and invalid or tampered payloads fail closed"
+  },
+  "boundary": "This canary covers the explicit native CPU SeedRuntime projection. It does not claim background cleanup, open-domain quality, unlimited growth, CUDA, frontend behavior, or CI."
+}

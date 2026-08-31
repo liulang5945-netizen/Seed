@@ -1,0 +1,51 @@
+{
+  "format": "taiji-w7-r5c-s22-structural-lineage-retention-v1",
+  "retention_limit": 1,
+  "schedule": {
+    "format": "taiji-structural-workbench-batch-schedule-v1",
+    "status": "batch_created",
+    "trigger_tick": 6,
+    "request_digest": "5cca36044b0e3e8c27085e641ff6c127fc3614154704830a29cd80b89812c44c",
+    "region_ids": [
+      "workbench.code",
+      "workbench.docs"
+    ],
+    "candidate_ids": [
+      "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+      "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+    ],
+    "source_window_digests": [
+      "81cc800452197205fff48c98afd75ef3aba2dd8ee1fb2533f1827e1594612344",
+      "760f1393059a5691e341752916eaa28afeec3efdf57b75d012210ea702d17224",
+      "bab9d74f1cc3474431f9a1ca73d64c23917294a59204a4e34a6dfbafc198e42a",
+      "4e9ba8bddaafb2a44ed3b479469f654969b67886f61a93e8d5deea7834562c2d",
+      "0654c311e053dc017ee2861389a7ca82d36983078b75d2c69f462fb4e4b01e46",
+      "faf799a4572a7bc9981a56d107dfc91a5137621e091087687891230123141897"
+    ],
+    "batch_id": "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1",
+    "reason": "",
+    "scheduler_revision": 2
+  },
+  "batch_ids": [
+    "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1"
+  ],
+  "pending_candidate_ids": [
+    "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+    "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+  ],
+  "restored_batch_ids": [
+    "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1"
+  ],
+  "metrics": {
+    "active_batch_survives_terminal_eviction": true,
+    "pending_candidates_survive_batch_retention": true,
+    "rollbackable_admitted_batch_survives_terminal_eviction": true,
+    "checkpoint_preserves_protected_lineage": true,
+    "no_unsafe_eviction_under_pressure": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "bounded retention may evict only terminal structural records; active reservations, pending/deferred candidates, and rollbackable admissions must survive and checkpoint"
+  },
+  "boundary": "This canary covers protected candidate/batch retention under a small configured limit; S20/S21 cover stale artifact isolation, evidence compaction, and long-sequence ledger stress. It does not claim open-domain quality, CUDA, CI, or physical deletion."
+}

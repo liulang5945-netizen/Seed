@@ -1,0 +1,74 @@
+{
+  "format": "taiji-w7-r5c-s26-structural-lineage-status-v1",
+  "retention_limit": 1,
+  "status": {
+    "format": "taiji-structural-maintenance-status-v1",
+    "status": "audit_available",
+    "structural_runtime_tick": 6,
+    "has_retention_audit": true,
+    "last_retention_audit": {
+      "format": "taiji-structural-lineage-retention-result-v1",
+      "status": "compacted",
+      "max_batches": 1,
+      "source_checkpoint_digest": "fa577b2eadd1572d4c3effe6407c4b95b0d1466ecef8c66fafc207ed1388dd84",
+      "target_checkpoint_digest": "fe61261781e8f85faae915946c0cdee4fcd310e7258f73eed6136466edac846c",
+      "protected_batch_ids": [
+        "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1"
+      ],
+      "retained_batch_ids": [
+        "batch:structural:338bebc0bac54bd4353d09cb2b91f8a1"
+      ],
+      "removed_batch_ids": [
+        "batch:terminal-lineage"
+      ],
+      "retained_candidate_ids": [
+        "candidate:pressure:workbench:workbench.code:1:117159ec8e8b",
+        "candidate:pressure:workbench:workbench.docs:1:671e0bcde976"
+      ],
+      "removed_candidate_ids": [
+        "candidate:terminal-lineage"
+      ],
+      "removed_record_counts": {
+        "admission_results": 1,
+        "candidate_proposals": 0,
+        "candidate_rollbacks": 1,
+        "candidate_validations": 1,
+        "growth_schedule_results": 0,
+        "maintenance_results": 0,
+        "proposal_candidates": 0,
+        "validation_artifact_batches": 1,
+        "validation_artifacts": 1,
+        "validation_gate_decisions": 1,
+        "workbench_batch_schedule_results": 1
+      },
+      "retention_pressure": false,
+      "result_digest": "6a075163309c2f8c42055c4b3bbb40864ff3cdb2a806be346e2399a0dd4e3364"
+    },
+    "last_retention_policy": {
+      "format": "taiji-structural-lineage-retention-policy-v1",
+      "revision": 1,
+      "max_batches": 1,
+      "protection_rules": [
+        "active_reservation",
+        "pending_candidate",
+        "pending_topology_proposal",
+        "rollbackable_admission"
+      ],
+      "policy_digest": "16cc51d6a8258df55bfc1c47daf66288285fb7cf4080fb681bc9862551f5a2fb"
+    },
+    "last_retention_policy_migration": null,
+    "retention_pressure": false
+  },
+  "metrics": {
+    "empty_state_is_explicit": true,
+    "status_projects_latest_audit": true,
+    "status_query_has_no_structural_side_effect": true,
+    "status_survives_seed_checkpoint_restore": true,
+    "status_does_not_change_topology_or_budget": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "runtime status is a pure read-only projection with an explicit empty state; it exposes the latest Taiji retention audit without triggering maintenance or changing topology/budget"
+  },
+  "boundary": "This canary covers native CPU status projection. It does not claim that status is a structural decision input, background cleanup, open-domain quality, unlimited growth, CUDA, frontend behavior, or CI."
+}

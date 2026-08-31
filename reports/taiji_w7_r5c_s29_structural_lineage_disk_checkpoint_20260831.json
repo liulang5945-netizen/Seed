@@ -1,0 +1,106 @@
+{
+  "format": "taiji-w7-r5c-s29-structural-lineage-disk-checkpoint-v1",
+  "source_policy": {
+    "format": "taiji-structural-lineage-retention-policy-v1",
+    "revision": 1,
+    "max_batches": 1,
+    "protection_rules": [
+      "active_reservation",
+      "pending_candidate",
+      "pending_topology_proposal",
+      "rollbackable_admission"
+    ],
+    "policy_digest": "16cc51d6a8258df55bfc1c47daf66288285fb7cf4080fb681bc9862551f5a2fb"
+  },
+  "target_policy": {
+    "format": "taiji-structural-lineage-retention-policy-v1",
+    "revision": 2,
+    "max_batches": 1,
+    "protection_rules": [
+      "active_reservation",
+      "pending_candidate",
+      "pending_topology_proposal",
+      "rollbackable_admission"
+    ],
+    "mode": "terminal_only",
+    "policy_digest": "2206fee63cbe65857d6971aff7fb0f27b820c369f44ef2102a22a85948cabd98"
+  },
+  "migration": {
+    "format": "taiji-structural-lineage-retention-policy-migration-v1",
+    "status": "committed",
+    "source_policy": {
+      "format": "taiji-structural-lineage-retention-policy-v1",
+      "revision": 1,
+      "max_batches": 1,
+      "protection_rules": [
+        "active_reservation",
+        "pending_candidate",
+        "pending_topology_proposal",
+        "rollbackable_admission"
+      ],
+      "policy_digest": "16cc51d6a8258df55bfc1c47daf66288285fb7cf4080fb681bc9862551f5a2fb"
+    },
+    "target_policy": {
+      "format": "taiji-structural-lineage-retention-policy-v1",
+      "revision": 2,
+      "max_batches": 1,
+      "protection_rules": [
+        "active_reservation",
+        "pending_candidate",
+        "pending_topology_proposal",
+        "rollbackable_admission"
+      ],
+      "mode": "terminal_only",
+      "policy_digest": "2206fee63cbe65857d6971aff7fb0f27b820c369f44ef2102a22a85948cabd98"
+    },
+    "migration_digest": "7f513a7506abfd992cd9fcd28ad4ea71439786fbc233249e591b4bb4cddbed37"
+  },
+  "rollback": {
+    "format": "taiji-structural-lineage-retention-policy-migration-v1",
+    "status": "rolled_back",
+    "source_policy": {
+      "format": "taiji-structural-lineage-retention-policy-v1",
+      "revision": 1,
+      "max_batches": 1,
+      "protection_rules": [
+        "active_reservation",
+        "pending_candidate",
+        "pending_topology_proposal",
+        "rollbackable_admission"
+      ],
+      "policy_digest": "16cc51d6a8258df55bfc1c47daf66288285fb7cf4080fb681bc9862551f5a2fb"
+    },
+    "target_policy": {
+      "format": "taiji-structural-lineage-retention-policy-v1",
+      "revision": 2,
+      "max_batches": 1,
+      "protection_rules": [
+        "active_reservation",
+        "pending_candidate",
+        "pending_topology_proposal",
+        "rollbackable_admission"
+      ],
+      "mode": "terminal_only",
+      "policy_digest": "2206fee63cbe65857d6971aff7fb0f27b820c369f44ef2102a22a85948cabd98"
+    },
+    "migration_digest": "5827d3144432730cca03417b13ec4edf41fee0d0f5b27a78381bd922851d9f3a"
+  },
+  "artifact_bytes": {
+    "migrated": 3133737,
+    "rolled_back": 3135579
+  },
+  "metrics": {
+    "maintenance_audit_is_preserved": true,
+    "deleted_lineage_does_not_reappear": true,
+    "migration_and_status_survive_disk_restore": true,
+    "rollback_continues_after_restore": true,
+    "lineage_and_budget_are_unchanged": true,
+    "both_disk_artifacts_exist": true,
+    "tampered_or_incomplete_checkpoint_fails_closed": true
+  },
+  "gate": {
+    "passed": true,
+    "criterion": "a real SeedRuntime disk save/load must preserve retention audit, policy migration, status and lineage, then permit explicit rollback and a second save/load without changing topology or structural budget"
+  },
+  "boundary": "This canary covers native CPU disk checkpoint continuation and rollback. It does not claim open-domain quality, unlimited growth, CUDA, frontend behavior, or CI."
+}
