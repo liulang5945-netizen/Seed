@@ -62,16 +62,46 @@ describe('NeedsPentagram', () => {
     expect(axes[1].classes()).not.toContain('critical')
   })
 
-  it('数值按 alert/watch/calm 三档分级着色', () => {
+  it('渲染 5 个数值且不再按单项分级着色', () => {
     const needs = { hunger: 80, fatigue: 55, boredom: 20, stress: 40, curiosity: 70 }
     const wrapper = mount(NeedsPentagram, { props: { needs } })
     const values = wrapper.findAll('tspan.pentagram-value')
     expect(values.length).toBe(5)
-    expect(values[0].classes()).toContain('alert')
-    expect(values[1].classes()).toContain('watch')
-    expect(values[2].classes()).toContain('calm')
-    expect(values[3].classes()).toContain('watch')
-    expect(values[4].classes()).toContain('watch')
+    values.forEach(v => {
+      expect(v.classes()).not.toContain('alert')
+      expect(v.classes()).not.toContain('watch')
+      expect(v.classes()).not.toContain('calm')
+    })
+  })
+
+  it('需求总和低于 200 时整图为 calm 档', () => {
+    const needs = { hunger: 34, fatigue: 28, boredom: 22, stress: 30, curiosity: 41 }
+    const wrapper = mount(NeedsPentagram, { props: { needs } })
+    expect(wrapper.attributes('data-tier')).toBe('calm')
+  })
+
+  it('需求总和 200 至 350 时整图为 watch 档', () => {
+    const needs = { hunger: 72, fatigue: 58, boredom: 44, stress: 50, curiosity: 44 }
+    const wrapper = mount(NeedsPentagram, { props: { needs } })
+    expect(wrapper.attributes('data-tier')).toBe('watch')
+  })
+
+  it('需求总和超过 350 时整图为 alert 档', () => {
+    const needs = { hunger: 82, fatigue: 68, boredom: 66, stress: 95, curiosity: 70 }
+    const wrapper = mount(NeedsPentagram, { props: { needs } })
+    expect(wrapper.attributes('data-tier')).toBe('alert')
+  })
+
+  it('档位阈值边界按 200 与 350 取值', () => {
+    const at = (total) => {
+      const base = Math.floor(total / 5)
+      const needs = { hunger: base, fatigue: base, boredom: base, stress: base, curiosity: total - base * 4 }
+      return mount(NeedsPentagram, { props: { needs } }).attributes('data-tier')
+    }
+    expect(at(199)).toBe('calm')
+    expect(at(200)).toBe('watch')
+    expect(at(350)).toBe('watch')
+    expect(at(351)).toBe('alert')
   })
 
   it('渲染 5 个维度标签文本', () => {
