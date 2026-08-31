@@ -444,6 +444,8 @@ Gate：知识问答不是唯一指标；必须同时通过未见任务规划/能
 
 **E6-0 已完成（2026-09-01）**：`seed_platform/mcp_capability_inheritance.py` 建立 `McpCapabilityInheritanceCandidate`、`McpCapabilityInheritancePolicy`、`McpCapabilityShadowObservation` 和独立 decision contract。候选从 Seed-owned `McpToolRegistry` 读取 tool schema，但只保存 server/tool identity、schema digest、风险、权限、网络 scope、credential reference、资源预算、证据和父 checkpoint；executor/source/secret 不可表达。preflight 只返回 shadow-pending/admissible，不注册或激活；shadow 只比较 content digest、输出、after-state 与资源，并拒绝外部调用、凭据访问、registry 漂移和未审批副作用。E6-0 [Gate report](../../../reports/taiji_w7_e6_0_mcp_client_capability_boundary_20260901.json) 的 10/10 检查和 10 个定向回归测试通过；当前进入 E6-1：将候选投影到 Seed-owned API/registry 的 shadow 状态，不连接真实第三方 MCP。
 
+**E6-1 已完成（2026-09-01）**：`seed_platform/mcp_client_capability_registry.py` 将 E6-0 candidate 投影为 Seed-owned shadow lifecycle record，状态只允许 `proposed`、`shadow_pending`、`shadow_validated`、`rejected`、`rolled_back`；每条记录保留 candidate/policy/observation digest、MCP registry snapshot、事件和 parent checkpoint，checkpoint 恢复校验 revision/snapshot/digest，rollback 只改变 shadow registry，不改变 MCP registry、Workbench executor 或 Taiji cognition。`api/routes_mcp_client_capabilities.py` 提供 status/proposals/shadow/rollback 四个入口，每次按当前 Workbench MCP snapshot 重绑，旧 candidate 或旧 observation fail-closed，不接受 executor/source/secret，也不连接真实第三方服务。E6-1 [Gate report](../../../reports/taiji_w7_e6_1_mcp_client_capability_shadow_projection_20260901.json) 的 10/10 检查和 13 个定向回归测试通过；client activation 明确保留到后续独立阶段。
+
 Gate：旧 client/capability snapshot 可恢复，旧路由/组件/监听器/executor 注册无泄漏，在途调用不丢失，资源 reservation 归还，异常插件 quarantine，Taiji cognition checkpoint 不被插件覆盖。
 
 ### E6：MCP 客户端器官继承
@@ -555,10 +557,10 @@ E1–E7 优先按现有 owner 增量接线，避免继续膨胀 `taiji/adapter.p
 - E1、E3、E5 是强 checkpoint Gate；任一损坏恢复或 lineage 错误立即停止功能推进。
 - E3 完成后是第一个需要讨论的决策点：若直接原生训练没有超过 frozen/route/memory 对照，应先修学习目标和 credit，不扩大参数规模。
 - E5 完成后是第二个决策点：只有隔离、状态迁移和 rollback 可靠，才允许接真实第三方 MCP/plugin。
-- 本轮提交 E4 与 E5-0 实现、定向测试、evaluator、report 和计划同步；不推送、不运行全量 CI。全量 CI 仍按用户决定在阶段收口时统一修复。
+- 本轮已提交 E6-0 与 E6-1 实现、定向测试、evaluator、report 和计划同步；不推送、不运行全量 CI。全量 CI 仍按用户决定在阶段收口时统一修复。
 
 ## 15. E1 首个执行切片
 
-`03_CURRENT_EXECUTION.md` 当前指向 **E6-1：MCP 客户端候选的 API/registry shadow 接线**；E1 已完成并作为全部后续训练与客户端继承的事实源，E5-0/E5-1/E5-2/E5-3 已分别冻结 host contract、完成 API/Vue 接线、退役 Legacy plugin surface 并通过真实 slot runtime canary，E6-0 已冻结 MCP capability inheritance candidate 合同。
+`03_CURRENT_EXECUTION.md` 当前指向 **E6-2：MCP 客户端能力 shadow canary 与显式激活提案边界**；E1 已完成并作为全部后续训练与客户端继承的事实源，E5-0/E5-1/E5-2/E5-3 已分别冻结 host contract、完成 API/Vue 接线、退役 Legacy plugin surface 并通过真实 slot runtime canary，E6-0 已冻结 MCP capability inheritance candidate 合同，E6-1 已完成 API/registry shadow projection。
 
-它优先于真实第三方 MCP 和插件 HMR，因为必须先把候选绑定到 Seed-owned registry 的 shadow 状态，证明 snapshot 一致性、生命周期和 rollback；E6-1 不连接真实第三方 MCP，不激活客户端器官，也不把插件执行权写入 Taiji cognition checkpoint。
+它优先于真实第三方 MCP 和插件 HMR，因为必须先对已投影的候选执行独立 shadow canary，并把任何未来激活限制为显式、可审计的 proposal；E6-2 仍不连接真实第三方 MCP，不激活客户端器官，也不把插件执行权写入 Taiji cognition checkpoint。

@@ -1,0 +1,25 @@
+{
+  "gate": "taiji-e6-1-mcp-client-capability-shadow-projection",
+  "status": "passed",
+  "checks": {
+    "candidate_projects_to_shadow_pending": true,
+    "equivalent_observation_projects_to_shadow_validated": true,
+    "api_exposes_seed_owned_shadow_snapshot": true,
+    "api_proposal_is_shadow_only": true,
+    "executor_and_source_are_not_exported": true,
+    "mcp_registry_is_not_mutated": true,
+    "checkpoint_roundtrip_preserves_shadow": true,
+    "rollback_is_terminal_without_active_state": true,
+    "snapshot_drift_fails_closed_without_record_mutation": true,
+    "no_external_or_cognitive_execution_boundary": true
+  },
+  "scope": {
+    "candidate_is_seed_owned": true,
+    "mcp_snapshot_is_bound": true,
+    "shadow_registry_is_checkpointable": true,
+    "rollback_is_supported": true,
+    "client_activation": false,
+    "real_third_party_mcp_connected": false,
+    "taiji_cognition_mutated": false
+  }
+}
