@@ -314,6 +314,13 @@ from .planning import (
     recovery_reader_credit_profile,
     recovery_reader_credit_structure_digest,
 )
+from .procedural_evolution import (
+    PROCEDURAL_EVOLUTION_FORMAT,
+    PROCEDURAL_EVOLUTION_MANIFEST_REVISION,
+    PROCEDURAL_EVOLUTION_VERSION,
+    NativeProceduralLearningReport,
+    NativeProceduralMemoryTrainer,
+)
 from .procedural_memory import (
     PROCEDURAL_MEMORY_CHECKPOINT_FORMAT,
     SEQUENTIAL_PROCEDURAL_MEMORY_CHECKPOINT_FORMAT,
@@ -696,6 +703,11 @@ __all__ = [
     "PROCEDURAL_MEMORY_CHECKPOINT_FORMAT",
     "ProceduralSequenceLearner",
     "SEQUENTIAL_PROCEDURAL_MEMORY_CHECKPOINT_FORMAT",
+    "NativeProceduralLearningReport",
+    "NativeProceduralMemoryTrainer",
+    "PROCEDURAL_EVOLUTION_FORMAT",
+    "PROCEDURAL_EVOLUTION_MANIFEST_REVISION",
+    "PROCEDURAL_EVOLUTION_VERSION",
     "PlanCandidate",
     "PlanState",
     "RecoveryBranchState",

@@ -1,0 +1,40 @@
+{
+  "gate": "taiji-e3-2-procedural-memory",
+  "status": "passed",
+  "checks": {
+    "native_update_admitted": true,
+    "holdout_improves_over_frozen": true,
+    "replay_only_matches_frozen": true,
+    "retention_preserved": true,
+    "failed_train_excluded": true,
+    "failed_train_not_consumed": true,
+    "checkpoint_roundtrip": true,
+    "dynamic_action_discovery": true
+  },
+  "report": {
+    "format": "taiji-native-procedural-evolution-v1",
+    "parent_learner_digest": "0f843b78cf23acc3c55103396743c6db77bcd9a4635dd8384e020f08e8095caa",
+    "child_learner_digest": "06703f6af2c9b44f0f5ab5aba9a39ed0a2902a55f1cea3deee4389158bdfb8ee",
+    "dataset_digest": "1874667ee70d5962ead7de5ecca8d24d6e3e7a0c73721de72d39fccbfeb55406",
+    "train_experiences": 2,
+    "excluded_train_experiences": 1,
+    "holdout_experiences": 1,
+    "retention_experiences": 1,
+    "frozen_holdout_accuracy": 0.0,
+    "replay_only_holdout_accuracy": 0.0,
+    "native_holdout_accuracy": 1.0,
+    "frozen_retention_accuracy": 1.0,
+    "native_retention_accuracy": 1.0,
+    "native_consolidation_loss": 0.0899469256401062,
+    "admitted": true,
+    "rolled_back": false,
+    "consumed_experience_ids": [
+      "train-editor",
+      "train-mcp"
+    ],
+    "excluded_experience_ids": [
+      "train-failed"
+    ]
+  },
+  "trainer_revision": 1
+}

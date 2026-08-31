@@ -3,7 +3,7 @@
   "version": 1,
   "work_package": "W7-R5",
   "title": "open-domain structural growth and self-evolution",
-  "status": "e3_1_native_route_credit_gate_passed_e3_2_procedural_memory_pending",
+  "status": "e3_2_procedural_memory_gate_passed_e3_3_world_prediction_pending",
   "claim": {
     "to_prove": "Taiji can grow local structure or memory in response to persistent real-task error, capacity pressure, or recovery deficiency, while retaining old abilities and remaining checkpointable and reversible.",
     "must_not_claim": "Growth is not automatic intelligence, unlimited weight addition, neuron-count scaling, or a return to full retraining from scratch."
@@ -67,7 +67,7 @@
     "existing_hooks": ["StructuralGrowthRequest", "AdaptiveStructuralGrowthController", "runtime topology ledger", "adaptive neuron/region growth", "concept trace capacity"],
     "new_test_entry": "tests/taiji_native/test_open_domain_growth_gate.py",
     "new_eval_entry": "scripts/training/eval_taiji_open_domain_growth.py",
-    "status": "e3_1_native_route_credit_gate_passed",
+    "status": "e3_2_procedural_memory_gate_passed",
     "e1_artifact": "taiji/evolution_experience.py and seed_platform/evolution_ledger.py",
     "e1_test": "tests/taiji_native/test_evolution_ledger.py",
     "e1_scope": "versioned content-addressed corpus and experience DTOs, Workbench digest-only projection, append-only identity/hash chain, train/holdout partitioning, redaction, checkpoint restore and continuation",
@@ -88,6 +88,10 @@
     "e3_1_test": "tests/taiji_native/test_evolution_training.py and scripts/training/verify_taiji_e3_1_native_route_credit.py",
     "e3_1_scope": "train-only content-addressed route/interaction credit update over EvolutionExperience DTOs with dynamic route identity features, outcome-field exclusion, frozen/replay-only comparison, holdout/retention/lesion checks, consumed cursor, learner checkpoint and atomic rollback",
     "e3_1_evidence": "verify_taiji_e3_1_native_route_credit.py reports status=passed with 8 checks; native holdout loss is 0.0100 versus frozen/replay-only 1.0, retention remains 0.0, holdout is not consumed, and trainer checkpoint roundtrip preserves scores",
+    "e3_2_artifact": "taiji/procedural_evolution.py and taiji/procedural_memory.py",
+    "e3_2_test": "tests/taiji_native/test_procedural_evolution.py and scripts/training/verify_taiji_e3_2_procedural_memory.py",
+    "e3_2_scope": "train-only successful EvolutionExperience intake into a dynamic action-kind procedural memory readout with frozen/replay-only comparison, holdout/retention checks, failed-experience exclusion, action-kind expansion preserving old weights, checkpoint and rollback",
+    "e3_2_evidence": "verify_taiji_e3_2_procedural_memory.py reports status=passed with 8 checks; native holdout accuracy is 1.0 versus frozen/replay-only 0.0, retention is 1.0, failed train experience is excluded, dynamic action discovery and checkpoint roundtrip hold",
     "s0_artifact": "taiji/structural_evidence.py and taiji/adapter.py",
     "s0_test": "tests/taiji_native/test_structural_evidence_window.py",
     "s0_scope": "content-addressed bounded evidence windows, duplicate/conflict rejection, monotonic ticks, resource-capacity atomicity, adapter runtime capture, and checkpoint restoration",
@@ -422,7 +426,7 @@
     "p4_12_artifact": "scripts/training/eval_taiji_terminal_three_domain_governance.py, tests/taiji_native/test_terminal_three_domain_governance.py, and reports/taiji_w7_p4_12_terminal_three_domain_governance_20260831.json",
     "p4_12_test": "scripts/training/eval_taiji_terminal_three_domain_governance.py",
     "p4_12_evidence": "P4-12 Gate reports gate.passed=true; across three seeds, real terminal.run positive and negative Workbench records train the router, two unseen three-action editor+MCP+terminal compositions complete after structural admission, fixed-capacity controls score 0.0, terminal execution requires explicit approval and bounded argv/timeout/output/artifact resources with shell disabled, failure stops the loop, checkpoint recovery accepts a fresh request, old workspace capability retention, lesion, and topology/budget rollback hold; this is bounded three-domain governance and structural evidence, not open-domain self-evolution",
-    "next_stage": "E3-2 procedural memory intake and comparison Gate"
+    "next_stage": "E3-3 world prediction/local synapse intake and comparison Gate"
   },
   "boundary": [
     "Self-evolution must be evidence-triggered, resource-bounded, and reversible.",
